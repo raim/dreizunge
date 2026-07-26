@@ -2,6 +2,290 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_613012330",
+      "title": "Evolution im Wandel",
+      "icon": "🧬",
+      "chapters": [
+        "tp_17850556692850000017",
+        "tp_17850563037020000196"
+      ],
+      "lang": "it",
+      "srcLang": "de",
+      "createdAt": "2026-07-26T08:53:27.057Z",
+      "updatedAt": "2026-07-26T09:19:44.042Z",
+      "tokenUsage": {
+        "totalPromptTokens": 2056,
+        "totalCompletionTokens": 1344,
+        "tokensByType": {
+          "retitle": 682,
+          "summary": 613,
+          "storyboard": 2105
+        }
+      },
+      "summary": "Die darwinistische Evolutionstheorie hat sich von einer starren Lehre zu einem dynamischen Forschungsprogramm entwickelt, das durch neue wissenschaftliche Erkenntnisse ständig erweitert wird. Wichtige Aspekte dieser Anpassung sind epigenetische Mutationen, die Stabilität des Gleichgewichts und der Einfluss katastrophaler Massenaussterbungen auf den Lauf der Evolution. Diese Entwicklungen widerlegen die Theorie nicht, sondern bereichern sie durch ein tieferes Verständnis von Genetik, natürlicher Selektion und ökologischen Zusammenhängen. Somit bleibt das Kernkonzept intakt, während es sich pluralistischer und komplexer darstellt.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 485,
+        "completionTokens": 128,
+        "ms": 67819,
+        "at": "2026-07-26T09:08:09.550Z"
+      },
+      "sourceFile": "Evoluzione (Scienze per la Maturità 2026) _ Le lezioni del Corriere - Corriere.it.pdf",
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Darwins Theorie als stabiles Fundament.</title><rect x=\"102\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"103\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><polygon points=\"20,80 50,40 80,80\" fill=\"#9e9e9e\"/><rect x=\"45\" y=\"40\" width=\"10\" height=\"40\" fill=\"#9e9e9e\"/><circle cx=\"50\" cy=\"30\" r=\"10\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"1\"><title>Neue Erkenntnisse erweitern das Modell.</title><rect x=\"284\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"285\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><circle cx=\"50\" cy=\"50\" r=\"30\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"none\" stroke=\"#e07a5f\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"50\" y1=\"10\" x2=\"50\" y2=\"90\" stroke=\"#e07a5f\" stroke-width=\"1\" stroke-linecap=\"round\"/><line x1=\"10\" y1=\"50\" x2=\"90\" y2=\"50\" stroke=\"#e07a5f\" stroke-width=\"1\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"2\"><title>Epigenetik und Mutationen treiben Wandel voran.</title><rect x=\"466\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"467\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#81b29a\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#81b29a\"/><path d=\"M 30 70 Q 50 20 70 70 Z\" fill=\"#f2cc8f\"/><circle cx=\"40\" cy=\"40\" r=\"5\" fill=\"#2b2b2b\"/><circle cx=\"60\" cy=\"30\" r=\"5\" fill=\"#2b2b2b\"/><path d=\"M 40 40 L 60 30\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></g><g data-chapter=\"2\"><title>Katastrophen lenken die Evolution um.</title><rect x=\"648\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"649\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><circle cx=\"80\" cy=\"20\" r=\"15\" fill=\"#f2cc8f\"/><polygon points=\"0,100 30,60 60,90 100,40 100,100\" fill=\"#8d6e63\"/><circle cx=\"50\" cy=\"80\" r=\"20\" fill=\"#e5989b\"/></svg></g><g data-chapter=\"2\"><title>Das evolutionäre Programm bleibt intakt.</title><rect x=\"830\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"831\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"#ffffff\" stroke=\"#2b2b2b\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M 30 50 L 70 50 M 50 30 L 50 70\" fill=\"none\" stroke=\"#e07a5f\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"50\" r=\"10\" fill=\"#f2cc8f\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 5,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 946,
+        "completionTokens": 1159,
+        "ms": 379943,
+        "at": "2026-07-26T09:19:44.042Z",
+        "storyStyle": "scientific"
+      },
+      "storyboardPanels": [
+        {
+          "caption": "Darwins Theorie als stabiles Fundament.",
+          "chapter": 1,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "paper"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  20,
+                  80
+                ],
+                [
+                  50,
+                  40
+                ],
+                [
+                  80,
+                  80
+                ]
+              ],
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 45,
+              "y": 40,
+              "w": 10,
+              "h": 40,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 30,
+              "r": 10,
+              "fill": "ink"
+            }
+          ]
+        },
+        {
+          "caption": "Neue Erkenntnisse erweitern das Modell.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "sky"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 30,
+              "fill": "none",
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 40,
+              "fill": "none",
+              "stroke": "accent",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 50,
+              "y1": 10,
+              "x2": 50,
+              "y2": 90,
+              "stroke": "accent",
+              "sw": 1
+            },
+            {
+              "type": "line",
+              "x1": 10,
+              "y1": 50,
+              "x2": 90,
+              "y2": 50,
+              "stroke": "accent",
+              "sw": 1
+            }
+          ]
+        },
+        {
+          "caption": "Epigenetik und Mutationen treiben Wandel voran.",
+          "chapter": 2,
+          "bg": "leaf",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "leaf"
+            },
+            {
+              "type": "path",
+              "d": "M 30 70 Q 50 20 70 70 Z",
+              "fill": "sun"
+            },
+            {
+              "type": "circle",
+              "cx": 40,
+              "cy": 40,
+              "r": 5,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 60,
+              "cy": 30,
+              "r": 5,
+              "fill": "ink"
+            },
+            {
+              "type": "path",
+              "d": "M 40 40 L 60 30",
+              "stroke": "white",
+              "sw": 2
+            }
+          ]
+        },
+        {
+          "caption": "Katastrophen lenken die Evolution um.",
+          "chapter": 2,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "night"
+            },
+            {
+              "type": "circle",
+              "cx": 80,
+              "cy": 20,
+              "r": 15,
+              "fill": "sun"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  0,
+                  100
+                ],
+                [
+                  30,
+                  60
+                ],
+                [
+                  60,
+                  90
+                ],
+                [
+                  100,
+                  40
+                ],
+                [
+                  100,
+                  100
+                ]
+              ],
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 80,
+              "r": 20,
+              "fill": "rose"
+            }
+          ]
+        },
+        {
+          "caption": "Das evolutionäre Programm bleibt intakt.",
+          "chapter": 2,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "paper"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 40,
+              "fill": "white",
+              "stroke": "ink",
+              "sw": 3
+            },
+            {
+              "type": "path",
+              "d": "M 30 50 L 70 50 M 50 30 L 50 70",
+              "stroke": "accent",
+              "sw": 4
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 10,
+              "fill": "sun"
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
+    },
+    {
       "id": "sl_2123771959",
       "title": "Chaos der Hagelstürme",
       "icon": "🌩️",
@@ -4881,6 +5165,599 @@
     }
   ],
   "topics": [
+    {
+      "id": "tp_17850563037020000196",
+      "topic": "Anpassung und Wandel",
+      "topicEmoji": "🌍",
+      "userTopic": "le estinzioni di massa che hanno deviato il corso dell’evoluzione su larga scala",
+      "userPrompt": "le estinzioni di massa che hanno deviato il corso dell’evoluzione su larga scala\n\n[story]\ngeografiche rapide che «punteggiano» lunghi periodi di stabilità (equilibri punteggiati); le mutazioni non solo genetiche ma anche «epigenetiche» (che non modificano la sequenza del DNA, ma come viene espressa e regolata, in base alle condizioni ambientali); gli eventi catastrofici come le estinzioni di massa che hanno deviato il corso dell’evoluzione su larga scala.\nLa teoria darwiniana si aggiorna\nTutte queste nuove appassionanti scoperte non hanno confutato la spiegazione darwiniana, ma l’hanno corretta, arricchita ed estesa. Oggi il programma di ricerca evoluzionistico è più pluralista, perché prevede una molteplicità di fattori e di fenomeni: le sorgenti di variazione non sono soltanto le mutazioni genetiche, ma anche quelle epigenetiche e quelle dovute al trasferimento genico orizzontale; i processi selettivi stessi sono molteplici, perché la selezione naturale classica si integra alla selezione sessuale (già scoperta da Darwin) e alla selezione di gruppo; alcuni fattori casuali, come la deriva genetica (quando la variazione genetica viene sorteggiata casualmente in occasione di improvvise riduzioni della popolazione di una specie o di migrazioni di piccoli gruppi), erano stati sottovalutati; inoltre, oggi sappiamo che la selezione naturale non parte mai da zero, ma fa di necessità virtù con il materiale che ha a disposizione e con i vincoli che esso contiene (vincoli di sviluppo, storici, architettonici, fisici, etc.).\nSpesso una struttura, nata in relazione a una funzione o a nessuna funzione (un effetto collaterale, una ridondanza), viene convertita nell’evoluzione per fare tutt’altro (un processo chiamato exaptation): le ali non si sono evolute «per» volare, ma all’inizio svolgevano altri compiti (termoregolazione, corteggiamento) e poi sono state cooptate nel volo. Infine, i geni sono importanti ma non tutto si svolge a livello genetico: l’ecologia è essenziale e molti processi di cambiamento sono influenzati da fattori macro-evolutivi, cioè che accadono al livello delle specie o al di sopra (come le grandi estinzioni dovute a perturbazioni ecologiche planetarie, eruzioni vulcaniche, impatti di asteroidi, cambiamenti climatici). Il programma di ricerca darwiniano, insomma, è in piena espansione e oggi viene applicato in modo fecondo anche allo studio di alcuni processi di cambiamento che avvengono a livello culturale e tecnologico.\nN. Eldredge, 1995, Ripensare Darwin, Einaudi, Torino, 1999.\nS.J. Gould, 1989, La vita meravigliosa, Feltrinelli, Milano, 1990.\nE. Mayr, 1991, Un lungo ragionamento, Bollati Boringhieri, Torino, 1994.\nA. Piseri, P. Poltronieri, P. Vitale, 2020, Ritratti della natura. Lezioni di biologia, V anno, Loescher\nEditore, Torino.\n12 maggio 2025 ( modifica il 1 aprile 2026 | 15:02)\n© RIPRODUZIONE RISERVATA",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 404,
+      "story": "geografiche rapide che «punteggiano» lunghi periodi di stabilità (equilibri punteggiati); le mutazioni non solo genetiche ma anche «epigenetiche» (che non modificano la sequenza del DNA, ma come viene espressa e regolata, in base alle condizioni ambientali); gli eventi catastrofici come le estinzioni di massa che hanno deviato il corso dell’evoluzione su larga scala.\nLa teoria darwiniana si aggiorna\nTutte queste nuove appassionanti scoperte non hanno confutato la spiegazione darwiniana, ma l’hanno corretta, arricchita ed estesa. Oggi il programma di ricerca evoluzionistico è più pluralista, perché prevede una molteplicità di fattori e di fenomeni: le sorgenti di variazione non sono soltanto le mutazioni genetiche, ma anche quelle epigenetiche e quelle dovute al trasferimento genico orizzontale; i processi selettivi stessi sono molteplici, perché la selezione naturale classica si integra alla selezione sessuale (già scoperta da Darwin) e alla selezione di gruppo; alcuni fattori casuali, come la deriva genetica (quando la variazione genetica viene sorteggiata casualmente in occasione di improvvise riduzioni della popolazione di una specie o di migrazioni di piccoli gruppi), erano stati sottovalutati; inoltre, oggi sappiamo che la selezione naturale non parte mai da zero, ma fa di necessità virtù con il materiale che ha a disposizione e con i vincoli che esso contiene (vincoli di sviluppo, storici, architettonici, fisici, etc.).\nSpesso una struttura, nata in relazione a una funzione o a nessuna funzione (un effetto collaterale, una ridondanza), viene convertita nell’evoluzione per fare tutt’altro (un processo chiamato exaptation): le ali non si sono evolute «per» volare, ma all’inizio svolgevano altri compiti (termoregolazione, corteggiamento) e poi sono state cooptate nel volo. Infine, i geni sono importanti ma non tutto si svolge a livello genetico: l’ecologia è essenziale e molti processi di cambiamento sono influenzati da fattori macro-evolutivi, cioè che accadono al livello delle specie o al di sopra (come le grandi estinzioni dovute a perturbazioni ecologiche planetarie, eruzioni vulcaniche, impatti di asteroidi, cambiamenti climatici). Il programma di ricerca darwiniano, insomma, è in piena espansione e oggi viene applicato in modo fecondo anche allo studio di alcuni processi di cambiamento che avvengono a livello culturale e tecnologico.\nN. Eldredge, 1995, Ripensare Darwin, Einaudi, Torino, 1999.\nS.J. Gould, 1989, La vita meravigliosa, Feltrinelli, Milano, 1990.\nE. Mayr, 1991, Un lungo ragionamento, Bollati Boringhieri, Torino, 1994.\nA. Piseri, P. Poltronieri, P. Vitale, 2020, Ritratti della natura. Lezioni di biologia, V anno, Loescher\nEditore, Torino.\n12 maggio 2025 ( modifica il 1 aprile 2026 | 15:02)\n© RIPRODUZIONE RISERVATA",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-07-26T08:53:27.106Z",
+        "origin": "file-upload",
+        "source": "recorded at generation",
+        "sourceFile": "Evoluzione (Scienze per la Maturità 2026) _ Le lezioni del Corriere - Corriere.it.pdf"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 770,
+        "completionTokens": 710,
+        "ms": 296595,
+        "at": "2026-07-26T08:58:23.701Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "kurze geografische Phasen, die lange Perioden der Stabilität durchbrechen (Gleichgewichte im Gleichgewicht); Mutationen, die nicht nur genetisch, sondern auch epigenetisch sind (die die DNA-Sequenz selbst nicht verändern, sondern deren Expression und Regulation je nach Umweltbedingungen beeinflussen); katastrophale Ereignisse wie Massenaussterben, die den Lauf der Evolution auf großer Skala verändert haben.\n\nDie darwinistische Theorie wird aktualisiert\n\nAll diese neuen faszinierenden Entdeckungen haben die darwinische Erklärung nicht widerlegt, sondern sie korrigiert, bereichert und erweitert. Heute ist das evolutionäre Forschungsprogramm pluralistischer, da es eine Vielzahl von Faktoren und Phänomenen berücksichtigt: Die Quellen der Variation sind nicht nur genetische Mutationen, sondern auch epigenetische Veränderungen sowie solche durch horizontalen Gentransfer; die selektiven Prozesse selbst sind vielfältig, denn die klassische natürliche Selektion wird ergänzt durch sexuelle Selektion (bereits von Darwin entdeckt) und Gruppenselektion; einige zufällige Faktoren wie genetische Drift (wenn genetische Variation bei plötzlichen Rückgängen der Population einer Art oder bei Migration kleiner Gruppen zufällig auftritt) wurden unterschätzt; außerdem wissen wir heute, dass die natürliche Selektion nie bei Null beginnt, sondern aus Not Tugend macht mit dem verfügbaren Material und den darin enthaltenen Einschränkungen (Entwicklungs-, historische, architektonische, physikalische usw. Beschränkungen).\n\nOft wird eine Struktur, die im Zusammenhang mit einer Funktion oder keiner Funktion entstanden ist (ein Nebeneffekt, eine Redundanz), in der Evolution für etwas ganz anderes umfunktioniert (ein Prozess namens Exaptation): Flügel haben sich nicht „zum“ Fliegen entwickelt, sondern erfüllten zunächst andere Aufgaben (Thermoregulation, Balz) und wurden später für den Flug übernommen. Schließlich sind Gene wichtig, aber nicht alles spielt sich auf genetischer Ebene ab: Die Ökologie ist entscheidend, und viele Veränderungsprozesse werden von makroevolutionären Faktoren beeinflusst, also solchen, die auf der Ebene der Arten oder darüber stattfinden (wie große Aussterbeereignisse aufgrund planetarer ökologischer Störungen, Vulkanausbrüche, Asteroideneinschläge, Klimaveränderungen). Das darwinistische Forschungsprogramm ist somit in voller Expansion und wird heute fruchtbar auch zur Untersuchung bestimmter Veränderungsprozesse auf kultureller und technologischer Ebene angewendet.\n\nN. Eldredge, 1995, Darwin neu denken, Einaudi, Turin, 1999.\nS.J. Gould, 1989, Das wunderbare Leben, Feltrinelli, Mailand, 1990.\nE. Mayr, 1991, Ein langer Gedankengang, Bollati Boringhieri, Turin, 1994.\nA. Piseri, P. Poltronieri, P. Vitale, 2020, Porträts der Natur. Biologievorlesungen, 5. Jahr, Loescher Verlag, Turin.\n\n12. Mai 2025 (geändert am 1. April 2026 | 15:02)\n© NACHDRUCK VERBOTEN",
+      "userStory": "geografiche rapide che «punteggiano» lunghi periodi di stabilità (equilibri punteggiati); le mutazioni non solo genetiche ma anche «epigenetiche» (che non modificano la sequenza del DNA, ma come viene espressa e regolata, in base alle condizioni ambientali); gli eventi catastrofici come le estinzioni di massa che hanno deviato il corso dell’evoluzione su larga scala.\nLa teoria darwiniana si aggiorna\nTutte queste nuove appassionanti scoperte non hanno confutato la spiegazione darwiniana, ma l’hanno corretta, arricchita ed estesa. Oggi il programma di ricerca evoluzionistico è più pluralista, perché prevede una molteplicità di fattori e di fenomeni: le sorgenti di variazione non sono soltanto le mutazioni genetiche, ma anche quelle epigenetiche e quelle dovute al trasferimento genico orizzontale; i processi selettivi stessi sono molteplici, perché la selezione naturale classica si integra alla selezione sessuale (già scoperta da Darwin) e alla selezione di gruppo; alcuni fattori casuali, come la deriva genetica (quando la variazione genetica viene sorteggiata casualmente in occasione di improvvise riduzioni della popolazione di una specie o di migrazioni di piccoli gruppi), erano stati sottovalutati; inoltre, oggi sappiamo che la selezione naturale non parte mai da zero, ma fa di necessità virtù con il materiale che ha a disposizione e con i vincoli che esso contiene (vincoli di sviluppo, storici, architettonici, fisici, etc.).\nSpesso una struttura, nata in relazione a una funzione o a nessuna funzione (un effetto collaterale, una ridondanza), viene convertita nell’evoluzione per fare tutt’altro (un processo chiamato exaptation): le ali non si sono evolute «per» volare, ma all’inizio svolgevano altri compiti (termoregolazione, corteggiamento) e poi sono state cooptate nel volo. Infine, i geni sono importanti ma non tutto si svolge a livello genetico: l’ecologia è essenziale e molti processi di cambiamento sono influenzati da fattori macro-evolutivi, cioè che accadono al livello delle specie o al di sopra (come le grandi estinzioni dovute a perturbazioni ecologiche planetarie, eruzioni vulcaniche, impatti di asteroidi, cambiamenti climatici). Il programma di ricerca darwiniano, insomma, è in piena espansione e oggi viene applicato in modo fecondo anche allo studio di alcuni processi di cambiamento che avvengono a livello culturale e tecnologico.\nN. Eldredge, 1995, Ripensare Darwin, Einaudi, Torino, 1999.\nS.J. Gould, 1989, La vita meravigliosa, Feltrinelli, Milano, 1990.\nE. Mayr, 1991, Un lungo ragionamento, Bollati Boringhieri, Torino, 1994.\nA. Piseri, P. Poltronieri, P. Vitale, 2020, Ritratti della natura. Lezioni di biologia, V anno, Loescher\nEditore, Torino.\n12 maggio 2025 ( modifica il 1 aprile 2026 | 15:02)\n© RIPRODUZIONE RISERVATA",
+      "continuedFrom": "Dynamik der Evolution",
+      "continuedFromId": "tp_17850556692850000017",
+      "storyStyle": "scientific",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Evolution und Massenaussterben",
+          "desc": "Lernworter und Satze zur Evolutionstheorie",
+          "icon": "🧬",
+          "vocab": [
+            {
+              "target": "mutazione",
+              "source": "die Mutation"
+            },
+            {
+              "target": "estinzioni di massa",
+              "source": "Massenaussterben"
+            },
+            {
+              "target": "corpo",
+              "source": "der Korper",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "der Körper",
+                  "field": "source",
+                  "at": "2026-07-26T09:10:42.161Z"
+                }
+              },
+              "qc": {
+                "sug": "der Körper",
+                "field": "source",
+                "at": "2026-07-26T09:10:42.161Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "teoria",
+              "source": "die Theorie"
+            },
+            {
+              "target": "scoperta",
+              "source": "die Entdeckung"
+            },
+            {
+              "target": "selezione naturale",
+              "source": "die naturliche Selektion"
+            },
+            {
+              "target": "gene",
+              "source": "die Gene"
+            },
+            {
+              "target": "ecologia",
+              "source": "die Okologie",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "die Ökologie",
+                  "field": "source",
+                  "at": "2026-07-26T09:11:05.003Z"
+                }
+              },
+              "qc": {
+                "sug": "die Ökologie",
+                "field": "source",
+                "at": "2026-07-26T09:11:05.003Z",
+                "by": "translategemma:12b"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Le mutazioni non solo genetiche ma anche epigenetiche.",
+              "source": "Mutationen sind nicht nur genetisch, sondern auch epigenetisch.",
+              "words": [
+                "Le",
+                "mutazioni",
+                "non",
+                "solo",
+                "genetiche",
+                "ma",
+                "anche",
+                "epigenetiche."
+              ]
+            },
+            {
+              "target": "Gli eventi catastrofici come le estinzioni di massa.",
+              "source": "Katastrophale Ereignisse wie Massenaussterben.",
+              "words": [
+                "Gli",
+                "eventi",
+                "catastrofici",
+                "come",
+                "le",
+                "estinzioni",
+                "di",
+                "massa."
+              ]
+            },
+            {
+              "target": "La teoria darwiniana si aggiorna.",
+              "source": "Die darwinistische Theorie wird aktualisiert.",
+              "words": [
+                "La",
+                "teoria",
+                "darwiniana",
+                "si",
+                "aggiorna."
+              ]
+            },
+            {
+              "target": "Tutte queste nuove scoperte non hanno confutato la spiegazione.",
+              "source": "Alle diese neuen Entdeckungen haben die Erklarung nicht widerlegt.",
+              "words": [
+                "Tutte",
+                "queste",
+                "nuove",
+                "scoperte",
+                "non",
+                "hanno",
+                "confutato",
+                "la",
+                "spiegazione."
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Alle diese neuen Entdeckungen haben die Erklärung nicht widerlegt.",
+                  "field": "source",
+                  "at": "2026-07-26T09:11:47.910Z"
+                }
+              },
+              "qc": {
+                "sug": "Alle diese neuen Entdeckungen haben die Erklärung nicht widerlegt.",
+                "field": "source",
+                "at": "2026-07-26T09:11:47.910Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "I geni sono importanti ma non tutto si svolge a livello genetico.",
+              "source": "Gene sind wichtig, aber nicht alles spielt sich auf genetischer Ebene ab.",
+              "words": [
+                "I",
+                "geni",
+                "sono",
+                "importanti",
+                "ma",
+                "non",
+                "tutto",
+                "si",
+                "svolge",
+                "a",
+                "livello",
+                "genetico."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 2047,
+            "completionTokens": 390,
+            "ms": 274775,
+            "at": "2026-07-26T09:02:58.537Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "Massenaussterben und Evolution",
+          "desc": "Katastrophenereignisse in der Evolutionsgeschichte",
+          "icon": "🦕",
+          "vocab": [
+            {
+              "target": "l'estinzione di massa",
+              "source": "die Massenaussterbung"
+            },
+            {
+              "target": "il corso dell'evoluzione",
+              "source": "der Lauf der Evolution"
+            },
+            {
+              "target": "la stabilità",
+              "source": "die Stabilität"
+            },
+            {
+              "target": "la mutazione epigenetica",
+              "source": "die epigenetische Mutation"
+            },
+            {
+              "target": "l'equilibrio",
+              "source": "das Gleichgewicht"
+            },
+            {
+              "target": "il fattore casuale",
+              "source": "der Zufallsfaktor"
+            },
+            {
+              "target": "la selezione di gruppo",
+              "source": "die Gruppenselektion"
+            },
+            {
+              "target": "il trasferimento genico",
+              "source": "der Gentransfer"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Le estinzioni di massa deviano l'evoluzione.",
+              "source": "Massenaussterbungen lenken die Evolution um.",
+              "words": [
+                "Le",
+                "estinzioni",
+                "di",
+                "massa",
+                "deviano",
+                "l'evoluzione."
+              ]
+            },
+            {
+              "target": "La stabilità dura a lungo nei periodi calmi.",
+              "source": "Die Stabilität dauert in ruhigen Perioden lange.",
+              "words": [
+                "La",
+                "stabilità",
+                "dura",
+                "a",
+                "lungo",
+                "nei",
+                "periodi",
+                "calmi."
+              ]
+            },
+            {
+              "target": "Le mutazioni epigenetiche regolano l'espressione genica.",
+              "source": "Epigenetische Mutationen regulieren die Genexpression.",
+              "words": [
+                "Le",
+                "mutazioni",
+                "epigenetiche",
+                "regolano",
+                "l'espressione",
+                "genica."
+              ]
+            },
+            {
+              "target": "La selezione di gruppo influenza la sopravvivenza.",
+              "source": "Die Gruppenselektion beeinflusst das Überleben.",
+              "words": [
+                "La",
+                "selezione",
+                "di",
+                "gruppo",
+                "influenza",
+                "la",
+                "sopravvivenza."
+              ]
+            },
+            {
+              "target": "I fattori casuali creano nuova variabilità genetica.",
+              "source": "Zufallsfaktoren schaffen neue genetische Variabilität.",
+              "words": [
+                "I",
+                "fattori",
+                "casuali",
+                "creano",
+                "nuova",
+                "variabilità",
+                "genetica."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1024,
+            "completionTokens": 409,
+            "ms": 183112,
+            "at": "2026-07-26T09:06:01.650Z"
+          },
+          "_arcMode": "reinforce",
+          "qcAt": "2026-07-26T09:13:24.060Z",
+          "qcBy": "translategemma:12b"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 571431,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 7522,
+        "totalCompletionTokens": 1197,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 274775,
+            "promptTokens": 2047,
+            "completionTokens": 390
+          }
+        ],
+        "tokensByType": {
+          "lesson_qc": 4802
+        }
+      },
+      "generatedAt": "2026-07-26T08:58:23.702Z",
+      "updatedAt": "2026-07-26T09:13:24.060Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17850556692850000017",
+      "topic": "Dynamik der Evolution",
+      "topicEmoji": "🧬",
+      "userTopic": "sa, senza aggiornamenti, revisioni ed estensioni, ci sarebbe di che preoccuparsi",
+      "userPrompt": "sa, senza aggiornamenti, revisioni ed estensioni, ci sarebbe di che preoccuparsi\n\n[story]\nSe una teoria scientifica rimanesse sempre la stessa, senza aggiornamenti, revisioni ed estensioni, ci sarebbe di che preoccuparsi. Vorrebbe dire che non sta al passo delle nuove scoperte ed evidenze, che nella scienza si susseguono sempre. La spiegazione evoluzionistica darwiniana in realtà non è soltanto una «teoria» scientifica, ma un vasto e complesso «programma di ricerca», composto da più leggi, fattori, modelli e ipotesi. E come programma di ricerca ha subito nell’ultimo secolo e mezzo molte correzioni e integrazioni, come è bene che sia, rimanendo tuttavia integro nel suo nocciolo centrale, quello individuato da Charles Darwin alla metà dell’Ottocento.\nTutti gli esseri viventi sono imparentati fra loro e sono connessi da un albero genealogico di discendenza con modificazioni. Questo è il primo pilastro del programma di ricerca darwiniano. In sostanza, prese a caso due specie, anche molto diverse fra loro come una pianta e un verme, avranno certamente avuto un antenato in comune vissuto in epoche lontane. Tutte le specie sono quindi «cugine», nel senso che hanno avuto un «nonno» in comune, e poi si sono ramificate e diversificate. Noi umani per esempio abbiamo avuto un antenato in comune con gli scimpanzé, i nostri cugini non umani più prossimi, vissuto in Africa intorno a sei milioni di anni fa. Con i\nNeanderthal, i nostri cugini umani più prossimi, abbiamo avuto un antenato in comune vissuto sempre in Africa 500.000 anni fa.\nIl secondo pilastro della rivoluzione darwiniana, ancora valido, è la selezione naturale, il principale motore del cambiamento evolutivo, che ci ciba di variazioni individuali spontanee e casuali, le quali danno al singolo maggiori o minori capacità di sopravvivenza e di riproduzione in un dato ambiente, venendo quindi trasmesse di più o di meno alle generazioni successive. In tal senso, l’evoluzione è un gioco di varianti che si diffondono di più o di meno nelle popolazioni. Non è un perfezionamento progressivo, ma un far di necessità virtù in un dato momento, in un ambiente che sarà sempre in cambiamento. Chi prevale nell’evoluzione non è necessariamente «il più forte», ma anche il più flessibile, opportunista, cooperativo, scaltro.\nDarwin non conosceva le basi molecolari della variazione né le leggi della sua trasmissione, scoperte in parallelo da Gregor Mendel, senza che i due entrassero in contatto. Bisognerà attendere la prima metà del Novecento per la nascita della genetica e per la fusione tra la teoria darwiniana e quella mendeliana. Si capì che le varianti nelle popolazioni sono dovute a mutazioni genetiche casuali, errori di copiatura del DNA, che oscillano nella loro frequenza. Secondo questo programma di ricerca, noto come «Sintesi Moderna», l’evoluzione è un processo lento e graduale di affinamento degli adattamenti degli organismi, dovuti al maggiore o minore successo dei geni portati dagli individui.\nFra gli anni settanta e ottanta del secolo scorso, anche questo programma di ricerca è stato rivisto ed esteso, perché non spiegava adeguatamente nuovi fenomeni, come: l’esistenza di ampie porzioni dei genomi privi di funzioni e non sottoposti al controllo della selezione naturale (neutralismo); l’importanza della simbiosi, cioè dell’associazione permanente fra individui che perdono la loro autonomia per far parte di strutture più complesse e competitive; la frequenza di speciazioni",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 522,
+      "story": "Se una teoria scientifica rimanesse sempre la stessa, senza aggiornamenti, revisioni ed estensioni, ci sarebbe di che preoccuparsi. Vorrebbe dire che non sta al passo delle nuove scoperte ed evidenze, che nella scienza si susseguono sempre. La spiegazione evoluzionistica darwiniana in realtà non è soltanto una «teoria» scientifica, ma un vasto e complesso «programma di ricerca», composto da più leggi, fattori, modelli e ipotesi. E come programma di ricerca ha subito nell’ultimo secolo e mezzo molte correzioni e integrazioni, come è bene che sia, rimanendo tuttavia integro nel suo nocciolo centrale, quello individuato da Charles Darwin alla metà dell’Ottocento.\nTutti gli esseri viventi sono imparentati fra loro e sono connessi da un albero genealogico di discendenza con modificazioni. Questo è il primo pilastro del programma di ricerca darwiniano. In sostanza, prese a caso due specie, anche molto diverse fra loro come una pianta e un verme, avranno certamente avuto un antenato in comune vissuto in epoche lontane. Tutte le specie sono quindi «cugine», nel senso che hanno avuto un «nonno» in comune, e poi si sono ramificate e diversificate. Noi umani per esempio abbiamo avuto un antenato in comune con gli scimpanzé, i nostri cugini non umani più prossimi, vissuto in Africa intorno a sei milioni di anni fa. Con i\nNeanderthal, i nostri cugini umani più prossimi, abbiamo avuto un antenato in comune vissuto sempre in Africa 500.000 anni fa.\nIl secondo pilastro della rivoluzione darwiniana, ancora valido, è la selezione naturale, il principale motore del cambiamento evolutivo, che ci ciba di variazioni individuali spontanee e casuali, le quali danno al singolo maggiori o minori capacità di sopravvivenza e di riproduzione in un dato ambiente, venendo quindi trasmesse di più o di meno alle generazioni successive. In tal senso, l’evoluzione è un gioco di varianti che si diffondono di più o di meno nelle popolazioni. Non è un perfezionamento progressivo, ma un far di necessità virtù in un dato momento, in un ambiente che sarà sempre in cambiamento. Chi prevale nell’evoluzione non è necessariamente «il più forte», ma anche il più flessibile, opportunista, cooperativo, scaltro.\nDarwin non conosceva le basi molecolari della variazione né le leggi della sua trasmissione, scoperte in parallelo da Gregor Mendel, senza che i due entrassero in contatto. Bisognerà attendere la prima metà del Novecento per la nascita della genetica e per la fusione tra la teoria darwiniana e quella mendeliana. Si capì che le varianti nelle popolazioni sono dovute a mutazioni genetiche casuali, errori di copiatura del DNA, che oscillano nella loro frequenza. Secondo questo programma di ricerca, noto come «Sintesi Moderna», l’evoluzione è un processo lento e graduale di affinamento degli adattamenti degli organismi, dovuti al maggiore o minore successo dei geni portati dagli individui.\nFra gli anni settanta e ottanta del secolo scorso, anche questo programma di ricerca è stato rivisto ed esteso, perché non spiegava adeguatamente nuovi fenomeni, come: l’esistenza di ampie porzioni dei genomi privi di funzioni e non sottoposti al controllo della selezione naturale (neutralismo); l’importanza della simbiosi, cioè dell’associazione permanente fra individui che perdono la loro autonomia per far parte di strutture più complesse e competitive; la frequenza di speciazioni",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-07-26T08:42:59.783Z",
+        "origin": "file-upload",
+        "source": "recorded at generation",
+        "sourceFile": "Evoluzione (Scienze per la Maturità 2026) _ Le lezioni del Corriere - Corriere.it.pdf"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 836,
+        "completionTokens": 838,
+        "ms": 289502,
+        "at": "2026-07-26T08:47:49.285Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Wenn eine wissenschaftliche Theorie stets unverändert bliebe, ohne Aktualisierungen, Überarbeitungen oder Erweiterungen, wäre das Anlass zur Sorge. Es würde bedeuten, dass sie mit den neuen Entdeckungen und Erkenntnissen nicht Schritt hält, die in der Wissenschaft ständig aufeinanderfolgen. Die darwinische Erklärung der Evolution ist in Wirklichkeit nicht nur eine „wissenschaftliche Theorie“, sondern ein weitreichendes und komplexes „Forschungsprogramm“, das aus mehreren Gesetzen, Faktoren, Modellen und Hypothesen besteht. Als Forschungsprogramm hat es im letzten anderthalb Jahrhundert zahlreiche Korrekturen und Ergänzungen erfahren, wie es sich gehört, wobei sein Kern, den Charles Darwin in der Mitte des 19. Jahrhunderts identifiziert hatte, intakt geblieben ist.\n\nAlle Lebewesen sind miteinander verwandt und durch einen Stammbaum der Abstammung mit Veränderungen verbunden. Dies ist der erste Pfeiler des darwinischen Forschungsprogramms. Im Wesentlichen hatten zwei zufällig ausgewählte Arten, selbst wenn sie sich stark unterscheiden, wie eine Pflanze und ein Wurm, zweifellos in ferner Vergangenheit einen gemeinsamen Vorfahren. Alle Arten sind daher „Cousins“ im Sinne dessen, dass sie einen gemeinsamen „Großvater“ hatten und sich danach verzweigten und diversifizierten. Wir Menschen zum Beispiel teilten uns mit den Schimpansen, unseren nächsten nicht-menschlichen Verwandten, einen gemeinsamen Vorfahren, der vor etwa sechs Millionen Jahren in Afrika lebte. Mit den Neandertalern, unseren nächsten menschlichen Verwandten, hatten wir einen gemeinsamen Vorfahren, der ebenfalls vor 500.000 Jahren in Afrika lebte.\n\nDer zweite Pfeiler der darwinischen Revolution, der noch immer gültig ist, ist die natürliche Selektion, der Hauptmotor des evolutionären Wandels. Sie nährt sich von spontanen und zufälligen individuellen Variationen, die dem Einzelnen größere oder geringere Fähigkeiten zur Überlebens- und Fortpflanzungsfähigkeit in einem bestimmten Umfeld verleihen und daher mehr oder weniger stark an nachfolgende Generationen weitergegeben werden. In diesem Sinne ist Evolution ein Spiel der Varianten, die sich in den Populationen mehr oder weniger stark ausbreiten. Es handelt sich nicht um eine schrittweise Vervollkommnung, sondern darum, aus Not eine Tugend zu machen, im jeweiligen Moment und in einer Umgebung, die sich stets verändert. Wer in der Evolution siegt, ist nicht unbedingt „der Stärkste“, sondern auch der flexibelste, opportunistischste, kooperativste und schlauste.\n\nDarwin kannte die molekularen Grundlagen der Variation sowie die Gesetze ihrer Vererbung nicht, die parallel von Gregor Mendel entdeckt wurden, ohne dass die beiden miteinander in Kontakt traten. Man musste bis zur ersten Hälfte des 20. Jahrhunderts warten, bis sich die Genetik entwickelte und die darwinische Theorie mit der mendelschen verschmolz. Man erkannte, dass Variationen in Populationen auf zufälligen genetischen Mutationen beruhen, also Kopierfehlern der DNA, deren Häufigkeit schwankt. Nach diesem Forschungsprogramm, das als „Moderne Synthese“ bekannt ist, ist Evolution ein langsamer und gradueller Prozess der Verfeinerung der Anpassungen von Organismen, bedingt durch den größeren oder geringeren Erfolg der Gene, die die Individuen tragen.\n\nIn den siebziger und achtziger Jahren des vergangenen Jahrhunderts wurde auch dieses Forschungsprogramm überarbeitet und erweitert, da es neue Phänomene nicht angemessen erklären konnte, wie zum Beispiel: das Vorhandensein großer Teile des Genoms, die funktionslos sind und nicht der Kontrolle durch natürliche Selektion unterliegen (Neutralismus); die Bedeutung der Symbiose, also der dauerhaften Verbindung zwischen Individuen, die ihre Autonomie aufgeben, um Teil komplexerer und wettbewerbsfähigerer Strukturen zu werden; die Häufigkeit von Artbildungsprozessen",
+      "userStory": "Se una teoria scientifica rimanesse sempre la stessa, senza aggiornamenti, revisioni ed estensioni, ci sarebbe di che preoccuparsi. Vorrebbe dire che non sta al passo delle nuove scoperte ed evidenze, che nella scienza si susseguono sempre. La spiegazione evoluzionistica darwiniana in realtà non è soltanto una «teoria» scientifica, ma un vasto e complesso «programma di ricerca», composto da più leggi, fattori, modelli e ipotesi. E come programma di ricerca ha subito nell’ultimo secolo e mezzo molte correzioni e integrazioni, come è bene che sia, rimanendo tuttavia integro nel suo nocciolo centrale, quello individuato da Charles Darwin alla metà dell’Ottocento.\nTutti gli esseri viventi sono imparentati fra loro e sono connessi da un albero genealogico di discendenza con modificazioni. Questo è il primo pilastro del programma di ricerca darwiniano. In sostanza, prese a caso due specie, anche molto diverse fra loro come una pianta e un verme, avranno certamente avuto un antenato in comune vissuto in epoche lontane. Tutte le specie sono quindi «cugine», nel senso che hanno avuto un «nonno» in comune, e poi si sono ramificate e diversificate. Noi umani per esempio abbiamo avuto un antenato in comune con gli scimpanzé, i nostri cugini non umani più prossimi, vissuto in Africa intorno a sei milioni di anni fa. Con i\nNeanderthal, i nostri cugini umani più prossimi, abbiamo avuto un antenato in comune vissuto sempre in Africa 500.000 anni fa.\nIl secondo pilastro della rivoluzione darwiniana, ancora valido, è la selezione naturale, il principale motore del cambiamento evolutivo, che ci ciba di variazioni individuali spontanee e casuali, le quali danno al singolo maggiori o minori capacità di sopravvivenza e di riproduzione in un dato ambiente, venendo quindi trasmesse di più o di meno alle generazioni successive. In tal senso, l’evoluzione è un gioco di varianti che si diffondono di più o di meno nelle popolazioni. Non è un perfezionamento progressivo, ma un far di necessità virtù in un dato momento, in un ambiente che sarà sempre in cambiamento. Chi prevale nell’evoluzione non è necessariamente «il più forte», ma anche il più flessibile, opportunista, cooperativo, scaltro.\nDarwin non conosceva le basi molecolari della variazione né le leggi della sua trasmissione, scoperte in parallelo da Gregor Mendel, senza che i due entrassero in contatto. Bisognerà attendere la prima metà del Novecento per la nascita della genetica e per la fusione tra la teoria darwiniana e quella mendeliana. Si capì che le varianti nelle popolazioni sono dovute a mutazioni genetiche casuali, errori di copiatura del DNA, che oscillano nella loro frequenza. Secondo questo programma di ricerca, noto come «Sintesi Moderna», l’evoluzione è un processo lento e graduale di affinamento degli adattamenti degli organismi, dovuti al maggiore o minore successo dei geni portati dagli individui.\nFra gli anni settanta e ottanta del secolo scorso, anche questo programma di ricerca è stato rivisto ed esteso, perché non spiegava adeguatamente nuovi fenomeni, come: l’esistenza di ampie porzioni dei genomi privi di funzioni e non sottoposti al controllo della selezione naturale (neutralismo); l’importanza della simbiosi, cioè dell’associazione permanente fra individui che perdono la loro autonomia per far parte di strutture più complesse e competitive; la frequenza di speciazioni",
+      "storyStyle": "scientific",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Darwins Evolutionstheorie",
+          "desc": "Grundlagen der biologischen Evolution verstehen",
+          "icon": "🧬",
+          "vocab": [
+            {
+              "target": "teoria",
+              "source": "die Theorie"
+            },
+            {
+              "target": "scienza",
+              "source": "die Wissenschaft"
+            },
+            {
+              "target": "essere vivente",
+              "source": "der Lebewesen",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "das Lebewesen",
+                  "field": "source",
+                  "at": "2026-07-26T09:09:10.241Z"
+                }
+              },
+              "qc": {
+                "sug": "das Lebewesen",
+                "field": "source",
+                "at": "2026-07-26T09:09:10.241Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "antenato",
+              "source": "der Vorfahr"
+            },
+            {
+              "target": "selezione naturale",
+              "source": "die natürliche Selektion"
+            },
+            {
+              "target": "mutazione",
+              "source": "die Mutation"
+            },
+            {
+              "target": "genetica",
+              "source": "die Genetik"
+            },
+            {
+              "target": "symbiosi",
+              "source": "die Symbiose"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Se una teoria scientifica rimanesse sempre la stessa, ci sarebbe di che preoccuparsi.",
+              "source": "Wenn eine wissenschaftliche Theorie stets unverändert bliebe, wäre das Anlass zur Sorge.",
+              "words": [
+                "Se",
+                "una",
+                "teoria",
+                "scientifica",
+                "rimanesse",
+                "sempre",
+                "la",
+                "stessa,",
+                "ci",
+                "sarebbe",
+                "di",
+                "che",
+                "preoccuparsi."
+              ]
+            },
+            {
+              "target": "Tutti gli esseri viventi sono imparentati fra loro.",
+              "source": "Alle Lebewesen sind miteinander verwandt.",
+              "words": [
+                "Tutti",
+                "gli",
+                "esseri",
+                "viventi",
+                "sono",
+                "imparentati",
+                "fra",
+                "loro."
+              ]
+            },
+            {
+              "target": "Il secondo pilastro della rivoluzione darwiniana è la selezione naturale.",
+              "source": "Der zweite Pfeiler der darwinischen Revolution ist die natürliche Selektion.",
+              "words": [
+                "Il",
+                "secondo",
+                "pilastro",
+                "della",
+                "rivoluzione",
+                "darwiniana",
+                "è",
+                "la",
+                "selezione",
+                "naturale."
+              ]
+            },
+            {
+              "target": "Darwin non conosceva le basi molecolari della variazione.",
+              "source": "Darwin kannte die molekularen Grundlagen der Variation nicht.",
+              "words": [
+                "Darwin",
+                "non",
+                "conosceva",
+                "le",
+                "basi",
+                "molecolari",
+                "della",
+                "variazione."
+              ]
+            },
+            {
+              "target": "Fra gli anni settanta e ottanta del secolo scorso, anche questo programma di ricerca è stato rivisto ed esteso.",
+              "source": "In den siebziger und achtziger Jahren des vergangenen Jahrhunderts wurde auch dieses Forschungsprogramm überarbeitet und erweitert.",
+              "words": [
+                "Fra",
+                "gli",
+                "anni",
+                "settanta",
+                "e",
+                "ottanta",
+                "del",
+                "secolo",
+                "scorso,",
+                "anche",
+                "questo",
+                "programma",
+                "di",
+                "ricerca",
+                "è",
+                "stato",
+                "rivisto",
+                "ed",
+                "esteso."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 2240,
+            "completionTokens": 451,
+            "ms": 337655,
+            "at": "2026-07-26T08:53:27.002Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 627219,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 5454,
+        "totalCompletionTokens": 1330,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 337653,
+            "promptTokens": 2240,
+            "completionTokens": 451
+          }
+        ],
+        "tokensByType": {
+          "lesson_qc": 2419
+        }
+      },
+      "generatedAt": "2026-07-26T08:47:49.285Z",
+      "updatedAt": "2026-07-26T09:10:27.666Z",
+      "createdBy": "admin"
+    },
     {
       "topic": "Unwetter zieht weiter",
       "topicEmoji": "⛈️",

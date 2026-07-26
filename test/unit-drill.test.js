@@ -304,8 +304,10 @@ assert.ok(!/lessons\.push\(drill\)/.test(html) && !/upsert\(.*drill/.test(html),
 assert.ok(/id="comp-drill"[^>]*onclick="startDrill\(\)"/.test(html), 'result card carries the drill button');
 assert.ok(/style="display:none/.test(html.match(/<button[^>]*id="comp-drill"[^>]*>/)[0]),
   'the button is hidden until availability is computed');
-assert.ok(/_db\.style\.display = \(\(_teacher \|\| _belowThreshold\) && drillAvailable\(_l, _s\)\) \? '' : 'none';/.test(html),
-  'drill shows for a teacher OR a below-threshold learner, when a round can be built (v60.8)');
+// v70_g: the expression gained a `!_nextIsDrill &&` term (the drill is not offered twice when the
+// primary action already IS the drill). The v60.8 gate itself is unchanged and still pinned.
+assert.ok(/_db\.style\.display = \(!_nextIsDrill && \(_teacher \|\| _belowThreshold\) && drillAvailable\(_l, _s\)\) \? '' : 'none';/.test(html),
+  'drill shows for a teacher OR a below-threshold learner, when a round can be built (v60.8), and never twice (v70_g)');
 // Anchor on the CALL, not the bare name: showComplete's own comments mention
 // recordLearnedFromLesson, so indexOf() on the name matched a comment — a guard that only looked
 // like one, and it passed a mutation that moved the block above the ledger update.

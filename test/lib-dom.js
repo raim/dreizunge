@@ -20,7 +20,7 @@ function makeElement(tag = 'div', id = '') {
   const el = {
     tagName: String(tag).toUpperCase(), id, nodeType: 1,
     style: {}, dataset: {}, children: [], childNodes: [],
-    _html: '', textContent: '', value: '', checked: false, disabled: false,
+    _html: '', textContent: '', value: '', checked: false, disabled: false, _attrs: {},
     className: '', title: '', href: '', src: '', download: '',
     classList: {
       _s: new Set(),
@@ -38,7 +38,13 @@ function makeElement(tag = 'div', id = '') {
     querySelector() { return makeElement(); },
     querySelectorAll() { return []; },
     closest() { return makeElement(); },
-    getAttribute() { return null; }, setAttribute() {}, removeAttribute() {}, hasAttribute() { return false; },
+    // Attributes are STORED (v70_g). They used to be no-ops returning null, which meant a render
+    // could set an aria-label and no test could ever see it — accessible names were structurally
+    // untestable. unit-report-edits had to hand-roll its own attribute store to work around this.
+    getAttribute(k) { return Object.prototype.hasOwnProperty.call(el._attrs, k) ? el._attrs[k] : null; },
+    setAttribute(k, v) { el._attrs[k] = String(v); },
+    removeAttribute(k) { delete el._attrs[k]; },
+    hasAttribute(k) { return Object.prototype.hasOwnProperty.call(el._attrs, k); },
     addEventListener() {}, removeEventListener() {}, dispatchEvent() { return true; },
     focus() {}, blur() {}, click() {}, scrollIntoView() {}, select() {},
     getBoundingClientRect() { return { top: 0, left: 0, right: 0, bottom: 0, width: 100, height: 20 }; },

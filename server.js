@@ -19,6 +19,65 @@ const LEARNERS = require('./learners');
 // on cross-site requests. `Secure` is set only when the request arrived over TLS — forcing it on
 // plain-HTTP LAN use would silently break login.
 const SESSION_COOKIE = 'dz_session';
+
+// ── Transport security (v70_b) ──────────────────────────────────────────────
+// The server binds 0.0.0.0, so it is reachable from the LAN the moment it starts. learners.js
+// protects credentials AT REST (scrypt + salt, session tokens stored hashed) but nothing protects
+// the WIRE: over plain HTTP the password crosses in the login body and the session cookie crosses
+// in the header of every request thereafter — and the cookie is valid for 30 days, so it is the
+// worse leak of the two. We cannot fix that here (terminating TLS is a deployment decision), so we
+// warn instead: silently shipping a login form over clear-text on a school LAN is the failure mode.
+//
+// Loopback is exempt: that traffic never reaches a network interface.
+// One definition of "is this TLS", used by both the cookie's `Secure` flag and the warning, so the
+// two can never disagree about what counts as a secure request.
+function isSecureRequest(req) {
+  if (req && req.socket && req.socket.encrypted) return true;
+  // A TLS-terminating proxy in front of us reports the original scheme here. Take the FIRST value:
+  // the header is a comma-separated chain and only the client-facing hop is meaningful.
+  const xfp = String(req?.headers?.['x-forwarded-proto'] || '').split(',')[0].trim().toLowerCase();
+  return xfp === 'https';
+}
+// Host header → is this a loopback address? Handles `localhost`, 127.0.0.0/8, `::1` bare and
+// bracketed, with or without a port.
+function isLoopbackHost(host) {
+  let h = String(host || '').trim().toLowerCase();
+  // No Host header: we cannot PROVE the request is local, so treat it as remote. A false warning
+  // costs a line of console noise; a missed one costs a password.
+  if (!h) return false;
+  if (h.startsWith('[')) {                     // [::1] / [::1]:3000
+    const end = h.indexOf(']');
+    if (end < 0) return false;
+    h = h.slice(1, end);
+  } else if ((h.match(/:/g) || []).length === 1) {
+    // Exactly one colon means host:port. A bare IPv6 literal has several, so leave those alone.
+    const c = h.lastIndexOf(':');
+    if (/^\d+$/.test(h.slice(c + 1))) h = h.slice(0, c);
+  }
+  if (h.endsWith('.')) h = h.slice(0, -1);     // fully-qualified trailing dot
+  if (h === 'localhost') return true;
+  if (h === '::1' || h === '0:0:0:0:0:0:0:1') return true;
+  return /^127\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(h);
+}
+// The condition the banner and the console warning both key off.
+function transportInsecure(req) {
+  return !isSecureRequest(req) && !isLoopbackHost(req?.headers?.host);
+}
+// Warn once per process, at the moment accounts are actually USED — boot cannot know which host a
+// client will reach us on, and a warning nobody is around to read teaches nothing.
+let _tlsWarned = false;
+function warnInsecureTransport(req, what) {
+  if (_tlsWarned || !transportInsecure(req)) return;
+  _tlsWarned = true;
+  const host = String(req?.headers?.host || 'unknown host');
+  console.warn(`\n⚠️  INSECURE TRANSPORT — ${what} over plain HTTP (${host}).`);
+  console.warn('   Passwords and 30-day session cookies are crossing this network in the clear.');
+  console.warn('   Fine on localhost; NOT fine on a shared or school network.');
+  console.warn('   Fix: put a TLS-terminating proxy (Caddy, nginx, a tunnel) in front of this');
+  console.warn('   server. X-Forwarded-Proto is already honoured, so the session cookie gains its');
+  console.warn('   Secure flag automatically once you do — no code change needed.\n');
+}
+
 function parseCookies(req) {
   const out = {};
   const raw = req.headers?.cookie;
@@ -31,7 +90,7 @@ function parseCookies(req) {
   return out;
 }
 function setSessionCookie(req, res, token, maxAgeSec) {
-  const secure = !!(req.socket && req.socket.encrypted) || String(req.headers['x-forwarded-proto'] || '').includes('https');
+  const secure = isSecureRequest(req);
   const bits = [`${SESSION_COOKIE}=${encodeURIComponent(token)}`, 'Path=/', 'HttpOnly', 'SameSite=Lax',
                 `Max-Age=${maxAgeSec}`];
   if (secure) bits.push('Secure');
@@ -117,7 +176,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v70';
+const APP_VERSION  = 'v70_j';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -4510,6 +4569,8 @@ http.createServer(async (req, res) => {
     // copy as an offline fallback. Credentials and state live in learners.json — deliberately NOT
     // lessons.json, which build-static bakes into the public docs/ bundle.
     if (M === 'POST' && url.pathname === '/api/auth/register') {
+      // Before the attempt, not after: the password crossed the wire whether or not it succeeds.
+      warnInsecureTransport(req, 'a learner account was created');
       let b; try { b = JSON.parse(await readBody(req)); } catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
       const r = LEARNERS.createUser(b.username, b.password);
       if (r.error) return json(res, 400, { error: r.error });
@@ -4519,6 +4580,7 @@ http.createServer(async (req, res) => {
       return json(res, 200, { ok: true, username: r.username });
     }
     if (M === 'POST' && url.pathname === '/api/auth/login') {
+      warnInsecureTransport(req, 'a learner signed in');
       let b; try { b = JSON.parse(await readBody(req)); } catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
       const r = LEARNERS.authenticate(b.username, b.password);
       if (r.error) return json(res, 401, { error: r.error });
@@ -4577,6 +4639,10 @@ http.createServer(async (req, res) => {
         storyboardSchemes: Object.keys(STORYBOARD_SCHEMES),
         // v60.8: global %-solved threshold to complete a chapter (teacher-set, model menu).
         coverageThreshold: getSettings().coverageThreshold,
+        // v70_b: plain HTTP on a non-loopback host — the client shows a warning where the password
+        // is typed. Computed per request, since it depends on how THIS client reached us: the same
+        // server is secure over loopback and insecure over the LAN at the same moment.
+        insecureTransport: transportInsecure(req),
         canGenerate: active !== 'none' });
     }
     // Model picker: list the models Ollama has installed, and which are active per role.

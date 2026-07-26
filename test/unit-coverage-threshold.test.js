@@ -111,7 +111,7 @@ console.log('  _coverageTarget precedence: chapter > storyline > global > 80%: O
 {
   const sc = ext(html, 'showComplete');
   assert.ok(/let _belowThreshold = false, _threshPct = 100;/.test(sc), 'card computes below-threshold state');
-  assert.ok(/_db\.style\.display = \(\(_teacher \|\| _belowThreshold\) && drillAvailable/.test(sc),
+  assert.ok(/_db\.style\.display = \(!_nextIsDrill && \(_teacher \|\| _belowThreshold\) && drillAvailable/.test(sc),
     'the drill is offered to a below-threshold learner (not just teachers)');
   assert.ok(/complete\.below_threshold/.test(sc) && /complete\.keep_going/.test(sc),
     'a below-threshold hint + "keep going" title are shown');

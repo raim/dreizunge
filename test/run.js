@@ -5,18 +5,26 @@
 const cp = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const { summaryLine } = require('./summary.js');
 
 const ROOT = path.join(__dirname, '..');
 const quick = process.argv.includes('--quick');
 
+// Counted in run() itself — the single increment site — so the printed total cannot drift from
+// the number of steps actually executed. Declared BEFORE run() rather than after: this codebase
+// has shipped a TDZ crash before (v68.1), and relying on "the first call happens later" is exactly
+// the assumption that broke then.
+let total = 0;
+const failures = [];
+
 function run(label, cmd, args, opts = {}) {
+  total++;
   process.stdout.write(`\n▶ ${label}\n`);
   const r = cp.spawnSync(cmd, args, { cwd: ROOT, stdio: 'inherit', ...opts });
   if (r.status !== 0) { console.error(`✗ ${label} FAILED (exit ${r.status})`); failures.push(label); }
   else console.log(`✓ ${label}`);
 }
 
-const failures = [];
 
 // 1) Static checks — always run.
 run('server.js node --check', 'node', ['--check', path.join(ROOT, 'server.js')]);
@@ -68,8 +76,6 @@ run('unit: static story edit (in-memory save)', 'node', [path.join(__dirname, 'u
 run('unit: static summary edit (in-memory save)', 'node', [path.join(__dirname, 'unit-static-summary-edit.test.js')]);
 run('unit: chapter export (error-hunt + meta)', 'node', [path.join(__dirname, 'unit-export-lessons.test.js')]);
 run('unit: static client export (eh/aeh + meta)', 'node', [path.join(__dirname, 'unit-client-export.test.js')]);
-run('e2e: mixed lesson edit (type round-trip)', 'node', [path.join(__dirname, 'e2e-mixed-lesson-edit.test.js')]);
-run('e2e: rating/flag round-trip (v46 Tier 1)', 'node', [path.join(__dirname, 'e2e-rating-edit.test.js')]);
 run('unit: static build markers', 'node', [path.join(__dirname, 'unit-static-markers.test.js')]);
 run('unit: generation metadata (_genMeta everywhere)', 'node', [path.join(__dirname, 'unit-genmeta.test.js')]);
 run('unit: edit-history report (v46 #12)', 'node', [path.join(__dirname, 'unit-report-edits.test.js')]);
@@ -80,6 +86,7 @@ run('unit: intro learn-the-script course (v48)', 'node', [path.join(__dirname, '
 run('unit: QC dispatch — synonyms/word_forms (v48)', 'node', [path.join(__dirname, 'unit-qc-dispatch.test.js')]);
 run('unit: QC skip already-checked lessons (v49 bug 6)', 'node', [path.join(__dirname, 'unit-qc-skip.test.js')]);
 run('unit: static version derived from server APP_VERSION (v49)', 'node', [path.join(__dirname, 'unit-version-derivation.test.js')]);
+run('unit: runner reports its own check count (v70)', 'node', [path.join(__dirname, 'unit-run-summary.test.js')]);
 run('unit: translate-ui discovers every offered language (v53)', 'node', [path.join(__dirname, 'unit-translate-ui-langs.test.js')]);
 run('unit: llm.js race guard clears its timer (v53_c)', 'node', [path.join(__dirname, 'unit-llm-timeout-handle.test.js')]);
 run('unit: storyline summary model log + stamp (v53_c)', 'node', [path.join(__dirname, 'unit-storyline-summary-stamp.test.js')]);
@@ -104,6 +111,7 @@ run('unit: persistent tutor widget (v62)', 'node', [path.join(__dirname, 'unit-t
 run('unit: tutor retrieval — spoiler-safe + scoped (v62)', 'node', [path.join(__dirname, 'unit-tutor-retrieval.test.js')]);
 run('unit: tutor streaming replies (v64)', 'node', [path.join(__dirname, 'unit-tutor-streaming.test.js')]);
 run('unit: learner accounts + server-side state (v65)', 'node', [path.join(__dirname, 'unit-learners.test.js')]);
+run('unit: TLS warning predicates + wiring (v70_b)', 'node', [path.join(__dirname, 'unit-tls-transport.test.js')]);
 run('unit: lesson-id integrity (v67.1)', 'node', [path.join(__dirname, 'unit-lesson-id-integrity.test.js')]);
 run('unit: provenance-stamp source heal (v68.1)', 'node', [path.join(__dirname, 'unit-meta-source-heal.test.js')]);
 run('unit: student-mode flagging + flag-mode stamps (v68.1)', 'node', [path.join(__dirname, 'unit-student-flags.test.js')]);
@@ -112,15 +120,12 @@ run('unit: coverage-driven mixed round + drill credit-back (v69.1)', 'node', [pa
 run('unit: ui translation QC (validator + translate-ui --qc) (v69_f)', 'node', [path.join(__dirname, 'unit-ui-qc.test.js')]);
 run('unit: error-hunt validation + retry (v69_g)', 'node', [path.join(__dirname, 'unit-error-hunt-validation.test.js')]);
 run('unit: knowledge-aware round composition (v69_h)', 'node', [path.join(__dirname, 'unit-round-composition.test.js')]);
-run('e2e: pass mark per storyline + chapter (v69_i)', 'node', [path.join(__dirname, 'e2e-pass-mark.test.js')]);
-run('e2e: model text cleanup — deletion-only (v69_m)', 'node', [path.join(__dirname, 'e2e-text-cleanup.test.js')]);
-run('e2e: teacher dashboard — overview + flag triage (v69_n)', 'node', [path.join(__dirname, 'e2e-teacher-dashboard.test.js')]);
-run('e2e: book chapters sharing a title stay distinct (v69_q)', 'node', [path.join(__dirname, 'e2e-book-duplicate-titles.test.js')]);
 // Executes the client's render paths in a stub DOM — the only guard that catches TDZ crashes and
 // undefined references, which source-level assertions provably cannot see (v69_k).
 run('unit: one definition of chapter-complete (v69_l)', 'node', [path.join(__dirname, 'unit-chapter-complete.test.js')]);
 run('smoke: render paths execute (buildPath/storyline/complete/renderEx)', 'node', [path.join(__dirname, 'smoke-render.test.js')]);
 run('unit: beginner-mode exercise types (v69.2)', 'node', [path.join(__dirname, 'unit-beginner-types.test.js')]);
+run('unit: crossword layout engine (v70_c)', 'node', [path.join(__dirname, 'unit-crossword-layout.test.js')]);
 run('unit: stable per-question IDs (qid) — Commit A', 'node', [path.join(__dirname, 'unit-qid-stability.test.js')]);
 run('unit: coverage model (fraction/assembly/complete) — Commit B', 'node', [path.join(__dirname, 'unit-coverage.test.js')]);
 run('unit: learned-vocab ledger + my-story wiring (v50)', 'node', [path.join(__dirname, 'unit-learned-vocab.test.js')]);
@@ -148,6 +153,16 @@ run('unit: storyline theme by story style', 'node', [path.join(__dirname, 'unit-
 
 // 3) E2E — spawn the real server + fake Ollama. Skipped with --quick.
 if (!quick) {
+  // Moved inside the block in v70_b: these six spawn a real server + fake Ollama, but were
+  // registered outside it, so --quick spawned servers despite this file's header promising
+  // it skips them. The promise now holds.
+  run('e2e: mixed lesson edit (type round-trip)', 'node', [path.join(__dirname, 'e2e-mixed-lesson-edit.test.js')]);
+  run('e2e: rating/flag round-trip (v46 Tier 1)', 'node', [path.join(__dirname, 'e2e-rating-edit.test.js')]);
+  run('e2e: pass mark per storyline + chapter (v69_i)', 'node', [path.join(__dirname, 'e2e-pass-mark.test.js')]);
+  run('e2e: model text cleanup — deletion-only (v69_m)', 'node', [path.join(__dirname, 'e2e-text-cleanup.test.js')]);
+  run('e2e: teacher dashboard — overview + flag triage (v69_n)', 'node', [path.join(__dirname, 'e2e-teacher-dashboard.test.js')]);
+  run('e2e: book chapters sharing a title stay distinct (v69_q)', 'node', [path.join(__dirname, 'e2e-book-duplicate-titles.test.js')]);
+  run('e2e: insecure-transport warning (v70_b)', 'node', [path.join(__dirname, 'e2e-tls-warning.test.js')]);
   run('e2e: generate-book + storyline-title (item 5)', 'node', [path.join(__dirname, 'e2e-generate.test.js')]);
   run('e2e: userPrompt stores full input', 'node', [path.join(__dirname, 'e2e-userprompt.test.js')]);
   run('e2e: dialect glossary import (M1)', 'node', [path.join(__dirname, 'e2e-dialect-import.test.js')]);
@@ -165,5 +180,5 @@ if (!quick) {
 }
 
 console.log('\n' + '='.repeat(50));
-if (failures.length) { console.error(`FAILED (${failures.length}): ${failures.join(', ')}`); process.exit(1); }
-console.log('ALL CHECKS PASSED');
+if (failures.length) { console.error(summaryLine(total, failures)); process.exit(1); }
+console.log(summaryLine(total, failures));

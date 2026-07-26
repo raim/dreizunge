@@ -15,8 +15,14 @@
 1. **This file** — the highest-numbered `build_history/roadmap_v*.md` is always the current one.
 2. The two most recent session-notes files: `build_history/v69_session1_notes.md` (notes 1–24 cover
    the whole v69 line) and any `v70_session*` notes once they exist.
-3. Establish the green baseline BEFORE touching anything: `node test/run.js` (currently **152
-   checks**) and `node test/check-inline.js` (0 failures on both `index.html` and `docs/index.html`).
+3. Establish the green baseline BEFORE touching anything: `node test/run.js` and
+   `node test/check-inline.js` (0 failures on both `index.html` and `docs/index.html`).
+   **The runner reports its own total** (added v70): the closing line reads
+   `ALL CHECKS PASSED (136 checks)`, and a failing run reads `FAILED <n> of 136: <labels>`.
+   **Quote that line — never hand-derive the figure.** A hand-derived count drifted to 152 against
+   an actual 133 and sat in two documents unnoticed; that is what the self-report exists to prevent.
+   Currently **137** (132 `test/*.test.js` files + 5 static checks). `--quick` reports **118**,
+   skipping the e2e steps — a smaller number there is correct, not a regression.
 
 ---
 
@@ -48,12 +54,53 @@ The v69 line is done and verified. Headline items, so the next session doesn't r
 
 ---
 
+## ✅ What shipped in the v70 line (detail in `v70_session1_notes.md`)
+- **v70** — the cut: pure version bump, no behavioural change.
+- **v70 (docs)** — the suite's check count was wrong in two documents (152 vs an actual 133). The
+  scary reading was ruled out first: every test file on disk is wired, and `run.js` has no dangling
+  reference. Root enabler fixed rather than just the number — see below.
+- **v70 (harness)** — **the runner reports its own check count.** `ALL CHECKS PASSED (136 checks)`,
+  `FAILED <n> of 136: …`. Counted at one site inside `run()`, so the figure cannot drift from the
+  steps executed. Quote it; never hand-derive it.
+- **v70_j** — **crossword: thin lessons top up from earlier ones.** Availability follows the pool
+  a puzzle would actually use, so a lesson whose vocabulary is article+noun phrases still offers a
+  crossword. Availability is now CONTENT-based, not type-based.
+- **v70_i** — **crossword: mixed lessons, synonyms, word forms.** Fixes a user-reported
+  disappearance (a mixed lesson owns no vocab, so the button vanished for the very lesson a
+  mixed-driven set resumes into). Synonyms and word-form lessons now contribute words too.
+- **v70_h** — **crossword: varying puzzles + word-pool options.** Regenerate (🎲) draws a new
+  attempt; options for word count, source (this lesson / earlier lessons / everything learned
+  across storylines) and "favour words I got wrong". Arrow-key + Backspace navigation, and an
+  auto-check when the last cell is filled.
+- **v70_g** — **completion screen: one icon action row.** Drill / crossword / primary action on a
+  single row, icons with tooltips + aria-labels. Below the mark with nothing left to play, the
+  primary becomes REPEAT (↻) instead of Next (→).
+- **v70_f** — **crossword UX.** Auto-advance on typing; Check no longer erases the grid and marks
+  each letter green/red; a Solve button reveals the answer and credits nothing.
+- **v70_e** — **crossword reachable by learners.** v70_d put the entry point only on the lesson
+  node, which learners never see (v60 learner nav skips the lesson-set page), so no student could
+  open one. Entry added to the completion screen, alongside the drill.
+- **v70_d** — **crossword play mode.** A 🧩 button on any vocab lesson opens a crossword built from
+  that lesson's words. Solving an entry credits the lesson's OWN `mcq_source_target` question, so
+  coverage moves per word and the qid universe does not grow.
+- **v70_c** — crossword layout engine (stage 1, library only — no user-visible change).
+- **v70_b** — **insecure-transport warning.** Plain HTTP on a non-loopback host now says so, in the
+  account modal (where the password is typed) and once per process on the server console. Guidance,
+  never a gate: LAN-without-TLS stays a supported deployment, the same reason the cookie's `Secure`
+  flag is conditional. One shared `isSecureRequest()` now serves both the cookie and the warning.
+
 ## 🔭 Open work carried into v70
 
 ### Near-term, concrete
-- **[i18n debt] One key awaits translation: `teacher.render_error`.** Present in `en`; missing in the
-  29 other languages (added after the user's last export). One `translate-ui.js` run clears it. This
-  is the ONLY outstanding translation key. It falls back to English meanwhile.
+- ~~**[small, test hygiene] `e2e-*` tests registered outside the `if (!quick)` block**~~ —
+  **✅ done in the v70_b line.** It was SIX, not seven (the earlier count included the v70_b e2e
+  before it was moved). `--quick` is now 117 steps in ~10s and genuinely spawns no servers, guarded
+  by `unit-run-summary` §6.
+- **[i18n debt] TWELVE keys await translation.** `teacher.render_error`, `acct.insecure` (v70_b),
+  twenty `crossword.*` keys (v70_d/f/h/j) and `complete.repeat` (v70_g). Present in `en`; missing
+  in the 29 other languages (667 entries). One `translate-ui.js` run clears all of them. They fall back to English meanwhile, and
+  `--qc` reports **0 structural defects** — every "error" it lists is one of these absences. This
+  is now the largest single item of debt in the tree and worth an offline pass soon.
 - **[verify in normal use] The v69 batch still wants a browser pass.** Most of it is
   server-testable and guarded, but these are only fully confirmable by using the app, and some are
   genuinely empirical:
@@ -66,15 +113,31 @@ The v69 line is done and verified. Headline items, so the next session doesn't r
     has only ever been exercised with fixtures + the empty state; panel 2 surfaces the user's 40
     existing teacher-mode flags).
   - Pass-mark controls (one per page, bottom) and the highlighted `{word}` in questions.
-- **[small] TLS guidance / warning banner** when learner accounts are used over plain HTTP on a
-  non-loopback host. The dashboard makes accounts real; this is the remaining safety gap before
-  putting the app on a LAN. Low effort, high value.
+- ~~**[small] TLS guidance / warning banner**~~ — **✅ shipped in v70_b**, see below.
 
 ### Product ideas / larger
-- **More word-game lesson types** — crossword from the lesson's words, a wordle-like lesson, other
-  word-play — all client-side over stored vocab, NO model calls. Best value/risk ratio of the
-  remaining features: no server surface, no new generation failure modes, and the smoke harness now
-  makes new render paths much safer to add. Strong candidate for the first real v70 feature.
+- **Word-game lesson types — IN PROGRESS.**
+  - ✅ **Stage 1 (done): the crossword layout engine.** `_crosswordLayout()` in `index.html` —
+    pure, deterministic, client-side, no model call. Guarded by `unit-crossword-layout` (grid
+    well-formedness, adjacency, numbering, determinism, degenerate input, placement floor).
+    **Deliberately not wired to anything yet** — it is a library, and the tree stays shippable.
+  - ✅ **Stage 2 (done, v70_d): play mode, option C.** Built as a MODE over an existing vocab
+    lesson, not a lesson type. No `LESSON_TYPE_META` entry, no `editorBranch`, no `_qidCanonical`
+    case, no new qid universe. `openCrossword(idx)` / `checkCrossword()` / `closeCrossword()`.
+  - ~~Stage 3: the authoring entry point.~~ **Obsolete** — option C removed the need for one. Any
+    vocab lesson can be played as a crossword, so there is no crossword lesson to author.
+  - ✅ **Learner reachability (v70_e).** The completion screen is the learner-visible entry; the
+    lesson-node button remains for teachers. **Standing lesson: a learner-facing feature placed on
+    the lesson-set page is unreachable.** `_canEdit()` is NOT the gate that matters — learners skip
+    that whole screen. Check reachability against `_isLearner()`, not against an edit permission.
+  - ⬜ **Known consequence of C:** a crossword is not an assignable unit. It does not appear in the
+    lesson list as its own node, the editor, or the teacher dashboard. If a teacher ever needs to
+    assign "the crossword", that is a real feature request and means revisiting option B.
+  - ⬜ Later: a wordle-like lesson, other word-play, reusing the same engine conventions.
+  - **Known limit:** the engine accepts Latin/Cyrillic/Greek only. Han/Kana/Hangul are excluded
+    (one glyph per cell is not a puzzle); Arabic and Hebrew are excluded pending a decision on
+    contextual shaping + RTL grid geometry — a real feature, not an oversight, but it means the
+    word-game family is unavailable for those languages.
 - **Per-learner preferences** (tutor model, difficulty) — more meaningful now that accounts and the
   dashboard exist.
 - **Stage 3 — concept graph.** Concept ontology + `teaches:` / `prerequisites:` per lesson; mastery
@@ -162,6 +225,12 @@ baseline (`node test/run.js` + `node test/check-inline.js`) before touching anyt
    build DERIVES the version from `server.js`'s `APP_VERSION` at build time (see
    `unit-version-derivation`), so a single bump in `server.js` + a `build-static.js` re-run is
    enough — no more hand-editing `build-static.js`.
+   **Point releases use an alphabetic suffix** (user, v70): the base cut is the bare number and is
+   implicitly `a`, so the sequence is `v70` → `v70_b` → `v70_c` → … — the same convention the v69
+   line ran (`v69` → `v69_b` → … → `v69_t`). **The next release off this tree is `v70_k`** (`v70_j`
+   shipped). A new base number (`v71`) is a fresh cut, not a point release. Roadmaps are per BASE
+   version, so point releases do not each get one — `roadmap_v70.md` stays current through the
+   whole v70 line.
 7. **Roadmap** — mark shipped items ✅, carry every open TODO/idea forward, and at a version bump
    write the next `build_history/roadmap_v{N+1}.md` (carrying this protocol block forward).
 8. **Session notes** — write/update `build_history/v{ver}_session{n}_notes.md`.

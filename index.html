@@ -265,6 +265,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .vtarget:hover{text-decoration:underline}
 .vsource{font-size:13px;color:var(--gray-dark);font-weight:600}
 .vpron{font-size:10px;color:var(--gray);font-style:italic}
+.comp-ico{width:56px;height:56px;display:inline-flex;align-items:center;justify-content:center;font-size:24px;background:var(--white);color:var(--text);border:2px solid var(--gray-mid);border-radius:var(--radius-lg);cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 0 var(--gray-mid);transition:transform .1s,box-shadow .1s,filter .1s;padding:0}
+.comp-ico:hover{filter:brightness(.97)}
+.comp-ico:active{transform:translateY(3px);box-shadow:0 1px 0 var(--gray-mid)}
+.comp-ico.primary{background:var(--green);color:var(--white);border-color:var(--green-dark);box-shadow:0 4px 0 var(--green-dark)}
+.comp-ico.primary:active{box-shadow:0 1px 0 var(--green-dark)}
 .cont-btn{width:100%;padding:15px;background:var(--green);color:var(--white);border:none;border-radius:var(--radius-lg);font-size:16px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 5px 0 var(--green-dark);margin-bottom:10px;transition:transform .1s,box-shadow .1s}
 .cont-btn:hover{transform:translateY(-2px);box-shadow:0 7px 0 var(--green-dark)}
 .sec-btn{width:100%;padding:12px;background:none;border:2.5px solid var(--gray-mid);border-radius:var(--radius-lg);font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark)}
@@ -511,12 +516,29 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <span>👤</span><span id="acct-name">Sign in</span>
   </button>
 </div>
+    <div id="cw-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:60;align-items:center;justify-content:center;padding:16px">
+      <div style="background:var(--white);border-radius:14px;padding:16px;max-width:760px;width:100%;max-height:90vh;overflow:auto">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div style="flex:1;font-weight:800;font-size:15px">🧩 <span id="cw-title"></span></div>
+          <button onclick="closeCrossword()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--gray-dark)" title="Close">✕</button>
+        </div>
+        <div id="cw-body"></div>
+        <!-- v70_h: actions, then the word-pool options beneath them. -->
+        <div id="cw-actions" style="display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap">
+          <button class="comp-ico primary" id="cw-check-btn" onclick="checkCrossword()"></button>
+          <button class="comp-ico" id="cw-regen-btn" onclick="regenerateCrossword()"></button>
+          <button class="comp-ico" id="cw-solve-btn" onclick="solveCrossword()"></button>
+        </div>
+        <div id="cw-options" style="display:flex;gap:14px;align-items:center;margin-top:10px;flex-wrap:wrap;font-size:11px;font-weight:700;color:var(--gray-dark)"></div>
+      </div>
+    </div>
 <div id="acct-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px">
   <div style="background:var(--white);border-radius:var(--radius-lg);max-width:360px;width:100%;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35)">
     <div style="display:flex;align-items:center;margin-bottom:12px">
       <span style="font-size:18px;font-weight:900" id="acct-title">Sign in</span>
       <button onclick="closeAccount()" style="margin-left:auto;background:transparent;border:none;font-size:20px;cursor:pointer">×</button>
     </div>
+    <div id="acct-tls-warn" style="display:none;background:#fff4e5;border:1.5px solid #f0a500;border-radius:8px;padding:9px 10px;margin-bottom:12px;font-size:11px;line-height:1.45;color:#7a4a00"></div>
     <div id="acct-signedout">
       <input id="acct-user" placeholder="" autocomplete="username" style="width:100%;box-sizing:border-box;margin-bottom:8px;font-family:Nunito,sans-serif;font-size:14px;padding:9px 10px;border:1.5px solid var(--gray-mid);border-radius:8px">
       <input id="acct-pass" type="password" placeholder="" autocomplete="current-password" onkeydown="if(event.key==='Enter')doSignIn()" style="width:100%;box-sizing:border-box;margin-bottom:10px;font-family:Nunito,sans-serif;font-size:14px;padding:9px 10px;border:1.5px solid var(--gray-mid);border-radius:8px">
@@ -1131,10 +1153,16 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
   <div id="comp-progress" style="margin-top:14px;text-align:left"></div>
   <!-- v60: exactly two buttons. Next opens the next questions directly; Back returns to the
        storyline (deck), or the landing page for a solo chapter. -->
-  <button class="cont-btn" id="comp-next" onclick="afterComplete()">Next</button>
+  <!-- v70_g: one action row. Icons only; the former button text is the tooltip. Secondary options
+       sit left of the primary action so the eye lands on the forward move last. Below the pass
+       mark the primary becomes REPEAT (↻) rather than Next (→) — the learner picks among repeat,
+       drill, crossword and whatever is added later, instead of Next silently meaning one of them. -->
+  <div id="comp-actions" style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:14px;flex-wrap:wrap">
+    <button class="comp-ico" id="comp-drill" style="display:none" onclick="startDrill()">🎯</button>
+    <button class="comp-ico" id="comp-crossword" style="display:none" onclick="openCrosswordFromComplete()">🔠</button>
+    <button class="comp-ico primary" id="comp-next" onclick="afterComplete()">→</button>
+  </div>
   <button class="cont-btn" id="comp-back" style="margin-top:8px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="compBackToStory()">← Back to story</button>
-  <!-- Teacher-only: drill + full nav pills. Hidden for learners (kept for the editing workflow). -->
-  <button class="cont-btn" id="comp-drill" style="display:none;background:var(--yellow);color:var(--text);margin-top:8px" onclick="startDrill()">🎯 Review my mistakes</button>
   <div id="comp-nav-btns" style="display:none;flex-wrap:wrap;justify-content:center;margin-top:8px"></div>
   <div id="comp-story-unlocked" style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:#f0fff4">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
@@ -1946,6 +1974,16 @@ function refreshAccountBadge(){
 function openAccount(){
   const m = document.getElementById('acct-modal'); if(!m) return;
   m.style.display = 'flex';
+  // v70_b: plain HTTP off loopback — say so where the password is actually typed. Shown in BOTH
+  // states: signed out the password is about to cross the wire, signed in the session cookie
+  // already is, on every request. Guidance only; it never blocks sign-in (LAN use without TLS is
+  // a supported deployment, the same reason the Secure cookie flag stays conditional).
+  const warn = document.getElementById('acct-tls-warn');
+  if(warn){
+    const bad = !!APP.info?.insecureTransport;
+    warn.style.display = bad ? '' : 'none';
+    if(bad) warn.textContent = t('acct.insecure');
+  }
   const inn = document.getElementById('acct-signedin'), out = document.getElementById('acct-signedout');
   const title = document.getElementById('acct-title');
   if(APP.learner){
@@ -5632,6 +5670,7 @@ function buildPath(){
         ${(_mixedDriven && L.type==='mixed' && !L._hidden) ? (()=>{ try{ const cov=lessonCoverage(i); return cov.total>0?`<span class="flag-note" style="color:var(--blue-dark);background:#e8f0ff;border-color:#b9d0ff" title="${t('coverage.node_title')}">📊 ${cov.solved}/${cov.total}</span>`:''; }catch(_){ return ''; } })() : ''}
         ${hasFlags?`<span class="flag-note">${lessonFlagCount===1?t('lesson.flagged_n',{n:lessonFlagCount}):t('lesson.flagged_n_plural',{n:lessonFlagCount})}</span>`:''}
         ${hasStars?`<span class="flag-note" style="color:#b58900;background:#fff3c4;border-color:#e0b000" title="${lessonStarCount} starred (good examples)">⭐ ${lessonStarCount}</span>`:''}
+        ${_crosswordAvailable(L, i, d)?`<div style="margin-top:5px" onclick="event.stopPropagation()"><button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('crossword.play_title')}" onclick="openCrossword(${i})">🔠 ${t('crossword.play')}</button></div>`:''}
         <div class="fix-status" id="fix-status-${L.id}"></div>
         ${_canEdit()&&L.id?`<div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap" onclick="event.stopPropagation()">
           <button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('lesson.edit_lesson')}" onclick="openLessonEditor(${i})">✏️${lessonFlagCount>0?'<span style="color:var(--red);font-weight:800;font-size:12px;margin-left:1px" title="'+lessonFlagCount+' flagged (QC + user)">'+lessonFlagCount+'</span>':''}${L._checked||[...(L.vocab||[]),(L.grammar||[]),(L.sentences||[])].some(x=>x._manualEdits?.length)?(L._checked?'<span style="color:var(--green);font-size:14px" title="✓ '+L._checked.slice(0,10)+'">✓</span>':'<span style="color:var(--green);font-size:14px" title="Edited">✓</span>'):''}</button>
@@ -9420,6 +9459,643 @@ function buildMixedExercises(lesson, lessonIdx){
 // Each story-derived item becomes one MCQ: the sentence (with a ___ blank), the
 // 4 forms shuffled, the original word correct. Reuses the standard choice grid +
 // default checker (C.sel === ex.correct), so no new check/scoring branch needed.
+// ── Crossword layout engine (v70_c) ─────────────────────────────────────────
+// Builds a crossword grid from words the lesson ALREADY has. Pure, deterministic, no model call
+// and no server round-trip — the whole point of the word-game family.
+//
+// DETERMINISTIC ON PURPOSE: shuffle() uses Math.random(), which would re-roll the grid on every
+// render. The puzzle would change under the learner mid-solve, and the exercise's qid (which keys
+// the solved-bit) would change with it. The seed is the lesson id, so a lesson always yields the
+// same puzzle.
+function _crosswordRng(seed){
+  // Mulberry32: small, dependency-free, stable across engines.
+  const s = String(seed == null ? '' : seed);
+  let a = 0;
+  for (let i = 0; i < s.length; i++) a = (a + s.charCodeAt(i) * (i + 1)) >>> 0;
+  a = (a || 0x9e3779b9) >>> 0;
+  return function(){
+    a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+// One letter per cell is the whole premise, so a word qualifies only if it is a single run of
+// letters in a script where isolated letters are still readable. Latin/Cyrillic/Greek (plus
+// combining marks, so accented forms survive) are in; Han/Kana/Hangul are out because a two-cell
+// 你好 is not a puzzle; Arabic and Hebrew are out of THIS slice because letters that reshape in
+// context, and RTL grid geometry, deserve their own change rather than a guess.
+function _crosswordUsable(word){
+  const w = String(word == null ? '' : word).trim();
+  if (w.length < 3 || w.length > 14) return false;
+  return /^[\p{Script=Latin}\p{Script=Cyrillic}\p{Script=Greek}\p{Mark}]+$/u.test(w);
+}
+// pairs: [{ answer, clue }]. Returns { width, height, entries, skipped } with entries carrying
+// { num, row, col, dir, answer, display, clue, len }. Coordinates are 0-based within the grid.
+function _crosswordLayout(pairs, seed){
+  const rnd = _crosswordRng(seed);
+  const seen = new Set();
+  const uniq = [];
+  for (const p of (Array.isArray(pairs) ? pairs : [])){
+    const answer = String(p && p.answer != null ? p.answer : '').trim();
+    const clue   = String(p && p.clue   != null ? p.clue   : '').trim();
+    if (!answer || !clue || !_crosswordUsable(answer)) continue;
+    const letters = answer.toUpperCase();
+    if (seen.has(letters)) continue;         // a repeated answer would be two clues, one solution
+    seen.add(letters);
+    uniq.push({ letters, display: answer, clue });
+  }
+  // Longest first: long words offer the most crossings, which keeps the grid connected. The
+  // seeded jitter only breaks ties, so length still dominates.
+  const order = uniq.map(w => ({ w, j: rnd() }))
+    .sort((a, b) => (b.w.letters.length - a.w.letters.length) || (a.j - b.j))
+    .map(x => x.w);
+
+  const cells = new Map();                    // "r,c" -> letter
+  const placed = [];
+  const skipped = [];
+  const K = (r, c) => r + ',' + c;
+  const at = (r, c) => cells.get(K(r, c));
+
+  // Returns false if the word cannot go here, else the number of crossings (0 = disconnected).
+  function fits(word, r, c, dir){
+    const n = word.length;
+    const dr = dir === 'down' ? 1 : 0, dc = dir === 'across' ? 1 : 0;
+    if (at(r - dr, c - dc) != null) return false;             // no letter immediately before
+    if (at(r + dr * n, c + dc * n) != null) return false;     // ...or immediately after
+    let crossings = 0;
+    for (let i = 0; i < n; i++){
+      const rr = r + dr * i, cc = c + dc * i;
+      const cur = at(rr, cc);
+      if (cur != null){
+        if (cur !== word[i]) return false;                    // conflicting letter
+        crossings++;
+      } else if (dir === 'across'){
+        // A NEW cell must not touch anything perpendicular, or the word runs alongside a
+        // neighbour and spells unintended two-letter garbage in the other direction.
+        if (at(rr - 1, cc) != null || at(rr + 1, cc) != null) return false;
+      } else {
+        if (at(rr, cc - 1) != null || at(rr, cc + 1) != null) return false;
+      }
+    }
+    return crossings;
+  }
+  function put(w, r, c, dir){
+    const dr = dir === 'down' ? 1 : 0, dc = dir === 'across' ? 1 : 0;
+    for (let i = 0; i < w.letters.length; i++) cells.set(K(r + dr * i, c + dc * i), w.letters[i]);
+    placed.push({ row: r, col: c, dir, answer: w.letters, display: w.display, clue: w.clue, len: w.letters.length });
+  }
+
+  for (const w of order){
+    if (!placed.length){ put(w, 0, 0, 'across'); continue; }
+    const L = w.letters;
+    let best = null;
+    for (let i = 0; i < L.length; i++){
+      for (const [k, letter] of cells){
+        if (letter !== L[i]) continue;
+        const p = k.split(','); const pr = +p[0], pc = +p[1];
+        for (const dir of ['across', 'down']){
+          const r = dir === 'across' ? pr : pr - i;
+          const c = dir === 'across' ? pc - i : pc;
+          const cross = fits(L, r, c, dir);
+          if (cross === false || cross < 1) continue;         // must actually cross something
+          // Prefer more crossings, then a compact grid.
+          const score = cross * 10 - Math.abs(r) - Math.abs(c);
+          if (!best || score > best.score) best = { r, c, dir, score };
+        }
+      }
+    }
+    if (best) put(w, best.r, best.c, best.dir);
+    else skipped.push(w);
+  }
+
+  // Second pass: a word rejected early was judged against a nearly empty grid. The grid is bigger
+  // now, so retry the rejects before giving up on them. Repeats until a pass places nothing, which
+  // terminates because every iteration either shrinks `skipped` or stops.
+  for (let again = true; again && skipped.length; ){
+    again = false;
+    const retry = skipped.splice(0, skipped.length);
+    for (const w of retry){
+      const L = w.letters;
+      let best = null;
+      for (let i = 0; i < L.length; i++){
+        for (const [k, letter] of cells){
+          if (letter !== L[i]) continue;
+          const p = k.split(','); const pr = +p[0], pc = +p[1];
+          for (const dir of ['across', 'down']){
+            const r = dir === 'across' ? pr : pr - i;
+            const c = dir === 'across' ? pc - i : pc;
+            const cross = fits(L, r, c, dir);
+            if (cross === false || cross < 1) continue;
+            const score = cross * 10 - Math.abs(r) - Math.abs(c);
+            if (!best || score > best.score) best = { r, c, dir, score };
+          }
+        }
+      }
+      if (best){ put(w, best.r, best.c, best.dir); again = true; }
+      else skipped.push(w);
+    }
+  }
+  const skippedNames = skipped.map(w => w.display);
+
+  if (!placed.length) return { width: 0, height: 0, entries: [], skipped: skippedNames };
+
+  // Normalise to a 0-based bounding box.
+  let minR = Infinity, minC = Infinity, maxR = -Infinity, maxC = -Infinity;
+  for (const k of cells.keys()){
+    const p = k.split(','); const r = +p[0], c = +p[1];
+    if (r < minR) minR = r; if (r > maxR) maxR = r;
+    if (c < minC) minC = c; if (c > maxC) maxC = c;
+  }
+  for (const e of placed){ e.row -= minR; e.col -= minC; }
+
+  // Standard numbering: entry start cells, in reading order; two entries starting in the same
+  // cell (one across, one down) share a number.
+  const starts = placed.slice().sort((a, b) => (a.row - b.row) || (a.col - b.col)
+    || (a.dir === b.dir ? 0 : (a.dir === 'across' ? -1 : 1)));
+  const nums = new Map();
+  let n = 0;
+  for (const e of starts){
+    const k = K(e.row, e.col);
+    if (!nums.has(k)) nums.set(k, ++n);
+    e.num = nums.get(k);
+  }
+  return { width: maxC - minC + 1, height: maxR - minR + 1, entries: starts, skipped: skippedNames };
+}
+
+// ── Crossword play mode (v70_d) ─────────────────────────────────────────────
+// A crossword is a different WAY TO ANSWER questions the lesson already asks, not a new lesson.
+// That is the whole design: no new lesson type, no authoring flow, no editorBranch, and — most
+// importantly — no new qid universe. Solving an entry credits the lesson's OWN question about that
+// word, so coverage moves per word and the pass mark keeps meaning what it meant.
+//
+// Crediting is deliberately CONSERVATIVE. Producing a written target from a source clue is what
+// `mcq_source_target` asks, so that is what gets credited. Audio types are NOT credited: the
+// learner never heard the word. Over-crediting would let someone pass a mark without demonstrating
+// what the mark claims, which is worse than a crossword that moves coverage slightly less.
+// ── Crossword play mode (v70_h) ─────────────────────────────────────────────
+// A crossword is a different WAY TO ANSWER questions the learner's lessons already ask, not a new
+// lesson: no LESSON_TYPE_META entry, no editorBranch, no new qid universe. Solving an entry credits
+// the OWNING lesson's own question for that word.
+//
+// Crediting is deliberately CONSERVATIVE: only `mcq_source_target`, the written source→target
+// question a crossword entry actually demonstrates. Audio types are never credited — the learner
+// did not hear the word — and over-crediting would let someone pass a mark without showing what
+// the mark claims.
+const CROSSWORD_CREDIT_TYPES = ['mcq_source_target'];
+const CROSSWORD_MIN_ENTRIES = 3;
+const CROSSWORD_COUNTS = [5, 8, 12, 20];
+
+// Words a single lesson can contribute, by type. v70_i widened this beyond `vocab`:
+//   standard/vocab → target ← source
+//   synonyms       → each `words[]` base ← its gloss, plus the synonyms themselves
+//   word_forms     → the correct choice ← its blanked sentence (the clue IS the question)
+//   mixed          → a mixed lesson owns NO words of its own; it pools from the earlier visible
+//                    non-mixed siblings it draws from, matching buildMixedExercises and
+//                    _lessonQidUniverse. Without this a mixed-driven learner set never offered a
+//                    crossword at all — which is exactly how the button "vanished" after a repeat,
+//                    since that is the lesson such a set resumes into.
+function _crosswordLessonPairs(L, lessonIdx, d){
+  d = d || APP.lessonData;
+  if (!L) return [];
+  const out = [];
+  const push = (answer, clue) => {
+    answer = String(answer == null ? '' : answer).trim();
+    clue   = String(clue   == null ? '' : clue).trim();
+    if (answer && clue) out.push({ answer, clue });
+  };
+  if (L.type === 'mixed'){
+    (d?.lessons || []).forEach((sib, i) => {
+      if (lessonIdx != null && i >= lessonIdx) return;      // earlier siblings only
+      if (!sib || sib.type === 'mixed') return;
+      if (sib._hidden && !APP._teacherMode) return;
+      for (const p of _crosswordLessonPairs(sib, i, d)) out.push(p);
+    });
+    return out;
+  }
+  for (const v of (Array.isArray(L.vocab) ? L.vocab : [])) push(v && v.target, v && v.source);
+  for (const w of (Array.isArray(L.words) ? L.words : [])){
+    if (!w) continue;
+    push(w.base, w.gloss);
+    for (const sy of (Array.isArray(w.synonyms) ? w.synonyms : [])) push(sy && sy.w, sy && sy.g);
+  }
+  for (const it of (Array.isArray(L.items) ? L.items : [])){
+    if (!it || !Array.isArray(it.choices)) continue;
+    const ci = it.correctIndex;
+    if (!Number.isInteger(ci) || ci < 0 || ci >= it.choices.length) continue;
+    push(it.choices[ci], it.sentence);
+  }
+  return out;
+}
+// Kept for the vocab-only callers (crediting matches on `vocab` specifically).
+function _crosswordPairs(L){
+  return (L && Array.isArray(L.vocab) ? L.vocab : [])
+    .filter(v => v && v.target && v.source)
+    .map(v => ({ answer: String(v.target), clue: String(v.source) }));
+}
+function _crosswordOpts(){
+  if (!APP._cwOpts) APP._cwOpts = { count: 8, src: 'lesson', preferWrong: true };
+  return APP._cwOpts;
+}
+// Candidate words for a puzzle, before layout.
+//   lesson → this lesson only
+//   topic  → this lesson and every earlier visible lesson in the loaded set
+//   all    → the learner's whole ledger for this language pair, across every storyline
+// Each candidate is annotated with the ledger's `wrong`/`seen` counts so "prefer my mistakes" can
+// sort by them regardless of which source supplied the word.
+function _crosswordPool(lessonIdx, opts, d){
+  d = d || APP.lessonData;
+  const L = d?.lessons?.[lessonIdx];
+  const lang = d?.lang || APP.lang, srcLang = d?.srcLang || APP.srcLang;
+  const led = (typeof _learnedLedger === 'function') ? _learnedLedger(lang, srcLang) : { vocab: {} };
+  let pairs = [];
+  if (opts.src === 'all'){
+    pairs = Object.entries(led.vocab || {})
+      .map(([target, rec]) => ({ answer: target, clue: (rec && rec.source) || '' }))
+      .filter(p => p.answer && p.clue);
+  } else if (opts.src === 'topic'){
+    const seen = new Set();
+    (d?.lessons || []).forEach((sib, i) => {
+      if (i > lessonIdx || !sib) return;
+      if (sib._hidden && !APP._teacherMode) return;
+      for (const p of _crosswordLessonPairs(sib, i, d)){
+        const k = p.answer.toUpperCase();
+        if (!seen.has(k)){ seen.add(k); pairs.push(p); }
+      }
+    });
+  } else {
+    pairs = _crosswordLessonPairs(L, lessonIdx, d);
+  }
+  return pairs.map(p => {
+    const rec = (led.vocab || {})[p.answer] || {};
+    return { answer: p.answer, clue: p.clue, wrong: rec.wrong || 0, seen: rec.seen || 0 };
+  });
+}
+// Choose `count` words from the pool for THIS attempt. Seeded, so an attempt is reproducible while
+// it is on screen, but a new attempt gets a new seed and therefore a different selection — which is
+// what lets a learner work through all of a lesson's words across several puzzles.
+function _crosswordSelect(pool, opts, seed){
+  const rnd = _crosswordRng(seed);
+  const usable = pool.filter(p => _crosswordUsable(p.answer));
+  const jittered = usable.map(p => ({ p, j: rnd() }));
+  if (opts.preferWrong){
+    // Mistakes first, then least-seen, then seeded jitter. The jitter matters: without it the same
+    // top-N would come back every attempt and "regenerate" would be a no-op for a stable ledger.
+    jittered.sort((a, b) => (b.p.wrong - a.p.wrong) || (a.p.seen - b.p.seen) || (a.j - b.j));
+  } else {
+    jittered.sort((a, b) => a.j - b.j);
+  }
+  const n = Math.max(CROSSWORD_MIN_ENTRIES, opts.count | 0);
+  return jittered.slice(0, n).map(x => ({ answer: x.p.answer, clue: x.p.clue }));
+}
+// Distinct crossable answers in a set of pairs.
+function _crosswordDistinct(pairs){
+  const seen = new Set();
+  for (const p of (pairs || [])) if (_crosswordUsable(p.answer)) seen.add(p.answer.toUpperCase());
+  return seen.size;
+}
+// The pool a puzzle will ACTUALLY use. When a lesson's own words are too thin for a grid, top up
+// from this lesson and the earlier ones rather than refusing to build.
+//
+// This exists because of a real report: a lesson whose vocabulary is quizzed WITH the article
+// ("der Hund") is a set of two-word phrases, none of which fit a grid — so the only lesson a
+// learner could actually see offered no crossword, while the topic had plenty of crossable words
+// one lesson back. The widening option already existed, but it lived inside the dialog the learner
+// could not open. An affordance nobody can discover is not an affordance.
+function _crosswordEffectivePool(lessonIdx, opts, d){
+  const own = _crosswordPool(lessonIdx, opts, d);
+  if (opts.src !== 'lesson' || _crosswordDistinct(own) >= CROSSWORD_MIN_ENTRIES)
+    return { pool: own, topped: false };
+  const wider = _crosswordPool(lessonIdx, Object.assign({}, opts, { src: 'topic' }), d);
+  const seen = new Set(), merged = [];
+  for (const p of own.concat(wider)){                    // this lesson's own words come first
+    const k = String(p.answer || '').toUpperCase();
+    if (!k || seen.has(k)) continue;
+    seen.add(k); merged.push(p);
+  }
+  return { pool: merged, topped: _crosswordDistinct(merged) > _crosswordDistinct(own) };
+}
+// A lesson offers a crossword when it contributes at least ONE word of its own AND the effective
+// pool can fill a grid. The "at least one of its own" clause matters: without it the topic top-up
+// would offer a crossword on error-hunt and other non-vocabulary lessons, which is not what any of
+// those screens are for.
+function _crosswordAvailable(L, lessonIdx, d){
+  if (!L) return false;
+  const own = _crosswordDistinct(_crosswordLessonPairs(L, lessonIdx, d));
+  if (!own) return false;
+  if (own >= CROSSWORD_MIN_ENTRIES) return true;
+  try {
+    const eff = _crosswordEffectivePool(lessonIdx, _crosswordOpts(), d);
+    return _crosswordDistinct(eff.pool) >= CROSSWORD_MIN_ENTRIES;
+  } catch(_) { return false; }
+}
+// Build the grid for one attempt. `attempt` varies the seed; everything downstream is deterministic
+// given it, so the puzzle never shifts while the learner is looking at it.
+function _crosswordFor(lessonIdx, attempt){
+  const L = APP.lessonData?.lessons?.[lessonIdx];
+  if (!L) return null;
+  const opts = _crosswordOpts();
+  const seed = (L.id || ('idx' + lessonIdx)) + '#' + (attempt || 0) + '|' + opts.src + '|' + opts.count + (opts.preferWrong ? '|w' : '');
+  const eff = _crosswordEffectivePool(lessonIdx, opts);
+  const words = _crosswordSelect(eff.pool, opts, seed);
+  const g = _crosswordLayout(words, seed);
+  if (g.entries.length < CROSSWORD_MIN_ENTRIES) return null;
+  g.topped = eff.topped;
+  return g;
+}
+// The question(s) to credit for a solved word. NOT found by rebuilding the lesson: build() SAMPLES
+// (a round, not the full set, differing per call — which is why _lessonQidUniverse unions many
+// builds). We synthesize the exercise shape instead; qid()'s canonical form for a translation
+// question is (target, source), so the id is byte-identical to the real question's. Membership in
+// the owning lesson's universe is then checked, so a solved-bit is never invented for a question
+// that lesson does not ask.
+//
+// Every lesson of the loaded topic is searched, not just the one the puzzle was opened from: with
+// `src: topic` the words legitimately belong to earlier lessons, and their coverage should move.
+// Words drawn from the cross-storyline ledger belong to topics that are not loaded, so they
+// practise without crediting — stated in the UI by the credited count, not silently.
+function _crosswordCreditable(answerUpper){
+  const d = APP.lessonData;
+  if (!d || !Array.isArray(d.lessons)) return [];
+  const out = [];
+  d.lessons.forEach((L, idx) => {
+    const cands = [];
+    const v = (L?.vocab || []).find(x => x && String(x.target || '').trim().toUpperCase() === answerUpper);
+    if (v) for (const type of CROSSWORD_CREDIT_TYPES) cands.push({ type, target: v.target, source: v.source });
+    // word_forms: qid canonical is (sentence, correct), and the crossword clued this entry WITH
+    // that sentence — so solving it demonstrates the same question. Synonyms deliberately do NOT
+    // credit: producing a word from its gloss is not choosing between synonyms.
+    for (const it of (Array.isArray(L?.items) ? L.items : [])){
+      if (!it || !Array.isArray(it.choices)) continue;
+      const ci = it.correctIndex;
+      if (!Number.isInteger(ci) || ci < 0 || ci >= it.choices.length) continue;
+      const correct = it.choices[ci];
+      if (String(correct || '').trim().toUpperCase() !== answerUpper) continue;
+      cands.push({ type: 'word_form', sentence: it.sentence || '', correct, target: correct });
+    }
+    if (!cands.length) return;
+    let universe;
+    try { universe = _lessonQidUniverse(idx); } catch(_) { return; }
+    for (const c of cands){
+      const ex = Object.assign({}, c, { _srcLessonIdx: idx });
+      try { if (universe.has(qid(ex))) out.push(ex); } catch(_) {}
+    }
+  });
+  return out;
+}
+function _crosswordCredit(answerUpper){
+  // markSolved() returns the qid it credited, or '' when it declined (flagged item, no topic).
+  // Count only real credits — an inflated number would misreport how much coverage moved.
+  let n = 0;
+  for (const ex of _crosswordCreditable(answerUpper)) if (markSolved(ex)) n++;
+  return n;
+}
+
+// v70_g: the completion screen's action row is icons only, so every button needs its former
+// label as a tooltip AND an aria-label — an icon with no accessible name is unusable with a
+// screen reader and unguessable for anyone else.
+function _compIco(btn, icon, label){
+  if (!btn) return;
+  btn.textContent = icon;
+  btn.title = label;
+  try { btn.setAttribute('aria-label', label); } catch(_) {}
+}
+function openCrosswordFromComplete(){
+  const idx = APP.cur?.lessonIdx;
+  if (idx == null) return;
+  openCrossword(idx);
+}
+function openCrossword(lessonIdx, attempt){
+  const at = attempt || 0;
+  const g = _crosswordFor(lessonIdx, at);
+  const m = document.getElementById('cw-modal');
+  if (!m) return;
+  if (!g){ if (typeof showToast === 'function') showToast(t('crossword.not_enough')); return; }
+  // Geometry derived ONCE per attempt. `typed`/`mark` live in state, not the DOM: the render
+  // rebuilds the grid markup wholesale, and before v70_f the letters lived only in the inputs, so
+  // Check erased everything the learner had entered.
+  const owner = new Map(), sol = new Map(), startNum = new Map();
+  g.entries.forEach((e, ei) => {
+    for (let i = 0; i < e.len; i++){
+      const k = (e.row + (e.dir === 'down' ? i : 0)) + ',' + (e.col + (e.dir === 'across' ? i : 0));
+      if (!owner.has(k)) owner.set(k, []);
+      owner.get(k).push(ei);
+      sol.set(k, e.answer[i]);
+    }
+    if (!startNum.has(e.row + ',' + e.col)) startNum.set(e.row + ',' + e.col, e.num);
+  });
+  APP._cw = { lessonIdx, attempt: at, grid: g, done: {}, typed: {}, mark: {}, owner, sol, startNum, dir: 'across', revealed: false };
+  m.style.display = 'flex';
+  const ttl = document.getElementById('cw-title'); if (ttl) ttl.textContent = t('crossword.title');
+  _compIco(document.getElementById('cw-check-btn'), '✓', t('crossword.check'));
+  _compIco(document.getElementById('cw-solve-btn'), '👁', t('crossword.solve'));
+  _compIco(document.getElementById('cw-regen-btn'), '🎲', t('crossword.regenerate'));
+  _renderCrosswordOptions();
+  _renderCrossword();
+}
+// A fresh attempt: new seed → different word selection and a different grid, so a learner can work
+// through a lesson's whole vocabulary over several puzzles instead of replaying one fixed layout.
+function regenerateCrossword(){
+  const S = APP._cw; if (!S) return;
+  openCrossword(S.lessonIdx, (S.attempt || 0) + 1);
+}
+function setCrosswordOpt(key, value){
+  const o = _crosswordOpts();
+  if (key === 'count') o.count = parseInt(value, 10) || 8;
+  else if (key === 'src') o.src = String(value);
+  else if (key === 'preferWrong') o.preferWrong = !!value;
+  // Options change the word pool, so they take effect as a new attempt rather than silently
+  // applying to the next open.
+  regenerateCrossword();
+}
+function closeCrossword(){
+  const m = document.getElementById('cw-modal');
+  if (m) m.style.display = 'none';
+  APP._cw = null;
+}
+function _renderCrosswordOptions(){
+  const host = document.getElementById('cw-options'); if (!host) return;
+  const o = _crosswordOpts();
+  const opt = (v, lbl, cur) => '<option value="' + v + '"' + (String(cur) === String(v) ? ' selected' : '') + '>' + escHtml(lbl) + '</option>';
+  const sel = 'font-size:11px;font-weight:700;border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 6px;background:var(--white);color:var(--text);font-family:Nunito,sans-serif';
+  host.innerHTML =
+      '<label style="display:inline-flex;align-items:center;gap:4px">' + escHtml(t('crossword.words'))
+    +   '<select style="' + sel + '" onchange="setCrosswordOpt(\'count\', this.value)">'
+    +     CROSSWORD_COUNTS.map(n => opt(n, String(n), o.count)).join('')
+    +   '</select></label>'
+    + '<label style="display:inline-flex;align-items:center;gap:4px">' + escHtml(t('crossword.from'))
+    +   '<select style="' + sel + '" onchange="setCrosswordOpt(\'src\', this.value)">'
+    +     opt('lesson', t('crossword.from_lesson'), o.src)
+    +     opt('topic',  t('crossword.from_topic'),  o.src)
+    +     opt('all',    t('crossword.from_all'),    o.src)
+    +   '</select></label>'
+    + '<label style="display:inline-flex;align-items:center;gap:4px;cursor:pointer">'
+    +   '<input type="checkbox"' + (o.preferWrong ? ' checked' : '') + ' onchange="setCrosswordOpt(\'preferWrong\', this.checked)">'
+    +   escHtml(t('crossword.prefer_wrong')) + '</label>';
+}
+// Focus follows the entry being worked in. A cell shared by an across and a down entry KEEPS the
+// current direction if that is still valid, so typing through a crossing does not turn the corner.
+function cwFocus(k){
+  const S = APP._cw; if (!S) return;
+  const dirs = (S.owner.get(k) || []).map(ei => S.grid.entries[ei].dir);
+  if (!dirs.includes(S.dir) && dirs.length) S.dir = dirs[0];
+}
+function _cwMove(k, dr, dc){
+  const S = APP._cw; if (!S) return false;
+  const p = k.split(','); let r = +p[0], c = +p[1];
+  r += dr; c += dc;
+  const nk = r + ',' + c;
+  if (!S.owner.has(nk)) return false;
+  const nx = document.getElementById('cw-' + nk);
+  if (nx && typeof nx.focus === 'function'){ nx.focus(); if (typeof nx.select === 'function') nx.select(); }
+  return true;
+}
+// Arrows move; Backspace clears and steps back. Without these a grid of one-character inputs is
+// navigable only by clicking each cell, which is unusable for an actual crossword.
+function cwKey(k, ev){
+  const S = APP._cw; if (!S || !ev) return;
+  const key = ev.key;
+  const stop = () => { try { ev.preventDefault(); } catch(_) {} };
+  if (key === 'ArrowRight'){ S.dir = 'across'; stop(); _cwMove(k, 0, 1); return; }
+  if (key === 'ArrowLeft'){  S.dir = 'across'; stop(); _cwMove(k, 0, -1); return; }
+  if (key === 'ArrowDown'){  S.dir = 'down';   stop(); _cwMove(k, 1, 0); return; }
+  if (key === 'ArrowUp'){    S.dir = 'down';   stop(); _cwMove(k, -1, 0); return; }
+  if (key === 'Backspace'){
+    const el = document.getElementById('cw-' + k);
+    const had = !!(el && el.value);
+    if (had){ el.value = ''; delete S.typed[k]; if (S.mark[k]){ delete S.mark[k]; _paintCell(k); } stop(); return; }
+    // Already empty → step back and clear that cell instead.
+    stop();
+    const p = k.split(','); const r = +p[0], c = +p[1];
+    const bk = (S.dir === 'down') ? (r - 1) + ',' + c : r + ',' + (c - 1);
+    if (!S.owner.has(bk)) return;
+    const be = document.getElementById('cw-' + bk);
+    if (be){ be.value = ''; delete S.typed[bk]; if (S.mark[bk]){ delete S.mark[bk]; _paintCell(bk); } }
+    _cwMove(k, S.dir === 'down' ? -1 : 0, S.dir === 'down' ? 0 : -1);
+  }
+}
+function cwInput(k){
+  const S = APP._cw; if (!S) return;
+  const el = document.getElementById('cw-' + k);
+  if (!el) return;
+  const ch = String(el.value || '').toUpperCase().slice(0, 1);
+  el.value = ch;
+  if (ch) S.typed[k] = ch; else delete S.typed[k];
+  // A retyped cell is no longer judged — stale red on a letter since changed would mislead.
+  if (S.mark[k]) { delete S.mark[k]; _paintCell(k); }
+  if (!ch) return;
+  const p = k.split(','); const r = +p[0], c = +p[1];
+  if (!_cwMove(k, S.dir === 'down' ? 1 : 0, S.dir === 'down' ? 0 : 1)){ /* end of entry: stay put */ }
+  // Every cell filled → check without being asked. Nothing is lost by it: Check never clears
+  // letters, so an early auto-check just colours what is there.
+  if (S.owner.size && Object.keys(S.typed).length >= S.owner.size) checkCrossword();
+}
+function _paintCell(k){
+  const S = APP._cw; if (!S) return;
+  const el = document.getElementById('cw-' + k); if (!el || !el.style) return;
+  const m = S.mark[k];
+  const locked = (S.owner.get(k) || []).some(ei => S.done[ei]);
+  el.style.background  = m === 'bad' ? '#ffe3e3' : (m === 'ok' || locked) ? '#d8f5d8' : 'var(--white)';
+  el.style.color       = m === 'bad' ? '#b00020' : (m === 'ok' || locked) ? '#0a7a28' : 'var(--text)';
+  el.style.borderColor = m === 'bad' ? '#e05a5a' : (m === 'ok' || locked) ? '#5ec27a' : 'var(--gray-dark)';
+}
+function _renderCrossword(){
+  const S = APP._cw; const host = document.getElementById('cw-body');
+  if (!S || !host) return;
+  const g = S.grid;
+  let grid = '<div class="cw-grid" style="display:inline-grid;grid-template-columns:repeat(' + g.width + ',30px);gap:2px">';
+  for (let r = 0; r < g.height; r++){
+    for (let c = 0; c < g.width; c++){
+      const k = r + ',' + c;
+      if (!S.owner.has(k)){ grid += '<div style="width:30px;height:30px"></div>'; continue; }
+      const m = S.mark[k];
+      const locked = (S.owner.get(k) || []).some(ei => S.done[ei]);
+      const bg = m === 'bad' ? '#ffe3e3' : (m === 'ok' || locked) ? '#d8f5d8' : 'var(--white)';
+      const fg = m === 'bad' ? '#b00020' : (m === 'ok' || locked) ? '#0a7a28' : 'var(--text)';
+      const bd = m === 'bad' ? '#e05a5a' : (m === 'ok' || locked) ? '#5ec27a' : 'var(--gray-dark)';
+      const num = S.startNum.get(k);
+      grid += '<div style="position:relative;width:30px;height:30px">'
+        + (num ? '<span style="position:absolute;top:0;left:1px;font-size:8px;font-weight:800;color:var(--gray-dark);pointer-events:none;z-index:1">' + num + '</span>' : '')
+        + '<input id="cw-' + k + '" maxlength="1" value="' + escHtml(S.typed[k] || '') + '"'
+        + ' oninput="cwInput(\'' + k + '\')" onfocus="cwFocus(\'' + k + '\')" onkeydown="cwKey(\'' + k + '\', event)"'
+        + ' style="width:30px;height:30px;text-align:center;font-weight:800;font-size:15px;text-transform:uppercase;'
+        + 'border:1.5px solid ' + bd + ';border-radius:4px;padding:0;font-family:Nunito,sans-serif;'
+        + 'background:' + bg + ';color:' + fg + '">'
+        + '</div>';
+    }
+  }
+  grid += '</div>';
+
+  const list = dir => g.entries.filter(e => e.dir === dir)
+    .map(e => { const ei = g.entries.indexOf(e);
+      return '<li style="margin-bottom:3px' + (S.done[ei] ? ';opacity:.5;text-decoration:line-through' : '') + '">'
+        + '<b>' + e.num + '.</b> ' + escHtml(e.clue) + ' <span style="color:var(--gray-dark)">(' + e.len + ')</span></li>'; })
+    .join('');
+
+  const total = g.entries.length, solvedN = Object.keys(S.done).length;
+  host.innerHTML =
+    '<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">'
+    + '<div>' + grid + '</div>'
+    + '<div style="flex:1;min-width:180px;font-size:12px;line-height:1.5">'
+    +   '<div style="font-weight:800;margin-bottom:3px">' + t('crossword.across') + '</div><ul style="margin:0 0 10px 16px;padding:0">' + list('across') + '</ul>'
+    +   '<div style="font-weight:800;margin-bottom:3px">' + t('crossword.down') + '</div><ul style="margin:0 0 0 16px;padding:0">' + list('down') + '</ul>'
+    + '</div></div>'
+    + '<div style="margin-top:10px;font-size:12px;font-weight:800;color:var(--blue-dark)">'
+    +   t('crossword.solved_n', { n: solvedN, total: total })
+    +   (S.revealed ? ' · <span style="font-weight:700;color:var(--gray-dark)">' + t('crossword.revealed') + '</span>' : '')
+    +   (g.topped ? ' · <span style="font-weight:700;color:var(--gray-dark)">' + t('crossword.topped_up') + '</span>' : '')
+    +   (g.skipped.length ? ' · <span style="font-weight:700;color:var(--gray-dark)">' + t('crossword.skipped_n', { n: g.skipped.length }) + '</span>' : '')
+    + '</div>';
+}
+function _cwSyncFromDom(){
+  const S = APP._cw; if (!S) return;
+  for (const k of S.owner.keys()){
+    const el = document.getElementById('cw-' + k);
+    if (!el) continue;
+    const v = String(el.value == null ? '' : el.value).toUpperCase().slice(0, 1);
+    if (v) S.typed[k] = v; else delete S.typed[k];
+  }
+}
+// Mark every FILLED cell green or red and lock any entry that is now fully correct. Letters are
+// never cleared: an erased grid destroys the learner's work and hides which letter was wrong.
+function checkCrossword(){
+  const S = APP._cw; if (!S) return { solved: 0, credited: 0, wrong: 0 };
+  _cwSyncFromDom();
+  let newly = 0, credited = 0, wrong = 0;
+  for (const k of S.owner.keys()){
+    const v = S.typed[k];
+    if (!v){ delete S.mark[k]; continue; }
+    if (v === S.sol.get(k)) S.mark[k] = 'ok';
+    else { S.mark[k] = 'bad'; wrong++; }
+  }
+  S.grid.entries.forEach((e, ei) => {
+    if (S.done[ei]) return;
+    let typed = '';
+    for (let i = 0; i < e.len; i++){
+      const k = (e.row + (e.dir === 'down' ? i : 0)) + ',' + (e.col + (e.dir === 'across' ? i : 0));
+      typed += (S.typed[k] || ' ');
+    }
+    if (typed === e.answer){
+      S.done[ei] = 1; newly++;
+      if (!S.revealed) credited += _crosswordCredit(e.answer);   // revealed puzzles credit nothing
+    }
+  });
+  _renderCrossword();
+  if (newly && typeof showToast === 'function') showToast(t('crossword.correct_n', { n: newly }));
+  return { solved: newly, credited, wrong };
+}
+// Reveal. Credits NOTHING — coverage must mean the learner produced the word, not that they asked
+// to be shown it. The flag latches so a later Check cannot launder a reveal into credit.
+function solveCrossword(){
+  const S = APP._cw; if (!S) return 0;
+  S.revealed = true;
+  for (const [k, letter] of S.sol){ S.typed[k] = letter; S.mark[k] = 'ok'; }
+  S.grid.entries.forEach((e, ei) => { S.done[ei] = 1; });
+  _renderCrossword();
+  if (typeof showToast === 'function') showToast(t('crossword.revealed'));
+  return S.grid.entries.length;
+}
+
 function buildWordFormsExercises(lesson){
   const items = lesson.items || [];
   const exs = [];
@@ -11601,6 +12277,7 @@ function showComplete(review){
   // unfinished lesson in THIS chapter, else the first unfinished lesson of the NEXT chapter in
   // the storyline, else (nothing left) it becomes a second "back to story" affordance.
   const compNext = el('comp-next');
+  let _nextIsRepeat = false, _nextIsDrill = false;
   // v60.1: the set may be mixed-driven, where completion is COVERAGE, not per-lesson done[id].
   // _firstUnfinishedLessonIdx already encodes the real rule (returns -1 when the set is complete,
   // else the lesson to continue — the mixed/driver lesson for a mixed-driven set). Use it so Next
@@ -11660,7 +12337,7 @@ function showComplete(review){
     };
   } else if (nextLessonIdx >= 0 && !lesson._drill) {
     // Next lesson in this chapter — start it directly (learners never see the lesson-set page).
-    compNext.textContent = t('complete.next');
+    _compIco(compNext, '→', t('complete.next'));
     compNext.style.display = '';
     compNext.onclick = () => { endDrill(); startLesson(nextLessonIdx); };
   } else if (_belowThreshold && !lesson._drill && _firstCoverageShortLessonIdx() >= 0) {
@@ -11672,7 +12349,10 @@ function showComplete(review){
     // on every play, so fresh questions advance coverage. Resume the first counted lesson whose
     // own coverage is still short.
     const _covIdx = _firstCoverageShortLessonIdx();
-    compNext.textContent = t('complete.next');
+    // Below the mark this is a REPEAT, not progress: replaying re-samples the round and raises
+    // coverage. Labelling it "Next" implied forward movement the learner has not earned yet.
+    _compIco(compNext, '↻', t('complete.repeat'));
+    _nextIsRepeat = true;
     compNext.style.display = '';
     compNext.onclick = () => { startLesson(_covIdx); };
   } else if (_belowThreshold && !lesson._drill && drillAvailable(APP.lessonData?.lang || APP.lang, APP.lessonData?.srcLang || APP.srcLang)) {
@@ -11685,13 +12365,14 @@ function showComplete(review){
     // Now Next carries PROGRESS (next lesson, else the coverage replay) and the drill is the
     // last-resort Next only when there is nothing left to play or replay. v66.1's rule is intact:
     // no branch below the mark advances to the next chapter.
-    compNext.textContent = t('drill.cta');
+    _compIco(compNext, '🎯', t('drill.cta'));
+    _nextIsDrill = true;
     compNext.style.display = '';
     compNext.onclick = () => { startDrill(); };
   } else if (!lesson._drill && !_belowThreshold && _nextChapter()) {
     // Chapter finished → carry straight into the next chapter's first unfinished lesson.
     const ch = _nextChapter();
-    compNext.textContent = t('complete.next');
+    _compIco(compNext, '→', t('complete.next'));
     compNext.style.display = '';
     compNext.onclick = () => { endDrill(); loadSaved(ch.id || encTopic(ch.topic)); };
   } else {
@@ -11737,10 +12418,21 @@ function showComplete(review){
       const _prev = APP._drillPrev;
       const _l = _prev?.lang    || APP.lessonData?.lang    || APP.lang;
       const _s = _prev?.srcLang || APP.lessonData?.srcLang || APP.srcLang;
-      _db.textContent = t('drill.cta');
+      _compIco(_db, '🎯', t('drill.cta'));
       // Shown for a teacher (review tool) OR a below-threshold learner (required to progress),
       // whenever a drill round can actually be built.
-      _db.style.display = ((_teacher || _belowThreshold) && drillAvailable(_l, _s)) ? '' : 'none';
+      // Hidden when Next already IS the drill — two identical targets side by side is noise.
+      _db.style.display = (!_nextIsDrill && (_teacher || _belowThreshold) && drillAvailable(_l, _s)) ? '' : 'none';
+    }
+    // v70_e: crossword practice over the words just studied. Offered to EVERYONE — unlike the
+    // drill it is not a remediation tool, and it credits the same coverage, so it is also a way up
+    // for a below-mark learner. Shown only when the lesson can actually make a puzzle.
+    const _cw = document.getElementById('comp-crossword');
+    if(_cw){
+      _compIco(_cw, '🔠', t('crossword.play'));
+      let _ok = false;
+      try { _ok = _crosswordAvailable(APP.lessonData?.lessons?.[APP.cur?.lessonIdx], APP.cur?.lessonIdx); } catch(_) { _ok = false; }
+      _cw.style.display = _ok ? '' : 'none';
     }
   } catch(_) {}
   const _compNav = document.getElementById('comp-nav-btns');
