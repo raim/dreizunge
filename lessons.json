@@ -5345,7 +5345,8 @@
             "completionTokens": 390,
             "ms": 274775,
             "at": "2026-07-26T09:02:58.537Z"
-          }
+          },
+          "_hidden": false
         },
         {
           "id": 1,
@@ -5355,7 +5356,8 @@
           "vocab": [
             {
               "target": "l'estinzione di massa",
-              "source": "die Massenaussterbung"
+              "source": "die Massenaussterbung",
+              "editedAt": "2026-07-26T09:38:31.546Z"
             },
             {
               "target": "il corso dell'evoluzione",
@@ -5368,19 +5370,23 @@
             },
             {
               "target": "la mutazione epigenetica",
-              "source": "die epigenetische Mutation"
+              "source": "die epigenetische Mutation",
+              "editedAt": "2026-07-26T09:38:31.546Z"
             },
             {
               "target": "l'equilibrio",
-              "source": "das Gleichgewicht"
+              "source": "das Gleichgewicht",
+              "editedAt": "2026-07-26T09:38:31.546Z"
             },
             {
               "target": "il fattore casuale",
-              "source": "der Zufallsfaktor"
+              "source": "der Zufallsfaktor",
+              "editedAt": "2026-07-26T09:38:31.546Z"
             },
             {
               "target": "la selezione di gruppo",
-              "source": "die Gruppenselektion"
+              "source": "die Gruppenselektion",
+              "editedAt": "2026-07-26T09:38:31.546Z"
             },
             {
               "target": "il trasferimento genico",
@@ -5466,7 +5472,8 @@
             "completionTokens": 390,
             "ms": 274775,
             "at": "2026-07-26T09:02:58.537Z"
-          }
+          },
+          "_hidden": false
         }
       ],
       "generationStats": {
@@ -5494,7 +5501,7 @@
         }
       },
       "generatedAt": "2026-07-26T08:58:23.702Z",
-      "updatedAt": "2026-07-26T09:38:31.549Z",
+      "updatedAt": "2026-07-26T09:43:42.267Z",
       "createdBy": "admin"
     },
     {
@@ -5570,8 +5577,12 @@
               "editedAt": "2026-07-26T09:40:15.099Z"
             },
             {
-              "target": "selezione naturale",
-              "source": "die natürliche Selektion"
+              "target": "la selezione naturale",
+              "source": "die natürliche Selektion",
+              "editedAt": "2026-07-26T09:42:30.175Z",
+              "_manualEdits": [
+                "2026-07-26T09:42:30.175Z"
+              ]
             },
             {
               "target": "mutazione",
@@ -5690,7 +5701,117 @@
             "completionTokens": 451,
             "ms": 337655,
             "at": "2026-07-26T08:53:27.002Z"
-          }
+          },
+          "_hidden": false
+        },
+        {
+          "id": "ls_1785058973182_0_gate",
+          "title": "Grundlagen der Evolution",
+          "desc": "Wichtige Begriffe zur Evolutionslehre",
+          "icon": "🧬",
+          "vocab": [
+            {
+              "target": "l'evoluzione",
+              "source": "die Evolution"
+            },
+            {
+              "target": "la teoria",
+              "source": "die Theorie"
+            },
+            {
+              "target": "la specie",
+              "source": "die Art"
+            },
+            {
+              "target": "l'antenato",
+              "source": "der Vorfahr"
+            },
+            {
+              "target": "il cambiamento",
+              "source": "die Veränderung"
+            },
+            {
+              "target": "la ricerca",
+              "source": "die Forschung"
+            },
+            {
+              "target": "la legge",
+              "source": "das Gesetz"
+            },
+            {
+              "target": "l'essere vivente",
+              "source": "der Lebewesen"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "La teoria evolve nel tempo.",
+              "source": "Die Theorie entwickelt sich im Laufe der Zeit.",
+              "words": [
+                "La",
+                "teoria",
+                "evolve",
+                "nel",
+                "tempo."
+              ]
+            },
+            {
+              "target": "Ogni specie ha un antenato comune.",
+              "source": "Jede Art hat einen gemeinsamen Vorfahren.",
+              "words": [
+                "Ogni",
+                "specie",
+                "ha",
+                "un",
+                "antenato",
+                "comune."
+              ]
+            },
+            {
+              "target": "Il cambiamento è fondamentale.",
+              "source": "Die Veränderung ist grundlegend.",
+              "words": [
+                "Il",
+                "cambiamento",
+                "è",
+                "fondamentale."
+              ]
+            },
+            {
+              "target": "La ricerca scientifica continua.",
+              "source": "Die wissenschaftliche Forschung geht weiter.",
+              "words": [
+                "La",
+                "ricerca",
+                "scientifica",
+                "continua."
+              ]
+            },
+            {
+              "target": "Le leggi naturali governano tutto.",
+              "source": "Die Naturgesetze regeln alles.",
+              "words": [
+                "Le",
+                "leggi",
+                "naturali",
+                "governano",
+                "tutto."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 923,
+            "completionTokens": 326,
+            "ms": 143034,
+            "at": "2026-07-26T09:42:53.182Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -5703,8 +5824,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 5454,
-        "totalCompletionTokens": 1330,
+        "totalPromptTokens": 6377,
+        "totalCompletionTokens": 1656,
         "lessons": [
           {
             "lessonNum": 1,
@@ -5714,11 +5835,12 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 2419
+          "lesson_qc": 2419,
+          "recreate": 1249
         }
       },
       "generatedAt": "2026-07-26T08:47:49.285Z",
-      "updatedAt": "2026-07-26T09:40:15.102Z",
+      "updatedAt": "2026-07-26T09:43:03.255Z",
       "createdBy": "admin"
     },
     {
