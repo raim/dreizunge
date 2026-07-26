@@ -33,7 +33,7 @@
 | | letzebuergesch consulting | 1| 
 | | fibonacci original text | 1| 
 | | story from pdf | 1|
-
+| michim | italian consulting | .5|
 
 # data/code tokens
 
