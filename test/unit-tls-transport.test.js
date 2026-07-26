@@ -116,9 +116,15 @@ assert.ok(!/insecureTransport/.test(signIn), 'sign-in is never blocked by the tr
 // ── 8. i18n: English only, per the standing rule ─────────────────────────────
 const ui = JSON.parse(fs.readFileSync(path.join(root, 'ui.json'), 'utf8'));
 assert.ok('acct.insecure' in ui.en, 'acct.insecure exists in en');
-const leaked = Object.keys(ui).filter(l => l !== 'en' && 'acct.insecure' in ui[l]);
-assert.deepStrictEqual(leaked, [],
-  'acct.insecure is en-only — translate-ui.js fills MISSING keys and cannot detect English left in another language');
+// v71: the original form of this asserted the key was en-ONLY. That was the right rule while the
+// key was new and untranslated — translate-ui.js fills MISSING keys and cannot detect English left
+// sitting in another language, so a seeded copy would never be corrected. It is the WRONG rule once
+// a real translation pass has run. The durable invariant is what it was always protecting: no other
+// language may hold the English string verbatim.
+const en = ui.en['acct.insecure'];
+const untranslated = Object.keys(ui).filter(l => l !== 'en' && ui[l]['acct.insecure'] === en);
+assert.deepStrictEqual(untranslated, [],
+  'no language holds the English text of acct.insecure verbatim (translate-ui.js would never revisit it)');
 
 console.log('  loopback/TLS predicates: 30 cases OK (incl. prefix-hole and proxy-chain)');
 console.log('  one shared isSecureRequest(); warning latched once, before auth');
