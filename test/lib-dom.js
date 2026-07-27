@@ -52,6 +52,11 @@ function makeElement(tag = 'div', id = '') {
     insertAdjacentHTML() {},
     insertAdjacentElement(pos, el) { this.children.push(el); return el; },
     insertAdjacentText() {},
+    // ChildNode.after/before insert siblings. The stub has no real tree, so they behave like the
+    // adjacent-insert stubs above: accept the nodes, run no layout. Enough for code that appends a
+    // results panel after an element (e.g. ehCheck) without needing it queried back.
+    after(...nodes) { (this.parentNode || this).children.push(...nodes.filter(n => typeof n === 'object')); },
+    before(...nodes) { (this.parentNode || this).children.push(...nodes.filter(n => typeof n === 'object')); },
     replaceChildren() { this.children = []; },
     contains() { return false; },
     matches() { return false; },

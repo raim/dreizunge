@@ -157,8 +157,12 @@ console.log('  loadSaved: learner auto-start, teacher keeps the page: OK');
   // Teacher-only extras.
   assert.ok(/const _teacher = !!APP\._teacherMode/.test(sc), 'card teacher gate keys off teacher MODE (v60.1), not _canEdit');
   // v70_l: pass-mark gate removed; a below-threshold learner is still covered (superset rule).
-  assert.ok(/_db\.style\.display = \(!_nextIsDrill && drillAvailable/.test(sc),
+  // v71_d: `!_nextIsDrill` dropped with the flag — Next is never the drill now, so it cannot double.
+  assert.ok(/_db\.style\.display = drillAvailable\(_l, _s\)/.test(sc),
     'drill shows for a teacher OR a below-threshold learner (v60.8 pass-mark gate)');
+  // v71_d: and below the mark, Next is locked rather than repurposed into one of those routes.
+  assert.ok(/_nextBlocked = true;/.test(sc) && /compNext\.disabled = true;/.test(sc),
+    'below the pass mark the forward button is disabled, not silently given another meaning');
   assert.ok(/if \(_teacher && !lesson\._drill\) \{/.test(sc), 'nav pills are teacher-only');
   // The card markup has exactly the two primary buttons wired.
   assert.ok(/id="comp-next" onclick="afterComplete\(\)"/.test(html), 'markup: Next button');

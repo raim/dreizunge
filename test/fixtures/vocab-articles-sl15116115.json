@@ -1,0 +1,311 @@
+{
+ "storyline": "sl_15116115",
+ "lang": "it",
+ "srcLang": "de",
+ "chapters": [
+  {
+   "chapter": 1,
+   "topic": "Evoluzione der Theorie",
+   "vocab": [
+    {
+     "target": "teoria",
+     "source": "die Theorie"
+    },
+    {
+     "target": "scienza",
+     "source": "die Wissenschaft"
+    },
+    {
+     "target": "ricerca",
+     "source": "die Forschung"
+    },
+    {
+     "target": "legge",
+     "source": "das Gesetz"
+    },
+    {
+     "target": "fattore",
+     "source": "der Faktor"
+    },
+    {
+     "target": "modello",
+     "source": "das Modell"
+    },
+    {
+     "target": "ipotesi",
+     "source": "die Hypothese"
+    },
+    {
+     "target": "nocciolo",
+     "source": "der Kern"
+    }
+   ]
+  },
+  {
+   "chapter": 2,
+   "topic": "Der Stammbaum des Lebens",
+   "vocab": [
+    {
+     "target": "essere vivente",
+     "source": "das Lebewesen"
+    },
+    {
+     "target": "imparentato",
+     "source": "verwandt"
+    },
+    {
+     "target": "albero genealogico",
+     "source": "der Stammbaum"
+    },
+    {
+     "target": "specie",
+     "source": "die Art"
+    },
+    {
+     "target": "antenato",
+     "source": "der Vorfahr"
+    },
+    {
+     "target": "comune",
+     "source": "gemeinsam"
+    },
+    {
+     "target": "scimpanzé",
+     "source": "der Schimpanse"
+    },
+    {
+     "target": "Neanderthal",
+     "source": "der Neandertaler"
+    }
+   ]
+  },
+  {
+   "chapter": 3,
+   "topic": "Natürliche Selektion",
+   "vocab": [
+    {
+     "target": "selezione",
+     "source": "die Selektion"
+    },
+    {
+     "target": "naturale",
+     "source": "natürlich"
+    },
+    {
+     "target": "pilastro",
+     "source": "der Pfeiler"
+    },
+    {
+     "target": "rivoluzione",
+     "source": "die Revolution"
+    },
+    {
+     "target": "motore",
+     "source": "der Motor"
+    },
+    {
+     "target": "cambiamento",
+     "source": "der Wandel"
+    },
+    {
+     "target": "sopravvivenza",
+     "source": "das Überleben"
+    },
+    {
+     "target": "riproduzione",
+     "source": "die Fortpflanzung"
+    }
+   ]
+  },
+  {
+   "chapter": 4,
+   "topic": "Genetik und Mendel",
+   "vocab": [
+    {
+     "target": "conoscere",
+     "source": "kennen"
+    },
+    {
+     "target": "la base",
+     "source": "die Grundlage"
+    },
+    {
+     "target": "la variazione",
+     "source": "die Variation"
+    },
+    {
+     "target": "la legge",
+     "source": "das Gesetz"
+    },
+    {
+     "target": "la trasmissione",
+     "source": "die Übertragung"
+    },
+    {
+     "target": "il contatto",
+     "source": "der Kontakt"
+    },
+    {
+     "target": "la genetica",
+     "source": "die Genetik"
+    },
+    {
+     "target": "l'evoluzione",
+     "source": "die Evolution"
+    }
+   ]
+  },
+  {
+   "chapter": 5,
+   "topic": "Neue Forschungsergebnisse",
+   "vocab": [
+    {
+     "target": "rivisto",
+     "source": "überarbeitet"
+    },
+    {
+     "target": "esteso",
+     "source": "erweitert"
+    },
+    {
+     "target": "fenomeno",
+     "source": "Phänomen"
+    },
+    {
+     "target": "esistenza",
+     "source": "Existenz"
+    },
+    {
+     "target": "simbiosi",
+     "source": "Symbiose"
+    },
+    {
+     "target": "speciazione",
+     "source": "Artbildung"
+    },
+    {
+     "target": "mutazione",
+     "source": "Mutation"
+    },
+    {
+     "target": "estinzioni di massa",
+     "source": "Massenaussterben"
+    }
+   ]
+  },
+  {
+   "chapter": 6,
+   "topic": "Theorie wird erweitert",
+   "vocab": [
+    {
+     "target": "teoria",
+     "source": "die Theorie"
+    },
+    {
+     "target": "scoperta",
+     "source": "die Entdeckung"
+    },
+    {
+     "target": "spiegazione",
+     "source": "die Erklärung"
+    },
+    {
+     "target": "fattore",
+     "source": "der Faktor"
+    },
+    {
+     "target": "fenomeno",
+     "source": "das Phänomen"
+    },
+    {
+     "target": "variazione",
+     "source": "die Variation"
+    },
+    {
+     "target": "mutazione",
+     "source": "die Mutation"
+    },
+    {
+     "target": "popolazione",
+     "source": "die Population"
+    }
+   ]
+  },
+  {
+   "chapter": 7,
+   "topic": "Exaptation und Gene",
+   "vocab": [
+    {
+     "target": "struttura",
+     "source": "die Struktur"
+    },
+    {
+     "target": "funzione",
+     "source": "die Funktion"
+    },
+    {
+     "target": "evoluzione",
+     "source": "die Evolution"
+    },
+    {
+     "target": "volo",
+     "source": "der Flug"
+    },
+    {
+     "target": "gene",
+     "source": "die Gene"
+    },
+    {
+     "target": "ecologia",
+     "source": "die Ökologie"
+    },
+    {
+     "target": "specie",
+     "source": "die Art"
+    },
+    {
+     "target": "cambiamento",
+     "source": "die Veränderung"
+    }
+   ]
+  },
+  {
+   "chapter": 8,
+   "topic": "Literaturverzeichnis",
+   "vocab": [
+    {
+     "target": "approfondire",
+     "source": "vertiefen"
+    },
+    {
+     "target": "pensare",
+     "source": "denken"
+    },
+    {
+     "target": "vita",
+     "source": "das Leben"
+    },
+    {
+     "target": "meraviglioso",
+     "source": "wunderbar"
+    },
+    {
+     "target": "ragionamento",
+     "source": "der Gedankengang"
+    },
+    {
+     "target": "ritratto",
+     "source": "das Porträt"
+    },
+    {
+     "target": "natura",
+     "source": "die Natur"
+    },
+    {
+     "target": "lezione",
+     "source": "die Vorlesung"
+    }
+   ]
+  }
+ ]
+}

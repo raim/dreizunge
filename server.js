@@ -176,7 +176,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v71';
+const APP_VERSION  = 'v71_g';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -1107,6 +1107,63 @@ function parseTableLesson(raw, lessonNum, topic) {
   if (vocab.length < 1) throw new Error(`Table parse: only ${vocab.length} vocab rows`);
 
   return { title: `Lesson ${lessonNum}`, desc: topic, icon: '📖', vocab, sentences };
+}
+
+// ── Vocab article symmetry (v71_d) ────────────────────────────────────────────────────────────
+// User-reported, measured on storyline sl_15116115 (Italian from German, 8 chapters from one PDF):
+// 42 of 64 vocab items carried a German article with no Italian one — "teoria" / "die Theorie".
+// The direction was never reversed (0 items the other way), and the split was per LESSON, not per
+// item: ch1/2/3/6/7/8 were asymmetric almost throughout, ch4 had articles on BOTH sides, ch5 on
+// neither. That is the signature of a per-CALL decision — each chapter is its own generation, and
+// the model picks a convention fresh each time. The prompt has always said "never an article on one
+// side only", so the missing piece is not instruction but ENFORCEMENT.
+//
+// Deterministic policy: STRIP the lone article. Adding the missing one would need the target noun's
+// gender, which cannot be derived without a model and would be a second place for gender to be
+// wrong; stripping needs nothing and is always safe. Gender is taught by the dedicated `grammar`
+// lesson type, which carries its own `article` field and is untouched by this.
+//
+// Languages absent from the table are treated as article-less, which matches the prompt's own rule
+// ("if either language does not use articles, omit them on both sides"). Arabic is deliberately
+// ABSENT even though it has ال-: it is a bound prefix, not a separate word, so stripping it would
+// corrupt the word itself.
+const VOCAB_ARTICLES = {
+  de: ['der','die','das','ein','eine'],
+  en: ['the','a','an'],
+  nl: ['de','het','een'],
+  it: ['il','lo','la','i','gli','le','un','uno','una'],
+  es: ['el','la','los','las','un','una'],
+  pt: ['o','a','os','as','um','uma'],
+  fr: ['le','la','les','un','une'],
+  ca: ['el','la','els','les','un','una'],
+  el: ['ο','η','το','οι','τα','ένας','μια','ένα'],
+  da: ['en','et'], sv: ['en','ett'], nb: ['en','et','ei'],
+};
+// Elided forms are written without a space ("l'evoluzione", "d'una"), so they need their own list.
+const VOCAB_ELISIONS = { it: ["l'","un'","l’","un’"], fr: ["l'","l’"], ca: ["l'","l’"] };
+// Returns { text, article } — `article` is '' when there was none to take.
+function splitArticle(word, lang) {
+  const s = String(word == null ? '' : word).trim();
+  const arts = VOCAB_ARTICLES[lang];
+  if (!s || !arts) return { text: s, article: '' };
+  for (const el of (VOCAB_ELISIONS[lang] || [])) {
+    if (s.toLowerCase().startsWith(el) && s.length > el.length) return { text: s.slice(el.length).trim(), article: s.slice(0, el.length) };
+  }
+  const m = s.match(/^(\S+)\s+(.+)$/);
+  if (!m) return { text: s, article: '' };          // a single token is the word itself, never an article
+  return arts.includes(m[1].toLowerCase()) ? { text: m[2].trim(), article: m[1] } : { text: s, article: '' };
+}
+// Normalise one lesson's vocab in place. Returns the items that were changed, for logging.
+function normalizeVocabArticles(vocab, lang, srcLang) {
+  const changed = [];
+  (vocab || []).forEach(v => {
+    const t = splitArticle(v.target, lang), s = splitArticle(v.source, srcLang);
+    if (!!t.article === !!s.article) return;         // both or neither: already consistent
+    const before = { target: v.target, source: v.source };
+    if (t.article) v.target = t.text; else v.source = s.text;
+    changed.push({ before, after: { target: v.target, source: v.source } });
+  });
+  return changed;
 }
 
 function sysSrcRepair(lang, srcLang, deepClean, lessonType) {
@@ -2540,7 +2597,120 @@ async function cleanNarrativeText(text, lang) {
            meta: buildGenMeta({ type: 'text_cleanup', model: OLLAMA_MODEL, t0: _t0, promptTokens, completionTokens }) };
 }
 
-// Shared by the /api/storyline-storyboard route and the book-job storyboard post-pass (v68.1) so
+// ── LLM-decided chapters (v71_b) ──────────────────────────────────────────────────────────────
+// The user asked for a model-driven alternative to the deterministic paragraph split, "similar to
+// the current PDF cleaning option", with cleaning foldable into the same prompt.
+//
+// The contract is deliberately NOT the one textCleanup uses. There the model returns TEXT and the
+// server has to prove afterwards that it only deleted (cleanTextChanges). Here the model never
+// returns text at all — it returns paragraph NUMBERS and titles, and the chapters are reassembled
+// from the caller's own paragraphs. Corruption is therefore impossible by construction rather than
+// caught by a checker: the worst a bad answer can do is group the paragraphs badly.
+//
+// assembleChapters is pure and separated from the call so the grouping rules can be tested without
+// a model. Returns [{ title, text, wordCount }].
+function assembleChapters(paras, starts, drop) {
+  const dropped = new Set((drop || []).map(Number).filter(n => Number.isInteger(n) && n >= 1 && n <= paras.length));
+  const cuts = [...new Set((starts || []).map(s => Number(s.start)))]
+    .filter(n => Number.isInteger(n) && n >= 1 && n <= paras.length)
+    .sort((a, b) => a - b);
+  if (!cuts.length) return [];
+  const titleFor = n => (starts.find(s => Number(s.start) === n) || {}).title || '';
+  const out = [];
+  cuts.forEach((from, i) => {
+    const to = i + 1 < cuts.length ? cuts[i + 1] - 1 : paras.length;
+    const body = [];
+    for (let p = from; p <= to; p++) if (!dropped.has(p)) body.push(paras[p - 1]);
+    if (!body.length) return;                         // every paragraph in it was discarded
+    const text = body.join('\n\n');
+    out.push({ title: String(titleFor(from) || '').trim().slice(0, 80),
+               text, wordCount: text.split(/\s+/).filter(Boolean).length });
+  });
+  return out;
+}
+
+// Validate the model's answer against the paragraph count. Returns a problem string, or ''.
+function chapterSplitProblem(obj, n, allowDrop) {
+  if (!obj || !Array.isArray(obj.chapters) || !obj.chapters.length) return 'you returned no chapters';
+  const starts = obj.chapters.map(c => Number(c && c.start));
+  if (starts.some(s => !Number.isInteger(s))) return 'every chapter needs a numeric "start"';
+  if (starts.some(s => s < 1 || s > n)) return `paragraph numbers must be between 1 and ${n}`;
+  for (let i = 1; i < starts.length; i++) if (starts[i] <= starts[i - 1]) return 'the "start" numbers must increase';
+  if (starts[0] !== 1 && !allowDrop) return 'the first chapter must start at paragraph 1';
+  const drop = Array.isArray(obj.drop) ? obj.drop.map(Number) : [];
+  if (!allowDrop && drop.length) return 'you may not discard paragraphs';
+  if (drop.some(d => !Number.isInteger(d) || d < 1 || d > n)) return `discarded numbers must be between 1 and ${n}`;
+  if (assembleChapters(new Array(n).fill('x'), obj.chapters, drop).length === 0)
+    return 'that leaves no chapters at all';
+  return '';
+}
+
+async function splitChaptersLLM(paras, lang, allowDrop) {
+  const _t0 = Date.now();
+  const n = paras.length;
+  const sys = fillPrompt(PROMPTS.chapterSplit.system, {
+    L: langName(lang),
+    DROP: allowDrop ? PROMPTS.chapterSplit.dropClause : PROMPTS.chapterSplit.keepClause,
+  });
+  // Previews only: the model needs enough of each paragraph to see where the subject turns, not
+  // the whole document. Keeps a 60-paragraph book inside a sane prompt.
+  const preview = p => {
+    const w = String(p).split(/\s+/).filter(Boolean);
+    return w.slice(0, 30).join(' ') + (w.length > 30 ? ' …' : '');
+  };
+  const user = paras.map((p, i) => `${i + 1}. ${preview(p)}`).join('\n');
+  console.log(`  [${OLLAMA_MODEL}] Choosing chapters (${n} paragraphs, ${langName(lang)}${allowDrop ? ', may discard furniture' : ''})…`);
+  const ATTEMPTS = 3;
+  let promptTokens = 0, completionTokens = 0, lastProblem = '';
+  for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
+    const feedback = lastProblem ? `\n\nYOUR PREVIOUS ANSWER WAS REJECTED: ${lastProblem}\nAnswer again, JSON only.` : '';
+    let obj = null;
+    try {
+      // Short structured output, like the chapter-title pass: never worth reasoning tokens.
+      const r = await _callLLM(OLLAMA_MODEL, sys, user + feedback, 40 * Math.min(n, 40) + 200,
+        { think: false, timeoutMs: getRequestTimeout() });
+      promptTokens += r.promptTokens || 0; completionTokens += r.completionTokens || 0;
+      const raw = stripRaw(r.text || '');
+      try { obj = JSON.parse(raw); }
+      catch (_) {
+        // Salvage: pull the {start,title} objects out of malformed JSON, same spirit as the
+        // chapter-title post-pass.
+        const objs = raw.match(/\{[^{}]*\}/g) || [];
+        const chapters = objs.map(o => {
+          const sm = o.match(/"start"\s*:\s*(\d+)/);
+          const tm = o.match(/"title"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+          return sm ? { start: Number(sm[1]), title: tm ? tm[1] : '' } : null;
+        }).filter(Boolean);
+        const dm = raw.match(/"drop"\s*:\s*\[([\d,\s]*)\]/);
+        if (chapters.length) obj = { chapters, drop: dm ? dm[1].split(',').map(x => Number(x.trim())).filter(Number.isInteger) : [] };
+      }
+    } catch (e) {
+      if (attempt === ATTEMPTS) break;
+      lastProblem = `the request failed (${e.message})`;
+      continue;
+    }
+    const problem = chapterSplitProblem(obj, n, allowDrop);
+    if (!problem) {
+      const chapters = assembleChapters(paras, obj.chapters, obj.drop);
+      const droppedN = (Array.isArray(obj.drop) ? obj.drop : []).length;
+      console.log(`  Chapter split: ${chapters.length} chapter(s) from ${n} paragraphs`
+        + (droppedN ? `, ${droppedN} discarded` : '') + (attempt > 1 ? `, attempt ${attempt}` : ''));
+      return { chapters, dropped: Array.isArray(obj.drop) ? obj.drop : [],
+               tokens: { promptTokens, completionTokens },
+               meta: buildGenMeta({ type: 'chapter_split', model: OLLAMA_MODEL, t0: _t0, promptTokens, completionTokens }) };
+    }
+    lastProblem = problem;
+    console.warn(`    Chapter split attempt ${attempt}/${ATTEMPTS} rejected: ${problem}`);
+  }
+  // Never leave the caller without chapters: fall back to one chapter per paragraph-run, which is
+  // what the client would have produced on its own.
+  console.warn(`  Chapter split: falling back to the deterministic split — ${lastProblem}`);
+  const err = new Error(lastProblem || 'the model did not return usable chapters');
+  err.code = 'CHAPTER_SPLIT_FAILED';
+  throw err;
+}
+
+
 // the two callers cannot drift: derives the majority story style across the chapters (v55_r — the
 // board should match how the story READS; ties → the first chapter's, all-unstyled → null),
 // generates the board, and persists svg + meta + panels + scheme (+ metered tokens, v59) on the
@@ -3510,6 +3680,16 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
       const k = v.target?.toLowerCase(); if (!k || seen.has(k)) return false; seen.add(k); return true;
     }).slice(0, 8);
     if (lesson.vocab.length < 1) throw new Error(`Only ${lesson.vocab.length} unique vocab items`);
+
+    // v71_d: enforce the prompt's own "never an article on one side only" rule. The model obeys it
+    // per call, so whole chapters came out asymmetric while their neighbours were fine.
+    {
+      const _fixed = normalizeVocabArticles(lesson.vocab, lang, srcLang);
+      if (_fixed.length) {
+        console.warn(`  [lesson ${lessonNum}] article symmetry: fixed ${_fixed.length}/${lesson.vocab.length} item(s)`);
+        _fixed.forEach(c => console.warn(`      • ${c.before.target} / ${c.before.source}  ->  ${c.after.target} / ${c.after.source}`));
+      }
+    }
 
     // Sentences are optional — use whatever we get (may be none).
     if (!Array.isArray(lesson.sentences)) lesson.sentences = [];
@@ -4925,6 +5105,17 @@ http.createServer(async (req, res) => {
       if (text.trim().length < 40) return json(res, 400, { error: 'Text too short to clean.' });
       if (text.length > 20000) return json(res, 400, { error: 'Text too long — split it first.' });
       try { return json(res, 200, await cleanNarrativeText(text, body.lang || 'en')); }
+      catch(e) { return json(res, 502, { error: e.message }); }
+    }
+    if (M === 'POST' && url.pathname === '/api/split-chapters') {
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const paras = Array.isArray(body.paragraphs) ? body.paragraphs.map(p => String(p || '').trim()).filter(Boolean) : [];
+      if (paras.length < 2) return json(res, 400, { error: 'Need at least two paragraphs to split.' });
+      if (paras.length > 400) return json(res, 400, { error: 'Too many paragraphs — split the document first.' });
+      try { return json(res, 200, await splitChaptersLLM(paras, body.lang || 'en', !!body.drop)); }
       catch(e) { return json(res, 502, { error: e.message }); }
     }
     if (M === 'POST' && url.pathname === '/api/pass-mark') {

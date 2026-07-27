@@ -113,7 +113,8 @@ console.log('  _coverageTarget precedence: chapter > storyline > global > 80%: O
   assert.ok(/let _belowThreshold = false, _threshPct = 100;/.test(sc), 'card computes below-threshold state');
   // v70_l: no longer gated on the pass mark — offered whenever a drill round exists, which still
   // includes every below-threshold learner the v60.8 rule was written to protect.
-  assert.ok(/_db\.style\.display = \(!_nextIsDrill && drillAvailable/.test(sc),
+  // v71_d: `!_nextIsDrill` dropped — Next can no longer be the drill, so it cannot double-offer.
+  assert.ok(/_db\.style\.display = drillAvailable\(_l, _s\)/.test(sc),
     'the drill is offered to a below-threshold learner (not just teachers)');
   assert.ok(/complete\.below_threshold/.test(sc) && /complete\.keep_going/.test(sc),
     'a below-threshold hint + "keep going" title are shown');
@@ -130,9 +131,13 @@ console.log('  card: below-threshold drill offer + hint: OK');
   // v69.2c: the drill is no longer the FIRST below-threshold branch (it looped — see §5c), but the
   // v66.1 GUARANTEE is unchanged: below the mark, Next never advances to the next chapter. It
   // offers progress (next lesson → coverage replay) and falls back to the drill.
-  assert.ok(/\} else if \(_belowThreshold && !lesson\._drill && drillAvailable\(/.test(sc),
-    'the drill remains a below-mark Next option (last resort)');
-  assert.ok(/compNext\.onclick = \(\) => \{ startDrill\(\); \};/.test(sc), 'and it starts that drill');
+  // v71_d: the guarantee is now enforced at the button itself rather than by giving Next another
+  // meaning. Below the mark Next is DISABLED, so there is no branch left that could advance.
+  assert.ok(/\} else if \(_belowThreshold && !lesson\._drill\) \{/.test(sc),
+    'a single below-mark branch catches every case');
+  assert.ok(/_nextBlocked = true;/.test(sc) && /compNext\.disabled = true;/.test(sc) &&
+            /compNext\.onclick = null;/.test(sc),
+    'and it locks Next rather than repurposing it');
   assert.ok(/\} else if \(!lesson\._drill && !_belowThreshold && _nextChapter\(\)\)/.test(sc),
     'the next-chapter branch refuses to advance while below the mark');
 }
@@ -150,23 +155,29 @@ console.log('  pass mark enforced: cannot advance below the threshold (v66.1): O
 // advances coverage).
 {
   const sc = ext(html, 'showComplete');
-  const drillAt   = sc.indexOf('if (lesson._drill) {');
-  const nextAt    = sc.indexOf('nextLessonIdx >= 0 && !lesson._drill');
-  const replayAt  = sc.indexOf('_firstCoverageShortLessonIdx() >= 0');
-  const drillCta  = sc.indexOf('_belowThreshold && !lesson._drill && drillAvailable(');
-  assert.ok(drillAt > 0 && drillCta > 0 && drillAt < drillCta,
-    'the drill card gets its own Next branch, ordered BEFORE the drill CTA');
-  // v69.2c (third stuck report): PROGRESS branches must precede the drill CTA. While the drill was
-  // the first below-threshold branch, Next was always "practise your mistakes" — and the drill can
-  // only re-ask wrong VOCAB words, never the sentence questions in the coverage universe, so the
-  // learner looped card → drill → card forever with coverage plateaued. The drill is also offered
-  // as its own #comp-drill button, so Next duplicating it bought nothing.
-  assert.ok(nextAt > 0 && nextAt < drillCta, 'next-unfinished-lesson comes BEFORE the drill CTA');
-  assert.ok(replayAt > 0 && replayAt < drillCta, 'the coverage replay comes BEFORE the drill CTA');
+  const drillAt = sc.indexOf('if (lesson._drill) {');
+  const nextAt  = sc.indexOf('nextLessonIdx >= 0 && !lesson._drill');
+  const belowAt = sc.indexOf('_belowThreshold && !lesson._drill) {');
+  assert.ok(drillAt > 0, 'the drill card keeps its own Next branch');
+  assert.ok(nextAt > 0 && drillAt < nextAt, 'ordered before the in-chapter next-lesson branch');
+  // v71_d: the drill CTA and coverage-replay Next branches are GONE — below the mark Next is locked
+  // and both routes are offered as their own buttons. The v69.2c looping report cannot recur,
+  // because Next no longer means "practise your mistakes" under any condition.
+  assert.ok(belowAt > nextAt,
+    'progress within the chapter still wins over the below-mark lock: a learner with lessons left is not blocked');
+  assert.ok(!/_belowThreshold && !lesson\._drill && drillAvailable\(/.test(sc),
+    'Next is never the drill any more');
+  assert.ok(!/_belowThreshold && !lesson\._drill && _firstCoverageShortLessonIdx\(\) >= 0/.test(sc),
+    'nor the coverage replay');
   assert.ok(/endDrill\(\);\s*const idx = _firstUnfinishedLessonIdx\(APP\.lessonData\);\s*if \(idx >= 0\) startLesson\(idx\); else showComplete\(true\);/.test(sc),
     'drill Next returns to the launching chapter: resume its questions, else its completion card');
-  assert.ok(/else if \(_belowThreshold && !lesson\._drill && _firstCoverageShortLessonIdx\(\) >= 0\)/.test(sc),
-    'below threshold with no drill → the coverage-replay fallback fires');
+  // The replay route still EXISTS — it moved from Next onto the repeat button, which is the whole
+  // point of the change. If it ever stops being reachable the v69.2 dead end returns.
+  const rf = ext(html, 'repeatForCoverage');
+  assert.ok(/_firstCoverageShortLessonIdx\(\)/.test(rf) && /startLesson\(target\)/.test(rf),
+    'the coverage replay is still reachable, now via the repeat button');
+  assert.ok(/id="comp-repeat"[^>]*onclick="repeatForCoverage\(\)"/.test(html),
+    'and that button is wired on the card');
   const helper = ext(html, '_firstCoverageShortLessonIdx');
   assert.ok(/typeof lessonCoverage !== 'function'/.test(helper), 'the helper is typeof-guarded like its siblings');
 

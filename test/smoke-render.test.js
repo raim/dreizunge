@@ -115,10 +115,38 @@ console.log('  _renderStorylineScreen: real + teacher + unresolvable chain: OK')
   shouldNotThrow('showComplete (review)', base + 'showComplete(true);');
   // Below the pass mark: the branch that reads _belowThreshold (the TDZ site) and wires the drill.
   seed();
+  // Every lesson PLAYED but coverage still short — the state v66.1 exists for. Without marking the
+  // lessons done, Next legitimately points at the next lesson IN this chapter and no lock applies.
   shouldNotThrow('showComplete (below pass mark)', base + `
     APP.lessonData.coverageTarget = 0.9;
     APP.progress.solved[APP.lessonData.topic] = {};
+    APP.progress.completed[APP.lessonData.topic] = {};
+    (APP.lessonData.lessons || []).forEach(L => { if (L && L.id) APP.progress.completed[APP.lessonData.topic][L.id] = true; });
     showComplete();`);
+  // v71_d (user-reported): below the mark, Next is LOCKED rather than repurposed. Asserted on the
+  // live card because the whole point is what the learner can click — a source check would not see
+  // the disabled flag, and this branch chain has produced three user-reported dead ends already.
+  {
+    const nx = C.document.getElementById('comp-next');
+    assert.strictEqual(nx.disabled, true, 'below the pass mark, Next is disabled');
+    assert.ok(nx.classList.contains('locked'), 'and visibly greyed');
+    assert.strictEqual(nx.onclick, null, 'and cannot be activated');
+    assert.notStrictEqual(C.document.getElementById('comp-repeat').style.display, 'none',
+      'while Repeat is offered as its own button');
+    assert.strictEqual(C.document.getElementById('comp-title').textContent, UI.en['complete.keep_going'],
+      'the SAME card is reused, with "Keep going!" in place of "Lesson complete!"');
+  }
+  // …and the lock does not persist into the next completion rendered into the same DOM.
+  seed();
+  C.run(base + `
+    APP.lessonData.coverageTarget = 0;
+    APP.progress.solved[APP.lessonData.topic] = {};
+    showComplete();`, 'above-mark');
+  {
+    const nx = C.document.getElementById('comp-next');
+    assert.strictEqual(nx.disabled, false, 'at or above the mark, Next is usable again');
+    assert.ok(!nx.classList.contains('locked'), 'and no longer greyed');
+  }
   // A drill's own card: its Next branch was the v69.2 dead end.
   seed();
   shouldNotThrow('showComplete (drill card)', base + `
@@ -168,6 +196,48 @@ console.log('  showComplete: fresh, review, below-mark, drill card, teacher: OK'
     }
   }
   console.log(`  renderEx: ${typeNames.length} exercise type(s) rendered without throwing (${typeNames.join(', ')}): OK`);
+}
+
+// ── 4b. A wrong TYPED answer renders the letter-by-letter diff (v71_c) ───────
+// check() is a render path: it writes feedback HTML and touches the input element. The unit test
+// covers the alignment; this covers the wiring — that check() actually reaches typedDiffHtml, and
+// that the branch it lives in still runs for all three typed types without throwing.
+{
+  const typed = ['listen_type', 'type_plural', 'type_conjugation'];
+  for (const type of typed) {
+    seed();
+    shouldNotThrow(`check(${type}, wrong)`, `(() => {
+      APP.cur = { lessonIdx: 0, exercises: [{ type: ${JSON.stringify(type)}, correct: 'Haus',
+                  target: 'Haus', source: 'house', pronoun: 'er' }], cur: 0, correct: 0, total: 0,
+                  mistakes: 0, hearts: 3, streak: 0, bestStreak: 0, answered: false, sel: null,
+                  placed: [], usedIdx: [] };
+      document.getElementById('type-in').value = 'hause';
+      check();
+    })();`);
+    const fb = C.document.getElementById('fb').innerHTML;
+    assert.ok(/typed-diff/.test(fb), `check(${type}) shows the letter diff for a wrong typed answer`);
+    assert.ok(/class="dc bad"/.test(fb), `check(${type}) marks the offending character`);
+  }
+  // A correct answer must NOT show a diff — there is nothing to point at.
+  seed();
+  C.run(`
+    APP.cur = { lessonIdx: 0, exercises: [{ type: 'listen_type', correct: 'Haus', target: 'Haus' }],
+                cur: 0, correct: 0, total: 0, mistakes: 0, hearts: 3, streak: 0, bestStreak: 0,
+                answered: false, sel: null, placed: [], usedIdx: [] };
+    document.getElementById('type-in').value = 'haus';
+    check();`, 'check-correct');
+  assert.ok(!/typed-diff/.test(C.document.getElementById('fb').innerHTML),
+    'a correct answer (case-insensitive) shows no diff');
+  // A non-typed type keeps the plain correct answer.
+  seed();
+  C.run(`
+    APP.cur = { lessonIdx: 0, exercises: [{ type: 'mcq_target_source', correct: 'Haus', target: 'Haus' }],
+                cur: 0, correct: 0, total: 0, mistakes: 0, hearts: 3, streak: 0, bestStreak: 0,
+                answered: false, sel: 'Baum', placed: [], usedIdx: [] };
+    check();`, 'check-mcq');
+  const mcqFb = C.document.getElementById('fb').innerHTML;
+  assert.ok(!/typed-diff/.test(mcqFb) && /Haus/.test(mcqFb), 'a multiple-choice answer still shows the plain answer');
+  console.log('  check(): typed diff on 3 typed types, absent when correct and for non-typed types: OK');
 }
 
 // ── 5. Muted / no-voice, the other render branch ─────────────────────────────
@@ -286,6 +356,12 @@ console.log('  account modal: TLS banner shown/hidden across 4 states: OK');
       {target:'HAUS', source:'house'}, {target:'HUND', source:'dog'},
       {target:'SONNE', source:'sun'},  {target:'NACHT', source:'night'},
       {target:'STERN', source:'star'}, {target:'BAUM', source:'tree'} ] };
+    // Swapping a lesson's CONTENT invalidates the coverage universe — the app does this in
+    // _postLessonEdit and on loading a set, and the cache is keyed on topic|lessonIdx so it cannot
+    // notice the swap by itself. The fixture must do the same or _crosswordCreditable checks the
+    // new lesson's qids against the OLD lesson's universe and credits nothing. (Latent since the
+    // cache was added; surfaced by v71_f, which made buildExercises populate the cache too.)
+    if (typeof _invalidateQidUniverse === 'function') _invalidateQidUniverse();
     true;`);
 
   assert.strictEqual(C.run(`_crosswordAvailable(APP.lessonData.lessons[0])`), true,
@@ -696,22 +772,34 @@ console.log('  account modal: TLS banner shown/hidden across 4 states: OK');
   shouldNotThrow('showComplete (stuck below pass mark)', `showComplete();`);
   assert.ok(C.run(`_firstCoverageShortLessonIdx() >= 0`), 'the scenario really is replayable');
   {
+    // v71_d: Next is LOCKED here rather than quietly becoming ↻ Repeat. The v69.2 guarantee this
+    // scenario exists for is unchanged and is what the next assertions check: the learner must
+    // never be left on this card with no route up. The route is now a button that says what it is.
     const nx = C.document.getElementById('comp-next');
-    assert.strictEqual(nx.textContent, '↻', 'below the mark with nothing left to play, the primary action is REPEAT');
-    assert.ok(nx.title && nx.title !== '→', 'the repeat button keeps a tooltip');
-    // The crossword is one of the ways up and must be offered here.
-    assert.strictEqual(C.document.getElementById('comp-crossword').style.display, '',
-      'the crossword is offered as a route to the pass mark');
-    // And the drill must never appear both as the primary action and as its own button.
+    assert.strictEqual(nx.disabled, true, 'below the mark with nothing left to play, Next is locked');
+    assert.ok(nx.classList.contains('locked'), 'and shown as unavailable');
+    assert.ok(nx.title && nx.title !== '→', 'with a tooltip saying what is still required');
+    // THE v69.2 RULE: at least one way up is offered. This is the assertion that must never soften.
+    const rp = C.document.getElementById('comp-repeat');
+    const cw = C.document.getElementById('comp-crossword');
     const db = C.document.getElementById('comp-drill');
-    if (nx.textContent === '🎯') assert.strictEqual(db.style.display, 'none', 'the drill is not offered twice');
+    const routes = [rp, cw, db].filter(b => b.style.display !== 'none');
+    assert.ok(routes.length >= 1, 'the learner is not dead-ended — at least one route to the pass mark is offered');
+    assert.notStrictEqual(rp.style.display, 'none', 'replaying is offered, since the scenario is replayable');
+    assert.strictEqual(cw.style.display, '', 'the crossword is offered as a route to the pass mark');
   }
 
-  // The no-duplicate rule, tested directly rather than left to a scenario that may not arise:
-  // whenever the primary action IS the drill, the standalone drill button must be hidden.
+  // v71_d: the no-duplicate rule is now structural rather than conditional. Next can no longer BE
+  // the drill or the repeat, so the standalone buttons cannot double an icon Next is wearing — the
+  // guard is that no two visible action buttons ever show the same icon, which is the property the
+  // old _nextIsDrill flag was protecting by hand.
   {
-    const dup = C.run(`/!_nextIsDrill && drillAvailable/.test(String(showComplete))`);
-    assert.strictEqual(dup, true, 'drill visibility is gated on the primary action not already being the drill');
+    const icons = ['comp-repeat', 'comp-drill', 'comp-crossword', 'comp-next']
+      .map(id => C.document.getElementById(id))
+      .filter(b => b && b.style.display !== 'none')
+      .map(b => b.textContent);
+    assert.strictEqual(new Set(icons).size, icons.length,
+      `no two visible action buttons share an icon (got ${icons.join(' ')})`);
   }
 
   // And it hides when the lesson cannot make a puzzle, rather than opening an empty grid.

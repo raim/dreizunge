@@ -5,6 +5,30 @@
 > from a true baseline rather than a repeatedly-patched one. `roadmap_v70.md` is now a **closed
 > archive** — everything still open has been carried here.
 >
+> **`v71_g` (session 6): tests + documentation only, app byte-identical to `v71_f`.** Answered two
+> questions with regression guards — repeat-focus correctly does NOT extend to the deterministic
+> synonyms/word_forms/grammar builders, and error-hunt lessons gate chapter completion on being
+> PLAYED (they count but add 0 coverage). Suite **146**. See `v71_session6_notes.md`.
+>
+> **`v71_f` shipped** (session 5): repeat now reaches the unsolved questions a single derivation
+> missed. Pass mark reached in 2 rounds instead of up to 10. Suite **145**.
+> See `v71_session5_notes.md`.
+>
+> **`v71_e` shipped** (session 4): merged the user's `ui_json.bak` — +30 translations (including
+> `crossword.done` in 7 languages), 203 stale `{lang}` entries held back, guard widened to all 7
+> rewritten keys.
+>
+> **`v71_d` shipped** (session 4): vocab article symmetry (diagnosed from the user's own
+> lessons.json), the {lang} grammar fix, and the below-pass-mark Next lock. Suite **144**.
+> See `v71_session4_notes.md`.
+>
+> **`v71_c` shipped** (session 3): the typed-answer letter-by-letter diff, with real sequence
+> alignment. Suite **142**. See `v71_session3_notes.md`.
+>
+> **`v71_b` shipped** (session 2): PDF chapters from the document's own paragraph structure, an
+> LLM chapter-split option, and three defects found on the way — one of them pre-existing text
+> corruption in every length-split chapter. Suite **141**. Full detail in `v71_session2_notes.md`.
+>
 > **The v71 cut is NOT a pure version bump.** It carries updated `ui.json` (a partial translation
 > pass) and updated `lessons.json` (283 topics, 80 storylines), plus one test whose assertion was
 > restated. Suite green at **138**, `check-inline` 0 on both builds.
@@ -13,15 +37,15 @@
 
 ## How to start a session (read these, in order)
 1. **This file** — the highest-numbered `build_history/roadmap_v*.md` is always the current one.
-2. The two most recent session-notes files: `build_history/v70_session1_notes.md` (notes 1–16 cover
-   the whole v70 line) and any `v71_session*` notes once they exist.
+2. The two most recent session-notes files: `build_history/v71_session4_notes.md` (`v71_d`) and
+   `build_history/v71_session3_notes.md` (`v71_c`). Sessions 1–2 cover the cut and `v71_b`.
 3. Establish the green baseline BEFORE touching anything: `node test/run.js` and
    `node test/check-inline.js` (0 failures on both `index.html` and `docs/index.html`).
    **The runner reports its own total** (added v70): the closing line reads
    `ALL CHECKS PASSED (138 checks)`, and a failing run reads `FAILED <n> of 138: <labels>`.
    **Quote that line — never hand-derive the figure.** A hand-derived count once drifted to 152
    against an actual 133 and sat in two documents unnoticed; that is what the self-report prevents.
-   Currently **138** (133 `test/*.test.js` files + 5 static checks). `--quick` reports **119** in
+   Currently **146** (142 `test/*.test.js` files + 5 static checks). `--quick` reports **127** in
    ~10s, skipping the server-spawning steps — a smaller number there is correct, not a regression.
 
 ---
@@ -47,20 +71,99 @@
 
 ---
 
+## ✅ What shipped in `v71_f`
+
+- **Replay pool top-up.** `assembleCoverageRound` could only order the pool it was given, and the
+  standard builder samples one exercise type per vocab item — so a replay's pool held 2 unsolved
+  items out of 6 available. Re-derives until the missing unsolved questions surface.
+- Surfaced a latent universe-cache staleness in a test fixture (see session notes §4).
+
+---
+
+## ✅ What shipped in `v71_d`
+
+- **Vocab article symmetry enforced.** The prompt always forbade a one-sided article; nothing
+  checked. Measured 42/64 asymmetric in `sl_15116115`, split per CHAPTER (each chapter is its
+  own call, the model picks a convention per call). Strips the lone article — adding one needs
+  gender, which is not derivable deterministically.
+- **`{lang}` no longer used attributively** in 7 strings; 203 stale translations cleared.
+  Cross-language attributive detection turned out NOT to be automatable (postpositional
+  languages), so the guard checks the English source plus a language-neutral staleness rule.
+- **Below the pass mark, Next is locked** instead of silently becoming Repeat or Drill. Two
+  unreachable branches and two always-false flags removed.
+
+---
+
+## ✅ What shipped in `v71_c`
+
+- **Typed-answer letter diff** for `listen_type` / `type_plural` / `type_conjugation`. Real
+  sequence alignment, not positional comparison — `hause` vs `haus` marks ONE column, not the
+  tail of the word. Grapheme-aware; respects the scorer's case/accent leniency; falls back to
+  the plain correct answer whenever no useful diff exists.
+
+---
+
+## ✅ What shipped in `v71_b` (full detail in `v71_session2_notes.md`)
+
+- **PDF paragraph structure from GEOMETRY** — `_extractPdfText` kept only text, so 15 paragraphs
+  arrived as one. The modal line gap IS the body leading; anything clearly above it is a break.
+  Spacing signal for articles, indent signal for novels (only when spacing found nothing).
+- **Chapter per paragraph**, built on `_sentenceUnits` so the v70_k repair is inherited. Headings
+  title the following section and stay in the body; a 40-word floor absorbs stubs. The size slider
+  is deliberately ignored in this mode. Real article: 15 paragraphs → 8 chapters.
+- **Split-mode control** `¶ / ↔ / 📄 / ✨`, paragraph as the default, guarded through a live DOM.
+- **LLM chapter split** — the model returns paragraph NUMBERS, never text, so corruption is
+  impossible to express rather than detected afterwards. Cleaning folds in as an optional drop list.
+- **Pre-existing corruption fixed**: `500.000 → 500. 000`, `S.J. → S. J.` in every length-split
+  chapter since the splitter was written.
+- **`_autoTitle`** no longer returns the tail of a long opening sentence.
+
+---
+
 ## 🔭 Open work carried into v71
 
 ### Near-term, concrete
+- **[✅ DONE in `v71_f`, scope confirmed in `v71_g`] Repeat focuses on unsolved questions.**
+  Extends to standard/vocab only, correctly: synonyms/word_forms/grammar are deterministic
+  (one build == whole universe), so they need no top-up — pinned in `unit-replay-focus` §8. The ordering was already
+  coverage-aware; the POOL was the problem — one derivation surfaces ~half the universe. Now
+  topped up by re-deriving, as the mixed builder already did. 80%/100% targets both reach the
+  mark in 2 rounds (were 2.84 / 5.48 avg, worst 10). Replays only; first play unchanged.
+
+- **[quality — from `v71_d` §1] Cross-chapter vocab duplication.** `sl_15116115` teaches 9 words
+  twice, 4 of them with clashing article forms (`legge`/`la legge`). `PROMPTS.vocab.prevHint`
+  already passes prior vocab to the model and is being ignored — so this is a prompt-adherence
+  problem, and the deterministic option is to drop a duplicate at save time.
+- **[NEXT — owed from `v71_c`] Browser pass on the typed diff.** Column alignment, strike-through
+  and RTL order are unverified — the stub DOM does not parse `innerHTML`, so only the wiring is
+  proven. Long sentences are the open question: the two rows wrap independently, and whether
+  they still read as columns after a wrap has not been seen.
+- **[NEXT — owed from `v71_b`] Browser pass on the PDF chapter work.** Nothing in the split-mode
+  control or the ✨ model pass has been seen in a browser. The session notes carry a "how to see it
+  work" for both. **Also empirical:** are the model's groupings actually better than the
+  deterministic paragraph split? The fake model cannot answer that; if they are not, ¶ stays the
+  default and ✨ stays an option, which is how it ships.
+- **[small — `v71_b` interaction, logged not fixed] 🧹 cleanup deletes section headings.**
+  `cleanExtractedText` rule 3 drops unpunctuated lines under 20 letters, which is exactly what a
+  heading is (`"Selezione naturale"` = 17). Headings now MEAN something — they title chapters — so
+  the rule costs a title whenever cleanup is on, which is the PDF default. Any fix must not
+  resurrect what rule 3 exists to remove (bylines, nav crumbs): a byline is also a short
+  unpunctuated line, and "followed by a substantial paragraph" does not separate them (in the
+  user's article that rule keeps the kicker `scienze` and drops the title `Evoluzione`). Probably
+  wants heading detection to run on the PRISTINE text before cleanup, which is a bigger change than
+  it looks.
+- **[i18n] `_sentenceSplit` abbreviation limitation.** A period followed by a space still ends a
+  sentence, so `N. Eldredge` and `z. B.` split. Costs a split point, never text. Only worth fixing
+  with a per-language abbreviation list, which is why it is logged rather than guessed at.
 - **[NEXT — carried, still open] Drill result card is redundant.** A drill session shows its own
   completion card; it should return to the card the learner came from. Touches the `showComplete`
   branch chain and `APP._drillPrev`. **Deferred twice on purpose:** that branch order has already
   fixed three user-reported dead ends (v66.1, v69.2) and the failure mode is a learner left with no
   forward affordance — quiet, and only visible in a browser. Wants a session that re-reads the
   branch order cold. Smallest item here.
-- **[NEXT] Typing exercises should show a letter-by-letter diff.** When a typed answer is wrong,
-  show BOTH the typed text and the correct one, marking the differing characters. Affects
-  `listen_type` and any free-text answer. Self-contained and fully unit-testable — but note it
-  needs proper **sequence alignment**, not positional comparison: `hause` vs `haus` differs by one
-  insertion, not four substitutions. Highest learner value of the open items.
+- **[✅ DONE in `v71_c`] Typing letter-by-letter diff.** Levenshtein backtrace over graphemes;
+  per-character equality reuses `normDiacritics` so the diff never marks what scoring forgave.
+  Live-DOM covered in `smoke-render` §4b. See `v71_session3_notes.md`.
 - **[quality — specified against real data] Deterministic vocab QC.** Validated against the user's
   pre-edit export (`lessons_witharticles.json`, storyline `sl_613012330`):
   - **Article mismatch** — source carries a `der/die/das/ein…` article, target carries none.
@@ -84,6 +187,17 @@
   chunk far more coarsely than a European one. Not yet reported; real.
 
 ### i18n — partially done, needs a second pass
+- **`v71_e` merged `ui_json.bak`**: +30 translations, `crossword.done` now covered in
+  nl/pt/fr/de/it/pl/es (was "translated nowhere"), `pl` up to 556 keys. **1137 entries still
+  outstanding**: best languages missing 21, the other 22 missing 45.
+- **`v71_d` added `complete.next_locked` and REWROTE 7 strings** (§2 of the session notes),
+  deleting **203 stale translations** that embedded the ungrammatical `{lang}` shape. Those 7
+  keys now fall back to English in 29 languages until re-translated — the largest single item
+  in the translate queue.
+- **`v71_c` added 1 `en`-only key**: `check.you_typed`.
+- **`v71_b` added 12 `en`-only keys** (listed in `v71_session2_notes.md`): the four split-mode
+  buttons and label, and the seven ✨ chapter-split strings. `form.split_per_page` is now unused by
+  the client but kept — it is already translated into six languages.
 - **558 missing entries across 24 keys.** The v71 translation pass covered **6 of 29 languages**
   (nl pt fr de it es), all partial, and was exported before v70_o — so `crossword.done` was never
   in it. 23 languages are untouched: `tr hi ar sv ru zh ko pl ja he uk cs vi id ro th el fi hu da

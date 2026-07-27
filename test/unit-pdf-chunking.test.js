@@ -21,9 +21,9 @@ function extract(name) {
 const sentEnd = src.match(/const _SENT_END_RE = ([^;]+);/);
 assert.ok(sentEnd, 'the module-level sentence-end pattern exists');
 const M = new Function(
-  'const _SENT_END_RE = ' + sentEnd[1] + ';\n' +
+  'const _SENT_END_RE = ' + sentEnd[1] + ';\n' + src.match(/const _TITLE_MAX = \d+;/)[0] + '\n' +
   extract('_cleanPdfText') + '\nlet _lastCleanStats = null;\n' +
-  extract('_sentenceUnits') + extract('_unitsToText') +
+  extract('_sentenceSplit') + extract('_sentenceUnits') + extract('_unitsToText') +
   extract('_splitIntoChunks') + extract('_autoTitle') +
   '\nreturn { _cleanPdfText, _sentenceUnits, _unitsToText, _splitIntoChunks };')();
 
@@ -155,5 +155,29 @@ assert.ok(/const units = _sentenceUnits\(c\.text\|\|''\);/.test(src.replace(/\s+
        || /_sentenceUnits\(c\.text/.test(src), 'the chunk editor lists sentence units');
 assert.ok(/const units = _sentenceUnits\(c\.text \|\| ''\);/.test(src), 'pdfDoSplit splits on sentence units');
 assert.ok(!/const paras = \(c\.text\|\|''\)\.split\(\/\\n\\n\+\//.test(src), 'the paragraph-based editor is gone');
+
+// ── 8. A glued period is not a sentence end (v71_b) ─────────────────────────
+// Pre-existing defect, found while asserting word-parity on paragraph chapters: the splitter cut
+// at every period, and _unitsToText rejoined the pieces with a space, so chapter text came back
+// altered. These strings are from the user's own article ("500.000 anni fa", "S.J. Gould").
+{
+  const cases = [
+    'Con i Neanderthal abbiamo avuto un antenato vissuto sempre in Africa 500.000 anni fa.',
+    'S.J. Gould, 1989, La vita meravigliosa, Feltrinelli, Milano, 1990.',
+    'Er kam um 15.30 Uhr an. Dann ging er.',
+    'Die Datei heisst bericht.txt und liegt dort.',
+  ];
+  cases.forEach(c => {
+    const round = M._splitIntoChunks(c, 500).map(x => x.text).join(' ');
+    assert.strictEqual(round, c, `chunking round-trips this text unchanged: ${JSON.stringify(c)}`);
+  });
+  // The number itself must survive inside a unit, not be split across two.
+  const u = M._sentenceUnits('Es waren 500.000 Menschen.');
+  assert.strictEqual(u.length, 1, '500.000 is one sentence, not two');
+  assert.ok(/500\.000/.test(u[0].text), 'and the number is intact');
+  // Real sentence boundaries still split.
+  assert.strictEqual(M._sentenceUnits('Er ging. Sie blieb.').length, 2, 'real sentence ends still split');
+  console.log('  glued periods (500.000, S.J., 15.30, bericht.txt) no longer split or corrupt text');
+}
 
 console.log('unit-pdf-chunking: ALL PASSED');

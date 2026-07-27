@@ -52,7 +52,18 @@ const srv = http.createServer(async (req, res) => {
     const sys = (msgs.find(m => m.role === 'system') || {}).content || '';
     const usr = msgs.filter(m => m.role === 'user').map(m => m.content).join('\n') || '';
     let kind, content;
-    if (/write a short, coherent story in Standard/i.test(sys)) {
+    if (/You divide a text into chapters/i.test(sys)) {
+      // v71_b chapter split: answer with paragraph NUMBERS only, never text — the same contract
+      // the server enforces. Cuts at 1 and the midpoint so the grouping is visibly not 1:1 with
+      // paragraphs, and exercises the optional drop list when the prompt allows one.
+      kind = 'chapter_split';
+      const nums = (usr.match(/^\s*(\d+)\./gm) || []).map(x => parseInt(x, 10)).filter(Number.isFinite);
+      const n = nums.length ? Math.max(...nums) : 1;
+      const out = { chapters: [{ start: 1, title: 'Erstes Kapitel' }] };
+      if (n >= 3) out.chapters.push({ start: Math.ceil(n / 2), title: 'Zweites Kapitel' });
+      if (/list the numbers you are discarding/i.test(sys) && n >= 4) out.drop = [n];
+      content = JSON.stringify(out);
+    } else if (/write a short, coherent story in Standard/i.test(sys)) {
       // V2 step 1: a Standard-German story (plain text, no blocks).
       kind = 'std_story';
       content = 'Heute ist ein schöner Tag. Ich habe ein Mädchen gesehen.';

@@ -22,7 +22,8 @@ function extract(name) {
   return html.slice(at, i);
 }
 
-const src = ['splitWords', 'wordCount', '_autoTitle', '_trimSpan', '_normalizeSelections', '_selectionsToChunks'].map(extract).join('\n\n');
+const consts = [html.match(/const _SENT_END_RE = [^;]+;/)[0], html.match(/const _TITLE_MAX = \d+;/)[0]].join('\n');
+const src = consts + '\n' + ['splitWords', 'wordCount', '_sentenceSplit', '_autoTitle', '_trimSpan', '_normalizeSelections', '_selectionsToChunks'].map(extract).join('\n\n');
 const mod = new Function(src + '\nreturn { _autoTitle, _trimSpan, _normalizeSelections, _selectionsToChunks };')();
 const { _trimSpan, _normalizeSelections, _selectionsToChunks } = mod;
 

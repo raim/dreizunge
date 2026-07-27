@@ -117,6 +117,13 @@ run('unit: provenance-stamp source heal (v68.1)', 'node', [path.join(__dirname, 
 run('unit: student-mode flagging + flag-mode stamps (v68.1)', 'node', [path.join(__dirname, 'unit-student-flags.test.js')]);
 run('unit: deterministic PDF/text-upload cleanup (v68.1)', 'node', [path.join(__dirname, 'unit-pdf-cleanup.test.js')]);
 run('unit: sentence-based PDF chunking (v70_k)', 'node', [path.join(__dirname, 'unit-pdf-chunking.test.js')]);
+run('unit: PDF paragraph detection from geometry (v71_b)', 'node', [path.join(__dirname, 'unit-pdf-paragraphs.test.js')]);
+run('unit: LLM chapter split contract (v71_b)', 'node', [path.join(__dirname, 'unit-chapter-split.test.js')]);
+run('unit: typed-answer letter diff (v71_c)', 'node', [path.join(__dirname, 'unit-typed-diff.test.js')]);
+run('unit: vocab article symmetry (v71_d)', 'node', [path.join(__dirname, 'unit-vocab-articles.test.js')]);
+run('unit: replay focuses on unsolved questions (v71_f)', 'node', [path.join(__dirname, 'unit-replay-focus.test.js')]);
+run('unit: error-hunt / pass-mark interaction (v71_g)', 'node', [path.join(__dirname, 'unit-errorhunt-passmark.test.js')]);
+run('unit: {lang} placeholder grammar (v71_d)', 'node', [path.join(__dirname, 'unit-lang-placeholder.test.js')]);
 run('unit: coverage-driven mixed round + drill credit-back (v69.1)', 'node', [path.join(__dirname, 'unit-mixed-coverage-round.test.js')]);
 run('unit: ui translation QC (validator + translate-ui --qc) (v69_f)', 'node', [path.join(__dirname, 'unit-ui-qc.test.js')]);
 run('unit: error-hunt validation + retry (v69_g)', 'node', [path.join(__dirname, 'unit-error-hunt-validation.test.js')]);
@@ -174,6 +181,7 @@ if (!quick) {
   run('e2e: upload filename stored on storyline', 'node', [path.join(__dirname, 'e2e-bookfile.test.js')]);
   run('e2e: word_forms lesson generation', 'node', [path.join(__dirname, 'e2e-word-forms.test.js')]);
   run('e2e: synonyms context sentences', 'node', [path.join(__dirname, 'e2e-synonyms.test.js')]);
+  run('e2e: LLM chapter split', 'node', [path.join(__dirname, 'e2e-chapter-split.test.js')]);
   run('e2e: re-create storyline lessons', 'node', [path.join(__dirname, 'e2e-recreate.test.js')]);
   run('e2e: model picker + table-format + split-translation + provenance', 'node', [path.join(__dirname, 'e2e-models.test.js')]);
 } else {

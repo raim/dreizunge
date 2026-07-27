@@ -307,9 +307,16 @@ assert.ok(/style="display:none/.test(html.match(/<button[^>]*id="comp-drill"[^>]
 // v70_l: the pass-mark gate was REMOVED. v60.8 required a below-threshold learner to be offered
 // the drill — that still holds, because the rule is now a superset: anyone with mistakes to drill
 // is offered it. Hiding it once a lesson was "finished" left a learner below the STORYLINE mark
-// with no route back in. `!_nextIsDrill` keeps it from appearing twice (v70_g).
-assert.ok(/_db\.style\.display = \(!_nextIsDrill && drillAvailable\(_l, _s\)\) \? '' : 'none';/.test(html),
-  'drill shows whenever a round can be built, and never twice (v70_l)');
+// with no route back in.
+// v71_d: the `!_nextIsDrill` half is gone with the flag. Next can no longer BE the drill (below the
+// pass mark it is locked, above it it means forward), so double-offering is now impossible by
+// construction rather than prevented by a flag. smoke-render asserts no two visible action buttons
+// share an icon, which is the property that guard was really protecting.
+assert.ok(/_db\.style\.display = drillAvailable\(_l, _s\) \? '' : 'none';/.test(html),
+  'drill shows whenever a round can be built (v70_l), with no pass-mark gate');
+// The flag must be gone from the CODE; the comment explaining its removal legitimately names it.
+assert.ok(!/(let|var)\s+_nextIsDrill|!_nextIsDrill\b|_nextIsDrill\s*=/.test(html),
+  'and the vestigial flag is gone rather than left always-false');
 // Anchor on the CALL, not the bare name: showComplete's own comments mention
 // recordLearnedFromLesson, so indexOf() on the name matched a comment — a guard that only looked
 // like one, and it passed a mutation that moved the block above the ledger update.
