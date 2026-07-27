@@ -5,6 +5,10 @@
 > from a true baseline rather than a repeatedly-patched one. `roadmap_v70.md` is now a **closed
 > archive** — everything still open has been carried here.
 >
+> **`v71_h` shipped** (session 7): removed the redundant drill result card (a finished drill now
+> returns to the real chapter card) and made every completion card show the same button row,
+> greyed when unavailable. Suite **147**. See `v71_session7_notes.md`.
+>
 > **`v71_g` (session 6): tests + documentation only, app byte-identical to `v71_f`.** Answered two
 > questions with regression guards — repeat-focus correctly does NOT extend to the deterministic
 > synonyms/word_forms/grammar builders, and error-hunt lessons gate chapter completion on being
@@ -45,7 +49,7 @@
    `ALL CHECKS PASSED (138 checks)`, and a failing run reads `FAILED <n> of 138: <labels>`.
    **Quote that line — never hand-derive the figure.** A hand-derived count once drifted to 152
    against an actual 133 and sat in two documents unnoticed; that is what the self-report prevents.
-   Currently **146** (142 `test/*.test.js` files + 5 static checks). `--quick` reports **127** in
+   Currently **147** (143 `test/*.test.js` files + 5 static checks). `--quick` reports **127** in
    ~10s, skipping the server-spawning steps — a smaller number there is correct, not a regression.
 
 ---
@@ -68,6 +72,19 @@
 - **Synonym context** (v70_m, v70_n) — trimmed to the sentence holding the word, then *clamped*,
   because the ten worst cases were each a single enormous sentence.
 - **Storyline full-story translation toggle** (v70_p).
+
+---
+
+## ✅ What shipped in `v71_h`
+
+- **Drill result card removed.** A finished drill returns to the launching chapter's real
+  completion card (below-mark or complete) instead of a stripped waystating card. endDrill runs
+  at the single drill exit (renderEx), rendering the real card in review mode so lesson/index
+  resolve against the restored topic. The old `if(lesson._drill)` branch is kept as a marked
+  defensive fallback (it fixed three dead ends).
+- **Consistent button row.** Next / Repeat / Drill / Crossword / Back are always present on
+  every card, greyed + disabled when unavailable, via new `_compBtnState`. Card layout no
+  longer shifts between states.
 
 ---
 

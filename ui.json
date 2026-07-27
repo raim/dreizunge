@@ -576,7 +576,11 @@
   "pdf.llmsplit_failed": "The model could not choose chapters — kept the paragraph split",
   "pdf.llmsplit_too_short": "Too few paragraphs to group",
   "check.you_typed": "You typed",
-  "complete.next_locked": "Reach {pct}% solved to continue"
+  "complete.next_locked": "Reach {pct}% solved to continue",
+  "drill.done": "Drill complete — back to your progress",
+  "drill.none": "No mistakes to drill yet",
+  "complete.repeat_none": "Nothing left to replay here",
+  "crossword.none": "Not enough words for a crossword"
  },
  "nl": {
   "qc.editor.suggests_by": "⚑ {model} stelt voor:",

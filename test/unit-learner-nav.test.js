@@ -147,7 +147,9 @@ console.log('  loadSaved: learner auto-start, teacher keeps the page: OK');
   assert.ok(/startLesson\(nextLessonIdx\)/.test(sc), 'Next → next lesson in this chapter directly');
   assert.ok(/_nextChapter\(\)/.test(sc) && /loadSaved\(ch\.id \|\| encTopic\(ch\.topic\)\)/.test(sc),
     'Next → next chapter (resumes its first unfinished lesson via loadSaved)');
-  assert.ok(/compNext\.style\.display = 'none'/.test(sc), 'Next hides when nothing is left to do');
+  assert.ok(/Next stays PRESENT but/.test(sc) && /compNext\.classList\.add\('disabled'\)/.test(sc),
+    'Next stays present but greyed when nothing is left to do (v71_h consistent row)');
+  assert.ok(!/compNext\.style\.display = 'none'/.test(sc), 'the old hide-Next form is gone');
   // Back target stashed; storyline or landing.
   assert.ok(/APP\._compBack = \(sl && slEnc\) \? \{ kind: 'storyline'/.test(sc), 'Back target: storyline when present');
   assert.ok(/: \{ kind: 'landing' \}/.test(sc), 'Back target: landing for a solo chapter');
@@ -158,8 +160,8 @@ console.log('  loadSaved: learner auto-start, teacher keeps the page: OK');
   assert.ok(/const _teacher = !!APP\._teacherMode/.test(sc), 'card teacher gate keys off teacher MODE (v60.1), not _canEdit');
   // v70_l: pass-mark gate removed; a below-threshold learner is still covered (superset rule).
   // v71_d: `!_nextIsDrill` dropped with the flag — Next is never the drill now, so it cannot double.
-  assert.ok(/_db\.style\.display = drillAvailable\(_l, _s\)/.test(sc),
-    'drill shows for a teacher OR a below-threshold learner (v60.8 pass-mark gate)');
+  assert.ok(/_compBtnState\(_db, drillAvailable\(_l, _s\)/.test(sc),
+    'drill shown always, greyed when no round can be built (v71_h)');
   // v71_d: and below the mark, Next is locked rather than repurposed into one of those routes.
   assert.ok(/_nextBlocked = true;/.test(sc) && /compNext\.disabled = true;/.test(sc),
     'below the pass mark the forward button is disabled, not silently given another meaning');

@@ -114,8 +114,9 @@ console.log('  _coverageTarget precedence: chapter > storyline > global > 80%: O
   // v70_l: no longer gated on the pass mark — offered whenever a drill round exists, which still
   // includes every below-threshold learner the v60.8 rule was written to protect.
   // v71_d: `!_nextIsDrill` dropped — Next can no longer be the drill, so it cannot double-offer.
-  assert.ok(/_db\.style\.display = drillAvailable\(_l, _s\)/.test(sc),
-    'the drill is offered to a below-threshold learner (not just teachers)');
+  // v71_h: the drill button is always present, greyed when no round can be built.
+  assert.ok(/_compBtnState\(_db, drillAvailable\(_l, _s\)/.test(sc),
+    'the drill is offered to a below-threshold learner (greyed when no mistakes, v71_h)');
   assert.ok(/complete\.below_threshold/.test(sc) && /complete\.keep_going/.test(sc),
     'a below-threshold hint + "keep going" title are shown');
 }

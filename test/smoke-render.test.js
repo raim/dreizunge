@@ -779,27 +779,29 @@ console.log('  account modal: TLS banner shown/hidden across 4 states: OK');
     assert.strictEqual(nx.disabled, true, 'below the mark with nothing left to play, Next is locked');
     assert.ok(nx.classList.contains('locked'), 'and shown as unavailable');
     assert.ok(nx.title && nx.title !== '→', 'with a tooltip saying what is still required');
-    // THE v69.2 RULE: at least one way up is offered. This is the assertion that must never soften.
+    // THE v69.2 RULE: at least one LIVE way up is offered. v71_h: buttons are always present now,
+    // so "a route up" means present AND enabled — a greyed button is not a route. This is the
+    // assertion that must never soften.
     const rp = C.document.getElementById('comp-repeat');
     const cw = C.document.getElementById('comp-crossword');
     const db = C.document.getElementById('comp-drill');
-    const routes = [rp, cw, db].filter(b => b.style.display !== 'none');
-    assert.ok(routes.length >= 1, 'the learner is not dead-ended — at least one route to the pass mark is offered');
-    assert.notStrictEqual(rp.style.display, 'none', 'replaying is offered, since the scenario is replayable');
-    assert.strictEqual(cw.style.display, '', 'the crossword is offered as a route to the pass mark');
+    const live = b => b.style.display !== 'none' && !b.disabled;
+    const routes = [rp, cw, db].filter(live);
+    assert.ok(routes.length >= 1, 'the learner is not dead-ended — at least one LIVE route to the pass mark is offered');
+    assert.ok(live(rp), 'replaying is a live route, since the scenario is replayable');
+    assert.ok(live(cw), 'the crossword is a live route to the pass mark');
   }
 
-  // v71_d: the no-duplicate rule is now structural rather than conditional. Next can no longer BE
-  // the drill or the repeat, so the standalone buttons cannot double an icon Next is wearing — the
-  // guard is that no two visible action buttons ever show the same icon, which is the property the
-  // old _nextIsDrill flag was protecting by hand.
+  // v71_h: the no-duplicate-icon rule now checks LIVE buttons. Every action button is always
+  // present, so comparing all four would trivially collide (two greyed buttons are fine); what must
+  // never happen is two ENABLED buttons wearing the same icon.
   {
     const icons = ['comp-repeat', 'comp-drill', 'comp-crossword', 'comp-next']
       .map(id => C.document.getElementById(id))
-      .filter(b => b && b.style.display !== 'none')
+      .filter(b => b && b.style.display !== 'none' && !b.disabled)
       .map(b => b.textContent);
     assert.strictEqual(new Set(icons).size, icons.length,
-      `no two visible action buttons share an icon (got ${icons.join(' ')})`);
+      `no two LIVE action buttons share an icon (got ${icons.join(' ')})`);
   }
 
   // And it hides when the lesson cannot make a puzzle, rather than opening an empty grid.
@@ -809,9 +811,14 @@ console.log('  account modal: TLS banner shown/hidden across 4 states: OK');
     APP._teacherMode = false;
     APP.cur = { lessonIdx:0, correct:1, total:1, mistakes:0, bestStreak:1, flagCount:0, exercises:[] };
     true;`);
+  // v71_h: it is greyed (present but disabled), not removed, so the button row is consistent.
   shouldNotThrow('showComplete (no puzzle possible)', `showComplete();`);
-  assert.strictEqual(C.document.getElementById('comp-crossword').style.display, 'none',
-    'hidden when the lesson has no crossable words');
+  {
+    const cw = C.document.getElementById('comp-crossword');
+    assert.notStrictEqual(cw.style.display, 'none', 'the crossword button is still present (v71_h)');
+    assert.strictEqual(cw.disabled, true, 'but greyed and disabled when the lesson has no crossable words');
+    assert.ok(cw.classList.contains('disabled'), 'and carries the disabled class');
+  }
 }
 console.log('  crossword: availability, render, solve+credit, reject, close, learner entry: OK');
 

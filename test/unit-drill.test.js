@@ -109,7 +109,7 @@ const v = (source, wrong, seen) => ({ source, wrong, seen });
   // Nothing wrong → nothing to review. A drill is not a re-run of known vocabulary.
   const noMistakes = mkCore({ A: v('a', 0, 3), B: v('b', 0, 3), C: v('c', 0, 3), D: v('d', 0, 3) });
   assert.strictEqual(noMistakes.buildDrillLesson('de', 'en'), null, 'no wrong words → no drill');
-  assert.strictEqual(noMistakes.drillAvailable('de', 'en'), false, 'and the button stays hidden');
+  assert.strictEqual(noMistakes.drillAvailable('de', 'en'), false, 'and the button is greyed (v71_h)');
 
   // Too few usable words → an MCQ has no distractors, even though there ARE mistakes.
   const tooFew = mkCore({ A: v('a', 2, 3), B: v('b', 1, 3), C: v('c', 0, 3) });
@@ -312,8 +312,13 @@ assert.ok(/style="display:none/.test(html.match(/<button[^>]*id="comp-drill"[^>]
 // pass mark it is locked, above it it means forward), so double-offering is now impossible by
 // construction rather than prevented by a flag. smoke-render asserts no two visible action buttons
 // share an icon, which is the property that guard was really protecting.
-assert.ok(/_db\.style\.display = drillAvailable\(_l, _s\) \? '' : 'none';/.test(html),
-  'drill shows whenever a round can be built (v70_l), with no pass-mark gate');
+// v71_h: the drill button is now ALWAYS present, greyed when no round can be built, so the card
+// button row is identical across states. Availability drives the disabled state via _compBtnState,
+// not display:none.
+assert.ok(/_compBtnState\(_db, drillAvailable\(_l, _s\)/.test(html),
+  'drill button is shown always and greyed when no round can be built (v71_h)');
+assert.ok(!/_db\.style\.display = drillAvailable/.test(html),
+  'the old hide-when-unavailable form is gone');
 // The flag must be gone from the CODE; the comment explaining its removal legitimately names it.
 assert.ok(!/(let|var)\s+_nextIsDrill|!_nextIsDrill\b|_nextIsDrill\s*=/.test(html),
   'and the vestigial flag is gone rather than left always-false');
