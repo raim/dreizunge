@@ -119,8 +119,8 @@ console.log('  difficulty resolution lesson → topic → 2: OK');
   const src = ext('buildStandardExercises');
   assert.ok(/if \(APP\._derivingUniverse\) return _exs;/.test(src),
     'universe derivation gets the full, uncapped, unbiased set');
-  assert.ok(/assembleCoverageRound\(_exs, 12, 1 - _famShare\)/.test(src),
-    'a normal round is coverage-aware, reserving only the familiar share for review');
+  assert.ok(/assembleCoverageRound\(_exs, 12, 1 - _famShare, true\)/.test(src),
+    'a normal round is coverage-aware, reserving only the familiar share for review (v71_i: +trim opt-in)');
   assert.ok(/typeof FAMILIAR_SHARE === 'number'\) \? FAMILIAR_SHARE : 0\.15/.test(src),
     'the share is read harness-safely (the unit harnesses extract this builder on its own)');
   // v69_h: the share is a single named constant, not a magic number scattered around.
@@ -129,8 +129,8 @@ console.log('  difficulty resolution lesson → topic → 2: OK');
   assert.ok(/APP\._derivingUniverse = true;/.test(uni) && /finally \{ APP\._derivingUniverse = _wasDeriving; \}/.test(uni),
     'the flag is set for the enumeration and always restored (nested-safe)');
   const asm = ext('assembleCoverageRound');
-  assert.ok(/function assembleCoverageRound\(pool, size, unsolvedRatio\)/.test(asm),
-    'the unsolved share is a parameter (mixed practice keeps its 0.7 blend)');
+  assert.ok(/function assembleCoverageRound\(pool, size, unsolvedRatio, trimToUnsolved\)/.test(asm),
+    'the unsolved share is a parameter (mixed practice keeps its 0.7 blend), plus the v71_i trim opt-in');
   assert.ok(/Math\.round\(N \* RATIO\)/.test(asm), 'the ratio actually drives the split');
 
   // Behavioral: with most questions solved, a round serves the UNSOLVED ones first. The fixture

@@ -893,6 +893,54 @@ console.log('  crossword: availability, render, solve+credit, reject, close, lea
     return document.getElementById('cw-' + k).style.background;
   })()`);
   assert.strictEqual(verdict, '#ffe3e3', 'a wrong letter stays red even under the cursor highlight');
+
+  // ── v71_j: the clue bar keeps a fixed footprint so the grid never jumps ───
+  // User-reported: moving on and off a square shared by an across and a down word changed the bar
+  // from hidden→1 line→2 lines, shifting the whole grid twice. The bar must now stay in the layout
+  // at a constant height in ALL three states.
+  {
+    const bar = () => C.run(`(function(){
+      const n = document.getElementById('cw-clue-now');
+      return { display: n.style.display, minHeight: n.style.minHeight,
+               lines: (n.innerHTML.match(/<div/g) || []).length,
+               empty: /crossword\\.pick_cell|Pick a square/.test(n.innerHTML) };})()`);
+    // (a) a square owned by ONE entry
+    const single = C.run(`(function(){
+      const S = APP._cw;
+      const k = [...S.owner.keys()].find(x => (S.owner.get(x) || []).length === 1);
+      if (k) cwFocus(k); return k || null; })()`);
+    // (b) a shared square (across + down) — the case that used to add a second line
+    const shared = C.run(`(function(){
+      const S = APP._cw;
+      const k = [...S.owner.keys()].find(x => (S.owner.get(x) || []).length >= 2);
+      if (k) cwFocus(k); return k || null; })()`);
+    const atShared = shared ? bar() : null;
+    if (single) { C.run(`cwFocus(${JSON.stringify(single)});`); }
+    const atSingle = single ? bar() : null;
+
+    // The reserved height lives in the markup's inline style, which the stub DOM does not parse
+    // back onto element.style — so the height itself is asserted at the source, while the
+    // never-hidden behaviour (the part that actually moved the grid) is asserted live.
+    assert.ok(/id="cw-clue-now"[^>]*min-height:[\d.]+em/.test(ROOT_HTML),
+      'the clue bar reserves a fixed min-height in the markup');
+    assert.ok(!/id="cw-clue-now"[^>]*display:none/.test(ROOT_HTML),
+      'and no longer starts hidden');
+    [['single-owner square', atSingle], ['shared square', atShared]].forEach(([label, st]) => {
+      if (!st) return;
+      assert.notStrictEqual(st.display, 'none', `${label}: the clue bar stays in the layout`);
+    });
+    if (atSingle && atShared) {
+      assert.ok(atShared.lines >= atSingle.lines,
+        'a shared square shows at least as many clue lines (both fit the reserved height)');
+    }
+    // (c) no active entry at all — an empty state, still not hidden
+    C.run(`(function(){ const S = APP._cw; S.cur = null; _cwHighlight(); })();`);
+    const atNone = bar();
+    assert.notStrictEqual(atNone.display, 'none', 'with no square selected the bar is still in the layout');
+    assert.ok(atNone.empty, 'and shows a placeholder rather than collapsing');
+    const reserved = (ROOT_HTML.match(/id="cw-clue-now"[^>]*min-height:([\d.]+em)/) || [])[1];
+    console.log(`  crossword clue bar: reserves ${reserved}, never hidden (single/shared/none)`);
+  }
   C.run(`closeCrossword();`);
 }
 console.log('  repeat on finished lessons + crossword cursor highlight: OK');

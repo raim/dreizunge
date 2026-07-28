@@ -9800,7 +9800,9 @@ function buildStandardExercises(lesson, lessonIdx){
       }
     } catch (_) { /* coverage top-up is an optimisation: never let it break the round */ }
   }
-  if (typeof assembleCoverageRound === 'function') return assembleCoverageRound(_exs, 12, 1 - _famShare);
+  // v71_i: `true` = trim rather than pad. A single-lesson round is the case where a review slot is
+  // a wasted question; the mixed round (which wants its blend) does not opt in.
+  if (typeof assembleCoverageRound === 'function') return assembleCoverageRound(_exs, 12, 1 - _famShare, true);
   return shuffle(_exs).slice(0,12);
 }
 // ══ Mixed review (no LLM) — pool exercises from this chapter's EARLIER lessons ══════
@@ -9849,7 +9851,15 @@ function buildMixedExercises(lesson, lessonIdx){
       const _noAudioC = (typeof _lessonIsDialect==='function' && _lessonIsDialect())
                      || (typeof ttsVoiceAvailableFor==='function' && !ttsVoiceAvailableFor(APP.lessonData?.lang || APP.lang));
       if (_noAudioC) cand = cand.filter(e => e.type !== 'listen_mcq' && e.type !== 'listen_type');
-      if (cand.length) return shuffle(shuffle(cand).slice(0, needed));
+      // v71_i: cap the sitting. The v69.1 sizing ("one pass reaches the target") is right and is
+      // kept — but on a real chapter it produced a 62-question round (measured on the user's
+      // sl_1725748570 ch2: denominator 77, target 80% → needed 62), which is a 15-minute sitting,
+      // not a lesson. MIXED_ROUND_CAP bounds it: a large chapter reaches the mark over two plays
+      // instead of one, and each play still spends EVERY question on unsolved material, so no
+      // progress is lost — only the sitting is shorter. Small chapters (needed <= cap) are
+      // unaffected and still hit the mark in a single pass.
+      const _take = Math.min(needed, MIXED_ROUND_CAP);
+      if (cand.length) return shuffle(shuffle(cand).slice(0, _take));
       // Collection came up empty (defensive) → fall through to the sampled round.
     }
   }
@@ -10427,12 +10437,20 @@ function _cwHighlight(){
   const now = document.getElementById('cw-clue-now');
   if (now){
     const act = [...active].map(ei => S.grid.entries[ei]).filter(Boolean);
+    // v71_j (user-reported: "put these in a fixed height, so the crossword doesn't jump when we
+    // move to or from a shared down/across field"). The bar used to be hidden when no entry was
+    // active and to hold one OR two lines depending on whether the cursor sat on a square shared by
+    // an across and a down word — so the grid below it shifted twice over: once on show/hide, once
+    // on 1↔2 lines. It now stays in the layout permanently at a two-line height (set in CSS), and
+    // an empty state is rendered as a placeholder rather than by hiding the element.
     if (act.length){
       now.innerHTML = act.map(e => '<div><b>' + e.num + ' '
         + escHtml(e.dir === 'across' ? t('crossword.across') : t('crossword.down'))
         + '</b> · ' + escHtml(e.clue) + ' <span style="color:var(--gray-dark)">(' + e.len + ')</span></div>').join('');
-      if (now.style) now.style.display = '';
-    } else if (now.style) now.style.display = 'none';
+    } else {
+      now.innerHTML = '<div style="opacity:.55">' + escHtml(t('crossword.pick_cell')) + '</div>';
+    }
+    if (now.style) now.style.display = '';
   }
   S.grid.entries.forEach((e, ei) => {
     const li = document.getElementById('cw-clue-' + ei);
@@ -10564,7 +10582,7 @@ function _renderCrossword(){
   const total = g.entries.length, solvedN = Object.keys(S.done).length;
   // v70_o: the highlight alone made you look back and forth to the clue list. The clue you are
   // actually answering now sits directly above the grid.
-  const nowHtml = '<div id="cw-clue-now" style="display:none;margin-bottom:8px;padding:7px 10px;background:#eef4ff;border-left:3px solid var(--blue);border-radius:6px;font-size:13px;line-height:1.45"></div>';
+  const nowHtml = '<div id="cw-clue-now" style="min-height:3.9em;box-sizing:border-box;margin-bottom:8px;padding:7px 10px;background:#eef4ff;border-left:3px solid var(--blue);border-radius:6px;font-size:13px;line-height:1.45"></div>';
   host.innerHTML = nowHtml +
     '<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">'
     + '<div style="overflow-x:auto;max-width:100%">' + grid + '</div>'
@@ -12511,8 +12529,14 @@ function _knownWordSet(){
 // about words the ledger says are known. The rest is new material. (v69_h, user request: "generate
 // lessons with only e.g. 15% of vocab the learner already knows".)
 const FAMILIAR_SHARE = 0.15;
+// v71_i: the longest a coverage-driven mixed round may be. The sizing rule ("one pass reaches
+// the chapter's pass mark") is unchanged; this only bounds how much of it lands in one sitting.
+// A chapter needing more than this reaches the mark over successive plays, each of them still
+// entirely unsolved material. 30 is roughly 2x a standard round (12) and was chosen against the
+// user's own data, where the uncapped round came out at 62 questions.
+const MIXED_ROUND_CAP = 30;
 
-function assembleCoverageRound(pool, size, unsolvedRatio){
+function assembleCoverageRound(pool, size, unsolvedRatio, trimToUnsolved){
   const topic = APP.lessonData?.topic;
   const solvedSet = topic ? _solvedMap(topic) : {};
   const N = Math.max(1, size || pool.length);
@@ -12563,6 +12587,28 @@ function assembleCoverageRound(pool, size, unsolvedRatio){
       if(round.length >= N) break;
       if(!used.has(ex)) round.push(ex);
     }
+  }
+  // v71_i (user-reported: "replay seems to still play a lot of already played lessons, perhaps also
+  // due to fixed length of lessons"). Reproduced on sl_1725748570 ch2 lesson 1 (37 questions):
+  // replaying to 100% asked 48 questions of which 11 were repeats, because the backfill above tops
+  // a round up to N with review once the unsolved pool runs short. The coverage FOCUS was already
+  // right (v71_f); the fixed LENGTH was the waste. With the trim: 41 questions, 4 repeats, and the
+  // final round is 5 questions instead of 12.
+  //
+  // OPT-IN ONLY — `trimToUnsolved`. This deliberately breaks v69_h's "backfill keeps the round full,
+  // nothing is excluded outright" rule, which exists so a round always fills and the coverage
+  // denominator can never strand below the threshold. That rule still holds everywhere it did:
+  // the MIXED round (which pools several lessons and wants its review blend) does not pass the
+  // flag, so its composition is byte-for-byte unchanged. Only a single-lesson replay — where the
+  // learner is working one lesson's coverage gap and a review slot is a wasted question — opts in.
+  //
+  // Stranding is impossible here regardless: the trim only ever runs while UNSOLVED questions are
+  // in the round (`unsolvedOnly.length` guards it), so every trimmed round still advances coverage.
+  // And it is skipped entirely when the pool is pure review (su.length === 0), so replaying a
+  // finished lesson for practice still yields a full-length round.
+  if (trimToUnsolved && su.length > 0 && takeU < wantUnsolved) {
+    const unsolvedOnly = round.filter(ex => { const id = qid(ex); return !(id && solvedSet[id]); });
+    if (unsolvedOnly.length) return shuffle(unsolvedOnly);
   }
   return shuffle(round);
 }

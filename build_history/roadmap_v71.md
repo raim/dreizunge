@@ -5,6 +5,14 @@
 > from a true baseline rather than a repeatedly-patched one. `roadmap_v70.md` is now a **closed
 > archive** — everything still open has been carried here.
 >
+> **`v71_j` shipped** (session 9): crossword clue bar given a fixed height (the grid no longer
+> jumps); new `ui.json` (+567 translations, 15 languages now complete) and `lessons.json`
+> integrated. Suite **148**. See `v71_session9_notes.md`.
+>
+> **`v71_i` shipped** (session 8): replay rounds no longer padded with already-answered questions
+> (48 questions/11 repeats -> 41/4 on the user's data), and the coverage-driven mixed round is
+> capped at 30 per sitting. Suite **148**. See `v71_session8_notes.md`.
+>
 > **`v71_h` shipped** (session 7): removed the redundant drill result card (a finished drill now
 > returns to the real chapter card) and made every completion card show the same button row,
 > greyed when unavailable. Suite **147**. See `v71_session7_notes.md`.
@@ -49,7 +57,7 @@
    `ALL CHECKS PASSED (138 checks)`, and a failing run reads `FAILED <n> of 138: <labels>`.
    **Quote that line — never hand-derive the figure.** A hand-derived count once drifted to 152
    against an actual 133 and sat in two documents unnoticed; that is what the self-report prevents.
-   Currently **147** (143 `test/*.test.js` files + 5 static checks). `--quick` reports **127** in
+   Currently **148** (144 `test/*.test.js` files + 5 static checks). `--quick` reports **128** in
    ~10s, skipping the server-spawning steps — a smaller number there is correct, not a regression.
 
 ---
@@ -72,6 +80,16 @@
 - **Synonym context** (v70_m, v70_n) — trimmed to the sentence holding the word, then *clamped*,
   because the ten worst cases were each a single enormous sentence.
 - **Storyline full-story translation toggle** (v70_p).
+
+---
+
+## ✅ What shipped in `v71_i`
+
+- **No padding with repeats on a replay.** Opt-in (`trimToUnsolved`) so v69_h's "round always
+  fills" invariant still governs the mixed round. 23% repeats -> 10% on the reported data.
+- **`MIXED_ROUND_CAP = 30`.** The v69.1 sizing (one pass reaches the chapter mark, measured
+  across all unhidden lessons) already did what was asked; it produced a 62-question sitting.
+  Capped: 30/30/2 with zero repeats, mark reached on play 3.
 
 ---
 
@@ -137,9 +155,54 @@
 
 ---
 
+## 🎯 Fresh-session brief — Storyline-result UI arc (start here)
+
+The next piece of work, bundling three user requests into ONE screen design. Everything below was
+verified against the code and the user's own data during the v71_i triage; it is a starting point,
+not a spec — re-read the current code before trusting any line number.
+
+**The three requests**
+1. A **final result card** when a story is fully played. `_allChaptersDone` already exists (it gates
+   the read-full-story panel on the storyline page) — but there is no card for that state.
+2. Result cards should show the **FULL storyboard**, with a **green** frame around fully-played
+   chapters, **blue** around the currently open one, and **no frame** around unplayed ones.
+3. Result cards should reuse the storyline page's **first two header lines**: the header (globe →
+   main page, title → storyline page) and the progress bar. If that lands, the
+   **"back to story" button can be removed**, since the header carries the link.
+
+**Root cause of the reported bug (confirmed)**
+`_renderCompStoryboard` crops the storyboard SVG to *this chapter's* `<g data-chapter>` group and
+returns early when the chapter has no group. The user's `sl_1725748570` has **5 groups for 8
+chapters** (1, 3, 4, 6, 7) — so chapters 2, 5 and 8 show no image at all. Showing the full
+storyboard with per-chapter frames replaces the cropping entirely and dissolves the bug.
+
+**Why it is a good fresh-session task**
+Entirely presentation code — no flow branches, no coverage machinery. But it is a new screen PLUS a
+card redesign PLUS removing a button and its tests, so it wants a clean context rather than being
+tacked onto other work.
+
+**Watch out for**
+- The completion card is `showComplete`, the most fragile branch chain in the app (three prior
+  user-reported dead ends). The BUTTON row was stabilised in `v71_h` — all five buttons always
+  present, greyed when unavailable, guarded by `unit-card-consistency`. Removing "back to story"
+  means updating that guard deliberately, not incidentally.
+- `smoke-render` and `unit-card-consistency` both assert on `comp-back`.
+- The user has browser-tested through `v71_h`; `v71_i` (round length / mixed cap) and `v71_j`
+  (clue bar) are not yet browser-verified.
+
+---
+
 ## 🔭 Open work carried into v71
 
 ### Near-term, concrete
+- **[🎯 NEXT SESSION — see the brief at the top of this file] Storyline-result UI arc.**
+- **[✅ DONE in `v71_j`] Crossword clue bar jumps.** Fixed `min-height:3.9em`, never hidden, empty
+  state renders a placeholder. Guarded in `smoke-render`.
+- **[TRIAGED — less blocked than thought] Bulk-generate mixed lessons for all chapters** from
+  the storyline page bottom row. Currently mixed can only be added to an OPEN lesson-set, one
+  chapter at a time. `perType` does not gate coverage-driven rounds (v71_i), so no length work
+  is needed first.
+
 - **[✅ DONE in `v71_f`, scope confirmed in `v71_g`] Repeat focuses on unsolved questions.**
   Extends to standard/vocab only, correctly: synonyms/word_forms/grammar are deterministic
   (one build == whole universe), so they need no top-up — pinned in `unit-replay-focus` §8. The ordering was already
@@ -204,6 +267,10 @@
   chunk far more coarsely than a European one. Not yet reported; real.
 
 ### i18n — partially done, needs a second pass
+- **`v71_j`: the user supplied a new `ui.json`** — +567 translations. **15 languages are now
+  complete** (ar de es fr hi it ja ko nl pl pt ru sv tr zh), including correct re-translations of
+  the 7 attributive-`{lang}` strings cleared in v71_d. **715 entries still outstanding** (was
+  1137), almost all in the 14 less-covered languages.
 - **`v71_e` merged `ui_json.bak`**: +30 translations, `crossword.done` now covered in
   nl/pt/fr/de/it/pl/es (was "translated nowhere"), `pl` up to 556 keys. **1137 entries still
   outstanding**: best languages missing 21, the other 22 missing 45.

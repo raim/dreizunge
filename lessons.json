@@ -6121,6 +6121,14 @@
           },
           "_recreated": true,
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1785155144837_x0qs",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
         }
       ],
       "generationStats": {
@@ -6149,7 +6157,7 @@
         }
       },
       "generatedAt": "2026-07-27T08:23:58.820Z",
-      "updatedAt": "2026-07-27T11:13:33.936Z",
+      "updatedAt": "2026-07-27T12:25:44.840Z",
       "createdBy": "admin"
     },
     {
@@ -6528,7 +6536,8 @@
             "at": "2026-07-27T10:42:49.093Z"
           },
           "_recreated": true,
-          "_arcMode": "reinforce"
+          "_arcMode": "reinforce",
+          "_hidden": true
         },
         {
           "id": "ls_1785149227590_6_synonyms",
@@ -6689,7 +6698,38 @@
             "at": "2026-07-27T10:47:07.590Z"
           },
           "_recreated": true,
-          "_arcMode": "reinforce"
+          "_arcMode": "reinforce",
+          "_hidden": true
+        },
+        {
+          "id": "ls_1785155133722_pyik",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3,
+          "_hidden": true
+        },
+        {
+          "difficulty": 3,
+          "id": "ls_1785155279244",
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "Spesso una struttura, nata in relazione a una funzione o a nessuna funzione (un effetto collaterale, una ridondanza), viene convertita nell’evoluzion per fare tutt’altro (un processo chiamato exaptation): le ali non si sono evolute «per» volare, ma all’inizio svolgevano altri compiti (termoregolazione, corteggiamento) e poi sono state cooptate nel volo. Infine, i geni sono importante ma non tutto si svolgono a livello genetico: l’ecologia è essenziale e molti processo di cambiamento sono influenzati da fattori macro-evolutivi, cioè che accadono al livello delle specie o al di sopra (come le grandi estinzioni dovute a perturbazioni ecologiche planetarie, eruzioni vulcaniche, impatti di asteroidi, cambiamenti climatici). Il programma di ricerca darwiniano, insomma, è in piena espansione e oggi viene applicato in modo fecondo anche allo studio di alcuni processo di cambiamento che avvengono a livello culturale e tecnologico.",
+          "_genMeta": {
+            "type": "error_hunt",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": null,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 702,
+            "completionTokens": 215,
+            "ms": 112441,
+            "at": "2026-07-27T12:27:59.244Z"
+          }
         }
       ],
       "generationStats": {
@@ -6702,8 +6742,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 6324,
-        "totalCompletionTokens": 2208,
+        "totalPromptTokens": 7026,
+        "totalCompletionTokens": 2423,
         "lessons": [
           {
             "lessonNum": 1,
@@ -6714,11 +6754,12 @@
         ],
         "tokensByType": {
           "lesson_qc": 2393,
-          "recreate": 4205
+          "recreate": 4205,
+          "add_lesson": 917
         }
       },
       "generatedAt": "2026-07-27T08:19:46.170Z",
-      "updatedAt": "2026-07-27T11:13:36.456Z",
+      "updatedAt": "2026-07-27T12:29:55.377Z",
       "createdBy": "admin"
     },
     {
@@ -7220,6 +7261,14 @@
           },
           "_recreated": true,
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1785155124983_mm0j",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
         }
       ],
       "generationStats": {
@@ -7248,7 +7297,7 @@
         }
       },
       "generatedAt": "2026-07-27T08:15:07.343Z",
-      "updatedAt": "2026-07-27T11:13:39.027Z",
+      "updatedAt": "2026-07-27T12:25:24.987Z",
       "createdBy": "admin"
     },
     {
@@ -7716,6 +7765,14 @@
           },
           "_recreated": true,
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1785155114925_xu85",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
         }
       ],
       "generationStats": {
@@ -7744,7 +7801,7 @@
         }
       },
       "generatedAt": "2026-07-27T08:10:26.061Z",
-      "updatedAt": "2026-07-27T11:13:40.813Z",
+      "updatedAt": "2026-07-27T12:25:14.928Z",
       "createdBy": "admin"
     },
     {

@@ -89,17 +89,21 @@ function attributiveUse(str) {
   });
   assert.deepStrictEqual(stale, [],
     'no translation interpolates {lang} for a key whose English dropped it:\n  ' + stale.join('\n  '));
-  // ALL SEVEN rewritten keys must be gone from every language, so they fall back to the corrected
-  // English rather than rendering the old broken phrasing. Widened from three to seven after a
-  // translation-file merge (v71_e): merging an older ui.json back in offered to restore exactly
-  // these 203 entries, and only three of them were guarded. A merge is the most likely way for
-  // them to return, so every one of them is pinned.
+  // ALL SEVEN rewritten keys: the durable rule is that no translation may reintroduce `{lang}` for
+  // a key whose English dropped it. Originally (v71_d) these were asserted to stay CLEARED, because
+  // the existing translations embedded the broken attributive shape and had to be deleted. They
+  // were properly re-translated in v71_j, so "cleared" is no longer the right assertion — but the
+  // reason it existed still is, and is checked below and in section 3.
   const REWRITTEN_V71D = ['ex.read_translate.q', 'ex.listen_mcq.q', 'ex.listen_type.q',
     'tts.approx_dialect', 'tts.no_voice_silent', 'tts.no_voice_hint', 'form.translation_placeholder'];
   REWRITTEN_V71D.forEach(k => {
     assert.ok(k in UI.en, `${k} still exists in English`);
-    const left = Object.keys(UI).filter(l => l !== 'en' && k in UI[l]);
-    assert.deepStrictEqual(left, [], `${k}: stale translations stay cleared until re-translated`);
+    // Where English dropped {lang} entirely, no translation may bring it back.
+    if (!UI.en[k].includes('{lang}')) {
+      const reintroduced = Object.keys(UI).filter(l => l !== 'en' && (UI[l][k] || '').includes('{lang}'));
+      assert.deepStrictEqual(reintroduced, [],
+        `${k}: English names no language, so no translation may reintroduce {lang}`);
+    }
   });
   console.log(`  ${Object.keys(UI).length} languages: no stale {lang} interpolations`);
 }

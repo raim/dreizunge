@@ -106,8 +106,13 @@ console.log('  a lesson of entirely known words remains fully playable: OK');
 {
   assert.ok(/const FAMILIAR_SHARE = 0\.15;/.test(html), 'the familiar share is a single named constant');
   const build = ext('buildStandardExercises');
-  assert.ok(/assembleCoverageRound\(_exs, 12, 1 - _famShare\)/.test(build),
-    'a standard round reserves only the familiar share for review');
+  assert.ok(/assembleCoverageRound\(_exs, 12, 1 - _famShare, true\)/.test(build),
+    'a standard round reserves only the familiar share for review, and opts into the v71_i trim');
+  // v71_i: the trim is OPT-IN so v69_h's "backfill keeps the round full" rule still governs the
+  // mixed round. Only the single-lesson replay passes the flag.
+  const mixedBuild = ext('buildMixedExercises');
+  assert.ok(/assembleCoverageRound\(pool2, cap\)/.test(mixedBuild),
+    'the mixed round does NOT opt in — its composition is unchanged');
   const asm = ext('assembleCoverageRound');
   assert.ok(/typeof _knownWordSet === 'function'/.test(asm) && /typeof stripFuri === 'function'/.test(asm),
     'the new dependencies are typeof-guarded (harnesses extract this function alone)');

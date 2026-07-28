@@ -18,6 +18,10 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+// v71_i: read the real cap from index.html rather than hard-coding it, so a retune of the cap
+// does not silently change what this suite believes it is testing.
+const CAP = Number((html.match(/const MIXED_ROUND_CAP = (\d+);/) || [])[1]);
+assert.ok(Number.isFinite(CAP) && CAP > 0, 'MIXED_ROUND_CAP is a module-level constant');
 
 function extract(name){
   const at = html.indexOf('function ' + name + '(');
@@ -59,11 +63,14 @@ function extract(name){
   const _resolveExItem = () => null;
   const assembleCoverageRound = (pool) => pool.map(e => ({ ...e, _sampled: true }));  // marks the fallback path
 
+  // v71_i: the builder now bounds the sitting with MIXED_ROUND_CAP. Read the real value from
+  // index.html rather than hard-coding it, so a retune of the cap does not silently change what
+  // this suite thinks it is testing.
   const build = new Function('APP', 'lessonTypeMeta', 'shuffle', '_resolveExItem', 'assembleCoverageRound',
-    '_lessonQidUniverse', '_solvedMap', '_coverageTarget', 'qid',
+    '_lessonQidUniverse', '_solvedMap', '_coverageTarget', 'qid', 'MIXED_ROUND_CAP',
     extract('buildMixedExercises') + '\nreturn buildMixedExercises;')(
     APP, lessonTypeMeta, shuffle, _resolveExItem, assembleCoverageRound,
-    _lessonQidUniverse, _solvedMap, _coverageTarget, qid);
+    _lessonQidUniverse, _solvedMap, _coverageTarget, qid, CAP);
 
   // Target 100%: needed = 8 − 3 = 5 → the round is exactly the 5 unsolved questions, no repeats,
   // no already-solved items — one clean pass to the threshold.
@@ -129,5 +136,42 @@ console.log('  drill credit-back: containing lesson credited, others/mixed skipp
     'below-threshold fires for mixed-driven sets even at the default target of 1.0');
 }
 console.log('  completion gate: mixed-driven sets route into the drill below target: OK');
+
+// ── 4. The sitting is capped, but the sizing rule is unchanged (v71_i) ───────
+// User request: "set number of lessons automatically such that one perfectly played mixed lesson
+// allows to fill the pass mark, where the pass mark refers NOT to the mixed lesson but to all
+// unhidden lessons in the chapter." The v69.1 sizing already did exactly that — measured on the
+// user's sl_1725748570 ch2, one perfect play took chapter coverage to 81% against a target of 80%.
+// The problem was the SITTING: that round was 62 questions. MIXED_ROUND_CAP bounds it without
+// changing what a round contains — every question is still unsolved material.
+{
+  // A chapter needing far more than the cap: 80 questions, none solved, target 1.0.
+  const big = [];
+  for (let i = 0; i < 80; i++) big.push('q' + i);
+  const lessons2 = [
+    { id: 'B1', type: 'standard' },
+    { id: 'M', type: 'mixed' },
+  ];
+  const APP2 = { lessonData: { topic: 'T', lessons: lessons2 }, _teacherMode: false,
+                 cur: { lessonIdx: 1 }, progress: {} };
+  const uni2 = (idx) => new Set(idx === 1 ? big.map(q => 'B1:' + q) : big.map(q => 'B1:' + q));
+  const solved2 = () => ({});
+  const build2 = new Function('APP', 'lessonTypeMeta', 'shuffle', '_resolveExItem', 'assembleCoverageRound',
+    '_lessonQidUniverse', '_solvedMap', '_coverageTarget', 'qid', 'MIXED_ROUND_CAP',
+    extract('buildMixedExercises') + '\nreturn buildMixedExercises;')(
+    APP2,
+    () => ({ build: () => big.map(q => ({ type: 'mcq_source_target', target: q, correct: q })) }),
+    (a) => a.slice(), () => null,
+    (pool) => pool.slice(),
+    uni2, solved2, () => 1.0,
+    (ex, lid) => (lid || 'B1') + ':' + ex.target,
+    CAP);
+  const r4 = build2(lessons2[1], 1);
+  assert.strictEqual(r4.length, CAP,
+    `a chapter needing 80 questions yields a round of exactly the cap (${CAP}), not the full 80`);
+  const uniqueTargets = new Set(r4.map(e => e.target));
+  assert.strictEqual(uniqueTargets.size, r4.length, 'and every question in it is distinct');
+  console.log(`  mixed round cap: 80 needed -> ${r4.length} in one sitting, all distinct`);
+}
 
 console.log('unit-mixed-coverage-round: ALL PASSED');
