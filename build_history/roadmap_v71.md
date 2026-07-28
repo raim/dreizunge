@@ -5,6 +5,13 @@
 > from a true baseline rather than a repeatedly-patched one. `roadmap_v70.md` is now a **closed
 > archive** — everything still open has been carried here.
 >
+> **`v71_k` shipped** (session 10): the storyline-result UI arc — result cards show the FULL
+> storyboard framed by chapter state (green = span finished, blue = the chapter just played),
+> the storyline header replaces the "← Back to story" button, and the last chapter of a story
+> now says "Story complete!". Plus a returning `ui.json` (+445 translations, 24 of 29 languages
+> complete) and 18 verbatim-English fallbacks deleted for the next translate pass. Suite **150**.
+> See `v71_session10_notes.md`.
+>
 > **`v71_j` shipped** (session 9): crossword clue bar given a fixed height (the grid no longer
 > jumps); new `ui.json` (+567 translations, 15 languages now complete) and `lessons.json`
 > integrated. Suite **148**. See `v71_session9_notes.md`.
@@ -49,15 +56,15 @@
 
 ## How to start a session (read these, in order)
 1. **This file** — the highest-numbered `build_history/roadmap_v*.md` is always the current one.
-2. The two most recent session-notes files: `build_history/v71_session4_notes.md` (`v71_d`) and
-   `build_history/v71_session3_notes.md` (`v71_c`). Sessions 1–2 cover the cut and `v71_b`.
+2. The two most recent session-notes files: `build_history/v71_session10_notes.md` (`v71_k`) and
+   `build_history/v71_session9_notes.md` (`v71_j`). Sessions 1–2 cover the cut and `v71_b`.
 3. Establish the green baseline BEFORE touching anything: `node test/run.js` and
    `node test/check-inline.js` (0 failures on both `index.html` and `docs/index.html`).
    **The runner reports its own total** (added v70): the closing line reads
    `ALL CHECKS PASSED (138 checks)`, and a failing run reads `FAILED <n> of 138: <labels>`.
    **Quote that line — never hand-derive the figure.** A hand-derived count once drifted to 152
    against an actual 133 and sat in two documents unnoticed; that is what the self-report prevents.
-   Currently **148** (144 `test/*.test.js` files + 5 static checks). `--quick` reports **128** in
+   Currently **150** (146 `test/*.test.js` files + 5 static checks). `--quick` reports **128** in
    ~10s, skipping the server-spawning steps — a smaller number there is correct, not a regression.
 
 ---
@@ -155,7 +162,7 @@
 
 ---
 
-## 🎯 Fresh-session brief — Storyline-result UI arc (start here)
+## ✅ [SHIPPED in `v71_k`] Fresh-session brief — Storyline-result UI arc
 
 The next piece of work, bundling three user requests into ONE screen design. Everything below was
 verified against the code and the user's own data during the v71_i triage; it is a starting point,
@@ -195,7 +202,12 @@ tacked onto other work.
 ## 🔭 Open work carried into v71
 
 ### Near-term, concrete
-- **[🎯 NEXT SESSION — see the brief at the top of this file] Storyline-result UI arc.**
+- **[✅ DONE in `v71_k`] Storyline-result UI arc.** All three requests shipped. The crop bug hit
+  TWO storylines, not the one recorded in the brief (`sl_795546417` as well), and the panel-span
+  rule needed grouping by distinct chapter — the obvious per-panel rule inverts on 7 of 22 boards.
+- **[NEXT — i18n] Run the translate pass.** `complete.story_complete` is new (`en` only), 18
+  fallbacks were deleted for refill, and nine Latin-script leftovers plus `hi/qc.editor.flag_save`
+  (`"-flag"`) need a speaker's call. Full list in `v71_session10_notes.md` §2.
 - **[✅ DONE in `v71_j`] Crossword clue bar jumps.** Fixed `min-height:3.9em`, never hidden, empty
   state renders a placeholder. Guarded in `smoke-render`.
 - **[TRIAGED — less blocked than thought] Bulk-generate mixed lessons for all chapters** from

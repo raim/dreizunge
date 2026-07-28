@@ -37,7 +37,18 @@ const withMistakes = () => C.run(`APP.progress.learned['de|en']={vocab:{
   HAUS:{source:'house',seen:2,wrong:1}, HUND:{source:'dog',seen:2,wrong:1},
   BAUM:{source:'tree',seen:2,wrong:0}, X:{source:'x',seen:2,wrong:0}},sentences:{}}; true;`);
 
-const ROW = ['comp-next', 'comp-repeat', 'comp-drill', 'comp-crossword', 'comp-back'];
+// v71_k: 'comp-back' left this row because the button was REMOVED, not because the guarantee
+// weakened — the storyline header (#comp-hdr) is now the route back, and it takes the button's
+// place here so "every card has a way out" is still enforced.
+// The source check below is load-bearing: the stub DOM auto-vivifies any id, so `state()` can
+// never return MISSING and a row entry naming a deleted element would pass forever. Asserting the
+// markup is gone is what stops this row from going quietly vacuous.
+const ROW = ['comp-next', 'comp-repeat', 'comp-drill', 'comp-crossword', 'comp-hdr'];
+{
+  const clientSrc = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+  assert.ok(!/id="comp-back"/.test(clientSrc), 'the Back button is gone from the markup');
+  ROW.forEach(id => assert.ok(clientSrc.includes(`id="${id}"`), `${id} really exists in the markup`));
+}
 const state = id => C.run(`(function(){const e=document.getElementById(${JSON.stringify(id)});
   if(!e) return 'MISSING';
   if(e.style.display==='none') return 'HIDDEN';
@@ -58,8 +69,8 @@ const rowStates = () => ROW.reduce((o, id) => (o[id] = state(id), o), {});
   // The real card renders: progress bars present (the drill card hid them), Back present.
   assert.notStrictEqual(C.run(`document.getElementById('comp-progress').style.display`), 'none',
     'the real card shows progress bars — the stripped drill card did not');
-  assert.notStrictEqual(C.run(`document.getElementById('comp-back').style.display`), 'none',
-    'and shows Back — the drill card hid it');
+  assert.notStrictEqual(C.run(`document.getElementById('comp-hdr').style.display`), 'none',
+    'and shows the storyline header — the drill card hides it');
   assert.strictEqual(C.calls.errors.length, 0, 'no errors while ending the drill onto the real card');
   console.log('  card D removed: finished drill lands on the real chapter card, topic restored');
 }
@@ -100,9 +111,9 @@ const rowStates = () => ROW.reduce((o, id) => (o[id] = state(id), o), {});
   cards.forEach(([label, st]) => {
     assert.strictEqual(st['comp-repeat'], 'LIVE', `${label}: Repeat is live`);
     assert.strictEqual(st['comp-crossword'], 'LIVE', `${label}: Crossword is live`);
-    assert.strictEqual(st['comp-back'], 'LIVE', `${label}: Back is live`);
+    assert.strictEqual(st['comp-hdr'], 'LIVE', `${label}: the header (the route back) is live`);
   });
-  console.log('  consistent row: all 5 buttons present on every card (' + cards.map(c => c[0]).join(', ') + ')');
+  console.log('  consistent row: all 5 affordances present on every card (' + cards.map(c => c[0]).join(', ') + ')');
 }
 
 // ── 4. Greyed states mean exactly what they should ──────────────────────────

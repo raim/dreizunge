@@ -249,8 +249,15 @@ assert.ok(/if \(_teacher && !lesson\._drill\) \{/.test(html),
   'the completion nav pills show only for a teacher on a non-drill card (v60)');
 assert.ok(/_compNav\.innerHTML = '';\s*\n\s*_compNav\.style\.display = 'none';/.test(html),
   'the nav pills are cleared+hidden otherwise (learner card, or a drill)');
-assert.ok(/backBtn\.style\.display = lesson\._drill \? 'none' : ''/.test(html),
-  'Back-to-story is hidden for a drill (v60)');
+// v71_k: the "← Back to story" BUTTON is gone; the storyline header line replaced it. The rule it
+// encoded still holds and still matters — a drill's topic is synthetic, so neither the storyline
+// nor the chapter name means anything on its card — so the assertion moves to the header rather
+// than being deleted with the button.
+assert.ok(/_hdr\.style\.display = _show \? '' : 'none';/.test(html),
+  'the storyline header is shown or hidden as one unit');
+assert.ok(/const _show = !lesson\._drill;/.test(html),
+  'and it is hidden for a drill, exactly as Back-to-story was (v60 rule, v71_k mechanism)');
+assert.ok(!/id="comp-back"/.test(html), 'the Back button itself is gone, not merely hidden');
 // afterComplete (a drill's Next) restores the real topic then returns to the story.
 const afterC = ext(html, 'afterComplete');
 assert.ok(/endDrill\(\);/.test(afterC) && /compBackToStory\(\)/.test(afterC),

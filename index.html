@@ -1156,6 +1156,16 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
 
 <!-- ══ COMPLETE ════════════════════════════════════════════════════════ -->
 <div id="complete-screen" class="screen">
+  <!-- v71_k: the storyline page's own header line, reused verbatim (same classes) so a result card
+       reads as part of the story rather than a floating dialog: 🌍 → main page, title → this
+       storyline. Hidden for a drill and for a solo chapter with no storyline. It is also what
+       replaced the "← Back to story" button — the title IS the link back. -->
+  <div class="sl-screen-title-row" id="comp-hdr" style="display:none">
+    <button class="sl-screen-home" onclick="goLandingClean()" id="comp-hdr-home" title="">🌍</button>
+    <span class="sl-screen-title" id="comp-hdr-title" style="cursor:pointer" role="button" tabindex="0"
+          onclick="compBackToStory()"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
+  </div>
   <div class="comp-title" id="comp-title">Lesson complete!</div>
   <!-- v65.1: the storyboard panel for THIS chapter, so the learner sees where they are in the arc. -->
   <div id="comp-storyboard" style="display:none;margin-top:12px"></div>
@@ -1174,7 +1184,6 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <button class="comp-ico" id="comp-crossword" style="display:none" onclick="openCrosswordFromComplete()">🔠</button>
     <button class="comp-ico primary" id="comp-next" onclick="afterComplete()">→</button>
   </div>
-  <button class="cont-btn" id="comp-back" style="margin-top:8px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="compBackToStory()">← Back to story</button>
   <div id="comp-nav-btns" style="display:none;flex-wrap:wrap;justify-content:center;margin-top:8px"></div>
   <div id="comp-story-unlocked" style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:#f0fff4">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
@@ -7527,6 +7536,50 @@ function _sbPanelChapter(i, panelCount, chapterCount, dataVal) {
   return Math.floor(i * C / P) + 1;
 }
 
+// v71_k: the chapter SPAN a panel stands for. _sbPanelChapter gives every panel exactly one
+// chapter, but panels and chapters are rarely 1:1 — with fewer panels than chapters a panel
+// stands for a RANGE (5 panels over 8 chapters → [1-2][3][4-5][6][7-8]), and with more panels
+// than chapters SEVERAL panels share one chapter (3 panels over 1 chapter → all three are ch 1).
+// Panels that resolve to the same chapter are the same story moment, so they get the SAME span
+// and change state together; staggering them would read as a rendering fault rather than state.
+// `chs` is the per-panel chapter list (the output of _sbPanelChapter, one entry per panel).
+// Returns one [start, end] pair per panel, or null where the panel has no usable chapter.
+function _sbPanelSpans(chs, chapterCount) {
+  const C = chapterCount | 0;
+  const list = Array.isArray(chs) ? chs : [];
+  const distinct = [...new Set(list.filter(c => Number.isInteger(c) && c >= 1))].sort((a, b) => a - b);
+  const endOf = new Map();
+  distinct.forEach((d, k) => {
+    const next = distinct[k + 1];
+    // A span runs to just before the next DISTINCT chapter; the last one runs to the end of the
+    // story. Taking the end from the next PANEL instead is the obvious rule and it is wrong: as
+    // soon as two panels resolve to one chapter it yields a backwards range (4 panels over 2
+    // chapters gives panel 0 the empty range [1, 0]), and a panel with a backwards range can
+    // never turn green. Grouping by distinct chapter is what rules that out — since `distinct` is
+    // sorted and deduped, next - 1 >= d always holds.
+    // max() is therefore a no-op for anything _sbPanelChapter produces, and guards only the one
+    // case it cannot: a caller passing chapter numbers ABOVE chapterCount, where the last span
+    // would otherwise end below its own start.
+    endOf.set(d, Math.max(d, next != null ? next - 1 : C));
+  });
+  return list.map(c => endOf.has(c) ? [c, endOf.get(c)] : null);
+}
+
+// v71_k: which frame a panel wears on a result card. Green = every chapter in the panel's span
+// is finished; blue = the span contains the chapter just played; no frame = not there yet.
+// Blue outranks green so that replaying an already-finished chapter still shows WHERE the
+// learner is. A span is green only when ALL of its chapters are done — a panel covering 7-8
+// stays unframed while 7 is finished and 8 is not, which is the point of spans.
+// `isDone` is a predicate over 1-based chapter numbers; the caller owns what "done" means.
+function _sbFrameState(span, isDone, openChapter) {
+  if (!Array.isArray(span)) return 'none';
+  const a = span[0], b = span[1];
+  if (!(a >= 1) || !(b >= a)) return 'none';
+  if (openChapter >= a && openChapter <= b) return 'open';
+  for (let c = a; c <= b; c++) if (!isDone(c)) return 'none';
+  return 'done';
+}
+
 // Resolve which chapter a panel click actually opens. `chaps` is the storyline's ordered
 // chapter OBJECTS, `completed` is APP.progress.completed, `ch` the 1-based panel target,
 // `free` = teacher mode / canGenerate (navigate anywhere). Student mode applies the SAME
@@ -13121,7 +13174,9 @@ function showComplete(review){
     compNext.onclick = () => { endDrill(); loadSaved(ch.id || encTopic(ch.topic)); };
   } else {
     // Nothing left to do (last lesson of last/solo chapter, review). v71_h: Next stays PRESENT but
-    // greyed, so the button row is identical to every other card — Back is the live forward action.
+    // greyed, so the button row is identical to every other card. v71_k: the live route onward is
+    // the HEADER — the globe home, the title back to this storyline — which is what replaced the
+    // "← Back to story" button that used to carry this case.
     // (A drill no longer reaches here; it ends via renderEx onto the real chapter card.)
     _compIco(compNext, '→', t('complete.next'));
     compNext.style.display = '';
@@ -13133,16 +13188,50 @@ function showComplete(review){
   // Back-to-story target is stashed for compBackToStory(): the storyline screen if any, else
   // the landing page (solo chapter). Resolved here so the button and Next agree on the deck.
   APP._compBack = (sl && slEnc) ? { kind: 'storyline', id: sl.id, enc: slEnc } : { kind: 'landing' };
-  const backBtn = el('comp-back');
-  if (backBtn) {
-    backBtn.textContent = (sl ? t('complete.back_story') : t('complete.back_home'));
-    backBtn.style.display = lesson._drill ? 'none' : '';   // a drill returns via Next/afterComplete
-  }
+  // v71_k: the header line — same markup and classes as the storyline screen, so the two pages
+  // read as one place. The globe goes home; the title goes back to this storyline (or home for a
+  // solo chapter), which is the affordance the "← Back to story" button used to provide.
+  // Hidden for a drill: its topic is synthetic, so neither destination is meaningful.
+  try {
+    const _hdr = document.getElementById('comp-hdr');
+    if (_hdr) {
+      const _show = !lesson._drill;
+      _hdr.style.display = _show ? '' : 'none';
+      if (_show) {
+        const _ht = document.getElementById('comp-hdr-title');
+        const _hh = document.getElementById('comp-hdr-home');
+        if (_hh) _hh.title = t('complete.back_home');
+        if (_ht) {
+          // A solo chapter has no storyline: fall back to the chapter's own name, and let the
+          // title lead home like the globe rather than pointing at a deck that does not exist.
+          _ht.textContent = sl ? ((sl.icon || '📖') + ' ' + (sl.title || t('storyline.title')))
+                               : (APP.lessonData?.topic || t('lesson.set'));
+          _ht.title = sl ? t('complete.back_story') : t('complete.back_home');
+        }
+      }
+    }
+  } catch(_) {}
 
   // (v60.8 threshold gate: computed at the top of the card — see above the Next wiring.)
+  // v71_k: the FINAL card. When every chapter of the storyline is finished this is not just another
+  // chapter completion, and the card said "Lesson complete!" as if more were coming. Uses the same
+  // canonical reader as the panel frames and the storyline page's read-full-story lock, so all
+  // three agree on what "finished" means. A drill or a solo chapter (no storyline) never qualifies.
+  let _storyDone = false;
+  try {
+    if (!lesson._drill && _slCtx) {
+      const ids = _slCtx.sl.chapters || [];
+      _storyDone = ids.length > 0 && ids.every(cid => {
+        const e = _slCtx.byId[cid];
+        return !!(e && chapterComplete(e));
+      });
+    }
+  } catch(_) { _storyDone = false; }
   // Title reflects the gate: below threshold it's not a "complete" celebration but a "keep going".
   const _titleEl = el('comp-title');
-  if (_titleEl) _titleEl.textContent = _belowThreshold ? t('complete.keep_going') : t('complete.title');
+  if (_titleEl) _titleEl.textContent = _belowThreshold ? t('complete.keep_going')
+                                     : _storyDone      ? t('complete.story_complete')
+                                     :                   t('complete.title');
 
   // Progress summary — along the storyline AND within the chapter. Skipped for a drill (its
   // synthetic topic has no chapter progress of its own).
@@ -13548,10 +13637,16 @@ function sendTutorMessage(){
   _tutorSend(false);
 }
 
-// v65.1: show the storyboard panel(s) for the CURRENT chapter on the completion card. Reuses the
-// v57 panel↔chapter mapping (_sbPanelChapter), so the panel shown here can never disagree with the
-// one the storyboard links to. Extracts only the matching group(s) into a fresh SVG cropped to
-// their bounding box, rather than shrinking the whole board to illegibility.
+// v65.1 / rewritten v71_k: show the storyboard on the completion card. Reuses the v57 panel↔chapter
+// mapping (_sbPanelChapter), so what is framed here can never disagree with what the board links to.
+//
+// v71_k shows the WHOLE board and frames each panel by state (green = span finished, blue = the
+// chapter just played, unframed = not reached) instead of cropping to this chapter's panel. The
+// crop had a dead end: it returned early when no panel carried this chapter, and 5 panels over 8
+// chapters means three chapters have none — the user saw an empty card on those. Framing has no
+// such branch, because every panel is drawn whatever the chapter counts are. It is also the
+// SMALLER card: boards are one wide strip (~1104×194), so the full board renders about a third the
+// height of one panel blown up to card width.
 function _renderCompStoryboard(topicKey, slCtx){
   const box = document.getElementById('comp-storyboard');
   if(!box) return;
@@ -13568,28 +13663,43 @@ function _renderCompStoryboard(topicKey, slCtx){
     if(!outer) return;
     const groups = Array.from(outer.children).filter(el => el.tagName && el.tagName.toLowerCase() === 'g');
     if(!groups.length) return;
-    const mine = groups.filter((g, i) =>
-      _sbPanelChapter(i, groups.length, chapters.length, g.getAttribute('data-chapter')) === chapterIdx);
-    if(!mine.length) return;
-    // Union bounding box from each panel's own border rect.
-    let x0=Infinity, y0=Infinity, x1=-Infinity, y1=-Infinity;
-    for(const g of mine){
-      const r = g.querySelector(':scope > rect'); if(!r) continue;
-      const x=parseFloat(r.getAttribute('x')||0), y=parseFloat(r.getAttribute('y')||0);
-      const w=parseFloat(r.getAttribute('width')||0), h=parseFloat(r.getAttribute('height')||0);
-      x0=Math.min(x0,x); y0=Math.min(y0,y); x1=Math.max(x1,x+w); y1=Math.max(y1,y+h);
-    }
-    if(!isFinite(x0) || x1<=x0) return;
-    const pad = 4;
-    const svgNS = 'http://www.w3.org/2000/svg';
-    const out = document.createElementNS(svgNS, 'svg');
-    out.setAttribute('viewBox', `${x0-pad} ${y0-pad} ${(x1-x0)+pad*2} ${(y1-y0)+pad*2}`);
+    const spans = _sbPanelSpans(
+      groups.map((g, i) => _sbPanelChapter(i, groups.length, chapters.length, g.getAttribute('data-chapter'))),
+      chapters.length);
+    // Chapter completion comes from the ONE canonical reader, so a frame agrees with the chapter
+    // cards and the read-full-story lock. Memoized: a span of N chapters would otherwise ask N
+    // times per panel. A chapter missing from the saved list counts as not done (fail closed).
+    const byId = (slCtx && slCtx.byId) || {};
+    const _cache = new Map();
+    const isDone = c => {
+      if(_cache.has(c)) return _cache.get(c);
+      let v = false;
+      try { const e = byId[chapters[c - 1]]; v = !!(e && typeof chapterComplete === 'function' && chapterComplete(e)); }
+      catch(_) { v = false; }
+      _cache.set(c, v); return v;
+    };
+    // importNode adopts the parsed board into THIS document in one step, carrying defs, viewBox
+    // and every panel with it — nothing has to be re-stitched, so gradients and patterns still
+    // resolve. Width is forced to 100% and any fixed height dropped, or the strip would render at
+    // its authored pixel size instead of the card's.
+    const out = document.importNode(outer, true);
     out.setAttribute('width', '100%');
+    if(out.getAttribute('viewBox')) out.removeAttribute('height');
     out.style.maxHeight = '190px';
     out.style.display = 'block';
-    // Carry over defs (gradients/patterns the panels may reference).
-    outer.querySelectorAll('defs').forEach(d => out.appendChild(d.cloneNode(true)));
-    for(const g of mine) out.appendChild(g.cloneNode(true));
+    Array.from(out.children)
+      .filter(el => el.tagName && el.tagName.toLowerCase() === 'g')
+      .forEach((g, i) => {
+        const frame = g.querySelector(':scope > rect');
+        if(!frame) return;
+        const st = _sbFrameState(spans[i], isDone, chapterIdx);
+        // Same visual language as the lesson-set page's _sbMarkCurrentPanels: blue, 3px, on the
+        // panel's own border rect. Clearing both properties returns a panel to the board's own
+        // styling rather than painting an "unframed" look over it.
+        if(st === 'open'){ frame.style.stroke = 'var(--blue)';  frame.style.strokeWidth = '3'; }
+        else if(st === 'done'){ frame.style.stroke = 'var(--green)'; frame.style.strokeWidth = '3'; }
+        else { frame.style.stroke = ''; frame.style.strokeWidth = ''; }
+      });
     box.appendChild(out);
     box.style.display = '';
   }catch(_){ /* a malformed board must never break the completion card */ }

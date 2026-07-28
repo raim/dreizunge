@@ -125,7 +125,9 @@ run('unit: replay focuses on unsolved questions (v71_f)', 'node', [path.join(__d
 run('unit: error-hunt / pass-mark interaction (v71_g)', 'node', [path.join(__dirname, 'unit-errorhunt-passmark.test.js')]);
 run('unit: completion-card consistency + drill card removal (v71_h)', 'node', [path.join(__dirname, 'unit-card-consistency.test.js')]);
 run('unit: round length not padded with repeats (v71_i)', 'node', [path.join(__dirname, 'unit-round-length.test.js')]);
+run('unit: storyboard panel frames on result cards (v71_k)', 'node', [path.join(__dirname, 'unit-storyboard-frames.test.js')]);
 run('unit: {lang} placeholder grammar (v71_d)', 'node', [path.join(__dirname, 'unit-lang-placeholder.test.js')]);
+run('unit: no verbatim-English fallbacks in translations (v71_k)', 'node', [path.join(__dirname, 'unit-ui-verbatim-en.test.js')]);
 run('unit: coverage-driven mixed round + drill credit-back (v69.1)', 'node', [path.join(__dirname, 'unit-mixed-coverage-round.test.js')]);
 run('unit: ui translation QC (validator + translate-ui --qc) (v69_f)', 'node', [path.join(__dirname, 'unit-ui-qc.test.js')]);
 run('unit: error-hunt validation + retry (v69_g)', 'node', [path.join(__dirname, 'unit-error-hunt-validation.test.js')]);

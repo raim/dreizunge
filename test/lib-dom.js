@@ -84,6 +84,11 @@ function makeDocument() {
     createElement(tag) { return makeElement(tag); },
     createTextNode(t) { return { nodeType: 3, textContent: String(t) }; },
     createDocumentFragment() { return makeElement('fragment'); },
+    createElementNS(ns, tag) { return makeElement(tag); },
+    // v71_k: adopt a parsed node into this document. The client uses it to move a storyboard from
+    // a DOMParser document into the page in one step; a deep clone is the whole observable
+    // behaviour, since this stub has no per-document node ownership to transfer.
+    importNode(node, deep) { return node && node.cloneNode ? node.cloneNode(deep !== false) : node; },
     querySelector() { return makeElement(); },
     querySelectorAll() { return []; },
     getElementsByClassName() { return []; },
@@ -96,6 +101,72 @@ function makeDocument() {
   doc.head = makeElement('head');
   doc.documentElement = makeElement('html');
   return doc;
+}
+
+// v71_k: the smallest XML parser that lets SVG render paths RUN rather than be swallowed by their
+// own try/catch. `_renderCompStoryboard` walks a parsed storyboard — top-level <g> panels, each
+// with a direct-child <rect> border — and without a DOMParser it threw on line one and the catch
+// hid it, so a smoke test would have passed while executing nothing.
+//
+// Scope is deliberately tiny: elements, attributes, self-closing tags, comments. No text nodes, no
+// namespaces, no entity decoding. That covers machine-composed storyboards (composeStoryboardSVG
+// emits exactly this shape) and nothing else. Anything richer needs a real browser, per the note
+// at the top of this file.
+function parseXmlElements(text) {
+  const root = makeElement('#document');
+  const stack = [root];
+  const tagRe = /<(\/)?([A-Za-z_][\w:.-]*)((?:\s+[\w:.-]+\s*=\s*(?:"[^"]*"|'[^']*'))*)\s*(\/)?>/g;
+  const src = String(text || '').replace(/<!--[\s\S]*?-->/g, '').replace(/<\?[\s\S]*?\?>/g, '');
+  let m;
+  while ((m = tagRe.exec(src)) !== null) {
+    const [, closing, name, attrText, selfClose] = m;
+    if (closing) { if (stack.length > 1) stack.pop(); continue; }
+    const el = makeElement(name);
+    const attrRe = /([\w:.-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
+    let a;
+    while ((a = attrRe.exec(attrText || '')) !== null) el.setAttribute(a[1], a[2] !== undefined ? a[2] : a[3]);
+    // Real matching for the two selector shapes SVG render paths use. Everything else keeps the
+    // auto-vivifying stub behaviour so unrelated code is unaffected.
+    el.querySelector = function (sel) {
+      const s = String(sel || '').trim();
+      const direct = s.replace(/^:scope\s*>\s*/, '');
+      const wantDirect = /^:scope\s*>/.test(s);
+      const tag = direct.toUpperCase();
+      const hit = this.children.find(c => c.tagName === tag);
+      if (hit || wantDirect) return hit || null;
+      const walk = n => {
+        for (const c of n.children) { if (c.tagName === tag) return c; const d = walk(c); if (d) return d; }
+        return null;
+      };
+      return walk(this);
+    };
+    el.querySelectorAll = function (sel) {
+      const tag = String(sel || '').trim().toUpperCase();
+      const out = [];
+      const walk = n => n.children.forEach(c => { if (c.tagName === tag) out.push(c); walk(c); });
+      walk(this); return out;
+    };
+    el.cloneNode = function (deep) {
+      const copy = makeElement(this.tagName, this.id);
+      Object.assign(copy._attrs, this._attrs);
+      Object.assign(copy.style, this.style);
+      copy.querySelector = el.querySelector; copy.querySelectorAll = el.querySelectorAll;
+      copy.cloneNode = el.cloneNode;
+      if (deep !== false) this.children.forEach(c => copy.appendChild(c.cloneNode(true)));
+      return copy;
+    };
+    stack[stack.length - 1].appendChild(el);
+    if (!selfClose) stack.push(el);
+  }
+  root.querySelector = function (sel) {
+    const tag = String(sel || '').trim().toUpperCase();
+    const walk = n => {
+      for (const c of n.children) { if (c.tagName === tag) return c; const d = walk(c); if (d) return d; }
+      return null;
+    };
+    return walk(this);
+  };
+  return root;
 }
 
 function makeStorage() {
@@ -152,6 +223,7 @@ function loadClient(opts = {}) {
     AbortController: function AbortController() { return { signal: {}, abort() {} }; },
     getComputedStyle: () => ({ getPropertyValue: () => '' }),
     CSS: { escape: (s) => String(s) },
+    DOMParser: function DOMParser() { return { parseFromString: (t) => parseXmlElements(t) }; },
     _smoke: calls,
   };
   // The client registers listeners on window at top level; the sandbox IS the global object, so it
@@ -172,4 +244,4 @@ function loadClient(opts = {}) {
   };
 }
 
-module.exports = { loadClient, makeElement, makeDocument, ROOT };
+module.exports = { loadClient, makeElement, makeDocument, parseXmlElements, ROOT };

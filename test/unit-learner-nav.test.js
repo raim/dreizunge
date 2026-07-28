@@ -168,7 +168,16 @@ console.log('  loadSaved: learner auto-start, teacher keeps the page: OK');
   assert.ok(/if \(_teacher && !lesson\._drill\) \{/.test(sc), 'nav pills are teacher-only');
   // The card markup has exactly the two primary buttons wired.
   assert.ok(/id="comp-next" onclick="afterComplete\(\)"/.test(html), 'markup: Next button');
-  assert.ok(/id="comp-back"[^>]*onclick="compBackToStory\(\)"/.test(html), 'markup: Back button');
+  // v71_k: Back is no longer a button. The header line carries it — the title returns to the
+  // storyline (or home for a solo chapter) via the SAME compBackToStory() the button called, so
+  // the route back is asserted here rather than dropped along with the markup.
+  assert.ok(!/id="comp-back"/.test(html), 'markup: the Back button has been removed');
+  assert.ok(/id="comp-hdr-title"[\s\S]{0,200}?onclick="compBackToStory\(\)"/.test(html),
+    'markup: the header title is the route back to the storyline');
+  assert.ok(/id="comp-hdr-home"[^>]*/.test(html) && /onclick="goLandingClean\(\)"[^>]*id="comp-hdr-home"|id="comp-hdr-home"/.test(html),
+    'markup: the globe goes to the main page');
+  assert.ok(/onkeydown="if\(event\.key==='Enter'\|\|event\.key===' '\)/.test(html),
+    'markup: the header title is keyboard-reachable, which a <button> gave for free');
   assert.ok(/id="comp-progress"/.test(html), 'markup: progress-summary container');
 }
 console.log('  completion card: Next chains lesson→chapter, Back to story/home, teacher-only extras: OK');
@@ -210,23 +219,33 @@ console.log('  full-story-on-unlock + within/along progress summary: OK');
 }
 console.log('  review mode for a re-opened complete chapter (live+static): OK');
 
-// ── 4c. Chapter storyboard panel on the completion card (v65.1) ─────────────
+// ── 4c. Chapter storyboard on the completion card (v65.1, reframed v71_k) ───
 {
   const fn = ext(html, '_renderCompStoryboard');
-  // Reuses the v57 mapping, so the panel shown can never disagree with the one the board links to.
+  // Reuses the v57 mapping, so what is framed can never disagree with what the board links to.
   assert.ok(/_sbPanelChapter\(i, groups\.length, chapters\.length, g\.getAttribute\('data-chapter'\)\)/.test(fn),
-    'the panel is selected with the SAME mapping the storyboard click handler uses');
+    'panels are mapped with the SAME rule the storyboard click handler uses');
   assert.ok(/const chapterIdx = idx \+ 1;/.test(fn), '_sbPanelChapter is 1-based; the deck index is 0-based');
-  // Cropped to the panel bounding box rather than shrinking the whole board.
-  assert.ok(/out\.setAttribute\('viewBox'/.test(fn), 'a fresh SVG is cropped to the panel bounding box');
-  assert.ok(/querySelectorAll\('defs'\)/.test(fn), 'defs are carried over so gradients/patterns still resolve');
+  // v71_k: the WHOLE board is shown and framed by state. The v65.1 crop is gone — it returned
+  // early when no panel carried this chapter, which is an empty card on any story whose panels
+  // do not cover every chapter (the reported bug). These assertions replace the crop ones.
+  assert.ok(!/if\(!mine\.length\) return;/.test(fn),
+    'no early return on "this chapter has no panel of its own" — that was the dead end');
+  assert.ok(/_sbPanelSpans\(/.test(fn), 'panels are resolved to chapter SPANS, not single chapters');
+  assert.ok(/_sbFrameState\(spans\[i\], isDone, chapterIdx\)/.test(fn), 'each panel gets a frame state');
+  assert.ok(/document\.importNode\(outer, true\)/.test(fn),
+    'the whole board is adopted, which carries defs/viewBox — nothing is re-stitched');
+  assert.ok(/var\(--green\)/.test(fn) && /var\(--blue\)/.test(fn),
+    'green for a finished span, blue for the chapter just played');
+  // Completion must come from the canonical reader, or a frame could contradict the chapter cards.
+  assert.ok(/chapterComplete\(e\)/.test(fn), 'chapter completion uses the one canonical reader');
   // Must never break the card.
   assert.ok(/catch\(_\)\{ \/\* a malformed board must never break the completion card \*\/ \}/.test(fn),
     'a malformed storyboard degrades silently');
   assert.ok(/id="comp-storyboard"/.test(html), 'the card has a storyboard slot');
   assert.ok(/else _renderCompStoryboard\(topicKey, _slCtx\)/.test(html), 'showComplete renders it for non-drill cards');
 }
-console.log('  chapter storyboard panel on the completion card: OK');
+console.log('  chapter storyboard framing on the completion card: OK');
 
 
 // ── 5. Static build parity ────────────────────────────────────────────────────
