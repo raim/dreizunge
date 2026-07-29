@@ -2,6 +2,312 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_190460344",
+      "title": "Verlorene Antworten",
+      "icon": "🗣️",
+      "chapters": [
+        "tp_17853225499350000035",
+        "tp_17853229401900000110"
+      ],
+      "lang": "it",
+      "srcLang": "de",
+      "createdAt": "2026-07-29T11:00:02.645Z",
+      "updatedAt": "2026-07-29T11:26:13.295Z",
+      "tokenUsage": {
+        "totalPromptTokens": 2446,
+        "totalCompletionTokens": 1456,
+        "tokensByType": {
+          "retitle": 1056,
+          "summary": 570,
+          "storyboard": 2276
+        }
+      },
+      "summary": "Beppe Grillo kehrt zurück und greift die Fünf-Sterne-Bewegung scharf an, weil sie ihre revolutionäre Identität verloren hat. Er kritisiert, dass die ursprünglichen Fragen der Bürger zwar bestehen bleiben, aber die Antworten auf wichtige Themen wie das Bürgergeld und den ökologischen Wandel verschwunden sind. Grillo erinnert daran, dass die Bewegung einst die Politik verändern wollte, sich jedoch selbst verändert hat. Er fordert die aktuellen Führungspersönlichkeiten auf, sich an die ursprünglichen Versprechen zu erinnern und die Zukunft neu zu programmieren.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 454,
+        "completionTokens": 116,
+        "ms": 89121,
+        "at": "2026-07-29T11:09:15.906Z"
+      },
+      "sourceFile": "Grillo torna e attacca M5S_ «I rivoluzionari hanno scoperto i palazzi. Dovevano cambiare la politica, ma la politica ha cambiato loro». E Conte_ «Lui è quello che considerava Draghi grillino» _ Corrie",
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Grillo kehrt zurueck und greift M5S an.</title><rect x=\"102\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"103\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"30\" r=\"20\" fill=\"#f2cc8f\"/><rect x=\"40\" y=\"40\" width=\"20\" height=\"30\" fill=\"#9e9e9e\"/><circle cx=\"50\" cy=\"35\" r=\"8\" fill=\"#faf7f0\"/><polygon points=\"42,45 58,45 50,60\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"1\"><title>Grillo: Die Revolutionaere haben die Palaeste entdeckt.</title><rect x=\"284\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"285\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"none\"/><rect x=\"20\" y=\"20\" width=\"60\" height=\"40\" fill=\"#9e9e9e\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"10\" r=\"15\" fill=\"#e07a5f\"/><line x1=\"30\" y1=\"70\" x2=\"70\" y2=\"70\" stroke=\"#2b2b2b\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"30\" y1=\"80\" x2=\"60\" y2=\"80\" stroke=\"#2b2b2b\" stroke-width=\"3\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"1\"><title>Conte: Er war der grillino Draghi.</title><rect x=\"466\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"467\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#9e9e9e\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"none\"/><circle cx=\"30\" cy=\"40\" r=\"15\" fill=\"#faf7f0\"/><rect x=\"20\" y=\"55\" width=\"20\" height=\"30\" fill=\"#2b2b2b\"/><circle cx=\"70\" cy=\"40\" r=\"15\" fill=\"#e07a5f\"/><rect x=\"60\" y=\"55\" width=\"20\" height=\"30\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"2\"><title>Grillo: Die Antworten sind verschwunden.</title><rect x=\"648\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"649\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"none\"/><circle cx=\"50\" cy=\"50\" r=\"38\" fill=\"#2b2b2b\"/><circle cx=\"50\" cy=\"50\" r=\"30\" fill=\"#3d405b\"/><line x1=\"40\" y1=\"45\" x2=\"60\" y2=\"45\" stroke=\"#faf7f0\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"40\" y1=\"55\" x2=\"60\" y2=\"55\" stroke=\"#faf7f0\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"2\"><title>Grillo ruft zurueck zu den urspruenglichen Ideen.</title><rect x=\"830\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"831\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#f2cc8f\"/><rect x=\"0\" y=\"70\" width=\"100\" height=\"30\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"30\" r=\"25\" fill=\"#faf7f0\"/><polygon points=\"45,25 55,25 50,15\" fill=\"#e07a5f\"/><rect x=\"45\" y=\"55\" width=\"10\" height=\"15\" fill=\"#2b2b2b\"/><line x1=\"30\" y1=\"60\" x2=\"70\" y2=\"60\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 5,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 987,
+        "completionTokens": 1289,
+        "ms": 596787,
+        "at": "2026-07-29T11:23:31.509Z",
+        "storyStyle": "journalism"
+      },
+      "storyboardPanels": [
+        {
+          "caption": "Grillo kehrt zurueck und greift M5S an.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 30,
+              "r": 20,
+              "fill": "sun"
+            },
+            {
+              "type": "rect",
+              "x": 40,
+              "y": 40,
+              "w": 20,
+              "h": 30,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 35,
+              "r": 8,
+              "fill": "paper"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  42,
+                  45
+                ],
+                [
+                  58,
+                  45
+                ],
+                [
+                  50,
+                  60
+                ]
+              ],
+              "fill": "ink"
+            }
+          ]
+        },
+        {
+          "caption": "Grillo: Die Revolutionaere haben die Palaeste entdeckt.",
+          "chapter": 1,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "none"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 20,
+              "w": 60,
+              "h": 40,
+              "fill": "stone",
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 10,
+              "r": 15,
+              "fill": "accent"
+            },
+            {
+              "type": "line",
+              "x1": 30,
+              "y1": 70,
+              "x2": 70,
+              "y2": 70,
+              "stroke": "ink",
+              "sw": 3
+            },
+            {
+              "type": "line",
+              "x1": 30,
+              "y1": 80,
+              "x2": 60,
+              "y2": 80,
+              "stroke": "ink",
+              "sw": 3
+            }
+          ]
+        },
+        {
+          "caption": "Conte: Er war der grillino Draghi.",
+          "chapter": 1,
+          "bg": "stone",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "none"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 40,
+              "r": 15,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 55,
+              "w": 20,
+              "h": 30,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 40,
+              "r": 15,
+              "fill": "accent"
+            },
+            {
+              "type": "rect",
+              "x": 60,
+              "y": 55,
+              "w": 20,
+              "h": 30,
+              "fill": "ink"
+            }
+          ]
+        },
+        {
+          "caption": "Grillo: Die Antworten sind verschwunden.",
+          "chapter": 2,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 40,
+              "fill": "none"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 38,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 30,
+              "fill": "night"
+            },
+            {
+              "type": "line",
+              "x1": 40,
+              "y1": 45,
+              "x2": 60,
+              "y2": 45,
+              "stroke": "paper",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 40,
+              "y1": 55,
+              "x2": 60,
+              "y2": 55,
+              "stroke": "paper",
+              "sw": 2
+            }
+          ]
+        },
+        {
+          "caption": "Grillo ruft zurueck zu den urspruenglichen Ideen.",
+          "chapter": 2,
+          "bg": "sun",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 70,
+              "w": 100,
+              "h": 30,
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 30,
+              "r": 25,
+              "fill": "paper"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  45,
+                  25
+                ],
+                [
+                  55,
+                  25
+                ],
+                [
+                  50,
+                  15
+                ]
+              ],
+              "fill": "accent"
+            },
+            {
+              "type": "rect",
+              "x": 45,
+              "y": 55,
+              "w": 10,
+              "h": 15,
+              "fill": "ink"
+            },
+            {
+              "type": "line",
+              "x1": 30,
+              "y1": 60,
+              "x2": 70,
+              "y2": 60,
+              "stroke": "ink",
+              "sw": 2
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
+    },
+    {
       "id": "sl_1725748570",
       "title": "Evolution der Theorie",
       "icon": "🧬",
@@ -5221,6 +5527,386 @@
     }
   ],
   "topics": [
+    {
+      "id": "tp_17853229401900000110",
+      "topic": "Verschwundene Antworten",
+      "topicEmoji": "📜",
+      "userTopic": "E prosegue: «Le domande sono rimaste, le risposte sono…",
+      "userPrompt": "E prosegue: «Le domande sono rimaste, le risposte sono…\n\n[story]\nE prosegue: «Le domande sono rimaste, le risposte sono scomparse», scrive, ricordando che «noi avevamo provato a darne alcune, distribuire il reddito, cambiare la classe dirigente, coinvolgere i cittadini nelle decisioni e programmare il futuro invece di amministrare la prossima elezione. Le avevamo chiamate reddito di cittadinanza, limite dei due mandati, restituzioni, democrazia diretta e transizione ecologica; proposte che, con il tempo, sono diventate slogan da pronunciare nei convegni e dimenticate dopo il buffet».\n\nPer questo alla fine del post Grillo lancia una sorta di appello: «Ecco, il Movimento era nato per affrontare tutte queste domande, poi ha cominciato a occuparsi di se stesso. Ma le domande non sono scomparse, sono ancora fuori dai palazzi e aspettano qualcuno che provi a rispondere», conclude.\n\nE arriva la reazione del presidente del M5S, Giuseppe Conte: «Il Movimento ha perso identità? Con tutte le nostre battaglie che stiamo facendo, spesso contro tutti? Lui aveva detto che Draghi è un grillino, fate un po' voi».\n\n29 luglio 2026 ( modifica il 29 luglio 2026 | 12:40)\n\n© RIPRODUZIONE RISERVATA",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 175,
+      "story": "E prosegue: «Le domande sono rimaste, le risposte sono scomparse», scrive, ricordando che «noi avevamo provato a darne alcune, distribuire il reddito, cambiare la classe dirigente, coinvolgere i cittadini nelle decisioni e programmare il futuro invece di amministrare la prossima elezione. Le avevamo chiamate reddito di cittadinanza, limite dei due mandati, restituzioni, democrazia diretta e transizione ecologica; proposte che, con il tempo, sono diventate slogan da pronunciare nei convegni e dimenticate dopo il buffet».\n\nPer questo alla fine del post Grillo lancia una sorta di appello: «Ecco, il Movimento era nato per affrontare tutte queste domande, poi ha cominciato a occuparsi di se stesso. Ma le domande non sono scomparse, sono ancora fuori dai palazzi e aspettano qualcuno che provi a rispondere», conclude.\n\nE arriva la reazione del presidente del M5S, Giuseppe Conte: «Il Movimento ha perso identità? Con tutte le nostre battaglie che stiamo facendo, spesso contro tutti? Lui aveva detto che Draghi è un grillino, fate un po' voi».\n\n29 luglio 2026 ( modifica il 29 luglio 2026 | 12:40)\n\n© RIPRODUZIONE RISERVATA",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-07-29T11:00:02.699Z",
+        "origin": "file-upload",
+        "source": "recorded at generation",
+        "sourceFile": "Grillo torna e attacca M5S_ «I rivoluzionari hanno scoperto i palazzi. Dovevano cambiare la politica, ma la politica ha cambiato loro». E Conte_ «Lui è quello che considerava Draghi grillino» _ Corrie"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 332,
+        "completionTokens": 309,
+        "ms": 137490,
+        "at": "2026-07-29T11:02:20.190Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Und er fährt fort: „Die Fragen sind geblieben, die Antworten sind verschwunden“, schreibt er und erinnert daran, dass „wir versucht hatten, einige davon zu geben, das Einkommen zu verteilen, die Führungselite zu wechseln, die Bürger in Entscheidungsprozesse einzubeziehen und die Zukunft zu planen, anstatt die nächste Wahl zu verwalten. Wir nannten sie Bürgergeld, Begrenzung auf zwei Amtszeiten, Rückerstattungen, direkte Demokratie und ökologischen Wandel; Vorschläge, die im Laufe der Zeit zu Slogans wurden, die man auf Konferenzen ausspricht und nach dem Buffet vergisst“.\n\nAus diesem Grund richtet Grillo am Ende seines Posts eine Art Appell: „Seht her, die Bewegung war entstanden, um all diese Fragen anzugehen, dann hat sie begonnen, sich selbst zu beschäftigen. Aber die Fragen sind nicht verschwunden; sie stehen noch immer außerhalb der Machtzentren und warten darauf, dass jemand versucht, sie zu beantworten“, schließt er.\n\nUnd da kommt die Reaktion des Präsidenten des M5S, Giuseppe Conte: „Hat die Bewegung ihre Identität verloren? Mit all unseren Kämpfen, die wir führen, oft gegen alle? Er hatte gesagt, Draghi sei ein Grilloaner, das überlasse ich Ihnen.“\n\n29. Juli 2026 (aktualisiert am 29. Juli 2026 | 12:40)\n\n© NACHDRUCK VERBOTEN",
+      "userStory": "E prosegue: «Le domande sono rimaste, le risposte sono scomparse», scrive, ricordando che «noi avevamo provato a darne alcune, distribuire il reddito, cambiare la classe dirigente, coinvolgere i cittadini nelle decisioni e programmare il futuro invece di amministrare la prossima elezione. Le avevamo chiamate reddito di cittadinanza, limite dei due mandati, restituzioni, democrazia diretta e transizione ecologica; proposte che, con il tempo, sono diventate slogan da pronunciare nei convegni e dimenticate dopo il buffet».\n\nPer questo alla fine del post Grillo lancia una sorta di appello: «Ecco, il Movimento era nato per affrontare tutte queste domande, poi ha cominciato a occuparsi di se stesso. Ma le domande non sono scomparse, sono ancora fuori dai palazzi e aspettano qualcuno che provi a rispondere», conclude.\n\nE arriva la reazione del presidente del M5S, Giuseppe Conte: «Il Movimento ha perso identità? Con tutte le nostre battaglie che stiamo facendo, spesso contro tutti? Lui aveva detto che Draghi è un grillino, fate un po' voi».\n\n29 luglio 2026 ( modifica il 29 luglio 2026 | 12:40)\n\n© RIPRODUZIONE RISERVATA",
+      "continuedFrom": "Grillo torna e attacca M5S: «I rivoluzionari hanno scoperto…",
+      "continuedFromId": "tp_17853225499350000035",
+      "storyStyle": "journalism",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Fragen und Antworten",
+          "desc": "Politische Diskussion über Identität",
+          "icon": "🗣️",
+          "vocab": [
+            {
+              "target": "domanda",
+              "source": "Frage"
+            },
+            {
+              "target": "risposta",
+              "source": "Antwort"
+            },
+            {
+              "target": "rimanere",
+              "source": "bleiben"
+            },
+            {
+              "target": "scomparire",
+              "source": "verschwinden"
+            },
+            {
+              "target": "scrivere",
+              "source": "schreiben"
+            },
+            {
+              "target": "ricordare",
+              "source": "sich erinnern"
+            },
+            {
+              "target": "cittadino",
+              "source": "Bürger"
+            },
+            {
+              "target": "futuro",
+              "source": "Zukunft"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Le domande sono rimaste.",
+              "source": "Die Fragen sind geblieben.",
+              "words": [
+                "Le",
+                "domande",
+                "sono",
+                "rimaste."
+              ]
+            },
+            {
+              "target": "Le risposte sono scomparse.",
+              "source": "Die Antworten sind verschwunden.",
+              "words": [
+                "Le",
+                "risposte",
+                "sono",
+                "scomparse."
+              ]
+            },
+            {
+              "target": "Scrivendo, ricorda che noi avevamo provato.",
+              "source": "Schreibend erinnert er sich, dass wir es versucht hatten.",
+              "words": [
+                "Scrivendo,",
+                "ricorda",
+                "che",
+                "noi",
+                "avevamo",
+                "provato."
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Schreibend erinnert man sich, dass wir es versucht hatten.",
+                  "field": "source",
+                  "at": "2026-07-29T11:13:15.348Z"
+                }
+              },
+              "qc": {
+                "sug": "Schreibend erinnert man sich, dass wir es versucht hatten.",
+                "field": "source",
+                "at": "2026-07-29T11:13:15.348Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "I cittadini devono partecipare alle decisioni.",
+              "source": "Die Bürger müssen an den Entscheidungen teilnehmen.",
+              "words": [
+                "I",
+                "cittadini",
+                "devono",
+                "partecipare",
+                "alle",
+                "decisioni."
+              ]
+            },
+            {
+              "target": "Dobbiamo programmare il futuro insieme.",
+              "source": "Wir müssen die Zukunft gemeinsam planen.",
+              "words": [
+                "Dobbiamo",
+                "programmare",
+                "il",
+                "futuro",
+                "insieme."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1204,
+            "completionTokens": 365,
+            "ms": 251251,
+            "at": "2026-07-29T11:06:31.499Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 388801,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 3822,
+        "totalCompletionTokens": 725,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 251251,
+            "promptTokens": 1204,
+            "completionTokens": 365
+          }
+        ],
+        "tokensByType": {
+          "lesson_qc": 2337
+        }
+      },
+      "generatedAt": "2026-07-29T11:02:20.190Z",
+      "updatedAt": "2026-07-29T11:13:34.677Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17853225499350000035",
+      "topic": "Grillos Revolution",
+      "topicEmoji": "🦗",
+      "userTopic": "Grillo torna e attacca M5S: «I rivoluzionari hanno scoperto…",
+      "userPrompt": "Grillo torna e attacca M5S: «I rivoluzionari hanno scoperto…\n\n[story]\nGrillo torna e attacca M5S: «I rivoluzionari hanno scoperto i palazzi. Dovevano cambiare la politica, ma la politica ha cambiato loro». E Conte: «Lui è quello che considerava Draghi grillino»\n\nIl post del fondatore sui social contro il Movimento: «Ha perso identità, ma le sue domande sono ancora qui. Qualcuno risponda»\n\nUn attacco frontale. Beppe Grillo torna a tuonare contro il M5S guidato da Giuseppe Conte e lo fa con un post sul suo blog dal titolo molto chiaro: «Si sono montati la testa senza leggere le istruzioni». Il Movimento 5 Stelle scrive Grillo «ha perso la sua identità e, soprattutto, quella diversità che lo aveva reso unico. Era nato per cambiare la politica, ma poi la politica ha cambiato il Movimento. Doveva ascoltare i cittadini e ha cominciato ad ascoltare i sondaggi. Doveva occuparsi del futuro e ha finito per occuparsi delle poltrone».",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 144,
+      "story": "Grillo torna e attacca M5S: «I rivoluzionari hanno scoperto i palazzi. Dovevano cambiare la politica, ma la politica ha cambiato loro». E Conte: «Lui è quello che considerava Draghi grillino»\n\nIl post del fondatore sui social contro il Movimento: «Ha perso identità, ma le sue domande sono ancora qui. Qualcuno risponda»\n\nUn attacco frontale. Beppe Grillo torna a tuonare contro il M5S guidato da Giuseppe Conte e lo fa con un post sul suo blog dal titolo molto chiaro: «Si sono montati la testa senza leggere le istruzioni». Il Movimento 5 Stelle scrive Grillo «ha perso la sua identità e, soprattutto, quella diversità che lo aveva reso unico. Era nato per cambiare la politica, ma poi la politica ha cambiato il Movimento. Doveva ascoltare i cittadini e ha cominciato ad ascoltare i sondaggi. Doveva occuparsi del futuro e ha finito per occuparsi delle poltrone».",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-07-29T10:53:55.770Z",
+        "origin": "file-upload",
+        "source": "recorded at generation",
+        "sourceFile": "Grillo torna e attacca M5S_ «I rivoluzionari hanno scoperto i palazzi. Dovevano cambiare la politica, ma la politica ha cambiato loro». E Conte_ «Lui è quello che considerava Draghi grillino» _ Corrie"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 266,
+        "completionTokens": 249,
+        "ms": 114164,
+        "at": "2026-07-29T10:55:49.934Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Grillo kehrt zurück und greift die M5S an: „Die Revolutionäre haben die Paläste entdeckt. Sie sollten die Politik verändern, aber die Politik hat sie verändert.“ Und Conte: „Er ist derjenige, den er als grillino-orientierten Draghi betrachtete.“\n\nDer Post des Gründers in den sozialen Medien gegen die Bewegung: „Sie hat ihre Identität verloren, aber ihre Fragen sind immer noch da. Jemand sollte antworten.“\n\nEin direkter Angriff. Beppe Grillo kehrt zurück und donnert erneut gegen die von Giuseppe Conte geführte M5S und tut dies mit einem Post auf seinem Blog mit dem sehr klaren Titel: „Sie haben sich den Kopf verdreht, ohne die Anleitung zu lesen.“ Die Bewegung Fünf Sterne schreibt: „Grillo hat seine Identität verloren und vor allem jene Unterschiedlichkeit, die ihn einzigartig gemacht hatte. Er war geboren worden, um die Politik zu verändern, aber dann hat die Politik die Bewegung verändert. Er sollte den Bürgern zuhören, doch er begann, auf Umfragen zu hören. Er sollte sich mit der Zukunft befassen, doch am Ende kümmerte er sich nur noch um die Sitze.“",
+      "userStory": "Grillo torna e attacca M5S: «I rivoluzionari hanno scoperto i palazzi. Dovevano cambiare la politica, ma la politica ha cambiato loro». E Conte: «Lui è quello che considerava Draghi grillino»\n\nIl post del fondatore sui social contro il Movimento: «Ha perso identità, ma le sue domande sono ancora qui. Qualcuno risponda»\n\nUn attacco frontale. Beppe Grillo torna a tuonare contro il M5S guidato da Giuseppe Conte e lo fa con un post sul suo blog dal titolo molto chiaro: «Si sono montati la testa senza leggere le istruzioni». Il Movimento 5 Stelle scrive Grillo «ha perso la sua identità e, soprattutto, quella diversità che lo aveva reso unico. Era nato per cambiare la politica, ma poi la politica ha cambiato il Movimento. Doveva ascoltare i cittadini e ha cominciato ad ascoltare i sondaggi. Doveva occuparsi del futuro e ha finito per occuparsi delle poltrone».",
+      "storyStyle": "journalism",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Grillo greift M5S an",
+          "desc": "Beppe Grillos Kritik am Movimento 5 Stelle",
+          "icon": "📢",
+          "vocab": [
+            {
+              "target": "tornare",
+              "source": "zurückkehren"
+            },
+            {
+              "target": "attaccare",
+              "source": "angreifen"
+            },
+            {
+              "target": "rivoluzionario",
+              "source": "Revolutionär"
+            },
+            {
+              "target": "palazzo",
+              "source": "Palast"
+            },
+            {
+              "target": "cambiare",
+              "source": "verändern"
+            },
+            {
+              "target": "identità",
+              "source": "Identität"
+            },
+            {
+              "target": "cittadino",
+              "source": "Bürger"
+            },
+            {
+              "target": "sondaggio",
+              "source": "Umfrage"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Grillo torna e attacca M5S.",
+              "source": "Grillo kehrt zurück und greift die M5S an.",
+              "words": [
+                "Grillo",
+                "torna",
+                "e",
+                "attacca",
+                "M5S."
+              ]
+            },
+            {
+              "target": "I rivoluzionari hanno scoperto i palazzi.",
+              "source": "Die Revolutionäre haben die Paläste entdeckt.",
+              "words": [
+                "I",
+                "rivoluzionari",
+                "hanno",
+                "scoperto",
+                "i",
+                "palazzi."
+              ]
+            },
+            {
+              "target": "Dovevano cambiare la politica.",
+              "source": "Sie sollten die Politik verändern.",
+              "words": [
+                "Dovevano",
+                "cambiare",
+                "la",
+                "politica."
+              ]
+            },
+            {
+              "target": "Ha perso identità.",
+              "source": "Sie hat ihre Identität verloren.",
+              "words": [
+                "Ha",
+                "perso",
+                "identità."
+              ]
+            },
+            {
+              "target": "Qualcuno risponda.",
+              "source": "Jemand sollte antworten.",
+              "words": [
+                "Qualcuno",
+                "risponda."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1082,
+            "completionTokens": 373,
+            "ms": 252607,
+            "at": "2026-07-29T11:00:02.589Z"
+          },
+          "qcAt": "2026-07-29T11:11:49.860Z",
+          "qcBy": "translategemma:12b"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 366819,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 3638,
+        "totalCompletionTokens": 668,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 252605,
+            "promptTokens": 1082,
+            "completionTokens": 373
+          }
+        ],
+        "tokensByType": {
+          "lesson_qc": 2336
+        }
+      },
+      "generatedAt": "2026-07-29T10:55:49.935Z",
+      "updatedAt": "2026-07-29T11:11:49.860Z",
+      "createdBy": "admin"
+    },
     {
       "id": "tp_17851387238120000029",
       "topic": "Die lebendige Theorie (2)",
