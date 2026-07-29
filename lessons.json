@@ -6,7 +6,9 @@
       "title": "Lo scontro sulle spese militari e i dossier critici…",
       "icon": "📖",
       "chapters": [
-        "tp_17853267145370000270"
+        "tp_17853267145370000270",
+        "tp_17853272126040000313",
+        "tp_17853290265450000497"
       ],
       "lang": "it",
       "srcLang": "de",
@@ -5540,6 +5542,446 @@
   ],
   "topics": [
     {
+      "id": "tp_17853290265450000497",
+      "topic": "APPROFONDISCI CON IL PODCAST",
+      "topicEmoji": "📖",
+      "userTopic": "APPROFONDISCI CON IL PODCAST",
+      "userPrompt": "APPROFONDISCI CON IL PODCAST\n\n[story]\nAPPROFONDISCI CON IL PODCAST\n\nTra gli altri, anche quelli di Daniela Santanchè: «Io le intercettazioni a strascico non le avrei votate e se arrivassero in Aula non le voterei». Secondo l’ex ministra «sono troppo invasive e danno troppa discrezionalità ai magistrati. Io ho molto fiducia nella magistratura ma, come è noto, una minoranza è politicizzata».\n\nNel frattempo, FdI formalizzava i suoi emendamenti pro «intercettazioni a strascico». E Ignazio La Russa, che ieri avrebbe dovuto sancire l’ammissibilità degli emendamenti del suo partito, ha rinviato la decisione a questa mattina. Ufficialmente perché il fascicolo degli emendamenti ieri sera non era ancora arrivato. Se ne riparlerà oggi a partire dalle 10. Fatto sta che anche in FdI sta montando l’irritazione: il nuovo caso arriva all’indomani della polemica sulla possibilità di finanziare lo sconto ai benzinai con i tabacchi. I leghisti attribuiscono l’incidente a due assi contrapposti nel partito della premier: La Russa-Lollobrigida da una parte, Donzelli-Arianna Meloni dall’altra.",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 155,
+      "story": "APPROFONDISCI CON IL PODCAST\n\nTra gli altri, anche quelli di Daniela Santanchè: «Io le intercettazioni a strascico non le avrei votate e se arrivassero in Aula non le voterei». Secondo l’ex ministra «sono troppo invasive e danno troppa discrezionalità ai magistrati. Io ho molto fiducia nella magistratura ma, come è noto, una minoranza è politicizzata».\n\nNel frattempo, FdI formalizzava i suoi emendamenti pro «intercettazioni a strascico». E Ignazio La Russa, che ieri avrebbe dovuto sancire l’ammissibilità degli emendamenti del suo partito, ha rinviato la decisione a questa mattina. Ufficialmente perché il fascicolo degli emendamenti ieri sera non era ancora arrivato. Se ne riparlerà oggi a partire dalle 10. Fatto sta che anche in FdI sta montando l’irritazione: il nuovo caso arriva all’indomani della polemica sulla possibilità di finanziare lo sconto ai benzinai con i tabacchi. I leghisti attribuiscono l’incidente a due assi contrapposti nel partito della premier: La Russa-Lollobrigida da una parte, Donzelli-Arianna Meloni dall’altra.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-07-29T12:39:25.815Z",
+        "origin": "user-pasted",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 333,
+        "completionTokens": 291,
+        "ms": 260729,
+        "at": "2026-07-29T12:43:46.545Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Vertiefen Sie sich mit dem Podcast\n\nUnter anderem auch die von Daniela Santanchè: „Ich hätte die abgeleiteten Abhörungen nicht befürwortet und würde sie auch dann nicht befürworten, wenn sie im Plenum zur Abstimmung kämen.“ Laut der ehemaligen Ministerin seien diese zu invasiv und gäben den Richtern zu viel Ermessensspielraum. Sie habe großes Vertrauen in die Justiz, aber wie bekannt sei, sei eine Minderheit politisiert.\n\nInzwischen formalisierte FdI seine Änderungsanträge zugunsten der abgeleiteten Abhörungen. Ignazio La Russa, der gestern die Zulässigkeit der Änderungsanträge seiner Partei hätte bestätigen sollen, hat die Entscheidung auf diesen Morgen verschoben. Offiziell, weil der Ordner mit den Änderungsanträgen am Vorabend noch nicht eingegangen war. Darüber wird heute ab 10 Uhr erneut gesprochen. Tatsache ist jedoch, dass auch in FdI die Unzufriedenheit wächst: Der neue Vorfall folgt unmittelbar auf die Kontroverse um die Möglichkeit, den Rabatt an Tankstellen durch Tabakeinnahmen zu finanzieren. Die Lega-Abgeordneten führen den Zwischenfall auf zwei gegensätzliche Flügel innerhalb der Partei der Premierministerin zurück: La Russa und Lollobrigida einerseits, Donzelli und Arianna Meloni andererseits.",
+      "userStory": "APPROFONDISCI CON IL PODCAST\n\nTra gli altri, anche quelli di Daniela Santanchè: «Io le intercettazioni a strascico non le avrei votate e se arrivassero in Aula non le voterei». Secondo l’ex ministra «sono troppo invasive e danno troppa discrezionalità ai magistrati. Io ho molto fiducia nella magistratura ma, come è noto, una minoranza è politicizzata».\n\nNel frattempo, FdI formalizzava i suoi emendamenti pro «intercettazioni a strascico». E Ignazio La Russa, che ieri avrebbe dovuto sancire l’ammissibilità degli emendamenti del suo partito, ha rinviato la decisione a questa mattina. Ufficialmente perché il fascicolo degli emendamenti ieri sera non era ancora arrivato. Se ne riparlerà oggi a partire dalle 10. Fatto sta che anche in FdI sta montando l’irritazione: il nuovo caso arriva all’indomani della polemica sulla possibilità di finanziare lo sconto ai benzinai con i tabacchi. I leghisti attribuiscono l’incidente a due assi contrapposti nel partito della premier: La Russa-Lollobrigida da una parte, Donzelli-Arianna Meloni dall’altra.",
+      "continuedFrom": "Tajani aveva già corretto il tiro, anche perché dall’Europa…",
+      "continuedFromId": "tp_17853272126040000313",
+      "storyStyle": "journalism",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Politik und Abhörungen",
+          "desc": "Vokabeln zu politischen Themen und Überwachung",
+          "icon": "🎙️",
+          "vocab": [
+            {
+              "target": "intercettare",
+              "source": "abhören"
+            },
+            {
+              "target": "votare",
+              "source": "abstimmen"
+            },
+            {
+              "target": "magistratura",
+              "source": "Justiz"
+            },
+            {
+              "target": "emendamento",
+              "source": "Änderungsantrag"
+            },
+            {
+              "target": "decisione",
+              "source": "Entscheidung"
+            },
+            {
+              "target": "irritazione",
+              "source": "Unzufriedenheit"
+            },
+            {
+              "target": "ministero",
+              "source": "Ministerium"
+            },
+            {
+              "target": "partito",
+              "source": "Partei"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Io le intercettazioni a strascico non le avrei votate.",
+              "source": "Ich hätte die abgeleiteten Abhörungen nicht befürwortet.",
+              "words": [
+                "Io",
+                "le",
+                "intercettazioni",
+                "a",
+                "strascico",
+                "non",
+                "le",
+                "avrei",
+                "votate."
+              ]
+            },
+            {
+              "target": "Sono troppo invasive e danno troppa discrezionalità ai magistrati.",
+              "source": "Sie seien zu invasiv und gäben den Richtern zu viel Ermessensspielraum.",
+              "words": [
+                "Sono",
+                "troppo",
+                "invasive",
+                "e",
+                "danno",
+                "troppa",
+                "discrezionalità",
+                "ai",
+                "magistrati."
+              ]
+            },
+            {
+              "target": "FdI formalizzava i suoi emendamenti pro «intercettazioni a strascico».",
+              "source": "Inzwischen formalisierte FdI seine Änderungsanträge zugunsten der abgeleiteten Abhörungen.",
+              "words": [
+                "FdI",
+                "formalizzava",
+                "i",
+                "suoi",
+                "emendamenti",
+                "pro",
+                "«intercettazioni",
+                "a",
+                "strascico»."
+              ]
+            },
+            {
+              "target": "Ha rinviato la decisione a questa mattina.",
+              "source": "Hat die Entscheidung auf diesen Morgen verschoben.",
+              "words": [
+                "Ha",
+                "rinviato",
+                "la",
+                "decisione",
+                "a",
+                "questa",
+                "mattina."
+              ]
+            },
+            {
+              "target": "Anche in FdI sta montando l’irritazione.",
+              "source": "Auch in FdI wächst die Unzufriedenheit.",
+              "words": [
+                "Anche",
+                "in",
+                "FdI",
+                "sta",
+                "montando",
+                "l’irritazione."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1183,
+            "completionTokens": 380,
+            "ms": 235147,
+            "at": "2026-07-29T12:47:41.752Z"
+          }
+        },
+        {
+          "id": 6,
+          "type": "word_forms",
+          "title": "Politik und Interzeptionen",
+          "desc": "Übungen zu italienischen Zeitformen und Formen",
+          "icon": "🎙️",
+          "items": [
+            {
+              "sentence": "Io le intercettazioni a strascico non le ___ votate.",
+              "translation": "Ich hätte die abgehörten Gespräche nicht zustimmen lassen.",
+              "choices": [
+                "avrei",
+                "ho",
+                "avrò"
+              ],
+              "correctIndex": 0,
+              "explanation": "Konditional für hypothetische Handlung"
+            },
+            {
+              "sentence": "Secondo l’ex ministra sono troppo ___ e danno troppa discrezionalità ai magistrati.",
+              "translation": "Laut der ehemaligen Ministerin sind sie zu invasiv und geben den Richtern zu viel Ermessen.",
+              "choices": [
+                "invasive",
+                "invasivo",
+                "invasivamente"
+              ],
+              "correctIndex": 0,
+              "explanation": "Plural feminin passend zu 'sono'"
+            },
+            {
+              "sentence": "Ignazio La Russa ha ___ la decisione a questa mattina.",
+              "translation": "Ignazio La Russa hat die Entscheidung auf diesen Morgen verschoben.",
+              "choices": [
+                "rinviato",
+                "rinvia",
+                "rinvierà"
+              ],
+              "correctIndex": 0,
+              "explanation": "Passato prossimo für abgeschlossene Handlung"
+            },
+            {
+              "sentence": "Ufficialmente perché il fascicolo degli emendamenti ieri sera non ___ ancora arrivato.",
+              "translation": "Offiziell, weil das Paket der Änderungsanträge gestern Abend noch nicht angekommen war.",
+              "choices": [
+                "era",
+                "è",
+                "sarà"
+              ],
+              "correctIndex": 0,
+              "explanation": "Imperfetto für vergangenen Zustand/Hintergrund"
+            },
+            {
+              "sentence": "I leghisti ___ l’incidente a due assi contrapposti nel partito.",
+              "translation": "Die Lega-Abgeordneten führen den Vorfall auf zwei entgegengesetzte Lager in der Partei zurück.",
+              "choices": [
+                "attribuiscono",
+                "attribuisce",
+                "attribuiranno"
+              ],
+              "correctIndex": 0,
+              "explanation": "Plural passend zu 'I leghisti'"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1161,
+            "completionTokens": 536,
+            "ms": 316855,
+            "at": "2026-07-29T12:52:58.607Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": 6,
+          "type": "synonyms",
+          "title": "Politica e Media Italiano",
+          "desc": "Vocaboli su politica e notizie",
+          "icon": "🎙️",
+          "words": [
+            {
+              "base": "emendamento",
+              "gloss": "Abänderung",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "modifica",
+                  "g": "Änderung"
+                },
+                {
+                  "w": "correzione",
+                  "g": "Korrektur"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "conferma",
+                  "g": "Bestätigung"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "intercettazione",
+              "gloss": "Abhören",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "ascolto",
+                  "g": "Anhörung"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "strascico",
+              "gloss": "Nachwirkung",
+              "sentence": "Tra gli altri, anche quelli di Daniela Santanchè: «Io le intercettazioni a strascico non le avrei votate e se arrivassero in Aula non le voterei».",
+              "synonyms": [
+                {
+                  "w": "conseguenza",
+                  "g": "Folge"
+                },
+                {
+                  "w": "reazione",
+                  "g": "Reaktion"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "dossier",
+              "gloss": "Aktenordner",
+              "sentence": "Lo scontro sulle spese militari e i dossier critici sull'energia.",
+              "synonyms": [
+                {
+                  "w": "cartella",
+                  "g": "Ordner"
+                },
+                {
+                  "w": "pratica",
+                  "g": "Angelegenheit"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "scontro",
+              "gloss": "Konflikt",
+              "sentence": "Lo scontro sulle spese militari e i dossier critici sull'energia.",
+              "synonyms": [
+                {
+                  "w": "conflitto",
+                  "g": "Konflikt"
+                },
+                {
+                  "w": "contesa",
+                  "g": "Streit"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "accordo",
+                  "g": "Vereinbarung"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "dubbio",
+              "gloss": "Zweifel",
+              "sentence": "dall’Europa era già trapelato qualche dubbio",
+              "synonyms": [
+                {
+                  "w": "incertezza",
+                  "g": "Unsicherheit"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "certezza",
+                  "g": "Sicherheit"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "scadenza",
+              "gloss": "Frist",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "termine",
+                  "g": "Enddatum"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "urtante",
+              "gloss": "beleidigend",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "offensivo",
+                  "g": "beleidigend"
+                },
+                {
+                  "w": "insultante",
+                  "g": "beschämend"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "gentile",
+                  "g": "freundlich"
+                }
+              ],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 719,
+            "completionTokens": 892,
+            "ms": 409773,
+            "at": "2026-07-29T12:59:48.380Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 495937,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1516,
+        "totalCompletionTokens": 671,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 235145,
+            "promptTokens": 1183,
+            "completionTokens": 380
+          }
+        ]
+      },
+      "generatedAt": "2026-07-29T12:43:46.545Z",
+      "updatedAt": "2026-07-29T12:59:48.380Z",
+      "createdBy": "admin"
+    },
+    {
       "id": "tp_17853272126040000313",
       "topic": "Tajani aveva già corretto il tiro, anche perché dall’Europa…",
       "topicEmoji": "📖",
@@ -5585,9 +6027,375 @@
       "continuedFrom": "Lo scontro sulle spese militari e i dossier critici…",
       "continuedFromId": "tp_17853267145370000270",
       "storyStyle": "journalism",
-      "lessons": [],
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Tajani und die europäische Politik",
+          "desc": "Vokabeln und Sätze zu Tajanis Aussagen",
+          "icon": "🇮🇹",
+          "vocab": [
+            {
+              "target": "correggere",
+              "source": "korrigieren"
+            },
+            {
+              "target": "il dubbio",
+              "source": "der Zweifel"
+            },
+            {
+              "target": "la scadenza",
+              "source": "die Frist"
+            },
+            {
+              "target": "il ministro degli Esteri",
+              "source": "der Außenminister"
+            },
+            {
+              "target": "la tempesta in un bicchier d'acqua",
+              "source": "der Sturm im Wasserglas"
+            },
+            {
+              "target": "il fondo europeo per la Difesa",
+              "source": "der Europäische Verteidigungsfonds"
+            },
+            {
+              "target": "urtante",
+              "source": "aufstachelnd"
+            },
+            {
+              "target": "l'estensione",
+              "source": "die Ausweitung"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Tajani aveva già corretto il tiro.",
+              "source": "Tajani hatte bereits die Richtung korrigiert.",
+              "words": [
+                "Tajani",
+                "aveva",
+                "già",
+                "corretto",
+                "il",
+                "tiro."
+              ]
+            },
+            {
+              "target": "dall’Europa era già trapelato qualche dubbio",
+              "source": "aus Europa bereits einige Zweifel aufgetaucht waren",
+              "words": [
+                "dall’Europa",
+                "era",
+                "già",
+                "trapelato",
+                "qualche",
+                "dubbio"
+              ]
+            },
+            {
+              "target": "il ministro degli Esteri ha allora parlato di «tempesta in un bicchier d’acqua».",
+              "source": "Der Außenminister sprach daher von einem „Sturm im Wasserglas“.",
+              "words": [
+                "il",
+                "ministro",
+                "degli",
+                "Esteri",
+                "ha",
+                "allora",
+                "parlato",
+                "di",
+                "«tempesta",
+                "in",
+                "un",
+                "bicchier",
+                "d’acqua»."
+              ]
+            },
+            {
+              "target": "Ma il fondo europeo per la Difesa non è l’unico scossone delle ultime settimane.",
+              "source": "Doch der Europäische Verteidigungsfonds ist nicht die einzige Erschütterung der letzten Wochen.",
+              "words": [
+                "Ma",
+                "il",
+                "fondo",
+                "europeo",
+                "per",
+                "la",
+                "Difesa",
+                "non",
+                "è",
+                "l’unico",
+                "scossone",
+                "delle",
+                "ultime",
+                "settimane."
+              ]
+            },
+            {
+              "target": "In realtà, pure dentro a Fratelli d’Italia ci sono dei dubbi.",
+              "source": "Tatsächlich gibt es auch innerhalb von Fratelli d’Italia Zweifel.",
+              "words": [
+                "In",
+                "realtà,",
+                "pure",
+                "dentro",
+                "a",
+                "Fratelli",
+                "d’Italia",
+                "ci",
+                "sono",
+                "dei",
+                "dubbi."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1049,
+            "completionTokens": 538,
+            "ms": 480346,
+            "at": "2026-07-29T12:21:33.017Z"
+          }
+        },
+        {
+          "id": 6,
+          "type": "word_forms",
+          "title": "Tajani und die Politik",
+          "desc": "Übungen zu Verben und Nomen",
+          "icon": "🇮🇹",
+          "items": [
+            {
+              "sentence": "Tajani aveva già ___ il tiro.",
+              "translation": "Tajani hatte den Kurs bereits korrigiert.",
+              "choices": [
+                "corretto",
+                "correggere",
+                "correggeva"
+              ],
+              "correctIndex": 0,
+              "explanation": "Partizip für das Passato Prossimo"
+            },
+            {
+              "sentence": "Il ministro degli Esteri ha allora ___ di «tempesta in un bicchier d’acqua».",
+              "translation": "Der Außenminister sprach dann von „Sturm im Wasserglas“.",
+              "choices": [
+                "parlato",
+                "parlare",
+                "parlava"
+              ],
+              "correctIndex": 0,
+              "explanation": "Partizip für das Passato Prossimo"
+            },
+            {
+              "sentence": "Ma il fondo europeo per la Difesa non è l’unico ___ delle ultime settimane.",
+              "translation": "Aber der europäische Verteidigungsfonds ist nicht der einzige Erschütterung der letzten Wochen.",
+              "choices": [
+                "scossone",
+                "scosse",
+                "scossa"
+              ],
+              "correctIndex": 0,
+              "explanation": "Singular wegen „l’unico“"
+            },
+            {
+              "sentence": "Una richiesta ___ a suo tempo dal procuratore antimafia Giovanni Melillo.",
+              "translation": "Eine Anfrage, die seinerzeit vom Antimafia-Staatsanwalt Giovanni Melillo gestellt wurde.",
+              "choices": [
+                "fatta",
+                "fare",
+                "facendo"
+              ],
+              "correctIndex": 0,
+              "explanation": "Partizip als Adjektiv zu „richiesta“"
+            },
+            {
+              "sentence": "In realtà, pure dentro a Fratelli d’Italia ci ___ dei dubbi.",
+              "translation": "In Wirklichkeit gibt es auch innerhalb von Fratelli d'Italia Zweifel.",
+              "choices": [
+                "sono",
+                "essere",
+                "era"
+              ],
+              "correctIndex": 0,
+              "explanation": "Konjugation von „essere“ für „ci sono“"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1092,
+            "completionTokens": 532,
+            "ms": 522017,
+            "at": "2026-07-29T12:30:15.035Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": 6,
+          "type": "synonyms",
+          "title": "Politica Europea e Tajani",
+          "desc": "Vocaboli chiave sulla politica italiana ed europea",
+          "icon": "🇪🇺",
+          "words": [
+            {
+              "base": "fratelli",
+              "gloss": "Brüder",
+              "sentence": "Sempre Tajani è stato in qualche modo urtante, in questo caso per Fratelli d’Italia, riguardo a un altro tema sul tavolo: l’estensione delle intercettazioni chieste per un procedimento giudiziario in altri processi nel caso di reati di terrorismo e criminalità organizzata.",
+              "synonyms": [
+                {
+                  "w": "sorelle",
+                  "g": "Schwestern"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "corretto",
+              "gloss": "korrigiert / richtig",
+              "sentence": "Tajani aveva già corretto il tiro, anche perché dall’Europa era già trapelato qualche dubbio, soprattutto sulla scadenza di dicembre considerata troppo in là.",
+              "synonyms": [
+                {
+                  "w": "giusto",
+                  "g": "richtig"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "sbagliato",
+                  "g": "falsch"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "anche",
+              "gloss": "auch",
+              "sentence": "Tajani aveva già corretto il tiro, anche perché dall’Europa era già trapelato qualche dubbio, soprattutto sulla scadenza di dicembre considerata troppo in là.",
+              "synonyms": [
+                {
+                  "w": "pure",
+                  "g": "ebenfalls"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "scontro",
+              "gloss": "Konflikt / Zusammenstoß",
+              "sentence": "Lo scontro sulle spese militari e i dossier critici sull'energia.",
+              "synonyms": [
+                {
+                  "w": "conflitto",
+                  "g": "Konflikt"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "accordo",
+                  "g": "Übereinkunft"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "tensione",
+              "gloss": "Spannung",
+              "sentence": "così sale la tensione nella maggioranza",
+              "synonyms": [
+                {
+                  "w": "tensività",
+                  "g": "Spannung (phys.)"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "rilassamento",
+                  "g": "Entspannung"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "maggioranza",
+              "gloss": "Mehrheit",
+              "sentence": "così sale la tensione nella maggioranza",
+              "synonyms": [
+                {
+                  "w": "plurale",
+                  "g": "Plural / Mehrheit"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "minoranza",
+                  "g": "Minderheit"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "dossier",
+              "gloss": "Aktenordner / Dossier",
+              "sentence": "Lo scontro sulle spese militari e i dossier critici sull'energia.",
+              "synonyms": [
+                {
+                  "w": "cartelle",
+                  "g": "Ordner"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 7,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 682,
+            "completionTokens": 753,
+            "ms": 550591,
+            "at": "2026-07-29T12:39:25.626Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 650023,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1313,
+        "totalCompletionTokens": 759,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 480344,
+            "promptTokens": 1049,
+            "completionTokens": 538
+          }
+        ]
+      },
       "generatedAt": "2026-07-29T12:13:32.604Z",
-      "updatedAt": "2026-07-29T12:13:32.604Z",
+      "updatedAt": "2026-07-29T12:39:25.626Z",
       "createdBy": "admin"
     },
     {
@@ -5974,23 +6782,6 @@
               "source": "die Zukunft"
             },
             {
-              "target": "lasciare",
-              "source": "vergessen",
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "aufgeben",
-                  "field": "source",
-                  "at": "2026-07-29T12:23:42.208Z"
-                }
-              },
-              "qc": {
-                "sug": "aufgeben",
-                "field": "source",
-                "at": "2026-07-29T12:23:42.208Z",
-                "by": "translategemma:12b"
-              }
-            },
-            {
               "target": "la battaglia",
               "source": "der Kampf"
             },
@@ -6298,8 +7089,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 6590,
-        "totalCompletionTokens": 2265,
+        "totalPromptTokens": 13616,
+        "totalCompletionTokens": 2675,
         "lessons": [
           {
             "lessonNum": 1,
@@ -6309,14 +7100,17 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 2337,
-          "recreate": 4308
+          "lesson_qc": 9004,
+          "recreate": 4308,
+          "story_qc": 769
         }
       },
       "generatedAt": "2026-07-29T11:02:20.190Z",
-      "updatedAt": "2026-07-29T12:27:29.566Z",
+      "updatedAt": "2026-07-29T12:51:46.837Z",
       "createdBy": "admin",
-      "coverageTarget": 0.5
+      "coverageTarget": 0.5,
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-07-29T12:43:47.793Z"
     },
     {
       "id": "tp_17853225499350000035",
