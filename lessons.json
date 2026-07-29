@@ -5695,7 +5695,335 @@
             "completionTokens": 365,
             "ms": 251251,
             "at": "2026-07-29T11:06:31.499Z"
-          }
+          },
+          "_hidden": false
+        },
+        {
+          "id": "ls_1785325798783_1_gate",
+          "title": "Verschwundene Antworten",
+          "desc": "Vokabeln zu Fragen und Antworten",
+          "icon": "❓",
+          "vocab": [
+            {
+              "target": "la domanda",
+              "source": "die Frage"
+            },
+            {
+              "target": "la risposta",
+              "source": "die Antwort"
+            },
+            {
+              "target": "scomparire",
+              "source": "verschwinden"
+            },
+            {
+              "target": "il reddito",
+              "source": "das Einkommen"
+            },
+            {
+              "target": "il futuro",
+              "source": "die Zukunft"
+            },
+            {
+              "target": "lasciare",
+              "source": "vergessen"
+            },
+            {
+              "target": "la battaglia",
+              "source": "der Kampf"
+            },
+            {
+              "target": "l'identità",
+              "source": "die Identität"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Le domande sono rimaste.",
+              "source": "Die Fragen sind geblieben.",
+              "words": [
+                "Le",
+                "domande",
+                "sono",
+                "rimaste."
+              ]
+            },
+            {
+              "target": "Le risposte sono scomparse.",
+              "source": "Die Antworten sind verschwunden.",
+              "words": [
+                "Le",
+                "risposte",
+                "sono",
+                "scomparse."
+              ]
+            },
+            {
+              "target": "Vogliamo cambiare il futuro.",
+              "source": "Wir wollen die Zukunft ändern.",
+              "words": [
+                "Vogliamo",
+                "cambiare",
+                "il",
+                "futuro."
+              ]
+            },
+            {
+              "target": "Lasciamo le battaglie indietro.",
+              "source": "Wir lassen die Kämpfe zurück.",
+              "words": [
+                "Lasciamo",
+                "le",
+                "battaglie",
+                "indietro."
+              ]
+            },
+            {
+              "target": "Perdiamo la nostra identità.",
+              "source": "Wir verlieren unsere Identität.",
+              "words": [
+                "Perdiamo",
+                "la",
+                "nostra",
+                "identità."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 920,
+            "completionTokens": 315,
+            "ms": 139915,
+            "at": "2026-07-29T11:49:58.783Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785326176195_1_word_forms",
+          "type": "word_forms",
+          "title": "Grillo und Conte",
+          "desc": "Übungen zu Verben und Substantiven",
+          "icon": "🇮🇹",
+          "items": [
+            {
+              "sentence": "noi avevamo provato a darne alcune, ___ il reddito.",
+              "translation": "wir hatten versucht, einige zu geben, das Einkommen zu verteilen.",
+              "choices": [
+                "distribuire",
+                "distribuito",
+                "distribuiva"
+              ],
+              "correctIndex": 0,
+              "explanation": "Infinito nach 'provare a'"
+            },
+            {
+              "sentence": "proposte che, con il tempo, ___ diventate slogan.",
+              "translation": "Vorschläge, die mit der Zeit zu Slogans geworden sind.",
+              "choices": [
+                "sono",
+                "erano",
+                "stato"
+              ],
+              "correctIndex": 0,
+              "explanation": "Passato prossimo con 'essere'"
+            },
+            {
+              "sentence": "il Movimento era nato per ___ tutte queste domande.",
+              "translation": "die Bewegung war entstanden, um all diese Fragen anzugehen.",
+              "choices": [
+                "affrontare",
+                "affronta",
+                "affrontava"
+              ],
+              "correctIndex": 0,
+              "explanation": "Infinito nach 'per'"
+            },
+            {
+              "sentence": "Con tutte le nostre battaglie che ___ facendo.",
+              "translation": "Mit all unseren Kämpfen, die wir gerade führen.",
+              "choices": [
+                "stiamo",
+                "siamo",
+                "stato"
+              ],
+              "correctIndex": 0,
+              "explanation": "Stare + gerundio für progressive Form"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 1,
+            "rejectReasons": {
+              "answer appears elsewhere in sentence": 1
+            },
+            "promptTokens": 1160,
+            "completionTokens": 487,
+            "ms": 377412,
+            "at": "2026-07-29T11:56:16.195Z"
+          },
+          "_recreated": true,
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1785326480205_1_synonyms",
+          "type": "synonyms",
+          "title": "Verschwundene Antworten",
+          "desc": "Wörter zu Fragen und Identität",
+          "icon": "🔍",
+          "words": [
+            {
+              "base": "domande",
+              "gloss": "Fragen",
+              "sentence": "E prosegue: «Le domande sono rimaste, le risposte sono scomparse», scrive, ricordando che «noi avevamo provato a darne alcune, distribuire il reddito, cambiare la classe dirigente, coinvolgere i cittadini nelle decisioni e programmare il futuro invece di amministrare la prossima elezione.",
+              "synonyms": [
+                {
+                  "w": "interrogazioni",
+                  "g": "Befragungen"
+                },
+                {
+                  "w": "quesiti",
+                  "g": "Anliegen"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "risposte",
+                  "g": "Antworten"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "scomparse",
+              "gloss": "verschwunden",
+              "sentence": "E prosegue: «Le domande sono rimaste, le risposte sono scomparse», scrive, ricordando che «noi avevamo provato a darne alcune, distribuire il reddito, cambiare la classe dirigente, coinvolgere i cittadini nelle decisioni e programmare il futuro invece di amministrare la prossima elezione.",
+              "synonyms": [
+                {
+                  "w": "sparite",
+                  "g": "verschwunden"
+                },
+                {
+                  "w": "disperse",
+                  "g": "verloren"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "apparse",
+                  "g": "erschienen"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "reddito",
+              "gloss": "Einkommen",
+              "sentence": "E prosegue: «Le domande sono rimaste, le risposte sono scomparse», scrive, ricordando che «noi avevamo provato a darne alcune, distribuire il reddito, cambiare la classe dirigente, coinvolgere i cittadini nelle decisioni e programmare il futuro invece di amministrare la prossima elezione.",
+              "synonyms": [
+                {
+                  "w": "salario",
+                  "g": "Lohn"
+                },
+                {
+                  "w": "guadagno",
+                  "g": "Gewinn"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "movimento",
+              "gloss": "Bewegung",
+              "sentence": "Per questo alla fine del post Grillo lancia una sorta di appello: «Ecco, il Movimento era nato per affrontare tutte queste domande, poi ha cominciato a occuparsi di se stesso.",
+              "synonyms": [
+                {
+                  "w": "moto",
+                  "g": "Bewegung"
+                },
+                {
+                  "w": "azione",
+                  "g": "Aktion"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "staticità",
+                  "g": "Ruhe"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "prosegue",
+              "gloss": "geht weiter",
+              "sentence": "E prosegue: «Le domande sono rimaste, le risposte sono scomparse», scrive, ricordando che «noi avevamo provato a darne alcune, distribuire il reddito, cambiare la classe dirigente, coinvolgere i cittadini nelle decisioni e programmare il futuro invece di amministrare la prossima elezione.",
+              "synonyms": [
+                {
+                  "w": "continua",
+                  "g": "setzt fort"
+                },
+                {
+                  "w": "avanza",
+                  "g": "rückt vor"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "si ferma",
+                  "g": "hält an"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "identità",
+              "gloss": "Identität",
+              "sentence": "E arriva la reazione del presidente del M5S, Giuseppe Conte: «Il Movimento ha perso identità?",
+              "synonyms": [
+                {
+                  "w": "personalità",
+                  "g": "Persönlichkeit"
+                },
+                {
+                  "w": "essenza",
+                  "g": "Wesen"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 6,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 688,
+            "completionTokens": 738,
+            "ms": 304009,
+            "at": "2026-07-29T12:01:20.205Z"
+          },
+          "_recreated": true,
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1785326580713_o6ru",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 5
         }
       ],
       "generationStats": {
@@ -5708,8 +6036,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 3822,
-        "totalCompletionTokens": 725,
+        "totalPromptTokens": 6590,
+        "totalCompletionTokens": 2265,
         "lessons": [
           {
             "lessonNum": 1,
@@ -5719,12 +6047,14 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 2337
+          "lesson_qc": 2337,
+          "recreate": 4308
         }
       },
       "generatedAt": "2026-07-29T11:02:20.190Z",
-      "updatedAt": "2026-07-29T11:13:34.677Z",
-      "createdBy": "admin"
+      "updatedAt": "2026-07-29T12:03:28.854Z",
+      "createdBy": "admin",
+      "coverageTarget": 0.5
     },
     {
       "id": "tp_17853225499350000035",
@@ -5876,7 +6206,117 @@
             "at": "2026-07-29T11:00:02.589Z"
           },
           "qcAt": "2026-07-29T11:11:49.860Z",
-          "qcBy": "translategemma:12b"
+          "qcBy": "translategemma:12b",
+          "_hidden": true
+        },
+        {
+          "id": "ls_1785325658806_0_gate",
+          "title": "Grillos Kritik am M5S",
+          "desc": "Wortschatz zu Grillos Angriff auf die Bewegung",
+          "icon": "🦗",
+          "vocab": [
+            {
+              "target": "il movimento",
+              "source": "die bewegung"
+            },
+            {
+              "target": "la politica",
+              "source": "die politik"
+            },
+            {
+              "target": "cambiare",
+              "source": "verändern"
+            },
+            {
+              "target": "l'identità",
+              "source": "die identität"
+            },
+            {
+              "target": "il cittadino",
+              "source": "der bürger"
+            },
+            {
+              "target": "la sedia",
+              "source": "der stuhl"
+            },
+            {
+              "target": "ascoltare",
+              "source": "zuhören"
+            },
+            {
+              "target": "il sondaggio",
+              "source": "die umfrage"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "La politica ha cambiato il movimento.",
+              "source": "Die politik hat die bewegung verändert.",
+              "words": [
+                "La",
+                "politica",
+                "ha",
+                "cambiato",
+                "il",
+                "movimento."
+              ]
+            },
+            {
+              "target": "Dovevo ascoltare i cittadini.",
+              "source": "Ich musste den bürgern zuhören.",
+              "words": [
+                "Dovevo",
+                "ascoltare",
+                "i",
+                "cittadini."
+              ]
+            },
+            {
+              "target": "Ha perso la sua identità.",
+              "source": "Er hat seine identität verloren.",
+              "words": [
+                "Ha",
+                "perso",
+                "la",
+                "sua",
+                "identità."
+              ]
+            },
+            {
+              "target": "Ascoltare le sondaggi è sbagliato.",
+              "source": "Umfragen zuzuhören ist falsch.",
+              "words": [
+                "Ascoltare",
+                "le",
+                "sondaggi",
+                "è",
+                "sbagliato."
+              ]
+            },
+            {
+              "target": "Vogliono occuparsi delle sedie.",
+              "source": "Sie wollen sich um die stühle kümmern.",
+              "words": [
+                "Vogliono",
+                "occuparsi",
+                "delle",
+                "sedie."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 853,
+            "completionTokens": 338,
+            "ms": 177945,
+            "at": "2026-07-29T11:47:38.806Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -5889,8 +6329,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 3638,
-        "totalCompletionTokens": 668,
+        "totalPromptTokens": 4491,
+        "totalCompletionTokens": 1006,
         "lessons": [
           {
             "lessonNum": 1,
@@ -5900,11 +6340,12 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 2336
+          "lesson_qc": 2336,
+          "recreate": 1191
         }
       },
       "generatedAt": "2026-07-29T10:55:49.935Z",
-      "updatedAt": "2026-07-29T11:11:49.860Z",
+      "updatedAt": "2026-07-29T11:47:38.806Z",
       "createdBy": "admin"
     },
     {
