@@ -18,12 +18,12 @@
       "lang": "it",
       "srcLang": "de",
       "createdAt": "2026-07-27T07:55:43.985Z",
-      "updatedAt": "2026-07-28T16:48:31.440Z",
+      "updatedAt": "2026-07-29T07:28:45.033Z",
       "tokenUsage": {
-        "totalPromptTokens": 5564,
-        "totalCompletionTokens": 1917,
+        "totalPromptTokens": 6567,
+        "totalCompletionTokens": 2144,
         "tokensByType": {
-          "retitle": 2125,
+          "retitle": 3355,
           "summary": 1601,
           "storyboard": 3260,
           "summary_qc": 495
@@ -5728,8 +5728,343 @@
   ],
   "topics": [
     {
+      "id": "tp_17851387238120000029",
+      "topic": "Die lebendige Theorie (2)",
+      "topicEmoji": "🧬",
+      "userTopic": "Evoluzione",
+      "userPrompt": "Evoluzione\n\n[story]\nEvoluzione\n\nTelmo Pievani scienze\n\nSe una teoria scientifica rimanesse sempre la stessa, senza aggiornamenti, revisioni ed estensioni, ci sarebbe di che preoccuparsi. Vorrebbe dire che non sta al passo delle nuove scoperte ed evidenze, che nella scienza si susseguono sempre. La spiegazione evoluzionistica darwiniana in realtà non è soltanto una «teoria» scientifica, ma un vasto e complesso «programma di ricerca», composto da più leggi, fattori, modelli e ipotesi. E come programma di ricerca ha subito nell’ultimo secolo e mezzo molte correzioni e integrazioni, come è bene che sia, rimanendo tuttavia integro nel suo nocciolo centrale, quello individuato da Charles Darwin alla metà dell’Ottocento.",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 103,
+      "story": "Evoluzione\n\nTelmo Pievani scienze\n\nSe una teoria scientifica rimanesse sempre la stessa, senza aggiornamenti, revisioni ed estensioni, ci sarebbe di che preoccuparsi. Vorrebbe dire che non sta al passo delle nuove scoperte ed evidenze, che nella scienza si susseguono sempre. La spiegazione evoluzionistica darwiniana in realtà non è soltanto una «teoria» scientifica, ma un vasto e complesso «programma di ricerca», composto da più leggi, fattori, modelli e ipotesi. E come programma di ricerca ha subito nell’ultimo secolo e mezzo molte correzioni e integrazioni, come è bene che sia, rimanendo tuttavia integro nel suo nocciolo centrale, quello individuato da Charles Darwin alla metà dell’Ottocento.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-07-27T07:50:53.524Z",
+        "origin": "file-upload",
+        "source": "recorded at generation",
+        "sourceFile": "Evoluzione (Scienze per la Maturità 2026) _ Le lezioni del Corriere - Corriere.it.pdf"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 218,
+        "completionTokens": 183,
+        "ms": 70288,
+        "at": "2026-07-27T07:52:03.812Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Evolution\n\nTelmo Pievani, Wissenschaften\n\nWenn eine wissenschaftliche Theorie stets unverändert bliebe, ohne Aktualisierungen, Überarbeitungen und Erweiterungen, gäbe es Anlass zur Sorge. Das würde bedeuten, dass sie mit den neuen Entdeckungen und Erkenntnissen nicht Schritt hält, die in der Wissenschaft fortlaufend aufeinanderfolgen. Die darwinsche Erklärungstheorie der Evolution ist in Wirklichkeit nicht nur eine wissenschaftliche „Theorie“, sondern ein weitreichendes und komplexes „Forschungsprogramm“, das aus mehreren Gesetzen, Faktoren, Modellen und Hypothesen besteht. Als Forschungsprogramm hat sie im letzten anderthalb Jahrhundert zahlreiche Korrekturen und Ergänzungen erfahren, wie es auch sein sollte, wobei ihr Kern, den Charles Darwin in der Mitte des 19. Jahrhunderts identifiziert hatte, intakt geblieben ist.",
+      "userStory": "Evoluzione\n\nTelmo Pievani scienze\n\nSe una teoria scientifica rimanesse sempre la stessa, senza aggiornamenti, revisioni ed estensioni, ci sarebbe di che preoccuparsi. Vorrebbe dire che non sta al passo delle nuove scoperte ed evidenze, che nella scienza si susseguono sempre. La spiegazione evoluzionistica darwiniana in realtà non è soltanto una «teoria» scientifica, ma un vasto e complesso «programma di ricerca», composto da più leggi, fattori, modelli e ipotesi. E come programma di ricerca ha subito nell’ultimo secolo e mezzo molte correzioni e integrazioni, come è bene che sia, rimanendo tuttavia integro nel suo nocciolo centrale, quello individuato da Charles Darwin alla metà dell’Ottocento.",
+      "storyStyle": "scientific",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Wissenschaftliche Evolution",
+          "desc": "Grundlagen der evolutionären Theorie verstehen",
+          "icon": "🧬",
+          "vocab": [
+            {
+              "target": "teoria",
+              "source": "Theorie"
+            },
+            {
+              "target": "scienza",
+              "source": "Wissenschaft"
+            },
+            {
+              "target": "ricerca",
+              "source": "Forschung"
+            },
+            {
+              "target": "legge",
+              "source": "Gesetz"
+            },
+            {
+              "target": "fattore",
+              "source": "Faktor"
+            },
+            {
+              "target": "modello",
+              "source": "Modell"
+            },
+            {
+              "target": "ipotesi",
+              "source": "Hypothese"
+            },
+            {
+              "target": "nocciolo",
+              "source": "Kern"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Se una teoria scientifica rimanesse sempre la stessa, ci sarebbe di che preoccuparsi.",
+              "source": "Wenn eine wissenschaftliche Theorie stets unverändert bliebe, gäbe es Anlass zur Sorge.",
+              "words": [
+                "Se",
+                "una",
+                "teoria",
+                "scientifica",
+                "rimanesse",
+                "sempre",
+                "la",
+                "stessa,",
+                "ci",
+                "sarebbe",
+                "di",
+                "che",
+                "preoccuparsi."
+              ]
+            },
+            {
+              "target": "Vorrebbe dire che non sta al passo delle nuove scoperte ed evidenze.",
+              "source": "Das würde bedeuten, dass sie mit den neuen Entdeckungen und Erkenntnissen nicht Schritt hält.",
+              "words": [
+                "Vorrebbe",
+                "dire",
+                "che",
+                "non",
+                "sta",
+                "al",
+                "passo",
+                "delle",
+                "nuove",
+                "scoperte",
+                "ed",
+                "evidenze."
+              ]
+            },
+            {
+              "target": "La spiegazione evoluzionistica darwiniana in realtà non è soltanto una teoria scientifica.",
+              "source": "Die darwinsche Erklärungstheorie der Evolution ist in Wirklichkeit nicht nur eine wissenschaftliche Theorie.",
+              "words": [
+                "La",
+                "spiegazione",
+                "evoluzionistica",
+                "darwiniana",
+                "in",
+                "realtà",
+                "non",
+                "è",
+                "soltanto",
+                "una",
+                "teoria",
+                "scientifica."
+              ]
+            },
+            {
+              "target": "È un vasto e complesso programma di ricerca, composto da più leggi, fattori, modelli e ipotesi.",
+              "source": "Es ist ein weitreichendes und komplexes Forschungsprogramm, das aus mehreren Gesetzen, Faktoren, Modellen und Hypothesen besteht.",
+              "words": [
+                "È",
+                "un",
+                "vasto",
+                "e",
+                "complesso",
+                "programma",
+                "di",
+                "ricerca,",
+                "composto",
+                "da",
+                "più",
+                "leggi,",
+                "fattori,",
+                "modelli",
+                "e",
+                "ipotesi."
+              ]
+            },
+            {
+              "target": "Ha subito molte correzioni e integrazioni, rimanendo tuttavia integro nel suo nocciolo centrale.",
+              "source": "Es hat zahlreiche Korrekturen und Ergänzungen erfahren, wobei sein Kern intakt geblieben ist.",
+              "words": [
+                "Ha",
+                "subito",
+                "molte",
+                "correzioni",
+                "e",
+                "integrazioni,",
+                "rimanendo",
+                "tuttavia",
+                "integro",
+                "nel",
+                "suo",
+                "nocciolo",
+                "centrale."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 953,
+            "completionTokens": 486,
+            "ms": 220020,
+            "at": "2026-07-27T07:55:43.905Z"
+          },
+          "qcAt": "2026-07-27T08:34:46.117Z",
+          "qcBy": "translategemma:12b",
+          "_hidden": false
+        },
+        {
+          "id": "ls_1785145365400_0_gate",
+          "title": "Wissenschaftliche Theorie Evolution",
+          "desc": "Grundlagen der evolutionären Theorie verstehen",
+          "icon": "🧬",
+          "vocab": [
+            {
+              "target": "la teoria",
+              "source": "die Theorie"
+            },
+            {
+              "target": "l'evoluzione",
+              "source": "die Evolution"
+            },
+            {
+              "target": "il modello",
+              "source": "das Modell"
+            },
+            {
+              "target": "la legge",
+              "source": "das Gesetz"
+            },
+            {
+              "target": "l'ipotesi",
+              "source": "die Hypothese"
+            },
+            {
+              "target": "la ricerca",
+              "source": "die Forschung"
+            },
+            {
+              "target": "il fattore",
+              "source": "der Faktor"
+            },
+            {
+              "target": "la scoperta",
+              "source": "die Entdeckung"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "La teoria evolve nel tempo.",
+              "source": "Die Theorie entwickelt sich im Laufe der Zeit.",
+              "words": [
+                "La",
+                "teoria",
+                "evolve",
+                "nel",
+                "tempo."
+              ]
+            },
+            {
+              "target": "Questo modello è fondamentale.",
+              "source": "Dieses Modell ist grundlegend.",
+              "words": [
+                "Questo",
+                "modello",
+                "è",
+                "fondamentale."
+              ]
+            },
+            {
+              "target": "Nuove scoperte cambiano tutto.",
+              "source": "Neue Entdeckungen ändern alles.",
+              "words": [
+                "Nuove",
+                "scoperte",
+                "cambiano",
+                "tutto."
+              ]
+            },
+            {
+              "target": "La ricerca continua senza sosta.",
+              "source": "Die Forschung geht unermüdlich weiter.",
+              "words": [
+                "La",
+                "ricerca",
+                "continua",
+                "senza",
+                "sosta."
+              ]
+            },
+            {
+              "target": "L'ipotesi richiede verifica.",
+              "source": "Die Hypothese erfordert Überprüfung.",
+              "words": [
+                "L'ipotesi",
+                "richiede",
+                "verifica."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 809,
+            "completionTokens": 322,
+            "ms": 149727,
+            "at": "2026-07-27T09:42:45.400Z"
+          },
+          "_recreated": true
+        }
+      ],
+      "generationStats": {
+        "totalMs": 290381,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 4387,
+        "totalCompletionTokens": 1030,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 220015,
+            "promptTokens": 953,
+            "completionTokens": 486
+          }
+        ],
+        "tokensByType": {
+          "lesson_qc": 2446,
+          "recreate": 1131
+        }
+      },
+      "generatedAt": "2026-07-27T07:52:03.813Z",
+      "updatedAt": "2026-07-27T11:08:56.848Z",
+      "createdBy": "admin"
+    },
+    {
       "id": "tp_17851406388200000748",
-      "topic": "Literaturverzeichnis (2)",
+      "topic": "Literaturverzeichnis",
       "topicEmoji": "📖",
       "userTopic": "Per approfondire",
       "userPrompt": "Per approfondire\n\n[story]\nPer approfondire:\n\nN. Eldredge, 1995, Ripensare Darwin, Einaudi, Torino, 1999. S.J. Gould, 1989, La vita meravigliosa, Feltrinelli, Milano, 1990. E. Mayr, 1991, Un lungo ragionamento, Bollati Boringhieri, Torino, 1994. A. Piseri, P. Poltronieri, P. Vitale, 2020, Ritratti della natura. Lezioni di biologia, V anno, Loescher Editore, Torino.\n\n12 maggio 2025 ( modifica il 1 aprile 2026 | 15:02)\n\n© RIPRODUZIONE RISERVATA",
@@ -5771,7 +6106,7 @@
       },
       "storyTranslation": "Zur Vertiefung der Thematik:\n\nN. Eldredge, 1995, Darwin neu gedacht, Einaudi, Turin, 1999. S.J. Gould, 1989, Das wunderbare Leben, Feltrinelli, Mailand, 1990. E. Mayr, 1991, Ein langer Gedankengang, Bollati Boringhieri, Turin, 1994. A. Piseri, P. Poltronieri, P. Vitale, 2020, Porträts der Natur. Biologievorlesungen, 5. Jahr, Loescher Editore, Turin.\n\n12. Mai 2025 (zuletzt geändert am 1. April 2026 | 15:02 Uhr)\n\n© NACHDRUCK VERBOTEN",
       "userStory": "Per approfondire:\n\nN. Eldredge, 1995, Ripensare Darwin, Einaudi, Torino, 1999. S.J. Gould, 1989, La vita meravigliosa, Feltrinelli, Milano, 1990. E. Mayr, 1991, Un lungo ragionamento, Bollati Boringhieri, Torino, 1994. A. Piseri, P. Poltronieri, P. Vitale, 2020, Ritratti della natura. Lezioni di biologia, V anno, Loescher Editore, Torino.\n\n12 maggio 2025 ( modifica il 1 aprile 2026 | 15:02)\n\n© RIPRODUZIONE RISERVATA",
-      "continuedFrom": "Exaptation und Gene (2)",
+      "continuedFrom": "Exaptation und Wandel",
       "continuedFromId": "tp_17851403861700000689",
       "storyStyle": "scientific",
       "lessons": [
@@ -6086,7 +6421,7 @@
     },
     {
       "id": "tp_17851403861700000689",
-      "topic": "Exaptation und Gene (2)",
+      "topic": "Exaptation und Wandel",
       "topicEmoji": "🦋",
       "userTopic": "Spesso una struttura, nata in relazione a una funzione o a…",
       "userPrompt": "Spesso una struttura, nata in relazione a una funzione o a…\n\n[story]\nSpesso una struttura, nata in relazione a una funzione o a nessuna funzione (un effetto collaterale, una ridondanza), viene convertita nell’evoluzione per fare tutt’altro (un processo chiamato exaptation): le ali non si sono evolute «per» volare, ma all’inizio svolgevano altri compiti (termoregolazione, corteggiamento) e poi sono state cooptate nel volo. Infine, i geni sono importanti ma non tutto si svolge a livello genetico: l’ecologia è essenziale e molti processi di cambiamento sono influenzati da fattori macro-evolutivi, cioè che accadono al livello delle specie o al di sopra (come le grandi estinzioni dovute a perturbazioni ecologiche planetarie, eruzioni vulcaniche, impatti di asteroidi, cambiamenti climatici). Il programma di ricerca darwiniano, insomma, è in piena espansione e oggi viene applicato in modo fecondo anche allo studio di alcuni processi di cambiamento che avvengono a livello culturale e tecnologico.",
@@ -6623,7 +6958,7 @@
       },
       "storyTranslation": "Die darwinistische Theorie wird aktualisiert\n\nAll diese neuen, faszinierenden Entdeckungen haben die darwinische Erklärung nicht widerlegt, sondern sie korrigiert, bereichert und erweitert. Heute ist das evolutionäre Forschungsprogramm pluralistischer, da es eine Vielzahl von Faktoren und Phänomenen berücksichtigt: Die Quellen der Variation sind nicht nur genetische Mutationen, sondern auch epigenetische Veränderungen sowie solche, die durch horizontalen Gentransfer entstehen; selbst die selektiven Prozesse sind vielfältig, denn die klassische natürliche Selektion wird ergänzt durch die sexuelle Selektion (bereits von Darwin entdeckt) und die Gruppenselektion; einige zufällige Faktoren wie die genetische Drift (wenn genetische Variation bei plötzlichen Rückgängen der Population einer Art oder bei Migrationen kleiner Gruppen zufällig auftritt) wurden unterschätzt. Zudem wissen wir heute, dass die natürliche Selektion nie bei Null beginnt, sondern aus Not Tugend macht und mit dem verfügbaren Material sowie den darin enthaltenen Einschränkungen arbeitet (Entwicklungs-, historische, architektonische, physikalische usw. Constraints).",
       "userStory": "La teoria darwiniana si aggiorna\n\nTutte queste nuove appassionanti scoperte non hanno confutato la spiegazione darwiniana, ma l’hanno corretta, arricchita ed estesa. Oggi il programma di ricerca evoluzionistico è più pluralista, perché prevede una molteplicità di fattori e di fenomeni: le sorgenti di variazione non sono soltanto le mutazioni genetiche, ma anche quelle epigenetiche e quelle dovute al trasferimento genico orizzontale; i processi selettivi stessi sono molteplici, perché la selezione naturale classica si integra alla selezione sessuale (già scoperta da Darwin) e alla selezione di gruppo; alcuni fattori casuali, come la deriva genetica (quando la variazione genetica viene sorteggiata casualmente in occasione di improvvise riduzioni della popolazione di una specie o di migrazioni di piccoli gruppi), erano stati sottovalutati; inoltre, oggi sappiamo che la selezione naturale non parte mai da zero, ma fa di necessità virtù con il materiale che ha a disposizione e con i vincoli che esso contiene (vincoli di sviluppo, storici, architettonici, fisici, etc.).",
-      "continuedFrom": "Neue Erkenntnisse",
+      "continuedFrom": "Neue Forschungsergebnisse",
       "continuedFromId": "tp_17851398260610000477",
       "storyStyle": "scientific",
       "lessons": [
@@ -7011,8 +7346,8 @@
     },
     {
       "id": "tp_17851398260610000477",
-      "topic": "Neue Erkenntnisse",
-      "topicEmoji": "🔍",
+      "topic": "Neue Forschungsergebnisse",
+      "topicEmoji": "🔭",
       "userTopic": "Fra gli anni settanta e ottanta del secolo scorso, anche…",
       "userPrompt": "Fra gli anni settanta e ottanta del secolo scorso, anche…\n\n[story]\nFra gli anni settanta e ottanta del secolo scorso, anche questo programma di ricerca è stato rivisto ed esteso, perché non spiegava adeguatamente nuovi fenomeni, come: l’esistenza di ampie porzioni dei genomi privi di funzioni e non sottoposti al controllo della selezione naturale (neutralismo); l’importanza della simbiosi, cioè dell’associazione permanente fra individui che perdono la loro autonomia per far parte di strutture più complesse e competitive; la frequenza di speciazioni geografiche rapide che «punteggiano» lunghi periodi di stabilità (equilibri punteggiati); le mutazioni non solo genetiche ma anche «epigenetiche» (che non modificano la sequenza del DNA, ma come viene espressa e regolata, in base alle condizioni ambientali); gli eventi catastrofici come le estinzioni di massa che hanno deviato il corso dell’evoluzione su larga scala.",
       "lang": "it",
@@ -7053,7 +7388,7 @@
       },
       "storyTranslation": "Zwischen den 1970er und 1980er Jahren des vergangenen Jahrhunderts wurde auch dieses Forschungsprogramm überarbeitet und erweitert, da es neue Phänomene nicht angemessen erklären konnte: das Vorhandensein großer Teile der Genome ohne Funktion und unter keinem Kontrollmechanismus der natürlichen Selektion (Neutralismus); die Bedeutung der Symbiose, also der dauerhaften Verbindung zwischen Individuen, die ihre Autonomie aufgeben, um Teil komplexerer und wettbewerbsfähigerer Strukturen zu werden; die Häufigkeit schneller geographischer Artbildungsprozesse, die lange Phasen der Stabilität unterbrechen (punktiertes Gleichgewicht); Mutationen nicht nur genetischer, sondern auch epigenetischer Natur (die die DNA-Sequenz selbst nicht verändern, sondern beeinflussen, wie sie je nach Umweltbedingungen exprimiert und reguliert wird); sowie katastrophale Ereignisse wie Massenaussterben, die den Verlauf der Evolution auf großer Skala verändert haben.",
       "userStory": "Fra gli anni settanta e ottanta del secolo scorso, anche questo programma di ricerca è stato rivisto ed esteso, perché non spiegava adeguatamente nuovi fenomeni, come: l’esistenza di ampie porzioni dei genomi privi di funzioni e non sottoposti al controllo della selezione naturale (neutralismo); l’importanza della simbiosi, cioè dell’associazione permanente fra individui che perdono la loro autonomia per far parte di strutture più complesse e competitive; la frequenza di speciazioni geografiche rapide che «punteggiano» lunghi periodi di stabilità (equilibri punteggiati); le mutazioni non solo genetiche ma anche «epigenetiche» (che non modificano la sequenza del DNA, ma come viene espressa e regolata, in base alle condizioni ambientali); gli eventi catastrofici come le estinzioni di massa che hanno deviato il corso dell’evoluzione su larga scala.",
-      "continuedFrom": "Genetik und Mendel (2)",
+      "continuedFrom": "Genetik und Mendel",
       "continuedFromId": "tp_17851395481530000335",
       "storyStyle": "scientific",
       "lessons": [
@@ -7406,7 +7741,7 @@
     },
     {
       "id": "tp_17851395481530000335",
-      "topic": "Genetik und Mendel (2)",
+      "topic": "Genetik und Mendel",
       "topicEmoji": "🧪",
       "userTopic": "Darwin non conosceva le basi molecolari della variazione né…",
       "userPrompt": "Darwin non conosceva le basi molecolari della variazione né…\n\n[story]\nDarwin non conosceva le basi molecolari della variazione né le leggi della sua trasmissione, scoperte in parallelo da Gregor Mendel, senza che i due entrassero in contatto. Bisognerà attendere la prima metà del Novecento per la nascita della genetica e per la fusione tra la teoria darwiniana e quella mendeliana. Si capì che le varianti nelle popolazioni sono dovute a mutazioni genetiche casuali, errori di copiatura del DNA, che oscillano nella loro frequenza. Secondo questo programma di ricerca, noto come «Sintesi Moderna», l’evoluzione è un processo lento e graduale di affinamento degli adattamenti degli organismi, dovuti al maggiore o minore successo dei geni portati dagli individui.",
@@ -7448,7 +7783,7 @@
       },
       "storyTranslation": "Darwin kannte die molekularen Grundlagen der Variation sowie die Gesetze ihrer Vererbung nicht, die parallel von Gregor Mendel entdeckt wurden, ohne dass die beiden in Kontakt getreten wären. Es musste bis zur ersten Hälfte des 20. Jahrhunderts gewartet werden, bis sich die Genetik entwickelte und eine Verschmelzung zwischen der darwinistischen und der mendelschen Theorie stattfand. Man erkannte, dass Variationen in Populationen auf zufälligen genetischen Mutationen beruhen, also Kopierfehlern der DNA, deren Häufigkeit schwankt. Nach diesem Forschungsprogramm, das als „Moderne Synthese“ bekannt ist, ist die Evolution ein langsamer und gradueller Prozess der Verfeinerung der Anpassungen von Organismen, bedingt durch den größeren oder geringeren Erfolg der Gene, die die Individuen tragen.",
       "userStory": "Darwin non conosceva le basi molecolari della variazione né le leggi della sua trasmissione, scoperte in parallelo da Gregor Mendel, senza che i due entrassero in contatto. Bisognerà attendere la prima metà del Novecento per la nascita della genetica e per la fusione tra la teoria darwiniana e quella mendeliana. Si capì che le varianti nelle popolazioni sono dovute a mutazioni genetiche casuali, errori di copiatura del DNA, che oscillano nella loro frequenza. Secondo questo programma di ricerca, noto come «Sintesi Moderna», l’evoluzione è un processo lento e graduale di affinamento degli adattamenti degli organismi, dovuti al maggiore o minore successo dei geni portati dagli individui.",
-      "continuedFrom": "Natürliche Selektion (2)",
+      "continuedFrom": "Selektion und Anpassung",
       "continuedFromId": "tp_17851392917180000271",
       "storyStyle": "scientific",
       "lessons": [
@@ -7842,7 +8177,7 @@
     },
     {
       "id": "tp_17851392917180000271",
-      "topic": "Natürliche Selektion (2)",
+      "topic": "Selektion und Anpassung",
       "topicEmoji": "⚖️",
       "userTopic": "Selezione naturale",
       "userPrompt": "Selezione naturale\n\n[story]\nSelezione naturale\n\nIl secondo pilastro della rivoluzione darwiniana, ancora valido, è la selezione naturale, il principale motore del cambiamento evolutivo, che ci ciba di variazioni individuali spontanee e casuali, le quali danno al singolo maggiori o minori capacità di sopravvivenza e di riproduzione in un dato ambiente, venendo quindi trasmesse di più o di meno alle generazioni successive. In tal senso, l’evoluzione è un gioco di varianti che si diffondono di più o di meno nelle popolazioni. Non è un perfezionamento progressivo, ma un far di necessità virtù in un dato momento, in un ambiente che sarà sempre in cambiamento. Chi prevale nell’evoluzione non è necessariamente «il più forte», ma anche il più flessibile, opportunista, cooperativo, scaltro.",
@@ -7884,7 +8219,7 @@
       },
       "storyTranslation": "Natürliche Selektion\n\nDer zweite Pfeiler der darwinistischen Revolution, der nach wie vor gültig ist, ist die natürliche Selektion – der Hauptmotor des evolutionären Wandels. Sie nutzt spontane und zufällige individuelle Variationen aus, die dem Einzelnen in einem bestimmten Umfeld größere oder geringere Überlebens- und Fortpflanzungschancen verleihen und daher mehr oder weniger stark an nachfolgende Generationen weitergegeben werden. In diesem Sinne ist Evolution ein Spiel der Varianten, die sich in den Populationen mehr oder weniger stark durchsetzen. Sie stellt keine schrittweise Annäherung an Perfektion dar, sondern vielmehr das Notwendige zum Tugendhaften zu machen im jeweiligen Augenblick und in einem stets wandelnden Umfeld. Wer in der Evolution siegt, ist nicht unbedingt „der Stärkste“, sondern auch der flexibelste, opportunistischste, kooperationsfähigste und gerissenste.",
       "userStory": "Selezione naturale\n\nIl secondo pilastro della rivoluzione darwiniana, ancora valido, è la selezione naturale, il principale motore del cambiamento evolutivo, che ci ciba di variazioni individuali spontanee e casuali, le quali danno al singolo maggiori o minori capacità di sopravvivenza e di riproduzione in un dato ambiente, venendo quindi trasmesse di più o di meno alle generazioni successive. In tal senso, l’evoluzione è un gioco di varianti che si diffondono di più o di meno nelle popolazioni. Non è un perfezionamento progressivo, ma un far di necessità virtù in un dato momento, in un ambiente che sarà sempre in cambiamento. Chi prevale nell’evoluzione non è necessariamente «il più forte», ma anche il più flessibile, opportunista, cooperativo, scaltro.",
-      "continuedFrom": "Der Stammbaum des Lebens (2)",
+      "continuedFrom": "Der Baum des Lebens",
       "continuedFromId": "tp_17851390198240000157",
       "storyStyle": "scientific",
       "lessons": [
@@ -8247,7 +8582,7 @@
     },
     {
       "id": "tp_17851390198240000157",
-      "topic": "Der Stammbaum des Lebens (2)",
+      "topic": "Der Baum des Lebens",
       "topicEmoji": "🌳",
       "userTopic": "Tutti gli esseri viventi sono imparentati fra loro e sono…",
       "userPrompt": "Tutti gli esseri viventi sono imparentati fra loro e sono…\n\n[story]\nTutti gli esseri viventi sono imparentati fra loro e sono connessi da un albero genealogico di discendenza con modificazioni. Questo è il primo pilastro del programma di ricerca darwiniano. In sostanza, prese a caso due specie, anche molto diverse fra loro come una pianta e un verme, avranno certamente avuto un antenato in comune vissuto in epoche lontane. Tutte le specie sono quindi «cugine», nel senso che hanno avuto un «nonno» in comune, e poi si sono ramificate e diversificate. Noi umani per esempio abbiamo avuto un antenato in comune con gli scimpanzé, i nostri cugini non umani più prossimi, vissuto in Africa intorno a sei milioni di anni fa. Con i Neanderthal, i nostri cugini umani più prossimi, abbiamo avuto un antenato in comune vissuto sempre in Africa 500.000 anni fa.",
@@ -8289,7 +8624,7 @@
       },
       "storyTranslation": "Alle Lebewesen sind miteinander verwandt und durch einen Stammbaum der Abstammung mit Veränderungen verbunden. Dies ist die erste Säule des darwinischen Forschungsprogramms. Im Wesentlichen werden zwei zufällig ausgewählte Arten, selbst wenn sie sich stark unterscheiden wie eine Pflanze und ein Wurm, zweifellos einen gemeinsamen Vorfahren gehabt haben, der in ferner Vergangenheit lebte. Alle Arten sind daher „Cousins“ im Sinne dessen, dass sie einen gemeinsamen „Großvater“ hatten und sich danach verzweigten und diversifizierten. Wir Menschen zum Beispiel teilten uns mit den Schimpansen, unseren nächsten nichtmenschlichen Verwandten, einen gemeinsamen Vorfahren, der vor etwa sechs Millionen Jahren in Afrika lebte. Mit den Neandertalern, unseren nächsten menschlichen Verwandten, hatten wir einen gemeinsamen Vorfahren, der ebenfalls vor 500.000 Jahren in Afrika lebte.",
       "userStory": "Tutti gli esseri viventi sono imparentati fra loro e sono connessi da un albero genealogico di discendenza con modificazioni. Questo è il primo pilastro del programma di ricerca darwiniano. In sostanza, prese a caso due specie, anche molto diverse fra loro come una pianta e un verme, avranno certamente avuto un antenato in comune vissuto in epoche lontane. Tutte le specie sono quindi «cugine», nel senso che hanno avuto un «nonno» in comune, e poi si sono ramificate e diversificate. Noi umani per esempio abbiamo avuto un antenato in comune con gli scimpanzé, i nostri cugini non umani più prossimi, vissuto in Africa intorno a sei milioni di anni fa. Con i Neanderthal, i nostri cugini umani più prossimi, abbiamo avuto un antenato in comune vissuto sempre in Africa 500.000 anni fa.",
-      "continuedFrom": "Evoluzione der Theorie (2)",
+      "continuedFrom": "Die lebendige Theorie (2)",
       "continuedFromId": "tp_17851387238120000029",
       "storyStyle": "scientific",
       "lessons": [
@@ -8676,341 +9011,6 @@
       },
       "generatedAt": "2026-07-27T07:56:59.825Z",
       "updatedAt": "2026-07-28T20:22:49.362Z",
-      "createdBy": "admin"
-    },
-    {
-      "id": "tp_17851387238120000029",
-      "topic": "Evoluzione der Theorie (2)",
-      "topicEmoji": "🧬",
-      "userTopic": "Evoluzione",
-      "userPrompt": "Evoluzione\n\n[story]\nEvoluzione\n\nTelmo Pievani scienze\n\nSe una teoria scientifica rimanesse sempre la stessa, senza aggiornamenti, revisioni ed estensioni, ci sarebbe di che preoccuparsi. Vorrebbe dire che non sta al passo delle nuove scoperte ed evidenze, che nella scienza si susseguono sempre. La spiegazione evoluzionistica darwiniana in realtà non è soltanto una «teoria» scientifica, ma un vasto e complesso «programma di ricerca», composto da più leggi, fattori, modelli e ipotesi. E come programma di ricerca ha subito nell’ultimo secolo e mezzo molte correzioni e integrazioni, come è bene che sia, rimanendo tuttavia integro nel suo nocciolo centrale, quello individuato da Charles Darwin alla metà dell’Ottocento.",
-      "lang": "it",
-      "srcLang": "de",
-      "difficulty": 1,
-      "storyLen": 103,
-      "story": "Evoluzione\n\nTelmo Pievani scienze\n\nSe una teoria scientifica rimanesse sempre la stessa, senza aggiornamenti, revisioni ed estensioni, ci sarebbe di che preoccuparsi. Vorrebbe dire che non sta al passo delle nuove scoperte ed evidenze, che nella scienza si susseguono sempre. La spiegazione evoluzionistica darwiniana in realtà non è soltanto una «teoria» scientifica, ma un vasto e complesso «programma di ricerca», composto da più leggi, fattori, modelli e ipotesi. E come programma di ricerca ha subito nell’ultimo secolo e mezzo molte correzioni e integrazioni, come è bene che sia, rimanendo tuttavia integro nel suo nocciolo centrale, quello individuato da Charles Darwin alla metà dell’Ottocento.",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "storyMeta": {
-        "type": "story",
-        "model": "(user-provided)",
-        "attempts": null,
-        "valid": 1,
-        "rejected": 0,
-        "rejectReasons": null,
-        "promptTokens": 0,
-        "completionTokens": 0,
-        "ms": null,
-        "at": "2026-07-27T07:50:53.524Z",
-        "origin": "file-upload",
-        "source": "recorded at generation",
-        "sourceFile": "Evoluzione (Scienze per la Maturità 2026) _ Le lezioni del Corriere - Corriere.it.pdf"
-      },
-      "translationMeta": {
-        "type": "translation",
-        "model": "qwen3.6:35b-a3b",
-        "attempts": null,
-        "valid": 1,
-        "rejected": 0,
-        "rejectReasons": null,
-        "promptTokens": 218,
-        "completionTokens": 183,
-        "ms": 70288,
-        "at": "2026-07-27T07:52:03.812Z",
-        "origin": "generated",
-        "source": "recorded at generation"
-      },
-      "storyTranslation": "Evolution\n\nTelmo Pievani, Wissenschaften\n\nWenn eine wissenschaftliche Theorie stets unverändert bliebe, ohne Aktualisierungen, Überarbeitungen und Erweiterungen, gäbe es Anlass zur Sorge. Das würde bedeuten, dass sie mit den neuen Entdeckungen und Erkenntnissen nicht Schritt hält, die in der Wissenschaft fortlaufend aufeinanderfolgen. Die darwinsche Erklärungstheorie der Evolution ist in Wirklichkeit nicht nur eine wissenschaftliche „Theorie“, sondern ein weitreichendes und komplexes „Forschungsprogramm“, das aus mehreren Gesetzen, Faktoren, Modellen und Hypothesen besteht. Als Forschungsprogramm hat sie im letzten anderthalb Jahrhundert zahlreiche Korrekturen und Ergänzungen erfahren, wie es auch sein sollte, wobei ihr Kern, den Charles Darwin in der Mitte des 19. Jahrhunderts identifiziert hatte, intakt geblieben ist.",
-      "userStory": "Evoluzione\n\nTelmo Pievani scienze\n\nSe una teoria scientifica rimanesse sempre la stessa, senza aggiornamenti, revisioni ed estensioni, ci sarebbe di che preoccuparsi. Vorrebbe dire che non sta al passo delle nuove scoperte ed evidenze, che nella scienza si susseguono sempre. La spiegazione evoluzionistica darwiniana in realtà non è soltanto una «teoria» scientifica, ma un vasto e complesso «programma di ricerca», composto da più leggi, fattori, modelli e ipotesi. E come programma di ricerca ha subito nell’ultimo secolo e mezzo molte correzioni e integrazioni, come è bene che sia, rimanendo tuttavia integro nel suo nocciolo centrale, quello individuato da Charles Darwin alla metà dell’Ottocento.",
-      "storyStyle": "scientific",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Wissenschaftliche Evolution",
-          "desc": "Grundlagen der evolutionären Theorie verstehen",
-          "icon": "🧬",
-          "vocab": [
-            {
-              "target": "teoria",
-              "source": "Theorie"
-            },
-            {
-              "target": "scienza",
-              "source": "Wissenschaft"
-            },
-            {
-              "target": "ricerca",
-              "source": "Forschung"
-            },
-            {
-              "target": "legge",
-              "source": "Gesetz"
-            },
-            {
-              "target": "fattore",
-              "source": "Faktor"
-            },
-            {
-              "target": "modello",
-              "source": "Modell"
-            },
-            {
-              "target": "ipotesi",
-              "source": "Hypothese"
-            },
-            {
-              "target": "nocciolo",
-              "source": "Kern"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Se una teoria scientifica rimanesse sempre la stessa, ci sarebbe di che preoccuparsi.",
-              "source": "Wenn eine wissenschaftliche Theorie stets unverändert bliebe, gäbe es Anlass zur Sorge.",
-              "words": [
-                "Se",
-                "una",
-                "teoria",
-                "scientifica",
-                "rimanesse",
-                "sempre",
-                "la",
-                "stessa,",
-                "ci",
-                "sarebbe",
-                "di",
-                "che",
-                "preoccuparsi."
-              ]
-            },
-            {
-              "target": "Vorrebbe dire che non sta al passo delle nuove scoperte ed evidenze.",
-              "source": "Das würde bedeuten, dass sie mit den neuen Entdeckungen und Erkenntnissen nicht Schritt hält.",
-              "words": [
-                "Vorrebbe",
-                "dire",
-                "che",
-                "non",
-                "sta",
-                "al",
-                "passo",
-                "delle",
-                "nuove",
-                "scoperte",
-                "ed",
-                "evidenze."
-              ]
-            },
-            {
-              "target": "La spiegazione evoluzionistica darwiniana in realtà non è soltanto una teoria scientifica.",
-              "source": "Die darwinsche Erklärungstheorie der Evolution ist in Wirklichkeit nicht nur eine wissenschaftliche Theorie.",
-              "words": [
-                "La",
-                "spiegazione",
-                "evoluzionistica",
-                "darwiniana",
-                "in",
-                "realtà",
-                "non",
-                "è",
-                "soltanto",
-                "una",
-                "teoria",
-                "scientifica."
-              ]
-            },
-            {
-              "target": "È un vasto e complesso programma di ricerca, composto da più leggi, fattori, modelli e ipotesi.",
-              "source": "Es ist ein weitreichendes und komplexes Forschungsprogramm, das aus mehreren Gesetzen, Faktoren, Modellen und Hypothesen besteht.",
-              "words": [
-                "È",
-                "un",
-                "vasto",
-                "e",
-                "complesso",
-                "programma",
-                "di",
-                "ricerca,",
-                "composto",
-                "da",
-                "più",
-                "leggi,",
-                "fattori,",
-                "modelli",
-                "e",
-                "ipotesi."
-              ]
-            },
-            {
-              "target": "Ha subito molte correzioni e integrazioni, rimanendo tuttavia integro nel suo nocciolo centrale.",
-              "source": "Es hat zahlreiche Korrekturen und Ergänzungen erfahren, wobei sein Kern intakt geblieben ist.",
-              "words": [
-                "Ha",
-                "subito",
-                "molte",
-                "correzioni",
-                "e",
-                "integrazioni,",
-                "rimanendo",
-                "tuttavia",
-                "integro",
-                "nel",
-                "suo",
-                "nocciolo",
-                "centrale."
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 953,
-            "completionTokens": 486,
-            "ms": 220020,
-            "at": "2026-07-27T07:55:43.905Z"
-          },
-          "qcAt": "2026-07-27T08:34:46.117Z",
-          "qcBy": "translategemma:12b",
-          "_hidden": false
-        },
-        {
-          "id": "ls_1785145365400_0_gate",
-          "title": "Wissenschaftliche Theorie Evolution",
-          "desc": "Grundlagen der evolutionären Theorie verstehen",
-          "icon": "🧬",
-          "vocab": [
-            {
-              "target": "la teoria",
-              "source": "die Theorie"
-            },
-            {
-              "target": "l'evoluzione",
-              "source": "die Evolution"
-            },
-            {
-              "target": "il modello",
-              "source": "das Modell"
-            },
-            {
-              "target": "la legge",
-              "source": "das Gesetz"
-            },
-            {
-              "target": "l'ipotesi",
-              "source": "die Hypothese"
-            },
-            {
-              "target": "la ricerca",
-              "source": "die Forschung"
-            },
-            {
-              "target": "il fattore",
-              "source": "der Faktor"
-            },
-            {
-              "target": "la scoperta",
-              "source": "die Entdeckung"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "La teoria evolve nel tempo.",
-              "source": "Die Theorie entwickelt sich im Laufe der Zeit.",
-              "words": [
-                "La",
-                "teoria",
-                "evolve",
-                "nel",
-                "tempo."
-              ]
-            },
-            {
-              "target": "Questo modello è fondamentale.",
-              "source": "Dieses Modell ist grundlegend.",
-              "words": [
-                "Questo",
-                "modello",
-                "è",
-                "fondamentale."
-              ]
-            },
-            {
-              "target": "Nuove scoperte cambiano tutto.",
-              "source": "Neue Entdeckungen ändern alles.",
-              "words": [
-                "Nuove",
-                "scoperte",
-                "cambiano",
-                "tutto."
-              ]
-            },
-            {
-              "target": "La ricerca continua senza sosta.",
-              "source": "Die Forschung geht unermüdlich weiter.",
-              "words": [
-                "La",
-                "ricerca",
-                "continua",
-                "senza",
-                "sosta."
-              ]
-            },
-            {
-              "target": "L'ipotesi richiede verifica.",
-              "source": "Die Hypothese erfordert Überprüfung.",
-              "words": [
-                "L'ipotesi",
-                "richiede",
-                "verifica."
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 809,
-            "completionTokens": 322,
-            "ms": 149727,
-            "at": "2026-07-27T09:42:45.400Z"
-          },
-          "_recreated": true
-        }
-      ],
-      "generationStats": {
-        "totalMs": 290381,
-        "backend": "ollama",
-        "model": "qwen3.6:35b-a3b",
-        "models": {
-          "story": null,
-          "translation": "qwen3.6:35b-a3b",
-          "lessons": "qwen3.6:35b-a3b"
-        },
-        "lessonFormat": "json",
-        "totalPromptTokens": 4387,
-        "totalCompletionTokens": 1030,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 220015,
-            "promptTokens": 953,
-            "completionTokens": 486
-          }
-        ],
-        "tokensByType": {
-          "lesson_qc": 2446,
-          "recreate": 1131
-        }
-      },
-      "generatedAt": "2026-07-27T07:52:03.813Z",
-      "updatedAt": "2026-07-27T11:08:56.848Z",
       "createdBy": "admin"
     },
     {
