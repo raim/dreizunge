@@ -18,7 +18,7 @@
       "lang": "it",
       "srcLang": "de",
       "createdAt": "2026-07-27T07:55:43.985Z",
-      "updatedAt": "2026-07-29T07:35:15.737Z",
+      "updatedAt": "2026-07-29T08:05:20.756Z",
       "tokenUsage": {
         "totalPromptTokens": 6567,
         "totalCompletionTokens": 2144,
@@ -29,7 +29,7 @@
           "summary_qc": 495
         }
       },
-      "summary": "Die darwinische Evolutionstheorie wird als dynamisches Forschungsprogramm dargestellt, das durch ständige Überarbeitung und Erweiterung an die neuesten wissenschaftlichen Erkenntnisse angepasst wird. Zentrale Säulen wie der gemeinsame Stammbaum aller Lebewesen und die natürliche Selektion wurden durch moderne Genetik, Epigenetik und Konzepte wie Symbiose oder Exaptation bereichert. Diese Entwicklungen zeigen, dass Evolution kein linearer Prozess ist, sondern von vielfältigen Faktoren wie genetischen Mutationen, epigenetischen Veränderungen und makroevolutiven Ereignissen geprägt wird. Somit bleibt die Theorie nicht statisch, sondern wächst durch neue Phänomene wie horizontale Genübertragung und punktuelle Artbildung stetig an Komplexität.",
+      "summary": "Darwins Evolutionstheorie wird als dynamisches Forschungsprogramm dargestellt, das durch ständige Überarbeitung und Erweiterung an die neuesten wissenschaftlichen Erkenntnisse angepasst wird. Zentrale Säulen wie der gemeinsame Stammbaum aller Lebewesen und die natürliche Selektion wurden durch moderne Genetik, Epigenetik und Konzepte wie Symbiose oder Exaptation bereichert. Diese Entwicklungen zeigen, dass Evolution kein linearer Prozess ist, sondern von vielfältigen Faktoren wie genetischen Mutationen, epigenetischen Veränderungen und makroevolutiven Ereignissen geprägt wird. Somit bleibt die Theorie nicht statisch, sondern wächst durch neue Phänomene wie horizontale Genübertragung und punktuelle Artbildung stetig an Komplexität.",
       "summaryMeta": {
         "type": "storyline_summary",
         "model": "qwen3.6:35b-a3b",
