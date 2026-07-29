@@ -3,17 +3,295 @@
   "storylines": [
     {
       "id": "sl_1055245617",
-      "title": "Lo scontro sulle spese militari e i dossier critici…",
-      "icon": "📖",
+      "title": "Politische Wirbelstürme",
+      "icon": "🌪️",
       "chapters": [
         "tp_17853267145370000270",
         "tp_17853272126040000313",
-        "tp_17853290265450000497"
+        "tp_17853290265450000497",
+        "tp_17853300821650000523"
       ],
       "lang": "it",
       "srcLang": "de",
       "createdAt": "2026-07-29T12:10:42.920Z",
-      "updatedAt": "2026-07-29T12:10:42.920Z"
+      "updatedAt": "2026-07-29T13:55:12.026Z",
+      "tokenUsage": {
+        "totalPromptTokens": 3117,
+        "totalCompletionTokens": 1649,
+        "tokensByType": {
+          "retitle": 1146,
+          "summary": 979,
+          "storyboard": 2641
+        }
+      },
+      "summary": "Die politische Mehrheit befindet sich in einer Phase hoher Spannung, da Kontroversen über Militärausgaben und den Europäischen Verteidigungsfonds die Einheit der Regierung belasten. Der Außenminister Tajani versucht, die aufkommenden Zweifel und Kritik an der Ausweitung von Überwachungsmethoden als „Sturm im Wasserglas“ abzutun, während interne Konflikte innerhalb der Parteien eskalieren. Gleichzeitig rückt das Thema der Präferenzen im neuen Wahlgesetz stärker in den Fokus, wobei Tajani dessen Bedeutung für die anstehende Reform relativiert. Die bevorstehende Präsentation des Energieplans durch Giorgetti droht ein neues politisches Front zu eröffnen und die ohnehin turbulente Lage weiter zu verschärfen.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 823,
+        "completionTokens": 156,
+        "ms": 124435,
+        "at": "2026-07-29T13:19:59.975Z"
+      },
+      "sourceFile": "Lo scontro sulle spese militari e i dossier critici sull'energia_ così sale la tensione nella maggioranza _ Corriere.it.pdf",
+      "coverageTarget": 0.6,
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Tajani korrigiert die Angaben zum Safe-Fonds.</title><rect x=\"193\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"194\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"20\" y=\"40\" width=\"60\" height=\"50\" rx=\"5\" fill=\"#9e9e9e\"/><circle cx=\"50\" cy=\"30\" r=\"15\" fill=\"#faf7f0\"/><rect x=\"45\" y=\"25\" width=\"10\" height=\"10\" fill=\"#2b2b2b\"/><rect x=\"35\" y=\"65\" width=\"30\" height=\"5\" fill=\"#e07a5f\"/></svg></g><g data-chapter=\"2\"><title>Ein Sturm im Wasserglas entsteht.</title><rect x=\"375\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"376\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><ellipse cx=\"50\" cy=\"70\" rx=\"20\" ry=\"30\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M 40 60 Q 50 50 60 60 T 80 60 Z\" fill=\"#457b9d\"/><circle cx=\"30\" cy=\"40\" r=\"5\" fill=\"#e07a5f\"/><circle cx=\"70\" cy=\"30\" r=\"8\" fill=\"#e07a5f\"/></svg></g><g data-chapter=\"3\"><title>Kritik an den Überwachungsmaßnahmen.</title><rect x=\"557\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"558\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"#9e9e9e\"/><rect x=\"40\" y=\"30\" width=\"20\" height=\"40\" fill=\"#2b2b2b\"/><circle cx=\"50\" cy=\"20\" r=\"10\" fill=\"#faf7f0\"/><path d=\"M 30 70 L 70 70 L 60 90 L 40 90 Z\" fill=\"#8d6e63\"/><circle cx=\"25\" cy=\"75\" r=\"3\" fill=\"#e5989b\"/><circle cx=\"75\" cy=\"75\" r=\"3\" fill=\"#e5989b\"/></svg></g><g data-chapter=\"4\"><title>Wahlrecht und Energieplan im Fokus.</title><rect x=\"739\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"740\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#f2cc8f\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#f2cc8f\"/><circle cx=\"50\" cy=\"50\" r=\"30\" fill=\"#faf7f0\"/><rect x=\"45\" y=\"20\" width=\"10\" height=\"60\" fill=\"#2b2b2b\"/><rect x=\"20\" y=\"70\" width=\"60\" height=\"10\" fill=\"#9e9e9e\"/><circle cx=\"30\" cy=\"85\" r=\"5\" fill=\"#81b29a\"/><circle cx=\"70\" cy=\"85\" r=\"5\" fill=\"#81b29a\"/><path d=\"M 40 10 L 60 10 L 50 30 Z\" fill=\"#e07a5f\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 4,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 1290,
+        "completionTokens": 1351,
+        "ms": 564029,
+        "at": "2026-07-29T13:55:12.026Z",
+        "storyStyle": "journalism"
+      },
+      "storyboardPanels": [
+        {
+          "caption": "Tajani korrigiert die Angaben zum Safe-Fonds.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "sky"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 40,
+              "w": 60,
+              "h": 50,
+              "rx": 5,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 30,
+              "r": 15,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 45,
+              "y": 25,
+              "w": 10,
+              "h": 10,
+              "fill": "ink"
+            },
+            {
+              "type": "line",
+              "x1": 30,
+              "y": 60,
+              "x2": 70,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "rect",
+              "x": 35,
+              "y": 65,
+              "w": 30,
+              "h": 5,
+              "fill": "accent"
+            }
+          ]
+        },
+        {
+          "caption": "Ein Sturm im Wasserglas entsteht.",
+          "chapter": 2,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "paper"
+            },
+            {
+              "type": "ellipse",
+              "cx": 50,
+              "cy": 70,
+              "rx": 20,
+              "ry": 30,
+              "fill": "none",
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "path",
+              "d": "M 40 60 Q 50 50 60 60 T 80 60 Z",
+              "fill": "water"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 40,
+              "r": 5,
+              "fill": "accent"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 30,
+              "r": 8,
+              "fill": "accent"
+            },
+            {
+              "type": "line",
+              "x1": 20,
+              "y": 30,
+              "x2": 40,
+              "stroke": "ink",
+              "sw": 3
+            },
+            {
+              "type": "line",
+              "x1": 80,
+              "y": 30,
+              "x2": 60,
+              "stroke": "ink",
+              "sw": 3
+            }
+          ]
+        },
+        {
+          "caption": "Kritik an den Überwachungsmaßnahmen.",
+          "chapter": 3,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "night"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 40,
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 40,
+              "y": 30,
+              "w": 20,
+              "h": 40,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 20,
+              "r": 10,
+              "fill": "paper"
+            },
+            {
+              "type": "path",
+              "d": "M 30 70 L 70 70 L 60 90 L 40 90 Z",
+              "fill": "earth"
+            },
+            {
+              "type": "line",
+              "x1": 20,
+              "y": 80,
+              "x2": 80,
+              "stroke": "accent",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 25,
+              "cy": 75,
+              "r": 3,
+              "fill": "rose"
+            },
+            {
+              "type": "circle",
+              "cx": 75,
+              "cy": 75,
+              "r": 3,
+              "fill": "rose"
+            }
+          ]
+        },
+        {
+          "caption": "Wahlrecht und Energieplan im Fokus.",
+          "chapter": 4,
+          "bg": "sun",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "sun"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 30,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 45,
+              "y": 20,
+              "w": 10,
+              "h": 60,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 70,
+              "w": 60,
+              "h": 10,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 85,
+              "r": 5,
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 85,
+              "r": 5,
+              "fill": "leaf"
+            },
+            {
+              "type": "path",
+              "d": "M 40 10 L 60 10 L 50 30 Z",
+              "fill": "accent"
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
     },
     {
       "id": "sl_190460344",
@@ -5542,9 +5820,551 @@
   ],
   "topics": [
     {
+      "id": "tp_17853300821650000523",
+      "topic": "Wahlrecht im Fokus",
+      "topicEmoji": "🗳️",
+      "userTopic": "E sulla scena rimane la vicenda delle preferenze dentro la…",
+      "userPrompt": "E sulla scena rimane la vicenda delle preferenze dentro la…\n\n[story]\nE sulla scena rimane la vicenda delle preferenze dentro la legge elettorale. Ieri Tajani ha ribadito che «le preferenze non sono l’elemento essenziale della riforma. Quando ci sarà lo valuteremo con serenità, senza pregiudizi o coercizioni, come quando è stato presentato alla Camera». Per la cronaca, a Montecitorio le preferenze sono state bocciate dai franchi tiratori. Anche qui, Tajani ha usato la stessa immagine: «Tempesta in un bicchier d’acqua». Ma intanto, c’è già chi pensa al 5 agosto, quando Giancarlo Giorgetti presenterà il piano per l’energia su cui ha ottenuto flessibilità dall’Ue. La risoluzione di maggioranza potrebbe non essere facile da scrivere.\n\n29 luglio 2026 ( modifica il 29 luglio 2026 | 08:23)\n\n© RIPRODUZIONE RISERVATA",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 116,
+      "story": "E sulla scena rimane la vicenda delle preferenze dentro la legge elettorale. Ieri Tajani ha ribadito che «le preferenze non sono l’elemento essenziale della riforma. Quando ci sarà lo valuteremo con serenità, senza pregiudizi o coercizioni, come quando è stato presentato alla Camera». Per la cronaca, a Montecitorio le preferenze sono state bocciate dai franchi tiratori. Anche qui, Tajani ha usato la stessa immagine: «Tempesta in un bicchier d’acqua». Ma intanto, c’è già chi pensa al 5 agosto, quando Giancarlo Giorgetti presenterà il piano per l’energia su cui ha ottenuto flessibilità dall’Ue. La risoluzione di maggioranza potrebbe non essere facile da scrivere.\n\n29 luglio 2026 ( modifica il 29 luglio 2026 | 08:23)\n\n© RIPRODUZIONE RISERVATA",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-07-29T12:59:48.527Z",
+        "origin": "file-upload",
+        "source": "recorded at generation",
+        "sourceFile": "Lo scontro sulle spese militari e i dossier critici sull'energia_ così sale la tensione nella maggioranza _ Corriere.it.pdf"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 252,
+        "completionTokens": 209,
+        "ms": 93637,
+        "at": "2026-07-29T13:01:22.164Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Und auf der politischen Bühne bleibt die Frage nach den Präferenzen im Wahlgesetz weiterhin aktuell. Tajani betonte gestern, dass „die Präferenzen nicht das wesentliche Element der Reform sind. Wenn es soweit ist, werden wir sie gelassen und ohne Vorurteile oder Zwang bewerten, so wie bei ihrer Vorlage im Abgeordnetenhaus“. Zur Information: Im Palazzo Montecitorio wurden die Präferenzen von den ungebundenen Abgeordneten abgelehnt. Auch hier griff Tajani dasselbe Bild auf: „Sturm im Wasserglas“. Inzwischen denkt bereits jemand an den 5. August, wenn Giancarlo Giorgetti den Energieplan vorlegen wird, für den er von der EU Flexibilität erhalten hat. Die Mehrheitsresolution könnte sich als schwierig zu formulieren erweisen.\n\n29. Juli 2026 (Bearbeitet am 29. Juli 2026 | 08:23)\n\n© NACHDRUCK VERBOTEN",
+      "userStory": "E sulla scena rimane la vicenda delle preferenze dentro la legge elettorale. Ieri Tajani ha ribadito che «le preferenze non sono l’elemento essenziale della riforma. Quando ci sarà lo valuteremo con serenità, senza pregiudizi o coercizioni, come quando è stato presentato alla Camera». Per la cronaca, a Montecitorio le preferenze sono state bocciate dai franchi tiratori. Anche qui, Tajani ha usato la stessa immagine: «Tempesta in un bicchier d’acqua». Ma intanto, c’è già chi pensa al 5 agosto, quando Giancarlo Giorgetti presenterà il piano per l’energia su cui ha ottenuto flessibilità dall’Ue. La risoluzione di maggioranza potrebbe non essere facile da scrivere.\n\n29 luglio 2026 ( modifica il 29 luglio 2026 | 08:23)\n\n© RIPRODUZIONE RISERVATA",
+      "continuedFrom": "Kritik an Überwachung",
+      "continuedFromId": "tp_17853290265450000497",
+      "storyStyle": "journalism",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Politik und Reformen in Italien",
+          "desc": "Wichtige Begriffe zur italienischen Politik",
+          "icon": "🏛️",
+          "vocab": [
+            {
+              "target": "scena",
+              "source": "Bühne"
+            },
+            {
+              "target": "preferenza",
+              "source": "Präferenz"
+            },
+            {
+              "target": "legge elettorale",
+              "source": "Wahlgesetz"
+            },
+            {
+              "target": "riforma",
+              "source": "Reform"
+            },
+            {
+              "target": "tempesta in un bicchier d'acqua",
+              "source": "Sturm im Wasserglas"
+            },
+            {
+              "target": "piano",
+              "source": "Plan"
+            },
+            {
+              "target": "energia",
+              "source": "Energie"
+            },
+            {
+              "target": "risoluzione",
+              "source": "Resolution"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "E sulla scena rimane la vicenda delle preferenze dentro la legge elettorale.",
+              "source": "Und auf der politischen Bühne bleibt die Frage nach den Präferenzen im Wahlgesetz weiterhin aktuell.",
+              "words": [
+                "E",
+                "sulla",
+                "scena",
+                "rimane",
+                "la",
+                "vicenda",
+                "delle",
+                "preferenze",
+                "dentro",
+                "la",
+                "legge",
+                "elettorale."
+              ]
+            },
+            {
+              "target": "Ieri Tajani ha ribadito che «le preferenze non sono l’elemento essenziale della riforma.",
+              "source": "Tajani betonte gestern, dass „die Präferenzen nicht das wesentliche Element der Reform sind.",
+              "words": [
+                "Ieri",
+                "Tajani",
+                "ha",
+                "ribadito",
+                "che",
+                "«le",
+                "preferenze",
+                "non",
+                "sono",
+                "l’elemento",
+                "essenziale",
+                "della",
+                "riforma."
+              ]
+            },
+            {
+              "target": "Per la cronaca, a Montecitorio le preferenze sono state bocciate dai franchi tiratori.",
+              "source": "Zur Information: Im Palazzo Montecitorio wurden die Präferenzen von den ungebundenen Abgeordneten abgelehnt.",
+              "words": [
+                "Per",
+                "la",
+                "cronaca,",
+                "a",
+                "Montecitorio",
+                "le",
+                "preferenze",
+                "sono",
+                "state",
+                "bocciate",
+                "dai",
+                "franchi",
+                "tiratori."
+              ]
+            },
+            {
+              "target": "Anche qui, Tajani ha usato la stessa immagine: «Tempesta in un bicchier d’acqua».",
+              "source": "Auch hier griff Tajani dasselbe Bild auf: „Sturm im Wasserglas“.",
+              "words": [
+                "Anche",
+                "qui,",
+                "Tajani",
+                "ha",
+                "usato",
+                "la",
+                "stessa",
+                "immagine:",
+                "«Tempesta",
+                "in",
+                "un",
+                "bicchier",
+                "d’acqua»."
+              ]
+            },
+            {
+              "target": "Ma intanto, c’è già chi pensa al 5 agosto, quando Giancarlo Giorgetti presenterà il piano per l’energia su cui ha ottenuto flessibilità dall’Ue.",
+              "source": "Inzwischen denkt bereits jemand an den 5. August, wenn Giancarlo Giorgetti den Energieplan vorlegen wird, für den er von der EU Flexibilität erhalten hat.",
+              "words": [
+                "Ma",
+                "intanto,",
+                "c’è",
+                "già",
+                "chi",
+                "pensa",
+                "al",
+                "5",
+                "agosto,",
+                "quando",
+                "Giancarlo",
+                "Giorgetti",
+                "presenterà",
+                "il",
+                "piano",
+                "per",
+                "l’energia",
+                "su",
+                "cui",
+                "ha",
+                "ottenuto",
+                "flessibilità",
+                "dall’Ue."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1021,
+            "completionTokens": 542,
+            "ms": 285519,
+            "at": "2026-07-29T13:06:07.748Z"
+          },
+          "qcAt": "2026-07-29T13:41:19.261Z",
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": 6,
+          "type": "word_forms",
+          "title": "Politica Italiana",
+          "desc": "Esercizi di grammatica politica",
+          "icon": "🇮🇹",
+          "items": [
+            {
+              "sentence": "Ieri Tajani ha ___ che le preferenze non sono l’elemento essenziale.",
+              "translation": "Gestern hat Tajani bekräftigt, dass die Präferenzen nicht das wesentliche Element sind.",
+              "choices": [
+                "ribadito",
+                "ribadire",
+                "ribadiva"
+              ],
+              "correctIndex": 0,
+              "explanation": "Participio passato per il passato prossimo"
+            },
+            {
+              "sentence": "Quando ci sarà lo valuteremo con ___, senza pregiudizi.",
+              "translation": "Wenn es soweit ist, werden wir es mit Gelassenheit bewerten.",
+              "choices": [
+                "serenità",
+                "sereno",
+                "serene"
+              ],
+              "correctIndex": 0,
+              "explanation": "Sostantivo femminile dopo la preposizione"
+            },
+            {
+              "sentence": "A Montecitorio le preferenze sono state ___ dai franchi tiratori.",
+              "translation": "In Montecitorio wurden die Präferenzen von den freischwebenden Wählern abgelehnt.",
+              "choices": [
+                "bocciate",
+                "bocciare",
+                "bocciati"
+              ],
+              "correctIndex": 0,
+              "explanation": "Participio passato femminile plurale"
+            },
+            {
+              "sentence": "Giancarlo Giorgetti ___ il piano per l’energia.",
+              "translation": "Giancarlo Giorgetti wird den Energieplan vorstellen.",
+              "choices": [
+                "presenterà",
+                "presenta",
+                "presentava"
+              ],
+              "correctIndex": 0,
+              "explanation": "Futuro semplice per un evento futuro"
+            },
+            {
+              "sentence": "La risoluzione di maggioranza potrebbe non essere facile da ___.",
+              "translation": "Die Mehrheitsauflösung könnte schwer zu schreiben sein.",
+              "choices": [
+                "scrivere",
+                "scritto",
+                "scrivendo"
+              ],
+              "correctIndex": 0,
+              "explanation": "Infinito dopo preposizione",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "The correct option should be \"scrivere\" to maintain the infinitive form after the preposition \"da\".",
+                  "field": "note",
+                  "at": "2026-07-29T13:43:37.541Z"
+                }
+              },
+              "qc": {
+                "sug": "The correct option should be \"scrivere\" to maintain the infinitive form after the preposition \"da\".",
+                "field": "note",
+                "at": "2026-07-29T13:43:37.541Z",
+                "by": "translategemma:12b"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1080,
+            "completionTokens": 513,
+            "ms": 280732,
+            "at": "2026-07-29T13:10:48.481Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": 6,
+          "type": "synonyms",
+          "title": "Politik und Präferenzen",
+          "desc": "Esercizi di grammatica politica",
+          "icon": "🗳️",
+          "items": [
+            {
+              "sentence": "Ieri Tajani ha ___ che le preferenze non sono l’elemento essenziale.",
+              "translation": "Gestern hat Tajani bekräftigt, dass die Präferenzen nicht das wesentliche Element sind.",
+              "choices": [
+                "ribadito",
+                "ribadire",
+                "ribadiva"
+              ],
+              "correctIndex": 0,
+              "explanation": "Participio passato per il passato prossimo"
+            },
+            {
+              "sentence": "Quando ci sarà lo valuteremo con ___, senza pregiudizi.",
+              "translation": "Wenn es soweit ist, werden wir es mit Gelassenheit bewerten.",
+              "choices": [
+                "serenità",
+                "sereno",
+                "serene"
+              ],
+              "correctIndex": 0,
+              "explanation": "Sostantivo femminile dopo la preposizione"
+            },
+            {
+              "sentence": "A Montecitorio le preferenze sono state ___ dai franchi tiratori.",
+              "translation": "In Montecitorio wurden die Präferenzen von den freischwebenden Wählern abgelehnt.",
+              "choices": [
+                "bocciate",
+                "bocciare",
+                "bocciati"
+              ],
+              "correctIndex": 0,
+              "explanation": "Participio passato femminile plurale"
+            },
+            {
+              "sentence": "Giancarlo Giorgetti ___ il piano per l’energia.",
+              "translation": "Giancarlo Giorgetti wird den Energieplan vorstellen.",
+              "choices": [
+                "presenterà",
+                "presenta",
+                "presentava"
+              ],
+              "correctIndex": 0,
+              "explanation": "Futuro semplice per un evento futuro"
+            },
+            {
+              "sentence": "La risoluzione di maggioranza potrebbe non essere facile da ___.",
+              "translation": "Die Mehrheitsauflösung könnte schwer zu schreiben sein.",
+              "choices": [
+                "scrivere",
+                "scritto",
+                "scrivendo"
+              ],
+              "correctIndex": 0,
+              "explanation": "Infinito dopo preposizione"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1080,
+            "completionTokens": 513,
+            "ms": 280732,
+            "at": "2026-07-29T13:10:48.481Z"
+          },
+          "_arcMode": "reinforce",
+          "words": [
+            {
+              "base": "preferenze",
+              "gloss": "Präferenzen",
+              "sentence": "E sulla scena rimane la vicenda delle preferenze dentro la legge elettorale.",
+              "synonyms": [
+                {
+                  "w": "scelte",
+                  "g": "Wahlen"
+                },
+                {
+                  "w": "opzioni",
+                  "g": "Optionen"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "avversioni",
+                  "g": "Abneigungen"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "scena",
+              "gloss": "Szene",
+              "sentence": "E sulla scena rimane la vicenda delle preferenze dentro la legge elettorale.",
+              "synonyms": [
+                {
+                  "w": "palcoscenico",
+                  "g": "Bühne"
+                },
+                {
+                  "w": "scenario",
+                  "g": "Schauplatz"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "rimane",
+              "gloss": "bleibt",
+              "sentence": "E sulla scena rimane la vicenda delle preferenze dentro la legge elettorale.",
+              "synonyms": [
+                {
+                  "w": "resta",
+                  "g": "bleibt"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "parte",
+                  "g": "geht weg"
+                },
+                {
+                  "w": "se ne va",
+                  "g": "verlässt"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "vicenda",
+              "gloss": "Vorgang",
+              "sentence": "E sulla scena rimane la vicenda delle preferenze dentro la legge elettorale.",
+              "synonyms": [
+                {
+                  "w": "caso",
+                  "g": "Fall"
+                },
+                {
+                  "w": "fatto",
+                  "g": "Tatsache"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "partito",
+              "gloss": "Partei",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "fazione",
+                  "g": "Fraktion"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "ministro",
+              "gloss": "Minister",
+              "sentence": "il ministro degli Esteri ha allora parlato di «tempesta in un bicchier d’acqua».",
+              "synonyms": [
+                {
+                  "w": "segretario di stato",
+                  "g": "Staatssekretär"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "decisione",
+              "gloss": "Entscheidung",
+              "sentence": "Ha rinviato la decisione a questa mattina.",
+              "synonyms": [
+                {
+                  "w": "scelta",
+                  "g": "Wahl"
+                },
+                {
+                  "w": "delibera",
+                  "g": "Beschluss"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "indecisione",
+                  "g": "Zögern"
+                }
+              ],
+              "homophones": []
+            }
+          ],
+          "qcAt": "2026-07-29T13:45:47.948Z",
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": "ls_1785331194109_5581",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 4
+        }
+      ],
+      "generationStats": {
+        "totalMs": 379221,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 6117,
+        "totalCompletionTokens": 846,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 285519,
+            "promptTokens": 1021,
+            "completionTokens": 542
+          }
+        ],
+        "tokensByType": {
+          "lesson_qc": 4939
+        }
+      },
+      "generatedAt": "2026-07-29T13:01:22.165Z",
+      "updatedAt": "2026-07-29T13:45:47.948Z",
+      "createdBy": "admin"
+    },
+    {
       "id": "tp_17853290265450000497",
-      "topic": "APPROFONDISCI CON IL PODCAST",
-      "topicEmoji": "📖",
+      "topic": "Kritik an Überwachung",
+      "topicEmoji": "👁️",
       "userTopic": "APPROFONDISCI CON IL PODCAST",
       "userPrompt": "APPROFONDISCI CON IL PODCAST\n\n[story]\nAPPROFONDISCI CON IL PODCAST\n\nTra gli altri, anche quelli di Daniela Santanchè: «Io le intercettazioni a strascico non le avrei votate e se arrivassero in Aula non le voterei». Secondo l’ex ministra «sono troppo invasive e danno troppa discrezionalità ai magistrati. Io ho molto fiducia nella magistratura ma, come è noto, una minoranza è politicizzata».\n\nNel frattempo, FdI formalizzava i suoi emendamenti pro «intercettazioni a strascico». E Ignazio La Russa, che ieri avrebbe dovuto sancire l’ammissibilità degli emendamenti del suo partito, ha rinviato la decisione a questa mattina. Ufficialmente perché il fascicolo degli emendamenti ieri sera non era ancora arrivato. Se ne riparlerà oggi a partire dalle 10. Fatto sta che anche in FdI sta montando l’irritazione: il nuovo caso arriva all’indomani della polemica sulla possibilità di finanziare lo sconto ai benzinai con i tabacchi. I leghisti attribuiscono l’incidente a due assi contrapposti nel partito della premier: La Russa-Lollobrigida da una parte, Donzelli-Arianna Meloni dall’altra.",
       "lang": "it",
@@ -5565,8 +6385,9 @@
         "completionTokens": 0,
         "ms": null,
         "at": "2026-07-29T12:39:25.815Z",
-        "origin": "user-pasted",
-        "source": "recorded at generation"
+        "origin": "file-upload",
+        "source": "recorded at generation",
+        "sourceFile": "Lo scontro sulle spese militari e i dossier critici sull'energia_ così sale la tensione nella maggioranza _ Corriere.it.pdf"
       },
       "translationMeta": {
         "type": "translation",
@@ -5584,7 +6405,7 @@
       },
       "storyTranslation": "Vertiefen Sie sich mit dem Podcast\n\nUnter anderem auch die von Daniela Santanchè: „Ich hätte die abgeleiteten Abhörungen nicht befürwortet und würde sie auch dann nicht befürworten, wenn sie im Plenum zur Abstimmung kämen.“ Laut der ehemaligen Ministerin seien diese zu invasiv und gäben den Richtern zu viel Ermessensspielraum. Sie habe großes Vertrauen in die Justiz, aber wie bekannt sei, sei eine Minderheit politisiert.\n\nInzwischen formalisierte FdI seine Änderungsanträge zugunsten der abgeleiteten Abhörungen. Ignazio La Russa, der gestern die Zulässigkeit der Änderungsanträge seiner Partei hätte bestätigen sollen, hat die Entscheidung auf diesen Morgen verschoben. Offiziell, weil der Ordner mit den Änderungsanträgen am Vorabend noch nicht eingegangen war. Darüber wird heute ab 10 Uhr erneut gesprochen. Tatsache ist jedoch, dass auch in FdI die Unzufriedenheit wächst: Der neue Vorfall folgt unmittelbar auf die Kontroverse um die Möglichkeit, den Rabatt an Tankstellen durch Tabakeinnahmen zu finanzieren. Die Lega-Abgeordneten führen den Zwischenfall auf zwei gegensätzliche Flügel innerhalb der Partei der Premierministerin zurück: La Russa und Lollobrigida einerseits, Donzelli und Arianna Meloni andererseits.",
       "userStory": "APPROFONDISCI CON IL PODCAST\n\nTra gli altri, anche quelli di Daniela Santanchè: «Io le intercettazioni a strascico non le avrei votate e se arrivassero in Aula non le voterei». Secondo l’ex ministra «sono troppo invasive e danno troppa discrezionalità ai magistrati. Io ho molto fiducia nella magistratura ma, come è noto, una minoranza è politicizzata».\n\nNel frattempo, FdI formalizzava i suoi emendamenti pro «intercettazioni a strascico». E Ignazio La Russa, che ieri avrebbe dovuto sancire l’ammissibilità degli emendamenti del suo partito, ha rinviato la decisione a questa mattina. Ufficialmente perché il fascicolo degli emendamenti ieri sera non era ancora arrivato. Se ne riparlerà oggi a partire dalle 10. Fatto sta che anche in FdI sta montando l’irritazione: il nuovo caso arriva all’indomani della polemica sulla possibilità di finanziare lo sconto ai benzinai con i tabacchi. I leghisti attribuiscono l’incidente a due assi contrapposti nel partito della premier: La Russa-Lollobrigida da una parte, Donzelli-Arianna Meloni dall’altra.",
-      "continuedFrom": "Tajani aveva già corretto il tiro, anche perché dall’Europa…",
+      "continuedFrom": "Sturm im Wasserglas",
       "continuedFromId": "tp_17853272126040000313",
       "storyStyle": "journalism",
       "lessons": [
@@ -5616,7 +6437,20 @@
             },
             {
               "target": "irritazione",
-              "source": "Unzufriedenheit"
+              "source": "Unzufriedenheit",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Irritation",
+                  "field": "source",
+                  "at": "2026-07-29T13:31:38.722Z"
+                }
+              },
+              "qc": {
+                "sug": "Irritation",
+                "field": "source",
+                "at": "2026-07-29T13:31:38.722Z",
+                "by": "translategemma:12b"
+              }
             },
             {
               "target": "ministero",
@@ -5641,7 +6475,20 @@
                 "le",
                 "avrei",
                 "votate."
-              ]
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Ich hätte die Ableitungen von Abhöraufnahmen nicht befürwortet.",
+                  "field": "source",
+                  "at": "2026-07-29T13:32:13.032Z"
+                }
+              },
+              "qc": {
+                "sug": "Ich hätte die Ableitungen von Abhöraufnahmen nicht befürwortet.",
+                "field": "source",
+                "at": "2026-07-29T13:32:13.032Z",
+                "by": "translategemma:12b"
+              }
             },
             {
               "target": "Sono troppo invasive e danno troppa discrezionalità ai magistrati.",
@@ -5656,7 +6503,20 @@
                 "discrezionalità",
                 "ai",
                 "magistrati."
-              ]
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Sie sind zu invasiv und geben den Richtern zu viel Ermessensspielraum.",
+                  "field": "source",
+                  "at": "2026-07-29T13:32:36.177Z"
+                }
+              },
+              "qc": {
+                "sug": "Sie sind zu invasiv und geben den Richtern zu viel Ermessensspielraum.",
+                "field": "source",
+                "at": "2026-07-29T13:32:36.177Z",
+                "by": "translategemma:12b"
+              }
             },
             {
               "target": "FdI formalizzava i suoi emendamenti pro «intercettazioni a strascico».",
@@ -5671,7 +6531,20 @@
                 "«intercettazioni",
                 "a",
                 "strascico»."
-              ]
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Inzwischen hat FdI seine Änderungsanträge zur Förderung der verdeckten Überwachung formalisiert.",
+                  "field": "source",
+                  "at": "2026-07-29T13:33:04.105Z"
+                }
+              },
+              "qc": {
+                "sug": "Inzwischen hat FdI seine Änderungsanträge zur Förderung der verdeckten Überwachung formalisiert.",
+                "field": "source",
+                "at": "2026-07-29T13:33:04.105Z",
+                "by": "translategemma:12b"
+              }
             },
             {
               "target": "Ha rinviato la decisione a questa mattina.",
@@ -5787,14 +6660,86 @@
             "ms": 316855,
             "at": "2026-07-29T12:52:58.607Z"
           },
-          "_arcMode": "reinforce"
+          "_arcMode": "reinforce",
+          "qcAt": "2026-07-29T13:35:51.453Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": 6,
           "type": "synonyms",
           "title": "Politica e Media Italiano",
-          "desc": "Vocaboli su politica e notizie",
+          "desc": "Übungen zu italienischen Zeitformen und Formen",
           "icon": "🎙️",
+          "items": [
+            {
+              "sentence": "Io le intercettazioni a strascico non le ___ votate.",
+              "translation": "Ich hätte die abgehörten Gespräche nicht zustimmen lassen.",
+              "choices": [
+                "avrei",
+                "ho",
+                "avrò"
+              ],
+              "correctIndex": 0,
+              "explanation": "Konditional für hypothetische Handlung"
+            },
+            {
+              "sentence": "Secondo l’ex ministra sono troppo ___ e danno troppa discrezionalità ai magistrati.",
+              "translation": "Laut der ehemaligen Ministerin sind sie zu invasiv und geben den Richtern zu viel Ermessen.",
+              "choices": [
+                "invasive",
+                "invasivo",
+                "invasivamente"
+              ],
+              "correctIndex": 0,
+              "explanation": "Plural feminin passend zu 'sono'"
+            },
+            {
+              "sentence": "Ignazio La Russa ha ___ la decisione a questa mattina.",
+              "translation": "Ignazio La Russa hat die Entscheidung auf diesen Morgen verschoben.",
+              "choices": [
+                "rinviato",
+                "rinvia",
+                "rinvierà"
+              ],
+              "correctIndex": 0,
+              "explanation": "Passato prossimo für abgeschlossene Handlung"
+            },
+            {
+              "sentence": "Ufficialmente perché il fascicolo degli emendamenti ieri sera non ___ ancora arrivato.",
+              "translation": "Offiziell, weil das Paket der Änderungsanträge gestern Abend noch nicht angekommen war.",
+              "choices": [
+                "era",
+                "è",
+                "sarà"
+              ],
+              "correctIndex": 0,
+              "explanation": "Imperfetto für vergangenen Zustand/Hintergrund"
+            },
+            {
+              "sentence": "I leghisti ___ l’incidente a due assi contrapposti nel partito.",
+              "translation": "Die Lega-Abgeordneten führen den Vorfall auf zwei entgegengesetzte Lager in der Partei zurück.",
+              "choices": [
+                "attribuiscono",
+                "attribuisce",
+                "attribuiranno"
+              ],
+              "correctIndex": 0,
+              "explanation": "Plural passend zu 'I leghisti'"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1161,
+            "completionTokens": 536,
+            "ms": 316855,
+            "at": "2026-07-29T12:52:58.607Z"
+          },
+          "_arcMode": "reinforce",
           "words": [
             {
               "base": "emendamento",
@@ -5829,7 +6774,20 @@
                 }
               ],
               "antonyms": [],
-              "homophones": []
+              "homophones": [],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "X is not a synonym of intercettazione.",
+                  "field": "note",
+                  "at": "2026-07-29T13:37:04.313Z"
+                }
+              },
+              "qc": {
+                "sug": "X is not a synonym of intercettazione.",
+                "field": "note",
+                "at": "2026-07-29T13:37:04.313Z",
+                "by": "translategemma:12b"
+              }
             },
             {
               "base": "strascico",
@@ -5940,20 +6898,15 @@
               ],
               "homophones": []
             }
-          ],
-          "_genMeta": {
-            "type": "synonyms",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": 1,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 719,
-            "completionTokens": 892,
-            "ms": 409773,
-            "at": "2026-07-29T12:59:48.380Z"
-          },
-          "_arcMode": "reinforce"
+          ]
+        },
+        {
+          "id": "ls_1785331188530_711u",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 4
         }
       ],
       "generationStats": {
@@ -5966,8 +6919,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1516,
-        "totalCompletionTokens": 671,
+        "totalPromptTokens": 6498,
+        "totalCompletionTokens": 819,
         "lessons": [
           {
             "lessonNum": 1,
@@ -5975,16 +6928,19 @@
             "promptTokens": 1183,
             "completionTokens": 380
           }
-        ]
+        ],
+        "tokensByType": {
+          "lesson_qc": 5130
+        }
       },
       "generatedAt": "2026-07-29T12:43:46.545Z",
-      "updatedAt": "2026-07-29T12:59:48.380Z",
+      "updatedAt": "2026-07-29T13:38:29.714Z",
       "createdBy": "admin"
     },
     {
       "id": "tp_17853272126040000313",
-      "topic": "Tajani aveva già corretto il tiro, anche perché dall’Europa…",
-      "topicEmoji": "📖",
+      "topic": "Sturm im Wasserglas",
+      "topicEmoji": "🌪️",
       "userTopic": "Tajani aveva già corretto il tiro, anche perché dall’Europa…",
       "userPrompt": "Tajani aveva già corretto il tiro, anche perché dall’Europa…\n\n[story]\nTajani aveva già corretto il tiro, anche perché dall’Europa era già trapelato qualche dubbio, soprattutto sulla scadenza di dicembre considerata troppo in là. Ma il caso tutto interno era ormai montato. Il ministro degli Esteri ha allora parlato di «tempesta in un bicchier d’acqua».\n\nMa il fondo europeo per la Difesa non è l’unico scossone delle ultime settimane. Sempre Tajani è stato in qualche modo urtante, in questo caso per Fratelli d’Italia, riguardo a un altro tema sul tavolo: l’estensione delle intercettazioni chieste per un procedimento giudiziario in altri processi nel caso di reati di terrorismo e criminalità organizzata. Una richiesta fatta a suo tempo dal procuratore antimafia Giovanni Melillo a cui i Fratelli d’Italia si sono detti favorevoli. Non Forza Italia che del garantismo ha fatto una delle sue bandiere. In realtà, pure dentro a Fratelli d’Italia ci sono dei dubbi.",
       "lang": "it",
@@ -6005,8 +6961,9 @@
         "completionTokens": 0,
         "ms": null,
         "at": "2026-07-29T12:10:42.994Z",
-        "origin": "user-pasted",
-        "source": "recorded at generation"
+        "origin": "file-upload",
+        "source": "recorded at generation",
+        "sourceFile": "Lo scontro sulle spese militari e i dossier critici sull'energia_ così sale la tensione nella maggioranza _ Corriere.it.pdf"
       },
       "translationMeta": {
         "type": "translation",
@@ -6024,7 +6981,7 @@
       },
       "storyTranslation": "Tajani hatte bereits die Richtung korrigiert, auch weil aus Europa bereits einige Zweifel aufgetaucht waren, insbesondere hinsichtlich der im Dezember angesetzten Frist, die als zu weit in der Zukunft angesehen wurde. Doch der internen Krise war bereits ihre Dynamik verliehen worden. Der Außenminister sprach daher von einem „Sturm im Wasserglas“.\n\nDoch der Europäische Verteidigungsfonds ist nicht die einzige Erschütterung der letzten Wochen. Auch Tajani wirkte in anderer Hinsicht aufstachelnd, diesmal für Fratelli d’Italia, in Bezug auf ein weiteres Thema auf der Tagesordnung: die Ausweitung von Abhörmaßnahmen, die in anderen Gerichtsverfahren im Fall von Terrorismus und organisierter Kriminalität beantragt wurden. Eine Forderung, die seinerzeit vom Antimafia-Prokurator Giovanni Melillo gestellt wurde, der von Fratelli d’Italia befürwortet wurde. Nicht jedoch von Forza Italia, das den Garantismus zu einer seiner Fahnen erhoben hat. Tatsächlich gibt es auch innerhalb von Fratelli d’Italia Zweifel.",
       "userStory": "Tajani aveva già corretto il tiro, anche perché dall’Europa era già trapelato qualche dubbio, soprattutto sulla scadenza di dicembre considerata troppo in là. Ma il caso tutto interno era ormai montato. Il ministro degli Esteri ha allora parlato di «tempesta in un bicchier d’acqua».\n\nMa il fondo europeo per la Difesa non è l’unico scossone delle ultime settimane. Sempre Tajani è stato in qualche modo urtante, in questo caso per Fratelli d’Italia, riguardo a un altro tema sul tavolo: l’estensione delle intercettazioni chieste per un procedimento giudiziario in altri processi nel caso di reati di terrorismo e criminalità organizzata. Una richiesta fatta a suo tempo dal procuratore antimafia Giovanni Melillo a cui i Fratelli d’Italia si sono detti favorevoli. Non Forza Italia che del garantismo ha fatto una delle sue bandiere. In realtà, pure dentro a Fratelli d’Italia ci sono dei dubbi.",
-      "continuedFrom": "Lo scontro sulle spese militari e i dossier critici…",
+      "continuedFrom": "Spannung im Lager",
       "continuedFromId": "tp_17853267145370000270",
       "storyStyle": "journalism",
       "lessons": [
@@ -6090,7 +7047,20 @@
                 "trapelato",
                 "qualche",
                 "dubbio"
-              ]
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "aus Europa waren bereits einige Zweifel aufgetaucht.",
+                  "field": "source",
+                  "at": "2026-07-29T13:23:49.739Z"
+                }
+              },
+              "qc": {
+                "sug": "aus Europa waren bereits einige Zweifel aufgetaucht.",
+                "field": "source",
+                "at": "2026-07-29T13:23:49.739Z",
+                "by": "translategemma:12b"
+              }
             },
             {
               "target": "il ministro degli Esteri ha allora parlato di «tempesta in un bicchier d’acqua».",
@@ -6237,14 +7207,86 @@
             "ms": 522017,
             "at": "2026-07-29T12:30:15.035Z"
           },
-          "_arcMode": "reinforce"
+          "_arcMode": "reinforce",
+          "qcAt": "2026-07-29T13:27:22.477Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": 6,
           "type": "synonyms",
           "title": "Politica Europea e Tajani",
-          "desc": "Vocaboli chiave sulla politica italiana ed europea",
+          "desc": "Übungen zu Verben und Nomen",
           "icon": "🇪🇺",
+          "items": [
+            {
+              "sentence": "Tajani aveva già ___ il tiro.",
+              "translation": "Tajani hatte den Kurs bereits korrigiert.",
+              "choices": [
+                "corretto",
+                "correggere",
+                "correggeva"
+              ],
+              "correctIndex": 0,
+              "explanation": "Partizip für das Passato Prossimo"
+            },
+            {
+              "sentence": "Il ministro degli Esteri ha allora ___ di «tempesta in un bicchier d’acqua».",
+              "translation": "Der Außenminister sprach dann von „Sturm im Wasserglas“.",
+              "choices": [
+                "parlato",
+                "parlare",
+                "parlava"
+              ],
+              "correctIndex": 0,
+              "explanation": "Partizip für das Passato Prossimo"
+            },
+            {
+              "sentence": "Ma il fondo europeo per la Difesa non è l’unico ___ delle ultime settimane.",
+              "translation": "Aber der europäische Verteidigungsfonds ist nicht der einzige Erschütterung der letzten Wochen.",
+              "choices": [
+                "scossone",
+                "scosse",
+                "scossa"
+              ],
+              "correctIndex": 0,
+              "explanation": "Singular wegen „l’unico“"
+            },
+            {
+              "sentence": "Una richiesta ___ a suo tempo dal procuratore antimafia Giovanni Melillo.",
+              "translation": "Eine Anfrage, die seinerzeit vom Antimafia-Staatsanwalt Giovanni Melillo gestellt wurde.",
+              "choices": [
+                "fatta",
+                "fare",
+                "facendo"
+              ],
+              "correctIndex": 0,
+              "explanation": "Partizip als Adjektiv zu „richiesta“"
+            },
+            {
+              "sentence": "In realtà, pure dentro a Fratelli d’Italia ci ___ dei dubbi.",
+              "translation": "In Wirklichkeit gibt es auch innerhalb von Fratelli d'Italia Zweifel.",
+              "choices": [
+                "sono",
+                "essere",
+                "era"
+              ],
+              "correctIndex": 0,
+              "explanation": "Konjugation von „essere“ für „ci sono“"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1092,
+            "completionTokens": 532,
+            "ms": 522017,
+            "at": "2026-07-29T12:30:15.035Z"
+          },
+          "_arcMode": "reinforce",
           "words": [
             {
               "base": "fratelli",
@@ -6257,7 +7299,20 @@
                 }
               ],
               "antonyms": [],
-              "homophones": []
+              "homophones": [],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "X is not a synonym of fratelli.",
+                  "field": "note",
+                  "at": "2026-07-29T13:28:27.431Z"
+                }
+              },
+              "qc": {
+                "sug": "X is not a synonym of fratelli.",
+                "field": "note",
+                "at": "2026-07-29T13:28:27.431Z",
+                "by": "translategemma:12b"
+              }
             },
             {
               "base": "corretto",
@@ -6357,20 +7412,15 @@
               "antonyms": [],
               "homophones": []
             }
-          ],
-          "_genMeta": {
-            "type": "synonyms",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": 1,
-            "valid": 7,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 682,
-            "completionTokens": 753,
-            "ms": 550591,
-            "at": "2026-07-29T12:39:25.626Z"
-          },
-          "_arcMode": "reinforce"
+          ]
+        },
+        {
+          "id": "ls_1785331182432_pxwd",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 4
         }
       ],
       "generationStats": {
@@ -6383,8 +7433,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1313,
-        "totalCompletionTokens": 759,
+        "totalPromptTokens": 6095,
+        "totalCompletionTokens": 856,
         "lessons": [
           {
             "lessonNum": 1,
@@ -6392,16 +7442,19 @@
             "promptTokens": 1049,
             "completionTokens": 538
           }
-        ]
+        ],
+        "tokensByType": {
+          "lesson_qc": 4879
+        }
       },
       "generatedAt": "2026-07-29T12:13:32.604Z",
-      "updatedAt": "2026-07-29T12:39:25.626Z",
+      "updatedAt": "2026-07-29T13:30:09.971Z",
       "createdBy": "admin"
     },
     {
       "id": "tp_17853267145370000270",
-      "topic": "Lo scontro sulle spese militari e i dossier critici…",
-      "topicEmoji": "📖",
+      "topic": "Spannung im Lager",
+      "topicEmoji": "⚡",
       "userTopic": "Lo scontro sulle spese militari e i dossier critici…",
       "userPrompt": "Lo scontro sulle spese militari e i dossier critici…\n\n[story]\nLo scontro sulle spese militari e i dossier critici sull'energia: così sale la tensione nella maggioranza\n\nIl piano energia rischia di essere il nuovo fronte\n\nGli scossoni. La navigazione della maggioranza verso le Politiche 2027 si fa sempre più turbolenta. Le reazioni, soprattutto della Lega, all’imprecisione di Antonio Tajani nel parlare del fondo europeo Safe per la difesa (dai tassi d’interesse inferiori e scomputati dal patto di Stabilità) sono un buon indicatore del clima.\n\nIl ministro degli Esteri infatti al mattino ha dato per acquisiti i 14,9 miliardi del Safe, invece di precisare che è stata attivata la procedura con l’Europa e la decisione sull’entità del prestito sarà decisa entro dicembre. FdI e anche il Mef non hanno apprezzato le parole del vicepremier, più per il metodo che per il merito. Matteo Salvini le ha fatte fiocinare da una nota di dieci parole: «Sull’uso dei fondi Safe l’ultima parola spetta al Parlamento». Mentre il capogruppo al Senato Massimiliano Romeo ha aggiunto che «le eventuali spese nel comparto difesa dovranno essere indirizzate alla sicurezza interna: infrastrutture, cybersicurezza e protezione dei confini dagli immigrati». Con un appunto ulteriore: «I fondi andranno spesi coinvolgendo al massimo le piccole e medie imprese italiane». Lo stesso Crosetto parlando con i cronisti aveva precisato che le risorse europee «non sono aggiuntive, semplicemente è cambiato un possibile strumento».",
       "lang": "it",
@@ -6422,8 +7475,9 @@
         "completionTokens": 0,
         "ms": null,
         "at": "2026-07-29T12:02:24.960Z",
-        "origin": "user-pasted",
-        "source": "recorded at generation"
+        "origin": "file-upload",
+        "source": "recorded at generation",
+        "sourceFile": "Lo scontro sulle spese militari e i dossier critici sull'energia_ così sale la tensione nella maggioranza _ Corriere.it.pdf"
       },
       "translationMeta": {
         "type": "translation",
@@ -6569,7 +7623,9 @@
             "completionTokens": 489,
             "ms": 328234,
             "at": "2026-07-29T12:10:42.835Z"
-          }
+          },
+          "qcAt": "2026-07-29T13:22:28.291Z",
+          "qcBy": "translategemma:12b"
         }
       ],
       "generationStats": {
@@ -6582,8 +7638,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1698,
-        "totalCompletionTokens": 858,
+        "totalPromptTokens": 4047,
+        "totalCompletionTokens": 898,
         "lessons": [
           {
             "lessonNum": 1,
@@ -6591,10 +7647,13 @@
             "promptTokens": 1314,
             "completionTokens": 489
           }
-        ]
+        ],
+        "tokensByType": {
+          "lesson_qc": 2389
+        }
       },
       "generatedAt": "2026-07-29T12:05:14.537Z",
-      "updatedAt": "2026-07-29T12:10:42.835Z",
+      "updatedAt": "2026-07-29T13:22:28.291Z",
       "createdBy": "admin"
     },
     {
@@ -7420,7 +8479,7 @@
         }
       },
       "generatedAt": "2026-07-29T10:55:49.935Z",
-      "updatedAt": "2026-07-29T12:26:49.621Z",
+      "updatedAt": "2026-07-29T13:18:53.969Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-07-29T12:18:53.543Z"
