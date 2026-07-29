@@ -18,14 +18,15 @@
       "lang": "it",
       "srcLang": "de",
       "createdAt": "2026-07-27T07:55:43.985Z",
-      "updatedAt": "2026-07-27T11:33:27.297Z",
+      "updatedAt": "2026-07-28T16:48:31.440Z",
       "tokenUsage": {
-        "totalPromptTokens": 5220,
-        "totalCompletionTokens": 1766,
+        "totalPromptTokens": 5564,
+        "totalCompletionTokens": 1917,
         "tokensByType": {
           "retitle": 2125,
           "summary": 1601,
-          "storyboard": 3260
+          "storyboard": 3260,
+          "summary_qc": 495
         }
       },
       "summary": "Die darwinische Evolutionstheorie wird als dynamisches Forschungsprogramm dargestellt, das durch ständige Überarbeitung und Erweiterung an die neuesten wissenschaftlichen Erkenntnisse angepasst wird. Zentrale Säulen wie der gemeinsame Stammbaum aller Lebewesen und die natürliche Selektion wurden durch moderne Genetik, Epigenetik und Konzepte wie Symbiose oder Exaptation bereichert. Diese Entwicklungen zeigen, dass Evolution kein linearer Prozess ist, sondern von vielfältigen Faktoren wie genetischen Mutationen, epigenetischen Veränderungen und makroevolutiven Ereignissen geprägt wird. Somit bleibt die Theorie nicht statisch, sondern wächst durch neue Phänomene wie horizontale Genübertragung und punktuelle Artbildung stetig an Komplexität.",
@@ -308,7 +309,33 @@
         }
       ],
       "storyboardScheme": "classic",
-      "coverageTarget": 0.6
+      "coverageTarget": 0.6,
+      "summaryQcProposal": {
+        "corrected": "Die darwinische Evolutionstheorie wird als dynamisches Forschungsprogramm dargestellt, das durch ständige Überarbeitung und Erweiterung an die neuesten wissenschaftlichen Erkenntnisse angepasst wird. Zentrale Säulen wie der gemeinsame Stammbaum aller Lebewesen und die natürliche Selektion wurden durch moderne Genetik, Epigenetik und Konzepte wie Symbiose oder Exaptation bereichert. Diese Entwicklungen zeigen, dass Evolution kein linearer Prozess ist, sondern von vielfältigen Faktoren wie genetischen Mutationen, epigenetischen Veränderungen und makroevolutiven Ereignissen geprägt wird. Somit bleibt die Theorie nicht statisch, sondern wächst durch neue Phänomene wie horizontale Genübertragung und punktuelle Artbildung stetig an Komplexität.",
+        "against": "Die darwinische Evolutionstheorie wird als dynamisches Forschungsprogramm dargestellt, das durch ständige Überarbeitung und Erweiterung an die neuesten wissenschaftlichen Erkenntnisse angepasst wird. Zentrale Säulen wie der gemeinsame Stammbaum aller Lebewesen und die natürliche Selektion wurden durch moderne Genetik, Epigenetik und Konzepte wie Symbiose oder Exaptation bereichert. Diese Entwicklungen zeigen, dass Evolution kein linearer Prozess ist, sondern von vielfältigen Faktoren wie genetischen Mutationen, epigenetischen Veränderungen und makroevolutiven Ereignissen geprägt wird. Somit bleibt die Theorie nicht statisch, sondern wächst durch neue Phänomene wie horizontale Genübertragung und punktuelle Artbildung stetig an Komplexität.",
+        "verdict": "clean",
+        "rejected": false,
+        "changedSentences": 0,
+        "totalSentences": 10,
+        "changedRatio": 0,
+        "wordEditRatio": 0,
+        "meta": {
+          "type": "summary_qc",
+          "model": "translategemma:12b",
+          "attempts": null,
+          "valid": 1,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 344,
+          "completionTokens": 151,
+          "ms": 146906,
+          "at": "2026-07-28T16:48:31.440Z",
+          "verdict": "clean",
+          "changedRatio": 0,
+          "wordEditRatio": 0
+        },
+        "at": "2026-07-28T16:48:31.440Z"
+      }
     },
     {
       "id": "sl_168806957",
@@ -5849,109 +5876,6 @@
           "_hidden": false
         },
         {
-          "id": "ls_1785149376414_7_gate",
-          "title": "Literaturverzeichnis Grundlagen",
-          "desc": "Wichtige Begriffe für Bibliografien lernen",
-          "icon": "📚",
-          "vocab": [
-            {
-              "target": "il libro",
-              "source": "das Buch"
-            },
-            {
-              "target": "l'autore",
-              "source": "der Autor"
-            },
-            {
-              "target": "la città",
-              "source": "die Stadt"
-            },
-            {
-              "target": "l'editore",
-              "source": "der Verlag"
-            },
-            {
-              "target": "l'anno",
-              "source": "das Jahr"
-            },
-            {
-              "target": "il titolo",
-              "source": "der Titel"
-            },
-            {
-              "target": "la pagina",
-              "source": "die Seite"
-            },
-            {
-              "target": "il nome",
-              "source": "der Name"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Il libro è nuovo.",
-              "source": "Das Buch ist neu.",
-              "words": [
-                "Il",
-                "libro",
-                "è",
-                "nuovo."
-              ]
-            },
-            {
-              "target": "L'autore scrive bene.",
-              "source": "Der Autor schreibt gut.",
-              "words": [
-                "L'autore",
-                "scrive",
-                "bene."
-              ]
-            },
-            {
-              "target": "La città è grande.",
-              "source": "Die Stadt ist groß.",
-              "words": [
-                "La",
-                "città",
-                "è",
-                "grande."
-              ]
-            },
-            {
-              "target": "L'editore è famoso.",
-              "source": "Der Verlag ist berühmt.",
-              "words": [
-                "L'editore",
-                "è",
-                "famoso."
-              ]
-            },
-            {
-              "target": "Il titolo è chiaro.",
-              "source": "Der Titel ist klar.",
-              "words": [
-                "Il",
-                "titolo",
-                "è",
-                "chiaro."
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 822,
-            "completionTokens": 301,
-            "ms": 148753,
-            "at": "2026-07-27T10:49:36.414Z"
-          },
-          "_recreated": true
-        },
-        {
           "id": "ls_1785149601902_7_word_forms",
           "type": "word_forms",
           "title": "Biologia e Natura",
@@ -6157,7 +6081,7 @@
         }
       },
       "generatedAt": "2026-07-27T08:23:58.820Z",
-      "updatedAt": "2026-07-27T12:25:44.840Z",
+      "updatedAt": "2026-07-28T20:23:51.217Z",
       "createdBy": "admin"
     },
     {
@@ -6354,113 +6278,6 @@
           "_hidden": false
         },
         {
-          "id": "ls_1785148733067_6_gate",
-          "title": "Exaptation und Gene",
-          "desc": "Grundlagen der Evolution und Genetik",
-          "icon": "🧬",
-          "vocab": [
-            {
-              "target": "l'evoluzione",
-              "source": "die Evolution"
-            },
-            {
-              "target": "il gene",
-              "source": "das Gen"
-            },
-            {
-              "target": "la specie",
-              "source": "die Art"
-            },
-            {
-              "target": "volare",
-              "source": "fliegen"
-            },
-            {
-              "target": "l'ala",
-              "source": "der Flügel"
-            },
-            {
-              "target": "il cambiamento",
-              "source": "die Veränderung"
-            },
-            {
-              "target": "la funzione",
-              "source": "die Funktion"
-            },
-            {
-              "target": "ecologico",
-              "source": "ökologisch"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Le ali servono per volare.",
-              "source": "Die Flügel dienen zum Fliegen.",
-              "words": [
-                "Le",
-                "ali",
-                "servono",
-                "per",
-                "volare."
-              ]
-            },
-            {
-              "target": "I geni cambiano lentamente.",
-              "source": "Die Gene verändern sich langsam.",
-              "words": [
-                "I",
-                "geni",
-                "cambiano",
-                "lentamente."
-              ]
-            },
-            {
-              "target": "L'evoluzione crea nuove specie.",
-              "source": "Die Evolution schafft neue Arten.",
-              "words": [
-                "L'evoluzione",
-                "crea",
-                "nuove",
-                "specie."
-              ]
-            },
-            {
-              "target": "Il cambiamento è ecologico.",
-              "source": "Die Veränderung ist ökologisch.",
-              "words": [
-                "Il",
-                "cambiamento",
-                "è",
-                "ecologico."
-              ]
-            },
-            {
-              "target": "La funzione originale era diversa.",
-              "source": "Die ursprüngliche Funktion war anders.",
-              "words": [
-                "La",
-                "funzione",
-                "originale",
-                "era",
-                "diversa."
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 862,
-            "completionTokens": 310,
-            "ms": 154375,
-            "at": "2026-07-27T10:38:53.067Z"
-          },
-          "_recreated": true
-        },
-        {
           "id": "ls_1785148969093_6_word_forms",
           "type": "word_forms",
           "title": "Evoluzione e Geni",
@@ -6537,7 +6354,7 @@
           },
           "_recreated": true,
           "_arcMode": "reinforce",
-          "_hidden": true
+          "_hidden": false
         },
         {
           "id": "ls_1785149227590_6_synonyms",
@@ -6699,7 +6516,7 @@
           },
           "_recreated": true,
           "_arcMode": "reinforce",
-          "_hidden": true
+          "_hidden": false
         },
         {
           "id": "ls_1785155133722_pyik",
@@ -6708,7 +6525,7 @@
           "icon": "🔀",
           "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
           "perType": 3,
-          "_hidden": true
+          "_hidden": false
         },
         {
           "difficulty": 3,
@@ -6759,7 +6576,7 @@
         }
       },
       "generatedAt": "2026-07-27T08:19:46.170Z",
-      "updatedAt": "2026-07-27T12:29:55.377Z",
+      "updatedAt": "2026-07-28T20:23:44.999Z",
       "createdBy": "admin"
     },
     {
@@ -6948,114 +6765,6 @@
             "at": "2026-07-27T08:18:22.985Z"
           },
           "_hidden": false
-        },
-        {
-          "id": "ls_1785148074497_5_gate",
-          "title": "Evolutionstheorie erweitern",
-          "desc": "Neue Erkenntnisse zur Darwin-Theorie",
-          "icon": "🧬",
-          "vocab": [
-            {
-              "target": "la teoria",
-              "source": "die Theorie"
-            },
-            {
-              "target": "la scoperta",
-              "source": "die Entdeckung"
-            },
-            {
-              "target": "il gene",
-              "source": "das Gen"
-            },
-            {
-              "target": "la selezione",
-              "source": "die Selektion"
-            },
-            {
-              "target": "la variazione",
-              "source": "die Variation"
-            },
-            {
-              "target": "il fattore",
-              "source": "der Faktor"
-            },
-            {
-              "target": "il processo",
-              "source": "der Prozess"
-            },
-            {
-              "target": "l'evoluzione",
-              "source": "die Evolution"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "La teoria si aggiorna.",
-              "source": "Die Theorie aktualisiert sich.",
-              "words": [
-                "La",
-                "teoria",
-                "si",
-                "aggiorna."
-              ]
-            },
-            {
-              "target": "Nuove scoperte arricchiscono il gene.",
-              "source": "Neue Entdeckungen bereichern das Gen.",
-              "words": [
-                "Nuove",
-                "scoperte",
-                "arricchiscono",
-                "il",
-                "gene."
-              ]
-            },
-            {
-              "target": "La selezione naturale è un processo.",
-              "source": "Die natürliche Selektion ist ein Prozess.",
-              "words": [
-                "La",
-                "selezione",
-                "naturale",
-                "è",
-                "un",
-                "processo."
-              ]
-            },
-            {
-              "target": "Ogni variazione ha un fattore.",
-              "source": "Jede Variation hat einen Faktor.",
-              "words": [
-                "Ogni",
-                "variazione",
-                "ha",
-                "un",
-                "fattore."
-              ]
-            },
-            {
-              "target": "L'evoluzione continua sempre.",
-              "source": "Die Evolution hört nie auf.",
-              "words": [
-                "L'evoluzione",
-                "continua",
-                "sempre."
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 882,
-            "completionTokens": 319,
-            "ms": 157786,
-            "at": "2026-07-27T10:27:54.497Z"
-          },
-          "_recreated": true
         },
         {
           "id": "ls_1785148330746_5_word_forms",
@@ -7297,7 +7006,7 @@
         }
       },
       "generatedAt": "2026-07-27T08:15:07.343Z",
-      "updatedAt": "2026-07-27T12:25:24.987Z",
+      "updatedAt": "2026-07-28T20:23:12.612Z",
       "createdBy": "admin"
     },
     {
@@ -7473,115 +7182,6 @@
           "qcAt": "2026-07-27T08:40:26.580Z",
           "qcBy": "translategemma:12b",
           "_hidden": false
-        },
-        {
-          "id": "ls_1785147447566_4_gate",
-          "title": "Neue Erkenntnisse in der Evolution",
-          "desc": "Grundlagen der modernen Evolutionsforschung verstehen",
-          "icon": "🧬",
-          "vocab": [
-            {
-              "target": "il genoma",
-              "source": "das Genom"
-            },
-            {
-              "target": "la selezione naturale",
-              "source": "die natürliche Selektion"
-            },
-            {
-              "target": "la simbiosi",
-              "source": "die Symbiose"
-            },
-            {
-              "target": "la mutazione",
-              "source": "die Mutation"
-            },
-            {
-              "target": "l'estinzione",
-              "source": "das Aussterben"
-            },
-            {
-              "target": "il DNA",
-              "source": "die DNA"
-            },
-            {
-              "target": "l'evoluzione",
-              "source": "die Evolution"
-            },
-            {
-              "target": "la stabilità",
-              "source": "die Stabilität"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Il genoma contiene molte informazioni.",
-              "source": "Das Genom enthält viele Informationen.",
-              "words": [
-                "Il",
-                "genoma",
-                "contiene",
-                "molte",
-                "informazioni."
-              ]
-            },
-            {
-              "target": "La selezione naturale è fondamentale.",
-              "source": "Die natürliche Selektion ist grundlegend.",
-              "words": [
-                "La",
-                "selezione",
-                "naturale",
-                "è",
-                "fondamentale."
-              ]
-            },
-            {
-              "target": "La simbiosi unisce gli organismi.",
-              "source": "Die Symbiose verbindet Organismen.",
-              "words": [
-                "La",
-                "simbiosi",
-                "unisce",
-                "gli",
-                "organismi."
-              ]
-            },
-            {
-              "target": "Una mutazione cambia il DNA.",
-              "source": "Eine Mutation verändert die DNA.",
-              "words": [
-                "Una",
-                "mutazione",
-                "cambia",
-                "il",
-                "DNA."
-              ]
-            },
-            {
-              "target": "L'estinzione interrompe la stabilità.",
-              "source": "Das Aussterben unterbricht die Stabilität.",
-              "words": [
-                "L'estinzione",
-                "interrompe",
-                "la",
-                "stabilità."
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 837,
-            "completionTokens": 342,
-            "ms": 160365,
-            "at": "2026-07-27T10:17:27.566Z"
-          },
-          "_recreated": true
         },
         {
           "id": "ls_1785147713708_4_word_forms",
@@ -7801,7 +7401,7 @@
         }
       },
       "generatedAt": "2026-07-27T08:10:26.061Z",
-      "updatedAt": "2026-07-27T12:25:14.928Z",
+      "updatedAt": "2026-07-28T20:23:07.773Z",
       "createdBy": "admin"
     },
     {
@@ -7995,114 +7595,6 @@
             "at": "2026-07-27T08:09:12.058Z"
           },
           "_hidden": false
-        },
-        {
-          "id": "ls_1785146804988_3_gate",
-          "title": "Genetik Grundlagen Mendel",
-          "desc": "Grundlagen der Genetik und Vererbung",
-          "icon": "🧬",
-          "vocab": [
-            {
-              "target": "il gene",
-              "source": "das Gen"
-            },
-            {
-              "target": "la mutazione",
-              "source": "die Mutation"
-            },
-            {
-              "target": "il DNA",
-              "source": "die DNA"
-            },
-            {
-              "target": "l'eredità",
-              "source": "die Vererbung"
-            },
-            {
-              "target": "la popolazione",
-              "source": "die Population"
-            },
-            {
-              "target": "l'adattamento",
-              "source": "die Anpassung"
-            },
-            {
-              "target": "il carattere",
-              "source": "das Merkmal"
-            },
-            {
-              "target": "la legge",
-              "source": "das Gesetz"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Il gene controlla il carattere.",
-              "source": "Das Gen steuert das Merkmal.",
-              "words": [
-                "Il",
-                "gene",
-                "controlla",
-                "il",
-                "carattere."
-              ]
-            },
-            {
-              "target": "La mutazione cambia il DNA.",
-              "source": "Die Mutation verändert die DNA.",
-              "words": [
-                "La",
-                "mutazione",
-                "cambia",
-                "il",
-                "DNA."
-              ]
-            },
-            {
-              "target": "L'eredità segue la legge.",
-              "source": "Die Vererbung folgt dem Gesetz.",
-              "words": [
-                "L'eredità",
-                "segue",
-                "la",
-                "legge."
-              ]
-            },
-            {
-              "target": "La popolazione mostra l'adattamento.",
-              "source": "Die Population zeigt die Anpassung.",
-              "words": [
-                "La",
-                "popolazione",
-                "mostra",
-                "l'adattamento."
-              ]
-            },
-            {
-              "target": "Il gene è nella cellula.",
-              "source": "Das Gen ist in der Zelle.",
-              "words": [
-                "Il",
-                "gene",
-                "è",
-                "nella",
-                "cellula."
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 810,
-            "completionTokens": 324,
-            "ms": 151831,
-            "at": "2026-07-27T10:06:44.988Z"
-          },
-          "_recreated": true
         },
         {
           "id": "ls_1785147037276_3_word_forms",
@@ -8345,7 +7837,7 @@
         }
       },
       "generatedAt": "2026-07-27T08:05:48.154Z",
-      "updatedAt": "2026-07-27T12:15:53.538Z",
+      "updatedAt": "2026-07-28T20:23:03.276Z",
       "createdBy": "admin"
     },
     {
@@ -8512,111 +8004,6 @@
             "at": "2026-07-27T08:04:43.195Z"
           },
           "_hidden": false
-        },
-        {
-          "id": "ls_1785146181502_2_gate",
-          "title": "Natürliche Selektion Grundlagen",
-          "desc": "Grundlagen der Evolution und Anpassung",
-          "icon": "🧬",
-          "vocab": [
-            {
-              "target": "la selezione naturale",
-              "source": "die natürliche Selektion"
-            },
-            {
-              "target": "l'evoluzione",
-              "source": "die Evolution"
-            },
-            {
-              "target": "il cambiamento",
-              "source": "die Veränderung"
-            },
-            {
-              "target": "l'ambiente",
-              "source": "das Umfeld"
-            },
-            {
-              "target": "la sopravvivenza",
-              "source": "das Überleben"
-            },
-            {
-              "target": "la riproduzione",
-              "source": "die Fortpflanzung"
-            },
-            {
-              "target": "la variazione",
-              "source": "die Variation"
-            },
-            {
-              "target": "l'adattamento",
-              "source": "die Anpassung"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "La selezione naturale guida l'evoluzione.",
-              "source": "Die natürliche Selektion steuert die Evolution.",
-              "words": [
-                "La",
-                "selezione",
-                "naturale",
-                "guida",
-                "l'evoluzione."
-              ]
-            },
-            {
-              "target": "L'ambiente cambia continuamente.",
-              "source": "Das Umfeld verändert sich ständig.",
-              "words": [
-                "L'ambiente",
-                "cambia",
-                "continuamente."
-              ]
-            },
-            {
-              "target": "La sopravvivenza dipende dall'adattamento.",
-              "source": "Das Überleben hängt von der Anpassung ab.",
-              "words": [
-                "La",
-                "sopravvivenza",
-                "dipende",
-                "dall'adattamento."
-              ]
-            },
-            {
-              "target": "Le variazioni sono casuali.",
-              "source": "Die Variationen sind zufällig.",
-              "words": [
-                "Le",
-                "variazioni",
-                "sono",
-                "casuali."
-              ]
-            },
-            {
-              "target": "La riproduzione è fondamentale.",
-              "source": "Die Fortpflanzung ist grundlegend.",
-              "words": [
-                "La",
-                "riproduzione",
-                "è",
-                "fondamentale."
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 820,
-            "completionTokens": 340,
-            "ms": 158893,
-            "at": "2026-07-27T09:56:21.502Z"
-          },
-          "_recreated": true
         },
         {
           "id": "ls_1785146428290_2_word_forms",
@@ -8855,7 +8242,7 @@
         }
       },
       "generatedAt": "2026-07-27T08:01:31.718Z",
-      "updatedAt": "2026-07-27T12:15:44.363Z",
+      "updatedAt": "2026-07-28T20:22:58.333Z",
       "createdBy": "admin"
     },
     {
@@ -8926,20 +8313,7 @@
             },
             {
               "target": "specie",
-              "source": "Art",
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "Arten",
-                  "field": "source",
-                  "at": "2026-07-27T08:35:03.865Z"
-                }
-              },
-              "qc": {
-                "sug": "Arten",
-                "field": "source",
-                "at": "2026-07-27T08:35:03.865Z",
-                "by": "translategemma:12b"
-              }
+              "source": "Art"
             },
             {
               "target": "antenato",
@@ -9055,125 +8429,6 @@
             "at": "2026-07-27T08:00:22.238Z"
           },
           "_hidden": false
-        },
-        {
-          "id": "ls_1785145508488_1_gate",
-          "title": "Der Stammbaum des Lebens",
-          "desc": "Vokabeln zur Evolution und Verwandtschaft",
-          "icon": "🌳",
-          "vocab": [
-            {
-              "target": "l'albero genealogico",
-              "source": "der Stammbaum"
-            },
-            {
-              "target": "la specie",
-              "source": "die Art"
-            },
-            {
-              "target": "l'antenato comune",
-              "source": "der gemeinsame Vorfahr"
-            },
-            {
-              "target": "lo scimpanzé",
-              "source": "der Schimpanse"
-            },
-            {
-              "target": "il Neanderthal",
-              "source": "der Neandertaler"
-            },
-            {
-              "target": "la discendenza",
-              "source": "die Abstammung"
-            },
-            {
-              "target": "l'evoluzione",
-              "source": "die Evolution"
-            },
-            {
-              "target": "parente",
-              "source": "Verwandter"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Tutti gli esseri viventi sono imparentati.",
-              "source": "Alle Lebewesen sind verwandt.",
-              "words": [
-                "Tutti",
-                "gli",
-                "esseri",
-                "viventi",
-                "sono",
-                "imparentati."
-              ]
-            },
-            {
-              "target": "L'uomo e lo scimpanzé hanno un antenato comune.",
-              "source": "Mensch und Schimpanse haben einen gemeinsamen Vorfahr.",
-              "words": [
-                "L'uomo",
-                "e",
-                "lo",
-                "scimpanzé",
-                "hanno",
-                "un",
-                "antenato",
-                "comune."
-              ]
-            },
-            {
-              "target": "La discendenza mostra l'evoluzione delle specie.",
-              "source": "Die Abstammung zeigt die Evolution der Arten.",
-              "words": [
-                "La",
-                "discendenza",
-                "mostra",
-                "l'evoluzione",
-                "delle",
-                "specie."
-              ]
-            },
-            {
-              "target": "I Neanderthal sono nostri cugini umani.",
-              "source": "Neandertaler sind unsere menschlichen Verwandten.",
-              "words": [
-                "I",
-                "Neanderthal",
-                "sono",
-                "nostri",
-                "cugini",
-                "umani."
-              ]
-            },
-            {
-              "target": "L'albero genealogico collega tutte le forme di vita.",
-              "source": "Der Stammbaum verbindet alle Lebensformen.",
-              "words": [
-                "L'albero",
-                "genealogico",
-                "collega",
-                "tutte",
-                "le",
-                "forme",
-                "di",
-                "vita."
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 844,
-            "completionTokens": 383,
-            "ms": 143016,
-            "at": "2026-07-27T09:45:08.488Z"
-          },
-          "_recreated": true
         },
         {
           "id": "ls_1785145770761_1_word_forms",
@@ -9420,7 +8675,7 @@
         }
       },
       "generatedAt": "2026-07-27T07:56:59.825Z",
-      "updatedAt": "2026-07-27T12:15:36.670Z",
+      "updatedAt": "2026-07-28T20:22:49.362Z",
       "createdBy": "admin"
     },
     {

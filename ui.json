@@ -1166,7 +1166,8 @@
     "drill.none": "Nog geen fouten om te oefenen",
     "complete.repeat_none": "Er is niets meer om hier te herhalen",
     "crossword.none": "Niet genoeg woorden voor een kruiswoordraadsel",
-    "crossword.pick_cell": "Kies een vakje om de aanwijzing te zien"
+    "crossword.pick_cell": "Kies een vakje om de aanwijzing te zien",
+    "complete.story_complete": "Verhaal voltooid!"
   },
   "pt": {
     "qc.editor.suggests_by": "⚑ Sugestões de: {model}",
@@ -1750,7 +1751,8 @@
     "drill.none": "Ainda não há erros para praticar",
     "complete.repeat_none": "Não há mais exercícios para revisar aqui",
     "crossword.none": "Não há palavras suficientes para um jogo de palavras cruzadas",
-    "crossword.pick_cell": "Selecione uma célula para ver a dica"
+    "crossword.pick_cell": "Selecione uma célula para ver a dica",
+    "complete.story_complete": "História completa!"
   },
   "fr": {
     "qc.editor.suggests_by": "⚑ Suggéré par {model} :",
@@ -2334,7 +2336,8 @@
     "drill.none": "Pas d'erreurs à corriger pour le moment",
     "complete.repeat_none": "Plus rien à revoir ici",
     "crossword.none": "Pas assez de mots pour un jeu de mots croisés",
-    "crossword.pick_cell": "Sélectionnez une case pour voir son indication"
+    "crossword.pick_cell": "Sélectionnez une case pour voir son indication",
+    "complete.story_complete": "Histoire terminée !"
   },
   "tr": {
     "qc.editor.suggests_by": "⚑ {model} öneriyor:",
@@ -2918,7 +2921,8 @@
     "drill.none": "Henüz tekrar etmeniz gereken hata yok",
     "complete.repeat_none": "Burada tekrar etmeniz için bir şey kalmadı",
     "crossword.none": "Kelime bulmacası için yeterli kelime yok",
-    "crossword.pick_cell": "Bir kare seçerek ipucunu görüntüleyin"
+    "crossword.pick_cell": "Bir kare seçerek ipucunu görüntüleyin",
+    "complete.story_complete": "Hikaye tamamlandı!"
   },
   "hi": {
     "qc.editor.suggests_by": "⚑ {model} का सुझाव:",
@@ -3497,7 +3501,13 @@
     "drill.none": "अभी अभ्यास करने के लिए कोई गलती नहीं",
     "complete.repeat_none": "यहां दोहराने के लिए कुछ भी नहीं बचा",
     "crossword.none": "क्रॉसवर्ड के लिए पर्याप्त शब्द नहीं",
-    "crossword.pick_cell": "एक वर्ग चुनें ताकि आप उसका संकेत देख सकें"
+    "crossword.pick_cell": "एक वर्ग चुनें ताकि आप उसका संकेत देख सकें",
+    "complete.story_complete": "कहानी पूरी!",
+    "toast.generated": "✅ \"{topic}\" तैयार!",
+    "toast.import_ok": "✓ आयात किया गया: +{added} नए, ~{updated} अपडेटेड",
+    "toast.export_ok": "✓ {n} पाठ निर्यात किया गया",
+    "toast.export_ok_plural": "✓ {n} पाठ निर्यात किए गए",
+    "qc.editor.flag_cancel": "रद्द करें"
   },
   "de": {
     "qc.editor.suggests_by": "⚑ {model} schlägt vor:",
@@ -4081,7 +4091,8 @@
     "drill.none": "Noch keine Fehler zum Üben",
     "complete.repeat_none": "Hier gibt es nichts mehr zum Wiederholen",
     "crossword.none": "Nicht genügend Wörter für ein Kreuzworträtsel",
-    "crossword.pick_cell": "Wähle ein Feld, um den Hinweis anzuzeigen"
+    "crossword.pick_cell": "Wähle ein Feld, um den Hinweis anzuzeigen",
+    "complete.story_complete": "Geschichte abgeschlossen!"
   },
   "ar": {
     "qc.editor.suggests_by": "⚑ يقترح النموذج {model}:",
@@ -4665,7 +4676,8 @@
     "drill.none": "لا توجد أخطاء للتدريب عليها بعد",
     "complete.repeat_none": "لا يوجد شيء آخر لإعادة التشغيل هنا",
     "crossword.none": "ليس هناك كلمات كافية لإنشاء سودوكو",
-    "crossword.pick_cell": "اختر مربعًا لعرض تلميحه"
+    "crossword.pick_cell": "اختر مربعًا لعرض تلميحه",
+    "complete.story_complete": "القصة اكتملت!"
   },
   "sv": {
     "qc.editor.suggests_by": "⚑ {model} föreslår:",
@@ -5249,7 +5261,8 @@
     "drill.none": "Inga misstag att öva på ännu",
     "complete.repeat_none": "Inget kvar att repetera här",
     "crossword.none": "Inte tillräckligt med ord för ett korsord",
-    "crossword.pick_cell": "Välj en ruta för att se ledtråden"
+    "crossword.pick_cell": "Välj en ruta för att se ledtråden",
+    "complete.story_complete": "Berättelsen är klar!"
   },
   "ru": {
     "qc.editor.suggests_by": "⚑ {model} предлагает:",
@@ -5832,7 +5845,9 @@
     "drill.none": "Пока нет ошибок для тренировки",
     "complete.repeat_none": "Здесь больше нет материала для повторения",
     "crossword.none": "Недостаточно слов для кроссворда",
-    "crossword.pick_cell": "Выберите клетку, чтобы увидеть подсказку"
+    "crossword.pick_cell": "Выберите клетку, чтобы увидеть подсказку",
+    "complete.story_complete": "История завершена!",
+    "ex.error_hunt.reason_placeholder": "Причина…"
   },
   "zh": {
     "qc.editor.suggests_by": "💡 {model} 推荐：",
@@ -6415,7 +6430,9 @@
     "drill.none": "目前没有需要练习的错误",
     "complete.repeat_none": "这里没有内容可以重复练习",
     "crossword.none": "单词数量不足以创建填字游戏",
-    "crossword.pick_cell": "选择一个格子，查看提示。"
+    "crossword.pick_cell": "选择一个格子，查看提示。",
+    "complete.story_complete": "故事已完成！",
+    "qc.editor.flag_save": "标记"
   },
   "ko": {
     "qc.editor.suggests_by": "🤖 {model} 추천:",
@@ -6999,7 +7016,8 @@
     "drill.none": "연습할 실수가 아직 없습니다",
     "complete.repeat_none": "다시 볼 내용이 더 이상 없습니다",
     "crossword.none": "크로스워드에 사용할 단어가 충분하지 않습니다",
-    "crossword.pick_cell": "칸을 선택하여 힌트를 확인하세요."
+    "crossword.pick_cell": "칸을 선택하여 힌트를 확인하세요.",
+    "complete.story_complete": "스토리 완료!"
   },
   "it": {
     "qc.editor.suggests_by": "⚑ {model} suggerisce:",
@@ -7583,7 +7601,8 @@
     "drill.none": "Nessun errore da ripetere al momento",
     "complete.repeat_none": "Non ci sono esercizi da ripetere qui",
     "crossword.none": "Non ci sono abbastanza parole per un cruciverba",
-    "crossword.pick_cell": "Seleziona una casella per vedere l'indizio"
+    "crossword.pick_cell": "Seleziona una casella per vedere l'indizio",
+    "complete.story_complete": "Storia completata!"
   },
   "pl": {
     "qc.editor.suggests_by": "⚑ {model} sugeruje:",
@@ -8167,7 +8186,8 @@
     "drill.none": "Nie ma jeszcze błędów do powtórzenia",
     "complete.repeat_none": "Nie ma już nic do powtórzenia tutaj",
     "crossword.none": "Nie ma wystarczającej liczby słów do krzyżówki",
-    "crossword.pick_cell": "Wybierz pole, aby zobaczyć wskazówkę"
+    "crossword.pick_cell": "Wybierz pole, aby zobaczyć wskazówkę",
+    "complete.story_complete": "Historia zakończona!"
   },
   "es": {
     "qc.editor.suggests_by": "⚑ {model} sugiere:",
@@ -8751,7 +8771,8 @@
     "drill.none": "Aún no hay errores para practicar",
     "complete.repeat_none": "No hay ejercicios para repasar aquí",
     "crossword.none": "No hay suficientes palabras para un crucigrama",
-    "crossword.pick_cell": "Selecciona una casilla para ver la pista"
+    "crossword.pick_cell": "Selecciona una casilla para ver la pista",
+    "complete.story_complete": "¡Historia completada!"
   },
   "ja": {
     "qc.editor.suggests_by": "⚑ {model} が提案:",
@@ -9333,7 +9354,10 @@
     "drill.none": "まだ練習するべき間違いがありません",
     "complete.repeat_none": "もう繰り返すものはありません",
     "crossword.none": "クロスワードを作成するのに十分な単語がありません",
-    "crossword.pick_cell": "マスを選択して、ヒントを確認"
+    "crossword.pick_cell": "マスを選択して、ヒントを確認",
+    "complete.story_complete": "ストーリー完了！",
+    "prov.by": "{user} によって",
+    "prov.from": "～より"
   },
   "he": {
     "qc.editor.suggests_by": "⚑ מציע: {model}",
@@ -9866,7 +9890,59 @@
     "teacher.flag_story": "סיפור שדווח",
     "pdf.aiclean_heavy": "{n} קיצוץ משמעותי - בדוק אותם",
     "pdf.aiclean_untouched": "{n} ללא שינוי",
-    "teacher.no_backend": "לוח המשתמש צריך שהאפליקציה תפעל עם שרת. הוא אינו זמין בגרסה הסטטית (לא מקוונת)."
+    "teacher.no_backend": "לוח המשתמש צריך שהאפליקציה תפעל עם שרת. הוא אינו זמין בגרסה הסטטית (לא מקוונת).",
+    "form.translation_placeholder": "הדביקו כאן את התרגום ({lang}). מומלץ משפט אחד לפסקה, אך אפשר גם טקסט רגיל.",
+    "tts.approx_dialect": "≈ דיבור משוער עבור {lang}",
+    "ex.listen_mcq.q": "הקשיבו ובחרו את המשמעות:",
+    "ex.listen_type.q": "הקלידו את המילה ששמעתם:",
+    "ex.read_translate.q": "תרגמו את המשפט הזה:",
+    "complete.story_complete": "הסיפור הסתיים!",
+    "ex.badge.type_translate": "✏️ תרגום ({lang})",
+    "tts.no_voice_silent": "🔇 לא מותקנת קריינית עבור {lang} - הדיבור כבוי עבור שפה זו (קריאה באנגלית עלולה להטעות).",
+    "tts.no_voice_hint": "לא מותקנת קריינית עבור {lang} במכשיר זה, ולכן הדיבור כבוי. התקינו אחת בהגדרות המערכת כדי להפעיל אותה.",
+    "acct.insecure": "⚠️ החיבור הזה אינו מוצפן, ולכן הסיסמה והכניסה שלכם גלויות לאחרים ברשת זו. בטוח במחשב האישי שלכם; ברשת משותפת או בבית ספר, בקשו ממי שמנהל את השרת להגן עליו באמצעות HTTPS.",
+    "crossword.play": "תשחץ",
+    "crossword.play_title": "תרגול מילים מהשיעור בצורת תשחץ",
+    "crossword.title": "תשחץ",
+    "crossword.across": "אופקי",
+    "crossword.down": "אנכי",
+    "crossword.check": "בדיקה",
+    "crossword.done": "סיום - סגור את התשחץ",
+    "crossword.solved_n": "{n} מתוך {total} פתורים",
+    "crossword.correct_n": "✅ {n} נכונים!",
+    "crossword.skipped_n": "{n} מילה/ות לא התאימו לרשת",
+    "crossword.solve": "פתור",
+    "crossword.revealed": "הפתרון מוצג - זה לא נספר להתקדמות שלך",
+    "complete.repeat": "חזור - תרגל שוב כדי להגיע לציון המינימלי",
+    "crossword.regenerate": "פאזל חדש - מילים שונות מאותה קבוצה",
+    "crossword.words": "מילים:",
+    "crossword.from": "מתוך:",
+    "crossword.from_lesson": "שיעור זה",
+    "crossword.from_topic": "שיעור זה ושיעורים קודמים",
+    "crossword.from_all": "כל מה שלמדתי",
+    "crossword.prefer_wrong": "תן עדיפות למילים בהן טעיתי",
+    "crossword.topped_up": "מושלם במילים משיעורים קודמים",
+    "crossword.not_enough": "לא מספיק מילים מתאימות לחידה בשיעור זה.",
+    "teacher.render_error": "לא ניתן להציג את המסך.",
+    "pdf.split_mode_lbl": "פרקים:",
+    "pdf.split_by_para": "¶ לפי פסקה",
+    "pdf.split_by_len": "↔ לפי אורך",
+    "pdf.split_by_page": "📄 לפי עמוד",
+    "pdf.split_unavailable": "לא זמין עבור מסמך זה",
+    "pdf.split_by_llm": "✨ לפי נושא (מודל)",
+    "pdf.llmsplit_drop_lbl": "גם להסיר פרסומות וטקסטים חוזרים",
+    "pdf.llmsplit_running": "בוחר פרקים...",
+    "pdf.llmsplit_done": "{n} פרקים נבחרו",
+    "pdf.llmsplit_dropped": "{n} פסקאות הוסרו",
+    "pdf.llmsplit_failed": "המודל לא הצליח לבחור פרקים - הפסקאות חולקו כרגיל",
+    "pdf.llmsplit_too_short": "מעט מדי פסקאות כדי לקבץ",
+    "check.you_typed": "כתבת",
+    "complete.next_locked": "השג {pct}% פתורות כדי להמשיך",
+    "drill.done": "תרגול הסתיים - חזרה להתקדמות שלך",
+    "drill.none": "אין טעויות לתרגל כרגע",
+    "complete.repeat_none": "אין מה לתרגל כאן",
+    "crossword.none": "לא מספיק מילים לחידה",
+    "crossword.pick_cell": "בחרו משבצת כדי לראות את הרמז"
   },
   "uk": {
     "qc.editor.suggests_by": "⚑ {model} пропонує:",
@@ -10450,7 +10526,8 @@
     "drill.none": "Поки немає помилок для тренування",
     "complete.repeat_none": "Тут немає чого повторювати",
     "crossword.none": "Недостатньо слів для кросворду",
-    "crossword.pick_cell": "Виберіть клітинку, щоб побачити підказку"
+    "crossword.pick_cell": "Виберіть клітинку, щоб побачити підказку",
+    "complete.story_complete": "Історія завершена!"
   },
   "cs": {
     "qc.editor.suggests_by": "⚑ {model} navrhuje:",
@@ -11034,7 +11111,8 @@
     "drill.none": "Zatím nemáte žádné chyby k procvičování",
     "complete.repeat_none": "Zde už není co opakovat",
     "crossword.none": "Nedostatek slov pro křížovku",
-    "crossword.pick_cell": "Vyberte pole pro zobrazení nápovědy"
+    "crossword.pick_cell": "Vyberte pole pro zobrazení nápovědy",
+    "complete.story_complete": "Příběh dokončen!"
   },
   "vi": {
     "qc.editor.suggests_by": "💡 {model} gợi ý:",
@@ -11617,7 +11695,9 @@
     "drill.none": "Chưa có lỗi nào để luyện tập",
     "complete.repeat_none": "Không còn nội dung nào để xem lại ở đây",
     "crossword.none": "Không đủ từ để tạo câu đố",
-    "crossword.pick_cell": "Chọn một ô để xem gợi ý"
+    "crossword.pick_cell": "Chọn một ô để xem gợi ý",
+    "complete.story_complete": "Câu chuyện đã hoàn thành!",
+    "crossword.title": "Ô chữ"
   },
   "id": {
     "qc.editor.suggests_by": "⚑ {model} menyarankan:",
@@ -12201,7 +12281,8 @@
     "drill.none": "Belum ada kesalahan untuk dilatih",
     "complete.repeat_none": "Tidak ada lagi yang perlu diulang di sini",
     "crossword.none": "Tidak cukup kata untuk membuat teka-teki silang",
-    "crossword.pick_cell": "Pilih kotak untuk melihat petunjuknya"
+    "crossword.pick_cell": "Pilih kotak untuk melihat petunjuknya",
+    "complete.story_complete": "Cerita selesai!"
   },
   "ro": {
     "qc.editor.suggests_by": "⚑ Sugerat de {model}:",
@@ -12785,7 +12866,8 @@
     "drill.none": "Nu ai încă greșeli de exersat",
     "complete.repeat_none": "Nu mai sunt elemente de reîmprospătat aici",
     "crossword.none": "Nu sunt suficiente cuvinte pentru un rebus",
-    "crossword.pick_cell": "Alege o căsuță pentru a vedea indiciul"
+    "crossword.pick_cell": "Alege o căsuță pentru a vedea indiciul",
+    "complete.story_complete": "Povestea este completă!"
   },
   "th": {
     "qc.editor.suggests_by": "⚑ {model} แนะนำ:",
@@ -13366,7 +13448,11 @@
     "drill.none": "ยังไม่มีข้อผิดพลาดให้ฝึกซ้อม",
     "complete.repeat_none": "ไม่มีอะไรให้ทบทวนในที่นี้",
     "crossword.none": "มีคำศัพท์ไม่เพียงพอสำหรับปริศนาอักษรไขว้",
-    "crossword.pick_cell": "เลือกช่องเพื่อดูคำใบ้"
+    "crossword.pick_cell": "เลือกช่องเพื่อดูคำใบ้",
+    "app.backend": "ส่วนหลังบ้าน:",
+    "complete.story_complete": "สำเร็จ! เรื่องนี้จบแล้ว",
+    "qc.editor.flag_save": "ทำเครื่องหมาย",
+    "crossword.title": "ปริศนาอักษรไขว้"
   },
   "el": {
     "qc.editor.suggests_by": "⚑ Προτείνει το {model}:",
@@ -13927,7 +14013,31 @@
     "crossword.from_all": "Όλα όσα έχω μάθει",
     "crossword.prefer_wrong": "Επιλέξτε λέξεις στις οποίες έκανα λάθος",
     "crossword.topped_up": "συμπληρωμένο με λέξεις από προηγούμενες διδασκαλίες",
-    "crossword.not_enough": "Δεν υπάρχουν αρκετές λέξεις για να δημιουργηθεί ένα σταυρόλεξο σε αυτή τη διδασκαλία."
+    "crossword.not_enough": "Δεν υπάρχουν αρκετές λέξεις για να δημιουργηθεί ένα σταυρόλεξο σε αυτή τη διδασκαλία.",
+    "app.backend": "Πίσω μέρος:",
+    "complete.story_complete": "Ιστορία ολοκληρώθηκε!",
+    "qc.editor.flag_save": "Σημείωση",
+    "storyboard.title": "Storyboard",
+    "teacher.render_error": "Δεν μπόρεσα να εμφανίσω τον πίνακα ελέγχου.",
+    "pdf.split_mode_lbl": "Κεφάλαια:",
+    "pdf.split_by_para": "¶ Ανά παράγραφο",
+    "pdf.split_by_len": "↔ Ανά μήκος",
+    "pdf.split_by_page": "📄 Ανά σελίδα",
+    "pdf.split_unavailable": "Δεν είναι διαθέσιμο για αυτό το έγγραφο",
+    "pdf.split_by_llm": "✨ Ανά θέμα (μοντέλο)",
+    "pdf.llmsplit_drop_lbl": "Επίσης, αφαιρέστε διαφημίσεις και περιττά στοιχεία",
+    "pdf.llmsplit_running": "Επιλογή κεφαλαίων...",
+    "pdf.llmsplit_done": "{n} κεφάλαια επιλέχθηκαν",
+    "pdf.llmsplit_dropped": "{n} παράγραφοι αφαιρέθηκαν",
+    "pdf.llmsplit_failed": "Το μοντέλο δεν μπόρεσε να επιλέξει κεφάλαια — διατηρήθηκε ο αρχικός διαχωρισμός",
+    "pdf.llmsplit_too_short": "Πάρα λίγοι παράγραφοι για ομαδοποίηση",
+    "check.you_typed": "Εισαγάγατε",
+    "complete.next_locked": "Φτάστε στο {pct}% ολοκληρωμένο για να συνεχίσετε",
+    "drill.done": "Ολοκληρώθηκε η άσκηση — επιστρέψτε στην πρόοδό σας",
+    "drill.none": "Δεν υπάρχουν ακόμη λάθη για επανάληψη",
+    "complete.repeat_none": "Δεν υπάρχει τίποτα άλλο για επανάληψη εδώ",
+    "crossword.none": "Δεν υπάρχουν αρκετές λέξεις για ένα σταυρόλεξο",
+    "crossword.pick_cell": "Επιλέξτε ένα τετράγωνο για να δείτε την ένδειξή του"
   },
   "fi": {
     "qc.editor.suggests_by": "⚑ {model} ehdottaa:",
@@ -14461,7 +14571,58 @@
     "teacher.flag_story": "tarina ilmoitettu",
     "pdf.aiclean_heavy": "{n} voimakkaasti leikattu — tarkista ne",
     "pdf.aiclean_untouched": "{n} jätetty muuttumattomaksi",
-    "teacher.no_backend": "Oppijan näkymä vaatii sovelluksen toiminnan taustajärjestelmän kanssa. Se ei ole saatavilla offline-versiossa."
+    "teacher.no_backend": "Oppijan näkymä vaatii sovelluksen toiminnan taustajärjestelmän kanssa. Se ei ole saatavilla offline-versiossa.",
+    "form.translation_placeholder": "Liitä käännös ({lang}) tähän. Yksi lause per kappale on ihanteellista, mutta selkeä teksti käy myös.",
+    "tts.approx_dialect": "≈ arvioitu ääni {lang}-kielelle",
+    "ex.listen_mcq.q": "Kuuntele ja valitse merkitys:",
+    "ex.listen_type.q": "Kirjoita kuulemasi sana:",
+    "ex.read_translate.q": "Käännä tämä lause:",
+    "complete.story_complete": "Tarina valmis!",
+    "tts.no_voice_silent": "🔇 Ääni ei ole käytettävissä {lang}-kielellä — puhe on pois päältä tälle kielelle (englanninkielinen ääni vain hämmentäisi).",
+    "tts.no_voice_hint": "Tälle laitteelle ei ole asennettu ääntä {lang}-kielelle, joten puhe on pois päältä. Asenna ääni järjestelmäasetuksistasi, niin voit ottaa sen käyttöön.",
+    "acct.insecure": "⚠️ Tämä yhteys ei ole salattu, joten salasanasi ja kirjautumistietosi ovat muiden nähtävillä tässä verkossa. Turvallista omalla tietokoneellasi; jaetussa tai koulun verkossa, pyydä palvelimen ylläpitäjää ottamaan se HTTPS-yhteyteen.",
+    "crossword.play": "Ristisanatehtävä",
+    "crossword.play_title": "Harjoittele tämän oppitunnin sanoja ristisanatehtävänä",
+    "crossword.title": "Ristisanatehtävä",
+    "crossword.across": "Vaakasuunnassa",
+    "crossword.down": "Pystysuunnassa",
+    "crossword.check": "Tarkista",
+    "crossword.done": "Valmis — sulje ristisanatehtävä",
+    "crossword.solved_n": "{n} / {total} ratkaistu",
+    "crossword.correct_n": "✅ {n} oikein!",
+    "crossword.skipped_n": "{n} sanaa ei sopinut ruudukkoon",
+    "crossword.solve": "Ratkaise",
+    "crossword.revealed": "Ratkaisu näytetty – tämä ei vaikuta edistymiseesi",
+    "complete.repeat": "Toista – harjoittele uudelleen, jotta saavutat vaaditun tason",
+    "crossword.regenerate": "Uusi pulma – eri sanat samasta sanastosta",
+    "crossword.words": "Sanat:",
+    "crossword.from": "Alkaa:",
+    "crossword.from_lesson": "Tästä oppitunnista",
+    "crossword.from_topic": "Tästä oppitunnista ja aiemmista",
+    "crossword.from_all": "Kaikesta, mitä olen oppinut",
+    "crossword.prefer_wrong": "Priorisoi sanat, joihin tein virheitä",
+    "crossword.topped_up": "täydennetty sanoilla aiemmista oppitunneista",
+    "crossword.not_enough": "Tässä oppitunnissa ei ole tarpeeksi sanoja ristisanatehtävää varten.",
+    "teacher.render_error": "Päävalikko ei jostain syystä lataudu.",
+    "pdf.split_mode_lbl": "Luvut:",
+    "pdf.split_by_para": "¶ Kohdalla",
+    "pdf.split_by_len": "↔ Pituuden mukaan",
+    "pdf.split_by_page": "📄 Sivun mukaan",
+    "pdf.split_unavailable": "Ei saatavilla tälle dokumentille",
+    "pdf.split_by_llm": "✨ Aiheen mukaan (malli)",
+    "pdf.llmsplit_drop_lbl": "Poista myös mainokset ja toistuvat osat",
+    "pdf.llmsplit_running": "Valitaan lukuja…",
+    "pdf.llmsplit_done": "{n} lukua valittu",
+    "pdf.llmsplit_dropped": "{n} kappaletta jätetty pois",
+    "pdf.llmsplit_failed": "Malli ei pystynyt valitsemaan lukuja — kappaleet jaettiin kuten ennen",
+    "pdf.llmsplit_too_short": "Liian vähän kappaleita ryhmiteltäväksi",
+    "check.you_typed": "Kirjoitit",
+    "complete.next_locked": "Saavuta {pct}% suoritettuna jatkaaksesi",
+    "drill.done": "Harjoitus valmis — palaa edistymiseen",
+    "drill.none": "Ei virheitä harjoitettavaksi vielä",
+    "complete.repeat_none": "Ei enää mitään toistettavaa täällä",
+    "crossword.none": "Ei tarpeeksi sanoja ristisanatehtävään",
+    "crossword.pick_cell": "Valitse ruutu nähdäksesi sen vihjeen"
   },
   "hu": {
     "qc.editor.suggests_by": "⚑ A {model} javaslatai:",
@@ -14995,7 +15156,58 @@
     "teacher.flag_story": "jelzett történet",
     "pdf.aiclean_heavy": "{n} erősen rövidítve – ellenőrizze őket",
     "pdf.aiclean_untouched": "{n} változatlan",
-    "teacher.no_backend": "A tanulói felülethez a futó alkalmazás szükséges, amelyhez egy szerverkapcsolat is kell. Ez nem érhető el az offline verzióban."
+    "teacher.no_backend": "A tanulói felülethez a futó alkalmazás szükséges, amelyhez egy szerverkapcsolat is kell. Ez nem érhető el az offline verzióban.",
+    "form.translation_placeholder": "Ide illessze be a fordítást ({lang}). Egy mondat egy bekezdésben ideális, de a egyszerű szöveg is megfelelő.",
+    "tts.approx_dialect": "≈ a(z) {lang} nyelvhez tartozó közelítő hang",
+    "ex.listen_mcq.q": "Hallgassa meg és válassza a jelentést:",
+    "ex.listen_type.q": "Írja be a hallott szót:",
+    "ex.read_translate.q": "Fordítsa le ezt az állítást:",
+    "complete.story_complete": "A történet befejeződött!",
+    "tts.no_voice_silent": "🔇 Nincs telepített hang a(z) {lang} nyelvhez – a szöveg olvasása ebben a nyelvben ki van kapcsolva (az angol nyelvű olvasás félrevezető lenne).",
+    "tts.no_voice_hint": "Nincs telepített hang a(z) {lang} nyelvhez ebben a készüléken, ezért a szöveg olvasása ki van kapcsolva. Telepítsen egyet a rendszerbeállításokban a bekapcsoláshoz.",
+    "acct.insecure": "⚠️ Ez a kapcsolat nem titkosított, ezért a jelszavát és bejelentkezését mások is láthatják ebben a hálózaton. Biztonságos a saját számítógépén; egy közös vagy iskolai hálózaton kérje a szerver üzemeltetőjét, hogy helyezze azt HTTPS mögé.",
+    "crossword.play": "Szókereszt",
+    "crossword.play_title": "Játssz a lecke szavaival keresztrejtvényt!",
+    "crossword.title": "Keresztrejtvény",
+    "crossword.across": "Felfele",
+    "crossword.down": "Le",
+    "crossword.check": "Ellenőrizés",
+    "crossword.done": "Befejezetlen – zárd a keresztrejtvényt",
+    "crossword.solved_n": "{n} / {total} megoldva",
+    "crossword.correct_n": "✅ {n} helyes!",
+    "crossword.skipped_n": "{n} szó nem illett a rácsba",
+    "crossword.solve": "Megoldás",
+    "crossword.revealed": "A megoldás megjelenítése – ez nem jár ponttal",
+    "complete.repeat": "Ismétlés – gyakorolj újra a sikeres teljesítéshez",
+    "crossword.regenerate": "Új feladvány – más szavak ugyanabból a készletből",
+    "crossword.words": "Szavak:",
+    "crossword.from": "Ebből:",
+    "crossword.from_lesson": "Ez a lecke",
+    "crossword.from_topic": "Ez a lecke és a korábbiak",
+    "crossword.from_all": "Minden, amit megtanultam",
+    "crossword.prefer_wrong": "Prioritizálom a hibás szavakat",
+    "crossword.topped_up": "kiegészítve szavakkal a korábbi leckékből",
+    "crossword.not_enough": "Nem elég szó van ebben a leckében a keresztrejtvényhez.",
+    "teacher.render_error": "Nem sikerült megjeleníteni a felületet.",
+    "pdf.split_mode_lbl": "Fejezetek:",
+    "pdf.split_by_para": "¶ Bejegyzés szerint",
+    "pdf.split_by_len": "↔ Hosszúság szerint",
+    "pdf.split_by_page": "📄 Oldal szerint",
+    "pdf.split_unavailable": "Ez a funkció nem elérhető ehhez a dokumentumhoz.",
+    "pdf.split_by_llm": "✨ Téma szerint (modell)",
+    "pdf.llmsplit_drop_lbl": "Eltávolítja a reklámokat és a bevezető szöveget is.",
+    "pdf.llmsplit_running": "Fejezetek kiválasztása…",
+    "pdf.llmsplit_done": "{n} fejezet kiválasztva",
+    "pdf.llmsplit_dropped": "{n} bekezdés elhagyva",
+    "pdf.llmsplit_failed": "A modell nem tudta kiválasztani a fejezeteket – a bekezdések továbbra is külön vannak",
+    "pdf.llmsplit_too_short": "Túl kevés bekezdés van a csoportosításhoz",
+    "check.you_typed": "Te írtad",
+    "complete.next_locked": "Érdekében, hogy folytathasd, {pct}%-ot kell megoldanod",
+    "drill.done": "A gyakorlás befejeződött – visszatérés a fejlődéshez",
+    "drill.none": "Még nincs hiba, amit gyakorolnod kellene",
+    "complete.repeat_none": "Itt nincs több dolog, amit újra kellene lejátssz",
+    "crossword.none": "Nincs elég szó a keresztrejtvényhez",
+    "crossword.pick_cell": "Válassz egy mezőt a feladványhoz tartozó szöveg megjelenítéséhez"
   },
   "da": {
     "qc.editor.suggests_by": "⚑ Foreslået af {model}:",
@@ -15529,7 +15741,58 @@
     "teacher.flag_story": "historie anmeldt",
     "pdf.aiclean_heavy": "{n} kraftigt forkortet – tjek dem",
     "pdf.aiclean_untouched": "{n} uændret",
-    "teacher.no_backend": "Elevens dashboard kræver, at appen kører med en backend. Den er ikke tilgængelig i den statiske (offline) version."
+    "teacher.no_backend": "Elevens dashboard kræver, at appen kører med en backend. Den er ikke tilgængelig i den statiske (offline) version.",
+    "form.translation_placeholder": "Indsæt oversættelsen ({lang}) her. En sætning pr. afsnit er ideelt, men almindelig tekst fungerer også.",
+    "tts.approx_dialect": "≈ omtrentlig stemme for {lang}",
+    "ex.listen_mcq.q": "Lyt og vælg betydningen:",
+    "ex.listen_type.q": "Skriv det ord, du hører:",
+    "ex.read_translate.q": "Oversæt denne sætning:",
+    "complete.story_complete": "Historien er færdig!",
+    "tts.no_voice_silent": "🔇 Ingen stemme installeret for {lang} — tale er slået fra for dette sprog (en engelsk stemme, der læser det, ville kun vildlede).",
+    "tts.no_voice_hint": "Der er ingen stemme installeret for {lang} på denne enhed, så talen er slået fra. Installer en i dine systemindstillinger for at aktivere den.",
+    "acct.insecure": "⚠️ Denne forbindelse er ikke krypteret, så dit kodeord og login er synligt for andre på dette netværk. Sikker på din egen computer; på et delt eller skole-netværk, så spørg den, der administrerer serveren, om at aktivere HTTPS.",
+    "crossword.play": "Krydsord",
+    "crossword.play_title": "Øv ordene fra denne lektion som et krydsord",
+    "crossword.title": "Krydsord",
+    "crossword.across": "Vandret",
+    "crossword.down": "Lodret",
+    "crossword.check": "Tjek",
+    "crossword.done": "Færdig – luk krydsordet",
+    "crossword.solved_n": "{n} ud af {total} løst",
+    "crossword.correct_n": "✅ {n} korrekt!",
+    "crossword.skipped_n": "{n} ord passede ikke i ruden",
+    "crossword.solve": "Løs",
+    "crossword.revealed": "Løsning vist – dette tæller ikke med i din fremskridt",
+    "complete.repeat": "Gentag – øv dig igen for at nå målet",
+    "crossword.regenerate": "Nyt puslespil – forskellige ord fra samme ordforråd",
+    "crossword.words": "Ord:",
+    "crossword.from": "Fra:",
+    "crossword.from_lesson": "Denne lektion",
+    "crossword.from_topic": "Denne lektion og tidligere lektioner",
+    "crossword.from_all": "Alt, hvad jeg har lært",
+    "crossword.prefer_wrong": "Prioriter ord, jeg har svaret forkert på",
+    "crossword.topped_up": "udvidet med ord fra tidligere lektioner",
+    "crossword.not_enough": "Der er ikke nok ord til at lave et krydsord i denne lektion.",
+    "teacher.render_error": "Kunne ikke vise dashboardet.",
+    "pdf.split_mode_lbl": "Kapitler:",
+    "pdf.split_by_para": "¶ Efter afsnit",
+    "pdf.split_by_len": "↔ Efter længde",
+    "pdf.split_by_page": "📄 Efter side",
+    "pdf.split_unavailable": "Ikke tilgængelig for dette dokument",
+    "pdf.split_by_llm": "✨ Efter emne (model)",
+    "pdf.llmsplit_drop_lbl": "Fjern også reklamer og indledende tekst",
+    "pdf.llmsplit_running": "Vælger kapitler…",
+    "pdf.llmsplit_done": "{n} kapitler valgt",
+    "pdf.llmsplit_dropped": "{n} afsnit fjernet",
+    "pdf.llmsplit_failed": "Modellen kunne ikke vælge kapitler – afsnittene er stadig adskilte",
+    "pdf.llmsplit_too_short": "For få afsnit til at gruppere",
+    "check.you_typed": "Du skrev",
+    "complete.next_locked": "Løs {pct}% for at fortsætte",
+    "drill.done": "Øvelse færdig – tilbage til din fremskridt",
+    "drill.none": "Ingen fejl at øve på endnu",
+    "complete.repeat_none": "Intet tilbage at gennemgå her",
+    "crossword.none": "Ikke nok ord til et krydsord",
+    "crossword.pick_cell": "Vælg en rude for at se dens ledetråd"
   },
   "ca": {
     "qc.editor.suggests_by": "⚑ Suggerit per {model}:",
@@ -16063,7 +16326,58 @@
     "teacher.flag_story": "història notificada",
     "pdf.aiclean_heavy": "{n} retallats intensament — revisa'ls",
     "pdf.aiclean_untouched": "{n} sense modificar",
-    "teacher.no_backend": "El tauler de control de l'alumne necessita que l'aplicació funcioni amb un servidor. No està disponible a la versió estàtica (offline)."
+    "teacher.no_backend": "El tauler de control de l'alumne necessita que l'aplicació funcioni amb un servidor. No està disponible a la versió estàtica (offline).",
+    "form.translation_placeholder": "Enganxeu la traducció ({lang}) aquí. Un paràgraf per frase és ideal, però també es pot utilitzar text senzill.",
+    "tts.approx_dialect": "≈ veu aproximada per a {lang}",
+    "ex.listen_mcq.q": "Escolta i tria el significat:",
+    "ex.listen_type.q": "Escriu la paraula que sents:",
+    "ex.read_translate.q": "Tradueix aquesta frase:",
+    "complete.story_complete": "Història completada!",
+    "tts.no_voice_silent": "🔇 No hi ha veu instal·lada per a {lang} — el reconeixement de veu està desactivat per a aquest idioma (una veu en anglès només podria enganyar).",
+    "tts.no_voice_hint": "No hi ha cap veu instal·lada per a {lang} en aquest dispositiu, així que el reconeixement de veu està desactivat. Instal·leu-ne una als ajustaments del sistema per activar-lo.",
+    "acct.insecure": "⚠️ Aquesta connexió no està encriptada, per tant, la teva contrasenya i l'inici de sessió són visibles per a altres usuaris d'aquesta xarxa. És segur al teu ordinador; en una xarxa compartida o escolar, demana a qui gestiona el servidor que l'activi amb HTTPS.",
+    "crossword.play": "Crucigrama",
+    "crossword.play_title": "Practica les paraules d'aquesta lliçó amb un creuagrama",
+    "crossword.title": "Creuagrama",
+    "crossword.across": "Horitzontalment",
+    "crossword.down": "Verticalment",
+    "crossword.check": "Comprovar",
+    "crossword.done": "Fet — tanca el creuagrama",
+    "crossword.solved_n": "{n} de {total} resolts",
+    "crossword.correct_n": "✅ {n} correctes!",
+    "crossword.skipped_n": "{n} paraula(s) no encaixaven a la graella",
+    "crossword.solve": "Resoldre",
+    "crossword.revealed": "Solució mostrada — això no compta per al teu progrés",
+    "complete.repeat": "Repeteix — practica de nou per assolir la puntuació mínima",
+    "crossword.regenerate": "Puzle nou — paraules diferents del mateix conjunt",
+    "crossword.words": "Paraules:",
+    "crossword.from": "De:",
+    "crossword.from_lesson": "Aquesta lliçó",
+    "crossword.from_topic": "Aquesta lliçó i les anteriors",
+    "crossword.from_all": "Tot el que he après",
+    "crossword.prefer_wrong": "Prioritzar paraules que he fallat",
+    "crossword.topped_up": "augmentat amb paraules de lliçons anteriors",
+    "crossword.not_enough": "No hi ha suficients paraules per a un creuagrama en aquesta lliçó.",
+    "teacher.render_error": "No s'ha pogut mostrar el panell de control.",
+    "pdf.split_mode_lbl": "Capítols:",
+    "pdf.split_by_para": "¶ Per paràgraf",
+    "pdf.split_by_len": "↔ Per longitud",
+    "pdf.split_by_page": "📄 Per pàgina",
+    "pdf.split_unavailable": "No disponible per a aquest document",
+    "pdf.split_by_llm": "✨ Per tema (model)",
+    "pdf.llmsplit_drop_lbl": "També eliminar anuncs i text repetitiu",
+    "pdf.llmsplit_running": "Seleccionant capítols…",
+    "pdf.llmsplit_done": "{n} capítols seleccionats",
+    "pdf.llmsplit_dropped": "{n} paràgrafs eliminats",
+    "pdf.llmsplit_failed": "El model no va poder seleccionar capítols; s'ha mantingut la divisió per paràgrafs",
+    "pdf.llmsplit_too_short": "Poc paràgrafs per agrupar",
+    "check.you_typed": "Has escrit",
+    "complete.next_locked": "Arribeu al {pct}% completat per continuar",
+    "drill.done": "Exercici completat — tornada al teu progrés",
+    "drill.none": "Encara no hi ha errors per practicar",
+    "complete.repeat_none": "No queda res més per repassar aquí",
+    "crossword.none": "No hi ha suficients paraules per a un joc de mots encreuats",
+    "crossword.pick_cell": "Toca una casella per veure la pista"
   },
   "lb": {
     "qc.editor.suggests_by": "⚑ {model} schléit vir:",
@@ -16647,7 +16961,8 @@
     "drill.none": "Nach keng Feeler fir ze üben",
     "complete.repeat_none": "Näpp fir hei nach ze widderhuelen",
     "crossword.none": "Net genuch Wierder fir e Kreuzworträtsel",
-    "crossword.pick_cell": "Wielt en Feld fir d'Hinweis ze gesinn"
+    "crossword.pick_cell": "Wielt en Feld fir d'Hinweis ze gesinn",
+    "complete.story_complete": "Geschicht fäerdeg!"
   },
   "sw": {
     "qc.editor.suggests_by": "⚑ {model} inapendekeza:",
@@ -17230,6 +17545,8 @@
     "drill.none": "Hakuna makosa ya mazoezi bado",
     "complete.repeat_none": "Hakuna chochote cha kurudia hapa",
     "crossword.none": "Maneno machache sana kwa crossword",
-    "crossword.pick_cell": "Chagua mraba ili kuona swali lake"
+    "crossword.pick_cell": "Chagua mraba ili kuona swali lake",
+    "complete.story_complete": "Hadithi imekamilika!",
+    "crossword.title": "Mchezo wa Neno"
   }
 }
