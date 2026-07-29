@@ -18,7 +18,7 @@
       "lang": "it",
       "srcLang": "de",
       "createdAt": "2026-07-27T07:55:43.985Z",
-      "updatedAt": "2026-07-29T07:28:45.033Z",
+      "updatedAt": "2026-07-29T07:35:15.737Z",
       "tokenUsage": {
         "totalPromptTokens": 6567,
         "totalCompletionTokens": 2144,
@@ -335,7 +335,11 @@
           "wordEditRatio": 0
         },
         "at": "2026-07-28T16:48:31.440Z"
-      }
+      },
+      "tags": [
+        "manually curated",
+        "scientific"
+      ]
     },
     {
       "id": "sl_168806957",
@@ -6538,20 +6542,7 @@
                 "evolute",
                 "«per»",
                 "volare"
-              ],
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "Die Flügel haben sich nicht entwickelt, um zu fliegen.",
-                  "field": "source",
-                  "at": "2026-07-27T08:42:54.599Z"
-                }
-              },
-              "qc": {
-                "sug": "Die Flügel haben sich nicht entwickelt, um zu fliegen.",
-                "field": "source",
-                "at": "2026-07-27T08:42:54.599Z",
-                "by": "translategemma:12b"
-              }
+              ]
             },
             {
               "target": "Infine, i geni sono importanti ma non tutto si svolge a livello genetico.",
@@ -6911,7 +6902,7 @@
         }
       },
       "generatedAt": "2026-07-27T08:19:46.170Z",
-      "updatedAt": "2026-07-28T20:23:44.999Z",
+      "updatedAt": "2026-07-29T07:34:49.967Z",
       "createdBy": "admin"
     },
     {
@@ -7051,7 +7042,7 @@
             },
             {
               "target": "I processi selettivi stessi sono molteplici.",
-              "source": "Selbst die selektiven Prozesse sind vielfältig.",
+              "source": "Die Auswahlverfahren selbst sind vielfältig.",
               "words": [
                 "I",
                 "processi",
@@ -7060,19 +7051,7 @@
                 "sono",
                 "molteplici."
               ],
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "Die Auswahlverfahren selbst sind vielfältig.",
-                  "field": "source",
-                  "at": "2026-07-27T08:41:43.794Z"
-                }
-              },
-              "qc": {
-                "sug": "Die Auswahlverfahren selbst sind vielfältig.",
-                "field": "source",
-                "at": "2026-07-27T08:41:43.794Z",
-                "by": "translategemma:12b"
-              }
+              "editedAt": "2026-07-29T07:34:24.838Z"
             },
             {
               "target": "Alcuni fattori casuali erano stati sottovalutati.",
@@ -7341,7 +7320,7 @@
         }
       },
       "generatedAt": "2026-07-27T08:15:07.343Z",
-      "updatedAt": "2026-07-28T20:23:12.612Z",
+      "updatedAt": "2026-07-29T07:34:28.674Z",
       "createdBy": "admin"
     },
     {
@@ -7803,20 +7782,8 @@
             },
             {
               "target": "la trasmissione",
-              "source": "die Vererbung",
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "die Übertragung",
-                  "field": "source",
-                  "at": "2026-07-27T08:37:41.501Z"
-                }
-              },
-              "qc": {
-                "sug": "die Übertragung",
-                "field": "source",
-                "at": "2026-07-27T08:37:41.501Z",
-                "by": "translategemma:12b"
-              }
+              "source": "die Übertragung",
+              "editedAt": "2026-07-29T07:33:35.032Z"
             },
             {
               "target": "la genetica",
@@ -7891,20 +7858,7 @@
                 "lento",
                 "e",
                 "graduale."
-              ],
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "Die Evolution ist ein langsamer und allmählicher Prozess.",
-                  "field": "source",
-                  "at": "2026-07-27T08:38:47.913Z"
-                }
-              },
-              "qc": {
-                "sug": "Die Evolution ist ein langsamer und allmählicher Prozess.",
-                "field": "source",
-                "at": "2026-07-27T08:38:47.913Z",
-                "by": "translategemma:12b"
-              }
+              ]
             },
             {
               "target": "Noto come «Sintesi Moderna».",
@@ -8172,7 +8126,7 @@
         }
       },
       "generatedAt": "2026-07-27T08:05:48.154Z",
-      "updatedAt": "2026-07-28T20:23:03.276Z",
+      "updatedAt": "2026-07-29T07:33:47.409Z",
       "createdBy": "admin"
     },
     {
@@ -8300,20 +8254,7 @@
                 "capacità",
                 "di",
                 "sopravvivenza."
-              ],
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "Größere Überlebenschancen.",
-                  "field": "source",
-                  "at": "2026-07-27T08:37:20.261Z"
-                }
-              },
-              "qc": {
-                "sug": "Größere Überlebenschancen.",
-                "field": "source",
-                "at": "2026-07-27T08:37:20.261Z",
-                "by": "translategemma:12b"
-              }
+              ]
             },
             {
               "target": "Trasmesse alle generazioni successive.",
@@ -8577,7 +8518,7 @@
         }
       },
       "generatedAt": "2026-07-27T08:01:31.718Z",
-      "updatedAt": "2026-07-28T20:22:58.333Z",
+      "updatedAt": "2026-07-29T07:32:50.281Z",
       "createdBy": "admin"
     },
     {
