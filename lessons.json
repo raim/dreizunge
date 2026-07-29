@@ -2,6 +2,18 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_1055245617",
+      "title": "Lo scontro sulle spese militari e i dossier critici…",
+      "icon": "📖",
+      "chapters": [
+        "tp_17853267145370000270"
+      ],
+      "lang": "it",
+      "srcLang": "de",
+      "createdAt": "2026-07-29T12:10:42.920Z",
+      "updatedAt": "2026-07-29T12:10:42.920Z"
+    },
+    {
       "id": "sl_190460344",
       "title": "Verlorene Antworten",
       "icon": "🗣️",
@@ -5528,6 +5540,57 @@
   ],
   "topics": [
     {
+      "id": "tp_17853272126040000313",
+      "topic": "Tajani aveva già corretto il tiro, anche perché dall’Europa…",
+      "topicEmoji": "📖",
+      "userTopic": "Tajani aveva già corretto il tiro, anche perché dall’Europa…",
+      "userPrompt": "Tajani aveva già corretto il tiro, anche perché dall’Europa…\n\n[story]\nTajani aveva già corretto il tiro, anche perché dall’Europa era già trapelato qualche dubbio, soprattutto sulla scadenza di dicembre considerata troppo in là. Ma il caso tutto interno era ormai montato. Il ministro degli Esteri ha allora parlato di «tempesta in un bicchier d’acqua».\n\nMa il fondo europeo per la Difesa non è l’unico scossone delle ultime settimane. Sempre Tajani è stato in qualche modo urtante, in questo caso per Fratelli d’Italia, riguardo a un altro tema sul tavolo: l’estensione delle intercettazioni chieste per un procedimento giudiziario in altri processi nel caso di reati di terrorismo e criminalità organizzata. Una richiesta fatta a suo tempo dal procuratore antimafia Giovanni Melillo a cui i Fratelli d’Italia si sono detti favorevoli. Non Forza Italia che del garantismo ha fatto una delle sue bandiere. In realtà, pure dentro a Fratelli d’Italia ci sono dei dubbi.",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 142,
+      "story": "Tajani aveva già corretto il tiro, anche perché dall’Europa era già trapelato qualche dubbio, soprattutto sulla scadenza di dicembre considerata troppo in là. Ma il caso tutto interno era ormai montato. Il ministro degli Esteri ha allora parlato di «tempesta in un bicchier d’acqua».\n\nMa il fondo europeo per la Difesa non è l’unico scossone delle ultime settimane. Sempre Tajani è stato in qualche modo urtante, in questo caso per Fratelli d’Italia, riguardo a un altro tema sul tavolo: l’estensione delle intercettazioni chieste per un procedimento giudiziario in altri processi nel caso di reati di terrorismo e criminalità organizzata. Una richiesta fatta a suo tempo dal procuratore antimafia Giovanni Melillo a cui i Fratelli d’Italia si sono detti favorevoli. Non Forza Italia che del garantismo ha fatto una delle sue bandiere. In realtà, pure dentro a Fratelli d’Italia ci sono dei dubbi.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-07-29T12:10:42.994Z",
+        "origin": "user-pasted",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 264,
+        "completionTokens": 221,
+        "ms": 169609,
+        "at": "2026-07-29T12:13:32.603Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Tajani hatte bereits die Richtung korrigiert, auch weil aus Europa bereits einige Zweifel aufgetaucht waren, insbesondere hinsichtlich der im Dezember angesetzten Frist, die als zu weit in der Zukunft angesehen wurde. Doch der internen Krise war bereits ihre Dynamik verliehen worden. Der Außenminister sprach daher von einem „Sturm im Wasserglas“.\n\nDoch der Europäische Verteidigungsfonds ist nicht die einzige Erschütterung der letzten Wochen. Auch Tajani wirkte in anderer Hinsicht aufstachelnd, diesmal für Fratelli d’Italia, in Bezug auf ein weiteres Thema auf der Tagesordnung: die Ausweitung von Abhörmaßnahmen, die in anderen Gerichtsverfahren im Fall von Terrorismus und organisierter Kriminalität beantragt wurden. Eine Forderung, die seinerzeit vom Antimafia-Prokurator Giovanni Melillo gestellt wurde, der von Fratelli d’Italia befürwortet wurde. Nicht jedoch von Forza Italia, das den Garantismus zu einer seiner Fahnen erhoben hat. Tatsächlich gibt es auch innerhalb von Fratelli d’Italia Zweifel.",
+      "userStory": "Tajani aveva già corretto il tiro, anche perché dall’Europa era già trapelato qualche dubbio, soprattutto sulla scadenza di dicembre considerata troppo in là. Ma il caso tutto interno era ormai montato. Il ministro degli Esteri ha allora parlato di «tempesta in un bicchier d’acqua».\n\nMa il fondo europeo per la Difesa non è l’unico scossone delle ultime settimane. Sempre Tajani è stato in qualche modo urtante, in questo caso per Fratelli d’Italia, riguardo a un altro tema sul tavolo: l’estensione delle intercettazioni chieste per un procedimento giudiziario in altri processi nel caso di reati di terrorismo e criminalità organizzata. Una richiesta fatta a suo tempo dal procuratore antimafia Giovanni Melillo a cui i Fratelli d’Italia si sono detti favorevoli. Non Forza Italia che del garantismo ha fatto una delle sue bandiere. In realtà, pure dentro a Fratelli d’Italia ci sono dei dubbi.",
+      "continuedFrom": "Lo scontro sulle spese militari e i dossier critici…",
+      "continuedFromId": "tp_17853267145370000270",
+      "storyStyle": "journalism",
+      "lessons": [],
+      "generatedAt": "2026-07-29T12:13:32.604Z",
+      "updatedAt": "2026-07-29T12:13:32.604Z",
+      "createdBy": "admin"
+    },
+    {
       "id": "tp_17853267145370000270",
       "topic": "Lo scontro sulle spese militari e i dossier critici…",
       "topicEmoji": "📖",
@@ -5571,9 +5634,159 @@
       "storyTranslation": "Die Auseinandersetzungen um die Militärausgaben und kritische Energie-Dossiers: So steigt die Spannung in der Regierungsmehrheit.\n\nDer Energieplan riskiert, zur neuen Frontlinie zu werden.\n\nDie Erschütterungen. Die Kursfahrt der Regierungsmehrheit hin zu den Haushaltsplänen 2027 wird immer turbulenter. Die Reaktionen, insbesondere der Lega, auf die Unschärfe von Antonio Tajani bei der Darstellung des europäischen SAFE-Fonds für die Verteidigung (mit niedrigeren Zinssätzen und absetzbar vom Stabilitätspakt) sind ein guter Indikator für das Klima.\n\nDer Außenminister hatte am Vormittag die 14,9 Milliarden Euro des SAFE-Fonds bereits als gesichert dargestellt, anstatt zu präzisieren, dass das Verfahren mit der EU eingeleitet wurde und die Entscheidung über die Höhe des Darlehens bis Dezember getroffen wird. FdI und auch das Finanzministerium (Mef) haben die Worte des Vizepremiers weniger wegen des Inhalts als wegen der Methodik missbilligt. Matteo Salvini ließ von einer zehn Wörter langen Erklärung eine Flut von Reaktionen auslösen: „Die letzte Wort über die Verwendung der SAFE-Mittel liegt beim Parlament.“ Der Fraktionsvorsitzende im Senat, Massimiliano Romeo, fügte hinzu, dass „eventuelle Ausgaben im Verteidigungsbereich der inneren Sicherheit zugutekommen müssen: Infrastruktur, Cybersicherheit und Schutz der Grenzen vor Einwanderern“. Mit einem weiteren Hinweis: „Die Mittel sollen unter maximaler Einbeziehung italienischer Klein- und Mittelunternehmen ausgegeben werden.“ Auch Crosetto hatte gegenüber den Journalisten präzisiert, dass die europäischen Ressourcen „nicht zusätzlich sind; es hat sich lediglich ein mögliches Instrument geändert“.",
       "userStory": "Lo scontro sulle spese militari e i dossier critici sull'energia: così sale la tensione nella maggioranza\n\nIl piano energia rischia di essere il nuovo fronte\n\nGli scossoni. La navigazione della maggioranza verso le Politiche 2027 si fa sempre più turbolenta. Le reazioni, soprattutto della Lega, all’imprecisione di Antonio Tajani nel parlare del fondo europeo Safe per la difesa (dai tassi d’interesse inferiori e scomputati dal patto di Stabilità) sono un buon indicatore del clima.\n\nIl ministro degli Esteri infatti al mattino ha dato per acquisiti i 14,9 miliardi del Safe, invece di precisare che è stata attivata la procedura con l’Europa e la decisione sull’entità del prestito sarà decisa entro dicembre. FdI e anche il Mef non hanno apprezzato le parole del vicepremier, più per il metodo che per il merito. Matteo Salvini le ha fatte fiocinare da una nota di dieci parole: «Sull’uso dei fondi Safe l’ultima parola spetta al Parlamento». Mentre il capogruppo al Senato Massimiliano Romeo ha aggiunto che «le eventuali spese nel comparto difesa dovranno essere indirizzate alla sicurezza interna: infrastrutture, cybersicurezza e protezione dei confini dagli immigrati». Con un appunto ulteriore: «I fondi andranno spesi coinvolgendo al massimo le piccole e medie imprese italiane». Lo stesso Crosetto parlando con i cronisti aveva precisato che le risorse europee «non sono aggiuntive, semplicemente è cambiato un possibile strumento».",
       "storyStyle": "journalism",
-      "lessons": [],
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Politische Spannungen in Italien",
+          "desc": "Vokabeln zu Konflikten und Energiepolitik",
+          "icon": "⚡",
+          "vocab": [
+            {
+              "target": "scontro",
+              "source": "Konflikt"
+            },
+            {
+              "target": "spesa militare",
+              "source": "Militärausgabe"
+            },
+            {
+              "target": "dossier",
+              "source": "Dossier"
+            },
+            {
+              "target": "energia",
+              "source": "Energie"
+            },
+            {
+              "target": "tensione",
+              "source": "Spannung"
+            },
+            {
+              "target": "maggioranza",
+              "source": "Mehrheit"
+            },
+            {
+              "target": "piano",
+              "source": "Plan"
+            },
+            {
+              "target": "fronte",
+              "source": "Front"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Lo scontro sulle spese militari e i dossier critici sull'energia.",
+              "source": "Die Auseinandersetzungen um die Militärausgaben und kritische Energie-Dossiers.",
+              "words": [
+                "Lo",
+                "scontro",
+                "sulle",
+                "spese",
+                "militari",
+                "e",
+                "i",
+                "dossier",
+                "critici",
+                "sull'energia."
+              ]
+            },
+            {
+              "target": "così sale la tensione nella maggioranza",
+              "source": "So steigt die Spannung in der Regierungsmehrheit",
+              "words": [
+                "così",
+                "sale",
+                "la",
+                "tensione",
+                "nella",
+                "maggioranza"
+              ]
+            },
+            {
+              "target": "Il piano energia rischia di essere il nuovo fronte",
+              "source": "Der Energieplan riskiert, zur neuen Frontlinie zu werden.",
+              "words": [
+                "Il",
+                "piano",
+                "energia",
+                "rischia",
+                "di",
+                "essere",
+                "il",
+                "nuovo",
+                "fronte"
+              ]
+            },
+            {
+              "target": "La navigazione della maggioranza verso le Politiche 2027 si fa sempre più turbolenta.",
+              "source": "Die Kursfahrt der Regierungsmehrheit hin zu den Haushaltsplänen 2027 wird immer turbulenter.",
+              "words": [
+                "La",
+                "navigazione",
+                "della",
+                "maggioranza",
+                "verso",
+                "le",
+                "Politiche",
+                "2027",
+                "si",
+                "fa",
+                "sempre",
+                "più",
+                "turbolenta."
+              ]
+            },
+            {
+              "target": "sono un buon indicatore del clima.",
+              "source": "sind ein guter Indikator für das Klima.",
+              "words": [
+                "sono",
+                "un",
+                "buon",
+                "indicatore",
+                "del",
+                "clima."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1314,
+            "completionTokens": 489,
+            "ms": 328234,
+            "at": "2026-07-29T12:10:42.835Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 497875,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1698,
+        "totalCompletionTokens": 858,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 328233,
+            "promptTokens": 1314,
+            "completionTokens": 489
+          }
+        ]
+      },
       "generatedAt": "2026-07-29T12:05:14.537Z",
-      "updatedAt": "2026-07-29T12:05:14.537Z",
+      "updatedAt": "2026-07-29T12:10:42.835Z",
       "createdBy": "admin"
     },
     {
@@ -5694,20 +5907,7 @@
                 "noi",
                 "avevamo",
                 "provato."
-              ],
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "Schreibend erinnert man sich, dass wir es versucht hatten.",
-                  "field": "source",
-                  "at": "2026-07-29T11:13:15.348Z"
-                }
-              },
-              "qc": {
-                "sug": "Schreibend erinnert man sich, dass wir es versucht hatten.",
-                "field": "source",
-                "at": "2026-07-29T11:13:15.348Z",
-                "by": "translategemma:12b"
-              }
+              ]
             },
             {
               "target": "I cittadini devono partecipare alle decisioni.",
@@ -5775,7 +5975,20 @@
             },
             {
               "target": "lasciare",
-              "source": "vergessen"
+              "source": "vergessen",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "aufgeben",
+                  "field": "source",
+                  "at": "2026-07-29T12:23:42.208Z"
+                }
+              },
+              "qc": {
+                "sug": "aufgeben",
+                "field": "source",
+                "at": "2026-07-29T12:23:42.208Z",
+                "by": "translategemma:12b"
+              }
             },
             {
               "target": "la battaglia",
@@ -6101,7 +6314,7 @@
         }
       },
       "generatedAt": "2026-07-29T11:02:20.190Z",
-      "updatedAt": "2026-07-29T12:03:28.854Z",
+      "updatedAt": "2026-07-29T12:27:29.566Z",
       "createdBy": "admin",
       "coverageTarget": 0.5
     },
@@ -6266,11 +6479,13 @@
           "vocab": [
             {
               "target": "il movimento",
-              "source": "die bewegung"
+              "source": "die Bewegung",
+              "editedAt": "2026-07-29T12:26:49.617Z"
             },
             {
               "target": "la politica",
-              "source": "die politik"
+              "source": "die Politik",
+              "editedAt": "2026-07-29T12:26:49.617Z"
             },
             {
               "target": "cambiare",
@@ -6278,15 +6493,18 @@
             },
             {
               "target": "l'identità",
-              "source": "die identität"
+              "source": "die Identität",
+              "editedAt": "2026-07-29T12:26:49.617Z"
             },
             {
               "target": "il cittadino",
-              "source": "der bürger"
+              "source": "der Bürger",
+              "editedAt": "2026-07-29T12:26:49.617Z"
             },
             {
               "target": "la sedia",
-              "source": "der stuhl"
+              "source": "der Stuhl",
+              "editedAt": "2026-07-29T12:26:49.617Z"
             },
             {
               "target": "ascoltare",
@@ -6294,13 +6512,14 @@
             },
             {
               "target": "il sondaggio",
-              "source": "die umfrage"
+              "source": "die Umfrage",
+              "editedAt": "2026-07-29T12:26:49.617Z"
             }
           ],
           "sentences": [
             {
               "target": "La politica ha cambiato il movimento.",
-              "source": "Die politik hat die bewegung verändert.",
+              "source": "Die Politik hat die Bewegung verändert.",
               "words": [
                 "La",
                 "politica",
@@ -6308,28 +6527,31 @@
                 "cambiato",
                 "il",
                 "movimento."
-              ]
+              ],
+              "editedAt": "2026-07-29T12:26:16.399Z"
             },
             {
               "target": "Dovevo ascoltare i cittadini.",
-              "source": "Ich musste den bürgern zuhören.",
+              "source": "Ich musste den Bürgern zuhören.",
               "words": [
                 "Dovevo",
                 "ascoltare",
                 "i",
                 "cittadini."
-              ]
+              ],
+              "editedAt": "2026-07-29T12:26:13.033Z"
             },
             {
               "target": "Ha perso la sua identità.",
-              "source": "Er hat seine identität verloren.",
+              "source": "Er hat seine Identität verloren.",
               "words": [
                 "Ha",
                 "perso",
                 "la",
                 "sua",
                 "identità."
-              ]
+              ],
+              "editedAt": "2026-07-29T12:26:08.470Z"
             },
             {
               "target": "Ascoltare le sondaggi è sbagliato.",
@@ -6344,13 +6566,14 @@
             },
             {
               "target": "Vogliono occuparsi delle sedie.",
-              "source": "Sie wollen sich um die stühle kümmern.",
+              "source": "Sie wollen sich um die Stühle kümmern.",
               "words": [
                 "Vogliono",
                 "occuparsi",
                 "delle",
                 "sedie."
-              ]
+              ],
+              "editedAt": "2026-07-29T12:26:04.489Z"
             }
           ],
           "_genMeta": {
@@ -6386,8 +6609,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 4491,
-        "totalCompletionTokens": 1006,
+        "totalPromptTokens": 7201,
+        "totalCompletionTokens": 1296,
         "lessons": [
           {
             "lessonNum": 1,
@@ -6397,13 +6620,16 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 2336,
-          "recreate": 1191
+          "lesson_qc": 4705,
+          "recreate": 1191,
+          "story_qc": 631
         }
       },
       "generatedAt": "2026-07-29T10:55:49.935Z",
-      "updatedAt": "2026-07-29T12:06:59.872Z",
-      "createdBy": "admin"
+      "updatedAt": "2026-07-29T12:26:49.621Z",
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-07-29T12:18:53.543Z"
     },
     {
       "id": "tp_17851387238120000029",
