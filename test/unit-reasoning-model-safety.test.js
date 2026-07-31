@@ -60,9 +60,13 @@ console.log('  meta/translation JSON calls: think:false: OK');
 // role — because these three calls never received the v60.5 think:false treatment. Their budgets
 // are tiny (240 / 80 / 400 tokens), so a reasoning model spends the lot before writing anything.
 {
-  for (const [fn, budget] of [['generateChapterMeta', '60 * n + 120'],
+  for (const [fn0, budget] of [['generateChapterMeta', '60 * n + 120'],
                               ['generateStorylineTitle', '80'],
                               ['generateStorylineSummary', '400']]) {
+    // v71_p: generateChapterMeta gained a 3-attempt retry loop and its single call moved into
+    // _generateChapterMetaOnce. The guarantee is unchanged — the CALL still passes think:false —
+    // so the guard follows the call rather than being dropped with the refactor.
+    const fn = fn0 === 'generateChapterMeta' ? '_generateChapterMetaOnce' : fn0;
     const at = server.indexOf('async function ' + fn + '(');
     assert.ok(at > 0, `found ${fn}`);
     const body = server.slice(at, at + 2000);

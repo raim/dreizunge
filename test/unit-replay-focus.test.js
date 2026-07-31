@@ -180,9 +180,15 @@ const solveAll = () => C.run(`(function(){
       APP._teacherMode = false; APP.muted = false;
       if (typeof _invalidateQidUniverse === 'function') _invalidateQidUniverse(); true;`, 'seed-' + type);
     const uni = C.run(`_lessonQidUniverse(${li}).size`);
+    // No extra filtering: since v71_l the builder and the denominator apply the SAME rule
+    // (_itemWithheld — human decisions only), so for a deterministic builder one build equals the
+    // universe with nothing to reconcile. This briefly needed a mirror of the exclusion, back when
+    // the denominator dropped QC-flagged items that the builder still asked; the fix was to make
+    // the two agree in the client rather than to teach the test about the disagreement.
     const one = C.run(`(function(){ APP._derivingUniverse = true;
+      const L = APP.lessonData.lessons[${li}];
       const e = buildExercises(${li}); APP._derivingUniverse = false;
-      return new Set(e.map(x => qid(x, APP.lessonData.lessons[${li}].id)).filter(Boolean)).size; })()`);
+      return new Set(e.map(x => qid(x, L.id)).filter(Boolean)).size; })()`);
     return { uni, one };
   };
   let checked = 0;
@@ -195,6 +201,82 @@ const solveAll = () => C.run(`(function(){
   }
   assert.ok(checked >= 2, 'at least two deterministic builders were actually checked, not all skipped');
   console.log(`  deterministic builders (${checked} checked): one build == universe, no top-up needed`);
+}
+
+// ── Only human decisions withhold an item (v71_l) ──────────────────────────
+// The policy this release settled, pinned end to end. `item.qc` is an unreviewed MODEL
+// suggestion: the learner is still asked the question AND it still counts toward coverage.
+// `userFlag`/`userDelete` are HUMAN decisions: the item is neither asked nor counted.
+//
+// Before v71_l all three call sites spelled the rule differently — the play filter withheld
+// userFlag|qc|userDelete but only in the STATIC build, the denominator withheld the same triple
+// in both builds, and markSolved withheld userFlag alone. So one QC pass removed 450 items from
+// the denominators of 157 lessons (median 38% of a flagged lesson, 41 lessons over half) while
+// live learners were still being asked those very questions.
+{
+  const seedTopic = (lessons) => C.run(`
+    APP.lessonData = { topic:'FlagT', lang:'de', srcLang:'en', lessons: ${JSON.stringify(lessons)} };
+    APP.lang='de'; APP.srcLang='en';
+    APP.info = { backend:'none', canGenerate:false, coverageThreshold:0.8 };
+    APP.progress = { completed:{}, solved:{}, learned:{} }; APP.progress.solved['FlagT'] = {};
+    APP._teacherMode = false; APP.muted = false;
+    if (typeof _invalidateQidUniverse === 'function') _invalidateQidUniverse(); true;`, 'seed-flags');
+
+  const probe = () => C.run(`(function(){
+    const L = APP.lessonData.lessons[0];
+    APP._derivingUniverse = true;
+    const asked = {};
+    for (let n = 0; n < 30; n++) for (const ex of buildExercises(0)) {
+      const it = _resolveExItem(ex, L); if (it && it.target) asked[it.target] = true;
+    }
+    APP._derivingUniverse = false;
+    const uni = _lessonQidUniverse(0);
+    const counted = {};
+    for (const t of ['Clean','Qc','Flagged','Deleted']) {
+      const it = (L.vocab||[]).find(v => v.target === t); if (!it) continue;
+      APP._derivingUniverse = true;
+      const ex = buildExercises(0).find(e => { const s = _resolveExItem(e, L); return s && s.target === t; });
+      APP._derivingUniverse = false;
+      counted[t] = !!(ex && uni.has(qid(ex, L.id)));
+    }
+    return { asked, counted, uniSize: uni.size };
+  })()`);
+
+  seedTopic([{ id: 'L1', vocab: [
+    { target: 'Clean',   source: 'clean' },
+    { target: 'Qc',      source: 'qc',      qc: { sug: 'maybe wrong', field: 'target' } },
+    { target: 'Flagged', source: 'flagged', userFlag: { comment: 'broken' } },
+    { target: 'Deleted', source: 'deleted', userDelete: 1 },
+  ] }]);
+  const r = probe();
+
+  // A model's suggestion is inert for the learner.
+  assert.ok(r.asked.Qc, 'a QC-suggested item is STILL ASKED — a model opinion is not a decision');
+  assert.strictEqual(r.counted.Qc, true, 'and it still counts toward coverage');
+  // A human's decision is not.
+  assert.ok(!r.asked.Flagged, 'a human-flagged item is NOT asked');
+  assert.ok(!r.asked.Deleted, 'nor is one marked for deletion');
+  assert.strictEqual(r.counted.Flagged, false, 'and neither counts toward coverage');
+  // The clean control, so the probe cannot pass by finding nothing at all.
+  assert.ok(r.asked.Clean && r.counted.Clean === true, 'a clean item is asked and counted');
+
+  // markSolved must agree with both: recording a withheld solve would credit a question that is
+  // not in the universe, which is how a learner ends up above 100%.
+  const solved = C.run(`(function(){
+    const L = APP.lessonData.lessons[0]; APP._derivingUniverse = true;
+    const all = buildExercises(0); APP._derivingUniverse = false;
+    const pick = t => all.find(e => { const s = _resolveExItem(e, L); return s && s.target === t; });
+    const qc = pick('Qc');
+    return { qc: qc ? markSolved(qc) !== '' : null };
+  })()`);
+  assert.strictEqual(solved.qc, true, 'markSolved records a QC-suggested item like any other');
+
+  // Teacher mode still sees everything — the flag content has to be reviewable.
+  C.run(`APP._teacherMode = true; if (typeof _invalidateQidUniverse === 'function') _invalidateQidUniverse();`);
+  const teacher = probe();
+  assert.ok(teacher.asked.Flagged, 'a teacher is still shown flagged items so they can be fixed');
+  C.run(`APP._teacherMode = false;`);
+  console.log('  withheld rule: qc asked+counted, userFlag/userDelete neither, teacher sees all');
 }
 
 console.log('unit-replay-focus: ALL PASSED');

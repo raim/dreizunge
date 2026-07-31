@@ -25,17 +25,31 @@ const { _resolveExItem, _topicHasPending } = new Function('APP',
   '\nreturn { _resolveExItem, _topicHasPending };')({ _pristine: new Set() });
 
 // Task 1: the play filter drops an exercise when its source item is flagged.
-const exFlagged = it => !!(it && (it.userFlag || it.qc));   // the predicate buildExercises uses
+// v71_l: the predicate buildExercises uses is now the client's own _itemWithheld — extracted, not
+// re-spelled here, because a local copy is exactly how the three call sites drifted apart in the
+// first place. It withholds on HUMAN decisions only; an unreviewed `qc` suggestion does not.
+const _itemWithheld = new Function(extract('_itemWithheld') + '\nreturn _itemWithheld;')();
+const exFlagged = it => _itemWithheld(it);
 
 const vocabLs = { vocab: [{ target: 'Hund', source: 'dog', userFlag: { comment: 'wrong' } }, { target: 'Katze', source: 'cat' }] };
 assert.ok(exFlagged(_resolveExItem({ type: 'mcq_target_source', target: 'Hund' }, vocabLs)), 'flagged vocab item resolves & is flagged');
 assert.ok(!exFlagged(_resolveExItem({ type: 'mcq_target_source', target: 'Katze' }, vocabLs)), 'clean vocab item is not flagged');
 
+// A QC suggestion is a model's opinion, not a human decision: the item resolves, but it is NOT
+// withheld. (Until v71_l it was, which meant one automated QC pass silently pulled 450 items out
+// of the coverage denominator across 157 lessons without anyone accepting a suggestion.)
 const sentLs = { sentences: [{ target: 'Das ist gut', source: 'That is good', qc: { sug: 'x' } }] };
-assert.ok(exFlagged(_resolveExItem({ type: 'read_translate', target: 'Das ist gut' }, sentLs)), 'QC-flagged sentence is caught');
+assert.ok(_resolveExItem({ type: 'read_translate', target: 'Das ist gut' }, sentLs), 'QC-flagged sentence still resolves');
+assert.ok(!exFlagged(_resolveExItem({ type: 'read_translate', target: 'Das ist gut' }, sentLs)),
+  'but a QC suggestion alone does NOT withhold it — the learner still sees and scores it');
 
 const wfLs = { items: [{ sentence: 'I ___ home', qc: {} }] };
-assert.ok(exFlagged(_resolveExItem({ type: 'word_form', sentence: 'I ___ home' }, wfLs)), 'word_form item resolves & flagged');
+assert.ok(!exFlagged(_resolveExItem({ type: 'word_form', sentence: 'I ___ home' }, wfLs)),
+  'same for a word_form item carrying only a QC suggestion');
+
+// userDelete is a human decision and DOES withhold, alongside userFlag.
+assert.ok(exFlagged(_resolveExItem({ type: 'mcq_target_source', target: 'Weg' },
+  { vocab: [{ target: 'Weg', source: 'path', userDelete: 1 }] })), 'userDelete withholds');
 
 const synLs = { words: [{ base: 'big', userFlag: {} }] };
 assert.ok(exFlagged(_resolveExItem({ type: 'syn_select', base: 'big' }, synLs)), 'synonyms item resolves & flagged');
@@ -52,8 +66,22 @@ assert.strictEqual(_topicHasPending({}), 0, 'no lessons -> 0');
 console.log('  Task 2: pending tally counts flags/ratings/_miscFlags: OK');
 
 // Structural guards (UI behaviour is browser-owed).
-assert.ok(/typeof STATIC_LESSONS !== 'undefined' && !APP\._teacherMode && Array\.isArray\(ex\)/.test(html),
-  'buildExercises must filter flagged items only in static non-teacher play');
+// v71_l: the filter no longer keys on the build. It ran ONLY in static, so a live learner was
+// asked withheld questions that could never count while a static learner was not asked them at
+// all — same corpus, two coverage stories. Live and static now apply one rule.
+assert.ok(/if \(!APP\._teacherMode && Array\.isArray\(ex\)\) \{/.test(html),
+  'buildExercises filters withheld items in BOTH builds, for non-teacher play');
+assert.ok(!/typeof STATIC_LESSONS !== 'undefined' && !APP\._teacherMode/.test(html),
+  'and the static-only condition is gone, not merely widened');
+assert.ok(/ex = ex\.filter\(e => !_itemWithheld\(_exFlagTarget\(e\)\)\);/.test(html),
+  'through the shared predicate');
+// All three historical call sites must go through it — this is what stops them drifting again.
+assert.ok(/if\(_itemWithheld\(_resolveExItem\(ex, L\)\)\) continue;/.test(html),
+  'the coverage denominator uses the shared predicate');
+assert.ok(/if\(_itemWithheld\(_exFlagTarget\(ex\)\)\) return '';/.test(html),
+  'and so does markSolved');
+assert.ok(!/src\.userFlag \|\| src\.qc \|\| src\.userDelete/.test(html),
+  'no open-coded copy of the rule survives');
 assert.ok(/id="static-flag-submit-link"/.test(html), 'pill must include the GitHub submit link');
 assert.ok(/const GITHUB_ISSUES_URL = 'https:\/\/github\.com\/raim\/dreizunge\/issues\/new'/.test(html),
   'GitHub issues URL constant present');
@@ -240,7 +268,11 @@ assert.ok(/_staticSoftDelete\(ls\.words\[wi\]\)/.test(html), 'syn entry soft-del
 assert.ok(/_staticSoftDelete\(ls\.exercises\[ei\]\)/.test(html), 'math soft-deletes in static');
 assert.ok(/chips\.push\('🗑 ' \+ deletes\)/.test(html), 'pill shows delete count');
 assert.ok(/\.editor-entry\.del-candidate\{/.test(html), 'del-candidate CSS present');
-assert.ok(/it\.userFlag \|\| it\.qc \|\| it\.userDelete/.test(html), 'delete candidates hidden from static play');
+// v71_l: this asserted the open-coded triple that no longer exists. What it was really pinning —
+// that a delete candidate is kept away from the learner — now lives in _itemWithheld, which is
+// asserted above. Kept as a check on the PREDICATE rather than on a vanished string.
+assert.ok(/function _itemWithheld\(it\)\{[\s\S]*?it\.userFlag \|\| it\.userDelete/.test(html),
+  'delete candidates and human flags are what withhold an item from play');
 assert.ok(/if \(link\) link\.style\.display = 'none'/.test(html), 'stale submit link hidden on new activity');
 assert.ok(/const _staticEditsKey = 'dz_static_edits'/.test(html), 'edits persistence key present');
 assert.ok(/_saveStaticEdits\(\); _saveStaticFlags\(\)/.test(html), 'content edits persisted on change');

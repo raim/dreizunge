@@ -32,9 +32,12 @@ const sandbox = {
 const src = [
   ext('_qidHash'), ext('_qidCanonical'), ext('qid'),
   ext('_solvedMap'), ext('isSolved'), ext('markSolved'),
-  // markSolved calls _exFlagState → _exFlagTarget → _resolveExItem; stub the flag lookup so we
-  // can control "is this flagged" without the whole resolver graph.
-  'function _exFlagState(ex){ return ex && ex.__flagged ? { comment: "x" } : null; }',
+  // v71_l: markSolved now calls _itemWithheld(_exFlagTarget(ex)) — one shared rule instead of its
+  // own userFlag-only spelling. Stub the resolver so "is this withheld" stays controllable without
+  // the whole resolver graph, but use the REAL predicate: what counts as withheld is the thing
+  // under test everywhere else, and a stub of it here could silently disagree with the client.
+  'function _exFlagTarget(ex){ return ex && ex.__flagged ? { userFlag: { comment: "x" } } : null; }',
+  ext('_itemWithheld'),
 ].join('\n');
 const make = new Function(...Object.keys(sandbox), src + '\nreturn { qid, _qidCanonical, markSolved, isSolved, _solvedMap };');
 const M = make(...Object.values(sandbox));

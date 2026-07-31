@@ -188,8 +188,18 @@ console.log('  completion card: Next chains lesson→chapter, Back to story/home
   // v60.6: the story render moved into _renderCompStory. Full story when complete; a 200-char
   // preview only in the teacher/not-yet-done peek.
   const rcs = ext(html, '_renderCompStory');
-  assert.ok(/_el\.textContent = allDone \? full : \(full\.slice\(0, 200\)/.test(rcs),
+  // v71_m: the full-vs-preview rule is unchanged, but the text is now rendered through the yellow
+  // solved-word highlighting, so it is assigned as HTML rather than textContent.
+  assert.ok(/const shown = allDone \? full : \(full\.slice\(0, 200\)/.test(rcs),
     'chapter complete → FULL story; otherwise a 200-char preview (teacher peek)');
+  assert.ok(/_highlightVocabHtml\(furiHtml\(shown\), solved\)/.test(rcs),
+    'solved words are highlighted with the SAME helper the storyline/lesson-set pages use');
+  assert.ok(/if \(!showingSource\)/.test(rcs),
+    'only for the target-language story — target words cannot be found in a source translation');
+  assert.ok(/if \(html != null\) _el\.innerHTML = html; else _el\.textContent = shown;/.test(rcs),
+    'and it falls back to plain text rather than failing to render the story at all');
+  assert.ok(/id="comp-story-unlocked"[^>]*background:var\(--white\)/.test(html),
+    'the story panel is white, so the yellow highlights read clearly');
   assert.ok(/_lbl\.textContent = _allDone2 \? t\('complete\.story_unlocked'\) : t\('complete\.story_preview'\)/.test(sc),
     'unlock vs preview label reflects completion');
   const prog = ext(html, '_compProgressHtml');

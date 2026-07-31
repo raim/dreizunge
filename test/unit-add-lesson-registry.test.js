@@ -67,7 +67,7 @@ assert.deepStrictEqual(c.args, ['de', { script: null, difficulty: ctx.diff, srcL
 
 // 3) Exactly the expected fmt set — nothing dropped, nothing extra.
 assert.deepStrictEqual(Object.keys(ADD_LESSON_GENERATORS).sort(),
-  ['conjugation','error_hunt','grammar','intro_script','math','standard','synonyms','word_forms'],
+  ['comprehension','conjugation','error_hunt','grammar','intro_script','math','standard','synonyms','word_forms'],
   'registry fmt set');
 console.log('  every fmt maps to the right generator with the right args: OK');
 

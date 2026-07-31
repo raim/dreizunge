@@ -144,8 +144,15 @@ console.log('  _renderStorylineScreen: real + teacher + unresolvable chain: OK')
     showComplete();`, 'above-mark');
   {
     const nx = C.document.getElementById('comp-next');
-    assert.strictEqual(nx.disabled, false, 'at or above the mark, Next is usable again');
-    assert.ok(!nx.classList.contains('locked'), 'and no longer greyed');
+    // The claim under test is that the below-mark LOCK does not persist — `locked` is what that
+    // branch sets, so that is what gets asserted. `disabled` was asserted here until v71_k and is
+    // the wrong signal: the "nothing left to do" branch also disables Next, for an unrelated and
+    // legitimate reason. Which of the two branches a corpus-picked chapter lands in depends on its
+    // lesson content, so the old assertion failed the moment the corpus grew and this test started
+    // picking a different storyline — it was testing the fixture, not the lock.
+    assert.ok(!nx.classList.contains('locked'), 'at or above the mark, the below-mark lock is cleared');
+    assert.strictEqual(C.document.getElementById('comp-title').textContent, UI.en['complete.title'],
+      'and the card is no longer the "Keep going!" card');
   }
   // A drill's own card: its Next branch was the v69.2 dead end.
   seed();
@@ -1223,5 +1230,76 @@ console.log('  repeat on finished lessons + crossword cursor highlight: OK');
   assert.strictEqual(broken, 'none', 'a board with no <svg> hides the slot instead of throwing');
 }
 console.log('  completion card: full storyboard framed by chapter state: OK');
+
+// ── 13. Card layout: header bar, row order, pass mark (v71_m) ────────────────
+// The card is meant to read as another view of the STORYLINE PAGE. Asserted on the rendered card
+// and on the markup order, because "the same header, then the board, then the chapter bars, then
+// the verdict" is a claim about sequence that no per-element check would catch.
+{
+  // `base` is block-scoped to the showComplete section above; this section needs its own.
+  // A stray auto-advance timer scheduled by an earlier section can fire mid-run and call renderEx;
+  // with an EMPTY exercise list that indexes undefined and takes the whole file down. One dummy
+  // exercise makes a late renderEx harmless without changing what this section asserts.
+  const base13 = `APP.cur = { lessonIdx: 0, cur: 0, correct: 3, total: 4,
+    exercises: [{ type:'mcq_source_target', source:'dog', target:'Hund', correct:'Hund', choices:['Hund','Katze'] }],
+    mistakes: 1, hearts: 3, streak: 2, bestStreak: 2 };`;
+  seed();
+  C.run(`(() => {
+    const tp = APP.lessonData.topic;
+    APP.savedList = [{ id: 'ha', topic: tp, lessons: APP.lessonData.lessons },
+                     { id: 'hb', topic: tp + '-2', lessons: [{ id: 'z', type: 'vocab' }], lessonCount: 1 }];
+    APP.storylines = [{ id: 'slH', title: 'Header Story', icon: '📘', chapters: ['ha', 'hb'] }];
+    APP._slScreen = null;
+    APP.progress.completed[tp] = {};
+    (APP.lessonData.lessons || []).forEach(L => { if (L && L.id) APP.progress.completed[tp][L.id] = { correct: 3, total: 4 }; });
+  })()`, 'hdr-state');
+  C.run(base13 + 'showComplete(true);' + ` APP.cur.exercises=[{ type:'mcq_source_target', source:'dog', target:'Hund', correct:'Hund', choices:['Hund','Katze'] }]; APP.cur.cur=0;`, 'hdr-card');
+
+  // The header carries the storyline progress bar, filled by the shared helper.
+  const bar = C.document.getElementById('comp-hdr-prog-bar');
+  const txt = C.document.getElementById('comp-hdr-prog-txt');
+  assert.ok(/^\d+%$/.test(bar.style.width || ''), 'the header progress bar is filled with a percentage');
+  assert.notStrictEqual(bar.style.width, '0%', 'and reflects the work already done, not a flat zero');
+  assert.ok(/\d+\/\d+/.test(txt.textContent || ''), 'with the same done/total label as the storyline page');
+
+  // A solo chapter has no storyline to be a fraction of — the bar hides rather than showing 0%.
+  seed();
+  C.run(`APP.savedList = []; APP.storylines = []; APP._slScreen = null;`, 'solo-state');
+  C.run(base13 + 'showComplete(true);' + ` APP.cur.exercises=[{ type:'mcq_source_target', source:'dog', target:'Hund', correct:'Hund', choices:['Hund','Katze'] }]; APP.cur.cur=0;`, 'solo-card');
+  assert.strictEqual(C.document.getElementById('comp-hdr-prog-txt').style.display, 'none',
+    'a chapter with no storyline hides the progress label instead of claiming 0%');
+
+  // Row order, read off the markup: header → storyboard → chapter bars → verdict → buttons.
+  const order = ['comp-hdr', 'comp-storyboard', 'comp-progress', 'comp-title', 'comp-actions']
+    .map(id => ROOT_HTML.indexOf('id="' + id + '"'));
+  order.forEach((at, i) => assert.ok(at > 0, `${['comp-hdr','comp-storyboard','comp-progress','comp-title','comp-actions'][i]} exists`));
+  for (let i = 1; i < order.length; i++) {
+    assert.ok(order[i] > order[i - 1],
+      'card rows run header → storyboard → chapter progress → status line → buttons');
+  }
+
+  // The storyline fraction appears ONCE: in the header, not again in the body.
+  const body = C.document.getElementById('comp-progress').innerHTML || '';
+  assert.ok(!new RegExp(UI.en['complete.story_progress'].split(' ')[0]).test(body)
+            || !/Header Story/.test(body),
+    'the along-the-storyline row is not repeated in the card body');
+}
+  // v71_p: the card must be the same COLUMN as the storyline page, not merely carry the same
+  // header. Asserted on the CSS numbers because the symptom (a storyboard that renders smaller
+  // than the identical board on the storyline page) is a rendering effect no headless check sees.
+  {
+    const grab = (sel) => (ROOT_HTML.match(new RegExp(sel.replace(/[.#]/g, '\\$&') + '\\{([^}]*)\\}')) || [])[1] || '';
+    const sl = grab('.sl-screen'), comp = grab('#complete-screen');
+    const width = (css) => (css.match(/max-width:(\d+)px/) || [])[1];
+    assert.strictEqual(width(comp), width(sl),
+      'the result card and the storyline page have the same max-width');
+    assert.ok(/padding:0 0 40px/.test(comp),
+      'and the card has no outer horizontal padding, so its header is full-bleed like the page');
+    assert.ok(/\.comp-body\{padding:12px 16px 0\}/.test(ROOT_HTML),
+      'the inset moved to a body that mirrors .sl-screen-body');
+    assert.ok(ROOT_HTML.indexOf('class="comp-body"') > ROOT_HTML.indexOf('id="comp-hdr"'),
+      'the header sits OUTSIDE that body — it is full-bleed on the storyline page too');
+  }
+console.log('  completion card: storyline header bar, row order, no duplicated story row: OK');
 
 console.log('smoke-render: ALL PASSED');

@@ -62,8 +62,18 @@ console.log('unit-dialect-panel: ALL PASSED');
 assert.ok(/class="opt-ai-authoring"/.test(html), 'LLM-authoring add-lesson options are tagged');
 assert.ok(/_fmtSel\.querySelectorAll\('\.opt-ai-authoring'\)\.forEach/.test(html),
   'openAddLesson hides the LLM-authoring options for dialect topics');
-assert.ok(/if \(_isDia && \['synonyms','word_forms','error_hunt'\]\.includes\(_fmtSel\.value\)\) _fmtSel\.value = 'standard'/.test(html),
+// v71_l: comprehension joins the LLM-authoring set. Its generator runs in the base language and
+// would write standard-German questions about dialect text, so the same guarantee applies.
+assert.ok(/if \(_isDia && \['synonyms','word_forms','error_hunt','comprehension'\]\.includes\(_fmtSel\.value\)\) _fmtSel\.value = 'standard'/.test(html),
   'a blocked format resets to standard for dialect');
+assert.ok(/<option value="comprehension" class="opt-ai-authoring opt-needs-story"/.test(html),
+  'comprehension is tagged as LLM-authoring, so the dialect gate above catches it');
+// It additionally needs a STORY — questions are written against the text — so it carries a second
+// gate that the other authoring types do not.
+assert.ok(/const compOpt = _fmtSel\.querySelector\('\.opt-needs-story'\);/.test(html),
+  'the no-story gate is wired');
+assert.ok(/if \(!hasStory && _fmtSel\.value === 'comprehension'\) _fmtSel\.value = 'standard';/.test(html),
+  'and a chapter with no story resets the selection instead of offering an impossible format');
 // The AI error-hunt is a PURE human-edit diff (no LLM) — it must NOT be gated for dialect (it's the
 // ideal tool for correcting dialect slop). Assert we did NOT hide it.
 assert.ok(!/_huntLbl\.style\.display = _isDia \? 'none'/.test(html),

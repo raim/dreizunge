@@ -255,7 +255,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .feedback.flagged-note .fb-body{color:#a05000}
 
 /* ══ COMPLETE ════════════════════════════════════════════════════════ */
-#complete-screen{padding:24px 20px 40px;max-width:520px;width:100%;text-align:center;margin:0 auto}
+#complete-screen{padding:0 0 40px;max-width:540px;width:100%;text-align:center;margin:0 auto}.comp-body{padding:12px 16px 0}
 .comp-title{font-size:28px;font-weight:900;color:var(--text);margin-bottom:4px}
 .vocab-box{width:100%;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:14px 16px;margin-bottom:18px;text-align:left;box-shadow:var(--shadow-card)}
 .vocab-hdr{font-size:11px;font-weight:900;color:var(--gray);text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px}.vocab-chip{display:inline-flex;align-items:center;gap:4px;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:20px;padding:3px 10px;font-size:13px;font-weight:700;margin:3px;white-space:nowrap}
@@ -323,7 +323,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .style-select:disabled{opacity:.5;cursor:not-allowed}
 .style-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:14px;color:var(--gray-dark)}
 .story-len-row{margin-bottom:14px}
-.pdf-panel{display:none;flex-direction:column;gap:8px;margin-bottom:12px;padding:12px;background:#f0f4ff;border:1.5px solid #a0b8f0;border-radius:10px}.pdf-panel.open{display:flex}.pdf-chunk-list{display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto}.pdf-chunk{display:flex;align-items:flex-start;gap:6px;padding:6px 8px;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;font-size:12px}.pdf-chunk-text{flex:1;color:var(--gray-dark);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}.pdf-chunk-text.expanded{white-space:pre-wrap}.pdf-break-editor{display:flex;flex-direction:column;gap:0;margin:4px 0 8px;padding:6px 8px;background:#fafbff;border:1.5px solid var(--gray-mid);border-radius:6px}.pdf-break-para{font-size:12px;color:var(--text);white-space:pre-wrap;padding:3px 0}.pdf-break-btn{align-self:center;font-size:10px;font-weight:800;color:var(--blue-dark);background:#eef4ff;border:1px dashed #a0b8f0;border-radius:10px;padding:1px 10px;margin:2px 0;cursor:pointer;font-family:Nunito,sans-serif}.pdf-break-btn:hover{background:#dbe6ff}.export-menu-item{text-align:left;font-size:13px;font-weight:700;border:none;background:none;cursor:pointer;padding:6px 14px;border-radius:6px;color:var(--text);font-family:Nunito,sans-serif}.export-menu-item:hover{background:var(--gray-light)}.pdf-chunk-num{font-weight:900;color:var(--blue-dark);min-width:18px}.pdf-chunk-wc{color:var(--gray-dark);font-size:11px;white-space:nowrap}.pdf-stepper{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.pdf-step{padding:3px 8px;border-radius:12px;font-size:11px;font-weight:700;background:var(--gray-light);border:1.5px solid var(--gray-mid)}.pdf-step.done{background:#d4edda;border-color:#28a745;color:#155724}.pdf-step.active{background:#cce5ff;border-color:#004085;color:#004085}.pdf-step.error{background:#f8d7da;border-color:#dc3545;color:#721c24}.split-mode-btn{font-size:11px;font-weight:700;padding:3px 10px;border:1.5px solid var(--gray-mid);border-radius:12px;background:var(--white);color:var(--gray-dark);cursor:pointer;font-family:Nunito,sans-serif}.split-mode-btn.on{background:#dbe6ff;border-color:#a0b8f0;color:var(--blue-dark)}.split-mode-btn:disabled{opacity:.45;cursor:default}.comp-ico.locked{opacity:.4;cursor:not-allowed;filter:grayscale(1)}.comp-ico.locked:hover{transform:none}.comp-ico.disabled{opacity:.4;cursor:not-allowed;filter:grayscale(1)}.comp-ico.disabled:hover{transform:none;filter:grayscale(1)}.comp-ico.disabled:active{transform:none;box-shadow:0 4px 0 var(--gray-mid)}.typed-diff{display:flex;flex-direction:column;gap:3px;margin-top:2px}.td-row{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}.td-lbl{font-size:11px;font-weight:800;opacity:.8;white-space:nowrap;min-width:74px}.td-chars{display:inline-flex;flex-wrap:wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.dc{display:inline-block;min-width:11px;text-align:center;padding:1px 1px;border-radius:3px;font-weight:800}.dc.bad{background:rgba(220,53,69,.22);text-decoration:line-through}.dc.want{background:rgba(40,167,69,.24)}.dc.gap{min-width:11px;opacity:.35;border-bottom:2px dotted currentColor;border-radius:0}.user-story-checks{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.pdf-panel{display:none;flex-direction:column;gap:8px;margin-bottom:12px;padding:12px;background:#f0f4ff;border:1.5px solid #a0b8f0;border-radius:10px}.pdf-panel.open{display:flex}.pdf-chunk-list{display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto}.pdf-chunk{display:flex;align-items:flex-start;gap:6px;padding:6px 8px;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;font-size:12px}.pdf-chunk-text{flex:1;color:var(--gray-dark);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}.pdf-chunk-text.expanded{white-space:pre-wrap}.pdf-break-editor{display:flex;flex-direction:column;gap:0;margin:4px 0 8px;padding:6px 8px;background:#fafbff;border:1.5px solid var(--gray-mid);border-radius:6px}.pdf-break-para{font-size:12px;color:var(--text);white-space:pre-wrap;padding:3px 0}.pdf-break-btn{align-self:center;font-size:10px;font-weight:800;color:var(--blue-dark);background:#eef4ff;border:1px dashed #a0b8f0;border-radius:10px;padding:1px 10px;margin:2px 0;cursor:pointer;font-family:Nunito,sans-serif}.pdf-break-btn:hover{background:#dbe6ff}.export-menu-item{text-align:left;font-size:13px;font-weight:700;border:none;background:none;cursor:pointer;padding:6px 14px;border-radius:6px;color:var(--text);font-family:Nunito,sans-serif}.export-menu-item:hover{background:var(--gray-light)}.pdf-chunk-num{font-weight:900;color:var(--blue-dark);min-width:18px}.pdf-chunk-wc{color:var(--gray-dark);font-size:11px;white-space:nowrap}.pdf-stepper{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.pdf-step{padding:3px 8px;border-radius:12px;font-size:11px;font-weight:700;background:var(--gray-light);border:1.5px solid var(--gray-mid)}.pdf-step.done{background:#d4edda;border-color:#28a745;color:#155724}.pdf-step.active{background:#cce5ff;border-color:#004085;color:#004085}.pdf-step.error{background:#f8d7da;border-color:#dc3545;color:#721c24}.split-mode-btn{font-size:11px;font-weight:700;padding:3px 10px;border:1.5px solid var(--gray-mid);border-radius:12px;background:var(--white);color:var(--gray-dark);cursor:pointer;font-family:Nunito,sans-serif}.split-mode-btn.on{background:#dbe6ff;border-color:#a0b8f0;color:var(--blue-dark)}.split-mode-btn:disabled{opacity:.45;cursor:default}.comp-ico.locked{opacity:.4;cursor:not-allowed;filter:grayscale(1)}.comp-ico.locked:hover{transform:none}.comp-ico.disabled{opacity:.4;cursor:not-allowed;filter:grayscale(1)}.comp-ico.disabled:hover{transform:none;filter:grayscale(1)}.comp-ico.disabled:active{transform:none;box-shadow:0 4px 0 var(--gray-mid)}.typed-diff{display:flex;flex-direction:column;gap:3px;margin-top:2px}.td-row{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}.td-lbl{font-size:11px;font-weight:800;opacity:.8;white-space:nowrap;min-width:74px}.td-chars{display:inline-flex;flex-wrap:wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.dc{display:inline-block;min-width:11px;text-align:center;padding:1px 1px;border-radius:3px;font-weight:800}.dc.bad{background:rgba(220,53,69,.22);text-decoration:line-through}.dc.want{background:rgba(40,167,69,.24)}.dc.gap{min-width:11px;opacity:.35;border-bottom:2px dotted currentColor;border-radius:0}.td-whole{font-size:14px;font-weight:800;word-break:break-word}.td-whole.bad{color:#a02020;opacity:.85}.td-whole.want{color:#1a7f37}.user-story-checks{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
 .user-story-check-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--gray-dark);cursor:pointer;user-select:none}
 .user-story-check-row input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--green)}
 .user-story-panel{display:none;flex-direction:column;gap:10px;margin-bottom:12px;padding:12px;background:#f8fdf4;border:1.5px solid #b8e0a0;border-radius:10px}
@@ -950,6 +950,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           <option value="word_forms">🧩 Word Forms — pick the form that fits</option>
           <option value="synonyms">🔁 Synonyms — synonyms, antonyms &amp; homophones</option>
           <option value="error_hunt">🔍 Error Hunt — find mistakes in the story</option>
+          <option value="comprehension">🧠 Comprehension — questions about the story</option>
         </select>
         <span class="format-select-arrow">▾</span>
       </div>
@@ -1098,6 +1099,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <option value="synonyms" class="opt-ai-authoring">🔁 Synonyms</option>
       <option value="word_forms" class="opt-ai-authoring">🧩 Word Forms</option>
       <option value="error_hunt" class="opt-ai-authoring">🔍 Error Hunt</option>
+      <option value="comprehension" class="opt-ai-authoring opt-needs-story" style="display:none">🧠 Comprehension</option>
       <option value="math">🔢 Math</option>
       <option value="mixed">🔀 Mixed review (no AI)</option>
       <option value="intro_script" class="opt-intro-script" style="display:none">🔡 Learn the script (no AI)</option>
@@ -1160,18 +1162,39 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
        reads as part of the story rather than a floating dialog: 🌍 → main page, title → this
        storyline. Hidden for a drill and for a solo chapter with no storyline. It is also what
        replaced the "← Back to story" button — the title IS the link back. -->
-  <div class="sl-screen-title-row" id="comp-hdr" style="display:none">
-    <button class="sl-screen-home" onclick="goLandingClean()" id="comp-hdr-home" title="">🌍</button>
-    <span class="sl-screen-title" id="comp-hdr-title" style="cursor:pointer" role="button" tabindex="0"
-          onclick="compBackToStory()"
-          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
+  <!-- v71_m: the storyline page's header BLOCK, not just its title row — same classes, same
+       storyline progress bar, so a result card reads as another view of the storyline page rather
+       than a dialog that happens to mention it. Hidden for a drill (synthetic topic) and for a solo
+       chapter with no storyline. The title is also the route back: it replaced "← Back to story". -->
+  <div class="sl-screen-hdr" id="comp-hdr" style="display:none;text-align:left">
+    <div class="sl-screen-title-row">
+      <button class="sl-screen-home" onclick="goLandingClean()" id="comp-hdr-home" title="">🌍</button>
+      <span class="sl-screen-title" id="comp-hdr-title" style="cursor:pointer" role="button" tabindex="0"
+            onclick="compBackToStory()"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
+    </div>
+    <div style="height:5px;background:var(--gray-mid);border-radius:2px;overflow:hidden;margin-top:6px">
+      <div id="comp-hdr-prog-bar" style="height:100%;background:var(--green);border-radius:2px;transition:width .3s;width:0%"></div>
+    </div>
+    <div id="comp-hdr-prog-txt" style="font-size:11px;font-weight:800;color:var(--gray-dark);text-align:right;padding:2px 0 0;opacity:.8"></div>
   </div>
-  <div class="comp-title" id="comp-title">Lesson complete!</div>
-  <!-- v65.1: the storyboard panel for THIS chapter, so the learner sees where they are in the arc. -->
+  <!-- v71_p: everything below the header lives in a body with the storyline page's own inset
+       (.sl-screen-body is 12px 16px 0), so the two pages line up column for column. The header
+       itself stays OUTSIDE it — on the storyline page it is full-bleed white with a bottom border,
+       and the result card was 60px narrower than the storyline page (520px cap with 20px padding
+       = a 480px content box, against .sl-screen's 540px), which is what made the storyboard
+       render visibly smaller here than on the page it is copied from. -->
+  <div class="comp-body">
+  <!-- v65.1: the storyboard for THIS chapter, framed by chapter state (v71_k), so the learner sees
+       where they are in the arc. Second row, directly under the header — as on the storyline page. -->
   <div id="comp-storyboard" style="display:none;margin-top:12px"></div>
-  <!-- v60.8: progress bars only — within-chapter, along-story, and %-solved. No trophy / %-pill /
-       stat panels (removed per design; the bars carry the signal). -->
+  <!-- v60.8: progress bars only — no trophy / %-pill / stat panels (the bars carry the signal).
+       v71_m: CHAPTER-level bars only. The along-the-storyline bar moved into the header above, and
+       showing it twice on one card was the duplication this row order was meant to remove. -->
   <div id="comp-progress" style="margin-top:14px;text-align:left"></div>
+  <!-- v71_m: the big status line now sits BELOW the progress it describes — the learner reads the
+       bars, then the verdict ("Keep going!" / "Lesson complete!"), then the buttons. -->
+  <div class="comp-title" id="comp-title">Lesson complete!</div>
   <!-- v60: exactly two buttons. Next opens the next questions directly; Back returns to the
        storyline (deck), or the landing page for a solo chapter. -->
   <!-- v70_g: one action row. Icons only; the former button text is the tooltip. Secondary options
@@ -1185,7 +1208,9 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <button class="comp-ico primary" id="comp-next" onclick="afterComplete()">→</button>
   </div>
   <div id="comp-nav-btns" style="display:none;flex-wrap:wrap;justify-content:center;margin-top:8px"></div>
-  <div id="comp-story-unlocked" style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:#f0fff4">
+  <!-- v71_m: white background. The green wash was doing the same job as the green border and made
+       the yellow word highlighting (below) muddy — the highlights are the signal here. -->
+  <div id="comp-story-unlocked" style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:var(--white)">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
       <span style="font-size:20px">📖</span>
       <span style="font-size:13px;font-weight:900;color:var(--green-dark)" id="comp-story-unlocked-lbl">Story unlocked!</span>
@@ -1195,6 +1220,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <div id="comp-story-text" style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic"></div>
   </div>
   <div class="vocab-box" style="margin-top:18px"><div class="vocab-hdr" id="words-from-lbl">Words from this lesson</div><div id="comp-vocab" style="display:flex;flex-wrap:wrap;margin:-3px"></div></div>
+  </div><!-- /.comp-body -->
 </div>
 
 <div id="storyline-screen" class="screen">
@@ -1248,7 +1274,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <button class="ico-btn" id="sl-bottom-download" onclick="slBottomDownload(event)" title="Download storyline">⬇</button>
       <button class="ico-btn" id="sl-bottom-clear" onclick="slBottomClearProgress()" title="Clear progress">🧹</button>
       <button class="ico-btn" id="sl-bottom-delete" onclick="deleteCurrentStoryline()" title="Delete storyline" style="color:var(--red)">🗑️</button>
-      <button class="ico-btn recreate" id="sl-bottom-recreate" onclick="recreateStorylineLessons(event)" title="Re-create all lessons (keeps & hides the originals)">🔁</button>
+      <button class="ico-btn recreate" id="sl-bottom-recreate" onclick="recreateStorylineLessons(event)" title="Add lessons to every chapter">➕</button>
     </div>
   <div class="lang-footer" id="lang-footer-storyline">
     <span class="lang-footer-lbl tts-pill" title="">🗣</span>
@@ -1327,6 +1353,11 @@ const LESSON_TYPE_META = {
   math:          { emoji: '🔢', key: 'lesson.type.math',          build: (l) => buildMathExercises(l), editorBranch: (ls, li, fo) => _editorBranchMath(ls, li, fo), editorReadInputs: (ls, li) => _editorReadInputsMath(ls, li) },
   mixed:         { emoji: '🔀', key: 'lesson.type.mixed',         build: (l, i) => buildMixedExercises(l, i), editorBranch: (ls, li, fo) => _editorBranchMixed(ls, li, fo) },
   intro_script:  { emoji: '🔡', key: 'lesson.type.intro_script',  build: (l) => buildIntroScriptExercises(l), editorBranch: (ls, li, fo) => _editorBranchIntroScript(ls, li, fo) },
+  // v71_l: reading comprehension over the chapter's STORY — inference, cause, motive, implication,
+  // not vocabulary recall. The questions are generated once and stored on the lesson, so play needs
+  // no story at runtime; the story is required to GENERATE, which is why the type is offered only
+  // for chapters that have one.
+  comprehension: { emoji: '🧠', key: 'lesson.type.comprehension', build: (l) => buildComprehensionExercises(l), editorBranch: (ls, li, fo) => _editorBranchComprehension(ls, li, fo) },
 };
 function lessonTypeMeta(type) { return LESSON_TYPE_META[type] || LESSON_TYPE_META.standard; }
 function lessonTypeEmoji(type) { return lessonTypeMeta(type).emoji; }
@@ -1337,6 +1368,7 @@ function lessonTypeLabel(type) { return t(lessonTypeMeta(type).key); }
 // was generated with (per-lesson difficulty, else the topic's). Falls back to the
 // per-type description when neither is known. `t` and `DIFF_SHORT` are globals.
 const LESSON_DESC_KEY = {
+  comprehension: 'lesson.type.desc.comprehension',
   grammar: 'lesson.type.desc.grammar', conjugation: 'lesson.type.desc.conjugation',
   error_hunt: 'lesson.type.desc.error_hunt', ai_error_hunt: 'lesson.type.desc.ai_error_hunt',
   word_forms: 'lesson.type.desc.word_forms',
@@ -1782,7 +1814,7 @@ function applyUIStrings() {
   // Update format-select option labels
   const formatSel = document.getElementById('format-select');
   if (formatSel) {
-    const formatKeys = { 'standard': 'form.format.standard', 'all_types': 'form.format.all_types', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation', 'synonyms': 'form.format.synonyms', 'word_forms': 'form.format.word_forms', 'math': 'form.format.math', 'intro_script': 'form.format.intro_script' };
+    const formatKeys = { 'standard': 'form.format.standard', 'all_types': 'form.format.all_types', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation', 'synonyms': 'form.format.synonyms', 'word_forms': 'form.format.word_forms', 'math': 'form.format.math', 'intro_script': 'form.format.intro_script', 'comprehension': 'form.format.comprehension' };
     Array.from(formatSel.options).forEach(opt => {
       if (formatKeys[opt.value]) { const lbl=t(formatKeys[opt.value]); if(lbl && lbl!==formatKeys[opt.value]) opt.text=lbl; }
     });
@@ -1813,7 +1845,7 @@ function applyUIStrings() {
   _setAttr('sl-bottom-download', 'title', t('sl.download'));
   _setAttr('sl-bottom-clear', 'title', t('sl.clear_progress'));
   _setAttr('sl-bottom-delete', 'title', t('sl.delete'));
-  _setAttr('sl-bottom-recreate', 'title', t('sl.recreate_btn'));
+  _setAttr('sl-bottom-recreate', 'title', t('sl.add_lessons_btn'));
   { const _nc=document.getElementById('num-chapters-val'); if(_nc) _nc.textContent=numChaptersLabel(APP.numChapters||1); }
   _setText('lesson-type-hdr-lbl', t('form.lesson_type_hdr'));
   _setText('continue-lbl', t('form.continue_from_lbl'));
@@ -2214,7 +2246,7 @@ function restoreStyleSelect(){
 // Every value the #format-select picker offers must be accepted here — an option missing from this
 // set is silently rewritten to 'standard' on selection, i.e. a dead menu entry (v68.1: word_forms
 // and synonyms were visible but clamped away, for single AND book/multi-chapter generation).
-const VALID_FORMATS=new Set(['standard','all_types','error_hunt','grammar','conjugation','math','word_forms','synonyms']);
+const VALID_FORMATS=new Set(['standard','all_types','error_hunt','grammar','conjugation','math','word_forms','synonyms','comprehension']);
 function onFormatSelect(v){
   APP.lessonFormat=VALID_FORMATS.has(v)?v:'standard'; saveLessonFormat();
   const sel=document.getElementById('format-select'); if(sel) sel.value=APP.lessonFormat;
@@ -2672,7 +2704,7 @@ function _revealSubmitLink(scopeTitle, fname){
 // per-browser/device. Cross-device sync is the accounts/repo feature (see platform_plan.md).
 const _staticFlagsKey = 'dz_static_flags';
 const _staticEditsKey = 'dz_static_edits';
-const _FLAG_ARRAYS = [['vocab','target'], ['sentences','target'], ['items','sentence'], ['words','base']];
+const _FLAG_ARRAYS = [['vocab','target'], ['sentences','target'], ['items','sentence'], ['words','base'], ['questions','q']];
 // ── "User-made" vs "pre-existing" signals ──────────────────────────────────────────
 // The static bundle ships with whatever flags/ratings/edits the maintainer baked into
 // lessons.json (their own review + community submissions they imported and rebuilt). Those are
@@ -4655,7 +4687,12 @@ async function renderModelPicker(){
     `</span>`
   ).join('')+
     `<span class="bmodel-field"><label>${escHtml(t('models.timeout'))}</label>`+
-    `<span><input type="number" id="bmodel-timeout" min="30" max="3600" step="30" value="${timeoutSec}" title="${escAttr(t('models.timeout_hint'))}" onchange="switchTimeout(this.value)" style="width:64px"><span style="opacity:.7">s</span></span></span>`;
+    `<span><input type="number" id="bmodel-timeout" min="30" max="3600" step="30" value="${timeoutSec}" title="${escAttr(t('models.timeout_hint'))}" onchange="switchTimeout(this.value)" style="width:64px"><span style="opacity:.7">s</span></span></span>`+
+    // v71_q: CPU threads. Blank = leave it to Ollama, whose own default is conservative (2 on many
+    // builds) and leaves most of a machine idle. Shown blank rather than as a guessed number, so
+    // the field never claims a value the server did not set.
+    `<span class="bmodel-field"><label>${escHtml(t('models.threads'))}</label>`+
+    `<span><input type="number" id="bmodel-threads" min="0" max="256" step="1" value="${active.numThread || ''}" placeholder="auto" title="${escAttr(t('models.threads_hint'))}" onchange="switchThreads(this.value)" style="width:64px"></span></span>`;
   setPillClickable(true);
 }
 
@@ -4702,6 +4739,20 @@ async function switchModel(role, model){
 }
 // Set the per-request timeout (seconds in the UI → ms server-side). For larger/slower models whose
 // lessons (e.g. Swahili word_forms) would otherwise time out.
+// v71_q: set the CPU thread count Ollama may use. An empty field or 0 means "auto" — clear the
+// override and let Ollama decide, which is a real choice and not an error.
+async function switchThreads(n){
+  const raw = String(n == null ? '' : n).trim();
+  const val = raw === '' ? 0 : parseInt(raw, 10);
+  if(!Number.isFinite(val) || val < 0) return;
+  try{
+    const r=await fetch('/api/models',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numThread:val})});
+    let data={}; try{ data=await r.json(); }catch(_){}
+    if(!r.ok){ showToast((data&&data.error)||t('models.switch_failed')); return; }
+    if(data.active) APP.info.ollamaNumThread=data.active.numThread;
+    showToast(data.active && data.active.numThread ? t('models.threads_set') : t('models.threads_auto'));
+  }catch(_){ showToast(t('models.switch_failed')); }
+}
 async function switchTimeout(sec){
   const ms = Math.round(parseFloat(sec)*1000);
   if(!Number.isFinite(ms)) return;
@@ -4836,6 +4887,7 @@ function savedItemHtml(s, connector, hideStory, hideProv) {
         <option value="word_forms">🧩 ${t('lesson.type.word_forms')}</option>
         <option value="error_hunt">🔍 ${t('lesson.type.error_hunt')}</option>
         <option value="math">🔢 ${t('lesson.type.math')}</option>
+        ${(s && s.story) ? `<option value="comprehension">🧠 ${t('lesson.type.comprehension')}</option>` : ''}
         ${scriptLessonAvailableForSet(s) ? `<option value="intro_script">🔡 ${t('lesson.type.intro_script')}</option>` : ''}
       </select>
       <select class="addlesson-select" id="sial-diff-${sid}" title="Difficulty">
@@ -6504,6 +6556,16 @@ function openAddLesson(sid, enc) {
       introOpt.style.display = show ? '' : 'none';
       if (!show && _fmtSel.value === 'intro_script') _fmtSel.value = 'standard';
     }
+    // v71_l: comprehension quizzes are written AGAINST the story, so the option only appears for a
+    // chapter that has one. Same shape as the intro-script gate above: hide, and reset the select
+    // if it was left pointing at a format this topic cannot generate.
+    const compOpt = _fmtSel.querySelector('.opt-needs-story');
+    if (compOpt) {
+      const hasStory = !!(APP.lessonData && String(APP.lessonData.story || '').trim());
+      compOpt.style.display = hasStory ? '' : 'none';
+      compOpt.disabled = !hasStory;
+      if (!hasStory && _fmtSel.value === 'comprehension') _fmtSel.value = 'standard';
+    }
     // For DIALECT topics, hide the LLM-authoring lesson types (synonyms/word_forms/error_hunt).
     // Those generators run in the base language (de) and don't know the dialect — they'd inject
     // standard-German or mis-judged content into a dialect topic, breaking the "no invented dialect"
@@ -6513,7 +6575,7 @@ function openAddLesson(sid, enc) {
       opt.style.display = _isDia ? 'none' : '';
       opt.disabled = _isDia;
     });
-    if (_isDia && ['synonyms','word_forms','error_hunt'].includes(_fmtSel.value)) _fmtSel.value = 'standard';
+    if (_isDia && ['synonyms','word_forms','error_hunt','comprehension'].includes(_fmtSel.value)) _fmtSel.value = 'standard';
   }
   const _mathInstrRow = document.getElementById('sial-math-instr-row-' + sid);
   const _reinforceRow = document.getElementById('sial-reinforce-row-' + sid);
@@ -6852,27 +6914,16 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   renderSlTagsRow(slMeta);
 
   // Progress summary for storyline screen
-  const _slCompleted = APP.progress?.completed || {};
-  let totalSets = 0, doneSets = 0, totalQ = 0, correctQ = 0, doneChapters = 0;
-  chapterIds.forEach(cid => {
-    const s = _byId[cid];
-    if (!s) return;
-    const topic = s.topic;
-    (s.lessons || []).forEach(ls => {
-      totalSets++;
-      const prog = _slCompleted[topic]?.[ls.id];
-      if (prog) { doneSets++; if (typeof prog==='object'){ correctQ+=prog.correct||0; totalQ+=prog.total||0; } }
-    });
-    // v69_l: chapter-level completion uses the shared rule (coverage-aware), not the lesson tally.
-    if (chapterComplete(s)) doneChapters++;
-  });
-  const _slPct = totalSets > 0 ? Math.round(100 * doneSets / totalSets) : 0;
-  const _slScorePct = totalQ > 0 ? Math.round(100*correctQ/totalQ) : null;
+  // v71_m: shared with the result card's header — see _slProgressStats.
+  const _slCompleted = APP.progress?.completed || {};   // still read further down this function
+  const _slStats = _slProgressStats(chapterIds, _byId);
+  const totalSets = _slStats.totalSets, doneSets = _slStats.doneSets, doneChapters = _slStats.doneChapters;
+  const _slPct = _slStats.pct, _slScorePct = _slStats.scorePct;
   // Populate tight 5px progress bar
   const _slBar = document.getElementById('sl-prog-bar');
   const _slTxt = document.getElementById('sl-prog-txt');
   if (_slBar) _slBar.style.width = _slPct + '%';
-  if (_slTxt) _slTxt.textContent = doneSets + '/' + totalSets + (_slScorePct !== null ? ' · ' + _slScorePct + '%' : '');
+  if (_slTxt) _slTxt.textContent = _slProgressLabel(_slStats);
   // Gen stats at bottom
   const statsEl = document.getElementById('sl-screen-stats');
   if (statsEl) {
@@ -7278,30 +7329,75 @@ function slBottomClearProgress(){
   if(sl) _renderStorylineScreen(sl.chainId, sl.encodedChain, sl.topics);
 }
 // Small picker for the learning-arc mode, mirroring the arc options offered by
-// pdf/book multi-lesson generation. Resolves to 'vocab' | 'grammar' | null(cancel).
-function _pickArcMode(){
-  return new Promise(resolve=>{
+// v71_p: the shared lesson-type picker. Replaces the old two-button arc-mode chooser ("more vocab"
+// vs "words and synonyms"), which could only express two fixed bundles. A tick-list says exactly
+// what to add, and the same widget serves both entry points — the storyline "add lessons" button
+// and the book-generation learning arc — so the two can never drift into offering different sets.
+//
+// `standard` and `review` are not registry types: standard is this chapter's own vocabulary,
+// review is a vocab lesson over PRIOR chapters. Both are generated by generateOneLesson with
+// different options, so they are listed explicitly rather than derived from LESSON_TYPE_META.
+const ADD_LESSON_TYPES = [
+  { v: 'standard',   emoji: '📖', key: 'form.format.standard' },
+  { v: 'review',     emoji: '🔁', key: 'gen.vocab_mode_reinforce' },
+  { v: 'word_forms', emoji: '🧩', key: 'lesson.type.word_forms' },
+  { v: 'synonyms',   emoji: '🔀', key: 'lesson.type.synonyms' },
+  { v: 'grammar',    emoji: '📐', key: 'lesson.type.grammar' },
+  { v: 'conjugation',emoji: '🔤', key: 'lesson.type.conjugation' },
+  { v: 'comprehension', emoji: '🧠', key: 'lesson.type.comprehension', needsStory: true },
+  { v: 'error_hunt', emoji: '🔍', key: 'lesson.type.error_hunt', needsStory: true },
+  { v: 'math',       emoji: '🔢', key: 'lesson.type.math' },
+];
+// Render the tick-list into a container. `opts.hasStory` hides the story-dependent types, matching
+// the same gate the add-lesson menu applies per chapter.
+function renderLessonTypeChecks(container, opts){
+  if(!container) return;
+  const o = opts || {};
+  const pre = Array.isArray(o.checked) ? o.checked : ['standard'];
+  container.innerHTML = ADD_LESSON_TYPES
+    .filter(x => !(x.needsStory && o.hasStory === false))
+    .map(x => {
+      const lbl = t(x.key);
+      return `<label class="user-story-check-row" style="gap:7px">
+        <input type="checkbox" class="${o.cls || 'lt-check'}" value="${x.v}" ${pre.includes(x.v) ? 'checked' : ''}>
+        <span>${x.emoji} ${escHtml(lbl && lbl !== x.key ? lbl : x.v)}</span>
+      </label>`;
+    }).join('');
+}
+function readLessonTypeChecks(container, cls){
+  if(!container) return [];
+  return [...container.querySelectorAll('.' + (cls || 'lt-check'))]
+    .filter(c => c.checked).map(c => c.value);
+}
+
+// Modal wrapper around the tick-list. Resolves to an array of types, or null if cancelled.
+function _pickLessonTypes(titleText){
+  return new Promise(resolve => {
     const ov=document.createElement('div');
-    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:9999';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999';
     const card=document.createElement('div');
-    card.style.cssText='background:var(--white);color:var(--text);border-radius:14px;padding:20px 20px 14px;max-width:360px;width:90%;box-shadow:0 8px 30px rgba(0,0,0,.3);font-family:Nunito,sans-serif;position:relative';
+    card.style.cssText='background:var(--white);color:var(--text);border-radius:14px;padding:20px 20px 14px;max-width:360px;width:90%;box-shadow:0 8px 30px rgba(0,0,0,.3);font-family:Nunito,sans-serif;position:relative;text-align:left';
     const close=document.createElement('button');
-    close.textContent='✕'; close.title='Cancel';
+    close.textContent='✕'; close.title=t('common.cancel')||'Cancel';
     close.style.cssText='position:absolute;top:8px;right:10px;border:none;background:none;font-size:16px;cursor:pointer;color:var(--gray-dark)';
     const done=v=>{ if(ov.parentNode) document.body.removeChild(ov); resolve(v); };
     close.onclick=()=>done(null);
-    card.innerHTML=`<div style="font-weight:800;font-size:16px;margin-bottom:3px">🔁 ${t('sl.recreate_btn')}</div>
-      <div style="font-size:13px;opacity:.8;margin:6px 0 12px">${t('form.arc_lbl')}</div>`;
-    const mk=(label,val,primary)=>{ const b=document.createElement('button');
-      b.textContent=label;
-      b.style.cssText=`display:block;width:100%;margin:6px 0;padding:10px 12px;border-radius:10px;border:2px solid ${primary?'var(--green)':'var(--gray-mid)'};background:var(--white);color:var(--text);font-weight:800;font-family:Nunito,sans-serif;cursor:pointer;text-align:left`;
-      b.onclick=()=>done(val); return b; };
-    card.appendChild(mk(t('form.arc_mode_vocab'), 'vocab', true));
-    card.appendChild(mk(t('form.arc_mode_grammar'), 'grammar', false));
-    card.appendChild(close);
+    card.innerHTML=`<div style="font-weight:800;font-size:16px;margin-bottom:3px">➕ ${escHtml(titleText||t('sl.add_lessons_btn'))}</div>
+      <div style="font-size:13px;opacity:.8;margin:6px 0 10px">${escHtml(t('sl.add_lessons_hint'))}</div>
+      <div id="lt-pick-list" class="user-story-checks"></div>`;
+    const go=document.createElement('button');
+    go.textContent='▶ ' + (t('sl.add_lessons_btn'));
+    go.style.cssText='display:block;width:100%;margin:10px 0 0;padding:10px 12px;border-radius:10px;border:none;background:var(--green);color:var(--white);font-weight:800;font-family:Nunito,sans-serif;cursor:pointer';
+    card.appendChild(go); card.appendChild(close);
     ov.appendChild(card);
     ov.onclick=e=>{ if(e.target===ov) done(null); };
     document.body.appendChild(ov);
+    renderLessonTypeChecks(card.querySelector('#lt-pick-list'), { cls:'lt-pick', checked:['standard'] });
+    // Nothing ticked is a no-op, not a run: silently generating the default set would be a
+    // surprise, and an empty run costs the user a long wait for nothing.
+    go.onclick=()=>{ const sel=readLessonTypeChecks(card.querySelector('#lt-pick-list'),'lt-pick');
+      if(!sel.length){ go.textContent='⚠ ' + t('sl.add_lessons_none'); return; }
+      done(sel); };
   });
 }
 
@@ -7310,13 +7406,13 @@ async function recreateStorylineLessons(ev){
   const { ids } = _slBottomChapters();
   const startId = ids[0];
   if(!startId){ return; }
-  const arcMode = await _pickArcMode();
-  if(!arcMode) return;
+  const addTypes = await _pickLessonTypes(t('sl.add_lessons_btn'));
+  if(!addTypes || !addTypes.length) return;
   const btn = document.getElementById('sl-bottom-recreate');
   if(btn){ btn.disabled = true; btn.textContent = '⏳'; }
   try {
     const r = await fetch('/api/storyline/recreate-lessons', { method:'POST',
-      headers:{'Content-Type':'application/json'}, body: JSON.stringify({ id: startId, arcMode }) });
+      headers:{'Content-Type':'application/json'}, body: JSON.stringify({ id: startId, addTypes, add: true }) });
     if(!r.ok) throw new Error('HTTP ' + r.status);
     const { jobId } = await r.json();
     await pollJob(jobId, step => { if(btn) btn.title = step; });
@@ -7325,7 +7421,7 @@ async function recreateStorylineLessons(ev){
   } catch(e){
     alert((t('sl.recreate_failed')) + ': ' + e.message);
   } finally {
-    if(btn){ btn.disabled = false; btn.textContent = '🔁'; btn.title = t('sl.recreate_btn'); }
+    if(btn){ btn.disabled = false; btn.textContent = '➕'; btn.title = t('sl.add_lessons_btn'); }
   }
 }
 
@@ -8667,6 +8763,40 @@ function _editorBranchSynonyms(ls, li, flaggedOnly){
   
   return html;
 }
+function _editorBranchComprehension(ls, li, flaggedOnly){
+  let html = '';
+  const qs = ls.questions || [];
+  const vis = flaggedOnly ? qs.filter(q => q && (q.qc || q.userFlag)) : qs;
+  if (!vis.length) html += `<em style="color:var(--gray-dark);font-size:13px">No questions</em>`;
+  qs.forEach((it, qi) => {
+    if (flaggedOnly && !(it && (it.qc || it.userFlag))) return;
+    const choices = Array.isArray(it.choices) ? it.choices : [];
+    // An answer that matches no option makes the question unplayable — buildComprehensionExercises
+    // drops it. Surface that here, or it would silently vanish from rounds with nothing to explain
+    // why the lesson is shorter than its question count.
+    const broken = !Number.isInteger(it.correctIndex) || !choices[it.correctIndex];
+    html += `<div class="editor-entry${it.userFlag?' flagged':''}${it.userRating?' starred':''}${it.userDelete?' del-candidate':''}" id="ee-${li}-cq-${qi}">
+      <div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-bottom:2px">
+        ${_flagBtnHtml(li, 'cq', qi, it)}
+        <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','cq',${qi})">🗑</button>
+      </div>
+      ${broken ? `<div style="font-size:11px;font-weight:800;color:var(--red);margin-bottom:3px">⚠ no correct option marked — this question is skipped in play</div>` : ''}
+      <div class="editor-field"><label>Question</label><input data-li="${li}" data-type="cq" data-qi="${qi}" data-field="q" value="${escAttr(it.q||'')}"></div>
+      <div class="editor-field"><label>Why</label><input data-li="${li}" data-type="cq" data-qi="${qi}" data-field="why" value="${escAttr(it.why||'')}" placeholder="short reason the answer follows from the story"></div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:7px">
+        <div style="font-size:11px;font-weight:800;opacity:.6">Options (● = correct)</div>
+      </div>
+      ${choices.map((c, ci) => `<div style="display:flex;gap:6px;align-items:center;margin-top:3px">
+        <input type="radio" name="cq-correct-${li}-${qi}" data-li="${li}" data-type="cq" data-qi="${qi}" data-field="correct" data-ci="${ci}" ${ci===it.correctIndex?'checked':''} title="Mark as correct">
+        <input data-li="${li}" data-type="cq" data-qi="${qi}" data-field="choice" data-ci="${ci}" value="${escAttr(c||'')}" style="flex:1">
+      </div>`).join('')}
+      ${_qcNoteHtml(li, 'cq', qi, it)}
+      ${_flagBoxHtml(li, 'cq', qi, it, false)}
+      ${_starNoteHtml(it)}
+    </div>`;
+  });
+  return html;
+}
 function _editorBranchWordForms(ls, li, flaggedOnly){
   let html = '';
 
@@ -9019,6 +9149,15 @@ function _syncEditorFromDOM(li, opts) {
         if (cat) { const ri = +inp.dataset.ri; if (ls.words[wi][cat]?.[ri]) ls.words[wi][cat][ri][field] = inp.value; }
         else ls.words[wi][field] = inp.value;
       }
+    } else if (type === 'cq') {
+      const qi = +inp.dataset.qi;
+      const it = ls.questions && ls.questions[qi];
+      if (it) {
+        if (field === 'q') it.q = inp.value;
+        else if (field === 'why') it.why = inp.value;
+        else if (field === 'choice') { const ci = +inp.dataset.ci; if (Array.isArray(it.choices) && ci >= 0 && ci < it.choices.length) it.choices[ci] = inp.value; }
+        else if (field === 'correct') { if (inp.checked) { const ci = +inp.dataset.ci; if (Number.isInteger(ci)) it.correctIndex = ci; } }
+      }
     } else if (type === 'wf') {
       const fi = +inp.dataset.fi;
       const it = ls.items && ls.items[fi];
@@ -9166,6 +9305,7 @@ function deleteEditorItem(li, type, idx) {
   else if (type === 'grammar')  { ls.grammar   = (ls.grammar||[]).filter((_,i)=>i!==idx); }
   else if (type === 'conj')     { ls.conjugations = (ls.conjugations||[]).filter((_,i)=>i!==idx); }
   else if (type === 'eh-edit')  { ls.edits = (ls.edits||[]).filter((_,i)=>i!==idx); }
+  else if (type === 'cq')       { ls.questions = (ls.questions||[]).filter((_,i)=>i!==idx); }
   else if (type === 'wf')       { ls.items = (ls.items||[]).filter((_,i)=>i!==idx); }
   else if (type === 'letter')   { ls.letters = (ls.letters||[]).filter((_,i)=>i!==idx); delete ls.exercises; }
   // Re-render editor to update indices
@@ -9689,11 +9829,14 @@ function buildExercises(lessonIdx){
   if (typeof STATIC_LESSONS !== 'undefined') { try { _ensureStaticFlagsLoaded(); } catch (_) {} }
   const lesson = APP.lessonData.lessons[lessonIdx];
   let ex = lessonTypeMeta(lesson.type).build(lesson, lessonIdx);
-  // Static build, non-teacher play: don't quiz the user on flagged items (a manual
-  // userFlag or a QC suggestion on the source item). Teacher mode and the lesson editor
-  // keep them visible so the flag content can be reviewed/fixed. Live builds are unaffected.
-  if (typeof STATIC_LESSONS !== 'undefined' && !APP._teacherMode && Array.isArray(ex)) {
-    ex = ex.filter(e => { const it = _exFlagTarget(e); return !(it && (it.userFlag || it.qc || it.userDelete)); });
+  // Non-teacher play: don't quiz the learner on an item a HUMAN has flagged or marked for
+  // deletion. Teacher mode and the lesson editor keep them visible so the flag can be reviewed.
+  // v71_l: this used to run only in the static build and to include `item.qc`. Both were wrong.
+  // Live and static now apply the same rule (a live learner was being asked questions that could
+  // never count toward coverage), and an unreviewed QC suggestion no longer withholds anything —
+  // see _itemWithheld for why a model's opinion must not silently change what the learner sees.
+  if (!APP._teacherMode && Array.isArray(ex)) {
+    ex = ex.filter(e => !_itemWithheld(_exFlagTarget(e)));
   }
   return ex;
 }
@@ -10927,6 +11070,32 @@ function tTypeConjugation(ex) {
 
 
 // ══ Math exercises ═══════════════════════════════════════════════════════════
+// v71_l: reading-comprehension round. Unlike every other builder here this one derives nothing —
+// the questions were authored by the generator against the story and are stored verbatim, so the
+// builder's only jobs are to drop malformed entries and to shuffle the options. Shuffling matters:
+// a stored option order would let a learner answer by position on replay, and qid deliberately
+// ignores option order so the question keeps its identity across shuffles.
+function buildComprehensionExercises(lesson){
+  const qs = lesson.questions || [];
+  const exs = [];
+  qs.forEach(item => {
+    if(!item || !item.q) return;
+    const choices = (Array.isArray(item.choices) ? item.choices : []).map(c => String(c == null ? '' : c).trim()).filter(Boolean);
+    // correctIndex is the stored form (it survives an editor re-ordering of the options); fall back
+    // to an explicit `answer` string for anything hand-authored or imported.
+    let correct = Number.isInteger(item.correctIndex) ? choices[item.correctIndex] : null;
+    if(correct == null && item.answer != null){
+      const a = String(item.answer).trim();
+      correct = choices.find(c => c.toLowerCase() === a.toLowerCase()) || null;
+    }
+    // A question with no identifiable answer among its options is unplayable — skip it rather than
+    // ship a round the learner cannot win. The editor still shows it so it can be repaired.
+    if(!correct || choices.length < 2) return;
+    exs.push({ type:'comprehension_mcq', question:String(item.q), correct,
+               choices: shuffle(choices.slice()), why: item.why || '' });
+  });
+  return shuffle(exs);
+}
 function buildSynonymsExercises(lesson){
   const words = lesson.words || [];
   // Pool of every related word in the lesson, for cross-word distractors.
@@ -11543,6 +11712,7 @@ function renderHearts(){
 // (the renderers are hoisted function declarations below). An unknown ex.type has no
 // entry and renders to '' — byte-identical to the old chain's fall-through.
 const EX_RENDERERS = {
+  comprehension_mcq: (ex) => tComprehension(ex),
   mcq_target_source: (ex) => tMcqIE(ex),
   mcq_source_target: (ex) => tMcqEI(ex),
   listen_mcq:        (ex) => tLMcq(ex),
@@ -11573,6 +11743,18 @@ function renderEx(){
     // round, never on this card, so nothing is lost. Non-drill lessons are unaffected: endDrill is
     // a no-op (returns false) when no drill is active.
     if (typeof endDrill === 'function' && APP._drillPrev) {
+      // v71_n: record the DRILL's outcome before endDrill() swaps the real topic back. Since v71_h
+      // the drill ends here rather than on its own card, and showComplete(true) then rebuilds
+      // APP.cur from the RESTORED topic — so by the time the ledger was written, `lesson` pointed at
+      // a real chapter lesson and `_wrongTargets` had been thrown away. The drill became invisible
+      // to the ledger: a word answered right in a drill never had its `wrong` count walked back
+      // down, so it stayed in the pool forever (reported: "studiare" asked over and over), and a
+      // word answered WRONG in a drill was never counted either. This is the only moment the drill
+      // lesson and its wrong-set both still exist.
+      try {
+        const _dl = APP.lessonData?.lessons?.[APP.cur?.lessonIdx];
+        if (_dl && _dl._drill) recordLearnedFromLesson(_dl, APP.cur?._wrongTargets);
+      } catch(_) {}
       const _wasDrill = endDrill();
       if (_wasDrill) {
         if (typeof showToast === 'function') { try { showToast(t('drill.done')); } catch(_){} }
@@ -11921,6 +12103,14 @@ function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=loc
   const q = t("ex.mcq_source_target.q",{word:qWord(furiHtml(ex.source))});
   const badge = dia ? t("ex.badge.mcq_source_target_nolang") : t("ex.badge.mcq_source_target",{lang:Ln});
   return `<div class="ex-badge">${S.flag}→${L.flag} ${badge}</div><div class="card"><div class="qtext" dir="auto">${q}</div>${cGrid(ex.choices,false)}</div>`; }
+// v71_l: the question is prose ABOUT the story, so it is escaped (not furiHtml'd like a vocabulary
+// prompt) and rendered in the lesson language. Options reuse the shared choice grid, so the generic
+// pickChoice/check path handles answering with no special-casing.
+function tComprehension(ex){
+  const L = lessonLang();
+  return `<div class="ex-badge">${L.flag} ${escHtml(t('ex.badge.comprehension'))}</div>`
+       + `<div class="card"><div class="qtext" dir="auto">${escHtml(ex.question)}</div>${cGrid(ex.choices,true)}</div>`;
+}
 function ttsApproxBadge(){
   if(!ttsIsApproximate()) return '';
   // For dialect content, name the base voice so the learner knows it's a German approximation of
@@ -12102,6 +12292,11 @@ function _resolveExItem(ex, ls){
   if(ex.type==='syn_select' && ex.base){
     const w=(ls.words||[]).find(x=>norm(x.base)===norm(ex.base)); if(w) return w;
   }
+  // v71_l: a comprehension question is its own source item, matched on the question text — without
+  // this it resolves to null and no flag, QC note or delete could ever reach it.
+  if(ex.type==='comprehension_mcq' && ex.question){
+    const q=(ls.questions||[]).find(x=>norm(x.q)===norm(ex.question)); if(q) return q;
+  }
   return null;
 }
 function _exFlagTarget(ex){
@@ -12112,6 +12307,22 @@ function _exFlagTarget(ex){
   return _resolveExItem(ex, ls);
 }
 function _exFlagState(ex){ return _exFlagTarget(ex)?.userFlag || null; }
+// v71_l: THE rule for whether a source item is withheld from the learner — asked, and counted
+// toward coverage. Single-sourced because it was previously spelled out three times (the play
+// filter in buildExercises, the coverage denominator in _lessonQidUniverse, and markSolved), and
+// the copies had already drifted: the play filter only ran in the STATIC build, so a live learner
+// was asked flagged questions that could never count, while a static learner was not asked them
+// at all. Same corpus, two different coverage stories.
+//
+// Only a HUMAN decision withholds an item. `item.qc` is an unreviewed MODEL suggestion and is
+// deliberately NOT here: a QC pass is diagnostic, not load-bearing. Including it meant one
+// automated pass silently rewrote the coverage denominator of 157 lessons across 80 topics —
+// median 38% of a flagged lesson's questions removed, 41 lessons over half, some entirely —
+// without the user accepting a single suggestion. Accepting a suggestion is what should bite:
+// it becomes an edit, or a userFlag, and then this returns true.
+function _itemWithheld(it){
+  return !!(it && (it.userFlag || it.userDelete));
+}
 // ══ Stable per-question IDs (qid) — the keystone for coverage-based progression ══════
 // Exercises are re-derived every play with shuffle/pick/slice, so the same underlying
 // question looks different each time and has no durable identity. `qid(ex, lessonId)`
@@ -12151,6 +12362,11 @@ function _qidCanonical(ex){
       return [n(ex.sentence), n(ex.correct)].join('|');       // blanked sentence + answer
     case 'syn_select':
       return [ex.mode || '', n(ex.base)].join('|');           // same base, syn vs antonym = distinct
+    case 'comprehension_mcq':
+      // Pinned by the QUESTION plus its answer — never the shuffled options, which is the whole
+      // point of a canonical form. Two questions about the same fact with different wording are
+      // deliberately distinct: they are distinct questions to the learner.
+      return ['comp', n(ex.question), n(ex.correct)].join('|');
     case 'mcq_article':
       return ['art', n(ex.target)].join('|');
     case 'mcq_plural':
@@ -12198,12 +12414,15 @@ function _solvedMap(topic){
   return APP.progress.solved[topic];
 }
 function isSolved(topic, id){ return !!(id && _solvedMap(topic)[id]); }
-// Mark an exercise solved for the current topic. Returns the qid (or '' if none). Never
-// records flagged questions (they're excluded from the coverage denominator by design).
+// Mark an exercise solved for the current topic. Returns the qid (or '' if none). Never records
+// withheld questions — they are excluded from the coverage denominator by the same rule, so
+// recording one would credit a solve against a question that is not in the universe.
 function markSolved(ex){
   const topic = APP.lessonData?.topic;
   if(!topic || !ex) return '';
-  if(_exFlagState(ex)) return '';           // flagged → out of the coverage universe
+  // v71_l: was `_exFlagState(ex)` — userFlag ONLY, a third spelling of a rule the play filter and
+  // the denominator each spelled differently again. All three now share _itemWithheld.
+  if(_itemWithheld(_exFlagTarget(ex))) return '';   // withheld → out of the coverage universe
   const id = qid(ex);
   if(!id) return '';
   const m = _solvedMap(topic);
@@ -12437,9 +12656,9 @@ function _lessonQidUniverse(lessonIdx){
     catch(_) { exs = []; }
     const before = U.size;
     for(const ex of exs){
-      // Exclude flagged source items from the denominator (matches markSolved).
-      const src = _resolveExItem(ex, L);
-      if(src && (src.userFlag || src.qc || src.userDelete)) continue;
+      // Exclude withheld source items from the denominator (matches markSolved and the play
+      // filter — all three go through _itemWithheld so they cannot drift apart again).
+      if(_itemWithheld(_resolveExItem(ex, L))) continue;
       const id = qid(ex, L.id);
       if(id) U.add(id);
     }
@@ -12832,12 +13051,30 @@ function _alignChars(typed, correct) {
 }
 // Two aligned rows: what was typed, and what was wanted. Placeholders keep the columns lined up,
 // which is the whole point of showing them one above the other.
+// v71_o: more than this many wrong characters and the per-letter diff stops being legible — see
+// typedDiffHtml. Three is the reported comfort limit: a typo or two reads fine, a mangled word does
+// not.
+const TYPED_DIFF_MAX_WRONG = 3;
 function typedDiffHtml(typed, correct) {
   const t0 = String(typed == null ? '' : typed);
   const c0 = stripFuri(String(correct == null ? '' : correct));
   if (!t0.trim() || !c0.trim()) return '';        // nothing typed: the plain answer is clearer
   const ops = _alignChars(t0, c0);
   if (!ops) return '';
+  // v71_o: a letter-by-letter comparison only helps when the answer was NEARLY right — it shows a
+  // missed umlaut or a swapped pair at a glance. Past a few wrong characters the two rows become a
+  // scatter of red boxes that is harder to read than the answer itself, so beyond the threshold we
+  // fall back to the plainest possible statement: the wrong word struck through, the right one next
+  // to it. Counted in EDIT operations (a substitution is one wrong letter, not two).
+  const wrong = ops.filter(o => o.op !== 'eq').length;
+  if (wrong > TYPED_DIFF_MAX_WRONG) {
+    return `<div class="typed-diff typed-diff-whole">`
+      + `<div class="td-row"><span class="td-lbl">${t('check.you_typed')}</span>`
+      + `<span class="td-whole bad" dir="auto"><s>${escHtml(t0.trim())}</s></span></div>`
+      + `<div class="td-row"><span class="td-lbl">${t('check.correct_answer')}</span>`
+      + `<span class="td-whole want" dir="auto"><strong>${escHtml(c0)}</strong></span></div>`
+      + `</div>`;
+  }
   const cell = (ch, cls) => ch === ''
     ? `<span class="dc gap"></span>`
     : `<span class="dc ${cls}">${ch === ' ' ? '&nbsp;' : escHtml(ch)}</span>`;
@@ -12941,7 +13178,19 @@ function check(){
     const _typedIn = (ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation')
       && !_glyphOrderActive(ex) ? (document.getElementById('type-in')?.value || '') : '';
     const _diff = _typedIn ? typedDiffHtml(_typedIn, ex.correct) : '';
-    const _wrongBody = _diff || `${t('check.correct_answer')} <strong>${_wrongCorrect}</strong>`;
+    // v71_o: a comprehension question reveals WHY, not just what. The generator already writes a
+    // one-sentence reason naming the part of the story that settles it, and that sentence is the
+    // whole point of the exercise — repeating the correct option teaches nothing the learner cannot
+    // already see highlighted above. Falls back to the option text when the model omitted a reason.
+    const _why = (ex.type==='comprehension_mcq' && ex.why) ? String(ex.why).trim() : '';
+    // v71_q: a synonym reveal is a LIST of words with glosses; prefixing it with "Correct answer:"
+    // and wrapping it in <strong> fought its own layout, and the label said nothing the list did
+    // not. Shown bare, like the comprehension reason.
+    const _wrongBody = _why
+      ? `<strong>${escHtml(_why)}</strong>`
+      : ex.type==='syn_select'
+      ? _wrongCorrect
+      : (_diff || `${t('check.correct_answer')} <strong>${_wrongCorrect}</strong>`);
     fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${_wrongBody}${(ex.type==='word_form'&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
     const speakBad = ex.type==='type_conjugation' ? ex.pronoun+' '+stripFuri(ex.correct)
       : ex.type==='type_plural' ? stripFuri(ex.correct)
@@ -12952,7 +13201,10 @@ function check(){
       : (ex.type==='math_calc'||ex.type==='math_order') ? (Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
       : ex.type==='syn_select' ? stripFuri(ex.correct.join(', '))
       : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+stripFuri(ex.target) : stripFuri(ex.target));
-    if(speakBad) speak(speakBad,0.75);
+    // v71_o: for a comprehension question the useful thing to hear is the REASON, in the learner's
+    // own language — not the target-language option text, which the story already contains.
+    if(_why) speakLang(_why, (APP.lessonData?.srcLang || APP.srcLang));
+    else if(speakBad) speak(speakBad,0.75);
     const _corrStr = Array.isArray(ex.correct) ? ex.correct.join(', ') : ex.correct;
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('bad'); if(b.textContent.trim()===stripFuri(_corrStr))b.classList.add('ok'); });
     if(ex.type==='syn_select') document.querySelectorAll('.syn-tile').forEach(b=>{ const w=(b.dataset.w||'').toLowerCase(); if(ex.correct.some(c=>c.toLowerCase()===w)) b.classList.add('ok'); else if(b.classList.contains('sel')) b.classList.add('bad'); });
@@ -13043,7 +13295,12 @@ function showComplete(review){
   // Accumulate this lesson's vocabulary into the cross-lesson learned ledger (foundation for
   // user-specific generation / milestones — see roadmap). Wrong-answered words are flagged for
   // future focus. Guarded so a failure here never breaks the result card.
-  try { recordLearnedFromLesson(lesson, C._wrongTargets); } catch(_) {}
+  // v71_n: NOT on a review render. This card is re-rendered every time a finished chapter is opened
+  // — and once more after every drill, since v71_h routes a finished drill through showComplete(true)
+  // — so `seen` was counting how often the card had been LOOKED AT, not how often the word had been
+  // practised. Three views of a completed chapter read as three exposures. A review render is by
+  // definition not a play: nothing was answered, so nothing is recorded.
+  if(!C._review) { try { recordLearnedFromLesson(lesson, C._wrongTargets); } catch(_) {} }
   // v60.8: teacher-set %-solved threshold gate. Computed FIRST — the Next wiring below, the card
   // title, the progress hint, and the drill offer all consume it. (v68.1: this block lived BELOW
   // the v66.1 Next wiring that reads `_belowThreshold` — a temporal-dead-zone ReferenceError, so
@@ -13208,6 +13465,22 @@ function showComplete(review){
                                : (APP.lessonData?.topic || t('lesson.set'));
           _ht.title = sl ? t('complete.back_story') : t('complete.back_home');
         }
+        // v71_m: the storyline progress bar, computed by the SAME helper the storyline page uses,
+        // so the two pages can never disagree about how far along the story is. A solo chapter has
+        // no storyline to be a fraction of — hide the bar rather than show a meaningless 0%.
+        const _pb = document.getElementById('comp-hdr-prog-bar');
+        const _px = document.getElementById('comp-hdr-prog-txt');
+        const _wrap = _pb && _pb.parentElement;
+        if (sl && _slCtx) {
+          const _st = _slProgressStats(_slCtx.sl.chapters || [], _slCtx.byId || {});
+          if (_pb) _pb.style.width = _st.pct + '%';
+          if (_px) _px.textContent = _slProgressLabel(_st);
+          if (_wrap) _wrap.style.display = '';
+          if (_px) _px.style.display = '';
+        } else {
+          if (_wrap) _wrap.style.display = 'none';
+          if (_px) _px.style.display = 'none';
+        }
       }
     }
   } catch(_) {}
@@ -13243,8 +13516,12 @@ function showComplete(review){
     if (lesson._drill) { _progEl.innerHTML = ''; _progEl.style.display = 'none'; }
     else {
       _progEl.style.display = '';
-      let _ph = _compProgressHtml(topicKey, _slCtx);
-      if (_belowThreshold) _ph += `<div style="margin-top:8px;font-size:12px;font-weight:800;color:#c0392b;text-align:center">${escHtml(t('complete.below_threshold').replace('{pct}', _threshPct))}</div>`;
+      // v71_m: the pass mark is DRAWN on the %-solved bar instead of stated in a sentence below it.
+      // Shown whenever a mark applies, not only when the learner is under it — knowing where the
+      // line is before you cross it is the useful part; a message that appears only on failure
+      // teaches the rule at the moment it is least welcome.
+      const _showMark = !_teacher && !lesson._drill && _threshPct > 0 && _threshPct < 100;
+      let _ph = _compProgressHtml(topicKey, _slCtx, { skipStoryRow: true, markPct: _showMark ? _threshPct : null });
       _progEl.innerHTML = _ph;
     }
   }
@@ -13331,6 +13608,30 @@ function showComplete(review){
 
 // v60.6: render the completion-card story in the currently-selected language (target | source),
 // and show/hide + label the toggle depending on whether a translation exists.
+// v71_m: the target-language words this learner has SOLVED in this chapter, longest first (so a
+// multi-word phrase wins over a word inside it when highlighting). Solved means the coverage store
+// holds a qid for a question about that word — not merely that the lesson was opened, which is why
+// this reads the solved map rather than `completed`.
+function _solvedTargetWords(d){
+  if (!d || !d.topic) return [];
+  const solvedMap = _solvedMap(d.topic) || {};
+  const out = new Set();
+  (d.lessons || []).forEach(L => {
+    if (!L || L.id == null) return;
+    (L.vocab || []).forEach(v => {
+      if (!v || !v.target) return;
+      if (_itemWithheld(v)) return;                  // withheld items are not part of the record
+      // Any question kind about this word counts: the learner demonstrated it once.
+      const hit = Object.keys(solvedMap).some(id => id.startsWith(L.id + ':') && qid({ type: 'mcq_source_target', target: v.target, source: v.source }, L.id) === id)
+               || Object.keys(solvedMap).some(id => {
+                    const parts = String(id).split(':');
+                    return parts[0] === String(L.id) && _qidHash(_qidCanonical({ type: parts[1], target: v.target, source: v.source })) === parts[2];
+                  });
+      if (hit) out.add(v.target);
+    });
+  });
+  return [...out].sort((a, b) => b.length - a.length);
+}
 function _renderCompStory(allDone){
   const d = APP.lessonData || {};
   const _story = d.story || '';
@@ -13338,7 +13639,23 @@ function _renderCompStory(allDone){
   const showingSource = APP._compStoryLang === 'source' && _xlate;
   const full = showingSource ? _xlate : _story;
   const _el = document.getElementById('comp-story-text');
-  if (_el) _el.textContent = allDone ? full : (full.slice(0, 200) + (full.length > 200 ? '…' : ''));
+  if (_el) {
+    const shown = allDone ? full : (full.slice(0, 200) + (full.length > 200 ? '…' : ''));
+    // v71_m: highlight the words this learner has actually SOLVED, the same yellow the storyline
+    // and lesson-set pages use — the story stops being a wall of text and becomes a record of what
+    // they can now read. Only for the target-language story: the words are target-language, so
+    // highlighting them inside a source-language translation would match nothing (or, worse,
+    // coincidental substrings). Falls back to plain text if anything goes wrong; a story that
+    // renders unhighlighted is fine, a story that fails to render is not.
+    let html = null;
+    if (!showingSource) {
+      try {
+        const solved = _solvedTargetWords(d);
+        if (solved.length) html = _highlightVocabHtml(furiHtml(shown), solved);
+      } catch(_) { html = null; }
+    }
+    if (html != null) _el.innerHTML = html; else _el.textContent = shown;
+  }
   const _btn = document.getElementById('comp-story-xlate');
   if (_btn){
     if (_xlate){
@@ -13708,15 +14025,53 @@ function _renderCompStoryboard(topicKey, slCtx){
 // v60: the progress summary shown on every completion card — the learner's position along the
 // storyline (chapters done / total) and within the current chapter (lessons done / total). Pure
 // string builder off APP.progress + the list projection, so it works in the static build too.
-function _compProgressHtml(topicKey, slCtx){
-  const rowsHtml = (label, done, total, pct) => {
+// v71_m: storyline progress (lesson tally + score), extracted from _renderStorylineScreen so the
+// result card's header can show the SAME bar as the storyline page. Two copies of this arithmetic
+// would drift the moment either page changed what "done" means — and the result card is supposed to
+// read as another view of the storyline page, so a differing number there is the worst kind of bug:
+// plausible, and wrong.
+function _slProgressStats(chapterIds, byId){
+  const completed = APP.progress?.completed || {};
+  let totalSets = 0, doneSets = 0, totalQ = 0, correctQ = 0, doneChapters = 0;
+  (chapterIds || []).forEach(cid => {
+    const s = byId && byId[cid];
+    if (!s) return;
+    (s.lessons || []).forEach(ls => {
+      totalSets++;
+      const prog = completed[s.topic]?.[ls.id];
+      if (prog) { doneSets++; if (typeof prog === 'object'){ correctQ += prog.correct||0; totalQ += prog.total||0; } }
+    });
+    // Chapter-level completion uses the shared coverage-aware rule, not the lesson tally (v69_l).
+    try { if (chapterComplete(s)) doneChapters++; } catch(_) {}
+  });
+  return {
+    totalSets, doneSets, doneChapters,
+    pct: totalSets > 0 ? Math.round(100 * doneSets / totalSets) : 0,
+    scorePct: totalQ > 0 ? Math.round(100 * correctQ / totalQ) : null,
+  };
+}
+// The one-line summary under the bar, so both pages label the same number the same way.
+function _slProgressLabel(st){
+  return st.doneSets + '/' + st.totalSets + (st.scorePct !== null ? ' · ' + st.scorePct + '%' : '');
+}
+
+function _compProgressHtml(topicKey, slCtx, opts){
+  // v71_m: `markPct` draws the pass mark ON the bar instead of spelling it out underneath. The
+  // sentence it replaces ("You must solve 80% of this chapter…") stated a number the learner then
+  // had to relate back to a bar they were already looking at; a line on the bar says the same thing
+  // in the place the eye already is. Bar keeps overflow visible so the mark can sit slightly proud.
+  const rowsHtml = (label, done, total, pct, markPct) => {
     const p = total>0 ? Math.round(100*done/total) : 0;
+    const hasMark = Number.isFinite(markPct) && markPct > 0 && markPct <= 100;
+    // Red until the mark is reached, green once it is: the bar itself carries pass/fail.
+    const fill = hasMark && p < markPct ? 'var(--red)' : 'var(--green)';
+    const mark = hasMark ? `<div title="${escAttr(String(Math.round(markPct)) + '%')}" style="position:absolute;left:${markPct}%;top:-2px;width:2px;height:12px;background:var(--text);opacity:.75;border-radius:1px"></div>` : '';
     return `<div style="margin:6px 0">
       <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:var(--gray-dark);margin-bottom:3px">
         <span>${escHtml(label)}</span><span>${done}/${total}</span>
       </div>
-      <div style="height:8px;background:var(--gray-light);border-radius:4px;overflow:hidden">
-        <div style="height:100%;width:${p}%;background:var(--green);border-radius:4px"></div>
+      <div style="position:relative;height:8px;background:var(--gray-light);border-radius:4px">
+        <div style="height:100%;width:${p}%;background:${fill};border-radius:4px"></div>${mark}
       </div>
     </div>`;
   };
@@ -13780,7 +14135,11 @@ function _compProgressHtml(topicKey, slCtx){
         if (doneKeys >= Math.max(1, cnt - 1)) doneCh++;
       } else if (doneKeys >= cnt) doneCh++;
     }
-    html = rowsHtml(t('complete.story_progress') + (sl.title?(' · '+sl.title):''), doneCh, total) + html;
+    // v71_m: the storyline row is NOT emitted here any more — the header bar above the storyboard
+    // carries it, and the card was showing the same fraction twice. `doneCh`/`total` are still
+    // computed because the loop above is where chapter completion for OTHER chapters is resolved,
+    // and callers outside the card still ask for this html.
+    if (!opts || !opts.skipStoryRow) html = rowsHtml(t('complete.story_progress') + (sl.title?(' · '+sl.title):''), doneCh, total) + html;
   }
   // v60.8: %-solved bar — the CORRECT-answer coverage (solved questions ÷ topic universe), the
   // real mastery signal, distinct from the lesson-count "chapter" bar above. Shown for the current
@@ -13788,7 +14147,9 @@ function _compProgressHtml(topicKey, slCtx){
   try {
     const cov = topicCoverage();
     if (cov && cov.total > 0){
-      html += rowsHtml(t('complete.solved'), cov.solved, cov.total);
+      // The mark belongs on THIS bar: %-solved is what the threshold is measured against.
+      const _mark = (opts && Number.isFinite(opts.markPct)) ? opts.markPct : null;
+      html += rowsHtml(t('complete.solved'), cov.solved, cov.total, null, _mark);
     }
   } catch(_) {}
   return html;
@@ -14355,6 +14716,29 @@ function _unlockTts() {
 document.addEventListener('touchend', _unlockTts, {once: true, passive: true});
 document.addEventListener('click',    _unlockTts, {once: true, passive: true});
 
+// v71_o: speak in a NAMED language rather than the lesson's target language. Needed for the
+// comprehension "why", which is written in the learner's own language — reading a German sentence
+// with an Italian voice is worse than not reading it at all. Same mute/dialect/unlock rules as
+// speak(); only the voice selection differs.
+// (_doSpeakLang takes no rate — it picks a voice for the language and speaks at its default. The
+// `rate` argument is accepted only for the no-langCode fallback to speak(), which does honour it.)
+function speakLang(text, langCode, rate){
+  if(APP.muted || !window.speechSynthesis || !text) return;
+  if(_lessonIsDialect()) return;
+  if(!langCode) return speak(text, rate);
+  const proceed = () => {
+    if(!_ttsUnlocked){ _ttsPendingAfterUnlock = { text, langCode }; return; }
+    _doSpeakLang(text, langCode);
+  };
+  const voices = speechSynthesis.getVoices();
+  if(voices.length > 0) proceed();
+  else {
+    speechSynthesis.addEventListener('voiceschanged', function h(){
+      speechSynthesis.removeEventListener('voiceschanged', h); proceed();
+    }, { once: true });
+    setTimeout(() => { if(!_ttsUnlocked) proceed(); }, 1000);
+  }
+}
 function speak(text, rate){
   if(APP.muted||!window.speechSynthesis) return;
   // Dialect content has no authentic spoken voice — never read it aloud (treat as muted).

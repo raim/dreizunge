@@ -15,6 +15,7 @@ assert.ok(lit.includes('const EX_RENDERERS = {'), 'EX_RENDERERS literal not foun
 
 // type -> the renderer name it must dispatch to (the contract this registry encodes).
 const expected = {
+  comprehension_mcq: 'tComprehension',   // v71_l: story-comprehension MCQ
   mcq_target_source: 'tMcqIE',
   mcq_source_target: 'tMcqEI',
   listen_mcq:        'tLMcq',

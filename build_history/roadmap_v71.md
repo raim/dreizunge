@@ -5,6 +5,44 @@
 > from a true baseline rather than a repeatedly-patched one. `roadmap_v70.md` is now a **closed
 > archive** — everything still open has been carried here.
 >
+> **`v71_q` shipped** (session 16, FINAL of that thread): tutor reasoning ON by default (story and
+> lessons stay off — reasoning starves structured JSON); a CPU-threads setting in the model menu
+> (absent from the request when unset, rather than a guessed number); synonym reveal shown bare; and
+> provenance relabelled `User:` / `Source` with 58 stale translations dropped for refill.
+> Suite **154**. See `v71_session16_notes.md` — it carries the handover list.
+>
+> **`v71_p` shipped** (session 15): result card matched to the storyline page's column (it was 60px
+> narrower, which is why its storyboard rendered smaller); chapter-title post-pass retries up to 3×
+> on EMPTY titles (it parsed fine — the titles were blank); and the two-button arc chooser replaced
+> by a shared lesson-type tick-list, with "Re-create all lessons" becoming **"Add lessons"** — it no
+> longer hides what is already there, and it covers chapter 1. Suite **153**.
+> See `v71_session15_notes.md`.
+>
+> **`v71_o` shipped** (session 14): comprehension follow-ups — quiz now in the LEARNER's language,
+> full story chain up to the current chapter, the generator's "why" shown and read aloud instead of
+> restating the answer. Plus the JSON-parse fix (the hand-rolled extractor never stripped `<think>`,
+> which broke FIVE generators on reasoning models) and a whole-word fallback for badly mistyped
+> answers. Suite **152**. See `v71_session14_notes.md`.
+>
+> **`v71_n` shipped** (session 13): drill/ledger correctness — a `v71_h` regression meant a finished
+> drill wrote its outcome AFTER `endDrill()` had swapped the topic back, so mistakes never decayed
+> (the reported "studiare" loop), drill mistakes were never counted, and the real chapter was
+> credited instead. Also: review renders no longer inflate `seen`. Suite **152**.
+> See `v71_session13_notes.md`.
+>
+> **`v71_m` shipped** (session 12): the result-card arc — the card now uses the storyline page's
+> header block and progress bar (shared `_slProgressStats`, no second copy of the arithmetic), rows
+> reordered to header → storyboard → chapter bars → status line → buttons, the pass mark DRAWN on
+> the %-solved bar in place of the below-threshold sentence, and the story shown on white with
+> solved words highlighted yellow. 4 of the arc's 5 TODOs; error-hunt-on-card still open.
+> Suite **151**. See `v71_session12_notes.md`.
+>
+> **`v71_l` shipped** (session 11): QC flags no longer affect the learner — only human decisions
+> (`userFlag`/`userDelete`) withhold an item, via one shared `_itemWithheld` predicate replacing
+> three divergent copies; 450 items restored to coverage denominators across 157 lessons. Plus the
+> new **comprehension** lesson type (🧠 story questions, counted normally, story-gated), and the
+> suite re-greened against the new corpus. Suite **151**. See `v71_session11_notes.md`.
+>
 > **`v71_k` shipped** (session 10): the storyline-result UI arc — result cards show the FULL
 > storyboard framed by chapter state (green = span finished, blue = the chapter just played),
 > the storyline header replaces the "← Back to story" button, and the last chapter of a story
@@ -56,15 +94,15 @@
 
 ## How to start a session (read these, in order)
 1. **This file** — the highest-numbered `build_history/roadmap_v*.md` is always the current one.
-2. The two most recent session-notes files: `build_history/v71_session10_notes.md` (`v71_k`) and
-   `build_history/v71_session9_notes.md` (`v71_j`). Sessions 1–2 cover the cut and `v71_b`.
+2. The two most recent session-notes files: `build_history/v71_session16_notes.md` (`v71_q`) and
+   `build_history/v71_session15_notes.md` (`v71_p`). The `v71_q` notes carry the full handover list. Sessions 1–2 cover the cut and `v71_b`.
 3. Establish the green baseline BEFORE touching anything: `node test/run.js` and
    `node test/check-inline.js` (0 failures on both `index.html` and `docs/index.html`).
    **The runner reports its own total** (added v70): the closing line reads
    `ALL CHECKS PASSED (138 checks)`, and a failing run reads `FAILED <n> of 138: <labels>`.
    **Quote that line — never hand-derive the figure.** A hand-derived count once drifted to 152
    against an actual 133 and sat in two documents unnoticed; that is what the self-report prevents.
-   Currently **150** (146 `test/*.test.js` files + 5 static checks). `--quick` reports **128** in
+   Currently **154** (150 `test/*.test.js` files + 5 static checks). `--quick` reports **128** in
    ~10s, skipping the server-spawning steps — a smaller number there is correct, not a regression.
 
 ---
@@ -202,10 +240,60 @@ tacked onto other work.
 ## 🔭 Open work carried into v71
 
 ### Near-term, concrete
+- **[LATER — design goal, requested session 14] Ask the model to DESIGN a lesson set per chapter**
+  as a deliberate learning arc toward understanding the text, rather than the caller picking a list
+  of formats. The `v71_p` tick-list is the manual version of this; the automatic version would hand
+  the model the chapter and let it choose which lesson types, in which order, build up to
+  comprehension.
+- **[NEXT — book form] Wire the learning-arc selects (`pdf-arc-mode` / `gen-arc-mode`) to the shared
+  picker.** `renderLessonTypeChecks` / `ADD_LESSON_TYPES` are built and shared-ready (`v71_p`); the
+  storyline button already uses them. Needs `arcMode`/`arcTypes` on the book path to become a list.
 - **[✅ DONE in `v71_k`] Storyline-result UI arc.** All three requests shipped. The crop bug hit
   TWO storylines, not the one recorded in the brief (`sl_795546417` as well), and the panel-span
   rule needed grouping by distinct chapter — the obvious per-panel rule inverts on 7 of 22 boards.
-- **[NEXT — i18n] Run the translate pass.** `complete.story_complete` is new (`en` only), 18
+- **[NEXT — i18n] Run the translate pass.** `v71_l` adds four en keys (`lesson.type.comprehension`,
+  `lesson.type.desc.comprehension`, `form.format.comprehension`, `ex.badge.comprehension`), and
+  `el/storyboard.title` needs a decision: real Greek translation, or exempt it as a loanword.
+- **[✅ DONE in `v71_q`] Tutor default = thinking mode ON**, and a **cores/threads setting in the
+  model menu** (`num_thread`, absent from the request when unset rather than a guessed number).
+- **[NEXT — comprehension] Remove the 6,000-char story caps; raise the timeout instead.**
+  Two caps, both added in `v71_o`: `collectChainStory`'s `budget = maxChars || 6000`
+  (server.js ~594) and the single-chapter fallback `MAX_STORY_CHARS` (~3626). Both were introduced
+  as a fix for `Ollama returned empty response`, and they were **the wrong instrument** — the real
+  cause was the token budget being consumed by reasoning before the model could answer, which the
+  same release fixed by raising the base 2,200 → 3,200. Capping the story costs exactly what
+  comprehension questions are best at: callbacks, character motive, what changed since chapter two.
+  The fix: pass a large (or no) `maxChars`, drop the `MAX_STORY_CHARS` fallback, and give the
+  lessons role a longer timeout for this call. Note `collectChainStory` trims from the OLDEST end
+  and always keeps the current chapter whole — that ordering must survive, because it is what stops
+  the chapter the questions are actually about from being cut off.
+  **Do this early and watch a long-chain generation live**: whether it worked is a judgement about
+  the questions the model asks, which no test can make.
+- **[OPEN — cosmetics deferred in `v71_q`, with reasons]**
+  - **Crossword: show the correct word's translation highlighted instead of the empty underline.**
+    Needs a decision first. Clues come from three shapes — vocabulary (`target ← source`), synonyms
+    (`base ← gloss`), and word_forms, where the clue IS a blanked sentence and the "empty underline"
+    lives. A word_forms item stores only the sentence and its choices, **no translation**, so there
+    is nothing to put in the gap. Either restrict this to vocabulary/synonym entries, or give
+    word_forms clues a translation field.
+  - **Global QC: a checkbox menu of what to QC**, including re-checking already-QCed items. Needs a
+    scope picker and changes to how QC jobs batch — the same treatment the lesson-type picker got in
+    `v71_p`, not a quick pass.
+  - **Live mode with teacher mode OFF must hide every editing control**, like static mode does. The
+    learner should be able to continue the story, download, and share a link — nothing else.
+- **[DONE in `v71_o`] Generate one comprehension lesson against a live model.** Shape and wiring are
+  verified; the PROMPT is not. If questions turn out answerable without reading the story, the
+  distractor rules need tightening — that is the one part of `v71_l` no test can reach.
+- **[QUEUE — triaged in session 11, ordered]** ~~result-card arc~~ (COMPLETE — 4/5 shipped in
+  `v71_m`, and the fifth was **dropped by the user in session 14**: error hunt stays a normal
+  lesson) →
+  ~~drill/ledger correctness~~ (done in `v71_n`, except **drill traceability** — the ledger is keyed
+  by word and has no lesson provenance; two options with real costs are written up in
+  `v71_session13_notes.md` and need a decision) (3 TODOs, one root cause: the
+  `wrong` counter never decays, evidenced by `studiare {seen:1,wrong:1}` being the entire it←de
+  drill pool) → error-hunt word alignment (needs a real token diff, fixture in hand) → book
+  generation (3) → tutor (4) → cosmetics (6). Full reasoning in `v71_session11_notes.md`.
+- **[SUPERSEDED] Run the translate pass.** `complete.story_complete` is new (`en` only), 18
   fallbacks were deleted for refill, and nine Latin-script leftovers plus `hi/qc.editor.flag_save`
   (`"-flag"`) need a speaker's call. Full list in `v71_session10_notes.md` §2.
 - **[✅ DONE in `v71_j`] Crossword clue bar jumps.** Fixed `min-height:3.9em`, never hidden, empty

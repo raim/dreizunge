@@ -9,6 +9,7 @@ const path  = require('path');
 const { parseDialectGlossary, buildDialectTopic } = require('./dialect-glossary.js');
 const { callLLM: _rawCallLLM, callLLMStream: _rawCallLLMStream, ping: pingOllama, release: releaseOllamaModel,
         warmup: _warmupLLM, listModels: listOllamaModels, setRequestTimeout, getRequestTimeout,
+        setNumThread, getNumThread,
         stripRaw, extractJSON, extractArray, salvageArray } = require('./llm');
 const { AsyncLocalStorage } = require('async_hooks');
 const { buildExport } = require('./export-lessons');
@@ -176,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v71_k';
+const APP_VERSION  = 'v71_q';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -228,7 +229,12 @@ let OLLAMA_LESSON_FORMAT = _deriveLessonFormat(OLLAMA_LESSON_MODEL);
 // (narrative coherence) and LESSONS (vocabulary/exercise quality). QC and translation are
 // mechanical and stay non-thinking always. When a role's reasoning is ON, its calls (a) pass
 // think:true and (b) get a bumped token budget + timeout so the answer survives the think block.
-const OLLAMA_THINK = { story: false, lessons: false, tutor: false };
+// v71_q: the TUTOR reasons by default. It is the one role that answers open questions about a
+// learner's own sentence rather than filling a template, and reasoning visibly improves what it
+// asks back — with it on, the tutor produced the kind of understanding questions the comprehension
+// lessons aim at. Story and lesson generation stay off: they emit structured JSON on a budget,
+// where reasoning starves the answer (the v60.5 finding, and the v71_o empty-response bug).
+const OLLAMA_THINK = { story: false, lessons: false, tutor: true };
 // Multipliers applied to a call's token budget and timeout when that role is thinking. A think
 // block on a 35B-a3b model routinely runs longer than the answer, so both need real headroom.
 const THINK_TOKEN_MULT = 2.5, THINK_TIMEOUT_MULT = 3;
@@ -256,7 +262,7 @@ function thinkOpts(role, baseTokens) {
 function currentModels() {
   return { story: OLLAMA_MODEL, translation: OLLAMA_TRANSLATION_MODEL,
            lessons: OLLAMA_LESSON_MODEL, qc: OLLAMA_QC_MODEL, tutor: OLLAMA_TUTOR_MODEL,
-           lessonFormat: OLLAMA_LESSON_FORMAT,
+           lessonFormat: OLLAMA_LESSON_FORMAT, numThread: getNumThread(),
            think: { story: OLLAMA_THINK.story, lessons: OLLAMA_THINK.lessons, tutor: OLLAMA_THINK.tutor },
            timeoutMs: getRequestTimeout() };
 }
@@ -575,6 +581,46 @@ function findSavedById(id) {
 // targets from all prior chapters, deduplicated. Returns { words, nouns, verbs }.
 // startRef is the PARENT reference: a tp_ id (preferred) or a topic name
 // (back-compat — resolved once, then traversal is id-based).
+// v71_o: the story so far — every EARLIER chapter's text, oldest first, then the current one.
+// Comprehension questions are about understanding a narrative, and a chapter read in isolation
+// loses exactly what such questions are best at asking: why a character acts, what a callback
+// refers to, what changed since the last chapter. Walks the same `continuedFromId` chain as
+// collectChainVocab (with the same name fallback for un-migrated entries).
+//
+// Bounded, and bounded from the RIGHT end: when the chain exceeds the budget the OLDEST chapters
+// are dropped, never the current one — questions are set on the chapter the learner just read, so
+// that text must survive in full. Returns { text, chapters } so callers can log what was used.
+function collectChainStory(saved, maxChars) {
+  const budget = maxChars || 6000;
+  const out = [];
+  const visited = new Set();
+  let t = saved;
+  // Walk backwards collecting stories, newest first.
+  while (t && !visited.has(t.id)) {
+    visited.add(t.id);
+    const story = String(t.story || '').trim();
+    if (story) out.push({ title: t.topic || '', story });
+    const pid = t.continuedFromId || (t.continuedFrom ? (findSaved(t.continuedFrom)?.id || null) : null);
+    t = pid ? findSavedById(pid) : null;
+  }
+  out.reverse();                                   // oldest first, so the narrative reads forwards
+  if (!out.length) return { text: '', chapters: 0 };
+  // Always keep the current chapter whole; spend what is left on predecessors, newest first.
+  const current = out[out.length - 1];
+  const currentText = current.story.length > budget
+    ? current.story.slice(0, budget).replace(/\s+\S*$/, '') + '…'
+    : current.story;
+  let left = budget - currentText.length;
+  const kept = [];
+  for (let i = out.length - 2; i >= 0; i--) {
+    const block = (out[i].title ? `## ${out[i].title}\n` : '') + out[i].story;
+    if (block.length + 2 > left) break;
+    kept.unshift(block);
+    left -= block.length + 2;
+  }
+  const head = (current.title ? `## ${current.title}\n` : '') + currentText;
+  return { text: [...kept, head].join('\n\n'), chapters: kept.length + 1 };
+}
 function collectChainVocab(startRef) {
   if (!startRef) return { words: [], nouns: [], verbs: [], sentences: [] };
   const words = [], nouns = [], verbs = [], sentences = [];
@@ -2750,6 +2796,32 @@ async function generateChapterMeta(stories, srcLang, lang) {
   const user = fillPrompt(PROMPTS.chapterTitles.user,   { chapterExcerpts, S, n });
   console.log(`\n── Chapter-title post-pass ──────────────────────────`);
   console.log(`  Chapters : ${n}, Lang: ${S}, Model: ${OLLAMA_MODEL}`);
+  // v71_p: up to three attempts. The reported failure printed `Titles   :   |  ` — the response
+  // PARSED as an array of the right length, but every title was an empty string. So a retry that
+  // only catches parse errors would not have retried at all: the acceptance test has to be on the
+  // CONTENT. Anything usable is kept — a partial set still beats falling back to "Chapter 3".
+  const MAX_TITLE_ATTEMPTS = 3;
+  let out = null;
+  for (let attempt = 1; attempt <= MAX_TITLE_ATTEMPTS; attempt++) {
+    let got;
+    try { got = await _generateChapterMetaOnce(sys, user, n); }
+    catch (e) { console.log(`  Attempt ${attempt}/${MAX_TITLE_ATTEMPTS} failed: ${e.message}`); continue; }
+    const named = got.filter(o => o.title).length;
+    if (named === n) { out = got; break; }                       // complete set — done
+    console.log(`  Attempt ${attempt}/${MAX_TITLE_ATTEMPTS}: ${named}/${n} titles came back named`);
+    // Keep the best partial seen so far, in case every attempt is incomplete.
+    if (named && (!out || named > out.filter(o => o.title).length)) out = got;
+  }
+  if (!out) throw new Error(`Chapter-title post-pass: no usable titles after ${MAX_TITLE_ATTEMPTS} attempts`);
+  console.log(`  Titles   : ${out.map(o => (o.emoji||'') + ' ' + (o.title||'—')).join(' | ').slice(0,160)}`);
+  console.log('────────────────────────────────────────────────────\n');
+  return out;
+}
+
+// One attempt at the chapter-title call: request, parse, normalise. Split out of
+// generateChapterMeta (v71_p) so the retry loop above has something to retry — the parsing ladder
+// below is unchanged, only its position is.
+async function _generateChapterMetaOnce(sys, user, n) {
   const result = await _callLLM(OLLAMA_MODEL, sys, user, 60 * n + 120, { think: false });   // v65.1: short structured output — never reason
   const raw = result.text;
   let arr;
@@ -2772,8 +2844,6 @@ async function generateChapterMeta(stories, srcLang, lang) {
     }
   }
   if (!Array.isArray(arr)) throw new Error('Expected a JSON array of {title,emoji}');
-  console.log(`  Titles   : ${arr.map(o => (o&&(o.emoji||o.icon)||'')+' '+(o&&(o.title||o.t)||'')).join(' | ').slice(0,160)}`);
-  console.log('────────────────────────────────────────────────────\n');
   return arr.map(o => ({
     title: ((o && (o.title || o.t)) || '').toString().trim().slice(0, 80),
     emoji: ((o && (o.emoji || o.icon || o.e)) || '📖').toString().slice(0, 8),
@@ -3269,9 +3339,8 @@ async function generateGrammar(topic, lang, srcLang, difficulty, jobId, opts) {
     let parsed;
     try { parsed = JSON.parse(cleaned); }
     catch(e) {
-      const m = cleaned.match(/\{[\s\S]*\}/);
-      if (!m) { lastError = 'Could not parse JSON: ' + cleaned.slice(0, 60); continue; }
-      try { parsed = JSON.parse(m[0]); } catch(e2) { lastError = 'JSON extract failed'; continue; }
+      try { parsed = extractJSON(raw); }        // v71_o: strips <think> before finding the JSON
+      catch(e2) { lastError = 'JSON extract failed: ' + stripRaw(raw).slice(0, 60); continue; }
     }
     if (!Array.isArray(parsed.grammar) || parsed.grammar.length === 0) {
       lastError = 'No grammar items in response'; continue;
@@ -3392,9 +3461,8 @@ async function generateWordForms(topic, lang, srcLang, difficulty, jobId, opts) 
     let parsed;
     try { parsed = JSON.parse(cleaned); }
     catch(e) {
-      const m = cleaned.match(/\{[\s\S]*\}/);
-      if (!m) { lastError = 'Could not parse JSON: ' + cleaned.slice(0, 60); continue; }
-      try { parsed = JSON.parse(m[0]); } catch(e2) { lastError = 'JSON extract failed'; continue; }
+      try { parsed = extractJSON(raw); }        // v71_o: strips <think> before finding the JSON
+      catch(e2) { lastError = 'JSON extract failed: ' + stripRaw(raw).slice(0, 60); continue; }
     }
     if (!Array.isArray(parsed.items) || parsed.items.length === 0) { lastError = 'No items in response'; continue; }
     const { valid, rejected } = validateWordFormsItems(parsed.items, story);
@@ -3488,9 +3556,8 @@ async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
     let parsed;
     try { parsed = JSON.parse(cleaned); }
     catch(e) {
-      const m = cleaned.match(/\{[\s\S]*\}/);
-      if (!m) { lastError = 'Could not parse JSON'; continue; }
-      try { parsed = JSON.parse(m[0]); } catch(e2) { lastError = 'JSON extract failed'; continue; }
+      try { parsed = extractJSON(raw); }        // v71_o: strips <think> before finding the JSON
+      catch(e2) { lastError = 'JSON extract failed: ' + stripRaw(raw).slice(0, 60); continue; }
     }
     if (!Array.isArray(parsed.words) || !parsed.words.length) { lastError = 'No words in response'; continue; }
     // Context-sentence pool: current story always; for non-extend modes also pull
@@ -3532,6 +3599,128 @@ async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
   throw new Error(`Synonyms generation failed after ${MAX_ATTEMPTS} attempts: ${lastError}`);
 }
 
+// ── Generate reading-comprehension lesson (v71_l) ─────────────────────────────
+// Story-based by design: the questions test whether the reader understood the TEXT, so there is
+// nothing to generate without one. Callers gate the option on `topic.story`; this throws rather
+// than inventing questions if it is ever reached without a story.
+async function generateComprehension(topic, lang, srcLang, difficulty, jobId, opts) {
+  const _t0 = Date.now();
+  opts = opts || {};
+  const { story, userDialect, chainStory } = opts;
+  const L = langName(lang), S = langName(srcLang || 'en');
+  // v71_o: prefer the whole chain (earlier chapters + this one). collectChainStory already keeps
+  // the current chapter whole and trims from the oldest end, so this text is safe to use as-is.
+  const storyText = String(chainStory || story || '').trim();
+  if (!storyText) throw new Error('Comprehension lessons need a story — none on this chapter');
+  // Question count scales with the story: a 3-paragraph chapter cannot honestly support 10
+  // distinct comprehension questions, and padding produces the trivia the prompt forbids.
+  const words = storyText.split(/\s+/).filter(Boolean).length;
+  const n = Math.max(3, Math.min(8, Math.round(words / 90)));
+  // v71_o: a very long chapter plus a reasoning model was returning an EMPTY response — the budget
+  // went entirely on reading and thinking, leaving nothing for the answer. Comprehension questions
+  // do not need the last paragraph of a 3,000-word chapter to be good, so the prompt gets a
+  // bounded excerpt. (Reported: "Ollama returned empty response" with thinking on.)
+  // A chain assembled by collectChainStory is already inside budget and trimmed from the correct
+  // (oldest) end; re-trimming here would cut the CURRENT chapter off the back — the one the
+  // questions are actually about. Only an unbounded single story needs capping.
+  const MAX_STORY_CHARS = 6000;
+  const storyForPrompt = (!chainStory && storyText.length > MAX_STORY_CHARS)
+    ? storyText.slice(0, MAX_STORY_CHARS).replace(/\s+\S*$/, '') + '…'
+    : storyText;
+  const P = PROMPTS && PROMPTS.comprehension;
+  let sys, userMsg;
+  if (P && P.system) {
+    sys = fillPrompt(P.system, { L, S, diff: difficultyLabel(difficulty || 2) });
+    if (userDialect && P.dialectNote) sys += fillPrompt(P.dialectNote, { dialect: userDialect });
+    userMsg = fillPrompt(P.user, { story: storyForPrompt, L, S, n });
+  } else {
+    sys = `You write reading-comprehension questions in ${L} for a learner who speaks ${S}. Test understanding of the text — events, motives, implications — never vocabulary or grammar. Output strict JSON only.`;
+    userMsg = `Story:\n"""\n${storyForPrompt}\n"""\nWrite ${n} questions.\nReturn ONLY JSON: {"title":"...","desc":"...","icon":"🧠","questions":[{"q":"<${L}>","choices":["<${L}>","<${L}>","<${L}>","<${L}>"],"correctIndex":0,"why":"<${S}>"}]}`;
+  }
+  const MAX_ATTEMPTS = 3;
+  let tp = 0, tc = 0, lastError = '';
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Comprehension lesson attempt ${attempt}/${MAX_ATTEMPTS}…`);
+    console.log(`    Comprehension attempt ${attempt}…`);
+    // 3200 base (was 2200): callLLMLesson multiplies this when lessons-reasoning is ON, and the
+    // old base left a thinking model too little room to emit the JSON after reasoning.
+    const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 3200);
+    tp += promptTokens; tc += completionTokens;
+    // v71_o (reported: "JSON extract failed" on all three attempts): parse through the shared
+    // helpers. The hand-rolled version here stripped ``` fences but NOT the <think> block, so on a
+    // reasoning model the first `{` it found was usually inside the model's own reasoning and every
+    // attempt failed. stripRaw/extractJSON remove <think> first — which is exactly why they exist.
+    let parsed = null;
+    try { parsed = JSON.parse(stripRaw(raw)); }
+    catch(_) {
+      try { parsed = extractJSON(raw); }                       // first { … last }, think stripped
+      catch(_2) {
+        // Last resort: the model wrote the questions array but not the wrapper object.
+        try { const arr = salvageArray(raw); if (Array.isArray(arr)) parsed = { questions: arr }; }
+        catch(_3) { parsed = null; }
+      }
+    }
+    if (!parsed) {
+      lastError = 'Could not parse JSON';
+      console.log(`      ✗ unparseable (${raw.length} chars). Starts: ${JSON.stringify(stripRaw(raw).slice(0, 120))}`);
+      continue;
+    }
+    // A model that reasons often answers with the bare array, or nests it one level down.
+    if (!Array.isArray(parsed.questions)) {
+      if (Array.isArray(parsed)) parsed = { questions: parsed };
+      else if (Array.isArray(parsed.items)) parsed.questions = parsed.items;
+      else if (Array.isArray(parsed.quiz)) parsed.questions = parsed.quiz;
+    }
+    if (!Array.isArray(parsed.questions) || !parsed.questions.length) {
+      lastError = 'No questions in response';
+      console.log(`      ✗ parsed, but no questions array. Keys: ${Object.keys(parsed).join(',') || '(none)'}`);
+      continue;
+    }
+    const questions = [];
+    const seen = new Set();
+    for (const entry of parsed.questions) {
+      const q = ((entry && (entry.q ?? entry.question ?? entry.prompt)) || '').toString().trim();
+      if (!q) continue;
+      const key = q.toLowerCase();
+      if (seen.has(key)) continue;                       // the same question twice is not two questions
+      // Models label the option list `choices`, `options` or `answers` about equally often; the
+      // prompt asks for one and normalising the other two costs nothing.
+      const rawChoices = Array.isArray(entry.choices) ? entry.choices
+                       : Array.isArray(entry.options) ? entry.options
+                       : Array.isArray(entry.answers) ? entry.answers : [];
+      const choices = rawChoices
+        .map(c => String(c == null ? '' : c).trim()).filter(Boolean);
+      // Dedupe options case-insensitively: a repeated option means two "correct" answers on screen.
+      const uniq = [], seenC = new Set();
+      for (const c of choices) { const k = c.toLowerCase(); if (seenC.has(k)) continue; seenC.add(k); uniq.push(c); }
+      if (uniq.length < 3) continue;                     // a 2-option "quiz" is a coin flip
+      let ci = Number.isInteger(entry.correctIndex) ? entry.correctIndex : -1;
+      // Models sometimes answer with the TEXT rather than the index; accept both.
+      if ((ci < 0 || ci >= uniq.length) && entry.answer != null) {
+        ci = uniq.findIndex(c => c.toLowerCase() === String(entry.answer).trim().toLowerCase());
+      }
+      if (ci < 0 || ci >= uniq.length) continue;         // unanswerable — drop rather than guess
+      seen.add(key);
+      questions.push({ q, choices: uniq.slice(0, 4), correctIndex: Math.min(ci, 3),
+                       why: ((entry.why ?? '') + '').trim() });
+    }
+    if (questions.length < 2) { lastError = `Only ${questions.length} usable question(s)`; continue; }
+    console.log(`    Comprehension: ${questions.length}/${n} questions kept`);
+    return {
+      lesson: {
+        id: 9, type: 'comprehension',
+        title: parsed.title || 'Understanding the story',
+        desc:  parsed.desc  || 'Questions about what you read',
+        icon:  parsed.icon  || '🧠',
+        questions,
+        _genMeta: buildGenMeta({ type: 'comprehension', model: OLLAMA_LESSON_MODEL, t0: _t0, attempts: attempt, valid: questions.length, promptTokens: tp, completionTokens: tc }),
+      },
+      tokens: { promptTokens: tp, completionTokens: tc },
+    };
+  }
+  throw new Error(`Comprehension generation failed after ${MAX_ATTEMPTS} attempts: ${lastError}`);
+}
+
 // ── Generate conjugation lesson ───────────────────────────────────────────────
 async function generateConjugation(topic, lang, srcLang, difficulty, jobId, opts) {
   const _t0 = Date.now();
@@ -3556,9 +3745,9 @@ async function generateConjugation(topic, lang, srcLang, difficulty, jobId, opts
   let parsed;
   try { parsed = JSON.parse(cleaned); }
   catch(e) {
-    const m = cleaned.match(/\{[\s\S]*\}/);
-    if (!m) throw new Error('Conjugation: could not parse JSON: ' + cleaned.slice(0, 80));
-    parsed = JSON.parse(m[0]);
+    // v71_o: extractJSON strips <think> first — see the note on the comprehension generator.
+    try { parsed = extractJSON(raw); }
+    catch(e2) { throw new Error('Conjugation: could not parse JSON: ' + stripRaw(raw).slice(0, 80)); }
   }
   if (!Array.isArray(parsed.conjugations) || parsed.conjugations.length === 0)
     throw new Error('Conjugation: no conjugations in response');
@@ -4040,7 +4229,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       : { words: [], nouns: [], verbs: [] };
   const chainOpts = { userDialect, storyStyle, chainVocab, vocabMode: _vocabMode, story };
 
-  if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math' || lessonFormat === 'synonyms' || lessonFormat === 'word_forms') {
+  if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math' || lessonFormat === 'synonyms' || lessonFormat === 'word_forms' || lessonFormat === 'comprehension') {
     const genFn   = lessonFormat === 'math'
       ? (mathInstruction
           ? () => generateMathLLM(lang, srcLang, difficulty, mathInstruction, jobId)
@@ -4049,12 +4238,14 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
                   : lessonFormat === 'grammar'      ? () => generateGrammar(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   : lessonFormat === 'synonyms'     ? () => generateSynonyms(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   : lessonFormat === 'word_forms'   ? () => generateWordForms(topic, lang, srcLang, difficulty, jobId, chainOpts)
+                  : lessonFormat === 'comprehension' ? () => generateComprehension(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   :                                   () => generateConjugation(topic, lang, srcLang, difficulty, jobId, chainOpts);
     const label   = lessonFormat === 'math'        ? 'Math'
                   : lessonFormat === 'error_hunt'  ? 'Error-hunt'
                   : lessonFormat === 'grammar'      ? 'Grammar'
                   : lessonFormat === 'synonyms'     ? 'Synonyms'
                   : lessonFormat === 'word_forms'   ? 'Word-forms'
+                  : lessonFormat === 'comprehension' ? 'Comprehension'
                   :                                   'Conjugation';
     try {
       const { lesson, tokens } = await genFn();
@@ -4152,6 +4343,7 @@ const ADD_LESSON_GENERATORS = {
   grammar:     (c) => generateGrammar(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
   conjugation: (c) => generateConjugation(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
   synonyms:    (c) => generateSynonyms(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
+  comprehension: (c) => generateComprehension(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
   word_forms:  (c) => generateWordForms(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
   math:        (c) => c.addMathInstr
     ? generateMathLLM(c.lang, c.srcLang, c.diff, c.addMathInstr, c.jobId)
@@ -4683,8 +4875,20 @@ async function _runRecreateJob(jobId, startId, opts) {
   const all = getStorylines();
   const sl = all.find(s => Array.isArray(s.chapters) && s.chapters.includes(startId));
   const chapterIds = sl ? sl.chapters.slice() : [startId];   // lone chapter → just it
+  // v71_p: this endpoint is now "ADD lessons", not "re-create". `addTypes` is the user's tick-list
+  // from the shared lesson-type picker and is applied to EVERY chapter including the first — the
+  // old flow could only reinforce from chapter 2 on, because it assumed chapter 1 had nothing to
+  // review. Selecting types explicitly removes that assumption: if you ask for word_forms on a
+  // storyline, you mean all of it.
+  const addTypes = Array.isArray(opts && opts.addTypes) && opts.addTypes.length
+    ? opts.addTypes.filter(t => ADD_LESSON_GENERATORS[t] || t === 'standard' || t === 'review')
+    : null;
+  // Legacy two-mode call (arcMode) still honoured for older clients.
   const arcMode = (opts && opts.arcMode === 'grammar') ? 'grammar' : 'vocab';
   const arcTypes = ['word_forms', 'synonyms'];   // superseding reinforcement types
+  // Adding must not hide what is already there: the user asked for MORE lessons, not different
+  // ones, and hiding silently discards progress made against the originals.
+  const keepExisting = !!addTypes || !!(opts && opts.add);
   let prevRef = null, recreated = 0, hidden = 0;
   for (let i = 0; i < chapterIds.length; i++) {
     const topic = findSavedById(chapterIds[i]);
@@ -4692,8 +4896,11 @@ async function _runRecreateJob(jobId, startId, opts) {
     const lang = topic.lang, srcLang = topic.srcLang || 'en', diff = topic.difficulty || 2;
     const story = topic.story || '';
     jobStep(jobId, `Re-creating chapter ${i + 1}/${chapterIds.length}: "${topic.topic}"…`);
-    // Keep but hide existing lessons.
-    for (const l of (topic.lessons || [])) { if (!l._hidden) { l._hidden = true; hidden++; } }
+    // Keep but hide existing lessons — only in the legacy re-create mode. An ADD run leaves them
+    // visible and simply appends (v71_p).
+    if (!keepExisting) {
+      for (const l of (topic.lessons || [])) { if (!l._hidden) { l._hidden = true; hidden++; } }
+    }
     const newLessons = [];
     const stamp = (lesson, suffix) => { lesson.id = 'ls_' + Date.now() + '_' + i + '_' + suffix; lesson._recreated = true; };
     // Gate: this chapter's own standard vocab lesson.
@@ -4701,6 +4908,40 @@ async function _runRecreateJob(jobId, startId, opts) {
     // and fold it into the chapter's cumulative totals — the roadmap's exact example
     // ("re-generating ADDS to that chapter's existing totals rather than being invisible").
     const { tokens: _rcTok } = await meterLLMTokens(async () => {
+      if (addTypes) {
+        // v71_p: explicit tick-list. Every selected type, every chapter — including the first.
+        const parent = prevRef ? findSavedById(prevRef) : null;
+        const chainVocab = parent ? collectChainVocab(parent.id || prevRef) : { words: [], nouns: [], verbs: [], sentences: [] };
+        const chainStory = collectChainStory(topic);
+        for (const aType of addTypes) {
+          try {
+            jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] ${aType} — chapter ${i + 1}/${chapterIds.length}…`);
+            let lesson = null;
+            if (aType === 'standard' || aType === 'review') {
+              // 'review' is the vocab-review lesson (prior chapters); 'standard' covers this one.
+              const vOpts = aType === 'review'
+                ? { story, chainVocab: chainVocab.words || [], vocabMode: 'reinforce' }
+                : { story, vocabMode: null };
+              ({ lesson } = await generateOneLesson(lang, srcLang, topic.topic, 1, 1, [], story, diff, jobId, vOpts));
+              if (lesson && aType === 'review') { lesson._arcMode = 'reinforce'; if (!lesson.title) lesson.title = 'Review words'; if (!lesson.icon) lesson.icon = '🔁'; }
+            } else {
+              const gen = ADD_LESSON_GENERATORS[aType];
+              if (!gen) continue;
+              ({ lesson } = await gen({ lang, srcLang, topicName: topic.topic, story, diff, jobId, chainVocab,
+                standardOpts: { story, vocabMode: null },
+                sharedGenOpts: { chainVocab, vocabMode: 'reinforce', story,
+                                 chainStory: chainStory.text, chainStoryChapters: chainStory.chapters } }));
+            }
+            if (lesson) { stamp(lesson, aType); newLessons.push(lesson); recreated++; }
+          } catch (e) {
+            // One failing type must not abandon the other selections, or a whole run is lost to a
+            // format the model happened to fumble on one chapter.
+            console.warn(`  [add-lessons] chapter ${i + 1} ${aType} failed: ${e.message}`);
+            jobStep(jobId, `⚠ ${aType} failed on chapter ${i + 1} — continuing…`);
+          }
+        }
+        return;
+      }
       try {
         const { lesson } = await generateOneLesson(lang, srcLang, topic.topic, 1, 1, [], story, diff, jobId, { story, vocabMode: null });
         if (lesson) { stamp(lesson, 'gate'); newLessons.push(lesson); recreated++; }
@@ -4732,7 +4973,7 @@ async function _runRecreateJob(jobId, startId, opts) {
     saveStore(store);   // persist per-chapter so progress survives a mid-run failure
     prevRef = topic.id;
   }
-  console.log(`  [recreate] done: ${recreated} new lesson(s) across ${chapterIds.length} chapter(s), ${hidden} hidden`);
+  console.log(`  [${addTypes ? 'add-lessons' : 'recreate'}] done: ${recreated} new lesson(s) across ${chapterIds.length} chapter(s), ${hidden} hidden`);
   return { recreated, hidden, chapters: chapterIds.length };
 }
 
@@ -4842,11 +5083,14 @@ http.createServer(async (req, res) => {
       const requested = [body.model, body.story, body.translation, body.lessons, body.qc, body.tutor]
         .filter(v => typeof v === 'string' && v.trim()).map(v => v.trim());
       const hasTimeout = body.timeoutMs != null && Number.isFinite(parseInt(body.timeoutMs, 10));
+      // v71_q: numThread — CPU threads Ollama may use. 0/empty means "leave it to Ollama", which is
+      // a meaningful choice and not the same as "unset", so it is accepted rather than rejected.
+      const hasThreads = body.numThread != null && Number.isFinite(parseInt(body.numThread, 10));
       const hasThink = body.think && typeof body.think === 'object' &&
         (typeof body.think.story === 'boolean' || typeof body.think.lessons === 'boolean'
          || typeof body.think.tutor === 'boolean');
-      if (!requested.length && !hasTimeout && !hasThink)
-        return json(res, 400, { error: 'Nothing to set. Provide story, translation, lessons, qc, tutor, model, timeoutMs, or think.' });
+      if (!requested.length && !hasTimeout && !hasThink && !hasThreads)
+        return json(res, 400, { error: 'Nothing to set. Provide story, translation, lessons, qc, tutor, model, timeoutMs, think, or numThread.' });
       if (requested.length) {
         const available = await listOllamaModels();
         if (available.length) {
@@ -4856,10 +5100,11 @@ http.createServer(async (req, res) => {
         }
       }
       if (hasTimeout) setRequestTimeout(body.timeoutMs);
+      if (hasThreads) setNumThread(body.numThread);
       // A think-only toggle still needs setRuntimeModels (it reads body.think); a model change does
       // too. Only a timeout-only POST skips it.
       const activeModels = (requested.length || hasThink) ? setRuntimeModels(body) : currentModels();
-      console.log(`  Models switched → story:${activeModels.story}${activeModels.think.story?'🧠':''} lessons:${activeModels.lessons}${activeModels.think.lessons?'🧠':''}${activeModels.translation!==activeModels.story?` transl:${activeModels.translation}`:''}${activeModels.tutor!==activeModels.story||activeModels.think.tutor?` tutor:${activeModels.tutor}${activeModels.think.tutor?'🧠':''}`:''}${activeModels.lessonFormat==='table'?' [table format]':''} timeout:${Math.round(activeModels.timeoutMs/1000)}s`);
+      console.log(`  Models switched → story:${activeModels.story}${activeModels.think.story?'🧠':''} lessons:${activeModels.lessons}${activeModels.think.lessons?'🧠':''}${activeModels.translation!==activeModels.story?` transl:${activeModels.translation}`:''}${activeModels.tutor!==activeModels.story||activeModels.think.tutor?` tutor:${activeModels.tutor}${activeModels.think.tutor?'🧠':''}`:''}${activeModels.lessonFormat==='table'?' [table format]':''} timeout:${Math.round(activeModels.timeoutMs/1000)}s${activeModels.numThread?` threads:${activeModels.numThread}`:''}`);
       return json(res, 200, { ok: true, active: activeModels });
     }
     if (M === 'GET' && url.pathname === '/api/lessons') {
@@ -5346,7 +5591,7 @@ http.createServer(async (req, res) => {
       if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
       if (topic !== resolvedTopic) body.topic = resolvedTopic;
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
-      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms','word_forms'].includes(lessonFormat) ? lessonFormat : 'standard';   // v68.1: word_forms was missing — the picker offered it but the route clamped it to 'standard'
+      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms','word_forms','comprehension'].includes(lessonFormat) ? lessonFormat : 'standard';   // v68.1: word_forms was missing — the picker offered it but the route clamped it to 'standard'. v71_l: comprehension added here at the same time as the picker entry, which is the pairing that guard enforces
       const wcMax = body.userStory ? 2000 : 1000;
       const wc = Math.max(100, Math.min(wcMax, parseInt(storyLen, 10) || 300));
       // contFrom: used for storyline chain tracking AND story continuation context.
@@ -5445,7 +5690,7 @@ http.createServer(async (req, res) => {
       if (!Array.isArray(chaptersIn) || chaptersIn.length === 0)
         return json(res, 400, { error: 'No chapters provided' });
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
-      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms','word_forms'].includes(lessonFormat) ? lessonFormat : 'standard';   // v68.1: word_forms was missing — the picker offered it but the route clamped it to 'standard'
+      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms','word_forms','comprehension'].includes(lessonFormat) ? lessonFormat : 'standard';   // v68.1: word_forms was missing — the picker offered it but the route clamped it to 'standard'. v71_l: comprehension added here at the same time as the picker entry, which is the pairing that guard enforces
       // Arc mode: each chapter = a vocab "gate" lesson + one or more reinforcement
       // lessons (grammar/conjugation/synonyms) generated in reinforce mode.
       const _arcTypes = (Array.isArray(arcReinforce) ? arcReinforce : ['word_forms','synonyms'])
@@ -5771,7 +6016,12 @@ http.createServer(async (req, res) => {
         // registry (B-phase-4). standardOpts / sharedGenOpts are the two opt shapes the
         // generators expect; building both unconditionally is side-effect-free.
         const standardOpts = { userTranslation: saved.storyTranslation || null, userDialect: dialect, writingStyle: style, storyLang: saved.storyLang || 'target', story: saved.story || null, chainVocab: chainVocab.words, vocabMode: _addVocabMode };
-        const sharedGenOpts = { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story };
+        // v71_o: comprehension questions read the whole chain, not just this chapter.
+        const _chainStory = collectChainStory(saved);
+        if (_chainStory.chapters > 1)
+          console.log(`    Story context: ${_chainStory.chapters} chapters, ${_chainStory.text.length} chars`);
+        const sharedGenOpts = { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story,
+                                chainStory: _chainStory.text, chainStoryChapters: _chainStory.chapters };
         const genCtx = { lang, srcLang, topicName, story, diff, jobId, chainVocab, standardOpts, sharedGenOpts, addMathInstr, addMathOps, introScript: addIntroScript || null };
         const genFn = ADD_LESSON_GENERATORS[fmt];
         if (!genFn) throw new Error(`Unsupported lessonFormat: ${fmt}`);
@@ -5833,8 +6083,13 @@ http.createServer(async (req, res) => {
       const startId = body.id || body.chapterId || body.startId;
       if (!startId) return json(res, 400, { error: 'missing chapter id' });
       const jobId = newJob();
-      console.log(`  Re-create storyline lessons: start=${startId}, arcMode=${body.arcMode || 'vocab'}`);
-      _runRecreateJob(jobId, startId, { arcMode: body.arcMode })
+      // v71_p: `addTypes` is the tick-list from the shared picker (ADD, keeping existing lessons);
+      // `arcMode` remains for older clients and still re-creates.
+      const _addTypes = Array.isArray(body.addTypes) ? body.addTypes : null;
+      console.log(_addTypes
+        ? `  Add storyline lessons: start=${startId}, types=${_addTypes.join(',')}`
+        : `  Re-create storyline lessons: start=${startId}, arcMode=${body.arcMode || 'vocab'}`);
+      _runRecreateJob(jobId, startId, { arcMode: body.arcMode, addTypes: _addTypes, add: !!body.add })
         .then(r => jobDone(jobId, r))
         .catch(e => { console.error('  Re-create error:', e.message); jobFail(jobId, e.message); });
       return json(res, 202, { jobId });

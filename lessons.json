@@ -2,6 +2,350 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_1216981541",
+      "title": "Wein und Dämmerung",
+      "icon": "🍷",
+      "chapters": [
+        "tp_17854053155190000082",
+        "tp_17854063449150000195"
+      ],
+      "lang": "it",
+      "srcLang": "de",
+      "createdAt": "2026-07-30T10:08:56.875Z",
+      "updatedAt": "2026-07-30T10:33:06.221Z",
+      "tokenUsage": {
+        "totalPromptTokens": 2095,
+        "totalCompletionTokens": 1636,
+        "tokensByType": {
+          "retitle": 710,
+          "summary": 597,
+          "storyboard": 2424
+        }
+      },
+      "summary": "Der Erzähler erlebt in Turin eine melancholische Abenddämmerung und betritt eine versteckte Trattoria, um der Kälte zu entfliehen. Dort trifft er auf den Wirt, der ihm Wein einschenkt und von seinen sizilianischen Wurzeln erzählt, während draußen der Regen fällt. Durch das gemeinsame Essen und Trinken entsteht eine tiefe Verbindung zwischen Fremden, die Wärme und Frieden in der Einsamkeit finden. Die Geschichte thematisiert die Sehnsucht nach menschlicher Nähe und den Genuss einfacher, authentischer Momente.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 481,
+        "completionTokens": 116,
+        "ms": 65695,
+        "at": "2026-07-30T10:20:38.865Z"
+      },
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Blauer Abend über Turins klassischen Bögen.</title><rect x=\"193\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"194\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><polygon points=\"0,60 20,50 40,60 60,50 80,60 100,50 100,100 0,100\" fill=\"#9e9e9e\"/><rect x=\"10\" y=\"30\" width=\"8\" height=\"30\" fill=\"#9e9e9e\"/><rect x=\"30\" y=\"25\" width=\"8\" height=\"35\" fill=\"#9e9e9e\"/><rect x=\"50\" y=\"30\" width=\"8\" height=\"30\" fill=\"#9e9e9e\"/><rect x=\"70\" y=\"25\" width=\"8\" height=\"35\" fill=\"#9e9e9e\"/><circle cx=\"14\" cy=\"28\" r=\"3\" fill=\"#f2cc8f\"/><circle cx=\"34\" cy=\"23\" r=\"3\" fill=\"#f2cc8f\"/><circle cx=\"54\" cy=\"28\" r=\"3\" fill=\"#f2cc8f\"/><circle cx=\"74\" cy=\"23\" r=\"3\" fill=\"#f2cc8f\"/></svg></g><g data-chapter=\"1\"><title>Ich betrete eine kleine Trattoria in der Gasse.</title><rect x=\"375\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"376\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#8d6e63\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#8d6e63\"/><rect x=\"20\" y=\"10\" width=\"60\" height=\"80\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"30\" y=\"40\" width=\"40\" height=\"50\" fill=\"#e5989b\"/><circle cx=\"50\" cy=\"30\" r=\"15\" fill=\"#f2cc8f\"/><rect x=\"45\" y=\"25\" width=\"10\" height=\"10\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"2\"><title>Der Wirt schenkt dunklen Barbera ein.</title><rect x=\"557\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"558\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><circle cx=\"30\" cy=\"40\" r=\"15\" fill=\"#8d6e63\"/><rect x=\"25\" y=\"55\" width=\"10\" height=\"30\" fill=\"#2b2b2b\"/><circle cx=\"70\" cy=\"45\" r=\"10\" fill=\"#e5989b\"/><rect x=\"65\" y=\"55\" width=\"10\" height=\"25\" fill=\"#2b2b2b\"/><path d=\"M 68 45 L 72 45 L 70 35 Z\" fill=\"#e07a5f\"/><ellipse cx=\"70\" cy=\"65\" rx=\"8\" ry=\"12\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"2\"><title>Regentropfen tanzen auf dem Fensterbrett.</title><rect x=\"739\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"740\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"20\" y=\"20\" width=\"60\" height=\"60\" fill=\"#a8dadc\" stroke=\"#9e9e9e\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"30\" y1=\"30\" x2=\"28\" y2=\"45\" stroke=\"#457b9d\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"25\" x2=\"48\" y2=\"40\" stroke=\"#457b9d\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"70\" y1=\"35\" x2=\"68\" y2=\"50\" stroke=\"#457b9d\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"30\" cy=\"45\" r=\"2\" fill=\"#457b9d\"/><circle cx=\"50\" cy=\"40\" r=\"2\" fill=\"#457b9d\"/><circle cx=\"70\" cy=\"50\" r=\"2\" fill=\"#457b9d\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 4,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 968,
+        "completionTokens": 1456,
+        "ms": 472220,
+        "at": "2026-07-30T10:33:06.221Z",
+        "storyStyle": "romantic"
+      },
+      "storyboardPanels": [
+        {
+          "caption": "Blauer Abend über Turins klassischen Bögen.",
+          "chapter": 1,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "night"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  0,
+                  60
+                ],
+                [
+                  20,
+                  50
+                ],
+                [
+                  40,
+                  60
+                ],
+                [
+                  60,
+                  50
+                ],
+                [
+                  80,
+                  60
+                ],
+                [
+                  100,
+                  50
+                ],
+                [
+                  100,
+                  100
+                ],
+                [
+                  0,
+                  100
+                ]
+              ],
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 10,
+              "y": 30,
+              "w": 8,
+              "h": 30,
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 30,
+              "y": 25,
+              "w": 8,
+              "h": 35,
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 50,
+              "y": 30,
+              "w": 8,
+              "h": 30,
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 70,
+              "y": 25,
+              "w": 8,
+              "h": 35,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 14,
+              "cy": 28,
+              "r": 3,
+              "fill": "sun"
+            },
+            {
+              "type": "circle",
+              "cx": 34,
+              "cy": 23,
+              "r": 3,
+              "fill": "sun"
+            },
+            {
+              "type": "circle",
+              "cx": 54,
+              "cy": 28,
+              "r": 3,
+              "fill": "sun"
+            },
+            {
+              "type": "circle",
+              "cx": 74,
+              "cy": 23,
+              "r": 3,
+              "fill": "sun"
+            }
+          ]
+        },
+        {
+          "caption": "Ich betrete eine kleine Trattoria in der Gasse.",
+          "chapter": 1,
+          "bg": "earth",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 10,
+              "w": 60,
+              "h": 80,
+              "fill": "none",
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "rect",
+              "x": 30,
+              "y": 40,
+              "w": 40,
+              "h": 50,
+              "fill": "rose"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 30,
+              "r": 15,
+              "fill": "sun"
+            },
+            {
+              "type": "rect",
+              "x": 45,
+              "y": 25,
+              "w": 10,
+              "h": 10,
+              "fill": "ink"
+            }
+          ]
+        },
+        {
+          "caption": "Der Wirt schenkt dunklen Barbera ein.",
+          "chapter": 2,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "paper"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 40,
+              "r": 15,
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 25,
+              "y": 55,
+              "w": 10,
+              "h": 30,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 45,
+              "r": 10,
+              "fill": "rose"
+            },
+            {
+              "type": "rect",
+              "x": 65,
+              "y": 55,
+              "w": 10,
+              "h": 25,
+              "fill": "ink"
+            },
+            {
+              "type": "path",
+              "d": "M 68 45 L 72 45 L 70 35 Z",
+              "fill": "accent"
+            },
+            {
+              "type": "ellipse",
+              "cx": 70,
+              "cy": 65,
+              "rx": 8,
+              "ry": 12,
+              "fill": "ink"
+            }
+          ]
+        },
+        {
+          "caption": "Regentropfen tanzen auf dem Fensterbrett.",
+          "chapter": 2,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "night"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 20,
+              "w": 60,
+              "h": 60,
+              "fill": "sky",
+              "stroke": "stone",
+              "sw": 4
+            },
+            {
+              "type": "line",
+              "x1": 30,
+              "y1": 30,
+              "x2": 28,
+              "y2": 45,
+              "stroke": "water",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 50,
+              "y1": 25,
+              "x2": 48,
+              "y2": 40,
+              "stroke": "water",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 70,
+              "y1": 35,
+              "x2": 68,
+              "y2": 50,
+              "stroke": "water",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 45,
+              "r": 2,
+              "fill": "water"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 40,
+              "r": 2,
+              "fill": "water"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 50,
+              "r": 2,
+              "fill": "water"
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
+    },
+    {
       "id": "sl_1055245617",
       "title": "Politische Wirbelstürme",
       "icon": "🌪️",
@@ -616,14 +960,14 @@
       "lang": "it",
       "srcLang": "de",
       "createdAt": "2026-07-27T07:55:43.985Z",
-      "updatedAt": "2026-07-29T08:05:20.756Z",
+      "updatedAt": "2026-07-29T21:05:28.152Z",
       "tokenUsage": {
-        "totalPromptTokens": 6567,
-        "totalCompletionTokens": 2144,
+        "totalPromptTokens": 8451,
+        "totalCompletionTokens": 3771,
         "tokensByType": {
           "retitle": 3355,
           "summary": 1601,
-          "storyboard": 3260,
+          "storyboard": 6771,
           "summary_qc": 495
         }
       },
@@ -641,84 +985,89 @@
         "at": "2026-07-27T08:33:02.951Z"
       },
       "sourceFile": "Evoluzione (Scienze per la Maturità 2026) _ Le lezioni del Corriere - Corriere.it.pdf",
-      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Darwin&#39;s tree of life branches out from a common root.</title><rect x=\"102\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"103\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><path d=\"M 50 90 L 20 60 L 80 60 Z\" fill=\"#8d6e63\"/><circle cx=\"50\" cy=\"40\" r=\"15\" fill=\"#81b29a\"/><line x1=\"50\" y1=\"25\" x2=\"30\" y2=\"10\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"25\" x2=\"70\" y2=\"10\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"30\" cy=\"8\" r=\"5\" fill=\"#81b29a\"/><circle cx=\"70\" cy=\"8\" r=\"5\" fill=\"#81b29a\"/></svg></g><g data-chapter=\"3\"><title>Natural selection filters variations in the population.</title><rect x=\"284\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"285\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#9e9e9e\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><circle cx=\"20\" cy=\"50\" r=\"8\" fill=\"#2b2b2b\"/><circle cx=\"40\" cy=\"50\" r=\"8\" fill=\"#e07a5f\"/><circle cx=\"60\" cy=\"50\" r=\"8\" fill=\"#2b2b2b\"/><circle cx=\"80\" cy=\"50\" r=\"8\" fill=\"#e07a5f\"/><line x1=\"30\" y1=\"50\" x2=\"70\" y2=\"50\" stroke=\"#e5989b\" stroke-width=\"4\" stroke-linecap=\"round\"/><polygon points=\"65,45 75,50 65,55\" fill=\"#e5989b\"/></svg></g><g data-chapter=\"4\"><title>Mendel&#39;s laws explain genetic transmission mechanisms.</title><rect x=\"466\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"467\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"20\" y=\"30\" width=\"60\" height=\"40\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"50\" y1=\"30\" x2=\"50\" y2=\"70\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/><line x1=\"20\" y1=\"50\" x2=\"80\" y2=\"50\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/><circle cx=\"35\" cy=\"45\" r=\"5\" fill=\"#f2cc8f\"/><circle cx=\"65\" cy=\"45\" r=\"5\" fill=\"#81b29a\"/><circle cx=\"35\" cy=\"55\" r=\"5\" fill=\"#f2cc8f\"/><circle cx=\"65\" cy=\"55\" r=\"5\" fill=\"#81b29a\"/></svg></g><g data-chapter=\"6\"><title>Modern synthesis integrates genetics and evolution.</title><rect x=\"648\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"649\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#457b9d\"/><circle cx=\"30\" cy=\"50\" r=\"20\" fill=\"#81b29a\"/><circle cx=\"70\" cy=\"50\" r=\"20\" fill=\"#f2cc8f\"/><path d=\"M 45 35 Q 50 50 45 65\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M 55 35 Q 50 50 55 65\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></g><g data-chapter=\"7\"><title>Exaptation repurposes structures for new functions.</title><rect x=\"830\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"831\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><path d=\"M 20 60 Q 50 20 80 60 Z\" fill=\"#9e9e9e\"/><circle cx=\"50\" cy=\"40\" r=\"10\" fill=\"#f2cc8f\"/><path d=\"M 30 50 L 20 30 L 40 40 Z\" fill=\"#e07a5f\"/></svg></g></svg>",
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Ein komplexes Forschungsprogramm wächst und passt sich an.</title><rect x=\"11\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"12\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><polygon points=\"0,80 50,60 100,80 100,100 0,100\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"40\" r=\"20\" fill=\"#f2cc8f\"/><rect x=\"40\" y=\"60\" width=\"20\" height=\"20\" fill=\"#9e9e9e\"/><rect x=\"35\" y=\"80\" width=\"30\" height=\"10\" fill=\"#8d6e63\"/></svg></g><g data-chapter=\"2\"><title>Der Baum des Lebens verbindet alle Arten durch gemeinsame Vorfahren.</title><rect x=\"193\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"194\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><path d=\"M 50 90 L 50 50 M 50 50 Q 30 40 20 60 M 50 50 Q 70 40 80 60 M 50 70 Q 40 60 30 75 M 50 70 Q 60 60 70 75\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"20\" cy=\"60\" r=\"5\" fill=\"#e5989b\"/><circle cx=\"80\" cy=\"60\" r=\"5\" fill=\"#e07a5f\"/><circle cx=\"30\" cy=\"75\" r=\"4\" fill=\"#81b29a\"/><circle cx=\"70\" cy=\"75\" r=\"4\" fill=\"#457b9d\"/></svg></g><g data-chapter=\"3\"><title>Natürliche Selektion formt die Anpassung an die Umwelt.</title><rect x=\"375\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"376\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#8d6e63\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#8d6e63\"/><circle cx=\"50\" cy=\"50\" r=\"30\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><polygon points=\"40,40 60,40 50,70\" fill=\"#e07a5f\"/><circle cx=\"30\" cy=\"60\" r=\"8\" fill=\"#9e9e9e\"/><circle cx=\"70\" cy=\"60\" r=\"8\" fill=\"#9e9e9e\"/></svg></g><g data-chapter=\"4\"><title>Genetik und Vererbung erklären die molekularen Grundlagen.</title><rect x=\"557\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"558\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#ffffff\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#ffffff\"/><path d=\"M 30 20 L 70 20 L 70 80 L 30 80 Z M 40 30 L 60 30 L 60 70 L 40 70 Z\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"50\" y1=\"20\" x2=\"50\" y2=\"80\" stroke=\"#e07a5f\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"40\" cy=\"40\" r=\"3\" fill=\"#e5989b\"/><circle cx=\"60\" cy=\"60\" r=\"3\" fill=\"#457b9d\"/></svg></g><g data-chapter=\"5\"><title>Neue Forschungsergebnisse erweitern das Verständnis der Evolution.</title><rect x=\"739\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"740\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><circle cx=\"20\" cy=\"20\" r=\"2\" fill=\"#faf7f0\"/><circle cx=\"80\" cy=\"30\" r=\"1\" fill=\"#faf7f0\"/><circle cx=\"50\" cy=\"50\" r=\"25\" fill=\"none\" stroke=\"#e07a5f\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M 30 50 Q 50 20 70 50 T 90 50\" fill=\"none\" stroke=\"#81b29a\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></g><g data-chapter=\"6\"><title>Die Theorie wird durch Exaptation und Wandel ständig aktualisiert.</title><rect x=\"921\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"922\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"#f2cc8f\"/><path d=\"M 30 60 L 70 40 M 30 80 L 70 60\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><polygon points=\"45,45 55,45 50,55\" fill=\"#e07a5f\"/></svg></g></svg>",
       "storyboardMeta": {
         "type": "storyline_storyboard",
         "model": "qwen3.6:35b-a3b",
         "attempts": null,
-        "valid": 5,
+        "valid": 6,
         "rejected": 0,
         "rejectReasons": null,
-        "promptTokens": 1893,
-        "completionTokens": 1367,
-        "ms": 545338,
-        "at": "2026-07-27T08:53:34.712Z",
+        "promptTokens": 1884,
+        "completionTokens": 1627,
+        "ms": 1596686,
+        "at": "2026-07-29T21:05:28.152Z",
         "storyStyle": "scientific"
       },
       "storyboardPanels": [
         {
-          "caption": "Darwin's tree of life branches out from a common root.",
+          "caption": "Ein komplexes Forschungsprogramm wächst und passt sich an.",
           "chapter": 1,
           "bg": "sky",
           "shapes": [
             {
               "type": "rect",
               "x": 0,
-              "y": 60,
+              "y": 0,
               "w": 100,
-              "h": 40,
-              "fill": "leaf"
+              "h": 100,
+              "fill": "sky"
             },
             {
-              "type": "path",
-              "d": "M 50 90 L 20 60 L 80 60 Z",
-              "fill": "earth"
+              "type": "polygon",
+              "points": [
+                [
+                  0,
+                  80
+                ],
+                [
+                  50,
+                  60
+                ],
+                [
+                  100,
+                  80
+                ],
+                [
+                  100,
+                  100
+                ],
+                [
+                  0,
+                  100
+                ]
+              ],
+              "fill": "leaf"
             },
             {
               "type": "circle",
               "cx": 50,
               "cy": 40,
-              "r": 15,
-              "fill": "leaf"
+              "r": 20,
+              "fill": "sun"
             },
             {
-              "type": "line",
-              "x1": 50,
-              "y1": 25,
-              "x2": 30,
-              "y2": 10,
-              "stroke": "ink",
-              "sw": 2
+              "type": "rect",
+              "x": 40,
+              "y": 60,
+              "w": 20,
+              "h": 20,
+              "fill": "stone"
             },
             {
-              "type": "line",
-              "x1": 50,
-              "y1": 25,
-              "x2": 70,
-              "y2": 10,
-              "stroke": "ink",
-              "sw": 2
-            },
-            {
-              "type": "circle",
-              "cx": 30,
-              "cy": 8,
-              "r": 5,
-              "fill": "leaf"
-            },
-            {
-              "type": "circle",
-              "cx": 70,
-              "cy": 8,
-              "r": 5,
-              "fill": "leaf"
+              "type": "rect",
+              "x": 35,
+              "y": 80,
+              "w": 30,
+              "h": 10,
+              "fill": "earth"
             }
           ]
         },
         {
-          "caption": "Natural selection filters variations in the population.",
-          "chapter": 3,
-          "bg": "stone",
+          "caption": "Der Baum des Lebens verbindet alle Arten durch gemeinsame Vorfahren.",
+          "chapter": 2,
+          "bg": "paper",
           "shapes": [
             {
               "type": "rect",
@@ -729,73 +1078,113 @@
               "fill": "paper"
             },
             {
+              "type": "path",
+              "d": "M 50 90 L 50 50 M 50 50 Q 30 40 20 60 M 50 50 Q 70 40 80 60 M 50 70 Q 40 60 30 75 M 50 70 Q 60 60 70 75",
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
               "type": "circle",
               "cx": 20,
-              "cy": 50,
-              "r": 8,
-              "fill": "ink"
-            },
-            {
-              "type": "circle",
-              "cx": 40,
-              "cy": 50,
-              "r": 8,
-              "fill": "accent"
-            },
-            {
-              "type": "circle",
-              "cx": 60,
-              "cy": 50,
-              "r": 8,
-              "fill": "ink"
+              "cy": 60,
+              "r": 5,
+              "fill": "rose"
             },
             {
               "type": "circle",
               "cx": 80,
-              "cy": 50,
-              "r": 8,
+              "cy": 60,
+              "r": 5,
               "fill": "accent"
             },
             {
-              "type": "line",
-              "x1": 30,
-              "y1": 50,
-              "x2": 70,
-              "y2": 50,
-              "stroke": "rose",
-              "sw": 4
+              "type": "circle",
+              "cx": 30,
+              "cy": 75,
+              "r": 4,
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 75,
+              "r": 4,
+              "fill": "water"
+            }
+          ]
+        },
+        {
+          "caption": "Natürliche Selektion formt die Anpassung an die Umwelt.",
+          "chapter": 3,
+          "bg": "earth",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 30,
+              "fill": "none",
+              "stroke": "ink",
+              "sw": 2
             },
             {
               "type": "polygon",
               "points": [
                 [
-                  65,
-                  45
+                  40,
+                  40
                 ],
                 [
-                  75,
-                  50
+                  60,
+                  40
                 ],
                 [
-                  65,
-                  55
+                  50,
+                  70
                 ]
               ],
-              "fill": "rose"
+              "fill": "accent"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 60,
+              "r": 8,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 60,
+              "r": 8,
+              "fill": "stone"
             }
           ]
         },
         {
-          "caption": "Mendel's laws explain genetic transmission mechanisms.",
+          "caption": "Genetik und Vererbung erklären die molekularen Grundlagen.",
           "chapter": 4,
-          "bg": "paper",
+          "bg": "white",
           "shapes": [
             {
               "type": "rect",
-              "x": 20,
-              "y": 30,
-              "w": 60,
-              "h": 40,
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "white"
+            },
+            {
+              "type": "path",
+              "d": "M 30 20 L 70 20 L 70 80 L 30 80 Z M 40 30 L 60 30 L 60 70 L 40 70 Z",
               "fill": "none",
               "stroke": "ink",
               "sw": 2
@@ -803,104 +1192,114 @@
             {
               "type": "line",
               "x1": 50,
-              "y1": 30,
+              "y1": 20,
               "x2": 50,
-              "y2": 70,
-              "stroke": "ink",
-              "sw": 1
-            },
-            {
-              "type": "line",
-              "x1": 20,
-              "y1": 50,
-              "x2": 80,
-              "y2": 50,
-              "stroke": "ink",
-              "sw": 1
+              "y2": 80,
+              "stroke": "accent",
+              "sw": 2
             },
             {
               "type": "circle",
-              "cx": 35,
-              "cy": 45,
-              "r": 5,
-              "fill": "sun"
+              "cx": 40,
+              "cy": 40,
+              "r": 3,
+              "fill": "rose"
             },
             {
               "type": "circle",
-              "cx": 65,
-              "cy": 45,
-              "r": 5,
-              "fill": "leaf"
-            },
-            {
-              "type": "circle",
-              "cx": 35,
-              "cy": 55,
-              "r": 5,
-              "fill": "sun"
-            },
-            {
-              "type": "circle",
-              "cx": 65,
-              "cy": 55,
-              "r": 5,
-              "fill": "leaf"
+              "cx": 60,
+              "cy": 60,
+              "r": 3,
+              "fill": "water"
             }
           ]
         },
         {
-          "caption": "Modern synthesis integrates genetics and evolution.",
-          "chapter": 6,
-          "bg": "water",
-          "shapes": [
-            {
-              "type": "circle",
-              "cx": 30,
-              "cy": 50,
-              "r": 20,
-              "fill": "leaf"
-            },
-            {
-              "type": "circle",
-              "cx": 70,
-              "cy": 50,
-              "r": 20,
-              "fill": "sun"
-            },
-            {
-              "type": "path",
-              "d": "M 45 35 Q 50 50 45 65",
-              "stroke": "ink",
-              "sw": 2
-            },
-            {
-              "type": "path",
-              "d": "M 55 35 Q 50 50 55 65",
-              "stroke": "ink",
-              "sw": 2
-            }
-          ]
-        },
-        {
-          "caption": "Exaptation repurposes structures for new functions.",
-          "chapter": 7,
+          "caption": "Neue Forschungsergebnisse erweitern das Verständnis der Evolution.",
+          "chapter": 5,
           "bg": "night",
           "shapes": [
             {
-              "type": "path",
-              "d": "M 20 60 Q 50 20 80 60 Z",
-              "fill": "stone"
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "night"
+            },
+            {
+              "type": "circle",
+              "cx": 20,
+              "cy": 20,
+              "r": 2,
+              "fill": "paper"
+            },
+            {
+              "type": "circle",
+              "cx": 80,
+              "cy": 30,
+              "r": 1,
+              "fill": "paper"
             },
             {
               "type": "circle",
               "cx": 50,
-              "cy": 40,
-              "r": 10,
+              "cy": 50,
+              "r": 25,
+              "fill": "none",
+              "stroke": "accent",
+              "sw": 1
+            },
+            {
+              "type": "path",
+              "d": "M 30 50 Q 50 20 70 50 T 90 50",
+              "stroke": "leaf",
+              "sw": 3
+            }
+          ]
+        },
+        {
+          "caption": "Die Theorie wird durch Exaptation und Wandel ständig aktualisiert.",
+          "chapter": 6,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "sky"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 40,
               "fill": "sun"
             },
             {
               "type": "path",
-              "d": "M 30 50 L 20 30 L 40 40 Z",
+              "d": "M 30 60 L 70 40 M 30 80 L 70 60",
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  45,
+                  45
+                ],
+                [
+                  55,
+                  45
+                ],
+                [
+                  50,
+                  55
+                ]
+              ],
               "fill": "accent"
             }
           ]
@@ -5820,6 +6219,807 @@
   ],
   "topics": [
     {
+      "id": "tp_17854063449150000195",
+      "topic": "Barbera und Geschichten",
+      "topicEmoji": "🍷",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 200,
+      "story": "Il proprietario, un uomo dal viso segnato da sorrisi e anni di lavoro, mi porge un bicchiere di Barbera scuro come la notte fuori. Le sue mani ruvide tremano leggermente mentre versa il vino, un gesto che rivela non solo età ma anche una profonda gratitudine per ogni ospite che osa fermarsi in quel angolo dimenticato del mondo. Conversiamo a bassa voce, lui parla delle sue radici siciliane e io delle mie paure torinesi, creando un ponte invisibile tra sud e nord attraverso la semplicità di due estranei uniti dalla fame e dalla solitudine condivisa.\n\nFuori, la pioggia inizia a cadere leggera, accarezzando i portici con una tenerezza quasi materna. Dentro, il calore del forno a legna si fa più intenso, avvolgendoci in un’aura protettiva che scaccia via il freddo della sera. Mentre assaporo l’ultimo boccone di agnolotti, sento una pace profonda radicarsi nel petto, come se quella piccola trattoria fosse diventata per un istante la mia vera casa, lontana da ogni fretta e da ogni giudizio esterno.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 2-3 paragraphs, under 200 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. Writing style: Warm, emotionally rich, evocative imagery. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nLa sera scende su Torino come una coperta di velluto blu, avvolgendo i portici neoclassici in un silenzio sacro. Cammino lungo Via Po, dove la luce dorata delle lampade a gas si riflette nei vetri dei caffè storici, creando un’atmosfera sospesa tra il passato e il presente. L’aria è fresca, profumata di castagne arrostite che provengono da una bancarella vicina, un invito irresistibile per chi cerca calore in questa città elegante e malinconica.\n\nMi fermo davanti a una piccola trattoria nascosta in un vicolo laterale, dove il profumo del ragù si mescola al vino rosso locale. Entro, e l’odore di pane appena sfornato mi accoglie come un abbraccio antico. Seduto a un tavolino di legno consumato dal tempo, assaporo ogni boccone con la consapevolezza che Torino non è solo una città da visitare, ma un luogo dove il tempo sembra rallentare, permettendo di gustare la vita nel suo modo più autentico e semplice.\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 444,
+        "completionTokens": 241,
+        "ms": 105024,
+        "at": "2026-07-30T10:10:41.953Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 299,
+        "completionTokens": 276,
+        "ms": 102961,
+        "at": "2026-07-30T10:12:24.914Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Der Wirt, ein Mann mit einem von Lächeln und Jahren harter Arbeit gezeichneten Gesicht, reicht mir ein Glas dunklen Barbera, so schwarz wie die Nacht draußen. Seine rauen Hände zittern leicht, während er den Wein einschenkt – eine Geste, die nicht nur sein Alter verrät, sondern auch tiefe Dankbarkeit gegenüber jedem Gast, der es wagt, in diesem vergessenen Winkel der Welt innezuhalten. Wir unterhalten uns leise; er spricht von seinen sizilianischen Wurzeln, ich von meinen Ängsten als Turiner, und so entsteht eine unsichtbare Brücke zwischen Süd und Nord, geschmiedet aus der Einfachheit zweier Fremder, die durch Hunger und geteilte Einsamkeit verbunden sind.\n\nDraußen beginnt es leicht zu regnen und streichelt die Arkaden mit einer fast mütterlichen Zärtlichkeit. Drinnen wird die Wärme des Holzofens intensiver und hüllt uns in eine schützende Aura, die die Kühle der Nacht vertreibt. Während ich den letzten Bissen Agnolotti genieße, spüre ich, wie sich eine tiefe Ruhe in meiner Brust verwurzelt, als wäre diese kleine Trattoria für einen Moment mein wahres Zuhause geworden, fern jeder Hektik und jedem äußeren Urteil.",
+      "continuedFrom": "Abenddämmerung in Turin",
+      "continuedFromId": "tp_17854053155190000082",
+      "storyStyle": "romantic",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Gespräch im Wirtshaus",
+          "desc": "Ein Abend mit dem Wirt bei Wein und Regen",
+          "icon": "🍷",
+          "vocab": [
+            {
+              "target": "il proprietario",
+              "source": "der Wirt"
+            },
+            {
+              "target": "la mano",
+              "source": "die Hand"
+            },
+            {
+              "target": "versare",
+              "source": "einschenken"
+            },
+            {
+              "target": "la gratitudine",
+              "source": "die Dankbarkeit"
+            },
+            {
+              "target": "il sud",
+              "source": "der Süden"
+            },
+            {
+              "target": "la pioggia",
+              "source": "der Regen"
+            },
+            {
+              "target": "il forno a legna",
+              "source": "der Holzofen"
+            },
+            {
+              "target": "l'agnolotto",
+              "source": "die Agnolotti"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Il proprietario mi porge un bicchiere di Barbera.",
+              "source": "Der Wirt reicht mir ein Glas Barbera.",
+              "words": [
+                "Il",
+                "proprietario",
+                "mi",
+                "porge",
+                "un",
+                "bicchiere",
+                "di",
+                "Barbera."
+              ]
+            },
+            {
+              "target": "Le sue mani ruvide tremano leggermente.",
+              "source": "Seine rauen Hände zittern leicht.",
+              "words": [
+                "Le",
+                "sue",
+                "mani",
+                "ruvide",
+                "tremano",
+                "leggermente."
+              ]
+            },
+            {
+              "target": "Fuori, la pioggia inizia a cadere leggera.",
+              "source": "Draußen beginnt es leicht zu regnen.",
+              "words": [
+                "Fuori,",
+                "la",
+                "pioggia",
+                "inizia",
+                "a",
+                "cadere",
+                "leggera."
+              ]
+            },
+            {
+              "target": "Il calore del forno si fa più intenso.",
+              "source": "Die Wärme des Ofens wird intensiver.",
+              "words": [
+                "Il",
+                "calore",
+                "del",
+                "forno",
+                "si",
+                "fa",
+                "più",
+                "intenso."
+              ]
+            },
+            {
+              "target": "Sento una pace profonda radicarsi nel petto.",
+              "source": "Ich spüre eine tiefe Ruhe in meiner Brust.",
+              "words": [
+                "Sento",
+                "una",
+                "pace",
+                "profonda",
+                "radicarsi",
+                "nel",
+                "petto."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1159,
+            "completionTokens": 399,
+            "ms": 201581,
+            "at": "2026-07-30T10:15:46.561Z"
+          },
+          "qcAt": "2026-07-30T10:23:51.763Z",
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": "ls_1700314670",
+          "title": "Abendessen in Turin",
+          "desc": "Ein Abend mit dem Wirt bei Wein und Regen",
+          "icon": "🍷",
+          "vocab": [
+            {
+              "target": "il vino",
+              "source": "der Wein"
+            },
+            {
+              "target": "la trattoria",
+              "source": "die Trattoria"
+            },
+            {
+              "target": "il proprietario",
+              "source": "der Besitzer"
+            },
+            {
+              "target": "l'agnolotto",
+              "source": "der Agnolotto",
+              "editedAt": "2026-07-30T11:32:41.375Z"
+            },
+            {
+              "target": "il calore",
+              "source": "die Wärme"
+            },
+            {
+              "target": "la pace",
+              "source": "der Frieden"
+            },
+            {
+              "target": "il bicchiere",
+              "source": "das Glas"
+            },
+            {
+              "target": "l'aria",
+              "source": "die Luft"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Il proprietario versa il vino.",
+              "source": "Der Besitzer schenkt den Wein ein.",
+              "words": [
+                "Il",
+                "proprietario",
+                "versa",
+                "il",
+                "vino."
+              ]
+            },
+            {
+              "target": "Assaporo l'agnolotto caldo.",
+              "source": "Ich genieße die warme Nudel.",
+              "words": [
+                "Assaporo",
+                "l'agnolotto",
+                "caldo."
+              ]
+            },
+            {
+              "target": "La trattoria profuma di pace.",
+              "source": "Die Trattoria duftet nach Frieden.",
+              "words": [
+                "La",
+                "trattoria",
+                "profuma",
+                "di",
+                "pace."
+              ]
+            },
+            {
+              "target": "Il calore avvolge il bicchiere.",
+              "source": "Die Wärme umhüllt das Glas.",
+              "words": [
+                "Il",
+                "calore",
+                "avvolge",
+                "il",
+                "bicchiere."
+              ]
+            },
+            {
+              "target": "L'aria serena entra dalla porta.",
+              "source": "Die ruhige Luft tritt durch die Tür.",
+              "words": [
+                "L'aria",
+                "serena",
+                "entra",
+                "dalla",
+                "porta."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1159,
+            "completionTokens": 399,
+            "ms": 201581,
+            "at": "2026-07-30T10:15:46.561Z"
+          },
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": "ls_1785500580472_1_grammar",
+          "type": "grammar",
+          "title": "Nomen: Geschlecht und Plural",
+          "desc": "Italienische Nomen lernen",
+          "icon": "📚",
+          "grammar": [
+            {
+              "target": "tempo",
+              "source": "Zeit",
+              "gender": "m",
+              "article": "il",
+              "plural": "tempi"
+            },
+            {
+              "target": "coperta",
+              "source": "Decke",
+              "gender": "f",
+              "article": "la",
+              "plural": "coperte"
+            },
+            {
+              "target": "velluto",
+              "source": "Samt",
+              "gender": "m",
+              "article": "il",
+              "plural": "velluti"
+            },
+            {
+              "target": "tramonto",
+              "source": "Sonnenuntergang",
+              "gender": "m",
+              "article": "il",
+              "plural": "tramonti"
+            },
+            {
+              "target": "cielo",
+              "source": "Himmel",
+              "gender": "m",
+              "article": "il",
+              "plural": "cieli"
+            },
+            {
+              "target": "ombra",
+              "source": "Schatten",
+              "gender": "f",
+              "article": "l'",
+              "plural": "ombre"
+            },
+            {
+              "target": "vento",
+              "source": "Wind",
+              "gender": "m",
+              "article": "il",
+              "plural": "venti"
+            },
+            {
+              "target": "strada",
+              "source": "Straße",
+              "gender": "f",
+              "article": "la",
+              "plural": "strade"
+            },
+            {
+              "target": "proprietario",
+              "source": "Eigentümer",
+              "gender": "m",
+              "article": "il",
+              "plural": "proprietari"
+            },
+            {
+              "target": "barbiere",
+              "source": "Friseur",
+              "gender": "m",
+              "article": "il",
+              "plural": "barbieri"
+            }
+          ],
+          "_genMeta": {
+            "type": "grammar",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 10,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 779,
+            "completionTokens": 541,
+            "ms": 301381,
+            "at": "2026-07-31T12:23:00.472Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785501598868_oxaf",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
+        },
+        {
+          "id": "ls_1785500922387_1_comprehension",
+          "type": "comprehension",
+          "title": "Abend in Turin",
+          "desc": "Verstehe die Stimmung und die Begegnung in der Geschichte.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum bleibt der Erzähler vor der kleinen Trattoria stehen?",
+              "choices": [
+                "Er hat sich verirrt und sucht einen Ausgang.",
+                "Der Geruch des Ragù und des frischen Brotes lockt ihn hinein.",
+                "Er wartet auf jemanden, den er dort treffen will.",
+                "Das Wetter ist zu schlecht, um weiterzugehen."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text beschreibt, wie der Duft von Ragù und Brot ihn einlädt und er dann die Trattoria betritt."
+            },
+            {
+              "q": "Was verbindet den Besitzer mit dem Erzähler?",
+              "choices": [
+                "Sie kommen beide aus Sizilien.",
+                "Sie teilen ihre Angst vor der Stadt Turin.",
+                "Sie sind Fremde, die durch Hunger und Einsamkeit verbunden sind.",
+                "Sie kennen sich bereits aus ihrer Kindheit."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text sagt explizit, dass eine unsichtbare Brücke zwischen zwei Fremden entsteht, die durch Hunger und geteilte Einsamkeit vereint sind."
+            },
+            {
+              "q": "Wie fühlt sich der Erzähler in der Trattoria?",
+              "choices": [
+                "Er fühlt sich unwohl wegen des lauten Lärms.",
+                "Er fühlt sich, als wäre die Trattoria für einen Moment sein Zuhause.",
+                "Er ist frustriert über das langsame Service.",
+                "Er vermisst seine eigene Küche zu Hause."
+              ],
+              "correctIndex": 1,
+              "why": "Am Ende des Textes fühlt er eine tiefe Ruhe und hat das Gefühl, dass die Trattoria für einen Moment sein wahres Zuhause ist."
+            },
+            {
+              "q": "Was beschreibt der Erzähler über die Atmosphäre in Turin?",
+              "choices": [
+                "Sie ist laut, geschäftig und voller Energie.",
+                "Sie ist elegant, melancholisch und lässt die Zeit verlangsamen.",
+                "Sie ist kalt, abweisend und gefährlich.",
+                "Sie ist modern, schnelllebig und futuristisch."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text nennt Turin eine elegante und melancholische Stadt, in der die Zeit zu verlangsamen scheint."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 874,
+            "completionTokens": 587,
+            "ms": 341915,
+            "at": "2026-07-31T12:28:42.387Z"
+          },
+          "_recreated": true
+        }
+      ],
+      "generationStats": {
+        "totalMs": 409632,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 8182,
+        "totalCompletionTokens": 2146,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 201581,
+            "promptTokens": 1159,
+            "completionTokens": 399
+          }
+        ],
+        "tokensByType": {
+          "lesson_qc": 4729,
+          "recreate": 2781
+        }
+      },
+      "generatedAt": "2026-07-30T10:12:24.915Z",
+      "updatedAt": "2026-07-31T12:40:07.144Z",
+      "createdBy": "admin",
+      "coverageTarget": 0.5
+    },
+    {
+      "id": "tp_17854053155190000082",
+      "topic": "Abenddämmerung in Turin",
+      "topicEmoji": "🌆",
+      "userTopic": "ich gehe in turin abendessen",
+      "userPrompt": "ich gehe in turin abendessen",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 200,
+      "story": "La sera scende su Torino come una coperta di velluto blu, avvolgendo i portici neoclassici in un silenzio sacro. Cammino lungo Via Po, dove la luce dorata delle lampade a gas si riflette nei vetri dei caffè storici, creando un’atmosfera sospesa tra il passato e il presente. L’aria è fresca, profumata di castagne arrostite che provengono da una bancarella vicina, un invito irresistibile per chi cerca calore in questa città elegante e malinconica.\n\nMi fermo davanti a una piccola trattoria nascosta in un vicolo laterale, dove il profumo del ragù si mescola al vino rosso locale. Entro, e l’odore di pane appena sfornato mi accoglie come un abbraccio antico. Seduto a un tavolino di legno consumato dal tempo, assaporo ogni boccone con la consapevolezza che Torino non è solo una città da visitare, ma un luogo dove il tempo sembra rallentare, permettendo di gustare la vita nel suo modo più autentico e semplice.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 2-3 paragraphs, under 200 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. Writing style: Warm, emotionally rich, evocative imagery.\n\nWrite a story for the topic: \"ich gehe in turin abendessen\". Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 137,
+        "completionTokens": 225,
+        "ms": 154767,
+        "at": "2026-07-30T09:53:41.179Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 283,
+        "completionTokens": 251,
+        "ms": 94340,
+        "at": "2026-07-30T09:55:15.519Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Die Nacht senkt sich wie eine blaue Samtdecke über Turin und hüllt die neoklassizistischen Portiken in eine heilige Stille. Ich gehe die Via Po entlang, wo das goldene Licht der Gaslaternen im Glas der historischen Cafés reflektiert wird und eine Atmosphäre schafft, die zwischen Vergangenheit und Gegenwart schwebt. Die Luft ist frisch und duftet nach gerösteten Kastanien von einem nahegelegenen Stand, ein unwiderstehliches Angebot für alle, die in dieser eleganten und melancholischen Stadt Wärme suchen.\n\nIch bleibe vor einer kleinen, in einer Seitenstraße versteckten Trattoria stehen, wo der Duft von Ragù sich mit dem lokalen Rotwein vermischt. Ich trete ein, und der Geruch von frisch gebackenem Brot empfängt mich wie eine uralte Umarmung. An einem vom Alter gebeizten Holztisch sitzend, genieße ich jeden Bissen mit dem Bewusstsein, dass Turin nicht nur eine Stadt zum Besichtigen ist, sondern ein Ort, an dem die Zeit zu verlangsamen scheint und es ermöglicht, das Leben in seiner authentischsten und einfachsten Form zu schmecken.",
+      "storyStyle": "romantic",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Abendessen in Turin",
+          "desc": "Genussvolle Abende in der Stadt",
+          "icon": "🍷",
+          "vocab": [
+            {
+              "target": "sera",
+              "source": "Abend"
+            },
+            {
+              "target": "scendere",
+              "source": "sinken"
+            },
+            {
+              "target": "camminare",
+              "source": "gehen"
+            },
+            {
+              "target": "aria",
+              "source": "Luft"
+            },
+            {
+              "target": "profumare",
+              "source": "duften"
+            },
+            {
+              "target": "fermarsi",
+              "source": "stehen bleiben"
+            },
+            {
+              "target": "entrare",
+              "source": "eintreten"
+            },
+            {
+              "target": "assaporare",
+              "source": "genießen"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "La sera scende su Torino.",
+              "source": "Die Nacht senkt sich über Turin.",
+              "words": [
+                "La",
+                "sera",
+                "scende",
+                "su",
+                "Torino."
+              ]
+            },
+            {
+              "target": "Cammino lungo Via Po.",
+              "source": "Ich gehe die Via Po entlang.",
+              "words": [
+                "Cammino",
+                "lungo",
+                "Via",
+                "Po."
+              ]
+            },
+            {
+              "target": "L’aria è fresca.",
+              "source": "Die Luft ist frisch.",
+              "words": [
+                "L’aria",
+                "è",
+                "fresca."
+              ]
+            },
+            {
+              "target": "Mi fermo davanti a una trattoria.",
+              "source": "Ich bleibe vor einer Trattoria stehen.",
+              "words": [
+                "Mi",
+                "fermo",
+                "davanti",
+                "a",
+                "una",
+                "trattoria."
+              ]
+            },
+            {
+              "target": "Assaporo ogni boccone.",
+              "source": "Ich genieße jeden Bissen.",
+              "words": [
+                "Assaporo",
+                "ogni",
+                "boccone."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1091,
+            "completionTokens": 418,
+            "ms": 821232,
+            "at": "2026-07-30T10:08:56.816Z"
+          }
+        },
+        {
+          "id": "ls_1785500022331_0_grammar",
+          "type": "grammar",
+          "title": "Nomen und Artikel",
+          "desc": "Geschlecht und Plural lernen",
+          "icon": "🌇",
+          "grammar": [
+            {
+              "target": "tempo",
+              "source": "Zeit/Wetter",
+              "gender": "m",
+              "article": "il",
+              "plural": "tempi"
+            },
+            {
+              "target": "coperta",
+              "source": "Decke",
+              "gender": "f",
+              "article": "la",
+              "plural": "coperte"
+            },
+            {
+              "target": "velluto",
+              "source": "Samt",
+              "gender": "m",
+              "article": "il",
+              "plural": "velluti"
+            },
+            {
+              "target": "tramonto",
+              "source": "Sonnenuntergang",
+              "gender": "m",
+              "article": "il",
+              "plural": "tramonti"
+            },
+            {
+              "target": "cielo",
+              "source": "Himmel",
+              "gender": "m",
+              "article": "il",
+              "plural": "cieli"
+            },
+            {
+              "target": "ombra",
+              "source": "Schatten",
+              "gender": "f",
+              "article": "l'",
+              "plural": "ombre"
+            },
+            {
+              "target": "vento",
+              "source": "Wind",
+              "gender": "m",
+              "article": "il",
+              "plural": "venti"
+            },
+            {
+              "target": "strada",
+              "source": "Straße",
+              "gender": "f",
+              "article": "la",
+              "plural": "strade"
+            }
+          ],
+          "_genMeta": {
+            "type": "grammar",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 8,
+            "rejected": 2,
+            "rejectReasons": {
+              "target===plural (\"torino\") — likely already a plural": 1,
+              "target===plural (\"città\") — likely already a plural": 1
+            },
+            "promptTokens": 651,
+            "completionTokens": 535,
+            "ms": 304596,
+            "at": "2026-07-31T12:13:42.330Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785501583194_c5j6",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
+        },
+        {
+          "id": "ls_1785500279016_0_comprehension",
+          "type": "comprehension",
+          "title": "Abenddämmerung in Turin",
+          "desc": "Lies die Geschichte und beantworte die Fragen auf Deutsch.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum bleibt der Erzähler vor der kleinen Trattoria stehen?",
+              "choices": [
+                "Weil er den Geruch von Ragù und frischem Brot riecht.",
+                "Weil er sich im Nebel verirrt hat.",
+                "Weil er auf jemanden wartet, der dort drinnen ist.",
+                "Weil die Straßenlaternen ausgefallen sind."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text erwähnt, dass das Aroma von Ragù und frischem Brot ihn anzieht."
+            },
+            {
+              "q": "Wie beschreibt der Erzähler die Atmosphäre in Turin?",
+              "choices": [
+                "Als laut und geschäftig.",
+                "Als schnell und modern.",
+                "Als ruhig und zeitlos.",
+                "Als kalt und leer."
+              ],
+              "correctIndex": 2,
+              "why": "Er schreibt, dass die Zeit zu verlangsamen scheint und man das Leben authentisch genießen kann."
+            },
+            {
+              "q": "Was deutet der Duft der gerösteten Kastanien an?",
+              "choices": [
+                "Dass es Winter ist.",
+                "Dass eine Straße voller Läden geschlossen hat.",
+                "Dass es eine Möglichkeit gibt, sich zu erwärmen.",
+                "Dass das Essen in den Cafés schlecht schmeckt."
+              ],
+              "correctIndex": 2,
+              "why": "Der Duft wird als 'unwiderstehliche Einladung für alle beschrieben, die Wärme suchen'."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 627,
+            "completionTokens": 411,
+            "ms": 256685,
+            "at": "2026-07-31T12:17:59.016Z"
+          },
+          "_recreated": true
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1070413,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 7763,
+        "totalCompletionTokens": 2185,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 821229,
+            "promptTokens": 1091,
+            "completionTokens": 418
+          }
+        ],
+        "tokensByType": {
+          "lesson_qc": 4656,
+          "story_qc": 663,
+          "recreate": 2224
+        }
+      },
+      "generatedAt": "2026-07-30T09:55:15.520Z",
+      "updatedAt": "2026-07-31T12:40:12.153Z",
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-07-30T11:38:29.013Z",
+      "coverageTarget": 0.5
+    },
+    {
       "id": "tp_17853300821650000523",
       "topic": "Wahlrecht im Fokus",
       "topicEmoji": "🗳️",
@@ -6118,7 +7318,7 @@
           "_arcMode": "reinforce"
         },
         {
-          "id": 6,
+          "id": "ls_140842167",
           "type": "synonyms",
           "title": "Politik und Präferenzen",
           "desc": "Esercizi di grammatica politica",
@@ -6331,6 +7531,105 @@
           "icon": "🔀",
           "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
           "perType": 4
+        },
+        {
+          "difficulty": 3,
+          "id": "ls_1785499458471",
+          "type": "comprehension",
+          "title": "Spannung in der italienischen Regierungskoalition",
+          "desc": "Verstehen Sie die politischen Konflikte und die Dynamik innerhalb der italienischen Mehrheitsregierung basierend auf dem Bericht.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum kritisierte Matteo Salvini die Äußerungen von Antonio Tajani bezüglich der Safe-Fonds?",
+              "choices": [
+                "Weil Tajani behauptete, das Geld sei bereits vollständig ausgezahlt und verfügbar.",
+                "Weil er der Meinung ist, dass nur das Parlament über die Verwendung dieser Mittel entscheiden darf.",
+                "Weil Tajani die Höhe der Zinsen für die Kredite falsch angegeben hatte.",
+                "Weil Salvini befürchtet, dass die Fonds nicht für die Verteidigung, sondern für Infrastruktur verwendet werden."
+              ],
+              "correctIndex": 1,
+              "why": "Salvinis Notiz besagt explizit: 'Sull’uso dei fondi Safe l’ultima parola spetta al Parlamento' (Das letzte Wort über die Nutzung der Safe-Fonds liegt beim Parlament)."
+            },
+            {
+              "q": "Welche Bedingung stellte Massimiliano Romeo für die Ausgabe der Verteidigungsmittel auf?",
+              "choices": [
+                "Sie müssen ausschließlich an große internationale Rüstungskonzerne gehen.",
+                "Sie dürfen nur für den Erwerb neuer Waffensysteme verwendet werden.",
+                "Sie sollten zur Sicherheit im Inneren beitragen und kleine sowie mittlere italienische Unternehmen einbeziehen.",
+                "Sie müssen von der Europäischen Union genehmigt werden, bevor sie ausgegeben werden können."
+              ],
+              "correctIndex": 2,
+              "why": "Romeo forderte, dass Ausgaben in den Sektor Verteidigung 'alla sicurezza interna' (zur inneren Sicherheit) geleitet werden sollen und kleine/mittlere italienische Unternehmen einbezogen werden müssen."
+            },
+            {
+              "q": "Was ist der Hauptgrund für die Kritik an Tajanis ursprünglicher Aussage über die Safe-Fonds?",
+              "choices": [
+                "Er hatte das Geld als gesichert dargestellt, obwohl die endgültige Entscheidung noch aussteht.",
+                "Er hatte die Zinssätze zu hoch veranschlagt, was die Kredite unattraktiv macht.",
+                "Er hatte vergessen, dass die Fonds nur für zivile Projekte und nicht für militärische genutzt werden dürfen.",
+                "Er hatte die Frist für den Antrag bei der EU falsch genannt."
+              ],
+              "correctIndex": 0,
+              "why": "Tajani gab die Milliarden 'come acquisiti' (als gesichert/verfügbar) an, obwohl nur das Verfahren eingeleitet war und die Entscheidung über die Höhe erst im Dezember fällt."
+            },
+            {
+              "q": "Warum gibt es innerhalb von Fratelli d'Italia (FdI) Zweifel bezüglich der Ausweitung von Abhörmaßnahmen?",
+              "choices": [
+                "Weil sie befürchten, dass die Justiz zu viel Macht und Diskretion erhält.",
+                "Weil Forza Italia diese Maßnahme strikt ablehnt.",
+                "Weil das Parlament noch nicht über den Antrag abgestimmt hat.",
+                "Weil die antimafia-Prokuratoren den Vorschlag zurückgezogen haben."
+              ],
+              "correctIndex": 0,
+              "why": "Daniela Santanchè äußert Zweifel, weil die Maßnahmen 'troppo invasive' (zu invasiv) sind und 'troppa discrezionalità ai magistrati' (zu viel Ermessensspielraum für Richter) geben."
+            },
+            {
+              "q": "Wie positioniert sich Forza Italia im Vergleich zu Fratelli d'Italia bezüglich der Ausweitung von Abhörmaßnahmen?",
+              "choices": [
+                "Forza Italia unterstützt die Maßnahme, weil sie die Terrorismusbekämpfung priorisiert.",
+                "Forza Italia lehnt die Maßnahme ab, da sie den Garantismus (Rechtssicherheit) als Kernwert hat.",
+                "Forza Italia ist neutral, da sie sich auf andere Themen konzentriert.",
+                "Forza Italia fordert eine sofortige Abstimmung im Parlament."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text stellt fest: 'Non Forza Italia che del garantismo ha fatto una delle sue bandiere' (Nicht Forza Italia, das den Garantismus zu einer seiner Fahnen gemacht hat)."
+            },
+            {
+              "q": "Was deutet die Verschiebung der Entscheidung über die Zulässigkeit der FdI-Abhöremendements an?",
+              "choices": [
+                "Dass La Russa die Unterstützung von Meloni verloren hat.",
+                "Dass Irritation und interne Konflikte in der Partei wachsen.",
+                "Dass die Unterlagen formal unvollständig waren.",
+                "Dass Giorgetti den Energieplan vorgezogen hat."
+              ],
+              "correctIndex": 1,
+              "why": "Obwohl offiziell fehlende Unterlagen genannt wurden, heißt es im Text: 'Fatto sta che anche in FdI sta montando l’irritazione' (Tatsache ist, dass auch in FdI die Irritation wächst)."
+            },
+            {
+              "q": "Welche politische Herausforderung wird für den 5. August vorhergesehen?",
+              "choices": [
+                "Die Wahl des neuen Premierministers.",
+                "Die Präsentation eines Energieplans durch Giorgetti, der die Mehrheitsresolution erschweren könnte.",
+                "Eine Abstimmung über das Wahlrecht mit Präferenzen.",
+                "Ein Treffen mit der EU-Kommission zur Klärung der Schuldenkrise."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text erwähnt, dass Giorgetti am 5. August den Energieplan vorstellt und die 'risoluzione di maggioranza potrebbe non essere facile da scrivere' (die Mehrheitsresolution könnte schwer zu verfassen sein)."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 7,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1417,
+            "completionTokens": 1329,
+            "ms": 635637,
+            "at": "2026-07-31T12:04:18.471Z"
+          }
         }
       ],
       "generationStats": {
@@ -6343,8 +7642,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 6117,
-        "totalCompletionTokens": 846,
+        "totalPromptTokens": 7534,
+        "totalCompletionTokens": 2175,
         "lessons": [
           {
             "lessonNum": 1,
@@ -6354,11 +7653,12 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 4939
+          "lesson_qc": 4939,
+          "add_lesson": 2746
         }
       },
       "generatedAt": "2026-07-29T13:01:22.165Z",
-      "updatedAt": "2026-07-29T13:45:47.948Z",
+      "updatedAt": "2026-07-31T12:04:18.471Z",
       "createdBy": "admin"
     },
     {
@@ -6665,7 +7965,7 @@
           "qcBy": "translategemma:12b"
         },
         {
-          "id": 6,
+          "id": "ls_1771016582",
           "type": "synonyms",
           "title": "Politica e Media Italiano",
           "desc": "Übungen zu italienischen Zeitformen und Formen",
@@ -7212,7 +8512,7 @@
           "qcBy": "translategemma:12b"
         },
         {
-          "id": 6,
+          "id": "ls_1227155750",
           "type": "synonyms",
           "title": "Politica Europea e Tajani",
           "desc": "Übungen zu Verben und Nomen",
@@ -7626,6 +8926,116 @@
           },
           "qcAt": "2026-07-29T13:22:28.291Z",
           "qcBy": "translategemma:12b"
+        },
+        {
+          "difficulty": 2,
+          "id": "ls_1785495720207",
+          "type": "comprehension",
+          "title": "Spannung in der Regierungsmehrheit",
+          "desc": "Verstehen Sie die politischen Spannungen um die Militärausgaben und den Energieplan?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist Antonio Tajani von seinen eigenen Parteigenossen kritisiert worden?",
+              "choices": [
+                "Er hat fälschlicherweise behauptet, dass die Mittel bereits vollständig genehmigt sind.",
+                "Er hat sich geweigert, über das Safe-Fonds zu sprechen.",
+                "Er hat vorgeschlagen, die Ausgaben für die Verteidigung zu kürzen.",
+                "Er hat die Zustimmung des Parlaments vorzeitig beansprucht."
+              ],
+              "correctIndex": 0,
+              "why": "Tajani gab an, dass die 14,9 Milliarden bereits als gesichert gelten würden, obwohl nur das Verfahren eingeleitet wurde und die Entscheidung noch aussteht."
+            },
+            {
+              "q": "Welche Bedingung stellt Massimiliano Romeo für die Verwendung der Verteidigungsmittel auf?",
+              "choices": [
+                "Sie müssen ausschließlich von kleinen und mittleren Unternehmen verwaltet werden.",
+                "Sie dürfen nur für die innere Sicherheit, wie Cybersicherheit, ausgegeben werden.",
+                "Sie müssen vom Europäischen Parlament genehmigt werden.",
+                "Sie sind nur für den Bau neuer Militärbasen verfügbar."
+              ],
+              "correctIndex": 1,
+              "why": "Romeo forderte, dass eventuelle Ausgaben im Verteidigungsbereich auf die innere Sicherheit wie Infrastruktur und Cybersicherheit gerichtet sein müssen."
+            },
+            {
+              "q": "Was bedeutet Matteo Crosettos Aussage über die europäischen Ressourcen?",
+              "choices": [
+                "Es handelt sich um zusätzliche Gelder, die das Budget erhöhen.",
+                "Es ist nur ein neues Instrument, das andere Optionen ersetzt.",
+                "Das Geld stammt ausschließlich aus nationalen Quellen.",
+                "Die Mittel sind bereits für andere Projekte festgelegt."
+              ],
+              "correctIndex": 1,
+              "why": "Crosetto präzisierete, dass die Ressourcen nicht additiv sind, sondern dass sich lediglich ein mögliches Instrument geändert hat."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 670,
+            "completionTokens": 505,
+            "ms": 193406,
+            "at": "2026-07-31T11:02:00.207Z"
+          }
+        },
+        {
+          "difficulty": 2,
+          "id": "ls_1785497678874",
+          "type": "comprehension",
+          "title": "Spannung im Lager",
+          "desc": "Verstehen Sie die politischen Spannungen in Italien?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist Antonio Tajani von den anderen Parteien kritisiert worden?",
+              "choices": [
+                "Er hat fälschlicherweise behauptet, dass die Mittel bereits fest zugesagt sind.",
+                "Er hat sich geweigert, über das Safe-Fonds zu sprechen.",
+                "Er hat vorgeschlagen, die Mittel für zivile Infrastruktur zu verwenden.",
+                "Er hat die Europäische Union direkt um mehr Geld gebeten."
+              ],
+              "correctIndex": 0,
+              "why": "Tajani gab an, die 14,9 Milliarden seien bereits 'erworben', obwohl nur das Verfahren eingeleitet war und die Entscheidung noch aussteht."
+            },
+            {
+              "q": "Welche Bedingung stellt Massimiliano Romeo für die Verwendung der Verteidigungsmittel?",
+              "choices": [
+                "Sie müssen primär der inneren Sicherheit und dem Grenzschutz dienen.",
+                "Sie dürfen nur von großen internationalen Rüstungskonzernen verwendet werden.",
+                "Sie müssen vollständig vom Parlament genehmigt werden, bevor sie ausgegeben werden.",
+                "Sie sollen in neue militärische Waffen für den Auslandseinsatz investiert werden."
+              ],
+              "correctIndex": 0,
+              "why": "Romeo forderte, dass Ausgaben im Verteidigungsbereich der inneren Sicherheit (Infrastruktur, Cybersicherheit, Grenzschutz) zugutekommen müssen."
+            },
+            {
+              "q": "Was bedeutet Matteo Crosettos Aussage über die europäischen Ressourcen?",
+              "choices": [
+                "Es handelt sich um zusätzliche Mittel, die das Budget erhöhen.",
+                "Die Mittel sind bereits im nationalen Haushalt enthalten und können nicht erhöht werden.",
+                "Es ist nur ein neues Instrument, das bestehende Optionen ersetzt oder ergänzt.",
+                "Die Mittel stammen ausschließlich aus dem Stabilitätspakt."
+              ],
+              "correctIndex": 2,
+              "why": "Crosetto präzisierte, dass die Ressourcen 'nicht additiv' sind, sondern dass sich lediglich ein mögliches Instrument geändert hat."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 723,
+            "completionTokens": 510,
+            "ms": 216694,
+            "at": "2026-07-31T11:34:38.874Z"
+          }
         }
       ],
       "generationStats": {
@@ -7638,8 +9048,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 4047,
-        "totalCompletionTokens": 898,
+        "totalPromptTokens": 5440,
+        "totalCompletionTokens": 1913,
         "lessons": [
           {
             "lessonNum": 1,
@@ -7649,11 +9059,12 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 2389
+          "lesson_qc": 2389,
+          "add_lesson": 2408
         }
       },
       "generatedAt": "2026-07-29T12:05:14.537Z",
-      "updatedAt": "2026-07-29T13:22:28.291Z",
+      "updatedAt": "2026-07-31T11:34:38.874Z",
       "createdBy": "admin"
     },
     {
@@ -8833,6 +10244,61 @@
             "at": "2026-07-29T08:32:39.537Z"
           },
           "_hidden": true
+        },
+        {
+          "difficulty": 2,
+          "id": "ls_1785487361380",
+          "type": "comprehension",
+          "title": "Evoluzione",
+          "desc": "Ein Text über die Stabilität und Anpassungsfähigkeit der darwinistischen Evolutionstheorie.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum wäre es problematisch, wenn eine wissenschaftliche Theorie niemals aktualisiert würde?",
+              "choices": [
+                "Weil sie dann nicht mehr als komplexes Forschungsprogramm gelten könnte.",
+                "Weil sie den neuesten Entdeckungen und Beweisen nicht mehr folgen würde.",
+                "Weil Charles Darwin seine ursprünglichen Ideen daraus ableiten würde.",
+                "Weil die Wissenschaft aufhören würde, Gesetze und Modelle zu verwenden."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt, dass keine Aktualisierung bedeutet, nicht mit neuen Entdeckungen Schritt zu halten."
+            },
+            {
+              "q": "Wie beschreibt der Autor die darwinistische Evolutionstheorie genauer?",
+              "choices": [
+                "Als ein starres Gesetz, das sich seit dem 19. Jahrhundert nicht geändert hat.",
+                "Als eine einfache Hypothese ohne viele Faktoren oder Modelle.",
+                "Als ein weites und komplexes Forschungsprogramm mit vielen Korrekturen.",
+                "Als eine Theorie, die im letzten Jahrhundert vollständig verworfen wurde."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text definiert sie als 'vasto e complesso programma di ricerca' und erwähnt Korrekturen."
+            },
+            {
+              "q": "Was ist mit dem Kern der darwinistischen Theorie nach den vielen Änderungen passiert?",
+              "choices": [
+                "Er wurde durch neue Gesetze von Darwin ersetzt.",
+                "Er ist im Wesentlichen unverändert geblieben.",
+                "Er wurde als falsch erkannt und verworfen.",
+                "Er besteht nur noch aus alten Hypothesen."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text besagt, dass das 'nocciolo centrale' trotz Korrekturen intakt geblieben ist."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 503,
+            "completionTokens": 475,
+            "ms": 170029,
+            "at": "2026-07-31T08:42:41.380Z"
+          }
         }
       ],
       "generationStats": {
@@ -8845,8 +10311,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 9435,
-        "totalCompletionTokens": 1271,
+        "totalPromptTokens": 10439,
+        "totalCompletionTokens": 6670,
         "lessons": [
           {
             "lessonNum": 1,
@@ -8858,11 +10324,12 @@
         "tokensByType": {
           "lesson_qc": 7214,
           "recreate": 1131,
-          "story_qc": 521
+          "story_qc": 521,
+          "add_lesson": 6403
         }
       },
       "generatedAt": "2026-07-27T07:52:03.813Z",
-      "updatedAt": "2026-07-29T08:32:43.790Z",
+      "updatedAt": "2026-07-31T08:44:16.298Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-07-29T08:30:01.317Z",
@@ -11822,6 +13289,61 @@
           "icon": "🔀",
           "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
           "perType": 3
+        },
+        {
+          "difficulty": 3,
+          "id": "ls_1785487847592",
+          "type": "comprehension",
+          "title": "Verständnistest: Darwins Forschungsprogramm",
+          "desc": "Beantworte die Fragen, um zu prüfen, ob du den Text verstanden hast.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Was beschreibt der erste Grundsatz des darwinischen Forschungsprogramms laut dem Text?",
+              "choices": [
+                "Alle Lebewesen sind durch einen Stammbaum mit Veränderungen miteinander verwandt.",
+                "Menschen und Schimpansen haben sich vor sechs Millionen Jahren in Afrika getrennt.",
+                "Pflanzen und Würmer teilen sich denselben Vorfahren wie der moderne Mensch.",
+                "Die Evolution führt dazu, dass alle Arten immer ähnlicher werden."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text definiert dies explizit als den ersten Pfeiler des Programms."
+            },
+            {
+              "q": "Warum bezeichnet der Autor alle Arten als „Cousins“?",
+              "choices": [
+                "Weil sie alle einen gemeinsamen Vorfahren in ferner Vergangenheit hatten.",
+                "Weil sie sich physisch sehr ähnlich sehen, obwohl sie unterschiedlich sind.",
+                "Weil sie alle denselben Lebensraum auf der Erde bewohnen.",
+                "Weil die menschliche Spezies die direkte Nachfahrin aller anderen Arten ist."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text erklärt, dass der Begriff „Cousins“ sich auf das Vorhandensein eines gemeinsamen Vorfahren bezieht."
+            },
+            {
+              "q": "Welche Schlussfolgerung lässt sich aus den Angaben zu Neanderthalern und Schimpansen ziehen?",
+              "choices": [
+                "Der gemeinsame Vorfahre der Menschen mit Schimpansen lebte zeitlich näher an uns als der mit den Neanderthalern.",
+                "Die Trennung von den Neanderthalern geschah früher als die Trennung von den Schimpansen.",
+                "Schimpansen sind genetisch weiter vom Menschen entfernt als die Neanderthalers.",
+                "Beide Gruppen teilten sich denselben Vorfahren zur gleichen Zeit."
+              ],
+              "correctIndex": 1,
+              "why": "Die Trennung von Schimpansen liegt bei 6 Millionen Jahren, die von Neanderthalern bei 500.000 Jahren; somit ist die Trennung von Neanderthalern später (näher an der Gegenwart)."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 538,
+            "completionTokens": 563,
+            "ms": 211382,
+            "at": "2026-07-31T08:50:47.592Z"
+          }
         }
       ],
       "generationStats": {
@@ -11834,8 +13356,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 11260,
-        "totalCompletionTokens": 2588,
+        "totalPromptTokens": 11798,
+        "totalCompletionTokens": 3151,
         "lessons": [
           {
             "lessonNum": 1,
@@ -11847,11 +13369,12 @@
         "tokensByType": {
           "lesson_qc": 7100,
           "recreate": 4242,
-          "story_qc": 585
+          "story_qc": 585,
+          "add_lesson": 1101
         }
       },
       "generatedAt": "2026-07-27T07:56:59.825Z",
-      "updatedAt": "2026-07-29T08:42:21.385Z",
+      "updatedAt": "2026-07-31T08:50:47.592Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-07-29T08:42:21.384Z"

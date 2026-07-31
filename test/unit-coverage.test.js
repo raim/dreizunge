@@ -39,7 +39,8 @@ const src = [
   ext('lessonCoverage'), ext('topicCoverage'),
   ext('_coverageTarget'), ext('coverageComplete'), ext('assembleCoverageRound'),
   // stubs for helpers the coverage fns reference:
-  'function _exFlagState(ex){ return ex && ex.__flagged ? {comment:"x"} : null; }',
+  'function _exFlagTarget(ex){ return ex && ex.__flagged ? {userFlag:{comment:"x"}} : null; }',
+  ext('_itemWithheld'),
   'function _resolveExItem(ex, ls){ return ex && ex.__src ? ex.__src : null; }',
   'function lessonTypeMeta(type){ return { build: (L,idx)=>buildStandardExercises(L,idx) }; }',
   'function lessonCountsFor(d, L){ if(APP._teacherMode) return true; const mixedOnly=(d.lessons||[]).some(x=>x&&x.type==="mixed"&&!x._hidden); return mixedOnly ? (L.type==="mixed"&&!L._hidden) : !L._hidden; }',

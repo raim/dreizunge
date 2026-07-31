@@ -100,6 +100,17 @@ function stripThink(raw) {
   return s.trim();
 }
 
+// v71_q: CPU threads for generation, settable at runtime from the model menu. null = leave it to
+// Ollama. Kept as a module-level value rather than threaded through every call site, because it is
+// a machine property, not a per-request one.
+let NUM_THREAD = null;
+function setNumThread(n) {
+  const v = parseInt(n, 10);
+  NUM_THREAD = (Number.isInteger(v) && v > 0) ? v : null;
+  return NUM_THREAD;
+}
+function getNumThread() { return NUM_THREAD; }
+
 function stripRaw(raw) {
   return stripThink(raw)
     .replace(/^```(?:json)?\s*/im, '')
@@ -160,6 +171,11 @@ function _callOllama(model, system, userMsg, maxTokens, opts) {
       // parameter (non-thinking models on some Ollama versions).
       ...(opts && typeof opts.think === 'boolean' ? { think: opts.think } : {}),
       options: { temperature, num_predict: maxTokens || 1024,
+        // v71_q: num_thread — how many CPU threads Ollama may use. Ollama's own default is
+        // conservative (2 on many builds), which leaves most of a machine idle during generation.
+        // Omitted entirely when unset, so Ollama keeps deciding rather than being pinned to a
+        // number this app invented.
+        ...(Number.isInteger(NUM_THREAD) && NUM_THREAD > 0 ? { num_thread: NUM_THREAD } : {}),
         ...(Array.isArray(opts?.stop) && opts.stop.length ? { stop: opts.stop } : {}) },
       messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }]
     });
@@ -312,6 +328,11 @@ function callLLMStream(model, system, userMsg, maxTokens, opts, onDelta) {
       model, stream: true, keep_alive: -1,
       ...(opts && typeof opts.think === 'boolean' ? { think: opts.think } : {}),
       options: { temperature, num_predict: maxTokens || 1024,
+        // v71_q: num_thread — how many CPU threads Ollama may use. Ollama's own default is
+        // conservative (2 on many builds), which leaves most of a machine idle during generation.
+        // Omitted entirely when unset, so Ollama keeps deciding rather than being pinned to a
+        // number this app invented.
+        ...(Number.isInteger(NUM_THREAD) && NUM_THREAD > 0 ? { num_thread: NUM_THREAD } : {}),
         ...(Array.isArray(opts?.stop) && opts.stop.length ? { stop: opts.stop } : {}) },
       messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }]
     });
@@ -366,4 +387,4 @@ function callLLMStream(model, system, userMsg, maxTokens, opts, onDelta) {
   });
 }
 
-module.exports = { callLLM, callLLMStream, makeThinkFilter, ping, listModels, release, warmup, stripThink, stripRaw, extractJSON, extractArray, salvageArray, setRequestTimeout, getRequestTimeout };
+module.exports = { callLLM, callLLMStream, makeThinkFilter, ping, listModels, release, warmup, stripThink, stripRaw, extractJSON, extractArray, salvageArray, setRequestTimeout, getRequestTimeout, setNumThread, getNumThread };

@@ -109,9 +109,12 @@ console.log('  round sizing: exact-needed unsolved, converging collection, repla
     cur: { lessonIdx: 0 },
   };
   let saves = 0;
-  const fns = new Function('APP', 'DRILL_TOPIC', '_exFlagState', 'qid', 'stripFuri', 'saveProg',
+  // v71_l: markSolved resolves the item then asks the shared _itemWithheld predicate, instead of
+  // its own userFlag-only check. Nothing here is flagged, so the resolver returns null.
+  const fns = new Function('APP', 'DRILL_TOPIC', '_exFlagTarget', '_itemWithheld', 'qid', 'stripFuri', 'saveProg',
     extract('_solvedMap') + '\n' + extract('markSolved') + '\nreturn { markSolved, _solvedMap };')(
-    APP, DRILL_TOPIC, () => null, (ex) => 'drill:mcq_source_target:h1', (s) => s, () => { saves++; });
+    APP, DRILL_TOPIC, () => null, (it) => !!(it && (it.userFlag || it.userDelete)),
+    (ex) => 'drill:mcq_source_target:h1', (s) => s, () => { saves++; });
 
   const id = fns.markSolved({ type: 'mcq_source_target', target: 'Haus', source: 'house', correct: 'Haus' });
   assert.strictEqual(id, 'drill:mcq_source_target:h1', 'the drill solve itself is recorded');

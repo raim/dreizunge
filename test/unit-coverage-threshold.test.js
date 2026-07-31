@@ -40,8 +40,20 @@ console.log('  clean card: trophy/%-pill/stat panels + dead CSS/JS removed: OK')
 // ── 2. %-solved bar in the progress summary ───────────────────────────────────
 {
   const prog = ext(html, '_compProgressHtml');
-  assert.ok(/const cov = topicCoverage\(\);/.test(prog) && /rowsHtml\(t\('complete\.solved'\), cov\.solved, cov\.total\)/.test(prog),
-    'a %-solved bar (correct-answer coverage) is appended below the chapter/story bars');
+  // v71_m: the row now also carries the PASS MARK (a line drawn on the bar), so the call gained
+  // two arguments. Still the same bar in the same place — asserted on the pieces that matter
+  // rather than on the exact argument list, which is what made this brittle.
+  assert.ok(/const cov = topicCoverage\(\);/.test(prog) && /rowsHtml\(t\('complete\.solved'\), cov\.solved, cov\.total/.test(prog),
+    'a %-solved bar (correct-answer coverage) is appended below the chapter bars');
+  assert.ok(/const _mark = \(opts && Number\.isFinite\(opts\.markPct\)\)/.test(prog),
+    'and the pass mark is applied to THAT bar — %-solved is what the threshold measures');
+  // The mark replaced a sentence. Both halves asserted: the drawing exists, the sentence is gone.
+  assert.ok(/left:\$\{markPct\}%/.test(html), 'the mark is positioned at the threshold percentage');
+  const scAll = ext(html, 'showComplete');
+  assert.ok(!/complete\.below_threshold/.test(scAll),
+    'the below-threshold sentence is gone from the card — the bar says it now');
+  assert.ok(/const _showMark = !_teacher && !lesson\._drill && _threshPct > 0 && _threshPct < 100;/.test(scAll),
+    'the mark is shown whenever one applies, not only once the learner has failed to reach it');
   const ui = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
   assert.ok(ui.en['complete.solved'], 'ui.json en has complete.solved');
   // Reuses the existing story/chapter labels (per the request).
@@ -117,8 +129,11 @@ console.log('  _coverageTarget precedence: chapter > storyline > global > 80%: O
   // v71_h: the drill button is always present, greyed when no round can be built.
   assert.ok(/_compBtnState\(_db, drillAvailable\(_l, _s\)/.test(sc),
     'the drill is offered to a below-threshold learner (greyed when no mistakes, v71_h)');
-  assert.ok(/complete\.below_threshold/.test(sc) && /complete\.keep_going/.test(sc),
-    'a below-threshold hint + "keep going" title are shown');
+  // v71_m: the below-threshold HINT is no longer a sentence — it is the pass mark drawn on the
+  // %-solved bar, plus the bar turning red until the mark is reached. The "Keep going!" title
+  // still carries the verdict in words, so that half is unchanged.
+  assert.ok(/complete\.keep_going/.test(sc), 'the "Keep going!" title still states the verdict');
+  assert.ok(/opts\.markPct/.test(ext(html, '_compProgressHtml')), 'and the bar carries the mark');
 }
 console.log('  card: below-threshold drill offer + hint: OK');
 

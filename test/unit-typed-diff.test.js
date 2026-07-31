@@ -21,7 +21,10 @@ function extract(name) {
 }
 const maxC = src.match(/const _DIFF_MAX = \d+;/);
 assert.ok(maxC, 'the diff size cap is a module-level constant');
-const M = new Function('const Intl = globalThis.Intl;\n' + maxC[0] + '\n' +
+const wrongC = src.match(/const TYPED_DIFF_MAX_WRONG = \d+;/);
+assert.ok(wrongC, 'the wrong-character threshold is a module-level constant');
+const MAX_WRONG = parseInt(wrongC[0].match(/\d+/)[0], 10);
+const M = new Function('const Intl = globalThis.Intl;\n' + maxC[0] + '\n' + wrongC[0] + '\n' +
   extract('_graphemes') + extract('normDiacritics') + extract('_charEq') + extract('_alignChars') +
   extract('stripFuri') + extract('typedDiffHtml') +
   "\nfunction escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}" +
@@ -135,8 +138,44 @@ const counts = (a, b) => M._alignChars(a, b).reduce((m, o) => (m[o.op] = (m[o.op
     'the diff is limited to the three typed exercise types');
   assert.ok(/&& !_glyphOrderActive\(ex\) \? \(document\.getElementById\('type-in'\)\?\.value \|\| ''\) : ''/.test(src),
     'and is skipped in no-keyboard glyph mode, where there is no typed string');
-  assert.ok(/const _wrongBody = _diff \|\| /.test(src),
+  // v71_o: a comprehension question reveals the REASON instead, so the fallback chain gained a
+  // branch ahead of the diff. The diff→plain-answer fallback still holds for typed exercises.
+  assert.ok(/\(_diff \|\| `\$\{t\('check\.correct_answer'\)\} <strong>\$\{_wrongCorrect\}<\/strong>`\)/.test(src),
     'the plain correct answer remains the fallback when no diff is available');
+  assert.ok(/const _why = \(ex\.type==='comprehension_mcq' && ex\.why\)/.test(src),
+    'and a comprehension question shows its reason instead of restating the option');
+}
+
+// ── 11. Past a few wrong characters, show whole words instead (v71_o) ───────
+// Reported: a badly mistyped word turns the per-letter view into a scatter of red boxes that is
+// harder to read than the answer itself. Below the threshold the letter view is the useful one —
+// it shows a missed umlaut at a glance — so this is a switch, not a replacement.
+{
+  const mode = (typed, correct) => {
+    const h = M.typedDiffHtml(typed, correct);
+    return h === '' ? 'none' : h.includes('typed-diff-whole') ? 'whole' : 'letters';
+  };
+  assert.strictEqual(MAX_WRONG, 3, 'the threshold is the reported three characters');
+
+  // Near misses keep the letter view — this is the case the feature was built for.
+  assert.strictEqual(mode('Hnd', 'Hund'), 'letters', 'one missing letter → per-letter');
+  assert.strictEqual(mode('Hunde', 'Hund'), 'letters', 'one extra letter → per-letter');
+  assert.strictEqual(mode('Hunt', 'Hund'), 'letters', 'one wrong letter → per-letter');
+  assert.strictEqual(mode('Backerei', 'Bäckerei'), 'letters', 'a missed umlaut → per-letter');
+
+  // Exactly at the threshold is still legible; past it is not.
+  assert.strictEqual(mode('Hxyz', 'Hund'), 'letters', 'three wrong → still per-letter (boundary)');
+  assert.strictEqual(mode('xyzzy', 'Fahrrad'), 'whole', 'a mangled word → whole-word');
+  assert.strictEqual(mode('Katze', 'Pferd'), 'whole', 'an entirely different word → whole-word');
+
+  // The whole-word view must actually contain both words, the wrong one struck through.
+  const h = M.typedDiffHtml('Katze', 'Pferd');
+  assert.ok(/<s>Katze<\/s>/.test(h), 'what was typed is struck through');
+  assert.ok(/<strong>Pferd<\/strong>/.test(h), 'and the correct answer is shown plainly');
+  assert.ok(!/class="dc /.test(h), 'with no per-character cells at all');
+  // Escaping still applies on this path — it is a separate branch from the letter renderer.
+  const esc = M.typedDiffHtml('<script>alert(1)</script>', 'Pferd');
+  assert.ok(!/<script>/.test(esc), 'the whole-word branch escapes what was typed');
 }
 
 console.log('  alignment, leniency, graphemes, rendering, escaping, RTL, call site: OK');

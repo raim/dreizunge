@@ -125,6 +125,10 @@ run('unit: replay focuses on unsolved questions (v71_f)', 'node', [path.join(__d
 run('unit: error-hunt / pass-mark interaction (v71_g)', 'node', [path.join(__dirname, 'unit-errorhunt-passmark.test.js')]);
 run('unit: completion-card consistency + drill card removal (v71_h)', 'node', [path.join(__dirname, 'unit-card-consistency.test.js')]);
 run('unit: round length not padded with repeats (v71_i)', 'node', [path.join(__dirname, 'unit-round-length.test.js')]);
+run('unit: model settings — tutor thinking, threads, reveal text (v71_q)', 'node', [path.join(__dirname, 'unit-model-settings.test.js')]);
+run('unit: add lessons — shared type picker, add not replace (v71_p)', 'node', [path.join(__dirname, 'unit-add-lessons.test.js')]);
+run('unit: drill ledger — mistakes decay, reviews record nothing (v71_n)', 'node', [path.join(__dirname, 'unit-drill-ledger.test.js')]);
+run('unit: comprehension lesson type — story questions (v71_l)', 'node', [path.join(__dirname, 'unit-comprehension.test.js')]);
 run('unit: storyboard panel frames on result cards (v71_k)', 'node', [path.join(__dirname, 'unit-storyboard-frames.test.js')]);
 run('unit: {lang} placeholder grammar (v71_d)', 'node', [path.join(__dirname, 'unit-lang-placeholder.test.js')]);
 run('unit: no verbatim-English fallbacks in translations (v71_k)', 'node', [path.join(__dirname, 'unit-ui-verbatim-en.test.js')]);
