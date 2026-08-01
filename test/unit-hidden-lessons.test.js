@@ -54,12 +54,21 @@ assert.ok(/function _firstVisibleMixedIdx\(d\)/.test(html), 'mixed-index helper 
   APPref._teacherMode = false;
 }
 assert.ok(/function setComplete\(d\)/.test(html), 'setComplete(d) exists');
-assert.ok(/countedLessons\(d\)\.every\(L => done\[L\.id\]\)/.test(html),
+// v71_s: the branch now measures over `_counted`, which is countedLessons(d) for chapter
+// completion and the story-gated-free subset for the story-unlock gate. Both spellings are pinned
+// so the derivation cannot quietly stop going through countedLessons.
+assert.ok(/const _counted = skipStoryGated \? storyUnlockLessons\(d\) : countedLessons\(d\);/.test(html),
+  'the counted set is derived from countedLessons (or its story-gated-free subset)');
+assert.ok(/_counted\.every\(L => done\[L\.id\]\)/.test(html),
   'setComplete: locked-path branch = every counted lesson done');
+assert.ok(/function storyUnlockLessons\(d\) \{ return countedLessons\(d\)\.filter/.test(html),
+  'the narrowed set is a FILTER of countedLessons, not a second visibility rule');
 
 // 2. Progress count, story-unlock, next-up, render, and the continue jump all route through it.
 assert.ok(/_countedLessons = countedLessons\(d\)/.test(html), 'progress count uses countedLessons(d)');
-assert.ok(/const allDone=setComplete\(d\)/.test(html), 'story unlock uses setComplete(d)');
+// v71_s: the lesson-set page's story section expands on the narrowed gate, for the same reason the
+// result card does — the story must be readable before the comprehension lesson that asks about it.
+assert.ok(/const allDone=storyUnlocked\(d\)/.test(html), 'story unlock uses storyUnlocked(d)');
 assert.ok(/_lessonCounts = \(L\) => lessonCountsFor\(d, L\)/.test(html), 'render-loop predicate aliases the shared helper');
 assert.ok(/findIndex\(L=>!done\[L\.id\]&&_lessonCounts\(L\)\)/.test(html),
   'next-up skips non-counted lessons (in-render)');
@@ -71,8 +80,13 @@ assert.ok(!/_mixedOnly/.test(html), 'the old inline _mixedOnly definitions are g
 
 // 3. Lock chain no longer keys off the raw previous index (which could be a hidden lesson) but
 //    off the previous COUNTED lesson's done state.
-assert.ok(/isLocked=!_firstNode&&!_prevDone&&!APP\._teacherMode/.test(html),
+//    v71_s: a second, independent lock was added alongside it — a comprehension lesson stays
+//    locked until the story is unlocked, wherever it sits on the path. The original rule is
+//    unchanged and still pinned; the new clause is ORed onto it, never replacing it.
+assert.ok(/isLocked=\(!_firstNode&&!_prevDone&&!APP\._teacherMode\)\|\|_storyLocked/.test(html),
   'lock is based on previous counted lesson, not raw i-1');
+assert.ok(/const _storyLocked = _isStoryGatedLesson\(L\) && !APP\._teacherMode && !storyUnlocked\(d\);/.test(html),
+  'and a story-gated lesson is additionally locked until the story unlocks (teachers exempt)');
 assert.ok(!/isLocked=i>0&&!done\[d\.lessons\[i-1\]\.id\]/.test(html),
   'old i-1-based lock removed');
 

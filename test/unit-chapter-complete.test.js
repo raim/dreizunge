@@ -132,11 +132,104 @@ console.log('  hidden lessons excluded; empty/missing chapters are not complete:
   // setComplete records on EVERY exit — via a wrapper, so a future edit cannot miss one.
   assert.ok(/function setComplete\(d\) \{\s*const v = _setCompleteRaw\(d\);/.test(html),
     'setComplete is a thin recording wrapper around the rule');
-  assert.ok(/function _setCompleteRaw\(d\) \{/.test(html), 'the rule itself is intact');
+  // v71_s: the rule gained an optional `skipStoryGated` parameter so the story-unlock gate can be
+  // measured over the same rule with the comprehension lessons removed, rather than a second copy
+  // of it. The assertion still pins what it always pinned — ONE shared rule function — and stays
+  // deliberately strict about there being exactly one.
+  assert.ok(/function _setCompleteRaw\(d(, skipStoryGated)?\) \{/.test(html), 'the rule itself is intact');
+  assert.strictEqual((html.match(/function _setCompleteRaw\(/g) || []).length, 1,
+    'and there is exactly one of it');
+  // storyUnlocked is the narrowed gate and must NOT record a chapter-done stamp — it is not
+  // chapter completion, and stamping it would make a chapter read as finished before its
+  // comprehension lesson had been played at all.
+  assert.ok(/function storyUnlocked\(d\) \{/.test(html), 'the narrowed story gate exists');
+  const _su = html.slice(html.indexOf('function storyUnlocked(d) {'));
+  assert.ok(!/_recordChapterDone/.test(_su.slice(0, _su.indexOf('function _setCompleteRaw'))),
+    'storyUnlocked does not stamp chapter completion');
   // The stamp carries the shape it was valid for.
   assert.ok(/m\[d\.topic\] = \{ done: !!done, n, at: new Date\(\)\.toISOString\(\) \};/.test(html),
     'the stamp records the counted-lesson count for staleness detection');
 }
 console.log('  all consumers share one reader; setComplete records via a wrapper: OK');
+
+// ── v71_w: the storyline page had a SECOND rule, and it diverged both ways ──
+// v69_l consolidated "is this chapter complete" onto one reader — but only where it was looked
+// for. The storyline page kept two raw `every(ls => done[ls.id])` scans: the connector line
+// between chapter cards, and the progress bar's green-at-100% colour. Nothing failed, because on
+// the bundled corpus they happened to agree. Measured, they do not:
+//
+//   • too STRICT  — a mixed-driven chapter with every VISIBLE lesson done reads as unfinished,
+//                   because the hidden pooled siblings have no done-flags (the v48 rule that
+//                   countedLessons already encodes).  shared: true,  raw: false
+//   • too PERMISSIVE — a chapter with every done-flag but coverage below the pass mark reads as
+//                   finished.  shared: false,  raw: true   ← the exact v69_l bug, still live here
+//
+// Both are quiet: a connector line or a bar colour that lies about an unfinished chapter is only
+// visible in a browser. Asserted as BEHAVIOUR (both directions) plus a source pin that no raw
+// scan comes back. This block needs a live client, which the rest of this file does not — so it
+// builds its own rather than changing the harness the other sections rely on.
+{
+  const { loadClient } = require('./lib-dom');
+  const LANGS = JSON.parse(fs.readFileSync(path.join(ROOT, 'languages.json'), 'utf8'));
+  const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
+  const C = loadClient({ quiet: true });
+  C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed-static');
+
+  const seed = (t, completed, active) => C.run(`
+    APP.savedList = ${JSON.stringify([t])};
+    APP.lessonData = ${JSON.stringify(active ? t : null)};
+    APP.lang = 'de'; APP.srcLang = 'en';
+    APP.info = { backend:'none', canGenerate:false, coverageThreshold: 0.8 };
+    APP.progress = { completed: ${JSON.stringify(completed)}, solved: {}, learned: {}, chapterDone: {} };
+    APP.progress.solved[${JSON.stringify(t.topic)}] = {};
+    APP.cur.lessonIdx = 0;
+    APP._teacherMode = false;
+    if (typeof _invalidateQidUniverse === 'function') _invalidateQidUniverse(); true;`, 'seed-' + t.topic);
+  // The rule the storyline page USED to apply, reproduced here so the divergence is measured
+  // rather than asserted from the diff.
+  const rawScan = (t, completed) => {
+    const done = completed[t.topic] || {};
+    const sets = t.lessons || [];
+    return sets.length > 0 && sets.every(ls => done[ls.id]);
+  };
+
+  // (a) too strict: a hidden (pooled) sibling has no done-flag, but it is not counted.
+  const tHidden = { topic: 'CmpHidden', lang: 'de', srcLang: 'en', lessons: [
+    { id: 'a', vocab: [{ target: 'Haus', source: 'house' }] },
+    { id: 'h', vocab: [{ target: 'Katze', source: 'cat' }], _hidden: true } ] };
+  const cHidden = { CmpHidden: { a: { correct: 1, total: 1 } } };
+  seed(tHidden, cHidden, false);
+  const sharedHidden = C.run(`chapterComplete(${JSON.stringify(tHidden)})`);
+  assert.strictEqual(sharedHidden, true, 'shared reader: hidden lessons do not block completion');
+  assert.strictEqual(rawScan(tHidden, cHidden), false,
+    'a raw done-flag scan would say unfinished — the divergence');
+
+  // (b) too permissive: every done-flag present, coverage below the pass mark.
+  const tMark = { topic: 'CmpMark', lang: 'de', srcLang: 'en', coverageTarget: 0.8, lessons: [
+    { id: 'x', vocab: [{ target: 'Haus', source: 'house' }, { target: 'Katze', source: 'cat' },
+                       { target: 'Baum', source: 'tree' }] } ] };
+  const cMark = { CmpMark: { x: { correct: 1, total: 6 } } };
+  seed(tMark, cMark, true);
+  const sharedMark = C.run(`chapterComplete(APP.lessonData)`);
+  assert.strictEqual(sharedMark, false, 'shared reader: below the pass mark is NOT complete');
+  assert.strictEqual(rawScan(tMark, cMark), true,
+    'a raw done-flag scan would say finished — the v69_l bug, still live on the storyline page');
+
+  // (c) Source: the storyline page must not reintroduce either scan.
+  const sl = html.slice(html.indexOf('function _renderChapterCard'));
+  const card = sl.slice(0, 9000);   // the function is dense; 4000 chars stopped before the bar
+  assert.ok(/const _prevAllDone = _chapterComplete\(prevTopic\);/.test(card),
+    'the connector line reads the shared rule');
+  assert.ok(/const _chDone = _chapterComplete\(topic\);/.test(card),
+    'and so does the bar colour — 100% of done-flags is not the same as complete');
+  assert.ok(!/_prevSets\.every\(ls => _prevDone\[ls\.id\]\)/.test(html),
+    'the raw previous-chapter scan is gone');
+  assert.ok(!/_pct >= 100 \? 'var\(--green\)'/.test(html),
+    'the bar no longer colours itself complete from a raw percentage');
+  // The FRACTION stays a fraction — a different question, legitimately — but over counted lessons.
+  assert.ok(/countedLessons\(s \|\| \{ lessons: \[\] \}\)/.test(card),
+    'the progress fraction counts the lessons a learner can actually play');
+  console.log('  storyline page: connector line + bar colour read the one rule (both divergences pinned)');
+}
 
 console.log('unit-chapter-complete: ALL PASSED');

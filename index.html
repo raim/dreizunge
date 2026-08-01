@@ -785,10 +785,11 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           <input type="checkbox" id="pdf-arc-cb">
           <span id="pdf-arc-lbl">🎯 Build a learning arc per chapter</span>
         </label>
-        <select id="pdf-arc-mode" class="arc-mode-select" style="margin:3px 0 0 24px;font-size:12px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:3px 6px;background:var(--white);color:var(--text)">
-          <option value="vocab">➕🔁 New + review vocabulary</option>
-          <option value="grammar">🧩🔁 Word forms + synonyms</option>
-        </select>
+        <!-- v71_u: the two-option <select> here became the shared tick-list. Same operation as the
+             storyline "add lessons" run, which has had the full picker since v71_p — so a type
+             added to one silently did not exist in the other (comprehension, v71_l, was never
+             reachable from a book at all). Rendered by renderLessonTypeChecks on form open. -->
+        <div id="pdf-arc-types" class="user-story-checks" style="margin:3px 0 0 24px"></div>
       </div>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
         <button type="button" id="pdf-gen-btn" onclick="pdfGenerateAll()"
@@ -874,10 +875,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           <input type="checkbox" id="gen-arc-cb" checked>
           <span id="gen-arc-lbl">🎯 Build a learning arc per chapter</span>
         </label>
-        <select id="gen-arc-mode" class="arc-mode-select" style="margin:3px 0 0 24px;font-size:12px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:3px 6px;background:var(--white);color:var(--text)">
-          <option value="vocab">➕🔁 New + review vocabulary</option>
-          <option value="grammar">🧩🔁 Word forms + synonyms</option>
-        </select>
+        <div id="gen-arc-types" class="user-story-checks" style="margin:3px 0 0 24px"></div>
         <label class="user-story-check-row" id="gen-arc-script-row" style="display:none;margin:4px 0 0 24px">
           <input type="checkbox" id="gen-arc-script-cb" checked>
           <span id="gen-arc-script-lbl">🔡 Teach the script per chapter</span>
@@ -1763,14 +1761,16 @@ function applyUIStrings() {
   if (useTransLbl) useTransLbl.textContent = t('form.translation_cb');
   const storyPanelLbl = document.getElementById('story-panel-lbl');
   if (storyPanelLbl) storyPanelLbl.textContent = t('form.story_label');
-  // Arc-mode <select> options (pdf + generated forms) — option text via ui.json
-  ['pdf-arc-mode','gen-arc-mode'].forEach(selId => {
-    const sel = document.getElementById(selId);
-    if (!sel) return;
-    const ov = sel.querySelector('option[value="vocab"]');
-    if (ov) ov.textContent = t('form.arc_mode_vocab');
-    const og = sel.querySelector('option[value="grammar"]');
-    if (og) og.textContent = t('form.arc_mode_grammar');
+  // v71_u: the arc-mode <select>s are gone (replaced by the shared tick-list, which gets its
+  // labels from ADD_LESSON_TYPES via renderLessonTypeChecks). Re-render them on a language change
+  // so the labels follow the UI language — the `rendered` flag is cleared first, since the picker
+  // deliberately refuses to re-render over a user's ticks.
+  ['pdf-arc-types','gen-arc-types'].forEach(id => {
+    const c = document.getElementById(id);
+    if (!c || c.dataset.rendered !== '1') return;
+    const keep = readArcTypeChecks(id);
+    c.dataset.rendered = '';
+    renderArcTypeChecks(id, { checked: keep });
   });
   // Translation hint
   updateTranslationLangHint();
@@ -2212,6 +2212,7 @@ function onNumChaptersSlider(v){
   const el=document.getElementById('num-chapters-val'); if(el) el.textContent=numChaptersLabel(APP.numChapters);
   // The learning-arc toggle only applies to multi-chapter generation.
   const arcRow=document.getElementById('gen-arc-row'); if(arcRow) arcRow.style.display=APP.numChapters>1?'':'none';
+  if(APP.numChapters>1) renderArcTypeChecks('gen-arc-types');
   updateArcScriptRow();
 }
 // The "teach the script per chapter" opt-in only makes sense when generating multiple chapters
@@ -4248,6 +4249,7 @@ function _renderPdfChunks() {
   const arcRow = document.getElementById('pdf-arc-row');
   const arcLbl = document.getElementById('pdf-arc-lbl');
   if (arcRow) arcRow.style.display = (genBtn && genBtn.style.display === '') ? '' : 'none';
+  if (arcRow && arcRow.style.display === '') renderArcTypeChecks('pdf-arc-types');
   if (arcLbl) arcLbl.textContent = t('form.arc_lbl');
   _renderSplitModes();
   const clLbl = document.getElementById('pdf-cleanup-lbl'); if(clLbl) clLbl.textContent = t('pdf.cleanup_lbl');
@@ -4458,8 +4460,9 @@ async function pdfGenerateAll() {
   };
   if (document.getElementById('pdf-arc-cb')?.checked) {
     body.arc = true;
-    body.arcMode = document.getElementById('pdf-arc-mode')?.value || 'vocab';
-    body.arcReinforce = ['word_forms', 'synonyms'];
+    // v71_u: the ticked types, not a two-value mode. arcMode is no longer sent — the server still
+    // accepts it from older clients, but this client has no such control any more.
+    body.arcTypes = readArcTypeChecks('pdf-arc-types');
     // PDF flow has no dedicated checkbox; default to the script primer when the target uses a
     // script the source doesn't (server also defaults this, but be explicit).
     body.arcScript = (typeof needsIntroScript === 'function') && needsIntroScript(APP.lang, APP.srcLang);
@@ -5512,7 +5515,7 @@ async function doGenerate(forceRegen){
       lessonFormat:APP.lessonFormat||'standard',
       continuedFrom:(document.getElementById('continue-select')?.value||null) };
     if(APP.storyStyle && APP.storyStyle!=='creative') gbody.storyStyle=APP.storyStyle;
-    if(document.getElementById('gen-arc-cb')?.checked){ gbody.arc=true; gbody.arcMode=document.getElementById('gen-arc-mode')?.value||'vocab'; gbody.arcReinforce=['word_forms','synonyms']; gbody.arcScript=!!document.getElementById('gen-arc-script-cb')?.checked; }
+    if(document.getElementById('gen-arc-cb')?.checked){ gbody.arc=true; gbody.arcTypes=readArcTypeChecks('gen-arc-types'); gbody.arcScript=!!document.getElementById('gen-arc-script-cb')?.checked; }
     try{
       const r=await fetch('/api/generate-book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(gbody)});
       const resp=await r.json();
@@ -5607,7 +5610,17 @@ async function _pollGenBook(bookId, total){
 // `lessonCountsFor` is the single rule used by the path render, progress, locking, next-up, and
 // story unlock. Teacher/live mode counts everything (nothing hidden, nothing locked).
 // Types the mixed lesson never pools from → never hidden by it, regardless of position.
-const _NEVER_POOLED = new Set(['mixed', 'error_hunt', 'ai_error_hunt']);
+// v71_s: `comprehension` joined them. A mixed round could otherwise ask story questions while the
+// story was still locked — the same conceptual error this release fixes, arriving by a side door.
+// It also means a comprehension lesson is never folded into a mixed lesson as a hidden sibling,
+// which matters: it has to stay reachable as its own node so the learner can play it after the
+// story opens. (error_hunt/ai_error_hunt builders return [] and were already skipped in practice;
+// listing them here is what makes that a rule rather than an accident.)
+const _NEVER_POOLED = new Set(['mixed', 'error_hunt', 'ai_error_hunt', 'comprehension']);
+// One predicate for "a mixed lesson does not draw questions from this type", so the pooling loops,
+// the mixed lesson's coverage universe and the hiding rule cannot disagree — three sites that each
+// spelled `type === 'mixed'` on their own before v71_s.
+function _mixedSkips(type){ return _NEVER_POOLED.has(type); }
 // The LLM-picked icons of the lessons a mixed lesson pools from — a visual preview shown on the
 // mixed card in place of the generic "Mixed review" label. De-duplicated, source order preserved.
 function mixedSourceIcons(d, mixIdx) {
@@ -5639,6 +5652,29 @@ function lessonCountsFor(d, L) {
   return false;                                // an earlier poolable lesson → folded into mixed
 }
 function countedLessons(d) { return (d?.lessons || []).filter(L => lessonCountsFor(d, L)); }
+// ── v71_s: comprehension is gated BY the story, so it cannot gate the story ──────────────────
+// A comprehension lesson asks about the chapter's story. A learner cannot read that story until
+// the chapter unlocks it (they never see the lesson-set page — v60.1 — so the completion card is
+// the only place it appears). Counting comprehension toward the unlock therefore asked them to
+// answer questions about text they had never been shown: circular, and unanswerable except by
+// guessing, which quietly writes false "solved" entries into the coverage store and the ledger.
+//
+// The split is TWO layers, not one — missing either leaves the circle intact:
+//   • lesson layer   — `setComplete` requires every counted lesson to be done;
+//   • coverage layer — `topicCoverage` unions the question universe over every counted lesson, so
+//                      comprehension qids sat inside the very denominator gating the unlock.
+//
+// `storyUnlocked(d)` is the narrowed gate (everything EXCEPT comprehension). `setComplete(d)` is
+// unchanged in meaning — the whole chapter, comprehension included — so chapter progression,
+// the green dots and `chapterComplete` keep requiring it. Both run through one `_setCompleteRaw`
+// rather than a second copy of the rule, which is how the three `_itemWithheld` spellings happened.
+const _STORY_GATED_TYPES = new Set(['comprehension']);
+function _isStoryGatedLesson(L) { return !!(L && _STORY_GATED_TYPES.has(L.type)); }
+// The lessons that must be finished for the STORY to unlock: counted, minus the story-gated ones.
+function storyUnlockLessons(d) { return countedLessons(d).filter(L => !_isStoryGatedLesson(L)); }
+// Does this chapter hold a story-gated lesson at all? Chapters without one are completely
+// unaffected by any of this — the narrowed gate and the full gate are then the same set.
+function _hasStoryGated(d) { return (d?.lessons || []).some(L => _isStoryGatedLesson(L) && lessonCountsFor(d, L)); }
 // Has the learner finished everything that counts in this set? Drives story unlock + 100%.
 // ── Chapter completion: ONE definition, shared (v69_l) ───────────────────────────────────────
 // The app had two. `setComplete()` is the honest rule — every counted lesson played AND coverage
@@ -5707,8 +5743,22 @@ function setComplete(d) {
     _recordChapterDone(d, v);
   return v;
 }
-function _setCompleteRaw(d) {
+// v71_s: the narrowed gate — is the STORY unlocked? Same rule as setComplete over a lesson set
+// with the story-gated (comprehension) lessons removed, and with their questions removed from the
+// coverage denominator. Deliberately does NOT record a chapter-done stamp: this is not chapter
+// completion and must never be mistaken for it.
+function storyUnlocked(d) {
+  d = d || APP.lessonData;
   if (!d) return false;
+  // No story-gated lesson → the two gates are identical; defer to the real one so there is exactly
+  // one answer for the overwhelming majority of chapters.
+  if (!_hasStoryGated(d)) return _setCompleteRaw(d);
+  return _setCompleteRaw(d, true);
+}
+function _setCompleteRaw(d, skipStoryGated) {
+  if (!d) return false;
+  // The lesson set this verdict is measured over (v71_s). Narrowed only for the story-unlock gate.
+  const _counted = skipStoryGated ? storyUnlockLessons(d) : countedLessons(d);
   // Mixed-driven sets complete by COVERAGE (solved ≥ target of the question universe) AND by
   // finishing every OTHER visible lesson — the error-hunt final test(s) and any lessons placed
   // after the mixed lesson (the mixed lesson only pools from, and hides, earlier lessons).
@@ -5716,15 +5766,15 @@ function _setCompleteRaw(d) {
   // unlocks only after both the mixed practice and the follow-on lessons/tests are done.
   if (!APP._teacherMode && (d.lessons||[]).some(x => x && x.type === 'mixed' && !x._hidden)
       && APP.lessonData && d.topic === APP.lessonData.topic) {
-    if (!coverageComplete()) return false;
+    if (!coverageComplete(skipStoryGated)) return false;
     const done = APP.progress?.completed?.[d.topic] || {};
     // The mixed lesson's own boolean isn't required (coverage covers it); require every other
     // surviving counted lesson (error hunts + any later lessons).
-    return countedLessons(d).every(L => L.type === 'mixed' || done[L.id]);
+    return _counted.every(L => L.type === 'mixed' || done[L.id]);
   }
   const done = APP.progress?.completed?.[d.topic] || {};
   // Every counted lesson done…
-  if (!countedLessons(d).every(L => done[L.id])) return false;
+  if (!_counted.every(L => done[L.id])) return false;
   // …AND, when a teacher has set a global %-solved threshold below 100%, the learner's correct-
   // answer coverage must also meet it (v60.8). This gates CLASSIC sets by mastery, not just
   // completion — below the bar, the chapter stays incomplete and the completion card offers the
@@ -5734,7 +5784,7 @@ function _setCompleteRaw(d) {
   if (!APP._teacherMode && APP.lessonData && d.topic === APP.lessonData.topic){
     const tgt = _coverageTarget();
     if (tgt < 1){
-      const cov = topicCoverage();
+      const cov = topicCoverage(skipStoryGated);
       if (cov.total > 0 && (cov.solved / cov.total) < tgt) return false;
     }
   }
@@ -5984,7 +6034,7 @@ function buildPath(){
   const storyBody=document.getElementById('story-body');
   if(d.story && storySec && storyBody){
     storySec.style.display='';
-    const allDone=setComplete(d);
+    const allDone=storyUnlocked(d);
     const arrow=document.getElementById('story-arrow');
     if(allDone){ storyBody.classList.add('open'); if(arrow) arrow.classList.add('open'); }
     else { storyBody.classList.remove('open'); if(arrow) arrow.classList.remove('open'); }
@@ -6040,7 +6090,12 @@ function buildPath(){
   let _firstNode=true;
   d.lessons.forEach((L,i)=>{
     if(!_lessonCounts(L)) return;   // hidden + non-teacher → omit from the path entirely
-    const isDone=!!(done[L.id]), isLocked=!_firstNode&&!_prevDone&&!APP._teacherMode, isActive=!isDone&&!isLocked;
+    // v71_s: a comprehension lesson is additionally locked until the STORY is unlocked, however
+    // far down the path it sits. Sequential locking alone is not enough — it only says "the
+    // previous lesson is done", which is not the same as "the story has been revealed" once
+    // coverage is part of the gate. Teachers are exempt, as with every other lock here.
+    const _storyLocked = _isStoryGatedLesson(L) && !APP._teacherMode && !storyUnlocked(d);
+    const isDone=!!(done[L.id]), isLocked=(!_firstNode&&!_prevDone&&!APP._teacherMode)||_storyLocked, isActive=!isDone&&!isLocked;
     const lessonScore=typeof done[L.id]==='object'?done[L.id]:null;
     const lessonPct=lessonScore&&lessonScore.total>0?Math.round(100*lessonScore.correct/lessonScore.total):null;
     if(!_firstNode){ const ln=document.createElement('div'); ln.className='path-line'+(_prevDone?' done':''); path.appendChild(ln); }
@@ -6182,7 +6237,19 @@ function _firstUnfinishedLessonIdx(d){
   // background call for a different topic can't misfire the coverage branch.
   if(d === APP.lessonData){ try { if(setComplete(d)) return -1; } catch(_) {} }
   const done = APP.progress.completed?.[d.topic] || {};
-  const idx = (d.lessons||[]).findIndex(L => !done[L.id] && lessonCountsFor(d, L));
+  // v71_s: never resume INTO a story-locked comprehension lesson. It is unfinished and counted, so
+  // the plain scan would happily return it, and a learner is auto-started at whatever comes back
+  // (v60 nav) — landing them on questions about a story they have not unlocked yet. Prefer any
+  // other unfinished lesson; the comprehension one becomes reachable the moment the story opens.
+  //
+  // typeof-guarded like the rest of the coverage machinery: the unit harnesses extract this
+  // function on its own, and an unguarded reference would ReferenceError there. Degrading to the
+  // pre-v71_s behaviour is the safe direction — it can only offer a lesson, never hide one.
+  const _storyLocked = (L) => typeof _isStoryGatedLesson === 'function'
+    && typeof storyUnlocked === 'function'
+    && _isStoryGatedLesson(L) && !APP._teacherMode && !storyUnlocked(d);
+  const _playable = (L) => !done[L.id] && lessonCountsFor(d, L) && !_storyLocked(L);
+  const idx = (d.lessons||[]).findIndex(_playable);
   if(idx >= 0) return idx;
   // v68.1: a mixed-driven set completes by COVERAGE, but the mixed lesson still GETS a done-flag on
   // every play (showComplete records one, and confirmQuit records partial progress on quit). So
@@ -7046,14 +7113,26 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   function _renderChapterCard(topic, prevTopic, isFirst, chainBlocked) {
     const s = byTopic[topic];
     const _done = _slCompleted[topic] || {};
-    const _sets = s?.lessons || [];
+    // v71_w: COUNTED lessons, not every lesson. A mixed-driven chapter hides the siblings the mixed
+    // lesson pools from, and a raw `s.lessons` count made the bar unreachable — the v48 hidden-lesson
+    // rule, which countedLessons already encodes. Guarded because this render also runs in the
+    // static build, where the helper is present but the harnesses extract this function alone.
+    const _sets = (typeof countedLessons === 'function') ? countedLessons(s || { lessons: [] }) : (s?.lessons || []);
     const _doneSets = _sets.filter(ls => _done[ls.id]).length;
     const _pct = _sets.length > 0 ? Math.round(100 * _doneSets / _sets.length) : 0;
     let out = '';
     if (!isFirst && prevTopic) {
-      const _prevDone = _slCompleted[prevTopic] || {};
-      const _prevSets = byTopic[prevTopic]?.lessons || [];
-      const _prevAllDone = _prevSets.length > 0 && _prevSets.every(ls => _prevDone[ls.id]);
+      // v71_w: the connector line asks "is the previous chapter finished?" — the same question
+      // `chapterComplete` answers, and it must not answer it a second way. The raw done-flag scan
+      // that used to live here diverged in BOTH directions, measured:
+      //   • too STRICT — a mixed-driven chapter with all visible lessons done read as unfinished,
+      //     because the hidden pooled siblings have no done-flags (shared: true, raw: false);
+      //   • too PERMISSIVE — a chapter with every done-flag but coverage below the pass mark read
+      //     as finished (shared: false, raw: true). That is the exact v69_l bug, which was fixed
+      //     for the gate (_chapterComplete, above) while this line kept the old rule.
+      // Nothing failed because the two happened to agree on the bundled data; a line that draws
+      // itself "done" over an unfinished chapter is quiet, and only wrong in a browser.
+      const _prevAllDone = _chapterComplete(prevTopic);
       out += '<div class="path-line' + (_prevAllDone ? ' done' : '') + '" style="height:20px"></div>';
     }
     if (!s) return out + '<div class="lesson-node" style="opacity:.5;width:100%;box-sizing:border-box">' + escHtml(topic) + '</div>';
@@ -7080,7 +7159,13 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
           return _ps.length === 0 || !_ps.every(ls => _pd[ls.id]);
         })()
       );
-    const _barColor = _pct >= 100 ? 'var(--green)' : 'var(--blue)';
+    // v71_w: the bar's FRACTION is a genuinely different question from completeness — "how much of
+    // this chapter have you played" — and stays a fraction. But its COLOUR asserts "finished", so
+    // that reads the shared rule: 100% of done-flags is not the same as complete once a pass mark
+    // or a story-gated lesson is involved (v71_s), and a green bar over an unfinished chapter is
+    // the same quiet lie the connector line was telling.
+    const _chDone = _chapterComplete(topic);
+    const _barColor = _chDone ? 'var(--green)' : 'var(--blue)';
     if (_isLocked) {
       out += '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden;opacity:.45;pointer-events:none">'
            + '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;z-index:2;pointer-events:none">🔒</div>'
@@ -7363,6 +7448,25 @@ function renderLessonTypeChecks(container, opts){
         <span>${x.emoji} ${escHtml(lbl && lbl !== x.key ? lbl : x.v)}</span>
       </label>`;
     }).join('');
+}
+// v71_u: render an arc tick-list into one of the book/generate forms. Both call this, so the two
+// forms cannot drift apart the way the old two-option <select>s did. Rendered lazily (on the form
+// becoming visible) rather than at startup, because `hasStory` and the UI language are only known
+// then — and re-rendering would otherwise wipe the user's ticks, so it is skipped when already
+// populated.
+// Default ticks match the OLD 'vocab' arc — one review lesson — so an existing user who never
+// touches the picker gets exactly what they got before this release.
+function renderArcTypeChecks(containerId, opts){
+  const c = document.getElementById(containerId);
+  if(!c || c.dataset.rendered === '1') return;
+  renderLessonTypeChecks(c, { cls: 'arc-lt-check', checked: ['review'], ...(opts || {}) });
+  c.dataset.rendered = '1';
+}
+// The types ticked in one of those forms. Empty means "arc off" as far as the server is concerned:
+// the checkbox governs whether an arc runs at all, and an arc with no types would be a long wait
+// for nothing (the same reasoning as _pickLessonTypes' empty guard).
+function readArcTypeChecks(containerId){
+  return readLessonTypeChecks(document.getElementById(containerId), 'arc-lt-check');
 }
 function readLessonTypeChecks(container, cls){
   if(!container) return [];
@@ -10010,6 +10114,10 @@ function buildStandardExercises(lesson, lessonIdx){
 // and types that build no playable exercises (error_hunt) are skipped. Fresh each play.
 function buildMixedExercises(lesson, lessonIdx){
   const lessons = APP.lessonData?.lessons || [];
+  // typeof-guarded like the coverage machinery below: the unit harnesses extract this builder on
+  // its own with stubs, and an unguarded reference would ReferenceError there. Degrades to the
+  // pre-v71_s rule (skip nested mixed only), which is the safe direction.
+  const _skipSib = (ty) => (typeof _mixedSkips === 'function') ? _mixedSkips(ty) : ty === 'mixed';
   const perType = Math.max(1, lesson?.perType || 3);
   const teacher = !!APP._teacherMode;
   // v69.1 (user request): size the round so ONE pass can reach the topic's coverage target —
@@ -10031,7 +10139,7 @@ function buildMixedExercises(lesson, lessonIdx){
     if (needed > 0){
       const byQid = new Map();
       lessons.forEach((sib, i) => {
-        if (i >= lessonIdx || !sib || sib.type === 'mixed') return;
+        if (i >= lessonIdx || !sib || _skipSib(sib.type)) return;
         if (sib._hidden && !teacher) return;
         const want = new Set();
         for (const id of _lessonQidUniverse(i)) if (!solved[id]) want.add(id);
@@ -10064,7 +10172,7 @@ function buildMixedExercises(lesson, lessonIdx){
     if(i === lessonIdx) return;                 // not itself
     if(i > lessonIdx) return;                    // only review EARLIER lessons; later lessons stay
                                                  // visible & independent (they're not pooled/hidden)
-    if(!sib || sib.type === 'mixed') return;    // no nested mixed
+    if(!sib || _skipSib(sib.type)) return;      // no nested mixed, no story-gated types (v71_s)
     if(sib._hidden && !teacher) return;         // skip hidden (matches play gating)
     let exs;
     try { exs = lessonTypeMeta(sib.type).build(sib, i) || []; }
@@ -10879,16 +10987,59 @@ function buildWordFormsExercises(lesson){
 
 // ══ Grammar exercises (gender/article/plural) ════════════════════════════════
 
-// Article choices per language (definite articles)
-const ARTICLE_CHOICES = {
-  de: ['der','die','das'],
-  fr: ['le','la','les',"l'"],
-  it: ['il','la','lo','i','le','gli',"l'"],
-  es: ['el','la','los','las'],
-  pt: ['o','a','os','as'],
-  nl: ['de','het'],
-  ru: ['м','ж','с'],   // gender labels when no articles
-};
+// v71_x — the hardcoded ARTICLE_CHOICES table is GONE (session-23 design principle: no language
+// knowledge in the code). It asserted things like "German has der/die/das" — nominative only, so
+// wrong the moment a lesson uses another case — and carried `ru: ['м','ж','с']`, gender labels
+// standing in for articles, which is the code holding a theory about a language.
+//
+// Distractors now come from the DATA the model produced: every article seen on any grammar item in
+// the same language, nearest source first. Measured against the bundled corpus, this is strictly
+// better than the table, not merely equivalent:
+//   • the table covered de/fr/it/es/pt/nl/ru — so 5 of the 6 single-article lessons (en, he) could
+//     never build an article MCQ at all;
+//   • corpus-derived gives `en` a/an/the, which the table never had → 4 of those 6 now DO build one;
+//   • `he` yields only ה corpus-wide, so it correctly still builds none — Hebrew has one definite
+//     article and no indefinite, a fact nobody had to write down.
+// The only case that loses is a language seen exactly once in the whole store, where there is
+// genuinely nothing to draw a distractor from and a fabricated one would be a guess.
+function _articleChoicesFor(lang, items) {
+  const seen = new Set();
+  const add = (a) => { if (a && typeof a === 'string') seen.add(a); };
+  (items || []).forEach(x => add(x && x.article));           // this lesson first
+  const scan = (lessons) => (lessons || []).forEach(L => {
+    ((L && L.grammar) || []).forEach(g => add(g && g.article));
+  });
+  try {
+    if (APP.lessonData && APP.lessonData.lang === lang) scan(APP.lessonData.lessons);
+    (APP.savedList || []).forEach(t => { if (t && t.lang === lang) scan(t.lessons); });
+  } catch(_) {}
+  return [...seen];
+}
+
+// v71_r (found by unit-replay-focus §8 firing against a new corpus): a builder that CAPS its
+// output is SAMPLING, and must cut the round the way the standard builder does — unsolved-first —
+// rather than at random.
+//
+// Grammar and conjugation both derive their full question set deterministically and then did
+// `shuffle(exs).slice(0, 14)`, discarding a random remainder. Two consequences, both real:
+//   1. They ignored the `APP._derivingUniverse` contract (_lessonQidUniverse: "builders: full set,
+//      no cap, no coverage bias"), so the coverage DENOMINATOR was only reached by convergence —
+//      up to 120 re-derivations to rediscover a set the builder already had in hand.
+//   2. A replay re-asked already-solved questions. Measured on ls_1785500580472_1_grammar
+//      (10 items → universe 25, round 14): ~53% of every replay was material already answered,
+//      and 11 questions stayed unreachable. Exactly the defect v71_f fixed for standard lessons.
+//
+// Unlike buildStandardExercises this needs NO re-derivation top-up: the pool handed here is
+// already the whole universe, so only the ordering and the cut were wrong. Kept as one helper
+// because two copies of a coverage rule is how the three _itemWithheld spellings happened.
+function _cutCoverageRound(exs, cap) {
+  if (APP._derivingUniverse) return exs;          // universe enumeration wants every question
+  const famShare = (typeof FAMILIAR_SHARE === 'number') ? FAMILIAR_SHARE : 0.15;   // harness-safe
+  // `true` = trim rather than pad, as the single-lesson standard replay does (v71_i): this is a
+  // one-lesson round where a review slot is a wasted question.
+  if (typeof assembleCoverageRound === 'function') return assembleCoverageRound(exs, cap, 1 - famShare, true);
+  return shuffle(exs).slice(0, cap);
+}
 
 function buildGrammarExercises(lesson) {
   const items = lesson.grammar || [];
@@ -10899,7 +11050,7 @@ function buildGrammarExercises(lesson) {
   items.forEach((g, i) => {
     // 1. MCQ — pick the correct article (skip if no articles for this language)
     if (g.article) {
-      const langArticles = ARTICLE_CHOICES[lang] || [...new Set(items.map(x=>x.article).filter(Boolean))];
+      const langArticles = _articleChoicesFor(lang, items);
       const wrong = shuffle(langArticles.filter(a => a !== g.article)).slice(0, 3);
       if (wrong.length >= 1) {
         const choices = shuffle([g.article, ...wrong]).slice(0, 4);
@@ -10925,7 +11076,7 @@ function buildGrammarExercises(lesson) {
                  plural:g.plural, correct:g.plural });
     }
   });
-  return shuffle(exs).slice(0, 14);
+  return _cutCoverageRound(exs, 14);
 }
 
 function tMcqArticle(ex) {
@@ -11044,7 +11195,9 @@ function buildConjugationExercises(lesson, lang) {
       }
     });
   });
-  return shuffle(exs).slice(0, 14);
+  // Same cap, same defect — no conjugation lesson exists in the bundled corpus, so this one was
+  // never measured, only reasoned from the identical shape. See _cutCoverageRound.
+  return _cutCoverageRound(exs, 14);
 }
 
 function tMcqConjugation(ex) {
@@ -11815,7 +11968,8 @@ function renderEx(){
       `<button class="mute-btn" onclick="toggleMute()" title="${APP.muted?'Unmute':'Mute'}" style="flex:0 0 auto;border:2px solid var(--gray-mid);background:var(--white);border-radius:var(--radius-lg);cursor:pointer;font-size:20px;padding:0 16px;opacity:${APP.muted?'1':'.7'}">${APP.muted?'🔇':'🔊'}</button>`+
       `<button class="kbd-btn${APP.noKeyboard?' kbd-on':''}" onclick="toggleNoKeyboard()" title="${escAttr(t('ex.no_keyboard.title'))}" style="flex:0 0 auto;border:2px solid var(--gray-mid);background:var(--white);border-radius:var(--radius-lg);cursor:pointer;font-size:20px;padding:0 16px;opacity:${APP.noKeyboard?'1':'.7'}">⌨️</button>`+
     '</div>'+
-    flagUi;
+    flagUi+
+    _exStoryPanelHtml(ex);
   if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>{
     if(_ttsUnlocked){ speak(ex.target); }
     else {
@@ -11825,6 +11979,47 @@ function renderEx(){
 
 }
 
+// v71_s: the chapter story, shown on a COMPREHENSION question so the learner can actually read the
+// text they are being asked about. Placed at the very END of the exercise area — after the choices,
+// the feedback line and the Check button — because the answer controls must stay reachable without
+// scrolling past a story that can run several hundred words (user's explicit layout call).
+//
+// Open by default: on a comprehension question the text is not supplementary, it is the material.
+// Collapsible so a learner who has read it can fold it away and keep the question in view.
+//
+// Deliberately NO translation toggle, unlike the result card's panel. There it rewards a finished
+// chapter; here it would let the learner answer questions about the target-language text without
+// ever reading the target language — which is the one thing a comprehension lesson is for. Worth
+// revisiting as a product decision, not a bug.
+function _exStoryPanelHtml(ex){
+  if(!ex || ex.type !== 'comprehension_mcq') return '';
+  const d = APP.lessonData || {};
+  const story = d.story || '';
+  if(!story) return '';
+  // The gate is belt-and-braces: the lesson is already unreachable until the story unlocks
+  // (buildPath + _firstUnfinishedLessonIdx), so this should always be true when we get here.
+  // If some future path opens the lesson early, showing the story is the safe failure — the
+  // alternative is the unanswerable question this release exists to remove.
+  const unlocked = (typeof storyUnlocked === 'function') ? storyUnlocked(d) : true;
+  if(!unlocked && !APP._teacherMode && !APP.info?.canGenerate) return '';
+  let body;
+  try {
+    const solved = (typeof _solvedTargetWords === 'function') ? _solvedTargetWords(d) : [];
+    const rendered = furiHtml(story);
+    body = solved.length ? _highlightVocabHtml(rendered, solved) : rendered;
+  } catch(_) { body = escHtml(story); }
+  const paras = body.split(/\n\n+/).map(p => `<p dir="auto" style="margin:0 0 8px">${p.replace(/\n/g,'<br>')}</p>`).join('');
+  const lang = d.lang || APP.lang;
+  const spk = (typeof _lessonIsDialect === 'function' && _lessonIsDialect()) ? '' :
+    `<button class="flag-btn" style="margin-bottom:6px" title="${escAttr(t('ex.comprehension.story_listen'))}"
+       onclick="speakBodyText(null,'${escAttr(lang)}',APP.lessonData?.story||'')">🔊</button>`;
+  return '<details id="ex-story-panel" open style="margin-top:14px;border:2px solid var(--gray-mid);'
+       + 'border-radius:var(--radius-lg);background:var(--white);text-align:left;padding:10px 14px">'
+       + `<summary style="cursor:pointer;font-size:13px;font-weight:900;color:var(--gray-dark);outline:none">`
+       + `📖 ${escHtml(t('ex.comprehension.story'))}</summary>`
+       + `<div id="ex-story-text" style="margin-top:8px;font-size:15px;line-height:1.6">${spk}${paras}</div>`
+       + '</details>';
+}
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 function cGrid(cs,one){ return `<div class="choices${one?' one-col':''}">${cs.map((c,i)=>`<button class="choice" dir="auto" id="c${i}" onclick="pickChoice(${i},this)">${furiHtml(c)}</button>`).join('')}</div>`; }
 // Shared card for sentence-context MCQs (word_forms + synonyms-in-context). The
@@ -12632,7 +12827,10 @@ function _lessonQidUniverse(lessonIdx){
   if(L.type === 'mixed'){
     const UM = new Set();
     (d.lessons||[]).forEach((sib,i)=>{
-      if(i>=lessonIdx || !sib || sib.type==='mixed') return;   // earlier, non-mixed siblings only
+      // typeof-guarded: the coverage harnesses extract _lessonQidUniverse on its own. Degrades to
+      // the pre-v71_s rule (skip nested mixed only), which is the safe direction.
+      const _skip = (typeof _mixedSkips === 'function') ? _mixedSkips(sib.type) : sib.type === 'mixed';
+      if(i>=lessonIdx || !sib || _skip) return;   // earlier, poolable siblings only
       if(sib._hidden && !APP._teacherMode) return;
       for(const id of _lessonQidUniverse(i)) UM.add(id);
     });
@@ -12683,10 +12881,15 @@ function lessonCoverage(lessonIdx){
 }
 // Topic-level coverage across the COUNTED lessons (respects the mixed-only / hidden rule via
 // countedLessons). This is the set-level completion fraction.
-function topicCoverage(){
+function topicCoverage(skipStoryGated){
   const d = APP.lessonData; if(!d) return { solved:0, total:0, pct:0 };
   const U = new Set();
-  for(const L of countedLessons(d)){
+  // v71_s: the story-unlock gate measures coverage over everything EXCEPT the story-gated
+  // (comprehension) lessons — their questions are about a story the learner has not been shown
+  // yet, so counting them here would keep the unlock permanently out of reach. Every other caller
+  // passes nothing and gets the whole chapter, which is what the progress bars should show.
+  const lessons = skipStoryGated ? storyUnlockLessons(d) : countedLessons(d);
+  for(const L of lessons){
     const idx = d.lessons.indexOf(L);
     for(const id of _lessonQidUniverse(idx)) U.add(id);
   }
@@ -12772,8 +12975,8 @@ async function setPassMark(scope, id, raw){
 // Is the set complete under the coverage model? Only meaningful for a mixed-driven set; the
 // locked path keeps its lesson-boolean completion (setComplete). Returns true when the solved
 // fraction of the topic universe meets the target.
-function coverageComplete(){
-  const cov = topicCoverage();
+function coverageComplete(skipStoryGated){
+  const cov = topicCoverage(skipStoryGated);
   if(cov.total === 0) return false;
   return (cov.solved / cov.total) >= _coverageTarget();
 }
@@ -13232,14 +13435,33 @@ function showComplete(review){
   // Review mode records nothing (the chapter is already complete).
   if(!C._review && !C.isErrorHunt && !lesson._drill){
     if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
-    const prev = APP.progress.completed[topicKey][lesson.id]||{};
-    const prevCorrect = typeof prev === 'object' ? (prev.correct||0) : 0;
-    const prevTotal   = typeof prev === 'object' ? (prev.total||0)   : 0;
-    APP.progress.completed[topicKey][lesson.id] = {
-      correct: prevCorrect + (C.correct||0),
-      total:   prevTotal   + (C.total||0)
-    };
-    saveProg();
+    // v71_s: a story-gated (comprehension) lesson is DONE only when every one of its questions has
+    // been answered correctly — "repeat until correct", the user's requirement for proceeding to
+    // the next chapter. Gating the WRITE rather than teaching ~12 readers of `done[L.id]` a second
+    // rule: the flag keeps meaning exactly what it always meant, and the chapter lock, the path,
+    // the resume scan and setComplete all inherit the requirement without knowing about it.
+    //
+    // Understanding a text is pass/fail in a way vocabulary practice is not — a learner who has
+    // answered three of five questions about a story has not understood it, and the pass mark
+    // (which may be 80%) is the wrong instrument. Fails OPEN on any error: never trap a learner in
+    // a lesson because coverage could not be computed.
+    let _record = true;
+    if (_isStoryGatedLesson(lesson) && !APP._teacherMode) {
+      try {
+        const _lc = lessonCoverage(C.lessonIdx);
+        _record = !(_lc.total > 0) || _lc.solved >= _lc.total;
+      } catch(_) { _record = true; }
+    }
+    if (_record) {
+      const prev = APP.progress.completed[topicKey][lesson.id]||{};
+      const prevCorrect = typeof prev === 'object' ? (prev.correct||0) : 0;
+      const prevTotal   = typeof prev === 'object' ? (prev.total||0)   : 0;
+      APP.progress.completed[topicKey][lesson.id] = {
+        correct: prevCorrect + (C.correct||0),
+        total:   prevTotal   + (C.total||0)
+      };
+      saveProg();
+    }
   }
   // v60.8: the trophy/%-pill/stat panels were removed — the progress bars (built in
   // _compProgressHtml, incl. %-solved) carry the signal now. Nothing to populate here.
@@ -13324,6 +13546,22 @@ function showComplete(review){
         const cov = topicCoverage();
         _belowThreshold = cov.total > 0 && (cov.solved / cov.total) < tgt;
       }
+      // v71_s: a comprehension lesson has its OWN mark, and it is 100% — the chapter's pass mark
+      // does not apply to understanding a text. Below it, Next locks and the remediation buttons
+      // (Repeat / Drill / Crossword) show themselves, which is the route back in that v71_d built.
+      // Reported as: comprehension "required to be solved completely (repeat lessons until
+      // correct) before proceeding to the next chapter".
+      //
+      // NOT on a review render. `showComplete(true)` repoints APP.cur at the LAST counted lesson
+      // purely so the vocab recap resolves (see the _review block above) — which is the
+      // comprehension lesson in any chapter that ends with one. Nothing was answered, so judging
+      // that lesson here would lock Next on a chapter the learner had already finished, and hide
+      // the "story complete" ending behind a "Keep going!" card. Same reasoning as v71_n's fix to
+      // recordLearnedFromLesson: a review render is not a play.
+      if (!C._review && _isStoryGatedLesson(lesson)) {
+        const _lc = lessonCoverage(C.lessonIdx);
+        if (_lc.total > 0 && _lc.solved < _lc.total) { _belowThreshold = true; _threshPct = 100; }
+      }
     }
   } catch(_) {}
 
@@ -13345,7 +13583,14 @@ function showComplete(review){
   // can't get trapped replaying a mixed lesson whose coverage is already satisfied. A review
   // render (_review) is by definition already-complete → no in-chapter next.
   const _setDone = C._review || (()=>{ try { return setComplete(APP.lessonData); } catch(_) { return false; } })();
-  const nextLessonIdx = _setDone ? -1 : _firstUnfinishedLessonIdx(APP.lessonData);
+  let nextLessonIdx = _setDone ? -1 : _firstUnfinishedLessonIdx(APP.lessonData);
+  // v71_s: …but never point Next at the comprehension lesson the learner has JUST played and not
+  // yet fully solved. Its done-flag is deliberately withheld below 100%, so it stays "unfinished"
+  // and _firstUnfinishedLessonIdx keeps returning it — which would make Next mean "replay this
+  // same lesson", silently repurposing the forward button and stepping straight over the lock
+  // v71_d built. Falling through to the _belowThreshold branch is the intended behaviour: Next
+  // greys out and Repeat / Drill / Crossword present themselves as the way back in.
+  if (nextLessonIdx === C.lessonIdx && !C._review && _isStoryGatedLesson(lesson)) nextLessonIdx = -1;
 
   // Storyline context (shared helper): the deck this chapter belongs to + its ordered chapters.
   // For a drill, topicKey is synthetic — resolve the deck from the real stashed topic instead so
@@ -13586,7 +13831,9 @@ function showComplete(review){
   const _compStory = document.getElementById('comp-story-unlocked');
   if (_compStory) {
     const _story = APP.lessonData?.story || '';
-    const _allDone2 = setComplete(APP.lessonData);
+    // v71_s: the story unlocks on the NARROWED gate — everything except the comprehension lessons,
+    // which are about this very story. `setComplete` still governs chapter completion below.
+    const _allDone2 = storyUnlocked(APP.lessonData);
     const _showStory = _story && (_allDone2 || APP.info.canGenerate || APP._teacherMode);
     _compStory.style.display = _showStory ? '' : 'none';
     if (_showStory) {
@@ -13676,7 +13923,7 @@ function _renderCompStory(allDone){
 }
 function toggleCompStoryLang(){
   APP._compStoryLang = (APP._compStoryLang === 'source') ? 'target' : 'source';
-  _renderCompStory(setComplete(APP.lessonData));
+  _renderCompStory(storyUnlocked(APP.lessonData));
 }
 
 // ── Persistent tutor widget (v62) ────────────────────────────────────────────

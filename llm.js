@@ -111,6 +111,42 @@ function setNumThread(n) {
 }
 function getNumThread() { return NUM_THREAD; }
 
+// v71_t: CONTEXT WINDOW. Ollama's default num_ctx is small (4096 on most builds) and it truncates
+// an over-long prompt SILENTLY — no error, no warning, and the request still succeeds. That makes
+// it the most dangerous default in this file: a caller that sends a 12,000-token story gets a
+// plausible-looking answer written from whatever fragment survived.
+//
+// This is why removing the app-side story caps needed this first. Trimming a story in
+// collectChainStory is a decision made with knowledge the model does not have (keep the CURRENT
+// chapter whole, drop the oldest); letting Ollama truncate replaces it with a blind cut.
+//
+// NUM_CTX_MAX is a CEILING, not a fixed size — the KV cache grows with the context, so pinning a
+// large value would spend memory on every small call. Callers that know they are sending a big
+// prompt pass `opts.ctxTokens` and get exactly what they ask for, clamped to this ceiling. Every
+// other call is untouched (num_ctx omitted → Ollama's own default), so this cannot regress the
+// memory profile of normal generation.
+let NUM_CTX_MAX = parseInt(process.env.OLLAMA_NUM_CTX_MAX || '16384', 10);
+function setNumCtxMax(n) {
+  const v = parseInt(n, 10);
+  if (Number.isFinite(v)) NUM_CTX_MAX = Math.max(2048, Math.min(131072, v));
+  return NUM_CTX_MAX;
+}
+function getNumCtxMax() { return NUM_CTX_MAX; }
+// Rough tokens-from-characters estimate. Deliberately pessimistic (3.2 chars/token rather than the
+// ~4 usual for English): non-Latin scripts and rare vocabulary tokenize worse, and under-estimating
+// here is the failure this whole mechanism exists to prevent.
+function estimateCtxTokens(chars, replyTokens) {
+  const promptTokens = Math.ceil(Number(chars || 0) / 3.2);
+  return promptTokens + Math.ceil(Number(replyTokens || 1024)) + 512;   // + headroom
+}
+// Resolve the num_ctx for one call: only when the caller asked, always within the ceiling, and
+// never below Ollama's usual 4096 (asking for less would be a pessimisation).
+function _resolveNumCtx(opts) {
+  const want = Number(opts?.ctxTokens);
+  if (!Number.isFinite(want) || want <= 0) return null;
+  return Math.max(4096, Math.min(NUM_CTX_MAX, Math.ceil(want)));
+}
+
 function stripRaw(raw) {
   return stripThink(raw)
     .replace(/^```(?:json)?\s*/im, '')
@@ -176,6 +212,9 @@ function _callOllama(model, system, userMsg, maxTokens, opts) {
         // Omitted entirely when unset, so Ollama keeps deciding rather than being pinned to a
         // number this app invented.
         ...(Number.isInteger(NUM_THREAD) && NUM_THREAD > 0 ? { num_thread: NUM_THREAD } : {}),
+        // v71_t: only present when the caller asked (opts.ctxTokens). Omitted otherwise, so
+        // Ollama keeps deciding and small calls keep their small KV cache.
+        ...(_resolveNumCtx(opts) ? { num_ctx: _resolveNumCtx(opts) } : {}),
         ...(Array.isArray(opts?.stop) && opts.stop.length ? { stop: opts.stop } : {}) },
       messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }]
     });
@@ -333,6 +372,9 @@ function callLLMStream(model, system, userMsg, maxTokens, opts, onDelta) {
         // Omitted entirely when unset, so Ollama keeps deciding rather than being pinned to a
         // number this app invented.
         ...(Number.isInteger(NUM_THREAD) && NUM_THREAD > 0 ? { num_thread: NUM_THREAD } : {}),
+        // v71_t: only present when the caller asked (opts.ctxTokens). Omitted otherwise, so
+        // Ollama keeps deciding and small calls keep their small KV cache.
+        ...(_resolveNumCtx(opts) ? { num_ctx: _resolveNumCtx(opts) } : {}),
         ...(Array.isArray(opts?.stop) && opts.stop.length ? { stop: opts.stop } : {}) },
       messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }]
     });
@@ -387,4 +429,4 @@ function callLLMStream(model, system, userMsg, maxTokens, opts, onDelta) {
   });
 }
 
-module.exports = { callLLM, callLLMStream, makeThinkFilter, ping, listModels, release, warmup, stripThink, stripRaw, extractJSON, extractArray, salvageArray, setRequestTimeout, getRequestTimeout, setNumThread, getNumThread };
+module.exports = { callLLM, callLLMStream, makeThinkFilter, ping, listModels, release, warmup, stripThink, stripRaw, extractJSON, extractArray, salvageArray, setRequestTimeout, getRequestTimeout, setNumThread, getNumThread, setNumCtxMax, getNumCtxMax, estimateCtxTokens };

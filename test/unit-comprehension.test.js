@@ -188,10 +188,22 @@ const GOOD = { q: 'Warum geht Anna weg?', choices: ['Sie hat Angst', 'Sie ist m�
 
   // (b) The empty-response half: a long chapter plus a reasoning model spent the whole budget on
   // reading and thinking. The story is now bounded and the base budget raised.
-  assert.ok(/const MAX_STORY_CHARS = 6000;/.test(server), 'the story fed to the model is bounded');
-  assert.ok(/storyForPrompt/.test(server) && !/fillPrompt\(P\.user, \{ story: storyText/.test(server),
-    'and it is the bounded excerpt that reaches the prompt, not the whole chapter');
-  assert.ok(/callLLMLesson\(sys, userMsg, 3200\)/.test(server),
+  // v71_t: the 6,000-char MAX_STORY_CHARS excerpt is GONE, and its absence is asserted. It was the
+  // wrong instrument for the empty-response bug (the real cause was the token budget, fixed by the
+  // 2,200 → 3,200 raise asserted below) and it cost exactly what comprehension questions are best
+  // at. Measured: it never once fired — the longest single chapter in the corpus is 4,691 chars.
+  assert.ok(!/const MAX_STORY_CHARS/.test(server),
+    'the dead 6,000-char excerpt is gone — it never fired, and capping the story is the wrong fix');
+  assert.ok(/let storyForPrompt = storyText;/.test(server),
+    'the story starts out whole — no unconditional excerpt');
+  // What replaces it: the CONTEXT WINDOW is sized to the prompt. Ollama's default num_ctx (~4096)
+  // truncates silently, so removing the app-side cap without this would have moved the truncation
+  // somewhere invisible and made the change worse than useless.
+  assert.ok(/ctxTokens: _ctxTokens/.test(server), 'the call sizes num_ctx for the prompt it sends');
+  assert.ok(/timeoutMs: _timeout/.test(server), 'and raises the timeout, since a long prompt takes longer to ingest');
+  assert.ok(/const _timeout = Math\.ceil\(getRequestTimeout\(\) \* THINK_TIMEOUT_MULT\);/.test(server),
+    'the per-call timeout uses the think multiplier, so it can never CUT a reasoning run short');
+  assert.ok(/callLLMLesson\(sys, userMsg, 3200, \{ ctxTokens/.test(server),
     'the token budget leaves room to answer after reasoning');
 
   // Key-name tolerance: `choices` is asked for, but models say `options`/`answers` just as often.
@@ -223,8 +235,12 @@ const GOOD = { q: 'Warum geht Anna weg?', choices: ['Sie hat Angst', 'Sie ist m�
   // The current chapter must survive whole: it is the one the questions are about. Trimming from
   // the wrong end would silently drop it and ask about chapters the learner read long ago.
   assert.ok(/Always keep the current chapter whole/.test(server), 'the budget is spent from the OLDEST end');
-  assert.ok(/\(!chainStory && storyText\.length > MAX_STORY_CHARS\)/.test(server),
-    'and an already-budgeted chain is not re-trimmed by the generator cap');
+  // v71_t: the generator no longer re-trims at all (the cap is gone), so what matters is that
+  // collectChainStory's own budget is the ONLY trim and still spends from the oldest end.
+  assert.ok(/const CHAIN_STORY_CHARS = 40000;/.test(server),
+    'the chain budget is sized for a real storyline, not the old 6,000');
+  assert.ok(/const budget = maxChars \|\| CHAIN_STORY_CHARS;/.test(server),
+    'and it is the single place a story is trimmed');
 
   // (c) The reveal shows the reason, in the learner's language, and says it aloud.
   assert.ok(/const _why = \(ex\.type==='comprehension_mcq' && ex\.why\)/.test(html),

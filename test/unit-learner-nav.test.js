@@ -90,8 +90,13 @@ console.log('  helpers: learner gate, resume index (hidden-aware), storyline res
   const fu = ext(html, '_firstUnfinishedLessonIdx');
   assert.ok(/setComplete\(d\)/.test(fu), '_firstUnfinishedLessonIdx returns -1 when the set is complete (coverage rule)');
   const sc = ext(html, 'showComplete');
-  assert.ok(/const nextLessonIdx = _setDone \? -1 : _firstUnfinishedLessonIdx\(APP\.lessonData\)/.test(sc),
+  // v71_s: `const` → `let`; the value is narrowed immediately after so Next never offers to
+  // "start" the comprehension lesson just played (its done-flag is withheld below 100%, so the
+  // helper keeps returning it). The delegation being pinned here is unchanged.
+  assert.ok(/let nextLessonIdx = _setDone \? -1 : _firstUnfinishedLessonIdx\(APP\.lessonData\)/.test(sc),
     'Next delegates to the coverage-aware helper (no naive done[id] scan that traps on a mixed lesson)');
+  assert.ok(/if \(nextLessonIdx === C\.lessonIdx && !C\._review && _isStoryGatedLesson\(lesson\)\) nextLessonIdx = -1;/.test(sc),
+    'and never points back at the story-gated lesson the learner just played');
   assert.ok(/setComplete\(APP\.lessonData\)/.test(sc), 'Next treats a coverage-complete set as done → advances to next chapter');
   const start = ext(html, 'startLesson');
   assert.ok(/delete C\._review/.test(start), 'startLesson clears _review so a real round records progress');
@@ -301,25 +306,54 @@ console.log('  static loadSaved parity + i18n keys: OK')
   // (c) Behavioral: an incomplete mixed-driven set resumes at the mixed lesson even when every
   // counted lesson (mixed included) carries a done-flag.
   const APP = { _teacherMode: false, progress: { completed: {} }, lessonData: null };
+  // v71_s: _firstUnfinishedLessonIdx gained two dependencies — a learner must never be auto-resumed
+  // INTO a comprehension lesson whose story is still locked (v60 nav auto-starts whatever this
+  // returns, which would put them on questions about text they have not been shown).
   const fu = new Function('APP', 'lessonCountsFor', 'setComplete', '_firstVisibleMixedIdx',
+    '_isStoryGatedLesson', 'storyUnlocked',
     ext(html, '_firstUnfinishedLessonIdx') + '\nreturn _firstUnfinishedLessonIdx;');
+  const notGated = () => false, unlocked = () => true;
   const mixedIdx = new Function(ext(html, '_firstVisibleMixedIdx') + '\nreturn _firstVisibleMixedIdx;')();
   const d = { topic: 'MixCh', lessons: [ { id: '1' }, { id: '6', type: 'word_forms' }, { id: 'm', type: 'mixed' } ] };
   APP.lessonData = d;
   APP.progress.completed['MixCh'] = { 1: {correct:1,total:2}, 6: {correct:1,total:2}, m: {correct:0,total:3} };
   const counts = (dd, L) => !L._hidden;
-  let f = fu(APP, counts, () => false, mixedIdx);
+  let f = fu(APP, counts, () => false, mixedIdx, notGated, unlocked);
   assert.strictEqual(f(d), 2, 'incomplete mixed-driven set with all done-flags resumes at the MIXED lesson');
-  f = fu(APP, counts, () => true, mixedIdx);
+  f = fu(APP, counts, () => true, mixedIdx, notGated, unlocked);
   assert.strictEqual(f(d), -1, 'a genuinely complete set still returns -1 (review card)');
   APP._teacherMode = true;
-  f = fu(APP, counts, () => false, mixedIdx);
+  f = fu(APP, counts, () => false, mixedIdx, notGated, unlocked);
   assert.strictEqual(f(d), -1, 'teacher mode keeps the classic done-flag semantics (no mixed fallback)');
   APP._teacherMode = false;
   // Classic set (no mixed) below threshold: unchanged — -1, the card's drill gate takes over.
   const dc = { topic: 'MixCh', lessons: [ { id: '1' }, { id: '6', type: 'word_forms' } ] };
   APP.lessonData = dc;
   assert.strictEqual(f(dc), -1, 'a classic set with all done-flags returns -1 (drill gate handles the threshold)');
+
+  // (c2) v71_s: the story-lock skip. A chapter whose LAST lesson is comprehension, with the story
+  // still locked, must resume at the earlier unfinished lesson — never at the comprehension one.
+  const dg = { topic: 'GateCh', lessons: [
+    { id: 'a' }, { id: 'c', type: 'comprehension' } ] };
+  APP.lessonData = dg;
+  APP.progress.completed['GateCh'] = {};
+  const isGated = (L) => !!(L && L.type === 'comprehension');
+  let g = fu(APP, counts, () => false, mixedIdx, isGated, () => false);
+  assert.strictEqual(g(dg), 0, 'story locked → resume at the first ordinary lesson');
+  // With lesson `a` finished but the story still locked, the comprehension lesson is NOT offered.
+  APP.progress.completed['GateCh'] = { a: {correct:2,total:2} };
+  g = fu(APP, counts, () => false, mixedIdx, isGated, () => false);
+  assert.notStrictEqual(g(dg), 1,
+    'story still locked → the comprehension lesson is never the resume target');
+  // Once the story unlocks, it becomes exactly the resume target.
+  g = fu(APP, counts, () => false, mixedIdx, isGated, () => true);
+  assert.strictEqual(g(dg), 1, 'story unlocked → resume lands on the comprehension lesson');
+  // A teacher is exempt from the lock, as everywhere else.
+  APP._teacherMode = true;
+  g = fu(APP, counts, () => false, mixedIdx, isGated, () => false);
+  assert.strictEqual(g(dg), 1, 'teacher mode ignores the story lock');
+  APP._teacherMode = false;
+  APP.lessonData = dc;
 
   // (c) Routing: startLesson signals failure; both loadSaveds route a stranded learner to the
   // storyline (confirmQuit's target), never leaving the lesson-set page showing.

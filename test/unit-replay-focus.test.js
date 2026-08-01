@@ -152,22 +152,37 @@ const solveAll = () => C.run(`(function(){
     'and does so BEFORE the top-up, so the denominator is never biased by it');
 }
 
-// ── 8. Deterministic builders need NO top-up, and this proves it ────────────
-// Asked (v71_g): should the fix extend to synonyms and word_forms? No — and the reason is a
-// property, not a preference. The top-up only helps a builder that SAMPLES, leaving unsolved
-// questions out of a single derivation (buildStandardExercises picks one exercise type per vocab
-// item). synonyms, word_forms and grammar emit their ENTIRE question set every build: exactly one
-// exercise per item/relation, deterministically. So one derivation already equals the universe and
-// a perfect learner reaches 100% in a single round. Extending the fix would add a re-derivation
-// loop that can never find anything missing. This asserts the premise that makes the fix
-// unnecessary there — if a future edit makes one of these builders sample, this fails and flags
-// that the decision must be revisited.
+// ── 8. The non-standard builders need no top-up — for TWO different reasons ──
+// Asked (v71_g): should the v71_f top-up extend to synonyms, word_forms and grammar? The answer is
+// still no, but the original reason was only half right, and this section asserted the wrong half
+// for grammar until v71_r.
+//
+// There are two shapes here, and conflating them is what hid a live defect:
+//
+//   UNCAPPED (synonyms, word_forms) — `return shuffle(exs)`. Exactly one exercise per item, no
+//     cut at all, so a PLAY build already equals the universe. Nothing to top up and nothing to
+//     order: a perfect learner reaches 100% in a single round.
+//
+//   CAPPED (grammar, conjugation) — `return _cutCoverageRound(exs, 14)`. The pool is the entire
+//     universe, but a round is a 14-question CUT of it. A top-up is still pointless (the pool is
+//     already complete — there is nothing missing to re-derive), but the CUT has to be
+//     coverage-aware or a replay re-asks solved questions. Until v71_r it was `shuffle().slice()`:
+//     a random 14 of 25, measured at ~53% repeats on ls_1785500580472_1_grammar with 11 questions
+//     unreachable. That is precisely the defect v71_f fixed for standard lessons, left live here
+//     because "deterministic" was read as "needs nothing".
+//
+// §8 originally asserted one-build == universe for all three. That held for grammar only by
+// accident of the bundled corpus: the cap bites at >14 exercises, and the then-first grammar lesson
+// was smaller. A new lessons.json moved it (14 of 20 grammar lessons in the current corpus exceed
+// the cap) and the guard fired — correctly, for a real reason.
+//
+// Both properties are asserted below, separately, so neither can silently become the other.
 {
   const seedType = (type) => {
     let topic = null, li = -1;
     for (const t of store.topics) {
       const i = (t.lessons || []).findIndex(L => L && L.type === type &&
-        (L.words || L.items || L.grammar || []).length >= 2);
+        (L.words || L.items || L.grammar || L.conjugations || []).length >= 2);
       if (i >= 0) { topic = t; li = i; break; }
     }
     if (!topic) return null;
@@ -177,30 +192,87 @@ const solveAll = () => C.run(`(function(){
       APP.info = { backend:'none', canGenerate:false, coverageThreshold:0.8 };
       APP.progress = { completed:{}, solved:{}, learned:{} };
       APP.progress.solved[APP.lessonData.topic] = {};
+      APP.cur.lessonIdx = ${li};
       APP._teacherMode = false; APP.muted = false;
       if (typeof _invalidateQidUniverse === 'function') _invalidateQidUniverse(); true;`, 'seed-' + type);
+    const LID = JSON.stringify(topic.lessons[li].id);
     const uni = C.run(`_lessonQidUniverse(${li}).size`);
     // No extra filtering: since v71_l the builder and the denominator apply the SAME rule
-    // (_itemWithheld — human decisions only), so for a deterministic builder one build equals the
-    // universe with nothing to reconcile. This briefly needed a mirror of the exclusion, back when
-    // the denominator dropped QC-flagged items that the builder still asked; the fix was to make
-    // the two agree in the client rather than to teach the test about the disagreement.
-    const one = C.run(`(function(){ APP._derivingUniverse = true;
-      const L = APP.lessonData.lessons[${li}];
+    // (_itemWithheld — human decisions only), so one build equals the universe with nothing to
+    // reconcile. This briefly needed a mirror of the exclusion, back when the denominator dropped
+    // QC-flagged items that the builder still asked; the fix was to make the two agree in the
+    // client rather than to teach the test about the disagreement.
+    const derived = C.run(`(function(){ APP._derivingUniverse = true;
       const e = buildExercises(${li}); APP._derivingUniverse = false;
-      return new Set(e.map(x => qid(x, L.id)).filter(Boolean)).size; })()`);
-    return { uni, one };
+      return new Set(e.map(x => qid(x, ${LID})).filter(Boolean)).size; })()`);
+    const play = C.run(`(function(){
+      return new Set(buildExercises(${li}).map(x => qid(x, ${LID})).filter(Boolean)).size; })()`);
+    return { uni, derived, play, li, LID, topic };
   };
-  let checked = 0;
-  for (const type of ['synonyms', 'word_forms', 'grammar']) {
+
+  // 8a. UNCAPPED builders: even a PLAY build is the whole universe.
+  let uncapped = 0;
+  for (const type of ['synonyms', 'word_forms']) {
     const r = seedType(type);
     if (!r) { console.log(`  (no ${type} lesson in corpus — skipped)`); continue; }
-    assert.strictEqual(r.one, r.uni,
-      `${type}: one derivation already yields the whole universe (${r.one}/${r.uni}) — a deterministic builder, no top-up needed`);
-    checked++;
+    assert.strictEqual(r.play, r.uni,
+      `${type}: a play build already yields the whole universe (${r.play}/${r.uni}) — uncapped, no top-up and no cut`);
+    uncapped++;
   }
-  assert.ok(checked >= 2, 'at least two deterministic builders were actually checked, not all skipped');
-  console.log(`  deterministic builders (${checked} checked): one build == universe, no top-up needed`);
+  assert.ok(uncapped >= 1, 'at least one uncapped builder was actually checked, not all skipped');
+
+  // 8b. CAPPED builders: the DERIVING build must still be complete (the _lessonQidUniverse
+  // contract — "builders: full set, no cap, no coverage bias"). Grammar and conjugation ignored
+  // that contract before v71_r, which forced the denominator to be rediscovered by convergence.
+  let capped = 0, sawCap = false;
+  for (const type of ['grammar', 'conjugation']) {
+    const r = seedType(type);
+    if (!r) { console.log(`  (no ${type} lesson in corpus — skipped)`); continue; }
+    assert.strictEqual(r.derived, r.uni,
+      `${type}: a DERIVING build must return the full set, uncut (${r.derived}/${r.uni}) — the _derivingUniverse contract`);
+    if (r.play < r.uni) {
+      sawCap = true;
+      // 8c. …and the CUT must be unsolved-first. Solve everything the first round asks, then
+      // replay: every question in the next round must be one that was NOT solved. Under the old
+      // `shuffle().slice(0,14)` this round was a random 14 of 25 and this assertion fails loudly.
+      const solvedNow = C.run(`(function(){
+        const s = APP.progress.solved[APP.lessonData.topic];
+        const ids = buildExercises(${r.li}).map(x => qid(x, ${r.LID})).filter(Boolean);
+        ids.forEach(id => s[id] = 1);
+        return ids.length; })()`);
+      const replayRepeats = C.run(`(function(){
+        const s = APP.progress.solved[APP.lessonData.topic];
+        const ids = buildExercises(${r.li}).map(x => qid(x, ${r.LID})).filter(Boolean);
+        return [ids.length, ids.filter(id => s[id]).length]; })()`);
+      const [roundLen, repeats] = [replayRepeats[0], replayRepeats[1]];
+      assert.ok(roundLen > 0, `${type}: a replay still produces a round (${roundLen} questions)`);
+      assert.strictEqual(repeats, 0,
+        `${type}: a replay after solving ${solvedNow} asks ONLY unsolved questions — ` +
+        `got ${repeats} repeats in a round of ${roundLen} (universe ${r.uni}). ` +
+        `A random cut re-asks solved material; the cut must be coverage-aware.`);
+      console.log(`  ${type}: capped play ${r.play}/${r.uni}, replay ${roundLen} questions, ${repeats} repeats`);
+    }
+    capped++;
+  }
+  assert.ok(capped >= 1, 'at least one capped builder was actually checked, not all skipped');
+  // Guard against this section going vacuous: if no capped builder in the corpus actually exceeds
+  // its cap, 8c never ran and the coverage-aware cut is unproven. That is exactly how the original
+  // §8 passed for years while grammar sampled at random.
+  assert.ok(sawCap,
+    'no capped builder in the corpus exceeds its 14-question cap, so the unsolved-first cut was ' +
+    'never exercised — §8c is vacuous against this data and needs a larger fixture');
+  console.log(`  uncapped (${uncapped}): play build == universe · capped (${capped}): deriving build == universe, cut is unsolved-first`);
+  // `APP.cur.lessonIdx` is set above because the coverage machinery reads it: assembleCoverageRound
+  // keys the solved-set with a bare `qid(ex)`, which resolves the lesson id through APP.cur — and
+  // real play sets `C.lessonIdx = idx` immediately before calling buildExercises (openLesson), so
+  // this mirrors production rather than inventing a state.
+  //
+  // Reset to 0 — the client's own default (`APP.cur` is declared with `lessonIdx:0`) — because it
+  // MUST NOT leak: _exFlagTarget resolves a flagged item through the same fallback, so an index
+  // pointing past a later section's shorter fixture silently stops flagged items being withheld.
+  // Restore the field, never `delete APP.cur`: the object carries the whole round state, and the
+  // following section depends on the default index existing.
+  C.run('APP.cur.lessonIdx = 0; true;', 'reset-cur');
 }
 
 // ── Only human decisions withhold an item (v71_l) ──────────────────────────

@@ -12,7 +12,7 @@
       "lang": "it",
       "srcLang": "de",
       "createdAt": "2026-07-30T10:08:56.875Z",
-      "updatedAt": "2026-07-30T10:33:06.221Z",
+      "updatedAt": "2026-07-31T22:26:37.484Z",
       "tokenUsage": {
         "totalPromptTokens": 2095,
         "totalCompletionTokens": 1636,
@@ -343,7 +343,8 @@
           ]
         }
       ],
-      "storyboardScheme": "classic"
+      "storyboardScheme": "classic",
+      "coverageTarget": 0.2
     },
     {
       "id": "sl_1055245617",

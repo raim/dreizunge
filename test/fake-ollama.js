@@ -123,6 +123,23 @@ const srv = http.createServer(async (req, res) => {
                     { type: 'polyline', points: [[20,60],[30,50],[40,60]], stroke: 'ink', sw: 2 },
                     { type: 'rect', x: 60, y: 55, w: 18, h: 20, fill: 'earth' } ] },
       ]);
+    } else if (/reading-comprehension quiz generator/i.test(sys)) {
+      // v71_u: comprehension had no branch here, so a book arc that ticked it fell through to the
+      // default and the lesson was silently skipped — which is what the e2e caught. Matched on the
+      // prompt's own opening phrase, and placed BEFORE word_forms: both ask for `correctIndex`, so
+      // a looser matcher would let word_forms swallow this.
+      kind = 'comprehension';
+      content = JSON.stringify({
+        title: 'Understanding the story', desc: 'Questions about what you read', icon: '🧠',
+        questions: [
+          { q: 'Wo war die Katze?', choices: ['Im Haus', 'Im Baum', 'Im Wasser', 'Im Garten'],
+            correctIndex: 0, why: 'The story says the cat was in the house.' },
+          { q: 'Was tat der Mann?', choices: ['Er las', 'Er schlief', 'Er sang', 'Er lief'],
+            correctIndex: 1, why: 'He was asleep when it happened.' },
+          { q: 'Wann geschah es?', choices: ['Am Morgen', 'Am Abend', 'In der Nacht', 'Am Mittag'],
+            correctIndex: 2, why: 'It happened during the night.' },
+        ],
+      });
     } else if (/synonyms[\s\S]*antonyms[\s\S]*homophones/i.test(sys)) {
       // synonyms: base words appear in the fake story so context-sentence attach works.
       kind = 'synonyms';

@@ -258,6 +258,58 @@ console.log('  showComplete: fresh, review, below-mark, drill card, teacher: OK'
   console.log(`  renderEx: ${typeNames.length} exercise type(s) rendered without throwing (${typeNames.join(', ')}): OK`);
 }
 
+// ── 4c. The comprehension story panel (v71_s) ────────────────────────────────
+// A learner cannot answer questions about a story they have not read, so the story is rendered
+// with the question. Layout matters here and only a live DOM can see it: the panel must come AFTER
+// the answer controls (choices, feedback, Check), which is the user's explicit call — a story of a
+// few hundred words placed above them would push the buttons off a phone screen.
+{
+  seed();
+  const built = C.run(`(() => {
+    APP.lessonData.story = 'Die Katze sass im Baum.\\n\\nDas Haus war still.';
+    APP.lessonData.lessons.push({ id: 'smk_comp', type: 'comprehension', questions: [
+      { q: 'Wo sass die Katze?', choices: ['Im Baum','Im Haus','Im Wasser'], correctIndex: 0, why: 'x' } ] });
+    const i = APP.lessonData.lessons.length - 1;
+    const ex = (lessonTypeMeta('comprehension').build(APP.lessonData.lessons[i], i) || [])[0];
+    if (!ex) return 'NO_EXERCISE';
+    APP._teacherMode = true;          // teacher is exempt from the unlock gate → panel renders
+    APP.cur = { lessonIdx: i, exercises: [ex], cur: 0, correct: 0, total: 0, mistakes: 0,
+                hearts: 3, streak: 0, bestStreak: 0, answered: false, sel: null, placed: [], usedIdx: [] };
+    renderEx();
+    return 'OK';
+  })();`, 'comp-panel');
+  assert.strictEqual(built, 'OK', 'a comprehension exercise was built and rendered');
+  const q = C.document.getElementById('ex-area').innerHTML;
+  assert.ok(/id="ex-story-panel"/.test(q), 'the story panel is rendered on a comprehension question');
+  assert.ok(/<details[^>]*\sopen/.test(q), 'and is open by default — on this question the text IS the material');
+  assert.ok(/Die Katze sass im Baum/.test(q), 'the story text is actually present');
+  // ORDER is the requirement: answer controls first, story last.
+  const iChoices = q.indexOf('class="choices');   // comprehension renders `choices one-col`
+  const iCheck   = q.indexOf('id="cbtn"');
+  const iStory   = q.indexOf('id="ex-story-panel"');
+  assert.ok(iChoices >= 0 && iCheck >= 0 && iStory >= 0, 'choices, Check button and story panel all present');
+  assert.ok(iChoices < iStory, 'the answer choices come BEFORE the story');
+  assert.ok(iCheck < iStory, 'and so does the Check button — the story never pushes it off-screen');
+  // Paragraph structure survives, so a multi-paragraph story is readable.
+  assert.ok((q.match(/<p dir="auto"/g) || []).length >= 2, 'blank lines become paragraphs');
+  // A NON-comprehension question must not grow a story panel. Derived here rather than borrowed
+  // from §4 — that block's locals are out of scope, and a self-contained negative is clearer.
+  const negType = C.run(`(() => {
+    const L = APP.lessonData.lessons[0];
+    const ex = (lessonTypeMeta(L.type).build(L, 0) || [])[0];
+    if (!ex) return 'NONE';
+    APP.cur = { lessonIdx: 0, exercises: [ex], cur: 0, correct: 0, total: 0, mistakes: 0,
+                hearts: 3, streak: 0, bestStreak: 0, answered: false, sel: null, placed: [], usedIdx: [] };
+    renderEx();
+    return ex.type;
+  })();`, 'comp-panel-negative');
+  assert.notStrictEqual(negType, 'NONE', 'a non-comprehension exercise was available for the negative check');
+  assert.ok(!/id="ex-story-panel"/.test(C.document.getElementById('ex-area').innerHTML),
+    `a ${negType} question shows no story panel`);
+  C.run('APP._teacherMode = false; true;');
+  console.log('  renderEx: comprehension story panel renders below the answer controls: OK');
+}
+
 // ── 4b. A wrong TYPED answer renders the letter-by-letter diff (v71_c) ───────
 // check() is a render path: it writes feedback HTML and touches the input element. The unit test
 // covers the alignment; this covers the wiring — that check() actually reaches typedDiffHtml, and

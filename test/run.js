@@ -122,6 +122,10 @@ run('unit: LLM chapter split contract (v71_b)', 'node', [path.join(__dirname, 'u
 run('unit: typed-answer letter diff (v71_c)', 'node', [path.join(__dirname, 'unit-typed-diff.test.js')]);
 run('unit: vocab article symmetry (v71_d)', 'node', [path.join(__dirname, 'unit-vocab-articles.test.js')]);
 run('unit: replay focuses on unsolved questions (v71_f)', 'node', [path.join(__dirname, 'unit-replay-focus.test.js')]);
+run('unit: comprehension is gated by the story, not gating it (v71_s)', 'node', [path.join(__dirname, 'unit-comprehension-gate.test.js')]);
+run('unit: article choices derived from data, not a table (v71_x)', 'node', [path.join(__dirname, 'unit-article-choices.test.js')]);
+run('unit: diacritic QC — scan generates candidates, model decides (v72)', 'node', [path.join(__dirname, 'unit-diacritic-qc.test.js')]);
+run('unit: story context sizing + chain budget (v71_t)', 'node', [path.join(__dirname, 'unit-story-context.test.js')]);
 run('unit: error-hunt / pass-mark interaction (v71_g)', 'node', [path.join(__dirname, 'unit-errorhunt-passmark.test.js')]);
 run('unit: completion-card consistency + drill card removal (v71_h)', 'node', [path.join(__dirname, 'unit-card-consistency.test.js')]);
 run('unit: round length not padded with repeats (v71_i)', 'node', [path.join(__dirname, 'unit-round-length.test.js')]);
@@ -183,6 +187,7 @@ if (!quick) {
   run('e2e: userPrompt stores full input', 'node', [path.join(__dirname, 'e2e-userprompt.test.js')]);
   run('e2e: dialect glossary import (M1)', 'node', [path.join(__dirname, 'e2e-dialect-import.test.js')]);
   run('e2e: bookjob continuation + arc lessons', 'node', [path.join(__dirname, 'e2e-bookjob.test.js')]);
+  run('e2e: book arc honours the ticked lesson types (v71_u)', 'node', [path.join(__dirname, 'e2e-book-arc-types.test.js')]);
   run('e2e: book formats — picker/route parity incl. all_types (v68.1)', 'node', [path.join(__dirname, 'e2e-book-formats.test.js')]);
   run('e2e: book topic not truncated', 'node', [path.join(__dirname, 'e2e-booktopic.test.js')]);
   run('e2e: ui.json hot-reload', 'node', [path.join(__dirname, 'e2e-ui-reload.test.js')]);

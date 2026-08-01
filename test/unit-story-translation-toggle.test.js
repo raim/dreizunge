@@ -45,9 +45,12 @@ function makeDoc() {
   const APP = { lang: 'de', _compStoryLang: 'target',
     lessonData: { story: 'ZIEL story', storyTranslation: 'SOURCE translation', lang: 'it', srcLang: 'de' } };
   const t = k => ({ 'story.show_translation': 'Translation', 'story.show_original': 'Original' }[k] || k);
+  // v71_s: toggleCompStoryLang re-renders against the STORY-UNLOCK gate (storyUnlocked), not full
+  // chapter completion — the story is readable before the comprehension lesson has been played.
   const { _renderCompStory, toggleCompStoryLang } = new Function('document', 'APP', 't', 'setComplete',
+    'storyUnlocked',
     ext(html, '_renderCompStory') + '\n' + ext(html, 'toggleCompStoryLang') +
-    '\nreturn { _renderCompStory, toggleCompStoryLang };')(doc, APP, t, () => true);
+    '\nreturn { _renderCompStory, toggleCompStoryLang };')(doc, APP, t, () => true, () => true);
 
   _renderCompStory(true);
   assert.strictEqual(doc.getElementById('comp-story-text').textContent, 'ZIEL story', 'defaults to the target story');

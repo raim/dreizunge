@@ -499,7 +499,10 @@ assert.ok(/compNext\.textContent = t\('complete\.next'\)/.test(html),
   'completion Next button is a plain "Next" (v60 — opens the next questions directly)');
 assert.ok(/lesson\?\.type === 'intro_script'[\s\S]*?lesson\.letters\|\|\[\]\)\.map/.test(html),
   'completion card shows letters for intro_script lessons');
-assert.ok(/const nextLessonIdx = _setDone \? -1 : _firstUnfinishedLessonIdx\(APP\.lessonData\)/.test(html),
+// v71_s: `const` became `let` — the value is narrowed one line later so Next cannot point at a
+// just-played comprehension lesson that is deliberately still unfinished. What this pins is
+// unchanged: the initial value comes from the coverage-aware helper, not a naive done[id] scan.
+assert.ok(/let nextLessonIdx = _setDone \? -1 : _firstUnfinishedLessonIdx\(APP\.lessonData\)/.test(html),
   'completion next-lesson uses the coverage-aware _firstUnfinishedLessonIdx (which skips hidden lessons via lessonCountsFor) (v60.1)');
 console.log('  completion card: script-lesson next-label + letters + hidden-skip: OK');
 
@@ -508,8 +511,15 @@ console.log('  completion card: script-lesson next-label + letters + hidden-skip
 // lesson unlocks the story (was allLessons.every, which counted the hidden siblings → never true).
 assert.ok(/lesson\?\.type === 'mixed'[\s\S]*?for \(const e of \(C\.exercises/.test(html),
   'mixed lesson shows the words actually played on the result card');
-assert.ok(/_allDone2 = setComplete\(APP\.lessonData\)/.test(html),
-  'result-card story-unlock uses the shared setComplete (mixed-only / hidden aware)');
+// v71_s: the story-unlock panel now uses `storyUnlocked` — the same shared rule with the
+// comprehension lessons removed from both the lesson list and the coverage denominator, because a
+// comprehension lesson asks about the very story this panel reveals. What the assertion protects is
+// unchanged: the panel must use the SHARED counted-lessons rule (mixed-only / hidden aware), never
+// a local `allLessons.every`, which counted hidden siblings and so was never true.
+assert.ok(/_allDone2 = storyUnlocked\(APP\.lessonData\)/.test(html),
+  'result-card story-unlock uses the shared narrowed gate (mixed-only / hidden aware)');
+assert.ok(!/_allDone2 = setComplete\(/.test(html),
+  'and not full chapter completion, which comprehension lessons make circular');
 assert.ok(!/_allDone2 = allLessons\.(every|filter)/.test(html),
   'the old allLessons-based story-unlock check is gone');
 console.log('  completion card: mixed-lesson words + story-unlock via _counts: OK');

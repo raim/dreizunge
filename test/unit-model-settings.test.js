@@ -25,7 +25,9 @@ const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
   assert.ok(/let NUM_THREAD = null;/.test(llm), 'the thread count is a module-level setting');
   assert.ok(/function setNumThread\(n\)/.test(llm) && /function getNumThread\(\)/.test(llm),
     'with a setter and getter');
-  assert.ok(/setNumThread, getNumThread \};/.test(llm), 'both exported');
+  // v71_t: the export list grew (setNumCtxMax/getNumCtxMax/estimateCtxTokens). Pin the two names
+  // this section is about rather than the end of the list, so adding an export is not a failure.
+  assert.ok(/setNumThread, getNumThread[,}]/.test(llm), 'both exported');
   // Unset must mean ABSENT from the options object, not 0 or a guessed number — otherwise the app
   // pins Ollama to a value it invented rather than leaving Ollama's own default alone.
   const guarded = (llm.match(/\.\.\.\(Number\.isInteger\(NUM_THREAD\) && NUM_THREAD > 0 \? \{ num_thread: NUM_THREAD \} : \{\}\)/g) || []).length;

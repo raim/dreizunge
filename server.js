@@ -9,7 +9,7 @@ const path  = require('path');
 const { parseDialectGlossary, buildDialectTopic } = require('./dialect-glossary.js');
 const { callLLM: _rawCallLLM, callLLMStream: _rawCallLLMStream, ping: pingOllama, release: releaseOllamaModel,
         warmup: _warmupLLM, listModels: listOllamaModels, setRequestTimeout, getRequestTimeout,
-        setNumThread, getNumThread,
+        setNumThread, getNumThread, setNumCtxMax, getNumCtxMax, estimateCtxTokens,
         stripRaw, extractJSON, extractArray, salvageArray } = require('./llm');
 const { AsyncLocalStorage } = require('async_hooks');
 const { buildExport } = require('./export-lessons');
@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v71_q';
+const APP_VERSION  = 'v72';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -590,8 +590,21 @@ function findSavedById(id) {
 // Bounded, and bounded from the RIGHT end: when the chain exceeds the budget the OLDEST chapters
 // are dropped, never the current one — questions are set on the chapter the learner just read, so
 // that text must survive in full. Returns { text, chapters } so callers can log what was used.
+//
+// v71_t: the budget was 6,000 chars, and it was the wrong instrument (v71_o added it to fix
+// `Ollama returned empty response`, whose real cause was the token budget — fixed separately by
+// raising the base 2,200 → 3,200). Measured on the corpus, 6,000 chars cut **75 of 294 chains**:
+// the worst, a 14-chapter storyline at 46,758 chars, kept barely three chapters. That discards
+// precisely what comprehension questions are best at — callbacks, character motive, what changed
+// since chapter two.
+//
+// The new default is CHAR_BUDGET_DEFAULT, sized against the context window rather than invented:
+// callers pass the whole chain and size num_ctx to match (see generateComprehension). A budget
+// still exists because a truly unbounded prompt would silently overflow whatever ceiling is set,
+// and a deliberate trim that keeps the current chapter whole beats a blind one.
+const CHAIN_STORY_CHARS = 40000;
 function collectChainStory(saved, maxChars) {
-  const budget = maxChars || 6000;
+  const budget = maxChars || CHAIN_STORY_CHARS;
   const out = [];
   const visited = new Set();
   let t = saved;
@@ -1167,50 +1180,13 @@ function parseTableLesson(raw, lessonNum, topic) {
 // Deterministic policy: STRIP the lone article. Adding the missing one would need the target noun's
 // gender, which cannot be derived without a model and would be a second place for gender to be
 // wrong; stripping needs nothing and is always safe. Gender is taught by the dedicated `grammar`
-// lesson type, which carries its own `article` field and is untouched by this.
-//
-// Languages absent from the table are treated as article-less, which matches the prompt's own rule
-// ("if either language does not use articles, omit them on both sides"). Arabic is deliberately
-// ABSENT even though it has ال-: it is a bound prefix, not a separate word, so stripping it would
-// corrupt the word itself.
-const VOCAB_ARTICLES = {
-  de: ['der','die','das','ein','eine'],
-  en: ['the','a','an'],
-  nl: ['de','het','een'],
-  it: ['il','lo','la','i','gli','le','un','uno','una'],
-  es: ['el','la','los','las','un','una'],
-  pt: ['o','a','os','as','um','uma'],
-  fr: ['le','la','les','un','une'],
-  ca: ['el','la','els','les','un','una'],
-  el: ['ο','η','το','οι','τα','ένας','μια','ένα'],
-  da: ['en','et'], sv: ['en','ett'], nb: ['en','et','ei'],
-};
-// Elided forms are written without a space ("l'evoluzione", "d'una"), so they need their own list.
-const VOCAB_ELISIONS = { it: ["l'","un'","l’","un’"], fr: ["l'","l’"], ca: ["l'","l’"] };
-// Returns { text, article } — `article` is '' when there was none to take.
-function splitArticle(word, lang) {
-  const s = String(word == null ? '' : word).trim();
-  const arts = VOCAB_ARTICLES[lang];
-  if (!s || !arts) return { text: s, article: '' };
-  for (const el of (VOCAB_ELISIONS[lang] || [])) {
-    if (s.toLowerCase().startsWith(el) && s.length > el.length) return { text: s.slice(el.length).trim(), article: s.slice(0, el.length) };
-  }
-  const m = s.match(/^(\S+)\s+(.+)$/);
-  if (!m) return { text: s, article: '' };          // a single token is the word itself, never an article
-  return arts.includes(m[1].toLowerCase()) ? { text: m[2].trim(), article: m[1] } : { text: s, article: '' };
-}
-// Normalise one lesson's vocab in place. Returns the items that were changed, for logging.
-function normalizeVocabArticles(vocab, lang, srcLang) {
-  const changed = [];
-  (vocab || []).forEach(v => {
-    const t = splitArticle(v.target, lang), s = splitArticle(v.source, srcLang);
-    if (!!t.article === !!s.article) return;         // both or neither: already consistent
-    const before = { target: v.target, source: v.source };
-    if (t.article) v.target = t.text; else v.source = s.text;
-    changed.push({ before, after: { target: v.target, source: v.source } });
-  });
-  return changed;
-}
+// v71_y: VOCAB_ARTICLES / VOCAB_ELISIONS / splitArticle / normalizeVocabArticles were removed here.
+// They encoded article lists for 12 languages plus elision forms — the session-23 design principle
+// ("no language knowledge in the code") — and prescribed a direction, always stripping the lone
+// article. Measured harm: `la grandine` / `hail` became `grandine` / `hail` while its symmetric
+// siblings were untouched, so the code degraded the lesson it was meant to normalise.
+// Article symmetry now lives in qcCheckPair, with the lesson's other pairs as context, proposing a
+// fix on whichever side matches the convention. See INTERNALS.md → "Design principle".
 
 function sysSrcRepair(lang, srcLang, deepClean, lessonType) {
   const L = langName(lang || 'it');
@@ -1461,15 +1437,130 @@ async function generateDialectStoryV2(glossaryRows, baseLang, opts) {
   };
 }
 
-async function qcCheckPair(target, source, lang, srcLang, userComment) {
+// v71_y: `siblings` are the other vocab items in the SAME lesson, used only to show the model the
+// article convention that lesson already follows. Optional — omitting it degrades the article check
+// to a judgement without context, never to an error.
+// Identity this check files its findings under, so they sit beside model verdicts in `qcByModel`
+// rather than competing with them. Not a model name — deliberately readable in the flag UI.
+const QC_DIACRITIC_BY = 'diacritics';
+// ── Deterministic diacritic check (v72) ───────────────────────────────────────
+// Roadmap item, validated against the user's pre-edit export: a word written WITHOUT its diacritics
+// where the same corpus contains the properly-accented form. `naturliche` vs `natürliche` survived
+// hand-editing, which is the argument for automating it.
+//
+// Filed on the roadmap as the "missing umlaut" rule; named for DIACRITICS here on purpose. Framing
+// it as a German problem would smuggle in the language knowledge the session-23 principle forbids —
+// and would miss the identical defect in `é/è`, `ñ`, `ç`, `å`, `ø`. Nothing below knows what
+// language it is looking at: it compares corpus forms against each other, which is tier 2 of the
+// four tiers in INTERNALS.md ("derived from what the model already produced").
+//
+// Unicode-level only, so it is squarely on the permitted side of the principle: NFD-decompose,
+// drop combining marks, and additionally fold the handful of letters that carry their diacritic as
+// a distinct codepoint rather than a combining mark (ß/æ/œ/ø). Deliberately mirrors the client's
+// normDiacritics — asserted by unit-diacritic-qc so the two cannot drift — except that CASE IS
+// PRESERVED, which is load-bearing (see below).
+function _stripDiacriticsCase(s) {
+  return String(s == null ? '' : s)
+    .replace(/ß/g, 'ss').replace(/Ø/g, 'O').replace(/ø/g, 'o')
+    .replace(/æ/g, 'ae').replace(/Æ/g, 'AE').replace(/œ/g, 'oe').replace(/Œ/g, 'OE')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .trim();
+}
+const _hasDiacritic = (s) => _stripDiacriticsCase(s) !== String(s == null ? '' : s).trim();
+
+// Index every accented form the corpus contains, keyed by its stripped form WITH CASE INTACT.
+// Case is what suppresses the false positive the roadmap names: `Zahlen` (numbers) and `zählen`
+// (to count) strip to `Zahlen` and `zahlen`, which are different keys, so neither flags the other.
+// Lowercasing here would report a real German word as a typo for an unrelated one.
+function buildDiacriticIndex(topics) {
+  const idx = new Map();
+  const add = (word, lang) => {
+    const w = String(word == null ? '' : word).trim();
+    if (!w || !_hasDiacritic(w)) return;
+    const key = lang + '\u0000' + _stripDiacriticsCase(w);
+    if (!idx.has(key)) idx.set(key, new Set());
+    idx.get(key).add(w);
+  };
+  for (const tp of (topics || [])) {
+    for (const ls of (tp.lessons || [])) {
+      for (const it of (ls.vocab || [])) { add(it && it.target, tp.lang); add(it && it.source, tp.srcLang); }
+      for (const it of (ls.sentences || [])) { add(it && it.target, tp.lang); add(it && it.source, tp.srcLang); }
+      for (const g of (ls.grammar || [])) { add(g && g.target, tp.lang); add(g && g.source, tp.srcLang); }
+    }
+  }
+  return idx;
+}
+
+// Is this word an unaccented spelling of something the corpus writes with diacritics?
+// Returns { ok } | { ok:false, sug } — a SUGGESTION, never a rewrite, exactly like the model checks.
+function checkDiacritics(word, lang, idx) {
+  const w = String(word == null ? '' : word).trim();
+  // A word that already carries a diacritic is not missing one. Multi-word phrases are skipped:
+  // the index is built from whole fields, so a phrase would only ever match another identical
+  // phrase, and per-token checking would need tokenisation rules that vary by language.
+  if (!w || !idx || _hasDiacritic(w) || /\s/.test(w)) return { ok: true };
+  const hits = idx.get(lang + '\u0000' + _stripDiacriticsCase(w));
+  if (!hits || !hits.size) return { ok: true };
+  const sug = [...hits][0];
+  return sug === w ? { ok: true } : { ok: false, sug };
+}
+
+// …and the model decides whether the candidate is actually a typo.
+//
+// The scan above is a CANDIDATE GENERATOR, not a verdict. Measured on the corpus it produces 5
+// candidates, of which most are minimal pairs — real, distinct words that differ only by a
+// diacritic: `souffle` (breath) vs `soufflé` (the dish); `inizio` (beginning) vs `iniziò` (he
+// began). Telling those apart requires knowing the language, which the session-23 principle says
+// is the model's job, not the code's.
+//
+// The roadmap's original rule tried to do it with capitalisation — `Zahlen` vs `zählen`. That
+// works because German capitalises nouns, and fails for every language that does not; it is a
+// German fact in disguise. It is kept anyway, as a cheap pre-filter (it costs nothing and removes
+// one certain class), but it is no longer the decision.
+//
+// Cost is negligible: the scan is deterministic and only its handful of survivors reach a model.
+async function qcCheckDiacriticCandidate(word, suggestion, lang) {
+  const L = langName(lang);
+  const system =
+    `Two ${L} spellings differ only in diacritics: "${word}" and "${suggestion}".\n` +
+    `Decide whether "${word}" is a MISSPELLING of "${suggestion}", or a DIFFERENT, correctly ` +
+    `spelled ${L} word in its own right (including a different inflected form).\n` +
+    `Reply EXACTLY one of:\n` +
+    `OK  — "${word}" is a correct ${L} spelling of some word; leave it alone.\n` +
+    `FIX — "${word}" is a misspelling and should be "${suggestion}".\n` +
+    `Reply with the single word OK or FIX and nothing else.`;
+  const { text } = await callLLMQC(system, `${word} / ${suggestion}`, 8);
+  const reply = String(text || '').trim().toUpperCase();
+  // Default to OK on anything unclear: a missed typo is a cosmetic defect, a false flag trains the
+  // user to dismiss the whole QC panel.
+  if (!/^FIX/.test(reply)) return { ok: true };
+  return { ok: false, sug: suggestion };
+}
+
+async function qcCheckPair(target, source, lang, srcLang, userComment, siblings) {
   const L = langName(lang), S = langName(srcLang || 'en');
   const tgt = _qcStripFuri(target);
   const src = String(source).trim();
+  // Up to 6 other pairs from the lesson, verbatim. The model needs to SEE the convention rather
+  // than be told one: whether this lesson carries articles on both sides or neither is a property
+  // of the data, and asserting it in the prompt would be the language knowledge we removed in
+  // v71_x wearing a different hat.
+  const _sib = (Array.isArray(siblings) ? siblings : [])
+    .filter(x => x && x.target && x.source && _qcStripFuri(x.target) !== tgt)
+    .slice(0, 6)
+    .map(x => `${_qcStripFuri(x.target)} => ${String(x.source).trim()}`);
   const system =
     `You check a ${L} phrase and its ${S} translation, given as "<${L}> => <${S}>".\n` +
-    `Check BOTH: (1) the ${L} text is correct — spelling, grammar, and capitalization ` +
+    `Check ALL of: (1) the ${L} text is correct — spelling, grammar, and capitalization ` +
     `(apply ${L} capitalization rules, e.g. German capitalizes all nouns); ` +
-    `(2) the ${S} side is an accurate translation of the ${L} text.\n` +
+    `(2) the ${S} side is an accurate translation of the ${L} text; ` +
+    `(3) ARTICLE SYMMETRY — if one side carries a leading article and the other does not, that is ` +
+    `an error. Fix it on whichever side matches how the other pairs in this lesson are written ` +
+    `(shown below): add the missing article, or remove the lone one. If the lesson shows no clear ` +
+    `convention, prefer the form that teaches more — for a language where the article marks gender, ` +
+    `keeping it is more useful than dropping it. If a language marks definiteness with an attached ` +
+    `prefix or suffix rather than a separate word, that is NOT a lone article and is correct as-is.\n` +
+    (_sib.length ? `Other pairs in this same lesson, for the convention only — do NOT correct them:\n${_sib.join('\n')}\n` : '') +
     (userComment && String(userComment).trim()
       ? `The user reports a problem with this item: "${String(userComment).trim().replace(/"/g, "'").slice(0, 300)}". Take this report into account when checking.\n`
       : '') +
@@ -1813,6 +1904,13 @@ async function _runQc(jobId, topics, opts) {
   let checked = 0, flagged = 0, cleared = 0, skipped = 0;
   let storyProposed = 0, storyClean = 0;
   const affected = [];
+  // v72: built once per run from the ENTIRE store, not just the topics in scope — the accented
+  // form that proves `naturliche` is a typo may well live in another chapter. Deterministic and
+  // cheap, so it costs nothing to widen. Guarded: a failure here must not abort a QC run whose
+  // main job is the model checks.
+  let _diacIdx = null;
+  try { _diacIdx = buildDiacriticIndex(store.schemaVersion >= 29 ? store.topics : store.lessons); }
+  catch (e) { console.warn(`  QC: diacritic index unavailable (${e.message}) — skipping that check`); }
   console.log(`  ⚙ QC starting: ${topics.length} topic(s)${lessonIdx !== null ? `, lesson ${lessonIdx}` : ''}${onlyFlagged ? ', flagged-only' : ''} [${OLLAMA_QC_MODEL}]`);
   jobStep(jobId, `[${OLLAMA_QC_MODEL}] Starting QC…`);
   for (let ti = 0; ti < topics.length; ti++) {
@@ -1847,11 +1945,15 @@ async function _runQc(jobId, topics, opts) {
         // different QC models can be compared on the same item, while keeping item.qc as the primary
         // (backward-compatible: apply/dismiss/badges/render read item.qc). A model only ever overwrites
         // its OWN entry; a model that now says OK drops only its own flag, leaving others' for compare.
-        const _check = async (item, runner, label) => {
+        // v72: `by` names the CHECKER, defaulting to the QC model. The deterministic diacritic
+        // pass supplies its own identity, so its findings live beside the model's in `qcByModel`
+        // and are cleared independently — a model saying "OK" must not silently erase a mechanical
+        // finding, and vice versa. The multi-checker shape already existed for comparing models.
+        const _check = async (item, runner, label, by) => {
           checked++;
           let res;
           try { res = await runner(); } catch (e) { return; }
-          const model = OLLAMA_QC_MODEL;
+          const model = by || OLLAMA_QC_MODEL;
           // Migrate a pre-collect single flag into the per-model map so it isn't lost.
           if (item.qc && !item.qcByModel && item.qc.by)
             item.qcByModel = { [item.qc.by]: { sug: item.qc.sug, field: item.qc.field, at: item.qc.at } };
@@ -1931,7 +2033,22 @@ async function _runQc(jobId, topics, opts) {
               if ((lessonIsDialect || item._dialect) && !item.aiGenerated) {
                 await _check(item, () => qcCheckDialectPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment), 'pair');
               } else {
-                await _check(item, () => qcCheckPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment), 'pair');
+                await _check(item, () => qcCheckPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment, arr), 'pair');
+              }
+              // v72: deterministic, no model call. Runs for every item including dialect ones —
+              // a missing diacritic is a spelling fact, not a translation judgement.
+              if (_diacIdx) {
+                await _check(item, async () => {
+                  for (const [field, word, lg] of [['target', item.target, tp.lang],
+                                                   ['source', item.source, tp.srcLang]]) {
+                    const c = checkDiacritics(word, lg, _diacIdx);
+                    if (c.ok) continue;
+                    // A candidate, not a verdict — the model decides typo vs. distinct word.
+                    const v = await qcCheckDiacriticCandidate(String(word).trim(), c.sug, lg);
+                    if (!v.ok) return { ok: false, field, sug: v.sug };
+                  }
+                  return { ok: true };
+                }, 'diacritic', QC_DIACRITIC_BY);
               }
             }
           }
@@ -3614,7 +3731,14 @@ async function generateComprehension(topic, lang, srcLang, difficulty, jobId, op
   if (!storyText) throw new Error('Comprehension lessons need a story — none on this chapter');
   // Question count scales with the story: a 3-paragraph chapter cannot honestly support 10
   // distinct comprehension questions, and padding produces the trivia the prompt forbids.
-  const words = storyText.split(/\s+/).filter(Boolean).length;
+  // v71_t: sized on the CURRENT chapter, not the chain. The questions are set on the chapter the
+  // learner just read — earlier chapters are context for callbacks, not extra material to quiz —
+  // so counting the whole chain made every chained chapter ask the maximum 8 regardless of how
+  // short it actually was. (Before this release the 6,000-char cap hid the error: a trimmed chain
+  // already exceeded the ceiling, so it also always produced 8. Same output, wrong reason — and
+  // the reason is what breaks now that the whole chain is sent.)
+  const sizingText = String(story || '').trim() || storyText;
+  const words = sizingText.split(/\s+/).filter(Boolean).length;
   const n = Math.max(3, Math.min(8, Math.round(words / 90)));
   // v71_o: a very long chapter plus a reasoning model was returning an EMPTY response — the budget
   // went entirely on reading and thinking, leaving nothing for the answer. Comprehension questions
@@ -3623,10 +3747,32 @@ async function generateComprehension(topic, lang, srcLang, difficulty, jobId, op
   // A chain assembled by collectChainStory is already inside budget and trimmed from the correct
   // (oldest) end; re-trimming here would cut the CURRENT chapter off the back — the one the
   // questions are actually about. Only an unbounded single story needs capping.
-  const MAX_STORY_CHARS = 6000;
-  const storyForPrompt = (!chainStory && storyText.length > MAX_STORY_CHARS)
-    ? storyText.slice(0, MAX_STORY_CHARS).replace(/\s+\S*$/, '') + '…'
-    : storyText;
+  // v71_t: the MAX_STORY_CHARS = 6000 fallback that used to sit here is GONE. It only ever applied
+  // to a single un-chained story, and measured against the corpus it never once fired: the longest
+  // single chapter is 4,691 chars. It was dead code protecting against a case that does not occur,
+  // while the real truncation happened in collectChainStory (75 of 294 chains) and, invisibly, in
+  // Ollama itself.
+  //
+  // What remains is a LAST-RESORT fit to the context ceiling. The ceiling is a memory decision
+  // (the KV cache grows with num_ctx), so it can legitimately be set below what a 40,000-char
+  // chain needs — and when it is, something has to give. The point is that WE decide what, not
+  // Ollama: this trims from the FRONT, which is the oldest chapters, leaving the current chapter
+  // (always last in the assembled text) whole. Ollama's own truncation makes no such promise, and
+  // reports nothing. Normal-length stories never reach this branch.
+  let storyForPrompt = storyText;
+  {
+    const _replyTokens = Math.max(3000, Math.ceil(3200 * THINK_TOKEN_MULT));
+    const _ceiling = getNumCtxMax();
+    const _fits = (chars) => estimateCtxTokens(chars + 1200 /* prompt scaffolding */, _replyTokens) <= _ceiling;
+    if (!_fits(storyForPrompt.length)) {
+      // Largest character count that fits, found directly rather than by loop.
+      const _maxChars = Math.max(1000, Math.floor((_ceiling - _replyTokens - 512) * 3.2) - 1200);
+      const _cut = storyForPrompt.length - _maxChars;
+      storyForPrompt = '…' + storyForPrompt.slice(_cut).replace(/^\S*\s+/, '');
+      console.log(`    Story trimmed to fit context ceiling: ${storyText.length} → ${storyForPrompt.length} chars ` +
+                  `(num_ctx max ${_ceiling}; oldest chapters dropped, current chapter kept)`);
+    }
+  }
   const P = PROMPTS && PROMPTS.comprehension;
   let sys, userMsg;
   if (P && P.system) {
@@ -3644,7 +3790,26 @@ async function generateComprehension(topic, lang, srcLang, difficulty, jobId, op
     console.log(`    Comprehension attempt ${attempt}…`);
     // 3200 base (was 2200): callLLMLesson multiplies this when lessons-reasoning is ON, and the
     // old base left a thinking model too little room to emit the JSON after reasoning.
-    const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 3200);
+    //
+    // v71_t: this call now carries the WHOLE chain (up to ~40k chars), so two things must scale
+    // with it or the change is worse than useless:
+    //   • num_ctx — Ollama's default (~4096) truncates a long prompt SILENTLY, so the model would
+    //     answer from a blind fragment while every attempt "succeeded". ctxTokens is an estimate
+    //     of prompt + reply + headroom, clamped to the ceiling inside llm.js.
+    //   • timeoutMs — a 12k-token prompt takes far longer to INGEST than a 1.5k one, before a
+    //     single token is generated. The roadmap's "raise the timeout instead" is this line.
+    // Both are per-call: no other generator's memory or timeout profile changes.
+    // NOTE: callLLMLesson spreads the caller's opts AFTER its own think policy, so a timeoutMs
+    // passed here WINS — including over the ×3 that thinkOpts applies when lessons-reasoning is on.
+    // Using THINK_TIMEOUT_MULT here means this can only ever raise the limit, never cut a
+    // reasoning run short. (A timeout is a ceiling, not a delay: a generous one costs nothing when
+    // the call returns quickly.)
+    const _ctxTokens = estimateCtxTokens(sys.length + userMsg.length, 3200 * THINK_TOKEN_MULT);
+    const _timeout = Math.ceil(getRequestTimeout() * THINK_TIMEOUT_MULT);
+    if (attempt === 1 && storyForPrompt.length > 6000)
+      console.log(`    Story context: ${storyForPrompt.length} chars → num_ctx≈${Math.min(_ctxTokens, getNumCtxMax())}, timeout ${Math.round(_timeout/1000)}s`);
+    const { text: raw, promptTokens, completionTokens } =
+      await callLLMLesson(sys, userMsg, 3200, { ctxTokens: _ctxTokens, timeoutMs: _timeout });
     tp += promptTokens; tc += completionTokens;
     // v71_o (reported: "JSON extract failed" on all three attempts): parse through the shared
     // helpers. The hand-rolled version here stripped ``` fences but NOT the <think> block, so on a
@@ -3870,15 +4035,15 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
     }).slice(0, 8);
     if (lesson.vocab.length < 1) throw new Error(`Only ${lesson.vocab.length} unique vocab items`);
 
-    // v71_d: enforce the prompt's own "never an article on one side only" rule. The model obeys it
-    // per call, so whole chapters came out asymmetric while their neighbours were fine.
-    {
-      const _fixed = normalizeVocabArticles(lesson.vocab, lang, srcLang);
-      if (_fixed.length) {
-        console.warn(`  [lesson ${lessonNum}] article symmetry: fixed ${_fixed.length}/${lesson.vocab.length} item(s)`);
-        _fixed.forEach(c => console.warn(`      • ${c.before.target} / ${c.before.source}  ->  ${c.after.target} / ${c.after.source}`));
-      }
-    }
+    // v71_y: the v71_d article-symmetry REWRITE that used to sit here is gone. It held article lists
+    // for 12 languages and always stripped, so it could only ever remove — turning `la grandine` /
+    // `hail` into `grandine` / `hail`, dropping the gender an Italian learner needs while symmetric
+    // siblings in the same lesson kept theirs. It made lessons LESS consistent than it found them.
+    //
+    // Article symmetry is now checked in the QC pass (qcCheckPair), which sees the lesson's other
+    // pairs and can fix EITHER side — and which proposes rather than rewrites, so a wrong call is
+    // visible in the flag UI instead of silently baked into the data. The generation prompt still
+    // forbids a one-sided article; QC is the safety net for what slips through.
 
     // Sentences are optional — use whatever we get (may be none).
     if (!Array.isArray(lesson.sentences)) lesson.sentences = [];
@@ -4352,6 +4517,62 @@ const ADD_LESSON_GENERATORS = {
   intro_script: (c) => generateIntroScript(c.lang, { script: c.introScript || null, difficulty: c.diff, srcLang: c.srcLang }),
 };
 
+// v71_u: the canonical list of types an arc / add-lessons run may request. Mirrors the client's
+// ADD_LESSON_TYPES; anything outside it is dropped rather than trusted, since it arrives over HTTP.
+// `review` and `standard` are not in ADD_LESSON_GENERATORS (both are generateOneLesson with
+// different vocab modes), so they are named here explicitly.
+const ARC_LESSON_TYPES = ['standard', 'review', 'word_forms', 'synonyms', 'grammar',
+                          'conjugation', 'comprehension', 'error_hunt', 'math'];
+function sanitizeArcTypes(list) {
+  if (!Array.isArray(list)) return null;
+  const seen = new Set();
+  return list.filter(t => typeof t === 'string' && ARC_LESSON_TYPES.includes(t)
+                       && !seen.has(t) && seen.add(t));
+}
+// Back-compat: the pre-v71_u book form sent a two-value `arcMode` instead of a list. Translating it
+// here — rather than leaving the old branch alive alongside the new one — is what stops the two
+// paths drifting again. 'vocab' was one review lesson; 'grammar' was word_forms + synonyms.
+function arcTypesFromLegacyMode(arcMode, arcReinforce) {
+  if (arcMode === 'grammar') {
+    const r = sanitizeArcTypes(arcReinforce);
+    return (r && r.length) ? r : ['word_forms', 'synonyms'];
+  }
+  return ['review'];
+}
+// ONE lesson for ONE requested type. Both the book arc and the storyline add-lessons run go through
+// this, so a type behaves identically wherever it was ticked. Returns the lesson or null; throwing
+// is left to the caller, which decides whether one bad type aborts the run (it does not).
+async function generateArcLesson(aType, ctx) {
+  if (aType === 'standard' || aType === 'review') {
+    const vOpts = aType === 'review'
+      ? { ...(ctx.reviewOpts || {}), story: ctx.story, chainVocab: ctx.chainVocab?.words || [], vocabMode: 'reinforce' }
+      : { ...(ctx.standardExtra || {}), story: ctx.story, vocabMode: null };
+    const { lesson } = await generateOneLesson(
+      ctx.lang, ctx.srcLang, ctx.topicName, 1, 1, [], ctx.story, ctx.diff, ctx.jobId, vOpts);
+    if (lesson && aType === 'review') {
+      lesson._arcMode = 'reinforce';
+      if (!lesson.title) lesson.title = 'Review words';
+      if (!lesson.icon) lesson.icon = '🔁';
+    }
+    return lesson || null;
+  }
+  const gen = ADD_LESSON_GENERATORS[aType];
+  if (!gen) return null;
+  const { lesson } = await gen({
+    lang: ctx.lang, srcLang: ctx.srcLang, topicName: ctx.topicName, story: ctx.story,
+    diff: ctx.diff, jobId: ctx.jobId, chainVocab: ctx.chainVocab,
+    standardOpts: { story: ctx.story, vocabMode: null },
+    sharedGenOpts: { chainVocab: ctx.chainVocab, vocabMode: 'reinforce', story: ctx.story,
+                     chainStory: ctx.chainStory?.text, chainStoryChapters: ctx.chainStory?.chapters },
+    addMathInstr: ctx.addMathInstr || null, addMathOps: ctx.addMathOps || null,
+    introScript: ctx.introScript || null,
+  });
+  // Everything except the chapter's own standard lesson is reinforcement, and the path badge
+  // reads _arcMode. Marked here so no caller has to remember to.
+  if (lesson) lesson._arcMode = 'reinforce';
+  return lesson || null;
+}
+
 // ── Repair flagged exercises ──────────────────────────────────────────
 // ── Ollama ping & warmup ──────────────────────────────────────────────
 async function warmupOllama() {
@@ -4739,38 +4960,35 @@ async function _runBookJob(bookId, chunks, base) {
       if (base.arc && i >= 1 && Array.isArray(data.lessons)) {
         const chainVocab = parent ? collectChainVocab(parent.id || prevRef) : { words: [], nouns: [], verbs: [] };
         const arcStory = userStory || data.story || '';
-        if (base.arcMode === 'grammar') {
-          const rOpts = { userDialect: null, storyStyle: null, chainVocab, vocabMode: 'reinforce', story: arcStory };
-          for (const rType of base.arcTypes) {
-            try {
-              jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Reinforcement lesson (${rType})…`);
-              const rFn = rType === 'word_forms'  ? generateWordForms
-                        : rType === 'synonyms'    ? generateSynonyms
-                        : rType === 'conjugation' ? generateConjugation   // legacy
-                        :                           generateGrammar;       // legacy
-              const { lesson } = await rFn(data.topic || placeholderTopic, base.lang, base.srcLang, base.diff, jobId, rOpts);
-              if (lesson) lesson._arcMode = 'reinforce';
-              data.lessons.push(lesson);
-            } catch (e) {
-              console.warn(`  [book ${bookId}] chapter ${i+1} reinforcement (${rType}) failed, skipping: ${e.message}`);
-              jobStep(jobId, `⚠ ${rType} reinforcement failed — continuing…`);
-            }
-          }
-        } else {
-          // Default vocab arc: ONE review lesson over the whole storyline's prior vocab.
+        // v71_u: the book path used to offer exactly two arc shapes ('vocab' → one review lesson,
+        // 'grammar' → word_forms + synonyms), while the storyline path had had the full tick-list
+        // since v71_p. Same operation, two different UIs and two different code paths — so a type
+        // added to one silently did not exist in the other (comprehension, added in v71_l, was
+        // never reachable from a book at all). Both now dispatch through generateArcLesson.
+        const _types = base.arcTypes;
+        // The current chapter is not persisted yet at this point, so it cannot be walked from the
+        // store the way the storyline path does. A synthetic node carrying this chapter's story and
+        // a link to its parent gives collectChainStory the same shape it expects: current chapter
+        // last and whole, earlier chapters ahead of it, trimmed from the oldest end (v71_t).
+        const _chainStory = collectChainStory({
+          id: null, topic: data.topic || placeholderTopic, story: arcStory,
+          continuedFromId: parent ? (parent.id || null) : null,
+        });
+        for (const aType of _types) {
           try {
-            jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Vocab review lesson (whole storyline)…`);
-            const vOpts = { userDialect: null, writingStyle: base.storyStyle || null,
-              storyLang: base.userStoryLang || null, story: arcStory,
-              chainVocab: chainVocab.words || [], vocabMode: 'reinforce' };
-            const { lesson } = await generateOneLesson(
-              base.lang, base.srcLang, data.topic || placeholderTopic, 1, 1, [], arcStory, base.diff, jobId, vOpts);
-            if (lesson && !lesson.title) lesson.title = 'Review words';
-            if (lesson) { lesson._arcMode = 'reinforce'; if (!lesson.icon) lesson.icon = '🔁'; }
-            data.lessons.push(lesson);
+            jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] ${aType} — chapter ${i + 1}/${chunks.length}…`);
+            const lesson = await generateArcLesson(aType, {
+              lang: base.lang, srcLang: base.srcLang, topicName: data.topic || placeholderTopic,
+              story: arcStory, diff: base.diff, jobId, chainVocab, chainStory: _chainStory,
+              reviewOpts: { userDialect: null, writingStyle: base.storyStyle || null,
+                            storyLang: base.userStoryLang || null },
+            });
+            if (lesson) data.lessons.push(lesson);
           } catch (e) {
-            console.warn(`  [book ${bookId}] chapter ${i+1} vocab review failed, skipping: ${e.message}`);
-            jobStep(jobId, `⚠ vocab review failed — continuing…`);
+            // One failing type must not abandon the others: a whole book run is a long wait, and
+            // losing it to a format the model fumbled on one chapter is the worst outcome here.
+            console.warn(`  [book ${bookId}] chapter ${i+1} arc lesson (${aType}) failed, skipping: ${e.message}`);
+            jobStep(jobId, `⚠ ${aType} failed — continuing…`);
           }
         }
       }
@@ -5691,10 +5909,14 @@ http.createServer(async (req, res) => {
         return json(res, 400, { error: 'No chapters provided' });
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
       const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms','word_forms','comprehension'].includes(lessonFormat) ? lessonFormat : 'standard';   // v68.1: word_forms was missing — the picker offered it but the route clamped it to 'standard'. v71_l: comprehension added here at the same time as the picker entry, which is the pairing that guard enforces
-      // Arc mode: each chapter = a vocab "gate" lesson + one or more reinforcement
-      // lessons (grammar/conjugation/synonyms) generated in reinforce mode.
-      const _arcTypes = (Array.isArray(arcReinforce) ? arcReinforce : ['word_forms','synonyms'])
-        .filter(t => ['word_forms','synonyms','grammar','conjugation'].includes(t));
+      // Arc: each chapter gets the lesson types the user ticked, generated in reinforce mode.
+      // v71_u: the client now sends `arcTypes` (the shared tick-list, same as the storyline
+      // add-lessons run). `arcMode` is still honoured for older clients and is translated into a
+      // list here, so there is exactly one shape downstream.
+      const _picked = sanitizeArcTypes(body.arcTypes);
+      const _arcTypes = (_picked && _picked.length)
+        ? _picked
+        : arcTypesFromLegacyMode(arcMode, arcReinforce);
       const arcEnabled = !!arc;
       // Normalize the chain root (id or name) to a name for downstream context.
       const rootParent = continuedFrom ? (findSavedById(continuedFrom) || findSaved(continuedFrom)) : null;
@@ -5706,7 +5928,8 @@ http.createServer(async (req, res) => {
               completionTokens: Math.max(0, Math.min(1e7, body.cleanupTokens.completionTokens | 0)) }
           : null,
         continuedFrom: rootParent ? rootParent.id : null, userStoryLang: userStoryLang || null,
-        arc: arcEnabled, arcTypes: _arcTypes.length ? _arcTypes : ['word_forms','synonyms'],
+        arc: arcEnabled, arcTypes: _arcTypes,
+        // Retained for logging/back-compat only — nothing downstream branches on it since v71_u.
         arcMode: arcMode === 'grammar' ? 'grammar' : 'vocab',
         // Arc script-teaching opt-in. Default ON when the target uses a script the source
         // doesn't (so a learner of a new alphabet gets per-chapter primers automatically);
@@ -5718,7 +5941,7 @@ http.createServer(async (req, res) => {
       const bookId = newBookJob(chaptersIn.map((c, i) => c.title || (baseTopic ? `${baseTopic.slice(0,40)} — ${i+1}` : '')));
       console.log(`  Book generation started: ${chaptersIn.length} chapter(s)${generated?` (generated from "${baseTopic}")`:' (from upload)'}, id=${bookId}`);
       console.log(`    lang=${base.lang}  srcLang=${base.srcLang}  difficulty=${base.diff}  format=${base.fmt}` +
-        `  style=${base.storyStyle||'(default)'}  arc=${base.arc?base.arcMode+(base.arcMode==='grammar'?' ['+base.arcTypes.join(',')+']':''):'off'}` +
+        `  style=${base.storyStyle||'(default)'}  arc=${base.arc?'['+base.arcTypes.join(',')+']':'off'}` +
         `  continuedFrom=${base.continuedFrom||'-'}`);
       _runBookJob(bookId, chaptersIn, base);  // fire-and-forget; runs server-side
       return json(res, 202, { bookId, chapters: chaptersIn.length });

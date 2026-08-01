@@ -10,6 +10,10 @@ better for every *source → target* language pair.
 > The screenshots below are **mock-ups** (ASCII), not pixel captures — they show layout and
 > the controls available in each mode.
 
+> **Working on the code rather than using the app?** `INTERNALS.md` is the engineering
+> counterpart to this file: tuning constants, silent-failure modes, load-bearing invariants and
+> test-harness limits.
+
 ---
 
 ## 1. The three layers
