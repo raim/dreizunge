@@ -35,9 +35,13 @@ See `HANDOVER.md` for the full table. In short: **browser passes on `v71_i`–`v
 **`NUM_CTX_MAX` decision**, **translate pass (380 keys)**, **native-speaker vocab review**.
 
 ### Open decisions blocking work
-1. **The design principle's boundary** — drawn at *correctness vs. handling*. `_sentenceUnits`
-   splitting on `.!?…` sits on the line: punctuation is arguably typographic, but it decides where a
-   sentence *is*. **Flagged, not filed — wants confirmation.**
+1. **[✅ RULED — user, session 25] The design principle's boundary.** Drawn at *correctness vs.
+   handling*, and **confirmed**: sentence segmentation is HANDLING, not correctness — it decides how
+   text is chunked for display and splitting, never whether content is right. A learner never sees a
+   wrong fact because of it. So it sits on the permitted side of the principle.
+   **With one condition: use Unicode machinery, not a hand-authored punctuation list.** `[.!?…]` is
+   a hand-authored list and it has a real gap (see the `_sentenceUnits` item below). The permitted
+   side means Unicode-standard segmentation, not "any punctuation table I write myself".
 2. **Duplicate grammar targets** (`v71_r`): six lessons repeat a `target`, so two exercises collide
    on one qid — the round asks the word twice while coverage counts it once. Dedupe or repair?
 3. **Crossword translation highlight**: word_forms items have no translation field.
@@ -53,9 +57,33 @@ See `HANDOVER.md` for the full table. In short: **browser passes on `v71_i`–`v
 - **Clamp the synonym context SERVER-side** — `findContextSentence` returns an uncapped sentence;
   the client clamps for display (v70_n) so nothing is broken, but stored data stays bloated. Decide
   between sharing the helper and accepting display-side-only.
-- **`_sentenceUnits` and Arabic** — `.!?…` only; Arabic prose uses `،` `؛` and often no full stop,
-  so a passage reads as ONE sentence. **The PDF chapter splitter has the same blind spot**, so an
-  Arabic book chunks far more coarsely. Not yet reported; real. See decision 1 first.
+- **[⚠️ DIAGNOSIS CORRECTED, session 25] `_sentenceUnits` — two separate items, in this order.**
+  The long-standing entry here claimed Arabic prose "uses `،` `؛` and often no full stop, so a
+  passage reads as ONE sentence", and proposed adding those marks to `_SENT_END_RE`. **That is the
+  wrong cause and the fix would make things worse.** Checked against Unicode's own sentence
+  segmentation (UAX #29, via `Intl.Segmenter`): an Arabic passage using `،` and `؛` with no full
+  stop segments as **one unit** — Unicode agrees with the current code, and is right to. `،` is a
+  COMMA and `؛` a SEMICOLON; they separate clauses, not sentences. Adding them to the terminator set
+  would split Arabic mid-sentence — a real regression in place of an imagined bug. That passage
+  genuinely is one long sentence.
+
+  **(a) Replace `_SENT_END_RE` / `_sentenceSplit` with `Intl.Segmenter`.** Motivation is **CJK, not
+  Arabic**: `[.!?…]` omits `。`, so Japanese and Chinese prose currently reads as one sentence — a
+  live defect nobody has reported. `Intl.Segmenter` is built into Node and every modern browser (no
+  dependency, which this project requires), is script-driven rather than per-language, and needs no
+  hand-authored table — so it satisfies decision 1's condition.
+  *Measured:* German 4/4 units, Japanese 3/3, Arabic 1 (correctly).
+  *Caveat:* no better on abbreviations — `Dr. Meier` splits wrongly under both. Not a regression.
+  **Riskier than it looks:** it changes segmentation for every language at once, and both the
+  synonym context and the PDF splitter have user-visible behaviour built on the current output.
+  Do a before/after comparison across the whole corpus, not just a green suite.
+
+  **(b) THEN fix the real Arabic chunking complaint with a LENGTH-based fallback.** The PDF splitter
+  does chunk Arabic coarsely — because the sentences are genuinely long, not because they were
+  missed. When a unit exceeds a character budget, split at a clause boundary, else on whitespace.
+  **No language knowledge at all** — the same instinct as `CHAIN_STORY_CHARS`. This also fixes
+  German legal prose and the 135-word Italian periods that prompted the v70_n synonym clamp, which
+  a punctuation-based fix never would.
 - **Deterministic vocab QC — article half: BLOCKED** by the design principle (needs a per-language
   article table). Superseded by `v71_y`, which does it model-side. The diacritic half shipped in
   `v72`.

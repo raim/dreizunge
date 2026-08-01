@@ -28,10 +28,14 @@ releases without a browser or a live model in the loop.
 
 ## Open decisions blocking work
 
-1. **The design principle's boundary.** Drawn at *correctness vs. handling*: article lists and
-   gender rules are out; Unicode normalisation and RTL detection are in. `_sentenceUnits` splitting
-   on `.!?…` sits on the line — punctuation is arguably typographic, but it decides where a sentence
-   *is*. Flagged, not filed. **Wants confirmation before anyone acts on it.**
+*(Decision 1 was ruled in session 25 and is kept below for context; 2–4 are still open.)*
+
+1. ~~**The design principle's boundary.**~~ **RULED, session 25.** Correctness vs. handling, with
+   the condition that *permitted* means **Unicode machinery, not a hand-authored table**. Sentence
+   segmentation is handling → allowed; a hand-written `[.!?…]` list is still the wrong tool.
+   This **unblocks** the `_sentenceUnits` work — see the roadmap, which now carries two ordered
+   follow-ups and a corrected diagnosis (the Arabic premise was wrong: `،` is a comma, so Unicode
+   correctly reads that prose as one long sentence; the real fix is a length-based fallback).
 2. **Duplicate grammar targets** (`v71_r`): six lessons repeat a `target`, so two exercises collide
    on one qid — the round asks the word twice while coverage counts it once. Dedupe or repair?
 3. **Crossword translation highlight**: word_forms items have no translation field.
@@ -43,6 +47,10 @@ releases without a browser or a live model in the loop.
   branch chain has produced three user-reported dead ends (v66.1, v69.2) and the failure mode is a
   learner with no forward affordance: quiet, browser-only. **Start a session with this, not end one
   with it** — it needs room to re-read the branch order cold.
+- **`_sentenceUnits` → `Intl.Segmenter`, then a length-based chunk fallback.** Unblocked by the
+  session-25 ruling. Motivation is CJK (`。` is missing today), NOT Arabic — the roadmap carries the
+  corrected diagnosis and the order. Riskier than it looks: it changes segmentation for every
+  language at once, and the synonym context and PDF splitter both build on the current output.
 - **`lib-dom` innerHTML parsing** — would unblock read-back testing for every future picker.
   Touches every harness, so it wants its own session.
 - **Clamp the synonym context server-side** — small; needs a decision between sharing the helper and

@@ -167,6 +167,13 @@ folding for comparison. These are properties of the encoding, not judgements abo
 
 The line: **does this decide whether content is right, or only how it is displayed/compared?**
 
+**Confirmed by the user, session 25**, with a condition worth stating separately: *permitted* means
+**Unicode machinery**, not "any table I author myself". Sentence segmentation is handling and is
+allowed — but a hand-written `[.!?…]` list is still the wrong tool, because it is a table someone
+typed and it fails silently for scripts nobody thought about (it omits `。`). Reach for
+`Intl.Segmenter`, `normalize()`, `Intl.Collator` and the like; a literal character class listing
+punctuation per language is the smell.
+
 ### Where should language knowledge live? Four tiers
 
 "Move the table to a JSON file" is not progress on its own — a file still has to be **authored** by
@@ -236,9 +243,16 @@ dismiss the whole QC panel, which costs the checks that do work.
    in **19 of 20** grammar lessons against **15** with the table, because the table covered
    de/fr/it/es/pt/nl/ru and nothing else, so English lessons could never build one. Hebrew still
    builds none — one definite article, no indefinite — a fact nobody had to write down.
-3. **`_sentenceUnits` splits on `.!?…` only** (`index.html`) — already logged separately: Arabic
-   uses `،` `؛` and often none of these. Borderline (punctuation is arguably typographic), but it
-   decides where a sentence *is*, which changes content.
+3. **`_sentenceUnits` splits on `.!?…` only** (`index.html`) — **ruled PERMITTED in principle,
+   still wrong in practice.** Sentence segmentation is handling, not correctness (see the boundary
+   rule above), so it is allowed — but `[.!?…]` is a *hand-authored* list, which the condition
+   rejects, and it omits `。`, so **Japanese and Chinese prose currently reads as one sentence**.
+   Fix by adopting `Intl.Segmenter` (UAX #29): built into Node and browsers, script-driven, no
+   table.
+   **Do not add `،` / `؛` for Arabic.** Measured: Unicode segments such a passage as one unit and is
+   right to — those are a comma and a semicolon, clause separators. The Arabic passage genuinely is
+   one long sentence; the coarse-chunking complaint is a LENGTH problem, fixed with a
+   character-budget fallback that needs no language knowledge. Roadmap has both, in order.
 
 Not yet actioned — recorded so the next change in this area does not add to the pile.
 

@@ -16093,7 +16093,9 @@
             "ms": 158042,
             "at": "2026-07-22T16:09:43.721Z"
           },
-          "_recreated": true
+          "_recreated": true,
+          "qcAt": "2026-08-01T09:17:32.769Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1784736840383_1_word_forms",
@@ -16303,8 +16305,8 @@
           "lessons": "qwen2.5:7b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 10390,
-        "totalCompletionTokens": 3242,
+        "totalPromptTokens": 15102,
+        "totalCompletionTokens": 3280,
         "lessons": [
           {
             "lessonNum": 1,
@@ -16314,12 +16316,12 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 4894,
+          "lesson_qc": 9644,
           "recreate": 7672
         }
       },
       "generatedAt": "2026-07-22T14:02:39.245Z",
-      "updatedAt": "2026-07-22T16:18:12.957Z",
+      "updatedAt": "2026-08-01T09:17:32.770Z",
       "createdBy": "admin",
       "id": "tp_17847292264520000293"
     },
