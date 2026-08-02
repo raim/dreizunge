@@ -2,6 +2,40 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_255710679",
+      "title": "Paella und Chaos",
+      "icon": "🥘",
+      "chapters": [
+        "tp_17856924896730000081",
+        "tp_17856930149110000139"
+      ],
+      "lang": "es",
+      "srcLang": "de",
+      "createdAt": "2026-08-02T17:45:43.041Z",
+      "updatedAt": "2026-08-02T18:21:07.249Z",
+      "tokenUsage": {
+        "totalPromptTokens": 1074,
+        "totalCompletionTokens": 193,
+        "tokensByType": {
+          "retitle": 672,
+          "summary": 595
+        }
+      },
+      "summary": "Ein Student reist nach Barcelona, um Wirtschaft zu studieren, lässt sich jedoch schnell von der Kälte und dem kulinarischen Angebot ablenken. Statt sich auf die Vorlesungen zu konzentrieren, verbringt er seine Zeit mit dem Essen von Paella und Churros, wobei sein Magen wichtiger wird als das Bankkonto. Er versucht sogar, wirtschaftliche Theorien auf den Schwarzmarkt für Süßigkeiten anzuwenden, was seine Konzentration weiter verwirrt. Letztlich scheitert er daran, echte Freunde zu finden oder die Inflation zu verstehen, während er stattdessen Schulden in Form von Zucker macht.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 460,
+        "completionTokens": 135,
+        "ms": 88210,
+        "at": "2026-08-02T18:21:07.249Z"
+      }
+    },
+    {
       "id": "sl_1216981541",
       "title": "Wein und Dämmerung",
       "icon": "🍷",
@@ -6220,6 +6254,747 @@
   ],
   "topics": [
     {
+      "id": "tp_17856930149110000139",
+      "topic": "Churros und Chaos",
+      "topicEmoji": "📉",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "es",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 200,
+      "story": "Intenté recuperar la dignidad académica asistiendo a una conferencia sobre inflación hiperbólica, pero el ponente hablaba tan rápido que los números parecían bailarines de flamenco escapados del control. Mi cerebro, ya debilitado por la falta de sol y el exceso de aceite de oliva, decidió que la única forma de entender la teoría económica era aplicarla al mercado negro de churros en La Rambla. Negocié tres monedas de euro por un chocolate espeso que sabía a deuda nacional, convencido de que estaba invirtiendo en activos tangibles mientras mi estómago reclamaba dividendos en forma de azúcar.\n\nLa profesora me miró con la severidad de un banco central frustrado cuando llegué tarde con manchas de cacao en la camisa. Me dijo que mi concentración era tan dispersa como el turismo en agosto, pero yo le argumenté que estaba estudiando la volatilidad del mercado gastronómico desde dentro. Ahora, mientras intento explicar a mis compañeros por qué la paella es un activo refugio contra la depresión estudiantil, solo consigo miradas de confusión y una oferta para compartir mi cuenta bancaria, que ya ha alcanzado niveles históricos de negatividad.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Spanish language teacher. Write a short story directly in Spanish on the given topic — aim for 2-3 paragraphs, under 200 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Spanish. Writing style: Comedic tone, wordplay, absurdist situations, punchlines. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nDecidí ir a Barcelona en enero para estudiar economía, aprender español y conocer gente, pero el frío me hizo reconsiderar mis prioridades. Llegué con la intención de analizar mercados emergentes, solo para descubrir que mi mercado más rentable era la paella valenciana disfrazada de tapas catalanas. Cada vez que intentaba conjugarel verbo \"ser\" en clase, mi estómago gritaba por \"estar\" sentado frente a un plato de gambas al ajillo.\n\nLos profesores hablaban tan rápido que entendía menos las lecciones de macroeconomía que el menú del día. Intenté hacer amigos en la universidad, pero todos parecían expertos en evitar los impuestos y encontrar el sol en pleno invierno. Ahora soy experto en negociar precios con vendedores ambulantes y en explicar a mi madre por qué \"estudiar\" significa principalmente siestas bajo la sombra de un palmera imaginaria. La economía local florece, pero mi cuenta bancaria se desinfla más rápido que un globo en la cima del Tibidabo.\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 441,
+        "completionTokens": 250,
+        "ms": 132864,
+        "at": "2026-08-02T17:47:55.955Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 308,
+        "completionTokens": 311,
+        "ms": 138955,
+        "at": "2026-08-02T17:50:14.911Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Ich versuchte, meine akademische Würde wiederherzustellen, indem ich an einer Konferenz über hyperbolische Inflation teilnahm, doch der Referent sprach so schnell, dass die Zahlen wie aus der Kontrolle geratene Flamenco-Tänzer wirkten. Mein Gehirn, bereits durch Sonnenmangel und einen Überschuss an Olivenöl geschwächt, beschloss, dass die einzige Möglichkeit, die wirtschaftstheoretischen Zusammenhänge zu verstehen, darin bestehe, sie auf den Schwarzmarkt für Churros an der La Rambla anzuwenden. Ich handelte drei Euro-Münzen gegen eine dicke Schokoladengetränk aus, das nach Staatsverschuldung schmeckte, überzeugt davon, in greifbare Vermögenswerte zu investieren, während mein Magen Dividenden in Form von Zucker einforderte.\n\nDie Professorin blickte mich mit der Strenge einer frustrierten Zentralbank an, als ich verspätet und mit Kakao-Flecken auf dem Hemd erschien. Sie sagte mir, meine Konzentration sei so zerstreut wie der Tourismus im August, doch ich argumentierte, dass ich die Volatilität des gastronomischen Marktes von innen heraus studiere. Jetzt versuche ich meinen Kommilitonen zu erklären, warum Paella ein sicherer Hafen gegen die studentische Depression ist, aber ich ernte nur verwirrte Blicke und das Angebot, mein Bankkonto zu teilen, das bereits historische Tiefststände an Negativität erreicht hat.",
+      "continuedFrom": "Kälte und Paella",
+      "continuedFromId": "tp_17856924896730000081",
+      "storyStyle": "funny",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Wirtschaft und Churros",
+          "desc": "Spanische Wirtschaftsvokabeln in einer humorvollen Geschichte",
+          "icon": "📉",
+          "vocab": [
+            {
+              "target": "asistir",
+              "source": "teilnehmen"
+            },
+            {
+              "target": "la inflación",
+              "source": "die Inflation"
+            },
+            {
+              "target": "el cerebro",
+              "source": "das Gehirn"
+            },
+            {
+              "target": "negociar",
+              "source": "handeln"
+            },
+            {
+              "target": "la concentración",
+              "source": "die Konzentration"
+            },
+            {
+              "target": "el mercado",
+              "source": "der Markt"
+            },
+            {
+              "target": "explicar",
+              "source": "erklären"
+            },
+            {
+              "target": "la cuenta bancaria",
+              "source": "das Bankkonto"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Intenté recuperar la dignidad académica.",
+              "source": "Ich versuchte, meine akademische Würde wiederherzustellen.",
+              "words": [
+                "Intenté",
+                "recuperar",
+                "la",
+                "dignidad",
+                "académica."
+              ]
+            },
+            {
+              "target": "Mi cerebro decidió que la única forma era aplicar la teoría.",
+              "source": "Mein Gehirn beschloss, dass die einzige Möglichkeit darin bestehe, die Theorie anzuwenden.",
+              "words": [
+                "Mi",
+                "cerebro",
+                "decidió",
+                "que",
+                "la",
+                "única",
+                "forma",
+                "era",
+                "aplicar",
+                "la",
+                "teoría."
+              ]
+            },
+            {
+              "target": "Negocié tres monedas de euro por un chocolate espeso.",
+              "source": "Ich handelte drei Euro-Münzen gegen ein dickes Schokoladengetränk.",
+              "words": [
+                "Negocié",
+                "tres",
+                "monedas",
+                "de",
+                "euro",
+                "por",
+                "un",
+                "chocolate",
+                "espeso."
+              ]
+            },
+            {
+              "target": "La profesora me miró con severidad cuando llegué tarde.",
+              "source": "Die Professorin blickte mich mit Strenge an, als ich verspätet erschien.",
+              "words": [
+                "La",
+                "profesora",
+                "me",
+                "miró",
+                "con",
+                "severidad",
+                "cuando",
+                "llegué",
+                "tarde."
+              ]
+            },
+            {
+              "target": "Ahora intento explicar por qué la paella es un activo refugio.",
+              "source": "Jetzt versuche ich zu erklären, warum Paella ein sicherer Hafen ist.",
+              "words": [
+                "Ahora",
+                "intento",
+                "explicar",
+                "por",
+                "qué",
+                "la",
+                "paella",
+                "es",
+                "un",
+                "activo",
+                "refugio."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1203,
+            "completionTokens": 381,
+            "ms": 248144,
+            "at": "2026-08-02T17:54:23.112Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "Churros und Inflation",
+          "desc": "Wirtschaftswahn mit Schokoladen-Churros",
+          "icon": "🤡",
+          "vocab": [
+            {
+              "target": "el churro",
+              "source": "der Churro"
+            },
+            {
+              "target": "la inflación",
+              "source": "die Inflation"
+            },
+            {
+              "target": "negociar",
+              "source": "verhandeln"
+            },
+            {
+              "target": "el chocolate",
+              "source": "der Schokoriegel"
+            },
+            {
+              "target": "la deuda",
+              "source": "die Schuld"
+            },
+            {
+              "target": "activo",
+              "source": "das Aktivum"
+            },
+            {
+              "target": "divertido",
+              "source": "lustig"
+            },
+            {
+              "target": "confundir",
+              "source": "verwirren"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "El churro es un activo divertido.",
+              "source": "Der Churro ist ein lustiges Aktivum.",
+              "words": [
+                "El",
+                "churro",
+                "es",
+                "un",
+                "activo",
+                "divertido."
+              ]
+            },
+            {
+              "target": "La inflación confunde al estómago.",
+              "source": "Die Inflation verwirrt den Magen.",
+              "words": [
+                "La",
+                "inflación",
+                "confunde",
+                "al",
+                "estómago."
+              ]
+            },
+            {
+              "target": "Negociar la deuda es difícil.",
+              "source": "Die Schuld zu verhandeln ist schwer.",
+              "words": [
+                "Negociar",
+                "la",
+                "deuda",
+                "es",
+                "difícil."
+              ]
+            },
+            {
+              "target": "El chocolate sabe a economía.",
+              "source": "Der Schokoriegel schmeckt nach Wirtschaft.",
+              "words": [
+                "El",
+                "chocolate",
+                "sabe",
+                "a",
+                "economía."
+              ]
+            },
+            {
+              "target": "Mi amigo tiene mucho frío.",
+              "source": "Mein Freund hat viel Kälte.",
+              "words": [
+                "Mi",
+                "amigo",
+                "tiene",
+                "mucho",
+                "frío."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1005,
+            "completionTokens": 446,
+            "ms": 257336,
+            "at": "2026-08-02T17:58:40.449Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": 6,
+          "type": "word_forms",
+          "title": "Spanisch: Verben & Kontext",
+          "desc": "Übe Zeitformen und Wortwahl.",
+          "icon": "🎓",
+          "items": [
+            {
+              "sentence": "Intenté recuperar la dignidad académica ___ a una conferencia sobre inflación hiperbólica.",
+              "translation": "Ich versuchte, die akademische Würde wiederherzustellen, indem ich einer Konferenz über hyperbolische Inflation beiwohnte.",
+              "choices": [
+                "asistiendo",
+                "asistir"
+              ],
+              "correctIndex": 0,
+              "explanation": "Gerundium nach „por“ impliziert Mittel/Weise."
+            },
+            {
+              "sentence": "Mi cerebro, ya debilitado por la falta de sol y el exceso de aceite de oliva, decidió que la única forma de ___ la teoría económica era aplicarla al mercado negro de churros en La Rambla.",
+              "translation": "Mein Gehirn, bereits geschwächt durch Sonnenmangel und zu viel Olivenöl, beschloss, dass die einzige Möglichkeit, die Wirtschaftstheorie zu verstehen, darin bestand, sie auf den Schwarzmarkt für Churros in der La Rambla anzuwenden.",
+              "choices": [
+                "entender",
+                "entiendo"
+              ],
+              "correctIndex": 0,
+              "explanation": "Infinitiv nach „era“ (war) als Subjekt/Objekt."
+            },
+            {
+              "sentence": "Negocié tres monedas de euro por un chocolate espeso que ___ a deuda nacional, convencido de que estaba invirtiendo en activos tangibles mientras mi estómago reclamaba dividendos en forma de azúcar.",
+              "translation": "Ich handelte drei Euromünzen für eine dicke Schokolade aus, die nach nationaler Schulde schmeckte, überzeugt davon, dass ich in greifbare Vermögenswerte investierte, während mein Magen Dividenden in Form von Zucker einforderte.",
+              "choices": [
+                "sabiendo",
+                "sabía"
+              ],
+              "correctIndex": 1,
+              "explanation": "Indikativ Imperfekt für wiederholte/andauernde Geschmackswahrnehmung."
+            },
+            {
+              "sentence": "La profesora me miró con la severidad de un banco central frustrado cuando ___ tarde con manchas de cacao en la camisa.",
+              "translation": "Die Professorin sah mich mit der Strenge einer frustrierten Zentralbank an, als ich zu spät kam und Kakaoflecken auf dem Hemd hatte.",
+              "choices": [
+                "llegué",
+                "llegaba"
+              ],
+              "correctIndex": 0,
+              "explanation": "Pretérito Indefinido für abgeschlossenes Ereignis."
+            },
+            {
+              "sentence": "Ahora, mientras intento explicar a mis compañeros por qué la paella es un activo refugio contra la depresión estudiantil, solo ___ miradas de confusión y una oferta para compartir mi cuenta bancaria, que ya ha alcanzado niveles históricos de negatividad.",
+              "translation": "Während ich jetzt versuche, meinen Kommilitonen zu erklären, warum Paella ein Schutzvermögen gegen die Studenten Depression ist, ernte ich nur verwirrte Blicke und das Angebot, mein Bankkonto zu teilen, das bereits historische Negativebenen erreicht hat.",
+              "choices": [
+                "consigo",
+                "consigues"
+              ],
+              "correctIndex": 0,
+              "explanation": "1. Person Singular passend zu „yo“ (impliziert)."
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1136,
+            "completionTokens": 827,
+            "ms": 414003,
+            "at": "2026-08-02T18:05:34.452Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": 6,
+          "type": "synonyms",
+          "title": "Economía y vida universitaria",
+          "desc": "Vocabulario sobre finanzas y estudios en español.",
+          "icon": "🎓",
+          "words": [
+            {
+              "base": "decidir",
+              "gloss": "entscheiden",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "determinar",
+                  "g": "bestimmen"
+                },
+                {
+                  "w": "resolver",
+                  "g": "lösen/entscheiden"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "frío",
+              "gloss": "Kälte",
+              "sentence": "El frío me hizo reconsiderar mis prioridades.",
+              "synonyms": [
+                {
+                  "w": "frio",
+                  "g": "kalt"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "calor",
+                  "g": "Hitze/Wärme"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "estómago",
+              "gloss": "Magen",
+              "sentence": "Negocié tres monedas de euro por un chocolate espeso que sabía a deuda nacional, convencido de que estaba invirtiendo en activos tangibles mientras mi estómago reclamaba dividendos en forma de azúcar.",
+              "synonyms": [
+                {
+                  "w": "panza",
+                  "g": "Bauch (umgangssprachlich)"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "profesor",
+              "gloss": "Professor",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "maestro",
+                  "g": "Lehrer"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "alumno",
+                  "g": "Schüler"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "amigo",
+              "gloss": "Freund",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "compañero",
+                  "g": "Begleiter/Kamerad"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "enemigo",
+                  "g": "Feind"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "banco",
+              "gloss": "Bank",
+              "sentence": "La profesora me miró con la severidad de un banco central frustrado cuando llegué tarde con manchas de cacao en la camisa.",
+              "synonyms": [
+                {
+                  "w": "entidad financiera",
+                  "g": "Finanzinstitut"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 6,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1404,
+            "completionTokens": 1007,
+            "ms": 503737,
+            "at": "2026-08-02T18:13:58.189Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": 9,
+          "type": "comprehension",
+          "title": "Spanisches Semester in Barcelona",
+          "desc": "Verstehen Sie die Geschichte des Studenten, der seine Prioritäten in Barcelona geändert hat.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum hat der Erzähler seine ursprünglichen Pläne für das Studium in Barcelona überdacht?",
+              "choices": [
+                "Weil die Wirtschaftsvorlesungen zu einfach waren.",
+                "Weil er sich mehr für Essen als für akademische Inhalte interessierte.",
+                "Weil er keine Freunde an der Universität gefunden hat.",
+                "Weil das Wetter im Januar zu warm war."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt, dass sein Magen nach Gambas schrie und er die paella valenciana als seinen 'rentabelsten Markt' bezeichnet."
+            },
+            {
+              "q": "Was hat der Erzähler getan, um die Theorie der Hyperinflation zu verstehen?",
+              "choices": [
+                "Er hat einen churro am Schwarzen Markt gekauft.",
+                "Er hat eine Vorlesung über makroökonomische Modelle besucht.",
+                "Er hat mit den Professoren über Zinsen gesprochen.",
+                "Er hat seine Bankkontoauszüge analysiert."
+              ],
+              "correctIndex": 0,
+              "why": "Er beschließt, die Theorie auf den 'Schwarzen Markt von Churros' anzuwenden und kauft einen für drei Euro."
+            },
+            {
+              "q": "Wie reagiert die Professorin auf das späte Erscheinen des Erzählers?",
+              "choices": [
+                "Sie lobt seine kreative Anwendung der Wirtschaftstheorie.",
+                "Sie ignoriert ihn und geht weiter mit dem Unterricht.",
+                "Sie kritisiert seine zerstreute Konzentration.",
+                "Sie bietet ihm an, die Kosten für den Churro zu erstatten."
+              ],
+              "correctIndex": 2,
+              "why": "Die Professorin sagt ihm, dass seine Konzentration so zerstreut sei wie der Tourismus im August."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 894,
+            "completionTokens": 481,
+            "ms": 256467,
+            "at": "2026-08-02T18:18:14.656Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 520021,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1952,
+        "totalCompletionTokens": 942,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 248143,
+            "promptTokens": 1203,
+            "completionTokens": 381
+          }
+        ]
+      },
+      "generatedAt": "2026-08-02T17:50:14.911Z",
+      "updatedAt": "2026-08-02T18:18:14.656Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17856924896730000081",
+      "topic": "Kälte und Paella",
+      "topicEmoji": "❄️",
+      "userTopic": "ich gehe fuer 1 semester (ab jaenner) nach barcelona um dort wirtschaft zu studieren, spanisch zu lernen, und menschen zu treffen",
+      "userPrompt": "ich gehe fuer 1 semester (ab jaenner) nach barcelona um dort wirtschaft zu studieren, spanisch zu lernen, und menschen zu treffen",
+      "lang": "es",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 200,
+      "story": "Decidí ir a Barcelona en enero para estudiar economía, aprender español y conocer gente, pero el frío me hizo reconsiderar mis prioridades. Llegué con la intención de analizar mercados emergentes, solo para descubrir que mi mercado más rentable era la paella valenciana disfrazada de tapas catalanas. Cada vez que intentaba conjugarel verbo \"ser\" en clase, mi estómago gritaba por \"estar\" sentado frente a un plato de gambas al ajillo.\n\nLos profesores hablaban tan rápido que entendía menos las lecciones de macroeconomía que el menú del día. Intenté hacer amigos en la universidad, pero todos parecían expertos en evitar los impuestos y encontrar el sol en pleno invierno. Ahora soy experto en negociar precios con vendedores ambulantes y en explicar a mi madre por qué \"estudiar\" significa principalmente siestas bajo la sombra de un palmera imaginaria. La economía local florece, pero mi cuenta bancaria se desinfla más rápido que un globo en la cima del Tibidabo.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Spanish language teacher. Write a short story directly in Spanish on the given topic — aim for 2-3 paragraphs, under 200 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Spanish. Writing style: Comedic tone, wordplay, absurdist situations, punchlines.\n\nWrite a story for the topic: \"ich gehe fuer 1 semester (ab jaenner) nach barcelona um dort wirtschaft zu studieren, spanisch zu lernen, und menschen zu treffen\". Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 163,
+        "completionTokens": 219,
+        "ms": 91366,
+        "at": "2026-08-02T17:39:28.241Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 276,
+        "completionTokens": 271,
+        "ms": 121431,
+        "at": "2026-08-02T17:41:29.672Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Ich hatte beschlossen, im Januar nach Barcelona zu gehen, um Wirtschaftswissenschaften zu studieren, Spanisch zu lernen und neue Leute kennenzulernen, doch die Kälte ließ mich meine Prioritäten überdenken. Ich kam mit der Absicht an, aufstrebende Märkte zu analysieren, nur um festzustellen, dass mein profitabelster Markt die valencianische Paella war, verkleidet als katalanische Tapas. Jedes Mal, wenn ich versuchte, das Verb „ser“ im Unterricht zu konjugieren, schrie mein Magen nach „estar“, während ich vor einem Teller Knoblauchgarnelen saß.\n\nDie Professoren sprachen so schnell, dass ich die Makroökonomie-Lektionen weniger verstand als die Tageskarte. Ich versuchte, Freunde an der Universität zu finden, aber alle schienen Experten darin zu sein, Steuern zu vermeiden und mitten im Winter die Sonne zu finden. Jetzt bin ich ein Experte darin, Preise mit Straßenverkäufern auszuhandeln und meiner Mutter zu erklären, warum „Studieren“ vor allem bedeutet, unter dem Schatten einer imaginären Palme ein Nickerchen zu machen. Die lokale Wirtschaft blüht auf, aber mein Bankkonto schrumpft schneller zusammen als ein Ballon auf der Spitze des Tibidabo.",
+      "storyStyle": "funny",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Studium in Barcelona",
+          "desc": "Erlebnis eines Studenten in Spanien",
+          "icon": "🎓",
+          "vocab": [
+            {
+              "target": "decidir",
+              "source": "beschließen"
+            },
+            {
+              "target": "el frío",
+              "source": "die Kälte"
+            },
+            {
+              "target": "la paella",
+              "source": "die Paella"
+            },
+            {
+              "target": "el estómago",
+              "source": "der Magen"
+            },
+            {
+              "target": "el profesor",
+              "source": "der Professor"
+            },
+            {
+              "target": "el amigo",
+              "source": "der Freund"
+            },
+            {
+              "target": "la economía",
+              "source": "die Wirtschaft"
+            },
+            {
+              "target": "el banco",
+              "source": "das Bankkonto"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Decidí ir a Barcelona en enero.",
+              "source": "Ich hatte beschlossen, im Januar nach Barcelona zu gehen.",
+              "words": [
+                "Decidí",
+                "ir",
+                "a",
+                "Barcelona",
+                "en",
+                "enero."
+              ]
+            },
+            {
+              "target": "El frío me hizo reconsiderar mis prioridades.",
+              "source": "Die Kälte ließ mich meine Prioritäten überdenken.",
+              "words": [
+                "El",
+                "frío",
+                "me",
+                "hizo",
+                "reconsiderar",
+                "mis",
+                "prioridades."
+              ]
+            },
+            {
+              "target": "Mi estómago gritaba por estar sentado.",
+              "source": "Mein Magen schrie nach „estar“, während ich saß.",
+              "words": [
+                "Mi",
+                "estómago",
+                "gritaba",
+                "por",
+                "estar",
+                "sentado."
+              ]
+            },
+            {
+              "target": "Los profesores hablaban tan rápido.",
+              "source": "Die Professoren sprachen so schnell.",
+              "words": [
+                "Los",
+                "profesores",
+                "hablaban",
+                "tan",
+                "rápido."
+              ]
+            },
+            {
+              "target": "Mi cuenta bancaria se desinfla.",
+              "source": "Mein Bankkonto schrumpft zusammen.",
+              "words": [
+                "Mi",
+                "cuenta",
+                "bancaria",
+                "se",
+                "desinfla."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1126,
+            "completionTokens": 380,
+            "ms": 253267,
+            "at": "2026-08-02T17:45:42.990Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 466116,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1565,
+        "totalCompletionTokens": 870,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 253265,
+            "promptTokens": 1126,
+            "completionTokens": 380
+          }
+        ]
+      },
+      "generatedAt": "2026-08-02T17:41:29.681Z",
+      "updatedAt": "2026-08-02T17:45:42.991Z",
+      "createdBy": "admin"
+    },
+    {
       "id": "tp_17854063449150000195",
       "topic": "Barbera und Geschichten",
       "topicEmoji": "🍷",
@@ -8513,222 +9288,11 @@
           "qcBy": "translategemma:12b"
         },
         {
-          "id": "ls_1227155750",
-          "type": "synonyms",
-          "title": "Politica Europea e Tajani",
-          "desc": "Übungen zu Verben und Nomen",
-          "icon": "🇪🇺",
-          "items": [
-            {
-              "sentence": "Tajani aveva già ___ il tiro.",
-              "translation": "Tajani hatte den Kurs bereits korrigiert.",
-              "choices": [
-                "corretto",
-                "correggere",
-                "correggeva"
-              ],
-              "correctIndex": 0,
-              "explanation": "Partizip für das Passato Prossimo"
-            },
-            {
-              "sentence": "Il ministro degli Esteri ha allora ___ di «tempesta in un bicchier d’acqua».",
-              "translation": "Der Außenminister sprach dann von „Sturm im Wasserglas“.",
-              "choices": [
-                "parlato",
-                "parlare",
-                "parlava"
-              ],
-              "correctIndex": 0,
-              "explanation": "Partizip für das Passato Prossimo"
-            },
-            {
-              "sentence": "Ma il fondo europeo per la Difesa non è l’unico ___ delle ultime settimane.",
-              "translation": "Aber der europäische Verteidigungsfonds ist nicht der einzige Erschütterung der letzten Wochen.",
-              "choices": [
-                "scossone",
-                "scosse",
-                "scossa"
-              ],
-              "correctIndex": 0,
-              "explanation": "Singular wegen „l’unico“"
-            },
-            {
-              "sentence": "Una richiesta ___ a suo tempo dal procuratore antimafia Giovanni Melillo.",
-              "translation": "Eine Anfrage, die seinerzeit vom Antimafia-Staatsanwalt Giovanni Melillo gestellt wurde.",
-              "choices": [
-                "fatta",
-                "fare",
-                "facendo"
-              ],
-              "correctIndex": 0,
-              "explanation": "Partizip als Adjektiv zu „richiesta“"
-            },
-            {
-              "sentence": "In realtà, pure dentro a Fratelli d’Italia ci ___ dei dubbi.",
-              "translation": "In Wirklichkeit gibt es auch innerhalb von Fratelli d'Italia Zweifel.",
-              "choices": [
-                "sono",
-                "essere",
-                "era"
-              ],
-              "correctIndex": 0,
-              "explanation": "Konjugation von „essere“ für „ci sono“"
-            }
-          ],
-          "_genMeta": {
-            "type": "word_forms",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": 1,
-            "valid": 5,
-            "rejected": 0,
-            "rejectReasons": {},
-            "promptTokens": 1092,
-            "completionTokens": 532,
-            "ms": 522017,
-            "at": "2026-07-29T12:30:15.035Z"
-          },
-          "_arcMode": "reinforce",
-          "words": [
-            {
-              "base": "fratelli",
-              "gloss": "Brüder",
-              "sentence": "Sempre Tajani è stato in qualche modo urtante, in questo caso per Fratelli d’Italia, riguardo a un altro tema sul tavolo: l’estensione delle intercettazioni chieste per un procedimento giudiziario in altri processi nel caso di reati di terrorismo e criminalità organizzata.",
-              "synonyms": [
-                {
-                  "w": "sorelle",
-                  "g": "Schwestern"
-                }
-              ],
-              "antonyms": [],
-              "homophones": [],
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "X is not a synonym of fratelli.",
-                  "field": "note",
-                  "at": "2026-07-29T13:28:27.431Z"
-                }
-              },
-              "qc": {
-                "sug": "X is not a synonym of fratelli.",
-                "field": "note",
-                "at": "2026-07-29T13:28:27.431Z",
-                "by": "translategemma:12b"
-              }
-            },
-            {
-              "base": "corretto",
-              "gloss": "korrigiert / richtig",
-              "sentence": "Tajani aveva già corretto il tiro, anche perché dall’Europa era già trapelato qualche dubbio, soprattutto sulla scadenza di dicembre considerata troppo in là.",
-              "synonyms": [
-                {
-                  "w": "giusto",
-                  "g": "richtig"
-                }
-              ],
-              "antonyms": [
-                {
-                  "w": "sbagliato",
-                  "g": "falsch"
-                }
-              ],
-              "homophones": []
-            },
-            {
-              "base": "anche",
-              "gloss": "auch",
-              "sentence": "Tajani aveva già corretto il tiro, anche perché dall’Europa era già trapelato qualche dubbio, soprattutto sulla scadenza di dicembre considerata troppo in là.",
-              "synonyms": [
-                {
-                  "w": "pure",
-                  "g": "ebenfalls"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "scontro",
-              "gloss": "Konflikt / Zusammenstoß",
-              "sentence": "Lo scontro sulle spese militari e i dossier critici sull'energia.",
-              "synonyms": [
-                {
-                  "w": "conflitto",
-                  "g": "Konflikt"
-                }
-              ],
-              "antonyms": [
-                {
-                  "w": "accordo",
-                  "g": "Übereinkunft"
-                }
-              ],
-              "homophones": []
-            },
-            {
-              "base": "tensione",
-              "gloss": "Spannung",
-              "sentence": "così sale la tensione nella maggioranza",
-              "synonyms": [
-                {
-                  "w": "tensività",
-                  "g": "Spannung (phys.)"
-                }
-              ],
-              "antonyms": [
-                {
-                  "w": "rilassamento",
-                  "g": "Entspannung"
-                }
-              ],
-              "homophones": []
-            },
-            {
-              "base": "maggioranza",
-              "gloss": "Mehrheit",
-              "sentence": "così sale la tensione nella maggioranza",
-              "synonyms": [
-                {
-                  "w": "plurale",
-                  "g": "Plural / Mehrheit"
-                }
-              ],
-              "antonyms": [
-                {
-                  "w": "minoranza",
-                  "g": "Minderheit"
-                }
-              ],
-              "homophones": []
-            },
-            {
-              "base": "dossier",
-              "gloss": "Aktenordner / Dossier",
-              "sentence": "Lo scontro sulle spese militari e i dossier critici sull'energia.",
-              "synonyms": [
-                {
-                  "w": "cartelle",
-                  "g": "Ordner"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            }
-          ]
-        },
-        {
-          "id": "ls_1785331182432_pxwd",
-          "type": "mixed",
-          "title": "🔀 Mischübung",
-          "icon": "🔀",
-          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
-          "perType": 4
-        },
-        {
           "difficulty": 1,
-          "id": "ls_1785614224079",
+          "id": "ls_1785664977343",
           "type": "synonyms",
           "title": "Sturm im Wasserglas",
-          "desc": "Politik und diplomatische Spannungen in Italien",
+          "desc": "Politische Spannungen in Italien",
           "icon": "🌪️",
           "words": [
             {
@@ -8738,19 +9302,10 @@
               "synonyms": [
                 {
                   "w": "uragano",
-                  "g": "Orkan"
-                },
-                {
-                  "w": "bufera",
-                  "g": "Sturm (Wetter)"
+                  "g": "Hurrikan"
                 }
               ],
-              "antonyms": [
-                {
-                  "w": "calma",
-                  "g": "Ruhe"
-                }
-              ],
+              "antonyms": [],
               "homophones": []
             },
             {
@@ -8761,18 +9316,9 @@
                 {
                   "w": "incertezze",
                   "g": "Unsicherheiten"
-                },
-                {
-                  "w": "riserve",
-                  "g": "Vorbehalte"
                 }
               ],
-              "antonyms": [
-                {
-                  "w": "certezze",
-                  "g": "Gewissheiten"
-                }
-              ],
+              "antonyms": [],
               "homophones": []
             },
             {
@@ -8781,56 +9327,34 @@
               "sentence": "Ma il fondo europeo per la Difesa non è l’unico scossone delle ultime settimane.",
               "synonyms": [
                 {
-                  "w": "sconvolgimento",
-                  "g": "Umsturz"
-                },
-                {
-                  "w": "colpo",
-                  "g": "Schlag"
+                  "w": "tremito",
+                  "g": "Zittern"
                 }
               ],
-              "antonyms": [
-                {
-                  "w": "conforto",
-                  "g": "Trost"
-                }
-              ],
+              "antonyms": [],
               "homophones": []
             },
             {
-              "base": "fronte",
-              "gloss": "Fronte",
-              "sentence": "Il piano energia rischia di essere il nuovo fronte",
+              "base": "urtante",
+              "gloss": "anstößig",
+              "sentence": "Sempre Tajani è stato in qualche modo urtante, in questo caso per Fratelli d’Italia, riguardo a un altro tema sul tavolo: l’estensione delle intercettazioni chieste per un procedimento giudiziario in altri processi nel caso di reati di terrorismo e criminalità organizzata.",
               "synonyms": [
                 {
-                  "w": "schiera",
-                  "g": "Reihe"
-                },
-                {
-                  "w": "campo",
-                  "g": "Lager"
+                  "w": "offensivo",
+                  "g": "beleidigend"
                 }
               ],
-              "antonyms": [
-                {
-                  "w": "retro",
-                  "g": "Rückseite"
-                }
-              ],
+              "antonyms": [],
               "homophones": []
             },
             {
-              "base": "dossier",
-              "gloss": "Dossier",
-              "sentence": "Lo scontro sulle spese militari e i dossier critici sull'energia.",
+              "base": "favorevoli",
+              "gloss": "befürwortend",
+              "sentence": "Una richiesta fatta a suo tempo dal procuratore antimafia Giovanni Melillo a cui i Fratelli d’Italia si sono detti favorevoli.",
               "synonyms": [
                 {
-                  "w": "pratica",
-                  "g": "Aktenfall"
-                },
-                {
-                  "w": "cartella",
-                  "g": "Mappe"
+                  "w": "propensi",
+                  "g": "geneigt"
                 }
               ],
               "antonyms": [],
@@ -8844,140 +9368,6 @@
                 {
                   "w": "conflitto",
                   "g": "Konflikt"
-                },
-                {
-                  "w": "litigio",
-                  "g": "Streit"
-                }
-              ],
-              "antonyms": [
-                {
-                  "w": "accordo",
-                  "g": "Vereinbarung"
-                }
-              ],
-              "homophones": []
-            },
-            {
-              "base": "tensione",
-              "gloss": "Spannung",
-              "sentence": "così sale la tensione nella maggioranza",
-              "synonyms": [
-                {
-                  "w": "tensività",
-                  "g": "Spannweite"
-                }
-              ],
-              "antonyms": [
-                {
-                  "w": "rilassamento",
-                  "g": "Entspannung"
-                }
-              ],
-              "homophones": []
-            },
-            {
-              "base": "maggioranza",
-              "gloss": "Mehrheit",
-              "sentence": "così sale la tensione nella maggioranza",
-              "synonyms": [
-                {
-                  "w": "plurale",
-                  "g": "Plural (Zahl)"
-                }
-              ],
-              "antonyms": [
-                {
-                  "w": "minoranza",
-                  "g": "Minderheit"
-                }
-              ],
-              "homophones": []
-            }
-          ],
-          "_genMeta": {
-            "type": "synonyms",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": 1,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 1070,
-            "completionTokens": 1118,
-            "ms": 435828,
-            "at": "2026-08-01T19:57:04.079Z"
-          },
-          "qcAt": "2026-08-01T20:12:06.480Z",
-          "qcBy": "qwen3.6:35b-a3b"
-        },
-        {
-          "difficulty": 1,
-          "id": "ls_1785655832878",
-          "type": "synonyms",
-          "title": "Politik und Konflikte",
-          "desc": "Wörter für politische Auseinandersetzungen",
-          "icon": "⚔️",
-          "words": [
-            {
-              "base": "tempesta",
-              "gloss": "Sturm",
-              "sentence": "Il ministro degli Esteri ha allora parlato di «tempesta in un bicchier d’acqua».",
-              "synonyms": [
-                {
-                  "w": "uragano",
-                  "g": "Orkan"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "scossone",
-              "gloss": "Erschütterung",
-              "sentence": "Ma il fondo europeo per la Difesa non è l’unico scossone delle ultime settimane.",
-              "synonyms": [
-                {
-                  "w": "sconvolgimento",
-                  "g": "Umsturz"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "dubbi",
-              "gloss": "Zweifel",
-              "sentence": "In realtà, pure dentro a Fratelli d’Italia ci sono dei dubbi.",
-              "synonyms": [
-                {
-                  "w": "incertezze",
-                  "g": "Unsicherheiten"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "fronte",
-              "gloss": "Fronte / Seite",
-              "sentence": "Il piano energia rischia di essere il nuovo fronte",
-              "synonyms": [
-                {
-                  "w": "lato",
-                  "g": "Seite"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "scontro",
-              "gloss": "Konflikt / Zusammenstoß",
-              "sentence": "Lo scontro sulle spese militari e i dossier critici sull'energia.",
-              "synonyms": [
-                {
-                  "w": "conflitto",
-                  "g": "Konflikt"
                 }
               ],
               "antonyms": [],
@@ -8990,7 +9380,7 @@
               "synonyms": [
                 {
                   "w": "tensività",
-                  "g": "Spannkraft"
+                  "g": "Spanntheit"
                 }
               ],
               "antonyms": [],
@@ -8998,25 +9388,12 @@
             },
             {
               "base": "dossier",
-              "gloss": "Dossier / Akte",
+              "gloss": "Aktenordner",
               "sentence": "Lo scontro sulle spese militari e i dossier critici sull'energia.",
               "synonyms": [
                 {
                   "w": "pratica",
-                  "g": "Aktenstück"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "maggioranza",
-              "gloss": "Mehrheit",
-              "sentence": "così sale la tensione nella maggioranza",
-              "synonyms": [
-                {
-                  "w": "plurale",
-                  "g": "Plural / Mehrheit"
+                  "g": "Akt"
                 }
               ],
               "antonyms": [],
@@ -9030,11 +9407,21 @@
             "valid": 8,
             "rejected": 0,
             "rejectReasons": null,
-            "promptTokens": 1238,
-            "completionTokens": 779,
-            "ms": 377408,
-            "at": "2026-08-02T07:30:32.878Z"
-          }
+            "promptTokens": 1365,
+            "completionTokens": 879,
+            "ms": 395537,
+            "at": "2026-08-02T10:02:57.342Z"
+          },
+          "qcAt": "2026-08-02T10:56:48.474Z",
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": "ls_1785331182432_pxwd",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 4
         }
       ],
       "generationStats": {
@@ -9047,8 +9434,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 9969,
-        "totalCompletionTokens": 2777,
+        "totalPromptTokens": 12839,
+        "totalCompletionTokens": 3680,
         "lessons": [
           {
             "lessonNum": 1,
@@ -9058,12 +9445,12 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 6469,
-          "add_lesson": 4205
+          "lesson_qc": 7998,
+          "add_lesson": 6449
         }
       },
       "generatedAt": "2026-07-29T12:13:32.604Z",
-      "updatedAt": "2026-08-02T07:30:32.878Z",
+      "updatedAt": "2026-08-02T10:56:48.474Z",
       "createdBy": "admin"
     },
     {
@@ -75113,6 +75500,242 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1785686722460_7_word_forms",
+          "type": "word_forms",
+          "title": "Zahlen und Verben",
+          "desc": "Übe Verbformen im Kontext",
+          "icon": "🔢",
+          "items": [
+            {
+              "sentence": "Eight collapsed, and now ___ on the ground.",
+              "translation": "Acht fiel zusammen und liegt jetzt auf dem Boden.",
+              "choices": [
+                "lies",
+                "lay",
+                "laid"
+              ],
+              "correctIndex": 0,
+              "explanation": "Präsens wegen „now“"
+            },
+            {
+              "sentence": "Little i ___ all, with distress.",
+              "translation": "Kleines i beobachtet alles mit Sorge.",
+              "choices": [
+                "witnesses",
+                "witnessed",
+                "witness"
+              ],
+              "correctIndex": 0,
+              "explanation": "3. Person Singular Präsens"
+            },
+            {
+              "sentence": "She has never ___ part of such a mess.",
+              "translation": "Sie war noch nie Teil eines solchen Chaos.",
+              "choices": [
+                "been",
+                "be",
+                "being"
+              ],
+              "correctIndex": 0,
+              "explanation": "Partizip II nach „has“"
+            },
+            {
+              "sentence": "She ___ with fear, wants to disappear.",
+              "translation": "Sie zittert vor Angst und will verschwinden.",
+              "choices": [
+                "trembles",
+                "trembled",
+                "trembling"
+              ],
+              "correctIndex": 0,
+              "explanation": "Präsens für aktuelle Handlung"
+            },
+            {
+              "sentence": "Some numbers ___, but to her it’s just mumble.",
+              "translation": "Einige Zahlen befehlen, aber für sie ist es nur ein Gemurmel.",
+              "choices": [
+                "command",
+                "commands",
+                "commanded"
+              ],
+              "correctIndex": 0,
+              "explanation": "Plural Subjekt „numbers“"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1008,
+            "completionTokens": 454,
+            "ms": 236201,
+            "at": "2026-08-02T16:05:22.460Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785687033074_7_synonyms",
+          "type": "synonyms",
+          "title": "Zahlen und Emotionen",
+          "desc": "Wörter aus dem Gedicht über Zahlen",
+          "icon": "🔢",
+          "words": [
+            {
+              "base": "finite",
+              "gloss": "endlich",
+              "sentence": "Or is he finite? Nothing will change.",
+              "synonyms": [],
+              "antonyms": [
+                {
+                  "w": "infinite",
+                  "g": "unendlich"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "disappear",
+              "gloss": "verschwinden",
+              "sentence": "She trembles with fear, wants to disappear,",
+              "synonyms": [
+                {
+                  "w": "vanish",
+                  "g": "verschwunden sein"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "appear",
+                  "g": "erscheinen"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "scuffle",
+              "gloss": "Zofferei / Kampf",
+              "sentence": "After the scuffle with number One,",
+              "synonyms": [
+                {
+                  "w": "fight",
+                  "g": "Kampf"
+                },
+                {
+                  "w": "struggle",
+                  "g": "Ringerei"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "assemble",
+              "gloss": "sich versammeln",
+              "sentence": "i looks around as the numbers assemble,",
+              "synonyms": [
+                {
+                  "w": "gather",
+                  "g": "sammeln"
+                },
+                {
+                  "w": "meet",
+                  "g": "treffen"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "mumble",
+              "gloss": "brabbeln / murmeln",
+              "sentence": "Some numbers command, but to her it’s just mumble.",
+              "synonyms": [
+                {
+                  "w": "mutter",
+                  "g": "vor sich hin murmeln"
+                },
+                {
+                  "w": "murmur",
+                  "g": "leise sprechen"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1263,
+            "completionTokens": 611,
+            "ms": 310614,
+            "at": "2026-08-02T16:10:33.074Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785687796217_7_comprehension",
+          "type": "comprehension",
+          "title": "Die Suche von little i",
+          "desc": "Verstehen Sie die Geschichte von little i?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist little i traurig, als sie Seven trifft?",
+              "choices": [
+                "Weil Seven ihr sagt, dass er nicht ihre Familie ist.",
+                "Weil Seven sehr groß und einschüchternd aussieht.",
+                "Weil Seven ihr kein Essen anbietet.",
+                "Weil Seven sie ignoriert und wegschaut."
+              ],
+              "correctIndex": 0,
+              "why": "Seven sagt explizit: 'I’m just a Seven' und schüttelt den Kopf, als sie nach ihrer Familie fragt."
+            },
+            {
+              "q": "Was passiert mit Eight am Ende der Geschichte?",
+              "choices": [
+                "Er isst einen Kuchen und geht glücklich nach Hause.",
+                "Er wird von One mit einem Kabel gefesselt und kollabiert.",
+                "Er freundet sich mit little i an und tanzt mit ihr.",
+                "Er findet heraus, dass er unendlich ist und bleibt stehen."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: 'Then One throws a cable. Eight collapsed...'"
+            },
+            {
+              "q": "Wie reagiert little i auf die Situation mit Eight?",
+              "choices": [
+                "Sie lacht über den Fehler von Eight.",
+                "Sie hilft One, das Kabel zu werfen.",
+                "Sie ist ängstlich und möchte verschwinden.",
+                "Sie fragt Eight, warum er so laut ist."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text beschreibt: 'She trembles with fear, wants to disappear...'"
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 3,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 3771,
+            "completionTokens": 1359,
+            "ms": 763143,
+            "at": "2026-08-02T16:23:16.217Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -75120,8 +75743,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 676,
-        "totalCompletionTokens": 236,
+        "totalPromptTokens": 6718,
+        "totalCompletionTokens": 2660,
         "lessons": [
           {
             "lessonNum": 1,
@@ -75135,10 +75758,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 8466
+        }
       },
       "generatedAt": "2026-06-15T13:10:04.958Z",
-      "updatedAt": "2026-06-15T13:36:28.915Z",
+      "updatedAt": "2026-08-02T16:23:16.217Z",
       "id": "tp_17815291150260000733",
       "storyMeta": {
         "type": "story",
@@ -75298,6 +75924,274 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1785680524519_0_word_forms",
+          "type": "word_forms",
+          "title": "Wortformen im Kontext",
+          "desc": "Übe Verb- und Nominalformen",
+          "icon": "📚",
+          "items": [
+            {
+              "sentence": "In the world of birds, little birds have ___.",
+              "translation": "In der Welt der Vögel haben kleine Vögel Nester.",
+              "choices": [
+                "nest",
+                "nests"
+              ],
+              "correctIndex": 1,
+              "explanation": "Plural wegen „birds“"
+            },
+            {
+              "sentence": "In the world of people, grown-ups often have ___.",
+              "translation": "In der Welt der Menschen haben Erwachsene oft Kinder.",
+              "choices": [
+                "child",
+                "children"
+              ],
+              "correctIndex": 1,
+              "explanation": "Plural von „child“"
+            },
+            {
+              "sentence": "But little i did not ___ where hers was.",
+              "translation": "Aber das kleine i wusste nicht, wo ihr Platz war.",
+              "choices": [
+                "know",
+                "knew"
+              ],
+              "correctIndex": 1,
+              "explanation": "Vergangenheit nach „did not“"
+            },
+            {
+              "sentence": "every number seems to have a ___.",
+              "translation": "jede Zahl scheint einen Platz zu haben.",
+              "choices": [
+                "place",
+                "places"
+              ],
+              "correctIndex": 0,
+              "explanation": "Singular nach „a“"
+            },
+            {
+              "sentence": "In the world of cats, little cats have ___.",
+              "translation": "In der Welt der Katzen haben kleine Katzen Familien.",
+              "choices": [
+                "family",
+                "families"
+              ],
+              "correctIndex": 1,
+              "explanation": "Plural wegen „cats“"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 973,
+            "completionTokens": 425,
+            "ms": 218545,
+            "at": "2026-08-02T14:22:04.519Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785680905994_0_synonyms",
+          "type": "synonyms",
+          "title": "Das kleine i: Wo gehöre ich hin?",
+          "desc": "Find your place in the world.",
+          "icon": "🐣",
+          "words": [
+            {
+              "base": "little",
+              "gloss": "klein",
+              "sentence": "In the world of birds, little birds have nests.",
+              "synonyms": [
+                {
+                  "w": "small",
+                  "g": "klein"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "big",
+                  "g": "groß"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "world",
+              "gloss": "Welt",
+              "sentence": "In the world of birds,",
+              "synonyms": [
+                {
+                  "w": "earth",
+                  "g": "Erde"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "nests",
+              "gloss": "Nester",
+              "sentence": "little birds have nests.",
+              "synonyms": [
+                {
+                  "w": "homes",
+                  "g": "Heime"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "families",
+              "gloss": "Familien",
+              "sentence": "little cats have families.",
+              "synonyms": [
+                {
+                  "w": "households",
+                  "g": "Haushalte"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "grown-ups",
+              "gloss": "Erwachsene",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "adults",
+                  "g": "Erwachsene"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "children",
+                  "g": "Kinder"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "numbers",
+              "gloss": "Zahlen",
+              "sentence": "And in the world of numbers,",
+              "synonyms": [
+                {
+                  "w": "digits",
+                  "g": "Ziffern"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "place",
+              "gloss": "Platz",
+              "sentence": "every number seems to have a place.",
+              "synonyms": [
+                {
+                  "w": "spot",
+                  "g": "Stelle"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "children",
+              "gloss": "Kinder",
+              "sentence": "grown-ups often have children.",
+              "synonyms": [
+                {
+                  "w": "kids",
+                  "g": "Kids"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "adults",
+                  "g": "Erwachsene"
+                }
+              ],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1194,
+            "completionTokens": 818,
+            "ms": 381475,
+            "at": "2026-08-02T14:28:25.994Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785681059333_0_comprehension",
+          "type": "comprehension",
+          "title": "Das kleine i",
+          "desc": "Verstehen Sie die Geschichte vom kleinen i?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Was fehlt dem kleinen i, das es nicht hat?",
+              "choices": [
+                "Es weiß nicht, wo sein Platz ist.",
+                "Es hat kein Nest gebaut.",
+                "Es kennt keine anderen Zahlen.",
+                "Es möchte eine Katze sein."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text sagt: 'little i did not know where hers was.'"
+            },
+            {
+              "q": "Welche Tiere haben in der Geschichte Familien?",
+              "choices": [
+                "Die Katzen.",
+                "Die Vögel.",
+                "Die Fische.",
+                "Die Hunde."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text sagt: 'In the world of cats, little cats have families.'"
+            },
+            {
+              "q": "Was haben die Erwachsenen in der Welt der Menschen?",
+              "choices": [
+                "Oft Kinder.",
+                "Viele Nester.",
+                "Keine Zahlen.",
+                "Große Familien."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text sagt: 'grown-ups often have children.'"
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 484,
+            "completionTokens": 318,
+            "ms": 153338,
+            "at": "2026-08-02T14:30:59.333Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -75305,8 +76199,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 634,
-        "totalCompletionTokens": 275,
+        "totalPromptTokens": 3285,
+        "totalCompletionTokens": 1836,
         "lessons": [
           {
             "lessonNum": 1,
@@ -75320,10 +76214,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 4212
+        }
       },
       "generatedAt": "2026-06-15T12:55:13.375Z",
-      "updatedAt": "2026-06-15T14:21:02.641Z",
+      "updatedAt": "2026-08-02T14:30:59.333Z",
       "id": "tp_17815283212820000053",
       "continuedFromId": null,
       "continuedFrom": null,
@@ -75480,6 +76377,238 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1785690052477_10_word_forms",
+          "type": "word_forms",
+          "title": "Sei einfach du",
+          "desc": "Worteformen im Kontext",
+          "icon": "✨",
+          "items": [
+            {
+              "sentence": "Maybe she didn’t have to be ___.",
+              "translation": "Vielleicht musste sie nicht Sieben sein.",
+              "choices": [
+                "Seven",
+                "Sevens"
+              ],
+              "correctIndex": 0,
+              "explanation": "Eigennamen/Nummern sind hier Singular"
+            },
+            {
+              "sentence": "Maybe she didn’t have to be ___.",
+              "translation": "Vielleicht musste sie nicht Eins sein.",
+              "choices": [
+                "One",
+                "Ones"
+              ],
+              "correctIndex": 0,
+              "explanation": "Eigennamen/Nummern sind hier Singular"
+            },
+            {
+              "sentence": "Maybe she didn’t even have to be a ___.",
+              "translation": "Vielleicht musste sie nicht einmal eine Nummer sein.",
+              "choices": [
+                "number",
+                "numbers"
+              ],
+              "correctIndex": 0,
+              "explanation": "Artikel „a“ verlangt Singular"
+            },
+            {
+              "sentence": "Maybe she could simply ___ i.",
+              "translation": "Vielleicht konnte sie einfach i sein.",
+              "choices": [
+                "be",
+                "been"
+              ],
+              "correctIndex": 0,
+              "explanation": "Modalverb „could“ verlangt Grundform"
+            },
+            {
+              "sentence": "that ___ just right.",
+              "translation": "das fühlte sich einfach richtig an.",
+              "choices": [
+                "felt",
+                "feel"
+              ],
+              "correctIndex": 0,
+              "explanation": "Vergangenheit passend zum Kontext"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 936,
+            "completionTokens": 404,
+            "ms": 266762,
+            "at": "2026-08-02T17:00:52.477Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785690371564_10_synonyms",
+          "type": "synonyms",
+          "title": "Identität und Selbstfindung",
+          "desc": "Die Freiheit, man selbst zu sein.",
+          "icon": "🧬",
+          "words": [
+            {
+              "base": "simply",
+              "gloss": "einfach / nur",
+              "sentence": "Maybe she could simply be i.",
+              "synonyms": [
+                {
+                  "w": "just",
+                  "g": "nur"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "number",
+              "gloss": "Nummer / Zahl",
+              "sentence": "Maybe she didn’t even have to be a number.",
+              "synonyms": [
+                {
+                  "w": "digit",
+                  "g": "Ziffer"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "felt",
+              "gloss": "fühlte sich an",
+              "sentence": "that felt just right.",
+              "synonyms": [
+                {
+                  "w": "seemed",
+                  "g": "schien"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "right",
+              "gloss": "richtig / passend",
+              "sentence": "that felt just right.",
+              "synonyms": [
+                {
+                  "w": "correct",
+                  "g": "korrekt"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "wrong",
+                  "g": "falsch"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "even",
+              "gloss": "sogar / selbst",
+              "sentence": "Maybe she didn’t even have to be a number.",
+              "synonyms": [
+                {
+                  "w": "also",
+                  "g": "auch"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "maybe",
+              "gloss": "vielleicht",
+              "sentence": "Maybe she didn’t have to be Seven.",
+              "synonyms": [
+                {
+                  "w": "perhaps",
+                  "g": "vielleicht"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 6,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1192,
+            "completionTokens": 605,
+            "ms": 319087,
+            "at": "2026-08-02T17:06:11.564Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785690723574_10_comprehension",
+          "type": "comprehension",
+          "title": "Die Reise von i",
+          "desc": "Verstehe die Geschichte von 'little i' und ihrer Suche nach Identität.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist little i traurig, als sie Seven trifft?",
+              "choices": [
+                "Weil Seven ihr sagt, dass er der König der Zahlen ist.",
+                "Weil Seven behauptet, nicht zu ihr zu gehören, obwohl er ihr ähnlich sieht.",
+                "Weil Seven ihr sein Essen verweigert.",
+                "Weil Seven sie vor den anderen Zahlen versteckt."
+              ],
+              "correctIndex": 1,
+              "why": "Seven sagt explizit 'I'm just a Seven' und schüttelt den Kopf, als i fragt, ob er ihre Familie ist."
+            },
+            {
+              "q": "Was passiert mit Eight, nachdem One ein Kabel wirft?",
+              "choices": [
+                "Eight wird wütend und greift One an.",
+                "Eight fällt zusammen und liegt regungslos da.",
+                "Eight findet den Kuchen sofort und isst ihn.",
+                "Eight verlässt die Welt der Zahlen."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: 'Eight collapsed, and now lies' nach dem Wurf des Kabels durch One."
+            },
+            {
+              "q": "Wie hilft Zero little i am Ende?",
+              "choices": [
+                "Er erklärt ihr, dass es in Ordnung ist, anders zu sein und man nicht jeder Zahl gleichen muss.",
+                "Er bringt sie nach Hause, weil die anderen Zahlen böse sind.",
+                "Er kämpft gegen One, um i zu schützen.",
+                "Er zeigt ihr, wie man ein Band aus Zahlen bildet."
+              ],
+              "correctIndex": 0,
+              "why": "Zero sagt: 'It’s exactly what makes me Zero' und bestätigt damit, dass es okay ist, nicht wie die anderen (One, Seven etc.) zu sein."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1524,
+            "completionTokens": 466,
+            "ms": 352010,
+            "at": "2026-08-02T17:12:03.574Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -75487,8 +76616,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 604,
-        "totalCompletionTokens": 284,
+        "totalPromptTokens": 4256,
+        "totalCompletionTokens": 1759,
         "lessons": [
           {
             "lessonNum": 1,
@@ -75502,10 +76631,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 5127
+        }
       },
       "generatedAt": "2026-06-15T13:15:39.863Z",
-      "updatedAt": "2026-06-15T13:41:04.489Z",
+      "updatedAt": "2026-08-02T17:12:03.574Z",
       "id": "tp_17815294559340001022",
       "storyMeta": {
         "type": "story",
@@ -75648,6 +76780,251 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1785689100348_9_word_forms",
+          "type": "word_forms",
+          "title": "Verben im Präteritum",
+          "desc": "Übe die Vergangenheitsform von Verben.",
+          "icon": "📖",
+          "items": [
+            {
+              "sentence": "“That’s okay,” ___ Zero.",
+              "translation": "„Das ist in Ordnung“, sagte Null.",
+              "choices": [
+                "said",
+                "say",
+                "saying"
+              ],
+              "correctIndex": 0,
+              "explanation": "Vergangenheit (Präteritum)"
+            },
+            {
+              "sentence": "Little i looked around. At Seven. At Eight. At One. At strange old π with his binoculars. For the first time all day, she ___ crying.",
+              "translation": "Kleines i sah sich um. Bei Sieben. Bei Acht. Bei Eins. Bei seltsamen alten Pi mit seinem Fernglas. Zum ersten Mal den ganzen Tag hörte sie auf zu weinen.",
+              "choices": [
+                "stopped",
+                "stop",
+                "stopping"
+              ],
+              "correctIndex": 0,
+              "explanation": "Vergangenheit (Präteritum)"
+            },
+            {
+              "sentence": "“Of course. I’m not One. I’m not Seven. I’m not Forty-two.” “And that’s okay?” ___ i.",
+              "translation": "„Natürlich. Ich bin nicht Eins. Ich bin nicht Sieben. Ich bin nicht Zweiundvierzig.“ „Und das ist in Ordnung?“ fragte i.",
+              "choices": [
+                "asked",
+                "ask",
+                "asking"
+              ],
+              "correctIndex": 0,
+              "explanation": "Vergangenheit (Präteritum)"
+            },
+            {
+              "sentence": "Little i ___ around. At Seven. At Eight. At One. At strange old π with his binoculars. For the first time all day, she stopped crying.",
+              "translation": "Kleines i sah sich um. Bei Sieben. Bei Acht. Bei Eins. Bei seltsamen alten Pi mit seinem Fernglas. Zum ersten Mal den ganzen Tag hörte sie auf zu weinen.",
+              "choices": [
+                "looked",
+                "look",
+                "looking"
+              ],
+              "correctIndex": 0,
+              "explanation": "Vergangenheit (Präteritum)"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 1,
+            "rejectReasons": {
+              "no ___ blank and answer not in sentence": 1
+            },
+            "promptTokens": 981,
+            "completionTokens": 644,
+            "ms": 362873,
+            "at": "2026-08-02T16:45:00.347Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785689506765_9_synonyms",
+          "type": "synonyms",
+          "title": "Neue Einsicht und Identität",
+          "desc": "Wer bin ich? Eine Geschichte über Zahlen.",
+          "icon": "🔢",
+          "words": [
+            {
+              "base": "Zero",
+              "gloss": "Null",
+              "sentence": "“It’s exactly what makes me Zero.”",
+              "synonyms": [],
+              "antonyms": [
+                {
+                  "w": "Infinity",
+                  "g": "Unendlichkeit"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "strange",
+              "gloss": "seltsam",
+              "sentence": "At strange old π with his binoculars.",
+              "synonyms": [
+                {
+                  "w": "odd",
+                  "g": "merkwürdig"
+                },
+                {
+                  "w": "peculiar",
+                  "g": "eigenartig"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "normal",
+                  "g": "normal"
+                },
+                {
+                  "w": "ordinary",
+                  "g": "gewöhnlich"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "stopped",
+              "gloss": "hielt an / hörte auf",
+              "sentence": "she stopped crying.",
+              "synonyms": [
+                {
+                  "w": "ceased",
+                  "g": "hörte auf"
+                },
+                {
+                  "w": "halted",
+                  "g": "hielt an"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "continued",
+                  "g": "fuhr fort"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "crying",
+              "gloss": "weinen",
+              "sentence": "she stopped crying.",
+              "synonyms": [
+                {
+                  "w": "weeping",
+                  "g": "weinend"
+                },
+                {
+                  "w": "sobbing",
+                  "g": "schluchzend"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "laughing",
+                  "g": "lachend"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "looked",
+              "gloss": "sah / blickte",
+              "sentence": "Little i looked around.",
+              "synonyms": [
+                {
+                  "w": "glanced",
+                  "g": "blickte"
+                },
+                {
+                  "w": "peered",
+                  "g": "starrte"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1236,
+            "completionTokens": 697,
+            "ms": 406417,
+            "at": "2026-08-02T16:51:46.765Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785689785668_9_comprehension",
+          "type": "comprehension",
+          "title": "Die Reise von kleinen i",
+          "desc": "Verstehe die Geschichte von 'little i' und ihrer Suche nach dem Platz in der Welt der Zahlen.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist little i traurig, als sie Seven trifft?",
+              "choices": [
+                "Weil Seven ihr sagt, dass er viel klüger ist als sie.",
+                "Weil Seven behauptet, nicht zu ihrer Familie zu gehören.",
+                "Weil Seven ihr das Essen wegnimmt.",
+                "Weil Seven sehr groß und einschüchternd aussieht."
+              ],
+              "correctIndex": 1,
+              "why": "Seven sagt explizit: 'I’m sorry... But I’m just a Seven', was i dazu bringt zu weinen."
+            },
+            {
+              "q": "Was passiert mit Eight, als One ein Kabel wirft?",
+              "choices": [
+                "Eight wird wütend und greift One an.",
+                "Eight findet einen Kuchen und isst ihn glücklich.",
+                "Eight fällt um und liegt regungslos da.",
+                "Eight rennt davon, um nicht gegessen zu werden."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text sagt: 'Eight collapsed, and now lies', was bedeutet, dass er zusammengebrochen ist."
+            },
+            {
+              "q": "Wie verändert sich little i nach dem Gespräch mit Zero?",
+              "choices": [
+                "Sie beginnt zu verstehen, dass sie anders sein darf.",
+                "Sie beschließt, eine Zahl wie Seven zu werden.",
+                "Sie wird wütend auf One und Eight.",
+                "Sie geht sofort wieder nach Hause."
+              ],
+              "correctIndex": 0,
+              "why": "Zero erklärt ihr, dass es in Ordnung ist, nicht Eins oder Sieben zu sein, woraufhin i aufhört zu weinen."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1469,
+            "completionTokens": 451,
+            "ms": 278903,
+            "at": "2026-08-02T16:56:25.668Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -75655,8 +77032,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 636,
-        "totalCompletionTokens": 269,
+        "totalPromptTokens": 4322,
+        "totalCompletionTokens": 2061,
         "lessons": [
           {
             "lessonNum": 1,
@@ -75670,10 +77047,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 5478
+        }
       },
       "generatedAt": "2026-06-15T13:13:46.457Z",
-      "updatedAt": "2026-06-15T13:38:40.633Z",
+      "updatedAt": "2026-08-02T16:56:25.668Z",
       "id": "tp_17815293398070000971",
       "storyMeta": {
         "type": "story",
@@ -75819,6 +77199,271 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1785688061829_8_word_forms",
+          "type": "word_forms",
+          "title": "Wortformen üben",
+          "desc": "Übe Verb- und Substantivformen.",
+          "icon": "📝",
+          "items": [
+            {
+              "sentence": "Then somebody quietly ___ beside her.",
+              "translation": "Dann setzte sich jemand leise neben sie.",
+              "choices": [
+                "sat",
+                "sit",
+                "sitting"
+              ],
+              "correctIndex": 0,
+              "explanation": "Vergangenheit (Past Simple)"
+            },
+            {
+              "sentence": "Zero was ___ .",
+              "translation": "Null war schüchtern.",
+              "choices": [
+                "shy",
+                "shyer",
+                "shiest"
+              ],
+              "correctIndex": 0,
+              "explanation": "Grundform des Adjektivs"
+            },
+            {
+              "sentence": "Zero never ___ to the front.",
+              "translation": "Null drängte sich nie nach vorne.",
+              "choices": [
+                "pushed",
+                "pushes",
+                "pushing"
+              ],
+              "correctIndex": 0,
+              "explanation": "Vergangenheit (Past Simple)"
+            },
+            {
+              "sentence": "“I don’t ___ here,” said little i.",
+              "translation": "„Ich gehöre hier nicht hin“, sagte kleine i.",
+              "choices": [
+                "belong",
+                "belongs",
+                "belonged"
+              ],
+              "correctIndex": 0,
+              "explanation": "Infinitiv nach „don’t“"
+            },
+            {
+              "sentence": "Zero ___ for a moment.",
+              "translation": "Null dachte einen Moment lang nach.",
+              "choices": [
+                "thought",
+                "think",
+                "thinking"
+              ],
+              "correctIndex": 0,
+              "explanation": "Vergangenheit (Past Simple)"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 994,
+            "completionTokens": 422,
+            "ms": 265556,
+            "at": "2026-08-02T16:27:41.829Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785688440112_8_synonyms",
+          "type": "synonyms",
+          "title": "Die Wahrheit erkennen",
+          "desc": "Worte über Identität und Wahrnehmung",
+          "icon": "👁️",
+          "words": [
+            {
+              "base": "sad",
+              "gloss": "traurig",
+              "sentence": "“You look sad,”",
+              "synonyms": [
+                {
+                  "w": "unhappy",
+                  "g": "unglücklich"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "happy",
+                  "g": "glücklich"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "shy",
+              "gloss": "schüchtern",
+              "sentence": "Zero was shy.",
+              "synonyms": [
+                {
+                  "w": "timid",
+                  "g": "furchtsam"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "bold",
+                  "g": "kühn"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "quiet",
+              "gloss": "leise",
+              "sentence": "Zero was quiet.",
+              "synonyms": [
+                {
+                  "w": "silent",
+                  "g": "still"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "loud",
+                  "g": "laut"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "true",
+              "gloss": "wahr",
+              "sentence": "“I don’t think that’s true.”",
+              "synonyms": [
+                {
+                  "w": "real",
+                  "g": "echt"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "false",
+                  "g": "falsch"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "noticed",
+              "gloss": "bemerkte",
+              "sentence": "nobody noticed Zero at all.",
+              "synonyms": [
+                {
+                  "w": "saw",
+                  "g": "sah"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "smiled",
+              "gloss": "lächelte",
+              "sentence": "Then he smiled.",
+              "synonyms": [
+                {
+                  "w": "grinned",
+                  "g": "breitete ein Grinsen aus"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "belong",
+              "gloss": "gehören",
+              "sentence": "“I don’t belong here,”",
+              "synonyms": [
+                {
+                  "w": "fit in",
+                  "g": "passen"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 7,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1248,
+            "completionTokens": 760,
+            "ms": 378282,
+            "at": "2026-08-02T16:34:00.112Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785688737407_8_comprehension",
+          "type": "comprehension",
+          "title": "Die Suche von little i",
+          "desc": "Verstehen Sie die Geschichte von little i und ihrer Suche nach Zugehörigkeit?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist little i traurig, als sie Seven trifft?",
+              "choices": [
+                "Weil Seven ihr sagt, dass er nicht zu ihrer Familie gehört.",
+                "Weil Seven sehr groß und einschüchternd ist.",
+                "Weil Seven ihr sein Essen verweigert.",
+                "Weil Seven sie ignoriert und wegschaut."
+              ],
+              "correctIndex": 0,
+              "why": "Seven sagt explizit: 'I’m sorry... But I’m just a Seven', was little i in Tränen ausbrechen lässt."
+            },
+            {
+              "q": "Was passiert mit Eight am Ende des Konflikts?",
+              "choices": [
+                "Er kollabiert und liegt regungslos da.",
+                "Er findet den Kuchen und isst ihn glücklich.",
+                "Er verzeiht One für das Kabel.",
+                "Er flieht aus der Zahlwelt."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text beschreibt: 'Eight collapsed, and now lies' nach dem Vorfall mit One."
+            },
+            {
+              "q": "Wie reagiert Zero auf little i?",
+              "choices": [
+                "Er bietet ihr Trost und Zweifel an ihrer Aussage an.",
+                "Er lacht über ihre Kleinheit.",
+                "Er weist sie höflich zurück.",
+                "Er ist wütend, weil sie laut ist."
+              ],
+              "correctIndex": 0,
+              "why": "Zero sagt: 'I don’t think that’s true', als little i sagt, dass sie nicht dazugehört, und lächelt dabei."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1369,
+            "completionTokens": 433,
+            "ms": 297295,
+            "at": "2026-08-02T16:38:57.407Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -75826,8 +77471,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 651,
-        "totalCompletionTokens": 252,
+        "totalPromptTokens": 4262,
+        "totalCompletionTokens": 1867,
         "lessons": [
           {
             "lessonNum": 1,
@@ -75841,10 +77486,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 5226
+        }
       },
       "generatedAt": "2026-06-15T13:11:55.083Z",
-      "updatedAt": "2026-06-15T13:37:30.379Z",
+      "updatedAt": "2026-08-02T16:38:57.407Z",
       "id": "tp_17815292264030000856",
       "storyMeta": {
         "type": "story",
@@ -75993,6 +77641,230 @@
               "editedAt": "2026-06-15T13:35:56.652Z"
             }
           ]
+        },
+        {
+          "id": "ls_1785685948046_6_word_forms",
+          "type": "word_forms",
+          "title": "Eight's Hunger",
+          "desc": "Verbs and nouns about eating",
+          "icon": "🥧",
+          "items": [
+            {
+              "sentence": "Eight is ___ , screaming:",
+              "translation": "Acht hetzt und schreit:",
+              "choices": [
+                "rushing",
+                "rushes",
+                "rushed"
+              ],
+              "correctIndex": 0,
+              "explanation": "Present continuous mit „is“"
+            },
+            {
+              "sentence": "He only ___ and has two bellies for this.",
+              "translation": "Er isst nur und hat dafür zwei Bäuche.",
+              "choices": [
+                "eats",
+                "eat",
+                "eating"
+              ],
+              "correctIndex": 0,
+              "explanation": "Simple present, 3. Person Singular"
+            },
+            {
+              "sentence": "He ___ pie.",
+              "translation": "Er liebt Kuchen.",
+              "choices": [
+                "loves",
+                "love",
+                "loving"
+              ],
+              "correctIndex": 0,
+              "explanation": "Simple present, 3. Person Singular"
+            },
+            {
+              "sentence": "He is almost ___, the first at the table!",
+              "translation": "Er ist fast da, der Erste am Tisch!",
+              "choices": [
+                "there",
+                "here",
+                "where"
+              ],
+              "correctIndex": 0,
+              "explanation": "Ort: dort (dort sein)"
+            },
+            {
+              "sentence": "Then One throws a ___.",
+              "translation": "Dann wirft Eins ein Kabel.",
+              "choices": [
+                "cable",
+                "cables",
+                "cabled"
+              ],
+              "correctIndex": 0,
+              "explanation": "Singular nach „a“"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 998,
+            "completionTokens": 417,
+            "ms": 222235,
+            "at": "2026-08-02T15:52:28.046Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785686227450_6_synonyms",
+          "type": "synonyms",
+          "title": "Panik und Verwirrung",
+          "desc": "Wörter für Chaos und Emotionen",
+          "icon": "😱",
+          "words": [
+            {
+              "base": "screaming",
+              "gloss": "schreiend",
+              "sentence": "Eight is rushing, screaming:",
+              "synonyms": [
+                {
+                  "w": "shouting",
+                  "g": "rufend"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "disruption",
+              "gloss": "Störung",
+              "sentence": "at the end of the room, there’s some sort of disruption.",
+              "synonyms": [
+                {
+                  "w": "disturbance",
+                  "g": "Aufruhr"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "rushing",
+              "gloss": "eilend",
+              "sentence": "Eight is rushing, screaming:",
+              "synonyms": [
+                {
+                  "w": "running",
+                  "g": "laufend"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "hungry",
+              "gloss": "hungrig",
+              "sentence": "Eight is hungry, he always is,",
+              "synonyms": [
+                {
+                  "w": "starving",
+                  "g": "verhungert"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "full",
+                  "g": "satt"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "throws",
+              "gloss": "wirft",
+              "sentence": "Then One throws a cable.",
+              "synonyms": [
+                {
+                  "w": "tosses",
+                  "g": "wirft"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1256,
+            "completionTokens": 521,
+            "ms": 279404,
+            "at": "2026-08-02T15:57:07.450Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785686486195_6_comprehension",
+          "type": "comprehension",
+          "title": "Die Suche von kleinen i",
+          "desc": "Verstehen Sie die Geschichte von 'little i' und ihrer Reise in der Welt der Zahlen?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist little i traurig, als sie Seven trifft?",
+              "choices": [
+                "Weil Seven ihr sagt, dass er viel klüger ist als sie.",
+                "Weil Seven behauptet, nicht zu wissen, wer sie ist und kein Verwandter von ihr zu sein.",
+                "Weil Seven ihr das Essen wegnimmt, das sie gefunden hat.",
+                "Weil Seven ihr erklärt, dass sie in der falschen Welt ist."
+              ],
+              "correctIndex": 1,
+              "why": "Seven sagt explizit: 'I’m sorry... But I’m just a Seven', was little i dazu bringt zu weinen."
+            },
+            {
+              "q": "Wie reagiert die Zahl Eight auf das Wort 'Pie'?",
+              "choices": [
+                "Er ist verwirrt und fragt nach der Bedeutung des Wortes.",
+                "Er ignoriert es, weil er mit dem Essen beschäftigt ist.",
+                "Er wird wütend und greift One an.",
+                "Er ist aufgeregt und hungrig, da er Kuchen liebt."
+              ],
+              "correctIndex": 3,
+              "why": "Der Text sagt: 'Eight is hungry... He loves pie. He loves cake.' Er reagiert mit Aufregung über das Essen."
+            },
+            {
+              "q": "Was charakterisiert die Zahl One in dieser Geschichte?",
+              "choices": [
+                "Sie ist höflich und hilft den anderen Zahlen.",
+                "Sie ist sehr groß und respektiert alle anderen.",
+                "Sie ist gemein und kümmert sich nicht darum, wem sie wehtut.",
+                "Sie ist unsicher und sucht nach Freunden."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text beschreibt One als: 'One is mean, he’s always first, doesn’t care who he’s gonna hurt.'"
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1128,
+            "completionTokens": 489,
+            "ms": 258745,
+            "at": "2026-08-02T16:01:26.195Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -76000,8 +77872,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 658,
-        "totalCompletionTokens": 274,
+        "totalPromptTokens": 4040,
+        "totalCompletionTokens": 1701,
         "lessons": [
           {
             "lessonNum": 1,
@@ -76015,10 +77887,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 4809
+        }
       },
       "generatedAt": "2026-06-15T13:08:07.055Z",
-      "updatedAt": "2026-06-15T13:35:56.655Z",
+      "updatedAt": "2026-08-02T16:01:26.195Z",
       "id": "tp_17815290049040000673",
       "storyMeta": {
         "type": "story",
@@ -76163,6 +78038,261 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1785684760680_5_word_forms",
+          "type": "word_forms",
+          "title": "π's Journey",
+          "desc": "Word forms from the story",
+          "icon": "🥧",
+          "items": [
+            {
+              "sentence": "One is mean, he’s always first, doesn’t care who he’s gonna ___.",
+              "translation": "Einer ist gemein, er ist immer der Erste, kümmert sich nicht darum, wen er verletzen wird.",
+              "choices": [
+                "hurt",
+                "hurts",
+                "hurting"
+              ],
+              "correctIndex": 0,
+              "explanation": "Infinitiv nach „gonna“"
+            },
+            {
+              "sentence": "He just says what he sees, thinks it’s true, what he only ___.",
+              "translation": "Er sagt einfach, was er sieht, hält es für wahr, was er nur glaubt.",
+              "choices": [
+                "believes",
+                "believe",
+                "believed"
+              ],
+              "correctIndex": 0,
+              "explanation": "3. Person Singular Präsens"
+            },
+            {
+              "sentence": "Then somebody ___ politely by.",
+              "translation": "Dann trat jemand höflich vorbei.",
+              "choices": [
+                "stepped",
+                "steps",
+                "step"
+              ],
+              "correctIndex": 0,
+              "explanation": "Vergangenheit (Past Simple)"
+            },
+            {
+              "sentence": "He wore a funny fringe, carried binoculars, and seemed to have ___ around the whole world.",
+              "translation": "Er trug einen lustigen Pony, trug ein Fernglas und schien um die ganze Welt gereist zu sein.",
+              "choices": [
+                "travelled",
+                "travel",
+                "travelling"
+              ],
+              "correctIndex": 0,
+              "explanation": "Partizip II für Perfekt"
+            },
+            {
+              "sentence": "___ to meet you. My name is π.",
+              "translation": "Freut mich, dich kennenzulernen. Mein Name ist π.",
+              "choices": [
+                "Nice",
+                "Nicer",
+                "Nicest"
+              ],
+              "correctIndex": 0,
+              "explanation": "Feste Redewendung „Nice to meet you“"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 972,
+            "completionTokens": 506,
+            "ms": 275365,
+            "at": "2026-08-02T15:32:40.680Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785685105412_5_synonyms",
+          "type": "synonyms",
+          "title": "Der Eins und Pi",
+          "desc": "Lerne die Unterschiede zwischen Eins und Pi",
+          "icon": "1️⃣",
+          "words": [
+            {
+              "base": "mean",
+              "gloss": "gemein",
+              "sentence": "One is mean, he’s always first,",
+              "synonyms": [
+                {
+                  "w": "nasty",
+                  "g": "böse"
+                },
+                {
+                  "w": "unkind",
+                  "g": "unfreundlich"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "kind",
+                  "g": "nett"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "first",
+              "gloss": "zuerst",
+              "sentence": "One is mean, he’s always first,",
+              "synonyms": [
+                {
+                  "w": "initial",
+                  "g": "ursprünglich"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "last",
+                  "g": "zuletzt"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "polite",
+              "gloss": "höflich",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "courteous",
+                  "g": "höfflich"
+                },
+                {
+                  "w": "civil",
+                  "g": "zivil"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "rude",
+                  "g": "unhöflich"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "funny",
+              "gloss": "komisch",
+              "sentence": "He wore a funny fringe,",
+              "synonyms": [
+                {
+                  "w": "strange",
+                  "g": "seltsam"
+                },
+                {
+                  "w": "odd",
+                  "g": "merkwürdig"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "normal",
+                  "g": "normal"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "travelled",
+              "gloss": "gereist",
+              "sentence": "and seemed to have travelled around the whole world.",
+              "synonyms": [
+                {
+                  "w": "journeyed",
+                  "g": "gereist"
+                },
+                {
+                  "w": "traveled",
+                  "g": "gereist"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1228,
+            "completionTokens": 696,
+            "ms": 344731,
+            "at": "2026-08-02T15:38:25.412Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785685725760_5_comprehension",
+          "type": "comprehension",
+          "title": "Die Suche von little i",
+          "desc": "Versteht der Leser, warum little i traurig ist und wie die anderen Zahlen auf sie reagieren?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum weint little i, als sie Seven trifft?",
+              "choices": [
+                "Weil Seven ihr sagt, dass er der König der Zahlen ist.",
+                "Weil Seven behauptet, nicht zu wissen, wer sie ist und nur eine Sieben zu sein.",
+                "Weil Seven ihr das Geld für ein neues Nest gibt.",
+                "Weil Seven ihr erklärt, wie man einen Keks backt."
+              ],
+              "correctIndex": 1,
+              "why": "Seven sagt explizit 'I’m sorry... But I’m just a Seven', was i als Ablehnung ihrer Suche nach Zugehörigkeit empfindet."
+            },
+            {
+              "q": "Wie reagieren die anderen Zahlen auf little i, als sie im Kreis stehen?",
+              "choices": [
+                "Sie laden sie sofort in ihre Band ein.",
+                "Sie ignorieren sie komplett und gehen weiter.",
+                "Sie starren sie verurteilend an, weil sie anders und klein ist.",
+                "Sie helfen ihr, sich mit einer Eins zu verbinden."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text beschreibt, dass die Zahlen 'judgmentally stare' und One bemerkt: 'She’s so different, she’s so small'."
+            },
+            {
+              "q": "Was macht den Charakter von Eins (One) aus?",
+              "choices": [
+                "Er ist höflich und trägt ein Fernglas.",
+                "Er ist freundlich und hilft allen Zahlen beim Zählen.",
+                "Er ist gemein und denkt, seine eigene Meinung sei die Wahrheit.",
+                "Er ist sehr klein und versteckt sich hinter Seven."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text sagt: 'One is mean... thinks it’s true, what he only believes'."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 3,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 3027,
+            "completionTokens": 1422,
+            "ms": 620348,
+            "at": "2026-08-02T15:48:45.760Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -76170,8 +78300,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 637,
-        "totalCompletionTokens": 260,
+        "totalPromptTokens": 5864,
+        "totalCompletionTokens": 2884,
         "lessons": [
           {
             "lessonNum": 1,
@@ -76185,10 +78315,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 7851
+        }
       },
       "generatedAt": "2026-06-15T13:06:18.701Z",
-      "updatedAt": "2026-06-15T13:08:06.999Z",
+      "updatedAt": "2026-08-02T15:48:45.760Z",
       "id": "tp_17815288869990000571",
       "storyMeta": {
         "type": "story",
@@ -76423,6 +78556,277 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1785683797960_4_word_forms",
+          "type": "word_forms",
+          "title": "Zahlen und Formen",
+          "desc": "Lern die richtigen Wortformen.",
+          "icon": "🔢",
+          "items": [
+            {
+              "sentence": "Sometimes they stand in rows. Sometimes they stand in circles. Sometimes they even form a ___.",
+              "translation": "Manchmal bilden sie sogar eine Gruppe.",
+              "choices": [
+                "band",
+                "bands"
+              ],
+              "correctIndex": 0,
+              "explanation": "Singular nach „a“"
+            },
+            {
+              "sentence": "noticed Four, petting his funny ___.",
+              "translation": "bemerkte Vier und streichelte seinen lustigen Bart.",
+              "choices": [
+                "beard",
+                "beards"
+              ],
+              "correctIndex": 0,
+              "explanation": "Singular, da „his“"
+            },
+            {
+              "sentence": "All the numbers, from here, from there, came — and judgmentally ___.",
+              "translation": "Alle Zahlen kamen und starrten urteilend.",
+              "choices": [
+                "stare",
+                "stared"
+              ],
+              "correctIndex": 1,
+              "explanation": "Vergangenheit passend zu „came“"
+            },
+            {
+              "sentence": "noticed One, who’s very ___.",
+              "translation": "bemerkte Eins, die sehr groß ist.",
+              "choices": [
+                "tall",
+                "taller"
+              ],
+              "correctIndex": 0,
+              "explanation": "Grundform nach „very“"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 1,
+            "rejectReasons": {
+              "no ___ blank and answer not in sentence": 1
+            },
+            "promptTokens": 1012,
+            "completionTokens": 461,
+            "ms": 263910,
+            "at": "2026-08-02T15:16:37.960Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785684229758_4_synonyms",
+          "type": "synonyms",
+          "title": "Zahlen in der Welt",
+          "desc": "Wörter über Zahlen und ihre Eigenschaften",
+          "icon": "🔢",
+          "words": [
+            {
+              "base": "strange",
+              "gloss": "seltsam",
+              "sentence": "In this world, so chaotic and strange,",
+              "synonyms": [
+                {
+                  "w": "odd",
+                  "g": "seltsam"
+                },
+                {
+                  "w": "weird",
+                  "g": "komisch"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "normal",
+                  "g": "normal"
+                },
+                {
+                  "w": "ordinary",
+                  "g": "gewöhnlich"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "tall",
+              "gloss": "groß (Körpergröße)",
+              "sentence": "noticed One, who’s very tall.",
+              "synonyms": [
+                {
+                  "w": "high",
+                  "g": "hoch"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "short",
+                  "g": "klein (Körpergröße)"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "weird",
+              "gloss": "seltsam",
+              "sentence": "“Look, there’s a letter, that’s weird,”",
+              "synonyms": [
+                {
+                  "w": "strange",
+                  "g": "seltsam"
+                },
+                {
+                  "w": "bizarre",
+                  "g": "bizar"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "number",
+              "gloss": "Zahl",
+              "sentence": "A number world.",
+              "synonyms": [
+                {
+                  "w": "digit",
+                  "g": "Ziffer"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "family",
+              "gloss": "Familie",
+              "sentence": "Are you my family?",
+              "synonyms": [
+                {
+                  "w": "household",
+                  "g": "Haushalt"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "they",
+              "gloss": "sie (Plural)",
+              "sentence": "Sometimes they stand in rows.",
+              "synonyms": [
+                {
+                  "w": "them",
+                  "g": "ihnen"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "he",
+              "gloss": "er",
+              "sentence": "He shook his head, saying, 'No.'",
+              "synonyms": [
+                {
+                  "w": "him",
+                  "g": "ihm"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "path",
+              "gloss": "Weg",
+              "sentence": "I followed a glowing path.",
+              "synonyms": [
+                {
+                  "w": "way",
+                  "g": "Weg"
+                },
+                {
+                  "w": "route",
+                  "g": "Route"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1267,
+            "completionTokens": 875,
+            "ms": 431797,
+            "at": "2026-08-02T15:23:49.758Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785684485261_4_comprehension",
+          "type": "comprehension",
+          "title": "Die Suche von kleinen i",
+          "desc": "Verstehen Sie die Geschichte von 'i' und ihrer Suche nach Identität?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist kleine i traurig, als sie den Sieben trifft?",
+              "choices": [
+                "Weil der Sieben ihr sagt, dass er nicht zu ihrer Familie gehört.",
+                "Weil der Sieben sehr laut und unhöflich zu ihr ist.",
+                "Weil der Sieben ihr sein Essen wegnimmt.",
+                "Weil der Sieben ihr sagt, dass sie keine Zahl ist."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text sagt: 'Are you my family?' asked i. Seven shook his head... 'But I’m just a Seven.' i burst into tears."
+            },
+            {
+              "q": "Was macht kleine i, als alle anderen schlafen?",
+              "choices": [
+                "Sie folgt einem leuchtenden Pfad in eine andere Welt.",
+                "Sie bleibt im Bett und träumt von Zahlen.",
+                "Sie sucht nach ihrem Vater in der Stadt.",
+                "Sie spielt mit dem Komma und dem Punkt."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text sagt: 'One evening, while everyone slept, little i followed a glowing path. It led to another world.'"
+            },
+            {
+              "q": "Wie reagieren die anderen Zahlen auf kleine i?",
+              "choices": [
+                "Sie starren sie verurteilend an, weil sie anders ist.",
+                "Sie laden sie sofort in ihre Band ein.",
+                "Sie helfen ihr, ihren Platz in der Reihe zu finden.",
+                "Sie ignorieren sie komplett und gehen weg."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: 'All the numbers... came — and judgmentally stare. She’s so different, she’s so small,' noticed One."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 919,
+            "completionTokens": 463,
+            "ms": 255503,
+            "at": "2026-08-02T15:28:05.261Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -76430,8 +78834,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 675,
-        "totalCompletionTokens": 267,
+        "totalPromptTokens": 3873,
+        "totalCompletionTokens": 2066,
         "lessons": [
           {
             "lessonNum": 1,
@@ -76445,10 +78849,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 4997
+        }
       },
       "generatedAt": "2026-06-15T13:04:20.430Z",
-      "updatedAt": "2026-06-15T13:37:49.324Z",
+      "updatedAt": "2026-08-02T15:28:05.261Z",
       "id": "tp_17815287786440000451",
       "storyMeta": {
         "type": "story",
@@ -76681,6 +79088,251 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1785682918648_3_word_forms",
+          "type": "word_forms",
+          "title": "Zahlen und Identität",
+          "desc": "Übe Verbformen und Plural",
+          "icon": "🔢",
+          "items": [
+            {
+              "sentence": "Seven ___ his head.",
+              "translation": "Sieben schüttelte den Kopf.",
+              "choices": [
+                "shook",
+                "shake"
+              ],
+              "correctIndex": 0,
+              "explanation": "Vergangenheit (Past Simple)"
+            },
+            {
+              "sentence": "I burst into ___.",
+              "translation": "Ich brach in Tränen aus.",
+              "choices": [
+                "tears",
+                "tear"
+              ],
+              "correctIndex": 0,
+              "explanation": "Plural nach 'burst into tears'"
+            },
+            {
+              "sentence": "High numbers ___ playing the heroes.",
+              "translation": "Hohe Zahlen spielen die Helden.",
+              "choices": [
+                "are",
+                "is"
+              ],
+              "correctIndex": 0,
+              "explanation": "Plural-Subjekt 'numbers'"
+            },
+            {
+              "sentence": "Forty-two thinks he is the ___.",
+              "translation": "Vierundvierzig hält sich für den Klügsten.",
+              "choices": [
+                "smartest",
+                "smarter"
+              ],
+              "correctIndex": 0,
+              "explanation": "Superlativ nach 'the'"
+            },
+            {
+              "sentence": "There are some ___ looking guys.",
+              "translation": "Es gibt einige gruselig aussehende Typen.",
+              "choices": [
+                "creepy",
+                "creep"
+              ],
+              "correctIndex": 0,
+              "explanation": "Adjektiv zur Beschreibung"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1001,
+            "completionTokens": 401,
+            "ms": 232107,
+            "at": "2026-08-02T15:01:58.648Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785683290197_3_synonyms",
+          "type": "synonyms",
+          "title": "Die Welt der Sieben",
+          "desc": "Zahlen und Identität in einer seltsamen Welt",
+          "icon": "🔢",
+          "words": [
+            {
+              "base": "asked",
+              "gloss": "fragte",
+              "sentence": "“Are you my family?” asked i.",
+              "synonyms": [
+                {
+                  "w": "inquired",
+                  "g": "erfragte"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "shook",
+              "gloss": "schüttelte",
+              "sentence": "Seven shook his head.",
+              "synonyms": [
+                {
+                  "w": "trembled",
+                  "g": "zitterte"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "burst",
+              "gloss": "brach aus",
+              "sentence": "i burst into tears.",
+              "synonyms": [
+                {
+                  "w": "erupted",
+                  "g": "brach hervor"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "creepy",
+              "gloss": "gruselig",
+              "sentence": "There are some creepy looking guys,",
+              "synonyms": [
+                {
+                  "w": "spooky",
+                  "g": "unheimlich"
+                },
+                {
+                  "w": "eerie",
+                  "g": "gespenstisch"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "comforting",
+                  "g": "beruhigend"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "disguise",
+              "gloss": "Verkleidung",
+              "sentence": "almost as if they were in disguise.",
+              "synonyms": [
+                {
+                  "w": "camouflage",
+                  "g": "Tarnung"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "smartest",
+              "gloss": "schlaueste",
+              "sentence": "Forty-two thinks he is the smartest,",
+              "synonyms": [
+                {
+                  "w": "cleverest",
+                  "g": "klügste"
+                },
+                {
+                  "w": "brightest",
+                  "g": "hellste"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "dumbest",
+                  "g": "dummste"
+                }
+              ],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 6,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1257,
+            "completionTokens": 758,
+            "ms": 371549,
+            "at": "2026-08-02T15:08:10.197Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785683533989_3_comprehension",
+          "type": "comprehension",
+          "title": "Die Suche von kleinen i",
+          "desc": "Verstehe die Geschichte von 'little i' und ihrer Suche nach dem Platz in der Welt der Zahlen.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist kleine i traurig, als sie den Sieben trifft?",
+              "choices": [
+                "Weil der Sieben ihr sagt, dass er nicht ihre Familie ist.",
+                "Weil der Sieben sehr laut und unhöflich zu ihr ist.",
+                "Weil der Sieben ihr sein Nest nicht zeigen will.",
+                "Weil der Sieben ihr Geld verweigert."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text sagt: 'Are you my family?' asked i. Seven shook his head... 'But I’m just a Seven.' i burst into tears."
+            },
+            {
+              "q": "Was macht kleine i, als alle anderen schlafen?",
+              "choices": [
+                "Sie folgt einem leuchtenden Pfad in eine andere Welt.",
+                "Sie spielt Verstecken mit den Nullen.",
+                "Sie sucht nach ihrem verlorenen Nest.",
+                "Sie schläft auch ein."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text sagt: 'One evening, while everyone slept, little i followed a glowing path. It led to another world.'"
+            },
+            {
+              "q": "Was ist das Hauptproblem von kleinen i am Anfang der Geschichte?",
+              "choices": [
+                "Sie weiß nicht, wo ihr Platz in der Welt der Zahlen ist.",
+                "Sie hat keine Familie wie die Vögel oder Katzen.",
+                "Sie kann die Rechenzeichen Plus und Minus nicht unterscheiden.",
+                "Sie ist zu klein für die Welt der großen Zahlen."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text sagt: 'And in the world of numbers, every number seems to have a place. But little i did not know where hers was.'"
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 789,
+            "completionTokens": 468,
+            "ms": 243791,
+            "at": "2026-08-02T15:12:13.989Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -76688,8 +79340,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 659,
-        "totalCompletionTokens": 250,
+        "totalPromptTokens": 3706,
+        "totalCompletionTokens": 1877,
         "lessons": [
           {
             "lessonNum": 1,
@@ -76703,10 +79355,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 4674
+        }
       },
       "generatedAt": "2026-06-15T13:02:31.605Z",
-      "updatedAt": "2026-06-15T14:39:38.689Z",
+      "updatedAt": "2026-08-02T15:12:13.989Z",
       "id": "tp_17815286603790000369",
       "storyMeta": {
         "type": "story",
@@ -76846,6 +79501,252 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1785682129972_2_word_forms",
+          "type": "word_forms",
+          "title": "Zahlenwelt Abenteuer",
+          "desc": "Lernformen im Kontext",
+          "icon": "🔢",
+          "items": [
+            {
+              "sentence": "One evening, while everyone ___ , little i followed a glowing path.",
+              "translation": "Eines Abends, während alle schliefen, folgte das kleine i einem leuchtenden Pfad.",
+              "choices": [
+                "slept",
+                "sleep",
+                "sleeping"
+              ],
+              "correctIndex": 0,
+              "explanation": "Vergangenheit wegen „One evening“"
+            },
+            {
+              "sentence": "At the end of the road stood a tall Seven. Little i ___.",
+              "translation": "Am Ende der Straße stand ein hoher Sieben. Das kleine i staunte.",
+              "choices": [
+                "gasped",
+                "gasp",
+                "gasping"
+              ],
+              "correctIndex": 0,
+              "explanation": "Vergangenheit im Erzählkontext"
+            },
+            {
+              "sentence": "He looked almost like ___. “Do you know me?” asked i.",
+              "translation": "Er sah ihr fast ähnlich. „Kennst du mich?“ fragte i.",
+              "choices": [
+                "her",
+                "she",
+                "him"
+              ],
+              "correctIndex": 0,
+              "explanation": "Objektfall nach „like“"
+            },
+            {
+              "sentence": "But Seven only ___. “No,” he said. “I’m a Seven.”",
+              "translation": "Aber Sieben zuckte nur mit den Schultern. „Nein“, sagte er. „Ich bin ein Sieben.“",
+              "choices": [
+                "shrugged",
+                "shrug",
+                "shrugs"
+              ],
+              "correctIndex": 0,
+              "explanation": "Vergangenheit im Erzählkontext"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 1,
+            "rejectReasons": {
+              "answer appears elsewhere in sentence": 1
+            },
+            "promptTokens": 973,
+            "completionTokens": 522,
+            "ms": 274913,
+            "at": "2026-08-02T14:48:49.972Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785682483532_2_synonyms",
+          "type": "synonyms",
+          "title": "Eine Abenteuerliche Nacht",
+          "desc": "Little i meets Seven in a strange number world.",
+          "icon": "🌙",
+          "words": [
+            {
+              "base": "strange",
+              "gloss": "seltsam",
+              "sentence": "A strange world.",
+              "synonyms": [
+                {
+                  "w": "odd",
+                  "g": "seltsam"
+                },
+                {
+                  "w": "peculiar",
+                  "g": "merkwürdig"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "normal",
+                  "g": "normal"
+                },
+                {
+                  "w": "usual",
+                  "g": "gewöhnlich"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "tall",
+              "gloss": "groß (von Personen)",
+              "sentence": "stood a tall Seven.",
+              "synonyms": [
+                {
+                  "w": "high",
+                  "g": "hoch"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "short",
+                  "g": "klein (von Personen)"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "gasped",
+              "gloss": "stöhnte / keuchte",
+              "sentence": "Little i gasped.",
+              "synonyms": [
+                {
+                  "w": "breathed heavily",
+                  "g": "atmete schwer"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "shrugged",
+              "gloss": "zuckte mit den Schultern",
+              "sentence": "But Seven only shrugged.",
+              "synonyms": [
+                {
+                  "w": "raised shoulders",
+                  "g": "hob die Schultern"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "world",
+              "gloss": "Welt",
+              "sentence": "It led to another world.",
+              "synonyms": [
+                {
+                  "w": "earth",
+                  "g": "Erde"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "little",
+              "gloss": "klein",
+              "sentence": "little i followed a glowing path.",
+              "synonyms": [
+                {
+                  "w": "small",
+                  "g": "klein"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "big",
+                  "g": "groß"
+                }
+              ],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 6,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1228,
+            "completionTokens": 702,
+            "ms": 353560,
+            "at": "2026-08-02T14:54:43.532Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785682686476_2_comprehension",
+          "type": "comprehension",
+          "title": "Die Reise der kleinen i",
+          "desc": "Verstehe die Geschichte von 'little i' und ihrer Suche nach dem Platz in der Welt der Zahlen.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum fühlt sich little i am Anfang der Geschichte verloren?",
+              "choices": [
+                "Weil sie keine Freunde in der Welt der Vögel hat.",
+                "Weil sie nicht weiß, wo ihr Platz in der Welt der Zahlen ist.",
+                "Weil die anderen Zahlen sie nicht ansehen wollen.",
+                "Weil sie vergessen hat, wie man zählt."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: 'But little i did not know where hers was' im Kontext der Welt der Zahlen."
+            },
+            {
+              "q": "Was tut little i, als alle anderen schlafen?",
+              "choices": [
+                "Sie folgt einem leuchtenden Pfad.",
+                "Sie sucht nach ihrem Bruder Seven.",
+                "Sie schläft auch ein.",
+                "Sie lernt die Rechenzeichen kennen."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text sagt: 'One evening, while everyone slept, little i followed a glowing path.'"
+            },
+            {
+              "q": "Wie reagiert Seven auf die Frage von little i?",
+              "choices": [
+                "Er hilft ihr sofort.",
+                "Er ignoriert sie komplett.",
+                "Er sagt, dass er ein Sieben ist.",
+                "Er fragt zurück, wer sie ist."
+              ],
+              "correctIndex": 2,
+              "why": "Seven antwortet: 'I’m a Seven' und zuckt mit den Schultern."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 667,
+            "completionTokens": 407,
+            "ms": 202944,
+            "at": "2026-08-02T14:58:06.476Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -76853,8 +79754,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 634,
-        "totalCompletionTokens": 248,
+        "totalPromptTokens": 3502,
+        "totalCompletionTokens": 1879,
         "lessons": [
           {
             "lessonNum": 1,
@@ -76868,10 +79769,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 4499
+        }
       },
       "generatedAt": "2026-06-15T13:00:45.451Z",
-      "updatedAt": "2026-06-15T14:24:53.287Z",
+      "updatedAt": "2026-08-02T14:58:06.476Z",
       "id": "tp_17815285515500000284",
       "storyMeta": {
         "type": "story",
@@ -77145,6 +80049,266 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1785681286576_1_word_forms",
+          "type": "word_forms",
+          "title": "Mathematik im Märchenland",
+          "desc": "Übe Verben und Plurale",
+          "icon": "📐",
+          "items": [
+            {
+              "sentence": "In the land where rules ___ made",
+              "translation": "In dem Land, in dem Regeln gemacht werden.",
+              "choices": [
+                "are",
+                "is"
+              ],
+              "correctIndex": 0,
+              "explanation": "Plural „rules“ erfordert „are“"
+            },
+            {
+              "sentence": "everyone knows their ___",
+              "translation": "jeder kennt sein Schicksal.",
+              "choices": [
+                "fate",
+                "fates"
+              ],
+              "correctIndex": 0,
+              "explanation": "Singular nach „everyone“"
+            },
+            {
+              "sentence": "little i ___ through the streets",
+              "translation": "kleines i schlenderte durch die Straßen.",
+              "choices": [
+                "wandered",
+                "wanders"
+              ],
+              "correctIndex": 0,
+              "explanation": "Vergangenheit (Past Tense)"
+            },
+            {
+              "sentence": "with her eyes wide ___",
+              "translation": "mit weit geöffneten Augen.",
+              "choices": [
+                "open",
+                "opened"
+              ],
+              "correctIndex": 0,
+              "explanation": "Adjektiv „wide open“"
+            },
+            {
+              "sentence": "people still confuse: which one’s ___?",
+              "translation": "Menschen verwechseln sie immer noch: was ist was?",
+              "choices": [
+                "what",
+                "who"
+              ],
+              "correctIndex": 0,
+              "explanation": "Fragepronomen für Dinge"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 967,
+            "completionTokens": 402,
+            "ms": 227179,
+            "at": "2026-08-02T14:34:46.576Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785681649135_1_synonyms",
+          "type": "synonyms",
+          "title": "Mathematische Symbole",
+          "desc": "Grundrechenarten und Zeichen",
+          "icon": "➗",
+          "words": [
+            {
+              "base": "plus",
+              "gloss": "Plus",
+              "sentence": "",
+              "synonyms": [],
+              "antonyms": [
+                {
+                  "w": "minus",
+                  "g": "Minus"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "minus",
+              "gloss": "Minus",
+              "sentence": "",
+              "synonyms": [],
+              "antonyms": [
+                {
+                  "w": "plus",
+                  "g": "Plus"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "multiply",
+              "gloss": "multiplizieren",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "times",
+                  "g": "mal"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "divide",
+                  "g": "dividieren"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "divide",
+              "gloss": "teilen",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "quotient",
+                  "g": "Quotient"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "multiply",
+                  "g": "multiplizieren"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "number",
+              "gloss": "Zahl",
+              "sentence": "Every number seems to have a place.",
+              "synonyms": [
+                {
+                  "w": "digit",
+                  "g": "Ziffer"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "little",
+              "gloss": "klein",
+              "sentence": "little i wandered through the streets",
+              "synonyms": [
+                {
+                  "w": "small",
+                  "g": "klein"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "big",
+                  "g": "groß"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "confuse",
+              "gloss": "verwechseln",
+              "sentence": "people still confuse: which one’s what?",
+              "synonyms": [
+                {
+                  "w": "mix up",
+                  "g": "verwechseln"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "distinguish",
+                  "g": "unterscheiden"
+                }
+              ],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 7,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1216,
+            "completionTokens": 725,
+            "ms": 362559,
+            "at": "2026-08-02T14:40:49.135Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1785681855012_1_comprehension",
+          "type": "comprehension",
+          "title": "Die Reise der kleinen i",
+          "desc": "Verstehe die Geschichte von 'little i' und ihrer Suche nach dem Platz in der Welt der Zahlen.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum fühlt sich little i verloren?",
+              "choices": [
+                "Sie hat ihre Familie in der Welt der Vögel verloren.",
+                "Sie weiß nicht, wo ihr Platz in der Welt der Zahlen ist.",
+                "Die anderen Zahlen machen keine Regeln für sie.",
+                "Sie mag die Zeichen + und - nicht."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: 'But little i did not know where hers was' im Kontext der Welt der Zahlen."
+            },
+            {
+              "q": "Was tut little i, während sie durch die Straßen läuft?",
+              "choices": [
+                "Sie sucht nach einem Nest für ihre Eier.",
+                "Sie spielt mit ihren Katzenfreunden.",
+                "Sie schaut sich mit offenen Augen um.",
+                "Sie lehrt andere Zahlen, wie man rechnet."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text beschreibt: 'little i wandered through the streets with her eyes wide open'."
+            },
+            {
+              "q": "Welche Ähnlichkeit wird am Anfang der Geschichte gezogen?",
+              "choices": [
+                "Vögel haben Familien wie Menschen.",
+                "Katzen bauen Nester wie Vögel.",
+                "Jede Zahl hat einen Platz, ähnlich wie Kinder eine Familie haben.",
+                "Erwachsene haben keine Kinder in ihrer Welt."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text stellt fest: 'And in the world of numbers, every number seems to have a place' als Vergleich zu den vorherigen Beispielen."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 574,
+            "completionTokens": 430,
+            "ms": 205877,
+            "at": "2026-08-02T14:44:15.012Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -77152,8 +80316,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 633,
-        "totalCompletionTokens": 309,
+        "totalPromptTokens": 3390,
+        "totalCompletionTokens": 1866,
         "lessons": [
           {
             "lessonNum": 1,
@@ -77167,10 +80331,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 4314
+        }
       },
       "generatedAt": "2026-06-15T12:58:41.342Z",
-      "updatedAt": "2026-06-15T13:29:17.145Z",
+      "updatedAt": "2026-08-02T14:44:15.012Z",
       "id": "tp_17815284454040000147",
       "storyMeta": {
         "type": "story",
@@ -80724,6 +83891,72 @@
           ],
           "_recreated": true,
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1785672872968_4_comprehension",
+          "type": "comprehension",
+          "title": "Die Reise des kleinen Ich bin ich",
+          "desc": "Verstehen Sie die Handlung und die Entwicklung der Figur in dieser Geschichte?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum beginnt das kleine, bunte Wesen am Anfang der Geschichte zu zweifeln?",
+              "choices": [
+                "Weil es von einem Baumfrosch angegriffen wird.",
+                "Weil es seinen eigenen Namen nicht kennt.",
+                "Weil es sich von den anderen Tieren im Wiesen isoliert fühlt.",
+                "Weil es keine Freunde in der Natur hat."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: \"As the creature doesn’t know its name, it begins to doubt itself.\""
+            },
+            {
+              "q": "Wie reagiert das Wesen, nachdem es sich mit den Zahlen und Buchstaben angefreundet hat?",
+              "choices": [
+                "Es beschließt, nur noch als Zahl zu leben.",
+                "Es lehnt die Buchstaben ab, weil sie zu kompliziert sind.",
+                "Es akzeptiert, dass es nicht in eine einzige Kategorie passt.",
+                "Es vergisst seine Reise und wird wieder traurig."
+              ],
+              "correctIndex": 2,
+              "why": "Am Ende heißt es: \"The creature realized that it didn't need to fit into just one category.\""
+            },
+            {
+              "q": "Welche Rolle spielt die Zahl Null (0) in der letzten Szene?",
+              "choices": [
+                "Sie lehnt die Subtraktion ab und geht weg.",
+                "Sie hilft den anderen Zahlen beim Addieren.",
+                "Sie lernt langsam, wie man mit ihr subtrahiert.",
+                "Sie wird zur Eins (1), weil sie perfekt sein will."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text sagt: \"0 slowly began to grasp the concept... 0 realized that it didn't need to be perfect.\""
+            },
+            {
+              "q": "Was beschreibt die Figur \"i\" in der Geschichte?",
+              "choices": [
+                "Eine komplexe Zahl, die sich nicht sicher ist.",
+                "Ein kleines Tier mit langen Ohren.",
+                "Die erste Zahl im Alphabet.",
+                "Eine ganze Zahl ohne Nachkommastellen."
+              ],
+              "correctIndex": 0,
+              "why": "i sagt: \"I'm the square root of minus one... I'm not a real number.\""
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 2544,
+            "completionTokens": 587,
+            "ms": 446113,
+            "at": "2026-08-02T12:14:32.968Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -80731,8 +83964,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 1580,
-        "totalCompletionTokens": 898,
+        "totalPromptTokens": 4124,
+        "totalCompletionTokens": 1485,
         "lessons": [
           {
             "lessonNum": 1,
@@ -80746,10 +83979,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 3131
+        }
       },
       "generatedAt": "2026-06-04T20:35:36.041Z",
-      "updatedAt": "2026-06-22T11:00:40.140Z",
+      "updatedAt": "2026-08-02T12:14:32.968Z",
       "id": "tp_103972811",
       "continuedFromId": "tp_799905727",
       "storyMeta": {
@@ -82638,6 +85874,61 @@
           ],
           "_recreated": true,
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1785675804550_8_comprehension",
+          "type": "comprehension",
+          "title": "Die Reise des Ich bin ich",
+          "desc": "Verstehe die Geschichte vom kleinen Wesen und seinen Freunden.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist das kleine, bunte Wesen am Anfang der Geschichte traurig?",
+              "choices": [
+                "Es hat sich von seiner Familie verirrt.",
+                "Es weiß nicht, wer es ist und zweifelt an sich selbst.",
+                "Die anderen Tiere in der Wiese sind unfreundlich zu ihm.",
+                "Es kann nicht springen wie die Frösche."
+              ],
+              "correctIndex": 1,
+              "why": "Das Text sagt: \"As the creature doesn’t know its name, it begins to doubt itself.\""
+            },
+            {
+              "q": "Was entdeckt Zahl 3 über die Null (0) im Abschnitt \"Das Geheimnis von 0\"?",
+              "choices": [
+                "Dass die Null jede andere Zahl verdoppelt.",
+                "Dass man mit der Null nicht addieren kann.",
+                "Dass jede Multiplikation mit der Null das Ergebnis Null ergibt.",
+                "Dass die Null die wichtigste Zahl für das Zählen ist."
+              ],
+              "correctIndex": 2,
+              "why": "Zahl 3 sagt: \"When you multiply any number by 0, you get 0.\""
+            },
+            {
+              "q": "Welches mathematische Konzept erklärt Pi (der Pilz) mit den Kaninchen?",
+              "choices": [
+                "Die Fibonacci-Folge.",
+                "Die Kreiszahl Pi.",
+                "Die Quadratwurzel aus minus eins.",
+                "Die Addition von Brüchen."
+              ],
+              "correctIndex": 0,
+              "why": "Pi erklärt die Vermehrung der Kaninchen und nennt es: \"the Fibonacci sequence.\""
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 4093,
+            "completionTokens": 439,
+            "ms": 615874,
+            "at": "2026-08-02T13:03:24.550Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -82645,8 +85936,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 1759,
-        "totalCompletionTokens": 667,
+        "totalPromptTokens": 5852,
+        "totalCompletionTokens": 1106,
         "lessons": [
           {
             "lessonNum": 1,
@@ -82660,10 +85951,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 4532
+        }
       },
       "generatedAt": "2026-06-09T09:02:22.611Z",
-      "updatedAt": "2026-06-22T12:10:32.669Z",
+      "updatedAt": "2026-08-02T13:03:24.550Z",
       "id": "tp_586040741",
       "aiStory": "pi whispered to the small i, \"You will discover what you are, but you must learn much more first. And you need to meet someone who might help you.\"\n\ni looked up, curious, as they continued their journey deeper into the forest. The sun was setting, casting long shadows across the path. Suddenly, they heard a soft hoot from above. Looking up, they saw an owl perched on a branch, watching them intently.\n\n\"Hello there,\" the owl said, its voice gentle and wise. \"I see you're on a quest, little ones. What brings you to the heart of the forest today?\"\n\ni and 0 exchanged glances, then 0 spoke up, \"We're trying to understand more about numbers and the world around us. We heard you might be able to help us.\"\n\nThe owl nodded, its eyes twinkling. \"Indeed, I can help. But first, let me tell you about a special number. It's called the growth number. It helps us understand how things grow and change over time.\"\n\ni listened intently, its ears perked up. \"Can you show us how it works?\" it asked, eager to learn.\n\nThe owl spread its wings and flew down to a nearby tree. \"Let's look at the branches. Each branch grows from the last, just like the numbers in a sequence. This is similar to what you've been learning, but with a twist.\"\n\nThe owl pointed to a series of branches, each one slightly larger than the last. \"See how each branch is a bit bigger than the one before? That's how the growth number works. It helps us predict how things will grow.\"\n\ni and 0 watched in wonder as the owl explained, their minds buzzing with new knowledge. The adventure was far from over, and they were ready to learn more.",
       "continuedFromId": "tp_1220958947",
@@ -83263,8 +86557,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 1687,
-        "totalCompletionTokens": 788,
+        "totalPromptTokens": 12835,
+        "totalCompletionTokens": 2736,
         "lessons": [
           {
             "lessonNum": 1,
@@ -83278,10 +86572,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 13096
+        }
       },
       "generatedAt": "2026-06-08T09:33:58.603Z",
-      "updatedAt": "2026-06-22T12:06:07.578Z",
+      "updatedAt": "2026-08-02T12:53:08.617Z",
       "id": "tp_1220958947",
       "aiStory": "pi, the mushroom, hopped over to them, its cap a vibrant green. \"0, i, I have a riddle for you,\" pi said, its voice a soft whisper.\n\n\"Sure, pi, we're all ears,\" i said, leaning in.\n\n\"Very well,\" pi began. \"A man placed a pair of rabbits in a fenced enclosure to see how many pairs would be born in a year. Each month, a pair of rabbits produces another pair, and the new pair starts breeding from the second month onward.\"\n\n0 tilted its head, trying to understand. \"So, the rabbits keep multiplying every month, and they start breeding from the second month?\"\n\n\"Exactly,\" pi said. \"Now, how many pairs of rabbits will there be at the end of the year?\"\n\ni scratched its head, thinking hard. \"Let's see. In the first month, there's one pair. In the second month, they have another pair, so that's two pairs. In the third month, the original pair has another pair, and the new pair starts breeding, so that's three pairs. By the fourth month, it's five pairs, right?\"\n\n\"Correct,\" pi said. \"And by the end of the year, the number of pairs will be much higher. Can you guess how many?\"\n\n0 looked at i, who was still counting on its fingers. \"I think it's 34 pairs,\" i said, holding up its paws.\n\n\"Very good!\" pi exclaimed, hugging i. \"You're right. The number of pairs at the end of the year is 34. This is a famous sequence in mathematics, known as the Fibonacci sequence.\"\n\n\"Wow, that's amazing,\" 0 said, eyes wide. \"We never knew rabbits could teach us about numbers.\"\n\n\"Indeed,\" pi said, nodding. \"And now that you understand this, let's see if there are any more secrets waiting for us in the forest.\"\n\nTogether, they walked deeper into the woods, the stofftier still waving from the boat. The adventure was far from over, and they were ready for whatever came next.",
       "continuedFromId": "tp_1356093754",
@@ -85487,6 +88784,61 @@
           ],
           "_recreated": true,
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1785673827404_6_comprehension",
+          "type": "comprehension",
+          "title": "Die Reise des kleinen Ich bin ich",
+          "desc": "Verstehe die Geschichte vom Finden der eigenen Identität.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum beginnt das kleine, bunte Wesen am Anfang der Geschichte zu zweifeln?",
+              "choices": [
+                "Weil es von einem Baumfrosch angegriffen wird.",
+                "Weil es seinen eigenen Namen nicht kennt.",
+                "Weil es sich mit den anderen Tieren streitet.",
+                "Weil es müde vom Laufen ist."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: \"As the creature doesn’t know its name, it begins to doubt itself.\""
+            },
+            {
+              "q": "Was entdeckt die Zahl 3 über die Null (0) beim Multiplizieren?",
+              "choices": [
+                "Dass die Null alles in Eins verwandelt.",
+                "Dass die Null keine Rolle spielt.",
+                "Dass jede Zahl mal Null immer Null ergibt.",
+                "Dass die Null größer als alle anderen Zahlen ist."
+              ],
+              "correctIndex": 2,
+              "why": "3 erklärt: \"When you multiply any number by 0, you get 0.\""
+            },
+            {
+              "q": "Wie reagiert die Zahl 1 auf das Selbstwertgefühl der Null am Ende?",
+              "choices": [
+                "Sie ist wütend und verlässt die Gruppe.",
+                "Sie bestätigt, dass die Null nur eine Null ist und das okay ist.",
+                "Sie zwingt die Null, sich in eine Eins zu verwandeln.",
+                "Sie ignoriert die Null komplett."
+              ],
+              "correctIndex": 1,
+              "why": "1 sagt: \"You're not the best... You're just you. And that's okay.\""
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 3245,
+            "completionTokens": 444,
+            "ms": 478477,
+            "at": "2026-08-02T12:30:27.404Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -85494,8 +88846,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 1775,
-        "totalCompletionTokens": 595,
+        "totalPromptTokens": 5020,
+        "totalCompletionTokens": 1039,
         "lessons": [
           {
             "lessonNum": 1,
@@ -85509,10 +88861,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 3689
+        }
       },
       "generatedAt": "2026-06-07T05:48:31.565Z",
-      "updatedAt": "2026-06-22T12:02:17.322Z",
+      "updatedAt": "2026-08-02T12:30:27.404Z",
       "id": "tp_1356093754",
       "continuedFromId": "tp_118316007",
       "storyMeta": {
@@ -86188,6 +89543,61 @@
           ],
           "_recreated": true,
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1785673348869_5_comprehension",
+          "type": "comprehension",
+          "title": "Die Reise des kleinen Ich bin ich",
+          "desc": "Verstehe die Geschichte vom Selbstfindungsprozess und den Begegnungen mit Zahlen und Buchstaben.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum beginnt das kleine, bunte Wesen am Anfang der Geschichte zu zweifeln?",
+              "choices": [
+                "Weil es von einem Baumfrosch angegriffen wird.",
+                "Weil es seinen eigenen Namen nicht kennt und sich fragt, wer es ist.",
+                "Weil es sich in einer Wiese verirrt hat und keine Freunde findet.",
+                "Weil es merkt, dass es wie ein Tier aussieht, aber kein Tier ist."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: 'As the creature doesn’t know its name, it begins to doubt itself.'"
+            },
+            {
+              "q": "Was passiert mit der Zahl Null (0), als die Gruppe lernt, Zahlen zu subtrahieren?",
+              "choices": [
+                "Null wird ausgeschlossen, weil es keine Rolle spielt.",
+                "Null versteht sofort, wie Subtraktion funktioniert, ohne Hilfe.",
+                "Null hat Angst, kann aber durch die Unterstützung der anderen allmählich Fortschritte machen.",
+                "Null lehrt die anderen Zahlen, wie man subtrahiert."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text beschreibt, dass Null sich Sorgen macht ('felt a twinge of worry'), aber 1 und 2 ihm helfen und es langsam begreift ('0 slowly began to grasp the concept')."
+            },
+            {
+              "q": "Welche Erkenntnis hat die Zahl Drei (3) über die Multiplikation mit Null?",
+              "choices": [
+                "Dass die Multiplikation mit Null immer das ursprüngliche Ergebnis liefert.",
+                "Dass Null eine magische Eigenschaft hat, indem es alles in Null verwandelt.",
+                "Dass man Null nicht multiplizieren darf, weil es ein Fehler ist.",
+                "Dass nur große Zahlen durch Null zu Null werden."
+              ],
+              "correctIndex": 1,
+              "why": "Drei erklärt: 'When you multiply any number by 0, you get 0... So, 0 is like a magic number. It turns everything into 0.'"
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 2970,
+            "completionTokens": 543,
+            "ms": 475840,
+            "at": "2026-08-02T12:22:28.869Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -86195,8 +89605,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 1838,
-        "totalCompletionTokens": 778,
+        "totalPromptTokens": 4808,
+        "totalCompletionTokens": 1321,
         "lessons": [
           {
             "lessonNum": 1,
@@ -86210,10 +89620,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 3513
+        }
       },
       "generatedAt": "2026-06-04T21:32:54.652Z",
-      "updatedAt": "2026-06-22T11:23:44.842Z",
+      "updatedAt": "2026-08-02T12:22:28.869Z",
       "id": "tp_118316007",
       "continuedFromId": "tp_103972811",
       "storyMeta": {
@@ -87692,6 +91105,72 @@
           ],
           "_recreated": true,
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1785672426788_3_comprehension",
+          "type": "comprehension",
+          "title": "Die Reise des kleinen Ich bin ich",
+          "desc": "Verstehst du die Geschichte vom kleinen Wesen und seinen Begegnungen?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum beginnt das kleine Wesen am Anfang der Geschichte, an seiner Existenz zu zweifeln?",
+              "choices": [
+                "Weil es von einem Baumfrosch angegriffen wird.",
+                "Weil es seinen eigenen Namen nicht kennt und sich fragt, wer es ist.",
+                "Weil es sich mit den anderen Tieren im Wiesenstreit befindet.",
+                "Weil es müde ist und einsam durch die Wiese läuft."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: \"As the creature doesn’t know its name, it begins to doubt itself.\""
+            },
+            {
+              "q": "Was beschreibt das Wesen über sich selbst, als es die Zahlen trifft?",
+              "choices": [
+                "Es ist eine komplexe Zahl, die wie ein Licht funkt.",
+                "Es ist keine ganze Zahl und auch kein Bruchteil.",
+                "Es ist der imaginäre Teil der Gleichung i.",
+                "Es ist eine Buchstabe, der sich verirrt hat."
+              ],
+              "correctIndex": 1,
+              "why": "Das Wesen erklärt: \"I'm not a whole number... I'm not even a fraction.\""
+            },
+            {
+              "q": "Wie reagiert die Zahl Eins (1) auf die imaginäre Einheit i?",
+              "choices": [
+                "Sie hilft ihr, ihre Identität zu finden.",
+                "Sie ignoriert sie komplett.",
+                "Sie macht sich über sie lustig und nennt sie einen winzigen Punkt.",
+                "Sie bittet sie, sich der Gruppe anzuschließen."
+              ],
+              "correctIndex": 2,
+              "why": "1 snorted. \"Anything? You? Ha! You're just a tiny dot.\""
+            },
+            {
+              "q": "Welches Geheimnis gibt die Zahl Null (0) am Ende der Geschichte zu?",
+              "choices": [
+                "Sie fühlt sich wie die Eins, weil sie das Beste sein will.",
+                "Sie ist eigentlich eine Eins, weiß es aber nicht genau.",
+                "Sie hat Angst, von den anderen Zahlen vergessen zu werden.",
+                "Sie möchte lieber ein Buchstabe als eine Zahl sein."
+              ],
+              "correctIndex": 1,
+              "why": "0 sagt: \"I think I might be a 1. But I'm not sure.\""
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1975,
+            "completionTokens": 605,
+            "ms": 389491,
+            "at": "2026-08-02T12:07:06.788Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -87699,8 +91178,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 1743,
-        "totalCompletionTokens": 837,
+        "totalPromptTokens": 3718,
+        "totalCompletionTokens": 1442,
         "lessons": [
           {
             "lessonNum": 1,
@@ -87714,10 +91193,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 2580
+        }
       },
       "generatedAt": "2026-06-04T20:00:09.553Z",
-      "updatedAt": "2026-06-22T10:43:20.405Z",
+      "updatedAt": "2026-08-02T12:07:06.788Z",
       "id": "tp_799905727",
       "continuedFromId": "tp_2088453173",
       "storyMeta": {
@@ -88196,6 +91678,72 @@
           ],
           "_recreated": true,
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1785671436635_1_comprehension",
+          "type": "comprehension",
+          "title": "Die Reise des kleinen Ich bin ich",
+          "desc": "Verstehen Sie die Handlung und die emotionale Entwicklung der Figur?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum beginnt das kleine Wesen zu zweifeln, als es den Erdkröten trifft?",
+              "choices": [
+                "Weil der Kröte sagt, dass das Wesen hässlich ist.",
+                "Weil es seinen eigenen Namen nicht kennt.",
+                "Weil es Angst vor dem großen Wald hat.",
+                "Weil es Hunger auf Blumen hat."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: \"As the creature doesn’t know its name, it begins to doubt itself.\""
+            },
+            {
+              "q": "Was passiert, als das Wesen die verschiedenen Tiere trifft?",
+              "choices": [
+                "Es findet ein Tier, das genau wie es aussieht.",
+                "Es merkt, dass es Ähnlichkeiten hat, aber nicht zu einer Art gehört.",
+                "Alle Tiere lehnen es sofort ab und verjagen es.",
+                "Das Wesen vergisst seine Reise und geht nach Hause."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: \"Although it discovers certain similarities with each animal, it is not 100 percent like any of them.\""
+            },
+            {
+              "q": "Wie reagiert das Wesen am Ende des ersten Teils auf seine Unsicherheit?",
+              "choices": [
+                "Es gibt auf und wird traurig.",
+                "Es akzeptiert sich selbst als einzigartiges Wesen.",
+                "Es bittet die anderen Tiere um Hilfe.",
+                "Es versucht, wie ein Vogel zu fliegen."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: \"It accepts and loves itself exactly as it is.\""
+            },
+            {
+              "q": "Warum fühlt sich das Wesen am Ende der Geschichte zugehörig?",
+              "choices": [
+                "Weil es nun eine Zahl ist.",
+                "Weil es gelernt hat, dass es nicht in eine Kategorie passen muss.",
+                "Weil Null ihm seinen Namen gegeben hat.",
+                "Weil es nur noch mit Zahlen spielt."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: \"I don't need to fit into one category. I can be myself, and that's enough.\""
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1013,
+            "completionTokens": 582,
+            "ms": 299309,
+            "at": "2026-08-02T11:50:36.635Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -88203,8 +91751,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 6814,
-        "totalCompletionTokens": 884,
+        "totalPromptTokens": 7827,
+        "totalCompletionTokens": 1466,
         "lessons": [
           {
             "lessonNum": 1,
@@ -88220,11 +91768,12 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "lesson_qc": 5645
+          "lesson_qc": 5645,
+          "recreate": 1595
         }
       },
       "generatedAt": "2026-06-03T09:38:48.158Z",
-      "updatedAt": "2026-07-21T07:51:00.893Z",
+      "updatedAt": "2026-08-02T11:50:36.635Z",
       "id": "tp_579238210",
       "continuedFromId": "tp_131653303",
       "storyMeta": {
@@ -92220,6 +95769,72 @@
           ],
           "_recreated": true,
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1785672037234_2_comprehension",
+          "type": "comprehension",
+          "title": "Die Reise des kleinen Ich bin ich",
+          "desc": "Verstehe die Geschichte vom Selbstfindungsprozess eines bunten Wesens.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum beginnt das bunte Wesen, an sich selbst zu zweifeln?",
+              "choices": [
+                "Weil es von einem Frosch angegriffen wird.",
+                "Weil es seinen eigenen Namen nicht kennt.",
+                "Weil es keine Freunde in der Wiese hat.",
+                "Weil es sich von den Tieren abgelehnt fühlt."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: \"As the creature doesn’t know its name, it begins to doubt itself.\""
+            },
+            {
+              "q": "Wie reagiert das Wesen nach seiner Begegnung mit den Zahlen?",
+              "choices": [
+                "Es beschließt, ein echter Mathematiker zu werden.",
+                "Es fühlt sich ausgeschlossen und geht weg.",
+                "Es akzeptiert, dass es nicht in eine einzige Kategorie passt.",
+                "Es vergleicht sich weiterhin nur mit anderen Zahlen."
+              ],
+              "correctIndex": 2,
+              "why": "Am Ende des zweiten Teils denkt es: \"I don't need to fit into one category. I can be myself, and that's enough.\""
+            },
+            {
+              "q": "Was lernt das Wesen von den Buchstaben?",
+              "choices": [
+                "Wie man komplexe Zahlen berechnet.",
+                "Wie man Wörter bildet und Geschichten schreibt.",
+                "Wie man sich in der Wiese orientiert.",
+                "Wie man mit anderen Tieren kommuniziert."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: \"They showed it how to form words, how to spell, and even how to write stories.\""
+            },
+            {
+              "q": "Welches Ergebnis hat die Reise des Wesens am Ende der Geschichte?",
+              "choices": [
+                "Es findet einen festen Platz nur unter den Zahlen.",
+                "Es erkennt, dass es verschiedene Aspekte in sich trägt und das okay ist.",
+                "Es vergisst seine Unsicherheit und wird arrogant.",
+                "Es kehrt allein in die Wiese zurück, ohne neue Freunde."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: \"It could be a number, a letter, or anything in between. And that was okay.\""
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 2,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 2916,
+            "completionTokens": 1114,
+            "ms": 600544,
+            "at": "2026-08-02T12:00:37.234Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -92227,8 +95842,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 1118,
-        "totalCompletionTokens": 961,
+        "totalPromptTokens": 4034,
+        "totalCompletionTokens": 2075,
         "lessons": [
           {
             "promptTokens": 498,
@@ -92240,10 +95855,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 4030
+        }
       },
       "generatedAt": "2026-06-03T09:53:02.146Z",
-      "updatedAt": "2026-06-22T10:29:27.513Z",
+      "updatedAt": "2026-08-02T12:00:37.234Z",
       "id": "tp_2088453173",
       "continuedFromId": "tp_579238210",
       "storyMeta": {
@@ -92791,6 +96409,61 @@
             }
           ],
           "_recreated": true
+        },
+        {
+          "id": "ls_1785671137281_0_comprehension",
+          "type": "comprehension",
+          "title": "Wer bin ich?",
+          "desc": "Lies die Geschichte und beantworte die Fragen.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum beginnt das kleine Wesen, an sich selbst zu zweifeln?",
+              "choices": [
+                "Weil es von einem Frosch beschimpft wird.",
+                "Weil es seinen eigenen Namen nicht kennt.",
+                "Weil es keine Freunde im Wiesen hat.",
+                "Weil es müde vom Hoppeln ist."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: 'As the creature doesn’t know its name, it begins to doubt itself.'"
+            },
+            {
+              "q": "Was stellt das Wesen bei den anderen Tieren fest?",
+              "choices": [
+                "Es ist genau wie ein Pferd.",
+                "Es hat keine Ähnlichkeit mit irgendeinem Tier.",
+                "Es ist sich selbst nicht sicher, ob es existiert.",
+                "Es ist 100 Prozent wie alle Tiere zusammen."
+              ],
+              "correctIndex": 2,
+              "why": "Am Ende der Reise fragt es: 'whether it exists at all', bevor es die Lösung findet."
+            },
+            {
+              "q": "Wie löst das Wesen sein Problem am Ende?",
+              "choices": [
+                "Es sucht weiter nach einem Namen.",
+                "Es akzeptiert, dass es einzigartig ist.",
+                "Es wird ein Frosch wie der erste Begegnung.",
+                "Es gibt auf und geht nach Hause."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: 'It accepts and loves itself exactly as it is.'"
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 549,
+            "completionTokens": 406,
+            "ms": 198289,
+            "at": "2026-08-02T11:45:37.281Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -92798,8 +96471,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 4466,
-        "totalCompletionTokens": 1651,
+        "totalPromptTokens": 5015,
+        "totalCompletionTokens": 2057,
         "lessons": [
           {
             "lessonNum": 1,
@@ -92827,11 +96500,12 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "lesson_qc": 2238
+          "lesson_qc": 2238,
+          "recreate": 955
         }
       },
       "generatedAt": "2026-06-03T08:54:37.623Z",
-      "updatedAt": "2026-07-21T07:32:24.461Z",
+      "updatedAt": "2026-08-02T11:45:37.281Z",
       "id": "tp_131653303",
       "repairStats": {
         "repairCount": 1,
