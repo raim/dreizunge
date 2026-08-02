@@ -120,7 +120,9 @@ const { _stripDiacriticsCase, buildDiacriticIndex, checkDiacritics } = M.exports
   // The QC run must call the adjudicator, not the scan's verdict.
   assert.ok(/const v = await qcCheckDiacriticCandidate\(String\(word\)\.trim\(\), c\.sug, lg\);/.test(server),
     'the QC run adjudicates each candidate');
-  assert.ok(/'diacritic', QC_DIACRITIC_BY\)/.test(server),
+  // v73_j appended the item locator (`_at`) after the checker identity — see the re-resolution
+  // note in _runQc. The claim here is unchanged: the identity is still QC_DIACRITIC_BY.
+  assert.ok(/'diacritic', QC_DIACRITIC_BY, _at\)/.test(server),
     'and files findings under their own checker identity, beside the model verdicts');
   assert.ok(/const QC_DIACRITIC_BY = 'diacritics';/.test(server), 'that identity is named');
 }

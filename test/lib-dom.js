@@ -16,11 +16,306 @@ const path = require('path');
 const vm = require('vm');
 const ROOT = path.join(__dirname, '..');
 
-function makeElement(tag = 'div', id = '') {
+// ─────────────────────────────────────────────────────────────────────────────
+// v73_c — runtime innerHTML parsing.
+//
+// Until now `innerHTML` was stored as a string and never parsed, so `querySelectorAll` returned []
+// and `getElementById` handed back an auto-vivified stub rather than the node the markup describes.
+// index.html assigns innerHTML in 122 places, so everything rendered that way — every picker, every
+// tick-list, every dynamically built card — could only be tested by regexing the markup string.
+// That is why ~36% of the suite's assertions match source text rather than behaviour.
+//
+// What is parsed here is not HTML5. It is the markup THIS app emits, which is machine-generated and
+// well-formed. Measured against index.html, that means it must handle: bare boolean attributes
+// (`disabled`, `checked`, `selected` — 104 sites), unquoted attribute values (28), `data-*` (203),
+// and 144 `onclick` handlers whose JavaScript can contain `>` and `/`. The last one rules out a
+// regex tokenizer, so this is a character scanner that tracks quoting.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Elements that never have children. An unterminated <br> must not swallow the rest of the markup.
+const VOID_TAGS = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link',
+                           'meta', 'param', 'source', 'track', 'wbr']);
+// Content is text, not markup: a '<' inside a script body is not a tag.
+const RAW_TEXT_TAGS = new Set(['script', 'style']);
+// Attributes the DOM reflects as booleans. Render code and tests read `el.disabled === true`, so an
+// attribute string has to become a real boolean or half the suite disagrees with the other half.
+const BOOL_ATTRS = new Set(['disabled', 'checked', 'selected', 'readonly', 'required', 'hidden',
+                            'multiple', 'open', 'autofocus', 'novalidate']);
+// Attributes reflected onto same-named string properties, matching the fields makeElement exposes.
+const PROP_ATTRS = new Set(['value', 'title', 'href', 'src', 'download', 'type', 'placeholder',
+                            'name', 'alt', 'target', 'lang', 'dir', 'role']);
+
+// The app escapes with esc()/escAttr(), so text and attribute values arrive encoded. Decoding is
+// deliberately limited to what those produce plus the few literals the templates contain — a full
+// entity table would be language knowledge of a different kind, and is not needed here.
+const ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: '\u00a0', '#39': "'", '#x27': "'" };
+function decodeEntities(s) {
+  return String(s).replace(/&(#x?[0-9a-fA-F]+|[a-zA-Z]+);/g, (whole, body) => {
+    if (Object.prototype.hasOwnProperty.call(ENTITIES, body)) return ENTITIES[body];
+    if (body[0] === '#') {
+      const n = body[1] === 'x' || body[1] === 'X' ? parseInt(body.slice(2), 16) : parseInt(body.slice(1), 10);
+      return Number.isFinite(n) ? String.fromCodePoint(n) : whole;
+    }
+    return whole;
+  });
+}
+
+const camel = (s) => String(s).replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+
+// `style="display:none;color:red"` has to land on el.style.display, because that is what both the
+// render code and the existing assertions use.
+function applyStyleString(el, text) {
+  String(text).split(';').forEach(decl => {
+    const i = decl.indexOf(':');
+    if (i < 0) return;
+    const k = decl.slice(0, i).trim(), v = decl.slice(i + 1).trim();
+    if (k) el.style[camel(k)] = v;
+  });
+}
+
+// Reflect one parsed attribute onto both the attribute store and the property the rest of lib-dom
+// already exposes. Keeping BOTH in step is the point: render code sets properties, markup carries
+// attributes, and tests read whichever they happened to be written against.
+function applyParsedAttribute(el, rawName, rawValue, doc) {
+  const name = String(rawName);
+  const value = decodeEntities(rawValue);
+  el._attrs[name] = value;
+  const lower = name.toLowerCase();
+  if (lower === 'id') {
+    el.id = value;
+    if (doc && doc._ids && !doc._ids.has(value)) doc._ids.set(value, el);
+  } else if (lower === 'class') {
+    el.className = value;
+    value.split(/\s+/).filter(Boolean).forEach(c => el.classList._s.add(c));
+  } else if (lower === 'style') {
+    applyStyleString(el, value);
+  } else if (lower.startsWith('data-')) {
+    el.dataset[camel(lower.slice(5))] = value;
+  } else if (BOOL_ATTRS.has(lower)) {
+    // Present-but-empty is TRUE in HTML (`<button disabled>`); only disabled="false" is false.
+    el[lower] = !(value === 'false');
+  } else if (PROP_ATTRS.has(lower)) {
+    el[lower] = value;
+  }
+}
+
+/**
+ * Parse `markup` into child nodes of `parent`.
+ *
+ * Identity rule, and the one real deviation from a browser: when parsed markup carries an id that
+ * document.getElementById has ALREADY vivified, the existing element object is reused and reset in
+ * place rather than replaced. A browser would create a new node. Reuse is chosen because the whole
+ * harness contract — "getElementById persists stubs, which is what makes interaction testable" —
+ * depends on a test's reference staying live across a re-render. Replacing would silently orphan
+ * every reference held before the render, which is a far worse failure than the one it fixes.
+ */
+function parseHtmlInto(markup, parent, doc) {
+  const s = String(markup == null ? '' : markup);
+  const stack = [parent];
+  const top = () => stack[stack.length - 1];
+  let i = 0, pendingText = '';
+
+  const flushText = () => {
+    if (!pendingText) return;
+    const t = decodeEntities(pendingText);
+    pendingText = '';
+    // Whitespace-only runs between tags are structurally meaningless in generated markup and would
+    // otherwise pad every textContent read with the template's own indentation.
+    if (!t.trim()) return;
+    top()._text += t;
+    top().childNodes.push({ nodeType: 3, textContent: t });
+  };
+
+  while (i < s.length) {
+    const lt = s.indexOf('<', i);
+    if (lt < 0) { pendingText += s.slice(i); break; }
+    pendingText += s.slice(i, lt);
+
+    if (s.startsWith('<!--', lt)) { const e = s.indexOf('-->', lt); i = e < 0 ? s.length : e + 3; continue; }
+    if (s.startsWith('<!', lt) || s.startsWith('<?', lt)) { const e = s.indexOf('>', lt); i = e < 0 ? s.length : e + 1; continue; }
+
+    // Closing tag: pop to the matching open element, so stray closers cannot unwind the stack past
+    // the element we were asked to fill.
+    if (s[lt + 1] === '/') {
+      const e = s.indexOf('>', lt);
+      const name = s.slice(lt + 2, e < 0 ? s.length : e).trim().toLowerCase();
+      flushText();
+      for (let k = stack.length - 1; k > 0; k--) {
+        if (stack[k].tagName === name.toUpperCase()) { stack.length = k; break; }
+      }
+      i = e < 0 ? s.length : e + 1;
+      continue;
+    }
+
+    // Opening tag. A bare '<' that is not a tag start is literal text.
+    const nameMatch = /^<([A-Za-z][\w:.-]*)/.exec(s.slice(lt, lt + 64));
+    if (!nameMatch) { pendingText += '<'; i = lt + 1; continue; }
+    flushText();
+    const tag = nameMatch[1];
+    let p = lt + 1 + tag.length;
+    const attrs = [];
+    let selfClose = false;
+
+    // Attribute loop. Quote tracking is what makes an onclick containing '>' safe.
+    while (p < s.length) {
+      while (p < s.length && /\s/.test(s[p])) p++;
+      if (s[p] === '>') { p++; break; }
+      if (s[p] === '/' && s[p + 1] === '>') { selfClose = true; p += 2; break; }
+      if (p >= s.length) break;
+      const nStart = p;
+      while (p < s.length && !/[\s=/>]/.test(s[p])) p++;
+      const aName = s.slice(nStart, p);
+      if (!aName) { p++; continue; }
+      let aVal = '';
+      let q = p;
+      while (q < s.length && /\s/.test(s[q])) q++;
+      if (s[q] === '=') {
+        q++;
+        while (q < s.length && /\s/.test(s[q])) q++;
+        const quote = s[q];
+        if (quote === '"' || quote === "'") {
+          const end = s.indexOf(quote, q + 1);
+          aVal = s.slice(q + 1, end < 0 ? s.length : end);
+          p = end < 0 ? s.length : end + 1;
+        } else {
+          const vStart = q;
+          while (q < s.length && !/[\s>]/.test(s[q])) q++;
+          aVal = s.slice(vStart, q);
+          p = q;
+        }
+      }
+      attrs.push([aName, aVal]);
+    }
+
+    const lowerTag = tag.toLowerCase();
+    // An id that already exists is reused rather than duplicated — see the identity rule above.
+    const idAttr = attrs.find(a => a[0].toLowerCase() === 'id');
+    let el;
+    if (idAttr && doc && doc._ids && doc._ids.has(idAttr[1])) {
+      el = doc._ids.get(idAttr[1]);
+      resetElement(el, tag);
+    } else {
+      el = makeElement(tag, '', doc);
+    }
+    attrs.forEach(([k, v]) => applyParsedAttribute(el, k, v, doc));
+    top().appendChild(el);
+
+    if (RAW_TEXT_TAGS.has(lowerTag)) {
+      const close = s.toLowerCase().indexOf(`</${lowerTag}`, p);
+      const body = s.slice(p, close < 0 ? s.length : close);
+      el._text = body;
+      i = close < 0 ? s.length : s.indexOf('>', close) + 1;
+      continue;
+    }
+    if (!selfClose && !VOID_TAGS.has(lowerTag)) stack.push(el);
+    i = p;
+  }
+  flushText();
+  return parent;
+}
+
+// Clear an element for reuse, without replacing the object (identity rule) and without touching the
+// method surface, which callers may already hold references to.
+function resetElement(el, tag) {
+  el.tagName = String(tag).toUpperCase();
+  el.children = [];
+  el.childNodes = [];
+  el._text = '';
+  el._html = '';
+  el._attrs = {};
+  el.className = '';
+  el.classList._s.clear();
+  el.dataset = {};
+  el.disabled = false;
+  el.checked = false;
+  el.value = '';
+  el.style = {};
+  return el;
+}
+
+// ── Selector engine ──────────────────────────────────────────────────────────
+// Supports what the app's own render and test code uses: tag, #id, .class, [attr], [attr="v"],
+// comma lists, and the descendant / child combinators. Not a CSS implementation — no pseudo-classes
+// beyond :scope, no sibling combinators. Anything richer needs a real browser, per the file header.
+function parseCompound(text) {
+  const c = { tag: '', id: '', classes: [], attrs: [], scope: false };
+  String(text).replace(/:scope|#[\w-]+|\.[\w-]+|\[[^\]]+\]|^[*A-Za-z][\w:-]*/g, (tok) => {
+    if (tok === ':scope') c.scope = true;
+    else if (tok[0] === '#') c.id = tok.slice(1);
+    else if (tok[0] === '.') c.classes.push(tok.slice(1));
+    else if (tok[0] === '[') {
+      const m = /^\[\s*([\w:-]+)\s*(?:([~^$*|]?=)\s*(?:"([^"]*)"|'([^']*)'|([^\]\s]*)))?\s*\]$/.exec(tok);
+      if (m) c.attrs.push({ name: m[1], op: m[2] || '', value: m[3] ?? m[4] ?? m[5] ?? null });
+    } else if (tok !== '*') c.tag = tok.toUpperCase();
+    return tok;
+  });
+  return c;
+}
+function matchesCompound(el, c) {
+  if (!el || el.nodeType !== 1) return false;
+  if (c.tag && el.tagName !== c.tag) return false;
+  if (c.id && el.id !== c.id) return false;
+  if (c.classes.some(k => !el.classList._s.has(k))) return false;
+  for (const a of c.attrs) {
+    const have = Object.prototype.hasOwnProperty.call(el._attrs, a.name) ? el._attrs[a.name] : null;
+    if (have === null) return false;
+    if (a.value === null) continue;
+    if (a.op === '=' && have !== a.value) return false;
+    if (a.op === '^=' && !have.startsWith(a.value)) return false;
+    if (a.op === '$=' && !have.endsWith(a.value)) return false;
+    if (a.op === '*=' && !have.includes(a.value)) return false;
+    if (a.op === '~=' && !have.split(/\s+/).includes(a.value)) return false;
+  }
+  return true;
+}
+// One comma-free selector, e.g. "div.card > button#go". Matched right-to-left from `el`.
+function matchesSequence(el, seq, root) {
+  let idx = seq.length - 1;
+  if (!matchesCompound(el, seq[idx].sel)) return false;
+  let node = el;
+  for (idx--; idx >= 0; idx--) {
+    const step = seq[idx + 1];
+    if (seq[idx].sel.scope) { return step.combinator === '>' ? node.parentNode === root : true; }
+    if (step.combinator === '>') {
+      node = node.parentNode;
+      if (!node || !matchesCompound(node, seq[idx].sel)) return false;
+    } else {
+      let a = node.parentNode, ok = false;
+      while (a) { if (matchesCompound(a, seq[idx].sel)) { ok = true; break; } a = a.parentNode; }
+      if (!ok) return false;
+      node = a;
+    }
+  }
+  return true;
+}
+function parseSelector(sel) {
+  return String(sel || '').split(',').map(part => {
+    const seq = [];
+    let combinator = ' ';
+    part.trim().split(/\s*(>)\s*|\s+/).filter(Boolean).forEach(tok => {
+      if (tok === '>') { combinator = '>'; return; }
+      seq.push({ sel: parseCompound(tok), combinator });
+      combinator = ' ';
+    });
+    return seq;
+  }).filter(seq => seq.length);
+}
+function descendants(root, out = []) {
+  for (const c of root.children || []) { if (c && c.nodeType === 1) { out.push(c); descendants(c, out); } }
+  return out;
+}
+function selectAll(root, sel) {
+  const groups = parseSelector(sel);
+  if (!groups.length) return [];
+  const pool = descendants(root);
+  return pool.filter(el => groups.some(seq => matchesSequence(el, seq, root)));
+}
+
+function makeElement(tag = 'div', id = '', doc = null) {
   const el = {
-    tagName: String(tag).toUpperCase(), id, nodeType: 1,
+    tagName: String(tag).toUpperCase(), id, nodeType: 1, _doc: doc,
     style: {}, dataset: {}, children: [], childNodes: [],
-    _html: '', textContent: '', value: '', checked: false, disabled: false, _attrs: {},
+    _html: '', _text: '', value: '', checked: false, disabled: false, _attrs: {},
     className: '', title: '', href: '', src: '', download: '',
     classList: {
       _s: new Set(),
@@ -29,15 +324,31 @@ function makeElement(tag = 'div', id = '') {
       toggle(c, on) { const has = this._s.has(c); const want = (on === undefined) ? !has : !!on; want ? this._s.add(c) : this._s.delete(c); return want; },
       contains(c) { return this._s.has(c); },
     },
-    appendChild(c) { this.children.push(c); this.childNodes.push(c); return c; },
-    removeChild(c) { this.children = this.children.filter(x => x !== c); return c; },
-    insertBefore(c) { this.children.unshift(c); return c; },
-    remove() {},
-    // Queries return fresh stubs rather than parsing innerHTML: render code commonly does
-    // `el.querySelector(...)?.something`, and a null would mask the very errors we want to see.
-    querySelector() { return makeElement(); },
-    querySelectorAll() { return []; },
-    closest() { return makeElement(); },
+    appendChild(c) { if (c && c.nodeType === 1) c._parent = this; this.children.push(c); this.childNodes.push(c); return c; },
+    removeChild(c) { this.children = this.children.filter(x => x !== c); this.childNodes = this.childNodes.filter(x => x !== c); return c; },
+    insertBefore(c) { if (c && c.nodeType === 1) c._parent = this; this.children.unshift(c); return c; },
+    remove() { const p = this._parent; if (p) p.removeChild(this); },
+    // v73_c: real matching over the parsed tree.
+    //
+    // querySelectorAll now returns actual nodes — it used to return [] unconditionally, so it could
+    // only ever have been asserted on vacuously.
+    //
+    // querySelector keeps the auto-vivifying stub as its MISS case, deliberately. Render code
+    // routinely does `el.querySelector('.x').textContent = y`, and returning null on a miss would
+    // turn every gap in this parser into a thrown TypeError inside product code — a false alarm
+    // that looks exactly like a real defect. A test that needs to assert absence should use
+    // `querySelectorAll(sel).length === 0`, which is now meaningful.
+    querySelector(sel) { return selectAll(this, sel)[0] || makeElement('div', '', this._doc); },
+    querySelectorAll(sel) { return selectAll(this, sel); },
+    closest(sel) {
+      const groups = parseSelector(sel);
+      let n = this;
+      while (n && n.nodeType === 1) {
+        if (groups.some(seq => matchesCompound(n, seq[seq.length - 1].sel))) return n;
+        n = n.parentNode;
+      }
+      return null;
+    },
     // Attributes are STORED (v70_g). They used to be no-ops returning null, which meant a render
     // could set an aria-label and no test could ever see it — accessible names were structurally
     // untestable. unit-report-edits had to hand-roll its own attribute store to work around this.
@@ -64,7 +375,32 @@ function makeElement(tag = 'div', id = '') {
   };
   // innerHTML is a real property: assigning it is what most render paths DO, and the assignment
   // must be observable so a test can assert something was rendered.
-  Object.defineProperty(el, 'innerHTML', { get() { return el._html; }, set(v) { el._html = String(v == null ? '' : v); }, enumerable: true });
+  // v73_c: the assignment now also PARSES. The raw string is still kept and still returned by the
+  // getter, so every existing markup-string assertion keeps working unchanged — the parsed tree is
+  // additive. That is what makes this migration incremental rather than a flag day.
+  Object.defineProperty(el, 'innerHTML', {
+    get() { return el._html; },
+    set(v) {
+      el._html = String(v == null ? '' : v);
+      el.children = [];
+      el.childNodes = [];
+      el._text = '';
+      parseHtmlInto(el._html, el, el._doc);
+    },
+    enumerable: true,
+  });
+  // textContent follows the DOM: reading concatenates descendant text, writing replaces children.
+  // Before v73_c it was a plain field, so an element filled via innerHTML reported '' — which is
+  // exactly why card titles and button labels could only be checked by regexing markup.
+  Object.defineProperty(el, 'textContent', {
+    get() {
+      if (!el.children.length) return el._text;
+      const walk = (n) => (n.children || []).reduce((acc, c) => acc + (c.nodeType === 1 ? walk(c) : (c.textContent || '')), n._text || '');
+      return walk(el);
+    },
+    set(v) { el._text = String(v == null ? '' : v); el.children = []; el.childNodes = []; el._html = ''; },
+    enumerable: true,
+  });
   Object.defineProperty(el, 'outerHTML', { get() { return el._html; }, enumerable: true });
   Object.defineProperty(el, 'firstChild', { get() { return el.children[0] || null; } });
   Object.defineProperty(el, 'parentNode', { get() { return el._parent || null; }, set(v) { el._parent = v; } });
@@ -80,19 +416,36 @@ function makeDocument() {
     // Auto-vivify: any id the client asks for exists. Enumerating the real id list would make the
     // harness fragile against markup changes, and a null return would hide errors behind
     // `if (el)` guards rather than exposing them.
-    getElementById(id) { if (!byId.has(id)) byId.set(id, makeElement('div', id)); return byId.get(id); },
-    createElement(tag) { return makeElement(tag); },
+    getElementById(id) { if (!byId.has(id)) byId.set(id, makeElement('div', id, doc)); return byId.get(id); },
+    createElement(tag) { return makeElement(tag, '', doc); },
     createTextNode(t) { return { nodeType: 3, textContent: String(t) }; },
-    createDocumentFragment() { return makeElement('fragment'); },
-    createElementNS(ns, tag) { return makeElement(tag); },
+    createDocumentFragment() { return makeElement('fragment', '', doc); },
+    createElementNS(ns, tag) { return makeElement(tag, '', doc); },
     // v71_k: adopt a parsed node into this document. The client uses it to move a storyboard from
     // a DOMParser document into the page in one step; a deep clone is the whole observable
     // behaviour, since this stub has no per-document node ownership to transfer.
     importNode(node, deep) { return node && node.cloneNode ? node.cloneNode(deep !== false) : node; },
-    querySelector() { return makeElement(); },
-    querySelectorAll() { return []; },
-    getElementsByClassName() { return []; },
-    getElementsByTagName() { return []; },
+    // v73_c: document-level queries search every root the client actually renders into. That is
+    // body PLUS every element handed out by getElementById — the client renders into those and
+    // never attaches them to body, so searching body alone would find almost nothing.
+    querySelector(sel) { return doc._selectAll(sel)[0] || makeElement('div', '', doc); },
+    querySelectorAll(sel) { return doc._selectAll(sel); },
+    getElementsByClassName(c) { return doc._selectAll('.' + c); },
+    getElementsByTagName(t) { return doc._selectAll(t); },
+    _selectAll(sel) {
+      const seen = new Set(), out = [];
+      const roots = [doc.body, doc.head, doc.documentElement, ...byId.values()];
+      for (const r of roots) {
+        if (!r) continue;
+        // A registered element is itself a candidate, not just its subtree: the client asks for
+        // '#comp-next' by id after a render that created it inside another element's innerHTML.
+        for (const el of [r, ...selectAll(r, sel)]) {
+          if (el === r && !selectAll({ children: [r] }, sel).includes(r)) continue;
+          if (!seen.has(el)) { seen.add(el); out.push(el); }
+        }
+      }
+      return out;
+    },
     addEventListener() {}, removeEventListener() {},
     execCommand() { return true; },
     _ids: byId,

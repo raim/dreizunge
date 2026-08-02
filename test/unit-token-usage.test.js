@@ -111,7 +111,7 @@ console.log('  addTokenUsage: cumulative topic totals, storyline bucket, per-typ
     [/addTokenUsage\(sl, _mTok, 'summary_qc'\)/g, 1, 'summary-QC → storyline'],
     [/addTokenUsage\(t, _mTok, 'story_qc'\)/g, 1, 'story-QC route → topic'],
     [/addTokenUsage\(tp, _sqTok, 'story_qc'\)/g, 1, 'story-QC sweep → topic'],
-    [/addTokenUsage\(tp, _lqTok, 'lesson_qc'\)/g, 1, 'lesson-QC sweep → topic'],
+    [/addTokenUsage\(_liveTopic\(\), _lqTok, 'lesson_qc'\)/g, 1, 'lesson-QC sweep → topic (v73_j: the LIVE topic)'],
     [/addTokenUsage\(saved, _alTok, 'add_lesson'\)/g, 1, 'add-lesson → topic'],
     [/addTokenUsage\(topic, _rcTok, 'recreate'\)/g, 1, 'recreate → per chapter'],
   ];
@@ -120,7 +120,9 @@ console.log('  addTokenUsage: cumulative topic totals, storyline bucket, per-typ
   }
   // The QC sweep persists accumulation even when everything came back clean.
   const runQc = ext(server, '_runQc');
-  assert.ok(/if \(_lqTok\.promptTokens \+ _lqTok\.completionTokens > 0\) \{ addTokenUsage\(tp, _lqTok, 'lesson_qc'\); touched = true; \}/.test(runQc),
+  // v73_j: the attribution target became `_liveTopic()` — QC no longer writes through the topic
+  // reference it captured at the start of the pass, because a concurrent edit can replace it.
+  assert.ok(/if \(_lqTok\.promptTokens \+ _lqTok\.completionTokens > 0\) \{ addTokenUsage\(_liveTopic\(\), _lqTok, 'lesson_qc'\); touched = true; \}/.test(runQc),
     'nonzero QC tokens mark the topic touched → an all-clean sweep still persists the accounting');
   // The main generation pipeline is NOT wrapped (it self-accumulates; wrapping = double count).
   const gen = server.slice(server.indexOf('let totalPromptTokens = 0, totalCompletionTokens = 0;', server.indexOf('async function generateStory')));

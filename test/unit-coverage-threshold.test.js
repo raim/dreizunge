@@ -47,13 +47,100 @@ console.log('  clean card: trophy/%-pill/stat panels + dead CSS/JS removed: OK')
     'a %-solved bar (correct-answer coverage) is appended below the chapter bars');
   assert.ok(/const _mark = \(opts && Number\.isFinite\(opts\.markPct\)\)/.test(prog),
     'and the pass mark is applied to THAT bar — %-solved is what the threshold measures');
-  // The mark replaced a sentence. Both halves asserted: the drawing exists, the sentence is gone.
-  assert.ok(/left:\$\{markPct\}%/.test(html), 'the mark is positioned at the threshold percentage');
   const scAll = ext(html, 'showComplete');
   assert.ok(!/complete\.below_threshold/.test(scAll),
     'the below-threshold sentence is gone from the card — the bar says it now');
-  assert.ok(/const _showMark = !_teacher && !lesson\._drill && _threshPct > 0 && _threshPct < 100;/.test(scAll),
-    'the mark is shown whenever one applies, not only once the learner has failed to reach it');
+
+  // v73_d — WAS TWO SOURCE PINS, and one of them guarded the bug.
+  //
+  // This block used to assert the literal line
+  //   `const _showMark = … && _threshPct > 0 && _threshPct < 100;`
+  // under the message "the mark is shown whenever one applies". Those disagree: `< 100` is exactly
+  // what hid the mark when a story-gated lesson raised the requirement to 100%, and rowsHtml then
+  // painted the bar green because its fill colour was tied to whether a mark existed. A learner
+  // reported a green %-solved bar above a locked Next. The guard could not have caught it — it was
+  // pinning the defect's own spelling.
+  //
+  // Driven through the real card instead, and readable at all only because lib-dom parses
+  // innerHTML as of v73_c.
+  {
+    const { loadClient } = require('./lib-dom');
+    const store = JSON.parse(fs.readFileSync(path.join(ROOT, 'lessons.json'), 'utf8'));
+    const LANGS = JSON.parse(fs.readFileSync(path.join(ROOT, 'languages.json'), 'utf8'));
+    const UIj = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
+    // A chapter with a story-gated lesson is the scenario under test; assert one was found, or this
+    // section silently becomes a no-op on a new corpus (the v71_r "guard a guard" rule).
+    const topic = (store.topics || []).find(t => (t.lessons || []).some(l => l && l.type === 'comprehension')
+                                             && (t.lessons || []).length >= 3);
+    assert.ok(topic, 'the corpus has a chapter with a story-gated lesson to exercise');
+    const compIdx = topic.lessons.findIndex(l => l && l.type === 'comprehension');
+
+    const C = loadClient({ quiet: true });
+    C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UIj.en)}; true;`, 'seed-static');
+    C.run(`
+      APP.savedList = ${JSON.stringify((store.topics || []).map(t => ({ id: t.id, topic: t.topic, lang: t.lang, srcLang: t.srcLang, lessons: t.lessons })))};
+      APP.storylines = ${JSON.stringify(store.storylines || [])};
+      APP.lessonData = ${JSON.stringify(topic)};
+      APP.lang = ${JSON.stringify(topic.lang)}; APP.srcLang = ${JSON.stringify(topic.srcLang)};
+      APP.info = { backend:'none', canGenerate:false, version:'smoke', coverageThreshold:0.8 };
+      APP.progress = { completed:{}, solved:{} };
+      APP._teacherMode = false;
+      APP.cur = { lessonIdx:${compIdx}, exercises:[], cur:0, correct:3, total:4,
+                  mistakes:1, hearts:3, streak:2, bestStreak:2 };
+      showComplete(); true;`, 'render-card');
+
+    // Read the bars back as structure, not as markup.
+    const rows = C.document.getElementById('comp-progress').querySelectorAll('div')
+      .filter(d => d.style.margin === '6px 0')
+      .map(d => {
+        const spans = d.querySelectorAll('span');
+        const track = d.querySelectorAll('div').find(x => x.style.position === 'relative');
+        const kids  = track ? track.querySelectorAll('div') : [];
+        const markEl = kids.find(k => k.style.position === 'absolute');
+        return {
+          label: spans[0] ? spans[0].textContent.trim() : '',
+          count: spans[1] ? spans[1].textContent.trim() : '',
+          fill:  kids[0] ? kids[0].style.background : '',
+          mark:  markEl ? (markEl.getAttribute('title') || '') : null,
+          markAtRightEdge: !!(markEl && markEl.style.right === '0'),
+        };
+      });
+    assert.ok(rows.length >= 3, `the card renders the bars (got ${rows.length})`);
+
+    // v73_f (user-reported): the chapter row said "This chapter" / "Dieses Kapitel". It now names
+    // the chapter, which is what a learner arriving from a storyline needs to know.
+    const genericLabel = UIj.en['complete.chapter_progress'];
+    assert.ok(!rows.some(r => r.label === genericLabel),
+      `no row is labelled with the generic "${genericLabel}" — the chapter names itself`);
+    assert.ok(rows.some(r => r.label === topic.topic
+                          || (topic.topic.length > 34 && r.label === topic.topic.slice(0, 33) + '…')),
+      'the chapter row carries the chapter name');
+
+    const solvedRow = rows.find(r => r.label === UIj.en['complete.solved']);
+    assert.ok(solvedRow, 'the %-solved row is rendered');
+    // Ask the CLIENT what this chapter's mark is rather than hardcoding one: the corpus is not a
+    // constant and per-topic targets exist (the first pick here carries 50%, not the global 80%).
+    const chapterPct = Math.round(Number(C.run(`_coverageTarget()`, 'target')) * 100);
+    assert.ok(chapterPct > 0 && chapterPct < 100,
+      `the fixture chapter has a partial pass mark to distinguish from 100% (got ${chapterPct}%)`);
+    // THE REGRESSION: the story gate must not stamp its 100% onto the TOPIC bar. That would tell
+    // the learner they need 100% of the chapter, which is not the rule.
+    assert.strictEqual(solvedRow.mark, `${chapterPct}%`,
+      'the topic bar carries the CHAPTER pass mark, not the gated lesson\'s 100%');
+    // …and a mark being in force must colour the bar. Green-while-locked was the reported symptom.
+    assert.strictEqual(solvedRow.fill, 'var(--red)',
+      'below its mark the bar is red — fill follows the mark, not merely whether one was passed');
+
+    // The blocker gets its own row at its own mark, so the card explains why Next is locked.
+    const gateRow = rows.find(r => r.mark === '100%');
+    assert.ok(gateRow, 'the story-gated lesson gets its own row showing its 100% requirement');
+    assert.strictEqual(gateRow.label, (topic.lessons[compIdx].title || '').trim(),
+      'labelled with the lesson the learner just played (its own title — no new UI string)');
+    assert.ok(gateRow.markAtRightEdge,
+      'a 100% mark is drawn INSIDE the track — at left:100% it rendered off the end, so the '
+      + 'strictest requirement was the one that could not be seen');
+    console.log(`  card bars: topic mark ${solvedRow.mark} (${solvedRow.fill}), gate row "${gateRow.label}" at ${gateRow.mark}`);
+  }
   const ui = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
   assert.ok(ui.en['complete.solved'], 'ui.json en has complete.solved');
   // Reuses the existing story/chapter labels (per the request).
@@ -122,7 +209,11 @@ console.log('  _coverageTarget precedence: chapter > storyline > global > 80%: O
 // ── 5. Card: below-threshold offers the drill + a hint ────────────────────────
 {
   const sc = ext(html, 'showComplete');
-  assert.ok(/let _belowThreshold = false, _threshPct = 100;/.test(sc), 'card computes below-threshold state');
+  // v73_d: was pinned to the whole declaration line, which broke when the gate gained
+  // `_topicMarkPct` / `_markApplies` / `_lessonGate` — an edit that did not touch what this claim
+  // is about. Kept only as an existence check; that the card actually COMPUTES the state is proven
+  // behaviourally in section 2 above (red bar at the chapter mark, gate row at 100%).
+  assert.ok(/let _belowThreshold = false/.test(sc), 'card computes below-threshold state');
   // v70_l: no longer gated on the pass mark — offered whenever a drill round exists, which still
   // includes every below-threshold learner the v60.8 rule was written to protect.
   // v71_d: `!_nextIsDrill` dropped — Next can no longer be the drill, so it cannot double-offer.

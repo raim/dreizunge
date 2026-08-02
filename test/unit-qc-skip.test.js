@@ -65,7 +65,12 @@ console.log('  _clearLessonQcStamp: OK');
 let pairCalls = 0;
 let storyQcCalls = 0;
 const okChecker = async () => { pairCalls++; return { ok: true }; };       // always clean
+// v73_j: _runQc now resolves topics/lessons through `store` instead of holding references,
+// so the harness must provide one. Populated with whatever the test passes to runQc, so the
+// re-resolution finds the real objects rather than silently falling back.
+const _qcStore = { topics: [], schemaVersion: 30 };
 const stubs = {
+  store: _qcStore,
   OLLAMA_TRANSLATION_MODEL: 'stub',
   OLLAMA_QC_MODEL: 'qc-stub',
   jobStep: () => {}, jobDone: (id, d) => { stubs._last = d; }, _last: null,
@@ -87,9 +92,10 @@ const stubs = {
     changedSentences: 1, totalSentences: 3, changedRatio: 0.33, wordEditRatio: 0.05,
     meta: { type: 'story_qc', model: 'qc-stub' } }; },
 };
-const runQc = new Function(...Object.keys(stubs).filter(k => k !== '_last'),
+const _runQcRaw = new Function(...Object.keys(stubs).filter(k => k !== '_last'),
   'async ' + ext(server, '_runQc') + '\nreturn _runQc;')(
   ...Object.keys(stubs).filter(k => k !== '_last').map(k => stubs[k]));
+const runQc = (jobId, tps, opts) => { _qcStore.topics = tps; return _runQcRaw(jobId, tps, opts); };
 
 function freshTopic() {
   return { id: 't1', topic: 'T', lang: 'ar', srcLang: 'en',
@@ -143,9 +149,12 @@ function freshTopic() {
 
   // 6) A lesson that flags during a full pass is NOT stamped (so it keeps getting checked).
   const flagStub = { ...stubs, qcCheckPair: async () => ({ ok: false, sug: 'bad', field: 'source' }) };
-  const runQcFlag = new Function(...Object.keys(flagStub).filter(k => k !== '_last'),
+  const _runQcFlagRaw = new Function(...Object.keys(flagStub).filter(k => k !== '_last'),
     'async ' + ext(server, '_runQc') + '\nreturn _runQc;')(
     ...Object.keys(flagStub).filter(k => k !== '_last').map(k => flagStub[k]));
+  // Must register its topics too (v73_j): freshTopic() reuses the same id, so a stale _qcStore
+  // would resolve this run's writes onto the PREVIOUS topic object.
+  const runQcFlag = (jobId, tps, opts) => { _qcStore.topics = tps; return _runQcFlagRaw(jobId, tps, opts); };
   const tp2 = freshTopic();
   await runQcFlag('j6', [tp2], { lessonIdx: null, onlyFlagged: false });
   assert.ok(!tp2.lessons[0].qcAt, 'a lesson that produced a flag is never stamped clean');

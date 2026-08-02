@@ -5,14 +5,22 @@
 //
 // It now drives the REAL renderer and asserts the markup it produces.
 //
-// HARNESS LIMIT, stated rather than worked around: lib-dom's querySelectorAll matches TAG names
-// over the tree parsed from index.html, and does not parse innerHTML assigned at runtime. Since
-// renderLessonTypeChecks builds its checkboxes by setting innerHTML, the read-back path
-// (readArcTypeChecks → readLessonTypeChecks → .checked) is NOT reachable from this harness. What
-// is asserted here is everything up to that boundary: which inputs are emitted, which carry
-// `checked`, and that a language change relabels them. The read-back is covered structurally in
-// unit-arc-reinforce-types (both forms call it) and needs a browser to exercise for real — it is
-// on the owed browser-pass list.
+// v73_c — THE HARNESS LIMIT IS GONE. lib-dom now parses innerHTML, so the read-back path
+// (readArcTypeChecks → readLessonTypeChecks → .checked) runs headlessly and this file drives it.
+//
+// Two things the old note got wrong, worth recording because both are the same shape:
+//   • It said the read-back was "covered structurally in unit-arc-reinforce-types". It was not.
+//     That file asserted the CALL EXISTS IN THE SOURCE (`/renderLessonTypeChecks\(c, \{ cls: …/`),
+//     which is a claim about spelling, not behaviour. Each file pointed at the other and neither
+//     executed the path — so `readLessonTypeChecks` had no coverage at all while appearing to have
+//     some from both directions.
+//   • It put the read-back on the owed BROWSER-PASS list as unverifiable here. It was verifiable
+//     the moment the harness could parse markup; the limit was in the harness, not in the feature.
+//
+// Values and ticks are now read off parsed nodes rather than matched out of the markup string,
+// which also removes a quiet fragility: the old `checkedValues` regex required `checked` to follow
+// `value="…"` with exactly one space run, so reordering the attributes would have silently returned
+// an empty list and passed the "default is ['review']" assertion only by luck of emission order.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -27,8 +35,11 @@ C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; 
 const htmlOf = (id) => C.run(`(document.getElementById(${JSON.stringify(id)}) || {}).innerHTML || ''`);
 const reset  = (id) => C.run(`(() => { const c = document.getElementById(${JSON.stringify(id)});
   if (c) { c.dataset.rendered = ''; c.innerHTML = ''; } return !!c; })()`);
-const values = (h) => [...h.matchAll(/value="([a-z_]+)"/g)].map(m => m[1]);
-const checkedValues = (h) => [...h.matchAll(/value="([a-z_]+)"\s+checked/g)].map(m => m[1]);
+// v73_c: read the real checkboxes. `boxes` deliberately queries by the CLASS the product's own
+// reader uses, so a class rename fails here as well as breaking the app.
+const boxes = (id) => C.document.getElementById(id).querySelectorAll('.arc-lt-check');
+const values = (id) => boxes(id).map(b => b.value);
+const checkedValues = (id) => boxes(id).filter(b => b.checked).map(b => b.value);
 
 // ── 1. Both containers exist in the shipped markup ─────────────────────────
 // Not created by the test: if a form loses its container, the picker silently renders nowhere and
@@ -42,15 +53,17 @@ for (const id of ['pdf-arc-types', 'gen-arc-types']) {
 {
   reset('gen-arc-types');
   C.run(`renderArcTypeChecks('gen-arc-types')`);
-  const h = htmlOf('gen-arc-types');
-  const vals = values(h);
+  const vals = values('gen-arc-types');
   assert.ok(vals.length >= 8, `every offered lesson type gets a checkbox (${vals.length}: ${vals.join(',')})`);
   assert.ok(vals.includes('comprehension'),
     'including comprehension — added in v71_l and, before v71_u, unreachable from a book at all');
-  assert.deepStrictEqual(checkedValues(h), ['review'],
+  assert.deepStrictEqual(checkedValues('gen-arc-types'), ['review'],
     "the default tick is the old 'vocab' arc — one review lesson — so an untouched form behaves as before");
-  assert.ok(/class="arc-lt-check"/.test(h), 'the checkboxes carry the class the reader looks for');
-  console.log(`  render: ${vals.length} types, default ticked ${JSON.stringify(checkedValues(h))}`);
+  // The class is asserted by `boxes()` finding anything at all — it queries by that exact class.
+  // Read through the PRODUCT's reader too, so renderer and reader are proven to agree.
+  assert.deepStrictEqual(JSON.parse(C.run(`JSON.stringify(readArcTypeChecks('gen-arc-types'))`)), ['review'],
+    'and the form\'s own reader returns that same default');
+  console.log(`  render: ${vals.length} types, default ticked ${JSON.stringify(checkedValues('gen-arc-types'))}`);
 }
 
 // ── 3. A populated picker is not re-rendered ───────────────────────────────
@@ -71,7 +84,7 @@ for (const id of ['pdf-arc-types', 'gen-arc-types']) {
 {
   reset('pdf-arc-types');
   C.run(`renderArcTypeChecks('pdf-arc-types', { checked: ['synonyms','math'] })`);
-  assert.deepStrictEqual(checkedValues(htmlOf('pdf-arc-types')), ['synonyms', 'math'],
+  assert.deepStrictEqual(checkedValues('pdf-arc-types'), ['synonyms', 'math'],
     'a supplied selection is what gets ticked');
 }
 
@@ -85,13 +98,13 @@ if (UI.de) {
     ['pdf-arc-types','gen-arc-types'].forEach(id => {
       const c = document.getElementById(id);
       if (!c || c.dataset.rendered !== '1') return;
-      const keep = ${JSON.stringify(['synonyms', 'math'])};   // stands in for readArcTypeChecks (see harness note)
+      const keep = readArcTypeChecks(id);   // v73_c: the REAL reader, no longer a hardcoded stand-in
       c.dataset.rendered = '';
       renderArcTypeChecks(id, { checked: keep });
     }); true;`, 'relabel');
   const after = htmlOf('pdf-arc-types');
-  assert.deepStrictEqual(checkedValues(after), ['synonyms', 'math'],
-    'the selection survives a language change');
+  assert.deepStrictEqual(checkedValues('pdf-arc-types'), ['synonyms', 'math'],
+    'the selection survives a language change — carried by readArcTypeChecks, not by a test constant');
   const deLabel = (after.match(/<span>[^<]*<\/span>/) || [''])[0];
   assert.notStrictEqual(deLabel, enLabel, 'and the labels followed the new language');
   C.run(`UI_STRINGS = ${JSON.stringify(UI.en)}; true;`);

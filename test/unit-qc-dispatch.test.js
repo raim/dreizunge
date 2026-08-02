@@ -31,7 +31,12 @@ console.log('  _qcParseOkOrSug: OK detection, label strip, truncation: OK');
 // Rebuild _runQc with all of its free identifiers stubbed. We make each checker return a
 // deterministic "not ok" so we can assert which items received item.qc, proving dispatch.
 const calls = { pair: 0, cloze: 0, synset: 0 };
+// v73_j: _runQc now resolves topics/lessons through `store` instead of holding references,
+// so the harness must provide one. Populated with whatever the test passes to runQc, so the
+// re-resolution finds the real objects rather than silently falling back.
+const _qcStore = { topics: [], schemaVersion: 30 };
 const stubs = {
+  store: _qcStore,
   langName: x => x,
   OLLAMA_TRANSLATION_MODEL: 'stub',
   OLLAMA_QC_MODEL: 'qc-stub',
@@ -54,7 +59,8 @@ const stubs = {
     return arrays.some(a => Array.isArray(a) && a.some(x => x && x.qc));
   },
 };
-const runQc = new Function(...Object.keys(stubs), 'async ' + ext(server, '_runQc') + '\nreturn _runQc;')(...Object.values(stubs));
+const _runQcRaw = new Function(...Object.keys(stubs), 'async ' + ext(server, '_runQc') + '\nreturn _runQc;')(...Object.values(stubs));
+const runQc = (jobId, tps, opts) => { _qcStore.topics = tps; return _runQcRaw(jobId, tps, opts); };
 
 const topics = [{
   id: 't1', topic: 'T', lang: 'ar', srcLang: 'en',

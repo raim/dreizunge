@@ -13,7 +13,10 @@ function ext(name) {
   return src.slice(at, i);
 }
 function build(qcModel, pairRes) {
+  // v73_j: _runQc resolves through `store` now; give it one tracking the topics under test.
+  const _qcStore = { topics: [], schemaVersion: 30 };
   const stubs = {
+    store: _qcStore,
     OLLAMA_QC_MODEL: qcModel, jobStep: () => {}, jobDone: () => {}, upsert: () => {},
     // v59 meter deps (accounting covered by unit-token-usage.test.js)
     meterLLMTokens: async (fn) => ({ result: await fn(), tokens: { promptTokens: 0, completionTokens: 0 } }),
@@ -23,7 +26,8 @@ function build(qcModel, pairRes) {
     qcCheckCloze: async () => ({ ok: true }), qcCheckSynonymSet: async () => ({ ok: true }),
     _lessonHasOpenQcFlag: (ls) => [ls.vocab, ls.sentences].some(a => Array.isArray(a) && a.some(x => x && x.qc)),
   };
-  return new Function(...Object.keys(stubs), ext('_runQc') + '\nreturn _runQc;')(...Object.values(stubs));
+  const _raw = new Function(...Object.keys(stubs), ext('_runQc') + '\nreturn _runQc;')(...Object.values(stubs));
+  return (jobId, tps, opts) => { _qcStore.topics = tps; return _raw(jobId, tps, opts); };
 }
 const topics = [{ id: 't', topic: 'T', lang: 'lb', srcLang: 'de',
   lessons: [{ type: 'standard', vocab: [{ target: 'Haus', source: 'Haus' }], sentences: [] }] }];

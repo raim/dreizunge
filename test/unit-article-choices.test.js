@@ -70,9 +70,16 @@ C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; 
 
 // ── 3. Corpus-wide: strictly better than the table it replaced ─────────────
 // The number is the argument. If a future change drops it, this fails with the count.
+//
+// v73_f — the metric is now split by LANGUAGE, because "more lessons build an article MCQ" stopped
+// being the right thing to maximise. Six of the 19 were English, where the exercise has no answer:
+// "which article fits `dream`?" offering a / an / the, when both "a dream" and "the dream" are
+// correct. Those six were counted as a win by the old assertion. So the claim is now two claims —
+// the table's removal must not cost coverage where the question is ANSWERABLE, and it must cost
+// exactly all of it where the question is not.
 {
   C.run(`APP.savedList = ${JSON.stringify(store.topics)}; true;`, 'seed-corpus');
-  let built = 0, none = 0;
+  const byLang = {};      // lang -> { built, none }
   for (const t of store.topics) {
     const ls = t.lessons || [];
     for (let i = 0; i < ls.length; i++) {
@@ -89,16 +96,116 @@ C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; 
       const n = C.run(`(function(){ APP._derivingUniverse = true;
         const e = buildExercises(${i}); APP._derivingUniverse = false;
         return e.filter(x => x.type === 'mcq_article').length; })()`);
-      if (n > 0) built++; else none++;
+      const rec = byLang[t.lang] = byLang[t.lang] || { built: 0, none: 0 };
+      if (n > 0) rec.built++; else rec.none++;
     }
   }
-  assert.ok(built + none >= 15, `the corpus really contains article lessons to measure (${built + none})`);
-  assert.ok(built >= 19,
-    `article MCQs build in at least 19 lessons (got ${built}); the removed table managed 15`);
-  assert.ok(none <= 1,
-    `at most one lesson builds none — Hebrew, which has a single definite article and no ` +
-    `indefinite, so there is genuinely nothing to draw a distractor from (got ${none})`);
-  console.log(`  corpus: article MCQs build in ${built} lesson(s), none in ${none} (table managed 15)`);
+  const total = Object.values(byLang).reduce((a, r) => a + r.built + r.none, 0);
+  const built = Object.values(byLang).reduce((a, r) => a + r.built, 0);
+  assert.ok(total >= 15, `the corpus really contains article lessons to measure (${total})`);
+
+  // Where the article IS predictable from the noun, coverage must be complete — this is the v71_x
+  // win, and the language the table never covered at all (it held de/fr/it/es/pt/nl/ru only).
+  for (const lang of ['de', 'it', 'fr']) {
+    const r = byLang[lang];
+    if (!r) continue;
+    assert.strictEqual(r.none, 0,
+      `every ${lang} article lesson still builds an MCQ (${r.built} built, ${r.none} did not)`);
+  }
+  assert.ok(built >= 13,
+    `article MCQs still build in at least 13 lessons (got ${built}); the removed table managed 15 ` +
+    `across ALL languages, of which the English ones were unanswerable`);
+
+  // …and where it is NOT predictable, none must build. This is the user-reported defect.
+  const en = byLang.en;
+  assert.ok(en && en.built + en.none >= 3,
+    'the corpus still has English article lessons to prove the suppression on');
+  assert.strictEqual(en.built, 0,
+    'no English lesson builds an article MCQ — a/the is a definiteness choice the sentence makes, ' +
+    'not a property of the noun, so there is no answer to mark correct');
+
+  const shape = Object.entries(byLang).map(([l, r]) => `${l} ${r.built}/${r.built + r.none}`).join(', ');
+  console.log(`  corpus: article MCQs build where answerable — ${shape}`);
+}
+
+// ── 4. Plural distractors are drawn, not manufactured (v73_h) ──────────────
+// The builder used to pad a short distractor list with `x.plural + 'e'` — a German pluralisation
+// fact (Hund → Hunde) sitting in a language-neutral builder. In English it produced "bookse": a
+// non-word, rejectable on sight, so the padding made the question EASIER than a real distractor
+// would. Exactly the ARTICLE_CHOICES defect one function further down, and it survived v71_x
+// because that pass was looking for a table and this was an expression.
+{
+  const seenChoices = [];
+  let built = 0;
+  for (const t of store.topics) {
+    const ls = t.lessons || [];
+    for (const L of ls) {
+      if (!L || L.type !== 'grammar') continue;
+      const withPl = (L.grammar || []).filter(g => g && g.plural);
+      if (!withPl.length) continue;
+      C.run(`APP.lessonData = ${JSON.stringify(t)}; APP.lang = ${JSON.stringify(t.lang)};
+             APP.srcLang = ${JSON.stringify(t.srcLang)}; true;`);
+      const exs = JSON.parse(C.run(
+        `JSON.stringify(buildGrammarExercises(${JSON.stringify(L)}).filter(e => e.type === 'mcq_plural'))`));
+      exs.forEach(e => { built++; seenChoices.push({ lang: t.lang, correct: e.correct, choices: e.choices }); });
+    }
+  }
+  assert.ok(built >= 10, `the corpus builds plural MCQs to inspect (${built})`);
+
+  // Every distractor must be a plural that EXISTS somewhere in the corpus for that language. A
+  // manufactured one cannot satisfy this, which is the whole assertion.
+  const realPlurals = {};
+  for (const t of store.topics) {
+    for (const L of t.lessons || []) {
+      if (!L || L.type !== 'grammar') continue;
+      for (const g of L.grammar || []) {
+        if (g && g.plural) (realPlurals[t.lang] = realPlurals[t.lang] || new Set()).add(g.plural);
+      }
+    }
+  }
+  const invented = [];
+  for (const { lang, correct, choices } of seenChoices) {
+    for (const c of choices) {
+      if (c === correct) continue;
+      if (!(realPlurals[lang] || new Set()).has(c)) invented.push(`${lang}: "${c}"`);
+    }
+  }
+  assert.deepStrictEqual(invented.slice(0, 5), [],
+    'every plural distractor is a real plural from the corpus, not a form the builder invented');
+
+  // The correct answer must not also arrive as a distractor. It can: a different item may carry the
+  // same plural, and the corpus draw would then offer it twice — two identical options, one of
+  // which is right, which is a broken question rather than a hard one.
+  const dupes = seenChoices
+    .filter(s => new Set(s.choices).size !== s.choices.length)
+    .map(s => `${s.lang}: ${JSON.stringify(s.choices)}`);
+  assert.deepStrictEqual(dupes.slice(0, 3), [],
+    'no plural MCQ offers the same option twice');
+  const missing = seenChoices.filter(s => !s.choices.includes(s.correct));
+  assert.strictEqual(missing.length, 0, 'and the correct answer is always among the options');
+
+  // Asserted on the helper directly. The corpus draw only fires for the handful of lessons holding
+  // fewer than three plurals of their own, so relying on it to surface a leaked correct answer
+  // makes the guarantee hostage to which chapters happen to be in lessons.json.
+  {
+    const probe = { topic: 'PluralProbe', lang: 'de', srcLang: 'en', lessons: [{ id: 'p1', type: 'grammar',
+      grammar: [ { target: 'Hund', plural: 'Hunde' }, { target: 'Katze', plural: 'Katzen' },
+                 { target: 'Rüde', plural: 'Hunde' } ] }] };
+    C.run(`APP.lessonData = ${JSON.stringify(probe)}; APP.lang='de'; APP.srcLang='en';
+           APP.savedList = ${JSON.stringify([probe])}; true;`, 'seed-plural-probe');
+    const got = C.run(`_pluralChoicesFor('de', APP.lessonData.lessons[0].grammar, 'Hunde')`);
+    assert.ok(!got.includes('Hunde'),
+      'the excluded plural never comes back as a distractor — two nouns sharing one plural is real ' +
+      '(der/die Angestellte), so this is not a hypothetical');
+    assert.ok(got.includes('Katzen'), 'while the others still do');
+  }
+
+  // …and the specific mechanism is gone from the source, because a corpus that happens to contain
+  // the padded form would let the check above pass while the defect remained.
+  const grammarFn = html.slice(html.indexOf('function buildGrammarExercises('));
+  assert.ok(!/\.plural\s*\+\s*'e'/.test(grammarFn.slice(0, grammarFn.indexOf('\n}\n'))),
+    "the '+ e' padding is removed, not merely unreachable");
+  console.log(`  plural MCQs: ${built} built, ${seenChoices.reduce((a, s) => a + s.choices.length - 1, 0)} distractors, all real`);
 }
 
 console.log('unit-article-choices: ALL PASSED');

@@ -34,26 +34,61 @@ const server = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
     'the generate form sends its ticked types');
 }
 
-// 2. Both forms render from the ONE shared list.
+// 2 + 3. RUN both pickers and read them back (v73_c).
+//
+// These two sections used to be pure source regexes — `/renderLessonTypeChecks\(c, \{ cls: …/` and
+// `/checked: \['review'\]/`. Both were pins on how the code is WRITTEN: reformatting the call broke
+// them, and neither could have noticed the picker rendering nothing at all. They are now driven
+// through the real render → read round trip, which lib-dom could not do before it parsed innerHTML
+// (`readLessonTypeChecks` uses `querySelectorAll('.arc-lt-check')`, which returned [] until v73_c —
+// so any earlier attempt at this would have read an empty list and passed vacuously).
 {
-  assert.ok(/function renderArcTypeChecks\(containerId, opts\)\{/.test(html),
-    'there is one shared arc picker renderer');
-  assert.ok(/renderLessonTypeChecks\(c, \{ cls: 'arc-lt-check'/.test(html),
-    'and it delegates to the shared tick-list renderer, not a private copy');
-  for (const id of ['pdf-arc-types', 'gen-arc-types']) {
-    assert.ok(new RegExp(`renderArcTypeChecks\\('${id}'`).test(html), `${id} is rendered from it`);
-    assert.ok(new RegExp(`id="${id}"`).test(html), `${id} exists in the form markup`);
-  }
-  // Gone, not merely unused: a hidden <select> still carrying two options is exactly the second
-  // source of truth this file exists to forbid.
+  const { loadClient } = require('./lib-dom');
+  const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
+  const C = loadClient({ quiet: true });
+  C.run(`UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed-ui');
+
+  const valuesIn = (id) => C.document.getElementById(id).querySelectorAll('.arc-lt-check').map(b => b.value);
+
+  // Both forms render, and render the SAME options — the property that replaced the two drifting
+  // <select>s. Compared as rendered output, so a private copy in one form fails here even if it
+  // happens to be spelled identically in source.
+  C.run(`renderArcTypeChecks('gen-arc-types'); renderArcTypeChecks('pdf-arc-types'); true;`, 'render-both');
+  const genValues = valuesIn('gen-arc-types');
+  const pdfValues = valuesIn('pdf-arc-types');
+  assert.ok(genValues.length >= 8, `the generate form renders a real tick-list (${genValues.length} options)`);
+  assert.deepStrictEqual(genValues, pdfValues,
+    'both forms offer exactly the same lesson types — one shared list, no second source of truth');
+
+  // The default, read through the PRODUCT's own reader rather than pinned in source.
+  assert.deepStrictEqual(JSON.parse(C.run(`JSON.stringify(readArcTypeChecks('gen-arc-types'))`, 'read-default')),
+    ['review'],
+    "the picker defaults to ['review'] — the old 'vocab' arc, unchanged for anyone who ignores it");
+
+  // A tick is observable end-to-end: set the box the way a learner's click would, read it back
+  // through readArcTypeChecks. This is the join the 'wiring needs a run' rule is about — the
+  // renderer and the reader agreeing on the class name and the value attribute.
+  C.run(`document.getElementById('gen-arc-types').querySelectorAll('.arc-lt-check')
+           .filter(b => b.value === 'synonyms').forEach(b => { b.checked = true; }); true;`, 'tick');
+  assert.deepStrictEqual(JSON.parse(C.run(`JSON.stringify(readArcTypeChecks('gen-arc-types'))`, 'read-ticked')),
+    ['review', 'synonyms'],
+    'ticking a box is read back by the reader the form actually uses');
+
+  // Story-dependent types are hidden when there is no story — the same gate the add-lesson menu
+  // applies. Asserted on the rendered options, which is where the learner meets it.
+  C.run(`const c = document.getElementById('pdf-arc-types'); c.dataset.rendered = '';
+         renderLessonTypeChecks(c, { cls: 'arc-lt-check', checked: ['review'], hasStory: false }); true;`, 'no-story');
+  const noStory = valuesIn('pdf-arc-types');
+  assert.ok(!noStory.includes('comprehension') && !noStory.includes('error_hunt'),
+    'without a story the story-dependent types are not offered');
+  assert.ok(noStory.includes('standard') && noStory.includes('review'),
+    'while the story-free ones still are');
+
+  console.log(`  picker round trip: ${genValues.length} options, default ['review'], tick read back`);
+
+  // Still source-level, and correctly so: this asserts an ABSENCE, which no render can show.
   assert.ok(!/id="pdf-arc-mode"/.test(html) && !/id="gen-arc-mode"/.test(html),
     'the two-option arc <select>s are removed from both forms');
-}
-
-// 3. Default ticks preserve the previous behaviour.
-{
-  assert.ok(/checked: \['review'\]/.test(html),
-    "the picker defaults to ['review'] — the old 'vocab' arc, unchanged for anyone who ignores it");
 }
 
 // 4. The server accepts the list, and still understands old clients.

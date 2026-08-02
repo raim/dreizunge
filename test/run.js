@@ -39,6 +39,10 @@ run('lessons.json parses', 'node', ['-e', "require(path.join('" + ROOT.replace(/
 run('unit: id-based resolvers (item 2)', 'node', [path.join(__dirname, 'unit-resolvers.test.js')]);
 run('unit: arc-mode options (item 3)', 'node', [path.join(__dirname, 'unit-arc-options.test.js')]);
 run('unit: arc reinforce types (v46 bug #1)', 'node', [path.join(__dirname, 'unit-arc-reinforce-types.test.js')]);
+run('unit: story vocab highlighting respects word boundaries (v73_d)', 'node', [path.join(__dirname, 'unit-vocab-highlight.test.js')]);
+run('unit: completion-card lesson icon row (v73_g)', 'node', [path.join(__dirname, 'unit-comp-lesson-icons.test.js')]);
+run('unit: a round never asks one question twice (v73_i)', 'node', [path.join(__dirname, 'unit-exercise-qid-unique.test.js')]);
+run('unit: QC survives a chapter edited mid-pass (v73_j)', 'node', [path.join(__dirname, 'unit-qc-concurrent-edit.test.js')]);
 run('unit: pdf text-span selection', 'node', [path.join(__dirname, 'unit-pdf-selection.test.js')]);
 run('unit: conjugation grouping (item 4)', 'node', [path.join(__dirname, 'unit-conjugation-grouping.test.js')]);
 run('unit: grammar reinforce note (item 5)', 'node', [path.join(__dirname, 'unit-grammar-reinforce.test.js')]);
@@ -88,6 +92,7 @@ run('unit: intro learn-the-script course (v48)', 'node', [path.join(__dirname, '
 run('unit: QC dispatch — synonyms/word_forms (v48)', 'node', [path.join(__dirname, 'unit-qc-dispatch.test.js')]);
 run('unit: QC skip already-checked lessons (v49 bug 6)', 'node', [path.join(__dirname, 'unit-qc-skip.test.js')]);
 run('unit: static version derived from server APP_VERSION (v49)', 'node', [path.join(__dirname, 'unit-version-derivation.test.js')]);
+run('unit: docs/ built from current sources (v73_b)', 'node', [path.join(__dirname, 'unit-static-freshness.test.js')]);
 run('unit: runner reports its own check count (v70)', 'node', [path.join(__dirname, 'unit-run-summary.test.js')]);
 run('unit: translate-ui discovers every offered language (v53)', 'node', [path.join(__dirname, 'unit-translate-ui-langs.test.js')]);
 run('unit: llm.js race guard clears its timer (v53_c)', 'node', [path.join(__dirname, 'unit-llm-timeout-handle.test.js')]);
