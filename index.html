@@ -1193,6 +1193,11 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
   <!-- v71_m: the big status line now sits BELOW the progress it describes — the learner reads the
        bars, then the verdict ("Keep going!" / "Lesson complete!"), then the buttons. -->
   <div class="comp-title" id="comp-title">Lesson complete!</div>
+  <!-- v73_g: one icon per lesson in this chapter, above the play buttons. Clicking starts that
+       lesson directly, which is a deliberate alternative route to the mixed lesson rather than a
+       bypass of it — the coverage universe is shared, so questions reached this way count exactly
+       as they would through mixed. Story-gated lessons render greyed until the story unlocks. -->
+  <div id="comp-lessons" style="display:none;margin-top:12px"></div>
   <!-- v60: exactly two buttons. Next opens the next questions directly; Back returns to the
        storyline (deck), or the landing page for a solo chapter. -->
   <!-- v70_g: one action row. Icons only; the former button text is the tooltip. Secondary options
@@ -3321,11 +3326,50 @@ async function discardSummaryQc() {
 }
 
 // Splits on HTML tags, applies word-boundary match only to text segments.
+// v73_d (user-reported): highlighting had NO word boundaries — `new RegExp('('+pat+')','gi')` — so a
+// one-letter vocab entry lit up every occurrence of that letter inside every word. Reported on
+// tp_131653303, whose vocabulary contains `"I" = "ich"`: every `i` in the story was marked.
+//
+// A plain `\b` is the wrong repair twice over. It is ASCII-only, so it would silently stop
+// highlighting Cyrillic, Greek, Arabic and Hebrew; and applying any boundary at all would break the
+// scripts that do not separate words with spaces, where matching INSIDE a run is the correct
+// behaviour and the only behaviour available.
+//
+// So the boundary is applied per word, and only to words written in a script that uses spaces.
+// Two notes on why this is not the hand-authored table the design principle forbids:
+//   • `\p{L}\p{N}\p{M}` and `\p{Script=…}` are Unicode machinery, the same tool `v72_a` adopted for
+//     sentence segmentation.
+//   • Which scripts run words together is a TYPOGRAPHIC property of the writing system — how text
+//     is displayed and compared — not a judgement about whether content is correct. The codebase
+//     already relies on the same fact in `CJK_LANGS` and in this function's own furigana strip.
+const _UNSPACED_SCRIPTS = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Thai}\p{Script=Lao}\p{Script=Khmer}\p{Script=Myanmar}]/u;
 function _highlightVocabHtml(html, words) {
   if (!words.length) return html;
   const stripF = w => w.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[[^\]]+\]/g, '$1');
-  const pat = words.map(w => stripF(w).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-  const wordRe = new RegExp('(' + pat + ')', 'gi');
+  const esc = w => stripF(w).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const spaced = [], unspaced = [];
+  words.forEach(w => {
+    const e = esc(w);
+    if (!e) return;
+    (_UNSPACED_SCRIPTS.test(stripF(w)) ? unspaced : spaced).push(e);
+  });
+  // Longest-first so a phrase wins over one of its own words ("il forno a legna" before "forno").
+  const bySize = a => a.sort((x, y) => y.length - x.length);
+  const parts = [];
+  // \p{M} is in the guard as well as \p{L}\p{N}: a trailing combining mark means the match ended
+  // mid-grapheme, which is not a word edge.
+  if (spaced.length)   parts.push(`(?<![\\p{L}\\p{N}\\p{M}])(?:${bySize(spaced).join('|')})(?![\\p{L}\\p{N}\\p{M}])`);
+  if (unspaced.length) parts.push(`(?:${bySize(unspaced).join('|')})`);
+  if (!parts.length) return html;
+  let wordRe;
+  try {
+    wordRe = new RegExp('(' + parts.join('|') + ')', 'giu');
+  } catch (_) {
+    // A vocab entry that will not compile under /u must not take the whole story's highlighting
+    // with it. Degrade to the older, unguarded behaviour — the safe direction (harness convention).
+    try { wordRe = new RegExp('(' + [...spaced, ...unspaced].join('|') + ')', 'gi'); }
+    catch (_2) { return html; }
+  }
   // Split into alternating [text, tag, text, tag, ...] segments
   return html.replace(/(<[^>]+>)|([^<]+)/g, (_, tag, text) => {
     if (tag) return tag; // leave HTML tags untouched
@@ -10087,6 +10131,36 @@ function buildExercises(lessonIdx){
   if (!APP._teacherMode && Array.isArray(ex)) {
     ex = ex.filter(e => !_itemWithheld(_exFlagTarget(e)));
   }
+  // v73_i: two exercises that canonicalise to the same qid ARE the same question to the learner —
+  // the qid is the definition of "a distinct question", and the coverage universe is already keyed
+  // by it. Emitting both meant asking one question twice in a round while it could only ever be
+  // counted once.
+  //
+  // Found from a duplicate grammar item (`dream ← Traum` and `dream ← Träume`, the second a plural
+  // form the model emitted as a new noun), but it is NOT a grammar problem: measured over the
+  // corpus, 97 duplicate exercises across 36 lessons and 10 exercise types, `mcq_source_target`
+  // the largest at 37. Some are duplicate data; some are legitimate — der/die Angestellte share a
+  // plural, so "the plural of Angestellte?" is genuinely one question however good the model is.
+  // Either way the learner should be asked once.
+  //
+  // This does not repair the data and is not meant to: the duplicate row survives in the editor,
+  // the vocab chips and the distractor pools. It stops a duplicate becoming a duplicate QUESTION.
+  // Teacher mode included deliberately — a teacher reviewing a round should see what a learner
+  // would, and the withheld filter above is the only thing that legitimately differs by mode.
+  if (Array.isArray(ex)) {
+    const seen = new Set();
+    ex = ex.filter(e => {
+      // Mirrors qid()'s own resolution: a mixed lesson pools exercises from EARLIER lessons, which
+      // carry `_srcLessonIdx` and must key on that lesson's id — passing this lesson's id would
+      // collapse two genuinely different questions into one. Exercises without a canonical form
+      // (qid '') cannot be judged duplicates and are always kept.
+      const id = qid(e, (e && e._srcLessonIdx != null) ? null : (lesson && lesson.id));
+      if (!id) return true;
+      if (seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+  }
   return ex;
 }
 // Default builder: standard vocab/sentence lessons (listen MCQ, EN→target MCQ, word
@@ -11147,18 +11221,108 @@ function buildWordFormsExercises(lesson){
 //     article and no indefinite, a fact nobody had to write down.
 // The only case that loses is a language seen exactly once in the whole store, where there is
 // genuinely nothing to draw a distractor from and a fabricated one would be a guess.
-function _articleChoicesFor(lang, items) {
-  const seen = new Set();
-  const add = (a) => { if (a && typeof a === 'string') seen.add(a); };
-  (items || []).forEach(x => add(x && x.article));           // this lesson first
+// v73_f (user-reported): "Welches Artikelwort passt zu dream?" with choices a / the / an — where
+// both "a dream" and "the dream" are correct, so the question has no answer.
+//
+// The defect is not the choice table (v71_x removed that); it is that the exercise ASSUMES the
+// article is a property of the noun. That holds in German, where der/die/das follows gender, and
+// not in English, where a/the is a definiteness decision the sentence makes. The corpus proves it
+// without anyone writing a rule: 5 English nouns carry two different articles across lessons
+// (dog{a/the}, mouse{a/the}, application{an/the}), i.e. the lessons contradict each other.
+//
+// So: build the article MCQ only for languages where the corpus shows the article IS predictable
+// from the noun's gender class. Measured over the shipped corpus, dominant-article share per gender
+// class, elision collapsed: de 100%, it 100%, fr 100%, he 100%, **en 73%** — bimodal with a 27-point
+// gap and nothing inside it, the same shape that set IDENTICAL_MIN_RATIO in v53_g. The threshold
+// sits in the gap rather than being picked.
+//
+// No language knowledge: nothing here names a language or lists an article. It generalises to
+// languages nobody has tried — es/pt/nl/el follow gender and keep the exercise; languages with no
+// articles never emit the field; single-article languages (he, ar) already produce no distractors
+// and so build nothing, which is how Hebrew has always behaved.
+const ARTICLE_PREDICTABLE_MIN   = 0.9;   // dominant-article share per gender class
+const ARTICLE_PREDICTABLE_MIN_N = 6;     // below this there is no evidence either way — do not guess
+
+// Elision is TYPOGRAPHY, not grammar: an article ending in an apostrophe whose stem prefixes
+// another article of the same language is that article's elided form (it/fr `l'` for `la`/`le`).
+// Folding it is what takes Italian from 92% to 100% — without it, a real exercise is lost to a
+// punctuation variant. Derived from the observed set; no per-language entry.
+function _foldElision(counts) {
+  const out = new Map();
+  for (const [a, n] of counts) {
+    let key = a;
+    if (/['’\u02bc]$/.test(a)) {
+      const stem = a.slice(0, -1);
+      const host = [...counts.keys()].find(b => b !== a && !/['’\u02bc]$/.test(b) && b.startsWith(stem));
+      if (host) key = host;
+    }
+    out.set(key, (out.get(key) || 0) + n);
+  }
+  return out;
+}
+
+// ONE scan answering both questions — which articles exist for this language, and whether the
+// article is predictable from gender. They were separate reads of the same data, which is how a
+// second copy of a rule starts.
+// One walk over every grammar item for a language: this lesson first, then the open chapter, then
+// the rest of the library. v73_h extracted it because a THIRD copy was about to be written for
+// plural distractors — and a second copy of a rule that then drifts is this codebase's most
+// expensive recurring defect. `_articleStatsFor` and `_pluralChoicesFor` are now the same traversal
+// asking different questions of it.
+function _forEachGrammarItem(lang, items, fn) {
+  (items || []).forEach(x => { if (x) fn(x); });                    // this lesson first
   const scan = (lessons) => (lessons || []).forEach(L => {
-    ((L && L.grammar) || []).forEach(g => add(g && g.article));
+    ((L && L.grammar) || []).forEach(g => { if (g) fn(g); });
   });
   try {
     if (APP.lessonData && APP.lessonData.lang === lang) scan(APP.lessonData.lessons);
     (APP.savedList || []).forEach(t => { if (t && t.lang === lang) scan(t.lessons); });
   } catch(_) {}
+}
+
+// v73_h — plural MCQ distractors, drawn from the corpus rather than manufactured.
+//
+// The old padding was `x.plural + 'e'`: when a lesson held fewer than three other plurals it
+// invented the rest by appending -e to the ones it had. That is a German pluralisation fact
+// (Hund → Hunde) hardcoded into a language-neutral builder, and in English it produced "bookse" —
+// a non-word, so the distractor was rejectable on sight and the question got EASIER, not harder.
+// Same class as the ARTICLE_CHOICES table removed in v71_x, and it was not on the INTERNALS
+// violations list either.
+//
+// Measured before replacing: the padding fired in 1 of 20 grammar lessons, on 3 questions, and in
+// all 3 the corpus already held 3+ real plurals for that language. So this loses nothing.
+function _pluralChoicesFor(lang, items, exclude) {
+  const seen = new Set();
+  _forEachGrammarItem(lang, items, (g) => {
+    if (g.plural && typeof g.plural === 'string' && g.plural !== exclude) seen.add(g.plural);
+  });
   return [...seen];
+}
+
+function _articleStatsFor(lang, items) {
+  const seen = new Set();
+  const byGender = new Map();          // gender -> Map(article -> count)
+  let n = 0;
+  _forEachGrammarItem(lang, items, (x) => {
+    const a = x.article;
+    if (!a || typeof a !== 'string') return;
+    seen.add(a);
+    const key = String(x.gender == null ? '?' : x.gender).trim().toLowerCase() || '?';
+    const art = a.trim().toLowerCase();
+    if (!byGender.has(key)) byGender.set(key, new Map());
+    const m = byGender.get(key);
+    m.set(art, (m.get(art) || 0) + 1);
+    n++;
+  });
+
+  let dominant = 0;
+  for (const counts of byGender.values()) dominant += Math.max(...[..._foldElision(counts).values()]);
+  const predictable = n >= ARTICLE_PREDICTABLE_MIN_N && (dominant / n) >= ARTICLE_PREDICTABLE_MIN;
+  return { choices: [...seen], predictable, sampleSize: n };
+}
+
+function _articleChoicesFor(lang, items) {
+  return _articleStatsFor(lang, items).choices;
 }
 
 // v71_r (found by unit-replay-focus §8 firing against a new corpus): a builder that CAPS its
@@ -11191,11 +11355,15 @@ function buildGrammarExercises(lesson) {
   if (!items.length) return [];
   const lang = APP.lessonData?.lang || APP.lang;
   const exs = [];
+  // Hoisted: this scans the whole library, and it was being re-run once per item.
+  const _artStats = _articleStatsFor(lang, items);
 
   items.forEach((g, i) => {
-    // 1. MCQ — pick the correct article (skip if no articles for this language)
-    if (g.article) {
-      const langArticles = _articleChoicesFor(lang, items);
+    // 1. MCQ — pick the correct article. Skipped when this language has no articles to offer, and
+    // (v73_f) when the corpus shows the article is not predictable from the noun — in English both
+    // "a dream" and "the dream" are correct, so there is no answer to mark right.
+    if (g.article && _artStats.predictable) {
+      const langArticles = _artStats.choices;
       const wrong = shuffle(langArticles.filter(a => a !== g.article)).slice(0, 3);
       if (wrong.length >= 1) {
         const choices = shuffle([g.article, ...wrong]).slice(0, 4);
@@ -11205,10 +11373,23 @@ function buildGrammarExercises(lesson) {
     }
     // 2. MCQ — pick the correct plural
     if (g.plural) {
-      const wrongPl = shuffle(items.filter(x=>x.target!==g.target&&x.plural).map(x=>x.plural)).slice(0,3);
+      // Nearest source first: other items in THIS lesson, then (v73_h) the rest of the corpus for
+      // this language, rather than manufacturing a distractor by appending a letter.
+      //
+      // Deduplicated, and excluding the correct answer — both matter and neither used to happen.
+      // Two different nouns can share a plural ("der/die Angestellte"; two English nouns both
+      // pluralising to "notifications"), which put the SAME option in the list twice: seen in the
+      // shipped corpus as ["apps","notifications","users","notifications"]. A repeated option is a
+      // broken question, not a hard one. Pre-existing, found by the v73_h uniqueness assertion.
+      const pool = new Set(items.filter(x => x.target !== g.target && x.plural).map(x => x.plural));
+      pool.delete(g.plural);
+      const wrongPl = shuffle([...pool]).slice(0, 3);
       const padded  = wrongPl.length < 3
-        ? [...wrongPl, ...items.filter(x=>x.target!==g.target&&x.plural).map(x=>x.plural+'e').slice(0,3-wrongPl.length)]
+        ? [...wrongPl, ...shuffle(_pluralChoicesFor(lang, items, g.plural)
+              .filter(p => !wrongPl.includes(p))).slice(0, 3 - wrongPl.length)]
         : wrongPl;
+      // Still nothing to offer → no question. A one-option MCQ answers itself, and a lesson with a
+      // single plural in a library with no others is genuinely unaskable.
       if (padded.length >= 1) {
         const choices = shuffle([g.plural, ...padded]).slice(0, 4);
         exs.push({ type:'mcq_plural', target:g.target, source:g.source,
@@ -13710,11 +13891,24 @@ function showComplete(review){
   // and a review render left the lesson-set page showing. It also tested `d.topic`, but no `d`
   // exists in this function — swallowed by the try/catch, so the gate silently never fired.)
   const _teacher = !!APP._teacherMode;
-  let _belowThreshold = false, _threshPct = 100;
+  // v73_d: THREE values, because they answer three different questions and conflating them is what
+  // produced the reported bug (a green bar above a locked Next).
+  //   _threshPct    — the BINDING mark, i.e. what the learner must reach to unlock Next. Used by
+  //                   the locked-Next tooltip. The story gate can raise it to 100.
+  //   _topicMarkPct — the mark that belongs on the TOPIC %-solved bar. Never overwritten by the
+  //                   story gate: that gate is on ONE lesson, so drawing its 100% on the topic bar
+  //                   would tell the learner they need 100% of the whole chapter, which is false.
+  //   _markApplies  — whether ANY coverage gate is in force. Needed because _threshPct is
+  //                   initialised to 100 as a neutral value, so "100" alone cannot distinguish
+  //                   "must be perfect" from "no gate here" — which is exactly why the old
+  //                   `_threshPct < 100` display test hid the mark on the strictest requirement.
+  let _belowThreshold = false, _threshPct = 100, _topicMarkPct = 100, _markApplies = false;
+  let _lessonGate = null;   // { solved, total, title } when a story-gated lesson is the blocker
   try {
     if (!_teacher && !lesson._drill && APP.lessonData?.topic === topicKey){
       const tgt = _coverageTarget();
       _threshPct = Math.round(tgt * 100);
+      _topicMarkPct = _threshPct;
       // v69.1: a MIXED-driven set completes by coverage at ANY target (setComplete/
       // coverageComplete) — including the default 1.0 — so "below threshold" must fire there
       // too, or a one-pass mixed round with errors would just replay instead of routing into the
@@ -13725,6 +13919,8 @@ function showComplete(review){
       if (tgt < 1 || _mixedDrv){
         const cov = topicCoverage();
         _belowThreshold = cov.total > 0 && (cov.solved / cov.total) < tgt;
+        // The bar is only meaningful when there is a universe to measure against.
+        _markApplies = cov.total > 0;
       }
       // v71_s: a comprehension lesson has its OWN mark, and it is 100% — the chapter's pass mark
       // does not apply to understanding a text. Below it, Next locks and the remediation buttons
@@ -13740,7 +13936,13 @@ function showComplete(review){
       // recordLearnedFromLesson: a review render is not a play.
       if (!C._review && _isStoryGatedLesson(lesson)) {
         const _lc = lessonCoverage(C.lessonIdx);
-        if (_lc.total > 0 && _lc.solved < _lc.total) { _belowThreshold = true; _threshPct = 100; }
+        if (_lc.total > 0 && _lc.solved < _lc.total) {
+          _belowThreshold = true; _threshPct = 100;
+          // v73_d: surface this as its OWN row instead of stamping 100 onto the topic bar. The
+          // reported symptom was a topic bar reading 77/94 in green with Next locked, and no way
+          // to see that the blocker was one unfinished comprehension lesson, not the chapter.
+          _lessonGate = { solved: _lc.solved, total: _lc.total, title: lesson.title || '' };
+        }
       }
     }
   } catch(_) {}
@@ -13945,11 +14147,28 @@ function showComplete(review){
       // Shown whenever a mark applies, not only when the learner is under it — knowing where the
       // line is before you cross it is the useful part; a message that appears only on failure
       // teaches the rule at the moment it is least welcome.
-      const _showMark = !_teacher && !lesson._drill && _threshPct > 0 && _threshPct < 100;
-      let _ph = _compProgressHtml(topicKey, _slCtx, { skipStoryRow: true, markPct: _showMark ? _threshPct : null });
+      // v73_d: shown whenever a mark is IN FORCE. This used to test `_threshPct < 100`, which was
+      // written when 100 meant "no partial mark to show" — but v71_s later made 100% a real mark
+      // (a story-gated lesson must be fully solved), so the mark vanished exactly when the
+      // requirement was strictest, and rowsHtml then painted the bar green because its fill colour
+      // was tied to whether a mark existed. Green bar, locked Next: the reported bug.
+      const _showMark = !_teacher && !lesson._drill && _markApplies && _topicMarkPct > 0;
+      let _ph = _compProgressHtml(topicKey, _slCtx, { skipStoryRow: true,
+        markPct: _showMark ? _topicMarkPct : null, lessonGate: _lessonGate });
       _progEl.innerHTML = _ph;
     }
   }
+
+  // v73_g: the per-lesson icon row. Hidden rather than emptied when there is nothing to show, so
+  // the card does not carry a stray 12px gap above the buttons.
+  try {
+    const _liEl = document.getElementById('comp-lessons');
+    if (_liEl) {
+      const _lih = _compLessonIconsHtml();
+      _liEl.innerHTML = _lih;
+      _liEl.style.display = _lih ? 'block' : 'none';
+    }
+  } catch(_) {}
 
 
   try {
@@ -14482,6 +14701,46 @@ function _slProgressLabel(st){
   return st.doneSets + '/' + st.totalSets + (st.scorePct !== null ? ' · ' + st.scorePct + '%' : '');
 }
 
+// v73_g — one icon per lesson of the current chapter, rendered on the completion card above the
+// play buttons. Mirrors _lessonTypesDropdownHtml (the storyline row) so the same lesson wears the
+// same emoji in both places; that row stays non-clickable and is untouched here.
+//
+// Deliberately NOT shown: whether a lesson has already been played. The learner recognises it and
+// can back out, and a done-flag on this row would have to answer "done" for a mixed-driven chapter
+// where completion is coverage rather than per-lesson flags — the divergence v69_l and v71_w exist
+// to prevent. One rule for completion, and this row does not add a second.
+//
+// Counting: nothing to do. A chapter has ONE coverage universe spanning every question every lesson
+// can produce, so a question answered by starting a lesson from here lands in the same denominator
+// it would have through the mixed lesson. "It should count" is already a property of the model.
+function _compLessonIconsHtml(){
+  const d = APP.lessonData;
+  if (!d || !Array.isArray(d.lessons)) return '';
+  // A drill is a synthetic set with no chapter of its own, so the row would misrepresent what it
+  // links to — the same reason comp-hdr hides there.
+  const _cl = APP.cur && APP.cur.lesson;
+  if (_cl && _cl._drill) return '';
+  const unlocked = (() => { try { return storyUnlocked(d); } catch(_) { return true; } })();
+  const cells = [];
+  d.lessons.forEach((L, i) => {
+    if (!L || L._hidden || L.hidden) return;
+    const ty = L.type || 'standard';
+    // Story-gated lessons stay visible but unstartable until the story unlocks: an icon that
+    // launched a locked lesson would be one more dead end on the branch chain that has already
+    // produced three of them.
+    let locked = false;
+    try { locked = !unlocked && _isStoryGatedLesson(L); } catch(_) {}
+    const label = (L.title ? String(L.title) + ' — ' : '') + lessonTypeLabel(ty);
+    const base = `title="${escAttr(label)}" style="font-size:22px;line-height:1;padding:4px 6px;border-radius:8px;`;
+    cells.push(locked
+      ? `<span class="comp-lesson-ico locked" ${base}opacity:.35;cursor:default">${lessonTypeEmoji(ty)}</span>`
+      : `<span class="comp-lesson-ico" data-lesson-idx="${i}" ${base}cursor:pointer;background:var(--gray-light)"`
+        + ` onclick="startLesson(${i})">${lessonTypeEmoji(ty)}</span>`);
+  });
+  if (!cells.length) return '';
+  return '<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">' + cells.join('') + '</div>';
+}
+
 function _compProgressHtml(topicKey, slCtx, opts){
   // v71_m: `markPct` draws the pass mark ON the bar instead of spelling it out underneath. The
   // sentence it replaces ("You must solve 80% of this chapter…") stated a number the learner then
@@ -14492,7 +14751,10 @@ function _compProgressHtml(topicKey, slCtx, opts){
     const hasMark = Number.isFinite(markPct) && markPct > 0 && markPct <= 100;
     // Red until the mark is reached, green once it is: the bar itself carries pass/fail.
     const fill = hasMark && p < markPct ? 'var(--red)' : 'var(--green)';
-    const mark = hasMark ? `<div title="${escAttr(String(Math.round(markPct)) + '%')}" style="position:absolute;left:${markPct}%;top:-2px;width:2px;height:12px;background:var(--text);opacity:.75;border-radius:1px"></div>` : '';
+    // v73_d: a mark at exactly 100% sat at `left:100%` and rendered outside the 8px track, so the
+    // strictest requirement was also the one the learner could not see. Pull the last 2px inside.
+    const _mk = markPct >= 100 ? 'right:0' : `left:${markPct}%`;
+    const mark = hasMark ? `<div title="${escAttr(String(Math.round(markPct)) + '%')}" style="position:absolute;${_mk};top:-2px;width:2px;height:12px;background:var(--text);opacity:.75;border-radius:1px"></div>` : '';
     return `<div style="margin:6px 0">
       <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:var(--gray-dark);margin-bottom:3px">
         <span>${escHtml(label)}</span><span>${done}/${total}</span>
@@ -14509,15 +14771,27 @@ function _compProgressHtml(topicKey, slCtx, opts){
   const d = APP.lessonData;
   const done = APP.progress.completed?.[topicKey] || {};
   const counted = countedLessons(d);
+  // v73_f (user-reported): the row read "This chapter" / "Dieses Kapitel" — true but uninformative,
+  // especially on a card reached from a storyline where the learner wants to know WHICH chapter.
+  // Use the chapter's own name; the generic string stays as the fallback for a drill or any state
+  // where APP.lessonData is not the chapter being summarised. The name is DATA, so no new ui.json
+  // key and no translate pass — and it is already localised in the sense that matters, being
+  // written in the language the chapter was authored in.
+  // Truncated because the label shares a flex row with the `n/total` counter, which must not wrap.
+  const _chapterLabel = (() => {
+    const nm = (d && d.topic === topicKey && typeof d.topic === 'string') ? d.topic.trim() : '';
+    if (!nm) return t('complete.chapter_progress');
+    return nm.length > 34 ? nm.slice(0, 33) + '…' : nm;
+  })();
   const _mixedDriven = !APP._teacherMode && (d.lessons||[]).some(x => x && x.type === 'mixed' && !x._hidden)
                        && d.topic === topicKey;
   let html;
   if (_mixedDriven){
     let cov = null; try { cov = topicCoverage(); } catch(_) {}
-    if (cov && cov.total > 0) html = rowsHtml(t('complete.chapter_progress'), cov.solved, cov.total);
-    else html = rowsHtml(t('complete.chapter_progress'), counted.filter(L => done[L.id]).length, counted.length);
+    if (cov && cov.total > 0) html = rowsHtml(_chapterLabel, cov.solved, cov.total);
+    else html = rowsHtml(_chapterLabel, counted.filter(L => done[L.id]).length, counted.length);
   } else {
-    html = rowsHtml(t('complete.chapter_progress'), counted.filter(L => done[L.id]).length, counted.length);
+    html = rowsHtml(_chapterLabel, counted.filter(L => done[L.id]).length, counted.length);
   }
   // Along the storyline: chapters with all their counted work done / total chapters.
   if (slCtx){
@@ -14577,6 +14851,17 @@ function _compProgressHtml(topicKey, slCtx, opts){
       // The mark belongs on THIS bar: %-solved is what the threshold is measured against.
       const _mark = (opts && Number.isFinite(opts.markPct)) ? opts.markPct : null;
       html += rowsHtml(t('complete.solved'), cov.solved, cov.total, null, _mark);
+    }
+  } catch(_) {}
+  // v73_d: when a story-gated lesson is what is holding Next, say so on its own row at its own
+  // 100% mark. Labelled with the LESSON'S OWN TITLE — data, not a new UI string, so this needs no
+  // translation pass and names the thing the learner just played. Without this row the card showed
+  // a topic bar comfortably above its mark and a locked button, with nothing connecting the two.
+  try {
+    const lg = opts && opts.lessonGate;
+    if (lg && lg.total > 0) {
+      const _lbl = String(lg.title || '').trim() || t('complete.solved');
+      html += rowsHtml(_lbl.length > 40 ? _lbl.slice(0, 39) + '…' : _lbl, lg.solved, lg.total, null, 100);
     }
   } catch(_) {}
   return html;

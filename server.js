@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v73';
+const APP_VERSION  = 'v73_j';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -1917,6 +1917,30 @@ async function _runQc(jobId, topics, opts) {
     const tp = topics[ti];
     const lessons = tp.lessons || [];
     let touched = false;
+    // v73_j — DO NOT WRITE THROUGH THE CAPTURED REFERENCES.
+    //
+    // A QC pass is minutes long and full of awaits. Between them the editor can save the chapter,
+    // and that save REPLACES the lesson and item objects (`saved.lessons = lessons.map(...)`,
+    // building fresh objects via mergeFlaggable). The references captured above then point into an
+    // orphaned array: QC keeps writing flags to objects that are no longer in `store`, and
+    // `saveStore` serialises the new ones. The findings vanish silently.
+    //
+    // Observed, not theorised. A user's run reported 9 flags across two chapters and 5 survived:
+    // `Kälte und Paella` was edited WHILE QC was inside it and lost all 4 of its flags — including
+    // two raised AFTER the edit, because once the reference is orphaned everything the rest of that
+    // topic writes is lost. `Churros und Chaos` was edited just BEFORE QC reached it, so QC captured
+    // the fresh array and kept all 5. The chapter that lost everything still carried
+    // `tokensByType.lesson_qc: 4935` — token accounting is written to the TOPIC, which the editor
+    // mutates in place, so it survived while everything below the topic did not. That asymmetry is
+    // the fingerprint.
+    //
+    // The fix is to treat the store as the only truth and re-resolve by id at every write. Ids are
+    // stable across the editor's merge (it matches `origLessons.find(ls => ls.id === edited.id)`),
+    // and items keep their index (`edited.vocab.map((v, j) => mergeFlaggable(orig.vocab[j], v))`),
+    // so id + index is a durable locator where an object reference is not.
+    const _tpId = tp.id;
+    const _liveTopic = () =>
+      (_tpId && (store.topics || []).find(x => x && x.id === _tpId)) || tp;
     // v59: meter EVERY per-item QC call for this topic in one scope (the checkers discard
     // token counts internally; the _callLLM meter catches them all) and fold the total into
     // the chapter's cumulative stats. Nonzero tokens mark the topic touched so the
@@ -1925,6 +1949,15 @@ async function _runQc(jobId, topics, opts) {
       for (let li = 0; li < lessons.length; li++) {
         if (lessonIdx !== null && li !== lessonIdx) continue;
         const ls = lessons[li];
+        const _lsId = ls && ls.id;
+        // Falls back to the captured object only when the lesson is genuinely gone from the store
+        // (deleted mid-pass). There is then nowhere to write and the orphan write is inert, but it
+        // keeps the pass from throwing halfway through a chapter.
+        const _liveLesson = () => {
+          const t = _liveTopic();
+          const arr = (t && t.lessons) || [];
+          return (_lsId && arr.find(x => x && x.id === _lsId)) || arr[li] || ls;
+        };
         if (onlyFlagged && !_qcLessonUserFlagged(tp, ls)) continue;
         // Skip lessons already cleared by a prior full QC pass and untouched since. `ls.qcAt`
         // is stamped at the end of a clean full pass below and cleared on any content edit
@@ -1949,11 +1982,19 @@ async function _runQc(jobId, topics, opts) {
         // pass supplies its own identity, so its findings live beside the model's in `qcByModel`
         // and are cleared independently — a model saying "OK" must not silently erase a mechanical
         // finding, and vice versa. The multi-checker shape already existed for comparing models.
-        const _check = async (item, runner, label, by) => {
+        // `locate(liveLesson)` returns the live counterpart of `item` — see the v73_j note above.
+        // The runner still reads the CAPTURED item (its content is what was checked); only the
+        // WRITE is redirected to the live object, which is the whole point.
+        const _check = async (item, runner, label, by, locate) => {
           checked++;
           let res;
           try { res = await runner(); } catch (e) { return; }
           const model = by || OLLAMA_QC_MODEL;
+          // v73_j: resolve AFTER the await. Between the call and here the chapter may have been
+          // saved, replacing every item object in it.
+          const _live = (locate && locate(_liveLesson())) || item;
+          if (_live !== item) console.log(`    ↻ QC re-resolved an item edited mid-pass`);
+          item = _live;
           // Migrate a pre-collect single flag into the per-model map so it isn't lost.
           if (item.qc && !item.qcByModel && item.qc.by)
             item.qcByModel = { [item.qc.by]: { sug: item.qc.sug, field: item.qc.field, at: item.qc.at } };
@@ -1977,7 +2018,7 @@ async function _runQc(jobId, topics, opts) {
             }
           }
           if (checked % 5 === 0)
-            jobStep(jobId, `[${model}] QC ${tp.topic} — ${checked} checked, ${flagged} flagged…`);
+            jobStep(jobId, `[${model}] QC ${_liveTopic().topic} — ${checked} checked, ${flagged} flagged…`);
         };
         // Dispatch by lesson type. vocab/sentences exist on standard lessons; word_forms uses
         // `items` (cloze); synonyms uses `words` (related-word sets); grammar uses `grammar`
@@ -1987,30 +2028,38 @@ async function _runQc(jobId, topics, opts) {
         // generic vocab/sentences scan.
         let _lessonQcRan = true;
         if (ls.type === 'word_forms') {
-          for (const item of (ls.items || [])) {
+          for (let _i = 0; _i < (ls.items || []).length; _i++) {
+            const item = ls.items[_i];
             if (!item || !item.sentence) continue;
-            await _check(item, () => qcCheckCloze(item, tp.lang, tp.srcLang, item.userFlag?.comment), 'cloze');
+            await _check(item, () => qcCheckCloze(item, tp.lang, tp.srcLang, item.userFlag?.comment), 'cloze',
+                         undefined, (L) => (L.items || [])[_i]);
           }
         } else if (ls.type === 'synonyms') {
-          for (const entry of (ls.words || [])) {
+          for (let _i = 0; _i < (ls.words || []).length; _i++) {
+            const entry = ls.words[_i];
             if (!entry || !entry.base) continue;
-            await _check(entry, () => qcCheckSynonymSet(entry, tp.lang, tp.srcLang, entry.userFlag?.comment), 'synset');
+            await _check(entry, () => qcCheckSynonymSet(entry, tp.lang, tp.srcLang, entry.userFlag?.comment), 'synset',
+                         undefined, (L) => (L.words || [])[_i]);
           }
         } else if (ls.type === 'grammar') {
           // Grammar lessons teach a noun with its article/plural; the target↔source translation
           // is the checkable pair (article/plural correctness is a separate, morphology-specific
           // check left for a future dedicated prompt).
-          for (const g of (ls.grammar || [])) {
+          for (let _i = 0; _i < (ls.grammar || []).length; _i++) {
+            const g = ls.grammar[_i];
             if (!g || !g.target || !g.source) continue;
-            await _check(g, () => qcCheckPair(g.target, g.source, tp.lang, tp.srcLang, g.userFlag?.comment), 'grammar');
+            await _check(g, () => qcCheckPair(g.target, g.source, tp.lang, tp.srcLang, g.userFlag?.comment), 'grammar',
+                         undefined, (L) => (L.grammar || [])[_i]);
           }
         } else if (ls.type === 'conjugation') {
           // Conjugation lessons carry an infinitive (target verb) + its source translation; QC the
           // translation pair. The per-form morphology is grammatical, not a translation, so it's
           // out of scope here (a dedicated conjugation-correctness prompt is future work).
-          for (const c of (ls.conjugations || [])) {
+          for (let _i = 0; _i < (ls.conjugations || []).length; _i++) {
+            const c = ls.conjugations[_i];
             if (!c || !c.infinitive || !c.source) continue;
-            await _check(c, () => qcCheckPair(c.infinitive, c.source, tp.lang, tp.srcLang, c.userFlag?.comment), 'conjug');
+            await _check(c, () => qcCheckPair(c.infinitive, c.source, tp.lang, tp.srcLang, c.userFlag?.comment), 'conjug',
+                         undefined, (L) => (L.conjugations || [])[_i]);
           }
         } else if (ls.type === 'intro_script') {
           // curated letter table — verified by humans (per-letter flag/star/edit), not the LLM.
@@ -2025,15 +2074,20 @@ async function _runQc(jobId, topics, opts) {
             const arr = ls[key];
             if (!Array.isArray(arr)) continue;
             const lessonIsDialect = !!ls._dialect;
-            for (const item of arr) {
+            for (let _i = 0; _i < arr.length; _i++) {
+              const item = arr[_i];
+              // v73_j: same array KEY and same INDEX in the live lesson. The editor's merge is
+              // index-aligned (`edited.vocab.map((v, j) => mergeFlaggable(orig.vocab[j], v))`), so
+              // this survives a save that rebuilt every object in the chapter.
+              const _at = (L) => (L[key] || [])[_i];
               if (!item || !item.target || !item.source) continue;
               // Dialect items get sourceOnly QC (verify gloss, never rewrite the dialect token) —
               // EXCEPT aiGenerated example sentences: the model authored those, so the dialect side is
               // NOT ground truth and must be checked too (full pair QC).
               if ((lessonIsDialect || item._dialect) && !item.aiGenerated) {
-                await _check(item, () => qcCheckDialectPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment), 'pair');
+                await _check(item, () => qcCheckDialectPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment), 'pair', undefined, _at);
               } else {
-                await _check(item, () => qcCheckPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment, arr), 'pair');
+                await _check(item, () => qcCheckPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment, arr), 'pair', undefined, _at);
               }
               // v72: deterministic, no model call. Runs for every item including dialect ones —
               // a missing diacritic is a spelling fact, not a translation judgement.
@@ -2048,7 +2102,7 @@ async function _runQc(jobId, topics, opts) {
                     if (!v.ok) return { ok: false, field, sug: v.sug };
                   }
                   return { ok: true };
-                }, 'diacritic', QC_DIACRITIC_BY);
+                }, 'diacritic', QC_DIACRITIC_BY, _at);
               }
             }
           }
@@ -2057,8 +2111,11 @@ async function _runQc(jobId, topics, opts) {
         // skip it. Only when this pass actually ran a checker for the lesson (intro_script is
         // human-QC'd, never stamped) and produced no new flags for it. A flagged-only pass must
         // NOT stamp — it didn't examine the whole lesson.
-        if (!onlyFlagged && _lessonQcRan && flagged === _flaggedBefore && !_lessonHasOpenQcFlag(ls)) {
-          ls.qcAt = new Date().toISOString(); ls.qcBy = OLLAMA_QC_MODEL; touched = true;
+        if (!onlyFlagged && _lessonQcRan && flagged === _flaggedBefore && !_lessonHasOpenQcFlag(_liveLesson())) {
+          // v73_j: stamp the LIVE lesson, and read the open-flag test from it too — the flags this
+          // pass just wrote live there, not on the captured object.
+          const _lsLive = _liveLesson();
+          _lsLive.qcAt = new Date().toISOString(); _lsLive.qcBy = OLLAMA_QC_MODEL; touched = true;
         }
       }
 
@@ -2074,7 +2131,7 @@ async function _runQc(jobId, topics, opts) {
       // clean story stores no proposal, only the checked stamp. Any pre-existing UNREVIEWED proposal
       // is left untouched when we skip, so accumulated proposals survive re-sweeps.
     });
-    if (_lqTok.promptTokens + _lqTok.completionTokens > 0) { addTokenUsage(tp, _lqTok, 'lesson_qc'); touched = true; }
+    if (_lqTok.promptTokens + _lqTok.completionTokens > 0) { addTokenUsage(_liveTopic(), _lqTok, 'lesson_qc'); touched = true; }
 
     if (includeStory && !onlyFlagged && lessonIdx === null && tp.story && tp.story.trim()) {
       const alreadyChecked = tp.storyQcCheckedBy === OLLAMA_QC_MODEL && tp.storyQcCheckedAt && !force;
@@ -2105,7 +2162,10 @@ async function _runQc(jobId, topics, opts) {
       }
     }
 
-    if (touched) { upsert(tp); affected.push(tp.id); }
+    // v73_j: upsert the LIVE topic. Upserting the captured one would write a shallow copy of a
+    // stale object back over the store — losing the user's concurrent edit instead of QC's flags,
+    // which is the same bug pointing the other way.
+    if (touched) { upsert(_liveTopic()); affected.push(_tpId); }
   }
   jobDone(jobId, { checked, flagged, cleared, skipped, storyProposed, storyClean, topics: topics.length, affected });
   console.log(`  ✓ QC done: ${checked} checked, ${flagged} flagged, ${cleared} cleared, ${skipped} skipped, story: ${storyProposed} proposed / ${storyClean} clean, across ${topics.length} topic(s)`);
@@ -2193,16 +2253,25 @@ const CJK_LANGS = new Set(['ja','zh','ko']);
 // Order-independent; extend this list as needed.
 //
 // NOTE (v53_c): this list is the ONLY place language "similarity" is recorded — there is no
-// similarity field in languages.json. The comparison is case-insensitive + trimmed, and blocks at
-// >2 identical vocab items (or >1 sentence) in a single lesson. That COUNT threshold conflates two
-// different things, measured against the real corpus:
+// similarity field in languages.json. The comparison is case-insensitive + trimmed.
+//
+// STALE UNTIL v73_c — read this before acting on the paragraph below. The count threshold it
+// describes was REPLACED in v53_g by a ratio rule, live at IDENTICAL_MIN_RATIO (~line 4237):
+// a lesson is rejected only at >=3 identical items AND >=60% of the lesson. The analysis below is
+// kept because it is why the ratio rule exists, but it is history, not a proposal — it was left
+// reading as open work for twenty releases. See build_history/future_development.md section 5.
+//
+// (historical) The old rule blocked at >2 identical vocab items (or >1 sentence) in a single
+// lesson. That COUNT threshold conflated two different things, measured against the real corpus:
 //   • a genuine model failure — the model wrote the source language into both fields (100% of items
 //     identical: an lb→en "History of Luxembourg" lesson, an it→en "Grandmas Doughs" lesson);
 //   • legitimate loanwords / proper nouns, which occur in EVERY pair regardless of closeness
 //     (38%: "pasta, tagliatelle, risotto"; "café, fans, notes"; "Champagne, Terroir").
-// A RATIO threshold (identical/total) would separate them; see roadmap_v54 "identical-source/target
-// heuristic". Until then, closeness is the only lever, so keep this list conservative: relaxing a
-// pair also disables the check that catches real model failures for it.
+// A ratio threshold separates them, and is what now runs (see above). Closeness remains a second
+// lever, so keep this list conservative: relaxing a pair also disables the check that catches real
+// model failures for it. Whether this table belongs in languages.json was open in roadmap_v54 and
+// v65 and then dropped out — but note INTERNALS.md's four-tier ruling: moving a hand-authored table
+// to a file is not progress on its own, because the cost is in authorship, not location.
 const CLOSE_LANG_PAIRS = [
   ['de','lb'],   // German ↔ Lëtzebuergesch
   ['de','nl'],   // German ↔ Dutch — West Germanic; arm/hand/winter/warm/water… collide once

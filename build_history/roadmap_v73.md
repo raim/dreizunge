@@ -24,7 +24,123 @@ words are kept ·
 call path; generation flows documented ·
 `v73` antonyms held to a looser standard than synonyms (user-reported: too few antonyms).
 
-## THIS SESSION — two parts, in this order
+## Shipped in the v73 line (session 27)
+
+`v73_b` **docs/ staleness guard.** `build-static.js` fingerprints every baked input and stamps the
+digests into the artifact as `APP.buildSources`; `unit-static-freshness` recomputes them and names
+the file that moved. Closes a real gap: `unit-version-derivation` compared version *strings*, and
+`APP_VERSION` changes once per release while `index.html` and `lessons.json` change many times
+inside one — so a mid-session drift was invisible. The v73 archive shipped with exactly that
+(`docs/` 70 minutes behind `lessons.json`, suite green). `build-static.js` watches itself; `server.js`
+is deliberately excluded. ·
+`v73_c` **`lib-dom` runtime `innerHTML` parsing.** Assignment now parses into real nodes;
+`querySelectorAll` returns them (it returned `[]` unconditionally, so it could only ever have been
+asserted on vacuously). The raw string is still stored and returned, so every existing markup
+assertion keeps passing — additive, not a flag day. Retired the "read-back needs a browser" claim in
+`unit-arc-options`, which was false in all three of its parts. ·
+`v73_d` **completion-card pass mark** (user-reported: green %-solved bar above a locked Next).
+`_threshPct` was answering three questions; split into binding / topic / applies. The gated lesson
+now gets its own row at its own 100% mark rather than stamping 100 onto the chapter bar. ·
+`v73_e` **story highlighting word boundaries** (user-reported: every `i` highlighted, from a vocab
+entry `"I"`). Unicode lookarounds for spaced scripts, unguarded for Han/Kana/Thai. 54 marks → 13 on
+the reported chapter. ·
+`v73_f` **article MCQs built only where answerable** (user-reported: `a / the / an` for `dream`) plus
+the chapter naming itself on the progress row. de 9/9, it 3/3, fr 1/1 keep the exercise; en 0/6. ·
+`v73_g` **completion-card lesson icon row** (user request). ·
+`v73_h` **plural distractors drawn from the corpus**, replacing `x.plural + 'e'` — a German
+pluralisation fact producing "bookse" in English. Caught a pre-existing duplicate-option defect.
+
+`v73_i` **a round never asks one question twice.** Two exercises canonicalising to the same qid are
+one question; `buildExercises` now drops the repeat. 41 duplicates across 17 lessons and 8 exercise
+types, → 0. Downstream hygiene, not a quality fix — the duplicate DATA survives and still needs QC.
+
+`v73_j` **QC findings survive a chapter edited mid-pass** (user-reported: 9 flags logged, 5 kept).
+`_runQc` re-resolves topic/lesson by id and items by (key, index) instead of writing through
+references the editor replaces. Two related mechanisms remain open — see the session notes §7c.
+
+`v73_k` **a lesson type nothing checks is no longer stamped QC-clean** — `comprehension` carries
+`questions`, fell to the generic vocab/sentences scan, and was stamped clean unexamined; the stamp
+then made every later bulk run skip it. Plus three items recovered from the v71 → v72 roadmap
+boundary (see RECOVERED below).
+
+Suite 161 → 166. Full detail in `build_history/v73k_session27_notes.md`.
+
+**Found and NOT fixed:** `topicCoverage().total` is nondeterministic — 15 of 294 topics return a
+different denominator run to run (worst spread 4 questions, 2.9%), because builders sample which
+items to quiz. A learner on the pass mark can cross it by reloading. Filed here rather than fixed:
+it needs a decision about whether the universe should be seeded per topic, and that is a change to
+the coverage model rather than a bug fix.
+
+## Session 27 — status
+
+Parts 1 and 2 of the planned session are **done or reordered by agreement**:
+
+1. ✅ **`lib-dom` innerHTML parsing** (`v73_c`).
+2. 🔄 **Cleanup / refactoring / documentation** — partly done. The five bookkeeping items in
+   `future_development.md` §5 are fixed. The seven evidence-backed items from `HANDOVER.md` are
+   still open and still correctly scoped.
+3. ✅ **`build_history/future_development.md`** written — the backlog scan the roadmaps never had.
+4. ⏸️ **Role model / authorization — POSTPONED BY THE USER**, plan recorded below. Superseded in
+   priority by user-reported bugs found while playing lessons (§3–§7 of the session notes). Moved aside for
+   user-reported bugs found while playing lessons, which is the right trade: nothing is deployed
+   publicly, so this has no clock, while play-found bugs are the one class this suite cannot
+   produce.
+
+## Authorization and roles — the plan (not started)
+
+**Why this is a design decision and not a cleanup item.** Roles, scoring and learner dashboards all
+hang off it, so building them first means building them twice. Measured on `v73_c`:
+
+| | |
+|---|---|
+| non-GET routes | 43 |
+| of those, with any auth check | **3** (`/api/auth/password`, `/api/learner/state`, and login/register by nature) |
+| `GET /api/learners` — every learner's username, completion counts, hardest words | **no gate at all** |
+| teacher mode | `localStorage.getItem('dz_teacher_mode') === '1'` |
+| server bind | `0.0.0.0` |
+
+So the app has **authentication without authorization**. `learners.js` (`v65`) is genuinely good —
+scrypt, timing-safe comparison, hashed session tokens, per-username throttling — and the gap is not
+a missing subsystem but a missing *role field and gate*. `platform_plan.md` estimates its Phase 1 at
+weeks of work while most of it already shipped; that estimate should not be trusted as written.
+
+**Note the comment on `/api/learners`**: it claims the route "Requires teacher capability, which on
+this server means a live backend (the same gate the editing UI uses)". No such gate is implemented.
+A comment asserting a control that does not exist is worse than no comment.
+
+**The plan, in order:**
+
+1. **Decide the taxonomy first, on paper.** Proposed: `student` · `teacher` · `admin`, stored on the
+   learner record, defaulting to `student`, with the first-created account becoming `admin`. Resist
+   a capability matrix at this stage — three roles cover teacher-vs-student, which is what was
+   asked for.
+2. **Separate the two axes that `_canEdit()` currently conflates.** `_canEdit()` returns
+   `APP.info?.canGenerate || APP._teacherMode` — i.e. *"is a backend available"* OR *"has this
+   browser ticked a box"*. Capability and authority are different questions and must not share a
+   function. `_isLearner()` is already the mode axis (v71 reachability rule) and is the model to
+   follow.
+3. **Server-side gate, deny by default.** One `requireRole(req, 'teacher')` helper, applied
+   route-by-route with an explicit table in `INTERNALS.md`. Deny-by-default matters more than the
+   table: a route added later must fail closed. Guard it with a test that enumerates the routes and
+   fails when a new non-GET route appears without a decision recorded — otherwise this decays
+   exactly as `/api/learners` did.
+4. **Keep the client flag as a VIEW toggle only.** A teacher may want to see the learner view. After
+   step 3 that is harmless, because the server no longer trusts it. Say so in the code, or someone
+   will "fix" the localStorage flag later thinking it is the control.
+5. **The static build has no server to ask.** `docs/index.html` teacher mode is, and must remain,
+   an honour-system UI toggle — there are no credentials in the static bundle and there must never
+   be (`learners.js`' opening comment is explicit that `build-static.js` must never read it). So the
+   role model is a LIVE-only concept, and the static build's teacher mode keeps its current
+   meaning. This asymmetry needs documenting, not eliminating.
+6. **Only then** the learner-facing pieces: scoring, history, and the two dashboards. `summarize()`
+   in `learners.js` already produces most of the teacher view (`chaptersCompleted` vs
+   `chaptersStarted` — honestly named since `v69_n` — `wordsLearned`, `hardestWords`).
+
+**Before any public deployment, independent of roles:** TLS termination in front of the server. The
+`warnInsecureTransport` banner already says this and already honours `X-Forwarded-Proto`, so the
+session cookie gains `Secure` with no code change.
+
+## The original session spec — two parts, in this order
 
 Full spec in `build_history/HANDOVER.md` under "Starting the next session". Summary:
 
@@ -89,6 +205,54 @@ story-free, session 26.)*
   list in the segmentation area. It answers a *different* question from splitting ("does this string
   END like a sentence?", for the paragraph-wrap repair and title heuristics), which is why it was
   left alone through `v72_a`–`v72_c`. Fair game now; part of the cleanup pass.
+
+### RECOVERED — dropped at the v71 → v72 boundary (restored in `v73_k`)
+
+An entire `[OPEN — cosmetics deferred in v71_q]` block of three items vanished when `roadmap_v72.md`
+was cut from `roadmap_v71.md`. None appears in `roadmap_v72`, `roadmap_v73`, `HANDOVER.md` — or in
+`future_development.md`, whose scan grepped for unchecked checkboxes and read the topical idea docs
+but did not walk `[OPEN — …]` blocks inside superseded roadmaps. All three re-verified as still open
+on `v73_k`.
+
+**Check `[OPEN`/`[QUEUE` blocks at every base-version cut.** That is where items are lost — not in
+the idea documents, which nobody deletes.
+
+1. **Global QC: a checkbox menu of what to QC**, including re-checking already-QCed items. Needs a
+   scope picker and changes to how QC jobs batch — the same treatment the lesson-type picker got in
+   `v71_p`, not a quick pass. **Merge with the user's session-27 request** (below): make the book's
+   automatic QC opt-in from the same menu that selects lesson types, and run it after the storyboard
+   post-pass rather than before. Note that reverses the `v68.1` ordering decision ("a slow board must
+   never delay content flags") — which is defensible once QC is opt-in, but should be reversed
+   knowingly. `renderLessonTypeChecks` is the menu, and `v73_c` made its render → read round trip
+   provable headlessly, so the client half is now testable.
+2. **Crossword: show the correct word's translation highlighted instead of the empty underline.**
+   Needs a decision first. Clues come from three shapes — vocabulary (`target ← source`), synonyms
+   (`base ← gloss`), and word_forms, where the clue IS a blanked sentence and the "empty underline"
+   lives. A word_forms item stores only the sentence and its choices, **no translation**, so there is
+   nothing to put in the gap. Either restrict this to vocabulary/synonym entries, or give word_forms
+   clues a translation field.
+3. **Live mode with teacher mode OFF must hide every editing control**, as static mode does. The
+   learner should be able to continue the story, download and share a link — nothing else. Verified
+   still open: `_canEdit()` is `!!(APP.info?.canGenerate || APP._teacherMode)`, so a learner on a
+   live backend sees editing controls with teacher mode off. **This is the same `_canEdit()`
+   conflation the authorization plan above calls out in step 2** — capability (is a backend
+   available?) OR authority (has this browser ticked a box?) in one function. Do them together.
+
+### Backlog — see `future_development.md`
+
+`build_history/future_development.md` (new, session 27) is the scan of everything wanted across 128
+files in `build_history/` and never built, each entry re-measured against the code. Two items in it
+outrank most of this queue on current evidence:
+
+- **The example pipeline is complete in code and empty in data.** `promptExample()` resolves at 4
+  generation sites; `examples.json` absent, **0** corpus items starred, **1** curated per-language
+  example (`wordForms.de`). Every generation in every language falls through to the generic default.
+  Needs curation, not code, and sits upstream of every lesson the app produces.
+- **5 lessons in the shipped corpus would be rejected by the app's own rule** (≥3 identical
+  source/target items AND ≥60% of the lesson) — including the two `dreizunge_lessons_assessment.md`
+  named as total model failures. The guard runs at generation time only, so it never cleaned what
+  prompted it. **General case: every generation-time guard in this codebase leaves an unmeasured
+  residue** (diacritics, article symmetry, identical-ratio).
 
 ### Larger, not started
 - **Concept graph / dependency-aware curriculum.** Deliberately untouched until the small queue is
@@ -171,10 +335,12 @@ what is owed by the USER, open decisions), then THIS file (the highest-numbered
    `unit-version-derivation`), so a single bump in `server.js` + a `build-static.js` re-run is
    enough — no more hand-editing `build-static.js`.
    **Point releases use an alphabetic suffix** (user, v70): the base cut is the bare number and is
-   implicitly `a`, so the sequence is `v71` → `v71_b` → `v71_c` → … — the same convention the v69
-   and v70 lines ran. **This is the `v72` line.** The base cut is the bare number and is implicitly `a`, so the
-   sequence is `v72` → `v72_b` → `v72_c` → …  Roadmaps are per BASE version, so point releases do
-   not each get one — this file stays current through the whole v72 line.
+   implicitly `a`, so the sequence is `v73` → `v73_b` → `v73_c` → … — the same convention the v69,
+   v70, v71 and v72 lines ran. **This is the `v73` line.** Roadmaps are per BASE version, so point
+   releases do not each get one — this file stays current through the whole v73 line.
+   (Corrected in `v73_c`: this paragraph still said "This is the `v72` line" and documented the
+   `v72` sequence, carried forward from `roadmap_v72.md` without being updated at the base cut.
+   Check it at every base cut — it is the one paragraph in this block that is version-specific.)
 7. **Roadmap** — mark shipped items ✅, carry every open TODO/idea forward, and at a version bump
    write the next `build_history/roadmap_v{N+1}.md` (carrying this protocol block forward).
 8. **Session notes** — write/update `build_history/v{ver}_session{n}_notes.md`.

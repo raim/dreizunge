@@ -13,7 +13,7 @@ please fix it.
 Every entry below was found by measurement or by a test failing, not by reading anything. That is
 the gap this document exists to close.
 
-Last verified against **`v72`**.
+Last verified against **`v73_c`**.
 
 ---
 
@@ -372,6 +372,20 @@ dismiss the whole QC panel, which costs the checks that do work.
      corpus the clause scan actually runs on 19 of the 39 long enough to clamp, and list and Unicode
      agree on all 19. A pure generalisation: identical today, correct for scripts the list never
      covered. `_SYN_CLAUSE_RE` survives only as the no-`Intl.Segmenter` fallback.
+
+4. **`CLOSE_LANG_PAIRS` (`server.js` ~2205)** — **LIVE, and missing from this list until `v73_c`.**
+   A hand-authored table of 21 language pairs judged "close enough" that identical source/target
+   vocabulary is legitimate rather than a model failure. It gates whether a generated lesson is KEPT
+   or REJECTED, which puts it on the correctness side of this section's own test, and its comment
+   concedes it "is the ONLY place language 'similarity' is recorded". Tier 4 by the ladder above.
+   Worth stating why it survived: entries 1–3 are all struck through, so this section has read as
+   "no violations remain" while a live one sat outside it. **An inventory that only records what was
+   found is not an inventory** — the next session in this area should re-scan `server.js` and
+   `index.html` for per-language tables rather than trusting this list.
+   No obvious tier-2 replacement: "are these two languages close?" cannot be derived from the corpus
+   the way `_articleChoicesFor` derives articles, because the corpus is exactly what the judgement is
+   about. Moving it to `languages.json` (open in `roadmap_v54`, `roadmap_v65`, then silently
+   dropped) is tier 3 at best and does not reduce the authorship cost.
 
 Not yet actioned — recorded so the next change in this area does not add to the pile.
 

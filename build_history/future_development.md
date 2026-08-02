@@ -198,6 +198,34 @@ accurate; the four items above are the whole of Phase 4 that was never done.
 
 ---
 
+## 4b. Items lost at a roadmap boundary — and the gap in this scan
+
+Added in `v73_k`, after the user asked whether an old QC TODO still existed. It did, and finding it
+exposed a hole in how this document was built.
+
+An entire `[OPEN — cosmetics deferred in v71_q]` block of three items disappeared when
+`roadmap_v72.md` was cut from `roadmap_v71.md`. It appears **zero times** in `roadmap_v72`,
+`roadmap_v73`, `HANDOVER.md`, or in the first version of this file. All three re-verified as still
+open. They now live in `roadmap_v73.md` under "RECOVERED":
+
+1. Global QC: a checkbox menu of what to QC, including re-checking already-QCed items.
+2. Crossword: show the correct word's translation instead of the empty underline.
+3. Live mode with teacher mode OFF must hide every editing control — still true, and the same
+   `_canEdit()` conflation the authorization plan describes.
+
+**Why the original scan missed them, stated plainly:** it grepped for unchecked checkboxes
+(`- [ ]`), read the ~30 topical idea documents, and probed the code for each feature. It did not
+walk `[OPEN — …]` and `[QUEUE — …]` blocks inside superseded roadmaps. Those blocks are prose, carry
+no checkbox, and are exactly where a deferred item goes to die — because the next base-version cut
+rewrites the roadmap and a prose block is easy to drop.
+
+**So the rule for anyone extending this file:** the idea documents are safe, nobody deletes them.
+The losses are in the roadmaps, at the base-version boundaries. Diff each `roadmap_vN.md` against
+`roadmap_vN+1.md` for `[OPEN`/`[QUEUE` blocks rather than trusting either one alone. There are 28
+roadmaps and only the v71 → v72 boundary has been checked.
+
+---
+
 ## 5. Records that will actively mislead the next session
 
 Not features — bookkeeping defects of the same shape as the "Drill result card" item that session 26

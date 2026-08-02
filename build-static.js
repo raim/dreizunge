@@ -16,6 +16,7 @@
 
 const fs   = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const UI_FILE   = path.join(__dirname, 'ui.json');
 const LANG_FILE = path.join(__dirname, 'languages.json');
 const SCRIPT_FILE = path.join(__dirname, 'scripts.json');
@@ -36,6 +37,33 @@ try {
 } catch (e) {
   console.warn('build-static: could not read server.js for APP_VERSION —', e.message);
 }
+
+// Source fingerprints (v73_b). The version stamp above only proves docs/ was built from a tree
+// carrying the same APP_VERSION — it says nothing about WHICH lessons.json or index.html went in.
+// A version bump happens once per release; the client and the corpus change many times inside one.
+// So docs/ routinely went stale mid-session with a green suite: the failure mode was a static build
+// silently serving an older corpus than the live server, which is invisible until someone opens
+// GitHub Pages and finds a chapter missing. Hash every baked input and stamp the digest into the
+// artifact, so unit-static-freshness can name the file that moved.
+// Hash the file BYTES, not the parsed data: what matters is "is docs/ built from this exact file",
+// and re-serialising JSON would make formatting-only edits invisible.
+function sourceFingerprint(file) {
+  try { return crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex').slice(0, 12); }
+  catch (_) { return 'missing'; }
+}
+// build-static.js watches ITSELF: a change to the transform (a new static override, a changed
+// slice marker) makes docs/ stale exactly as a corpus change does, and nothing else would notice.
+// server.js is deliberately NOT here — only its APP_VERSION reaches the artifact, that is already
+// guarded by unit-version-derivation, and including it would demand a docs/ rebuild after every
+// server edit for no gain.
+const BUILD_SOURCES = {
+  'index.html'     : sourceFingerprint(sourceHtml),
+  'lessons.json'   : sourceFingerprint(lessonsFile),
+  'ui.json'        : sourceFingerprint(UI_FILE),
+  'languages.json' : sourceFingerprint(LANG_FILE),
+  'scripts.json'   : sourceFingerprint(SCRIPT_FILE),
+  'build-static.js': sourceFingerprint(__filename),
+};
 
 // ── Load inputs ───────────────────────────────────────────────────────
 if (!fs.existsSync(sourceHtml)) {
@@ -240,6 +268,9 @@ function repopulateContinueSelect(){
 async function init() {
   APP.info = { backend: 'none', canGenerate: false, version: '${APP_VERSION}', coverageThreshold: ${COVERAGE_THRESHOLD} };
   { const _v=document.getElementById('app-tagline'); if(_v) _v.title='${APP_VERSION}'; }
+  // v73_b: digests of the files this bundle was built from. Read it in the browser console as
+  // APP.buildSources to tell which corpus a deployed page is actually serving.
+  APP.buildSources = ${JSON.stringify(BUILD_SOURCES)};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');

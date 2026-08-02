@@ -12,13 +12,14 @@
       "lang": "es",
       "srcLang": "de",
       "createdAt": "2026-08-02T17:45:43.041Z",
-      "updatedAt": "2026-08-02T18:21:07.249Z",
+      "updatedAt": "2026-08-02T19:11:55.283Z",
       "tokenUsage": {
-        "totalPromptTokens": 1074,
-        "totalCompletionTokens": 193,
+        "totalPromptTokens": 2025,
+        "totalCompletionTokens": 1708,
         "tokensByType": {
           "retitle": 672,
-          "summary": 595
+          "summary": 595,
+          "storyboard": 2466
         }
       },
       "summary": "Ein Student reist nach Barcelona, um Wirtschaft zu studieren, lässt sich jedoch schnell von der Kälte und dem kulinarischen Angebot ablenken. Statt sich auf die Vorlesungen zu konzentrieren, verbringt er seine Zeit mit dem Essen von Paella und Churros, wobei sein Magen wichtiger wird als das Bankkonto. Er versucht sogar, wirtschaftliche Theorien auf den Schwarzmarkt für Süßigkeiten anzuwenden, was seine Konzentration weiter verwirrt. Letztlich scheitert er daran, echte Freunde zu finden oder die Inflation zu verstehen, während er stattdessen Schulden in Form von Zucker macht.",
@@ -33,7 +34,279 @@
         "completionTokens": 135,
         "ms": 88210,
         "at": "2026-08-02T18:21:07.249Z"
-      }
+      },
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Ein Student friert in Barcelona und denkt nur an Paella.</title><rect x=\"102\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"103\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#9e9e9e\"/><circle cx=\"50\" cy=\"30\" r=\"20\" fill=\"#f2cc8f\"/><rect x=\"30\" y=\"65\" width=\"40\" height=\"35\" fill=\"#e07a5f\"/><circle cx=\"50\" cy=\"55\" r=\"10\" fill=\"#ffffff\"/><path d=\"M 40 70 L 60 70 L 50 85 Z\" fill=\"#e5989b\"/></svg></g><g data-chapter=\"1\"><title>Der Professor spricht schnell, der Student sieht Paella.</title><rect x=\"284\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"285\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"10\" y=\"20\" width=\"30\" height=\"50\" fill=\"#2b2b2b\"/><circle cx=\"25\" cy=\"15\" r=\"8\" fill=\"#ffffff\"/><line x1=\"15\" y1=\"30\" x2=\"35\" y2=\"30\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"15\" y1=\"40\" x2=\"35\" y2=\"40\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><rect x=\"60\" y=\"60\" width=\"30\" height=\"20\" fill=\"#e07a5f\"/><circle cx=\"75\" cy=\"55\" r=\"10\" fill=\"#ffffff\"/><path d=\"M 65 65 Q 75 50 85 65 Z\" fill=\"#f2cc8f\"/></svg></g><g data-chapter=\"2\"><title>Inflation: Zahlen tanzen wie Flamenco-Tänzer.</title><rect x=\"466\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"467\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"none\" stroke=\"#e07a5f\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M 30 40 L 40 60 L 50 30 L 60 70 L 70 40 Z\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"20\" cy=\"80\" r=\"5\" fill=\"#f2cc8f\"/><circle cx=\"80\" cy=\"20\" r=\"5\" fill=\"#f2cc8f\"/></svg></g><g data-chapter=\"2\"><title>Churros am La Rambla: Investition in Zucker.</title><rect x=\"648\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"649\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#8d6e63\"/><rect x=\"0\" y=\"70\" width=\"100\" height=\"30\" fill=\"#9e9e9e\"/><path d=\"M 20 60 Q 30 40 40 60 T 60 60 T 80 60\" fill=\"none\" stroke=\"#e07a5f\" stroke-width=\"5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"30\" r=\"15\" fill=\"#ffffff\"/><rect x=\"45\" y=\"20\" width=\"10\" height=\"5\" fill=\"#2b2b2b\"/><circle cx=\"47\" cy=\"28\" r=\"2\" fill=\"#2b2b2b\"/><circle cx=\"53\" cy=\"28\" r=\"2\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"2\"><title>Schweres Schokoladengetränk als &#39;tangible Assets&#39;.</title><rect x=\"830\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"831\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"35\" y=\"40\" width=\"30\" height=\"40\" fill=\"#2b2b2b\"/><path d=\"M 35 40 L 65 40 L 60 35 L 40 35 Z\" fill=\"#e07a5f\"/><circle cx=\"50\" cy=\"25\" r=\"12\" fill=\"#ffffff\"/><path d=\"M 45 25 Q 50 30 55 25\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"70\" cy=\"60\" r=\"8\" fill=\"#e07a5f\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 5,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 951,
+        "completionTokens": 1515,
+        "ms": 664920,
+        "at": "2026-08-02T19:11:55.283Z",
+        "storyStyle": "funny"
+      },
+      "storyboardPanels": [
+        {
+          "caption": "Ein Student friert in Barcelona und denkt nur an Paella.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 30,
+              "r": 20,
+              "fill": "sun"
+            },
+            {
+              "type": "rect",
+              "x": 30,
+              "y": 65,
+              "w": 40,
+              "h": 35,
+              "fill": "accent"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 55,
+              "r": 10,
+              "fill": "white"
+            },
+            {
+              "type": "path",
+              "d": "M 40 70 L 60 70 L 50 85 Z",
+              "fill": "rose"
+            }
+          ]
+        },
+        {
+          "caption": "Der Professor spricht schnell, der Student sieht Paella.",
+          "chapter": 1,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 10,
+              "y": 20,
+              "w": 30,
+              "h": 50,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 25,
+              "cy": 15,
+              "r": 8,
+              "fill": "white"
+            },
+            {
+              "type": "line",
+              "x1": 15,
+              "y1": 30,
+              "x2": 35,
+              "y2": 30,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 15,
+              "y1": 40,
+              "x2": 35,
+              "y2": 40,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "rect",
+              "x": 60,
+              "y": 60,
+              "w": 30,
+              "h": 20,
+              "fill": "accent"
+            },
+            {
+              "type": "circle",
+              "cx": 75,
+              "cy": 55,
+              "r": 10,
+              "fill": "white"
+            },
+            {
+              "type": "path",
+              "d": "M 65 65 Q 75 50 85 65 Z",
+              "fill": "sun"
+            }
+          ]
+        },
+        {
+          "caption": "Inflation: Zahlen tanzen wie Flamenco-Tänzer.",
+          "chapter": 2,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "night"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 40,
+              "fill": "none",
+              "stroke": "accent",
+              "sw": 1
+            },
+            {
+              "type": "path",
+              "d": "M 30 40 L 40 60 L 50 30 L 60 70 L 70 40 Z",
+              "stroke": "white",
+              "sw": 3,
+              "fill": "none"
+            },
+            {
+              "type": "circle",
+              "cx": 20,
+              "cy": 80,
+              "r": 5,
+              "fill": "sun"
+            },
+            {
+              "type": "circle",
+              "cx": 80,
+              "cy": 20,
+              "r": 5,
+              "fill": "sun"
+            }
+          ]
+        },
+        {
+          "caption": "Churros am La Rambla: Investition in Zucker.",
+          "chapter": 2,
+          "bg": "earth",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 70,
+              "w": 100,
+              "h": 30,
+              "fill": "stone"
+            },
+            {
+              "type": "path",
+              "d": "M 20 60 Q 30 40 40 60 T 60 60 T 80 60",
+              "stroke": "accent",
+              "sw": 5,
+              "fill": "none"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 30,
+              "r": 15,
+              "fill": "white"
+            },
+            {
+              "type": "rect",
+              "x": 45,
+              "y": 20,
+              "w": 10,
+              "h": 5,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 47,
+              "cy": 28,
+              "r": 2,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 53,
+              "cy": 28,
+              "r": 2,
+              "fill": "ink"
+            }
+          ]
+        },
+        {
+          "caption": "Schweres Schokoladengetränk als 'tangible Assets'.",
+          "chapter": 2,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 35,
+              "y": 40,
+              "w": 30,
+              "h": 40,
+              "fill": "ink"
+            },
+            {
+              "type": "path",
+              "d": "M 35 40 L 65 40 L 60 35 L 40 35 Z",
+              "fill": "accent"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 25,
+              "r": 12,
+              "fill": "white"
+            },
+            {
+              "type": "path",
+              "d": "M 45 25 Q 50 30 55 25",
+              "stroke": "ink",
+              "sw": 2,
+              "fill": "none"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 60,
+              "r": 8,
+              "fill": "accent"
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
     },
     {
       "id": "sl_1216981541",
@@ -6369,7 +6642,7 @@
             },
             {
               "target": "Negocié tres monedas de euro por un chocolate espeso.",
-              "source": "Ich handelte drei Euro-Münzen gegen ein dickes Schokoladengetränk.",
+              "source": "Ich tauschte drei Euro-Münzen gegen ein dickes Schokoladengebäck.",
               "words": [
                 "Negocié",
                 "tres",
@@ -6380,7 +6653,8 @@
                 "un",
                 "chocolate",
                 "espeso."
-              ]
+              ],
+              "editedAt": "2026-08-02T19:58:17.244Z"
             },
             {
               "target": "La profesora me miró con severidad cuando llegué tarde.",
@@ -6429,9 +6703,9 @@
           }
         },
         {
-          "id": 1,
+          "id": "ls_1028275672",
           "title": "Churros und Inflation",
-          "desc": "Wirtschaftswahn mit Schokoladen-Churros",
+          "desc": "Spanische Wirtschaftsvokabeln in einer humorvollen Geschichte",
           "icon": "🤡",
           "vocab": [
             {
@@ -6456,7 +6730,8 @@
             },
             {
               "target": "activo",
-              "source": "das Aktivum"
+              "source": "das Aktiv",
+              "editedAt": "2026-08-02T19:58:51.503Z"
             },
             {
               "target": "divertido",
@@ -6515,14 +6790,15 @@
             },
             {
               "target": "Mi amigo tiene mucho frío.",
-              "source": "Mein Freund hat viel Kälte.",
+              "source": "Meinem Freund ist sehr kalt.",
               "words": [
                 "Mi",
                 "amigo",
                 "tiene",
                 "mucho",
                 "frío."
-              ]
+              ],
+              "editedAt": "2026-08-02T19:59:47.168Z"
             }
           ],
           "_genMeta": {
@@ -6532,12 +6808,11 @@
             "valid": 8,
             "rejected": 0,
             "rejectReasons": null,
-            "promptTokens": 1005,
-            "completionTokens": 446,
-            "ms": 257336,
-            "at": "2026-08-02T17:58:40.449Z"
-          },
-          "_arcMode": "reinforce"
+            "promptTokens": 1203,
+            "completionTokens": 381,
+            "ms": 248144,
+            "at": "2026-08-02T17:54:23.112Z"
+          }
         },
         {
           "id": 6,
@@ -6609,14 +6884,81 @@
             "ms": 414003,
             "at": "2026-08-02T18:05:34.452Z"
           },
-          "_arcMode": "reinforce"
+          "_arcMode": "reinforce",
+          "qcAt": "2026-08-02T18:58:38.325Z",
+          "qcBy": "translategemma:12b"
         },
         {
-          "id": 6,
+          "id": "ls_1563758049",
           "type": "synonyms",
           "title": "Economía y vida universitaria",
-          "desc": "Vocabulario sobre finanzas y estudios en español.",
+          "desc": "Übe Zeitformen und Wortwahl.",
           "icon": "🎓",
+          "items": [
+            {
+              "sentence": "Intenté recuperar la dignidad académica ___ a una conferencia sobre inflación hiperbólica.",
+              "translation": "Ich versuchte, die akademische Würde wiederherzustellen, indem ich einer Konferenz über hyperbolische Inflation beiwohnte.",
+              "choices": [
+                "asistiendo",
+                "asistir"
+              ],
+              "correctIndex": 0,
+              "explanation": "Gerundium nach „por“ impliziert Mittel/Weise."
+            },
+            {
+              "sentence": "Mi cerebro, ya debilitado por la falta de sol y el exceso de aceite de oliva, decidió que la única forma de ___ la teoría económica era aplicarla al mercado negro de churros en La Rambla.",
+              "translation": "Mein Gehirn, bereits geschwächt durch Sonnenmangel und zu viel Olivenöl, beschloss, dass die einzige Möglichkeit, die Wirtschaftstheorie zu verstehen, darin bestand, sie auf den Schwarzmarkt für Churros in der La Rambla anzuwenden.",
+              "choices": [
+                "entender",
+                "entiendo"
+              ],
+              "correctIndex": 0,
+              "explanation": "Infinitiv nach „era“ (war) als Subjekt/Objekt."
+            },
+            {
+              "sentence": "Negocié tres monedas de euro por un chocolate espeso que ___ a deuda nacional, convencido de que estaba invirtiendo en activos tangibles mientras mi estómago reclamaba dividendos en forma de azúcar.",
+              "translation": "Ich handelte drei Euromünzen für eine dicke Schokolade aus, die nach nationaler Schulde schmeckte, überzeugt davon, dass ich in greifbare Vermögenswerte investierte, während mein Magen Dividenden in Form von Zucker einforderte.",
+              "choices": [
+                "sabiendo",
+                "sabía"
+              ],
+              "correctIndex": 1,
+              "explanation": "Indikativ Imperfekt für wiederholte/andauernde Geschmackswahrnehmung."
+            },
+            {
+              "sentence": "La profesora me miró con la severidad de un banco central frustrado cuando ___ tarde con manchas de cacao en la camisa.",
+              "translation": "Die Professorin sah mich mit der Strenge einer frustrierten Zentralbank an, als ich zu spät kam und Kakaoflecken auf dem Hemd hatte.",
+              "choices": [
+                "llegué",
+                "llegaba"
+              ],
+              "correctIndex": 0,
+              "explanation": "Pretérito Indefinido für abgeschlossenes Ereignis."
+            },
+            {
+              "sentence": "Ahora, mientras intento explicar a mis compañeros por qué la paella es un activo refugio contra la depresión estudiantil, solo ___ miradas de confusión y una oferta para compartir mi cuenta bancaria, que ya ha alcanzado niveles históricos de negatividad.",
+              "translation": "Während ich jetzt versuche, meinen Kommilitonen zu erklären, warum Paella ein Schutzvermögen gegen die Studenten Depression ist, ernte ich nur verwirrte Blicke und das Angebot, mein Bankkonto zu teilen, das bereits historische Negativebenen erreicht hat.",
+              "choices": [
+                "consigo",
+                "consigues"
+              ],
+              "correctIndex": 0,
+              "explanation": "1. Person Singular passend zu „yo“ (impliziert)."
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1136,
+            "completionTokens": 827,
+            "ms": 414003,
+            "at": "2026-08-02T18:05:34.452Z"
+          },
+          "_arcMode": "reinforce",
           "words": [
             {
               "base": "decidir",
@@ -6716,19 +7058,16 @@
               "homophones": []
             }
           ],
-          "_genMeta": {
-            "type": "synonyms",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": 1,
-            "valid": 6,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 1404,
-            "completionTokens": 1007,
-            "ms": 503737,
-            "at": "2026-08-02T18:13:58.189Z"
-          },
-          "_arcMode": "reinforce"
+          "qcAt": "2026-08-02T19:00:50.308Z",
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": "ls_1785695256008_m9w9",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 5
         },
         {
           "id": 9,
@@ -6783,7 +7122,9 @@
             "ms": 256467,
             "at": "2026-08-02T18:18:14.656Z"
           },
-          "_arcMode": "reinforce"
+          "_arcMode": "reinforce",
+          "qcAt": "2026-08-02T19:00:50.308Z",
+          "qcBy": "translategemma:12b"
         }
       ],
       "generationStats": {
@@ -6796,8 +7137,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1952,
-        "totalCompletionTokens": 942,
+        "totalPromptTokens": 24717,
+        "totalCompletionTokens": 1486,
         "lessons": [
           {
             "lessonNum": 1,
@@ -6805,11 +7146,17 @@
             "promptTokens": 1203,
             "completionTokens": 381
           }
-        ]
+        ],
+        "tokensByType": {
+          "lesson_qc": 22642,
+          "story_qc": 667
+        }
       },
       "generatedAt": "2026-08-02T17:50:14.911Z",
-      "updatedAt": "2026-08-02T18:18:14.656Z",
-      "createdBy": "admin"
+      "updatedAt": "2026-08-02T19:59:47.172Z",
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-02T19:54:29.868Z"
     },
     {
       "id": "tp_17856924896730000081",
@@ -6821,7 +7168,7 @@
       "srcLang": "de",
       "difficulty": 1,
       "storyLen": 200,
-      "story": "Decidí ir a Barcelona en enero para estudiar economía, aprender español y conocer gente, pero el frío me hizo reconsiderar mis prioridades. Llegué con la intención de analizar mercados emergentes, solo para descubrir que mi mercado más rentable era la paella valenciana disfrazada de tapas catalanas. Cada vez que intentaba conjugarel verbo \"ser\" en clase, mi estómago gritaba por \"estar\" sentado frente a un plato de gambas al ajillo.\n\nLos profesores hablaban tan rápido que entendía menos las lecciones de macroeconomía que el menú del día. Intenté hacer amigos en la universidad, pero todos parecían expertos en evitar los impuestos y encontrar el sol en pleno invierno. Ahora soy experto en negociar precios con vendedores ambulantes y en explicar a mi madre por qué \"estudiar\" significa principalmente siestas bajo la sombra de un palmera imaginaria. La economía local florece, pero mi cuenta bancaria se desinfla más rápido que un globo en la cima del Tibidabo.",
+      "story": "Decidí ir a Barcelona en enero para estudiar economía, aprender español y conocer gente, pero el frío me hizo reconsiderar mis prioridades. Llegué con la intención de analizar mercados emergentes, solo para descubrir que mi mercado más rentable era la paella valenciana disfrazada de tapas catalanas. Cada vez que intentaba conjugar el verbo \"ser\" en clase, mi estómago gritaba por \"estar\" sentado frente a un plato de gambas al ajillo.\n\nLos profesores hablaban tan rápido que entendía menos las lecciones de macroeconomía que el menú del día. Intenté hacer amigos en la universidad, pero todos parecían expertos en evitar los impuestos y encontrar el sol en pleno invierno. Ahora soy experto en negociar precios con vendedores ambulantes y en explicar a mi madre por qué \"estudiar\" significa principalmente siestas bajo la sombra de un palmera imaginaria. La economía local florece, pero mi cuenta bancaria se desinfla más rápido que un globo en la cima del Tibidabo.",
       "storyLang": "target",
       "storyPrompt": "You are a creative writer and Spanish language teacher. Write a short story directly in Spanish on the given topic — aim for 2-3 paragraphs, under 200 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Spanish. Writing style: Comedic tone, wordplay, absurdist situations, punchlines.\n\nWrite a story for the topic: \"ich gehe fuer 1 semester (ab jaenner) nach barcelona um dort wirtschaft zu studieren, spanisch zu lernen, und menschen zu treffen\". Plain prose, no headings.",
       "storyMeta": {
@@ -6863,7 +7210,8 @@
           "vocab": [
             {
               "target": "decidir",
-              "source": "beschließen"
+              "source": "entscheiden",
+              "editedAt": "2026-08-02T18:29:12.455Z"
             },
             {
               "target": "el frío",
@@ -6891,7 +7239,8 @@
             },
             {
               "target": "el banco",
-              "source": "das Bankkonto"
+              "source": "die Bank",
+              "editedAt": "2026-08-02T18:29:23.193Z"
             }
           ],
           "sentences": [
@@ -6921,18 +7270,6 @@
               ]
             },
             {
-              "target": "Mi estómago gritaba por estar sentado.",
-              "source": "Mein Magen schrie nach „estar“, während ich saß.",
-              "words": [
-                "Mi",
-                "estómago",
-                "gritaba",
-                "por",
-                "estar",
-                "sentado."
-              ]
-            },
-            {
               "target": "Los profesores hablaban tan rápido.",
               "source": "Die Professoren sprachen so schnell.",
               "words": [
@@ -6945,14 +7282,15 @@
             },
             {
               "target": "Mi cuenta bancaria se desinfla.",
-              "source": "Mein Bankkonto schrumpft zusammen.",
+              "source": "Mein Bankkonto schrumpft.",
               "words": [
                 "Mi",
                 "cuenta",
                 "bancaria",
                 "se",
                 "desinfla."
-              ]
+              ],
+              "editedAt": "2026-08-02T19:57:33.090Z"
             }
           ],
           "_genMeta": {
@@ -6967,6 +7305,91 @@
             "ms": 253267,
             "at": "2026-08-02T17:45:42.990Z"
           }
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1785695791899",
+          "type": "comprehension",
+          "title": "Barcelona im Winter",
+          "desc": "Versteht der Lernende die Hauptmotive und Ironien der Geschichte?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum hat sich der Fokus des Erzählers von seinem ursprünglichen Plan geändert?",
+              "choices": [
+                "Weil er in Barcelona keine Wirtschaftsvorlesungen mehr angeboten bekommen hat.",
+                "Weil die Kälte ihn dazu brachte, seine Prioritäten neu zu bewerten und Essen wichtiger fand.",
+                "Weil seine Professoren ihm geraten haben, sich mehr auf das soziale Leben zu konzentrieren.",
+                "Weil er festgestellt hat, dass spanische Wirtschaftsmärkte für ihn nicht profitabel sind."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt explizit: 'aber der Kälte ließ mich meine Prioritäten überdenken' und beschreibt, wie das Essen (Paella) wichtiger wurde als die Wirtschaftsstudien."
+            },
+            {
+              "q": "Was bedeutet der Vergleich mit dem 'Globus auf dem Tibidabo' für den Erzähler?",
+              "choices": [
+                "Er fühlt sich frei und leicht, weil er in Barcelona ist.",
+                "Sein Geldbeutel leidet stark unter den Ausgaben, während die lokale Wirtschaft wächst.",
+                "Er hat einen Ball verloren, als er auf den Tibidabo gegangen ist.",
+                "Die Inflation in Barcelona ist so hoch wie der Luftdruck auf dem Berg."
+              ],
+              "correctIndex": 1,
+              "why": "Der Satz 'meine Bankkonto entleert sich schneller als ein Ball auf dem Gipfel des Tibidabo' beschreibt metaphorisch den schnellen Verlust von Geld im Vergleich zum Wachstum der lokalen Wirtschaft."
+            },
+            {
+              "q": "Wie beschreibt der Erzähler seine neuen Freunde an der Universität?",
+              "choices": [
+                "Als hilfsbereit und bereit, ihm bei der Spanischkonjugation zu helfen.",
+                "Als Menschen, die versuchen, Steuern zu vermeiden und im Winter Sonne zu finden.",
+                "Als Experten in makroökonomischen Theorien und akademischen Debatten.",
+                "Als Personen, die ihn einladen, gemeinsam Paella zu kochen."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text beschreibt die anderen Studenten als 'Experten darin, Steuern zu vermeiden und die Sonne mitten im Winter zu finden', was ihre Priorität auf Freizeit und Ausweichen von Pflichten zeigt."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 618,
+            "completionTokens": 566,
+            "ms": 388390,
+            "at": "2026-08-02T18:36:31.899Z"
+          },
+          "qcAt": "2026-08-02T19:23:14.695Z",
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": "aeh_1785700657010",
+          "type": "ai_error_hunt",
+          "title": "AI Error Hunt",
+          "desc": "Find AI errors that were corrected by a proofreader.",
+          "icon": "🔎",
+          "aiStory": "Decidí ir a Barcelona en enero para estudiar economía, aprender español y conocer gente, pero el frío me hizo reconsiderar mis prioridades. Llegué con la intención de analizar mercados emergentes, solo para descubrir que mi mercado más rentable era la paella valenciana disfrazada de tapas catalanas. Cada vez que intentaba conjugarel verbo \"ser\" en clase, mi estómago gritaba por \"estar\" sentado frente a un plato de gambas al ajillo.\n\nLos profesores hablaban tan rápido que entendía menos las lecciones de macroeconomía que el menú del día. Intenté hacer amigos en la universidad, pero todos parecían expertos en evitar los impuestos y encontrar el sol en pleno invierno. Ahora soy experto en negociar precios con vendedores ambulantes y en explicar a mi madre por qué \"estudiar\" significa principalmente siestas bajo la sombra de un palmera imaginaria. La economía local florece, pero mi cuenta bancaria se desinfla más rápido que un globo en la cima del Tibidabo.",
+          "sentences": [
+            {
+              "ai": "Cada vez que intentaba conjugarel verbo \"",
+              "corrected": "Cada vez que intentaba conjugar el verbo \"",
+              "reason": ""
+            }
+          ],
+          "_genMeta": {
+            "type": "ai_error_hunt",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 1,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "ms": null,
+            "at": "2026-08-02T19:57:37.010Z"
+          },
+          "_hidden": true
         }
       ],
       "generationStats": {
@@ -6979,8 +7402,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1565,
-        "totalCompletionTokens": 870,
+        "totalPromptTokens": 12328,
+        "totalCompletionTokens": 1768,
         "lessons": [
           {
             "lessonNum": 1,
@@ -6988,11 +7411,21 @@
             "promptTokens": 1126,
             "completionTokens": 380
           }
-        ]
+        ],
+        "tokensByType": {
+          "lesson_qc": 9857,
+          "add_lesson": 1184,
+          "story_qc": 620
+        }
       },
       "generatedAt": "2026-08-02T17:41:29.681Z",
-      "updatedAt": "2026-08-02T17:45:42.991Z",
-      "createdBy": "admin"
+      "updatedAt": "2026-08-02T19:57:47.509Z",
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-02T19:27:54.848Z",
+      "aiStory": "Decidí ir a Barcelona en enero para estudiar economía, aprender español y conocer gente, pero el frío me hizo reconsiderar mis prioridades. Llegué con la intención de analizar mercados emergentes, solo para descubrir que mi mercado más rentable era la paella valenciana disfrazada de tapas catalanas. Cada vez que intentaba conjugarel verbo \"ser\" en clase, mi estómago gritaba por \"estar\" sentado frente a un plato de gambas al ajillo.\n\nLos profesores hablaban tan rápido que entendía menos las lecciones de macroeconomía que el menú del día. Intenté hacer amigos en la universidad, pero todos parecían expertos en evitar los impuestos y encontrar el sol en pleno invierno. Ahora soy experto en negociar precios con vendedores ambulantes y en explicar a mi madre por qué \"estudiar\" significa principalmente siestas bajo la sombra de un palmera imaginaria. La economía local florece, pero mi cuenta bancaria se desinfla más rápido que un globo en la cima del Tibidabo.",
+      "storyQcBy": "translategemma:12b",
+      "storyQcAt": "2026-08-02T19:57:37.010Z"
     },
     {
       "id": "tp_17854063449150000195",
