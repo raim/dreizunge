@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v72';
+const APP_VERSION  = 'v73';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -3343,8 +3343,14 @@ async function generateErrorHunt(story, lang, difficulty, jobId, priorVocab) {
     if (attempt > 1) jobStep(jobId, `[${OLLAMA_MODEL}] Error-hunt retry ${attempt}/${ATTEMPTS}${useThink ? ' (with reasoning)' : ''}…`);
     let text = '';
     try {
+      // v72_f: this prompt embeds the whole story AND asks for the whole story back, so it is the
+      // most context-hungry lesson call there is — the output budget is already `story.length * 2`.
+      // Truncating the INPUT here is uniquely bad: the model would return a corrupted copy of a
+      // fragment, the length check would reject it, and the retry loop would burn all three attempts
+      // reporting "returned identical story" or a word-count mismatch, never the real cause.
       const r = await _callLLM(OLLAMA_MODEL, sys, baseMsg + feedback, story.length * 2,
-        { think: useThink, timeoutMs: Math.ceil(getRequestTimeout() * THINK_TIMEOUT_MULT) });
+        { think: useThink, timeoutMs: Math.ceil(getRequestTimeout() * THINK_TIMEOUT_MULT),
+          ctxTokens: estimateCtxTokens(sys.length + baseMsg.length + feedback.length, story.length * 2 / 3.5) });
       text = r.text; promptTokens += r.promptTokens || 0; completionTokens += r.completionTokens || 0;
     } catch (e) {
       lastProblem = `the request failed (${e.message})`;
@@ -3572,7 +3578,20 @@ async function generateWordForms(topic, lang, srcLang, difficulty, jobId, opts) 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Word-forms lesson attempt ${attempt}/${MAX_ATTEMPTS}…`);
     console.log(`    Word-forms attempt ${attempt}…`);
-    const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 1600);
+    // v72_f: size num_ctx like generateComprehension and generateSynonyms. This prompt carries the
+    // WHOLE chapter story, and Ollama's default num_ctx (~4096) truncates a long prompt SILENTLY —
+    // the model then derives items from a fragment while every attempt "succeeds" (v71_t).
+    //
+    // It was not failing yet, and that is the point: measured against this corpus the largest
+    // chapter (4,691 chars) puts the prompt at ~3,985 tokens, i.e. inside the default by about 110
+    // tokens — roughly 380 characters of story. A slightly longer chapter, a longer system prompt,
+    // or a chain arriving here later crosses it with no signal at all. validateWordFormsItems would
+    // then reject items for "not in the story" when the real cause is that the model never saw that
+    // part of the story.
+    const _ctxTokens = estimateCtxTokens(sys.length + userMsg.length, 1600 * THINK_TOKEN_MULT);
+    const _timeout = Math.ceil(getRequestTimeout() * THINK_TIMEOUT_MULT);
+    const { text: raw, promptTokens, completionTokens } =
+      await callLLMLesson(sys, userMsg, 1600, { ctxTokens: _ctxTokens, timeoutMs: _timeout });
     totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
     const cleaned = raw.replace(/\`\`\`json|\`\`\`/g, '').trim();
     let parsed;
@@ -3612,9 +3631,81 @@ async function generateWordForms(topic, lang, srcLang, difficulty, jobId, opts) 
 // ── synonyms context sentence ────────────────────────────────────────────────
 // Split text into candidate sentences and find the first that contains `base`
 // (whole-word, normalized). Used to present a synonym/antonym target in context.
+// Split one paragraph into sentences.
+//
+// v72_a: boundaries come from Intl.Segmenter (Unicode UAX #29 sentence breaking), not from a
+// hand-written terminator list. The list was the standing design-principle violation here: `[.!?…]`
+// silently excluded EVERY terminator outside Latin script, so a Japanese story segmented as one
+// unit (33 units across the whole ja corpus, against 176 correct ones) and Arabic lost every `؟`
+// — `/[.!?…]/.test('؟')` is false. Unicode already knows all of this; we were re-deriving it badly.
+//
+// No locale is passed, deliberately. Sentence breaking is script-driven, and passing one changed
+// the result on 0 of 1533 corpus paragraphs — so a locale would add an APP.lang dependency to a
+// pure helper and buy nothing. Keeping it out is what keeps "no language knowledge in the code"
+// true rather than merely relocated.
+//
+// Single newlines are flattened FIRST. Intl.Segmenter treats a line break as a sentence end;
+// _sentenceUnits has already split paragraphs on \n\n+, so a surviving \n is a line WRAP. Without
+// this, PDF-derived text shatters mid-clause ("…dei vigili del fuoco per ⏎ sottopassi allagati"),
+// which is the very corruption v70_k's paragraph repair exists to prevent — 598 of 854 new split
+// points across the corpus came from line breaks alone before this line was added.
+//
+// Measured against the previous scan on the whole corpus: +257 boundaries, -87, and NOT ONE
+// character of text gained or lost anywhere. The losses are overwhelmingly the old code being
+// wrong — 51 of them were mid-sentence hesitation ellipsis ("Forse... forse c'è qualcosa"), which
+// it split and Unicode correctly does not.
+//
+// Kept in sync with the copy in server.js — see unit-sentence-segmentation.test.js, which asserts
+// the two bodies are byte-identical. One rule per question.
+function _sentenceSplit(p) {
+  const s = String(p || '');
+  if (!s.trim()) return [];
+  const flat = s.replace(/\n/g, ' ');
+  if (typeof Intl !== 'undefined' && typeof Intl.Segmenter === 'function') {
+    const out = [];
+    for (const seg of new Intl.Segmenter(undefined, { granularity: 'sentence' }).segment(flat)) {
+      const t = seg.segment.trim();
+      if (t) out.push(t);
+    }
+    if (out.length) return out;
+  }
+  // Fallback for engines without Intl.Segmenter. This is the pre-v72_a scan, kept verbatim so an
+  // old browser degrades to the OLD behaviour rather than to no splitting at all.
+  //
+  // v71_b: a terminator only ends a sentence when something WHITESPACE-like follows it. A period
+  // glued to the next character is part of a token, not a boundary — and the previous regex split
+  // there, then _unitsToText rejoined the pieces with a space, so the text came back CORRUPTED:
+  //     500.000 anni fa   ->  500. 000 anni fa        (the user's article says 500.000)
+  //     S.J. Gould        ->  S. J. Gould
+  // Written as a scan rather than a lookahead regex on purpose: `(?=\s|$)` on the old pattern makes
+  // the whole alternative fail at a glued period, and the engine then resumes PAST it, silently
+  // dropping "500." from the output. Walking the terminators keeps every character accounted for.
+  const out = [];
+  const re = /[.!?…]+["'»«”’)\]]*/gu;
+  let start = 0, m;
+  while ((m = re.exec(flat)) !== null) {
+    const end = m.index + m[0].length;
+    if (end < flat.length && !/\s/.test(flat[end])) continue;   // glued to what follows: not a boundary
+    const piece = flat.slice(start, end).trim();
+    if (piece) out.push(piece);
+    start = end;
+  }
+  const tail = flat.slice(start).trim();
+  if (tail) out.push(tail);
+  return out.length ? out : (flat.trim() ? [flat.trim()] : []);
+}
+
+// The synonym-context pool: every sentence in the story, as candidate context for a target word.
+//
+// v72_a: this used to be a SECOND, independent splitter — and the two had already drifted. The
+// server's list included 。！？ and the client's did not, so the two halves of the same pipeline
+// disagreed about what a sentence is, with the server accidentally the more correct one. Both now
+// route through the one _sentenceSplit above. Paragraphs are separated here rather than inside it
+// so the helper stays a pure paragraph-level function on both sides.
 function _synSplitSentences(text) {
   return String(text == null ? '' : text)
-    .split(/(?<=[.!?。！？\u2026])\s+|\n+/)
+    .split(/\n\n+/)
+    .reduce((acc, p) => acc.concat(_sentenceSplit(p)), [])
     .map(s => s.trim()).filter(s => s.length > 2);
 }
 function findContextSentence(base, sentencePools) {
@@ -3629,12 +3720,46 @@ function findContextSentence(base, sentencePools) {
   return '';
 }
 
+// v72_d: accept the model's OWN context sentence — but only if it is really from the story.
+//
+// Before this, generateSynonyms reduced the story to eight keywords via extractKeywords and the
+// model never saw a sentence at all. It chose synonyms for a word in ISOLATION, and the server then
+// searched the story for a sentence containing that word and stapled it on afterwards. Nothing ever
+// checked that the synonyms fit the sentence the learner is shown, which is exactly where polysemy
+// bites: "preferenze" in an electoral-law story means preference VOTES, and a model working from a
+// topic string can quite reasonably answer with the "tastes" sense.
+//
+// The model now quotes the sentence it had in mind. That only helps if the quote is real, so it is
+// verified rather than trusted: a model asked to copy text will sometimes paraphrase, translate,
+// merge two sentences, or invent one outright, and an invented sentence would be worse than the
+// server-picked one it replaced. Two checks, both cheap and exact:
+//   • the sentence appears in the story character-for-character (whitespace normalised, since the
+//     model will not reproduce line wrapping)
+//   • it actually CONTAINS the base word, whole-word — a correctly-quoted but irrelevant sentence
+//     is still useless as context
+// Anything that fails falls back to findContextSentence, so this can only improve on the old path.
+function verbatimStorySentence(candidate, base, story) {
+  const c = String(candidate == null ? '' : candidate).replace(/\s+/g, ' ').trim();
+  if (!c) return '';
+  const s = String(story == null ? '' : story).replace(/\s+/g, ' ');
+  if (!s.includes(c)) return '';                      // paraphrased, merged, translated or invented
+  const b = _wfNorm(base);
+  if (!b) return '';
+  if (!_wfNorm(c).split(' ').filter(Boolean).includes(b)) return '';   // quoted, but not the word
+  return c;
+}
+
 async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
   const _t0 = Date.now();
   opts = opts || {};
   const { story, userDialect, chainVocab, vocabMode: synVocabMode } = opts;
   const L = langName(lang), S = langName(srcLang || 'en');
   const storyKeywords = story ? extractKeywords(story, 8, lang) : '';
+  // v72_d: pass the STORY, not eight keywords extracted from it. The data was always here — it was
+  // being thrown away one line later. Stories are small (corpus p50 787 chars, max 4691), so this
+  // fits comfortably; the ceiling check mirrors generateComprehension and degrades to the old
+  // keyword hint rather than silently sending a prompt Ollama would truncate (the v71_t trap).
+  const storyForPrompt = String(story || '').trim();
   const _priorWords = (chainVocab?.words || []).slice(0, 12).map(v => v.target).filter(Boolean);
   const priorWords = _priorWords.join(', ');
   const P = PROMPTS && PROMPTS.synonyms;
@@ -3643,11 +3768,16 @@ async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
     sys = fillPrompt(P.system, { L, S, diff: difficultyLabel(difficulty || 2), EXAMPLE: fillPrompt(promptExample(P, lang, srcLang), { L, S }) });
     if (userDialect && P.dialectNote) sys += fillPrompt(P.dialectNote, { dialect: userDialect });
     const ss = getStoryStyle(opts.storyStyle); if (ss && P.writingStyleNote) sys += fillPrompt(P.writingStyleNote, { writingStyle: ss });
+    const _fitsStory = storyForPrompt && P.storyBlock &&
+      estimateCtxTokens(sys.length + storyForPrompt.length + 1200, 1800 * THINK_TOKEN_MULT) <= getNumCtxMax();
     userMsg = fillPrompt(P.user, { topic, L, S })
-      + (storyKeywords && P.storyHint ? fillPrompt(P.storyHint, { storyKeywords }) : '')
+      + (_fitsStory ? fillPrompt(P.storyBlock, { story: storyForPrompt })
+                    : (storyKeywords && P.storyHint ? fillPrompt(P.storyHint, { storyKeywords }) : ''))
       + (priorWords && P.priorHint && synVocabMode !== 'extend' ? fillPrompt(P.priorHint, { priorWords }) : '');
+    if (storyForPrompt && !_fitsStory)
+      console.log(`    Synonyms: story too large for num_ctx (${storyForPrompt.length} chars) — falling back to keyword hint`);
   } else {
-    sys = `You are a ${L} vocabulary lesson generator (learner speaks ${S}). For useful ${L} words, give ${L} synonyms (>=1), ${L} antonyms (0+), and ${L} homophones ONLY when they truly exist (else []). Glosses are short ${S} translations. Output strict JSON only.`;
+    sys = `You are a ${L} vocabulary lesson generator (learner speaks ${S}). For useful ${L} words, give ${L} synonyms and ${L} antonyms that are genuine drop-in replacements in the word's own sentence, and ${L} homophones ONLY when they truly exist (else []). Prefer FEWER, certain entries over more, doubtful ones: [] is better than a word that does not really fit. Each word needs at least one synonym OR one antonym, not both. Glosses are short ${S} translations. Output strict JSON only.`;
     userMsg = `Topic: "${topic}".`
       + (storyKeywords ? `\nPrefer these ${L} words: ${storyKeywords}.` : '')
       + `\nReturn ONLY JSON: {"title":"...","desc":"...","icon":"🔁","words":[{"base":"<${L}>","gloss":"<${S}>","synonyms":[{"w":"<${L}>","g":"<${S}>"}],"antonyms":[],"homophones":[]}]}`;
@@ -3667,7 +3797,13 @@ async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Synonyms lesson attempt ${attempt}/${MAX_ATTEMPTS}…`);
     console.log(`    Synonyms attempt ${attempt}…`);
-    const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 1800);
+    // Sized like generateComprehension now that the whole story rides along: Ollama's default
+    // num_ctx (~4096) truncates a long prompt SILENTLY, so the model would answer from a fragment
+    // while every attempt "succeeded" (v71_t). A timeout is a ceiling, not a delay.
+    const _ctxTokens = estimateCtxTokens(sys.length + userMsg.length, 1800 * THINK_TOKEN_MULT);
+    const _timeout = Math.ceil(getRequestTimeout() * THINK_TIMEOUT_MULT);
+    const { text: raw, promptTokens, completionTokens } =
+      await callLLMLesson(sys, userMsg, 1800, { ctxTokens: _ctxTokens, timeoutMs: _timeout });
     tp += promptTokens; tc += completionTokens;
     const cleaned = raw.replace(/```json|```/g, '').trim();
     let parsed;
@@ -3684,6 +3820,7 @@ async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
     const chainSents = (synVocabMode !== 'extend' && Array.isArray(chainVocab?.sentences)) ? chainVocab.sentences : [];
     const sentPools = synVocabMode === 'extend' ? [storySents] : [storySents, chainSents];
     const words = [];
+    let nQuoted = 0, nRejected = 0;
     for (const entry of parsed.words) {
       const base = (entry.base ?? entry.word ?? '').toString().trim();
       if (!base) continue;
@@ -3693,14 +3830,33 @@ async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
       const synonyms   = notBase(clean(entry.synonyms)).slice(0, 4);
       const antonyms   = notBase(clean(entry.antonyms)).slice(0, 3);
       const homophones = notBase(clean(entry.homophones)).slice(0, 2);
-      if (!synonyms.length) continue; // need >=1 synonym to be quizzable
-      const sentence = findContextSentence(base, sentPools);
+      // v72_e: an entry is quizzable with EITHER relation. buildSynExercises makes one select-all
+      // per relation and skips the empty one, so an antonym-only word yields exactly one exercise
+      // — the client already handled this; the server was the half that threw the word away.
+      //
+      // This exists so the prompt can be strict. It now tells the model that [] beats a doubtful
+      // synonym, and a learner is marked WRONG for not picking a listed word, so a shaky entry
+      // teaches something false. That instruction is only safe to give if dropping the weak
+      // synonyms does not also drop a word whose ANTONYMS were solid.
+      if (!synonyms.length && !antonyms.length) continue; // neither relation: nothing to ask
+      // The model's own quote first (it chose the synonyms against THIS sentence), the server's
+      // search only as a fallback. Order matters: the fallback sentence is correct but arbitrary.
+      const quoted = verbatimStorySentence(entry.sentence, base, storyForPrompt);
+      if (quoted) nQuoted++; else if (entry.sentence) nRejected++;
+      const sentence = quoted || findContextSentence(base, sentPools);
       words.push({ base, gloss: (entry.gloss ?? '').toString().trim(), sentence, synonyms, antonyms, homophones });
     }
     if (!words.length) { lastError = 'No usable word groups (need a base + >=1 synonym)'; continue; }
+    const antOnly = words.filter(w => !w.synonyms.length).length;
     const synN = words.reduce((n,w)=>n+w.synonyms.length,0);
     const homN = words.reduce((n,w)=>n+w.homophones.length,0);
-    console.log(`    Synonyms: ${words.length} groups, ${synN} synonyms, ${homN} homophones`);
+    console.log(`    Synonyms: ${words.length} groups, ${synN} synonyms, ${homN} homophones` +
+      (antOnly ? `, ${antOnly} antonym-only` : ''));
+    // Logged because it is the only signal that the model actually read the story. A run reporting
+    // 0 quoted is the symptom of a silently truncated prompt or a model ignoring the field.
+    if (nQuoted || nRejected)
+      console.log(`    Synonyms context: ${nQuoted} sentence(s) quoted from the story` +
+        (nRejected ? `, ${nRejected} rejected as not verbatim (fell back to search)` : ''));
     return {
       lesson: {
         id: 6, type: 'synonyms',
@@ -4009,7 +4165,17 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
 
   return withRetry(`Lesson ${lessonNum}`, async () => {
     const t0 = Date.now();
-    const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sysPrompt, userMsg, 2048);
+    // v72_f: sized from the ASSEMBLED userMsg, because only one of this function's four prompt
+    // branches caps the story. The `1200 char cap` comment above applies to the standard branch
+    // alone; the two my-text branches embed the whole story AND its whole translation, and the
+    // table branch embeds the whole story. Measured on this corpus they all land just inside
+    // Ollama's ~4096 default — the my-text branch only because no topic here HAS a translation.
+    // With one of similar length it reaches ~4,700 tokens, i.e. silently truncated (v71_t), and a
+    // translation is the entire point of that branch.
+    const _ctxTokens = estimateCtxTokens(sysPrompt.length + userMsg.length, 2048 * THINK_TOKEN_MULT);
+    const _timeout = Math.ceil(getRequestTimeout() * THINK_TIMEOUT_MULT);
+    const { text: raw, promptTokens, completionTokens } =
+      await callLLMLesson(sysPrompt, userMsg, 2048, { ctxTokens: _ctxTokens, timeoutMs: _timeout });
     const ms = Date.now() - t0;
   
     let lesson;
@@ -4392,7 +4558,23 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     : (!_hasLearnedVocab && _vocabMode !== 'neutral' && chainParent)
       ? collectChainVocab(findSaved(chainParent)?.id || chainParent)
       : { words: [], nouns: [], verbs: [] };
-  const chainOpts = { userDialect, storyStyle, chainVocab, vocabMode: _vocabMode, story };
+  // v72_f: the chain STORY, alongside the chain vocab collected just above. generateComprehension is
+  // its only consumer and it already prefers `chainStory || story` — but this call path was the one
+  // of five that never supplied it, so a comprehension lesson created WITH a chapter saw only that
+  // chapter while the same lesson ADDED afterwards saw the whole storyline. Measured on the corpus:
+  // "Wahlrecht im Fokus" is 749 chars on its own and 4,139 across its four chapters, so the two
+  // routes differed by 5.5x for identical output.
+  //
+  // The current chapter is not persisted yet here, so it cannot be walked from the store. The
+  // synthetic node is the same shape the arc path builds for the same reason: this chapter's story
+  // last and whole, predecessors ahead of it, trimmed from the oldest end.
+  const _chainStory = chainParent
+    ? collectChainStory({ id: null, topic, story, continuedFromId: findSaved(chainParent)?.id || null })
+    : { text: '', chapters: 0 };
+  if (_chainStory.chapters > 1)
+    console.log(`    Story context: ${_chainStory.chapters} chapters, ${_chainStory.text.length} chars`);
+  const chainOpts = { userDialect, storyStyle, chainVocab, vocabMode: _vocabMode, story,
+                      chainStory: _chainStory.text, chainStoryChapters: _chainStory.chapters };
 
   if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math' || lessonFormat === 'synonyms' || lessonFormat === 'word_forms' || lessonFormat === 'comprehension') {
     const genFn   = lessonFormat === 'math'

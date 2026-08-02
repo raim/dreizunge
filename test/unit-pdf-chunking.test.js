@@ -23,7 +23,8 @@ assert.ok(sentEnd, 'the module-level sentence-end pattern exists');
 const M = new Function(
   'const _SENT_END_RE = ' + sentEnd[1] + ';\n' + src.match(/const _TITLE_MAX = \d+;/)[0] + '\n' +
   extract('_cleanPdfText') + '\nlet _lastCleanStats = null;\n' +
-  extract('_sentenceSplit') + extract('_sentenceUnits') + extract('_unitsToText') +
+  src.match(/const _MAX_UNIT_CHARS = \d+;/)[0] + '\n' +
+  extract('_sentenceSplit') + extract('_splitLongUnit') + extract('_sentenceUnits') + extract('_unitsToText') +
   extract('_splitIntoChunks') + extract('_autoTitle') +
   '\nreturn { _cleanPdfText, _sentenceUnits, _unitsToText, _splitIntoChunks };')();
 

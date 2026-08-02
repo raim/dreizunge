@@ -39,22 +39,26 @@ const LANGS = JSON.parse(fs.readFileSync(path.join(ROOT, 'languages.json'), 'utf
 const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
 C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed-static');
 
-const seed = () => C.run(`
-  APP.savedList = ${JSON.stringify(store.topics.map(t => ({
-    id: t.id, topic: t.topic, lang: t.lang, srcLang: t.srcLang, difficulty: t.difficulty,
-    lessons: t.lessons, storyStyle: t.storyStyle, createdBy: t.createdBy,
-    storyMeta: t.storyMeta, translationMeta: t.translationMeta, generationStats: t.generationStats,
-  })))};
+const SAVED_LIST = JSON.stringify(store.topics.map(t => ({
+  id: t.id, topic: t.topic, lang: t.lang, srcLang: t.srcLang, difficulty: t.difficulty,
+  lessons: t.lessons, storyStyle: t.storyStyle, createdBy: t.createdBy,
+  storyMeta: t.storyMeta, translationMeta: t.translationMeta, generationStats: t.generationStats,
+})));
+// Seeding is parameterised by chapter because §3 needs a chapter with a specific SHAPE (see the
+// lock fixture below) rather than the richest one. Everything else still seeds the default topic.
+const seedTopic = (t) => C.run(`
+  APP.savedList = ${SAVED_LIST};
   APP.storylines = ${JSON.stringify(store.storylines || [])};
-  APP.lessonData = ${JSON.stringify(topic)};
-  APP.lang = ${JSON.stringify(topic.lang)};
-  APP.srcLang = ${JSON.stringify(topic.srcLang)};
+  APP.lessonData = ${JSON.stringify(t)};
+  APP.lang = ${JSON.stringify(t.lang)};
+  APP.srcLang = ${JSON.stringify(t.srcLang)};
   APP.info = { backend: 'none', canGenerate: false, version: 'smoke', coverageThreshold: 0.8 };
   APP.progress = APP.progress || {};
   APP.progress.completed = APP.progress.completed || {};
   APP.progress.solved = APP.progress.solved || {};
   true;
 `, 'seed');
+const seed = () => seedTopic(topic);
 
 function shouldNotThrow(label, code) {
   try { C.run(code, label); }
@@ -113,16 +117,48 @@ console.log('  _renderStorylineScreen: real + teacher + unresolvable chain: OK')
   // Review mode — the branch loadSaved uses for an already-complete chapter.
   seed();
   shouldNotThrow('showComplete (review)', base + 'showComplete(true);');
-  // Below the pass mark: the branch that reads _belowThreshold (the TDZ site) and wires the drill.
-  seed();
-  // Every lesson PLAYED but coverage still short — the state v66.1 exists for. Without marking the
-  // lessons done, Next legitimately points at the next lesson IN this chapter and no lock applies.
-  shouldNotThrow('showComplete (below pass mark)', base + `
+  // ── Below the pass mark: the branch that reads _belowThreshold (the TDZ site) ──
+  //
+  // The lock branch is only REACHABLE when the chapter has no in-chapter lesson left to offer, and
+  // the corpus decides that. Two preconditions, and neither is a property of the richest chapter:
+  //
+  //   • no visible `mixed` lesson. For a mixed-driven set that is below target,
+  //     `_firstUnfinishedLessonIdx` deliberately returns the mixed DRIVER (the v68.1 fix — without
+  //     it a learner who had a done-flag on every lesson could never raise coverage again). That is
+  //     correct behaviour, and it wins at index.html's `nextLessonIdx >= 0` branch, which sits
+  //     ABOVE the `_belowThreshold` branch. Asserted in its own right below.
+  //   • a non-empty coverage universe, or `cov.total > 0` fails and `_belowThreshold` stays false.
+  //
+  // So the fixture is chosen BY SHAPE and the search is asserted to have succeeded. This section
+  // has been bitten by corpus drift twice now (see the v71_k note in the above-mark block below,
+  // and again when lessons.json grew a mixed lesson into the picked chapter) — both times it went
+  // quietly wrong rather than loudly, which is what the assertion below exists to stop.
+  const _visibleMixed = (t) => (t.lessons || []).some(x => x && x.type === 'mixed' && !x._hidden);
+  const _markAllDone = `
     APP.lessonData.coverageTarget = 0.9;
     APP.progress.solved[APP.lessonData.topic] = {};
     APP.progress.completed[APP.lessonData.topic] = {};
-    (APP.lessonData.lessons || []).forEach(L => { if (L && L.id) APP.progress.completed[APP.lessonData.topic][L.id] = true; });
-    showComplete();`);
+    (APP.lessonData.lessons || []).forEach(L => { if (L && L.id) APP.progress.completed[APP.lessonData.topic][L.id] = true; });`;
+
+  let lockTopic = null;
+  for (const cand of store.topics) {
+    if ((cand.lessons || []).length < 2 || _visibleMixed(cand)) continue;
+    seedTopic(cand);
+    const ok = C.run(base + _markAllDone + `
+      JSON.stringify({ total: topicCoverage().total, next: _firstUnfinishedLessonIdx(APP.lessonData) })`,
+      'lock-probe');
+    const r = JSON.parse(ok);
+    if (r.total > 0 && r.next < 0) { lockTopic = cand; break; }
+  }
+  // The vacuity guard: without it this section silently becomes a no-op the next time the corpus
+  // is replaced, exactly as it did here.
+  assert.ok(lockTopic,
+    'the corpus contains a non-mixed-driven chapter that can reach the below-pass-mark lock — ' +
+    'without one this section proves nothing about the v71_d lock');
+  console.log(`  lock fixture: "${lockTopic.topic}" (${(lockTopic.lessons || []).length} lessons, not mixed-driven)`);
+
+  seedTopic(lockTopic);
+  shouldNotThrow('showComplete (below pass mark)', base + _markAllDone + '\n    showComplete();');
   // v71_d (user-reported): below the mark, Next is LOCKED rather than repurposed. Asserted on the
   // live card because the whole point is what the learner can click — a source check would not see
   // the disabled flag, and this branch chain has produced three user-reported dead ends already.
@@ -135,6 +171,38 @@ console.log('  _renderStorylineScreen: real + teacher + unresolvable chain: OK')
       'while Repeat is offered as its own button');
     assert.strictEqual(C.document.getElementById('comp-title').textContent, UI.en['complete.keep_going'],
       'the SAME card is reused, with "Keep going!" in place of "Lesson complete!"');
+  }
+
+  // The other side of the same branch chain, and the reason the fixture above has to be chosen by
+  // shape: a MIXED-driven chapter below the mark must NOT lock. Its Next carries the learner back
+  // into the mixed round, which is how coverage gets raised (v68.1). Guarding it here means a
+  // future change that "fixes" the lock by making it unconditional fails loudly instead of
+  // re-opening the dead end that fix closed. Skipped, with a note, if the corpus has no such
+  // chapter — the assertion above already covers the case that matters most.
+  {
+    const mixedTopic = store.topics.find(t => (t.lessons || []).length >= 2 && _visibleMixed(t));
+    if (!mixedTopic) console.log('  (no mixed-driven chapter in the corpus — mixed resume not exercised)');
+    else {
+      seedTopic(mixedTopic);
+      const probe = JSON.parse(C.run(base + _markAllDone + `
+        JSON.stringify({ total: topicCoverage().total, next: _firstUnfinishedLessonIdx(APP.lessonData) })`,
+        'mixed-probe'));
+      // Only meaningful while this chapter is genuinely below its mark; say so rather than assume.
+      if (probe.total > 0) {
+        seedTopic(mixedTopic);
+        shouldNotThrow('showComplete (below mark, mixed-driven)', base + _markAllDone + '\n        showComplete();');
+        const nx = C.document.getElementById('comp-next');
+        assert.strictEqual(nx.disabled, false,
+          'a mixed-driven chapter below the mark keeps Next live — it resumes the mixed round');
+        assert.ok(!nx.classList.contains('locked'), 'and is not greyed');
+        assert.ok(typeof nx.onclick === 'function', 'and is clickable');
+        assert.ok(probe.next >= 0 && (mixedTopic.lessons[probe.next] || {}).type === 'mixed',
+          'because resume points at the mixed driver, not at a lesson with a done-flag');
+        assert.strictEqual(C.document.getElementById('comp-title').textContent, UI.en['complete.keep_going'],
+          'while the card still says "Keep going!" — the mark is not met, only the route on differs');
+        console.log(`  mixed-driven fixture: "${mixedTopic.topic}" — Next resumes lesson ${probe.next} (mixed), not locked`);
+      } else console.log('  (mixed-driven chapter has an empty coverage universe — resume not exercised)');
+    }
   }
   // …and the lock does not persist into the next completion rendered into the same DOM.
   seed();

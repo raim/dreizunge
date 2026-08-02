@@ -142,12 +142,24 @@ const srv = http.createServer(async (req, res) => {
       });
     } else if (/synonyms[\s\S]*antonyms[\s\S]*homophones/i.test(sys)) {
       // synonyms: base words appear in the fake story so context-sentence attach works.
+      //
+      // v72_d: the two words deliberately exercise BOTH sides of verbatimStorySentence.
+      //   Haus  — quotes the story sentence exactly, so the model's own sentence is kept.
+      //   Katze — returns a plausible sentence that is NOT in the story (the paraphrase/invention
+      //           failure a model actually makes), so it must be REJECTED and the server's own
+      //           findContextSentence search used instead.
+      // Both end up with a sentence, so a test that only checks "has a sentence" cannot tell the
+      // paths apart — e2e-synonyms asserts the source of each.
       kind = 'synonyms';
       content = JSON.stringify({
         title: 'Synonyms', desc: 'Related words from the story', icon: '🔁',
         words: [
-          { base: 'Haus', gloss: 'house', synonyms: [{ w: 'Gebäude', g: 'building' }, { w: 'Heim', g: 'home' }], antonyms: [], homophones: [] },
-          { base: 'Katze', gloss: 'cat', synonyms: [{ w: 'Mieze', g: 'kitty' }], antonyms: [{ w: 'Hund', g: 'dog' }], homophones: [] },
+          { base: 'Haus', gloss: 'house', sentence: 'Die Katze und das Haus blieben gleich.', synonyms: [{ w: 'Gebäude', g: 'building' }, { w: 'Heim', g: 'home' }], antonyms: [], homophones: [] },
+          { base: 'Katze', gloss: 'cat', sentence: 'Die Katze war sehr klein und grau.', synonyms: [{ w: 'Mieze', g: 'kitty' }], antonyms: [{ w: 'Hund', g: 'dog' }], homophones: [] },
+          // v72_e: ANTONYM-ONLY. The prompt now tells the model that [] beats a doubtful synonym,
+          // so this shape is expected rather than exceptional — the server used to drop the whole
+          // word. It must survive and still produce one playable (antonym) exercise.
+          { base: 'gleich', gloss: 'same', sentence: 'Die Katze und das Haus blieben gleich.', synonyms: [], antonyms: [{ w: 'anders', g: 'different' }], homophones: [] },
         ],
       });
     } else if (/word.?forms.*exercise generator|"correctIndex"/i.test(sys)) {

@@ -125,8 +125,14 @@ console.log('  empty-response + reasoning-only guards intact: OK');
   const at = server.indexOf('async function generateErrorHunt(');
   assert.ok(at > 0, 'generateErrorHunt exists');
   const body = server.slice(at, server.indexOf('\n}', at));
-  assert.ok(/\{ think: useThink, timeoutMs: Math\.ceil\(getRequestTimeout\(\) \* THINK_TIMEOUT_MULT\) \}/.test(body),
-    'error-hunt passes an explicit think flag + the reasoning-grade timeout multiplier');
+  // v72_f: asserted as two independent properties rather than one literal object. The old regex
+  // pinned `{ think: useThink, timeoutMs: ... }` exactly, so adding `ctxTokens` to the same opts
+  // broke it while every requirement it protects was still satisfied. A guard that fails on
+  // unrelated additions trains people to edit the guard, which is how a guard stops guarding.
+  assert.ok(/think: useThink/.test(body),
+    'error-hunt passes an explicit think flag (a verbatim rewrite is not a reasoning task)');
+  assert.ok(/timeoutMs: Math\.ceil\(getRequestTimeout\(\) \* THINK_TIMEOUT_MULT\)/.test(body),
+    'and the reasoning-grade timeout multiplier — its output is story-length, the longest of any generator');
   assert.ok(!/_callLLM\(OLLAMA_MODEL, sys, userMsg, story\.length \* 2\);/.test(server),
     'the old opts-less error-hunt call shape is gone');
   // v69_g: the think flag is now ADAPTIVE. think:false is right for a verbatim rewrite (v68.1, it

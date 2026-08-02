@@ -76,10 +76,31 @@ const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
   // next pass refills them against the new English rather than keeping the old wording.
   assert.strictEqual(UI.en['prov.by'], 'User: {user}', 'the author line is labelled');
   assert.strictEqual(UI.en['prov.from'], 'Source', 'and the origin line is labelled');
-  const stale = Object.keys(UI).filter(l => l !== 'en' &&
-    ('prov.by' in UI[l] || 'prov.from' in UI[l]));
-  assert.deepStrictEqual(stale, [],
-    'no language still holds a translation of the OLD wording — they were dropped for refill');
+
+  // This guard originally asserted the two keys were absent from every non-`en` language: they were
+  // DELETED in v71_q so the offline pass would refill them against the new English rather than keep
+  // the old wording. That form is correct only while the keys are still missing, and wrong the
+  // moment the pass runs (roadmap DoD §3). The pass has now run — all 29 languages carry both — so
+  // the claim is restated in the durable form: not "untranslated", and not COLLIDING, which is the
+  // defect v71_q actually fixed (German rendered both lines as "von", because the English source
+  // said "by" and "from" and neither carried a label).
+  const langs = Object.keys(UI).filter(l => l !== 'en');
+  const missing = langs.filter(l => !('prov.by' in UI[l]) || !('prov.from' in UI[l]));
+  assert.deepStrictEqual(missing, [], 'every language has both provenance labels');
+
+  // The author line is an interpolation; losing {user} would drop the name silently.
+  const noUser = langs.filter(l => !/\{user\}/.test(String(UI[l]['prov.by'])));
+  assert.deepStrictEqual(noUser, [], 'every prov.by keeps the {user} placeholder');
+
+  // The two labels must stay DISTINGUISHABLE once the placeholder and its separator are removed.
+  // A language whose two provenance lines read identically has the v71_q bug back, whatever the
+  // wording. (Non-Latin-script verbatim-English fallbacks are caught separately and generally by
+  // unit-ui-verbatim-en; duplicating that check here would only drift from it.)
+  const bare = (s) => String(s == null ? '' : s).replace(/\{user\}/g, '').replace(/[:：]/g, '').trim();
+  const collide = langs.filter(l => bare(UI[l]['prov.by']) &&
+    bare(UI[l]['prov.by']) === bare(UI[l]['prov.from']));
+  assert.deepStrictEqual(collide, [],
+    'no language renders the author line and the origin line as the same word (the v71_q defect)');
 }
 
 console.log('unit-model-settings: ALL PASSED');

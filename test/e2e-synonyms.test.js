@@ -25,7 +25,7 @@ async function waitJob(sport, jobId, timeoutMs = 60000) {
 }
 
 (async () => {
-  const env = await boot({ seed: SEED });
+  const env = await boot({ seed: SEED, log: true });
   let failed = false;
   try {
     const { sport } = env;
@@ -47,6 +47,44 @@ async function waitJob(sport, jobId, timeoutMs = 60000) {
     }
     // Schema preserved.
     assert(syn.words.every(w => Array.isArray(w.synonyms)), 'words keep synonyms arrays');
+
+    // v72_d: the model now quotes its own context sentence, and the server verifies the quote.
+    // The fake returns one real quote and one invented sentence, so both branches are covered.
+    const byBase = Object.fromEntries(syn.words.map(w => [w.base, w.sentence]));
+    assert(byBase.Haus === 'Die Katze und das Haus blieben gleich.',
+      'a verbatim quote from the story is KEPT as the context sentence (got ' + JSON.stringify(byBase.Haus) + ')');
+    assert(byBase.Katze && !/sehr klein/.test(byBase.Katze),
+      'an invented sentence is REJECTED and replaced by the server search (got ' +
+      JSON.stringify(byBase.Katze) + ') — otherwise the learner is shown text that is not in the story');
+    assert(STORY.includes(byBase.Katze),
+      'and whatever replaces it really is from the story');
+    assert(/Synonyms context: 2 sentence\(s\) quoted from the story, 1 rejected as not verbatim/.test(env.srvlog()),
+      'the server reports 2 quotes kept and 1 rejected\n  --- log ---\n' +
+      env.srvlog().split('\n').filter(l => /Synonyms/.test(l)).join('\n'));
+
+    // The model must actually RECEIVE the story — it cannot quote what it never saw. Checked
+    // against the prompt the fake model was sent, not against the server's own log, because
+    // verbatimStorySentence validates using the server's copy of the story either way and would
+    // keep passing if the prompt quietly went back to eight extracted keywords.
+    // (An earlier draft asserted this with `... || true` — vacuous, and it passed happily.)
+    const synReq = env.readChatLog().filter(c => c.kind === 'synonyms');
+    assert(synReq.length >= 1, 'the synonyms generation call was logged');
+    assert(synReq[0].usr.includes(STORY),
+      'the STORY itself is in the synonyms prompt — not just keywords extracted from it\n  usr: ' +
+      JSON.stringify(synReq[0].usr).slice(0, 300));
+    // The wording of the sentence rule lives in prompts.json and is pinned by
+    // unit-prompt-strictness; the fake's log truncates `sys`, so it is not re-checked here.
+    console.log('  context sentences: 1 model quote kept, 1 invention rejected and replaced');
+
+    // v72_e: an antonym-only entry survives. Before this the server dropped any word without a
+    // synonym, so telling the model "[] is better than a shaky synonym" would have quietly deleted
+    // words instead of trimming their lists.
+    const gleich = syn.words.find(w => w.base === 'gleich');
+    assert(gleich, 'an antonym-only word is KEPT (the server used to drop it for having no synonym)');
+    assert(gleich.synonyms.length === 0 && gleich.antonyms.length === 1,
+      'and keeps its shape: no synonyms, one antonym');
+    assert(/1 antonym-only/.test(env.srvlog()), 'and the generator reports it');
+    console.log('  antonym-only entry survives generation');
     console.log('  groups with context sentence:', withSentence.length + '/' + syn.words.length);
     console.log('  e.g.', JSON.stringify(withSentence[0].base), '->', JSON.stringify(withSentence[0].sentence));
     console.log('e2e-synonyms: ALL PASSED');

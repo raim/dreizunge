@@ -1,143 +1,94 @@
-# Roadmap — v72
+# Roadmap — v73
 
-`v72` is a fresh base cut off the end of the v71 line (`v71` … `v71_z`, 24 sessions). Nothing was
-abandoned in the cut: every open item below is carried forward verbatim from `roadmap_v71.md`, which
-stays readable as the historical record of the v71 line.
-
-**Start here:** `build_history/HANDOVER.md` — one page covering the green baseline, what is owed by
-the user, and the open decisions. Then this file, then `INTERNALS.md`.
+The v72 line is closed. Its full history, including every measurement, is in
+`build_history/roadmap_v72.md` and `build_history/v72f_session26_notes.md`; this file carries
+forward only what is still live.
 
 ## Baseline at the cut
-`node test/run.js` → **159** · `--quick` → **138** · `check-inline` → 0 on both builds.
 
----
+`node test/run.js` → **161 checks** · `node test/run.js --quick` → **140**
+`node test/check-inline.js` → 0 on `index.html` AND `docs/index.html`
+`APP_VERSION` = `v73` · `docs/` rebuilt and matching · `ui.json` byte-identical to the user's own
+copy (nothing has been deleted from it).
 
-## Shipped in the v71 line (summary; details in each session's notes)
+## Shipped in the v72 line (summary; details in each session's notes)
 
-`v71_r` grammar/conjugation rounds were a random cut of a complete pool → coverage-aware ·
-`v71_s` comprehension gated BY the story instead of gating it (lesson AND coverage layers) ·
-`v71_t` story caps removed + `num_ctx` sizing (Ollama truncates silently) ·
-`v71_u` book arc uses the shared lesson-type picker; comprehension reachable from a book ·
-`v71_v` `INTERNALS.md` created ·
-`v71_w` one reader for "is this chapter complete" (it had diverged both ways) ·
-`v71_x` article MCQ choices derived from data, not a table ·
-`v71_y` article symmetry moved into the QC pass, proposing not rewriting ·
-`v71_z` handover release ·
-**`v72`** diacritic QC: deterministic scan generates candidates, the model decides.
+`v72` diacritic QC — deterministic scan generates candidates, the model decides ·
+`v72_a` sentence segmentation via `Intl.Segmenter`, client and server splitters merged ·
+`v72_b` length-based sub-split for over-long units, plus the CJK `sep` fix ·
+`v72_c` clause detection for the synonym clamp switched to Unicode ·
+`v72_d` synonyms generation SEES the story and quotes its own context sentence, verified verbatim ·
+`v72_e` synonyms prompt made strict — fewer certain entries beat more shaky ones; antonym-only
+words are kept ·
+`v72_f` `num_ctx` sized on all five full-story generators; comprehension gets the chain from every
+call path; generation flows documented ·
+`v73` antonyms held to a looser standard than synonyms (user-reported: too few antonyms).
 
----
+## THIS SESSION — two parts, in this order
+
+Full spec in `build_history/HANDOVER.md` under "Starting the next session". Summary:
+
+1. **`lib-dom` runtime `innerHTML` parsing.** The fake DOM stores `innerHTML` as a string and never
+   parses it, so `getElementById` returns empty stubs and 128 render sites cannot be read back.
+   Expect the suite to go RED across the board before it goes green; every failure is a finding, and
+   some will be tests that were passing vacuously.
+2. **Cleanup / refactoring / documentation.** Seven evidence-backed items, each naming the defect
+   that produced it. Do `lib-dom` first — several cleanup candidates are tests that pin source text
+   *precisely because* they cannot read the DOM back.
+
+> **The caution that matters most for part 2:** in this codebase "refactoring" has one recurring
+> failure mode — a second copy of a rule that then drifts. Session 26 alone found two such pairs
+> (the client/server sentence splitters; the synonyms prompt floor vs the server's filter) that had
+> agreed with each other by coincidence for releases, so nothing ever failed. **Prefer removing a
+> second copy over reorganising code that works.**
 
 ## Open — the queue
 
 ### Owed by the user (nothing here is doable in a dev container)
-See `HANDOVER.md` for the full table. In short: **browser passes on `v71_i`–`v72`** (9 releases),
-**live QC run** (check Arabic first — `ال` must not be flagged), **live comprehension generation**,
-**`NUM_CTX_MAX` decision**, **translate pass (380 keys)**, **native-speaker vocab review**.
+
+See the table in `HANDOVER.md` — it is the authoritative list and has grown across nine releases.
+The two most informative right now:
+
+- **Live synonyms run** (`v72_d`, `v72_e`, `v73`). Partially done: the user reports the new synonyms
+  "look good so far", which is what prompted the `v73` antonym change. Still to confirm: the log
+  lines `Synonyms context: N quoted, M rejected` and `N antonym-only`, and whether antonym counts
+  recover after `v73`.
+- **Browser passes on `v71_i`–`v73`** — nine releases deep.
 
 ### Open decisions blocking work
-1. **[✅ RULED — user, session 25] The design principle's boundary.** Drawn at *correctness vs.
-   handling*, and **confirmed**: sentence segmentation is HANDLING, not correctness — it decides how
-   text is chunked for display and splitting, never whether content is right. A learner never sees a
-   wrong fact because of it. So it sits on the permitted side of the principle.
-   **With one condition: use Unicode machinery, not a hand-authored punctuation list.** `[.!?…]` is
-   a hand-authored list and it has a real gap (see the `_sentenceUnits` item below). The permitted
-   side means Unicode-standard segmentation, not "any punctuation table I write myself".
-2. **Duplicate targets** (`v71_r`) — **re-measured session 26: the original evidence is GONE.** The
-   six grammar lessons this was written about are no longer in the corpus (replaced between v72 and
-   v72_b); what is live now is **2 synonyms lessons with a repeated `base`**, both Arabic. Rule on
-   that shape. Original text: six lessons repeat a `target`, so two exercises collide
-   on one qid — the round asks the word twice while coverage counts it once. Dedupe or repair?
-3. **Crossword translation highlight**: word_forms items have no translation field.
-4. ~~**`el/storyboard.title`**~~ — **RULED, session 26: keep "Storyboard".** Exempt as a loanword.
-   Now listed in `APPROVED_LOANWORDS` in `test/unit-ui-verbatim-en.test.js`, separate from the
-   parked-QC list so it is never re-queued a fourth time. The guard still requires it to BE the
-   English string, so a future genuine translation fails loudly and the exemption goes with it.
+
+1. **Duplicate targets** (`v71_r`) — **evidence re-measured in session 26; the original data is
+   gone.** The "six grammar lessons" this was written about are no longer in the corpus. What is
+   live is **2 synonyms lessons with a repeated `base`**, both Arabic. Same defect class — two
+   exercises collide on one qid, so the round asks the word twice while coverage counts it once —
+   but rule on the CURRENT shape. Dedupe or repair?
+2. **Crossword translation highlight**: `word_forms` items have no translation field.
+
+*(Rulings from the v72 line, kept because each closes an item that would otherwise be re-opened:
+the design principle's boundary — Unicode machinery, not hand-authored tables, session 25;
+`el/storyboard.title` stays "Storyboard" as a loanword, session 26; grammar and conjugation stay
+story-free, session 26.)*
 
 ### Ready to implement, no decision needed
-- ~~**Drill result card**~~ — **NOT AN OPEN ITEM. Shipped in `v71_h`**, session 7. Verified in code
-  (session 26): `renderEx` at `index.html:11898-11919` ends a drill via `endDrill()` then
-  `showComplete(true)` on the restored topic, and the old `if (lesson._drill)` branch at 13629 is
-  commented "NORMALLY UNREACHABLE … defensive fallback only". Guarded by `unit-drill`,
-  `unit-drill-ledger`, `unit-card-consistency`.
-  It survived four deferrals because `roadmap_v71.md` holds **both** entries — shipped at line 227
-  and `[NEXT — carried, still open]` at line 491 — and the open list was carried forward
-  mechanically without being cross-checked against the shipped list in the same file. See the new
-  standing rule in the session protocol.
-- ~~**Give grammar/conjugation the story**~~ — **NOT AN OPEN ITEM. RULED session 26: they stay
-  story-free.** They receive 8 extracted keywords by design. Gender, article, plural and verb
-  paradigms are dictionary properties of a word, so a passage cannot make the answer more correct —
-  unlike a synonym, whose validity depends on which sense the sentence picks out. Recorded here
-  because the shape looks exactly like the pre-`v72_d` synonyms bug and would otherwise be
-  "discovered" again; `unit-generation-context.test.js` asserts they do NOT embed the raw story.
-- **★ NEXT SESSION: `lib-dom` runtime `innerHTML` parsing, THEN a cleanup pass.** The one ready item big enough to need a
-  whole session, and the only thing blocking read-back tests for every future picker widget. Spec
-  and constraints are in `HANDOVER.md` under "Starting the next session", which now carries **both
-  parts**: the `lib-dom` spec and a seven-item cleanup/refactoring/documentation list, each entry backed
-  by a defect found in session 26 rather than by general tidiness. Do `lib-dom` first — several
-  cleanup candidates are tests that pin source text precisely because they cannot read the DOM back.
-  Do not start either at the end of a session doing something else.
-- **Arabic presentation forms** (measured session 26, no code written — full numbers in
-  `v72f_session26_notes.md` §7). Three topics store Arabic as U+FB50–FDFF / U+FE70–FEFF instead of
-  standard letters, a PDF-extraction artifact that nothing folds.
-  **Not urgent, and NOT a blanket NFKC.** Measured: **0 of 4670** typed-answer targets are affected,
-  so no learner is ever marked wrong; the affected fields are MCQ-only plus story text. Meanwhile a
-  blanket NFKC changes 158 corpus strings and *corrupts* several — `sˤ` → `sʕ` in `letters[].ipa`
-  is a different phoneme, `① ② ③` → `1 2 3` destroys a lesson whose glyphs are the content, and
-  Japanese full-width `！` is flattened to ASCII across story and sentence fields.
-  The one live effect: for those three topics `verbatimStorySentence` (v72_d) can never accept a
-  model quote, because the model will answer in standard letters — it degrades to the fallback, so
-  nothing breaks, but the feature silently no-ops in the language that most needed it.
-  If actioned: fold **only** the two presentation-form blocks, **at comparison time**, the way
-  `normDiacritics` folds accents — never rewrite stored text. Better still, fix it upstream in
-  `_cleanPdfText` so new imports never store presentation forms.
+
+- **Arabic presentation forms** — measured in session 26 (`v72f_session26_notes.md` §7), **not
+  urgent**, and explicitly **NOT a blanket NFKC**: measured across the corpus, NFKC changes 158
+  strings and corrupts several — `sˤ` → `sʕ` in `letters[].ipa` is a different phoneme, `① ② ③` →
+  `1 2 3` destroys a lesson whose glyphs are the content, and Japanese full-width `！` is flattened
+  to ASCII. **0 of 4670** typed-answer targets are affected, so no learner is ever marked wrong. The
+  one live effect: `verbatimStorySentence` can never accept a model quote for those three topics, so
+  the `v72_d` feature silently no-ops there. If actioned: fold **only** the two presentation-form
+  blocks, **at comparison time**, never rewriting stored text — or better, fix `_cleanPdfText` so
+  new imports never store them.
 - **Clamp the synonym context SERVER-side** — `findContextSentence` returns an uncapped sentence;
-  the client clamps for display (v70_n) so nothing is broken, but stored data stays bloated. Decide
-  between sharing the helper and accepting display-side-only.
-- **[⚠️ DIAGNOSIS CORRECTED, session 25] `_sentenceUnits` — two separate items, in this order.**
-  The long-standing entry here claimed Arabic prose "uses `،` `؛` and often no full stop, so a
-  passage reads as ONE sentence", and proposed adding those marks to `_SENT_END_RE`. **That is the
-  wrong cause and the fix would make things worse.** Checked against Unicode's own sentence
-  segmentation (UAX #29, via `Intl.Segmenter`): an Arabic passage using `،` and `؛` with no full
-  stop segments as **one unit** — Unicode agrees with the current code, and is right to. `،` is a
-  COMMA and `؛` a SEMICOLON; they separate clauses, not sentences. Adding them to the terminator set
-  would split Arabic mid-sentence — a real regression in place of an imagined bug. That passage
-  genuinely is one long sentence.
-
-  **(a) ✅ SHIPPED as `v72_a`** (session 26). `_sentenceSplit` now takes boundaries from
-  `Intl.Segmenter`, **no locale** (locale changed 0 of 1533 corpus paragraphs), with single newlines
-  flattened to spaces first and the old scan retained as a fallback for engines without it.
-  *Whole-corpus result:* **+170 units, 0 of 775 samples changing a single character.** Japanese
-  **33 → 176**; Arabic **+106**; en −46 and it −32, almost all of which were the OLD code splitting
-  mid-sentence hesitation ellipsis.
-  **The "riskier than it looks" warning was correct and earned its keep.** The naive drop-in
-  produced 854 new boundaries, **598 of them from single line breaks** — `Intl.Segmenter` treats
-  `\n` as a sentence end, which shatters PDF-derived text mid-clause and re-opens exactly what
-  `v70_k` fixed. Flattening newlines first is load-bearing; do not remove it.
-  **The corrected Arabic diagnosis above was itself incomplete.** `،` and `؛` are indeed not
-  terminators (still true, now pinned by test) — but `؟` (U+061F) **is**, and was missing from
-  `[.!?…]`. That is where Arabic's +106 comes from.
-  Also merged the **second** splitter: `server.js` `_synSplitSentences` was independently written,
-  already contained `。！？`, and had silently disagreed with the client for releases. One
-  implementation now, byte-identical in both files, parity asserted by
-  `unit-sentence-segmentation.test.js`.
-  *Still hand-authored:* `_SENT_END_RE` remains at lines ~4044, 4062, 4156, 4210 — it answers "does
-  this END like a sentence?" for the wrap repair and title heuristics, not splitting. Left alone to
-  keep `v72_a` to one change.
-
-  **(b) ✅ SHIPPED as `v72_b`.** `_splitLongUnit`, budget `_MAX_UNIT_CHARS = 300` (corpus p99 = 325),
-  breaking at clause boundaries found via `Intl.Segmenter` word granularity — `isWordLike === false`
-  is punctuation in any script, so still no hand-written list. 133 fragment units created: **68 ar,
-  63 it, 2 de**, which is the complaint's own population. Cuts anchored to existing whitespace (see
-  INTERNALS for why that is not optional), so no word is gained or lost.
-  Original text of the item, for reference: The PDF splitter
-  does chunk Arabic coarsely — because the sentences are genuinely long, not because they were
-  missed. When a unit exceeds a character budget, split at a clause boundary, else on whitespace.
-  **No language knowledge at all** — the same instinct as `CHAIN_STORY_CHARS`. This also fixes
-  German legal prose and the 135-word Italian periods that prompted the v70_n synonym clamp, which
-  a punctuation-based fix never would.
-- **Deterministic vocab QC — article half: BLOCKED** by the design principle (needs a per-language
-  article table). Superseded by `v71_y`, which does it model-side. The diacritic half shipped in
-  `v72`.
+  the client clamps for display (`v70_n`) so nothing is broken, but stored data stays bloated.
+  Cheaper than it was — `_sentenceSplit` is genuinely shared now, with a parity test to copy. One
+  wrinkle: a stored fragment loses the `frag` flag, which exists only client-side, so decide whether
+  stored fragments carry ellipses or the honesty marker is lost.
+- **`_SENT_END_RE`** (`index.html` ~4044, 4062, 4156, 4210) — the last hand-authored punctuation
+  list in the segmentation area. It answers a *different* question from splitting ("does this string
+  END like a sentence?", for the paragraph-wrap repair and title heuristics), which is why it was
+  left alone through `v72_a`–`v72_c`. Fair game now; part of the cleanup pass.
 
 ### Larger, not started
 - **Concept graph / dependency-aware curriculum.** Deliberately untouched until the small queue is

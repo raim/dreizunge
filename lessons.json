@@ -8722,6 +8722,319 @@
           "icon": "🔀",
           "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
           "perType": 4
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1785614224079",
+          "type": "synonyms",
+          "title": "Sturm im Wasserglas",
+          "desc": "Politik und diplomatische Spannungen in Italien",
+          "icon": "🌪️",
+          "words": [
+            {
+              "base": "tempesta",
+              "gloss": "Sturm",
+              "sentence": "Il ministro degli Esteri ha allora parlato di «tempesta in un bicchier d’acqua».",
+              "synonyms": [
+                {
+                  "w": "uragano",
+                  "g": "Orkan"
+                },
+                {
+                  "w": "bufera",
+                  "g": "Sturm (Wetter)"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "calma",
+                  "g": "Ruhe"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "dubbi",
+              "gloss": "Zweifel",
+              "sentence": "In realtà, pure dentro a Fratelli d’Italia ci sono dei dubbi.",
+              "synonyms": [
+                {
+                  "w": "incertezze",
+                  "g": "Unsicherheiten"
+                },
+                {
+                  "w": "riserve",
+                  "g": "Vorbehalte"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "certezze",
+                  "g": "Gewissheiten"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "scossone",
+              "gloss": "Erschütterung",
+              "sentence": "Ma il fondo europeo per la Difesa non è l’unico scossone delle ultime settimane.",
+              "synonyms": [
+                {
+                  "w": "sconvolgimento",
+                  "g": "Umsturz"
+                },
+                {
+                  "w": "colpo",
+                  "g": "Schlag"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "conforto",
+                  "g": "Trost"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "fronte",
+              "gloss": "Fronte",
+              "sentence": "Il piano energia rischia di essere il nuovo fronte",
+              "synonyms": [
+                {
+                  "w": "schiera",
+                  "g": "Reihe"
+                },
+                {
+                  "w": "campo",
+                  "g": "Lager"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "retro",
+                  "g": "Rückseite"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "dossier",
+              "gloss": "Dossier",
+              "sentence": "Lo scontro sulle spese militari e i dossier critici sull'energia.",
+              "synonyms": [
+                {
+                  "w": "pratica",
+                  "g": "Aktenfall"
+                },
+                {
+                  "w": "cartella",
+                  "g": "Mappe"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "scontro",
+              "gloss": "Konflikt",
+              "sentence": "Lo scontro sulle spese militari e i dossier critici sull'energia.",
+              "synonyms": [
+                {
+                  "w": "conflitto",
+                  "g": "Konflikt"
+                },
+                {
+                  "w": "litigio",
+                  "g": "Streit"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "accordo",
+                  "g": "Vereinbarung"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "tensione",
+              "gloss": "Spannung",
+              "sentence": "così sale la tensione nella maggioranza",
+              "synonyms": [
+                {
+                  "w": "tensività",
+                  "g": "Spannweite"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "rilassamento",
+                  "g": "Entspannung"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "maggioranza",
+              "gloss": "Mehrheit",
+              "sentence": "così sale la tensione nella maggioranza",
+              "synonyms": [
+                {
+                  "w": "plurale",
+                  "g": "Plural (Zahl)"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "minoranza",
+                  "g": "Minderheit"
+                }
+              ],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1070,
+            "completionTokens": 1118,
+            "ms": 435828,
+            "at": "2026-08-01T19:57:04.079Z"
+          },
+          "qcAt": "2026-08-01T20:12:06.480Z",
+          "qcBy": "qwen3.6:35b-a3b"
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1785655832878",
+          "type": "synonyms",
+          "title": "Politik und Konflikte",
+          "desc": "Wörter für politische Auseinandersetzungen",
+          "icon": "⚔️",
+          "words": [
+            {
+              "base": "tempesta",
+              "gloss": "Sturm",
+              "sentence": "Il ministro degli Esteri ha allora parlato di «tempesta in un bicchier d’acqua».",
+              "synonyms": [
+                {
+                  "w": "uragano",
+                  "g": "Orkan"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "scossone",
+              "gloss": "Erschütterung",
+              "sentence": "Ma il fondo europeo per la Difesa non è l’unico scossone delle ultime settimane.",
+              "synonyms": [
+                {
+                  "w": "sconvolgimento",
+                  "g": "Umsturz"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "dubbi",
+              "gloss": "Zweifel",
+              "sentence": "In realtà, pure dentro a Fratelli d’Italia ci sono dei dubbi.",
+              "synonyms": [
+                {
+                  "w": "incertezze",
+                  "g": "Unsicherheiten"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "fronte",
+              "gloss": "Fronte / Seite",
+              "sentence": "Il piano energia rischia di essere il nuovo fronte",
+              "synonyms": [
+                {
+                  "w": "lato",
+                  "g": "Seite"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "scontro",
+              "gloss": "Konflikt / Zusammenstoß",
+              "sentence": "Lo scontro sulle spese militari e i dossier critici sull'energia.",
+              "synonyms": [
+                {
+                  "w": "conflitto",
+                  "g": "Konflikt"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "tensione",
+              "gloss": "Spannung",
+              "sentence": "così sale la tensione nella maggioranza",
+              "synonyms": [
+                {
+                  "w": "tensività",
+                  "g": "Spannkraft"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "dossier",
+              "gloss": "Dossier / Akte",
+              "sentence": "Lo scontro sulle spese militari e i dossier critici sull'energia.",
+              "synonyms": [
+                {
+                  "w": "pratica",
+                  "g": "Aktenstück"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "maggioranza",
+              "gloss": "Mehrheit",
+              "sentence": "così sale la tensione nella maggioranza",
+              "synonyms": [
+                {
+                  "w": "plurale",
+                  "g": "Plural / Mehrheit"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1238,
+            "completionTokens": 779,
+            "ms": 377408,
+            "at": "2026-08-02T07:30:32.878Z"
+          }
         }
       ],
       "generationStats": {
@@ -8734,8 +9047,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 6095,
-        "totalCompletionTokens": 856,
+        "totalPromptTokens": 9969,
+        "totalCompletionTokens": 2777,
         "lessons": [
           {
             "lessonNum": 1,
@@ -8745,11 +9058,12 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 4879
+          "lesson_qc": 6469,
+          "add_lesson": 4205
         }
       },
       "generatedAt": "2026-07-29T12:13:32.604Z",
-      "updatedAt": "2026-07-29T13:30:09.971Z",
+      "updatedAt": "2026-08-02T07:30:32.878Z",
       "createdBy": "admin"
     },
     {

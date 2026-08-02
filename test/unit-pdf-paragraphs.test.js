@@ -35,7 +35,8 @@ const M = new Function(
   'const _SENT_END_RE = ' + sentEnd[1] + ';\n' + consts[0] + '\n' + minW[0] + '\n' + titleMax[0] + '\nlet _lastCleanStats = null;\n' +
   extract('splitWords') + extract('wordCount') +
   extract('_linesToParagraphs') + extract('_cleanPdfText') + extract('cleanExtractedText') +
-  extract('_sentenceSplit') + extract('_sentenceUnits') + extract('_unitsToText') +
+  src.match(/const _MAX_UNIT_CHARS = \d+;/)[0] + '\n' +
+  extract('_sentenceSplit') + extract('_splitLongUnit') + extract('_sentenceUnits') + extract('_unitsToText') +
   extract('_isHeadingPara') + extract('_paragraphBlocks') + extract('_splitIntoParagraphChunks') +
   extract('_autoTitle') +
   '\nreturn { _linesToParagraphs, _cleanPdfText, cleanExtractedText, _isHeadingPara, ' +

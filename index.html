@@ -4064,49 +4064,194 @@ function _sentenceUnits(text) {
   }
   const units = [];
   merged.forEach((p, pi) => {
-    const cleaned = _sentenceSplit(p);
-    cleaned.forEach((sent, si) => units.push({ text: sent, para: pi, endsPara: si === cleaned.length - 1 }));
+    const cleaned = [];
+    for (const sent of _sentenceSplit(p)) {
+      const parts = _splitLongUnit(sent);
+      // A unit that came out of _splitLongUnit is a FRAGMENT of a sentence, not a sentence. Flag it
+      // so a consumer that shows the unit to a learner can say so — see _synContext, where dropping
+      // this silently turned an excerpt into something that looked like a whole sentence.
+      parts.forEach((part, k) => cleaned.push(
+        parts.length > 1 ? { text: part, frag: true, fragFirst: k === 0, fragLast: k === parts.length - 1 }
+                         : { text: part }));
+    }
+    // Record the separator that ACTUALLY stood between two pieces instead of assuming a space.
+    // v72_a introduced CJK sentence boundaries, and CJK does not put whitespace at them — so
+    // _unitsToText rejoining with ' ' inserted a space after every 。, changing the text of all 13
+    // Japanese stories in the corpus. It went unnoticed because the PDF fixtures are Latin, where
+    // the separator IS a space. Derived by locating each piece in the source, so it needs no
+    // knowledge of which scripts use spaces.
+    const flat = p.replace(/\n/g, ' ');
+    let pos = 0;
+    cleaned.forEach((u, si) => {
+      let sep = ' ';
+      const at = flat.indexOf(u.text, pos);
+      if (at >= 0) { sep = at > pos && !/\S/.test(flat.slice(pos, at)) ? ' ' : (at === pos ? '' : ' '); pos = at + u.text.length; }
+      units.push({
+        text: u.text, para: pi, endsPara: si === cleaned.length - 1, sep: si === 0 ? '' : sep,
+        frag: !!u.frag, fragFirst: !!u.fragFirst, fragLast: !!u.fragLast,
+      });
+    });
   });
   return units;
 }
-// Split one paragraph into sentences.
+// The longest sentence a unit is allowed to be before it is sub-split.
 //
-// v71_b: a terminator only ends a sentence when something WHITESPACE-like follows it. A period
-// glued to the next character is part of a token, not a boundary — and the previous regex split
-// there, then _unitsToText rejoined the pieces with a space, so the text came back CORRUPTED:
-//     500.000 anni fa   ->  500. 000 anni fa        (the user's article says 500.000)
-//     S.J. Gould        ->  S. J. Gould
-//     um 15.30 Uhr      ->  um 15. 30 Uhr
-// That has been true of every length-split chapter since the splitter was written; it surfaced
-// here because the paragraph chapters assert that no word is gained or lost.
+// Chosen from the corpus, not invented: unit lengths run p50=60, p90=131, p95=160, p99=325. At 300
+// this touches 59 of 5405 units (1.1%) and the affected set is almost exactly the two languages the
+// complaint named — 33 Arabic, 25 Italian, 1 German. Dropping to 200 would catch 2.6% and start
+// splitting ordinary English and Dutch sentences, which is not the problem being solved.
+const _MAX_UNIT_CHARS = 300;
+
+// Sub-split a sentence that is simply too long to be a useful unit.
 //
-// Written as a scan rather than a lookahead regex on purpose: `(?=\s|$)` on the old pattern makes
-// the whole alternative fail at a glued period, and the engine then resumes PAST it, silently
-// dropping "500." from the output. Walking the terminators keeps every character accounted for.
-// Known limitation, unchanged: an abbreviation followed by a space ("N. Eldredge", "z. B.") is
-// still read as a sentence end. It costs a split point, never text.
-function _sentenceSplit(p) {
-  const s = String(p || '');
+// v72_b, item (b) of the segmentation work. This is the fix for the ORIGINAL Arabic complaint,
+// which `v72_a` did not address: the PDF splitter chunks Arabic coarsely because those sentences
+// are genuinely long, not because their boundaries were missed. It also covers German legal prose
+// and the 914-character, 135-word Italian period that prompted the v70_n synonym clamp — none of
+// which a punctuation fix could ever have reached.
+//
+// NO LANGUAGE KNOWLEDGE, and specifically no second punctuation list. Break candidates come from
+// `Intl.Segmenter` at WORD granularity: a segment with `isWordLike === false` that is not
+// whitespace is a punctuation mark, whatever the script. Measured — it finds `،` and `؛` in Arabic,
+// `、` and `。` in Japanese, and `,` `;` `—` in Latin text, with nothing hand-written. That is the
+// same reason `_sentenceSplit` uses Unicode rather than a table.
+//
+// Note this is deliberately where `،` and `؛` DO get used. The v71 ruling that they must not end a
+// SENTENCE still stands and is still tested — they are clause separators. A clause separator is
+// exactly the right place to break an over-long unit, which is a length decision, not a claim about
+// where the sentence ends.
+//
+// Preference order: a clause boundary, else any word gap. Every candidate cut is anchored to
+// EXISTING WHITESPACE, and that is load-bearing rather than incidental. `Intl.Segmenter` at word
+// granularity happily reports boundaries INSIDE a whitespace-delimited token — `l'aria` segments as
+// `l` `'` `aria` and `30-32` as `30` `-` `32` — so cutting at an arbitrary word boundary and letting
+// `_unitsToText` rejoin with a space turns one word into two. Caught by the PDF paragraph test's
+// word-count invariant (937 against 934) rather than by reading the code. Cutting only where
+// whitespace already exists means the rejoin restores exactly what was there.
+//
+// A script with no whitespace therefore yields no candidates and its units are left whole. That is
+// the correct outcome and costs nothing measured: everything over budget in this corpus is Arabic,
+// Italian or German (33/25/1), all whitespace-using. Splitting CJK by character count would cut
+// mid-word, which is worse than a long unit.
+function _splitLongUnit(text, budget) {
+  const s = String(text == null ? '' : text);
+  const max = budget || _MAX_UNIT_CHARS;
+  if (s.length <= max) return s ? [s] : [];
+  if (typeof Intl === 'undefined' || typeof Intl.Segmenter !== 'function') return [s];
+
+  // Offsets immediately after a punctuation mark, in any script — no hand-written list.
+  const afterPunct = new Set();
+  for (const seg of new Intl.Segmenter(undefined, { granularity: 'word' }).segment(s)) {
+    if (!seg.isWordLike && seg.segment.trim()) afterPunct.add(seg.index + seg.segment.length);
+  }
+  const clause = [], gap = [];
+  const ws = /\s+/g;
+  let m;
+  while ((m = ws.exec(s)) !== null) {
+    gap.push(m.index);
+    if (afterPunct.has(m.index)) clause.push(m.index);
+  }
+  if (!gap.length) return [s];
+
+  const bestBefore = (arr, start, limit) => {
+    let best = -1;
+    for (const c of arr) if (c > start && c <= limit && c > best) best = c;
+    return best;
+  };
+  const firstAfter = (arr, start) => {
+    let best = -1;
+    for (const c of arr) if (c > start && (best < 0 || c < best)) best = c;
+    return best;
+  };
   const out = [];
-  const re = /[.!?…]+["'»«”’)\]]*/gu;
-  let start = 0, m;
-  while ((m = re.exec(s)) !== null) {
-    const end = m.index + m[0].length;
-    if (end < s.length && !/\s/.test(s[end])) continue;   // glued to what follows: not a boundary
-    const piece = s.slice(start, end).trim();
+  let start = 0;
+  while (s.length - start > max) {
+    const limit = start + max;
+    let cut = bestBefore(clause, start, limit);
+    if (cut < 0) cut = bestBefore(gap, start, limit);
+    // Nothing inside the budget: take the next gap anyway rather than emit an unsplit unit or, worse,
+    // cut mid-token. Guarantees the loop makes progress.
+    if (cut < 0) cut = firstAfter(gap, start);
+    if (cut < 0) break;
+    const piece = s.slice(start, cut).trim();
     if (piece) out.push(piece);
-    start = end;
+    start = cut;
   }
   const tail = s.slice(start).trim();
   if (tail) out.push(tail);
-  return out.length ? out : (s.trim() ? [s.trim()] : []);
+  return out.length ? out : [s];
+}
+// Split one paragraph into sentences.
+//
+// v72_a: boundaries come from Intl.Segmenter (Unicode UAX #29 sentence breaking), not from a
+// hand-written terminator list. The list was the standing design-principle violation here: `[.!?…]`
+// silently excluded EVERY terminator outside Latin script, so a Japanese story segmented as one
+// unit (33 units across the whole ja corpus, against 176 correct ones) and Arabic lost every `؟`
+// — `/[.!?…]/.test('؟')` is false. Unicode already knows all of this; we were re-deriving it badly.
+//
+// No locale is passed, deliberately. Sentence breaking is script-driven, and passing one changed
+// the result on 0 of 1533 corpus paragraphs — so a locale would add an APP.lang dependency to a
+// pure helper and buy nothing. Keeping it out is what keeps "no language knowledge in the code"
+// true rather than merely relocated.
+//
+// Single newlines are flattened FIRST. Intl.Segmenter treats a line break as a sentence end;
+// _sentenceUnits has already split paragraphs on \n\n+, so a surviving \n is a line WRAP. Without
+// this, PDF-derived text shatters mid-clause ("…dei vigili del fuoco per ⏎ sottopassi allagati"),
+// which is the very corruption v70_k's paragraph repair exists to prevent — 598 of 854 new split
+// points across the corpus came from line breaks alone before this line was added.
+//
+// Measured against the previous scan on the whole corpus: +257 boundaries, -87, and NOT ONE
+// character of text gained or lost anywhere. The losses are overwhelmingly the old code being
+// wrong — 51 of them were mid-sentence hesitation ellipsis ("Forse... forse c'è qualcosa"), which
+// it split and Unicode correctly does not.
+//
+// Kept in sync with the copy in server.js — see unit-sentence-segmentation.test.js, which asserts
+// the two bodies are byte-identical. One rule per question.
+function _sentenceSplit(p) {
+  const s = String(p || '');
+  if (!s.trim()) return [];
+  const flat = s.replace(/\n/g, ' ');
+  if (typeof Intl !== 'undefined' && typeof Intl.Segmenter === 'function') {
+    const out = [];
+    for (const seg of new Intl.Segmenter(undefined, { granularity: 'sentence' }).segment(flat)) {
+      const t = seg.segment.trim();
+      if (t) out.push(t);
+    }
+    if (out.length) return out;
+  }
+  // Fallback for engines without Intl.Segmenter. This is the pre-v72_a scan, kept verbatim so an
+  // old browser degrades to the OLD behaviour rather than to no splitting at all.
+  //
+  // v71_b: a terminator only ends a sentence when something WHITESPACE-like follows it. A period
+  // glued to the next character is part of a token, not a boundary — and the previous regex split
+  // there, then _unitsToText rejoined the pieces with a space, so the text came back CORRUPTED:
+  //     500.000 anni fa   ->  500. 000 anni fa        (the user's article says 500.000)
+  //     S.J. Gould        ->  S. J. Gould
+  // Written as a scan rather than a lookahead regex on purpose: `(?=\s|$)` on the old pattern makes
+  // the whole alternative fail at a glued period, and the engine then resumes PAST it, silently
+  // dropping "500." from the output. Walking the terminators keeps every character accounted for.
+  const out = [];
+  const re = /[.!?…]+["'»«”’)\]]*/gu;
+  let start = 0, m;
+  while ((m = re.exec(flat)) !== null) {
+    const end = m.index + m[0].length;
+    if (end < flat.length && !/\s/.test(flat[end])) continue;   // glued to what follows: not a boundary
+    const piece = flat.slice(start, end).trim();
+    if (piece) out.push(piece);
+    start = end;
+  }
+  const tail = flat.slice(start).trim();
+  if (tail) out.push(tail);
+  return out.length ? out : (flat.trim() ? [flat.trim()] : []);
 }
 // Re-join units into text, keeping paragraph breaks where they were real.
 function _unitsToText(units) {
   let out = '';
   units.forEach((u, i) => {
     if (i === 0) out = u.text;
-    else out += (u.para !== units[i - 1].para ? '\n\n' : ' ') + u.text;
+    // `sep` is the whitespace that really stood here (see _sentenceUnits). Units from older callers
+    // that build them by hand have no `sep`, so a space stays the default.
+    else out += (u.para !== units[i - 1].para ? '\n\n' : (u.sep === undefined ? ' ' : u.sep)) + u.text;
   });
   return out;
 }
@@ -12056,7 +12201,31 @@ const SYN_CONTEXT_MAX_WORDS = 24;
 // 135-word Italian period and a 61-word Arabic passage are ONE sentence each — sentence splitting
 // alone cannot shorten them, which is why v70_m's first attempt changed nothing for the ten worst
 // cases in the corpus. This clamps to a window around the word instead.
+// Fallback clause punctuation, used only where Intl.Segmenter is unavailable — see _endsClause.
 const _SYN_CLAUSE_RE = /[,;:—–،؛。、]$/u;
+
+// Does this word end at a clause break? Asked by _synClamp so its window starts after a phrase
+// boundary rather than mid-clause.
+//
+// v72_c: the hand-written list above had the same gap as the old sentence terminator list, one
+// script further out — it has `،` and `、` but NOT the Devanagari danda `।`, and Hindi is a shipped
+// language. Armenian `։` and Ethiopic `።` were missing too. Unicode already knows: a word-granularity
+// segment that is not `isWordLike` and not whitespace is punctuation, whatever the script. Same
+// mechanism as _splitLongUnit, so there is now one way to ask this question instead of two.
+//
+// Measured before switching, on all 286 synonym cards in the corpus: the clause scan actually runs
+// on 19 of the 39 cards long enough to clamp, and the list and Unicode agree on all 19 — so this is
+// a pure generalisation, identical output today and correct output for scripts the list never
+// covered. It matches more than the list did (`.`, `"`, `)` end a phrase too), which is right for
+// the question being asked: where can a readable window begin.
+function _endsClause(w) {
+  const s = String(w == null ? '' : w);
+  if (!s) return false;
+  if (typeof Intl === 'undefined' || typeof Intl.Segmenter !== 'function') return _SYN_CLAUSE_RE.test(s);
+  let last = null;
+  for (const seg of new Intl.Segmenter(undefined, { granularity: 'word' }).segment(s)) last = seg;
+  return !!last && !last.isWordLike && !!last.segment.trim();
+}
 function _synClamp(sentence, base, maxWords){
   const words = String(sentence).split(/\s+/).filter(Boolean);
   if (words.length <= maxWords) return String(sentence).trim();
@@ -12072,7 +12241,7 @@ function _synClamp(sentence, base, maxWords){
   // Prefer to begin just after a nearby clause break, so the window reads as a phrase rather than
   // starting mid-clause. Only look a few words back, and never past the target word.
   for (let i = start; i < Math.min(at, start + 6); i++){
-    if (_SYN_CLAUSE_RE.test(words[i])) { start = i + 1; break; }
+    if (_endsClause(words[i])) { start = i + 1; break; }
   }
   end = Math.min(words.length, start + maxWords);
   const out = words.slice(start, end).join(' ');
@@ -12084,13 +12253,24 @@ function _synContext(sentence, base){
   const full = String(sentence == null ? '' : sentence).trim();
   if (!full) return '';
   const units = (typeof _sentenceUnits === 'function') ? _sentenceUnits(full) : [];
-  let pick = full;
+  let pick = full, unit = null;
   if (units.length > 1){
     const needle = String(base || '').trim().toLowerCase();
     const hit = needle ? units.find(u => u.text.toLowerCase().includes(needle)) : null;
-    pick = (hit || units[0]).text;
+    unit = hit || units[0];
+    pick = unit.text;
   }
-  return _synClamp(pick, base, SYN_CONTEXT_MAX_WORDS);
+  let out = _synClamp(pick, base, SYN_CONTEXT_MAX_WORDS);
+  // v72_b: since _sentenceUnits gained a length fallback, `pick` may be a FRAGMENT of a long
+  // sentence rather than a whole one. _synClamp only marks elision when IT trims, so a fragment
+  // that happens to fit under the word cap would render with no ellipsis at all — the learner would
+  // read a mid-sentence excerpt as if it were the whole thing. That is the exact honesty guarantee
+  // v70_n added, so it is restored here rather than left to the clamp.
+  if (unit && unit.frag){
+    if (!unit.fragFirst && !/^…/.test(out)) out = '… ' + out;
+    if (!unit.fragLast  && !/…$/.test(out)) out = out + ' …';
+  }
+  return out;
 }
 function tSynSelect(ex){
   const isSyn = ex.mode==='synonyms';

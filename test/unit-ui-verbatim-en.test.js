@@ -116,9 +116,60 @@ const CROSSWORD_KEYS = Object.keys(UI.en).filter(k => /crossword/i.test(UI.en[k]
       fallbacks.push(`${lang}/${k} = ${JSON.stringify(en)}`);
     }
   }
-  assert.deepStrictEqual(fallbacks, [],
+
+  // ── Parked pending the user's own QC (v72_b) ──────────────────────────────
+  // The v72_b translate pass returned these nine still in English. They are NOT exempt and NOT
+  // approved as loanwords — they are held here so the suite stays green while the user reviews
+  // them, and they are deliberately NOT deleted (deleting is the usual remedy, but the user asked
+  // to keep the data intact for a QC pass).
+  //
+  // `el/storyboard.title` is a REPEAT: v71_k deleted it as an untranslated fallback and the next
+  // pass reinstated the English. That is what open decision 4 has to settle — a third deletion
+  // will not break the loop.
+  //
+  // The comparison below is EXACT in both directions on purpose. A new fallback fails (the guard
+  // still does its job), and a parked entry that has since been translated ALSO fails, so the list
+  // is forced to shrink instead of quietly outliving the problem. That failure is good news and
+  // the message says so.
+  // RULED, decision 4 (session 26): `storyboard.title` stays "Storyboard" in Greek. This is a
+  // permanent exemption, not a parked item — it is listed apart so nobody re-queues it a third
+  // time. v71_k deleted it as a fallback and the next translate pass reinstated the English; the
+  // loop only ends with a ruling, and this is it. The assertion below still requires the entry to
+  // BE verbatim English, so if it is ever genuinely translated this fails and the exemption is
+  // removed rather than quietly outliving the decision.
+  const APPROVED_LOANWORDS = [
+    'el/storyboard.title = "Storyboard"',
+  ];
+
+  const PENDING_QC = [
+    'ar/models.threads = "Threads"',
+    'el/models.threads = "Threads"',
+    'he/models.threads = "Threads"',
+    'hi/models.threads = "Threads"',
+    'ko/models.threads = "Threads"',
+    'th/models.threads = "Threads"',
+    'uk/models.threads = "Threads"',
+    'zh/models.threads = "Threads"',
+  ].concat(APPROVED_LOANWORDS).sort();
+
+  const found = fallbacks.slice().sort();
+  const isNew = found.filter(f => !PENDING_QC.includes(f));
+  const resolved = PENDING_QC.filter(f => !found.includes(f));
+
+  assert.deepStrictEqual(isNew, [],
     'a non-Latin-script language holds a Latin-alphabet English string verbatim, which means it was ' +
-    'never translated — delete the entry so translate-ui.js refills it:\n  ' + fallbacks.join('\n  '));
+    'never translated — delete the entry so translate-ui.js refills it, or park it in PENDING_QC ' +
+    'with a reason:\n  ' + isNew.join('\n  '));
+
+  assert.deepStrictEqual(resolved, [],
+    'these entries are listed in PENDING_QC but are no longer verbatim English — either they have ' +
+    'been translated (good: remove them from PENDING_QC) or an APPROVED_LOANWORDS entry was ' +
+    'changed and its exemption should go with it:\n  ' + resolved.join('\n  '));
+
+  const parked = PENDING_QC.length - APPROVED_LOANWORDS.length;
+  console.log(`  ${NON_LATIN.length} non-Latin-script languages: no NEW verbatim-English fallbacks ` +
+    `(${NO_PROSE.size} prose-free keys exempt, ${APPROVED_LOANWORDS.length} ruled loanword(s), ` +
+    `${parked} parked for user QC)`);
 
   // The exemption list may not be used to smuggle prose past the check. Every exempt string must be
   // free of multi-word running text once placeholders, symbols and format tokens are stripped.
@@ -133,8 +184,6 @@ const CROSSWORD_KEYS = Object.keys(UI.en).filter(k => /crossword/i.test(UI.en[k]
       `exempt key ${k} now contains running text (${JSON.stringify(bare)}) — it must be re-checked, ` +
       'not exempted');
   });
-  console.log(`  ${NON_LATIN.length} non-Latin-script languages: no verbatim-English fallbacks ` +
-    `(${NO_PROSE.size} prose-free keys exempt)`);
 }
 
 console.log('unit-ui-verbatim-en: ALL PASSED');

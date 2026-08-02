@@ -196,6 +196,60 @@ types* the learner then plays:
 > missing blank, drops unfixable items) so a weak local model still yields a usable lesson
 > rather than failing outright.
 
+### What each generator actually sees
+
+Every lesson format makes **two independent decisions**: how much *story text* goes into the prompt,
+and which *prior vocabulary* comes with it. They are set in different places and answer different
+questions, so it is worth reading them as two columns rather than one setting.
+
+#### Story context
+
+| Format | Story text sent to the model | Context window |
+|---|---|---|
+| **Standard** (`vocab`) | first **1200 chars** of this chapter — *but only on the plain branch*; the table and own-text branches send the whole story, and own-text adds the whole translation | sized |
+| **Word forms** | whole chapter | sized |
+| **Synonyms** | whole chapter (falls back to 8 keywords if it would not fit) | sized |
+| **Comprehension** | **the whole storyline chain** — earlier chapters plus this one, up to 40 000 chars | sized |
+| **Error hunt** | whole chapter, and it must come back nearly unchanged | sized |
+| **Grammar** | *none* — 8 frequency-extracted keywords | n/a |
+| **Conjugation** | *none* — 8 frequency-extracted keywords | n/a |
+| **Math** | none (arithmetic is generated, not read from the story) | n/a |
+| **Tutor** (chat) | current chapter, capped at 4000 chars | default |
+
+Comprehension is the only format that sees **more than the current chapter**, and that is deliberate:
+its questions are about what the learner just read, but good ones lean on callbacks — what changed
+since chapter two, why a character did something three chapters ago. The chain is assembled oldest
+first, the *current* chapter is never trimmed, and when the budget runs out the **oldest** chapters
+are dropped.
+
+Grammar and conjugation see no story at all, and that is **deliberate** (ruled session 26). They
+drill gender, article, plural and verb paradigms — properties of a word in the dictionary, not of a
+word in a passage. The keywords tell the model *which* words the learner is meeting; the story would
+not make the answers any more correct. This is the one place where the synonyms fix does **not**
+generalise: a synonym depends on which sense the sentence picks out, a plural does not.
+
+#### Vocabulary mode
+
+Set per generation, and it controls how a chapter relates to the ones before it.
+
+| Mode | What the model is told | Use it when |
+|---|---|---|
+| **neutral** | nothing — no prior words are collected at all | a standalone topic, or a fresh start |
+| **reinforce** | *"weave these words from prior chapters naturally into sentences — do not list them as vocab items"* | you want earlier vocabulary to keep reappearing in context |
+| **extend** | *"these were covered before and are NOT in the current story — do NOT use them as vocab items, focus on fresh vocabulary"* | you want each chapter to teach genuinely new words |
+
+The distinction is between **recycling words as material** (reinforce) and **avoiding them as
+targets** (extend). Reinforce puts old words into new sentences so they stay familiar; extend steers
+the model away from them so the vocabulary list keeps moving.
+
+It reaches more than the word list:
+
+- **Grammar** drills prior *nouns* under reinforce, and is told to avoid them under extend.
+- **Synonyms** may draw a word's example sentence from earlier chapters under reinforce; under
+  extend it is restricted to the current chapter.
+- A word that already appears in the new story is **never** avoided, even in extend mode — the story
+  is what the lesson teaches, so suppressing its own vocabulary would be self-defeating.
+
 ---
 
 ## 4. The feedback → improvement pipeline

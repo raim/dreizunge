@@ -125,10 +125,63 @@ intact at any pass mark below 1.0 (`v71_s`).
 refuses to mark a lesson done must also stop Next pointing back at it, or the forward button
 silently means "replay this".
 
+**Model output that quotes source text is verified, never trusted.** `v72_d`: `generateSynonyms`
+asks the model to quote the story sentence it chose the synonyms against, and
+`verbatimStorySentence` (server.js) checks the quote character-for-character against the story
+(whitespace normalised) *and* that it contains the base word whole-word. Anything failing either
+check falls back to `findContextSentence`, so the feature can only improve on the old path. The six
+ways a model breaks a quote — paraphrase, translation, truncation with `…`, two sentences joined,
+an irrelevant real quote, an invented one — each have a test. Apply the same shape to any future
+"have the model cite the source" feature: the check is cheap, and an unverified quote shows the
+learner text that is not in their story.
+
+**Story context and `num_ctx` are one decision, made per call site.** `v72_f`. Two traps, both
+silent, both measured rather than reasoned about:
+
+- **A prompt carrying the whole story must pass `ctxTokens`.** Omitting it means Ollama's own
+  default (~4096 tokens), and Ollama **truncates rather than failing** (`v71_t`) — the model answers
+  from a fragment while every attempt reports success. Five generators embed the full story:
+  `generateWordForms`, `generateSynonyms`, `generateComprehension`, `generateOneLesson`,
+  `generateErrorHunt`. All five now size it. Error-hunt is the hungriest — it sends the story *and*
+  asks for it back — and truncation there is uniquely misleading: the reply is a corrupted fragment,
+  the length check rejects it, and all three retries burn reporting a word-count mismatch.
+- **`prompts.json` is only half the picture.** Five prompts declare `{story}`; server.js
+  interpolates `${story}` inline in **five more** places. A guard that reads only `prompts.json`
+  sees half the problem and reports "all accounted for" — the first draft of
+  `unit-generation-context.test.js` did exactly that. It now checks both, and pins the inline count.
+- **The 1200-char vocab cap covers one of four branches.** `generateOneLesson` has four prompt
+  branches; only the plain one slices to 1200. The table branch sends the whole story and the two
+  own-text branches send the whole story *plus* its whole translation. Reading the comment on the
+  capped branch and concluding "vocab is capped" is wrong.
+
+**Grammar and conjugation are story-free ON PURPOSE** (ruled session 26). They receive 8 extracted
+keywords, never the story. Gender, article, plural and verb paradigms are dictionary properties of a
+word, so a passage cannot make the answer more correct — unlike a synonym, whose validity depends on
+which sense the sentence picks out. Recorded because the shape looks exactly like the pre-`v72_d`
+synonyms bug and will otherwise be "fixed" by a future session. `unit-generation-context.test.js`
+asserts they do NOT embed the raw story.
+
+**Only comprehension sees more than the current chapter.** It is the sole consumer of `chainStory`,
+via five call paths. Four of them supplied it and `generate()` did not — while collecting chain
+*vocab* two lines above — so the same lesson had one chapter of context when created with the
+chapter and the whole storyline when added afterwards (measured: 749 chars against 4,139, a 5.5x
+difference for identical output). Fixed in `v72_f`. The current chapter is not persisted at that
+point, so `generate()` builds the same synthetic node the arc path does.
+
+Chapter-only is *correct* for the rest, and for two of them it is now load-bearing:
+`verbatimStorySentence` (synonyms) validates the model's quote against the current chapter, and
+`validateWordFormsItems` requires items to be derived from it. Feeding either the chain would make
+the model quote text that fails its own validation, every time, silently falling back.
+
 **One rule per question.** Recurring failure mode: a second copy of a rule that then drifts.
 Consolidated cases — `_itemWithheld` (had three spellings), `chapterComplete`, `_setCompleteRaw`
-(narrowed by parameter, not duplicated), `_mixedSkips`, and the storyline page's connector line and
-progress-bar colour (`v71_w`).
+(narrowed by parameter, not duplicated), `_mixedSkips`, the storyline page's connector line and
+progress-bar colour (`v71_w`), and `_sentenceSplit` (`v72_a` — the client's `_sentenceSplit` and the
+server's `_synSplitSentences` were independently written and had **already** drifted: the server's
+terminator list contained `。！？` and the client's did not, so the two halves of the synonym
+pipeline disagreed about what a sentence is, with the *server* accidentally the more correct one.
+Nothing failed. Now one implementation, byte-identical in both files, asserted by
+`unit-sentence-segmentation.test.js`).
 
 That last one is the clearest illustration of why this matters, because the two rules **diverged in
 both directions** and nothing failed for two releases:
@@ -243,16 +296,82 @@ dismiss the whole QC panel, which costs the checks that do work.
    in **19 of 20** grammar lessons against **15** with the table, because the table covered
    de/fr/it/es/pt/nl/ru and nothing else, so English lessons could never build one. Hebrew still
    builds none — one definite article, no indefinite — a fact nobody had to write down.
-3. **`_sentenceUnits` splits on `.!?…` only** (`index.html`) — **ruled PERMITTED in principle,
-   still wrong in practice.** Sentence segmentation is handling, not correctness (see the boundary
-   rule above), so it is allowed — but `[.!?…]` is a *hand-authored* list, which the condition
-   rejects, and it omits `。`, so **Japanese and Chinese prose currently reads as one sentence**.
-   Fix by adopting `Intl.Segmenter` (UAX #29): built into Node and browsers, script-driven, no
-   table.
-   **Do not add `،` / `؛` for Arabic.** Measured: Unicode segments such a passage as one unit and is
-   right to — those are a comma and a semicolon, clause separators. The Arabic passage genuinely is
-   one long sentence; the coarse-chunking complaint is a LENGTH problem, fixed with a
-   character-budget fallback that needs no language knowledge. Roadmap has both, in order.
+3. ~~**`_sentenceUnits` splits on `.!?…` only** (`index.html`)~~ — **resolved in `v72_a`.**
+   `_sentenceSplit` now takes its boundaries from `Intl.Segmenter` (UAX #29) with **no locale
+   passed**: sentence breaking is script-driven, and passing one changed the result on **0 of 1533**
+   corpus paragraphs, so a locale would add an `APP.lang` dependency to a pure helper and buy
+   nothing. The hand-authored list is gone from the decision path; it survives only as a fallback
+   for engines without `Intl.Segmenter`, where the correct behaviour is to degrade to the *old*
+   behaviour rather than to none.
+
+   Measured over the whole corpus: **+170 sentence units, and not one character of text gained or
+   lost in any of 775 samples.** Japanese went from **33 units to 176** — it really had been reading
+   as one sentence per paragraph.
+
+   **The Arabic ruling above was right about `،` / `؛` and incomplete.** Those are clause
+   separators and Unicode is right to ignore them — that still holds, and is now pinned by a test.
+   But `؟` (U+061F, Arabic question mark) *is* a sentence terminator and was **not** in `[.!?…]`:
+   `/[.!?…]/.test('؟')` is `false`. Arabic gained **106 boundaries and lost none**. So the history
+   is: first diagnosis wrong (add `،؛`), second incomplete (length only), actual cause **a missing
+   terminator *and* length**. The length item (character-budget fallback) is still open and still
+   needs no language knowledge.
+
+   Two behaviour changes worth knowing, both accepted by the user as improvements:
+   - **Mid-sentence ellipsis no longer splits.** `"Forse... forse c'è qualcosa"` is hesitation
+     inside a sentence; the old scan split it. 51 corpus boundaries were wrong this way. This is
+     most of the apparent "losses" (it −32, de −5, fr −1).
+   - **`. ` before a digit no longer splits** (en −46). Nearly all of these come from one bundled
+     story whose characters are *named* `0`, `1`, `2` and lowercase `i`, so sentences genuinely
+     begin with a digit and Unicode reads `. 1` as a list marker. A corpus artifact, not a language
+     problem — but if it ever matters, that is where to look.
+
+   **A single newline is flattened to a space before segmenting.** `Intl.Segmenter` treats a line
+   break as a sentence end; `_sentenceUnits` has already split paragraphs on `\n\n+`, so a
+   surviving `\n` is a line *wrap*. Without the flatten, PDF-derived text shatters mid-clause —
+   **598 of 854** new boundaries came from line breaks alone, re-opening exactly the corruption
+   `v70_k`'s paragraph repair exists to prevent. Do not remove that line.
+
+   **Item (b) shipped too, as `v72_b`.** `_splitLongUnit` sub-splits any unit over
+   `_MAX_UNIT_CHARS` (300 — chosen from the corpus, where p99 = 325, so it touches ~1% of units and
+   the affected set is 68 Arabic, 63 Italian, 2 German: exactly the languages the complaint named).
+   Break candidates come from `Intl.Segmenter` at **word** granularity — a segment with
+   `isWordLike === false` that is not whitespace is punctuation, in any script — so there is no
+   second punctuation list either. Note this is where `،` and `؛` legitimately *are* used: the v71
+   ruling was that they must not end a SENTENCE, and that still stands and is still tested. Using a
+   clause separator to break an over-long unit is a length decision, not a claim about sentences.
+
+   **Cuts are anchored to existing whitespace, and that is load-bearing.** `Intl.Segmenter` reports
+   word boundaries INSIDE a token — `l'aria` segments as `l` `'` `aria`, `30-32` as `30` `-` `32` —
+   so cutting at an arbitrary word boundary and rejoining with a space invents words. The first
+   implementation did exactly that and was caught by the PDF paragraph test's word-count invariant
+   (937 against 934), not by review. A consequence: a script with no whitespace yields no safe cut
+   and its units are left whole. That is correct — cutting CJK by character count would split
+   mid-word — and costs nothing, because everything over budget in the corpus uses whitespace.
+
+   **Units now carry `sep`, the whitespace that really preceded them.** `v72_a` gave CJK real
+   sentence boundaries for the first time, and CJK has no whitespace at them, so `_unitsToText`
+   rejoining with `' '` inserted a space after every `。` and changed the text of **all 13** Japanese
+   stories in the corpus. It survived a green suite because every PDF fixture is Latin, where the
+   separator genuinely is a space. Units built by hand without `sep` still default to a space, so
+   older callers are unaffected. Guarded by section 10 of the segmentation test.
+
+   **Fragments are flagged.** A unit produced by `_splitLongUnit` is part of a sentence, so it
+   carries `frag` / `fragFirst` / `fragLast`. `_synContext` uses these to keep the `v70_n` elision
+   marker: without it a fragment that happens to fit under the word cap renders with no ellipsis and
+   the learner reads a mid-sentence excerpt as though it were whole.
+
+   **One hand-authored list remains in this area:**
+   - `_SENT_END_RE` (`index.html` ~4044, 4062, 4156, 4210) — answers a *different* question, "does
+     this string END like a sentence?", for the paragraph-wrap repair and the title/heading
+     heuristics, not for splitting.
+   - ~~`_SYN_CLAUSE_RE`~~ — **resolved in `v72_c`.** `_synClamp` now asks `_endsClause`, which uses
+     the same `isWordLike === false` test as `_splitLongUnit`, so there is one way to ask "is this
+     punctuation?" instead of two. The list had the identical gap one script further out: it held
+     `،` and `、` but not the Devanagari danda `।`, and **Hindi is a shipped language** (Armenian `։`
+     and Ethiopic `።` were missing too). Measured before switching — on all 286 synonym cards in the
+     corpus the clause scan actually runs on 19 of the 39 long enough to clamp, and list and Unicode
+     agree on all 19. A pure generalisation: identical today, correct for scripts the list never
+     covered. `_SYN_CLAUSE_RE` survives only as the no-`Intl.Segmenter` fallback.
 
 Not yet actioned — recorded so the next change in this area does not add to the pile.
 

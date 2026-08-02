@@ -53,6 +53,8 @@ run('unit: lowercase title + app.motto tagline (v49)', 'node', [path.join(__dirn
 run('unit: word_forms validator', 'node', [path.join(__dirname, 'unit-word-forms.test.js')]);
 run('unit: word_forms client play', 'node', [path.join(__dirname, 'unit-word-forms-client.test.js')]);
 run('unit: synonyms in-context builder', 'node', [path.join(__dirname, 'unit-synonyms.test.js')]);
+run('unit: story context + num_ctx sizing per generator (v72_f)', 'node', [path.join(__dirname, 'unit-generation-context.test.js')]);
+run('unit: sentence segmentation client/server parity (v72_a)', 'node', [path.join(__dirname, 'unit-sentence-segmentation.test.js')]);
 run('unit: synonyms context sentence', 'node', [path.join(__dirname, 'unit-syn-context.test.js')]);
 run('unit: storyline bottom row + re-create wiring', 'node', [path.join(__dirname, 'unit-recreate-ui.test.js')]);
 run('unit: chapter navigation (same-language)', 'node', [path.join(__dirname, 'unit-chapter-nav.test.js')]);
