@@ -6954,7 +6954,7 @@
           "qcBy": "translategemma:12b"
         },
         {
-          "id": 1,
+          "id": "ls_447278686",
           "title": "Mirandas Reise nach Wien",
           "desc": "Erinnerungen an Viena und Barcelona",
           "icon": "📚",
@@ -7149,7 +7149,7 @@
           "qcBy": "translategemma:12b"
         },
         {
-          "id": 6,
+          "id": "ls_1980813865",
           "type": "synonyms",
           "title": "Miranda und die Erinnerung",
           "desc": "Miranda findet ihre alte Arbeit in Wien.",
@@ -7289,6 +7289,14 @@
           "_arcMode": "reinforce"
         },
         {
+          "id": "ls_1785742966414_1obq",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 5
+        },
+        {
           "id": 9,
           "type": "comprehension",
           "title": "Mirandas Reise: Von Wien nach Barcelona",
@@ -7371,7 +7379,7 @@
         }
       },
       "generatedAt": "2026-08-02T22:27:20.323Z",
-      "updatedAt": "2026-08-03T00:00:54.706Z",
+      "updatedAt": "2026-08-03T07:56:32.813Z",
       "createdBy": "admin"
     },
     {
@@ -7577,7 +7585,7 @@
           "qcBy": "translategemma:12b"
         },
         {
-          "id": 1,
+          "id": "ls_1405964777",
           "title": "Mirandas Wirtschaftsstudium",
           "desc": "Wirtschaft und Kultur in Barcelona",
           "icon": "🎓",
@@ -7772,7 +7780,7 @@
           "qcBy": "translategemma:12b"
         },
         {
-          "id": 6,
+          "id": "ls_485569584",
           "type": "synonyms",
           "title": "Mirandas Reise nach Barcelona",
           "desc": "Sprachliche und kulturelle Entwicklung in Spanien.",
@@ -7905,6 +7913,14 @@
           "_arcMode": "reinforce"
         },
         {
+          "id": "ls_1785742950401_ixam",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 5
+        },
+        {
           "id": 9,
           "type": "comprehension",
           "title": "Mirandas Reise von Wien nach Barcelona",
@@ -7987,8 +8003,9 @@
         }
       },
       "generatedAt": "2026-08-02T21:57:42.086Z",
-      "updatedAt": "2026-08-02T23:36:09.900Z",
-      "createdBy": "admin"
+      "updatedAt": "2026-08-03T07:56:18.338Z",
+      "createdBy": "admin",
+      "coverageTarget": 0.6
     },
     {
       "id": "tp_17857073976600000006",
@@ -8053,20 +8070,8 @@
             },
             {
               "target": "la paella",
-              "source": "der Paella",
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "die Paella",
-                  "field": "source",
-                  "at": "2026-08-02T23:00:48.580Z"
-                }
-              },
-              "qc": {
-                "sug": "die Paella",
-                "field": "source",
-                "at": "2026-08-02T23:00:48.580Z",
-                "by": "translategemma:12b"
-              }
+              "source": "die Paella",
+              "editedAt": "2026-08-03T07:43:00.117Z"
             },
             {
               "target": "el vino tinto",
@@ -8107,7 +8112,7 @@
             },
             {
               "target": "Durante ese semestre, su mente se abrió a la fluidez del catalán.",
-              "source": "Während dieses Semesters öffnete sich ihr Geist für die Flüssigkeit des Katalanischen.",
+              "source": "Während dieses Semesters öffnete sich ihr Geist für die fließende Form des Katalanischen.",
               "words": [
                 "Durante",
                 "ese",
@@ -8122,23 +8127,11 @@
                 "del",
                 "catalán."
               ],
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "Während dieses Semesters öffnete sich ihr Geist für die fließende Form des Katalanischen.",
-                  "field": "source",
-                  "at": "2026-08-02T23:06:06.531Z"
-                }
-              },
-              "qc": {
-                "sug": "Während dieses Semesters öffnete sich ihr Geist für die fließende Form des Katalanischen.",
-                "field": "source",
-                "at": "2026-08-02T23:06:06.531Z",
-                "by": "translategemma:12b"
-              }
+              "editedAt": "2026-08-03T07:43:10.369Z"
             },
             {
               "target": "La paella humeante y el vino tinto se convirtieron en compañeros de estudio.",
-              "source": "Der dampfende Paella und der Rotwein wurden zu ihren Studienbegleitern.",
+              "source": "Der dampfende Paella und der Rotwein wurden zu Studienbegleitern.",
               "words": [
                 "La",
                 "paella",
@@ -8154,19 +8147,7 @@
                 "de",
                 "estudio."
               ],
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "Der dampfende Paella und der Rotwein wurden zu Studienbegleitern.",
-                  "field": "source",
-                  "at": "2026-08-02T23:07:34.340Z"
-                }
-              },
-              "qc": {
-                "sug": "Der dampfende Paella und der Rotwein wurden zu Studienbegleitern.",
-                "field": "source",
-                "at": "2026-08-02T23:07:34.340Z",
-                "by": "translategemma:12b"
-              }
+              "editedAt": "2026-08-03T07:43:24.620Z"
             },
             {
               "target": "Miranda descubrió que la economía no solo se mide en números.",
@@ -8203,20 +8184,7 @@
                 "la",
                 "conexión",
                 "humana."
-              ],
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "Die Stadt lehrte sie, die Pausen, den Geschmack und die menschliche Verbindung zu schätzen.",
-                  "field": "source",
-                  "at": "2026-08-02T23:09:38.505Z"
-                }
-              },
-              "qc": {
-                "sug": "Die Stadt lehrte sie, die Pausen, den Geschmack und die menschliche Verbindung zu schätzen.",
-                "field": "source",
-                "at": "2026-08-02T23:09:38.505Z",
-                "by": "translategemma:12b"
-              }
+              ]
             }
           ],
           "_genMeta": {
@@ -8231,6 +8199,61 @@
             "ms": 258433,
             "at": "2026-08-02T21:54:16.172Z"
           }
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1785743494401",
+          "type": "comprehension",
+          "title": "Mirandas Studienzeit",
+          "desc": "Verstehen Sie die Geschichte von Miranda in Barcelona?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum hat Miranda Wien verlassen?",
+              "choices": [
+                "Um das kalte Wetter zu vermeiden und mehr über katalanische Kultur zu lernen.",
+                "Weil sie in Wien keine Arbeit mehr finden konnte.",
+                "Um die Wirtschaftstheorien der Universität Wien zu kritisieren.",
+                "Weil Barcelona günstigeres Essen anbietet als Wien."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text sagt, dass sie die akademische Kälte Wiens gegen das lebendige Barcelona tauschte und sich für die katalanische Sprache interessierte."
+            },
+            {
+              "q": "Was hat Miranda in Barcelona über die Wirtschaft gelernt?",
+              "choices": [
+                "Dass Zahlen das einzige Maß für Erfolg sind.",
+                "Dass menschliche Verbindungen genauso wichtig sind wie finanzielle Theorien.",
+                "Dass sie ihre Wirtschaftsstudie abbrechen sollte.",
+                "Dass katalanische Tapas teurer sind als Wiener Schnitzel."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text besagt, dass sie entdeckte, dass Wirtschaft nicht nur in Zahlen gemessen wird, sondern auch in geteilten Momenten und menschlichen Verbindungen."
+            },
+            {
+              "q": "Welche Rolle spielten Essen und Trinken bei Mirandas Erfahrung?",
+              "choices": [
+                "Sie waren nur eine Ablenkung von ihren Studien.",
+                "Sie machten das Lernen zu einer sinnlichen, unvergesslichen Erfahrung.",
+                "Sie zeigten, dass sie keine Zeit zum Kochen hatte.",
+                "Sie waren der einzige Grund, warum sie nach Barcelona ging."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text beschreibt Paella und Wein als Begleiter des Studiums, die das Sprachlernen in eine unvergessliche sinnliche Erfahrung verwandelten."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 578,
+            "completionTokens": 477,
+            "ms": 222647,
+            "at": "2026-08-03T07:51:34.400Z"
+          }
         }
       ],
       "generationStats": {
@@ -8243,8 +8266,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 6628,
-        "totalCompletionTokens": 942,
+        "totalPromptTokens": 7206,
+        "totalCompletionTokens": 1419,
         "lessons": [
           {
             "lessonNum": 1,
@@ -8254,11 +8277,12 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 5335
+          "lesson_qc": 5335,
+          "add_lesson": 1055
         }
       },
       "generatedAt": "2026-08-02T21:49:57.660Z",
-      "updatedAt": "2026-08-02T23:09:38.506Z",
+      "updatedAt": "2026-08-03T07:51:34.401Z",
       "createdBy": "admin"
     },
     {
