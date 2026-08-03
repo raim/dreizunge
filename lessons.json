@@ -6826,57 +6826,55 @@
       "continuedFromId": "tp_17857078620860000194",
       "lessons": [
         {
-          "id": 1,
-          "title": "Miranda und der Buchladen",
-          "desc": "Miranda findet ihre verlorene Dissertation im Antiquariat wieder.",
-          "icon": "📚",
+          "difficulty": 1,
+          "id": "ls_1785747849154",
+          "title": "Miranda und das Manuskript",
+          "desc": "Ein vergessenes Buch findet den Weg zurück.",
+          "icon": "📖",
           "vocab": [
             {
               "target": "librería",
               "source": "Buchladen"
             },
             {
-              "target": "antiguo",
-              "source": "antik"
-            },
-            {
               "target": "bibliotecario",
               "source": "Bibliothekar"
             },
             {
-              "target": "diccionario",
-              "source": "Wörterbuch"
+              "target": "tesis",
+              "source": "Dissertation"
             },
             {
-              "target": "tesina",
-              "source": "Dissertation"
+              "target": "raíz",
+              "source": "Wurzel"
+            },
+            {
+              "target": "garganta",
+              "source": "Hals"
+            },
+            {
+              "target": "viaje",
+              "source": "Reise"
             },
             {
               "target": "mudanza",
               "source": "Umzug"
             },
             {
-              "target": "memoria",
-              "source": "Gedächtnis"
-            },
-            {
-              "target": "raíz",
-              "source": "Wurzel"
+              "target": "lluvia",
+              "source": "Regen"
             }
           ],
           "sentences": [
             {
-              "target": "Miranda escuchó una voz familiar detrás del mostrador.",
-              "source": "Miranda hörte eine vertraute Stimme hinter der Theke.",
+              "target": "Miranda escuchó una voz familiar.",
+              "source": "Miranda hörte eine vertraute Stimme.",
               "words": [
                 "Miranda",
                 "escuchó",
                 "una",
                 "voz",
-                "familiar",
-                "detrás",
-                "del",
-                "mostrador."
+                "familiar."
               ]
             },
             {
@@ -6893,38 +6891,32 @@
               ]
             },
             {
-              "target": "Él deslizó un libro encuadernado en cuero hacia ella.",
-              "source": "Er schob ihr ein Buch mit Ledereinband zu.",
+              "target": "Sin decir palabra, él deslizó un libro.",
+              "source": "Ohne ein Wort schob er ein Buch.",
               "words": [
-                "Él",
+                "Sin",
+                "decir",
+                "palabra,",
+                "él",
                 "deslizó",
                 "un",
-                "libro",
-                "encuadernado",
-                "en",
-                "cuero",
-                "hacia",
-                "ella."
+                "libro."
               ]
             },
             {
-              "target": "La memoria no se olvida, murmuró con una sonrisa.",
-              "source": "Das Gedächtnis vergisst nie, murmelte er lächelnd.",
+              "target": "La memoria no se olvida.",
+              "source": "Das Gedächtnis vergisst nie.",
               "words": [
                 "La",
                 "memoria",
                 "no",
                 "se",
-                "olvida,",
-                "murmuró",
-                "con",
-                "una",
-                "sonrisa."
+                "olvida."
               ]
             },
             {
-              "target": "Miranda sintió un nudo en la garganta al comprenderlo.",
-              "source": "Miranda spürte einen Kloß im Hals beim Verstehen.",
+              "target": "Miranda sintió un nudo en la garganta.",
+              "source": "Miranda spürte einen Kloß im Hals.",
               "words": [
                 "Miranda",
                 "sintió",
@@ -6932,9 +6924,7 @@
                 "nudo",
                 "en",
                 "la",
-                "garganta",
-                "al",
-                "comprenderlo."
+                "garganta."
               ]
             }
           ],
@@ -6945,117 +6935,109 @@
             "valid": 8,
             "rejected": 0,
             "rejectReasons": null,
-            "promptTokens": 1049,
-            "completionTokens": 430,
-            "ms": 233044,
-            "at": "2026-08-02T22:31:13.419Z"
-          },
-          "qcAt": "2026-08-02T23:55:56.948Z",
-          "qcBy": "translategemma:12b"
+            "promptTokens": 1096,
+            "completionTokens": 387,
+            "ms": 229254,
+            "at": "2026-08-03T09:04:09.154Z"
+          }
         },
         {
-          "id": "ls_447278686",
-          "title": "Mirandas Reise nach Wien",
-          "desc": "Erinnerungen an Viena und Barcelona",
-          "icon": "📚",
+          "difficulty": 1,
+          "id": "ls_1785748386480",
+          "title": "Das vergessene Manuskript",
+          "desc": "Miranda findet ihr altes Manuskript wieder",
+          "icon": "📜",
           "vocab": [
             {
-              "target": "la tesis",
-              "source": "die Thesis"
+              "target": "martes",
+              "source": "Dienstag"
             },
             {
-              "target": "el mostrador",
-              "source": "der Tresen"
+              "target": "lluvia",
+              "source": "Regen"
             },
             {
-              "target": "el diccionario",
-              "source": "das Wörterbuch"
+              "target": "voz",
+              "source": "Stimme"
             },
             {
-              "target": "la librería",
-              "source": "die Buchhandlung"
+              "target": "librería",
+              "source": "Buchladen"
             },
             {
-              "target": "el cuero",
-              "source": "das Leder"
+              "target": "libro",
+              "source": "Buch"
             },
             {
-              "target": "la memoria",
-              "source": "das Gedächtnis"
+              "target": "tesis",
+              "source": "Arbeit"
             },
             {
-              "target": "el bibliotecario",
-              "source": "der Bibliothekar"
+              "target": "memoria",
+              "source": "Gedächtnis"
             },
             {
-              "target": "la raíz",
-              "source": "die Wurzel"
+              "target": "garganta",
+              "source": "Hals"
             }
           ],
           "sentences": [
             {
-              "target": "La tesis original estaba encuadernada en cuero.",
-              "source": "Die Originalthesis war in Leder gebunden.",
+              "target": "Un martes de lluvia fina.",
+              "source": "An einem Dienstag mit feinem Regen.",
               "words": [
-                "La",
-                "tesis",
-                "original",
-                "estaba",
-                "encuadernada",
-                "en",
-                "cuero."
+                "Un",
+                "martes",
+                "de",
+                "lluvia",
+                "fina."
               ]
             },
             {
-              "target": "El bibliotecario guardó los diccionarios con cuidado.",
-              "source": "Der Bibliothekar bewahrte die Wörterbücher sorgfältig auf.",
-              "words": [
-                "El",
-                "bibliotecario",
-                "guardó",
-                "los",
-                "diccionarios",
-                "con",
-                "cuidado."
-              ]
-            },
-            {
-              "target": "Miranda revisaba datos en la librería antigua.",
-              "source": "Miranda überprüfte Daten in der alten Buchhandlung.",
+              "target": "Miranda escuchó una voz familiar.",
+              "source": "Miranda hörte eine vertraute Stimme.",
               "words": [
                 "Miranda",
-                "revisaba",
-                "datos",
-                "en",
-                "la",
-                "librería",
-                "antigua."
+                "escuchó",
+                "una",
+                "voz",
+                "familiar."
               ]
             },
             {
-              "target": "La memoria sostiene todo crecimiento humano.",
-              "source": "Das Gedächtnis stützt jedes menschliche Wachstum.",
+              "target": "Es el señor Puig, el bibliotecario.",
+              "source": "Es war Herr Puig, der Bibliothekar.",
+              "words": [
+                "Es",
+                "el",
+                "señor",
+                "Puig,",
+                "el",
+                "bibliotecario."
+              ]
+            },
+            {
+              "target": "La memoria no se olvida.",
+              "source": "Das Gedächtnis vergisst nie.",
               "words": [
                 "La",
                 "memoria",
-                "sostiene",
-                "todo",
-                "crecimiento",
-                "humano."
+                "no",
+                "se",
+                "olvida."
               ]
             },
             {
-              "target": "El mostrador de madera olía a papel viejo.",
-              "source": "Der Holztresen roch nach altem Papier.",
+              "target": "Miranda sintió un nudo en la garganta.",
+              "source": "Miranda spürte einen Kloß im Hals.",
               "words": [
-                "El",
-                "mostrador",
-                "de",
-                "madera",
-                "olía",
-                "a",
-                "papel",
-                "viejo."
+                "Miranda",
+                "sintió",
+                "un",
+                "nudo",
+                "en",
+                "la",
+                "garganta."
               ]
             }
           ],
@@ -7066,208 +7048,123 @@
             "valid": 8,
             "rejected": 0,
             "rejectReasons": null,
-            "promptTokens": 842,
-            "completionTokens": 373,
-            "ms": 215255,
-            "at": "2026-08-02T22:34:48.675Z"
+            "promptTokens": 1145,
+            "completionTokens": 375,
+            "ms": 233577,
+            "at": "2026-08-03T09:13:06.480Z"
           }
         },
         {
-          "id": 6,
-          "type": "word_forms",
-          "title": "Miranda y el libro perdido",
-          "desc": "Ejercicios de formas verbales y sustantivos",
-          "icon": "📚",
-          "items": [
-            {
-              "sentence": "Un martes de lluvia fina, mientras ___ los últimos datos para su publicación, Miranda escuchó una voz familiar.",
-              "translation": "An einem regnerischen Dienstag, während sie die letzten Daten für ihre Veröffentlichung überprüfte, hörte Miranda eine vertraute Stimme.",
-              "choices": [
-                "revisaba",
-                "revisó"
-              ],
-              "correctIndex": 0,
-              "explanation": "Imperfekt para acción en progreso."
-            },
-            {
-              "sentence": "Era el señor Puig, el antiguo bibliotecario que le había ___ los primeros diccionarios hace años.",
-              "translation": "Es war Señor Puig, der ehemalige Bibliothekar, der ihr vor Jahren die ersten Wörterbücher geliehen hatte.",
-              "choices": [
-                "prestado",
-                "prestó"
-              ],
-              "correctIndex": 0,
-              "explanation": "Pluscuamperfecto: acción anterior al pasado."
-            },
-            {
-              "sentence": "Sin decir palabra, él ___ un libro encuadernado en cuero desgastado hacia ella.",
-              "translation": "Ohne ein Wort zu sagen, schob er ihr ein in Leder gebundenes Buch hin.",
-              "choices": [
-                "deslizó",
-                "deslizaba"
-              ],
-              "correctIndex": 0,
-              "explanation": "Pretérito indefinido para acción puntual."
-            },
-            {
-              "sentence": "Miranda sintió un nudo en la garganta, ___ que su viaje no había sido solo hacia adelante.",
-              "translation": "Miranda spürte einen Kloß im Hals und verstand, dass ihre Reise nicht nur nach vorne gegangen war.",
-              "choices": [
-                "comprendiendo",
-                "comprendió"
-              ],
-              "correctIndex": 0,
-              "explanation": "Gerundio indica acción simultánea."
-            },
-            {
-              "sentence": "Recordándole que las raíces, aunque invisibles, ___ todo crecimiento.",
-              "translation": "Er erinnerte sie daran, dass die Wurzeln, obwohl unsichtbar, jedes Wachstum tragen/stützen.",
-              "choices": [
-                "sostienen",
-                "sostenían"
-              ],
-              "correctIndex": 0,
-              "explanation": "Presente para verdad general o permanente."
-            }
-          ],
-          "_genMeta": {
-            "type": "word_forms",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": 1,
-            "valid": 5,
-            "rejected": 1,
-            "rejectReasons": {
-              "answer appears elsewhere in sentence": 1
-            },
-            "promptTokens": 1073,
-            "completionTokens": 724,
-            "ms": 375700,
-            "at": "2026-08-02T22:41:04.375Z"
-          },
-          "_arcMode": "reinforce",
-          "qcAt": "2026-08-03T00:00:54.706Z",
-          "qcBy": "translategemma:12b"
-        },
-        {
-          "id": "ls_1980813865",
+          "difficulty": 1,
+          "id": "ls_1785749048822",
           "type": "synonyms",
-          "title": "Miranda und die Erinnerung",
-          "desc": "Miranda findet ihre alte Arbeit in Wien.",
-          "icon": "📚",
+          "title": "Das vergessene Manuskript",
+          "desc": "Miranda findet ihr altes Werk wieder.",
+          "icon": "📜",
           "words": [
             {
               "base": "tesis",
               "gloss": "Dissertation",
-              "sentence": "Era el señor Puig, el antiguo bibliotecario que le había prestado los primeros diccionarios hace años. Sin decir palabra, él deslizó un libro encuadernado en cuero desgastado hacia ella; era su tesis original, aquella que había entregado en Viena y que creía perdida entre cajas de mudanza.",
+              "sentence": "Sin decir palabra, él deslizó un libro encuadernado en cuero desgastado hacia ella; era su tesis original, aquella que había entregado en Viena y que creía perdida entre cajas de mudanza.",
               "synonyms": [
                 {
                   "w": "trabajo",
                   "g": "Arbeit"
                 },
                 {
-                  "w": "dissertación",
-                  "g": "Dissertation"
+                  "w": "disertación",
+                  "g": "Abhandlung"
                 }
               ],
               "antonyms": [],
               "homophones": []
             },
             {
-              "base": "economía",
-              "gloss": "Wirtschaft",
-              "sentence": "Su tesis sobre el impacto turístico en la economía local no era solo un ejercicio académico.",
+              "base": "perdida",
+              "gloss": "verloren",
+              "sentence": "Sin decir palabra, él deslizó un libro encuadernado en cuero desgastado hacia ella; era su tesis original, aquella que había entregado en Viena y que creía perdida entre cajas de mudanza.",
               "synonyms": [
                 {
-                  "w": "mercado",
-                  "g": "Markt"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "confianza",
-              "gloss": "Vertrauen",
-              "sentence": "Ahora caminaba por el Born con la confianza de quien conoce cada esquina y cada secreto culinario.",
-              "synonyms": [
-                {
-                  "w": "seguridad",
-                  "g": "Sicherheit"
+                  "w": "extraviada",
+                  "g": "verirrt"
                 }
               ],
               "antonyms": [
                 {
-                  "w": "desconfianza",
-                  "g": "Misstrauen"
+                  "w": "encontrada",
+                  "g": "gefunden"
                 }
               ],
               "homophones": []
             },
             {
-              "base": "impacto",
-              "gloss": "Auswirkung",
-              "sentence": "Su tesis sobre el impacto turístico en la economía local no era solo un ejercicio académico.",
+              "base": "refugiarse",
+              "gloss": "sich flüchten",
+              "sentence": "Miranda escuchó una voz familiar detrás del mostrador de la librería anticuada donde solía refugiarse.",
               "synonyms": [
                 {
-                  "w": "efecto",
-                  "g": "Effekt"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "conexión",
-              "gloss": "Verbindung",
-              "sentence": "La conexión con Barcelona se había vuelto orgánica, casi respiratoria.",
-              "synonyms": [
+                  "w": "esconderse",
+                  "g": "sich verstecken"
+                },
                 {
-                  "w": "vínculo",
-                  "g": "Bindung"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "turista",
-              "gloss": "Tourist",
-              "sentence": "El turista compra frutas frescas.",
-              "synonyms": [
-                {
-                  "w": "viajero",
-                  "g": "Reisender"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "vender",
-              "gloss": "verkaufen",
-              "sentence": "",
-              "synonyms": [
-                {
-                  "w": "comercializar",
-                  "g": "kommerzialisieren"
+                  "w": "acogerse",
+                  "g": "sich zurückziehen"
                 }
               ],
               "antonyms": [
                 {
-                  "w": "comprar",
-                  "g": "kaufen"
+                  "w": "exponerse",
+                  "g": "sich aussetzen"
                 }
               ],
               "homophones": []
             },
             {
-              "base": "risa",
-              "gloss": "Lachen",
-              "sentence": "La risa une a las personas.",
+              "base": "cómplice",
+              "gloss": "heimlich / einverstanden",
+              "sentence": "\"La memoria no se olvida\", murmuró con una sonrisa cómplice, recordándole que las raíces, aunque invisibles, sostienen todo crecimiento.",
               "synonyms": [
                 {
-                  "w": "carcajada",
-                  "g": "Gelächter"
+                  "w": "secreta",
+                  "g": "geheim"
+                },
+                {
+                  "w": "entendida",
+                  "g": "verstanden"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "raíces",
+              "gloss": "Wurzeln",
+              "sentence": "\"La memoria no se olvida\", murmuró con una sonrisa cómplice, recordándole que las raíces, aunque invisibles, sostienen todo crecimiento.",
+              "synonyms": [
+                {
+                  "w": "orígenes",
+                  "g": "Ursprünge"
+                },
+                {
+                  "w": "fundamentos",
+                  "g": "Grundlagen"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "hogar",
+              "gloss": "Zuhause / Heim",
+              "sentence": "Miranda sintió un nudo en la garganta, comprendiendo que su viaje no había sido solo hacia adelante, sino también hacia adentro, integrando cada versión de sí misma en esa Barcelona que ahora llamaba hogar.",
+              "synonyms": [
+                {
+                  "w": "casa",
+                  "g": "Haus"
+                },
+                {
+                  "w": "domicilio",
+                  "g": "Wohnsitz"
                 }
               ],
               "antonyms": [],
@@ -7278,15 +7175,14 @@
             "type": "synonyms",
             "model": "qwen3.6:35b-a3b",
             "attempts": 1,
-            "valid": 8,
+            "valid": 6,
             "rejected": 0,
             "rejectReasons": null,
-            "promptTokens": 1351,
-            "completionTokens": 849,
-            "ms": 410256,
-            "at": "2026-08-02T22:47:54.631Z"
-          },
-          "_arcMode": "reinforce"
+            "promptTokens": 1339,
+            "completionTokens": 1050,
+            "ms": 485014,
+            "at": "2026-08-03T09:24:08.822Z"
+          }
         },
         {
           "id": "ls_1785742966414_1obq",
@@ -7364,8 +7260,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 14274,
-        "totalCompletionTokens": 951,
+        "totalPromptTokens": 18950,
+        "totalCompletionTokens": 3152,
         "lessons": [
           {
             "lessonNum": 1,
@@ -7375,11 +7271,12 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 12691
+          "lesson_qc": 12691,
+          "add_lesson": 6877
         }
       },
       "generatedAt": "2026-08-02T22:27:20.323Z",
-      "updatedAt": "2026-08-03T07:56:32.813Z",
+      "updatedAt": "2026-08-03T09:24:34.233Z",
       "createdBy": "admin"
     },
     {
@@ -7428,48 +7325,49 @@
       "continuedFromId": "tp_17857073976600000006",
       "lessons": [
         {
-          "id": 1,
-          "title": "Mirandas Reise nach Barcelona",
-          "desc": "Miranda findet ihre wahre Heimat in Barcelona.",
-          "icon": "🌇",
+          "difficulty": 1,
+          "id": "ls_1785746888348",
+          "title": "Miranda in Barcelona",
+          "desc": "Mirandas Reise zur Freiheit und Reife",
+          "icon": "🌊",
           "vocab": [
             {
-              "target": "tímida",
+              "target": "tímido",
               "source": "schüchtern"
             },
             {
-              "target": "el cuaderno",
-              "source": "das Heft"
+              "target": "camino",
+              "source": "Spaziergang"
             },
             {
-              "target": "la confianza",
-              "source": "die Sicherheit"
+              "target": "confianza",
+              "source": "Sicherheit"
             },
             {
-              "target": "la tesis",
-              "source": "die Arbeit"
+              "target": "tesis",
+              "source": "Arbeit"
             },
             {
-              "target": "el impacto",
-              "source": "der Einfluss"
+              "target": "fluía",
+              "source": "floss"
             },
             {
-              "target": "el mercado",
-              "source": "der Markt"
+              "target": "conexión",
+              "source": "Verbindung"
             },
             {
-              "target": "la conexión",
-              "source": "die Verbindung"
+              "target": "pensamientos",
+              "source": "Gedanken"
             },
             {
-              "target": "el atardecer",
-              "source": "der Sonnenuntergang"
+              "target": "atardeceres",
+              "source": "Sonnenuntergänge"
             }
           ],
           "sentences": [
             {
-              "target": "Miranda ya no era la estudiante tímida que llegaba con cuadernos llenos de fórmulas.",
-              "source": "Monate später war Miranda nicht mehr die schüchterne Studentin, die mit Heften voller Formeln kam.",
+              "target": "Miranda ya no era la estudiante tímida.",
+              "source": "Miranda war nicht mehr die schüchterne Studentin.",
               "words": [
                 "Miranda",
                 "ya",
@@ -7477,19 +7375,12 @@
                 "era",
                 "la",
                 "estudiante",
-                "tímida",
-                "que",
-                "llegaba",
-                "con",
-                "cuadernos",
-                "llenos",
-                "de",
-                "fórmulas."
+                "tímida."
               ]
             },
             {
-              "target": "Ahora caminaba por el Born con la confianza de quien conoce cada esquina y cada secreto culinario.",
-              "source": "Jetzt spazierte sie durch das Born-Viertel mit der Sicherheit einer Person, die jede Ecke und jedes kulinarische Geheimnis kennt.",
+              "target": "Ahora caminaba por el Born con confianza.",
+              "source": "Jetzt spazierte sie durch das Born-Viertel mit Sicherheit.",
               "words": [
                 "Ahora",
                 "caminaba",
@@ -7497,75 +7388,43 @@
                 "el",
                 "Born",
                 "con",
-                "la",
-                "confianza",
-                "de",
-                "quien",
-                "conoce",
-                "cada",
-                "esquina",
-                "y",
-                "cada",
-                "secreto",
-                "culinario."
+                "confianza."
               ]
             },
             {
-              "target": "Su tesis sobre el impacto turístico en la economía local no era solo un ejercicio académico.",
-              "source": "Ihre Arbeit über den touristischen Einfluss auf die lokale Wirtschaft war nicht nur eine akademische Übung;",
+              "target": "Su tesis era un testimonio vivo.",
+              "source": "Ihre Arbeit war ein lebendiges Zeugnis.",
               "words": [
                 "Su",
                 "tesis",
-                "sobre",
-                "el",
-                "impacto",
-                "turístico",
-                "en",
-                "la",
-                "economía",
-                "local",
-                "no",
                 "era",
-                "solo",
                 "un",
-                "ejercicio",
-                "académico."
+                "testimonio",
+                "vivo."
               ]
             },
             {
-              "target": "La conexión con Barcelona se había vuelto orgánica, casi respiratoria.",
-              "source": "Die Verbindung zu Barcelona war organisch geworden, fast atemaktiv.",
+              "target": "La conexión con Barcelona se volvió orgánica.",
+              "source": "Die Verbindung zu Barcelona wurde organisch.",
               "words": [
                 "La",
                 "conexión",
                 "con",
                 "Barcelona",
                 "se",
-                "había",
-                "vuelto",
-                "orgánica,",
-                "casi",
-                "respiratoria."
+                "volvió",
+                "orgánica."
               ]
             },
             {
-              "target": "Miranda comprendió que su verdadera graduación no fue en Viena, sino en esos atardeceres.",
-              "source": "Miranda begriff, dass ihr eigentlicher Abschluss nicht in Wien stattfand, sondern in diesen Sonnenuntergängen,",
+              "target": "Miranda comprendió su verdadera graduación.",
+              "source": "Miranda begriff ihren eigentlichen Abschluss.",
               "words": [
                 "Miranda",
                 "comprendió",
-                "que",
                 "su",
                 "verdadera",
-                "graduación",
-                "no",
-                "fue",
-                "en",
-                "Viena,",
-                "sino",
-                "en",
-                "esos",
-                "atardeceres."
+                "graduación."
               ]
             }
           ],
@@ -7576,341 +7435,79 @@
             "valid": 8,
             "rejected": 0,
             "rejectReasons": null,
-            "promptTokens": 1061,
-            "completionTokens": 559,
-            "ms": 307672,
-            "at": "2026-08-02T22:02:49.827Z"
-          },
-          "qcAt": "2026-08-02T23:30:10.210Z",
-          "qcBy": "translategemma:12b"
-        },
-        {
-          "id": "ls_1405964777",
-          "title": "Mirandas Wirtschaftsstudium",
-          "desc": "Wirtschaft und Kultur in Barcelona",
-          "icon": "🎓",
-          "vocab": [
-            {
-              "target": "la economía",
-              "source": "die Wirtschaft"
-            },
-            {
-              "target": "el mercado",
-              "source": "der Markt"
-            },
-            {
-              "target": "la tesis",
-              "source": "die These"
-            },
-            {
-              "target": "el impacto",
-              "source": "die Auswirkung"
-            },
-            {
-              "target": "el turista",
-              "source": "der Tourist"
-            },
-            {
-              "target": "vender",
-              "source": "verkaufen"
-            },
-            {
-              "target": "la risa",
-              "source": "das Lachen"
-            },
-            {
-              "target": "el balance",
-              "source": "die Bilanz"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "La economía local depende del turismo.",
-              "source": "Die lokale Wirtschaft hängt vom Tourismus ab.",
-              "words": [
-                "La",
-                "economía",
-                "local",
-                "depende",
-                "del",
-                "turismo."
-              ]
-            },
-            {
-              "target": "Los vendedores del mercado son muy amables.",
-              "source": "Die Verkäufer auf dem Markt sind sehr freundlich.",
-              "words": [
-                "Los",
-                "vendedores",
-                "del",
-                "mercado",
-                "son",
-                "muy",
-                "amables."
-              ]
-            },
-            {
-              "target": "Su tesis analiza el impacto económico.",
-              "source": "Ihre These analysiert die wirtschaftliche Auswirkung.",
-              "words": [
-                "Su",
-                "tesis",
-                "analiza",
-                "el",
-                "impacto",
-                "económico."
-              ]
-            },
-            {
-              "target": "El turista compra frutas frescas.",
-              "source": "Der Tourist kauft frisches Obst.",
-              "words": [
-                "El",
-                "turista",
-                "compra",
-                "frutas",
-                "frescas."
-              ]
-            },
-            {
-              "target": "La risa une a las personas.",
-              "source": "Das Lachen verbindet die Menschen.",
-              "words": [
-                "La",
-                "risa",
-                "une",
-                "a",
-                "las",
-                "personas."
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 853,
-            "completionTokens": 330,
-            "ms": 194364,
-            "at": "2026-08-02T22:06:04.192Z"
+            "promptTokens": 1031,
+            "completionTokens": 384,
+            "ms": 415703,
+            "at": "2026-08-03T08:48:08.348Z"
           }
         },
         {
-          "id": 6,
+          "difficulty": 1,
+          "id": "ls_1785747510924",
           "type": "word_forms",
-          "title": "Miranda's Growth",
-          "desc": "Verb forms and adjectives in context",
+          "title": "Mirandas Reise",
+          "desc": "Lückentexte zur Grammatik",
           "icon": "🎓",
           "items": [
             {
-              "sentence": "Meses después, Miranda ya no ___ la estudiante tímida que llegaba con cuadernos llenos de fórmulas.",
-              "translation": "Monate später war Miranda nicht mehr die schüchterne Studentin, die mit vollen Notizbüchern voller Formeln kam.",
+              "sentence": "Miranda ya no ___ la estudiante tímida.",
+              "translation": "Miranda war nicht mehr die schüchterne Studentin.",
               "choices": [
                 "era",
                 "es",
                 "fue"
               ],
               "correctIndex": 0,
-              "explanation": "Imperfekt für Beschreibung in der Vergangenheit."
+              "explanation": "Imperfekt für Beschreibung in der Vergangenheit"
             },
             {
-              "sentence": "Ahora caminaba por el Born con la ___ de quien conoce cada esquina y cada secreto culinario.",
-              "translation": "Jetzt ging sie durch das Born-Viertel mit dem Selbstvertrauen dessen, der jede Ecke und jedes kulinarische Geheimnis kennt.",
+              "sentence": "Miranda ___ que su verdadera graduación no fue en Viena.",
+              "translation": "Miranda verstand, dass ihre wahre Graduierung nicht in Wien war.",
               "choices": [
-                "confianza",
-                "confiado",
-                "confiar"
+                "comprendió",
+                "comprende",
+                "comprendía"
               ],
               "correctIndex": 0,
-              "explanation": "Substantiv nach dem Artikel 'la'."
+              "explanation": "Pretérito perfecto simple für abgeschlossene Handlung"
             },
             {
-              "sentence": "Su tesis sobre el impacto turístico en la economía local no era solo un ejercicio académico; era un testimonio vivo de las interacciones diarias en los mercados de La Boquería, donde el dinero ___ tan rápido como las risas entre vendedores y clientes.",
-              "translation": "Ihre Arbeit über die touristische Auswirkung auf die lokale Wirtschaft war nicht nur eine akademische Übung; sie war ein lebendiges Zeugnis der täglichen Interaktionen in den Märkten von La Boquería, wo das Geld so schnell floss wie das Lachen zwischen Verkäufern und Kunden.",
+              "sentence": "Ya no necesitaba traducir sus pensamientos al catalán; simplemente ___ allí.",
+              "translation": "Sie brauchte nicht mehr, ihre Gedanken ins Katalanische zu übersetzen; sie existierten einfach dort.",
               "choices": [
-                "fluía",
-                "fluye",
-                "fluyó"
+                "existían",
+                "existen",
+                "existió"
               ],
               "correctIndex": 0,
-              "explanation": "Imperfekt für wiederholte/andauernde Handlung in der Vergangenheit."
+              "explanation": "Imperfekt für Zustand in der Vergangenheit"
             },
             {
-              "sentence": "La conexión con Barcelona se había vuelto orgánica, casi respiratoria. Ya no ___ traducir sus pensamientos al catalán; simplemente existían allí, entrelazados con el olor a sal marina y la brisa del Mediterráneo.",
-              "translation": "Die Verbindung zu Barcelona war organisch geworden, fast atemlos. Sie brauchte ihre Gedanken nicht mehr ins Katalanische zu übersetzen; sie existierten einfach dort, verwoben mit dem Geruch nach Meersalz und der Brise des Mittelmeers.",
+              "sentence": "La conexión con Barcelona ___ orgánica, casi respiratoria.",
+              "translation": "Die Verbindung zu Barcelona war organisch geworden, fast atemlos.",
               "choices": [
-                "necesitaba",
-                "necesita",
-                "necesitó"
+                "se había vuelto",
+                "se vuelve",
+                "se volvió"
               ],
               "correctIndex": 0,
-              "explanation": "Imperfekt für fehlende Notwendigkeit in der Vergangenheit."
-            },
-            {
-              "sentence": "Miranda comprendió que su verdadera graduación no fue en Viena, sino en esos atardeceres donde aprendió que la riqueza de un lugar reside en su capacidad para unir corazones, no solo en sus balances ___.",
-              "translation": "Miranda begriff, dass ihre wahre Graduierung nicht in Wien stattfand, sondern in diesen Sonnenuntergängen, wo sie lernte, dass der Reichtum eines Ortes in seiner Fähigkeit liegt, Herzen zu verbinden, nicht nur in seinen finanziellen Bilanzen.",
-              "choices": [
-                "financieros",
-                "financiera",
-                "financiero"
-              ],
-              "correctIndex": 0,
-              "explanation": "Plural maskulin, passt zu 'balances'."
+              "explanation": "Plusquamperfekt für Handlung vor der Vergangenheit"
             }
           ],
           "_genMeta": {
             "type": "word_forms",
             "model": "qwen3.6:35b-a3b",
             "attempts": 1,
-            "valid": 5,
+            "valid": 4,
             "rejected": 1,
             "rejectReasons": {
               "answer appears elsewhere in sentence": 1
             },
             "promptTokens": 1084,
-            "completionTokens": 992,
-            "ms": 417754,
-            "at": "2026-08-02T22:13:01.947Z"
-          },
-          "_arcMode": "reinforce",
-          "qcAt": "2026-08-02T23:36:09.900Z",
-          "qcBy": "translategemma:12b"
-        },
-        {
-          "id": "ls_485569584",
-          "type": "synonyms",
-          "title": "Mirandas Reise nach Barcelona",
-          "desc": "Sprachliche und kulturelle Entwicklung in Spanien.",
-          "icon": "🎓",
-          "words": [
-            {
-              "base": "tímida",
-              "gloss": "schüchtern",
-              "sentence": "Miranda ya no era la estudiante tímida que llegaba con cuadernos llenos de fórmulas.",
-              "synonyms": [
-                {
-                  "w": "reservada",
-                  "g": "zurückhaltend"
-                }
-              ],
-              "antonyms": [
-                {
-                  "w": "extrovertida",
-                  "g": "extrovertiert"
-                }
-              ],
-              "homophones": []
-            },
-            {
-              "base": "confianza",
-              "gloss": "Vertrauen / Selbstvertrauen",
-              "sentence": "Ahora caminaba por el Born con la confianza de quien conoce cada esquina y cada secreto culinario.",
-              "synonyms": [
-                {
-                  "w": "seguridad",
-                  "g": "Sicherheit"
-                }
-              ],
-              "antonyms": [
-                {
-                  "w": "inseguridad",
-                  "g": "Unsicherheit"
-                }
-              ],
-              "homophones": []
-            },
-            {
-              "base": "orgánica",
-              "gloss": "organisch / natürlich",
-              "sentence": "La conexión con Barcelona se había vuelto orgánica, casi respiratoria.",
-              "synonyms": [
-                {
-                  "w": "natural",
-                  "g": "natürlich"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "reside",
-              "gloss": "liegt begründet / besteht",
-              "sentence": "Miranda comprendió que su verdadera graduación no fue en Viena, sino en esos atardeceres donde aprendió que la riqueza de un lugar reside en su capacidad para unir corazones, no solo en sus balances financieros.",
-              "synonyms": [
-                {
-                  "w": "consiste",
-                  "g": "besteht"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "compartir",
-              "gloss": "teilen",
-              "sentence": "",
-              "synonyms": [
-                {
-                  "w": "repartir",
-                  "g": "verteilen"
-                }
-              ],
-              "antonyms": [
-                {
-                  "w": "acaparar",
-                  "g": "an sich reißen / horten"
-                }
-              ],
-              "homophones": []
-            },
-            {
-              "base": "sabor",
-              "gloss": "Geschmack",
-              "sentence": "La ciudad le enseñó a valorar la pausa, el sabor y la conexión humana.",
-              "synonyms": [
-                {
-                  "w": "gusto",
-                  "g": "Geschmack"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "conexión",
-              "gloss": "Verbindung",
-              "sentence": "La conexión con Barcelona se había vuelto orgánica, casi respiratoria.",
-              "synonyms": [
-                {
-                  "w": "vínculo",
-                  "g": "Bindung"
-                }
-              ],
-              "antonyms": [
-                {
-                  "w": "ruptura",
-                  "g": "Bruch"
-                }
-              ],
-              "homophones": []
-            }
-          ],
-          "_genMeta": {
-            "type": "synonyms",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": 1,
-            "valid": 7,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 1348,
-            "completionTokens": 855,
-            "ms": 428931,
-            "at": "2026-08-02T22:20:10.879Z"
-          },
-          "_arcMode": "reinforce"
+            "completionTokens": 507,
+            "ms": 513170,
+            "at": "2026-08-03T08:58:30.924Z"
+          }
         },
         {
           "id": "ls_1785742950401_ixam",
@@ -7988,8 +7585,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 14524,
-        "totalCompletionTokens": 1128,
+        "totalPromptTokens": 16639,
+        "totalCompletionTokens": 2019,
         "lessons": [
           {
             "lessonNum": 1,
@@ -7999,11 +7596,12 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 12974
+          "lesson_qc": 12974,
+          "add_lesson": 3006
         }
       },
       "generatedAt": "2026-08-02T21:57:42.086Z",
-      "updatedAt": "2026-08-03T07:56:18.338Z",
+      "updatedAt": "2026-08-03T09:19:28.782Z",
       "createdBy": "admin",
       "coverageTarget": 0.6
     },
@@ -8051,10 +7649,11 @@
       "storyTranslation": "Miranda verließ die kühle Akademikwelt Wiens für das lebendige Sonnenlicht Barcelonas und tauschte die wirtschaftlichen Diagramme gegen die lebensfrohen Straßen der Stadt. Während dieses Semesters öffnete sich ihr Geist für die Flüssigkeit des Katalanischen, einer Sprache, die mit der Wärme ihrer Bewohner mitschwingte, während sie in jeder Ecke Tapas probierte. Der dampfende Paella und der Rotwein wurden zu ihren Studienbegleitern und verwandelten ihre sprachlichen Lernprozesse in ein unvergessliches Sinneserlebnis.\n\nObwohl ihr Abschluss das Siegel Wiens tragen würde, entdeckte Miranda an der Mittelmeerküste, dass Wirtschaft nicht nur in Zahlen gemessen wird, sondern auch in den geteilten Momenten um einen Tisch herum. Die Stadt lehrte sie, die Pause, den Geschmack und die menschliche Verbindung zu schätzen – Elemente, die genauso wesentlich sind wie jede finanzielle Theorie.",
       "lessons": [
         {
-          "id": 1,
-          "title": "Miranda studiert in Barcelona",
-          "desc": "Sprachenlernen mit Tapas und Wein",
-          "icon": "🎓",
+          "difficulty": 1,
+          "id": "ls_1785746303913",
+          "title": "Mirandas Reise nach Barcelona",
+          "desc": "Sprachlernen in Spanien mit Tapas und Wein",
+          "icon": "🌞",
           "vocab": [
             {
               "target": "dejar",
@@ -8065,35 +7664,35 @@
               "source": "die Kälte"
             },
             {
-              "target": "el semestre",
-              "source": "das Semester"
+              "target": "el sol",
+              "source": "die Sonne"
+            },
+            {
+              "target": "la calle",
+              "source": "die Straße"
+            },
+            {
+              "target": "el idioma",
+              "source": "die Sprache"
             },
             {
               "target": "la paella",
               "source": "die Paella",
-              "editedAt": "2026-08-03T07:43:00.117Z"
+              "editedAt": "2026-08-03T08:51:56.297Z"
             },
             {
-              "target": "el vino tinto",
-              "source": "der Rotwein"
+              "target": "el vino",
+              "source": "der Wein"
             },
             {
-              "target": "compartir",
-              "source": "teilen"
-            },
-            {
-              "target": "el sabor",
-              "source": "der Geschmack"
-            },
-            {
-              "target": "la conexión",
-              "source": "die Verbindung"
+              "target": "la economía",
+              "source": "die Wirtschaft"
             }
           ],
           "sentences": [
             {
-              "target": "Miranda dejó el frío académico de Viena por el sol vibrante de Barcelona.",
-              "source": "Miranda verließ die kühle Akademikwelt Wiens für das lebendige Sonnenlicht Barcelonas.",
+              "target": "Miranda dejó el frío académico de Viena.",
+              "source": "Miranda verließ die kühle Akademikwelt Wiens.",
               "words": [
                 "Miranda",
                 "dejó",
@@ -8101,23 +7700,14 @@
                 "frío",
                 "académico",
                 "de",
-                "Viena",
-                "por",
-                "el",
-                "sol",
-                "vibrante",
-                "de",
-                "Barcelona."
+                "Viena."
               ]
             },
             {
-              "target": "Durante ese semestre, su mente se abrió a la fluidez del catalán.",
-              "source": "Während dieses Semesters öffnete sich ihr Geist für die fließende Form des Katalanischen.",
+              "target": "Su mente se abrió a la fluidez del catalán.",
+              "source": "Ihr Geist öffnete sich für die Flüssigkeit des Katalanischen.",
               "words": [
-                "Durante",
-                "ese",
-                "semestre,",
-                "su",
+                "Su",
                 "mente",
                 "se",
                 "abrió",
@@ -8126,49 +7716,38 @@
                 "fluidez",
                 "del",
                 "catalán."
-              ],
-              "editedAt": "2026-08-03T07:43:10.369Z"
+              ]
             },
             {
-              "target": "La paella humeante y el vino tinto se convirtieron en compañeros de estudio.",
-              "source": "Der dampfende Paella und der Rotwein wurden zu Studienbegleitern.",
+              "target": "La paella humeante se convirtió en compañera.",
+              "source": "Der dampfende Paella wurde zum Begleiter.",
               "words": [
                 "La",
                 "paella",
                 "humeante",
-                "y",
-                "el",
-                "vino",
-                "tinto",
                 "se",
-                "convirtieron",
+                "convirtió",
                 "en",
-                "compañeros",
-                "de",
-                "estudio."
-              ],
-              "editedAt": "2026-08-03T07:43:24.620Z"
-            },
-            {
-              "target": "Miranda descubrió que la economía no solo se mide en números.",
-              "source": "Miranda entdeckte, dass Wirtschaft nicht nur in Zahlen gemessen wird.",
-              "words": [
-                "Miranda",
-                "descubrió",
-                "que",
-                "la",
-                "economía",
-                "no",
-                "solo",
-                "se",
-                "mide",
-                "en",
-                "números."
+                "compañera."
               ]
             },
             {
-              "target": "La ciudad le enseñó a valorar la pausa, el sabor y la conexión humana.",
-              "source": "Die Stadt lehrte sie, die Pause, den Geschmack und die menschliche Verbindung zu schätzen.",
+              "target": "Miranda descubrió la economía en momentos compartidos.",
+              "source": "Miranda entdeckte die Wirtschaft in gemeinsamen Momenten.",
+              "words": [
+                "Miranda",
+                "descubrió",
+                "la",
+                "economía",
+                "en",
+                "momentos",
+                "compartidos."
+              ],
+              "editedAt": "2026-08-03T09:28:21.167Z"
+            },
+            {
+              "target": "La ciudad le enseñó a valorar la pausa.",
+              "source": "Die Stadt lehrte sie, die Pause zu schätzen.",
               "words": [
                 "La",
                 "ciudad",
@@ -8177,13 +7756,7 @@
                 "a",
                 "valorar",
                 "la",
-                "pausa,",
-                "el",
-                "sabor",
-                "y",
-                "la",
-                "conexión",
-                "humana."
+                "pausa."
               ]
             }
           ],
@@ -8194,10 +7767,10 @@
             "valid": 8,
             "rejected": 0,
             "rejectReasons": null,
-            "promptTokens": 1012,
-            "completionTokens": 467,
-            "ms": 258433,
-            "at": "2026-08-02T21:54:16.172Z"
+            "promptTokens": 992,
+            "completionTokens": 470,
+            "ms": 243282,
+            "at": "2026-08-03T08:38:23.913Z"
           }
         },
         {
@@ -8266,8 +7839,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 7206,
-        "totalCompletionTokens": 1419,
+        "totalPromptTokens": 13135,
+        "totalCompletionTokens": 1944,
         "lessons": [
           {
             "lessonNum": 1,
@@ -8277,12 +7850,12 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 5335,
-          "add_lesson": 1055
+          "lesson_qc": 10327,
+          "add_lesson": 2517
         }
       },
       "generatedAt": "2026-08-02T21:49:57.660Z",
-      "updatedAt": "2026-08-03T07:51:34.401Z",
+      "updatedAt": "2026-08-03T09:28:23.616Z",
       "createdBy": "admin"
     },
     {
