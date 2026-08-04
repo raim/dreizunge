@@ -159,6 +159,82 @@ function renderCard({ teacher }) {
   // The <p>s need a rhythm or they stack flush and read as one block again.
   assert.ok(/#comp-story-text p\{margin/.test(html),
     'and the panel gives its paragraphs spacing, as .story-body has since v39');
+  // PARITY with the shared formatter, not merely "some paragraphs": the point is that the three
+  // story panels agree. Two hand-written copies of this split is how the card came to be missing it.
+  const shared = C.run(`_storyParasHtml(furiHtml(APP.lessonData.story || ''))`, 'shared');
+  assert.strictEqual((h.match(/<br>/g) || []).length, (String(shared).match(/<br>/g) || []).length,
+    'single newlines become line breaks exactly as the other panels do');
+  assert.strictEqual((h.match(/<mark/g) || []).length, (h.match(/<\/mark>/g) || []).length,
+    'every mark is closed — the split did not cut through one');
+  assert.strictEqual((html.match(/function _storyParasHtml\(/g) || []).length, 1,
+    'there is exactly ONE paragraph formatter');
+  assert.ok((html.match(/_storyParasHtml\(/g) || []).length >= 4,
+    'and every story panel goes through it');
+}
+
+// ── 6. v74_n: TWO highlight tiers, and the two story panels agree ───────────────────────────
+// The storyline page marked ALL of a chapter's vocabulary; the completion card marked only the
+// words the learner had SOLVED. So the same story lit up differently depending on which screen it
+// was read from, and a partly-played chapter looked almost unmarked on the card — the user noticed
+// exactly this. Both meanings now sit on the page: every vocabulary word is marked (what the
+// chapter teaches) and the solved ones are marked more strongly (what you already have).
+{
+  const topic = (store.topics || []).find(t => t.story
+    && (t.lessons || []).some(L => L && (L.vocab || []).length >= 4));
+  assert.ok(topic, 'the corpus has a chapter with a story and several vocabulary words');
+  const render = (rounds) => {
+    const C = loadClient({ quiet: true });
+    C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed');
+    C.run(`
+      APP.savedList = []; APP.storylines = [];
+      APP.lessonData = ${JSON.stringify(topic)};
+      APP.lang = ${JSON.stringify(topic.lang)}; APP.srcLang = ${JSON.stringify(topic.srcLang)};
+      APP.info = { backend:'none', canGenerate:false, coverageThreshold:0.8 };
+      APP.progress = { completed:{}, solved:{} }; APP._teacherMode = false;
+      APP.cur = { lessonIdx:0, exercises:[], cur:0 };
+      (function(){
+        if (!${rounds}) return;
+        var i = (APP.lessonData.lessons||[]).findIndex(function(L){ return L && (L.vocab||[]).length; });
+        var prev = APP.cur.lessonIdx; APP.cur.lessonIdx = i;
+        for (var r = 0; r < ${rounds}; r++) { try { buildExercises(i).forEach(function(ex){ markSolved(ex); }); } catch(e) {} }
+        APP.cur.lessonIdx = prev;
+      })();
+      APP._compStoryLang = 'target'; _renderCompStory(true); true;`, 'render');
+    const h = C.run(`(function(){ var e=document.getElementById('comp-story-text'); return e ? e.innerHTML : ''; })()`, 'h');
+    return { total: (h.match(/<mark class="story-vocab-hl/g) || []).length,
+             strong: (h.match(/<mark class="story-vocab-hl solved"/g) || []).length };
+  };
+  const cold = render(0), warm = render(40);
+  // Non-vacuity: the fixture must actually contain vocabulary that appears in its story, or every
+  // count below is zero and the section proves nothing.
+  assert.ok(cold.total > 0, `the fixture's vocabulary really does appear in its story (${cold.total} marks)`);
+  // The KEY property: marking no longer depends on progress — only the SHADE does. This is what
+  // makes the card and the storyline page agree.
+  assert.strictEqual(warm.total, cold.total,
+    'the same words are marked before and after playing — progress changes the shade, not the set');
+  assert.strictEqual(cold.strong, 0, 'with nothing solved, nothing is in the strong tier');
+  assert.ok(warm.strong > 0, 'and solved words move into it');
+  // NOT "entirely strong": only the first vocabulary-bearing lesson is played here, and a chapter
+  // may draw story words from several. The claim is that the strong tier GROWS with progress and
+  // never exceeds the marked set — asserting totality would pin an accident of the fixture.
+  assert.ok(warm.strong <= warm.total, 'the strong tier is a subset of what is marked');
+  assert.ok(warm.strong > cold.strong, 'and it grows as words are demonstrated');
+  // Both tiers must be visually distinct, or the distinction is invisible and the change pointless.
+  assert.ok(/\.story-vocab-hl\{[^}]*background:/.test(html), 'the base tier has a background');
+  assert.ok(/\.story-vocab-hl\.solved\{[^}]*background:/.test(html),
+    'and the solved tier has a DIFFERENT one');
+  const base = (html.match(/\.story-vocab-hl\{([^}]*)\}/) || [])[1] || '';
+  const strongCss = (html.match(/\.story-vocab-hl\.solved\{([^}]*)\}/) || [])[1] || '';
+  assert.notStrictEqual((base.match(/background:([^;]*)/) || [])[1],
+                        (strongCss.match(/background:([^;]*)/) || [])[1],
+    'the two shades are not the same colour');
+  // The storyline chain panel takes the same two tiers, resolved PER CHAPTER — pooling the solved
+  // set across the chain would show a word solved in chapter 1 as solved inside chapter 3.
+  assert.ok(/_highlightVocabHtml\(t, allVocab, solved\)/.test(html),
+    'the storyline chain body passes a solved subset too');
+  assert.ok(/function highlight\(text, isTarget, d\)/.test(html),
+    'and resolves it per chapter, not across the chain');
+  console.log(`  highlight tiers: ${cold.total} words marked throughout, strong ${cold.strong} -> ${warm.strong} as they are solved`);
 }
 
 console.log('  story-unlocked card: instruction label, prose story, Next-only for learners, Repeat kept while coverage remains');

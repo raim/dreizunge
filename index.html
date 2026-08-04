@@ -414,7 +414,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .tts-select{font-size:12px;font-weight:700;font-family:'Nunito',sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:3px 6px;background:var(--white);color:var(--text);cursor:pointer}
 .tts-select:focus{outline:none;border-color:var(--blue)}
 .tts-approx{font-size:11px;font-weight:700;color:#b06000;background:#fff8e0;border:1px solid #f0c060;border-radius:6px;padding:2px 7px;white-space:nowrap}
-.story-vocab-hl{background:#fff3c0;border-radius:3px;padding:0 2px;font-weight:800;cursor:help}
+.story-vocab-hl{background:#fff8e1;border-radius:3px;padding:0 2px;font-weight:600;cursor:help}
+/* v74_n: the SOLVED tier keeps exactly what the single tier used to be, so a fully-played chapter
+   looks the way it always did; the new, fainter tier is the addition. */
+.story-vocab-hl.solved{background:#fff3c0;font-weight:800}
 .story-flag-row{padding:6px 14px 10px;display:flex;flex-direction:column;gap:6px}
 
 /* ══ STORY ═══════════════════════════════════════════════════════════ */
@@ -3351,9 +3354,13 @@ async function discardSummaryQc() {
 //     is displayed and compared — not a judgement about whether content is correct. The codebase
 //     already relies on the same fact in `CJK_LANGS` and in this function's own furigana strip.
 const _UNSPACED_SCRIPTS = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Thai}\p{Script=Lao}\p{Script=Khmer}\p{Script=Myanmar}]/u;
-function _highlightVocabHtml(html, words) {
+// `strongWords` (v74_n, optional): the subset of `words` the learner has SOLVED, marked in the
+// stronger shade. Omitted → every match gets the base shade, which is the pre-v74_n behaviour and
+// what a panel with no per-learner progress in hand (the library reader) still wants.
+function _highlightVocabHtml(html, words, strongWords) {
   if (!words.length) return html;
   const stripF = w => w.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[[^\]]+\]/g, '$1');
+  const strong = new Set((strongWords || []).map(w => stripF(String(w || '')).trim().toLowerCase()).filter(Boolean));
   const esc = w => stripF(w).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const spaced = [], unspaced = [];
   words.forEach(w => {
@@ -3381,7 +3388,15 @@ function _highlightVocabHtml(html, words) {
   // Split into alternating [text, tag, text, tag, ...] segments
   return html.replace(/(<[^>]+>)|([^<]+)/g, (_, tag, text) => {
     if (tag) return tag; // leave HTML tags untouched
-    return text.replace(wordRe, '<mark class="story-vocab-hl">$1</mark>');
+    return text.replace(wordRe, (m) => {
+      // v74_n: two tiers. Every word of the chapter's vocabulary is marked, so the story reads as
+      // "this is the language you are working on"; the ones the learner has SOLVED are marked more
+      // strongly, so it also reads as a record of what they can already read. Before this the two
+      // panels disagreed — the storyline page showed all vocabulary and the completion card showed
+      // only solved words, so the same story lit up differently on two screens.
+      const key = stripF(m).trim().toLowerCase();
+      return '<mark class="story-vocab-hl' + (strong.has(key) ? ' solved' : '') + '">' + m + '</mark>';
+    });
   });
 }
 
@@ -10174,11 +10189,18 @@ const _chainStoryLang = {};
 function _renderChainStory(body, chapters, chainId) {
   const showSource = _chainStoryLang[chainId] === 'source';
   const allVocab = chapters.flatMap(d => (d.lessons||[]).flatMap(L => L.vocab||[])).map(v => v.target).filter(Boolean).sort((a,b) => b.length - a.length);
-  function highlight(text, isTarget) {
+  // v74_n: the solved set is PER CHAPTER — `_solvedTargetWords` reads the solved map for one topic,
+  // and this panel renders several. Resolved per chapter and passed in, rather than pooling across
+  // the chain, or a word solved in chapter 1 would show as solved inside chapter 3's story.
+  function highlight(text, isTarget, d) {
     let t = furiHtml(text);
     // Vocabulary highlighting only applies to the TARGET text — the words are target-language, so
     // running it over a translation would match nothing at best and the wrong spans at worst.
-    if (isTarget && allVocab.length) t = _highlightVocabHtml(t, allVocab);
+    if (isTarget && allVocab.length) {
+      let solved = [];
+      try { solved = (typeof _solvedTargetWords === 'function' && d) ? _solvedTargetWords(d) : []; } catch(_) { solved = []; }
+      t = _highlightVocabHtml(t, allVocab, solved);
+    }
     return _storyParasHtml(t);
   }
   body.innerHTML = chapters.map((d, i) => {
@@ -10189,7 +10211,7 @@ function _renderChainStory(body, chapters, chainId) {
     const text = useSource ? xl : (d.story || t('chapter.no_story'));
     return `<div class="storyline-chapter">` +
       `<div class="storyline-chapter-hdr">${t('storyline.chapter_hdr',{n:i+1,topic:escHtml(d.topic)})}</div>` +
-      `<div class="storyline-chapter-body">${highlight(text, !useSource)}</div>` +
+      `<div class="storyline-chapter-body">${highlight(text, !useSource, d)}</div>` +
       `</div>`;
   }).join('');
   _syncChainXlateBtn(chainId, chapters);
@@ -14691,8 +14713,16 @@ function _renderCompStory(allDone){
     let html = null;
     if (!showingSource) {
       try {
+        // v74_n: mark the WHOLE chapter's vocabulary, with the solved words in the stronger shade.
+        // This panel used to mark solved words only, while the storyline page marked everything —
+        // so the same story lit up differently depending on which screen you read it from, and a
+        // partly-played chapter looked almost unmarked here. Both meanings are now on the page:
+        // what the chapter teaches, and how much of it you already have.
+        const all = (d.lessons || []).flatMap(L => (L && L.vocab) || [])
+          .map(v => v && v.target).filter(Boolean)
+          .sort((a, b) => b.length - a.length);
         const solved = _solvedTargetWords(d);
-        if (solved.length) html = _highlightVocabHtml(furiHtml(shown), solved);
+        if (all.length) html = _highlightVocabHtml(furiHtml(shown), all, solved);
       } catch(_) { html = null; }
     }
     // v74_m: paragraphs. Every other story panel has split on blank lines since v39; this one set

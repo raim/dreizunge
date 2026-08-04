@@ -197,8 +197,11 @@ console.log('  completion card: Next chains lesson→chapter, Back to story/home
   // solved-word highlighting, so it is assigned as HTML rather than textContent.
   assert.ok(/const shown = allDone \? full : \(full\.slice\(0, 200\)/.test(rcs),
     'chapter complete → FULL story; otherwise a 200-char preview (teacher peek)');
-  assert.ok(/_highlightVocabHtml\(furiHtml\(shown\), solved\)/.test(rcs),
-    'solved words are highlighted with the SAME helper the storyline/lesson-set pages use');
+  // v74_n: TWO tiers. The panel marks the whole chapter's vocabulary and passes the solved subset
+  // as the strong shade — it used to mark solved words only, so the same story lit up differently
+  // here and on the storyline page, and a partly-played chapter looked almost unmarked.
+  assert.ok(/_highlightVocabHtml\(furiHtml\(shown\), all, solved\)/.test(rcs),
+    'the whole chapter vocabulary is highlighted, with solved words passed as the strong tier');
   assert.ok(/if \(!showingSource\)/.test(rcs),
     'only for the target-language story — target words cannot be found in a source translation');
   // v74_m: this pinned the exact assignment line, so it broke the moment the panel gained the

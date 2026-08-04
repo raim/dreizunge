@@ -78439,8 +78439,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 3285,
-        "totalCompletionTokens": 1836,
+        "totalPromptTokens": 4391,
+        "totalCompletionTokens": 2010,
         "lessons": [
           {
             "lessonNum": 1,
@@ -78456,11 +78456,11 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 4212
+          "recreate": 5492
         }
       },
       "generatedAt": "2026-06-15T12:55:13.375Z",
-      "updatedAt": "2026-08-02T14:30:59.333Z",
+      "updatedAt": "2026-08-04T12:59:18.397Z",
       "id": "tp_17815283212820000053",
       "continuedFromId": null,
       "continuedFrom": null,
@@ -78849,6 +78849,27 @@
             "at": "2026-08-02T17:12:03.574Z"
           },
           "_recreated": true
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1785847763009",
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "Maybe she didn’t have to be Sevn.\nMaybe she didn’t have to be On.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just rite.",
+          "_genMeta": {
+            "type": "error_hunt",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": null,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1136,
+            "completionTokens": 104,
+            "ms": 83697,
+            "at": "2026-08-04T12:49:23.009Z"
+          }
         }
       ],
       "generationStats": {
@@ -78856,8 +78877,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 4256,
-        "totalCompletionTokens": 1759,
+        "totalPromptTokens": 5392,
+        "totalCompletionTokens": 1863,
         "lessons": [
           {
             "lessonNum": 1,
@@ -78873,11 +78894,12 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 5127
+          "recreate": 5127,
+          "add_lesson": 1240
         }
       },
       "generatedAt": "2026-06-15T13:15:39.863Z",
-      "updatedAt": "2026-08-02T17:12:03.574Z",
+      "updatedAt": "2026-08-04T12:49:23.009Z",
       "id": "tp_17815294559340001022",
       "storyMeta": {
         "type": "story",
@@ -80112,8 +80134,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 4040,
-        "totalCompletionTokens": 1701,
+        "totalPromptTokens": 5302,
+        "totalCompletionTokens": 1926,
         "lessons": [
           {
             "lessonNum": 1,
@@ -80129,11 +80151,11 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 4809
+          "recreate": 6296
         }
       },
       "generatedAt": "2026-06-15T13:08:07.055Z",
-      "updatedAt": "2026-08-02T16:01:26.195Z",
+      "updatedAt": "2026-08-04T13:29:32.111Z",
       "id": "tp_17815290049040000673",
       "storyMeta": {
         "type": "story",
@@ -80540,8 +80562,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 5864,
-        "totalCompletionTokens": 2884,
+        "totalPromptTokens": 7069,
+        "totalCompletionTokens": 3056,
         "lessons": [
           {
             "lessonNum": 1,
@@ -80557,11 +80579,11 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 7851
+          "recreate": 9228
         }
       },
       "generatedAt": "2026-06-15T13:06:18.701Z",
-      "updatedAt": "2026-08-02T15:48:45.760Z",
+      "updatedAt": "2026-08-04T13:21:08.376Z",
       "id": "tp_17815288869990000571",
       "storyMeta": {
         "type": "story",
@@ -81067,6 +81089,27 @@
             "at": "2026-08-02T15:28:05.261Z"
           },
           "_recreated": true
+        },
+        {
+          "id": "ls_1785849089997_4_error_hunt",
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "In this world, so chaotic and strage,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also want to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stared.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+          "_genMeta": {
+            "type": "error_hunt",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": null,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 598,
+            "completionTokens": 127,
+            "ms": 157399,
+            "at": "2026-08-04T13:11:29.997Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -81074,8 +81117,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 3873,
-        "totalCompletionTokens": 2066,
+        "totalPromptTokens": 4471,
+        "totalCompletionTokens": 2193,
         "lessons": [
           {
             "lessonNum": 1,
@@ -81091,11 +81134,11 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 4997
+          "recreate": 5722
         }
       },
       "generatedAt": "2026-06-15T13:04:20.430Z",
-      "updatedAt": "2026-08-02T15:28:05.261Z",
+      "updatedAt": "2026-08-04T13:11:29.997Z",
       "id": "tp_17815287786440000451",
       "storyMeta": {
         "type": "story",
@@ -81573,6 +81616,27 @@
             "at": "2026-08-02T15:12:13.989Z"
           },
           "_recreated": true
+        },
+        {
+          "id": "ls_1785848932534_3_error_hunt",
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "“Are you my family?” ask i.\nSeven shoke his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into teares.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heros.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+          "_genMeta": {
+            "type": "error_hunt",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": null,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 587,
+            "completionTokens": 118,
+            "ms": 143397,
+            "at": "2026-08-04T13:08:52.534Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -81580,8 +81644,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 3706,
-        "totalCompletionTokens": 1877,
+        "totalPromptTokens": 4293,
+        "totalCompletionTokens": 1995,
         "lessons": [
           {
             "lessonNum": 1,
@@ -81597,11 +81661,11 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 4674
+          "recreate": 5379
         }
       },
       "generatedAt": "2026-06-15T13:02:31.605Z",
-      "updatedAt": "2026-08-02T15:12:13.989Z",
+      "updatedAt": "2026-08-04T13:08:52.534Z",
       "id": "tp_17815286603790000369",
       "storyMeta": {
         "type": "story",
@@ -81987,6 +82051,27 @@
             "at": "2026-08-02T14:58:06.476Z"
           },
           "_recreated": true
+        },
+        {
+          "id": "ls_1785848789079_2_error_hunt",
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "One evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to anothr world.\nA strange world.\nA numbr world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Sevens.”",
+          "_genMeta": {
+            "type": "error_hunt",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": null,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1190,
+            "completionTokens": 180,
+            "ms": 113677,
+            "at": "2026-08-04T13:06:29.079Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -81994,8 +82079,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 3502,
-        "totalCompletionTokens": 1879,
+        "totalPromptTokens": 4692,
+        "totalCompletionTokens": 2059,
         "lessons": [
           {
             "lessonNum": 1,
@@ -82011,11 +82096,11 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 4499
+          "recreate": 5869
         }
       },
       "generatedAt": "2026-06-15T13:00:45.451Z",
-      "updatedAt": "2026-08-02T14:58:06.476Z",
+      "updatedAt": "2026-08-04T13:06:29.079Z",
       "id": "tp_17815285515500000284",
       "storyMeta": {
         "type": "story",
@@ -82556,8 +82641,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 3390,
-        "totalCompletionTokens": 1866,
+        "totalPromptTokens": 4531,
+        "totalCompletionTokens": 2028,
         "lessons": [
           {
             "lessonNum": 1,
@@ -82573,11 +82658,11 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 4314
+          "recreate": 5617
         }
       },
       "generatedAt": "2026-06-15T12:58:41.342Z",
-      "updatedAt": "2026-08-02T14:44:15.012Z",
+      "updatedAt": "2026-08-04T13:04:35.339Z",
       "id": "tp_17815284454040000147",
       "storyMeta": {
         "type": "story",
