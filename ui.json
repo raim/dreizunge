@@ -2986,7 +2986,8 @@
     "prov.from": "Kaynak",
     "ex.comprehension.story": "Hikaye",
     "ex.comprehension.story_listen": "Hikayeyi yüksek sesle okuyun",
-    "ex.badge.comprehension": "Anladınız mı?"
+    "ex.badge.comprehension": "Anladınız mı?",
+    "complete.story_unlocked": "bölümü oku ve anla"
   },
   "hi": {
     "qc.editor.suggests_by": "⚑ {model} का सुझाव:",
@@ -3583,7 +3584,8 @@
     "prov.from": "स्रोत",
     "ex.comprehension.story": "कहानी",
     "ex.comprehension.story_listen": "कहानी को ज़ोर से पढ़ें",
-    "ex.badge.comprehension": "क्या आप इसे समझ पाए?"
+    "ex.badge.comprehension": "क्या आप इसे समझ पाए?",
+    "complete.story_unlocked": "अध्याय पढ़ें और समझें"
   },
   "de": {
     "qc.editor.suggests_by": "⚑ {model} schlägt vor:",
@@ -7170,7 +7172,8 @@
     "prov.from": "출처",
     "ex.comprehension.story": "이야기",
     "ex.comprehension.story_listen": "이야기 소리내어 읽기",
-    "ex.badge.comprehension": "이해했나요?"
+    "ex.badge.comprehension": "이해했나요?",
+    "complete.story_unlocked": "챕터를 읽고 이해하기"
   },
   "it": {
     "qc.editor.suggests_by": "⚑ {model} suggerisce:",
@@ -9561,7 +9564,8 @@
     "prov.from": "出典",
     "ex.comprehension.story": "物語",
     "ex.comprehension.story_listen": "物語を音読する",
-    "ex.badge.comprehension": "理解できましたか？"
+    "ex.badge.comprehension": "理解できましたか？",
+    "complete.story_unlocked": "章を読んで理解する"
   },
   "he": {
     "qc.editor.suggests_by": "⚑ מציע: {model}",
@@ -10157,7 +10161,9 @@
     "prov.by": "משתמש: {user}",
     "prov.from": "מקור",
     "ex.comprehension.story": "הסיפור",
-    "ex.comprehension.story_listen": "קראו את הסיפור בקול רם"
+    "ex.comprehension.story_listen": "קראו את הסיפור בקול רם",
+    "complete.story_unlocked": "קרא והבן את הפרק",
+    "ex.badge.comprehension": "הבנת את זה?"
   },
   "uk": {
     "qc.editor.suggests_by": "⚑ {model} пропонує:",
@@ -10753,7 +10759,9 @@
     "prov.by": "Користувач: {user}",
     "prov.from": "Джерело",
     "ex.comprehension.story": "Історія",
-    "ex.comprehension.story_listen": "Прочитайте історію вголос"
+    "ex.comprehension.story_listen": "Прочитайте історію вголос",
+    "complete.story_unlocked": "прочитайте та зрозумійте розділ",
+    "ex.badge.comprehension": "чи зрозуміли ви це?"
   },
   "cs": {
     "qc.editor.suggests_by": "⚑ {model} navrhuje:",
@@ -13741,7 +13749,9 @@
     "prov.by": "ผู้ใช้: {user}",
     "prov.from": "แหล่งที่มา",
     "ex.comprehension.story": "เรื่องราว",
-    "ex.comprehension.story_listen": "อ่านเรื่องราวให้ดังๆ"
+    "ex.comprehension.story_listen": "อ่านเรื่องราวให้ดังๆ",
+    "complete.story_unlocked": "อ่านและเข้าใจบทนี้",
+    "ex.badge.comprehension": "คุณเข้าใจหรือไม่?"
   },
   "el": {
     "qc.editor.suggests_by": "⚑ Προτείνει το {model}:",
@@ -14337,7 +14347,9 @@
     "prov.by": "Χρήστης: {user}",
     "prov.from": "Πηγή",
     "ex.comprehension.story": "Η ιστορία",
-    "ex.comprehension.story_listen": "Διαβάστε την ιστορία δυνατά"
+    "ex.comprehension.story_listen": "Διαβάστε την ιστορία δυνατά",
+    "complete.story_unlocked": "διαβάστε και κατανοήστε το κεφάλαιο",
+    "ex.badge.comprehension": "το κατανοήσατε;"
   },
   "fi": {
     "qc.editor.suggests_by": "⚑ {model} ehdottaa:",
@@ -14933,7 +14945,9 @@
     "prov.by": "Käyttäjä: {user}",
     "prov.from": "Lähde",
     "ex.comprehension.story": "Tarina",
-    "ex.comprehension.story_listen": "Lue tarina ääneen"
+    "ex.comprehension.story_listen": "Lue tarina ääneen",
+    "complete.story_unlocked": "lue ja ymmärrä luku",
+    "ex.badge.comprehension": "ymmärsitkö tämän?"
   },
   "hu": {
     "qc.editor.suggests_by": "⚑ A {model} javaslatai:",
@@ -15529,7 +15543,9 @@
     "prov.by": "Felhasználó: {user}",
     "prov.from": "Forrás",
     "ex.comprehension.story": "A történet",
-    "ex.comprehension.story_listen": "Olvassa fel a történetet hangosan"
+    "ex.comprehension.story_listen": "Olvassa fel a történetet hangosan",
+    "complete.story_unlocked": "olvassd el és értsd meg a fejezetet",
+    "ex.badge.comprehension": "értetted?"
   },
   "da": {
     "qc.editor.suggests_by": "⚑ Foreslået af {model}:",
@@ -16125,7 +16141,9 @@
     "prov.by": "Bruger: {user}",
     "prov.from": "Kilde",
     "ex.comprehension.story": "Historien",
-    "ex.comprehension.story_listen": "Læs historien højt"
+    "ex.comprehension.story_listen": "Læs historien højt",
+    "complete.story_unlocked": "læs og forstå kapitlet",
+    "ex.badge.comprehension": "forstod du det?"
   },
   "ca": {
     "qc.editor.suggests_by": "⚑ Suggerit per {model}:",
@@ -16721,7 +16739,9 @@
     "prov.by": "Usuari: {user}",
     "prov.from": "Origen",
     "ex.comprehension.story": "La història",
-    "ex.comprehension.story_listen": "Llegiu la història en veu alta"
+    "ex.comprehension.story_listen": "Llegiu la història en veu alta",
+    "complete.story_unlocked": "llegeix i entén el capítol",
+    "ex.badge.comprehension": "ho has entès?"
   },
   "lb": {
     "qc.editor.suggests_by": "⚑ {model} schléit vir:",
