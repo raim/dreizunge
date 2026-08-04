@@ -12801,6 +12801,61 @@
             "ms": 170029,
             "at": "2026-07-31T08:42:41.380Z"
           }
+        },
+        {
+          "id": "ls_1785831960292_0_comprehension",
+          "type": "comprehension",
+          "title": "Die lebendige Theorie (2)",
+          "desc": "Verständnisfrage zur Evolutionstheorie",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum wäre es problematisch, wenn eine wissenschaftliche Theorie niemals aktualisiert würde?",
+              "choices": [
+                "Weil sie dann nicht mehr als komplexes Forschungsprogramm gelten könnte.",
+                "Weil sie den neuesten Entdeckungen und Beweisen nicht mehr folgen würde.",
+                "Weil Charles Darwin seine ursprünglichen Ideen damit widerrufen hätte.",
+                "Weil die Wissenschaft dadurch aufhören würde, Gesetze zu formulieren."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt, dass keine Aktualisierung bedeutet, nicht mit neuen Entdeckungen Schritt zu halten."
+            },
+            {
+              "q": "Wie beschreibt der Text die darwinistische Evolutionstheorie genauer?",
+              "choices": [
+                "Als ein starres Gesetz, das seit dem 19. Jahrhundert unverändert gilt.",
+                "Als eine einfache Hypothese, die bald widerlegt werden wird.",
+                "Als ein umfangreiches Forschungsprogramm mit vielen Komponenten.",
+                "Als eine Theorie, die nur aus einem einzigen Faktor besteht."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text definiert sie als ein 'vastes und komplexes Programm di ricerca' (umfangreiches Forschungsprogramm)."
+            },
+            {
+              "q": "Was ist mit dem Kern der Evolutionstheorie nach den vielen Korrekturen der letzten 150 Jahre geschehen?",
+              "choices": [
+                "Er wurde vollständig durch neue Modelle ersetzt.",
+                "Er bleibt im Wesentlichen intakt, wie Darwin ihn festgelegt hat.",
+                "Er ist jetzt nur noch eine Vermutung ohne Beweise.",
+                "Er wurde von neuen Gesetzen völlig neu definiert."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text besagt, dass das 'nocciolo centrale' (Kernstück) trotz Korrekturen intakt geblieben ist."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 561,
+            "completionTokens": 482,
+            "ms": 188711,
+            "at": "2026-08-04T08:26:00.292Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -12813,8 +12868,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 10439,
-        "totalCompletionTokens": 6670,
+        "totalPromptTokens": 11000,
+        "totalCompletionTokens": 7152,
         "lessons": [
           {
             "lessonNum": 1,
@@ -12825,13 +12880,13 @@
         ],
         "tokensByType": {
           "lesson_qc": 7214,
-          "recreate": 1131,
+          "recreate": 2174,
           "story_qc": 521,
           "add_lesson": 6403
         }
       },
       "generatedAt": "2026-07-27T07:52:03.813Z",
-      "updatedAt": "2026-07-31T08:44:16.298Z",
+      "updatedAt": "2026-08-04T08:26:00.292Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-07-29T08:30:01.317Z",
@@ -13197,6 +13252,61 @@
             "at": "2026-07-29T09:52:19.991Z"
           },
           "_hidden": true
+        },
+        {
+          "id": "ls_1785834238344_7_comprehension",
+          "type": "comprehension",
+          "title": "Die lebendige Theorie",
+          "desc": "Verstehen Sie den Text über die Evolutionstheorie?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist es nach dem Text gut, dass sich die evolutionäre Theorie weiterentwickelt hat?",
+              "choices": [
+                "Weil Darwin ursprünglich viele Fehler gemacht hat.",
+                "Weil neue wissenschaftliche Erkenntnisse und Entdeckungen berücksichtigt werden müssen.",
+                "Weil die alte Theorie komplett falsch war und ersetzt werden musste.",
+                "Weil sich die Menschen in ihrer Meinung über die Natur geändert haben."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt, dass eine unveränderte Theorie besorgniserregend wäre, weil sie nicht mit neuen Entdeckungen Schritt hält."
+            },
+            {
+              "q": "Was bedeutet die Aussage, dass alle Lebewesen 'Kusinen' sind?",
+              "choices": [
+                "Sie haben einen gemeinsamen Vorfahren in der fernen Vergangenheit.",
+                "Sie sehen sich äußerlich sehr ähnlich aus.",
+                "Sie leben immer noch zusammen in denselben Gruppen.",
+                "Sie haben sich erst vor kurzem voneinander getrennt."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text erklärt, dass alle Arten durch einen Stammbaum verbunden sind und gemeinsame Vorfahren haben."
+            },
+            {
+              "q": "Wie hat sich das Verständnis der 'natürlichen Selektion' im Laufe der Zeit erweitert?",
+              "choices": [
+                "Sie ist die einzige Kraft der Evolution geblieben.",
+                "Man weiß nun, dass nur die stärksten Individuen überleben.",
+                "Es gibt jetzt auch sexuelle Selektion und genetische Drift als weitere Faktoren.",
+                "Die Selektion findet nur auf genetischer Ebene statt."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text listet auf, dass das Programm heute pluralistischer ist und Faktoren wie sexuelle Selektion und genetische Drift einschließt."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 2,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 3896,
+            "completionTokens": 959,
+            "ms": 584687,
+            "at": "2026-08-04T09:03:58.344Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -13209,8 +13319,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 10495,
-        "totalCompletionTokens": 2294,
+        "totalPromptTokens": 14391,
+        "totalCompletionTokens": 3253,
         "lessons": [
           {
             "lessonNum": 1,
@@ -13221,12 +13331,12 @@
         ],
         "tokensByType": {
           "lesson_qc": 6437,
-          "recreate": 4053,
+          "recreate": 8908,
           "story_qc": 551
         }
       },
       "generatedAt": "2026-07-27T08:23:58.820Z",
-      "updatedAt": "2026-07-29T09:52:22.508Z",
+      "updatedAt": "2026-08-04T09:03:58.344Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-07-29T09:50:30.670Z",
@@ -13688,6 +13798,61 @@
             "ms": 112441,
             "at": "2026-07-27T12:27:59.244Z"
           }
+        },
+        {
+          "id": "ls_1785833653603_6_comprehension",
+          "type": "comprehension",
+          "title": "Die lebendige Theorie",
+          "desc": "Verständnistest: Wie hat sich das darwinistische Forschungsprogramm entwickelt?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum bleibt die darwinistische Evolutionstheorie laut dem Text wissenschaftlich gültig, obwohl sie ständig überarbeitet wird?",
+              "choices": [
+                "Weil Darwin alle Details der Genetik vorhergesehen hat.",
+                "Weil ihr Kern unverändert geblieben ist, während sie durch neue Erkenntnisse erweitert wurde.",
+                "Weil sie keine neuen Beweise mehr benötigt und statisch bleibt.",
+                "Weil sie nur auf alten Daten basiert und nicht aktualisiert werden darf."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text besagt, dass das Programm viele Korrekturen erfahren hat, aber im Kern intakt geblieben ist."
+            },
+            {
+              "q": "Welche Rolle spielt die Genetik laut dem Text für die moderne Synthese der Evolution?",
+              "choices": [
+                "Sie widerlegte Darwins Theorie vollständig.",
+                "Sie wurde erst später entdeckt und mit der darwinistischen Theorie verschmolzen.",
+                "Darwin kannte die Genetik bereits und baute sie direkt in seine Theorie ein.",
+                "Sie ist irrelevant, da nur die natürliche Selektion zählt."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text erklärt, dass Darwin die molekularen Grundlagen nicht kannte und die Fusion mit Mendels Gesetzen erst im 20. Jahrhundert stattfand."
+            },
+            {
+              "q": "Was bedeutet der Begriff 'Exaptation' im Kontext der Evolution?",
+              "choices": [
+                "Ein Merkmal entwickelt sich direkt für einen neuen Zweck.",
+                "Ein Merkmal, das ursprünglich für etwas anderes oder gar nichts diente, wird später für eine neue Funktion genutzt.",
+                "Die vollständige Anpassung eines Organismus an seine Umwelt ohne Fehler.",
+                "Das Aussterben von Arten aufgrund ungenügender Anpassung."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text erklärt am Ende, dass Strukturen wie Flügel ursprünglich andere Aufgaben hatten und später für den Flug 'umfunktioniert' wurden."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1766,
+            "completionTokens": 518,
+            "ms": 310155,
+            "at": "2026-08-04T08:54:13.603Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -13700,8 +13865,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 12361,
-        "totalCompletionTokens": 2734,
+        "totalPromptTokens": 14127,
+        "totalCompletionTokens": 3252,
         "lessons": [
           {
             "lessonNum": 1,
@@ -13712,13 +13877,13 @@
         ],
         "tokensByType": {
           "lesson_qc": 7408,
-          "recreate": 4205,
+          "recreate": 6489,
           "add_lesson": 917,
           "story_qc": 631
         }
       },
       "generatedAt": "2026-07-27T08:19:46.170Z",
-      "updatedAt": "2026-07-29T09:49:07.774Z",
+      "updatedAt": "2026-08-04T08:54:13.603Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-07-29T09:40:04.914Z"
@@ -14116,6 +14281,61 @@
           "icon": "🔀",
           "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
           "perType": 3
+        },
+        {
+          "id": "ls_1785833343404_5_comprehension",
+          "type": "comprehension",
+          "title": "Die lebendige Theorie",
+          "desc": "Verständnistest: Wie hat sich das Verständnis der Evolution weiterentwickelt?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist es nach dem Text problematisch, wenn eine wissenschaftliche Theorie unverändert bleibt?",
+              "choices": [
+                "Weil sie dann nicht mehr als komplexes Forschungsprogramm gilt.",
+                "Weil sie dann den neuesten Entdeckungen und Beweisen nicht mehr entspricht.",
+                "Weil Charles Darwin seine ursprünglichen Ideen damit widerlegen würde.",
+                "Weil die Genetik keine Rolle in einer statischen Theorie spielen kann."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt, dass eine unveränderte Theorie bedeutet, dass sie nicht mit neuen Entdeckungen Schritt hält."
+            },
+            {
+              "q": "Welche Rolle spielt die genetische Vererbung laut dem Abschnitt über die 'Moderne Synthese' bei der Evolution?",
+              "choices": [
+                "Sie ist der einzige Faktor, der evolutionäre Veränderungen antreibt.",
+                "Sie erklärt, wie zufällige Mutationen in der Häufigkeit schwanken und so Anpassungen ermöglichen.",
+                "Sie wurde erst entdeckt, nachdem Darwin bereits alle seine Theorien widerlegt hatte.",
+                "Sie zeigt, dass Evolution immer ein langsamer und gradueller Prozess ist."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text erklärt, dass die Moderne Synthese versteht, wie Variationen durch genetische Mutationen entstehen und sich in der Population verbreiten."
+            },
+            {
+              "q": "Wie haben neue Entdeckungen seit den 1970er Jahren die darwinistische Theorie beeinflusst?",
+              "choices": [
+                "Sie haben die Theorie widerlegt und durch eine komplett neue ersetzt.",
+                "Sie haben gezeigt, dass natürliche Selektion der einzige wichtige Faktor ist.",
+                "Sie haben die Theorie korrigiert, bereichert und erweitert, indem sie weitere Faktoren einbezogen haben.",
+                "Sie haben bestätigt, dass epigenetische Veränderungen keine Rolle in der Evolution spielen."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text stellt fest, dass neue Entdeckungen die Theorie nicht widerlegt, sondern korrigiert und erweitert haben, indem sie Faktoren wie Epigenetik und horizontale Genübertragung einbeziehen."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1546,
+            "completionTokens": 543,
+            "ms": 290522,
+            "at": "2026-08-04T08:49:03.404Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -14128,8 +14348,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 11775,
-        "totalCompletionTokens": 2606,
+        "totalPromptTokens": 13321,
+        "totalCompletionTokens": 3149,
         "lessons": [
           {
             "lessonNum": 1,
@@ -14140,12 +14360,12 @@
         ],
         "tokensByType": {
           "lesson_qc": 7383,
-          "recreate": 4297,
+          "recreate": 6386,
           "story_qc": 681
         }
       },
       "generatedAt": "2026-07-27T08:15:07.343Z",
-      "updatedAt": "2026-07-29T09:28:03.925Z",
+      "updatedAt": "2026-08-04T08:49:03.404Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-07-29T09:28:03.925Z",
@@ -14542,6 +14762,61 @@
           "icon": "🔀",
           "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
           "perType": 3
+        },
+        {
+          "id": "ls_1785833052841_4_comprehension",
+          "type": "comprehension",
+          "title": "Die lebendige Theorie",
+          "desc": "Verständnistest zur Evolutionstheorie",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist es laut dem Text problematisch, wenn eine wissenschaftliche Theorie unverändert bleibt?",
+              "choices": [
+                "Weil sie dann nicht mehr als komplexes Forschungsprogramm gilt.",
+                "Weil sie dann den neuesten Entdeckungen und Beweisen nicht mehr entspricht.",
+                "Weil Charles Darwin seine Theorien damals falsch verstanden hat.",
+                "Weil die Genetik erst später entdeckt wurde."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt, dass eine unveränderte Theorie bedeutet, dass sie nicht mit neuen Entdeckungen Schritt hält."
+            },
+            {
+              "q": "Welche Beziehung besteht zwischen Menschen und Schimpansen laut dem Text?",
+              "choices": [
+                "Menschen haben sich direkt aus Schimpansen entwickelt.",
+                "Sie teilen sich einen gemeinsamen Vorfahren in Afrika vor etwa sechs Millionen Jahren.",
+                "Es gibt keine Verwandtschaft, da sie zu unterschiedlichen Arten gehören.",
+                "Schimpansen sind die nächsten menschlichen Verwandten, aber ohne gemeinsame Ahnen."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text erklärt, dass Menschen und Schimpansen einen gemeinsamen Vorfahren in Afrika vor sechs Millionen Jahren hatten."
+            },
+            {
+              "q": "Was hat zur Fusion der darwinistischen und mendelschen Theorien geführt?",
+              "choices": [
+                "Die Entdeckung der epigenetischen Mutationen.",
+                "Die Entstehung der Genetik in der ersten Hälfte des 20. Jahrhunderts.",
+                "Die Beobachtung von Massenaussterben-Ereignissen.",
+                "Der direkte Kontakt zwischen Darwin und Mendel."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text besagt, dass man erst in der ersten Hälfte des 20. Jahrhunderts die Genetik verstand und die Theorien verschmolz."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 2,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 2612,
+            "completionTokens": 956,
+            "ms": 456477,
+            "at": "2026-08-04T08:44:12.841Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -14554,8 +14829,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 11230,
-        "totalCompletionTokens": 2492,
+        "totalPromptTokens": 13842,
+        "totalCompletionTokens": 3448,
         "lessons": [
           {
             "lessonNum": 1,
@@ -14566,12 +14841,12 @@
         ],
         "tokensByType": {
           "lesson_qc": 7111,
-          "recreate": 4132,
+          "recreate": 7700,
           "story_qc": 585
         }
       },
       "generatedAt": "2026-07-27T08:10:26.061Z",
-      "updatedAt": "2026-07-29T09:16:07.811Z",
+      "updatedAt": "2026-08-04T08:44:12.841Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-07-29T09:16:07.811Z"
@@ -14960,6 +15235,61 @@
           "icon": "🔀",
           "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
           "perType": 3
+        },
+        {
+          "id": "ls_1785832596320_3_comprehension",
+          "type": "comprehension",
+          "title": "Die lebendige Theorie",
+          "desc": "Verstehen Sie den Text über die Evolutionstheorie?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist es gut, dass sich die evolutionäre Theorie im Laufe der Zeit verändert hat?",
+              "choices": [
+                "Weil Darwin ursprünglich viele Fehler gemacht hat.",
+                "Damit sie mit neuen wissenschaftlichen Entdeckungen Schritt hält.",
+                "Weil Mendel seine eigenen Gesetze beweisen wollte.",
+                "Um zu zeigen, dass die Wissenschaft immer unsicher ist."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt, dass eine unveränderte Theorie bedeuten würde, dass sie nicht mit neuen Beweisen Schritt hält."
+            },
+            {
+              "q": "Was bedeutet der Begriff 'Vorfahr' in Bezug auf Menschen und Schimpansen?",
+              "choices": [
+                "Dass Menschen direkt von Schimpansen abstammen.",
+                "Dass beide eine gemeinsame Vorfahrenart hatten.",
+                "Dass Schimpansen sich an Menschen angepasst haben.",
+                "Dass es keine Verbindung zwischen den Arten gibt."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text erklärt, dass Menschen und Schimpansen einen gemeinsamen Vorfahren in Afrika hatten."
+            },
+            {
+              "q": "Wer hat die genetischen Grundlagen der Vererbung entdeckt, ohne Darwin zu kennen?",
+              "choices": [
+                "Charles Darwin selbst.",
+                "Gregor Mendel.",
+                "Neanderthal-Menschen.",
+                "Die moderne Genetik-Forscher."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text besagt, dass Gregor Mendel die Gesetze der Vererbung parallel zu Darwin entdeckte."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1107,
+            "completionTokens": 424,
+            "ms": 215923,
+            "at": "2026-08-04T08:36:36.320Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -14972,8 +15302,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 11165,
-        "totalCompletionTokens": 2521,
+        "totalPromptTokens": 12272,
+        "totalCompletionTokens": 2945,
         "lessons": [
           {
             "lessonNum": 1,
@@ -14984,12 +15314,12 @@
         ],
         "tokensByType": {
           "lesson_qc": 7225,
-          "recreate": 4118,
+          "recreate": 5649,
           "story_qc": 510
         }
       },
       "generatedAt": "2026-07-27T08:05:48.154Z",
-      "updatedAt": "2026-07-29T09:11:48.340Z",
+      "updatedAt": "2026-08-04T08:36:36.320Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-07-29T09:04:39.741Z"
@@ -15355,6 +15685,61 @@
           "icon": "🔀",
           "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
           "perType": 3
+        },
+        {
+          "id": "ls_1785832380343_2_comprehension",
+          "type": "comprehension",
+          "title": "Darwins Evolutionstheorie verstehen",
+          "desc": "Teste dein Verständnis des Textes über die lebendige Theorie der Evolution.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist es laut dem Text gut, dass sich die evolutionäre Theorie im Laufe der Zeit verändert hat?",
+              "choices": [
+                "Weil Darwin seine ursprünglichen Ideen später selbst korrigiert hat.",
+                "Damit sie mit neuen wissenschaftlichen Entdeckungen und Beweisen Schritt hält.",
+                "Weil die Wissenschaftler früher keine genauen Daten hatten.",
+                "Damit die Theorie einfacher zu verstehen wird."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt, dass eine unveränderte Theorie besorgniserregend wäre, weil sie nicht mehr mit neuen Entdeckungen Schritt hält."
+            },
+            {
+              "q": "Was bedeutet die Aussage, dass alle Lebewesen 'Vetterchen' sind?",
+              "choices": [
+                "Sie sehen sich alle sehr ähnlich.",
+                "Sie haben alle einen gemeinsamen Vorfahren in der fernen Vergangenheit.",
+                "Sie leben alle im selben Lebensraum.",
+                "Sie haben alle die gleichen Gene."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text erklärt, dass alle Arten durch ein genealogisches Netzwerk verbunden sind und einen gemeinsamen Vorfahren hatten."
+            },
+            {
+              "q": "Wer überlebt in der Evolution laut dem Text am ehesten?",
+              "choices": [
+                "Die stärksten Individuen.",
+                "Die schnellsten Läufer.",
+                "Die flexibelsten und kooperativsten.",
+                "Die größten Tiere."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text stellt klar, dass nicht der 'Stärkste' gewinnt, sondern wer flexibel, opportunistisch oder kooperativ ist."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 939,
+            "completionTokens": 443,
+            "ms": 208835,
+            "at": "2026-08-04T08:33:00.343Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -15367,8 +15752,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 10987,
-        "totalCompletionTokens": 2485,
+        "totalPromptTokens": 11926,
+        "totalCompletionTokens": 2928,
         "lessons": [
           {
             "lessonNum": 1,
@@ -15379,12 +15764,12 @@
         ],
         "tokensByType": {
           "lesson_qc": 6967,
-          "recreate": 4140,
+          "recreate": 5522,
           "story_qc": 539
         }
       },
       "generatedAt": "2026-07-27T08:01:31.718Z",
-      "updatedAt": "2026-07-29T08:53:58.509Z",
+      "updatedAt": "2026-08-04T08:33:00.343Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-07-29T08:53:58.509Z"
@@ -15846,6 +16231,61 @@
             "ms": 211382,
             "at": "2026-07-31T08:50:47.592Z"
           }
+        },
+        {
+          "id": "ls_1785832171443_1_comprehension",
+          "type": "comprehension",
+          "title": "Die lebendige Theorie (2)",
+          "desc": "Verständnisfrage zur Evolutionstheorie",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist es nach dem Text gut, dass die darwinistische Theorie Korrekturen und Erweiterungen erfahren hat?",
+              "choices": [
+                "Weil Darwin selbst im 19. Jahrhundert viele Fehler machte.",
+                "Damit sie mit neuen wissenschaftlichen Entdeckungen Schritt halten kann.",
+                "Weil die ursprüngliche Theorie ohne Änderungen nicht mehr existiert.",
+                "Um zu beweisen, dass Wissenschaftler unsicher sind."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt, dass eine unveränderte Theorie bedeuten würde, dass sie nicht mit neuen Entdeckungen Schritt hält."
+            },
+            {
+              "q": "Was bedeutet die Aussage, dass alle Lebewesen 'cugini' (Cousins) sind?",
+              "choices": [
+                "Sie haben sich immer gegenseitig geheiratet.",
+                "Sie teilen sich einen gemeinsamen Vorfahren in der fernen Vergangenheit.",
+                "Sie sehen einander sehr ähnlich, besonders Menschen und Schimpansen.",
+                "Sie gehören zur gleichen biologischen Familie im heutigen Sinne."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text erklärt, dass alle Arten von einem gemeinsamen Vorfahren abstammen und sich dann verzweigt haben."
+            },
+            {
+              "q": "Wann lebte der gemeinsame Vorfahr von Menschen und Neanderthalern?",
+              "choices": [
+                "Vor etwa sechs Millionen Jahren.",
+                "Vor etwa 500.000 Jahren.",
+                "Vor etwa 150 Jahren.",
+                "Vor etwa 600 Jahren."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text nennt explizit '500.000 anni fa' für den gemeinsamen Vorfahren mit Neanderthalern."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 761,
+            "completionTokens": 470,
+            "ms": 211104,
+            "at": "2026-08-04T08:29:31.443Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -15858,8 +16298,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 11798,
-        "totalCompletionTokens": 3151,
+        "totalPromptTokens": 12559,
+        "totalCompletionTokens": 3621,
         "lessons": [
           {
             "lessonNum": 1,
@@ -15870,13 +16310,13 @@
         ],
         "tokensByType": {
           "lesson_qc": 7100,
-          "recreate": 4242,
+          "recreate": 5473,
           "story_qc": 585,
           "add_lesson": 1101
         }
       },
       "generatedAt": "2026-07-27T07:56:59.825Z",
-      "updatedAt": "2026-07-31T08:50:47.592Z",
+      "updatedAt": "2026-08-04T08:29:31.443Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-07-29T08:42:21.384Z"

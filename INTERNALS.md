@@ -13,7 +13,7 @@ please fix it.
 Every entry below was found by measurement or by a test failing, not by reading anything. That is
 the gap this document exists to close.
 
-Last verified against **`v73_c`**.
+Last verified against **`v74_c`**.
 
 ---
 
@@ -115,6 +115,29 @@ bugs from this shape (`v71_n`, `v71_s` twice).
 are set on the chapter just read, so that text must survive. Any trim added elsewhere must preserve
 this direction — the last-resort context fit in `generateComprehension` cuts from the front for
 exactly this reason.
+
+**A lesson has ONE phase, and everything else derives from it (`v74_b`).** `lessonPhase(L)` returns
+`prep` or `post`; `_POST_STORY_TYPES` = `comprehension`, `error_hunt`, `ai_error_hunt`.
+`_NEVER_POOLED` (= post ∪ `mixed`) and `_STORY_GATED_TYPES` (= post) are **derived**, not restated.
+Before this the concept existed three times over and the copies disagreed: `_NEVER_POOLED` held the
+complete set while `_STORY_GATED_TYPES` listed only `comprehension`, so **29 chapters gated the story
+behind an error hunt** — a lesson that renders `corruptedStory`, a mangled copy of the very story
+still locked. `mixed` is **prep**: it is not a lesson but an alternative way to play the prep lessons,
+and letting it drift to post would strand every mixed-driven chapter. A new lesson type declares its
+phase once, here, instead of being added to two tables and forgotten from a third.
+
+**FIXED in v74_c — was: the coverage denominator depends on AUDIO STATE.** `_lessonQidUniverse`'s cache key carries
+`'na'`/`'m'`/`'a'` (`index.html` ~13181), because listening exercises are not built when muted or
+when no TTS voice matches — but the solved store is one flat map per topic. So solves earned in one
+audio state are measured against a denominator derived in another. **284 of 298 topics** change
+denominator; `Churros und Chaos` is 83 audible, 67 muted, 51 with no TTS voice. A learner who played
+muted and then unmuted reads `64/83` — below the mark, Next locked, and unrecoverable, because the
+16 missing questions are listening items a muted app never offers. `ttsVoiceAvailableFor` returns
+`true` while voices are still loading, so the key can flip mid-session with no user action.
+**Closed by `v74_c`: coverage counts SOURCE ITEMS (`_lessonItemUniverse`), read from `lessons.json`,
+so no builder runs. Measured after: 0 of 298 topics drift with mute/TTS, and the denominator is
+identical on every fresh derivation. `_lessonQidUniverse` still exists and is still audio-keyed —
+it drives ROUND ASSEMBLY, which legitimately needs question identity. `markSolved` records both.**
 
 **Comprehension is gated BY the story, so it cannot gate it.** `storyUnlocked()` is the narrowed
 gate (everything except story-gated types); `setComplete()` is the whole chapter. The circularity

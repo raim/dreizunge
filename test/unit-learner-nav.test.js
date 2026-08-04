@@ -201,8 +201,22 @@ console.log('  completion card: Next chains lesson→chapter, Back to story/home
     'solved words are highlighted with the SAME helper the storyline/lesson-set pages use');
   assert.ok(/if \(!showingSource\)/.test(rcs),
     'only for the target-language story — target words cannot be found in a source translation');
-  assert.ok(/if \(html != null\) _el\.innerHTML = html; else _el\.textContent = shown;/.test(rcs),
+  // v74_m: this pinned the exact assignment line, so it broke the moment the panel gained the
+  // paragraph formatting every OTHER story panel has had since v39. The claim worth keeping is the
+  // INTENT — a story that renders unformatted is fine, one that fails to render is not — so it is
+  // asserted as a fallback existing, plus the new structure, rather than as one line of source.
+  assert.ok(/_el\.textContent = shown;/.test(rcs),
     'and it falls back to plain text rather than failing to render the story at all');
+  assert.ok(/_el\.innerHTML = _storyParasHtml\(/.test(rcs),
+    'the story is emitted as PARAGRAPHS — 217 of 299 shipped chapters contain blank lines');
+  assert.ok(/html != null \? html : furiHtml\(shown\)/.test(rcs),
+    'on both branches: losing the highlighting must not also lose the shape of the text');
+  // ONE formatter. Two renderers already split stories with the same expression written out twice;
+  // the completion card is now the third caller rather than a fourth copy.
+  assert.strictEqual((html.match(/function _storyParasHtml\(/g) || []).length, 1,
+    'there is exactly one story paragraph formatter');
+  assert.ok(!/\.split\(\/\\n\\n\+\/\)\.map\(p => '<p dir="auto">'/.test(html),
+    'and no renderer still carries its own copy of the split');
   assert.ok(/id="comp-story-unlocked"[^>]*background:var\(--white\)/.test(html),
     'the story panel is white, so the yellow highlights read clearly');
   assert.ok(/_lbl\.textContent = _allDone2 \? t\('complete\.story_unlocked'\) : t\('complete\.story_preview'\)/.test(sc),

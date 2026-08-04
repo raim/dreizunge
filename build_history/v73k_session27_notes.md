@@ -1,7 +1,8 @@
-# v73_k — session 27 notes
+# v73_k → v74 — session 27 notes
 
 Baseline at the cut: **161 checks green**, `check-inline` 0 on both builds, `--quick` 140.
-At the close: **166 checks green**, `check-inline` 0 on both. `APP_VERSION = v73_k`.
+At the close: **166 checks green**, `check-inline` 0 on both. Cut as **`v74`**; the v74 line
+opens with `roadmap_v74.md` and a rewritten `HANDOVER.md`.
 
 Ten point releases: `v73_b` … `v73_k`. Suite green and `docs/` rebuilt between each.
 
@@ -10,7 +11,7 @@ Ten point releases: `v73_b` … `v73_k`. Suite green and `docs/` rebuilt between
 ## 0. The session opened on the wrong archive, and it was worth something
 
 The first upload was `dreizunge_v72.zip`: v72 source with three newer files dropped in
-(`docs/index.html` built from v73, `lessons.json`, `session_28_prompt.md`). It went red at 159/4.
+(`docs/index.html` built from v73, `lessons.json`, `session_28_prompt.md` — this session's own prompt). It went red at 159/4.
 
 Before the correct archive arrived, the four failures were diagnosed independently, and three of
 them reproduce session 26 §1 exactly — `prov.by` as a migration-shaped assertion, the

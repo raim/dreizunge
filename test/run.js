@@ -155,6 +155,10 @@ run('unit: beginner-mode exercise types (v69.2)', 'node', [path.join(__dirname, 
 run('unit: crossword layout engine (v70_c)', 'node', [path.join(__dirname, 'unit-crossword-layout.test.js')]);
 run('unit: stable per-question IDs (qid) — Commit A', 'node', [path.join(__dirname, 'unit-qid-stability.test.js')]);
 run('unit: coverage model (fraction/assembly/complete) — Commit B', 'node', [path.join(__dirname, 'unit-coverage.test.js')]);
+run('unit: coverage counts source items, not questions (v74_c)', 'node', [path.join(__dirname, 'unit-coverage-item-model.test.js')]);
+run('unit: storyline progress is identical in live and static (v74_i)', 'node', [path.join(__dirname, 'unit-live-static-progress-parity.test.js')]);
+run('unit: TTS voice ranking — locale before quality (v74_j)', 'node', [path.join(__dirname, 'unit-tts-voice-ranking.test.js')]);
+run('unit: story-unlocked card — label, prose story, Next-only (v74_l)', 'node', [path.join(__dirname, 'unit-story-unlocked-card.test.js')]);
 run('unit: learned-vocab ledger + my-story wiring (v50)', 'node', [path.join(__dirname, 'unit-learned-vocab.test.js')]);
 run('unit: my-story generation plumbing (v50)', 'node', [path.join(__dirname, 'unit-my-story.test.js')]);
 run('unit: dialect glossary importer (M1, deterministic)', 'node', [path.join(__dirname, 'unit-dialect-glossary.test.js')]);

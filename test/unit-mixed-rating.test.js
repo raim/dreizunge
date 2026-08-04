@@ -41,7 +41,9 @@ const shuffle = (a) => a.slice(); // identity → deterministic ordering before 
 // fine. Coverage-aware assembly is covered by unit-coverage.
 const assembleCoverageRound = (pool /*, size */) => pool.slice();
 
-const _resolveExItem = new Function(extract('_resolveExItem') + '\nreturn _resolveExItem;')();
+// v74_c: _resolveExItem delegates to _resolveExItemEntry, so an isolated extraction must inject
+// both halves (INTERNALS.md — 'some functions are extracted in isolation').
+const _resolveExItem = new Function(extract('_resolveExItemEntry') + '\n' + extract('_resolveExItem') + '\nreturn _resolveExItem;')();
 const buildMixedExercises = new Function('APP', 'lessonTypeMeta', 'shuffle', '_resolveExItem', 'assembleCoverageRound',
   extract('buildMixedExercises') + '\nreturn buildMixedExercises;')(APP, lessonTypeMeta, shuffle, _resolveExItem, assembleCoverageRound);
 

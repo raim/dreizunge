@@ -23,7 +23,10 @@ function ext(src, name) {
 
 // Run the REAL resolver against stubbed voice sets (there is no browser here).
 function harness(voices, voiceName) {
-  const code = ext(client, '_ttsPickVoice') + '\n' + ext(client, '_ttsMakeUtterance');
+  // v74_j: _ttsPickVoice now delegates ranking to _ttsRankVoices (locale before quality, one
+  // ranker shared with the selector menu). Extracted in isolation, so the helper must be
+  // injected too — the documented extraction limit in INTERNALS.md.
+  const code = ext(client, '_ttsRankVoices') + '\n' + ext(client, '_ttsPickVoice') + '\n' + ext(client, '_ttsMakeUtterance');
   const APP = { _ttsVoiceName: voiceName || null };
   const LANGS = { sw: { tts: 'sw-KE', name: 'Swahili' }, de: { tts: 'de-DE', name: 'German' } };
   const speechSynthesis = { getVoices: () => voices };

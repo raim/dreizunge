@@ -106,10 +106,14 @@ console.log('  /api/topic-source contract + list projection: OK');
   // the STORYLINE SCREEN's chapter cards do (that page shows one aggregate line at the bottom, so
   // per-chapter repeats were noise). The landing library still renders it.
   assert.ok(/\$\{hideProv \? '' : provLineHtml\(s\)\}/.test(client), 'LIVE landing row renders the one-liner (opt-out param)');
-  assert.ok(/function savedItemHtml\(s, connector, hideStory, hideProv\)/.test(client),
-    'savedItemHtml takes an explicit hideProv flag');
-  assert.strictEqual((client.match(/savedItemHtml\([^)]*, true, true\)/g) || []).length, 3,
-    'exactly the three storyline-screen chapter-card call sites opt out');
+  // v74_h: the signature gained `slChapter` — a storyline chapter card drops the library-only
+  // actions (edit/rename, add-lesson, download). Passed EXPLICITLY rather than inferred from
+  // `hideProv`: the two are true on the same three call sites today, and reusing one as a proxy for
+  // the other is the `_canEdit()` conflation in miniature.
+  assert.ok(/function savedItemHtml\(s, connector, hideStory, hideProv, slChapter\)/.test(client),
+    'savedItemHtml takes explicit hideProv AND slChapter flags');
+  assert.strictEqual((client.match(/savedItemHtml\([^)]*, true, true, true\)/g) || []).length, 3,
+    'exactly the three storyline-screen chapter-card call sites opt out of both');
   // The landing call sites must NOT opt out.
   assert.ok(/savedItemHtml\(s, false\)\)\.join\(''\)/.test(client), 'the landing orphan rows keep provenance');
   assert.ok(/\\\$\{hideProv \? '' : provLineHtml\(s\)\}/.test(builder),
@@ -117,8 +121,47 @@ console.log('  /api/topic-source contract + list projection: OK');
   // Parity trap (v69.2c): the storyline screen's _renderChain is INHERITED from index.html and
   // calls savedItemHtml(s, false, true, true). The static alias is a SEPARATE implementation — if
   // it drops the extra args, static chapter cards keep a provenance line the live build removed.
-  assert.ok(/function savedItemHtml\(s, connector, hideStory, hideProv\) \{ return itemHtml\(s, connector, hideStory, hideProv\); \}/.test(builder),
+  assert.ok(/function savedItemHtml\(s, connector, hideStory, hideProv, slChapter\) \{ return itemHtml\(s, connector, hideStory, hideProv, slChapter\); \}/.test(builder),
     'the static alias FORWARDS every argument to itemHtml');
+  // v74_h: forwarding the argument is only half of it — the static row must also ACT on it. A
+  // revert that re-enabled the download button in build-static.js passed every other assertion in
+  // this file, which is precisely the v69.2c parity bug in a new place: the live build drops a
+  // control and the static build quietly keeps it.
+  assert.ok(/slChapter \? '' : '<button class="ico-btn export"/.test(builder),
+    'the static row GATES the download button on slChapter, not just accepts the flag');
+  // v74_h — the ACTIONS on a storyline chapter card, asserted by rendering rather than by reading
+  // the source. A storyline chapter keeps the three that act on the story (continue / QC / delete);
+  // edit-rename, add-lesson and download are library operations and stay in the library.
+  {
+    const { loadClient } = require('./lib-dom');
+    const LANGSj = JSON.parse(fs.readFileSync(path.join(ROOT, 'languages.json'), 'utf8'));
+    const UIj = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
+    const Cc = loadClient({ quiet: true });
+    Cc.run(`LANGS = ${JSON.stringify(LANGSj)}; UI_STRINGS = ${JSON.stringify(UIj.en)}; true;`, 'seed');
+    // canGenerate:true is the permissive case — if a button survives here it survives everywhere.
+    Cc.run(`APP.info = { backend:'x', canGenerate:true, coverageThreshold:0.8 };
+            APP.progress = { completed:{}, solved:{} }; APP._teacherMode = true; true;`, 'env');
+    const row = { id: 'T1', topic: 'Chapter One', lang: 'de', srcLang: 'en',
+                  lessonCount: 4, difficulty: 2, updatedAt: '2026-01-01' };
+    const titles = (slChapter) => {
+      const h = Cc.run(`savedItemHtml(${JSON.stringify(row)}, false, true, ${slChapter ? 'true, true' : 'false, false'})`, 'h');
+      return [...h.matchAll(/<button class="ico-btn[^"]*"[^>]*title="([^"]*)"/g)].map(m => m[1]);
+    };
+    const lib = titles(false), sl = titles(true);
+    // Non-vacuity: the library row must actually carry the buttons being removed, or "absent from
+    // the storyline card" would be trivially true and prove nothing.
+    for (const want of ['Edit / rename topic', 'Add lesson', 'Export lesson with flags']) {
+      assert.ok(lib.some(x => x.startsWith(want)), `the library row still offers "${want}"`);
+      assert.ok(!sl.some(x => x.startsWith(want)), `a storyline chapter card does NOT offer "${want}"`);
+    }
+    for (const keep of ['Continue story', 'Delete']) {
+      assert.ok(sl.some(x => x.startsWith(keep)), `a storyline chapter card keeps "${keep}"`);
+    }
+    assert.ok(sl.some(x => /QC/i.test(x)), 'and keeps QC');
+    assert.strictEqual(sl.length, 3, `exactly three actions remain, got ${JSON.stringify(sl)}`);
+    console.log(`  storyline chapter actions: ${JSON.stringify(sl.map(x => x.split(' (')[0]))}`);
+  }
+
   const docsFile = path.join(ROOT, 'docs', 'index.html');
   if (fs.existsSync(docsFile)) {
     assert.ok(/hideProv \? '' : provLineHtml\(s\)/.test(fs.readFileSync(docsFile, 'utf8')),

@@ -22,7 +22,11 @@ const lesson = {
   words: [{ base: 'klein', synonyms: [{ w: 'winzig' }] }],
 };
 const APP = { lessonData: { lessons: [lesson] }, cur: { lessonIdx: 0 } };
-const _resolveExItem = new Function(extract('_resolveExItem') + '\nreturn _resolveExItem;')();
+// v74_c: _resolveExItem now delegates to _resolveExItemEntry (which also reports WHICH array the
+// item came from, for item-keyed coverage). Extracted in isolation, so both halves must be injected
+// or the harness gets a ReferenceError — the documented extraction limit in INTERNALS.md.
+const _resolveExItem = new Function(
+  extract('_resolveExItemEntry') + '\n' + extract('_resolveExItem') + '\nreturn _resolveExItem;')();
 const { _exFlagTarget, _exFlagState } = new Function('APP', '_resolveExItem',
   extract('_exFlagTarget') + '\n' + extract('_exFlagState') + '\nreturn { _exFlagTarget, _exFlagState };')(APP, _resolveExItem);
 

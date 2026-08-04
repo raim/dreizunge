@@ -18,6 +18,17 @@ function ext(name){
   return html.slice(at, i);
 }
 
+// v74_c: _ITEM_ARRAYS is a module-level const the item helpers close over. Sliced out of the
+// source rather than re-declared here, so the sandbox uses the SAME registry the app does and a
+// new lesson type cannot be added to one and forgotten in the other.
+const ITEM_ARRAYS_SRC = (() => {
+  const at = html.indexOf('const _ITEM_ARRAYS = {');
+  if (at < 0) throw new Error('not found: _ITEM_ARRAYS');
+  const b = html.indexOf('{', at); let d = 0, i = b;
+  for (; i < html.length; i++){ if (html[i] === '{') d++; else if (html[i] === '}'){ d--; if (!d){ i++; break; } } }
+  return html.slice(at, i) + ';';
+})();
+
 // ── Build a sandbox with the real qid + coverage + builder machinery ─────────
 const APP = { _teacherMode: false, lang: 'de', lessonData: null, cur: { lessonIdx: 0 }, progress: { completed: {}, solved: {} } };
 let saved = 0;
@@ -38,16 +49,22 @@ const src = [
   ext('_lessonQidUniverse'), ext('_invalidateQidUniverse'),
   ext('lessonCoverage'), ext('topicCoverage'),
   ext('_coverageTarget'), ext('coverageComplete'), ext('assembleCoverageRound'),
+  // v74_c: coverage keys on SOURCE ITEMS, so the item machinery is REAL here — stubbing it would
+  // make this file test a copy of the model rather than the model.
+  ITEM_ARRAYS_SRC,
+  ext('_lessonItemArrays'), ext('_itemIdentity'), ext('_itemKey'),
+  ext('_resolveExItemEntry'), ext('_exItemKey'), ext('_lessonItemUniverse'),
+  'function _mixedSkips(type){ return type === "mixed"; }',
   // stubs for helpers the coverage fns reference:
   'function _exFlagTarget(ex){ return ex && ex.__flagged ? {userFlag:{comment:"x"}} : null; }',
   ext('_itemWithheld'),
-  'function _resolveExItem(ex, ls){ return ex && ex.__src ? ex.__src : null; }',
+  'function _resolveExItem(ex, ls){ const e = _resolveExItemEntry(ex, ls); return e ? e.item : null; }',
   'function lessonTypeMeta(type){ return { build: (L,idx)=>buildStandardExercises(L,idx) }; }',
   'function lessonCountsFor(d, L){ if(APP._teacherMode) return true; const mixedOnly=(d.lessons||[]).some(x=>x&&x.type==="mixed"&&!x._hidden); return mixedOnly ? (L.type==="mixed"&&!L._hidden) : !L._hidden; }',
   'function countedLessons(d){ return (d.lessons||[]).filter(L=>lessonCountsFor(d,L)); }',
 ].join('\n');
 const M = new Function(...Object.keys(env), src +
-  '\nreturn { qid, markSolved, _solvedMap, _lessonQidUniverse, _invalidateQidUniverse, lessonCoverage, topicCoverage, coverageComplete, assembleCoverageRound };'
+  '\nreturn { qid, markSolved, _solvedMap, _lessonQidUniverse, _lessonItemUniverse, _invalidateQidUniverse, lessonCoverage, topicCoverage, coverageComplete, assembleCoverageRound };'
 )(...Object.values(env));
 
 // ── A realistic standard lesson (the only type our stubbed lessonTypeMeta builds) ──
@@ -66,18 +83,32 @@ assert.strictEqual(U1, U2, 'universe is cached (same Set instance on second call
 console.log('  universe enumeration converges (' + U1.size + ') and caches: OK');
 
 // ── 2) Coverage fraction reflects the solved store ───────────────────────────
+// v74_c: coverage is measured over SOURCE ITEMS, not the questions built from them. The qid
+// universe above is still real and still used for round assembly — these are deliberately two
+// different questions ("which question do I ask next" vs "what does the learner know").
+const I1 = M._lessonItemUniverse(0);
+assert.strictEqual(I1.size, lesson.vocab.length + lesson.sentences.length,
+  'the item universe is exactly the lesson\'s source items — 8 vocab + 5 sentences');
+assert.ok(U1.size > I1.size,
+  'and it is smaller than the qid universe, which splits each item across several question formats');
+// The headline property, asserted rather than assumed: an item count is READ FROM THE DATA, so it
+// cannot move between derivations the way a sampled qid universe does (15 of 294 topics did).
+for (let r = 0; r < 5; r++){
+  assert.strictEqual(M._lessonItemUniverse(0).size, I1.size,
+    'the item universe is identical on every derivation — no builder runs, so nothing samples');
+}
 let cov = M.lessonCoverage(0);
 assert.strictEqual(cov.solved, 0, 'nothing solved yet');
-assert.strictEqual(cov.total, U1.size, 'lesson total = universe size');
+assert.strictEqual(cov.total, I1.size, 'lesson total = item universe size');
 assert.strictEqual(cov.pct, 0, '0% at start');
 // Solve half the universe directly in the store.
-const ids = [...U1];
+const ids = [...I1];
 const half = Math.floor(ids.length / 2);
 ids.slice(0, half).forEach(id => { M._solvedMap('T1')[id] = 1; });
 cov = M.lessonCoverage(0);
-assert.strictEqual(cov.solved, half, 'coverage counts solved qids');
+assert.strictEqual(cov.solved, half, 'coverage counts solved items');
 assert.ok(cov.pct > 0 && cov.pct < 100, 'partial coverage is between 0 and 100');
-console.log('  coverage fraction tracks the solved store: OK');
+console.log(`  coverage fraction tracks the solved store (${I1.size} items vs ${U1.size} questions): OK`);
 
 // ── 3) coverageComplete against the target ───────────────────────────────────
 assert.ok(!M.coverageComplete(), 'not complete at half coverage (target 1.0)');
@@ -86,7 +117,7 @@ assert.ok(M.coverageComplete(), 'complete once the whole universe is solved');
 // custom target: solving exactly ceil(total/2) items must meet a 50% target regardless of
 // whether the universe size is even or odd (floor(n/2)/n can be < 0.5 for odd n).
 APP.lessonData.coverageTarget = 0.5;
-const uNow = [...M._lessonQidUniverse(0)];      // ids from the CURRENT universe (may have grown)
+const uNow = [...M._lessonItemUniverse(0)];     // items from the CURRENT universe
 const total = uNow.length;
 const halfUp = Math.ceil(total / 2);
 Object.keys(M._solvedMap('T1')).forEach(k => delete M._solvedMap('T1')[k]);

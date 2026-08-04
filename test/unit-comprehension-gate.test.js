@@ -66,11 +66,23 @@ const finish = (lessonId) => C.run(
 // Uses the qid UNIVERSE rather than a single derivation: buildStandardExercises samples one
 // exercise type per vocab item (the v71_f finding), so one build covers only part of what the
 // lesson can ask — and a coverage assertion built on it would silently measure the wrong thing.
+// v74_c: this used to write qids from _lessonQidUniverse straight into the solved map. That
+// bypassed markSolved entirely, so it re-implemented the recording rule — and a harness that
+// re-implements the rule it is testing agrees with a broken implementation (the v73_i measuring
+// script had exactly this bug). It now drives a REAL perfect play: build the lesson's full question
+// set and credit each answer through markSolved, which is the only thing that knows a correct
+// answer credits both a qid and its source item.
 const solveLesson = (idx) => C.run(`(function(){
-  const s = APP.progress.solved[APP.lessonData.topic];
-  const ids = Array.from(_lessonQidUniverse(${idx}));
-  ids.forEach(id => s[id] = 1);
-  return ids.length; })()`);
+  const prev = APP.cur;
+  APP.cur = { lessonIdx: ${idx} };
+  const L = APP.lessonData.lessons[${idx}];
+  const wasD = APP._derivingUniverse; APP._derivingUniverse = true;
+  let exs = []; try { exs = lessonTypeMeta(L.type).build(L, ${idx}) || []; } catch(_) {}
+  APP._derivingUniverse = wasD;
+  let n = 0;
+  exs.forEach(ex => { if (markSolved(ex)) n++; });
+  APP.cur = prev;
+  return n; })()`);
 
 // ── 1. The premise: a comprehension lesson really does hold questions ────────
 // If the builder ever stops producing them this whole file would pass vacuously — the gate would
@@ -143,8 +155,15 @@ const solveLesson = (idx) => C.run(`(function(){
   C.run("APP.info.coverageThreshold = 0.8; APP.lessonData.coverageTarget = 0.8; true;");
   const full = C.run('topicCoverage().total');
   const narrowed = C.run('topicCoverage(true).total');
-  assert.strictEqual(narrowed, 12, 'unlock denominator is the vocabulary questions only');
-  assert.strictEqual(full, 18, 'whole-chapter denominator includes the six comprehension questions');
+  // v74_c: the denominator counts SOURCE ITEMS, not the questions built from them — so these are
+  // the vocab entries and the comprehension questions themselves, not the 12/18 question instances
+  // the builder used to emit. Derived from the fixture rather than hardcoded, so the structural
+  // claim (unlock = vocabulary only; whole chapter = vocabulary + comprehension) survives a change
+  // to either array.
+  assert.strictEqual(narrowed, VOCAB.length, 'unlock denominator is the vocabulary items only');
+  assert.strictEqual(full, VOCAB.length + 6, 'whole-chapter denominator adds the six comprehension questions');
+  assert.ok(VOCAB.length / (VOCAB.length + 6) < 0.8,
+    'the fixture keeps whole-chapter coverage below the 80% mark after a perfect vocabulary play, or the section proves nothing');
 
   solveLesson(0);            // a PERFECT play of the vocabulary
   finish('GateG_v');
@@ -218,10 +237,37 @@ const solveLesson = (idx) => C.run(`(function(){
     'and does not restate the completion rule locally');
   assert.ok(/function storyUnlockLessons\(d\) \{ return countedLessons\(d\)\.filter/.test(html),
     'the narrowed lesson set is a filter of countedLessons, not a parallel visibility rule');
-  // The type table is a named set, so adding a second story-gated type is a one-line change.
-  assert.ok(/const _STORY_GATED_TYPES = new Set\(\['comprehension'\]\);/.test(html),
-    'story-gated types live in one named table');
-  console.log('  source: one shared rule, narrowed by a named type table');
+  // v74_b: this used to pin the literal `new Set(['comprehension'])` — a claim about spelling that
+  // could not see the defect it sat next to. The table was a SECOND, incomplete copy of the
+  // post-story classification (`_NEVER_POOLED` already held the complete one), so the error hunts
+  // were absent from it and 29 corpus chapters gated the story behind a corrupted copy of that
+  // story. Asserted behaviourally now: every post-story type is story-gated, no prep type is, and
+  // the pooling table DERIVES from the same set rather than restating it.
+// Behaviour FIRST, source pins after: an `assert` aborts the file, so a source pin placed above
+// would shadow the behavioural failure and report a spelling change where the real signal is that
+// the gate moved (v71_r — a later section that never runs proves nothing).
+  for (const ty of ['comprehension', 'error_hunt', 'ai_error_hunt']) {
+    assert.strictEqual(C.run(`lessonPhase({ type: ${JSON.stringify(ty)} })`, 'ph'), 'post',
+      `${ty} depends on the story, so it is post-story`);
+    assert.strictEqual(C.run(`_isStoryGatedLesson({ type: ${JSON.stringify(ty)} })`, 'g'), true,
+      `${ty} is therefore story-gated and cannot sit in the story's own gate`);
+  }
+  // `mixed` is the one that must NOT drift into post: it is an alternative way to play the prep
+  // lessons, so treating it as its own phase would take the mixed round out of the story gate and
+  // strand every mixed-driven chapter. A standard lesson carries no `type` field at all (v71_u).
+  for (const ty of ['standard', 'word_forms', 'synonyms', 'grammar', 'conjugation', 'mixed']) {
+    assert.strictEqual(C.run(`lessonPhase({ type: ${JSON.stringify(ty)} })`, 'ph2'), 'prep',
+      `${ty} is preparation for the story`);
+    assert.strictEqual(C.run(`_isStoryGatedLesson({ type: ${JSON.stringify(ty)} })`, 'g2'), false,
+      `${ty} is not story-gated`);
+  }
+  assert.strictEqual(C.run(`lessonPhase({})`, 'ph3'), 'prep',
+    'a lesson with no type field is a standard lesson, hence prep');
+  assert.ok(/const _STORY_GATED_TYPES = _POST_STORY_TYPES;/.test(html),
+    'story-gating is derived from the phase set, not a second table');
+  assert.ok(/const _NEVER_POOLED = new Set\(\[\.\.\._POST_STORY_TYPES, 'mixed'\]\);/.test(html),
+    'and so is the pooling exclusion — one classification, two derived rules');
+  console.log('  source: one shared rule, narrowed by a derived phase set');
 }
 
 // ── 8. "Repeat until correct": a comprehension lesson is DONE only at 100% ──
@@ -240,7 +286,9 @@ const solveLesson = (idx) => C.run(`(function(){
   // card's "next lesson in this chapter" branch legitimately wins ahead of the below-mark lock —
   // so the assertion below would be testing branch order, not the 100% rule.
   solveLesson(0); finish('GateH_v');
-  const uni = C.run(`Array.from(_lessonQidUniverse(${compIdx}))`);
+  // v74_c: the 100% rule is measured over the lesson's SOURCE ITEMS, which for a comprehension
+  // lesson are precisely its questions — so this reads the item universe, not the qid universe.
+  const uni = C.run(`Array.from(_lessonItemUniverse(${compIdx}))`);
   assert.ok(uni.length >= 2, 'the comprehension lesson has several questions to be partial about');
 
   // Play it, getting only the FIRST question right.

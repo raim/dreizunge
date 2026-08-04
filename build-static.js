@@ -379,13 +379,15 @@ function renderPill() {
   if(styleWrap) styleWrap.style.opacity='0.4';
 }
 
-function itemHtml(s, connector, hideStory, hideProv) {
+function itemHtml(s, connector, hideStory, hideProv, slChapter) {
   const enc=encTopic(s.topic);
   const d=s.difficulty||2;
   const diff={1:'Beginner',2:'Intermediate',3:'Advanced'}[d]||'';
   const diffBadge='<span class="diff-dot d'+d+'" title="'+diff+'"></span>';
   const ratingStr='';
-  const count=s.lessons?s.lessons.length:0;
+  // v74_i: hidden lessons never count for anything (user ruling, v74_e) — and this now matches
+  // the live projection's lessonCount, so one chapter reports the same number in both builds.
+  const count=(s.lessons||[]).filter(L=>L&&!L._hidden&&!L._aiExamples).length;
   const dateStr=s.updatedAt||s.generatedAt;
   const date=dateStr?new Date(dateStr).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
   const conn=connector?'<span class="storyline-connector">↩</span>':'';
@@ -403,9 +405,7 @@ function itemHtml(s, connector, hideStory, hideProv) {
         \${hideProv ? '' : provLineHtml(s)}
       </div>
       <div class="saved-actions" onclick="event.stopPropagation()">
-        <button class="ico-btn export" title="Export lesson with flags"
-          data-topic="\${escapedTopic}"
-          onclick="openExportMenu(event,[this.dataset.topic])">⬇</button>
+        \${slChapter ? '' : '<button class="ico-btn export" title="Export lesson with flags" data-topic="' + escapedTopic + '" onclick="openExportMenu(event,[this.dataset.topic])">⬇</button>'}
       </div>
     </div>
     <div class="saved-item-story">
@@ -424,7 +424,7 @@ function itemHtml(s, connector, hideStory, hideProv) {
 // _renderChain is INHERITED from index.html and calls savedItemHtml(s, false, true, true) — a
 // 2-arg alias silently dropped hideProv, so static chapter cards kept the provenance line the
 // live build had already dropped (v69.2c parity bug, caught by the built-artifact assertion).
-function savedItemHtml(s, connector, hideStory, hideProv) { return itemHtml(s, connector, hideStory, hideProv); }
+function savedItemHtml(s, connector, hideStory, hideProv, slChapter) { return itemHtml(s, connector, hideStory, hideProv, slChapter); }
 
 async function loadSavedList() {
   // Seed storylines: baked-in titles + localStorage overrides

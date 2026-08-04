@@ -43,8 +43,50 @@ console.log('  clean card: trophy/%-pill/stat panels + dead CSS/JS removed: OK')
   // v71_m: the row now also carries the PASS MARK (a line drawn on the bar), so the call gained
   // two arguments. Still the same bar in the same place — asserted on the pieces that matter
   // rather than on the exact argument list, which is what made this brittle.
-  assert.ok(/const cov = topicCoverage\(\);/.test(prog) && /rowsHtml\(t\('complete\.solved'\), cov\.solved, cov\.total/.test(prog),
+  // v74_g — WAS A SOURCE PIN, and it guarded a defect, exactly as the v73_d block below warns.
+  // It asserted the literal `const cov = topicCoverage();` under the message "a %-solved bar is
+  // appended". The message was true and the pin was the bug: `topicCoverage()` is the WHOLE chapter
+  // while the story gate reads `topicCoverage(true)` (prep only), so this bar carried a pass mark
+  // measured against a different universe from the one the mark gates. On the shipped corpus that
+  // made "below the mark, in red, with the story already unlocked" reachable — `Churros und Chaos`
+  // at 64..66 of 83, `Kälte und Paella` at 23..24 of 31.
+  //
+  // Asserted behaviourally now: the bar's denominator must equal the STORY-UNLOCK universe.
+  assert.ok(/rowsHtml\(t\('complete\.solved'\), cov\.solved, cov\.total/.test(prog),
     'a %-solved bar (correct-answer coverage) is appended below the chapter bars');
+  {
+    const { loadClient } = require('./lib-dom');
+    const store = JSON.parse(fs.readFileSync(path.join(ROOT, 'lessons.json'), 'utf8'));
+    const LANGS = JSON.parse(fs.readFileSync(path.join(ROOT, 'languages.json'), 'utf8'));
+    const UIj = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
+    // The two universes only differ on a chapter that HAS a story-gated lesson, so the fixture must
+    // be one — otherwise the assertion passes for the wrong reason (v71_r).
+    const topic = (store.topics || []).find(t => (t.lessons || []).some(l => l && l.type === 'comprehension')
+                                             && (t.lessons || []).length >= 3);
+    assert.ok(topic, 'the corpus has a chapter with a story-gated lesson to exercise');
+    const C = loadClient({ quiet: true });
+    C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UIj.en)}; true;`, 'seed');
+    C.run(`
+      APP.savedList = []; APP.storylines = [];
+      APP.lessonData = ${JSON.stringify(topic)};
+      APP.lang = ${JSON.stringify(topic.lang)}; APP.srcLang = ${JSON.stringify(topic.srcLang)};
+      APP.info = { backend:'none', canGenerate:false, coverageThreshold:0.8 };
+      APP.progress = { completed:{}, solved:{} }; APP._teacherMode = false;
+      APP.cur = { lessonIdx:0, exercises:[], cur:0 }; true;`, 'setup');
+    const whole = C.run(`topicCoverage().total`, 'w');
+    const gate  = C.run(`topicCoverage(true).total`, 'g');
+    assert.ok(gate < whole,
+      `the fixture's two universes really do differ (${gate} vs ${whole}), or this proves nothing`);
+    C.run(`APP.cur = { lessonIdx:0, exercises:[], cur:0, correct:3, total:4, mistakes:1,
+                       hearts:3, streak:2, bestStreak:2 }; showComplete(); true;`, 'render');
+    const bars = (C.document.getElementById('comp-progress').innerHTML || '')
+      .match(/<span>(\d+)\/(\d+)<\/span>/g) || [];
+    const denoms = bars.map(b => Number(b.replace(/[^\d/]/g, '').split('/')[1]));
+    assert.ok(denoms.includes(gate),
+      `the %-solved bar is measured over the story-unlock universe (${gate}), which is what its mark gates`);
+    assert.ok(!denoms.includes(whole),
+      `and NOT over the whole chapter (${whole}) — that mismatch is what put a red bar under an unlocked story`);
+  }
   assert.ok(/const _mark = \(opts && Number\.isFinite\(opts\.markPct\)\)/.test(prog),
     'and the pass mark is applied to THAT bar — %-solved is what the threshold measures');
   const scAll = ext(html, 'showComplete');
@@ -147,6 +189,73 @@ console.log('  clean card: trophy/%-pill/stat panels + dead CSS/JS removed: OK')
   assert.ok(ui.en['complete.story_progress'] && ui.en['complete.chapter_progress'], 'story/chapter labels reused');
 }
 console.log('  %-solved bar present + reuses story/chapter labels: OK');
+
+// ── 2b. v74_g — counter (b): the chapter bar counts LESSONS, on both chapter shapes ──────────
+// The card carries two bars. Before v74_g the first one changed UNITS depending on the chapter:
+// lessons on a classic chapter, questions on a mixed-driven one. So one chapter read `2/2` and the
+// next `67/83` on visually identical bars — and on a mixed chapter the first bar printed exactly
+// the same fraction as the second, carrying no information at all.
+{
+  const { loadClient } = require('./lib-dom');
+  const store = JSON.parse(fs.readFileSync(path.join(ROOT, 'lessons.json'), 'utf8'));
+  const LANGS = JSON.parse(fs.readFileSync(path.join(ROOT, 'languages.json'), 'utf8'));
+  const UIj = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
+  const render = (topic) => {
+    const C = loadClient({ quiet: true });
+    C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UIj.en)}; true;`, 'seed');
+    C.run(`
+      APP.savedList = []; APP.storylines = [];
+      APP.lessonData = ${JSON.stringify(topic)};
+      APP.lang = ${JSON.stringify(topic.lang)}; APP.srcLang = ${JSON.stringify(topic.srcLang)};
+      APP.info = { backend:'none', canGenerate:false, coverageThreshold:0.8 };
+      APP.progress = { completed:{}, solved:{} }; APP._teacherMode = false;
+      APP.cur = { lessonIdx:0, exercises:[], cur:0, correct:3, total:4, mistakes:1,
+                  hearts:3, streak:2, bestStreak:2 };
+      showComplete(); true;`, 'render');
+    const rows = [...(C.document.getElementById('comp-progress').innerHTML || '')
+      .matchAll(/<span>([^<]*)<\/span><span>(\d+)\/(\d+)<\/span>/g)]
+      .map(m => ({ label: m[1], done: +m[2], total: +m[3] }));
+    return { C, rows };
+  };
+  const classic = (store.topics || []).find(t => (t.lessons || []).length >= 4
+    && !(t.lessons || []).some(l => l && l.type === 'mixed' && !l._hidden));
+  const mixed = (store.topics || []).find(t => (t.lessons || []).some(l => l && l.type === 'mixed' && !l._hidden)
+    && (t.lessons || []).length >= 4);
+  assert.ok(classic && mixed, 'the corpus has both a classic and a mixed-driven chapter to compare');
+
+  for (const [t, shape] of [[classic, 'classic'], [mixed, 'mixed-driven']]) {
+    const { C, rows } = render(t);
+    assert.ok(rows.length >= 2, `${shape}: the card draws a chapter bar and a %-solved bar`);
+    const chapterBar = rows[0], solvedBar = rows[rows.length - 1];
+    const under = C.run(`underlyingLessons(APP.lessonData).length`, 'u');
+    assert.strictEqual(chapterBar.total, under,
+      `${shape}: the chapter bar is denominated in LESSONS (${under}), whatever the chapter's shape`);
+    assert.strictEqual(solvedBar.total, C.run(`topicCoverage(true).total`, 's'),
+      `${shape}: the %-solved bar is denominated in the story-unlock universe`);
+    assert.notStrictEqual(chapterBar.total, solvedBar.total,
+      `${shape}: the two bars measure different things — one printing the other's number is the v73 duplicate-bar bug`);
+  }
+
+  // A mixed chapter's folded prep lessons must APPEAR — hiding them behind a single `mixed` entry
+  // is what made this row read 2/2 on a six-lesson chapter.
+  const { C: Cm } = render(mixed);
+  const visible = (mixed.lessons || []).filter(L => L && !L._hidden && L.type !== 'mixed').length;
+  assert.strictEqual(Cm.run(`underlyingLessons(APP.lessonData).length`, 'v'), visible,
+    'the mixed lesson itself is not a lesson — the prep lessons it pools are what the learner studies');
+
+  // And an unplayed error hunt is VISIBLE in that bar, so a chapter that will not complete never
+  // shows every bar full with nothing left to point at.
+  const ehTopic = (store.topics || []).find(t =>
+    (t.lessons || []).some(l => l && (l.type === 'error_hunt' || l.type === 'ai_error_hunt') && !l._hidden));
+  assert.ok(ehTopic, 'the corpus has a chapter with a visible error hunt');
+  const { C: Ce, rows: ehRows } = render(ehTopic);
+  const ehCounted = Ce.run(`underlyingLessons(APP.lessonData)
+    .filter(function(L){ return L.type === 'error_hunt' || L.type === 'ai_error_hunt'; }).length`, 'e');
+  assert.ok(ehCounted > 0, 'and the error hunt is one of the underlying lessons');
+  assert.ok(ehRows[0].done < ehRows[0].total,
+    'so with the hunt unplayed the chapter bar is short of full — the learner can see what is left');
+  console.log('  chapter bar: lessons on both shapes, folded prep shown, unplayed hunt visible: OK');
+}
 
 // ── 3. setComplete threshold gate (behavioral, classic set) ───────────────────
 {

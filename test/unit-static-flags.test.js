@@ -20,7 +20,9 @@ function extract(name) {
 }
 const { _resolveExItem, _topicHasPending } = new Function('APP',
   "const _FLAG_ARRAYS=[['vocab','target'],['sentences','target'],['items','sentence'],['words','base']];\n" +
-  extract('_resolveExItem') + '\n' + extract('_topicHasPending') + '\n' +
+// v74_c: _resolveExItem delegates to _resolveExItemEntry, so an isolated extraction must inject
+// both halves (INTERNALS.md — 'some functions are extracted in isolation').
+  extract('_resolveExItemEntry') + '\n' + extract('_resolveExItem') + '\n' + extract('_topicHasPending') + '\n' +
   extract('_userItemSignals') + '\n' + extract('_userMiscFlag') +
   '\nreturn { _resolveExItem, _topicHasPending };')({ _pristine: new Set() });
 

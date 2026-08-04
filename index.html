@@ -1220,7 +1220,15 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <button class="spk-ico" id="comp-story-xlate" style="display:none;margin-left:auto;font-size:11px;font-weight:800;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Nunito,sans-serif" onclick="toggleCompStoryLang()"></button>
       <button class="spk-ico" id="comp-story-spk" onclick="speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">🔊</button>
     </div>
-    <div id="comp-story-text" style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic"></div>
+    <!-- v74_l: NOT italic, and larger. This panel is the reward for finishing the chapter and the
+         thing the learner is meant to actually READ — a long italic run at 13px reads as a caption,
+         which is what it looked like in the play-test screenshots. 15px upright, same line-height
+         ratio. The story is in the TARGET language, often with diacritics or a non-Latin script,
+         and italic synthesis mangles several of those. -->
+    <div id="comp-story-text" style="font-size:15px;color:var(--text);line-height:1.65"></div>
+    <!-- v74_m: the same paragraph rhythm .story-body has had since v39. Without it the <p>s this
+         panel now emits would stack with no gap and read as one block again. -->
+    <style>#comp-story-text p{margin:0 0 12px}#comp-story-text p:last-child{margin-bottom:0}</style>
   </div>
   <div class="vocab-box" style="margin-top:18px"><div class="vocab-hdr" id="words-from-lbl">Words from this lesson</div><div id="comp-vocab" style="display:flex;flex-wrap:wrap;margin:-3px"></div></div>
   </div><!-- /.comp-body -->
@@ -3377,6 +3385,27 @@ function _highlightVocabHtml(html, words) {
   });
 }
 
+// ── v74_m: ONE story paragraph formatter ──────────────────────────────────────────────────────
+// Stories carry real structure: 249 of 299 shipped chapters contain newlines and 217 contain blank
+// lines. HTML collapses both, so a story set with `innerHTML = text` arrives as one undifferentiated
+// slab however long it is.
+//
+// Two renderers already split it — `renderStoryText` (lesson-set / library) and the storyline
+// chain body — with the same expression written out twice. The COMPLETION CARD, added later in
+// v60, never got it: that is the paragraph formatting the user remembers losing. It is also the
+// panel where it matters most, being the one screen whose whole job is to get the story read.
+//
+// Takes HTML, not text: the callers have already run furiHtml and the vocab highlighter, and the
+// split must not cut through a <mark> or a <ruby>. Blank line → paragraph, single newline → <br>,
+// matching what the other two panels have always done. `dir="auto"` per paragraph so an RTL story
+// lays out correctly.
+function _storyParasHtml(html) {
+  return String(html == null ? '' : html)
+    .split(/\n\n+/)
+    .map(p => '<p dir="auto">' + p.replace(/\n/g, '<br>') + '</p>')
+    .join('');
+}
+
 function renderStoryText(d, targetEl){
   const body=targetEl||document.getElementById('story-body'); if(!body) return;
   const done=APP.progress.completed?.[d.topic]||{};
@@ -3389,7 +3418,7 @@ function renderStoryText(d, targetEl){
   let rendered=furiHtml(d.story||'');
   if(vocabWords.length) rendered = _highlightVocabHtml(rendered, vocabWords);
   const spkBtn=''; // speaker moved to story-hdr
-  body.innerHTML=spkBtn+rendered.split(/\n\n+/).map(p=>'<p dir="auto">'+p.replace(/\n/g,'<br>')+'</p>').join('');
+  body.innerHTML=spkBtn+_storyParasHtml(rendered);
 }
 function speakStory(){
   const d=APP.lessonData; if(!d||!d.story) return;
@@ -3449,6 +3478,10 @@ async function goLessonSet(){
   // fake "__drill__" lesson set.
   endDrill();
   try { _invalidateQidUniverse(); } catch(_) {}   // fresh coverage context for this set
+  // v74_c: re-key any pre-v74_c question-keyed progress for this chapter onto item keys. Runs at
+  // the one choke point every entry into a lesson set passes through; idempotent and additive, so
+  // it is a no-op on an already-migrated chapter and on a fresh learner.
+  try { _migrateSolvedToItems(APP.lessonData); } catch(_) {}
   if(APP.lessonData) {
     // Render this lesson's chrome in its own source language WITHOUT touching the
     // form's selection: only the active render context (APP.srcLang) and the mid-story
@@ -5018,7 +5051,16 @@ function setLibFilter(lang){
 // SCREEN's chapter cards only — that page carries one aggregate "by … · from …" line at the bottom
 // (v68.1), so repeating it on every chapter card was noise. The landing library keeps its per-topic
 // line: there each row is an independent topic with no aggregate line anywhere.
-function savedItemHtml(s, connector, hideStory, hideProv) {
+// `slChapter` (v74_h, user request): this card is a CHAPTER on the storyline screen rather than a
+// topic row in the landing library. A chapter's actions there are the three that act on the story —
+// continue it, QC it, delete it. Edit/rename, add-lesson and download are library operations: on a
+// storyline card they crowd the row and invite editing a chapter in isolation from the arc it sits
+// in, which is what the storyline screen exists to show. They remain available in the library.
+//
+// Passed EXPLICITLY rather than inferred from `hideProv`. Both flags happen to be true on the same
+// three call sites today, and reusing one as a proxy for "which screen" is the same conflation as
+// `_canEdit()` doing double duty for teacher-mode and live-mode — a bug already on the open list.
+function savedItemHtml(s, connector, hideStory, hideProv, slChapter) {
   const dateStr = s.updatedAt || s.generatedAt;
   const date = dateStr ? new Date(dateStr).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '';
   const enc = encTopic(s.topic);
@@ -5042,12 +5084,12 @@ function savedItemHtml(s, connector, hideStory, hideProv) {
       </div>
       <div class="saved-actions" onclick="event.stopPropagation()">
         ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${escJsAttr(s.id||s.topic)}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
-        ${APP.info.canGenerate?`<button class="ico-btn" title="Edit / rename topic" onclick="event.stopPropagation();openSavedItemEdit('${sid}','${enc}')">✏️</button>`:''}
-        ${APP.info.canGenerate?`<button class="ico-btn" title="${t('lib.add_lesson')}" onclick="event.stopPropagation();openAddLesson('${sid}','${enc}')">➕</button>`:''}
+        ${(APP.info.canGenerate && !slChapter)?`<button class="ico-btn" title="Edit / rename topic" onclick="event.stopPropagation();openSavedItemEdit('${sid}','${enc}')">✏️</button>`:''}
+        ${(APP.info.canGenerate && !slChapter)?`<button class="ico-btn" title="${t('lib.add_lesson')}" onclick="event.stopPropagation();openAddLesson('${sid}','${enc}')">➕</button>`:''}
         ${APP.info.canGenerate&&s.id?`<button class="ico-btn" title="${t('qc.btn.topic')} ${t('qc.btn.force_hint')}" onclick="event.stopPropagation();qcRun({topicId:'${s.id}'},this)">🔍${s.qcFlags>0?`<span style="color:var(--red);font-weight:800">${s.qcFlags}</span>`:''}${s.storyQcPending?`<span title="${t('qc.story_pending')}" style="color:var(--green);font-weight:800">📝</span>`:''}</button>`:''}
-        <button class="ico-btn export" title="${t('lesson.export_title')}"
+        ${slChapter?'':`<button class="ico-btn export" title="${t('lesson.export_title')}"
           data-topic="${s.topic.replace(/"/g,'&quot;')}"
-          onclick="openExportMenu(event,[this.dataset.topic])">⬇</button>
+          onclick="openExportMenu(event,[this.dataset.topic])">⬇</button>`}
         <button class="ico-btn" title="Delete" onclick="deleteSaved('${s.id||enc}')">🗑</button>
       </div>
     </div>
@@ -5805,7 +5847,36 @@ async function _pollGenBook(bookId, total){
 // which matters: it has to stay reachable as its own node so the learner can play it after the
 // story opens. (error_hunt/ai_error_hunt builders return [] and were already skipped in practice;
 // listing them here is what makes that a rule rather than an accident.)
-const _NEVER_POOLED = new Set(['mixed', 'error_hunt', 'ai_error_hunt', 'comprehension']);
+//
+// ── v74_b: ONE classification — a lesson's PHASE relative to the chapter's story ──────────────
+// The app had this concept three times over, discovered piecemeal and written down inconsistently:
+// `_NEVER_POOLED` (what mixed does not pool), `_STORY_GATED_TYPES` (what the story gates), and the
+// mixed-folding half of `lessonCountsFor`. `_NEVER_POOLED` was already EXACTLY the post-story set
+// plus `mixed` — the classification existed, it just had no name and one of its two copies was
+// incomplete.
+//
+// A lesson is either PREPARATION for the story or a consequence OF it:
+//   prep — vocabulary work. Unlocks the story once its coverage reaches the pass mark. `mixed` is
+//          prep because it is not a lesson at all: it is an alternative way to PLAY the prep
+//          lessons, so it must never be treated as a fourth thing.
+//   post — depends on having read the story, and gates the NEXT chapter instead.
+//
+// `error_hunt` / `ai_error_hunt` are post, and this is the change: they render `corruptedStory`,
+// a mangled copy of the chapter's story, so requiring one before the story unlocks is precisely
+// the circularity v71_s removed for `comprehension` — the same defect arriving through a type
+// nobody had classified. Measured on the shipped corpus: 29 chapters gated the story behind a
+// corrupted copy of that story. They contribute 0 questions to coverage (19/19 and 19/19 measured),
+// so no denominator moves; only the gate they sit in changes.
+//
+// A new lesson type declares its phase HERE, once, instead of being added to two tables and
+// forgotten from a third.
+const _POST_STORY_TYPES = new Set(['comprehension', 'error_hunt', 'ai_error_hunt']);
+function lessonPhase(L){
+  const ty = (L && typeof L === 'object') ? (L.type || 'standard') : (L || 'standard');
+  return _POST_STORY_TYPES.has(ty) ? 'post' : 'prep';
+}
+// Derived, not restated: mixed pools only from prep, and never from itself.
+const _NEVER_POOLED = new Set([..._POST_STORY_TYPES, 'mixed']);
 // One predicate for "a mixed lesson does not draw questions from this type", so the pooling loops,
 // the mixed lesson's coverage universe and the hiding rule cannot disagree — three sites that each
 // spelled `type === 'mixed'` on their own before v71_s.
@@ -5841,6 +5912,35 @@ function lessonCountsFor(d, L) {
   return false;                                // an earlier poolable lesson → folded into mixed
 }
 function countedLessons(d) { return (d?.lessons || []).filter(L => lessonCountsFor(d, L)); }
+// ── v74_g: the UNDERLYING lessons — what the learner actually studies ────────────────────────
+// `countedLessons` answers "which lessons does the completion RULE walk", and on a mixed-driven
+// chapter that is the mixed lesson plus whatever follows it — so the four prep lessons folded into
+// the mixed round vanish and the chapter bar read `2/2` where the classic one read `n/31`. Two
+// different questions were sharing one bar.
+//
+// This answers the other one: which lessons is there actually work in. `mixed` is excluded because
+// it is NOT a lesson — it is an alternative way to PLAY the prep lessons, so counting it as well as
+// the lessons it pools would count the same work twice. Hidden and `_aiExamples` lessons never
+// count for anything (user ruling, v74_e).
+function underlyingLessons(d) {
+  return (d?.lessons || []).filter(L =>
+    L && !L._hidden && !L.hidden && !L._aiExamples && L.type !== 'mixed');
+}
+// A folded prep lesson never receives a done-flag: the learner meets it only through the mixed
+// round, which records coverage rather than completion. So "solved" is the done-flag OR the
+// lesson's own coverage reaching the chapter's pass mark — the same mark the chapter uses, so a
+// learner cannot see a lesson counted here that the chapter gate would not also count.
+function lessonSolved(d, L) {
+  if (!d || !L) return false;
+  const done = APP.progress?.completed?.[d.topic] || {};
+  if (done[L.id]) return true;
+  const idx = (d.lessons || []).indexOf(L);
+  if (idx < 0) return false;
+  let cov = null;
+  try { cov = lessonCoverage(idx); } catch(_) { return false; }
+  if (!cov || !(cov.total > 0)) return false;
+  return (cov.solved / cov.total) >= _coverageTarget();
+}
 // ── v71_s: comprehension is gated BY the story, so it cannot gate the story ──────────────────
 // A comprehension lesson asks about the chapter's story. A learner cannot read that story until
 // the chapter unlocks it (they never see the lesson-set page — v60.1 — so the completion card is
@@ -5857,8 +5957,12 @@ function countedLessons(d) { return (d?.lessons || []).filter(L => lessonCountsF
 // unchanged in meaning — the whole chapter, comprehension included — so chapter progression,
 // the green dots and `chapterComplete` keep requiring it. Both run through one `_setCompleteRaw`
 // rather than a second copy of the rule, which is how the three `_itemWithheld` spellings happened.
-const _STORY_GATED_TYPES = new Set(['comprehension']);
-function _isStoryGatedLesson(L) { return !!(L && _STORY_GATED_TYPES.has(L.type)); }
+// v74_b: derived from lessonPhase rather than restated. This was a SECOND, incomplete copy of the
+// post-story set — it listed `comprehension` and omitted the error hunts, which is how 29 chapters
+// came to gate the story behind a corrupted copy of that story. Kept as a named alias because the
+// "story-gated" vocabulary reads better at the call sites than "post".
+const _STORY_GATED_TYPES = _POST_STORY_TYPES;
+function _isStoryGatedLesson(L) { return !!(L && lessonPhase(L) === 'post'); }
 // The lessons that must be finished for the STORY to unlock: counted, minus the story-gated ones.
 function storyUnlockLessons(d) { return countedLessons(d).filter(L => !_isStoryGatedLesson(L)); }
 // Does this chapter hold a story-gated lesson at all? Chapters without one are completely
@@ -6053,7 +6157,10 @@ function buildPath(){
     let _slTotalSets=0, _slDoneSets=0;
     _cTopics.forEach(tp => {
       const tDone=APP.progress.completed?.[tp]||{};
-      const tLessons=(APP.savedList||[]).find(l=>l.topic===tp)?.lessons||[];
+      // v74_i: same population mismatch as _slProgressStats — count only lessons that can be
+      // flagged, or this fraction can never reach 1 either.
+      const _tEntry=(APP.savedList||[]).find(l=>l.topic===tp);
+      const tLessons=(typeof countedLessons === 'function') ? countedLessons(_tEntry || {lessons:[]}) : (_tEntry?.lessons||[]);
       _slTotalSets+=tLessons.length;
       _slDoneSets+=tLessons.filter(L=>tDone[L.id]).length;
     });
@@ -7343,10 +7450,11 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
         !prevTopic ||
         // …or anything earlier in the chain is unfinished.
         chainBlocked ||
-        (() => {
-          const _pd = _slCompleted[prevTopic] || {}; const _ps = byTopic[prevTopic]?.lessons || [];
-          return _ps.length === 0 || !_ps.every(ls => _pd[ls.id]);
-        })()
+        // v74_k: the SHARED rule. This was a raw `lessons.every(done-flag)` — the v69_l pattern
+        // again. A mixed-driven predecessor hides the prep lessons its mixed round pools, and those
+        // never receive a done-flag, so `every()` could never be satisfied and the chapter AFTER a
+        // mixed chapter stayed locked forever however thoroughly it was played.
+        !_chapterComplete(prevTopic)
       );
     // v71_w: the bar's FRACTION is a genuinely different question from completeness — "how much of
     // this chapter have you played" — and stays a fraction. But its COLOUR asserts "finished", so
@@ -7358,12 +7466,12 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
     if (_isLocked) {
       out += '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden;opacity:.45;pointer-events:none">'
            + '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;z-index:2;pointer-events:none">🔒</div>'
-           + savedItemHtml(s, false, true, true) + '</div>';
+           + savedItemHtml(s, false, true, true, true) + '</div>';
     } else {
       out += '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden">'
            + '<div style="position:absolute;top:0;left:0;right:0;height:4px;background:var(--gray-mid)">'
            + '<div style="height:100%;width:' + _pct + '%;background:' + _barColor + ';transition:width .3s"></div></div>'
-           + savedItemHtml(s, false, true, true) + '</div>';
+           + savedItemHtml(s, false, true, true, true) + '</div>';
     }
     out += _lessonTypesDropdownHtml(s);
     return out;
@@ -7407,7 +7515,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
         const kidData = byTopic[kid];
         out += '<div style="opacity:.5;pointer-events:none">'
              + '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden">'
-             + savedItemHtml(kidData, false, true, true)
+             + savedItemHtml(kidData, false, true, true, true)
              + '</div></div>';
       }
       out += '</div>';
@@ -7449,8 +7557,16 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   const escapedChain = encodedChain;
   const slscId = 'slsc-' + chainId;
   // Lock until all chapters complete (static / teacher-mode-off)
+  // v74_k: the SHARED rule — this lock had its OWN copy of "every raw lesson has a done-flag",
+  // the fourth instance of that pattern (three were fixed in v74_i). It could never open on a
+  // mixed-driven chapter, whose folded prep lessons are never flagged, nor on a chapter carrying a
+  // hidden lesson: measured on the shipped "Paella und Chaos" with BOTH chapters fully played and
+  // `chapterComplete` true for both, this returned false — Kälte rawLessons=3/flagged=2,
+  // Churros rawLessons=6/flagged=2. The 🔒 was permanent, exactly as the user's screenshot showed.
+  // index.html:14443 already claimed the completion card shares "the same canonical reader as ...
+  // the storyline page's read-full-story lock". It did not. Now it does.
   const _allChaptersDone = !APP.info.canGenerate && !APP._teacherMode
-    ? topics.every(tp => { const d2=_slCompleted[tp]||{}; const ls2=byTopic[tp]?.lessons||[]; return ls2.length>0&&ls2.every(l=>d2[l.id]); })
+    ? topics.every(tp => _chapterComplete(tp))
     : true;
   if (_allChaptersDone) {
     html += '<div class="storyline-story" style="margin-top:8px;border-radius:var(--radius-lg);overflow:hidden;border:2px solid var(--gray-mid)">' +
@@ -10063,7 +10179,7 @@ function _renderChainStory(body, chapters, chainId) {
     // Vocabulary highlighting only applies to the TARGET text — the words are target-language, so
     // running it over a translation would match nothing at best and the wrong spans at worst.
     if (isTarget && allVocab.length) t = _highlightVocabHtml(t, allVocab);
-    return t.split(/\n\n+/).map(p => '<p dir="auto">' + p.replace(/\n/g,'<br>') + '</p>').join('');
+    return _storyParasHtml(t);
   }
   body.innerHTML = chapters.map((d, i) => {
     const xl = d.storyTranslation || '';
@@ -12054,11 +12170,31 @@ function renderErrorHunt(){
   C.ehEditMap=buildEhEditMap(lesson);
   const el=document.getElementById('ex-area');
   const _autoCheck=!!(savedResult&&typeof savedResult==='object'&&savedResult.suspect);
+  // v74_h (user request): tell the learner HOW MANY errors there are. Without it the task has no
+  // stopping condition — a learner who has found three cannot know whether to keep hunting, and
+  // over-marking is scored as `wrong`, so the missing number costs them points.
+  //
+  // The count is `C.ehEditMap.size`, NOT `lesson.edits.length`. The map is what ehCheck scores
+  // against (`editTokens = new Set([...C.ehEditMap.keys()])`), and the two legitimately differ:
+  // buildEhEditMap drops an edit whose `replace` text is not found in the corrupted story
+  // (`if(pos<0) return;`) and maps a multi-word edit onto several token indices. Showing
+  // `edits.length` would sometimes ask for errors that cannot be found, which is worse than
+  // showing nothing.
+  //
+  // Rendered as an emoji + number rather than a sentence: `ex.error_hunt.result` already sets that
+  // precedent (`✅ {correct} ❌ {wrong} ⚠️ {missed}`), and a digit needs no translation across the
+  // 30 languages in ui.json — so this ships without an i18n pass and cannot go stale in 29 of them.
+  const _ehCount = (C.ehEditMap && typeof C.ehEditMap.size === 'number') ? C.ehEditMap.size : 0;
+  // Suppressed at 0: a lesson whose edits all failed to locate is broken, and "find 0 errors" would
+  // read as an instruction rather than as the symptom it is.
+  const _ehCountHtml = _ehCount > 0
+    ? `<span style="font-weight:800;color:var(--text);white-space:nowrap;margin-left:8px">🔍 ${_ehCount}</span>`
+    : '';
   el.innerHTML=
     `<div class="ex-badge">${t('ex.badge.error_hunt')}</div>`+
     '<div class="card">'+
-    '<div style="font-size:12px;font-weight:700;color:var(--gray-dark);margin-bottom:6px">'+ 
-    t('ex.error_hunt.instruction')+'</div>'+
+    '<div style="font-size:12px;font-weight:700;color:var(--gray-dark);margin-bottom:6px;display:flex;align-items:baseline;justify-content:space-between;gap:8px">'+
+    `<span>${t('ex.error_hunt.instruction')}</span>${_ehCountHtml}</div>`+
     `<div class="eh-wrap" id="eh-wrap" dir="auto">${spans.join('')}</div>`+
     '<div id="eh-btn-row" style="margin-top:10px;text-align:center">'+
     `<button class="big-btn" onclick="ehCheck()">${t('ex.error_hunt.check')}</button>`+
@@ -12834,27 +12970,61 @@ function updateSbox(){
 // Match a built exercise back to the SOURCE item inside a given lesson (vocab/sentence
 // by target, word_forms by sentence, synonyms by base). Pure: no APP access — reused by
 // _exFlagTarget (play flag/rating) and by the mixed-lesson pooler (rating-aware select).
-function _resolveExItem(ex, ls){
+// v74_c: resolution now reports WHICH array the item came from, because coverage keys on the
+// source item and the array decides the item's identity field. `_resolveExItem` keeps its old
+// signature and return value so its ~6 existing callers (flagging, withholding, QC notes) are
+// untouched.
+//
+// Three arrays were missing and each was a silent hole: `grammar` and `conjugations` (grammar items
+// live under `L.grammar`, NOT `L.items` — the resolver was looking at the wrong key, so every
+// mcq_article / mcq_plural / type_plural / mcq_conjugation / type_conjugation resolved to null, a
+// 0% rate measured across the corpus) and `letters` for the script primer. The practical effect
+// before this: a flagged grammar item could never be withheld, because nothing could find it.
+function _resolveExItemEntry(ex, ls){
   if(!ls || !ex) return null;
   const norm = s => String(s==null?'':s).trim().toLowerCase();
   const key = norm(ex.target || ex.correct);
   if(key){
-    const v=(ls.vocab||[]).find(x=>norm(x.target)===key); if(v) return v;
-    const s=(ls.sentences||[]).find(x=>norm(x.target)===key); if(s) return s;
+    const v=(ls.vocab||[]).find(x=>norm(x.target)===key);     if(v) return { item:v, arrayKey:'vocab' };
+    const s=(ls.sentences||[]).find(x=>norm(x.target)===key); if(s) return { item:s, arrayKey:'sentences' };
+    const g=(ls.grammar||[]).find(x=>norm(x.target)===key);   if(g) return { item:g, arrayKey:'grammar' };
+  }
+  if(ex.infinitive){
+    const c=(ls.conjugations||[]).find(x=>norm(x.infinitive)===norm(ex.infinitive));
+    if(c) return { item:c, arrayKey:'conjugations' };
   }
   if(ex.type==='word_form' && ex.sentence){
-    const it=(ls.items||[]).find(x=>norm(x.sentence)===norm(ex.sentence)); if(it) return it;
+    const it=(ls.items||[]).find(x=>norm(x.sentence)===norm(ex.sentence));
+    if(it) return { item:it, arrayKey:'items' };
   }
   if(ex.type==='syn_select' && ex.base){
-    const w=(ls.words||[]).find(x=>norm(x.base)===norm(ex.base)); if(w) return w;
+    const w=(ls.words||[]).find(x=>norm(x.base)===norm(ex.base));
+    if(w) return { item:w, arrayKey:'words' };
   }
   // v71_l: a comprehension question is its own source item, matched on the question text — without
   // this it resolves to null and no flag, QC note or delete could ever reach it.
   if(ex.type==='comprehension_mcq' && ex.question){
-    const q=(ls.questions||[]).find(x=>norm(x.q)===norm(ex.question)); if(q) return q;
+    const q=(ls.questions||[]).find(x=>norm(x.q)===norm(ex.question));
+    if(q) return { item:q, arrayKey:'questions' };
+  }
+  // Script primer: the letter is the item, and the exercise may carry it on either side depending
+  // on which `_intro` variant built it (glyph→sound, sound→glyph, listen→glyph).
+  if(Array.isArray(ls.letters) && ls.letters.length){
+    const cand=[norm(ex.target), norm(ex.source), norm(ex.correct)].filter(Boolean);
+    const l=(ls.letters||[]).find(x=>cand.includes(norm(x.ch)) || cand.includes(norm(x.translit)));
+    if(l) return { item:l, arrayKey:'letters' };
+  }
+  // v74_d: a math exercise resolves to the baked entry it was drawn from, matched on the shared
+  // canonical form. Without this branch a played math question credits no item and the 225 baked
+  // math items would sit permanently unsolvable in the denominator.
+  if(Array.isArray(ls.exercises) && ls.exercises.length && ex.type && String(ex.type).startsWith('math_')){
+    const want = _qidCanonical(ex);
+    const e = want && (ls.exercises||[]).find(x => _qidCanonical(x) === want);
+    if(e) return { item:e, arrayKey:'exercises' };
   }
   return null;
 }
+function _resolveExItem(ex, ls){ return _resolveExItemEntry(ex, ls)?.item || null; }
 function _exFlagTarget(ex){
   // For a pooled (mixed-lesson) exercise, resolve against its SOURCE lesson, not the
   // active mixed lesson (which owns no items). Falls back to the active lesson.
@@ -12963,6 +13133,116 @@ function qid(ex, lessonId){
 // Monotonic (one correct answer ever = solved, the coverage model). Behaviourally inert in
 // Commit A: recorded on every correct answer but not yet consumed by round assembly or the
 // completion fraction (that's Commit B). Shape: APP.progress.solved[topic] = { qid: 1, … }.
+// ── v74_c: coverage counts SOURCE ITEMS, not generated questions ─────────────────────────────
+// The learner's question was the right one: we want to count the vocabulary / sentences / synonym
+// groups / word-form items that actually sit in lessons.json, not the questions a builder happens
+// to spin out of them. Everything good about this follows from one property — an item count is
+// READ FROM THE DATA, so no builder runs, and the two defects that plagued the question-keyed
+// denominator disappear together rather than needing separate fixes:
+//
+//   • AUDIO. The qid universe was cached under an audio key ('na'/'m'/'a') because listening
+//     exercises are not built when muted or voiceless, while the solved store is one flat map per
+//     topic — so solves earned in one audio state were measured against a denominator derived in
+//     another. Measured: 284 of 298 topics changed denominator; `Churros und Chaos` was 83 audible,
+//     67 muted, 51 with no voice, and a learner who had answered every question they were ever
+//     asked read 64/83, below the mark, with Next locked and no way to recover.
+//   • SAMPLING. Builders that cap sample which items to quiz, so the denominator moved run to run
+//     on 15 of 294 topics (worst spread 4 questions). An item count cannot sample.
+//
+// Items are audio-invariant BY CONSTRUCTION, not by a rule someone has to remember.
+//
+// `_lessonQidUniverse` is deliberately NOT removed: choosing which QUESTION to ask next is a
+// genuinely different problem from measuring what the learner knows, and round assembly still
+// wants question identity. Coverage is item-keyed; round biasing stays qid-keyed. markSolved
+// records both.
+const _ITEM_ARRAYS = {
+  standard:      ['vocab', 'sentences'],
+  grammar:       ['grammar'],
+  conjugation:   ['conjugations'],
+  word_forms:    ['items'],
+  synonyms:      ['words'],
+  comprehension: ['questions'],
+  intro_script:  ['letters'],
+  // v74_d: math counts. Its `exercises` array is AUTHORED and baked into lessons.json — all 30 math
+  // lessons carry one (186 math_calc + 39 math_order = 225 items across 25 chapters). The runtime
+  // `generateMathExercisesClient` fallback only fires for a lesson with no baked exercises, which
+  // no shipped chapter has, so reading it as "math is procedurally generated" was simply wrong.
+  // The learner is still learning the language here — number words, read aloud in every listening
+  // format — so these belong in the denominator and in the story-unlock gate like any other prep.
+  math:          ['exercises'],
+  // Deliberately EMPTY, each for its own reason:
+  //   error hunts — a "play it once" task (0 coverage questions, measured 19/19 and 19/19). Their
+  //                 `sentences` array holds the whole story as a single entry, which would count
+  //                 as one spurious item. They gate the next chapter (v74_b), not coverage.
+  //   mixed       — owns no items at all; its universe is the union of the prep lessons it pools.
+  error_hunt: [], ai_error_hunt: [], mixed: [],
+};
+function _lessonItemArrays(L){
+  const ty = (L && (L.type || 'standard'));
+  return Object.prototype.hasOwnProperty.call(_ITEM_ARRAYS, ty) ? _ITEM_ARRAYS[ty] : ['vocab', 'sentences'];
+}
+// What makes an item that item. Mirrors the identifying field _resolveExItemEntry matches on, so
+// an exercise and its source item can never disagree about identity.
+function _itemIdentity(item, arrayKey){
+  if(!item || typeof item !== 'object') return '';
+  const n = s => stripFuri(String(s == null ? '' : s)).trim().toLowerCase();
+  switch(arrayKey){
+    case 'items':        return n(item.sentence);
+    case 'words':        return n(item.base);
+    case 'questions':    return n(item.q);
+    case 'conjugations': return n(item.infinitive);
+    case 'letters':      return n(item.ch) || n(item.translit);
+    // v74_d: a math item IS an exercise object (authored and baked), so its identity comes from the
+    // SAME canonical form the qid uses. Deriving rather than restating means the item and the
+    // exercise that credits it cannot drift apart — `calc|a|op|b`, and direction + sorted set for
+    // an ordering question, are decided in exactly one place.
+    case 'exercises':    return _qidCanonical(item);
+    default:             return [n(item.target), n(item.source)].join('|');
+  }
+}
+// `:i:` distinguishes an item key from a qid (`lessonId:type:hash`) in the same solved map, so the
+// two can coexist during and after migration without either shadowing the other.
+function _itemKey(lessonId, item, arrayKey){
+  const idy = _itemIdentity(item, arrayKey);
+  if(!idy) return '';
+  return `${lessonId || '_'}:i:${_qidHash(idy)}`;
+}
+// The item key an exercise credits, resolved through the SOURCE lesson for pooled exercises exactly
+// as _exFlagTarget does.
+function _exItemKey(ex){
+  const idx = (ex && ex._srcLessonIdx != null) ? ex._srcLessonIdx : APP.cur?.lessonIdx;
+  const ls  = APP.lessonData?.lessons?.[idx];
+  const ent = _resolveExItemEntry(ex, ls);
+  return ent ? _itemKey(ls.id, ent.item, ent.arrayKey) : '';
+}
+// Every item this lesson can teach. No builder, no cap, no sampling, no audio key — which is the
+// whole point. Withheld items are excluded, matching the play filter and markSolved via the shared
+// _itemWithheld rule.
+function _lessonItemUniverse(lessonIdx){
+  const d = APP.lessonData;
+  const U = new Set();
+  const L = d?.lessons?.[lessonIdx];
+  if(!L) return U;
+  // A mixed lesson owns nothing: its universe is the union of the earlier prep siblings it pools,
+  // mirroring _lessonQidUniverse so the two models agree about what a mixed chapter contains.
+  if(L.type === 'mixed'){
+    (d.lessons||[]).forEach((sib,i)=>{
+      const _skip = (typeof _mixedSkips === 'function') ? _mixedSkips(sib && sib.type) : (sib && sib.type === 'mixed');
+      if(i>=lessonIdx || !sib || _skip) return;
+      if(sib._hidden && !APP._teacherMode) return;
+      for(const k of _lessonItemUniverse(i)) U.add(k);
+    });
+    return U;
+  }
+  for(const arrayKey of _lessonItemArrays(L)){
+    for(const item of (L[arrayKey]||[])){
+      if(typeof _itemWithheld === 'function' && _itemWithheld(item)) continue;
+      const k = _itemKey(L.id, item, arrayKey);
+      if(k) U.add(k);
+    }
+  }
+  return U;
+}
 function _solvedMap(topic){
   if(!APP.progress) return {};
   if(!APP.progress.solved) APP.progress.solved = {};
@@ -12970,6 +13250,75 @@ function _solvedMap(topic){
   return APP.progress.solved[topic];
 }
 function isSolved(topic, id){ return !!(id && _solvedMap(topic)[id]); }
+// ── v74_c: migrate a learner's existing question-keyed progress onto item keys ───────────────
+// Progress earned before v74_c is stored as `lessonId:type:hash(canonical)`. The canonical form is
+// recomputable from the item for most types, so most of it is RE-KEYED rather than reset. What
+// cannot be recovered is dropped (agreed with the user): math has no source item, and error hunts
+// never had coverage questions.
+//
+// Idempotent and additive — it only ever SETS item keys, never clears a qid, so running it twice
+// is a no-op and a learner who plays on an older build loses nothing.
+function _legacyQidsForItem(lessonId, item, arrayKey){
+  const n = s => stripFuri(String(s == null ? '' : s)).trim().toLowerCase();
+  const h = c => `${lessonId}:%TYPE%:${_qidHash(c)}`;
+  const out = [];
+  const push = (types, canon) => { for(const t of types) out.push(h(canon).replace('%TYPE%', t)); };
+  if(arrayKey === 'vocab' || arrayKey === 'sentences' || arrayKey === 'grammar' || arrayKey === 'letters'){
+    // Six exercise types share one canonical form (`_intro|target|source`), which is exactly why
+    // the question-keyed model split one word across up to six qids.
+    const pair = ['', n(item.target), n(item.source)].join('|');
+    push(['mcq_target_source','mcq_source_target','listen_mcq','listen_type','read_translate','order'], pair);
+    if(arrayKey === 'letters'){
+      for(const iv of ['glyph_sound','sound_glyph','listen_glyph']){
+        push(['mcq_source_target','listen_mcq','mcq_target_source'],
+             [iv, n(item.ch), n(item.translit)].join('|'));
+        push(['mcq_source_target','listen_mcq','mcq_target_source'],
+             [iv, n(item.translit), n(item.ch)].join('|'));
+      }
+    }
+    if(arrayKey === 'grammar'){
+      push(['mcq_article'], ['art', n(item.target)].join('|'));
+      push(['mcq_plural'],  ['plu', n(item.target)].join('|'));
+      push(['type_plural'], ['tplu', n(item.target)].join('|'));
+    }
+  } else if(arrayKey === 'items'){
+    const correct = Array.isArray(item.choices) ? item.choices[item.correctIndex] : item.correct;
+    push(['word_form'], [n(item.sentence), n(correct)].join('|'));
+  } else if(arrayKey === 'words'){
+    for(const mode of ['syn','antonym','']) push(['syn_select'], [mode, n(item.base)].join('|'));
+  } else if(arrayKey === 'questions'){
+    for(const ch of (Array.isArray(item.choices) ? item.choices : [])){
+      push(['comprehension_mcq'], ['comp', n(item.q), n(ch)].join('|'));
+    }
+    push(['comprehension_mcq'], ['comp', n(item.q), n(item.correct)].join('|'));
+  } else if(arrayKey === 'conjugations'){
+    for(const f of (Array.isArray(item.forms) ? item.forms : [])){
+      push(['mcq_conjugation','type_conjugation'], [n(item.infinitive), n(f.pronoun)].join('|'));
+    }
+  }
+  return out;
+}
+function _migrateSolvedToItems(d){
+  d = d || APP.lessonData;
+  if(!d || !d.topic || !Array.isArray(d.lessons)) return 0;
+  const m = _solvedMap(d.topic);
+  if(!m || !Object.keys(m).length) return 0;
+  let credited = 0;
+  for(const L of d.lessons){
+    if(!L || L.id == null) continue;
+    for(const arrayKey of _lessonItemArrays(L)){
+      for(const item of (L[arrayKey]||[])){
+        const ik = _itemKey(L.id, item, arrayKey);
+        if(!ik || m[ik]) continue;
+        let legacy = [];
+        try { legacy = _legacyQidsForItem(L.id, item, arrayKey); } catch(_) { legacy = []; }
+        if(legacy.some(q => m[q])){ m[ik] = 1; credited++; }
+      }
+    }
+  }
+  if(credited) { try { saveProg(); } catch(_) {} }
+  return credited;
+}
 // Mark an exercise solved for the current topic. Returns the qid (or '' if none). Never records
 // withheld questions — they are excluded from the coverage denominator by the same rule, so
 // recording one would credit a solve against a question that is not in the universe.
@@ -12984,6 +13333,16 @@ function markSolved(ex){
   const m = _solvedMap(topic);
   let changed = false;
   if(!m[id]){ m[id] = 1; changed = true; }
+  // v74_c: also credit the SOURCE ITEM. Coverage counts items; round assembly still keys on the
+  // qid (which question to ask next is a different question from what the learner knows), so both
+  // live in this map — they cannot collide because an item key carries the `:i:` marker.
+  // An item is solved by ANY correct answer derived from it: the learner has demonstrated the
+  // vocabulary, and requiring every question FORMAT would re-import the audio dependence this
+  // change exists to remove (a muted learner is never offered the listening formats).
+  try {
+    const ik = _exItemKey(ex);
+    if(ik && !m[ik]){ m[ik] = 1; changed = true; }
+  } catch(_) {}
   // v69.1: a drill launched from a chapter also CREDITS that chapter. The drill was designed as
   // "the way up" below the pass mark (v60.8), but its solves landed only under the synthetic
   // __drill__ topic — the real chapter's coverage never moved, so the drill could never actually
@@ -13233,7 +13592,8 @@ function _invalidateQidUniverse(){ _qidUniverseCache.clear(); }
 // many of those the learner has in the solved store for this topic.
 function lessonCoverage(lessonIdx){
   const d = APP.lessonData; if(!d) return { solved:0, total:0, pct:0 };
-  const universe = _lessonQidUniverse(lessonIdx);
+  // v74_c: the universe is the lesson's SOURCE ITEMS, not the questions built from them.
+  const universe = _lessonItemUniverse(lessonIdx);
   const solvedSet = _solvedMap(d.topic);
   let solved = 0;
   for(const id of universe) if(solvedSet[id]) solved++;
@@ -13252,7 +13612,10 @@ function topicCoverage(skipStoryGated){
   const lessons = skipStoryGated ? storyUnlockLessons(d) : countedLessons(d);
   for(const L of lessons){
     const idx = d.lessons.indexOf(L);
-    for(const id of _lessonQidUniverse(idx)) U.add(id);
+    // v74_c: items, not questions. Counting over the COUNTED lessons still reaches the folded prep
+    // lessons of a mixed chapter, because the mixed lesson's item universe is the union of the
+    // siblings it pools — so the denominator is the chapter's underlying content either way.
+    for(const id of _lessonItemUniverse(idx)) U.add(id);
   }
   const solvedSet = _solvedMap(d.topic);
   let solved = 0;
@@ -14235,6 +14598,38 @@ function showComplete(review){
     const _allDone2 = storyUnlocked(APP.lessonData);
     const _showStory = _story && (_allDone2 || APP.info.canGenerate || APP._teacherMode);
     _compStory.style.display = _showStory ? '' : 'none';
+    // v74_l: when the story has just UNLOCKED, strip the card back toward Next. The other actions
+    // are ways to raise coverage, and coverage is what the learner has just finished raising:
+    // offering four routes back into practice beside a story captioned "read and understand the
+    // chapter" argues against the card's own instruction.
+    //
+    // EXCEPT Repeat, when the chapter is not yet complete. The story unlocks on the PREP gate,
+    // which can be passed while the chapter gate is still short — the storyline mark can exceed the
+    // lesson one (`_coverageTarget`: chapter > storyline > global), and replaying re-samples the
+    // round, which is the only way up from there. Hiding it unconditionally would strand exactly
+    // the learner `smoke-render`'s "a finished lesson still offers Repeat" case was written for.
+    // So: quiet card once there is nothing left to gain, escape hatch while there is.
+    //
+    // Applied only on the genuine unlock, NOT on a teacher/canGenerate preview, where the story is
+    // visible without the gate having been passed and the practice actions still make sense.
+    if (_showStory && _allDone2 && !APP._teacherMode) {
+      // "Nothing left to gain" is COVERAGE, not chapter completion: a chapter can read complete
+      // (a low or zero mark) while questions remain unasked, which is the exact fixture
+      // smoke-render uses. `_firstCoverageShortLessonIdx` is the same signal `_replayable` uses,
+      // so this cannot drift from the button's own availability rule.
+      let _coverageLeft = false;
+      try { _coverageLeft = (typeof _firstCoverageShortLessonIdx === 'function')
+                            && _firstCoverageShortLessonIdx() >= 0; } catch(_) {}
+      const _hide = _coverageLeft
+        ? ['comp-drill', 'comp-crossword', 'comp-back']
+        : ['comp-repeat', 'comp-drill', 'comp-crossword', 'comp-back'];
+      for (const _id of _hide) {
+        const _b = document.getElementById(_id);
+        if (_b) _b.style.display = 'none';
+      }
+      const _nx = document.getElementById('comp-next');
+      if (_nx) _nx.style.display = '';
+    }
     if (_showStory) {
       const _lbl = document.getElementById('comp-story-unlocked-lbl');
       if (_lbl) _lbl.textContent = _allDone2 ? t('complete.story_unlocked') : t('complete.story_preview');
@@ -14300,7 +14695,16 @@ function _renderCompStory(allDone){
         if (solved.length) html = _highlightVocabHtml(furiHtml(shown), solved);
       } catch(_) { html = null; }
     }
-    if (html != null) _el.innerHTML = html; else _el.textContent = shown;
+    // v74_m: paragraphs. Every other story panel has split on blank lines since v39; this one set
+    // the text flat, so a chapter with 217-of-299's worth of structure arrived as a single slab.
+    // Applied on BOTH branches — the highlighted path and the plain fallback — because losing the
+    // highlighting must not also lose the shape of the text. `furiHtml` is applied on the fallback
+    // too so ruby survives; escaping is furiHtml's job, as on the highlighted branch.
+    try {
+      _el.innerHTML = _storyParasHtml(html != null ? html : furiHtml(shown));
+    } catch(_) {
+      _el.textContent = shown;   // a story that renders unformatted is fine; one that fails is not
+    }
   }
   const _btn = document.getElementById('comp-story-xlate');
   if (_btn){
@@ -14682,7 +15086,14 @@ function _slProgressStats(chapterIds, byId){
   (chapterIds || []).forEach(cid => {
     const s = byId && byId[cid];
     if (!s) return;
-    (s.lessons || []).forEach(ls => {
+    // v74_i: the denominator must be the lessons that can RECEIVE a done-flag. It used to walk raw
+    // `s.lessons`, which includes hidden lessons and — on a mixed-driven chapter — the prep lessons
+    // folded into the mixed round, none of which is ever flagged. So the numerator and denominator
+    // counted two different populations and the fraction could never reach 1: the shipped
+    // "Paella und Chaos" storyline read 4/8 with both chapters finished. Hidden lessons never count
+    // for anything (user ruling, v74_e), and `countedLessons` is the one place that rule lives.
+    const _cl = (typeof countedLessons === 'function') ? countedLessons(s) : (s.lessons || []);
+    _cl.forEach(ls => {
       totalSets++;
       const prog = completed[s.topic]?.[ls.id];
       if (prog) { doneSets++; if (typeof prog === 'object'){ correctQ += prog.correct||0; totalQ += prog.total||0; } }
@@ -14783,16 +15194,15 @@ function _compProgressHtml(topicKey, slCtx, opts){
     if (!nm) return t('complete.chapter_progress');
     return nm.length > 34 ? nm.slice(0, 33) + '…' : nm;
   })();
-  const _mixedDriven = !APP._teacherMode && (d.lessons||[]).some(x => x && x.type === 'mixed' && !x._hidden)
-                       && d.topic === topicKey;
-  let html;
-  if (_mixedDriven){
-    let cov = null; try { cov = topicCoverage(); } catch(_) {}
-    if (cov && cov.total > 0) html = rowsHtml(_chapterLabel, cov.solved, cov.total);
-    else html = rowsHtml(_chapterLabel, counted.filter(L => done[L.id]).length, counted.length);
-  } else {
-    html = rowsHtml(_chapterLabel, counted.filter(L => done[L.id]).length, counted.length);
-  }
+  // v74_g — counter (b): LESSONS OF THIS CHAPTER, one unit on both chapter shapes.
+  // The `_mixedDriven` split below used to send this row to `topicCoverage()` (QUESTIONS) on a
+  // mixed chapter and to a lesson count on a classic one — so one chapter read `2/2` and the next
+  // `67/83` on visually identical bars, and on a mixed chapter this row printed exactly the same
+  // fraction as the %-solved row below it, carrying no information at all. Underlying lessons
+  // answer the same question in both cases, and a mixed chapter now shows the prep lessons folded
+  // into its round instead of hiding them behind a single `mixed` entry.
+  const _under = underlyingLessons(d);
+  let html = rowsHtml(_chapterLabel, _under.filter(L => lessonSolved(d, L)).length, _under.length);
   // Along the storyline: chapters with all their counted work done / total chapters.
   if (slCtx){
     const { sl, byId, topics } = slCtx;
@@ -14846,7 +15256,14 @@ function _compProgressHtml(topicKey, slCtx, opts){
   // real mastery signal, distinct from the lesson-count "chapter" bar above. Shown for the current
   // topic whenever it has a question universe. Rendered LAST so it sits directly below the others.
   try {
-    const cov = topicCoverage();
+    // v74_g — counter (c): the STORY-UNLOCK universe, not the whole chapter.
+    // This bar carries the pass mark, so it must be measured over exactly what the mark gates.
+    // It used to read `topicCoverage()` (the whole chapter, comprehension included) while the gate
+    // read `topicCoverage(true)` (prep only), which is why a chapter could sit below the mark in
+    // red with the story already unlocked — measured on the shipped corpus, `Churros und Chaos`
+    // diverged at 64..66 of 83 and `Kälte und Paella` at 23..24 of 31. Sharing one universe makes
+    // that state unrepresentable rather than merely unlikely.
+    const cov = topicCoverage(true);
     if (cov && cov.total > 0){
       // The mark belongs on THIS bar: %-solved is what the threshold is measured against.
       const _mark = (opts && Number.isFinite(opts.markPct)) ? opts.markPct : null;
@@ -15279,6 +15696,52 @@ function _ttsChunks(text) {
   return chunks;
 }
 
+// ── v74_j: ONE voice ranking, and locale accuracy outranks voice quality ───────────────────────
+// User report: "on my phone but not my laptop I suddenly have an English readout with some accent,
+// perhaps Caribbean". It was ours. The filter accepted an exact locale match OR any voice sharing
+// the language prefix, and the sort then ranked purely on QUALITY — so `en-GB`, `en-US`, `en-IN`,
+// `en-NG`, `en-JM` and `en-TT` all landed in one pool and whichever happened to be a NETWORK voice
+// (score 3) beat the local `en-GB` (score 1). The exact-locale test appeared in the filter and then
+// never again. Simulated against a realistic Android list vs a laptop list:
+//
+//   laptop  en-GB -> Daniel [en-GB]            phone  en-GB -> English Nigeria [en-NG]
+//
+// Desktops expose two or three English voices, all local, so the right one happened to sort first;
+// Android ships many locales and several as network voices. Nothing changed but the inventory.
+//
+// Not cosmetic, and not English-only: the same pooling gave `de-DE -> de-CH` and, worse for a
+// learner, `pt-PT -> pt-BR`. A regional accent is a small thing; being read European Portuguese in
+// Brazilian Portuguese is not.
+//
+// Ranking is now: EXACT LOCALE first, then quality within each tier. That keeps the neural-voice
+// preference everywhere it does not cost accuracy.
+//
+// Extracted because it was DUPLICATED in `_ttsPickVoice` and `_buildGlobalTtsSelectors`, and the
+// two had already drifted (the builder's copy scores `localService?1:3` with no neural tier). That
+// is the same duplication the v55_x comment below describes fixing for the speak paths — it just
+// grew back in a second place. One ranker, one policy.
+function _ttsRankVoices(voices, ttsCode) {
+  const norm = c => (c||'').replace('_','-').toLowerCase();
+  const ttsNorm = norm(ttsCode), ttsPrefix = ttsNorm.split('-')[0];
+  const quality = v => {
+    const n = (v.name||'').toLowerCase();
+    if (n.includes('espeak') || n.includes('mbrola')) return 0;
+    if (!v.localService) return 3;                                     // online/neural
+    if (n.includes('natural') || n.includes('neural') || n.includes('premium')) return 2;
+    return 1;                                                          // local, non-espeak
+  };
+  // 1 = this voice is for the requested REGION, not merely the requested language.
+  const exact = v => (norm(v.lang) === ttsNorm ? 1 : 0);
+  // espeak/mbrola score 0 as a "this is bad" signal, not merely "lower quality" — the v39 notes
+  // record that every espeak variant uses one engine and they all sound identical and robotic.
+  // So usability outranks locale: an espeak `en-GB` should NOT beat a neural `en-US`. Locale then
+  // decides among voices that are actually worth listening to.
+  const usable = v => (quality(v) > 0 ? 1 : 0);
+  return (voices || [])
+    .filter(v => norm(v.lang) === ttsNorm || norm(v.lang).startsWith(ttsPrefix))
+    .sort((a,b) => (usable(b) - usable(a)) || (exact(b) - exact(a)) || (quality(b) - quality(a)));
+}
+
 // ── Speech: ONE voice resolver, and a refusal instead of an approximation (v55_x) ──────────────
 // Returns: a SpeechSynthesisVoice (use it) | null (voices ARE loaded and none match this language)
 // | undefined (voices not loaded yet — caller must stay conservative and NOT declare "no voice",
@@ -15290,18 +15753,7 @@ function _ttsPickVoice(ttsCode) {
   if (!window.speechSynthesis || !speechSynthesis.getVoices) return undefined;
   const voices = speechSynthesis.getVoices();
   if (!voices || !voices.length) return undefined;
-  const norm = c => (c||'').replace('_','-').toLowerCase();
-  const ttsNorm = norm(ttsCode), ttsPrefix = ttsNorm.split('-')[0];
-  const score = v => {
-    const n = (v.name||'').toLowerCase();
-    if (n.includes('espeak') || n.includes('mbrola')) return 0;
-    if (!v.localService) return 3;                                     // online/neural
-    if (n.includes('natural') || n.includes('neural') || n.includes('premium')) return 2;
-    return 1;                                                          // local, non-espeak
-  };
-  const langVoices = voices
-    .filter(v => norm(v.lang) === ttsNorm || norm(v.lang).startsWith(ttsPrefix))
-    .sort((a,b) => score(b) - score(a));
+  const langVoices = _ttsRankVoices(voices, ttsCode);
   const named = APP._ttsVoiceName ? langVoices.find(v => v.name === APP._ttsVoiceName) : null;
   return named || langVoices[0] || null;
 }
@@ -15481,7 +15933,6 @@ function speak(text, rate){
 function _buildGlobalTtsSelectors() {
   const ids = ['ls']; // TTS selector only on lesson-set page
   const norm = c => (c||'').replace('_','-').toLowerCase();
-  const score = v => { const n=v.name.toLowerCase(); if(n.includes('espeak')||n.includes('mbrola')) return 0; return v.localService?1:3; };
   // Retry if LANGS not loaded yet
   if (!Object.keys(LANGS).length) { setTimeout(_buildGlobalTtsSelectors, 300); return; }
   // Ensure both selectors exist — if not, schedule retry once DOM is ready
@@ -15508,8 +15959,11 @@ function _buildGlobalTtsSelectors() {
     if (!lsel || !vsel) return;
     lsel.innerHTML = langOpts.map(o=>`<option value="${o.code}">${o.label}</option>`).join('');
     lsel.value = savedLang;
-    const prefix = norm(savedLang).split('-')[0];
-    const lv = voices.filter(v=>norm(v.lang)===norm(savedLang)||norm(v.lang).startsWith(prefix)).sort((a,b)=>score(b)-score(a));
+    // v74_j: the SHARED ranker, so the voice this menu preselects is the same one the speak paths
+    // would have chosen on their own. This copy had already drifted from _ttsPickVoice's — it
+    // scored `localService?1:3` with no neural tier and, like the other, never preferred the exact
+    // locale, so the menu could open on "English Jamaica" for a learner reading en-GB.
+    const lv = _ttsRankVoices(voices, savedLang);
     if (lv.length > 1) {
       vsel.innerHTML = lv.map(v=>`<option value="${v.name}">${v.name}${v.localService?'':' ☁'}</option>`).join('');
       const savedVoice = localStorage.getItem('imp3_voice_'+savedLang);

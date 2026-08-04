@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v73_j';
+const APP_VERSION  = 'v74_m';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -2064,10 +2064,27 @@ async function _runQc(jobId, topics, opts) {
         } else if (ls.type === 'intro_script') {
           // curated letter table — verified by humans (per-letter flag/star/edit), not the LLM.
           _lessonQcRan = false;
-        } else if (ls.type === 'math' || ls.type === 'error_hunt' || ls.type === 'ai_error_hunt' || ls.type === 'mixed') {
+        } else if (ls.type === 'math' || ls.type === 'error_hunt' || ls.type === 'ai_error_hunt' || ls.type === 'mixed'
+                   || ls.type === 'comprehension') {
           // Out of scope: math is procedural, error-hunt correctness is intrinsic to its own
           // story, and mixed lessons own no items (they pool from their source lessons, which are
           // QC'd in place). Don't stamp — nothing was examined.
+          //
+          // v73_k — `comprehension` added, and it is a GAP being made honest, not a judgement that
+          // the type is unqualifiable. It carries `questions`, not vocab/sentences, so it fell to
+          // the generic scan below, which found nothing to check. `_lessonQcRan` therefore stayed
+          // true, `flagged === _flaggedBefore` held trivially, and the lesson was STAMPED CLEAN
+          // having been examined by nothing. Worse than uncovered: the stamp makes every later bulk
+          // run skip it (see the `ls.qcAt && ls.qcBy === OLLAMA_QC_MODEL` skip above), so a
+          // comprehension lesson was marked QC-clean for good, unread.
+          //
+          // Observed in a user's run: the comprehension lesson of "Churros und Chaos" carries
+          // `qcAt` and `qcBy: translategemma:12b` with no checker having touched it.
+          //
+          // A real checker belongs here eventually — "does each question follow from the story, and
+          // are its distractors defensible?" is exactly what QC is for, and it is the one part of
+          // v71_l no headless test can reach. That needs a new prompt and a live model, so it is
+          // queued rather than guessed at. Until then, "not checked" is the honest stamp.
           _lessonQcRan = false;
         } else {
           for (const key of ['vocab', 'sentences']) {
@@ -5595,7 +5612,28 @@ http.createServer(async (req, res) => {
         createdBy: l.createdBy || null,
         source: l.source || null,
         sourceFile: l.storyMeta?.sourceFile || null,
-        lessonCount: l.lessons?.length || 0,
+        // v74_i: hidden lessons never count for anything (user ruling, v74_e). This was the RAW
+        // length, so live showed "Kälte und Paella · 3 lessons" where static showed 2 — the static
+        // builder strips hidden ai_error_hunts at bake time, and the two counts disagreed on screen.
+        lessonCount: (l.lessons || []).filter(L => L && !L._hidden && !L._aiExamples).length,
+        // v74_i: METADATA-ONLY lessons. The storyline screen's progress — the header fraction, each
+        // chapter's bar, its green completion dot, and the final card's "story complete" title —
+        // all walk `lessons[]`. The list payload omitted it, so in LIVE mode `countedLessons(s)`
+        // returned 0, which made `chapterComplete()` reject its v69_l stamp (`rec.n === 0`) and then
+        // fail its fallback (`counted.length > 0`) — false for every chapter except the active one.
+        // One missing field, four broken readings: header "0/0", no chapter bars, no completion
+        // dots, and "Lesson complete!" where the story was in fact finished.
+        //
+        // Same shape as the static build's baked topics, so ONE renderer serves both modes — the
+        // v55_s/v58 precedent. Content is deliberately excluded: no savedList consumer reads
+        // vocab/sentences (they all work from APP.lessonData, loaded on demand), and shipping the
+        // full arrays would cost 1536KB against 50KB for this — 3.2%.
+        lessons: (l.lessons || []).map(L => ({
+          id: L.id,
+          type: L.type || 'standard',
+          ...(L._hidden     ? { _hidden: true }     : {}),
+          ...(L._aiExamples ? { _aiExamples: true } : {}),
+        })),
         // Distinct lesson-set types (first-seen order; missing -> 'standard'). The list
         // payload omits the full lessons[] (loaded on demand), so the client storyline
         // screen needs this to show each chapter's lesson-types dropdown in live mode.

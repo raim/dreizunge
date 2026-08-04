@@ -182,5 +182,33 @@ async function run() {
     console.log(`  topic replaced mid-pass: added lesson kept, ${f2.length}/3 findings landed`);
   }
 
-  console.log('unit-qc-concurrent-edit: ALL PASSED');
+// ── Scenario 3: a lesson type nothing checks is never stamped clean ─────────
+// v73_k. `comprehension` carries `questions`, not vocab/sentences, so it fell to the generic scan,
+// which found nothing to check — and the lesson was then stamped QC-clean. The stamp is not inert:
+// `_runQc` skips any lesson whose `qcAt` was set by the same model, so the lesson was marked clean
+// for good, unexamined. Seen in the wild on "Churros und Chaos".
+//
+// Asserted for EVERY out-of-scope type, not just comprehension, so the next type added to that list
+// (or forgotten from it) is covered by the same guarantee.
+{
+  const unchecked = ['comprehension', 'math', 'error_hunt', 'ai_error_hunt', 'mixed', 'intro_script'];
+  for (const type of unchecked) {
+    store.topics = [{
+      id: 'tp_scope', topic: 'Scope', lang: 'es', srcLang: 'de',
+      // Deliberately carries the fields the generic scan looks for as EMPTY arrays plus a payload
+      // the scan cannot read — the shape that produced the false stamp.
+      lessons: [{ id: 'LS', type, questions: [{ q: 'why?', correct: 'because' }] }],
+    }];
+    flagCalls = 0;
+    await _raw('job3-' + type, store.topics.slice(), { lessonIdx: null, onlyFlagged: false, includeStory: false });
+    const ls3 = store.topics.find(t => t.id === 'tp_scope').lessons[0];
+    assert.ok(!ls3.qcAt,
+      `a ${type} lesson is never stamped QC-clean — nothing examined it, and the stamp would make ` +
+      `every later bulk run skip it`);
+    assert.strictEqual(flagCalls, 0, `and no pair checker ran for ${type}`);
+  }
+  console.log(`  scope: ${unchecked.length} unchecked lesson types, none stamped clean`);
+}
+
+console.log('unit-qc-concurrent-edit: ALL PASSED');
 })().catch(e => { console.error(e); process.exit(1); });
