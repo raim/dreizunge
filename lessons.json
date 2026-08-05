@@ -2480,26 +2480,6 @@
       "storyboardScheme": "classic"
     },
     {
-      "id": "sl_1235896199",
-      "title": "in den alpen wandern — 1",
-      "icon": "📖",
-      "chapters": [
-        "tp_17846508308300000276",
-        "tp_17846511517370000393"
-      ],
-      "lang": "en",
-      "srcLang": "de",
-      "createdAt": "2026-07-21T16:20:30.873Z",
-      "updatedAt": "2026-07-22T04:47:58.683Z",
-      "tokenUsage": {
-        "totalPromptTokens": 326,
-        "totalCompletionTokens": 36,
-        "tokensByType": {
-          "retitle": 362
-        }
-      }
-    },
-    {
       "id": "sl_1458569861",
       "title": "Schatten des Berges",
       "icon": "🧯",
@@ -10313,20 +10293,8 @@
             },
             {
               "target": "irritazione",
-              "source": "Unzufriedenheit",
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "Irritation",
-                  "field": "source",
-                  "at": "2026-07-29T13:31:38.722Z"
-                }
-              },
-              "qc": {
-                "sug": "Irritation",
-                "field": "source",
-                "at": "2026-07-29T13:31:38.722Z",
-                "by": "translategemma:12b"
-              }
+              "source": "Irritation",
+              "editedAt": "2026-08-05T09:57:38.510Z"
             },
             {
               "target": "ministero",
@@ -10340,7 +10308,7 @@
           "sentences": [
             {
               "target": "Io le intercettazioni a strascico non le avrei votate.",
-              "source": "Ich hätte die abgeleiteten Abhörungen nicht befürwortet.",
+              "source": "Ich hätte nicht für die pauschalen Abhörmaßnahmen gestimmt.",
               "words": [
                 "Io",
                 "le",
@@ -10352,23 +10320,11 @@
                 "avrei",
                 "votate."
               ],
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "Ich hätte die Ableitungen von Abhöraufnahmen nicht befürwortet.",
-                  "field": "source",
-                  "at": "2026-07-29T13:32:13.032Z"
-                }
-              },
-              "qc": {
-                "sug": "Ich hätte die Ableitungen von Abhöraufnahmen nicht befürwortet.",
-                "field": "source",
-                "at": "2026-07-29T13:32:13.032Z",
-                "by": "translategemma:12b"
-              }
+              "editedAt": "2026-08-05T09:59:08.953Z"
             },
             {
               "target": "Sono troppo invasive e danno troppa discrezionalità ai magistrati.",
-              "source": "Sie seien zu invasiv und gäben den Richtern zu viel Ermessensspielraum.",
+              "source": "Sie sind zu invasiv und geben den Richtern zu viel Ermessensspielraum.",
               "words": [
                 "Sono",
                 "troppo",
@@ -10380,23 +10336,11 @@
                 "ai",
                 "magistrati."
               ],
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "Sie sind zu invasiv und geben den Richtern zu viel Ermessensspielraum.",
-                  "field": "source",
-                  "at": "2026-07-29T13:32:36.177Z"
-                }
-              },
-              "qc": {
-                "sug": "Sie sind zu invasiv und geben den Richtern zu viel Ermessensspielraum.",
-                "field": "source",
-                "at": "2026-07-29T13:32:36.177Z",
-                "by": "translategemma:12b"
-              }
+              "editedAt": "2026-08-05T09:59:20.157Z"
             },
             {
               "target": "FdI formalizzava i suoi emendamenti pro «intercettazioni a strascico».",
-              "source": "Inzwischen formalisierte FdI seine Änderungsanträge zugunsten der abgeleiteten Abhörungen.",
+              "source": "Inzwischen hat FdI seine Änderungsanträge zur Förderung der verdeckten Überwachung formalisiert.",
               "words": [
                 "FdI",
                 "formalizzava",
@@ -10408,19 +10352,7 @@
                 "a",
                 "strascico»."
               ],
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "Inzwischen hat FdI seine Änderungsanträge zur Förderung der verdeckten Überwachung formalisiert.",
-                  "field": "source",
-                  "at": "2026-07-29T13:33:04.105Z"
-                }
-              },
-              "qc": {
-                "sug": "Inzwischen hat FdI seine Änderungsanträge zur Förderung der verdeckten Überwachung formalisiert.",
-                "field": "source",
-                "at": "2026-07-29T13:33:04.105Z",
-                "by": "translategemma:12b"
-              }
+              "editedAt": "2026-08-05T09:59:46.730Z"
             },
             {
               "target": "Ha rinviato la decisione a questa mattina.",
@@ -10646,24 +10578,11 @@
               "synonyms": [
                 {
                   "w": "ascolto",
-                  "g": "Anhörung"
+                  "g": "Zuhören"
                 }
               ],
               "antonyms": [],
-              "homophones": [],
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "X is not a synonym of intercettazione.",
-                  "field": "note",
-                  "at": "2026-07-29T13:37:04.313Z"
-                }
-              },
-              "qc": {
-                "sug": "X is not a synonym of intercettazione.",
-                "field": "note",
-                "at": "2026-07-29T13:37:04.313Z",
-                "by": "translategemma:12b"
-              }
+              "homophones": []
             },
             {
               "base": "strascico",
@@ -10783,6 +10702,61 @@
           "icon": "🔀",
           "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
           "perType": 4
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1785924008392",
+          "type": "comprehension",
+          "title": "Spannung in der italienischen Regierung",
+          "desc": "Verstehen Sie die politischen Konflikte im Text?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum kritisiert Matteo Salvini Antonio Tajani scharf?",
+              "choices": [
+                "Weil Tajani zu wenig über Cybersicherheit spricht.",
+                "Weil Tajani die Verfügbarkeit der EU-Mittel für Verteidigung falsch dargestellt hat.",
+                "Weil Tajani die Zusammenarbeit mit kleinen Unternehmen verweigert.",
+                "Weil Tajani die Zinsen des Safe-Fonds zu hoch findet."
+              ],
+              "correctIndex": 1,
+              "why": "Tajani gab fälschlicherweise an, die Mittel seien bereits gesichert, obwohl nur das Verfahren gestartet war und die Entscheidung erst im Dezember fällt."
+            },
+            {
+              "q": "Welches ist der Hauptgrund für Daniela Santanchès Ablehnung der \"intercettazioni a strascico\"?",
+              "choices": [
+                "Sie hält sie für zu teuer für den Staat.",
+                "Sie befürchtet, dass Richter zu viel Macht und Diskretion erhalten.",
+                "Sie glaubt, dass die Mafia dadurch stärker wird.",
+                "Sie möchte mehr Überwachung durch das Parlament."
+              ],
+              "correctIndex": 1,
+              "why": "Santanchè argumentiert, dass die Maßnahme zu invasiv ist und den Richtern zu viel Ermessensspielraum lässt."
+            },
+            {
+              "q": "Was deutet die Verschiebung der Entscheidung über die Änderungsanträge durch La Russa an?",
+              "choices": [
+                "Dass es Uneinigkeit und Irritation innerhalb von Fratelli d'Italia gibt.",
+                "Dass das Parlament die Anträge bereits abgelehnt hat.",
+                "Dass La Russa keine Zeit hatte, die Dokumente zu lesen.",
+                "Dass Forza Italia die Anträge unterstützt."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text beschreibt, dass in FdI Irritation aufkommt und interne Konflikte zwischen verschiedenen Fraktionen bestehen."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1217,
+            "completionTokens": 493,
+            "ms": 226558,
+            "at": "2026-08-05T10:00:08.392Z"
+          }
         }
       ],
       "generationStats": {
@@ -10795,8 +10769,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 6498,
-        "totalCompletionTokens": 819,
+        "totalPromptTokens": 7715,
+        "totalCompletionTokens": 1312,
         "lessons": [
           {
             "lessonNum": 1,
@@ -10806,11 +10780,12 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 5130
+          "lesson_qc": 5130,
+          "add_lesson": 1710
         }
       },
       "generatedAt": "2026-07-29T12:43:46.545Z",
-      "updatedAt": "2026-07-29T13:38:29.714Z",
+      "updatedAt": "2026-08-05T10:01:52.833Z",
       "createdBy": "admin"
     },
     {
@@ -10915,7 +10890,7 @@
             },
             {
               "target": "dall’Europa era già trapelato qualche dubbio",
-              "source": "aus Europa bereits einige Zweifel aufgetaucht waren",
+              "source": "aus Europa waren bereits einige Zweifel aufgetaucht.",
               "words": [
                 "dall’Europa",
                 "era",
@@ -10924,19 +10899,7 @@
                 "qualche",
                 "dubbio"
               ],
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "aus Europa waren bereits einige Zweifel aufgetaucht.",
-                  "field": "source",
-                  "at": "2026-07-29T13:23:49.739Z"
-                }
-              },
-              "qc": {
-                "sug": "aus Europa waren bereits einige Zweifel aufgetaucht.",
-                "field": "source",
-                "at": "2026-07-29T13:23:49.739Z",
-                "by": "translategemma:12b"
-              }
+              "editedAt": "2026-08-05T09:57:22.310Z"
             },
             {
               "target": "il ministro degli Esteri ha allora parlato di «tempesta in un bicchier d’acqua».",
@@ -11212,7 +11175,7 @@
             "ms": 395537,
             "at": "2026-08-02T10:02:57.342Z"
           },
-          "qcAt": "2026-08-02T10:56:48.474Z",
+          "qcAt": "2026-08-05T07:00:43.768Z",
           "qcBy": "translategemma:12b"
         },
         {
@@ -11222,6 +11185,61 @@
           "icon": "🔀",
           "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
           "perType": 4
+        },
+        {
+          "difficulty": 3,
+          "id": "ls_1785913407311",
+          "type": "comprehension",
+          "title": "Spannung in der italienischen Regierung",
+          "desc": "Verstehen Sie die politischen Konflikte um Verteidigungsausgaben und Überwachungsbefugnisse?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum kritisierte Matteo Salvini die Aussage von Antonio Tajani bezüglich der Safe-Fonds?",
+              "choices": [
+                "Weil Tajani behauptete, das Geld sei bereits vollständig genehmigt, obwohl nur ein Verfahren eingeleitet wurde.",
+                "Weil Tajani ablehnte, die Mittel für die Verteidigung von kleinen und mittleren Unternehmen nutzen zu lassen.",
+                "Weil Tajani forderte, dass das Parlament vor der Entscheidung über die Höhe des Kredits konsultiert werden muss.",
+                "Weil Tajani die Zinssätze des Safe-Fonds als zu hoch im Vergleich zum Stabilitätspakt darstellte."
+              ],
+              "correctIndex": 0,
+              "why": "Tajani gab fälschlicherweise an, die 14,9 Milliarden seien bereits gesichert, obwohl nur das Verfahren eingeleitet war und die Entscheidung erst im Dezember fällt; Salvini korrigierte dies mit dem Hinweis auf die Parlamentszuständigkeit."
+            },
+            {
+              "q": "Welcher Unterschied in der Haltung der Koalitionsparteien wird beim Thema der Ausweitung von Abhörmaßnahmen deutlich?",
+              "choices": [
+                "Fratelli d'Italia ist grundsätzlich dafür, während Forza Italia dies als Verletzung des Garantismus ablehnt.",
+                "Alle Parteien lehnen die Ausweitung ab, weil sie befürchten, dass die Terrorismusbekämpfung dadurch geschwächt wird.",
+                "Nur die Lega unterstützt die Abhörmaßnahmen, während alle anderen Parteien Bedenken wegen der Datenschutzrichtlinien haben.",
+                "Fratelli d'Italia und Forza Italia sind sich einig, dass nur das Parlament über neue Überwachungsbefugnisse entscheiden darf."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text stellt fest, dass Fratelli d'Italia der Erweiterung zustimmte, während Forza Italia dies ablehnte, da es den Garantismus (Rechtssicherheit) zu einer seiner Fahnen gemacht hat."
+            },
+            {
+              "q": "Was ist die Hauptursache für die turbulente Stimmung in der Regierungsmehrheit laut dem Text?",
+              "choices": [
+                "Uneinigkeit über die genaue Verwendung und Finanzierung von EU-Mitteln sowie unterschiedliche Rechtsauffassungen.",
+                "Der Widerstand Europas gegen die italienischen Pläne zur Erhöhung der Militärausgaben im Jahr 2027.",
+                "Der Konflikt zwischen dem Außenminister und dem Finanzministerium über die Höhe der Staatsverschuldung.",
+                "Die Forderung der Lega, alle EU-Fonds ausschließlich für die Cybersicherheit und nicht für die Infrastruktur zu nutzen."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text beschreibt Spannungen durch Tajanis ungenaue Angaben zu den Safe-Fonds (Finanzierung/Verwendung) und die unterschiedlichen Haltungen zur Ausweitung von Abhörmaßnahmen (Rechtsauffassung/Garantismus)."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 936,
+            "completionTokens": 716,
+            "ms": 390641,
+            "at": "2026-08-05T07:03:27.311Z"
+          }
         }
       ],
       "generationStats": {
@@ -11234,8 +11252,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 12839,
-        "totalCompletionTokens": 3680,
+        "totalPromptTokens": 15280,
+        "totalCompletionTokens": 4420,
         "lessons": [
           {
             "lessonNum": 1,
@@ -11245,12 +11263,12 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 7998,
-          "add_lesson": 6449
+          "lesson_qc": 9527,
+          "add_lesson": 8101
         }
       },
       "generatedAt": "2026-07-29T12:13:32.604Z",
-      "updatedAt": "2026-08-02T10:56:48.474Z",
+      "updatedAt": "2026-08-05T09:57:25.310Z",
       "createdBy": "admin"
     },
     {
@@ -19620,510 +19638,6 @@
       "aiStory": "Cosa fare in auto se si finisce sotto una maxi grandinata?\nMaxi-grandine, paura sull’A13 con auto distrutte e feriti: «Sembrava un\n\nbombardamento»\n\ndi Alessio Ribaudo\n\nL’evento ieri vicino a Ferrara. In tre giorni colpito tutto il Nord. Al Sud la colonnina è rimasta oltre i 40\ngradi, mentre gli incendi divoravano boschi e macchia mediterranea\n\n\n\nDentro la nuova casa della famiglia bosco:\necco come saranno le stanze da letto, la\ncucina e la veranda biodinamica\nIl rendering del progetto realizzato\ndall'architetta Maria Mascarucci di Chieti\nIeri l’Italia è stata divisa in due. Al Nord il caldo record si è trasformato in grandine,\nnubifragi e raffiche che hanno sfondato parabrezza, bucato tetti e triturato i raccolti. Al Sud\nla colonnina è rimasta oltre i 40 gradi mentre gli incendi divoravano boschi e macchia\nmediterranea. Il primo colpo era arrivato domenica in Lombardia. A Milano la grandine\naveva fatto evacuare ottantamila spettatori al concerto di Bad Bunny. Nel Cremasco, danni\nad auto, case e campi; a Cremona si era infranta una lastra del rosone del Duomo.\nParabrezza e carrozzerie delle auto distrutti anche nel Bresciano.\nI danni\nIeri il fronte si è accanito sull’Emilia-Romagna. Nel Ferrarese chicchi fino a tre centimetri\nhanno danneggiato vetri, perforato tetti e pannelli fotovoltaici. Sull’A13 gli automobilisti si\nsono fermati. «Il cielo è diventato nero all’improvviso, poi è caduta grandine grande\ncome sassi. Mi ha distrutto il parabrezza. Ho accostato e mi sono coperto il viso», racconta\nuno di loro.\nA San Martino i tronchi hanno rotto una condotta, interrompendo l’erogazione dell’acqua;\naltre zone sono rimaste senza luce. A Ravenna sono caduti oltre 100 alberi, la Romea è\nstata chiusa per ore e il vento ha scoperchiato una scuola. Sulla Bologna-Venezia si sono\nregistrati ritardi fino a 70 minuti; cancellati dei convogli sulla Ferrara-Ravenna.",
       "storyQcBy": "translategemma:latest",
       "storyQcAt": "2026-07-22T14:32:20.039Z"
-    },
-    {
-      "topic": "Schattenbewegungen",
-      "topicEmoji": "：</",
-      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
-      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
-      "lang": "en",
-      "srcLang": "de",
-      "difficulty": 1,
-      "storyLen": 50,
-      "story": "Elias spun around, his breath hitching in his throat as the fog thickened into a solid wall of gray. The hum grew louder, vibrating in his teeth, a rhythmic thrumming that felt less like sound and more like a heartbeat. He clawed at the granite, fingers numb with cold, but the rock beneath him seemed to soften, yielding like wet clay. Shadows detached themselves from the mist, tall and slender, moving with unnatural grace toward him. He tried to scream, but the air was too thin, too heavy with the scent of decay. The ground beneath his feet gave way, not with a crash, but with a silent, sucking pull, dragging him down into the dark throat of the mountain.",
-      "storyLang": "target",
-      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Suspenseful, eerie atmosphere, foreboding. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nThe trail vanished beneath a sudden, suffocating fog that smelled of wet iron and old stone. Elias stumbled, his boots slipping on moss-slicked granite as the silence deepened into a heavy, watchful pressure. Above him, the jagged peaks disappeared into the gray void, leaving only the oppressive weight of the mountain itself. A low hum vibrated through the soles of his feet, not from wind, but from something vast and ancient stirring in the depths below. He turned to flee, but the path he had just traversed was gone, swallowed by the mist as if it had never existed.\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
-      "storyMeta": {
-        "type": "story",
-        "model": "qwen3.6:35b-a3b",
-        "attempts": null,
-        "valid": 1,
-        "rejected": 0,
-        "rejectReasons": null,
-        "promptTokens": 345,
-        "completionTokens": 148,
-        "ms": 73792,
-        "at": "2026-07-21T16:21:44.709Z",
-        "origin": "generated",
-        "source": "recorded at generation"
-      },
-      "translationMeta": {
-        "type": "translation",
-        "model": "(none)",
-        "attempts": null,
-        "valid": 0,
-        "rejected": 0,
-        "rejectReasons": null,
-        "promptTokens": 0,
-        "completionTokens": 0,
-        "ms": null,
-        "at": "2026-07-21T16:21:44.709Z",
-        "origin": "skipped-same-model",
-        "source": "recorded at generation"
-      },
-      "continuedFrom": "Dunkel und Feucht",
-      "continuedFromId": "tp_17846508308300000276",
-      "storyStyle": "horror",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Der dunkle Abgrund",
-          "desc": "Elias fällt in die Tiefe der Berge.",
-          "icon": "🌑",
-          "vocab": [
-            {
-              "target": "fog",
-              "source": "Nebel"
-            },
-            {
-              "target": "shadow",
-              "source": "Schatten"
-            },
-            {
-              "target": "heart",
-              "source": "Herz"
-            },
-            {
-              "target": "darkness",
-              "source": "Dunkelheit"
-            },
-            {
-              "target": "fear",
-              "source": "Angst"
-            },
-            {
-              "target": "ground",
-              "source": "Boden"
-            },
-            {
-              "target": "scream",
-              "source": "Schrei"
-            },
-            {
-              "target": "cold",
-              "source": "Kälte"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "The fog is thick.",
-              "source": "Der Nebel ist dicht.",
-              "words": [
-                "The",
-                "fog",
-                "is",
-                "thick."
-              ]
-            },
-            {
-              "target": "Shadows move fast.",
-              "source": "Schatten bewegen sich schnell.",
-              "words": [
-                "Shadows",
-                "move",
-                "fast."
-              ]
-            },
-            {
-              "target": "Fear grips his heart.",
-              "source": "Angst packt sein Herz.",
-              "words": [
-                "Fear",
-                "grips",
-                "his",
-                "heart."
-              ]
-            },
-            {
-              "target": "He screams in the dark.",
-              "source": "Er schreit in der Dunkelheit.",
-              "words": [
-                "He",
-                "screams",
-                "in",
-                "the",
-                "dark."
-              ]
-            },
-            {
-              "target": "The cold bites hard.",
-              "source": "Die Kälte beißt hart.",
-              "words": [
-                "The",
-                "cold",
-                "bites",
-                "hard."
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 779,
-            "completionTokens": 264,
-            "ms": 142009,
-            "at": "2026-07-21T16:24:06.747Z"
-          },
-          "qcAt": "2026-07-21T16:32:41.626Z",
-          "qcBy": "translategemma:12b"
-        },
-        {
-          "id": "ls_329654412",
-          "title": "Alpen Wandern Zwei",
-          "desc": "Dunkle Geheimnisse der Berge",
-          "icon": "🏔️",
-          "vocab": [
-            {
-              "target": "fog",
-              "source": "Nebel"
-            },
-            {
-              "target": "trail",
-              "source": "Weg"
-            },
-            {
-              "target": "stone",
-              "source": "Stein"
-            },
-            {
-              "target": "silence",
-              "source": "Stille"
-            },
-            {
-              "target": "peak",
-              "source": "Gipfel"
-            },
-            {
-              "target": "mist",
-              "source": "Nebel",
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "Dunst",
-                  "field": "source",
-                  "at": "2026-07-21T16:33:06.274Z"
-                }
-              },
-              "qc": {
-                "sug": "Dunst",
-                "field": "source",
-                "at": "2026-07-21T16:33:06.274Z",
-                "by": "translategemma:12b"
-              }
-            },
-            {
-              "target": "foot",
-              "source": "Fuß"
-            },
-            {
-              "target": "fear",
-              "source": "Angst"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "The fog hides the trail.",
-              "source": "Der Nebel verbirgt den Weg.",
-              "words": [
-                "The",
-                "fog",
-                "hides",
-                "the",
-                "trail."
-              ]
-            },
-            {
-              "target": "Cold stone bites my foot.",
-              "source": "Kalter Stein beißt meinen Fuß.",
-              "words": [
-                "Cold",
-                "stone",
-                "bites",
-                "my",
-                "foot."
-              ]
-            },
-            {
-              "target": "Silence fills the peak.",
-              "source": "Stille füllt den Gipfel.",
-              "words": [
-                "Silence",
-                "fills",
-                "the",
-                "peak."
-              ],
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "Die Stille erfüllt den Gipfel.",
-                  "field": "source",
-                  "at": "2026-07-21T16:33:38.149Z"
-                }
-              },
-              "qc": {
-                "sug": "Die Stille erfüllt den Gipfel.",
-                "field": "source",
-                "at": "2026-07-21T16:33:38.149Z",
-                "by": "translategemma:12b"
-              }
-            },
-            {
-              "target": "Thick mist brings fear.",
-              "source": "Dichter Nebel bringt Angst.",
-              "words": [
-                "Thick",
-                "mist",
-                "brings",
-                "fear."
-              ]
-            },
-            {
-              "target": "The stone falls silently.",
-              "source": "Der Stein fällt lautlos.",
-              "words": [
-                "The",
-                "stone",
-                "falls",
-                "silently."
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 818,
-            "completionTokens": 267,
-            "ms": 104948,
-            "at": "2026-07-21T16:25:51.695Z"
-          },
-          "_arcMode": "reinforce"
-        }
-      ],
-      "generationStats": {
-        "totalMs": 215831,
-        "backend": "ollama",
-        "model": "qwen3.6:35b-a3b",
-        "models": {
-          "story": "qwen3.6:35b-a3b",
-          "translation": null,
-          "lessons": "qwen3.6:35b-a3b"
-        },
-        "lessonFormat": "json",
-        "totalPromptTokens": 5635,
-        "totalCompletionTokens": 499,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 142008,
-            "promptTokens": 779,
-            "completionTokens": 264
-          }
-        ],
-        "tokensByType": {
-          "lesson_qc": 4598
-        }
-      },
-      "generatedAt": "2026-07-21T16:21:44.709Z",
-      "updatedAt": "2026-07-21T16:33:51.367Z",
-      "createdBy": "admin",
-      "id": "tp_17846511517370000393"
-    },
-    {
-      "topic": "Dunkel und Feucht",
-      "topicEmoji": "：<",
-      "userTopic": "in den alpen wandern",
-      "userPrompt": "in den alpen wandern",
-      "lang": "en",
-      "srcLang": "de",
-      "difficulty": 1,
-      "storyLen": 50,
-      "story": "The trail vanished beneath a sudden, suffocating fog that smelled of wet iron and old stone. Elias stumbled, his boots slipping on moss-slicked granite as the silence deepened into a heavy, watchful pressure. Above him, the jagged peaks disappeared into the gray void, leaving only the oppressive weight of the mountain itself. A low hum vibrated through the soles of his feet, not from wind, but from something vast and ancient stirring in the depths below. He turned to flee, but the path he had just traversed was gone, swallowed by the mist as if it had never existed.",
-      "storyLang": "target",
-      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Suspenseful, eerie atmosphere, foreboding.\n\nWrite a story for the topic: \"in den alpen wandern\". Plain prose, no headings.",
-      "storyMeta": {
-        "type": "story",
-        "model": "qwen3.6:35b-a3b",
-        "attempts": null,
-        "valid": 1,
-        "rejected": 0,
-        "rejectReasons": null,
-        "promptTokens": 136,
-        "completionTokens": 125,
-        "ms": 34600,
-        "at": "2026-07-21T16:17:59.428Z",
-        "origin": "generated",
-        "source": "recorded at generation"
-      },
-      "translationMeta": {
-        "type": "translation",
-        "model": "(none)",
-        "attempts": null,
-        "valid": 0,
-        "rejected": 0,
-        "rejectReasons": null,
-        "promptTokens": 0,
-        "completionTokens": 0,
-        "ms": null,
-        "at": "2026-07-21T16:17:59.428Z",
-        "origin": "skipped-same-model",
-        "source": "recorded at generation"
-      },
-      "storyStyle": "horror",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Wandern in den Bergen",
-          "desc": "Elias verliert sich im Nebel",
-          "icon": "🏔️",
-          "vocab": [
-            {
-              "target": "fog",
-              "source": "Nebel"
-            },
-            {
-              "target": "trail",
-              "source": "Weg"
-            },
-            {
-              "target": "stone",
-              "source": "Stein"
-            },
-            {
-              "target": "silence",
-              "source": "Stille"
-            },
-            {
-              "target": "peak",
-              "source": "Gipfel"
-            },
-            {
-              "target": "mist",
-              "source": "Nebel",
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "Dunst",
-                  "field": "source",
-                  "at": "2026-07-21T16:31:00.084Z"
-                }
-              },
-              "qc": {
-                "sug": "Dunst",
-                "field": "source",
-                "at": "2026-07-21T16:31:00.084Z",
-                "by": "translategemma:12b"
-              }
-            },
-            {
-              "target": "foot",
-              "source": "Fuß"
-            },
-            {
-              "target": "fear",
-              "source": "Angst"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "The fog is thick.",
-              "source": "Der Nebel ist dicht.",
-              "words": [
-                "The",
-                "fog",
-                "is",
-                "thick."
-              ]
-            },
-            {
-              "target": "He sees a stone.",
-              "source": "Er sieht einen Stein.",
-              "words": [
-                "He",
-                "sees",
-                "a",
-                "stone."
-              ]
-            },
-            {
-              "target": "Silence fills the air.",
-              "source": "Stille füllt die Luft.",
-              "words": [
-                "Silence",
-                "fills",
-                "the",
-                "air."
-              ]
-            },
-            {
-              "target": "The peak is high.",
-              "source": "Der Gipfel ist hoch.",
-              "words": [
-                "The",
-                "peak",
-                "is",
-                "high."
-              ]
-            },
-            {
-              "target": "Fear grips his heart.",
-              "source": "Angst packt sein Herz.",
-              "words": [
-                "Fear",
-                "grips",
-                "his",
-                "heart."
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 727,
-            "completionTokens": 298,
-            "ms": 151309,
-            "at": "2026-07-21T16:20:30.788Z"
-          }
-        }
-      ],
-      "generationStats": {
-        "totalMs": 185961,
-        "backend": "ollama",
-        "model": "qwen3.6:35b-a3b",
-        "models": {
-          "story": "qwen3.6:35b-a3b",
-          "translation": null,
-          "lessons": "qwen3.6:35b-a3b"
-        },
-        "lessonFormat": "json",
-        "totalPromptTokens": 3110,
-        "totalCompletionTokens": 462,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 151309,
-            "promptTokens": 727,
-            "completionTokens": 298
-          }
-        ],
-        "tokensByType": {
-          "lesson_qc": 2286
-        }
-      },
-      "generatedAt": "2026-07-21T16:17:59.429Z",
-      "updatedAt": "2026-07-21T16:31:36.711Z",
-      "createdBy": "admin",
-      "id": "tp_17846508308300000276",
-      "continuedFromId": null,
-      "continuedFrom": null
     },
     {
       "topic": "Geisterhafte Gestalten",
@@ -85762,7 +85276,9 @@
               ]
             }
           ],
-          "_hidden": true
+          "_hidden": true,
+          "qcAt": "2026-08-04T19:10:43.366Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1780765298128",
@@ -86096,7 +85612,9 @@
             }
           ],
           "_recreated": true,
-          "_hidden": true
+          "_hidden": true,
+          "qcAt": "2026-08-04T21:14:38.534Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1782125530664_4_synonyms",
@@ -86289,8 +85807,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 4124,
-        "totalCompletionTokens": 1485,
+        "totalPromptTokens": 27523,
+        "totalCompletionTokens": 2297,
         "lessons": [
           {
             "lessonNum": 1,
@@ -86306,11 +85824,13 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 3131
+          "recreate": 3131,
+          "lesson_qc": 22844,
+          "story_qc": 1367
         }
       },
       "generatedAt": "2026-06-04T20:35:36.041Z",
-      "updatedAt": "2026-08-02T12:14:32.968Z",
+      "updatedAt": "2026-08-04T21:25:52.563Z",
       "id": "tp_103972811",
       "continuedFromId": "tp_799905727",
       "storyMeta": {
@@ -86341,7 +85861,9 @@
         "source": "generationStats.models.translation",
         "origin": "generated"
       },
-      "createdBy": "admin"
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-04T19:29:57.871Z"
     },
     {
       "topic": "アプリの魔法",
@@ -87994,7 +87516,8 @@
             },
             {
               "target": "twinkle",
-              "source": "blitzen"
+              "source": "blinzeln",
+              "editedAt": "2026-08-05T05:45:45.008Z"
             },
             {
               "target": "branch",
@@ -88029,13 +87552,14 @@
             },
             {
               "target": "They heard a hoot.",
-              "source": "Sie hörten ein Hupton.",
+              "source": "Sie hörten einen Eulenschrei.",
               "words": [
                 "They",
                 "heard",
                 "a",
                 "hoot."
-              ]
+              ],
+              "editedAt": "2026-08-05T05:46:58.749Z"
             },
             {
               "target": "The owl nodded.",
@@ -88080,10 +87604,10 @@
               "translation": "i und 0 wechselten einen Blick, dann sprach 0 auf: 'Wir versuchen, mehr über Zahlen und den Umwelt um uns herum zu verstehen. Wir haben gehört, dass du uns vielleicht helfen kannst.'",
               "choices": [
                 "up",
-                "out"
+                "down"
               ],
               "correctIndex": 0,
-              "explanation": "Verbform 'up' passt besser zum Kontext."
+              "explanation": "'up' passt besser zum Kontext."
             },
             {
               "sentence": "The sun was setting, casting long shadows across the path.___",
@@ -88107,7 +87631,9 @@
             }
           ],
           "_recreated": true,
-          "_arcMode": "reinforce"
+          "_arcMode": "reinforce",
+          "qcAt": "2026-08-04T21:57:31.304Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1782129414768_8_synonyms",
@@ -88198,7 +87724,9 @@
             }
           ],
           "_recreated": true,
-          "_arcMode": "reinforce"
+          "_arcMode": "reinforce",
+          "qcAt": "2026-08-04T21:58:53.954Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1785675804550_8_comprehension",
@@ -88261,8 +87789,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 5852,
-        "totalCompletionTokens": 1106,
+        "totalPromptTokens": 18446,
+        "totalCompletionTokens": 1614,
         "lessons": [
           {
             "lessonNum": 1,
@@ -88278,11 +87806,13 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 4532
+          "recreate": 4532,
+          "lesson_qc": 12174,
+          "story_qc": 928
         }
       },
       "generatedAt": "2026-06-09T09:02:22.611Z",
-      "updatedAt": "2026-08-02T13:03:24.550Z",
+      "updatedAt": "2026-08-05T05:56:57.136Z",
       "id": "tp_586040741",
       "aiStory": "pi whispered to the small i, \"You will discover what you are, but you must learn much more first. And you need to meet someone who might help you.\"\n\ni looked up, curious, as they continued their journey deeper into the forest. The sun was setting, casting long shadows across the path. Suddenly, they heard a soft hoot from above. Looking up, they saw an owl perched on a branch, watching them intently.\n\n\"Hello there,\" the owl said, its voice gentle and wise. \"I see you're on a quest, little ones. What brings you to the heart of the forest today?\"\n\ni and 0 exchanged glances, then 0 spoke up, \"We're trying to understand more about numbers and the world around us. We heard you might be able to help us.\"\n\nThe owl nodded, its eyes twinkling. \"Indeed, I can help. But first, let me tell you about a special number. It's called the growth number. It helps us understand how things grow and change over time.\"\n\ni listened intently, its ears perked up. \"Can you show us how it works?\" it asked, eager to learn.\n\nThe owl spread its wings and flew down to a nearby tree. \"Let's look at the branches. Each branch grows from the last, just like the numbers in a sequence. This is similar to what you've been learning, but with a twist.\"\n\nThe owl pointed to a series of branches, each one slightly larger than the last. \"See how each branch is a bit bigger than the one before? That's how the growth number works. It helps us predict how things will grow.\"\n\ni and 0 watched in wonder as the owl explained, their minds buzzing with new knowledge. The adventure was far from over, and they were ready to learn more.",
       "continuedFromId": "tp_1220958947",
@@ -88324,7 +87854,7 @@
       "srcLang": "de",
       "difficulty": 1,
       "storyLen": 400,
-      "story": "pi, the mushroom, hopped over to them, its cap a vibrant green. \"0, i, I have a riddle for you,\" pi said, its voice a soft whisper.\n\n\"Sure, pi, we're all ears,\" i said, leaning in.\n\n\"Very well,\" pi began. \"A man placed a pair of rabbits in a fenced enclosure to see how many pairs would be born in a year. Each month, a pair of rabbits produces another pair, and the new pair starts breeding from the second month onward.\"\n\n0 tilted its head, trying to understand. \"So, the rabbits keep multiplying every month, and they start breeding from the second month?\"\n\n\"Exactly,\" pi said. \"Now, how many pairs of rabbits will there be at the end of the year?\"\n\ni scratched its head, thinking hard. \"Let's see. In the first month, there's one pair. In the second month, they have another pair, so that's two pairs. In the third month, the original pair has another pair, and the new pair starts breeding, so that's three pairs. By the fourth month, it's five pairs, right?\"\n\n\"Correct,\" pi said. \"And by the end of the year, the number of pairs will be much higher. Can you guess how many?\"\n\n0 looked at i, who was still counting on its fingers. \"I think it's 34 pairs in the ninth month,\" i said, holding up its paws. \"But I am running out of fingers.\"\n\n\"Very good!\" pi exclaimed, hugging i. \"You're right. The number of pairs at the in the seventh month is 34. This is a famous sequence in mathematics, known as the Fibonacci sequence.\"\n\n\"Wow, that's amazing,\" 0 said, eyes wide. \"We never knew rabbits could teach us about numbers.\"\n\n\"Indeed,\" pi said, nodding. \"And now that you understand this, let's see if there are any more secrets waiting for us in the forest.\"\n\nTogether, they walked deeper into the woods, the stofftier still waving from the boat. The adventure was far from over, and they were ready for whatever came next.",
+      "story": "pi, the mushroom, hopped over to them, its cap a vibrant green. \"0, i, I have a riddle for you,\" pi said, its voice a soft whisper.\n\n\"Sure, pi, we're all ears,\" i said, leaning in.\n\n\"Very well,\" pi began. \"A man placed a pair of rabbits in a fenced enclosure to see how many pairs would be born in a year. Each month, a pair of rabbits produces another pair, and the new pair starts breeding from the second month onward.\"\n\n0 tilted its head, trying to understand. \"So, the rabbits keep multiplying every month, and they start breeding from the second month?\"\n\n\"Exactly,\" pi said. \"Now, how many pairs of rabbits will there be at the end of the year?\"\n\ni scratched its head, thinking hard. \"Let's see. In the first month, there's one pair. In the second month, they have another pair, so that's two pairs. In the third month, the original pair has another pair, and the new pair starts breeding, so that's three pairs. By the fourth month, it's five pairs, right?\"\n\n\"Correct,\" pi said. \"And by the end of the year, the number of pairs will be much higher. Can you guess how many?\"\n\n0 looked at i, who was still counting on its fingers. \"I think it's 34 pairs in the seventh month,\" i said, holding up its paws. \"But I am running out of fingers.\"\n\n\"Very good!\" pi exclaimed, hugging i. \"You're right. The number of pairs in the seventh month is 34. This is a famous sequence in mathematics, known as the Fibonacci sequence.\"\n\n\"Wow, that's amazing,\" 0 said, eyes wide. \"We never knew rabbits could teach us about numbers.\"\n\n\"Indeed,\" pi said, nodding. \"And now that you understand this, let's see if there are any more secrets waiting for us in the forest.\"\n\nTogether, they walked deeper into the woods, the stofftier still waving from the boat. The adventure was far from over, and they were ready for whatever came next.",
       "storyLang": "target",
       "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Simple vocabulary, playful tone, short sentences. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nng with excitement.\n\n\"Remember how we found out about 0?\" i asked, looking at 0 with a smile.\n\n0 nodded, a hint of a smile on its face. \"Yes, it was amazing. I never thought I could be so important.\"\n\n\"Exactly,\" i said. \"And now, look at us. We've come so far. The stofftier is here, and it's like it's cheering us on.\"\n\nThe stofftier waved again, its movements graceful and joyful. \"It's like it's saying, 'Keep going, you two. There's more to discover,' \" 0 said, a sense of wonder in its voice.\n\ni nodded, feeling a surge of determination. \"Let's go find out what it means. Maybe there's another secret waiting for us.\"\n\nTogether, they stood up and walked towards the riverbank, the stofftier still waving from the boat. The adventure was far from over, and they were ready for whatever came next.\n\nNew topic: \"Ein Pilz names pi kommt vorbei und erzaehlt 0 und i ein Raetsel:\n\nEin Mann setzte ein Kaninchenpaar in ein umzäuntes Gehege, um herauszufinden, wie viele Paare im Laufe eines Jahres daraus hervorgehen würden: Von Natur aus bringt ein Kaninchenpaar jeden Monat ein weiteres Paar hervor und beginnt ab dem zweiten Monat nach der Geburt selbst mit der Fortpflanzung.\". Write the continuation now. Plain prose, no headings.",
       "continuedFrom": "0 und i am Fluss",
@@ -88439,7 +87969,9 @@
               ]
             }
           ],
-          "_hidden": false
+          "_hidden": false,
+          "qcAt": "2026-08-04T21:14:00.790Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "aeh_1780912491524",
@@ -88471,11 +88003,11 @@
             },
             {
               "ai": "The number of pairs at the end of the year is 34.",
-              "corrected": "The number of pairs at the in the seventh month is 34.",
+              "corrected": "The number of pairs in the seventh month is 34.",
               "reason": ""
             }
           ],
-          "_hidden": false
+          "_hidden": true
         },
         {
           "id": "ls_1780930634694",
@@ -88706,7 +88238,9 @@
               ]
             }
           ],
-          "_recreated": true
+          "_recreated": true,
+          "qcAt": "2026-08-04T21:31:06.787Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1782128284708_7_word_forms",
@@ -88747,7 +88281,9 @@
             }
           ],
           "_recreated": true,
-          "_arcMode": "reinforce"
+          "_arcMode": "reinforce",
+          "qcAt": "2026-08-04T21:32:35.624Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1782128562620_7_synonyms",
@@ -88757,17 +88293,13 @@
           "icon": "🐰",
           "words": [
             {
-              "base": "pairs",
-              "gloss": "Paare",
+              "base": "pair",
+              "gloss": "Paar",
               "sentence": "\"A man placed a pair of rabbits in a fenced enclosure to see how many pairs would be born in a year.",
               "synonyms": [
                 {
                   "w": "couple",
                   "g": "Paar"
-                },
-                {
-                  "w": "sets",
-                  "g": "Sätze"
                 }
               ],
               "antonyms": [],
@@ -88847,29 +88379,11 @@
                   "g": "Kaninchen"
                 },
                 {
-                  "w": "rabes",
+                  "w": "coneys",
                   "g": "Kaninchen"
                 }
               ],
               "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "second",
-              "gloss": "zweiter",
-              "sentence": "Each month, a pair of rabbits produces another pair, and the new pair starts breeding from the second month onward.\"",
-              "synonyms": [
-                {
-                  "w": "secondly",
-                  "g": "zweitens"
-                }
-              ],
-              "antonyms": [
-                {
-                  "w": "first",
-                  "g": "erster"
-                }
-              ],
               "homophones": []
             }
           ],
@@ -88882,8 +88396,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 12835,
-        "totalCompletionTokens": 2736,
+        "totalPromptTokens": 25164,
+        "totalCompletionTokens": 3327,
         "lessons": [
           {
             "lessonNum": 1,
@@ -88899,11 +88413,13 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 13096
+          "recreate": 13096,
+          "lesson_qc": 11795,
+          "story_qc": 1125
         }
       },
       "generatedAt": "2026-06-08T09:33:58.603Z",
-      "updatedAt": "2026-08-02T12:53:08.617Z",
+      "updatedAt": "2026-08-05T05:55:46.626Z",
       "id": "tp_1220958947",
       "aiStory": "pi, the mushroom, hopped over to them, its cap a vibrant green. \"0, i, I have a riddle for you,\" pi said, its voice a soft whisper.\n\n\"Sure, pi, we're all ears,\" i said, leaning in.\n\n\"Very well,\" pi began. \"A man placed a pair of rabbits in a fenced enclosure to see how many pairs would be born in a year. Each month, a pair of rabbits produces another pair, and the new pair starts breeding from the second month onward.\"\n\n0 tilted its head, trying to understand. \"So, the rabbits keep multiplying every month, and they start breeding from the second month?\"\n\n\"Exactly,\" pi said. \"Now, how many pairs of rabbits will there be at the end of the year?\"\n\ni scratched its head, thinking hard. \"Let's see. In the first month, there's one pair. In the second month, they have another pair, so that's two pairs. In the third month, the original pair has another pair, and the new pair starts breeding, so that's three pairs. By the fourth month, it's five pairs, right?\"\n\n\"Correct,\" pi said. \"And by the end of the year, the number of pairs will be much higher. Can you guess how many?\"\n\n0 looked at i, who was still counting on its fingers. \"I think it's 34 pairs,\" i said, holding up its paws.\n\n\"Very good!\" pi exclaimed, hugging i. \"You're right. The number of pairs at the end of the year is 34. This is a famous sequence in mathematics, known as the Fibonacci sequence.\"\n\n\"Wow, that's amazing,\" 0 said, eyes wide. \"We never knew rabbits could teach us about numbers.\"\n\n\"Indeed,\" pi said, nodding. \"And now that you understand this, let's see if there are any more secrets waiting for us in the forest.\"\n\nTogether, they walked deeper into the woods, the stofftier still waving from the boat. The adventure was far from over, and they were ready for whatever came next.",
       "continuedFromId": "tp_1356093754",
@@ -90717,7 +90233,7 @@
             },
             {
               "target": "To understand the true meaning of the zero is a challenge.",
-              "source": "Der wirkliche Bedeutung der Null zu verstehen, ist eine Herausforderung.",
+              "source": "Die wahre Bedeutung der Null zu verstehen, ist eine Herausforderung.",
               "words": [
                 "To",
                 "understand",
@@ -90734,11 +90250,12 @@
               "_manualEdits": [
                 "2026-06-07T06:18:59.655Z",
                 "2026-06-07T06:23:14.863Z"
-              ]
+              ],
+              "editedAt": "2026-08-04T21:09:51.692Z"
             },
             {
               "target": "Together, we discovered the magic of adding and subtracting.",
-              "source": "Zusammen haben wir die Magie von Zusammenzählen und Voneinander abziehen entdeckt.",
+              "source": "Zusammen haben wir die Magie des Addierens und Subtrahierens entdeckt.",
               "words": [
                 "Together,",
                 "we",
@@ -90752,7 +90269,8 @@
               ],
               "_manualEdits": [
                 "2026-06-07T06:18:59.655Z"
-              ]
+              ],
+              "editedAt": "2026-08-04T21:10:26.433Z"
             }
           ],
           "_hidden": false
@@ -91038,7 +90556,7 @@
               "synonyms": [
                 {
                   "w": "assented",
-                  "g": "zustimmte"
+                  "g": "stimmte zu"
                 }
               ],
               "antonyms": [
@@ -91047,19 +90565,6 @@
                   "g": "schüttelte"
                 }
               ],
-              "homophones": []
-            },
-            {
-              "base": "there",
-              "gloss": "da",
-              "sentence": "There's more to discover,' \" 0 said, a sense of wonder in its voice.",
-              "synonyms": [
-                {
-                  "w": "here",
-                  "g": "hier"
-                }
-              ],
-              "antonyms": [],
               "homophones": []
             },
             {
@@ -91171,8 +90676,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 5020,
-        "totalCompletionTokens": 1039,
+        "totalPromptTokens": 16516,
+        "totalCompletionTokens": 1458,
         "lessons": [
           {
             "lessonNum": 1,
@@ -91188,11 +90693,13 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 3689
+          "recreate": 3689,
+          "lesson_qc": 11180,
+          "story_qc": 735
         }
       },
       "generatedAt": "2026-06-07T05:48:31.565Z",
-      "updatedAt": "2026-08-02T12:30:27.404Z",
+      "updatedAt": "2026-08-04T21:11:54.891Z",
       "id": "tp_1356093754",
       "continuedFromId": "tp_118316007",
       "storyMeta": {
@@ -91223,7 +90730,9 @@
         "source": "generationStats.models.translation",
         "origin": "generated"
       },
-      "createdBy": "admin"
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-04T20:47:18.065Z"
     },
     {
       "topic": "Das Geheimnis von 0",
@@ -91653,7 +91162,7 @@
             },
             {
               "target": "When you multiply any number by 0, you get 0.",
-              "source": "Wenn du irgendein Zahl mit 0 multiplizierst, bekommst du 0.",
+              "source": "Wenn man irgendeine Zahl mit 0 multipliziert, bekommt man 0.",
               "words": [
                 "When",
                 "you",
@@ -91665,7 +91174,8 @@
                 "you",
                 "get",
                 "0."
-              ]
+              ],
+              "editedAt": "2026-08-04T21:08:38.724Z"
             },
             {
               "target": "Without it, the whole thing doesn't work.",
@@ -91755,7 +91265,9 @@
             }
           ],
           "_recreated": true,
-          "_arcMode": "reinforce"
+          "_arcMode": "reinforce",
+          "qcAt": "2026-08-04T19:51:39.586Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1782126571154_5_synonyms",
@@ -91798,11 +91310,11 @@
             {
               "base": "times",
               "gloss": "mal",
-              "sentence": "\"1 times 0 is 0.",
+              "sentence": "1 times 0 is 0.",
               "synonyms": [
                 {
-                  "w": "multiplied",
-                  "g": "multipliziert"
+                  "w": "multiplied by",
+                  "g": "multipliziert mit"
                 }
               ],
               "antonyms": [],
@@ -91930,8 +91442,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 4808,
-        "totalCompletionTokens": 1321,
+        "totalPromptTokens": 17427,
+        "totalCompletionTokens": 1896,
         "lessons": [
           {
             "lessonNum": 1,
@@ -91947,11 +91459,13 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 3513
+          "recreate": 3513,
+          "lesson_qc": 12139,
+          "story_qc": 1055
         }
       },
       "generatedAt": "2026-06-04T21:32:54.652Z",
-      "updatedAt": "2026-08-02T12:22:28.869Z",
+      "updatedAt": "2026-08-04T21:09:31.432Z",
       "id": "tp_118316007",
       "continuedFromId": "tp_103972811",
       "storyMeta": {
@@ -91982,7 +91496,9 @@
         "source": "generationStats.models.translation",
         "origin": "generated"
       },
-      "createdBy": "admin"
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-04T20:00:45.049Z"
     },
     {
       "topic": "Visit Jerusalem, city of three religions",
@@ -93157,7 +92673,9 @@
               ]
             }
           ],
-          "_hidden": false
+          "_hidden": false,
+          "qcAt": "2026-08-04T18:38:38.269Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1780604030829",
@@ -93218,7 +92736,7 @@
             },
             {
               "target": "i has a right to explore who it is.",
-              "source": "i hat das Recht, wer es ist, zu erkunden.",
+              "source": "i hat das Recht, zu erkunden wer es ist.",
               "words": [
                 "i",
                 "has",
@@ -93229,7 +92747,8 @@
                 "who",
                 "it",
                 "is."
-              ]
+              ],
+              "editedAt": "2026-08-04T19:43:47.976Z"
             },
             {
               "target": "2 stepped forward.",
@@ -93278,7 +92797,7 @@
           "items": [
             {
               "sentence": "1 snorted. ___ and who are you to tell me what to do? You're just a 2, after all.",
-              "translation": "1 schnaubte. Und wer bist du, um mich zu beurteilen? Du bist nur eine 2, nachdem alles.",
+              "translation": "1 schnaubte. Und wer bist du, um mich zu beurteilen? Du bist schließlich nur eine 2.",
               "choices": [
                 "and who",
                 "and what",
@@ -93503,8 +93022,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 3718,
-        "totalCompletionTokens": 1442,
+        "totalPromptTokens": 16311,
+        "totalCompletionTokens": 2115,
         "lessons": [
           {
             "lessonNum": 1,
@@ -93520,11 +93039,13 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 2580
+          "recreate": 2580,
+          "lesson_qc": 12009,
+          "story_qc": 1257
         }
       },
       "generatedAt": "2026-06-04T20:00:09.553Z",
-      "updatedAt": "2026-08-02T12:07:06.788Z",
+      "updatedAt": "2026-08-04T19:45:58.124Z",
       "id": "tp_799905727",
       "continuedFromId": "tp_2088453173",
       "storyMeta": {
@@ -93555,7 +93076,9 @@
         "source": "generationStats.models.translation",
         "origin": "generated"
       },
-      "createdBy": "admin"
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-04T19:00:39.297Z"
     },
     {
       "topic": "Das Ich trifft das  i=√(-1)",
@@ -93823,8 +93346,8 @@
             },
             {
               "target": "kind",
-              "source": "lieb",
-              "editedAt": "2026-07-21T07:49:49.804Z"
+              "source": "nett",
+              "editedAt": "2026-08-04T18:10:39.915Z"
             },
             {
               "target": "join",
@@ -93981,24 +93504,6 @@
               ],
               "antonyms": [],
               "homophones": []
-            },
-            {
-              "base": "either",
-              "gloss": "entweder",
-              "sentence": "I'm not a number, and yet, I'm not like the little i either.\"",
-              "synonyms": [
-                {
-                  "w": "neither",
-                  "g": "nichts"
-                }
-              ],
-              "antonyms": [
-                {
-                  "w": "both",
-                  "g": "beide"
-                }
-              ],
-              "homophones": []
             }
           ],
           "_recreated": true,
@@ -94076,8 +93581,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 7827,
-        "totalCompletionTokens": 1466,
+        "totalPromptTokens": 14162,
+        "totalCompletionTokens": 2006,
         "lessons": [
           {
             "lessonNum": 1,
@@ -94093,12 +93598,13 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "lesson_qc": 5645,
-          "recreate": 1595
+          "lesson_qc": 11395,
+          "recreate": 1595,
+          "story_qc": 1125
         }
       },
       "generatedAt": "2026-06-03T09:38:48.158Z",
-      "updatedAt": "2026-08-04T16:04:40.408Z",
+      "updatedAt": "2026-08-04T18:10:43.271Z",
       "id": "tp_579238210",
       "continuedFromId": "tp_131653303",
       "storyMeta": {
@@ -94129,7 +93635,9 @@
         "source": "generationStats.models.translation",
         "origin": "generated"
       },
-      "createdBy": "admin"
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-04T18:08:22.004Z"
     },
     {
       "topic": "Giulia e il circo",
@@ -97907,7 +97415,9 @@
               "plural": "stars"
             }
           ],
-          "_hidden": false
+          "_hidden": false,
+          "qcAt": "2026-08-04T18:10:21.083Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1782122406824_2_gate",
@@ -97961,7 +97471,7 @@
             },
             {
               "target": "Would you like to join us?",
-              "source": "Möchtest du uns bei uns mitmachen?",
+              "source": "Möchtest du zu uns kommen?",
               "words": [
                 "Would",
                 "you",
@@ -97969,7 +97479,8 @@
                 "to",
                 "join",
                 "us?"
-              ]
+              ],
+              "editedAt": "2026-08-04T19:00:59.927Z"
             },
             {
               "target": "The creature was fascinated.",
@@ -98093,7 +97604,9 @@
             }
           ],
           "_recreated": true,
-          "_arcMode": "reinforce"
+          "_arcMode": "reinforce",
+          "qcAt": "2026-08-04T18:20:59.532Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1785672037234_2_comprehension",
@@ -98167,8 +97680,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 4034,
-        "totalCompletionTokens": 2075,
+        "totalPromptTokens": 12966,
+        "totalCompletionTokens": 2609,
         "lessons": [
           {
             "promptTokens": 498,
@@ -98182,11 +97695,13 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 4030
+          "recreate": 4030,
+          "lesson_qc": 8385,
+          "story_qc": 1081
         }
       },
       "generatedAt": "2026-06-03T09:53:02.146Z",
-      "updatedAt": "2026-08-02T12:00:37.234Z",
+      "updatedAt": "2026-08-04T19:01:04.020Z",
       "id": "tp_2088453173",
       "continuedFromId": "tp_579238210",
       "storyMeta": {
@@ -98217,7 +97732,9 @@
         "source": "generationStats.models.translation",
         "origin": "generated"
       },
-      "createdBy": "admin"
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-04T18:28:21.498Z"
     },
     {
       "topic": "Das kleine Ich bin ich",
@@ -98227,7 +97744,7 @@
       "srcLang": "de",
       "difficulty": 1,
       "storyLen": 550,
-      "story": "A small, colourful creature with long ears and a floral pattern is happily hopping across a meadow. Suddenly, a tree frog asks: “Who are you?” As the creature doesn’t know its name, it begins to doubt itself.\n\n\nThe creature sets off on a journey to find out who it belongs to. It meets many different animals – including horses, birds, dogs and fish. Although it discovers certain similarities with each animal, it is not 100 percent like any of them.\n\nSad and exhausted, the creature finally wonders whether it exists at all. But then it stops abruptly, reflects on itself and cries out loudly: “Of course I exist: I AM ME!” It accepts and loves itself exactly as it is.",
+      "story": "A small, colourful creature with long ears and a floral pattern is happily hopping across a meadow. Suddenly, a tree frog asks: “Who are you?” As the creature doesn’t know its name, it begins to doubt itself.\n\nThe creature sets off on a journey to find out who it belongs to. It meets many different animals—including horses, birds, dogs, and fish. Although it discovers certain similarities with each animal, it is not 100 percent like any of them.\n\nSad and exhausted, the creature finally wonders whether it exists at all. But then it stops abruptly, reflects on itself, and cries out loudly: “Of course I exist: I AM ME!” It accepts and loves itself exactly as it is.",
       "storyLang": "en",
       "storyPrompt": "User-provided story",
       "userStory": "The trigger: a small, colourful creature with long ears and a floral pattern is happily hopping across a meadow. Suddenly, a tree frog asks: “Who are you?” As the creature doesn’t know its name, it begins to doubt itself. \n\nThe search: The creature sets off on a journey to find out who it belongs to. It meets many different animals – including horses, birds, dogs and fish. Although it discovers certain similarities with each animal, it is not 100 per cent like any of them. \n\nThe realisation: Sad and exhausted, the creature finally wonders whether it exists at all. But then it stops abruptly, reflects on itself and cries out loudly: “Of course I exist: I AM ME!” It accepts and loves itself exactly as it is.",
@@ -98325,7 +97842,9 @@
               ]
             }
           ],
-          "_hidden": false
+          "_hidden": false,
+          "qcAt": "2026-08-04T17:38:15.333Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": 5,
@@ -98405,7 +97924,9 @@
               "plural": "lights"
             }
           ],
-          "_hidden": false
+          "_hidden": false,
+          "qcAt": "2026-08-04T17:39:22.230Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": 6,
@@ -98570,13 +98091,15 @@
               ]
             }
           ],
-          "_hidden": false
+          "_hidden": false,
+          "qcAt": "2026-08-04T17:39:45.334Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "aeh_1780765589224",
           "type": "ai_error_hunt",
           "title": "AI Error Hunt",
-          "desc": "Find AI errors that were corrected by a human tutor.",
+          "desc": "Find AI errors that were corrected by a proofreader.",
           "icon": "🔎",
           "aiStory": "The trigger: a small, colourful creature with long ears and a floral pattern is happily hopping across a meadow. Suddenly, a tree frog asks: “Who are you?” As the creature doesn’t know its name, it begins to doubt itself. \n\nThe search: The creature sets off on a journey to find out who it belongs to. It meets many different animals – including horses, birds, dogs and fish. Although it discovers certain similarities with each animal, it is not 100 per cent like any of them. \n\nThe realisation: Sad and exhausted, the creature finally wonders whether it exists at all. But then it stops abruptly, reflects on itself and cries out loudly: “Of course I exist: I AM ME!” It accepts and loves itself exactly as it is.",
           "sentences": [
@@ -98596,6 +98119,21 @@
               "reason": ""
             },
             {
+              "ai": "It meets many different animals – including horses,",
+              "corrected": "It meets many different animals—including horses,",
+              "reason": ""
+            },
+            {
+              "ai": "dogs and fish.",
+              "corrected": "dogs,",
+              "reason": ""
+            },
+            {
+              "ai": null,
+              "corrected": "and fish.",
+              "reason": ""
+            },
+            {
               "ai": "it is not 100 per cent like any of them.",
               "corrected": "it is not 100 percent like any of them.",
               "reason": ""
@@ -98604,8 +98142,30 @@
               "ai": "The realisation:",
               "corrected": null,
               "reason": ""
+            },
+            {
+              "ai": "reflects on itself and cries out loudly:",
+              "corrected": "reflects on itself,",
+              "reason": ""
+            },
+            {
+              "ai": null,
+              "corrected": "and cries out loudly:",
+              "reason": ""
             }
           ],
+          "_genMeta": {
+            "type": "ai_error_hunt",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 10,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "ms": null,
+            "at": "2026-08-04T17:50:27.074Z"
+          },
           "_hidden": true
         },
         {
@@ -98733,7 +98293,9 @@
               "editedAt": "2026-07-21T07:32:10.028Z"
             }
           ],
-          "_recreated": true
+          "_recreated": true,
+          "qcAt": "2026-08-04T17:46:57.625Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1785671137281_0_comprehension",
@@ -98796,8 +98358,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 5015,
-        "totalCompletionTokens": 2057,
+        "totalPromptTokens": 18838,
+        "totalCompletionTokens": 2332,
         "lessons": [
           {
             "lessonNum": 1,
@@ -98825,12 +98387,13 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "lesson_qc": 2238,
-          "recreate": 955
+          "lesson_qc": 15841,
+          "recreate": 955,
+          "story_qc": 495
         }
       },
       "generatedAt": "2026-06-03T08:54:37.623Z",
-      "updatedAt": "2026-08-02T11:45:37.281Z",
+      "updatedAt": "2026-08-04T17:50:36.977Z",
       "id": "tp_131653303",
       "repairStats": {
         "repairCount": 1,
@@ -98868,7 +98431,11 @@
         "source": "generationStats.models.translation",
         "origin": "generated"
       },
-      "createdBy": "admin"
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-04T17:49:50.482Z",
+      "storyQcBy": "translategemma:12b",
+      "storyQcAt": "2026-08-04T17:50:27.073Z"
     },
     {
       "topic": "Bioreaktor vs. Erde",
