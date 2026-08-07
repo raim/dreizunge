@@ -58,19 +58,26 @@ table in the same file before starting it — session 26 carried an item through
 four releases that had already shipped.
 
 1. The pass mark — blocked on my browser pass. Discuss before touching.
-2. Highlighting (roadmap §2). MEASURED but not shipped, and the OLD plan in
+2. Allow sentence ordering at difficulty 1. Measured and agreed at the v75 cut:
+   192 of 287 chapters with sentences never show an ordering exercise, because
+   difficulty 1 filters `order` out in buildStandardExercises. Note this
+   REVERSES my own instruction of 2026-07-14 (v69_session1_notes.md:141) — I've
+   changed my mind about the word bank being production, so write it up as a
+   decision reversed, not a bug fixed. It's denominator-neutral post-v74_c.
+   unit-beginner-types pins the old behaviour in four places; rewrite it.
+3. Highlighting (roadmap §3). MEASURED but not shipped, and the OLD plan in
    roadmap_v74.md is wrong: _articleStatsFor reads grammar items and returns
    sampleSize 0 on the chapters that need it. The corpus-derived replacement is
    measured in the session 28 notes. Size it by the per-chapter effect (Churros
    2 → 10 marks), not the +1% aggregate. Do NOT revert the word boundaries.
-3. Browsing completion cards of already-played lessons, with explicit back/next
+4. Browsing completion cards of already-played lessons, with explicit back/next
    so I can revisit and replay. This turns v74_o's "nothing left to do" terminal
    state into a waypoint and interacts with v74_l's Next-only rule — revisit
    both branches together rather than adding a third navigation rule on top.
-4. _sbChapterTarget (index.html ~8065) — the seventh and last known instance of
+5. _sbChapterTarget (index.html ~8065) — the seventh and last known instance of
    the raw-lessons pattern. Its test extracts it in isolation, so the harness
    needs reworking first.
-5. The storyline-page TTS selector, which was lost with no note explaining why.
+6. The storyline-page TTS selector, which was lost with no note explaining why.
    I'd like to choose between English variants for readout.
 
 Still queued for me, don't start them in a container: the comprehension QC

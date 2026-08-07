@@ -1,7 +1,21 @@
 # Roadmap — v75 line
 
-Current cut: **`v75`**. Baseline `node test/run.js` **170**, `--quick` **149**, `check-inline` 0 on
-both builds. Read `build_history/HANDOVER.md` first, then this file, then `INTERNALS.md`, then
+Current cut: **`v75_h`**. Baseline `node test/run.js` **174**, `--quick` **151**, `check-inline` 0 on
+both builds. (Session 29 opened on a RED baseline — 2 of 170 — for two unrelated real causes; see
+`build_history/v75h_session29_notes.md`. Neither was a stale fixture.)
+
+## Shipped in the v75 line (session 29)
+
+| release | what |
+|---|---|
+| `v75_b` | **`ui.json` predated the code.** `complete.words_solved` + `form.finish_mixed` were absent from all 30 languages including `en`, so `t()` rendered the raw key to the learner. The returned translate pass was itself clean (596×30, 0 missing/0 extra) — it simply predated the two keys. Also repaired `common.cancel`, a key that **never existed in any release**, written as `t('…') \|\| 'Cancel'` — a fallback that can never fire because `t()` returns the truthy key on a miss. New `unit-ui-key-exists` sweeps all **491** literal `t()` keys against `en`, and bans the dead-fallback shape. |
+| `v75_c` | **`smoke-render` crossword: the product was right.** Corpus drift (297 topics) made the default fixture and the §3 lock fixture the same chapter; the lock probe's completion (keyed by topic NAME) leaked forward through a `seed()` that preserves `APP.progress`, the story counted as unlocked, and `v74_l` correctly hid the crossword. Progress cleared + the precondition asserted, so the section cannot silently become a test of a rule `unit-story-unlocked-card` already owns. |
+| `v75_e` | **Comprehension and math lesson edits were silently discarded.** `/api/lessons/edit` merges a WHITELIST of content fields; `questions` (comprehension) and `numbers`/`mathOps` (math) were not on it, so edits returned HTTP 200 and changed nothing. Measured across all 11 registry types: **6 of 16 field edits lost**. New `e2e-lesson-edit-roundtrip` drives its cases off `LESSON_TYPE_META`, so a new lesson type cannot repeat this. |
+| `v75_f` | **A flagged merge-import destroyed a storyline's storyboard.** `_syncStorylineForTopic` identified a chain by ID alone — a hash of the chapter list — so a storyline whose id was not that hash fell through to the FORK branch and was rebuilt from six fields, losing `storyboard`/`summary`/`tags`/`icon`; the dedup then kept the bare copy because its tie-break reads TITLES, not content. Reproduced exactly against the user's real export, fixed at the identity check (a storyline covering exactly these chapters IS this chain). |
+| `v75_g` | **Serbian + Croatian added, with their own script table.** `sr → ["cyrillic-sr","latin"]` (digraphic), `hr → "latin"`. Serbian does NOT use the existing `cyrillic` table — that is the 33-letter RUSSIAN alphabet, with nine letters Serbian lacks and `Е` read as /je/ where Serbian has /e/. New 30-row table validated by Unicode property checks and run through the product builder (65 exercises). Latin is correctly NOT taught to a Serbian reader — that falls out of `latin.soundsFor`, no new rule. |
+| `v75_h` | **The read-out was cut off; both reported symptoms were one defect.** `_speakAndAdvance` armed a flat 4s safety net, so a longer sentence advanced MID-utterance and the next question's auto-speak then `cancel()`ed the readout still running. The net now watches PROGRESS (three consecutive idle polls) instead of wall-clock, `cancel()` fires only when something is in flight, and the text is chunked through the shared `_speakChunksThen`. |
+| `v75_d` | **Sentence ordering allowed at difficulty 1** (§2 below). Measured: `order` questions 675 → 1710; ITEM denominator 8332 → **8332**, unchanged. `smoke-render` renderEx went 5 → 6 types — the `order` render path had never been executed on a beginner chapter. |
+ Read `build_history/HANDOVER.md` first, then this file, then `INTERNALS.md`, then
 `build_history/v74b_session28_notes.md` (session 28 — long, and the findings matter more than the
 diffs).
 
@@ -61,7 +75,10 @@ correct answer, so 80% is a materially lower bar than before `v74_c`. Deliberate
 the current mark's meaning was set by play, and a rescale without play would be a guess dressed as a
 decision. **Blocked on a browser pass.**
 
-### 2. Allow sentence ordering at difficulty 1 (user, at the v75 cut)
+### 2. Allow sentence ordering at difficulty 1 (user, at the v75 cut) — ✅ SHIPPED `v75_d`
+
+**Shipped in session 29.** Numbers below were re-measured on the current corpus and held
+(281 sentence-bearing chapters, 191 suppressed; denominator-neutral). Kept for the reasoning.
 
 **Measured, agreed, not started.** Two thirds of the corpus never shows a sentence-ordering
 exercise:
@@ -145,6 +162,42 @@ the per-chapter effect, not the aggregate. The filter (`count>=3`, `standalone*4
 Tier 2 (corpus inflections from `word_forms` / `grammar.plural`) is untouched and would address the
 3 stem-only cases.
 
+### 3b. The Android English voice — MEASURED session 29, a real hole in `v74_j`, NOT shipped
+
+User, at the v75 cut: *"i still get caribbean sounding english on the static site at github, and
+only on android"*. Not a cache and not a stale deploy — **`v74_j` fixed only the case where the
+exact locale is PRESENT.** `languages.json` maps `en → en-GB`; with no `en-GB` voice installed,
+`_ttsRankVoices` falls through `usable → exact → quality`, nothing is exact, and quality alone
+decides — so a NETWORK voice in an arbitrary region beats the LOCAL `en-US`. Measured by calling the
+product ranker: `en-GB` absent → **`en-NG`**; typical Android inventory → **`en-IN`**.
+
+`unit-tts-voice-ranking` §5 builds exactly this inventory but asserts only that the app *speaks*,
+never which voice — deliberately, from `v55_x` (*"a regional accent is not the failure v55_x
+refuses"*). **That position is what the user is disputing, so this needs a ruling, not a patch.**
+
+**Blocked on a design-principle decision.** "`en-US` is closer to `en-GB` than `en-JM`" is a
+hand-authored language fact. Non-violating signals: **`voice.default`** (the platform's own pick) or
+**`navigator.language`** (the device's region). Third option: leave the ranking and ship §6's
+selector, so the user picks once and `imp3_voice_*` persists it — that store is written ONLY on an
+explicit pick and is **not** the cause here.
+
+### 3c. Serbian and Croatian — ✅ SHIPPED `v75_g` (table authored; native review OWED)
+
+**Serbian does NOT "just use standard Cyrillic".** `scripts.json`'s `cyrillic` table is the
+**33-letter Russian alphabet** — it contains `Ё Й Ы Э Щ Ъ Ь Ю Я`, none of which are Serbian, and
+reads `Е` as *ye* (`ipa: je`) where Serbian has plain `/e/`. Serbian Cyrillic is 30 letters and adds
+`Ђ Ј Љ Њ Ћ Џ`. Mapping `sr → cyrillic` would teach the Russian alphabet under a Serbian flag, and
+leaving `sr` unmapped is not an option either (the file's own header: an unmapped code reads as
+"no script"). Croatian is Latin only — `"hr": "latin"`, no new table.
+
+Serbian is digraphic (both scripts official and equal), so the `ja: ["hiragana","katakana"]`
+precedent fits: `"sr": ["cyrillic-sr", "latin"]`. **Needs a ruling** because one option is content
+authoring: (a) author a 30-row `cyrillic-sr` table — which is exactly what the design principle
+exists to prevent; (b) ship `sr` Latin-only now, add Cyrillic when a native speaker or the model
+produces it; (c) have the model generate it under the existing prompt machinery, then QC it.
+Both languages also need a `tts` code (`sr-RS`, `hr-HR`), 29 `names` entries each, and a `ui.json`
+stub for `translate-ui.js`.
+
 ### 4. Browsing completion cards (user request, session 28)
 
 Explicit back/next to walk the completion cards of already-played lessons, so a learner can revisit
@@ -194,12 +247,22 @@ drop again.**
 - **A browser pass.** Nineteen releases deep. `v74_c` changed what coverage MEANS, `v74_i` was the
   only `server.js` change of the session (live mode is the half that cannot be exercised headlessly,
   only simulated), and `v74_j` / `v74_n` are visual.
+- **Serbian/Croatian follow-ups (`v75_g`):** the 28 non-English `names` entries in
+  `languages.json`, the `ui.json` translate pass for `sr` and `hr` (both are empty stubs), and
+  **a native-speaker check of the 30 `cyrillic-sr` rows** — especially the letter names and the
+  IPA column. The table was authored in-container, which is exactly the case the design
+  principle warns is wrong in ways that stay invisible until a native speaker looks.
 - **The comprehension QC checker** — needs a new prompt and a live model. Correctly queued, not
   started in a container.
 - **The translate pass.** Changed in English and DROPPED from the other 29 languages for refill:
   `complete.story_unlocked`, `ex.badge.comprehension`. New and English-only:
-  `complete.words_solved`, `form.finish_mixed`. `t()` falls back through English, so nothing is
-  broken meanwhile. **`v71_q`: never assert a dropped key absent.**
+  `complete.words_solved` = "Words you can read in this chapter",
+  `form.finish_mixed` = "Finish the chapter with a mixed review round (no AI)".
+  **(v75_b) These two were MISSING FROM `en` TOO** — the returning `ui.json` predated them, so they
+  rendered as raw key text. Now present in `en`; every other language is missing exactly these two
+  and nothing else (verified). `t()` falls back through English, so nothing is broken meanwhile.
+  **`v71_q`: never assert a dropped key absent.** **When the file comes back, `unit-ui-key-exists`
+  catches it if it predates the code again.**
 
 ---
 
@@ -405,5 +468,34 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
   corpus contains a case (here: a lesson exceeding its builder's cap), assert that such a case was
   actually found. Without it the section silently becomes a no-op — which is precisely how §8
   passed while grammar sampled at random.
+
+## Rules earned in session 29 (continued — see the session notes for the full set)
+
+5. **A whitelist fails silently and per-type, so its guard must be per-type AND driven off the
+   registry**, or it guards only the types someone thought of.
+6. **A "curated title" is a proxy for authorship, not for content.** Deciding which copy of a
+   duplicated record survives by any signal other than its content will eventually delete content.
+7. **"Every language has key X" goes stale when a LANGUAGE is added**, exactly as "key X is absent
+   everywhere" goes stale when the translate pass runs. Scope such claims to the languages actually
+   translated, and floor them for non-vacuity.
+8. **Replacing a brittle source pin is itself a change that needs revert-verifying.** The first
+   replacement of the `if (!u)` pin was vacuous in a NEW way — its match window reached past the
+   block it meant to check — and only the paired behavioural test exposed it.
+
+## Rules earned in session 29
+
+1. **A comment near a source-scanned pattern must not spell the pattern.** The repair comment for
+   `common.cancel` contained a literal `t('…')` call and failed the very sweep it documented —
+   rule 4 above, arriving from the other direction: a correct guard made to fail by prose *about*
+   code. A source scanner cannot tell the two apart.
+2. **When a guard asserts the precondition of a render, assert it against the state the render
+   LEAVES.** A precondition checked before `showComplete()` passed under its own revert, because
+   rendering the card is what marks the lesson done and flips the branch it was guarding.
+3. **A test that does not reset shared state is a test of whatever ran before it.** `seed()`
+   preserves `APP.progress` by design and the §3 lock probe writes completion keyed by topic NAME;
+   one corpus change made two fixtures the same chapter and the leak surfaced. A section needing
+   empty progress must clear it and say so.
+4. **Timestamps are evidence, and cheap.** `ui.json` older than `index.html` was the entire
+   diagnosis of the first red check.
 
 (If you add a new standing rule, append it here so the next session inherits it.)

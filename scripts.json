@@ -33,7 +33,12 @@
     "hu": "latin",
     "da": "latin",
     "ca": "latin",
-    "zh": "han"
+    "zh": "han",
+    "sr": [
+      "cyrillic-sr",
+      "latin"
+    ],
+    "hr": "latin"
   },
   "_stub_comment": "Remaining stubs: thai (44 consonants with many shared sounds + positional vowels + tone classes — not reducible to a simple unique letter→sound table; needs a purpose-built design) and han (not an alphabet). Both are still valid SOURCE scripts: `latin.sounds.thai` lets Thai speakers learn the Latin alphabet even though we cannot teach Thai.",
   "_sounds_comment": "letters[].sounds maps a SOURCE script → the letter's name written in that script (B → بي for an Arabic reader). Used by introScriptExercises via opts.srcScripts so the answer is readable to the learner; without it a Latin course would ask a non-Latin reader to pick 'b' from Latin choices. Values are the letter NAME (not the phonetic value) because phonetic values collide (c/k/q → ك) and would yield several correct MCQ answers. NATIVE REVIEW OWED on every column.",
@@ -729,6 +734,222 @@
         "name": "ya",
         "translit": "ya",
         "ipa": "ja"
+      }
+    ]
+  },
+  "cyrillic-sr": {
+    "rtl": false,
+    "label": "Serbian Cyrillic",
+    "letters": [
+      {
+        "ch": "А",
+        "lower": "а",
+        "name": "a",
+        "translit": "a",
+        "ipa": "a"
+      },
+      {
+        "ch": "Б",
+        "lower": "б",
+        "name": "be",
+        "translit": "b",
+        "ipa": "b"
+      },
+      {
+        "ch": "В",
+        "lower": "в",
+        "name": "ve",
+        "translit": "v",
+        "ipa": "ʋ"
+      },
+      {
+        "ch": "Г",
+        "lower": "г",
+        "name": "ge",
+        "translit": "g",
+        "ipa": "ɡ"
+      },
+      {
+        "ch": "Д",
+        "lower": "д",
+        "name": "de",
+        "translit": "d",
+        "ipa": "d"
+      },
+      {
+        "ch": "Ђ",
+        "lower": "ђ",
+        "name": "đe",
+        "translit": "đ",
+        "ipa": "dʑ"
+      },
+      {
+        "ch": "Е",
+        "lower": "е",
+        "name": "e",
+        "translit": "e",
+        "ipa": "e"
+      },
+      {
+        "ch": "Ж",
+        "lower": "ж",
+        "name": "že",
+        "translit": "ž",
+        "ipa": "ʒ"
+      },
+      {
+        "ch": "З",
+        "lower": "з",
+        "name": "ze",
+        "translit": "z",
+        "ipa": "z"
+      },
+      {
+        "ch": "И",
+        "lower": "и",
+        "name": "i",
+        "translit": "i",
+        "ipa": "i"
+      },
+      {
+        "ch": "Ј",
+        "lower": "ј",
+        "name": "je",
+        "translit": "j",
+        "ipa": "j"
+      },
+      {
+        "ch": "К",
+        "lower": "к",
+        "name": "ka",
+        "translit": "k",
+        "ipa": "k"
+      },
+      {
+        "ch": "Л",
+        "lower": "л",
+        "name": "el",
+        "translit": "l",
+        "ipa": "l"
+      },
+      {
+        "ch": "Љ",
+        "lower": "љ",
+        "name": "elj",
+        "translit": "lj",
+        "ipa": "ʎ"
+      },
+      {
+        "ch": "М",
+        "lower": "м",
+        "name": "em",
+        "translit": "m",
+        "ipa": "m"
+      },
+      {
+        "ch": "Н",
+        "lower": "н",
+        "name": "en",
+        "translit": "n",
+        "ipa": "n"
+      },
+      {
+        "ch": "Њ",
+        "lower": "њ",
+        "name": "enj",
+        "translit": "nj",
+        "ipa": "ɲ"
+      },
+      {
+        "ch": "О",
+        "lower": "о",
+        "name": "o",
+        "translit": "o",
+        "ipa": "o"
+      },
+      {
+        "ch": "П",
+        "lower": "п",
+        "name": "pe",
+        "translit": "p",
+        "ipa": "p"
+      },
+      {
+        "ch": "Р",
+        "lower": "р",
+        "name": "er",
+        "translit": "r",
+        "ipa": "r"
+      },
+      {
+        "ch": "С",
+        "lower": "с",
+        "name": "es",
+        "translit": "s",
+        "ipa": "s"
+      },
+      {
+        "ch": "Т",
+        "lower": "т",
+        "name": "te",
+        "translit": "t",
+        "ipa": "t"
+      },
+      {
+        "ch": "Ћ",
+        "lower": "ћ",
+        "name": "će",
+        "translit": "ć",
+        "ipa": "tɕ"
+      },
+      {
+        "ch": "У",
+        "lower": "у",
+        "name": "u",
+        "translit": "u",
+        "ipa": "u"
+      },
+      {
+        "ch": "Ф",
+        "lower": "ф",
+        "name": "ef",
+        "translit": "f",
+        "ipa": "f"
+      },
+      {
+        "ch": "Х",
+        "lower": "х",
+        "name": "ha",
+        "translit": "h",
+        "ipa": "x"
+      },
+      {
+        "ch": "Ц",
+        "lower": "ц",
+        "name": "ce",
+        "translit": "c",
+        "ipa": "ts"
+      },
+      {
+        "ch": "Ч",
+        "lower": "ч",
+        "name": "če",
+        "translit": "č",
+        "ipa": "tʃ"
+      },
+      {
+        "ch": "Џ",
+        "lower": "џ",
+        "name": "dže",
+        "translit": "dž",
+        "ipa": "dʒ"
+      },
+      {
+        "ch": "Ш",
+        "lower": "ш",
+        "name": "ša",
+        "translit": "š",
+        "ipa": "ʃ"
       }
     ]
   },

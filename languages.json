@@ -58,5 +58,9 @@
   "da": { "name": "Danish",           "flag": "🇩🇰", "tts": "da-DK",
     "names": { "en":"Danish","de":"Dänisch","fr":"Danois","es":"Danés","it":"Danese","pt":"Dinamarquês","nl":"Deens","pl":"Duński","sv":"Danska","ja":"デンマーク語","zh":"丹麦语","ru":"Датский","ko":"덴마크어","ar":"الدانماركية","tr":"Danca","hi":"डेनिश","fi":"Tanska","hu":"Dán","da":"Dansk","el":"Δανικά","he":"דנית","cs":"Dánština","ro":"Daneză","uk":"Данська","vi":"Tiếng Đan Mạch","id":"Bahasa Denmark","th":"ภาษาเดนมาร์ก","ca":"Danès","sw":"Kideni" } },
   "ca": { "name": "Catalan",          "flag": "🏴", "tts": "ca-ES",
-    "names": { "en":"Catalan","de":"Katalanisch","fr":"Catalan","es":"Catalán","it":"Catalano","pt":"Catalão","nl":"Catalaans","pl":"Kataloński","sv":"Katalanska","ja":"カタルーニャ語","zh":"加泰罗尼亚语","ru":"Каталанский","ko":"카탈루냐어","ar":"الكاتالونية","tr":"Katalanca","hi":"कातालान","fi":"Katalaani","hu":"Katalán","da":"Catalansk","el":"Καταλανικά","he":"קטלאנית","cs":"Katalánština","ro":"Catalană","uk":"Каталонська","vi":"Tiếng Catalan","id":"Bahasa Katalan","th":"ภาษาคาตาลัน","ca":"Català","sw":"Kikatalani" } }
+    "names": { "en":"Catalan","de":"Katalanisch","fr":"Catalan","es":"Catalán","it":"Catalano","pt":"Catalão","nl":"Catalaans","pl":"Kataloński","sv":"Katalanska","ja":"カタルーニャ語","zh":"加泰罗尼亚语","ru":"Каталанский","ko":"카탈루냐어","ar":"الكاتالونية","tr":"Katalanca","hi":"कातालान","fi":"Katalaani","hu":"Katalán","da":"Catalansk","el":"Καταλανικά","he":"קטלאנית","cs":"Katalánština","ro":"Catalană","uk":"Каталонська","vi":"Tiếng Catalan","id":"Bahasa Katalan","th":"ภาษาคาตาลัน","ca":"Català","sw":"Kikatalani" } },
+  "sr": { "name": "Serbian",          "flag": "🇷🇸", "tts": "sr-RS",
+    "names": { "en":"Serbian" } },
+  "hr": { "name": "Croatian",         "flag": "🇭🇷", "tts": "hr-HR",
+    "names": { "en":"Croatian" } }
 }

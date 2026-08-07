@@ -669,6 +669,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <option value="hu">🇭🇺 Hungarian</option>
             <option value="da">🇩🇰 Danish</option>
             <option value="ca">🏴 Catalan</option>
+            <option value="sr"> Serbian</option>
           </select>
           <span class="lang-select-arrow">▾</span>
         </div>
@@ -709,6 +710,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <option value="hu">🇭🇺 Hungarian</option>
             <option value="da">🇩🇰 Danish</option>
             <option value="ca">🏴 Catalan</option>
+            <option value="sr"> Serbian</option>
           </select>
           <span class="lang-select-arrow">▾</span>
         </div>
@@ -7828,7 +7830,11 @@ function _pickLessonTypes(titleText){
     const card=document.createElement('div');
     card.style.cssText='background:var(--white);color:var(--text);border-radius:14px;padding:20px 20px 14px;max-width:360px;width:90%;box-shadow:0 8px 30px rgba(0,0,0,.3);font-family:Nunito,sans-serif;position:relative;text-align:left';
     const close=document.createElement('button');
-    close.textContent='✕'; close.title=t('common.cancel')||'Cancel';
+    // v75_b: this asked for a "common.cancel" key that has never existed in ui.json, so the tooltip
+    // rendered as that raw key name. The trailing `|| 'Cancel'` looked like a safety net and was
+    // dead: t() returns the KEY when it misses, and a key is truthy. `dialog.cancel` is the same
+    // word and is already translated into all 30 languages.
+    close.textContent='✕'; close.title=t('dialog.cancel');
     close.style.cssText='position:absolute;top:8px;right:10px;border:none;background:none;font-size:16px;cursor:pointer;color:var(--gray-dark)';
     const done=v=>{ if(ov.parentNode) document.body.removeChild(ov); resolve(v); };
     close.onclick=()=>done(null);
@@ -10404,14 +10410,22 @@ function buildStandardExercises(lesson, lessonIdx){
   let _exs = _noAudio ? exs.filter(e => e.type !== 'listen_mcq' && e.type !== 'listen_type') : exs;
   // v69.2 (roadmap item, user 2026-07-14): BEGINNER lessons only serve exercises you can answer by
   // PICKING from four options — plus "hear it, type it", which the user explicitly allowed because
-  // it is transcription, not recall. Two consequences:
-  //   • `order` always goes: assembling a sentence needs word order the beginner hasn't met yet
-  //     (the word bank looks like options but the task is production).
-  //   • `listen_type` goes when there is NO AUDIO — muted or voiceless. Its muted RENDER falls back
-  //     to type_translate ("show the source, type the target"), i.e. exactly the recall-production
-  //     task rule 1 excludes; with audio it stays, because then it really is transcription.
-  //     (This is the "listening OFF → don't require already knowing the translation" clause: the
-  //     audio was the scaffolding, and without it the item silently changes character.)
+  // it is transcription, not recall.
+  //   • `listen_type` goes when there is NO AUDIO (muted or voiceless). Its muted RENDER falls
+  //     back to type_translate ("show the source, type the target"), i.e. exactly the recall-
+  //     production task the rule excludes; with audio it stays, because then it really is
+  //     transcription. (This is the "listening OFF → don't require already knowing the
+  //     translation" clause: the audio was the scaffolding, and without it the item silently
+  //     changes character.) This half is unchanged.
+  //   • `order` USED to go too — "the shuffled word bank LOOKS like options, but assembling a
+  //     sentence is production and needs word order a beginner hasn't met". v75_d REVERSES that on
+  //     the user's ruling at the v75 cut: the word bank is scaffolding enough. This is a changed
+  //     decision, not a bug fix — the original reasoning was considered and is recorded above.
+  //     Two thirds of the corpus (191 of 281 sentence-bearing chapters) had never shown one.
+  //     Denominator-neutral, which it would NOT have been before v74_c: a sentence is already an
+  //     ITEM, reachable via read_translate, and ordering is another way to ask about that same
+  //     item — so the pass mark's denominator does not move. Under the old question-keyed model
+  //     this would have raised the bar on all 191 chapters as a side effect.
   // Difficulty is resolved the way the lesson list displays it: the lesson's own value first, then
   // the topic's, then the 2 default — so a beginner lesson inside a harder topic is still beginner.
   // Applies in teacher mode too: this is a property of the LESSON's difficulty, not a visibility
@@ -10419,7 +10433,7 @@ function buildStandardExercises(lesson, lessonIdx){
   const _diff = (lesson && lesson.difficulty) || (d && d.difficulty) || 2;
   if (_diff <= 1) {
     const _muted = !!APP.muted;
-    _exs = _exs.filter(e => e.type !== 'order' && !((_muted || _noAudio) && e.type === 'listen_type'));
+    _exs = _exs.filter(e => !((_muted || _noAudio) && e.type === 'listen_type'));
   }
   // Universe enumeration wants EVERY question this lesson can ask — uncapped and unbiased.
   if (APP._derivingUniverse) return _exs;
@@ -15777,23 +15791,56 @@ function _speakAndAdvance(text) {
     return;
   }
   const ttsCode = activeTtsCode();
-  const u = _ttsMakeUtterance(text, ttsCode, 0.9);   // shared resolver (v55_y — was a 3rd copy)
-  if (!u) {
+  if (!_ttsMakeUtterance(text, ttsCode, 0.9)) {
     // No voice for this language: stay silent rather than let an English voice spell out "Mtu" as
     // "M t u". MUST still advance, or a listening exercise would hang forever on the silent item.
     _ttsNoVoice(ttsCode, APP.lessonData?.lang || APP.lang);
     setTimeout(doAdvance, 900);
     return;
   }
-  let advanced = false;
-  const advance = () => { if (!advanced) { advanced = true; doAdvance(); } };
-  u.onend   = () => setTimeout(advance, 120); // brief pause after speech
-  u.onerror = () => advance();
-  // Safety fallback — 4s max wait
-  const safety = setTimeout(advance, 4000);
-  u.onend = () => { clearTimeout(safety); setTimeout(advance, 120); };
-  speechSynthesis.cancel();
-  setTimeout(() => speechSynthesis.speak(u), 50);
+  let advanced = false, watchdog = null;
+  const advance = () => {
+    if (advanced) return;
+    advanced = true;
+    if (watchdog) clearInterval(watchdog);
+    setTimeout(doAdvance, 120);          // brief pause after speech
+  };
+  // v75_h (user-reported: "if solved correctly, we jump to the next question before the read-out
+  // is finished"). Two changes, and the first is the cause:
+  //
+  // (a) The safety net was a FLAT 4s — `setTimeout(advance, 4000)`. A long sentence takes longer
+  //     than that to speak, so on those items the net fired MID-SENTENCE: it advanced, `renderEx`
+  //     auto-spoke the next question, and that `speechSynthesis.cancel()` truncated the readout
+  //     still in progress. So the second reported symptom ("the next question's read-out is cut
+  //     short") is the same defect seen from the other end — the two utterances were overlapping
+  //     because the first was never allowed to finish. The net now watches PROGRESS instead of
+  //     wall-clock: it only gives up after the engine has been idle for three consecutive polls,
+  //     which cannot happen while speech is running however long the text is. An absolute cap
+  //     remains so a wedged engine can still never hang the round.
+  //
+  // (b) The text is CHUNKED through the shared `_speakChunksThen`, which was already the "speak,
+  //     then call back" path used elsewhere. The old code built one utterance from the whole
+  //     string and ignored `_ttsChunks`, whose 200-char limit exists because browsers drop long
+  //     utterances outright — the exact items this report is about.
+  const chunks = _ttsChunks(text);
+  const t0 = Date.now();
+  let sawSpeech = false, idlePolls = 0;
+  const HARD_CAP_MS = 120000;      // a wedged engine must not strand the learner
+  const START_GRACE_MS = 3000;     // speech that never starts at all
+  watchdog = setInterval(() => {
+    if (speechSynthesis.speaking || speechSynthesis.pending) {
+      sawSpeech = true; idlePolls = 0;
+      if (Date.now() - t0 > HARD_CAP_MS) advance();
+      return;
+    }
+    // Idle. Between two chunks the engine is briefly idle as well, so a single idle poll is not
+    // evidence that the readout is over — require three, and let the callback win the normal race.
+    idlePolls++;
+    if (idlePolls >= 3 && (sawSpeech || Date.now() - t0 > START_GRACE_MS)) advance();
+  }, 300);
+  const wasSpeaking = speechSynthesis.speaking || speechSynthesis.pending;
+  if (wasSpeaking) { speechSynthesis.cancel(); setTimeout(() => _speakChunksThen(chunks, null, 0.9, 0, advance), 50); }
+  else _speakChunksThen(chunks, null, 0.9, 0, advance);
 }
 
 function _ttsChunks(text) {
@@ -15935,9 +15982,14 @@ function _speakChunks(chunks, langCode, rate, idx) {
 function _doSpeak(text,rate){
   if(APP.muted) return;
   const chunks = _ttsChunks(text);
+  // v75_h: cancel ONLY when something is actually in flight. `cancel()` immediately followed by
+  // `speak()` truncates or drops the new utterance on several engines, and it was being called
+  // unconditionally — including on the common path where nothing was speaking and there was
+  // nothing to cancel. This is the second half of the "next question's read-out is cut short"
+  // report; the first half is that the previous readout was still running (see _speakAndAdvance).
   const wasSpeaking = speechSynthesis.speaking || speechSynthesis.pending;
-  speechSynthesis.cancel();
   if (wasSpeaking) {
+    speechSynthesis.cancel();
     setTimeout(() => _speakChunks(chunks, null, rate, 0), 50);
   } else {
     _speakChunks(chunks, null, rate, 0);
@@ -15947,9 +15999,14 @@ function _doSpeak(text,rate){
 function _doSpeakLang(text, langCode) {
   if (APP.muted) return;
   const chunks = _ttsChunks(text);
+  // v75_h: cancel ONLY when something is actually in flight. `cancel()` immediately followed by
+  // `speak()` truncates or drops the new utterance on several engines, and it was being called
+  // unconditionally — including on the common path where nothing was speaking and there was
+  // nothing to cancel. This is the second half of the "next question's read-out is cut short"
+  // report; the first half is that the previous readout was still running (see _speakAndAdvance).
   const wasSpeaking = speechSynthesis.speaking || speechSynthesis.pending;
-  speechSynthesis.cancel();
   if (wasSpeaking) {
+    speechSynthesis.cancel();
     setTimeout(() => _speakChunks(chunks, langCode, 0.9, 0), 50);
   } else {
     _speakChunks(chunks, langCode, 0.9, 0);
@@ -15968,10 +16025,14 @@ function _speakChunksThen(chunks, langCode, rate, idx, cb) {
 
 function _doSpeakLangThen(text, langCode, cb) {
   const chunks = _ttsChunks(text);
+  // v75_h: cancel ONLY when something is actually in flight. `cancel()` immediately followed by
+  // `speak()` truncates or drops the new utterance on several engines, and it was being called
+  // unconditionally — including on the common path where nothing was speaking and there was
+  // nothing to cancel. This is the second half of the "next question's read-out is cut short"
+  // report; the first half is that the previous readout was still running (see _speakAndAdvance).
   const wasSpeaking = speechSynthesis.speaking || speechSynthesis.pending;
-  speechSynthesis.cancel();
   const go = () => _speakChunksThen(chunks, langCode, 0.9, 0, cb);
-  if (wasSpeaking) setTimeout(go, 50); else go();
+  if (wasSpeaking) { speechSynthesis.cancel(); setTimeout(go, 50); } else go();
 }
 
 // iOS and some Android browsers require speechSynthesis to be triggered from a user gesture.

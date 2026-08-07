@@ -143,6 +143,8 @@ run('unit: comprehension lesson type — story questions (v71_l)', 'node', [path
 run('unit: storyboard panel frames on result cards (v71_k)', 'node', [path.join(__dirname, 'unit-storyboard-frames.test.js')]);
 run('unit: {lang} placeholder grammar (v71_d)', 'node', [path.join(__dirname, 'unit-lang-placeholder.test.js')]);
 run('unit: no verbatim-English fallbacks in translations (v71_k)', 'node', [path.join(__dirname, 'unit-ui-verbatim-en.test.js')]);
+run('unit: every t() key exists in ui.json en (v75_b)', 'node', [path.join(__dirname, 'unit-ui-key-exists.test.js')]);
+run('unit: correct answer advances after the read-out (v75_h)', 'node', [path.join(__dirname, 'unit-speak-advance.test.js')]);
 run('unit: coverage-driven mixed round + drill credit-back (v69.1)', 'node', [path.join(__dirname, 'unit-mixed-coverage-round.test.js')]);
 run('unit: ui translation QC (validator + translate-ui --qc) (v69_f)', 'node', [path.join(__dirname, 'unit-ui-qc.test.js')]);
 run('unit: error-hunt validation + retry (v69_g)', 'node', [path.join(__dirname, 'unit-error-hunt-validation.test.js')]);
@@ -188,6 +190,8 @@ if (!quick) {
   // registered outside it, so --quick spawned servers despite this file's header promising
   // it skips them. The promise now holds.
   run('e2e: mixed lesson edit (type round-trip)', 'node', [path.join(__dirname, 'e2e-mixed-lesson-edit.test.js')]);
+  run('e2e: every lesson type survives an edit round-trip (v75_e)', 'node', [path.join(__dirname, 'e2e-lesson-edit-roundtrip.test.js')]);
+  run('e2e: flagged merge-import keeps storyline storyboards (v75_f)', 'node', [path.join(__dirname, 'e2e-import-storyboard.test.js')]);
   run('e2e: rating/flag round-trip (v46 Tier 1)', 'node', [path.join(__dirname, 'e2e-rating-edit.test.js')]);
   run('e2e: pass mark per storyline + chapter (v69_i)', 'node', [path.join(__dirname, 'e2e-pass-mark.test.js')]);
   run('e2e: model text cleanup — deletion-only (v69_m)', 'node', [path.join(__dirname, 'e2e-text-cleanup.test.js')]);

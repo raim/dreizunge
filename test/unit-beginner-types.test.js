@@ -5,12 +5,24 @@
 //    already knowing the translation. Lessons with sound where you type the word you hear ARE fine."
 // Implemented as a play-time policy in buildStandardExercises (where the exercise mix for a
 // difficulty is chosen), because that is what actually decides what the learner is asked:
-//   • `order` always drops at difficulty ≤ 1 — the shuffled word bank LOOKS like options, but
-//     assembling a sentence is production and needs word order a beginner hasn't met;
 //   • `listen_type` drops only when there is NO AUDIO (muted or voiceless): its muted render falls
 //     back to type_translate ("show source, TYPE target") = recall production. With audio it stays,
 //     exactly as the user allowed (transcription).
 //   • Every 4-option MCQ survives in both audio states.
+//
+// v75_d — `order` NO LONGER drops at difficulty ≤ 1. This file used to pin the opposite in three
+// places, and the reasoning it pinned was sound rather than accidental: "the shuffled word bank
+// LOOKS like options, but assembling a sentence is production and needs word order a beginner
+// hasn't met". The user REVERSED that decision at the v75 cut — the word bank is scaffolding
+// enough. Rewritten rather than deleted so the reversal stays legible: what is asserted below is
+// that ordering is KEPT at difficulty 1 while `listen_type` still drops when muted, i.e. the two
+// halves of the old rule have come apart and only one of them survives.
+//
+// Measured on the shipped corpus at the time of the change (probe calling the product builder):
+// 191 of 281 sentence-bearing chapters had never been able to show a sentence-ordering exercise;
+// buildable `order` questions went 675 → 1710, while the ITEM denominator the pass mark measures
+// stayed at 8332. Denominator-neutral only because v74_c made coverage count SOURCE ITEMS — a
+// sentence is already an item via read_translate, and ordering is another way to ask about it.
 // Difficulty resolves lesson → topic → 2 (the same fallback the lesson list displays), so a
 // beginner lesson inside a harder topic is still treated as beginner.
 'use strict';
@@ -56,30 +68,49 @@ function buildWith({ difficulty, muted, voice }) {
   return new Set(fn(lesson, 0).map(e => e.type));
 }
 
-// ── 1. Beginner WITH audio: MCQs + listen-and-type; no sentence ordering ──────
+// ── 1. Beginner WITH audio: MCQs + listen-and-type + sentence ordering ───────
 {
   const types = buildWith({ difficulty: 1, muted: false, voice: true });
-  assert.ok(!types.has('order'), 'beginner: sentence ordering is dropped (production, not a 4-option pick)');
+  assert.ok(types.has('order'),
+    'v75_d: beginner KEEPS sentence ordering — the shuffled word bank is scaffolding enough');
   assert.ok(types.has('listen_type'), 'beginner + audio: "hear it, type it" stays (transcription — explicitly allowed)');
   for (const keep of ['listen_mcq', 'mcq_source_target', 'read_translate'])
     assert.ok(types.has(keep), `beginner keeps the 4-option type ${keep}`);
 }
-console.log('  beginner + audio: 4-option MCQs + listen-type kept, order dropped: OK');
+console.log('  beginner + audio: 4-option MCQs + listen-type + order all kept: OK');
 
-// ── 2. Beginner with listening OFF (muted): the typed item goes too ───────────
+// ── 2. Beginner with listening OFF (muted): the typed item goes, ordering stays ───
+// The two halves of the old rule are independent now, so muting must NOT take ordering with it.
 {
   const muted = buildWith({ difficulty: 1, muted: true, voice: true });
   assert.ok(!muted.has('listen_type'),
     'beginner + muted: listen_type drops (its muted render is type_translate = recall production)');
-  assert.ok(!muted.has('order'), 'order still dropped when muted');
+  assert.ok(muted.has('order'),
+    'v75_d: ordering survives muting — the audio clause is not what used to suppress it');
   assert.ok(muted.has('mcq_source_target'), 'pick-from-four still available with sound off');
   // Same when the DEVICE has no voice (the other way listening is "off").
   const voiceless = buildWith({ difficulty: 1, muted: false, voice: false });
   assert.ok(!voiceless.has('listen_type') && !voiceless.has('listen_mcq'),
     'no voice: both audio types drop (v55_z) — including the typed one');
+  assert.ok(voiceless.has('order'), 'and ordering is still offered to a voiceless beginner');
   assert.ok(voiceless.has('mcq_source_target'), 'voiceless beginners still get 4-option MCQs');
 }
-console.log('  beginner + listening off: typed item dropped, MCQs remain: OK');
+console.log('  beginner + listening off: typed item dropped, MCQs + order remain: OK');
+
+// ── 2b. The beginner mix now matches the non-beginner one except for the audio clause ────────
+// Non-vacuity for the change, stated as a DIFFERENCE between two sets built from the same fixture,
+// so it cannot pass by the fixture simply having no sentences to order — and evaluated on the sets
+// the assertion itself runs against, not on the fixture they were derived from.
+{
+  const beginner = buildWith({ difficulty: 1, muted: false, voice: true });
+  const normal   = buildWith({ difficulty: 2, muted: false, voice: true });
+  assert.ok(normal.has('order') && beginner.has('order'),
+    'the fixture really does produce ordering exercises at BOTH difficulties — otherwise the ' +
+    'comparison below is a no-op and proves nothing about the policy');
+  assert.deepStrictEqual([...beginner].sort(), [...normal].sort(),
+    'with audio on, a beginner round now draws from the same exercise types as any other');
+}
+console.log('  beginner mix equals the normal mix when audio is on: OK');
 
 // ── 3. Non-beginner is untouched (the policy is scoped to difficulty ≤ 1) ─────
 {

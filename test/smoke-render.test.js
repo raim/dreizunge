@@ -323,6 +323,22 @@ console.log('  showComplete: fresh, review, below-mark, drill card, teacher: OK'
       assert.ok(/class="q-word"/.test(q), `renderEx(${type}) highlights the asked-about word`);
     }
   }
+  // v75_d: `order` must be among them whenever the fixture can produce one. Before v75_d the
+  // builder dropped ordering at difficulty ≤ 1, and the fixture chapter IS difficulty 1 — so this
+  // render path had never once been executed by the suite on a beginner chapter, which is exactly
+  // where it now appears for the first time. Conditional on the fixture's SHAPE rather than
+  // asserted flat, so a future corpus without multi-word sentences fails honestly instead of
+  // spuriously; the condition is evaluated on the fixture the collection above actually ran over.
+  {
+    const orderable = C.run(`(APP.lessonData.lessons || []).some(L =>
+      L && (L.type || 'standard') === 'standard' &&
+      (L.sentences || []).some(s => s && (s.words || []).length > 1))`);
+    if (orderable) {
+      assert.ok(typeNames.includes('order'),
+        'the fixture has multi-word sentences, so sentence ordering must be among the rendered ' +
+        'types — v75_d allows it at difficulty 1 and this chapter is difficulty 1');
+    }
+  }
   console.log(`  renderEx: ${typeNames.length} exercise type(s) rendered without throwing (${typeNames.join(', ')}): OK`);
 }
 
@@ -912,7 +928,24 @@ console.log('  account modal: TLS banner shown/hidden across 4 states: OK');
     APP._teacherMode = false;
     APP.cur = { lessonIdx:0, correct:1, total:1, mistakes:0, bestStreak:1, flagCount:0, exercises:[] };
     true;`);
+  // v75_c: this section is about an ORDINARY completion card. `seed()` does not reset
+  // APP.progress — it preserves what is there — and the §3 lock probe above marks every lesson of
+  // its fixture complete, keyed by TOPIC NAME. When the corpus drifted so that the lock fixture and
+  // the default topic became the same chapter, that completion leaked in here: rendering the card
+  // marks `cw-lesson` done, which with the leaked siblings completed the chapter, the story counted
+  // as unlocked, and v74_l CORRECTLY hid the crossword — so this assertion started failing against
+  // working code. Clear the leak, and then say out loud which card was rendered.
+  //
+  // Checked AFTER showComplete, not before: rendering the card marks the lesson done, so the
+  // unlock state that decides v74_l's branch is the state the render LEAVES, not the one it found.
+  // Asserted before the reset was added this passed, which made it no guard at all.
+  C.run(`APP.progress.completed[APP.lessonData.topic] = {};
+         APP.progress.solved[APP.lessonData.topic] = {}; true;`);
   shouldNotThrow('showComplete (learner, crossword available)', `showComplete();`);
+  assert.strictEqual(C.run(`storyUnlocked(APP.lessonData)`), false,
+    'the card just rendered is an ordinary completion card, NOT the story-unlocked card — v74_l ' +
+    'strips that one back to Next and would hide the crossword for a reason unrelated to this ' +
+    'assertion, turning the check below into a test of a rule unit-story-unlocked-card already owns');
   assert.strictEqual(C.document.getElementById('comp-crossword').style.display, '',
     'a LEARNER is offered the crossword on the completion screen');
 

@@ -84,12 +84,24 @@ const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
   // the claim is restated in the durable form: not "untranslated", and not COLLIDING, which is the
   // defect v71_q actually fixed (German rendered both lines as "von", because the English source
   // said "by" and "from" and neither carried a label).
+  // v75_g: scoped to languages that have BEEN translated. A newly added language is stubbed in
+  // `ui.json` as an empty table so `translate-ui.js` picks it up (`sr`, `hr` at the v75_g cut), and
+  // an empty table is not a regression — it is the normal state between adding a language and
+  // running the offline pass. This is the roadmap DoD §3 trap from the other side: the note above
+  // records that "these keys are absent everywhere" went stale once the pass ran; "every language
+  // has these keys" goes stale the moment a language is added. What is durably true is that a
+  // language which has been translated AT ALL must have these two.
   const langs = Object.keys(UI).filter(l => l !== 'en');
-  const missing = langs.filter(l => !('prov.by' in UI[l]) || !('prov.from' in UI[l]));
-  assert.deepStrictEqual(missing, [], 'every language has both provenance labels');
+  const translated = langs.filter(l => Object.keys(UI[l] || {}).length > 0);
+  // Non-vacuity, evaluated on the list the assertion actually runs over: if the corpus of
+  // translated languages ever emptied, every check below would pass over nothing.
+  assert.ok(translated.length >= 20,
+    `${translated.length} translated languages found — too few for these checks to mean anything`);
+  const missing = translated.filter(l => !('prov.by' in UI[l]) || !('prov.from' in UI[l]));
+  assert.deepStrictEqual(missing, [], 'every translated language has both provenance labels');
 
   // The author line is an interpolation; losing {user} would drop the name silently.
-  const noUser = langs.filter(l => !/\{user\}/.test(String(UI[l]['prov.by'])));
+  const noUser = translated.filter(l => !/\{user\}/.test(String(UI[l]['prov.by'])));
   assert.deepStrictEqual(noUser, [], 'every prov.by keeps the {user} placeholder');
 
   // The two labels must stay DISTINGUISHABLE once the placeholder and its separator are removed.
@@ -97,7 +109,7 @@ const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
   // wording. (Non-Latin-script verbatim-English fallbacks are caught separately and generally by
   // unit-ui-verbatim-en; duplicating that check here would only drift from it.)
   const bare = (s) => String(s == null ? '' : s).replace(/\{user\}/g, '').replace(/[:：]/g, '').trim();
-  const collide = langs.filter(l => bare(UI[l]['prov.by']) &&
+  const collide = translated.filter(l => bare(UI[l]['prov.by']) &&
     bare(UI[l]['prov.by']) === bare(UI[l]['prov.from']));
   assert.deepStrictEqual(collide, [],
     'no language renders the author line and the origin line as the same word (the v71_q defect)');

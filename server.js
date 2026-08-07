@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v75';
+const APP_VERSION  = 'v75_h';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -4948,8 +4948,19 @@ function _syncStorylineForTopic(topicRef, continuedFromTopic) {
   const chain = chapterIds.map(id => findSavedById(id)?.topic ?? String(topicRef));
   const slId = _chainId(chapterIds);
 
-  // Find existing storyline that contains this topic
-  const existing = allSl.find(s => s.id === slId);
+  // Find existing storyline that contains this topic.
+  // v75_f (user-reported: "imported with merge and it lost the storyboard"): identity was looked
+  // up by ID ALONE, i.e. by the hash of the chapter list. A storyline whose stored id is NOT that
+  // hash — imported from elsewhere, or created before its chapter list settled — was therefore not
+  // recognised as its own chain, fell through to the FORK branch, and was rebuilt from six fields
+  // (id/title/icon/chapters/lang/srcLang). Everything else — `storyboard`, `storyboardMeta`,
+  // `summary`, `tags` — is not in that list and was dropped. The rebuilt copy is unshifted to the
+  // FRONT, so the dedup below then saw two storylines with an identical chapter sequence and kept
+  // whichever came first whenever its title-based tie-break could not separate them.
+  // A storyline covering exactly these chapters IS this chain, whatever its id says.
+  const sameChain = s => (s.chapters || []).length === chapterIds.length
+                      && chapterIds.every((c, i) => c === s.chapters[i]);
+  const existing = allSl.find(s => s.id === slId) || allSl.find(sameChain);
   const partialMatch = !existing ? allSl.find(s => s.chapters.includes(tid)) : null;
   // Also check if any storyline matches the predecessor chain (new topic not yet in any sl)
   const predecessorMatch = (!existing && !partialMatch && chapterIds.length > 1)
@@ -6453,6 +6464,14 @@ http.createServer(async (req, res) => {
           // so a flag/rating on those types persists in the live build (not just static).
           words:     edited.words     ? edited.words.map((w,j) => mergeFlaggable((orig.words||[])[j]||{}, w)) : orig.words,
           items:     edited.items     ? edited.items.map((it,j) => mergeFlaggable((orig.items||[])[j]||{}, it)) : orig.items,
+          // v75_e (user-reported): comprehension `questions` were NOT in this whitelist, so every
+          // edit to a comprehension lesson — the question, any choice, the correct answer, the
+          // explanation — was accepted with HTTP 200 and silently dropped. The client kept it in
+          // memory, so it survived closing and reopening the editor and only vanished on the next
+          // load from the server; the stored diff showed nothing but a fresh `updatedAt`.
+          // Same flaggable merge as words/items so a flag or rating on a question would ride the
+          // same client-authoritative path (nothing sets one today; this is not a special case).
+          questions: edited.questions ? edited.questions.map((q,j) => mergeFlaggable((orig.questions||[])[j]||{}, q)) : orig.questions,
           // intro_script letters: same flaggable merge so a flag/rating/edit on a letter persists.
           letters:   edited.letters   ? edited.letters.map((L,j) => mergeFlaggable((orig.letters||[])[j]||{}, L)) : orig.letters,
           grammar:   edited.grammar   ? edited.grammar.map((g,j) => ({...(orig.grammar||[])[j]||{}, ...g})) : orig.grammar,
@@ -6462,6 +6481,11 @@ http.createServer(async (req, res) => {
           })) : orig.conjugations,
           ...(edited.corruptedStory !== undefined ? { corruptedStory: edited.corruptedStory } : {}),
           ...(edited.correctStory   !== undefined ? { correctStory:   edited.correctStory   } : {}),
+          // v75_e: the math editor's own inputs (_editorReadInputsMath writes exactly these two).
+          // Same omission as `questions` above — changing the number pool or the operator set
+          // returned 200 and changed nothing.
+          ...(edited.numbers  !== undefined ? { numbers:  edited.numbers  } : {}),
+          ...(edited.mathOps  !== undefined ? { mathOps:  edited.mathOps  } : {}),
           ...(edited._hidden         !== undefined ? { _hidden:         edited._hidden         } : {}),
           edits: edited.edits ? edited.edits.map((e,j) => ({...(orig.edits||[])[j]||{}, ...e})) : orig.edits,
         };

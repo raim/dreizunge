@@ -41,6 +41,57 @@ const chs = cyr.letters.map(L => L.ch);
 assert.strictEqual(new Set(chs).size, chs.length, 'cyrillic glyphs are unique');
 console.log('  scripts.json: _langScript resolves, cyrillic table complete + unique: OK');
 
+// ── v75_g: Serbian Cyrillic is its OWN table, not the Russian one ────────────────────────────
+// The question that prompted it: "does Serbian just use standard cyrillic?" No. The `cyrillic`
+// table is the 33-letter RUSSIAN alphabet. Mapping `sr` to it would teach nine letters Serbian does
+// not have and omit six it does, and would read Е as "ye" where Serbian has plain /e/ — a content
+// error invisible to anyone who does not read both. Asserted as the DIFFERENCE between the two
+// tables rather than as a letter list, so it cannot be satisfied by a table that merely has the
+// right row count, and cannot be silently "fixed" by pointing `sr` back at `cyrillic`.
+{
+  const sr = scripts['cyrillic-sr'];
+  assert.ok(sr && Array.isArray(sr.letters), 'the Serbian Cyrillic table exists');
+  assert.strictEqual(sr.letters.length, 30, 'Serbian Cyrillic has 30 letters (Russian has 33)');
+
+  const ruSet = new Set(cyr.letters.map(L => L.ch));
+  const srSet = new Set(sr.letters.map(L => L.ch));
+  // The nine Russian letters Serbian does not use, and the six Serbian ones Russian lacks.
+  const RU_ONLY = ['Ё','Й','Щ','Ъ','Ы','Ь','Э','Ю','Я'];
+  const SR_ONLY = ['Ђ','Ј','Љ','Њ','Ћ','Џ'];
+  // Non-vacuity, on the data these assertions run against: the Russian table must really still
+  // contain the letters we are claiming Serbian lacks, or "Serbian lacks them" proves nothing.
+  assert.deepStrictEqual(RU_ONLY.filter(c => !ruSet.has(c)), [],
+    'the Russian table still has the letters Serbian is asserted NOT to have');
+  assert.deepStrictEqual(RU_ONLY.filter(c => srSet.has(c)), [],
+    'Serbian Cyrillic has none of the Russian-only letters');
+  assert.deepStrictEqual(SR_ONLY.filter(c => !srSet.has(c)), [],
+    'Serbian Cyrillic has all six of its own letters');
+  assert.deepStrictEqual(SR_ONLY.filter(c => ruSet.has(c)), [],
+    'and those six are genuinely absent from the Russian table (else this section is vacuous)');
+  // Phonemic orthography: one letter, one sound. The Russian table reads Е as /je/; Serbian /e/.
+  const e = sr.letters.find(L => L.ch === 'Е');
+  assert.strictEqual(e.ipa, 'e', 'Serbian Е is /e/, not the Russian /je/');
+  assert.strictEqual(cyr.letters.find(L => L.ch === 'Е').ipa, 'je',
+    'and the Russian table really does say /je/ — the difference this guard is about');
+
+  // Every column an MCQ can key on must be unique, or a question has several correct answers.
+  for (const col of ['ch', 'lower', 'name', 'translit', 'ipa']) {
+    const v = sr.letters.map(L => L[col]);
+    assert.strictEqual(new Set(v).size, v.length, `Serbian Cyrillic ${col} values are unique`);
+  }
+  // Unicode machinery, not a hand-checked list: uppercase Cyrillic with its exact lowercase pair.
+  for (const L of sr.letters) {
+    assert.ok(/^\p{Script=Cyrillic}$/u.test(L.ch), `${L.ch} is a Cyrillic letter`);
+    assert.strictEqual(L.lower, L.ch.toLowerCase(), `${L.ch} pairs with its own lowercase`);
+    // `translit` is Gaj's Latin — the CO-OFFICIAL Serbian script, in 1:1 correspondence.
+    assert.ok(/^\p{Script=Latin}+$/u.test(L.translit), `${L.ch} transliterates into Latin`);
+  }
+  assert.deepStrictEqual(scripts._langScript.sr, ['cyrillic-sr', 'latin'],
+    'sr is digraphic — both scripts are official and equal');
+  assert.strictEqual(scripts._langScript.hr, 'latin', 'hr is Latin only');
+}
+console.log('  scripts.json: Serbian Cyrillic is its own 30-letter table, not the Russian one: OK');
+
 // ── scriptsForLang / needsIntroScript gating ─────────────────────────────────
 const SCRIPTS_DATA = scripts;
 const scriptsForLang = new Function('SCRIPTS_DATA', ext(html, 'scriptsForLang') + '\nreturn scriptsForLang;')(SCRIPTS_DATA);
@@ -60,6 +111,17 @@ const _allLangs = Object.keys(JSON.parse(fs.readFileSync(path.join(ROOT, 'langua
   .filter(k => !k.startsWith('_'));
 _allLangs.forEach(l => assert.ok(scriptsForLang(l).length, `${l} is mapped in _langScript`));
 assert.strictEqual(scriptHasTable('cyrillic'), true, 'cyrillic table is usable');
+// v75_g: the Serbian gating, asserted where the helpers exist.
+assert.deepStrictEqual(scriptsForLang('sr'), ['cyrillic-sr', 'latin'], 'sr → both official scripts');
+assert.deepStrictEqual(scriptsForLang('hr'), ['latin'], 'hr → latin only');
+assert.strictEqual(scriptHasTable('cyrillic-sr'), true, 'the Serbian Cyrillic table is usable');
+// A Serbian reader must NOT be offered a Latin course: they already read it. This falls out of
+// `latin.soundsFor` not listing cyrillic-sr, rather than from any rule about which languages
+// "need" Latin — worth pinning because it is the behaviour, not the mechanism, that matters.
+assert.strictEqual(scriptTeachable('latin', scriptsForLang('sr')), false,
+  'Latin is not taught to a Serbian reader — Serbian Latin is co-official, there is nothing to teach');
+assert.strictEqual(scriptTeachable('cyrillic-sr', ['latin']), true,
+  'but Serbian Cyrillic IS teachable to a Latin reader');
 assert.strictEqual(scriptHasTable('hiragana'), true, 'hiragana table is filled');
 assert.strictEqual(scriptHasTable('katakana'), true, 'katakana table is filled');
 assert.strictEqual(scriptHasTable('arabic'), true, 'arabic table is filled');
@@ -332,6 +394,9 @@ console.log('  v53 Latin course: localized answers, no Latin leak, parity, legac
     latin: 'Latin', cyrillic: 'Cyrillic', greek: 'Greek', hebrew: 'Hebrew', arabic: 'Arabic',
     devanagari: 'Devanagari', hangul: 'Hangul', hiragana: 'Hiragana', katakana: 'Katakana',
     thai: 'Thai', han: 'Han',
+    // v75_g: Serbian Cyrillic is its own table, not a variant of the Russian one — it drops nine
+    // of that table's letters (Ё Й Щ Ъ Ы Ь Э Ю Я) and adds six (Ђ Ј Љ Њ Ћ Џ). Same Unicode script.
+    'cyrillic-sr': 'Cyrillic',
   };
   const inScript = (s, str) => new RegExp(`\\p{Script=${SCRIPT_PROP[s]}}`, 'u').test(str);
   let columnsChecked = 0;

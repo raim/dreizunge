@@ -88,6 +88,7 @@
     "lesson.continue": "↪ Continue",
     "lesson.read_aloud": "Read aloud",
     "lesson.words_from": "Words from this lesson",
+    "complete.words_solved": "Words you can read in this chapter",
     "lesson.flagged_n": "⚑ {n}",
     "lesson.flagged_n_plural": "⚑ {n}",
     "lesson.flagged_across": "⚑ {n}",
@@ -411,6 +412,7 @@
     "lesson.type.mixed": "🔀 Mixed review",
     "lesson.type.desc.mixed": "A mix of questions from this chapter's other lessons",
     "form.format.mixed": "🔀 Mixed review — questions pooled from this chapter (no AI)",
+    "form.finish_mixed": "Finish the chapter with a mixed review round (no AI)",
     "lesson.type.intro_script": "🔡 Learn the script",
     "lesson.type.desc.intro_script": "Learn the letters of the target language's writing system",
     "form.format.intro_script": "🔡 Learn the script — the alphabet, letter by letter (no AI)",
@@ -17938,5 +17940,7 @@
     "ex.comprehension.story_listen": "Soma hadithi kwa sauti.",
     "complete.story_unlocked": "soma na uelewe sura",
     "ex.badge.comprehension": "Je, uliielewa?"
-  }
+  },
+  "sr": {},
+  "hr": {}
 }

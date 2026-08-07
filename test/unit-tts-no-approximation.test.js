@@ -103,8 +103,21 @@ const DE = { name: 'Anna', lang: 'de-DE', localService: true };
   }
   assert.strictEqual((client.match(/function _ttsPickVoice\(/g) || []).length, 1, 'exactly one voice resolver');
   // The listening path must still ADVANCE when it refuses, or the exercise hangs on a silent item.
+  // v75_h: this pinned the literal `if (!u) {` — the spelling of the refusal, not the claim — and
+  // broke when that variable was inlined, while the behaviour was unchanged. Its first replacement
+  // was worse: a loose `_ttsNoVoice … doAdvance` window reached PAST the refusal block and matched
+  // the advance belonging to the normal spoken path, so it passed under its own revert. Scoped now
+  // to the refusal block itself — from the no-voice handler to the `return` that ends it.
+  // The BEHAVIOUR is covered by unit-speak-advance §6, against an engine with no matching voice.
   const adv = ext(client, '_speakAndAdvance');
-  assert.ok(/if \(!u\) \{[\s\S]{0,400}doAdvance/.test(adv), '_speakAndAdvance still advances when it refuses to speak');
+  const refusalAt = adv.indexOf('_ttsNoVoice(');
+  assert.ok(refusalAt >= 0, '_speakAndAdvance refuses via the shared no-voice handler');
+  const refusalEnd = adv.indexOf('return', refusalAt);
+  assert.ok(refusalEnd > refusalAt,
+    'the refusal block ends in a return (without one this slice would run to the end of the ' +
+    'function and match an advance that is not the refusal\'s)');
+  assert.ok(/doAdvance/.test(adv.slice(refusalAt, refusalEnd)),
+    '_speakAndAdvance still advances when it refuses to speak');
 }
 
 // ── 7. Auto-mute on no-voice — and the refusal is what makes it SAFE ─────────

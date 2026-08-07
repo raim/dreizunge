@@ -1,4 +1,4 @@
-# HANDOVER — v75
+# HANDOVER — v75_h
 
 One page. Read `build_history/roadmap_v75.md` next for the queue and the session protocol, and
 `build_history/v74b_session28_notes.md` for what session 28 actually found — it is long, and the
@@ -8,12 +8,19 @@ findings matter more than the diffs.
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **170 checks, ALL PASSED** |
-| `node test/run.js --quick` | 149 |
+| `node test/run.js` | **174 checks, ALL PASSED** |
+| `node test/run.js --quick` | 151 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v75'`. Establish this before changing anything.
+`APP_VERSION = 'v75_h'`. Establish this before changing anything.
+
+**Session 29 opened on a RED baseline (2 of 170) and neither failure was a stale fixture.** One was
+`ui.json` arriving OLDER than the code it serves (two keys missing from `en` itself, rendering raw
+key names to the learner); the other was corpus drift making two `smoke-render` fixtures the same
+chapter, so leaked progress put a later section on a story-unlocked card where `v74_l` correctly
+hides the button it was asserting. **Check file timestamps first — it was the whole diagnosis of the
+first one.** Full account in `build_history/v75h_session29_notes.md`.
 
 **If `unit-static-freshness` fails, run `node build-static.js`.** It hashes every baked input and
 stamps the digests into `docs/index.html`, so a stale static build is caught instead of shipping
@@ -63,6 +70,19 @@ existing `v{ver}_session{n}_notes.md` form.
 
 ## Next session - in this order
 
+**Two items are BLOCKED ON A RULING FROM YOU, both measured in session 29 (`roadmap_v75.md` §3b, §3c):**
+
+- **The Android English voice.** Your "still caribbean, only on android" report is a real hole in
+  `v74_j`, which fixed only the case where the exact locale is PRESENT. With no `en-GB` voice
+  installed the ranker falls through to quality alone and a NETWORK `en-NG` / `en-IN` beats the
+  LOCAL `en-US`. The obvious fix is barred by the design principle (a locale-proximity table is a
+  hand-authored language fact) — choose between `voice.default`, `navigator.language`, or shipping
+  §6's selector so you pick once.
+- **Serbian/Croatian: SHIPPED in `v75_g`**, with a purpose-built 30-letter `cyrillic-sr` table.
+  Still owed by you: the 28 non-English `names` entries, the `ui.json` pass for `sr`/`hr`, and a
+  **native-speaker check of the table** — it was authored in-container, which is the exact case the
+  design principle warns about.
+
 1. **The pass mark.** `Churros` is 40 items where it was 83 questions, and an item is solved by ANY
    correct answer, so 80% is a materially lower bar than before. Deliberately not guessed at. **Needs
    the user's browser pass, not a code change.**
@@ -90,9 +110,10 @@ existing `v{ver}_session{n}_notes.md` form.
 - **A browser pass.** Now 19 releases deep. `v74_c` changed what coverage means, `v74_i` touched the
   live list projection (the first `server.js` change in the session), and `v74_j`/`v74_n` are visual.
 - **The comprehension QC checker** - needs a new prompt and a live model. Queued, correctly.
-- **The translate pass.** `complete.story_unlocked` and `ex.badge.comprehension` were changed in
-  English and dropped from the other 29 languages for refill; `complete.words_solved` and
-  `form.finish_mixed` are new and English-only. `t()` falls back through English, so nothing is
+- **The translate pass.** `complete.story_unlocked` and `ex.badge.comprehension` came BACK filled in
+  all 30 languages — that pass worked, and the returned file validated clean (596x30, 0 missing).
+  It simply predated `complete.words_solved` and `form.finish_mixed`, which were therefore missing
+  from `en` as well; both are now in `en` only and still owed a pass. `t()` falls back through English, so nothing is
   broken meanwhile. **`v71_q`: never assert a dropped key absent.**
 
 ## One process failure worth not repeating
