@@ -152,8 +152,17 @@ console.log('  loadSaved: learner auto-start, teacher keeps the page: OK');
   assert.ok(/startLesson\(nextLessonIdx\)/.test(sc), 'Next → next lesson in this chapter directly');
   assert.ok(/_nextChapter\(\)/.test(sc) && /loadSaved\(ch\.id \|\| encTopic\(ch\.topic\)\)/.test(sc),
     'Next → next chapter (resumes its first unfinished lesson via loadSaved)');
-  assert.ok(/Next stays PRESENT but/.test(sc) && /compNext\.classList\.add\('disabled'\)/.test(sc),
-    'Next stays present but greyed when nothing is left to do (v71_h consistent row)');
+  // v74_o: with nothing left to do Next now LEADS somewhere instead of greying out. v71_h's real
+  // point — the button stays PRESENT and in the same position, so the row is identical on every
+  // card — is preserved; only the greying goes, because `comp-back` is hidden on this card too and
+  // a disabled arrow beside no other affordance is a dead end. Destination reuses APP._compBack
+  // (storyline if any, else home), so the button and the header cannot disagree about "onward".
+  assert.ok(/compNext\.onclick = \(\) => \{ endDrill\(\); compBackToStory\(\); \};/.test(sc),
+    'with nothing left, Next leads back to the storyline (or home for a solo chapter)');
+  assert.ok(!/compNext\.classList\.add\('disabled'\)/.test(sc),
+    'and is no longer greyed — there IS something to do');
+  assert.ok(/const _endLbl = \(sl && slEnc\) \? t\('complete\.back_story'\) : t\('complete\.back_home'\);/.test(sc),
+    'labelled for its actual destination rather than a generic "Next"');
   assert.ok(!/compNext\.style\.display = 'none'/.test(sc), 'the old hide-Next form is gone');
   // Back target stashed; storyline or landing.
   assert.ok(/APP\._compBack = \(sl && slEnc\) \? \{ kind: 'storyline'/.test(sc), 'Back target: storyline when present');

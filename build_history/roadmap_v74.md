@@ -67,10 +67,18 @@ only one that also closes the sampling nondeterminism (15 of 294 topics).
   gate-1 mark. Measured: sharing one universe between bar and gate collapses §1's divergence window
   (`64..66`, `23..24`) to **none**.
 
-**Shipped this session:** `v74_b` lesson-phase · `v74_c` item-keyed coverage (closes 1a) ·
+**Shipped in session 28:** `v74_b` lesson-phase · `v74_c` item-keyed coverage (closes 1a) ·
 `v74_d` math counts · `v74_e` hidden-never-counts guard · `v74_f` error-hunt routing guard ·
-`v74_g` counters (b) and (c). Counter (a) CLOSED as chapters, no change (see session notes).
-Suite 167 / quick 146.
+`v74_g` counters (b)/(c) · `v74_i` live-mode storyline progress · `v74_j` TTS voice ranking ·
+`v74_k` storyline locks · `v74_l` section 3 · `v74_m` story paragraph formatter · `v74_n` two
+highlight tiers · `v74_o` last card not a dead end · `v74_p` chapter-wide vocabulary panel ·
+`v74_q` comprehension reason shown not spoken · `v74_r` mixed round as a toggle.
+Counter (a) CLOSED as chapters, no change. **Sections 1, 3 and 4 are COMPLETE.**
+Suite 170 / quick 149. See `v74b_session28_notes.md`.
+
+**Section 2 (highlighting) is the only design section left, and its plan below is WRONG** — see the
+session notes: `_articleStatsFor` returns `sampleSize: 0` on the chapters that need it, because it
+reads grammar items. A corpus-derived replacement is measured there.
 
 **Still open:** the pass mark. `Churros` is 40 items where it was 83 questions, and an item is
 solved by ANY correct answer, so 80% is a materially lower bar than before. Deliberately left alone

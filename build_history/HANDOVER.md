@@ -1,134 +1,104 @@
-# HANDOVER — v74
+# HANDOVER — v75
 
-One page. Read `build_history/roadmap_v74.md` next for the queue and the session protocol, and
-`build_history/v73k_session27_notes.md` for what session 27 actually found.
+One page. Read `build_history/roadmap_v75.md` next for the queue and the session protocol, and
+`build_history/v74b_session28_notes.md` for what session 28 actually found — it is long, and the
+findings matter more than the diffs.
 
 ## Green baseline
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **166 checks, ALL PASSED** |
-| `node test/run.js --quick` | 145 |
+| `node test/run.js` | **170 checks, ALL PASSED** |
+| `node test/run.js --quick` | 149 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v74'`. Establish this before changing anything.
+`APP_VERSION = 'v75'`. Establish this before changing anything.
 
-**If `unit-static-freshness` fails, run `node build-static.js`.** New in `v73_b`: it hashes every
-baked input and stamps the digests into `docs/index.html`, so a stale static build is caught instead
-of shipping silently. It fires whenever `index.html`, `lessons.json`, `ui.json`, `languages.json`,
-`scripts.json` or `build-static.js` changes without a rebuild. **A failure here is the guard
-working.** The data files travel separately from the code and routinely arrive newer.
+**If `unit-static-freshness` fails, run `node build-static.js`.** It hashes every baked input and
+stamps the digests into `docs/index.html`, so a stale static build is caught instead of shipping
+silently. **A failure here is the guard working.** The data files travel separately from the code
+and routinely arrive newer.
 
-## Starting the next session — the lesson flow, the completion card, comprehension
+## What session 28 settled
 
-Full spec in `roadmap_v74.md` under "THIS SESSION". The short version: session 27 fixed four defects
-in this area and each one exposed the next, so it is one block of work rather than three.
+Nineteen point releases, `v74_b` -> `v74_r`, then cut to **`v75`**. The headline: **the roadmap's prime suspect was wrong.**
+Nothing from session 27 was reverted. `v73_g`'s icon row does navigate, `v73_i`'s keying is sound,
+`v73_d` is not the cause of the red bar. The real defect was older and larger.
 
-**Session 27 is suspected of breaking this area.** The user play-tested it and reported user
-progress, lesson flow and completion cards as broken. Nine changes landed on this subsystem in one
-sitting, each individually revert-verified, **with no browser in the loop** — the individual changes
-were verified, the accumulation was not. `roadmap_v74.md` §0 has the prime suspect (`v73_g`'s icon
-row calls `startLesson()` from the completion card, violating a documented `v68.1` precondition) and
-the bisection points. **Establish what is actually broken before writing code.**
+- **`v74_b`** one lesson-phase classification. 29 chapters had gated the story behind an error hunt,
+  which renders a corrupted copy of that story.
+- **`v74_c`** coverage counts SOURCE ITEMS, not generated questions. This was the cause of the
+  reported "user progress broken": the qid universe was cached under an audio key, so a learner who
+  played muted and then unmuted read `64/83` with Next locked and no way to recover. **284 of 298
+  topics -> 0.** Also closes the sampling nondeterminism.
+- **`v74_d`** math counts (225 authored exercises, 25 chapters).
+- **`v74_e`** hidden lessons never count (guard). **`v74_f`** the card routes to the error hunt (guard).
+- **`v74_g`** counters (b) and (c). **`v74_i`** live-mode storyline progress. **`v74_k`** the
+  storyline locks. **`v74_o`** the last card is not a dead end.
+- **`v74_j`** TTS voice ranking: locale before quality. **`v74_l`-`v74_r`** sections 3 and 4 complete.
 
-**QC work is postponed** by the user — the QC menu, `mergeFlaggable`, and the comprehension checker
-all wait behind the lesson flow.
+## Three standing rules earned the hard way
 
-**Three further things are known-broken and measured**, none of them fixed:
+1. **A probe must call the product function, never a re-typed copy** - and least of all one lifted
+   from a test stub. Two false findings this session came from re-implementing `lessonCountsFor` and
+   the read-full-story lock rather than invoking them.
+2. **A claim about behaviour is only measured if the assertion touched the thing being claimed.**
+   `setComplete=false` is not evidence about a button. Three inference-not-measurement errors.
+3. **A non-vacuity check must be evaluated on the data the assertion actually runs against**, not on
+   the data it was derived from. Two guards passed under their own reverts because the fixture had
+   been projected before the assertion saw it.
 
-1. **`topicCoverage().total` is nondeterministic** — 15 of 294 topics return a different denominator
-   run to run (worst spread 4 questions, 2.9%), because builders sample which items to quiz. A
-   learner sitting exactly on the pass mark can cross it by reloading. Needs a decision about
-   seeding the universe, not a patch.
-2. **Comprehension has no QC checker.** `v73_k` stopped it being falsely stamped clean, which made
-   the gap honest rather than closing it. Needs a new prompt and a live model.
-3. **`mergeFlaggable` deletes flags — and stars — that the client's payload predates.** No
-   concurrency required. `if (!('qc' in v)) delete m.qc;` cannot distinguish "the user cleared this"
-   from "the client never knew about it". **The same path carries `userRating`**, and stars are the
-   input to an example pipeline that currently has none.
+Also: **a headless harness that builds `APP.savedList` from whole topics is testing STATIC mode**,
+whatever else it thinks it is testing. That blind spot hid `v74_i` from 167 green checks.
 
-(3) is the cheapest and is upstream of the one item in `future_development.md` that outranks the
-whole queue — but it is QC work and therefore postponed. Do the lesson flow first.
+## Naming convention (set by the user at the v75 cut)
 
-**Two findings from the play-test that change what the notes look like they say** (both measured,
-full detail in `roadmap_v74.md` §1–§2):
+**A session's prompt file is named for the version that session WRAPS UP WITH**, not the one it
+starts from. The session that ended in `v75` opened with `build_history/v75_prompt.md`. The old
+`session_{n}_prompt.md` files were renamed to match — `session_28_prompt.md` -> `v74_prompt.md`,
+`session_29_prompt.md` -> `v75_prompt.md` — because the session numbering had drifted from the
+version numbering and only the version number stays meaningful later. Session NOTES keep their
+existing `v{ver}_session{n}_notes.md` form.
 
-- The progress bars are **three questions sharing one display**. `_compProgressHtml` shows completed
-  LESSONS for a classic chapter and solved QUESTIONS for a mixed-driven one — hence `2/2` next to
-  `67/83` on identical bars. And comprehension sits INSIDE the coverage universe but OUTSIDE the
-  unlock rule, which is why a chapter reads "64/83, below threshold" with the story already
-  unlocked. The right model is two gates: non-comprehension lessons unlock the story, the
-  comprehension lesson unlocks the next chapter.
-- "Too little highlighting" is **not** mainly the `v73_e` boundary fix. Measured on the reported
-  chapter: 4 marks before, 2 after — but of 16 vocab words, **9 match only once a leading article is
-  stripped** (`el churro` vs the story's `churros`) and **4 only via a stem** (`negociar` →
-  `negocié`). Vocabulary is stored in dictionary form; stories use inflected forms. **Do not revert
-  the word boundaries** — that trades 2 real marks for the every-`i`-highlighted bug.
+## Next session - in this order
 
-## Owed by the USER — nothing here can be done in a dev container
+1. **The pass mark.** `Churros` is 40 items where it was 83 questions, and an item is solved by ANY
+   correct answer, so 80% is a materially lower bar than before. Deliberately not guessed at. **Needs
+   the user's browser pass, not a code change.**
+2. **Highlighting (roadmap section 2).** Measured, not shipped. **The roadmap's stated plan does not
+   work**: `_articleStatsFor` reads grammar items and returns `sampleSize: 0` on the very chapters
+   that need it. A corpus-derived alternative is measured in the session notes (`Churros` 2 -> 10
+   marks; only Spanish and Italian store articles with their vocabulary). It wants its own release
+   with the threshold justified. **Do NOT revert the word boundaries** - `v73_e` traded the every-`i`
+   bug for 2 real marks.
+3. **Browsing completion cards** of already-played lessons, with explicit back/next (user request).
+   Note this turns `v74_o`'s "nothing left to do" terminal state into a waypoint and interacts with
+   `v74_l`'s Next-only rule - revisit those two branches together rather than layering a third
+   navigation rule on top.
+4. **`_sbChapterTarget`** (`index.html` ~8065) - the seventh and last known instance of the
+   raw-lessons pattern. Not fixed because its test extracts it in isolation with synthetic progress
+   maps, so switching it to `chapterComplete` needs that harness reworked first.
+5. **The storyline-page TTS selector.** `dreizunge_v39_summary.md:331` records selectors built "in
+   all footer rows (lesson-set, **storyline** screens)". Today `ids = ['ls']`, the `-sl` elements are
+   gone, but the function's own existence check still looks for `tts-lang-select-sl`. No note
+   anywhere explains the removal. Also dead: `#tts-row` / `buildTtsSelector()`, permanently
+   `display:none`, still rebuilt on every lesson-set entry.
 
-The reason to stop adding code rather than continue. Ten releases without a browser or a live model.
+## Owed by the user, not doable in a container
 
-| owed | since | why it needs a human |
-|---|---|---|
-| **Browser passes on `v71_i`–`v74`** | 10 releases | Several changes are only visible in a browser. **Now including the completion card specifically**: the `v73_d` gate row, the `v73_g` lesson icon row, and whether the two together crowd the card on a phone. |
-| **Live QC run — article symmetry** | `v71_y` | Whether the model CATCHES an asymmetric pair is a judgement no test can make. **Check Arabic first**: `ال`-prefixed words must not be flagged as one-sided articles. |
-| **Live QC run — diacritics** | `v72` | The scan finds 5 candidates corpus-wide; the model must reject the minimal pairs (`souffle`/`soufflé`, `inizio`/`iniziò`). Rejecting all 5 is CORRECT. |
-| **Live comprehension generation** | `v71_t` | Whether the removed story caps improved the questions. Watch for `Story context: … → num_ctx≈…`. |
-| **`NUM_CTX_MAX` decision** | `v71_t` | A memory choice on hardware nobody here can see. 16384 default; 32768 roughly doubles the surviving story. |
-| **QC on 8 `ui.json` entries** | `v72_b` | One key, `models.threads`, in ar/he/hi/ko/uk/zh/th/el — all verbatim English. Parked in `PENDING_QC` in `test/unit-ui-verbatim-en.test.js`, which fails if a new fallback appears AND if a parked one gets translated (remove it from the list then). |
-| **Native-speaker vocab review** | ongoing | Nothing in the suite can judge whether a generated word is the one a native speaker would use. |
-| **Live synonyms run** | `v72_d`, `v72_e`, `v73` | Two log lines: `Synonyms context: N quoted, M rejected` — 0 quoted means the model ignored the field; and `N antonym-only`. |
-| **Corpus curation — ⭐ ratings** | ongoing | **0 items in the corpus are starred.** The rating UI exists, `harvest-examples.js` exists, `promptExample()` resolves at 4 generation sites — and `examples.json` does not exist. Every generation in every language falls through to a generic default. Needs judgement, not code, and it is upstream of every lesson the app produces. |
+- **A browser pass.** Now 19 releases deep. `v74_c` changed what coverage means, `v74_i` touched the
+  live list projection (the first `server.js` change in the session), and `v74_j`/`v74_n` are visual.
+- **The comprehension QC checker** - needs a new prompt and a live model. Queued, correctly.
+- **The translate pass.** `complete.story_unlocked` and `ex.badge.comprehension` were changed in
+  English and dropped from the other 29 languages for refill; `complete.words_solved` and
+  `form.finish_mixed` are new and English-only. `t()` falls back through English, so nothing is
+  broken meanwhile. **`v71_q`: never assert a dropped key absent.**
 
-## Open decisions blocking work
+## One process failure worth not repeating
 
-1. **Duplicate targets.** `v73_i` stopped a duplicate becoming a duplicate QUESTION; the duplicate
-   DATA is untouched and still reaches the editor, the vocab chips and the distractor pools. Note
-   that one instance is legitimate — `der/die Angestellte` are two real nouns sharing a plural — so
-   a rule keyed on target alone throws away good data. Dedupe on the pair, repair the corpus, or
-   flag in QC?
-2. **Crossword translation highlight** — `word_forms` items have no translation field, so there is
-   nothing to put in the gap. Restrict to vocabulary/synonym clues, or give word_forms a translation?
-3. **Coverage universe seeding** — see item 1 of the section above.
-4. **Script-mismatch detection.** `scripts.json._langScript` already maps `he→hebrew`, `ar→arabic`,
-   so a check is a registry lookup plus `\p{Script=…}` — no language knowledge. Measured: 1 topic,
-   7 words out of 4,670 targets — a Hebrew lesson whose grammar items are Arabic words carrying the
-   Hebrew article `ה`, one plural reading `"udades"` (Spanish debris). Rare but shipping today.
-   Block at generation, flag in QC, or both? The tolerance policy is the hard part: loanwords will
-   trip a naive check.
-
-*(Rulings kept so they are not re-opened: the design principle's boundary is Unicode machinery, not
-hand-authored tables, session 25; `el/storyboard.title` stays "Storyboard" as a loanword, session 26;
-grammar and conjugation stay story-free, session 26; article MCQs build only where the corpus shows
-the article is predictable from gender, session 27.)*
-
-## What changed in session 27, one line each
-
-`v73_b` docs/ staleness guard — fired on the archive as delivered · `v73_c` lib-dom parses
-`innerHTML`, retiring a "needs a browser" claim that was false in all three of its parts · `v73_d`
-completion-card pass mark: a green bar above a locked Next · `v73_e` story highlighting: a vocab
-entry `"I"` lit every `i` in every word, 54 marks → 13 · `v73_f` article MCQs suppressed where the
-corpus shows the article is not predictable from gender (en 0/6 suppressed, de 9/9 kept) · `v73_g`
-completion-card lesson icon row · `v73_h` plural distractors drawn from the corpus, replacing
-`plural + 'e'` · `v73_i` a round never asks one question twice · `v73_j` QC findings survive a
-chapter edited mid-pass — 9 flags logged, 5 kept, diagnosed from the user's console log · `v73_k`
-unchecked lesson types no longer stamped QC-clean, plus three TODOs recovered from a roadmap
-boundary.
-
-**Five of the ten came from the user playing lessons.** Nothing in the suite could have produced
-them, and that ratio is the strongest argument for clearing the owed browser passes.
-
-## Two things worth carrying into how you work
-
-**Nine vacuous assertions were found in this session alone**, every one by breaking the product and
-demanding the named assertion fire — none by reading. The shape is always the same: the assertion is
-downstream of the thing under test, or the fixture is arranged so the distinction never arises. Two
-needed three attempts to make bite. A revert must also leave the product in a *coherent* wrong
-state: one apparent "no failure" turned out to be a `TypeError`, which verifies nothing.
-
-**Items are lost at roadmap base cuts, not in the idea documents.** An entire `[OPEN — …]` block of
-three items vanished at the v71 → v72 boundary and was absent from `roadmap_v72`, `roadmap_v73`, the
-previous `HANDOVER.md`, and the first draft of `future_development.md`. They are restored in
-`roadmap_v74.md` under RECOVERED. **Only 1 of 28 roadmap boundaries has been checked.**
+Mid-session I bumped `APP_VERSION` and edited three files **without running the definition-of-done or
+packaging**, so the tree drifted past the artifact the user was holding. I then found the changes,
+failed to recognise them as mine, and asked the user about them - the container has one writer.
+**Where the environment admits only one agent, unexplained state is yours.** The protocol's
+suite-docs-package cycle exists precisely to make that drift impossible; follow it per change.

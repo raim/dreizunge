@@ -258,7 +258,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 #complete-screen{padding:0 0 40px;max-width:540px;width:100%;text-align:center;margin:0 auto}.comp-body{padding:12px 16px 0}
 .comp-title{font-size:28px;font-weight:900;color:var(--text);margin-bottom:4px}
 .vocab-box{width:100%;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:14px 16px;margin-bottom:18px;text-align:left;box-shadow:var(--shadow-card)}
-.vocab-hdr{font-size:11px;font-weight:900;color:var(--gray);text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px}.vocab-chip{display:inline-flex;align-items:center;gap:4px;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:20px;padding:3px 10px;font-size:13px;font-weight:700;margin:3px;white-space:nowrap}
+.vocab-hdr{font-size:11px;font-weight:900;color:var(--gray);text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px}.vocab-chip{display:inline-flex;align-items:center;gap:4px;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:20px;padding:3px 10px;font-size:13px;font-weight:700;margin:3px;
+  /* v74_p: a chip may now hold a whole-chapter phrase ("la cuenta bancaria" + its gloss), which
+     `white-space:nowrap` pushed past the panel edge. Wrap inside the chip and cap it at the
+     panel width; `flex-wrap` lets the target and its gloss fall onto separate lines. */
+  white-space:normal;flex-wrap:wrap;max-width:100%;overflow-wrap:anywhere}
 .vrow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1.5px solid var(--gray-mid)}
 .vrow:last-child{border:none}
 .vtarget{font-size:14px;font-weight:800;color:var(--blue);cursor:pointer}
@@ -7767,7 +7771,21 @@ function renderLessonTypeChecks(container, opts){
         <input type="checkbox" class="${o.cls || 'lt-check'}" value="${x.v}" ${pre.includes(x.v) ? 'checked' : ''}>
         <span>${x.emoji} ${escHtml(lbl && lbl !== x.key ? lbl : x.v)}</span>
       </label>`;
-    }).join('');
+    }).join('')
+    // v74_r: `mixed` is NOT a lesson type and must not sit in this list. v74_b settled that it is an
+    // alternative way to PLAY the prep lessons — it owns no content, and its questions are pooled
+    // from the siblings before it. Ticked on its own it would generate a round with nothing to pool
+    // (`mixed.empty`: "Nothing to pool yet"). So it is a separate toggle, below a rule: not "what
+    // kind of lesson do you want" but "how should the chapter finish".
+    //
+    // Reading it (see readLessonTypeChecks) appends `mixed` only when at least one real type is
+    // ticked, which is what makes an empty mixed round unreachable from this form rather than
+    // merely discouraged.
+    + `<div style="border-top:1px solid var(--gray-mid);margin:8px 0 6px"></div>
+      <label class="user-story-check-row" style="gap:7px">
+        <input type="checkbox" class="${(o.cls || 'lt-check')}-mixed" ${o.mixed ? 'checked' : ''}>
+        <span>🔀 ${escHtml(t('form.finish_mixed'))}</span>
+      </label>`;
 }
 // v71_u: render an arc tick-list into one of the book/generate forms. Both call this, so the two
 // forms cannot drift apart the way the old two-option <select>s did. Rendered lazily (on the form
@@ -7790,8 +7808,16 @@ function readArcTypeChecks(containerId){
 }
 function readLessonTypeChecks(container, cls){
   if(!container) return [];
-  return [...container.querySelectorAll('.' + (cls || 'lt-check'))]
+  const base = cls || 'lt-check';
+  const types = [...container.querySelectorAll('.' + base)]
     .filter(c => c.checked).map(c => c.value);
+  // v74_r: the mixed round is appended LAST and only when there is something for it to pool. A
+  // mixed lesson draws from the prep lessons BEFORE it (buildMixedExercises bounds on `i <
+  // lessonIdx`), so both facts matter: ticked alone it would produce an empty round, and placed
+  // anywhere but last it would pool only part of the chapter.
+  const mx = container.querySelector('.' + base + '-mixed');
+  if (mx && mx.checked && types.length) types.push('mixed');
+  return types;
 }
 
 // Modal wrapper around the tick-list. Resolves to an array of types, or null if cancelled.
@@ -14150,10 +14176,17 @@ function check(){
       : (ex.type==='math_calc'||ex.type==='math_order') ? (Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
       : ex.type==='syn_select' ? stripFuri(ex.correct.join(', '))
       : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+stripFuri(ex.target) : stripFuri(ex.target));
-    // v71_o: for a comprehension question the useful thing to hear is the REASON, in the learner's
-    // own language — not the target-language option text, which the story already contains.
-    if(_why) speakLang(_why, (APP.lessonData?.srcLang || APP.srcLang));
-    else if(speakBad) speak(speakBad,0.75);
+    // v74_q: the reason is SHOWN, not spoken. v71_o read it aloud in the learner's own language on
+    // the argument that the reason is the useful thing to hear — but it means a target-language
+    // lesson suddenly speaks the learner's native language mid-round, in a different voice (the
+    // resolver correctly switches locale for it, which is exactly what makes the switch audible).
+    // The learner is reading the sentence in front of them at the same time, so the audio competes
+    // with the text rather than supporting it. Shown in full, spoken not at all.
+    //
+    // Nothing is spoken in its place: the remaining candidate would be the correct OPTION, and
+    // v71_o's other observation still holds — that text is already in the story above, so hearing
+    // it teaches nothing the learner cannot see. A comprehension question is a reading exercise.
+    if(!_why && speakBad) speak(speakBad,0.75);
     const _corrStr = Array.isArray(ex.correct) ? ex.correct.join(', ') : ex.correct;
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('bad'); if(b.textContent.trim()===stripFuri(_corrStr))b.classList.add('ok'); });
     if(ex.type==='syn_select') document.querySelectorAll('.syn-tile').forEach(b=>{ const w=(b.dataset.w||'').toLowerCase(); if(ex.correct.some(c=>c.toLowerCase()===w)) b.classList.add('ok'); else if(b.classList.contains('sel')) b.classList.add('bad'); });
@@ -14216,6 +14249,33 @@ function showComplete(review){
   // Vocab recap — handle all lesson types
   const vocabBox = document.getElementById('comp-vocab')?.closest('.vocab-box');
   const wordsLbl = document.getElementById('words-from-lbl');
+  // v74_p: chips for every word of THIS CHAPTER the learner has solved, target + gloss, longest
+  // first (as _solvedTargetWords returns them). Memoised per render: the branch chain below asks
+  // twice and _solvedTargetWords walks the whole solved map. Returns '' when the chapter has no
+  // solved vocabulary, which is what lets the per-lesson branches remain the fallback — a grammar
+  // or math lesson has nothing to contribute here and should keep showing its own content.
+  let _cvChips = null;
+  const _chapterVocabChips = () => {
+    if (_cvChips !== null) return _cvChips;
+    _cvChips = '';
+    try {
+      const d = APP.lessonData;
+      const solved = _solvedTargetWords(d);
+      if (solved.length) {
+        const gloss = new Map();
+        (d.lessons || []).forEach(L => (L && L.vocab || []).forEach(v => {
+          if (v && v.target && !gloss.has(v.target)) gloss.set(v.target, v.source || '');
+        }));
+        _cvChips = solved.map(w => {
+          const g = gloss.get(w) || '';
+          return `<span class="vocab-chip" dir="auto">${furiHtml(w)}` +
+                 (g ? `<small style="opacity:.55;font-weight:600;margin-left:4px">${furiHtml(g)}</small>` : '') +
+                 `</span>`;
+        }).join('');
+      }
+    } catch(_) { _cvChips = ''; }
+    return _cvChips;
+  };
   let vocabItems = '';
   if (lesson?.type === 'ai_error_hunt' || lesson?.type === 'error_hunt') {
     if (vocabBox) vocabBox.style.display = 'none';
@@ -14231,9 +14291,10 @@ function showComplete(review){
       // Script lessons have no vocab — show the letters this lesson covered (glyph + sound).
       if (wordsLbl) wordsLbl.textContent = lesson.title || t('lesson.type.intro_script');
       vocabItems = (lesson.letters||[]).map(L=>`<span class="vocab-chip" dir="auto"><span style="font-size:18px">${escHtml(L.ch||'')}</span>${(L.translit||L.name)?'<small style="opacity:.55;font-weight:600;margin-left:4px">'+escHtml(L.translit||L.name)+'</small>':''}</span>`).join('');
-    } else if (lesson?.type === 'mixed') {
+    } else if (lesson?.type === 'mixed' && !_chapterVocabChips()) {
       // Mixed lessons have no vocab of their own — show the distinct words actually played this
       // round (pulled from the sibling lessons it pooled from), so the recap isn't empty.
+      // v74_p: only reached when the chapter-wide list below comes back empty.
       if (wordsLbl) wordsLbl.textContent = t('lesson.words_from');
       const seen = new Set(); const chips = [];
       for (const e of (C.exercises || [])) {
@@ -14244,6 +14305,14 @@ function showComplete(review){
         chips.push(`<span class="vocab-chip" dir="auto">${furiHtml(tgt)}${src}</span>`);
       }
       vocabItems = chips.join('');
+    } else if (_chapterVocabChips()) {
+      // v74_p: the WHOLE CHAPTER's solved vocabulary, not this round's. The panel used to list the
+      // lesson's own words (or, for a mixed round, the words that round happened to draw), so it
+      // changed every replay and never showed what the learner had actually accumulated. Drawn
+      // from `_solvedTargetWords` — the SAME set that v74_n marks in the strong tier inside the
+      // story above it, so the chips and the highlighting cannot disagree about what you can read.
+      if (wordsLbl) wordsLbl.textContent = t('complete.words_solved');
+      vocabItems = _chapterVocabChips();
     } else {
       if (wordsLbl) wordsLbl.textContent = t('lesson.words_from');
       if (lesson?.vocab?.length) {
@@ -14377,13 +14446,18 @@ function showComplete(review){
     for (let i = myIdx + 1; i < ids.length; i++) {
       const ch = byId[ids[i]];
       if (!ch) continue;
-      const cDone = APP.progress.completed?.[ch.topic] || {};
-      // A chapter's list projection carries lessonCount but not the lessons themselves; treat
-      // any chapter that isn't fully accounted-for in progress as having work left. loadSaved
-      // will resume it precisely at its first unfinished lesson.
-      const cnt = ch.lessonCount || 0;
-      const doneCount = Object.keys(cDone).length;
-      if (cnt === 0 || doneCount < cnt) return ch;
+      // v74_o: the SHARED completion rule. This compared `Object.keys(done).length` against
+      // `ch.lessonCount` — two different populations, because done-flags only ever reach COUNTED
+      // lessons while lessonCount counts every non-hidden one. On any mixed-driven chapter the two
+      // can never meet, so a finished chapter was offered as unfinished for ever:
+      //   Kälte und Paella  doneFlags=2 lessonCount=2  agree
+      //   Churros und Chaos doneFlags=3 lessonCount=6  "work left", though complete
+      // The sixth instance of the raw-lessons pattern. It is fixable here now because v74_i ships
+      // `lessons[]` in the live list projection, so `chapterComplete` works in both modes — before
+      // that this heuristic was the only thing available.
+      let _done = false;
+      try { _done = !!chapterComplete(ch); } catch(_) { _done = false; }
+      if (!_done) return ch;
     }
     return null;
   };
@@ -14442,16 +14516,28 @@ function showComplete(review){
     compNext.style.display = '';
     compNext.onclick = () => { endDrill(); loadSaved(ch.id || encTopic(ch.topic)); };
   } else {
-    // Nothing left to do (last lesson of last/solo chapter, review). v71_h: Next stays PRESENT but
-    // greyed, so the button row is identical to every other card. v71_k: the live route onward is
-    // the HEADER — the globe home, the title back to this storyline — which is what replaced the
-    // "← Back to story" button that used to carry this case.
-    // (A drill no longer reaches here; it ends via renderEx onto the real chapter card.)
-    _compIco(compNext, '→', t('complete.next'));
+    // Nothing left to do (last lesson of last/solo chapter, review).
+    //
+    // v74_o: Next now LEADS somewhere instead of greying out. v71_h greyed it so the button row
+    // matched every other card, leaving the header as the only route onward — but `comp-back` is
+    // hidden on this card too, so a learner who finished the last chapter of a storyline was left
+    // with a disabled arrow and no visible way forward. Measured on the shipped
+    // "Paella und Chaos" with both chapters complete: `comp-next` disabled=true, `comp-back`
+    // display=none. That is a dead end, and the header link is not an obvious answer to a button
+    // that looks like it should work.
+    //
+    // Destination (user ruling): the storyline if this chapter belongs to one, else home. That is
+    // exactly what `APP._compBack` already resolves for the header and for `compBackToStory`, so
+    // this reuses it rather than deciding a second time — the two must not be able to disagree
+    // about where "onward" is. Read at CLICK time, so the assignment a few lines below is in
+    // place by then.
+    //
+    // v71_h's reasoning is preserved: the button stays present and in the same position. It is the
+    // greying that goes, because there is something to do.
+    const _endLbl = (sl && slEnc) ? t('complete.back_story') : t('complete.back_home');
+    _compIco(compNext, '→', _endLbl);
     compNext.style.display = '';
-    compNext.disabled = true;
-    compNext.classList.add('disabled');
-    compNext.onclick = null;
+    compNext.onclick = () => { endDrill(); compBackToStory(); };
   }
 
   // Back-to-story target is stashed for compBackToStory(): the storyline screen if any, else

@@ -1,4 +1,4 @@
-# v74 → v74_n — session 28 notes
+# v74 → v75 — session 28 notes
 
 Baseline at the open: **166 checks green**, `--quick` 145, `check-inline` 0 on both builds — but only
 after `node build-static.js`. The `v73_b` freshness guard fired on the archive as delivered, naming
@@ -810,6 +810,103 @@ assertion of mine was wrong and the product was right: I asserted a thoroughly p
 *entirely* strong, but the fixture plays only the first vocabulary-bearing lesson and a chapter may
 draw story words from several. Relaxed to "the strong tier is a subset that grows with progress" —
 totality was an accident of the fixture, not a property of the design.
+
+---
+
+## 2o. `v74_o` — the last card led nowhere
+
+Measured on the shipped "Paella und Chaos" with both chapters complete:
+
+```
+comp-next : disabled=true, present, no onclick
+comp-back : display=none
+```
+
+A greyed arrow beside no other affordance. `v71_h` greyed Next so the button row matched every other
+card, leaving the header as the route onward — but `comp-back` is hidden on this card too, and a
+header link is not an obvious answer to a button that looks like it should work.
+
+**User rulings:** a chapter in no storyline → home; mid-storyline completion → keep skipping to the
+next unsolved chapter.
+
+Next now leads to `APP._compBack` — the storyline if this chapter belongs to one, else home. That is
+the destination the header and `compBackToStory` already resolve, reused rather than decided a
+second time so the two cannot disagree about where "onward" is. `v71_h`'s real point is preserved:
+the button stays present and in the same position; only the greying goes, because there IS something
+to do. Labelled for its actual destination rather than a generic "Next".
+
+**And the sixth instance of the raw-lessons pattern**, in `_nextChapter`:
+
+```
+Kälte und Paella  doneFlags=2  lessonCount=2   agree
+Churros und Chaos doneFlags=3  lessonCount=6   "work left", though complete
+```
+
+Done-flags only ever reach COUNTED lessons; `lessonCount` counts every non-hidden one. On a
+mixed-driven chapter the two can never meet, so a finished chapter was offered as unfinished for
+ever and Next dragged the learner back into it. Now `chapterComplete` — fixable here only because
+`v74_i` ships `lessons[]` in the live projection; before that this heuristic was all there was.
+
+Guarded by CLICKING the button, not by reading its markup: "has an onclick" is exactly the vacuous
+form `v73_g`'s icon-row test fell into. Three cases — end of storyline → storyline screen; solo
+chapter → home; earlier chapter of a finished storyline → storyline, without reloading the finished
+one.
+
+**A vacuity failure caught in revert-verification, the second of this kind.** The `_nextChapter`
+revert passed at first: the fixture storyline had no MIXED chapter after the first, so the raw rule
+and the shared rule agreed on it. Fixed by requiring a later mixed chapter when selecting the
+storyline, and asserting that requirement rather than branching on it — a case that quietly skips
+itself is a case that proves nothing.
+
+**Queued next, at the user's request:** explicit back/next buttons to browse the completion cards of
+already-played lessons, so a learner can revisit and replay. Note this will interact with `v74_l`'s
+Next-only rule and with the branch above — "nothing left to do" stops being the end of the road.
+
+---
+
+## 2p. `v74_p` / `v74_q` / `v74_r` — the rest of §4
+
+**`v74_p` — the vocabulary panel shows the CHAPTER, not the round.** It listed the lesson's own
+words, or on a mixed round whichever words that round happened to draw, so it changed on every
+replay and never showed what the learner had accumulated. Now drawn from `_solvedTargetWords` — the
+SAME set `v74_n` marks in the strong tier inside the story directly above it, so the chips and the
+highlighting cannot disagree about what the learner can read. Measured: 14 chapter-wide chips on a
+mixed chapter where the round had drawn a handful. Chips wrap (`white-space:normal`, `max-width:100%`)
+because a chip may now hold a whole-chapter phrase plus its gloss. When nothing is solved yet the
+per-lesson list remains as a fallback, so a fresh learner is not shown an empty box.
+
+Two of my own guards were wrong before the product was:
+- I asserted the cold fallback on a MIXED lesson, whose branch lists what the round drew — nothing,
+  with nothing played. True before this change too, and not its to fix. Retargeted at a standard lesson.
+- I asserted the absence of `white-space:nowrap`, and the rule's own comment names `white-space:nowrap`
+  as what it replaced, so the negative match found the comment. **A guard that reads its own
+  explanation is a guard that lies.** Asserted as the declaration now in force instead.
+
+**`v74_q` — the comprehension reason is shown, not spoken.** `v71_o` read it aloud in the learner's
+own language, on the argument that the reason is the useful thing to hear. But it makes a
+target-language lesson suddenly speak the learner's native language mid-round, in a different voice
+— the resolver correctly switches locale for it, which is precisely what makes the switch audible —
+while the learner is already reading the same sentence on screen. Nothing is spoken in its place:
+the only remaining candidate is the correct OPTION, and `v71_o`'s other observation still stands,
+that the text is already in the story above. A comprehension question is a reading exercise.
+
+**`v74_r` — the mixed round is a TOGGLE** (user ruling). `v74_b` settled that `mixed` is not a
+lesson: it owns no content and pools from the prep lessons BEFORE it. As a checkbox among the types
+it could be ticked alone, producing a round with nothing to pool — the state `mixed.empty`
+("Nothing to pool yet") exists to apologise for. Now a separate toggle below a rule, and reading
+appends `mixed` LAST and only when at least one real type is ticked:
+
+```
+standard only, toggle off      -> ["standard"]
+standard+synonyms, toggle ON   -> ["standard","synonyms","mixed"]
+NOTHING ticked, toggle ON      -> []          <- the empty round is now unreachable
+```
+
+Both positions matter: last because it pools what precedes it, and never alone because it needs
+something to pool. Revert-verified both ways.
+
+**§4 is complete.** Its six items: the storyline bar and the live/static divergence closed in
+`v74_i`, the read-full-story lock in `v74_k`, and these three plus `v74_o`.
 
 ---
 

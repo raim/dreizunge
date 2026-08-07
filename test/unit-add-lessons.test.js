@@ -109,4 +109,42 @@ const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
     'and it still passes think:false — the v65.1 guarantee survives the refactor');
 }
 
+// ── v74_r: the mixed round is a TOGGLE, not a lesson type ───────────────────────────────────
+// v74_b settled that `mixed` is not a lesson: it owns no content and pools its questions from the
+// prep lessons BEFORE it. As a checkbox among the types it could be ticked alone, producing a round
+// with nothing to pool — the state `mixed.empty` ("Nothing to pool yet") exists to apologise for.
+// It is now a separate toggle below a rule, and reading appends `mixed` LAST and only when at least
+// one real type is ticked, which makes the empty round unreachable from the form rather than merely
+// discouraged.
+{
+  const { loadClient, ROOT: R } = require('./lib-dom');
+  const fsx = require('fs'), pth = require('path');
+  const LANGSx = JSON.parse(fsx.readFileSync(pth.join(R, 'languages.json'), 'utf8'));
+  const UIx = JSON.parse(fsx.readFileSync(pth.join(R, 'ui.json'), 'utf8'));
+  const Cx = loadClient({ quiet: true });
+  Cx.run(`LANGS = ${JSON.stringify(LANGSx)}; UI_STRINGS = ${JSON.stringify(UIx.en)}; true;`, 'seed');
+  const pick = (checked, mixedOn) => JSON.parse(Cx.run(`(function(){
+    var c = document.createElement('div');
+    renderLessonTypeChecks(c, { hasStory: true, checked: ${JSON.stringify(checked)} });
+    var mx = c.querySelector('.lt-check-mixed');
+    if (mx) mx.checked = ${mixedOn};
+    return JSON.stringify({ asType: (c.innerHTML.match(/value="mixed"/g) || []).length,
+                            toggle: !!mx, read: readLessonTypeChecks(c, 'lt-check') });
+  })()`, 'pick'));
+
+  const off = pick(['standard'], false);
+  assert.ok(off.toggle, 'the form offers a mixed-round toggle');
+  assert.strictEqual(off.asType, 0, 'and `mixed` is NOT one of the type checkboxes');
+  assert.deepStrictEqual(off.read, ['standard'], 'with the toggle off it contributes nothing');
+
+  const on = pick(['standard', 'synonyms'], true);
+  assert.deepStrictEqual(on.read, ['standard', 'synonyms', 'mixed'],
+    'with it on, `mixed` is appended LAST — it pools the lessons before it, so it must come after them');
+
+  // The case the toggle exists to make unreachable.
+  const alone = pick([], true);
+  assert.deepStrictEqual(alone.read, [],
+    'ticking only the mixed round yields nothing — a round with no siblings to pool is not offered');
+}
+
 console.log('unit-add-lessons: ALL PASSED');

@@ -237,6 +237,172 @@ function renderCard({ teacher }) {
   console.log(`  highlight tiers: ${cold.total} words marked throughout, strong ${cold.strong} -> ${warm.strong} as they are solved`);
 }
 
+// ── 7. v74_o: the last card is not a dead end ───────────────────────────────────────────────
+// Measured before the fix on the shipped "Paella und Chaos" with both chapters complete:
+// `comp-next` disabled=true and `comp-back` display=none — a greyed arrow beside no other
+// affordance. v71_h greyed Next so the button row matched every other card and left the header as
+// the route onward, but a header link is not an obvious answer to a button that looks like it
+// should work. Asserted by CLICKING, not by reading the source: "has an onclick" is exactly the
+// vacuous form v73_g's icon-row test fell into.
+{
+  const byId = Object.fromEntries((store.topics || []).map(t => [t.id, t]));
+  // A LATER chapter must be mixed-driven, or case (c) below cannot tell the shared completion rule
+  // from the raw done-flags-vs-lessonCount one it replaced.
+  const sl = (store.storylines || []).find(x => {
+    const ts = (x.chapters || []).map(c => byId[c]).filter(Boolean);
+    return ts.length >= 2 && ts.slice(1).some(t => (t.lessons || []).some(L => L && L.type === 'mixed' && !L._hidden));
+  });
+  assert.ok(sl, 'the corpus has a multi-chapter storyline whose later chapters include a mixed one');
+  const topics = (sl.chapters || []).map(c => byId[c]).filter(Boolean);
+  const last = topics[topics.length - 1];
+
+  const play = (savedList, standOn, storylines) => {
+    const C = loadClient({ quiet: true });
+    C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed');
+    C.run(`
+      APP.savedList = ${JSON.stringify(savedList)};
+      APP.storylines = ${JSON.stringify(storylines)};
+      APP.info = { backend:'none', canGenerate:false, coverageThreshold:0.8 };
+      APP.progress = { completed:{}, solved:{}, chapterDone:{} };
+      APP._teacherMode = false; APP._slScreen = {}; true;`, 'setup');
+    for (const t of topics) {
+      C.run(`
+        APP.lessonData = ${JSON.stringify(t)};
+        APP.lang = ${JSON.stringify(t.lang)}; APP.srcLang = ${JSON.stringify(t.srcLang)};
+        APP.cur = { lessonIdx:0, exercises:[], cur:0 };
+        if (typeof _invalidateQidUniverse === 'function') _invalidateQidUniverse();
+        (function(){
+          var m = _solvedMap(APP.lessonData.topic);
+          countedLessons(APP.lessonData).forEach(function(L){
+            _lessonItemUniverse(APP.lessonData.lessons.indexOf(L)).forEach(function(k){ m[k]=1; }); });
+          var d = APP.progress.completed[APP.lessonData.topic] = {};
+          countedLessons(APP.lessonData).forEach(function(L){ d[L.id] = {done:true, correct:4, total:4}; });
+        })();
+        setComplete(APP.lessonData); true;`, 'play');
+    }
+    C.run(`
+      APP.lessonData = ${JSON.stringify(standOn)};
+      APP.cur = { lessonIdx:0, exercises:[], cur:0, correct:4, total:4, mistakes:0,
+                  hearts:3, streak:4, bestStreak:4 };
+      APP._navWent = null;
+      openStorylineScreen = function(id){ APP._navWent = 'storyline:' + id; };
+      goLandingClean = function(){ APP._navWent = 'landing'; };
+      showComplete(); true;`, 'render');
+    return C;
+  };
+
+  // (a) End of a storyline → the storyline screen.
+  const projected = topics.map(t => ({ id: t.id, topic: t.topic, lang: t.lang, srcLang: t.srcLang,
+    lessonCount: (t.lessons || []).filter(L => L && !L._hidden && !L._aiExamples).length,
+    lessons: (t.lessons || []).map(L => Object.assign({ id: L.id, type: L.type || 'standard' },
+      L._hidden ? { _hidden: true } : {})) }));
+  const C1 = play(projected, last, store.storylines || []);
+  assert.strictEqual(C1.run(`!!document.getElementById('comp-next').disabled`, 'd'), false,
+    'at the end of a finished storyline Next is NOT greyed');
+  C1.run(`document.getElementById('comp-next').onclick(); true;`, 'click');
+  assert.ok(String(C1.run(`APP._navWent`, 'w') || '').startsWith('storyline:'),
+    'and clicking it goes to the storyline, not nowhere');
+
+  // (b) A chapter in NO storyline → home (user ruling).
+  const C2 = play(projected, last, []);
+  assert.strictEqual(C2.run(`!!document.getElementById('comp-next').disabled`, 'd2'), false,
+    'a solo chapter also gets a live Next');
+  C2.run(`document.getElementById('comp-next').onclick(); true;`, 'click2');
+  assert.strictEqual(C2.run(`APP._navWent`, 'w2'), 'landing',
+    'and it goes home, because there is no storyline to return to');
+  // (c) Standing on an EARLIER chapter with the whole storyline finished. `_nextChapter` used to
+  // decide "has work left" with `Object.keys(done).length < ch.lessonCount` — two different
+  // populations, because done-flags only ever reach COUNTED lessons while lessonCount counts every
+  // non-hidden one. On a mixed-driven chapter they can never meet, so a finished chapter was
+  // offered as unfinished for ever and Next dragged the learner back into it.
+  const laterMixed = topics.slice(1).some(t => (t.lessons || []).some(L => L && L.type === 'mixed' && !L._hidden));
+  // Non-vacuity: without a later MIXED chapter the raw rule and the shared rule agree here, and
+  // this case would pass under the defect. The fixture is chosen above to guarantee one.
+  assert.ok(laterMixed, 'a later chapter is mixed-driven, so the two rules genuinely disagree');
+  {
+    const C3 = play(projected, topics[0], store.storylines || []);
+    C3.run(`APP._loadedSaved = null; loadSaved = function(x){ APP._loadedSaved = String(x); }; true;`, 'stub');
+    assert.strictEqual(C3.run(`!!document.getElementById('comp-next').disabled`, 'd3'), false,
+      'Next is live on an earlier chapter too');
+    C3.run(`document.getElementById('comp-next').onclick(); true;`, 'click3');
+    assert.strictEqual(C3.run(`APP._loadedSaved`, 'ls') || null, null,
+      'a FINISHED later chapter is not offered as unfinished — Next does not reload it');
+    assert.ok(String(C3.run(`APP._navWent`, 'w3') || '').startsWith('storyline:'),
+      'it goes to the storyline instead, because nothing is left');
+  }
+  console.log('  last card: Next leads to the storyline or home; finished chapters are not re-offered');
+}
+
+// ── 8. v74_p: the vocabulary panel shows the CHAPTER, not the round ─────────────────────────
+// It listed the lesson's own words, or — on a mixed round — whichever words that round happened to
+// draw, so it changed on every replay and never showed what the learner had accumulated. It now
+// draws from `_solvedTargetWords`: the SAME set v74_n marks in the strong tier inside the story
+// directly above it, so the chips and the highlighting cannot disagree about what you can read.
+{
+  const topic = (store.topics || []).find(t => (t.lessons || []).some(L => L && L.type === 'mixed' && !L._hidden)
+    && (t.lessons || []).some(L => L && (L.vocab || []).length));
+  assert.ok(topic, 'the corpus has a mixed-driven chapter with vocabulary');
+  const mixedIdx = (topic.lessons || []).findIndex(L => L && L.type === 'mixed' && !L._hidden);
+  const render = (rounds, standOn) => {
+    const C = loadClient({ quiet: true });
+    C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed');
+    C.run(`
+      APP.savedList = []; APP.storylines = [];
+      APP.lessonData = ${JSON.stringify(topic)};
+      APP.lang = ${JSON.stringify(topic.lang)}; APP.srcLang = ${JSON.stringify(topic.srcLang)};
+      APP.info = { backend:'none', canGenerate:false, coverageThreshold:0.8 };
+      APP.progress = { completed:{}, solved:{} }; APP._teacherMode = false;
+      APP.cur = { lessonIdx:0, exercises:[], cur:0 };
+      (function(){
+        countedLessons(APP.lessonData).forEach(function(L){
+          var i = APP.lessonData.lessons.indexOf(L), prev = APP.cur.lessonIdx;
+          APP.cur.lessonIdx = i;
+          for (var r = 0; r < ${rounds}; r++) { try { buildExercises(i).forEach(function(ex){ markSolved(ex); }); } catch(e) {} }
+          APP.cur.lessonIdx = prev;
+        });
+      })();
+      APP.cur = { lessonIdx:${standOn == null ? mixedIdx : standOn}, exercises:[], cur:0, correct:4, total:4, mistakes:0,
+                  hearts:3, streak:4, bestStreak:4 };
+      showComplete(); true;`, 'render');
+    return {
+      chips: C.run(`(function(){ var e=document.getElementById('comp-vocab');
+        return e ? (e.innerHTML.match(/vocab-chip/g) || []).length : 0; })()`, 'c'),
+      label: C.run(`(function(){ var e=document.getElementById('words-from-lbl'); return e ? e.textContent : ''; })()`, 'l'),
+      solved: C.run(`_solvedTargetWords(APP.lessonData).length`, 's'),
+      roundWords: C.run(`(APP.cur.exercises || []).length`, 'r'),
+    };
+  };
+  const warm = render(40);
+  // Non-vacuity: the chapter must have solved vocabulary, or "chips == solved" is 0 == 0.
+  assert.ok(warm.solved > 1, `the chapter really does have solved vocabulary (${warm.solved})`);
+  assert.strictEqual(warm.chips, warm.solved,
+    'the panel shows one chip per solved word of the CHAPTER');
+  assert.strictEqual(warm.label, 'Words you can read in this chapter',
+    'and says so, rather than "Words from this lesson"');
+  // Fewer solved → fewer chips. The old per-lesson list did not move with progress at all.
+  const cool = render(1);
+  assert.ok(cool.solved < warm.solved, 'a shorter play solves fewer words');
+  assert.strictEqual(cool.chips, cool.solved, 'and the panel tracks that, chip for chip');
+  // With nothing solved the per-lesson fallback remains — a learner should not face an empty box.
+  // Checked on a STANDARD lesson: a mixed round with nothing played has no words of its own to fall
+  // back to either (its branch lists what the round drew, and nothing was drawn), which was true
+  // before v74_p as well and is not this change's to fix.
+  const vocabIdx = (topic.lessons || []).findIndex(L => L && (L.vocab || []).length);
+  assert.ok(vocabIdx >= 0, 'the chapter has a lesson carrying its own vocabulary');
+  const cold = render(0, vocabIdx);
+  assert.strictEqual(cold.solved, 0, 'nothing solved yet');
+  assert.ok(cold.chips > 0, 'the panel falls back to the lesson\'s own words rather than showing nothing');
+  assert.strictEqual(cold.label, 'Words from this lesson', 'and labels itself accordingly');
+  // Wrapping: a chip may now hold a whole-chapter phrase plus its gloss.
+  // Asserted as the DECLARATION that is now in force, not as the absence of the old one: the rule
+  // carries a comment naming `white-space:nowrap` as what it replaced, and a negative match on the
+  // string finds the comment. A guard that reads its own explanation is a guard that lies.
+  assert.ok(/\.vocab-chip\{[\s\S]*?white-space:normal/.test(html),
+    'chips wrap — a whole-chapter phrase plus its gloss no longer pushes past the panel edge');
+  assert.ok(/\.vocab-chip\{[\s\S]*?max-width:100%/.test(html), 'and are capped at the panel width');
+  console.log(`  vocabulary panel: ${warm.chips} chapter-wide chips, tracking the solved set`);
+}
+
 console.log('  story-unlocked card: instruction label, prose story, Next-only for learners, Repeat kept while coverage remains');
 console.log('  story paragraphs: preserved, highlighting intact, spacing applied');
 console.log('unit-story-unlocked-card: ALL PASSED');

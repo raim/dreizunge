@@ -242,14 +242,20 @@ const GOOD = { q: 'Warum geht Anna weg?', choices: ['Sie hat Angst', 'Sie ist m�
   assert.ok(/const budget = maxChars \|\| CHAIN_STORY_CHARS;/.test(server),
     'and it is the single place a story is trimmed');
 
-  // (c) The reveal shows the reason, in the learner's language, and says it aloud.
+  // (c) The reveal SHOWS the reason. v74_q: it is no longer spoken.
   assert.ok(/const _why = \(ex\.type==='comprehension_mcq' && ex\.why\)/.test(html),
     'a comprehension question reveals its reason');
   assert.ok(/_wrongBody = _why[\s\S]{0,80}escHtml\(_why\)/.test(html),
     'the reason replaces the correct-answer restatement');
-  assert.ok(/if\(_why\) speakLang\(_why, \(APP\.lessonData\?\.srcLang \|\| APP\.srcLang\)\);/.test(html),
-    'and is read aloud in the SOURCE language — a target-language voice would mangle it');
-  assert.ok(/function speakLang\(text, langCode, rate\)/.test(html), 'via a language-targeted speak');
+  // v71_o read it aloud in the learner's own language. That made a target-language lesson suddenly
+  // speak the learner's native language mid-round, in a different voice — the resolver correctly
+  // switches locale for it, which is precisely what makes the switch audible — while the learner is
+  // already reading the same sentence on screen. Shown in full, spoken not at all (user request).
+  assert.ok(!/speakLang\(_why/.test(html), 'the reason is NOT read aloud');
+  // And nothing is spoken in its place: the only candidate is the correct OPTION, which is already
+  // in the story above, so hearing it teaches nothing the learner cannot see.
+  assert.ok(/if\(!_why && speakBad\) speak\(speakBad,0\.75\);/.test(html),
+    'a comprehension reveal is silent; every other exercise type still speaks its answer');
   // Falls back when the model omitted a reason, rather than showing an empty reveal.
   assert.ok(/: \(_diff \|\| `\$\{t\('check\.correct_answer'\)\}/.test(html),
     'with the plain correct answer as the fallback when there is no reason');

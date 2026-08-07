@@ -7938,10 +7938,6 @@
               "source": "das Gehirn"
             },
             {
-              "target": "negociar",
-              "source": "handeln"
-            },
-            {
               "target": "la concentración",
               "source": "die Konzentration"
             },
@@ -8076,13 +8072,9 @@
               "source": "die Schuld"
             },
             {
-              "target": "activo",
-              "source": "das Aktiv",
-              "editedAt": "2026-08-02T19:58:51.503Z"
-            },
-            {
               "target": "divertido",
-              "source": "lustig"
+              "source": "lustig",
+              "editedAt": "2026-08-02T19:58:51.503Z"
             },
             {
               "target": "confundir",
@@ -8328,12 +8320,7 @@
               "base": "frío",
               "gloss": "Kälte",
               "sentence": "El frío me hizo reconsiderar mis prioridades.",
-              "synonyms": [
-                {
-                  "w": "frio",
-                  "g": "kalt"
-                }
-              ],
+              "synonyms": [],
               "antonyms": [
                 {
                   "w": "calor",
@@ -8500,7 +8487,7 @@
         }
       },
       "generatedAt": "2026-08-02T17:50:14.911Z",
-      "updatedAt": "2026-08-02T19:59:47.172Z",
+      "updatedAt": "2026-08-07T07:27:47.126Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-02T19:54:29.868Z"
@@ -12061,12 +12048,205 @@
           "_arcMode": "reinforce"
         },
         {
+          "difficulty": 1,
+          "id": "ls_1786050586371",
+          "title": "Verschwundene Antworten",
+          "desc": "Fragen und Antworten im politischen Kontext",
+          "icon": "❓",
+          "vocab": [
+            {
+              "target": "domanda",
+              "source": "die Frage"
+            },
+            {
+              "target": "risposta",
+              "source": "die Antwort"
+            },
+            {
+              "target": "scomparire",
+              "source": "verschwinden"
+            },
+            {
+              "target": "distribuire",
+              "source": "verteilen"
+            },
+            {
+              "target": "cittadino",
+              "source": "der Bürger"
+            },
+            {
+              "target": "programmare",
+              "source": "planen",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "programmieren",
+                  "field": "source",
+                  "at": "2026-08-06T22:57:11.440Z"
+                }
+              },
+              "qc": {
+                "sug": "programmieren",
+                "field": "source",
+                "at": "2026-08-06T22:57:11.440Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "appello",
+              "source": "der Appell"
+            },
+            {
+              "target": "identità",
+              "source": "die Identität"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Le domande sono rimaste, le risposte sono scomparse.",
+              "source": "Die Fragen sind geblieben, die Antworten sind verschwunden.",
+              "words": [
+                "Le",
+                "domande",
+                "sono",
+                "rimaste,",
+                "le",
+                "risposte",
+                "sono",
+                "scomparse."
+              ]
+            },
+            {
+              "target": "Noi avevamo provato a darne alcune.",
+              "source": "Wir hatten versucht, einige davon zu geben.",
+              "words": [
+                "Noi",
+                "avevamo",
+                "provato",
+                "a",
+                "darne",
+                "alcune."
+              ]
+            },
+            {
+              "target": "Distribuire il reddito, cambiare la classe dirigente.",
+              "source": "Das Einkommen verteilen, die Führungselite wechseln.",
+              "words": [
+                "Distribuire",
+                "il",
+                "reddito,",
+                "cambiare",
+                "la",
+                "classe",
+                "dirigente."
+              ]
+            },
+            {
+              "target": "Il Movimento era nato per affrontare tutte queste domande.",
+              "source": "Die Bewegung war entstanden, um all diese Fragen anzugehen.",
+              "words": [
+                "Il",
+                "Movimento",
+                "era",
+                "nato",
+                "per",
+                "affrontare",
+                "tutte",
+                "queste",
+                "domande."
+              ]
+            },
+            {
+              "target": "Le domande non sono scomparse, sono ancora fuori dai palazzi.",
+              "source": "Die Fragen sind nicht verschwunden; sie stehen noch immer außerhalb der Machtzentren.",
+              "words": [
+                "Le",
+                "domande",
+                "non",
+                "sono",
+                "scomparse,",
+                "sono",
+                "ancora",
+                "fuori",
+                "dai",
+                "palazzi."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1263,
+            "completionTokens": 405,
+            "ms": 194003,
+            "at": "2026-08-06T21:09:46.371Z"
+          }
+        },
+        {
           "id": "ls_1785326580713_o6ru",
           "type": "mixed",
           "title": "🔀 Mischübung",
           "icon": "🔀",
           "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
           "perType": 5
+        },
+        {
+          "id": "ls_1785939915055_1_comprehension",
+          "type": "comprehension",
+          "title": "Grillos Kritik am M5S",
+          "desc": "Versteht der Leser, warum Beppe Grillo den Movimento 5 Stelle kritisiert und wie Giuseppe Conte reagiert?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum wirft Grillo dem M5S vor, seine Identität verloren zu haben?",
+              "choices": [
+                "Weil die Partei sich nicht mehr an die ursprünglichen politischen Forderungen hält.",
+                "Weil die Partei keine Mitglieder mehr hat und daher unsichtbar geworden ist.",
+                "Weil die Partei ihre Farbe von Blau in Grün geändert hat.",
+                "Weil die Partei Grillos Blog nicht mehr finanziell unterstützt."
+              ],
+              "correctIndex": 0,
+              "why": "Grillo sagt, das M5S habe sich um 'poltrone' (Stühle/Posten) gekümmert und auf Umfragen statt auf Bürger gehört, wodurch die ursprünglichen Fragen verschwunden sind."
+            },
+            {
+              "q": "Was behauptet Giuseppe Conte in seiner Antwort auf Grillos Vorwürfe?",
+              "choices": [
+                "Er weist darauf hin, dass das M5S weiterhin hart für seine Ziele kämpft.",
+                "Er stimmt Grillo zu und tritt als Parteipräsident zurück.",
+                "Er behauptet, Draghi sei der eigentliche Gründer des Movimento 5 Stelle.",
+                "Er sagt, die ursprünglichen Forderungen seien bereits in Gesetzen umgesetzt."
+              ],
+              "correctIndex": 0,
+              "why": "Conte fragt rhetorisch: 'Mit all unseren Kämpfen, die wir führen, oft gegen alle?', was seine Verteidigung der aktuellen Aktivität des M5S darstellt."
+            },
+            {
+              "q": "Welche konkreten Themen nennt Grillo als Beispiele für die ursprünglichen Ziele des Movimento?",
+              "choices": [
+                "Bürgergeld, Begrenzung der Amtszeiten und direkte Demokratie.",
+                "Steuererhöhungen für Reiche, Abschaffung des Parlaments und neue Wahlen.",
+                "Mitgliedschaft in der NATO, Euro-Einführung und Freihandel.",
+                "Abschaffung der Parteien, Einführung einer Monarchie und Zensur."
+              ],
+              "correctIndex": 0,
+              "why": "Im Text listet Grillo 'reddito di cittadinanza', 'limite dei due mandati' und 'democrazia diretta' als die ursprünglichen Vorschläge auf."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 2,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1770,
+            "completionTokens": 1084,
+            "ms": 399486,
+            "at": "2026-08-05T14:25:15.055Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -12079,8 +12259,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 13616,
-        "totalCompletionTokens": 2675,
+        "totalPromptTokens": 21662,
+        "totalCompletionTokens": 4208,
         "lessons": [
           {
             "lessonNum": 1,
@@ -12090,13 +12270,14 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 9004,
-          "recreate": 4308,
-          "story_qc": 769
+          "lesson_qc": 14061,
+          "recreate": 7162,
+          "story_qc": 769,
+          "add_lesson": 1668
         }
       },
       "generatedAt": "2026-07-29T11:02:20.190Z",
-      "updatedAt": "2026-07-29T12:51:46.837Z",
+      "updatedAt": "2026-08-06T23:27:24.704Z",
       "createdBy": "admin",
       "coverageTarget": 0.5,
       "storyQcCheckedBy": "translategemma:12b",
@@ -12381,6 +12562,61 @@
           "icon": "🔀",
           "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
           "perType": 5
+        },
+        {
+          "id": "ls_1785939515474_0_comprehension",
+          "type": "comprehension",
+          "title": "Grillos Revolution",
+          "desc": "Beppe Grillo kritisiert die aktuelle Führung des Movimento 5 Stelle.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Was ist laut Grillo der Hauptgrund für den Verfall des Movimentos?",
+              "choices": [
+                "Die Mitglieder haben die Anweisungen nicht gelesen.",
+                "Die Politik hat das Movimento verändert, statt umgekehrt.",
+                "Draghi hat die Führung übernommen.",
+                "Das Movimento hat seine Fragen vergessen."
+              ],
+              "correctIndex": 1,
+              "why": "Grillo sagt explizit: 'la politica ha cambiato il Movimento' (die Politik hat das Movimento verändert)."
+            },
+            {
+              "q": "Wie beschreibt Grillo den Wandel im Verhalten des Movimentos?",
+              "choices": [
+                "Es hört jetzt mehr auf die Bürger als früher.",
+                "Es kümmert sich mehr um die Zukunft der Nation.",
+                "Es konzentriert sich nun auf politische Ämter statt auf das Wesentliche.",
+                "Es hat seine Einzigartigkeit durch neue Ideen gewonnen."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text sagt: 'ha finito per occuparsi delle poltrone' (hat sich am Ende um die Sessel/Ämter gekümmert)."
+            },
+            {
+              "q": "Was bleibt laut Grillo trotz des Verlusts der Identität erhalten?",
+              "choices": [
+                "Die Unterstützung durch Giuseppe Conte.",
+                "Die Fähigkeit, Umfragen zu lesen.",
+                "Die ursprünglichen Fragen an die Politik.",
+                "Die klare Anleitung für die Mitglieder."
+              ],
+              "correctIndex": 2,
+              "why": "Grillo schreibt: 'le sue domande sono ancora qui' (seine Fragen sind noch hier)."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 2,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1210,
+            "completionTokens": 950,
+            "ms": 309829,
+            "at": "2026-08-05T14:18:35.474Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -12393,8 +12629,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 7201,
-        "totalCompletionTokens": 1296,
+        "totalPromptTokens": 12680,
+        "totalCompletionTokens": 3794,
         "lessons": [
           {
             "lessonNum": 1,
@@ -12405,12 +12641,13 @@
         ],
         "tokensByType": {
           "lesson_qc": 4705,
-          "recreate": 1191,
-          "story_qc": 631
+          "recreate": 3351,
+          "story_qc": 631,
+          "add_lesson": 5817
         }
       },
       "generatedAt": "2026-07-29T10:55:49.935Z",
-      "updatedAt": "2026-07-29T13:18:53.969Z",
+      "updatedAt": "2026-08-06T21:05:45.304Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-07-29T12:18:53.543Z"
