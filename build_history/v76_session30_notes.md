@@ -414,6 +414,91 @@ history when it lands.
 
 ---
 
+## `v76_h` / `v76_i` — telling the model the script, and letting the user choose it
+
+The user's ruling at `v76_g`: **`script` field, per-chapter override, inheriting from the
+storyline's previous chapter, with an explicit pick only for a brand-new story.**
+
+### `v76_h` — the server half
+
+`langName()` is the choke point: **every** prompt fills `{L}`/`{S}` from it, so decorating there
+reaches the story generator, the lesson extractor and everything downstream without threading a
+parameter through 56 call sites.
+
+```
+before:  "You are a creative writer and Serbian language teacher…"
+after:   "You are a creative writer and Serbian (written in Cyrillic script) language teacher…"
+         "You are a Serbian (written in Cyrillic script) language lesson extractor…"
+```
+
+Naming it is not sufficient on its own — the model still drifts between scripts inside one text — so
+`prompts.json` gained **one** key, `story.scriptNote`, appended only when the language really has a
+choice. (`prompts.json` was re-emitted at 178 lines with **0 pre-existing values changed**; the
+first attempt also added a stray empty `lesson` key, caught by diffing against the previous copy.)
+
+`script` / `srcScript` are accepted at `/api/generate`, **validated against `scripts.json` rather
+than trusted** (`_validScript`) — the value goes into a prompt, so an undeclared one must never
+reach it verbatim — threaded through `chainOpts` / `lessonOpts` / `sharedGenOpts`, and persisted on
+the topic so the next chapter has something to inherit.
+
+### Two mistakes, both caught by existing guards
+
+1. **A `ReferenceError` inside a swallowing `catch`.** `sysErrorHunt(lang, difficulty, opts.script)`
+   was added inside `generateErrorHunt`, which has **no `opts` in scope**. The throw was swallowed
+   and every error-hunt lesson was silently dropped. `e2e-book-formats` caught it deterministically,
+   and the pristine tree was checked before assuming the cause. This is the concrete form of the
+   §0b concern about swallowed throws — the suite caught it only because a test asserted the
+   RESULT (a chapter carries an error hunt), not the call.
+2. **A vacuous line.** The first repair passed `c.chainOpts` in the arc registry; there is no such
+   field — the real one is `sharedGenOpts` — so it was always `null`.
+   `unit-add-lesson-registry` pins the exact argument shape and caught the change; the fix was to
+   pass the real object rather than to pin the broken shape.
+
+### A harness limit that made a guard vacuous
+
+`fake-ollama` logged `sys.slice(0, 400)`. Every note appended AFTER a prompt's `system` block — the
+script rule, the dialect note, the writing-style note, the continuation note — falls past that cut,
+so **any test asserting on a prompt's TAIL through `readChatLog()` was checking the truncation, not
+the prompt.** Widened to 8000. Recorded in `INTERNALS` → harness limits.
+
+Also: booting a **second** live environment while the first is running returned an empty chat log.
+The e2e now uses one environment and slices the log from a mark taken before each run.
+
+### `v76_i` — the client half
+
+Two pickers, rendered into `#script-wrap` (under 📖 "I learn") and `#src-script-wrap` (under 🗣 "I
+speak"), **only** when `scripts.json` `_scriptChoice` lists that language. They are labelled
+`Cyrillic` / `Latin` for a reader, not by the internal table name `cyrillic-sr`.
+
+Because `continueFromLesson` already prefills the landing form (it does not open a separate dialog),
+**"add chapter" and "new story" share one control** and the per-chapter override falls out for free.
+Inheritance reads the `continue-select` — the parent chapter — so continuing a Cyrillic chapter
+preselects Cyrillic, continuing a Latin one preselects Latin, and a brand-new story preselects
+nothing. Changing either language clears a script chosen for the previous one.
+
+`unit-script-picker` drives the real render. Its section 2 is the one that matters: **Japanese must
+get NO picker**, because it lists two scripts and mixes them. Revert-verified — swapping the gate to
+`scriptsForLang(x).length > 1` fires *"Japanese lists two scripts but MIXES them — offering a
+hiragana/katakana choice is meaningless"*, and dropping the inheritance fires its own assertion.
+`e2e-script-choice` revert-verifies the server half three ways (langName ignoring the script,
+dropping the validator, dropping the field from the returned record).
+
+### i18n
+
+**One new key, `en` only: `form.script_pick` = "Script…"**. Add to the translate queue.
+
+### How to see it work
+
+Pick Serbian as the target language on the landing page: a small **Script…** menu appears under
+"I learn", offering Cyrillic and Latin. It is absent for every other language — check Japanese
+specifically, which has two scripts but no choice. Generate a chapter in Cyrillic; then open that
+storyline and press ↪ (continue): the form should come back with **Cyrillic already selected**.
+Switch it to Latin for that chapter only — the storyline now runs Latin chapters after Cyrillic
+ones, which is the "train words in Latin, then Cyrillic in parallel" case. A chapter whose SOURCE is
+Serbian (an `hr←sr` chapter) gets the picker under "I speak" instead.
+
+---
+
 ## Still owed by the user (unchanged from the v76_c handover, plus one)
 
 - **The three rulings blocking the progress-card rework** (`roadmap_v76.md` §0a) — none were

@@ -38,7 +38,11 @@ assert.deepStrictEqual(c.args, ['de','en','My Topic',1,1,[],'the story',2,'job1'
 
 c = callOf('error_hunt');
 assert.strictEqual(c.fn, 'generateErrorHunt');
-assert.deepStrictEqual(c.args, ['the story','de',2,'job1',[{target:'w'}]], 'error_hunt arg shape (chainVocab.words)');
+// v76_h: error_hunt now takes the shared generation opts too, so the target language's SCRIPT
+// reaches sysErrorHunt. It is the same object the other reinforcement generators receive — an
+// error hunt returns a corrupted copy of the story, so it must be corrupted in the same script.
+assert.deepStrictEqual(c.args, ['the story','de',2,'job1',[{target:'w'}],{tag:'SHARED'}],
+  'error_hunt arg shape (chainVocab.words + sharedGenOpts)');
 
 for (const [fmt, fn] of [['grammar','generateGrammar'],['conjugation','generateConjugation'],['synonyms','generateSynonyms'],['word_forms','generateWordForms']]) {
   c = callOf(fmt);

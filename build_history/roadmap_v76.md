@@ -1,6 +1,6 @@
 # Roadmap — v76 line
 
-Current cut: **`v76_g`**. Baseline `node test/run.js` **178**, `--quick` **155**, `check-inline` 0 on
+Current cut: **`v76_i`**. Baseline `node test/run.js` **180**, `--quick` **156**, `check-inline` 0 on
 both builds.
 
 > **Carried forward from `roadmap_v75.md` in full, from §3 onward.** The v71→v72 boundary lost three
@@ -11,6 +11,8 @@ both builds.
 
 | release | what |
 |---|---|
+| `v76_i` | **The script picker.** Rendered under each language select, only when `scripts.json` `_scriptChoice` lists that language, labelled `Cyrillic`/`Latin`. **Inherits from the chapter being continued**, explicit pick only for a brand-new story (user's ruling); an explicit pick is the per-chapter override. Because `continueFromLesson` prefills the landing form rather than opening its own dialog, "new story" and "add chapter" share one control. New `en` key: `form.script_pick`. |
+| `v76_h` | **The model is told which script to write in.** `langName(code, script)` — the choke point every prompt fills `{L}`/`{S}` from — now names it (`"Serbian (written in Cyrillic script)"`), plus a `story.scriptNote` consistency rule. `script`/`srcScript` accepted at `/api/generate`, **validated against scripts.json rather than trusted**, threaded through the generator opts, and persisted on the topic so the next chapter can inherit. Found on the way: a `ReferenceError` in `generateErrorHunt` swallowed by its own catch, and `fake-ollama` truncating logged prompts at 400 chars, which made any tail assertion vacuous. |
 | `v76_g` | **Script choice for digraphic languages — the data half.** Serbian is written in Cyrillic OR Latin and nothing told the model which, so it chose per generation (target → Latin, source → Cyrillic). `scripts.json` now declares **`_scriptChoice: ["sr"]`**, and `backfill-script.js` stamps `script`/`srcScript` on existing topics by Unicode detection. **The obvious gate `scriptsForLang(x).length > 1` is WRONG** — it is equally true of `ja`, which mixes hiragana and katakana concurrently; measured, `sr` texts mix in 0 of 5 and `ja` in 9 of 13. Nothing reads the field yet. |
 | `v76_f` | **`--langnames` wrote only at the end** (user-reported) — every language accumulated in memory and `languages.json` was written once, after the loop, so any interruption discarded the whole run. `translateLang` in the same file has saved per batch all along; this mode never copied it (**standing rule 10, second time in the same function**). Extracted `_flushLangs()` and call it after every batch. `unit-langnames` §3 runs the REAL mode and kills it mid-run. |
 | `v76_e` | **A mixed-language storyline lost its identity on the main page** (user-reported, `sl_9302163`). `loadSavedList` projected each chain through the **language-filtered** id index, and `storylines_renderChain` recovers the storyline by an exact full-length positional match — which a truncated chain can never satisfy — so it fell through to a synthetic `'c'+hash` id with no storyline behind it: no title, icon, storyboard or summary, and a short chapter count and deck. Reproduced the user's exact `c1935658823` at `libFilter=sr` / `libSrcFilter=all`. **A storyline is one unit: the filter decides WHETHER it is shown, never WHICH of its chapters are.** Same class as `v75_f`. |

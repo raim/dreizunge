@@ -209,7 +209,12 @@ const srv = http.createServer(async (req, res) => {
     } else {
       kind = 'vocab'; content = JSON.stringify(VOCAB_LESSON);
     }
-    if (LOG) { try { fs.appendFileSync(LOG, JSON.stringify({ kind, sys: sys.slice(0, 400), usr }) + '\n'); } catch (_) {} }
+    // v76_h: was sys.slice(0, 400). Notes appended AFTER a prompt's `system` block — the script
+    // rule, the dialect note, the writing-style note, the continuation note — all fall past 400
+    // chars, so any test asserting on a prompt's TAIL through readChatLog() was silently checking
+    // the truncation rather than the prompt. Widened; still capped so a runaway prompt cannot fill
+    // the log file.
+    if (LOG) { try { fs.appendFileSync(LOG, JSON.stringify({ kind, sys: sys.slice(0, 8000), usr }) + '\n'); } catch (_) {} }
     res.writeHead(200, { 'Content-Type': 'application/json' });
     return res.end(JSON.stringify({ message: { role: 'assistant', content }, done: true }));
   }

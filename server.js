@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v76_g';
+const APP_VERSION  = 'v76_i';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -962,7 +962,41 @@ try {
   _langsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'languages.json'), 'utf8'));
 } catch(e) { console.warn('Could not load languages.json:', e.message); }
 const LANG_NAMES = Object.fromEntries(Object.entries(_langsData).map(([k,v]) => [k, v.name]));
-function langName(code) { return LANG_NAMES[code] || code || 'Italian'; }
+// v76_h: a digraphic language needs its SCRIPT named, or the model picks one per generation.
+// Measured before this: Serbian-as-target came back Latin and Serbian-as-source Cyrillic, on the
+// same storyline, because `langName` returned the bare string "Serbian" and that is the only thing
+// any generator is told about the language. Decorating the name here reaches every prompt for
+// free — all of them fill {L}/{S} from this function.
+//
+// `script` is IGNORED unless the language actually has a choice to make (scripts.json
+// `_scriptChoice`). That list is NOT "languages with more than one script": Japanese lists
+// hiragana and katakana and mixes them inside one sentence. See INTERNALS → "Several scripts is
+// not the same as a script CHOICE".
+function scriptChoiceLangs() { return new Set((_scriptsData && _scriptsData._scriptChoice) || []); }
+function hasScriptChoice(code) { return scriptChoiceLangs().has(code); }
+// Table name -> the name a human (and a model) calls that script. `cyrillic-sr` is the Serbian
+// Cyrillic table; the `-sr` suffix disambiguates OUR tables, not the script, so it is dropped.
+// Mechanical: this renames a table, it does not assert anything about the language.
+function scriptLabel(name) {
+  const base = String(name || '').split('-')[0];
+  return base ? base.charAt(0).toUpperCase() + base.slice(1) : '';
+}
+// A script value is kept only when the language really has a choice AND the value is one of the
+// scripts scripts.json lists for it. Anything else becomes null, which restores pre-v76_h
+// behaviour rather than sending the model a script name nobody declared.
+function _validScript(code, script) {
+  if (!code || !script) return null;
+  if (!hasScriptChoice(code)) return null;
+  const m = (_scriptsData._langScript || {})[code];
+  const allowed = m ? (Array.isArray(m) ? m : [m]) : [];
+  return allowed.includes(String(script)) ? String(script) : null;
+}
+function langName(code, script) {
+  const base = LANG_NAMES[code] || code || 'Italian';
+  if (!script || !hasScriptChoice(code)) return base;
+  const label = scriptLabel(script);
+  return label ? `${base} (written in ${label} script)` : base;
+}
 
 // ── Script config (from scripts.json) — drives the LLM-free intro course ──
 let _scriptsData = {};
@@ -1071,8 +1105,8 @@ function STORY_STYLES() { return PROMPTS.storyStyles || {}; }
 // Helper: get style description for a key
 function getStoryStyle(key) { return key ? (STORY_STYLES()[key] ?? null) : null; }
 
-function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, _unused, dialect, writingStyle) {
-  const L    = langName(lang);
+function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, _unused, dialect, writingStyle, script) {
+  const L    = langName(lang, script);
   const S    = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
   const sentLen = sentenceLengthSpec(difficulty || 2);
@@ -1089,8 +1123,8 @@ function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, _unused, 
 
 
 // Lesson prompt for user-provided story + parallel translation
-function sysLessonFromText(lang, srcLang, lessonNum, totalLessons, difficulty, dialect) {
-  const L    = langName(lang);
+function sysLessonFromText(lang, srcLang, lessonNum, totalLessons, difficulty, dialect, script) {
+  const L    = langName(lang, script);
   const S    = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
   const sentLen = sentenceLengthSpec(difficulty || 2);
@@ -1106,8 +1140,8 @@ function sysLessonFromText(lang, srcLang, lessonNum, totalLessons, difficulty, d
 
 
 // Lesson prompt for table format
-function sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, dialect) {
-  const L    = langName(lang);
+function sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, dialect, script) {
+  const L    = langName(lang, script);
   const S    = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
   const lessonDiff = lessonNum === 1 ? 'basic vocabulary'
@@ -2370,13 +2404,19 @@ function sysTranslation(lang, srcLang) {
 }
 
 // ── Story prompts ─────────────────────────────────────────────────────
-function sysStory(lang, isContinuation, wordCount, dialect, writingStyle) {
-  const L = langName(lang);
+function sysStory(lang, isContinuation, wordCount, dialect, writingStyle, script) {
+  const L = langName(lang, script);
   const wc = Math.max(100, Math.min(1000, wordCount || 300));
   const paraLo = Math.max(1, Math.floor(wc / 100));
   const paraHi = paraLo + 1;
   const P = PROMPTS.story;
   let sys = fillPrompt(P.system, { L, wc, paraLo, paraHi });
+  // v76_h: naming the script in {L} is not enough on its own — the model still drifts between
+  // scripts inside one text. State it as a rule too, but ONLY when the language really has a
+  // choice, so nothing is added for the 31 languages that do not.
+  if (script && hasScriptChoice(lang) && P.scriptNote) {
+    sys += fillPrompt(P.scriptNote, { scriptLabel: scriptLabel(script), L2: LANG_NAMES[lang] || lang });
+  }
   if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
   if (lang === 'ja')              sys += P.furiganaNote;
   if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
@@ -2390,8 +2430,8 @@ function sysStory(lang, isContinuation, wordCount, dialect, writingStyle) {
 function errorHuntCounts(difficulty) {
   return { nSpell: difficulty >= 3 ? 4 : 3, nGrammar: difficulty >= 2 ? 3 : 2 };
 }
-function sysErrorHunt(lang, difficulty) {
-  const L = langName(lang);
+function sysErrorHunt(lang, difficulty, script) {
+  const L = langName(lang, script);
   const { nSpell, nGrammar } = errorHuntCounts(difficulty);
   return fillPrompt(PROMPTS.errorHunt.system, { L, nSpell, nGrammar });
 }
@@ -3393,10 +3433,10 @@ async function generateMathLLM(lang, srcLang, difficulty, instruction, jobId) {
   }
 }
 
-async function generateErrorHunt(story, lang, difficulty, jobId, priorVocab) {
+async function generateErrorHunt(story, lang, difficulty, jobId, priorVocab, opts) {
   const _t0 = Date.now();
   jobStep(jobId, `[${OLLAMA_MODEL}] Generating error-hunt lesson…`);
-  const sys = sysErrorHunt(lang, difficulty);
+  const sys = sysErrorHunt(lang, difficulty, (opts && opts.script) || null);
   const priorHint = priorVocab && priorVocab.length
     ? `\n\nPREFER errors on these words where they appear: ${priorVocab.slice(0,20).map(v=>v.target).join(', ')}`
     : '';
@@ -4176,6 +4216,7 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
   const _t0 = Date.now();
   opts = opts || {};
   const { userTranslation, userDialect, writingStyle, storyLang, chainVocab, vocabMode } = opts;
+  const _script = opts.script || null;   // v76_h: names the script for a digraphic target language
   const useTable = OLLAMA_LESSON_FORMAT === 'table';
   jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Lesson ${lessonNum}/${totalLessons}…`);
 
@@ -4201,27 +4242,27 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
 
   if (userTranslation) {
     if (useTable) {
-      sysPrompt = sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, userDialect);
+      sysPrompt = sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, userDialect, _script);
       const prevHint = prevVocab.length
         ? `\nAvoid repeating these already-covered words: ${prevVocab.map(v=>v.target).join(', ')}`
         : '';
       userMsg = `Topic: "${topic}". Extract vocabulary and sentences from this story and its translation.\n\nSTORY:\n${story}\n\n${langName(srcLang||'en').toUpperCase()} TRANSLATION:\n${userTranslation}${prevHint}${chainHint}`;
     } else {
-      sysPrompt = sysLessonFromText(lang, srcLang, lessonNum, totalLessons, difficulty, userDialect);
+      sysPrompt = sysLessonFromText(lang, srcLang, lessonNum, totalLessons, difficulty, userDialect, _script);
       const prevHint = prevVocab.length
         ? `\nVocabulary already used in earlier lessons (avoid repeating these):\n${prevVocab.map(v => v.target + ' = ' + v.source).join(', ')}`
         : '';
       userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.\n\nSTORY (${langName(lang)}):\n${story}\n\n${langName(srcLang||'en').toUpperCase()} TRANSLATION:\n${userTranslation}${prevHint}${chainHint}\n\nReturn only the JSON object.`;
     }
   } else if (useTable) {
-    sysPrompt = sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, userDialect);
+    sysPrompt = sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, userDialect, _script);
     const prevHint = prevVocab.length
       ? `\nAvoid repeating these already-covered words: ${prevVocab.map(v=>v.target).join(', ')}`
       : '';
     const storyHint = story ? `\n\nContext story:\n${story}` : '';
     userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.${storyHint}${prevHint}${chainHint}`;
   } else {
-    sysPrompt = sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, null, userDialect, writingStyle);
+    sysPrompt = sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, null, userDialect, writingStyle, _script);
     const prevHint = prevVocab.length
       ? fillPrompt(PROMPTS.vocab.prevHint, { prevVocab: prevVocab.map(v => v.target + ' = ' + v.source).join(', ') })
       : '';
@@ -4497,7 +4538,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
         : prevStory
           ? `Previous story (excerpt):\n${prevStory}\n\nNew topic: "${userTopic}". Write the continuation now. Plain prose, no headings.`
           : `Write a story for the topic: "${userTopic}". Plain prose, no headings.`;
-      const storySystem = sysStory(lang, !!prevStory, storyLen, userDialect, storyStyle);
+      const storySystem = sysStory(lang, !!prevStory, storyLen, userDialect, storyStyle, userOpts.script);
       // v60.7: reasoning is per-role and OFF by default. think:false keeps a story as plain prose
       // (and, on a reasoning model, avoids spending the whole num_predict inside <think> → empty
       // response — the v60.5 fix). When the user opts the STORY role into reasoning, thinkOpts
@@ -4605,6 +4646,8 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       ...(_genTopicId ? { id: _genTopicId } : {}),
       topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
       userTopic, userPrompt, lang, srcLang, difficulty: difficulty || 2, storyLen,
+      ...(userOpts.script    ? { script: userOpts.script }       : {}),
+      ...(userOpts.srcScript ? { srcScript: userOpts.srcScript } : {}),
       story, storyLang, storyPrompt,
       ...(_storyMeta ? { storyMeta: _storyMeta } : {}),
       ...(_translationMeta ? { translationMeta: _translationMeta } : {}),
@@ -4660,6 +4703,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   if (_chainStory.chapters > 1)
     console.log(`    Story context: ${_chainStory.chapters} chapters, ${_chainStory.text.length} chars`);
   const chainOpts = { userDialect, storyStyle, chainVocab, vocabMode: _vocabMode, story,
+                      script: userOpts.script || null,
                       chainStory: _chainStory.text, chainStoryChapters: _chainStory.chapters };
 
   if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math' || lessonFormat === 'synonyms' || lessonFormat === 'word_forms' || lessonFormat === 'comprehension') {
@@ -4667,7 +4711,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       ? (mathInstruction
           ? () => generateMathLLM(lang, srcLang, difficulty, mathInstruction, jobId)
           : () => Promise.resolve(generateMath(story, difficulty)))
-                  : lessonFormat === 'error_hunt'  ? () => generateErrorHunt(story, lang, difficulty, jobId, chainVocab.words)
+                  : lessonFormat === 'error_hunt'  ? () => generateErrorHunt(story, lang, difficulty, jobId, chainVocab.words, chainOpts)
                   : lessonFormat === 'grammar'      ? () => generateGrammar(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   : lessonFormat === 'synonyms'     ? () => generateSynonyms(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   : lessonFormat === 'word_forms'   ? () => generateWordForms(topic, lang, srcLang, difficulty, jobId, chainOpts)
@@ -4701,6 +4745,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       : story;
     const lessonOpts = { userTranslation: storyTranslation || null, userDialect: userDialect || null,
       writingStyle: storyStyle || null, storyLang, story: combinedStory,
+      script: userOpts.script || null,
       chainVocab: _vocabMode !== 'neutral' ? chainVocab.words : [],
       vocabMode: _vocabMode };
     // (styleHint removed — story context passed via userMsg in generateOneLesson)
@@ -4720,7 +4765,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       const extraFmts = [
         { fmt: 'word_forms',  label: 'Word Forms',  fn: () => generateWordForms(topic, lang, srcLang, difficulty, jobId, chainOpts) },
         { fmt: 'synonyms',    label: 'Synonyms',    fn: () => generateSynonyms(topic, lang, srcLang, difficulty, jobId, chainOpts) },
-        { fmt: 'error_hunt',  label: 'Error Hunt',  fn: () => generateErrorHunt(story, lang, difficulty, jobId, chainVocab.words) },
+        { fmt: 'error_hunt',  label: 'Error Hunt',  fn: () => generateErrorHunt(story, lang, difficulty, jobId, chainVocab.words, chainOpts) },
       ];
       for (const { fmt: eFmt, label, fn } of extraFmts) {
         try {
@@ -4754,6 +4799,12 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     ...(chainParent      ? { continuedFrom: chainParent } : {}),
     ...(continuedFromId  ? { continuedFromId }   : {}),
     ...(storyStyle       ? { storyStyle }        : {}),
+    // v76_h: the script this chapter was written in, so the NEXT chapter can inherit it and the
+    // backfill never has to guess. It must be on the returned object, not only on the mid-flight
+    // upsert above — upsert REPLACES an entry rather than merging, so the final upsert(data) in
+    // the caller would otherwise drop it.
+    ...(userOpts.script    ? { script: userOpts.script }       : {}),
+    ...(userOpts.srcScript ? { srcScript: userOpts.srcScript } : {}),
     ...(lessonFormat && !['standard'].includes(lessonFormat) ? { lessonFormat } : {}),
     lessons,
     generationStats: { totalMs, backend: 'ollama', model: modelLabel,
@@ -4772,7 +4823,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
 // handler throws "Unsupported lessonFormat", identical to the old chain's else.
 const ADD_LESSON_GENERATORS = {
   standard:    (c) => generateOneLesson(c.lang, c.srcLang, c.topicName, 1, 1, [], c.story, c.diff, c.jobId, c.standardOpts),
-  error_hunt:  (c) => generateErrorHunt(c.story, c.lang, c.diff, c.jobId, c.chainVocab.words),
+  error_hunt:  (c) => generateErrorHunt(c.story, c.lang, c.diff, c.jobId, c.chainVocab.words, c.sharedGenOpts),
   grammar:     (c) => generateGrammar(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
   conjugation: (c) => generateConjugation(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
   synonyms:    (c) => generateSynonyms(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
@@ -4814,7 +4865,7 @@ async function generateArcLesson(aType, ctx) {
   if (aType === 'standard' || aType === 'review') {
     const vOpts = aType === 'review'
       ? { ...(ctx.reviewOpts || {}), story: ctx.story, chainVocab: ctx.chainVocab?.words || [], vocabMode: 'reinforce' }
-      : { ...(ctx.standardExtra || {}), story: ctx.story, vocabMode: null };
+      : { ...(ctx.standardExtra || {}), story: ctx.story, vocabMode: null, script: ctx.script || null };
     const { lesson } = await generateOneLesson(
       ctx.lang, ctx.srcLang, ctx.topicName, 1, 1, [], ctx.story, ctx.diff, ctx.jobId, vOpts);
     if (lesson && aType === 'review') {
@@ -4829,8 +4880,9 @@ async function generateArcLesson(aType, ctx) {
   const { lesson } = await gen({
     lang: ctx.lang, srcLang: ctx.srcLang, topicName: ctx.topicName, story: ctx.story,
     diff: ctx.diff, jobId: ctx.jobId, chainVocab: ctx.chainVocab,
-    standardOpts: { story: ctx.story, vocabMode: null },
+    standardOpts: { story: ctx.story, vocabMode: null, script: ctx.script || null },
     sharedGenOpts: { chainVocab: ctx.chainVocab, vocabMode: 'reinforce', story: ctx.story,
+                     script: ctx.script || null,
                      chainStory: ctx.chainStory?.text, chainStoryChapters: ctx.chainStory?.chapters },
     addMathInstr: ctx.addMathInstr || null, addMathOps: ctx.addMathOps || null,
     introScript: ctx.introScript || null,
@@ -5259,6 +5311,7 @@ async function _runBookJob(bookId, chunks, base) {
             const lesson = await generateArcLesson(aType, {
               lang: base.lang, srcLang: base.srcLang, topicName: data.topic || placeholderTopic,
               story: arcStory, diff: base.diff, jobId, chainVocab, chainStory: _chainStory,
+              script: base.script || null,
               reviewOpts: { userDialect: null, writingStyle: base.storyStyle || null,
                             storyLang: base.userStoryLang || null },
             });
@@ -6091,7 +6144,8 @@ http.createServer(async (req, res) => {
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
       const { topic, lang, srcLang, difficulty, lessonFormat, storyLen, continuedFrom, forceRegenerate,
-              userStory, userTranslation, userDialect, storyStyle, reinforcePrior, vocabMode, useFullChain, userStoryLang, mathInstruction, fromLearned } = body;
+              userStory, userTranslation, userDialect, storyStyle, reinforcePrior, vocabMode, useFullChain, userStoryLang, mathInstruction, fromLearned,
+              script, srcScript } = body;
       // continuedFrom may arrive as a stable tp_ id (from the continue-select)
       // or a topic name (other paths). Normalize to the canonical topic name so
       // everything downstream is unaffected by which the client sent.
@@ -6138,6 +6192,11 @@ http.createServer(async (req, res) => {
       const userOpts = {
         userStory:       userStory       ? String(userStory).trim()       : null,
         userStoryLang:   userStoryLang   ? String(userStoryLang)          : null,
+        // v76_h: the script a digraphic language should be written in. Validated against
+        // scripts.json rather than trusted — an unknown value would reach the prompt verbatim,
+        // and a value for a language with no choice would name a script that does not apply.
+        script:          _validScript(lang, script),
+        srcScript:       _validScript(srcLang, srcScript),
         prevStoryTopic:  combinedUserStory || null,
         userTranslation: userTranslation ? String(userTranslation).trim() : null,
         userDialect:     userDialect     ? String(userDialect).trim()     : null,

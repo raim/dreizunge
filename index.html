@@ -674,6 +674,9 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           </select>
           <span class="lang-select-arrow">▾</span>
         </div>
+        <!-- v76_i: script picker for a digraphic SOURCE language. Rendered only when
+             scripts.json _scriptChoice lists it, so it is invisible for every other language. -->
+        <div id="src-script-wrap" style="display:none;margin-top:4px"></div>
       </div>
       <div class="lang-pair-arrow">→</div>
       <div class="lang-pair-col">
@@ -716,6 +719,9 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           </select>
           <span class="lang-select-arrow">▾</span>
         </div>
+        <!-- v76_i: script picker for a digraphic TARGET language. Sits with the language it
+             qualifies, not down with difficulty — it is a property of that choice. -->
+        <div id="script-wrap" style="display:none;margin-top:4px"></div>
       </div>
     </div>
     <!-- v49: the standalone 🔊 1,2,3 button (#tts-test-row, v47.x) is superseded by the
@@ -1458,6 +1464,60 @@ async function loadScripts() {
 function scriptsForLang(code) {
   const m = (SCRIPTS_DATA._langScript || {})[code];
   return m ? (Array.isArray(m) ? m : [m]) : [];
+}
+// ── Script choice (v76_i) ────────────────────────────────────────────────────
+// A language has a CHOICE of script only when scripts.json says so. This is deliberately NOT
+// `scriptsForLang(code).length > 1`: that is equally true of Japanese, which mixes hiragana and
+// katakana inside one sentence and has nothing to choose. See INTERNALS → "Several scripts is not
+// the same as a script CHOICE".
+function langHasScriptChoice(code) {
+  return (SCRIPTS_DATA._scriptChoice || []).includes(code);
+}
+// Table name -> the label a learner sees. `cyrillic-sr` is OUR name for the Serbian Cyrillic
+// table; the suffix disambiguates the table, not the script.
+function scriptLabelOf(name) {
+  const base = String(name || '').split('-')[0];
+  return base ? base.charAt(0).toUpperCase() + base.slice(1) : '';
+}
+// Render (or hide) the script picker for one side of the language pair. Returns the value in force.
+function _renderScriptPicker(which) {
+  const code = which === 'target' ? APP.lang : APP.srcLang;
+  const wrap = document.getElementById(which === 'target' ? 'script-wrap' : 'src-script-wrap');
+  if (!wrap) return null;
+  const opts = langHasScriptChoice(code) ? scriptsForLang(code) : [];
+  if (opts.length < 2) { wrap.style.display = 'none'; wrap.innerHTML = ''; return null; }
+  const key = which === 'target' ? 'script' : 'srcScript';
+  // Inherit: the chapter being continued decides, else the storyline's other chapters, else
+  // nothing is preselected and the learner picks (the user's ruling at v76_g).
+  const cur = APP[key] || _inheritedScript(which) || '';
+  const sel = 'sel-' + (which === 'target' ? 'script' : 'src-script');
+  wrap.style.display = '';
+  wrap.innerHTML = '<select class="lang-select" id="' + sel + '" onchange="onScriptPick(\'' + which + '\',this.value)">'
+    + '<option value=""' + (cur ? '' : ' selected') + '>' + escHtml(t('form.script_pick')) + '</option>'
+    + opts.map(function (o) {
+        return '<option value="' + escAttr(o) + '"' + (o === cur ? ' selected' : '') + '>'
+             + escHtml(scriptLabelOf(o)) + '</option>';
+      }).join('')
+    + '</select>';
+  APP[key] = cur || null;
+  return APP[key];
+}
+// What the chapter being continued was written in. The `continue-select` names the parent chapter,
+// which is exactly the "previous chapter" the inheritance rule means.
+function _inheritedScript(which) {
+  const ref = document.getElementById('continue-select')?.value;
+  if (!ref) return null;                       // a brand-new story inherits nothing — explicit pick
+  const src = (APP.savedList || []).find(s => s.id === ref || s.topic === ref);
+  if (!src) return null;
+  return (which === 'target' ? src.script : src.srcScript) || null;
+}
+function onScriptPick(which, value) {
+  APP[which === 'target' ? 'script' : 'srcScript'] = value || null;
+}
+// Both pickers follow any change to the language pair or the continue-select.
+function refreshScriptPickers() {
+  _renderScriptPicker('target');
+  _renderScriptPicker('source');
 }
 // Whether a script has a usable (non-empty) letter table loaded.
 function scriptHasTable(name) {
@@ -2500,6 +2560,9 @@ function selectSrcLang(code, fromForm){
   // Footer selectors always mirror the active render-context language
   ['src-lang-select-footer-ls','src-lang-select-footer-sl'].forEach(id=>{const f=document.getElementById(id);if(f&&f.value!==code)f.value=code;});
   updateTranslationLangHint();
+  // v76_i: same as selectLang — a new source language has its own script choice, or none.
+  APP.srcScript = null;
+  try { refreshScriptPickers(); } catch(_){}
   loadUIStrings(code).then(() => {
     try { refreshAccountBadge(); } catch(_) {}   // v70_m: strings exist now — repaint the badge
     const lbl=document.getElementById('topic-label');
@@ -2529,6 +2592,10 @@ function selectLang(code, silent, fromForm){
   repopulateContinueSelect();
   updateDocDir();
   try { updateArcScriptRow(); } catch(_){}
+  // v76_i: a different target language may have a different script choice, or none. Clear the
+  // previous pick rather than carrying a script from another language into the request.
+  APP.script = null;
+  try { refreshScriptPickers(); } catch(_){}
   const sel=document.getElementById('lang-select');
   if(fromForm && sel && sel.value!==code) sel.value=code;
   const L=LANGS[code]||LANGS.it;
@@ -5461,6 +5528,9 @@ async function loadSavedList(){
 }
 
 function _updateReinforcePriorVisibility(){
+  // v76_i: the parent chapter decides the inherited script, so re-render the pickers whenever it
+  // changes. Called from the continue-select's own onchange.
+  try { refreshScriptPickers(); } catch(_){}
   const sel = document.getElementById('continue-select');
   const row = document.getElementById('reinforce-prior-row');
   if (row) row.style.display = (sel && sel.value) ? 'flex' : 'none';
@@ -5602,6 +5672,13 @@ function continueFromLesson(ref, difficulty, storyLen){
     const match=[...contSel.options].find(o=>o.value===optVal);
     if(match){ contSel.value=optVal; }
   }
+  // v76_i: inherit the script from the chapter being continued (the user's ruling: inherit from
+  // the storyline's previous chapter, explicit pick only for a brand-new story). Set BEFORE the
+  // pickers render so the inherited value is the one preselected. Cleared first, because
+  // selectLang/selectSrcLang above may already have reset them for a different language.
+  APP.script    = src?.script    || null;
+  APP.srcScript = src?.srcScript || null;
+  try { refreshScriptPickers(); } catch(_){}
   goLanding();
   setTimeout(()=>{
     const inp=document.getElementById('topic-input');
@@ -5812,6 +5889,7 @@ async function doGenerate(forceRegen){
       mathInstruction: APP.lessonFormat==='math' ? (document.getElementById('topic-input')?.value?.trim()||null) : null,
       userStoryLang: useStory ? (document.getElementById('user-story-lang')?.value||'target') : null,
       useFullChain:!useStory&&!!(document.getElementById('use-full-chain-cb')?.checked)&&!!_contSelVal&&!myStory,
+      script: APP.script || null, srcScript: APP.srcScript || null,
       forceRegenerate:!!forceRegen || myStory};
     if(myStory && myStoryData) body.fromLearned=myStoryData;
     if(userStory)       body.userStory=userStory;

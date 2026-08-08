@@ -12,22 +12,23 @@
         "tp_17861090349940000192",
         "tp_17861703693860000064",
         "tp_17861711972020000186",
-        "tp_17861933955580000067"
+        "tp_17861933955580000067",
+        "tp_17861968126590000089"
       ],
       "lang": "sr",
       "srcLang": "en",
       "createdAt": "2026-08-07T12:46:44.034Z",
-      "updatedAt": "2026-08-08T11:13:06.905Z",
+      "updatedAt": "2026-08-08T14:35:13.273Z",
       "tokenUsage": {
-        "totalPromptTokens": 6713,
-        "totalCompletionTokens": 6949,
+        "totalPromptTokens": 10173,
+        "totalCompletionTokens": 8810,
         "tokensByType": {
           "retitle": 392,
-          "summary": 543,
-          "storyboard": 12727
+          "summary": 2153,
+          "storyboard": 16438
         }
       },
-      "summary": "The narrative traces the descent into conflict as football stadiums transform from sites of sport into political battlefields where fan groups rally for national superiority rather than goals. As tension grips the city, tanks invade the empty stands and propaganda-filled newspapers replace truth, signaling that the war has begun long before official declarations. The protagonist faces an impossible choice between silence and escape amidst the rising smoke, marking the end of normalcy and the onset of a terrifying new reality.",
+      "summary": "The narrative traces the transformation of Belgrade from a vibrant football city to a war-torn landscape, forcing the protagonist Miloš into exile in Vienna. Initially defined by the cold intensity of stadium victories and political tension, the story shifts to the universal language of fear as tanks replace fans on the streets. In Austria, Miloš transitions from a fleeing refugee to an architect of a new hybrid community, finding solace in shared stories rather than his past identity. Ultimately, despite achieving material stability and middle-class comfort, he grapples with the emptiness of success and the loss of his original roots.",
       "summaryMeta": {
         "type": "storyline_summary",
         "model": "qwen3.6:35b-a3b",
@@ -35,12 +36,12 @@
         "valid": 1,
         "rejected": 0,
         "rejectReasons": null,
-        "promptTokens": 453,
-        "completionTokens": 90,
-        "ms": 60607,
-        "at": "2026-08-07T13:43:59.574Z"
+        "promptTokens": 1489,
+        "completionTokens": 121,
+        "ms": 273087,
+        "at": "2026-08-08T14:16:03.973Z"
       },
-      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Frozen stadium with players running on ice.</title><rect x=\"11\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"12\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#9e9e9e\"/><polyline points=\"0,50 20,40 40,50 60,40 80,50 100,40\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"30\" cy=\"70\" r=\"5\" fill=\"#2b2b2b\"/><rect x=\"28\" y=\"75\" width=\"4\" height=\"10\" fill=\"#e07a5f\"/><circle cx=\"70\" cy=\"70\" r=\"5\" fill=\"#2b2b2b\"/><rect x=\"68\" y=\"75\" width=\"4\" height=\"10\" fill=\"#e5989b\"/></svg></g><g data-chapter=\"2\"><title>Crowd cheering in the cold night air.</title><rect x=\"193\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"194\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><circle cx=\"50\" cy=\"30\" r=\"15\" fill=\"#f2cc8f\"/><rect x=\"0\" y=\"70\" width=\"100\" height=\"30\" fill=\"#9e9e9e\"/><circle cx=\"20\" cy=\"60\" r=\"4\" fill=\"#faf7f0\"/><rect x=\"18\" y=\"64\" width=\"4\" height=\"8\" fill=\"#2b2b2b\"/><circle cx=\"50\" cy=\"55\" r=\"4\" fill=\"#faf7f0\"/><rect x=\"48\" y=\"59\" width=\"4\" height=\"8\" fill=\"#2b2b2b\"/><circle cx=\"80\" cy=\"60\" r=\"4\" fill=\"#faf7f0\"/><rect x=\"78\" y=\"64\" width=\"4\" height=\"8\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"3\"><title>Tense faces in the stands, wind blowing.</title><rect x=\"375\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"376\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"50\" width=\"100\" height=\"50\" fill=\"#9e9e9e\"/><polyline points=\"10,40 30,60 50,40 70,60 90,40\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"30\" cy=\"55\" r=\"5\" fill=\"#2b2b2b\"/><circle cx=\"70\" cy=\"55\" r=\"5\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"4\"><title>Miloš watches tanks enter the empty stadium.</title><rect x=\"557\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"558\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#8d6e63\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#9e9e9e\"/><rect x=\"20\" y=\"40\" width=\"60\" height=\"20\" fill=\"#2b2b2b\"/><circle cx=\"50\" cy=\"30\" r=\"10\" fill=\"#e07a5f\"/><rect x=\"80\" y=\"70\" width=\"10\" height=\"20\" fill=\"#2b2b2b\"/><circle cx=\"85\" cy=\"65\" r=\"3\" fill=\"#faf7f0\"/></svg></g><g data-chapter=\"5\"><title>Miloš walking alone in the snowy streets of Vienna.</title><rect x=\"739\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"740\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#ffffff\"/><rect x=\"0\" y=\"70\" width=\"100\" height=\"30\" fill=\"#9e9e9e\"/><rect x=\"10\" y=\"20\" width=\"80\" height=\"50\" fill=\"#faf7f0\"/><circle cx=\"50\" cy=\"60\" r=\"4\" fill=\"#2b2b2b\"/><rect x=\"48\" y=\"64\" width=\"4\" height=\"10\" fill=\"#2b2b2b\"/><polyline points=\"20,30 25,35 20,40\" fill=\"none\" stroke=\"#a8dadc\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><polyline points=\"80,30 75,35 80,40\" fill=\"none\" stroke=\"#a8dadc\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></g><g data-chapter=\"6\"><title>Community gathering in a cafe, sharing stories.</title><rect x=\"921\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"922\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"80\" width=\"100\" height=\"20\" fill=\"#8d6e63\"/><circle cx=\"30\" cy=\"70\" r=\"6\" fill=\"#2b2b2b\"/><rect x=\"28\" y=\"76\" width=\"4\" height=\"8\" fill=\"#e07a5f\"/><circle cx=\"50\" cy=\"70\" r=\"6\" fill=\"#2b2b2b\"/><rect x=\"48\" y=\"76\" width=\"4\" height=\"8\" fill=\"#e07a5f\"/><circle cx=\"70\" cy=\"70\" r=\"6\" fill=\"#2b2b2b\"/><rect x=\"68\" y=\"76\" width=\"4\" height=\"8\" fill=\"#e07a5f\"/><circle cx=\"50\" cy=\"50\" r=\"10\" fill=\"#81b29a\"/></svg></g></svg>",
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Frozen stadium with cheering fans and smoke.</title><rect x=\"11\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"12\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#9e9e9e\"/><polygon points=\"0,60 20,40 40,60 60,40 80,60 100,40 100,60\" fill=\"#2b2b2b\"/><circle cx=\"50\" cy=\"30\" r=\"15\" fill=\"#f2cc8f\"/><polyline points=\"20,80 40,70 60,80 80,70\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"30\" cy=\"50\" r=\"3\" fill=\"#e07a5f\"/><circle cx=\"70\" cy=\"50\" r=\"3\" fill=\"#e07a5f\"/></svg></g><g data-chapter=\"2\"><title>Crowd celebrating in snowy Belgrade streets.</title><rect x=\"193\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"194\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"0\" y=\"70\" width=\"100\" height=\"30\" fill=\"#9e9e9e\"/><circle cx=\"20\" cy=\"85\" r=\"4\" fill=\"#ffffff\"/><circle cx=\"50\" cy=\"85\" r=\"4\" fill=\"#ffffff\"/><circle cx=\"80\" cy=\"85\" r=\"4\" fill=\"#ffffff\"/><rect x=\"10\" y=\"30\" width=\"20\" height=\"40\" fill=\"#2b2b2b\"/><circle cx=\"20\" cy=\"25\" r=\"6\" fill=\"#faf7f0\"/><rect x=\"70\" y=\"30\" width=\"20\" height=\"40\" fill=\"#2b2b2b\"/><circle cx=\"80\" cy=\"25\" r=\"6\" fill=\"#faf7f0\"/></svg></g><g data-chapter=\"4\"><title>Tense stadium with dark clouds and tanks.</title><rect x=\"375\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"376\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#2b2b2b\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#9e9e9e\"/><polygon points=\"0,60 25,45 50,60 75,45 100,60\" fill=\"#8d6e63\"/><rect x=\"40\" y=\"50\" width=\"20\" height=\"10\" fill=\"#2b2b2b\"/><circle cx=\"50\" cy=\"30\" r=\"20\" fill=\"#3d405b\"/><line x1=\"45\" y1=\"55\" x2=\"55\" y2=\"65\" stroke=\"#e07a5f\" stroke-width=\"3\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"5\"><title>Milosh walking alone in snowy Vienna.</title><rect x=\"557\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"558\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"70\" width=\"100\" height=\"30\" fill=\"#9e9e9e\"/><circle cx=\"50\" cy=\"85\" r=\"2\" fill=\"#ffffff\"/><circle cx=\"60\" cy=\"90\" r=\"2\" fill=\"#ffffff\"/><rect x=\"45\" y=\"30\" width=\"10\" height=\"40\" fill=\"#2b2b2b\"/><circle cx=\"50\" cy=\"25\" r=\"7\" fill=\"#faf7f0\"/><rect x=\"80\" y=\"20\" width=\"15\" height=\"50\" fill=\"#9e9e9e\"/></svg></g><g data-chapter=\"6\"><title>Community gathering in a Vienna cafe.</title><rect x=\"739\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"740\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#8d6e63\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#9e9e9e\"/><circle cx=\"30\" cy=\"50\" r=\"8\" fill=\"#e5989b\"/><circle cx=\"70\" cy=\"50\" r=\"8\" fill=\"#81b29a\"/><rect x=\"25\" y=\"40\" width=\"10\" height=\"10\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"65\" y=\"40\" width=\"10\" height=\"10\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></g><g data-chapter=\"8\"><title>Family standing on a wooden terrace in Alps.</title><rect x=\"921\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"922\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><polygon points=\"0,60 30,40 60,60 100,30 100,100 0,100\" fill=\"#81b29a\"/><rect x=\"40\" y=\"70\" width=\"20\" height=\"5\" fill=\"#8d6e63\"/><circle cx=\"45\" cy=\"60\" r=\"5\" fill=\"#faf7f0\"/><circle cx=\"55\" cy=\"60\" r=\"5\" fill=\"#faf7f0\"/><rect x=\"42\" y=\"65\" width=\"3\" height=\"10\" fill=\"#2b2b2b\"/><rect x=\"52\" y=\"65\" width=\"3\" height=\"10\" fill=\"#2b2b2b\"/></svg></g></svg>",
       "storyboardMeta": {
         "type": "storyline_storyboard",
         "model": "qwen3.6:35b-a3b",
@@ -48,15 +49,15 @@
         "valid": 6,
         "rejected": 0,
         "rejectReasons": null,
-        "promptTokens": 1634,
-        "completionTokens": 1770,
-        "ms": 541003,
-        "at": "2026-08-08T11:13:06.905Z",
+        "promptTokens": 1971,
+        "completionTokens": 1740,
+        "ms": 733309,
+        "at": "2026-08-08T14:35:13.273Z",
         "storyStyle": "neutral"
       },
       "storyboardPanels": [
         {
-          "caption": "Frozen stadium with players running on ice.",
+          "caption": "Frozen stadium with cheering fans and smoke.",
           "chapter": 1,
           "bg": "sky",
           "shapes": [
@@ -69,11 +70,11 @@
               "fill": "stone"
             },
             {
-              "type": "polyline",
+              "type": "polygon",
               "points": [
                 [
                   0,
-                  50
+                  60
                 ],
                 [
                   20,
@@ -81,7 +82,7 @@
                 ],
                 [
                   40,
-                  50
+                  60
                 ],
                 [
                   60,
@@ -89,11 +90,44 @@
                 ],
                 [
                   80,
-                  50
+                  60
                 ],
                 [
                   100,
                   40
+                ],
+                [
+                  100,
+                  60
+                ]
+              ],
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 30,
+              "r": 15,
+              "fill": "sun"
+            },
+            {
+              "type": "polyline",
+              "points": [
+                [
+                  20,
+                  80
+                ],
+                [
+                  40,
+                  70
+                ],
+                [
+                  60,
+                  80
+                ],
+                [
+                  80,
+                  70
                 ]
               ],
               "stroke": "white",
@@ -102,47 +136,24 @@
             {
               "type": "circle",
               "cx": 30,
-              "cy": 70,
-              "r": 5,
-              "fill": "ink"
-            },
-            {
-              "type": "rect",
-              "x": 28,
-              "y": 75,
-              "w": 4,
-              "h": 10,
+              "cy": 50,
+              "r": 3,
               "fill": "accent"
             },
             {
               "type": "circle",
               "cx": 70,
-              "cy": 70,
-              "r": 5,
-              "fill": "ink"
-            },
-            {
-              "type": "rect",
-              "x": 68,
-              "y": 75,
-              "w": 4,
-              "h": 10,
-              "fill": "rose"
+              "cy": 50,
+              "r": 3,
+              "fill": "accent"
             }
           ]
         },
         {
-          "caption": "Crowd cheering in the cold night air.",
+          "caption": "Crowd celebrating in snowy Belgrade streets.",
           "chapter": 2,
           "bg": "night",
           "shapes": [
-            {
-              "type": "circle",
-              "cx": 50,
-              "cy": 30,
-              "r": 15,
-              "fill": "sun"
-            },
             {
               "type": "rect",
               "x": 0,
@@ -154,109 +165,176 @@
             {
               "type": "circle",
               "cx": 20,
-              "cy": 60,
+              "cy": 85,
               "r": 4,
-              "fill": "paper"
-            },
-            {
-              "type": "rect",
-              "x": 18,
-              "y": 64,
-              "w": 4,
-              "h": 8,
-              "fill": "ink"
+              "fill": "white"
             },
             {
               "type": "circle",
               "cx": 50,
-              "cy": 55,
+              "cy": 85,
               "r": 4,
+              "fill": "white"
+            },
+            {
+              "type": "circle",
+              "cx": 80,
+              "cy": 85,
+              "r": 4,
+              "fill": "white"
+            },
+            {
+              "type": "rect",
+              "x": 10,
+              "y": 30,
+              "w": 20,
+              "h": 40,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 20,
+              "cy": 25,
+              "r": 6,
               "fill": "paper"
             },
             {
               "type": "rect",
-              "x": 48,
-              "y": 59,
-              "w": 4,
-              "h": 8,
+              "x": 70,
+              "y": 30,
+              "w": 20,
+              "h": 40,
               "fill": "ink"
             },
             {
               "type": "circle",
               "cx": 80,
-              "cy": 60,
-              "r": 4,
+              "cy": 25,
+              "r": 6,
               "fill": "paper"
-            },
-            {
-              "type": "rect",
-              "x": 78,
-              "y": 64,
-              "w": 4,
-              "h": 8,
-              "fill": "ink"
             }
           ]
         },
         {
-          "caption": "Tense faces in the stands, wind blowing.",
-          "chapter": 3,
-          "bg": "sky",
+          "caption": "Tense stadium with dark clouds and tanks.",
+          "chapter": 4,
+          "bg": "ink",
           "shapes": [
             {
               "type": "rect",
               "x": 0,
-              "y": 50,
+              "y": 60,
               "w": 100,
-              "h": 50,
+              "h": 40,
               "fill": "stone"
             },
             {
-              "type": "polyline",
+              "type": "polygon",
               "points": [
                 [
-                  10,
-                  40
+                  0,
+                  60
                 ],
                 [
-                  30,
-                  60
+                  25,
+                  45
                 ],
                 [
                   50,
-                  40
-                ],
-                [
-                  70,
                   60
                 ],
                 [
-                  90,
-                  40
+                  75,
+                  45
+                ],
+                [
+                  100,
+                  60
                 ]
               ],
-              "stroke": "ink",
-              "sw": 2
+              "fill": "earth"
             },
             {
-              "type": "circle",
-              "cx": 30,
-              "cy": 55,
-              "r": 5,
+              "type": "rect",
+              "x": 40,
+              "y": 50,
+              "w": 20,
+              "h": 10,
               "fill": "ink"
             },
             {
               "type": "circle",
-              "cx": 70,
-              "cy": 55,
-              "r": 5,
-              "fill": "ink"
+              "cx": 50,
+              "cy": 30,
+              "r": 20,
+              "fill": "night"
+            },
+            {
+              "type": "line",
+              "x1": 45,
+              "y1": 55,
+              "x2": 55,
+              "y2": 65,
+              "stroke": "accent",
+              "sw": 3
             }
           ]
         },
         {
-          "caption": "Miloš watches tanks enter the empty stadium.",
-          "chapter": 4,
+          "caption": "Milosh walking alone in snowy Vienna.",
+          "chapter": 5,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 70,
+              "w": 100,
+              "h": 30,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 85,
+              "r": 2,
+              "fill": "white"
+            },
+            {
+              "type": "circle",
+              "cx": 60,
+              "cy": 90,
+              "r": 2,
+              "fill": "white"
+            },
+            {
+              "type": "rect",
+              "x": 45,
+              "y": 30,
+              "w": 10,
+              "h": 40,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 25,
+              "r": 7,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 80,
+              "y": 20,
+              "w": 15,
+              "h": 50,
+              "fill": "stone"
+            }
+          ]
+        },
+        {
+          "caption": "Community gathering in a Vienna cafe.",
+          "chapter": 6,
           "bg": "earth",
           "shapes": [
             {
@@ -268,177 +346,113 @@
               "fill": "stone"
             },
             {
-              "type": "rect",
-              "x": 20,
-              "y": 40,
-              "w": 60,
-              "h": 20,
-              "fill": "ink"
-            },
-            {
-              "type": "circle",
-              "cx": 50,
-              "cy": 30,
-              "r": 10,
-              "fill": "accent"
-            },
-            {
-              "type": "rect",
-              "x": 80,
-              "y": 70,
-              "w": 10,
-              "h": 20,
-              "fill": "ink"
-            },
-            {
-              "type": "circle",
-              "cx": 85,
-              "cy": 65,
-              "r": 3,
-              "fill": "paper"
-            }
-          ]
-        },
-        {
-          "caption": "Miloš walking alone in the snowy streets of Vienna.",
-          "chapter": 5,
-          "bg": "white",
-          "shapes": [
-            {
-              "type": "rect",
-              "x": 0,
-              "y": 70,
-              "w": 100,
-              "h": 30,
-              "fill": "stone"
-            },
-            {
-              "type": "rect",
-              "x": 10,
-              "y": 20,
-              "w": 80,
-              "h": 50,
-              "fill": "paper"
-            },
-            {
-              "type": "circle",
-              "cx": 50,
-              "cy": 60,
-              "r": 4,
-              "fill": "ink"
-            },
-            {
-              "type": "rect",
-              "x": 48,
-              "y": 64,
-              "w": 4,
-              "h": 10,
-              "fill": "ink"
-            },
-            {
-              "type": "polyline",
-              "points": [
-                [
-                  20,
-                  30
-                ],
-                [
-                  25,
-                  35
-                ],
-                [
-                  20,
-                  40
-                ]
-              ],
-              "stroke": "sky",
-              "sw": 1
-            },
-            {
-              "type": "polyline",
-              "points": [
-                [
-                  80,
-                  30
-                ],
-                [
-                  75,
-                  35
-                ],
-                [
-                  80,
-                  40
-                ]
-              ],
-              "stroke": "sky",
-              "sw": 1
-            }
-          ]
-        },
-        {
-          "caption": "Community gathering in a cafe, sharing stories.",
-          "chapter": 6,
-          "bg": "paper",
-          "shapes": [
-            {
-              "type": "rect",
-              "x": 0,
-              "y": 80,
-              "w": 100,
-              "h": 20,
-              "fill": "earth"
-            },
-            {
               "type": "circle",
               "cx": 30,
-              "cy": 70,
-              "r": 6,
-              "fill": "ink"
-            },
-            {
-              "type": "rect",
-              "x": 28,
-              "y": 76,
-              "w": 4,
-              "h": 8,
-              "fill": "accent"
-            },
-            {
-              "type": "circle",
-              "cx": 50,
-              "cy": 70,
-              "r": 6,
-              "fill": "ink"
-            },
-            {
-              "type": "rect",
-              "x": 48,
-              "y": 76,
-              "w": 4,
-              "h": 8,
-              "fill": "accent"
+              "cy": 50,
+              "r": 8,
+              "fill": "rose"
             },
             {
               "type": "circle",
               "cx": 70,
-              "cy": 70,
-              "r": 6,
+              "cy": 50,
+              "r": 8,
+              "fill": "leaf"
+            },
+            {
+              "type": "rect",
+              "x": 25,
+              "y": 40,
+              "w": 10,
+              "h": 10,
+              "fill": "none",
+              "stroke": "ink",
+              "sw": 1
+            },
+            {
+              "type": "rect",
+              "x": 65,
+              "y": 40,
+              "w": 10,
+              "h": 10,
+              "fill": "none",
+              "stroke": "ink",
+              "sw": 1
+            }
+          ]
+        },
+        {
+          "caption": "Family standing on a wooden terrace in Alps.",
+          "chapter": 8,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  0,
+                  60
+                ],
+                [
+                  30,
+                  40
+                ],
+                [
+                  60,
+                  60
+                ],
+                [
+                  100,
+                  30
+                ],
+                [
+                  100,
+                  100
+                ],
+                [
+                  0,
+                  100
+                ]
+              ],
+              "fill": "leaf"
+            },
+            {
+              "type": "rect",
+              "x": 40,
+              "y": 70,
+              "w": 20,
+              "h": 5,
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 45,
+              "cy": 60,
+              "r": 5,
+              "fill": "paper"
+            },
+            {
+              "type": "circle",
+              "cx": 55,
+              "cy": 60,
+              "r": 5,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 42,
+              "y": 65,
+              "w": 3,
+              "h": 10,
               "fill": "ink"
             },
             {
               "type": "rect",
-              "x": 68,
-              "y": 76,
-              "w": 4,
-              "h": 8,
-              "fill": "accent"
-            },
-            {
-              "type": "circle",
-              "cx": 50,
-              "cy": 50,
-              "r": 10,
-              "fill": "leaf"
+              "x": 52,
+              "y": 65,
+              "w": 3,
+              "h": 10,
+              "fill": "ink"
             }
           ]
         }
@@ -7205,6 +7219,1012 @@
   ],
   "topics": [
     {
+      "id": "tp_17861968126590000089",
+      "topic": "East-Tyrolian Alps Family Roots",
+      "topicEmoji": "🏔️",
+      "userTopic": "during the heatwave we left vienna to visit the homes in the east-tyrolean alps, where our spouses grew up",
+      "userPrompt": "during the heatwave we left vienna to visit the homes in the east-tyrolean alps, where our spouses grew up",
+      "lang": "sr",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Жар је у Бечу био гушћи од наших успомена, па смо побегли источно, ка тиролским планинама где су наши супружници провели детињство. Ваздух овде није мирисао на парфем и асфалт, већ на смолу и влажну земљу. Стојећи на дрвеној тераси старе куће, гледали смо како магла полако покрива врхове, док су нам прсти некад осетили мирис траве који је остао заборављен у градском буци.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Serbian (written in Cyrillic script) language teacher. Write a short story directly in Serbian (written in Cyrillic script) on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian (written in Cyrillic script). Write the ENTIRE text in Cyrillic script. Serbian is written in more than one script; use Cyrillic consistently for every word, including names, and do not mix scripts or add a transliteration. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nDa li je udobnost kupovna cena slobode? Danas se u Beču još uvek čuje taj hibridni jezik, ali ga prekriva šum uspeha. Miloš sada nosi skupocen sat, a njegovi stanovi su toliki da ih ne može ni svi osvetliti istovremeno. Mi smo postali deo te tihe većine, onih koji su izgradili zidove između sebe i prošlosti, verujući da je stabilnost dovoljna nagrada za izgubljene granice. Da li smo zaista napredovali ili smo samo naučili da bolje sakrivamo prazninu iza prozora sa pogledom na Dunav?\n\nNew topic: \"during the heatwave we left vienna to visit the homes in the east-tyrolean alps, where our spouses grew up\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 417,
+        "completionTokens": 144,
+        "ms": 77913,
+        "at": "2026-08-08T13:46:09.496Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 202,
+        "completionTokens": 88,
+        "ms": 43161,
+        "at": "2026-08-08T13:46:52.658Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "The heat in Vienna was thicker than our memories, so we fled eastward, toward the Tyrolean mountains where our spouses had spent their childhoods. The air here did not smell of perfume and asphalt, but of resin and damp earth. Standing on the wooden terrace of an old house, we watched as the fog slowly covered the peaks, while our fingers once again sensed the scent of grass, forgotten amidst the city's noise.",
+      "continuedFrom": "Beč: Od izbjeglica do srednje klase",
+      "continuedFromId": "tp_17861933955580000067",
+      "script": "cyrillic-sr",
+      "lessons": [
+        {
+          "id": "ls_1786197185764_imxf",
+          "type": "intro_script",
+          "script": "cyrillic-sr",
+          "rtl": false,
+          "difficulty": 3,
+          "title": "🔡 Serbian Cyrillic",
+          "icon": "🔡",
+          "desc": "Serbian Cyrillic — 16 letters",
+          "letters": [
+            {
+              "ch": "Е",
+              "lower": "е",
+              "name": "e",
+              "translit": "e",
+              "ipa": "e"
+            },
+            {
+              "ch": "Г",
+              "lower": "г",
+              "name": "ge",
+              "translit": "g",
+              "ipa": "ɡ"
+            },
+            {
+              "ch": "Ц",
+              "lower": "ц",
+              "name": "ce",
+              "translit": "c",
+              "ipa": "ts"
+            },
+            {
+              "ch": "Џ",
+              "lower": "џ",
+              "name": "dže",
+              "translit": "dž",
+              "ipa": "dʒ"
+            },
+            {
+              "ch": "Ж",
+              "lower": "ж",
+              "name": "že",
+              "translit": "ž",
+              "ipa": "ʒ"
+            },
+            {
+              "ch": "Х",
+              "lower": "х",
+              "name": "ha",
+              "translit": "h",
+              "ipa": "x"
+            },
+            {
+              "ch": "З",
+              "lower": "з",
+              "name": "ze",
+              "translit": "z",
+              "ipa": "z"
+            },
+            {
+              "ch": "А",
+              "lower": "а",
+              "name": "a",
+              "translit": "a",
+              "ipa": "a"
+            },
+            {
+              "ch": "Л",
+              "lower": "л",
+              "name": "el",
+              "translit": "l",
+              "ipa": "l"
+            },
+            {
+              "ch": "К",
+              "lower": "к",
+              "name": "ka",
+              "translit": "k",
+              "ipa": "k"
+            },
+            {
+              "ch": "О",
+              "lower": "о",
+              "name": "o",
+              "translit": "o",
+              "ipa": "o"
+            },
+            {
+              "ch": "Ђ",
+              "lower": "ђ",
+              "name": "đe",
+              "translit": "đ",
+              "ipa": "dʑ"
+            },
+            {
+              "ch": "И",
+              "lower": "и",
+              "name": "i",
+              "translit": "i",
+              "ipa": "i"
+            },
+            {
+              "ch": "Н",
+              "lower": "н",
+              "name": "en",
+              "translit": "n",
+              "ipa": "n"
+            },
+            {
+              "ch": "Б",
+              "lower": "б",
+              "name": "be",
+              "translit": "b",
+              "ipa": "b"
+            },
+            {
+              "ch": "Ф",
+              "lower": "ф",
+              "name": "ef",
+              "translit": "f",
+              "ipa": "f"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "Е е",
+              "target": "e",
+              "correct": "e",
+              "choices": [
+                "h",
+                "e",
+                "j",
+                "d"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "e",
+              "target": "Е е",
+              "correct": "Е е",
+              "choices": [
+                "Љ љ",
+                "Х х",
+                "Е е",
+                "Џ џ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Г г",
+              "target": "g",
+              "correct": "g",
+              "choices": [
+                "h",
+                "k",
+                "u",
+                "g"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "g (ge)",
+              "target": "Г г",
+              "correct": "Г г",
+              "choices": [
+                "Н н",
+                "А а",
+                "Г г",
+                "Ж ж"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Ц ц",
+              "target": "c",
+              "correct": "c",
+              "choices": [
+                "a",
+                "h",
+                "c",
+                "e"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "c (ce)",
+              "target": "Ц ц",
+              "correct": "Ц ц",
+              "choices": [
+                "Љ љ",
+                "Ц ц",
+                "С с",
+                "Ж ж"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Џ џ",
+              "target": "dž",
+              "correct": "dž",
+              "choices": [
+                "nj",
+                "lj",
+                "j",
+                "dž"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "dž (dže)",
+              "target": "Џ џ",
+              "correct": "Џ џ",
+              "choices": [
+                "П п",
+                "Ж ж",
+                "Ћ ћ",
+                "Џ џ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Ж ж",
+              "target": "ž",
+              "correct": "ž",
+              "choices": [
+                "t",
+                "m",
+                "j",
+                "ž"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ž (že)",
+              "target": "Ж ж",
+              "correct": "Ж ж",
+              "choices": [
+                "Ђ ђ",
+                "Ж ж",
+                "Г г",
+                "А а"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Х х",
+              "target": "h",
+              "correct": "h",
+              "choices": [
+                "v",
+                "s",
+                "h",
+                "p"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "h (ha)",
+              "target": "Х х",
+              "correct": "Х х",
+              "choices": [
+                "Х х",
+                "Н н",
+                "В в",
+                "Е е"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "З з",
+              "target": "z",
+              "correct": "z",
+              "choices": [
+                "f",
+                "z",
+                "ć",
+                "c"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "z (ze)",
+              "target": "З з",
+              "correct": "З з",
+              "choices": [
+                "С с",
+                "З з",
+                "О о",
+                "Ч ч"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "А а",
+              "target": "a",
+              "correct": "a",
+              "choices": [
+                "c",
+                "z",
+                "h",
+                "a"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "a",
+              "target": "А а",
+              "correct": "А а",
+              "choices": [
+                "А а",
+                "Ч ч",
+                "Г г",
+                "Ј ј"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Л л",
+              "target": "l",
+              "correct": "l",
+              "choices": [
+                "z",
+                "h",
+                "e",
+                "l"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "l (el)",
+              "target": "Л л",
+              "correct": "Л л",
+              "choices": [
+                "О о",
+                "Г г",
+                "Л л",
+                "Ж ж"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "К к",
+              "target": "k",
+              "correct": "k",
+              "choices": [
+                "g",
+                "k",
+                "p",
+                "f"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "k (ka)",
+              "target": "К к",
+              "correct": "К к",
+              "choices": [
+                "К к",
+                "Г г",
+                "Л л",
+                "Ћ ћ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "О о",
+              "target": "o",
+              "correct": "o",
+              "choices": [
+                "o",
+                "dž",
+                "b",
+                "đ"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "o",
+              "target": "О о",
+              "correct": "О о",
+              "choices": [
+                "Њ њ",
+                "Ф ф",
+                "Е е",
+                "О о"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Ђ ђ",
+              "target": "đ",
+              "correct": "đ",
+              "choices": [
+                "đ",
+                "z",
+                "g",
+                "p"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "đ (đe)",
+              "target": "Ђ ђ",
+              "correct": "Ђ ђ",
+              "choices": [
+                "Б б",
+                "Ш ш",
+                "Џ џ",
+                "Ђ ђ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "И и",
+              "target": "i",
+              "correct": "i",
+              "choices": [
+                "p",
+                "i",
+                "t",
+                "z"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "i",
+              "target": "И и",
+              "correct": "И и",
+              "choices": [
+                "Д д",
+                "И и",
+                "Б б",
+                "Л л"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Н н",
+              "target": "n",
+              "correct": "n",
+              "choices": [
+                "đ",
+                "j",
+                "n",
+                "m"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "n (en)",
+              "target": "Н н",
+              "correct": "Н н",
+              "choices": [
+                "Б б",
+                "Х х",
+                "Љ љ",
+                "Н н"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Б б",
+              "target": "b",
+              "correct": "b",
+              "choices": [
+                "l",
+                "dž",
+                "b",
+                "lj"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "b (be)",
+              "target": "Б б",
+              "correct": "Б б",
+              "choices": [
+                "Б б",
+                "Љ љ",
+                "Ш ш",
+                "Р р"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Ф ф",
+              "target": "f",
+              "correct": "f",
+              "choices": [
+                "f",
+                "g",
+                "m",
+                "t"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "f (ef)",
+              "target": "Ф ф",
+              "correct": "Ф ф",
+              "choices": [
+                "Њ њ",
+                "Г г",
+                "Ф ф",
+                "И и"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "н",
+              "pron": "n",
+              "correct": "Н н",
+              "choices": [
+                "Ј ј",
+                "Г г",
+                "Н н",
+                "Р р"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ђ",
+              "pron": "đ",
+              "correct": "Ђ ђ",
+              "choices": [
+                "Ђ ђ",
+                "П п",
+                "С с",
+                "Ф ф"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ц",
+              "pron": "c",
+              "correct": "Ц ц",
+              "choices": [
+                "Ј ј",
+                "Ц ц",
+                "П п",
+                "С с"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "џ",
+              "pron": "dž",
+              "correct": "Џ џ",
+              "choices": [
+                "Џ џ",
+                "Ј ј",
+                "О о",
+                "Ж ж"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ж",
+              "pron": "ž",
+              "correct": "Ж ж",
+              "choices": [
+                "Е е",
+                "П п",
+                "Ж ж",
+                "Ћ ћ"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 16,
+            "at": "2026-08-08T13:53:05.765Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "Escape to Tyrolean Mountains",
+          "desc": "Leaving Vienna for nature and memories",
+          "icon": "🏔️",
+          "vocab": [
+            {
+              "target": "жар",
+              "source": "heat"
+            },
+            {
+              "target": "беч",
+              "source": "Vienna"
+            },
+            {
+              "target": "меморија",
+              "source": "memory"
+            },
+            {
+              "target": "тиролски",
+              "source": "Tyrolean"
+            },
+            {
+              "target": "планина",
+              "source": "mountain"
+            },
+            {
+              "target": "супружник",
+              "source": "spouse"
+            },
+            {
+              "target": "детињство",
+              "source": "childhood"
+            },
+            {
+              "target": "ваздух",
+              "source": "air"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Жар је у Бечу био гушћи од наших успомена.",
+              "source": "The heat in Vienna was thicker than our memories.",
+              "words": [
+                "Жар",
+                "је",
+                "у",
+                "Бечу",
+                "био",
+                "гушћи",
+                "од",
+                "наших",
+                "успомена."
+              ]
+            },
+            {
+              "target": "Па смо побегли источно, ка тиролским планинама.",
+              "source": "So we fled eastward, toward the Tyrolean mountains.",
+              "words": [
+                "Па",
+                "смо",
+                "побегли",
+                "источно,",
+                "ка",
+                "тиролским",
+                "планинама."
+              ]
+            },
+            {
+              "target": "Ту су наши супружници провели детињство.",
+              "source": "Where our spouses had spent their childhoods.",
+              "words": [
+                "Ту",
+                "су",
+                "наши",
+                "супружници",
+                "провели",
+                "детињство."
+              ]
+            },
+            {
+              "target": "Ваздух овде није мирисао на парфем и асфалт.",
+              "source": "The air here did not smell of perfume and asphalt.",
+              "words": [
+                "Ваздух",
+                "овде",
+                "није",
+                "мирисао",
+                "на",
+                "парфем",
+                "и",
+                "асфалт."
+              ]
+            },
+            {
+              "target": "Већ на смолу и влажну земљу.",
+              "source": "But of resin and damp earth.",
+              "words": [
+                "Већ",
+                "на",
+                "смолу",
+                "и",
+                "влажну",
+                "земљу."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1151,
+            "completionTokens": 401,
+            "ms": 244631,
+            "at": "2026-08-08T13:50:57.354Z"
+          }
+        },
+        {
+          "difficulty": 2,
+          "id": "ls_1786197488141",
+          "type": "word_forms",
+          "title": "Serbian Word Forms",
+          "desc": "Practice tense, case, and number.",
+          "icon": "🏔️",
+          "items": [
+            {
+              "sentence": "Жар је у Бечу био ___ од наших успомена.",
+              "translation": "The heat in Vienna was thicker than our memories.",
+              "choices": [
+                "гушћи",
+                "гушта",
+                "гушће"
+              ],
+              "correctIndex": 0,
+              "explanation": "Comparative adjective for 'thicker'."
+            },
+            {
+              "sentence": "Па смо ___ источно, ка тиролским планинама.",
+              "translation": "So we fled east, towards the Tyrolean mountains.",
+              "choices": [
+                "побегли",
+                "побегнемо",
+                "побегла"
+              ],
+              "correctIndex": 0,
+              "explanation": "Past tense plural masculine 'we fled'."
+            },
+            {
+              "sentence": "Ваздух овде није мирисао на парфем и ___.",
+              "translation": "The air here did not smell of perfume and asphalt.",
+              "choices": [
+                "асфалт",
+                "асфалта",
+                "асфалту"
+              ],
+              "correctIndex": 0,
+              "explanation": "Accusative singular 'asphalt'."
+            },
+            {
+              "sentence": "Стојећи на дрвеној тераси старе ___.",
+              "translation": "Standing on the wooden terrace of the old house.",
+              "choices": [
+                "куће",
+                "кућа",
+                "кући"
+              ],
+              "correctIndex": 0,
+              "explanation": "Genitive singular 'of the house'."
+            },
+            {
+              "sentence": "Гледали смо како магла полако покрива ___.",
+              "translation": "We watched as the fog slowly covered the peaks.",
+              "choices": [
+                "врхове",
+                "врховима",
+                "врха"
+              ],
+              "correctIndex": 0,
+              "explanation": "Accusative plural 'peaks'."
+            },
+            {
+              "sentence": "Дошавши у градски ___, осетили смо мирис траве.",
+              "translation": "Arriving in the city noise, we smelled the grass.",
+              "choices": [
+                "буци",
+                "буква",
+                "букве"
+              ],
+              "correctIndex": 0,
+              "explanation": "Locative singular 'in the noise'."
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 6,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1030,
+            "completionTokens": 592,
+            "ms": 277340,
+            "at": "2026-08-08T13:58:08.141Z"
+          }
+        },
+        {
+          "difficulty": 3,
+          "id": "ls_1786198401053",
+          "type": "comprehension",
+          "title": "From Belgrade to the Alps: A Journey of Displacement",
+          "desc": "Comprehension quiz for the story 'Frozen Belgrade Derby' and its sequels.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "How does the atmosphere at the stadium change between the first and third sections?",
+              "choices": [
+                "It shifts from a celebration of victory to a tense political confrontation.",
+                "It changes from a cold, hostile environment to a warm, welcoming one.",
+                "It remains focused on the sport but becomes more violent in both instances.",
+                "It transitions from a quiet mourning to an energetic party."
+              ],
+              "correctIndex": 0,
+              "why": "The first section describes joy and victory ('radost celom gradu'), while the third states football became a 'predigra za rat' with 'tension' and 'hostile' looks."
+            },
+            {
+              "q": "What does Miloš realize about his identity after arriving in Vienna?",
+              "choices": [
+                "He has become a shadow fleeing his past rather than a journalist seeking truth.",
+                "He has successfully rebuilt his career as a prominent news reporter.",
+                "He feels that Vienna is exactly like Belgrade, just colder.",
+                "He decides to return to Belgrade immediately to stop the war."
+              ],
+              "correctIndex": 0,
+              "why": "The text explicitly states he 'prestaо da bude novinar... i postao samo senka koja beži' (stopped being a journalist... and became only a shadow fleeing)."
+            },
+            {
+              "q": "What is the significance of the 'hybrid language' mentioned in the section about Leopolstadt?",
+              "choices": [
+                "It represents a new community identity formed by mixing stories from different exiled cities.",
+                "It is a code used by politicians to hide their true intentions during the war.",
+                "It refers to the technical jargon used by journalists in Vienna.",
+                "It describes the confusion felt by refugees who cannot understand German."
+              ],
+              "correctIndex": 0,
+              "why": "The text explains that stories from Belgrade, Sarajevo, and Zagreb intertwined to create a 'new, hybrid language' that helped build a community among the exiles."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1685,
+            "completionTokens": 528,
+            "ms": 288305,
+            "at": "2026-08-08T14:13:21.053Z"
+          }
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1786198940954",
+          "type": "comprehension",
+          "title": "From Belgrade to Vienna: A Journey of Loss and Identity",
+          "desc": "A story about the transformation of a city, a war, and the search for home.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "How does the atmosphere in Belgrade change from the first section to the third section?",
+              "choices": [
+                "It shifts from celebratory joy to political tension and fear.",
+                "It changes from cold and silent to hot and noisy.",
+                "It remains joyful but becomes more crowded with people.",
+                "It turns from tense and angry to peaceful and quiet."
+              ],
+              "correctIndex": 0,
+              "why": "The first section describes victory and joy, while the third section states that football became a prelude to war and people stopped hugging."
+            },
+            {
+              "q": "Why does Miloš leave Belgrade?",
+              "choices": [
+                "He is fleeing from the war and the violence.",
+                "He wants to visit his family in the Tyrolean Alps.",
+                "He is going to Vienna to become a wealthy businessman.",
+                "He is traveling to report on the new political situation."
+              ],
+              "correctIndex": 0,
+              "why": "The text explicitly states he became a shadow fleeing his past and that they did not escape war but changed the background while their souls broke apart."
+            },
+            {
+              "q": "What does Miloš realize about 'home' in Vienna?",
+              "choices": [
+                "Home is defined by shared stories and community, not just a location.",
+                "Home is only found in the wealthy apartments he eventually buys.",
+                "Home is a place where one can forget their past completely.",
+                "Home is the cold, empty hallway of the refugee center."
+              ],
+              "correctIndex": 0,
+              "why": "The text concludes that home is not a place on a map but the sound of one's own voice in the chorus of others' fates."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1685,
+            "completionTokens": 464,
+            "ms": 282063,
+            "at": "2026-08-08T14:22:20.954Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 383646,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 6332,
+        "totalCompletionTokens": 2247,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 244629,
+            "promptTokens": 1151,
+            "completionTokens": 401
+          }
+        ],
+        "tokensByType": {
+          "add_lesson": 5984
+        }
+      },
+      "generatedAt": "2026-08-08T13:46:52.659Z",
+      "updatedAt": "2026-08-08T14:22:20.954Z",
+      "createdBy": "admin"
+    },
+    {
       "id": "tp_17861933955580000067",
       "topic": "Beč: Od izbjeglica do srednje klase",
       "topicEmoji": "🇦🇹",
@@ -12520,6 +13540,125 @@
           "_recreated": true
         },
         {
+          "difficulty": 2,
+          "id": "ls_1786197968466",
+          "title": "Frozen Belgrade Derby",
+          "desc": "Vocabulary from a winter football match",
+          "icon": "⚽",
+          "vocab": [
+            {
+              "target": "Beograd",
+              "source": "Belgrade"
+            },
+            {
+              "target": "zima",
+              "source": "winter"
+            },
+            {
+              "target": "hladan",
+              "source": "cold"
+            },
+            {
+              "target": "stadion",
+              "source": "stadium"
+            },
+            {
+              "target": "lopta",
+              "source": "ball"
+            },
+            {
+              "target": "trava",
+              "source": "grass"
+            },
+            {
+              "target": "sudija",
+              "source": "referee"
+            },
+            {
+              "target": "gol",
+              "source": "goal"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Beograd je zimi bio siv i hladan.",
+              "source": "Belgrade was gray and cold in winter.",
+              "words": [
+                "Beograd",
+                "je",
+                "zimi",
+                "bio",
+                "siv",
+                "i",
+                "hladan."
+              ]
+            },
+            {
+              "target": "Navijači Crvene zvezde su stajali na tribinama stadiona Partizana.",
+              "source": "Red Star fans stood in the stands of Partizan's stadium.",
+              "words": [
+                "Navijači",
+                "Crvene",
+                "zvezde",
+                "su",
+                "stajali",
+                "na",
+                "tribinama",
+                "stadiona",
+                "Partizana."
+              ]
+            },
+            {
+              "target": "Hladnoća je prodirela kroz kapute.",
+              "source": "The cold pierced through their coats.",
+              "words": [
+                "Hladnoća",
+                "je",
+                "prodirela",
+                "kroz",
+                "kapute."
+              ]
+            },
+            {
+              "target": "Lopta je klizila po zamrznutom travi.",
+              "source": "The ball slid across the frozen grass.",
+              "words": [
+                "Lopta",
+                "je",
+                "klizila",
+                "po",
+                "zamrznutom",
+                "travi."
+              ]
+            },
+            {
+              "target": "Igrači su se smrzavali dok su trčali.",
+              "source": "Players froze as they ran.",
+              "words": [
+                "Igrači",
+                "su",
+                "se",
+                "smrzavali",
+                "dok",
+                "su",
+                "trčali."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 830,
+            "completionTokens": 387,
+            "ms": 193194,
+            "at": "2026-08-08T14:06:08.466Z"
+          }
+        },
+        {
           "id": "ls_1786170547331_1ddp",
           "type": "mixed",
           "title": "🔀 Mixed review",
@@ -12593,8 +13732,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 15889,
-        "totalCompletionTokens": 2250,
+        "totalPromptTokens": 16719,
+        "totalCompletionTokens": 2637,
         "lessons": [
           {
             "lessonNum": 1,
@@ -12606,11 +13745,12 @@
         "tokensByType": {
           "lesson_qc": 11727,
           "story_qc": 451,
-          "recreate": 4255
+          "recreate": 4255,
+          "add_lesson": 1217
         }
       },
       "generatedAt": "2026-08-07T12:41:36.188Z",
-      "updatedAt": "2026-08-08T11:56:18.428Z",
+      "updatedAt": "2026-08-08T14:31:45.593Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-07T20:55:52.810Z",
@@ -83637,7 +84777,7 @@
         }
       },
       "generatedAt": "2026-06-15T13:10:04.958Z",
-      "updatedAt": "2026-08-02T16:23:16.217Z",
+      "updatedAt": "2026-08-08T13:11:40.661Z",
       "id": "tp_17815291150260000733",
       "storyMeta": {
         "type": "story",
@@ -83832,8 +84972,8 @@
                 "know",
                 "knew"
               ],
-              "correctIndex": 1,
-              "explanation": "Vergangenheit nach „did not“"
+              "correctIndex": 0,
+              "explanation": "Infinitiv nach „did not“"
             },
             {
               "sentence": "every number seems to have a ___.",
@@ -84093,7 +85233,7 @@
         }
       },
       "generatedAt": "2026-06-15T12:55:13.375Z",
-      "updatedAt": "2026-08-04T12:59:18.397Z",
+      "updatedAt": "2026-08-08T13:14:22.010Z",
       "id": "tp_17815283212820000053",
       "continuedFromId": null,
       "continuedFrom": null,
@@ -84532,7 +85672,7 @@
         }
       },
       "generatedAt": "2026-06-15T13:15:39.863Z",
-      "updatedAt": "2026-08-04T12:49:23.009Z",
+      "updatedAt": "2026-08-08T13:11:40.564Z",
       "id": "tp_17815294559340001022",
       "storyMeta": {
         "type": "story",
@@ -84948,7 +86088,7 @@
         }
       },
       "generatedAt": "2026-06-15T13:13:46.457Z",
-      "updatedAt": "2026-08-02T16:56:25.668Z",
+      "updatedAt": "2026-08-08T13:11:40.614Z",
       "id": "tp_17815293398070000971",
       "storyMeta": {
         "type": "story",
@@ -85387,7 +86527,7 @@
         }
       },
       "generatedAt": "2026-06-15T13:11:55.083Z",
-      "updatedAt": "2026-08-02T16:38:57.407Z",
+      "updatedAt": "2026-08-08T13:11:40.640Z",
       "id": "tp_17815292264030000856",
       "storyMeta": {
         "type": "story",
@@ -85788,7 +86928,7 @@
         }
       },
       "generatedAt": "2026-06-15T13:08:07.055Z",
-      "updatedAt": "2026-08-04T13:29:32.111Z",
+      "updatedAt": "2026-08-08T13:11:40.683Z",
       "id": "tp_17815290049040000673",
       "storyMeta": {
         "type": "story",
@@ -86216,7 +87356,7 @@
         }
       },
       "generatedAt": "2026-06-15T13:06:18.701Z",
-      "updatedAt": "2026-08-04T13:21:08.376Z",
+      "updatedAt": "2026-08-08T13:11:40.704Z",
       "id": "tp_17815288869990000571",
       "storyMeta": {
         "type": "story",
@@ -86771,7 +87911,7 @@
         }
       },
       "generatedAt": "2026-06-15T13:04:20.430Z",
-      "updatedAt": "2026-08-04T13:11:29.997Z",
+      "updatedAt": "2026-08-08T13:11:40.726Z",
       "id": "tp_17815287786440000451",
       "storyMeta": {
         "type": "story",
@@ -87298,7 +88438,7 @@
         }
       },
       "generatedAt": "2026-06-15T13:02:31.605Z",
-      "updatedAt": "2026-08-04T13:08:52.534Z",
+      "updatedAt": "2026-08-08T13:11:40.746Z",
       "id": "tp_17815286603790000369",
       "storyMeta": {
         "type": "story",
@@ -87733,7 +88873,7 @@
         }
       },
       "generatedAt": "2026-06-15T13:00:45.451Z",
-      "updatedAt": "2026-08-04T13:06:29.079Z",
+      "updatedAt": "2026-08-08T13:11:40.767Z",
       "id": "tp_17815285515500000284",
       "storyMeta": {
         "type": "story",
@@ -88295,7 +89435,7 @@
         }
       },
       "generatedAt": "2026-06-15T12:58:41.342Z",
-      "updatedAt": "2026-08-04T13:04:35.339Z",
+      "updatedAt": "2026-08-08T13:11:40.788Z",
       "id": "tp_17815284454040000147",
       "storyMeta": {
         "type": "story",
@@ -91949,7 +93089,7 @@
         }
       },
       "generatedAt": "2026-06-04T20:35:36.041Z",
-      "updatedAt": "2026-08-04T21:25:52.563Z",
+      "updatedAt": "2026-08-08T13:11:40.920Z",
       "id": "tp_103972811",
       "continuedFromId": "tp_799905727",
       "storyMeta": {
@@ -93931,7 +95071,7 @@
         }
       },
       "generatedAt": "2026-06-09T09:02:22.611Z",
-      "updatedAt": "2026-08-05T05:56:57.136Z",
+      "updatedAt": "2026-08-08T13:11:40.833Z",
       "id": "tp_586040741",
       "aiStory": "pi whispered to the small i, \"You will discover what you are, but you must learn much more first. And you need to meet someone who might help you.\"\n\ni looked up, curious, as they continued their journey deeper into the forest. The sun was setting, casting long shadows across the path. Suddenly, they heard a soft hoot from above. Looking up, they saw an owl perched on a branch, watching them intently.\n\n\"Hello there,\" the owl said, its voice gentle and wise. \"I see you're on a quest, little ones. What brings you to the heart of the forest today?\"\n\ni and 0 exchanged glances, then 0 spoke up, \"We're trying to understand more about numbers and the world around us. We heard you might be able to help us.\"\n\nThe owl nodded, its eyes twinkling. \"Indeed, I can help. But first, let me tell you about a special number. It's called the growth number. It helps us understand how things grow and change over time.\"\n\ni listened intently, its ears perked up. \"Can you show us how it works?\" it asked, eager to learn.\n\nThe owl spread its wings and flew down to a nearby tree. \"Let's look at the branches. Each branch grows from the last, just like the numbers in a sequence. This is similar to what you've been learning, but with a twist.\"\n\nThe owl pointed to a series of branches, each one slightly larger than the last. \"See how each branch is a bit bigger than the one before? That's how the growth number works. It helps us predict how things will grow.\"\n\ni and 0 watched in wonder as the owl explained, their minds buzzing with new knowledge. The adventure was far from over, and they were ready to learn more.",
       "continuedFromId": "tp_1220958947",
@@ -94538,7 +95678,7 @@
         }
       },
       "generatedAt": "2026-06-08T09:33:58.603Z",
-      "updatedAt": "2026-08-05T05:55:46.626Z",
+      "updatedAt": "2026-08-08T13:11:40.855Z",
       "id": "tp_1220958947",
       "aiStory": "pi, the mushroom, hopped over to them, its cap a vibrant green. \"0, i, I have a riddle for you,\" pi said, its voice a soft whisper.\n\n\"Sure, pi, we're all ears,\" i said, leaning in.\n\n\"Very well,\" pi began. \"A man placed a pair of rabbits in a fenced enclosure to see how many pairs would be born in a year. Each month, a pair of rabbits produces another pair, and the new pair starts breeding from the second month onward.\"\n\n0 tilted its head, trying to understand. \"So, the rabbits keep multiplying every month, and they start breeding from the second month?\"\n\n\"Exactly,\" pi said. \"Now, how many pairs of rabbits will there be at the end of the year?\"\n\ni scratched its head, thinking hard. \"Let's see. In the first month, there's one pair. In the second month, they have another pair, so that's two pairs. In the third month, the original pair has another pair, and the new pair starts breeding, so that's three pairs. By the fourth month, it's five pairs, right?\"\n\n\"Correct,\" pi said. \"And by the end of the year, the number of pairs will be much higher. Can you guess how many?\"\n\n0 looked at i, who was still counting on its fingers. \"I think it's 34 pairs,\" i said, holding up its paws.\n\n\"Very good!\" pi exclaimed, hugging i. \"You're right. The number of pairs at the end of the year is 34. This is a famous sequence in mathematics, known as the Fibonacci sequence.\"\n\n\"Wow, that's amazing,\" 0 said, eyes wide. \"We never knew rabbits could teach us about numbers.\"\n\n\"Indeed,\" pi said, nodding. \"And now that you understand this, let's see if there are any more secrets waiting for us in the forest.\"\n\nTogether, they walked deeper into the woods, the stofftier still waving from the boat. The adventure was far from over, and they were ready for whatever came next.",
       "continuedFromId": "tp_1356093754",
@@ -96818,7 +97958,7 @@
         }
       },
       "generatedAt": "2026-06-07T05:48:31.565Z",
-      "updatedAt": "2026-08-04T21:11:54.891Z",
+      "updatedAt": "2026-08-08T13:11:40.876Z",
       "id": "tp_1356093754",
       "continuedFromId": "tp_118316007",
       "storyMeta": {
@@ -97584,7 +98724,7 @@
         }
       },
       "generatedAt": "2026-06-04T21:32:54.652Z",
-      "updatedAt": "2026-08-04T21:09:31.432Z",
+      "updatedAt": "2026-08-08T13:11:40.899Z",
       "id": "tp_118316007",
       "continuedFromId": "tp_103972811",
       "storyMeta": {
@@ -99164,7 +100304,7 @@
         }
       },
       "generatedAt": "2026-06-04T20:00:09.553Z",
-      "updatedAt": "2026-08-04T19:45:58.124Z",
+      "updatedAt": "2026-08-08T13:11:40.942Z",
       "id": "tp_799905727",
       "continuedFromId": "tp_2088453173",
       "storyMeta": {
@@ -99723,7 +100863,7 @@
         }
       },
       "generatedAt": "2026-06-03T09:38:48.158Z",
-      "updatedAt": "2026-08-04T18:10:43.271Z",
+      "updatedAt": "2026-08-08T13:11:40.985Z",
       "id": "tp_579238210",
       "continuedFromId": "tp_131653303",
       "storyMeta": {
@@ -103820,7 +104960,7 @@
         }
       },
       "generatedAt": "2026-06-03T09:53:02.146Z",
-      "updatedAt": "2026-08-04T19:01:04.020Z",
+      "updatedAt": "2026-08-08T13:11:40.963Z",
       "id": "tp_2088453173",
       "continuedFromId": "tp_579238210",
       "storyMeta": {
@@ -104512,7 +105652,7 @@
         }
       },
       "generatedAt": "2026-06-03T08:54:37.623Z",
-      "updatedAt": "2026-08-04T17:50:36.977Z",
+      "updatedAt": "2026-08-08T13:11:41.006Z",
       "id": "tp_131653303",
       "repairStats": {
         "repairCount": 1,

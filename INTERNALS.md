@@ -13,7 +13,7 @@ please fix it.
 Every entry below was found by measurement or by a test failing, not by reading anything. That is
 the gap this document exists to close.
 
-Last verified against **`v76_f`**.
+Last verified against **`v76_i`**.
 
 ---
 
@@ -181,6 +181,15 @@ a wrong entry fails loudly rather than silently offering a meaningless choice. T
 `script` (target side) and `srcScript` (source side), stamped by `backfill-script.js` from Unicode
 detection alone. **As of `v76_g` nothing READS these fields** — generation is still not told which
 script to use, which is why the corpus split target→Latin, source→Cyrillic.
+
+**Telling the model the script is one function (`v76_h`).** `langName(code, script)` is where every
+prompt gets its `{L}`/`{S}`, so decorating the name there reaches all ~56 call sites without
+threading a parameter. `script` is ignored unless `hasScriptChoice(code)`, and `_validScript()`
+rejects anything not declared in `scripts.json` — the value goes into a prompt, so it is validated
+rather than trusted. `prompts.json` `story.scriptNote` adds the consistency rule; naming the script
+alone still lets the model drift between scripts inside one text. **`upsert()` REPLACES an entry
+rather than merging**, so a field must be on the object `generate()` RETURNS, not only on its
+mid-flight upsert — the final `upsert(data)` in the caller would otherwise drop it.
 
 **`makeParentResolver` is same-language guarded** (`index.html:1429` — returns `null` when the
 parent's `lang` or `srcLang` differs). So any path that rebuilds a chain from `continuedFrom` links
@@ -494,6 +503,13 @@ immediately before `buildExercises(idx)`.
 `lessons.json`" breaks when the data is replaced. Prefer hand-built fixtures for anything needing
 exact counts — and if a section only means something when the corpus contains a particular case,
 **assert that the case was found**, or the section goes vacuous on new data.
+
+**`fake-ollama` truncates logged prompts (`v76_h`).** `readChatLog()` entries carry `sys` cut to
+8000 chars — it was **400** until `v76_h`, and every note appended after a prompt's `system` block
+(the script rule, dialect, writing style, continuation) falls past that. A test asserting on a
+prompt's TAIL was checking the truncation, not the prompt. Also: booting a **second** live
+environment while the first is running returns an empty chat log — use one environment and slice
+the log from a mark taken before each run.
 
 **A count of a repeated element pins the fixture, not the claim (`v76_d`).** `total 🔒 === 1`
 encoded "a two-chapter storyline" and broke when the corpus offered a six-chapter one — while the

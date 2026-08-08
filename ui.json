@@ -597,7 +597,8 @@
     "crossword.none": "Not enough words for a crossword",
     "crossword.pick_cell": "Pick a square to see its clue",
     "ex.comprehension.story": "The story",
-    "ex.comprehension.story_listen": "Read the story aloud"
+    "ex.comprehension.story_listen": "Read the story aloud",
+    "form.script_pick": "Script…"
   },
   "nl": {
     "qc.editor.suggests_by": "⚑ {model} stelt voor:",

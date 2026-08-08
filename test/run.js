@@ -147,6 +147,7 @@ run('unit: every t() key exists in ui.json en (v75_b)', 'node', [path.join(__dir
 run('unit: every language is offered in both menus (v76_b)', 'node', [path.join(__dirname, 'unit-lang-menu-coverage.test.js')]);
 run('unit: storyline chains survive the language filter (v76_e)', 'node', [path.join(__dirname, 'unit-storyline-lang-filter.test.js')]);
 run('unit: script choice declared + corpus stamped (v76_g)', 'node', [path.join(__dirname, 'unit-script-choice.test.js')]);
+run('unit: script picker + inheritance (v76_i)', 'node', [path.join(__dirname, 'unit-script-picker.test.js')]);
 run('unit: translate-ui --langnames request path (v76_c)', 'node', [path.join(__dirname, 'unit-langnames.test.js')]);
 run('unit: correct answer advances after the read-out (v75_h)', 'node', [path.join(__dirname, 'unit-speak-advance.test.js')]);
 run('unit: coverage-driven mixed round + drill credit-back (v69.1)', 'node', [path.join(__dirname, 'unit-mixed-coverage-round.test.js')]);
@@ -212,6 +213,7 @@ if (!quick) {
   run('e2e: ui.json hot-reload', 'node', [path.join(__dirname, 'e2e-ui-reload.test.js')]);
   run('e2e: upload filename stored on storyline', 'node', [path.join(__dirname, 'e2e-bookfile.test.js')]);
   run('e2e: word_forms lesson generation', 'node', [path.join(__dirname, 'e2e-word-forms.test.js')]);
+  run('e2e: script choice reaches the model (v76_h)', 'node', [path.join(__dirname, 'e2e-script-choice.test.js')]);
   run('e2e: synonyms context sentences', 'node', [path.join(__dirname, 'e2e-synonyms.test.js')]);
   run('e2e: LLM chapter split', 'node', [path.join(__dirname, 'e2e-chapter-split.test.js')]);
   run('e2e: re-create storyline lessons', 'node', [path.join(__dirname, 'e2e-recreate.test.js')]);

@@ -78,7 +78,8 @@
     "continuationNote": " IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.",
     "furiganaNote1": " Annotate EVERY kanji with its reading in square brackets directly after, e.g. 日本語[にほんご]. Annotate all kanji without exception — the learner cannot read any kanji yet. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
     "furiganaNote2": " Annotate every kanji with its reading in square brackets directly after, e.g. 日本語[にほんご]. Only annotate kanji (CJK characters) — do NOT annotate hiragana, katakana, or punctuation.",
-    "furiganaNote3": " Annotate only less common or complex kanji with readings in square brackets, e.g. 語彙[ごい]. Skip common N4/N5 kanji. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation."
+    "furiganaNote3": " Annotate only less common or complex kanji with readings in square brackets, e.g. 語彙[ごい]. Skip common N4/N5 kanji. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
+    "scriptNote": " Write the ENTIRE text in {scriptLabel} script. {L2} is written in more than one script; use {scriptLabel} consistently for every word, including names, and do not mix scripts or add a transliteration."
   },
   "storylineTitle": {
     "system": "You are a creative writing assistant. Given a multi-chapter story, produce a single JSON object with exactly two fields: \"title\" (a short evocative series title, 2–5 words) and \"icon\" (one emoji that fits the story). The \"title\" MUST be written in {S}. Return ONLY the JSON object, no markdown, no explanation.",
