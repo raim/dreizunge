@@ -1195,7 +1195,9 @@
     "ex.comprehension.story": "Het verhaal",
     "ex.comprehension.story_listen": "Lees het verhaal hardop",
     "complete.story_unlocked": "lees en begrijp het hoofdstuk",
-    "ex.badge.comprehension": "heb je dit begrepen?"
+    "ex.badge.comprehension": "heb je dit begrepen?",
+    "complete.words_solved": "Woorden die je kunt lezen in dit hoofdstuk",
+    "form.finish_mixed": "Hoofdstuk afronden met een mixed review ronde (zonder AI)"
   },
   "pt": {
     "qc.editor.suggests_by": "⚑ Sugestões de: {model}",
@@ -1793,7 +1795,9 @@
     "ex.comprehension.story": "A história",
     "ex.comprehension.story_listen": "Leia a história em voz alta",
     "complete.story_unlocked": "ler e entender o capítulo",
-    "ex.badge.comprehension": "você entendeu?"
+    "ex.badge.comprehension": "você entendeu?",
+    "complete.words_solved": "Palavras que você consegue ler neste capítulo",
+    "form.finish_mixed": "Concluir o capítulo com uma revisão mista (sem IA)"
   },
   "fr": {
     "qc.editor.suggests_by": "⚑ Suggéré par {model} :",
@@ -2391,7 +2395,9 @@
     "ex.comprehension.story": "L'histoire",
     "ex.comprehension.story_listen": "Lisez l'histoire à voix haute",
     "complete.story_unlocked": "lire et comprendre le chapitre",
-    "ex.badge.comprehension": "avez-vous compris ?"
+    "ex.badge.comprehension": "avez-vous compris ?",
+    "complete.words_solved": "Mots que vous pouvez lire dans ce chapitre",
+    "form.finish_mixed": "Terminer le chapitre avec une révision mixte (sans IA)"
   },
   "tr": {
     "qc.editor.suggests_by": "⚑ {model} öneriyor:",
@@ -2989,7 +2995,9 @@
     "ex.comprehension.story": "Hikaye",
     "ex.comprehension.story_listen": "Hikayeyi yüksek sesle okuyun",
     "ex.badge.comprehension": "Anladınız mı?",
-    "complete.story_unlocked": "bölümü oku ve anla"
+    "complete.story_unlocked": "bölümü oku ve anla",
+    "complete.words_solved": "Bu bölümde okuyabildiğiniz kelime sayısı",
+    "form.finish_mixed": "Bölümü, yapay zeka olmadan karma bir tekrar turuyla tamamla"
   },
   "hi": {
     "qc.editor.suggests_by": "⚑ {model} का सुझाव:",
@@ -4185,7 +4193,9 @@
     "ex.comprehension.story": "Die Geschichte",
     "ex.comprehension.story_listen": "Lies die Geschichte laut vor",
     "complete.story_unlocked": "Lies und verstehe das Kapitel",
-    "ex.badge.comprehension": "Hast du das verstanden?"
+    "ex.badge.comprehension": "Hast du das verstanden?",
+    "complete.words_solved": "Wörter, die Sie in diesem Kapitel lesen können",
+    "form.finish_mixed": "Kapitel mit einer gemischten Wiederholungsrunde abschließen (ohne KI)"
   },
   "ar": {
     "qc.editor.suggests_by": "⚑ يقترح النموذج {model}:",
@@ -4783,7 +4793,9 @@
     "ex.comprehension.story": "القصة",
     "ex.comprehension.story_listen": "اقرأ القصة بصوت عالٍ",
     "complete.story_unlocked": "اقرأ واستوعب الفصل",
-    "ex.badge.comprehension": "هل فهمت ذلك؟"
+    "ex.badge.comprehension": "هل فهمت ذلك؟",
+    "complete.words_solved": "عدد الكلمات التي يمكنك قراءتها في هذا الفصل",
+    "form.finish_mixed": "إنهاء الفصل بمراجعة شاملة (بدون استخدام الذكاء الاصطناعي)"
   },
   "sv": {
     "qc.editor.suggests_by": "⚑ {model} föreslår:",
@@ -5381,7 +5393,9 @@
     "ex.comprehension.story": "Berättelsen",
     "ex.comprehension.story_listen": "Läs berättelsen högt",
     "complete.story_unlocked": "läs och förstå kapitlet",
-    "ex.badge.comprehension": "förstod du det här?"
+    "ex.badge.comprehension": "förstod du det här?",
+    "complete.words_solved": "Ord du kan läsa i det här kapitlet",
+    "form.finish_mixed": "Slutför kapitlet med en blandad repetitionsomgång (utan AI)"
   },
   "ru": {
     "qc.editor.suggests_by": "⚑ {model} предлагает:",
@@ -5979,7 +5993,9 @@
     "ex.comprehension.story": "История",
     "ex.comprehension.story_listen": "Прочитайте историю вслух",
     "complete.story_unlocked": "прочитать и понять главу",
-    "ex.badge.comprehension": "Вы поняли это?"
+    "ex.badge.comprehension": "Вы поняли это?",
+    "complete.words_solved": "Слов, которые вы можете прочитать в этой главе",
+    "form.finish_mixed": "Завершить главу с комбинированным повторением (без ИИ)"
   },
   "zh": {
     "qc.editor.suggests_by": "💡 {model} 推荐：",
@@ -6577,7 +6593,9 @@
     "ex.comprehension.story": "故事",
     "ex.comprehension.story_listen": "大声朗读故事",
     "complete.story_unlocked": "阅读并理解章节",
-    "ex.badge.comprehension": "你理解了吗？"
+    "ex.badge.comprehension": "你理解了吗？",
+    "complete.words_solved": "本章可读单词",
+    "form.finish_mixed": "完成本章，进行综合复习（无AI）"
   },
   "ko": {
     "qc.editor.suggests_by": "🤖 {model} 추천:",
@@ -7175,7 +7193,9 @@
     "ex.comprehension.story": "이야기",
     "ex.comprehension.story_listen": "이야기 소리내어 읽기",
     "ex.badge.comprehension": "이해했나요?",
-    "complete.story_unlocked": "챕터를 읽고 이해하기"
+    "complete.story_unlocked": "챕터를 읽고 이해하기",
+    "complete.words_solved": "이 챕터에서 읽을 수 있는 단어 수",
+    "form.finish_mixed": "혼합 문제 풀이로 챕터 완료 (AI 미사용)"
   },
   "it": {
     "qc.editor.suggests_by": "⚑ {model} suggerisce:",
@@ -7773,7 +7793,9 @@
     "ex.comprehension.story": "La storia",
     "ex.comprehension.story_listen": "Leggi la storia ad alta voce",
     "complete.story_unlocked": "leggi e comprendi il capitolo",
-    "ex.badge.comprehension": "hai capito?"
+    "ex.badge.comprehension": "hai capito?",
+    "complete.words_solved": "Parole che puoi leggere in questo capitolo",
+    "form.finish_mixed": "Completa il capitolo con un riepilogo misto (senza AI)"
   },
   "pl": {
     "qc.editor.suggests_by": "⚑ {model} sugeruje:",
@@ -8371,7 +8393,9 @@
     "ex.comprehension.story": "Opowieść",
     "ex.comprehension.story_listen": "Przeczytaj opowieść na głos",
     "complete.story_unlocked": "przeczytaj i zrozum rozdział",
-    "ex.badge.comprehension": "Czy to zrozumiałeś?"
+    "ex.badge.comprehension": "Czy to zrozumiałeś?",
+    "complete.words_solved": "Słowa, które możesz przeczytać w tym rozdziale",
+    "form.finish_mixed": "Zakończ rozdział rundą powtórki (bez AI)"
   },
   "es": {
     "qc.editor.suggests_by": "⚑ {model} sugiere:",
@@ -8969,7 +8993,9 @@
     "ex.comprehension.story": "La historia",
     "ex.comprehension.story_listen": "Lee la historia en voz alta",
     "complete.story_unlocked": "leer y comprender el capítulo",
-    "ex.badge.comprehension": "¿Lo entendiste?"
+    "ex.badge.comprehension": "¿Lo entendiste?",
+    "complete.words_solved": "Palabras que puedes leer en este capítulo",
+    "form.finish_mixed": "Finalizar el capítulo con una revisión mixta (sin IA)"
   },
   "ja": {
     "qc.editor.suggests_by": "⚑ {model} が提案:",
@@ -9567,7 +9593,9 @@
     "ex.comprehension.story": "物語",
     "ex.comprehension.story_listen": "物語を音読する",
     "ex.badge.comprehension": "理解できましたか？",
-    "complete.story_unlocked": "章を読んで理解する"
+    "complete.story_unlocked": "章を読んで理解する",
+    "complete.words_solved": "この章で読める単語数",
+    "form.finish_mixed": "AIなしの複合問題で章を完了する"
   },
   "he": {
     "qc.editor.suggests_by": "⚑ מציע: {model}",

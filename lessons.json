@@ -2,6 +2,307 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_9302163",
+      "title": "Shadows of Marakana",
+      "icon": "🏟️",
+      "chapters": [
+        "tp_17861064961880000087",
+        "tp_17861070445150000190",
+        "tp_17861087064830000023",
+        "tp_17861090349940000192"
+      ],
+      "lang": "sr",
+      "srcLang": "en",
+      "createdAt": "2026-08-07T12:46:44.034Z",
+      "updatedAt": "2026-08-07T14:10:31.035Z",
+      "tokenUsage": {
+        "totalPromptTokens": 1811,
+        "totalCompletionTokens": 1239,
+        "tokensByType": {
+          "retitle": 392,
+          "summary": 543,
+          "storyboard": 2115
+        }
+      },
+      "summary": "The narrative traces the descent into conflict as football stadiums transform from sites of sport into political battlefields where fan groups rally for national superiority rather than goals. As tension grips the city, tanks invade the empty stands and propaganda-filled newspapers replace truth, signaling that the war has begun long before official declarations. The protagonist faces an impossible choice between silence and escape amidst the rising smoke, marking the end of normalcy and the onset of a terrifying new reality.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 453,
+        "completionTokens": 90,
+        "ms": 60607,
+        "at": "2026-08-07T13:43:59.574Z"
+      },
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Fans turned stadium into political battlefield.</title><rect x=\"284\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"285\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><polygon points=\"0,60 100,60 100,100 0,100\" fill=\"#9e9e9e\"/><rect x=\"20\" y=\"40\" width=\"60\" height=\"20\" fill=\"#8d6e63\"/><circle cx=\"30\" cy=\"50\" r=\"3\" fill=\"#2b2b2b\"/><circle cx=\"40\" cy=\"50\" r=\"3\" fill=\"#e07a5f\"/><circle cx=\"50\" cy=\"50\" r=\"3\" fill=\"#2b2b2b\"/><circle cx=\"60\" cy=\"50\" r=\"3\" fill=\"#e07a5f\"/><line x1=\"25\" y1=\"45\" x2=\"75\" y2=\"45\" stroke=\"#e5989b\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"25\" y1=\"55\" x2=\"75\" y2=\"55\" stroke=\"#e5989b\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"2\"><title>Miloš watched tanks enter the empty stadium.</title><rect x=\"466\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"467\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><polygon points=\"0,70 100,70 100,100 0,100\" fill=\"#8d6e63\"/><rect x=\"40\" y=\"50\" width=\"20\" height=\"20\" fill=\"#2b2b2b\"/><rect x=\"45\" y=\"40\" width=\"10\" height=\"10\" fill=\"#9e9e9e\"/><circle cx=\"50\" cy=\"35\" r=\"8\" fill=\"#faf7f0\"/><rect x=\"20\" y=\"60\" width=\"10\" height=\"10\" fill=\"#2b2b2b\"/><rect x=\"70\" y=\"60\" width=\"10\" height=\"10\" fill=\"#2b2b2b\"/><line x1=\"50\" y1=\"43\" x2=\"50\" y2=\"70\" stroke=\"none\" stroke-width=\"0\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"2\"><title>Smoke replaced the smell of grass.</title><rect x=\"648\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"649\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><circle cx=\"80\" cy=\"20\" r=\"15\" fill=\"#f2cc8f\"/><polygon points=\"0,80 100,80 100,100 0,100\" fill=\"#9e9e9e\"/><path d=\"M 30 80 Q 40 60 50 80 T 70 80 Z\" fill=\"#2b2b2b\"/><circle cx=\"50\" cy=\"70\" r=\"2\" fill=\"#e07a5f\"/><rect x=\"45\" y=\"60\" width=\"10\" height=\"15\" fill=\"#faf7f0\"/><circle cx=\"50\" cy=\"55\" r=\"5\" fill=\"#faf7f0\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 3,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 990,
+        "completionTokens": 1125,
+        "ms": 370365,
+        "at": "2026-08-07T14:10:31.035Z",
+        "storyStyle": "journalism"
+      },
+      "storyboardPanels": [
+        {
+          "caption": "Fans turned stadium into political battlefield.",
+          "chapter": 1,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "night"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  0,
+                  60
+                ],
+                [
+                  100,
+                  60
+                ],
+                [
+                  100,
+                  100
+                ],
+                [
+                  0,
+                  100
+                ]
+              ],
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 40,
+              "w": 60,
+              "h": 20,
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 50,
+              "r": 3,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 40,
+              "cy": 50,
+              "r": 3,
+              "fill": "accent"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 3,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 60,
+              "cy": 50,
+              "r": 3,
+              "fill": "accent"
+            },
+            {
+              "type": "line",
+              "x1": 25,
+              "y1": 45,
+              "x2": 75,
+              "y2": 45,
+              "stroke": "rose",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 25,
+              "y1": 55,
+              "x2": 75,
+              "y2": 55,
+              "stroke": "rose",
+              "sw": 2
+            }
+          ]
+        },
+        {
+          "caption": "Miloš watched tanks enter the empty stadium.",
+          "chapter": 2,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "sky"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  0,
+                  70
+                ],
+                [
+                  100,
+                  70
+                ],
+                [
+                  100,
+                  100
+                ],
+                [
+                  0,
+                  100
+                ]
+              ],
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 40,
+              "y": 50,
+              "w": 20,
+              "h": 20,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 45,
+              "y": 40,
+              "w": 10,
+              "h": 10,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 35,
+              "r": 8,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 60,
+              "w": 10,
+              "h": 10,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 70,
+              "y": 60,
+              "w": 10,
+              "h": 10,
+              "fill": "ink"
+            },
+            {
+              "type": "line",
+              "x1": 50,
+              "y1": 43,
+              "x2": 50,
+              "y2": 70,
+              "stroke": "none",
+              "sw": 0
+            }
+          ]
+        },
+        {
+          "caption": "Smoke replaced the smell of grass.",
+          "chapter": 2,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "night"
+            },
+            {
+              "type": "circle",
+              "cx": 80,
+              "cy": 20,
+              "r": 15,
+              "fill": "sun"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  0,
+                  80
+                ],
+                [
+                  100,
+                  80
+                ],
+                [
+                  100,
+                  100
+                ],
+                [
+                  0,
+                  100
+                ]
+              ],
+              "fill": "stone"
+            },
+            {
+              "type": "path",
+              "d": "M 30 80 Q 40 60 50 80 T 70 80 Z",
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 70,
+              "r": 2,
+              "fill": "accent"
+            },
+            {
+              "type": "rect",
+              "x": 45,
+              "y": 60,
+              "w": 10,
+              "h": 15,
+              "fill": "paper"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 55,
+              "r": 5,
+              "fill": "paper"
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
+    },
+    {
       "id": "sl_1628964013",
       "title": "Wiener Kälte und Barcelona",
       "icon": "🌶️",
@@ -6761,18 +7062,18 @@
   ],
   "topics": [
     {
-      "id": "tp_17861056525400000072",
-      "topic": "fussballspiel in belgrad — 1",
-      "topicEmoji": "📖",
-      "userTopic": "fussballspiel in belgrad",
-      "userPrompt": "fussballspiel in belgrad",
+      "id": "tp_17861090349940000192",
+      "topic": "Shadows of Belgrade",
+      "topicEmoji": "🏚️",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
       "lang": "sr",
-      "srcLang": "de",
+      "srcLang": "en",
       "difficulty": 1,
-      "storyLen": 50,
-      "story": "Der Himmel über Belgrad war grau und kalt, als die Fans das Stadion betraten. Die Luft roch nach gegrilltem Fleisch und Tabak. Auf dem Platz kämpften zwei Mannschaften um den Ball. Das Publikum schrie laut, doch die Spieler konzentrierten sich nur auf das Spiel. Nach neunzig Minuten endete das Match unentschieden. Die Menschen verließen langsam das Gelände, müde aber zufrieden mit dem Abend.",
+      "storyLen": 100,
+      "story": "Naredne nedelje, ulice Beograda su se pretvorile u labirint sumraka. Miloš je stajao ispred zatvorene kapije stadiona, gledajući kako tenkovi polako prodiru kroz prazne tribine. Njegova torba je bila teška od novina koje su nosile lažne naslove o herojstvu, dok je u džepu držao pismo koje nikada nije poslao. Vatra je gorela na drugoj strani Dunava, a on je znao da će sutra morati da bira između ćutanja i bekstva. Vetar je sada nosio miris dima, a ne trave.",
       "storyLang": "target",
-      "storyPrompt": "You are a creative writer and Serbian language teacher. Write a short story directly in Serbian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian. Writing style: Clear, factual, neutral tone — no narrative flourish.\n\nWrite a story for the topic: \"fussballspiel in belgrad\". Plain prose, no headings.",
+      "storyPrompt": "You are a creative writer and Serbian language teacher. Write a short story directly in Serbian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian. Writing style: Reportage style: direct, punchy, who/what/where/when. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nGodine devedesete nisu počele u parlamentu, već na tribinama Marakane i Partizana. Navijačke grupe su pretvorile stadion u politički bojno polje, gde se umesto golova vičalo za nacionalnu superiornost. Hladan vetar je sada nosio miris tenzije, a ne pobede. Ljudi su prestali da se grle; pogledi su postali oštri, neprijateljski. Grad je stegnut u čvor straha, jer je fudbal postao predigra za rat.\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
       "storyMeta": {
         "type": "story",
         "model": "qwen3.6:35b-a3b",
@@ -6780,10 +7081,10 @@
         "valid": 1,
         "rejected": 0,
         "rejectReasons": null,
-        "promptTokens": 137,
-        "completionTokens": 92,
-        "ms": 33845,
-        "at": "2026-08-07T12:26:51.575Z",
+        "promptTokens": 359,
+        "completionTokens": 154,
+        "ms": 76679,
+        "at": "2026-08-07T13:23:13.166Z",
         "origin": "generated",
         "source": "recorded at generation"
       },
@@ -6794,19 +7095,1739 @@
         "valid": 1,
         "rejected": 0,
         "rejectReasons": null,
-        "promptTokens": 150,
-        "completionTokens": 92,
-        "ms": 40955,
-        "at": "2026-08-07T12:27:32.531Z",
+        "promptTokens": 212,
+        "completionTokens": 103,
+        "ms": 41827,
+        "at": "2026-08-07T13:23:54.993Z",
         "origin": "generated",
         "source": "recorded at generation"
       },
-      "storyTranslation": "Der Himmel über Belgrad war grau und kalt, als die Fans das Stadion betraten. Die Luft roch nach gegrilltem Fleisch und Tabak. Auf dem Platz kämpften zwei Mannschaften um den Ball. Das Publikum schrie laut, doch die Spieler konzentrierten sich nur auf das Spiel. Nach neunzig Minuten endete das Match unentschieden. Die Menschen verließen langsam das Gelände, müde aber zufrieden mit dem Abend.",
+      "storyTranslation": "The following week, the streets of Belgrade turned into a labyrinth of twilight. Miloš stood in front of the stadium's closed gate, watching as tanks slowly advanced through the empty stands. His bag was heavy with newspapers bearing false headlines about heroism, while in his pocket he held a letter he had never sent. Fire burned on the other side of the Danube, and he knew that tomorrow he would have to choose between silence and flight. The wind now carried the smell of smoke instead of grass.",
+      "continuedFrom": "the war of the 1990s started in the socc — 1",
+      "continuedFromId": "tp_17861087064830000023",
+      "storyStyle": "journalism",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Miloš in Belgrade",
+          "desc": "Miloš watches tanks enter the stadium",
+          "icon": "🏙️",
+          "vocab": [
+            {
+              "target": "ulica",
+              "source": "street"
+            },
+            {
+              "target": "grad",
+              "source": "city"
+            },
+            {
+              "target": "stadiion",
+              "source": "stadium"
+            },
+            {
+              "target": "tenk",
+              "source": "tank"
+            },
+            {
+              "target": "torba",
+              "source": "bag"
+            },
+            {
+              "target": "novine",
+              "source": "newspapers"
+            },
+            {
+              "target": "pismo",
+              "source": "letter"
+            },
+            {
+              "target": "vetar",
+              "source": "wind"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Miloš je stajao ispred zatvorene kapije stadiona.",
+              "source": "Miloš stood in front of the stadium's closed gate.",
+              "words": [
+                "Miloš",
+                "je",
+                "stajao",
+                "ispred",
+                "zatvorene",
+                "kapije",
+                "stadiona."
+              ]
+            },
+            {
+              "target": "Gledajući kako tenkovi polako prodiru kroz prazne tribine.",
+              "source": "Watching as tanks slowly advanced through the empty stands.",
+              "words": [
+                "Gledajući",
+                "kako",
+                "tenkovi",
+                "polako",
+                "prodiru",
+                "kroz",
+                "prazne",
+                "tribine."
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "The tank is going down the street.",
+                  "field": "source",
+                  "at": "2026-08-07T21:29:28.475Z"
+                }
+              },
+              "qc": {
+                "sug": "The tank is going down the street.",
+                "field": "source",
+                "at": "2026-08-07T21:29:28.475Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "Njegova torba je bila teška od novina.",
+              "source": "His bag was heavy with newspapers.",
+              "words": [
+                "Njegova",
+                "torba",
+                "je",
+                "bila",
+                "teška",
+                "od",
+                "novina."
+              ]
+            },
+            {
+              "target": "U džepu držao pismo koje nikada nije poslao.",
+              "source": "In his pocket he held a letter he had never sent.",
+              "words": [
+                "U",
+                "džepu",
+                "držao",
+                "pismo",
+                "koje",
+                "nikada",
+                "nije",
+                "poslao."
+              ]
+            },
+            {
+              "target": "Vetar je sada nosio miris dima, a ne trave.",
+              "source": "The wind now carried the smell of smoke instead of grass.",
+              "words": [
+                "Vetar",
+                "je",
+                "sada",
+                "nosio",
+                "miris",
+                "dima,",
+                "a",
+                "ne",
+                "trave."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 901,
+            "completionTokens": 410,
+            "ms": 185092,
+            "at": "2026-08-07T13:27:00.148Z"
+          },
+          "qcAt": "2026-08-07T13:58:28.276Z",
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": "ls_1122172073",
+          "title": "Serbian War Basics",
+          "desc": "Essential words for conflict context",
+          "icon": "🏛️",
+          "vocab": [
+            {
+              "target": "rat",
+              "source": "war"
+            },
+            {
+              "target": "grad",
+              "source": "city"
+            },
+            {
+              "target": "ulica",
+              "source": "street"
+            },
+            {
+              "target": "tenk",
+              "source": "tank"
+            },
+            {
+              "target": "novine",
+              "source": "newspaper"
+            },
+            {
+              "target": "pismo",
+              "source": "letter"
+            },
+            {
+              "target": "vatra",
+              "source": "fire"
+            },
+            {
+              "target": "vetar",
+              "source": "wind"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Rat je počeo.",
+              "source": "The war started.",
+              "words": [
+                "Rat",
+                "je",
+                "počeo."
+              ]
+            },
+            {
+              "target": "Tenk ide ulicom.",
+              "source": "The tank goes down the street.",
+              "words": [
+                "Tenk",
+                "ide",
+                "ulicom."
+              ]
+            },
+            {
+              "target": "Vatra gori noću.",
+              "source": "Fire burns at night.",
+              "words": [
+                "Vatra",
+                "gori",
+                "noću."
+              ]
+            },
+            {
+              "target": "Čitam stare novine.",
+              "source": "I read old newspapers.",
+              "words": [
+                "Čitam",
+                "stare",
+                "novine."
+              ]
+            },
+            {
+              "target": "Vetar duva jako.",
+              "source": "The wind blows strongly.",
+              "words": [
+                "Vetar",
+                "duva",
+                "jako."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 815,
+            "completionTokens": 290,
+            "ms": 169417,
+            "at": "2026-08-07T13:29:49.566Z"
+          }
+        },
+        {
+          "id": "ls_1786139668823_3_word_forms",
+          "type": "word_forms",
+          "title": "Serbian War Story",
+          "desc": "Practice verbs and nouns",
+          "icon": "📰",
+          "items": [
+            {
+              "sentence": "Naredne nedelje, ulice Beograda su se ___ u labirint sumraka.",
+              "translation": "The following week, the streets of Belgrade turned into a labyrinth of twilight.",
+              "choices": [
+                "pretvorile",
+                "pretvaraju",
+                "pretvorio"
+              ],
+              "correctIndex": 0,
+              "explanation": "Past tense plural feminine to match 'ulice'"
+            },
+            {
+              "sentence": "Miloš je stajao ispred ___ kapije stadiona.",
+              "translation": "Miloš stood in front of the closed stadium gate.",
+              "choices": [
+                "zatvorene",
+                "zatvorenih",
+                "zatvorena"
+              ],
+              "correctIndex": 0,
+              "explanation": "Genitive singular feminine to match 'kapije'"
+            },
+            {
+              "sentence": "dok je u džepu držao ___ koje nikada nije poslao.",
+              "translation": "while in his pocket he held a letter that he never sent.",
+              "choices": [
+                "pismo",
+                "pisma",
+                "pismu"
+              ],
+              "correctIndex": 0,
+              "explanation": "Accusative singular neuter object"
+            },
+            {
+              "sentence": "Vatra je ___ na drugoj strani Dunava.",
+              "translation": "Fire was burning on the other side of the Danube.",
+              "choices": [
+                "gorela",
+                "goreo"
+              ],
+              "correctIndex": 0,
+              "explanation": "Past tense feminine singular to match 'Vatra'"
+            },
+            {
+              "sentence": "Vetar je sada nosio miris dima, a ne ___.",
+              "translation": "The wind now carried the smell of smoke, not grass.",
+              "choices": [
+                "trave",
+                "trava",
+                "travi"
+              ],
+              "correctIndex": 0,
+              "explanation": "Genitive singular feminine after 'ne'"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1040,
+            "completionTokens": 504,
+            "ms": 245626,
+            "at": "2026-08-07T21:54:28.823Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1786139976035_3_synonyms",
+          "type": "synonyms",
+          "title": "War in Belgrade",
+          "desc": "Vocabulary from the opening scene of war.",
+          "icon": "🏙️",
+          "words": [
+            {
+              "base": "ulica",
+              "gloss": "street",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "put",
+                  "g": "road"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "tribina",
+              "gloss": "stand / bleachers",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "gledalište",
+                  "g": "spectator area"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "vetar",
+              "gloss": "wind",
+              "sentence": "Vetar je sada nosio miris dima, a ne trave.",
+              "synonyms": [
+                {
+                  "w": "duvanje",
+                  "g": "blowing"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "dim",
+              "gloss": "smoke",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "čad",
+                  "g": "soot / smoke"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "strah",
+              "gloss": "fear",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "panika",
+                  "g": "panic"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "hrabrost",
+                  "g": "bravery"
+                }
+              ],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1325,
+            "completionTokens": 662,
+            "ms": 307210,
+            "at": "2026-08-07T21:59:36.034Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1786140184833_3_comprehension",
+          "type": "comprehension",
+          "title": "Belgrade's Changing Atmosphere",
+          "desc": "Comprehension quiz on the story 'Frozen Belgrade Derby' and 'the war of the 1990s'.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Why did the fans roar with excitement at the end of the first match?",
+              "choices": [
+                "Because the cold weather finally stopped.",
+                "Because a goal was scored in the last minute.",
+                "Because the referee made a controversial decision.",
+                "Because the opposing team surrendered."
+              ],
+              "correctIndex": 1,
+              "why": "The text states that a goal was scored in the last minute, which caused the fans to roar with excitement."
+            },
+            {
+              "q": "How did the atmosphere among the people change from the first story to the third?",
+              "choices": [
+                "It shifted from celebration and hugging to fear and hostility.",
+                "It remained joyful but became quieter due to the cold.",
+                "It turned from tense to relaxed as the war ended.",
+                "It stayed angry throughout both periods."
+              ],
+              "correctIndex": 0,
+              "why": "In the first story, people hugged and celebrated; in the third, they stopped hugging and their gazes became sharp and hostile due to political tension."
+            },
+            {
+              "q": "What does Miloš know he must choose between tomorrow?",
+              "choices": [
+                "Staying in Belgrade or moving to another city.",
+                "Playing football or watching the tanks.",
+                "Silence or fleeing.",
+                "Reading the newspapers or writing his letter."
+              ],
+              "correctIndex": 2,
+              "why": "The text explicitly says he knew he would have to choose between silence (ćutanje) and fleeing (bekstvo)."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 991,
+            "completionTokens": 429,
+            "ms": 208798,
+            "at": "2026-08-07T22:03:04.833Z"
+          },
+          "_recreated": true
+        }
+      ],
+      "generationStats": {
+        "totalMs": 303661,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 19292,
+        "totalCompletionTokens": 2553,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 185092,
+            "promptTokens": 901,
+            "completionTokens": 410
+          }
+        ],
+        "tokensByType": {
+          "lesson_qc": 14265,
+          "story_qc": 490,
+          "recreate": 4951
+        }
+      },
+      "generatedAt": "2026-08-07T13:23:54.994Z",
+      "updatedAt": "2026-08-07T22:03:04.833Z",
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-07T21:35:35.008Z",
+      "storyQcProposal": {
+        "corrected": "Naredne nedelje, ulice Beograda su se pretvorile u labirint sumraka. Miloš je stajao ispred zatvorene kapije stadiona, gledajući kako tenkovi polako prodire kroz prazne tribine. Njegova torba je bila teška od novina koje su nosile lažne naslove o herojstvu, dok je u džepu držao pismo koje nikada nije poslao. Vatra je gorela na drugoj strani Dunava, a on je znao da će sutra morati da bira između ćutanja i bekstva. Vetar je sada nosio miris dima, a ne trave.",
+        "against": "Naredne nedelje, ulice Beograda su se pretvorile u labirint sumraka. Miloš je stajao ispred zatvorene kapije stadiona, gledajući kako tenkovi polako prodiru kroz prazne tribine. Njegova torba je bila teška od novina koje su nosile lažne naslove o herojstvu, dok je u džepu držao pismo koje nikada nije poslao. Vatra je gorela na drugoj strani Dunava, a on je znao da će sutra morati da bira između ćutanja i bekstva. Vetar je sada nosio miris dima, a ne trave.",
+        "verdict": "corrected",
+        "rejected": false,
+        "changedSentences": 1,
+        "totalSentences": 10,
+        "changedRatio": 0.1,
+        "wordEditRatio": 0.013,
+        "meta": {
+          "type": "story_qc",
+          "model": "translategemma:12b",
+          "attempts": null,
+          "valid": 1,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 342,
+          "completionTokens": 148,
+          "ms": 205518,
+          "at": "2026-08-07T21:35:35.008Z",
+          "verdict": "corrected",
+          "changedRatio": 0.1,
+          "wordEditRatio": 0.013
+        },
+        "at": "2026-08-07T21:35:35.008Z"
+      }
+    },
+    {
+      "id": "tp_17861087064830000023",
+      "topic": "Marakana's Cold Wind",
+      "topicEmoji": "🌬️",
+      "userTopic": "the war of the 1990s started in the soccer stadiums of yugoslawia",
+      "userPrompt": "the war of the 1990s started in the soccer stadiums of yugoslawia",
+      "lang": "sr",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Godine devedesete nisu počele u parlamentu, već na tribinama Marakane i Partizana. Navijačke grupe su pretvorile stadion u politički bojno polje, gde se umesto golova vičalo za nacionalnu superiornost. Hladan vetar je sada nosio miris tenzije, a ne pobede. Ljudi su prestali da se grle; pogledi su postali oštri, neprijateljski. Grad je stegnut u čvor straha, jer je fudbal postao predigra za rat.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Serbian language teacher. Write a short story directly in Serbian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian. Writing style: Reportage style: direct, punchy, who/what/where/when. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nHladan vetar je nosio miris dima i snega kroz ulice Beograda. Navijači su napuštali stadion, njihovi koraci odjekivali na asfaltu. Neki su još uvek pevali, glasovi im se gubili u noći. Grad je bio ispunjen energijom pobede. Ljudi su se smejali i grlili jedni druge. Hladnoća više nije bila neprijatelj, već deo proslave. Beograd je disao zajedno sa svojim navijačima.\n\nNew topic: \"the war of the 1990s started in the soccer stadiums of yugoslawia\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 337,
+        "completionTokens": 133,
+        "ms": 72085,
+        "at": "2026-08-07T13:17:47.267Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 191,
+        "completionTokens": 89,
+        "ms": 39215,
+        "at": "2026-08-07T13:18:26.482Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "The nineties did not begin in parliament, but on the stands of Maracanã and Partizan. Fan groups turned the stadium into a political battlefield, where instead of goals, people shouted for national superiority. The cold wind now carried the scent of tension, not victory. People stopped embracing; their gazes became sharp and hostile. The city was gripped by a knot of fear, because football had become a prelude to war.",
+      "continuedFrom": "a soccer game in belgrad, late 1980s — 2",
+      "continuedFromId": "tp_17861070445150000190",
+      "storyStyle": "journalism",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Football and War in Yugoslavia",
+          "desc": "Vocabulary from the story about conflict in stadiums",
+          "icon": "⚽",
+          "vocab": [
+            {
+              "target": "parlament",
+              "source": "parliament"
+            },
+            {
+              "target": "tribina",
+              "source": "stand"
+            },
+            {
+              "target": "navijačka grupa",
+              "source": "fan group"
+            },
+            {
+              "target": "stadion",
+              "source": "stadium"
+            },
+            {
+              "target": "bojno polje",
+              "source": "battlefield"
+            },
+            {
+              "target": "gol",
+              "source": "goal"
+            },
+            {
+              "target": "vetar",
+              "source": "wind"
+            },
+            {
+              "target": "strah",
+              "source": "fear"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Godine devedesete nisu počele u parlamentu.",
+              "source": "The nineties did not begin in parliament.",
+              "words": [
+                "Godine",
+                "devedesete",
+                "nisu",
+                "počele",
+                "u",
+                "parlamentu."
+              ]
+            },
+            {
+              "target": "Navijačke grupe su pretvorile stadion u politički bojno polje.",
+              "source": "Fan groups turned the stadium into a political battlefield.",
+              "words": [
+                "Navijačke",
+                "grupe",
+                "su",
+                "pretvorile",
+                "stadion",
+                "u",
+                "politički",
+                "bojno",
+                "polje."
+              ]
+            },
+            {
+              "target": "Hladan vetar je sada nosio miris tenzije.",
+              "source": "The cold wind now carried the scent of tension.",
+              "words": [
+                "Hladan",
+                "vetar",
+                "je",
+                "sada",
+                "nosio",
+                "miris",
+                "tenzije."
+              ]
+            },
+            {
+              "target": "Ljudi su prestali da se grle.",
+              "source": "People stopped embracing.",
+              "words": [
+                "Ljudi",
+                "su",
+                "prestali",
+                "da",
+                "se",
+                "grle."
+              ]
+            },
+            {
+              "target": "Grad je stegnut u čvor straha.",
+              "source": "The city was gripped by a knot of fear.",
+              "words": [
+                "Grad",
+                "je",
+                "stegnut",
+                "u",
+                "čvor",
+                "straha."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 852,
+            "completionTokens": 456,
+            "ms": 209756,
+            "at": "2026-08-07T13:21:56.331Z"
+          },
+          "qcAt": "2026-08-07T13:51:36.632Z",
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": "ls_1786138805839_2_word_forms",
+          "type": "word_forms",
+          "title": "Serbian Football Tension",
+          "desc": "Fill in the blanks with correct forms.",
+          "icon": "⚽",
+          "items": [
+            {
+              "sentence": "Godine devedesete nisu ___ u parlamentu, već na tribinama Marakane i Partizana.",
+              "translation": "The nineties did not begin in parliament, but on the stands of Maracana and Partizan.",
+              "choices": [
+                "počele",
+                "počeo",
+                "počela"
+              ],
+              "correctIndex": 0,
+              "explanation": "Feminine plural past participle for 'Godine'."
+            },
+            {
+              "sentence": "Navijačke grupe su pretvorile stadion u politički ___ polje.",
+              "translation": "Fan groups turned the stadium into a political battlefield.",
+              "choices": [
+                "bojno",
+                "borno",
+                "boji"
+              ],
+              "correctIndex": 0,
+              "explanation": "Adjective 'bojno' agrees with 'polje'."
+            },
+            {
+              "sentence": "Hladan vetar je sada nosio miris ___, a ne pobede.",
+              "translation": "The cold wind now carried the smell of tension, not victory.",
+              "choices": [
+                "tenzije",
+                "tension",
+                "tenzija"
+              ],
+              "correctIndex": 0,
+              "explanation": "Genitive singular 'tenzije' required after 'miris'."
+            },
+            {
+              "sentence": "Ljudi su prestali da se ___; pogledi su postali oštri.",
+              "translation": "People stopped hugging each other; looks became sharp.",
+              "choices": [
+                "grle",
+                "grlio",
+                "grlim"
+              ],
+              "correctIndex": 0,
+              "explanation": "Present tense plural verb 'grle' for 'Ljudi'."
+            },
+            {
+              "sentence": "Grad je stegnut u ___ straha, jer je fudbal postao predigra za rat.",
+              "translation": "The city was tightened into a knot of fear, because football became a prelude to war.",
+              "choices": [
+                "čvor",
+                "čvora",
+                "čvoru"
+              ],
+              "correctIndex": 0,
+              "explanation": "Nominative/Accusative singular 'čvor' after 'u' (instrumental context implies noun form)."
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1019,
+            "completionTokens": 617,
+            "ms": 261651,
+            "at": "2026-08-07T21:40:05.839Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1786139113458_2_synonyms",
+          "type": "synonyms",
+          "title": "Football turns to war",
+          "desc": "Serbian words from the story",
+          "icon": "⚽️",
+          "words": [
+            {
+              "base": "navijač",
+              "gloss": "fan / supporter",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "pristalica",
+                  "g": "supporter"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "pobeda",
+              "gloss": "victory",
+              "sentence": "Pobeda je donela radost celom gradu.",
+              "synonyms": [
+                {
+                  "w": "uspeh",
+                  "g": "success"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "poraz",
+                  "g": "defeat"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "pesma",
+              "gloss": "song",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "himna",
+                  "g": "anthem"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1301,
+            "completionTokens": 690,
+            "ms": 307619,
+            "at": "2026-08-07T21:45:13.458Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1786139423122_2_comprehension",
+          "type": "comprehension",
+          "title": "Belgrade Football Stories",
+          "desc": "Three short texts about football in Belgrade: a winter derby, the celebration after, and the dark turn during the 1990s.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Why did the fans roar with excitement at the end of the first match?",
+              "choices": [
+                "Because the cold weather finally stopped.",
+                "Because a goal was scored in the last minute.",
+                "Because the referee made a good decision.",
+                "Because the players finished running."
+              ],
+              "correctIndex": 1,
+              "why": "The text states the roar happened because a goal was scored in the last minute."
+            },
+            {
+              "q": "How did the atmosphere change from the first story to the second?",
+              "choices": [
+                "It became colder and more dangerous.",
+                "It shifted from tension to celebration.",
+                "It remained angry and hostile.",
+                "It turned quiet and sad."
+              ],
+              "correctIndex": 1,
+              "why": "The first story ends with a victory and joy, while the second describes people hugging and celebrating."
+            },
+            {
+              "q": "What happened to the relationship between fans in the third story?",
+              "choices": [
+                "They started hugging each other again.",
+                "They stopped playing football entirely.",
+                "Their looks became sharp and hostile.",
+                "They united against the government."
+              ],
+              "correctIndex": 2,
+              "why": "The text says people stopped hugging and their looks became sharp and hostile due to political tension."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 2,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1634,
+            "completionTokens": 781,
+            "ms": 309663,
+            "at": "2026-08-07T21:50:23.122Z"
+          },
+          "_recreated": true
+        }
+      ],
+      "generationStats": {
+        "totalMs": 321150,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 10541,
+        "totalCompletionTokens": 2930,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 209754,
+            "promptTokens": 852,
+            "completionTokens": 456
+          }
+        ],
+        "tokensByType": {
+          "lesson_qc": 4927,
+          "story_qc": 444,
+          "recreate": 6042
+        }
+      },
+      "generatedAt": "2026-08-07T13:18:26.483Z",
+      "updatedAt": "2026-08-07T21:50:23.122Z",
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-07T21:20:39.948Z",
+      "storyQcProposal": {
+        "corrected": "Godine devedesete nisu počele u parlamentu, već na tribinama Marakane i Partizana. Navijačke grupe su pretvorile stadion u političko bojno polje, gde se umesto golova vikalo za nacionalnu superiornost. Hladan vetar je sada nosio miris tenzije, a ne pobede. Ljudi su prestali da se grle; pogledi su postali oštri, neprijateljski. Grad je stegnut u čvor straha, jer je fudbal postao predigra za rat.",
+        "against": "Godine devedesete nisu počele u parlamentu, već na tribinama Marakane i Partizana. Navijačke grupe su pretvorile stadion u politički bojno polje, gde se umesto golova vičalo za nacionalnu superiornost. Hladan vetar je sada nosio miris tenzije, a ne pobede. Ljudi su prestali da se grle; pogledi su postali oštri, neprijateljski. Grad je stegnut u čvor straha, jer je fudbal postao predigra za rat.",
+        "verdict": "corrected",
+        "rejected": false,
+        "changedSentences": 2,
+        "totalSentences": 11,
+        "changedRatio": 0.182,
+        "wordEditRatio": 0.032,
+        "meta": {
+          "type": "story_qc",
+          "model": "translategemma:12b",
+          "attempts": null,
+          "valid": 1,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 319,
+          "completionTokens": 125,
+          "ms": 119680,
+          "at": "2026-08-07T21:20:39.948Z",
+          "verdict": "corrected",
+          "changedRatio": 0.182,
+          "wordEditRatio": 0.032
+        },
+        "at": "2026-08-07T21:20:39.948Z"
+      }
+    },
+    {
+      "id": "tp_17861070445150000190",
+      "topic": "Belgrade Winter Roar",
+      "topicEmoji": "⚽",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "sr",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "Hladan vetar je nosio miris dima i snega kroz ulice Beograda. Navijači su napuštali stadion, njihovi koraci odjekivali na asfaltu. Neki su još uvek pevali, glasovi im se gubili u noći. Grad je bio ispunjen energijom pobede. Ljudi su se smejali i grlili jedni druge. Hladnoća više nije bila neprijatelj, već deo proslave. Beograd je disao zajedno sa svojim navijačima.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Serbian language teacher. Write a short story directly in Serbian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian. Writing style: Clear, factual, neutral tone — no narrative flourish. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nBeograd je zimi bio siv i hladan. Navijači Crvene zvezde su stajali na tribinama stadiona Partizana. Hladnoća je prodirela kroz kapute. Lopta je klizila po zamrznutom travi. Igrači su se smrzavali dok su trčali. Sudijska svirka je prekinula tišinu. Gol je postignut u poslednjem minutu. Navijači su urlali od uzbuđenja. Vatra na stadionu je rasla. Pobeda je donela radost celom gradu.\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 354,
+        "completionTokens": 125,
+        "ms": 158230,
+        "at": "2026-08-07T12:49:22.349Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 183,
+        "completionTokens": 84,
+        "ms": 82165,
+        "at": "2026-08-07T12:50:44.514Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "A cold wind carried the scent of smoke and snow through the streets of Belgrade. Fans were leaving the stadium, their footsteps echoing on the asphalt. Some were still singing, their voices fading into the night. The city was filled with the energy of victory. People were laughing and hugging each other. The cold was no longer an enemy, but part of the celebration. Belgrade breathed together with its fans.",
+      "continuedFrom": "a soccer game in belgrad, late 1980s — 1",
+      "continuedFromId": "tp_17861064961880000087",
       "storyStyle": "neutral",
-      "lessons": [],
-      "generatedAt": "2026-08-07T12:27:32.540Z",
-      "updatedAt": "2026-08-07T12:27:32.540Z",
-      "createdBy": "admin"
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Belgrade Victory Celebration",
+          "desc": "Fans celebrate a win in Belgrade",
+          "icon": "🎉",
+          "vocab": [
+            {
+              "target": "vetar",
+              "source": "wind"
+            },
+            {
+              "target": "dim",
+              "source": "smoke"
+            },
+            {
+              "target": "sneg",
+              "source": "snow"
+            },
+            {
+              "target": "ulica",
+              "source": "street"
+            },
+            {
+              "target": "navijač",
+              "source": "fan"
+            },
+            {
+              "target": "stadion",
+              "source": "stadium"
+            },
+            {
+              "target": "glas",
+              "source": "voice"
+            },
+            {
+              "target": "grad",
+              "source": "city"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hladan vetar je nosio miris dima.",
+              "source": "A cold wind carried the scent of smoke.",
+              "words": [
+                "Hladan",
+                "vetar",
+                "je",
+                "nosio",
+                "miris",
+                "dima."
+              ]
+            },
+            {
+              "target": "Navijači su napuštali stadion.",
+              "source": "Fans were leaving the stadium.",
+              "words": [
+                "Navijači",
+                "su",
+                "napuštali",
+                "stadion."
+              ]
+            },
+            {
+              "target": "Neki su još uvek pevali.",
+              "source": "Some were still singing.",
+              "words": [
+                "Neki",
+                "su",
+                "još",
+                "uvek",
+                "pevali."
+              ]
+            },
+            {
+              "target": "Grad je bio ispunjen energijom.",
+              "source": "The city was filled with energy.",
+              "words": [
+                "Grad",
+                "je",
+                "bio",
+                "ispunjen",
+                "energijom."
+              ]
+            },
+            {
+              "target": "Ljudi su se smejali i grlili.",
+              "source": "People were laughing and hugging.",
+              "words": [
+                "Ljudi",
+                "su",
+                "se",
+                "smejali",
+                "i",
+                "grlili."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 853,
+            "completionTokens": 357,
+            "ms": 347940,
+            "at": "2026-08-07T12:56:32.525Z"
+          },
+          "qcAt": "2026-08-07T21:05:34.110Z",
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": "ls_540889182",
+          "title": "Belgrade Soccer Night",
+          "desc": "Vocabulary for a snowy victory celebration",
+          "icon": "⚽",
+          "vocab": [
+            {
+              "target": "fudbal",
+              "source": "soccer"
+            },
+            {
+              "target": "stadion",
+              "source": "stadium"
+            },
+            {
+              "target": "navijač",
+              "source": "fan"
+            },
+            {
+              "target": "pobeda",
+              "source": "victory"
+            },
+            {
+              "target": "sneg",
+              "source": "snow"
+            },
+            {
+              "target": "vetar",
+              "source": "wind"
+            },
+            {
+              "target": "pesma",
+              "source": "song"
+            },
+            {
+              "target": "grad",
+              "source": "city"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Navijači pevaju pesmu.",
+              "source": "Fans sing a song.",
+              "words": [
+                "Navijači",
+                "pevaju",
+                "pesmu."
+              ]
+            },
+            {
+              "target": "Sneg pada na stadion.",
+              "source": "Snow falls on the stadium.",
+              "words": [
+                "Sneg",
+                "pada",
+                "na",
+                "stadion."
+              ]
+            },
+            {
+              "target": "Grad slavi pobedu.",
+              "source": "The city celebrates victory.",
+              "words": [
+                "Grad",
+                "slavi",
+                "pobedu."
+              ]
+            },
+            {
+              "target": "Hladan vetar duva.",
+              "source": "Cold wind blows.",
+              "words": [
+                "Hladan",
+                "vetar",
+                "duva."
+              ]
+            },
+            {
+              "target": "Fudbal je igra.",
+              "source": "Soccer is a game.",
+              "words": [
+                "Fudbal",
+                "je",
+                "igra."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 785,
+            "completionTokens": 298,
+            "ms": 301429,
+            "at": "2026-08-07T13:01:33.955Z"
+          },
+          "qcAt": "2026-08-07T21:15:30.932Z",
+          "qcBy": "translategemma:12b"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 588406,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 13996,
+        "totalCompletionTokens": 2418,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 347939,
+            "promptTokens": 853,
+            "completionTokens": 357
+          }
+        ],
+        "tokensByType": {
+          "lesson_qc": 9428,
+          "story_qc": 432,
+          "recreate": 4598
+        }
+      },
+      "generatedAt": "2026-08-07T12:50:44.515Z",
+      "updatedAt": "2026-08-07T21:18:40.170Z",
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-07T21:18:40.170Z",
+      "storyQcProposal": {
+        "corrected": "Hladan vetar je nosio miris dima i snega kroz ulice Beograda. Navijači su napuštali stadion, njihovi koraci odjekivali na asfaltu. Neki su još uvek pevali, a glasovi im se gubili u noći. Grad je bio ispunjen energijom pobede. Ljudi su se smejali i grlili jedni druge. Hladnoća više nije bila neprijatelj, već deo proslave. Beograd je disao zajedno sa svojim navijačima.",
+        "against": "Hladan vetar je nosio miris dima i snega kroz ulice Beograda. Navijači su napuštali stadion, njihovi koraci odjekivali na asfaltu. Neki su još uvek pevali, glasovi im se gubili u noći. Grad je bio ispunjen energijom pobede. Ljudi su se smejali i grlili jedni druge. Hladnoća više nije bila neprijatelj, već deo proslave. Beograd je disao zajedno sa svojim navijačima.",
+        "verdict": "corrected",
+        "rejected": false,
+        "changedSentences": 1,
+        "totalSentences": 10,
+        "changedRatio": 0.1,
+        "wordEditRatio": 0.017,
+        "meta": {
+          "type": "story_qc",
+          "model": "translategemma:12b",
+          "attempts": null,
+          "valid": 1,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 312,
+          "completionTokens": 120,
+          "ms": 189238,
+          "at": "2026-08-07T21:18:40.170Z",
+          "verdict": "corrected",
+          "changedRatio": 0.1,
+          "wordEditRatio": 0.017
+        },
+        "at": "2026-08-07T21:18:40.170Z"
+      }
+    },
+    {
+      "id": "tp_17861064961880000087",
+      "topic": "Frozen Belgrade Derby",
+      "topicEmoji": "⚽",
+      "userTopic": "a soccer game in belgrad, late 1980s",
+      "userPrompt": "a soccer game in belgrad, late 1980s",
+      "lang": "sr",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "Beograd je zimi bio siv i hladan. Navijači Crvene zvezde su stajali na tribinama stadiona Partizana. Hladnoća je prodirela kroz kapute. Lopta je klizila po zamrznutom travi. Igrači su se smrzavali dok su trčali. Sudijska svirka je prekinula tišinu. Gol je postignut u poslednjem minutu. Navijači su urlali od uzbuđenja. Vatra na stadionu je rasla. Pobeda je donela radost celom gradu.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Serbian language teacher. Write a short story directly in Serbian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian. Writing style: Clear, factual, neutral tone — no narrative flourish.\n\nWrite a story for the topic: \"a soccer game in belgrad, late 1980s\". Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 144,
+        "completionTokens": 134,
+        "ms": 89198,
+        "at": "2026-08-07T12:40:32.708Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 192,
+        "completionTokens": 82,
+        "ms": 63479,
+        "at": "2026-08-07T12:41:36.187Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Belgrade was gray and cold in winter. Red Star fans stood in the stands of Partizan's stadium. The cold pierced through their coats. The ball slid across the frozen grass. Players froze as they ran. The referee's whistle broke the silence. A goal was scored in the last minute. Fans roared with excitement. The fire at the stadium grew. Victory brought joy to the entire city.",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Serbian Soccer Match",
+          "desc": "Vocabulary from a Belgrade game",
+          "icon": "⚽",
+          "vocab": [
+            {
+              "target": "Beograd",
+              "source": "Belgrade"
+            },
+            {
+              "target": "zima",
+              "source": "winter"
+            },
+            {
+              "target": "hladan",
+              "source": "cold"
+            },
+            {
+              "target": "lopta",
+              "source": "ball"
+            },
+            {
+              "target": "trava",
+              "source": "grass"
+            },
+            {
+              "target": "igrač",
+              "source": "player"
+            },
+            {
+              "source": "goal",
+              "target": "gol"
+            },
+            {
+              "target": "pobeda",
+              "source": "victory"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Beograd je zimi bio siv i hladan.",
+              "source": "Belgrade was gray and cold in winter.",
+              "words": [
+                "Beograd",
+                "je",
+                "zimi",
+                "bio",
+                "siv",
+                "i",
+                "hladan."
+              ]
+            },
+            {
+              "target": "Lopta je klizila po zamrznutom travi.",
+              "source": "The ball slid across the frozen grass.",
+              "words": [
+                "Lopta",
+                "je",
+                "klizila",
+                "po",
+                "zamrznutom",
+                "travi."
+              ]
+            },
+            {
+              "target": "Igrači su se smrzavali dok su trčali.",
+              "source": "Players froze as they ran.",
+              "words": [
+                "Igrači",
+                "su",
+                "se",
+                "smrzavali",
+                "dok",
+                "su",
+                "trčali."
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "The players were freezing while they were running.",
+                  "field": "source",
+                  "at": "2026-08-07T20:52:48.369Z"
+                }
+              },
+              "qc": {
+                "sug": "The players were freezing while they were running.",
+                "field": "source",
+                "at": "2026-08-07T20:52:48.369Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "Gol je postignut u poslednjem minutu.",
+              "source": "A goal was scored in the last minute.",
+              "words": [
+                "Gol",
+                "je",
+                "postignut",
+                "u",
+                "poslednjem",
+                "minutu."
+              ]
+            },
+            {
+              "target": "Pobeda je donela radost celom gradu.",
+              "source": "Victory brought joy to the entire city.",
+              "words": [
+                "Pobeda",
+                "je",
+                "donela",
+                "radost",
+                "celom",
+                "gradu."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 839,
+            "completionTokens": 315,
+            "ms": 307656,
+            "at": "2026-08-07T12:46:43.945Z"
+          }
+        },
+        {
+          "id": "ls_1786136695122_0_word_forms",
+          "type": "word_forms",
+          "title": "Winter Football Match",
+          "desc": "Serbian verbs and adjectives in past tense",
+          "icon": "⚽️",
+          "items": [
+            {
+              "sentence": "Beograd je zimi bio ___ i hladan.",
+              "translation": "Belgrade was grey and cold in winter.",
+              "choices": [
+                "siv",
+                "siva",
+                "sivo"
+              ],
+              "correctIndex": 0,
+              "explanation": "Masculine singular adjective for 'Beograd'"
+            },
+            {
+              "sentence": "Hladnoća je ___ kroz kapute.",
+              "translation": "The cold was piercing through the coats.",
+              "choices": [
+                "prodirela",
+                "prodirao",
+                "prodiru"
+              ],
+              "correctIndex": 0,
+              "explanation": "Feminine singular past tense for 'Hladnoća'"
+            },
+            {
+              "sentence": "Lopta je klizila po ___ travi.",
+              "translation": "The ball was sliding on the frozen grass.",
+              "choices": [
+                "zamrznutom",
+                "zamrznutoj",
+                "zamrznuta"
+              ],
+              "correctIndex": 0,
+              "explanation": "Masculine singular prepositional case for 'travi'"
+            },
+            {
+              "sentence": "Igrači su se ___ dok su trčali.",
+              "translation": "The players were freezing while they ran.",
+              "choices": [
+                "smrzavali",
+                "smrzavala",
+                "smrzavao"
+              ],
+              "correctIndex": 0,
+              "explanation": "Masculine plural past tense for 'Igrači'"
+            },
+            {
+              "sentence": "Vatra na stadionu je ___.",
+              "translation": "The fire at the stadium was growing.",
+              "choices": [
+                "rasla",
+                "rastao",
+                "rasli"
+              ],
+              "correctIndex": 0,
+              "explanation": "Feminine singular past tense for 'Vatra'"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1020,
+            "completionTokens": 475,
+            "ms": 375516,
+            "at": "2026-08-07T21:04:55.121Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1786137148258_0_synonyms",
+          "type": "synonyms",
+          "title": "Frozen Belgrade Derby",
+          "desc": "Serbian words for a cold winter football match",
+          "icon": "⚽",
+          "words": [
+            {
+              "base": "hladan",
+              "gloss": "cold",
+              "sentence": "Beograd je zimi bio siv i hladan.",
+              "synonyms": [
+                {
+                  "w": "hladno",
+                  "g": "chilly"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "topao",
+                  "g": "warm"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "trava",
+              "gloss": "grass",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "njiva",
+                  "g": "field"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "gol",
+              "gloss": "goal",
+              "sentence": "Gol je postignut u poslednjem minutu.",
+              "synonyms": [
+                {
+                  "w": "pogodak",
+                  "g": "strike"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "radost",
+              "gloss": "joy",
+              "sentence": "Pobeda je donela radost celom gradu.",
+              "synonyms": [
+                {
+                  "w": "sreća",
+                  "g": "happiness"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "tuga",
+                  "g": "sadness"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "grad",
+              "gloss": "city",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "mesto",
+                  "g": "place"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1245,
+            "completionTokens": 633,
+            "ms": 453135,
+            "at": "2026-08-07T21:12:28.258Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1786137377462_0_comprehension",
+          "type": "comprehension",
+          "title": "Frozen Belgrade Derby",
+          "desc": "A short story about a winter football match in Belgrade.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Why were the players struggling during the game?",
+              "choices": [
+                "They were tired from running in the heat.",
+                "The cold was freezing them while they ran.",
+                "They were injured by the frozen grass.",
+                "The referee stopped the game early."
+              ],
+              "correctIndex": 1,
+              "why": "The text states the players were freezing while running due to the winter conditions."
+            },
+            {
+              "q": "What happened at the very end of the match?",
+              "choices": [
+                "The game ended in a draw.",
+                "A goal was scored in the last minute.",
+                "The referee blew the final whistle early.",
+                "The fans left the stadium quietly."
+              ],
+              "correctIndex": 1,
+              "why": "The story explicitly mentions a goal was scored in the last minute."
+            },
+            {
+              "q": "How did the victory affect the city?",
+              "choices": [
+                "It made the city feel colder.",
+                "It brought joy to the whole city.",
+                "It caused anger among the fans.",
+                "It had no noticeable effect."
+              ],
+              "correctIndex": 1,
+              "why": "The last sentence says the victory brought joy to the whole city."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 532,
+            "completionTokens": 350,
+            "ms": 229204,
+            "at": "2026-08-07T21:16:17.462Z"
+          },
+          "_recreated": true
+        }
+      ],
+      "generationStats": {
+        "totalMs": 460436,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 9119,
+        "totalCompletionTokens": 2166,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 307653,
+            "promptTokens": 839,
+            "completionTokens": 315
+          }
+        ],
+        "tokensByType": {
+          "lesson_qc": 4873,
+          "story_qc": 451,
+          "recreate": 4255
+        }
+      },
+      "generatedAt": "2026-08-07T12:41:36.188Z",
+      "updatedAt": "2026-08-07T21:16:17.462Z",
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-07T20:55:52.810Z",
+      "storyQcProposal": {
+        "corrected": "Beograd je zimi bio siv i hladan. Navijači Crvene zvezde su stajali na tribinama stadiona Partizana. Hladnoća je prodirala kroz kapute. Lopta je klizila po zamrznutom travi. Igrači su se smrzavali dok su trčali. Sudijska svirka je prekinula tišinu. Gol je postignut u poslednjem minutu. Navijači su urlali od uzbuđenja. Vatra na stadionu je rasla. Pobeda je donela radost celom gradu.",
+        "against": "Beograd je zimi bio siv i hladan. Navijači Crvene zvezde su stajali na tribinama stadiona Partizana. Hladnoća je prodirela kroz kapute. Lopta je klizila po zamrznutom travi. Igrači su se smrzavali dok su trčali. Sudijska svirka je prekinula tišinu. Gol je postignut u poslednjem minutu. Navijači su urlali od uzbuđenja. Vatra na stadionu je rasla. Pobeda je donela radost celom gradu.",
+        "verdict": "corrected",
+        "rejected": false,
+        "changedSentences": 1,
+        "totalSentences": 10,
+        "changedRatio": 0.1,
+        "wordEditRatio": 0.016,
+        "meta": {
+          "type": "story_qc",
+          "model": "translategemma:12b",
+          "attempts": null,
+          "valid": 1,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 322,
+          "completionTokens": 129,
+          "ms": 117367,
+          "at": "2026-08-07T20:55:52.810Z",
+          "verdict": "corrected",
+          "changedRatio": 0.1,
+          "wordEditRatio": 0.016
+        },
+        "at": "2026-08-07T20:55:52.810Z"
+      }
     },
     {
       "id": "tp_17857096403230000266",
