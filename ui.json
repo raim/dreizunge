@@ -3595,7 +3595,9 @@
     "ex.comprehension.story": "कहानी",
     "ex.comprehension.story_listen": "कहानी को ज़ोर से पढ़ें",
     "ex.badge.comprehension": "क्या आप इसे समझ पाए?",
-    "complete.story_unlocked": "अध्याय पढ़ें और समझें"
+    "complete.story_unlocked": "अध्याय पढ़ें और समझें",
+    "complete.words_solved": "इस अध्याय में आप जितने शब्द पढ़ सकते हैं",
+    "form.finish_mixed": "अध्याय को मिश्रित समीक्षा दौर के साथ पूरा करें (कोई AI नहीं)"
   },
   "de": {
     "qc.editor.suggests_by": "⚑ {model} schlägt vor:",
@@ -10791,7 +10793,9 @@
     "ex.comprehension.story": "Історія",
     "ex.comprehension.story_listen": "Прочитайте історію вголос",
     "complete.story_unlocked": "прочитайте та зрозумійте розділ",
-    "ex.badge.comprehension": "чи зрозуміли ви це?"
+    "ex.badge.comprehension": "чи зрозуміли ви це?",
+    "complete.words_solved": "Слова, які ви можете прочитати в цьому розділі",
+    "form.finish_mixed": "Завершити розділ з перевіркою знань (без використання ШІ)"
   },
   "cs": {
     "qc.editor.suggests_by": "⚑ {model} navrhuje:",
@@ -11389,7 +11393,9 @@
     "ex.comprehension.story": "Příběh",
     "ex.comprehension.story_listen": "Přečtěte příběh nahlas",
     "complete.story_unlocked": "přečtěte a porozumějte kapitole",
-    "ex.badge.comprehension": "pochopili jste to?"
+    "ex.badge.comprehension": "pochopili jste to?",
+    "complete.words_solved": "Slov, která můžete přečíst v této lekci",
+    "form.finish_mixed": "Dokončit lekci s kombinovaným testem (bez AI)"
   },
   "vi": {
     "qc.editor.suggests_by": "💡 {model} gợi ý:",
@@ -11987,7 +11993,9 @@
     "ex.comprehension.story": "Câu chuyện",
     "ex.comprehension.story_listen": "Đọc câu chuyện to.",
     "complete.story_unlocked": "đọc và hiểu chương",
-    "ex.badge.comprehension": "bạn đã hiểu chưa?"
+    "ex.badge.comprehension": "bạn đã hiểu chưa?",
+    "complete.words_solved": "Số từ bạn có thể đọc trong chương này",
+    "form.finish_mixed": "Hoàn thành chương với phần ôn tập tổng hợp (không có AI)"
   },
   "id": {
     "qc.editor.suggests_by": "⚑ {model} menyarankan:",
@@ -12585,7 +12593,9 @@
     "ex.comprehension.story": "Cerita",
     "ex.comprehension.story_listen": "Bacalah cerita dengan suara keras",
     "complete.story_unlocked": "baca dan pahami bab ini",
-    "ex.badge.comprehension": "apakah Anda mengerti?"
+    "ex.badge.comprehension": "apakah Anda mengerti?",
+    "complete.words_solved": "Jumlah kata yang dapat Anda baca di bab ini",
+    "form.finish_mixed": "Selesaikan bab dengan putaran ulasan campuran (tanpa AI)"
   },
   "ro": {
     "qc.editor.suggests_by": "⚑ Sugerat de {model}:",
@@ -13183,7 +13193,9 @@
     "ex.comprehension.story": "Povestea",
     "ex.comprehension.story_listen": "Citește povestea cu voce tare",
     "complete.story_unlocked": "citește și înțelege capitolul",
-    "ex.badge.comprehension": "ai înțeles?"
+    "ex.badge.comprehension": "ai înțeles?",
+    "complete.words_solved": "Cuvinte pe care le poți citi în acest capitol",
+    "form.finish_mixed": "Finalizează capitolul cu o rundă de recapitulare (fără AI)"
   },
   "th": {
     "qc.editor.suggests_by": "⚑ {model} แนะนำ:",
@@ -13781,7 +13793,9 @@
     "ex.comprehension.story": "เรื่องราว",
     "ex.comprehension.story_listen": "อ่านเรื่องราวให้ดังๆ",
     "complete.story_unlocked": "อ่านและเข้าใจบทนี้",
-    "ex.badge.comprehension": "คุณเข้าใจหรือไม่?"
+    "ex.badge.comprehension": "คุณเข้าใจหรือไม่?",
+    "complete.words_solved": "จำนวนคำที่คุณอ่านได้ในบทนี้",
+    "form.finish_mixed": "จบการเรียนบทนี้ด้วยแบบทดสอบผสม (ไม่มี AI)"
   },
   "el": {
     "qc.editor.suggests_by": "⚑ Προτείνει το {model}:",
@@ -17369,7 +17383,9 @@
     "ex.comprehension.story": "D'Geschichte",
     "ex.comprehension.story_listen": "Liest d'Geschichte lautt.",
     "complete.story_unlocked": "liesen a versteet de Kapitel",
-    "ex.badge.comprehension": "Hutt Dir dat verstanen?"
+    "ex.badge.comprehension": "Hutt Dir dat verstanen?",
+    "complete.words_solved": "Wierder déi Dir an deem Kapitel liesen kënnt",
+    "form.finish_mixed": "De Kapitel mat enger gemëschter Wiederhuelungsronn ofschléissen (ouni AI)"
   },
   "sw": {
     "qc.editor.suggests_by": "⚑ {model} inapendekeza:",
@@ -17967,7 +17983,9 @@
     "ex.comprehension.story": "Hadithi",
     "ex.comprehension.story_listen": "Soma hadithi kwa sauti.",
     "complete.story_unlocked": "soma na uelewe sura",
-    "ex.badge.comprehension": "Je, uliielewa?"
+    "ex.badge.comprehension": "Je, uliielewa?",
+    "complete.words_solved": "Maneno ambayo unaweza kusoma katika sura hii",
+    "form.finish_mixed": "Hakisha sura kwa mtihani mchanganyiko (bila AI)"
   },
   "sr": {},
   "hr": {}

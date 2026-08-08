@@ -300,6 +300,14 @@ function _serializeLangs(obj) {
   return '{\n' + lines.join('\n') + '\n}\n';
 }
 
+// Serialize + write languages.json, refusing to write anything that will not re-parse.
+// v76_f: extracted so the run can persist after EVERY batch. Returns the number of cells on disk.
+function _flushLangs() {
+  const out = _serializeLangs(langs);
+  JSON.parse(out);                      // never write a file that will not parse
+  fs.writeFileSync(LANG_FILE, out, 'utf8');
+}
+
 async function runLangNames() {
   const { codes, gaps } = _langNameGaps();
   const total = Object.values(gaps).reduce((n, a) => n + a.length, 0);
@@ -315,7 +323,7 @@ async function runLangNames() {
   const reachable = await ping();
   if (!reachable) { console.error(`❌ Cannot reach LLM backend at ${OLLAMA_HOST}.`); process.exit(1); }
 
-  let wrote = 0;
+  let wrote = 0, saved = 0;
   for (const ui of want) {
     const need = gaps[ui];
     if (!need || !need.length) continue;
@@ -355,14 +363,19 @@ async function runLangNames() {
       ok++; wrote++;
     }
     process.stdout.write(`${ok} ok${bad.length ? `, ${bad.length} rejected (${bad.join(',')})` : ''}`);
+    // v76_f (user-reported): save after EVERY batch, so an interrupted run keeps what it earned.
+    // This whole mode used to write once, after the loop — so a Ctrl-C, a backend timeout or a
+    // crash 30 languages in threw away every name it had just paid for. `translateLang` above has
+    // done it per batch all along ("Save after each batch so progress isn't lost on interruption");
+    // this mode simply never copied it. Standing rule 10, in the same file it was written for.
+    if (ok) {
+      try { _flushLangs(); saved += ok; process.stdout.write(` · 💾 saved`); }
+      catch (e) { console.error(`\n⚠ could not write ${LANG_FILE}: ${e.message}`); }
+    }
   }
 
-  if (wrote) {
-    const out = _serializeLangs(langs);
-    JSON.parse(out);                    // never write a file that will not parse
-    fs.writeFileSync(LANG_FILE, out, 'utf8');
-    console.log(`\n\n💾 Wrote ${wrote} name(s) to ${LANG_FILE}`);
-  }
+  if (saved) console.log(`\n\n💾 Wrote ${saved} name(s) to ${LANG_FILE}`);
+  else if (wrote) console.log(`\n\n⚠ ${wrote} name(s) accepted but nothing reached disk.`);
   const left = Object.values(_langNameGaps().gaps).reduce((n, a) => n + a.length, 0);
   console.log(left ? `⚠ ${left} cell(s) still missing. Run again to retry.` : '✅ languages.json complete.');
 }

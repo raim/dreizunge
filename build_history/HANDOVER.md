@@ -1,141 +1,112 @@
-# HANDOVER — v76_c
+# HANDOVER — v76_g
 
-One page. Read `build_history/roadmap_v76.md` next for the queue and the session protocol, and
-`build_history/v74b_session28_notes.md` for what session 28 actually found — it is long, and the
-findings matter more than the diffs.
+One page. Read `build_history/roadmap_v76.md` next for the queue and the session protocol, then
+`INTERNALS.md`, then `build_history/v76_session30_notes.md` for what session 30 found.
 
 ## Green baseline
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **176 checks, ALL PASSED** |
-| `node test/run.js --quick` | 153 |
+| `node test/run.js` | **178 checks, ALL PASSED** |
+| `node test/run.js --quick` | 155 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v76_c'`. Establish this before changing anything.
+`APP_VERSION = 'v76_g'`. Establish this before changing anything.
 
-**Session 29 opened on a RED baseline (2 of 170) and neither failure was a stale fixture.** One was
-`ui.json` arriving OLDER than the code it serves (two keys missing from `en` itself, rendering raw
-key names to the learner); the other was corpus drift making two `smoke-render` fixtures the same
-chapter, so leaked progress put a later section on a story-unlocked card where `v74_l` correctly
-hides the button it was asserting. **Check file timestamps first — it was the whole diagnosis of the
-first one.** Full account in `build_history/v76_session29_notes.md`.
+**These numbers are the ones to trust.** Session 30's prompt said to expect 170/149 and to treat any
+other number as a finding; 170/149 were the numbers session 29 *opened* on, before it added six
+checks. **If a prompt and this file disagree, measure — and check timestamps first.** The data files
+(`lessons.json`, `ui.json`, `learners.json`) travel separately from the code and routinely arrive
+newer.
+
+**If `unit-script-choice` fails saying topics are unstamped, run `node backfill-script.js --write`.**
+A newly generated Serbian chapter arrives without its `script` stamp; the guard is doing its job.
 
 **If `unit-static-freshness` fails, run `node build-static.js`.** It hashes every baked input and
-stamps the digests into `docs/index.html`, so a stale static build is caught instead of shipping
-silently. **A failure here is the guard working.** The data files travel separately from the code
-and routinely arrive newer.
+stamps the digests into `docs/index.html`. **A failure here is the guard working.**
 
-## What session 28 settled
+## What session 30 settled
 
-Nineteen point releases, `v74_b` -> `v74_r`, then cut to **`v75`**. The headline: **the roadmap's prime suspect was wrong.**
-Nothing from session 27 was reverted. `v73_g`'s icon row does navigate, `v73_i`'s keying is sound,
-`v73_d` is not the cause of the red bar. The real defect was older and larger.
+Opened RED (2 of 176). **Neither failure was a product defect, and one of them WAS the user's
+reported bug.** Three releases, `v76_d` -> `v76_f`.
 
-- **`v74_b`** one lesson-phase classification. 29 chapters had gated the story behind an error hunt,
-  which renders a corrupted copy of that story.
-- **`v74_c`** coverage counts SOURCE ITEMS, not generated questions. This was the cause of the
-  reported "user progress broken": the qid universe was cached under an audio key, so a learner who
-  played muted and then unmuted read `64/83` with Next locked and no way to recover. **284 of 298
-  topics -> 0.** Also closes the sampling nondeterminism.
-- **`v74_d`** math counts (225 authored exercises, 25 chapters).
-- **`v74_e`** hidden lessons never count (guard). **`v74_f`** the card routes to the error hunt (guard).
-- **`v74_g`** counters (b) and (c). **`v74_i`** live-mode storyline progress. **`v74_k`** the
-  storyline locks. **`v74_o`** the last card is not a dead end.
-- **`v74_j`** TTS voice ranking: locale before quality. **`v74_l`-`v74_r`** sections 3 and 4 complete.
+- **`v76_d`** (test-only, no version bump) — two guards had pinned the shape of the corpus rather
+  than their claim. `unit-coverage-threshold` compared a progress-row label against the raw title
+  while the card truncates at 40 chars; `unit-live-static-progress-parity` asserted `total 🔒 === 1`,
+  which encoded a *two*-chapter storyline where the chain is now six. **The product was right in
+  both cases** — chapter 2 does open; chapters 3–6 are locked because *their* predecessors are.
+- **`v76_e`** — the reported storyline bug. `loadSavedList` projected each chain through the
+  **language-filtered** id index, and the renderer recovers the storyline by an exact full-length
+  positional match, which a truncated chain can never satisfy — so it fell through to a synthetic
+  `'c'+hash` id with no storyline behind it. Reproduced the user's exact `c1935658823`. Fix: **a
+  storyline is one unit — the filter decides WHETHER it is shown, never WHICH of its chapters are.**
+- **`v76_f`** — `--langnames` wrote `languages.json` once, after the loop, so an interrupted run
+  discarded everything. Now flushed after every batch, as `translateLang` in the same file has
+  always done.
 
-## Three standing rules earned the hard way
+## Standing rules worth re-reading (14 now, in `roadmap_v76.md`)
 
-1. **A probe must call the product function, never a re-typed copy** - and least of all one lifted
-   from a test stub. Two false findings this session came from re-implementing `lessonCountsFor` and
-   the read-full-story lock rather than invoking them.
-2. **A claim about behaviour is only measured if the assertion touched the thing being claimed.**
-   `setComplete=false` is not evidence about a button. Three inference-not-measurement errors.
-3. **A non-vacuity check must be evaluated on the data the assertion actually runs against**, not on
-   the data it was derived from. Two guards passed under their own reverts because the fixture had
-   been projected before the assertion saw it.
+1. **A probe must call the product function, never a re-typed copy.**
+2. **A claim is only measured if the assertion touched the thing being claimed.**
+3. **A non-vacuity check must run on the data the assertion actually runs against.**
+4. **A headless harness building `APP.savedList` from whole topics is testing STATIC mode.**
+5. **(new, 12)** A test that hard-codes a COUNT of a repeated element pins the fixture, not the claim.
+6. **(new, 13)** A guard whose scenario matches nothing may never reach the branch it tests —
+   `loadSavedList` returns early on an empty list, and a negative assertion passed under its revert.
+7. **(new, 14)** **Identity must be CARRIED through a projection, never recovered by hashing it.**
+   Third instance (`v75_f`, `v76_e`). If a list is filtered and then matched back against its source
+   by length or position, the filter and the match are the same bug waiting.
 
-Also: **a headless harness that builds `APP.savedList` from whole topics is testing STATIC mode**,
-whatever else it thinks it is testing. That blind spot hid `v74_i` from 167 green checks.
+## Next session — in this order
 
-## Naming convention (set by the user at the v75 cut)
-
-**A session's prompt file is named for the version that session WRAPS UP WITH**, not the one it
-starts from. The session that ended in `v75` opened with `build_history/v75_prompt.md`. The old
-`session_{n}_prompt.md` files were renamed to match — `session_28_prompt.md` -> `v74_prompt.md`,
-`session_29_prompt.md` -> `v75_prompt.md` — because the session numbering had drifted from the
-version numbering and only the version number stays meaningful later. Session NOTES keep their
-existing `v{ver}_session{n}_notes.md` form.
-
-## Next session - in this order
-
-**THE NEXT SESSION IS THE PROGRESS-CARD REWORK.** Read, in this order:
-`build_history/roadmap_v76.md` §0 (the whole rework, with the user's notes merged and the roadmap
-items absorbed), then `build_history/v76_card_gates.md` (the MEASURED as-is truth table for the card
-— 32 rows, both gate families, plus a preserved probe to re-run and diff).
+**THE PROGRESS-CARD REWORK IS STILL THE NEXT SESSION.** It was not started: session 30 spent itself
+on the red baseline and the two user reports. Read `build_history/roadmap_v76.md` §0 (the whole
+rework), then `build_history/v76_card_gates.md` (the MEASURED as-is truth table — 32 rows, both gate
+families, plus a preserved probe to re-run and diff).
 
 **Do not start §0c (the card sequence) until the three rulings in §0a are answered.** Two of them
-supersede decisions that are currently shipped and tested (`v74_l`, `v74_o`); building on top of
-them instead of deleting them is how a third navigation rule gets layered on.
+supersede decisions that are currently shipped and tested (`v74_l`, `v74_o`).
 
 **Do §0b first regardless:** make the 7 swallowing `catch(_) {}` blocks in `showComplete` visible,
 and settle the coverage key-space question (86 seeded solved keys, 0 counted, total 31 — the branch
-that gates story unlock for every mixed-driven chapter). Both are small, and both de-risk everything
-after them.
-
-**Three items are BLOCKED ON A RULING FROM YOU, both measured in session 29 (`roadmap_v76.md` §0a, §3b):**
-
-- **The Android English voice.** Your "still caribbean, only on android" report is a real hole in
-  `v74_j`, which fixed only the case where the exact locale is PRESENT. With no `en-GB` voice
-  installed the ranker falls through to quality alone and a NETWORK `en-NG` / `en-IN` beats the
-  LOCAL `en-US`. The obvious fix is barred by the design principle (a locale-proximity table is a
-  hand-authored language fact) — choose between `voice.default`, `navigator.language`, or shipping
-  §6's selector so you pick once.
-- **Serbian/Croatian: SHIPPED in `v75_g`**, with a purpose-built 30-letter `cyrillic-sr` table.
-  Still owed by you: the 28 non-English `names` entries, the `ui.json` pass for `sr`/`hr`, and a
-  **native-speaker check of the table** — it was authored in-container, which is the exact case the
-  design principle warns about.
-
-1. **The pass mark.** `Churros` is 40 items where it was 83 questions, and an item is solved by ANY
-   correct answer, so 80% is a materially lower bar than before. Deliberately not guessed at. **Needs
-   the user's browser pass, not a code change.**
-2. **Highlighting (roadmap section 2).** Measured, not shipped. **The roadmap's stated plan does not
-   work**: `_articleStatsFor` reads grammar items and returns `sampleSize: 0` on the very chapters
-   that need it. A corpus-derived alternative is measured in the session notes (`Churros` 2 -> 10
-   marks; only Spanish and Italian store articles with their vocabulary). It wants its own release
-   with the threshold justified. **Do NOT revert the word boundaries** - `v73_e` traded the every-`i`
-   bug for 2 real marks.
-3. **Browsing completion cards** of already-played lessons, with explicit back/next (user request).
-   Note this turns `v74_o`'s "nothing left to do" terminal state into a waypoint and interacts with
-   `v74_l`'s Next-only rule - revisit those two branches together rather than layering a third
-   navigation rule on top.
-4. **`_sbChapterTarget`** (`index.html` ~8065) - the seventh and last known instance of the
-   raw-lessons pattern. Not fixed because its test extracts it in isolation with synthetic progress
-   maps, so switching it to `chapterComplete` needs that harness reworked first.
-5. **The storyline-page TTS selector.** `dreizunge_v39_summary.md:331` records selectors built "in
-   all footer rows (lesson-set, **storyline** screens)". Today `ids = ['ls']`, the `-sl` elements are
-   gone, but the function's own existence check still looks for `tts-lang-select-sl`. No note
-   anywhere explains the removal. Also dead: `#tts-row` / `buildTtsSelector()`, permanently
-   `display:none`, still rebuilt on every lesson-set entry.
+that gates story unlock for every mixed-driven chapter). Both are small and de-risk everything after.
 
 ## Owed by the user, not doable in a container
 
-- **A browser pass.** Now 19 releases deep. `v74_c` changed what coverage means, `v74_i` touched the
-  live list projection (the first `server.js` change in the session), and `v74_j`/`v74_n` are visual.
-- **The comprehension QC checker** - needs a new prompt and a live model. Queued, correctly.
-- **`translate-ui.js --langnames`** — 151 `languages.json` name cells are empty (`sr`/`hr`, and 31
-  for `lb`). Needs a live model; run `--langnames --check` first to see the gap.
-- **The translate pass.** `complete.story_unlocked` and `ex.badge.comprehension` came BACK filled in
-  all 30 languages — that pass worked, and the returned file validated clean (596x30, 0 missing).
-  It simply predated `complete.words_solved` and `form.finish_mixed`, which were therefore missing
-  from `en` as well; both are now in `en` only and still owed a pass. `t()` falls back through English, so nothing is
-  broken meanwhile. **`v71_q`: never assert a dropped key absent.**
+- **A browser pass**, now including `v76_e` — see "how to see it work" in the session-30 notes.
+- **Confirm the `v76_e` product judgement**: filtering the library to one language now shows a
+  mixed-language storyline **whole**, including its chapters in other languages. The alternative
+  leaves *"the lessons in a different language didn't show up"* unfixed. Say if you want it reversed.
+- **The three §0a rulings** blocking the card rework.
+- **The Android English voice.** `v74_j` fixed only the case where the exact locale is PRESENT; with
+  no `en-GB` installed the ranker falls through to quality alone and a NETWORK `en-NG`/`en-IN` beats
+  the LOCAL `en-US`. The obvious fix is barred by the design principle — choose between
+  `voice.default`, `navigator.language`, or shipping §6's selector so you pick once.
+- **The pass mark.** `Churros` is 40 items where it was 83 questions, and an item is solved by ANY
+  correct answer, so 80% is a materially lower bar. Needs a browser pass, not a code change.
+- **`translate-ui.js --langnames`** — 151 `languages.json` name cells still empty (`sr`/`hr`, and 31
+  for `lb`). It now saves as it goes, so an interrupted run keeps its progress.
+- **`sr`/`hr`**: the `ui.json` pass, the 28 non-English `names` entries, and a **native-speaker check
+  of the `cyrillic-sr` table** — it was authored in-container, the exact case the design principle
+  warns about.
+- **The translate pass** for `complete.words_solved` and `form.finish_mixed` (`en`-only). `t()` falls
+  back through English meanwhile. **`v71_q`: never assert a dropped key absent.**
+- **The comprehension QC checker** — needs a new prompt and a live model.
 
-## One process failure worth not repeating
+**No new `ui.json` keys in session 30** — nothing added to the translate queue.
 
-Mid-session I bumped `APP_VERSION` and edited three files **without running the definition-of-done or
-packaging**, so the tree drifted past the artifact the user was holding. I then found the changes,
-failed to recognise them as mine, and asked the user about them - the container has one writer.
-**Where the environment admits only one agent, unexplained state is yours.** The protocol's
-suite-docs-package cycle exists precisely to make that drift impossible; follow it per change.
+## Known, not fixed
+
+- **`_tryOpenStorylineByChainId`'s legacy fallback** rebuilds chains through `makeParentResolver`,
+  which is **same-language guarded**, so an old bookmark carrying a pre-`v76_e` synthetic `c…` id
+  cannot be resolved for a mixed-language chain. No new `c…` ids are produced after `v76_e`.
+- **`_sbChapterTarget`** (`index.html` ~8065) — the last known instance of the raw-lessons pattern.
+- **The storyline-page TTS selector** — `ids = ['ls']`, the `-sl` elements are gone, but the
+  function's existence check still looks for `tts-lang-select-sl`. Also dead: `#tts-row` /
+  `buildTtsSelector()`, permanently `display:none`, still rebuilt on every lesson-set entry.
+- **The two language menus should eventually be GENERATED from `languages.json`** — they are
+  deliberately ordered differently, so generating would silently reorder a user-visible menu.
+  `unit-lang-menu-coverage` makes the duplication safe meanwhile.
+- **The import dedup's title-based tie-break** still decides which copy of a duplicated chain
+  survives on a non-content signal (`v75_f`). No longer reachable from the import path.

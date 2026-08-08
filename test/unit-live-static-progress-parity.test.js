@@ -245,12 +245,34 @@ function playThrough(list, topics, chapterIds) {
     _renderStorylineScreen('ch1', encodeURIComponent(${JSON.stringify(names2)}.join('|')), ${JSON.stringify(names2)});
     true;`, 'play-first');
   const html2 = C2.run(`(function(){ var e=document.getElementById('sl-screen-body'); return e ? e.innerHTML : ''; })()`, 'h');
-  // The chapter CARDS carry their own 🔒 overlay when locked; the full-story row is still locked
-  // here (chapter 2 unplayed), so count the locks rather than test for any.
-  const locks = (html2.match(/🔒/g) || []).length;
-  // One lock only: the full-story row (chapter 2 is unplayed). Every chapter CARD must be open.
-  assert.strictEqual(locks, 1,
-    `only the full story stays locked — later chapters open once chapter 1 is complete (found ${locks} locks)`);
+  // v76_d: this counted TOTAL 🔒 and required exactly 1, which silently encoded the shape of a
+  // TWO-chapter storyline (ch2 open + the full-story row locked). The corpus is not a constant
+  // (harness rule): the first chain the selector above matches is now SIX chapters, where ch3..ch6
+  // are locked *correctly* — their own predecessors are unplayed — so the count was 5 and the
+  // product was right. Assert the CLAIM instead: the chapter AFTER a completed one opens.
+  // Chapter cards carry a locked/unlocked wrapper (index.html ~7490); read that, in render order.
+  const cards = [];
+  const wrapRe = /<div style="position:relative;border-radius:var\(--radius-xl\);overflow:hidden(;opacity:\.45;pointer-events:none)?">/g;
+  for (let mm; (mm = wrapRe.exec(html2)) !== null; ) cards.push({ locked: !!mm[1], at: mm.index });
+  assert.ok(cards.length >= 2,
+    `the storyline screen rendered its chapter cards (found ${cards.length})`);
+  assert.strictEqual(cards[0].locked, false, 'the played chapter itself is open');
+  assert.strictEqual(cards[1].locked, false,
+    'the chapter AFTER a completed one opens — the shared-rule fix (v74_i); under the raw '
+    + '`every(done)` rule a mixed/hidden-lesson chapter is never "finished" and this stayed locked');
+  // Non-vacuity, evaluated on the data this assertion actually runs against (session-28 rule 3):
+  // if NOTHING is ever locked the check above is meaningless. A chain longer than two must still
+  // lock the chapter whose own predecessor is unplayed.
+  if (cards.length > 2) {
+    assert.strictEqual(cards[2].locked, true,
+      'a chapter whose OWN predecessor is unplayed is still locked — otherwise the chain rule is '
+      + 'not running at all and the assertion above passes for the wrong reason');
+  }
+  // The full story stays locked while later chapters are unplayed; it renders its own lock row
+  // (index.html ~7608) rather than a card overlay.
+  const fullStoryLocks = (html2.match(/<span>🔒<\/span>/g) || []).length;
+  assert.strictEqual(fullStoryLocks, 1,
+    `the full-story row is still locked while later chapters are unplayed (found ${fullStoryLocks})`);
   console.log('  full-story lock: closed before play, open after; chapter chain unlocks on the shared rule');
 }
 

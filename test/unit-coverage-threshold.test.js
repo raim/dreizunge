@@ -176,8 +176,17 @@ console.log('  clean card: trophy/%-pill/stat panels + dead CSS/JS removed: OK')
     // The blocker gets its own row at its own mark, so the card explains why Next is locked.
     const gateRow = rows.find(r => r.mark === '100%');
     assert.ok(gateRow, 'the story-gated lesson gets its own row showing its 100% requirement');
-    assert.strictEqual(gateRow.label, (topic.lessons[compIdx].title || '').trim(),
-      'labelled with the lesson the learner just played (its own title — no new UI string)');
+    // v76_d: this compared against the RAW title and broke when the corpus moved to a 42-char one.
+    // The card truncates a long row label (index.html ~15413, >40 → slice(0,39)+'…'), exactly as
+    // the chapter row above truncates at 34 — so accept either form, the same way that assertion
+    // does. The claim is "the row is labelled with the lesson's own title", not "the label is
+    // never shortened".
+    const _gateTitle = (topic.lessons[compIdx].title || '').trim();
+    assert.ok(_gateTitle, 'the story-gated lesson has a title to be labelled with (non-vacuity)');
+    assert.ok(gateRow.label === _gateTitle
+           || (_gateTitle.length > 40 && gateRow.label === _gateTitle.slice(0, 39) + '…'),
+      'labelled with the lesson the learner just played (its own title — no new UI string); '
+      + `got "${gateRow.label}" for "${_gateTitle}"`);
     assert.ok(gateRow.markAtRightEdge,
       'a 100% mark is drawn INSIDE the track — at left:100% it rendered off the end, so the '
       + 'strictest requirement was the one that could not be seen');

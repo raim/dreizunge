@@ -101,6 +101,70 @@ const { ROOT } = require('./lib-dom');
   fs.rmSync(tmp, { recursive: true, force: true });
 }
 
+// ── 3. v76_f — progress is written after EVERY batch, not once at the end ───────────────────
+// User-reported: "the entries seem to not be stored until finished". The mode collected every
+// language into memory and wrote languages.json once, after the loop — so an interrupted run
+// (Ctrl-C, a backend timeout, a crash) threw away everything it had already earned. The ui.json
+// path in the same file has saved per batch all along.
+//
+// Measured by killing the run mid-way: the stub answers the first language and then hard-exits the
+// process on the second. Whatever the first batch earned must already be on disk.
+{
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'langnames-partial-'));
+  // Three UI-language columns to fill, so there is a "first batch" and a "later batch".
+  const langs = {
+    en: { name: 'English', flag: '\u{1F1EC}\u{1F1E7}', tts: 'en-GB', names: { en: 'English' } },
+    de: { name: 'German',  flag: '\u{1F1E9}\u{1F1EA}', tts: 'de-DE', names: { en: 'German'  } },
+    sr: { name: 'Serbian', flag: '\u{1F1F7}\u{1F1F8}', tts: 'sr-RS', names: { en: 'Serbian' } },
+  };
+  fs.writeFileSync(path.join(tmp, 'languages.json'), JSON.stringify(langs, null, 2));
+  fs.writeFileSync(path.join(tmp, 'ui.json'), JSON.stringify({ en: { 'a.b': 'x' } }, null, 2));
+  for (const f of ['translate-ui.js', 'ui-qc.js']) {
+    fs.copyFileSync(path.join(ROOT, f), path.join(tmp, f));
+  }
+  // Answers the first call, then aborts the process on the second — standing in for any
+  // interruption. process.exit skips every after-the-loop write by construction.
+  fs.writeFileSync(path.join(tmp, 'llm.js'), `
+    const fs = require('fs'), path = require('path');
+    const N = path.join(__dirname, 'n.txt');
+    function callLLM(model, system, userMsg, maxTokens, opts) {
+      const n = (fs.existsSync(N) ? Number(fs.readFileSync(N, 'utf8')) : 0) + 1;
+      fs.writeFileSync(N, String(n));
+      if (n > 1) process.exit(9);            // interrupted, mid-run
+      const asked = JSON.parse(userMsg);
+      const out = {};
+      for (const k of Object.keys(asked)) out[k] = 'NAME_' + k;
+      return Promise.resolve({ text: JSON.stringify(out) });
+    }
+    module.exports = { callLLM, ping: () => Promise.resolve(true),
+                       extractJSON: (s) => JSON.parse(s) };
+  `);
+
+  let exitCode = 0;
+  try {
+    execFileSync(process.execPath, ['translate-ui.js', '--langnames'],
+                 { cwd: tmp, encoding: 'utf8', stdio: 'pipe' });
+  } catch (e) { exitCode = e.status; }
+  assert.strictEqual(exitCode, 9,
+    'the run really was interrupted mid-way (non-vacuity: if it completed normally this section '
+    + 'would be testing the end-of-run write it exists to replace)');
+
+  const calls = Number(fs.readFileSync(path.join(tmp, 'n.txt'), 'utf8'));
+  assert.ok(calls >= 2, `more than one batch was attempted (got ${calls})`);
+
+  const after = JSON.parse(fs.readFileSync(path.join(tmp, 'languages.json'), 'utf8'));
+  const written = Object.keys(after).filter(c => Object.values(after[c].names || {}).some(v => /^NAME_/.test(v)));
+  assert.ok(written.length > 0,
+    'the names earned BEFORE the interruption are on disk — this is the whole report: with a '
+    + 'single write after the loop, an interrupted run leaves languages.json untouched');
+  // The file must still be valid and structurally intact after a partial write.
+  assert.strictEqual(after.sr.tts, 'sr-RS', 'the partially-written file keeps everything outside `names`');
+  assert.strictEqual(after.en.names.en, 'English', 'and its pre-existing names');
+
+  fs.rmSync(tmp, { recursive: true, force: true });
+}
+
 console.log('  callLLM rejects an options bag and names the positional signature');
 console.log('  --langnames issues a well-formed call and writes the response into languages.json');
+console.log('  --langnames persists after every batch: an interrupted run keeps what it earned');
 console.log('unit-langnames: ALL PASSED');

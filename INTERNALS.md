@@ -13,7 +13,7 @@ please fix it.
 Every entry below was found by measurement or by a test failing, not by reading anything. That is
 the gap this document exists to close.
 
-Last verified against **`v74_c`**.
+Last verified against **`v76_f`**.
 
 ---
 
@@ -147,6 +147,48 @@ intact at any pass mark below 1.0 (`v71_s`).
 **A withheld done-flag makes `_firstUnfinishedLessonIdx` keep returning that lesson.** Any rule that
 refuses to mark a lesson done must also stop Next pointing back at it, or the forward button
 silently means "replay this".
+
+**A storyline is ONE unit; the library language filter decides whether it is shown, not which of
+its chapters it has (`v76_e`).** `loadSavedList` keeps two id indexes: `byId` (language-filtered,
+for deciding what appears) and `byIdAll` (every topic, for resolving a chain). **Every chain-scoped
+lookup must use `byIdAll`** — a chain may legitimately contain a chapter the current filter hides,
+and `byId` reads it as missing. Before this, chains were projected through `byId` and then matched
+back against `sl.chapters` by exact length and position, which a projected chain can never satisfy;
+the renderer fell through to a synthetic `'c'+hash` chain id with no storyline object behind it, so
+title, icon, storyboard and summary all vanished and the chapter count and deck payload were short.
+Only mixed-language storylines are affected, which is why it survived: with every chapter in one
+language pair the filter removes none of them and the exact match succeeds. Measured on the reported
+data (`sl_9302163`, six chapters over `sr<-en` / `sr<-de` / `hr<-sr`) at `libFilter=sr`,
+`libSrcFilter=all`: 5 of 6 chapters survived and the card was keyed `c1935658823`.
+`build_history/probe_landing_v76e.js` re-runs the measurement.
+
+**Identity is carried through a projection, never recovered by hashing it.** Third instance of this
+shape. `v75_f`: a storyline rebuilt (losing its storyboard) because its stored id was not the hash
+of its chapter list. `v76_e`: a storyline unrecognised because its chapter list was filtered before
+it was matched. **If a list is filtered and then matched back against its source by length or
+position, the filter and the match are the same bug waiting.** Related: the import dedup's
+title-based tie-break still decides which copy of a duplicated chain survives on a non-content
+signal — no longer reachable from the import path, but unfixed.
+
+**Several scripts is not the same as a script CHOICE (`v76_g`).** `_langScript` lists more than one
+script for both `sr` and `ja`, but Serbian is written in Cyrillic **or** Latin (a choice) while
+Japanese mixes hiragana **and** katakana in one sentence (no choice). So
+`scriptsForLang(x).length > 1` must NOT gate a script picker, a prompt instruction, or a stamp —
+the gate is `scripts.json` `_scriptChoice`. Measured over target-language text per topic: `sr`
+mixes its two scripts in **0 of 5** topics, `ja` in **9 of 13**. The declaration is tier 3; the
+check on it is tier 2 (`unit-script-choice` §2 tests it against the corpus in both directions), so
+a wrong entry fails loudly rather than silently offering a meaningless choice. Topics carry
+`script` (target side) and `srcScript` (source side), stamped by `backfill-script.js` from Unicode
+detection alone. **As of `v76_g` nothing READS these fields** — generation is still not told which
+script to use, which is why the corpus split target→Latin, source→Cyrillic.
+
+**`makeParentResolver` is same-language guarded** (`index.html:1429` — returns `null` when the
+parent's `lang` or `srcLang` differs). So any path that rebuilds a chain from `continuedFrom` links
+rather than reading `storylines[]` **cannot reconstruct a mixed-language chain**. The v29
+`storylines[]` path is what the app uses, so this is latent rather than live; the one reachable
+consequence is that `_tryOpenStorylineByChainId`'s legacy fallback cannot resolve an old bookmark
+carrying a pre-`v76_e` synthetic `c…` id for such a chain. Know it is there before touching chain
+construction.
 
 **Model output that quotes source text is verified, never trusted.** `v72_d`: `generateSynonyms`
 asks the model to quote the story sentence it chose the synonyms against, and
@@ -452,6 +494,20 @@ immediately before `buildExercises(idx)`.
 `lessons.json`" breaks when the data is replaced. Prefer hand-built fixtures for anything needing
 exact counts — and if a section only means something when the corpus contains a particular case,
 **assert that the case was found**, or the section goes vacuous on new data.
+
+**A count of a repeated element pins the fixture, not the claim (`v76_d`).** `total 🔒 === 1`
+encoded "a two-chapter storyline" and broke when the corpus offered a six-chapter one — while the
+product was correct. The chapter-card lock overlay and the full-story lock row are *different
+elements*; count by kind, or assert the specific one the claim is about.
+
+**`loadSavedList` returns early on an empty filtered list.** A "this must NOT be shown" assertion
+written with a filter that matches nothing never reaches the storyline branch, and passes under its
+own revert. Pair every such negative with a positive assertion proving the render got that far.
+
+**Driving `loadSavedList` headlessly needs two stubs**, neither of them the code under test:
+`window.fetch` (it fetches `/api/lessons` and `/api/storylines`) and `_populateLibSelects` (the stub
+DOM has no `<option>` lists, so the menu populator throws). It is `async`, so flush microtasks
+before reading `#saved-list`.
 
 **Wiring changes need a run, not source assertions.** When one side sends and the other consumes,
 assertions on each half prove nothing about the join. In `v71_u` the server could ignore `arcTypes`

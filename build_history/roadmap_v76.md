@@ -1,6 +1,6 @@
 # Roadmap — v76 line
 
-Current cut: **`v76_c`**. Baseline `node test/run.js` **176**, `--quick` **153**, `check-inline` 0 on
+Current cut: **`v76_g`**. Baseline `node test/run.js` **178**, `--quick` **155**, `check-inline` 0 on
 both builds.
 
 > **Carried forward from `roadmap_v75.md` in full, from §3 onward.** The v71→v72 boundary lost three
@@ -11,8 +11,23 @@ both builds.
 
 | release | what |
 |---|---|
+| `v76_g` | **Script choice for digraphic languages — the data half.** Serbian is written in Cyrillic OR Latin and nothing told the model which, so it chose per generation (target → Latin, source → Cyrillic). `scripts.json` now declares **`_scriptChoice: ["sr"]`**, and `backfill-script.js` stamps `script`/`srcScript` on existing topics by Unicode detection. **The obvious gate `scriptsForLang(x).length > 1` is WRONG** — it is equally true of `ja`, which mixes hiragana and katakana concurrently; measured, `sr` texts mix in 0 of 5 and `ja` in 9 of 13. Nothing reads the field yet. |
+| `v76_f` | **`--langnames` wrote only at the end** (user-reported) — every language accumulated in memory and `languages.json` was written once, after the loop, so any interruption discarded the whole run. `translateLang` in the same file has saved per batch all along; this mode never copied it (**standing rule 10, second time in the same function**). Extracted `_flushLangs()` and call it after every batch. `unit-langnames` §3 runs the REAL mode and kills it mid-run. |
+| `v76_e` | **A mixed-language storyline lost its identity on the main page** (user-reported, `sl_9302163`). `loadSavedList` projected each chain through the **language-filtered** id index, and `storylines_renderChain` recovers the storyline by an exact full-length positional match — which a truncated chain can never satisfy — so it fell through to a synthetic `'c'+hash` id with no storyline behind it: no title, icon, storyboard or summary, and a short chapter count and deck. Reproduced the user's exact `c1935658823` at `libFilter=sr` / `libSrcFilter=all`. **A storyline is one unit: the filter decides WHETHER it is shown, never WHICH of its chapters are.** Same class as `v75_f`. |
+| `v76_d` | **Test-only.** Two guards had pinned the shape of the corpus rather than their claim: `unit-coverage-threshold` compared a progress-row label against the raw title while the card truncates at 40 chars (the corpus moved to a 42-char one), and `unit-live-static-progress-parity` asserted `total 🔒 === 1`, which encoded a *two*-chapter storyline where the chain is now six. **In both cases the product was correct.** No version bump, no `docs/` rebuild — no shipped artifact moved. |
 | `v76_c` | **`--langnames` shipped broken** — `callLLM` is positional and returns `{text}`; it was called with an options bag and its result read as a string. Only `--check` had ever been run, and `--check` never calls the model. Fixed, `llm.js` now rejects a non-string model with an actionable message, and `unit-langnames` runs the real mode against a stubbed backend. |
 | `v76_b` | **`sr`/`hr` were missing from both language drop-downs** — the menus are hand-written `<option>` markup, not generated from `languages.json`, so adding a language is a two-file change and only one file had a guard. Options added; `unit-lang-menu-coverage` now asserts both directions plus `name`/`flag`/`tts`. Added **`translate-ui.js --langnames`** to fill `languages.json`'s 32x32 `names` matrix (151 cells were empty — including 31 for `lb`, a pre-existing hole nobody knew about). |
+
+**Open from `v76_e`, needs the user:** the fix means filtering the library to one language now shows
+a mixed-language storyline **whole**, including chapters in the other languages. The alternative
+(fix identity only, keep truncating) leaves *"the lessons in a different language didn't show up"*
+unfixed and still hands `openStorylineScreen` a short chain. Confirm or reverse.
+
+**Open from `v76_e`, not fixed:** `_tryOpenStorylineByChainId`'s legacy fallback rebuilds chains
+through `makeParentResolver`, which is **same-language guarded** (`index.html:1429`), so an old
+bookmark or shared link carrying one of the synthetic `c…` ids cannot be resolved for a
+mixed-language chain and lands on the landing page. No new `c…` ids are produced after `v76_e`.
+Widening the parent resolver changes chain CONSTRUCTION and wants its own release.
 
 **Open, not done:** the two menus should eventually be GENERATED from `languages.json`. Not done in
 `v76_b` because they are deliberately ordered differently (`lang-select` leads with Italian) and
@@ -410,11 +425,12 @@ what is owed by the USER, open decisions), then THIS file (the highest-numbered
    `unit-version-derivation`), so a single bump in `server.js` + a `build-static.js` re-run is
    enough — no more hand-editing `build-static.js`.
    **Point releases use an alphabetic suffix** (user, v70): the base cut is the bare number and is
-   implicitly `a`, so the sequence is `v75` → `v75_b` → `v75_c` → … — the same convention the v69–v74
-   lines ran. **This is the `v75` line.** Roadmaps are per BASE version, so point
-   releases do not each get one — this file stays current through the whole v75 line.
+   implicitly `a`, so the sequence is `v76` → `v76_b` → `v76_c` → … — the same convention the v69–v75
+   lines ran. **This is the `v76` line.** Roadmaps are per BASE version, so point
+   releases do not each get one — this file stays current through the whole v76 line.
    (This paragraph is the one version-specific line in the block and has been carried forward stale
-   twice — `roadmap_v73.md` shipped saying "This is the `v72` line". **Check it at every base cut.**)
+   THREE times now — `roadmap_v73.md` shipped saying "This is the `v72` line", and this file shipped
+   the whole v76 line saying "the `v75` line" until session 30. **Check it at every base cut.**)
 7. **Roadmap** — mark shipped items ✅, carry every open TODO/idea forward, and at a version bump
    write the next `build_history/roadmap_v{N+1}.md` (carrying this protocol block forward).
 8. **Session notes** — write/update `build_history/v{ver}_session{n}_notes.md`.
@@ -565,5 +581,21 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
    empty progress must clear it and say so.
 4. **Timestamps are evidence, and cheap.** `ui.json` older than `index.html` was the entire
    diagnosis of the first red check.
+
+## Rules earned in session 30
+
+12. **A test that hard-codes a COUNT of a repeated element is pinning the fixture, not the claim.**
+    `total 🔒 === 1` meant "a two-chapter storyline"; it broke on a six-chapter chain while the
+    product was correct. Count by element KIND (the chapter-card overlay and the full-story row are
+    different elements), or assert the specific element the claim is about.
+13. **A guard whose scenario matches nothing may never reach the branch it tests.** `loadSavedList`
+    returns early on an empty filtered list, so a "this must NOT be shown" check written with a
+    filter matching nothing passed under its own revert. A negative assertion needs a positive one
+    beside it proving the render got that far.
+14. **Identity must be CARRIED through a projection, never recovered by hashing it.** Third time:
+    `v75_f` (a storyline rebuilt because its stored id was not the hash of its chapters), `v76_e`
+    (a storyline unrecognised because its chapter list was filtered before it was matched). If a
+    list is filtered and then matched back against its source by length or position, the filter and
+    the match are the same bug waiting.
 
 (If you add a new standing rule, append it here so the next session inherits it.)

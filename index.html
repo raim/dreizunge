@@ -5260,16 +5260,34 @@ async function loadSavedList(){
   // ── Build display chains from v29 storylines[] or legacy continuedFromId ──
   // Index visible topics by stable id for chain/chapter lookups.
   const byId = Object.fromEntries(filtered.filter(l=>l.id).map(l => [l.id, l]));
+  // v76_e: …and ALL topics, for resolving a chain. A storyline is one unit: the language filter
+  // decides WHETHER it is shown, never WHICH of its chapters are. Projecting the chain through the
+  // filtered index instead broke a mixed-language storyline three ways at once — see below.
+  const byIdAll = Object.fromEntries(saved.filter(l=>l.id).map(l => [l.id, l]));
 
   let storylines, orphans;
   const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
   const v29chains = slArr.filter(sl => sl.chapters && sl.chapters.length >= 1);
 
   if (v29chains.length > 0) {
-    // v29: keep chapter IDS as the chain identity, filtered to visible topics
-    storylines = v29chains.map(sl =>
-      (sl.chapters||[]).filter(cid => byId[cid])
-    ).filter(c => c.length >= 1);
+    // v29: keep chapter IDS as the chain identity. Shown when ANY chapter passes the filter; the
+    // chain itself is resolved WHOLE.
+    //
+    // v76_e (user-reported, storyline sl_9302163 "Shadows of Marakana"): this used to be
+    //   v29chains.map(sl => sl.chapters.filter(cid => byId[cid]))
+    // which silently truncated a chain whose chapters are not all in one language pair. The
+    // renderer then tries to recover the storyline by an exact, full-length, positional match
+    // against sl.chapters — a truncated chain can never match — so it fell through to a synthetic
+    // 'c'+hash id with no storyline object behind it. Measured on the reported data, with the
+    // target filter on Serbian and the source filter on All: 5 of 6 chapters survived, the card
+    // was keyed `c1935658823` instead of `sl_9302163`, and title, icon 🏟️, storyboard and summary
+    // all vanished while the storyline sat intact in the store. Same class as v75_f: identity
+    // recovered by a hash of a projection rather than carried.
+    storylines = v29chains
+      .filter(sl => (sl.chapters||[]).some(cid => byId[cid]))
+      .map(sl => (sl.chapters||[]).filter(cid => byIdAll[cid]))
+      .filter(c => c.length >= 1);
+    // Whole chains here too, or a chapter the filter hides would ALSO be listed as an orphan.
     const inChain = new Set(storylines.flat());
     orphans = filtered.filter(l => !inChain.has(l.id));
   } else {
@@ -5296,11 +5314,13 @@ async function loadSavedList(){
   }
 
   // Sort storylines by source (home) language, then newest updatedAt within each.
+  // v76_e: chain-scoped lookups resolve through byIdAll — a chain may legitimately contain a
+  // chapter the current filter hides, and byId would read it as missing.
   const newestOf = chain => chain.reduce((best, id) => {
-    const dt = byId[id]?.updatedAt || byId[id]?.generatedAt || '';
+    const dt = byIdAll[id]?.updatedAt || byIdAll[id]?.generatedAt || '';
     return dt > best ? dt : best;
   }, '');
-  const srcOf = chain => byId[chain[0]]?.srcLang || 'en';
+  const srcOf = chain => byIdAll[chain[0]]?.srcLang || 'en';
   storylines.sort((a, b) =>
     srcOf(a).localeCompare(srcOf(b)) || newestOf(b).localeCompare(newestOf(a)));
   // Sort orphans by source language, then newest first within each.
@@ -5324,7 +5344,7 @@ async function loadSavedList(){
     // Group storylines by source (home) language
     let lastLang = null;
     for (const chain of storylines) {
-      const chainLang = byId[chain[0]]?.srcLang || 'en';
+      const chainLang = byIdAll[chain[0]]?.srcLang || 'en';
       if (chainLang !== lastLang) {
         const L = LANGS[chainLang] || LANGS.en;
         html += `<div class="orphans-hdr">${L.flag} ${L.name}</div>`;
@@ -5338,7 +5358,7 @@ async function loadSavedList(){
 
   function storylines_renderChain(chain) {
     // chain is an array of topic IDS; resolve to current names for display + deck payload
-    const chainTopics = chain.map(id => byId[id]?.topic || id).filter(Boolean);
+    const chainTopics = chain.map(id => byIdAll[id]?.topic || id).filter(Boolean);
     const chainTopicsJson = JSON.stringify(chainTopics);
     // Find matching v29 storyline by comparing chapter IDS directly (collision-safe)
     const slArr2 = Array.isArray(APP.storylines) ? APP.storylines : [];
@@ -5361,11 +5381,11 @@ async function loadSavedList(){
           <span style="font-size:18px">${titleIcon}</span>
           <div style="min-width:0">
             <div class="storyline-title-text">${escHtml(titleText)}</div>
-            <div class="storyline-title-sub">${(()=>{ const first=byId[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge" style="font-size:10px">${sL.flag}→${tL.flag}</span> `; })()} ${chain.length===1?t('storyline.chapters',{n:1}):t('storyline.chapters_plural',{n:chain.length})}${chainDate?' · '+chainDate:''}</div>
+            <div class="storyline-title-sub">${(()=>{ const first=byIdAll[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge" style="font-size:10px">${sL.flag}→${tL.flag}</span> `; })()} ${chain.length===1?t('storyline.chapters',{n:1}):t('storyline.chapters_plural',{n:chain.length})}${chainDate?' · '+chainDate:''}</div>
           </div>
          </span>`
       : `<span class="storyline-title" style="flex:1;cursor:pointer" onclick="event.stopPropagation();openStorylineScreen(this.closest('[data-chain-id]').dataset.chainId,this.closest('[data-chain]').dataset.chain)">
-          ${(()=>{ const first=byId[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge">${sL.flag}→${tL.flag}</span>`; })()}
+          ${(()=>{ const first=byIdAll[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge">${sL.flag}→${tL.flag}</span>`; })()}
           <span class="storyline-title-sub">${t('storyline.title')} · ${chain.length===1?t('storyline.chapters',{n:1}):t('storyline.chapters_plural',{n:chain.length})}${chainDate?' · '+chainDate:''}</span>
          </span>`;
     const genBtn = APP.info.canGenerate
@@ -5386,7 +5406,7 @@ async function loadSavedList(){
         onclick="event.stopPropagation();shareStorylineById(this.dataset.chainId)">🔗</button>
       ${APP.info.canGenerate?`<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="${t('qc.btn.storyline')} ${t('qc.btn.force_hint')}"
         data-sl="${chainId}"
-        onclick="event.stopPropagation();qcRun({storylineId:this.dataset.sl},this)">🔍${(()=>{const n=chain.reduce((a,id)=>a+((byId[id]&&byId[id].qcFlags)||0),0);return n>0?`<span style="color:var(--red);font-weight:800">${n}</span>`:'';})()}${(()=>{const sp=chain.reduce((a,id)=>a+((byId[id]&&byId[id].storyQcPending)?1:0),0);return sp>0?`<span title="${t('qc.story_pending')}" style="color:var(--green);font-weight:800">📝${sp}</span>`:'';})()}</button>`:''}
+        onclick="event.stopPropagation();qcRun({storylineId:this.dataset.sl},this)">🔍${(()=>{const n=chain.reduce((a,id)=>a+((byIdAll[id]&&byIdAll[id].qcFlags)||0),0);return n>0?`<span style="color:var(--red);font-weight:800">${n}</span>`:'';})()}${(()=>{const sp=chain.reduce((a,id)=>a+((byIdAll[id]&&byIdAll[id].storyQcPending)?1:0),0);return sp>0?`<span title="${t('qc.story_pending')}" style="color:var(--green);font-weight:800">📝${sp}</span>`:'';})()}</button>`:''}
       <button class="ico-btn" style="font-size:11px;padding:2px 8px;color:var(--red)" title="Delete all chapters in this storyline"
         data-chain="${escapedChain}"
         onclick="event.stopPropagation();deleteStoryline(this.dataset.chain)">🗑️</button>
@@ -5408,7 +5428,7 @@ async function loadSavedList(){
         `<button class="storyline-hdr-btn" style="flex-shrink:0" data-speak="slsc-summary-body-${chainId}" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="${t('lesson.read_aloud')}">🔊</button>` +
         (_canEdit() ? `<button class="storyline-hdr-btn" style="flex-shrink:0;margin-right:6px" onclick="event.stopPropagation();openSummaryEdit('${chainId}')" title="Edit summary">✏️</button>` : '') +
         `</div>` +
-        `<div class="storyline-story-body" id="slsc-summary-body-${chainId}" dir="auto" data-lang="${byId[chain[0]]?.srcLang||''}">` +
+        `<div class="storyline-story-body" id="slsc-summary-body-${chainId}" dir="auto" data-lang="${byIdAll[chain[0]]?.srcLang||''}">` +
         `<p dir="auto" style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">${escHtml(_slSum)}</p>` +
         `</div></div>`;
     }
