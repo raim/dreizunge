@@ -1,6 +1,6 @@
 # Roadmap — v76 line
 
-Current cut: **`v76_i`**. Baseline `node test/run.js` **180**, `--quick` **156**, `check-inline` 0 on
+Current cut: **`v76_j`**. Baseline `node test/run.js` **181**, `--quick` **157**, `check-inline` 0 on
 both builds.
 
 > **Carried forward from `roadmap_v75.md` in full, from §3 onward.** The v71→v72 boundary lost three
@@ -11,6 +11,7 @@ both builds.
 
 | release | what |
 |---|---|
+| `v76_j` | **"Continue story" landed with an empty "continue from" field** (user-reported, `sl_9302163`). `continueFromLesson` switched the TARGET language — which repopulates the menu — before switching the SOURCE, so the menu was built for a pair with no chapters and the chapter's own option never existed. Only a mixed-language storyline can show it. Plus the **pin**: arriving by this route fixes the story, it is offered whatever the language filters say, and it is cancelled by the ✕ or by "— new story —" (persisted, user's rulings). Note: the reordering is defensive and NOT independently observable — the pin subsumes it, and the test says so. |
 | `v76_i` | **The script picker.** Rendered under each language select, only when `scripts.json` `_scriptChoice` lists that language, labelled `Cyrillic`/`Latin`. **Inherits from the chapter being continued**, explicit pick only for a brand-new story (user's ruling); an explicit pick is the per-chapter override. Because `continueFromLesson` prefills the landing form rather than opening its own dialog, "new story" and "add chapter" share one control. New `en` key: `form.script_pick`. |
 | `v76_h` | **The model is told which script to write in.** `langName(code, script)` — the choke point every prompt fills `{L}`/`{S}` from — now names it (`"Serbian (written in Cyrillic script)"`), plus a `story.scriptNote` consistency rule. `script`/`srcScript` accepted at `/api/generate`, **validated against scripts.json rather than trusted**, threaded through the generator opts, and persisted on the topic so the next chapter can inherit. Found on the way: a `ReferenceError` in `generateErrorHunt` swallowed by its own catch, and `fake-ollama` truncating logged prompts at 400 chars, which made any tail assertion vacuous. |
 | `v76_g` | **Script choice for digraphic languages — the data half.** Serbian is written in Cyrillic OR Latin and nothing told the model which, so it chose per generation (target → Latin, source → Cyrillic). `scripts.json` now declares **`_scriptChoice: ["sr"]`**, and `backfill-script.js` stamps `script`/`srcScript` on existing topics by Unicode detection. **The obvious gate `scriptsForLang(x).length > 1` is WRONG** — it is equally true of `ja`, which mixes hiragana and katakana concurrently; measured, `sr` texts mix in 0 of 5 and `ja` in 9 of 13. Nothing reads the field yet. |

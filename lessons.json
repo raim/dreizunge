@@ -9989,13 +9989,13 @@
                 "translategemma:12b": {
                   "sug": "in dem widerhallen nur fremde Schritte.",
                   "field": "source",
-                  "at": "2026-08-08T09:51:52.774Z"
+                  "at": "2026-08-08T15:59:41.566Z"
                 }
               },
               "qc": {
                 "sug": "in dem widerhallen nur fremde Schritte.",
                 "field": "source",
-                "at": "2026-08-08T09:51:52.774Z",
+                "at": "2026-08-08T15:59:41.566Z",
                 "by": "translategemma:12b"
               }
             },
@@ -10028,13 +10028,13 @@
                 "translategemma:12b": {
                   "sug": "Angst ist die universelle Sprache aller Städte.",
                   "field": "source",
-                  "at": "2026-08-08T09:53:05.265Z"
+                  "at": "2026-08-08T16:01:19.869Z"
                 }
               },
               "qc": {
                 "sug": "Angst ist die universelle Sprache aller Städte.",
                 "field": "source",
-                "at": "2026-08-08T09:53:05.265Z",
+                "at": "2026-08-08T16:01:19.869Z",
                 "by": "translategemma:12b"
               }
             },
@@ -10053,13 +10053,13 @@
                 "translategemma:12b": {
                   "sug": "Jeder Stadt hat ihren eigenen Akzent.",
                   "field": "source",
-                  "at": "2026-08-08T09:53:34.654Z"
+                  "at": "2026-08-08T16:02:00.932Z"
                 }
               },
               "qc": {
                 "sug": "Jeder Stadt hat ihren eigenen Akzent.",
                 "field": "source",
-                "at": "2026-08-08T09:53:34.654Z",
+                "at": "2026-08-08T16:02:00.932Z",
                 "by": "translategemma:12b"
               }
             }
@@ -10500,8 +10500,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 8276,
-        "totalCompletionTokens": 1475,
+        "totalPromptTokens": 13202,
+        "totalCompletionTokens": 1541,
         "lessons": [
           {
             "lessonNum": 1,
@@ -10512,12 +10512,12 @@
         ],
         "tokensByType": {
           "add_lesson": 1689,
-          "lesson_qc": 4992,
+          "lesson_qc": 9984,
           "story_qc": 491
         }
       },
       "generatedAt": "2026-08-08T06:26:09.387Z",
-      "updatedAt": "2026-08-08T09:55:32.923Z",
+      "updatedAt": "2026-08-08T16:02:00.933Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-08T09:55:32.923Z",
@@ -10768,13 +10768,13 @@
                 "translategemma:12b": {
                   "sug": "The tank is going down the street.",
                   "field": "source",
-                  "at": "2026-08-08T09:41:41.956Z"
+                  "at": "2026-08-08T15:51:36.773Z"
                 }
               },
               "qc": {
                 "sug": "The tank is going down the street.",
                 "field": "source",
-                "at": "2026-08-08T09:41:41.956Z",
+                "at": "2026-08-08T15:51:36.773Z",
                 "by": "translategemma:12b"
               }
             },
@@ -11065,8 +11065,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 25852,
-        "totalCompletionTokens": 2635,
+        "totalPromptTokens": 30429,
+        "totalCompletionTokens": 2687,
         "lessons": [
           {
             "lessonNum": 1,
@@ -11076,13 +11076,13 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 20907,
+          "lesson_qc": 25536,
           "story_qc": 490,
           "recreate": 4951
         }
       },
       "generatedAt": "2026-08-07T13:23:54.994Z",
-      "updatedAt": "2026-08-08T10:55:06.993Z",
+      "updatedAt": "2026-08-08T15:53:19.471Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-07T21:35:35.008Z",
@@ -12999,7 +12999,9 @@
             "completionTokens": 315,
             "ms": 307656,
             "at": "2026-08-07T12:46:43.945Z"
-          }
+          },
+          "qcAt": "2026-08-08T15:37:48.854Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1786170463701_8v6c",
@@ -13470,13 +13472,13 @@
                 "translategemma:12b": {
                   "sug": "X is not a synonym of trava.",
                   "field": "note",
-                  "at": "2026-08-08T09:31:03.762Z"
+                  "at": "2026-08-08T15:38:43.263Z"
                 }
               },
               "qc": {
                 "sug": "X is not a synonym of trava.",
                 "field": "note",
-                "at": "2026-08-08T09:31:03.762Z",
+                "at": "2026-08-08T15:38:43.263Z",
                 "by": "translategemma:12b"
               }
             },
@@ -13642,7 +13644,20 @@
                 "dok",
                 "su",
                 "trčali."
-              ]
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Players were freezing while they were running.",
+                  "field": "source",
+                  "at": "2026-08-08T15:46:58.243Z"
+                }
+              },
+              "qc": {
+                "sug": "Players were freezing while they were running.",
+                "field": "source",
+                "at": "2026-08-08T15:46:58.243Z",
+                "by": "translategemma:12b"
+              }
             }
           ],
           "_genMeta": {
@@ -13732,8 +13747,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 16719,
-        "totalCompletionTokens": 2637,
+        "totalPromptTokens": 27376,
+        "totalCompletionTokens": 2745,
         "lessons": [
           {
             "lessonNum": 1,
@@ -13743,14 +13758,14 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 11727,
+          "lesson_qc": 22492,
           "story_qc": 451,
           "recreate": 4255,
           "add_lesson": 1217
         }
       },
       "generatedAt": "2026-08-07T12:41:36.188Z",
-      "updatedAt": "2026-08-08T14:31:45.593Z",
+      "updatedAt": "2026-08-08T15:46:58.244Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-07T20:55:52.810Z",

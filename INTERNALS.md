@@ -13,7 +13,7 @@ please fix it.
 Every entry below was found by measurement or by a test failing, not by reading anything. That is
 the gap this document exists to close.
 
-Last verified against **`v76_i`**.
+Last verified against **`v76_j`**.
 
 ---
 
@@ -190,6 +190,14 @@ rather than trusted. `prompts.json` `story.scriptNote` adds the consistency rule
 alone still lets the model drift between scripts inside one text. **`upsert()` REPLACES an entry
 rather than merging**, so a field must be on the object `generate()` RETURNS, not only on its
 mid-flight upsert — the final `upsert(data)` in the caller would otherwise drop it.
+
+**The continue-story PIN (`v76_j`).** `APP.contPin` (persisted as `imp3_contpin`) fixes which story
+is being continued. `repopulateContinueSelect` re-inserts the pinned topic when the language filters
+would drop it, badges it with its language pair, and restores it in preference to the previous
+value — so a mixed-language storyline, whose last chapter is in a different pair from the one the
+form lands on, can be continued at all. **The cancel is wired to `onContinueSelectChange()`, NOT to
+`_updateReinforcePriorVisibility()`**: the latter is also called programmatically at the end of
+every rebuild, so a cancel placed there would let a rebuild cancel the pin it exists to restore.
 
 **`makeParentResolver` is same-language guarded** (`index.html:1429` — returns `null` when the
 parent's `lang` or `srcLang` differs). So any path that rebuilds a chain from `continuedFrom` links
@@ -503,6 +511,19 @@ immediately before `buildExercises(idx)`.
 `lessons.json`" breaks when the data is replaced. Prefer hand-built fixtures for anything needing
 exact counts — and if a section only means something when the corpus contains a particular case,
 **assert that the case was found**, or the section goes vacuous on new data.
+
+**A `<select>` has no `.options` in the stub DOM (`v76_j`).** It does not parse `innerHTML`, so any
+product code reading `sel.options` (`repopulateContinueSelect`, `continueFromLesson`,
+`applyUIStrings`) sees `undefined`. Tests define the getter a real DOM would provide, derived from
+the markup the product itself wrote. `applyUIStrings()` iterates **seven** selects
+(`lang-select`, `src-lang-select`, `diff-select`, `format-select`, `style-select`,
+`vocab-mode-select`, `user-story-lang`) asynchronously via `loadUIStrings`, so a test that calls
+`selectLang`/`selectSrcLang` and shims only the select it cares about still crashes the runner
+**after** its assertions have passed.
+
+**A ref is treated as an id only when it matches `/^tp_\d+$/` (`v76_j`).** `continueFromLesson`
+falls back to matching the topic NAME otherwise, so a mnemonic fixture id (`tp_z`, `tp_a`) resolves
+to nothing and a test fails for a reason unrelated to what it is testing.
 
 **`fake-ollama` truncates logged prompts (`v76_h`).** `readChatLog()` entries carry `sys` cut to
 8000 chars — it was **400** until `v76_h`, and every note appended after a prompt's `system` block

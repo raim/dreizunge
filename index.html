@@ -924,10 +924,13 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <div class="continue-row" id="continue-row">
       <span class="continue-lbl" id="continue-lbl">Continue story from</span>
       <div class="continue-select-wrap">
-        <select class="continue-select" id="continue-select" onchange="_updateReinforcePriorVisibility()">
+        <select class="continue-select" id="continue-select" onchange="onContinueSelectChange()">
           <option value="">— new story —</option>
         </select>
         <span class="continue-select-arrow">▾</span>
+        <!-- v76_j: cancels a story pinned by the "continue story" route. Hidden unless pinned. -->
+        <button class="ico-btn" id="cont-pin-clear" style="display:none;font-size:11px;padding:2px 8px"
+          onclick="clearContinuePin()">✕</button>
       </div>
       <label style="font-size:11px;font-weight:700;color:var(--gray-dark);display:flex;align-items:center;gap:4px;margin-top:4px;cursor:pointer">
         <input type="checkbox" id="cont-all-langs" onchange="repopulateContinueSelect()"> <span id="show-other-langs-lbl">show other languages</span>
@@ -1730,6 +1733,9 @@ var APP = {
   activeJob: null,
   ttsLang: null,
   showFurigana: (localStorage.getItem('imp3_furigana')||'1')==='1',
+  // v76_j: the story pinned by "continue story", persisted like the other form choices (user's
+  // ruling). repopulateContinueSelect() re-offers it whatever the language filters say.
+  contPin: (() => { try { return localStorage.getItem('imp3_contpin') || null; } catch(_) { return null; } })(),
   cur: {lessonIdx:0,exercises:[],cur:0,hearts:3,mistakes:0,correct:0,total:0,streak:0,bestStreak:0,
         answered:false,sel:null,placed:[],usedIdx:[]}
 };
@@ -5539,6 +5545,27 @@ function _updateReinforcePriorVisibility(){
   const fcLbl = document.getElementById('use-full-chain-lbl');
   if (fcLbl && !fcLbl.textContent) fcLbl.textContent = t('gen.use_full_chain');
 }
+// ── The continue-story PIN (v76_j) ───────────────────────────────────────────────────────────
+// Arriving via "continue story" (from the storyline page or a lesson set) fixes which story is
+// being continued. Before this, that choice lived only in the select's value, so any later filter
+// change silently dropped it — the user's report. A pinned story is ALWAYS offered, whatever the
+// language filters say, and is cancelled explicitly (the ✕, or picking "— new story —").
+function loadContinuePin(){ try { return localStorage.getItem('imp3_contpin') || null; } catch(_) { return null; } }
+function setContinuePin(id){
+  APP.contPin = id || null;
+  try { id ? localStorage.setItem('imp3_contpin', id) : localStorage.removeItem('imp3_contpin'); } catch(_) {}
+  repopulateContinueSelect();
+}
+function clearContinuePin(){ setContinuePin(null); }
+// The select's own onchange. Kept separate from _updateReinforcePriorVisibility, which is also
+// called PROGRAMMATICALLY at the end of every repopulate — clearing the pin from there would let a
+// rebuild cancel the pin it is meant to restore.
+function onContinueSelectChange(){
+  const v = document.getElementById('continue-select')?.value || '';
+  if (!v) { clearContinuePin(); return; }        // "— new story —" cancels the pin
+  if (v !== APP.contPin) setContinuePin(v);      // picking another story re-pins to it
+  else _updateReinforcePriorVisibility();
+}
 function repopulateContinueSelect(){
   const contSel=document.getElementById('continue-select');
   if(!contSel) return;
@@ -5548,8 +5575,16 @@ function repopulateContinueSelect(){
   const saved=APP.savedList||[];
   // Apply BOTH the current target and source language filters, unless "show other
   // languages" is ticked.
-  const filtered=showAll ? saved
+  let filtered=showAll ? saved
     : saved.filter(s=>(s.lang||'it')===curLang && (s.srcLang||'en')===curSrc);
+  // v76_j: the pinned story survives the filters. Without this a mixed-language storyline could
+  // not be continued at all — its last chapter is in a different pair from the one the form lands
+  // on, so the filter removed the only option that mattered.
+  const _pin = APP.contPin || null;
+  if(_pin){
+    const p = saved.find(s => s.id === _pin || s.topic === _pin);
+    if(p && !filtered.includes(p)) filtered = [p, ...filtered];
+  }
   const prev=contSel.value;
   // "my story" — generate from the learner's cumulated vocabulary (see roadmap). Offered only
   // when there's learned material for the current pair. value="__my__" is a sentinel the
@@ -5565,10 +5600,17 @@ function repopulateContinueSelect(){
       const sL=LANGS[s.lang||'it']||LANGS.it;
       const sS=LANGS[s.srcLang||'en']||LANGS.en;
       const differs=(s.lang||'it')!==curLang || (s.srcLang||'en')!==curSrc;
-      const langTag=showAll&&differs?' ['+sS.flag+'\u2192'+sL.flag+']':'';
+      // v76_j: a PINNED story is shown even when it belongs to another pair, so it needs the
+      // badge whether or not "show other languages" is ticked — otherwise it reads as though it
+      // were in the current pair.
+      const _isPin=!!_pin&&(s.id===_pin||s.topic===_pin);
+      const langTag=(showAll||_isPin)&&differs?' ['+sS.flag+'\u2192'+sL.flag+']':'';
       return '<option value="'+(s.id||s.topic.replace(/"/g,'&quot;'))+'">'+sL.flag+' '+s.topic+langTag+'</option>';
     }).join('');
-  if(prev && [...contSel.options].some(o=>o.value===prev)) contSel.value=prev;
+  const _want = _pin || prev;
+  if(_want && [...contSel.options].some(o=>o.value===_want)) contSel.value=_want;
+  const _x = document.getElementById('cont-pin-clear');
+  if(_x) _x.style.display = _pin ? '' : 'none';
   _updateReinforcePriorVisibility();
 }
 
@@ -5661,17 +5703,29 @@ function continueFromLesson(ref, difficulty, storyLen){
   if(storyLen){ onStoryLenSlider(storyLen); restoreStoryLenSlider(); }
   const isId=/^tp_\d+$/.test(String(ref));
   const src=(APP.savedList||[]).find(s=> isId ? s.id===ref : s.topic===ref);
-  if(src?.lang) selectLang(src.lang);
+  // v76_j (user-reported): set the SOURCE language BEFORE selectLang repopulates the
+  // continue-select. selectLang() calls repopulateContinueSelect(), which filters on the CURRENT
+  // pair — so with the target already switched and the source still on its old value, the menu was
+  // built for a pair that has no chapters, the chapter's own option never existed, and the
+  // selection below silently could not be applied. Measured on sl_9302163's last chapter (hr<-sr):
+  // arriving from it<-en the menu collapsed from 50 options to 1 and the field came up empty,
+  // while arriving from the lesson-set page (already hr<-sr) it worked — which is exactly why one
+  // route looked broken and the other did not.
+  //
+  // NOTE, honestly: this reordering is DEFENSIVE and is not independently observable, because
+  // setContinuePin() below repopulates the menu again once both languages are set — so the PIN,
+  // not this swap, is what makes the reported symptom impossible. Kept because building the menu
+  // for a pair the form is only half-way into is wrong on its own terms and wastes a rebuild;
+  // reverting it alone does NOT fail unit-continue-pin, and that is not an oversight in the test.
   if(src?.srcLang){ APP.srcLang=src.srcLang; APP.formSrcLang=src.srcLang; saveSrcLang(); const ss=document.getElementById('src-lang-select'); if(ss) ss.value=src.srcLang; updateTranslationLangHint(); }
+  if(src?.lang) selectLang(src.lang);
   document.getElementById('topic-input').value='';
   const useStoryCb=document.getElementById('use-story-cb');
   if(useStoryCb?.checked){ useStoryCb.checked=false; onUseStoryCb(); }
-  const contSel=document.getElementById('continue-select');
-  if(contSel){
-    const optVal=src?.id || (isId?ref:src?.topic);
-    const match=[...contSel.options].find(o=>o.value===optVal);
-    if(match){ contSel.value=optVal; }
-  }
+  // v76_j: arriving by this route PINS the story. A pinned story stays offered even when the
+  // language filters would exclude it (user's ruling: changing a language keeps it in the list
+  // rather than cancelling), so the selection can no longer be lost by a later filter change.
+  setContinuePin(src?.id || (isId?ref:src?.topic) || null);
   // v76_i: inherit the script from the chapter being continued (the user's ruling: inherit from
   // the storyline's previous chapter, explicit pick only for a brand-new story). Set BEFORE the
   // pickers render so the inherited value is the one preselected. Cleared first, because

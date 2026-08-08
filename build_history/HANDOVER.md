@@ -1,4 +1,4 @@
-# HANDOVER — v76_i
+# HANDOVER — v76_j
 
 One page. Read `build_history/roadmap_v76.md` next for the queue and the session protocol, then
 `INTERNALS.md`, then `build_history/v76_session30_notes.md` for what session 30 found.
@@ -7,12 +7,12 @@ One page. Read `build_history/roadmap_v76.md` next for the queue and the session
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **180 checks, ALL PASSED** |
-| `node test/run.js --quick` | 156 |
+| `node test/run.js` | **181 checks, ALL PASSED** |
+| `node test/run.js --quick` | 157 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v76_i'`. Establish this before changing anything.
+`APP_VERSION = 'v76_j'`. Establish this before changing anything.
 
 **These numbers are the ones to trust.** Session 30's prompt said to expect 170/149 and to treat any
 other number as a finding; 170/149 were the numbers session 29 *opened* on, before it added six
@@ -59,6 +59,11 @@ reported bug.** Three releases, `v76_d` -> `v76_f`.
    by length or position, the filter and the match are the same bug waiting.
 
 ## Next session — in this order
+
+**Start from `build_history/v77_prompt.md`** — it carries the read order, the baseline numbers, the
+rules worth re-reading, and the three rulings written out with a blank for each answer. **Answer the
+three rulings in that file before the session starts.**
+
 
 **THE PROGRESS-CARD REWORK IS STILL THE NEXT SESSION.** It was not started: session 30 spent itself
 on the red baseline and the two user reports. Read `build_history/roadmap_v76.md` §0 (the whole

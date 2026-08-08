@@ -513,6 +513,90 @@ Serbian (an `hr←sr` chapter) gets the picker under "I speak" instead.
 
 ---
 
+## `v76_j` — "continue story" landed with an empty field (user-reported)
+
+> *"when i click 'continue story' in the storylinepage of sl_9302163, i correctly landed on the main
+> page, but the 'continue from' field was empty. It was not empty when i clicked 'continue story'
+> from the last chapter's lesson-set page. However, the story to be continued was lost, when i set a
+> source language."*
+
+Two separate defects, and the report distinguishes them precisely.
+
+### Why one route worked and the other did not — an ordering bug
+
+```js
+if (src?.lang) selectLang(src.lang);          // repopulates the menu, with the OLD srcLang
+if (src?.srcLang) { APP.srcLang = src.srcLang; … }   // changes srcLang, never repopulates
+```
+
+`selectLang()` calls `repopulateContinueSelect()`, which filters on the **current** pair. With the
+target already switched to `hr` and the source still on `en`, the menu was built for a pair that has
+no chapters at all, so the chapter's own option never existed and the selection could not be
+applied. From the lesson-set page the form was **already** on `hr<-sr`, so the stale filter happened
+to be correct. Measured by calling `continueFromLesson` on the real corpus:
+
+```
+A) arriving from it<-en (the storyline route) :  50 options -> 1   value=""       ✗ EMPTY
+B) arriving already on hr<-sr (lesson set)    :   2 options -> 2   value=tp_…186  ✓
+```
+
+Only a **mixed-language** storyline can show this: when every chapter shares one pair, the form is
+already on that pair and the stale filter is right by accident. Same root as `v76_e` — the language
+filter applied to something that belongs to a storyline, not to the current pair.
+
+### The pin — and an honest note about what fixes what
+
+The second half of the report (*"lost when I set a source language"*) is not the ordering; a later
+filter change legitimately removed the option. Per the user's rulings: **arriving via this route
+PINS the story**, a pinned story is offered whatever the filters say, changing a language keeps it
+in the list rather than cancelling, it is cancelled by an ✕ **or** by picking "— new story —", and
+it persists across a reload (`imp3_contpin`).
+
+`repopulateContinueSelect` now re-inserts the pinned topic when the filters would drop it, badges it
+with its language pair (it may be from another one), and restores it in preference to the previous
+value. The cancel is wired to a new `onContinueSelectChange()` rather than to
+`_updateReinforcePriorVisibility()` — the latter is also called **programmatically** at the end of
+every rebuild, so putting the cancel there would let a rebuild cancel the pin it exists to restore.
+
+**The reordering is defensive and is NOT independently observable.** `setContinuePin()` repopulates
+the menu again once both languages are set, so it subsumes the swap: reverting the reordering alone
+does **not** fail `unit-continue-pin`. That was caught during revert-verification — the first
+version of section 1 claimed to guard the ordering and did not, because the pin masked it. Adding a
+sibling chapter in the target pair isolated the *end state* (the menu is built for the pair the form
+landed on), but not the ordering itself. Both the code comment and the test now say so, rather than
+implying a guard that does not exist. The reordering is kept because leaving the menu built for a
+pair the form is only half-way into is wrong on its own terms.
+
+### The guard
+
+`test/unit-continue-pin.test.js` (new, registered): both routes select the chapter; the pin survives
+a source **and** a target language change and keeps its pair badge; both cancel paths clear it; a
+persisted pin is restored on load; repeated rebuilds do not cancel it. Revert-verified where the
+guard is real — disabling the pin's filter-survival fires *"the pinned story is still offered"*.
+
+Two fixture traps worth recording, both mine:
+
+- **`/^tp_\d+$/`.** A mnemonic fixture id (`tp_z`) is not recognised as an id at all — the product
+  reads it as a topic NAME — so section 1 failed for a reason that had nothing to do with the
+  behaviour under test.
+- **Selects have no `.options` in the stub DOM.** The product legitimately reads
+  `contSel.options`, so the test defines the getter a real DOM would provide, derived from the
+  markup the product itself wrote. `applyUIStrings()` iterates seven more selects asynchronously;
+  without shimming those too, a *passing* test still crashed the runner.
+
+---
+
+## Where this session stopped, and why
+
+The progress-card rework was **not started**. It is blocked on the three §0a rulings, two of which
+supersede shipped and tested behaviour (`v74_l`, `v74_o`) — starting §0c before they are answered is
+how a third navigation rule gets layered on top of two that should have been deleted. §0b is
+unblocked and is the first thing the next session should do; its two numbers were re-verified at the
+`v76_i` cut and are still exact (`showComplete` = 564 lines, exactly 7 empty `catch` blocks).
+
+`build_history/v77_prompt.md` is written and carries the read order, the baseline, the rules, and
+the three rulings with a blank for each answer.
+
 ## New standing rules from this session
 
 12. **A test that hard-codes a COUNT of a repeated element is pinning the fixture, not the claim.**
