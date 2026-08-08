@@ -1,7 +1,11 @@
-# Roadmap — v76 line
+# Roadmap — v77 line
 
 Current cut: **`v77`**. Baseline `node test/run.js` **182**, `--quick` **158**, `check-inline` 0 on
-both builds. **This roadmap is closed — the v77 line continues in `roadmap_v77.md`.**
+both builds.
+
+> **Carried forward from `roadmap_v76.md` in full.** Everything below — the session protocol, the
+> fifteen standing rules, and every open item — survives the base cut. The shipped table lists the
+> v76 line for context; new releases are appended above it.
 
 > **Carried forward from `roadmap_v75.md` in full, from §3 onward.** The v71→v72 boundary lost three
 > items that were only recovered in `v73_k`; everything still open is reproduced below rather than
@@ -59,22 +63,106 @@ cards** and become the spine that guides a learner through a story.
 **Read `build_history/v76_card_gates.md` before touching the card.** It carries the measured AS-IS
 truth table (32 rows, both gate families) and a preserved probe to re-run and diff.
 
-## 0a. BLOCKING — three rulings the user still owes
+## 0a. RULED — session 30 (user). These are decided; do not re-derive them.
 
-Nothing in §0 should be built before these are settled; each one changes what the cards are.
+All three were answered by the user at the end of session 30, after walking through each one against
+the code. **Two of them delete shipped, tested behaviour.** Where a rule is superseded, delete it and
+its assertions rather than layering a new rule on top — that layering is what §0a existed to prevent.
 
-1. **Does `v74_l` survive?** It strips the story-unlocked card to Next-only for learners. The rework
-   wants that same card to show the story as the focus, keep Replay always available, and carry a
-   third progress bar. These are incompatible — `v74_l` looks SUPERSEDED, and if so it should be
-   deleted with its test rather than worked around. Note the table finding: `v74_l`'s hide-list is
-   barely observable today, because those buttons are usually already hidden for other reasons.
-2. **Does `v74_o` survive?** "Nothing left to do → return to the storyline." Back/next turns that
-   terminal state into a waypoint. The user's screenshot 2 shows the grey Next this rule produces;
-   the user wants it green and active, restarting the comprehension lesson.
-3. **What does a highlight MEAN?** See §3 — the measured choice is +782 marks with articles as noise
-   versus +60 clean. That is a product judgement about what a mark tells a learner, and it must be
-   written into this roadmap next to the numbers or the next session will re-derive both and pick
-   differently.
+### Ruling 1 — `v74_l` is SUPERSEDED as a mechanism; its intent survives
+
+> **User: "move the actions below the text as §0d already wants".**
+
+`v74_l` (`index.html` ~14891) hides `comp-repeat`/`comp-drill`/`comp-crossword`/`comp-back` by id on
+a genuine learner unlock and forces `comp-next` visible, so the story is not crowded by four routes
+back into practice. **Keep that intent, drop that mechanism.** The story leads because the actions
+move BELOW the text (§0d), not because buttons are taken away.
+
+Consequences, all of them required together:
+
+- **The hide-list goes.** With it go the three §0d conflicts it caused: Replay becomes ALWAYS
+  available (a learner must be able to reach 100%), `comp-back` is freed for the §0c navigation
+  spine, and `comp-next` stops being forced as the single route out.
+- The premise `v74_l` was written on is gone anyway: once the card carries a third progress bar,
+  cumulative vocabulary and back/next, it is no longer the "quiet card" the rule assumed.
+- Measured support: `v74_l`'s hide-list is **barely observable today** — in the rows where the gate
+  is true and the user is not a teacher, drill/crossword/back were ALREADY hidden for other reasons.
+  It defends less behaviour than its test implies.
+
+### Ruling 2a — `v74_o` is SUPERSEDED
+
+> **User: "superseded — the story-finished card is the answer to the dead end".**
+
+`v74_o` makes "nothing left to do" a TERMINAL state: Next is relabelled ↩ and hands the learner back
+to the storyline (or home), reusing `APP._compBack` so the header and Next cannot disagree.
+
+§0c makes that same state a WAYPOINT — the **story-finished card** (full story collapsible, complete
+vocabulary learned, festive icon) is the next page in the walk. Under `v74_o` that card can never be
+reached by pressing forward.
+
+**The dead end `v74_o` fixed is real and must not come back.** It existed because `v71_h` greyed Next
+here while `comp-back` was hidden — measured on the shipped "Paella und Chaos" with both chapters
+complete: `comp-next` `disabled=true`, `comp-back` `display=none`. The story-finished card is a
+better answer to that dead end than the hand-off, but only if it is actually reachable: **do not
+delete `v74_o` until the story-finished card exists and Next reaches it.**
+
+### Ruling 2b — below the pass mark, Next LEADS; the destination card is inert
+
+> **User: "next could lead to the next card in the walk, but with no button active" → clarified:
+> ALL of that card's action buttons inactive.**
+
+This supersedes **`v71_d`**, not `v74_o` — worth stating plainly, because §0a originally attributed
+the grey Next to `v74_o` and that was wrong: `v74_o` is the release that REMOVED greying from the
+terminal branch. The surviving grey Next is `v71_d`'s `_belowThreshold` branch
+(`_nextBlocked = true; compNext.disabled = true; compNext.classList.add('locked')`).
+
+New behaviour: below the mark, **Next is active and moves to the next card in the walk**, and that
+card renders with **all of its action buttons inactive** until the mark is met. The learner can read
+ahead; they cannot act ahead.
+
+`v71_d`'s principle is PRESERVED and in fact strengthened: Next never silently repurposes itself
+into Repeat or Drill. It always means forward. What goes is the disabled button, not the rule behind
+it. Inertness becomes a property of the CARD, not a lock on one button.
+
+### Ruling 3 — article noise is accepted; take the high-recall matcher
+
+> **User: "article noise was 'ok for now' still stands. we may later add a LLM call to judge which
+> exact vocabulary is covered by lessons."**
+
+So the mark means *"something from your vocabulary occurs here"*, not *"you have learned this
+word"* — recall over precision. Take **whitespace splitting**: `+782` marks corpus-wide, 96 chapters
+improved, 8 on the screenshot chapter — accepting that 4 of those are the article `la`. The clean
+composed option (`+60`, 0 articles) is NOT chosen.
+
+Two useful consequences:
+
+- **No article table is needed at all.** Whitespace splitting needs no article set, so the
+  corpus-derived `es: el, la` / `it: il, la, l'` / `ar: ال` work — and its two Italian false
+  positives (`reti`, `per`) and the threshold tightening they wanted — is **not needed for this
+  ruling**. That is squarely better under the standing design principle.
+- **Keep "also mark articles" reversible.** The user's phrase is "ok for NOW", and the stated
+  intention is to revisit with an LLM pass judging which vocabulary a lesson actually covers. Build
+  the matcher so precision can be raised later without redoing the display.
+
+**Not part of this ruling, ship regardless:** the apostrophe bug. Vocab stores `l'evoluzione` with
+ASCII `'` (U+0027), stories use `l’evoluzione` (U+2019), so even an exactly-present word never
+matched — 15 `it`, 7 `en`, 4 `lb` chapters affected. That is a plain defect, not a judgement.
+
+Inflection (`mutazione`/`mutazioni`) still misses under whitespace splitting; it is Tier 2 and stays
+open.
+
+### What these rulings cost in tests — read before starting
+
+Eight test files touch the superseded rules: `smoke-render`, `unit-comprehension-gate`,
+`unit-coverage-threshold`, `unit-drill`, `unit-lang-placeholder`, `unit-learner-nav`,
+`unit-story-unlocked-card`, `unit-vocab-articles`.
+
+**Several assert on SOURCE TEXT, not behaviour** — e.g. `unit-learner-nav` matches
+`/_nextBlocked = true;/`, `/compNext\.disabled = true;/` and the literal `_endLbl` line against the
+`showComplete` source. When the rework changes that code these fail as text mismatches. **Do not
+re-pin them to the new text.** Replace each with an assertion about what the learner can DO — the
+whole point of rulings 1, 2a and 2b is behavioural, and a source regex cannot express any of it.
+`unit-story-unlocked-card`'s "Next-only for learners" line is `v74_l`'s and goes with it.
 
 ## 0b. Do this FIRST, before restructuring
 
@@ -216,9 +304,14 @@ it separately.
 > `ar: ال`, with `it` also catching two false positives (`reti`, `per`) that want the threshold
 > tightened before shipping.
 >
-> **The user has accepted article noise ("that's ok for now"). §0a ruling 3 is whether that still
-> holds now the cost is measured.** Ship the composed version unless the user rules otherwise; keep
-> "also mark articles" as a separate reversible toggle.
+> **RULED (session 30 — see §0a ruling 3): article noise stays accepted.** Take **whitespace
+> splitting** (`+782`, 96 chapters), NOT the composed version — the mark means "something from your
+> vocabulary occurs here", not "you have learned this word". Consequence: **no article set is
+> needed at all**, so the corpus-derived `es/it/ar` article work below, and the `reti`/`per` false
+> positives and threshold tightening it wanted, are not required for this. Keep "also mark
+> articles" reversible — the user's word is "ok for NOW", with an LLM pass judging which
+> vocabulary a lesson actually covers as the intended later refinement. The apostrophe fix
+> (U+0027 vs U+2019) ships regardless: it is a defect, not a judgement.
 >
 > Also new here: include vocabulary that was the question or correct answer in **synonym and
 > word_forms** lessons (§0e), and share ONE matcher with §0e's story-order vocabulary display.
@@ -430,12 +523,13 @@ what is owed by the USER, open decisions), then THIS file (the highest-numbered
    `unit-version-derivation`), so a single bump in `server.js` + a `build-static.js` re-run is
    enough — no more hand-editing `build-static.js`.
    **Point releases use an alphabetic suffix** (user, v70): the base cut is the bare number and is
-   implicitly `a`, so the sequence is `v76` → `v76_b` → `v76_c` → … — the same convention the v69–v75
-   lines ran. **This is the `v76` line.** Roadmaps are per BASE version, so point
-   releases do not each get one — this file stays current through the whole v76 line.
-   (This paragraph is the one version-specific line in the block and has been carried forward stale
-   THREE times now — `roadmap_v73.md` shipped saying "This is the `v72` line", and this file shipped
-   the whole v76 line saying "the `v75` line" until session 30. **Check it at every base cut.**)
+   implicitly `a`, so the sequence is `v77` → `v77_b` → `v77_c` → … — the same convention the v69–v76
+   lines ran. **This is the `v77` line.** Roadmaps are per BASE version, so point
+   releases do not each get one — this file stays current through the whole v77 line.
+   (This paragraph is the one version-specific line in the block and has shipped stale THREE times —
+   `roadmap_v73.md` said "the `v72` line", and `roadmap_v76.md` said "the `v75` line" for its whole
+   run until session 30 caught it. **It was updated deliberately at this cut. Check it again at the
+   next one.**)
 7. **Roadmap** — mark shipped items ✅, carry every open TODO/idea forward, and at a version bump
    write the next `build_history/roadmap_v{N+1}.md` (carrying this protocol block forward).
 8. **Session notes** — write/update `build_history/v{ver}_session{n}_notes.md`.

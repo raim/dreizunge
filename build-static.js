@@ -475,12 +475,23 @@ async function loadSavedList() {
   // Build display chains — v29: use STATIC_STORYLINES (id chapters); legacy: continuedFromId
   // byId: visible (filtered) topics indexed by stable id
   const byId=Object.fromEntries(filtered.filter(l=>l.id).map(l=>[l.id,l]));
+  // v76_k: …and ALL topics, for resolving a chain. THIS FILE CARRIES ITS OWN COPY of
+  // loadSavedList, which overrides the client's — so the v76_e fix landed in index.html only and
+  // the static build kept truncating mixed-language chains.
+  const byIdAll=Object.fromEntries(saved.filter(l=>l.id).map(l=>[l.id,l]));
   let storylines, orphans;
   const _slArr=Array.isArray(STATIC_STORYLINES)?STATIC_STORYLINES:[];
   const v29chains=_slArr.filter(sl=>sl.chapters&&sl.chapters.length>=1);
   if(v29chains.length>0){
     // Keep chapter IDS for visible (filtered) topics only
-    storylines=v29chains.map(sl=>(sl.chapters||[]).filter(cid=>byId[cid])).filter(c=>c.length>=1);
+    // v76_k (mirrors v76_e in index.html): a storyline is ONE unit — the language filter decides
+    // WHETHER it is shown, never WHICH of its chapters are. A truncated chain can never satisfy the
+    // exact positional match below, so the card fell through to a synthetic 'c'+hash id with no
+    // storyline behind it: no title, no icon, no storyboard.
+    storylines=v29chains
+      .filter(sl=>(sl.chapters||[]).some(cid=>byId[cid]))
+      .map(sl=>(sl.chapters||[]).filter(cid=>byIdAll[cid]))
+      .filter(c=>c.length>=1);
     const inChain=new Set(storylines.flat());
     orphans=filtered.filter(l=>!inChain.has(l.id));
   } else {
@@ -505,12 +516,12 @@ async function loadSavedList() {
 
 
 
-  const newestOf=chain=>chain.reduce((b,id)=>{const d=byId[id]?.updatedAt||byId[id]?.generatedAt||'';return d>b?d:b;},'');
+  const newestOf=chain=>chain.reduce((b,id)=>{const d=byIdAll[id]?.updatedAt||byIdAll[id]?.generatedAt||'';return d>b?d:b;},'');
   storylines.sort((a,b)=>newestOf(b).localeCompare(newestOf(a)));
   const showAllLangs = APP.libFilter==='all';
   // When showing all languages, group storylines by language
   if(showAllLangs) storylines.sort((a,b)=>{
-    const la=byId[a[0]]?.lang||'it', lb=byId[b[0]]?.lang||'it';
+    const la=byIdAll[a[0]]?.lang||'it', lb=byIdAll[b[0]]?.lang||'it';
     return la.localeCompare(lb) || newestOf(b).localeCompare(newestOf(a));
   });
 
@@ -521,14 +532,14 @@ async function loadSavedList() {
   let html='', _lastLang=null;
   for(const chain of storylines){
     if(showAllLangs){
-      const cl=byId[chain[0]]?.lang||'it';
+      const cl=byIdAll[chain[0]]?.lang||'it';
       if(cl!==_lastLang){
         const L=LANGS[cl]||LANGS.it;
         html+='<div class="orphans-hdr">'+L.flag+' '+L.name+'</div>';
         _lastLang=cl;
       }
     }
-    const chainTopics=chain.map(id=>byId[id]?.topic).filter(Boolean);
+    const chainTopics=chain.map(id=>byIdAll[id]?.topic).filter(Boolean);
     const chainTopicsJson=JSON.stringify(chainTopics);
     const chainEncoded=encodeURIComponent(chainTopicsJson);
     const legacyChainId='c'+Math.abs(chainTopicsJson.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
@@ -548,8 +559,8 @@ async function loadSavedList() {
     const chainNewest=newestOf(chain);
     const chainDate=chainNewest?new Date(chainNewest).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'';
     const hdrTitle=hasTitle
-      ? '<span class="storyline-title" style="cursor:pointer;flex:1"><span style="font-size:18px">'+titleIcon+'</span><div style="min-width:0"><div class="storyline-title-text">'+esc(titleText)+'</div><div class="storyline-title-sub">'+(()=>{const first=byId[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge" style="font-size:10px">'+sL2.flag+'→'+tL2.flag+'</span> ';})()+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</div></div></span>'
-      : '<span class="storyline-title" style="flex:1">'+(()=>{const first=byId[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge">'+sL2.flag+'→'+tL2.flag+'</span>';})()+'<span class="storyline-title-sub">Story line · '+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</span></span>';
+      ? '<span class="storyline-title" style="cursor:pointer;flex:1"><span style="font-size:18px">'+titleIcon+'</span><div style="min-width:0"><div class="storyline-title-text">'+esc(titleText)+'</div><div class="storyline-title-sub">'+(()=>{const first=byIdAll[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge" style="font-size:10px">'+sL2.flag+'→'+tL2.flag+'</span> ';})()+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</div></div></span>'
+      : '<span class="storyline-title" style="flex:1">'+(()=>{const first=byIdAll[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge">'+sL2.flag+'→'+tL2.flag+'</span>';})()+'<span class="storyline-title-sub">Story line · '+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</span></span>';
     html+='<div class="storyline-group" id="slgroup-'+chainId+'">';
     html+='<div class="storyline-hdr" id="slhdr-'+chainId+'"'
       +' data-chain-id="'+chainId+'" data-chain="'+chainEncoded+'"'
@@ -580,7 +591,7 @@ async function loadSavedList() {
         +'📖 '+t('lesson.read_summary')+'<span class="storyline-story-arrow" id="slsc-summary-arrow-'+chainId+'">▼</span></button>'
         +'<button class="storyline-hdr-btn" data-speak="slsc-summary-body-'+chainId+'" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="'+t('lesson.read_aloud')+'">🔊</button>'
         +'</div>'
-        +'<div class="storyline-story-body" id="slsc-summary-body-'+chainId+'" data-lang="'+(byId[chain[0]]?.srcLang||'')+'">'
+        +'<div class="storyline-story-body" id="slsc-summary-body-'+chainId+'" data-lang="'+(byIdAll[chain[0]]?.srcLang||'')+'">'
         +'<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">'+_slSum2.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</p>'
         +'</div></div>';
     }

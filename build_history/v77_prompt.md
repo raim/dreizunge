@@ -3,32 +3,32 @@
 *(Named for the version this session WRAPS UP WITH, per the convention set at the v75 cut.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v76_j`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v77`** base cut.
 
 Orient yourself by reading, in order:
 
 1. `build_history/HANDOVER.md` — one page: baseline numbers, the naming convention, what's owed by
    me (not doable in a container), and where this session starts.
-2. `build_history/roadmap_v76.md` — read the "⚠️ Session protocol — READ FIRST" block and follow its
+2. `build_history/roadmap_v77.md` — read the "⚠️ Session protocol — READ FIRST" block and follow its
    definition-of-done for every change. Note the standing design principle: no language knowledge in
    the code, where *permitted* means Unicode machinery or corpus statistics, not a hand-authored
    table.
 3. `INTERNALS.md` — constants, silent-failure modes, invariants, harness limits. Read this instead
    of grepping the notes for "what is the value of X".
-4. `build_history/v76_session30_notes.md` — the previous session. Long, and worth it: eight point
+4. `build_history/v76_session30_notes.md` — the previous session. Long, and worth it: nine point
    releases, a red baseline that turned out to BE the reported bug, and three separate mistakes of
    mine that existing guards caught.
 
 Then establish a green baseline before changing anything:
 
 ```
-node test/run.js                        → expect 181 checks
-node test/run.js --quick                → expect 157
+node test/run.js                        → expect 182 checks
+node test/run.js --quick                → expect 158
 node test/check-inline.js               → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Confirm all four. **If the count differs from 181, treat that as a finding and diagnose it before
+Confirm all four. **If the count differs from 182, treat that as a finding and diagnose it before
 doing anything else — do not assume a stale fixture.** Data files (`lessons.json`, `ui.json`,
 `learners.json`) often change between sessions without that being mentioned; check file timestamps
 against the code before concluding anything. Session 30 opened RED at 2 of 176 and *neither* failure
@@ -42,7 +42,7 @@ the corpus, and one of them was standing on the exact storyline the user had jus
 ## Read the rules before writing any probe
 
 Read **"Rules earned in session 28"**, **"…session 29"** and **"…session 30"** in
-`roadmap_v76.md` — fourteen now, and each one cost a wrong finding. The expensive ones:
+`roadmap_v77.md` — fifteen now, and each one cost a wrong finding. The expensive ones:
 
 - **A probe must CALL the product function**, never a re-typed copy — least of all one lifted from a
   test stub.
@@ -57,12 +57,15 @@ Read **"Rules earned in session 28"**, **"…session 29"** and **"…session 30"
 - **(30) A guard whose scenario matches nothing may never reach the branch it tests.**
   `loadSavedList` returns early on an empty filtered list, and a "must not be shown" assertion
   passed under its own revert because of it.
+- **(30) A fix to the client is not a fix to the published build.** `build-static.js` re-implements
+  `loadSavedList` and `savedItemHtml`; the `v76_e` guard passed for two releases while `docs/`
+  stayed broken. Use `loadClient({ file })` to assert against `docs/index.html`.
 
 ---
 
 # THE TASK: the progress-card rework
 
-Read `build_history/roadmap_v76.md` **§0** (the whole rework, with my notes merged and the roadmap
+Read `build_history/roadmap_v77.md` **§0** (the whole rework, with my notes merged and the roadmap
 items absorbed), then `build_history/v76_card_gates.md` — the **measured AS-IS truth table** for the
 card, 32 rows across both gate families, derived by RUNNING `showComplete`, not by reading it.
 `build_history/probe_gates_v76.js` is preserved: **re-run it and diff after any change to the card.**
@@ -88,32 +91,32 @@ become the spine that guides a learner through a story.
    unlock for every mixed-driven chapter. Stated there as an open question, not a bug; it may be
    that the seeding is at the wrong level. It is invisible from the classic-set tests.
 
-## Then the three rulings — MY ANSWERS
+## The three rulings are ANSWERED — §0c is unblocked
 
-*(Fill these in before the session starts. §0c must not begin until they are answered, because two
-of them supersede behaviour that is currently shipped AND tested — building on top of those instead
-of deleting them is how a third navigation rule gets layered on.)*
+I settled all three at the end of session 30, walking through each against the code. They are
+written up in full in `roadmap_v77.md` §0a. **Do not re-derive them.** In short:
 
-1. **Does `v74_l` survive?** It strips the story-unlocked card to Next-only for learners. The rework
-   wants that same card to show the story as the focus, keep Replay always available, and carry a
-   third progress bar. These look incompatible. Note the measured finding: `v74_l`'s hide-list is
-   **barely observable today** — in the rows where it applies those buttons were already hidden for
-   other reasons.
-   → **MY ANSWER:**
+1. **`v74_l` is superseded as a MECHANISM, its intent survives.** Stop hiding
+   repeat/drill/crossword/back by id; instead move the actions BELOW the text (§0d) so the story
+   leads. Consequences: Replay is ALWAYS available, `comp-back` is freed for the navigation spine,
+   Next stops being forced as the only route out.
+2. **(a) `v74_o` is superseded** — "nothing left to do" becomes the story-finished card in the walk
+   instead of a hand-off back to the storyline. **But the dead end it fixed is real: do not delete
+   `v74_o` until the story-finished card exists and Next reaches it.**
+   **(b) Below the pass mark, Next LEADS** to the next card in the walk, and that card renders with
+   **all of its action buttons inactive**. This supersedes **`v71_d`**, not `v74_o` — §0a used to
+   attribute the grey Next to the wrong release. `v71_d`'s principle is kept: Next always means
+   forward and never silently becomes Repeat.
+3. **Article noise stays accepted** — take **whitespace splitting** (`+782`), not the clean composed
+   option. A mark means "something from your vocabulary occurs here". This means **no article table
+   is needed at all**. Keep it reversible: I may later add an LLM pass judging which vocabulary a
+   lesson actually covers. The apostrophe fix (U+0027 vs U+2019) ships regardless — it is a defect.
 
-2. **Does `v74_o` survive?** "Nothing left to do → return to the storyline." Back/next turns that
-   terminal state into a waypoint. My screenshot 2 shows the grey Next this rule produces; I want it
-   green and active, restarting the comprehension lesson.
-   → **MY ANSWER:**
-
-3. **What does a highlight MEAN?** (roadmap §3.) The measured choice is **+782 marks with articles
-   as noise** versus **+60 clean**. This is a product judgement about what a mark tells a learner,
-   and it must be written into the roadmap next to the numbers or the next session will re-derive
-   both and pick differently. Note: `_articleStatsFor` returns `sampleSize: 0` on the very chapters
-   that need it, so the roadmap's original stated plan does not work; a corpus-derived alternative
-   is measured in the session notes. **Do NOT revert the word boundaries** — `v73_e` traded the
-   every-`i` bug for 2 real marks.
-   → **MY ANSWER:**
+**Expect test churn, and read §0a's last section before touching it.** Eight files touch these
+rules, and several assert on the SOURCE TEXT of `showComplete` (`/_nextBlocked = true;/` and
+similar). When the code changes they will fail as text mismatches. **Do not re-pin them to the new
+text** — replace them with assertions about what the learner can DO. All three rulings are
+behavioural; a source regex cannot express any of them.
 
 ## §0c onward — the sequence (the big one)
 

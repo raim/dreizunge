@@ -586,16 +586,110 @@ Two fixture traps worth recording, both mine:
 
 ---
 
+## `v76_k` / `v77` — the SAME bug, still live in the published build
+
+> *"the static docs/index.html still has the language-filter problem on the main page, such that the
+> story is not shown, when i select serbian target language, and instead just a title-less and
+> storyboard less link to c21003805."*
+
+**`build-static.js` carries its OWN copy of `loadSavedList`, which overrides the client's.** The
+`v76_e` fix went into `index.html` only, so the published build kept the truncating projection and
+the exact positional match verbatim:
+
+```js
+storylines=v29chains.map(sl=>(sl.chapters||[]).filter(cid=>byId[cid])).filter(c=>c.length>=1);
+```
+
+Nine chain-scoped lookups moved to a full index, mirroring `v76_e` line for line.
+
+**This is the `v76_b` duplication hazard again** — the two language menus lived in two files and
+only one had a guard. Here the landing-page renderer lives in two files and only one had a guard.
+**Every source-level assertion about `index.html` passed throughout**, including the `v76_e` test
+that exists for exactly this claim, because it loads `index.html`.
+
+### The guard, and why it had to be a second one
+
+`test/unit-static-storyline-filter.test.js` asserts the same claim **against the built artefact**.
+`lib-dom`'s `loadClient` gained an `opts.file` so the harness can drive `docs/index.html` under the
+same machinery (defaults to `index.html`, so every existing caller is unaffected). The storyline it
+uses is **derived from the corpus** — the first whose chapters span more than one language pair —
+with a non-vacuity assertion that such a storyline exists and that the filter really hides one of
+its chapters. Revert-verified: putting the filtered index back fires
+*"the static build renders 'Shadows of Marakana' under its real id…"*.
+
+### Honest note on the reported id
+
+The reported `c21003805` does not reproduce from the bundled corpus — every filter combination
+yields a different synthetic id (`c1935658823` for `sr`/all, and so on). The likeliest explanation is
+that the user's `docs/` build was made from a slightly different corpus (they had been generating
+Serbian chapters while testing), and the id is a hash of the visible chapter TITLES. **The mechanism
+is identical and was reproduced directly against the built file, so the exact hash was not chased.**
+
+### Rule earned
+
+**15. A fix to the client is not a fix to the published build.** `build-static.js` re-implements
+part of `index.html` — currently `loadSavedList` and `savedItemHtml`. Any change to the landing page
+must be applied twice and asserted against `docs/index.html`, not just `index.html`.
+
+---
+
 ## Where this session stopped, and why
 
-The progress-card rework was **not started**. It is blocked on the three §0a rulings, two of which
-supersede shipped and tested behaviour (`v74_l`, `v74_o`) — starting §0c before they are answered is
-how a third navigation rule gets layered on top of two that should have been deleted. §0b is
-unblocked and is the first thing the next session should do; its two numbers were re-verified at the
-`v76_i` cut and are still exact (`showComplete` = 564 lines, exactly 7 empty `catch` blocks).
+The progress-card rework was **not started** — but it is no longer blocked. The user answered all
+three §0a rulings at the end of the session, after walking through each one against the code. They
+are written up in `roadmap_v77.md` §0a; the summary is in `v77_prompt.md`.
 
-`build_history/v77_prompt.md` is written and carries the read order, the baseline, the rules, and
-the three rulings with a blank for each answer.
+| | ruling |
+|---|---|
+| 1 | **`v74_l` superseded as a MECHANISM, intent kept** — actions move below the text (§0d) instead of being hidden by id. Replay always available; `comp-back` freed for the navigation spine. |
+| 2a | **`v74_o` superseded** — "nothing left to do" becomes the story-finished card in the walk. *But its dead end is real: do not delete it until that card exists and Next reaches it.* |
+| 2b | **Below the mark, Next LEADS**; the destination card renders with ALL action buttons inactive. This supersedes **`v71_d`**, not `v74_o`. |
+| 3 | **Article noise stays accepted** — whitespace splitting (`+782`), not the clean composed option. No article table needed at all. Apostrophe fix ships regardless. |
+
+**§0a's own attribution was wrong and this corrected it.** It said the grey Next in the user's
+screenshot was what `v74_o` produced. Reading the code, `v74_o` is the release that REMOVED greying
+from the terminal branch; the surviving grey Next is `v71_d`'s `_belowThreshold` lock. Splitting
+ruling 2 into 2a and 2b let the user answer the question they actually cared about instead of the
+one the roadmap had written down.
+
+Recorded alongside the rulings: **eight test files touch the superseded rules, and several assert on
+the SOURCE TEXT of `showComplete`** (`/_nextBlocked = true;/` and similar). They will fail as text
+mismatches, and must be replaced with behavioural assertions rather than re-pinned.
+
+§0b is still the first thing to do; its two numbers were re-verified at the `v76_i` cut and are
+still exact (`showComplete` = 564 lines, exactly 7 empty `catch` blocks).
+
+**The user's browser pass passed**: Serbian with script selection and the rest of session 30's work
+all confirmed working.
+
+## Final data drop, and two guards proving themselves
+
+The user supplied fresh `languages.json`, `lessons.json` and `learners.json` at the end of the
+session. Validated before use: 32 languages either side, nothing added or removed, **no `name`,
+`flag` or `tts` value changed**, `schemaVersion` 30 both sides, 84 storylines, no topic removed.
+
+- **`languages.json` gained 8 name cells** (873 → 881 of 1024). That is a partially-completed
+  `--langnames` run whose progress survived — `v76_f` doing exactly what it was built for. 143 cells
+  still empty.
+- **`lessons.json` gained 2 topics**, both Serbian, and they exercise the session's own work:
+  `"Alpine Roots"` is `sr<-en` carrying **`script=cyrillic-sr`** where the other four `sr<-en`
+  chapters are `latin` — the per-chapter script override, working end to end from picker to store.
+  `"Beč: Od izbjeglica do srednje klase"` is a new pair, `sr<-hr`.
+- **`sl_9302163` is now 8 chapters across FOUR language pairs** (`sr<-en`, `sr<-de`, `hr<-sr`,
+  `sr<-hr`) — a considerably harsher test of `v76_e`/`v76_k` than the six it was fixed against.
+
+**Two guards fired, both correctly, and neither was a defect:**
+
+1. `unit-script-choice` failed with *"every topic in a script-choice language is stamped — 1 are
+   not. Run `node backfill-script.js --write`"*. The new `sr<-hr` chapter arrived unstamped; the
+   backfill measured it as unambiguously Latin (`latin=625 cyrillic-sr=0`) and stamped it. Serbian
+   still partitions cleanly across the corpus — **0 of 7 texts mix scripts**, against 9 of 13 for
+   Japanese.
+2. `unit-static-freshness` and `unit-static-storyline-filter` failed until `build-static.js` was
+   re-run, which is the `v73_b` guard plus the new `v76_k` one behaving as designed.
+
+Re-verified after: the storyline renders whole (**8 chapters**, real id, storyboard, no synthetic
+`c…` ids) under every filter state, in BOTH builds.
 
 ## New standing rules from this session
 

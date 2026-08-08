@@ -149,6 +149,7 @@ run('unit: storyline chains survive the language filter (v76_e)', 'node', [path.
 run('unit: script choice declared + corpus stamped (v76_g)', 'node', [path.join(__dirname, 'unit-script-choice.test.js')]);
 run('unit: script picker + inheritance (v76_i)', 'node', [path.join(__dirname, 'unit-script-picker.test.js')]);
 run('unit: continue-story pin survives filters (v76_j)', 'node', [path.join(__dirname, 'unit-continue-pin.test.js')]);
+run('unit: docs/ storyline survives the language filter (v76_k)', 'node', [path.join(__dirname, 'unit-static-storyline-filter.test.js')]);
 run('unit: translate-ui --langnames request path (v76_c)', 'node', [path.join(__dirname, 'unit-langnames.test.js')]);
 run('unit: correct answer advances after the read-out (v75_h)', 'node', [path.join(__dirname, 'unit-speak-advance.test.js')]);
 run('unit: coverage-driven mixed round + drill credit-back (v69.1)', 'node', [path.join(__dirname, 'unit-mixed-coverage-round.test.js')]);

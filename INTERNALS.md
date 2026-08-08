@@ -13,7 +13,7 @@ please fix it.
 Every entry below was found by measurement or by a test failing, not by reading anything. That is
 the gap this document exists to close.
 
-Last verified against **`v76_j`**.
+Last verified against **`v77`**.
 
 ---
 
@@ -511,6 +511,14 @@ immediately before `buildExercises(idx)`.
 `lessons.json`" breaks when the data is replaced. Prefer hand-built fixtures for anything needing
 exact counts — and if a section only means something when the corpus contains a particular case,
 **assert that the case was found**, or the section goes vacuous on new data.
+
+**`build-static.js` re-implements part of the client (`v76_k`).** It carries its OWN
+`loadSavedList` and `savedItemHtml`, which OVERRIDE the ones in `index.html`. A change to the
+landing page must be made in BOTH files: the `v76_e` storyline fix landed in `index.html` only and
+the published `docs/` build stayed broken for two releases while every source-level assertion
+passed. `loadClient({ file: 'docs/index.html' })` drives the built artefact under the same harness
+— use it for any landing-page claim. (`init()` is suppressed there too, so `LANGS`/`UI_STRINGS`
+must be seeded or the storyline header throws on `LANGS.it.flag`.)
 
 **A `<select>` has no `.options` in the stub DOM (`v76_j`).** It does not parse `innerHTML`, so any
 product code reading `sel.options` (`repopulateContinueSelect`, `continueFromLesson`,

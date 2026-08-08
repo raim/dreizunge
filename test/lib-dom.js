@@ -540,7 +540,11 @@ function makeStorage() {
  * client's top-level `const`/`let` (APP, helpers) are visible to test code.
  */
 function loadClient(opts = {}) {
-  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  // v76_k: `opts.file` loads a DIFFERENT built artefact — docs/index.html — under the same harness.
+  // build-static.js carries its own copy of loadSavedList that overrides the client's, so a claim
+  // proved against index.html says nothing about the published build. Defaults to index.html, so
+  // every existing caller is unaffected.
+  const html = fs.readFileSync(opts.file || path.join(ROOT, 'index.html'), 'utf8');
   const m = html.match(/<script>([\s\S]*)<\/script>/);
   if (!m) throw new Error('could not find the inline client script');
   // Strip ONLY the bootstrap call. Everything else — every function and top-level statement — is

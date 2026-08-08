@@ -1,18 +1,18 @@
-# HANDOVER — v76_j
+# HANDOVER — v77
 
-One page. Read `build_history/roadmap_v76.md` next for the queue and the session protocol, then
+One page. Read `build_history/roadmap_v77.md` next for the queue and the session protocol, then
 `INTERNALS.md`, then `build_history/v76_session30_notes.md` for what session 30 found.
 
 ## Green baseline
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **181 checks, ALL PASSED** |
-| `node test/run.js --quick` | 157 |
+| `node test/run.js` | **182 checks, ALL PASSED** |
+| `node test/run.js --quick` | 158 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v76_j'`. Establish this before changing anything.
+`APP_VERSION = 'v77'`. Establish this before changing anything.
 
 **These numbers are the ones to trust.** Session 30's prompt said to expect 170/149 and to treat any
 other number as a finding; 170/149 were the numbers session 29 *opened* on, before it added six
@@ -57,6 +57,10 @@ reported bug.** Three releases, `v76_d` -> `v76_f`.
 7. **(new, 14)** **Identity must be CARRIED through a projection, never recovered by hashing it.**
    Third instance (`v75_f`, `v76_e`). If a list is filtered and then matched back against its source
    by length or position, the filter and the match are the same bug waiting.
+8. **(new, 15)** **A fix to the client is not a fix to the published build.** `build-static.js`
+   re-implements part of `index.html` (`loadSavedList`, `savedItemHtml`). The `v76_e` guard passed
+   for two releases while `docs/` stayed broken. Assert against `docs/index.html` —
+   `loadClient({ file })` drives it under the same harness.
 
 ## Next session — in this order
 
@@ -70,8 +74,10 @@ on the red baseline and the two user reports. Read `build_history/roadmap_v76.md
 rework), then `build_history/v76_card_gates.md` (the MEASURED as-is truth table — 32 rows, both gate
 families, plus a preserved probe to re-run and diff).
 
-**Do not start §0c (the card sequence) until the three rulings in §0a are answered.** Two of them
-supersede decisions that are currently shipped and tested (`v74_l`, `v74_o`).
+**§0a is SETTLED — the three rulings were answered at the end of session 30** and are written up in
+`roadmap_v77.md` §0a. §0c is unblocked. Two of them delete shipped, tested behaviour (`v74_l`'s
+hide-list, `v74_o`'s terminal hand-off, and `v71_d`'s disabled Next), so read §0a — including its
+last section on the eight test files that assert on `showComplete`'s SOURCE TEXT — before coding.
 
 **Do §0b first regardless:** make the 7 swallowing `catch(_) {}` blocks in `showComplete` visible,
 and settle the coverage key-space question (86 seeded solved keys, 0 counted, total 31 — the branch
@@ -83,7 +89,6 @@ that gates story unlock for every mixed-driven chapter). Both are small and de-r
 - **Confirm the `v76_e` product judgement**: filtering the library to one language now shows a
   mixed-language storyline **whole**, including its chapters in other languages. The alternative
   leaves *"the lessons in a different language didn't show up"* unfixed. Say if you want it reversed.
-- **The three §0a rulings** blocking the card rework.
 - **The Android English voice.** `v74_j` fixed only the case where the exact locale is PRESENT; with
   no `en-GB` installed the ranker falls through to quality alone and a NETWORK `en-NG`/`en-IN` beats
   the LOCAL `en-US`. The obvious fix is barred by the design principle — choose between
