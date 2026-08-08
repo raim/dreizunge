@@ -134,7 +134,11 @@ console.log('  auditAll: per-language findings, counts, read-only: OK');
   assert.ok(/const QC_MODE\s+= process\.argv\.includes\('--qc'\);/.test(src), '--qc flag exists');
   assert.ok(/const QC_FIX\s+= process\.argv\.includes\('--fix'\);/.test(src), '--fix flag exists');
   assert.ok(/const QC_RETRANS\s+= process\.argv\.includes\('--retranslate'\);/.test(src), '--retranslate flag exists');
-  assert.ok(/if \(!QC_MODE && \(CHECK_ONLY \|\| totalMissing === 0\)\)/.test(src),
+  // v76_b: was pinned as the exact text `if (!QC_MODE && (CHECK_ONLY || totalMissing === 0))`, and
+  // broke when `--langnames` added a second exemption to the same line — behaviour for --qc
+  // unchanged. The claim is that --qc is EXEMPT from the early exit, so that is what is matched;
+  // further exemptions are allowed to join it without this failing.
+  assert.ok(/if \(!QC_MODE &&[^)]*\(CHECK_ONLY \|\| totalMissing === 0\)\)/.test(src),
     '--qc still runs when nothing is missing — that is exactly when content defects hide');
   // The prompt must name the failure mode concretely; "preserve placeholders" alone was ignored.
   assert.ok(/NEVER translate text inside curly braces/.test(src), 'prompt forbids translating placeholders');

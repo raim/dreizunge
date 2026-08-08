@@ -40,6 +40,12 @@ const LANG_SCRIPT = {
   el: 'Greek', ru: 'Cyrillic', uk: 'Cyrillic', bg: 'Cyrillic', sr: 'Cyrillic',
 };
 // Japanese legitimately mixes kana and kanji.
+// v76_c: Serbian digraphia needs NO entry here, and adding one would be a no-op with a confident
+// comment attached: SCRIPTS below has no `Latin` pattern, so Latin is never tested for ANY
+// language. A Serbian Latin translation therefore already passes, and a Serbian Cyrillic one
+// passes via LANG_SCRIPT.sr. Croatian (Latin-only, absent from LANG_SCRIPT) correctly rejects
+// Cyrillic, because Cyrillic IS tested. Recorded because "add sr to EXTRA_OK" looks obviously
+// right and changes nothing.
 const EXTRA_OK = { ja: ['Han'] };
 
 // Model artifacts seen in real runs; cheap to spot, always wrong.

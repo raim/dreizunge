@@ -144,6 +144,8 @@ run('unit: storyboard panel frames on result cards (v71_k)', 'node', [path.join(
 run('unit: {lang} placeholder grammar (v71_d)', 'node', [path.join(__dirname, 'unit-lang-placeholder.test.js')]);
 run('unit: no verbatim-English fallbacks in translations (v71_k)', 'node', [path.join(__dirname, 'unit-ui-verbatim-en.test.js')]);
 run('unit: every t() key exists in ui.json en (v75_b)', 'node', [path.join(__dirname, 'unit-ui-key-exists.test.js')]);
+run('unit: every language is offered in both menus (v76_b)', 'node', [path.join(__dirname, 'unit-lang-menu-coverage.test.js')]);
+run('unit: translate-ui --langnames request path (v76_c)', 'node', [path.join(__dirname, 'unit-langnames.test.js')]);
 run('unit: correct answer advances after the read-out (v75_h)', 'node', [path.join(__dirname, 'unit-speak-advance.test.js')]);
 run('unit: coverage-driven mixed round + drill credit-back (v69.1)', 'node', [path.join(__dirname, 'unit-mixed-coverage-round.test.js')]);
 run('unit: ui translation QC (validator + translate-ui --qc) (v69_f)', 'node', [path.join(__dirname, 'unit-ui-qc.test.js')]);

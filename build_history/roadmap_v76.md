@@ -1,139 +1,209 @@
-# Roadmap — v75 line
+# Roadmap — v76 line
 
-Current cut: **`v75_h`**. Baseline `node test/run.js` **174**, `--quick` **151**, `check-inline` 0 on
-both builds. (Session 29 opened on a RED baseline — 2 of 170 — for two unrelated real causes; see
-`build_history/v76_session29_notes.md`. Neither was a stale fixture.)
+Current cut: **`v76_c`**. Baseline `node test/run.js` **176**, `--quick` **153**, `check-inline` 0 on
+both builds.
 
-## Shipped in the v75 line (session 29)
+> **Carried forward from `roadmap_v75.md` in full, from §3 onward.** The v71→v72 boundary lost three
+> items that were only recovered in `v73_k`; everything still open is reproduced below rather than
+> referenced. `roadmap_v75.md` remains for the shipped table and the session-28/29 rules.
 
-| release | what |
-|---|---|
-| `v75_b` | **`ui.json` predated the code.** `complete.words_solved` + `form.finish_mixed` were absent from all 30 languages including `en`, so `t()` rendered the raw key to the learner. The returned translate pass was itself clean (596×30, 0 missing/0 extra) — it simply predated the two keys. Also repaired `common.cancel`, a key that **never existed in any release**, written as `t('…') \|\| 'Cancel'` — a fallback that can never fire because `t()` returns the truthy key on a miss. New `unit-ui-key-exists` sweeps all **491** literal `t()` keys against `en`, and bans the dead-fallback shape. |
-| `v75_c` | **`smoke-render` crossword: the product was right.** Corpus drift (297 topics) made the default fixture and the §3 lock fixture the same chapter; the lock probe's completion (keyed by topic NAME) leaked forward through a `seed()` that preserves `APP.progress`, the story counted as unlocked, and `v74_l` correctly hid the crossword. Progress cleared + the precondition asserted, so the section cannot silently become a test of a rule `unit-story-unlocked-card` already owns. |
-| `v75_e` | **Comprehension and math lesson edits were silently discarded.** `/api/lessons/edit` merges a WHITELIST of content fields; `questions` (comprehension) and `numbers`/`mathOps` (math) were not on it, so edits returned HTTP 200 and changed nothing. Measured across all 11 registry types: **6 of 16 field edits lost**. New `e2e-lesson-edit-roundtrip` drives its cases off `LESSON_TYPE_META`, so a new lesson type cannot repeat this. |
-| `v75_f` | **A flagged merge-import destroyed a storyline's storyboard.** `_syncStorylineForTopic` identified a chain by ID alone — a hash of the chapter list — so a storyline whose id was not that hash fell through to the FORK branch and was rebuilt from six fields, losing `storyboard`/`summary`/`tags`/`icon`; the dedup then kept the bare copy because its tie-break reads TITLES, not content. Reproduced exactly against the user's real export, fixed at the identity check (a storyline covering exactly these chapters IS this chain). |
-| `v75_g` | **Serbian + Croatian added, with their own script table.** `sr → ["cyrillic-sr","latin"]` (digraphic), `hr → "latin"`. Serbian does NOT use the existing `cyrillic` table — that is the 33-letter RUSSIAN alphabet, with nine letters Serbian lacks and `Е` read as /je/ where Serbian has /e/. New 30-row table validated by Unicode property checks and run through the product builder (65 exercises). Latin is correctly NOT taught to a Serbian reader — that falls out of `latin.soundsFor`, no new rule. |
-| `v75_h` | **The read-out was cut off; both reported symptoms were one defect.** `_speakAndAdvance` armed a flat 4s safety net, so a longer sentence advanced MID-utterance and the next question's auto-speak then `cancel()`ed the readout still running. The net now watches PROGRESS (three consecutive idle polls) instead of wall-clock, `cancel()` fires only when something is in flight, and the text is chunked through the shared `_speakChunksThen`. |
-| `v75_d` | **Sentence ordering allowed at difficulty 1** (§2 below). Measured: `order` questions 675 → 1710; ITEM denominator 8332 → **8332**, unchanged. `smoke-render` renderEx went 5 → 6 types — the `order` render path had never been executed on a beginner chapter. |
- Read `build_history/HANDOVER.md` first, then this file, then `INTERNALS.md`, then
-`build_history/v74b_session28_notes.md` (session 28 — long, and the findings matter more than the
-diffs).
-
----
-
-## Shipped in the v74 line (session 28) — nineteen point releases
-
-The headline: **the v74 roadmap's prime suspect was wrong.** Nothing from session 27 was reverted.
-`v73_g`'s icon row does navigate, `v73_i`'s keying is sound, `v73_d` is not the cause of the red bar.
-The reported "user progress broken" had an older and much larger cause.
+## Shipped after the v76 cut
 
 | release | what |
 |---|---|
-| `v74_b` | ONE lesson-phase classification. 29 chapters had gated the story behind an error hunt — which renders a corrupted copy of that story. |
-| `v74_c` | **Coverage counts SOURCE ITEMS, not generated questions.** The qid universe was cached under an AUDIO key while the solved store was one flat map, so a learner who played muted and then unmuted read `64/83` with Next locked and no way back. **284 of 298 topics affected → 0.** Also closes the sampling nondeterminism — **and the wrinkle logged as a follow-up in `v69_session1_notes.md` and carried unfixed through five roadmap boundaries**: *"`_qidUniverseCache` is keyed on (topic, lessonIdx, teacher) but the mix now also depends on mute state… toggling mute mid-chapter can shift the coverage denominator."* That note described the exact defect the user reported. |
-| `v74_d` | Math counts — 225 authored exercises across 25 chapters. |
-| `v74_e` | Hidden lessons never count for anything (guard, no behaviour change). |
-| `v74_f` | The completion card routes the learner to the error hunt (guard). |
-| `v74_g` | Counters (b) and (c): chapter bar in LESSONS on both chapter shapes; %-solved over the story-unlock universe. |
-| `v74_i` | Live-mode storyline progress. The list projection shipped no `lessons[]`, so `countedLessons` was 0 and `chapterComplete` was false for every inactive chapter — header `0/0`, no bars, wrong completion title. |
-| `v74_j` | TTS voice ranking: locale before quality. `en-GB` was read by `en-NG`; `pt-PT` by `pt-BR`. |
-| `v74_k` | The storyline locks use the shared completion rule (instances 4 and 5 of the raw-lessons pattern). |
-| `v74_l` | Section 3 — the story-unlocked card. |
-| `v74_m` | ONE story paragraph formatter, applied to the completion card. |
-| `v74_n` | Two highlight tiers; the two story panels agree. |
-| `v74_o` | The last completion card is not a dead end (instance 6). |
-| `v74_p` | The vocabulary panel shows the CHAPTER, not the round. |
-| `v74_q` | The comprehension reason is shown, not spoken. |
-| `v74_r` | The mixed round is a TOGGLE, not a lesson type. |
+| `v76_c` | **`--langnames` shipped broken** — `callLLM` is positional and returns `{text}`; it was called with an options bag and its result read as a string. Only `--check` had ever been run, and `--check` never calls the model. Fixed, `llm.js` now rejects a non-string model with an actionable message, and `unit-langnames` runs the real mode against a stubbed backend. |
+| `v76_b` | **`sr`/`hr` were missing from both language drop-downs** — the menus are hand-written `<option>` markup, not generated from `languages.json`, so adding a language is a two-file change and only one file had a guard. Options added; `unit-lang-menu-coverage` now asserts both directions plus `name`/`flag`/`tts`. Added **`translate-ui.js --langnames`** to fill `languages.json`'s 32x32 `names` matrix (151 cells were empty — including 31 for `lb`, a pre-existing hole nobody knew about). |
 
-**Sections 1, 3 and 4 of `roadmap_v74.md` are COMPLETE.** Counter (a) was CLOSED as chapters by user
-ruling (an underlying-lesson count would need a new server projection field for a row that is
-suppressed on the completion card anyway).
+**Open, not done:** the two menus should eventually be GENERATED from `languages.json`. Not done in
+`v76_b` because they are deliberately ordered differently (`lang-select` leads with Italian) and
+generating would silently reorder a user-visible menu. The guard makes the duplication safe until
+someone decides the order.
 
-### The ruled lesson-flow definition (user, session 28) — now implemented
+## ⚠️ Session protocol — READ FIRST
 
-| phase | types | role |
-|---|---|---|
-| **prep** | `standard`, `word_forms`, `synonyms`, `grammar`, `conjugation`, `math`, `intro_script` | vocabulary work toward the story |
-| — | `mixed` | **not a lesson** — an alternative way to PLAY the prep lessons |
-| **story** | — | read and understand |
-| **post** | `comprehension`, `error_hunt`, `ai_error_hunt` | gate the next chapter |
+Unchanged from `roadmap_v75.md`. Re-read its protocol block and its definition-of-done before
+writing anything, plus **"Rules earned in session 28"** and **"Rules earned in session 29"** — eight
+rules now, and each one cost a wrong finding.
 
-Gate 1 (story): prep coverage ≥ pass mark. Gate 2 (next chapter): comprehension all-correct-once,
-error hunts merely played; **optional to EXIST** — no post lesson means no gate 2 (243 of 298
-chapters). `lessonPhase()` is the single classification; `_STORY_GATED_TYPES` and `_NEVER_POOLED`
-derive from it.
+Standing design principle: **no language knowledge in the code**, where *permitted* means Unicode
+machinery or corpus statistics, not a hand-authored table.
 
 ---
 
-## THIS SESSION — the queue, in order
+# 0. THE PROGRESS-CARD REWORK (user, at the v76 cut)
 
-### 1. The pass mark — needs the USER, not code
+**Principle, in the user's words: THE STORY TEXT MUST BE THE FOCUS OF ATTENTION.** The lesson flow
+exists so that the student ends up understanding the text. "Complete cards" are renamed **progress
+cards** and become the spine that guides a learner through a story.
 
-`Churros und Chaos` is **40 items** where it was **83 questions**, and an item is solved by ANY
-correct answer, so 80% is a materially lower bar than before `v74_c`. Deliberately not guessed at:
-the current mark's meaning was set by play, and a rescale without play would be a guess dressed as a
-decision. **Blocked on a browser pass.**
+**Read `build_history/v76_card_gates.md` before touching the card.** It carries the measured AS-IS
+truth table (32 rows, both gate families) and a preserved probe to re-run and diff.
 
-### 2. Allow sentence ordering at difficulty 1 (user, at the v75 cut) — ✅ SHIPPED `v75_d`
+## 0a. BLOCKING — three rulings the user still owes
 
-**Shipped in session 29.** Numbers below were re-measured on the current corpus and held
-(281 sentence-bearing chapters, 191 suppressed; denominator-neutral). Kept for the reasoning.
+Nothing in §0 should be built before these are settled; each one changes what the cards are.
 
-**Measured, agreed, not started.** Two thirds of the corpus never shows a sentence-ordering
-exercise:
+1. **Does `v74_l` survive?** It strips the story-unlocked card to Next-only for learners. The rework
+   wants that same card to show the story as the focus, keep Replay always available, and carry a
+   third progress bar. These are incompatible — `v74_l` looks SUPERSEDED, and if so it should be
+   deleted with its test rather than worked around. Note the table finding: `v74_l`'s hide-list is
+   barely observable today, because those buttons are usually already hidden for other reasons.
+2. **Does `v74_o` survive?** "Nothing left to do → return to the storyline." Back/next turns that
+   terminal state into a waypoint. The user's screenshot 2 shows the grey Next this rule produces;
+   the user wants it green and active, restarting the comprehension lesson.
+3. **What does a highlight MEAN?** See §3 — the measured choice is +782 marks with articles as noise
+   versus +60 clean. That is a product judgement about what a mark tells a learner, and it must be
+   written into this roadmap next to the numbers or the next session will re-derive both and pick
+   differently.
 
-```
-chapters containing sentences        : 287
-  ordering suppressed (all diff <= 1): 192
-  ordering available                 :  95
-```
+## 0b. Do this FIRST, before restructuring
 
-`Churros und Chaos` has `topic.difficulty = 1` and neither sentence-bearing lesson overrides it, so
-both inherit 1. The sentences and their `words[]` arrays are intact (10 of 10) and `mkOrder` is still
-called unconditionally — the exercises are **built and then filtered out**, in
-`buildStandardExercises`:
+**Make the 7 swallowing `catch(_) {}` blocks in `showComplete` visible** (564 lines, `index.html`
+~14212–14776). A throw in any of them leaves the card half-rendered with the suite green. Session 29
+lost real time to a bug that *looked* like a swallowed throw and was not. A counter the harness can
+assert is zero, or a rethrow under a test flag, is enough. One small release, revert-verified, before
+any of the work below.
 
-```js
-const _diff = (lesson && lesson.difficulty) || (d && d.difficulty) || 2;
-if (_diff <= 1) {
-  _exs = _exs.filter(e => e.type !== 'order' && !((_muted || _noAudio) && e.type === 'listen_type'));
-}
-```
+**Then settle the coverage key-space question** in `v76_card_gates.md` — 86 seeded solved keys, 0
+counted, total 31, on the branch that gates story unlock for every mixed-driven chapter.
 
-**This reverses a considered decision, not an oversight.** `v69_session1_notes.md:141` records the
-user's own instruction of 2026-07-14 — *"In beginner mode, don't add lessons that require already
-knowing the word — only ones where you pick a word from 4 options"* — and the specific reasoning for
-`order`: *"Its shuffled word bank LOOKS like options, but assembling a sentence is production and
-needs word order a beginner hasn't met."* The user has since decided the word bank is scaffolding
-enough. Say so in the notes rather than presenting it as a fix.
+## 0c. The sequence (the big one)
 
-**The change is denominator-neutral, which it would NOT have been before `v74_c`:**
+Progress cards become an ordered walk, with back/next, over:
 
-```
-Churros, story-unlock universe
-  difficulty 1 (suppressed) : items=37  questions=80
-  difficulty 2 (allowed)    : items=37  questions=90
-  ITEM denominator moves by  0   <- what the pass mark measures
-  question count moves by  +10   <- what it would have moved pre-v74_c
-```
+  **summary → chapter questions → story-unlocked → next-chapter-unlocked → story-finished**
 
-A sentence is already an item, reachable via `read_translate`; ordering is another way to ask about
-the same item. Under the old question-keyed model this change would have raised the bar on 192
-chapters as a side effect.
+- The **summary card is the FIRST page** in the back/next sequence, showing the story summary in the
+  SOURCE language, with progress bars empty, before any question of that chapter.
+- Back/next also walks **already-played chapters**, to revisit, replay, or complete vocabulary.
+  Hint from the user: such buttons already exist in the teacher-only lesson-set view.
+- A **"story finished"** card at the end: full story (collapsible), the complete vocabulary learned,
+  and a festive icon.
+- **`comp-back` already exists and is hidden in all 32 measured rows.** Decide: revive or replace.
+- **`comp-story-unlocked` does not mean what its name says** (it is the preview label, shown while
+  locked whenever canGenerate or teacher is on). Rename before adding a real unlocked card.
 
-**What to touch:** drop the `e.type !== 'order' &&` clause, keep the `listen_type` half — that one
-has separate and still-sound reasoning (muted `listen_type` silently becomes recall-production, the
-"listening OFF" clause). `unit-beginner-types` pins the current behaviour in three places (lines 62,
-74, 87) and its header comment carries the rationale, so **rewrite rather than delete**: it should
-end up asserting that ordering is KEPT at difficulty 1 while `listen_type` still drops when muted.
-Line 32 pins an exact round composition of 12 including `2 order` — that count changes.
+## 0d. Layout and navigation
 
-**Verify it in play, not only in the suite:** ordering is a render path (`renderEx` case `'order'`,
-`index.html` ~14091), and a beginner round has never drawn one, so extend `smoke-render` and say in
-the notes what to click.
+- Move progress bars, lesson icons and the replay/drill/crossword/next buttons **BELOW the text** on
+  all progress cards. (Check `comp-drill` first — grey or hidden in all 32 rows; possibly dead.)
+- Closing a question card (the ✕, upper left) must return to **the progress card of the lesson being
+  played**, not to the storyline.
+- **Replay must ALWAYS be available**, including after the story is unlocked and comprehension and
+  error-hunt lessons are done. The learner must be able to reach 100%.
+- Show the **third progress bar** (post-unlock lessons: comprehension, error hunts) on ALL progress
+  cards of that chapter, iff such lessons exist. User screenshot 2 shows it appearing only on
+  partial completion today.
 
-### 3. Highlighting — measured, NOT shipped, and the old plan is WRONG
+## 0e. Vocabulary on progress cards
+
+- **Cumulative per lesson-set**: every word the learner has already solved correctly, not just the
+  current lesson's. **User screenshot 2 shows the panel EMPTY** on a comprehension card, because a
+  comprehension lesson has no vocab of its own — so today the panel is blank on exactly the cards
+  where the story is the focus. This is not polish; it is a blank panel.
+- Ideally ordered as the words appear in the story (greedy matching, to allow for word forms).
+  **Do this as part of §3, sharing one matcher** — it is the same token-alignment problem, not a
+  separate nicety.
+- Include vocabulary that was the question or the correct answer in **synonym and word_forms**
+  lessons.
+
+## 0f. Story read-out
+
+**Auto-start a read-out of the story chapter when it is unlocked and shown on the progress card**
+(unless muted). Cheap now, and only because of `v75_h`: the old flat 4-second advance net would have
+cut a story chapter to ribbons. Watch for cancel-races with the card's other speech — `v75_h` made
+`cancel()` conditional, and that must not be undone here.
+
+## 0g. Comprehension flow
+
+- A wrong answer currently returns to the card; Replay then replays only the normal lessons.
+- **Next should be green and active**, restarting the comprehension lesson directly.
+- **A repeated comprehension lesson must ask only the questions not yet answered correctly.**
+- Model prompt change (user, needs a live model — OWED BY THE USER): explanations must NOT quote
+  story sentences literally; keep the explanation in the SOURCE language; if a quote is required,
+  translate it; and additionally report the exact underlying quote in the TARGET language. Read out
+  the explanation for CORRECT answers too — both the source-language explanation and the
+  target-language quote.
+
+## 0h. Question navigation — its own release, probably its own session
+
+Back/next on the QUESTION cards. Already-made choices are shown (right or wrong) and cannot be
+reverted, but the lock lasts only for that question set: replaying via the progress card makes them
+playable again.
+
+This is not a card change — it is a question-runner change (`C.cur`, `check()`, per-run answer
+state) and it interacts with `_speakAndAdvance`, which today advances in one direction only. Scope
+it separately.
+
+---
+
+# 0i. LESSON GENERATION REWORK (user, at the v76 cut) — BLOCKED on §1
+
+- Align the teacher-only "add lessons" button on the lesson-set/chapter page with the storyline-level
+  bulk "add lessons" selection menu. Per-type options on the right of each lesson type (math: LLM
+  prompt; vocab: extend/neutral/reinforce), possibly including the difficulty selector, plus a
+  per-type **count** defaulting to 1 (e.g. 2 vocab, 1 synonym, 1 comprehension).
+  **MERGE HERE: the recovered "Global QC checkbox menu" item** — same menu, and it also wants the
+  book's automatic QC made opt-in from the lesson-type menu and run AFTER the storyboard pass.
+  That reverses the `v68.1` ordering decision.
+- **PERHAPS: remove extend/neutral/reinforce entirely** and make "extend" the standard: whenever a
+  lesson is generated it uses words of the chapter NOT YET covered by previous lessons up to this
+  chapter. Aim to cover a story's vocabulary as completely as possible, focused on specific/rarer
+  words. Re-inject unsolved items from previous sections outside the model, the way the lesson flow
+  already reduces to unsolved.
+  **BLOCKED on §1 (the pass mark).** This moves the denominator; settling the target afterwards
+  means both moved at once and neither measurement is interpretable.
+- Add a real **re-generate lessons** function on the storyline page, beside "add lessons", that
+  regenerates the EXISTING lesson types with the same settings but new prompts and models — so older
+  storylines can get better lessons.
+
+---
+
+# CARRIED FORWARD from the v75 line (unchanged unless noted)
+
+> §4 "Browsing completion cards" is **ABSORBED into §0c** and deleted as a separate item — it was
+> the back/next request. Everything else below is still open.
+
+### 3. Highlighting — measured TWICE, NOT shipped; the v75 plan was too narrow
+
+> **REVISED at the v76 cut, after the user's screenshot.** The chapter in
+> `Screenshot_2026-08-04_23-28-47.png` (`Genetik und Mendel`, it←de, `tp_17851395481530000335`)
+> scores **0 marks today**, from THREE independent causes, only one of which the plan below covers:
+>
+> 1. **Stored articles** — `"la variazione"` vs the story's `"della variazione"`. (Covered below.)
+> 2. **An apostrophe mismatch nobody had spotted.** Vocab stores `l'evoluzione` with ASCII `'`
+>    (U+0027); the story has `l’evoluzione` with U+2019. Not equal — so even the exactly-present
+>    word never matched. 15 `it`, 7 `en`, 4 `lb` chapters have ASCII apostrophes in vocab; 18 `it`
+>    and 92 `en` stories carry the typographic one.
+> 3. **Inflection** — `mutazione`/`adattamento` vs `mutazioni`/`adattamenti`. That is Tier 2 below.
+>
+> **Measured comparison of the candidate fixes** (product highlighter, 282 chapters):
+>
+> ```
+>                                    screenshot ch.   corpus            improved in
+>   as stored (today)                    0 marks       3233 marks        -
+>   split vocab on whitespace            8             4015   (+782)     96 chapters
+>   strip leading token (plan below)     4             3377   (+144)     56 chapters
+>   normalise apostrophes only           1             3235   (+2)       10 chapters
+>   articles + elided + apostrophes      5             3293   (+60)      22 chapters
+> ```
+>
+> **Whitespace splitting wins on count and loses on meaning:** on that chapter 4 of its 9 marks are
+> the article `la` — it highlights the commonest word in the text as if it were learned vocabulary,
+> and `mutazione`/`adattamento` still miss. The composed version marks
+> `variazione, trasmissione, genetica, DNA, evoluzione` — **5 marks, 0 articles**, and corpus-wide
+> **0 bare articles**. Corpus-derived article sets came out as `es: el, la` / `it: il, la, l'` /
+> `ar: ال`, with `it` also catching two false positives (`reti`, `per`) that want the threshold
+> tightened before shipping.
+>
+> **The user has accepted article noise ("that's ok for now"). §0a ruling 3 is whether that still
+> holds now the cost is measured.** Ship the composed version unless the user rules otherwise; keep
+> "also mark articles" as a separate reversible toggle.
+>
+> Also new here: include vocabulary that was the question or correct answer in **synonym and
+> word_forms** lessons (§0e), and share ONE matcher with §0e's story-order vocabulary display.
+
+### (original v75 note follows) Highlighting — measured, NOT shipped, and the old plan is WRONG
 
 `roadmap_v74.md` §2 said the article set "is already derived — `_articleStatsFor` collects exactly
 this". **It does not.** That function reads `x.article` from GRAMMAR items via `_forEachGrammarItem`;
@@ -198,13 +268,11 @@ produces it; (c) have the model generate it under the existing prompt machinery,
 Both languages also need a `tts` code (`sr-RS`, `hr-HR`), 29 `names` entries each, and a `ui.json`
 stub for `translate-ui.js`.
 
-### 4. Browsing completion cards (user request, session 28)
+### 4. Browsing completion cards — ✅ ABSORBED into §0c (the progress-card rework)
 
-Explicit back/next to walk the completion cards of already-played lessons, so a learner can revisit
-and replay. **Interacts with two things session 28 just settled:** `v74_l` strips the story-unlocked
-card back to Next only, and `v74_o` makes "nothing left to do" mean "return to the storyline". This
-turns that terminal state into a waypoint — revisit both branches together rather than layering a
-third navigation rule on top.
+Deleted as a separate item at the v76 cut: it *is* the back/next request. Its warning survives in
+§0a — it interacts with `v74_l` and `v74_o`, and both need a ruling rather than a third navigation
+rule layered on top.
 
 ### 5. `_sbChapterTarget` — the seventh and last known raw-lessons instance
 

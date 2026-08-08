@@ -1,6 +1,6 @@
-# HANDOVER — v75_h
+# HANDOVER — v76_c
 
-One page. Read `build_history/roadmap_v75.md` next for the queue and the session protocol, and
+One page. Read `build_history/roadmap_v76.md` next for the queue and the session protocol, and
 `build_history/v74b_session28_notes.md` for what session 28 actually found — it is long, and the
 findings matter more than the diffs.
 
@@ -8,19 +8,19 @@ findings matter more than the diffs.
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **174 checks, ALL PASSED** |
-| `node test/run.js --quick` | 151 |
+| `node test/run.js` | **176 checks, ALL PASSED** |
+| `node test/run.js --quick` | 153 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v75_h'`. Establish this before changing anything.
+`APP_VERSION = 'v76_c'`. Establish this before changing anything.
 
 **Session 29 opened on a RED baseline (2 of 170) and neither failure was a stale fixture.** One was
 `ui.json` arriving OLDER than the code it serves (two keys missing from `en` itself, rendering raw
 key names to the learner); the other was corpus drift making two `smoke-render` fixtures the same
 chapter, so leaked progress put a later section on a story-unlocked card where `v74_l` correctly
 hides the button it was asserting. **Check file timestamps first — it was the whole diagnosis of the
-first one.** Full account in `build_history/v75h_session29_notes.md`.
+first one.** Full account in `build_history/v76_session29_notes.md`.
 
 **If `unit-static-freshness` fails, run `node build-static.js`.** It hashes every baked input and
 stamps the digests into `docs/index.html`, so a stale static build is caught instead of shipping
@@ -70,7 +70,21 @@ existing `v{ver}_session{n}_notes.md` form.
 
 ## Next session - in this order
 
-**Two items are BLOCKED ON A RULING FROM YOU, both measured in session 29 (`roadmap_v75.md` §3b, §3c):**
+**THE NEXT SESSION IS THE PROGRESS-CARD REWORK.** Read, in this order:
+`build_history/roadmap_v76.md` §0 (the whole rework, with the user's notes merged and the roadmap
+items absorbed), then `build_history/v76_card_gates.md` (the MEASURED as-is truth table for the card
+— 32 rows, both gate families, plus a preserved probe to re-run and diff).
+
+**Do not start §0c (the card sequence) until the three rulings in §0a are answered.** Two of them
+supersede decisions that are currently shipped and tested (`v74_l`, `v74_o`); building on top of
+them instead of deleting them is how a third navigation rule gets layered on.
+
+**Do §0b first regardless:** make the 7 swallowing `catch(_) {}` blocks in `showComplete` visible,
+and settle the coverage key-space question (86 seeded solved keys, 0 counted, total 31 — the branch
+that gates story unlock for every mixed-driven chapter). Both are small, and both de-risk everything
+after them.
+
+**Three items are BLOCKED ON A RULING FROM YOU, both measured in session 29 (`roadmap_v76.md` §0a, §3b):**
 
 - **The Android English voice.** Your "still caribbean, only on android" report is a real hole in
   `v74_j`, which fixed only the case where the exact locale is PRESENT. With no `en-GB` voice
@@ -110,6 +124,8 @@ existing `v{ver}_session{n}_notes.md` form.
 - **A browser pass.** Now 19 releases deep. `v74_c` changed what coverage means, `v74_i` touched the
   live list projection (the first `server.js` change in the session), and `v74_j`/`v74_n` are visual.
 - **The comprehension QC checker** - needs a new prompt and a live model. Queued, correctly.
+- **`translate-ui.js --langnames`** — 151 `languages.json` name cells are empty (`sr`/`hr`, and 31
+  for `lb`). Needs a live model; run `--langnames --check` first to see the gap.
 - **The translate pass.** `complete.story_unlocked` and `ex.badge.comprehension` came BACK filled in
   all 30 languages — that pass worked, and the returned file validated clean (596x30, 0 missing).
   It simply predated `complete.words_solved` and `form.finish_mixed`, which were therefore missing

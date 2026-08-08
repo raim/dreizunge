@@ -36,6 +36,19 @@ function getRequestTimeout() { return OLLAMA_TIMEOUT; }
 // ── Public interface ───────────────────────────────────────────────────────────
 
 function callLLM(model, system, userMsg, maxTokens, opts) {
+  // v76_c: this signature is POSITIONAL, and passing an options object instead — callLLM({ model,
+  // system, prompt }) — is an easy and silent mistake: the object travels all the way to the
+  // backend and surfaces as `json: cannot unmarshal object into Go struct field
+  // ChatRequest.model of type string`, which names Ollama's struct rather than the caller's bug.
+  // Fail here instead, where the message can say what to do. Cheap, and it protects every caller.
+  if (typeof model !== 'string' || !model) {
+    throw new TypeError(
+      'callLLM(model, system, userMsg, maxTokens, opts): `model` must be a non-empty string, got ' +
+      (model && typeof model === 'object'
+        ? 'an object — this signature is positional, not an options bag; ' +
+          'call callLLM(MODEL, system, userMsg, 2048, { temperature: 0.1 })'
+        : JSON.stringify(model)));
+  }
   if (BACKEND === 'ollama') {
     const p = _callOllama(model, system, userMsg, maxTokens, opts);
     // Graceful degradation: if think:false was requested but THIS model rejects the parameter

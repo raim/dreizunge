@@ -12,6 +12,8 @@
 //   node translate-ui.js --qc --fix             # …and auto-repair what can be repaired safely
 //   node translate-ui.js --qc --retranslate     # …and re-translate what cannot (needs the backend)
 //   node translate-ui.js --qc de fr             # audit only these languages
+//   node translate-ui.js --langnames             # fill languages.json `names` (the language MENU
+//                                                #   labels), not ui.json. --check/--dry apply.
 //
 // Reads OLLAMA_HOST, OLLAMA_MODEL, LLM_BACKEND from environment (same as server.js defaults).
 
@@ -33,6 +35,7 @@ const CHECK_ONLY   = process.argv.includes('--check');
 const QC_MODE      = process.argv.includes('--qc');
 const QC_FIX       = process.argv.includes('--fix');
 const QC_RETRANS   = process.argv.includes('--retranslate');
+const LANGNAMES    = process.argv.includes('--langnames');
 
 // Collect language codes from positional args; collect --exclude / --skip / --model values
 const EXCLUDE_LANGS = new Set();
@@ -93,12 +96,12 @@ console.log(`${'─'.repeat(50)}\nTotal missing: ${totalMissing} across ${workLa
 
 // --qc runs even when nothing is missing: it audits the CONTENT of what is already there, which is
 // exactly the case where the completeness report says "all complete" and the file is still wrong.
-if (!QC_MODE && (CHECK_ONLY || totalMissing === 0)) {
+if (!QC_MODE && !LANGNAMES && (CHECK_ONLY || totalMissing === 0)) {
   if (totalMissing === 0) console.log('✅ All translations complete!');
   process.exit(0);
 }
 
-if (!QC_MODE && DRY_RUN) {
+if (!QC_MODE && !LANGNAMES && DRY_RUN) {
   console.log('(dry run — not translating)');
   process.exit(0);
 }
@@ -260,7 +263,112 @@ function runQC() {
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
+
+// ── --langnames: fill languages.json `names` ──────────────────────────────────
+// A SECOND matrix, and it is not ui.json. `languages.json` carries, for every offered language, its
+// name written in every OTHER offered language — that is what the two drop-downs label their
+// options with. Adding a language therefore needs two files filled, and only ui.json had a filler:
+// `sr` and `hr` arrived in v75_g with `names.en` alone, and the pre-existing `lb` column had never
+// been filled at all (31 of its 32 cells empty since it was added).
+//
+// Batched by UI LANGUAGE rather than by entry: one request asks for every missing name in one
+// target language, which is both the natural prompt ("write these language names in Finnish") and
+// far fewer calls than one-per-cell.
+function _langNameGaps() {
+  const codes = Object.keys(langs).filter(k => !k.startsWith('_'));
+  const gaps = {};                       // uiLang -> [codes needing a name in that language]
+  for (const ui of codes) {
+    const need = codes.filter(c => !((langs[c].names || {})[ui] || '').trim());
+    if (need.length) gaps[ui] = need;
+  }
+  return { codes, gaps };
+}
+
+// languages.json is hand-formatted (one entry per two lines, names inline). JSON.stringify would
+// reflow 66 lines into ~1100 and make every future diff unreadable, so the file is re-emitted in
+// its own shape. Verified by parsing the result before it is written.
+function _serializeLangs(obj) {
+  const codes = Object.keys(obj);
+  const pad = Math.max(...codes.map(c => (obj[c].name || '').length));
+  const lines = codes.map((c, i) => {
+    const e = obj[c];
+    const namePart = JSON.stringify(e.name) + ','.padEnd(pad - (e.name || '').length + 2);
+    const head = `  ${JSON.stringify(c)}: { "name": ${namePart}"flag": ${JSON.stringify(e.flag)}, "tts": ${JSON.stringify(e.tts)},`;
+    const names = Object.entries(e.names || {}).map(([k, v]) => `${JSON.stringify(k)}:${JSON.stringify(v)}`).join(',');
+    return head + `\n    "names": { ${names} } }` + (i < codes.length - 1 ? ',' : '');
+  });
+  return '{\n' + lines.join('\n') + '\n}\n';
+}
+
+async function runLangNames() {
+  const { codes, gaps } = _langNameGaps();
+  const total = Object.values(gaps).reduce((n, a) => n + a.length, 0);
+  const want = INCLUDE_LANGS.length ? INCLUDE_LANGS : Object.keys(gaps);
+  console.log(`languages.json: ${codes.length} languages → ${codes.length * codes.length} name cells, ${total} missing`);
+  for (const ui of Object.keys(gaps)) {
+    console.log(`  ${ui.padEnd(4)} missing ${String(gaps[ui].length).padStart(3)}: ${gaps[ui].join(' ')}`);
+  }
+  if (!total) { console.log('\n✅ All language names present.'); return; }
+  if (CHECK_ONLY) { console.log('\n(--check — not translating)'); return; }
+  if (DRY_RUN)    { console.log('\n(dry run — not translating)'); return; }
+
+  const reachable = await ping();
+  if (!reachable) { console.error(`❌ Cannot reach LLM backend at ${OLLAMA_HOST}.`); process.exit(1); }
+
+  let wrote = 0;
+  for (const ui of want) {
+    const need = gaps[ui];
+    if (!need || !need.length) continue;
+    const uiName = langs[ui]?.name || ui;
+    process.stdout.write(`\n🌍 ${uiName} (${ui}) — ${need.length} name(s)… `);
+    const sys = `You write LANGUAGE NAMES. Given a JSON object mapping language codes to their ` +
+      `English names, return ONLY a JSON object with the SAME keys, where each value is that ` +
+      `language's name as normally written in ${uiName}. No markdown, no explanation.\n\n` +
+      `RULES:\n` +
+      `1. Write each name in ${uiName}, using ${uiName}'s own script and capitalisation ` +
+      `conventions for language names.\n` +
+      `2. Give the name of the LANGUAGE, never the country.\n` +
+      `3. If ${uiName} genuinely uses the same spelling as English, return that spelling — do not ` +
+      `invent a difference.`;
+    const payload = Object.fromEntries(need.map(c => [c, langs[c].name]));
+    let got = null;
+    for (let attempt = 1; attempt <= 3 && !got; attempt++) {
+      try {
+        // Same call shape as translateLang above — callLLM is POSITIONAL
+        // (model, system, userMsg, maxTokens, opts) and returns { text, … }.
+        const raw = await callLLM(MODEL, sys, JSON.stringify(payload, null, 2), 2048, { temperature: 0.1 });
+        got = extractJSON(raw.text);
+      } catch (e) { if (attempt === 3) console.log(`failed: ${e.message}`); }
+    }
+    if (!got) continue;
+    let ok = 0, bad = [];
+    for (const c of need) {
+      const v = got[c];
+      // Same validator the ui.json writer uses, so a name cannot be written here that the auditor
+      // would reject there. `names` values carry no placeholders or lead icons, so in practice this
+      // is the empty/garbage/foreign-script check.
+      const { issues, repaired } = validateEntry(langs[c].name, typeof v === 'string' ? v : '', ui);
+      const val = repaired != null ? repaired : v;
+      if (issues.some(isBlocking) || typeof val !== 'string' || !val.trim()) { bad.push(c); continue; }
+      langs[c].names = langs[c].names || {};
+      langs[c].names[ui] = val.trim();
+      ok++; wrote++;
+    }
+    process.stdout.write(`${ok} ok${bad.length ? `, ${bad.length} rejected (${bad.join(',')})` : ''}`);
+  }
+
+  if (wrote) {
+    const out = _serializeLangs(langs);
+    JSON.parse(out);                    // never write a file that will not parse
+    fs.writeFileSync(LANG_FILE, out, 'utf8');
+    console.log(`\n\n💾 Wrote ${wrote} name(s) to ${LANG_FILE}`);
+  }
+  const left = Object.values(_langNameGaps().gaps).reduce((n, a) => n + a.length, 0);
+  console.log(left ? `⚠ ${left} cell(s) still missing. Run again to retry.` : '✅ languages.json complete.');
+}
+
 async function main() {
+  if (LANGNAMES) { await runLangNames(); return; }
   if (QC_MODE) {
     const { unfixable } = runQC();
     if (!QC_RETRANS) return;
