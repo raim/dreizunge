@@ -27,7 +27,7 @@ const { validateEntry, isBlocking, auditAll } = require('./ui-qc');
 
 const UI_FILE   = path.join(__dirname, 'ui.json');
 const LANG_FILE = path.join(__dirname, 'languages.json');
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'qwen2.5:7b';
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'translategemma:12b';
 const OLLAMA_HOST  = process.env.OLLAMA_HOST  || 'http://localhost:11434';
 const BATCH_SIZE   = parseInt(process.env.BATCH_SIZE || '10', 10);
 const DRY_RUN      = process.argv.includes('--dry');

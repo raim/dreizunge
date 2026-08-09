@@ -8429,6 +8429,183 @@
           "qcBy": "translategemma:12b"
         },
         {
+          "id": "ls_1786317335862_1_conjugation",
+          "type": "conjugation",
+          "title": "Verben im Park",
+          "desc": "Wichtige Verben für die Parkfreundschaft",
+          "icon": "🌳",
+          "conjugations": [
+            {
+              "infinitive": "biti",
+              "source": "sein",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ja",
+                  "form": "sam"
+                },
+                {
+                  "pronoun": "ti",
+                  "form": "si"
+                },
+                {
+                  "pronoun": "on/ona/ono",
+                  "form": "je"
+                },
+                {
+                  "pronoun": "mi",
+                  "form": "smo"
+                },
+                {
+                  "pronoun": "vi",
+                  "form": "ste"
+                },
+                {
+                  "pronoun": "oni/one/ona",
+                  "form": "su"
+                }
+              ]
+            },
+            {
+              "infinitive": "ići",
+              "source": "gehen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ja",
+                  "form": "idem"
+                },
+                {
+                  "pronoun": "ti",
+                  "form": "ideš"
+                },
+                {
+                  "pronoun": "on/ona/ono",
+                  "form": "ide"
+                },
+                {
+                  "pronoun": "mi",
+                  "form": "idemo"
+                },
+                {
+                  "pronoun": "vi",
+                  "form": "idete"
+                },
+                {
+                  "pronoun": "oni/one/ona",
+                  "form": "idu"
+                }
+              ]
+            },
+            {
+              "infinitive": "pokažem",
+              "source": "zeigen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ja",
+                  "form": "pokažem"
+                },
+                {
+                  "pronoun": "ti",
+                  "form": "pokažeš"
+                },
+                {
+                  "pronoun": "on/ona/ono",
+                  "form": "pokaže"
+                },
+                {
+                  "pronoun": "mi",
+                  "form": "pokažemo"
+                },
+                {
+                  "pronoun": "vi",
+                  "form": "pokažete"
+                },
+                {
+                  "pronoun": "oni/one/ona",
+                  "form": "pokazuju"
+                }
+              ]
+            },
+            {
+              "infinitive": "skočiti",
+              "source": "springen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ja",
+                  "form": "skačem"
+                },
+                {
+                  "pronoun": "ti",
+                  "form": "skačeš"
+                },
+                {
+                  "pronoun": "on/ona/ono",
+                  "form": "skače"
+                },
+                {
+                  "pronoun": "mi",
+                  "form": "skačemo"
+                },
+                {
+                  "pronoun": "vi",
+                  "form": "skačete"
+                },
+                {
+                  "pronoun": "oni/one/ona",
+                  "form": "skaču"
+                }
+              ]
+            },
+            {
+              "infinitive": "voljeti",
+              "source": "mögen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ja",
+                  "form": "volim"
+                },
+                {
+                  "pronoun": "ti",
+                  "form": "voliš"
+                },
+                {
+                  "pronoun": "on/ona/ono",
+                  "form": "voli"
+                },
+                {
+                  "pronoun": "mi",
+                  "form": "volimo"
+                },
+                {
+                  "pronoun": "vi",
+                  "form": "volite"
+                },
+                {
+                  "pronoun": "oni/one/ona",
+                  "form": "vole"
+                }
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "conjugation",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 763,
+            "completionTokens": 853,
+            "ms": 389080,
+            "at": "2026-08-09T23:15:35.862Z"
+          },
+          "_recreated": true
+        },
+        {
           "id": "ls_1786289570949_c4zl",
           "type": "mixed",
           "title": "🔀 Mischübung",
@@ -8502,8 +8679,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 17774,
-        "totalCompletionTokens": 1050,
+        "totalPromptTokens": 18537,
+        "totalCompletionTokens": 1903,
         "lessons": [
           {
             "lessonNum": 1,
@@ -8513,12 +8690,12 @@
           }
         ],
         "tokensByType": {
-          "recreate": 955,
+          "recreate": 2571,
           "lesson_qc": 16008
         }
       },
       "generatedAt": "2026-08-09T14:25:35.014Z",
-      "updatedAt": "2026-08-09T17:18:35.127Z",
+      "updatedAt": "2026-08-09T23:24:25.838Z",
       "createdBy": "admin",
       "coverageTarget": 0.6,
       "script": "latin"
@@ -8760,6 +8937,183 @@
           "perType": 3
         },
         {
+          "id": "ls_1786316946709_0_conjugation",
+          "type": "conjugation",
+          "title": "Prisustvo glagola",
+          "desc": "Konjugacija glagola u prezentu",
+          "icon": "🗣️",
+          "conjugations": [
+            {
+              "infinitive": "zvati se",
+              "source": "heißen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ja",
+                  "form": "zovem se"
+                },
+                {
+                  "pronoun": "ti",
+                  "form": "zoveš se"
+                },
+                {
+                  "pronoun": "on/ona/ono",
+                  "form": "zove se"
+                },
+                {
+                  "pronoun": "mi",
+                  "form": "zovemo se"
+                },
+                {
+                  "pronoun": "vi",
+                  "form": "zovete se"
+                },
+                {
+                  "pronoun": "oni/one/ona",
+                  "form": "zovu se"
+                }
+              ]
+            },
+            {
+              "infinitive": "pozdraviti",
+              "source": "grüßen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ja",
+                  "form": "pozdravljam"
+                },
+                {
+                  "pronoun": "ti",
+                  "form": "pozdravljaš"
+                },
+                {
+                  "pronoun": "on/ona/ono",
+                  "form": "pozdravlja"
+                },
+                {
+                  "pronoun": "mi",
+                  "form": "pozdravljamo"
+                },
+                {
+                  "pronoun": "vi",
+                  "form": "pozdravljate"
+                },
+                {
+                  "pronoun": "oni/one/ona",
+                  "form": "pozdravljaju"
+                }
+              ]
+            },
+            {
+              "infinitive": "biti",
+              "source": "sein",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ja",
+                  "form": "sam"
+                },
+                {
+                  "pronoun": "ti",
+                  "form": "si"
+                },
+                {
+                  "pronoun": "on/ona/ono",
+                  "form": "je"
+                },
+                {
+                  "pronoun": "mi",
+                  "form": "smo"
+                },
+                {
+                  "pronoun": "vi",
+                  "form": "ste"
+                },
+                {
+                  "pronoun": "oni/one/ona",
+                  "form": "su"
+                }
+              ]
+            },
+            {
+              "infinitive": "ići",
+              "source": "gehen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ja",
+                  "form": "idem"
+                },
+                {
+                  "pronoun": "ti",
+                  "form": "ideš"
+                },
+                {
+                  "pronoun": "on/ona/ono",
+                  "form": "ide"
+                },
+                {
+                  "pronoun": "mi",
+                  "form": "idemo"
+                },
+                {
+                  "pronoun": "vi",
+                  "form": "idete"
+                },
+                {
+                  "pronoun": "oni/one/ona",
+                  "form": "idu"
+                }
+              ]
+            },
+            {
+              "infinitive": "voljeti",
+              "source": "mögen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ja",
+                  "form": "volim"
+                },
+                {
+                  "pronoun": "ti",
+                  "form": "voliš"
+                },
+                {
+                  "pronoun": "on/ona/ono",
+                  "form": "voli"
+                },
+                {
+                  "pronoun": "mi",
+                  "form": "volimo"
+                },
+                {
+                  "pronoun": "vi",
+                  "form": "volite"
+                },
+                {
+                  "pronoun": "oni/one/ona",
+                  "form": "vole"
+                }
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "conjugation",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 735,
+            "completionTokens": 872,
+            "ms": 642253,
+            "at": "2026-08-09T23:09:06.709Z"
+          },
+          "_recreated": true
+        },
+        {
           "id": "ls_1786288667889_0_comprehension",
           "type": "comprehension",
           "title": "Anas Neue Freunde",
@@ -8825,8 +9179,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 8271,
-        "totalCompletionTokens": 1301,
+        "totalPromptTokens": 9006,
+        "totalCompletionTokens": 2173,
         "lessons": [
           {
             "lessonNum": 1,
@@ -8836,15 +9190,16 @@
           }
         ],
         "tokensByType": {
-          "recreate": 795,
+          "recreate": 2402,
           "add_lesson": 1415,
           "lesson_qc": 5775
         }
       },
       "generatedAt": "2026-08-09T14:17:02.396Z",
-      "updatedAt": "2026-08-09T17:19:34.019Z",
+      "updatedAt": "2026-08-09T23:11:10.423Z",
       "createdBy": "admin",
-      "script": "latin"
+      "script": "latin",
+      "coverageTarget": 0.75
     },
     {
       "id": "tp_17861968126590000089",
