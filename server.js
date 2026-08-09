@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v77_w';
+const APP_VERSION  = 'v77_x';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -3082,15 +3082,42 @@ async function _generateChapterMetaOnce(sys, user, n) {
           const em = o.match(/"(?:emoji|icon)"\s*:\s*"((?:[^"\\]|\\.)*)"/);
           return tm ? { title: tm[1], emoji: em ? em[1] : '📖' } : null;
         }).filter(Boolean);
+        // v77_x (user-reported): the model can answer with PAIR ARRAYS instead of objects, one per
+        // line and with no enclosing array:
+        //     ["Erste Begegnung", "🐕"]
+        //     ["Parkfreundschaft", "🌳"]
+        // Every rung above looks for `{…}` objects, so a perfectly readable answer was rejected
+        // three times and the whole post-pass failed. Notably it only ever failed for MULTI-chapter
+        // storylines — a single chapter is asked for one object and returns one, which is why the
+        // lesson-set page's title generation worked while the storyline post-pass did not.
+        if (!arr.length) {
+          const pairs = stripRaw(raw).match(/\[[^\[\]]*\]/g) || [];
+          arr = pairs.map(p => {
+            try {
+              const a = JSON.parse(p);
+              if (Array.isArray(a) && typeof a[0] === 'string' && a[0].trim()) {
+                return { title: a[0], emoji: (typeof a[1] === 'string' && a[1].trim()) ? a[1] : '📖' };
+              }
+            } catch(_p) {}
+            return null;
+          }).filter(Boolean);
+        }
         if (!arr.length) throw new Error('Could not parse chapter-titles array: ' + stripRaw(raw).slice(0,120));
       }
     }
   }
   if (!Array.isArray(arr)) throw new Error('Expected a JSON array of {title,emoji}');
-  return arr.map(o => ({
-    title: ((o && (o.title || o.t)) || '').toString().trim().slice(0, 80),
-    emoji: ((o && (o.emoji || o.icon || o.e)) || '📖').toString().slice(0, 8),
-  }));
+  // v77_x: accept a [title, emoji] PAIR as well as an object. When the model answers with a proper
+  // top-level array of pairs the first rung parses it successfully — and this normaliser would then
+  // read `.title` off an Array and produce an empty title for every chapter. A parse that succeeds
+  // into the wrong shape is worse than one that fails, because nothing reports it.
+  return arr.map(o => {
+    if (Array.isArray(o)) o = { title: o[0], emoji: o[1] };
+    return {
+      title: ((o && (o.title || o.t)) || '').toString().trim().slice(0, 80),
+      emoji: ((o && (o.emoji || o.icon || o.e)) || '📖').toString().slice(0, 8),
+    };
+  });
 }
 
 // ── Grammar lesson: gender, articles, plurals ───────────────────────────────

@@ -1027,6 +1027,34 @@ native-speaker check of `cyrillic-sr`, the translate pass for `complete.words_so
 `form.finish_mixed` / `form.script_pick`, and the comprehension QC checker.
 
 
+## `v77_x` — two defects from the user's testing notes
+
+**(a) Chapter titles failed on multi-chapter storylines.** The model answered with PAIR ARRAYS, one
+per line, no enclosing array:
+
+```
+["Erste Begegnung", "🐕"]
+["Parkfreundschaft", "🌳"]
+```
+
+Every rung of the parsing ladder looks for `{…}` objects, so a perfectly readable answer was
+rejected three times and the post-pass gave up — silently, leaving the placeholder titles in place.
+
+**The user's own observation was the diagnostic**: title generation worked from the lesson-set page.
+That path asks for ONE chapter and gets one object; only the multi-chapter request provokes the pair
+form. A bug that looks intermittent is often a bug in the branch that only one caller reaches.
+
+Fixed in BOTH places — a pair-array rung in the ladder AND the normaliser, which reads `.title` off
+its input. Without the second, a properly-formed top-level array of pairs would parse successfully
+and yield an empty title for every chapter: **a parse that succeeds into the wrong shape is worse
+than one that fails, because nothing reports it.**
+
+**(b) Math ordering presented the numbers already sorted.** Not a shuffle bug — `shuffle` is uniform
+and therefore returns the answer about 1 build in 24 for four numbers, 1 in 6 for three. The learner
+sees a question that is already finished. Reshuffles until the presented order differs, bounded, and
+falls back to the original order for a set that cannot differ. Verified over 400 builds: 0 present
+the solution, where the old behaviour would have produced roughly 17.
+
 ---
 
 # Session 31 — closing summary
@@ -1062,6 +1090,20 @@ unreachable dead code once the branch order was checked.
 return Sets, not arrays; `chapterComplete` re-stamps as a side effect; a comment must not spell a
 pattern a test sweeps for (that one caught me four times); and `build-static.js` re-implements
 client functions, so a client fix is not a published fix (three times).
+
+## The user's testing notes — triaged into the roadmap
+
+The user supplied a batch of testing notes at the end of the session. They are triaged in
+`roadmap_v77.md` → "USER TESTING NOTES", in five groups: **A** fixed here (`v77_x`), **B** small and
+self-contained, **C** prompt work needing a live model, **D** bugs needing reproduction, **E** larger
+features needing a decision first.
+
+Two observations from doing the triage with the code loaded, which a cold reading would have missed:
+- **The clear-progress-per-chapter request must reuse `slBottomClearProgress`**, not re-implement
+  it — `v77_s` just fixed what that function forgets to clear, and a fresh implementation would
+  forget `chapterDone` all over again.
+- **The word-form highlighting request belongs with §0e/§3 and the ONE shared matcher.** Adding a
+  second matcher is exactly what §0e was written to prevent.
 
 ## Owed by the user
 

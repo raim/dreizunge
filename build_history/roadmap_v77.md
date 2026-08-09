@@ -15,6 +15,7 @@ both builds.
 
 | release | what |
 |---|---|
+| `v77_x` | **(user notes) Two defects fixed.** (a) **Chapter-title generation failed on multi-chapter storylines.** The model answered with PAIR ARRAYS, one per line and with no enclosing array (`["Erste Begegnung", "🐕"]` / `["Parkfreundschaft", "🌳"]`); every rung of the parsing ladder looks for `{…}` objects, so a perfectly readable answer was rejected three times. **This is why the lesson-set page worked and the storyline post-pass did not** — one chapter is asked for one object and returns one. Fixed in BOTH places: a pair-array rung in the ladder, and the normaliser now accepts a pair, because a parse that succeeds into the wrong shape yields empty titles and reports nothing. (b) **Math ordering presented the numbers already sorted.** `shuffle` is uniform, so it returns the answer about 1 build in 24 for four numbers — the learner sees a finished question. Reshuffles until the presented order differs, bounded. |
 | `v77_w` | **(user) NO QC PASS during storyline/book generation.** Story QC was already excluded — an LLM pass per chapter, unprompted, on an already-long job — and the user made the same call for LESSON QC, for the same reason: it is the slowest part of the job, and QC loses nothing by being deferred because it is a REVIEW step, not a generation step. Everything it would flag is still there afterwards. **On-demand QC is untouched:** the storyline 🔍 sweep (defaults `includeStory: true`), the per-chapter QC, `_runQc` itself and the `/api/qc` endpoint. Two guards updated to assert the ABSENCE of the automatic pass — paired with positive assertions that QC still exists, so "no auto-QC" cannot pass by QC having been deleted. |
 | `v77_v` | **§0f — the story is READ ALOUD when it unlocks on the card.** Cheap only because of `v75_h`. Four restraints, each revert-verified because each protects something that has broken before: **muted means muted** (note `speakBodyText` force-unmutes on a tap — auto-play has no such consent, so it goes to the speech layer directly), **never on a review render**, **once per chapter per session** (the card re-renders into the same DOM repeatedly), and **never interrupts speech already in progress** — `v75_h` made `cancel()` conditional for exactly these races and auto-play must not undo it. Dialect chapters excluded by the same rule the speaker button uses. |
 | `v77_u` | **The APOSTROPHE defect — a plain bug, shipped independently of ruling 3.** Vocabulary stores `l'evoluzione` with ASCII U+0027; stories are written with U+2019, so a word EXACTLY present in the story never matched. Fixed as **Unicode machinery, not a table**: one character class folds the apostrophe code points, the same class of rule as the case-insensitivity the matcher already applies — no language knowledge added. Both sides fold, so a SOLVED word also keeps its strong mark across forms (only fixing the regex would have left the defect half-cured). **Measured on the shipped corpus: 17 vocabulary words across 13 chapters (`it` 5, `en` 6, `lb` 2) now match that never could.** Inflection still misses under whitespace splitting — Tier 2, still open. |
@@ -494,6 +495,64 @@ Also dead: `#tts-row` / `buildTtsSelector()`, permanently `display:none` with th
 by global TTS selectors in footers", still rebuilt on every lesson-set entry.
 
 ---
+
+## USER TESTING NOTES — session 31 batch, TRIAGED (not yet done unless marked)
+
+Triaged with the code loaded. Grouped by what each needs, because several look like separate items
+and are not. **Two were fixed immediately as `v77_x`** (chapter titles, math order).
+
+### A. Fixed this session
+- ✅ **Chapter-title generation failing on multi-chapter storylines** — `v77_x`. Root cause above;
+  note it explains the user's own observation that the lesson-set page worked.
+- ✅ **Math ordering shows the solved order** — `v77_x`.
+
+### B. Small and self-contained — good first work for a fresh session
+- **Clear-progress at CHAPTER level**, on the storyline page, the progress cards, and inside error /
+  AI-error-hunt lessons. The wipe logic already exists (`slBottomClearProgress`) and `v77_s` fixed
+  what it forgets to clear — **reuse it, do not re-implement**, or the new button will forget
+  `chapterDone` all over again.
+- **Sentence-translation read-out should include the `"Übersetze: "` prefix** (tp_579238210) — read
+  the whole question in the source language.
+- **Synonym/antonym questions should state how many are to be found** ("<n> similar to <word>").
+- **Conjugation options must be alternative forms of THE SAME verb**, not other verbs, and need not
+  be padded to four.
+- **Teacher-mode switch at the bottom of every page**, beside the UI-language and mute controls.
+  (Will later depend on credentials.)
+- **Highlight word forms from conjugation and word-form lessons**, so covered vocabulary lights up
+  more fully. **Belongs with §0e/§3 and the ONE shared matcher** — do not add a second matcher.
+
+### C. Needs a live model — prompt work, verify with the user
+- **Error-hunt lessons fail too often.** The user's diagnosis is concrete: make the error count
+  length-dependent (1/2/3 by difficulty per paragraph or per word budget), relax "exactly", and use
+  1/2/3 in TOTAL as the rejection floor. The reported failure ends in an empty Ollama response after
+  three retries, so this also costs a whole add-lesson attempt.
+- **Vocab lessons: article mismatch** (target `palazzo`, source `der Palast`). Prompt needs to be
+  stricter, with BAD examples.
+- **Word-form sentences are too long** — same treatment as synonyms.
+- **Comprehension scope:** ask for chapter-level questions first, then whole-story ones, via the
+  prompt rather than a new selector.
+- **§0g's model-prompt change** (already recorded) belongs with these.
+
+### D. Bugs needing reproduction — ask the user for the case
+- **Bulk "add lessons": ticking mixed produced no mixed lessons**, and adding mixed alone appears to
+  require another lesson type alongside it. Should work on its own, per chapter.
+- **Live mode: edit windows keep the PREVIOUS chapter's content** when browsing between chapters
+  (lesson editor, QC story proposals). Smells like a render that reuses a panel without clearing it
+  — the same shape as several card bugs this session.
+
+### E. Larger features — need their own release, and a decision first
+- **Second script for Serbian (Latin ⇄ Cyrillic):** an LLM-generated alternative script plus a
+  toggle beside the translate button in every read-story field. Note `v75_g` already ships an
+  `sr`/`hr` table and a native review is OWED — settle that first.
+- **Live main page should mirror the static one**, with generation moved behind a button/card, and
+  every "continue story" affordance redirecting there.
+- **Floating pill listing running LLM jobs, one row each, with a working STOP per job.**
+- **Token accounting must include deleted lessons/chapters** — record the spend when deleting, or
+  the total is not a total.
+- **Social-media preview for storyline URLs** (title + storyboard). Server-side OG tags; cheap only
+  if the storyboard is already reachable as an image.
+- **Startup check for missing ENGLISH ui.json keys**, not only other languages. Note
+  `unit-ui-key-exists` already does this in the SUITE — this is about the running app.
 
 ## RECOVERED — carried since v71, still not done
 

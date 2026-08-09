@@ -12348,7 +12348,18 @@ function generateMathExercisesClient(nums, difficulty, customOps) {
     const subset = shuffle([...nums]).slice(0,size);
     const dir = Math.random()<0.5?'asc':'desc';
     const sorted = [...subset].sort((a,b)=>a-b);
-    exs.push({ type:'math_order', direction:dir, numbers:shuffle([...subset]), correct:(dir==='asc'?sorted:[...sorted].reverse()).map(String) });
+    // v77_x (user-reported): the numbers must not be PRESENTED in the order that solves the task.
+    // `shuffle` is uniform, so it will sometimes return the answer — and with a short subset that is
+    // not rare (1 in 24 for four numbers, 1 in 6 for three). The learner then sees a question that
+    // is already finished, which reads as a bug whether or not they notice it is chance.
+    // Reshuffle until the presented order differs from the target; bounded, and if a set genuinely
+    // cannot differ (all values equal) the original order stands rather than looping.
+    const _want = (dir === 'asc' ? sorted : [...sorted].reverse()).map(String);
+    let _shown = shuffle([...subset]);
+    for (let _i = 0; _i < 12 && _shown.map(String).join('\u0001') === _want.join('\u0001'); _i++) {
+      _shown = shuffle([...subset]);
+    }
+    exs.push({ type:'math_order', direction:dir, numbers:_shown, correct:_want });
   }
 
   // Calculations

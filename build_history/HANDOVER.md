@@ -1,4 +1,4 @@
-# HANDOVER — v77_w
+# HANDOVER — v77_x
 
 One page. Read `build_history/roadmap_v77.md` next for the queue and the session protocol, then
 `INTERNALS.md`, then `build_history/v77_session31_notes.md` for what session 31 found.
@@ -7,12 +7,12 @@ One page. Read `build_history/roadmap_v77.md` next for the queue and the session
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **191 checks, ALL PASSED** |
-| `node test/run.js --quick` | 167 |
+| `node test/run.js` | **192 checks, ALL PASSED** |
+| `node test/run.js --quick` | 168 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v77_w'`. Establish this before changing anything.
+`APP_VERSION = 'v77_x'`. Establish this before changing anything.
 
 **These numbers are the ones to trust.** Session 30's prompt said 170/149 and session 31's said
 182/158; each was right for the tree it was written against and stale by the time it was read.
@@ -159,7 +159,13 @@ Both `v76_card_gates.md` and roadmap §0c have been corrected in place.
 
 ## Next session — START HERE
 
-### 1. The user has a batch of testing notes. Triage them FIRST.
+### 1. The user's testing notes are ALREADY TRIAGED — see roadmap "USER TESTING NOTES".
+
+Session 31 triaged the batch into five groups (A fixed, B small, C prompt work, D needs
+reproduction, E larger features). **Start from group B** — small, self-contained, and each one
+names the trap to avoid. The user may have more notes since; triage those the same way.
+
+### 1b. How that triage went, if more notes arrive
 
 The user tested heavily across this session and has collected more notes than one session should
 swallow. **Do not start §0e/§3 or §0h before reading them.** Expect the same pattern this whole
