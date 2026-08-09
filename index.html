@@ -1285,6 +1285,13 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <button class="comp-ico" id="comp-repeat" style="display:none" onclick="repeatForCoverage()">↻</button>
     <button class="comp-ico" id="comp-drill" style="display:none" onclick="startDrill()">🎯</button>
     <button class="comp-ico" id="comp-crossword" style="display:none" onclick="openCrosswordFromComplete()">🔠</button>
+    <!-- v78_e (user): wipe THIS CHAPTER's progress, the chapter-level counterpart to the
+         storyline-wide control on the storyline page. Both go through _clearChapterProgress, so a
+         chapter wiped from here forgets exactly what a chapter wiped from there forgets — including
+         the `chapterDone` stamp that v77_s found surviving a wipe. Hidden on a drill (its topic is
+         synthetic and has no progress of its own). Handler assigned in JS: the stub DOM cannot
+         click an inline one (standing rule 22). -->
+    <button class="comp-ico" id="comp-wipe" style="display:none">🧹</button>
     <button class="comp-ico primary" id="comp-next" onclick="afterComplete()">→</button>
   </div>
   <div id="comp-nav-btns" style="display:none;flex-wrap:wrap;justify-content:center;margin-top:8px"></div>
@@ -8138,23 +8145,49 @@ function slBottomDownload(ev){
   if(!topics.length){ return; }
   openExportMenu(ev, topics);
 }
+// v78_e (user): the per-chapter wipe, extracted so every entry point clears the SAME stores.
+// `slBottomClearProgress` (whole storyline) is now a loop over this, and the chapter-level controls
+// call it directly. Extracted rather than copied for one reason with a name: `v77_s` found this
+// logic clearing `completed` and `solved` but not `chapterDone`, so a wiped chapter still read
+// "finished" — chapters stayed unlocked and the storyline bar stayed green with nothing played. A
+// second copy is how that comes back. There is one list of stores that can answer "is this chapter
+// done", and it lives here.
+//
+// No confirm() and no re-render: this is the RULE, not the interaction. Callers own both, because
+// the storyline-wide wipe asks once for the whole deck rather than once per chapter.
+function _clearChapterProgress(topicKey){
+  if(!topicKey) return false;
+  if(APP.progress?.completed)   delete APP.progress.completed[topicKey];
+  if(APP.progress?.solved)      delete APP.progress.solved[topicKey];   // coverage store (Commit A)
+  // The cached completeness STAMP that `chapterComplete` trusts AHEAD of the flags. A stamp
+  // outlives the progress it described, so leaving it behind is what made a wipe invisible.
+  if(APP.progress?.chapterDone) delete APP.progress.chapterDone[topicKey];
+  // The once-per-chapter story-unlocked page is offered again — the learner is starting over.
+  if(APP.progress?.storyShown)  delete APP.progress.storyShown[topicKey];
+  return true;
+}
+
+// v78_e (user): clear the CURRENT chapter's progress and re-render the card in place.
+// Deliberately re-renders through `showComplete(true)` — the REVIEW render — rather than reloading
+// the chapter: the learner asked to reset their progress, not to be thrown into a lesson. Review
+// mode is also the one that must not judge (INTERNALS: "a review render is not a play"), which is
+// exactly right for a card being redrawn over a freshly emptied store.
+function clearThisChapterProgress(){
+  const topicKey = APP.lessonData?.topic;
+  if(!topicKey) return false;
+  if(!confirm(t('chapter.clear_progress_confirm'))) return false;
+  _clearChapterProgress(topicKey);
+  saveProg();
+  try { if (typeof showToast === 'function') showToast(t('chapter.clear_progress_done')); } catch(_) {}
+  try { showComplete(true); } catch(_) {}
+  return true;
+}
+
 function slBottomClearProgress(){
   const { topics } = _slBottomChapters();
   if(!topics.length) return;
   if(!confirm(t('sl.clear_progress_confirm'))) return;
-  topics.forEach(tp => {
-    if(APP.progress?.completed) delete APP.progress.completed[tp];
-    if(APP.progress?.solved)    delete APP.progress.solved[tp];   // coverage store (Commit A)
-    // v77_r (user-reported): `chapterDone` was NOT cleared. It is the cached completeness STAMP
-    // that `chapterComplete` trusts ahead of the flags, so wiping progress left every chapter
-    // still reading "finished": chapters stayed unlocked, and the storyline bar stayed fully
-    // green with nothing played. The wipe has to clear every store that can answer "is this
-    // chapter done", not only the two that record how it got done.
-    if(APP.progress?.chapterDone) delete APP.progress.chapterDone[tp];
-    // The once-per-chapter story-unlocked page should be offered again after a wipe, too — the
-    // learner is starting the chapter over.
-    if(APP.progress?.storyShown)  delete APP.progress.storyShown[tp];
-  });
+  topics.forEach(tp => _clearChapterProgress(tp));
   saveProg();
   const sl = APP._slScreen;
   if(sl) _renderStorylineScreen(sl.chainId, sl.encodedChain, sl.topics);
@@ -9168,8 +9201,11 @@ function clearLessonProgress(enc) {
   const topic = decodeURIComponent(enc);
   if (!confirm(`Clear all lesson results for "${topic}"?\nThis resets all progress for this lesson set.`)) return;
   if (APP.progress.completed[topic]) {
-    delete APP.progress.completed[topic];
-    if (APP.progress.solved) delete APP.progress.solved[topic];   // coverage store (Commit A)
+    // v78_e: this was a THIRD copy of the wipe, and it carried the v77_s defect — it cleared
+    // `completed` and `solved` but not the `chapterDone` STAMP or `storyShown`, so clearing from
+    // the lesson-set page left the chapter still reading "finished". Routed through the one shared
+    // rule; see _clearChapterProgress for what "cleared" means and why it is a single list.
+    _clearChapterProgress(topic);
     saveProg();
   }
   buildPath();
@@ -12101,10 +12137,20 @@ function buildConjugationExercises(lesson, lang) {
     // Local transform only — does NOT mutate the stored lesson.
     const cleanForms = mergeConjugationForms(forms, lang);
     cleanForms.forEach((f, fi) => {
+      // v78_d (user): the distractors are OTHER FORMS OF THIS VERB, and nothing else.
+      //
+      // The pool used to be `shuffle([...wrongSameVerb, ...wrongOther])`, a UNION with every form
+      // of every other verb in the lesson, shuffled — so other verbs' forms crowded out the real
+      // paradigm even when this verb had plenty of its own. That makes the question answerable
+      // without knowing the conjugation at all: "which of these is a form of `essere`" is a
+      // vocabulary question wearing a grammar question's badge, and the learner can score it by
+      // recognising the stem.
+      //
+      // And NO PADDING: if the verb offers only two contrasting forms, the question has three
+      // options, not four topped up from elsewhere. A short question that tests the paradigm beats
+      // a full one that does not. (User: "need not be padded to four".)
       const wrongSameVerb = cleanForms.filter(x=>x.cleanForm!==f.cleanForm).map(x=>x.cleanForm);
-      const wrongOther    = verbs.filter(v=>v.infinitive!==verb.infinitive)
-                                 .flatMap(v=>(v.forms||[]).map(x=>stripPronoun(x.pronoun,x.form)));
-      const wrongPool     = shuffle([...new Set([...wrongSameVerb, ...wrongOther])]).slice(0, 3);
+      const wrongPool     = shuffle([...new Set(wrongSameVerb)]).slice(0, 3);
 
       if (wrongPool.length >= 1) {
         const choices = shuffle([f.cleanForm, ...wrongPool]).slice(0, 4);
@@ -13111,9 +13157,20 @@ function tSynSelect(ex){
     }
     sentenceHtml = `<div dir="auto" style="font-size:17px;font-weight:700;line-height:1.6;margin:4px 0 8px;text-align:start">${sentenceHtml}</div>`;
   }
+  // (user, v78_b) The prompt states HOW MANY words are to be found. Multi-select gives no other
+  // signal of when the answer is complete: a learner who tapped one of three correct words had no
+  // way to know two remained, so Check was a guess about the QUESTION rather than the vocabulary.
+  // The count is `ex.correct.length`, the same array Check scores against, so the number shown and
+  // the number required cannot disagree. A separate `_n` key rather than a reworded existing one —
+  // the translate pass keys off MISSING, not CHANGED, so editing the old value in place would have
+  // left 31 languages silently showing the uncounted prompt for ever.
+  const _synN = Array.isArray(ex.correct) ? ex.correct.length : 0;
+  const _synQ = (key) => _synN > 0
+    ? t(key + '_n', { n: _synN, word: qWord(furiHtml(ex.base)) })
+    : t(key,        {            word: qWord(furiHtml(ex.base)) });
   const q = isSyn
-    ? `<span style="color:var(--green);font-weight:800">${t('ex.syn.q_synonyms',{word:qWord(furiHtml(ex.base))})}</span>`
-    : `<span style="color:var(--red);font-weight:800">${t('ex.syn.q_antonyms',{word:qWord(furiHtml(ex.base))})}</span>`;
+    ? `<span style="color:var(--green);font-weight:800">${_synQ('ex.syn.q_synonyms')}</span>`
+    : `<span style="color:var(--red);font-weight:800">${_synQ('ex.syn.q_antonyms')}</span>`;
   const badge = isSyn ? t('ex.badge.syn_synonyms') : t('ex.badge.syn_antonyms');
   const gloss = ex.gloss ? `<div dir="auto" style="opacity:.55;font-size:13px;margin-top:-2px;margin-bottom:6px;text-align:start">${escHtml(ex.gloss)}</div>` : '';
   const tiles = ex.choices.map((w,i)=>`<button class="syn-tile" dir="auto" id="st${i}" data-w="${escAttr(w)}" onclick="synToggle(${i},this)">${furiHtml(w)}</button>`).join('');
@@ -15302,6 +15359,16 @@ function showComplete(review){
       let _ok = false;
       try { _ok = _crosswordAvailable(APP.lessonData?.lessons?.[APP.cur?.lessonIdx], APP.cur?.lessonIdx); } catch(_) { _ok = false; }
       _compBtnState(_cw, _ok, t('crossword.none'));   // v71_h: always shown, greyed when no puzzle can be built
+    }
+    // v78_e (user): clear THIS chapter's progress. Hidden rather than greyed on a drill, because a
+    // drill runs on a synthetic ephemeral topic with no progress to clear — the same reason ← is
+    // hidden there. Elsewhere it is always available: a learner who wants to start the chapter over
+    // is never in a state where that is unavailable, and greying it would only pose a puzzle.
+    const _wp = document.getElementById('comp-wipe');
+    if(_wp){
+      _compIco(_wp, '🧹', t('chapter.clear_progress'));
+      _wp.style.display = lesson._drill ? 'none' : '';
+      _wp.onclick = () => clearThisChapterProgress();
     }
   } catch(_) { if (typeof _cardNote === 'function') _cardNote('action-buttons', _); }
   const _compNav = document.getElementById('comp-nav-btns');

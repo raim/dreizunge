@@ -45,6 +45,7 @@ run('unit: a round never asks one question twice (v73_i)', 'node', [path.join(__
 run('unit: QC survives a chapter edited mid-pass (v73_j)', 'node', [path.join(__dirname, 'unit-qc-concurrent-edit.test.js')]);
 run('unit: pdf text-span selection', 'node', [path.join(__dirname, 'unit-pdf-selection.test.js')]);
 run('unit: conjugation grouping (item 4)', 'node', [path.join(__dirname, 'unit-conjugation-grouping.test.js')]);
+run('unit: conjugation distractors are same-verb (v78_d)', 'node', [path.join(__dirname, 'unit-conjugation-distractors.test.js')]);
 run('unit: grammar reinforce note (item 5)', 'node', [path.join(__dirname, 'unit-grammar-reinforce.test.js')]);
 run('unit: editor sync on delete (item 3)', 'node', [path.join(__dirname, 'unit-editor-sync.test.js')]);
 run('unit: tts voice-quality helpers (item 1)', 'node', [path.join(__dirname, 'unit-tts-voice.test.js')]);
@@ -60,6 +61,7 @@ run('unit: synonyms in-context builder', 'node', [path.join(__dirname, 'unit-syn
 run('unit: story context + num_ctx sizing per generator (v72_f)', 'node', [path.join(__dirname, 'unit-generation-context.test.js')]);
 run('unit: sentence segmentation client/server parity (v72_a)', 'node', [path.join(__dirname, 'unit-sentence-segmentation.test.js')]);
 run('unit: synonyms context sentence', 'node', [path.join(__dirname, 'unit-syn-context.test.js')]);
+run('unit: syn/antonym prompt states the count (v78_b)', 'node', [path.join(__dirname, 'unit-syn-count.test.js')]);
 run('unit: storyline bottom row + re-create wiring', 'node', [path.join(__dirname, 'unit-recreate-ui.test.js')]);
 run('unit: chapter navigation (same-language)', 'node', [path.join(__dirname, 'unit-chapter-nav.test.js')]);
 run('unit: user-flag editor (correct version + apply)', 'node', [path.join(__dirname, 'unit-user-flag-editor.test.js')]);
@@ -92,6 +94,7 @@ run('unit: intro learn-the-script course (v48)', 'node', [path.join(__dirname, '
 run('unit: QC dispatch — synonyms/word_forms (v48)', 'node', [path.join(__dirname, 'unit-qc-dispatch.test.js')]);
 run('unit: QC skip already-checked lessons (v49 bug 6)', 'node', [path.join(__dirname, 'unit-qc-skip.test.js')]);
 run('unit: static version derived from server APP_VERSION (v49)', 'node', [path.join(__dirname, 'unit-version-derivation.test.js')]);
+run('unit: current roadmap names the current line (v78_b)', 'node', [path.join(__dirname, 'unit-roadmap-version.test.js')]);
 run('unit: docs/ built from current sources (v73_b)', 'node', [path.join(__dirname, 'unit-static-freshness.test.js')]);
 run('unit: runner reports its own check count (v70)', 'node', [path.join(__dirname, 'unit-run-summary.test.js')]);
 run('unit: translate-ui discovers every offered language (v53)', 'node', [path.join(__dirname, 'unit-translate-ui-langs.test.js')]);
@@ -169,6 +172,7 @@ run('unit: knowledge-aware round composition (v69_h)', 'node', [path.join(__dirn
 // Executes the client's render paths in a stub DOM — the only guard that catches TDZ crashes and
 // undefined references, which source-level assertions provably cannot see (v69_k).
 run('unit: one definition of chapter-complete (v69_l)', 'node', [path.join(__dirname, 'unit-chapter-complete.test.js')]);
+run('unit: chapter-level clear progress (v78_e)', 'node', [path.join(__dirname, 'unit-chapter-clear-progress.test.js')]);
 run('smoke: render paths execute (buildPath/storyline/complete/renderEx)', 'node', [path.join(__dirname, 'smoke-render.test.js')]);
 run('unit: beginner-mode exercise types (v69.2)', 'node', [path.join(__dirname, 'unit-beginner-types.test.js')]);
 run('unit: crossword layout engine (v70_c)', 'node', [path.join(__dirname, 'unit-crossword-layout.test.js')]);

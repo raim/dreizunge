@@ -4,7 +4,7 @@ Current cut: **`v78`**. Baseline `node test/run.js` **192**, `--quick` **168**, 
 both builds. Corpus: **308 topics, 86 storylines**.
 
 > **Carried forward from `roadmap_v77.md` in full.** Everything below — the session protocol, the
-> standing rules (now twenty-two, sessions 28–31), the §0 rulings, and every open item — survives
+> standing rules (now twenty-five, sessions 28–32), the §0 rulings, and every open item — survives
 > the cut. The user's triaged testing notes are in "USER TESTING NOTES"; start there. The shipped table lists the
 > v76 line for context; new releases are appended above it.
 
@@ -32,6 +32,10 @@ both the documented guards doing their job:
 
 | release | what |
 |---|---|
+| `v78_e` | **(user notes, group B) Clear progress for ONE CHAPTER**, plus a third copy of the `v77_s` bug found and killed. The wipe rule is extracted to **`_clearChapterProgress(topicKey)`** and every entry point goes through it: the storyline-wide control loops over it, the new `comp-wipe` 🧹 on the progress card calls it for the current chapter, and **`clearLessonProgress` (the lesson-set page) — which turned out to be a THIRD implementation carrying the exact `v77_s` defect: it cleared `completed` and `solved` but not the `chapterDone` STAMP or `storyShown`, so clearing from that page left the chapter still reading "finished".** The user's note named the trap ("reuse it, do not re-implement, or the new button will forget `chapterDone` all over again") and it was already true of shipped code. The guard's payload assertion is PARITY: wiping every chapter one-by-one must leave byte-identical state to the storyline-wide wipe, so a future re-implementation that drops a store fails even while its own checks pass — revert-verified by reintroducing exactly that mistake. The card re-renders via `showComplete(true)`, the REVIEW render, because a play render would re-judge a chapter nobody just played and re-record the completion it had just erased. **Found on the way:** `unit-qid-stability` §5 pinned two SOURCE PHRASINGS (`delete APP.progress.solved[tp]`) that the extraction broke while the product stayed correct — standing rule 18, and one of the pins §0a asks to retire. Replaced behaviourally, and the replacement itself revert-verified (session-29 rule 8). 3 new `en` keys. |
+| `v78_d` | **(user notes, group B) Conjugation MCQ distractors are OTHER FORMS OF THE SAME VERB, and the question is no longer padded to four.** The pool was a shuffled UNION of this verb's other forms and every form of every OTHER verb in the lesson, capped at 3 — and because it was shuffled, the intruders crowded out the real paradigm even when the verb had six forms of its own. Measured under revert on a two-verb Italian fixture: `essere (voi)` was offered **`siete / parli / parla / parlano`**, three of four from `parlare`. That is not a grammar question — the learner picks the form whose stem matches the infinitive and never considers the paradigm. Now same-verb only, and **no padding**: a two-form verb asks a two-option question rather than being topped up from a neighbour (user: "need not be padded to four"). **Checked for the v71_s trap** — narrowing a builder can strand coverage, since a form that yields no MCQ leaves its universe key unreachable. It does not: a fully syncretic verb merges to ONE cleanForm, so `fi % 3 === 0` still emits the typed variant, and any verb with more than one distinct form gives every form a same-verb distractor. Asserted rather than argued (§5). §1 and §4 revert-verified independently, the second by a targeted weakening that pads only when short — which passes §1 and fails §4, as it must. Client-only: no server copy of `buildConjugationExercises`. |
+| `v78_c` | **(user-reported crash) `translate-ui.js --langnames` died on the first REJECTED name.** `isBlocking` is `issues => issues.some(i => i.severity === 'error')` — it takes the whole array. The `--langnames` writer called it as `issues.some(isBlocking)`, handing it one issue OBJECT per invocation, so it evaluated `issue.some(...)` and aborted with `Fatal: issues.some is not a function`. **Unreachable on the happy path**, which is why it shipped and why the mode's own guard was green: when a name validates, `issues` is empty and `[].some(fn)` never calls `fn` at all — the same "only the no-op path was ever exercised" shape as `v76_c`, in the same mode. The other two call sites in the file were already correct. `unit-langnames` §4 forces a rejection, asserts the run COMPLETES, reports the rejected cell, does not write the bad value, and still writes the good cells in the same and later batches; under revert it reproduces the user's exact message. The survey half was never affected — the 119 missing cells were counted correctly, and `v76_f`'s per-batch save kept the names earned before the crash. |
+| `v78_b` | **(user notes, group B) A synonym/antonym question STATES HOW MANY words are to be found**, plus one guard that retires a note. (a) `syn_select` is the only MULTI-select exercise in the app, so it is the only one where "have I finished answering?" is a real question — and there was no signal: a learner who tapped one of three correct words had nothing telling them two remained, and Check scored the round. The prompt now reads **"3 similar to Haus"**, counted from `ex.correct` — the same array `check()` scores against — so the number shown and the number required cannot drift; `unit-syn-count` §3 asserts that join by rendering and scoring ONE object. **New `_n` keys, not reworded old ones**: `translate-ui.js` fills keys that are MISSING, not keys whose English value CHANGED, so an in-place edit would have left 31 languages on the uncounted prompt for ever. A missing/zero count falls back to the uncounted key rather than rendering "0 similar to" — that is the section that caught the real mistake under revert (using `_n` unconditionally). §1's revert aborts the file, so **§2–§6 were each verified against a revert only they could see**; one weakening of §4 was behaviourally equivalent and correctly still passed. (b) **`unit-roadmap-version`** — the protocol's one version-specific sentence had shipped stale FOUR times (v73, v76, and the v78 cut in BOTH of its two sentences, the second having survived every previous correction). Replaced the reminder with an assertion against `APP_VERSION`; the roadmap is found by NUMBER, so it survives the next cut unedited. Both sentences revert-verified separately. **Also, and separately: the red baseline this session was a FINDING — see the session-32 notes §1 before reaching for the data-drop fixers, and run backfill BEFORE build-static.** |
 | `v77_x` | **(user notes) Two defects fixed.** (a) **Chapter-title generation failed on multi-chapter storylines.** The model answered with PAIR ARRAYS, one per line and with no enclosing array (`["Erste Begegnung", "🐕"]` / `["Parkfreundschaft", "🌳"]`); every rung of the parsing ladder looks for `{…}` objects, so a perfectly readable answer was rejected three times. **This is why the lesson-set page worked and the storyline post-pass did not** — one chapter is asked for one object and returns one. Fixed in BOTH places: a pair-array rung in the ladder, and the normaliser now accepts a pair, because a parse that succeeds into the wrong shape yields empty titles and reports nothing. (b) **Math ordering presented the numbers already sorted.** `shuffle` is uniform, so it returns the answer about 1 build in 24 for four numbers — the learner sees a finished question. Reshuffles until the presented order differs, bounded. |
 | `v77_w` | **(user) NO QC PASS during storyline/book generation.** Story QC was already excluded — an LLM pass per chapter, unprompted, on an already-long job — and the user made the same call for LESSON QC, for the same reason: it is the slowest part of the job, and QC loses nothing by being deferred because it is a REVIEW step, not a generation step. Everything it would flag is still there afterwards. **On-demand QC is untouched:** the storyline 🔍 sweep (defaults `includeStory: true`), the per-chapter QC, `_runQc` itself and the `/api/qc` endpoint. Two guards updated to assert the ABSENCE of the automatic pass — paired with positive assertions that QC still exists, so "no auto-QC" cannot pass by QC having been deleted. |
 | `v77_v` | **§0f — the story is READ ALOUD when it unlocks on the card.** Cheap only because of `v75_h`. Four restraints, each revert-verified because each protects something that has broken before: **muted means muted** (note `speakBodyText` force-unmutes on a tap — auto-play has no such consent, so it goes to the speech layer directly), **never on a review render**, **once per chapter per session** (the card re-renders into the same DOM repeatedly), and **never interrupts speech already in progress** — `v75_h` made `cancel()` conditional for exactly these races and auto-play must not undo it. Dialect chapters excluded by the same rule the speaker button uses. |
@@ -513,6 +517,106 @@ by global TTS selectors in footers", still rebuilt on every lesson-set entry.
 
 ---
 
+## USER TESTING NOTES — session 32 batch, TRIAGED AND SCHEDULED
+
+Five notes. Triaged with the code loaded, and **placed in the existing plan rather than queued as a
+flat list** — two belong to sections that already exist, one is a decision rather than a defect, and
+one was fixed on the spot.
+
+### ✅ Fixed immediately — `v78_c`
+
+- **`--langnames` crash: `Fatal: issues.some is not a function`.** Full note in the shipped table.
+  **Invisible until a name is actually REJECTED** — on the happy path `issues` is empty and
+  `[].some(fn)` never invokes `fn`. The 119 missing cells the run reported are unaffected: the crash
+  was in the writer, not the survey.
+
+### → §7 (NEW): script lessons for a DIGRAPHIC SOURCE — `sl_56647998`
+
+**User: "I generated a serbian-latin → serbian-cyrillic storyline but I can't add script lessons to
+it. Script lessons would obviously fit such a script-focussed lesson."** Correct, and the cause is
+exact — now with the reproduction case in the corpus (`tp_17862984310970000000`: `lang sr`,
+`script cyrillic-sr`, `srcLang sr`, `srcScript latin`, both stamped by the v76_i picker).
+
+`needsIntroScript(target, src)` computes the learner's readable scripts as
+**`scriptsForLang(srcLang)` — every script the source LANGUAGE admits**. For `sr → sr` that is
+`["cyrillic-sr","latin"]` on *both* sides, so `tgt.some(s => !src.has(s))` is **false** and the gate
+concludes the learner already reads everything. `buildArcIntroLessons` skips every script for the
+same reason (`srcScripts.has(scr) → continue`).
+
+**The gate encodes "which scripts can this language be written in", where the question is "which
+script is THIS chapter's source actually written in".** Since `v76_g`/`v76_h` that is a stored
+per-topic fact: **`srcScript`**. The fix reads the chosen script when there is one —
+`srcScript ? [srcScript] : scriptsForLang(srcLang)` — the same one-line shape in both functions.
+
+Notes for whoever takes it:
+- **The bug only bites when the SOURCE language is digraphic**, i.e. exactly the languages in
+  `scripts.json` `_scriptChoice` (`["sr"]` today). `sr→en`, `ar→en` etc. are unaffected — which is
+  why it survived: the corpus had no digraphic-source chapter until the user made one.
+- **`index.html` carries its OWN `needsIntroScript`/`scriptTeachable` (≈1762/1894) — DoD item 5,
+  data parity.** Fix both and assert parity, or the menu and the generator disagree about whether
+  the option exists at all.
+- Callers must pass the script through: `index.html:2540` and `:5033` gate the arc-script checkbox
+  off `APP.lang`/`APP.srcLang` only; the v76_i picker already holds the chosen scripts.
+- **Re-check `scriptTeachable` at the same time.** Once the source set narrows to ONE script its
+  `soundsFor` test is being asked a sharper question than before — confirm the sr→sr direction is
+  teachable in both directions rather than assuming it.
+- Its own release. The gate itself is headless; only the end-to-end needs a live model.
+
+### → §0e / §3 — Replay's target ordering (NOT a conflict, an ORDER bug)
+
+**User: "the replay button plays only comprehension lessons after a lesson is complete… preferably
+those that haven't been seen before. Is this request in conflict with the definition of this
+button?"**
+
+**Answered: no. The definition is fine and the ORDER is wrong.** Replay is `repeatForCoverage`,
+whose defined job is to raise COVERAGE. A lesson at 100% has nothing unsolved, so replaying it
+raises nothing and it is correctly skipped. **An unplayed lesson is not at 100% — it is at zero**,
+so "prefer ones not yet seen" is not a competing rule, it is the *strongest case* of the rule
+already there.
+
+What actually goes wrong: `_firstCoverageShortLessonIdx` returns the **first coverage-short lesson
+in document order**, not the least covered. A comprehension lesson sits early and, since `v77_t`
+narrows a repeat to the questions still unanswered, stays short for a long time — so it wins that
+scan every time and later unplayed lessons are never reached.
+
+Fix shape: choose the **least-covered** counted lesson (unplayed = 0% sorts first) rather than the
+first short one. Keeps the button's meaning intact, no ruling needed. **Schedule with §0e/§3**,
+which already owns the same card; re-run and diff `probe_gates_v77.js` after it.
+
+### → §0c — auto read-out: RULED (user, session 32), but HELD for a screenshot
+
+**User: "move auto-read from the progress card when the story unlocks to the card that is shown
+before comprehension lessons. No other place. But the mute button should work on it."**
+
+The read-out does not go on the finished card at all; it **moves**, and the current §0f call site is
+**removed in the same change** — "no other place" is part of the ruling, not a side effect.
+
+**HELD: do not implement yet.** The user will send a screenshot pinning which card is meant. "The
+card shown before comprehension lessons" is ambiguous in the current walk — the summary card
+(`v77_h`), the story-unlocked card (`v77_j`) and the progress card can all precede a comprehension
+lesson, and `v77_j` exists *because* the story-unlock moment was given its own page. Guessing would
+move the feature to the wrong screen and delete the working call site on the way.
+
+When it is built:
+- **Mute must work on it** — a REAL change, not a restatement of §0f's first restraint. §0f only
+  checks `APP.muted` at fire time and then goes straight to `_doSpeakLang`, deliberately bypassing
+  `speakBodyText` (which force-unmutes on a tap). "The mute button should work on it" means pressing
+  🔇 **while it is reading** must stop it — i.e. `toggleMute` has to cancel speech in flight. Check
+  what `toggleMute` does today before assuming.
+- §0f's other three restraints carry over verbatim: never on a review render, once per chapter per
+  session, never interrupt speech already in progress (`v75_h`).
+- `_autoReadStory` already takes `(topicKey, story, langCode)`, so the move is a call-site change
+  plus the mute wiring — not a rewrite.
+- The `v77_v` guard asserts §0f's behaviour at the OLD site and must move with it, or it passes
+  vacuously against a call site that no longer exists.
+
+Measured, and still true: `_autoReadStory` has exactly one call site today (the progress card story
+panel, `v77_v`), and the finished card `v77_f` has none. So this was never a regression.
+
+### → Group B, unchanged
+
+The remaining group-B items are **not** displaced by this batch and stay next in line.
+
 ## USER TESTING NOTES — session 31 batch, TRIAGED (not yet done unless marked)
 
 Triaged with the code loaded. Grouped by what each needs, because several look like separate items
@@ -524,15 +628,30 @@ and are not. **Two were fixed immediately as `v77_x`** (chapter titles, math ord
 - ✅ **Math ordering shows the solved order** — `v77_x`.
 
 ### B. Small and self-contained — good first work for a fresh session
-- **Clear-progress at CHAPTER level**, on the storyline page, the progress cards, and inside error /
-  AI-error-hunt lessons. The wipe logic already exists (`slBottomClearProgress`) and `v77_s` fixed
-  what it forgets to clear — **reuse it, do not re-implement**, or the new button will forget
-  `chapterDone` all over again.
-- **Sentence-translation read-out should include the `"Übersetze: "` prefix** (tp_579238210) — read
-  the whole question in the source language.
-- **Synonym/antonym questions should state how many are to be found** ("<n> similar to <word>").
-- **Conjugation options must be alternative forms of THE SAME verb**, not other verbs, and need not
-  be padded to four.
+- ✅ **Clear-progress at CHAPTER level** — `v78_e`, on the **progress cards** (🧹 `comp-wipe`), via the
+  shared `_clearChapterProgress`. The storyline page keeps its storyline-wide control and now shares
+  the same rule; **`clearLessonProgress` turned out to be a THIRD copy carrying the `v77_s` defect
+  and is fixed too.**
+  **STILL OPEN, deliberately: the per-chapter control on the STORYLINE PAGE's chapter cards, and the
+  one inside error / AI-error-hunt lessons.** The rule is done and shared, so each is now a button
+  and a call — but storyline-page placement needs care (those cards carry the lock overlay and the
+  `v76_d` element-counting trap), and "inside error lessons" needs the user to say whether it means
+  the chapter wipe or resetting just that lesson.
+- ⚠️ **Sentence-translation read-out should include the `"Übersetze: "` prefix** (tp_579238210) — read
+  the whole question in the source language. **RETRIAGED session 32 → needs the USER, not a fix.**
+  `Übersetze: "{sentence}"` is `ex.order.q`, the WORD-ORDER exercise, and its question is entirely
+  in the source language — which fits the note exactly. But **there is no read-out of it to add a
+  prefix to**: every `speak`/`speakLang`/`speakBodyText` call site was enumerated, and `renderEx`
+  auto-speaks only `listen_mcq`/`listen_type` (and speaks `ex.target`). `tOrder` renders no speaker
+  control at all. So this is either a request to ADD a source-language question read-out to the
+  order exercise — a new affordance, not a prefix fix — or it is about a screen other than the one
+  found. **Ask before building.** Full note in the session-32 notes §3.
+- ✅ **Synonym/antonym questions should state how many are to be found** ("<n> similar to <word>")
+  — `v78_b`. Counted from `ex.correct`, the array Check scores against. New `_n` keys (owed to the
+  translate pass); the uncounted keys stay as the fallback and must not be deleted.
+- ✅ **Conjugation options must be alternative forms of THE SAME verb**, not other verbs, and need
+  not be padded to four — `v78_d`. Same-verb pool, no cross-verb padding; the coverage universe was
+  checked for the v71_s stranding trap and is unaffected.
 - **Teacher-mode switch at the bottom of every page**, beside the UI-language and mute controls.
   (Will later depend on credentials.)
 - **Highlight word forms from conjugation and word-form lessons**, so covered vocabulary lights up
@@ -588,6 +707,14 @@ drop again.**
 ---
 
 ## Owed by the USER — not doable in a container
+
+**New `en`-only keys from `v78_b`, owed to the translate pass:** `ex.syn.q_synonyms_n`
+(`{n} similar to {word}`) and `ex.syn.q_antonyms_n` (`{n} opposite to {word}`). **Both carry TWO
+placeholders** — a translation that drops `{n}` silently loses the feature for that language, so
+these are worth a glance when the file comes back. The uncounted `ex.syn.q_synonyms` /
+`ex.syn.q_antonyms` are still in use as the fallback and are already translated: **do not delete
+them.** `unit-syn-count` §5 asserts en-only, which is correct only while the keys are new — flip it
+to "no language holds the English string verbatim" once the pass has run (`v71_q`).
 
 **New `en`-only keys from `v77_i`, owed to the translate pass:** `unlocked.title`
 ("Next chapter unlocked!"), `unlocked.next`, `unlocked.back_card`, `unlocked.progress`
@@ -701,12 +828,15 @@ what is owed by the USER, open decisions), then THIS file (the highest-numbered
    enough — no more hand-editing `build-static.js`.
    **Point releases use an alphabetic suffix** (user, v70): the base cut is the bare number and is
    implicitly `a`, so the sequence is `v77` → `v77_b` → `v77_c` → … — the same convention the v69–v76
-   lines ran. **This is the `v77` line.** Roadmaps are per BASE version, so point
-   releases do not each get one — this file stays current through the whole v77 line.
-   (This paragraph is the one version-specific line in the block and has shipped stale THREE times —
-   `roadmap_v73.md` said "the `v72` line", and `roadmap_v76.md` said "the `v75` line" for its whole
-   run until session 30 caught it. **It was updated deliberately at this cut. Check it again at the
-   next one.**)
+   lines ran. **This is the `v78` line.** Roadmaps are per BASE version, so point
+   releases do not each get one — this file stays current through the whole v78 line.
+   (This paragraph is the one version-specific line in the block and had shipped stale FOUR times by
+   session 32 — `roadmap_v73.md` said "the `v72` line", `roadmap_v76.md` said "the `v75` line" for
+   its whole run, and this file was written at the v78 cut still naming the v77 line, in BOTH
+   sentences. **It is no longer maintained by hand: `unit-roadmap-version` asserts that the
+   highest-numbered roadmap names the same base version as `server.js`'s `APP_VERSION`.** A note
+   telling the next session to check something is not a guard; four repeats is enough evidence that
+   this one was never going to be checked.)
 7. **Roadmap** — mark shipped items ✅, carry every open TODO/idea forward, and at a version bump
    write the next `build_history/roadmap_v{N+1}.md` (carrying this protocol block forward).
 8. **Session notes** — write/update `build_history/v{ver}_session{n}_notes.md`.
@@ -924,5 +1054,32 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
     not.** `unit-card-errors` asserts zero empty `catch` blocks in `showComplete` rather than
     matching the new call text — so it keeps working as the rework moves that code, which is
     precisely what §0a asks of the eight files that currently pin source text.
+
+## Rules earned in session 32
+
+23. **A fixer is not a diagnosis, and two guards firing together may be one cause seen twice.** The
+    `v78` baseline opened red on both data-sensitive guards, each with a documented one-line remedy.
+    Running either remedy **destroys the evidence** that says whether the remedy was right: three
+    cheap facts (corpus counts unchanged at 308/86, `lessons.json` the OLDEST file in the tree, the
+    hash the freshness guard names) narrowed it before anything was written, and the first
+    hypothesis they suggested turned out to be **wrong** — the backfill did not reproduce the hash
+    `docs/` was built from. The real cause was one thing: the shipped `lessons.json` was the user's
+    NEWER file (7 topics with an `ai_error_hunt` lesson `docs/` lacked). **Corollary: when the
+    remedies interact, the ORDER is part of the diagnosis** — `build-static.js` first, the fixer the
+    failure literally asks for, would have baked the unstamped corpus and overwritten the evidence.
+    Backfill, then rebuild.
+24. **A note instructing the next session to check something is not a guard.** The protocol's
+    version sentence went stale four times, each correction ending in a fresh reminder to check it
+    next time; the fourth repeat got BOTH its sentences wrong, the second having survived every
+    earlier fix. If a fact can be derived from a source of truth, assert it (`unit-roadmap-version`).
+    A reminder is what you write when you have decided not to.
+
+25. **Never put emoji — or any non-BMP character — in a string literal inside the script that writes
+    a file.** Session 32 truncated `roadmap_v78.md` **to zero bytes** with a heredoc containing
+    `\ud83e\uddf9` surrogate escapes: encoding rejects lone surrogates, and the exception arrives
+    AFTER the file is opened for writing, so a "failed" write is not a no-op. Write such blocks with
+    a `cat` heredoc to a temp file and splice the FILE in, so the bytes come from disk rather than
+    from an escape the writer must encode. `unit-roadmap-version` caught it on the next run, and the
+    packaged zip was the only intact copy — both worth remembering.
 
 (If you add a new standing rule, append it here so the next session inherits it.)

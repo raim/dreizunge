@@ -357,7 +357,14 @@ async function runLangNames() {
       // is the empty/garbage/foreign-script check.
       const { issues, repaired } = validateEntry(langs[c].name, typeof v === 'string' ? v : '', ui);
       const val = repaired != null ? repaired : v;
-      if (issues.some(isBlocking) || typeof val !== 'string' || !val.trim()) { bad.push(c); continue; }
+      // v78_c (user-reported crash): `isBlocking` takes the WHOLE issues array — it is
+      // `issues => issues.some(i => i.severity === 'error')`. Calling it as `issues.some(isBlocking)`
+      // hands it one issue OBJECT at a time, so it evaluates `issue.some(...)` and dies with
+      // "issues.some is not a function". Invisible until a name is actually rejected: on the happy
+      // path `issues` is empty and `.some()` never invokes the callback at all, which is why the
+      // mode passed its own test and every clean run. Same family as v76_c — this mode's error
+      // paths had never been executed.
+      if (isBlocking(issues) || typeof val !== 'string' || !val.trim()) { bad.push(c); continue; }
       langs[c].names = langs[c].names || {};
       langs[c].names[ui] = val.trim();
       ok++; wrote++;

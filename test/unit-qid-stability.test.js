@@ -138,11 +138,29 @@ assert.ok(universe.size >= 6 && universe.size <= 60,
   `qid universe is bounded by content, got ${universe.size}`);
 console.log(`  end-to-end: ${universe.size} stable qids across 50 shuffled derivations: OK`);
 
-// ── 5) Clear-progress wiring drops the solved store too (source guards) ──────
-assert.ok(/delete APP\.progress\.solved\[tp\]/.test(html),
-  'storyline clear-progress also deletes the solved store for each topic');
-assert.ok(/if \(APP\.progress\.solved\) delete APP\.progress\.solved\[topic\]/.test(html),
-  'per-topic clear-progress also deletes the solved store');
+// ── 5) Clear-progress wiring drops the solved store too ─────────────────────
+// v78_e: the two source pins that used to live here (`delete APP.progress.solved[tp]` and
+// `…[topic]`) were PHRASING pins, and they broke the moment the wipe was extracted into one shared
+// `_clearChapterProgress(topicKey)` — the product was correct and the guard was stale. Standing
+// rule 18: a guard that pins a phrasing does not survive a rewrite. Replaced with a behavioural
+// check that the shared rule actually clears the coverage store, which is the claim this file
+// cares about (a stale `solved` map would silently keep every question marked solved after a wipe).
+// The full wipe contract — all four stores, and parity between the three entry points — is
+// asserted in unit-chapter-clear-progress.
+{
+  const { loadClient } = require('./lib-dom');
+  const K = loadClient({ quiet: true });
+  K.run(`
+    APP.progress = APP.progress || {};
+    APP.progress.solved = { T: { 'lessonX:0:abc': 1 } };
+    APP.progress.completed = { T: { l1: 1 } };
+    true;`, 'seed');
+  assert.ok(K.run(`_clearChapterProgress('T')`), 'the shared chapter wipe ran');
+  assert.strictEqual(K.run(`String(APP.progress.solved.T)`), 'undefined',
+    'clear-progress drops the per-topic solved store — otherwise coverage survives a wipe');
+  assert.strictEqual(K.run(`String(APP.progress.completed.T)`), 'undefined',
+    'and the completion flags with it');
+}
 // markSolved is actually wired into the correct-answer path.
 assert.ok(/C\.correct\+\+; C\.total\+\+; C\.streak\+\+;[\s\S]{0,80}markSolved\(ex\)/.test(html),
   'markSolved is called on a correct answer');

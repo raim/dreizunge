@@ -2,6 +2,30 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_1355606516",
+      "title": "Učenje samo skripti",
+      "icon": "📖",
+      "chapters": [
+        "tp_17863000442000000196"
+      ],
+      "lang": "sr",
+      "srcLang": "hr",
+      "createdAt": "2026-08-09T18:32:32.759Z",
+      "updatedAt": "2026-08-09T18:32:32.759Z"
+    },
+    {
+      "id": "sl_56647998",
+      "title": "Učenje skriptova",
+      "icon": "📖",
+      "chapters": [
+        "tp_17862984310970000000"
+      ],
+      "lang": "sr",
+      "srcLang": "sr",
+      "createdAt": "2026-08-09T18:06:46.896Z",
+      "updatedAt": "2026-08-09T18:06:46.896Z"
+    },
+    {
       "id": "sl_703242082",
       "title": "Max und Ana im Park",
       "icon": "🐕",
@@ -374,18 +398,6 @@
         }
       ],
       "storyboardScheme": "classic"
-    },
-    {
-      "id": "sl_1324249577",
-      "title": "begruessung und sich vorstellen, in einf — 1",
-      "icon": "📖",
-      "chapters": [
-        "tp_17862841966150000039"
-      ],
-      "lang": "sr",
-      "srcLang": "de",
-      "createdAt": "2026-08-09T14:09:50.064Z",
-      "updatedAt": "2026-08-09T14:09:50.064Z"
     },
     {
       "id": "sl_9302163",
@@ -7605,6 +7617,365 @@
   ],
   "topics": [
     {
+      "id": "tp_17863000442000000196",
+      "topic": "Učenje samo skripti",
+      "topicEmoji": "📜",
+      "userTopic": "можемо ли да научимо само скрипт",
+      "userPrompt": "можемо ли да научимо само скрипт",
+      "lang": "sr",
+      "srcLang": "hr",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Мики је гледао у екран. Очи су му се ширале. Шта је ово? Букве лете као пчеле. Неке су танке, неке су дебеле. Мики покушава да напише слово А. Изгледа као кула. Затим пише Б. Изгледа као зуб. Све је закривљено и чудно.\n\nМама улази у собу. Смее се тихо. „Ово је ћирилица, малишане“, каже она. Мики кима главом. Жели да научи све слова. Свако слово има своју тајну. Мики узима оловку. Црта нову линију. Данас ће бити леп дан за писање.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Serbian (written in Cyrillic script) language teacher. Write a short story directly in Serbian (written in Cyrillic script) on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian (written in Cyrillic script). Write the ENTIRE text in Cyrillic script. Serbian is written in more than one script; use Cyrillic consistently for every word, including names, and do not mix scripts or add a transliteration. Writing style: Simple vocabulary, playful tone, short sentences.\n\nWrite a story for the topic: \"можемо ли да научимо само скрипт\". Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 199,
+        "completionTokens": 171,
+        "ms": 112357,
+        "at": "2026-08-09T18:25:20.558Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 229,
+        "completionTokens": 169,
+        "ms": 123641,
+        "at": "2026-08-09T18:27:24.200Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Miki je gledao u ekran. Oči su mu se širile. Što je ovo? Slova lete kao pčele. Neka su tanka, neka su debela. Miki pokušava napisati slovo A. Izgleda kao toranj. Zatim piše B. Izgleda kao zub. Sve je zakrivljeno i čudno.\n\nMama ulazi u sobu. Tiho se smije. „Ovo je ćirilica, mališane“, kaže ona. Miki kimne glavom. Želi naučiti sva slova. Svako slovo ima svoju tajnu. Miki uzima olovku. Crtá novu liniju. Danas će biti lijep dan za pisanje.",
+      "storyStyle": "children",
+      "script": "cyrillic-sr",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Мики учи ћирилицу",
+          "desc": "Учим слова и писмо са Миком",
+          "icon": "✍️",
+          "vocab": [
+            {
+              "target": "екран",
+              "source": "ekran"
+            },
+            {
+              "target": "очима",
+              "source": "oči"
+            },
+            {
+              "target": "букве",
+              "source": "slova"
+            },
+            {
+              "target": "пчела",
+              "source": "pčela"
+            },
+            {
+              "target": "слова",
+              "source": "slovo"
+            },
+            {
+              "target": "кула",
+              "source": "toranj"
+            },
+            {
+              "target": "зуб",
+              "source": "zub"
+            },
+            {
+              "target": "оловка",
+              "source": "olovka"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Мики је гледао у екран.",
+              "source": "Miki je gledao u ekran.",
+              "words": [
+                "Мики",
+                "је",
+                "гледао",
+                "у",
+                "екран."
+              ]
+            },
+            {
+              "target": "Букве лете као пчеле.",
+              "source": "Slova lete kao pčele.",
+              "words": [
+                "Букве",
+                "лете",
+                "као",
+                "пчеле."
+              ]
+            },
+            {
+              "target": "Изгледа као кула.",
+              "source": "Izgleda kao toranj.",
+              "words": [
+                "Изгледа",
+                "као",
+                "кула."
+              ]
+            },
+            {
+              "target": "Ово је ћирилица, малишане.",
+              "source": "Ovo je ćirilica, mališane.",
+              "words": [
+                "Ово",
+                "је",
+                "ћирилица,",
+                "малишане."
+              ]
+            },
+            {
+              "target": "Мики узима оловку.",
+              "source": "Miki uzima olovku.",
+              "words": [
+                "Мики",
+                "узима",
+                "оловку."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1024,
+            "completionTokens": 322,
+            "ms": 308361,
+            "at": "2026-08-09T18:32:32.659Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 637635,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1662,
+        "totalCompletionTokens": 699,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 308361,
+            "promptTokens": 1024,
+            "completionTokens": 322
+          }
+        ]
+      },
+      "generatedAt": "2026-08-09T18:27:24.200Z",
+      "updatedAt": "2026-08-09T18:32:32.660Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17862984310970000000",
+      "topic": "Učenje skriptova",
+      "topicEmoji": "📜",
+      "userTopic": "можемо ли да научимо само скрипт",
+      "userPrompt": "можемо ли да научимо само скрипт",
+      "lang": "sr",
+      "srcLang": "sr",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Мали Мило је гледао у екран. Писма су летела као птице. „Можемо ли да научимо само скрипт?“ питао је тату. Тата се насмејао. „Скрипт је за рачунаре, малишане“, рекао је. Мило је уздигао нос. Он жели да пише лепим словима. Узео је оловку и папир. Прво слово је било криво. Друго је пало. Али Мило није одустао. Слово по слово, реч по реч. Сада зна да ћирилица није тешка. Она је игра. И он је победник у тој игри.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Serbian (written in Cyrillic script) language teacher. Write a short story directly in Serbian (written in Cyrillic script) on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian (written in Cyrillic script). Write the ENTIRE text in Cyrillic script. Serbian is written in more than one script; use Cyrillic consistently for every word, including names, and do not mix scripts or add a transliteration. Writing style: Simple vocabulary, playful tone, short sentences.\n\nWrite a story for the topic: \"можемо ли да научимо само скрипт\". Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 199,
+        "completionTokens": 166,
+        "ms": 145890,
+        "at": "2026-08-09T17:58:30.436Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 224,
+        "completionTokens": 151,
+        "ms": 120660,
+        "at": "2026-08-09T18:00:31.096Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Mali Milo je gledao u ekran. Pisma su letela kao ptice. „Možemo li da naučimo samo skriptu?“ pitao je tatu. Tata se nasmejao. „Skripta je za računare, mališane“, rekao je. Milo je uzdigao nos. On želi da piše lepim slovima. Uzeo je olovku i papir. Prvo slovo je bilo krivo. Drugo je palo. Ali Milo nije odustao. Slovo po slovo, reč po reč. Sada zna da ćirilica nije teška. Ona je igra. I on je pobednik u toj igri.",
+      "storyStyle": "children",
+      "script": "cyrillic-sr",
+      "srcScript": "latin",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Мило и ћирилица",
+          "desc": "Прича о Милу који учи писмо.",
+          "icon": "✍️",
+          "vocab": [
+            {
+              "target": "екран",
+              "source": "ekran"
+            },
+            {
+              "target": "писма",
+              "source": "pisma"
+            },
+            {
+              "target": "птице",
+              "source": "ptice"
+            },
+            {
+              "target": "тата",
+              "source": "tata"
+            },
+            {
+              "target": "олoвка",
+              "source": "olovka"
+            },
+            {
+              "target": "папир",
+              "source": "papir"
+            },
+            {
+              "target": "слово",
+              "source": "slovo"
+            },
+            {
+              "target": "реч",
+              "source": "reč"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Мали Мило је гледао у екран.",
+              "source": "Mali Milo je gledao u ekran.",
+              "words": [
+                "Мали",
+                "Мило",
+                "је",
+                "гледао",
+                "у",
+                "екран."
+              ]
+            },
+            {
+              "target": "Писма су летела као птице.",
+              "source": "Pisma su letela kao ptice.",
+              "words": [
+                "Писма",
+                "су",
+                "летела",
+                "као",
+                "птице."
+              ]
+            },
+            {
+              "target": "Узео је оловку и папир.",
+              "source": "Uzeo je olovku i papir.",
+              "words": [
+                "Узео",
+                "је",
+                "оловку",
+                "и",
+                "папир."
+              ]
+            },
+            {
+              "target": "Слово по слово, реч по реч.",
+              "source": "Slovo po slovo, reč po reč.",
+              "words": [
+                "Слово",
+                "по",
+                "слово,",
+                "реч",
+                "по",
+                "реч."
+              ]
+            },
+            {
+              "target": "И он је победник у тој игри.",
+              "source": "I on je pobednik u toj igri.",
+              "words": [
+                "И",
+                "он",
+                "је",
+                "победник",
+                "у",
+                "тој",
+                "игри."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 998,
+            "completionTokens": 325,
+            "ms": 375606,
+            "at": "2026-08-09T18:06:46.810Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 710398,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1631,
+        "totalCompletionTokens": 678,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 375604,
+            "promptTokens": 998,
+            "completionTokens": 325
+          }
+        ]
+      },
+      "generatedAt": "2026-08-09T18:00:31.097Z",
+      "updatedAt": "2026-08-09T18:06:46.811Z",
+      "createdBy": "admin"
+    },
+    {
       "id": "tp_17862855350130000221",
       "topic": "Parkfreundschaft",
       "topicEmoji": "🌳",
@@ -8149,7 +8520,8 @@
       "generatedAt": "2026-08-09T14:25:35.014Z",
       "updatedAt": "2026-08-09T17:18:35.127Z",
       "createdBy": "admin",
-      "coverageTarget": 0.6
+      "coverageTarget": 0.6,
+      "script": "latin"
     },
     {
       "id": "tp_17862850223960000178",
@@ -8471,183 +8843,8 @@
       },
       "generatedAt": "2026-08-09T14:17:02.396Z",
       "updatedAt": "2026-08-09T17:19:34.019Z",
-      "createdBy": "admin"
-    },
-    {
-      "id": "tp_17862841966150000039",
-      "topic": "begruessung und sich vorstellen, in einf — 1",
-      "topicEmoji": "📖",
-      "userTopic": "begruessung und sich vorstellen, in einfacher sprache",
-      "userPrompt": "begruessung und sich vorstellen, in einfacher sprache",
-      "lang": "sr",
-      "srcLang": "de",
-      "difficulty": 1,
-      "storyLen": 100,
-      "story": "Pozdrav! Zovem se Ana. Ja sam iz Beograda. Volim da čitam knjige i da šetam u parku. Moj omiljeni hobi je kuvanje torti. Slobodno me pitaj bilo šta o meni. Drago mi je što smo se upoznali. Nadam se da ćemo postati dobri prijatelji. Hvala ti na pažnji.",
-      "storyLang": "target",
-      "storyPrompt": "You are a creative writer and Serbian language teacher. Write a short story directly in Serbian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian. Writing style: Simple vocabulary, playful tone, short sentences.\n\nWrite a story for the topic: \"begruessung und sich vorstellen, in einfacher sprache\". Plain prose, no headings.",
-      "storyMeta": {
-        "type": "story",
-        "model": "qwen3.6:35b-a3b",
-        "attempts": null,
-        "valid": 1,
-        "rejected": 0,
-        "rejectReasons": null,
-        "promptTokens": 140,
-        "completionTokens": 90,
-        "ms": 85692,
-        "at": "2026-08-09T14:02:12.509Z",
-        "origin": "generated",
-        "source": "recorded at generation"
-      },
-      "translationMeta": {
-        "type": "translation",
-        "model": "qwen3.6:35b-a3b",
-        "attempts": null,
-        "valid": 1,
-        "rejected": 0,
-        "rejectReasons": null,
-        "promptTokens": 148,
-        "completionTokens": 70,
-        "ms": 64105,
-        "at": "2026-08-09T14:03:16.614Z",
-        "origin": "generated",
-        "source": "recorded at generation"
-      },
-      "storyTranslation": "Hallo! Ich heiße Ana. Ich komme aus Belgrad. Ich lese gerne Bücher und gehe im Park spazieren. Mein Lieblingshobby ist das Backen von Torten. Frag mich gerne alles über mich. Es freut mich, dich kennengelernt zu haben. Ich hoffe, wir werden gute Freunde. Danke für deine Aufmerksamkeit.",
-      "storyStyle": "children",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Sich vorstellen auf Serbisch",
-          "desc": "Einfache Begrüßung und Vorstellung",
-          "icon": "👋",
-          "vocab": [
-            {
-              "target": "zvat se",
-              "source": "heißen"
-            },
-            {
-              "target": "doći iz",
-              "source": "kommen aus"
-            },
-            {
-              "target": "čitati",
-              "source": "lesen"
-            },
-            {
-              "target": "šetati",
-              "source": "spazieren gehen"
-            },
-            {
-              "target": "hobi",
-              "source": "Hobby"
-            },
-            {
-              "target": "kuvati",
-              "source": "kochen"
-            },
-            {
-              "target": "prijatelj",
-              "source": "Freund"
-            },
-            {
-              "target": "hvala",
-              "source": "Danke"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Zovem se Ana.",
-              "source": "Ich heiße Ana.",
-              "words": [
-                "Zovem",
-                "se",
-                "Ana."
-              ]
-            },
-            {
-              "target": "Ja sam iz Beograda.",
-              "source": "Ich komme aus Belgrad.",
-              "words": [
-                "Ja",
-                "sam",
-                "iz",
-                "Beograda."
-              ]
-            },
-            {
-              "target": "Volim da čitam knjige.",
-              "source": "Ich lese gerne Bücher.",
-              "words": [
-                "Volim",
-                "da",
-                "čitam",
-                "knjige."
-              ]
-            },
-            {
-              "target": "Drago mi je što smo se upoznali.",
-              "source": "Es freut mich, dich kennengelerbt zu haben.",
-              "words": [
-                "Drago",
-                "mi",
-                "je",
-                "što",
-                "smo",
-                "se",
-                "upoznali."
-              ]
-            },
-            {
-              "target": "Hvala ti na pažnji.",
-              "source": "Danke für deine Aufmerksamkeit.",
-              "words": [
-                "Hvala",
-                "ti",
-                "na",
-                "pažnji."
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 781,
-            "completionTokens": 299,
-            "ms": 393281,
-            "at": "2026-08-09T14:09:49.969Z"
-          }
-        }
-      ],
-      "generationStats": {
-        "totalMs": 543152,
-        "backend": "ollama",
-        "model": "qwen3.6:35b-a3b",
-        "models": {
-          "story": "qwen3.6:35b-a3b",
-          "translation": "qwen3.6:35b-a3b",
-          "lessons": "qwen3.6:35b-a3b"
-        },
-        "lessonFormat": "json",
-        "totalPromptTokens": 1069,
-        "totalCompletionTokens": 459,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 393279,
-            "promptTokens": 781,
-            "completionTokens": 299
-          }
-        ]
-      },
-      "generatedAt": "2026-08-09T14:03:16.615Z",
-      "updatedAt": "2026-08-09T14:09:49.970Z",
-      "createdBy": "admin"
+      "createdBy": "admin",
+      "script": "latin"
     },
     {
       "id": "tp_17861968126590000089",

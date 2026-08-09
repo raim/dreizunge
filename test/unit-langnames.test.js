@@ -164,7 +164,73 @@ const { ROOT } = require('./lib-dom');
   fs.rmSync(tmp, { recursive: true, force: true });
 }
 
+// ── 4. v78_c — a REJECTED name must be reported, not crash the run ──────────────────────────
+// User-reported, on a real run:
+//     🌍 Lëtzebuergesch (lb) — 31 name(s)… Fatal: issues.some is not a function
+// `isBlocking` takes the whole issues ARRAY (`issues => issues.some(i => i.severity === 'error')`).
+// The call site passed it as a predicate — `issues.some(isBlocking)` — so it received one issue
+// OBJECT per invocation and evaluated `issue.some(...)`.
+//
+// Why every earlier run and every earlier assertion missed it: on the happy path `issues` is EMPTY,
+// and `[].some(fn)` never invokes `fn`. The defect is unreachable until a name is actually
+// rejected — the same shape as v76_c, where this mode shipped broken because only its no-op
+// `--check` path had ever been exercised. So the section below forces a rejection.
+{
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'langnames-reject-'));
+  const langs = {
+    en: { name: 'English', flag: '\u{1F1EC}\u{1F1E7}', tts: 'en-GB', names: { en: 'English' } },
+    de: { name: 'German',  flag: '\u{1F1E9}\u{1F1EA}', tts: 'de-DE', names: { en: 'German'  } },
+    sr: { name: 'Serbian', flag: '\u{1F1F7}\u{1F1F8}', tts: 'sr-RS', names: { en: 'Serbian' } },
+  };
+  fs.writeFileSync(path.join(tmp, 'languages.json'), JSON.stringify(langs, null, 2));
+  fs.writeFileSync(path.join(tmp, 'ui.json'), JSON.stringify({ en: { 'a.b': 'x' } }, null, 2));
+  for (const f of ['translate-ui.js', 'ui-qc.js']) fs.copyFileSync(path.join(ROOT, f), path.join(tmp, f));
+
+  // The model answers with an EMPTY string for `de` — the exact input validateEntry flags as a
+  // blocking `empty` issue, and the only thing needed to reach the crash. `sr` is answered well, so
+  // the run has both a rejection and a success and cannot pass by rejecting everything.
+  fs.writeFileSync(path.join(tmp, 'llm.js'), `
+    function callLLM(model, system, userMsg, maxTokens, opts) {
+      const asked = JSON.parse(userMsg);
+      const out = {};
+      for (const k of Object.keys(asked)) out[k] = (k === 'de') ? '' : ('NAME_' + k);
+      return Promise.resolve({ text: JSON.stringify(out) });
+    }
+    module.exports = { callLLM, ping: () => Promise.resolve(true),
+                       extractJSON: (s) => JSON.parse(s) };
+  `);
+
+  // The payload assertion is simply that this RETURNS. execFileSync throws on a non-zero exit, and
+  // before the fix the run died on the first rejected cell.
+  let out = '';
+  assert.doesNotThrow(() => {
+    out = execFileSync(process.execPath, ['translate-ui.js', '--langnames'],
+                       { cwd: tmp, encoding: 'utf8', stdio: 'pipe' });
+  }, 'a rejected name does not crash the run (v78_c: "issues.some is not a function")');
+  assert.ok(!/is not a function/.test(out), 'and the crash message does not appear in the output');
+
+  // The rejection was REPORTED rather than silently swallowed — the mode prints "N rejected (codes)".
+  assert.ok(/rejected/.test(out), 'the rejected cell is reported to the operator');
+
+  // …and the good cells still landed. Without this the section would pass on a run that gave up
+  // entirely, which is the failure it exists to distinguish from. Note the axis: the stub answers
+  // badly for the language CODE `de`, so it is `de.names[*]` that must stay unwritten — every
+  // other code's cells are filled normally in the same batches.
+  const after = JSON.parse(fs.readFileSync(path.join(tmp, 'languages.json'), 'utf8'));
+  assert.strictEqual(after.de.names.de, undefined,
+    'the empty name was NOT written (a rejection must reject)');
+  assert.strictEqual(after.de.names.sr, undefined,
+    'and it is rejected in every batch, not just the first');
+  assert.strictEqual(after.de.names.en, 'German', 'the pre-existing cell is untouched');
+  assert.strictEqual(after.sr.names.de, 'NAME_sr',
+    'a valid name in the SAME batch was still written — the run continued past the rejection');
+  assert.strictEqual(after.en.names.sr, 'NAME_en', 'and later batches ran at all');
+
+  fs.rmSync(tmp, { recursive: true, force: true });
+}
+
 console.log('  callLLM rejects an options bag and names the positional signature');
 console.log('  --langnames issues a well-formed call and writes the response into languages.json');
 console.log('  --langnames persists after every batch: an interrupted run keeps what it earned');
+console.log('  --langnames reports a rejected name and keeps going (v78_c)');
 console.log('unit-langnames: ALL PASSED');

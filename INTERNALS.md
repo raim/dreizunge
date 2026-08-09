@@ -13,7 +13,7 @@ please fix it.
 Every entry below was found by measurement or by a test failing, not by reading anything. That is
 the gap this document exists to close.
 
-Last verified against **`v77`**.
+Last verified against **`v78_e`**.
 
 ---
 
@@ -67,6 +67,28 @@ reload. Not measured (no live Ollama in the dev container). If comprehension gen
 
 The dangerous class: things that produce a plausible result while doing the wrong thing. Nothing
 throws, no test necessarily fails, and the output looks fine.
+
+**A data drop can leave `docs/` behind the live corpus, and the FIXERS hide it (`v78_b`).** Both
+data-sensitive guards (`unit-static-freshness`, `unit-script-choice`) have a documented one-line
+remedy, and running it is what destroys the evidence about whether the remedy was right. At the
+`v78_b` baseline both were red with the corpus counts UNCHANGED (308/86) and `lessons.json` the
+OLDEST file in the tree — so no fixer had run, and the shipped data was the user's newer working
+file. Diffing the corpus baked into `docs/index.html` against disk showed **7 topics carrying an
+`ai_error_hunt` lesson the published build lacked** (story-QC acceptance had added them after the
+build). **Order is part of the fix: `backfill-script.js --write` FIRST, `build-static.js` SECOND** —
+rebuilding first bakes the unstamped corpus and overwrites the last copy of the previous baked
+state. Diff baked-vs-disk before rebuilding, so a rebuild cannot lose user content.
+
+**One rule for "clear this chapter's progress", and it has been copied twice (`v78_e`).** The stores
+that can answer *"is this chapter done"* are `completed`, `solved`, **`chapterDone`** (the cached
+completeness STAMP `chapterComplete` trusts ahead of the flags) and `storyShown`. Missing the stamp
+is the `v77_s` defect: the chapter still reads "finished" after a wipe, later chapters stay unlocked
+and the storyline bar stays green with nothing played. **`_clearChapterProgress(topicKey)` is the
+single reader of that list**; `slBottomClearProgress` loops over it, `clearThisChapterProgress`
+(the card's 🧹) calls it for the current chapter, and `clearLessonProgress` — which was a THIRD copy
+still carrying the `v77_s` defect until `v78_e` — now routes through it. Adding a new completeness
+store means adding it HERE, and `unit-chapter-clear-progress` §3 asserts the entry points agree by
+diffing their resulting state rather than checking each alone.
 
 **Ollama truncates an over-long prompt with no error.** Default `num_ctx` is ~4096. Exceed it and
 the request still succeeds — the model just answers from whatever fragment survived. This is why

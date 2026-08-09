@@ -1,32 +1,99 @@
-# HANDOVER — v78
+# HANDOVER — v78_e
 
-One page. This is the **`v78` cut**: session 31 shipped `v77_b` … `v77_x`, then the line was renamed
-and the user's current data taken. **Read `build_history/roadmap_v78.md` next** for the queue and the session protocol, then
-`INTERNALS.md`, then `build_history/v77_session31_notes.md` for what session 31 found.
+One page. Session 32 shipped **`v78_b`** … **`v78_e`** from the `v78` cut. **Read
+`build_history/roadmap_v78.md`** next for the queue and the session protocol, then `INTERNALS.md`,
+then `build_history/v78_session32_notes.md` (session 32) and `build_history/v77_session31_notes.md`.
 
 ## Green baseline
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **192 checks, ALL PASSED** |
-| `node test/run.js --quick` | 168 |
+| `node test/run.js` | **196 checks, ALL PASSED** |
+| `node test/run.js --quick` | 172 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v78'`. Corpus: **308 topics, 86 storylines**. Establish this before changing
+`APP_VERSION = 'v78_e'`. Corpus: **309 topics, 87 storylines**. Establish this before changing
 anything.
 
-**These numbers are the ones to trust.** Session 30's prompt said 170/149 and session 31's said
-182/158; each was right for the tree it was written against and stale by the time it was read.
-**If a prompt and this file disagree, measure — and check timestamps first.**
+**These numbers are the ones to trust.** Session 30's prompt said 170/149, session 31's said
+182/158, session 32's said 192/168; each was right for the tree it was written against and stale by
+the time it was read. **If a prompt and this file disagree, measure — and check timestamps first.**
 
-**The v78 cut took a data drop, and both data-sensitive guards fired — as designed:**
-- `unit-script-choice` red → **`node backfill-script.js --write`** (3 new topics were unstamped).
-- `unit-static-freshness` red → **`node build-static.js`**.
-- A third went red on a NEW chapter and **the test was wrong, not the product**:
-  `unit-mixed-unlock-reachable` asserted coverage was COMPLETE at unlock, which held on the v77
-  corpus by coincidence. Corrected at the cut. **Expect one or two of these per data drop, and
-  diagnose rather than re-pin** — session 30 lost time to assuming "stale fixture".
+## ⚠️ On a data drop: the guards fire, but the FIXERS ARE NOT A DIAGNOSIS
+
+Both data-sensitive guards go red when the user's data files arrive, and each has a documented
+one-line remedy. **Running the remedy destroys the evidence** that says whether the remedy was
+right. Session 32 hit this twice; `v78_session32_notes.md` §1 is the long form. Short form:
+
+- **Check three cheap things first** — corpus counts (`topics` / `storylines`), file **mtimes**
+  (a file just rewritten by a fixer is the NEWEST; if `lessons.json` is the oldest, no fixer ran),
+  and the hash `unit-static-freshness` names.
+- **ORDER MATTERS.** `node backfill-script.js --write` **first**, `node build-static.js` **second**.
+  Rebuilding first bakes the unstamped corpus and overwrites the only surviving copy of the
+  previous baked state.
+- **Diff the baked corpus against disk before rebuilding**, so a rebuild cannot lose user content.
+  At the `v78_b` baseline the shipped `lessons.json` was the user's NEWER file and `docs/` was a
+  corpus behind it: **7 topics had an `ai_error_hunt` lesson the published build did not.**
+- **The script stamps are lost on every round-trip.** The same two `sr` topics came back unstamped
+  at both drops this session: the backfill runs in the container, the user runs from their own copy,
+  so `backfill-script.js --write` is a per-drop step, not a one-off repair.
+- Sometimes **the test is wrong, not the product** (the `v78` cut's `unit-mixed-unlock-reachable`).
+  Expect one or two per drop and diagnose rather than re-pin.
+
+## ⚠️ Writing docs: NEVER put emoji in a Python string literal
+
+Session 32 truncated `roadmap_v78.md` **to zero bytes** by writing a heredoc containing `\ud83e\uddf9`
+surrogate escapes — the write threw mid-flight after opening the file. `unit-roadmap-version`
+caught it on the next run and the file was restored from the packaged `v78_b` zip, but the
+re-application cost real time. **Write emoji-bearing doc blocks via a `cat` heredoc to a temp file
+and splice that file in**, never as literals inside the script doing the splice.
+
+## What session 32 shipped
+
+**`v78_b`** — a synonym/antonym question states HOW MANY words to find ("3 similar to Haus").
+`syn_select` is the only multi-select exercise in the app, so it is the only one where "have I
+finished answering?" is a real question, and there was no signal at all. Counted from `ex.correct`,
+the same array `check()` scores against. **New `_n` keys, not reworded old ones** — the translate
+pass keys off MISSING, not CHANGED. Plus **`unit-roadmap-version`**, retiring a protocol note that
+had gone stale four times.
+
+**`v78_c`** — `translate-ui.js --langnames` crashed on the first REJECTED name (`isBlocking` takes
+the whole issues ARRAY; it was called as a per-item predicate). **Unreachable on the happy path**,
+so the mode's own guard stayed green — the `v76_c` shape again, in the same mode.
+
+**`v78_d`** — conjugation MCQ distractors are now OTHER FORMS OF THE SAME VERB, and the question is
+not padded to four. The old pool was a shuffled UNION with every other verb's forms, so `essere
+(voi)` was offered `siete / parli / parla / parlano` — three of four from `parlare`, answerable by
+stem-matching without touching the paradigm.
+
+**`v78_e`** — clear progress for ONE CHAPTER, via a shared **`_clearChapterProgress(topicKey)`**.
+**Found on the way: `clearLessonProgress` was a THIRD copy of the wipe carrying the exact `v77_s`
+defect** — no `chapterDone`, no `storyShown` — so clearing from the lesson-set page left the chapter
+still reading "finished". All three entry points now share one rule, and the guard asserts PARITY
+between them rather than each in isolation.
+
+**⚠️ One group-B note was RETRIAGED and needs the USER:** the *"`Übersetze: ` prefix in the
+sentence-translation read-out"* item presupposes a read-out that **does not exist** — every speech
+call site was enumerated; the word-order exercise has no speaker control and no auto-speak. It is
+either a request for a NEW source-language question read-out or it is about another screen.
+**Ask before building.** Session-32 notes §3.
+
+## ⚠️ Open questions the USER owes an answer to
+
+- **Where exactly the auto-read moves** (ruled: to the card before comprehension lessons, nowhere
+  else; a screenshot is coming). Roadmap "session 32 batch" → §0c. **Do not guess the card.**
+- **"Inside error / AI-error-hunt lessons"** in the clear-progress note: the CHAPTER wipe, or
+  resetting just that lesson? The two remaining placements wait on this.
+- **Is a Latin-script `sr` UI intended?** The returning `ui.json` translates `sr` fully (612 keys)
+  and it is **100% Latin, zero Cyrillic** — plausible, but `sr` is the digraphic language and the
+  user has just built a Latin→Cyrillic storyline, so it is worth confirming rather than assuming.
+- **`hr` is still 0 keys**, and the other 30 languages are still missing the same 14–16 accumulated
+  `en`-only keys.
+
+**Still open in group B:** the **teacher-mode switch at the bottom of every page**, the two
+remaining clear-progress placements (storyline-page chapter cards; error lessons), and the word-form
+highlighting item, which belongs with §0e/§3 and the ONE shared matcher.
 
 ## What session 31 settled — §0b DONE, and §0c STARTED
 
@@ -144,7 +211,7 @@ must be BUILT**, and reusing that id means updating the guard too. Also: **`comp
 the whole bordered PANEL**, not a label — the §0c rename touches a container and its four children.
 Both `v76_card_gates.md` and roadmap §0c have been corrected in place.
 
-## Standing rules worth re-reading (18 now, in `roadmap_v78.md`)
+## Standing rules worth re-reading (25 now, in `roadmap_v78.md`)
 
 1. **A probe must call the product function, never a re-typed copy.**
 2. **A claim is only measured if the assertion touched the thing being claimed.**
@@ -222,18 +289,34 @@ user reports it again, that note is the starting point.
   `voice.default`, `navigator.language`, or shipping §6's selector so you pick once.
 - **The pass mark.** `Churros` is 40 items where it was 83 questions, and an item is solved by ANY
   correct answer, so 80% is a materially lower bar. Needs a browser pass, not a code change.
-- **`translate-ui.js --langnames`** — 151 `languages.json` name cells still empty (`sr`/`hr`, and 31
-  for `lb`). It now saves as it goes, so an interrupted run keeps its progress.
-- **`sr`/`hr`**: the `ui.json` pass, the 28 non-English `names` entries, and a **native-speaker check
-  of the `cyrillic-sr` table** — it was authored in-container, the exact case the design principle
-  warns about.
+- **`translate-ui.js --langnames`** — `languages.json` name cells still empty. The last real run
+  reported **119 missing of 1024**: `lb` 31, `sr` 32, `hr` 32, and 2 each (`sr`/`hr`) for 12 other
+  languages. **`v78_c` fixed the crash that ended that run**, so it can be re-run; it saves per
+  batch, so an interrupted run keeps its progress.
+- **`sr`/`hr`**: the `ui.json` pass is **DONE for `sr`** (612 keys, arrived session 32) and **still
+  owed for `hr`** (0 keys). Also still owed: the 28 non-English `names` entries, and a
+  **native-speaker check of the `cyrillic-sr` table** — authored in-container, the exact case the
+  design principle warns about. **Worth confirming: the returning `sr` UI is 100% LATIN script,
+  zero Cyrillic.** Plausibly intended, but `sr` is the digraphic language and the user has just
+  built a Latin→Cyrillic storyline.
 - **The translate pass** for `complete.words_solved` and `form.finish_mixed` (`en`-only). `t()` falls
   back through English meanwhile. **`v71_q`: never assert a dropped key absent.**
 - **The comprehension QC checker** — needs a new prompt and a live model.
 
-**New `ui.json` keys owed to the translate pass:** `summary.start` ("Start learning") from `v77_k`; `form.script_pick` = "Script…" (session 30), plus
-four from `v77_f` — `finished.title`, `finished.vocab`, `finished.next`, `finished.back_card`. All
-`en` only; `t()` falls back through English meanwhile.
+**`en`-only keys owed to the translate pass.** The 30 already-translated languages are each missing
+**14–16** of the current 617 `en` keys; `sr` is complete as of the session-32 drop and `hr` has none.
+The named ones:
+- **`v78_e`** — `chapter.clear_progress`, `chapter.clear_progress_confirm`,
+  `chapter.clear_progress_done`.
+- **`v78_b`** — `ex.syn.q_synonyms_n`, `ex.syn.q_antonyms_n`. **Both carry TWO placeholders — a
+  translation that drops `{n}` loses the feature for that language.** The uncounted `ex.syn.q_*`
+  keys stay as the fallback: **do not delete them.**
+- **`v77_k`** `summary.start`; **session 30** `form.script_pick`; **`v77_f`** `finished.title`,
+  `finished.vocab`, `finished.next`, `finished.back_card`.
+
+`t()` falls back through English meanwhile. **A test asserting a key is "en-only" is correct while
+the key is NEW and wrong once it has been translated** — `unit-syn-count` §5 still asserts it and
+will need flipping to "no language holds the English string verbatim" after the next pass.
 
 ## Known, not fixed
 
