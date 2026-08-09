@@ -8054,7 +8054,7 @@
             "at": "2026-08-09T14:53:38.812Z"
           },
           "_arcMode": "reinforce",
-          "qcAt": "2026-08-09T15:59:57.045Z",
+          "qcAt": "2026-08-09T17:18:35.126Z",
           "qcBy": "translategemma:12b"
         },
         {
@@ -8131,8 +8131,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 17012,
-        "totalCompletionTokens": 1038,
+        "totalPromptTokens": 17774,
+        "totalCompletionTokens": 1050,
         "lessons": [
           {
             "lessonNum": 1,
@@ -8143,11 +8143,11 @@
         ],
         "tokensByType": {
           "recreate": 955,
-          "lesson_qc": 15234
+          "lesson_qc": 16008
         }
       },
       "generatedAt": "2026-08-09T14:25:35.014Z",
-      "updatedAt": "2026-08-09T15:59:57.045Z",
+      "updatedAt": "2026-08-09T17:18:35.127Z",
       "createdBy": "admin",
       "coverageTarget": 0.6
     },
@@ -8375,7 +8375,9 @@
             "completionTokens": 436,
             "ms": 407339,
             "at": "2026-08-09T15:30:39.394Z"
-          }
+          },
+          "qcAt": "2026-08-09T17:19:34.019Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1786289563846_dezb",
@@ -8451,8 +8453,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 7304,
-        "totalCompletionTokens": 1286,
+        "totalPromptTokens": 8271,
+        "totalCompletionTokens": 1301,
         "lessons": [
           {
             "lessonNum": 1,
@@ -8464,11 +8466,11 @@
         "tokensByType": {
           "recreate": 795,
           "add_lesson": 1415,
-          "lesson_qc": 4793
+          "lesson_qc": 5775
         }
       },
       "generatedAt": "2026-08-09T14:17:02.396Z",
-      "updatedAt": "2026-08-09T15:54:27.149Z",
+      "updatedAt": "2026-08-09T17:19:34.019Z",
       "createdBy": "admin"
     },
     {

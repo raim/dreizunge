@@ -1,6 +1,7 @@
-# HANDOVER — v77_x
+# HANDOVER — v78
 
-One page. Read `build_history/roadmap_v77.md` next for the queue and the session protocol, then
+One page. This is the **`v78` cut**: session 31 shipped `v77_b` … `v77_x`, then the line was renamed
+and the user's current data taken. **Read `build_history/roadmap_v78.md` next** for the queue and the session protocol, then
 `INTERNALS.md`, then `build_history/v77_session31_notes.md` for what session 31 found.
 
 ## Green baseline
@@ -12,17 +13,20 @@ One page. Read `build_history/roadmap_v77.md` next for the queue and the session
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v77_x'`. Establish this before changing anything.
+`APP_VERSION = 'v78'`. Corpus: **308 topics, 86 storylines**. Establish this before changing
+anything.
 
 **These numbers are the ones to trust.** Session 30's prompt said 170/149 and session 31's said
 182/158; each was right for the tree it was written against and stale by the time it was read.
-**If a prompt and this file disagree, measure — and check timestamps first.** The data files
-(`lessons.json`, `ui.json`, `learners.json`) travel separately from the code and routinely arrive
-newer. Session 31 opened green with newer data files, because session 30 had already run the
-backfill and the static build after its own data drop.
+**If a prompt and this file disagree, measure — and check timestamps first.**
 
-**If `unit-script-choice` fails saying topics are unstamped, run `node backfill-script.js --write`.**
-**If `unit-static-freshness` fails, run `node build-static.js`.** Both are the guards working.
+**The v78 cut took a data drop, and both data-sensitive guards fired — as designed:**
+- `unit-script-choice` red → **`node backfill-script.js --write`** (3 new topics were unstamped).
+- `unit-static-freshness` red → **`node build-static.js`**.
+- A third went red on a NEW chapter and **the test was wrong, not the product**:
+  `unit-mixed-unlock-reachable` asserted coverage was COMPLETE at unlock, which held on the v77
+  corpus by coincidence. Corrected at the cut. **Expect one or two of these per data drop, and
+  diagnose rather than re-pin** — session 30 lost time to assuming "stale fixture".
 
 ## What session 31 settled — §0b DONE, and §0c STARTED
 
@@ -140,7 +144,7 @@ must be BUILT**, and reusing that id means updating the guard too. Also: **`comp
 the whole bordered PANEL**, not a label — the §0c rename touches a container and its four children.
 Both `v76_card_gates.md` and roadmap §0c have been corrected in place.
 
-## Standing rules worth re-reading (18 now, in `roadmap_v77.md`)
+## Standing rules worth re-reading (18 now, in `roadmap_v78.md`)
 
 1. **A probe must call the product function, never a re-typed copy.**
 2. **A claim is only measured if the assertion touched the thing being claimed.**

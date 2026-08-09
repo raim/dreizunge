@@ -1059,7 +1059,19 @@ the solution, where the old behaviour would have produced roughly 17.
 
 # Session 31 — closing summary
 
-**`v77` → `v77_w`.** Baseline `182 / 158 / 0 / 0` → **`191 / 167 / 0 / 0`**. Twenty-one point
+**Cut to `v78` at the end of the session** (roadmap renamed to `roadmap_v78.md`; the user's current
+data taken: 305 → **308 topics**, 84 → **86 storylines**). The cut changed no code.
+
+Two guards fired on the data drop and both were informative:
+- `unit-script-choice` → `node backfill-script.js --write`, exactly as documented.
+- `unit-mixed-unlock-reachable` failed on a NEW chapter, and **the test was wrong, not the
+  product**. It asserted coverage was COMPLETE at unlock — true on the v77 corpus only because the
+  replay loop stops the moment the gate opens, and there it happened to open at 100%. The prep gate
+  is not pure coverage; the new chapter unlocked at 31 of 43. Corrected to assert what the file is
+  for: that the unlock is REACHABLE BY PLAYING. **A test that encodes a coincidence of the fixture
+  reads as a product failure on the next data drop** — the same lesson as rule 30, from a new angle.
+
+**`v77` → `v77_x`, then cut to `v78`.** Baseline `182 / 158 / 0 / 0` → **`192 / 168 / 0 / 0`**. Twenty-three point
 releases, every one revert-verified and packaged with `docs/` rebuilt.
 
 ## What was actually done
