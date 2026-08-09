@@ -1,0 +1,178 @@
+// unit-story-summary.test.js
+// v77_h — the story-summary card: the FIRST page of the progress-card walk (roadmap §0c).
+//
+// Contract, all asserted by CLICKING rather than by matching source:
+//   1. ← on the progress card opens the summary card.
+//   2. The summary shown is the STORYLINE's, in the SOURCE language — it is authored there and
+//      nothing is translated on the way.
+//   3. → returns to the progress card. The walk goes both ways or it is not a walk.
+//   4. When the storyline has NO summary the control is HIDDEN, so it can never lead to a blank
+//      page. (37 of 84 storylines carry no summary.)
+//   5. The card renders with the progress bars EMPTY — it sits before any question of the chapter.
+'use strict';
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const { loadClient, ROOT } = require('./lib-dom');
+
+const store = JSON.parse(fs.readFileSync(path.join(ROOT, 'lessons.json'), 'utf8'));
+const LANGS = JSON.parse(fs.readFileSync(path.join(ROOT, 'languages.json'), 'utf8'));
+const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
+
+const byId = Object.fromEntries(store.topics.filter(t => t.id).map(t => [t.id, t]));
+const pick = wantSummary => (store.storylines || []).find(sl => {
+  const has = !!String(sl.summary || '').trim();
+  if (has !== wantSummary) return false;
+  return (sl.chapters || []).some(c => byId[c] && (byId[c].lessons || []).length);
+});
+const SL_WITH = pick(true), SL_WITHOUT = pick(false);
+// The corpus is not a constant: both cases must exist or the file has nothing to say (rule: assert
+// the case was found, or the section goes vacuous on new data).
+assert.ok(SL_WITH, 'the corpus has a storyline WITH a summary');
+assert.ok(SL_WITHOUT, 'the corpus has a storyline WITHOUT a summary');
+
+const SAVED = store.topics.map(t => ({ id: t.id, topic: t.topic, lang: t.lang, srcLang: t.srcLang,
+  story: t.story, lessons: t.lessons,
+  lessonCount: (t.lessons || []).filter(L => L && !L._hidden && !L._aiExamples).length }));
+
+function open(sl) {
+  const topic = (sl.chapters || []).map(c => byId[c]).find(t => t && (t.lessons || []).length);
+  const C = loadClient({ quiet: true });
+  C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed');
+  C.run(`
+    APP.savedList = ${JSON.stringify(SAVED)};
+    APP.storylines = ${JSON.stringify(store.storylines || [])};
+    APP.info = { backend:'none', canGenerate:false, coverageThreshold:0.8 };
+    APP.progress = { completed:{}, solved:{}, chapterDone:{}, learned:{} };
+    APP._teacherMode = false; APP._slScreen = {};
+    APP.lessonData = ${JSON.stringify(topic)};
+    APP.lang = ${JSON.stringify(topic.lang)}; APP.srcLang = ${JSON.stringify(topic.srcLang)};
+    APP.cur = { lessonIdx:0, exercises:[], cur:0, correct:2, total:4, mistakes:2 };
+    APP._shown = null; APP._navWent = null;
+    show = function(id){ APP._shown = id; };
+    openStorylineScreen = function(id){ APP._navWent = 'storyline:' + id; };
+    goLandingClean = function(){ APP._navWent = 'landing'; };
+    showComplete(); true;`, 'render');
+  return { C, topic };
+}
+const state = (C, id) => C.run(`(function(){ var e=document.getElementById(${JSON.stringify(id)});
+  if(!e) return 'MISSING'; if(e.style.display==='none') return 'HIDDEN';
+  return e.disabled ? 'GREY' : 'LIVE'; })()`);
+
+// ── 1-2. ← opens the card, showing the storyline's own summary ─────────────
+{
+  const { C } = open(SL_WITH);
+  assert.strictEqual(state(C, 'comp-prev'), 'LIVE',
+    'the ← control is offered when the storyline has a summary');
+  C.run(`document.getElementById('comp-prev').onclick(); true;`, 'prev');
+  assert.strictEqual(C.run(`APP._shown`), 'summary-screen', '← opens the summary card');
+  const txt = C.run(`document.getElementById('sum-text').innerHTML || ''`);
+  assert.ok(txt.length > 0, 'the summary card is populated');
+  // It is THIS storyline's summary, not some other text. Compared through the product's own
+  // escaper, since the summary carries punctuation the card escapes.
+  const head = String(SL_WITH.summary).trim().slice(0, 40);
+  assert.ok(txt.includes(C.run(`esc(${JSON.stringify(head)})`)),
+    "the text shown is this storyline's own summary");
+  // Rendering the walk swallowed nothing (v77_b).
+  assert.deepStrictEqual(JSON.parse(C.run(`JSON.stringify(_cardErrors())`)), [],
+    'no error was swallowed reaching the summary card');
+  console.log('  ← opens the summary card, showing this storyline\'s summary');
+}
+
+// ── 3. → returns to the progress card ──────────────────────────────────────
+{
+  const { C } = open(SL_WITH);
+  C.run(`document.getElementById('comp-prev').onclick(); true;`, 'prev');
+  C.run(`APP._shown = null; document.getElementById('sum-next').onclick(); true;`, 'fwd');
+  assert.strictEqual(C.run(`APP._shown`), 'complete-screen',
+    '→ returns to the progress card — the walk goes both ways');
+  console.log('  → returns to the progress card');
+}
+
+// ── 4. No summary → the control is hidden, never a blank page ──────────────
+{
+  const { C } = open(SL_WITHOUT);
+  assert.strictEqual(state(C, 'comp-prev'), 'HIDDEN',
+    'with no summary the ← control is hidden, so it cannot lead to a blank page');
+  console.log('  no summary: the control is hidden rather than leading nowhere');
+}
+
+// ── 5. The bars are EMPTY: this page precedes any question of the chapter ───
+{
+  const { C } = open(SL_WITH);
+  C.run(`document.getElementById('comp-prev').onclick(); true;`, 'prev');
+  // v77_p (user ruling): the entry card shows ALL the progress bars, the same ones every other
+  // progress card shows. §0c's "bars empty" was right when this page only ever preceded the first
+  // question; it is now the entry point for EVERY visit, including resuming a half-played chapter,
+  // where an empty bar would misreport where the learner is. The claim is therefore that it renders
+  // the SAME bars — asserted by comparing against the progress card's own renderer rather than by
+  // matching markup, so the two cannot drift.
+  const prog = C.run(`document.getElementById('sum-progress').innerHTML || ''`);
+  assert.ok(prog.length > 0, 'the entry card shows progress bars');
+  const cardProg = C.run(`(function(){ try {
+    return _compProgressHtml(APP.lessonData && APP.lessonData.topic,
+      _storylineForTopic(APP.lessonData && APP.lessonData.topic), { skipStoryRow: true });
+  } catch(e){ return 'THREW:' + e.message; } })()`);
+  assert.strictEqual(prog, cardProg,
+    'and they are exactly the progress card\'s bars — one renderer, so the two cannot disagree');
+  console.log('  entry card: shows the same progress bars as the progress card');
+}
+
+
+
+// loadSaved is async (it awaits fetch and goLessonSet), so the assertions must run after the
+// microtask queue drains. Without this the section would read APP._shown before loadSaved has
+// written it and would pass or fail on timing rather than behaviour.
+const settle = () => new Promise(r => setTimeout(r, 50));
+
+// ── 6. v77_k: the summary card is the ACTUAL ENTRY POINT ───────────────────
+// Opening a chapter shows the summary first, and its forward starts the lesson the learner came
+// to play. Driven through loadSaved — the real entry path — rather than by calling the renderer.
+(async () => {
+  const topic = (SL_WITH.chapters || []).map(c => byId[c]).find(t => t && (t.lessons || []).length);
+  const C = loadClient({ quiet: true });
+  C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed');
+  C.run(`
+    APP.savedList = ${JSON.stringify(SAVED)};
+    APP.storylines = ${JSON.stringify(store.storylines || [])};
+    APP.info = { backend:'none', canGenerate:false, coverageThreshold:0.8 };
+    APP.progress = { completed:{}, solved:{}, chapterDone:{}, learned:{} };
+    APP._teacherMode = false; APP._slScreen = {};
+    APP.lessonData = ${JSON.stringify(topic)};
+    APP.lang = ${JSON.stringify(topic.lang)}; APP.srcLang = ${JSON.stringify(topic.srcLang)};
+    APP._shown = null; APP._started = null; APP._skipEntryCard = false;
+    show = function(id){ APP._shown = id; };
+    startLesson = function(i){ APP._started = i; return true; };
+    saveProg = function(){};
+    true;`, 'setup');
+  const idx = C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
+  assert.ok(idx >= 0, 'non-vacuity: this chapter has an unfinished lesson to enter');
+
+  // Drives the REAL entry path — loadSaved itself, with fetch stubbed to hand back this chapter —
+  // rather than the decision function alone. Calling `_enterViaSummaryCard` directly would prove
+  // the decision works while leaving the WIRING unguarded: removing the call from loadSaved would
+  // not fail such a test, which is exactly the gap revert-verification exposed here.
+  C.run(`
+    goLessonSet = async function(){ return true; };
+    fetch = function(){ return Promise.resolve({ ok:true,
+      json: function(){ return Promise.resolve(${JSON.stringify(topic)}); } }); };
+    loadSaved(${JSON.stringify(topic.id)}); true;`, 'enter');
+  await settle();
+  assert.strictEqual(C.run(`APP._shown`), 'summary-screen',
+    'entering a chapter shows the summary card FIRST');
+  assert.strictEqual(C.run(`APP._started`), null, 'and does not start the lesson underneath it');
+  C.run(`document.getElementById('sum-next').onclick(); true;`, 'start');
+  assert.strictEqual(C.run(`APP._started`), idx,
+    'forward from the entry card starts the lesson the learner came to play');
+  console.log('  entry: chapter -> summary card -> the lesson');
+
+  // Arriving from the next-chapter-unlocked card must NOT stack a second interstitial.
+  C.run(`APP._shown = null; APP._started = null; APP._skipEntryCard = true;
+    loadSaved(${JSON.stringify(topic.id)}); true;`, 'from-unlock');
+  await settle();
+  assert.notStrictEqual(C.run(`APP._shown`), 'summary-screen',
+    'arriving from the next-chapter card does NOT stack a second interstitial');
+  assert.strictEqual(C.run(`APP._started`), idx, 'it goes straight into the lesson');
+  console.log('  no double interstitial after the next-chapter card');
+  console.log('unit-story-summary: ALL PASSED');
+})().catch(e => { console.error(e); process.exit(1); });

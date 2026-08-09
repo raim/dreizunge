@@ -304,9 +304,20 @@ const solveLesson = (idx) => C.run(`(function(){
     'a partially-solved comprehension lesson is NOT recorded as done — the learner repeats it');
   assert.strictEqual(C.run('setComplete(APP.lessonData)'), false,
     'so the chapter does not complete, and the next chapter stays locked');
-  // Next must be locked, with the remediation buttons available (the v71_d route back in).
-  assert.ok(C.run(`document.getElementById('comp-next').classList.contains('locked')`),
-    'Next is visibly locked while questions remain unanswered');
+  // v77_o (user ruling): Next is NEVER greyed — it leads to the work instead. What this section
+  // actually protects is that an unfinished comprehension lesson does not let the learner LEAVE
+  // the chapter, and that is asserted above (`setComplete` is false, the next chapter stays
+  // locked). Here we assert the replacement: Next is live and points BACK INTO this chapter,
+  // never onward.
+  assert.ok(!C.run(`document.getElementById('comp-next').disabled`),
+    'Next is not greyed while questions remain — it leads to the work that answers them');
+  const before = C.run(`APP.lessonData.topic`);
+  C.run(`APP._leftChapter = null;
+         loadSaved = function(x){ APP._leftChapter = String(x); };
+         document.getElementById('comp-next').onclick(); true;`, 'fwd');
+  assert.strictEqual(C.run(`APP._leftChapter`), null,
+    'and it does NOT carry the learner out of the chapter while questions remain');
+  assert.strictEqual(C.run(`APP.lessonData.topic`), before, 'the chapter is unchanged');
 
   // Now solve the rest → the flag lands and the chapter completes.
   C.run(`(function(){ const s = APP.progress.solved[APP.lessonData.topic];

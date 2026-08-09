@@ -96844,6 +96844,61 @@
             "ms": 384286,
             "at": "2026-07-01T11:50:10.740Z"
           }
+        },
+        {
+          "id": "ls_1786251734776_1_comprehension",
+          "type": "comprehension",
+          "title": "Fibonaccis Hasen",
+          "desc": "Verstehen Sie die mathematische Logik und die historische Einordnung der Geschichte?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum beginnt die Anzahl der Kaninchenpaare im ersten Monat mit zwei, obwohl nur ein Paar eingesetzt wurde?",
+              "choices": [
+                "Das ursprüngliche Paar hat sich sofort nach dem Einsetzen vermehrt.",
+                "Die Aufgabe verlangt eine Verdopplung, um den Beginn der Reproduktion zu markieren.",
+                "Ein weiteres wildes Kaninchen ist in das eingezäunte Gebiet eingedrungen.",
+                "Fibonacci zählte die Eltern und die ersten Babys als separate Generationen."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt explizit: 'da die genannte Paar im ersten Monat sich fortpflanzt, müssen Sie es verdoppeln' (Poiché la suddetta coppia si riproduce nel primo mese, devi raddoppiarla)."
+            },
+            {
+              "q": "Welche Eigenschaft der Zahlenreihe wird im zweiten Teil des Textes als Fibonaccis persönliche Erkenntnis beschrieben?",
+              "choices": [
+                "Dass die Anzahl der Paare immer ungerade ist.",
+                "Dass jeder Zahl in der Folge die Summe der beiden vorherigen entspricht.",
+                "Dass die Vermehrung nach dem zwölften Monat stoppt.",
+                "Dass die Zahlenreihe nur für Kaninchen und nicht für andere Tiere gilt."
+              ],
+              "correctIndex": 1,
+              "why": "Im zweiten Abschnitt heißt es: 'Fibonacci ... erkannte, dass jede Zahl in der Folge die Summe der beiden vorherigen war' (si rese conto che ogni numero nella successione era la somma dei due precedenti)."
+            },
+            {
+              "q": "Wie wird Fibonaccis Beitrag zur Entdeckung der Zahlenreihe im Text historisch eingeordnet?",
+              "choices": [
+                "Er war der erste Mensch überhaupt, der dieses Problem jemals gelöst hat.",
+                "Es handelt sich wahrscheinlich um eine populäre Darstellung eines bereits bekannten Problems.",
+                "Die Eigenschaften der Reihe wurden erst von Fibonacci selbst vollständig verstanden.",
+                "Das Buch 'Liber Abaci' wurde sofort von allen europäischen Gelehrten anerkannt."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text stellt fest: 'Wahrscheinlich handelt es sich um die einfache populäre Exposition eines zu seinen Zeiten bereits bekannten Problems' (Probabilmente si tratta della semplice esposizione divulgativa di un problema già noto ai suoi tempi)."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1316,
+            "completionTokens": 601,
+            "ms": 354724,
+            "at": "2026-08-09T05:02:14.776Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -96851,8 +96906,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 1115,
-        "totalCompletionTokens": 869,
+        "totalPromptTokens": 2431,
+        "totalCompletionTokens": 1470,
         "lessons": [
           {
             "promptTokens": 488,
@@ -96864,10 +96919,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 1917
+        }
       },
       "generatedAt": "2026-06-07T10:36:38.101Z",
-      "updatedAt": "2026-07-01T11:50:10.740Z",
+      "updatedAt": "2026-08-09T05:02:14.776Z",
       "id": "tp_1758085634",
       "continuedFromId": "tp_499560229",
       "storyMeta": {
@@ -97351,6 +97409,83 @@
             "ms": 358869,
             "at": "2026-07-01T11:36:32.045Z"
           }
+        },
+        {
+          "id": "ls_1786251379972_0_comprehension",
+          "type": "comprehension",
+          "title": "Fibonaccis Hasen",
+          "desc": "Verstehe die Logik der Kaninchenpopulation und Fibonaccis Beitrag.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum beginnt die Anzahl der Kaninchenpaare im ersten Monat mit zwei?",
+              "choices": [
+                "Weil das ursprüngliche Paar im ersten Monat ein neues Paar zur Welt bringt.",
+                "Weil zwei Paare von außen in den eingezäunten Bereich eindringen.",
+                "Weil die Kaninchen erst nach einem Monat geschlechtsreif sind.",
+                "Weil der Autor einen Fehler bei der Zählung gemacht hat."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text sagt: 'da die besagte Paarung im ersten Monat stattfindet, musst du sie verdoppeln'."
+            },
+            {
+              "q": "Welche Regel gilt für die Fortpflanzung der Kaninchen?",
+              "choices": [
+                "Jedes Paar bringt jeden Monat ein neues Paar zur Welt.",
+                "Nur Paare, die älter als zwei Monate sind, können sich fortpflanzen.",
+                "Paare bringen nur alle drei Monate Nachwuchs zur Welt.",
+                "Die Kaninchen pflanzen sich nur im ersten Monat ihres Lebens fort."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text besagt: 'und beginnen erst ab dem zweiten Monat nach der Geburt zu brüten'."
+            },
+            {
+              "q": "Wie berechnet Fibonacci die Gesamtzahl der Paare für einen neuen Monat?",
+              "choices": [
+                "Er multipliziert die Anzahl des vorherigen Monats mit zwei.",
+                "Er addiert die Anzahl der Paare der beiden vorhergehenden Monate.",
+                "Er verdoppelt nur die Anzahl der neugeborenen Paare.",
+                "Er zieht die Anzahl der verstorbenen Paare von der Gesamtzahl ab."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text erklärt: 'wir haben die erste Zahl mit der zweiten addiert... und so weiter'."
+            },
+            {
+              "q": "Was passiert im sechsten Monat mit den Paaren, die im fünften Monat geboren wurden?",
+              "choices": [
+                "Sie bringen sofort ein neues Paar zur Welt.",
+                "Sie sterben vor der Fortpflanzung.",
+                "Sie können sich noch nicht fortpflanzen.",
+                "Sie verlassen den eingezäunten Bereich."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text sagt explizit: 'die im vorherigen Monat erzeugten 5 bringen im sechsten Monat keine hervor'."
+            },
+            {
+              "q": "Was ist laut dem Text die wahre Bedeutung von Fibonaccis Arbeit an dieser Folge?",
+              "choices": [
+                "Er hat die mathematischen Eigenschaften der Folge als Erster entdeckt.",
+                "Er hat ein bereits bekanntes Problem populär gemacht und erklärt.",
+                "Er hat bewiesen, dass Kaninchen unendlich schnell wachsen können.",
+                "Er hat die Formel erfunden, um Mauerwerk zu berechnen."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text stellt fest: 'Wahrscheinlich handelt es sich um die einfache populäre Darstellung eines damals bereits bekannten Problems'."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1008,
+            "completionTokens": 784,
+            "ms": 362180,
+            "at": "2026-08-09T04:56:19.972Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -97358,8 +97493,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 1619,
-        "totalCompletionTokens": 392,
+        "totalPromptTokens": 2627,
+        "totalCompletionTokens": 1176,
         "lessons": [
           {
             "lessonNum": 1,
@@ -97373,10 +97508,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 1792
+        }
       },
       "generatedAt": "2026-06-07T10:01:50.863Z",
-      "updatedAt": "2026-07-01T11:36:32.045Z",
+      "updatedAt": "2026-08-09T05:15:49.546Z",
       "id": "tp_499560229",
       "continuedFromId": null,
       "storyMeta": {

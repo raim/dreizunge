@@ -150,20 +150,37 @@ console.log('  loadSaved: learner auto-start, teacher keeps the page: OK');
   // Next: next lesson in chapter, else next chapter's first unfinished, else hidden.
   assert.ok(/compNext\.textContent = t\('complete\.next'\)/.test(sc), 'Next is a plain "Next"');
   assert.ok(/startLesson\(nextLessonIdx\)/.test(sc), 'Next → next lesson in this chapter directly');
-  assert.ok(/_nextChapter\(\)/.test(sc) && /loadSaved\(ch\.id \|\| encTopic\(ch\.topic\)\)/.test(sc),
-    'Next → next chapter (resumes its first unfinished lesson via loadSaved)');
-  // v74_o: with nothing left to do Next now LEADS somewhere instead of greying out. v71_h's real
-  // point — the button stays PRESENT and in the same position, so the row is identical on every
-  // card — is preserved; only the greying goes, because `comp-back` is hidden on this card too and
-  // a disabled arrow beside no other affordance is a dead end. Destination reuses APP._compBack
-  // (storyline if any, else home), so the button and the header cannot disagree about "onward".
-  assert.ok(/compNext\.onclick = \(\) => \{ endDrill\(\); compBackToStory\(\); \};/.test(sc),
-    'with nothing left, Next leads back to the storyline (or home for a solo chapter)');
+  // v77_i: the `loadSaved(...)` call moved OUT of showComplete and into the
+  // next-chapter-unlocked card (§0c's fourth page) — Next now names what the learner earned before
+  // carrying them into it. Same destination, one page in between. The old pin matched that call
+  // inside this function and failed as a text mismatch; per roadmap §0a it is NOT re-pinned to the
+  // new text. `unit-next-chapter-unlocked.test.js` CLICKS through and asserts the learner reaches
+  // the next chapter, which is the actual claim.
+  //
+  // What stays here is structural: showComplete still resolves the next chapter and stashes it, so
+  // the card and the button that opened it cannot disagree about which chapter is next.
+  assert.ok(/_nextChapter\(\)/.test(sc), 'Next → the next chapter is still resolved here');
+  assert.ok(/APP\._unlNext = ch;/.test(sc),
+    'and stashed at render time, so the card cannot resolve a different chapter');
+  // v74_o / v77_f: with nothing left to do, Next LEADS somewhere instead of greying out. v71_h's
+  // real point — the button stays PRESENT and in the same position, so the row is identical on
+  // every card — is preserved; only the greying goes.
+  //
+  // The three assertions that used to live here pinned the SOURCE TEXT of that branch
+  // (`compNext.onclick = () => { endDrill(); compBackToStory(); };` and the exact `_endLbl`
+  // ternary). v77_f made the destination conditional — a finished story now leads to the
+  // story-finished card — and they failed as text mismatches. Per roadmap §0a they are NOT
+  // re-pinned to the new text: a source regex cannot express "where does Next take the learner",
+  // which is the whole claim. They are replaced by `unit-story-finished.test.js`, which CLICKS
+  // Next in both states and asserts where it lands.
+  //
+  // What stays here is structural and still true: the button is never hidden, never greyed, and
+  // the Back target is stashed for whoever consumes it.
   assert.ok(!/compNext\.classList\.add\('disabled'\)/.test(sc),
-    'and is no longer greyed — there IS something to do');
-  assert.ok(/const _endLbl = \(sl && slEnc\) \? t\('complete\.back_story'\) : t\('complete\.back_home'\);/.test(sc),
-    'labelled for its actual destination rather than a generic "Next"');
+    'Next is no longer greyed on the terminal branch — there IS something to do');
   assert.ok(!/compNext\.style\.display = 'none'/.test(sc), 'the old hide-Next form is gone');
+  assert.ok(/compBackToStory\(\)/.test(sc),
+    'the terminal branch still routes through the shared back target, not a second destination rule');
   // Back target stashed; storyline or landing.
   assert.ok(/APP\._compBack = \(sl && slEnc\) \? \{ kind: 'storyline'/.test(sc), 'Back target: storyline when present');
   assert.ok(/: \{ kind: 'landing' \}/.test(sc), 'Back target: landing for a solo chapter');
@@ -176,9 +193,15 @@ console.log('  loadSaved: learner auto-start, teacher keeps the page: OK');
   // v71_d: `!_nextIsDrill` dropped with the flag — Next is never the drill now, so it cannot double.
   assert.ok(/_compBtnState\(_db, drillAvailable\(_l, _s\)/.test(sc),
     'drill shown always, greyed when no round can be built (v71_h)');
-  // v71_d: and below the mark, Next is locked rather than repurposed into one of those routes.
-  assert.ok(/_nextBlocked = true;/.test(sc) && /compNext\.disabled = true;/.test(sc),
-    'below the pass mark the forward button is disabled, not silently given another meaning');
+  // v77_o (user ruling): NEXT IS NEVER GREYED — it always leads to the next step. v71_d's
+  // principle survives and is what still matters: Next means FORWARD and never silently becomes
+  // Repeat. Below the mark it now leads to the work that raises the mark (a coverage-short lesson
+  // first, so a mixed round re-samples toward what is NOT yet solved), instead of being a dead
+  // arrow. The old pins matched `_nextBlocked = true` / `compNext.disabled = true`, both of which
+  // are gone; per §0a they are replaced by behaviour, asserted in unit-coverage-threshold by
+  // clicking, not by matching source.
+  assert.ok(!/_nextBlocked/.test(sc), 'the below-mark lock is gone from showComplete');
+  assert.ok(!/compNext\.onclick = null;/.test(sc), 'Next is never left without a destination');
   assert.ok(/if \(_teacher && !lesson\._drill\) \{/.test(sc), 'nav pills are teacher-only');
   // The card markup has exactly the two primary buttons wired.
   assert.ok(/id="comp-next" onclick="afterComplete\(\)"/.test(html), 'markup: Next button');
@@ -229,7 +252,7 @@ console.log('  completion card: Next chains lesson→chapter, Back to story/home
     'there is exactly one story paragraph formatter');
   assert.ok(!/\.split\(\/\\n\\n\+\/\)\.map\(p => '<p dir="auto">'/.test(html),
     'and no renderer still carries its own copy of the split');
-  assert.ok(/id="comp-story-unlocked"[^>]*background:var\(--white\)/.test(html),
+  assert.ok(/id="comp-story-panel"[^>]*background:var\(--white\)/.test(html),
     'the story panel is white, so the yellow highlights read clearly');
   assert.ok(/_lbl\.textContent = _allDone2 \? t\('complete\.story_unlocked'\) : t\('complete\.story_preview'\)/.test(sc),
     'unlock vs preview label reflects completion');

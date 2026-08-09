@@ -135,6 +135,12 @@ run('unit: diacritic QC — scan generates candidates, model decides (v72)', 'no
 run('unit: story context sizing + chain budget (v71_t)', 'node', [path.join(__dirname, 'unit-story-context.test.js')]);
 run('unit: error-hunt / pass-mark interaction (v71_g)', 'node', [path.join(__dirname, 'unit-errorhunt-passmark.test.js')]);
 run('unit: completion-card consistency + drill card removal (v71_h)', 'node', [path.join(__dirname, 'unit-card-consistency.test.js')]);
+run('unit: progress-card swallowed errors are visible (v77_b)', 'node', [path.join(__dirname, 'unit-card-errors.test.js')]);
+run('unit: mixed-driven story unlock is reachable by playing (v77_c)', 'node', [path.join(__dirname, 'unit-mixed-unlock-reachable.test.js')]);
+run('unit: story-finished card — the last page of the walk (v77_f)', 'node', [path.join(__dirname, 'unit-story-finished.test.js')]);
+run('unit: story-summary card — the first page of the walk (v77_h)', 'node', [path.join(__dirname, 'unit-story-summary.test.js')]);
+run('unit: next-chapter-unlocked card (v77_i)', 'node', [path.join(__dirname, 'unit-next-chapter-unlocked.test.js')]);
+run('unit: story-unlocked page — the third page of the walk (v77_j)', 'node', [path.join(__dirname, 'unit-story-unlocked-page.test.js')]);
 run('unit: round length not padded with repeats (v71_i)', 'node', [path.join(__dirname, 'unit-round-length.test.js')]);
 run('unit: model settings — tutor thinking, threads, reveal text (v71_q)', 'node', [path.join(__dirname, 'unit-model-settings.test.js')]);
 run('unit: add lessons — shared type picker, add not replace (v71_p)', 'node', [path.join(__dirname, 'unit-add-lessons.test.js')]);

@@ -249,6 +249,15 @@ const seed = (tgt) => C.run(`
         if (!e) return 'no-button';
         if (e.classList.contains('locked')) return 'LOCKED';
         try { e.onclick && e.onclick(); } catch (err) { return 'threw:' + err.message; }
+        // v77_j: forward may now pass THROUGH the story-unlocked page (§0c's third page) on the
+        // one render where the prep gate has just flipped. The claim here is unchanged — forward
+        // must reach the hunt and never point PAST it — so the walk is followed one page further
+        // rather than the claim being weakened. The page's own forward starts exactly the lesson
+        // the card resolved, so arriving via it is arriving at the hunt.
+        var u = document.getElementById('us-next');
+        if (u && u.onclick && APP._usNextLesson != null) {
+          try { u.onclick(); } catch (err) { return 'threw-unlock:' + err.message; }
+        }
         return String(APP.cur.lessonIdx); })()`);
       if (String(went) !== String(ehIdx)) misrouted.push(`${t.topic}: forward went to ${went}, hunt is ${ehIdx}`);
     } else {

@@ -635,6 +635,12 @@ async function loadSaved(ref) {
     const idx=_firstUnfinishedLessonIdx(APP.lessonData);
     // v68.1 (parity with the live loadSaved): startLesson returns false when it could not take
     // over the screen — a learner must never be left on the lesson-set page goLessonSet rendered.
+    // v77_o: the ENTRY CARD, exactly as the live loadSaved does it. This file re-implements
+    // loadSaved, so v77_k's entry point landed in index.html only and the static build went
+    // straight into the lesson - the v76_e / rule-15 shape again. Both call the SAME
+    // _enterViaSummaryCard helper, so there is one decision, not two that can drift.
+    // (No backticks in this comment: it lives inside a template literal.)
+    if (typeof _enterViaSummaryCard === 'function' && _enterViaSummaryCard(idx)) return;
     const started = idx>=0 ? (startLesson(idx) !== false) : (showComplete(true), true);
     if(!started){
       const ctx=_storylineForTopic(APP.lessonData?.topic);

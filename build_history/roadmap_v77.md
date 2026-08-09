@@ -15,6 +15,21 @@ both builds.
 
 | release | what |
 |---|---|
+| `v77_p` | **(user) Four more.** (a) **Next opens UNPLAYED work first.** `v77_o` preferred a coverage-short lesson, so on a chapter whose story had just unlocked Next replayed earlier lessons instead of opening the comprehension questions — the learner had to press Replay to get past their own replays. Order is now: first unfinished lesson → coverage-short → re-render. (b) **No story PREVIEW at all.** The panel appeared while the story was still LOCKED, truncated, for teacher/canGenerate, pushing the vocabulary below a paragraph the learner is not meant to read. It now appears ONLY on a genuine unlock. (c) **The headline fraction counts CHAPTERS, not lessons** — unlocked chapters, in `_slProgressStats`/`_slProgressLabel`, so the storyline page and every card change together. (d) **The entry card shows the real progress bars**, via the same `_compProgressHtml`; §0c's "bars empty" was right when the page only preceded the first question, but it is now the entry point for every visit including resuming. **Known gap: the ordering claim in (a) is asserted as a RESULT but does not discriminate under revert** — see the note in `unit-story-unlocked-page` §6. |
+| `v77_o` | **(user) Four items.** (a) **The entry card is laid out like every other progress card** — storyboard, bars, summary, actions, title at the bottom; its own 📖 icon is gone (the storyboard is the picture). The storyboard comes from the SAME `_renderCompStoryboard`, now taking an optional target id, rather than a second implementation. (b) **The static build now opens on the entry card too.** `build-static.js` re-implements `loadSaved`, so `v77_k`'s entry point had landed in `index.html` only — **rule 15 again, third time**. Both now call the same `_enterViaSummaryCard`. (c) **LIVE-mode fix (user-reported): the finished card's chapter drop-downs were EMPTY.** The live `/api/lessons` list is a PROJECTION with `lessons[]` metadata-only and **no `story`**, while static ships whole topics — the v55_s / v74_i asymmetry in a third place. Chapters are now hydrated (STATIC_LESSONS, then `/api/lessons/load`), cached, with the card rendering immediately and re-rendering when the fetches land. Reproduced against a real projection and revert-verified. (d) **NEXT IS NEVER GREYED** (user ruling): below the mark it leads to a COVERAGE-short lesson first — so a mixed round re-samples toward what is not yet solved — then the first unfinished lesson. `v71_d`'s principle is kept (Next means forward, never silently Repeat); the dead arrow is gone, and six guards were replaced behaviourally. |
+| `v77_n` | **(user) The card header finally matches the storyline page, and the verdict moves to the bottom.** (a) `align-items:stretch` on `.card-screen`: the card screens ARE the `.screen` element, and `.screen` is a **centring** flex column, so every direct child shrank to its own content width — the header rendered as a narrow centred pill while the storyline page's spanned the full column. The storyline page never showed this because it nests its content in a full-width `.sl-screen` inside its `.screen`. **Copying the header markup verbatim could never have fixed this**; it was the container. (b) The progress message ("Mach weiter!" / "Lektion abgeschlossen!") moves BELOW the play buttons on every progress card — it is a verdict on what just happened, not a heading for what follows, and putting it first pushed the storyboard and bars down so the card did not open like the page. Order is now header → storyboard → bars → story → words → icons → actions → verdict. Both revert-verified. |
+| `v77_m` | **(user, from a browser pass) Three fixes.** (a) **Row order now MIRRORS THE STORYLINE PAGE** — title+bar → storyboard → chapter-wise bars → story (+vocabulary) → icons → buttons — so moving between the two screens jumps in neither width nor order. `v77_l` had put the story directly under the title, which led the card but no longer matched the page; §0d's principle is unchanged and still asserted (the story precedes the icons and the action row). (b) **The story-finished card no longer fires on a STALE done-stamp.** `chapterComplete` trusts a cached `chapterDone` stamp whose lesson count still matches, and a stamp outlives the progress it described; for every other caller that is the right trade, but for the end-of-story celebration it retires a story with chapters still unplayed. The celebration now requires the done-FLAGS, and an unverifiable chapter counts as NOT done. (c) **The story-unlocked page highlights vocabulary**, via the same `_highlightVocabHtml` two-shade pass the progress card panel has had since `v74_n` — the same story was lighting up on one screen and not the other, on the page whose whole job is reading it. |
+| `v77_l` | **§0d — THE STORY LEADS, and `v74_l`'s hide-list is RETIRED (ruling 1).** The card ran storyboard → bars → verdict → icons → buttons → *then* the story: the thing the whole lesson flow exists to deliver arrived last, under a screenful of machinery. It now runs **verdict → THE STORY → the words in it → storyboard → bars → icons → actions.** `v71_m`'s point survives inside the lower group (bars still precede what describes them); the group moved below the text. Ruling 1's hide-list is gone — **Replay is always available and Next is no longer the only route out**. §0d removed the PREMISE rather than the buttons. Measured: **exactly 8 of 32 rows changed, repeat/drill `-`→`YES` in each**, matching `v77_e`'s prediction. Five guards updated behaviourally, none re-pinned. |
+| `v77_k` | **(user) One column for the whole walk, and the entry card becomes the ACTUAL entry point.** (a) The 540px cap moved off `#complete-screen` onto a shared **`.card-screen`** worn by all five card screens — the four pages added in `v77_f..v77_j` had **no width rule at all** and sized to their content, so entering a lesson jumped the column and moved the title line. Now the storyline page, the entry card, every progress card and the final card share one column and one inset (`.comp-body` == `.sl-screen-body`). `v71_p`'s guard was widened from "the result card matches" to "EVERY page matches, and each one wears the class". (b) **`loadSaved` now opens a chapter on the summary card**, whose forward starts the lesson — §0c's "the FIRST page … before any question". Skipped when the storyline has no summary (37 of 84) and when arriving from the next-chapter-unlocked card, so two interstitials never stack. Decision extracted as `_enterViaSummaryCard` so the guard calls the product rather than a copy; guard drives the real `loadSaved` with `fetch` stubbed. 1 new `en` key (`summary.start`). |
+| `v77_j` | **§0c's THIRD PAGE — the story-unlocked card. THE WALK IS NOW COMPLETE.** The moment the story becomes readable — what every prep lesson was for — was only ever a panel among the bars and buttons. **User ruling: the page "sits beside it"** — the panel STAYS on the progress card and is asserted to stay; this page gives the moment a page of its own, with the story as the only thing on it. Shown when the prep gate flips and work remains, **once per chapter** (`APP.progress.storyShown`), then → continues into the lesson the card resolved, so forward never skips one. Reuses existing `en` keys — no new i18n. Revert-verified. Honest finding recorded: the `!C._review` condition is **defence in depth, not load-bearing** — measured, a review render leaves `nextLessonIdx` at -1, so the branch is unreachable there anyway, and the guard says so instead of claiming credit. |
+| `v77_i` | **§0c's FOURTH PAGE — the next-chapter-unlocked card.** Finishing a chapter opens the next one, and that moment passed SILENTLY: Next called `loadSaved` directly and the learner arrived mid-lesson without being told what they had earned. Next now goes through a card that names the chapter and shows the position along the deck, then carries them in — **same Next, same destination, one acknowledgement in between**; ← returns to the progress card. The target is stashed at RENDER time (`APP._unlNext`) rather than re-resolved by the card, so the two cannot disagree about which chapter is next (the reason `v74_o` reused `APP._compBack`). Revert-verified; gate table identical. 4 new `en` keys. One more `unit-learner-nav` source pin retired behaviourally — the `loadSaved` call it matched moved into the card. |
+| `v77_h` | **§0c's FIRST PAGE — the story-summary card**, plus the first link of the navigation spine. New `summary-screen`: the storyline summary in the SOURCE language (it is authored there — measured, 47 of 84 storylines carry one), the chapter count, and the **progress bar EMPTY**, because this page sits before any question of the chapter. Reached by a new **`comp-prev`** ← on the progress card and returns by →. **A new id, not `comp-back`** — that was deleted in `v71_k` and its absence is asserted deliberately, so the spine is BUILT. The control is **hidden** when the storyline has no summary (37 of 84), so it can never lead to a blank page. Direction is taken from the client's one `RTL_LANGS` rule rather than a second spelling. Both halves revert-verified; the gate table diffs identical. 4 new `en` keys. |
+| `v77_g` | **The story PANEL is renamed to `comp-story-panel`** — §0c's prerequisite. The old id claimed "the story is unlocked", but the panel is shown while the story is still LOCKED (a truncated preview for teacher/canGenerate) in most of the 24 of 32 rows it appears in, and §0c's genuinely distinct story-unlocked PAGE would have collided with it. It is the whole bordered panel: the caption and `comp-story-text`/`-spk`/`-xlate` are children. Pure rename, proven so — the corrected gate table diffs identical in every state cell, only the column name moves. `unit-card-consistency` now sweeps the client for the old id, because a half-done rename is INVISIBLE otherwise: the stub DOM auto-vivifies any id, so a leftover lookup returns a live-looking element for ever (rule 16). Caught on the way: the explanatory comment naming the old id failed that very sweep — session-29 rule 1, arriving exactly as written. |
+| `v77_f` | **§0c's LAST PAGE — the story-finished card.** New `finished-screen`: festive icon, the whole story chapter by chapter (native `<details>`, so it collapses without script and survives the static build), the **cumulative** vocabulary learned across the story, Back to the progress card and onward to the storyline. `showComplete`'s terminal branch now leads here **when the story is genuinely finished**. **Ruling 2a is applied to ONE path deliberately:** the terminal branch also fires for a learner who finished the LAST chapter with earlier ones unplayed, where celebrating would be a lie — that case keeps `v74_o`'s hand-off. Both halves clicked and revert-verified. Found on the way: reading `_storyDone` at the Next wiring is a **temporal-dead-zone throw** (it is declared 59 lines below — the v68.1 shape in the v68.1 function), and the obvious fix duplicates the rule, so `_storyAllChaptersDone(slCtx)` is now the single reader for both sites. The `v77_b` ledger asserted empty across the walk; verified against `docs/index.html` too. 4 new `en` keys. |
+| `v77_e` | **Docs only, no product change, no version bump. The card truth table is REGENERATED** as `v77_card_gates.md`; `v76_card_gates.md`'s table is superseded. Findings 2 and 5 audited and both were the same class of artefact — `comp-storyboard` renders fine once `APP.savedList` is seeded (the renderer uses `appendChild`, so the stub's `innerHTML` reads empty even when the board is there), and the learner/teacher asymmetry all but vanishes once every store is written. **Finding 6 withdrawn:** `v74_l`'s hide-list is not "barely observable" — measured by neutralising it, it changes **8 of 32 rows**, hiding three otherwise-live buttons in each. New probe `probe_gates_v77.js` asserts element existence in the markup and seeds every store the card reads. |
+| `v77_d` | **Docs only, no product change, no version bump.** §0d's open question answered: **`comp-drill` is not dead.** The gate table's "never once enabled in 32 rows" was a third seeding artefact — the drill reads `APP.progress.learned[lang\|srcLang]`, which the probe never wrote, so grey was the correct answer to "this learner has nothing to drill". With the real writer (`recordLearnedFromLesson`, 2 wrong answers) the button is LIVE. **`unit-card-consistency` §4 had asserted this since `v71_h` and was green throughout** — a passing test and a "measured" table contradicted each other for a release. Probe preserved as `probe_drill_v77d.js`. |
+| `v77_c` | **§0b, second half — the coverage key-space question is SETTLED as a seeding artefact.** `v74_c` moved coverage onto SOURCE ITEM keys (`lessonId:i:hash`) while round assembly kept QUESTION ids (`lessonId:type:hash`); the two spaces are **disjoint**, so the v76 probe's 86 seeded qids counted 0 against a 31-item total. `markSolved` writes both, so no learner was ever affected — driven through `buildExercises`+`markSolved` with no seeding, coverage converges 62→95→95→100 and unlocks in 4 rounds (builders SAMPLE, so replaying is the designed way up). New guard `unit-mixed-unlock-reachable` drives the real solve path, because seeding is the mistake that produced the question. |
+| `v77_b` | **§0b, first half — the 7 swallowing `catch(_) {}` blocks in `showComplete` are visible.** Each now reports site + message to a per-render ledger (`_cardErrors()`); `APP._cardStrict = true` rethrows at the site. **Default behaviour is unchanged** — still swallowed, just no longer invisible. `var` not `let` for the ledger, deliberately: `v68.1` was a TDZ crash in this very function. Call sites are `typeof`-guarded per the harness convention. Measured after: **0 swallowed errors across 1216 renders over all 304 topics**, and the `probe_gates_v76` truth table diffs identical. Found on the way: **`comp-back` and `comp-story` do not exist** — two columns of the "measured" gate table are stub-DOM phantoms. |
 | `v77` | **Base cut.** The `v76_k` static-build fix, folded into the version bump. |
 | `v76_k` | **The `v76_e` bug was still live in the published `docs/` build** (user-reported). `build-static.js` carries its OWN copy of `loadSavedList` which overrides the client's, so the fix landed in `index.html` only. Same duplication hazard as `v76_b`. Now guarded by a test that drives **the built artefact** (`loadClient({file})`), because every source-level assertion about `index.html` passed throughout. |
 | `v76_j` | **"Continue story" landed with an empty "continue from" field** (user-reported, `sl_9302163`). `continueFromLesson` switched the TARGET language — which repopulates the menu — before switching the SOURCE, so the menu was built for a pair with no chapters and the chapter's own option never existed. Only a mixed-language storyline can show it. Plus the **pin**: arriving by this route fixes the story, it is offered whatever the language filters say, and it is cancelled by the ✕ or by "— new story —" (persisted, user's rulings). Note: the reordering is defensive and NOT independently observable — the pin subsumes it, and the test says so. |
@@ -60,8 +75,11 @@ machinery or corpus statistics, not a hand-authored table.
 exists so that the student ends up understanding the text. "Complete cards" are renamed **progress
 cards** and become the spine that guides a learner through a story.
 
-**Read `build_history/v76_card_gates.md` before touching the card.** It carries the measured AS-IS
-truth table (32 rows, both gate families) and a preserved probe to re-run and diff.
+**Read `build_history/v77_card_gates.md` before touching the card** — the CORRECTED truth table
+(32 rows, both gate families) and `probe_gates_v77.js` to re-run and diff.
+**`v76_card_gates.md`'s TABLE is superseded and must not be built on**: four of its five findings
+were artefacts of state its probe never seeded. That file is kept only for its corrected findings
+and the settled coverage question.
 
 ## 0a. RULED — session 30 (user). These are decided; do not re-derive them.
 
@@ -85,11 +103,29 @@ Consequences, all of them required together:
   spine, and `comp-next` stops being forced as the single route out.
 - The premise `v74_l` was written on is gone anyway: once the card carries a third progress bar,
   cumulative vocabulary and back/next, it is no longer the "quiet card" the rule assumed.
-- Measured support: `v74_l`'s hide-list is **barely observable today** — in the rows where the gate
-  is true and the user is not a teacher, drill/crossword/back were ALREADY hidden for other reasons.
-  It defends less behaviour than its test implies.
+- ~~Measured support: `v74_l`'s hide-list is **barely observable today**…~~ **WITHDRAWN `v77_e` —
+  that measurement was wrong.** It came from the unseeded v76 table, where those buttons were
+  already hidden for unrelated reasons. Re-measured by neutralising the hide-list and diffing the
+  whole table: it changes **8 of 32 rows**, hiding **three otherwise-live buttons in each** (repeat,
+  drill, crossword), on exactly the genuine learner unlocks. **The ruling stands — it was made on
+  principle — but expect a bigger visible change than §0a assumed.**
+- **Nuance not to lose:** the hide-list already keeps Repeat while coverage is short
+  (`_coverageLeft`) and hides it only at 100%. So *"a learner must be able to reach 100%"* is
+  already satisfied today; Repeat disappears only AT 100%, never on the way there. The case for
+  moving the actions below the text stands on its own — the story should lead — but it is not
+  rescuing a stranded learner.
 
-### Ruling 2a — `v74_o` is SUPERSEDED
+### Ruling 2a — `v74_o` is SUPERSEDED (scope CONFIRMED by the user, session 31)
+
+> **User, after the `v77_f` browser pass: "🎉 card only on finished stories."**
+>
+> **SETTLED — the shipped behaviour is correct, do not widen it.** `showComplete`'s terminal branch
+> fires whenever there is nothing left in this chapter and no next chapter, which INCLUDES a learner
+> who finished the LAST chapter while earlier ones are unplayed. That case is **not** a finished
+> story and keeps `v74_o`'s hand-off. The gate is `_storyAllChaptersDone(slCtx)`, and both halves
+> are asserted by clicking in `unit-story-finished`. **Do not "simplify" this to always show the
+> card** — the narrower gate is the ruling, not an implementation detail.
+
 
 > **User: "superseded — the story-finished card is the answer to the dead end".**
 
@@ -172,8 +208,18 @@ lost real time to a bug that *looked* like a swallowed throw and was not. A coun
 assert is zero, or a rethrow under a test flag, is enough. One small release, revert-verified, before
 any of the work below.
 
-**Then settle the coverage key-space question** in `v76_card_gates.md` — 86 seeded solved keys, 0
-counted, total 31, on the branch that gates story unlock for every mixed-driven chapter.
+**✅ DONE `v77_b`** — the 7 catches now report to a per-render ledger (`_cardErrors()`), with
+`APP._cardStrict = true` rethrowing at the site. Default behaviour is unchanged: a throw is still
+swallowed, it is merely no longer invisible. Measured across the whole corpus at the `v77_b` cut:
+**1216 renders over all 304 topics swallowed ZERO errors**, so the catches hide nothing today — the
+ledger is a net for the rework, not a bug-catcher for now. Guarded by `unit-card-errors`, which also
+asserts no empty `catch` survives in `showComplete`.
+
+**✅ DONE `v77_c` — the coverage key-space question is SETTLED: a seeding artefact, not a bug.**
+`topicCoverage` reads ITEM keys (`v74_c`); the probe seeded QID keys; the two spaces are disjoint,
+so 0 of 86 counted. `markSolved` writes both, and a learner driven through the real solve path
+reaches 100% and unlocks in 4 rounds. Full measurement in `v76_card_gates.md`; guarded by
+`unit-mixed-unlock-reachable`.
 
 ## 0c. The sequence (the big one)
 
@@ -181,20 +227,51 @@ Progress cards become an ordered walk, with back/next, over:
 
   **summary → chapter questions → story-unlocked → next-chapter-unlocked → story-finished**
 
-- The **summary card is the FIRST page** in the back/next sequence, showing the story summary in the
-  SOURCE language, with progress bars empty, before any question of that chapter.
+**✅ WALK COMPLETE:** summary `v77_h` · chapter questions (existing progress card) · story-unlocked
+`v77_j` · next-chapter-unlocked `v77_i` · story-finished `v77_f`. Every page exists and every link
+is asserted by clicking. **What remains in §0c is the spine's REACH, not its pages** — see §0d for
+the layout work, and note that the summary page is reachable by ← but is not yet forced before the
+first question (a lesson-entry change the user has not seen).
+
+**✅ The story-finished page SHIPPED in `v77_f`** — built first because ruling 2a forbids deleting
+`v74_o` until it exists and Next reaches it, so the rest of the walk is downstream of it.
+`finished-screen` / `showStoryFinished()` / `finBackToCard()`, guarded by `unit-story-finished`.
+**✅ `v77_g` renamed the preview panel to `comp-story-panel`**, so the name `story-unlocked` is now
+free for the real page. **Still to build: summary (the walk's FIRST page), story-unlocked,
+next-chapter-unlocked**, and the
+back/next spine connecting them. `comp-back` does not exist — the spine must be built (see below).
+
+- ✅ **SHIPPED `v77_h`.** The **summary card is the FIRST page** in the back/next sequence, showing
+  the story summary in the SOURCE language, with progress bars empty, before any question of that
+  chapter. `summary-screen` / `showStorySummary()` / `sumForwardToCard()`, reached by `comp-prev`.
+  **Note on scope:** it is reachable by ← FROM the progress card; it is not yet forced before the
+  first question on lesson entry. That would change the lesson-entry path (`loadSaved`'s learner
+  auto-start, v60) and is a UX change the user has not seen — **ask before doing it.**
 - Back/next also walks **already-played chapters**, to revisit, replay, or complete vocabulary.
   Hint from the user: such buttons already exist in the teacher-only lesson-set view.
 - A **"story finished"** card at the end: full story (collapsible), the complete vocabulary learned,
   and a festive icon.
-- **`comp-back` already exists and is hidden in all 32 measured rows.** Decide: revive or replace.
+- ~~**`comp-back` already exists and is hidden in all 32 measured rows.** Decide: revive or replace.~~
+  **CORRECTED `v77_b`: `comp-back` DOES NOT EXIST** — 0 occurrences of `id="comp-back"` in both
+  `index.html` and `docs/index.html`. It was deleted in `v71_k` (`#comp-hdr`, whose title is the
+  route back, replaced it), and `unit-card-consistency` asserts its absence deliberately. The table
+  showed it because **`lib-dom` auto-vivifies any id**, so the probe measured a phantom; `comp-story`
+  is the same. **There is nothing to revive — the spine must be BUILT**, and reusing the id
+  `comp-back` means updating that guard too.
 - **`comp-story-unlocked` does not mean what its name says** (it is the preview label, shown while
   locked whenever canGenerate or teacher is on). Rename before adding a real unlocked card.
+  **Note (`v77_b`): it is the whole bordered PANEL, not a label** — `comp-story-unlocked-lbl` is the
+  caption inside it, and `comp-story-text` / `-spk` / `-xlate` are its children. The rename touches a
+  container, so it is a slightly larger change than "rename the label".
 
 ## 0d. Layout and navigation
 
 - Move progress bars, lesson icons and the replay/drill/crossword/next buttons **BELOW the text** on
-  all progress cards. (Check `comp-drill` first — grey or hidden in all 32 rows; possibly dead.)
+  all progress cards. ~~(Check `comp-drill` first — grey or hidden in all 32 rows; possibly dead.)~~
+  **CHECKED `v77_d`: `comp-drill` is ALIVE — keep it in the row.** It was grey in all 32 rows because
+  the gate probe never wrote the wrong-answer ledger it reads; with mistakes recorded it goes LIVE,
+  and `unit-card-consistency` has asserted exactly that since `v71_h`. Note it is `hidden` on the
+  unlocked-learner row today — `v74_l`'s hide-list — so ruling 1 restores it there.
 - Closing a question card (the ✕, upper left) must return to **the progress card of the lesson being
   played**, not to the storyline.
 - **Replay must ALWAYS be available**, including after the story is unlocked and comprehension and
@@ -211,7 +288,10 @@ Progress cards become an ordered walk, with back/next, over:
   where the story is the focus. This is not polish; it is a blank panel.
 - Ideally ordered as the words appear in the story (greedy matching, to allow for word forms).
   **Do this as part of §3, sharing one matcher** — it is the same token-alignment problem, not a
-  separate nicety.
+  separate nicety. **`v77_f` deliberately did NOT attempt it** on the story-finished card: ordering
+  there before §3 exists would guarantee the two disagree. That card lists every solved item across
+  the story in deck-then-lesson order (133 words vs 24 for a single chapter, measured), which is the
+  cumulative half of this item done; the ORDERING half is still open.
 - Include vocabulary that was the question or the correct answer in **synonym and word_forms**
   lessons.
 
@@ -425,6 +505,19 @@ drop again.**
 
 ## Owed by the USER — not doable in a container
 
+**New `en`-only keys from `v77_i`, owed to the translate pass:** `unlocked.title`
+("Next chapter unlocked!"), `unlocked.next`, `unlocked.back_card`, `unlocked.progress`
+("{done} of {total} chapters").
+
+**New `en`-only keys from `v77_h`, owed to the translate pass:** `summary.title`
+("The story so far"), `summary.open`, `summary.next` ("Back to your progress"),
+`summary.chapters` ("{n} chapters").
+
+**New `en`-only keys from `v77_f`, owed to the translate pass:** `finished.title`
+("Story finished!"), `finished.vocab` ("Everything you learned"), `finished.next`
+("See the whole story"), `finished.back_card` ("Back to the chapter"). `t()` falls back through
+English meanwhile. **`v71_q`: never assert a dropped key absent.**
+
 - **A browser pass.** Nineteen releases deep. `v74_c` changed what coverage MEANS, `v74_i` was the
   only `server.js` change of the session (live mode is the half that cannot be exercised headlessly,
   only simulated), and `v74_j` / `v74_n` are visual.
@@ -540,6 +633,11 @@ what is owed by the USER, open decisions), then THIS file (the highest-numbered
    numbering and only one of the two is meaningful later.
 9. **Package** — sync the release dir, regenerate `docs/`, zip, and call out which deliverables are
    still owed (browser pass, i18n, native-speaker content checks).
+   **(v77_h, user) The zip's TOP-LEVEL DIRECTORY must be named for the release it contains**, not
+   for the base cut: `dreizunge_v77_f.zip` unpacks to `dreizunge_v77_f/`. Unpacking every point
+   release into the same `dreizunge_v77/` silently overwrites the previous one, or merges into it —
+   which is how a stale file survives a release. Rename the directory before zipping; do not rely
+   on the working directory's name.
 
 **(v71) Test-quality rules — added because five guards failed in one session, in five distinct ways:**
 - **Verify every guard by reverting its fix and watching it fail.** Four of the five were caught
@@ -701,5 +799,46 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
     (a storyline unrecognised because its chapter list was filtered before it was matched). If a
     list is filtered and then matched back against its source by length or position, the filter and
     the match are the same bug waiting.
+
+## Rules earned in session 31
+
+21. **A variable declared with `let` further down the same function cannot be read earlier — check
+    the declaration line before reaching for a value.** `showComplete` computes `_storyDone` ~60
+    lines BELOW its Next wiring; reading it there is a `ReferenceError` on every terminal card, and
+    it is the exact `v68.1` bug in the exact `v68.1` function. **And the obvious fix is worse:**
+    re-deriving the value inline creates a second copy of the rule, which is how the storyline
+    page's connector line drifted in `v71_w`. Extract one function both sites call.
+22. **A handler declared inline in markup is one a headless test can never click.** The stub DOM
+    does not turn an `onclick="f()"` attribute into a callable property. `comp-next` has always
+    assigned its handler in JS; anything testable must do the same.
+
+19. **Three of `v76_card_gates.md`'s findings were seeding artefacts, in three different stores**
+    (`comp-back`/`comp-story`: the stub DOM itself; the coverage rows: `solved` keyed by item vs
+    qid; `comp-drill`: `learned` never written at all). A gate table is only as good as the state it
+    seeds, and "the element was never enabled in 32 rows" usually means **the store that enables it
+    was never populated** — not that the feature is dead. Before deleting a control as unreachable,
+    find its enabling store and write it the way the PRODUCT writes it.
+20. **When a passing test contradicts a written finding, the test is usually right.**
+    `unit-card-consistency` asserted "drill is live once mistakes exist" while the truth table said
+    "never once enabled", and the contradiction sat in the tree for a release because prose is read
+    as measurement and a green assertion is read as a detail. Grep the suite for the element before
+    trusting a table about it.
+
+16. **An element-visibility probe against the stub DOM must first assert the element exists in the
+    MARKUP.** `lib-dom` auto-vivifies any id, so `getElementById('anything')` returns a fresh stub
+    with no `display` and no `disabled` — which reads as "present and visible", or as "present and
+    hidden" once the probe's own legend maps it. Two of the nine columns in `v76_card_gates.md`
+    (`comp-back`, `comp-story`) were phantoms for a whole release, and the roadmap carried
+    "the button is already there and already dead" into a rework that was about to reuse it.
+    The probe DID call the product function — but the READOUT went through the stub, so the
+    assertion never touched the thing being claimed (session-28 rule 2, from a new direction).
+17. **When two stores are keyed differently, seeding one and reading the other measures nothing.**
+    The `v76` coverage question — "86 keys in, 0 counted" — was a probe seeding the QID universe
+    into a store `topicCoverage` reads by ITEM key. Before concluding a gate is unreachable, seed
+    it the way the PRODUCT writes it (here: `markSolved`), or drive the real path.
+18. **A guard that asserts a construct is ABSENT survives a rewrite; one that pins a phrasing does
+    not.** `unit-card-errors` asserts zero empty `catch` blocks in `showComplete` rather than
+    matching the new call text — so it keeps working as the rework moves that code, which is
+    precisely what §0a asks of the eight files that currently pin source text.
 
 (If you add a new standing rule, append it here so the next session inherits it.)

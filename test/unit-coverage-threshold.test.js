@@ -23,7 +23,14 @@ function ext(src, name) {
 
 // ── 1. Clean card: removed elements are gone ──────────────────────────────────
 {
-  const screen = html.slice(html.indexOf('id="complete-screen"'), html.indexOf('id="comp-story-unlocked"'));
+  // v77_l: this slice used to end at `comp-story-panel`, which silently assumed the story panel was
+  // the LAST row of the card. §0d moved the story above the bars and the slice stopped containing
+  // half the card — the assertions below then passed or failed on where the boundary happened to
+  // land rather than on what the card contains. The boundary is now the next screen, so the slice
+  // is the whole completion card whatever order its rows are in.
+  const _cs = html.indexOf('id="complete-screen"');
+  const _next = html.indexOf('class="screen', html.indexOf('>', _cs));
+  const screen = html.slice(_cs, _next > 0 ? _next : undefined);
   for (const gone of ['class="trophy"', 'id="comp-xp"', 'id="comp-sub"', 'class="stat-row"', 'id="s-correct"', 'id="stat-flagged"']) {
     assert.ok(!screen.includes(gone), `completion card no longer has ${gone}`);
   }
@@ -360,9 +367,14 @@ console.log('  card: below-threshold drill offer + hint: OK');
   // meaning. Below the mark Next is DISABLED, so there is no branch left that could advance.
   assert.ok(/\} else if \(_belowThreshold && !lesson\._drill\) \{/.test(sc),
     'a single below-mark branch catches every case');
-  assert.ok(/_nextBlocked = true;/.test(sc) && /compNext\.disabled = true;/.test(sc) &&
-            /compNext\.onclick = null;/.test(sc),
-    'and it locks Next rather than repurposing it');
+  // v77_o (user ruling): the branch no longer LOCKS Next; it points it at the work that raises the
+  // mark. The guarantee this section exists for is unchanged and is asserted below by clicking:
+  // Next below the mark must not leave the chapter.
+  assert.ok(!/_nextBlocked/.test(sc) && !/compNext\.onclick = null;/.test(sc),
+    'Next is never a dead arrow — it always has a destination');
+  assert.ok(/_firstCoverageShortLessonIdx/.test(sc),
+    'and below the mark it targets a COVERAGE-short lesson first, so a mixed round re-samples ' +
+    'toward what is not yet solved rather than re-asking what is');
   assert.ok(/\} else if \(!lesson\._drill && !_belowThreshold && _nextChapter\(\)\)/.test(sc),
     'the next-chapter branch refuses to advance while below the mark');
 }

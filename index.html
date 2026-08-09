@@ -255,7 +255,20 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .feedback.flagged-note .fb-body{color:#a05000}
 
 /* ══ COMPLETE ════════════════════════════════════════════════════════ */
-#complete-screen{padding:0 0 40px;max-width:540px;width:100%;text-align:center;margin:0 auto}.comp-body{padding:12px 16px 0}
+/* v77_k: every page of the progress-card walk shares ONE width rule, and it is the same
+   540px column as .sl-screen — so the storyline page, the entry card, every progress card
+   and the final card all put their title line in the same place and entering a lesson
+   causes no width jump. Previously only #complete-screen carried the cap: the four pages
+   added in v77_f..v77_j had no width rule at all and sized to their content.
+   .comp-body's inset matches .sl-screen-body exactly (12px 16px 0) for the same reason. */
+/* v77_n (user): `align-items:stretch`. The card screens ARE the .screen element, and .screen is
+   a centring flex column — so every direct child shrank to its own content width. The storyline
+   page never showed this because it nests its content in a full-width .sl-screen INSIDE its
+   .screen. The visible symptom was the card header rendering as a narrow centred pill while the
+   storyline page's header spanned the full column, so the two never matched however carefully
+   the header markup was copied. */
+.card-screen{padding:0 0 40px;max-width:540px;width:100%;text-align:center;margin:0 auto;align-items:stretch}
+.comp-body{padding:12px 16px 0}
 .comp-title{font-size:28px;font-weight:900;color:var(--text);margin-bottom:4px}
 .vocab-box{width:100%;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:14px 16px;margin-bottom:18px;text-align:left;box-shadow:var(--shadow-card)}
 .vocab-hdr{font-size:11px;font-weight:900;color:var(--gray);text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px}.vocab-chip{display:inline-flex;align-items:center;gap:4px;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:20px;padding:3px 10px;font-size:13px;font-weight:700;margin:3px;
@@ -1175,7 +1188,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
 </div>
 
 <!-- ══ COMPLETE ════════════════════════════════════════════════════════ -->
-<div id="complete-screen" class="screen">
+<div id="complete-screen" class="screen card-screen">
   <!-- v71_k: the storyline page's own header line, reused verbatim (same classes) so a result card
        reads as part of the story rather than a floating dialog: 🌍 → main page, title → this
        storyline. Hidden for a drill and for a solo chapter with no storyline. It is also what
@@ -1203,6 +1216,13 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
        = a 480px content box, against .sl-screen's 540px), which is what made the storyboard
        render visibly smaller here than on the page it is copied from. -->
   <div class="comp-body">
+  <!-- v77_m (user) — the progress card mirrors the STORYLINE PAGE as closely as possible, so
+       moving between them causes no jump in either width or row order:
+         title + its progress bar  ->  storyboard  ->  chapter-wise bars  ->  the story
+         (with the vocabulary panel below it)  ->  lesson icons  ->  buttons.
+       v77_l put the story directly under the title, which led the card but no longer matched the
+       page. §0d's principle survives: the story still comes BEFORE the lesson icons and the
+       action row, which is what "the actions sit below the text" asks for. -->
   <!-- v65.1: the storyboard for THIS chapter, framed by chapter state (v71_k), so the learner sees
        where they are in the arc. Second row, directly under the header — as on the storyline page. -->
   <div id="comp-storyboard" style="display:none;margin-top:12px"></div>
@@ -1210,33 +1230,29 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
        v71_m: CHAPTER-level bars only. The along-the-storyline bar moved into the header above, and
        showing it twice on one card was the duplication this row order was meant to remove. -->
   <div id="comp-progress" style="margin-top:14px;text-align:left"></div>
-  <!-- v71_m: the big status line now sits BELOW the progress it describes — the learner reads the
-       bars, then the verdict ("Keep going!" / "Lesson complete!"), then the buttons. -->
-  <div class="comp-title" id="comp-title">Lesson complete!</div>
   <!-- v73_g: one icon per lesson in this chapter, above the play buttons. Clicking starts that
        lesson directly, which is a deliberate alternative route to the mixed lesson rather than a
        bypass of it — the coverage universe is shared, so questions reached this way count exactly
        as they would through mixed. Story-gated lessons render greyed until the story unlocks. -->
-  <div id="comp-lessons" style="display:none;margin-top:12px"></div>
-  <!-- v60: exactly two buttons. Next opens the next questions directly; Back returns to the
-       storyline (deck), or the landing page for a solo chapter. -->
-  <!-- v70_g: one action row. Icons only; the former button text is the tooltip. Secondary options
-       sit left of the primary action so the eye lands on the forward move last. Below the pass
-       mark the primary becomes REPEAT (↻) rather than Next (→) — the learner picks among repeat,
-       drill, crossword and whatever is added later, instead of Next silently meaning one of them. -->
-  <div id="comp-actions" style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:14px;flex-wrap:wrap">
-    <button class="comp-ico" id="comp-repeat" style="display:none" onclick="repeatForCoverage()">↻</button>
-    <button class="comp-ico" id="comp-drill" style="display:none" onclick="startDrill()">🎯</button>
-    <button class="comp-ico" id="comp-crossword" style="display:none" onclick="openCrosswordFromComplete()">🔠</button>
-    <button class="comp-ico primary" id="comp-next" onclick="afterComplete()">→</button>
-  </div>
-  <div id="comp-nav-btns" style="display:none;flex-wrap:wrap;justify-content:center;margin-top:8px"></div>
   <!-- v71_m: white background. The green wash was doing the same job as the green border and made
        the yellow word highlighting (below) muddy — the highlights are the signal here. -->
-  <div id="comp-story-unlocked" style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:var(--white)">
+  <!-- v77_g: RENAMED (the old id claimed the story was unlocked), which is not what it is.
+       NOTE: the old id is deliberately NOT spelled anywhere in this file — `unit-card-consistency`
+       sweeps the client for it to prove the rename is complete, and a comment naming it would fail
+       the very check it documents (standing rule: a comment near a source-scanned pattern must not
+       spell the pattern). This panel is shown
+       whenever the story is DISPLAYED on the progress card — including while the story is still
+       LOCKED, as a truncated preview, for a teacher or anyone with canGenerate. Measured across the
+       whole gate table (v77_card_gates.md): it appears in 24 of 32 rows, most of them locked. The
+       old name promised "the story is unlocked", which was true in only some of them.
+       §0c adds a genuinely distinct story-unlocked PAGE to the walk, and the two would have
+       collided — so the panel is named for what it is and the old name is now free.
+       Note it is the whole bordered PANEL: `comp-story-panel-lbl` is the caption inside it, and
+       `comp-story-text` / `-spk` / `-xlate` are its children. -->
+  <div id="comp-story-panel" style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:var(--white)">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
       <span style="font-size:20px">📖</span>
-      <span style="font-size:13px;font-weight:900;color:var(--green-dark)" id="comp-story-unlocked-lbl">Story unlocked!</span>
+      <span style="font-size:13px;font-weight:900;color:var(--green-dark)" id="comp-story-panel-lbl">Story unlocked!</span>
       <button class="spk-ico" id="comp-story-xlate" style="display:none;margin-left:auto;font-size:11px;font-weight:800;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Nunito,sans-serif" onclick="toggleCompStoryLang()"></button>
       <button class="spk-ico" id="comp-story-spk" onclick="speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">🔊</button>
     </div>
@@ -1251,7 +1267,171 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <style>#comp-story-text p{margin:0 0 12px}#comp-story-text p:last-child{margin-bottom:0}</style>
   </div>
   <div class="vocab-box" style="margin-top:18px"><div class="vocab-hdr" id="words-from-lbl">Words from this lesson</div><div id="comp-vocab" style="display:flex;flex-wrap:wrap;margin:-3px"></div></div>
+  <!-- Below the text: the machinery. -->
+  <div id="comp-lessons" style="display:none;margin-top:12px"></div>
+  <!-- v60: exactly two buttons. Next opens the next questions directly; Back returns to the
+       storyline (deck), or the landing page for a solo chapter. -->
+  <!-- v70_g: one action row. Icons only; the former button text is the tooltip. Secondary options
+       sit left of the primary action so the eye lands on the forward move last. Below the pass
+       mark the primary becomes REPEAT (↻) rather than Next (→) — the learner picks among repeat,
+       drill, crossword and whatever is added later, instead of Next silently meaning one of them. -->
+  <div id="comp-actions" style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:14px;flex-wrap:wrap">
+    <!-- v77_h: ← to the summary card, the walk's first page. A NEW id: the old `comp-back` was
+         deleted in v71_k and unit-card-consistency asserts its absence on purpose, so the §0c
+         spine is built rather than revived. Hidden when this storyline has no summary — 37 of 84
+         do not — so the control never leads to a blank page. Handler assigned in JS (the stub DOM
+         cannot click an inline one). -->
+    <button class="comp-ico" id="comp-prev" style="display:none">←</button>
+    <button class="comp-ico" id="comp-repeat" style="display:none" onclick="repeatForCoverage()">↻</button>
+    <button class="comp-ico" id="comp-drill" style="display:none" onclick="startDrill()">🎯</button>
+    <button class="comp-ico" id="comp-crossword" style="display:none" onclick="openCrosswordFromComplete()">🔠</button>
+    <button class="comp-ico primary" id="comp-next" onclick="afterComplete()">→</button>
+  </div>
+  <div id="comp-nav-btns" style="display:none;flex-wrap:wrap;justify-content:center;margin-top:8px"></div>
+  <!-- v77_n (user): the progress message sits at the BOTTOM, below the play buttons, on every
+       progress card. It is a verdict on what just happened, not a heading for what follows — and
+       putting it first pushed the storyboard and the bars down, so the card no longer opened the
+       way the storyline page does. Reading order is now: header, storyboard, bars, the story, its
+       words, the lesson icons, the actions — then the verdict. -->
+  <div class="comp-title" id="comp-title" style="margin-top:16px">Lesson complete!</div>
   </div><!-- /.comp-body -->
+</div>
+
+<!-- ══ STORY FINISHED ══════════════════════════════════════════════════
+     v77_f: the last page of the progress-card walk (roadmap §0c). Reached by Next from the
+     terminal branch of showComplete once EVERY chapter of the storyline is complete.
+
+     It supersedes v74_o on that path only: v74_o made "nothing left to do" a hand-off back to the
+     storyline, which meant this card could never be reached by pressing forward. Where the story
+     is NOT finished (a learner who completed the last chapter while earlier ones are unplayed)
+     v74_o still applies — celebrating there would be a lie.
+
+     The dead end v74_o fixed must not come back, so this card carries its OWN way out: the header
+     title and the → button both resolve through APP._compBack, the same target the completion card
+     uses, so the two can never disagree about where "onward" is. -->
+<div id="finished-screen" class="screen card-screen">
+  <div class="sl-screen-hdr" id="fin-hdr" style="text-align:left">
+    <div class="sl-screen-title-row">
+      <button class="sl-screen-home" onclick="goLandingClean()" id="fin-hdr-home" title="">🌍</button>
+      <span class="sl-screen-title" id="fin-hdr-title" style="cursor:pointer" role="button" tabindex="0"
+            onclick="compBackToStory()"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
+    </div>
+  </div>
+  <div class="comp-body">
+    <div style="text-align:center;font-size:44px;line-height:1.1;margin-top:14px" id="fin-icon">🎉</div>
+    <div class="comp-title" id="fin-title">Story finished!</div>
+    <!-- The whole story, chapter by chapter, each collapsible. <details> is native: it needs no
+         script, so it survives the static build and works with the card's speech buttons. -->
+    <div id="fin-story" style="margin-top:16px;text-align:left"></div>
+    <div class="vocab-box" style="margin-top:18px">
+      <div class="vocab-hdr" id="fin-vocab-lbl">Everything you learned</div>
+      <div id="fin-vocab" style="display:flex;flex-wrap:wrap;margin:-3px"></div>
+    </div>
+    <!-- Back returns to the progress card this card was reached from — the walk's previous page.
+         Next leaves for the storyline (or home for a solo chapter). -->
+    <div id="fin-actions" style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:18px;flex-wrap:wrap">
+      <!-- Handlers are assigned in showStoryFinished(), not inline, matching how the completion
+           card wires comp-next: the destination depends on state the markup cannot see, and an
+           assigned handler is the one a headless test can actually click. -->
+      <button class="comp-ico" id="fin-back">←</button>
+      <button class="comp-ico primary" id="fin-out">→</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STORY SUMMARY ═══════════════════════════════════════════════════
+     v77_h: the FIRST page of the progress-card walk (roadmap §0c). Shows the storyline summary in
+     the SOURCE language — the summary is authored there already (measured: 47 of 84 storylines
+     carry one, and each is in its own srcLang) — with the progress bars empty, because this page
+     sits before any question of the chapter.
+
+     Reached by ← from the progress card. That control is a NEW id, not the old `comp-back`: that
+     button was deleted in v71_k and `unit-card-consistency` asserts its absence deliberately, so
+     the spine is built rather than revived (roadmap §0c, corrected v77_b). -->
+<div id="summary-screen" class="screen card-screen">
+  <div class="sl-screen-hdr" id="sum-hdr" style="text-align:left">
+    <div class="sl-screen-title-row">
+      <button class="sl-screen-home" onclick="goLandingClean()" id="sum-hdr-home" title="">🌍</button>
+      <span class="sl-screen-title" id="sum-hdr-title" style="cursor:pointer" role="button" tabindex="0"
+            onclick="compBackToStory()"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
+    </div>
+  </div>
+  <div class="comp-body">
+    <!-- v77_o (user): the entry card is laid out like every other progress card — storyboard first,
+         then the bars, then the content, with the title line at the BOTTOM (v77_n). Its own 📖 icon
+         is gone: the storyboard is the picture, and two images stacked read as a dialog rather than
+         as the same page the storyline shows. -->
+    <div id="sum-storyboard" style="display:none;margin-top:12px"></div>
+    <div id="sum-progress" style="margin-top:14px;text-align:left"></div>
+    <div id="sum-text" dir="auto" style="margin-top:14px;text-align:left;font-size:15px;color:var(--text);line-height:1.65"></div>
+    <div id="sum-actions" style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:18px;flex-wrap:wrap">
+      <button class="comp-ico primary" id="sum-next">→</button>
+    </div>
+    <div class="comp-title" id="sum-title" style="margin-top:16px">The story so far</div>
+  </div>
+</div>
+
+<!-- ══ NEXT CHAPTER UNLOCKED ═══════════════════════════════════════════
+     v77_i: the fourth page of the progress-card walk (roadmap §0c). Finishing a chapter opens the
+     next one, and until now that moment passed silently — Next loaded the next chapter directly,
+     so the thing the learner had just EARNED was never named. This card names it, then carries
+     them in.
+
+     It sits ON the existing path rather than beside it: the same Next, the same destination, one
+     acknowledgement in between. ← returns to the progress card, so the walk stays two-way. -->
+<div id="unlocked-screen" class="screen card-screen">
+  <div class="sl-screen-hdr" id="unl-hdr" style="text-align:left">
+    <div class="sl-screen-title-row">
+      <button class="sl-screen-home" onclick="goLandingClean()" id="unl-hdr-home" title="">🌍</button>
+      <span class="sl-screen-title" id="unl-hdr-title" style="cursor:pointer" role="button" tabindex="0"
+            onclick="compBackToStory()"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
+    </div>
+  </div>
+  <div class="comp-body">
+    <div style="text-align:center;font-size:40px;line-height:1.1;margin-top:14px" id="unl-icon">🔓</div>
+    <div class="comp-title" id="unl-title">Next chapter unlocked!</div>
+    <div id="unl-chapter" style="margin-top:14px;text-align:center;font-size:16px;font-weight:900;color:var(--green-dark)"></div>
+    <div id="unl-progress" style="margin-top:14px;text-align:left"></div>
+    <div id="unl-actions" style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:18px;flex-wrap:wrap">
+      <button class="comp-ico" id="unl-back">←</button>
+      <button class="comp-ico primary" id="unl-next">→</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STORY UNLOCKED ══════════════════════════════════════════════════
+     v77_j: the THIRD page of the progress-card walk (roadmap §0c). The moment the story becomes
+     readable — the thing every prep lesson was for — is currently a panel that appears on the
+     progress card among the bars and buttons. It stays there (user ruling: the page "sits beside
+     it", it does not replace it); this page gives the moment a page of its own, ONCE per chapter,
+     with the story as the only thing on it.
+
+     Shown when the prep gate flips and there is still work left in the chapter. Seen-once is
+     recorded per chapter in APP.progress.storyShown, and NEVER on a review render — re-opening a
+     finished chapter is not the moment of unlocking (INTERNALS: "a review render is not a play"). -->
+<div id="unlockstory-screen" class="screen card-screen">
+  <div class="sl-screen-hdr" id="us-hdr" style="text-align:left">
+    <div class="sl-screen-title-row">
+      <button class="sl-screen-home" onclick="goLandingClean()" id="us-hdr-home" title="">🌍</button>
+      <span class="sl-screen-title" id="us-hdr-title" style="cursor:pointer" role="button" tabindex="0"
+            onclick="compBackToStory()"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
+    </div>
+  </div>
+  <div class="comp-body">
+    <div style="text-align:center;font-size:40px;line-height:1.1;margin-top:14px" id="us-icon">📖</div>
+    <div class="comp-title" id="us-title">Story unlocked!</div>
+    <div id="us-story" dir="auto" style="margin-top:16px;text-align:left;font-size:15px;color:var(--text);line-height:1.65"></div>
+    <style>#us-story p{margin:0 0 12px}#us-story p:last-child{margin-bottom:0}</style>
+    <div id="us-actions" style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:18px;flex-wrap:wrap">
+      <button class="comp-ico" id="us-back">←</button>
+      <button class="comp-ico" id="us-spk">🔊</button>
+      <button class="comp-ico primary" id="us-next">→</button>
+    </div>
+  </div>
 </div>
 
 <div id="storyline-screen" class="screen">
@@ -1959,7 +2139,7 @@ function applyUIStrings() {
   _setAttr('gen-topic-title-btn',  'title', t('lesson.gen_topic_title'));
   _setAttr('sl-screen-gen-btn',    'title', t('lesson.gen_topic_title'));
   _setAttr('sl-screen-edit-btn',    'title', t('ui.edit_title'));
-  _setText('comp-story-unlocked-lbl', t('complete.story_unlocked'));
+  _setText('comp-story-panel-lbl', t('complete.story_unlocked'));
   updateTeacherModeBtn();
   _buildGlobalTtsSelectors();
   _setAttr('sl-screen-summary-btn', 'title', t('lesson.gen_summary'));
@@ -5636,6 +5816,16 @@ async function loadSaved(ref){
       // build). goLessonSet has already rendered the lesson-set page underneath, which a learner
       // must never see (v60.1) — fall back to the same target as confirmQuit: the storyline deck,
       // else the landing page.
+      // v77_k (user): the summary card is the ACTUAL ENTRY POINT. Opening a chapter shows the
+      // story summary first — in the source language, bars empty — and its forward starts the
+      // lesson. §0c's "the FIRST page in the back/next sequence ... before any question".
+      //
+      // Two conditions, both deliberate:
+      //   • only when this storyline HAS a summary (37 of 84 do not) — otherwise the entry card
+      //     would be a blank page between the learner and their lesson;
+      //   • not when arriving from the next-chapter-unlocked card, which has just shown the
+      //     learner an interstitial of its own. Two in a row is friction, not orientation.
+      if (_enterViaSummaryCard(idx)) return;
       const started = idx>=0 ? (startLesson(idx) !== false) : (showComplete(true), true);
       if(!started){
         const ctx=_storylineForTopic(APP.lessonData?.topic);
@@ -14364,12 +14554,75 @@ function check(){
   }
 }
 
+// ── v77_b: progress-card error visibility ──
+// `showComplete` carries seven `catch(_) {}` blocks. A throw inside any of them leaves the card
+// half-rendered — the pass-mark gate, the header, the storyboard, the icon row, the action row —
+// while the whole suite stays green, because nothing observable throws. Session 30 hit this exact
+// shape in server.js: a ReferenceError swallowed by its own catch dropped every error-hunt lesson
+// silently, and was caught only because a test asserted the RESULT rather than the call.
+// Two affordances, neither of which changes behaviour by default:
+//   _cardErrors()           -> what THIS render swallowed; a harness asserts it is empty.
+//   APP._cardStrict = true  -> rethrow instead of swallowing, so a test fails AT the site.
+// Call sites are typeof-guarded per the harness convention (INTERNALS "Test harness limits"): a
+// function extracted in isolation degrades to the old empty-catch behaviour rather than throwing
+// a ReferenceError out of a catch block.
+// `var`, deliberately: v68.1 was a temporal-dead-zone crash in this very function, and a hoisted
+// binding cannot reproduce it. The push is guarded, so an early call degrades to a no-op.
+var _cardErrs = [];
+function _cardErrorsReset(){ _cardErrs = []; }
+function _cardErrors(){ return _cardErrs.slice(); }
+function _cardNote(where, e){
+  try { _cardErrs.push({ where: where, msg: (e && e.message) ? String(e.message) : String(e) }); } catch(__){}
+  if (typeof APP !== 'undefined' && APP && APP._cardStrict) throw e;
+}
+
+// ── v77_f: "is the whole story finished?" — ONE rule, two readers ────────────────────────────
+// showComplete needs this answer twice: at the Next wiring (to decide whether Next leads to the
+// story-finished card) and ~60 lines later for the card title. The second site used to spell it
+// inline, and the first cannot read that variable at all — it is still in its temporal dead zone
+// there, which is the v68.1 crash in this exact function. A second copy would also be the shape
+// that drifted for the storyline page's connector line in v71_w, so there is only one.
+//
+// `chapterComplete` is the canonical reader (INTERNALS: a signal asserting FINISHED must use the
+// shared rule, never a raw done-flag count). A solo chapter has no storyline and is never "a story
+// finished" by this rule — it has no chapters to have finished. Guarded: a story that cannot be
+// judged is not finished.
+function _storyAllChaptersDone(slCtx){
+  try {
+    if (!slCtx || !slCtx.sl) return false;
+    const ids = slCtx.sl.chapters || [];
+    if (!ids.length) return false;
+    return ids.every(cid => {
+      const e = slCtx.byId?.[cid];
+      if (!e) return false;                       // a chapter we cannot see is not a chapter we finished
+      if (typeof chapterComplete !== 'function' || !chapterComplete(e)) return false;
+      // v77_m (user-reported): the finished card appeared after only the FIRST chapter was solved.
+      // `chapterComplete` will trust a cached `chapterDone` STAMP whose lesson count still matches,
+      // and a stamp can outlive the progress it described — a reset, a re-import, a chapter replayed
+      // under an older build. For every other caller that is the right trade (it is conservative in
+      // the permissive direction); for the END-OF-STORY CELEBRATION it is the wrong one, because
+      // over-celebrating retires the story while chapters are still unplayed.
+      //
+      // So for THIS question the stamp is not enough: the done-flags must actually be there. When
+      // the chapter's lessons are not available to check, the answer is NO — an unverifiable
+      // chapter must not finish a story.
+      if (e.topic && APP.lessonData && APP.lessonData.topic === e.topic) return true;  // the live one
+      const counted = (typeof countedLessons === 'function') ? countedLessons(e) : (e.lessons || []);
+      if (!counted.length) return false;
+      const flags = APP.progress?.completed?.[e.topic] || {};
+      return counted.every(L => L && flags[L.id]);
+    });
+  } catch(_) { return false; }
+}
+
 // ── complete ──
 function showComplete(review){
   // review=true (v60.1): render the completion card for an ALREADY-complete chapter a learner
   // re-opened — no fresh round exists, so we neither record progress nor show per-round stats.
   // A synthetic C keeps the downstream code (which reads APP.cur) working; lessonIdx points at
   // the last visible lesson purely so `lesson` resolves for the vocab recap.
+  // v77_b: per-render error ledger. Reset here so `_cardErrors()` always describes THIS card.
+  if (typeof _cardErrorsReset === 'function') _cardErrorsReset();
   if(review){
     const _d=APP.lessonData;
     const _last=(_d.lessons||[]).map((L,i)=>({L,i})).filter(x=>lessonCountsFor(_d,x.L)).pop();
@@ -14505,7 +14758,7 @@ function showComplete(review){
   // — so `seen` was counting how often the card had been LOOKED AT, not how often the word had been
   // practised. Three views of a completed chapter read as three exposures. A review render is by
   // definition not a play: nothing was answered, so nothing is recorded.
-  if(!C._review) { try { recordLearnedFromLesson(lesson, C._wrongTargets); } catch(_) {} }
+  if(!C._review) { try { recordLearnedFromLesson(lesson, C._wrongTargets); } catch(_) { if (typeof _cardNote === 'function') _cardNote('learned-ledger', _); } }
   // v60.8: teacher-set %-solved threshold gate. Computed FIRST — the Next wiring below, the card
   // title, the progress hint, and the drill offer all consume it. (v68.1: this block lived BELOW
   // the v66.1 Next wiring that reads `_belowThreshold` — a temporal-dead-zone ReferenceError, so
@@ -14567,7 +14820,7 @@ function showComplete(review){
         }
       }
     }
-  } catch(_) {}
+  } catch(_) { if (typeof _cardNote === 'function') _cardNote('pass-mark-gate', _); }
 
   // ── v60 completion card: Next + Back, progress summary, full story on unlock ──
   // "Next" opens the next questions directly (no lesson-set page for learners): the next
@@ -14580,7 +14833,10 @@ function showComplete(review){
   // v71_d: the former _nextIsRepeat / _nextIsDrill flags are gone. They existed to stop the
   // standalone Repeat and Drill buttons duplicating an icon that Next was already wearing, and
   // Next no longer wears either — below the mark it is locked, above it it means "forward".
-  let _nextBlocked = false;
+  // v77_o: the below-mark lock flag is gone with the greyed Next (user ruling: Next always leads
+  // somewhere). It had one writer and one reader, both in the branch that has been replaced.
+  // Its NAME is deliberately not written here: two tests sweep this function for it to prove the
+  // lock is gone, and a comment naming it would fail the very check it documents.
   // v60.1: the set may be mixed-driven, where completion is COVERAGE, not per-lesson done[id].
   // _firstUnfinishedLessonIdx already encodes the real rule (returns -1 when the set is complete,
   // else the lesson to continue — the mixed/driver lesson for a mixed-driven set). Use it so Next
@@ -14657,32 +14913,81 @@ function showComplete(review){
     };
   } else if (nextLessonIdx >= 0 && !lesson._drill) {
     // Next lesson in this chapter — start it directly (learners never see the lesson-set page).
+    //
+    // v77_j: EXCEPT at the moment the story unlocks. If the prep gate has just flipped and this
+    // learner has not yet been shown the story for this chapter, Next leads to the story-unlocked
+    // page (§0c's third page) and continues into the lesson from there. Once per chapter.
+    //
+    // `!C._review` is DEFENCE IN DEPTH, not the load-bearing part, and the guard says so rather
+    // than claiming credit for it: measured, a review render leaves `nextLessonIdx` at -1, so this
+    // branch is not reached on review anyway. It is kept because that entry condition is not this
+    // line's to guarantee, and because showing the page WRITES progress (`_markStoryShown`) —
+    // anything that judges the learner belongs behind `!C._review` (INTERNALS: "a review render is
+    // not a play"; three bugs from this shape).
+    let _showUnlock = false;
+    try {
+      _showUnlock = !C._review && storyUnlocked(APP.lessonData)
+                    && !_storyShownMap()[APP.lessonData?.topic];
+    } catch(_) { _showUnlock = false; }
+    APP._usNextLesson = nextLessonIdx;
     _compIco(compNext, '→', t('complete.next'));
     compNext.style.display = '';
-    compNext.onclick = () => { endDrill(); startLesson(nextLessonIdx); };
+    compNext.onclick = _showUnlock
+      ? () => showStoryUnlocked()
+      : () => { endDrill(); startLesson(nextLessonIdx); };
   } else if (_belowThreshold && !lesson._drill) {
-    // v71_d (user-reported): below the pass mark, Next is DISABLED rather than silently repurposed.
-    // It used to become ↻ Repeat (and, failing that, 🎯 Drill) — so the one button the learner reads
-    // as "forward" meant three different things depending on state, and the repeat button hid itself
-    // to avoid showing two ↻ icons. v70_g's own note already said the learner should "pick among
-    // repeat, drill, crossword … instead of Next silently meaning one of them"; the code had drifted
-    // from it. Now the card is the SAME card (title already switches to "Keep going!"), the
-    // remediation buttons show themselves, and Next is visibly unavailable until the mark is met.
-    _nextBlocked = true;
-    _compIco(compNext, '→', t('complete.next_locked', { pct: _threshPct }));
-    compNext.style.display = '';
-    compNext.disabled = true;
-    compNext.classList.add('locked');
-    compNext.onclick = null;
-  // (v71_d removed two branches here: below the mark Next used to become ↻ Repeat, else 🎯 Drill.
-  // Both are now unreachable — the branch above catches every below-threshold case — and both are
-  // still offered as their own buttons, which is where the learner already looks for them.)
-  } else if (!lesson._drill && !_belowThreshold && _nextChapter()) {
-    // Chapter finished → carry straight into the next chapter's first unfinished lesson.
-    const ch = _nextChapter();
+    // v77_o (user ruling): NEXT IS NEVER GREYED. It always leads to the next step.
+    //
+    // v71_d disabled it below the pass mark, to stop the one button the learner reads as "forward"
+    // silently meaning Repeat. That principle is KEPT — Next never becomes Repeat — but the remedy
+    // changes: instead of a dead arrow, Next leads to the work that actually raises the mark.
+    // v71_d's own note said the learner should be able to pick among repeat, drill and crossword;
+    // those buttons are all present and, since v77_l, no longer hidden by state.
+    //
+    // Target, in order:
+    //   1. a lesson whose COVERAGE is short — for a mixed lesson this is the one with unsolved
+    //      questions left, so a replay re-samples toward what the learner has NOT yet solved
+    //      rather than re-asking what they have (the same signal `repeatForCoverage` uses, so the
+    //      button and Next cannot disagree about where the work is);
+    //   2. failing that, the first unfinished lesson;
+    //   3. failing that, re-render the card — never a dead end.
     _compIco(compNext, '→', t('complete.next'));
     compNext.style.display = '';
-    compNext.onclick = () => { endDrill(); loadSaved(ch.id || encTopic(ch.topic)); };
+    compNext.disabled = false;
+    compNext.classList.remove('locked');
+    compNext.onclick = () => {
+      endDrill();
+      // v77_p (user): UNPLAYED WORK FIRST. v77_o looked for a coverage-short lesson before an
+      // unfinished one, so on a chapter whose story had just unlocked Next replayed earlier
+      // lessons instead of opening the comprehension questions the learner had never seen — the
+      // learner had to reach for Replay to get past their own replays. Forward should mean the
+      // next thing you have NOT done.
+      //   1. the first UNFINISHED lesson (the comprehension questions, once the story unlocks);
+      //   2. failing that, a COVERAGE-short lesson — for a mixed lesson the one with unsolved
+      //      questions left, so a replay re-samples toward what is not yet solved;
+      //   3. failing that, re-render. Never a dead end.
+      let target = -1;
+      try { target = _firstUnfinishedLessonIdx(APP.lessonData); } catch(_) { target = -1; }
+      if (target < 0) {
+        try {
+          if (typeof _firstCoverageShortLessonIdx === 'function') target = _firstCoverageShortLessonIdx();
+        } catch(_) { target = -1; }
+      }
+      if (target >= 0 && startLesson(target) !== false) return;
+      showComplete(true); show('complete-screen');
+    };
+  } else if (!lesson._drill && !_belowThreshold && _nextChapter()) {
+    // Chapter finished → the next chapter is now open.
+    // v77_i: Next goes through the next-chapter-unlocked card (§0c's fourth page) instead of
+    // loading the next chapter silently. Same destination, one acknowledgement in between — the
+    // learner is told what they earned before being carried into it. The target is stashed here,
+    // at render time, so the card cannot resolve a different chapter than the button that opened
+    // it (the reason v74_o reused APP._compBack rather than deciding twice).
+    const ch = _nextChapter();
+    APP._unlNext = ch;
+    _compIco(compNext, '→', t('complete.next'));
+    compNext.style.display = '';
+    compNext.onclick = () => showNextChapterUnlocked();
   } else {
     // Nothing left to do (last lesson of last/solo chapter, review).
     //
@@ -14702,10 +15007,29 @@ function showComplete(review){
     //
     // v71_h's reasoning is preserved: the button stays present and in the same position. It is the
     // greying that goes, because there is something to do.
-    const _endLbl = (sl && slEnc) ? t('complete.back_story') : t('complete.back_home');
+    // v77_f (ruling 2a): when the whole story is finished, Next LEADS to the story-finished card
+    // — the last page of the §0c walk — instead of handing the learner back to the storyline.
+    // Under v74_o that card could never be reached by pressing forward, which is why 2a supersedes
+    // it *on this path*.
+    //
+    // Only when `_storyDone`. The terminal branch also fires for a learner who finished the LAST
+    // chapter while earlier ones are unplayed (no next chapter, mark met) — the story is not
+    // finished there, and a celebration card would be a lie. That case keeps v74_o's hand-off, so
+    // the dead end it fixed does not come back either way.
+    // NOTE: `_storyDone` is declared with `let` ~60 lines BELOW this branch, so reading it here
+    // would be a temporal-dead-zone throw — precisely the v68.1 bug in this same function. Both
+    // sites call the ONE shared rule instead of spelling it twice (INTERNALS, "one rule per
+    // question"): a second copy of "is the story finished" is exactly the shape that drifted for
+    // the storyline page's connector line in v71_w.
+    const _finish = !lesson._drill && _storyAllChaptersDone(_slCtx);
+    const _endLbl = _finish            ? t('finished.next')
+                  : (sl && slEnc)      ? t('complete.back_story')
+                  :                      t('complete.back_home');
     _compIco(compNext, '→', _endLbl);
     compNext.style.display = '';
-    compNext.onclick = () => { endDrill(); compBackToStory(); };
+    compNext.onclick = _finish
+      ? () => { endDrill(); showStoryFinished(); }
+      : () => { endDrill(); compBackToStory(); };
   }
 
   // Back-to-story target is stashed for compBackToStory(): the storyline screen if any, else
@@ -14749,23 +15073,17 @@ function showComplete(review){
         }
       }
     }
-  } catch(_) {}
+  } catch(_) { if (typeof _cardNote === 'function') _cardNote('header', _); }
 
   // (v60.8 threshold gate: computed at the top of the card — see above the Next wiring.)
   // v71_k: the FINAL card. When every chapter of the storyline is finished this is not just another
   // chapter completion, and the card said "Lesson complete!" as if more were coming. Uses the same
   // canonical reader as the panel frames and the storyline page's read-full-story lock, so all
   // three agree on what "finished" means. A drill or a solo chapter (no storyline) never qualifies.
-  let _storyDone = false;
-  try {
-    if (!lesson._drill && _slCtx) {
-      const ids = _slCtx.sl.chapters || [];
-      _storyDone = ids.length > 0 && ids.every(cid => {
-        const e = _slCtx.byId[cid];
-        return !!(e && chapterComplete(e));
-      });
-    }
-  } catch(_) { _storyDone = false; }
+  // v77_f: was an inline copy of this rule. The story-finished card's Next needs the same answer
+  // ~60 lines above, where `_storyDone` is still in its temporal dead zone, so the rule moved into
+  // one function both sites call rather than being spelled twice.
+  const _storyDone = !lesson._drill && _storyAllChaptersDone(_slCtx);
   // Title reflects the gate: below threshold it's not a "complete" celebration but a "keep going".
   const _titleEl = el('comp-title');
   if (_titleEl) _titleEl.textContent = _belowThreshold ? t('complete.keep_going')
@@ -14776,7 +15094,7 @@ function showComplete(review){
   // synthetic topic has no chapter progress of its own).
   // v65.1: storyboard panel for this chapter (hidden for drills / when there's no board).
   try { if (lesson._drill) { const b=el('comp-storyboard'); if(b){ b.style.display='none'; b.innerHTML=''; } }
-        else _renderCompStoryboard(topicKey, _slCtx); } catch(_) {}
+        else _renderCompStoryboard(topicKey, _slCtx); } catch(_) { if (typeof _cardNote === 'function') _cardNote('storyboard', _); }
   const _progEl = el('comp-progress');
   if (_progEl) {
     if (lesson._drill) { _progEl.innerHTML = ''; _progEl.style.display = 'none'; }
@@ -14807,7 +15125,7 @@ function showComplete(review){
       _liEl.innerHTML = _lih;
       _liEl.style.display = _lih ? 'block' : 'none';
     }
-  } catch(_) {}
+  } catch(_) { if (typeof _cardNote === 'function') _cardNote('lesson-icons', _); }
 
 
   try {
@@ -14831,6 +15149,17 @@ function showComplete(review){
     // for a below-mark learner. Shown only when the lesson can actually make a puzzle.
     // Repeat is offered on every completion card, finished or not: replaying re-samples the round
     // and raises coverage, which is the only way up when the storyline mark exceeds the lesson ones.
+    // v77_h: ← to the summary card, the walk's first page. Shown only when this storyline HAS a
+    // summary (37 of 84 do not), so the control can never lead to a blank page — hidden rather
+    // than greyed, because "there is no summary" is not a state the learner can act their way out
+    // of, unlike an empty drill. Not offered on a drill: its topic is synthetic.
+    const _pv = document.getElementById('comp-prev');
+    if (_pv) {
+      const _hasSummary = !lesson._drill && !!_summaryOfStory();
+      _compIco(_pv, '←', t('summary.open'));
+      _pv.style.display = _hasSummary ? '' : 'none';
+      _pv.onclick = () => { APP._sumNext = null; showStorySummary(); };   // walk mode: forward returns here
+    }
     const _rp = document.getElementById('comp-repeat');
     if(_rp){
       _compIco(_rp, '↻', t('complete.repeat'));
@@ -14845,7 +15174,7 @@ function showComplete(review){
       try { _ok = _crosswordAvailable(APP.lessonData?.lessons?.[APP.cur?.lessonIdx], APP.cur?.lessonIdx); } catch(_) { _ok = false; }
       _compBtnState(_cw, _ok, t('crossword.none'));   // v71_h: always shown, greyed when no puzzle can be built
     }
-  } catch(_) {}
+  } catch(_) { if (typeof _cardNote === 'function') _cardNote('action-buttons', _); }
   const _compNav = document.getElementById('comp-nav-btns');
   if (_compNav) {
     if (_teacher && !lesson._drill) {
@@ -14866,48 +15195,38 @@ function showComplete(review){
   // Story-unlocked card: on chapter completion show the FULL chapter story (v60 — was a 200-char
   // teaser). Same visibility rule as the path: mixed-only/hidden learners unlock on finishing the
   // COUNTED lessons; teachers/canGenerate always see it.
-  const _compStory = document.getElementById('comp-story-unlocked');
+  const _compStory = document.getElementById('comp-story-panel');
   if (_compStory) {
     const _story = APP.lessonData?.story || '';
     // v71_s: the story unlocks on the NARROWED gate — everything except the comprehension lessons,
     // which are about this very story. `setComplete` still governs chapter completion below.
     const _allDone2 = storyUnlocked(APP.lessonData);
-    const _showStory = _story && (_allDone2 || APP.info.canGenerate || APP._teacherMode);
+    // v77_p (user): "skip all story preview fields — only show the vocabulary". The panel used to
+    // appear while the story was still LOCKED, truncated, for a teacher or anyone with canGenerate
+    // (that is why it was misnamed until v77_g). A teaser of the reward is not the reward, and on a
+    // locked card it pushed the vocabulary — the thing the learner can actually use — below a
+    // paragraph they are not meant to read yet. The panel now appears ONLY on a genuine unlock.
+    const _showStory = !!(_story && _allDone2);
     _compStory.style.display = _showStory ? '' : 'none';
-    // v74_l: when the story has just UNLOCKED, strip the card back toward Next. The other actions
-    // are ways to raise coverage, and coverage is what the learner has just finished raising:
-    // offering four routes back into practice beside a story captioned "read and understand the
-    // chapter" argues against the card's own instruction.
+    // v74_l is RETIRED here (roadmap ruling 1, shipped v77_l). It used to strip the card back
+    // toward Next once the story unlocked, hiding repeat/drill/crossword — the reasoning being that
+    // four routes back into practice argued against a story captioned "read and understand the
+    // chapter". §0d removes the PREMISE instead of the buttons: the actions now sit BELOW the text,
+    // so the story leads and nothing competes with it for the top of the card.
     //
-    // EXCEPT Repeat, when the chapter is not yet complete. The story unlocks on the PREP gate,
-    // which can be passed while the chapter gate is still short — the storyline mark can exceed the
-    // lesson one (`_coverageTarget`: chapter > storyline > global), and replaying re-samples the
-    // round, which is the only way up from there. Hiding it unconditionally would strand exactly
-    // the learner `smoke-render`'s "a finished lesson still offers Repeat" case was written for.
-    // So: quiet card once there is nothing left to gain, escape hatch while there is.
+    // Consequences, both intended:
+    //   - Replay is ALWAYS available; it is never hidden by state again.
+    //   - Next stops being the only route out of an unlocked card.
+    // Measured before removal (v77_e): the hide-list changed 8 of 32 rows and hid THREE otherwise
+    // live buttons in each, on exactly the genuine learner unlocks — a visible change, not a
+    // tidy-up. The v76 note calling it "barely observable" came from an unseeded gate table and
+    // was withdrawn.
     //
-    // Applied only on the genuine unlock, NOT on a teacher/canGenerate preview, where the story is
-    // visible without the gate having been passed and the practice actions still make sense.
-    if (_showStory && _allDone2 && !APP._teacherMode) {
-      // "Nothing left to gain" is COVERAGE, not chapter completion: a chapter can read complete
-      // (a low or zero mark) while questions remain unasked, which is the exact fixture
-      // smoke-render uses. `_firstCoverageShortLessonIdx` is the same signal `_replayable` uses,
-      // so this cannot drift from the button's own availability rule.
-      let _coverageLeft = false;
-      try { _coverageLeft = (typeof _firstCoverageShortLessonIdx === 'function')
-                            && _firstCoverageShortLessonIdx() >= 0; } catch(_) {}
-      const _hide = _coverageLeft
-        ? ['comp-drill', 'comp-crossword', 'comp-back']
-        : ['comp-repeat', 'comp-drill', 'comp-crossword', 'comp-back'];
-      for (const _id of _hide) {
-        const _b = document.getElementById(_id);
-        if (_b) _b.style.display = 'none';
-      }
-      const _nx = document.getElementById('comp-next');
-      if (_nx) _nx.style.display = '';
-    }
+    // The nuance the old code got RIGHT, now moot: it kept Repeat while coverage was short and hid
+    // it only at 100%, so no learner was ever stranded below the mark. Removing the list cannot
+    // strand anyone either — it only ever took affordances away.
     if (_showStory) {
-      const _lbl = document.getElementById('comp-story-unlocked-lbl');
+      const _lbl = document.getElementById('comp-story-panel-lbl');
       if (_lbl) _lbl.textContent = _allDone2 ? t('complete.story_unlocked') : t('complete.story_preview');
       // v60.6: story-translation toggle. When a source-language translation exists (the
       // auto-translate pass stored it on the topic), offer a button to switch the panel between
@@ -15298,8 +15617,12 @@ function sendTutorMessage(){
 // such branch, because every panel is drawn whatever the chapter counts are. It is also the
 // SMALLER card: boards are one wide strip (~1104×194), so the full board renders about a third the
 // height of one panel blown up to card width.
-function _renderCompStoryboard(topicKey, slCtx){
-  const box = document.getElementById('comp-storyboard');
+// v77_o: optional `boxId` so the ENTRY card can show the same storyboard through the same renderer
+// rather than a second implementation, or a DOM move (the stub DOM's appendChild does not detach
+// from the old parent, so moving children is an infinite loop there — and a re-implementation is
+// how the storyline connector line drifted in v71_w).
+function _renderCompStoryboard(topicKey, slCtx, boxId){
+  const box = document.getElementById(boxId || 'comp-storyboard');
   if(!box) return;
   box.style.display = 'none'; box.innerHTML = '';
   try{
@@ -15385,15 +15708,28 @@ function _slProgressStats(chapterIds, byId){
     // Chapter-level completion uses the shared coverage-aware rule, not the lesson tally (v69_l).
     try { if (chapterComplete(s)) doneChapters++; } catch(_) {}
   });
+  // v77_p (user): the headline fraction counts CHAPTERS, not lessons. "4/7 lessons" measures the
+  // machinery; a story is read in chapters, and that is the unit the storyboard, the deck and the
+  // walk are all in. UNLOCKED rather than completed, so the number says how much of the story is
+  // open to the learner — the chapter in progress counts, which is why a fresh storyline reads 1/2
+  // rather than 0/2. `doneSets`/`totalSets` stay on the object: the per-chapter bars still use them.
+  const totalChapters = (chapterIds || []).length;
+  const unlockedChapters = totalChapters
+    ? Math.min(totalChapters, doneChapters + (doneChapters < totalChapters ? 1 : 0))
+    : 0;
   return {
-    totalSets, doneSets, doneChapters,
-    pct: totalSets > 0 ? Math.round(100 * doneSets / totalSets) : 0,
+    totalSets, doneSets, doneChapters, totalChapters, unlockedChapters,
+    pct: totalChapters > 0 ? Math.round(100 * unlockedChapters / totalChapters) : 0,
+    lessonPct: totalSets > 0 ? Math.round(100 * doneSets / totalSets) : 0,
     scorePct: totalQ > 0 ? Math.round(100 * correctQ / totalQ) : null,
   };
 }
 // The one-line summary under the bar, so both pages label the same number the same way.
 function _slProgressLabel(st){
-  return st.doneSets + '/' + st.totalSets + (st.scorePct !== null ? ' · ' + st.scorePct + '%' : '');
+  // v77_p: chapters, matching the bar above it. One helper for both pages, so the storyline screen
+  // and every progress card cannot disagree about how far along the story is.
+  return st.unlockedChapters + '/' + st.totalChapters +
+         (st.scorePct !== null ? ' · ' + st.scorePct + '%' : '');
 }
 
 // v73_g — one icon per lesson of the current chapter, rendered on the completion card above the
@@ -15575,6 +15911,362 @@ function compBackToStory(){
   if (b && b.kind === 'storyline') openStorylineScreen(b.id, b.enc);
   else goLandingClean();
 }
+
+// ── v77_j: the story-unlocked card (roadmap §0c, the walk's THIRD page) ──────────────────────
+// The reward moment, given a page of its own. The panel on the progress card STAYS (user ruling:
+// this "sits beside it") — the panel is the story always available; this page is the story arriving.
+//
+// Seen-once per chapter, because a celebration that repeats on every card render is noise.
+function _storyShownMap(){
+  if (!APP.progress) return {};
+  if (!APP.progress.storyShown) APP.progress.storyShown = {};
+  return APP.progress.storyShown;
+}
+function _markStoryShown(topic){
+  if (!topic) return;
+  const m = _storyShownMap();
+  if (!m[topic]) { m[topic] = 1; try { saveProg(); } catch(_) {} }
+}
+function showStoryUnlocked(){
+  const d = APP.lessonData || {};
+  const box = document.getElementById('us-story');
+  // Same paragraph + furigana treatment as the progress card's panel, via the same helpers, so the
+  // two renderings of one story cannot drift.
+  if (box) {
+    // v77_m (user): the page was missing the vocabulary highlighting the progress card's panel has
+    // had since v74_n, so the same story lit up on one screen and not the other — on the page whose
+    // entire job is reading it. Same helper, same two shades (whole-chapter vocabulary marked, the
+    // words you have SOLVED in the stronger one), so the two renderings cannot diverge again.
+    let _html = null;
+    try {
+      const all = (d.lessons || []).flatMap(L => (L && L.vocab) || [])
+        .map(v => v && v.target).filter(Boolean)
+        .sort((a, b) => b.length - a.length);
+      const solved = _solvedTargetWords(d);
+      if (all.length) _html = _highlightVocabHtml(furiHtml(d.story || ''), all, solved);
+    } catch(_) { _html = null; }
+    try { box.innerHTML = _storyParasHtml(_html != null ? _html : furiHtml(d.story || '')); }
+    catch(_) { box.textContent = d.story || ''; }
+    box.setAttribute('dir', (typeof RTL_LANGS !== 'undefined' && RTL_LANGS.has(d.lang || APP.lang)) ? 'rtl' : 'ltr');
+  }
+  const ttl = document.getElementById('us-title');
+  if (ttl) ttl.textContent = t('complete.story_unlocked');
+  const ht = document.getElementById('us-hdr-title');
+  if (ht) ht.textContent = d.topic || t('complete.story_unlocked');
+  const sp = document.getElementById('us-spk');
+  if (sp) {
+    // Hidden for a dialect lesson, exactly as the panel's own speaker button is.
+    const _dial = (typeof _lessonIsDialect === 'function') && _lessonIsDialect();
+    sp.style.display = _dial ? 'none' : '';
+    sp.onclick = () => { try { speakBodyText(null, d.lang || APP.lang, d.story || ''); } catch(_) {} };
+  }
+  const bk = document.getElementById('us-back');
+  if (bk) { _compIco(bk, '\u2190', t('unlocked.back_card')); bk.onclick = () => { showComplete(true); show('complete-screen'); }; }
+  const nx = document.getElementById('us-next');
+  if (nx) {
+    _compIco(nx, '\u2192', t('complete.next'));
+    nx.onclick = () => {
+      const i = APP._usNextLesson;
+      endDrill();
+      if (i != null && i >= 0) startLesson(i); else { showComplete(true); show('complete-screen'); }
+    };
+  }
+  _markStoryShown(d.topic);
+  show('unlockstory-screen');
+}
+
+// ── v77_i: the next-chapter-unlocked card (roadmap §0c, the walk's fourth page) ──────────────
+// Finishing a chapter opens the next one. That moment used to pass silently: Next called loadSaved
+// on the next chapter and the learner arrived mid-lesson without ever being told what they had
+// earned. This card names it and then carries them in — same Next, same destination, one page in
+// between.
+//
+// The target is stashed at RENDER time (APP._unlNext) rather than resolved again here, so the card
+// and the button that opened it cannot disagree about which chapter is next — the same reason
+// v74_o reused APP._compBack instead of deciding a second time.
+function showNextChapterUnlocked(){
+  const ch = APP._unlNext;
+  const nameEl = document.getElementById('unl-chapter');
+  if (nameEl) nameEl.textContent = (ch && (ch.topic || ch.title)) || '';
+  const ttl = document.getElementById('unl-title');
+  if (ttl) ttl.textContent = t('unlocked.title');
+  let sl = null;
+  try { sl = _storylineForTopic(APP.lessonData?.topic)?.sl || null; } catch(_) {}
+  const ht = document.getElementById('unl-hdr-title');
+  if (ht) ht.textContent = (sl && sl.title) || t('unlocked.title');
+  // Where this chapter sits in the deck — the learner's position along the story, which is the
+  // whole point of naming the moment.
+  const pr = document.getElementById('unl-progress');
+  if (pr) {
+    let done = 0, total = 0;
+    try {
+      const ctx = _storylineForTopic(APP.lessonData?.topic);
+      const ids = (ctx && ctx.sl && ctx.sl.chapters) || [];
+      total = ids.length;
+      done = ids.filter(cid => { const e = ctx.byId?.[cid];
+        return !!(e && typeof chapterComplete === 'function' && chapterComplete(e)); }).length;
+    } catch(_) {}
+    const pct = total ? Math.round(100 * done / total) : 0;
+    pr.innerHTML = total
+      ? `<div style="font-size:11px;font-weight:800;color:var(--gray-dark);opacity:.8;margin-bottom:4px">${esc(t('unlocked.progress', { done: String(done), total: String(total) }))}</div>
+         <div style="height:5px;background:var(--gray-mid);border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:var(--green);border-radius:2px"></div></div>`
+      : '';
+  }
+  const bk = document.getElementById('unl-back');
+  if (bk) { _compIco(bk, '\u2190', t('unlocked.back_card')); bk.onclick = () => { showComplete(true); show('complete-screen'); }; }
+  const nx = document.getElementById('unl-next');
+  if (nx) {
+    _compIco(nx, '\u2192', t('unlocked.next'));
+    nx.onclick = () => { const c = APP._unlNext; endDrill();
+      // v77_k: this card IS the orientation for the next chapter, so the entry card must not
+      // follow it — two interstitials back to back read as friction.
+      APP._skipEntryCard = true;
+      if (c) loadSaved(c.id || encTopic(c.topic)); };
+  }
+  show('unlocked-screen');
+}
+
+// ── v77_h: the story-summary card (roadmap §0c, the FIRST page of the walk) ──────────────────
+// Sits before any question of the chapter: the storyline summary in the SOURCE language, with the
+// progress bars empty. The summary is a storyline property (`sl.summary`), not a topic one, and is
+// authored in srcLang already — nothing is translated here.
+//
+// Reached by ← from the progress card and returns by →. Symmetric with the story-finished card at
+// the other end of the walk, and it resolves its way out through the same APP._compBack, so no two
+// controls can disagree about "onward".
+function _summaryOfStory(){
+  try {
+    const ctx = _storylineForTopic(APP.lessonData?.topic);
+    const sl = ctx && ctx.sl;
+    if (!sl) return null;
+    const text = String(sl.summary || '').trim();
+    return text ? { sl, text, ctx } : null;
+  } catch(_) { return null; }
+}
+function showStorySummary(){
+  const s = _summaryOfStory();
+  const box = document.getElementById('sum-text');
+  // Escaped, and given the SOURCE language's direction: the summary is srcLang text on a page
+  // whose chapter may be target-RTL, so it must not inherit the wrong direction.
+  if (box) {
+    box.innerHTML = s ? _storyParasHtml(esc(s.text)) : '';
+    const _src = APP.lessonData?.srcLang || APP.srcLang;
+    // RTL_LANGS is the client's one direction rule (index.html ~1450); a second spelling would
+    // drift. typeof-guarded for harnesses that extract this function in isolation.
+    const _rtl = (typeof RTL_LANGS !== 'undefined') && RTL_LANGS.has(_src);
+    box.setAttribute('dir', _rtl ? 'rtl' : 'ltr');
+  }
+  const ttl = document.getElementById('sum-title');
+  if (ttl) ttl.textContent = t('summary.title');
+  const ht = document.getElementById('sum-hdr-title');
+  if (ht) ht.textContent = (s && s.sl.title) || t('summary.title');
+  // The same storyboard the progress card and the storyline page show, via the same renderer, so
+  // all three agree about where the learner is in the arc. It targets #comp-storyboard, so the
+  // rendered node is moved across rather than the renderer being re-implemented here.
+  try { if (s) _renderCompStoryboard(APP.lessonData?.topic, s.ctx, 'sum-storyboard'); } catch(_) {}
+  // v77_p (user): the entry card shows the SAME progress bars as every other progress card, via the
+  // same `_compProgressHtml`. §0c asked for "bars empty", which was right when this page only ever
+  // preceded the first question — but it is now the entry point for EVERY visit, including resuming
+  // a half-played chapter, and an empty bar there would misreport the learner's position. One
+  // renderer, so the entry card and the progress card can never disagree about where they are.
+  const pr = document.getElementById('sum-progress');
+  if (pr) {
+    let _ph = '';
+    try { _ph = _compProgressHtml(APP.lessonData?.topic, s && s.ctx, { skipStoryRow: true }); }
+    catch(_) { _ph = ''; }
+    pr.innerHTML = _ph;
+    pr.style.display = _ph ? '' : 'none';
+  }
+  // v77_k: forward has TWO destinations, because this page now has two roles.
+  //   ENTRY  — reached by opening a chapter: forward starts the lesson the learner came to play.
+  //   WALK   — reached by <- from the progress card: forward goes back to that card.
+  // The target is stashed by whoever opened the page rather than guessed here, so the page and its
+  // opener cannot disagree (the same reason v74_o reused APP._compBack instead of deciding twice).
+  const _tgt = APP._sumNext;
+  const _entry = !!(_tgt && _tgt.kind === 'lesson');
+  const nx = document.getElementById('sum-next');
+  if (nx) {
+    _compIco(nx, '→', _entry ? t('summary.start') : t('summary.next'));
+    nx.onclick = _entry
+      ? () => { const g = APP._sumNext; APP._sumNext = null; endDrill();
+                if (!g || startLesson(g.idx) === false) { showComplete(true); show('complete-screen'); } }
+      : () => sumForwardToCard();
+  }
+  show('summary-screen');
+}
+// Forward = back into the walk, at the progress card this page was opened from. A review render,
+// never a play (INTERNALS: "a review render is not a play").
+function sumForwardToCard(){ showComplete(true); show('complete-screen'); }
+
+// v77_k: the entry decision, as ONE function so the product and its guard cannot diverge — a test
+// that re-types this logic would be testing its own copy (session-28 rule 1). Returns true when it
+// has taken over the screen with the entry card, false when the caller should start the lesson.
+//
+// Two conditions, both deliberate:
+//   • only when this storyline HAS a summary (37 of 84 do not) — otherwise the entry card would be
+//     a blank page standing between the learner and their lesson;
+//   • not when arriving from the next-chapter-unlocked card, which has just shown an interstitial
+//     of its own. Two in a row is friction, not orientation.
+// The flag is consumed here whether or not it fires, so it can never leak into a later entry.
+function _enterViaSummaryCard(idx){
+  const skip = !!APP._skipEntryCard;
+  APP._skipEntryCard = false;
+  let ok = false;
+  try { ok = idx >= 0 && !skip && !!_summaryOfStory(); } catch(_) { ok = false; }
+  if (!ok) return false;
+  APP._sumNext = { kind: 'lesson', idx: idx };
+  showStorySummary();
+  return true;
+}
+// ── v77_f: the story-finished card (roadmap §0c, the LAST page of the walk) ──────────────────
+// Reached by Next from showComplete's terminal branch when every chapter of the storyline is
+// complete. Rendered from APP.lessonData + the storyline context, NOT from showComplete's locals,
+// so it can also be re-entered by Back from anywhere the walk later reaches it.
+//
+// Everything here is derived, never stored: the chapter list and the solved sets are the same ones
+// the progress card reads, so this card cannot drift from the numbers the learner just saw.
+// v77_o (user-reported, LIVE mode): the finished card's chapter drop-downs were EMPTY and the
+// vocabulary read "nothing left to repeat". The live `/api/lessons` list is a PROJECTION — it
+// carries `lessons[]` as metadata only (v74_i) and no `story` at all — while the static build ships
+// whole topics, so the card worked in static and was blank in live. The same live/static asymmetry
+// as v55_s and v74_i, in a third place.
+//
+// Chapters are hydrated the way `_toggleSavedStory` already does it: STATIC_LESSONS first, then
+// `/api/lessons/load`. Resolution is cached, and the card RENDERS IMMEDIATELY with whatever it has
+// and re-renders when the fetches land, so a slow network shows the card rather than nothing.
+const _finTopicCache = {};
+function _finHydrated(e){
+  if (!e) return null;
+  if (e.story) return e;
+  const cached = _finTopicCache[e.topic];
+  if (cached) return cached;
+  try {
+    const st = (typeof STATIC_LESSONS !== 'undefined' ? STATIC_LESSONS : []).find(l => l && l.topic === e.topic);
+    if (st) { _finTopicCache[e.topic] = st; return st; }
+  } catch(_) {}
+  return e;
+}
+async function _finHydrateMissing(entries){
+  let got = false;
+  for (const e of (entries || [])) {
+    if (!e || e.story || _finTopicCache[e.topic]) continue;
+    try {
+      const r = await fetch('/api/lessons/load?' + (e.id ? ('id=' + e.id)
+                                                         : ('topic=' + encodeURIComponent(e.topic))));
+      if (!r.ok) continue;
+      const full = await r.json();
+      if (full && full.topic) { _finTopicCache[full.topic] = full; got = true; }
+    } catch(_) {}
+  }
+  return got;
+}
+function _finChapters(){
+  // The deck, in reading order, as full topic records. byId is the UNFILTERED index (v76_e): a
+  // storyline is one unit, so a chapter hidden by the library language filter still belongs to the
+  // story the learner just finished and must appear in it.
+  const ctx = (typeof _storylineForTopic === 'function')
+    ? _storylineForTopic(APP.lessonData?.topic) : null;
+  if (!ctx || !ctx.sl) {
+    const d = APP.lessonData;
+    return d ? [d] : [];                       // solo chapter: the chapter IS the story
+  }
+  return (ctx.sl.chapters || []).map(cid => _finHydrated(ctx.byId?.[cid])).filter(Boolean);
+}
+// Every item the learner has actually SOLVED, across the whole story, in deck-then-lesson order.
+// Ordering "as the words appear in the story" is roadmap §3 and shares a matcher with the
+// highlighting work — deliberately NOT attempted here, so the two cannot disagree later.
+function _finLearnedChips(chapters){
+  const seen = new Set(), out = [];
+  for (const ch of (chapters || [])) {
+    let solved = {};
+    try { solved = _solvedMap(ch.topic) || {}; } catch(_) {}
+    for (const L of (ch.lessons || [])) {
+      if (!L || (L._hidden && !APP._teacherMode)) continue;
+      let arrays = ['vocab', 'sentences'];
+      try { arrays = _lessonItemArrays(L); } catch(_) {}
+      for (const arrayKey of arrays) {
+        for (const item of (L[arrayKey] || [])) {
+          if (!item) continue;
+          try { if (typeof _itemWithheld === 'function' && _itemWithheld(item)) continue; } catch(_) {}
+          let key = '';
+          try { key = _itemKey(L.id, item, arrayKey); } catch(_) {}
+          if (!key || !solved[key]) continue;            // only what was answered correctly
+          // Shapes differ per array (vocab/grammar carry target+source, synonyms base+gloss,
+          // conjugations an infinitive). Read structurally rather than per lesson type.
+          const target = item.target || item.base || item.infinitive || item.sentence || '';
+          const source = item.source || item.gloss || '';
+          const t2 = String(target).trim();
+          if (!t2 || seen.has(t2.toLowerCase())) continue;
+          seen.add(t2.toLowerCase());
+          out.push({ target: t2, source: String(source || '').trim() });
+        }
+      }
+    }
+  }
+  return out;
+}
+function showStoryFinished(){
+  _finRenderFinished();
+  show('finished-screen');
+  // Anything the live list projection did not carry is fetched, then the card re-renders in place.
+  try {
+    const raw = _finChapters();
+    if (raw.some(e => e && !e.story)) {
+      _finHydrateMissing(raw).then(got => { if (got) _finRenderFinished(); }).catch(() => {});
+    }
+  } catch(_) {}
+}
+function _finRenderFinished(){
+  const chapters = _finChapters();
+  const box = document.getElementById('fin-story');
+  if (box) {
+    box.innerHTML = (chapters || []).map((ch, i) => {
+      const title = esc(ch.topic || '');
+      // Paragraph rhythm matches #comp-story-text, via the same helper (v74_m) — a chapter with
+      // blank-line structure must not arrive as a single slab here either. `furiHtml` does the
+      // escaping AND keeps ruby, exactly as _renderCompStory relies on it to.
+      let body = '';
+      try { body = _storyParasHtml(furiHtml(ch.story || '')); }
+      catch(_) { body = '<p>' + esc(ch.story || '') + '</p>'; }
+      return `<details class="fin-ch"${i === 0 ? ' open' : ''} style="margin-bottom:10px;border:1.5px solid var(--gray-mid);border-radius:var(--radius-lg);padding:8px 12px;background:var(--white)">
+        <summary style="cursor:pointer;font-weight:900;font-size:13px;color:var(--green-dark)">${esc(String(i + 1))}. ${title}</summary>
+        <div class="fin-ch-body" dir="auto" style="font-size:15px;color:var(--text);line-height:1.65;margin-top:8px">${body}</div>
+      </details>`;
+    }).join('');
+  }
+  const chips = _finLearnedChips(chapters);
+  const vb = document.getElementById('fin-vocab');
+  if (vb) {
+    vb.innerHTML = chips.length
+      ? chips.map(c => `<span class="vocab-chip" title="${esc(c.source)}">${esc(c.target)}</span>`).join('')
+      : `<span style="font-size:12px;color:var(--gray-dark);opacity:.8">${esc(t('complete.repeat_none'))}</span>`;
+  }
+  const ttl = document.getElementById('fin-title');
+  if (ttl) ttl.textContent = t('finished.title');
+  const vl = document.getElementById('fin-vocab-lbl');
+  if (vl) vl.textContent = t('finished.vocab');
+  // The header title names the storyline and doubles as the route back to it — same affordance as
+  // the completion card's header (v71_k). Resolved from the storyline object, not a lookup map.
+  const ht = document.getElementById('fin-hdr-title');
+  if (ht) {
+    let slTitle = '';
+    try { slTitle = _storylineForTopic(APP.lessonData?.topic)?.sl?.title || ''; } catch(_) {}
+    ht.textContent = slTitle || t('finished.title');
+  }
+  const _fb = document.getElementById('fin-back');
+  if (_fb) { _compIco(_fb, '←', t('finished.back_card')); _fb.onclick = () => finBackToCard(); }
+  const _fo = document.getElementById('fin-out');
+  if (_fo) {
+    _compIco(_fo, '→', (APP._compBack && APP._compBack.kind === 'storyline')
+                       ? t('complete.back_story') : t('complete.back_home'));
+    // Reuses APP._compBack, the same target the header title and the completion card resolve, so
+    // no two controls can disagree about where "onward" is (v74_o's rule, kept).
+    _fo.onclick = () => compBackToStory();
+  }
+}
+// Back = the walk's previous page, i.e. the progress card this card was reached from. A review
+// render, never a play: nothing here was answered (INTERNALS, "a review render is not a play").
+function finBackToCard(){ showComplete(true); show('complete-screen'); }
 
 function afterComplete() {
   // Reached only by a drill's Next now (the learner card's Next starts the next lesson/chapter

@@ -80,7 +80,7 @@ function renderCard({ teacher }) {
   return {
     unlocked: C.run(`storyUnlocked(APP.lessonData)`, 'u'),
     coverageLeft: C.run(`(typeof _firstCoverageShortLessonIdx === 'function') && _firstCoverageShortLessonIdx() >= 0`, 'c'),
-    label: C.run(`(function(){ var e=document.getElementById('comp-story-unlocked-lbl'); return e ? e.textContent : ''; })()`, 'l'),
+    label: C.run(`(function(){ var e=document.getElementById('comp-story-panel-lbl'); return e ? e.textContent : ''; })()`, 'l'),
     next: vis('comp-next'), repeat: vis('comp-repeat'),
     drill: vis('comp-drill'), crossword: vis('comp-crossword'),
   };
@@ -92,11 +92,21 @@ function renderCard({ teacher }) {
   assert.strictEqual(learner.unlocked, true, 'the fixture really does unlock the story');
   assert.strictEqual(learner.label, 'read and understand the chapter', 'and the card says so');
   assert.strictEqual(learner.next, 'shown', 'Next is offered');
-  assert.strictEqual(learner.drill, 'hidden', 'the drill is not — it argues against the instruction');
-  assert.strictEqual(learner.crossword, 'hidden', 'nor is the crossword');
-  if (!learner.coverageLeft) {
-    assert.strictEqual(learner.repeat, 'hidden', 'and with nothing left to gain, nor is Repeat');
-  }
+  // v77_l (ruling 1): v74_l's hide-list is RETIRED. It used to hide drill/crossword — and Repeat
+  // once coverage was complete — so that four routes back into practice would not argue against a
+  // story captioned "read and understand the chapter". §0d removes the PREMISE instead: the
+  // actions now sit BELOW the text, so the story leads and nothing competes with it.
+  //
+  // The old assertions here pinned the hiding. They are replaced by the ruling's own consequences,
+  // which are the things that would actually hurt a learner if they broke.
+  assert.notStrictEqual(learner.repeat, 'hidden',
+    'Replay is ALWAYS available on an unlocked card — it is never hidden by state again (ruling 1)');
+  assert.notStrictEqual(learner.drill, 'hidden',
+    'and the drill is no longer stripped from the unlocked card');
+  // Next is no longer the ONLY route out, which was v74_l's other effect.
+  const routes = ['next', 'repeat', 'drill', 'crossword'].filter(k => learner[k] === 'shown');
+  assert.ok(routes.length > 1,
+    `Next is not the only route out of an unlocked card (offered: ${routes.join(', ') || 'none'})`);
 
   // A TEACHER sees the story without having passed the gate, so the practice actions still make
   // sense there — the card is a preview, not a reward.
@@ -108,14 +118,20 @@ function renderCard({ teacher }) {
 
 // ── 4. Repeat survives when it is the only way up ───────────────────────────────────────────
 // The story unlocks on the PREP gate, which can be passed while coverage is still short: the
-// storyline mark can exceed the lesson one, and replaying re-samples the round. Hiding Repeat
-// unconditionally would strand exactly the learner smoke-render's "a finished lesson still offers
-// Repeat" case exists for — that assertion caught this on the first attempt at this change.
+// storyline mark can exceed the lesson one, and replaying re-samples the round. Stranding that
+// learner is the failure mode this section exists to prevent — smoke-render's "a finished lesson
+// still offers Repeat" case caught it on the first attempt at v74_l.
+// v77_l: the two source pins that lived here matched v74_l's hide-list, which ruling 1 has
+// retired — there is no longer a list for Repeat to be excluded from. The SAFETY claim underneath
+// them is what mattered and it is asserted behaviourally instead: a learner who can still raise
+// coverage must be offered the way up. Under ruling 1 that is unconditional, which is stronger
+// than the old carve-out, so this cannot regress quietly.
 {
-  assert.ok(/_coverageLeft\s*\?[\s\S]{0,200}?'comp-drill'/.test(html),
-    'Repeat is excluded from the hidden set while coverage can still be raised');
-  assert.ok(/_firstCoverageShortLessonIdx\(\) >= 0/.test(html),
-    'and "still to gain" is COVERAGE, not chapter completion — a chapter can read complete with questions unasked');
+  const learner = renderCard({ teacher: false });
+  assert.strictEqual(learner.unlocked, true, 'non-vacuity: the story really is unlocked here');
+  assert.notStrictEqual(learner.repeat, 'hidden',
+    'a learner on an unlocked card is always offered Replay — the only way to raise coverage');
+  assert.notStrictEqual(learner.next, 'hidden', 'and a way forward');
 }
 
 // ── 5. v74_m: the story keeps its PARAGRAPHS ────────────────────────────────────────────────
@@ -296,12 +312,23 @@ function renderCard({ teacher }) {
     lessonCount: (t.lessons || []).filter(L => L && !L._hidden && !L._aiExamples).length,
     lessons: (t.lessons || []).map(L => Object.assign({ id: L.id, type: L.type || 'standard' },
       L._hidden ? { _hidden: true } : {})) }));
+  // (a) End of a FINISHED storyline → v77_f: Next now leads to the story-finished card, the last
+  // page of the §0c walk, rather than handing the learner straight back to the storyline. The
+  // guarantee this section exists to protect is unchanged and still asserted: Next is not greyed,
+  // and it does not go NOWHERE. It simply goes one page further along the walk first, and that
+  // page has its own way out — which is what stops v74_o's dead end coming back.
   const C1 = play(projected, last, store.storylines || []);
   assert.strictEqual(C1.run(`!!document.getElementById('comp-next').disabled`, 'd'), false,
     'at the end of a finished storyline Next is NOT greyed');
   C1.run(`document.getElementById('comp-next').onclick(); true;`, 'click');
-  assert.ok(String(C1.run(`APP._navWent`, 'w') || '').startsWith('storyline:'),
-    'and clicking it goes to the storyline, not nowhere');
+  assert.strictEqual(C1.run(`APP._navWent`, 'w'), null,
+    'Next does not leave for the storyline — it opens the story-finished card');
+  assert.ok(C1.run(`(document.getElementById('fin-story').innerHTML||'').length`, 'fin') > 0,
+    'and that card is populated with the story');
+  // The way out. Without this the new card would be exactly the dead end v74_o was written to fix.
+  C1.run(`document.getElementById('fin-out').onclick(); true;`, 'out');
+  assert.ok(String(C1.run(`APP._navWent`, 'w2') || '').startsWith('storyline:'),
+    'and from the finished card the learner still reaches the storyline, not nowhere');
 
   // (b) A chapter in NO storyline → home (user ruling).
   const C2 = play(projected, last, []);
@@ -327,10 +354,16 @@ function renderCard({ teacher }) {
     C3.run(`document.getElementById('comp-next').onclick(); true;`, 'click3');
     assert.strictEqual(C3.run(`APP._loadedSaved`, 'ls') || null, null,
       'a FINISHED later chapter is not offered as unfinished — Next does not reload it');
-    assert.ok(String(C3.run(`APP._navWent`, 'w3') || '').startsWith('storyline:'),
-      'it goes to the storyline instead, because nothing is left');
+    // v77_f: the destination for "nothing left" moved one page along the walk. The claim this
+    // section protects is unchanged — Next must not drag the learner back into a finished chapter
+    // — and is asserted immediately above. Where it goes INSTEAD is now the story-finished card,
+    // because every chapter of this storyline is complete.
+    assert.strictEqual(C3.run(`APP._navWent`, 'w3'), null,
+      'it does not leave for the storyline — the finished story opens its own card');
+    assert.ok(C3.run(`(document.getElementById('fin-story').innerHTML||'').length`, 'f3') > 0,
+      'and that card is populated, so Next still leads somewhere real');
   }
-  console.log('  last card: Next leads to the storyline or home; finished chapters are not re-offered');
+  console.log('  last card: a finished story opens the story-finished card; finished chapters are not re-offered');
 }
 
 // ── 8. v74_p: the vocabulary panel shows the CHAPTER, not the round ─────────────────────────

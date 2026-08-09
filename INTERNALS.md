@@ -75,6 +75,28 @@ would have moved trimming from our code (which keeps the current chapter whole) 
 (which cuts blindly and reports nothing). **Any change that makes a prompt bigger must size the
 context window in the same commit.**
 
+**`showComplete` computes `_storyDone` ~60 lines BELOW its Next wiring (`v77_f`).** Reading it at
+the Next branch is a temporal-dead-zone `ReferenceError` on every terminal card — the `v68.1` bug in
+the `v68.1` function. Both sites now call **`_storyAllChaptersDone(slCtx)`**, declared above
+`showComplete`, rather than either reaching forward or re-deriving the rule inline: a second copy is
+how the storyline page's connector line drifted in `v71_w`. It reads through `chapterComplete`, the
+canonical completeness reader, so the card, the title and the storyline page cannot disagree. A solo
+chapter has no storyline and is never "a story finished" by this rule.
+
+**A handler declared inline in markup is not callable in the stub DOM (`v77_f`).** `onclick="f()"`
+in the HTML never becomes a callable `.onclick` property, so a headless test cannot click it.
+`comp-next` has always assigned its handler in JS; `fin-back`/`fin-out` follow it for the same
+reason. Anything a test must exercise assigns in JS.
+
+**`showComplete`'s seven `catch(_) {}` blocks swallowed everything (fixed `v77_b`).** A throw in any
+of them left the card half-rendered with the whole suite green. They now report site and message to
+a per-render ledger: **`_cardErrors()`** returns what this render swallowed, and **`APP._cardStrict
+= true`** rethrows at the site. Default behaviour is unchanged — still swallowed, no longer
+invisible. The dangerous one is `pass-mark-gate`: a throw there leaves `_belowThreshold = false`, so
+a learner below the mark is treated as above it. Measured at the `v77_b` cut: **0 swallowed errors
+across 1216 renders over all 304 topics**, so this is a net for future work rather than a live bug.
+`unit-card-errors` asserts no empty `catch` survives in the function.
+
 **A standard/vocab lesson has no `type` field.** It is the default shape. So `l.type === 'standard'`
 is *always false*, and any assertion written that way is vacuous. Use `(l.type || 'standard')`. This
 bit inside the very test written to catch a vacuous pass (`v71_u`).
@@ -138,6 +160,19 @@ muted and then unmuted reads `64/83` — below the mark, Next locked, and unreco
 so no builder runs. Measured after: 0 of 298 topics drift with mute/TTS, and the denominator is
 identical on every fresh derivation. `_lessonQidUniverse` still exists and is still audio-keyed —
 it drives ROUND ASSEMBLY, which legitimately needs question identity. `markSolved` records both.**
+
+**Coverage and round assembly use DISJOINT key spaces (`v74_c`, measured `v77_c`).** Coverage counts
+SOURCE ITEMS (`_lessonItemUniverse`, keys `lessonId:i:hash`); round assembly keys QUESTIONS
+(`_lessonQidUniverse`, keys `lessonId:type:hash`). Both live in the one flat `APP.progress.solved`
+map per topic and cannot collide because of the `:i:` marker. **`markSolved` writes both** — the qid
+for "which question to ask next", the item key for "what the learner knows". Measured on a
+mixed-driven chapter: 61 qids, 24 items, **0 shared**. Consequence for anyone writing a probe:
+seeding `_lessonQidUniverse` into `solved` moves coverage by exactly nothing, which is what produced
+the "86 keys in, 0 counted, total 31" open question in `v76_card_gates.md` — a seeding artefact, not
+a bug. Seed items, or better, drive `markSolved`. And note that **one round does not cover the
+universe** (builders sample): coverage converges over several replays — 62→95→95→100, unlocking in 4
+— which is `repeatForCoverage` working as designed, not a workaround. Guarded by
+`unit-mixed-unlock-reachable`.
 
 **Comprehension is gated BY the story, so it cannot gate it.** `storyUnlocked()` is the narrowed
 gate (everything except story-gated types); `setComplete()` is the whole chapter. The circularity
@@ -519,6 +554,15 @@ the published `docs/` build stayed broken for two releases while every source-le
 passed. `loadClient({ file: 'docs/index.html' })` drives the built artefact under the same harness
 — use it for any landing-page claim. (`init()` is suppressed there too, so `LANGS`/`UI_STRINGS`
 must be seeded or the storyline header throws on `LANGS.it.flag`.)
+
+**`lib-dom` AUTO-VIVIFIES any id (`v77_b`).** `document.getElementById('anything')` returns a fresh
+stub element with no `style.display` and no `disabled`, whether or not the id exists in the markup.
+So a probe that reads visibility by id **cannot distinguish "present and visible" from "does not
+exist"**, and a legend mapping `display:none`→hidden will report a non-existent element as a real,
+hidden one. This is how `v76_card_gates.md` carried two phantom columns (`comp-back`, `comp-story`)
+through a release as measured truth, and how the roadmap came to say the §0c back button was
+"already there and already dead" when `comp-back` was deleted in `v71_k`. **Assert the id exists in
+the MARKUP first** — `unit-card-consistency` does exactly this for the row it checks, and says why.
 
 **A `<select>` has no `.options` in the stub DOM (`v76_j`).** It does not parse `innerHTML`, so any
 product code reading `sel.options` (`repopulateContinueSelect`, `continueFromLesson`,

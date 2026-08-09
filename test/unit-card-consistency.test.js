@@ -48,6 +48,19 @@ const ROW = ['comp-next', 'comp-repeat', 'comp-drill', 'comp-crossword', 'comp-h
   const clientSrc = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
   assert.ok(!/id="comp-back"/.test(clientSrc), 'the Back button is gone from the markup');
   ROW.forEach(id => assert.ok(clientSrc.includes(`id="${id}"`), `${id} really exists in the markup`));
+  // v77_g: the story panel was renamed from `comp-story-unlocked` to `comp-story-panel`, because
+  // it is shown while the story is still LOCKED (a truncated preview for teacher/canGenerate) in
+  // most of the rows it appears in — and §0c adds a genuinely distinct story-unlocked page that
+  // would have collided with the old name.
+  //
+  // This pair of assertions is load-bearing for the SAME reason the comp-back line above is: the
+  // stub DOM auto-vivifies any id, so a leftover `getElementById('comp-story-unlocked')` anywhere
+  // in the client would return a live-looking element for ever instead of failing. A rename that
+  // is only half done is invisible without this (standing rule 16).
+  assert.ok(!/comp-story-unlocked/.test(clientSrc),
+    'no reference to the old comp-story-unlocked id survives in the client');
+  ['comp-story-panel', 'comp-story-panel-lbl', 'comp-story-text']
+    .forEach(id => assert.ok(clientSrc.includes(`id="${id}"`), `${id} really exists in the markup`));
 }
 const state = id => C.run(`(function(){const e=document.getElementById(${JSON.stringify(id)});
   if(!e) return 'MISSING';
@@ -126,13 +139,16 @@ const rowStates = () => ROW.reduce((o, id) => (o[id] = state(id), o), {});
   C.run(`APP.cur={lessonIdx:1,correct:2,total:6,mistakes:4,bestStreak:1,exercises:[]}; showComplete();`);
   assert.strictEqual(state('comp-drill'), 'LIVE', 'drill is live once mistakes exist');
 
-  // Next: GREY below the mark (locked) and on a finished solo chapter (nothing forward), LIVE mid-chapter.
+  // Next: LIVE everywhere (v77_o user ruling — it is never greyed and always leads to the next
+  // step). Below the mark it leads to the work that raises the mark; on a finished solo chapter it
+  // leads out. What is still asserted is that it is always PRESENT and always actionable.
   seed(topic(1.0)); solve(0, 1.0);
   C.run(`APP.cur={lessonIdx:0,correct:3,total:3,mistakes:0,bestStreak:3,exercises:[]}; showComplete();`);
   assert.strictEqual(state('comp-next'), 'LIVE', 'Next is live when a next lesson exists');
   seed(topic(0.8)); solve(0, 1.0); solve(1, 1.0);
   C.run(`APP.cur={lessonIdx:1,correct:3,total:3,mistakes:0,bestStreak:3,exercises:[]}; showComplete();`);
-  assert.strictEqual(state('comp-next'), 'GREY', 'Next is greyed on a finished solo chapter, not removed');
+  assert.strictEqual(state('comp-next'), 'LIVE',
+    'Next is LIVE on a finished solo chapter too — never a dead arrow (v77_o)');
 
   // A greyed button carries an explanatory tooltip, not the default action label.
   assert.ok(C.run(`document.getElementById('comp-drill').title`).length > 0, 'a greyed drill button explains itself');
@@ -150,10 +166,14 @@ const rowStates = () => ROW.reduce((o, id) => (o[id] = state(id), o), {});
 }
 
 // ── 5. Greyed buttons cannot be activated ───────────────────────────────────
+// v77_o: Next is no longer one of them — it is never greyed (user ruling), so the example here is
+// the drill, which still greys when no round can be built. The claim is unchanged: a button that
+// LOOKS unavailable really is.
 {
   seed(topic(0.8)); solve(0, 1.0); solve(1, 1.0);
   C.run(`APP.cur={lessonIdx:1,correct:3,total:3,mistakes:0,bestStreak:3,exercises:[]}; showComplete();`);
-  assert.strictEqual(C.run(`document.getElementById('comp-next').disabled`), true, 'a greyed Next is disabled');
+  assert.strictEqual(C.run(`document.getElementById('comp-next').disabled`), false,
+    'Next is never disabled — it always leads to the next step (v77_o)');
   assert.strictEqual(C.run(`document.getElementById('comp-drill').disabled`), true, 'a greyed drill is disabled');
 }
 

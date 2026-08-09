@@ -159,14 +159,16 @@ console.log('  _renderStorylineScreen: real + teacher + unresolvable chain: OK')
 
   seedTopic(lockTopic);
   shouldNotThrow('showComplete (below pass mark)', base + _markAllDone + '\n    showComplete();');
-  // v71_d (user-reported): below the mark, Next is LOCKED rather than repurposed. Asserted on the
-  // live card because the whole point is what the learner can click — a source check would not see
-  // the disabled flag, and this branch chain has produced three user-reported dead ends already.
+  // v77_o (user ruling): below the mark Next is NEVER greyed — it LEADS to the work that raises the
+  // mark. v71_d's principle is kept and is what this block now checks: Next means forward and never
+  // silently becomes Repeat, and it is never a dead arrow. Asserted on the live card because the
+  // whole point is what the learner can click, and this branch chain has produced three
+  // user-reported dead ends already — a greyed arrow beside no route was the fourth.
   {
     const nx = C.document.getElementById('comp-next');
-    assert.strictEqual(nx.disabled, true, 'below the pass mark, Next is disabled');
-    assert.ok(nx.classList.contains('locked'), 'and visibly greyed');
-    assert.strictEqual(nx.onclick, null, 'and cannot be activated');
+    assert.strictEqual(nx.disabled, false, 'below the pass mark, Next is NOT disabled');
+    assert.ok(!nx.classList.contains('locked'), 'and not greyed');
+    assert.ok(typeof nx.onclick === 'function', 'and it can be activated — it always leads somewhere');
     assert.notStrictEqual(C.document.getElementById('comp-repeat').style.display, 'none',
       'while Repeat is offered as its own button');
     assert.strictEqual(C.document.getElementById('comp-title').textContent, UI.en['complete.keep_going'],
@@ -985,13 +987,23 @@ console.log('  account modal: TLS banner shown/hidden across 4 states: OK');
   shouldNotThrow('showComplete (stuck below pass mark)', `showComplete();`);
   assert.ok(C.run(`_firstCoverageShortLessonIdx() >= 0`), 'the scenario really is replayable');
   {
-    // v71_d: Next is LOCKED here rather than quietly becoming ↻ Repeat. The v69.2 guarantee this
-    // scenario exists for is unchanged and is what the next assertions check: the learner must
-    // never be left on this card with no route up. The route is now a button that says what it is.
+    // v77_o (user ruling): Next is LIVE here and leads to the coverage-short lesson — which in this
+    // scenario is the only work left, so forward and "the way up" are now the SAME move. The v69.2
+    // guarantee this scenario exists for is unchanged and is what the assertions below check: the
+    // learner must never be left on this card with no route up. Next is now itself such a route.
     const nx = C.document.getElementById('comp-next');
-    assert.strictEqual(nx.disabled, true, 'below the mark with nothing left to play, Next is locked');
-    assert.ok(nx.classList.contains('locked'), 'and shown as unavailable');
-    assert.ok(nx.title && nx.title !== '→', 'with a tooltip saying what is still required');
+    assert.strictEqual(nx.disabled, false, 'below the mark, Next is live rather than locked (v77_o)');
+    assert.ok(typeof nx.onclick === 'function', 'and has a destination');
+    // It must lead INTO the work, not out of the chapter: clicking starts a lesson.
+    C.run(`APP._startedIdx = null; APP._leftChapter = null;
+           var _os = startLesson; startLesson = function(i){ APP._startedIdx = i; return true; };
+           loadSaved = function(x){ APP._leftChapter = String(x); };
+           document.getElementById('comp-next').onclick();
+           startLesson = _os; true;`);
+    assert.strictEqual(C.run(`APP._leftChapter`), null,
+      'Next below the mark does not carry the learner out of the chapter');
+    assert.ok(C.run(`APP._startedIdx`) >= 0,
+      'it starts the lesson that still has coverage to gain');
     // THE v69.2 RULE: at least one LIVE way up is offered. v71_h: buttons are always present now,
     // so "a route up" means present AND enabled — a greyed button is not a route. This is the
     // assertion that must never soften.
@@ -1422,14 +1434,39 @@ console.log('  completion card: full storyboard framed by chapter state: OK');
   assert.strictEqual(C.document.getElementById('comp-hdr-prog-txt').style.display, 'none',
     'a chapter with no storyline hides the progress label instead of claiming 0%');
 
-  // Row order, read off the markup: header → storyboard → chapter bars → verdict → buttons.
-  const order = ['comp-hdr', 'comp-storyboard', 'comp-progress', 'comp-title', 'comp-actions']
-    .map(id => ROOT_HTML.indexOf('id="' + id + '"'));
-  order.forEach((at, i) => assert.ok(at > 0, `${['comp-hdr','comp-storyboard','comp-progress','comp-title','comp-actions'][i]} exists`));
+  // Row order, read off the markup. v77_l (roadmap §0d): THE STORY TEXT IS THE FOCUS OF ATTENTION,
+  // so the card now runs header → verdict → THE STORY → its words → storyboard → bars → icons →
+  // actions. The machinery that used to sit above the text is all below it.
+  //
+  // This is the claim §0d exists for, so it is asserted as an order rather than as "the story is
+  // present somewhere": a later edit that quietly floats the bars back above the text is exactly
+  // the regression worth catching, and only order catches it.
+  // v77_m (user): the card mirrors the STORYLINE PAGE — title+bar, storyboard, chapter-wise bars,
+  // then the story and its vocabulary, then the icons and buttons — so moving between the two
+  // screens jumps in neither width nor row order. §0d's principle is unchanged and is asserted
+  // separately below: the story still precedes the icons and the action row.
+  // v77_n (user): the verdict line moved to the BOTTOM, below the play buttons — it is a verdict on
+  // what just happened, not a heading for what follows, and putting it first pushed the storyboard
+  // and the bars down so the card no longer opened the way the storyline page does.
+  const ROWS = ['comp-hdr', 'comp-storyboard', 'comp-progress',
+                'comp-story-panel', 'comp-vocab', 'comp-lessons', 'comp-actions', 'comp-title'];
+  const order = ROWS.map(id => ROOT_HTML.indexOf('id="' + id + '"'));
+  order.forEach((at, i) => assert.ok(at > 0, `${ROWS[i]} exists`));
   for (let i = 1; i < order.length; i++) {
     assert.ok(order[i] > order[i - 1],
-      'card rows run header → storyboard → chapter progress → status line → buttons');
+      `the story leads: ${ROWS[i]} must come after ${ROWS[i - 1]} on the card`);
   }
+  // The load-bearing half, stated on its own so a failure names the principle rather than a pair.
+  assert.ok(ROOT_HTML.indexOf('id="comp-story-panel"') < ROOT_HTML.indexOf('id="comp-actions"'),
+    'the story text comes BEFORE the action buttons (§0d)');
+  assert.ok(ROOT_HTML.indexOf('id="comp-title"') > ROOT_HTML.indexOf('id="comp-actions"'),
+    'and the verdict line comes AFTER them (v77_n)');
+  // The card screens must STRETCH their children, or the header renders as a narrow pill instead of
+  // the storyline page's full-width bar however faithfully its markup is copied (v77_n).
+  assert.ok(/\.card-screen\{[^}]*align-items:stretch/.test(ROOT_HTML),
+    'card screens stretch their children so the header spans the column');
+  assert.ok(ROOT_HTML.indexOf('id="comp-story-panel"') < ROOT_HTML.indexOf('id="comp-lessons"'),
+    'the story text comes BEFORE the lesson icons (§0d)');
 
   // The storyline fraction appears ONCE: in the header, not again in the body.
   const body = C.document.getElementById('comp-progress').innerHTML || '';
@@ -1440,16 +1477,37 @@ console.log('  completion card: full storyboard framed by chapter state: OK');
   // v71_p: the card must be the same COLUMN as the storyline page, not merely carry the same
   // header. Asserted on the CSS numbers because the symptom (a storyboard that renders smaller
   // than the identical board on the storyline page) is a rendering effect no headless check sees.
+  //
+  // v77_k widened this from the completion card to the WHOLE walk. The cap moved off
+  // `#complete-screen` onto a shared `.card-screen` class, and the four pages added in
+  // v77_f..v77_j had no width rule at all — so entering a lesson jumped the column width and the
+  // title line moved. The claim is no longer "the result card matches" but "EVERY page of the walk
+  // matches", which is why this asserts the class exists, resolves to the storyline's width, and
+  // is actually worn by all five screens. A page that forgets the class is the regression.
   {
     const grab = (sel) => (ROOT_HTML.match(new RegExp(sel.replace(/[.#]/g, '\\$&') + '\\{([^}]*)\\}')) || [])[1] || '';
-    const sl = grab('.sl-screen'), comp = grab('#complete-screen');
+    const sl = grab('.sl-screen'), card = grab('.card-screen');
     const width = (css) => (css.match(/max-width:(\d+)px/) || [])[1];
-    assert.strictEqual(width(comp), width(sl),
-      'the result card and the storyline page have the same max-width');
-    assert.ok(/padding:0 0 40px/.test(comp),
-      'and the card has no outer horizontal padding, so its header is full-bleed like the page');
+    assert.ok(width(sl), 'the storyline page declares a max-width');
+    assert.strictEqual(width(card), width(sl),
+      'every page of the progress-card walk shares the storyline page\'s column width');
+    const CARD_SCREENS = ['complete-screen', 'summary-screen', 'unlocked-screen',
+                          'unlockstory-screen', 'finished-screen'];
+    for (const id of CARD_SCREENS) {
+      const tag = (ROOT_HTML.match(new RegExp('<div id="' + id + '"[^>]*>')) || [])[0] || '';
+      assert.ok(tag, `${id} exists in the markup`);
+      assert.ok(/class="[^"]*\bcard-screen\b/.test(tag),
+        `${id} wears .card-screen — no width jump when entering or leaving it`);
+    }
+    // Same inset as the storyline body, or the 540px column would hold a differently-indented
+    // title line and the jump would simply move inward.
+    const inset = (css) => (css.match(/padding:([^;]*)/) || [])[1];
+    assert.strictEqual(inset(grab('.comp-body')), inset(grab('.sl-screen-body')),
+      'and the same inner padding, so the title line lands in the same place');
+    assert.ok(/padding:0 0 40px/.test(card),
+      'and the cards have no outer horizontal padding, so their headers are full-bleed like the page');
     assert.ok(/\.comp-body\{padding:12px 16px 0\}/.test(ROOT_HTML),
-      'the inset moved to a body that mirrors .sl-screen-body');
+      'the inset lives on a body that mirrors .sl-screen-body');
     assert.ok(ROOT_HTML.indexOf('class="comp-body"') > ROOT_HTML.indexOf('id="comp-hdr"'),
       'the header sits OUTSIDE that body — it is full-bleed on the storyline page too');
   }

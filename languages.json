@@ -60,7 +60,7 @@
   "ca": { "name": "Catalan",          "flag": "🏴", "tts": "ca-ES",
     "names": { "en":"Catalan","de":"Katalanisch","fr":"Catalan","es":"Catalán","it":"Catalano","pt":"Catalão","nl":"Catalaans","pl":"Kataloński","sv":"Katalanska","ja":"カタルーニャ語","zh":"加泰罗尼亚语","ru":"Каталанский","ko":"카탈루냐어","ar":"الكاتالونية","tr":"Katalanca","hi":"कातालान","fi":"Katalaani","hu":"Katalán","da":"Catalansk","el":"Καταλανικά","he":"קטלאנית","cs":"Katalánština","ro":"Catalană","uk":"Каталонська","vi":"Tiếng Catalan","id":"Bahasa Katalan","th":"ภาษาคาตาลัน","ca":"Català","sw":"Kikatalani" } },
   "sr": { "name": "Serbian",          "flag": "🇷🇸", "tts": "sr-RS",
-    "names": { "en":"Serbian","it":"Serbo","fr":"serbe","de":"Serbisch","es":"Serbio" } },
+    "names": { "en":"Serbian","it":"Serbo","fr":"serbe","de":"Serbisch","es":"Serbio","pt":"Sérvio","nl":"Servisch","pl":"serbski","sv":"Serbiska","ja":"セルビア語","zh":"塞尔维亚语","ar":"الصربية","ru":"Сербский","ko":"세르비아어","tr":"Sırpça","hi":"सर्बियाई","sw":"Kisrbia" } },
   "hr": { "name": "Croatian",         "flag": "🇭🇷", "tts": "hr-HR",
-    "names": { "en":"Croatian","it":"Croato","fr":"croate","de":"Kroatisch","es":"Croata" } }
+    "names": { "en":"Croatian","it":"Croato","fr":"croate","de":"Kroatisch","es":"Croata","pt":"Croata","nl":"Kroatisch","pl":"chorwacki","sv":"Kroatiska","ja":"クロアチア語","zh":"克罗地亚语","ar":"الكرواتية","ru":"Хорватский","ko":"크로아티아어","tr":"Hırvatça","hi":"क्रोएशियाई","sw":"Kroatia" } }
 }
