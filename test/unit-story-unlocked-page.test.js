@@ -148,61 +148,33 @@ const workLeft = C => C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
 
 
 
-// ── 6. v77_p (user): Next opens the UNPLAYED work, not a replay ────────────
-// Reported from a browser: on a chapter whose story had just unlocked, Next led to a replay of
-// earlier lessons instead of the comprehension questions the learner had never seen — so the
-// learner had to press Replay to get past their own replays. Forward must mean the next thing you
-// have NOT done; coverage replay is the fallback, not the first choice.
+// ── 6. Next opens the UNPLAYED lesson, never a replay ─────────────────────
+// User report: Next led to a replay of earlier lessons instead of the comprehension questions.
+//
+// FINDING (v77_s), recorded because it changes what this section can claim: showComplete tries
+// `nextLessonIdx >= 0` BEFORE the below-mark branch, so whenever an unfinished lesson exists the
+// next-lesson branch wins and starts it. That is the behaviour asserted here, and it is correct.
+//
+// It also means v77_p's re-ordering INSIDE the below-mark branch is unreachable while any lesson
+// is unfinished — that branch only runs when `_firstUnfinishedLessonIdx` is already -1, where its
+// first choice can never match. Two earlier versions of this section tried to revert-verify that
+// ordering and could not, and the reason was the scenario, not the assertion: the branch was never
+// entered. The ordering is kept as a correct fallback, but it is NOT what protects the learner
+// here, and this section does not pretend to test it.
+//
+// The open question the user's screenshot really poses is why `_firstUnfinishedLessonIdx` returned
+// -1 while an unplayed comprehension lesson remained — that is where the replay came from, and it
+// is still unexplained.
 {
   const C = atUnlock();
-  // Make a prep lesson coverage-SHORT after the fact, leaving its done-flag in place. Without a
-  // coverage-short lesson that is DIFFERENT from the unplayed one, both candidate targets coincide
-  // and "unplayed beats replay" is not being tested at all — the first version of this section
-  // passed under its own revert for exactly that reason. Done here rather than in the shared
-  // fixture so the other sections keep the state they were written against.
-  C.run(`(function(){
-    var d = APP.lessonData, m = _solvedMap(d.topic);
-    for (var i = 0; i < (d.lessons||[]).length; i++) {
-      var L = d.lessons[i];
-      if (!L || _isStoryGatedLesson(L)) continue;
-      // _lessonItemUniverse returns a SET, not an array — calling .slice on it throws, and inside
-      // a try/catch that means "seeded nothing" rather than a visible failure. (That is exactly
-      // what happened on the first attempt at this section: the swallowed TypeError left the prep
-      // gate closed and the failure surfaced two sections away, in an unrelated assertion.)
-      var uni = [];
-      try { uni = Array.from(_lessonItemUniverse(i) || []); } catch(e){}
-      if (uni.length < 4) continue;
-      // ONE item, not half: the prep gate is coverage-aware, so removing a large slice re-LOCKS
-      // the story and the comprehension lessons stop counting as unfinished at all. One missing
-      // item leaves the gate open while making the lesson coverage-short — which is precisely the
-      // state the user reported (story unlocked, Replay still offered).
-      delete m[uni[uni.length - 1]];
-      break;
-    }
-  })(); true;`, 'short');
-  // Consume the once-per-chapter story page first, so Next takes its normal route rather than
-  // opening the unlocked page (which section 3 already covers).
-  C.run(`APP.progress.storyShown[APP.lessonData.topic] = 1; APP._started = null; showComplete(); true;`, 'again');
   const unplayed = workLeft(C);
   assert.ok(unplayed >= 0, 'non-vacuity: there is an unplayed lesson in this chapter');
-  // Non-vacuity that makes this test DISCRIMINATE: a coverage-short lesson must exist and must be
-  // a DIFFERENT lesson, or "unplayed beats replay" is not being tested at all.
-  const covShort = C.run(`(typeof _firstCoverageShortLessonIdx === 'function') ? _firstCoverageShortLessonIdx() : -1`);
-  assert.ok(covShort >= 0, 'a coverage-short lesson exists (the replay candidate)');
-  assert.notStrictEqual(covShort, unplayed,
-    'and it is a DIFFERENT lesson from the unplayed one, so the preference is observable');
-  // HONEST LIMITATION, recorded rather than papered over: this section asserts the RESULT (Next
-  // opens the unplayed lesson) and that result is correct, but it does NOT discriminate under
-  // revert — swapping the product back to coverage-first leaves it green. The two candidates
-  // differ when measured here, so the likely cause is that `endDrill()`, which the handler runs
-  // BEFORE choosing a target, changes the state `_firstCoverageShortLessonIdx` reads. Until that
-  // is chased down, treat this as a result check, not as protection for the ORDER — the ordering
-  // claim is currently unguarded (standing rule 13: a guard that cannot fail is not a guard).
   const gated = C.run(`(function(){ var L = APP.lessonData.lessons[${unplayed}];
     return L ? (L.type || 'standard') : 'none'; })()`);
-  C.run(`APP._started = null; document.getElementById('comp-next').onclick(); true;`, 'next');
+  C.run(`APP.progress.storyShown[APP.lessonData.topic] = 1; APP._started = null; showComplete(); true;`, 'again');
+  C.run(`document.getElementById('comp-next').onclick(); true;`, 'next');
   assert.strictEqual(C.run(`APP._started`), unplayed,
-    `Next opens the first UNPLAYED lesson (${gated}), not a replay of finished ones`);
+    `Next opens the first UNPLAYED lesson (${gated}), never a replay of a finished one`);
   console.log(`  Next opens the unplayed lesson (${gated}), not a replay`);
 }
 

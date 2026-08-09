@@ -207,9 +207,21 @@ function freshTopic() {
     '/api/save-story detects a story change');
   assert.ok(/_storyChanged[\s\S]{0,400}error_hunt[\s\S]{0,120}_clearLessonQcStamp\(ls\)/.test(server),
     '/api/save-story clears the stamp on story-derived (error-hunt) lessons');
-  // The bulk auto-QC after a generated book stays a full pass (so it stamps fresh lessons).
-  assert.ok(/_runQc\(newJob\(\), qcTopics, \{ lessonIdx: null, onlyFlagged: false, includeStory: false \}\)/.test(server),
-    'post-book auto-QC runs a full (stampable) pass, lesson-only (no auto story QC)');
+  // v77_w (user): there is NO automatic QC pass after a generated book any more. Story QC was
+  // already excluded (an LLM pass per chapter, unprompted, on an already-long job); the user made
+  // the same call for LESSON QC, for the same reason — it is the slowest part of the job and QC
+  // loses nothing by being deferred, since it is a review step and everything it would flag is
+  // still there afterwards.
+  //
+  // The claim is now the ABSENCE of that call. Asserted structurally, and paired with the positive
+  // assertions below that the on-demand paths still exist — otherwise "QC no longer runs" could
+  // pass just as well if QC had been deleted outright.
+  assert.ok(!/_runQc\(newJob\(\), qcTopics/.test(server),
+    'book generation does NOT run an automatic QC pass (v77_w)');
+  assert.ok(/function _runQc\(/.test(server),
+    'but _runQc itself is untouched — QC is deferred, not removed');
+  assert.ok(/url\.pathname === '\/api\/qc'/.test(server),
+    'and the on-demand QC endpoint still exists (the storyline 🔍 sweep and per-chapter QC)');
   // The /api/qc endpoint threads a force flag (bulk re-check override) into _runQc.
   assert.ok(/const \{ storylineId, topicId, lessonIdx, onlyFlagged, force, includeStory \} = body/.test(server),
     '/api/qc reads a force flag');

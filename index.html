@@ -1317,8 +1317,13 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             onclick="compBackToStory()"
             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
     </div>
+    <div style="height:5px;background:var(--gray-mid);border-radius:2px;overflow:hidden;margin-top:6px">
+      <div id="fin-hdr-prog-bar" style="height:100%;background:var(--green);border-radius:2px;transition:width .3s;width:0%"></div>
+    </div>
+    <div id="fin-hdr-prog-txt" style="font-size:11px;font-weight:800;color:var(--gray-dark);text-align:right;padding:2px 0 0;opacity:.8"></div>
   </div>
   <div class="comp-body">
+  <div id="fin-storyboard" style="display:none;margin-top:12px"></div>
     <div style="text-align:center;font-size:44px;line-height:1.1;margin-top:14px" id="fin-icon">🎉</div>
     <div class="comp-title" id="fin-title">Story finished!</div>
     <!-- The whole story, chapter by chapter, each collapsible. <details> is native: it needs no
@@ -1357,6 +1362,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             onclick="compBackToStory()"
             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
     </div>
+    <div style="height:5px;background:var(--gray-mid);border-radius:2px;overflow:hidden;margin-top:6px">
+      <div id="sum-hdr-prog-bar" style="height:100%;background:var(--green);border-radius:2px;transition:width .3s;width:0%"></div>
+    </div>
+    <div id="sum-hdr-prog-txt" style="font-size:11px;font-weight:800;color:var(--gray-dark);text-align:right;padding:2px 0 0;opacity:.8"></div>
   </div>
   <div class="comp-body">
     <!-- v77_o (user): the entry card is laid out like every other progress card — storyboard first,
@@ -1365,7 +1374,19 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
          as the same page the storyline shows. -->
     <div id="sum-storyboard" style="display:none;margin-top:12px"></div>
     <div id="sum-progress" style="margin-top:14px;text-align:left"></div>
-    <div id="sum-text" dir="auto" style="margin-top:14px;text-align:left;font-size:15px;color:var(--text);line-height:1.65"></div>
+    <!-- v77_r (user): the summary sits in the SAME bordered field as every other body text on the
+         card, with the same read-aloud button (and the translate button when a translation exists),
+         instead of being loose prose. One field shape means one set of affordances: wherever there
+         is text to read, there is a way to hear it. -->
+    <div id="sum-sumbox" style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:var(--white)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <span style="font-size:20px">📖</span>
+        <span style="font-size:13px;font-weight:900;color:var(--green-dark)" id="sum-sumbox-lbl"></span>
+        <button class="spk-ico" id="sum-sum-xlate" style="display:none;margin-left:auto;font-size:11px;font-weight:800;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Nunito,sans-serif"></button>
+        <button class="spk-ico" id="sum-sum-spk" title="">🔊</button>
+      </div>
+      <div id="sum-sumtext" dir="auto" style="font-size:15px;color:var(--text);line-height:1.65"></div>
+    </div>
     <div id="sum-actions" style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:18px;flex-wrap:wrap">
       <button class="comp-ico primary" id="sum-next">→</button>
     </div>
@@ -1389,12 +1410,33 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             onclick="compBackToStory()"
             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
     </div>
+    <div style="height:5px;background:var(--gray-mid);border-radius:2px;overflow:hidden;margin-top:6px">
+      <div id="unl-hdr-prog-bar" style="height:100%;background:var(--green);border-radius:2px;transition:width .3s;width:0%"></div>
+    </div>
+    <div id="unl-hdr-prog-txt" style="font-size:11px;font-weight:800;color:var(--gray-dark);text-align:right;padding:2px 0 0;opacity:.8"></div>
   </div>
   <div class="comp-body">
+  <div id="unl-storyboard" style="display:none;margin-top:12px"></div>
     <div style="text-align:center;font-size:40px;line-height:1.1;margin-top:14px" id="unl-icon">🔓</div>
     <div class="comp-title" id="unl-title">Next chapter unlocked!</div>
     <div id="unl-chapter" style="margin-top:14px;text-align:center;font-size:16px;font-weight:900;color:var(--green-dark)"></div>
     <div id="unl-progress" style="margin-top:14px;text-align:left"></div>
+    <!-- v77_q: the story summary, as on the entry card — this IS the entry card for chapters 2..N.
+         The short collapsible "how the game works" text the user has planned belongs here too, and
+         on the entry card, from the one place both read. -->
+    <!-- v77_r (user): the summary sits in the SAME bordered field as every other body text on the
+         card, with the same read-aloud button (and the translate button when a translation exists),
+         instead of being loose prose. One field shape means one set of affordances: wherever there
+         is text to read, there is a way to hear it. -->
+    <div id="unl-sumbox" style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:var(--white)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <span style="font-size:20px">📖</span>
+        <span style="font-size:13px;font-weight:900;color:var(--green-dark)" id="unl-sumbox-lbl"></span>
+        <button class="spk-ico" id="unl-sum-xlate" style="display:none;margin-left:auto;font-size:11px;font-weight:800;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Nunito,sans-serif"></button>
+        <button class="spk-ico" id="unl-sum-spk" title="">🔊</button>
+      </div>
+      <div id="unl-sumtext" dir="auto" style="font-size:15px;color:var(--text);line-height:1.65"></div>
+    </div>
     <div id="unl-actions" style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:18px;flex-wrap:wrap">
       <button class="comp-ico" id="unl-back">←</button>
       <button class="comp-ico primary" id="unl-next">→</button>
@@ -1420,8 +1462,13 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             onclick="compBackToStory()"
             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
     </div>
+    <div style="height:5px;background:var(--gray-mid);border-radius:2px;overflow:hidden;margin-top:6px">
+      <div id="us-hdr-prog-bar" style="height:100%;background:var(--green);border-radius:2px;transition:width .3s;width:0%"></div>
+    </div>
+    <div id="us-hdr-prog-txt" style="font-size:11px;font-weight:800;color:var(--gray-dark);text-align:right;padding:2px 0 0;opacity:.8"></div>
   </div>
   <div class="comp-body">
+  <div id="us-storyboard" style="display:none;margin-top:12px"></div>
     <div style="text-align:center;font-size:40px;line-height:1.1;margin-top:14px" id="us-icon">📖</div>
     <div class="comp-title" id="us-title">Story unlocked!</div>
     <div id="us-story" dir="auto" style="margin-top:16px;text-align:left;font-size:15px;color:var(--text);line-height:1.65"></div>
@@ -3618,11 +3665,29 @@ const _UNSPACED_SCRIPTS = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}
 // `strongWords` (v74_n, optional): the subset of `words` the learner has SOLVED, marked in the
 // stronger shade. Omitted → every match gets the base shade, which is the pre-v74_n behaviour and
 // what a panel with no per-learner progress in hand (the library reader) still wants.
+// v77_u: one folding rule for the highlight matcher's keys — apostrophe form and case. Both sides
+// of every comparison go through it, so the story text and the solved ledger cannot disagree about
+// whether `l'evoluzione` and `l’evoluzione` are the same word.
+function _hlKey(w){
+  return String(w == null ? '' : w).replace(/['\u2019\u2018\u02BC\u02B9\u2032]/g, "'").trim().toLowerCase();
+}
 function _highlightVocabHtml(html, words, strongWords) {
   if (!words.length) return html;
   const stripF = w => w.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[[^\]]+\]/g, '$1');
-  const strong = new Set((strongWords || []).map(w => stripF(String(w || '')).trim().toLowerCase()).filter(Boolean));
-  const esc = w => stripF(w).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const strong = new Set((strongWords || []).map(w => _hlKey(stripF(String(w || '')))).filter(Boolean));
+  // v77_u: APOSTROPHE EQUIVALENCE. Vocabulary stores `l'evoluzione` with ASCII U+0027; stories are
+  // written with the typographic U+2019 (`l’evoluzione`). Compared literally these are different
+  // strings, so even an exactly-present word never matched — 15 `it`, 7 `en`, 4 `lb` chapters.
+  // A plain defect, not a judgement about matching (roadmap §3 ruling 3).
+  //
+  // Fixed as UNICODE MACHINERY, not a table: every apostrophe-like code point is folded to one
+  // character class, so the regex matches whichever the author happened to type. No language
+  // knowledge is added — this is the same class of rule as case-insensitivity, which the matcher
+  // already applies.
+  const APOS_CLASS = "['\u2019\u2018\u02BC\u02B9\u2032]";
+  const APOS_RE = /['\u2019\u2018\u02BC\u02B9\u2032]/g;
+  const normApos = w => String(w == null ? '' : w).replace(APOS_RE, "'");
+  const esc = w => stripF(w).replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(APOS_RE, APOS_CLASS);
   const spaced = [], unspaced = [];
   words.forEach(w => {
     const e = esc(w);
@@ -3655,7 +3720,9 @@ function _highlightVocabHtml(html, words, strongWords) {
       // strongly, so it also reads as a record of what they can already read. Before this the two
       // panels disagreed — the storyline page showed all vocabulary and the completion card showed
       // only solved words, so the same story lit up differently on two screens.
-      const key = stripF(m).trim().toLowerCase();
+      // Folded the same way as the set above: the story's U+2019 and the ledger's U+0027 are the
+      // same word, so a solved word must earn the strong mark whichever form the author typed.
+      const key = _hlKey(stripF(m));
       return '<mark class="story-vocab-hl' + (strong.has(key) ? ' solved' : '') + '">' + m + '</mark>';
     });
   });
@@ -8078,6 +8145,15 @@ function slBottomClearProgress(){
   topics.forEach(tp => {
     if(APP.progress?.completed) delete APP.progress.completed[tp];
     if(APP.progress?.solved)    delete APP.progress.solved[tp];   // coverage store (Commit A)
+    // v77_r (user-reported): `chapterDone` was NOT cleared. It is the cached completeness STAMP
+    // that `chapterComplete` trusts ahead of the flags, so wiping progress left every chapter
+    // still reading "finished": chapters stayed unlocked, and the storyline bar stayed fully
+    // green with nothing played. The wipe has to clear every store that can answer "is this
+    // chapter done", not only the two that record how it got done.
+    if(APP.progress?.chapterDone) delete APP.progress.chapterDone[tp];
+    // The once-per-chapter story-unlocked page should be offered again after a wipe, too — the
+    // learner is starting the chapter over.
+    if(APP.progress?.storyShown)  delete APP.progress.storyShown[tp];
   });
   saveProg();
   const sl = APP._slScreen;
@@ -12095,6 +12171,23 @@ function buildComprehensionExercises(lesson){
     exs.push({ type:'comprehension_mcq', question:String(item.q), correct,
                choices: shuffle(choices.slice()), why: item.why || '' });
   });
+  // v77_t (roadmap §0g): a REPEATED comprehension lesson asks only the questions not yet answered
+  // correctly. A wrong answer used to send the learner back to the card, and Next then restarted
+  // the whole round — so the price of one mistake was re-answering everything they had already got
+  // right, and the questions they actually got wrong were buried among them.
+  //
+  // "Not yet answered correctly" is the SOLVED store, which is monotonic (one correct answer ever
+  // = solved) and is the same signal `v71_s` uses to decide the lesson is done. So this filter and
+  // the done-rule cannot disagree: the round empties exactly when the lesson completes.
+  //
+  // Deliberately NOT applied when nothing is solved yet (a first play asks everything) and never
+  // allowed to empty the round — if every question is solved the lesson is finished and the caller
+  // should not be here, but returning an empty round would be a dead end rather than a message.
+  try {
+    const solved = _solvedMap(APP.lessonData?.topic) || {};
+    const remaining = exs.filter(ex => { const id = qid(ex, lesson.id); return !id || !solved[id]; });
+    if (remaining.length && remaining.length < exs.length) return shuffle(remaining);
+  } catch(_) {}
   return shuffle(exs);
 }
 function buildSynonymsExercises(lesson){
@@ -14929,12 +15022,37 @@ function showComplete(review){
       _showUnlock = !C._review && storyUnlocked(APP.lessonData)
                     && !_storyShownMap()[APP.lessonData?.topic];
     } catch(_) { _showUnlock = false; }
-    APP._usNextLesson = nextLessonIdx;
+    // v77_t (roadmap §0g): FINISH WHAT YOU JUST FAILED. A wrong answer in a comprehension round
+    // returns the learner to this card; Next used to move on to whatever `_firstUnfinishedLessonIdx`
+    // offered next — often an earlier normal lesson — so the questions they had just got wrong sank
+    // out of reach and Replay was the only way back to them.
+    //
+    // If the lesson just played is story-gated (comprehension / error hunt) and still has questions
+    // that have never been answered correctly, Next restarts THAT lesson. Since v77_t the round it
+    // rebuilds contains only those questions, so "restart" costs the learner exactly what they have
+    // left to do. Only for the lesson just played: this is "finish this", not a general preference
+    // for gated lessons over everything else.
+    let _target = nextLessonIdx;
+    try {
+      const _li = APP.cur?.lessonIdx;
+      const _L = (APP.lessonData?.lessons || [])[_li];
+      if (!C._review && _L && typeof _isStoryGatedLesson === 'function' && _isStoryGatedLesson(_L)
+          && typeof _lessonQidUniverse === 'function') {
+        const _solved = _solvedMap(APP.lessonData?.topic) || {};
+        // NOTE: _lessonQidUniverse returns a SET (as _lessonItemUniverse does). Calling an Array
+        // method on it throws, and inside this try that silently means "no override" — the first
+        // version of this block did exactly that and Next kept walking to an earlier lesson.
+        const _uni = Array.from(_lessonQidUniverse(_li) || []);
+        const _left = _uni.some(q => !_solved[q]);
+        if (_left) _target = _li;
+      }
+    } catch(_) { _target = nextLessonIdx; }
+    APP._usNextLesson = _target;
     _compIco(compNext, '→', t('complete.next'));
     compNext.style.display = '';
     compNext.onclick = _showUnlock
       ? () => showStoryUnlocked()
-      : () => { endDrill(); startLesson(nextLessonIdx); };
+      : () => { endDrill(); startLesson(_target); };
   } else if (_belowThreshold && !lesson._drill) {
     // v77_o (user ruling): NEXT IS NEVER GREYED. It always leads to the next step.
     //
@@ -15228,6 +15346,13 @@ function showComplete(review){
     if (_showStory) {
       const _lbl = document.getElementById('comp-story-panel-lbl');
       if (_lbl) _lbl.textContent = _allDone2 ? t('complete.story_unlocked') : t('complete.story_preview');
+      // v77_v (§0f): the story has just opened — read it aloud, unless muted. `_showStory` now
+      // means a GENUINE unlock (v77_p removed the locked preview), so this cannot fire on a teaser.
+      // Not on a review render: re-opening a finished chapter is not the moment of unlocking.
+      if (!C._review) {
+        try { _autoReadStory(topicKey, APP.lessonData?.story, APP.lessonData?.lang || APP.lang); }
+        catch(_) { if (typeof _cardNote === 'function') _cardNote('auto-read', _); }
+      }
       // v60.6: story-translation toggle. When a source-language translation exists (the
       // auto-translate pass stored it on the topic), offer a button to switch the panel between
       // the target-language story and its translation. Defaults to the target story; a full story
@@ -15928,6 +16053,7 @@ function _markStoryShown(topic){
   if (!m[topic]) { m[topic] = 1; try { saveProg(); } catch(_) {} }
 }
 function showStoryUnlocked(){
+  _cardHeader('us');
   const d = APP.lessonData || {};
   const box = document.getElementById('us-story');
   // Same paragraph + furigana treatment as the progress card's panel, via the same helpers, so the
@@ -15951,8 +16077,8 @@ function showStoryUnlocked(){
   }
   const ttl = document.getElementById('us-title');
   if (ttl) ttl.textContent = t('complete.story_unlocked');
-  const ht = document.getElementById('us-hdr-title');
-  if (ht) ht.textContent = d.topic || t('complete.story_unlocked');
+  // Header title is written by _cardHeader alone (v77_q). A second assignment here is how the
+  // storyline icon went missing from four of the five cards while the fraction matched.
   const sp = document.getElementById('us-spk');
   if (sp) {
     // Hidden for a dialect lesson, exactly as the panel's own speaker button is.
@@ -15985,32 +16111,29 @@ function showStoryUnlocked(){
 // and the button that opened it cannot disagree about which chapter is next — the same reason
 // v74_o reused APP._compBack instead of deciding a second time.
 function showNextChapterUnlocked(){
+  // v77_q (user): this card is the STARTER for every chapter after the first — the entry card's
+  // job, done at the moment the previous chapter ends. So it carries what the entry card carries:
+  // the same header and storyboard (via _cardHeader), the story SUMMARY, and the chapter progress
+  // bars. The entry card is now genuinely "entry": chapter one only.
+  const ctx = _cardHeader('unl');
   const ch = APP._unlNext;
   const nameEl = document.getElementById('unl-chapter');
   if (nameEl) nameEl.textContent = (ch && (ch.topic || ch.title)) || '';
+  // The story summary, in the same field the entry card uses (v77_r).
+  _renderSummaryField('unl', ctx && ctx.sl);
   const ttl = document.getElementById('unl-title');
   if (ttl) ttl.textContent = t('unlocked.title');
-  let sl = null;
-  try { sl = _storylineForTopic(APP.lessonData?.topic)?.sl || null; } catch(_) {}
-  const ht = document.getElementById('unl-hdr-title');
-  if (ht) ht.textContent = (sl && sl.title) || t('unlocked.title');
-  // Where this chapter sits in the deck — the learner's position along the story, which is the
-  // whole point of naming the moment.
+  // Header title is written by _cardHeader alone (v77_q). A second assignment here is how the
+  // storyline icon went missing from four of the five cards while the fraction matched.
+  // The chapter progress bars, from the SAME renderer every other progress card uses — empty on a
+  // first visit to the chapter ahead, which is exactly what a starter card should show.
   const pr = document.getElementById('unl-progress');
   if (pr) {
-    let done = 0, total = 0;
-    try {
-      const ctx = _storylineForTopic(APP.lessonData?.topic);
-      const ids = (ctx && ctx.sl && ctx.sl.chapters) || [];
-      total = ids.length;
-      done = ids.filter(cid => { const e = ctx.byId?.[cid];
-        return !!(e && typeof chapterComplete === 'function' && chapterComplete(e)); }).length;
-    } catch(_) {}
-    const pct = total ? Math.round(100 * done / total) : 0;
-    pr.innerHTML = total
-      ? `<div style="font-size:11px;font-weight:800;color:var(--gray-dark);opacity:.8;margin-bottom:4px">${esc(t('unlocked.progress', { done: String(done), total: String(total) }))}</div>
-         <div style="height:5px;background:var(--gray-mid);border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:var(--green);border-radius:2px"></div></div>`
-      : '';
+    let _ph = '';
+    try { _ph = _compProgressHtml((ch && ch.topic) || APP.lessonData?.topic, ctx, { skipStoryRow: true }); }
+    catch(_) { _ph = ''; }
+    pr.innerHTML = _ph;
+    pr.style.display = _ph ? '' : 'none';
   }
   const bk = document.getElementById('unl-back');
   if (bk) { _compIco(bk, '\u2190', t('unlocked.back_card')); bk.onclick = () => { showComplete(true); show('complete-screen'); }; }
@@ -16024,6 +16147,128 @@ function showNextChapterUnlocked(){
       if (c) loadSaved(c.id || encTopic(c.topic)); };
   }
   show('unlocked-screen');
+}
+
+// ── v77_r (user): the summary field, shared by the entry card and the starter card ───────────
+// "Both the summary on the entry card and the presentation of unlocked chapter should embed their
+// text into our usual fields that have read-out buttons, and — if present — translation buttons."
+// One renderer, so the two cards cannot end up with different affordances over the same text.
+//
+// The summary is a STORYLINE property in the SOURCE language. A translation is offered only when
+// one actually exists (`sl.summaryTranslation`); the button stays hidden otherwise rather than
+// appearing and doing nothing.
+function _renderSummaryField(prefix, sl){
+  const box = document.getElementById(prefix + '-sumbox');
+  if (!box) return false;
+  const text = String((sl && sl.summary) || '').trim();
+  if (!text) { box.style.display = 'none'; return false; }
+  const src = APP.lessonData?.srcLang || APP.srcLang;
+  const alt = String((sl && (sl.summaryTranslation || sl.summaryTarget)) || '').trim();
+  const showing = !!APP['_sumXlate_' + prefix];
+  const shown = (showing && alt) ? alt : text;
+  const lang  = (showing && alt) ? (APP.lessonData?.lang || APP.lang) : src;
+
+  const body = document.getElementById(prefix + '-sumtext');
+  if (body) {
+    try { body.innerHTML = _storyParasHtml(esc(shown)); } catch(_) { body.textContent = shown; }
+    body.setAttribute('dir', (typeof RTL_LANGS !== 'undefined' && RTL_LANGS.has(lang)) ? 'rtl' : 'ltr');
+  }
+  const lbl = document.getElementById(prefix + '-sumbox-lbl');
+  if (lbl) lbl.textContent = t('summary.title');
+  const spk = document.getElementById(prefix + '-sum-spk');
+  if (spk) {
+    spk.title = t('lesson.read_aloud');
+    spk.onclick = () => { try { speakBodyText(null, lang, shown); } catch(_) {} };
+  }
+  const xl = document.getElementById(prefix + '-sum-xlate');
+  if (xl) {
+    // Only when a translation exists — a dead button is worse than none.
+    xl.style.display = alt ? '' : 'none';
+    xl.textContent = (LANGS?.[showing ? src : (APP.lessonData?.lang || APP.lang)]?.flag) || '🌐';
+    xl.onclick = () => { APP['_sumXlate_' + prefix] = !showing; _renderSummaryField(prefix, sl); };
+  }
+  box.style.display = '';
+  return true;
+}
+
+// ── v77_v (roadmap §0f): auto-read the story when it is unlocked on the card ─────────────────
+// The story is the point of the lesson flow; when it finally opens, it should be heard as well as
+// seen without the learner hunting for a button. Cheap only because of v75_h — the old flat
+// 4-second advance net would have cut a story chapter to ribbons.
+//
+// Four deliberate restraints, each protecting something that has broken before:
+//   • MUTED means muted. Note `speakBodyText` force-unmutes (it treats a tap as consent); auto-play
+//     has no such consent, so it goes straight to the speech layer instead of through it.
+//   • Never on a review render. Re-opening a finished chapter is not the moment of unlocking
+//     (INTERNALS: "a review render is not a play").
+//   • ONCE per chapter per session. showComplete re-renders into the same DOM repeatedly; without
+//     this, every re-render would restart the reading.
+//   • Never interrupt speech already in progress. v75_h made `cancel()` conditional precisely to
+//     stop these races, and auto-play must not undo that — if something is speaking, stay silent.
+// Dialect chapters are excluded by the same rule the speaker button uses: no authentic voice.
+function _autoReadStory(topicKey, story, langCode){
+  try {
+    if (!story || APP.muted) return false;
+    if (typeof _lessonIsDialect === 'function' && _lessonIsDialect()) return false;
+    APP._autoRead = APP._autoRead || {};
+    if (APP._autoRead[topicKey]) return false;
+    if (typeof speechSynthesis !== 'undefined' && speechSynthesis
+        && (speechSynthesis.speaking || speechSynthesis.pending)) return false;
+    APP._autoRead[topicKey] = 1;
+    const text = (typeof stripFuri === 'function' ? stripFuri(story) : String(story))
+      .replace(/\s+/g, ' ').trim();
+    if (!text) return false;
+    if (typeof _doSpeakLang === 'function') _doSpeakLang(text, langCode);
+    else if (typeof speak === 'function') speak(text);
+    return true;
+  } catch(_) { return false; }
+}
+
+// ── v77_q (user): ONE header for every progress card ─────────────────────────────────────────
+// "They should all have the identical header, that itself looks identical to the storyline header."
+// The completion card had the full block (title row + storyline bar + fraction) while the four
+// pages added in v77_f..v77_j carried only the title row, so moving through the walk changed the
+// header from card to card. Copying the markup four more times is how the storyline connector line
+// drifted in v71_w, so all five are driven from HERE, with the same `_slProgressStats` /
+// `_slProgressLabel` the storyline page itself uses.
+//
+// The storyboard is part of the same identity — the storyline page shows it directly under the
+// header, so every card does too, through the one `_renderCompStoryboard`.
+function _cardHeader(prefix, opts){
+  opts = opts || {};
+  const d = APP.lessonData || {};
+  let ctx = null;
+  try { ctx = _storylineForTopic(d.topic); } catch(_) { ctx = null; }
+  const sl = ctx && ctx.sl;
+  const _id = n => document.getElementById(prefix + n);
+  const home = _id('-hdr-home');
+  if (home) home.title = t('complete.back_home');
+  const ttl = _id('-hdr-title');
+  if (ttl) {
+    // Solo chapter: no storyline to name or to be a fraction of — fall back to the chapter, and
+    // let the title lead home like the globe rather than at a deck that does not exist.
+    ttl.textContent = sl ? ((sl.icon || '📖') + ' ' + (sl.title || t('storyline.title')))
+                         : (d.topic || t('lesson.set'));
+    ttl.title = sl ? t('complete.back_story') : t('complete.back_home');
+  }
+  const pb = _id('-hdr-prog-bar'), px = _id('-hdr-prog-txt');
+  const wrap = pb && pb.parentElement;
+  if (sl && ctx) {
+    let st = null;
+    try { st = _slProgressStats(ctx.sl.chapters || [], ctx.byId || {}); } catch(_) { st = null; }
+    if (st) {
+      if (pb) pb.style.width = st.pct + '%';
+      if (px) { px.textContent = _slProgressLabel(st); px.style.display = ''; }
+      if (wrap) wrap.style.display = '';
+    }
+  } else {
+    if (wrap) wrap.style.display = 'none';
+    if (px) px.style.display = 'none';
+  }
+  if (opts.storyboard !== false) {
+    try { _renderCompStoryboard(d.topic, ctx, prefix + '-storyboard'); } catch(_) {}
+  }
+  return ctx;
 }
 
 // ── v77_h: the story-summary card (roadmap §0c, the FIRST page of the walk) ──────────────────
@@ -16044,26 +16289,16 @@ function _summaryOfStory(){
   } catch(_) { return null; }
 }
 function showStorySummary(){
+  _cardHeader('sum');
   const s = _summaryOfStory();
-  const box = document.getElementById('sum-text');
-  // Escaped, and given the SOURCE language's direction: the summary is srcLang text on a page
-  // whose chapter may be target-RTL, so it must not inherit the wrong direction.
-  if (box) {
-    box.innerHTML = s ? _storyParasHtml(esc(s.text)) : '';
-    const _src = APP.lessonData?.srcLang || APP.srcLang;
-    // RTL_LANGS is the client's one direction rule (index.html ~1450); a second spelling would
-    // drift. typeof-guarded for harnesses that extract this function in isolation.
-    const _rtl = (typeof RTL_LANGS !== 'undefined') && RTL_LANGS.has(_src);
-    box.setAttribute('dir', _rtl ? 'rtl' : 'ltr');
-  }
+  _renderSummaryField('sum', s && s.sl);
   const ttl = document.getElementById('sum-title');
   if (ttl) ttl.textContent = t('summary.title');
-  const ht = document.getElementById('sum-hdr-title');
-  if (ht) ht.textContent = (s && s.sl.title) || t('summary.title');
+  // Header title is written by _cardHeader alone (v77_q). A second assignment here is how the
+  // storyline icon went missing from four of the five cards while the fraction matched.
   // The same storyboard the progress card and the storyline page show, via the same renderer, so
   // all three agree about where the learner is in the arc. It targets #comp-storyboard, so the
   // rendered node is moved across rather than the renderer being re-implemented here.
-  try { if (s) _renderCompStoryboard(APP.lessonData?.topic, s.ctx, 'sum-storyboard'); } catch(_) {}
   // v77_p (user): the entry card shows the SAME progress bars as every other progress card, via the
   // same `_compProgressHtml`. §0c asked for "bars empty", which was right when this page only ever
   // preceded the first question — but it is now the entry point for EVERY visit, including resuming
@@ -16112,7 +16347,21 @@ function _enterViaSummaryCard(idx){
   const skip = !!APP._skipEntryCard;
   APP._skipEntryCard = false;
   let ok = false;
-  try { ok = idx >= 0 && !skip && !!_summaryOfStory(); } catch(_) { ok = false; }
+  try {
+    ok = idx >= 0 && !skip && !!_summaryOfStory();
+    // v77_q (user): ENTRY means the FIRST chapter. Every later chapter is started by the
+    // next-chapter-unlocked card, which now carries the same summary, header and bars — so a
+    // learner meets one starter card per chapter, not two competing ones. A solo chapter (no
+    // storyline) is its own first chapter.
+    if (ok) {
+      const ctx = _storylineForTopic(APP.lessonData?.topic);
+      const ids = (ctx && ctx.sl && ctx.sl.chapters) || [];
+      if (ids.length) {
+        const me = (ctx.topics || []).indexOf(APP.lessonData?.topic);
+        if (me > 0) ok = false;
+      }
+    }
+  } catch(_) { ok = false; }
   if (!ok) return false;
   APP._sumNext = { kind: 'lesson', idx: idx };
   showStorySummary();
@@ -16217,6 +16466,7 @@ function showStoryFinished(){
   } catch(_) {}
 }
 function _finRenderFinished(){
+  _cardHeader('fin');
   const chapters = _finChapters();
   const box = document.getElementById('fin-story');
   if (box) {
@@ -16247,12 +16497,8 @@ function _finRenderFinished(){
   if (vl) vl.textContent = t('finished.vocab');
   // The header title names the storyline and doubles as the route back to it — same affordance as
   // the completion card's header (v71_k). Resolved from the storyline object, not a lookup map.
-  const ht = document.getElementById('fin-hdr-title');
-  if (ht) {
-    let slTitle = '';
-    try { slTitle = _storylineForTopic(APP.lessonData?.topic)?.sl?.title || ''; } catch(_) {}
-    ht.textContent = slTitle || t('finished.title');
-  }
+  // Header title is written by _cardHeader alone (v77_q). A second assignment here is how the
+  // storyline icon went missing from four of the five cards while the fraction matched.
   const _fb = document.getElementById('fin-back');
   if (_fb) { _compIco(_fb, '←', t('finished.back_card')); _fb.onclick = () => finBackToCard(); }
   const _fo = document.getElementById('fin-out');

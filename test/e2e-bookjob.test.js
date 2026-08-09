@@ -59,13 +59,21 @@ const { boot, post, waitBookJob, assert } = require('./lib');
     assert(sl.summary && /FAKE SUMMARY/.test(sl.summary), 'storyline has a generated summary (got: ' + JSON.stringify(sl.summary) + ')');
     console.log('  storyline summary post-pass: OK');
 
-    // Auto-QC ran over the finished storyline and tagged items (TODO item 7).
+    // v77_w (user): book generation no longer runs an automatic QC pass. Story QC was already
+    // excluded (an LLM pass per chapter, unprompted, on an already-long job) and the user made the
+    // same call for lesson QC: it is the slowest part of the job, and QC loses nothing by being
+    // deferred — it is a review step, and everything it would flag is still there afterwards.
+    //
+    // The claim here is now the ABSENCE of the pass. It is worth asserting rather than deleting:
+    // an automatic QC pass creeping back in is exactly the kind of change that would be noticed
+    // only as "generation got slow again", which is what prompted this.
     const allItems = chain.flatMap(c => (c.lessons || []).flatMap(ls =>
       [...(ls.vocab || []), ...(ls.sentences || [])]));
+    assert(allItems.length > 0, 'the generated chain has items to QC (non-vacuity)');
     const flagged = allItems.filter(it => it && it.qc);
-    assert(flagged.length > 0, 'auto-QC tagged at least one item (got ' + flagged.length + ' of ' + allItems.length + ')');
-    assert(flagged.some(it => it.qc.sug === 'KORRIGIERT'), 'QC suggestion stored on the item');
-    console.log('  storyline auto-QC: OK (' + flagged.length + '/' + allItems.length + ' items tagged)');
+    assert(flagged.length === 0,
+      'generation runs NO automatic QC pass (got ' + flagged.length + ' tagged of ' + allItems.length + ')');
+    console.log('  no auto-QC during generation: OK (0/' + allItems.length + ' items tagged)');
 
     console.log('e2e-bookjob: ALL PASSED');
   } catch (e) {

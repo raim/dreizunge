@@ -120,4 +120,83 @@ function finishFirstChapter() {
   console.log('  card and button agree on which chapter is next');
 }
 
+
+
+// ── 5. v77_q (user): this card is the STARTER for chapters 2..N ────────────
+// "It should replace the entry progress card as a starter for all but the first chapter, but it
+// looks the same as the entry card" — so it carries the storyline header, the storyboard, the
+// story summary and the chapter progress bars, and the entry card is confined to chapter one.
+{
+  const C = finishFirstChapter();
+  C.run(`document.getElementById('comp-next').onclick(); true;`, 'next');
+  assert.strictEqual(C.run(`APP._shown`), 'unlocked-screen', 'the starter card is shown');
+  // The storyline header, filled — not just present in the markup.
+  assert.ok((C.run(`document.getElementById('unl-hdr-title').textContent || ''`)).length > 0,
+    'it carries the storyline title, like every other progress card');
+  assert.ok((C.run(`document.getElementById('unl-hdr-prog-txt').textContent || ''`)).length > 0,
+    'and the storyline progress fraction');
+  // The summary — the thing that makes it "look the same as the entry card".
+  const sl = (store.storylines || []).find(x => x.id === SL.id);
+  if (String(sl.summary || '').trim()) {
+    assert.ok((C.run(`document.getElementById('unl-sumtext').innerHTML || ''`)).length > 0,
+      'and the story summary, as the entry card shows it');
+  }
+  // The chapter progress bars, from the shared renderer.
+  const bars = C.run(`document.getElementById('unl-progress').innerHTML || ''`);
+  assert.ok(bars.length > 0, 'and the chapter progress bars');
+  console.log('  starter card: header, summary and bars, like the entry card');
+}
+
+// ── 6. v77_q: the ENTRY card is chapter ONE only ───────────────────────────
+// Two starter cards in a row would be the double interstitial v77_k already removed, in a new form.
+{
+  const C = finishFirstChapter();
+  C.run(`APP.lessonData = ${JSON.stringify(SECOND)};
+         APP.lang = ${JSON.stringify(SECOND.lang)}; APP.srcLang = ${JSON.stringify(SECOND.srcLang)};
+         APP._skipEntryCard = false; APP._shown = null; true;`, 'ch2');
+  const usedEntry = C.run(`_enterViaSummaryCard(0)`);
+  assert.strictEqual(usedEntry, false,
+    'a later chapter does NOT open the entry card — its starter is the next-chapter card');
+  // Non-vacuity: the FIRST chapter still does.
+  C.run(`APP.lessonData = ${JSON.stringify(FIRST)};
+         APP.lang = ${JSON.stringify(FIRST.lang)}; APP.srcLang = ${JSON.stringify(FIRST.srcLang)};
+         APP._skipEntryCard = false; APP._shown = null; true;`, 'ch1');
+  const first = C.run(`_enterViaSummaryCard(0)`);
+  assert.strictEqual(first, true, 'the FIRST chapter still opens the entry card');
+  console.log('  entry card is chapter one only; later chapters use the starter card');
+}
+
+
+
+// ── 7. v77_q (user): EVERY progress card renders the IDENTICAL header ──────
+// "They should all have the identical header, that itself looks identical to the storyline header."
+// Asserted on what the headers RENDER, not on the markup: four of the five carried the right ids
+// and still showed a different title, because each renderer overwrote _cardHeader's title
+// afterwards and dropped the storyline icon while the fraction matched. Markup parity is not
+// header parity.
+{
+  const C = finishFirstChapter();
+  C.run(`APP._unlNext = ${JSON.stringify(SECOND)}; true;`, 'target');
+  const seen = {};
+  for (const [pre, call] of [['comp', 'showComplete()'], ['sum', 'showStorySummary()'],
+                             ['unl', 'showNextChapterUnlocked()'], ['us', 'showStoryUnlocked()'],
+                             ['fin', 'showStoryFinished()']]) {
+    C.run(call + '; true;', pre);
+    seen[pre] = {
+      title: C.run(`document.getElementById('${pre}-hdr-title').textContent || ''`),
+      frac:  C.run(`document.getElementById('${pre}-hdr-prog-txt').textContent || ''`),
+      board: C.run(`(document.getElementById('${pre}-storyboard').children || []).length`),
+    };
+  }
+  // Non-vacuity: the reference header must actually say something, or "all equal" is trivially true.
+  assert.ok(seen.comp.title.length > 0 && seen.comp.frac.length > 0,
+    'the completion card header is populated (the reference every other card must match)');
+  for (const pre of ['sum', 'unl', 'us', 'fin']) {
+    assert.strictEqual(seen[pre].title, seen.comp.title, `${pre}: same storyline title as the card`);
+    assert.strictEqual(seen[pre].frac,  seen.comp.frac,  `${pre}: same storyline progress fraction`);
+    assert.strictEqual(seen[pre].board, seen.comp.board, `${pre}: same storyboard under the header`);
+  }
+  console.log(`  all five card headers identical: "${seen.comp.title}" ${seen.comp.frac}`);
+}
+
 console.log('unit-next-chapter-unlocked: ALL PASSED');

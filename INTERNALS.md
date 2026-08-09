@@ -75,6 +75,21 @@ would have moved trimming from our code (which keeps the current chapter whole) 
 (which cuts blindly and reports nothing). **Any change that makes a prompt bigger must size the
 context window in the same commit.**
 
+**OPEN DEFECT (`v77_s`) — `_firstUnfinishedLessonIdx` can return -1 with a lesson still unplayed.**
+User-reported: the story was unlocked, a comprehension lesson had never been played, and Next was
+greyed (pre-`v77_o`) / offered a replay. That state requires the helper to have returned -1, because
+`showComplete` tries the `nextLessonIdx >= 0` branch FIRST — whenever it returns a lesson, that
+lesson is what Next starts.
+
+**Prime suspect, first line of the helper: `if (setComplete(d)) return -1;`.** If the chapter reads
+COMPLETE, the helper stops looking, unplayed lessons and all. `setComplete`/`chapterComplete` will
+trust a cached `chapterDone` STAMP ahead of the flags — and `v77_s` found that stamp surviving a
+progress wipe, which is exactly how a chapter can read complete while its lessons are unplayed.
+**So the `v77_s` wipe fix may already have cured this**; it has not been confirmed against the
+user's data. If the symptom recurs, dump `APP.progress.chapterDone[topic]` alongside
+`countedLessons(d).length` before anything calls `chapterComplete` — that reader RE-STAMPS as a side
+effect, so inspect the stamp first or you will read a record your own check just wrote.
+
 **`showComplete` computes `_storyDone` ~60 lines BELOW its Next wiring (`v77_f`).** Reading it at
 the Next branch is a temporal-dead-zone `ReferenceError` on every terminal card — the `v68.1` bug in
 the `v68.1` function. Both sites now call **`_storyAllChaptersDone(slCtx)`**, declared above

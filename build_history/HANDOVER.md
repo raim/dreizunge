@@ -1,4 +1,4 @@
-# HANDOVER — v77_p
+# HANDOVER — v77_w
 
 One page. Read `build_history/roadmap_v77.md` next for the queue and the session protocol, then
 `INTERNALS.md`, then `build_history/v77_session31_notes.md` for what session 31 found.
@@ -7,12 +7,12 @@ One page. Read `build_history/roadmap_v77.md` next for the queue and the session
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **188 checks, ALL PASSED** |
-| `node test/run.js --quick` | 164 |
+| `node test/run.js` | **191 checks, ALL PASSED** |
+| `node test/run.js --quick` | 167 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v77_p'`. Establish this before changing anything.
+`APP_VERSION = 'v77_w'`. Establish this before changing anything.
 
 **These numbers are the ones to trust.** Session 30's prompt said 170/149 and session 31's said
 182/158; each was right for the tree it was written against and stale by the time it was read.
@@ -25,6 +25,31 @@ backfill and the static build after its own data drop.
 **If `unit-static-freshness` fails, run `node build-static.js`.** Both are the guards working.
 
 ## What session 31 settled — §0b DONE, and §0c STARTED
+
+**`v77_v` shipped §0f** (the story is read aloud when it unlocks — muted stays muted, once per
+chapter, never interrupting speech in progress) and **`v77_u` shipped the APOSTROPHE fix**: 17
+vocabulary words across 13 chapters now match that never could, folded as Unicode machinery rather
+than a table.
+
+**`v77_t` shipped §0g's code half:** a repeated comprehension lesson asks only the questions not yet
+answered correctly, and Next restarts that lesson while any remain. **§0g's model-prompt change is
+still OWED BY THE USER** (needs a live model). Next up was agreed as the **apostrophe fix**
+(U+0027 vs U+2019) as a quick standalone release.
+
+**`v77_s` (user):** wiping progress now clears the **`chapterDone` stamp**, so chapters re-lock and
+the storyline bar empties — both of the user's first two notes were that one bug. Summaries moved
+into the standard read-aloud field. **⚠️ And a RETRACTION: `v77_p`'s below-mark re-ordering is
+unreachable while any lesson is unfinished** (`nextLessonIdx >= 0` is tried first), so it is not
+what fixes the reported replay. **Open: why `_firstUnfinishedLessonIdx` returns -1 while an unplayed
+comprehension lesson remains.** Prime suspect is its first line, `if (setComplete(d)) return -1;` —
+a chapter that reads COMPLETE stops the search, and `chapterComplete` trusts the cached
+`chapterDone` stamp that `v77_s` found surviving a wipe. **The `v77_s` fix may already have cured
+it**; the user is watching for a recurrence. Full note in INTERNALS §2.
+
+**`v77_q` (user):** the next-chapter card is now the STARTER for chapters 2..N (summary, header,
+storyboard, bars) and the entry card is chapter one only; and **all five progress cards render an
+identical header**, matching the storyline page, from one `_cardHeader(prefix)`. **Any new card page
+must call it** — markup parity is not header parity, as the first attempt proved.
 
 **`v77_p` (user):** Next opens UNPLAYED work before a coverage replay (it was sending learners into
 replays instead of the comprehension questions); the story PREVIEW panel is gone entirely (locked
@@ -132,39 +157,48 @@ Both `v76_card_gates.md` and roadmap §0c have been corrected in place.
    for two releases while `docs/` stayed broken. Assert against `docs/index.html` —
    `loadClient({ file })` drives it under the same harness.
 
-## Next session — in this order
+## Next session — START HERE
 
-**CONTINUE §0c — the walk, backwards from the card that exists.**
+### 1. The user has a batch of testing notes. Triage them FIRST.
 
-`v77_f` built the LAST page (story-finished). Build the rest against it:
+The user tested heavily across this session and has collected more notes than one session should
+swallow. **Do not start §0e/§3 or §0h before reading them.** Expect the same pattern this whole
+session followed: most items are small, several are the same bug seen from different angles, and one
+or two will turn out to be measurement artefacts rather than defects.
 
-1. **The summary card — the walk's FIRST page.** Story summary in the SOURCE language, progress
-   bars empty, shown before any question of that chapter.
-2. ✅ **ALL FIVE PAGES OF THE WALK NOW EXIST** (`v77_f`/`h`/`i`/`j`). The user ruled that the
-   story-unlocked page **sits beside** the progress card's panel, and a guard asserts the panel is
-   still shown. What is left in §0c is the spine's REACH, not its pages. ✅ **The rename is DONE (`v77_g`)** —
-   the preview panel is now `comp-story-panel`, so that name is free. Proven a pure rename: the
-   gate table diffs identical in every state cell.
-3. **The back/next spine joining them.** `comp-back` DOES NOT EXIST — it was deleted in `v71_k` and
-   `unit-card-consistency` asserts its absence deliberately. **Build it; do not revive that id**
-   without updating that guard. `showStoryFinished`/`finBackToCard` show the shape: handlers
-   assigned in JS (rule 22), destination resolved through the one shared target.
+What worked, and is worth repeating:
+- **Measure before believing the report OR the code.** Four of five findings in
+  `v76_card_gates.md` were seeding artefacts; two of the user's own notes turned out to be one bug
+  (`v77_s`); and one of my own fixes turned out to be unreachable dead code (`v77_p`, retracted in
+  `v77_s`). A browser symptom and its cause were rarely the same thing.
+- **Group before fixing.** "Bar fully green" and "wipe doesn't re-lock" looked like two items and
+  were one stale `chapterDone` stamp.
+- **Say so when a fix is unproven.** Two guards this session could not be made to discriminate;
+  both are labelled in-place rather than left to imply protection they do not give.
 
-✅ §0d and ruling 1 are DONE (`v77_l`). What remains: **§0e's ORDERING half** (vocabulary ordered as
-the words appear in the story — belongs with §3 and ONE shared matcher), the **apostrophe fix**
-(U+0027 vs U+2019, a plain defect, ships independently), and **§0h** (back/next on the QUESTION
-cards), which is its own session — it is a question-runner change touching `_speakAndAdvance`.
+### 2. One OPEN DEFECT the user is watching for
 
-**Tools built this session, use them:**
+`_firstUnfinishedLessonIdx` can return -1 with a lesson still unplayed — full note in INTERNALS §2,
+including the prime suspect and the debugging trap. **`v77_s` may already have cured it.** If the
+user reports it again, that note is the starting point.
+
+### 3. Then the remaining queue
+
+- **§0e's ordering half + §3 highlighting**, sharing ONE matcher. **Needs re-planning, not
+  implementing:** the roadmap records that the v75 plan was measured twice and is wrong. `v77_u`
+  already fixed the apostrophe half of that area.
+- **§0h — question navigation.** Its own session: `C.cur`, `check()`, per-run answer state, and
+  `_speakAndAdvance`, which today advances in one direction only.
+- Smaller, still open: §3b (the Android English voice), §5 (`_sbChapterTarget`), §6 (the
+  storyline-page TTS selector), and the RECOVERED items carried since v71.
+
+### 4. Standing tools built this session — use them
+
 - `_cardErrors()` — assert it is empty after any card render you add (`v77_b`).
-- `probe_gates_v77.js` — re-run and diff after every card change. It stayed identical across
-  `v77_b` and `v77_f`.
-- `v77_card_gates.md` — the corrected table. **Do not use `v76_card_gates.md`'s table.**
-
-**§0a's last section still applies.** Six of the eight files that assert on `showComplete`'s source
-text are untouched and still owed their behavioural replacement. `v77_f` did two of them:
-`unit-learner-nav` §3's pins were DELETED (a regex cannot express where Next goes) and
-`unit-story-unlocked-card` §7 was UPDATED because it was already behavioural. **Do not re-pin.**
+- `probe_gates_v77.js` — re-run and diff after every card change. Do NOT use
+  `v76_card_gates.md`'s table; `v77_card_gates.md` is the corrected one.
+- `_cardHeader(prefix)` — **every new card page must call it**, and must wear `.card-screen`.
+  Markup parity is not header parity (`v77_q`) and id parity is not width parity (`v77_n`).
 
 ## Owed by the user, not doable in a container
 

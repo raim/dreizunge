@@ -149,7 +149,14 @@ console.log('  loadSaved: learner auto-start, teacher keeps the page: OK');
   const sc = ext(html, 'showComplete');
   // Next: next lesson in chapter, else next chapter's first unfinished, else hidden.
   assert.ok(/compNext\.textContent = t\('complete\.next'\)/.test(sc), 'Next is a plain "Next"');
-  assert.ok(/startLesson\(nextLessonIdx\)/.test(sc), 'Next → next lesson in this chapter directly');
+  // v77_t (§0g): this pinned `startLesson(nextLessonIdx)`. Next still starts a lesson in this
+  // chapter directly, but the TARGET is now chosen: if the lesson just played is a comprehension
+  // or error-hunt lesson with questions still unanswered, Next restarts THAT one instead of walking
+  // on — otherwise the questions the learner just got wrong sink out of reach. Per §0a the pin is
+  // not re-pointed at the new variable name; the behaviour is asserted by clicking in
+  // `unit-comprehension-repeat` §4 and §5. What remains here is structural.
+  assert.ok(/startLesson\(/.test(sc), 'Next starts a lesson in this chapter directly');
+  assert.ok(/nextLessonIdx/.test(sc), 'resolved from the next unfinished lesson in this chapter');
   // v77_i: the `loadSaved(...)` call moved OUT of showComplete and into the
   // next-chapter-unlocked card (§0c's fourth page) — Next now names what the learner earned before
   // carrying them into it. Same destination, one page in between. The old pin matched that call

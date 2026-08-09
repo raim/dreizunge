@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v77_p';
+const APP_VERSION  = 'v77_w';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -5367,19 +5367,19 @@ async function _runBookJob(bookId, chunks, base) {
       const chapterIds = bj.chapters.map(c => c.topicId).filter(Boolean);
       if (chapterIds.length) await _titleStorylinePostPass(chapterIds, base, bj);
     } catch (e) { console.warn(`  [book ${bookId}] title post-pass error: ${e.message}`); }
-    // Auto-QC the finished storyline (same as the user-triggered QC from the saved
-    // list), tagging items across all chapters. Best-effort; never fails the book.
-    try {
-      const qcTopics = bj.chapters.map(c => c.topicId).filter(Boolean)
-        .map(id => findSavedById(id)).filter(Boolean);
-      if (qcTopics.length) {
-        bj.status = 'qc';
-        // Lesson QC only here — story QC is deliberately NOT auto-run during book generation (it
-        // adds an LLM pass per chapter to an already-long job, unprompted). The user opts into
-        // story QC via the storyline 🔍 sweep, which defaults includeStory:true.
-        await _runQc(newJob(), qcTopics, { lessonIdx: null, onlyFlagged: false, includeStory: false });
-      }
-    } catch (e) { console.warn(`  [book ${bookId}] QC post-pass error: ${e.message}`); }
+    // v77_w (user): NO QC PASS during generation. Story QC was already excluded here — an LLM pass
+    // per chapter, unprompted, on an already-long job — and the user has now made the same call for
+    // LESSON QC, for the same reason: it is the slowest part of a book job and it is not urgent.
+    // QC loses nothing by being deferred; it is a review step, and everything it would have found
+    // is still there afterwards.
+    //
+    // Both remain available on demand and unchanged: the storyline 🔍 sweep (which defaults
+    // `includeStory: true`) and the per-chapter QC from the saved list. This removes the automatic
+    // invocation only — `_runQc` itself, its flagging, and the QC endpoints are untouched.
+    // To restore the old behaviour, re-add the bulk QC call here (lessonIdx null, onlyFlagged
+    // false, includeStory false). Its exact form is deliberately NOT spelled out: a test sweeps
+    // this file to prove the automatic call is gone, and a comment quoting it would fail the very
+    // check it documents.
     // Storyboard post-pass (v68.1, queued in the v68 notes): one whole-storyline board at the end
     // of every book/multi-chapter job — the same artefact the storyline 🎨 button makes, via the
     // same shared helper, so the deck opens with its board instead of an empty slot. Runs AFTER

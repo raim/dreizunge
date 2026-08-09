@@ -863,6 +863,132 @@ currently unguarded and is owed.**
 
 ---
 
+## `v77_q` — one card family
+
+**(a) One starter card per chapter.** The next-chapter-unlocked card now does the entry card's job
+for every chapter after the first: same header, same storyboard, the story SUMMARY, and the chapter
+progress bars (empty on a first visit, which is exactly what a starter should show). The entry card
+is confined to chapter one, so the learner never meets two competing starters. The planned "how the
+game works" collapsible belongs on both and should be written once, read twice.
+
+**(b) All five headers are identical, and that had to be MEASURED.** My first pass added the missing
+ids to the four newer cards, wired one `_cardHeader(prefix)`, and every markup check passed. Driving
+the five renderers showed the fraction and storyboard matching on all of them — and **four different
+titles**: each renderer still overwrote `_cardHeader`'s title afterwards and dropped the storyline
+icon. `🐰 Fibonaccis Hasen` on the completion card, `Fibonaccis Hasen` everywhere else.
+
+**Markup parity is not header parity**, and the guard now says so: it compares what the five headers
+RENDER — title, fraction, storyboard child count — against the completion card as reference, with a
+non-vacuity check that the reference is populated. Revert-verified by making one card write its own
+title again.
+
+That is the same lesson as `v77_n`'s: the header block had been copied faithfully for releases and
+still did not match, because the thing that differed was never in the markup.
+
+---
+
+## `v77_t` — §0g, the comprehension flow
+
+**(a) A repeat asks only what is left.** The filter reads the SOLVED store, which is monotonic and
+is the same signal `v71_s` uses to decide the lesson is done — so the round empties exactly when the
+lesson completes, and the filter cannot disagree with the done-rule. A first play still asks
+everything (asserted as the non-vacuity floor), and a fully-solved lesson falls back to the full set
+rather than rendering a blank round.
+
+**(b) Next restarts the lesson you just failed.** A wrong answer returns the learner to the card,
+where Next used to offer whatever `_firstUnfinishedLessonIdx` found next — often an earlier normal
+lesson — so the questions just got wrong sank out of reach and Replay was the only way back. Now, if
+the lesson just played is story-gated and still has unanswered questions, Next restarts it. Scoped
+to the lesson just played: "finish this", not a standing preference for gated lessons. §5 of the
+guard asserts the override releases once every question is answered, so it cannot trap anyone.
+
+**`_lessonQidUniverse` returns a SET**, like `_lessonItemUniverse`. My first version called `.some`
+on it; the `TypeError` was swallowed by the surrounding `try` and the override silently never fired
+— Next kept walking to lesson 0 and everything looked correct-but-unchanged. **Second time this
+session the same Set-not-Array trap cost a debugging round**, both times hidden by a `try/catch`.
+Worth a standing rule: the universe helpers return Sets; `Array.from` them at the boundary.
+
+---
+
+## `v77_u` — the apostrophe defect
+
+Vocabulary stores `l'evoluzione` with ASCII U+0027; stories are written with the typographic U+2019.
+Compared literally those are different strings, so a word EXACTLY present in the story never
+matched. Carried since v75 as "ship regardless of ruling 3", and it is a plain defect rather than a
+judgement about matching policy.
+
+Fixed as **Unicode machinery, not a table** — one character class folds the apostrophe code points,
+which is the same class of rule as the case-insensitivity the matcher already applied, so no
+language knowledge is added. The design principle is asserted structurally in the guard.
+
+**Both sides had to fold.** The regex alone would have made the word match while leaving it with the
+WEAK mark, because the two-tier `v74_n` display keys the solved set by the word's text. Fixing only
+the regex would have half-cured the defect in a way nobody would have noticed.
+
+**Measured on the shipped corpus: 17 words across 13 chapters** (`it` 5, `en` 6, `lb` 2) now match
+that never could. The guard re-measures it, so a regression shows up as a number rather than as
+silence. Inflection still misses under whitespace splitting — Tier 2, still open.
+
+## `v77_v` — §0f, the story reads itself when it unlocks
+
+The reading is the easy part; the restraints are the substance, and each protects something that has
+broken before:
+
+- **Muted means muted.** `speakBodyText` force-unmutes — it treats a tap as consent. Auto-play has
+  no tap and therefore no consent, so it goes to the speech layer directly rather than through that
+  function. Asserted that mute is still on afterwards, not just that nothing was said.
+- **Never on a review render** — re-opening a finished chapter is not the moment of unlocking.
+- **Once per chapter per session.** `showComplete` re-renders into the same DOM repeatedly; without
+  this every re-render would restart the reading.
+- **Never interrupts speech in progress.** `v75_h` made `cancel()` conditional for exactly these
+  races; the guard asserts auto-read neither speaks NOR cancels while something else is running.
+
+All four revert-verified separately. `v77_p` helps here too: `_showStory` now means a genuine
+unlock, so the reading cannot fire on a locked teaser.
+
+---
+
+## `v77_w` — no QC pass during generation (user)
+
+Story QC was already excluded from book generation, for a stated reason: an LLM pass per chapter,
+unprompted, on an already-long job. The user has now made the same call for LESSON QC, and the
+reasoning generalises cleanly — **QC is a REVIEW step, not a generation step.** Deferring it costs
+nothing, because everything it would flag is still there afterwards; running it inline costs the
+slowest part of every book job.
+
+Everything on-demand is untouched: the storyline 🔍 sweep (which still defaults
+`includeStory: true`), the per-chapter QC from the saved list, `_runQc` itself and `/api/qc`.
+
+Two guards changed, and both now assert the ABSENCE of the automatic pass **paired with positive
+assertions that QC still exists** — otherwise "generation runs no QC" would pass equally well if QC
+had been deleted outright, which is the failure mode of every absence-assertion.
+
+Session-29 rule 1 caught me a fourth time: the comment I wrote pointing at how to restore the old
+behaviour SPELLED the call the new guard sweeps for, and so failed the check it documented.
+
+---
+
+## Open defect carried forward — `_firstUnfinishedLessonIdx` returning -1
+
+The user's replay report is **not** explained by anything shipped. Recorded in INTERNALS §2 so the
+next session meets it where the code is, not only in a session note.
+
+Shape: `showComplete` tries `nextLessonIdx >= 0` FIRST, so whenever the helper returns a lesson,
+that lesson is what Next starts. The reported state — story unlocked, comprehension unplayed, Next
+greyed or offering a replay — therefore requires the helper to have returned -1.
+
+Prime suspect is its very first line, `if (setComplete(d)) return -1;`: a chapter that reads COMPLETE
+stops the search regardless of unplayed lessons. `setComplete`/`chapterComplete` trust the cached
+`chapterDone` STAMP ahead of the flags, and `v77_s` found that stamp surviving a progress wipe —
+which is precisely how a chapter reads complete while its lessons are unplayed. **The `v77_s` wipe
+fix may already have cured this.** Unconfirmed against the user's data; they are watching for it.
+
+Debugging note for whoever picks it up: inspect `APP.progress.chapterDone[topic]` BEFORE calling
+`chapterComplete`. That reader re-stamps as a side effect, so a check made after it reads a record
+the check itself just wrote — which is how a correct fix looked broken for one round in `v77_r`.
+
+---
+
 ## What §0c inherits
 
 - **`comp-back` must be built, not revived** (above). Check `unit-card-consistency` before choosing
@@ -899,3 +1025,45 @@ Everything in `HANDOVER.md` → "Owed by the user" carries forward untouched: th
 `v76_e` product judgement, the Android English voice, the pass mark, `--langnames`, the `sr`/`hr`
 native-speaker check of `cyrillic-sr`, the translate pass for `complete.words_solved` /
 `form.finish_mixed` / `form.script_pick`, and the comprehension QC checker.
+
+
+---
+
+# Session 31 — closing summary
+
+**`v77` → `v77_w`.** Baseline `182 / 158 / 0 / 0` → **`191 / 167 / 0 / 0`**. Twenty-one point
+releases, every one revert-verified and packaged with `docs/` rebuilt.
+
+## What was actually done
+
+- **§0b** (the assignment) — the seven swallowing catches made visible, and the coverage key-space
+  question settled.
+- **§0c** — the whole progress-card walk BUILT: summary, story-unlocked, next-chapter-unlocked,
+  story-finished, plus the navigation spine and one shared header.
+- **§0d** and **ruling 1** — the story leads; `v74_l`'s hide-list retired.
+- **§0f** — the story reads itself when it unlocks.
+- **§0g** — the comprehension repeat asks only what is left, and Next restarts the lesson you failed.
+- **The apostrophe defect** — carried since v75, 17 words across 13 chapters recovered.
+- **`v77_w`** — no QC pass during generation.
+
+## What this session was really about
+
+Measurement. Four of five findings in the "measured" `v76_card_gates.md` were seeding artefacts, and
+correcting them changed what §0c had to build (`comp-back` did not exist; the spine had to be built,
+not revived). A prediction made from the CORRECTED table — that retiring `v74_l` would change 8 of
+32 rows — then held exactly.
+
+The same discipline caught my own work repeatedly: **five of my own guards passed under their own
+revert**, each for a different reason, and each was fixed or labelled rather than left green. Two
+are still labelled as not discriminating; one of my fixes (`v77_p`) was retracted outright as
+unreachable dead code once the branch order was checked.
+
+**Recurring traps, all now written down:** the stub DOM auto-vivifies any id; the universe helpers
+return Sets, not arrays; `chapterComplete` re-stamps as a side effect; a comment must not spell a
+pattern a test sweeps for (that one caught me four times); and `build-static.js` re-implements
+client functions, so a client fix is not a published fix (three times).
+
+## Owed by the user
+
+Eleven `en`-only UI keys for the translate pass; the "how the game works" copy for the entry and
+starter cards; §0g's model-prompt change; and everything in HANDOVER → "Owed by the user".

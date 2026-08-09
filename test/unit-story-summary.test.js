@@ -66,7 +66,7 @@ const state = (C, id) => C.run(`(function(){ var e=document.getElementById(${JSO
     'the ← control is offered when the storyline has a summary');
   C.run(`document.getElementById('comp-prev').onclick(); true;`, 'prev');
   assert.strictEqual(C.run(`APP._shown`), 'summary-screen', '← opens the summary card');
-  const txt = C.run(`document.getElementById('sum-text').innerHTML || ''`);
+  const txt = C.run(`document.getElementById('sum-sumtext').innerHTML || ''`);
   assert.ok(txt.length > 0, 'the summary card is populated');
   // It is THIS storyline's summary, not some other text. Compared through the product's own
   // escaper, since the summary carries punctuation the card escapes.
@@ -174,5 +174,67 @@ const settle = () => new Promise(r => setTimeout(r, 50));
     'arriving from the next-chapter card does NOT stack a second interstitial');
   assert.strictEqual(C.run(`APP._started`), idx, 'it goes straight into the lesson');
   console.log('  no double interstitial after the next-chapter card');
-  console.log('unit-story-summary: ALL PASSED');
+  
 })().catch(e => { console.error(e); process.exit(1); });
+
+// ── 7. v77_r (user): the summary lives in the standard read-aloud FIELD ────
+// "Both the summary on the entry card and the presentation of unlocked chapter should embed their
+// text into our usual fields that have read-out buttons." Wherever there is body text on a card,
+// there must be a way to hear it — asserted as a working handler, not as a button that exists.
+{
+  const { C } = open(SL_WITH);
+  C.run(`document.getElementById('comp-prev').onclick(); true;`, 'prev');
+  assert.notStrictEqual(C.run(`document.getElementById('sum-sumbox').style.display`), 'none',
+    'the summary sits in the bordered field, like every other body text on a card');
+  assert.ok(C.run(`typeof document.getElementById('sum-sum-spk').onclick === 'function'`),
+    'and carries a working read-aloud button');
+  assert.ok((C.run(`document.getElementById('sum-sum-spk').title || ''`)).length > 0,
+    'with a label');
+  // The translate button appears ONLY when a translation exists — a dead button is worse than none.
+  const hasAlt = !!String(SL_WITH.summaryTranslation || SL_WITH.summaryTarget || '').trim();
+  assert.strictEqual(C.run(`document.getElementById('sum-sum-xlate').style.display`) !== 'none', hasAlt,
+    'the translate button appears exactly when there is a translation to show');
+  console.log('  summary is in the standard field, with read-aloud' + (hasAlt ? ' and translate' : ''));
+}
+
+// ── 8. v77_r (user-reported): wiping progress RE-LOCKS the chapters ────────
+// The wipe cleared `completed` and `solved` but not `chapterDone` — the cached completeness STAMP
+// that `chapterComplete` trusts ahead of the flags. So after a wipe every chapter still read
+// "finished": later chapters stayed unlocked and the storyline bar stayed fully green with nothing
+// played. Both symptoms, one cause.
+{
+  const topic = (SL_WITH.chapters || []).map(c => byId[c]).find(t => t && (t.lessons || []).length);
+  const { C } = open(SL_WITH);
+  C.run(`
+    APP.lessonData = ${JSON.stringify(topic)};
+    (function(){ var d = APP.lessonData, m = _solvedMap(d.topic);
+      var done = APP.progress.completed[d.topic] = {};
+      countedLessons(d).forEach(function(L){
+        try { _lessonItemUniverse(d.lessons.indexOf(L)).forEach(function(k){ m[k]=1; }); } catch(e){}
+        done[L.id] = { done:true, correct:4, total:4 }; });
+    })();
+    setComplete(APP.lessonData); true;`, 'play');
+  assert.strictEqual(C.run(`chapterComplete(APP.lessonData)`), true,
+    'non-vacuity: the chapter really is complete before the wipe');
+  assert.ok(C.run(`!!_chapterDoneMap()[APP.lessonData.topic]`),
+    'and a done-STAMP was written — the thing the wipe used to leave behind');
+  // Drive the PRODUCT's own wipe — re-typing what it does would test the copy, not the button
+  // (session-28 rule 1), and the whole defect was that the real one missed a store.
+  C.run(`
+    confirm = function(){ return true; };
+    _renderStorylineScreen = function(){};
+    APP._slScreen = { chainId: 'x', encodedChain: 'x', topics: [APP.lessonData.topic] };
+    _slBottomChapters = function(){ return { topics: [APP.lessonData.topic] }; };
+    slBottomClearProgress(); true;`, 'wipe');
+  // ORDER MATTERS: `chapterComplete` re-stamps as a side effect, so the stamp must be inspected
+  // BEFORE anything asks the question — otherwise the check reads a record it has just created
+  // itself. (That is exactly how the first version of this assertion failed against a correct fix.)
+  // This is the discriminating part: clearing `completed`/`solved` alone leaves a stale "finished"
+  // record behind for any later reader that trusts it.
+  assert.strictEqual(C.run(`!!(APP.progress.chapterDone && APP.progress.chapterDone[APP.lessonData.topic])`), false,
+    'the cached done-STAMP is cleared by the wipe, not left behind for the next reader');
+  assert.strictEqual(C.run(`chapterComplete(APP.lessonData)`), false,
+    'and the chapter is NOT complete afterwards — so the next chapter re-locks');
+}
+
+console.log('unit-story-summary: ALL PASSED');

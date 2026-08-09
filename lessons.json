@@ -2,6 +2,392 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_703242082",
+      "title": "Max und Ana im Park",
+      "icon": "🐕",
+      "chapters": [
+        "tp_17862850223960000178",
+        "tp_17862855350130000221"
+      ],
+      "lang": "sr",
+      "srcLang": "de",
+      "createdAt": "2026-08-09T14:22:10.916Z",
+      "updatedAt": "2026-08-09T16:11:27.384Z",
+      "tokenUsage": {
+        "totalPromptTokens": 1627,
+        "totalCompletionTokens": 1742,
+        "tokensByType": {
+          "retitle": 375,
+          "summary": 459,
+          "storyboard": 2535
+        }
+      },
+      "summary": "Ana stellt sich vor und trifft auf einen Jungen mit ihrem Hund Max im Park. Sie unterhalten sich über ihre Hobbys wie Lesen und Laufen, während Max mit seinem Ball spielt. Die Begegnung beginnt eine neue Freundschaft zwischen den beiden unter der Sonne.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 402,
+        "completionTokens": 57,
+        "ms": 78968,
+        "at": "2026-08-09T14:59:37.313Z"
+      },
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Ana und ihr Hund Max stehen im Park.</title><rect x=\"102\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"103\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"20\" r=\"15\" fill=\"#f2cc8f\"/><circle cx=\"30\" cy=\"70\" r=\"8\" fill=\"#8d6e63\"/><rect x=\"25\" y=\"60\" width=\"10\" height=\"20\" fill=\"#e5989b\"/><circle cx=\"30\" cy=\"55\" r=\"5\" fill=\"#faf7f0\"/><rect x=\"60\" y=\"65\" width=\"12\" height=\"15\" fill=\"#8d6e63\"/><circle cx=\"66\" cy=\"60\" r=\"4\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"1\"><title>Max rennt fröhlich durch das Gras.</title><rect x=\"284\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"285\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"80\" cy=\"20\" r=\"15\" fill=\"#f2cc8f\"/><polyline points=\"20,70 30,65 40,70 50,65\" fill=\"none\" stroke=\"#8d6e63\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"45\" y=\"60\" width=\"10\" height=\"15\" fill=\"#8d6e63\"/><circle cx=\"50\" cy=\"55\" r=\"5\" fill=\"#2b2b2b\"/><line x1=\"45\" y1=\"65\" x2=\"35\" y2=\"75\" stroke=\"#8d6e63\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"55\" y1=\"65\" x2=\"65\" y2=\"75\" stroke=\"#8d6e63\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"2\"><title>Ana liest ein Buch unter dem Baum.</title><rect x=\"466\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"467\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"20\" cy=\"30\" r=\"25\" fill=\"#81b29a\"/><rect x=\"18\" y=\"50\" width=\"4\" height=\"30\" fill=\"#8d6e63\"/><rect x=\"70\" y=\"65\" width=\"12\" height=\"15\" fill=\"#e5989b\"/><circle cx=\"76\" cy=\"60\" r=\"5\" fill=\"#faf7f0\"/><rect x=\"72\" y=\"68\" width=\"8\" height=\"10\" fill=\"#ffffff\"/><line x1=\"74\" y1=\"70\" x2=\"78\" y2=\"70\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/><line x1=\"74\" y1=\"73\" x2=\"78\" y2=\"73\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"2\"><title>Max spielt mit einem roten Ball.</title><rect x=\"648\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"649\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"75\" r=\"8\" fill=\"#e07a5f\"/><rect x=\"30\" y=\"60\" width=\"12\" height=\"15\" fill=\"#8d6e63\"/><circle cx=\"36\" cy=\"55\" r=\"5\" fill=\"#2b2b2b\"/><line x1=\"30\" y1=\"65\" x2=\"20\" y2=\"75\" stroke=\"#8d6e63\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"65\" x2=\"50\" y2=\"75\" stroke=\"#8d6e63\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"2\"><title>Alle sind glücklich im sonnigen Park.</title><rect x=\"830\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"831\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"20\" r=\"18\" fill=\"#f2cc8f\"/><rect x=\"20\" y=\"65\" width=\"10\" height=\"15\" fill=\"#e5989b\"/><circle cx=\"25\" cy=\"60\" r=\"4\" fill=\"#faf7f0\"/><rect x=\"70\" y=\"65\" width=\"10\" height=\"15\" fill=\"#8d6e63\"/><circle cx=\"75\" cy=\"60\" r=\"4\" fill=\"#2b2b2b\"/><circle cx=\"50\" cy=\"75\" r=\"6\" fill=\"#e07a5f\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 5,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 869,
+        "completionTokens": 1666,
+        "ms": 690234,
+        "at": "2026-08-09T16:11:27.383Z",
+        "storyStyle": "children"
+      },
+      "storyboardPanels": [
+        {
+          "caption": "Ana und ihr Hund Max stehen im Park.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 20,
+              "r": 15,
+              "fill": "sun"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 70,
+              "r": 8,
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 25,
+              "y": 60,
+              "w": 10,
+              "h": 20,
+              "fill": "rose"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 55,
+              "r": 5,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 60,
+              "y": 65,
+              "w": 12,
+              "h": 15,
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 66,
+              "cy": 60,
+              "r": 4,
+              "fill": "ink"
+            }
+          ]
+        },
+        {
+          "caption": "Max rennt fröhlich durch das Gras.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 80,
+              "cy": 20,
+              "r": 15,
+              "fill": "sun"
+            },
+            {
+              "type": "polyline",
+              "points": [
+                [
+                  20,
+                  70
+                ],
+                [
+                  30,
+                  65
+                ],
+                [
+                  40,
+                  70
+                ],
+                [
+                  50,
+                  65
+                ]
+              ],
+              "stroke": "earth",
+              "sw": 2
+            },
+            {
+              "type": "rect",
+              "x": 45,
+              "y": 60,
+              "w": 10,
+              "h": 15,
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 55,
+              "r": 5,
+              "fill": "ink"
+            },
+            {
+              "type": "line",
+              "x1": 45,
+              "y1": 65,
+              "x2": 35,
+              "y2": 75,
+              "stroke": "earth",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 55,
+              "y1": 65,
+              "x2": 65,
+              "y2": 75,
+              "stroke": "earth",
+              "sw": 2
+            }
+          ]
+        },
+        {
+          "caption": "Ana liest ein Buch unter dem Baum.",
+          "chapter": 2,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 20,
+              "cy": 30,
+              "r": 25,
+              "fill": "leaf"
+            },
+            {
+              "type": "rect",
+              "x": 18,
+              "y": 50,
+              "w": 4,
+              "h": 30,
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 70,
+              "y": 65,
+              "w": 12,
+              "h": 15,
+              "fill": "rose"
+            },
+            {
+              "type": "circle",
+              "cx": 76,
+              "cy": 60,
+              "r": 5,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 72,
+              "y": 68,
+              "w": 8,
+              "h": 10,
+              "fill": "white"
+            },
+            {
+              "type": "line",
+              "x1": 74,
+              "y1": 70,
+              "x2": 78,
+              "y2": 70,
+              "stroke": "ink",
+              "sw": 1
+            },
+            {
+              "type": "line",
+              "x1": 74,
+              "y1": 73,
+              "x2": 78,
+              "y2": 73,
+              "stroke": "ink",
+              "sw": 1
+            }
+          ]
+        },
+        {
+          "caption": "Max spielt mit einem roten Ball.",
+          "chapter": 2,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 75,
+              "r": 8,
+              "fill": "accent"
+            },
+            {
+              "type": "rect",
+              "x": 30,
+              "y": 60,
+              "w": 12,
+              "h": 15,
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 36,
+              "cy": 55,
+              "r": 5,
+              "fill": "ink"
+            },
+            {
+              "type": "line",
+              "x1": 30,
+              "y1": 65,
+              "x2": 20,
+              "y2": 75,
+              "stroke": "earth",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 42,
+              "y1": 65,
+              "x2": 50,
+              "y2": 75,
+              "stroke": "earth",
+              "sw": 2
+            }
+          ]
+        },
+        {
+          "caption": "Alle sind glücklich im sonnigen Park.",
+          "chapter": 2,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 20,
+              "r": 18,
+              "fill": "sun"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 65,
+              "w": 10,
+              "h": 15,
+              "fill": "rose"
+            },
+            {
+              "type": "circle",
+              "cx": 25,
+              "cy": 60,
+              "r": 4,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 70,
+              "y": 65,
+              "w": 10,
+              "h": 15,
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 75,
+              "cy": 60,
+              "r": 4,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 75,
+              "r": 6,
+              "fill": "accent"
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
+    },
+    {
+      "id": "sl_1324249577",
+      "title": "begruessung und sich vorstellen, in einf — 1",
+      "icon": "📖",
+      "chapters": [
+        "tp_17862841966150000039"
+      ],
+      "lang": "sr",
+      "srcLang": "de",
+      "createdAt": "2026-08-09T14:09:50.064Z",
+      "updatedAt": "2026-08-09T14:09:50.064Z"
+    },
+    {
       "id": "sl_9302163",
       "title": "Shadows of Marakana",
       "icon": "🏟️",
@@ -7219,6 +7605,1049 @@
   ],
   "topics": [
     {
+      "id": "tp_17862855350130000221",
+      "topic": "Parkfreundschaft",
+      "topicEmoji": "🌳",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "sr",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Max je odmah skočio na tebe. Njegove šape su bile prljave od blata. Hteo je da ti pokaže svoju lopticu. Ti si se nasmejao. Ana je rekla da si dobar momak. Sada ste svi u parku. Sunce greje. Max trči za pticom. Ti gledaš Anu. Ona čita knjigu pod drvetom. Sve je lepo. Prijateljstvo počinje ovde.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Serbian language teacher. Write a short story directly in Serbian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian. Writing style: Simple vocabulary, playful tone, short sentences. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nPozdrav! Zovem se Ana. Ja sam iz Beograda. Ovo je moj pas. On se zove Max. Max je smeđ i veoma sladak. On voli da trči u parku. Ja volim da čitam knjige. Hvala ti što si me upoznao. Da li imaš ljubimca? Nadam se da ćemo biti dobri prijatelji. Srećan dan!\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 311,
+        "completionTokens": 108,
+        "ms": 130435,
+        "at": "2026-08-09T14:24:21.450Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 166,
+        "completionTokens": 91,
+        "ms": 73562,
+        "at": "2026-08-09T14:25:35.013Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Max ist sofort auf dich zugeprescht. Seine Pfoten waren von Schlamm schmutzig. Er wollte dir seinen Ball zeigen. Du hast gelacht. Ana hat gesagt, dass du ein guter Jung bist. Jetzt seid ihr alle im Park. Die Sonne scheint. Max jagt einem Vogel hinterher. Du schaust Ana an. Sie liest unter dem Baum ein Buch. Alles ist schön. Die Freundschaft beginnt hier.",
+      "continuedFrom": "begruessen und sich vorstellen mit moegl — 1",
+      "continuedFromId": "tp_17862850223960000178",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Max und Ana im Park",
+          "desc": "Ein Tag im Park mit Max und Ana",
+          "icon": "🌳",
+          "vocab": [
+            {
+              "target": "skakati",
+              "source": "springen"
+            },
+            {
+              "target": "šapa",
+              "source": "die Pfote"
+            },
+            {
+              "target": "blato",
+              "source": "der Schlamm"
+            },
+            {
+              "target": "loptica",
+              "source": "der Ball"
+            },
+            {
+              "target": "smejati se",
+              "source": "lachen"
+            },
+            {
+              "target": "momak",
+              "source": "der Junge"
+            },
+            {
+              "target": "drvo",
+              "source": "der Baum"
+            },
+            {
+              "target": "prijateljstvo",
+              "source": "die Freundschaft"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Max je odmah skočio na tebe.",
+              "source": "Max ist sofort auf dich zugeprescht.",
+              "words": [
+                "Max",
+                "je",
+                "odmah",
+                "skočio",
+                "na",
+                "tebe."
+              ]
+            },
+            {
+              "target": "Njegove šape su bile prljave od blata.",
+              "source": "Seine Pfoten waren von Schlamm schmutzig.",
+              "words": [
+                "Njegove",
+                "šape",
+                "su",
+                "bile",
+                "prljave",
+                "od",
+                "blata."
+              ]
+            },
+            {
+              "target": "Ti si se nasmejao.",
+              "source": "Du hast gelacht.",
+              "words": [
+                "Ti",
+                "si",
+                "se",
+                "nasmejao."
+              ]
+            },
+            {
+              "target": "Ana je rekla da si dobar momak.",
+              "source": "Ana hat gesagt, dass du ein guter Junge bist.",
+              "words": [
+                "Ana",
+                "je",
+                "rekla",
+                "da",
+                "si",
+                "dobar",
+                "momak."
+              ],
+              "editedAt": "2026-08-09T15:46:41.151Z"
+            },
+            {
+              "target": "Sve je lepo.",
+              "source": "Alles ist schön.",
+              "words": [
+                "Sve",
+                "je",
+                "lepo."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 842,
+            "completionTokens": 343,
+            "ms": 346212,
+            "at": "2026-08-09T14:31:21.304Z"
+          },
+          "qcAt": "2026-08-09T15:58:36.320Z",
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": "ls_172111852",
+          "title": "Begrüßung und Vorstellung",
+          "desc": "Ein Tag im Park mit Max und Ana",
+          "icon": "👋",
+          "vocab": [
+            {
+              "target": "zdravo",
+              "source": "hallo"
+            },
+            {
+              "target": "pozdraviti se",
+              "source": "sich begrüßen"
+            },
+            {
+              "target": "predstaviti se",
+              "source": "sich vorstellen"
+            },
+            {
+              "target": "ime",
+              "source": "Name"
+            },
+            {
+              "target": "prijatelj",
+              "source": "Freund"
+            },
+            {
+              "target": "park",
+              "source": "Park"
+            },
+            {
+              "target": "sunce",
+              "source": "Sonne"
+            },
+            {
+              "target": "knjiga",
+              "source": "Buch"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Zdravo, ja sam Max.",
+              "source": "Hallo, ich bin Max.",
+              "words": [
+                "Zdravo,",
+                "ja",
+                "sam",
+                "Max."
+              ]
+            },
+            {
+              "target": "Predstavljamo se u parku.",
+              "source": "Wir stellen uns im Park vor.",
+              "words": [
+                "Predstavljamo",
+                "se",
+                "u",
+                "parku."
+              ]
+            },
+            {
+              "target": "Sunce greje danas.",
+              "source": "Die Sonne scheint heute.",
+              "words": [
+                "Sunce",
+                "greje",
+                "danas."
+              ]
+            },
+            {
+              "target": "Ana čita knjigu.",
+              "source": "Anna liest ein Buch.",
+              "words": [
+                "Ana",
+                "čita",
+                "knjigu."
+              ],
+              "editedAt": "2026-08-09T15:46:41.151Z"
+            },
+            {
+              "target": "Max je moj prijatelj.",
+              "source": "Max ist mein Freund.",
+              "words": [
+                "Max",
+                "je",
+                "moj",
+                "prijatelj."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 842,
+            "completionTokens": 343,
+            "ms": 346212,
+            "at": "2026-08-09T14:31:21.304Z"
+          }
+        },
+        {
+          "id": "ls_172112813",
+          "title": "Begrüßung und Max",
+          "desc": "Ein Tag im Park mit Max und Ana",
+          "icon": "🐶",
+          "vocab": [
+            {
+              "target": "smejati se",
+              "source": "lachen"
+            },
+            {
+              "target": "blato",
+              "source": "Schlamm"
+            },
+            {
+              "target": "lopta",
+              "source": "Ball"
+            },
+            {
+              "target": "drvo",
+              "source": "Baum"
+            },
+            {
+              "target": "sunce",
+              "source": "Sonne"
+            },
+            {
+              "target": "ptica",
+              "source": "Vogel"
+            },
+            {
+              "target": "dobar",
+              "source": "gut"
+            },
+            {
+              "target": "početi",
+              "source": "beginnen"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Max trči za pticom.",
+              "source": "Max läuft hinter dem Vogel her.",
+              "words": [
+                "Max",
+                "trči",
+                "za",
+                "pticom."
+              ]
+            },
+            {
+              "target": "Njegove šape su prljave od blata.",
+              "source": "Seine Pfoten sind schlammig.",
+              "words": [
+                "Njegove",
+                "šape",
+                "su",
+                "prljave",
+                "od",
+                "blata."
+              ]
+            },
+            {
+              "target": "Ana čita knjigu pod drvetom.",
+              "source": "Anna liest ein Buch unter dem Baum.",
+              "words": [
+                "Ana",
+                "čita",
+                "knjigu",
+                "pod",
+                "drvetom."
+              ]
+            },
+            {
+              "target": "Ti si dobar momak.",
+              "source": "Du bist ein guter Junge.",
+              "words": [
+                "Ti",
+                "si",
+                "dobar",
+                "momak."
+              ],
+              "editedAt": "2026-08-09T15:46:41.151Z"
+            },
+            {
+              "target": "Sve je lepo na suncu.",
+              "source": "Alles ist schön in der Sonne.",
+              "words": [
+                "Sve",
+                "je",
+                "lepo",
+                "na",
+                "suncu."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 842,
+            "completionTokens": 343,
+            "ms": 346212,
+            "at": "2026-08-09T14:31:21.304Z"
+          }
+        },
+        {
+          "id": 6,
+          "type": "synonyms",
+          "title": "Begrüßung und Vorstellung",
+          "desc": "Max trifft Ana im Park.",
+          "icon": "🐕",
+          "words": [
+            {
+              "base": "pozdraviti se",
+              "gloss": "sich begrüßen",
+              "sentence": "",
+              "synonyms": [],
+              "antonyms": [
+                {
+                  "w": "odvojiti se",
+                  "g": "sich trennen"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "pas",
+              "gloss": "Hund",
+              "sentence": "Ovo je moj pas.",
+              "synonyms": [
+                {
+                  "w": "pes",
+                  "g": "Hund"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "trčati",
+              "gloss": "laufen (rennen)",
+              "sentence": "",
+              "synonyms": [],
+              "antonyms": [
+                {
+                  "w": "stajati",
+                  "g": "stehen"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "prijatelj",
+              "gloss": "Freund",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "drug",
+                  "g": "Kamerad"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "neprijatelj",
+                  "g": "Feind"
+                }
+              ],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1265,
+            "completionTokens": 700,
+            "ms": 678597,
+            "at": "2026-08-09T14:53:38.812Z"
+          },
+          "_arcMode": "reinforce",
+          "qcAt": "2026-08-09T15:59:57.045Z",
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": "ls_1786289570949_c4zl",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
+        },
+        {
+          "id": "ls_1786288962027_1_comprehension",
+          "type": "comprehension",
+          "title": "Ana und Max",
+          "desc": "Verstehe die Geschichte von Ana, ihrem Hund Max und deinem ersten Treffen im Park.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Woher kommt Ana?",
+              "choices": [
+                "Aus Berlin",
+                "Aus Beograd",
+                "Aus Wien",
+                "Aus Prag"
+              ],
+              "correctIndex": 1,
+              "why": "Ana sagt im Text: 'Ja sam iz Beograda.'"
+            },
+            {
+              "q": "Was macht Ana im Park, während Max spielt?",
+              "choices": [
+                "Sie läuft mit Max.",
+                "Sie schläft auf der Bank.",
+                "Sie liest ein Buch unter einem Baum.",
+                "Sie sucht nach ihrer Brille."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text sagt: 'Ona čita knjigu pod drvetom.'"
+            },
+            {
+              "q": "Warum ist Max' Pfoten schmutzig?",
+              "choices": [
+                "Weil er im Wasser gebadet hat.",
+                "Weil er in den Schlamm gelaufen ist.",
+                "Weil er mit Farbe gespielt hat.",
+                "Weil er im Schnee gesprungen ist."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: 'Njegove šape su bile prljave od blata.'"
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 606,
+            "completionTokens": 349,
+            "ms": 294046,
+            "at": "2026-08-09T15:22:42.027Z"
+          },
+          "_recreated": true
+        }
+      ],
+      "generationStats": {
+        "totalMs": 550289,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 17012,
+        "totalCompletionTokens": 1038,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 346212,
+            "promptTokens": 842,
+            "completionTokens": 343
+          }
+        ],
+        "tokensByType": {
+          "recreate": 955,
+          "lesson_qc": 15234
+        }
+      },
+      "generatedAt": "2026-08-09T14:25:35.014Z",
+      "updatedAt": "2026-08-09T15:59:57.045Z",
+      "createdBy": "admin",
+      "coverageTarget": 0.6
+    },
+    {
+      "id": "tp_17862850223960000178",
+      "topic": "Anas Neue Freunde",
+      "topicEmoji": "🐕",
+      "userTopic": "begruessen und sich vorstellen mit moeglichst einfachem grundvokabular",
+      "userPrompt": "begruessen und sich vorstellen mit moeglichst einfachem grundvokabular",
+      "lang": "sr",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Pozdrav! Zovem se Ana. Ja sam iz Beograda. Ovo je moj pas. On se zove Max. Max je smeđ i veoma sladak. On voli da trči u parku. Ja volim da čitam knjige. Hvala ti što si me upoznao. Da li imaš ljubimca? Nadam se da ćemo biti dobri prijatelji. Srećan dan!",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Serbian language teacher. Write a short story directly in Serbian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian. Writing style: Simple vocabulary, playful tone, short sentences.\n\nWrite a story for the topic: \"begruessen und sich vorstellen mit moeglichst einfachem grundvokabular\". Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 146,
+        "completionTokens": 93,
+        "ms": 109855,
+        "at": "2026-08-09T14:15:50.740Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 151,
+        "completionTokens": 76,
+        "ms": 71655,
+        "at": "2026-08-09T14:17:02.395Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Hallo! Ich heiße Ana. Ich komme aus Belgrad. Das ist mein Hund. Er heißt Max. Max ist braun und sehr süß. Er liebt es, im Park zu laufen. Ich lese gerne Bücher. Danke, dass du mich kennengelernt hast. Hast du ein Haustier? Ich hoffe, wir werden gute Freunde. Einen schönen Tag!",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Vorstellung und Begrüßung",
+          "desc": "Einfache Sätze zur Selbstvorstellung auf Serbisch.",
+          "icon": "👋",
+          "vocab": [
+            {
+              "target": "pozdraviti se",
+              "source": "sich begrüßen"
+            },
+            {
+              "target": "zvati se",
+              "source": "heißen"
+            },
+            {
+              "target": "pas",
+              "source": "der Hund"
+            },
+            {
+              "target": "trčati",
+              "source": "laufen"
+            },
+            {
+              "target": "čitati",
+              "source": "lesen"
+            },
+            {
+              "target": "knjiga",
+              "source": "das Buch"
+            },
+            {
+              "target": "ljubimac",
+              "source": "das Haustier"
+            },
+            {
+              "target": "prijatelj",
+              "source": "der Freund"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Zovem se Ana.",
+              "source": "Ich heiße Ana.",
+              "words": [
+                "Zovem",
+                "se",
+                "Ana."
+              ]
+            },
+            {
+              "target": "Ja sam iz Beograda.",
+              "source": "Ich komme aus Belgrad.",
+              "words": [
+                "Ja",
+                "sam",
+                "iz",
+                "Beograda."
+              ]
+            },
+            {
+              "target": "Ovo je moj pas.",
+              "source": "Das ist mein Hund.",
+              "words": [
+                "Ovo",
+                "je",
+                "moj",
+                "pas."
+              ]
+            },
+            {
+              "target": "On se zove Max.",
+              "source": "Er heißt Max.",
+              "words": [
+                "On",
+                "se",
+                "zove",
+                "Max."
+              ]
+            },
+            {
+              "target": "Hvala ti što si me upoznao.",
+              "source": "Danke, dass du mich kennengelernt hast.",
+              "words": [
+                "Hvala",
+                "ti",
+                "što",
+                "si",
+                "me",
+                "upoznao."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 796,
+            "completionTokens": 325,
+            "ms": 308288,
+            "at": "2026-08-09T14:22:10.816Z"
+          }
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1786289439394",
+          "type": "word_forms",
+          "title": "Ana und Max",
+          "desc": "Wortschatz zu Ana und ihrem Hund",
+          "icon": "🐕",
+          "items": [
+            {
+              "sentence": "Ja sam iz Beograda. Ovo je moj ___.",
+              "translation": "Das ist mein Hund.",
+              "choices": [
+                "pas",
+                "pes",
+                "pasa"
+              ],
+              "correctIndex": 0,
+              "explanation": "Nominativ Singular maskulin"
+            },
+            {
+              "sentence": "Max je smeđ i veoma ___.",
+              "translation": "Max ist braun und sehr süß.",
+              "choices": [
+                "sladak",
+                "slađi",
+                "slatko"
+              ],
+              "correctIndex": 0,
+              "explanation": "Positiv adjektiva"
+            },
+            {
+              "sentence": "On voli da ___ u parku.",
+              "translation": "Er liebt es, im Park zu rennen.",
+              "choices": [
+                "trči",
+                "trčao",
+                "trčati"
+              ],
+              "correctIndex": 0,
+              "explanation": "Przítent Aktiv"
+            },
+            {
+              "sentence": "Ja volim da ___ knjige.",
+              "translation": "Ich liebe es, Bücher zu lesen.",
+              "choices": [
+                "čitam",
+                "čitao",
+                "čita"
+              ],
+              "correctIndex": 0,
+              "explanation": "Przítent Aktiv"
+            },
+            {
+              "sentence": "Nadam se da ćemo biti dobri ___.",
+              "translation": "Ich hoffe, dass wir gute Freunde sein werden.",
+              "choices": [
+                "prijatelji",
+                "prijatelj",
+                "prijateljima"
+              ],
+              "correctIndex": 0,
+              "explanation": "Plural wegen „mi“"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 979,
+            "completionTokens": 436,
+            "ms": 407339,
+            "at": "2026-08-09T15:30:39.394Z"
+          }
+        },
+        {
+          "id": "ls_1786289563846_dezb",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
+        },
+        {
+          "id": "ls_1786288667889_0_comprehension",
+          "type": "comprehension",
+          "title": "Anas Neue Freunde",
+          "desc": "Verstehe die Geschichte über Ana und ihren Hund Max?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Woher kommt Ana?",
+              "choices": [
+                "Aus Belgrad",
+                "Aus Zagreb",
+                "Aus Sarajevo",
+                "Aus Novi Sad"
+              ],
+              "correctIndex": 0,
+              "why": "Ana sagt im Text: 'Ja sam iz Beograda.'"
+            },
+            {
+              "q": "Was macht Ana gerne?",
+              "choices": [
+                "Sie liest Bücher",
+                "Sie läuft im Park",
+                "Sie spielt mit Max",
+                "Sie kocht Essen"
+              ],
+              "correctIndex": 0,
+              "why": "Ana sagt: 'Ja volim da čitam knjige.' Das Laufen im Park macht Max."
+            },
+            {
+              "q": "Welche Farbe hat Max?",
+              "choices": [
+                "Braun",
+                "Schwarz",
+                "Weiß",
+                "Grau"
+              ],
+              "correctIndex": 0,
+              "why": "Der Text beschreibt Max als 'smeđ', was braun bedeutet."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 491,
+            "completionTokens": 304,
+            "ms": 279178,
+            "at": "2026-08-09T15:17:47.889Z"
+          },
+          "_recreated": true
+        }
+      ],
+      "generationStats": {
+        "totalMs": 489931,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 7304,
+        "totalCompletionTokens": 1286,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 308287,
+            "promptTokens": 796,
+            "completionTokens": 325
+          }
+        ],
+        "tokensByType": {
+          "recreate": 795,
+          "add_lesson": 1415,
+          "lesson_qc": 4793
+        }
+      },
+      "generatedAt": "2026-08-09T14:17:02.396Z",
+      "updatedAt": "2026-08-09T15:54:27.149Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17862841966150000039",
+      "topic": "begruessung und sich vorstellen, in einf — 1",
+      "topicEmoji": "📖",
+      "userTopic": "begruessung und sich vorstellen, in einfacher sprache",
+      "userPrompt": "begruessung und sich vorstellen, in einfacher sprache",
+      "lang": "sr",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Pozdrav! Zovem se Ana. Ja sam iz Beograda. Volim da čitam knjige i da šetam u parku. Moj omiljeni hobi je kuvanje torti. Slobodno me pitaj bilo šta o meni. Drago mi je što smo se upoznali. Nadam se da ćemo postati dobri prijatelji. Hvala ti na pažnji.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Serbian language teacher. Write a short story directly in Serbian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian. Writing style: Simple vocabulary, playful tone, short sentences.\n\nWrite a story for the topic: \"begruessung und sich vorstellen, in einfacher sprache\". Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 140,
+        "completionTokens": 90,
+        "ms": 85692,
+        "at": "2026-08-09T14:02:12.509Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 148,
+        "completionTokens": 70,
+        "ms": 64105,
+        "at": "2026-08-09T14:03:16.614Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Hallo! Ich heiße Ana. Ich komme aus Belgrad. Ich lese gerne Bücher und gehe im Park spazieren. Mein Lieblingshobby ist das Backen von Torten. Frag mich gerne alles über mich. Es freut mich, dich kennengelernt zu haben. Ich hoffe, wir werden gute Freunde. Danke für deine Aufmerksamkeit.",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Sich vorstellen auf Serbisch",
+          "desc": "Einfache Begrüßung und Vorstellung",
+          "icon": "👋",
+          "vocab": [
+            {
+              "target": "zvat se",
+              "source": "heißen"
+            },
+            {
+              "target": "doći iz",
+              "source": "kommen aus"
+            },
+            {
+              "target": "čitati",
+              "source": "lesen"
+            },
+            {
+              "target": "šetati",
+              "source": "spazieren gehen"
+            },
+            {
+              "target": "hobi",
+              "source": "Hobby"
+            },
+            {
+              "target": "kuvati",
+              "source": "kochen"
+            },
+            {
+              "target": "prijatelj",
+              "source": "Freund"
+            },
+            {
+              "target": "hvala",
+              "source": "Danke"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Zovem se Ana.",
+              "source": "Ich heiße Ana.",
+              "words": [
+                "Zovem",
+                "se",
+                "Ana."
+              ]
+            },
+            {
+              "target": "Ja sam iz Beograda.",
+              "source": "Ich komme aus Belgrad.",
+              "words": [
+                "Ja",
+                "sam",
+                "iz",
+                "Beograda."
+              ]
+            },
+            {
+              "target": "Volim da čitam knjige.",
+              "source": "Ich lese gerne Bücher.",
+              "words": [
+                "Volim",
+                "da",
+                "čitam",
+                "knjige."
+              ]
+            },
+            {
+              "target": "Drago mi je što smo se upoznali.",
+              "source": "Es freut mich, dich kennengelerbt zu haben.",
+              "words": [
+                "Drago",
+                "mi",
+                "je",
+                "što",
+                "smo",
+                "se",
+                "upoznali."
+              ]
+            },
+            {
+              "target": "Hvala ti na pažnji.",
+              "source": "Danke für deine Aufmerksamkeit.",
+              "words": [
+                "Hvala",
+                "ti",
+                "na",
+                "pažnji."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 781,
+            "completionTokens": 299,
+            "ms": 393281,
+            "at": "2026-08-09T14:09:49.969Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 543152,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1069,
+        "totalCompletionTokens": 459,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 393279,
+            "promptTokens": 781,
+            "completionTokens": 299
+          }
+        ]
+      },
+      "generatedAt": "2026-08-09T14:03:16.615Z",
+      "updatedAt": "2026-08-09T14:09:49.970Z",
+      "createdBy": "admin"
+    },
+    {
       "id": "tp_17861968126590000089",
       "topic": "Alpine Roots",
       "topicEmoji": "🏔️",
@@ -7955,7 +9384,20 @@
                 "супружници",
                 "провели",
                 "детињство."
-              ]
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Where our spouses spent their childhood.",
+                  "field": "source",
+                  "at": "2026-08-09T14:59:15.521Z"
+                }
+              },
+              "qc": {
+                "sug": "Where our spouses spent their childhood.",
+                "field": "source",
+                "at": "2026-08-09T14:59:15.521Z",
+                "by": "translategemma:12b"
+              }
             },
             {
               "target": "Ваздух овде није мирисао на парфем и асфалт.",
@@ -7981,7 +9423,20 @@
                 "и",
                 "влажну",
                 "земљу."
-              ]
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "But on resin and damp earth.",
+                  "field": "source",
+                  "at": "2026-08-09T15:04:25.969Z"
+                }
+              },
+              "qc": {
+                "sug": "But on resin and damp earth.",
+                "field": "source",
+                "at": "2026-08-09T15:04:25.969Z",
+                "by": "translategemma:12b"
+              }
             }
           ],
           "_genMeta": {
@@ -8069,7 +9524,20 @@
                 "букве"
               ],
               "correctIndex": 0,
-              "explanation": "Locative singular 'in the noise'."
+              "explanation": "Locative singular 'in the noise'.",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "The correct option should be \"булевар\" (boulevard), not \"буци\" (noise), and the translation should be \"Arriving in the city boulevard, we smelled the grass.\"",
+                  "field": "note",
+                  "at": "2026-08-09T15:28:29.720Z"
+                }
+              },
+              "qc": {
+                "sug": "The correct option should be \"булевар\" (boulevard), not \"буци\" (noise), and the translation should be \"Arriving in the city boulevard, we smelled the grass.\"",
+                "field": "note",
+                "at": "2026-08-09T15:28:29.720Z",
+                "by": "translategemma:12b"
+              }
             }
           ],
           "_genMeta": {
@@ -8206,8 +9674,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 6332,
-        "totalCompletionTokens": 2247,
+        "totalPromptTokens": 12884,
+        "totalCompletionTokens": 2477,
         "lessons": [
           {
             "lessonNum": 1,
@@ -8217,12 +9685,42 @@
           }
         ],
         "tokensByType": {
-          "add_lesson": 5984
+          "add_lesson": 5984,
+          "lesson_qc": 6338,
+          "story_qc": 444
         }
       },
       "generatedAt": "2026-08-08T13:46:52.659Z",
-      "updatedAt": "2026-08-08T14:22:20.954Z",
-      "createdBy": "admin"
+      "updatedAt": "2026-08-09T15:33:46.705Z",
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-09T15:33:46.705Z",
+      "storyQcProposal": {
+        "corrected": "Žar je u Beču bio gušći od naših uspomena, pa smo побегли istočno, ka tirolskim planinama gde su naši supružnici proveli detinjstvo. Vazduh ovde nije mirisao na parfem i asfalt, već na smolu i vlažnu zemlju. Stojeći na drvenoj terasi stare kuće, gledali smo kako magla polako pokriva vrhove, dok su nam prsti nekad osetili miris trave koji je ostao zaboravljen u gradskom buku.",
+        "against": "Жар је у Бечу био гушћи од наших успомена, па смо побегли источно, ка тиролским планинама где су наши супружници провели детињство. Ваздух овде није мирисао на парфем и асфалт, већ на смолу и влажну земљу. Стојећи на дрвеној тераси старе куће, гледали смо како магла полако покрива врхове, док су нам прсти некад осетили мирис траве који је остао заборављен у градском буци.",
+        "verdict": "rewrite",
+        "rejected": true,
+        "changedSentences": 8,
+        "totalSentences": 8,
+        "changedRatio": 1,
+        "wordEditRatio": 0.984,
+        "meta": {
+          "type": "story_qc",
+          "model": "translategemma:12b",
+          "attempts": null,
+          "valid": 0,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 324,
+          "completionTokens": 120,
+          "ms": 316984,
+          "at": "2026-08-09T15:33:46.705Z",
+          "verdict": "rewrite",
+          "changedRatio": 1,
+          "wordEditRatio": 0.984
+        },
+        "at": "2026-08-09T15:33:46.705Z"
+      }
     },
     {
       "id": "tp_17861933955580000067",
@@ -8387,7 +9885,9 @@
             "completionTokens": 382,
             "ms": 241941,
             "at": "2026-08-08T12:53:57.560Z"
-          }
+          },
+          "qcAt": "2026-08-09T14:38:35.613Z",
+          "qcBy": "translategemma:12b"
         }
       ],
       "generationStats": {
@@ -8400,8 +9900,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1810,
-        "totalCompletionTokens": 755,
+        "totalPromptTokens": 7257,
+        "totalCompletionTokens": 950,
         "lessons": [
           {
             "lessonNum": 1,
@@ -8409,12 +9909,44 @@
             "promptTokens": 950,
             "completionTokens": 382
           }
-        ]
+        ],
+        "tokensByType": {
+          "lesson_qc": 5162,
+          "story_qc": 480
+        }
       },
       "generatedAt": "2026-08-08T12:49:55.558Z",
-      "updatedAt": "2026-08-08T12:53:57.561Z",
+      "updatedAt": "2026-08-09T14:43:43.017Z",
       "createdBy": "admin",
-      "script": "latin"
+      "script": "latin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-09T14:43:43.017Z",
+      "storyQcProposal": {
+        "corrected": "Da li je udobnost kupljena cena slobode? Danas se u Beču još uvek čuje taj hibridni jezik, ali ga prekriva šum uspeha. Miloš sada nosi skupocen sat, a njegovi stanovi su toliko veliki da ih ne može ni svi osvetliti istovremeno. Mi smo postali deo te tihe većine, onih koji su izgradili zidove između sebe i prošlosti, verujući da je stabilnost dovoljna nagrada za izgubljene granice. Da li smo zaista napredovali ili smo samo naučili da bolje sakrivamo prazninu iza prozora sa pogledom na Dunav?",
+        "against": "Da li je udobnost kupovna cena slobode? Danas se u Beču još uvek čuje taj hibridni jezik, ali ga prekriva šum uspeha. Miloš sada nosi skupocen sat, a njegovi stanovi su toliki da ih ne može ni svi osvetliti istovremeno. Mi smo postali deo te tihe većine, onih koji su izgradili zidove između sebe i prošlosti, verujući da je stabilnost dovoljna nagrada za izgubljene granice. Da li smo zaista napredovali ili smo samo naučili da bolje sakrivamo prazninu iza prozora sa pogledom na Dunav?",
+        "verdict": "corrected",
+        "rejected": false,
+        "changedSentences": 2,
+        "totalSentences": 9,
+        "changedRatio": 0.222,
+        "wordEditRatio": 0.036,
+        "meta": {
+          "type": "story_qc",
+          "model": "translategemma:12b",
+          "attempts": null,
+          "valid": 1,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 336,
+          "completionTokens": 144,
+          "ms": 307403,
+          "at": "2026-08-09T14:43:43.017Z",
+          "verdict": "corrected",
+          "changedRatio": 0.222,
+          "wordEditRatio": 0.036
+        },
+        "at": "2026-08-09T14:43:43.017Z"
+      }
     },
     {
       "id": "tp_17861711972020000186",
@@ -9990,13 +11522,13 @@
                 "translategemma:12b": {
                   "sug": "in dem widerhallen nur fremde Schritte.",
                   "field": "source",
-                  "at": "2026-08-08T15:59:41.566Z"
+                  "at": "2026-08-09T14:13:15.960Z"
                 }
               },
               "qc": {
                 "sug": "in dem widerhallen nur fremde Schritte.",
                 "field": "source",
-                "at": "2026-08-08T15:59:41.566Z",
+                "at": "2026-08-09T14:13:15.960Z",
                 "by": "translategemma:12b"
               }
             },
@@ -10029,13 +11561,13 @@
                 "translategemma:12b": {
                   "sug": "Angst ist die universelle Sprache aller Städte.",
                   "field": "source",
-                  "at": "2026-08-08T16:01:19.869Z"
+                  "at": "2026-08-09T14:15:39.033Z"
                 }
               },
               "qc": {
                 "sug": "Angst ist die universelle Sprache aller Städte.",
                 "field": "source",
-                "at": "2026-08-08T16:01:19.869Z",
+                "at": "2026-08-09T14:15:39.033Z",
                 "by": "translategemma:12b"
               }
             },
@@ -10054,13 +11586,13 @@
                 "translategemma:12b": {
                   "sug": "Jeder Stadt hat ihren eigenen Akzent.",
                   "field": "source",
-                  "at": "2026-08-08T16:02:00.932Z"
+                  "at": "2026-08-09T14:16:51.255Z"
                 }
               },
               "qc": {
                 "sug": "Jeder Stadt hat ihren eigenen Akzent.",
                 "field": "source",
-                "at": "2026-08-08T16:02:00.932Z",
+                "at": "2026-08-09T14:16:51.255Z",
                 "by": "translategemma:12b"
               }
             }
@@ -10501,8 +12033,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 13202,
-        "totalCompletionTokens": 1541,
+        "totalPromptTokens": 18128,
+        "totalCompletionTokens": 1607,
         "lessons": [
           {
             "lessonNum": 1,
@@ -10513,12 +12045,12 @@
         ],
         "tokensByType": {
           "add_lesson": 1689,
-          "lesson_qc": 9984,
+          "lesson_qc": 14976,
           "story_qc": 491
         }
       },
       "generatedAt": "2026-08-08T06:26:09.387Z",
-      "updatedAt": "2026-08-08T16:02:00.933Z",
+      "updatedAt": "2026-08-09T14:16:51.255Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-08T09:55:32.923Z",
@@ -10769,13 +12301,13 @@
                 "translategemma:12b": {
                   "sug": "The tank is going down the street.",
                   "field": "source",
-                  "at": "2026-08-08T15:51:36.773Z"
+                  "at": "2026-08-09T14:01:59.751Z"
                 }
               },
               "qc": {
                 "sug": "The tank is going down the street.",
                 "field": "source",
-                "at": "2026-08-08T15:51:36.773Z",
+                "at": "2026-08-09T14:01:59.751Z",
                 "by": "translategemma:12b"
               }
             },
@@ -11066,8 +12598,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 30429,
-        "totalCompletionTokens": 2687,
+        "totalPromptTokens": 35006,
+        "totalCompletionTokens": 2739,
         "lessons": [
           {
             "lessonNum": 1,
@@ -11077,13 +12609,13 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 25536,
+          "lesson_qc": 30165,
           "story_qc": 490,
           "recreate": 4951
         }
       },
       "generatedAt": "2026-08-07T13:23:54.994Z",
-      "updatedAt": "2026-08-08T15:53:19.471Z",
+      "updatedAt": "2026-08-09T14:05:51.713Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-07T21:35:35.008Z",
@@ -13473,13 +15005,13 @@
                 "translategemma:12b": {
                   "sug": "X is not a synonym of trava.",
                   "field": "note",
-                  "at": "2026-08-08T15:38:43.263Z"
+                  "at": "2026-08-09T13:45:15.381Z"
                 }
               },
               "qc": {
                 "sug": "X is not a synonym of trava.",
                 "field": "note",
-                "at": "2026-08-08T15:38:43.263Z",
+                "at": "2026-08-09T13:45:15.381Z",
                 "by": "translategemma:12b"
               }
             },
@@ -13650,13 +15182,13 @@
                 "translategemma:12b": {
                   "sug": "Players were freezing while they were running.",
                   "field": "source",
-                  "at": "2026-08-08T15:46:58.243Z"
+                  "at": "2026-08-09T13:55:25.345Z"
                 }
               },
               "qc": {
                 "sug": "Players were freezing while they were running.",
                 "field": "source",
-                "at": "2026-08-08T15:46:58.243Z",
+                "at": "2026-08-09T13:55:25.345Z",
                 "by": "translategemma:12b"
               }
             }
@@ -13748,8 +15280,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 27376,
-        "totalCompletionTokens": 2745,
+        "totalPromptTokens": 33198,
+        "totalCompletionTokens": 2814,
         "lessons": [
           {
             "lessonNum": 1,
@@ -13759,14 +15291,14 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 22492,
+          "lesson_qc": 28383,
           "story_qc": 451,
           "recreate": 4255,
           "add_lesson": 1217
         }
       },
       "generatedAt": "2026-08-07T12:41:36.188Z",
-      "updatedAt": "2026-08-08T15:46:58.244Z",
+      "updatedAt": "2026-08-09T13:55:25.346Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-07T20:55:52.810Z",

@@ -141,6 +141,9 @@ run('unit: story-finished card — the last page of the walk (v77_f)', 'node', [
 run('unit: story-summary card — the first page of the walk (v77_h)', 'node', [path.join(__dirname, 'unit-story-summary.test.js')]);
 run('unit: next-chapter-unlocked card (v77_i)', 'node', [path.join(__dirname, 'unit-next-chapter-unlocked.test.js')]);
 run('unit: story-unlocked page — the third page of the walk (v77_j)', 'node', [path.join(__dirname, 'unit-story-unlocked-page.test.js')]);
+run('unit: comprehension repeat asks only what is left (v77_t)', 'node', [path.join(__dirname, 'unit-comprehension-repeat.test.js')]);
+run('unit: apostrophe forms match in vocabulary highlighting (v77_u)', 'node', [path.join(__dirname, 'unit-apostrophe-match.test.js')]);
+run('unit: story is read aloud when it unlocks (v77_v)', 'node', [path.join(__dirname, 'unit-story-autoread.test.js')]);
 run('unit: round length not padded with repeats (v71_i)', 'node', [path.join(__dirname, 'unit-round-length.test.js')]);
 run('unit: model settings — tutor thinking, threads, reveal text (v71_q)', 'node', [path.join(__dirname, 'unit-model-settings.test.js')]);
 run('unit: add lessons — shared type picker, add not replace (v71_p)', 'node', [path.join(__dirname, 'unit-add-lessons.test.js')]);
