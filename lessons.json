@@ -27,26 +27,30 @@
     },
     {
       "id": "sl_703242082",
-      "title": "Max und Ana im Park",
-      "icon": "🐕",
+      "title": "Zwei Schriften, Ein Herz",
+      "icon": "📜",
       "chapters": [
         "tp_17862850223960000178",
-        "tp_17862855350130000221"
+        "tp_17862855350130000221",
+        "tp_17863620662290000045",
+        "tp_17863624043390000123",
+        "tp_17863670543560000092",
+        "tp_17863673658190000116"
       ],
       "lang": "sr",
       "srcLang": "de",
       "createdAt": "2026-08-09T14:22:10.916Z",
-      "updatedAt": "2026-08-09T16:11:27.384Z",
+      "updatedAt": "2026-08-10T13:25:14.523Z",
       "tokenUsage": {
-        "totalPromptTokens": 1627,
-        "totalCompletionTokens": 1742,
+        "totalPromptTokens": 5490,
+        "totalCompletionTokens": 2278,
         "tokensByType": {
-          "retitle": 375,
-          "summary": 459,
+          "retitle": 2744,
+          "summary": 2489,
           "storyboard": 2535
         }
       },
-      "summary": "Ana stellt sich vor und trifft auf einen Jungen mit ihrem Hund Max im Park. Sie unterhalten sich über ihre Hobbys wie Lesen und Laufen, während Max mit seinem Ball spielt. Die Begegnung beginnt eine neue Freundschaft zwischen den beiden unter der Sonne.",
+      "summary": "Ana und ihr Hund Max lernen sich im Park kennen, wo ihre Freundschaft durch gemeinsame Aktivitäten wie Laufen und Lesen entsteht. Zusammen unternehmen sie einen Spaziergang an der Donau, während sie von ihren gemeinsamen Träumen träumen, insbesondere von einer Reise nach Wien. Die Geschichte betont auch die Einzigartigkeit der serbischen Sprache, die in zwei Schriften geschrieben werden kann, was Ana und Max verbindet. Am Ende kehren sie bei einbrechender Dunkelheit nach Hause zurück, glücklich über ihre neue Verbindung.",
       "summaryMeta": {
         "type": "storyline_summary",
         "model": "qwen3.6:35b-a3b",
@@ -54,10 +58,10 @@
         "valid": 1,
         "rejected": 0,
         "rejectReasons": null,
-        "promptTokens": 402,
-        "completionTokens": 57,
-        "ms": 78968,
-        "at": "2026-08-09T14:59:37.313Z"
+        "promptTokens": 916,
+        "completionTokens": 107,
+        "ms": 105076,
+        "at": "2026-08-10T13:22:40.245Z"
       },
       "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Ana und ihr Hund Max stehen im Park.</title><rect x=\"102\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"103\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"20\" r=\"15\" fill=\"#f2cc8f\"/><circle cx=\"30\" cy=\"70\" r=\"8\" fill=\"#8d6e63\"/><rect x=\"25\" y=\"60\" width=\"10\" height=\"20\" fill=\"#e5989b\"/><circle cx=\"30\" cy=\"55\" r=\"5\" fill=\"#faf7f0\"/><rect x=\"60\" y=\"65\" width=\"12\" height=\"15\" fill=\"#8d6e63\"/><circle cx=\"66\" cy=\"60\" r=\"4\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"1\"><title>Max rennt fröhlich durch das Gras.</title><rect x=\"284\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"285\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"80\" cy=\"20\" r=\"15\" fill=\"#f2cc8f\"/><polyline points=\"20,70 30,65 40,70 50,65\" fill=\"none\" stroke=\"#8d6e63\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"45\" y=\"60\" width=\"10\" height=\"15\" fill=\"#8d6e63\"/><circle cx=\"50\" cy=\"55\" r=\"5\" fill=\"#2b2b2b\"/><line x1=\"45\" y1=\"65\" x2=\"35\" y2=\"75\" stroke=\"#8d6e63\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"55\" y1=\"65\" x2=\"65\" y2=\"75\" stroke=\"#8d6e63\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"2\"><title>Ana liest ein Buch unter dem Baum.</title><rect x=\"466\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"467\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"20\" cy=\"30\" r=\"25\" fill=\"#81b29a\"/><rect x=\"18\" y=\"50\" width=\"4\" height=\"30\" fill=\"#8d6e63\"/><rect x=\"70\" y=\"65\" width=\"12\" height=\"15\" fill=\"#e5989b\"/><circle cx=\"76\" cy=\"60\" r=\"5\" fill=\"#faf7f0\"/><rect x=\"72\" y=\"68\" width=\"8\" height=\"10\" fill=\"#ffffff\"/><line x1=\"74\" y1=\"70\" x2=\"78\" y2=\"70\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/><line x1=\"74\" y1=\"73\" x2=\"78\" y2=\"73\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"2\"><title>Max spielt mit einem roten Ball.</title><rect x=\"648\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"649\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"75\" r=\"8\" fill=\"#e07a5f\"/><rect x=\"30\" y=\"60\" width=\"12\" height=\"15\" fill=\"#8d6e63\"/><circle cx=\"36\" cy=\"55\" r=\"5\" fill=\"#2b2b2b\"/><line x1=\"30\" y1=\"65\" x2=\"20\" y2=\"75\" stroke=\"#8d6e63\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"65\" x2=\"50\" y2=\"75\" stroke=\"#8d6e63\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"2\"><title>Alle sind glücklich im sonnigen Park.</title><rect x=\"830\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"831\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"20\" r=\"18\" fill=\"#f2cc8f\"/><rect x=\"20\" y=\"65\" width=\"10\" height=\"15\" fill=\"#e5989b\"/><circle cx=\"25\" cy=\"60\" r=\"4\" fill=\"#faf7f0\"/><rect x=\"70\" y=\"65\" width=\"10\" height=\"15\" fill=\"#8d6e63\"/><circle cx=\"75\" cy=\"60\" r=\"4\" fill=\"#2b2b2b\"/><circle cx=\"50\" cy=\"75\" r=\"6\" fill=\"#e07a5f\"/></svg></g></svg>",
       "storyboardMeta": {
@@ -7617,6 +7621,1522 @@
   ],
   "topics": [
     {
+      "id": "tp_17863673658190000116",
+      "topic": "Rückweg unter Sternen",
+      "topicEmoji": "✨",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "sr",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Макс је узео Ананину руку. „Хајде кући“, рекао је тихо. Ноге су их носиле кроз хладан ваздух. Улица је била празна. Само су се чули њихови кораци. Ана је гледала у звезде. Биле су јасне и блиставе. Осмехнула се. Зна да ће сутра поново писати. Српски језик их везује. То је довољно.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Serbian (written in Cyrillic script) language teacher. Write a short story directly in Serbian (written in Cyrillic script) on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian (written in Cyrillic script). Write the ENTIRE text in Cyrillic script. Serbian is written in more than one script; use Cyrillic consistently for every word, including names, and do not mix scripts or add a transliteration. Writing style: Simple vocabulary, playful tone, short sentences. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nМакс се насмејао. „Видиш ли?“ показао је на натпис. „Два писма.“ Ана је кимнула. Српски је јединствен. Остали свет пише само једним путем. Ми имамо избор. То је наша тајна сила. Сунце је зашло. Било је тамно. Али смо били срећни.\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 369,
+        "completionTokens": 116,
+        "ms": 83141,
+        "at": "2026-08-10T13:08:42.321Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 175,
+        "completionTokens": 87,
+        "ms": 43497,
+        "at": "2026-08-10T13:09:25.818Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Max nahm Ananas Hand. „Lass uns nach Hause gehen“, sagte er leise. Ihre Beine trugen sie durch die kalte Luft. Die Straße war leer. Man hörte nur ihre Schritte. Ana blickte zu den Sternen. Sie waren klar und strahlend. Sie lächelte. Sie wusste, dass sie morgen wieder schreiben würde. Die serbische Sprache verbindet sie. Das ist genug.",
+      "continuedFrom": "Geheimnis der Sprache",
+      "continuedFromId": "tp_17863670543560000092",
+      "storyStyle": "children",
+      "script": "cyrillic-sr",
+      "lessons": [
+        {
+          "id": "intro_cyrillic-sr_1786367773934_9ll8",
+          "type": "intro_script",
+          "script": "cyrillic-sr",
+          "rtl": false,
+          "_arcMode": "extend",
+          "difficulty": 1,
+          "title": "🔡 Serbian Cyrillic",
+          "icon": "🔡",
+          "desc": "Serbian Cyrillic — 4 letters",
+          "letters": [
+            {
+              "ch": "Г",
+              "lower": "г",
+              "name": "ge",
+              "translit": "g",
+              "ipa": "ɡ"
+            },
+            {
+              "ch": "Љ",
+              "lower": "љ",
+              "name": "elj",
+              "translit": "lj",
+              "ipa": "ʎ"
+            },
+            {
+              "ch": "Њ",
+              "lower": "њ",
+              "name": "enj",
+              "translit": "nj",
+              "ipa": "ɲ"
+            },
+            {
+              "ch": "Ч",
+              "lower": "ч",
+              "name": "če",
+              "translit": "č",
+              "ipa": "tʃ"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "Г г",
+              "target": "g",
+              "correct": "g",
+              "choices": [
+                "j",
+                "dž",
+                "š",
+                "g"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "g (ge)",
+              "target": "Г г",
+              "correct": "Г г",
+              "choices": [
+                "Г г",
+                "Д д",
+                "Ћ ћ",
+                "У у"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Љ љ",
+              "target": "lj",
+              "correct": "lj",
+              "choices": [
+                "g",
+                "b",
+                "j",
+                "lj"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "lj (elj)",
+              "target": "Љ љ",
+              "correct": "Љ љ",
+              "choices": [
+                "Р р",
+                "Н н",
+                "Ж ж",
+                "Љ љ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Њ њ",
+              "target": "nj",
+              "correct": "nj",
+              "choices": [
+                "ž",
+                "đ",
+                "nj",
+                "u"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "nj (enj)",
+              "target": "Њ њ",
+              "correct": "Њ њ",
+              "choices": [
+                "Р р",
+                "Њ њ",
+                "Г г",
+                "У у"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Ч ч",
+              "target": "č",
+              "correct": "č",
+              "choices": [
+                "f",
+                "č",
+                "ž",
+                "t"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "č (če)",
+              "target": "Ч ч",
+              "correct": "Ч ч",
+              "choices": [
+                "А а",
+                "Ч ч",
+                "Ђ ђ",
+                "Ћ ћ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ч",
+              "pron": "č",
+              "correct": "Ч ч",
+              "choices": [
+                "Ј ј",
+                "Љ љ",
+                "Ч ч",
+                "Ж ж"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "љ",
+              "pron": "lj",
+              "correct": "Љ љ",
+              "choices": [
+                "Љ љ",
+                "Ф ф",
+                "К к",
+                "П п"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "г",
+              "pron": "g",
+              "correct": "Г г",
+              "choices": [
+                "Ш ш",
+                "М м",
+                "Г г",
+                "Л л"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "њ",
+              "pron": "nj",
+              "correct": "Њ њ",
+              "choices": [
+                "Џ џ",
+                "Ђ ђ",
+                "У у",
+                "Њ њ"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 12,
+            "at": "2026-08-10T13:16:13.934Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "Max und Ana gehen nach Hause",
+          "desc": "Ein Spaziergang unter den Sternen in Serbien",
+          "icon": "🌙",
+          "vocab": [
+            {
+              "target": "рука",
+              "source": "die Hand"
+            },
+            {
+              "target": "тихо",
+              "source": "leise"
+            },
+            {
+              "target": "хладан",
+              "source": "kalt"
+            },
+            {
+              "target": "улица",
+              "source": "die Straße"
+            },
+            {
+              "target": "празан",
+              "source": "leer"
+            },
+            {
+              "target": "корак",
+              "source": "der Schritt"
+            },
+            {
+              "target": "звезда",
+              "source": "der Stern"
+            },
+            {
+              "target": "осмехнути се",
+              "source": "lächeln"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Макс је узео Ананину руку.",
+              "source": "Max nahm Ananas Hand.",
+              "words": [
+                "Макс",
+                "је",
+                "узео",
+                "Ананину",
+                "руку."
+              ]
+            },
+            {
+              "target": "Ноге су их носиле кроз хладан ваздух.",
+              "source": "Ihre Beine trugen sie durch die kalte Luft.",
+              "words": [
+                "Ноге",
+                "су",
+                "их",
+                "носиле",
+                "кроз",
+                "хладан",
+                "ваздух."
+              ]
+            },
+            {
+              "target": "Улица је била празна.",
+              "source": "Die Straße war leer.",
+              "words": [
+                "Улица",
+                "је",
+                "била",
+                "празна."
+              ]
+            },
+            {
+              "target": "Ана је гледала у звезде.",
+              "source": "Ana blickte zu den Sternen.",
+              "words": [
+                "Ана",
+                "је",
+                "гледала",
+                "у",
+                "звезде."
+              ]
+            },
+            {
+              "target": "Осмехнула се.",
+              "source": "Sie lächelte.",
+              "words": [
+                "Осмехнула",
+                "се."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 909,
+            "completionTokens": 302,
+            "ms": 196022,
+            "at": "2026-08-10T13:12:41.890Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "Serbisch in zwei Schriften",
+          "desc": "Lernen Sie kyrillische und lateinische Buchstaben.",
+          "icon": "🔤",
+          "vocab": [
+            {
+              "target": "ћирилица",
+              "source": "Kyrillisch"
+            },
+            {
+              "target": "latinica",
+              "source": "Lateinisch"
+            },
+            {
+              "target": "слова",
+              "source": "Buchstaben"
+            },
+            {
+              "target": "писати",
+              "source": "schreiben"
+            },
+            {
+              "target": "читати",
+              "source": "lesen"
+            },
+            {
+              "target": "азбука",
+              "source": "Alphabet"
+            },
+            {
+              "target": "језик",
+              "source": "Sprache"
+            },
+            {
+              "target": "учити",
+              "source": "lernen"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Пишем ћирилицом.",
+              "source": "Ich schreibe Kyrillisch.",
+              "words": [
+                "Пишем",
+                "ћирилицом."
+              ]
+            },
+            {
+              "target": "Читајмо азбуку.",
+              "source": "Lass uns das Alphabet lesen.",
+              "words": [
+                "Читајмо",
+                "азбуку."
+              ]
+            },
+            {
+              "target": "Српска слова су лепа.",
+              "source": "Die serbischen Buchstaben sind schön.",
+              "words": [
+                "Српска",
+                "слова",
+                "су",
+                "лепа."
+              ]
+            },
+            {
+              "target": "Учим српски језик.",
+              "source": "Ich lerne die serbische Sprache.",
+              "words": [
+                "Учим",
+                "српски",
+                "језик."
+              ]
+            },
+            {
+              "target": "Пишем и читам.",
+              "source": "Ich schreibe und lese.",
+              "words": [
+                "Пишем",
+                "и",
+                "читам."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1016,
+            "completionTokens": 338,
+            "ms": 212042,
+            "at": "2026-08-10T13:16:13.933Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 322710,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1453,
+        "totalCompletionTokens": 505,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 196021,
+            "promptTokens": 909,
+            "completionTokens": 302
+          }
+        ]
+      },
+      "generatedAt": "2026-08-10T13:09:25.819Z",
+      "updatedAt": "2026-08-10T13:16:13.934Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17863670543560000092",
+      "topic": "Geheimnis der Sprache",
+      "topicEmoji": "🔤",
+      "userTopic": "serbisch kann man ja in 2 schriften schreiben, die meisten anderen sprachen nur in 1.",
+      "userPrompt": "serbisch kann man ja in 2 schriften schreiben, die meisten anderen sprachen nur in 1.",
+      "lang": "sr",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Макс се насмејао. „Видиш ли?“ показао је на натпис. „Два писма.“ Ана је кимнула. Српски је јединствен. Остали свет пише само једним путем. Ми имамо избор. То је наша тајна сила. Сунце је зашло. Било је тамно. Али смо били срећни.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Serbian (written in Cyrillic script) language teacher. Write a short story directly in Serbian (written in Cyrillic script) on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian (written in Cyrillic script). Write the ENTIRE text in Cyrillic script. Serbian is written in more than one script; use Cyrillic consistently for every word, including names, and do not mix scripts or add a transliteration. Writing style: Simple vocabulary, playful tone, short sentences. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nMax se vratio umoran, ali je i dalje bio pun energije. Ana je ponovo otvorila knjigu, ali nije čitala. Gledala je u reku. Sunce je bilo niže. Vazduh je postajao hladniji. Želeli smo da odemo u Beč. To je bila naša zajednička želja. Crno more je bilo samo san. Ali sada smo bili tu, uz Dunav. Bilo je tiho. Čuli smo samo zvuk vode.\n\nNew topic: \"serbisch kann man ja in 2 schriften schreiben, die meisten anderen sprachen nur in 1.\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 379,
+        "completionTokens": 90,
+        "ms": 57254,
+        "at": "2026-08-10T13:03:37.503Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 148,
+        "completionTokens": 72,
+        "ms": 36853,
+        "at": "2026-08-10T13:04:14.356Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Max lachte. „Siehst du?“ Er zeigte auf das Schild. „Zwei Briefe.“ Ana nickte. Serbisch ist einzigartig. Der Rest der Welt schreibt nur in einer Richtung. Wir haben die Wahl. Das ist unsere geheime Stärke. Die Sonne war untergegangen. Es war dunkel. Aber wir waren glücklich.",
+      "continuedFrom": "Träume von Wien",
+      "continuedFromId": "tp_17863624043390000123",
+      "storyStyle": "children",
+      "script": "cyrillic-sr",
+      "lessons": [
+        {
+          "id": "intro_cyrillic-sr_1786367239067_qko4",
+          "type": "intro_script",
+          "script": "cyrillic-sr",
+          "rtl": false,
+          "_arcMode": "extend",
+          "difficulty": 1,
+          "title": "🔡 Serbian Cyrillic",
+          "icon": "🔡",
+          "desc": "Serbian Cyrillic — 8 letters",
+          "letters": [
+            {
+              "ch": "З",
+              "lower": "з",
+              "name": "ze",
+              "translit": "z",
+              "ipa": "z"
+            },
+            {
+              "ch": "Л",
+              "lower": "л",
+              "name": "el",
+              "translit": "l",
+              "ipa": "l"
+            },
+            {
+              "ch": "М",
+              "lower": "м",
+              "name": "em",
+              "translit": "m",
+              "ipa": "m"
+            },
+            {
+              "ch": "Ш",
+              "lower": "ш",
+              "name": "ša",
+              "translit": "š",
+              "ipa": "ʃ"
+            },
+            {
+              "ch": "И",
+              "lower": "и",
+              "name": "i",
+              "translit": "i",
+              "ipa": "i"
+            },
+            {
+              "ch": "У",
+              "lower": "у",
+              "name": "u",
+              "translit": "u",
+              "ipa": "u"
+            },
+            {
+              "ch": "Р",
+              "lower": "р",
+              "name": "er",
+              "translit": "r",
+              "ipa": "r"
+            },
+            {
+              "ch": "О",
+              "lower": "о",
+              "name": "o",
+              "translit": "o",
+              "ipa": "o"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "З з",
+              "target": "z",
+              "correct": "z",
+              "choices": [
+                "ć",
+                "k",
+                "z",
+                "ž"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "z (ze)",
+              "target": "З з",
+              "correct": "З з",
+              "choices": [
+                "З з",
+                "Љ љ",
+                "Ћ ћ",
+                "Ј ј"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Л л",
+              "target": "l",
+              "correct": "l",
+              "choices": [
+                "dž",
+                "l",
+                "f",
+                "c"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "l (el)",
+              "target": "Л л",
+              "correct": "Л л",
+              "choices": [
+                "Ђ ђ",
+                "Л л",
+                "Т т",
+                "Д д"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "М м",
+              "target": "m",
+              "correct": "m",
+              "choices": [
+                "đ",
+                "m",
+                "č",
+                "t"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "m (em)",
+              "target": "М м",
+              "correct": "М м",
+              "choices": [
+                "М м",
+                "И и",
+                "Љ љ",
+                "Д д"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Ш ш",
+              "target": "š",
+              "correct": "š",
+              "choices": [
+                "š",
+                "ž",
+                "l",
+                "nj"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "š (ša)",
+              "target": "Ш ш",
+              "correct": "Ш ш",
+              "choices": [
+                "О о",
+                "Г г",
+                "Ш ш",
+                "А а"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "И и",
+              "target": "i",
+              "correct": "i",
+              "choices": [
+                "r",
+                "i",
+                "č",
+                "m"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "i",
+              "target": "И и",
+              "correct": "И и",
+              "choices": [
+                "Г г",
+                "И и",
+                "З з",
+                "М м"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "У у",
+              "target": "u",
+              "correct": "u",
+              "choices": [
+                "u",
+                "v",
+                "nj",
+                "p"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "u",
+              "target": "У у",
+              "correct": "У у",
+              "choices": [
+                "Ј ј",
+                "Л л",
+                "У у",
+                "П п"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Р р",
+              "target": "r",
+              "correct": "r",
+              "choices": [
+                "n",
+                "j",
+                "h",
+                "r"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "r (er)",
+              "target": "Р р",
+              "correct": "Р р",
+              "choices": [
+                "Ф ф",
+                "Њ њ",
+                "И и",
+                "Р р"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "О о",
+              "target": "o",
+              "correct": "o",
+              "choices": [
+                "o",
+                "i",
+                "h",
+                "s"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "o",
+              "target": "О о",
+              "correct": "О о",
+              "choices": [
+                "О о",
+                "Р р",
+                "Љ љ",
+                "Ј ј"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "р",
+              "pron": "r",
+              "correct": "Р р",
+              "choices": [
+                "Р р",
+                "Х х",
+                "П п",
+                "О о"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "и",
+              "pron": "i",
+              "correct": "И и",
+              "choices": [
+                "А а",
+                "И и",
+                "С с",
+                "Ц ц"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "у",
+              "pron": "u",
+              "correct": "У у",
+              "choices": [
+                "Р р",
+                "М м",
+                "У у",
+                "Т т"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "м",
+              "pron": "m",
+              "correct": "М м",
+              "choices": [
+                "Ђ ђ",
+                "Б б",
+                "Г г",
+                "М м"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ш",
+              "pron": "š",
+              "correct": "Ш ш",
+              "choices": [
+                "К к",
+                "Ђ ђ",
+                "Е е",
+                "Ш ш"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 21,
+            "at": "2026-08-10T13:07:19.067Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "Serbische Schrift und Einzigartigkeit",
+          "desc": "Lektion über die Besonderheiten der serbischen Sprache.",
+          "icon": "📝",
+          "vocab": [
+            {
+              "target": "насмехнути се",
+              "source": "lachen"
+            },
+            {
+              "target": "натпис",
+              "source": "das Schild"
+            },
+            {
+              "target": "писмо",
+              "source": "der Brief"
+            },
+            {
+              "target": "кимнути",
+              "source": "nicken"
+            },
+            {
+              "target": "јединствен",
+              "source": "einzigartig"
+            },
+            {
+              "target": "избор",
+              "source": "die Wahl"
+            },
+            {
+              "target": "тајна сила",
+              "source": "die geheime Stärke"
+            },
+            {
+              "target": "срећан",
+              "source": "glücklich"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Макс се насмејао.",
+              "source": "Max lachte.",
+              "words": [
+                "Макс",
+                "се",
+                "насмејао."
+              ]
+            },
+            {
+              "target": "Видиш ли?",
+              "source": "Siehst du?",
+              "words": [
+                "Видиш",
+                "ли?"
+              ]
+            },
+            {
+              "target": "Два писма.",
+              "source": "Zwei Briefe.",
+              "words": [
+                "Два",
+                "писма."
+              ]
+            },
+            {
+              "target": "Српски је јединствен.",
+              "source": "Serbisch ist einzigartig.",
+              "words": [
+                "Српски",
+                "је",
+                "јединствен."
+              ]
+            },
+            {
+              "target": "Али смо били срећни.",
+              "source": "Aber wir waren glücklich.",
+              "words": [
+                "Али",
+                "смо",
+                "били",
+                "срећни."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 854,
+            "completionTokens": 286,
+            "ms": 184637,
+            "at": "2026-08-10T13:07:19.061Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 278812,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1381,
+        "totalCompletionTokens": 448,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 184634,
+            "promptTokens": 854,
+            "completionTokens": 286
+          }
+        ]
+      },
+      "generatedAt": "2026-08-10T13:04:14.357Z",
+      "updatedAt": "2026-08-10T13:07:19.068Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17863624043390000123",
+      "topic": "Träume von Wien",
+      "topicEmoji": "🏰",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "sr",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Max se vratio umoran, ali je i dalje bio pun energije. Ana je ponovo otvorila knjigu, ali nije čitala. Gledala je u reku. Sunce je bilo niže. Vazduh je postajao hladniji. Želeli smo da odemo u Beč. To je bila naša zajednička želja. Crno more je bilo samo san. Ali sada smo bili tu, uz Dunav. Bilo je tiho. Čuli smo samo zvuk vode.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Serbian language teacher. Write a short story directly in Serbian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian. Writing style: Clear, factual, neutral tone — no narrative flourish. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nKrenuli smo šetali uz reku ka Dunavu. Max je trčao napred, povremeno se okrećući da vidi da li ga pratimo. Ana je zatvorila knjigu i pogledala u daljinu. Pričali smo o putovanjima. Želeli smo da odemo u Beč. Sanjali smo i o Crnom moru. Vazduh je bio svež. Sunce je lagano zalazilo. Bilo je mirno oko nas.\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 332,
+        "completionTokens": 113,
+        "ms": 79628,
+        "at": "2026-08-10T11:45:50.649Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 171,
+        "completionTokens": 95,
+        "ms": 53688,
+        "at": "2026-08-10T11:46:44.338Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Max kam erschöpft zurück, war aber immer noch voller Energie. Ana schlug das Buch erneut auf, las jedoch nicht. Sie starrte auf den Fluss. Die Sonne stand tiefer. Die Luft wurde kälter. Wir wollten nach Wien fahren. Das war unser gemeinsamer Wunsch. Das Schwarze Meer war nur ein Traum. Aber jetzt waren wir hier, am Donauufer. Es war still. Wir hörten nur das Rauschen des Wassers.",
+      "continuedFrom": "Spaziergang am Fluss",
+      "continuedFromId": "tp_17863620662290000045",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Max und Ana am Fluss",
+          "desc": "Eine ruhige Szene am Donauufer mit Max und Ana.",
+          "icon": "🌅",
+          "vocab": [
+            {
+              "target": "umoran",
+              "source": "erschöpft"
+            },
+            {
+              "target": "energija",
+              "source": "Energie"
+            },
+            {
+              "target": "knjiga",
+              "source": "Buch"
+            },
+            {
+              "target": "reka",
+              "source": "Fluss"
+            },
+            {
+              "target": "sunce",
+              "source": "Sonne"
+            },
+            {
+              "target": "vazduh",
+              "source": "Luft"
+            },
+            {
+              "target": "želja",
+              "source": "Wunsch"
+            },
+            {
+              "target": "san",
+              "source": "Traum"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Max se vratio umoran.",
+              "source": "Max kam erschöpft zurück.",
+              "words": [
+                "Max",
+                "se",
+                "vratio",
+                "umoran."
+              ]
+            },
+            {
+              "target": "Ana je ponovo otvorila knjigu.",
+              "source": "Ana schlug das Buch erneut auf.",
+              "words": [
+                "Ana",
+                "je",
+                "ponovo",
+                "otvorila",
+                "knjigu."
+              ]
+            },
+            {
+              "target": "Gledala je u reku.",
+              "source": "Sie starrte auf den Fluss.",
+              "words": [
+                "Gledala",
+                "je",
+                "u",
+                "reku."
+              ]
+            },
+            {
+              "target": "Vazduh je postajao hladniji.",
+              "source": "Die Luft wurde kälter.",
+              "words": [
+                "Vazduh",
+                "je",
+                "postajao",
+                "hladniji."
+              ]
+            },
+            {
+              "target": "Bilo je tiho.",
+              "source": "Es war still.",
+              "words": [
+                "Bilo",
+                "je",
+                "tiho."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 852,
+            "completionTokens": 298,
+            "ms": 168035,
+            "at": "2026-08-10T11:49:32.471Z"
+          }
+        },
+        {
+          "id": "ls_914234152",
+          "title": "Spaziergang an der Donau",
+          "desc": "Wörter und Sätze zum Flussspaziergang",
+          "icon": "🌊",
+          "vocab": [
+            {
+              "target": "Dunav",
+              "source": "die Donau"
+            },
+            {
+              "target": "tišina",
+              "source": "die Stille"
+            },
+            {
+              "target": "hladan",
+              "source": "kalt"
+            },
+            {
+              "target": "žudnja",
+              "source": "der Wunsch"
+            },
+            {
+              "target": "zajednički",
+              "source": "gemeinsam"
+            },
+            {
+              "target": "san",
+              "source": "der Traum"
+            },
+            {
+              "target": "šum",
+              "source": "das Geräusch"
+            },
+            {
+              "target": "miris",
+              "source": "der Geruch"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Dunav je tihi.",
+              "source": "Die Donau ist still.",
+              "words": [
+                "Dunav",
+                "je",
+                "tihi."
+              ]
+            },
+            {
+              "target": "Vazduh je hladan.",
+              "source": "Die Luft ist kalt.",
+              "words": [
+                "Vazduh",
+                "je",
+                "hladan."
+              ]
+            },
+            {
+              "target": "San o Beču je zajednički.",
+              "source": "Der Traum von Wien ist gemeinsam.",
+              "words": [
+                "San",
+                "o",
+                "Beču",
+                "je",
+                "zajednički."
+              ]
+            },
+            {
+              "target": "Čujemo šum vode.",
+              "source": "Wir hören das Geräusch des Wassers.",
+              "words": [
+                "Čujemo",
+                "šum",
+                "vode."
+              ]
+            },
+            {
+              "target": "Žudnja za putovanjem raste.",
+              "source": "Die Sehnsucht nach der Reise wächst.",
+              "words": [
+                "Žudnja",
+                "za",
+                "putovanjem",
+                "raste."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1002,
+            "completionTokens": 331,
+            "ms": 190709,
+            "at": "2026-08-10T11:52:43.181Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": 9,
+          "type": "comprehension",
+          "title": "Anas Tag im Park",
+          "desc": "Verstehe die Geschichte von Ana und Max.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist Max' Pfote schmutzig?",
+              "choices": [
+                "Weil er in der Küche war.",
+                "Weil er im Park gelaufen ist.",
+                "Weil er geschwommen ist.",
+                "Weil er im Bett geschlafen hat."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt, dass Max' Pfoten von Schlamm sind, weil er im Park läuft."
+            },
+            {
+              "q": "Was machen Ana und der Erzähler gemeinsam?",
+              "choices": [
+                "Sie essen zusammen.",
+                "Sie schwimmen im Fluss.",
+                "Sie träumen von Reisen.",
+                "Sie kaufen ein neues Auto."
+              ],
+              "correctIndex": 2,
+              "why": "Im Text steht, dass sie über Reisen sprechen und von Wien sowie dem Schwarzen Meer träumen."
+            },
+            {
+              "q": "Wie fühlt sich die Atmosphäre am Ende der Geschichte an?",
+              "choices": [
+                "Lärmig und chaotisch.",
+                "Kalt und traurig.",
+                "Ruhig und friedlich.",
+                "Angstvoll und dunkel."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text beschreibt die Luft als frisch, die Sonne als untergehend und sagt explizit 'Bilo je mirno' (Es war ruhig)."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 862,
+            "completionTokens": 376,
+            "ms": 181121,
+            "at": "2026-08-10T11:55:44.303Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 301451,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1355,
+        "totalCompletionTokens": 506,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 168034,
+            "promptTokens": 852,
+            "completionTokens": 298
+          }
+        ]
+      },
+      "generatedAt": "2026-08-10T11:46:44.339Z",
+      "updatedAt": "2026-08-10T11:55:44.312Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17863620662290000045",
+      "topic": "Spaziergang am Fluss",
+      "topicEmoji": "🌊",
+      "userTopic": "wir spazieren zur Donau und traeumen von Reisen nach Wien und ans Schwarze Meer.",
+      "userPrompt": "wir spazieren zur Donau und traeumen von Reisen nach Wien und ans Schwarze Meer.",
+      "lang": "sr",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Krenuli smo šetali uz reku ka Dunavu. Max je trčao napred, povremeno se okrećući da vidi da li ga pratimo. Ana je zatvorila knjigu i pogledala u daljinu. Pričali smo o putovanjima. Želeli smo da odemo u Beč. Sanjali smo i o Crnom moru. Vazduh je bio svež. Sunce je lagano zalazilo. Bilo je mirno oko nas.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Serbian language teacher. Write a short story directly in Serbian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian. Writing style: Clear, factual, neutral tone — no narrative flourish. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nMax je odmah skočio na tebe. Njegove šape su bile prljave od blata. Hteo je da ti pokaže svoju lopticu. Ti si se nasmejao. Ana je rekla da si dobar momak. Sada ste svi u parku. Sunce greje. Max trči za pticom. Ti gledaš Anu. Ona čita knjigu pod drvetom. Sve je lepo. Prijateljstvo počinje ovde.\n\nNew topic: \"wir spazieren zur Donau und traeumen von Reisen nach Wien und ans Schwarze Meer.\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 312,
+        "completionTokens": 112,
+        "ms": 61356,
+        "at": "2026-08-10T11:40:22.189Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 170,
+        "completionTokens": 93,
+        "ms": 44039,
+        "at": "2026-08-10T11:41:06.228Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Wir begannen, entlang des Flusses in Richtung Donau zu spazieren. Max rannte voraus und wandte sich gelegentlich um, um zu sehen, ob wir ihm folgen. Ana schloss ihr Buch und blickte in die Ferne. Wir sprachen über Reisen. Wir wollten nach Wien fahren. Wir träumten auch vom Schwarzen Meer. Die Luft war frisch. Die Sonne sank langsam unter. Es war ruhig um uns herum.",
+      "continuedFrom": "Parkbesuch beginnt",
+      "continuedFromId": "tp_17862855350130000221",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Spaziergang an der Donau",
+          "desc": "Ein Spaziergang am Fluss und Träume von Reisen.",
+          "icon": "🚶‍♂️",
+          "vocab": [
+            {
+              "target": "šetati",
+              "source": "spazieren"
+            },
+            {
+              "target": "reka",
+              "source": "der Fluss"
+            },
+            {
+              "target": "trčati",
+              "source": "rennen"
+            },
+            {
+              "target": "knjiga",
+              "source": "das Buch"
+            },
+            {
+              "target": "putovanje",
+              "source": "die Reise"
+            },
+            {
+              "target": "odeti",
+              "source": "fahren"
+            },
+            {
+              "target": "sanjati",
+              "source": "träumen"
+            },
+            {
+              "target": "vazduh",
+              "source": "die Luft"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Krenuli smo šetali uz reku.",
+              "source": "Wir begannen, entlang des Flusses zu spazieren.",
+              "words": [
+                "Krenuli",
+                "smo",
+                "šetali",
+                "uz",
+                "reku."
+              ]
+            },
+            {
+              "target": "Max je trčao napred.",
+              "source": "Max rannte voraus.",
+              "words": [
+                "Max",
+                "je",
+                "trčao",
+                "napred."
+              ]
+            },
+            {
+              "target": "Ana je zatvorila knjigu.",
+              "source": "Ana schloss ihr Buch.",
+              "words": [
+                "Ana",
+                "je",
+                "zatvorila",
+                "knjigu."
+              ]
+            },
+            {
+              "target": "Pričali smo o putovanjima.",
+              "source": "Wir sprachen über Reisen.",
+              "words": [
+                "Pričali",
+                "smo",
+                "o",
+                "putovanjima."
+              ]
+            },
+            {
+              "target": "Vazduh je bio svež.",
+              "source": "Die Luft war frisch.",
+              "words": [
+                "Vazduh",
+                "je",
+                "bio",
+                "svež."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 833,
+            "completionTokens": 373,
+            "ms": 204546,
+            "at": "2026-08-10T11:44:30.864Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 310032,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1315,
+        "totalCompletionTokens": 578,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 204545,
+            "promptTokens": 833,
+            "completionTokens": 373
+          }
+        ]
+      },
+      "generatedAt": "2026-08-10T11:41:06.230Z",
+      "updatedAt": "2026-08-10T11:44:30.865Z",
+      "createdBy": "admin"
+    },
+    {
       "id": "tp_17863000442000000196",
       "topic": "Učenje samo skripti",
       "topicEmoji": "📜",
@@ -7977,8 +9497,8 @@
     },
     {
       "id": "tp_17862855350130000221",
-      "topic": "Parkfreundschaft",
-      "topicEmoji": "🌳",
+      "topic": "Parkbesuch beginnt",
+      "topicEmoji": "☀️",
       "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
       "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
       "lang": "sr",
@@ -8702,7 +10222,7 @@
     },
     {
       "id": "tp_17862850223960000178",
-      "topic": "Anas Neue Freunde",
+      "topic": "Vorstellung und Max",
       "topicEmoji": "🐕",
       "userTopic": "begruessen und sich vorstellen mit moeglichst einfachem grundvokabular",
       "userPrompt": "begruessen und sich vorstellen mit moeglichst einfachem grundvokabular",

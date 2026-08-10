@@ -6263,6 +6263,12 @@ async function doGenerate(forceRegen){
       lang:APP.lang, srcLang:APP.srcLang, difficulty:APP.difficulty,
       lessonFormat:APP.lessonFormat||'standard',
       continuedFrom:(document.getElementById('continue-select')?.value||null) };
+    // v78_p (user-reported): the CHOSEN scripts must travel with a multi-chapter job. Without them
+    // the server has no script, so `sysStory` omits the `scriptNote` and the model writes `sr` in
+    // its default Latin — and then the script primer finds no Cyrillic letters IN THE TEXT and
+    // builds nothing. One omission, two symptoms: "the stories came out in latin script" and
+    // "script lessons were never made" are the same bug seen twice.
+    gbody.script = APP.script || null; gbody.srcScript = APP.srcScript || null;
     if(APP.storyStyle && APP.storyStyle!=='creative') gbody.storyStyle=APP.storyStyle;
     if(document.getElementById('gen-arc-cb')?.checked){ gbody.arc=true; gbody.arcTypes=readArcTypeChecks('gen-arc-types'); gbody.arcScript=!!document.getElementById('gen-arc-script-cb')?.checked; }
     try{

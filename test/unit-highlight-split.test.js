@@ -116,3 +116,32 @@ const marks = (html) => [...html.matchAll(/<mark class="story-vocab-hl( solved)?
 }
 
 console.log('unit-highlight-split: ALL PASSED');
+
+// ── v78_p (user) — matching is CASE-INSENSITIVE, including sentence-initially ──
+// User: "highlighting story text: do case-insensitive match, to e.g. catch words in the beginning
+// of a sentence."
+//
+// MEASURED ALREADY TRUE and left alone. The matcher's regex already carries `i` and `_hlKey` folds
+// case on both sides of the stronger-shade lookup. A corpus sweep of 120 chapters found only 8
+// single-token vocabulary entries present in a story but unmarked — all Arabic, none a case
+// problem. Closed by a guard rather than by a change, the same way "Replay must always be
+// available" was: an item that is already satisfied should be proved, not re-implemented.
+{
+  const cap = hl('Casa mia è bella.', ['casa']);
+  assert.ok(marks(cap).some(m => m.text === 'Casa'),
+    'a sentence-initial capital is matched by a lowercase vocabulary entry');
+  const low = hl('la casa mia', ['La Casa']);
+  assert.ok(marks(low).some(m => m.text.toLowerCase() === 'la casa'),
+    'and the reverse: a capitalised entry matches lowercase text');
+  // The stronger shade must fold case too, or a solved word would show as unlearned at the start
+  // of a sentence — the shading would be wrong precisely where the reading eye lands first.
+  const strong = hl('Casa mia è bella.', ['casa'], ['casa']);
+  assert.strictEqual(marks(strong).find(m => m.text === 'Casa').solved, true,
+    'the SOLVED shade folds case as well');
+  // Non-Latin scripts fold too — this matters for the sr Cyrillic work, where an entry and the
+  // story can disagree on case at every sentence start.
+  assert.ok(marks(hl('Кућа је лепа.', ['кућа'])).some(m => m.text === 'Кућа'),
+    'Cyrillic folds case as well');
+  assert.ok(marks(hl('Το σπίτι είναι όμορφο.', ['ΣΠΊΤΙ'])).length >= 1, 'Greek folds case too');
+  console.log('  matching folds case in Latin, Cyrillic and Greek, and in the solved shade');
+}

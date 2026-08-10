@@ -180,6 +180,7 @@ run('unit: chapter-level clear progress (v78_e)', 'node', [path.join(__dirname, 
 run('unit: teacher-mode switch on every page (v78_f)', 'node', [path.join(__dirname, 'unit-teacher-toggle.test.js')]);
 run('unit: story highlight — all word sources, two shades (v78_h)', 'node', [path.join(__dirname, 'unit-story-highlight-sources.test.js')]);
 run('unit: highlight splits multi-token entries (v78_k)', 'node', [path.join(__dirname, 'unit-highlight-split.test.js')]);
+run('unit: multi-chapter job carries the chosen script (v78_p)', 'node', [path.join(__dirname, 'unit-book-script.test.js')]);
 run('smoke: render paths execute (buildPath/storyline/complete/renderEx)', 'node', [path.join(__dirname, 'smoke-render.test.js')]);
 run('unit: beginner-mode exercise types (v69.2)', 'node', [path.join(__dirname, 'unit-beginner-types.test.js')]);
 run('unit: crossword layout engine (v70_c)', 'node', [path.join(__dirname, 'unit-crossword-layout.test.js')]);

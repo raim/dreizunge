@@ -1,6 +1,6 @@
-# HANDOVER — v78_n
+# HANDOVER — v78_p
 
-One page. Session 32 shipped **`v78_b`** … **`v78_n`** from the `v78` cut. **Read
+One page. Session 32 shipped **`v78_b`** … **`v78_p`** from the `v78` cut. **Read
 `build_history/roadmap_v78.md`** next for the queue and the session protocol, then `INTERNALS.md`,
 then `build_history/v78_session32_notes.md` (session 32) and `build_history/v77_session31_notes.md`.
 
@@ -8,12 +8,12 @@ then `build_history/v78_session32_notes.md` (session 32) and `build_history/v77_
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **203 checks, ALL PASSED** |
-| `node test/run.js --quick` | 179 |
+| `node test/run.js` | **204 checks, ALL PASSED** |
+| `node test/run.js --quick` | 180 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v78_n'`. Corpus: **309 topics, 87 storylines**. **33 languages** (Slovenian added in `v78_j`). Establish this before changing
+`APP_VERSION = 'v78_p'`. Corpus: **309 topics, 87 storylines**. **33 languages** (Slovenian added in `v78_j`). Establish this before changing
 anything.
 
 **These numbers are the ones to trust.** Session 30's prompt said 170/149, session 31's said
@@ -107,10 +107,23 @@ blocked on the user except two translation passes (`sl` has no `ui.json` block; 
 `languages.json` name cells — both faster now with `--batch` / `--threads`).
 
 **The next item is a DISCUSSION the user explicitly asked for, not an implementation:** the per-text
-learning scheme. **Do the coverage measurement first** — what share of a chapter's story TOKENS its
-lessons already teach. `v78_h` and `v78_k` both measured MARKS; neither measured COVERAGE, and they
-answer different questions. That number decides whether "exhaust the vocabulary of the input text"
-is a generation problem or a gap-filling problem.
+learning scheme. **Its prerequisite measurement is DONE — bring the numbers, do not re-derive them**
+(roadmap → "THE COVERAGE MEASUREMENT"; probes kept as `build_history/probe_coverage_v78n.js` and
+`probe_coverage_bands_v78n.js` with their results in the headers):
+
+| | |
+|---|---|
+| story tokens a chapter's lessons teach | **9.2%** |
+| distinct word types | **8.2%** (median chapter 13.2%, none above 50%) |
+| by frequency band | top-100 **9.0%** · top-500 **12.2%** · **rare 5.1%** |
+
+**It is a GENERATION problem, and a POLICY change as well as a volume one** — the rarest words are
+the LEAST covered, the opposite of "start with the hard/unusual words". "For a simple text go
+towards the basic words too" is not a separate mode either: the top-100 band is at 9%.
+
+**The one thing still unmeasured, and worth doing before any generator is sized:** what share of the
+uncovered types are INFLECTIONS of covered lemmas. That is the difference between "generate ten
+times as much" and "teach the forms of what is already taught" — two different products.
 
 **Buildable without discussion:** §0h question navigation — now the only queued implementation
 item, and it wants its own session (`C.cur`, `check()`, per-run answer state, and `_speakAndAdvance`,

@@ -32,6 +32,8 @@ both the documented guards doing their job:
 
 | release | what |
 |---|---|
+| `v78_p` | **(user-reported) A multi-chapter job dropped the chosen SCRIPT — one omission, two symptoms.** The user continued a `de → sr` storyline with 2 chapters, selected Serbian **Cyrillic**, and got Latin stories and no script lessons. Cause: the client's multi-chapter body (`gbody`) never set `script`/`srcScript`, and the server's book-route `userOpts` did not carry them either — so fixing one end alone would have moved the failure one hop. `generate()` reads `userOpts.script` for THREE things, which is why one missing field produced both complaints: the story prompt's `scriptNote` (v76_h) was omitted so the model wrote `sr` in its default Latin; the saved topic went unstamped; and the arc primer then ran `introExtendLetters('cyrillic-sr', <a Latin text>)`, found **no Cyrillic letters in the chapter**, and built nothing. **"Script lessons were never made" was not a second bug — it was a consequence of the first**, and diagnosing it as two would have produced two wrong fixes. `/api/generate` had always passed the scripts; only the book route did not, which is why `v78_g` missed it — its reproduction case was a single-chapter storyline. Both halves revert-verified independently. **Also, the case-insensitivity request was MEASURED ALREADY TRUE and closed with a guard rather than a change**: the matcher's regex carries `i` and `_hlKey` folds case on both sides, and a 120-chapter sweep found only 8 vocabulary entries present-but-unmarked, all Arabic and none a case problem. `unit-highlight-split` now asserts folding in Latin, Cyrillic and Greek and in the solved shade — sentence-initial capitals are exactly where the reading eye lands first. |
+| `v78_o` | **Measurement and documentation only — NO product change.** Given its own version rather than re-issuing `v78_n`'s zip with different contents, because two packages with one name is worse than an extra letter. Contains **THE COVERAGE MEASUREMENT** (roadmap section of that name; session-32 notes §22) and the two probes that produced it, kept in `build_history/` with their results in the headers so a later run has something to diff: `probe_coverage_v78n.js` and `probe_coverage_bands_v78n.js`. The finding, in one line: **a chapter's lessons teach 9.2% of its story's tokens and 8.2% of its distinct word types (median chapter 13.2%, none above 50%), and the RAREST words are the LEAST covered at 5.1%** — so the per-text learning scheme is a GENERATION problem *and* a POLICY change, not a top-up, and "for a simple text go towards the basic words too" is not a separate mode because the top-100 frequency band sits at 9% as well. Measured through the PRODUCT matcher (`_highlightVocabHtml` + `_storyWordSources`), never a re-implementation, and the frequency bands are derived by corpus statistics rather than a word list (INTERNALS §4). |
 | `v78_n` | **(user, §0d) The three remaining card items — two fixed, one measured already true.** (a) **The ✕ on a question card returns to the PROGRESS CARD of the lesson being played**, not the storyline deck. Quitting is a step back inside the chapter, and the card is the page that says what this lesson is and how far through it you are. Uses the REVIEW render, which records nothing — the round's partial score is already folded into `completed` by `confirmQuit` itself, and a play render would count it twice. `showComplete` gained an optional `lessonIdxOverride`, because review mode deliberately points at the LAST counted lesson (it exists for re-opening a finished chapter, where "which lesson" has no answer) and quitting has a very definite answer. Not for a drill — `endDrill()` has just restored the real topic — and it falls back to the old behaviour whenever the card cannot render, so ✕ always goes somewhere. (b) **The post-unlock bar shows on EVERY progress card of a chapter that has such lessons**, not only while one is blocking Next. It came from `_lessonGate`, set only when a story-gated lesson is both unfinished AND the one just played, so the learner saw "Verständnis 3/8" on one card and nothing on the next with no way to tell the work still existed — the user's screenshot exactly. One row per post lesson, labelled with the lesson's OWN TITLE (data, no new `ui.json` key, the same choice `v73_d` made), marked at 100 because a story-gated lesson must be fully solved. The gate row is no longer emitted separately: it is already among them, and two bars for one quantity is the `v74_g` mistake. (c) **"Replay must ALWAYS be available" was MEASURED ALREADY TRUE** and left alone — `v71_h` shows the button always and `repeatForCoverage` falls back to the current lesson when nothing is coverage-short, so 100% stays reachable. Asserted anyway (§5) so a future coverage change cannot quietly strand it. **Two more rule-18 signature pins retired on the way** (`unit-learner-nav`, `unit-card-errors` both pinned `function showComplete(review)` exactly) and one positional pin (`unit-coverage-threshold` read the %-solved bar as `rows[rows.length-1]`; it now finds it by LABEL — it had been passing on the chosen chapters rather than on the rule, since `v73_d`'s gate row could already append after it). **`probe_gates_v77.js` re-run and diffed against the `v78_l` baseline: the 16-row gate table is byte-identical.** |
 | `v78_l` | **(user) Replay targets the LEAST-COVERED lesson, not the first coverage-short one.** The user asked whether "replay lessons not yet seen" conflicts with the button's definition. **It does not** — Replay is `repeatForCoverage`, whose job is to raise COVERAGE, so a lesson at 100% is correctly skipped; but an unplayed lesson is not at 100%, it is at ZERO, so "prefer ones not yet seen" is the STRONGEST case of the rule already there, not a competing one. Only the ORDER was wrong: the scan returned the first short lesson in DOCUMENT order, and a comprehension lesson sits early and stays short (since `v77_t` a repeat asks only the questions still unanswered), so it won every scan and later unplayed lessons were never reached — exactly what the user saw. Now the minimum of `solved/total`. **A FRACTION, not a remaining count**: a 4-question lesson never played must outrank a 40-question one that is 90% done, though both have 4 left — §3 asserts that with the remainders deliberately equal, so only the rule can decide it. **Ties keep document order** (stable scan), so an evenly-covered chapter behaves exactly as before, which is what keeps this an ordering fix rather than a reshuffle. Revert-verified three ways: first-in-order fails §1; fewest-remaining fails §1; MOST-remaining passes §1 and §2 and fails §3, which is the only weakening that isolates the fraction rule. **`probe_gates_v77.js` re-run and diffed against the `v78_k` baseline — the 16-row gate table is byte-identical**, as the protocol requires after any progress-card change. |
 | `v78_k` | **§3 whitespace splitting — the last unshipped part of §3, ruled in sessions 29/30.** A multi-token vocabulary entry matched only as a whole phrase, so `la variazione genetica` marked nothing in a story containing just `variazione` — the commonest shape in the corpus, since vocabulary is stored with its article (181 of 1408 entries across 96 chapters carry a space). Each entry now contributes the whole phrase AND each token; longest-first ordering means **the phrase still wins wherever it is actually present**, so this only adds marks where the phrase could not reach. **Measured A/B on the current corpus, splitting off vs on: 761 → 1071 marks, +310, 41 of 96 chapters gaining.** The ruling recorded +782; that figure predates `v77_u` (the apostrophe fold, which independently recovered part of the same gap) and a corpus that has turned over several times — **the direction and decisiveness hold, the number does not, and the guard states the measured one rather than repeating the stale one.** **BOTH SHADES split together:** the stronger shade is keyed on the MATCHED text, so splitting only the light set would have shown `variazione` as unlearned inside the very phrase the learner had answered; §5 asserts that, and both halves were revert-verified independently. **Article noise is the RULING, not a defect** — bare `la`/`il` are marked, and §4 asserts it deliberately so a future session does not read it as the v73_d one-letter bug returning and "fix" a decision. Consequence, restated: **no article set is derived anywhere, and none is needed.** |
@@ -689,6 +691,59 @@ by global TTS selectors in footers", still rebuilt on every lesson-set entry.
   teachable to its speakers (v53). The `--langnames` run that just completed filled 1024/1024 cells;
   adding a language makes it 33×33 and reopens 65 of them.
 
+### THE COVERAGE MEASUREMENT — done, session 32. Read this before designing anything.
+
+The roadmap has said for three sections that this number comes first. It is measured now, through
+the PRODUCT matcher (`_highlightVocabHtml` + `_storyWordSources`, never a re-implementation), over
+**120 corpus chapters with a story**, and it reframes the request.
+
+**How much of a chapter's story do its lessons teach today?**
+
+```
+TOKEN coverage (running words)  :  9.2%   (1946 of 21048)
+TYPE  coverage (distinct words) :  8.2%   (1127 of 13764)
+
+per-chapter TYPE coverage   min 0%   p25 5.3%   median 13.2%   p75 19.2%   max 48.6%
+chapters below 25%: 108 of 120        chapters above 50%: 0
+```
+
+**So it is a GENERATION problem, not a gap-filling problem** — decisively, and that was the question
+the number was for. A learner who has solved every lesson in a chapter can read roughly one word in
+eleven of its story. "Exhaust the vocabulary of the input text" is not a matter of topping up the
+last few items; the current corpus is an order of magnitude away.
+
+**And the second cut changes the design, not just the scale.** Splitting the story's word types by
+CORPUS FREQUENCY per language (statistics, not a word list — INTERNALS §4):
+
+```
+top-100 most frequent types    350 / 3878  =  9.0% covered
+top-500                        466 / 3821  = 12.2% covered
+rare (everything else)         311 / 6065  =  5.1% covered
+```
+
+**The RAREST words are the LEAST covered** — the exact opposite of the user's "start with the
+hard/unusual words". The generator today skews slightly toward the common ones. So the request is a
+change of POLICY, not only of volume: even at ten times the output, a generator that keeps picking
+by whatever it currently picks by would still leave the hard words last.
+
+**What this settles, and what it does not:**
+- **Settled:** the per-text scheme needs generation aimed at the text, and it needs a difficulty
+  ordering to aim with. Both are the user's own framing, and the data supports both.
+- **Settled:** "if it's a simple short text, go towards the basic words as well" is not a separate
+  mode — at 9% coverage of the top-100 band, the basic words are not covered either.
+- **NOT settled, and the next thing to measure:** how much of the gap is *reachable*. A story
+  contains proper nouns, numbers and inflected forms of words the lessons DO teach; the matcher
+  counts an inflection as uncovered unless a `word_forms` lesson happens to list it. **Before
+  sizing any generator, measure what share of the uncovered types are inflections of covered
+  lemmas** — that is the difference between "generate ten times as much" and "teach the forms of
+  what is already taught", and `v78_h`'s tier-2 note (corpus inflections from `word_forms` /
+  `grammar.plural`) is the machinery that would answer it.
+- **Caveat on the method, stated so it is not over-read:** "covered" here means the word appears in
+  some lesson of that chapter, which is a strict reading — a learner also carries vocabulary from
+  earlier chapters. The cumulative figure is worse in the other direction (83% of a learner's
+  cumulative vocabulary does not occur in the chapter on screen — see the §0e re-plan), so the two
+  measurements bracket the real answer rather than agreeing on it. Neither is above 20%.
+
 ### → NEEDS DESIGN, and the user wants it discussed before it is built
 
 **"DEVELOP A LEARNING SCHEME FOR EACH TEXT, where lessons are focussed on teaching the text."**
@@ -715,8 +770,11 @@ already a TODO in that area — this supersedes and enlarges it. `reinforce` cur
 prior chapters' vocabulary"; the request above makes the real axis **coverage of THIS text**, which
 is a different quantity and measurable today.
 
-**The first measurement, before any design** (and the one that decides whether this is feasible at
-all): **what fraction of a chapter's story tokens are already covered by its lessons?** `v78_h` built
+**The first measurement is DONE — see "THE COVERAGE MEASUREMENT" above: 9.2% of tokens, 8.2% of
+types, rarest words least covered. It is a GENERATION problem, and a policy change as well as a
+volume one.** The original framing of that question is kept below because the distinction it draws
+is the one that mattered: **what fraction of a chapter's story tokens are already covered by its
+lessons?** `v78_h` built
 exactly the collector for it — `_storyWordSources` returns every word every source teaches — but
 `v78_h` measured MARKS, not COVERAGE. Marks count occurrences; coverage is the share of the text a
 learner could actually read. **Do that measurement first**: if a typical chapter covers 15% of its

@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v78_n';
+const APP_VERSION  = 'v78_p';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -5330,6 +5330,12 @@ async function _runBookJob(bookId, chunks, base) {
         parentId: parent ? (parent.id || null) : null,
         // Defer titling to the whole-storyline post-pass (cheap placeholder for now).
         skipMeta: true, placeholderTopic,
+        // v78_p: the chosen scripts. `generate()` reads `userOpts.script` for THREE things — the
+        // story prompt's scriptNote (v76_h), the saved topic's `script`/`srcScript` stamps, and the
+        // stamps the arc primer later reads. The book route built userOpts without them, so a
+        // Serbian-Cyrillic job produced a Latin story, an unstamped topic, and a primer with no
+        // letters to teach. `/api/generate` has always passed them; only this route did not.
+        script: base.script || null, srcScript: base.srcScript || null,
       };
       console.log(`  [book ${bookId}] chapter ${i+1}/${chunks.length}: "${placeholderTopic}"${contFrom?' cont='+contFrom:''}${generated?' generated':''}${base.arc?' arc[+'+base.arcTypes.join(',')+']':''} job=${jobId}`);
       // Generated chapters continue the prior story as context (continuedFrom set);

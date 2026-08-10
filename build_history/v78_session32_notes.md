@@ -739,20 +739,73 @@ items touched the progress card, so the diff was run once for the three rather t
 
 ---
 
+
+---
+
+## 22. The coverage measurement — done, and it reframes the request
+
+The roadmap had said for three sections that this number comes first. Done at the `v78_n` cut,
+through the PRODUCT matcher over 120 chapters with a story. Probes kept as
+`build_history/probe_coverage_v78n.js` and `probe_coverage_bands_v78n.js`, with the results in
+their headers so a later run has something to diff against.
+
+**How much of a chapter's story do its lessons teach?**
+
+| | |
+|---|---|
+| token coverage (running words) | **9.2%** (1946 / 21048) |
+| type coverage (distinct words) | **8.2%** (1127 / 13764) |
+| per-chapter type coverage | min 0% · p25 5.3% · **median 13.2%** · p75 19.2% · max 48.6% |
+| chapters below 25% | 108 of 120 · above 50%: **none** |
+
+**It is a GENERATION problem, decisively** — which is exactly the question the number was for. A
+learner who has solved every lesson in a chapter can read about one word in eleven of its story.
+"Exhaust the vocabulary of the input text" is an order of magnitude away, not a top-up.
+
+**The second cut is the one that changes the design.** Splitting the story's word types by CORPUS
+FREQUENCY per language — statistics, not a word list, so no language knowledge enters the code:
+
+| band | covered |
+|---|---|
+| top-100 most frequent types | 9.0% |
+| top-500 | 12.2% |
+| rare (everything else) | **5.1%** |
+
+**The rarest words are the LEAST covered.** That is the opposite of the user's "start with the
+hard/unusual words", and it means the request is a change of POLICY, not only of volume: at ten
+times the output, a generator that still picks the way it currently picks would leave the hard words
+last all the same. It also settles a sub-question the user raised — "for a simple short text, go
+towards the basic words as well" is not a separate mode, because at 9% coverage of the top-100 band
+the basic words are not covered either.
+
+**The next thing to measure, before sizing any generator.** A story contains proper nouns, numbers,
+and inflected forms of words the lessons DO teach; the matcher counts an inflection as uncovered
+unless a `word_forms` lesson happens to list it. **What share of the uncovered types are inflections
+of covered lemmas?** That is the difference between "generate ten times as much" and "teach the
+forms of what is already taught" — two different products — and `v78_h`'s tier-2 note (corpus
+inflections from `word_forms` / `grammar.plural`) is the machinery that would answer it.
+
+**Method caveat, recorded so the figure is not over-read.** "Covered" means the word appears in some
+lesson of THAT chapter, which is strict — a learner also carries vocabulary from earlier chapters.
+The cumulative measurement from the §0e re-plan errs the other way (83% of a learner's cumulative
+vocabulary does not occur in the chapter on screen). The two bracket the real answer rather than
+agreeing; **neither is above 20%**, which is why the conclusion holds either way.
+
+---
+
 ## 6. What the next session should know
 
-- **Baseline for `v78_n`: 203 / 179 / 0 / 0.** Corpus 309 topics, 87 storylines. **33 languages.**
-- **Group B is DONE. §3 is DONE. §7 is DONE.** Twelve point releases this session (`v78_b`…`v78_n`).
+- **Baseline for `v78_o`: 203 / 179 / 0 / 0.** Corpus 309 topics, 87 storylines. **33 languages.**
+- **Group B is DONE. §3 is DONE. §7 is DONE.** Thirteen point releases this session (`v78_b`…`v78_o`); `v78_o` is measurement and documentation only.
 - **Nothing is owed by the user except two translation passes** — `sl` has no `ui.json` block, and
   Slovenian reopened `languages.json` name cells. Both are faster now (`--batch`, `--threads`).
 - **The next real item is a DISCUSSION the user asked for**, not an implementation: the per-text
-  learning scheme (roadmap → "session 32, second batch" → "NEEDS DESIGN"). **Do the coverage
-  measurement FIRST** — what share of a chapter's story TOKENS its lessons already teach.
-  `_storyWordSources` (`v78_h`) is the input. Note carefully: `v78_h` measured **marks** and `v78_k`
-  measured **marks**; neither measured **coverage**, and they answer different questions. Marks
-  count occurrences highlighted; coverage is the share of the text a learner could actually read.
-  That single number decides whether "exhaust the vocabulary of the input text" is a GENERATION
-  problem or a GAP-FILLING problem, and it is the prerequisite for progressive reveal as well.
+  learning scheme (roadmap → "session 32, second batch" → "NEEDS DESIGN"). **The prerequisite
+  coverage measurement is DONE — §22 above, and the roadmap's "THE COVERAGE MEASUREMENT" section.
+  9.2% of tokens, 8.2% of types, and the RAREST words are the least covered (5.1%).** It is a
+  generation problem and a policy change, not a top-up. **Bring the numbers to the discussion; do
+  not re-derive them.** The one thing still unmeasured, and worth doing before any generator is
+  sized: what share of the uncovered types are INFLECTIONS of covered lemmas.
 - **Buildable without discussion:** §0h question navigation (its own session — `C.cur`, `check()`,
   per-run answer state, `_speakAndAdvance` advancing one way only). The Replay ordering fix shipped
   as `v78_l`, and the three §0d card items as `v78_n` (one of which needed no change — it was
