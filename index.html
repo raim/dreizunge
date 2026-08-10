@@ -684,6 +684,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <option value="ca">🏴 Catalan</option>
             <option value="sr">🇷🇸 Serbian</option>
             <option value="hr">🇭🇷 Croatian</option>
+            <option value="sl">🇸🇮 Slovenian</option>
           </select>
           <span class="lang-select-arrow">▾</span>
         </div>
@@ -729,6 +730,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <option value="ca">🏴 Catalan</option>
             <option value="sr">🇷🇸 Serbian</option>
             <option value="hr">🇭🇷 Croatian</option>
+            <option value="sl">🇸🇮 Slovenian</option>
           </select>
           <span class="lang-select-arrow">▾</span>
         </div>
@@ -1129,6 +1131,11 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <option value="standard">📚 Standard</option>
       <option value="synonyms" class="opt-ai-authoring">🔁 Synonyms</option>
       <option value="word_forms" class="opt-ai-authoring">🧩 Word Forms</option>
+      <!-- v78_j (user): grammar and conjugation were hidden from the SINGLE-CHAPTER add-lesson
+           menu while the storyline-wide arc offered them. Both are full registry types with
+           builders, editors and labels; there was no gate, only an omission. -->
+      <option value="grammar" class="opt-ai-authoring">📐 Grammar</option>
+      <option value="conjugation" class="opt-ai-authoring">🔤 Conjugation</option>
       <option value="error_hunt" class="opt-ai-authoring">🔍 Error Hunt</option>
       <option value="comprehension" class="opt-ai-authoring opt-needs-story" style="display:none">🧠 Comprehension</option>
       <option value="math">🔢 Math</option>
@@ -1166,7 +1173,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <span class="lang-footer-lbl tts-pill" title="">🗣</span>
       <select class="tts-select" id="tts-lang-select-ls" onchange="onTtsLangSelectGlobal(this.value,'ls')" style="width:auto;font-size:12px" title="Speech language"></select>
       <select class="tts-select" id="tts-voice-select-ls" onchange="onTtsVoiceSelectGlobal(this.value,'ls')" style="display:none;width:auto;max-width:150px;font-size:12px" title="Voice"></select>
-      <button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button><button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button>
+      <button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button><button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button><button class="story-icon-btn teacher-ico" id="teacher-ico-ls" style="flex-shrink:0;font-size:18px;opacity:.7"></button>
     </div>
   </div>
   <div id="ls-passmark" style="border-top:1px solid var(--gray-mid);display:none"></div>
@@ -1548,7 +1555,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       </select>
       <span class="lang-select-arrow">▾</span>
     </div>
-    <button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button><button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button>
+    <button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button><button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button><button class="story-icon-btn teacher-ico" id="teacher-ico-sl" style="flex-shrink:0;font-size:18px;opacity:.7"></button>
   </div>
   <div id="sl-passmark" style="border-top:1px solid var(--gray-mid);display:none"></div>
   <div class="gen-stats sl-screen-stats" id="sl-screen-prov" style="padding:6px 16px 0;border-top:1px solid var(--gray-mid);margin:0;display:none"></div>
@@ -1898,10 +1905,34 @@ function introLetterScope(d, scriptName, mode) {
 }
 // True when the target's script differs from the UI/source script AND we have a letter table
 // for it — i.e. an intro course would teach the learner a new alphabet we can actually build.
-function needsIntroScript(targetLang, srcLang) {
-  const tgt = scriptsForLang(targetLang);
-  if (!tgt.length) return false;
-  const srcArr = scriptsForLang(srcLang || 'en');
+// v78_g (user-reported): the source's readable scripts are the ONE script this pair is actually
+// written in when that is known, not every script the source LANGUAGE admits.
+//
+// The bug it fixes, reported on a Serbian-Latin -> Serbian-Cyrillic storyline (sl_56647998):
+// `scriptsForLang('sr')` is ["cyrillic-sr","latin"], so for sr->sr BOTH sides came back as the full
+// pair, every target script was already "readable", and the gate concluded the learner needs no
+// alphabet at all. Exactly backwards for a storyline whose whole point is the script.
+//
+// The gate was answering "which scripts CAN this language be written in" where the question is
+// "which script is THIS pair actually written in". Since v76_g/v76_h that is a stored per-topic
+// fact (`script` / `srcScript`), so it is passed in when the caller has it.
+//
+// Only bites when a side is DIGRAPHIC — the languages in scripts.json `_scriptChoice` (["sr"]).
+// Everywhere else the chosen script is the language's only script and narrowing changes nothing,
+// which is why this survived until the corpus gained its first digraphic-source chapter.
+//
+// A chosen script is honoured only if it is one the language actually admits: a stale or
+// hand-edited stamp falls back to the full set rather than inventing an alphabet for a language
+// that has none.
+function _scriptSideOf(langCode, chosen, fallbackLang) {
+  const all = scriptsForLang(langCode || fallbackLang || 'en');
+  if (chosen && all.indexOf(chosen) >= 0) return [chosen];
+  return all;
+}
+function needsIntroScript(targetLang, srcLang, opts) {
+  const tgt = _scriptSideOf(targetLang, opts && opts.script, targetLang);
+  if (!tgt.length) return false;            // target unmapped -> no intro
+  const srcArr = _scriptSideOf(srcLang || 'en', opts && opts.srcScript, 'en');
   const src = new Set(srcArr);
   return tgt.some(s => !src.has(s) && scriptTeachable(s, srcArr));
 }
@@ -1909,8 +1940,13 @@ function needsIntroScript(targetLang, srcLang) {
 // table-backed script is involved on EITHER side — the language being learned (en→ar) OR the
 // language shown (ar→en / ja→en / hi→en). Auto-generation (arc) still uses the target-only
 // needsIntroScript, since a generated story teaches the target's script.
-function scriptLessonAvailable(target, src) {
-  return needsIntroScript(target, src) || needsIntroScript(src, target);
+function scriptLessonAvailable(target, src, opts) {
+  const o = opts || {};
+  // v78_g: when asking the REVERSE direction the chosen scripts swap with the languages. Passing
+  // `o` unchanged here would ask "is the source's script new to a reader of the source's script",
+  // which is false by construction — the mirror has to mirror both arguments.
+  return needsIntroScript(target, src, o)
+      || needsIntroScript(src, target, { script: o.srcScript, srcScript: o.script });
 }
 // …and always ask it about the SET's own languages. `APP.srcLang` is the global source/UI language of
 // whoever happens to be browsing; a saved set carries the pair it was authored for. Before v53 the
@@ -1921,7 +1957,12 @@ function scriptLessonAvailable(target, src) {
 // d.srcLang — this keeps the gate and the generator agreeing.)
 function scriptLessonAvailableForSet(d) {
   if (!d || !d.lang) return false;
-  return scriptLessonAvailable(d.lang, d.srcLang || APP.srcLang);
+  // v78_g: the SET's own chosen scripts, for the same reason it reads the set's own srcLang — a
+  // saved topic carries the pair AND the scripts it was authored for. This is the gate the user hit
+  // on sl_56647998 (sr-latin -> sr-cyrillic), where reading only the languages made both sides look
+  // identical and the menu offered nothing.
+  return scriptLessonAvailable(d.lang, d.srcLang || APP.srcLang,
+                               { script: d.script, srcScript: d.srcScript });
 }
 
 // ── Language names in each UI language ───────────────────────────────────────
@@ -2544,7 +2585,7 @@ function onNumChaptersSlider(v){
 function updateArcScriptRow(){
   const row=document.getElementById('gen-arc-script-row');
   if(!row) return;
-  const show = APP.numChapters>1 && typeof needsIntroScript==='function' && needsIntroScript(APP.lang, APP.srcLang);
+  const show = APP.numChapters>1 && typeof needsIntroScript==='function' && needsIntroScript(APP.lang, APP.srcLang, { script: APP.script, srcScript: APP.srcScript });
   row.style.display = show ? '' : 'none';
 }
 function restoreNumChaptersSlider(){
@@ -5037,7 +5078,10 @@ async function pdfGenerateAll() {
     body.arcTypes = readArcTypeChecks('pdf-arc-types');
     // PDF flow has no dedicated checkbox; default to the script primer when the target uses a
     // script the source doesn't (server also defaults this, but be explicit).
-    body.arcScript = (typeof needsIntroScript === 'function') && needsIntroScript(APP.lang, APP.srcLang);
+    body.arcScript = (typeof needsIntroScript === 'function') && needsIntroScript(APP.lang, APP.srcLang, { script: APP.script, srcScript: APP.srcScript });
+    // v78_g: send the chosen scripts too. Without them the server re-decides on the LANGUAGES
+    // alone and the primer would disagree with the checkbox the client just computed.
+    body.script = APP.script || null; body.srcScript = APP.srcScript || null;
   }
   _pdfChunks.forEach(c => c.status = 'pending');
   _renderPdfChunks();
@@ -5469,6 +5513,8 @@ function savedItemHtml(s, connector, hideStory, hideProv, slChapter) {
         <option value="standard">📚 ${t('lesson.type.vocab')}</option>
         <option value="synonyms">🔁 ${t('lesson.type.synonyms')}</option>
         <option value="word_forms">🧩 ${t('lesson.type.word_forms')}</option>
+        <option value="grammar">📐 ${t('lesson.type.grammar')}</option>
+        <option value="conjugation">🔤 ${t('lesson.type.conjugation')}</option>
         <option value="error_hunt">🔍 ${t('lesson.type.error_hunt')}</option>
         <option value="math">🔢 ${t('lesson.type.math')}</option>
         ${(s && s.story) ? `<option value="comprehension">🧠 ${t('lesson.type.comprehension')}</option>` : ''}
@@ -7081,7 +7127,11 @@ function _renderSavedStory(id){
   const xlate=d.storyTranslation||'';
   const showingSource = body.dataset.storyLang==='source' && xlate;
   const text = showingSource ? xlate : (d.story||'');
-  const allVocab=(d.lessons||[]).flatMap(L=>L.vocab||[]).map(v=>v.target).filter(Boolean).sort((a,b)=>b.length-a.length);
+  // v78_h: the library reader marks every source too. No solved set here — this panel has no
+  // per-learner progress in hand, which is the case `_highlightVocabHtml` documents as base-shade-only.
+  const allVocab=(d.lessons||[]).flatMap(L=>L.vocab||[]).map(v=>v.target).filter(Boolean)
+    .concat((function(){ try { return _storyExtraWords(d); } catch(_) { return []; } })())
+    .filter(Boolean).sort((a,b)=>b.length-a.length);
   let rendered=furiHtml(text);
   // Vocab highlighting only makes sense on the target-language story.
   if(!showingSource && allVocab.length) rendered = _highlightVocabHtml(rendered, allVocab);
@@ -10676,7 +10726,10 @@ const _chainStoryLang = {};
 
 function _renderChainStory(body, chapters, chainId) {
   const showSource = _chainStoryLang[chainId] === 'source';
-  const allVocab = chapters.flatMap(d => (d.lessons||[]).flatMap(L => L.vocab||[])).map(v => v.target).filter(Boolean).sort((a,b) => b.length - a.length);
+  // v78_h: every word-bearing source across the chain, not vocabulary alone.
+  const allVocab = chapters.flatMap(d => (d.lessons||[]).flatMap(L => L.vocab||[])).map(v => v.target).filter(Boolean)
+    .concat(chapters.flatMap(d => { try { return _storyExtraWords(d); } catch(_) { return []; } }))
+    .filter(Boolean).sort((a,b) => b.length - a.length);
   // v74_n: the solved set is PER CHAPTER — `_solvedTargetWords` reads the solved map for one topic,
   // and this panel renders several. Resolved per chapter and passed in, rather than pooling across
   // the chain, or a word solved in chapter 1 would show as solved inside chapter 3's story.
@@ -10685,8 +10738,11 @@ function _renderChainStory(body, chapters, chainId) {
     // Vocabulary highlighting only applies to the TARGET text — the words are target-language, so
     // running it over a translation would match nothing at best and the wrong spans at worst.
     if (isTarget && allVocab.length) {
+      // v78_h: the darker shade covers every source, not just vocabulary. Wrapped in the existing
+      // try/catch — this panel renders a whole chain, and a malformed chapter must not blank it.
       let solved = [];
-      try { solved = (typeof _solvedTargetWords === 'function' && d) ? _solvedTargetWords(d) : []; } catch(_) { solved = []; }
+      try { solved = (typeof _solvedTargetWords === 'function' && d)
+                     ? _solvedTargetWords(d).concat(_solvedExtraWords(d)) : []; } catch(_) { solved = []; }
       t = _highlightVocabHtml(t, allVocab, solved);
     }
     return _storyParasHtml(t);
@@ -12158,7 +12214,17 @@ function buildConjugationExercises(lesson, lang) {
                    infinitive:verb.infinitive, source:verb.source,
                    pronoun:f.pronoun, correct:f.cleanForm, choices });
       }
-      if (fi % 3 === 0) {
+      // v78_i (user): "strongly prefer multiple choice over typing". Typing is now a FALLBACK for
+      // forms that could not be asked as an MCQ, not an extra question layered on top of one.
+      //
+      // It also fixes a real defect the new corpus exposed. `mcq_conjugation` and
+      // `type_conjugation` share ONE qid (`infinitive|pronoun`) — deliberately, since they are the
+      // same question asked two ways. Emitting both for the same form therefore put TWO exercises
+      // with ONE identity into the round, so a replay counted the typing twin as unsolved and
+      // re-asked material already answered: `unit-replay-focus` measured 2 repeats in a round of 14
+      // on the user's `Anas Neue Freunde` conjugation lesson. Making typing an else-branch removes
+      // the duplicate identity at the source rather than teaching the cut to dedupe.
+      if (wrongPool.length < 1) {
         exs.push({ type:'type_conjugation',
                    infinitive:verb.infinitive, source:verb.source,
                    pronoun:f.pronoun, correct:f.cleanForm });
@@ -14663,9 +14729,17 @@ function check(){
     // Remember which words were answered wrongly this round → learned-vocab ledger marks them,
     // so future user-specific retraining can focus on them (see roadmap "my story").
     try { const wt=(ex.target||ex.correct); if(wt){ (C._wrongTargets||(C._wrongTargets=new Set())).add(stripFuri(String(wt)).trim()); } } catch(_) {}
+    // v78_i (user): a conjugation reveal shows the WHOLE phrase, "vi ste", not the bare form "ste".
+    // The question asks which form goes with a pronoun, so the answer is the pair — a lone "ste"
+    // makes the learner reconstruct the very thing being taught. The read-out has combined the two
+    // since it was written (`speakBad`/`speakOk`: `ex.pronoun + ' ' + stripFuri(ex.correct)`), so
+    // the app already SAID the full phrase while SHOWING half of it. Same composition, so the two
+    // cannot disagree.
     const _wrongCorrect = ex.type==='syn_select' ? synRevealHtml(ex)
       : (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex')
       ? escHtml(Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
+      : (ex.type==='mcq_conjugation'||ex.type==='type_conjugation') && ex.pronoun
+      ? escHtml(ex.pronoun) + ' ' + furiHtml(ex.correct)
       : furiHtml(ex.correct);
     // v71_c: a typed answer shows WHERE it went wrong, character by character. Only for the typed
     // types, and never in no-keyboard glyph mode (there is no typed string to compare).
@@ -15428,8 +15502,13 @@ function showComplete(review){
       // means a GENUINE unlock (v77_p removed the locked preview), so this cannot fire on a teaser.
       // Not on a review render: re-opening a finished chapter is not the moment of unlocking.
       if (!C._review) {
-        try { _autoReadStory(topicKey, APP.lessonData?.story, APP.lessonData?.lang || APP.lang); }
-        catch(_) { if (typeof _cardNote === 'function') _cardNote('auto-read', _); }
+        // v78_i (user, superseding): the chapter auto-read is REMOVED from this card and is not
+        // added anywhere else. It was §0f (`v77_v`), then briefly re-scoped to "the card before
+        // comprehension lessons"; the user's screenshot ruling withdrew both. `_autoReadStory` is
+        // kept — the story read-out is still reachable from the speaker control, and the helper
+        // carries the four restraints (muted, review renders, once per chapter, never interrupting)
+        // that any future caller would otherwise have to rediscover. It simply has no caller now.
+        /* auto-read removed here deliberately — do not re-add without a fresh ruling */
       }
       // v60.6: story-translation toggle. When a source-language translation exists (the
       // auto-translate pass stored it on the topic), offer a button to switch the panel between
@@ -15451,6 +15530,94 @@ function showComplete(review){
 // multi-word phrase wins over a word inside it when highlighting). Solved means the coverage store
 // holds a qid for a question about that word — not merely that the lesson was opened, which is why
 // this reads the solved map rather than `completed`.
+// ── v78_h (user): every word-bearing source feeds the story highlight ────────
+// Until now only `L.vocab[].target` was marked, so a chapter whose learning happens in a
+// conjugation, word_forms, grammar or synonyms lesson had a story with almost nothing lit up.
+// Measured over 90 chapters with a story: 704 marks from vocabulary alone, 1043 once every source
+// is included — **+48%, with 44 of the 90 chapters gaining**.
+//
+// Each source contributes a WORD and a PROBE: the exercise shape whose qid identifies the question
+// that teaches that word. One list therefore drives both shades — light for "this is in your
+// lesson data", darker for "you have answered it" — and they cannot fall out of step, which is the
+// mistake v74_n/v77_something kept re-making by computing the two sets in different places.
+//
+// The probe shapes are not invented here; they are the same objects `_qidCanonical` switches on
+// (`word_form` = sentence+correct, `syn_select` = mode+base, `mcq_conjugation` = infinitive+pronoun,
+// `mcq_article`/`mcq_plural` = target). If a qid scheme changes, this follows it automatically
+// because both sides call the product's own `qid`.
+function _storyWordSources(d){
+  const out = [];
+  const push = (word, lessonId, probes) => {
+    const w = String(word == null ? '' : word).trim();
+    if (w && lessonId != null) out.push({ word: w, lessonId, probes });
+  };
+  (d && d.lessons || []).forEach(L => {
+    if (!L || L.id == null) return;
+    const id = L.id;
+    // synonyms: the base word AND every alternative offered — all of them are words the lesson
+    // puts in front of the learner, which is what the light shade means.
+    (L.words || []).forEach(w => {
+      if (!w) return;
+      const probe = [{ type: 'syn_select', mode: 'synonyms', base: w.base },
+                     { type: 'syn_select', mode: 'antonyms', base: w.base }];
+      push(w.base, id, probe);
+      [...(w.synonyms || []), ...(w.antonyms || []), ...(w.homophones || [])]
+        .forEach(g => g && push(g.w, id, probe));
+    });
+    // word_forms: every offered choice. The distractors are real forms of the same word, so they
+    // belong in the light shade; only the CORRECT one can ever be solved.
+    (L.items || []).forEach(it => {
+      if (!it || !Array.isArray(it.choices)) return;
+      const correct = it.choices[it.correctIndex];
+      const probe = [{ type: 'word_form', sentence: it.sentence, correct }];
+      it.choices.forEach(c => push(c, id, c === correct ? probe : []));
+    });
+    // grammar: the noun and its plural.
+    (L.grammar || []).forEach(g => {
+      if (!g) return;
+      push(g.target, id, [{ type: 'mcq_article', target: g.target }]);
+      push(g.plural, id, [{ type: 'mcq_plural', target: g.target },
+                          { type: 'type_plural', target: g.target }]);
+    });
+    // conjugation: the infinitive and every inflected form. `stripPronoun` because the corpus
+    // stores forms WITH their pronoun ("io parlo") and the story contains only the verb.
+    (L.conjugations || []).forEach(v => {
+      if (!v) return;
+      push(v.infinitive, id, []);
+      (v.forms || []).forEach(f => {
+        if (!f || !f.form) return;
+        const probe = [{ type: 'mcq_conjugation', infinitive: v.infinitive, pronoun: f.pronoun },
+                       { type: 'type_conjugation', infinitive: v.infinitive, pronoun: f.pronoun }];
+        push(typeof stripPronoun === 'function' ? stripPronoun(f.pronoun, f.form) : f.form, id, probe);
+      });
+    });
+  });
+  return out;
+}
+// Light shade: every word any source puts in front of the learner, longest first so a multi-token
+// entry wins over its own parts (the matcher applies them in order).
+function _storyExtraWords(d){
+  return [...new Set(_storyWordSources(d).map(s => s.word))].sort((a, b) => b.length - a.length);
+}
+// Darker shade: the subset whose own question this learner has answered. Same solved map and the
+// same `qid` call `_solvedTargetWords` uses for vocabulary, so the two shades mean the same thing
+// on both kinds of word.
+function _solvedExtraWords(d){
+  if (!d || !d.topic) return [];
+  const solvedMap = _solvedMap(d.topic) || {};
+  const keys = Object.keys(solvedMap);
+  if (!keys.length) return [];
+  const have = new Set(keys);
+  const out = new Set();
+  _storyWordSources(d).forEach(s => {
+    (s.probes || []).forEach(p => {
+      let k = null;
+      try { k = qid(p, s.lessonId); } catch(_) { k = null; }
+      if (k && have.has(k)) out.add(s.word);
+    });
+  });
+  return [...out].sort((a, b) => b.length - a.length);
+}
 function _solvedTargetWords(d){
   if (!d || !d.topic) return [];
   const solvedMap = _solvedMap(d.topic) || {};
@@ -15494,10 +15661,16 @@ function _renderCompStory(allDone){
         // so the same story lit up differently depending on which screen you read it from, and a
         // partly-played chapter looked almost unmarked here. Both meanings are now on the page:
         // what the chapter teaches, and how much of it you already have.
+        // v78_h: and every other word-bearing source, so a chapter that teaches through
+        // conjugation or word_forms stops showing an almost-unmarked story. Both shades come from
+        // one collector (`_storyWordSources`), so "in your lessons" and "you have answered it"
+        // cannot drift apart the way this panel and the storyline page once did.
         const all = (d.lessons || []).flatMap(L => (L && L.vocab) || [])
           .map(v => v && v.target).filter(Boolean)
+          .concat(_storyExtraWords(d))
           .sort((a, b) => b.length - a.length);
-        const solved = _solvedTargetWords(d);
+        const solved = _solvedTargetWords(d).concat(_solvedExtraWords(d))
+          .sort((a, b) => b.length - a.length);
         if (all.length) html = _highlightVocabHtml(furiHtml(shown), all, solved);
       } catch(_) { html = null; }
     }
@@ -16143,10 +16316,14 @@ function showStoryUnlocked(){
     // words you have SOLVED in the stronger one), so the two renderings cannot diverge again.
     let _html = null;
     try {
+      // v78_h: vocabulary AND every other word-bearing source (conjugation forms, word_forms
+      // choices, grammar nouns/plurals, synonym sets) — measured +48% marks over 90 chapters.
       const all = (d.lessons || []).flatMap(L => (L && L.vocab) || [])
         .map(v => v && v.target).filter(Boolean)
+        .concat(_storyExtraWords(d))
         .sort((a, b) => b.length - a.length);
-      const solved = _solvedTargetWords(d);
+      const solved = _solvedTargetWords(d).concat(_solvedExtraWords(d))
+        .sort((a, b) => b.length - a.length);
       if (all.length) _html = _highlightVocabHtml(furiHtml(d.story || ''), all, solved);
     } catch(_) { _html = null; }
     try { box.innerHTML = _storyParasHtml(_html != null ? _html : furiHtml(d.story || '')); }
@@ -16726,27 +16903,63 @@ async function saveSlTags() {
   closeSlTagEditor();
   loadSavedList();
 }
+// v78_f (user): the teacher switch is reachable from every page that has the footer controls, not
+// only the landing page. `_TEACHER_TOGGLES` is the list; ONE updater fills all of them, because
+// three copies of "which icon means which state" is exactly how the storyline connector line
+// drifted in v71_w and how four card headers ended up with four different titles in v77_q.
+//
+// The landing entry is the existing full-width labelled button; the two footer entries are compact
+// icons sitting beside the mute control, per the user's placement ("beside the UI-language and mute
+// controls"). Different presentation, one state.
+//
+// Reachability (v71 rule): the lesson-set page is invisible to learners, so a control placed only
+// there would not exist for the people who need it. Landing and the storyline page are both learner
+// -reachable, which is why all three are wired rather than just the one that was easiest.
+const _TEACHER_TOGGLES = [
+  { id: 'teacher-mode-btn', compact: false },
+  { id: 'teacher-ico-ls',   compact: true  },
+  { id: 'teacher-ico-sl',   compact: true  },
+];
 function updateTeacherModeBtn() {
-  const btn = document.getElementById('teacher-mode-btn');
-  if (!btn) return;
   // When unlocked (true): show green lock icon = click to lock
   // When locked (false): show gray unlock icon = click to unlock
-  btn.textContent = APP._teacherMode ? t('teacher.mode_on') : t('teacher.mode_off');
-  btn.title = t('teacher.unlock_tooltip');
-  btn.style.opacity = '1';
-  btn.style.borderColor = APP._teacherMode ? 'var(--green)' : 'var(--gray-mid)';
-  btn.style.color = APP._teacherMode ? 'var(--green-dark)' : '';
+  const on = !!APP._teacherMode;
+  for (const spec of _TEACHER_TOGGLES) {
+    const btn = document.getElementById(spec.id);
+    if (!btn) continue;
+    const label = on ? t('teacher.mode_on') : t('teacher.mode_off');
+    if (spec.compact) {
+      // The label already leads with the state emoji (🔒 / 🔓); the compact button is the emoji
+      // alone, with the full label as its tooltip so the meaning is still reachable. Taken from the
+      // SAME string rather than hard-coded here — a second spelling of the icon is a second rule.
+      btn.textContent = (Array.from(label)[0] || '🔓');
+      btn.title = label;
+      btn.style.opacity = on ? '1' : '.7';
+    } else {
+      btn.textContent = label;
+      btn.title = t('teacher.unlock_tooltip');
+      btn.style.opacity = '1';
+      btn.style.borderColor = on ? 'var(--green)' : 'var(--gray-mid)';
+    }
+    btn.style.color = on ? 'var(--green-dark)' : '';
+    // Assigned in JS, never as an inline attribute: the stub DOM does not turn onclick="f()" into a
+    // callable property, so an inline handler is one no headless test can click (standing rule 22).
+    btn.onclick = () => toggleTeacherMode();
+  }
 }
 function toggleTeacherMode() {
   APP._teacherMode = !APP._teacherMode;
   try { localStorage.setItem(_TEACHER_KEY, APP._teacherMode ? '1' : '0'); } catch (_) {}   // remember across reloads
-  updateTeacherModeBtn();
   loadSavedList();
   if (document.getElementById('lesson-set')?.classList.contains('active')) buildPath();
   if (document.getElementById('storyline-screen')?.classList.contains('active')) {
     const cs = APP._slScreen;
     if (cs) _renderStorylineScreen(cs.chainId, cs.encodedChain, cs.topics);
   }
+  // v78_f: sync AFTER the re-renders, not before. The toggle now lives inside the screens this
+  // function redraws, so updating first and redrawing second would leave the control showing the
+  // state it had before the click on exactly the page the user clicked it from.
+  updateTeacherModeBtn();
 }
 
 function setTagFilter(tag) { APP.libTagFilter = tag; loadSavedList(); }

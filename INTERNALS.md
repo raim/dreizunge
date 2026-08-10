@@ -13,7 +13,7 @@ please fix it.
 Every entry below was found by measurement or by a test failing, not by reading anything. That is
 the gap this document exists to close.
 
-Last verified against **`v78_e`**.
+Last verified against **`v78_g`**.
 
 ---
 
@@ -89,6 +89,17 @@ single reader of that list**; `slBottomClearProgress` loops over it, `clearThisC
 still carrying the `v77_s` defect until `v78_e` — now routes through it. Adding a new completeness
 store means adding it HERE, and `unit-chapter-clear-progress` §3 asserts the entry points agree by
 diffing their resulting state rather than checking each alone.
+
+**"Which scripts can this language be written in" is not "which script is this pair written in"
+(`v78_g`).** `scriptsForLang(code)` answers the first. Every script gate must ask the second, via
+**`_scriptSideOf(langCode, chosen)`**, passing the per-topic `script` / `srcScript` stamped since
+`v76_g`/`v76_h`. Getting this wrong is invisible for every monoscript language — the two answers
+coincide — and wrong only for the languages in `scripts.json` `_scriptChoice` (`["sr"]`), where it
+made a Serbian-Latin → Serbian-Cyrillic storyline report that the learner needed no alphabet.
+**Gate and BUILDER must narrow identically**: `needsIntroScript` narrowing while
+`buildArcIntroLessons` still walked `scriptsForLang(lang)` passes the gate and then skips every
+script in the loop, returning `[]` with no error. Both functions exist in **two copies** (server +
+client) and are asserted byte-identical.
 
 **Ollama truncates an over-long prompt with no error.** Default `num_ctx` is ~4096. Exceed it and
 the request still succeeds — the model just answers from whatever fragment survived. This is why

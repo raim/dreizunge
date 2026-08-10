@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v78_e';
+const APP_VERSION  = 'v78_j';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -1028,10 +1028,34 @@ function scriptTeachable(name, srcScripts) {
 // True when the target's script differs from the UI/source script AND we can teach it to this
 // learner — i.e. an intro course would actually teach a new alphabet we can build. Symmetric
 // since v53: `latin` is a script like any other, so ar→en teaches the Latin alphabet.
-function needsIntroScript(targetLang, srcLang) {
-  const tgt = scriptsForLang(targetLang);
-  if (!tgt.length) return false;            // target unmapped → no intro
-  const srcArr = scriptsForLang(srcLang || 'en');
+// v78_g (user-reported): the source's readable scripts are the ONE script this pair is actually
+// written in when that is known, not every script the source LANGUAGE admits.
+//
+// The bug it fixes, reported on a Serbian-Latin -> Serbian-Cyrillic storyline (sl_56647998):
+// `scriptsForLang('sr')` is ["cyrillic-sr","latin"], so for sr->sr BOTH sides came back as the full
+// pair, every target script was already "readable", and the gate concluded the learner needs no
+// alphabet at all. Exactly backwards for a storyline whose whole point is the script.
+//
+// The gate was answering "which scripts CAN this language be written in" where the question is
+// "which script is THIS pair actually written in". Since v76_g/v76_h that is a stored per-topic
+// fact (`script` / `srcScript`), so it is passed in when the caller has it.
+//
+// Only bites when a side is DIGRAPHIC — the languages in scripts.json `_scriptChoice` (["sr"]).
+// Everywhere else the chosen script is the language's only script and narrowing changes nothing,
+// which is why this survived until the corpus gained its first digraphic-source chapter.
+//
+// A chosen script is honoured only if it is one the language actually admits: a stale or
+// hand-edited stamp falls back to the full set rather than inventing an alphabet for a language
+// that has none.
+function _scriptSideOf(langCode, chosen, fallbackLang) {
+  const all = scriptsForLang(langCode || fallbackLang || 'en');
+  if (chosen && all.indexOf(chosen) >= 0) return [chosen];
+  return all;
+}
+function needsIntroScript(targetLang, srcLang, opts) {
+  const tgt = _scriptSideOf(targetLang, opts && opts.script, targetLang);
+  if (!tgt.length) return false;            // target unmapped -> no intro
+  const srcArr = _scriptSideOf(srcLang || 'en', opts && opts.srcScript, 'en');
   const src = new Set(srcArr);
   return tgt.some(s => !src.has(s) && scriptTeachable(s, srcArr));
 }
@@ -5228,12 +5252,17 @@ async function _titleStorylinePostPass(chapterIds, base, bj) {
 // the letters NEW to this chapter (extend), capped by difficulty, distractors from the full
 // alphabet. Returns [] when nothing applies. (chapterText = this chapter's story/target text;
 // priorRef = the parent chapter id/name so we know which letters are already introduced.)
-function buildArcIntroLessons(lang, srcLang, chapterText, priorRef, difficulty) {
-  if (!needsIntroScript(lang, srcLang)) return [];
-  const srcArr = scriptsForLang(srcLang || 'en');
+function buildArcIntroLessons(lang, srcLang, chapterText, priorRef, difficulty, opts) {
+  if (!needsIntroScript(lang, srcLang, opts)) return [];
+  // v78_g: narrow BOTH sides exactly as the gate does, through the same helper. If the gate said
+  // yes on the chosen scripts and this loop still walked every script the LANGUAGE admits, a
+  // digraphic pair would pass the gate and then skip every script inside the loop
+  // (`srcScripts.has(scr)` is true for all of them) — returning [] with no error, which is the
+  // silent-empty shape INTERNALS §2 is full of. Gate and builder must ask the same question.
+  const srcArr = _scriptSideOf(srcLang || 'en', opts && opts.srcScript, 'en');
   const srcScripts = new Set(srcArr);
   const out = [];
-  for (const scr of scriptsForLang(lang)) {
+  for (const scr of _scriptSideOf(lang, opts && opts.script, lang)) {
     if (srcScripts.has(scr) || !scriptTeachable(scr, srcArr)) continue;
     const table = _scriptsData[scr];
     let letters = introExtendLetters(scr, chapterText, priorRef, difficulty);
@@ -5360,7 +5389,7 @@ async function _runBookJob(bookId, chunks, base) {
       if (base.arc && base.arcScript && Array.isArray(data.lessons)) {
         try {
           const chapterText = userStory || data.story || '';
-          const introLessons = buildArcIntroLessons(base.lang, base.srcLang, chapterText, parent ? (parent.id || prevRef) : null, base.diff);
+          const introLessons = buildArcIntroLessons(base.lang, base.srcLang, chapterText, parent ? (parent.id || prevRef) : null, base.diff, { script: base.script, srcScript: base.srcScript });
           if (introLessons.length) {
             data.lessons.unshift(...introLessons);
             jobStep(jobId, `🔡 Prepended script primer (${introLessons.map(l => l.script).join(', ')})`);
@@ -6273,7 +6302,11 @@ http.createServer(async (req, res) => {
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
       const { chunks, lang, srcLang, difficulty, lessonFormat, continuedFrom, userStoryLang, arc, arcReinforce, arcMode, arcScript,
-              generated, topic, nChapters, chapterLen, storyStyle, sourceFile } = body;
+              generated, topic, nChapters, chapterLen, storyStyle, sourceFile,
+              // v78_g: the chosen scripts, so the arc primer can narrow a DIGRAPHIC side the way
+              // /api/generate does. Absent from older clients → undefined → the gate falls back to
+              // every script the language admits, i.e. exactly the pre-v78_g answer.
+              script, srcScript } = body;
       if (active === 'none')
         return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
       // Generated batch: synthesize N text-less chapters from a single topic; each is
@@ -6307,6 +6340,11 @@ http.createServer(async (req, res) => {
       // Normalize the chain root (id or name) to a name for downstream context.
       const rootParent = continuedFrom ? (findSavedById(continuedFrom) || findSaved(continuedFrom)) : null;
       const base = { lang: lang || 'it', srcLang: srcLang || 'en', diff, fmt,
+        // v78_g: the CHOSEN scripts travel with the job. Without them `base.script` is undefined
+        // downstream and buildArcIntroLessons silently falls back to "every script the language
+        // admits" — which is the very thing the fix narrows, so the arc primer would have kept the
+        // old behaviour while the gate reported the new one.
+        script: script || null, srcScript: srcScript || null,
         // v69_p: token spend from the ✨ upload cleanup, which happens BEFORE any storyline exists.
         // Sanitised here rather than trusted: it is client-supplied and only ever added to a ledger.
         cleanupTokens: (body.cleanupTokens && typeof body.cleanupTokens === 'object')
@@ -6320,7 +6358,7 @@ http.createServer(async (req, res) => {
         // Arc script-teaching opt-in. Default ON when the target uses a script the source
         // doesn't (so a learner of a new alphabet gets per-chapter primers automatically);
         // the client can pass arcScript:false to suppress it.
-        arcScript: arcEnabled && (arcScript === undefined ? needsIntroScript(lang || 'it', srcLang || 'en') : !!arcScript),
+        arcScript: arcEnabled && (arcScript === undefined ? needsIntroScript(lang || 'it', srcLang || 'en', { script, srcScript }) : !!arcScript),
         generated: !!generated, baseTopic, chapterLen: chapterLenN,
         sourceFile: (typeof sourceFile === 'string' && sourceFile.trim()) ? sourceFile.trim().slice(0,200) : null,
         storyStyle: (storyStyle && storyStyle !== 'creative') ? storyStyle : null };

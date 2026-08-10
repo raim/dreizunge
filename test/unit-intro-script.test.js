@@ -98,8 +98,13 @@ const scriptsForLang = new Function('SCRIPTS_DATA', ext(html, 'scriptsForLang') 
 const scriptHasTable = new Function('SCRIPTS_DATA', ext(html, 'scriptHasTable') + '\nreturn scriptHasTable;')(SCRIPTS_DATA);
 const scriptTeachable = new Function('SCRIPTS_DATA', 'scriptHasTable',
   ext(html, 'scriptTeachable') + '\nreturn scriptTeachable;')(SCRIPTS_DATA, scriptHasTable);
-const needsIntroScript = new Function('SCRIPTS_DATA', 'scriptsForLang', 'scriptTeachable',
-  ext(html, 'needsIntroScript') + '\nreturn needsIntroScript;')(SCRIPTS_DATA, scriptsForLang, scriptTeachable);
+// v78_g: needsIntroScript now narrows each side through `_scriptSideOf`, so the extraction has to
+// pull that helper in as well. `ext()` grabs ONE named function, which is a harness limit rather
+// than a product constraint — the ReferenceError it produced was this file's, not the client's.
+const _scriptSideOf = new Function('scriptsForLang',
+  ext(html, '_scriptSideOf') + '\nreturn _scriptSideOf;')(scriptsForLang);
+const needsIntroScript = new Function('SCRIPTS_DATA', 'scriptsForLang', 'scriptTeachable', '_scriptSideOf',
+  ext(html, 'needsIntroScript') + '\nreturn needsIntroScript;')(SCRIPTS_DATA, scriptsForLang, scriptTeachable, _scriptSideOf);
 
 assert.deepStrictEqual(scriptsForLang('ja'), ['hiragana', 'katakana'], 'ja → two scripts');
 assert.deepStrictEqual(scriptsForLang('ru'), ['cyrillic'], 'ru → cyrillic');
@@ -460,6 +465,7 @@ console.log('  v53 Latin course: localized answers, no Latin leak, parity, legac
   const APPen = { srcLang: 'en' };   // browsing with an English UI
   const gate = new Function('SCRIPTS_DATA', 'APP',
     [ext(html, 'scriptsForLang'), ext(html, 'scriptHasTable'), ext(html, 'scriptTeachable'),
+     ext(html, '_scriptSideOf'),                      // v78_g: needsIntroScript's per-side narrowing
      ext(html, 'needsIntroScript'), ext(html, 'scriptLessonAvailable'),
      ext(html, 'scriptLessonAvailableForSet')].join('\n') + '\nreturn scriptLessonAvailableForSet;'
   )(SCRIPTS_DATA, APPen);
@@ -599,13 +605,16 @@ console.log('  completion card: mixed-lesson words + story-unlock via _counts: O
   const sScriptsFor = new Function('_scriptsData', ext(server, 'scriptsForLang') + '\nreturn scriptsForLang;')(_scriptsData);
   const sHasTable = new Function('_scriptsData', ext(server, 'scriptHasTable') + '\nreturn scriptHasTable;')(_scriptsData);
   const sTeachable = new Function('_scriptsData', 'scriptHasTable', ext(server, 'scriptTeachable') + '\nreturn scriptTeachable;')(_scriptsData, sHasTable);
-  const sNeeds = new Function('scriptsForLang', 'scriptTeachable', ext(server, 'needsIntroScript') + '\nreturn needsIntroScript;')(sScriptsFor, sTeachable);
+  // v78_g: both needsIntroScript and buildArcIntroLessons narrow each side through `_scriptSideOf`,
+  // so the extraction must supply it to BOTH.
+  const sSide = new Function('scriptsForLang', ext(server, '_scriptSideOf') + '\nreturn _scriptSideOf;')(sScriptsFor);
+  const sNeeds = new Function('scriptsForLang', 'scriptTeachable', '_scriptSideOf', ext(server, 'needsIntroScript') + '\nreturn needsIntroScript;')(sScriptsFor, sTeachable, sSide);
   const sCharSet = new Function('_scriptsData', ext(server, '_scriptCharSet') + '\nreturn _scriptCharSet;')(_scriptsData);
   const sChainGlyphs = new Function('_scriptCharSet', 'findSavedById', 'findSaved', ext(server, 'chainGlyphSet') + '\nreturn chainGlyphSet;')(sCharSet, findSavedById, findSaved);
   const sExtend = new Function('_scriptsData', 'chainGlyphSet', 'introMaxLetters', ext(server, 'introExtendLetters') + '\nreturn introExtendLetters;')(_scriptsData, sChainGlyphs, sIntroMax);
   const sExs = new Function(ext(server, 'introScriptExercises') + '\nreturn introScriptExercises;')();
-  const sBuild = new Function('needsIntroScript', 'scriptsForLang', 'scriptTeachable', '_scriptsData', 'introExtendLetters', 'introScriptExercises',
-    ext(server, 'buildArcIntroLessons') + '\nreturn buildArcIntroLessons;')(sNeeds, sScriptsFor, sTeachable, _scriptsData, sExtend, sExs);
+  const sBuild = new Function('needsIntroScript', 'scriptsForLang', 'scriptTeachable', '_scriptsData', 'introExtendLetters', 'introScriptExercises', '_scriptSideOf',
+    ext(server, 'buildArcIntroLessons') + '\nreturn buildArcIntroLessons;')(sNeeds, sScriptsFor, sTeachable, _scriptsData, sExtend, sExs, sSide);
 
   // Chapter 1, no prior: letters new = all arabic letters appearing in the story (capped).
   const ch1 = sBuild('ar', 'en', 'يوسف له قطة اسمها لولو وكان سعيدا جدا في البيت الكبير', null, 2);

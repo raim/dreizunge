@@ -334,13 +334,223 @@ argument for the packaged zip: it was the only intact copy of a file the working
 
 ---
 
+
+---
+
+## 12. `v78_f` — the teacher-mode switch on every page
+
+User: *"Teacher-mode switch at the bottom of every page, beside the UI-language and mute controls.
+(Will later depend on credentials.)"*
+
+It existed, but only on the landing page (`teacher-mode-bar`, a full-width labelled button shown in
+both live and static). The two other footers — `lang-footer-lessonset` and `lang-footer-storyline`,
+which carry the UI-language select and the mute button — had nothing.
+
+**Three controls, one updater.** The obvious implementation is to paste the button into two more
+footers, and that is precisely the shape that has cost this project twice: `v71_w`'s storyline
+connector line drifted from a second copy of the completeness rule, and `v77_q` found four card
+headers rendering four different titles from four copies of the same markup. So `_TEACHER_TOGGLES`
+lists the three ids and `updateTeacherModeBtn` fills all of them; the compact footer glyph is taken
+as the **first character of the same label string** the landing button renders, not spelled a second
+time. Revert-verified by hard-coding the glyph — which passes §1 and §2 and fails §3's agreement
+check, as it must.
+
+**Reachability decided the scope.** The v71 rule: a learner-facing affordance placed on the
+lesson-set page is unreachable, because learners skip that screen entirely (v60 learner nav). So
+"every page" could not be satisfied by the easiest footer — landing and the storyline page are the
+learner-reachable ones and both had to carry it.
+
+**Found and fixed on the way: `toggleTeacherMode` synced the button BEFORE re-rendering.** That
+ordering was harmless for as long as the control lived only on the landing page, and wrong the
+moment it moved *into* the screens the function redraws (`buildPath`, `_renderStorylineScreen`) —
+the page the user clicked would have shown its pre-click state. The sync moved after the re-renders,
+and §6 asserts the ORDER rather than the outcome, because the outcome is identical on any page that
+was not redrawn.
+
+**No new i18n**, deliberately: `teacher.mode_on` / `teacher.mode_off` / `teacher.unlock_tooltip`
+already carry both presentations. §7 asserts no new `teacher.*` key was invented, so a later "just
+hard-code the emoji" edit has to argue for itself.
+
+**"Will later depend on credentials" is unchanged and still ahead.** The new controls are wired to
+`APP._teacherMode` exactly as the landing button always was, so gating on credentials remains the
+same one change in the same one place — this release did not make that harder or easier.
+
+**How to see it work** (browser): open a storyline, look at the footer row beside 🗣 and 🔊 — there is
+now a 🔓 (or 🔒 when teacher mode is on). Tap it: the deck re-renders with locks removed, the icon
+turns green, and the landing page's own button shows the same state when you go back. The same
+control sits in the lesson-set footer. The state survives a reload (localStorage `dz_teacher_mode`).
+
+## 13. Two user decisions recorded, no code
+
+- **"Inside error / AI-error-hunt lessons"** (the unbuilt half of `v78_e`) meant something different
+  from a chapter wipe: clearing the errors the LEARNER had marked, so they can be re-tagged. **The
+  user then dropped it — "we can actually skip this."** Recorded in group B and NOT carried forward
+  as an open item; a deferred item that nobody decided is how the v71→v72 boundary lost three
+  things.
+- **The Latin-script `sr` UI stays**, with both options possibly wanted later. Filed under the
+  roadmap's "Second script for Serbian" entry rather than as a new item, because it is the same
+  question in a third place: a language whose UI, story text and lesson content can each be in
+  either script wants ONE notion of "which script is this learner reading", not three toggles that
+  can disagree. **Sequenced after §7**, which is the first code to actually READ the per-topic
+  `script`/`srcScript` pair and should prove that carrier before a third consumer is built on it.
+
+---
+
+
+---
+
+## 14. `v78_g` — §7, script lessons for a digraphic source
+
+The user's report: *"I generated a serbian-latin → serbian-cyrillic lesson, sl_56647998, but I can't
+add script lessons to this. Script lessons would obviously fit such a script-focussed lesson."*
+
+**The gate was asking the wrong question.** `needsIntroScript` computed the learner's readable
+scripts as `scriptsForLang(srcLang)` — every script the source LANGUAGE admits. For `sr → sr` that
+is `["cyrillic-sr","latin"]` on *both* sides, so `tgt.some(s => !src.has(s))` was false and the gate
+concluded the learner already reads everything. It was answering "which scripts CAN this language be
+written in" where the question is "which script is THIS pair actually written in" — and since
+`v76_g`/`v76_h` that is a stored per-topic fact (`script` / `srcScript`).
+
+One helper, `_scriptSideOf(langCode, chosen)`, now narrows each side, in **both copies**. A chosen
+script is honoured only if the language actually admits it, so a stale or hand-edited stamp falls
+back rather than inventing an alphabet — and the fallback is **per side**, which cost a corrected
+assertion (see below).
+
+**Why the builder had to change too.** If the gate narrowed and `buildArcIntroLessons` did not, a
+digraphic pair would pass the gate and then skip every script inside the loop
+(`srcScripts.has(scr)` true for all of them), returning `[]` with no error. That is the
+silent-empty shape INTERNALS §2 is full of, and §6 asserts gate and builder ask the same question
+rather than trusting that they do.
+
+**Threading found two real gaps, neither visible by reading the diff:**
+- `base` (the generate job) did not carry the chosen scripts, so `base.script` was `undefined`
+  downstream. The arc primer would have kept the OLD behaviour while the gate reported the new one —
+  a disagreement between the checkbox and the thing it controls.
+- `/api/generate-book` destructures its own body set, which had no `script`/`srcScript`. My call
+  passed identifiers that did not exist in that scope: a **`ReferenceError` in nine e2e tests**.
+  Worth recording that the suite caught this and reading did not — the edit looked right in both
+  places it was written.
+
+**Guarded against the real corpus.** `sl_56647998` arrived in the session-32 drop, so the test drives
+`tp_17862984310970000000` from `lessons.json` rather than a fixture (v70_n, from the good direction
+for once). §0 asserts the premise — that `sr` really is the digraphic language and admits exactly
+those two scripts — because a test built on a corpus coincidence is how the `v78` cut produced a
+wrong test. §5 sweeps **31 non-digraphic corpus pairs** and asserts none changed answer: the
+narrowing is inert where a language has one script, which is the entire regression surface.
+
+**Revert-verified two ways**, deliberately:
+- Reverting the narrowing reproduces the user's report exactly — §1 fails on the real storyline.
+- Reverting only the SERVER copy fails **only** §7 (parity) while every behavioural section still
+  passes. That is the one-sided-fix failure this change was most exposed to, and it is the shape
+  that would otherwise ship: the menu offering an option the generator then refuses to build.
+
+**Three extraction sites in `unit-intro-script` needed the helper injected.** `ext()` grabs one
+named function, so splitting a function into two broke the harness, not the product. The
+`ReferenceError` it raised was the test's own. Fixed at all three sites rather than by inlining the
+helper back — inlining would have meant two copies of the narrowing rule, one in the gate and one in
+the builder, which is precisely what §6 exists to prevent.
+
+**NOT done, deliberately — and this is a language decision, not a code one.** Teaching LATIN to a
+Serbian-Cyrillic reader stays unoffered. The Latin table's `sounds` column is keyed by the reader's
+script and carries `cyrillic` — Russian-flavoured respellings, "эй" for A, "си" for C — but not
+`cyrillic-sr`. Aliasing them would print the answers in letters a Serbian reader does not use (no
+э, ы, ё), and INTERNALS §4 puts that judgement outside the code. Added to the owed list as a real
+26-respelling column needing a model pass and a native check. §8 asserts the REASON, not the
+symptom, so adding the column flips the behaviour deliberately.
+
+**A corrected assertion, recorded because the product was right and I was not (twice).** §4 first
+claimed an invalid stamp turns the option off; in fact the sides fall back independently, so a bogus
+target stamp with a VALID source stamp correctly still finds `cyrillic-sr` unreadable. §8 first
+asserted the withheld direction on the MENU gate — but `scriptLessonAvailable` checks both
+directions by design ("worth offering whenever a table-backed script is involved on either side"),
+so it rightly still offers the `cyrillic-sr` lesson. Both were restated against the function that
+actually encodes the claim. Two different questions, and the first draft asked the wrong one.
+
+**How to see it work** (browser): open `sl_56647998` (*Učenje skriptova*), go to the chapter and open
+the add-a-lesson menu — the script-lesson option is now offered, and generating it produces a
+Serbian Cyrillic alphabet primer built from the 30-letter `cyrillic-sr` table. The arc checkbox on a
+new `sr`-latin → `sr`-cyrillic storyline now defaults ON for the same reason.
+
+---
+
+
+---
+
+## 15. §0e/§3 re-planned — the coupling was right for a seventh of the data
+
+The roadmap has said for three sessions that this pair "needs re-planning, not implementing". Done
+here, by measurement rather than by reading the old note again.
+
+**Three of the v75 plan's four parts turned out to be already-done or moot:**
+- the apostrophe fix shipped as `v77_u`;
+- the corpus-derived article sets are unnecessary since session 30 ruled article noise ACCEPTED,
+  which also retires `roadmap_v74.md`'s wrong claim that `_articleStatsFor` already derived them;
+- a matcher already exists (`_highlightVocabHtml` + `_hlKey`), so "one shared matcher" is an
+  extension, not a new thing.
+
+**One part is ready to build**: `_highlightVocabHtml` matches a multi-token vocab entry only as a
+whole phrase — verified by calling it, `['la variazione genetica']` marks that phrase but a story
+containing only `variazione` marks nothing. Whitespace splitting is the ruled change (+782 marks,
+96 chapters) and is still unshipped.
+
+**And the part the coupling rested on is dead.** The v75 note justified attaching §0e to §3 by
+saying story-ordering "is the same token-alignment problem, not a separate nicety". Simulating the
+cumulative panel against the chapter story actually on screen, through the product matcher, over 612
+entries in 12 multi-chapter storylines:
+
+| | |
+|---|---|
+| exact match in the shown story | 82 (13%) |
+| only a word-form / stem match | 24 (4%) |
+| **absent entirely** | **506 (83%)** |
+
+`The Lion's Mischief`: 221 cumulative words, 25 in the story. `Nights in Cairo`: 0 of 23.
+
+**The cause is two correct decisions that were never compared.** The v75 ordering note assumed the
+panel showed the CHAPTER's vocabulary; `v77_f` then made it cumulative across the deck (133 words vs
+24, measured at the time). Separately reasonable; together they make "order as the words appear in
+the story" an instruction about a seventh of the list.
+
+Word forms do not rescue it either: the v75 note's "greedy matching, to allow for word forms" is
+worth the 4% above, and greedy stem matching is the one part of this that risks marking the wrong
+word. Four points is not a good price for that.
+
+So the re-plan does not schedule the work — it puts a **ruling** in front of the user with three
+options, all of which still share ONE matcher (so the coupling survives, on better grounds), and
+recommends **"mark, do not reorder"**: use the matcher to flag which panel words occur in this
+chapter's story, keeping the existing order. Well-defined for 100% of the panel, and the panel stops
+re-shuffling as the learner moves between chapters.
+
+**Also identified, and it is the real prerequisite:** `_highlightVocabHtml` does a regex replace and
+returns a STRING, so it can answer "mark this" but not "where, and in what order". Every option
+needs the second answer, so the shared matcher must return matches WITH OFFSETS and highlighting
+becomes a thin wrapper over them — which keeps §3 byte-identical and revert-verifiable while §0e is
+built on the same call.
+
+### Rule earned (26)
+
+**When two releases each change the same surface, re-measure the older plan against the newer
+behaviour before scheduling it.** Neither the v75 ordering note nor `v77_f`'s cumulative panel was
+wrong; the plan was stale because nothing forced them to be compared. The tell was cheap and was
+available the whole time — one probe over the corpus asking "does this panel word occur in this
+story", 612 entries, ten minutes. **A plan that has been carried forward unchanged across three
+roadmaps is a plan whose premises have not been checked against three roadmaps' worth of changes.**
+
+---
+
 ## 6. What the next session should know
 
-- **Baseline for `v78_b`: 194 / 170 / 0 / 0.** Two new guards since the cut's 192.
-- **The two group-B items I did not reach** are unchanged and still small: clear-progress at chapter
-  level (reuse `slBottomClearProgress`, do not re-implement — `v77_s` fixed what it forgets), and
-  conjugation options being alternative forms of the same verb. The word-form highlighting item
-  still belongs with §0e/§3 and the one shared matcher.
-- **The `Übersetze:` note needs the user** before anything is built for it (§3 above).
-- **Expect the data-drop guards to fire again** on the next drop — but read §1 before reaching for
-  the fixers, and run **backfill before build-static**.
+- **Baseline for `v78_g`: 198 / 174 / 0 / 0.** Corpus 309 topics, 87 storylines.
+- **GROUP B IS DONE** apart from two items that are not mine to close: the `Übersetze:` note (needs
+  the user — it presupposes a read-out that does not exist) and the word-form highlighting item,
+  which belongs with §0e/§3 and the ONE shared matcher.
+- **§7 SHIPPED as `v78_g`.** Next are **§0e's ordering half + §3 highlighting** (ONE shared matcher;
+  the v75 plan was measured twice and is WRONG — re-plan, do not implement), **§0h question
+  navigation** (its own session), and the **Replay ordering fix** scheduled alongside §0e/§3.
+- **Held on a screenshot:** the auto-read move (ruled: to the card before comprehension lessons,
+  nowhere else, and the mute button must stop it mid-read). Do not guess which card.
+- **On the next data drop:** read §1 and §7 of these notes before reaching for the fixers, and run
+  **backfill before build-static**. The `sr` script stamps are lost on every round-trip — that is
+  now confirmed across two drops, so it is a per-drop step rather than a repair that sticks.
+- **Writing docs: never put emoji in a Python string literal** (rule 25, and §11 above — it
+  truncated the roadmap to zero bytes).

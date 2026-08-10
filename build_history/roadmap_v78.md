@@ -4,7 +4,7 @@ Current cut: **`v78`**. Baseline `node test/run.js` **192**, `--quick` **168**, 
 both builds. Corpus: **308 topics, 86 storylines**.
 
 > **Carried forward from `roadmap_v77.md` in full.** Everything below — the session protocol, the
-> standing rules (now twenty-five, sessions 28–32), the §0 rulings, and every open item — survives
+> standing rules (now twenty-six, sessions 28–32), the §0 rulings, and every open item — survives
 > the cut. The user's triaged testing notes are in "USER TESTING NOTES"; start there. The shipped table lists the
 > v76 line for context; new releases are appended above it.
 
@@ -32,6 +32,11 @@ both the documented guards doing their job:
 
 | release | what |
 |---|---|
+| `v78_j` | **(user) Three small specified items.** (a) **Grammar and Konjugation restored to the single-chapter add-lesson menus.** There was no gate, only an omission — both are full registry types with builders, editors and translated labels, and the storyline-wide arc has offered them all along. The real defect is structural and is what the new guard pins: **the option list is written out three times** (progress card, library, `ADD_LESSON_TYPES`), which is how they drifted. `unit-add-lesson-menu` asserts the two add-lesson menus AGREE — and it immediately earned itself by catching a second difference I had not noticed: the library menu lacks `mixed`. That one is REAL and now documented as the single allowed exception, because a mixed lesson pools the OPEN set's other lessons and its handler throws `mixed.need_open_set` without one; the guard also asserts that handler exists, so the exception is a reason rather than an excuse. (b) **Slovenian (`sl`)** added — `languages.json`, `_langScript` (latin) and both language selects. `unit-lang-menu-coverage` fired exactly as predicted and then caught a second thing: my first edit reflowed `languages.json`, and that guard protects the hand-written line shape (a reflow makes every future diff unreadable). Re-done as a textual append. 33 languages; **65 name cells reopen** for the next `--langnames` run. (c) **`--batch N` and `--threads N` for `translate-ui.js`.** `setNumThread` had existed in `llm.js` since `v71_q` but only the model MENU ever called it, so a batch run could not set either. Flag beats env var, matching `--model`. Guarded behaviourally — the same 20 keys go out as 1 batch at `--batch 20` and 4 at `--batch 5`, driven through the real script with a counting stub. |
+| `v78_i` | **(user, screenshots) Three rulings, and a defect the new corpus exposed.** (a) **Chapter auto-read REMOVED** from the progress card and added nowhere else — supersedes §0f (`v77_v`) and the brief "card before comprehension lessons" re-scoping. The helper is kept (the speaker control still reads the story, and it carries the four restraints), but **`unit-story-autoread` now asserts it has NO CALL SITE**, revert-verified by re-adding one; the ruling is a property of the product, not a fact about one commit. (b) **Conjugation prefers MCQ over typing** — typing is a FALLBACK for forms that cannot be asked as an MCQ, not a second question on the same form. **This fixed a real defect:** `mcq_conjugation` and `type_conjugation` share ONE qid (`infinitive|pronoun`), so emitting both put two exercises with one identity into a round, and `unit-replay-focus` measured 2 repeats in a round of 14 on the user's first conjugation lesson. (c) **The conjugation reveal shows the whole phrase** (`vi ste`, not `ste`) — the read-out has composed pronoun+form since it was written, so the app SAID the full phrase while SHOWING half of it; same composition now, so they cannot disagree. **Also: `unit-replay-focus` §8c was measuring the corpus, not the product.** It asserted a replay has ZERO repeats, and passed for years because grammar — the only capped builder in the corpus — leaves 11 unsolved against a cap of 14, so trim mode never had room for the `FAMILIAR_SHARE` (0.15) review slots the cut deliberately reserves. The user's 30-question conjugation lesson left 16 unsolved, the round filled to 14, and the two designed review slots appeared. Bound corrected to the designed share, keeping the original power (a random cut re-asks ~half the round and still fails). **And `unit-syn-count` §5 flipped as predicted** from "en-only, owed to the translate pass" to "no language drops the `{n}` placeholder" — the pass has run and all 32 languages carry both keys. |
+| `v78_h` | **(user) Every word-bearing source feeds the story highlight, in two shades.** Only `L.vocab[].target` was ever marked, so a chapter that teaches through conjugation, word_forms, grammar or synonyms showed a story with almost nothing lit up. Now **synonyms** (base + every alternative), **word_forms** (every offered choice), **grammar** (noun + plural) and **conjugation** (infinitive + each inflected form, pronoun stripped — the corpus stores `io parlo`, the story contains `parlo`) all contribute. **Measured over 90 corpus chapters with a story: 704 marks → 1043, +48%, with 44 of the 90 gaining** — and the shipped collector was re-measured after wiring and reproduced that figure exactly. **One collector drives BOTH shades:** `_storyWordSources` emits each word together with the PROBE identifying the question that teaches it, so light ("in your lessons") and dark ("you have answered it") are two reads of one list — computing them separately is how this panel and the storyline page came to light the same story differently before `v74_n`. The probes are the shapes `_qidCanonical` already switches on and solved-ness is tested with the product's own `qid`, so a qid change moves both sides together. A word_forms **distractor is light but can never be dark** — no question has it as its answer, and calling it learned would be a lie the shading tells. Wired into all four story panels (progress card, comprehension, chain, library reader); the library reader stays base-shade-only, having no per-learner progress in hand. Revert-verified twice: removing the conjugation source fails §1, and making the dark shade ignore the solved map fails §4 while §3 correctly still passes (an empty solved map short-circuits). |
+| `v78_g` | **(user-reported) §7 — script lessons for a DIGRAPHIC source.** `needsIntroScript` computed the learner's readable scripts as `scriptsForLang(srcLang)` — every script the source LANGUAGE admits. For the user's `sr`(latin) → `sr`(cyrillic-sr) storyline that is `["cyrillic-sr","latin"]` on **both** sides, so every target script was already "readable" and the gate concluded no alphabet was needed — exactly backwards for a storyline whose whole point is the script. It was answering *"which scripts CAN this language be written in"* where the question is *"which script is THIS pair actually written in"* — a per-topic fact stored since `v76_g`/`v76_h`. Both sides now narrow through one `_scriptSideOf(lang, chosen)`, in **both copies** (server + client, byte-identical, asserted). **The builder had to narrow too:** gate-narrows-but-builder-does-not would pass the gate and then skip every script inside the loop, returning `[]` with no error — the silent-empty shape INTERNALS §2 is full of. Threading found two real gaps: `base` did not carry the chosen scripts (so `base.script` was `undefined` downstream and the arc primer would have kept the old behaviour while the gate reported the new one), and `/api/generate-book` destructures its own body set, which lacked them — a **`ReferenceError` in nine e2e tests**, caught by the suite rather than by review. Guarded against the REAL storyline in the shipped corpus, with a 31-pair sweep proving no non-digraphic pair moved. Revert-verified two ways: the narrowing reverted reproduces the user's report, and the SERVER copy alone reverted fails only the parity section while every behavioural section still passes. **Also fixed: three extraction sites in `unit-intro-script`** needed the new helper injected — a harness limit (`ext()` grabs one named function), not a product constraint. **NOT done, deliberately: the reverse direction** (teaching Latin to a Cyrillic-Serbian reader) stays unoffered — `latin.soundsFor` carries `cyrillic` (Russian-flavoured "эй"/"си") but not `cyrillic-sr`, and aliasing them is a LANGUAGE judgement (Serbian Cyrillic has no э/ы/ё) that INTERNALS §4 puts outside the code. Asserted with its reason, so adding a real column flips it deliberately. |
+| `v78_f` | **(user notes, group B) The teacher-mode switch is on every page that carries the footer controls**, beside the UI-language and mute controls — it had lived only on the landing page. Compact 🔓/🔒 icons in `lang-footer-lessonset` and `lang-footer-storyline` join the existing full-width landing button, and **all three are driven by ONE updater**: three copies of "which icon means which state" is how `v71_w`'s connector line drifted and how `v77_q` produced four card headers with four different titles. The compact glyph is **derived from the same label string** the landing button renders rather than spelled a second time — revert-verified by hard-coding it, which fails the agreement check. **Reachability (v71 rule) is why all three were wired rather than the easiest one:** the lesson-set page is invisible to learners, so a switch placed only there would not exist for the people who need it; landing and the storyline page are the learner-reachable ones. **Also fixed on the way: `toggleTeacherMode` synced the button BEFORE re-rendering the screens.** That was harmless while the control lived only on the landing page and wrong the moment it moved into the screens this function redraws — the clicked page would have shown its pre-click state. Sync moved after the re-renders, revert-verified by ordering. Handlers assigned in JS, never inline (rule 22). **No new i18n:** the existing `teacher.*` keys carry both presentations, asserted so a later "just hard-code the emoji" edit has to justify itself. |
 | `v78_e` | **(user notes, group B) Clear progress for ONE CHAPTER**, plus a third copy of the `v77_s` bug found and killed. The wipe rule is extracted to **`_clearChapterProgress(topicKey)`** and every entry point goes through it: the storyline-wide control loops over it, the new `comp-wipe` 🧹 on the progress card calls it for the current chapter, and **`clearLessonProgress` (the lesson-set page) — which turned out to be a THIRD implementation carrying the exact `v77_s` defect: it cleared `completed` and `solved` but not the `chapterDone` STAMP or `storyShown`, so clearing from that page left the chapter still reading "finished".** The user's note named the trap ("reuse it, do not re-implement, or the new button will forget `chapterDone` all over again") and it was already true of shipped code. The guard's payload assertion is PARITY: wiping every chapter one-by-one must leave byte-identical state to the storyline-wide wipe, so a future re-implementation that drops a store fails even while its own checks pass — revert-verified by reintroducing exactly that mistake. The card re-renders via `showComplete(true)`, the REVIEW render, because a play render would re-judge a chapter nobody just played and re-record the completion it had just erased. **Found on the way:** `unit-qid-stability` §5 pinned two SOURCE PHRASINGS (`delete APP.progress.solved[tp]`) that the extraction broke while the product stayed correct — standing rule 18, and one of the pins §0a asks to retire. Replaced behaviourally, and the replacement itself revert-verified (session-29 rule 8). 3 new `en` keys. |
 | `v78_d` | **(user notes, group B) Conjugation MCQ distractors are OTHER FORMS OF THE SAME VERB, and the question is no longer padded to four.** The pool was a shuffled UNION of this verb's other forms and every form of every OTHER verb in the lesson, capped at 3 — and because it was shuffled, the intruders crowded out the real paradigm even when the verb had six forms of its own. Measured under revert on a two-verb Italian fixture: `essere (voi)` was offered **`siete / parli / parla / parlano`**, three of four from `parlare`. That is not a grammar question — the learner picks the form whose stem matches the infinitive and never considers the paradigm. Now same-verb only, and **no padding**: a two-form verb asks a two-option question rather than being topped up from a neighbour (user: "need not be padded to four"). **Checked for the v71_s trap** — narrowing a builder can strand coverage, since a form that yields no MCQ leaves its universe key unreachable. It does not: a fully syncretic verb merges to ONE cleanForm, so `fi % 3 === 0` still emits the typed variant, and any verb with more than one distinct form gives every form a same-verb distractor. Asserted rather than argued (§5). §1 and §4 revert-verified independently, the second by a targeted weakening that pads only when short — which passes §1 and fails §4, as it must. Client-only: no server copy of `buildConjugationExercises`. |
 | `v78_c` | **(user-reported crash) `translate-ui.js --langnames` died on the first REJECTED name.** `isBlocking` is `issues => issues.some(i => i.severity === 'error')` — it takes the whole array. The `--langnames` writer called it as `issues.some(isBlocking)`, handing it one issue OBJECT per invocation, so it evaluated `issue.some(...)` and aborted with `Fatal: issues.some is not a function`. **Unreachable on the happy path**, which is why it shipped and why the mode's own guard was green: when a name validates, `issues` is empty and `[].some(fn)` never calls `fn` at all — the same "only the no-op path was ever exercised" shape as `v76_c`, in the same mode. The other two call sites in the file were already correct. `unit-langnames` §4 forces a rejection, asserts the run COMPLETES, reports the rejected cell, does not write the bad value, and still writes the good cells in the same and later batches; under revert it reproduces the user's exact message. The survey half was never affected — the 119 missing cells were counted correctly, and `v76_f`'s per-batch save kept the names earned before the crash. |
@@ -308,6 +313,130 @@ back/next spine connecting them. `comp-back` does not exist — the spine must b
   cards of that chapter, iff such lessons exist. User screenshot 2 shows it appearing only on
   partial completion today.
 
+## §0e ordering — DROPPED by the user (session 32), replaced by a LOW-PRIORITY idea
+
+**User: "forget about the ordering for now."** The measured re-plan below stands as the record of
+WHY; the three options are withdrawn and no ruling is owed. `v77_f`'s deck-then-lesson order stays.
+
+**Replacing it, at LOW priority and explicitly "needs more thinking" —
+`PROGRESSIVE STORY REVEAL`:** *"at a later point we may show the story but just HIDE all non-learned
+vocab and progressively reveal the story."*
+
+Not scheduled. Recorded so it is not re-derived from scratch, with what is already known about it:
+
+- **It inverts the highlight.** Today the matcher answers "which spans are known"; this needs the
+  complement, "which spans are not", over the same offsets. `v78_h`'s `_storyWordSources` is the
+  right input — it already carries per-word learned/not-learned — so this is a consumer of that
+  collector, not a new matcher.
+- **The measurement that killed ordering is the one to check first here too.** 83% of a learner's
+  cumulative vocabulary does not occur in the chapter on screen; the question for reveal is the
+  reverse — what fraction of a STORY's words are covered by ANY source. `v78_h` measured 1043 marks
+  over 90 chapters, which is marks, not coverage. **Measure coverage as a share of story tokens
+  before designing anything**: if a typical story is 10% covered, "hide everything not learned"
+  hides the story, and the feature is a blank page rather than a reveal.
+- **It is a reading feature, so the failure mode is severe.** A story panel that hides too much has
+  no fallback the learner can reach — unlike a highlight, which is ignorable. Any design needs an
+  escape (reveal-all toggle), and the read-aloud must be decided too: does TTS speak hidden words?
+- Interacts with §0f/§0c (the auto read-out being moved) and with the finished card, which shows
+  the whole story. **Do not design it before the auto-read move lands**, or the same page will be
+  redesigned twice.
+
+## §0e ordering + §3 highlighting — the measurement that produced the above
+
+The roadmap said this pair "needs re-planning, not implementing", because the v75 plan was measured
+twice and found wrong. Re-planned here against the current corpus. **Two of the v75 plan's premises
+are now dead, one item is ready to build, and one needs a USER RULING.**
+
+### What is already done, and was not when the plan was written
+
+- **The apostrophe fix shipped** as `v77_u` (`_hlKey` folds U+0027/U+2019 and case on both sides).
+  The v75 note listed it as "ships regardless, it is a defect not a judgement". It is done.
+- **The article-set work is moot.** Session 30 ruled article noise ACCEPTED, so the corpus-derived
+  `es/it/ar` article sets, the `reti`/`per` false positives and the threshold tightening are all
+  unnecessary. `roadmap_v74.md`'s claim that `_articleStatsFor` already derives them was wrong, and
+  it no longer matters that it was wrong.
+- **A matcher already exists**: `_highlightVocabHtml` + `_hlKey`, with per-word boundaries applied
+  only to spaced scripts (`v73_d`). Any "one shared matcher" is an EXTENSION of this, not a new one.
+
+### Ready to build — §3's ruled half
+
+`_highlightVocabHtml` matches a multi-token vocab entry only as a whole phrase. Measured just now:
+`['la variazione genetica']` against a story containing exactly that phrase marks it, but a story
+containing only `variazione` marks nothing. **Whitespace splitting is the ruled change** (`+782`
+marks over 96 chapters, session 29's measurement) and it is still unshipped. Article noise is
+accepted, so no filtering is needed. This is a self-contained release.
+
+### DEAD PREMISE: "ordered as the words appear in the story" is undefined for most of the panel
+
+The v75 note says story-ordering is "the same token-alignment problem, not a separate nicety", which
+is why it was coupled to §3. **Measured against the corpus, that is true of a seventh of the data.**
+
+Simulating the cumulative panel — every solved word across a storyline, matched against the chapter
+story actually on screen, via the PRODUCT matcher, 612 entries over 12 multi-chapter storylines:
+
+```
+exact match in the shown story        82   13%
+only a word-form / stem match         24    4%
+absent entirely                      506   83%
+```
+
+Per storyline it is worse than the average suggests: `The Lion's Mischief` has **221 cumulative
+words and 25 in the story**; `Nights in Cairo` has **0 of 23**. Sorting by story position would give
+a 25-word ordered head and a 196-word arbitrary tail — or, for Cairo, change nothing at all.
+
+**Why the plan and the data disagree: two releases made decisions that were never compared.** The
+v75 ordering note assumed the panel showed the CHAPTER's vocabulary. `v77_f` then made it cumulative
+across the deck (133 words vs 24, measured at the time). Each was right on its own; together they
+make "order as they appear in the story" an instruction about 17% of the list.
+
+**And word forms do not rescue it.** The v75 note's "greedy matching, to allow for word forms" is
+worth exactly the 4% above (`preferenza`, `lezione`, `планина` — real, and a rounding error against
+83% absent). Greedy stem matching is a genuine cost — it is the one part of this that risks marking
+the wrong word — for four points.
+
+### NEEDS A USER RULING before anything is built
+
+The intent behind §0e's ordering half is sound: **connect the vocabulary panel to the story in front
+of the learner.** Story-ORDER turns out to be a poor instrument for it. Three ways to serve the
+intent, all using the SAME matcher (so the coupling to §3 survives, on better grounds):
+
+**~~The three options below are WITHDRAWN — the user dropped ordering (see above). Kept only as the
+record of what was measured.~~**
+
+1. **Mark, do not reorder.** Keep the existing deck-then-lesson order and use the matcher to flag
+   the panel words that occur in THIS chapter's story. Well-defined for 100% of the panel (each word
+   either occurs or does not), reuses §3's matcher exactly, and the panel stops jumping around as
+   the learner moves between chapters. **Recommended.**
+2. **Two zones**: an ordered "in this chapter" head, then everything else in the current order.
+   Delivers the v75 wording literally, at the cost of a panel that is 17% sorted and 83% not.
+3. **Order by recency of solving**, ignoring the story. Well-defined for the whole panel and needs
+   no matcher — but it abandons the story connection, which was the point.
+
+Option 1 is what the measurement argues for; **the user should rule**, because "ordered as the words
+appear in the story" is their sentence and the substitution is a product judgement, not a bug fix.
+
+### Sequencing, once ruled
+
+1. §3 whitespace splitting — ruled, measured, self-contained, no dependency on the above.
+2. Extract the shared matcher to return MATCHES WITH OFFSETS rather than substituted HTML. Today
+   `_highlightVocabHtml` does a regex replace and returns a string, so it can answer "mark this" but
+   not "where, and in what order" — every option above needs the second answer. Highlighting then
+   becomes a thin wrapper that wraps the offsets, which keeps §3's behaviour byte-identical and
+   revert-verifiable.
+3. The ruled §0e behaviour, on top of that matcher.
+4. **The Replay ordering fix rides here** (session-32 batch): pick the LEAST-COVERED counted lesson
+   rather than the first coverage-short one. It touches the same card. Independent of the ruling.
+
+### Traps carried forward
+
+- **`probe_gates_v77.js` must be re-run and diffed** after any change to the progress cards, against
+  `v77_card_gates.md` (**not** `v76_card_gates.md`, which is superseded).
+- **One matcher, not two.** `v77_f`'s finished card deliberately did NOT order, precisely so it
+  would not disagree with a matcher that did not exist yet. Whatever ships must serve both that card
+  and the progress-card panel, or the two will disagree about the same story.
+- `_cardErrors()` empty after any card render, and `_cardHeader(prefix)` + `.card-screen` on any new
+  card page.
+
 ## 0e. Vocabulary on progress cards
 
 - **Cumulative per lesson-set**: every word the learner has already solved correctly, not just the
@@ -517,6 +646,82 @@ by global TTS selectors in footers", still rebuilt on every lesson-set entry.
 
 ---
 
+## USER TESTING NOTES — session 32, second batch (screenshots) — TRIAGED
+
+### ✅ Done in `v78_i`
+
+- **Chapter auto-read REMOVED from the progress card, and added nowhere else.** *"This supercedes
+  previous instructions on putting it somewhere else."* §0f (`v77_v`) and the brief re-scoping to
+  "the card before comprehension lessons" are both **withdrawn**. `_autoReadStory` is KEPT — the
+  story is still readable from the speaker control, and the helper carries the four restraints
+  (muted, review renders, once per chapter, never interrupting) that a future caller would otherwise
+  rediscover. **`unit-story-autoread` now asserts it has NO CALL SITE**, so the ruling is a property
+  of the product rather than a fact about one commit; a next session reading three releases of
+  discussion about where to put it will fail the suite instead of putting it back.
+- **Conjugation: multiple choice strongly preferred over typing.** Typing is now a FALLBACK for
+  forms that cannot be asked as an MCQ, not a second question layered on the same form. **This also
+  fixed a real defect the new corpus exposed:** `mcq_conjugation` and `type_conjugation` share ONE
+  qid (`infinitive|pronoun`), so emitting both put two exercises with one identity into a round.
+- **Conjugation solution shows the WHOLE phrase** — `vi ste`, not `ste`
+  (`tp_17862850223960000178`, screenshot). The read-out had combined pronoun and form since it was
+  written, so the app SAID the full phrase while SHOWING half of it; the reveal now uses the same
+  composition, so the two cannot disagree.
+
+### ✅ Done in `v78_j` — the three small specified items
+
+- **Restore the FULL lesson suite to the single-chapter "add lesson" menu**
+  (`Screenshot_2026-08-10_00-58-41.png`). Grammar and conjugation were hidden from this
+  single-chapter version and should come back; the screenshot shows Vokabeln, Synonyme/Antonyme,
+  Wortformen, Fehlerjagen, Verständnis, Mathematik, Mischübung, Schrift lernen — **missing Grammatik
+  and Konjugation**. Find the menu's type list and the gate that trims it; check whether the
+  omission is a hard-coded list or a capability gate (the script entry is gated by
+  `scriptLessonAvailableForSet`, so at least one is real). **No new i18n** — both types already have
+  registry entries and labels.
+- **`translate-ui.js`: `--threads` and `--batch` on the command line.** Threads may already exist as
+  an env var; batch size is the hard-coded 10-per-batch. Goal stated by the user: **integrate
+  completely new languages more efficiently.** Cheap, and `unit-langnames` already drives the real
+  mode with a stubbed backend, so it is testable headlessly.
+- **Add Slovenian (`sl`).** `languages.json` entry + `_langScript` mapping (latin) + a `names` cell
+  in all 32 languages. **Check `unit-intro-script`'s "every language is mapped in `_langScript`"
+  assertion** — an unmapped code reads as "no script", which wrongly makes a Latin course look
+  teachable to its speakers (v53). The `--langnames` run that just completed filled 1024/1024 cells;
+  adding a language makes it 33×33 and reopens 65 of them.
+
+### → NEEDS DESIGN, and the user wants it discussed before it is built
+
+**"DEVELOP A LEARNING SCHEME FOR EACH TEXT, where lessons are focussed on teaching the text."**
+The user's framing, recorded close to verbatim because the shape matters more than any summary:
+
+- Adding vocab lessons to a chapter should **exhaust the vocabulary of the input text** — the model
+  should use vocab **not already covered by existing lessons**, ideally covering all non-basic
+  vocabulary, and for a simple/short text (e.g. children's) going down to the basic words too.
+- In the long run: **a full word-by-word dissection of the text**, with lessons presented
+  semi-randomly around that dissection. **Start with the hard/unusual words**; the learner can
+  indicate — or the app can detect — whether they understand the text sufficiently or need more
+  basic lessons first.
+- **Dynamic difficulty**: start mid-level; too hard → easier vocab; too easy → more specific/harder.
+  Guided by the learner's history.
+- **No short-cuts to the source-language interpretation.** The learner MUST prove vocabulary
+  understanding first. (This is a hard constraint on the UI, not a preference — it rules out
+  "reveal translation" affordances on the path being designed.)
+- For a language pair, **draw on OTHER existing stories** for the dynamic quizzing, or suggest
+  solving a simpler storyline first. **This needs both stories and individual questions ranked by
+  difficulty.**
+
+**Related existing item: the `extend` / `reinforce` redefinition.** The user is right that there is
+already a TODO in that area — this supersedes and enlarges it. `reinforce` currently means "reuse
+prior chapters' vocabulary"; the request above makes the real axis **coverage of THIS text**, which
+is a different quantity and measurable today.
+
+**The first measurement, before any design** (and the one that decides whether this is feasible at
+all): **what fraction of a chapter's story tokens are already covered by its lessons?** `v78_h` built
+exactly the collector for it — `_storyWordSources` returns every word every source teaches — but
+`v78_h` measured MARKS, not COVERAGE. Marks count occurrences; coverage is the share of the text a
+learner could actually read. **Do that measurement first**: if a typical chapter covers 15% of its
+story, "exhaust the vocabulary" is a generation problem; if it covers 70%, it is a gap-filling
+problem, and those are different products. The same number is the prerequisite for the progressive
+reveal idea below, so it is owed twice over.
+
 ## USER TESTING NOTES — session 32 batch, TRIAGED AND SCHEDULED
 
 Five notes. Triaged with the code loaded, and **placed in the existing plan rather than queued as a
@@ -530,7 +735,7 @@ one was fixed on the spot.
   `[].some(fn)` never invokes `fn`. The 119 missing cells the run reported are unaffected: the crash
   was in the writer, not the survey.
 
-### → §7 (NEW): script lessons for a DIGRAPHIC SOURCE — `sl_56647998`
+### ✅ §7 — script lessons for a DIGRAPHIC SOURCE — `sl_56647998` — SHIPPED as `v78_g`
 
 **User: "I generated a serbian-latin → serbian-cyrillic storyline but I can't add script lessons to
 it. Script lessons would obviously fit such a script-focussed lesson."** Correct, and the cause is
@@ -632,11 +837,12 @@ and are not. **Two were fixed immediately as `v77_x`** (chapter titles, math ord
   shared `_clearChapterProgress`. The storyline page keeps its storyline-wide control and now shares
   the same rule; **`clearLessonProgress` turned out to be a THIRD copy carrying the `v77_s` defect
   and is fixed too.**
-  **STILL OPEN, deliberately: the per-chapter control on the STORYLINE PAGE's chapter cards, and the
-  one inside error / AI-error-hunt lessons.** The rule is done and shared, so each is now a button
-  and a call — but storyline-page placement needs care (those cards carry the lock overlay and the
-  `v76_d` element-counting trap), and "inside error lessons" needs the user to say whether it means
-  the chapter wipe or resetting just that lesson.
+  **RESOLVED by the user (session 32): the "inside error / AI-error-hunt lessons" half meant
+  something different — clearing the errors the LEARNER had marked, so they can be re-tagged, not a
+  chapter wipe. The user then dropped it: "we can actually skip this." Not carried forward.**
+  Still optional, never requested: a per-chapter control on the storyline page's chapter cards. Not
+  scheduled — the progress card already carries it and those cards have the lock overlay and the
+  `v76_d` element-counting trap. Raise it if it is wanted.
 - ⚠️ **Sentence-translation read-out should include the `"Übersetze: "` prefix** (tp_579238210) — read
   the whole question in the source language. **RETRIAGED session 32 → needs the USER, not a fix.**
   `Übersetze: "{sentence}"` is `ex.order.q`, the WORD-ORDER exercise, and its question is entirely
@@ -652,8 +858,13 @@ and are not. **Two were fixed immediately as `v77_x`** (chapter titles, math ord
 - ✅ **Conjugation options must be alternative forms of THE SAME verb**, not other verbs, and need
   not be padded to four — `v78_d`. Same-verb pool, no cross-verb padding; the coverage universe was
   checked for the v71_s stranding trap and is unaffected.
-- **Teacher-mode switch at the bottom of every page**, beside the UI-language and mute controls.
-  (Will later depend on credentials.)
+- ✅ **Teacher-mode switch at the bottom of every page**, beside the UI-language and mute controls
+  — `v78_f`. Three controls, ONE updater; the compact footer icon derives its glyph from the same
+  label string the landing button shows, so there is no second spelling of "which icon means which
+  state". Reused the existing `teacher.*` keys — nothing new owed to the translate pass.
+  (User's "will later depend on credentials" is unchanged and still ahead: the control is wired to
+  `APP._teacherMode` exactly as the landing button always was, and gating it on credentials is the
+  same one change in the same one place it would have been before.)
 - **Highlight word forms from conjugation and word-form lessons**, so covered vocabulary lights up
   more fully. **Belongs with §0e/§3 and the ONE shared matcher** — do not add a second matcher.
 
@@ -680,6 +891,16 @@ and are not. **Two were fixed immediately as `v77_x`** (chapter titles, math ord
 - **Second script for Serbian (Latin ⇄ Cyrillic):** an LLM-generated alternative script plus a
   toggle beside the translate button in every read-story field. Note `v75_g` already ships an
   `sr`/`hr` table and a native review is OWED — settle that first.
+  **Extended session 32 — the SAME toggle is wanted for the UI.** The `sr` `ui.json` pass that
+  arrived at the session-32 drop is complete (612 keys) and **written entirely in LATIN script,
+  zero Cyrillic**. User's ruling: *"we can keep this for now, but later perhaps add both options."*
+  So `sr` UI stays Latin-only and is **not** a defect. When it is picked up, note the shape: this is
+  the same question as the story toggle and the same question as `_scriptChoice`, in a third place —
+  a language whose UI, whose story text and whose lesson content can each be in either script. It
+  wants ONE notion of "which script is this learner reading", not three toggles that can disagree.
+  **Sequence it after §7** (script lessons for a digraphic source), which is the first thing to
+  actually READ the per-topic `script`/`srcScript` fields; §7 establishes whether that pair is the
+  right carrier before a third consumer is built on it.
 - **Live main page should mirror the static one**, with generation moved behind a button/card, and
   every "continue story" affordance redirecting there.
 - **Floating pill listing running LLM jobs, one row each, with a working STOP per job.**
@@ -1081,5 +1302,14 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
     a `cat` heredoc to a temp file and splice the FILE in, so the bytes come from disk rather than
     from an escape the writer must encode. `unit-roadmap-version` caught it on the next run, and the
     packaged zip was the only intact copy — both worth remembering.
+
+26. **When two releases each change the same surface, re-measure the older plan against the newer
+    behaviour before scheduling it.** §0e's "order the vocabulary as the words appear in the story"
+    assumed a per-CHAPTER panel; `v77_f` later made that panel CUMULATIVE across the deck. Neither
+    was wrong, and nothing forced them to be compared — so a plan carried unchanged across three
+    roadmaps turned out to describe **17% of the data** (measured: 83% of cumulative panel words
+    never occur in the story on screen). The check was one probe over the corpus and was available
+    the whole time. **A plan carried forward unchanged across N roadmaps is a plan whose premises
+    have not been checked against N roadmaps' worth of changes.**
 
 (If you add a new standing rule, append it here so the next session inherits it.)

@@ -20,7 +20,7 @@
 'use strict';
 const fs   = require('fs');
 const path = require('path');
-const { callLLM, ping, extractJSON } = require('./llm');
+const { callLLM, ping, extractJSON, setNumThread } = require('./llm');
 // Shared with the --qc auditor below: the writer and the auditor MUST apply the same rules, or a
 // defect the auditor reports could still be written by the next run (and vice versa).
 const { validateEntry, isBlocking, auditAll } = require('./ui-qc');
@@ -29,7 +29,23 @@ const UI_FILE   = path.join(__dirname, 'ui.json');
 const LANG_FILE = path.join(__dirname, 'languages.json');
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'translategemma:12b';
 const OLLAMA_HOST  = process.env.OLLAMA_HOST  || 'http://localhost:11434';
-const BATCH_SIZE   = parseInt(process.env.BATCH_SIZE || '10', 10);
+// v78_j (user): `--batch N` and `--threads N` on the command line, so a brand-new language can be
+// integrated at the machine's real capacity instead of the 10-per-batch default. Env vars still
+// work and the flag wins, which is the order every other tool here uses.
+//
+// Why they matter together: a batch is ONE model call for N keys, so a bigger batch is fewer
+// round-trips but a longer prompt — and `llm.js` documents that Ollama truncates an over-long
+// prompt SILENTLY. Threads are a machine property (`setNumThread`), null = leave it to Ollama.
+// `translate-ui.js` could not set them at all before this: the runtime setter existed and only the
+// model menu ever called it.
+const _flagInt = (name) => {
+  const i = process.argv.indexOf(name);
+  if (i < 0 || i + 1 >= process.argv.length) return null;
+  const v = parseInt(process.argv[i + 1], 10);
+  return (Number.isInteger(v) && v > 0) ? v : null;
+};
+const BATCH_SIZE   = _flagInt('--batch') || parseInt(process.env.BATCH_SIZE || '10', 10);
+const NUM_THREADS  = _flagInt('--threads') || parseInt(process.env.NUM_THREADS || '0', 10) || null;
 const DRY_RUN      = process.argv.includes('--dry');
 const CHECK_ONLY   = process.argv.includes('--check');
 const QC_MODE      = process.argv.includes('--qc');
@@ -55,6 +71,9 @@ for (let i = 2; i < process.argv.length; i++) {
 }
 
 const MODEL = _modelOverride || OLLAMA_MODEL;
+
+// Applied once, here, rather than per call: it is a machine property (llm.js NUM_THREAD).
+if (NUM_THREADS && typeof setNumThread === 'function') setNumThread(NUM_THREADS);
 
 // ── Load data ─────────────────────────────────────────────────────────────────
 let ui, langs;

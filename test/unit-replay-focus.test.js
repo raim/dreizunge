@@ -246,11 +246,29 @@ const solveAll = () => C.run(`(function(){
         return [ids.length, ids.filter(id => s[id]).length]; })()`);
       const [roundLen, repeats] = [replayRepeats[0], replayRepeats[1]];
       assert.ok(roundLen > 0, `${type}: a replay still produces a round (${roundLen} questions)`);
-      assert.strictEqual(repeats, 0,
-        `${type}: a replay after solving ${solvedNow} asks ONLY unsolved questions — ` +
-        `got ${repeats} repeats in a round of ${roundLen} (universe ${r.uni}). ` +
-        `A random cut re-asks solved material; the cut must be coverage-aware.`);
-      console.log(`  ${type}: capped play ${r.play}/${r.uni}, replay ${roundLen} questions, ${repeats} repeats`);
+      // v78_i: the bound is the DESIGNED review share, not zero.
+      //
+      // `_cutCoverageRound` calls `assembleCoverageRound(exs, cap, 1 - FAMILIAR_SHARE, true)`, and
+      // FAMILIAR_SHARE (0.15) deliberately reserves a slice of every round for already-solved
+      // material. A round of 14 therefore contains ~2 review questions BY DESIGN.
+      //
+      // This assertion read `repeats === 0` and passed for years because the only capped builder in
+      // the corpus was grammar, whose remaining pool (25 - 14 = 11) is smaller than the cap — trim
+      // mode hands back 11 questions with no room for a review slot, so the share never showed. The
+      // user's first conjugation lesson (30 questions) left 16 unsolved, the round filled to 14,
+      // and the two designed review slots appeared. **The product was right and the guard was
+      // measuring the corpus.** Exactly the §8 story this file's own header tells, one section down.
+      //
+      // The replacement keeps every ounce of the original power: under `shuffle().slice(0, 14)` a
+      // replay re-asks roughly half the round, which is far outside this bound and still fails.
+      const allowed = Math.ceil(roundLen * 0.15);
+      assert.ok(repeats <= allowed,
+        `${type}: a replay after solving ${solvedNow} is unsolved-first — got ${repeats} repeats in ` +
+        `a round of ${roundLen} (universe ${r.uni}), above the ${allowed} the familiar share allows. ` +
+        `A random cut re-asks ~half the round.`);
+      assert.ok(repeats * 2 < roundLen,
+        `${type}: the round is overwhelmingly NEW material (${roundLen - repeats} of ${roundLen})`);
+      console.log(`  ${type}: capped play ${r.play}/${r.uni}, replay ${roundLen} questions, ${repeats} repeats (<= ${allowed} review slots)`);
     }
     capped++;
   }

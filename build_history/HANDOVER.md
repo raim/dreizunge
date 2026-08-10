@@ -1,6 +1,6 @@
-# HANDOVER — v78_e
+# HANDOVER — v78_j
 
-One page. Session 32 shipped **`v78_b`** … **`v78_e`** from the `v78` cut. **Read
+One page. Session 32 shipped **`v78_b`** … **`v78_j`** from the `v78` cut. **Read
 `build_history/roadmap_v78.md`** next for the queue and the session protocol, then `INTERNALS.md`,
 then `build_history/v78_session32_notes.md` (session 32) and `build_history/v77_session31_notes.md`.
 
@@ -8,12 +8,12 @@ then `build_history/v78_session32_notes.md` (session 32) and `build_history/v77_
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **196 checks, ALL PASSED** |
-| `node test/run.js --quick` | 172 |
+| `node test/run.js` | **200 checks, ALL PASSED** |
+| `node test/run.js --quick` | 176 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v78_e'`. Corpus: **309 topics, 87 storylines**. Establish this before changing
+`APP_VERSION = 'v78_j'`. Corpus: **309 topics, 87 storylines**. **33 languages** (Slovenian added in `v78_j`). Establish this before changing
 anything.
 
 **These numbers are the ones to trust.** Session 30's prompt said 170/149, session 31's said
@@ -79,21 +79,66 @@ call site was enumerated; the word-order exercise has no speaker control and no 
 either a request for a NEW source-language question read-out or it is about another screen.
 **Ask before building.** Session-32 notes §3.
 
-## ⚠️ Open questions the USER owes an answer to
+**`v78_f`** — the teacher-mode switch is on every page carrying the footer controls, not only the
+landing page. Three controls, ONE updater; the compact footer glyph is derived from the same label
+string rather than spelled a second time. **Fixed on the way: `toggleTeacherMode` synced the button
+BEFORE re-rendering the screens** — harmless while the control lived only on the landing page, wrong
+the moment it moved into the screens that function redraws. No new i18n.
+
+- ~~§0e/§3 needs a RULING~~ **WITHDRAWN — the user dropped story-ordering (session 32).** Replaced by
+  a LOW-PRIORITY, needs-more-thinking idea: **progressive story reveal** (hide non-learned vocab and
+  reveal as it is learned). Not scheduled; the roadmap records what is already known, including the
+  measurement to do FIRST (coverage as a share of story tokens, not mark count — if a typical story
+  is 10% covered, "hide everything not learned" hides the story). The `v78_h` collector is its right
+  input. **Do not design it before the auto-read move lands**, or that page gets redesigned twice.
+- ~~(superseded)~~ **Why ordering was dropped, kept as the record**: measured, **83% of the cumulative
+  vocabulary panel never occurs in the story on screen** (612 entries, 12 storylines; 13% exact, 4%
+  word-form, 83% absent). "Order as the words appear in the story" was therefore an instruction
+  about a seventh of the list — the v75 note assumed a per-CHAPTER panel and `v77_f` made it
+  cumulative, and the two were never compared (**rule 26**). **§3's whitespace splitting is still
+  ruled and buildable, and is now the only unshipped part of §3**: `_highlightVocabHtml` matches a
+  multi-token vocab entry only as a whole phrase, so `la variazione genetica` marks nothing in a
+  story containing just `variazione` (+782 marks over 96 chapters, session-29 measurement).
+
+## Where session 33 should start
+
+**All open user questions are CLOSED.** The auto-read is removed by ruling, the Latin `sr` UI is
+confirmed, the error-lesson wipe was dropped, ordering was dropped, and `ui.json` / `languages.json`
+came back complete (32 languages at 617 keys, 1024/1024 name cells).
+
+**The three small specified items are DONE** (`v78_j`). One thing they leave owed: **Slovenian
+reopened 65 `languages.json` name cells** (33 languages = 1089 cells, of which `sl` accounts for the
+new row and column) and `sl` has no `ui.json` block at all. A `--langnames` run and a `sl` UI pass
+are owed by the user, and both are now faster with `--batch` / `--threads`.
+
+**Then the big one, which the user wants DISCUSSED before it is built:** a per-text learning scheme
+(exhaust the text's vocabulary, word-by-word dissection, dynamic difficulty, no short-cut to the
+translation, cross-story quizzing ranked by difficulty). **Do the coverage measurement FIRST** —
+what share of a chapter's story tokens its lessons already teach. `v78_h`'s `_storyWordSources` is
+the input; `v78_h` measured MARKS, not COVERAGE, and the two answer different questions. That single
+number decides whether this is a generation problem or a gap-filling problem, and it is also the
+prerequisite for the progressive-reveal idea.
+
+## ⚠️ Open questions the USER owes an answer to (none currently)
 
 - **Where exactly the auto-read moves** (ruled: to the card before comprehension lessons, nowhere
   else; a screenshot is coming). Roadmap "session 32 batch" → §0c. **Do not guess the card.**
-- **"Inside error / AI-error-hunt lessons"** in the clear-progress note: the CHAPTER wipe, or
-  resetting just that lesson? The two remaining placements wait on this.
-- **Is a Latin-script `sr` UI intended?** The returning `ui.json` translates `sr` fully (612 keys)
-  and it is **100% Latin, zero Cyrillic** — plausible, but `sr` is the digraphic language and the
-  user has just built a Latin→Cyrillic storyline, so it is worth confirming rather than assuming.
+- ~~"Inside error / AI-error-hunt lessons"~~ **ANSWERED session 32:** it meant clearing the errors
+  the LEARNER had marked so they can be re-tagged — not a chapter wipe. **The user then dropped it
+  ("we can actually skip this"). Not carried forward.**
+- ~~Is a Latin-script `sr` UI intended?~~ **ANSWERED session 32: yes, keep Latin for now**; the user
+  may want BOTH options later. Recorded under the roadmap's "Second script for Serbian" item, with
+  a note to sequence it AFTER §7 — §7 is the first consumer of the per-topic `script`/`srcScript`
+  pair, and it should prove that carrier before a third consumer is built on it.
 - **`hr` is still 0 keys**, and the other 30 languages are still missing the same 14–16 accumulated
   `en`-only keys.
 
-**Still open in group B:** the **teacher-mode switch at the bottom of every page**, the two
-remaining clear-progress placements (storyline-page chapter cards; error lessons), and the word-form
-highlighting item, which belongs with §0e/§3 and the ONE shared matcher.
+**Group B is now DONE** except two items that are not mine to close: the `Übersetze:` note (blocked
+on the user, above) and the word-form highlighting item, which belongs with §0e/§3 and the ONE
+shared matcher. **§7 shipped as `v78_g`.** The next queue items are **§0e's ordering half + §3 highlighting**
+(sharing ONE matcher — the roadmap records that the v75 plan was measured twice and is WRONG, so it
+needs re-planning, not implementing), **§0h question navigation** (its own session), and the Replay
+ordering fix scheduled alongside §0e/§3.
 
 ## What session 31 settled — §0b DONE, and §0c STARTED
 
@@ -211,7 +256,7 @@ must be BUILT**, and reusing that id means updating the guard too. Also: **`comp
 the whole bordered PANEL**, not a label — the §0c rename touches a container and its four children.
 Both `v76_card_gates.md` and roadmap §0c have been corrected in place.
 
-## Standing rules worth re-reading (25 now, in `roadmap_v78.md`)
+## Standing rules worth re-reading (26 now, in `roadmap_v78.md`)
 
 1. **A probe must call the product function, never a re-typed copy.**
 2. **A claim is only measured if the assertion touched the thing being claimed.**
@@ -289,6 +334,15 @@ user reports it again, that note is the starting point.
   `voice.default`, `navigator.language`, or shipping §6's selector so you pick once.
 - **The pass mark.** `Churros` is 40 items where it was 83 questions, and an item is solved by ANY
   correct answer, so 80% is a materially lower bar. Needs a browser pass, not a code change.
+- **A `cyrillic-sr` sounds column for the `latin` letter table** (`v78_g`, NEW). Teaching the Latin
+  alphabet TO a Serbian-Cyrillic reader is not offered, because `latin.soundsFor` carries `cyrillic`
+  — Russian-flavoured respellings ("эй", "си") — and not `cyrillic-sr`. **Aliasing one to the other
+  is a language judgement, not a code change**: Serbian Cyrillic has no э/ы/ё, so the answers would
+  be printed in letters the reader does not use. Needs a real column (26 respellings) from a model
+  pass plus a native check — the same treatment `v75_g`'s table is still owed. Until then the
+  direction stays off, asserted with its reason in `unit-script-digraphic` §8 so adding the column
+  flips it deliberately rather than silently. The direction the user actually built
+  (latin reader → cyrillic-sr) works today: `cyrillic-sr` has no `soundsFor` restriction at all.
 - **`translate-ui.js --langnames`** — `languages.json` name cells still empty. The last real run
   reported **119 missing of 1024**: `lb` 31, `sr` 32, `hr` 32, and 2 each (`sr`/`hr`) for 12 other
   languages. **`v78_c` fixed the crash that ended that run**, so it can be re-run; it saves per

@@ -107,21 +107,29 @@ const C = checkClient();
   console.log('  a missing answer set falls back to the uncounted prompt');
 }
 
-// ── 5. The keys exist in en, and ONLY in en ──────────────────────────────────
-// Paired assertions: the key must be present (or every render silently shows the raw key name,
-// since t() falls back to the key itself), and must not yet be translated. Per the protocol, the
-// second half is correct only while the key is NEW — when the translate pass returns, this flips
-// to "no language holds the English string verbatim". Flagged here so it is not read as permanent.
+// ── 5. The keys exist in en, and no language holds the English string verbatim ──
+// FLIPPED at the session-32 second drop, exactly as the original note said it would be. This began
+// as "the keys are en-ONLY and OWED to the translate pass", which is correct only while a key is
+// NEW. The pass has now run and all 32 languages carry both keys, so the en-only assertion had
+// become the WRONG assertion — it would have failed for the best possible reason. Replaced with
+// the durable claim (v71_q: never assert a dropped key absent; assert what must remain true).
 {
   for (const k of ['ex.syn.q_synonyms_n', 'ex.syn.q_antonyms_n']) {
     assert.ok(UI.en[k], `${k} exists in en`);
     assert.ok(/\{n\}/.test(UI.en[k]) && /\{word\}/.test(UI.en[k]),
       `${k} carries both placeholders`);
-    const translated = Object.keys(UI).filter(l => l !== 'en' && UI[l][k]);
-    assert.deepStrictEqual(translated, [],
-      `${k} is en-only and OWED to the translate pass (see the session notes)`);
+    // A translation that dropped {n} would silently lose the whole feature for that language —
+    // the prompt would render without the count and nothing would flag it.
+    for (const lang of Object.keys(UI)) {
+      const v = UI[lang][k];
+      if (!v) continue;
+      assert.ok(/\{n\}/.test(v),
+        `${lang}'s ${k} keeps the {n} placeholder — without it that language loses the count`);
+      assert.ok(/\{word\}/.test(v), `${lang}'s ${k} keeps the {word} placeholder`);
+    }
   }
-  console.log('  both keys present in en, owed to the translate pass');
+  const translated = Object.keys(UI).filter(l => l !== 'en' && UI[l]['ex.syn.q_synonyms_n']);
+  console.log(`  both keys present in en and translated into ${translated.length} languages, all with {n}`);
 }
 
 // ── 6. And in the PUBLISHED build ────────────────────────────────────────────

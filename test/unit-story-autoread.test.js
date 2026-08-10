@@ -122,3 +122,36 @@ const spoken = C => JSON.parse(C.run(`JSON.stringify(APP._spoke.length)`));
 }
 
 console.log('unit-story-autoread: ALL PASSED');
+
+// ── v78_i — the auto-read has NO CALL SITE, and that is now enforced ─────────
+// User ruling (session 32, superseding): remove the chapter auto-read from the progress card, and
+// "don't add it to anywhere else. This supercedes previous instructions on putting it somewhere
+// else."
+//
+// The helper is deliberately KEPT — the story is still readable from the speaker control, and
+// `_autoReadStory` carries the four restraints (muted, review renders, once per chapter, never
+// interrupting speech in progress) that any future caller would otherwise have to rediscover. The
+// sections above still assert all four, so this is not a guard left standing over dead code.
+//
+// What is asserted here is the ruling itself: nothing CALLS it. Without this the removal is a fact
+// about one commit rather than a property of the product, and the next session — reading a roadmap
+// that spent three releases discussing WHERE to put it — would put it back.
+{
+  const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const defAt = src.indexOf('function _autoReadStory');
+  assert.ok(defAt > 0, '_autoReadStory is still defined (the helper is kept on purpose)');
+  // Every other mention must not be an invocation. Matches `_autoReadStory(` anywhere outside the
+  // definition; comments naming it without parentheses are fine and are how the removal is
+  // documented at the old call site.
+  // All `_autoReadStory(` occurrences, minus the one that is the definition itself.
+  const defCallIdx = src.indexOf('_autoReadStory', defAt);
+  const calls = [...src.matchAll(/_autoReadStory\s*\(/g)]
+    .map(m => m.index)
+    .filter(i => i !== defCallIdx);
+  assert.deepStrictEqual(calls, [],
+    'the auto-read has no call site — the user ruled it removed and not re-placed. ' +
+    'If a future ruling reinstates it, move THIS assertion rather than deleting it.');
+  console.log('  no call site: the auto-read is removed everywhere, by ruling');
+}
+
+console.log('unit-story-autoread: v78_i no-call-site check included');

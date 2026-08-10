@@ -1,6 +1,8 @@
 {
   "_comment": "Per-writing-system letter tables for the LLM-free intro 'learn the script' course. Keyed by SCRIPT (many languages share one); _langScript maps a language code to its script(s). Every language must be mapped: an unmapped code reads as 'no script', which wrongly makes a Latin course look teachable to its speakers.",
-  "_scriptChoice": ["sr"],
+  "_scriptChoice": [
+    "sr"
+  ],
   "_scriptChoice_comment": "Languages whose entry in _langScript lists ALTERNATIVE scripts — a text is written in one OR the other, and somebody has to choose. This is NOT the same as a language listing several scripts it uses CONCURRENTLY: Japanese mixes hiragana and katakana inside one sentence, so `ja` has two scripts and no choice to make. `scriptsForLang(x).length > 1` therefore cannot gate a script picker; this list can. Kept here rather than in code because scripts.json already owns the fact that sr is digraphic. A language is added here only when its scripts PARTITION the corpus (texts are one script or the other) rather than co-occurring — unit-script-choice checks that against the actual corpus, so a wrong entry fails loudly instead of silently offering a meaningless choice.",
   "_langScript": {
     "ru": "cyrillic",
@@ -40,7 +42,8 @@
       "cyrillic-sr",
       "latin"
     ],
-    "hr": "latin"
+    "hr": "latin", "sl": "latin",
+    "sl": "latin"
   },
   "_stub_comment": "Remaining stubs: thai (44 consonants with many shared sounds + positional vowels + tone classes — not reducible to a simple unique letter→sound table; needs a purpose-built design) and han (not an alphabet). Both are still valid SOURCE scripts: `latin.sounds.thai` lets Thai speakers learn the Latin alphabet even though we cannot teach Thai.",
   "_sounds_comment": "letters[].sounds maps a SOURCE script → the letter's name written in that script (B → بي for an Arabic reader). Used by introScriptExercises via opts.srcScripts so the answer is readable to the learner; without it a Latin course would ask a non-Latin reader to pick 'b' from Latin choices. Values are the letter NAME (not the phonetic value) because phonetic values collide (c/k/q → ك) and would yield several correct MCQ answers. NATIVE REVIEW OWED on every column.",

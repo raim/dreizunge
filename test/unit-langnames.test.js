@@ -234,3 +234,59 @@ console.log('  --langnames issues a well-formed call and writes the response int
 console.log('  --langnames persists after every batch: an interrupted run keeps what it earned');
 console.log('  --langnames reports a rejected name and keeps going (v78_c)');
 console.log('unit-langnames: ALL PASSED');
+
+// ── v78_j — `--batch` and `--threads` are settable on the command line ──────
+// User: "allow to set number of threads also via commandline in translate-ui. if not yet available,
+// also allow to set the size for individual batches (current default 10 per batch). Goal is that we
+// can more efficiently integrate completely new lessons."
+//
+// `setNumThread` existed in llm.js since v71_q but only the model MENU ever called it — a batch
+// translation run had no way to set either value. The flag wins over the env var, matching every
+// other override here (`--model` over OLLAMA_MODEL).
+{
+  const src = fs.readFileSync(path.join(ROOT, 'translate-ui.js'), 'utf8');
+  assert.ok(/_flagInt\('--batch'\)\s*\|\|\s*parseInt\(process\.env\.BATCH_SIZE/.test(src),
+    '--batch overrides BATCH_SIZE, and the env var still works as a fallback');
+  assert.ok(/_flagInt\('--threads'\)/.test(src), '--threads is parsed');
+  assert.ok(/setNumThread\(NUM_THREADS\)/.test(src),
+    'and is actually applied through llm.js rather than parsed and dropped');
+
+  // Behavioural: the batch size really drives the loop. Two runs over the same missing keys with
+  // different --batch values must issue a different NUMBER of model calls — otherwise the flag is
+  // decoration. Driven through the real script with a counting stub.
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'batchflag-'));
+  const en = {}; for (let i = 0; i < 20; i++) en['k.' + i] = 'value ' + i;
+  fs.writeFileSync(path.join(tmp, 'ui.json'), JSON.stringify({ en, de: {} }, null, 2));
+  fs.writeFileSync(path.join(tmp, 'languages.json'), JSON.stringify({
+    en: { name: 'English', flag: '\u{1F1EC}\u{1F1E7}', tts: 'en-GB', names: { en: 'English' } },
+    de: { name: 'German',  flag: '\u{1F1E9}\u{1F1EA}', tts: 'de-DE', names: { en: 'German' } },
+  }, null, 2));
+  for (const f of ['translate-ui.js', 'ui-qc.js']) fs.copyFileSync(path.join(ROOT, f), path.join(tmp, f));
+  fs.writeFileSync(path.join(tmp, 'llm.js'), `
+    let calls = 0;
+    function callLLM(model, system, userMsg, maxTokens, opts) {
+      calls++;
+      const asked = JSON.parse(userMsg);
+      const out = {};
+      for (const k of Object.keys(asked)) out[k] = 'X ' + k;
+      process.stderr.write('CALL\\n');
+      return Promise.resolve({ text: JSON.stringify(out) });
+    }
+    module.exports = { callLLM, ping: () => Promise.resolve(true),
+                       extractJSON: (s) => JSON.parse(s), setNumThread: () => {} };
+  `);
+  const runWith = (batch) => {
+    const r = execFileSync(process.execPath, ['translate-ui.js', 'de', '--batch', String(batch)],
+                           { cwd: tmp, encoding: 'utf8', stdio: 'pipe' });
+    // restore the empty target so the second run has the same work to do
+    const u = JSON.parse(fs.readFileSync(path.join(tmp, 'ui.json'), 'utf8'));
+    u.de = {}; fs.writeFileSync(path.join(tmp, 'ui.json'), JSON.stringify(u, null, 2));
+    return r;
+  };
+  const wide = runWith(20), narrow = runWith(5);
+  const batchesIn = (s) => (s.match(/Batch \d+\/(\d+)/) || [])[1];
+  assert.strictEqual(batchesIn(wide), '1', `--batch 20 sends 20 keys in one batch (got ${batchesIn(wide)})`);
+  assert.strictEqual(batchesIn(narrow), '4', `--batch 5 splits 20 keys into 4 (got ${batchesIn(narrow)})`);
+  fs.rmSync(tmp, { recursive: true, force: true });
+  console.log('  --batch changes the real batch count (20 -> 1 batch, 5 -> 4); --threads reaches llm.js');
+}

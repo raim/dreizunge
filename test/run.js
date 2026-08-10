@@ -158,8 +158,10 @@ run('unit: {lang} placeholder grammar (v71_d)', 'node', [path.join(__dirname, 'u
 run('unit: no verbatim-English fallbacks in translations (v71_k)', 'node', [path.join(__dirname, 'unit-ui-verbatim-en.test.js')]);
 run('unit: every t() key exists in ui.json en (v75_b)', 'node', [path.join(__dirname, 'unit-ui-key-exists.test.js')]);
 run('unit: every language is offered in both menus (v76_b)', 'node', [path.join(__dirname, 'unit-lang-menu-coverage.test.js')]);
+run('unit: add-lesson menus offer the full suite (v78_j)', 'node', [path.join(__dirname, 'unit-add-lesson-menu.test.js')]);
 run('unit: storyline chains survive the language filter (v76_e)', 'node', [path.join(__dirname, 'unit-storyline-lang-filter.test.js')]);
 run('unit: script choice declared + corpus stamped (v76_g)', 'node', [path.join(__dirname, 'unit-script-choice.test.js')]);
+run('unit: script lessons for a digraphic source (v78_g)', 'node', [path.join(__dirname, 'unit-script-digraphic.test.js')]);
 run('unit: script picker + inheritance (v76_i)', 'node', [path.join(__dirname, 'unit-script-picker.test.js')]);
 run('unit: continue-story pin survives filters (v76_j)', 'node', [path.join(__dirname, 'unit-continue-pin.test.js')]);
 run('unit: docs/ storyline survives the language filter (v76_k)', 'node', [path.join(__dirname, 'unit-static-storyline-filter.test.js')]);
@@ -173,6 +175,8 @@ run('unit: knowledge-aware round composition (v69_h)', 'node', [path.join(__dirn
 // undefined references, which source-level assertions provably cannot see (v69_k).
 run('unit: one definition of chapter-complete (v69_l)', 'node', [path.join(__dirname, 'unit-chapter-complete.test.js')]);
 run('unit: chapter-level clear progress (v78_e)', 'node', [path.join(__dirname, 'unit-chapter-clear-progress.test.js')]);
+run('unit: teacher-mode switch on every page (v78_f)', 'node', [path.join(__dirname, 'unit-teacher-toggle.test.js')]);
+run('unit: story highlight — all word sources, two shades (v78_h)', 'node', [path.join(__dirname, 'unit-story-highlight-sources.test.js')]);
 run('smoke: render paths execute (buildPath/storyline/complete/renderEx)', 'node', [path.join(__dirname, 'smoke-render.test.js')]);
 run('unit: beginner-mode exercise types (v69.2)', 'node', [path.join(__dirname, 'unit-beginner-types.test.js')]);
 run('unit: crossword layout engine (v70_c)', 'node', [path.join(__dirname, 'unit-crossword-layout.test.js')]);
