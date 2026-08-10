@@ -110,7 +110,8 @@ const restore = () => C.run(`_renderCompStoryboard = _origStoryboard; true;`);
 {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   const lines = html.split('\n');
-  const start = lines.findIndex(l => l.startsWith('function showComplete(review){'));
+  // v78_m: prefix match, not the exact signature — the same rule-18 pin as unit-learner-nav.
+  const start = lines.findIndex(l => l.startsWith('function showComplete(review'));
   assert.ok(start >= 0, 'showComplete is found in the client');
   let depth = 0, started = false, end = -1;
   for (let i = start; i < lines.length; i++) {

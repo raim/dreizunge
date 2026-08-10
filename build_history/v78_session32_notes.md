@@ -538,19 +538,231 @@ roadmaps is a plan whose premises have not been checked against three roadmaps' 
 
 ---
 
+
+---
+
+## 16. `v78_h` — every word-bearing source feeds the story highlight
+
+Only `L.vocab[].target` had ever been marked, so a chapter that teaches through conjugation,
+word_forms, grammar or synonyms showed a story with almost nothing lit up.
+
+**Measured over 90 corpus chapters with a story: 704 marks → 1043, +48%, 44 of the 90 gaining.**
+Re-measured after wiring; the shipped collector reproduced the figure exactly.
+
+One detail that would silently have produced zero: the corpus stores conjugation forms WITH their
+pronoun (`io parlo`) while the story contains only `parlo`. The collector strips it.
+
+**The design claim is not "more words".** `_storyWordSources` emits each word together with the
+PROBE — the exercise shape whose qid identifies the question that teaches it — so light ("in your
+lessons") and dark ("you have answered it") are two reads of ONE list. Computing them separately is
+how this panel and the storyline page came to light the same story differently before `v74_n`. The
+probes are the shapes `_qidCanonical` already switches on, and solved-ness is tested with the
+product's own `qid`, so a qid-scheme change moves both sides together.
+
+A word_forms **distractor is light but can never be dark**: no question has it as its correct
+answer, and calling it learned would be a lie the shading tells.
+
+## 17. `v78_i` — three user rulings, and a guard that was measuring the corpus
+
+**Auto-read removed** from the progress card and added nowhere else — superseding §0f (`v77_v`) and
+the brief "card before comprehension lessons" re-scoping. The helper is KEPT (the speaker control
+still reads the story; it carries the four restraints), but `unit-story-autoread` now asserts it has
+**no call site**, revert-verified by re-adding one. Without that assertion the removal is a fact
+about one commit, and the next session — reading three releases of discussion about where to put
+it — puts it back.
+
+**Conjugation prefers MCQ over typing**, per the user. This also fixed a real defect: `mcq_conjugation`
+and `type_conjugation` share ONE qid (`infinitive|pronoun`), so emitting both put two exercises with
+one identity into a round.
+
+**The conjugation reveal shows the whole phrase** (`vi ste`, not `ste`). The read-out has composed
+pronoun+form since it was written, so the app SAID the full phrase while SHOWING half of it.
+
+### The instructive part: `unit-replay-focus` §8c was measuring the corpus
+
+The user's first conjugation lesson made it fail, and **the product was right**. §8c asserted a
+replay has ZERO repeats. But `_cutCoverageRound` calls
+`assembleCoverageRound(exs, cap, 1 - FAMILIAR_SHARE, true)`, and `FAMILIAR_SHARE` (0.15)
+deliberately reserves part of every round for review.
+
+It passed for years because grammar — the only capped builder in the bundled corpus — leaves
+25 − 14 = 11 unsolved against a cap of 14, so trim mode hands back 11 questions with no room for a
+review slot and the share never showed. The new 30-question lesson left 16 unsolved, the round
+filled to 14, and the two designed slots appeared.
+
+Bounded by the designed share instead of zero. The guard keeps its power: a random cut re-asks about
+half a round, far outside the bound. **This is the same story the file's own header tells about §8
+one section down — twice in one file, found five sessions apart.**
+
+## 18. `v78_j` — three small specified items, and two guards that earned themselves
+
+**Grammar + Konjugation restored** to the single-chapter add-lesson menus. No gate, only an
+omission. The structural defect is that the option list is **written out three times**, so the new
+guard asserts the two add-lesson menus AGREE rather than merely containing the two types — and it
+immediately caught a second difference I had not noticed: the library menu lacks `mixed`. That one
+is REAL (a mixed lesson pools the OPEN set's other lessons; its handler throws `mixed.need_open_set`
+without one) and is now the single documented exception, with the guard also asserting that handler
+exists so the exception is a reason rather than an excuse.
+
+**Slovenian added.** `unit-lang-menu-coverage` fired exactly as predicted — and then caught
+something I had not predicted: my first edit **reflowed `languages.json`**, and that guard protects
+the file's hand-written line shape because a reflow makes every future diff unreadable. Redone as a
+textual append.
+
+**`--batch` / `--threads` for `translate-ui.js`.** `setNumThread` had existed in `llm.js` since
+`v71_q` but only the model MENU ever called it. Guarded behaviourally — the same 20 keys go out as
+1 batch at `--batch 20` and 4 at `--batch 5`, through the real script with a counting stub. A flag
+that parses but never reaches the loop passes a source check and fails this one.
+
+## 19. `v78_k` — §3 whitespace splitting, and a stale number restated
+
+The last unshipped part of §3, ruled in sessions 29/30. A multi-token entry matched only as a whole
+phrase, so `la variazione genetica` marked nothing in a story containing just `variazione` — the
+commonest shape, since vocabulary is stored with its article (181 of 1408 entries carry a space).
+
+**A/B measured on the current corpus, same 96 chapters, splitting off then on: 761 → 1071 marks,
++310, 41 chapters gaining.**
+
+**The ruling recorded +782, and I did not repeat it.** My first attempt at the measurement was also
+wrong in a way worth recording: I compared "all entries" against "single-token entries only", which
+removes the multi-token PHRASE matches the old code already made — so it measured the wrong
+difference and got +368. The honest A/B is to disable the split and re-run the same call, which is
+what the numbers above are. The ruling's +782 predates `v77_u` (the apostrophe fold recovered part
+of the same gap independently) and a corpus that has turned over several times. Direction and
+decisiveness hold; the figure does not.
+
+**Both shades split together.** The stronger shade is keyed on the MATCHED text, so splitting only
+the light set would have shown `variazione` as unlearned inside the very phrase the learner had
+answered. Both halves revert-verified independently — §1 catches the split, §5 catches the shade.
+
+**Article noise is asserted as a RULING.** Splitting marks bare `la`/`il`. §4 asserts that
+deliberately, because the alternative is a future session seeing a lit-up article, reading it as the
+`v73_d` one-letter bug returning, and "fixing" a decision that was measured and taken. Consequence
+worth restating: **no article set is derived anywhere, and none is needed.**
+
+---
+
+
+---
+
+## 20. `v78_l` — Replay's target ordering
+
+The user's question was the useful part: *"Is this request in conflict with the definition of this
+button?"* Answering it honestly is what made the fix small.
+
+**It is not in conflict.** Replay is `repeatForCoverage`; its job is to raise COVERAGE, so skipping a
+lesson at 100% is correct — replaying it raises nothing. But an unplayed lesson is not at 100%, it
+is at ZERO. "Prefer ones not yet seen" is therefore the STRONGEST case of the rule already there,
+not a second rule competing with it. Nothing needed redefining; only the order was wrong.
+
+`_firstCoverageShortLessonIdx` returned the first coverage-short lesson in DOCUMENT order. A
+comprehension lesson sits early and — since `v77_t` narrows a repeat to the questions still
+unanswered — stays short for a long time, so it won that scan every time and later unplayed lessons
+were never reached. Precisely the symptom reported.
+
+**A fraction, not a remaining count.** A 4-question lesson never played should outrank a 40-question
+one that is 90% done, even though both have four questions left. §3 asserts that with the remainders
+deliberately EQUAL, so the count rule and the fraction rule give different answers and only the rule
+under test can decide it.
+
+**Ties keep document order**, so an evenly-covered chapter behaves exactly as before. That is what
+keeps this an ordering fix rather than a reshuffle of the whole card.
+
+### Revert-verification, and why three weakenings rather than one
+
+- first-in-order → §1 fails (the original bug).
+- fewest-remaining → §1 fails too.
+- **most-remaining-first → §1 and §2 PASS, §3 fails.**
+
+Only the third isolates the fraction rule, because the first two are caught by §1 and abort the file
+before §3 runs. This is the same trap as `v78_b`: an early assertion aborting means the later
+sections were never executed under that revert, so "the guard failed" is not evidence that every
+section works.
+
+**`probe_gates_v77.js` re-run and diffed** against the `v78_k` package — the 16-row gate table is
+byte-identical. The protocol requires this after any progress-card change, and the diff is the
+cheap half; running the probe without diffing it against the previous cut proves nothing.
+
+---
+
+
+---
+
+## 21. `v78_n` — the three §0d card items
+
+Two fixed, and **one measured already true and left alone**, which is the part worth recording.
+
+**The ✕ returns to the progress card of the lesson being played.** Quitting a question is a step
+back inside the chapter; the deck discards the context the learner was in. It uses the REVIEW
+render, which records nothing — `confirmQuit` has already folded the round's partial score into
+`completed` a few lines earlier, and a play render would count it a second time (the `v71_n` shape:
+a review render is not a play).
+
+`showComplete` needed an optional `lessonIdxOverride`, because review mode deliberately points
+`lessonIdx` at the LAST counted lesson. That is right for its original purpose — re-opening a
+finished chapter, where "which lesson" has no answer — and wrong here, where it has a very definite
+one. Excluded for drills (`endDrill()` has just restored the real topic, so the index no longer
+refers to anything) and it falls back to the old behaviour whenever the card cannot render, so ✕
+always goes somewhere.
+
+**The post-unlock bar shows on every card of the chapter.** It came from `_lessonGate`, which is set
+only when a story-gated lesson is BOTH unfinished AND the one just played — so the learner saw
+"Verständnis 3/8" on one card and nothing at all on the next, with no way to tell the work still
+existed. One row per post lesson now, labelled with the lesson's OWN TITLE: data, not a new
+`ui.json` key, which matters because the user is mid-translation. The gate row is no longer emitted
+separately — it is already among them, and two bars for one quantity is the `v74_g` mistake.
+
+**"Replay must ALWAYS be available" needed no change.** Measured: `v71_h` already shows the button
+unconditionally, and `repeatForCoverage` falls back to `APP.cur.lessonIdx` when nothing is
+coverage-short, so a finished chapter still replays and 100% stays reachable. Asserted in §5 rather
+than "fixed" — an item that is already satisfied should be closed by measurement and a guard, not by
+a change that appears to do something.
+
+### Three more stale pins, all rule 18
+
+Two SIGNATURE pins broke on the `showComplete` parameter while the product was correct:
+`unit-learner-nav` and `unit-card-errors` both pinned `function showComplete(review)` exactly. Both
+relaxed to a prefix match, which preserves the claim they actually make.
+
+One POSITIONAL pin: `unit-coverage-threshold` read the %-solved bar as `rows[rows.length - 1]`. That
+held only while nothing was appended after it — and `v73_d`'s gate row already could be, so it had
+been passing on the chapters it happened to pick rather than on the rule. Now found by LABEL.
+
+That is **five stale pins retired this session** (two here, two in `unit-qid-stability`, one in
+`unit-replay-focus`'s §8c bound). Every one was a guard describing HOW the code was written rather
+than WHAT it must do, and every one broke on a correct change. §0a's "retire the source pins" item
+is not cosmetic housekeeping — it is the difference between a suite that catches regressions and one
+that taxes correct work.
+
+**`probe_gates_v77.js` re-run and diffed against the `v78_l` baseline: byte-identical.** All three
+items touched the progress card, so the diff was run once for the three rather than three times.
+
+---
+
 ## 6. What the next session should know
 
-- **Baseline for `v78_g`: 198 / 174 / 0 / 0.** Corpus 309 topics, 87 storylines.
-- **GROUP B IS DONE** apart from two items that are not mine to close: the `Übersetze:` note (needs
-  the user — it presupposes a read-out that does not exist) and the word-form highlighting item,
-  which belongs with §0e/§3 and the ONE shared matcher.
-- **§7 SHIPPED as `v78_g`.** Next are **§0e's ordering half + §3 highlighting** (ONE shared matcher;
-  the v75 plan was measured twice and is WRONG — re-plan, do not implement), **§0h question
-  navigation** (its own session), and the **Replay ordering fix** scheduled alongside §0e/§3.
-- **Held on a screenshot:** the auto-read move (ruled: to the card before comprehension lessons,
-  nowhere else, and the mute button must stop it mid-read). Do not guess which card.
+- **Baseline for `v78_n`: 203 / 179 / 0 / 0.** Corpus 309 topics, 87 storylines. **33 languages.**
+- **Group B is DONE. §3 is DONE. §7 is DONE.** Twelve point releases this session (`v78_b`…`v78_n`).
+- **Nothing is owed by the user except two translation passes** — `sl` has no `ui.json` block, and
+  Slovenian reopened `languages.json` name cells. Both are faster now (`--batch`, `--threads`).
+- **The next real item is a DISCUSSION the user asked for**, not an implementation: the per-text
+  learning scheme (roadmap → "session 32, second batch" → "NEEDS DESIGN"). **Do the coverage
+  measurement FIRST** — what share of a chapter's story TOKENS its lessons already teach.
+  `_storyWordSources` (`v78_h`) is the input. Note carefully: `v78_h` measured **marks** and `v78_k`
+  measured **marks**; neither measured **coverage**, and they answer different questions. Marks
+  count occurrences highlighted; coverage is the share of the text a learner could actually read.
+  That single number decides whether "exhaust the vocabulary of the input text" is a GENERATION
+  problem or a GAP-FILLING problem, and it is the prerequisite for progressive reveal as well.
+- **Buildable without discussion:** §0h question navigation (its own session — `C.cur`, `check()`,
+  per-run answer state, `_speakAndAdvance` advancing one way only). The Replay ordering fix shipped
+  as `v78_l`, and the three §0d card items as `v78_n` (one of which needed no change — it was
+  already true, and is now asserted). **§0d is empty.**
 - **On the next data drop:** read §1 and §7 of these notes before reaching for the fixers, and run
-  **backfill before build-static**. The `sr` script stamps are lost on every round-trip — that is
-  now confirmed across two drops, so it is a per-drop step rather than a repair that sticks.
-- **Writing docs: never put emoji in a Python string literal** (rule 25, and §11 above — it
-  truncated the roadmap to zero bytes).
+  **backfill before build-static**. Note the script stamps SURVIVED the second drop, so the
+  per-drop-repair rule may be softening — check, do not assume either way.
+- **Writing docs: never put emoji in a Python string literal** (rule 25, §11 — it truncated the
+  roadmap to zero bytes).
+- **Three guards earned their keep this session by catching things nobody was looking for**:
+  `unit-roadmap-version` caught the zero-byte roadmap; `unit-add-lesson-menu` caught the
+  library/`mixed` divergence; `unit-lang-menu-coverage` caught a `languages.json` reflow. All three
+  were written for other reasons.

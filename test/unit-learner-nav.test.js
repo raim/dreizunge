@@ -276,7 +276,11 @@ console.log('  full-story-on-unlock + within/along progress summary: OK');
 // ── 4b. Review mode: a learner re-opening a COMPLETE chapter (v60.1) ──────────
 {
   const sc = ext(html, 'showComplete');
-  assert.ok(/function showComplete\(review\)/.test(html), 'showComplete accepts a review flag');
+  // v78_m: matched on the FIRST parameter, not the whole signature. This pinned
+  // `function showComplete(review)` exactly and broke when a second optional parameter was added,
+  // while the claim it makes — "there is a review flag" — stayed true (standing rule 18: a guard
+  // that pins a phrasing does not survive a rewrite).
+  assert.ok(/function showComplete\(review\b/.test(html), 'showComplete accepts a review flag first');
   assert.ok(/if\(review\)\{[\s\S]*?_review:true \}/.test(sc), 'review builds a synthetic no-round C');
   assert.ok(/!C\._review &&/.test(sc), 'review mode records NO progress (chapter already complete)');
   // loadSaved routes a learner with no unfinished lesson into the review card, not the page —

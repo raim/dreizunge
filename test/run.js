@@ -133,6 +133,7 @@ run('unit: typed-answer letter diff (v71_c)', 'node', [path.join(__dirname, 'uni
 run('unit: vocab article symmetry (v71_d)', 'node', [path.join(__dirname, 'unit-vocab-articles.test.js')]);
 run('unit: replay focuses on unsolved questions (v71_f)', 'node', [path.join(__dirname, 'unit-replay-focus.test.js')]);
 run('unit: replay targets the least-covered lesson (v78_l)', 'node', [path.join(__dirname, 'unit-replay-target.test.js')]);
+run('unit: §0d card items — quit target, post bars, replay (v78_n)', 'node', [path.join(__dirname, 'unit-card-0d.test.js')]);
 run('unit: comprehension is gated by the story, not gating it (v71_s)', 'node', [path.join(__dirname, 'unit-comprehension-gate.test.js')]);
 run('unit: article choices derived from data, not a table (v71_x)', 'node', [path.join(__dirname, 'unit-article-choices.test.js')]);
 run('unit: diacritic QC — scan generates candidates, model decides (v72)', 'node', [path.join(__dirname, 'unit-diacritic-qc.test.js')]);

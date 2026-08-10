@@ -8937,6 +8937,88 @@
           "perType": 3
         },
         {
+          "difficulty": 1,
+          "id": "ls_1786355226452",
+          "type": "grammar",
+          "title": "Nomen: Geschlecht & Plural",
+          "desc": "Lerne Nomen, Artikel und Mehrzahl.",
+          "icon": "📚",
+          "grammar": [
+            {
+              "target": "pozdrav",
+              "source": "Grüß",
+              "gender": "m",
+              "article": "taj",
+              "plural": "pozdravi"
+            },
+            {
+              "target": "Beograd",
+              "source": "Belgrad",
+              "gender": "m",
+              "article": "taj",
+              "plural": "Beogradi"
+            },
+            {
+              "target": "sladoled",
+              "source": "Eis",
+              "gender": "m",
+              "article": "taj",
+              "plural": "sladoledi"
+            },
+            {
+              "target": "žena",
+              "source": "Frau",
+              "gender": "f",
+              "article": "ova",
+              "plural": "žene"
+            },
+            {
+              "target": "kći",
+              "source": "Tochter",
+              "gender": "f",
+              "article": "ova",
+              "plural": "kćeri"
+            },
+            {
+              "target": "srce",
+              "source": "Herz",
+              "gender": "n",
+              "article": "ovo",
+              "plural": "srca"
+            },
+            {
+              "target": "more",
+              "source": "Meer",
+              "gender": "n",
+              "article": "ovo",
+              "plural": "mora"
+            },
+            {
+              "target": "društvo",
+              "source": "Gesellschaft",
+              "gender": "n",
+              "article": "ovo",
+              "plural": "društva"
+            }
+          ],
+          "_genMeta": {
+            "type": "grammar",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 8,
+            "rejected": 2,
+            "rejectReasons": {
+              "target===source (\"park\")": 1,
+              "target===plural (\"deca\") — likely already a plural": 1
+            },
+            "promptTokens": 666,
+            "completionTokens": 549,
+            "ms": 368216,
+            "at": "2026-08-10T09:47:06.452Z"
+          },
+          "_hidden": true
+        },
+        {
           "id": "ls_1786316946709_0_conjugation",
           "type": "conjugation",
           "title": "Prisustvo glagola",
@@ -9179,8 +9261,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 9006,
-        "totalCompletionTokens": 2173,
+        "totalPromptTokens": 9672,
+        "totalCompletionTokens": 2722,
         "lessons": [
           {
             "lessonNum": 1,
@@ -9191,15 +9273,15 @@
         ],
         "tokensByType": {
           "recreate": 2402,
-          "add_lesson": 1415,
+          "add_lesson": 2630,
           "lesson_qc": 5775
         }
       },
       "generatedAt": "2026-08-09T14:17:02.396Z",
-      "updatedAt": "2026-08-09T23:11:10.423Z",
+      "updatedAt": "2026-08-10T11:12:06.217Z",
       "createdBy": "admin",
       "script": "latin",
-      "coverageTarget": 0.75
+      "coverageTarget": 0.65
     },
     {
       "id": "tp_17861968126590000089",

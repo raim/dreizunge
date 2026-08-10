@@ -3736,11 +3736,45 @@ function _highlightVocabHtml(html, words, strongWords) {
   const APOS_RE = /['\u2019\u2018\u02BC\u02B9\u2032]/g;
   const normApos = w => String(w == null ? '' : w).replace(APOS_RE, "'");
   const esc = w => stripF(w).replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(APOS_RE, APOS_CLASS);
+  // v78_k (§3, ruled session 29/30): WHITESPACE SPLITTING. A multi-token vocabulary entry used to
+  // match only as a whole phrase, so `la variazione genetica` marked nothing in a story containing
+  // just `variazione` — the commonest shape by far, since vocabulary is stored with its article.
+  // Measured at the ruling: +782 marks across 96 chapters.
+  //
+  // Each entry contributes the WHOLE PHRASE and each of its tokens. Longest-first ordering (below)
+  // means the phrase still wins wherever it is actually present, so this only ever adds marks in
+  // places the phrase itself could not reach.
+  //
+  // ARTICLE NOISE IS ACCEPTED — this is the ruling, not an oversight. Splitting marks bare `la` and
+  // `il` as if they were learned vocabulary. Session 30 ruled that the mark means "something from
+  // your vocabulary occurs here", not "you have learned this word", and took splitting (+782, 96
+  // chapters) over the article-filtered variant (+5 marks on the sample chapter, 0 articles) —
+  // which is also why NO article set is derived anywhere: nothing needs one.
+  //
+  // Only for SPACED scripts. An unspaced-script entry has no whitespace to split on, and matching
+  // inside a run is already its correct behaviour (v73_d).
+  const splitTokens = w => String(w == null ? '' : w).trim().split(/\s+/).filter(Boolean);
   const spaced = [], unspaced = [];
-  words.forEach(w => {
+  const pushWord = (w) => {
     const e = esc(w);
     if (!e) return;
     (_UNSPACED_SCRIPTS.test(stripF(w)) ? unspaced : spaced).push(e);
+  };
+  words.forEach(w => {
+    pushWord(w);
+    if (_UNSPACED_SCRIPTS.test(stripF(String(w || '')))) return;
+    const toks = splitTokens(w);
+    if (toks.length > 1) toks.forEach(pushWord);
+  });
+  // The stronger shade is keyed on the MATCHED text, so a solved phrase whose tokens were split out
+  // would light its own parts in the weaker shade — the learner would see `variazione` as unlearned
+  // inside the very phrase they had answered. Split the solved set the same way, so both shades
+  // describe the same words.
+  (strongWords || []).forEach(w => {
+    const raw = String(w || '');
+    if (_UNSPACED_SCRIPTS.test(stripF(raw))) return;
+    const toks = splitTokens(raw);
+    if (toks.length > 1) toks.forEach(t => { const k = _hlKey(stripF(t)); if (k) strong.add(k); });
   });
   // Longest-first so a phrase wins over one of its own words ("il forno a legna" before "forno").
   const bySize = a => a.sort((x, y) => y.length - x.length);
@@ -7055,15 +7089,41 @@ function _firstUnfinishedLessonIdx(d){
 // away (the decrement) had no way up at all. typeof-guarded like its siblings (unit harnesses
 // extract callers with stubs). Mixed lessons are skipped: a mixed-driven set resumes via
 // _firstUnfinishedLessonIdx's own mixed fallback.
+// v78_l (user): Replay picks the LEAST-COVERED lesson, not the first coverage-short one.
+//
+// User: "the replay button plays only comprehension lessons after a lesson is complete. We would
+// also want to replay other lessons from the same chapter, preferably those that haven't been seen
+// before. Is this request in conflict with the definition of this button?"
+//
+// It is not. Replay is `repeatForCoverage`: its job is to raise COVERAGE, so a lesson at 100% is
+// correctly skipped — replaying it raises nothing. But an UNPLAYED lesson is not at 100%, it is at
+// ZERO, so "prefer ones not yet seen" is not a competing rule; it is the strongest case of the rule
+// already here. Only the ORDER was wrong.
+//
+// The old scan returned the first short lesson in DOCUMENT order. A comprehension lesson sits early
+// and — since `v77_t` narrows a repeat to the questions still unanswered — stays short for a long
+// time, so it won that scan every time and later unplayed lessons were never reached. Exactly what
+// the user saw.
+//
+// Ties keep document order (the sort is stable and the scan is in `countedLessons` order), so a
+// chapter whose lessons are all equally covered behaves exactly as before.
 function _firstCoverageShortLessonIdx(){
   const d = APP.lessonData; if(!d) return -1;
   if (typeof lessonCoverage !== 'function' || typeof countedLessons !== 'function') return -1;
+  let best = -1, bestFrac = Infinity;
   for (const L of countedLessons(d)){
     if (!L || L.type === 'mixed') continue;
     const idx = d.lessons.indexOf(L);
-    try { const c = lessonCoverage(idx); if (c.total > 0 && c.solved < c.total) return idx; } catch(_){}
+    try {
+      const c = lessonCoverage(idx);
+      if (!(c.total > 0 && c.solved < c.total)) continue;
+      // Fraction, not remaining count: a 4-question lesson never played (0%) should outrank a
+      // 40-question one that is 90% done, even though the latter has more questions left.
+      const frac = c.solved / c.total;
+      if (frac < bestFrac) { bestFrac = frac; best = idx; }
+    } catch(_){}
   }
-  return -1;
+  return best;
 }
 
 // Resolve the storyline this chapter belongs to (preferring the deck the learner came from),
@@ -14851,7 +14911,11 @@ function _storyAllChaptersDone(slCtx){
 }
 
 // ── complete ──
-function showComplete(review){
+// v78_m: `lessonIdxOverride` — render the review card for a SPECIFIC lesson rather than the last
+// visible one. Needed because review mode deliberately points `lessonIdx` at the last counted
+// lesson (it exists for re-opening a finished chapter, where "which lesson" has no answer), and
+// quitting mid-lesson has a very definite answer: the one being played.
+function showComplete(review, lessonIdxOverride){
   // review=true (v60.1): render the completion card for an ALREADY-complete chapter a learner
   // re-opened — no fresh round exists, so we neither record progress nor show per-round stats.
   // A synthetic C keeps the downstream code (which reads APP.cur) working; lessonIdx points at
@@ -14861,7 +14925,9 @@ function showComplete(review){
   if(review){
     const _d=APP.lessonData;
     const _last=(_d.lessons||[]).map((L,i)=>({L,i})).filter(x=>lessonCountsFor(_d,x.L)).pop();
-    APP.cur={ lessonIdx:_last?_last.i:0, correct:0, total:0, mistakes:0, bestStreak:0, flagCount:0, exercises:[], _review:true };
+    const _idx = (Number.isInteger(lessonIdxOverride) && (_d.lessons||[])[lessonIdxOverride])
+      ? lessonIdxOverride : (_last?_last.i:0);
+    APP.cur={ lessonIdx:_idx, correct:0, total:0, mistakes:0, bestStreak:0, flagCount:0, exercises:[], _review:true };
   }
   const C=APP.cur, lesson=APP.lessonData.lessons[C.lessonIdx], topicKey=APP.lessonData.topic;
   // A drill is ephemeral: it has no entry in lessons.json, so recording completion under its
@@ -15370,8 +15436,28 @@ function showComplete(review){
       // requirement was strictest, and rowsHtml then painted the bar green because its fill colour
       // was tied to whether a mark existed. Green bar, locked Next: the reported bug.
       const _showMark = !_teacher && !lesson._drill && _markApplies && _topicMarkPct > 0;
+      // v78_n (user, §0d): the post-unlock lessons get their own bar on EVERY progress card of the
+      // chapter that has them — not only on the card where one of them is currently blocking Next.
+      // Before this the row came from `_lessonGate`, which is set only while a story-gated lesson
+      // is unfinished AND is the lesson just played, so the learner could see "comprehension: 3/8"
+      // on one card and nothing at all on the next, with no way to tell whether the work still
+      // existed. The user's screenshot is exactly that state.
+      //
+      // Labelled with each lesson's OWN TITLE — data, not a new ui.json key, so this needs no
+      // translation pass (the same choice `v73_d` made for the gate row it generalises). Marked at
+      // 100 because a story-gated lesson must be fully solved (v71_s).
+      let _postRows = [];
+      try {
+        const _d2 = APP.lessonData;
+        (_d2?.lessons || []).forEach((L, i) => {
+          if (!L || !_isStoryGatedLesson(L) || !lessonCountsFor(_d2, L)) return;
+          const c = lessonCoverage(i);
+          if (!(c && c.total > 0)) return;
+          _postRows.push({ solved: c.solved, total: c.total, title: L.title || '' });
+        });
+      } catch(_) { _postRows = []; if (typeof _cardNote === 'function') _cardNote('post-rows', _); }
       let _ph = _compProgressHtml(topicKey, _slCtx, { skipStoryRow: true,
-        markPct: _showMark ? _topicMarkPct : null, lessonGate: _lessonGate });
+        markPct: _showMark ? _topicMarkPct : null, lessonGate: _lessonGate, postRows: _postRows });
       _progEl.innerHTML = _ph;
     }
   }
@@ -16271,10 +16357,16 @@ function _compProgressHtml(topicKey, slCtx, opts){
   // translation pass and names the thing the learner just played. Without this row the card showed
   // a topic bar comfortably above its mark and a locked button, with nothing connecting the two.
   try {
-    const lg = opts && opts.lessonGate;
-    if (lg && lg.total > 0) {
-      const _lbl = String(lg.title || '').trim() || t('complete.solved');
-      html += rowsHtml(_lbl.length > 40 ? _lbl.slice(0, 39) + '…' : _lbl, lg.solved, lg.total, null, 100);
+    // v78_n: one row per post-unlock lesson, whenever the chapter has any. `lessonGate` is the
+    // blocking lesson and is already among them, so it is NOT emitted separately — two rows for one
+    // lesson is how the storyline row and the topic row confused each other in v74_g.
+    const rows = (opts && Array.isArray(opts.postRows) && opts.postRows.length)
+      ? opts.postRows
+      : ((opts && opts.lessonGate && opts.lessonGate.total > 0) ? [opts.lessonGate] : []);
+    for (const r of rows) {
+      if (!r || !(r.total > 0)) continue;
+      const _lbl = String(r.title || '').trim() || t('complete.solved');
+      html += rowsHtml(_lbl.length > 40 ? _lbl.slice(0, 39) + '…' : _lbl, r.solved, r.total, null, 100);
     }
   } catch(_) {}
   return html;
@@ -17630,6 +17722,27 @@ function confirmQuit(){
   // deck (or the landing page for a solo chapter), the same target as the completion card's Back.
   // Teachers go back to their editing hub as before.
   if(_isLearner()){
+    // v78_m (user, §0d): the ✕ returns to the PROGRESS CARD of the lesson being played, not to the
+    // storyline. Quitting a question is a step back inside the chapter, and the card is the page
+    // that says what this lesson is and how far through it you are — landing on the deck instead
+    // discards that context and makes resuming a search.
+    //
+    // The REVIEW render (`showComplete(true, …)`) is the right one: it records nothing, which is
+    // what a quit must do — the round's partial score was already folded into `completed` above,
+    // and a play render would count it a second time.
+    //
+    // Deliberately NOT for a drill: `endDrill()` has just restored the real topic, so the drill's
+    // index no longer refers to anything, and a drill has no progress card of its own. Falls back
+    // to the previous behaviour whenever the card cannot be rendered, so the ✕ always goes
+    // somewhere.
+    const _idx = (C && Number.isInteger(C.lessonIdx)) ? C.lessonIdx : null;
+    const _canCard = APP.lessonData && Array.isArray(APP.lessonData.lessons)
+                     && _idx != null && APP.lessonData.lessons[_idx]
+                     && !APP.lessonData.lessons[_idx]._drill;
+    if (_canCard) {
+      try { showComplete(true, _idx); return; }
+      catch(_) { if (typeof _cardNote === 'function') _cardNote('quit-to-card', _); }
+    }
     const topicKey = APP.lessonData?.topic;
     const ctx = topicKey ? _storylineForTopic(topicKey) : null;
     if(ctx && ctx.sl) openStorylineScreen(ctx.sl.id, ctx.enc);

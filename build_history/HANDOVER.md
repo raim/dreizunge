@@ -1,6 +1,6 @@
-# HANDOVER — v78_j
+# HANDOVER — v78_n
 
-One page. Session 32 shipped **`v78_b`** … **`v78_j`** from the `v78` cut. **Read
+One page. Session 32 shipped **`v78_b`** … **`v78_n`** from the `v78` cut. **Read
 `build_history/roadmap_v78.md`** next for the queue and the session protocol, then `INTERNALS.md`,
 then `build_history/v78_session32_notes.md` (session 32) and `build_history/v77_session31_notes.md`.
 
@@ -8,12 +8,12 @@ then `build_history/v78_session32_notes.md` (session 32) and `build_history/v77_
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **200 checks, ALL PASSED** |
-| `node test/run.js --quick` | 176 |
+| `node test/run.js` | **203 checks, ALL PASSED** |
+| `node test/run.js --quick` | 179 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v78_j'`. Corpus: **309 topics, 87 storylines**. **33 languages** (Slovenian added in `v78_j`). Establish this before changing
+`APP_VERSION = 'v78_n'`. Corpus: **309 topics, 87 storylines**. **33 languages** (Slovenian added in `v78_j`). Establish this before changing
 anything.
 
 **These numbers are the ones to trust.** Session 30's prompt said 170/149, session 31's said
@@ -101,6 +101,24 @@ the moment it moved into the screens that function redraws. No new i18n.
   story containing just `variazione` (+782 marks over 96 chapters, session-29 measurement).
 
 ## Where session 33 should start
+
+**Group B is DONE, §3 is DONE, §7 is DONE.** Session 32 shipped ten point releases. Nothing is
+blocked on the user except two translation passes (`sl` has no `ui.json` block; Slovenian reopened
+`languages.json` name cells — both faster now with `--batch` / `--threads`).
+
+**The next item is a DISCUSSION the user explicitly asked for, not an implementation:** the per-text
+learning scheme. **Do the coverage measurement first** — what share of a chapter's story TOKENS its
+lessons already teach. `v78_h` and `v78_k` both measured MARKS; neither measured COVERAGE, and they
+answer different questions. That number decides whether "exhaust the vocabulary of the input text"
+is a generation problem or a gap-filling problem.
+
+**Buildable without discussion:** §0h question navigation — now the only queued implementation
+item, and it wants its own session (`C.cur`, `check()`, per-run answer state, and `_speakAndAdvance`,
+which advances in one direction only). **§0d is empty**: the Replay ordering fix shipped as `v78_l`
+and the three card items as `v78_n`, one of which needed no change (it was already true, and is now
+asserted rather than "fixed").
+
+## (previous framing)
 
 **All open user questions are CLOSED.** The auto-read is removed by ruling, the Latin `sr` UI is
 confirmed, the error-lesson wipe was dropped, ordering was dropped, and `ui.json` / `languages.json`

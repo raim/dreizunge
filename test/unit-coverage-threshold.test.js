@@ -242,7 +242,16 @@ console.log('  %-solved bar present + reuses story/chapter labels: OK');
   for (const [t, shape] of [[classic, 'classic'], [mixed, 'mixed-driven']]) {
     const { C, rows } = render(t);
     assert.ok(rows.length >= 2, `${shape}: the card draws a chapter bar and a %-solved bar`);
-    const chapterBar = rows[0], solvedBar = rows[rows.length - 1];
+    // v78_n: identify the %-solved bar by its LABEL, not by position. It was `rows[rows.length-1]`,
+    // which held only while nothing was appended after it — and `v73_d`'s gate row already could
+    // be, so this passed on the chosen chapters rather than on the rule. `v78_n` adds a row per
+    // post-unlock lesson, which made the positional read pick a comprehension bar and call it the
+    // %-solved one (standing rule 18: pin the claim, not the layout).
+    const chapterBar = rows[0];
+    const solvedLbl = UIj.en['complete.solved'];
+    const solvedBar = rows.find(r => r.label === solvedLbl);
+    assert.ok(solvedBar, `${shape}: the card draws a row labelled "${solvedLbl}" ` +
+      `(got ${JSON.stringify(rows.map(r => r.label))})`);
     const under = C.run(`underlyingLessons(APP.lessonData).length`, 'u');
     assert.strictEqual(chapterBar.total, under,
       `${shape}: the chapter bar is denominated in LESSONS (${under}), whatever the chapter's shape`);
