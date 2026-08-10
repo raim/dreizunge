@@ -132,6 +132,7 @@ run('unit: LLM chapter split contract (v71_b)', 'node', [path.join(__dirname, 'u
 run('unit: typed-answer letter diff (v71_c)', 'node', [path.join(__dirname, 'unit-typed-diff.test.js')]);
 run('unit: vocab article symmetry (v71_d)', 'node', [path.join(__dirname, 'unit-vocab-articles.test.js')]);
 run('unit: replay focuses on unsolved questions (v71_f)', 'node', [path.join(__dirname, 'unit-replay-focus.test.js')]);
+run('unit: replay targets the least-covered lesson (v78_l)', 'node', [path.join(__dirname, 'unit-replay-target.test.js')]);
 run('unit: comprehension is gated by the story, not gating it (v71_s)', 'node', [path.join(__dirname, 'unit-comprehension-gate.test.js')]);
 run('unit: article choices derived from data, not a table (v71_x)', 'node', [path.join(__dirname, 'unit-article-choices.test.js')]);
 run('unit: diacritic QC — scan generates candidates, model decides (v72)', 'node', [path.join(__dirname, 'unit-diacritic-qc.test.js')]);
@@ -177,6 +178,7 @@ run('unit: one definition of chapter-complete (v69_l)', 'node', [path.join(__dir
 run('unit: chapter-level clear progress (v78_e)', 'node', [path.join(__dirname, 'unit-chapter-clear-progress.test.js')]);
 run('unit: teacher-mode switch on every page (v78_f)', 'node', [path.join(__dirname, 'unit-teacher-toggle.test.js')]);
 run('unit: story highlight — all word sources, two shades (v78_h)', 'node', [path.join(__dirname, 'unit-story-highlight-sources.test.js')]);
+run('unit: highlight splits multi-token entries (v78_k)', 'node', [path.join(__dirname, 'unit-highlight-split.test.js')]);
 run('smoke: render paths execute (buildPath/storyline/complete/renderEx)', 'node', [path.join(__dirname, 'smoke-render.test.js')]);
 run('unit: beginner-mode exercise types (v69.2)', 'node', [path.join(__dirname, 'unit-beginner-types.test.js')]);
 run('unit: crossword layout engine (v70_c)', 'node', [path.join(__dirname, 'unit-crossword-layout.test.js')]);
