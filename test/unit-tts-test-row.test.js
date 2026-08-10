@@ -52,8 +52,17 @@ assert.ok(/b\.dataset\.muteTip \|\| \(APP\.muted \? 'Unmute' : 'Mute'\)/.test(mu
 // v49 (later): selectLang must refresh the row (its flag) IMMEDIATELY after setting APP.lang,
 // before the heavier helpers (repopulateContinueSelect/updateDocDir) — a throw in any of those
 // otherwise leaves the flag showing the previous language even though APP.lang changed.
-const selLang = html.slice(html.indexOf('function selectLang('),
-                           html.indexOf('function selectLang(') + 900);
+// v78_q: slice the WHOLE function by brace-matching, not a fixed 900-character window. The window
+// was sized to the function as it stood; a comment added inside it pushed the very markers this
+// section looks for past the end, and the ordering claim — which is what the test is about — was
+// still perfectly true (standing rule 18: pin the claim, not the layout).
+const selLang = (() => {
+  const at = html.indexOf('function selectLang(');
+  const b = html.indexOf('{', at);
+  let d = 0, i = b;
+  for (; i < html.length; i++) { const c = html[i]; if (c === '{') d++; else if (c === '}') { d--; if (!d) { i++; break; } } }
+  return html.slice(at, i);
+})();
 const iLang = selLang.indexOf('APP.lang=code');
 const iTts  = selLang.indexOf('updateTtsVoiceNote()');
 const iRepop = selLang.indexOf('repopulateContinueSelect()');

@@ -40,14 +40,14 @@
       "lang": "sr",
       "srcLang": "de",
       "createdAt": "2026-08-09T14:22:10.916Z",
-      "updatedAt": "2026-08-10T13:25:14.523Z",
+      "updatedAt": "2026-08-10T13:57:02.490Z",
       "tokenUsage": {
-        "totalPromptTokens": 5490,
-        "totalCompletionTokens": 2278,
+        "totalPromptTokens": 6838,
+        "totalCompletionTokens": 3902,
         "tokensByType": {
           "retitle": 2744,
           "summary": 2489,
-          "storyboard": 2535
+          "storyboard": 5507
         }
       },
       "summary": "Ana und ihr Hund Max lernen sich im Park kennen, wo ihre Freundschaft durch gemeinsame Aktivitäten wie Laufen und Lesen entsteht. Zusammen unternehmen sie einen Spaziergang an der Donau, während sie von ihren gemeinsamen Träumen träumen, insbesondere von einer Reise nach Wien. Die Geschichte betont auch die Einzigartigkeit der serbischen Sprache, die in zwei Schriften geschrieben werden kann, was Ana und Max verbindet. Am Ende kehren sie bei einbrechender Dunkelheit nach Hause zurück, glücklich über ihre neue Verbindung.",
@@ -63,7 +63,7 @@
         "ms": 105076,
         "at": "2026-08-10T13:22:40.245Z"
       },
-      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Ana und ihr Hund Max stehen im Park.</title><rect x=\"102\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"103\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"20\" r=\"15\" fill=\"#f2cc8f\"/><circle cx=\"30\" cy=\"70\" r=\"8\" fill=\"#8d6e63\"/><rect x=\"25\" y=\"60\" width=\"10\" height=\"20\" fill=\"#e5989b\"/><circle cx=\"30\" cy=\"55\" r=\"5\" fill=\"#faf7f0\"/><rect x=\"60\" y=\"65\" width=\"12\" height=\"15\" fill=\"#8d6e63\"/><circle cx=\"66\" cy=\"60\" r=\"4\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"1\"><title>Max rennt fröhlich durch das Gras.</title><rect x=\"284\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"285\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"80\" cy=\"20\" r=\"15\" fill=\"#f2cc8f\"/><polyline points=\"20,70 30,65 40,70 50,65\" fill=\"none\" stroke=\"#8d6e63\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"45\" y=\"60\" width=\"10\" height=\"15\" fill=\"#8d6e63\"/><circle cx=\"50\" cy=\"55\" r=\"5\" fill=\"#2b2b2b\"/><line x1=\"45\" y1=\"65\" x2=\"35\" y2=\"75\" stroke=\"#8d6e63\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"55\" y1=\"65\" x2=\"65\" y2=\"75\" stroke=\"#8d6e63\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"2\"><title>Ana liest ein Buch unter dem Baum.</title><rect x=\"466\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"467\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"20\" cy=\"30\" r=\"25\" fill=\"#81b29a\"/><rect x=\"18\" y=\"50\" width=\"4\" height=\"30\" fill=\"#8d6e63\"/><rect x=\"70\" y=\"65\" width=\"12\" height=\"15\" fill=\"#e5989b\"/><circle cx=\"76\" cy=\"60\" r=\"5\" fill=\"#faf7f0\"/><rect x=\"72\" y=\"68\" width=\"8\" height=\"10\" fill=\"#ffffff\"/><line x1=\"74\" y1=\"70\" x2=\"78\" y2=\"70\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/><line x1=\"74\" y1=\"73\" x2=\"78\" y2=\"73\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"2\"><title>Max spielt mit einem roten Ball.</title><rect x=\"648\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"649\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"75\" r=\"8\" fill=\"#e07a5f\"/><rect x=\"30\" y=\"60\" width=\"12\" height=\"15\" fill=\"#8d6e63\"/><circle cx=\"36\" cy=\"55\" r=\"5\" fill=\"#2b2b2b\"/><line x1=\"30\" y1=\"65\" x2=\"20\" y2=\"75\" stroke=\"#8d6e63\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"65\" x2=\"50\" y2=\"75\" stroke=\"#8d6e63\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"2\"><title>Alle sind glücklich im sonnigen Park.</title><rect x=\"830\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"831\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"20\" r=\"18\" fill=\"#f2cc8f\"/><rect x=\"20\" y=\"65\" width=\"10\" height=\"15\" fill=\"#e5989b\"/><circle cx=\"25\" cy=\"60\" r=\"4\" fill=\"#faf7f0\"/><rect x=\"70\" y=\"65\" width=\"10\" height=\"15\" fill=\"#8d6e63\"/><circle cx=\"75\" cy=\"60\" r=\"4\" fill=\"#2b2b2b\"/><circle cx=\"50\" cy=\"75\" r=\"6\" fill=\"#e07a5f\"/></svg></g></svg>",
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Ana und ihr Hund Max im Park.</title><rect x=\"102\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#adb5bd\" stroke-width=\"1\" rx=\"4\"/><svg x=\"103\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#4cc9f0\"/><rect x=\"0\" y=\"70\" width=\"100\" height=\"30\" fill=\"#2ec4b6\"/><circle cx=\"50\" cy=\"20\" r=\"15\" fill=\"#ffd60a\"/><polygon points=\"20,70 80,70 50,40\" fill=\"#adb5bd\"/><circle cx=\"30\" cy=\"60\" r=\"10\" fill=\"#9c6644\"/><rect x=\"28\" y=\"50\" width=\"4\" height=\"10\" fill=\"#1d1d1d\"/><circle cx=\"70\" cy=\"60\" r=\"8\" fill=\"#ff477e\"/><rect x=\"68\" y=\"52\" width=\"4\" height=\"8\" fill=\"#1d1d1d\"/></svg></g><g data-chapter=\"2\"><title>Max spielt mit dem Ball unter dem Baum.</title><rect x=\"284\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#adb5bd\" stroke-width=\"1\" rx=\"4\"/><svg x=\"285\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#4cc9f0\"/><rect x=\"0\" y=\"75\" width=\"100\" height=\"25\" fill=\"#2ec4b6\"/><circle cx=\"80\" cy=\"30\" r=\"12\" fill=\"#ffd60a\"/><polygon points=\"10,75 90,75 50,20\" fill=\"#9c6644\"/><rect x=\"48\" y=\"40\" width=\"4\" height=\"35\" fill=\"#1d1d1d\"/><circle cx=\"50\" cy=\"15\" r=\"20\" fill=\"#2ec4b6\"/><circle cx=\"30\" cy=\"70\" r=\"6\" fill=\"#ff5714\"/><polyline points=\"25,70 30,65 35,70\" fill=\"none\" stroke=\"#1d1d1d\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></g><g data-chapter=\"3\"><title>Spaziergang am Fluss bei Sonnenuntergang.</title><rect x=\"466\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#adb5bd\" stroke-width=\"1\" rx=\"4\"/><svg x=\"467\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#ffd60a\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#0077b6\"/><circle cx=\"50\" cy=\"50\" r=\"25\" fill=\"#ffd60a\"/><rect x=\"0\" y=\"85\" width=\"100\" height=\"15\" fill=\"#adb5bd\"/><circle cx=\"30\" cy=\"75\" r=\"5\" fill=\"#1d1d1d\"/><rect x=\"28\" y=\"65\" width=\"4\" height=\"10\" fill=\"#ff477e\"/><circle cx=\"70\" cy=\"75\" r=\"5\" fill=\"#1d1d1d\"/><rect x=\"68\" y=\"65\" width=\"4\" height=\"10\" fill=\"#fffef2\"/></svg></g><g data-chapter=\"4\"><title>Träume von Wien und dem Schwarzen Meer.</title><rect x=\"648\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#adb5bd\" stroke-width=\"1\" rx=\"4\"/><svg x=\"649\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#22223b\"/><rect x=\"0\" y=\"65\" width=\"100\" height=\"35\" fill=\"#0077b6\"/><circle cx=\"20\" cy=\"20\" r=\"8\" fill=\"#fffef2\"/><polygon points=\"0,65 100,65 50,30\" fill=\"#adb5bd\"/><circle cx=\"40\" cy=\"60\" r=\"4\" fill=\"#ff5714\"/><rect x=\"38\" y=\"52\" width=\"4\" height=\"8\" fill=\"#1d1d1d\"/><circle cx=\"60\" cy=\"60\" r=\"4\" fill=\"#ff5714\"/><rect x=\"58\" y=\"52\" width=\"4\" height=\"8\" fill=\"#1d1d1d\"/></svg></g><g data-chapter=\"6\"><title>Abends unter den Sternen auf dem Heimweg.</title><rect x=\"830\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#adb5bd\" stroke-width=\"1\" rx=\"4\"/><svg x=\"831\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#22223b\"/><rect x=\"0\" y=\"80\" width=\"100\" height=\"20\" fill=\"#adb5bd\"/><circle cx=\"10\" cy=\"10\" r=\"1\" fill=\"#fffef2\"/><circle cx=\"30\" cy=\"15\" r=\"1.5\" fill=\"#fffef2\"/><circle cx=\"70\" cy=\"20\" r=\"1\" fill=\"#fffef2\"/><circle cx=\"90\" cy=\"10\" r=\"2\" fill=\"#fffef2\"/><circle cx=\"40\" cy=\"75\" r=\"6\" fill=\"#1d1d1d\"/><rect x=\"38\" y=\"65\" width=\"4\" height=\"10\" fill=\"#ff477e\"/><circle cx=\"60\" cy=\"75\" r=\"6\" fill=\"#1d1d1d\"/><rect x=\"58\" y=\"65\" width=\"4\" height=\"10\" fill=\"#fffef2\"/></svg></g></svg>",
       "storyboardMeta": {
         "type": "storyline_storyboard",
         "model": "qwen3.6:35b-a3b",
@@ -71,24 +71,24 @@
         "valid": 5,
         "rejected": 0,
         "rejectReasons": null,
-        "promptTokens": 869,
-        "completionTokens": 1666,
-        "ms": 690234,
-        "at": "2026-08-09T16:11:27.383Z",
+        "promptTokens": 1348,
+        "completionTokens": 1624,
+        "ms": 642747,
+        "at": "2026-08-10T13:38:44.627Z",
         "storyStyle": "children"
       },
       "storyboardPanels": [
         {
-          "caption": "Ana und ihr Hund Max stehen im Park.",
+          "caption": "Ana und ihr Hund Max im Park.",
           "chapter": 1,
           "bg": "sky",
           "shapes": [
             {
               "type": "rect",
               "x": 0,
-              "y": 60,
+              "y": 70,
               "w": 100,
-              "h": 40,
+              "h": 30,
               "fill": "leaf"
             },
             {
@@ -99,69 +99,120 @@
               "fill": "sun"
             },
             {
+              "type": "polygon",
+              "points": [
+                [
+                  20,
+                  70
+                ],
+                [
+                  80,
+                  70
+                ],
+                [
+                  50,
+                  40
+                ]
+              ],
+              "fill": "stone"
+            },
+            {
               "type": "circle",
               "cx": 30,
-              "cy": 70,
-              "r": 8,
+              "cy": 60,
+              "r": 10,
               "fill": "earth"
             },
             {
               "type": "rect",
-              "x": 25,
-              "y": 60,
-              "w": 10,
-              "h": 20,
+              "x": 28,
+              "y": 50,
+              "w": 4,
+              "h": 10,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 60,
+              "r": 8,
               "fill": "rose"
             },
             {
-              "type": "circle",
-              "cx": 30,
-              "cy": 55,
-              "r": 5,
-              "fill": "paper"
-            },
-            {
               "type": "rect",
-              "x": 60,
-              "y": 65,
-              "w": 12,
-              "h": 15,
-              "fill": "earth"
-            },
-            {
-              "type": "circle",
-              "cx": 66,
-              "cy": 60,
-              "r": 4,
+              "x": 68,
+              "y": 52,
+              "w": 4,
+              "h": 8,
               "fill": "ink"
             }
           ]
         },
         {
-          "caption": "Max rennt fröhlich durch das Gras.",
-          "chapter": 1,
+          "caption": "Max spielt mit dem Ball unter dem Baum.",
+          "chapter": 2,
           "bg": "sky",
           "shapes": [
             {
               "type": "rect",
               "x": 0,
-              "y": 60,
+              "y": 75,
               "w": 100,
-              "h": 40,
+              "h": 25,
               "fill": "leaf"
             },
             {
               "type": "circle",
               "cx": 80,
-              "cy": 20,
-              "r": 15,
+              "cy": 30,
+              "r": 12,
               "fill": "sun"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  10,
+                  75
+                ],
+                [
+                  90,
+                  75
+                ],
+                [
+                  50,
+                  20
+                ]
+              ],
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 48,
+              "y": 40,
+              "w": 4,
+              "h": 35,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 15,
+              "r": 20,
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 70,
+              "r": 6,
+              "fill": "accent"
             },
             {
               "type": "polyline",
               "points": [
                 [
-                  20,
+                  25,
                   70
                 ],
                 [
@@ -169,56 +220,19 @@
                   65
                 ],
                 [
-                  40,
+                  35,
                   70
-                ],
-                [
-                  50,
-                  65
                 ]
               ],
-              "stroke": "earth",
-              "sw": 2
-            },
-            {
-              "type": "rect",
-              "x": 45,
-              "y": 60,
-              "w": 10,
-              "h": 15,
-              "fill": "earth"
-            },
-            {
-              "type": "circle",
-              "cx": 50,
-              "cy": 55,
-              "r": 5,
-              "fill": "ink"
-            },
-            {
-              "type": "line",
-              "x1": 45,
-              "y1": 65,
-              "x2": 35,
-              "y2": 75,
-              "stroke": "earth",
-              "sw": 2
-            },
-            {
-              "type": "line",
-              "x1": 55,
-              "y1": 65,
-              "x2": 65,
-              "y2": 75,
-              "stroke": "earth",
+              "stroke": "ink",
               "sw": 2
             }
           ]
         },
         {
-          "caption": "Ana liest ein Buch unter dem Baum.",
-          "chapter": 2,
-          "bg": "sky",
+          "caption": "Spaziergang am Fluss bei Sonnenuntergang.",
+          "chapter": 3,
+          "bg": "sun",
           "shapes": [
             {
               "type": "rect",
@@ -226,182 +240,200 @@
               "y": 60,
               "w": 100,
               "h": 40,
-              "fill": "leaf"
+              "fill": "water"
             },
             {
               "type": "circle",
-              "cx": 20,
-              "cy": 30,
+              "cx": 50,
+              "cy": 50,
               "r": 25,
-              "fill": "leaf"
-            },
-            {
-              "type": "rect",
-              "x": 18,
-              "y": 50,
-              "w": 4,
-              "h": 30,
-              "fill": "earth"
-            },
-            {
-              "type": "rect",
-              "x": 70,
-              "y": 65,
-              "w": 12,
-              "h": 15,
-              "fill": "rose"
-            },
-            {
-              "type": "circle",
-              "cx": 76,
-              "cy": 60,
-              "r": 5,
-              "fill": "paper"
-            },
-            {
-              "type": "rect",
-              "x": 72,
-              "y": 68,
-              "w": 8,
-              "h": 10,
-              "fill": "white"
-            },
-            {
-              "type": "line",
-              "x1": 74,
-              "y1": 70,
-              "x2": 78,
-              "y2": 70,
-              "stroke": "ink",
-              "sw": 1
-            },
-            {
-              "type": "line",
-              "x1": 74,
-              "y1": 73,
-              "x2": 78,
-              "y2": 73,
-              "stroke": "ink",
-              "sw": 1
-            }
-          ]
-        },
-        {
-          "caption": "Max spielt mit einem roten Ball.",
-          "chapter": 2,
-          "bg": "sky",
-          "shapes": [
-            {
-              "type": "rect",
-              "x": 0,
-              "y": 60,
-              "w": 100,
-              "h": 40,
-              "fill": "leaf"
-            },
-            {
-              "type": "circle",
-              "cx": 50,
-              "cy": 75,
-              "r": 8,
-              "fill": "accent"
-            },
-            {
-              "type": "rect",
-              "x": 30,
-              "y": 60,
-              "w": 12,
-              "h": 15,
-              "fill": "earth"
-            },
-            {
-              "type": "circle",
-              "cx": 36,
-              "cy": 55,
-              "r": 5,
-              "fill": "ink"
-            },
-            {
-              "type": "line",
-              "x1": 30,
-              "y1": 65,
-              "x2": 20,
-              "y2": 75,
-              "stroke": "earth",
-              "sw": 2
-            },
-            {
-              "type": "line",
-              "x1": 42,
-              "y1": 65,
-              "x2": 50,
-              "y2": 75,
-              "stroke": "earth",
-              "sw": 2
-            }
-          ]
-        },
-        {
-          "caption": "Alle sind glücklich im sonnigen Park.",
-          "chapter": 2,
-          "bg": "sky",
-          "shapes": [
-            {
-              "type": "rect",
-              "x": 0,
-              "y": 60,
-              "w": 100,
-              "h": 40,
-              "fill": "leaf"
-            },
-            {
-              "type": "circle",
-              "cx": 50,
-              "cy": 20,
-              "r": 18,
               "fill": "sun"
             },
             {
               "type": "rect",
-              "x": 20,
-              "y": 65,
-              "w": 10,
+              "x": 0,
+              "y": 85,
+              "w": 100,
               "h": 15,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 75,
+              "r": 5,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 28,
+              "y": 65,
+              "w": 4,
+              "h": 10,
               "fill": "rose"
             },
             {
               "type": "circle",
-              "cx": 25,
-              "cy": 60,
-              "r": 4,
-              "fill": "paper"
+              "cx": 70,
+              "cy": 75,
+              "r": 5,
+              "fill": "ink"
             },
             {
               "type": "rect",
-              "x": 70,
+              "x": 68,
               "y": 65,
-              "w": 10,
-              "h": 15,
-              "fill": "earth"
+              "w": 4,
+              "h": 10,
+              "fill": "paper"
+            }
+          ]
+        },
+        {
+          "caption": "Träume von Wien und dem Schwarzen Meer.",
+          "chapter": 4,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 65,
+              "w": 100,
+              "h": 35,
+              "fill": "water"
             },
             {
               "type": "circle",
-              "cx": 75,
+              "cx": 20,
+              "cy": 20,
+              "r": 8,
+              "fill": "paper"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  0,
+                  65
+                ],
+                [
+                  100,
+                  65
+                ],
+                [
+                  50,
+                  30
+                ]
+              ],
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 40,
               "cy": 60,
               "r": 4,
+              "fill": "accent"
+            },
+            {
+              "type": "rect",
+              "x": 38,
+              "y": 52,
+              "w": 4,
+              "h": 8,
               "fill": "ink"
             },
             {
               "type": "circle",
-              "cx": 50,
+              "cx": 60,
+              "cy": 60,
+              "r": 4,
+              "fill": "accent"
+            },
+            {
+              "type": "rect",
+              "x": 58,
+              "y": 52,
+              "w": 4,
+              "h": 8,
+              "fill": "ink"
+            }
+          ]
+        },
+        {
+          "caption": "Abends unter den Sternen auf dem Heimweg.",
+          "chapter": 6,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 80,
+              "w": 100,
+              "h": 20,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 10,
+              "cy": 10,
+              "r": 1,
+              "fill": "paper"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 15,
+              "r": 1.5,
+              "fill": "paper"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 20,
+              "r": 1,
+              "fill": "paper"
+            },
+            {
+              "type": "circle",
+              "cx": 90,
+              "cy": 10,
+              "r": 2,
+              "fill": "paper"
+            },
+            {
+              "type": "circle",
+              "cx": 40,
               "cy": 75,
               "r": 6,
-              "fill": "accent"
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 38,
+              "y": 65,
+              "w": 4,
+              "h": 10,
+              "fill": "rose"
+            },
+            {
+              "type": "circle",
+              "cx": 60,
+              "cy": 75,
+              "r": 6,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 58,
+              "y": 65,
+              "w": 4,
+              "h": 10,
+              "fill": "paper"
             }
           ]
         }
       ],
-      "storyboardScheme": "classic"
+      "storyboardScheme": "vivid"
     },
     {
       "id": "sl_9302163",
@@ -8077,6 +8109,61 @@
             "at": "2026-08-10T13:16:13.933Z"
           },
           "_arcMode": "reinforce"
+        },
+        {
+          "difficulty": 3,
+          "id": "ls_1786369363300",
+          "type": "comprehension",
+          "title": "Ein Tag mit Ana und Max",
+          "desc": "Verstehe die Geschichte von Anas Tag im Park und am Fluss.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum schließt Ana ihr Buch, als sie mit Max zum Fluss gehen?",
+              "choices": [
+                "Sie hat das Ende der Geschichte vergessen.",
+                "Sie möchte über ihre Reisepläne sprechen.",
+                "Das Buch ist zu schwer für den Spaziergang.",
+                "Max will nicht, dass sie liest."
+              ],
+              "correctIndex": 1,
+              "why": "Im Text steht: 'Ana je zatvorila knjigu... Pričali smo o putovanjima.'"
+            },
+            {
+              "q": "Was ist der Hauptunterschied zwischen Wien und dem Schwarzen Meer in ihren Träumen?",
+              "choices": [
+                "Wien ist ein gemeinsames Ziel, das Schwarze Meer nur ein ferner Traum.",
+                "Sie wollen beide Orte sofort besuchen.",
+                "Das Schwarze Meer ist näher als Wien.",
+                "Wien ist nur eine Idee von Max."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text sagt: 'Želeli smo da odemo u Beč. To je bila naša zajednička želja. Crno more je bilo samo san.'"
+            },
+            {
+              "q": "Was bedeutet die Szene mit dem Schild am Ende der Geschichte?",
+              "choices": [
+                "Max kann die Schrift nicht lesen.",
+                "Es zeigt, dass Serbisch eine einzigartige Schreibweise hat.",
+                "Das Schild ist kaputt gegangen.",
+                "Ana erklärt Max die Grammatik."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: 'Srpski je jed... Mi imamo izbor. To je naša tajna sila.'"
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1060,
+            "completionTokens": 440,
+            "ms": 398859,
+            "at": "2026-08-10T13:42:43.300Z"
+          }
         }
       ],
       "generationStats": {
@@ -8089,8 +8176,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1453,
-        "totalCompletionTokens": 505,
+        "totalPromptTokens": 2513,
+        "totalCompletionTokens": 945,
         "lessons": [
           {
             "lessonNum": 1,
@@ -8098,10 +8185,13 @@
             "promptTokens": 909,
             "completionTokens": 302
           }
-        ]
+        ],
+        "tokensByType": {
+          "add_lesson": 1500
+        }
       },
       "generatedAt": "2026-08-10T13:09:25.819Z",
-      "updatedAt": "2026-08-10T13:16:13.934Z",
+      "updatedAt": "2026-08-10T13:42:43.301Z",
       "createdBy": "admin"
     },
     {
@@ -8598,6 +8688,183 @@
             "ms": 184637,
             "at": "2026-08-10T13:07:19.061Z"
           }
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1786370351359",
+          "type": "conjugation",
+          "title": "Geheimnis der Sprache",
+          "desc": "Verben für das Sprachgeheimnis lernen",
+          "icon": "🗝️",
+          "conjugations": [
+            {
+              "infinitive": "biti",
+              "source": "sein",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ja",
+                  "form": "sam"
+                },
+                {
+                  "pronoun": "ti",
+                  "form": "si"
+                },
+                {
+                  "pronoun": "on/ona/ono",
+                  "form": "je"
+                },
+                {
+                  "pronoun": "mi",
+                  "form": "smo"
+                },
+                {
+                  "pronoun": "vi",
+                  "form": "ste"
+                },
+                {
+                  "pronoun": "oni/one/ona",
+                  "form": "su"
+                }
+              ]
+            },
+            {
+              "infinitive": "ići",
+              "source": "gehen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ja",
+                  "form": "idem"
+                },
+                {
+                  "pronoun": "ti",
+                  "form": "ideš"
+                },
+                {
+                  "pronoun": "on/ona/ono",
+                  "form": "ide"
+                },
+                {
+                  "pronoun": "mi",
+                  "form": "idemo"
+                },
+                {
+                  "pronoun": "vi",
+                  "form": "idete"
+                },
+                {
+                  "pronoun": "oni/one/ona",
+                  "form": "idu"
+                }
+              ]
+            },
+            {
+              "infinitive": "govoriti",
+              "source": "sprechen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ja",
+                  "form": "govorim"
+                },
+                {
+                  "pronoun": "ti",
+                  "form": "govoriš"
+                },
+                {
+                  "pronoun": "on/ona/ono",
+                  "form": "govori"
+                },
+                {
+                  "pronoun": "mi",
+                  "form": "govorimo"
+                },
+                {
+                  "pronoun": "vi",
+                  "form": "govorite"
+                },
+                {
+                  "pronoun": "oni/one/ona",
+                  "form": "govore"
+                }
+              ]
+            },
+            {
+              "infinitive": "slušati",
+              "source": "hören",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ja",
+                  "form": "slušam"
+                },
+                {
+                  "pronoun": "ti",
+                  "form": "slušaš"
+                },
+                {
+                  "pronoun": "on/ona/ono",
+                  "form": "sluša"
+                },
+                {
+                  "pronoun": "mi",
+                  "form": "slušamo"
+                },
+                {
+                  "pronoun": "vi",
+                  "form": "slušate"
+                },
+                {
+                  "pronoun": "oni/one/ona",
+                  "form": "slušaju"
+                }
+              ]
+            },
+            {
+              "infinitive": "znati",
+              "source": "wissen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ja",
+                  "form": "znam"
+                },
+                {
+                  "pronoun": "ti",
+                  "form": "znaš"
+                },
+                {
+                  "pronoun": "on/ona/ono",
+                  "form": "zna"
+                },
+                {
+                  "pronoun": "mi",
+                  "form": "znamo"
+                },
+                {
+                  "pronoun": "vi",
+                  "form": "znate"
+                },
+                {
+                  "pronoun": "oni/one/ona",
+                  "form": "znaju"
+                }
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "conjugation",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 752,
+            "completionTokens": 853,
+            "ms": 306134,
+            "at": "2026-08-10T13:59:11.359Z"
+          }
         }
       ],
       "generationStats": {
@@ -8610,8 +8877,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1381,
-        "totalCompletionTokens": 448,
+        "totalPromptTokens": 2133,
+        "totalCompletionTokens": 1301,
         "lessons": [
           {
             "lessonNum": 1,
@@ -8619,10 +8886,13 @@
             "promptTokens": 854,
             "completionTokens": 286
           }
-        ]
+        ],
+        "tokensByType": {
+          "add_lesson": 1605
+        }
       },
       "generatedAt": "2026-08-10T13:04:14.357Z",
-      "updatedAt": "2026-08-10T13:07:19.068Z",
+      "updatedAt": "2026-08-10T13:59:11.359Z",
       "createdBy": "admin"
     },
     {

@@ -958,7 +958,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         </select>
       </div>
       <label id="use-full-chain-row" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;margin-top:4px;cursor:pointer" title="Pass the full storyline as context — better continuity, slower generation">
-        <input type="checkbox" id="use-full-chain-cb"> <span id="use-full-chain-lbl"></span>
+        <!-- v78_r (user): CHECKED by default. Continuing a story with only the previous chapter as
+             context is how a continuation loses the thread; the full chain is what the learner
+             means by "continue this story". Slower, and the row is still there to turn it off. -->
+        <input type="checkbox" id="use-full-chain-cb" checked> <span id="use-full-chain-lbl"></span>
       </label>
     </div>
     <div class="lesson-type-hdr" id="lesson-type-hdr">
@@ -2832,6 +2835,7 @@ function selectSrcLang(code, fromForm){
   // Globe = reset source library filter (a form/landing concept), keep srcLang unchanged
   if(code==='all'){ APP.libSrcFilter='all'; try{ localStorage.setItem('imp3_libsrc','all'); }catch(_){}
     const sel=document.getElementById('src-lang-select'); if(sel) sel.value='all'; loadSavedList(); return; }
+  const _srcChanged = (APP.srcLang !== code);   // v78_q: same rule for the source side
   APP.srcLang=code;                       // active render context
   if(fromForm){
     APP.formSrcLang=code; saveSrcLang();  // persist the form's own selection
@@ -2847,7 +2851,8 @@ function selectSrcLang(code, fromForm){
   ['src-lang-select-footer-ls','src-lang-select-footer-sl'].forEach(id=>{const f=document.getElementById(id);if(f&&f.value!==code)f.value=code;});
   updateTranslationLangHint();
   // v76_i: same as selectLang — a new source language has its own script choice, or none.
-  APP.srcScript = null;
+  // v78_q: only when it really changed (see selectLang).
+  if (_srcChanged) APP.srcScript = null;
   try { refreshScriptPickers(); } catch(_){}
   loadUIStrings(code).then(() => {
     try { refreshAccountBadge(); } catch(_) {}   // v70_m: strings exist now — repaint the badge
@@ -2870,6 +2875,14 @@ function selectLang(code, silent, fromForm){
   if(fromForm===undefined) fromForm=true;
   // Globe = reset target filter, keep APP.lang unchanged
   if(code==='all'){ APP.libFilter='all'; const sel=document.getElementById('lang-select'); if(sel) sel.value='all'; loadSavedList(); return; }
+  // v78_q (user hint): remember whether this is a REAL language change. `selectLang` is called on
+  // every mirror/refresh with the language it already has, and the unconditional clear below then
+  // discarded an explicit script pick — after which `_renderScriptPicker` fell back to
+  // `_inheritedScript()`, i.e. the CONTINUED CHAPTER'S script. For a Serbian chapter continued from
+  // a Latin one that silently turned a chosen Cyrillic back into Latin, with the dropdown following
+  // suit, so nothing looked wrong. Intermittent by nature: it depended on whether anything
+  // re-selected the language after the pick.
+  const _langChanged = (APP.lang !== code);
   APP.lang=code;                          // active render context
   // Refresh the sound-test row's flag right away — before the heavier calls below, so an
   // exception in any of them can't leave the flag showing the previous language.
@@ -2880,7 +2893,8 @@ function selectLang(code, silent, fromForm){
   try { updateArcScriptRow(); } catch(_){}
   // v76_i: a different target language may have a different script choice, or none. Clear the
   // previous pick rather than carrying a script from another language into the request.
-  APP.script = null;
+  // v78_q: only on a REAL change. Clearing on a no-op re-selection threw away the learner's pick.
+  if (_langChanged) APP.script = null;
   try { refreshScriptPickers(); } catch(_){}
   const sel=document.getElementById('lang-select');
   if(fromForm && sel && sel.value!==code) sel.value=code;
@@ -141977,11 +141991,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v78_p', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v78_p'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v78_r', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v78_r'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"35be31009e8c","lessons.json":"c5380343c124","ui.json":"093a74c9e752","languages.json":"f635efd8f23c","scripts.json":"7ab0296b5b49","build-static.js":"a9f1bfa580fc"};
+  APP.buildSources = {"index.html":"876b59a1e371","lessons.json":"c5380343c124","ui.json":"093a74c9e752","languages.json":"f635efd8f23c","scripts.json":"7ab0296b5b49","build-static.js":"a9f1bfa580fc"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');

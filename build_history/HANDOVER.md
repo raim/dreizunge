@@ -1,6 +1,6 @@
-# HANDOVER — v78_p
+# HANDOVER — v78_r
 
-One page. Session 32 shipped **`v78_b`** … **`v78_p`** from the `v78` cut. **Read
+One page. Session 32 shipped **`v78_b`** … **`v78_r`** from the `v78` cut. **Read
 `build_history/roadmap_v78.md`** next for the queue and the session protocol, then `INTERNALS.md`,
 then `build_history/v78_session32_notes.md` (session 32) and `build_history/v77_session31_notes.md`.
 
@@ -8,12 +8,12 @@ then `build_history/v78_session32_notes.md` (session 32) and `build_history/v77_
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **204 checks, ALL PASSED** |
-| `node test/run.js --quick` | 180 |
+| `node test/run.js` | **206 checks, ALL PASSED** |
+| `node test/run.js --quick` | 182 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v78_p'`. Corpus: **309 topics, 87 storylines**. **33 languages** (Slovenian added in `v78_j`). Establish this before changing
+`APP_VERSION = 'v78_r'`. Corpus: **309 topics, 87 storylines**. **33 languages** (Slovenian added in `v78_j`). Establish this before changing
 anything.
 
 **These numbers are the ones to trust.** Session 30's prompt said 170/149, session 31's said

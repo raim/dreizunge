@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v78_p';
+const APP_VERSION  = 'v78_r';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -2440,6 +2440,14 @@ function sysStory(lang, isContinuation, wordCount, dialect, writingStyle, script
   // choice, so nothing is added for the 31 languages that do not.
   if (script && hasScriptChoice(lang) && P.scriptNote) {
     sys += fillPrompt(P.scriptNote, { scriptLabel: scriptLabel(script), L2: LANG_NAMES[lang] || lang });
+    // v78_q: say so. This separates "the script never reached the prompt" from "the model was told
+    // and ignored it" — two different bugs with one identical symptom, and the reason the first
+    // report was mis-diagnosed twice.
+    try { console.log(`    [script] story prompt pinned to ${scriptLabel(script)} for ${lang}`); } catch(_) {}
+  } else if (script && !hasScriptChoice(lang)) {
+    try { console.log(`    [script] ${lang} has no script choice — '${script}' ignored`); } catch(_) {}
+  } else if (!script && hasScriptChoice(lang)) {
+    try { console.log(`    [script] WARNING: ${lang} is digraphic but NO script was supplied — the model will pick`); } catch(_) {}
   }
   if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
   if (lang === 'ja')              sys += P.furiganaNote;
@@ -5187,31 +5195,75 @@ function _applyChapterTitles(topics, chapterMeta, bj) {
 async function _titleStorylinePostPass(chapterIds, base, bj) {
   const topics = chapterIds.map(id => findSavedById(id)).filter(Boolean);
   if (!topics.length) return;
-  const stories = topics.map(t => t.story || '');
+  // v78_r (user-reported): on a CONTINUATION this used to see only the newly added chapters.
+  // Two consequences, both reported:
+  //   • it failed. Titling chapters 3-4 of a six-chapter story from those two excerpts alone gave
+  //     "0/2 titles came back named" on all three attempts, while the storyline-header button —
+  //     which passes all six — succeeded on the first. A mid-story fragment with no beginning is
+  //     not enough for the model to name anything, and the retry loop cannot fix missing context.
+  //   • it overwrote. The storyline title and summary were regenerated from the new chapters only,
+  //     replacing ones written from the whole story with ones written from its tail.
+  // So the post-pass now works from the WHOLE chain and writes back only what is missing.
+  const _chain = (() => {
+    try {
+      const all = getStorylines();
+      const sl = all.find(s => s.id === _chainId(chapterIds))
+              || all.find(s => chapterIds.every(id => (s.chapters || []).includes(id)));
+      if (!sl || !Array.isArray(sl.chapters)) return null;
+      const full = sl.chapters.map(id => findSavedById(id)).filter(Boolean);
+      return full.length > topics.length ? { sl, full } : null;
+    } catch (_) { return null; }
+  })();
+  const ctxTopics = _chain ? _chain.full : topics;      // context: everything the story has
+  const stories = ctxTopics.map(t => t.story || '');
   // 1) Per-chapter coherent titles + emojis. (v59: metered → storyline 'retitle' bucket,
   // same attribution as the manual retitle route — one call covers the whole chain.)
   try {
     const { result: chapterMeta, tokens: _mTok } = await meterLLMTokens(() => generateChapterMeta(stories, base.srcLang, base.lang));
-    _applyChapterTitles(topics, chapterMeta, bj);
+    // Titles come back for the whole chain, in chain order. Apply only to the chapters THIS job
+    // added — an existing chapter keeps the title it already has, per the user's ruling. Sliced by
+    // identity rather than by position: `chapterIds` need not be a contiguous tail.
+    const _idx = new Map(ctxTopics.map((t, i) => [t.id, i]));
+    const _newTopics = topics.filter(t => _idx.has(t.id));
+    const _newMeta = _newTopics.map(t => chapterMeta[_idx.get(t.id)] || {});
+    _applyChapterTitles(_newTopics, _newMeta, bj);
     const _slT = getStorylines().find(s => s.id === _chainId(chapterIds))
               || getStorylines().find(s => chapterIds.every(id => s.chapters.includes(id)));
     if (_slT) { addTokenUsage(_slT, _mTok, 'retitle'); upsertStoryline(_slT); }
   } catch (e) { console.warn(`  Chapter-title post-pass failed: ${e.message}`); }
   // 2) Whole-storyline title + icon (reuse existing helper).
   try {
-    const names = topics.map(t => t.topic);
+    // v78_r (user): only when there is none. A continuation must not rename a storyline the learner
+    // already has — and the old behaviour was worse than a rename, because it regenerated the title
+    // from the NEW chapters alone, replacing a whole-story title with one about its tail.
+    const _slPre = (() => { try { const all = getStorylines();
+      return all.find(s => s.id === _chainId(chapterIds))
+          || all.find(s => chapterIds.every(id => (s.chapters||[]).includes(id))) || null; } catch(_) { return null; } })();
+    if (_slPre && String(_slPre.title || '').trim()) {
+      console.log(`  Storyline title: keeping existing "${String(_slPre.title).slice(0,60)}"`);
+    } else {
+    const names = ctxTopics.map(t => t.topic);
     const { result: { title, icon }, tokens: _mTok } = await meterLLMTokens(() => generateStorylineTitle(names, stories, base.srcLang));
     const slId = _chainId(chapterIds);
     const all = getStorylines();
     const sl = all.find(s => s.id === slId)
             || all.find(s => chapterIds.every(id => s.chapters.includes(id)));
     if (sl) { addTokenUsage(sl, _mTok, 'retitle'); sl.title = title; sl.icon = icon || sl.icon || '📖'; upsertStoryline(sl); }
+    }
   } catch (e) { console.warn(`  Storyline title post-pass failed: ${e.message}`); }
   // 3) Whole-storyline summary in the source language — same as the storyline-page
   // header-row summary (generateStorylineSummary + store on the storyline). Best-effort.
   try {
-    const names = topics.map(t => t.topic);
-    const vocab = topics.flatMap(t =>
+    // v78_r (user): same rule, same reason — and the summary is the clearer case, since a summary
+    // of chapters 3-4 presented as the summary of a six-chapter story is simply wrong.
+    const _slPre2 = (() => { try { const all = getStorylines();
+      return all.find(s => s.id === _chainId(chapterIds))
+          || all.find(s => chapterIds.every(id => (s.chapters||[]).includes(id))) || null; } catch(_) { return null; } })();
+    if (_slPre2 && String(_slPre2.summary || '').trim()) {
+      console.log(`  Storyline summary: keeping existing (${String(_slPre2.summary).length} chars)`);
+    } else {
+    const names = ctxTopics.map(t => t.topic);
+    const vocab = ctxTopics.flatMap(t =>
       (t.lessons || []).flatMap(ls => (ls.vocab || []).map(v => v.source || v.target)));
     const { result: { text: summary, meta: summaryMeta }, tokens: _mTok } =
       await meterLLMTokens(() => generateStorylineSummary(names, stories, vocab, base.srcLang));
@@ -5220,6 +5272,7 @@ async function _titleStorylinePostPass(chapterIds, base, bj) {
     const sl = all.find(s => s.id === slId)
             || all.find(s => chapterIds.every(id => s.chapters.includes(id)));
     if (sl && summary) { addTokenUsage(sl, _mTok, 'summary'); sl.summary = summary; sl.summaryMeta = summaryMeta; upsertStoryline(sl); }
+    }
   } catch (e) { console.warn(`  Storyline summary post-pass failed: ${e.message}`); }
   // 4) For file-derived books, record the original uploaded filename on the
   // storyline (so the library can show provenance). Best-effort.
@@ -6370,8 +6423,15 @@ http.createServer(async (req, res) => {
         storyStyle: (storyStyle && storyStyle !== 'creative') ? storyStyle : null };
       const bookId = newBookJob(chaptersIn.map((c, i) => c.title || (baseTopic ? `${baseTopic.slice(0,40)} — ${i+1}` : '')));
       console.log(`  Book generation started: ${chaptersIn.length} chapter(s)${generated?` (generated from "${baseTopic}")`:' (from upload)'}, id=${bookId}`);
+      // v78_q: the SCRIPTS are logged. They were not, which is why two rounds of "the story came
+      // out in Latin" could not be told apart from the outside: a job that never received the
+      // script and a job that received it and ignored it print the same line otherwise. Also
+      // `arcScript`, for the same reason — `arc=[...]` lists the TYPES and has never said whether
+      // the script primer was on.
       console.log(`    lang=${base.lang}  srcLang=${base.srcLang}  difficulty=${base.diff}  format=${base.fmt}` +
+        `  script=${base.script||'-'}  srcScript=${base.srcScript||'-'}` +
         `  style=${base.storyStyle||'(default)'}  arc=${base.arc?'['+base.arcTypes.join(',')+']':'off'}` +
+        `  arcScript=${base.arcScript?'on':'off'}` +
         `  continuedFrom=${base.continuedFrom||'-'}`);
       _runBookJob(bookId, chaptersIn, base);  // fire-and-forget; runs server-side
       return json(res, 202, { bookId, chapters: chaptersIn.length });
