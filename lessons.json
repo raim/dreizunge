@@ -2,6 +2,431 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_1362886653",
+      "title": "Max und die Zukunft",
+      "icon": "🐕",
+      "chapters": [
+        "tp_17862850223960000178",
+        "tp_17862855350130000221",
+        "tp_17863742740810000060",
+        "tp_17863746762340000193"
+      ],
+      "lang": "sr",
+      "srcLang": "de",
+      "createdAt": "2026-08-10T15:08:06.819Z",
+      "updatedAt": "2026-08-10T15:37:03.502Z",
+      "tokenUsage": {
+        "totalPromptTokens": 3038,
+        "totalCompletionTokens": 1812,
+        "tokensByType": {
+          "retitle": 1377,
+          "summary": 880,
+          "storyboard": 2593
+        }
+      },
+      "summary": "Ana und ihr Hund Max lernen sich im Park kennen, wo ihre Freundschaft unter der Sonne beginnt. Gemeinsam träumen sie von einer Reise nach Wien und weiter zum Schwarzen Meer, wobei der Wind und der Fluss ihre Sehnsucht begleiten. Während sie an der Donau spazieren, wächst die innige Verbindung zwischen ihnen durch geteilte Träume und leise Gespräche. Die Geschichte endet mit der Vorfreude auf eine gemeinsame Zukunft, die über die erste Station Wien hinausgeht.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 780,
+        "completionTokens": 100,
+        "ms": 101740,
+        "at": "2026-08-10T15:22:56.568Z"
+      },
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Max rennt am Ufer entlang, der Wind weht.</title><rect x=\"102\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"103\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#457b9d\"/><circle cx=\"80\" cy=\"20\" r=\"15\" fill=\"#f2cc8f\"/><polyline points=\"0,60 20,55 40,62 60,58 80,63 100,60\" fill=\"none\" stroke=\"#457b9d\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><polygon points=\"30,70 35,60 45,60 50,70 45,75 35,75\" fill=\"#8d6e63\"/><circle cx=\"40\" cy=\"55\" r=\"5\" fill=\"#e07a5f\"/><line x1=\"38\" y1=\"60\" x2=\"35\" y2=\"70\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"42\" y1=\"60\" x2=\"45\" y2=\"70\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"1\"><title>Wir schauen auf den Horizont und träumen von Wien.</title><rect x=\"284\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"285\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"70\" width=\"100\" height=\"30\" fill=\"#457b9d\"/><polygon points=\"20,65 30,50 40,65\" fill=\"#9e9e9e\"/><polygon points=\"60,65 70,45 80,65\" fill=\"#9e9e9e\"/><circle cx=\"25\" cy=\"30\" r=\"10\" fill=\"#e5989b\"/><rect x=\"20\" y=\"40\" width=\"10\" height=\"25\" fill=\"#2b2b2b\"/><circle cx=\"75\" cy=\"30\" r=\"10\" fill=\"#81b29a\"/><rect x=\"70\" y=\"40\" width=\"10\" height=\"25\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"2\"><title>Max bleibt stehen und riecht an der Luft.</title><rect x=\"466\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"467\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"65\" width=\"100\" height=\"35\" fill=\"#457b9d\"/><circle cx=\"50\" cy=\"40\" r=\"20\" fill=\"#9e9e9e\"/><polygon points=\"40,60 50,30 60,60\" fill=\"#8d6e63\"/><circle cx=\"50\" cy=\"25\" r=\"8\" fill=\"#e07a5f\"/><line x1=\"50\" y1=\"33\" x2=\"50\" y2=\"45\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><polyline points=\"45,20 50,15 55,20\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></g><g data-chapter=\"2\"><title>Anas Hand findet meine in der Kälte.</title><rect x=\"648\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"649\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"#2b2b2b\"/><circle cx=\"30\" cy=\"50\" r=\"12\" fill=\"#e5989b\"/><rect x=\"25\" y=\"62\" width=\"10\" height=\"20\" fill=\"#2b2b2b\"/><circle cx=\"70\" cy=\"50\" r=\"12\" fill=\"#81b29a\"/><rect x=\"65\" y=\"62\" width=\"10\" height=\"20\" fill=\"#2b2b2b\"/><line x1=\"42\" y1=\"50\" x2=\"58\" y2=\"50\" stroke=\"#ffffff\" stroke-width=\"3\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"2\"><title>Das Meer klopft in unseren Adern.</title><rect x=\"830\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"831\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#457b9d\"/><path d=\"M0,50 Q25,30 50,50 T100,50 L100,100 L0,100 Z\" fill=\"#a8dadc\"/><circle cx=\"50\" cy=\"50\" r=\"30\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"50\" r=\"15\" fill=\"#e07a5f\"/><line x1=\"50\" y1=\"20\" x2=\"50\" y2=\"80\" stroke=\"#ffffff\" stroke-width=\"1\" stroke-linecap=\"round\"/><line x1=\"20\" y1=\"50\" x2=\"80\" y2=\"50\" stroke=\"#ffffff\" stroke-width=\"1\" stroke-linecap=\"round\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 5,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 982,
+        "completionTokens": 1611,
+        "ms": 611892,
+        "at": "2026-08-10T15:33:08.523Z",
+        "storyStyle": null
+      },
+      "storyboardPanels": [
+        {
+          "caption": "Max rennt am Ufer entlang, der Wind weht.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "water"
+            },
+            {
+              "type": "circle",
+              "cx": 80,
+              "cy": 20,
+              "r": 15,
+              "fill": "sun"
+            },
+            {
+              "type": "polyline",
+              "points": [
+                [
+                  0,
+                  60
+                ],
+                [
+                  20,
+                  55
+                ],
+                [
+                  40,
+                  62
+                ],
+                [
+                  60,
+                  58
+                ],
+                [
+                  80,
+                  63
+                ],
+                [
+                  100,
+                  60
+                ]
+              ],
+              "stroke": "water",
+              "sw": 2
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  30,
+                  70
+                ],
+                [
+                  35,
+                  60
+                ],
+                [
+                  45,
+                  60
+                ],
+                [
+                  50,
+                  70
+                ],
+                [
+                  45,
+                  75
+                ],
+                [
+                  35,
+                  75
+                ]
+              ],
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 40,
+              "cy": 55,
+              "r": 5,
+              "fill": "accent"
+            },
+            {
+              "type": "line",
+              "x1": 38,
+              "y1": 60,
+              "x2": 35,
+              "y2": 70,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 42,
+              "y1": 60,
+              "x2": 45,
+              "y2": 70,
+              "stroke": "ink",
+              "sw": 2
+            }
+          ]
+        },
+        {
+          "caption": "Wir schauen auf den Horizont und träumen von Wien.",
+          "chapter": 1,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "sky"
+            },
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 70,
+              "w": 100,
+              "h": 30,
+              "fill": "water"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  20,
+                  65
+                ],
+                [
+                  30,
+                  50
+                ],
+                [
+                  40,
+                  65
+                ]
+              ],
+              "fill": "stone"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  60,
+                  65
+                ],
+                [
+                  70,
+                  45
+                ],
+                [
+                  80,
+                  65
+                ]
+              ],
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 25,
+              "cy": 30,
+              "r": 10,
+              "fill": "rose"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 40,
+              "w": 10,
+              "h": 25,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 75,
+              "cy": 30,
+              "r": 10,
+              "fill": "leaf"
+            },
+            {
+              "type": "rect",
+              "x": 70,
+              "y": 40,
+              "w": 10,
+              "h": 25,
+              "fill": "ink"
+            }
+          ]
+        },
+        {
+          "caption": "Max bleibt stehen und riecht an der Luft.",
+          "chapter": 2,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 65,
+              "w": 100,
+              "h": 35,
+              "fill": "water"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 40,
+              "r": 20,
+              "fill": "stone"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  40,
+                  60
+                ],
+                [
+                  50,
+                  30
+                ],
+                [
+                  60,
+                  60
+                ]
+              ],
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 25,
+              "r": 8,
+              "fill": "accent"
+            },
+            {
+              "type": "line",
+              "x1": 50,
+              "y1": 33,
+              "x2": 50,
+              "y2": 45,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "polyline",
+              "points": [
+                [
+                  45,
+                  20
+                ],
+                [
+                  50,
+                  15
+                ],
+                [
+                  55,
+                  20
+                ]
+              ],
+              "stroke": "ink",
+              "sw": 1
+            }
+          ]
+        },
+        {
+          "caption": "Anas Hand findet meine in der Kälte.",
+          "chapter": 2,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 40,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 50,
+              "r": 12,
+              "fill": "rose"
+            },
+            {
+              "type": "rect",
+              "x": 25,
+              "y": 62,
+              "w": 10,
+              "h": 20,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 50,
+              "r": 12,
+              "fill": "leaf"
+            },
+            {
+              "type": "rect",
+              "x": 65,
+              "y": 62,
+              "w": 10,
+              "h": 20,
+              "fill": "ink"
+            },
+            {
+              "type": "line",
+              "x1": 42,
+              "y1": 50,
+              "x2": 58,
+              "y2": 50,
+              "stroke": "white",
+              "sw": 3
+            }
+          ]
+        },
+        {
+          "caption": "Das Meer klopft in unseren Adern.",
+          "chapter": 2,
+          "bg": "water",
+          "shapes": [
+            {
+              "type": "path",
+              "d": "M0,50 Q25,30 50,50 T100,50 L100,100 L0,100 Z",
+              "fill": "sky"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 30,
+              "fill": "none",
+              "stroke": "white",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 15,
+              "fill": "accent"
+            },
+            {
+              "type": "line",
+              "x1": 50,
+              "y1": 20,
+              "x2": 50,
+              "y2": 80,
+              "stroke": "white",
+              "sw": 1
+            },
+            {
+              "type": "line",
+              "x1": 20,
+              "y1": 50,
+              "x2": 80,
+              "y2": 50,
+              "stroke": "white",
+              "sw": 1
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
+    },
+    {
       "id": "sl_1355606516",
       "title": "Učenje samo skripti",
       "icon": "📖",
@@ -7652,6 +8077,878 @@
     }
   ],
   "topics": [
+    {
+      "id": "tp_17863746762340000193",
+      "topic": "Flüstern der Zukunft",
+      "topicEmoji": "🌧️",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "sr",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Макс је застао, нос уздигнут ка нечему што ми нисмо видели. Ана је померила корак ближе мени, њена рука пронашла моју у хладном ветру који је сада носио мирис кише. „Чујеш ли то?“ прошептала је, а ја сам затворио очи и слушао како река шепати приче о градовима које још нисмо додирнули. Беч нам је био само прва станица, али Црно море је већ куцало у нашим венама, талас по талас, све ближе и немирније.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Serbian (written in Cyrillic script) language teacher. Write a short story directly in Serbian (written in Cyrillic script) on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian (written in Cyrillic script). Write the ENTIRE text in Cyrillic script. Serbian is written in more than one script; use Cyrillic consistently for every word, including names, and do not mix scripts or add a transliteration. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nШетали смо уз Дунав, ветар је носио мирис воде и далечине. Макс је трчао пред нама, реп му се вијорио као заставa. Гледали смо у хоризонт где река нестаје у сивилу, а ум нам је лутао даље, према Бечу чији су кровови сјајели у сну, па онда још даље, ка Црном мору где ће таласи испричати све тајне. Ана је ћутала, али њен осмех говорио је да и она сања исте путеве. Било је то време нежности и тихе жеље за светом који нас још није видео, али који смо већ носили у срцима.\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 449,
+        "completionTokens": 150,
+        "ms": 109584,
+        "at": "2026-08-10T15:09:56.480Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 208,
+        "completionTokens": 130,
+        "ms": 79753,
+        "at": "2026-08-10T15:11:16.233Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Max blieb stehen, die Nase in die Höhe gestreckt zu etwas, das wir nicht sahen. Ana trat einen Schritt näher auf mich zu, ihre Hand fand meine in dem kalten Wind, der nun den Geruch von Regen mit sich trug. „Hörst du das?“ flüsterte sie, und ich schloss die Augen und lauschte, wie der Fluss Geschichten über Städte flüsterte, die wir noch nicht berührt hatten. Wien war für uns nur die erste Station, aber das Schwarze Meer klopfte bereits in unseren Adern, Welle um Welle, immer näher und unruhiger.",
+      "continuedFrom": "Traumreise nach Wien",
+      "continuedFromId": "tp_17863742740810000060",
+      "script": "cyrillic-sr",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Путујемо ка Црном мору",
+          "desc": "Макс и Ана путове до Црног мора",
+          "icon": "🌊",
+          "vocab": [
+            {
+              "target": "река",
+              "source": "der Fluss"
+            },
+            {
+              "target": "киша",
+              "source": "der Regen"
+            },
+            {
+              "target": "ветар",
+              "source": "der Wind"
+            },
+            {
+              "target": "град",
+              "source": "die Stadt"
+            },
+            {
+              "target": "море",
+              "source": "das Meer"
+            },
+            {
+              "target": "вене",
+              "source": "die Ader"
+            },
+            {
+              "target": "талас",
+              "source": "die Welle"
+            },
+            {
+              "target": "станција",
+              "source": "die Station"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Макс је застао.",
+              "source": "Max blieb stehen.",
+              "words": [
+                "Макс",
+                "је",
+                "застао."
+              ]
+            },
+            {
+              "target": "Ана је померила корак ближе мени.",
+              "source": "Ana trat einen Schritt näher auf mich zu.",
+              "words": [
+                "Ана",
+                "је",
+                "померила",
+                "корак",
+                "ближе",
+                "мени."
+              ]
+            },
+            {
+              "target": "Чујеш ли то?",
+              "source": "Hörst du das?",
+              "words": [
+                "Чујеш",
+                "ли",
+                "то?"
+              ]
+            },
+            {
+              "target": "Беч нам је био само прва станица.",
+              "source": "Wien war für uns nur die erste Station.",
+              "words": [
+                "Беч",
+                "нам",
+                "је",
+                "био",
+                "само",
+                "прва",
+                "станица."
+              ]
+            },
+            {
+              "target": "Црно море је већ куцало у нашим венама.",
+              "source": "Das Schwarze Meer klopfte bereits in unseren Adern.",
+              "words": [
+                "Црно",
+                "море",
+                "је",
+                "већ",
+                "куцало",
+                "у",
+                "нашим",
+                "венама."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 985,
+            "completionTokens": 446,
+            "ms": 253970,
+            "at": "2026-08-10T15:15:30.267Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "Spavali am Donau",
+          "desc": "Träumen und Flussgeräusche",
+          "icon": "🌊",
+          "vocab": [
+            {
+              "target": "reka",
+              "source": "der Fluss"
+            },
+            {
+              "target": "sanjati",
+              "source": "träumen"
+            },
+            {
+              "target": "vetar",
+              "source": "der Wind"
+            },
+            {
+              "target": "miris",
+              "source": "der Geruch"
+            },
+            {
+              "target": "grad",
+              "source": "die Stadt"
+            },
+            {
+              "target": "tišina",
+              "source": "die Stille"
+            },
+            {
+              "target": "pesak",
+              "source": "der Sand"
+            },
+            {
+              "target": "daljina",
+              "source": "die Ferne"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Reka šapuće priče.",
+              "source": "Der Fluss flüstert Geschichten.",
+              "words": [
+                "Reka",
+                "šapuće",
+                "priče."
+              ]
+            },
+            {
+              "target": "Sanjam o daljini.",
+              "source": "Ich träume von der Ferne.",
+              "words": [
+                "Sanjam",
+                "o",
+                "daljini."
+              ]
+            },
+            {
+              "target": "Vetar donosi miris kiše.",
+              "source": "Der Wind bringt den Geruch des Regens.",
+              "words": [
+                "Vetar",
+                "donosi",
+                "miris",
+                "kiše."
+              ]
+            },
+            {
+              "target": "Grad spava u tišini.",
+              "source": "Die Stadt schläft in der Stille.",
+              "words": [
+                "Grad",
+                "spava",
+                "u",
+                "tišini."
+              ]
+            },
+            {
+              "target": "Pesak je topao na suncu.",
+              "source": "Der Sand ist warm in der Sonne.",
+              "words": [
+                "Pesak",
+                "je",
+                "topao",
+                "na",
+                "suncu."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1029,
+            "completionTokens": 331,
+            "ms": 237591,
+            "at": "2026-08-10T15:19:27.859Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1786376515690",
+          "type": "comprehension",
+          "title": "Anas Tag mit Max",
+          "desc": "Verstehe die Geschichte von Ana und ihrem Hund Max.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist Max' Pfote schmutzig?",
+              "choices": [
+                "Weil er im Park gelaufen ist.",
+                "Weil er in der Küche war.",
+                "Weil er geschlafen hat.",
+                "Weil er gebadet hat."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text sagt, dass seine Pfoten von Schlamm sind, weil sie im Park waren."
+            },
+            {
+              "q": "Was macht Ana, während Max nach einer Vogel jagt?",
+              "choices": [
+                "Sie liest ein Buch unter einem Baum.",
+                "Sie läuft auch im Park.",
+                "Sie schläft auf der Bank.",
+                "Sie kauft Essen."
+              ],
+              "correctIndex": 0,
+              "why": "Im zweiten Teil steht, dass Ana unter dem Baum liest, während Max rennt."
+            },
+            {
+              "q": "Wohin träumen Ana und der Erzähler gemeinsam?",
+              "choices": [
+                "Nach Wien und zum Schwarzen Meer.",
+                "Nach Berlin und zur Nordsee.",
+                "Nach Paris und zum Mittelmeer.",
+                "Nach Rom und zum Adriatischen Meer."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text erwähnt Wien als ersten Schritt und das Schwarze Meer als weiteres Ziel ihrer Träume."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 949,
+            "completionTokens": 371,
+            "ms": 216785,
+            "at": "2026-08-10T15:41:55.690Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 443371,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 2591,
+        "totalCompletionTokens": 1097,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 253968,
+            "promptTokens": 985,
+            "completionTokens": 446
+          }
+        ],
+        "tokensByType": {
+          "add_lesson": 1320
+        }
+      },
+      "generatedAt": "2026-08-10T15:11:16.234Z",
+      "updatedAt": "2026-08-10T15:41:55.690Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17863742740810000060",
+      "topic": "Traumreise nach Wien",
+      "topicEmoji": "🌊",
+      "userTopic": "wir spazierten zur donau und traeumten von wien und vom schwarzen meer",
+      "userPrompt": "wir spazierten zur donau und traeumten von wien und vom schwarzen meer",
+      "lang": "sr",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Шетали смо уз Дунав, ветар је носио мирис воде и далечине. Макс је трчао пред нама, реп му се вијорио као заставa. Гледали смо у хоризонт где река нестаје у сивилу, а ум нам је лутао даље, према Бечу чији су кровови сјајели у сну, па онда још даље, ка Црном мору где ће таласи испричати све тајне. Ана је ћутала, али њен осмех говорио је да и она сања исте путеве. Било је то време нежности и тихе жеље за светом који нас још није видео, али који смо већ носили у срцима.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Serbian (written in Cyrillic script) language teacher. Write a short story directly in Serbian (written in Cyrillic script) on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Serbian (written in Cyrillic script). Write the ENTIRE text in Cyrillic script. Serbian is written in more than one script; use Cyrillic consistently for every word, including names, and do not mix scripts or add a transliteration. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nMax je odmah skočio na tebe. Njegove šape su bile prljave od blata. Hteo je da ti pokaže svoju lopticu. Ti si se nasmejao. Ana je rekla da si dobar momak. Sada ste svi u parku. Sunce greje. Max trči za pticom. Ti gledaš Anu. Ona čita knjigu pod drvetom. Sve je lepo. Prijateljstvo počinje ovde.\n\nNew topic: \"wir spazierten zur donau und traeumten von wien und vom schwarzen meer\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 359,
+        "completionTokens": 183,
+        "ms": 106384,
+        "at": "2026-08-10T15:03:22.473Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 240,
+        "completionTokens": 152,
+        "ms": 71607,
+        "at": "2026-08-10T15:04:34.080Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Wir spazierten entlang der Donau, der Wind trug den Duft des Wassers und der Ferne. Max lief vor uns her, sein Schwanz wedelte wie eine Fahne. Wir blickten zum Horizont, wo der Fluss im Grau verschwand, und unsere Gedanken wanderten weiter, nach Wien, dessen Dächer in unseren Träumen glänzten, und dann noch weiter, zum Schwarzen Meer, wo die Wellen alle Geheimnisse erzählen würden. Ana schwieg, aber ihr Lachen sagte uns, dass auch sie dieselben Wege träumte. Es war eine Zeit der Zärtlichkeit und des stillen Verlangens nach einer Welt, die uns noch nicht gesehen hatte, die wir jedoch bereits in unseren Herzen trugen.",
+      "continuedFrom": "Parkbesuch beginnt",
+      "continuedFromId": "tp_17862855350130000221",
+      "script": "cyrillic-sr",
+      "lessons": [
+        {
+          "id": "intro_cyrillic-sr_1786374486741_okzu",
+          "type": "intro_script",
+          "script": "cyrillic-sr",
+          "rtl": false,
+          "_arcMode": "extend",
+          "difficulty": 1,
+          "title": "🔡 Serbian Cyrillic",
+          "icon": "🔡",
+          "desc": "Serbian Cyrillic — 8 letters",
+          "letters": [
+            {
+              "ch": "У",
+              "lower": "у",
+              "name": "u",
+              "translit": "u",
+              "ipa": "u"
+            },
+            {
+              "ch": "Н",
+              "lower": "н",
+              "name": "en",
+              "translit": "n",
+              "ipa": "n"
+            },
+            {
+              "ch": "Д",
+              "lower": "д",
+              "name": "de",
+              "translit": "d",
+              "ipa": "d"
+            },
+            {
+              "ch": "О",
+              "lower": "о",
+              "name": "o",
+              "translit": "o",
+              "ipa": "o"
+            },
+            {
+              "ch": "Ч",
+              "lower": "ч",
+              "name": "če",
+              "translit": "č",
+              "ipa": "tʃ"
+            },
+            {
+              "ch": "Ж",
+              "lower": "ж",
+              "name": "že",
+              "translit": "ž",
+              "ipa": "ʒ"
+            },
+            {
+              "ch": "И",
+              "lower": "и",
+              "name": "i",
+              "translit": "i",
+              "ipa": "i"
+            },
+            {
+              "ch": "М",
+              "lower": "м",
+              "name": "em",
+              "translit": "m",
+              "ipa": "m"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "У у",
+              "target": "u",
+              "correct": "u",
+              "choices": [
+                "u",
+                "i",
+                "v",
+                "f"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "u",
+              "target": "У у",
+              "correct": "У у",
+              "choices": [
+                "У у",
+                "С с",
+                "Ђ ђ",
+                "Њ њ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Н н",
+              "target": "n",
+              "correct": "n",
+              "choices": [
+                "n",
+                "p",
+                "t",
+                "l"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "n (en)",
+              "target": "Н н",
+              "correct": "Н н",
+              "choices": [
+                "У у",
+                "А а",
+                "Ј ј",
+                "Н н"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Д д",
+              "target": "d",
+              "correct": "d",
+              "choices": [
+                "f",
+                "š",
+                "d",
+                "m"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "d (de)",
+              "target": "Д д",
+              "correct": "Д д",
+              "choices": [
+                "Д д",
+                "Ц ц",
+                "А а",
+                "Њ њ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "О о",
+              "target": "o",
+              "correct": "o",
+              "choices": [
+                "o",
+                "g",
+                "dž",
+                "š"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "o",
+              "target": "О о",
+              "correct": "О о",
+              "choices": [
+                "Њ њ",
+                "О о",
+                "Д д",
+                "З з"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Ч ч",
+              "target": "č",
+              "correct": "č",
+              "choices": [
+                "č",
+                "e",
+                "s",
+                "r"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "č (če)",
+              "target": "Ч ч",
+              "correct": "Ч ч",
+              "choices": [
+                "Ј ј",
+                "Њ њ",
+                "Ч ч",
+                "Џ џ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Ж ж",
+              "target": "ž",
+              "correct": "ž",
+              "choices": [
+                "ž",
+                "o",
+                "š",
+                "m"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ž (že)",
+              "target": "Ж ж",
+              "correct": "Ж ж",
+              "choices": [
+                "Љ љ",
+                "Ж ж",
+                "Г г",
+                "Л л"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "И и",
+              "target": "i",
+              "correct": "i",
+              "choices": [
+                "l",
+                "ć",
+                "i",
+                "b"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "i",
+              "target": "И и",
+              "correct": "И и",
+              "choices": [
+                "И и",
+                "О о",
+                "Е е",
+                "Ч ч"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "М м",
+              "target": "m",
+              "correct": "m",
+              "choices": [
+                "t",
+                "m",
+                "ž",
+                "lj"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "m (em)",
+              "target": "М м",
+              "correct": "М м",
+              "choices": [
+                "Њ њ",
+                "Г г",
+                "И и",
+                "М м"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "у",
+              "pron": "u",
+              "correct": "У у",
+              "choices": [
+                "Љ љ",
+                "Ф ф",
+                "У у",
+                "Г г"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "и",
+              "pron": "i",
+              "correct": "И и",
+              "choices": [
+                "Ж ж",
+                "Ђ ђ",
+                "И и",
+                "М м"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "м",
+              "pron": "m",
+              "correct": "М м",
+              "choices": [
+                "М м",
+                "В в",
+                "Ђ ђ",
+                "Ш ш"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "о",
+              "pron": "o",
+              "correct": "О о",
+              "choices": [
+                "Г г",
+                "Ц ц",
+                "О о",
+                "М м"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "н",
+              "pron": "n",
+              "correct": "Н н",
+              "choices": [
+                "Ј ј",
+                "Е е",
+                "Н н",
+                "В в"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 21,
+            "at": "2026-08-10T15:08:06.741Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "Шетња уз Дунав",
+          "desc": "Прича о шетњи и сновима поред реке",
+          "icon": "🌊",
+          "vocab": [
+            {
+              "target": "шетати",
+              "source": "spazieren"
+            },
+            {
+              "target": "ветар",
+              "source": "der Wind"
+            },
+            {
+              "target": "трчати",
+              "source": "laufen"
+            },
+            {
+              "target": "хоризонт",
+              "source": "der Horizont"
+            },
+            {
+              "target": "мисао",
+              "source": "der Gedanke"
+            },
+            {
+              "target": "тајна",
+              "source": "das Geheimnis"
+            },
+            {
+              "target": "осмех",
+              "source": "das Lächeln"
+            },
+            {
+              "target": "срце",
+              "source": "das Herz"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Шетали смо уз Дунав.",
+              "source": "Wir spazierten entlang der Donau.",
+              "words": [
+                "Шетали",
+                "смо",
+                "уз",
+                "Дунав."
+              ]
+            },
+            {
+              "target": "Ветар је носио мирис воде.",
+              "source": "Der Wind trug den Duft des Wassers.",
+              "words": [
+                "Ветар",
+                "је",
+                "носио",
+                "мирис",
+                "воде."
+              ]
+            },
+            {
+              "target": "Макс је трчао пред нама.",
+              "source": "Max lief vor uns her.",
+              "words": [
+                "Макс",
+                "је",
+                "трчао",
+                "пред",
+                "нама."
+              ]
+            },
+            {
+              "target": "Гледали смо у хоризонт.",
+              "source": "Wir blickten zum Horizont.",
+              "words": [
+                "Гледали",
+                "смо",
+                "у",
+                "хоризонт."
+              ]
+            },
+            {
+              "target": "Ана је ћутала.",
+              "source": "Ana schwieg.",
+              "words": [
+                "Ана",
+                "је",
+                "ћутала."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1023,
+            "completionTokens": 301,
+            "ms": 212581,
+            "at": "2026-08-10T15:08:06.738Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 390650,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1622,
+        "totalCompletionTokens": 636,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 212578,
+            "promptTokens": 1023,
+            "completionTokens": 301
+          }
+        ]
+      },
+      "generatedAt": "2026-08-10T15:04:34.081Z",
+      "updatedAt": "2026-08-10T15:08:06.742Z",
+      "createdBy": "admin"
+    },
     {
       "id": "tp_17863673658190000116",
       "topic": "Rückweg unter Sternen",
