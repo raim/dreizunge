@@ -87190,6 +87190,10 @@
                 {
                   "w": "children",
                   "g": "Kinder"
+                },
+                {
+                  "w": "kids",
+                  "g": "Kinder"
                 }
               ],
               "homophones": []
@@ -87233,6 +87237,10 @@
               "antonyms": [
                 {
                   "w": "adults",
+                  "g": "Erwachsene"
+                },
+                {
+                  "w": "grown-ups",
                   "g": "Erwachsene"
                 }
               ],
@@ -87335,7 +87343,7 @@
         }
       },
       "generatedAt": "2026-06-15T12:55:13.375Z",
-      "updatedAt": "2026-08-08T13:14:22.010Z",
+      "updatedAt": "2026-08-09T23:50:45.160Z",
       "id": "tp_17815283212820000053",
       "continuedFromId": null,
       "continuedFrom": null,
