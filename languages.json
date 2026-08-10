@@ -64,5 +64,5 @@
   "hr": { "name": "Croatian",         "flag": "🇭🇷", "tts": "hr-HR",
     "names": { "en":"Croatian","it":"Croato","fr":"croate","de":"Kroatisch","es":"Croata","pt":"Croata","nl":"Kroatisch","pl":"chorwacki","sv":"Kroatiska","ja":"クロアチア語","zh":"克罗地亚语","ar":"الكرواتية","ru":"Хорватский","ko":"크로아티아어","tr":"Hırvatça","hi":"क्रोएशियाई","sw":"Kroatia","lb":"Kroatesch","vi":"tiếng Croatia","id":"Kroasia","cs":"chorvatský jazyk","ro":"Croată","uk":"хорватська","th":"โครเอเชีย","el":"Κροατική","he":"קרואטית","fi":"kroatia","hu":"horvát","da":"Kroatisk","ca":"croat","sr":"Hrvatski","hr":"Hrvatski" } },
   "sl": { "name": "Slovenian",        "flag": "🇸🇮", "tts": "sl-SI",
-    "names": { "en":"Slovenian" } }
+    "names": { "en":"Slovenian","it":"Sloveno","fr":"Slovène","de":"Slowenisch","es":"Esloveno" } }
 }
