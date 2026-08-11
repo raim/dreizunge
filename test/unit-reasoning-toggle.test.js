@@ -56,7 +56,17 @@ console.log('  thinkOpts: off=safe, on=think:true + bumped tokens & timeout: OK'
 
 // ── 2. Wiring: story uses thinkOpts; callLLMLesson applies it centrally ────────
 {
-  const storyCall = server.slice(server.indexOf('const storySystem = sysStory('), server.indexOf('story = text.trim();'));
+  // v79_b: the window used to open at `const storySystem = sysStory(` — but that line is no longer
+  // the top of the story call. `_baseStoryTokens`/`thinkOpts` were hoisted above the prompt so the
+  // chain-context budget could be sized against the reply allowance, which put both of them
+  // OUTSIDE this slice and failed a pin whose CLAIM was still true (the v71_w rule, from the other
+  // direction: a window that no longer reaches the line it checks). Anchored on the whole
+  // story-generation block instead, with a non-vacuity check that the window really does contain
+  // the call it is making claims about.
+  const storyCall = server.slice(server.indexOf('// \u2500\u2500 Story: use user-supplied or generate'),
+                                 server.indexOf('story = text.trim();'));
+  assert.ok(/await callLLM\(\s*storySystem, storyUserMsg/.test(storyCall),
+    'non-vacuity: the slice contains the story callLLM it is asserting about');
   assert.ok(/thinkOpts\('story', _baseStoryTokens\)/.test(storyCall), 'story call resolves reasoning via thinkOpts');
   const cll = extFn(server, 'callLLMLesson');
   assert.ok(/thinkOpts\('lessons', maxTokens\)/.test(cll),

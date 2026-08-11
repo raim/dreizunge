@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v79';
+const APP_VERSION  = 'v79_b';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -4167,7 +4167,7 @@ async function generateComprehension(topic, lang, srcLang, difficulty, jobId, op
     const _ctxTokens = estimateCtxTokens(sys.length + userMsg.length, 3200 * THINK_TOKEN_MULT);
     const _timeout = Math.ceil(getRequestTimeout() * THINK_TIMEOUT_MULT);
     if (attempt === 1 && storyForPrompt.length > 6000)
-      console.log(`    Story context: ${storyForPrompt.length} chars → num_ctx≈${Math.min(_ctxTokens, getNumCtxMax())}, timeout ${Math.round(_timeout/1000)}s`);
+      console.log(`    Lesson context: ${storyForPrompt.length} chars → num_ctx≈${Math.min(_ctxTokens, getNumCtxMax())}, timeout ${Math.round(_timeout/1000)}s`);
     const { text: raw, promptTokens, completionTokens } =
       await callLLMLesson(sys, userMsg, 3200, { ctxTokens: _ctxTokens, timeoutMs: _timeout });
     tp += promptTokens; tc += completionTokens;
@@ -4577,13 +4577,56 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     _storyMeta.source = 'recorded at generation';
     console.log(`    Using user-provided story (${story.length} chars)${userTranslation?' + translation':''}${userDialect?', dialect: '+userDialect:''}`);
   } else {
+    // v79_b (user ruling at the v79 cut): `useFullChain` now means what its label says.
+    //
+    // It promised "pass the full storyline as context" and delivered the PARENT CHAPTER — in full
+    // when set, its last OLLAMA_MAX_PREV_STORY characters when not. So every continuation was
+    // written from one chapter of context however the box was set, which is a plausible cause of
+    // drift across a long storyline. Measured on the corpus at the cut: of 236 continuations, 128
+    // (54%) have a parent SHORTER than the 800-char tail, so for most chapters the box did nothing
+    // at all; the storyline behind a continuation is a median 3,297 chars against a median parent
+    // of 671, i.e. the label was promising ~3.3x the context it passed.
+    //
+    // The chain comes from collectChainStory — the same collector the LESSON path uses — so the two
+    // contexts cannot drift apart, and its trim is the deliberate one: predecessors are dropped from
+    // the OLDEST end and the most recent chapter is always kept whole.
+    //
+    // ⚠️ Sizing is part of the change, not a follow-up (v71_t). This call site passed no ctxTokens,
+    // so Ollama used its ~4096 default — which today's single parent never exceeds (longest chapter
+    // in the corpus: 4,691 chars, ~3,203 estimated tokens) but a chain does at the 90th percentile
+    // (8,021 chars, ~4,244 tokens) and comfortably at the top (43,312 chars). Feeding the chain
+    // without num_ctx would move the truncation from a trim we choose into a silent one Ollama
+    // makes, with every generation still "succeeding". The budget is derived from the ceiling and
+    // handed to collectChainStory, so the trim happens where the chapter boundaries are known
+    // rather than mid-sentence afterwards.
+    const _prevNode = parentTopic || (continuedFrom ? findSaved(continuedFrom) : null);
     const prevStoryFull = (parentTopic && parentTopic.story) ? parentTopic.story
       : (continuedFrom ? (findSaved(continuedFrom)?.story || null) : null);
-    const prevStory = prevStoryFull
-      ? (useFullChain ? prevStoryFull : prevStoryFull.slice(-OLLAMA_MAX_PREV_STORY))
+    // The story reply budget, needed BEFORE the prompt so the context budget can be sized against
+    // it. Same expression as before, only hoisted (thinkOpts is pure).
+    const _baseStoryTokens = Math.min(4096, Math.ceil((storyLen||300) * 1.5) + 400);
+    const _sOpts = thinkOpts('story', _baseStoryTokens);
+    let _chainCtx = { text: '', chapters: 0 };
+    if (prevStoryFull && useFullChain && _prevNode) {
+      const _replyTokens = Math.max(1024, _sOpts.tokens || 1024);
+      const _ceiling = getNumCtxMax();
+      // Largest context that fits, found directly rather than by loop — 3.2 chars/token to match
+      // estimateCtxTokens, less the prompt scaffolding the story system message costs.
+      const _maxChars = Math.max(1000, Math.floor((_ceiling - _replyTokens - 512) * 3.2) - 1200);
+      _chainCtx = collectChainStory(_prevNode, Math.min(CHAIN_STORY_CHARS, _maxChars));
+    }
+    // One chapter of chain is the parent chapter, which is what the box already gave: keep the old
+    // shape exactly (no "## title" header) so the change is confined to the case it is for.
+    const _useChain = _chainCtx.chapters > 1;
+    const prevStory = _useChain ? _chainCtx.text
+      : prevStoryFull ? (useFullChain ? prevStoryFull : prevStoryFull.slice(-OLLAMA_MAX_PREV_STORY))
       : null;
     if (continuedFrom && prevStory)
-      console.log(`    Continuing from: "${continuedFrom}" (using ${useFullChain?'full':'last '+prevStory.length+'/'+prevStoryFull.length} chars)`);
+      console.log(`    Continuing from: "${continuedFrom}" (story prompt: `
+        + (_useChain ? `full storyline, ${_chainCtx.chapters} chapters, ${prevStory.length} chars`
+           : useFullChain ? `previous chapter in full, ${prevStory.length} chars`
+           : `last ${prevStory.length}/${prevStoryFull.length} chars of the previous chapter`)
+        + ')');
     jobStep(jobId, `[${OLLAMA_MODEL}] Generating story (~${storyLen} words)…`);
     try {
       const t0 = Date.now();
@@ -4614,18 +4657,32 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
               + `\nKeep it easy to read at their level. Plain prose, no headings.`;
           })()
         : prevStory
-          ? `Previous story (excerpt):\n${prevStory}\n\nNew topic: "${userTopic}". Write the continuation now. Plain prose, no headings.`
+          ? `${_useChain ? `Previous story (the full storyline so far, ${_chainCtx.chapters} chapters)`
+                         : useFullChain ? 'Previous story (full)' : 'Previous story (excerpt)'}:\n${prevStory}`
+            + `\n\nNew topic: "${userTopic}". Write the continuation now. Plain prose, no headings.`
           : `Write a story for the topic: "${userTopic}". Plain prose, no headings.`;
-      const storySystem = sysStory(lang, !!prevStory, storyLen, userDialect, storyStyle, userOpts.script);
       // v60.7: reasoning is per-role and OFF by default. think:false keeps a story as plain prose
       // (and, on a reasoning model, avoids spending the whole num_predict inside <think> → empty
       // response — the v60.5 fix). When the user opts the STORY role into reasoning, thinkOpts
       // flips think:true AND bumps the token budget + timeout so the answer survives the think
-      // block. (Mirrors the v55_c think:false applied to QC/storyboard.)
-      const _baseStoryTokens = Math.min(4096, Math.ceil((storyLen||300) * 1.5) + 400);
-      const _sOpts = thinkOpts('story', _baseStoryTokens);
+      // block. (Mirrors the v55_c think:false applied to QC/storyboard.) `_sOpts` is computed
+      // above, because the context budget is sized against its reply allowance.
+      const storySystem = sysStory(lang, !!prevStory, storyLen, userDialect, storyStyle, userOpts.script);
+      // v79_b: num_ctx and the timeout, but ONLY when the chain is actually being fed — a single
+      // chapter has never come near the default and does not need a bigger window reserved for it
+      // (the KV cache grows with num_ctx, so asking for one is not free). Math.max means this can
+      // only ever RAISE the timeout, never cut a reasoning run short: thinkOpts already sets
+      // timeoutMs to the same product when story-reasoning is on.
+      const _ctxOpts = _useChain
+        ? { ctxTokens: estimateCtxTokens(storySystem.length + storyUserMsg.length, _sOpts.tokens),
+            timeoutMs: Math.max(_sOpts.timeoutMs || 0, Math.ceil(getRequestTimeout() * THINK_TIMEOUT_MULT)) }
+        : {};
+      if (_useChain)
+        console.log(`    Story context: ${_chainCtx.chapters} chapters, ${prevStory.length} chars `
+          + `→ num_ctx≈${Math.min(_ctxOpts.ctxTokens, getNumCtxMax())}, `
+          + `timeout ${Math.round(_ctxOpts.timeoutMs/1000)}s`);
       const { text, promptTokens, completionTokens } = await callLLM(
-        storySystem, storyUserMsg, _sOpts.tokens, _sOpts);
+        storySystem, storyUserMsg, _sOpts.tokens, { ..._sOpts, ..._ctxOpts });
       story = text.trim();
       _storyModel = OLLAMA_MODEL;
       _storyMeta = buildGenMeta({ type: 'story', model: OLLAMA_MODEL, t0, valid: story ? 1 : 0,
@@ -4779,7 +4836,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     ? collectChainStory({ id: null, topic, story, continuedFromId: findSaved(chainParent)?.id || null })
     : { text: '', chapters: 0 };
   if (_chainStory.chapters > 1)
-    console.log(`    Story context: ${_chainStory.chapters} chapters, ${_chainStory.text.length} chars`);
+    console.log(`    Lesson context: ${_chainStory.chapters} chapters, ${_chainStory.text.length} chars`);
   const chainOpts = { userDialect, storyStyle, chainVocab, vocabMode: _vocabMode, story,
                       script: userOpts.script || null,
                       chainStory: _chainStory.text, chainStoryChapters: _chainStory.chapters };
@@ -6764,7 +6821,7 @@ http.createServer(async (req, res) => {
         // v71_o: comprehension questions read the whole chain, not just this chapter.
         const _chainStory = collectChainStory(saved);
         if (_chainStory.chapters > 1)
-          console.log(`    Story context: ${_chainStory.chapters} chapters, ${_chainStory.text.length} chars`);
+          console.log(`    Lesson context: ${_chainStory.chapters} chapters, ${_chainStory.text.length} chars`);
         const sharedGenOpts = { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story,
                                 chainStory: _chainStory.text, chainStoryChapters: _chainStory.chapters };
         const genCtx = { lang, srcLang, topicName, story, diff, jobId, chainVocab, standardOpts, sharedGenOpts, addMathInstr, addMathOps, introScript: addIntroScript || null };

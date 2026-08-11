@@ -591,39 +591,35 @@ by global TTS selectors in footers", still rebuilt on every lesson-set entry.
 
 | release | what |
 |---|---|
+| `v79_b` | **`useFullChain` now does what its label says (user ruling, session 33).** The checkbox promised *"use full storyline as context"* and the request field said `useFullChain`, but `generate()` chose only between the PARENT CHAPTER whole and its last `OLLAMA_MAX_PREV_STORY` (800) characters — so every continuation was written from one chapter of context however the box was set. The story prompt now takes `collectChainStory(parentNode, budget)`, the same collector the LESSON path uses, so the two contexts cannot drift apart and predecessors are dropped from the OLDEST end with the most recent chapter kept whole. **The sizing is part of the change, not a follow-up (v71_t).** That call site passed no `ctxTokens`, so Ollama used its ~4096 default; measured over 236 corpus continuations the single parent never approaches it (max 4,691 chars ≈ 3,203 tokens) but the chain crosses it at the 90th percentile (8,021 chars ≈ 4,244) and reaches 43,312 at the top — feeding the chain without `num_ctx` would have replaced a trim we choose with a silent one Ollama makes, every generation still "succeeding". **A single-chapter chain keeps the pre-`v79_b` shape exactly** (no `## title` header, no `num_ctx` reserved — the KV cache grows with the window), so the change is confined to the case it is for. Two measurements worth keeping: **54% of continuations (128 of 236) have a parent SHORTER than the 800-char tail**, so for most chapters the box did nothing at all either way; and the storyline behind a continuation is a median 3,297 chars against a median parent of 671, i.e. the label was promising ~3.3× the context it passed. **No i18n change** — the existing label and tooltip became true rather than needing rewording, which was the point of choosing this option over the other. Console lines now distinguish the two contexts: `Story context:` is the story prompt, `Lesson context:` the lesson chain. Guarded behaviourally in `e2e-bookjob` by story-marker IDENTITY (chapter 3's prompt must carry chapter 1's `STORYTEXT[…]` marker, not merely "a previous story"), with both branches exercised by one job; both halves revert-verified separately. **`fake-ollama` now logs the request OPTIONS** (`think`, `num_ctx`, `num_predict`) — "the server sized the context window" is a wiring claim no prompt assertion can reach. Two source pins in `unit-reasoning-model-safety` and `unit-reasoning-toggle` broke on the hoist of `_baseStoryTokens`/`thinkOpts` above the prompt; their CLAIM was still true, so the windows were widened and given a non-vacuity check rather than re-pinned, and the same claim is now also asserted at the backend (`think:false` observed). |
 | `v79_a` | **The script pin now reaches the LESSON prompts, not just the story prompt.** `scriptPinNote(lang, script)` returns `PROMPTS.story.scriptNote` — *"Write the ENTIRE text in {scriptLabel} script… do not mix scripts or add a transliteration"* — or an empty string when the language has no script choice, and `sysLesson`, `sysLessonFromText` and `sysLessonTable` all append it. The three lesson builders already RECEIVED `script` but used it only through `langName(lang, script)`, i.e. as part of a name (*"Serbian (written in Cyrillic script)"*) rather than as an instruction — and `v76_h`'s own comment says that is "not enough on its own — the model still drifts". Costless for the other 32 languages, which get an empty string. **⚠️ THE EVIDENCE THAT PROMPTED THIS WAS MISATTRIBUTED, and the correction matters more than the change.** It was found via a mixed-script chapter at the cut, which I read as lesson-prompt drift; the user identified it as a **`reinforce`** lesson faithfully re-teaching an earlier chapter's Latin vocabulary during a deliberate Latin→Cyrillic switch, and `_genMeta` confirms `_arcMode: "reinforce"`. The plain lesson in that chapter, same builder, came out correct Cyrillic — **so the corpus does NOT demonstrate that the lesson prompts drift.** The change is retained on `v76_h`'s reasoning alone and should be treated as UNMEASURED: nobody has checked what a pinned prompt does when `reinforce` hands it prior-script vocabulary to re-teach. See "PLANNED REWORK", which subsumes the question. Rule 27 was earned on the misattribution, not on the fix. |
 
 ## ⚠️ OPEN AT THE v79 CUT — read these first
 
-### 1. `useFullChain` does not do what its label says (user-reported, NOT yet fixed)
+### 1. ~~`useFullChain` does not do what its label says~~ — RULED and SHIPPED as `v79_b`
+
+**User ruling, session 33: make the label TRUE.** Shipped — see the shipped table for the full
+entry, `v79_session33_notes.md` for the measurements and how the guard was built. The label and
+tooltip were left untouched because they became true; the console lines now say `Story context:` for
+the story prompt and `Lesson context:` for the lesson chain.
+
+**What the item said, kept because two of its claims turned out to be worth carrying:**
 
 The main-page checkbox reads *"Pass the full storyline as context — better continuity, slower
-generation"*, and the request field is `useFullChain`. **It controls neither.** In `generate()` it
-chooses only between the PARENT CHAPTER'S story in full and its last `OLLAMA_MAX_PREV_STORY`
-characters:
+generation"*, and the request field is `useFullChain`. **It controlled neither.** In `generate()` it
+chose only between the PARENT CHAPTER'S story in full and its last `OLLAMA_MAX_PREV_STORY`
+characters. So `Continuing from: "…" (using full chars)` in the console meant **the whole of ONE
+chapter**, not the chain, while the separate chain-wide line fed LESSON generation only.
 
-```js
-const prevStoryFull = (parentTopic && parentTopic.story) ? parentTopic.story : …;
-const prevStory = prevStoryFull ? (useFullChain ? prevStoryFull : prevStoryFull.slice(-OLLAMA_MAX_PREV_STORY)) : null;
-```
+Two things the item did NOT say, both measured at the ruling and both load-bearing:
 
-So `Continuing from: "…" (using full chars)` in the console means **the whole of ONE chapter**, not
-the chain. The separate `Story context: 3 chapters, 1142 chars` line IS chain-wide — but it feeds
-LESSON generation, not the story. A continuation is therefore written from one chapter of context
-however the box is set, which is a plausible cause of drift across a long storyline.
-
-`v78_r` defaulting the box ON is still an improvement (the previous chapter untruncated rather than
-its tail) but does not deliver what the label promises.
-
-**Two separable decisions, and the user has not ruled:**
-- **Make the label true** — feed `_chainStory` (already built, with a chapter count and a character
-  budget) into the story prompt's user message. Small in code; it changes what EVERY continuation
-  costs in tokens and wall-clock, on a model that already takes ~100s for a 100-word story.
-- **Or make the label honest** — reword the tooltip and rename the field to say "use the previous
-  chapter in full".
-
-Do not pick one silently. Whichever is chosen, the console line should distinguish the two contexts,
-because they read identically today.
+- **For 128 of 236 corpus continuations (54%) the box changed nothing at all** — the parent chapter
+  is shorter than the 800-char tail, so "full" and "last 800" are the same string. The defect was
+  therefore invisible on more than half the corpus, which is why it took a user report.
+- **The story call passed no `ctxTokens`**, so Ollama used its ~4096 default. The single parent
+  never approaches it; the chain crosses it at p90. "Small in code" was wrong: sizing `num_ctx` and
+  the timeout is part of the change, not a follow-up (rule v71_t), and the chain's own budget has to
+  be derived from the context ceiling so the trim happens where chapter boundaries are known.
 
 ### 2. ~~One chapter's vocabulary is in the wrong script~~ — WITHDRAWN, it is a `reinforce` artefact
 

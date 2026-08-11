@@ -30,7 +30,17 @@ console.log('  opts propagation callLLM→meter→_callOllama + reject-retry: OK
 
 // ── 2. Story generation honors the per-role reasoning toggle (default off) ────
 {
-  const storyCall = server.slice(server.indexOf('const storySystem = sysStory('), server.indexOf('story = text.trim();'));
+  // v79_b: the window used to open at `const storySystem = sysStory(` — but that line is no longer
+  // the top of the story call. `_baseStoryTokens`/`thinkOpts` were hoisted above the prompt so the
+  // chain-context budget could be sized against the reply allowance, which put both of them
+  // OUTSIDE this slice and failed a pin whose CLAIM was still true (the v71_w rule, from the other
+  // direction: a window that no longer reaches the line it checks). Anchored on the whole
+  // story-generation block instead, with a non-vacuity check that the window really does contain
+  // the call it is making claims about.
+  const storyCall = server.slice(server.indexOf('// \u2500\u2500 Story: use user-supplied or generate'),
+                                 server.indexOf('story = text.trim();'));
+  assert.ok(/await callLLM\(\s*storySystem, storyUserMsg/.test(storyCall),
+    'non-vacuity: the slice contains the story callLLM it is asserting about');
   assert.ok(/thinkOpts\('story', _baseStoryTokens\)/.test(storyCall),
     'story generation resolves reasoning via thinkOpts (per-role, default off = think:false)');
   assert.ok(/Math\.min\(4096,/.test(storyCall), 'story base budget is 4096 headroom (was 2048)');

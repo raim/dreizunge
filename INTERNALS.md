@@ -13,7 +13,7 @@ please fix it.
 Every entry below was found by measurement or by a test failing, not by reading anything. That is
 the gap this document exists to close.
 
-Last verified against **`v79`**.
+Last verified against **`v79_b`**.
 
 ---
 
@@ -23,7 +23,8 @@ Last verified against **`v79`**.
 |---|---|---|---|
 | `NUM_CTX_MAX` | `llm.js` | 16384 (env `OLLAMA_NUM_CTX_MAX`) | Context-window ceiling. See §1.1 |
 | `OLLAMA_TIMEOUT` | `llm.js` | 720000 (12 min; env `OLLAMA_TIMEOUT`) | Base request timeout, clamped 30 s–60 min |
-| `CHAIN_STORY_CHARS` | `server.js` | 40000 | Chain-story budget for comprehension |
+| `CHAIN_STORY_CHARS` | `server.js` | 40000 | Chain-story budget for comprehension AND, since `v79_b`, for the story prompt when `useFullChain` is set |
+| `OLLAMA_MAX_PREV_STORY` | `server.js` | 800 (env) | Tail of the previous chapter fed to the story prompt when `useFullChain` is OFF. 54% of corpus continuations have a parent shorter than this, so for them the checkbox changes nothing either way |
 | `THINK_TOKEN_MULT` / `THINK_TIMEOUT_MULT` | `server.js` | 2.5 / 3 | Applied when a role's reasoning is ON |
 | `THINK_MIN_TOKENS` | `server.js` | 3000 | Floor for a thinking call's token budget |
 | lesson token base | `server.js` | 3200 | Passed to `callLLMLesson`; ×2.5 when thinking |
@@ -53,8 +54,16 @@ model at fp16 — *varies a lot by model size and quantization, treat as an orde
 4096 ≈ 0.5 GB, 16384 ≈ 2 GB, 32768 ≈ 4 GB. That sits on top of the weights (~5 GB for an 8B at Q4).
 
 Mitigations already in place: `num_ctx` is sent **only when a caller passes `opts.ctxTokens`**, and
-today only `generateComprehension` does. Every other call keeps Ollama's default and its existing
-memory profile.
+only `generateComprehension` and — since `v79_b` — the story call do. Every other call keeps
+Ollama's default and its existing memory profile.
+
+**`v79_b`'s story call asks for a window only when it needs one.** The chain is fed when the
+storyline behind a continuation is longer than one chapter; a single parent takes the old path and
+reserves nothing. That matters because of the caveat below: the fewer calls that alternate between
+sizes, the less often a reload can be provoked. Corpus scale, measured at the v79 cut over 236
+continuations: parent chapter median 671 chars (max 4,691, ~3,203 estimated tokens — always under
+the ~4096 default), whole storyline median 3,297, p90 8,021 (~4,244 tokens, OVER the default) and
+max 43,312. So the sizing is not defensive: the chain crosses the default at the 90th percentile.
 
 **Unverified caveat.** Ollama keys its loaded model instance partly on load-time options, and
 `num_ctx` is one of them — so alternating between large-context and default calls *may* force a

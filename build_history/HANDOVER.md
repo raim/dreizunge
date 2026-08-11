@@ -1,10 +1,10 @@
-# HANDOVER — v79
+# HANDOVER — v79_b
 
-One page. **This is the `v79` base cut**, taken after session 32 shipped fourteen point releases on
-the `v78` line. **Read `build_history/roadmap_v79.md` next** — start with its
+One page. **Current release `v79_b`** (session 33, one point release on the `v79` line, which was
+cut after session 32 shipped fourteen point releases on the `v78` line). **Read `build_history/roadmap_v79.md` next** — start with its
 "⚠️ OPEN AT THE v79 CUT" block — then `INTERNALS.md`, then
-`build_history/v78_session32_notes.md`. What any `v78_*` release did is in `roadmap_v78.md`; that
-file is history now and is not carried forward.
+`build_history/v79_session33_notes.md`, then `build_history/v78_session32_notes.md`. What any
+`v78_*` release did is in `roadmap_v78.md`; that file is history now and is not carried forward.
 
 ## Green baseline
 
@@ -15,7 +15,7 @@ file is history now and is not carried forward.
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v79'`. Corpus: **315 topics, 88 storylines**. **33 languages**, `ui.json` complete
+`APP_VERSION = 'v79_b'`. Corpus: **315 topics, 88 storylines**. **33 languages**, `ui.json` complete
 for all of them (617 `en` keys), `languages.json` at **1089/1089** name cells.
 
 **These numbers are the ones to trust.** Every session prompt so far has quoted a count that was
@@ -41,11 +41,16 @@ file and splice that file in.
 
 ## What is open
 
-See `roadmap_v79.md` → "⚠️ OPEN AT THE v79 CUT". In short: **`useFullChain` does not do what its
-label says** (needs a ruling, not a patch); a **PLANNED REWORK removing `reinforce`/`neutral`/
-`extend`**, which the per-text learning scheme is the natural replacement for — **do not remove them
-first and design after**; and the **per-text scheme discussion** itself, whose prerequisite coverage
-measurement is already done: 9.2% of story tokens, 8.2% of types, rarest words least covered at 5.1%.
+See `roadmap_v79.md` → "⚠️ OPEN AT THE v79 CUT". In short: a **PLANNED REWORK removing
+`reinforce`/`neutral`/`extend`**, which the per-text learning scheme is the natural replacement for
+— **do not remove them first and design after**; and the **per-text scheme discussion** itself,
+whose prerequisite coverage measurement is already done: 9.2% of story tokens, 8.2% of types,
+rarest words least covered at 5.1%.
+
+**Closed in session 33: `useFullChain`.** The user ruled *make the label true* and `v79_b` shipped
+it — the story prompt now takes the whole chain through `collectChainStory`, sized for `num_ctx`.
+The label and tooltip were left alone because they became true. Details in the shipped table and
+`v79_session33_notes.md`.
 
 **Nothing is owed by the user.** Two items that were on that list are withdrawn — the "mixed-script
 chapter" is `reinforce` working as designed, and the `cyrillic-sr` sounds column was never owed

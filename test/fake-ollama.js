@@ -48,7 +48,8 @@ const srv = http.createServer(async (req, res) => {
   }
   if (req.method === 'POST' && req.url === '/api/chat') {
     const raw = await readBody(req);
-    let msgs = []; try { msgs = JSON.parse(raw).messages || []; } catch (_) {}
+    let msgs = [], body = {};
+    try { body = JSON.parse(raw) || {}; msgs = body.messages || []; } catch (_) {}
     const sys = (msgs.find(m => m.role === 'system') || {}).content || '';
     const usr = msgs.filter(m => m.role === 'user').map(m => m.content).join('\n') || '';
     let kind, content;
@@ -214,7 +215,16 @@ const srv = http.createServer(async (req, res) => {
     // chars, so any test asserting on a prompt's TAIL through readChatLog() was silently checking
     // the truncation rather than the prompt. Widened; still capped so a runaway prompt cannot fill
     // the log file.
-    if (LOG) { try { fs.appendFileSync(LOG, JSON.stringify({ kind, sys: sys.slice(0, 8000), usr }) + '\n'); } catch (_) {} }
+    // v79_b: record the REQUEST OPTIONS, not just the prompts. `num_ctx` is omitted by llm.js
+    // unless the caller asked for it, and Ollama silently truncates an over-long prompt when it is
+    // absent — so "the server sized the context window" is a claim no prompt assertion can reach,
+    // and the standing rule is that a wiring change needs a run rather than a source pin. `think`
+    // is here for the same reason: the per-role reasoning toggle was guarded only by source slices
+    // until now, and one of them broke on a line move while its claim stayed true.
+    const _opts = { think: (typeof body.think === 'boolean' ? body.think : null),
+                    num_ctx: (body.options && body.options.num_ctx) || null,
+                    num_predict: (body.options && body.options.num_predict) || null };
+    if (LOG) { try { fs.appendFileSync(LOG, JSON.stringify({ kind, sys: sys.slice(0, 8000), usr, opts: _opts }) + '\n'); } catch (_) {} }
     res.writeHead(200, { 'Content-Type': 'application/json' });
     return res.end(JSON.stringify({ message: { role: 'assistant', content }, done: true }));
   }
