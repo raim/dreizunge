@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v78_r';
+const APP_VERSION  = 'v79';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -1129,6 +1129,22 @@ function STORY_STYLES() { return PROMPTS.storyStyles || {}; }
 // Helper: get style description for a key
 function getStoryStyle(key) { return key ? (STORY_STYLES()[key] ?? null) : null; }
 
+// v79_a (found at the v79 cut): the SCRIPT PIN, shared by every prompt that writes target-language
+// text. `v76_h` established that naming the script inside {L} is not enough — the model drifts
+// between scripts inside one text — and added the rule to the STORY prompt. The lesson prompts were
+// left with the name alone, and the corpus shows exactly the predicted result: the chapter
+// `tp_17863746762340000193` has a story in pure Cyrillic and vocabulary in Latin (`reka`,
+// `sanjati`, `vetar`), so a Cyrillic chapter taught Latin words and nothing the learner studied
+// could ever be highlighted in the text they were reading.
+//
+// The note lives under PROMPTS.story because that is where it was written; it says nothing
+// story-specific, so it is used verbatim rather than duplicated per prompt family.
+function scriptPinNote(lang, script) {
+  const P = PROMPTS.story;
+  if (!script || !hasScriptChoice(lang) || !P || !P.scriptNote) return '';
+  return fillPrompt(P.scriptNote, { scriptLabel: scriptLabel(script), L2: LANG_NAMES[lang] || lang });
+}
+
 function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, _unused, dialect, writingStyle, script) {
   const L    = langName(lang, script);
   const S    = langName(srcLang || 'en');
@@ -1142,6 +1158,7 @@ function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, _unused, 
   if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
   if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
   if (lang === 'ja')              sys += P.cjkNote;
+  sys += scriptPinNote(lang, script);   // v79_a: same rule the story prompt has had since v76_h
   return sys;
 }
 
@@ -1159,6 +1176,7 @@ function sysLessonFromText(lang, srcLang, lessonNum, totalLessons, difficulty, d
   let sys = fillPrompt(P.system, { L, S, diff, sentLen, lessonDiff, lessonNum, totalLessons });
   if (dialect) sys += fillPrompt(P.dialectNote, { dialect });
   if (lang === 'ja') sys += P.cjkNote;
+  sys += scriptPinNote(lang, script);   // v79_a
   return sys;
 }
 
@@ -1175,6 +1193,7 @@ function sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, dial
   let sys = fillPrompt(P.system, { L, S, diff, lessonDiff, lessonNum, totalLessons });
   if (dialect) sys += fillPrompt(P.dialectNote, { dialect });
   if (lang === 'ja') sys += P.cjkNote;
+  sys += scriptPinNote(lang, script);   // v79_a
   return sys;
 }
 

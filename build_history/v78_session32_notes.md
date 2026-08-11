@@ -793,9 +793,131 @@ agreeing; **neither is above 20%**, which is why the conclusion holds either way
 
 ---
 
+
+---
+
+## 23. The v79 cut — and a bug the cut itself found
+
+The data drop for the cut was clean in every dimension the protocol checks: 617 `en` keys with none
+vanished and no value changed, `sl` now a full block (33 languages complete), `languages.json` at
+**1089/1089** name cells, 309 → 315 topics, 87 → 88 storylines, nothing removed.
+
+**Then `backfill-script.js` reported something it had never reported before: `ambiguous (left
+alone): 1`.** One Serbian chapter, `tp_17863746762340000193` — 459 Cyrillic characters against 127
+Latin. The guard's message said a mixed passage means the generator was never told which script to
+use, and the temptation was to read that as stale, since `v78_p`/`v78_q` had just fixed exactly that
+and the console had shown `[script] story prompt pinned to Cyrillic for sr`.
+
+**Inspecting instead of assuming found the real thing.** The story is *pure* Cyrillic — zero Latin
+runs. The 127 Latin characters are all in one place: the vocabulary lesson's TARGET words. `reka`,
+`sanjati`, `vetar`, `miris`, `grad`. **A Cyrillic chapter teaching Latin words** — so nothing the
+learner studied could ever be highlighted in the text they were reading, and the two would look like
+unrelated languages.
+
+The cause was written down two sessions before it happened. `v76_h`'s own comment says naming the
+script inside `{L}` "is not enough on its own — the model still drifts between scripts inside one
+text", and adds the explicit rule to the STORY prompt. The three LESSON prompt builders got the
+script only through `langName(lang, script)` — the name, not the rule. The comment predicted the
+failure and the fix was applied to one of four call sites.
+
+`v79_a` extracts `scriptPinNote(lang, script)` and appends it in `sysLesson`, `sysLessonFromText`
+and `sysLessonTable`. Verified by building the real prompt: pinned for `sr`+`cyrillic-sr`, untouched
+for a non-digraphic language.
+
+**The existing chapter stays broken** — regenerating it needs a live model, so it is owed by the
+user. Rather than relax the assertion, the id is listed in `unit-script-choice` with a note that a
+SECOND id means the fix did not hold rather than that the list should grow. A guard that stops
+counting is worth less than a guard with one documented exception.
+
+### Rule earned (27)
+
+**When a comment predicts a failure mode, check every site the prediction covers, not the one in
+front of you.** `v76_h` wrote down that the language name alone lets the model drift, fixed the
+story prompt, and left three lesson prompts unfixed for two sessions — until the corpus produced the
+exact artefact described. The prediction was the finding; nobody re-read it. **A note that says "X
+is not enough" is a search instruction: grep for every place X is done alone.**
+
+## 24. What the v79 cut carries forward
+
+- `roadmap_v79.md` carries the protocol, the **27** standing rules, every open item and the triaged
+  user notes. **The `v78` shipped table stays in `roadmap_v78.md`** — history, not queue; copying it
+  forward would make the roadmap grow without bound.
+- `unit-roadmap-version` was written in this session to stop the protocol's version sentence going
+  stale a fifth time, and it did its job at the cut: both sentences were caught and updated to name
+  the `v79` line.
+- **The largest open item is a RULING, not a task**: `useFullChain` promises the storyline and
+  delivers one chapter. Recorded in full at the top of `roadmap_v79.md`, with both options and the
+  reason not to pick one silently — the honest version is a two-line reword, the true version
+  changes what every continuation costs on a model already taking ~100s per short story.
+
+---
+
+
+---
+
+## 25. Two corrections from the user, and what they cost
+
+Both landed after the v79 cut was packaged. Recorded at length because in each case the artefact was
+real, the reasoning was plausible, and the conclusion was wrong.
+
+### The mixed-script chapter was `reinforce` working correctly
+
+I read `tp_17863746762340000193` — Cyrillic story, Latin vocabulary — as the lesson prompts drifting
+for want of a script pin, wrote `v79_a`, and shipped it. **The user identified it as the `reinforce`
+arc mode**, which explicitly re-trains vocabulary from EARLIER chapters; those chapters were Latin
+because the user was deliberately switching that storyline from Latin to Cyrillic. The Latin is the
+prior vocabulary, faithfully reproduced.
+
+**The lesson's own `_genMeta` said so**: `_arcMode: "reinforce"`, sitting in the file I had already
+opened twice. And the plain lesson in the same chapter, from the same builder four minutes earlier,
+is correct Cyrillic — which on its own should have made "the builder drifts" suspicious.
+
+So the corpus does **not** demonstrate that lesson prompts drift. `v79_a` is retained on `v76_h`'s
+original reasoning (a name is not an instruction) but is now labelled UNMEASURED in the shipped
+table, with its open question stated: nobody has checked what a pinned prompt does when `reinforce`
+hands it prior-script vocabulary to re-teach. That is a real interaction, not a hypothetical.
+
+**Rule 28** came out of this: `_genMeta` records how every lesson was made — read it before
+diagnosing what a lesson contains.
+
+Note what rule 27 was actually earned on. I wrote it as "when a comment predicts a failure mode,
+check every site" — which is still sound advice — but the failure it was written about turned out
+not to be that failure. The rule survives; its worked example does not.
+
+### The `cyrillic-sr` sounds column was never owed
+
+I had listed it for three releases as owed by the user, and when asked, produced it: 26 Serbian
+Cyrillic respellings of the Latin letter names, verified mechanically against our own 30-letter
+table — zero characters outside the Serbian alphabet.
+
+Then `unit-intro-script` failed on a `v75_g` ruling I had not read: **"a Serbian reader must NOT be
+offered a Latin course: they already read it"**, Serbian Latin being co-official. The missing column
+is not an oversight — it is the mechanism that ENFORCES that ruling. Adding it would have silently
+reversed a deliberate decision.
+
+Reverted. Both test comments that described the absence as "owed" are corrected to say it is
+deliberate, and to name `unit-intro-script` as the assertion that must change first if the ruling is
+ever reopened. **The guard caught what three sessions of my own notes had got wrong** — and the
+comment in that guard says exactly why it pins the behaviour rather than the mechanism: *"it is the
+behaviour, not the mechanism, that matters"*. Written by a past session, for exactly this.
+
+The table itself is kept here in case `v75_g` is ever reopened:
+`A еј · B би · C си · D ди · E и · F еф · G џи · H ејч · I ај · J џеј · K кеј · L ел · M ем · N ен ·
+O оу · P пи · Q кју · R ар · S ес · T ти · U ју · V ви · W дабл-ју · X екс · Y вај · Z зед`
+
+### The pattern
+
+Both were cases of an artefact fitting a story I already had. The script-plumbing bugs of `v78_p`
+and `v78_q` were fresh, so a script-shaped artefact looked like more of the same; the "owed
+translation passes" list was long, so a missing data column looked like another entry on it. In each
+case the disconfirming evidence was already in the repository — one field in `lessons.json`, one
+assertion in a test file.
+
+---
+
 ## 6. What the next session should know
 
-- **Baseline for `v78_o`: 203 / 179 / 0 / 0.** Corpus 309 topics, 87 storylines. **33 languages.**
+- **Baseline at the `v79` cut: 206 / 182 / 0 / 0.** Corpus 315 topics, 88 storylines, 33 languages. Corpus 309 topics, 87 storylines. **33 languages.**
 - **Group B is DONE. §3 is DONE. §7 is DONE.** Thirteen point releases this session (`v78_b`…`v78_o`); `v78_o` is measurement and documentation only.
 - **Nothing is owed by the user except two translation passes** — `sl` has no `ui.json` block, and
   Slovenian reopened `languages.json` name cells. Both are faster now (`--batch`, `--threads`).

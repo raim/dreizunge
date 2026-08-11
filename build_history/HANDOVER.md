@@ -1,8 +1,10 @@
-# HANDOVER — v78_r
+# HANDOVER — v79
 
-One page. Session 32 shipped **`v78_b`** … **`v78_r`** from the `v78` cut. **Read
-`build_history/roadmap_v78.md`** next for the queue and the session protocol, then `INTERNALS.md`,
-then `build_history/v78_session32_notes.md` (session 32) and `build_history/v77_session31_notes.md`.
+One page. **This is the `v79` base cut**, taken after session 32 shipped fourteen point releases on
+the `v78` line. **Read `build_history/roadmap_v79.md` next** — start with its
+"⚠️ OPEN AT THE v79 CUT" block — then `INTERNALS.md`, then
+`build_history/v78_session32_notes.md`. What any `v78_*` release did is in `roadmap_v78.md`; that
+file is history now and is not carried forward.
 
 ## Green baseline
 
@@ -13,163 +15,44 @@ then `build_history/v78_session32_notes.md` (session 32) and `build_history/v77_
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v78_r'`. Corpus: **309 topics, 87 storylines**. **33 languages** (Slovenian added in `v78_j`). Establish this before changing
-anything.
+`APP_VERSION = 'v79'`. Corpus: **315 topics, 88 storylines**. **33 languages**, `ui.json` complete
+for all of them (617 `en` keys), `languages.json` at **1089/1089** name cells.
 
-**These numbers are the ones to trust.** Session 30's prompt said 170/149, session 31's said
-182/158, session 32's said 192/168; each was right for the tree it was written against and stale by
-the time it was read. **If a prompt and this file disagree, measure — and check timestamps first.**
+**These numbers are the ones to trust.** Every session prompt so far has quoted a count that was
+right when written and stale when read. **If a prompt and this file disagree, measure.**
 
 ## ⚠️ On a data drop: the guards fire, but the FIXERS ARE NOT A DIAGNOSIS
 
-Both data-sensitive guards go red when the user's data files arrive, and each has a documented
-one-line remedy. **Running the remedy destroys the evidence** that says whether the remedy was
-right. Session 32 hit this twice; `v78_session32_notes.md` §1 is the long form. Short form:
-
-- **Check three cheap things first** — corpus counts (`topics` / `storylines`), file **mtimes**
-  (a file just rewritten by a fixer is the NEWEST; if `lessons.json` is the oldest, no fixer ran),
-  and the hash `unit-static-freshness` names.
+- **Check three cheap things first** — corpus counts, file **mtimes** (a file a fixer just rewrote is
+  the NEWEST), and the hash `unit-static-freshness` names.
 - **ORDER MATTERS.** `node backfill-script.js --write` **first**, `node build-static.js` **second**.
-  Rebuilding first bakes the unstamped corpus and overwrites the only surviving copy of the
-  previous baked state.
 - **Diff the baked corpus against disk before rebuilding**, so a rebuild cannot lose user content.
-  At the `v78_b` baseline the shipped `lessons.json` was the user's NEWER file and `docs/` was a
-  corpus behind it: **7 topics had an `ai_error_hunt` lesson the published build did not.**
-- **The script stamps are lost on every round-trip.** The same two `sr` topics came back unstamped
-  at both drops this session: the backfill runs in the container, the user runs from their own copy,
-  so `backfill-script.js --write` is a per-drop step, not a one-off repair.
-- Sometimes **the test is wrong, not the product** (the `v78` cut's `unit-mixed-unlock-reachable`).
-  Expect one or two per drop and diagnose rather than re-pin.
+- **A test can be wrong on new data.** It happened three times in session 32
+  (`unit-mixed-unlock-reachable`, `unit-replay-focus` §8c, `unit-coverage-threshold`'s positional
+  read). Diagnose before re-pinning — but note the v79 cut's ambiguity was the guard being RIGHT.
+- **`ambiguous (left alone): 1` is expected** at this cut — one known-bad chapter, item 2 of the
+  roadmap's open block. A SECOND one is a real failure.
 
 ## ⚠️ Writing docs: NEVER put emoji in a Python string literal
 
-Session 32 truncated `roadmap_v78.md` **to zero bytes** by writing a heredoc containing `\ud83e\uddf9`
-surrogate escapes — the write threw mid-flight after opening the file. `unit-roadmap-version`
-caught it on the next run and the file was restored from the packaged `v78_b` zip, but the
-re-application cost real time. **Write emoji-bearing doc blocks via a `cat` heredoc to a temp file
-and splice that file in**, never as literals inside the script doing the splice.
+Session 32 truncated a roadmap **to zero bytes** that way; the exception arrives AFTER the file is
+opened, so a failed write is not a no-op. Write emoji-bearing blocks via a `cat` heredoc to a temp
+file and splice that file in.
 
-## What session 32 shipped
+## What is open
 
-**`v78_b`** — a synonym/antonym question states HOW MANY words to find ("3 similar to Haus").
-`syn_select` is the only multi-select exercise in the app, so it is the only one where "have I
-finished answering?" is a real question, and there was no signal at all. Counted from `ex.correct`,
-the same array `check()` scores against. **New `_n` keys, not reworded old ones** — the translate
-pass keys off MISSING, not CHANGED. Plus **`unit-roadmap-version`**, retiring a protocol note that
-had gone stale four times.
+See `roadmap_v79.md` → "⚠️ OPEN AT THE v79 CUT". In short: **`useFullChain` does not do what its
+label says** (needs a ruling, not a patch); a **PLANNED REWORK removing `reinforce`/`neutral`/
+`extend`**, which the per-text learning scheme is the natural replacement for — **do not remove them
+first and design after**; and the **per-text scheme discussion** itself, whose prerequisite coverage
+measurement is already done: 9.2% of story tokens, 8.2% of types, rarest words least covered at 5.1%.
 
-**`v78_c`** — `translate-ui.js --langnames` crashed on the first REJECTED name (`isBlocking` takes
-the whole issues ARRAY; it was called as a per-item predicate). **Unreachable on the happy path**,
-so the mode's own guard stayed green — the `v76_c` shape again, in the same mode.
+**Nothing is owed by the user.** Two items that were on that list are withdrawn — the "mixed-script
+chapter" is `reinforce` working as designed, and the `cyrillic-sr` sounds column was never owed
+(its absence enforces a `v75_g` ruling). Both corrections are in the session-32 notes §25.
 
-**`v78_d`** — conjugation MCQ distractors are now OTHER FORMS OF THE SAME VERB, and the question is
-not padded to four. The old pool was a shuffled UNION with every other verb's forms, so `essere
-(voi)` was offered `siete / parli / parla / parlano` — three of four from `parlare`, answerable by
-stem-matching without touching the paradigm.
-
-**`v78_e`** — clear progress for ONE CHAPTER, via a shared **`_clearChapterProgress(topicKey)`**.
-**Found on the way: `clearLessonProgress` was a THIRD copy of the wipe carrying the exact `v77_s`
-defect** — no `chapterDone`, no `storyShown` — so clearing from the lesson-set page left the chapter
-still reading "finished". All three entry points now share one rule, and the guard asserts PARITY
-between them rather than each in isolation.
-
-**⚠️ One group-B note was RETRIAGED and needs the USER:** the *"`Übersetze: ` prefix in the
-sentence-translation read-out"* item presupposes a read-out that **does not exist** — every speech
-call site was enumerated; the word-order exercise has no speaker control and no auto-speak. It is
-either a request for a NEW source-language question read-out or it is about another screen.
-**Ask before building.** Session-32 notes §3.
-
-**`v78_f`** — the teacher-mode switch is on every page carrying the footer controls, not only the
-landing page. Three controls, ONE updater; the compact footer glyph is derived from the same label
-string rather than spelled a second time. **Fixed on the way: `toggleTeacherMode` synced the button
-BEFORE re-rendering the screens** — harmless while the control lived only on the landing page, wrong
-the moment it moved into the screens that function redraws. No new i18n.
-
-- ~~§0e/§3 needs a RULING~~ **WITHDRAWN — the user dropped story-ordering (session 32).** Replaced by
-  a LOW-PRIORITY, needs-more-thinking idea: **progressive story reveal** (hide non-learned vocab and
-  reveal as it is learned). Not scheduled; the roadmap records what is already known, including the
-  measurement to do FIRST (coverage as a share of story tokens, not mark count — if a typical story
-  is 10% covered, "hide everything not learned" hides the story). The `v78_h` collector is its right
-  input. **Do not design it before the auto-read move lands**, or that page gets redesigned twice.
-- ~~(superseded)~~ **Why ordering was dropped, kept as the record**: measured, **83% of the cumulative
-  vocabulary panel never occurs in the story on screen** (612 entries, 12 storylines; 13% exact, 4%
-  word-form, 83% absent). "Order as the words appear in the story" was therefore an instruction
-  about a seventh of the list — the v75 note assumed a per-CHAPTER panel and `v77_f` made it
-  cumulative, and the two were never compared (**rule 26**). **§3's whitespace splitting is still
-  ruled and buildable, and is now the only unshipped part of §3**: `_highlightVocabHtml` matches a
-  multi-token vocab entry only as a whole phrase, so `la variazione genetica` marks nothing in a
-  story containing just `variazione` (+782 marks over 96 chapters, session-29 measurement).
-
-## Where session 33 should start
-
-**Group B is DONE, §3 is DONE, §7 is DONE.** Session 32 shipped ten point releases. Nothing is
-blocked on the user except two translation passes (`sl` has no `ui.json` block; Slovenian reopened
-`languages.json` name cells — both faster now with `--batch` / `--threads`).
-
-**The next item is a DISCUSSION the user explicitly asked for, not an implementation:** the per-text
-learning scheme. **Its prerequisite measurement is DONE — bring the numbers, do not re-derive them**
-(roadmap → "THE COVERAGE MEASUREMENT"; probes kept as `build_history/probe_coverage_v78n.js` and
-`probe_coverage_bands_v78n.js` with their results in the headers):
-
-| | |
-|---|---|
-| story tokens a chapter's lessons teach | **9.2%** |
-| distinct word types | **8.2%** (median chapter 13.2%, none above 50%) |
-| by frequency band | top-100 **9.0%** · top-500 **12.2%** · **rare 5.1%** |
-
-**It is a GENERATION problem, and a POLICY change as well as a volume one** — the rarest words are
-the LEAST covered, the opposite of "start with the hard/unusual words". "For a simple text go
-towards the basic words too" is not a separate mode either: the top-100 band is at 9%.
-
-**The one thing still unmeasured, and worth doing before any generator is sized:** what share of the
-uncovered types are INFLECTIONS of covered lemmas. That is the difference between "generate ten
-times as much" and "teach the forms of what is already taught" — two different products.
-
-**Buildable without discussion:** §0h question navigation — now the only queued implementation
-item, and it wants its own session (`C.cur`, `check()`, per-run answer state, and `_speakAndAdvance`,
-which advances in one direction only). **§0d is empty**: the Replay ordering fix shipped as `v78_l`
-and the three card items as `v78_n`, one of which needed no change (it was already true, and is now
-asserted rather than "fixed").
-
-## (previous framing)
-
-**All open user questions are CLOSED.** The auto-read is removed by ruling, the Latin `sr` UI is
-confirmed, the error-lesson wipe was dropped, ordering was dropped, and `ui.json` / `languages.json`
-came back complete (32 languages at 617 keys, 1024/1024 name cells).
-
-**The three small specified items are DONE** (`v78_j`). One thing they leave owed: **Slovenian
-reopened 65 `languages.json` name cells** (33 languages = 1089 cells, of which `sl` accounts for the
-new row and column) and `sl` has no `ui.json` block at all. A `--langnames` run and a `sl` UI pass
-are owed by the user, and both are now faster with `--batch` / `--threads`.
-
-**Then the big one, which the user wants DISCUSSED before it is built:** a per-text learning scheme
-(exhaust the text's vocabulary, word-by-word dissection, dynamic difficulty, no short-cut to the
-translation, cross-story quizzing ranked by difficulty). **Do the coverage measurement FIRST** —
-what share of a chapter's story tokens its lessons already teach. `v78_h`'s `_storyWordSources` is
-the input; `v78_h` measured MARKS, not COVERAGE, and the two answer different questions. That single
-number decides whether this is a generation problem or a gap-filling problem, and it is also the
-prerequisite for the progressive-reveal idea.
-
-## ⚠️ Open questions the USER owes an answer to (none currently)
-
-- **Where exactly the auto-read moves** (ruled: to the card before comprehension lessons, nowhere
-  else; a screenshot is coming). Roadmap "session 32 batch" → §0c. **Do not guess the card.**
-- ~~"Inside error / AI-error-hunt lessons"~~ **ANSWERED session 32:** it meant clearing the errors
-  the LEARNER had marked so they can be re-tagged — not a chapter wipe. **The user then dropped it
-  ("we can actually skip this"). Not carried forward.**
-- ~~Is a Latin-script `sr` UI intended?~~ **ANSWERED session 32: yes, keep Latin for now**; the user
-  may want BOTH options later. Recorded under the roadmap's "Second script for Serbian" item, with
-  a note to sequence it AFTER §7 — §7 is the first consumer of the per-topic `script`/`srcScript`
-  pair, and it should prove that carrier before a third consumer is built on it.
-- **`hr` is still 0 keys**, and the other 30 languages are still missing the same 14–16 accumulated
-  `en`-only keys.
-
-**Group B is now DONE** except two items that are not mine to close: the `Übersetze:` note (blocked
-on the user, above) and the word-form highlighting item, which belongs with §0e/§3 and the ONE
-shared matcher. **§7 shipped as `v78_g`.** The next queue items are **§0e's ordering half + §3 highlighting**
-(sharing ONE matcher — the roadmap records that the v75 plan was measured twice and is WRONG, so it
-needs re-planning, not implementing), **§0h question navigation** (its own session), and the Replay
-ordering fix scheduled alongside §0e/§3.
+**Buildable without a ruling:** §0h question navigation, which wants its own session (`C.cur`,
+`check()`, per-run answer state, and `_speakAndAdvance`, which advances one way only). §0d is empty.
 
 ## What session 31 settled — §0b DONE, and §0c STARTED
 

@@ -171,8 +171,15 @@ const call = (expr) => JSON.parse(C.run(`JSON.stringify(${expr})`, 'gate'));
 // lesson for such a chapter. Two different questions; the first draft of this section asked the
 // wrong one and called the right answer a failure.
 {
+  // CORRECTED at the v79 cut: the missing `cyrillic-sr` entry in `latin.soundsFor` is NOT an
+  // oversight awaiting a translation pass — it is what ENFORCES a v75_g ruling, pinned in
+  // `unit-intro-script`: "a Serbian reader must NOT be offered a Latin course: they already read
+  // it", Serbian Latin being co-official. A `cyrillic-sr` column was authored and verified at this
+  // cut (26 respellings, zero non-Serbian characters) and then REVERTED, because adding it silently
+  // reverses that ruling. **Do not add it without reopening v75_g** — and if it is ever reopened,
+  // `unit-intro-script`'s assertion is the one that has to change first.
   assert.ok(!(SCRIPTS.latin.soundsFor || []).includes('cyrillic-sr'),
-    'latin has no cyrillic-sr sounds column yet (OWED: needs a native/model pass, not an alias)');
+    'latin has no cyrillic-sr sounds column — deliberate (v75_g), not owed');
   assert.strictEqual(
     call(`needsIntroScript('sr','sr',{script:'latin',srcScript:'cyrillic-sr'})`), false,
     'a Latin primer is NOT generated for a Cyrillic-Serbian reader — its answers would be respelled ' +

@@ -13,7 +13,7 @@ please fix it.
 Every entry below was found by measurement or by a test failing, not by reading anything. That is
 the gap this document exists to close.
 
-Last verified against **`v78_g`**.
+Last verified against **`v79`**.
 
 ---
 
@@ -100,6 +100,18 @@ made a Serbian-Latin → Serbian-Cyrillic storyline report that the learner need
 `buildArcIntroLessons` still walked `scriptsForLang(lang)` passes the gate and then skips every
 script in the loop, returning `[]` with no error. Both functions exist in **two copies** (server +
 client) and are asserted byte-identical.
+
+**Naming the script inside the language name is NOT enough — every target-text prompt needs the PIN
+(`v76_h`, completed `v79_a`).** `langName(lang, script)` yields "Serbian (written in Cyrillic
+script)", and the model still drifts between scripts inside one text. `v76_h` added the explicit
+rule (`PROMPTS.story.scriptNote`) to the STORY prompt and left the three LESSON prompt builders with
+the name alone. The corpus shows exactly the predicted result: `tp_17863746762340000193` has a story
+in pure Cyrillic and vocabulary whose TARGET words are Latin — **a Cyrillic chapter teaching Latin
+words, so nothing the learner studied could ever be highlighted in the text they were reading.**
+`scriptPinNote(lang, script)` is now the one place that rule lives, and `sysLesson`,
+`sysLessonFromText` and `sysLessonTable` all append it. **Any new prompt that emits target-language
+text must call it too** — the symptom is silent, appears only for the languages in
+`scripts.json` `_scriptChoice`, and is invisible until someone reads the vocabulary.
 
 **Ollama truncates an over-long prompt with no error.** Default `num_ctx` is ~4096. Exceed it and
 the request still succeeds — the model just answers from whatever fragment survived. This is why

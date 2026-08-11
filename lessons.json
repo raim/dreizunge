@@ -5119,13 +5119,464 @@
       "lang": "en",
       "srcLang": "ar",
       "createdAt": "2026-06-26T09:58:01.040Z",
-      "updatedAt": "2026-06-26T11:01:39.585Z",
+      "updatedAt": "2026-08-11T11:22:36.102Z",
       "summary": "في هذه القصة، تكتشف الصغيرة i أنها لا تنتمي إلى عالم الأرقام حيث يحدد كل رقم مكانه. تجوب i العالم بحثاً عن مكانها الحقيقي، وتواجه العديد من الأرقام الغريبة مثل سبع وثمانية. في النهاية، تكتشف i أنها ليست رقمًا بل i، وأن هذا هو مكانها الحقيقي. يدعمها الرقم صفر في هذه الرحلة، مما يساعد i على القبول بنفسها.",
       "sourceFile": "book-3.pdf",
       "tags": [
         "children",
         "needs native speaker"
-      ]
+      ],
+      "tokenUsage": {
+        "totalPromptTokens": 1730,
+        "totalCompletionTokens": 2368,
+        "tokensByType": {
+          "storyboard": 4098
+        }
+      },
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 376\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>الطائر الصغير يبحث عن مكانه في العش</title><rect x=\"11\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"12\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"70\" width=\"100\" height=\"30\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"40\" r=\"15\" fill=\"#f2cc8f\"/><polygon points=\"20,70 80,70 50,50\" fill=\"#8d6e63\"/><circle cx=\"50\" cy=\"60\" r=\"5\" fill=\"#ffffff\"/></svg></g><g data-chapter=\"2\"><title>الرقم i يتجول في شوارع الرموز</title><rect x=\"193\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"194\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#9e9e9e\"/><rect x=\"0\" y=\"80\" width=\"100\" height=\"20\" fill=\"#8d6e63\"/><line x1=\"10\" y1=\"90\" x2=\"90\" y2=\"90\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"50\" cy=\"60\" r=\"8\" fill=\"#e07a5f\"/><path d=\"M 30 40 L 70 40 M 50 20 L 50 60\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"80\" cy=\"30\" r=\"10\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></g><g data-chapter=\"3\"><title>i تتبع مساراً متوهجاً نحو الرقم سبعة</title><rect x=\"375\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"376\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><path d=\"M 0 80 Q 50 60 100 80 L 100 100 L 0 100 Z\" fill=\"#2b2b2b\"/><line x1=\"20\" y1=\"70\" x2=\"80\" y2=\"30\" stroke=\"#f2cc8f\" stroke-width=\"4\" stroke-linecap=\"round\"/><circle cx=\"50\" cy=\"60\" r=\"6\" fill=\"#e07a5f\"/><rect x=\"75\" y=\"20\" width=\"10\" height=\"40\" fill=\"#9e9e9e\"/><circle cx=\"80\" cy=\"15\" r=\"5\" fill=\"#faf7f0\"/></svg></g><g data-chapter=\"4\"><title>i تبكي لأن سبعة لا يعرفها</title><rect x=\"557\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"558\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"0\" y=\"80\" width=\"100\" height=\"20\" fill=\"#2b2b2b\"/><circle cx=\"30\" cy=\"60\" r=\"5\" fill=\"#e07a5f\"/><line x1=\"30\" y1=\"65\" x2=\"30\" y2=\"75\" stroke=\"#457b9d\" stroke-width=\"2\" stroke-linecap=\"round\"/><rect x=\"65\" y=\"20\" width=\"10\" height=\"40\" fill=\"#9e9e9e\"/><circle cx=\"70\" cy=\"15\" r=\"5\" fill=\"#faf7f0\"/></svg></g><g data-chapter=\"5\"><title>الأرقام تتجمع وتشكل فرقة موسيقية</title><rect x=\"739\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"740\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"70\" width=\"100\" height=\"30\" fill=\"#81b29a\"/><circle cx=\"20\" cy=\"60\" r=\"8\" fill=\"#e5989b\"/><circle cx=\"50\" cy=\"60\" r=\"8\" fill=\"#e07a5f\"/><circle cx=\"80\" cy=\"60\" r=\"8\" fill=\"#457b9d\"/><line x1=\"28\" y1=\"60\" x2=\"42\" y2=\"60\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/><line x1=\"58\" y1=\"60\" x2=\"72\" y2=\"60\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"6\"><title>واحد يقف في المقدمة بغطرسة</title><rect x=\"921\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"922\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"80\" width=\"100\" height=\"20\" fill=\"#9e9e9e\"/><rect x=\"45\" y=\"30\" width=\"10\" height=\"50\" fill=\"#2b2b2b\"/><circle cx=\"50\" cy=\"20\" r=\"8\" fill=\"#f2cc8f\"/><line x1=\"45\" y1=\"40\" x2=\"30\" y2=\"30\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"55\" y1=\"40\" x2=\"70\" y2=\"30\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"7\"><title>ثمانية يصرخ جائعاً عن الفطير</title><rect x=\"284\" y=\"193\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"285\" y=\"194\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><circle cx=\"50\" cy=\"50\" r=\"20\" fill=\"#e07a5f\"/><circle cx=\"50\" cy=\"30\" r=\"15\" fill=\"#e07a5f\"/><circle cx=\"45\" cy=\"45\" r=\"2\" fill=\"#2b2b2b\"/><circle cx=\"55\" cy=\"45\" r=\"2\" fill=\"#2b2b2b\"/><path d=\"M 40 60 Q 50 70 60 60\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"80\" y1=\"80\" x2=\"90\" y2=\"90\" stroke=\"#2b2b2b\" stroke-width=\"3\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"8\"><title>ثمانية يسقط وأعينه مغلقة</title><rect x=\"466\" y=\"193\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"467\" y=\"194\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"85\" width=\"100\" height=\"15\" fill=\"#9e9e9e\"/><circle cx=\"30\" cy=\"75\" r=\"15\" fill=\"#e07a5f\"/><line x1=\"25\" y1=\"70\" x2=\"35\" y2=\"70\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"70\" cy=\"40\" r=\"8\" fill=\"#e5989b\"/><line x1=\"65\" y1=\"48\" x2=\"75\" y2=\"48\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"9\"><title>صفر يجلس بجانب i الحزينة</title><rect x=\"648\" y=\"193\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"649\" y=\"194\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"70\" width=\"100\" height=\"30\" fill=\"#81b29a\"/><circle cx=\"40\" cy=\"60\" r=\"5\" fill=\"#e07a5f\"/><ellipse cx=\"70\" cy=\"65\" rx=\"10\" ry=\"8\" fill=\"#ffffff\"/><circle cx=\"70\" cy=\"55\" r=\"6\" fill=\"#ffffff\"/><line x1=\"45\" y1=\"60\" x2=\"60\" y2=\"60\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 9,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 1730,
+        "completionTokens": 2368,
+        "ms": 1074323,
+        "at": "2026-08-11T11:22:36.102Z",
+        "storyStyle": "children"
+      },
+      "storyboardPanels": [
+        {
+          "caption": "الطائر الصغير يبحث عن مكانه في العش",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 70,
+              "w": 100,
+              "h": 30,
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 40,
+              "r": 15,
+              "fill": "sun"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  20,
+                  70
+                ],
+                [
+                  80,
+                  70
+                ],
+                [
+                  50,
+                  50
+                ]
+              ],
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 60,
+              "r": 5,
+              "fill": "white"
+            }
+          ]
+        },
+        {
+          "caption": "الرقم i يتجول في شوارع الرموز",
+          "chapter": 2,
+          "bg": "stone",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 80,
+              "w": 100,
+              "h": 20,
+              "fill": "earth"
+            },
+            {
+              "type": "line",
+              "x1": 10,
+              "y1": 90,
+              "x2": 90,
+              "y2": 90,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 60,
+              "r": 8,
+              "fill": "accent"
+            },
+            {
+              "type": "path",
+              "d": "M 30 40 L 70 40 M 50 20 L 50 60",
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 80,
+              "cy": 30,
+              "r": 10,
+              "fill": "none",
+              "stroke": "ink",
+              "sw": 1
+            }
+          ]
+        },
+        {
+          "caption": "i تتبع مساراً متوهجاً نحو الرقم سبعة",
+          "chapter": 3,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "path",
+              "d": "M 0 80 Q 50 60 100 80 L 100 100 L 0 100 Z",
+              "fill": "ink"
+            },
+            {
+              "type": "line",
+              "x1": 20,
+              "y1": 70,
+              "x2": 80,
+              "y2": 30,
+              "stroke": "sun",
+              "sw": 4
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 60,
+              "r": 6,
+              "fill": "accent"
+            },
+            {
+              "type": "rect",
+              "x": 75,
+              "y": 20,
+              "w": 10,
+              "h": 40,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 80,
+              "cy": 15,
+              "r": 5,
+              "fill": "paper"
+            }
+          ]
+        },
+        {
+          "caption": "i تبكي لأن سبعة لا يعرفها",
+          "chapter": 4,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 80,
+              "w": 100,
+              "h": 20,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 60,
+              "r": 5,
+              "fill": "accent"
+            },
+            {
+              "type": "line",
+              "x1": 30,
+              "y1": 65,
+              "x2": 30,
+              "y2": 75,
+              "stroke": "water",
+              "sw": 2
+            },
+            {
+              "type": "rect",
+              "x": 65,
+              "y": 20,
+              "w": 10,
+              "h": 40,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 15,
+              "r": 5,
+              "fill": "paper"
+            }
+          ]
+        },
+        {
+          "caption": "الأرقام تتجمع وتشكل فرقة موسيقية",
+          "chapter": 5,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 70,
+              "w": 100,
+              "h": 30,
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 20,
+              "cy": 60,
+              "r": 8,
+              "fill": "rose"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 60,
+              "r": 8,
+              "fill": "accent"
+            },
+            {
+              "type": "circle",
+              "cx": 80,
+              "cy": 60,
+              "r": 8,
+              "fill": "water"
+            },
+            {
+              "type": "line",
+              "x1": 28,
+              "y1": 60,
+              "x2": 42,
+              "y2": 60,
+              "stroke": "ink",
+              "sw": 1
+            },
+            {
+              "type": "line",
+              "x1": 58,
+              "y1": 60,
+              "x2": 72,
+              "y2": 60,
+              "stroke": "ink",
+              "sw": 1
+            }
+          ]
+        },
+        {
+          "caption": "واحد يقف في المقدمة بغطرسة",
+          "chapter": 6,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 80,
+              "w": 100,
+              "h": 20,
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 45,
+              "y": 30,
+              "w": 10,
+              "h": 50,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 20,
+              "r": 8,
+              "fill": "sun"
+            },
+            {
+              "type": "line",
+              "x1": 45,
+              "y1": 40,
+              "x2": 30,
+              "y2": 30,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 55,
+              "y1": 40,
+              "x2": 70,
+              "y2": 30,
+              "stroke": "ink",
+              "sw": 2
+            }
+          ]
+        },
+        {
+          "caption": "ثمانية يصرخ جائعاً عن الفطير",
+          "chapter": 7,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 20,
+              "fill": "accent"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 30,
+              "r": 15,
+              "fill": "accent"
+            },
+            {
+              "type": "circle",
+              "cx": 45,
+              "cy": 45,
+              "r": 2,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 55,
+              "cy": 45,
+              "r": 2,
+              "fill": "ink"
+            },
+            {
+              "type": "path",
+              "d": "M 40 60 Q 50 70 60 60",
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 80,
+              "y1": 80,
+              "x2": 90,
+              "y2": 90,
+              "stroke": "ink",
+              "sw": 3
+            }
+          ]
+        },
+        {
+          "caption": "ثمانية يسقط وأعينه مغلقة",
+          "chapter": 8,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 85,
+              "w": 100,
+              "h": 15,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 75,
+              "r": 15,
+              "fill": "accent"
+            },
+            {
+              "type": "line",
+              "x1": 25,
+              "y1": 70,
+              "x2": 35,
+              "y2": 70,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 40,
+              "r": 8,
+              "fill": "rose"
+            },
+            {
+              "type": "line",
+              "x1": 65,
+              "y1": 48,
+              "x2": 75,
+              "y2": 48,
+              "stroke": "ink",
+              "sw": 2
+            }
+          ]
+        },
+        {
+          "caption": "صفر يجلس بجانب i الحزينة",
+          "chapter": 9,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 70,
+              "w": 100,
+              "h": 30,
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 40,
+              "cy": 60,
+              "r": 5,
+              "fill": "accent"
+            },
+            {
+              "type": "ellipse",
+              "cx": 70,
+              "cy": 65,
+              "rx": 10,
+              "ry": 8,
+              "fill": "white"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 55,
+              "r": 6,
+              "fill": "white"
+            },
+            {
+              "type": "line",
+              "x1": 45,
+              "y1": 60,
+              "x2": 60,
+              "y2": 60,
+              "stroke": "ink",
+              "sw": 1
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
     },
     {
       "id": "sl_1051537691",
@@ -8235,7 +8686,7 @@
           }
         },
         {
-          "id": 1,
+          "id": "ls_534284213",
           "title": "Spavali am Donau",
           "desc": "Träumen und Flussgeräusche",
           "icon": "🌊",
@@ -10524,7 +10975,8 @@
       },
       "generatedAt": "2026-08-10T11:46:44.339Z",
       "updatedAt": "2026-08-10T11:55:44.312Z",
-      "createdBy": "admin"
+      "createdBy": "admin",
+      "script": "latin"
     },
     {
       "id": "tp_17863620662290000045",
@@ -10701,7 +11153,8 @@
       },
       "generatedAt": "2026-08-10T11:41:06.230Z",
       "updatedAt": "2026-08-10T11:44:30.865Z",
-      "createdBy": "admin"
+      "createdBy": "admin",
+      "script": "latin"
     },
     {
       "id": "tp_17863000442000000196",
@@ -59434,6 +59887,61 @@
             "at": "2026-06-26T10:43:35.825Z"
           },
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1786453604471_10_comprehension",
+          "type": "comprehension",
+          "title": "رحلة الحرف i الصغير",
+          "desc": "أسئلة لفهم قصة الحرف i وعالم الأرقام الغريب.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "لماذا بدأت little i تبكي عندما قابلت الرقم سبعة؟",
+              "choices": [
+                "لأن سبعة كان غاضباً منها ويصرخ في وجهها.",
+                "لأنها ظنت أنه قد يكون من عائلتها لكنه نفى ذلك.",
+                "لأن سبعة رفض أن يعطيها الطعام الذي كانت جائعةً له.",
+                "لأن سبعة أخبرها أنها صغيرة جداً ولا مكان لها في هذا العالم."
+              ],
+              "correctIndex": 1,
+              "why": "لأن النص يذكر صراحةً أنها سألت 'هل أنت من عائلتي؟' وعندما هز رأس سبعة ونفى ذلك، انفجرت بالبكاء."
+            },
+            {
+              "q": "ما الذي حدث للرقم ثمانية بعد أن قال كلمة 'PIE'؟",
+              "choices": [
+                "انهار وسقط أرضاً ولم يفتح عينيه.",
+                "ذهب لتناول الفطيرة مع الأرقام الآخرين.",
+                "غضب من الرقم واحد وهاجمه بالأيدي.",
+                "ضحك كثيراً لأنه فهم المزحة التي قيلت له."
+              ],
+              "correctIndex": 0,
+              "why": "لأن النص يصف مباشرةً أن 'Eight collapsed' (انهار ثمانية) بعد صراخه على كلمة PIE."
+            },
+            {
+              "q": "كيف ساعد الصفر الحرف i في الشعور بالتحسن؟",
+              "choices": [
+                "أقنعها بأن تصبح رقماً مثل باقي الأرقام.",
+                "أعطى لها عذراً للهروب من العالم الغريب.",
+                "أظهر لها أن كونها مختلفة هو ما يجعلها فريدة ومقبولة.",
+                "أخبرها أن الرقم واحد سيوقف سلوكه السيئ قريباً."
+              ],
+              "correctIndex": 2,
+              "why": "لأن الصفر قال لها إن كونها ليست واحداً أو سبعة هو بالضبط ما يجعلها صفرًا، مما جعلها تتوقف عن البكاء وتشعر أن الأمر 'مناسب'."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 2874,
+            "completionTokens": 523,
+            "ms": 425893,
+            "at": "2026-08-11T13:06:44.471Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -59441,8 +59949,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 620,
-        "totalCompletionTokens": 248,
+        "totalPromptTokens": 3494,
+        "totalCompletionTokens": 771,
         "lessons": [
           {
             "lessonNum": 1,
@@ -59456,10 +59964,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 3397
+        }
       },
       "generatedAt": "2026-06-26T10:39:24.282Z",
-      "updatedAt": "2026-06-26T11:18:56.346Z",
+      "updatedAt": "2026-08-11T13:06:44.471Z",
       "id": "tp_17824706158760001035",
       "storyMeta": {
         "type": "story",
@@ -59971,6 +60482,61 @@
             "ms": 316755,
             "at": "2026-06-26T11:38:40.781Z"
           }
+        },
+        {
+          "id": "ls_1786453178503_9_comprehension",
+          "type": "comprehension",
+          "title": "فهم قصة little i",
+          "desc": "أسئلة لفهم أحداث المشاعر في القصة",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "لماذا بدأت little i تبكي عندما قابلت الرقم سبعة؟",
+              "choices": [
+                "لأن سبعة كان غاضباً منها.",
+                "لأنها شعرت بالوحدة وعدم الانتماء.",
+                "لأن سبعة رفض إعطائها الطعام.",
+                "لأن الطريق إلى العالم الآخر كان مخيفاً."
+              ],
+              "correctIndex": 1,
+              "why": "لأن سبعة قال لها إنه مجرد سبعة وليس من عائلتها، مما جعلها تشعر أنها لا تنتمي هناك."
+            },
+            {
+              "q": "كيف تفاعل الرقم صفر مع little i عندما كانت حزينة؟",
+              "choices": [
+                "ضحك عليها لأنها مختلفة.",
+                "أخبرها بأنها يجب أن تصبح رقماً مثل الآخرين.",
+                "جلس بجانبها وطمأنها بأن اختلافها هو ما يجعلها مميزة.",
+                "طلب منها مغادرة العالم فوراً."
+              ],
+              "correctIndex": 2,
+              "why": "لأن صفر قال لها إن كونها ليست واحداً أو سبعة هو بالضبط ما يجعلها هي، مما جعلها تتوقف عن البكاء."
+            },
+            {
+              "q": "ماذا حدث للرقم ثمانية في نهاية القصة؟",
+              "choices": [
+                "أكل الكعك وسعد كثيراً.",
+                "تحول إلى رقم سبعة.",
+                "انهار بعد مشاجرة مع الرقم واحد.",
+                "غادر العالم ليبحث عن الطعام."
+              ],
+              "correctIndex": 2,
+              "why": "لأن النص يذكر أن ثمانية انهار واستلقى على الأرض بعد أن رمى له واحدٌ كابلًا أثناء صراخه."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 2817,
+            "completionTokens": 443,
+            "ms": 407950,
+            "at": "2026-08-11T12:59:38.503Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -59978,8 +60544,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 652,
-        "totalCompletionTokens": 257,
+        "totalPromptTokens": 3469,
+        "totalCompletionTokens": 700,
         "lessons": [
           {
             "lessonNum": 1,
@@ -59993,10 +60559,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 3260
+        }
       },
       "generatedAt": "2026-06-26T10:34:19.772Z",
-      "updatedAt": "2026-06-26T11:41:40.567Z",
+      "updatedAt": "2026-08-11T12:59:38.503Z",
       "id": "tp_17824703642070000958",
       "storyMeta": {
         "type": "story",
@@ -60301,6 +60870,61 @@
             "at": "2026-06-26T10:34:19.661Z"
           },
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1786452770495_8_comprehension",
+          "type": "comprehension",
+          "title": "فهم قصة little i",
+          "desc": "أسئلة لفهم أحداث ومشاعر الشخصية الرئيسية في القصة.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "لماذا بدأت little i تبكي عندما التقت بالرقم سبعة؟",
+              "choices": [
+                "لأن سبعة كان يبدو غريباً ومخيفاً لها.",
+                "لأنها ظنت أنه قد يكون من عائلتها لكنه نفى ذلك.",
+                "لأن سبعة رفض أن يلعب معها في العالم الجديد.",
+                "لأن سبعة أخبرها أنها صغيرة جداً ولا مكان لها."
+              ],
+              "correctIndex": 1,
+              "why": "لأن النص يذكر أنها سألت 'هل أنت من عائلتي؟' وعندما هز رأس سبعة وقال إنه مجرد سبعة، انفجرت بالبكاء."
+            },
+            {
+              "q": "ما الذي حدث للرقم ثمانية في نهاية المعركة مع الرقم واحد؟",
+              "choices": [
+                "تمكن من أكل الفطيرة قبل أن يوقفه أحد.",
+                "غادر المكان خوفاً من الرقم واحد.",
+                "سقط وأغمي عليه بعد أن رمى له واحدٌ كابلًا.",
+                "تزوج من الرقم صفر وهربا معاً."
+              ],
+              "correctIndex": 2,
+              "why": "لأن النص يصف كيف رمى واحد كابلًا، ثم سقط ثمانية ويكمن الآن مضجعاً ويسأل عما إذا كان سيفقد وعيه."
+            },
+            {
+              "q": "كيف تفاعل الرقم صفر مع little i عندما شعرت بالحزن؟",
+              "choices": [
+                "ضحك منها لأنها مختلفة عن الأرقام الأخرى.",
+                "تجاهلها لأنهم لم يكونا متشابهين في الشخصية.",
+                "جلس بجانبها بهدوء وابتسم لها بعد أن استمع لها.",
+                "أخبرها أنها يجب أن تذهب لتبحث عن عائلتها."
+              ],
+              "correctIndex": 2,
+              "why": "لأن النص يذكر أن صفر جلس بجانبها بهدوء، وعندما قالت إنها لا تنتمي هنا، ابتسم لها وقال إنه لا يعتقد أن ذلك صحيح."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 2716,
+            "completionTokens": 514,
+            "ms": 410750,
+            "at": "2026-08-11T12:52:50.495Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -60308,8 +60932,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 667,
-        "totalCompletionTokens": 239,
+        "totalPromptTokens": 3383,
+        "totalCompletionTokens": 753,
         "lessons": [
           {
             "lessonNum": 1,
@@ -60323,10 +60947,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 3230
+        }
       },
       "generatedAt": "2026-06-26T10:30:15.938Z",
-      "updatedAt": "2026-06-26T11:14:42.434Z",
+      "updatedAt": "2026-08-11T12:52:50.495Z",
       "id": "tp_17824700597030000842",
       "storyMeta": {
         "type": "story",
@@ -60663,6 +61290,61 @@
             "at": "2026-06-26T10:30:15.829Z"
           },
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1786452359685_7_comprehension",
+          "type": "comprehension",
+          "title": "فهم قصة little i",
+          "desc": "اختبر فهمك لقصة little i وعالم الأرقام الغريب.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "لماذا بدأت little i تبكي بعد أن قابلت الرقم سبعة؟",
+              "choices": [
+                "لأن سبعة رفض الاعتراف بأنها من عائلته.",
+                "لأن سبعة كان قاسياً ولم يتحدث معها بلهجة لطيفة.",
+                "لأن سبعة أخبرها أنها صغيرة جداً ولا مكان لها.",
+                "لأن سبعة ضحك عليها بسبب شكلها المختلف."
+              ],
+              "correctIndex": 0,
+              "why": "لأن النص يذكر صراحةً أن little i سألت 'هل أنت من عائلتي؟' فرد عليها سبعة بالرفض قائلاً 'أنا مجرد سبعة'، مما أدى إلى بكائها."
+            },
+            {
+              "q": "ما الذي حدث للرقم ثمانية في نهاية القصة؟",
+              "choices": [
+                "غادر العالم بسرعة بعد أن أكل الكعك.",
+                "سقط أرضاً وفقد الوعي بعد مشاجرة مع الرقم واحد.",
+                "انضم إلى فرقة الأرقام وأصبح قائداً لهم.",
+                "تزوج من little i لأنهما متشابهان."
+              ],
+              "correctIndex": 1,
+              "why": "لأن النص يصف أن ثمانية انهار وسقط أرضاً بعد أن رمى عليه الرقم واحد كابلاً، ويسأل النص عما إذا كان سيستعيد وعيه أم لا."
+            },
+            {
+              "q": "كيف تصف little i مشاعرها أثناء مشاهدة الأحداث في عالم الأرقام؟",
+              "choices": [
+                "تشعر بالارتباك والخوف وتريد الاختفاء.",
+                "تشعر بالسعادة لأنها وجدت أصدقاء جدد.",
+                "تشعر بالغضب لأنها تريد أن تكون مثلهم.",
+                "تشعر بالملل لأن الأحداث مكررة."
+              ],
+              "correctIndex": 0,
+              "why": "لأن النص يذكر أنها 'ترتجف خوفاً وتريد الاختفاء' وأن الموقف 'لا يبدو حقيقياً' لها، مما يدل على شعورها بالارتباك والخوف."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 2603,
+            "completionTokens": 517,
+            "ms": 401548,
+            "at": "2026-08-11T12:45:59.685Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -60670,8 +61352,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 692,
-        "totalCompletionTokens": 267,
+        "totalPromptTokens": 3295,
+        "totalCompletionTokens": 784,
         "lessons": [
           {
             "lessonNum": 1,
@@ -60685,10 +61367,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 3120
+        }
       },
       "generatedAt": "2026-06-26T10:26:21.003Z",
-      "updatedAt": "2026-06-26T11:12:53.473Z",
+      "updatedAt": "2026-08-11T12:45:59.685Z",
       "id": "tp_17824698158710000734",
       "storyMeta": {
         "type": "story",
@@ -61019,6 +61704,61 @@
             "at": "2026-06-26T10:26:20.897Z"
           },
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1786451958075_6_comprehension",
+          "type": "comprehension",
+          "title": "فهم قصة little i",
+          "desc": "اختبر فهمك لقصة little i وعالم الأرقام الغريب.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "لماذا بدأت little i تبكي عندما التقت بالرقم سبعة؟",
+              "choices": [
+                "لأن سبعة رفض أن يكون جزءاً من عائلتها.",
+                "لأن سبعة كان طويلاً جداً وخوفاً منها.",
+                "لأن سبعة ضحك عليها بسبب صغر حجمها.",
+                "لأن سبعة أخبرها أنها ليست رقماً حقيقياً."
+              ],
+              "correctIndex": 0,
+              "why": "لأن القصة تذكر أن little i سألت 'هل أنت من عائلتي؟' فرد سبعة برفضه قائلاً 'أنا مجرد سبعة'، مما جعلها تبكي."
+            },
+            {
+              "q": "ما الذي يميز الرقم ثمانية عن باقي الأرقام في القصة؟",
+              "choices": [
+                "انه مشغول دائماً بالأكل وخاصة الفطائر.",
+                "انه يحاول أن يكون أول رقم في الصف.",
+                "انه يتنقل بين العالمين بشكل مستمر.",
+                "انه يعرف الإجابات لجميع الأسئلة."
+              ],
+              "correctIndex": 0,
+              "why": "لأن النص يصف ثمانية بأنه جائع دائماً، يحب الفطائر والكعك، ويصرخ عندما يسمع كلمة فطيرة."
+            },
+            {
+              "q": "كيف تصف القصة سلوك الرقم واحد؟",
+              "choices": [
+                "انه شخص أناني لا يهتم بمن يؤذي.",
+                "انه لطيف ويساعد الأرقام الأخرى.",
+                "انه خجول ولا يتكلم مع أحد.",
+                "انه ذكي ويعرف كل الإجابات."
+              ],
+              "correctIndex": 0,
+              "why": "لأن النص يصف واحد بأنه 'mean' (قاسٍ/سيء) ويقول إنه 'لا يهتم بمن سيجرحه'."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 2477,
+            "completionTokens": 476,
+            "ms": 376635,
+            "at": "2026-08-11T12:39:18.075Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -61026,8 +61766,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 674,
-        "totalCompletionTokens": 236,
+        "totalPromptTokens": 3151,
+        "totalCompletionTokens": 712,
         "lessons": [
           {
             "lessonNum": 1,
@@ -61041,10 +61781,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 2953
+        }
       },
       "generatedAt": "2026-06-26T10:22:06.501Z",
-      "updatedAt": "2026-06-26T11:10:25.178Z",
+      "updatedAt": "2026-08-11T12:39:18.075Z",
       "id": "tp_17824695809340000611",
       "storyMeta": {
         "type": "story",
@@ -61373,6 +62116,61 @@
             "at": "2026-06-26T10:22:06.369Z"
           },
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1786451581386_5_comprehension",
+          "type": "comprehension",
+          "title": "فهم القصة: رحلة الرقم الصغير i",
+          "desc": "اختبر فهمك لرحلة الشخصية الرئيسية في القصة الإنجليزية.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "لماذا بدأت الشخصية \"i\" تبكي بعد مقابلتها للرقم سبعة؟",
+              "choices": [
+                "لأن سبعة رفض أن يكون جزءاً من عائلتها.",
+                "لأن سبعة كان طويلاً جداً وخوفاً منها.",
+                "لأن سبعة أخبرها أنها صغيرة جداً وضعيفة.",
+                "لأن سبعة ضحك عليها بسبب شكلها المختلف."
+              ],
+              "correctIndex": 0,
+              "why": "لأن النص يقول صراحةً: 'Are you my family?' asked i. Seven shook his head... 'But I’m just a Seven.' ثم تبكت i."
+            },
+            {
+              "q": "ما الذي فعله الرقم \"واحد\" (One) عندما رآهم جميعاً؟",
+              "choices": [
+                "رحب بهم بلطف ودعاهم للعب.",
+                "أخبرهم أنه يعرف الإجابات الصحيحة لكل شيء.",
+                "نظر إليهم بحكم قاسٍ وقال إنهم مختلفون وصغار.",
+                "ساعد i في العثور على مكانها في الدائرة."
+              ],
+              "correctIndex": 2,
+              "why": "لأن النص يصف One بأنه 'mean' (قاسي) ويقول: 'She’s so different, she’s so small,' noticed One."
+            },
+            {
+              "q": "كيف دخلت الشخصية \"i\" إلى عالم الأرقام؟",
+              "choices": [
+                "سارت على طريق متوهج بينما كان الجميع نائماً.",
+                "انتقلت هناك مع عائلتها في رحلة طويلة.",
+                "دعيت من قبل الرقم سبعة لزيارته.",
+                "وجدت نفسها هناك فجأة دون أن تعرف كيف."
+              ],
+              "correctIndex": 0,
+              "why": "لأن النص يذكر: 'One evening, while everyone slept, little i followed a glowing path. It led to another world.'"
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 2358,
+            "completionTokens": 495,
+            "ms": 375302,
+            "at": "2026-08-11T12:33:01.386Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -61380,8 +62178,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 653,
-        "totalCompletionTokens": 234,
+        "totalPromptTokens": 3011,
+        "totalCompletionTokens": 729,
         "lessons": [
           {
             "lessonNum": 1,
@@ -61395,10 +62193,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 2853
+        }
       },
       "generatedAt": "2026-06-26T10:17:57.141Z",
-      "updatedAt": "2026-06-26T11:08:31.730Z",
+      "updatedAt": "2026-08-11T12:33:01.386Z",
       "id": "tp_17824693264190000513",
       "storyMeta": {
         "type": "story",
@@ -61714,6 +62515,61 @@
             "at": "2026-06-26T10:17:57.009Z"
           },
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1786451206028_4_comprehension",
+          "type": "comprehension",
+          "title": "فهم قصة الحرف i الصغير",
+          "desc": "اختبر فهمك لقصة الحرف i الصغير وعالم الأرقام الغريب.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "لماذا بكى الحرف \"i\" عندما التقى بالرقم سبعة؟",
+              "choices": [
+                "لأنه شعر بالوحدة لأنه لا يعرف مكانه في عالم الأرقام.",
+                "لأن الرقم سبعة رفض التحدث معه بلهجة غريبة.",
+                "لأنه خاف من ظهور أرقام أخرى غريبة الشكل.",
+                "لأنه أدرك أنه ليس جزءاً من عائلة الأرقام الحقيقية."
+              ],
+              "correctIndex": 0,
+              "why": "لأن النص يذكر أن i لم تعرف مكانها، وعندما سألته عن كونه عائلته رفض وقال إنه مجرد سبعة، مما جعلها تبكي بسبب شعورها بالغربة وعدم الانتماء."
+            },
+            {
+              "q": "كيف تصف الأرقام الأخرى الحرف \"i\" عندما رآه الجميع؟",
+              "choices": [
+                "أنه مختلف وصغير جداً مقارنة بهم.",
+                "أنه طويل وقوي مثل الرقم واحد.",
+                "أنه غامض ويبدو وكأنه في تنكر.",
+                "أنه ذكي ويعرف كل الإجابات."
+              ],
+              "correctIndex": 0,
+              "why": "لأن النص يذكر صراحة أن الرقم واحد لاحظ قائلاً: 'هي مختلفة جداً، وهي صغيرة جداً'."
+            },
+            {
+              "q": "ما الذي فعله الحرف \"i\" في البداية قبل أن يتبع المسار المتوهج؟",
+              "choices": [
+                "تجول في شوارع الأرض حيث تُصنع القواعد.",
+                "دخل إلى عالم الطيور والقطط.",
+                "حاول ترتيب الأرقام في صفوف ودوائر.",
+                "سأل الرقم سبعة عن هويته الحقيقية."
+              ],
+              "correctIndex": 0,
+              "why": "لأن النص يصف في قسم العناوين (÷×+−) أن i تجولت في الشوارع حيث تُصنع القواعد وتعرف كل مصير، قبل أن تتبع المسار المتوهج في المساء."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 2269,
+            "completionTokens": 517,
+            "ms": 374618,
+            "at": "2026-08-11T12:26:46.028Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -61721,8 +62577,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 691,
-        "totalCompletionTokens": 275,
+        "totalPromptTokens": 2960,
+        "totalCompletionTokens": 792,
         "lessons": [
           {
             "lessonNum": 1,
@@ -61736,10 +62592,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 2786
+        }
       },
       "generatedAt": "2026-06-26T10:13:32.472Z",
-      "updatedAt": "2026-06-26T11:06:46.748Z",
+      "updatedAt": "2026-08-11T12:26:46.028Z",
       "id": "tp_17824690770610000447",
       "storyMeta": {
         "type": "story",
@@ -62044,6 +62903,61 @@
             "at": "2026-06-26T10:13:32.335Z"
           },
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1786450831347_3_comprehension",
+          "type": "comprehension",
+          "title": "فهم القصة: رحلة الرقم الصغير",
+          "desc": "اختبر فهمك لما حدث للرقم i ولماذا شعرت بالحزن والضياع في عالم الأرقام.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "لماذا سارت little i في المساء على مسار متوهج؟",
+              "choices": [
+                "لأنها كانت تبحث عن أصدقائها من الطيور والقطط.",
+                "لتصل إلى عالم آخر غريب للأرقام.",
+                "لأنها تريد أن تصبح رقماً كبيراً مثل الرقم سبعة.",
+                "لأن القواعد في أرض الأرقام أمرتها بذلك."
+              ],
+              "correctIndex": 1,
+              "why": "لأن النص يقول إنها اتبعت مساراً متوهجاً أثناء نوم الجميع وقادها إلى عالم آخر غريب وهو عالم الأرقام."
+            },
+            {
+              "q": "ماذا فعل الرقم سبعة عندما سألت little i إذا كانتا من العائلة؟",
+              "choices": [
+                "اعتذر لها وقال إنه مجرد رقم سبعة.",
+                "ضحك عليها وأخبرها أنها صغيرة جداً.",
+                "دعاها للعب معه في عالم الأرقام.",
+                "أخبرها أن الرقم 42 هو الأقرب إليها."
+              ],
+              "correctIndex": 0,
+              "why": "لأن النص يذكر أن سبعة هز رأسه وقال: 'آسف، أنا مجرد رقم سبعة'."
+            },
+            {
+              "q": "لماذا بدأت little i بالبكاء بعد حديثها مع الرقم سبعة؟",
+              "choices": [
+                "لأنها أدركت أنها لا تعرف مكانها في عالم الأرقام.",
+                "لأن الرقم سبعة رفض التعرف عليها ولم يعتبرها من عائلته.",
+                "لأنها فقدت المسار المتوهج وعادت إلى المنزل وحيدة.",
+                "لأن الأرقام الكبيرة مثل 42 كانت تضحك عليها."
+              ],
+              "correctIndex": 1,
+              "why": "لأن النص يربط مباشرة بين سؤالها عن العائلة ورد سبعة بالرفض (بأنه مجرد سبعة) وبين انفجارها بالبكاء فوراً."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 2138,
+            "completionTokens": 506,
+            "ms": 344276,
+            "at": "2026-08-11T12:20:31.347Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -62051,8 +62965,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 675,
-        "totalCompletionTokens": 241,
+        "totalPromptTokens": 2813,
+        "totalCompletionTokens": 747,
         "lessons": [
           {
             "lessonNum": 1,
@@ -62066,10 +62980,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 2644
+        }
       },
       "generatedAt": "2026-06-26T10:09:45.546Z",
-      "updatedAt": "2026-06-26T11:04:54.806Z",
+      "updatedAt": "2026-08-11T12:20:31.347Z",
       "id": "tp_17824688123810000351",
       "storyMeta": {
         "type": "story",
@@ -62383,6 +63300,61 @@
             "at": "2026-06-26T10:09:45.422Z"
           },
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1786450487010_2_comprehension",
+          "type": "comprehension",
+          "title": "فهم القصة: رحلة الرقم الصغير",
+          "desc": "اختبر فهمك لأحداث القصة ومشاعر الشخصية الرئيسية.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "لماذا شعرت الحرف 'i' بالحيرة في البداية؟",
+              "choices": [
+                "لأنها لم تجد عشاً لتعيش فيه.",
+                "لأنها لم تعرف مكانها بين الأرقام.",
+                "لأنها اختفت عن عيون الناس الكبار.",
+                "لأنها خلطت بين النقطة والفاصلة."
+              ],
+              "correctIndex": 1,
+              "why": "لأن النص يقول صراحةً إنها لم تعرف أين مكانها في عالم الأرقام."
+            },
+            {
+              "q": "ماذا فعلت الحرف 'i' عندما نام الجميع؟",
+              "choices": [
+                "بقيت نائمة في بيتها.",
+                "سارت مع القطط الصغيرة.",
+                "اتبعت مساراً متوهجاً إلى عالم آخر.",
+                "حاولت تعليم الأرقام كيف تقرأ."
+              ],
+              "correctIndex": 2,
+              "why": "لأن النص يذكر أنها اتبعت مساراً متوهجاً قادها إلى عالم الأرقام أثناء نوم الجميع."
+            },
+            {
+              "q": "كيف استجاب الرقم سبعة (Seven) عندما سألته 'i' عن معرفته بها؟",
+              "choices": [
+                "رحب بها وقال إنه يعرفها جيداً.",
+                "رفض التعرف عليها وقال إنه رقم سبعة.",
+                "ضحك منها وسألها عن مكان عشها.",
+                "أخبرها أنها تشبهه كثيراً."
+              ],
+              "correctIndex": 1,
+              "why": "لأن النص يصف أنه هز كتفيه وقال 'لا' ثم أكد أنه رقم سبعة."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 2017,
+            "completionTokens": 432,
+            "ms": 319866,
+            "at": "2026-08-11T12:14:47.010Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -62390,8 +63362,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 650,
-        "totalCompletionTokens": 243,
+        "totalPromptTokens": 2667,
+        "totalCompletionTokens": 675,
         "lessons": [
           {
             "lessonNum": 1,
@@ -62405,10 +63377,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 2449
+        }
       },
       "generatedAt": "2026-06-26T10:04:07.917Z",
-      "updatedAt": "2026-06-26T11:03:09.645Z",
+      "updatedAt": "2026-08-11T12:14:47.010Z",
       "id": "tp_17824685854690000203",
       "storyMeta": {
         "type": "story",
@@ -62868,6 +63843,61 @@
             "ms": 1,
             "at": "2026-06-26T11:04:36.524Z"
           }
+        },
+        {
+          "id": "ls_1786450167083_1_comprehension",
+          "type": "comprehension",
+          "title": "فهم القصة: كاليلا ودمنة والصغير أنا",
+          "desc": "اختبر فهمك لأحداث الحكايات المضمنة في النص.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "لماذا ترك الرجل الثور وحيداً في الوحل ثم عاد ليخبر صاحبه بموته؟",
+              "choices": [
+                "لأنه خاف من الوحل وأراد الهروب منه فوراً.",
+                "لأنه سمع قصة عن رجل مات رغم حذره، فاعتقد أن الموت حتمي ولا فائدة من الجهد.",
+                "لأن الثور مات بالفعل بسبب المرض قبل أن يتركه.",
+                "لأن صاحبه طلب منه العودة بسرعة لإنهاء المهمة."
+              ],
+              "correctIndex": 1,
+              "why": "لأن النص يذكر أنه تبرم واستوحش ثم تذكر قصة الرجل الذي حاول الهروب من الذئب والغرق في الماء، فاستنتج أن اجتهاده لن يغني عنه شيئاً إذا حانت المنية."
+            },
+            {
+              "q": "ما الدافع الرئيسي لدمنة ليخاطب أخاه كليلة حول سلوك الأسد؟",
+              "choices": [
+                "لأنه يريد أن يصبح ملكاً مكان الأسد.",
+                "لأنه يشعر بالفضول تجاه سبب بقاء الأسد في مكانه دون حركة.",
+                "لأنه يخاف على حياته من الأسد ويبحث عن خطة للهروب.",
+                "لأن كليلة سأله أولاً عن سبب كسل الأسد."
+              ],
+              "correctIndex": 1,
+              "why": "لأن النص يذكر أن دمنة قال لأخيه: يا أخي ما شأن الأسد مقيماَ مكانه لا يبرح ولا ينشط؟ مما يدل على فضوله وملاحظته للسلوك الغريب."
+            },
+            {
+              "q": "كيف تشعر الشخصية \"الصغيرة i\" في عالم الأرقام مقارنة بغيرها؟",
+              "choices": [
+                "تشعر بالارتياح لأن لها مكاناً محدداً وواضحاً.",
+                "تشعر بالحيرة لعدم معرفتها لمكانها أو هويتها بين الأرقام.",
+                "تشعر بالغضب لأن القواعد تمنعها من الحركة.",
+                "تشعر بالفخر لأنها مختلفة عن باقي الأرقام."
+              ],
+              "correctIndex": 1,
+              "why": "لأن النص يقول صراحةً: 'But little i did not know where hers was'، مما يعكس شعورها بعدم الانتماء أو الحيرة حول مكانها."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1924,
+            "completionTokens": 579,
+            "ms": 351914,
+            "at": "2026-08-11T12:09:27.083Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -62875,8 +63905,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 649,
-        "totalCompletionTokens": 244,
+        "totalPromptTokens": 2573,
+        "totalCompletionTokens": 823,
         "lessons": [
           {
             "lessonNum": 1,
@@ -62890,10 +63920,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 2503
+        }
       },
       "generatedAt": "2026-06-26T09:58:01.075Z",
-      "updatedAt": "2026-06-26T11:04:36.524Z",
+      "updatedAt": "2026-08-11T12:09:27.083Z",
       "id": "tp_17824682478370000180",
       "storyMeta": {
         "type": "story",
@@ -65228,6 +66261,61 @@
             "valid": 16,
             "at": "2026-07-11T11:31:03.239Z"
           }
+        },
+        {
+          "id": "ls_1786449815104_0_comprehension",
+          "type": "comprehension",
+          "title": "فهم القصة: كاليلا ودمنة والصغير أنا",
+          "desc": "اختبر فهمك لأحداث النصين من خلال الإجابة على هذه الأسئلة.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "لماذا أرسل الملك دبشليم الفيلسوف بيدبا ليقص عليه مثلاً؟",
+              "choices": [
+                "ليعلمه كيف يجمع المال من أحسن وجه.",
+                "ليشرح له كيف يتصرف الأب مع أبنائه الذين أسرفوا في ماله.",
+                "ليبين له كيف يمكن للكذوب أن يقطع بين متحابين ويحملهما على العداوة.",
+                "ليخبره عن قصة الثور الذي مات في الوحل."
+              ],
+              "correctIndex": 2,
+              "why": "لأن الملك طلب من بيدبا أن يضرب مثلاّ لمتحابين يقطع بينهما الكذوب المحتال."
+            },
+            {
+              "q": "ما الذي حدث للثور بعد أن تركه صاحبه في الوحل؟",
+              "choices": [
+                "مات لأن صاحبه كذب عليه.",
+                "نجح في الخروج بمساعدة أهل القرية.",
+                "خلص من مكانه ووجد مرجاً خصيباً فسمن وأصبح ضحية للأسد.",
+                "بقي عالقاً في الوحل حتى جاع ومات."
+              ],
+              "correctIndex": 2,
+              "why": "لأن النص يذكر أن الثور خلص من مكانه وانبعث في مرج مخصب، ثم سمعه الأسد الذي كان منفرداً برأيه."
+            },
+            {
+              "q": "ما الشعور الأساسي الذي يعبر عنه الحرف \"i\" الصغير في الجزء الثاني من النص؟",
+              "choices": [
+                "الغضب لأن الأرقام الأخرى لا تقبله.",
+                "الحيرة لعدم معرفته مكانه في عالم الأرقام.",
+                "الفخر لأنه مختلف عن باقي الأرقام.",
+                "الخوف من أن يختفي مثل الطيور والقطط."
+              ],
+              "correctIndex": 1,
+              "why": "لأن النص يقول صراحةً: \"But little i did not know where hers was\" (ولكن الصغير أنا لم تعرف أين مكانها)."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1836,
+            "completionTokens": 517,
+            "ms": 308392,
+            "at": "2026-08-11T12:03:35.104Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -65235,8 +66323,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 650,
-        "totalCompletionTokens": 293,
+        "totalPromptTokens": 2486,
+        "totalCompletionTokens": 810,
         "lessons": [
           {
             "lessonNum": 1,
@@ -65250,10 +66338,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 2353
+        }
       },
       "generatedAt": "2026-06-26T09:54:21.279Z",
-      "updatedAt": "2026-07-23T18:46:54.389Z",
+      "updatedAt": "2026-08-11T12:03:35.104Z",
       "id": "tp_17824678810030000009",
       "continuedFromId": "tp_17825433860400000751",
       "continuedFrom": "Kalila and Dimna",
