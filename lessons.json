@@ -98062,6 +98062,61 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1786574796438_7_comprehension",
+          "type": "comprehension",
+          "title": "Il viaggio di little i",
+          "desc": "Comprendi la storia di little i nel mondo dei numeri.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Perché little i si sente persa all'inizio della storia?",
+              "choices": [
+                "Perché non sa dove appartiene nel mondo dei numeri.",
+                "Perché ha perso la sua famiglia di uccellini.",
+                "Perché non riesce a trovare il suo nido.",
+                "Perché i numeri la ignorano deliberatamente."
+              ],
+              "correctIndex": 0,
+              "why": "Il testo dice che 'little i did not know where hers was' riferendosi al suo posto nel mondo dei numeri."
+            },
+            {
+              "q": "Come reagisce Zero quando little i dice di non appartenere lì?",
+              "choices": [
+                "Le spiega che essere diversi è la sua forza.",
+                "Ride di lei perché è troppo piccola.",
+                "Se ne va subito senza parlare.",
+                "Le dice di diventare come gli altri numeri."
+              ],
+              "correctIndex": 0,
+              "why": "Zero le dice 'It’s exactly what makes me Zero', mostrando che la diversità è accettata e positiva."
+            },
+            {
+              "q": "Cosa succede a Eight dopo aver visto il simbolo infinito?",
+              "choices": [
+                "Si scontra con One e collassa.",
+                "Trova subito un pezzo di torta.",
+                "Diventa l'amico di little i.",
+                "Inizia a cantare in una banda."
+              ],
+              "correctIndex": 0,
+              "why": "Il testo narra che 'One throws a cable', Eight 'collapsed' e poi cercò vendetta contro One."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1534,
+            "completionTokens": 417,
+            "ms": 300416,
+            "at": "2026-08-12T22:46:36.438Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -98069,8 +98124,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 719,
-        "totalCompletionTokens": 319,
+        "totalPromptTokens": 2253,
+        "totalCompletionTokens": 736,
         "lessons": [
           {
             "lessonNum": 1,
@@ -98084,10 +98139,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 1951
+        }
       },
       "generatedAt": "2026-06-12T18:17:24.034Z",
-      "updatedAt": "2026-06-15T08:23:11.232Z",
+      "updatedAt": "2026-08-12T22:46:36.438Z",
       "id": "tp_17812884182760000789",
       "storyMeta": {
         "type": "story",
@@ -98309,6 +98367,61 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1786574495950_6_comprehension",
+          "type": "comprehension",
+          "title": "Il viaggio di little i",
+          "desc": "Comprendi la storia di little i nel mondo dei numeri.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Perché little i piange quando incontra il numero Sette?",
+              "choices": [
+                "Perché Sette è molto alto e spaventoso.",
+                "Perché Sette le dice che non è della sua famiglia.",
+                "Perché Sette non sa fare i calcoli.",
+                "Perché Sette le ruba il suo posto."
+              ],
+              "correctIndex": 1,
+              "why": "Sette risponde 'No' quando lei gli chiede se lo conosce e dice di essere solo un Sette, facendola sentire sola."
+            },
+            {
+              "q": "Cosa fa il numero Otto che causa il suo svenimento?",
+              "choices": [
+                "Inizia a correre per mangiare una torta.",
+                "Litiga con il numero Uno.",
+                "Si addormenta improvvisamente.",
+                "Viaggia in giro per il mondo."
+              ],
+              "correctIndex": 0,
+              "why": "Otto urla di fame per la torta ('pie'), ma prima che possa mangiare, Uno gli lancia un cavo e lui collassa."
+            },
+            {
+              "q": "Come cambia little i dopo aver parlato con Zero?",
+              "choices": [
+                "Diventa arrabbiata con tutti.",
+                "Smette di piangere perché si sente accettata.",
+                "Decide di diventare un numero intero.",
+                "Se ne va via dal mondo dei numeri."
+              ],
+              "correctIndex": 1,
+              "why": "Zero le fa capire che essere diversi è normale e speciale, così little i smette di piangere per la prima volta."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1476,
+            "completionTokens": 434,
+            "ms": 294873,
+            "at": "2026-08-12T22:41:35.950Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -98316,8 +98429,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 803,
-        "totalCompletionTokens": 253,
+        "totalPromptTokens": 2279,
+        "totalCompletionTokens": 687,
         "lessons": [
           {
             "lessonNum": 1,
@@ -98331,10 +98444,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 1910
+        }
       },
       "generatedAt": "2026-06-12T18:13:42.348Z",
-      "updatedAt": "2026-06-15T08:22:31.507Z",
+      "updatedAt": "2026-08-12T22:41:35.950Z",
       "id": "tp_17812882026210000631",
       "storyMeta": {
         "type": "story",
@@ -98633,6 +98749,61 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1786574201012_5_comprehension",
+          "type": "comprehension",
+          "title": "Il viaggio di little i",
+          "desc": "Comprendi la storia di little i nel mondo dei numeri.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Perché little i è triste all'inizio della storia?",
+              "choices": [
+                "Perché non ha trovato un nido come gli uccellini.",
+                "Perché non sa dove appartiene nel mondo dei numeri.",
+                "Perché Seven le ha rubato il suo posto.",
+                "Perché tutti gli altri numeri la ignorano."
+              ],
+              "correctIndex": 1,
+              "why": "Il testo dice che little i 'did not know where hers was' (non sapeva dove fosse il suo posto)."
+            },
+            {
+              "q": "Come reagisce Seven quando little i gli chiede se è la sua famiglia?",
+              "choices": [
+                "La abbraccia e le dice di stare con lui.",
+                "Ride della sua domanda perché è piccola.",
+                "Le spiega che è il numero più intelligente.",
+                "Si stringe nelle spalle e dice che è solo un Sette."
+              ],
+              "correctIndex": 3,
+              "why": "Seven 'shrugged' (si strinse nelle spalle) e disse 'I’m just a Seven' (sono solo un Sette)."
+            },
+            {
+              "q": "Perché Eight si arrabbia e cade a terra?",
+              "choices": [
+                "Perché One gli ha lanciato un cavo mentre parlava di torta.",
+                "Perché Zero lo ha spinto via dalla fila.",
+                "Perché non ha trovato il dessert che cercava.",
+                "Perché Four gli ha tagliato la barba."
+              ],
+              "correctIndex": 0,
+              "why": "Eight urla per la torta ('pie'), poi 'One throws a cable' (One lancia un cavo) e Eight collassa."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1310,
+            "completionTokens": 451,
+            "ms": 286410,
+            "at": "2026-08-12T22:36:41.012Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -98640,8 +98811,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 787,
-        "totalCompletionTokens": 273,
+        "totalPromptTokens": 2097,
+        "totalCompletionTokens": 724,
         "lessons": [
           {
             "lessonNum": 1,
@@ -98655,10 +98826,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 1761
+        }
       },
       "generatedAt": "2026-06-12T18:09:52.263Z",
-      "updatedAt": "2026-06-15T08:24:20.210Z",
+      "updatedAt": "2026-08-12T22:36:41.012Z",
       "id": "tp_17812879789530000532",
       "storyMeta": {
         "type": "story",
@@ -98803,8 +98977,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 808,
-        "totalCompletionTokens": 284,
+        "totalPromptTokens": 4327,
+        "totalCompletionTokens": 1595,
         "lessons": [
           {
             "lessonNum": 1,
@@ -98818,10 +98992,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 4830
+        }
       },
       "generatedAt": "2026-06-12T18:06:08.656Z",
-      "updatedAt": "2026-06-15T09:26:17.778Z",
+      "updatedAt": "2026-08-12T22:31:54.538Z",
       "id": "tp_17812877509860000491",
       "storyMeta": {
         "type": "story",
@@ -99207,6 +99384,61 @@
               "plural": "wolves"
             }
           ]
+        },
+        {
+          "id": "ls_1786573268836_3_comprehension",
+          "type": "comprehension",
+          "title": "Il viaggio di little i",
+          "desc": "Comprendi la storia di little i nel mondo dei numeri?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Perché little i piange quando incontra il numero Sette?",
+              "choices": [
+                "Perché Sette è molto alto e spaventoso.",
+                "Perché Sette le dice che non è la sua famiglia.",
+                "Perché Sette non sa fare i calcoli.",
+                "Perché Sette vuole rubare il suo posto."
+              ],
+              "correctIndex": 1,
+              "why": "Sette rifiuta esplicitamente di essere parte della sua famiglia dicendo 'I'm just a Seven'."
+            },
+            {
+              "q": "Come reagisce il numero Uno quando vede little i?",
+              "choices": [
+                "La saluta gentilmente e le offre la mano.",
+                "La ignora completamente mentre cammina via.",
+                "La giudica perché è diversa e piccola.",
+                "Le chiede di unirsi alla sua banda musicale."
+              ],
+              "correctIndex": 2,
+              "why": "Il testo dice che Uno è 'mean' (cattivo) e nota che lei è 'so different, so small', giudicandola."
+            },
+            {
+              "q": "Qual è la differenza principale tra little i e il numero π?",
+              "choices": [
+                "π è un numero intero mentre i è una lettera.",
+                "i vuole stare con gli altri ma non sa dove mettersi, mentre π sembra sicuro di sé.",
+                "π è arrabbiato con tutti, mentre i è triste.",
+                "i conosce già π da quando era piccola."
+              ],
+              "correctIndex": 1,
+              "why": "Little i 'does not know where to stand', mentre π appare come un viaggiatore esperto che ha 'travelled around the whole world'."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1013,
+            "completionTokens": 452,
+            "ms": 218772,
+            "at": "2026-08-12T22:21:08.836Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -99214,8 +99446,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 755,
-        "totalCompletionTokens": 309,
+        "totalPromptTokens": 1768,
+        "totalCompletionTokens": 761,
         "lessons": [
           {
             "lessonNum": 1,
@@ -99229,10 +99461,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 1465
+        }
       },
       "generatedAt": "2026-06-12T18:02:06.197Z",
-      "updatedAt": "2026-06-15T08:21:01.827Z",
+      "updatedAt": "2026-08-12T22:21:08.836Z",
       "id": "tp_17812875250780000308",
       "storyMeta": {
         "type": "story",
@@ -99635,6 +99870,61 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1786573050009_2_comprehension",
+          "type": "comprehension",
+          "title": "La ricerca di identità di little i",
+          "desc": "Tre domande per verificare la comprensione della storia di little i nel mondo dei numeri.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Perché little i si sente persa all'inizio della storia?",
+              "choices": [
+                "Perché non ha trovato il suo nido tra gli uccelli.",
+                "Perché non sa quale sia il suo posto nel mondo dei numeri.",
+                "Perché i suoi genitori umani l'hanno lasciata sola.",
+                "Perché le altre famiglie di gatti non la vogliono con sé."
+              ],
+              "correctIndex": 1,
+              "why": "Il testo dice esplicitamente che 'little i did not know where hers was' riferendosi al suo posto nel mondo dei numeri."
+            },
+            {
+              "q": "Come reagisce il numero Sette quando little i gli chiede se è della sua famiglia?",
+              "choices": [
+                "La abbraccia e la porta con sé.",
+                "Ride di lei perché è troppo piccola.",
+                "Le dice che non la conosce e che è solo un Sette.",
+                "Piange insieme a lei per la tristezza."
+              ],
+              "correctIndex": 2,
+              "why": "Sette risponde 'No' e spiega 'I’m just a Seven', rifiutando gentilmente l'idea di essere parente."
+            },
+            {
+              "q": "Cosa desidera fare little i alla fine della storia?",
+              "choices": [
+                "Diventare il numero più intelligente del mondo.",
+                "Unirsi a una banda di numeri ma non sa dove mettersi.",
+                "Tornare immediatamente nel mondo degli umani.",
+                "Insegnare agli altri numeri come distinguere la virgola dal punto."
+              ],
+              "correctIndex": 1,
+              "why": "Il testo afferma che 'i also wants to be of this world, in a band, but does not know where to stand'."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 851,
+            "completionTokens": 468,
+            "ms": 225713,
+            "at": "2026-08-12T22:17:30.008Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -99642,8 +99932,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 811,
-        "totalCompletionTokens": 314,
+        "totalPromptTokens": 1662,
+        "totalCompletionTokens": 782,
         "lessons": [
           {
             "lessonNum": 1,
@@ -99657,10 +99947,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 1319
+        }
       },
       "generatedAt": "2026-06-12T17:58:04.990Z",
-      "updatedAt": "2026-06-15T08:20:46.708Z",
+      "updatedAt": "2026-08-12T22:17:30.009Z",
       "id": "tp_17812872798010000260",
       "storyMeta": {
         "type": "story",
@@ -99799,6 +100092,61 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1786572824212_1_comprehension",
+          "type": "comprehension",
+          "title": "La ricerca di identità di little i",
+          "desc": "Tre domande per verificare la comprensione della storia 'The Little I am i'.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Perché little i si sente confusa all'inizio della storia?",
+              "choices": [
+                "Non sa dove appartiene nel mondo dei numeri.",
+                "Ha perso la sua famiglia di gatti.",
+                "Non riesce a leggere le regole matematiche.",
+                "Vuole diventare un uccellino."
+              ],
+              "correctIndex": 0,
+              "why": "Il testo dice esplicitamente che 'little i did not know where hers was' nel mondo dei numeri."
+            },
+            {
+              "q": "Come reagisce il numero Sette quando little i gli chiede se è la sua famiglia?",
+              "choices": [
+                "La abbraccia e le dice di sì.",
+                "Si arrabbia e la caccia via.",
+                "Scuote la testa e dice che è solo un Sette.",
+                "Piange insieme a lei."
+              ],
+              "correctIndex": 2,
+              "why": "Sette 'shook his head' e dice 'I’m just a Seven', rifiutando gentilmente l'idea di essere parente."
+            },
+            {
+              "q": "Cosa prova little i dopo il rifiuto di Sette?",
+              "choices": [
+                "Diventa felice e torna a casa.",
+                "Scoppia in lacrime.",
+                "Inizia a studiare matematica.",
+                "Chiede aiuto ad altri numeri."
+              ],
+              "correctIndex": 1,
+              "why": "L'ultima frase della storia afferma: 'i burst into tears' (little i scoppiò in lacrime)."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 2,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1402,
+            "completionTokens": 867,
+            "ms": 316462,
+            "at": "2026-08-12T22:13:44.212Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -99806,8 +100154,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 782,
-        "totalCompletionTokens": 286,
+        "totalPromptTokens": 2184,
+        "totalCompletionTokens": 1153,
         "lessons": [
           {
             "lessonNum": 1,
@@ -99821,10 +100169,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 2269
+        }
       },
       "generatedAt": "2026-06-12T17:54:03.117Z",
-      "updatedAt": "2026-06-15T08:20:30.026Z",
+      "updatedAt": "2026-08-12T22:13:44.212Z",
       "id": "tp_17812870269340000125",
       "storyMeta": {
         "type": "story",
@@ -99983,6 +100334,61 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1786572507699_0_comprehension",
+          "type": "comprehension",
+          "title": "Il piccolo io",
+          "desc": "Una storia su un numero che cerca il suo posto nel mondo.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Perché 'little i' si sente diversa dagli altri numeri?",
+              "choices": [
+                "Perché non ha nessun segno matematico vicino a sé.",
+                "Perché non sa dove appartiene nel mondo dei numeri.",
+                "Perché gli altri numeri la ignorano deliberatamente.",
+                "Perché preferisce vivere con gli uccelli e i gatti."
+              ],
+              "correctIndex": 1,
+              "why": "Il testo dice esplicitamente che 'little i did not know where hers was' (non sapeva dove fosse il suo posto)."
+            },
+            {
+              "q": "Qual è la differenza principale tra il mondo degli animali e quello dei numeri descritta all'inizio?",
+              "choices": [
+                "Gli animali hanno regole rigide, i numeri sono liberi.",
+                "Gli animali hanno nidi o famiglie, i numeri sembrano avere un posto fisso.",
+                "I numeri vivono nelle strade, gli animali nei boschi.",
+                "Non c'è differenza, tutti hanno un posto sicuro."
+              ],
+              "correctIndex": 1,
+              "why": "Il testo contrappone nidi/famiglie per uccelli/gatti con il fatto che ogni numero 'sembra avere un posto' (seems to have a place)."
+            },
+            {
+              "q": "Come si sente 'little i' mentre cammina per le strade?",
+              "choices": [
+                "Spaventata e confusa dai segni matematici.",
+                "Curiosa, con gli occhi aperti e il cuore che batte forte.",
+                "Arrabbiata perché non trova la sua famiglia.",
+                "Triste perché è sola nel mondo dei numeri."
+              ],
+              "correctIndex": 1,
+              "why": "Il testo descrive i suoi 'occhi wide open' (ben aperti) e il cuore che batte con 'a million beats', indicando eccitazione o curiosità intensa."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 567,
+            "completionTokens": 488,
+            "ms": 177331,
+            "at": "2026-08-12T22:08:27.699Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -99990,8 +100396,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 818,
-        "totalCompletionTokens": 322,
+        "totalPromptTokens": 1385,
+        "totalCompletionTokens": 810,
         "lessons": [
           {
             "lessonNum": 1,
@@ -100005,10 +100411,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 1055
+        }
       },
       "generatedAt": "2026-06-12T17:49:41.308Z",
-      "updatedAt": "2026-06-15T08:20:16.513Z",
+      "updatedAt": "2026-08-12T22:08:27.700Z",
       "id": "tp_17812867751650000079",
       "continuedFromId": null,
       "continuedFrom": null,
@@ -115225,6 +115634,260 @@
             }
           ],
           "type": "standard"
+        },
+        {
+          "id": "ls_1786537192938_0_standard",
+          "title": "جولة في شيكاغو",
+          "desc": "اكتشاف المعالم الثقافية في المدينة",
+          "icon": "🏙️",
+          "vocab": [
+            {
+              "target": "skyline",
+              "source": "أفق المدينة"
+            },
+            {
+              "target": "museum",
+              "source": "متحف"
+            },
+            {
+              "target": "painting",
+              "source": "لوحة فنية"
+            },
+            {
+              "target": "café",
+              "source": "مقهى"
+            },
+            {
+              "target": "building",
+              "source": "مبنى"
+            },
+            {
+              "target": "street",
+              "source": "شارع"
+            },
+            {
+              "target": "art",
+              "source": "فن"
+            },
+            {
+              "target": "view",
+              "source": "منظر"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The skyline looks beautiful at night.",
+              "source": "يبدو الأفق جميلاً في الليل.",
+              "words": [
+                "The",
+                "skyline",
+                "looks",
+                "beautiful",
+                "at",
+                "night."
+              ]
+            },
+            {
+              "target": "We visited the art museum today.",
+              "source": "قمنا بزيارة المتحف الفني اليوم.",
+              "words": [
+                "We",
+                "visited",
+                "the",
+                "art",
+                "museum",
+                "today."
+              ]
+            },
+            {
+              "target": "She bought a painting for her home.",
+              "source": "اشتقت لوحة لمنزلها.",
+              "words": [
+                "She",
+                "bought",
+                "a",
+                "painting",
+                "for",
+                "her",
+                "home."
+              ]
+            },
+            {
+              "target": "They had lunch at a nearby café.",
+              "source": "تناولوا الغداء في مقهى قريب.",
+              "words": [
+                "They",
+                "had",
+                "lunch",
+                "at",
+                "a",
+                "nearby",
+                "café."
+              ]
+            },
+            {
+              "target": "The tall building reflects the sun.",
+              "source": "يعكس المبنى الطويل ضوء الشمس.",
+              "words": [
+                "The",
+                "tall",
+                "building",
+                "reflects",
+                "the",
+                "sun."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 898,
+            "completionTokens": 324,
+            "ms": 177979,
+            "at": "2026-08-12T12:19:52.938Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1786537521461_0_word_forms",
+          "type": "word_forms",
+          "title": "رحلة فنية في شيكاغو",
+          "desc": "تمارين على أشكال الكلمات",
+          "icon": "🎨",
+          "items": [
+            {
+              "sentence": "The air ___ crisp, carrying the scent of autumn leaves.",
+              "translation": "كان الهواء بارداً، حاملاً رائحة أوراق الخريف.",
+              "choices": [
+                "was",
+                "is"
+              ],
+              "correctIndex": 0,
+              "explanation": "ماضٍ بسيط لسرد قصة."
+            },
+            {
+              "sentence": "Sarah and Mark ___ slowly, their eyes darting from one masterpiece to another.",
+              "translation": "تحركت سارة ومارك ببطء، وعيونهما تتنقل من لوحة فنية إلى أخرى.",
+              "choices": [
+                "moved",
+                "move"
+              ],
+              "correctIndex": 0,
+              "explanation": "ماضٍ بسيط لحدث مكتمل."
+            },
+            {
+              "sentence": "They ___ in front of Van Gogh's \"Starry Night\".",
+              "translation": "توقفوا أمام لوحة \"الليلة النجمية\" لفان جوخ.",
+              "choices": [
+                "lingered",
+                "linger"
+              ],
+              "correctIndex": 0,
+              "explanation": "ماضٍ بسيط للإشارة إلى الماضي."
+            },
+            {
+              "sentence": "The building was a modern marvel, its glass and steel structure ___ the changing light.",
+              "translation": "كان المبنى عجيبة حديثة، يعكس هيكله الزجاجي والصلب الضوء المتغير.",
+              "choices": [
+                "reflecting",
+                "reflected"
+              ],
+              "correctIndex": 0,
+              "explanation": "اسم فاعل يصف الهيكل."
+            },
+            {
+              "sentence": "The concert hall was a hushed sanctuary, the seats ___ up as the audience prepared.",
+              "translation": "كانت قاعة الحفلات ملاذاً هادئاً، والمقاعد تمتلئ بينما استعد الجمهور.",
+              "choices": [
+                "filling",
+                "filled"
+              ],
+              "correctIndex": 0,
+              "explanation": "اسم فاعل يصف حالة مستمرة."
+            },
+            {
+              "sentence": "Sarah turned to Mark, her eyes shining with a mix of awe and ___.",
+              "translation": "التفتت سارة إلى مارك، وعيناها تلمعان بمزيج من الدهشة والفرح.",
+              "choices": [
+                "joy",
+                "happy"
+              ],
+              "correctIndex": 0,
+              "explanation": "اسم بعد حرف الجر."
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 6,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1257,
+            "completionTokens": 649,
+            "ms": 328522,
+            "at": "2026-08-12T12:25:21.461Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1786537745345_0_comprehension",
+          "type": "comprehension",
+          "title": "فهم القصة: يوم في شيكاغو",
+          "desc": "اختبر فهمك لأحداث القصة ومشاعر الشخصيات من خلال هذه الأسئلة.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "ما الذي شعرت به سارة عندما استمعت إلى الموسيقى في مركز السيمفوني؟",
+              "choices": [
+                "أنها كانت تشعر بالملل من طول العرض.",
+                "أنها كانت سعيدة لأنها حققت هدفها في تجربة سحر الفن والموسيقى.",
+                "أنها كانت متوترة لأن القاعة كانت مزدحمة جداً.",
+                "أنها كانت غاضبة لأن الموسيقى لم تكن كما توقعت."
+              ],
+              "correctIndex": 1,
+              "why": "لأن النص يذكر أن عينيها تلمعان بالدهشة والفرح، وقالت إنها جاءت لتجربة سحر الفن والموسيقى."
+            },
+            {
+              "q": "كيف تصف القاعة داخل مركز السيمفوني؟",
+              "choices": [
+                "كمكان ضوضاء وصخب حيث كان الجمهور يتحدث بصوت عالٍ.",
+                "كمكان هادئ يشبه الملاذ المقدس حيث يملأ الصمت المكان.",
+                "كمبنى قديم به تفاصيل معقدة وزخارف كثيرة.",
+                "كمكان مفتوح تحت السماء حيث يمكن رؤية النجوم."
+              ],
+              "correctIndex": 1,
+              "why": "لأن النص يصف القاعة بأنها 'ملاذ هادئ' (hushed sanctuary) بينما كان الجمهور يستعد للعرض."
+            },
+            {
+              "q": "ما هو السبب الرئيسي لزيارة سارة ومارك لمركز السيمفوني بعد المتحف؟",
+              "choices": [
+                "لأنهم أرادوا شراء تذكرة لحضور عرض مسرحي لاحقاً.",
+                "لأنهم شعروا بالجوع وأرادوا تناول العشاء في المطعم المجاور.",
+                "لأنهم يريدون الاستمتاع بتجربة الموسيقى كجزء من استكشافهم الثقافي.",
+                "لأنهم فقدوا الطريق وعثروا على المبنى بالصدفة."
+              ],
+              "correctIndex": 2,
+              "why": "لأن القصة تذكر أنهما خطط ليوم من الاستكشاف الثقافي، وأن سارة قالت إنهما جاءا لتجربة سحر الموسيقى والفن."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 778,
+            "completionTokens": 542,
+            "ms": 223883,
+            "at": "2026-08-12T12:29:05.345Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -115232,8 +115895,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 2537,
-        "totalCompletionTokens": 1600,
+        "totalPromptTokens": 5470,
+        "totalCompletionTokens": 3115,
         "lessons": [
           {
             "lessonNum": 1,
@@ -115259,10 +115922,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 4448
+        }
       },
       "generatedAt": "2026-05-28T09:08:23.626Z",
-      "updatedAt": "2026-05-28T09:08:23.626Z",
+      "updatedAt": "2026-08-12T12:29:05.345Z",
       "id": "tp_872660509",
       "continuedFromId": null,
       "storyMeta": {
@@ -115649,6 +116315,260 @@
             }
           ],
           "type": "standard"
+        },
+        {
+          "id": "ls_1786537916182_1_standard",
+          "title": "ساعة لوجان العذبة",
+          "desc": "رحلة مسائية في حي لوجان",
+          "icon": "🌃",
+          "vocab": [
+            {
+              "target": "neighborhood",
+              "source": "حي"
+            },
+            {
+              "target": "restaurant",
+              "source": "مطعم"
+            },
+            {
+              "target": "waiter",
+              "source": "نادل"
+            },
+            {
+              "target": "appetizer",
+              "source": "مقبلات"
+            },
+            {
+              "target": "aroma",
+              "source": "عبير"
+            },
+            {
+              "target": "bustling",
+              "source": "صاخب"
+            },
+            {
+              "target": "cozy",
+              "source": "دافئ ومريح"
+            },
+            {
+              "target": "patron",
+              "source": "زبون"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The neighborhood has vibrant street art.",
+              "source": "يحتوي الحي على فنون شارع نابضة بالحياة.",
+              "words": [
+                "The",
+                "neighborhood",
+                "has",
+                "vibrant",
+                "street",
+                "art."
+              ]
+            },
+            {
+              "target": "We found a cozy table by the window.",
+              "source": "وجدنا طاولة مريحة بجانب النافذة.",
+              "words": [
+                "We",
+                "found",
+                "a",
+                "cozy",
+                "table",
+                "by",
+                "the",
+                "window."
+              ]
+            },
+            {
+              "target": "The waiter offered us fresh appetizers.",
+              "source": "قدم لنا النادل مقبلات طازجة.",
+              "words": [
+                "The",
+                "waiter",
+                "offered",
+                "us",
+                "fresh",
+                "appetizers."
+              ]
+            },
+            {
+              "target": "An aroma of grilled meat filled the air.",
+              "source": "ملأ عبير اللحم المشوي الهواء.",
+              "words": [
+                "An",
+                "aroma",
+                "of",
+                "grilled",
+                "meat",
+                "filled",
+                "the",
+                "air."
+              ]
+            },
+            {
+              "target": "The restaurant was bustling with happy patrons.",
+              "source": "كان المطعم مزدحماً بالزبائن السعداء.",
+              "words": [
+                "The",
+                "restaurant",
+                "was",
+                "bustling",
+                "with",
+                "happy",
+                "patrons."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 904,
+            "completionTokens": 350,
+            "ms": 170734,
+            "at": "2026-08-12T12:31:56.182Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1786538167650_1_word_forms",
+          "type": "word_forms",
+          "title": "أشكال الأفعال والأسماء",
+          "desc": "تمارين على صياغة الكلمات",
+          "icon": "📝",
+          "items": [
+            {
+              "sentence": "After the symphony, they ___ into the cool evening air.",
+              "translation": "بعد السيمفونية، خرجوا إلى هواء المساء البارد.",
+              "choices": [
+                "emerged",
+                "emerges",
+                "emerging"
+              ],
+              "correctIndex": 0,
+              "explanation": "ماضي بسيط لأن الحدث انتهى"
+            },
+            {
+              "sentence": "The city lights ___ like stars on the horizon.",
+              "translation": "تلمع أضواء المدينة كنجوم على الأفق.",
+              "choices": [
+                "twinkled",
+                "twinkle",
+                "twinkling"
+              ],
+              "correctIndex": 0,
+              "explanation": "ماضي بسيط ليتوافق مع سياق القصة"
+            },
+            {
+              "sentence": "The aroma of grilled meats and fresh herbs ___ through the air.",
+              "translation": "انتشر رائحة اللحوم المشوية والأعشاب الطازجة عبر الهواء.",
+              "choices": [
+                "wafted",
+                "wafts",
+                "wafting"
+              ],
+              "correctIndex": 0,
+              "explanation": "ماضي بسيط للحدث المكتمل"
+            },
+            {
+              "sentence": "The restaurant was already ___ with patrons enjoying the early evening.",
+              "translation": "كان المطعم مزدحماً بالفعل بالزبائن الذين يستمتعون بالمساء المبكر.",
+              "choices": [
+                "bustling",
+                "bustle",
+                "bustled"
+              ],
+              "correctIndex": 0,
+              "explanation": "صيغة الاستمرار بعد فعل الكينونة 'was'"
+            },
+            {
+              "sentence": "Mark nodded, his hand ___ around hers.",
+              "translation": "أومق مارك برأسه، وشد يده حول يدها.",
+              "choices": [
+                "tightening",
+                "tighten",
+                "tightened"
+              ],
+              "correctIndex": 0,
+              "explanation": "اسم الفاعل لوصف الحالة المصاحبة"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 1,
+            "rejectReasons": {
+              "answer appears elsewhere in sentence": 1
+            },
+            "promptTokens": 1176,
+            "completionTokens": 586,
+            "ms": 251468,
+            "at": "2026-08-12T12:36:07.650Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1786538387938_1_comprehension",
+          "type": "comprehension",
+          "title": "فهم قصة يوم في شيكاغو",
+          "desc": "اختبر فهمك لأحداث القصة ومشاعر الشخصيات من خلال هذه الأسئلة.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "لماذا ذهبت سارة ومارك إلى مركز السيمفوني؟",
+              "choices": [
+                "لأنهم أرادوا تذوق الطعام في المقاهي القريبة.",
+                "لسماع الموسيقى والاستمتاع بالسحر الفني الذي وعدتهم به المدينة.",
+                "لمشاهدة اللوحات الفنية المعروضة في القاعة.",
+                "لتجنب الزحام في شارع الفنون."
+              ],
+              "correctIndex": 1,
+              "why": "قالت سارة: \"هذا هو سبب مجيئنا... لتجربة سحر الفن والموسيقى\"."
+            },
+            {
+              "q": "كيف شعرت سارة بعد الحفل الموسيقي؟",
+              "choices": [
+                "بالملل والإرهاق من كثرة المشي.",
+                "بالارتياح والفضول لرؤية المزيد من سحر الحي.",
+                "بالانزعاج من ضجيج المدينة في الخارج.",
+                "بالأسف لأن الوقت كان قصيرًا جدًا."
+              ],
+              "correctIndex": 1,
+              "why": "قالت: \"هذا بالضبط ما كنت أحتاجه بعد الحفل... قليلًا من سحر هذا الحي\"."
+            },
+            {
+              "q": "ماذا فعل مارة عندما استجاب لطلب سارة برؤية المزيد؟",
+              "choices": [
+                "أخبرها أن اليوم قد انتهى وأنهم يجب أن يذهبوا للمنزل.",
+                "أخذ يدها بإحكام وعيناه تبدوان بوعد بما سيأتي لاحقًا.",
+                "غادر المطعم بسرعة للبحث عن مكان آخر.",
+                "طلب من النادل إحضار المزيد من الطعام فورًا."
+              ],
+              "correctIndex": 1,
+              "why": "قال: \"وهناك المزيد قادم\"، وعيناه تبدوان بوعد لما سيأتي في المساء."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1073,
+            "completionTokens": 482,
+            "ms": 220287,
+            "at": "2026-08-12T12:39:47.938Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -115656,8 +116576,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 2779,
-        "totalCompletionTokens": 1441,
+        "totalPromptTokens": 5932,
+        "totalCompletionTokens": 2859,
         "lessons": [
           {
             "lessonNum": 1,
@@ -115683,10 +116603,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "recreate": 4571
+        }
       },
       "generatedAt": "2026-05-28T12:04:13.732Z",
-      "updatedAt": "2026-05-28T12:04:13.732Z",
+      "updatedAt": "2026-08-12T12:39:47.938Z",
       "id": "tp_1328268658",
       "continuedFromId": "tp_872660509",
       "storyMeta": {

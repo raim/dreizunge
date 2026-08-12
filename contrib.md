@@ -36,6 +36,7 @@
 | | story from pdf | 1|
 | michim | italian consulting | .5|
 | harald | it's a text understanding app | .5|
+| c | LMGTFY widget | 1|
 
 # data/code tokens
 
