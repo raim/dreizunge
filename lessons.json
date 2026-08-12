@@ -7213,8 +7213,479 @@
         "tp_1328268658"
       ],
       "createdAt": "2026-05-28T09:08:23.626Z",
-      "updatedAt": "2026-06-24T09:55:04.323Z",
-      "tags": []
+      "updatedAt": "2026-08-12T09:25:12.841Z",
+      "tags": [],
+      "tokenUsage": {
+        "totalPromptTokens": 1388,
+        "totalCompletionTokens": 2427,
+        "tokensByType": {
+          "summary": 628,
+          "storyboard": 3187
+        }
+      },
+      "summary": "تجول سارة ومارك في شوارع شيكاغو المزدحمة، حيث زارا معهد الفنون واستمتعا بجولة بين المعارض الفنية الغنية بالألوان والعواطف. بعد ذلك، حضرا عرضاً موسيقياً حياً في قاعة كبيرة، حيث استمتع الجمهور بسماع الفرقة الموسيقية تحت قيادة المدير الموسيقي. وفي المساء، انتقلا إلى حي لوجان سكوير لتناول العشاء في مطعم بيستو دافئ، حيث تذوقا أطعمة مشوية واستمتعوا بأجواء الحي الحيوي والرائحة الزكية للأعشاب والزهور المنتشرة في المكان.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 489,
+        "completionTokens": 139,
+        "ms": 74688,
+        "at": "2026-08-12T06:37:38.100Z"
+      },
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>سارة ومارك يمشيان في شوارع شيكاغو تحت سماء صافية</title><rect x=\"11\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"12\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#9e9e9e\"/><rect x=\"10\" y=\"20\" width=\"15\" height=\"40\" fill=\"#8d6e63\"/><rect x=\"30\" y=\"10\" width=\"20\" height=\"50\" fill=\"#9e9e9e\"/><rect x=\"60\" y=\"15\" width=\"18\" height=\"45\" fill=\"#8d6e63\"/><circle cx=\"20\" cy=\"15\" r=\"3\" fill=\"#f2cc8f\"/><circle cx=\"75\" cy=\"80\" r=\"4\" fill=\"#2b2b2b\"/><rect x=\"72\" y=\"84\" width=\"6\" height=\"10\" fill=\"#e07a5f\"/><circle cx=\"85\" cy=\"80\" r=\"4\" fill=\"#2b2b2b\"/><rect x=\"82\" y=\"84\" width=\"6\" height=\"10\" fill=\"#81b29a\"/></svg></g><g data-chapter=\"1\"><title>يدخلان متحف الفنون الجميل بواجهته الكبيرة</title><rect x=\"193\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"194\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"20\" y=\"10\" width=\"60\" height=\"70\" fill=\"#9e9e9e\"/><rect x=\"30\" y=\"30\" width=\"40\" height=\"50\" fill=\"#a8dadc\"/><circle cx=\"50\" cy=\"20\" r=\"10\" fill=\"#f2cc8f\"/><rect x=\"35\" y=\"40\" width=\"10\" height=\"15\" fill=\"#e5989b\"/><rect x=\"55\" y=\"45\" width=\"12\" height=\"12\" fill=\"#e07a5f\"/><circle cx=\"40\" cy=\"85\" r=\"3\" fill=\"#2b2b2b\"/><rect x=\"37\" y=\"88\" width=\"6\" height=\"8\" fill=\"#8d6e63\"/><circle cx=\"60\" cy=\"85\" r=\"3\" fill=\"#2b2b2b\"/><rect x=\"57\" y=\"88\" width=\"6\" height=\"8\" fill=\"#81b29a\"/></svg></g><g data-chapter=\"1\"><title>يبدوان الاستعراض الفني بألوان زاهية ومبهجة</title><rect x=\"375\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"376\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#ffffff\"/><rect x=\"10\" y=\"20\" width=\"30\" height=\"40\" fill=\"#e5989b\"/><circle cx=\"70\" cy=\"50\" r=\"20\" fill=\"#e07a5f\"/><polygon points=\"40,60 60,80 30,90\" fill=\"#81b29a\"/><circle cx=\"25\" cy=\"75\" r=\"4\" fill=\"#2b2b2b\"/><rect x=\"22\" y=\"79\" width=\"6\" height=\"8\" fill=\"#8d6e63\"/><circle cx=\"75\" cy=\"75\" r=\"4\" fill=\"#2b2b2b\"/><rect x=\"72\" y=\"79\" width=\"6\" height=\"8\" fill=\"#81b29a\"/></svg></g><g data-chapter=\"2\"><title>بعد الحفل، يمشيان في ضوء المدينة الليلي</title><rect x=\"557\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"558\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"none\"/><circle cx=\"20\" cy=\"20\" r=\"1\" fill=\"#f2cc8f\"/><circle cx=\"80\" cy=\"30\" r=\"1\" fill=\"#f2cc8f\"/><circle cx=\"60\" cy=\"10\" r=\"1\" fill=\"#f2cc8f\"/><rect x=\"0\" y=\"80\" width=\"100\" height=\"20\" fill=\"#9e9e9e\"/><circle cx=\"40\" cy=\"75\" r=\"3\" fill=\"#2b2b2b\"/><rect x=\"37\" y=\"78\" width=\"6\" height=\"8\" fill=\"#e07a5f\"/><circle cx=\"50\" cy=\"75\" r=\"3\" fill=\"#2b2b2b\"/><rect x=\"47\" y=\"78\" width=\"6\" height=\"8\" fill=\"#8d6e63\"/></svg></g><g data-chapter=\"2\"><title>يصلان إلى لوجان سكوير مع فن الشارع الملون</title><rect x=\"739\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"740\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#9e9e9e\"/><rect x=\"10\" y=\"20\" width=\"80\" height=\"40\" fill=\"#8d6e63\"/><path d=\"M 20 30 Q 50 10 80 30 L 80 60 L 20 60 Z\" fill=\"#e5989b\"/><circle cx=\"50\" cy=\"40\" r=\"5\" fill=\"#e07a5f\"/><circle cx=\"30\" cy=\"75\" r=\"3\" fill=\"#2b2b2b\"/><rect x=\"27\" y=\"78\" width=\"6\" height=\"8\" fill=\"#81b29a\"/><circle cx=\"40\" cy=\"75\" r=\"3\" fill=\"#2b2b2b\"/><rect x=\"37\" y=\"78\" width=\"6\" height=\"8\" fill=\"#8d6e63\"/></svg></g><g data-chapter=\"2\"><title>يدخلان المطعم الدافئ حيث الروائح اللذيذة</title><rect x=\"921\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"922\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"30\" y=\"20\" width=\"40\" height=\"50\" fill=\"#8d6e63\"/><rect x=\"40\" y=\"50\" width=\"20\" height=\"20\" fill=\"#f2cc8f\"/><circle cx=\"50\" cy=\"10\" r=\"8\" fill=\"none\"/><path d=\"M 45 10 Q 50 5 55 10 Q 50 15 45 10 Z\" fill=\"#ffffff\"/><circle cx=\"35\" cy=\"75\" r=\"3\" fill=\"#2b2b2b\"/><rect x=\"32\" y=\"78\" width=\"6\" height=\"8\" fill=\"#e07a5f\"/><circle cx=\"45\" cy=\"75\" r=\"3\" fill=\"#2b2b2b\"/><rect x=\"42\" y=\"78\" width=\"6\" height=\"8\" fill=\"#81b29a\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 6,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 899,
+        "completionTokens": 2288,
+        "ms": 803003,
+        "at": "2026-08-12T09:25:12.841Z",
+        "storyStyle": null
+      },
+      "storyboardPanels": [
+        {
+          "caption": "سارة ومارك يمشيان في شوارع شيكاغو تحت سماء صافية",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 10,
+              "y": 20,
+              "w": 15,
+              "h": 40,
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 30,
+              "y": 10,
+              "w": 20,
+              "h": 50,
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 60,
+              "y": 15,
+              "w": 18,
+              "h": 45,
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 20,
+              "cy": 15,
+              "r": 3,
+              "fill": "sun"
+            },
+            {
+              "type": "circle",
+              "cx": 75,
+              "cy": 80,
+              "r": 4,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 72,
+              "y": 84,
+              "w": 6,
+              "h": 10,
+              "fill": "accent"
+            },
+            {
+              "type": "circle",
+              "cx": 85,
+              "cy": 80,
+              "r": 4,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 82,
+              "y": 84,
+              "w": 6,
+              "h": 10,
+              "fill": "leaf"
+            }
+          ]
+        },
+        {
+          "caption": "يدخلان متحف الفنون الجميل بواجهته الكبيرة",
+          "chapter": 1,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 10,
+              "w": 60,
+              "h": 70,
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 30,
+              "y": 30,
+              "w": 40,
+              "h": 50,
+              "fill": "sky"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 20,
+              "r": 10,
+              "fill": "sun"
+            },
+            {
+              "type": "rect",
+              "x": 35,
+              "y": 40,
+              "w": 10,
+              "h": 15,
+              "fill": "rose"
+            },
+            {
+              "type": "rect",
+              "x": 55,
+              "y": 45,
+              "w": 12,
+              "h": 12,
+              "fill": "accent"
+            },
+            {
+              "type": "circle",
+              "cx": 40,
+              "cy": 85,
+              "r": 3,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 37,
+              "y": 88,
+              "w": 6,
+              "h": 8,
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 60,
+              "cy": 85,
+              "r": 3,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 57,
+              "y": 88,
+              "w": 6,
+              "h": 8,
+              "fill": "leaf"
+            }
+          ]
+        },
+        {
+          "caption": "يبدوان الاستعراض الفني بألوان زاهية ومبهجة",
+          "chapter": 1,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "white"
+            },
+            {
+              "type": "rect",
+              "x": 10,
+              "y": 20,
+              "w": 30,
+              "h": 40,
+              "fill": "rose"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 50,
+              "r": 20,
+              "fill": "accent"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  40,
+                  60
+                ],
+                [
+                  60,
+                  80
+                ],
+                [
+                  30,
+                  90
+                ]
+              ],
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 25,
+              "cy": 75,
+              "r": 4,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 22,
+              "y": 79,
+              "w": 6,
+              "h": 8,
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 75,
+              "cy": 75,
+              "r": 4,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 72,
+              "y": 79,
+              "w": 6,
+              "h": 8,
+              "fill": "leaf"
+            }
+          ]
+        },
+        {
+          "caption": "بعد الحفل، يمشيان في ضوء المدينة الليلي",
+          "chapter": 2,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 40,
+              "fill": "none"
+            },
+            {
+              "type": "circle",
+              "cx": 20,
+              "cy": 20,
+              "r": 1,
+              "fill": "sun"
+            },
+            {
+              "type": "circle",
+              "cx": 80,
+              "cy": 30,
+              "r": 1,
+              "fill": "sun"
+            },
+            {
+              "type": "circle",
+              "cx": 60,
+              "cy": 10,
+              "r": 1,
+              "fill": "sun"
+            },
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 80,
+              "w": 100,
+              "h": 20,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 40,
+              "cy": 75,
+              "r": 3,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 37,
+              "y": 78,
+              "w": 6,
+              "h": 8,
+              "fill": "accent"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 75,
+              "r": 3,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 47,
+              "y": 78,
+              "w": 6,
+              "h": 8,
+              "fill": "earth"
+            }
+          ]
+        },
+        {
+          "caption": "يصلان إلى لوجان سكوير مع فن الشارع الملون",
+          "chapter": 2,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 10,
+              "y": 20,
+              "w": 80,
+              "h": 40,
+              "fill": "earth"
+            },
+            {
+              "type": "path",
+              "d": "M 20 30 Q 50 10 80 30 L 80 60 L 20 60 Z",
+              "fill": "rose"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 40,
+              "r": 5,
+              "fill": "accent"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 75,
+              "r": 3,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 27,
+              "y": 78,
+              "w": 6,
+              "h": 8,
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 40,
+              "cy": 75,
+              "r": 3,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 37,
+              "y": 78,
+              "w": 6,
+              "h": 8,
+              "fill": "earth"
+            }
+          ]
+        },
+        {
+          "caption": "يدخلان المطعم الدافئ حيث الروائح اللذيذة",
+          "chapter": 2,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 30,
+              "y": 20,
+              "w": 40,
+              "h": 50,
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 40,
+              "y": 50,
+              "w": 20,
+              "h": 20,
+              "fill": "sun"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 10,
+              "r": 8,
+              "fill": "none"
+            },
+            {
+              "type": "path",
+              "d": "M 45 10 Q 50 5 55 10 Q 50 15 45 10 Z",
+              "fill": "white"
+            },
+            {
+              "type": "circle",
+              "cx": 35,
+              "cy": 75,
+              "r": 3,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 32,
+              "y": 78,
+              "w": 6,
+              "h": 8,
+              "fill": "accent"
+            },
+            {
+              "type": "circle",
+              "cx": 45,
+              "cy": 75,
+              "r": 3,
+              "fill": "ink"
+            },
+            {
+              "type": "rect",
+              "x": 42,
+              "y": 78,
+              "w": 6,
+              "h": 8,
+              "fill": "leaf"
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
     },
     {
       "id": "sl_1118994349",
@@ -9157,7 +9628,7 @@
           }
         },
         {
-          "id": 1,
+          "id": "ls_209183466",
           "title": "Wir sprechen über Wien und das Schwarze",
           "desc": "Grundwortschatz für Gespräche in Wien",
           "icon": "🏙️",
