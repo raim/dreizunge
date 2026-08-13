@@ -13,7 +13,7 @@
       "lang": "de",
       "srcLang": "it",
       "createdAt": "2026-08-12T23:46:57.377Z",
-      "updatedAt": "2026-08-13T00:16:57.655Z",
+      "updatedAt": "2026-08-13T11:04:23.970Z",
       "tokenUsage": {
         "totalPromptTokens": 1665,
         "totalCompletionTokens": 989,
@@ -200,7 +200,11 @@
         }
       ],
       "storyboardScheme": "classic",
-      "coverageTarget": 0.7
+      "coverageTarget": 0.7,
+      "tags": [
+        "manually curated",
+        "comic"
+      ]
     },
     {
       "id": "sl_1271936135",
@@ -10128,9 +10132,12 @@
               "source": "mettere"
             },
             {
-              "target": "riesen",
+              "target": "Riesen",
               "source": "giganti",
-              "editedAt": "2026-08-13T00:45:37.300Z"
+              "editedAt": "2026-08-13T11:01:30.727Z",
+              "_manualEdits": [
+                "2026-08-13T11:01:30.728Z"
+              ]
             },
             {
               "target": "willkommen",
@@ -10379,6 +10386,14 @@
           "qcBy": "translategemma:12b"
         },
         {
+          "id": "ls_1786619010425_qokj",
+          "type": "mixed",
+          "title": "🔀 Revisione mista",
+          "icon": "🔀",
+          "desc": "Un miscuglio di domande da altre lezioni di questo capitolo",
+          "perType": 3
+        },
+        {
           "id": "ls_1786580730533_1_comprehension",
           "type": "comprehension",
           "title": "Paese delle Dumplings",
@@ -10461,7 +10476,7 @@
         }
       },
       "generatedAt": "2026-08-12T23:47:24.324Z",
-      "updatedAt": "2026-08-13T06:38:10.779Z",
+      "updatedAt": "2026-08-13T11:03:38.211Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-13T05:52:50.918Z"
