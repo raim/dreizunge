@@ -13,7 +13,7 @@
       "lang": "de",
       "srcLang": "it",
       "createdAt": "2026-08-12T23:46:57.377Z",
-      "updatedAt": "2026-08-13T00:01:10.152Z",
+      "updatedAt": "2026-08-13T00:16:57.655Z",
       "tokenUsage": {
         "totalPromptTokens": 1665,
         "totalCompletionTokens": 989,
@@ -23,7 +23,7 @@
           "storyboard": 1723
         }
       },
-      "summary": "In un paese dove le teste delle persone assomigliano a deliziosi gnocchi, la popolazione vive nella costante paura di essere divorata dai giganti. Per dissuaderli, il governo erige un cartello al confine che dichiara i giganti non benvenuti e si vanta di aver reso la nazione libera da queste minacce. Tuttavia, in realtà non esistono giganti, e il regime viene rieletto grazie a questa vittoria ingannevole basata sulla paura infondata.",
+      "summary": "In un paese dove le teste delle persone assomigliano a deliziosi gnocchi, la popolazione vive nella costante paura di essere divorata dai giganti. Per dissuaderli, il governo erige un cartello al confine che dichiara i giganti non benvenuti e si vanta di aver reso la nazione libera da queste minacce. Tuttavia, in realtà non esistono giganti, e il regime viene rieletto grazie a questa vittoria ingannevole basata sulla paura infondata.\n\n\n\nhttp://www.murmel-comics.org/stories/2640/",
       "summaryMeta": {
         "type": "storyline_summary",
         "model": "qwen3.6:35b-a3b",
@@ -199,7 +199,8 @@
           ]
         }
       ],
-      "storyboardScheme": "classic"
+      "storyboardScheme": "classic",
+      "coverageTarget": 0.7
     },
     {
       "id": "sl_1271936135",
@@ -9804,6 +9805,214 @@
             "ms": 201962,
             "at": "2026-08-12T23:53:56.198Z"
           }
+        },
+        {
+          "id": "ls_1786580944334_2_word_forms",
+          "type": "word_forms",
+          "title": "Riesen und Regierung",
+          "desc": "Übungen zu Verben und Nomen",
+          "icon": "👹",
+          "items": [
+            {
+              "sentence": "Natürlich ___ dann nie ein Riese.",
+              "translation": "Naturalmente non è mai venuto un gigante.",
+              "choices": [
+                "kam",
+                "kommt"
+              ],
+              "correctIndex": 0,
+              "explanation": "Präteritum: 'kam' passt zur Vergangenheit"
+            },
+            {
+              "sentence": "Gibt ja ___.",
+              "translation": "Es gibt keine.",
+              "choices": [
+                "keine",
+                "keiner"
+              ],
+              "correctIndex": 0,
+              "explanation": "Plural: 'keine' für Riesen"
+            },
+            {
+              "sentence": "Dank ihr ist das Land ___.",
+              "translation": "Grazie a lei il paese è gigante-free.",
+              "choices": [
+                "riesenfrei",
+                "riesenfreier"
+              ],
+              "correctIndex": 0,
+              "explanation": "Adjektiv: 'riesenfrei' als Prädikativum"
+            },
+            {
+              "sentence": "Sie ___.",
+              "translation": "È stata rieletta.",
+              "choices": [
+                "wurde wiedergewählt",
+                "wird wiedergewählt"
+              ],
+              "correctIndex": 0,
+              "explanation": "Vorgangspassiv Präteritum: 'wurde'"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 1,
+            "rejectReasons": {
+              "need at least 2 distinct choices": 1
+            },
+            "promptTokens": 968,
+            "completionTokens": 431,
+            "ms": 213747,
+            "at": "2026-08-13T00:29:04.334Z"
+          },
+          "_recreated": true,
+          "_hidden": true
+        },
+        {
+          "id": "ls_1786581222889_2_synonyms",
+          "type": "synonyms",
+          "title": "La Vittoria Ingannevole",
+          "desc": "Una storia breve sulla politica e l'assenza di giganti.",
+          "icon": "👑",
+          "words": [
+            {
+              "base": "Regierung",
+              "gloss": "governo",
+              "sentence": "FREILICH HAT SICH DIE REGIERUNG DAMIT GEBRÜSTET, DASS DAS LAND DANK IHR RIESENFREI IST.",
+              "synonyms": [
+                {
+                  "w": "Administration",
+                  "g": "amministrazione"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "Land",
+              "gloss": "paese",
+              "sentence": "FREILICH HAT SICH DIE REGIERUNG DAMIT GEBRÜSTET, DASS DAS LAND DANK IHR RIESENFREI IST.",
+              "synonyms": [
+                {
+                  "w": "Staat",
+                  "g": "stato"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "riesenfrei",
+              "gloss": "senza giganti",
+              "sentence": "FREILICH HAT SICH DIE REGIERUNG DAMIT GEBRÜSTET, DASS DAS LAND DANK IHR RIESENFREI IST.",
+              "synonyms": [],
+              "antonyms": [
+                {
+                  "w": "riesenhaft",
+                  "g": "gigantesco"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "Wiedergewählt",
+              "gloss": "rieletto",
+              "sentence": "SIE WURDE WIEDERGEWÄHLT.",
+              "synonyms": [
+                {
+                  "w": "erneut gewählt",
+                  "g": "eletto di nuovo"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "Riese",
+              "gloss": "gigante",
+              "sentence": "NATÜRLICH KAM DANN NIE EIN RIESE.",
+              "synonyms": [
+                {
+                  "w": "Riesename",
+                  "g": "colosso"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1231,
+            "completionTokens": 604,
+            "ms": 278555,
+            "at": "2026-08-13T00:33:42.889Z"
+          },
+          "_recreated": true,
+          "_hidden": true
+        },
+        {
+          "id": "ls_1786581594350_2_comprehension",
+          "type": "comprehension",
+          "title": "Paese delle Dumplings",
+          "desc": "Una storia satirica su un paese dove tutti hanno la testa a forma di knedel.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Perché i cittadini vivono con paura costante?",
+              "choices": [
+                "Perché credono che i giganti li mangeranno.",
+                "Perché il governo è molto severo con loro.",
+                "Perché non hanno abbastanza cibo da mangiare.",
+                "Perché le teste di knedel sono troppo pesanti."
+              ],
+              "correctIndex": 0,
+              "why": "Il testo dice che vivono nell'ansia costante che i giganti vengano a mangiarli perché pensano di essere deliziosi."
+            },
+            {
+              "q": "Qual è lo scopo del cartello alla frontiera?",
+              "choices": [
+                "Avvisare i turisti delle regole locali.",
+                "Dissuadere l'arrivo dei giganti.",
+                "Ringraziare il governo per la protezione.",
+                "Spiegare la forma delle teste degli abitanti."
+              ],
+              "correctIndex": 1,
+              "why": "Il testo specifica che il cartello è stato eretto 'zur Abschreckung' (per dissuasione/scoraggiamento) contro i giganti."
+            },
+            {
+              "q": "Cosa si può dedurre sulla situazione reale dei giganti?",
+              "choices": [
+                "I giganti sono nascosti da qualche parte.",
+                "Il governo ha sconfitto tutti i giganti.",
+                "I giganti non esistono affatto.",
+                "I giganti hanno paura del cartello."
+              ],
+              "correctIndex": 2,
+              "why": "Il testo chiarisce esplicitamente 'Gibt ja keine' (non ce ne sono) e che non è mai arrivato nessun gigante perché non esistono."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 2,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1250,
+            "completionTokens": 907,
+            "ms": 371461,
+            "at": "2026-08-13T00:39:54.350Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -9816,8 +10025,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 873,
-        "totalCompletionTokens": 491,
+        "totalPromptTokens": 4322,
+        "totalCompletionTokens": 2433,
         "lessons": [
           {
             "lessonNum": 1,
@@ -9825,10 +10034,13 @@
             "promptTokens": 741,
             "completionTokens": 445
           }
-        ]
+        ],
+        "tokensByType": {
+          "recreate": 5391
+        }
       },
       "generatedAt": "2026-08-12T23:50:34.192Z",
-      "updatedAt": "2026-08-12T23:55:50.703Z",
+      "updatedAt": "2026-08-13T00:48:08.301Z",
       "createdBy": "admin"
     },
     {
@@ -9907,7 +10119,8 @@
             },
             {
               "target": "riesen",
-              "source": "i giganti"
+              "source": "giganti",
+              "editedAt": "2026-08-13T00:45:37.300Z"
             },
             {
               "target": "willkommen",
@@ -9963,6 +10176,250 @@
             "ms": 157758,
             "at": "2026-08-12T23:50:02.152Z"
           }
+        },
+        {
+          "id": "ls_1786580278215_1_word_forms",
+          "type": "word_forms",
+          "title": "Warnschild an der Grenze",
+          "desc": "Übungen zu Verben und Nomen",
+          "icon": "🚧",
+          "items": [
+            {
+              "sentence": "Die Regierung hat ein großes Schild ___ .",
+              "translation": "Il governo ha eretto un grande cartello.",
+              "choices": [
+                "aufgestellt",
+                "aufstellte",
+                "aufstellen"
+              ],
+              "correctIndex": 0,
+              "explanation": "Perfekt: 'hat' + Partizip II"
+            },
+            {
+              "sentence": "Riesen sind hier nicht ___ .",
+              "translation": "I giganti non sono i benvenuti qui.",
+              "choices": [
+                "willkommen",
+                "willkommend",
+                "willkürlich"
+              ],
+              "correctIndex": 0,
+              "explanation": "Adjektiv: 'willkommen' (benvenuto)"
+            },
+            {
+              "sentence": "An der ___ von Deutschland steht das Schild.",
+              "translation": "Al confine della Germania si trova il cartello.",
+              "choices": [
+                "Grenze",
+                "Grenzen",
+                "grenzt"
+              ],
+              "correctIndex": 0,
+              "explanation": "Singular: 'der Grenze' (dativo)"
+            },
+            {
+              "sentence": "Das Schild dient zur ___ .",
+              "translation": "Il cartello serve come deterrente.",
+              "choices": [
+                "Abschreckung",
+                "abschrecken",
+                "erschrecken"
+              ],
+              "correctIndex": 0,
+              "explanation": "Nomen: 'die Abschreckung' (deterrenza)"
+            },
+            {
+              "sentence": "Ein ___ Schild wurde aufgestellt.",
+              "translation": "È stato eretto un grande cartello.",
+              "choices": [
+                "große",
+                "großem",
+                "großen"
+              ],
+              "correctIndex": 0,
+              "explanation": "Nominativ Femininum: 'ein große'"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 943,
+            "completionTokens": 462,
+            "ms": 209341,
+            "at": "2026-08-13T00:17:58.215Z"
+          },
+          "_recreated": true,
+          "_hidden": false
+        },
+        {
+          "id": "ls_1786580564952_1_synonyms",
+          "type": "synonyms",
+          "title": "Cartello Spaventoso",
+          "desc": "Un grande cartello alla frontiera.",
+          "icon": "🚫",
+          "words": [
+            {
+              "base": "groß",
+              "gloss": "grande",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "riesig",
+                  "g": "enorme"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "klein",
+                  "g": "piccolo"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "Schild",
+              "gloss": "cartello",
+              "sentence": "SO WURDE ZUR ABSCHRECKUNG AN DER GRENZE VON DER REGIERUNG EIN GROSSES SCHILD AUFGESTELLT.",
+              "synonyms": [
+                {
+                  "w": "Zeichen",
+                  "g": "segno"
+                },
+                {
+                  "w": "Plakat",
+                  "g": "manifesto"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "Riesen",
+              "gloss": "giganti",
+              "sentence": "RIESEN SIND HIER NICHT WILLKOMMEN.",
+              "synonyms": [
+                {
+                  "w": "Kolosse",
+                  "g": "colossi"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "Zwerge",
+                  "g": "nani"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "Angst",
+              "gloss": "paura",
+              "sentence": "Sie leben in Angst.",
+              "synonyms": [
+                {
+                  "w": "Furcht",
+                  "g": "timore"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "Mut",
+                  "g": "coraggio"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "leben",
+              "gloss": "vivere",
+              "sentence": "Sie leben in Angst.",
+              "synonyms": [
+                {
+                  "w": "existieren",
+                  "g": "esistere"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "sterben",
+                  "g": "morire"
+                }
+              ],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1192,
+            "completionTokens": 662,
+            "ms": 286737,
+            "at": "2026-08-13T00:22:44.952Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1786580730533_1_comprehension",
+          "type": "comprehension",
+          "title": "Paese delle Dumplings",
+          "desc": "Una storia breve su un paese strano e spaventoso.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Perché le persone nel Paese delle Dumplings hanno paura?",
+              "choices": [
+                "Perché credono che i giganti li mangeranno.",
+                "Perché non hanno abbastanza cibo da mangiare.",
+                "Perché vogliono diventare giganti loro stessi.",
+                "Perché il governo è molto severo con loro."
+              ],
+              "correctIndex": 0,
+              "why": "Il testo dice che vivono nella costante paura che i giganti vengano a mangiarli perché pensano di essere deliziosi."
+            },
+            {
+              "q": "Qual è la forma delle teste delle persone in questo paese?",
+              "choices": [
+                "A forma di gnocco o dumpling.",
+                "A forma di gigante.",
+                "A forma di cartello.",
+                "A forma di cibo delizioso."
+              ],
+              "correctIndex": 0,
+              "why": "Il testo afferma esplicitamente che le teste di tutte le persone sono uguali agli gnocchi (Knödel)."
+            },
+            {
+              "q": "Qual è lo scopo del grande cartello posto al confine?",
+              "choices": [
+                "Avvertire i giganti che non sono benvenuti.",
+                "Spiegare ai turisti come cucinare i dumplings.",
+                "Ringraziare il governo per la protezione.",
+                "Chiedere aiuto ai giganti per fuggire."
+              ],
+              "correctIndex": 0,
+              "why": "Il cartello è stato eretto dal governo come deterrente e dice chiaramente che i giganti non sono benvenuti."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 544,
+            "completionTokens": 417,
+            "ms": 165581,
+            "at": "2026-08-13T00:25:30.533Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -9975,8 +10432,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 826,
-        "totalCompletionTokens": 339,
+        "totalPromptTokens": 3505,
+        "totalCompletionTokens": 1880,
         "lessons": [
           {
             "lessonNum": 1,
@@ -9984,10 +10441,13 @@
             "promptTokens": 719,
             "completionTokens": 299
           }
-        ]
+        ],
+        "tokensByType": {
+          "recreate": 4220
+        }
       },
       "generatedAt": "2026-08-12T23:47:24.324Z",
-      "updatedAt": "2026-08-12T23:55:50.646Z",
+      "updatedAt": "2026-08-13T00:46:27.982Z",
       "createdBy": "admin"
     },
     {
@@ -10139,6 +10599,439 @@
             "ms": 166030,
             "at": "2026-08-12T23:46:57.324Z"
           }
+        },
+        {
+          "id": "ls_1786579559556_0_word_forms",
+          "type": "word_forms",
+          "title": "Angst und Angst",
+          "desc": "Lernwortschatz: Angst, Riesen, Menschen",
+          "icon": "😱",
+          "items": [
+            {
+              "sentence": "WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE ___ KOMMEN, UM SIE AUFZUFRESSEN.",
+              "translation": "Perché pensano di essere deliziosi, vivono nella costante paura che i giganti vengano a mangiarli.",
+              "choices": [
+                "Riese",
+                "Riesen",
+                "Riesin"
+              ],
+              "correctIndex": 1,
+              "explanation": "Plural: 'die' e il verbo plurale 'kommen' richiedono il plurale."
+            },
+            {
+              "sentence": "ES GIBT EIN LAND, WO DIE KÖPFE ALLER ___ KNÖDELN GLEICHEN.",
+              "translation": "C'è un paese dove le teste di tutte le persone sono come gnocchi.",
+              "choices": [
+                "Mensch",
+                "Menschen",
+                "Männer"
+              ],
+              "correctIndex": 1,
+              "explanation": "Plural: 'aller' (genitivo plurale) richiede il sostantivo al plurale."
+            },
+            {
+              "sentence": "WEIL SIE ___, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST.",
+              "translation": "Perché pensano di essere deliziosi, vivono nella costante paura.",
+              "choices": [
+                "meint",
+                "meinen",
+                "meinte"
+              ],
+              "correctIndex": 1,
+              "explanation": "Coniugazione: il soggetto 'Sie' (loro) richiede la desinenza -en."
+            },
+            {
+              "sentence": "ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN ___.",
+              "translation": "C'è un paese dove le teste di tutte le persone sono come gnocchi.",
+              "choices": [
+                "gleichen",
+                "gleich",
+                "ähnlich"
+              ],
+              "correctIndex": 0,
+              "explanation": "Verbo: 'gleichen' è il verbo corretto per 'assomigliare a', usato qui con 'wie' implicito o struttura comparativa."
+            },
+            {
+              "sentence": "WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ___.",
+              "translation": "Perché pensano di essere deliziosi, vivono nella costante paura.",
+              "choices": [
+                "Angst",
+                "Angste",
+                "Angstes"
+              ],
+              "correctIndex": 0,
+              "explanation": "Genitivo: 'der' (femminile singolare) richiede la forma base 'Angst'."
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 984,
+            "completionTokens": 684,
+            "ms": 278704,
+            "at": "2026-08-13T00:05:59.556Z"
+          },
+          "_recreated": true,
+          "_hidden": true
+        },
+        {
+          "id": "ls_1786579907773_0_synonyms",
+          "type": "synonyms",
+          "title": "Angst vor den Riesen",
+          "desc": "Wörter aus dem dumpling Land",
+          "icon": "🥟",
+          "words": [
+            {
+              "base": "Land",
+              "gloss": "paese",
+              "sentence": "ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN.",
+              "synonyms": [
+                {
+                  "w": "Staat",
+                  "g": "stato"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "Köpfe",
+              "gloss": "teste",
+              "sentence": "ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN.",
+              "synonyms": [
+                {
+                  "w": "Häupter",
+                  "g": "capo"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "Menschen",
+              "gloss": "persone",
+              "sentence": "ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN.",
+              "synonyms": [
+                {
+                  "w": "Leute",
+                  "g": "gente"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "Angst",
+              "gloss": "paura",
+              "sentence": "WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRESSEN.",
+              "synonyms": [
+                {
+                  "w": "Furcht",
+                  "g": "timore"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "Mut",
+                  "g": "coraggio"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "Riesen",
+              "gloss": "giganti",
+              "sentence": "WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRESSEN.",
+              "synonyms": [
+                {
+                  "w": "Riesinnen",
+                  "g": "gigantesse"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "lecker",
+              "gloss": "delizioso",
+              "sentence": "WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRESSEN.",
+              "synonyms": [
+                {
+                  "w": "köstlich",
+                  "g": "delizioso"
+                },
+                {
+                  "w": "schmackhaft",
+                  "g": "saporito"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "unlecker",
+                  "g": "insapore"
+                }
+              ],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 6,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1199,
+            "completionTokens": 856,
+            "ms": 348216,
+            "at": "2026-08-13T00:11:47.773Z"
+          },
+          "_recreated": true,
+          "_hidden": true
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1786582428293",
+          "type": "conjugation",
+          "title": "Verbi per Knödeln",
+          "desc": "Coniugazione presente di 5 verbi",
+          "icon": "🥟",
+          "conjugations": [
+            {
+              "infinitive": "kochen",
+              "source": "cuocere",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "koche"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "kochst"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "kocht"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "kochen"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "kocht"
+                },
+                {
+                  "pronoun": "sie/Sie",
+                  "form": "kochen"
+                }
+              ]
+            },
+            {
+              "infinitive": "essen",
+              "source": "mangiare",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "esse"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "isst"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "isst"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "essen"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "esst"
+                },
+                {
+                  "pronoun": "sie/Sie",
+                  "form": "essen"
+                }
+              ]
+            },
+            {
+              "infinitive": "machen",
+              "source": "fare",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "mache"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "machst"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "macht"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "machen"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "macht"
+                },
+                {
+                  "pronoun": "sie/Sie",
+                  "form": "machen"
+                }
+              ]
+            },
+            {
+              "infinitive": "gehen",
+              "source": "andare",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "gehe"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "gehst"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "geht"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "gehen"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "geht"
+                },
+                {
+                  "pronoun": "sie/Sie",
+                  "form": "gehen"
+                }
+              ]
+            },
+            {
+              "infinitive": "sehen",
+              "source": "vedere",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "sehe"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "siehst"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "sieht"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "sehen"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "seht"
+                },
+                {
+                  "pronoun": "sie/Sie",
+                  "form": "sehen"
+                }
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "conjugation",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 752,
+            "completionTokens": 827,
+            "ms": 304311,
+            "at": "2026-08-13T00:53:48.292Z"
+          }
+        },
+        {
+          "id": "ls_1786580676053_svdj",
+          "type": "mixed",
+          "title": "🔀 Revisione mista",
+          "icon": "🔀",
+          "desc": "Un miscuglio di domande da altre lezioni di questo capitolo",
+          "perType": 3
+        },
+        {
+          "id": "ls_1786580068817_0_comprehension",
+          "type": "comprehension",
+          "title": "Paese delle Dumplings",
+          "desc": "Una breve storia surreale su un paese dove tutti hanno la testa a forma di knödel.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Perché le persone nel Paese delle Dumplings vivono con paura costante?",
+              "choices": [
+                "Perché temono che i giganti li mangino.",
+                "Perché non hanno abbastanza cibo da mangiare.",
+                "Perché i giganti vogliono rubare le loro teste.",
+                "Perché vogliono diventare giganti loro stessi."
+              ],
+              "correctIndex": 0,
+              "why": "Il testo dice che vivono nella paura costante che i giganti vengano a mangiarli perché credono di essere deliziosi."
+            },
+            {
+              "q": "A cosa assomigliano le teste delle persone in questo paese?",
+              "choices": [
+                "Ai knödel (gnocchi).",
+                "Alle teste dei giganti.",
+                "Al cibo che i giganti mangiano.",
+                "Alle loro mani."
+              ],
+              "correctIndex": 0,
+              "why": "La prima frase afferma esplicitamente che le teste di tutti gli uomini sono uguali ai knödel."
+            },
+            {
+              "q": "Qual è la ragione per cui i giganti potrebbero mangiare queste persone?",
+              "choices": [
+                "Perché le persone sembrano deliziose.",
+                "Perché le persone hanno fatto arrabbiare i giganti.",
+                "Perché i giganti sono affamati di teste.",
+                "Perché le persone vivono in una foresta."
+              ],
+              "correctIndex": 0,
+              "why": "Il testo spiega che la paura deriva dal fatto che pensano di 'sembrare deliziosi' (lecker aussehen)."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 488,
+            "completionTokens": 432,
+            "ms": 161043,
+            "at": "2026-08-13T00:14:28.817Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -10151,8 +11044,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 928,
-        "totalCompletionTokens": 387,
+        "totalPromptTokens": 4351,
+        "totalCompletionTokens": 3186,
         "lessons": [
           {
             "lessonNum": 1,
@@ -10160,11 +11053,16 @@
             "promptTokens": 780,
             "completionTokens": 311
           }
-        ]
+        ],
+        "tokensByType": {
+          "recreate": 4643,
+          "add_lesson": 1579
+        }
       },
       "generatedAt": "2026-08-12T23:44:11.213Z",
-      "updatedAt": "2026-08-12T23:55:50.588Z",
-      "createdBy": "admin"
+      "updatedAt": "2026-08-13T00:55:52.885Z",
+      "createdBy": "admin",
+      "coverageTarget": 0.7
     },
     {
       "id": "tp_17865767776190000060",
