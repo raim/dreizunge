@@ -2,6 +2,206 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_1653967216",
+      "title": "EIN SCHEISSLAND",
+      "icon": "📖",
+      "chapters": [
+        "tp_17865782512120000000",
+        "tp_17865784443240000119",
+        "tp_17865786341910000220"
+      ],
+      "lang": "de",
+      "srcLang": "it",
+      "createdAt": "2026-08-12T23:46:57.377Z",
+      "updatedAt": "2026-08-13T00:01:10.152Z",
+      "tokenUsage": {
+        "totalPromptTokens": 1665,
+        "totalCompletionTokens": 989,
+        "tokensByType": {
+          "retitle": 429,
+          "summary": 502,
+          "storyboard": 1723
+        }
+      },
+      "summary": "In un paese dove le teste delle persone assomigliano a deliziosi gnocchi, la popolazione vive nella costante paura di essere divorata dai giganti. Per dissuaderli, il governo erige un cartello al confine che dichiara i giganti non benvenuti e si vanta di aver reso la nazione libera da queste minacce. Tuttavia, in realtà non esistono giganti, e il regime viene rieletto grazie a questa vittoria ingannevole basata sulla paura infondata.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 399,
+        "completionTokens": 103,
+        "ms": 61688,
+        "at": "2026-08-12T23:55:50.477Z"
+      },
+      "sourceFile": "koeniglueq_text.pdf",
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Persone con teste a forma di dumpling vivono unite.</title><rect x=\"284\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"285\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"25\" cy=\"40\" r=\"10\" fill=\"#faf7f0\"/><rect x=\"20\" y=\"50\" width=\"10\" height=\"15\" fill=\"#2b2b2b\"/><circle cx=\"75\" cy=\"40\" r=\"10\" fill=\"#faf7f0\"/><rect x=\"70\" y=\"50\" width=\"10\" height=\"15\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"2\"><title>Un grande cartello spaventoso segna il confine.</title><rect x=\"466\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"467\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#9e9e9e\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#8d6e63\"/><rect x=\"30\" y=\"20\" width=\"40\" height=\"50\" fill=\"#faf7f0\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></g><g data-chapter=\"3\"><title>Nessun gigante appare mai, la paura era infondata.</title><rect x=\"648\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"649\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#f2cc8f\"/><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"none\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"25\" cy=\"40\" r=\"10\" fill=\"#faf7f0\"/><rect x=\"20\" y=\"50\" width=\"10\" height=\"15\" fill=\"#2b2b2b\"/><circle cx=\"75\" cy=\"40\" r=\"10\" fill=\"#faf7f0\"/><rect x=\"70\" y=\"50\" width=\"10\" height=\"15\" fill=\"#2b2b2b\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 3,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 897,
+        "completionTokens": 826,
+        "ms": 319390,
+        "at": "2026-08-13T00:01:10.152Z",
+        "storyStyle": "neutral"
+      },
+      "storyboardPanels": [
+        {
+          "caption": "Persone con teste a forma di dumpling vivono unite.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 25,
+              "cy": 40,
+              "r": 10,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 50,
+              "w": 10,
+              "h": 15,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 75,
+              "cy": 40,
+              "r": 10,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 70,
+              "y": 50,
+              "w": 10,
+              "h": 15,
+              "fill": "ink"
+            }
+          ]
+        },
+        {
+          "caption": "Un grande cartello spaventoso segna il confine.",
+          "chapter": 2,
+          "bg": "stone",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 30,
+              "y": 20,
+              "w": 40,
+              "h": 50,
+              "fill": "paper",
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 30,
+              "y": 20,
+              "x2": 70,
+              "stroke": "ink",
+              "sw": 4
+            },
+            {
+              "type": "line",
+              "x1": 30,
+              "y": 70,
+              "x2": 70,
+              "stroke": "ink",
+              "sw": 4
+            },
+            {
+              "type": "line",
+              "x1": 50,
+              "y": 70,
+              "x2": 50,
+              "stroke": "ink",
+              "sw": 4
+            }
+          ]
+        },
+        {
+          "caption": "Nessun gigante appare mai, la paura era infondata.",
+          "chapter": 3,
+          "bg": "sun",
+          "shapes": [
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 40,
+              "fill": "none"
+            },
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 25,
+              "cy": 40,
+              "r": 10,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 50,
+              "w": 10,
+              "h": 15,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 75,
+              "cy": 40,
+              "r": 10,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 70,
+              "y": 50,
+              "w": 10,
+              "h": 15,
+              "fill": "ink"
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
+    },
+    {
       "id": "sl_1271936135",
       "title": "Max und Ana im Park",
       "icon": "🐕",
@@ -9447,6 +9647,575 @@
     }
   ],
   "topics": [
+    {
+      "id": "tp_17865786341910000220",
+      "topic": "Vittoria Ingannevole",
+      "topicEmoji": "🗳️",
+      "userTopic": "NATÜRLICH KAM DANN NIE EIN RIESE",
+      "userPrompt": "NATÜRLICH KAM DANN NIE EIN RIESE\n\n[story]\nNATÜRLICH KAM DANN NIE EIN RIESE. GIBT JA KEINE.\n\nFREILICH HAT SICH DIE REGIERUNG DAMIT GEBRÜSTET, DASS DAS LAND DANK IHR RIESENFREI IST.\n\nSIE WURDE WIEDERGEWÄHLT.",
+      "lang": "de",
+      "srcLang": "it",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "NATÜRLICH KAM DANN NIE EIN RIESE. GIBT JA KEINE.\n\nFREILICH HAT SICH DIE REGIERUNG DAMIT GEBRÜSTET, DASS DAS LAND DANK IHR RIESENFREI IST.\n\nSIE WURDE WIEDERGEWÄHLT.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-08-12T23:50:02.277Z",
+        "origin": "file-upload",
+        "source": "recorded at generation",
+        "sourceFile": "koeniglueq_text.pdf"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 132,
+        "completionTokens": 46,
+        "ms": 31914,
+        "at": "2026-08-12T23:50:34.191Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Naturalmente, non arrivò mai un gigante. Non ce ne sono.\n\nIn effetti, il governo si vantava del fatto che il paese era libero dai giganti grazie a lui.\n\nFu rieletto.",
+      "userStory": "NATÜRLICH KAM DANN NIE EIN RIESE. GIBT JA KEINE.\n\nFREILICH HAT SICH DIE REGIERUNG DAMIT GEBRÜSTET, DASS DAS LAND DANK IHR RIESENFREI IST.\n\nSIE WURDE WIEDERGEWÄHLT.",
+      "continuedFrom": "Cartello Spaventoso",
+      "continuedFromId": "tp_17865784443240000119",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Giganti e Governo",
+          "desc": "Storia breve sui giganti inesistenti",
+          "icon": "👹",
+          "vocab": [
+            {
+              "target": "der Riese",
+              "source": "il gigante"
+            },
+            {
+              "target": "die Regierung",
+              "source": "il governo"
+            },
+            {
+              "target": "das Land",
+              "source": "il paese"
+            },
+            {
+              "target": "sich brüsten mit",
+              "source": "vantarsi di"
+            },
+            {
+              "target": "riesenfrei",
+              "source": "libero dai giganti"
+            },
+            {
+              "target": "wiederwählen",
+              "source": "rieleggere"
+            },
+            {
+              "target": "natürlich",
+              "source": "naturalmente"
+            },
+            {
+              "target": "freilich",
+              "source": "in effetti"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Natürlich kam dann nie ein Riese.",
+              "source": "Naturalmente, non arrivò mai un gigante.",
+              "words": [
+                "Natürlich",
+                "kam",
+                "dann",
+                "nie",
+                "ein",
+                "Riese."
+              ]
+            },
+            {
+              "target": "Gibt ja keine.",
+              "source": "Non ce ne sono.",
+              "words": [
+                "Gibt",
+                "ja",
+                "keine."
+              ]
+            },
+            {
+              "target": "Freilich hat sich die Regierung damit gebrüstet.",
+              "source": "In effetti, il governo si vantava del fatto.",
+              "words": [
+                "Freilich",
+                "hat",
+                "sich",
+                "die",
+                "Regierung",
+                "damit",
+                "gebrüstet."
+              ]
+            },
+            {
+              "target": "Dass das Land dank ihr riesenfrei ist.",
+              "source": "Che il paese era libero dai giganti grazie a lui.",
+              "words": [
+                "Dass",
+                "das",
+                "Land",
+                "dank",
+                "ihr",
+                "riesenfrei",
+                "ist."
+              ]
+            },
+            {
+              "target": "Sie wurde wiedergewählt.",
+              "source": "Fu rieletto.",
+              "words": [
+                "Sie",
+                "wurde",
+                "wiedergewählt."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 741,
+            "completionTokens": 445,
+            "ms": 201962,
+            "at": "2026-08-12T23:53:56.198Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 233921,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 873,
+        "totalCompletionTokens": 491,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 201962,
+            "promptTokens": 741,
+            "completionTokens": 445
+          }
+        ]
+      },
+      "generatedAt": "2026-08-12T23:50:34.192Z",
+      "updatedAt": "2026-08-12T23:55:50.703Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17865784443240000119",
+      "topic": "Cartello Spaventoso",
+      "topicEmoji": "⚠️",
+      "userTopic": "SO WURDE ZUR ABSCHRECKUNG AN DER GRENZE VON DER REGIERUNG…",
+      "userPrompt": "SO WURDE ZUR ABSCHRECKUNG AN DER GRENZE VON DER REGIERUNG…\n\n[story]\nSO WURDE ZUR ABSCHRECKUNG AN DER GRENZE VON DER REGIERUNG EIN GROSSES SCHILD AUFGESTELLT.\n\nRIESEN SIND HIER NICHT WILLKOMMEN.",
+      "lang": "de",
+      "srcLang": "it",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "SO WURDE ZUR ABSCHRECKUNG AN DER GRENZE VON DER REGIERUNG EIN GROSSES SCHILD AUFGESTELLT.\n\nRIESEN SIND HIER NICHT WILLKOMMEN.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-08-12T23:46:57.416Z",
+        "origin": "file-upload",
+        "source": "recorded at generation",
+        "sourceFile": "koeniglueq_text.pdf"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 107,
+        "completionTokens": 40,
+        "ms": 26906,
+        "at": "2026-08-12T23:47:24.323Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "PER DISSUASIONE, AL CONFINE È STATO MESSO UN GRANDE CARTELLO DAL GOVERNO.\n\nI GIGANTI NON SONO BENVENUTI QUI.",
+      "userStory": "SO WURDE ZUR ABSCHRECKUNG AN DER GRENZE VON DER REGIERUNG EIN GROSSES SCHILD AUFGESTELLT.\n\nRIESEN SIND HIER NICHT WILLKOMMEN.",
+      "continuedFrom": "Paese delle Dumplings",
+      "continuedFromId": "tp_17865782512120000000",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Cartello al confine",
+          "desc": "Un cartello di avvertimento alla frontiera",
+          "icon": "🚧",
+          "vocab": [
+            {
+              "target": "die Abschreckung",
+              "source": "la dissuasione"
+            },
+            {
+              "target": "die Grenze",
+              "source": "il confine"
+            },
+            {
+              "target": "die Regierung",
+              "source": "il governo"
+            },
+            {
+              "target": "das Schild",
+              "source": "il cartello"
+            },
+            {
+              "target": "aufstellen",
+              "source": "mettere"
+            },
+            {
+              "target": "riesen",
+              "source": "i giganti"
+            },
+            {
+              "target": "willkommen",
+              "source": "benvenuti"
+            },
+            {
+              "target": "hier",
+              "source": "qui"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "SO WURDE ZUR ABSCHRECKUNG AN DER GRENZE VON DER REGIERUNG EIN GROSSES SCHILD AUFGESTELLT.",
+              "source": "PER DISSUASIONE, AL CONFINE È STATO MESSO UN GRANDE CARTELLO DAL GOVERNO.",
+              "words": [
+                "SO",
+                "WURDE",
+                "ZUR",
+                "ABSCHRECKUNG",
+                "AN",
+                "DER",
+                "GRENZE",
+                "VON",
+                "DER",
+                "REGIERUNG",
+                "EIN",
+                "GROSSES",
+                "SCHILD",
+                "AUFGESTELLT."
+              ]
+            },
+            {
+              "target": "RIESEN SIND HIER NICHT WILLKOMMEN.",
+              "source": "I GIGANTI NON SONO BENVENUTI QUI.",
+              "words": [
+                "RIESEN",
+                "SIND",
+                "HIER",
+                "NICHT",
+                "WILLKOMMEN."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 719,
+            "completionTokens": 299,
+            "ms": 157758,
+            "at": "2026-08-12T23:50:02.152Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 184736,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 826,
+        "totalCompletionTokens": 339,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 157758,
+            "promptTokens": 719,
+            "completionTokens": 299
+          }
+        ]
+      },
+      "generatedAt": "2026-08-12T23:47:24.324Z",
+      "updatedAt": "2026-08-12T23:55:50.646Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17865782512120000000",
+      "topic": "Paese delle Dumplings",
+      "topicEmoji": "🥟",
+      "userTopic": "EIN SCHEISSLAND",
+      "userPrompt": "EIN SCHEISSLAND\n\n[story]\nEIN SCHEISSLAND\n\nES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN.\n\nWEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRESSEN.",
+      "lang": "de",
+      "srcLang": "it",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "EIN SCHEISSLAND\n\nES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN.\n\nWEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRESSEN.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-08-12T23:43:42.213Z",
+        "origin": "file-upload",
+        "source": "recorded at generation",
+        "sourceFile": "koeniglueq_text.pdf"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 148,
+        "completionTokens": 76,
+        "ms": 28998,
+        "at": "2026-08-12T23:44:11.212Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "UN PAESE DI MERDA\n\nC'È UN PAESE DOVE LE TESTE DI TUTTE LE PERSONE SONO COME GNOCCHI.\n\nPERCHÉ PENSANO DI AVERE UN ASPETTO DELIZIOSO, VIVONO NELLA COSTANTE PAURA CHE I GIGANTI VENGANO A MANGIARLI.",
+      "userStory": "EIN SCHEISSLAND\n\nES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN.\n\nWEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRESSEN.",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Un paese di gnocchi",
+          "desc": "Vocabolario base su un paese strano",
+          "icon": "🥟",
+          "vocab": [
+            {
+              "target": "das Land",
+              "source": "il paese"
+            },
+            {
+              "target": "der Kopf",
+              "source": "la testa"
+            },
+            {
+              "target": "die Person",
+              "source": "la persona"
+            },
+            {
+              "target": "der Knödel",
+              "source": "lo gnocco"
+            },
+            {
+              "target": "lecker",
+              "source": "delizioso"
+            },
+            {
+              "target": "leben",
+              "source": "vivere"
+            },
+            {
+              "target": "die Angst",
+              "source": "la paura"
+            },
+            {
+              "target": "der Riese",
+              "source": "il gigante"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Es gibt ein Land.",
+              "source": "C'è un paese.",
+              "words": [
+                "Es",
+                "gibt",
+                "ein",
+                "Land."
+              ]
+            },
+            {
+              "target": "Die Köpfe sind Knödel.",
+              "source": "Le teste sono gnocchi.",
+              "words": [
+                "Die",
+                "Köpfe",
+                "sind",
+                "Knödel."
+              ]
+            },
+            {
+              "target": "Sie meinen, sie sind lecker.",
+              "source": "Pensano di essere deliziosi.",
+              "words": [
+                "Sie",
+                "meinen,",
+                "sie",
+                "sind",
+                "lecker."
+              ]
+            },
+            {
+              "target": "Sie leben in Angst.",
+              "source": "Vivono nella paura.",
+              "words": [
+                "Sie",
+                "leben",
+                "in",
+                "Angst."
+              ]
+            },
+            {
+              "target": "Die Riesen kommen.",
+              "source": "I giganti vengono.",
+              "words": [
+                "Die",
+                "Riesen",
+                "kommen."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 780,
+            "completionTokens": 311,
+            "ms": 166030,
+            "at": "2026-08-12T23:46:57.324Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 195111,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 928,
+        "totalCompletionTokens": 387,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 166028,
+            "promptTokens": 780,
+            "completionTokens": 311
+          }
+        ]
+      },
+      "generatedAt": "2026-08-12T23:44:11.213Z",
+      "updatedAt": "2026-08-12T23:55:50.588Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17865767776190000060",
+      "topic": "EIN SCHEISSLAND Panel 1-2 ES GIBT EIN LAND, WO DIE KÖPFE…",
+      "topicEmoji": "📖",
+      "userTopic": "EIN SCHEISSLAND Panel 1-2 ES GIBT EIN LAND, WO DIE KÖPFE…",
+      "userPrompt": "EIN SCHEISSLAND Panel 1-2 ES GIBT EIN LAND, WO DIE KÖPFE…\n\n[story]\nEIN SCHEISSLAND Panel 1-2 ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRESSEN",
+      "lang": "en",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "EIN SCHEISSLAND Panel 1-2 ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRESSEN",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-08-12T23:19:17.228Z",
+        "origin": "user-pasted",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 149,
+        "completionTokens": 45,
+        "ms": 20389,
+        "at": "2026-08-12T23:19:37.618Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "A SHITTY LAND Panel 1-2 There is a land where the heads of all people resemble dumplings because they think they look delicious. They live in constant fear that the giants will come to devour them.",
+      "userStory": "EIN SCHEISSLAND Panel 1-2 ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRESSEN",
+      "continuedFrom": "Parkbesuch beginnt",
+      "continuedFromId": "tp_17862855350130000221",
+      "lessons": [],
+      "generatedAt": "2026-08-12T23:19:37.619Z",
+      "updatedAt": "2026-08-12T23:19:37.619Z",
+      "createdBy": "admin"
+    },
     {
       "id": "tp_17864554460460000107",
       "topic": "Ein neues Kapitel beginnt",
