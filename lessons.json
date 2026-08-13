@@ -9772,7 +9772,7 @@
             },
             {
               "target": "Dass das Land dank ihr riesenfrei ist.",
-              "source": "Che il paese era libero dai giganti grazie a lui.",
+              "source": "Che il paese era libero dai giganti grazie a lei.",
               "words": [
                 "Dass",
                 "das",
@@ -9781,16 +9781,18 @@
                 "ihr",
                 "riesenfrei",
                 "ist."
-              ]
+              ],
+              "editedAt": "2026-08-13T06:08:51.137Z"
             },
             {
               "target": "Sie wurde wiedergewählt.",
-              "source": "Fu rieletto.",
+              "source": "Lei è stata rieletta.",
               "words": [
                 "Sie",
                 "wurde",
                 "wiedergewählt."
-              ]
+              ],
+              "editedAt": "2026-08-13T06:08:58.914Z"
             }
           ],
           "_genMeta": {
@@ -9869,7 +9871,9 @@
             "at": "2026-08-13T00:29:04.334Z"
           },
           "_recreated": true,
-          "_hidden": true
+          "_hidden": true,
+          "qcAt": "2026-08-13T06:05:13.486Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1786581222889_2_synonyms",
@@ -9957,7 +9961,9 @@
             "at": "2026-08-13T00:33:42.889Z"
           },
           "_recreated": true,
-          "_hidden": true
+          "_hidden": true,
+          "qcAt": "2026-08-13T06:06:59.542Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1786581594350_2_comprehension",
@@ -10025,8 +10031,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 4322,
-        "totalCompletionTokens": 2433,
+        "totalPromptTokens": 11163,
+        "totalCompletionTokens": 2589,
         "lessons": [
           {
             "lessonNum": 1,
@@ -10036,12 +10042,16 @@
           }
         ],
         "tokensByType": {
-          "recreate": 5391
+          "recreate": 5391,
+          "lesson_qc": 6666,
+          "story_qc": 331
         }
       },
       "generatedAt": "2026-08-12T23:50:34.192Z",
-      "updatedAt": "2026-08-13T00:48:08.301Z",
-      "createdBy": "admin"
+      "updatedAt": "2026-08-13T06:09:07.519Z",
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-13T06:08:57.551Z"
     },
     {
       "id": "tp_17865784443240000119",
@@ -10232,7 +10242,7 @@
               "sentence": "Ein ___ Schild wurde aufgestellt.",
               "translation": "È stato eretto un grande cartello.",
               "choices": [
-                "große",
+                "großes",
                 "großem",
                 "großen"
               ],
@@ -10364,7 +10374,9 @@
             "ms": 286737,
             "at": "2026-08-13T00:22:44.952Z"
           },
-          "_recreated": true
+          "_recreated": true,
+          "qcAt": "2026-08-13T05:51:19.622Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1786580730533_1_comprehension",
@@ -10432,8 +10444,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 3505,
-        "totalCompletionTokens": 1880,
+        "totalPromptTokens": 9282,
+        "totalCompletionTokens": 2019,
         "lessons": [
           {
             "lessonNum": 1,
@@ -10443,12 +10455,16 @@
           }
         ],
         "tokensByType": {
-          "recreate": 4220
+          "recreate": 4220,
+          "lesson_qc": 5627,
+          "story_qc": 289
         }
       },
       "generatedAt": "2026-08-12T23:47:24.324Z",
-      "updatedAt": "2026-08-13T00:46:27.982Z",
-      "createdBy": "admin"
+      "updatedAt": "2026-08-13T06:38:10.779Z",
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-13T05:52:50.918Z"
     },
     {
       "id": "tp_17865782512120000000",
@@ -10676,7 +10692,9 @@
             "at": "2026-08-13T00:05:59.556Z"
           },
           "_recreated": true,
-          "_hidden": true
+          "_hidden": true,
+          "qcAt": "2026-08-13T05:33:26.003Z",
+          "qcBy": "translategemma:12b"
         },
         {
           "id": "ls_1786579907773_0_synonyms",
@@ -10753,7 +10771,20 @@
                 }
               ],
               "antonyms": [],
-              "homophones": []
+              "homophones": [],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "X is not a synonym of Riesen.",
+                  "field": "note",
+                  "at": "2026-08-13T05:35:14.734Z"
+                }
+              },
+              "qc": {
+                "sug": "X is not a synonym of Riesen.",
+                "field": "note",
+                "at": "2026-08-13T05:35:14.734Z",
+                "by": "translategemma:12b"
+              }
             },
             {
               "base": "lecker",
@@ -10968,7 +10999,10 @@
             "completionTokens": 827,
             "ms": 304311,
             "at": "2026-08-13T00:53:48.292Z"
-          }
+          },
+          "qcAt": "2026-08-13T05:37:19.839Z",
+          "qcBy": "translategemma:12b",
+          "_hidden": true
         },
         {
           "id": "ls_1786580676053_svdj",
@@ -11044,8 +11078,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 4351,
-        "totalCompletionTokens": 3186,
+        "totalPromptTokens": 13092,
+        "totalCompletionTokens": 3367,
         "lessons": [
           {
             "lessonNum": 1,
@@ -11056,13 +11090,17 @@
         ],
         "tokensByType": {
           "recreate": 4643,
-          "add_lesson": 1579
+          "add_lesson": 1579,
+          "lesson_qc": 8571,
+          "story_qc": 351
         }
       },
       "generatedAt": "2026-08-12T23:44:11.213Z",
-      "updatedAt": "2026-08-13T00:55:52.885Z",
+      "updatedAt": "2026-08-13T06:38:59.246Z",
       "createdBy": "admin",
-      "coverageTarget": 0.7
+      "coverageTarget": 0.7,
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-13T05:39:21.077Z"
     },
     {
       "id": "tp_17865767776190000060",
