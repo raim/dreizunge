@@ -688,6 +688,22 @@ const staticOverrides = [
   '  if(fromForm===undefined) fromForm=true;',
   '  if(code==="all"){ APP.libFilter="all"; const sel=document.getElementById("lang-select"); if(sel) sel.value="all"; loadSavedList(); return; }',
   '  APP.lang=code;',
+  // v79_p (user, screenshot of the LIVE static build): this override sets APP.lang and stopped.
+  // The live selectLang also refreshes the sound-test row and clears a speech-language override
+  // left pointing at the PREVIOUS target — neither of which happened here, so on GitHub Pages the
+  // whole row went stale: the flag AND the locale selector still said French while "I learn" said
+  // Polish. The Test button looked right only because ttsTestVoice() reads APP.lang at CLICK time,
+  // which is why the report was "the test DID USE polish voice, so just the selector needs
+  // updating" — the row was stale as a whole, not the selector alone.
+  //
+  // This is the standing rule (`build-static.js` re-implements client functions) costing a second
+  // fix for one bug. unit-static-selectlang-tts guards the pairing so the next one cannot be
+  // missed silently.
+  '  if(APP.ttsLang){',
+  '    var _nb=((LANGS[code]||{}).tts||code||"").split("-")[0].toLowerCase();',
+  '    if(String(APP.ttsLang).split("-")[0].toLowerCase()!==_nb) APP.ttsLang=null;',
+  '  }',
+  '  try{ updateTtsVoiceNote(); }catch(_e){}',
   '  if(fromForm){ APP.formLang=code; APP.libFilter=code; saveLang(); }',
   '  const sel=document.getElementById("lang-select"); if(fromForm&&sel&&sel.value!==code) sel.value=code;',
   '  const tb=document.getElementById("lang-tutor-banner");',

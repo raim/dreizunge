@@ -50,6 +50,11 @@ function render(exercise, opts) {
     APP.progress = { completed:{}, solved:{} };
     APP._spoken = [];
     speak = function(txt){ APP._spoken.push(String(txt)); };
+    // v79_o: _introSpeakGlyph schedules through setTimeout(…, 60), so a synchronous read of
+    // APP._spoken right after render is EMPTY whatever the code does — which would make any
+    // "it does not speak" assertion pass for the wrong reason (rule 33). With this flag the
+    // callback runs inline, so both the positive and the negative case are really measured.
+    ${(opts || {}).immediateTimers ? 'setTimeout = function(f){ try { f(); } catch(_){} return 0; };' : ''}
     APP.cur = { lessonIdx:0, exercises:[${JSON.stringify(exercise)}], cur:0, correct:0, total:1, mistakes:0 };
     document.getElementById("ex-body").innerHTML = EX_RENDERERS[APP.cur.exercises[0].type](APP.cur.exercises[0]);
     true;`, 'render');
@@ -149,17 +154,38 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
     'nothing is spoken while muted, on render or on tap');
 }
 
-// ── 6. SCOPE: the sound→glyph item in the same lesson is untouched ────────────────────────────
-// Its prompt is a transliteration, so it still needs the question sentence to say what is asked.
+// ── 6. BOTH DIRECTIONS get the new card (v79_o, user ruling — REVERSES v79_g's scope) ─────────
+// This section used to assert the OPPOSITE: that sound→glyph keeps its carrier sentence, "since
+// its prompt is a transliteration that needs the question to say what is being asked". That was
+// v79_g's reasoning and the user overruled it with screenshots of both sides — one lesson was
+// rendering two visually unrelated styles for the same task seen from two directions, and the
+// flag→flag badge already states the direction.
+//
+// Rule 29: the CLAIM changed here, not merely the text. Recorded as a deliberate reversal so a
+// later session does not read the flip as drift and "restore" it.
 {
   const C = render(SOUND_GLYPH);
   const h = html(C);
-  assert.ok(/class="qtext"/.test(h),
-    'the sound→glyph item keeps its question sentence — the change is scoped to the one item '
-    + 'whose prompt is a single grapheme');
-  assert.ok(!/class="qglyph"/.test(h), 'and does not get the large-glyph treatment');
-  assert.ok(!/\bchips\b/.test(h), 'nor the chip layout: its answers are glyphs, not short sounds');
-  console.log('  scope: the sound-to-glyph item in the same lesson is unchanged: OK');
+  assert.ok(/class="qglyph"/.test(h),
+    'the sound→glyph item now gets the same large prompt treatment as glyph→sound');
+  assert.ok(!/class="qtext"/.test(h), 'and drops the carrier sentence the badge already implies');
+  assert.ok(/\bchips\b/.test(h), 'and the chip layout, so both directions of the pair match');
+  console.log('  both script directions use the new card: OK');
+}
+
+// ── 6b. …but the AUDIO stays scoped to glyph→sound ────────────────────────────────────────────
+// In sound→glyph the glyph is the ANSWER (`_glyphSpeakForm` reads ex.target for this variant), so
+// auto-playing it on render would hand the answer over before the learner reads the chips. The
+// display changed; what is spoken did not.
+{
+  const C = render(SOUND_GLYPH, { immediateTimers: true });
+  assert.deepStrictEqual(spoken(C), [],
+    'the sound→glyph card must NOT auto-speak — its glyph is the answer');
+  const C2 = render(GLYPH_SOUND, { immediateTimers: true });
+  assert.ok(spoken(C2).length > 0,
+    'while glyph→sound still speaks its prompt on render, which is the point of a script primer');
+  assert.strictEqual(spoken(C2).length, 1, 'exactly once, not once per re-render');
+  console.log('  audio stays scoped to glyph-to-sound: OK');
 }
 
 // ── 7. The badge names the language in the LEARNER's language ─────────────────────────────────

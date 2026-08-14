@@ -1,6 +1,6 @@
-# HANDOVER — v79_n
+# HANDOVER — v79_p
 
-One page. **Current release `v79_n`** (session 34, three point releases on top of `v79_j`, which closed session 33 after eight point releases on the `v79` line, which was
+One page. **Current release `v79_p`** (session 34, three point releases on top of `v79_j`, which closed session 33 after eight point releases on the `v79` line, which was
 cut after session 32 shipped fourteen point releases on the `v78` line). **Read `build_history/roadmap_v79.md` next** — start with its
 "⚠️ OPEN AT THE v79 CUT" block — then `INTERNALS.md`, then
 `build_history/v79_session33_notes.md`, then `build_history/v78_session32_notes.md`. What any
@@ -10,12 +10,12 @@ cut after session 32 shipped fourteen point releases on the `v78` line). **Read 
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **217 checks, ALL PASSED** |
-| `node test/run.js --quick` | 193 |
+| `node test/run.js` | **218 checks, ALL PASSED** |
+| `node test/run.js --quick` | 194 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v79_n'`. Corpus: **321 topics, 90 storylines** (August drop, arrived mid-session). **33 languages**, `ui.json` complete
+`APP_VERSION = 'v79_p'`. Corpus: **321 topics, 90 storylines** (August drop, arrived mid-session). **33 languages**, `ui.json` complete
 for all of them (617 `en` keys), `languages.json` at **1089/1089** name cells.
 
 **These numbers are the ones to trust.** Every session prompt so far has quoted a count that was
@@ -38,6 +38,39 @@ right when written and stale when read. **If a prompt and this file disagree, me
 Session 32 truncated a roadmap **to zero bytes** that way; the exception arrives AFTER the file is
 opened, so a failed write is not a no-op. Write emoji-bearing blocks via a `cat` heredoc to a temp
 file and splice that file in.
+
+## `v79_p` — the stale TTS row was a STATIC-BUILD gap
+
+The photo showed the row's **flag** on French too, and the flag has always come from `APP.lang` —
+so `v79_o`'s account could not explain it. What does: `updateTtsVoiceNote()` was never called on
+that path at all. `build-static.js` re-implements `selectLang`; the override set `APP.lang` and
+stopped. The Test button looked right only because `ttsTestVoice()` reads `APP.lang` at CLICK time.
+
+**`v79_o` was a real fix the user could not have seen**, because its code path does not run in
+static mode. The override now mirrors it. `unit-static-selectlang-tts` guards the PAIRING for all
+19 re-implemented functions, not just this one.
+
+**Still dropped by the static `selectLang`, out of scope and now on the record:** `updateDocDir()`
+and `updateArcScriptRow()`.
+
+## `v79_o` — three items from your static-`v79_l` pass
+
+**Script primer: the new card is now used in BOTH directions** — a reversal of `v79_g`, which had
+deliberately scoped it to `glyph_sound`. Your two screenshots were the argument. Audio stays scoped
+to `glyph_sound`, because in the other direction the glyph is the ANSWER.
+
+**The selector now follows a target-language change.** It read `APP.ttsLang || L.tts` while the Test
+button speaks `APP.lang` and ignores `APP.ttsLang` — which is exactly why the test used Polish and
+the selector did not. Both go through `_speechLocaleFor` now, and a stale override pointing at the
+previous target is cleared.
+
+**The row is tighter:** "Test" and "Mute:" are gone as visible text and live in the tooltips, so no
+ui.json key is orphaned.
+
+**Your source/target worry: answered and guarded.** `APP._ttsVoiceName` is global, so the doubt was
+fair — but `_ttsPickVoice` looks the name up inside the ranked list for the language being spoken,
+so a name from another language is not found and the ranker takes over. `unit-speech-locale` §11
+speaks Italian then German with an Italian voice selected and asserts each keeps its own.
 
 ## `v79_n` — speech locale per storyline and chapter
 

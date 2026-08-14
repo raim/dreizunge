@@ -191,6 +191,7 @@ run('unit: forked storylines — full branch, title marker, both-way switch (v79
 run('unit: chosen speech voice persists across lessons (v79_l)', 'node', [path.join(__dirname, 'unit-tts-voice-persistence.test.js')]);
 run('unit: no voiceless utterance while voices load (v79_m)', 'node', [path.join(__dirname, 'unit-tts-voices-not-loaded.test.js')]);
 run('unit: storyline/chapter speech locale (v79_n)', 'node', [path.join(__dirname, 'unit-speech-locale.test.js')]);
+run('unit: static overrides keep the TTS refresh (v79_p)', 'node', [path.join(__dirname, 'unit-static-selectlang-tts.test.js')]);
 run('unit: script pick survives re-selection (v78_q)', 'node', [path.join(__dirname, 'unit-script-pick-persist.test.js')]);
 run('unit: continuation post-pass context + no overwrite (v78_r)', 'node', [path.join(__dirname, 'unit-continuation-postpass.test.js')]);
 run('smoke: render paths execute (buildPath/storyline/complete/renderEx)', 'node', [path.join(__dirname, 'smoke-render.test.js')]);

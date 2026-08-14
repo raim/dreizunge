@@ -23,27 +23,46 @@ assert.ok(fn.length > 0, 'updateTtsVoiceNote body found');
 // No voice-quality gating in the row. The long tts.voice_warn_q question is no longer shown
 // inline — it's reused as the Test button's hover tooltip (title=...), not as body text.
 assert.ok(!/if\(ttsHasNiceVoice\(/.test(fn), 'row no longer gated on ttsHasNiceVoice');
-assert.ok(/title="\$\{escAttr\(t\('tts\.voice_warn_q'\)\)\}"/.test(fn),
-  'tts.voice_warn_q is reused as the Test button hover tooltip (attribute-escaped)');
+// v79_o, rule 29: this used to match the exact literal
+// `title="${escAttr(t('tts.voice_warn_q'))}"`. The user asked for the row to be tightened, so the
+// Test button's tooltip now also carries `tts.test_lbl` (the visible "Test" label was removed and
+// its string moved into the tooltip rather than being orphaned). The CLAIM — voice_warn_q is a
+// hover tooltip, attribute-escaped, not body text — did not change; only the expression did.
+// Re-anchored at the claim: it appears inside a title=, escAttr'd, and nowhere as text.
+assert.ok(/title="[^"]*escAttr\([^"]*t\('tts\.voice_warn_q'\)/.test(fn),
+  'tts.voice_warn_q is reused as a hover tooltip (attribute-escaped), not shown inline');
+assert.ok(!/>\$\{escHtml\(t\('tts\.voice_warn_q'\)\)\}</.test(fn),
+  'and is never rendered as visible body text');
 assert.ok(!/<span[^>]*>\$\{escHtml\(t\('tts\.voice_warn_q'\)\)\}/.test(fn),
   'tts.voice_warn_q is NOT rendered as inline body text');
 assert.ok(!/_ttsVoicesSettled/.test(fn), 'voices-loading gate removed (row does not depend on voices)');
 
-// The compact row: label, test button, short mute hint, mute button — in that order.
-const iLbl = fn.indexOf("t('tts.test_lbl')");
-const iBtn = fn.indexOf("t('tts.voice_test')");
-const iHint = fn.indexOf("t('tts.mute_hint_short')");
+// v79_o (user: "remove the Test and Mute: strings to make this row tighter"). The row's VISIBLE
+// pieces are now: language flag, speech-variant selector, test button, mute button. `tts.test_lbl`
+// and `tts.mute_hint_short` are no longer rendered text — they moved into the two buttons'
+// `title=` tooltips so no translated string is orphaned. The old assertion ordered four visible
+// pieces; two of them are no longer visible, so the CLAIM changed, not just the text (rule 29).
+const iSel  = fn.indexOf('_ttsVariantSelectHtml');
+const iBtn  = fn.indexOf("t('tts.voice_test')");
 const iMute = fn.indexOf('toggleMute()');
-assert.ok(iLbl > -1 && iBtn > -1 && iHint > -1 && iMute > -1, 'all four row pieces present');
-assert.ok(iLbl < iBtn && iBtn < iHint && iHint < iMute, 'pieces in row order');
+assert.ok(iSel > -1 && iBtn > -1 && iMute > -1, 'selector, test button and mute button all present');
+assert.ok(iSel < iBtn && iBtn < iMute,
+  'row order: the speech-variant selector sits beside the test button, mute last');
+// The two removed labels must still exist somewhere in the row source — as tooltips.
+for (const k of ['tts.test_lbl', 'tts.mute_hint_short'])
+  assert.ok(fn.includes(`t('${k}')`),
+    `${k} must survive as a tooltip rather than being dropped (its translations are not orphaned)`);
 assert.ok(/class="mute-btn"/.test(fn), 'mute button carries .mute-btn (kept in sync by updateMuteButtons)');
 // The mute button reuses the (formerly orphaned) tts.voice_mute_hint as its hover tooltip,
 // stored in data-mute-tip so updateMuteButtons preserves it instead of overwriting with the
 // generic mute/unmute label.
 assert.ok(/data-mute-tip="\$\{escAttr\(t\('tts\.voice_mute_hint'\)\)\}"/.test(fn),
   'sound-test mute button carries tts.voice_mute_hint as data-mute-tip');
-assert.ok(/title="\$\{escAttr\(t\('tts\.voice_mute_hint'\)\)\}"/.test(fn),
-  'sound-test mute button initial title is tts.voice_mute_hint');
+// v79_o, rule 29: the initial title now also carries `tts.mute_hint_short`, which lost its visible
+// slot when the row was tightened. The claim — the mute button's tooltip explains muting via
+// voice_mute_hint, and data-mute-tip keeps it from being overwritten — is unchanged.
+assert.ok(/title="[^"]*escAttr\([^"]*t\('tts\.voice_mute_hint'\)/.test(fn),
+  'sound-test mute button initial title includes tts.voice_mute_hint');
 const muteSync = html.slice(html.indexOf('function updateMuteButtons('),
                             html.indexOf('function updateMuteButtons(') + 400);
 assert.ok(/b\.dataset\.muteTip \|\| \(APP\.muted \? 'Unmute' : 'Mute'\)/.test(muteSync),
@@ -101,5 +120,5 @@ const _hasKey = k => Object.keys(ui).filter(l => l !== 'en' && ui[l][k] !== unde
 assert.ok(_hasKey('tts.test_lbl') >= _langCount - 3, 'tts.test_lbl translated across (nearly) all languages');
 assert.ok(_hasKey('tts.mute_hint_short') >= _langCount - 3, 'tts.mute_hint_short translated across (nearly) all languages');
 
-console.log('  always-on compact sound-test row (label · 1,2,3 · mute hint · mute): OK');
+console.log('  always-on compact sound-test row (flag · variant selector · 1,2,3 · mute): OK');
 console.log('unit-tts-test-row: ALL PASSED');

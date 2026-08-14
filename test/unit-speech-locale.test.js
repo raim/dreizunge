@@ -156,4 +156,80 @@ const resolve = (lang, id) => C.run(
 // • Storylines pass through `build-static.js` whole (`cleanedStorylines = rawStorylines`), so the
 //   storyline-level field reaches static mode; the CHAPTER-level field in static mode rides the
 //   baked topics and is not separately asserted here.
+
+// ── 9. the selector names the locale that would actually SPEAK (v79_o) ─────
+// The user's report: after changing the target language the Test button used the new language's
+// voice while the selector still listed the old one's. Cause: the selector read `APP.ttsLang ||
+// L.tts` and the button speaks `APP.lang`, ignoring `APP.ttsLang`. Both now go through
+// `_speechLocaleFor`, so the row cannot name a locale that would not be used.
+{
+  C.run(`
+    globalThis.__voices = [
+      { name: 'PL', lang: 'pl-PL', localService: true, default: false },
+      { name: 'PL2', lang: 'pl-PL', localService: false, default: false },
+      { name: 'IT', lang: 'it-IT', localService: true, default: false },
+      { name: 'IT2', lang: 'it-IT', localService: false, default: false }
+    ];
+    APP.savedList = []; APP.storylines = []; APP.lessonData = null;
+    APP._teacherMode = true; APP.info = { backend:'x', canGenerate:true, version:'t' };
+    APP.lang = 'it'; APP.ttsLang = 'it-IT';        // an override from the PREVIOUS target
+    true;`, 'stale');
+  // the target language changes to Polish, the override is now stale
+  C.run(`APP.lang = 'pl';
+    if (APP.ttsLang) {
+      const b = ((LANGS['pl']||{}).tts || 'pl').split('-')[0].toLowerCase();
+      if (String(APP.ttsLang).split('-')[0].toLowerCase() !== b) APP.ttsLang = null;
+    }
+    updateTtsVoiceNote(); true;`, 'switch');
+  const html = C.run(`document.getElementById('tts-voice-note').innerHTML`, 'row');
+  assert.ok(html.includes('pl-PL'), 'the selector must list the NEW target language, got: ' + html);
+  assert.ok(!html.includes('it-IT'),
+    'THE REPORT: it must not still be listing the previous target language');
+  console.log('  selector follows a target-language change: OK');
+}
+
+// ── 10. the row carries no carrier words (v79_o) ──────────────────────────
+{
+  const html = C.run(`document.getElementById('tts-voice-note').innerHTML`, 'row2');
+  // Read TEXT NODES, not raw HTML. The first version of this check scanned the markup string and
+  // "Test" matched inside `onclick="ttsTestVoice()"` — a proxy failing on something it should have
+  // welcomed (rule 30). What "visible" means is textContent, so that is what gets asserted.
+  const visible = C.run(`document.getElementById('tts-voice-note').textContent`, 'row2txt');
+  const en = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8')).en;
+  for (const k of ['tts.test_lbl', 'tts.mute_hint_short']) {
+    const s = en[k];
+    if (!s) continue;
+    assert.ok(!visible.includes(s), `"${s}" (${k}) must no longer be visible text, got: ${visible}`);
+    assert.ok(/title="/.test(html) && html.includes(s),
+      `"${s}" (${k}) must survive as a tooltip, not be orphaned`);
+  }
+  console.log('  Test/Mute carrier words removed but not orphaned: OK');
+}
+
+// ── 11. a voice choice for ONE language never speaks another (v79_o) ──────
+// The user's worry: "I hope the current speech voice selection doesn't override previous
+// per-spoken-text speech selection, e.g. when speech is used for both source and target."
+// `APP._ttsVoiceName` is a single global field, so this is a fair thing to doubt. It is safe
+// because `_ttsPickVoice` looks the wanted name up INSIDE the ranked list for the language being
+// spoken — a name from another language simply is not there and the ranker takes over. Asserted
+// rather than argued.
+{
+  C.run(`globalThis.__spoken = [];
+    globalThis.__voices = [
+      { name: 'ItalianoA', lang: 'it-IT', localService: true, default: false },
+      { name: 'DeutschA',  lang: 'de-DE', localService: true, default: false }
+    ];
+    APP.savedList = []; APP.storylines = []; APP.lessonData = null; APP.ttsLang = null;
+    APP._ttsVoiceName = 'ItalianoA';         // learner picked an Italian voice
+    true;`, 'cross');
+  C.run(`_speakChunks(['ciao'], 'it', 0.9, 0); _speakChunks(['hallo'], 'de', 0.9, 0); true;`, 'both');
+  const s = JSON.parse(C.run('JSON.stringify(globalThis.__spoken)', 'read3'));
+  assert.strictEqual(s.length, 2, 'both readouts happen');
+  assert.strictEqual(s[0].voice, 'ItalianoA', 'the Italian pick is used for Italian');
+  assert.strictEqual(s[1].voice, 'DeutschA',
+    'and must NOT override the German readout on the same screen — a source-language line keeps ' +
+    'its own language voice');
+  console.log('  a voice picked for one language never speaks another: OK');
+}
+
 console.log('unit-speech-locale: ALL PASSED');

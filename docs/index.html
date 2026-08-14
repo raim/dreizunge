@@ -2895,6 +2895,14 @@ function selectLang(code, silent, fromForm){
   // re-selected the language after the pick.
   const _langChanged = (APP.lang !== code);
   APP.lang=code;                          // active render context
+  // v79_o (user): a speech-language override left over from the PREVIOUS target language is stale
+  // the moment the target changes. It was surviving, which is why the selector and the Test button
+  // disagreed — the button speaks `APP.lang` and ignores `APP.ttsLang`. Cleared only when it names
+  // a different language than the new target, so a deliberate same-language locale pick survives.
+  if (_langChanged && APP.ttsLang) {
+    const _newBase = ((LANGS[code]||{}).tts || code || '').split('-')[0].toLowerCase();
+    if (String(APP.ttsLang).split('-')[0].toLowerCase() !== _newBase) APP.ttsLang = null;
+  }
   // Refresh the sound-test row's flag right away — before the heavier calls below, so an
   // exception in any of them can't leave the flag showing the previous language.
   try { updateTtsVoiceNote(); } catch(_){}
@@ -148897,11 +148905,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v79_n', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v79_n'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v79_p', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v79_p'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"cc70226a178a","lessons.json":"3104eda89455","ui.json":"bda38a928a7f","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"a9f1bfa580fc"};
+  APP.buildSources = {"index.html":"a43e7ec75827","lessons.json":"3104eda89455","ui.json":"bda38a928a7f","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"6d61ec6d51fa"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');
@@ -156614,13 +156622,23 @@ function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=loc
   const badge = dia ? t("ex.badge.mcq_source_target_nolang") : t("ex.badge.mcq_source_target",{lang:Ln});
   // v79_g (user request): the script-primer glyph→sound item drops the carrier sentence entirely.
   // "Wie sagt man М м?" spent a line of prose on a question whose whole content is the glyph, and
-  // rendered that glyph at question size. Now the glyph IS the question, large and unadorned, and
-  // the answers are chips rather than half-card buttons. Only this ONE item shape is affected —
-  // `_intro:'glyph_sound'` — because it is the only one whose prompt is a single grapheme; the
-  // sound→glyph item in the same lesson keeps the sentence, since its prompt is a transliteration
-  // that needs the question to say what is being asked.
-  if (ex._intro === 'glyph_sound') {
-    _introSpeakGlyph(ex.source);
+  // rendered that glyph at question size. Now the prompt IS the question, large and unadorned, and
+  // the answers are chips rather than half-card buttons.
+  //
+  // v79_o (user, with screenshots of both): this now covers BOTH directions of the pair. v79_g
+  // deliberately scoped it to `glyph_sound` only, reasoning that the sound→glyph item "keeps the
+  // sentence, since its prompt is a transliteration that needs the question to say what is being
+  // asked". The user overruled that, and the screenshots are the argument: one lesson rendered two
+  // visually unrelated question styles for what is the same task seen from two sides, and the
+  // direction is already stated by the flag→flag badge above the card. The carrier sentence was
+  // not carrying anything the badge did not.
+  //
+  // Audio stays scoped to `glyph_sound`. There the glyph is the prompt and hearing it is the whole
+  // point of a script primer; in `sound_glyph` the glyph is the ANSWER, and `_glyphSpeakForm`
+  // (used by the speaker button) reads `ex.target` for this variant — auto-playing it on render
+  // would hand over the answer before the learner has looked at the chips.
+  if (ex._intro === 'glyph_sound' || ex._intro === 'sound_glyph') {
+    if (ex._intro === 'glyph_sound') _introSpeakGlyph(ex.source);
     return `<div class="ex-badge">${S.flag}→${L.flag} ${badge}</div><div class="card">`
          + `<div class="qglyph" dir="auto">${furiHtml(ex.source)}</div>${cGrid(ex.choices,false,'chips')}</div>`;
   }
@@ -160451,12 +160469,15 @@ function updateTtsVoiceNote(){
   if(!lang){ note.style.display = 'none'; return; }          // no specific target → nothing to test
   const L = (typeof LANGS !== 'undefined' && LANGS[lang]) || null;
   const langTag = L ? ` <span style="white-space:nowrap">${L.flag}</span>` : '';
+  // v79_o (user): "remove the Test and Mute: strings to make this row tighter". The two buttons
+  // are a 1,2,3 speaker and a 🔊/🔇 toggle — both self-evident — so the carrier words were paying
+  // for themselves only on first sight. The strings stay in ui.json and move to the `title`
+  // attributes, so the explanation is one hover away and no translation is orphaned.
   note.innerHTML =
-    `<span style="white-space:nowrap">${escHtml(t('tts.test_lbl'))}${langTag}</span>`
+    `<span style="white-space:nowrap">${langTag}</span>`
     + _ttsVariantSelectHtml(lang)
-    + `<button type="button" onclick="ttsTestVoice()" title="${escAttr(t('tts.voice_warn_q'))}" style="font-size:12px;font-weight:800;padding:5px 12px;border-radius:12px;border:2px solid #f5a623;background:#fff;color:#9a6400;cursor:pointer;font-family:inherit">${escHtml(t('tts.voice_test'))}</button>`
-    + `<span style="color:#9a6400;white-space:nowrap">${escHtml(t('tts.mute_hint_short'))}</span>`
-    + `<button type="button" class="mute-btn" data-mute-tip="${escAttr(t('tts.voice_mute_hint'))}" onclick="toggleMute()" title="${escAttr(t('tts.voice_mute_hint'))}" style="font-size:18px;border:none;background:none;cursor:pointer;padding:2px 4px;opacity:${APP.muted?'1':'.7'}">${APP.muted?'🔇':'🔊'}</button>`;
+    + `<button type="button" onclick="ttsTestVoice()" title="${escAttr(t('tts.test_lbl')+' — '+t('tts.voice_warn_q'))}" style="font-size:12px;font-weight:800;padding:5px 12px;border-radius:12px;border:2px solid #f5a623;background:#fff;color:#9a6400;cursor:pointer;font-family:inherit">${escHtml(t('tts.voice_test'))}</button>`
+    + `<button type="button" class="mute-btn" data-mute-tip="${escAttr(t('tts.voice_mute_hint'))}" onclick="toggleMute()" title="${escAttr(t('tts.mute_hint_short')+' '+t('tts.voice_mute_hint'))}" style="font-size:18px;border:none;background:none;cursor:pointer;padding:2px 4px;opacity:${APP.muted?'1':'.7'}">${APP.muted?'🔇':'🔊'}</button>`;
   note.style.display = 'flex';
 }
 
@@ -160481,8 +160502,12 @@ function updateTtsVoiceNote(){
 // voice does not grow a one-item dropdown.
 function _ttsVariantSelectHtml(lang) {
   if (typeof speechSynthesis === 'undefined' || !speechSynthesis || !speechSynthesis.getVoices) return '';
-  const L = (typeof LANGS !== 'undefined' && LANGS[lang]) || null;
-  const code = APP.ttsLang || (L && L.tts);
+  // v79_o (user): the selector used `APP.ttsLang || L.tts` while the Test button speaks via
+  // `speakBodyText(null, APP.lang, ...)`, which ignores `APP.ttsLang` entirely. So after a target
+  // language change the two disagreed — the user reported exactly that: "the test DID USE polish
+  // voice, so just the selector needs updating". Both now resolve through `_speechLocaleFor`, so
+  // the row can only ever name the locale that would actually speak.
+  const code = _speechLocaleFor(lang);
   if (!code) return '';
   const voices = speechSynthesis.getVoices();
   if (!voices || !voices.length) {
@@ -161565,6 +161590,11 @@ function selectLang(code, silent, fromForm){
   if(fromForm===undefined) fromForm=true;
   if(code==="all"){ APP.libFilter="all"; const sel=document.getElementById("lang-select"); if(sel) sel.value="all"; loadSavedList(); return; }
   APP.lang=code;
+  if(APP.ttsLang){
+    var _nb=((LANGS[code]||{}).tts||code||"").split("-")[0].toLowerCase();
+    if(String(APP.ttsLang).split("-")[0].toLowerCase()!==_nb) APP.ttsLang=null;
+  }
+  try{ updateTtsVoiceNote(); }catch(_e){}
   if(fromForm){ APP.formLang=code; APP.libFilter=code; saveLang(); }
   const sel=document.getElementById("lang-select"); if(fromForm&&sel&&sel.value!==code) sel.value=code;
   const tb=document.getElementById("lang-tutor-banner");
