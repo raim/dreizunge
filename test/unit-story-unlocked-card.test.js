@@ -372,9 +372,22 @@ function renderCard({ teacher }) {
 // draws from `_solvedTargetWords`: the SAME set v74_n marks in the strong tier inside the story
 // directly above it, so the chips and the highlighting cannot disagree about what you can read.
 {
+  // v79_e: this used to take the FIRST chapter that had a mixed lesson and any vocabulary at all.
+  // On the August data drop that became `tp_17865784443240000119`, whose single vocabulary lesson
+  // carries EIGHT words — few enough that one round already solves all of them. The section's
+  // "a shorter play solves fewer words" step then compared 8 with 8 and failed, on a chapter the
+  // product handled correctly. The test was measuring the corpus, not the code (the second time a
+  // selector like this has picked an unsuitable chapter on new data — see unit-replay-focus §8c).
+  //
+  // The claim needs a chapter a single round CANNOT exhaust, so that is now the selection
+  // criterion, stated rather than hoped for. `_solvedTargetWords` counts the chapter's whole
+  // vocabulary, so the threshold is on the chapter total.
+  const VOCAB_MIN = 20;
+  const _vocabCount = t => (t.lessons || []).reduce((n, L) => n + ((L && L.vocab || []).length), 0);
   const topic = (store.topics || []).find(t => (t.lessons || []).some(L => L && L.type === 'mixed' && !L._hidden)
-    && (t.lessons || []).some(L => L && (L.vocab || []).length));
-  assert.ok(topic, 'the corpus has a mixed-driven chapter with vocabulary');
+    && _vocabCount(t) >= VOCAB_MIN);
+  assert.ok(topic, `the corpus has a mixed-driven chapter with at least ${VOCAB_MIN} words — without `
+    + 'one, a single round exhausts the chapter and the replay step below cannot be measured');
   const mixedIdx = (topic.lessons || []).findIndex(L => L && L.type === 'mixed' && !L._hidden);
   const render = (rounds, standOn) => {
     const C = loadClient({ quiet: true });

@@ -479,11 +479,29 @@ console.log('  v53 Latin course: localized answers, no Latin leak, parity, legac
   assert.strictEqual(gate(null), false, 'no set → no option');
   assert.strictEqual(gate({}), false, 'set with no lang → no option');
 
-  // Both call sites must go through the set-scoped helper, not the raw global.
+  // Every place that asks "should this set be offered a script lesson" must go through the
+  // set-scoped helper, not the raw global.
   assert.ok(!/scriptLessonAvailable\((?:s\.lang|lang), APP\.srcLang\)/.test(html),
     'no call site passes APP.srcLang alongside a set\'s lang');
-  assert.strictEqual((html.match(/scriptLessonAvailableForSet\(/g) || []).length, 3,
-    'both option gates + the definition use scriptLessonAvailableForSet');
+  // v79_h: this used to assert the helper appears EXACTLY 3 times — "both option gates + the
+  // definition". `v79_h` added a legitimate THIRD gate (the storyline-level add-lessons form, which
+  // could not offer the script lesson at all), and the count broke while its claim stayed true.
+  // A count is a proxy for the real rule and it fails on the very thing it should welcome: a new
+  // call site that uses the helper CORRECTLY. Stated directly instead — every mention outside the
+  // definition is a call, and there is more than one, so the helper is genuinely shared rather than
+  // written for a single site.
+  const _fnUses = (html.match(/scriptLessonAvailableForSet\(/g) || []).length;
+  const _defs   = (html.match(/function scriptLessonAvailableForSet\(/g) || []).length;
+  assert.strictEqual(_defs, 1, 'there is exactly ONE set-scoped gate, not a copy per menu');
+  assert.ok(_fnUses - _defs >= 2,
+    `the gate is shared across the menus that offer the lesson (${_fnUses - _defs} call sites)`);
+  // And each caller asks about a SET, never about APP's globals — the distinction the helper
+  // exists for (a global srcLang answers about whoever is browsing, not about the set).
+  for (const m of html.matchAll(/scriptLessonAvailableForSet\(([^)]*)\)/g)) {
+    if (!m[1].trim() || /^d$/.test(m[1].trim())) continue;          // the definition itself
+    assert.ok(!/APP\.srcLang|APP\.lang\b/.test(m[1]),
+      `scriptLessonAvailableForSet is asked about a set, not about APP globals (got "${m[1]}")`);
+  }
 
   // The AUTHORING path bakes the exercises that the editor and QC see. It must localize too —
   // play-time rebuild does, but the persisted `exercises` array would otherwise answer in Latin.

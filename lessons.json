@@ -117487,17 +117487,13 @@
                 "is"
               ],
               "correctIndex": 0,
-              "explanation": "ماضٍ بسيط لسرد قصة."
-            },
-            {
-              "sentence": "Sarah and Mark ___ slowly, their eyes darting from one masterpiece to another.",
-              "translation": "تحركت سارة ومارك ببطء، وعيونهما تتنقل من لوحة فنية إلى أخرى.",
-              "choices": [
-                "moved",
-                "move"
-              ],
-              "correctIndex": 0,
-              "explanation": "ماضٍ بسيط لحدث مكتمل."
+              "explanation": "ماضٍ بسيط لسرد قصة.",
+              "userFlag": {
+                "comment": "both choices would work in that sentence",
+                "correct": "",
+                "at": "2026-08-14T00:23:04.886Z",
+                "mode": "teacher"
+              }
             },
             {
               "sentence": "They ___ in front of Van Gogh's \"Starry Night\".",
@@ -117507,7 +117503,13 @@
                 "linger"
               ],
               "correctIndex": 0,
-              "explanation": "ماضٍ بسيط للإشارة إلى الماضي."
+              "explanation": "ماضٍ بسيط للإشارة إلى الماضي.",
+              "userFlag": {
+                "comment": "both choices would work in that sentence",
+                "correct": "",
+                "at": "2026-08-14T00:23:18.574Z",
+                "mode": "teacher"
+              }
             },
             {
               "sentence": "The building was a modern marvel, its glass and steel structure ___ the changing light.",
@@ -117517,7 +117519,13 @@
                 "reflected"
               ],
               "correctIndex": 0,
-              "explanation": "اسم فاعل يصف الهيكل."
+              "explanation": "اسم فاعل يصف الهيكل.",
+              "userFlag": {
+                "comment": "both choices would work in that sentence",
+                "correct": "",
+                "at": "2026-08-14T00:23:38.284Z",
+                "mode": "teacher"
+              }
             },
             {
               "sentence": "The concert hall was a hushed sanctuary, the seats ___ up as the audience prepared.",
@@ -117527,7 +117535,13 @@
                 "filled"
               ],
               "correctIndex": 0,
-              "explanation": "اسم فاعل يصف حالة مستمرة."
+              "explanation": "اسم فاعل يصف حالة مستمرة.",
+              "userFlag": {
+                "comment": "both choices would work in that sentence",
+                "correct": "",
+                "at": "2026-08-14T00:23:53.517Z",
+                "mode": "teacher"
+              }
             },
             {
               "sentence": "Sarah turned to Mark, her eyes shining with a mix of awe and ___.",
@@ -117648,7 +117662,7 @@
         }
       },
       "generatedAt": "2026-05-28T09:08:23.626Z",
-      "updatedAt": "2026-08-12T12:29:05.345Z",
+      "updatedAt": "2026-08-14T00:24:16.731Z",
       "id": "tp_872660509",
       "continuedFromId": null,
       "storyMeta": {
@@ -118183,7 +118197,13 @@
                 "twinkling"
               ],
               "correctIndex": 0,
-              "explanation": "ماضي بسيط ليتوافق مع سياق القصة"
+              "explanation": "ماضي بسيط ليتوافق مع سياق القصة",
+              "userFlag": {
+                "comment": "all choices would work in that sentence",
+                "correct": "",
+                "at": "2026-08-14T00:24:54.455Z",
+                "mode": "teacher"
+              }
             },
             {
               "sentence": "The aroma of grilled meats and fresh herbs ___ through the air.",
@@ -118194,7 +118214,13 @@
                 "wafting"
               ],
               "correctIndex": 0,
-              "explanation": "ماضي بسيط للحدث المكتمل"
+              "explanation": "ماضي بسيط للحدث المكتمل",
+              "userFlag": {
+                "comment": "all choices would work in that sentence",
+                "correct": "",
+                "at": "2026-08-14T00:25:09.740Z",
+                "mode": "teacher"
+              }
             },
             {
               "sentence": "The restaurant was already ___ with patrons enjoying the early evening.",
@@ -118216,7 +118242,13 @@
                 "tightened"
               ],
               "correctIndex": 0,
-              "explanation": "اسم الفاعل لوصف الحالة المصاحبة"
+              "explanation": "اسم الفاعل لوصف الحالة المصاحبة",
+              "userFlag": {
+                "comment": "two choices would work in that sentence",
+                "correct": "",
+                "at": "2026-08-14T00:25:37.438Z",
+                "mode": "teacher"
+              }
             }
           ],
           "_genMeta": {
@@ -118329,7 +118361,7 @@
         }
       },
       "generatedAt": "2026-05-28T12:04:13.732Z",
-      "updatedAt": "2026-08-12T12:39:47.938Z",
+      "updatedAt": "2026-08-14T00:25:39.767Z",
       "id": "tp_1328268658",
       "continuedFromId": "tp_872660509",
       "storyMeta": {

@@ -77,7 +77,15 @@ const server = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
   assert.ok(prompts.story && prompts.story.scriptNote, 'prompts.json carries story.scriptNote');
   assert.ok(/\{scriptLabel\}/.test(prompts.story.scriptNote),
     'and names the script it wants');
-  assert.ok(/hasScriptChoice\(lang\)\s*&&\s*P\.scriptNote/.test(server),
+  // v79_f: this used to match sysStory's INLINE copy of the rule. That copy is gone — the story
+  // prompt now calls the shared `scriptPinNote`, the same helper every other target-text prompt
+  // uses, because two copies of one rule is how the lesson prompts ended up with a weaker version
+  // of it than the story prompt. The claim is unchanged, so the pin is re-anchored on the helper
+  // rather than restored; unit-script-pin-coverage sweeps the callers.
+  assert.ok(/sysStory[\s\S]{0,900}?scriptPinNote\(lang, script/.test(server),
+    'the story prompt gets its script rule from the shared helper');
+  const _pin = server.slice(server.indexOf('function scriptPinNote('));
+  assert.ok(/hasScriptChoice\(lang\)/.test(_pin.slice(0, 1200)),
     'it is added only when the language really HAS a choice — nothing is said to the other 31');
   console.log('  the story prompt states the script, for digraphic languages only');
 }

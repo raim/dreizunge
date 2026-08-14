@@ -28,6 +28,9 @@ const ctx = {
   chainVocab:{ words:[{target:'w'}], nouns:[], verbs:[] },
   standardOpts:{ tag:'STD' }, sharedGenOpts:{ tag:'SHARED' },
   addMathInstr:null, addMathOps:['+'],
+  // v79_f: the chapter's script now rides on the ctx as well as inside sharedGenOpts, because the
+  // LLM math generator builds its own prompt rather than going through a sys* builder.
+  script:'cyrillic-sr',
 };
 function callOf(fmt){ calls.length = 0; ADD_LESSON_GENERATORS[fmt](ctx); assert.strictEqual(calls.length, 1, `${fmt} must call exactly one generator`); return calls[0]; }
 
@@ -57,7 +60,9 @@ assert.deepStrictEqual(c.args, ['the story',2,['+']], 'procedural math arg shape
 ctx.addMathInstr = 'sum to 100';
 c = callOf('math');                              // instruction present -> LLM
 assert.strictEqual(c.fn, 'generateMathLLM');
-assert.deepStrictEqual(c.args, ['de','en',2,'sum to 100','job1'], 'LLM math arg shape');
+assert.deepStrictEqual(c.args, ['de','en',2,'sum to 100','job1','cyrillic-sr'],
+  'LLM math arg shape — v79_f adds the script, since math word problems are target-language prose '
+  + 'and this generator has no sys* builder to carry the pin for it');
 ctx.addMathInstr = null;
 
 // intro_script: procedural + story-independent, keyed on the target lang + optional script.

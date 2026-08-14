@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v79_b';
+const APP_VERSION  = 'v79_i';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -1139,9 +1139,21 @@ function getStoryStyle(key) { return key ? (STORY_STYLES()[key] ?? null) : null;
 //
 // The note lives under PROMPTS.story because that is where it was written; it says nothing
 // story-specific, so it is used verbatim rather than duplicated per prompt family.
-function scriptPinNote(lang, script) {
+function scriptPinNote(lang, script, _role) {
   const P = PROMPTS.story;
-  if (!script || !hasScriptChoice(lang) || !P || !P.scriptNote) return '';
+  const _digraphic = hasScriptChoice(lang);
+  // v78_q, generalised in v79_f: SAY which of the two failures happened. "The script never reached
+  // the prompt" and "the model was told and ignored it" have one identical symptom — a lesson in
+  // the wrong alphabet — and telling them apart from the corpus alone is what mis-diagnosed the
+  // first report twice. The line used to exist for the STORY prompt only, which is why the
+  // conjugation lesson could come out Latin without a word in the log.
+  const role = _role || 'prompt';
+  try {
+    if (script && _digraphic)       console.log(`    [script] ${role} pinned to ${scriptLabel(script)} for ${lang}`);
+    else if (script && !_digraphic) console.log(`    [script] ${lang} has no script choice — '${script}' ignored (${role})`);
+    else if (!script && _digraphic) console.log(`    [script] WARNING: ${lang} is digraphic but NO script reached the ${role} — the model will pick`);
+  } catch (_) {}
+  if (!script || !_digraphic || !P || !P.scriptNote) return '';
   return fillPrompt(P.scriptNote, { scriptLabel: scriptLabel(script), L2: LANG_NAMES[lang] || lang });
 }
 
@@ -1158,7 +1170,7 @@ function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, _unused, 
   if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
   if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
   if (lang === 'ja')              sys += P.cjkNote;
-  sys += scriptPinNote(lang, script);   // v79_a: same rule the story prompt has had since v76_h
+  sys += scriptPinNote(lang, script, 'vocab prompt');   // v79_a: same rule the story prompt has had since v76_h
   return sys;
 }
 
@@ -1176,7 +1188,7 @@ function sysLessonFromText(lang, srcLang, lessonNum, totalLessons, difficulty, d
   let sys = fillPrompt(P.system, { L, S, diff, sentLen, lessonDiff, lessonNum, totalLessons });
   if (dialect) sys += fillPrompt(P.dialectNote, { dialect });
   if (lang === 'ja') sys += P.cjkNote;
-  sys += scriptPinNote(lang, script);   // v79_a
+  sys += scriptPinNote(lang, script, 'vocab prompt');   // v79_a
   return sys;
 }
 
@@ -1193,7 +1205,7 @@ function sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, dial
   let sys = fillPrompt(P.system, { L, S, diff, lessonDiff, lessonNum, totalLessons });
   if (dialect) sys += fillPrompt(P.dialectNote, { dialect });
   if (lang === 'ja') sys += P.cjkNote;
-  sys += scriptPinNote(lang, script);   // v79_a
+  sys += scriptPinNote(lang, script, 'vocab prompt');   // v79_a
   return sys;
 }
 
@@ -1409,8 +1421,12 @@ async function generateDialectStory(glossaryRows, baseLang, opts) {
   const user = `Glossary:\n${fewshot}\n\n`
     + (topic ? `Topic: "${topic}".\n` : '')
     + `Write the dialect story now.`;
+  // v79_f: a dialect story is target-language text, so it takes the pin like every other. The base
+  // languages that carry glossaries today are monoscriptic, so this adds nothing to them — which is
+  // the point of routing it through scriptPinNote rather than deciding per call site.
+  const systemPinned = system + scriptPinNote(baseLang, opts.script || null, 'dialect story prompt');
   let text;
-  try { ({ text } = await callLLMTranslation(system, user, opts.long ? 1000 : 640)); } catch (_) { return null; }
+  try { ({ text } = await callLLMTranslation(systemPinned, user, opts.long ? 1000 : 640)); } catch (_) { return null; }
   const reply = (text || '').trim();
   const m = reply.match(/STORY:\s*([\s\S]*?)\s*---\s*GERMAN:\s*([\s\S]*)$/i);
   if (!m) return null;
@@ -1486,7 +1502,9 @@ async function generateDialectStoryV2(glossaryRows, baseLang, opts) {
   // One rewrite attempt → { story, gloss, coverage } or null.
   const runRewrite = async (escalate) => {
     let text2;
-    try { ({ text: text2 } = await callLLMTranslation(sys2(escalate), usr2, opts.long ? 1200 : 760)); } catch (_) { return null; }
+    try { ({ text: text2 } = await callLLMTranslation(
+      sys2(escalate) + scriptPinNote(baseLang, opts.script || null, 'dialect rewrite prompt'),
+      usr2, opts.long ? 1200 : 760)); } catch (_) { return null; }   // v79_f
     const reply = (text2 || '').trim();
     const m = reply.match(/STORY:\s*([\s\S]*?)\s*---\s*GERMAN:\s*([\s\S]*)$/i);
     let story, gloss;
@@ -1924,13 +1942,16 @@ function classifyStoryQc(original, corrected) {
 // Run the QC model over a story. Returns { corrected, story, ...classifier, meta }. Never mutates
 // anything — the caller decides whether to store the proposal. `story` echoes the original so the
 // client can diff without re-fetching. think:false (v55_c) — proofreading is not a reasoning task.
-async function generateStoryQc(story, lang) {
+async function generateStoryQc(story, lang, script) {
   if (!story || !story.trim()) throw new Error('QC: empty story');
-  const L = langName(lang);
+  const L = langName(lang, script || null);
   const _t0 = Date.now();
   console.log(`\n── Story QC ─────────────────────────────────────────`);
   console.log(`  Lang: ${L}, Model: ${OLLAMA_QC_MODEL}, ${story.length} chars`);
-  const sys = fillPrompt(PROMPTS.storyQc.system, { L });
+  // v79_f: QC returns a CORRECTED COPY of the story, so it emits target-language text like any
+  // generator — and a proofreader that silently transliterates is the worst version of this bug,
+  // because the chapter it rewrites was already right.
+  const sys = fillPrompt(PROMPTS.storyQc.system, { L }) + scriptPinNote(lang, script || null, 'story QC prompt');
   const { text, promptTokens, completionTokens } = await callLLMQC(sys, story,
     Math.min(4096, Math.ceil(story.length * 1.3)), { think: false });
   const corrected = stripRaw(text).trim();  // stripRaw already strips <think> internally
@@ -2234,7 +2255,7 @@ async function _runQc(jobId, topics, opts) {
       } else {
         jobStep(jobId, `[${OLLAMA_QC_MODEL}] Proofreading story: ${tp.topic}…`);
         try {
-          const { result: qr, tokens: _sqTok } = await meterLLMTokens(() => generateStoryQc(tp.story, tp.lang || 'it'));
+          const { result: qr, tokens: _sqTok } = await meterLLMTokens(() => generateStoryQc(tp.story, tp.lang || 'it', tp.script || null));
           addTokenUsage(tp, _sqTok, 'story_qc');
           tp.storyQcCheckedBy = OLLAMA_QC_MODEL;
           tp.storyQcCheckedAt = new Date().toISOString();
@@ -2457,17 +2478,10 @@ function sysStory(lang, isContinuation, wordCount, dialect, writingStyle, script
   // v76_h: naming the script in {L} is not enough on its own — the model still drifts between
   // scripts inside one text. State it as a rule too, but ONLY when the language really has a
   // choice, so nothing is added for the 31 languages that do not.
-  if (script && hasScriptChoice(lang) && P.scriptNote) {
-    sys += fillPrompt(P.scriptNote, { scriptLabel: scriptLabel(script), L2: LANG_NAMES[lang] || lang });
-    // v78_q: say so. This separates "the script never reached the prompt" from "the model was told
-    // and ignored it" — two different bugs with one identical symptom, and the reason the first
-    // report was mis-diagnosed twice.
-    try { console.log(`    [script] story prompt pinned to ${scriptLabel(script)} for ${lang}`); } catch(_) {}
-  } else if (script && !hasScriptChoice(lang)) {
-    try { console.log(`    [script] ${lang} has no script choice — '${script}' ignored`); } catch(_) {}
-  } else if (!script && hasScriptChoice(lang)) {
-    try { console.log(`    [script] WARNING: ${lang} is digraphic but NO script was supplied — the model will pick`); } catch(_) {}
-  }
+  // v79_f: this was an inline COPY of scriptPinNote, written first and left behind when the helper
+  // was extracted for the vocabulary prompts. Two copies of one rule is how the lesson prompts came
+  // to have a weaker version of it than the story prompt, so there is now one.
+  sys += scriptPinNote(lang, script, 'story prompt');
   if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
   if (lang === 'ja')              sys += P.furiganaNote;
   if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
@@ -2484,7 +2498,10 @@ function errorHuntCounts(difficulty) {
 function sysErrorHunt(lang, difficulty, script) {
   const L = langName(lang, script);
   const { nSpell, nGrammar } = errorHuntCounts(difficulty);
-  return fillPrompt(PROMPTS.errorHunt.system, { L, nSpell, nGrammar });
+  // v79_f: naming the script inside {L} is NOT the pin — that is precisely what v76_h established
+  // and what this call site still assumed. The corrupted story must come back in the same script it
+  // went out in, or the learner is hunting errors in an alphabet the chapter never used.
+  return fillPrompt(PROMPTS.errorHunt.system, { L, nSpell, nGrammar }) + scriptPinNote(lang, script, 'error-hunt prompt');
 }
 
 // Word-level comparison of the corrupted story against the original.
@@ -3172,27 +3189,29 @@ async function _generateChapterMetaOnce(sys, user, n) {
 }
 
 // ── Grammar lesson: gender, articles, plurals ───────────────────────────────
-function sysGrammar(lang, srcLang, difficulty, dialect, writingStyle) {
-  const L    = langName(lang);
+function sysGrammar(lang, srcLang, difficulty, dialect, writingStyle, script) {
+  const L    = langName(lang, script);
   const S    = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
   const P = PROMPTS.grammar;
   let sys = fillPrompt(P.system, { L, S, diff, EXAMPLE: fillPrompt(promptExample(P, lang, srcLang), { L, S }) });
   if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
   if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
+  sys += scriptPinNote(lang, script, 'grammar prompt');   // v79_f
   return sys;
 }
 
 
 // ── Conjugation lesson: verb forms by person ─────────────────────────────────
-function sysConjugation(lang, srcLang, difficulty, dialect, writingStyle) {
-  const L    = langName(lang);
+function sysConjugation(lang, srcLang, difficulty, dialect, writingStyle, script) {
+  const L    = langName(lang, script);
   const S    = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
   const P = PROMPTS.conjugation;
   let sys = fillPrompt(P.system, { L, S, diff, EXAMPLE: fillPrompt(promptExample(P, lang, srcLang), { L, S }) });
   if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
   if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
+  sys += scriptPinNote(lang, script, 'conjugation prompt');   // v79_f
   return sys;
 }
 
@@ -3457,15 +3476,17 @@ function generateMath(story, difficulty, mathOps) {
   };
 }
 
-async function generateMathLLM(lang, srcLang, difficulty, instruction, jobId) {
+async function generateMathLLM(lang, srcLang, difficulty, instruction, jobId, script) {
   const _t0 = Date.now();
   jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Generating math lesson (LLM)…`);
-  const L = langName(lang || 'it');
+  const L = langName(lang || 'it', script || null);
   const S = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
   const nExercises = difficulty * 5;
   //const nExercises = difficulty <= 1 ? 5 : 7;
-  const sys  = fillPrompt(PROMPTS.math.system, { L, S });
+  // v79_f: word problems are prose in the target language, so this prompt emits target text like
+  // any other and takes the pin. (The non-LLM `generateMath` builds from digits and needs nothing.)
+  const sys  = fillPrompt(PROMPTS.math.system, { L, S }) + scriptPinNote(lang, script || null, 'math prompt');
   const user = fillPrompt(PROMPTS.math.user, { L, S, diff, instruction, nExercises });
   console.log('\n── Math lesson (LLM) prompt ─────────────────────────');
   console.log(`  Model: ${OLLAMA_LESSON_MODEL}, Lang: ${L}, Src: ${S}, Diff: ${diff}, N: ${nExercises}`);
@@ -3644,7 +3665,7 @@ async function generateGrammar(topic, lang, srcLang, difficulty, jobId, opts) {
   const _t0 = Date.now();
   opts = opts || {};
   const { userDialect, storyStyle, chainVocab, vocabMode: gramVocabMode, story } = opts;
-  const sys = sysGrammar(lang, srcLang, difficulty, userDialect, storyStyle);
+  const sys = sysGrammar(lang, srcLang, difficulty, userDialect, storyStyle, opts.script || null);
   const _gNouns = chainVocab?.nouns?.slice(0, 15).map(n => n.target) || [];
   const priorNouns = grammarPriorNounsNote(_gNouns, gramVocabMode);
   const L = langName(lang); const S = langName(srcLang || 'en');
@@ -3773,9 +3794,11 @@ async function generateWordForms(topic, lang, srcLang, difficulty, jobId, opts) 
   opts = opts || {};
   const { story } = opts;
   if (!story || !String(story).trim()) throw new Error('word_forms: no story available');
-  const L = langName(lang); const S = langName(srcLang || 'en');
+  const _wfScript = opts.script || null;                                  // v79_f
+  const L = langName(lang, _wfScript); const S = langName(srcLang || 'en');
   const n = (difficulty <= 1) ? 5 : (difficulty >= 3 ? 8 : 6);
-  const sys = fillPrompt(PROMPTS.wordForms.system, { L, S, EXAMPLE: fillPrompt(promptExample(PROMPTS.wordForms, lang, srcLang), { L, S }) });
+  const sys = fillPrompt(PROMPTS.wordForms.system, { L, S, EXAMPLE: fillPrompt(promptExample(PROMPTS.wordForms, lang, srcLang), { L, S }) })
+            + scriptPinNote(lang, _wfScript, 'word-forms prompt');                             // v79_f
   const userMsg = fillPrompt(PROMPTS.wordForms.user, { L, S, story, n });
   const MAX_ATTEMPTS = 3;
   let totalPromptTokens = 0, totalCompletionTokens = 0, lastError = '';
@@ -3986,6 +4009,9 @@ async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
       + (storyKeywords ? `\nPrefer these ${L} words: ${storyKeywords}.` : '')
       + `\nReturn ONLY JSON: {"title":"...","desc":"...","icon":"🔁","words":[{"base":"<${L}>","gloss":"<${S}>","synonyms":[{"w":"<${L}>","g":"<${S}>"}],"antonyms":[],"homophones":[]}]}`;
   }
+  // v79_f: appended after BOTH branches, so the inline fallback prompt cannot be the one that
+  // drifts. `opts.script` is null for a monoscriptic language and scriptPinNote returns '' then.
+  sys += scriptPinNote(lang, opts.script || null, 'synonyms prompt');
   const MAX_ATTEMPTS = 3;
   let tp = 0, tc = 0, lastError = '';
   const clean = arr => {
@@ -4143,6 +4169,7 @@ async function generateComprehension(topic, lang, srcLang, difficulty, jobId, op
     sys = `You write reading-comprehension questions in ${L} for a learner who speaks ${S}. Test understanding of the text — events, motives, implications — never vocabulary or grammar. Output strict JSON only.`;
     userMsg = `Story:\n"""\n${storyForPrompt}\n"""\nWrite ${n} questions.\nReturn ONLY JSON: {"title":"...","desc":"...","icon":"🧠","questions":[{"q":"<${L}>","choices":["<${L}>","<${L}>","<${L}>","<${L}>"],"correctIndex":0,"why":"<${S}>"}]}`;
   }
+  sys += scriptPinNote(lang, opts.script || null, 'comprehension prompt');   // v79_f — both branches
   const MAX_ATTEMPTS = 3;
   let tp = 0, tc = 0, lastError = '';
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
@@ -4252,7 +4279,7 @@ async function generateConjugation(topic, lang, srcLang, difficulty, jobId, opts
   opts = opts || {};
   const { userDialect, storyStyle, chainVocab, vocabMode: conjVocabMode, story } = opts;
   jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Generating conjugation lesson…`);
-  const sys = sysConjugation(lang, srcLang, difficulty, userDialect, storyStyle);
+  const sys = sysConjugation(lang, srcLang, difficulty, userDialect, storyStyle, opts.script || null);
   const _cVerbs = chainVocab?.verbs?.slice(0, 10).map(v => v.target) || [];
   const priorVerbs = !_cVerbs.length ? ''
     : conjVocabMode === 'extend'
@@ -4965,7 +4992,7 @@ const ADD_LESSON_GENERATORS = {
   comprehension: (c) => generateComprehension(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
   word_forms:  (c) => generateWordForms(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
   math:        (c) => c.addMathInstr
-    ? generateMathLLM(c.lang, c.srcLang, c.diff, c.addMathInstr, c.jobId)
+    ? generateMathLLM(c.lang, c.srcLang, c.diff, c.addMathInstr, c.jobId, c.script || null)
     : generateMath(c.story, c.diff, c.addMathOps || null),
   // Topic-independent + LLM-free: ignores the story, builds from the script table.
   intro_script: (c) => generateIntroScript(c.lang, { script: c.introScript || null, difficulty: c.diff, srcLang: c.srcLang }),
@@ -4976,7 +5003,13 @@ const ADD_LESSON_GENERATORS = {
 // `review` and `standard` are not in ADD_LESSON_GENERATORS (both are generateOneLesson with
 // different vocab modes), so they are named here explicitly.
 const ARC_LESSON_TYPES = ['standard', 'review', 'word_forms', 'synonyms', 'grammar',
-                          'conjugation', 'comprehension', 'error_hunt', 'math'];
+                          'conjugation', 'comprehension', 'error_hunt', 'math',
+                          // v79_h: `intro_script` is in ADD_LESSON_GENERATORS and was reachable
+                          // from the per-chapter dropdown, but not from this whitelist — so a
+                          // storyline-level run that ticked it would have had it dropped here,
+                          // silently and with no error. The client gate and this list are the two
+                          // halves of one decision and both had to change.
+                          'intro_script'];
 function sanitizeArcTypes(list) {
   if (!Array.isArray(list)) return null;
   const seen = new Set();
@@ -5015,6 +5048,7 @@ async function generateArcLesson(aType, ctx) {
   const { lesson } = await gen({
     lang: ctx.lang, srcLang: ctx.srcLang, topicName: ctx.topicName, story: ctx.story,
     diff: ctx.diff, jobId: ctx.jobId, chainVocab: ctx.chainVocab,
+    script: ctx.script || null,                                    // v79_f
     standardOpts: { story: ctx.story, vocabMode: null, script: ctx.script || null },
     sharedGenOpts: { chainVocab: ctx.chainVocab, vocabMode: 'reinforce', story: ctx.story,
                      script: ctx.script || null,
@@ -5669,8 +5703,10 @@ async function _runRecreateJob(jobId, startId, opts) {
               const gen = ADD_LESSON_GENERATORS[aType];
               if (!gen) continue;
               ({ lesson } = await gen({ lang, srcLang, topicName: topic.topic, story, diff, jobId, chainVocab,
-                standardOpts: { story, vocabMode: null },
+                script: topic.script || null,                      // v79_f
+                standardOpts: { story, vocabMode: null, script: topic.script || null },
                 sharedGenOpts: { chainVocab, vocabMode: 'reinforce', story,
+                                 script: topic.script || null,    // v79_f
                                  chainStory: chainStory.text, chainStoryChapters: chainStory.chapters } }));
             }
             if (lesson) { stamp(lesson, aType); newLessons.push(lesson); recreated++; }
@@ -6817,14 +6853,20 @@ http.createServer(async (req, res) => {
         // Dispatch the lessonFormat to its generator via the ADD_LESSON_GENERATORS
         // registry (B-phase-4). standardOpts / sharedGenOpts are the two opt shapes the
         // generators expect; building both unconditionally is side-effect-free.
-        const standardOpts = { userTranslation: saved.storyTranslation || null, userDialect: dialect, writingStyle: style, storyLang: saved.storyLang || 'target', story: saved.story || null, chainVocab: chainVocab.words, vocabMode: _addVocabMode };
+        // v79_f: the chapter's own script travels with every add-lessons generation. Without it
+        // `scriptPinNote` cannot fire and a digraphic chapter gets lessons in whichever script the
+        // model reaches for — the reported `tp_17864554460460000107`, Cyrillic story, Latin
+        // conjugation. `saved.script` is the stamp v76_h put on the chapter for exactly this.
+        const _chapScript = saved.script || null;
+        const standardOpts = { userTranslation: saved.storyTranslation || null, userDialect: dialect, writingStyle: style, storyLang: saved.storyLang || 'target', story: saved.story || null, chainVocab: chainVocab.words, vocabMode: _addVocabMode, script: _chapScript };
         // v71_o: comprehension questions read the whole chain, not just this chapter.
         const _chainStory = collectChainStory(saved);
         if (_chainStory.chapters > 1)
           console.log(`    Lesson context: ${_chainStory.chapters} chapters, ${_chainStory.text.length} chars`);
         const sharedGenOpts = { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story,
+                                script: _chapScript,   // v79_f
                                 chainStory: _chainStory.text, chainStoryChapters: _chainStory.chapters };
-        const genCtx = { lang, srcLang, topicName, story, diff, jobId, chainVocab, standardOpts, sharedGenOpts, addMathInstr, addMathOps, introScript: addIntroScript || null };
+        const genCtx = { lang, srcLang, topicName, story, diff, jobId, chainVocab, standardOpts, sharedGenOpts, addMathInstr, addMathOps, introScript: addIntroScript || null, script: _chapScript };
         const genFn = ADD_LESSON_GENERATORS[fmt];
         if (!genFn) throw new Error(`Unsupported lessonFormat: ${fmt}`);
         // v59: meter the whole generator run (some formats are multi-call) and fold it into
@@ -7159,7 +7201,7 @@ http.createServer(async (req, res) => {
       if (!t.story || !t.story.trim()) return json(res, 400, { error: 'Topic has no story to QC' });
       const _t0 = Date.now();
       try {
-        const { result: r, tokens: _mTok } = await meterLLMTokens(() => generateStoryQc(t.story, t.lang || 'it'));
+        const { result: r, tokens: _mTok } = await meterLLMTokens(() => generateStoryQc(t.story, t.lang || 'it', t.script || null));
         addTokenUsage(t, _mTok, 'story_qc');   // cumulative per-chapter tokens (v59)
         // Persist the proposal (survives a client refresh; overwrites any prior proposal). Store
         // the exact original it was diffed against, so acceptance can't drift if the story changed.

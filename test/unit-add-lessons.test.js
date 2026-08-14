@@ -24,7 +24,11 @@ const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
   assert.ok(/const ADD_LESSON_TYPES = \[/.test(html), 'the type list is a single named table');
   assert.ok(/function renderLessonTypeChecks\(container, opts\)/.test(html), 'it renders as checkboxes');
   assert.ok(/function readLessonTypeChecks\(container, cls\)/.test(html), 'and reads back a selection');
-  assert.ok(/function _pickLessonTypes\(titleText\)/.test(html), 'with a modal wrapper');
+  // v79_h: this pinned the exact signature `(titleText)`, and adding the `opts` argument that
+  // carries the script gate broke it while its CLAIM — "there is a modal wrapper" — stayed true.
+  // A signature is not the claim; the function is. Matched by name and shape, so the next argument
+  // does not break it either.
+  assert.ok(/function _pickLessonTypes\([^)]*\)\s*\{/.test(html), 'with a modal wrapper');
   // The two-bundle chooser is GONE, not left beside the new one — two ways to express the same
   // intent is how the storyline page and the book form drift apart.
   assert.ok(!/function _pickArcMode\(/.test(html), 'the old two-button arc-mode chooser is removed');
@@ -52,7 +56,9 @@ const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
 
 // ── 3. The storyline button ADDS ───────────────────────────────────────────
 {
-  assert.ok(/const addTypes = await _pickLessonTypes\(t\('sl\.add_lessons_btn'\)\);/.test(html),
+  // v79_h: the exact call text was pinned, and adding the script-gate argument broke it while the
+  // claim — "the storyline button opens the picker" — stayed true. Anchored on the call instead.
+  assert.ok(/const addTypes = await _pickLessonTypes\(t\('sl\.add_lessons_btn'\)/.test(html),
     'the storyline button opens the picker');
   assert.ok(/JSON\.stringify\(\{ id: startId, addTypes, add: true \}\)/.test(html),
     'and posts the tick-list in ADD mode');

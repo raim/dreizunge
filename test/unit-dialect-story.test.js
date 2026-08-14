@@ -23,6 +23,10 @@ function extAsync(src, n) {
     const stubs = {
       langName: x => (x === 'de' ? 'German' : x),
       callLLMTranslation: async (sys, usr) => { lastPrompt = { sys, usr }; return { text: reply }; },
+      // v79_f: a dialect story is target-language text, so the generator now appends the shared
+      // script pin like every other prompt. Stubbed to a marker so the section below can assert it
+      // ARRIVES, rather than merely that the reference resolves.
+      scriptPinNote: (lang, script, role) => (script ? `\n[PIN ${lang}/${script}/${role}]` : ''),
     };
     return new Function(...Object.keys(stubs), extAsync(server, 'generateDialectStory') + '\nreturn generateDialectStory;')(...Object.values(stubs));
   }
@@ -35,6 +39,17 @@ function extAsync(src, n) {
   assert.ok(/Bavarian-style/.test(lastPrompt.sys), 'instructions reach the prompt');
   assert.ok(/Gitsche = Mädchen/.test(lastPrompt.usr), 'glossary is few-shot in the prompt');
   console.log('  generateDialectStory: parses blocks; topic + instructions + glossary in prompt: OK');
+
+  // v79_f: the script pin reaches the dialect prompt, and stays out of it when there is no script.
+  gen = build('STORY:\nx\n---\nGERMAN:\ny');
+  await gen(rows, 'sr', { topic: 't', script: 'cyrillic-sr' });
+  assert.ok(/\[PIN sr\/cyrillic-sr\/dialect story prompt\]/.test(lastPrompt.sys),
+    'the chapter script reaches the dialect story prompt');
+  await gen(rows, 'de', { topic: 't' });
+  assert.ok(!/\[PIN/.test(lastPrompt.sys),
+    'and nothing is added when no script was chosen — the pin must not grow a paragraph on the 31 '
+    + 'monoscriptic languages');
+  console.log('  generateDialectStory: script pin present when asked, absent when not: OK');
 
   // Malformed reply → null (no crash).
   gen = build('just some text without the blocks');
@@ -92,6 +107,7 @@ function extAsync(src, n) {
       if (/rewrite a Standard/i.test(sys)) return { text: 'STORY:\nHeint is schee. I hon a Gitsche gsegn.\n---\nGERMAN:\nHeute ist schön. Ich sah ein Mädchen.' };
       return { text: 'Heute ist schön. Ich sah ein Mädchen.' };
     },
+    scriptPinNote: (lang, script, role) => (script ? `\n[PIN ${lang}/${script}/${role}]` : ''),  // v79_f
   };
   const genV2 = new Function(...Object.keys(stubs2),
     extPlain(serverSrc, 'dialectGlossaryCoverage') + '\n' +

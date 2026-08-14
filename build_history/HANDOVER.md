@@ -1,6 +1,6 @@
-# HANDOVER — v79_b
+# HANDOVER — v79_i
 
-One page. **Current release `v79_b`** (session 33, one point release on the `v79` line, which was
+One page. **Current release `v79_i`** (session 33, seven point releases on the `v79` line, which was
 cut after session 32 shipped fourteen point releases on the `v78` line). **Read `build_history/roadmap_v79.md` next** — start with its
 "⚠️ OPEN AT THE v79 CUT" block — then `INTERNALS.md`, then
 `build_history/v79_session33_notes.md`, then `build_history/v78_session32_notes.md`. What any
@@ -10,12 +10,12 @@ cut after session 32 shipped fourteen point releases on the `v78` line). **Read 
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **206 checks, ALL PASSED** |
-| `node test/run.js --quick` | 182 |
+| `node test/run.js` | **212 checks, ALL PASSED** |
+| `node test/run.js --quick` | 188 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v79_b'`. Corpus: **315 topics, 88 storylines**. **33 languages**, `ui.json` complete
+`APP_VERSION = 'v79_i'`. Corpus: **321 topics, 90 storylines** (August drop, arrived mid-session). **33 languages**, `ui.json` complete
 for all of them (617 `en` keys), `languages.json` at **1089/1089** name cells.
 
 **These numbers are the ones to trust.** Every session prompt so far has quoted a count that was
@@ -46,6 +46,26 @@ See `roadmap_v79.md` → "⚠️ OPEN AT THE v79 CUT". In short: a **PLANNED REW
 — **do not remove them first and design after**; and the **per-text scheme discussion** itself,
 whose prerequisite coverage measurement is already done: 9.2% of story tokens, 8.2% of types,
 rarest words least covered at 5.1%.
+
+**Closed in session 33 from the user's bug list:** the storyline-summary Cancel button (`v79_c`),
+the wrong-region English voice (`v79_d`, the second report — `v74_j` fixed only the case where the
+requested locale IS installed), the script pin reaching every target-text prompt (`v79_f` — `v79_a`
+covered three prompts of fourteen and its shipped row is now marked SUPERSEDED), and the
+script-primer glyph card plus an untranslated language name in its badge (`v79_g`).
+
+Also closed: the script lesson missing from the STORYLINE-level add-lessons form (`v79_h` — the gate
+was right, the row was absent from `ADD_LESSON_TYPES` and from the server's `ARC_LESSON_TYPES`
+whitelist), and the word-forms prompt (`v79_i` — the rule was already there and the prompt
+contradicted it three bullets earlier; the fix was to DELETE the bullet that asked for the defect).
+
+**Still open from that list — two items, each a session:** import "new" mode (re-assign ids on
+import so nothing is overwritten) and the forked-storyline display. See the session-33 notes §10.
+
+**Three releases need a LIVE pass** before their claims are more than wiring: `v79_f` (regenerate
+the conjugation lesson of `tp_17864554460460000107`, watch for the new `[script]` log line),
+`v79_i` (regenerate a word-forms lesson, then re-run `build_history/probe_word_forms_v79i.js` and diff its header
+numbers — the Aug 14 movement is NOT a result, that lesson was hand-edited, not regenerated), and
+`v79_g` (play a script-primer lesson and listen).
 
 **Closed in session 33: `useFullChain`.** The user ruled *make the label true* and `v79_b` shipped
 it — the story prompt now takes the whole chain through `collectChainStory`, sized for `num_ctx`.

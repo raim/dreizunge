@@ -1,8 +1,10 @@
 # Session 33 — the `v79` line
 
-Opened at the `v79` base cut. **One release: `v79_b`.** One ruling asked for and given, one stale
-instruction found in the session prompt, and the per-text learning scheme discussed rather than
-built (the user's choice for this session).
+Opened at the `v79` base cut. **Seven releases: `v79_b` through `v79_i`.** One ruling asked for and
+given, one stale instruction found in the session prompt, the per-text learning scheme discussed
+rather than built, then two data drops and a user bug list. Baseline 206 -> 212 checks, and
+**six new standing rules (29-34)** — more than any session since 28, all of them earned from tests
+that broke while their claims stayed true.
 
 ---
 
@@ -175,9 +177,140 @@ and, separately, `Lesson context: …` for the lesson prompts. **Chapter 2 delib
 unchanged** — that is the single-parent branch, not a failure. Expect the story call to be slower in
 proportion to the context; the median chapter now carries about 3.3x what it did.
 
-## 4. Still owed at the end of this session
+## 4. The August data drop — one fixer, one test that was wrong
 
-- **Package.** The zip's top-level directory must be `dreizunge_v79_b/`, not `dreizunge_v79/`.
+`lessons.json` and `learners.json` arrived mid-session: **321 topics, 90 storylines** (was 315/88).
+Two checks went red.
+
+**`unit-static-freshness`** — the drop is newer than `docs/`. Checked `unit-script-choice` FIRST
+(rule 23): `20 stamped, 0 outstanding, 1 known-mixed`, so there was nothing for the backfill to do
+and `build-static.js` alone was correct. Running backfill first would have been a no-op that muddied
+the evidence.
+
+**`unit-story-unlocked-card` §8 — the TEST was wrong, not the code.** It selected the first chapter
+with a mixed lesson and ANY vocabulary; on this drop that is `tp_17865784443240000119`, whose
+vocabulary is EIGHT words — few enough that a single round solves all of them. Its "a shorter play
+solves fewer words" step then compared 8 with 8. The selector now requires at least 20 words and
+says why, so the precondition is stated rather than hoped for. **Second time a selector like this
+has picked an unsuitable chapter on new data** (`unit-replay-focus` §8c was the first), and it is
+also latently flaky: at 5 rounds the same chapter measured 7 of 8, non-monotonic, because the draw
+is random.
+
+## 5. The user's bug list — four releases
+
+Full entries are in the roadmap's shipped table; what follows is only what a future session needs
+that the table does not repeat.
+
+**`v79_c` (summary Cancel).** The generalisable part: **Save worked BY ACCIDENT.** It found the
+right panel through `ta.parentElement`; Cancel guessed at ids. Two paths answering "which element is
+this?" two different ways, and only the guessing one was wrong. When a fix touches one of a pair
+like that, check whether the other is right for a reason or by luck.
+
+**`v79_d` (TTS fallback).** `v74_j` was not wrong, it was incomplete, **and its own mechanism is
+why**: it added a tier that is FLAT whenever the requested locale is absent, so in that case the
+sort falls straight through to the pre-`v74_j` behaviour. A tier that only fires on a match cannot
+fix the no-match case. Worth remembering when reading any "we fixed the ranking" claim.
+
+**`v79_f` (the script pin).** The biggest finding of the session and the one with the most reusable
+shape — see §6.
+
+**`v79_g` (glyph card).** Two of the three decisions in it were AMBIGUOUS in the request and were
+ruled on rather than guessed: "and now underline" (read as *no* underline) and what a tapped chip
+should say. The screenshot also carried a bug that was not on the list — the badge naming Serbian in
+English inside a German sentence — which is a reminder that a screenshot is evidence about
+everything in it, not only about the thing being reported.
+
+## 6. `v79_f`: what to take from it
+
+**A release that says it closed a hole is a claim, not a measurement.** `v79_a`'s shipped row read
+as though the script problem was solved; it covered THREE prompts of FOURTEEN. The row is now marked
+SUPERSEDED in place, because the next session would otherwise read it exactly as this one did.
+
+**The pin is two facts and each fails alone.** The prompt must append it, AND the script must reach
+the prompt. `tp_17864554460460000107` failed on the first while the path supplied the script
+correctly; the add-lessons path failed on the second while the prompts were being fixed. A guard for
+either one alone would have gone green on a broken app.
+
+**Guard the SHAPE, not the list.** `unit-script-pin-coverage` sweeps every `sys*`/`generate*`
+function out of the source and demands a classification. It found 29 builders — three more than a
+hand-written list would have had, including `generateStoryQc`, a proofreader that returns a
+corrected copy of the story and could therefore silently transliterate a chapter that was already
+right. **The sweep found bugs the author did not know to look for**, which is the whole argument for
+sweeps over enumerations.
+
+**Three tests went red and none of them was noise.** Two were genuine consequences of the change
+(an argument list, an extracted-source harness missing a stub). The third, `unit-book-script`,
+matched `sysStory`'s INLINE copy of the rule — the copy deliberately deleted in this release. It was
+re-anchored on the shared helper rather than restored: restoring it would have meant keeping the
+duplication that caused the bug. **"Make the test pass again" and "keep the test's claim true" are
+different instructions**, and this is the third time in two sessions the difference has mattered.
+
+**What is NOT verified:** every guard here proves the instruction reaches the prompt. Whether
+`qwen3.6:35b-a3b` then honours it on a conjugation table is only observable live. Regenerate that
+chapter's conjugation lesson with the model up and watch for the new `[script]` log line.
+
+## 7. `v79_h` and `v79_i` — two reports whose diagnosis was the opposite of the request
+
+Both were asked for as "make X do Y". In both cases the thing that needed changing was somewhere
+else, and changing the obvious thing would have been wrong.
+
+**`v79_h`: the gate was right, the ROW was missing.** The user reported the script lesson not being
+offered on an en<-ar storyline. `scriptLessonAvailableForSet` answers TRUE for it and the
+per-chapter dropdown offers the option correctly — but the STORYLINE form renders from
+`ADD_LESSON_TYPES`, and `intro_script` was not in that array at all, so no storyline could offer it
+for any language pair. Touching the gate would have broken a correct function to fix an absent row.
+The server's `ARC_LESSON_TYPES` whitelist was missing it too, so a client-only fix would have had
+the tick dropped **with no error**.
+
+**`v79_i`: the prompt already said it, and contradicted itself.** See rule 31. The transferable
+part is the shape: *"strengthen the prompt"* was the request, and the correct action was to DELETE
+the bullet that asked for the defect. A stronger version of a rule that is already present changes
+nothing.
+
+## 8. Five source pins broke this session and none of them had a false claim
+
+Recorded together because the pattern only became visible in aggregate, and it is now rules 29-30.
+
+| test | what it pinned | why it broke |
+|---|---|---|
+| `unit-reasoning-model-safety` | a slice starting at `const storySystem = sysStory(` | `thinkOpts` hoisted ABOVE that line |
+| `unit-reasoning-toggle` | the same slice | same |
+| `unit-book-script` | `sysStory`'s INLINE copy of the script rule | the copy was deliberately deleted for a shared helper |
+| `unit-add-lessons` | the exact signature `_pickLessonTypes(titleText)` and the exact call text | the argument list grew |
+| `unit-intro-script` | "the helper appears exactly 3 times" | a legitimate new call site appeared |
+
+Every one was re-anchored at the level the claim lives, with a non-vacuity check added where the
+widened window could otherwise go empty. **None was re-pinned to the new text.** The last is the
+sharpest: a COUNT stood in for "no call site hand-rolls this question", and it failed on a new call
+site that used the helper correctly — the exact thing it should have welcomed.
+
+## 9. The Aug 14 drop — and why it says nothing about `v79_i`
+
+`lessons.json` arrived again on the 14th; `learners.json` was byte-identical to the 13th. Corpus
+unchanged at **321 topics / 90 storylines**. `unit-static-freshness` went red (expected: the drop is
+newer than `docs/`); `unit-script-choice` reported `20 stamped, 0 outstanding, 1 known-mixed`, so
+`build-static.js` alone was correct and no backfill was run.
+
+`build_history/probe_word_forms_v79i.js` moved from 8 flagged items to 7. **That is not evidence about the prompt
+change.** `tp_872660509`'s word-forms lesson still carries its original `_genMeta.at`
+(2026-08-12T12:25:21), so it was never regenerated — one item was removed by hand between the drops.
+The probe header now records both cuts and says so, because a later session finding "17% -> 15%"
+next to a prompt fix would read it as a result. **The `v79_i` prompt has not yet met a model.**
+
+## 10. Still owed at the end of this session
+
+- **Package.** The zip's top-level directory must be `dreizunge_v79_i/`, not `dreizunge_v79/`.
 - Everything in `HANDOVER.md`'s "Owed by the user" that a container cannot do — unchanged by this
   session.
 - The per-text learning scheme remains a DISCUSSION. Nothing was built for it here.
+- **Two items from the user's list are untouched, and each is a session:** import "new" mode
+  (re-assign ids so an import cannot overwrite — needs a consistent rewrite of `continuedFromId`,
+  storyline `chapters` and the fork links, or it produces broken chains rather than fresh ones), and
+  the forked-storyline display rework (all chapters shown, greyed, clickable, switchable, with
+  shared chapters counting the same for every fork — it lands on the surface `probe_gates_v77.js`
+  measures, so re-run and DIFF that probe).
+- **A live pass on three releases.** `v79_f`, `v79_g` and `v79_i` are all guarded at the layer where
+  the claim is observable here, which is not the layer where the claim ultimately matters:
+  regenerate a word-forms lesson and re-run `build_history/probe_word_forms_v79i.js`; regenerate the conjugation
+  lesson of `tp_17864554460460000107` and watch for the new `[script]` log line; and play a
+  script-primer lesson to hear the glyph and the tapped chip.

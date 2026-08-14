@@ -154,6 +154,16 @@ const scriptsFor = (c) => {
   // Listed by id rather than by relaxing the count, so a mixed chapter arising any OTHER way still
   // fails. **`reinforce`/`neutral`/`extend` are slated for removal (roadmap → "PLANNED REWORK");
   // when they go, this entry should go with them and the message should be re-read.**
+  //
+  // v79_f — WHAT THIS GUARD CANNOT SEE, recorded because it stayed green through the exact bug it
+  // looks like it should catch. `tp_17864554460460000107` is a Cyrillic chapter whose CONJUGATION
+  // lesson came out entirely Latin, and this section never noticed: `backfill-script.js` compares
+  // the chapter's STORY and its VOCABULARY, and that chapter's vocabulary is correct Cyrillic. A
+  // conjugation table, a synonyms list or a comprehension question in the wrong script is invisible
+  // here. Do not read a green run as "no chapter mixes scripts" — read it as "no chapter's story
+  // and vocabulary disagree". The coverage guard for the other lesson types is
+  // `unit-script-pin-coverage`, and it works on the PROMPTS rather than on the corpus, because a
+  // corpus check can only find drift that has already been generated.
   const EXPECTED_MIXED = ['tp_17863746762340000193'];
   const _mixedIds = [...out.matchAll(/^\s+\?\s+(\S+)/gm)].map(m => m[1]);
   const _unexpected = _mixedIds.filter(id => !EXPECTED_MIXED.includes(id));

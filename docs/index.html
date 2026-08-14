@@ -193,6 +193,17 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .pron{font-size:11px;color:var(--gray-dark);font-style:italic;margin-top:3px}ruby{ruby-align:center}rt{font-size:0.55em;color:var(--gray-dark);font-style:normal}
 .choices{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
 .choices.one-col{grid-template-columns:1fr}
+/* v79_g: script-primer variant. The answers are single letters or short transliterations, so a
+   two-column full-width grid gave each one a button the width of half the card. Laid out like the
+   sentence/glyph-ordering bank (.wbank/.tok) so the two surfaces match: chips sized to their own
+   content, flowing next to each other. Font is 20px against the question's 44px — deliberately a
+   step down from the glyph, not a match for it. */
+.choices.chips{display:flex;flex-wrap:wrap;gap:9px;justify-content:center}
+.choices.chips .choice{font-size:20px;padding:10px 20px;text-align:center;min-width:52px}
+/* The question is the glyph itself and nothing else, so it carries the size. No underline: the
+   `.q-word` treatment marks a word inside a sentence, and there is no sentence here to mark it
+   against. */
+.qglyph{font-size:44px;line-height:1.15;font-weight:900;color:var(--blue-dark);text-align:center;margin:6px 0 2px}
 .choice{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:var(--radius);padding:12px 14px;font-size:14px;font-weight:700;cursor:pointer;color:var(--text);text-align:left;font-family:'Nunito',sans-serif;box-shadow:0 3px 0 var(--gray-mid);transition:border-color .1s,transform .05s}
 .choice:hover:not(:disabled){border-color:var(--blue);box-shadow:0 3px 0 #84d8ff;transform:translateY(-1px)}
 .choice.sel{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark);box-shadow:0 3px 0 #84d8ff}
@@ -112796,17 +112807,13 @@ const STATIC_LESSONS = [
               "is"
             ],
             "correctIndex": 0,
-            "explanation": "ماضٍ بسيط لسرد قصة."
-          },
-          {
-            "sentence": "Sarah and Mark ___ slowly, their eyes darting from one masterpiece to another.",
-            "translation": "تحركت سارة ومارك ببطء، وعيونهما تتنقل من لوحة فنية إلى أخرى.",
-            "choices": [
-              "moved",
-              "move"
-            ],
-            "correctIndex": 0,
-            "explanation": "ماضٍ بسيط لحدث مكتمل."
+            "explanation": "ماضٍ بسيط لسرد قصة.",
+            "userFlag": {
+              "comment": "both choices would work in that sentence",
+              "correct": "",
+              "at": "2026-08-14T00:23:04.886Z",
+              "mode": "teacher"
+            }
           },
           {
             "sentence": "They ___ in front of Van Gogh's \"Starry Night\".",
@@ -112816,7 +112823,13 @@ const STATIC_LESSONS = [
               "linger"
             ],
             "correctIndex": 0,
-            "explanation": "ماضٍ بسيط للإشارة إلى الماضي."
+            "explanation": "ماضٍ بسيط للإشارة إلى الماضي.",
+            "userFlag": {
+              "comment": "both choices would work in that sentence",
+              "correct": "",
+              "at": "2026-08-14T00:23:18.574Z",
+              "mode": "teacher"
+            }
           },
           {
             "sentence": "The building was a modern marvel, its glass and steel structure ___ the changing light.",
@@ -112826,7 +112839,13 @@ const STATIC_LESSONS = [
               "reflected"
             ],
             "correctIndex": 0,
-            "explanation": "اسم فاعل يصف الهيكل."
+            "explanation": "اسم فاعل يصف الهيكل.",
+            "userFlag": {
+              "comment": "both choices would work in that sentence",
+              "correct": "",
+              "at": "2026-08-14T00:23:38.284Z",
+              "mode": "teacher"
+            }
           },
           {
             "sentence": "The concert hall was a hushed sanctuary, the seats ___ up as the audience prepared.",
@@ -112836,7 +112855,13 @@ const STATIC_LESSONS = [
               "filled"
             ],
             "correctIndex": 0,
-            "explanation": "اسم فاعل يصف حالة مستمرة."
+            "explanation": "اسم فاعل يصف حالة مستمرة.",
+            "userFlag": {
+              "comment": "both choices would work in that sentence",
+              "correct": "",
+              "at": "2026-08-14T00:23:53.517Z",
+              "mode": "teacher"
+            }
           },
           {
             "sentence": "Sarah turned to Mark, her eyes shining with a mix of awe and ___.",
@@ -112957,7 +112982,7 @@ const STATIC_LESSONS = [
       }
     },
     "generatedAt": "2026-05-28T09:08:23.626Z",
-    "updatedAt": "2026-08-12T12:29:05.345Z",
+    "updatedAt": "2026-08-14T00:24:16.731Z",
     "id": "tp_872660509",
     "continuedFromId": null,
     "storyMeta": {
@@ -113492,7 +113517,13 @@ const STATIC_LESSONS = [
               "twinkling"
             ],
             "correctIndex": 0,
-            "explanation": "ماضي بسيط ليتوافق مع سياق القصة"
+            "explanation": "ماضي بسيط ليتوافق مع سياق القصة",
+            "userFlag": {
+              "comment": "all choices would work in that sentence",
+              "correct": "",
+              "at": "2026-08-14T00:24:54.455Z",
+              "mode": "teacher"
+            }
           },
           {
             "sentence": "The aroma of grilled meats and fresh herbs ___ through the air.",
@@ -113503,7 +113534,13 @@ const STATIC_LESSONS = [
               "wafting"
             ],
             "correctIndex": 0,
-            "explanation": "ماضي بسيط للحدث المكتمل"
+            "explanation": "ماضي بسيط للحدث المكتمل",
+            "userFlag": {
+              "comment": "all choices would work in that sentence",
+              "correct": "",
+              "at": "2026-08-14T00:25:09.740Z",
+              "mode": "teacher"
+            }
           },
           {
             "sentence": "The restaurant was already ___ with patrons enjoying the early evening.",
@@ -113525,7 +113562,13 @@ const STATIC_LESSONS = [
               "tightened"
             ],
             "correctIndex": 0,
-            "explanation": "اسم الفاعل لوصف الحالة المصاحبة"
+            "explanation": "اسم الفاعل لوصف الحالة المصاحبة",
+            "userFlag": {
+              "comment": "two choices would work in that sentence",
+              "correct": "",
+              "at": "2026-08-14T00:25:37.438Z",
+              "mode": "teacher"
+            }
           }
         ],
         "_genMeta": {
@@ -113638,7 +113681,7 @@ const STATIC_LESSONS = [
       }
     },
     "generatedAt": "2026-05-28T12:04:13.732Z",
-    "updatedAt": "2026-08-12T12:39:47.938Z",
+    "updatedAt": "2026-08-14T00:25:39.767Z",
     "id": "tp_1328268658",
     "continuedFromId": "tp_872660509",
     "storyMeta": {
@@ -148854,11 +148897,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v79_b', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v79_b'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v79_i', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v79_i'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"876b59a1e371","lessons.json":"62d1f8b673a3","ui.json":"bda38a928a7f","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"a9f1bfa580fc"};
+  APP.buildSources = {"index.html":"4af47534de9a","lessons.json":"3104eda89455","ui.json":"bda38a928a7f","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"a9f1bfa580fc"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');
@@ -151218,6 +151261,13 @@ const ADD_LESSON_TYPES = [
   { v: 'comprehension', emoji: '🧠', key: 'lesson.type.comprehension', needsStory: true },
   { v: 'error_hunt', emoji: '🔍', key: 'lesson.type.error_hunt', needsStory: true },
   { v: 'math',       emoji: '🔢', key: 'lesson.type.math' },
+  // v79_h (user report, sl_1567412712 — an en→ar storyline): the script lesson was reachable from
+  // the PER-CHAPTER "add lesson" dropdown (gated by scriptLessonAvailableForSet) but was simply
+  // absent from this list, so the storyline-level "add lessons" form could never offer it however
+  // the languages were set. `needsScript` mirrors `needsStory`: the row is offered only when the
+  // set's languages actually call for a glyph course, so it stays hidden for the pairs where it
+  // would be meaningless rather than being offered and failing later.
+  { v: 'intro_script', emoji: '🔡', key: 'lesson.type.intro_script', needsScript: true },
 ];
 // Render the tick-list into a container. `opts.hasStory` hides the story-dependent types, matching
 // the same gate the add-lesson menu applies per chapter.
@@ -151227,6 +151277,10 @@ function renderLessonTypeChecks(container, opts){
   const pre = Array.isArray(o.checked) ? o.checked : ['standard'];
   container.innerHTML = ADD_LESSON_TYPES
     .filter(x => !(x.needsStory && o.hasStory === false))
+    // v79_h: same shape as the story gate above. `undefined` means "not asked", and an unasked
+    // gate must not silently hide the row — only an explicit false does, so a caller that does not
+    // know about scripts keeps its old behaviour.
+    .filter(x => !(x.needsScript && o.hasScript === false))
     .map(x => {
       const lbl = t(x.key);
       return `<label class="user-story-check-row" style="gap:7px">
@@ -151283,7 +151337,7 @@ function readLessonTypeChecks(container, cls){
 }
 
 // Modal wrapper around the tick-list. Resolves to an array of types, or null if cancelled.
-function _pickLessonTypes(titleText){
+function _pickLessonTypes(titleText, opts){
   return new Promise(resolve => {
     const ov=document.createElement('div');
     ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999';
@@ -151308,7 +151362,7 @@ function _pickLessonTypes(titleText){
     ov.appendChild(card);
     ov.onclick=e=>{ if(e.target===ov) done(null); };
     document.body.appendChild(ov);
-    renderLessonTypeChecks(card.querySelector('#lt-pick-list'), { cls:'lt-pick', checked:['standard'] });
+    renderLessonTypeChecks(card.querySelector('#lt-pick-list'), { cls:'lt-pick', checked:['standard'], ...(opts || {}) });
     // Nothing ticked is a no-op, not a run: silently generating the default set would be a
     // surprise, and an empty run costs the user a long wait for nothing.
     go.onclick=()=>{ const sel=readLessonTypeChecks(card.querySelector('#lt-pick-list'),'lt-pick');
@@ -151322,7 +151376,12 @@ async function recreateStorylineLessons(ev){
   const { ids } = _slBottomChapters();
   const startId = ids[0];
   if(!startId){ return; }
-  const addTypes = await _pickLessonTypes(t('sl.add_lessons_btn'));
+  // v79_h: ask the SAME gate the per-chapter dropdown asks, about a chapter of THIS storyline —
+  // scriptLessonAvailableForSet reads the set's own languages and scripts, which is the whole point
+  // of it (a global APP.srcLang would answer about whoever is browsing).
+  const _chap = (APP.savedList || []).find(x => x && x.id === startId) || APP.lessonData || null;
+  const addTypes = await _pickLessonTypes(t('sl.add_lessons_btn'),
+    { hasScript: !!(_chap && scriptLessonAvailableForSet(_chap)) });
   if(!addTypes || !addTypes.length) return;
   const btn = document.getElementById('sl-bottom-recreate');
   if(btn){ btn.disabled = true; btn.textContent = '⏳'; }
@@ -151878,6 +151937,15 @@ function openSummaryEdit(chainId, bodyId) {
   const current = sl?.summary || body.querySelector('p')?.textContent || '';
 
   // Replace body content with inline editor
+  // v79_c: REMEMBER which element the editor went into. There are two summary panels with
+  // different ids — `slsc-summary-body-<chainId>` on the library card and
+  // `slsc-sum-<sanitized chainId>` on the storyline page — and both can be in the DOM at once.
+  // Cancel used to re-derive the element by trying those ids in a fixed order, so opening the
+  // editor on the storyline page and pressing Cancel restored the LIBRARY card and left the
+  // editor on screen. Identity must be carried through, never recovered by guessing at it
+  // (standing rule 14, fourth instance). Save already got this right by accident, via the
+  // textarea's parent — which is why Save closed the editor and Cancel did not.
+  APP._sumEdit = { chainId: chainId, bodyId: body.id || null };
   body.style.display = '';  // ensure visible (expand if collapsed)
   body.innerHTML =
     '<textarea dir="auto" id="slsum-edit-ta-' + chainId + '" style="width:100%;box-sizing:border-box;min-height:100px;font-size:14px;line-height:1.6;font-family:Nunito,sans-serif;border:1.5px solid var(--blue);border-radius:6px;padding:8px;resize:vertical;outline:none;color:var(--text)">' +
@@ -151897,7 +151965,13 @@ async function saveSummaryEdit(chainId) {
   const status = document.getElementById('slsum-edit-status-' + chainId);
   if (!ta) return;
   const summary = ta.value.trim();
-  const editorBody = ta.parentElement;   // the element openSummaryEdit rendered the editor into
+  // v79_c: same recorded identity Cancel uses. `ta.parentElement` still works and stays as the
+  // fallback, but the two paths now agree on which panel the editor is in rather than one relying
+  // on DOM parentage and the other on an id guess.
+  const _open = (APP._sumEdit && APP._sumEdit.chainId === chainId) ? APP._sumEdit : null;
+  const editorBody = (_open && _open.bodyId ? document.getElementById(_open.bodyId) : null)
+                  || ta.parentElement;   // the element openSummaryEdit rendered the editor into
+  APP._sumEdit = null;
   if (status) status.textContent = 'Saving…';
   // Replace the editor with the saved summary text (shared by both save paths).
   const _renderSaved = () => {
@@ -151943,13 +152017,21 @@ function cancelSummaryEdit(chainId) {
   // Re-render with existing summary from cache
   const sl = (APP.storylines||[]).find(s => s.id === chainId);
   const summary = sl?.summary || '';
-  const body = document.getElementById('slsc-summary-body-' + chainId)
+  // v79_c: restore the panel the editor was opened INTO (recorded by openSummaryEdit), not
+  // whichever of the two summary-panel ids happens to resolve first. Both panels exist together
+  // once the library list has rendered, and the fixed lookup order below always preferred the
+  // library card's — so Cancel on the storyline page rewrote the wrong panel and the editor
+  // stayed open. The old lookup survives as the fallback for a call with no recorded editor.
+  const _open = (APP._sumEdit && APP._sumEdit.chainId === chainId) ? APP._sumEdit : null;
+  const body = (_open && _open.bodyId ? document.getElementById(_open.bodyId) : null)
+            || document.getElementById('slsc-summary-body-' + chainId)
             || document.getElementById('slsc-sum-' + chainId.replace(/[^a-zA-Z0-9]/g,'_'));
   if (body) {
     body.innerHTML = summary
       ? '<p dir="auto" style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(summary) + '</p>'
       : '<em style="color:var(--gray-dark)">Here could be your summary.</em>';
   }
+  APP._sumEdit = null;
 }
 
 
@@ -156062,7 +156144,7 @@ function _exStoryPanelHtml(ex){
        + '</details>';
 }
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
-function cGrid(cs,one){ return `<div class="choices${one?' one-col':''}">${cs.map((c,i)=>`<button class="choice" dir="auto" id="c${i}" onclick="pickChoice(${i},this)">${furiHtml(c)}</button>`).join('')}</div>`; }
+function cGrid(cs,one,mode){ return `<div class="choices${one?' one-col':''}${mode==='chips'?' chips':''}">${cs.map((c,i)=>`<button class="choice" dir="auto" id="c${i}" onclick="pickChoice(${i},this)">${furiHtml(c)}</button>`).join('')}</div>`; }
 // Shared card for sentence-context MCQs (word_forms + synonyms-in-context). The
 // sentence div is omitted when empty (no story sentence was found).
 function sentenceMcqCard({badge, question, sentenceHtml, hint, choices}){
@@ -156317,7 +156399,13 @@ function lBlock(it, pron, hideWord) {
 // Return the name of a language code in the current UI language
 // Falls back to English name, then the code itself
 function localizedLessonLangName(langCode) {
-  const uiLang = APP.srcLang || APP.lang || 'en';
+  // v79_g: resolve the UI language the SAME way lessonSrcLang() does — the open lesson first, then
+  // the app default. It read `APP.srcLang` alone, so on a lesson whose own srcLang differs from the
+  // app's (an intro-script lesson opened directly by #topic=, where APP.srcLang is still the
+  // default 'en'), the badge printed the flag from lessonData and the language NAME from a
+  // different language: "🇩🇪→🇷🇸 ÜBERSETZE INS SERBIAN". The flag and the name came from two
+  // different sources of truth, which is why only the name was wrong.
+  const uiLang = APP.lessonData?.srcLang || APP.srcLang || APP.lang || 'en';
   const entry = LANGS[langCode];
   if (!entry) return langCode;
   return (entry.names && (entry.names[uiLang] || entry.names['en'])) || entry.name || langCode;
@@ -156382,9 +156470,31 @@ function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=loc
   // v69_i (user request): the question no longer names the target language — the badge above it
   // already shows the direction (flag→flag) and the language name. One string for both the dialect
   // and the normal case; the old `.q_nolang` variant became the canonical `.q` in ui.json.
-  const q = t("ex.mcq_source_target.q",{word:qWord(furiHtml(ex.source))});
   const badge = dia ? t("ex.badge.mcq_source_target_nolang") : t("ex.badge.mcq_source_target",{lang:Ln});
+  // v79_g (user request): the script-primer glyph→sound item drops the carrier sentence entirely.
+  // "Wie sagt man М м?" spent a line of prose on a question whose whole content is the glyph, and
+  // rendered that glyph at question size. Now the glyph IS the question, large and unadorned, and
+  // the answers are chips rather than half-card buttons. Only this ONE item shape is affected —
+  // `_intro:'glyph_sound'` — because it is the only one whose prompt is a single grapheme; the
+  // sound→glyph item in the same lesson keeps the sentence, since its prompt is a transliteration
+  // that needs the question to say what is being asked.
+  if (ex._intro === 'glyph_sound') {
+    _introSpeakGlyph(ex.source);
+    return `<div class="ex-badge">${S.flag}→${L.flag} ${badge}</div><div class="card">`
+         + `<div class="qglyph" dir="auto">${furiHtml(ex.source)}</div>${cGrid(ex.choices,false,'chips')}</div>`;
+  }
+  const q = t("ex.mcq_source_target.q",{word:qWord(furiHtml(ex.source))});
   return `<div class="ex-badge">${S.flag}→${L.flag} ${badge}</div><div class="card"><div class="qtext" dir="auto">${q}</div>${cGrid(ex.choices,false)}</div>`; }
+// v79_g: read the glyph aloud when the card appears, in the TARGET voice — the point of a script
+// primer is to attach a sound to a shape, and the learner should not have to hunt for a speaker
+// button to get it. Deliberately silent when muted or when the device has no voice for the
+// language: _ttsMakeUtterance already REFUSES rather than approximating (v55_x), and speak() is the
+// one entry point that honours both. Scheduled after the render so the card exists first.
+function _introSpeakGlyph(glyph){
+  const txt = String(glyph||'').trim();
+  if (!txt || APP.muted) return;
+  setTimeout(() => { try { speak(txt); } catch(_) {} }, 60);
+}
 // v71_l: the question is prose ABOUT the story, so it is escaped (not furiHtml'd like a vocabulary
 // prompt) and rendered in the lesson language. Options reuse the shared choice grid, so the generic
 // pickChoice/check path handles answering with no special-casing.
@@ -156471,6 +156581,14 @@ function pickChoice(i,el){
   C.sel=el.textContent.trim();
   document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
+  // v79_g (user request): on the script primer, hearing the glyph is only half of it — the learner
+  // also needs to hear what the ANSWER they picked sounds like, right after tapping it. Spoken with
+  // the TARGET voice: the chips are transliterations of a target-language sound, so reading them
+  // with the source voice would teach the wrong pronunciation. Scoped to the glyph→sound item,
+  // where a chip really is a sound; on the sound→glyph item the chips are glyphs and the prompt was
+  // already spoken, so speaking again would just repeat the question.
+  if (C.exercises && C.exercises[C.cur] && C.exercises[C.cur]._intro === 'glyph_sound' && !APP.muted)
+    setTimeout(() => { try { speak(C.sel); } catch(_) {} }, 40);
   document.getElementById('cbtn').disabled=false;
   check();
 }
@@ -160272,9 +160390,55 @@ function _ttsRankVoices(voices, ttsCode) {
   // So usability outranks locale: an espeak `en-GB` should NOT beat a neural `en-US`. Locale then
   // decides among voices that are actually worth listening to.
   const usable = v => (quality(v) > 0 ? 1 : 0);
+  // v79_d — the SECOND half of the same user report. v74_j fixed the case where the requested
+  // locale IS installed: exact now outranks quality, so a neural `en-JM` no longer beats a local
+  // `en-GB`. But when the requested locale is ABSENT, every voice scores exact=0, the tier ties,
+  // and the sort falls straight through to quality — which is the pre-v74_j behaviour, region and
+  // all. `languages.json` maps `en` to `en-GB`, and an Android that has no en-GB installed will
+  // therefore still be handed whichever English is a NETWORK voice: en-NG, en-JM, en-TT. That is
+  // the readout the user reported a second time, and v74_j could not have fixed it — its whole
+  // mechanism is a tier that is flat in this case.
+  //
+  // What breaks the tie has to come from DATA, not from us ranking Englishes. Two sources exist and
+  // both belong to the device rather than to the app:
+  //
+  //   `navigator.languages` — the user's own locale preferences, in their own order. If the phone
+  //   is set to en-US, en-US is the right English for that user. This is not a language judgement
+  //   by the app; it is the user's setting, read.
+  //
+  //   `voice.default` — the engine's own default for the device.
+  //
+  // Then, and only among voices that are NOT the requested locale, LOCAL beats NETWORK. The
+  // rationale is inventory, not audio quality: local voices are the ones the OS shipped or the user
+  // installed, while the network list is the wholesale long tail Android exposes for every region
+  // on earth. Between two voices that are both already wrong about the region, the one the device
+  // actually has is likelier to be the one the user expects. This tier CANNOT reorder the requested
+  // locale, because the exact tier has already separated those — so a neural `en-GB` still wins
+  // over a local `en-GB`, which is what v74_j established and what a learner wants.
+  const devPrefs = (() => {
+    try {
+      const nav = (typeof navigator !== 'undefined') ? navigator : null;
+      const list = (nav && (nav.languages || (nav.language ? [nav.language] : []))) || [];
+      return list.map(norm);
+    } catch (_) { return []; }
+  })();
+  // Earlier in the user's own preference list = stronger claim. 0 when the device says nothing.
+  const device = v => {
+    const l = norm(v.lang);
+    const i = devPrefs.indexOf(l);
+    if (i >= 0) return 1000 - i;
+    return v.default ? 1 : 0;
+  };
+  const local = v => (v.localService ? 1 : 0);
   return (voices || [])
     .filter(v => norm(v.lang) === ttsNorm || norm(v.lang).startsWith(ttsPrefix))
-    .sort((a,b) => (usable(b) - usable(a)) || (exact(b) - exact(a)) || (quality(b) - quality(a)));
+    .sort((a,b) => (usable(b) - usable(a))
+                || (exact(b) - exact(a))
+                // Both tiers below are reached only when a and b agree on `exact`, so neither can
+                // demote the requested locale.
+                || (exact(a) ? 0 : (device(b) - device(a)))
+                || (exact(a) ? 0 : (local(b) - local(a)))
+                || (quality(b) - quality(a)));
 }
 
 // ── Speech: ONE voice resolver, and a refusal instead of an approximation (v55_x) ──────────────

@@ -13,7 +13,7 @@ please fix it.
 Every entry below was found by measurement or by a test failing, not by reading anything. That is
 the gap this document exists to close.
 
-Last verified against **`v79_b`**.
+Last verified against **`v79_i`**.
 
 ---
 
@@ -117,10 +117,37 @@ rule (`PROMPTS.story.scriptNote`) to the STORY prompt and left the three LESSON 
 the name alone. The corpus shows exactly the predicted result: `tp_17863746762340000193` has a story
 in pure Cyrillic and vocabulary whose TARGET words are Latin — **a Cyrillic chapter teaching Latin
 words, so nothing the learner studied could ever be highlighted in the text they were reading.**
-`scriptPinNote(lang, script)` is now the one place that rule lives, and `sysLesson`,
-`sysLessonFromText` and `sysLessonTable` all append it. **Any new prompt that emits target-language
-text must call it too** — the symptom is silent, appears only for the languages in
-`scripts.json` `_scriptChoice`, and is invisible until someone reads the vocabulary.
+`scriptPinNote(lang, script, role)` is the one place that rule lives, and **all fourteen
+target-text prompts append it** (`v79_f`): the three vocabulary builders, the story, error-hunt,
+grammar, conjugation, word-forms, synonyms, comprehension, LLM math, story QC, and both dialect
+generators. `sysStory` used to carry an inline COPY of the rule — written first, left behind when
+the helper was extracted — and that duplication is why the lesson prompts ended up with a weaker
+version of it. There is one now.
+
+**`v79_a` claimed to close this and covered three prompts of fourteen.** Four releases later
+`tp_17864554460460000107`, a `cyrillic-sr` chapter, got a conjugation lesson entirely in Latin. The
+lesson is that the pin is TWO facts, not one, and each can fail alone:
+
+1. **the prompt appends the pin** — guarded by `unit-script-pin-coverage`, which SWEEPS every
+   `sys*`/`generate*` function out of the source and requires each to be classified as needing the
+   pin, delegating to one that does, or exempt with a stated reason. A new lesson type fails that
+   test until someone decides which side it is on, because a new lesson type is exactly the event
+   that reintroduced this bug.
+2. **the script REACHES the prompt** — of the three `sharedGenOpts` shapes, only the arc path
+   carried it before `v79_f`; the add-lessons and re-create-storyline-lessons paths were blind for
+   every lesson type no matter how many prompts carried the pin. Every construction site is now
+   asserted to include a `script`.
+
+**`unit-script-choice` cannot see this class of bug.** `backfill-script.js` compares a chapter's
+STORY against its VOCABULARY, so a conjugation table, synonyms list or comprehension question in the
+wrong script leaves it green. Read a passing run as "no chapter's story and vocabulary disagree",
+never as "no chapter mixes scripts".
+
+**Since `v79_f` every pinned prompt logs which of the two failures happened** —
+`[script] conjugation prompt pinned to Cyrillic for sr`, or a WARNING when a digraphic language
+reaches a prompt with no script. That line separates "the script never arrived" from "the model was
+told and ignored it": two different bugs with one identical symptom, and the reason the first report
+was mis-diagnosed twice.
 
 **Ollama truncates an over-long prompt with no error.** Default `num_ctx` is ~4096. Exceed it and
 the request still succeeds — the model just answers from whatever fragment survived. This is why

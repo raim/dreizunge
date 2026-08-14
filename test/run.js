@@ -82,6 +82,7 @@ run('unit: mixed-type review lessons (C)', 'node', [path.join(__dirname, 'unit-m
 run('unit: mixed pool rating-aware (v46 #7)', 'node', [path.join(__dirname, 'unit-mixed-rating.test.js')]);
 run('unit: static story edit (in-memory save)', 'node', [path.join(__dirname, 'unit-static-story-edit.test.js')]);
 run('unit: static summary edit (in-memory save)', 'node', [path.join(__dirname, 'unit-static-summary-edit.test.js')]);
+run('unit: summary editor Cancel closes the editor (v79_c)', 'node', [path.join(__dirname, 'unit-summary-edit-cancel.test.js')]);
 run('unit: chapter export (error-hunt + meta)', 'node', [path.join(__dirname, 'unit-export-lessons.test.js')]);
 run('unit: static client export (eh/aeh + meta)', 'node', [path.join(__dirname, 'unit-client-export.test.js')]);
 run('unit: static build markers', 'node', [path.join(__dirname, 'unit-static-markers.test.js')]);
@@ -181,6 +182,10 @@ run('unit: teacher-mode switch on every page (v78_f)', 'node', [path.join(__dirn
 run('unit: story highlight — all word sources, two shades (v78_h)', 'node', [path.join(__dirname, 'unit-story-highlight-sources.test.js')]);
 run('unit: highlight splits multi-token entries (v78_k)', 'node', [path.join(__dirname, 'unit-highlight-split.test.js')]);
 run('unit: multi-chapter job carries the chosen script (v78_p)', 'node', [path.join(__dirname, 'unit-book-script.test.js')]);
+run('unit: script pin reaches every target-text prompt (v79_f)', 'node', [path.join(__dirname, 'unit-script-pin-coverage.test.js')]);
+run('unit: script-primer glyph card — layout, speech, badge (v79_g)', 'node', [path.join(__dirname, 'unit-intro-glyph-card.test.js')]);
+run('unit: storyline add-lessons offers the script lesson (v79_h)', 'node', [path.join(__dirname, 'unit-storyline-script-lesson.test.js')]);
+run('unit: word-forms distractors must be wrong without the story (v79_i)', 'node', [path.join(__dirname, 'unit-word-forms-decidable.test.js')]);
 run('unit: script pick survives re-selection (v78_q)', 'node', [path.join(__dirname, 'unit-script-pick-persist.test.js')]);
 run('unit: continuation post-pass context + no overwrite (v78_r)', 'node', [path.join(__dirname, 'unit-continuation-postpass.test.js')]);
 run('smoke: render paths execute (buildPath/storyline/complete/renderEx)', 'node', [path.join(__dirname, 'smoke-render.test.js')]);
@@ -191,6 +196,7 @@ run('unit: coverage model (fraction/assembly/complete) — Commit B', 'node', [p
 run('unit: coverage counts source items, not questions (v74_c)', 'node', [path.join(__dirname, 'unit-coverage-item-model.test.js')]);
 run('unit: storyline progress is identical in live and static (v74_i)', 'node', [path.join(__dirname, 'unit-live-static-progress-parity.test.js')]);
 run('unit: TTS voice ranking — locale before quality (v74_j)', 'node', [path.join(__dirname, 'unit-tts-voice-ranking.test.js')]);
+run('unit: TTS voice fallback — device locale when the requested one is absent (v79_d)', 'node', [path.join(__dirname, 'unit-tts-voice-fallback.test.js')]);
 run('unit: story-unlocked card — label, prose story, Next-only (v74_l)', 'node', [path.join(__dirname, 'unit-story-unlocked-card.test.js')]);
 run('unit: learned-vocab ledger + my-story wiring (v50)', 'node', [path.join(__dirname, 'unit-learned-vocab.test.js')]);
 run('unit: my-story generation plumbing (v50)', 'node', [path.join(__dirname, 'unit-my-story.test.js')]);
