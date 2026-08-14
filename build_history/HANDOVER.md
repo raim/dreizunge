@@ -1,6 +1,6 @@
-# HANDOVER — v79_i
+# HANDOVER — v79_l
 
-One page. **Current release `v79_i`** (session 33, seven point releases on the `v79` line, which was
+One page. **Current release `v79_l`** (session 34, three point releases on top of `v79_j`, which closed session 33 after eight point releases on the `v79` line, which was
 cut after session 32 shipped fourteen point releases on the `v78` line). **Read `build_history/roadmap_v79.md` next** — start with its
 "⚠️ OPEN AT THE v79 CUT" block — then `INTERNALS.md`, then
 `build_history/v79_session33_notes.md`, then `build_history/v78_session32_notes.md`. What any
@@ -10,12 +10,12 @@ cut after session 32 shipped fourteen point releases on the `v78` line). **Read 
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **212 checks, ALL PASSED** |
-| `node test/run.js --quick` | 188 |
+| `node test/run.js` | **215 checks, ALL PASSED** |
+| `node test/run.js --quick` | 191 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v79_i'`. Corpus: **321 topics, 90 storylines** (August drop, arrived mid-session). **33 languages**, `ui.json` complete
+`APP_VERSION = 'v79_l'`. Corpus: **321 topics, 90 storylines** (August drop, arrived mid-session). **33 languages**, `ui.json` complete
 for all of them (617 `en` keys), `languages.json` at **1089/1089** name cells.
 
 **These numbers are the ones to trust.** Every session prompt so far has quoted a count that was
@@ -39,6 +39,72 @@ Session 32 truncated a roadmap **to zero bytes** that way; the exception arrives
 opened, so a failed write is not a no-op. Write emoji-bearing blocks via a `cat` heredoc to a temp
 file and splice that file in.
 
+## `v79_l` (session 34, cont.) — fork centring, and the speech-voice fix
+
+**Fork layout:** the storyline you are reading now sits in the CENTRE, alternatives split to either
+side (`alt | own | alt` on the 3-way fork). Guarded by `unit-fork-display` §5b, revert-verified.
+
+**The Android English readout — the diagnosis is the finding.** `v79_d` fixed the ranker, and the
+ranker was not the remaining problem. The chosen voice has been persisted as `imp3_voice_<code>`
+since v55, but **nothing read it back at the point of use**: the only reader ran on the lesson-set
+page and wrote `APP._ttsVoiceName`, which four navigation paths reset to `null`. The preference
+survived in storage and died in memory on every navigation — precisely "worked in the sound test,
+fell back to Nigerian English on the next lesson". `_ttsPickVoice` now reads the persisted choice
+directly, so it no longer depends on a selector having been built on the current screen.
+
+**The variant selector** the user asked for is on the main page beside the speech-test button,
+labelled by LOCALE (`en-US`, `en-NG`) because Android voice names often do not distinguish them.
+Hidden when there is nothing to choose; rebuilt on `voiceschanged`.
+
+**Answering "aren't there official defaults for each language?"** — `languages.json` already holds
+one per language (`en` -> `en-GB`, `pt` -> `pt-PT`, `de` -> `de-DE`); that IS the app's default and
+it is what the ranker asks for. There is no universal registry that makes a region canonical; the
+nearest thing is CLDR's "likely subtags", which would say `en` -> `en-US` and `pt` -> `pt-BR`. **The
+bug was never a missing default — it was what happens when the default locale is not INSTALLED**,
+which is a per-device fact no table can fix. Hence a persisted user choice.
+
+**Dead markup found:** `#tts-footer-landing` (with its `-landing` selectors) has existed since v55,
+is `display:none`, and is toggled by nothing. Left in place — `onTtsVoiceSelectGlobal` syncs it by
+id — but it is not the selector anyone sees.
+
+**⚠️ A guard that was green for the wrong reason**, caught by revert-verify:
+`unit-tts-voice-persistence` first chose the voice the ranker would have picked anyway, so it
+passed with the fix reverted. It now asserts the fixture differs from the ranker's pick first.
+
+## What session 34 shipped, and the one ruling it needs back
+
+**`v79_k` — the forked-storyline display** (roadmap §0). The other fork is now drawn COMPLETELY
+rather than as a one-card stub; the `⑂A/B/C` marker became nothing on the open storyline and the
+other storyline's icon+title elsewhere; and the whole greyed branch opens that storyline, so a
+learner switches between forks from either side. **The user's ruling shaped it:** *"don't draw the
+shared prefix multiple times, keep the forking"* — so a greyed branch starts AT the fork, the shared
+chapters stay drawn once above it, and **the `_rendered` collision every prior note warned about
+never happens**; it belonged to the rejected design.
+
+**The fourth part needed no code.** "Shared chapters count the same for every fork" was measured
+TRUE before anything was edited: completion is keyed by topic NAME and `_slProgressStats` walks a
+storyline's own `chapters[]`, so a chapter both forks list already moves both decks identically.
+`unit-fork-display` §6 pins it; revert-verify shows §6 passes on the pre-change code, so it is a
+pin rather than a fix, and the write-up says so.
+
+**⚠️ ONE RULING OWED BY THE USER — the ASYMMETRIC fork.** `sl_1041030875` lists one chapter that
+continues from a chapter it does not contain, so it has no fork parent to branch from: no shared
+prefix on screen, and playing that prefix moves the other deck and not this one. **Add the shared
+ancestors to `chapters[]`, or have the display reach back across `continuedFromId` without touching
+the data?** Roadmap §0 has it in full. Do not pick one unasked.
+
+**Found while measuring, not fixed, not a fork bug:** `_slProgressStats` adds one for the
+in-progress chapter, so **every single-chapter storyline reads 1/1 and a 100% bar with nothing
+played**. Changing a headline number wants its own ruling.
+
+**Two corrections to the record**, both in INTERNALS §6b: the old row saying the fork stub "renders
+only `kids[0]`" was **wrong** (it drew one card per foreign kid; the truncation was the missing
+recursion), and `tp_17825433860400000751` "Kalila and Dimna" names **itself** as `continuedFromId`
+— inert in the client, but it makes a naive successor scan report a phantom 9-way fork.
+
+**New standing tool:** `build_history/probe_forks_v79k.js` — enumerates every fork under the
+client's own parent rule and reports what the screen and the completion helpers do with each.
+
 ## What is open
 
 See `roadmap_v79.md` → "⚠️ OPEN AT THE v79 CUT". In short: a **PLANNED REWORK removing
@@ -58,8 +124,30 @@ was right, the row was absent from `ADD_LESSON_TYPES` and from the server's `ARC
 whitelist), and the word-forms prompt (`v79_i` — the rule was already there and the prompt
 contradicted it three bullets earlier; the fix was to DELETE the bullet that asked for the defect).
 
-**Still open from that list — two items, each a session:** import "new" mode (re-assign ids on
-import so nothing is overwritten) and the forked-storyline display. See the session-33 notes §10.
+Also closed: the `v71`-era roadmap item **"live mode with teacher mode OFF must hide every editing
+control"** (`v79_j` — `_canEdit()` keyed on capability as well as role, so a learner on a live
+install saw every editing affordance; generation stays on `canGenerate` by user ruling).
+
+**The forked-storyline display SHIPPED as `v79_k`** (session 34) — three parts built, the fourth
+measured already true, and **one ruling owed on the asymmetric fork** (see the session-34 block
+above). The warning that "the progress-counting half is the risky one" turned out to be **wrong in
+a useful way**: progress needed no change at all, because it is keyed by topic name. Import "new"
+mode is still **POSTPONED by the user** to a possible future feature (§0b) — do not start it
+without raising it.
+
+**`v79_l` NEEDS A DEVICE PASS, and it is the point of the change:** on the Android that reads
+English as Nigerian, open the main page, pick a variant from the new selector beside the speech
+test button, press Test, then **start a lesson and listen**. The lesson is the step that used to
+lose the choice. If it still reverts, the remaining suspect is the OS ignoring `u.voice`, not the
+app forgetting — say which and I will chase that instead.
+
+**A FOURTH thing wants a browser, and it is one click:** open a storyline with a fork
+(`sl_1191899409` "Dolomites Disaster" is the clean two-way case) and **tap the greyed branch**. It
+must open the OTHER storyline, not the chapter card under your finger, and **Back must return you
+to the fork you came from**. The guard asserts the wrapper carries `_openStorylineById` and the
+inner cards are `pointer-events:none`, but which element wins a real click is a browser
+event-dispatch fact no container can see (rule 34). Also worth a glance: the fork marker should
+read as the other storyline's title, and nothing at all above your own column.
 
 **Three releases need a LIVE pass** before their claims are more than wiring: `v79_f` (regenerate
 the conjugation lesson of `tp_17864554460460000107`, watch for the new `[script]` log line),

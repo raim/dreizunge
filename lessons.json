@@ -5746,11 +5746,234 @@
       "lang": "de",
       "srcLang": "en",
       "createdAt": "2026-06-16T09:58:06.303Z",
-      "updatedAt": "2026-06-30T11:01:29.506Z",
+      "updatedAt": "2026-08-14T10:01:41.098Z",
       "summary": "The story follows the development of a language learning app that uses advanced language models to provide personalized and interactive learning experiences. Over several weeks, the app was optimized and enhanced with new features, including interactive dialogues with virtual assistants that simulate real-life scenarios to improve communication skills. The app integrates corpora and grammatical rules into interactive exercises, allowing users to systematically improve their language skills and receive evaluations on both grammar and stylistic quality.",
       "tags": [
         "experimental"
-      ]
+      ],
+      "tokenUsage": {
+        "totalPromptTokens": 1022,
+        "totalCompletionTokens": 1032,
+        "tokensByType": {
+          "storyboard": 2054
+        }
+      },
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Developers code the LLM engine for personalized learning.</title><rect x=\"284\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"285\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"20\" y=\"40\" width=\"60\" height=\"50\" rx=\"2\" fill=\"#9e9e9e\"/><rect x=\"30\" y=\"50\" width=\"40\" height=\"30\" fill=\"#faf7f0\"/><polyline points=\"35,60 45,70 55,60 65,70\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"25\" r=\"10\" fill=\"#f2cc8f\"/><rect x=\"48\" y=\"35\" width=\"4\" height=\"5\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"2\"><title>Users engage in interactive dialogues with virtual assistants.</title><rect x=\"466\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"467\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><circle cx=\"30\" cy=\"50\" r=\"15\" fill=\"#e07a5f\"/><rect x=\"25\" y=\"65\" width=\"10\" height=\"20\" fill=\"#e07a5f\"/><circle cx=\"70\" cy=\"50\" r=\"15\" fill=\"#81b29a\"/><rect x=\"65\" y=\"65\" width=\"10\" height=\"20\" fill=\"#81b29a\"/><line x1=\"45\" y1=\"50\" x2=\"55\" y2=\"50\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"55\" y1=\"50\" x2=\"45\" y2=\"50\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"3\"><title>Grammar rules and corpora are integrated into exercises.</title><rect x=\"648\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"649\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#9e9e9e\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#9e9e9e\"/><rect x=\"20\" y=\"30\" width=\"60\" height=\"40\" rx=\"5\" fill=\"#ffffff\"/><line x1=\"25\" y1=\"40\" x2=\"75\" y2=\"40\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/><line x1=\"25\" y1=\"50\" x2=\"75\" y2=\"50\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/><line x1=\"25\" y1=\"60\" x2=\"75\" y2=\"60\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/><circle cx=\"80\" cy=\"80\" r=\"10\" fill=\"#e5989b\"/><rect x=\"75\" y=\"75\" width=\"10\" height=\"10\" fill=\"none\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 3,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 1022,
+        "completionTokens": 1032,
+        "ms": 221546,
+        "at": "2026-08-14T10:01:41.098Z",
+        "storyStyle": "scientific"
+      },
+      "storyboardPanels": [
+        {
+          "caption": "Developers code the LLM engine for personalized learning.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "sky"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 40,
+              "w": 60,
+              "h": 50,
+              "rx": 2,
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 30,
+              "y": 50,
+              "w": 40,
+              "h": 30,
+              "fill": "paper"
+            },
+            {
+              "type": "polyline",
+              "points": [
+                [
+                  35,
+                  60
+                ],
+                [
+                  45,
+                  70
+                ],
+                [
+                  55,
+                  60
+                ],
+                [
+                  65,
+                  70
+                ]
+              ],
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 25,
+              "r": 10,
+              "fill": "sun"
+            },
+            {
+              "type": "rect",
+              "x": 48,
+              "y": 35,
+              "w": 4,
+              "h": 5,
+              "fill": "ink"
+            }
+          ]
+        },
+        {
+          "caption": "Users engage in interactive dialogues with virtual assistants.",
+          "chapter": 2,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "paper"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 50,
+              "r": 15,
+              "fill": "accent"
+            },
+            {
+              "type": "rect",
+              "x": 25,
+              "y": 65,
+              "w": 10,
+              "h": 20,
+              "fill": "accent"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 50,
+              "r": 15,
+              "fill": "leaf"
+            },
+            {
+              "type": "rect",
+              "x": 65,
+              "y": 65,
+              "w": 10,
+              "h": 20,
+              "fill": "leaf"
+            },
+            {
+              "type": "line",
+              "x1": 45,
+              "y1": 50,
+              "x2": 55,
+              "y2": 50,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 55,
+              "y1": 50,
+              "x2": 45,
+              "y2": 50,
+              "stroke": "ink",
+              "sw": 2
+            }
+          ]
+        },
+        {
+          "caption": "Grammar rules and corpora are integrated into exercises.",
+          "chapter": 3,
+          "bg": "stone",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 30,
+              "w": 60,
+              "h": 40,
+              "rx": 5,
+              "fill": "white"
+            },
+            {
+              "type": "line",
+              "x1": 25,
+              "y1": 40,
+              "x2": 75,
+              "y2": 40,
+              "stroke": "ink",
+              "sw": 1
+            },
+            {
+              "type": "line",
+              "x1": 25,
+              "y1": 50,
+              "x2": 75,
+              "y2": 50,
+              "stroke": "ink",
+              "sw": 1
+            },
+            {
+              "type": "line",
+              "x1": 25,
+              "y1": 60,
+              "x2": 75,
+              "y2": 60,
+              "stroke": "ink",
+              "sw": 1
+            },
+            {
+              "type": "circle",
+              "cx": 80,
+              "cy": 80,
+              "r": 10,
+              "fill": "rose"
+            },
+            {
+              "type": "rect",
+              "x": 75,
+              "y": 75,
+              "w": 10,
+              "h": 10,
+              "fill": "none"
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
     },
     {
       "id": "sl_1172165689",
@@ -11626,6 +11849,183 @@
           "_arcMode": "reinforce"
         },
         {
+          "difficulty": 1,
+          "id": "ls_1786699971785",
+          "type": "conjugation",
+          "title": "Nezavisni glagoli u prezentu",
+          "desc": "Ključni glagoli za početak priče",
+          "icon": "📖",
+          "conjugations": [
+            {
+              "infinitive": "бити",
+              "source": "sein",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ја",
+                  "form": "сам"
+                },
+                {
+                  "pronoun": "ти",
+                  "form": "си"
+                },
+                {
+                  "pronoun": "он/она/оно",
+                  "form": "је"
+                },
+                {
+                  "pronoun": "ми",
+                  "form": "смо"
+                },
+                {
+                  "pronoun": "ви",
+                  "form": "сте"
+                },
+                {
+                  "pronoun": "они/оне/она",
+                  "form": "су"
+                }
+              ]
+            },
+            {
+              "infinitive": "ићи",
+              "source": "gehen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ја",
+                  "form": "идем"
+                },
+                {
+                  "pronoun": "ти",
+                  "form": "идеш"
+                },
+                {
+                  "pronoun": "он/она/оно",
+                  "form": "иде"
+                },
+                {
+                  "pronoun": "ми",
+                  "form": "идемо"
+                },
+                {
+                  "pronoun": "ви",
+                  "form": "идете"
+                },
+                {
+                  "pronoun": "они/оне/она",
+                  "form": "иду"
+                }
+              ]
+            },
+            {
+              "infinitive": "читати",
+              "source": "lesen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ја",
+                  "form": "читам"
+                },
+                {
+                  "pronoun": "ти",
+                  "form": "читаš"
+                },
+                {
+                  "pronoun": "он/она/оно",
+                  "form": "чита"
+                },
+                {
+                  "pronoun": "ми",
+                  "form": "читамо"
+                },
+                {
+                  "pronoun": "ви",
+                  "form": "читате"
+                },
+                {
+                  "pronoun": "они/оне/она",
+                  "form": "читају"
+                }
+              ]
+            },
+            {
+              "infinitive": "писати",
+              "source": "schreiben",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ја",
+                  "form": "пишем"
+                },
+                {
+                  "pronoun": "ти",
+                  "form": "пишеш"
+                },
+                {
+                  "pronoun": "он/она/оно",
+                  "form": "пише"
+                },
+                {
+                  "pronoun": "ми",
+                  "form": "пишемо"
+                },
+                {
+                  "pronoun": "ви",
+                  "form": "пишете"
+                },
+                {
+                  "pronoun": "они/оне/она",
+                  "form": "пишу"
+                }
+              ]
+            },
+            {
+              "infinitive": "разумети",
+              "source": "verstehen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ја",
+                  "form": "разумевам"
+                },
+                {
+                  "pronoun": "ти",
+                  "form": "разумеваš"
+                },
+                {
+                  "pronoun": "он/она/оно",
+                  "form": "разумева"
+                },
+                {
+                  "pronoun": "ми",
+                  "form": "разумевамо"
+                },
+                {
+                  "pronoun": "ви",
+                  "form": "разумевате"
+                },
+                {
+                  "pronoun": "они/оне/она",
+                  "form": "разумевају"
+                }
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "conjugation",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 824,
+            "completionTokens": 860,
+            "ms": 184044,
+            "at": "2026-08-14T09:32:51.785Z"
+          }
+        },
+        {
           "id": 9,
           "type": "comprehension",
           "title": "Max und Ana im Park",
@@ -11679,6 +12079,83 @@
             "at": "2026-08-11T13:53:37.619Z"
           },
           "_arcMode": "reinforce"
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1786701177560",
+          "type": "word_forms",
+          "title": "Дружба и природа",
+          "desc": "Вежбе за облике речи",
+          "icon": "🤝",
+          "items": [
+            {
+              "sentence": "Макс је вратио ___ у моје руке, мокра и мирисава на траву.",
+              "translation": "Max gab den Ball in meine Hände, nass und nach Gras riechend.",
+              "choices": [
+                "лоптицу",
+                "лопте",
+                "лопта"
+              ],
+              "correctIndex": 0,
+              "explanation": "аккузатив једнине"
+            },
+            {
+              "sentence": "Ана се насмејала, а њен осмех био је топлији од последњих ___ сунца.",
+              "translation": "Ana lachte, und ihr Lächeln war wärmer als die letzten Sonnenstrahlen.",
+              "choices": [
+                "зрак",
+                "зрака",
+                "зракима"
+              ],
+              "correctIndex": 1,
+              "explanation": "генитив множине"
+            },
+            {
+              "sentence": "Одлучили смо да кренемо кући, али не пре него што смо поделили једну последњу причу о томе како ћирилица и латиница могу бити као два ___ истог птичара.",
+              "translation": "Wir entschlossen uns, nach Hause zu gehen, aber nicht bevor wir eine letzte Geschichte darüber teilten, wie Kyrillisch und Lateinisch wie zwei Flügel desselben Vogels sein können.",
+              "choices": [
+                "крило",
+                "крила",
+                "крилима"
+              ],
+              "correctIndex": 1,
+              "explanation": "инструментал множине"
+            },
+            {
+              "sentence": "Док смо шетали уз парку, ветар је носио мирис вечерње ___.",
+              "translation": "Während wir spazieren gingen, trug der Wind den Duft des abendlichen Regens.",
+              "choices": [
+                "киша",
+                "кише",
+                "киши"
+              ],
+              "correctIndex": 1,
+              "explanation": "генитив једнине"
+            },
+            {
+              "sentence": "Било је јасно да ће ово пријатељство трајати дуже од једног ___ у парку.",
+              "translation": "Es war klar, dass diese Freundschaft länger dauern wird als ein Tag im Park.",
+              "choices": [
+                "дан",
+                "дана",
+                "дани"
+              ],
+              "correctIndex": 1,
+              "explanation": "генитив једнине"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1672,
+            "completionTokens": 624,
+            "ms": 208411,
+            "at": "2026-08-14T09:52:57.560Z"
+          }
         }
       ],
       "generationStats": {
@@ -11691,8 +12168,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 2024,
-        "totalCompletionTokens": 685,
+        "totalPromptTokens": 4520,
+        "totalCompletionTokens": 2169,
         "lessons": [
           {
             "lessonNum": 1,
@@ -11700,10 +12177,13 @@
             "promptTokens": 1032,
             "completionTokens": 399
           }
-        ]
+        ],
+        "tokensByType": {
+          "add_lesson": 3980
+        }
       },
       "generatedAt": "2026-08-11T13:37:26.046Z",
-      "updatedAt": "2026-08-11T13:53:37.619Z",
+      "updatedAt": "2026-08-14T09:52:57.560Z",
       "createdBy": "admin"
     },
     {
@@ -117622,6 +118102,93 @@
             "at": "2026-08-12T12:29:05.345Z"
           },
           "_recreated": true
+        },
+        {
+          "difficulty": 2,
+          "id": "ls_1786690193428",
+          "type": "word_forms",
+          "title": "رحلة فنية في شيكاغو",
+          "desc": "تمارين على أشكال الكلمات",
+          "icon": "🎨",
+          "items": [
+            {
+              "sentence": "The air was crisp, ___ the scent of autumn leaves and the distant hum of the city.",
+              "translation": "كان الهواء منعشاً، حاملاً رائحة أوراق الخريف وزمجرة المدينة البعيدة.",
+              "choices": [
+                "carrying",
+                "carry",
+                "carried"
+              ],
+              "correctIndex": 0,
+              "explanation": "بعد الفعل was (استمرارية)"
+            },
+            {
+              "sentence": "The museum was a grand affair, its towering facade and intricate details ___ them like an old friend.",
+              "translation": "كان المتحف حدثاً رائعاً، حيث كانت واجهته الشاهقة وتفاصيله المعقدة ترحب بهم كصديق قديم.",
+              "choices": [
+                "greeting",
+                "greets",
+                "greeted"
+              ],
+              "correctIndex": 0,
+              "explanation": "بعد was (استمرارية)"
+            },
+            {
+              "sentence": "Inside, the galleries ___ a kaleidoscope of colors and emotions.",
+              "translation": "من الداخل، كانت المعارض عبارة عن بانوراما من الألوان والعواطف.",
+              "choices": [
+                "were",
+                "was"
+              ],
+              "correctIndex": 0,
+              "explanation": "الموضوع جمع: 'galleries'"
+            },
+            {
+              "sentence": "Sarah and Mark moved slowly, their eyes ___ from one masterpiece to another.",
+              "translation": "تحركت سارة ومارك ببطء، وعيونهم تتنقل من لوحة فنية إلى أخرى.",
+              "choices": [
+                "darting",
+                "dart",
+                "darted"
+              ],
+              "correctIndex": 0,
+              "explanation": "بعد was (استمرارية)"
+            },
+            {
+              "sentence": "Sarah and Mark found their seats, ___ in with a sense of anticipation.",
+              "translation": "وجدت سارة ومارك مقاعدهما، واستقرتا بشعور بالتشوق.",
+              "choices": [
+                "settling",
+                "settle",
+                "settled"
+              ],
+              "correctIndex": 0,
+              "explanation": "بعد was (استمرارية)"
+            },
+            {
+              "sentence": "The building was a modern marvel, its glass and steel structure ___ the changing light of the afternoon.",
+              "translation": "كان المبنى عجيبة حديثة، تعكس هيكله الزجاجي والصلب الضوء المتغير في فترة ما بعد الظهر.",
+              "choices": [
+                "reflecting",
+                "reflects",
+                "reflected"
+              ],
+              "correctIndex": 0,
+              "explanation": "بعد was (استمرارية)"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 6,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1737,
+            "completionTokens": 640,
+            "ms": 220666,
+            "at": "2026-08-14T06:49:53.428Z"
+          }
         }
       ],
       "generationStats": {
@@ -117629,8 +118196,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 5470,
-        "totalCompletionTokens": 3115,
+        "totalPromptTokens": 7207,
+        "totalCompletionTokens": 3755,
         "lessons": [
           {
             "lessonNum": 1,
@@ -117658,11 +118225,12 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 4448
+          "recreate": 4448,
+          "add_lesson": 2377
         }
       },
       "generatedAt": "2026-05-28T09:08:23.626Z",
-      "updatedAt": "2026-08-14T00:24:16.731Z",
+      "updatedAt": "2026-08-14T06:49:53.428Z",
       "id": "tp_872660509",
       "continuedFromId": null,
       "storyMeta": {

@@ -591,6 +591,9 @@ by global TTS selectors in footers", still rebuilt on every lesson-set entry.
 
 | release | what |
 |---|---|
+| `v79_l` | **Active fork centred; and the chosen speech voice finally sticks.** Two user items. **(1) Fork layout.** `[...ownKids, ...otherKids]` pinned the open storyline to the far left, so the column the learner is reading drifted as alternatives were added. The foreign branches are now split around it — `alt \| own \| alt` on the 3-way fork, own-then-alt when there is only one alternative and nothing to balance. `ownKids` stays contiguous, so a deck listing two successors of one chapter is still one column group. `unit-fork-display` §5b guards the ORDER (a column is "own" if it is not a `.sl-fork-alt` wrapper) and revert-verifies: it fails with `own,alt,alt` on the old ordering. **(2) The English readout on Android, reported TWICE.** `v79_d` fixed the RANKING; this is the other half, and **the diagnosis is that the fix was never the ranker.** The chosen voice HAS been persisted to `localStorage` as `imp3_voice_<code>` since v55, but nothing read it back at the point of use: the only reader was `_buildGlobalTtsSelectors`, which runs only where a selector element exists (`ids = ['ls']`, the lesson-set page) and which sets `APP._ttsVoiceName` — a field `goLanding`, `goLandingClean` and both chapter-exit paths reset to `null`. **The preference survived in storage and died in memory on every navigation**, so `_ttsPickVoice` fell through to `langVoices[0]`. That is exactly "it worked in the sound test, but the next lesson fell back to Nigerian English". New `_ttsSavedVoiceName(ttsCode)` is read inside `_ttsPickVoice` — the one resolver every speak path goes through — so the choice no longer depends on a selector having been built on the current screen. A saved voice that no longer exists falls back to the ranker rather than muting the app, and the choice is scoped per speech language (an English pick does not leak into German). **(3) The variant selector the user asked for**, next to the speech-test button on the main page: `_ttsVariantSelectHtml(lang)` inside `updateTtsVoiceNote`, listing every installed voice for the target language **labelled by LOCALE first** (`en-US`, `en-NG`) because that is the part that distinguishes them and Android voice names often do not. Hidden when there are fewer than two voices, and rebuilt on `voiceschanged` because `getVoices()` is routinely empty until after first paint on Android. **A find while doing it:** `#tts-footer-landing` — with `tts-lang-select-landing` / `tts-voice-select-landing` — has existed in the markup since v55, is `display:none`, and **is toggled by nothing**; `_buildGlobalTtsSelectors` never populated it either. Dead markup, left in place because `onTtsVoiceSelectGlobal` still syncs it by id. New guard `unit-tts-voice-persistence` reproduces the reported device as a fixture (no en-GB installed; en-NG/en-JM/en-TT as network voices) rather than describing it. **⚠️ Its first version was GREEN WITH THE FIX REVERTED** — it chose the voice the ranker would have picked anyway, so the assertion never touched the claim; it now asserts the fixture differs from the ranker's pick before choosing, and fails correctly on the old code. On this fixture the ranker alone already picks `en-US` over the network Englishes, **so `v79_d` was working and persistence was the whole remaining bug.** `probe_gates_v77.js` re-run and diffed: byte-identical. |
+| `v79_k` | **The forked-storyline display: the other fork is drawn COMPLETELY, its marker is the storyline TITLE, and either side opens the other.** Four parts, three shipped and one measured-as-already-true. **(1) Completeness.** The `else` arm of `_renderChain`'s branch block drew one card per foreign kid and never recursed, so a four-chapter alternative appeared as a single greyed stub. `_renderAltBranch` now draws every chapter of that fork, ordered by the other storyline's OWN `chapters[]` (authoritative, and so a branch with a broken continuation link still shows every chapter instead of stopping at the gap), falling back to a `_succMap` walk when the kid is listed nowhere. **(2) The prefix is drawn once — user ruling: "don't draw the shared prefix multiple times, keep the forking".** The greyed branch starts AT the fork, not at the other storyline's first chapter, so the shared chapters stay drawn once above the branch. **The `_rendered` collision the roadmap and INTERNALS both warned about therefore never occurs** — it was a consequence of the rejected design, not of the task. **(3) The marker.** `⑂A/B/C` said nothing; it is now empty on the open storyline's own column and the other storyline's icon+title elsewhere, clickable, with the whole greyed branch clickable too via a `.sl-fork-alt` wrapper whose inner cards are `pointer-events:none` so `savedItemHtml`'s own `loadSaved` cannot win the click. New `_openStorylineById(slId)` **pushes** history rather than replacing it, so a fork switch is reversible with Back — `_tryOpenStorylineByChainId` replaces (URL entry) and `_openStorylineForTopic` resolves by topic, which is ambiguous exactly where forks live: the 3-way fork's parent belongs to three storylines. **(4) "Shared chapters count the same for every fork" NEEDED NO CODE, and that is a measurement, not an assumption.** `APP.progress.completed`/`chapterDone` are keyed by topic NAME and `_slProgressStats` walks a storyline's own `chapters[]`, so completion is storyline-agnostic: playing the shared prefix of `sl_1191899409`/`sl_320941528` moves BOTH from 0/4 to 2/4 chapters and 0/10 to 6/10 lessons, measured through the product helpers before anything was edited. `unit-fork-display` §6 pins it, and **revert-verify confirms §6 passes on the pre-change code — it is a pin of correct behaviour, not a fix.** §§1,3,4,5 all fail on the pre-change code; §2 (prefix drawn once) cannot fail there because the old renderer drew strictly less, so it is a forward guard. **The guard SWEEPS the corpus for forks under the client's own parent rule** (rule 32) — 3 forks, 9 storyline x foreign-branch pairs, 8 directed switch pairs — so a fork arriving in a future data drop is covered the day it lands. `probe_gates_v77.js` re-run and diffed: **byte-identical**. `_cardErrors()` empty after every fork render. **Two corrections recorded in INTERNALS §6b:** the old row claiming the stub "renders only `kids[0]`" was wrong (it drew one card per foreign kid; the truncation was the missing recursion), and one corpus artefact — `tp_17825433860400000751` "Kalila and Dimna" names ITSELF as `continuedFromId`, which the client drops but which makes a naive successor scan report a phantom 9-way fork. **STILL OPEN, deliberately: the ASYMMETRIC fork.** `sl_1041030875` has one chapter that continues from a chapter it does not list, so it has no fork parent to branch from and still shows one card with no route back to the shared prefix. That is a membership question in the DATA and needs a user ruling; `unit-fork-display`'s closing note says so rather than pretending it is covered. |
+| `v79_j` | **Editing controls key on TEACHER MODE alone — "live mode with teacher mode OFF must hide every editing control", the roadmap item carried since `v71`.** `_canEdit()` was `canGenerate \|\| _teacherMode`, which answers two unrelated questions at once: can this install generate, and does this person want the authoring role. A learner on a LIVE install — server up, teacher mode deliberately off — therefore saw every pencil, flag, star, pass-mark editor and provenance control. `_isLearner()` two lines below had always keyed on `_teacherMode` alone and said why. **The change is provable rather than arguable because the truth table moves in exactly ONE cell:** static-learner, static-teacher and live-teacher are all unchanged (the static build has no backend, so teacher mode was already the only source of edit rights there), and only live-learner flips from true to false. `unit-can-edit-teacher-mode` asserts all four cells, not just the fixed one — a test checking only the fix would pass equally well for a function that returned `false` always — plus a sweep over all 13 call sites for the real regression shape, a new site writing `_canEdit() \|\| canGenerate` and restoring the bug one screen at a time. **GENERATION deliberately stays on the capability axis by user ruling** (session 33: Continue story, Add lesson and Edit/rename topic are "generation, not editing"), and that is asserted too, because the tempting over-fix is to route everything through one flag — which would hide generation from a live teacher who simply has teacher mode off, and in the static build would show controls that cannot work. **What the roadmap entry got wrong, and is now recorded there:** it read as though `_canEdit()` were the whole conflation. `Edit / rename topic` in the library row is a pure EDITING control gated directly on `canGenerate` and was never a `_canEdit()` caller, so a fix touching only that function looks complete and leaves the pencil in place. **`unit-static-teacher` asserted the old shape and was UPDATED rather than re-anchored** — the distinction rule 29 asks for: here the claim genuinely changed by ruling, not just the text. |
 | `v79_i` | **Word-forms distractors must be wrong WITHOUT the story context (user report, `tp_872660509`).** The report is exact: five of the six items in that lesson accept both choices. *"The air ___ crisp"* takes `was` and `is`; *"They ___ in front of Van Gogh's Starry Night"* takes `lingered` and `linger`. Only `joy`/`happy` is decidable. **The rule was already in the prompt, and the prompt contradicted it three bullets earlier.** It said *"PREFER VERBS. The easiest reliable exercise: blank a verb, and use the SAME verb in a different tense/conjugation … as the wrong choice"* — a concrete recipe — and then, later, *"if the sentence does not force a single form (e.g. it works in both present and past) … choose another sentence"* — an abstract prohibition. The model followed the recipe, which is what any model does. **So this was not a weak prompt; the prompt REQUESTED the defect**, and writing a stronger version of a rule that was already present would have changed nothing. That distinction is the transferable part: on the next report of this shape, check whether the instruction is absent or present-and-contradicted before strengthening it. The recipe bullet is replaced by a rule about WHERE THE EVIDENCE LIVES — the deciding word must be in the sentence (a visible subject forcing agreement, a governing auxiliary, a preposition or article, a time expression written in the sentence), and the story's tense explicitly does not count because the learner cannot see the story. Nouns, degrees and cases are named as safer than tense, since their trigger is a word the learner can see. Added a check the model can actually run per item (cover the story, substitute each wrong choice, ask whether a native speaker would accept it) and an explicit preference for **returning FEWER items over padding to the requested count** — without that a model asked for six produces six. Added a **worked COUNTER-example built from the reported lesson's own item** (`lingered`/`linger`, with the repaired `were`/`was` beside it): the prompt previously had only positive examples, and a small model imitates examples far more reliably than it obeys prohibitions. `explanation` is no longer optional decoration — it must NAME the triggering word, which is the same check expressed as inspectable output, so a bad item is visible in the saved lesson rather than only at generation time. **Deliberately NOT a validator:** rejecting these mechanically would mean the app encoding per-language grammar, against the standing principle that the model owns language knowledge and the app owns structure. `build_history/probe_word_forms_v79i.js` is a measuring instrument for a human instead, with its results in the header. **What the guard proves:** the contradiction is gone, the rule and per-item check are present, the counter-example is present, and the enlarged prompt still fits `num_ctx` beside the longest corpus story (5,359 est. tokens against the 16,384 ceiling — checked, because a prompt edit that silently pushes the story out of the window swaps one silent failure for another). **What it cannot prove:** compliance. Only a live regeneration shows that. |
 | `v79_h` | **The script lesson is now offered by the STORYLINE-level "add lessons" form (user report, `sl_1567412712`, an en←ar storyline).** **The gate was never wrong** — `scriptLessonAvailableForSet` returns true for those chapters, and the per-chapter "add lesson" dropdown asks it and offers the option. The storyline form renders from `ADD_LESSON_TYPES`, and `intro_script` was simply ABSENT from that array, so no storyline could ever offer it whatever its languages. A fix that changed the gate would have been the wrong fix. It was missing on the SERVER too: `ARC_LESSON_TYPES` is the whitelist `sanitizeArcTypes` filters a storyline run against, and a client-only fix would have had the tick dropped there **with no error** — a long wait producing nothing, the silent-empty shape. Both halves changed, both revert-verified on their own named assertion. The row is gated by `needsScript`, mirroring `needsStory`: an ABSENT flag means "not asked" and does not hide the row, so a caller that knows nothing about scripts keeps its behaviour. Direction is easy to read backwards and is asserted: for `lang: en, srcLang: ar` the learner reads Arabic and is learning English, so the course is the **Latin** alphabet — checked through the server's own `scriptsForLang` rather than against a hand-written expectation. **Two existing pins broke and neither claim had changed:** `unit-add-lessons` pinned the exact signature `_pickLessonTypes(titleText)` and the exact call text, and `unit-intro-script` asserted `scriptLessonAvailableForSet` appears EXACTLY 3 times. That count is a proxy for "no call site hand-rolls this question" and it fails on precisely what it should welcome — a new call site using the helper correctly. Replaced with the rule stated directly (exactly one definition, at least two call sites, and every call asked about a SET rather than about `APP` globals), which is now revert-verifiable: pointing a call at `{lang: APP.lang, srcLang: APP.srcLang}` fails with the offending argument quoted back. |
 | `v79_g` | **The script-primer glyph card: layout, speech, and a badge bug found in the same screenshot (user request).** The glyph-to-sound item rendered as *"Wie sagt man М м?"* — a line of prose whose entire content is the glyph, with the glyph itself at question size and underlined, above four answer buttons each half a card wide carrying one letter. Now: the carrier sentence is gone and the glyph IS the question at **44px against 17px**, with **no underline** (the `.q-word` treatment marks a word inside a sentence; there is no sentence left to mark it against — user ruled on this, the request was ambiguous); the answers are **content-sized chips** flowing next to each other, mirroring the existing ordering bank (`.wbank`/`.tok`) rather than inventing a layout, at **20px** — above the 14px standard choice button but deliberately BELOW the glyph; the glyph is **spoken on render** and the chosen chip **on tap**, both in the TARGET voice (user ruling: the chips are transliterations of a target-language sound, so the source voice would teach the wrong pronunciation), and silent when muted. **Scope is guarded as tightly as the change:** the sound-to-glyph item in the same lesson keeps its sentence, because its prompt is a transliteration that needs the question to say what is being asked — a change stripping both would look identical in a screenshot of the first. Sizes are MEASURED from the stylesheet and their ordering asserted, not trusted. **The badge bug:** *"ÜBERSETZE INS SERBIAN"* — German sentence, English language name. `localizedLessonLangName` read `APP.srcLang` while `lessonSrcLang` (which supplies the FLAG) reads `APP.lessonData?.srcLang` first, so opening a lesson directly by `#topic=` left `APP.srcLang` at the default `en` while the lesson's own was `de`. **The flag and the name came from two different sources of truth, which is why only the name was wrong.** `languages.json` carried `Serbisch` all along, asserted so the fix cannot be quietly re-solved by editing data. Reverting reproduces the screenshot verbatim. |
@@ -601,6 +604,57 @@ by global TTS selectors in footers", still rebuilt on every lesson-set entry.
 | `v79_a` | **[SUPERSEDED BY `v79_f` — read that row first. This one says it closed the hole; it covered THREE prompts of fourteen, and a Cyrillic chapter got a Latin conjugation lesson four releases later.]** **The script pin now reaches the VOCABULARY lesson prompts, not just the story prompt.** `scriptPinNote(lang, script)` returns `PROMPTS.story.scriptNote` — *"Write the ENTIRE text in {scriptLabel} script… do not mix scripts or add a transliteration"* — or an empty string when the language has no script choice, and `sysLesson`, `sysLessonFromText` and `sysLessonTable` all append it. The three lesson builders already RECEIVED `script` but used it only through `langName(lang, script)`, i.e. as part of a name (*"Serbian (written in Cyrillic script)"*) rather than as an instruction — and `v76_h`'s own comment says that is "not enough on its own — the model still drifts". Costless for the other 32 languages, which get an empty string. **⚠️ THE EVIDENCE THAT PROMPTED THIS WAS MISATTRIBUTED, and the correction matters more than the change.** It was found via a mixed-script chapter at the cut, which I read as lesson-prompt drift; the user identified it as a **`reinforce`** lesson faithfully re-teaching an earlier chapter's Latin vocabulary during a deliberate Latin→Cyrillic switch, and `_genMeta` confirms `_arcMode: "reinforce"`. The plain lesson in that chapter, same builder, came out correct Cyrillic — **so the corpus does NOT demonstrate that the lesson prompts drift.** The change is retained on `v76_h`'s reasoning alone and should be treated as UNMEASURED: nobody has checked what a pinned prompt does when `reinforce` hands it prior-script vocabulary to re-teach. See "PLANNED REWORK", which subsumes the question. Rule 27 was earned on the misattribution, not on the fix. |
 
 ## ⚠️ OPEN AT THE v79 CUT — read these first
+
+### 0. ~~the forked-storyline display~~ — SHIPPED as `v79_k` (session 34), ONE PART STILL OPEN
+
+**Three of the four parts shipped; see the shipped table for `v79_k`.** The fourth — "shared
+chapters count the same way for every fork" — **needed no code and was measured to be already
+true**: completion is keyed by topic NAME and is storyline-agnostic, so a chapter both forks *list*
+already moves both decks identically. `unit-fork-display` §6 pins that (and revert-verify confirms
+it passes on the pre-change code, so it is a pin, not a fix).
+
+**⚠️ STILL OPEN — needs a user ruling, the question raised at the end of session 34.** Where a fork
+is ASYMMETRIC the intent is still unmet, and it is a DATA question rather than a rendering one. At
+this cut: `sl_1041030875` ("Dough of the Ancients") lists exactly one chapter, "Grandpas Dough
+Talk", which continues from "pizza dough" — a chapter that storyline does not contain. So from that
+side there is no fork parent to branch from, no shared prefix on screen, and playing "pizza dough"
+moves the *other* deck (`sl_182891979`) from 0/2 to 1/2 while this one stays at 0/1. **The choice:
+add the shared ancestor(s) to the storyline's `chapters[]`, or have the display reach back across
+the `continuedFromId` link without changing the data.** Do not pick one without asking.
+
+**Also found while measuring, and separate from all of the above:** `_slProgressStats` computes
+`unlockedChapters = doneChapters + (doneChapters < total ? 1 : 0)`, so **every single-chapter
+storyline reads 1/1 and a 100% bar before anything is played** (`sl_1041030875` does today). That
+is the `v77_p` "the chapter in progress counts" rule meeting a one-chapter deck. Not touched — it
+is not a fork bug and changing a headline number wants its own ruling.
+
+**The original item, kept for the record.** Four parts, all on the storyline screen:
+
+- the forked storyline is shown **completely** — every chapter, not the truncated stub — and all of
+  it greyed out as it is today;
+- clicking **any** greyed chapter opens that alternative storyline, so the learner can switch
+  between forks from either side;
+- **shared chapters count the same way for every fork** — a chapter both forks contain must not be
+  progress on one and nothing on the other;
+- the `⑂A/B/C` marker becomes **nothing** for the currently open storyline and the **storyline
+  TITLE** for the others, and the node itself is clickable.
+
+It lands on the surface `probe_gates_v77.js` measures. **Re-run it AND diff against
+`v77_card_gates.md`** — running it without diffing proves nothing (`v76_card_gates.md`'s table is
+superseded). The progress-counting part is the risky half: it is shared state between forks, so
+check what `_counts` and the gate probe say before and after, not just what the screen looks like.
+
+### 0b. POSTPONED by the user (session 33): import "new" mode — a possible FUTURE feature
+
+Was on the session-33 bug list, deliberately deferred: *"import lessons as json: we currently have
+merge and overwrite options; add a third option 'new' that re-assigns IDs to the imported stories
+and chapters, such that it doesn't overwrite existing stories."*
+
+Kept here rather than dropped, with the reason it is a session and not an afternoon: an id
+re-assignment has to rewrite `continuedFromId`, the storylines' `chapters` arrays and the fork links
+**consistently in one pass**. Get any one of the three wrong and the import succeeds while producing
+broken chains rather than fresh stories — a silent failure of the worst kind, because the damage is
+in data the user then keeps. **Do not start it without raising it with me first.**
 
 ### 1. ~~`useFullChain` does not do what its label says~~ — RULED and SHIPPED as `v79_b`
 
@@ -1021,9 +1075,15 @@ drop again.**
   reverses the `v68.1` ordering decision.**
 - **Crossword**: show the correct word's translation instead of the empty underline. **Needs a
   decision first** — `word_forms` items have no translation.
-- **Live mode with teacher mode OFF must hide every editing control.** Same `_canEdit()` conflation
-  as the authorization plan. (`v74_h` deliberately did NOT reuse `hideProv` as a screen proxy for
-  exactly this reason — see the session notes.)
+- ~~**Live mode with teacher mode OFF must hide every editing control.**~~ **DONE in `v79_j`**
+  (session 33). `_canEdit()` now keys on teacher mode alone; the truth table moves in exactly one
+  cell and `unit-can-edit-teacher-mode` holds it. **One thing this entry got wrong, kept as a
+  warning:** it read as though `_canEdit()` were the whole conflation. It is not —
+  `Edit / rename topic` (index.html, the library row) is a pure editing control gated directly on
+  `canGenerate` and was never a `_canEdit()` caller, so a fix touching only that function would look
+  complete and leave the pencil in place. It stays visible **by user ruling** (session 33: Continue
+  story / Add lesson / Edit-rename are "generation, not editing"), which is a decision rather than
+  an oversight — revisit it with the larger learner/teacher rework, not on its own.
 
 ---
 
@@ -1071,6 +1131,21 @@ English meanwhile. **`v71_q`: never assert a dropped key absent.**
   catches it if it predates the code again.**
 
 ---
+
+## ⚠️ How the rules are NUMBERED — read before citing one
+
+**The standing rules run to 35, but the numbering in this file is not continuous, and that is a
+wart rather than a gap.** Two blocks restart at `1.`: "Rules earned in session 28" (rules 1–8) and
+"Rules earned in session 29 (continued)" / "Rules earned in session 29" (which carry what the rest
+of the corpus cites as rules **10–14**, and which a grep for `^10\.` will therefore never find).
+"Rules earned in session 30" resumes at `15.` and the numbering is continuous from there to 35.
+
+**Do not renumber them.** Every "rule 23", "rule 29", "rule 32" citation across `HANDOVER.md`,
+`INTERNALS.md`, the session prompts, the session notes and several test files is by number, and a
+renumber would silently invalidate all of them — the exact failure mode rule 29 is about. When a
+session says "thirty-five standing rules" it means **numbered to 35**, not thirty-five entries;
+`^\d+\. \*\*` finds 33, and the "9. Package" line inside the definition-of-done list is not a rule
+at all and will inflate any naive count by one.
 
 ## Rules earned in session 28 — read these before writing a probe
 
@@ -1481,5 +1556,38 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
     context window" — the guard moved to the backend (`fake-ollama` now logs `think`, `num_ctx` and
     `num_predict`), because no prompt assertion can reach it. Where it could not move, the limit is
     written into the shipped row rather than left implied.
+
+
+## Rules earned in session 34
+
+35. **A warning carried forward in the notes is a claim about a DESIGN, not a fact about the
+    problem — measure the warned-about thing before you plan around it.** Three documents (the
+    session prompt, `roadmap_v79.md` §0 and `INTERNALS.md` §6b) all warned that the fork task's
+    progress half was "the risky one", that it was "shared state between forks rather than a
+    rendering change", and that making a shared chapter count for both forks "collides with the
+    `_rendered` guard, and how you resolve that collision IS the design decision in this task."
+    **Both halves of that were wrong, and ten minutes of measurement said so before anything was
+    edited.** Progress needed **no change at all**: `APP.progress.completed` and `chapterDone` are
+    keyed by topic **name**, so completion was already storyline-agnostic, and playing a shared
+    prefix moved both decks identically (0/4 -> 2/4 on each side, measured through
+    `chapterComplete` and `_slProgressStats`). And the `_rendered` collision existed only for the
+    design where a fork column redraws the whole other storyline including its prefix — the design
+    the user then rejected ("don't draw the shared prefix multiple times, keep the forking"), after
+    which the guard was never touched. **The warning was true of a plan nobody had committed to.**
+
+    Why this is worth a rule rather than a note: a carried-forward warning is written by a session
+    that was *anticipating*, and it hardens into fact by repetition across documents. Three
+    restatements read as three confirmations when they are one guess. The tell is grammatical — a
+    warning phrased in the future tense ("you will hit", "it collides with", "how you resolve that
+    IS the design decision") is a prediction; one phrased in the past ("measured at the v79 cut",
+    "it changes 8 of 32 rows") is a measurement. **Spend the first probe on the predicted obstacle.**
+    If it is real you have lost nothing and gained a baseline; if it is not, you have been spared
+    designing around a constraint that does not exist.
+
+    Corollary, and the reason the real defect was found at all: when the warned-about mechanism
+    turns out not to be the problem, **the actual defect is usually one layer out.** Here the fork
+    asymmetry was never in the completion helpers — it was in **membership**, a storyline's
+    `chapters[]` not listing a chapter its own chain continues from, which is data rather than code
+    and needed a user ruling rather than a fix.
 
 (If you add a new standing rule, append it here so the next session inherits it.)

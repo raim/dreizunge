@@ -1,16 +1,27 @@
 // Source-shape tests for static teacher-mode editing: non-LLM edit affordances are
-// gated by _canEdit() (canGenerate OR teacher mode), while LLM actions (QC) stay gated
-// by canGenerate; lesson-edit persistence goes through a static-aware helper.
+// gated by _canEdit(), while LLM actions (QC) stay gated by canGenerate; lesson-edit
+// persistence goes through a static-aware helper.
+//
+// v79_j: _canEdit() used to be `canGenerate || _teacherMode` and this file asserted that shape.
+// The CLAIM changed, not merely the text — a live install no longer grants edit rights to someone
+// who has chosen the learner role — so this pin is updated rather than re-anchored (standing rule
+// 29: ask which of the two happened). Static behaviour is untouched either way: the static build
+// has no backend, so teacher mode was already the only source of edit rights there, which is why
+// this file's other assertions all still hold unchanged.
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 
-// _canEdit exists and is the OR of canGenerate and teacher mode.
+// _canEdit exists and answers the ROLE question only.
 assert.ok(html.includes('function _canEdit()'), 'missing _canEdit');
 const ce = html.slice(html.indexOf('function _canEdit()'), html.indexOf('function _canEdit()') + 120);
-assert.ok(ce.includes('canGenerate') && ce.includes('_teacherMode'), '_canEdit must combine canGenerate + teacher mode');
+assert.ok(ce.includes('_teacherMode'), '_canEdit must key on teacher mode');
+assert.ok(!ce.includes('canGenerate'),
+  '_canEdit must NOT consult canGenerate (v79_j) — capability and role are separate axes, and '
+  + 'combining them showed every editing control to a learner on a live install. '
+  + 'unit-can-edit-teacher-mode holds the truth table.');
 console.log('  _canEdit helper: OK');
 
 // The lesson-node edit row is gated by _canEdit (not raw canGenerate) ...

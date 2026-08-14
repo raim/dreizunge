@@ -26,7 +26,13 @@ function harness(voices, voiceName) {
   // v74_j: _ttsPickVoice now delegates ranking to _ttsRankVoices (locale before quality, one
   // ranker shared with the selector menu). Extracted in isolation, so the helper must be
   // injected too — the documented extraction limit in INTERNALS.md.
-  const code = ext(client, '_ttsRankVoices') + '\n' + ext(client, '_ttsPickVoice') + '\n' + ext(client, '_ttsMakeUtterance');
+  // v79_l: _ttsPickVoice gained a SECOND helper, _ttsSavedVoiceName (it now falls back to the
+  // voice the user persisted, which is what makes a choice survive a lesson change). Same
+  // extraction limit as v74_j's _ttsRankVoices — a new dependency of an extracted function has to
+  // be extracted alongside it. Note this harness gives it no localStorage on purpose: the helper
+  // is try/catch'd and returns null, so these cases exercise the ranker path exactly as before.
+  const code = ext(client, '_ttsRankVoices') + '\n' + ext(client, '_ttsSavedVoiceName') + '\n'
+             + ext(client, '_ttsPickVoice') + '\n' + ext(client, '_ttsMakeUtterance');
   const APP = { _ttsVoiceName: voiceName || null };
   const LANGS = { sw: { tts: 'sw-KE', name: 'Swahili' }, de: { tts: 'de-DE', name: 'German' } };
   const speechSynthesis = { getVoices: () => voices };

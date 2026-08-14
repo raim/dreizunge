@@ -13,7 +13,7 @@ please fix it.
 Every entry below was found by measurement or by a test failing, not by reading anything. That is
 the gap this document exists to close.
 
-Last verified against **`v79_i`**.
+Last verified against **`v79_j`**.
 
 ---
 
@@ -718,7 +718,98 @@ observe **B's output** — usually an e2e against the live server + `fake-ollama
 
 **Definition of done** for a change is in the roadmap's session-protocol block, not here.
 
+### 6b. Feature → function map
+
+**Names, deliberately, not line numbers** — names survive edits and line numbers do not. `grep -n
+"function NAME"` finds any of these in one call. The point of this table is to convert exploration
+into a direct read: a session that knows the entry point spends its context on the problem instead
+of on locating it.
+
+**Storyline screen and forks** (all in `index.html`)
+
+| what | where |
+|---|---|
+| the whole storyline screen | `_renderStorylineScreen(chainId, encodedChain, topics)` |
+| chapter → successors, built inside it | local `_succMap`, and `byTopic` (keyed by **topic name**, not id) |
+| the recursion that draws the chain | `_renderChain(topic, prevTopic, isFirst, depth, chainBlocked)` |
+| one chapter's card | `_renderChapterCard(...)` → `savedItemHtml(s, connector, hideStory, hideProv, slChapter)` |
+| the branch point (side-by-side columns) | the `kids.length > 1` block inside `_renderChain` |
+| the fork marker | that block: **empty** for the open storyline's own column, the other storyline's icon+title (clickable) for the rest. Was `'⑂ ' + String.fromCharCode(65+bi)` until `v79_k` |
+| **the greyed branch for another storyline** | `_renderAltBranch(kidTopicName, altSl)` — one `.sl-fork-alt` wrapper at `opacity:.5` carrying **every** chapter of that fork from the branch point down, cards inert (`pointer-events:none`) so the wrapper's `_openStorylineById` takes the click |
+| which storyline a foreign successor belongs to | `_altStorylineFor(kidTopicName)` — first storyline listing it that is not the open one |
+| open a storyline by id | `_openStorylineById(slId)` — **pushes** history (fork switching must be reversible); contrast `_tryOpenStorylineByChainId`, which *replaces* and is for URL entry, and `_openStorylineForTopic`, which resolves by topic and is ambiguous where forks live |
+
+**⚠️ A correction, recorded because the wrong version of this row cost a session's assumption:** the
+pre-`v79_k` row said the `else` arm "renders only `kids[0]`". **It did not.** It rendered one card
+per foreign kid — the 3-way fork correctly drew two — and the truncation was that it **never
+recursed**, so an alternative storyline with four chapters showed as a single card. Measured at the
+`v79_j` cut with `build_history/probe_forks_v79k.js` before anything was changed.
+| "is this chapter finished" | `_chapterComplete(t)` (local) → `chapterComplete(t)` (global) |
+| which lessons count toward completion | `lessonCountsFor(d, L)`, `countedLessons(d)` |
+| chain parent resolution | `continuedFromId` first, else name — see the comment at "Resolve a lesson's chain parent" |
+
+Two facts a fork change runs into immediately, both established by reading the above rather than
+assumed: `byTopic` is keyed by topic **name**, so anything keyed by id needs converting; and
+`_rendered` (a `Set`) guarantees each chapter card is drawn at most once across the whole tree.
+
+**How `v79_k` resolved that second one — by the user's ruling, "don't draw the shared prefix
+multiple times, keep the forking".** The greyed branch starts **at the fork**, not at the other
+storyline's first chapter, so the chapters both forks share stay drawn exactly once, above the
+branch, which is where a shared prefix belongs. `_rendered` is therefore untouched and still
+holds — the anticipated collision never happens, because the design says the prefix is one thing
+rather than a copy per fork. `_renderAltBranch` also adds every card it draws to `_rendered`, so
+two fork columns cannot both claim a chapter their branches share further down.
+
+**Progress attribution needed no change at all, and this is the fact to keep:** `APP.progress.completed`
+and `chapterDone` are keyed by **topic name**, globally, and `_slProgressStats` walks a storyline's
+own `chapters[]`. Completion is therefore storyline-agnostic already — a chapter both forks *list*
+moves both decks identically, measured. Where a fork looks asymmetric, the cause is **membership**
+(one storyline's `chapters[]` not listing the shared chapter), never the completion helpers.
+
+**Progress, cards, gates**
+
+| what | where |
+|---|---|
+| card render errors | `_cardErrors()` — assert empty after any card render |
+| card page scaffolding | `_cardHeader(prefix)` + `.card-screen` (both required for a new card page) |
+| exercise build / answer / advance | `buildExercises(i)`, `pickChoice(i, el)`, `check()`, `markSolved(ex)` |
+| exercise renderer registry | `EX_RENDERERS[ex.type]`, dispatched by `renderEx()` |
+| words this chapter teaches | `_storyWordSources(d)`; solved set via `_solvedTargetWords(d)` |
+| the card truth table | `build_history/probe_gates_v77.js` → `v77_card_gates.md` (**`v76_card_gates.md` superseded**) |
+
+**Roles, menus, scripts**
+
+| what | where |
+|---|---|
+| edit rights (role axis) | `_canEdit()` — teacher mode only since `v79_j`; `_isLearner()` alongside |
+| generation affordances (capability axis) | gated directly on `APP.info.canGenerate` — Continue story, Add lesson, Edit/rename |
+| storyline add-lessons tick list | `ADD_LESSON_TYPES` + `renderLessonTypeChecks()` + `_pickLessonTypes()` |
+| server whitelist for storyline runs | `ARC_LESSON_TYPES` / `sanitizeArcTypes()` in `server.js` — **client and server are two halves of one decision** |
+| per-chapter lesson generators | `ADD_LESSON_GENERATORS` in `server.js` |
+| is a script lesson applicable | `scriptLessonAvailableForSet(d)` → `needsIntroScript()` → `scriptsForLang()` |
+| script pin on prompts | `scriptPinNote(lang, script, role)` in `server.js`; swept by `unit-script-pin-coverage` |
+| chapter script reaching a generator | every `sharedGenOpts` construction (three of them) must carry `script` |
+
+**Story generation and context**
+
+| what | where |
+|---|---|
+| the chain fed to prompts | `collectChainStory(node, budget)`, budget `CHAIN_STORY_CHARS` |
+| story prompt assembly | the `else` branch of `generate()` in `server.js`; system from `sysStory()` |
+| context-window sizing | `estimateCtxTokens()` / `_resolveNumCtx()` in `llm.js`; only callers passing `ctxTokens` get a `num_ctx` |
+
+**Speech**
+
+| what | where |
+|---|---|
+| voice ranking and choice | `_ttsRankVoices(voices, code)`, `_ttsPickVoice()` |
+| which locale a lesson speaks | `activeTtsCode()`, `lessonLang()` / `lessonSrcLang()` |
+
+
 ---
+
+**Keep 6b current the cheap way:** when a session's write-up names a function it had to hunt for,
+add the row. A wrong row is worse than a missing one, so only add names verified in that session.
 
 ## 7. Maintaining this file
 

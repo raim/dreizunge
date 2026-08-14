@@ -186,6 +186,9 @@ run('unit: script pin reaches every target-text prompt (v79_f)', 'node', [path.j
 run('unit: script-primer glyph card — layout, speech, badge (v79_g)', 'node', [path.join(__dirname, 'unit-intro-glyph-card.test.js')]);
 run('unit: storyline add-lessons offers the script lesson (v79_h)', 'node', [path.join(__dirname, 'unit-storyline-script-lesson.test.js')]);
 run('unit: word-forms distractors must be wrong without the story (v79_i)', 'node', [path.join(__dirname, 'unit-word-forms-decidable.test.js')]);
+run('unit: editing controls key on teacher mode alone (v79_j)', 'node', [path.join(__dirname, 'unit-can-edit-teacher-mode.test.js')]);
+run('unit: forked storylines — full branch, title marker, both-way switch (v79_k)', 'node', [path.join(__dirname, 'unit-fork-display.test.js')]);
+run('unit: chosen speech voice persists across lessons (v79_l)', 'node', [path.join(__dirname, 'unit-tts-voice-persistence.test.js')]);
 run('unit: script pick survives re-selection (v78_q)', 'node', [path.join(__dirname, 'unit-script-pick-persist.test.js')]);
 run('unit: continuation post-pass context + no overwrite (v78_r)', 'node', [path.join(__dirname, 'unit-continuation-postpass.test.js')]);
 run('smoke: render paths execute (buildPath/storyline/complete/renderEx)', 'node', [path.join(__dirname, 'smoke-render.test.js')]);

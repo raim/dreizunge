@@ -1,8 +1,8 @@
 # Session 33 — the `v79` line
 
-Opened at the `v79` base cut. **Seven releases: `v79_b` through `v79_i`.** One ruling asked for and
+Opened at the `v79` base cut. **Eight releases: `v79_b` through `v79_j`.** One ruling asked for and
 given, one stale instruction found in the session prompt, the per-text learning scheme discussed
-rather than built, then two data drops and a user bug list. Baseline 206 -> 212 checks, and
+rather than built, then two data drops and a user bug list. Baseline 206 -> 213 checks, and
 **six new standing rules (29-34)** — more than any session since 28, all of them earned from tests
 that broke while their claims stayed true.
 
@@ -297,18 +297,53 @@ change.** `tp_872660509`'s word-forms lesson still carries its original `_genMet
 The probe header now records both cuts and says so, because a later session finding "17% -> 15%"
 next to a prompt fix would read it as a result. **The `v79_i` prompt has not yet met a model.**
 
+## 9b. `INTERNALS.md` §6b — the feature → function map
+
+Added at the end of the session, in answer to "could I upload less to save effort". The answer was
+no — files on disk cost nothing, and a partial upload would break the green baseline, revert-verify
+and the ability to notice that a change broke five unrelated pins, which was this session's most
+valuable signal every time it fired. **The cost is SEARCHING, not reading.** Locating the script
+pin, the glyph-card renderer and `_pickLessonTypes`'s callers took a dozen greps each, and every
+grep's output stays in context permanently.
+
+§6b maps features to function NAMES (not line numbers, which drift). Every name in it was verified
+against the source before it was written, and the maintenance note says to add a row whenever a
+session had to hunt for something — **only names verified in that session, because a wrong row is
+worse than a missing one.**
+
+The same reasoning shaped the amended session prompt: it now names the fork task's entry points, the
+two facts a fork change hits in the first ten minutes (`byTopic` is keyed by NAME not id; `_rendered`
+guarantees one card per chapter across the whole tree, which "shared chapters count the same" runs
+straight into), and a FIRST MOVE that is measurement rather than editing — so that if the session
+runs short, what survives is the diagnosis and the baseline rather than a half-applied change to
+shared progress state.
+
 ## 10. Still owed at the end of this session
 
 - **Package.** The zip's top-level directory must be `dreizunge_v79_i/`, not `dreizunge_v79/`.
 - Everything in `HANDOVER.md`'s "Owed by the user" that a container cannot do — unchanged by this
   session.
 - The per-text learning scheme remains a DISCUSSION. Nothing was built for it here.
-- **Two items from the user's list are untouched, and each is a session:** import "new" mode
-  (re-assign ids so an import cannot overwrite — needs a consistent rewrite of `continuedFromId`,
-  storyline `chapters` and the fork links, or it produces broken chains rather than fresh ones), and
-  the forked-storyline display rework (all chapters shown, greyed, clickable, switchable, with
-  shared chapters counting the same for every fork — it lands on the surface `probe_gates_v77.js`
-  measures, so re-run and DIFF that probe).
+- **The forked-storyline display is the NEXT SESSION's task** (user, at the end of session 33):
+  all chapters shown, greyed, clickable, switchable, shared chapters counting the same for every
+  fork, and the `⑂A/B/C` marker replaced by nothing for the open storyline and by the storyline
+  title for the others. Roadmap open block §0. It lands on the surface `probe_gates_v77.js`
+  measures, so re-run and DIFF that probe.
+- **Import "new" mode is POSTPONED by the user** to a possible future feature (roadmap §0b). It was
+  on this session's bug list and was deliberately deferred; the reason it is a session rather than
+  an afternoon is recorded there.
+- **`_canEdit()` shipped as `v79_j`** — after being started, reverted on the user's instruction
+  (a larger learner/teacher rework was expected to supersede it), then asked for again. The revert
+  in between was exact, which is why re-applying it was cheap: `index.html` had diffed to zero lines
+  against the packaged zip. Two things from it are worth carrying:
+  **(a)** the truth table moves in exactly ONE cell, which turned a judgement call into something
+  assertable — when a change can be framed that way, frame it that way and assert the unchanged
+  cells too, since a test covering only the fix would also pass for a function that always returned
+  false;
+  **(b)** the roadmap entry UNDERSOLD the item. `Edit / rename topic` in the library row is a pure
+  editing control gated directly on `canGenerate` and was never a `_canEdit()` caller, so a fix
+  touching only that function looks complete and leaves the pencil in place. It stays visible by
+  user ruling. The roadmap entry now carries that warning for the rework that will revisit it.
 - **A live pass on three releases.** `v79_f`, `v79_g` and `v79_i` are all guarded at the layer where
   the claim is observable here, which is not the layer where the claim ultimately matters:
   regenerate a word-forms lesson and re-run `build_history/probe_word_forms_v79i.js`; regenerate the conjugation

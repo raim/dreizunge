@@ -148897,11 +148897,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v79_i', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v79_i'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v79_l', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v79_l'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"4af47534de9a","lessons.json":"3104eda89455","ui.json":"bda38a928a7f","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"a9f1bfa580fc"};
+  APP.buildSources = {"index.html":"969f3b08b1b3","lessons.json":"3104eda89455","ui.json":"bda38a928a7f","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"a9f1bfa580fc"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');
@@ -149969,7 +149969,29 @@ function _chapterNeighbors(d){
 // LLM backend is present OR teacher mode is on. In the static build canGenerate is false,
 // so this gates editing to teacher mode there; LLM features stay on canGenerate.
 // NOTE: kept here (after buildPath) so it lands in the static build's engine slice.
-function _canEdit(){ return !!(APP.info?.canGenerate || APP._teacherMode); }
+// v79_j (roadmap "RECOVERED — carried since v71"): editing controls key on TEACHER MODE ALONE.
+//
+// This was `canGenerate || _teacherMode`, which conflated two independent axes: whether the install
+// CAN generate, and whether the person wants the authoring role. A learner on a LIVE install —
+// server running, teacher mode deliberately off — therefore saw every pencil, flag, star and
+// pass-mark editor. `_isLearner()` directly below has always keyed off `_teacherMode` alone and
+// says why: a person can have a backend AND choose the learner experience.
+//
+// The truth table changes in exactly ONE cell, which is what makes this safe:
+//
+//     canGenerate  teacherMode   before   after
+//     false        false         false    false     (static learner — unchanged)
+//     false        true          true     true      (static teacher — unchanged)
+//     true         true          true     true      (live teacher — unchanged)
+//     true         false         TRUE     false     ← the bug, and the only change
+//
+// GENERATION is a different question and stays on `canGenerate` (user ruling, session 33 — "they're
+// generation, not editing"): Continue story, Add lesson and Edit/rename topic in the library row are
+// deliberately unaffected. Note that `Edit / rename topic` is by nature an EDIT gated on the
+// capability axis, so this function is not the only place the two axes meet — it is the place the
+// roadmap named. Every one of this function's callers was checked to be an edit/review affordance
+// when it changed; `unit-can-edit-teacher-mode` sweeps them so a new caller cannot quietly widen it.
+function _canEdit(){ return !!APP._teacherMode; }
 
 // ── Learner navigation (v60): skip the lesson-set page ───────────────────────
 // A learner is defined by teacher mode being OFF — independent of canGenerate. (Editing
@@ -150982,7 +151004,16 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
     const allKids = (_succMap[topic] || []).filter(t => !_rendered.has(t));
     const ownKids   = allKids.filter(t => _topicSet.has(t));
     const otherKids = allKids.filter(t => !_topicSet.has(t) && byTopic[t]);
-    const kids = [...ownKids, ...otherKids];
+    // v79_l (user): the storyline you are READING sits in the CENTRE, alternatives to the sides.
+    // Until now `[...ownKids, ...otherKids]` pinned the open deck to the far left and pushed every
+    // alternative right, so the column your eye follows moved as forks were added. Splitting the
+    // foreign branches around the own one keeps the through-line in the middle: with one
+    // alternative it goes to the right (nothing to balance), with two it is alt | own | alt.
+    // ownKids stays contiguous — a deck listing two successors of one chapter is still one column
+    // group, not two halves with someone else's branch wedged between them.
+    const _leftAlts = otherKids.slice(0, Math.floor(otherKids.length / 2));
+    const _rightAlts = otherKids.slice(Math.floor(otherKids.length / 2));
+    const kids = [..._leftAlts, ...ownKids, ..._rightAlts];
     if (kids.length === 0) return out;
     if (kids.length === 1 && ownKids.length === 1) {
       // Simple linear continuation
@@ -150995,22 +151026,104 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
       const notLast = bi < kids.length - 1;
       const border = notLast ? ';border-right:2px solid var(--gray-mid);padding-right:5px;margin-right:5px' : '';
       out += '<div style="flex:1;min-width:0' + border + '">';
-      out += '<div style="text-align:center;font-size:10px;font-weight:800;color:var(--gray-dark);padding:4px 0 2px">⑂ ' + String.fromCharCode(65+bi) + '</div>';
+      // v79_k (user): the ⑂A/B/C letters said nothing. A learner looking at a fork wants to know
+      // WHICH STORY the other side is, and needs no label at all for the one they already have
+      // open. So: nothing on the open storyline's column, the other storyline's icon+title on the
+      // rest. The row is kept (empty) on the open column so the two columns still start level.
+      const _altSl = isOwn ? null : _altStorylineFor(kid);
+      const _markerBase = 'text-align:center;font-size:10px;font-weight:800;color:var(--gray-dark);padding:4px 0 2px;min-height:13px';
+      if (isOwn) {
+        out += '<div style="' + _markerBase + '"></div>';
+      } else if (_altSl) {
+        out += '<div style="' + _markerBase + ';cursor:pointer;text-decoration:underline" role="button" tabindex="0"'
+             + ' title="' + escAttr(_altSl.title || '') + '"'
+             + ' onclick="event.stopPropagation();_openStorylineById(\'' + escJsAttr(_altSl.id) + '\')">'
+             + escHtml((_altSl.icon || '📖') + ' ' + (_altSl.title || '')) + '</div>';
+      } else {
+        // A successor in no storyline at all — there is nothing to name and nowhere to go.
+        out += '<div style="' + _markerBase + '"></div>';
+      }
       out += '<div class="path-line" style="height:12px;width:2px;margin:0 auto"></div>';
       if (isOwn) {
         out += _renderChain(kid, topic, false, depth + 1, _blockedOnward);
       } else {
-        // Stub: show first chapter of other branch greyed, non-clickable
-        const kidData = byTopic[kid];
-        out += '<div style="opacity:.5;pointer-events:none">'
-             + '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden">'
-             + savedItemHtml(kidData, false, true, true, true)
-             + '</div></div>';
+        out += _renderAltBranch(kid, _altSl);
       }
       out += '</div>';
     });
     out += '</div>';
     return out;
+  }
+
+  // v79_k: which storyline does a foreign successor belong to? The one that lists it and is not
+  // the deck currently open. `find` rather than a hand-picked match: a chapter listed by two other
+  // storylines is a fork of a fork, and either is a truthful destination — but the FIRST is the
+  // stable one, so the same click always lands in the same place.
+  function _altStorylineFor(kidTopicName) {
+    const kidId = byTopic[kidTopicName]?.id;
+    if (!kidId) return null;
+    const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
+    return slArr.find(s => s.id !== chainId && (s.chapters || []).includes(kidId)) || null;
+  }
+
+  // v79_k (user): the other fork is drawn COMPLETELY — every chapter of it, not the one-card stub
+  // this replaced — greyed as before, and clicking any of it opens that storyline.
+  //
+  // Two decisions, both the user's ruling ("don't draw the shared prefix multiple times, keep the
+  // forking"):
+  //
+  //  • It starts AT the fork, not at the other storyline's first chapter. The chapters before the
+  //    branch are the ones both forks share; they are already drawn once, above the fork, which is
+  //    exactly where a shared prefix belongs. Redrawing them inside the column would say the two
+  //    forks have separate copies of a chapter they have one of — and would collide with the
+  //    `_rendered` guard, whose whole job is that a chapter card is drawn at most once.
+  //  • The order comes from the other storyline's OWN `chapters` array, not from walking
+  //    `_succMap`. That array is the authoritative order (the same reason _renderStorylineScreen
+  //    trusts it for gap-filling), so a branch whose continuation link is broken still shows every
+  //    chapter rather than stopping at the gap. `_succMap` is the fallback when the kid is not
+  //    listed by any storyline.
+  //
+  // Every chapter drawn here is added to `_rendered`, so two fork columns cannot both claim a
+  // chapter their branches happen to share further down.
+  function _renderAltBranch(kidTopicName, altSl) {
+    const kidId = byTopic[kidTopicName]?.id;
+    let names;
+    if (altSl && kidId && (altSl.chapters || []).includes(kidId)) {
+      const from = altSl.chapters.indexOf(kidId);
+      names = altSl.chapters.slice(from).map(cid => _byIdAll[cid]?.topic).filter(Boolean);
+    } else {
+      // Not listed anywhere (or listed before its own fork point): follow the links instead.
+      names = [];
+      let cur = kidTopicName;
+      for (let i = 0; i < 20 && cur; i++) {
+        names.push(cur);
+        const nx = (_succMap[cur] || []).filter(n => !names.includes(n));
+        cur = nx.length === 1 ? nx[0] : null;   // a fork inside a greyed branch is not expanded
+      }
+    }
+    // Never redraw something the tree already has — the shared prefix reaches here whenever the
+    // other storyline lists it after its own fork point.
+    // `topics` (this deck's chapter names), not _renderChain's `_topicSet` — that one is local to
+    // the recursion and is not in scope here.
+    names = names.filter(n => byTopic[n] && !_rendered.has(n) && !topics.includes(n));
+    if (!names.length) return '';
+    names.forEach(n => _rendered.add(n));
+    // The click target is the WRAPPER: the cards inside carry savedItemHtml's own onclick
+    // (loadSaved — open the chapter), and a greyed fork must open the STORYLINE instead. Killing
+    // pointer events on the inner block and taking the click on the outer one is what makes the
+    // whole column a single target without editing the shared card renderer.
+    const openable = !!altSl;
+    let alt = '<div class="sl-fork-alt" style="opacity:.5' + (openable ? ';cursor:pointer' : '') + '"'
+            + (openable ? ' role="button" tabindex="0" title="' + escAttr(altSl.title || '') + '"'
+                        + ' onclick="_openStorylineById(\'' + escJsAttr(altSl.id) + '\')"' : '')
+            + '><div style="pointer-events:none">';
+    names.forEach((n, i) => {
+      if (i > 0) alt += '<div class="path-line" style="height:20px"></div>';
+      alt += '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden">'
+           + savedItemHtml(byTopic[n], false, true, true, true)
+           + '</div>';
+    });
+    return alt + '</div></div>';
   }
 
   html += '<div class="path-wrap" style="padding:4px 0 0" id="slsc-cards-' + chainId + '">';
@@ -151120,6 +151233,26 @@ function _openStorylineForTopic(topicName) {
   }
   // Fallback: open as standalone lesson set
   if (topicName) loadSaved(encodeURIComponent(topicName));
+}
+
+// v79_k: open a storyline BY ID. The fork columns on the storyline screen need this — a greyed
+// alternative branch opens the storyline it belongs to, and the learner must be able to come back.
+//
+// Deliberately NOT `_tryOpenStorylineByChainId`, which exists for URL/hash entry and uses
+// `replaceState`: switching forks through that would overwrite the current history entry, so Back
+// would leave the storyline screen entirely instead of returning to the fork the learner came from.
+// `openStorylineScreen` pushes, which is the behaviour a fork switch wants.
+//
+// `_openStorylineForTopic` resolves by TOPIC and takes the first storyline containing it, which is
+// ambiguous exactly where forks live (the 3-way fork's parent belongs to three storylines). The
+// caller here already knows which storyline it drew, so it passes the id and the ambiguity is gone.
+function _openStorylineById(slId) {
+  const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
+  const sl = slArr.find(s => s.id === slId);
+  const byId = Object.fromEntries((APP.savedList || []).filter(l => l.id).map(l => [l.id, l]));
+  const chain = (sl?.chapters || []).map(cid => byId[cid]?.topic).filter(Boolean);
+  if (!chain.length) return;
+  openStorylineScreen(sl.id, encodeURIComponent(JSON.stringify(chain)));
 }
 
 function _tryOpenStorylineByChainId(chainId) {
@@ -160197,10 +160330,68 @@ function updateTtsVoiceNote(){
   const langTag = L ? ` <span style="white-space:nowrap">${L.flag}</span>` : '';
   note.innerHTML =
     `<span style="white-space:nowrap">${escHtml(t('tts.test_lbl'))}${langTag}</span>`
+    + _ttsVariantSelectHtml(lang)
     + `<button type="button" onclick="ttsTestVoice()" title="${escAttr(t('tts.voice_warn_q'))}" style="font-size:12px;font-weight:800;padding:5px 12px;border-radius:12px;border:2px solid #f5a623;background:#fff;color:#9a6400;cursor:pointer;font-family:inherit">${escHtml(t('tts.voice_test'))}</button>`
     + `<span style="color:#9a6400;white-space:nowrap">${escHtml(t('tts.mute_hint_short'))}</span>`
     + `<button type="button" class="mute-btn" data-mute-tip="${escAttr(t('tts.voice_mute_hint'))}" onclick="toggleMute()" title="${escAttr(t('tts.voice_mute_hint'))}" style="font-size:18px;border:none;background:none;cursor:pointer;padding:2px 4px;opacity:${APP.muted?'1':'.7'}">${APP.muted?'🔇':'🔊'}</button>`;
   note.style.display = 'flex';
+}
+
+// v79_l (user): "an additional speech language selector, that lists all versions of the selected
+// target language … next to the current speech test button on the main page. Note that we already
+// have such a selector but currently ONLY in the teacher-mode-only view of the lesson sets."
+//
+// Both halves of that were right, and one was worse than reported: `#tts-footer-landing` (with
+// `tts-lang-select-landing` / `tts-voice-select-landing`) has existed in the markup all along but
+// is `display:none` and is toggled by NOTHING — `_buildGlobalTtsSelectors` hard-codes
+// `ids = ['ls']`, so the landing pair was never populated either. It is dead markup, left in place
+// rather than removed because `onTtsVoiceSelectGlobal` still syncs it by id.
+//
+// This selector is deliberately NOT that one. The lesson-set control is a LANGUAGE picker plus a
+// voice list; what the user asked for is the VARIANTS of the language they are already learning,
+// which is a different question and the one that actually matters on Android — the device offers
+// a dozen Englishes and the app's `languages.json` default (`en-GB`) may not be among the
+// installed ones. So the options are labelled by LOCALE first (`en-US`, `en-NG`), because that is
+// the part that distinguishes them; the engine's voice name is secondary and often unhelpful.
+//
+// Shown only when there is a real choice — two or more voices — so a language with one installed
+// voice does not grow a one-item dropdown.
+function _ttsVariantSelectHtml(lang) {
+  if (typeof speechSynthesis === 'undefined' || !speechSynthesis || !speechSynthesis.getVoices) return '';
+  const L = (typeof LANGS !== 'undefined' && LANGS[lang]) || null;
+  const code = APP.ttsLang || (L && L.tts);
+  if (!code) return '';
+  const voices = speechSynthesis.getVoices();
+  if (!voices || !voices.length) {
+    // getVoices() is empty until the engine reports in — on Android that is routinely AFTER first
+    // paint, which is why this row must rebuild rather than decide "no choice" now. Guarded by a
+    // flag because updateTtsVoiceNote runs on every language change and would otherwise stack
+    // listeners.
+    if (!APP._ttsNoteVoiceHook) {
+      APP._ttsNoteVoiceHook = true;
+      try {
+        speechSynthesis.addEventListener('voiceschanged', function h(){
+          speechSynthesis.removeEventListener('voiceschanged', h);
+          APP._ttsNoteVoiceHook = false;
+          try { updateTtsVoiceNote(); } catch(_) {}
+        }, { once: true });
+      } catch(_) { APP._ttsNoteVoiceHook = false; }
+    }
+    return '';
+  }
+  const ranked = _ttsRankVoices(voices, code);
+  if (ranked.length < 2) return '';
+  const current = _ttsPickVoice(code);              // the voice that WOULD be used right now
+  const opts = ranked.map(v => {
+    const loc = (v.lang || '').replace('_', '-');
+    // The name is trimmed of the locale when the engine already repeats it, so the option does not
+    // read "en-US en-US-language".
+    const nm = (v.name || '').replace(loc, '').replace(/^[\s\-–—·(]+|[\s\-–—·)]+$/g, '');
+    const lbl = loc + (nm ? ' · ' + nm : '') + (v.localService ? '' : ' ☁');
+    return `<option value="${escAttr(v.name)}"${current && v.name === current.name ? ' selected' : ''}>${escHtml(lbl)}</option>`;
+  }).join('');
+  return `<select class="tts-select" id="tts-voice-select-main" onchange="onTtsVoiceSelectGlobal(this.value,'main')"`
+    + ` title="Speech variant" style="font-size:12px;max-width:170px;font-family:inherit">${opts}</select>`;
 }
 
 function speakBodyText(bodyId,langCode,preText){
@@ -160448,12 +160639,34 @@ function _ttsRankVoices(voices, ttsCode) {
 // This logic was DUPLICATED in _speakChunks and _speakChunksThen and had already drifted: one
 // toasted "using approximation" and the other said nothing — and BOTH then spoke anyway with the
 // browser's default (English) voice. One resolver, one policy.
+// v79_l (user, second report): "a different language then back to English worked in the sound
+// test, but the NEXT LESSON fell back to Nigerian English again."
+//
+// The chosen voice WAS being persisted — `onTtsVoiceSelectGlobal` has written
+// `imp3_voice_<code>` to localStorage since v55 — but nothing read it back at the point of use.
+// The only reader was `_buildGlobalTtsSelectors`, which (a) ran only where a selector element
+// exists (`ids = ['ls']`, the lesson-set page) and (b) set `APP._ttsVoiceName`, which
+// `goLanding`, `goLandingClean` and the two chapter-exit paths all reset to `null`. So the
+// preference survived in storage and died in memory on every navigation, and `_ttsPickVoice`
+// fell through to `langVoices[0]` — the ranker's top pick, which on an Android with no en-GB
+// installed is exactly the en-NG/en-JM network voice v79_d was about.
+//
+// Reading storage HERE, in the one resolver every speak path goes through, is what makes the
+// choice stick: it no longer depends on a selector having been built on the current screen.
+function _ttsSavedVoiceName(ttsCode) {
+  try { return localStorage.getItem('imp3_voice_' + ttsCode) || null; } catch (_) { return null; }
+}
+
 function _ttsPickVoice(ttsCode) {
   if (!window.speechSynthesis || !speechSynthesis.getVoices) return undefined;
   const voices = speechSynthesis.getVoices();
   if (!voices || !voices.length) return undefined;
   const langVoices = _ttsRankVoices(voices, ttsCode);
-  const named = APP._ttsVoiceName ? langVoices.find(v => v.name === APP._ttsVoiceName) : null;
+  // In-memory choice first (this session's selector), then the persisted one. Both are checked
+  // against the CURRENT voice list, so a voice the user uninstalled falls back to the ranker
+  // rather than silencing the app.
+  const wanted = APP._ttsVoiceName || _ttsSavedVoiceName(ttsCode);
+  const named = wanted ? langVoices.find(v => v.name === wanted) : null;
   return named || langVoices[0] || null;
 }
 
@@ -160729,7 +160942,12 @@ function onTtsVoiceSelectGlobal(name, id) {
   APP._ttsVoiceName = name || null;
   const code = APP.ttsLang || (LANGS[APP.lessonData?.lang||APP.lang||'it']||LANGS.it||{}).tts;
   if (name) localStorage.setItem('imp3_voice_'+code, name);
-  ['ls','sl','landing'].forEach(i=>{ const el=document.getElementById('tts-voice-select-'+i); if(el&&el.querySelector(`option[value="${CSS.escape(name)}"]`)) el.value=name; });
+  ['ls','sl','landing','main'].forEach(i=>{ const el=document.getElementById('tts-voice-select-'+i); if(el&&el.querySelector(`option[value="${CSS.escape(name)}"]`)) el.value=name; });
+  // v79_l: the main-page row is rebuilt from scratch by updateTtsVoiceNote, so its `selected`
+  // attribute is re-derived from _ttsPickVoice — which now reads the value just persisted. This
+  // keeps the row honest about which voice would actually speak, rather than only about which
+  // option the user last touched.
+  try { if (id !== 'main') updateTtsVoiceNote(); } catch(_) {}
 }
 
 function buildTtsSelector(){
