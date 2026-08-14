@@ -5,9 +5,17 @@
 // choice STICKS across lessons, which is what "on the next lesson it fell back to Nigerian English
 // again" actually described.
 //
-// The scenario is reproduced with a fake voice list rather than described in a comment: an Android
-// that has NO en-GB installed and offers en-NG/en-JM as network voices, which is precisely the
-// device the report came from.
+// The voice list below is taken from a SCREENSHOT of the reporting device (Android, German UI,
+// teacher-mode picker): en-GB, en-US, en-AU, en-IN, en-NG, with localized names and en-GB
+// selected.
+//
+// CORRECTION, and it matters. The first version of this file used a fixture with NO en-GB
+// installed, inherited from the v79_d comment's hypothesis and asserted in the header to be
+// "precisely the device the report came from". The screenshot falsified that: en-GB IS installed
+// there. The persistence fix is still needed and still guarded below, but on THIS inventory the
+// ranker re-picks en-GB after a navigation reset anyway - so persistence alone cannot produce the
+// reported Nigerian readout, and this file must not be read as evidence that it does. See
+// unit-tts-voices-not-loaded for the cause that fits the screenshot.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -26,12 +34,15 @@ const C = loadClient({ quiet: true });
 C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed');
 
 // ── the reported device: no en-GB, several network Englishes ────────────────
-const ANDROID_NO_EN_GB = [
-  { name: 'English Nigeria',  lang: 'en-NG', localService: false, default: false },
-  { name: 'English Jamaica',  lang: 'en-JM', localService: false, default: false },
-  { name: 'English Trinidad', lang: 'en-TT', localService: false, default: false },
-  { name: 'en-us-x-sfg#male_1-local', lang: 'en-US', localService: true, default: false },
-  { name: 'Deutsch',          lang: 'de-DE', localService: true, default: false },
+// Names are the device's own LOCALIZED strings. Kept verbatim because the persistence key is the
+// voice NAME, so a localized name is what actually gets stored.
+const ANDROID_REPORTED = [
+  { name: 'Englisch Vereinigtes Koenigreich', lang: 'en-GB', localService: true,  default: false },
+  { name: 'Englisch Vereinigte Staaten',      lang: 'en-US', localService: true,  default: false },
+  { name: 'Englisch Australien',              lang: 'en-AU', localService: false, default: false },
+  { name: 'Englisch Indien',                  lang: 'en-IN', localService: false, default: false },
+  { name: 'Englisch Nigeria',                 lang: 'en-NG', localService: false, default: false },
+  { name: 'Deutsch',                          lang: 'de-DE', localService: true,  default: false },
 ];
 function installVoices(list, navLangs) {
   C.run(`
@@ -56,12 +67,14 @@ function installVoices(list, navLangs) {
 }
 const pick = (code) => C.run(`(function(){ const v = _ttsPickVoice(${JSON.stringify(code)}); return v ? v.name + '|' + v.lang : String(v); })()`, 'pick');
 
-// ── 1. the bug, reproduced ──────────────────────────────────────────────────
+// ── 1. what the ranker does unaided on the REPORTED inventory ───────────────
+// It picks en-GB, the exact requested locale. Recorded because it is the evidence that v79_d's
+// ranking fix works on this device and that the readout bug is NOT a ranking bug.
 // With no choice made, the ranker picks something. Whatever it picks, the point of the test is
 // what happens AFTER the user chooses — so this only records the starting state.
-installVoices(ANDROID_NO_EN_GB, []);
+installVoices(ANDROID_REPORTED, []);
 const unchosen = pick('en-GB');
-console.log('  no en-GB installed, no user choice -> ' + unchosen);
+console.log('  ranker pick with no user choice -> ' + unchosen);
 assert.ok(!unchosen.startsWith('undefined') && unchosen !== 'null',
   'a voice is still chosen when the requested locale is absent');
 
@@ -74,15 +87,15 @@ assert.ok(!unchosen.startsWith('undefined') && unchosen !== 'null',
   // whether or not the persistence works. `unchosen` above is the ranker's pick; assert the
   // fixture differs from it, then choose the other one. (Found the hard way: the first version of
   // this test chose the ranker's own default and stayed green with the fix reverted.)
-  const CHOICE = 'English Jamaica';
+  const CHOICE = 'Englisch Nigeria';
   assert.notStrictEqual(unchosen.split('|')[0], CHOICE,
     'the fixture must choose a voice the ranker would NOT pick, or the test proves nothing');
 
   C.run(`onTtsVoiceSelectGlobal(${JSON.stringify(CHOICE)}, 'main'); true;`, 'choose');
-  assert.strictEqual(pick('en-GB'), CHOICE + '|en-JM', 'the voice just chosen must be the one used');
+  assert.strictEqual(pick('en-GB'), CHOICE + '|en-NG', 'the voice just chosen must be the one used');
 
   C.run(`APP._ttsVoiceName = null; true;`, 'navigate');   // what goLanding does
-  assert.strictEqual(pick('en-GB'), CHOICE + '|en-JM',
+  assert.strictEqual(pick('en-GB'), CHOICE + '|en-NG',
     'THE REGRESSION: after navigating, the chosen voice must still be used — this is the ' +
     '"next lesson fell back to Nigerian English" report');
   console.log('  chosen voice survives APP._ttsVoiceName being reset: OK (' + CHOICE + ')');
@@ -93,36 +106,35 @@ assert.ok(!unchosen.startsWith('undefined') && unchosen !== 'null',
 // must fall back to the ranker rather than returning null (which would mute the app) or a voice
 // from another language.
 {
-  C.run(`globalThis.__voices = ${JSON.stringify(ANDROID_NO_EN_GB.filter(v => v.lang !== 'en-US'))}; true;`, 'uninstall');
+  C.run(`globalThis.__voices = ${JSON.stringify(ANDROID_REPORTED.filter(v => v.lang !== 'en-NG'))}; true;`, 'uninstall');
   const after = pick('en-GB');
   assert.ok(after !== 'null' && !after.startsWith('undefined'),
     'an uninstalled saved voice must fall back to the ranker, not mute the app');
-  assert.ok(after.endsWith('|en-NG') || after.endsWith('|en-JM') || after.endsWith('|en-TT'),
-    'the fallback must still be an ENGLISH voice, got ' + after);
+  assert.ok(/\|en-/.test(after), 'the fallback must still be an ENGLISH voice, got ' + after);
   console.log('  a saved voice that no longer exists falls back safely: OK (' + after + ')');
 }
 
 // ── 4. the choice is per-language, not global ──────────────────────────────
 {
-  C.run(`globalThis.__voices = ${JSON.stringify(ANDROID_NO_EN_GB)};
+  C.run(`globalThis.__voices = ${JSON.stringify(ANDROID_REPORTED)};
          localStorage.clear(); APP._ttsVoiceName = null; true;`, 'reset');
-  C.run(`onTtsVoiceSelectGlobal('English Jamaica', 'main'); APP._ttsVoiceName = null; true;`, 'choose-en');
+  C.run(`onTtsVoiceSelectGlobal('Englisch Nigeria', 'main'); APP._ttsVoiceName = null; true;`, 'choose-en');
   assert.strictEqual(pick('de-DE'), 'Deutsch|de-DE',
     'an English choice must not leak into German');
-  assert.strictEqual(pick('en-GB'), 'English Jamaica|en-JM', 'the English choice still holds');
+  assert.strictEqual(pick('en-GB'), 'Englisch Nigeria|en-NG', 'the English choice still holds');
   console.log('  the saved choice is scoped per speech language: OK');
 }
 
 // ── 5. the main-page selector: present, labelled by LOCALE, only when there is a choice ──
 {
-  C.run(`globalThis.__voices = ${JSON.stringify(ANDROID_NO_EN_GB)}; APP.lang = 'en';
+  C.run(`globalThis.__voices = ${JSON.stringify(ANDROID_REPORTED)}; APP.lang = 'en';
          APP._ttsVoiceName = null; localStorage.clear(); true;`, 'reset2');
   const html = C.run(`(function(){ updateTtsVoiceNote();
     return document.getElementById('tts-voice-note').innerHTML; })()`, 'note');
   assert.ok(html.includes('id="tts-voice-select-main"'),
     'the main-page speech row must carry the variant selector');
   assert.ok(html.includes('onTtsVoiceSelectGlobal'), 'the selector must be wired to the shared handler');
-  for (const loc of ['en-NG', 'en-JM', 'en-US']) {
+  for (const loc of ['en-NG', 'en-AU', 'en-US', 'en-GB']) {
     assert.ok(html.includes(loc), `the option list must name the locale ${loc}`);
   }
   assert.ok(!html.includes('de-DE'), 'the selector must not offer voices of another language');

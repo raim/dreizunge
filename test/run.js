@@ -189,6 +189,8 @@ run('unit: word-forms distractors must be wrong without the story (v79_i)', 'nod
 run('unit: editing controls key on teacher mode alone (v79_j)', 'node', [path.join(__dirname, 'unit-can-edit-teacher-mode.test.js')]);
 run('unit: forked storylines — full branch, title marker, both-way switch (v79_k)', 'node', [path.join(__dirname, 'unit-fork-display.test.js')]);
 run('unit: chosen speech voice persists across lessons (v79_l)', 'node', [path.join(__dirname, 'unit-tts-voice-persistence.test.js')]);
+run('unit: no voiceless utterance while voices load (v79_m)', 'node', [path.join(__dirname, 'unit-tts-voices-not-loaded.test.js')]);
+run('unit: storyline/chapter speech locale (v79_n)', 'node', [path.join(__dirname, 'unit-speech-locale.test.js')]);
 run('unit: script pick survives re-selection (v78_q)', 'node', [path.join(__dirname, 'unit-script-pick-persist.test.js')]);
 run('unit: continuation post-pass context + no overwrite (v78_r)', 'node', [path.join(__dirname, 'unit-continuation-postpass.test.js')]);
 run('smoke: render paths execute (buildPath/storyline/complete/renderEx)', 'node', [path.join(__dirname, 'smoke-render.test.js')]);

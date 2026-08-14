@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v79_l';
+const APP_VERSION  = 'v79_n';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -5907,6 +5907,11 @@ http.createServer(async (req, res) => {
         // length, so live showed "Kälte und Paella · 3 lessons" where static showed 2 — the static
         // builder strips hidden ai_error_hunts at bake time, and the two counts disagreed on screen.
         lessonCount: (l.lessons || []).filter(L => L && !L._hidden && !L._aiExamples).length,
+        // v79_n: the chapter speech locale MUST ride in this projection. It is a whitelist, and
+        // `_speechLocaleFor` resolves from APP.savedList — omitting it would mean the setting
+        // saves, survives a reload of lessons.json, and silently does nothing in live mode.
+        // That is precisely the v74_i failure the comment above this line records.
+        ...(l.speechLocale ? { speechLocale: l.speechLocale } : {}),
         // v74_i: METADATA-ONLY lessons. The storyline screen's progress — the header fraction, each
         // chapter's bar, its green completion dot, and the final card's "story complete" title —
         // all walk `lessons[]`. The list payload omitted it, so in LIVE mode `countedLessons(s)`
@@ -6184,6 +6189,45 @@ http.createServer(async (req, res) => {
         if (clearing) delete t.coverageTarget; else t.coverageTarget = v;
         upsert(t);
         console.log(`  Pass mark (chapter "${t.topic}"): ${clearing ? 'inherit' : Math.round(v*100)+'%'}`);
+        return json(res, 200, { ok: true, value: v });
+      }
+      return json(res, 400, { error: "scope must be 'storyline' or 'topic'" });
+    }
+    // v79_n (user): a default SPEECH LOCALE per storyline, overridable per chapter — the same
+    // scope/override shape as /api/pass-mark above, deliberately, because the user named the pass
+    // mark as the model and two settings with the same semantics should not have two shapes.
+    //
+    // A LOCALE (`en-GB`), not a voice name. The user's own Android screenshot is the argument: its
+    // voice names are localized German strings ("Englisch Nigeria") that exist on that device and
+    // nowhere else, so a stored name would fail to resolve almost everywhere and the fallback
+    // would fire nearly always — making the field decorative. A locale is portable, every engine
+    // can honour it, and the app already ranks voices within a locale.
+    if (M === 'POST' && url.pathname === '/api/speech-locale') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { scope, id } = body;
+      const clearing = body.value === null || body.value === '';
+      // Shape-check only. WHICH locales exist is a device fact the server cannot know, and
+      // rejecting an unknown tag here would mean the server holding a list of the world's locales
+      // — the "no language knowledge in the code" principle (INTERNALS §4). BCP-47-ish is enough.
+      if (!clearing && (typeof body.value !== 'string' || !/^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$/.test(body.value)))
+        return json(res, 400, { error: 'value must be a BCP-47 locale like "en-GB", or null to inherit' });
+      const v = clearing ? null : body.value;
+      if (scope === 'storyline') {
+        const sl = findStoryline(id);
+        if (!sl) return json(res, 404, { error: 'Storyline not found' });
+        if (clearing) delete sl.speechLocale; else sl.speechLocale = v;
+        upsertStoryline(sl);
+        console.log(`  Speech locale (storyline "${sl.title || sl.id}"): ${clearing ? 'inherit' : v}`);
+        return json(res, 200, { ok: true, value: v });
+      }
+      if (scope === 'topic') {
+        const t = findSavedById(id);
+        if (!t) return json(res, 404, { error: 'Topic not found' });
+        if (clearing) delete t.speechLocale; else t.speechLocale = v;
+        upsert(t);
+        console.log(`  Speech locale (chapter "${t.topic}"): ${clearing ? 'inherit' : v}`);
         return json(res, 200, { ok: true, value: v });
       }
       return json(res, 400, { error: "scope must be 'storyline' or 'topic'" });

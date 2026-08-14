@@ -1,6 +1,6 @@
-# HANDOVER — v79_l
+# HANDOVER — v79_n
 
-One page. **Current release `v79_l`** (session 34, three point releases on top of `v79_j`, which closed session 33 after eight point releases on the `v79` line, which was
+One page. **Current release `v79_n`** (session 34, three point releases on top of `v79_j`, which closed session 33 after eight point releases on the `v79` line, which was
 cut after session 32 shipped fourteen point releases on the `v78` line). **Read `build_history/roadmap_v79.md` next** — start with its
 "⚠️ OPEN AT THE v79 CUT" block — then `INTERNALS.md`, then
 `build_history/v79_session33_notes.md`, then `build_history/v78_session32_notes.md`. What any
@@ -10,12 +10,12 @@ cut after session 32 shipped fourteen point releases on the `v78` line). **Read 
 
 | command | expected |
 |---|---|
-| `node test/run.js` | **215 checks, ALL PASSED** |
-| `node test/run.js --quick` | 191 |
+| `node test/run.js` | **217 checks, ALL PASSED** |
+| `node test/run.js --quick` | 193 |
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v79_l'`. Corpus: **321 topics, 90 storylines** (August drop, arrived mid-session). **33 languages**, `ui.json` complete
+`APP_VERSION = 'v79_n'`. Corpus: **321 topics, 90 storylines** (August drop, arrived mid-session). **33 languages**, `ui.json` complete
 for all of them (617 `en` keys), `languages.json` at **1089/1089** name cells.
 
 **These numbers are the ones to trust.** Every session prompt so far has quoted a count that was
@@ -38,6 +38,44 @@ right when written and stale when read. **If a prompt and this file disagree, me
 Session 32 truncated a roadmap **to zero bytes** that way; the exception arrives AFTER the file is
 opened, so a failed write is not a no-op. Write emoji-bearing blocks via a `cat` heredoc to a temp
 file and splice that file in.
+
+## `v79_n` — speech locale per storyline and chapter
+
+Your ruling: **locale, not voice name.** Chapter `speechLocale` overrides storyline `speechLocale`,
+which overrides `languages.json` — the pass-mark shape. `_speechLocaleFor(lang, topicId)` is the
+one resolver; both speak paths consume it at the single point where a language code becomes a TTS
+code. Teacher-mode selectors sit in the existing `#ls-passmark` / `#sl-passmark` blocks.
+
+**Two things fell out for free and are guarded rather than assumed:** old chapters need no
+migration (absence resolves to what absence always resolved to), and "fall back on an available
+speech for that language" needed no new code, because `_ttsRankVoices` already filters on the
+language prefix and only PREFERS the exact locale.
+
+**The trap avoided:** the saved-list payload is a whitelist projection and the resolver reads
+`APP.savedList`. Omitting the field would have made the setting save, persist, and silently do
+nothing in live mode — the v74_i failure whose post-mortem sits two lines above the line I added.
+`unit-speech-locale` §8 pins the projection at source level.
+
+**⚠️ NEEDS A DEVICE PASS:** set a storyline locale in teacher mode, confirm chapters inherit it,
+override one chapter, and check a locale your phone lacks (marked ⚠) still speaks in the right
+language rather than going silent.
+
+## `v79_m` — the screenshot changed the diagnosis
+
+**The device HAS en-GB installed.** The teacher-mode picker lists en-GB, en-US, en-AU, en-IN, en-NG
+with en-GB selected — that ordering IS `_ttsRankVoices` working. So `v79_d` (ranking) was right and
+`v79_l` (persistence), though a real bug, **cannot explain the report**: with en-GB present the
+ranker re-picks it after any reset.
+
+**The cause is the empty-`getVoices()` window.** After a screen change on Android the list is `[]`
+for a while; `_ttsMakeUtterance` then returns an utterance with no `.voice` and the OS picks its own
+default English — Nigerian on that phone. It fits the report's shape, which nothing else did: the
+sound test works, the next lesson does not. The speak paths now defer the first chunk until voices
+load (`_ttsWhenVoicesReady`, bounded at 1200ms so a missing `voiceschanged` cannot mute the app).
+
+**A fixture was corrected, not just extended:** `unit-tts-voice-persistence` claimed to reproduce
+the reporting device while using a no-en-GB inventory inherited from a comment's hypothesis. It now
+uses the screenshot's real list. **A guard is only as good as its fixture's provenance.**
 
 ## `v79_l` (session 34, cont.) — fork centring, and the speech-voice fix
 

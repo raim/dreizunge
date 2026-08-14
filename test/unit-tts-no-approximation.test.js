@@ -104,7 +104,20 @@ const DE = { name: 'Anna', lang: 'de-DE', localService: true };
     const body = ext(client, fn);
     assert.ok(/_ttsMakeUtterance\(/.test(body), `${fn} uses the shared utterance builder`);
     assert.ok(/_ttsNoVoice\(/.test(body), `${fn} refuses via the shared no-voice handler`);
-    assert.ok(!/getVoices\(\)/.test(body), `${fn} no longer resolves voices itself`);
+    // v79_m, rule 29/30: this used to assert the body contains no `getVoices()` at all. That was a
+    // PROXY for the v55_x claim — the speak paths must not do their own voice RESOLUTION, one
+    // resolver and one policy — and it broke on a call site that is correct. `_speakChunks` and
+    // `_speakChunksThen` now ask whether the voice list is EMPTY, to defer the first chunk instead
+    // of handing the engine a voiceless utterance (the OS then picks, which is the Nigerian-English
+    // readout). Asking "are there any voices yet" is not choosing one.
+    //
+    // Re-anchored at the level the claim actually lives: no SELECTION in these bodies — nothing
+    // may assign `.voice`, index the voice list, or call the ranker. A future path that resolves a
+    // voice itself still fails, which is what v55_x was protecting.
+    assert.ok(!/\.voice\s*=/.test(body), `${fn} must not assign a voice itself (v55_x: one resolver)`);
+    assert.ok(!/_ttsRankVoices\(/.test(body), `${fn} must not rank voices itself (v55_x: one policy)`);
+    assert.ok(!/getVoices\(\)\s*(\[|\.find|\.filter|\.sort)/.test(body),
+      `${fn} must not pick out of the voice list itself (v55_x: one resolver)`);
     assert.ok(!/new SpeechSynthesisUtterance/.test(body), `${fn} does not build utterances itself`);
   }
   assert.strictEqual((client.match(/function _ttsPickVoice\(/g) || []).length, 1, 'exactly one voice resolver');

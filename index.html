@@ -6695,7 +6695,11 @@ function buildPath(){
   if (_pmEl) {
     const _inherit = (_ctxSl && typeof _ctxSl.coverageTarget === 'number') ? _ctxSl.coverageTarget
       : ((APP.info && typeof APP.info.coverageThreshold === 'number') ? APP.info.coverageThreshold : 0.8);
-    const _h = passMarkRowHtml('topic', d.id || '', (typeof d.coverageTarget === 'number' ? d.coverageTarget : null), _inherit);
+    const _h = passMarkRowHtml('topic', d.id || '', (typeof d.coverageTarget === 'number' ? d.coverageTarget : null), _inherit)
+      // v79_n: the chapter speech locale rides in the same teacher-mode block as the pass mark,
+      // inheriting from the storyline in context exactly as the pass mark does.
+      + speechLocaleRowHtml('topic', d.id || '', d.speechLocale || null,
+          (_ctxSl && _ctxSl.speechLocale) || null, d.lang);
     _pmEl.innerHTML = _h;
     _pmEl.style.display = _h ? '' : 'none';
   }
@@ -7931,7 +7935,11 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
     const _slObj = _slById;
     const _g = (APP.info && typeof APP.info.coverageThreshold === 'number') ? APP.info.coverageThreshold : 0.8;
     const _h = _slObj
-      ? passMarkRowHtml('storyline', _slObj.id, (typeof _slObj.coverageTarget === 'number' ? _slObj.coverageTarget : null), _g)
+      ? (passMarkRowHtml('storyline', _slObj.id, (typeof _slObj.coverageTarget === 'number' ? _slObj.coverageTarget : null), _g)
+         // v79_n: the storyline-level speech locale. Its language comes from the chapters, since a
+         // storyline has no `lang` of its own — the first chapter that has one.
+         + speechLocaleRowHtml('storyline', _slObj.id, _slObj.speechLocale || null, null,
+             (chapterIds.map(cid => _byId[cid]).find(c => c && c.lang) || {}).lang))
       : '';
     pmEl.innerHTML = _h;
     pmEl.style.display = _h ? '' : 'none';
@@ -14594,6 +14602,79 @@ function _coverageTarget(){
 // Rendered on the storyline screen (whole deck) and above the lesson chain (this chapter).
 // Shows the EFFECTIVE mark and where it comes from, so a teacher can see at a glance whether this
 // level is overriding or inheriting. Empty input = inherit.
+// v79_n (user): the storyline/chapter speech-locale control, deliberately built as a sibling of
+// passMarkRowHtml — same scope/own/inherited signature, same teacher-mode gate, same clear-to-
+// inherit ✕ — because the user asked for "such as the pass mark" and a setting that behaves like
+// the pass mark should look like it.
+//
+// The options are the LOCALES the device can actually speak for this language, derived from the
+// installed voices (several voices often share one locale, so they are deduped). The stored value
+// is the locale; the voice within it stays the ranker's business and the learner's own override.
+//
+// An inherited-or-absent locale that the device cannot speak is NOT hidden: it is listed with a
+// marker, because a teacher who set `en-GB` on a phone that has it should still see what they set
+// when they open the same storyline on a laptop that does not.
+function speechLocaleRowHtml(scope, id, own, inherited, lang){
+  if(!_canEdit()) return '';
+  const L = (typeof LANGS !== 'undefined' && LANGS[lang]) || {};
+  const base = L.tts || lang || '';
+  const eff = own || inherited || base;
+  const norm = c => (c||'').replace('_','-');
+  let locales = [];
+  try {
+    if (window.speechSynthesis && speechSynthesis.getVoices) {
+      const prefix = (base.split('-')[0] || '').toLowerCase();
+      locales = [...new Set((speechSynthesis.getVoices()||[])
+        .map(v => norm(v.lang))
+        .filter(l => l.toLowerCase().split('-')[0] === prefix))].sort();
+    }
+  } catch(_) {}
+  if (base && !locales.includes(base)) locales.unshift(base);
+  if (eff && !locales.includes(eff)) locales.unshift(eff);
+  const srcTxt = own ? '' : ` <span style="opacity:.65">(${escHtml(t('passmark.inherited'))})</span>`;
+  const installed = new Set(locales);
+  const opts = locales.map(l => {
+    const here = (() => { try { return (speechSynthesis.getVoices()||[])
+      .some(v => norm(v.lang) === l); } catch(_) { return true; } })();
+    return `<option value="${escAttr(l)}"${l === eff ? ' selected' : ''}>`
+         + escHtml(l + (l === base ? ' ★' : '') + (here ? '' : ' ⚠')) + `</option>`;
+  }).join('');
+  return `<div style="display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;font-size:12px;font-weight:700;color:var(--gray-dark);padding:6px 12px">
+    <span>🗣 ${escHtml(t('tts.test_lbl'))}</span>
+    <select id="sp-loc-${scope}" title="Speech locale"
+      style="padding:4px 6px;border:1.5px solid var(--gray-mid);border-radius:8px;font-weight:800;font-family:inherit"
+      onchange="setSpeechLocale('${scope}','${esc(String(id))}',this.value)">${opts}</select>
+    ${srcTxt}
+    ${own ? `<button class="storyline-hdr-btn" title="${escAttr(t('passmark.clear'))}" onclick="setSpeechLocale('${scope}','${esc(String(id))}','')">✕</button>` : ''}
+  </div>`;
+}
+
+async function setSpeechLocale(scope, id, raw){
+  const value = String(raw==null?'':raw).trim() || null;
+  try{
+    const r = await fetch('/api/speech-locale', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ scope, id, value }) });
+    const data = await r.json();
+    if(!r.ok) throw new Error(data.error||'failed');
+    // Mirror locally so the screen updates without a reload — same shape as setPassMark.
+    if(scope==='storyline'){
+      const sl=(APP.storylines||[]).find(s=>s.id===id);
+      if(sl){ if(value===null) delete sl.speechLocale; else sl.speechLocale=value; }
+    } else {
+      const t0=(APP.savedList||[]).find(l=>l.id===id) || (APP.lessonData?.id===id?APP.lessonData:null);
+      if(t0){ if(value===null) delete t0.speechLocale; else t0.speechLocale=value; }
+      if(APP.lessonData && APP.lessonData.id===id){ if(value===null) delete APP.lessonData.speechLocale; else APP.lessonData.speechLocale=value; }
+    }
+    // A changed speech locale changes which voice would speak, so the pill and the main-page
+    // variant row are both stale now.
+    try { refreshTtsVoiceState(); } catch(_) {}
+    try { updateTtsVoiceNote(); } catch(_) {}
+    showToast('🗣 ' + (value || t('passmark.inherited')));
+    if(scope==='storyline' && APP._slScreen?.chainId) openStorylineScreen(APP._slScreen.chainId, APP._slScreen.enc);
+    else if(APP.lessonData) buildPath();
+  }catch(e){ showToast(t('qc.toast.save_failed')+': '+e.message); }
+}
+
 function passMarkRowHtml(scope, id, own, inherited){
   if(!_canEdit()) return '';
   const eff = (typeof own === 'number') ? own : inherited;
@@ -17317,10 +17398,52 @@ function _toggleStaticAiWarning(show) {
   if (ov) ov.style.display = show ? '' : 'none';
 }
 
+// v79_n (user): a default speech LOCALE per storyline, overridable per chapter — "such as the pass
+// mark", and this is the resolver that gives that phrase its meaning.
+//
+// Order, most specific first:
+//   1. the chapter's own `speechLocale`
+//   2. the `speechLocale` of a storyline containing it
+//   3. `languages.json`'s `tts` for the language — the app's existing default, unchanged
+// and then the ranker picks a voice WITHIN whatever locale comes out, so a locale that the device
+// does not have installed still degrades to another voice of the same language rather than to
+// silence. That is the user's "fall back on an available speech for that language", and it needs
+// no new code: `_ttsRankVoices` filters on the language prefix and only PREFERS the exact locale.
+//
+// Chapters authored before this field simply have none and land on step 3 — the behaviour they
+// have today — so there is nothing to migrate.
+//
+// `lang` is passed in rather than read from APP because the speak paths already know which
+// language they are reading, and a chapter's speech setting must not leak into a readout of some
+// other language on the same screen.
+function _speechLocaleFor(lang, topicId) {
+  const langs = (typeof LANGS !== 'undefined' && LANGS) || {};
+  const fallback = ((langs[lang] || {}).tts) || lang || null;
+  if (!lang) return fallback;
+  // Which chapter are we speaking for? The explicit id wins; otherwise the open lesson, but only
+  // when it is actually in this language.
+  let ch = null;
+  if (topicId) {
+    ch = (APP.savedList || []).find(l => l.id === topicId)
+      || (APP.lessonData && APP.lessonData.id === topicId ? APP.lessonData : null);
+  } else if (APP.lessonData && (APP.lessonData.lang || '') === lang) {
+    ch = APP.lessonData;
+  }
+  if (ch && ch.speechLocale) return ch.speechLocale;
+  // Storyline level. A chapter can sit in more than one storyline (forks share a prefix), so the
+  // FIRST one carrying a setting wins — stable, and the same `find`-order rule the fork links use.
+  const chId = ch && ch.id;
+  if (chId) {
+    const sl = (APP.storylines || []).find(s => (s.chapters || []).includes(chId) && s.speechLocale);
+    if (sl) return sl.speechLocale;
+  }
+  return fallback;
+}
+
 function activeTtsCode(){
   if(APP.ttsLang) return APP.ttsLang;
   const lang=APP.lessonData?.lang||APP.lang||'it';
-  return (LANGS[lang]||LANGS.it).tts;
+  return _speechLocaleFor(lang) || (LANGS[lang]||LANGS.it).tts;
 }
 
 function ttsIsApproximate(){
@@ -17810,9 +17933,52 @@ function renderTtsPill() {
   });
 }
 
+// v79_m — the cause the Android screenshot pointed at, which is NOT the one v79_l fixed.
+//
+// The device DOES have en-GB installed (it is listed and selected in the teacher-mode picker), and
+// the picker's order — en-GB, en-US, en-AU, en-IN, en-NG — is exactly `_ttsRankVoices` putting the
+// exact locale first. So the ranker is right and, once voices are loaded, the re-ranked pick after
+// a navigation reset would have been en-GB anyway. Persistence alone therefore cannot explain
+// "the next lesson fell back to Nigerian English".
+//
+// What can: `getVoices()` is EMPTY for a window after a screen change on Android. In that window
+// `_ttsPickVoice` returns `undefined` (correctly — it cannot yet tell), `_ttsMakeUtterance` returns
+// an utterance carrying `u.lang` but NO `u.voice`, and the OS then picks the voice itself. On a
+// device whose own default English is Nigerian, that is the reported readout — and it explains the
+// shape of the report exactly: the sound test works (voices have long since loaded by the time you
+// press it) and the next lesson does not (it speaks on render).
+//
+// So: when voices are not loaded yet, WAIT for them rather than handing the utterance to the OS
+// voiceless. This is the same `voiceschanged` wait `speakBodyText` already does for its pre-text
+// path — it simply never covered the chunked speak paths, which are the ones a lesson uses.
+// Bounded, because `voiceschanged` is not guaranteed to fire: after the timeout we speak anyway,
+// which is the pre-v79_m behaviour and no worse than it.
+function _ttsWhenVoicesReady(fn) {
+  if (!window.speechSynthesis || !speechSynthesis.getVoices) { fn(); return; }
+  const v = speechSynthesis.getVoices();
+  if (v && v.length) { fn(); return; }
+  let done = false;
+  const go = () => { if (done) return; done = true; fn(); };
+  try {
+    speechSynthesis.addEventListener('voiceschanged', function h(){
+      speechSynthesis.removeEventListener('voiceschanged', h); go();
+    }, { once: true });
+  } catch(_) { go(); return; }
+  setTimeout(go, 1200);
+}
+
 function _speakChunks(chunks, langCode, rate, idx) {
   if (idx >= chunks.length) return;
-  const ttsCode = langCode ? ((LANGS[langCode]||{}).tts||langCode) : activeTtsCode();
+  // Only the FIRST chunk can land in the not-loaded window; later chunks follow an onend, by which
+  // time the engine has certainly reported in. Guarding chunk 0 alone keeps the readout gapless.
+  if (idx === 0 && window.speechSynthesis && speechSynthesis.getVoices
+      && !(speechSynthesis.getVoices()||[]).length) {
+    _ttsWhenVoicesReady(() => _speakChunks(chunks, langCode, rate, 0));
+    return;
+  }
+  // v79_n: the chapter/storyline speech locale enters HERE, at the one place a language code
+  // becomes a TTS code, so every readout honours it and none of them re-derives it.
+  const ttsCode = langCode ? (_speechLocaleFor(langCode) || langCode) : activeTtsCode();
   const u = _ttsMakeUtterance(chunks[idx], ttsCode, rate);
   if (!u) { if (idx === 0) _ttsNoVoice(ttsCode, langCode); return; }   // silent, not approximated
   u.onend = () => _speakChunks(chunks, langCode, rate, idx + 1);
@@ -17856,7 +18022,16 @@ function _doSpeakLang(text, langCode) {
 
 function _speakChunksThen(chunks, langCode, rate, idx, cb) {
   if (idx >= chunks.length) { if (cb) cb(); return; }
-  const ttsCode = langCode ? ((LANGS[langCode]||{}).tts||langCode) : activeTtsCode();
+  // v79_m: same not-loaded-yet guard as _speakChunks — this is the path a question readout takes,
+  // so it is at least as exposed to the empty-getVoices window as the story one.
+  if (idx === 0 && window.speechSynthesis && speechSynthesis.getVoices
+      && !(speechSynthesis.getVoices()||[]).length) {
+    _ttsWhenVoicesReady(() => _speakChunksThen(chunks, langCode, rate, 0, cb));
+    return;
+  }
+  // v79_n: the chapter/storyline speech locale enters HERE, at the one place a language code
+  // becomes a TTS code, so every readout honours it and none of them re-derives it.
+  const ttsCode = langCode ? (_speechLocaleFor(langCode) || langCode) : activeTtsCode();
   const u = _ttsMakeUtterance(chunks[idx], ttsCode, rate);   // shared resolver (v55_x)
   if (!u) { if (idx === 0) _ttsNoVoice(ttsCode, langCode); if (cb) cb(); return; }
   u.onend = () => _speakChunksThen(chunks, langCode, rate, idx+1, cb);
