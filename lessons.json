@@ -2,6 +2,367 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_1835515392",
+      "title": "Zwei Wege im Winter",
+      "icon": "🐿️",
+      "chapters": [
+        "tp_17869977371640000022",
+        "tp_17869980065780000104",
+        "tp_17869990828330000253"
+      ],
+      "lang": "fr",
+      "srcLang": "de",
+      "createdAt": "2026-08-17T20:18:16.495Z",
+      "updatedAt": "2026-08-17T21:19:49.851Z",
+      "tokenUsage": {
+        "totalPromptTokens": 2597,
+        "totalCompletionTokens": 1776,
+        "tokensByType": {
+          "retitle": 974,
+          "summary": 756,
+          "storyboard": 2643
+        }
+      },
+      "summary": "Ein kleines Eichhörnchen beobachtet ein Murmeltier im tiefen Schlaf und reflektiert über die unterschiedlichen Philosophien des Überlebens vor dem Winter. Während das Murmeltier sich dem Schlaf ergibt, um zu leben, muss das Nagetier trotz der Kälte und des fallenden Schnees aktiv nach Nahrung suchen. Die Begegnung in der Stille zeigt, dass ihre Wege zwar verschieden sind, aber durch den Wind und den Schnee verbunden bleiben. Letztlich verlässt das Eichhörnchen die Illusion der Ruhe und springt weg, um der harten Realität des Überlebens zu trotzen.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 621,
+        "completionTokens": 135,
+        "ms": 67303,
+        "at": "2026-08-17T20:57:52.466Z"
+      },
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Das Eichhörnchen steht vor der unbeweglichen Murmel.</title><rect x=\"193\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"194\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#9e9e9e\"/><circle cx=\"75\" cy=\"80\" r=\"12\" fill=\"#8d6e63\"/><rect x=\"73\" y=\"68\" width=\"4\" height=\"12\" fill=\"#8d6e63\"/><circle cx=\"20\" cy=\"50\" r=\"8\" fill=\"#e07a5f\"/><rect x=\"16\" y=\"42\" width=\"8\" height=\"10\" fill=\"#e07a5f\"/><line x1=\"20\" y1=\"50\" x2=\"30\" y2=\"40\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"30\" cy=\"38\" r=\"3\" fill=\"#81b29a\"/></svg></g><g data-chapter=\"2\"><title>Blätter wirbeln im Wind zwischen ihnen.</title><rect x=\"375\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"376\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"70\" width=\"100\" height=\"30\" fill=\"#9e9e9e\"/><circle cx=\"80\" cy=\"85\" r=\"14\" fill=\"#8d6e63\"/><rect x=\"78\" y=\"71\" width=\"4\" height=\"14\" fill=\"#8d6e63\"/><circle cx=\"20\" cy=\"50\" r=\"8\" fill=\"#e07a5f\"/><rect x=\"16\" y=\"42\" width=\"8\" height=\"10\" fill=\"#e07a5f\"/><polyline points=\"30,60 40,50 50,65\" fill=\"none\" stroke=\"#81b29a\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><polyline points=\"60,70 70,60 80,75\" fill=\"none\" stroke=\"#81b29a\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"45\" cy=\"30\" r=\"1\" fill=\"#2b2b2b\"/><circle cx=\"55\" cy=\"40\" r=\"1\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"2\"><title>Schnee bedeckt die Stille zwischen den beiden.</title><rect x=\"557\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"558\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"65\" width=\"100\" height=\"35\" fill=\"#ffffff\"/><circle cx=\"75\" cy=\"80\" r=\"12\" fill=\"#9e9e9e\"/><rect x=\"73\" y=\"68\" width=\"4\" height=\"12\" fill=\"#9e9e9e\"/><circle cx=\"20\" cy=\"50\" r=\"8\" fill=\"#e07a5f\"/><rect x=\"16\" y=\"42\" width=\"8\" height=\"10\" fill=\"#e07a5f\"/><circle cx=\"30\" cy=\"20\" r=\"1\" fill=\"#2b2b2b\"/><circle cx=\"50\" cy=\"30\" r=\"1\" fill=\"#2b2b2b\"/><circle cx=\"70\" cy=\"15\" r=\"1\" fill=\"#2b2b2b\"/><circle cx=\"40\" cy=\"45\" r=\"1\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"3\"><title>Das Eichhörnchen flieht in den kalten Wald.</title><rect x=\"739\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"740\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#9e9e9e\"/><circle cx=\"85\" cy=\"75\" r=\"10\" fill=\"#8d6e63\"/><rect x=\"83\" y=\"65\" width=\"4\" height=\"10\" fill=\"#8d6e63\"/><circle cx=\"20\" cy=\"50\" r=\"8\" fill=\"#e07a5f\"/><rect x=\"16\" y=\"42\" width=\"8\" height=\"10\" fill=\"#e07a5f\"/><line x1=\"28\" y1=\"50\" x2=\"40\" y2=\"45\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"35\" y1=\"45\" x2=\"45\" y2=\"35\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"90\" cy=\"20\" r=\"1\" fill=\"#ffffff\"/><circle cx=\"80\" cy=\"30\" r=\"1\" fill=\"#ffffff\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 4,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 1112,
+        "completionTokens": 1531,
+        "ms": 384605,
+        "at": "2026-08-17T21:04:17.136Z",
+        "storyStyle": "philosophical"
+      },
+      "storyboardPanels": [
+        {
+          "caption": "Das Eichhörnchen steht vor der unbeweglichen Murmel.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 75,
+              "cy": 80,
+              "r": 12,
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 73,
+              "y": 68,
+              "w": 4,
+              "h": 12,
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 20,
+              "cy": 50,
+              "r": 8,
+              "fill": "accent"
+            },
+            {
+              "type": "rect",
+              "x": 16,
+              "y": 42,
+              "w": 8,
+              "h": 10,
+              "fill": "accent"
+            },
+            {
+              "type": "line",
+              "x1": 20,
+              "y1": 50,
+              "x2": 30,
+              "y2": 40,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 38,
+              "r": 3,
+              "fill": "leaf"
+            }
+          ]
+        },
+        {
+          "caption": "Blätter wirbeln im Wind zwischen ihnen.",
+          "chapter": 2,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 70,
+              "w": 100,
+              "h": 30,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 80,
+              "cy": 85,
+              "r": 14,
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 78,
+              "y": 71,
+              "w": 4,
+              "h": 14,
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 20,
+              "cy": 50,
+              "r": 8,
+              "fill": "accent"
+            },
+            {
+              "type": "rect",
+              "x": 16,
+              "y": 42,
+              "w": 8,
+              "h": 10,
+              "fill": "accent"
+            },
+            {
+              "type": "polyline",
+              "points": [
+                [
+                  30,
+                  60
+                ],
+                [
+                  40,
+                  50
+                ],
+                [
+                  50,
+                  65
+                ]
+              ],
+              "stroke": "leaf",
+              "sw": 2
+            },
+            {
+              "type": "polyline",
+              "points": [
+                [
+                  60,
+                  70
+                ],
+                [
+                  70,
+                  60
+                ],
+                [
+                  80,
+                  75
+                ]
+              ],
+              "stroke": "leaf",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 45,
+              "cy": 30,
+              "r": 1,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 55,
+              "cy": 40,
+              "r": 1,
+              "fill": "ink"
+            }
+          ]
+        },
+        {
+          "caption": "Schnee bedeckt die Stille zwischen den beiden.",
+          "chapter": 2,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 65,
+              "w": 100,
+              "h": 35,
+              "fill": "white"
+            },
+            {
+              "type": "circle",
+              "cx": 75,
+              "cy": 80,
+              "r": 12,
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 73,
+              "y": 68,
+              "w": 4,
+              "h": 12,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 20,
+              "cy": 50,
+              "r": 8,
+              "fill": "accent"
+            },
+            {
+              "type": "rect",
+              "x": 16,
+              "y": 42,
+              "w": 8,
+              "h": 10,
+              "fill": "accent"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 20,
+              "r": 1,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 30,
+              "r": 1,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 15,
+              "r": 1,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 40,
+              "cy": 45,
+              "r": 1,
+              "fill": "ink"
+            }
+          ]
+        },
+        {
+          "caption": "Das Eichhörnchen flieht in den kalten Wald.",
+          "chapter": 3,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 85,
+              "cy": 75,
+              "r": 10,
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 83,
+              "y": 65,
+              "w": 4,
+              "h": 10,
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 20,
+              "cy": 50,
+              "r": 8,
+              "fill": "accent"
+            },
+            {
+              "type": "rect",
+              "x": 16,
+              "y": 42,
+              "w": 8,
+              "h": 10,
+              "fill": "accent"
+            },
+            {
+              "type": "line",
+              "x1": 28,
+              "y1": 50,
+              "x2": 40,
+              "y2": 45,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 35,
+              "y1": 45,
+              "x2": 45,
+              "y2": 35,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 90,
+              "cy": 20,
+              "r": 1,
+              "fill": "white"
+            },
+            {
+              "type": "circle",
+              "cx": 80,
+              "cy": 30,
+              "r": 1,
+              "fill": "white"
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
+    },
+    {
       "id": "sl_1653967216",
       "title": "EIN SCHEISSLAND",
       "icon": "📖",
@@ -9433,7 +9794,7 @@
     },
     {
       "id": "sl_1041030875",
-      "title": "Dough of the Ancients",
+      "title": "Dough of the Ancients 2",
       "icon": "🧈🔥",
       "lang": "it",
       "srcLang": null,
@@ -9441,7 +9802,7 @@
         "tp_1303255627"
       ],
       "createdAt": "2026-05-04T06:58:28.635Z",
-      "updatedAt": "2026-05-05T09:53:54.230Z"
+      "updatedAt": "2026-08-17T21:04:38.395Z"
     },
     {
       "id": "sl_1910168909",
@@ -9875,6 +10236,1403 @@
     }
   ],
   "topics": [
+    {
+      "id": "tp_17869990828330000253",
+      "topic": "Flucht ins Leere",
+      "topicEmoji": "🌬️",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "fr",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Le froid mord les pattes du petit rongeur, lui rappelant que la contemplation n’alimente pas le ventre. Il regarde encore une fois cette forme endormie, ce refuge contre l’âpreté du monde, puis se retourne vers les branches nues. La neige tombe plus dense, effaçant les traces au sol, rendant chaque mouvement incertain. Doit-il fuir cette quiétude pour affronter le vide blanc, ou rester à observer comment le silence transforme la peur en paix ? Il saute, non par courage, mais par nécessité, laissant derrière lui l’illusion d’un hiver doux, pour retrouver la réalité froide et vivante de la survie.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and French language teacher. Write a short story directly in French on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in French. Writing style: Contemplative, questioning, abstract ideas. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (the full storyline so far, 2 chapters):\n## ein eichhoernchen trifft ein murmeltier — 1\nLe petit écureuil, agité par l’urgence de l’hiver qui approche, s’arrêta net devant la masse immobile du marmotte. L’un accumule le temps en grains de noix, l’autre le dilue dans un sommeil profond. Se croisent-ils vraiment ou ne font-ils que frôler deux philosophies opposées de la survie ? Le silence entre eux pesait plus lourd que les branches chargées de neige. Peut-être que la véritable rencontre n’est pas celle des corps, mais celle de leurs silences respectifs, suspendus dans l’air glacé d’une après-midi d’octobre.\n\n## ein eichhoernchen trifft ein murmeltier — 2\nLe vent se lève, emportant les dernières feuilles d’or qui tournoient comme des souvenirs oubliés. L’écureuil observe la marmotte, dont le souffle devient imperceptible, presque invisible dans l’air vif. Il comprend alors que leur différence n’est pas une barrière, mais un pont entre deux manières d’exister : l’un accumule pour survivre, l’autre s’abandonne pour vivre. La neige commence à tomber, couvrant leurs silences d’un linceul blanc et pur. Dans ce calme absolu, le temps semble suspendu, offrant une pause éphémère avant que l’hiver ne prenne possession de la forêt.\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 546,
+        "completionTokens": 144,
+        "ms": 72788,
+        "at": "2026-08-17T20:37:24.864Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 202,
+        "completionTokens": 170,
+        "ms": 37969,
+        "at": "2026-08-17T20:38:02.833Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Die Kälte beißt in die Pfoten des kleinen Nagetiers und erinnert es daran, dass das Betrachten den Magen nicht füllt. Es blickt noch einmal auf diese schlafende Gestalt, dieses Zufluchtsort gegen die Härte der Welt, und wendet sich dann den kahlen Ästen zu. Der Schnee fällt dichter, verwischt die Spuren am Boden und macht jede Bewegung unsicher. Sollte es diese Ruhe verlassen, um dem weißen Nichts zu begegnen, oder sollte es bleiben und beobachten, wie die Stille die Angst in Frieden verwandelt? Es springt auf, nicht aus Mut, sondern aus Notwendigkeit, lässt hinter sich die Illusion eines sanften Winters zurück, um der kalten und lebendigen Realität des Überlebens wieder zu begegnen.",
+      "continuedFrom": "Brücke der Existenz",
+      "continuedFromId": "tp_17869980065780000104",
+      "storyStyle": "philosophical",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Kälte und Überleben",
+          "desc": "Ein Nagetier kämpft gegen die Kälte",
+          "icon": "❄️",
+          "vocab": [
+            {
+              "target": "le froid",
+              "source": "die Kälte"
+            },
+            {
+              "target": "mordre",
+              "source": "beißen"
+            },
+            {
+              "target": "la patte",
+              "source": "die Pfote"
+            },
+            {
+              "target": "le rongeur",
+              "source": "das Nagetier"
+            },
+            {
+              "target": "la neige",
+              "source": "der Schnee"
+            },
+            {
+              "target": "tomber",
+              "source": "fallen"
+            },
+            {
+              "target": "sauter",
+              "source": "springen"
+            },
+            {
+              "target": "la survie",
+              "source": "das Überleben"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Le froid mord les pattes.",
+              "source": "Die Kälte beißt in die Pfoten.",
+              "words": [
+                "Le",
+                "froid",
+                "mord",
+                "les",
+                "pattes."
+              ]
+            },
+            {
+              "target": "La neige tombe plus dense.",
+              "source": "Der Schnee fällt dichter.",
+              "words": [
+                "La",
+                "neige",
+                "tombe",
+                "plus",
+                "dense."
+              ]
+            },
+            {
+              "target": "Il saute par nécessité.",
+              "source": "Es springt aus Notwendigkeit.",
+              "words": [
+                "Il",
+                "saute",
+                "par",
+                "nécessité."
+              ]
+            },
+            {
+              "target": "Le silence transforme la peur.",
+              "source": "Die Stille verwandelt die Angst.",
+              "words": [
+                "Le",
+                "silence",
+                "transforme",
+                "la",
+                "peur."
+              ]
+            },
+            {
+              "target": "C'est la réalité de la survie.",
+              "source": "Es ist die Realität des Überlebens.",
+              "words": [
+                "C'est",
+                "la",
+                "réalité",
+                "de",
+                "la",
+                "survie."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 956,
+            "completionTokens": 352,
+            "ms": 143001,
+            "at": "2026-08-17T20:40:25.883Z"
+          }
+        },
+        {
+          "id": 6,
+          "type": "word_forms",
+          "title": "Le rongeur dans la neige",
+          "desc": "Exercices sur les formes du texte",
+          "icon": "❄️",
+          "items": [
+            {
+              "sentence": "La neige tombe plus ___, effaçant les traces au sol.",
+              "translation": "Der Schnee fällt dichter und wischt die Spuren vom Boden.",
+              "choices": [
+                "dense",
+                "denses",
+                "dence"
+              ],
+              "correctIndex": 0,
+              "explanation": "Comparaison avec 'plus' (adjectif invariable ici)"
+            },
+            {
+              "sentence": "Il saute, non par courage, mais par ___, laissant derrière lui l’illusion.",
+              "translation": "Er springt, nicht aus Mut, sondern aus Not, und lässt die Illusion hinter sich.",
+              "choices": [
+                "nécessité",
+                "nécessaires",
+                "nécessiter"
+              ],
+              "correctIndex": 0,
+              "explanation": "Nom féminin après la préposition 'par'"
+            },
+            {
+              "sentence": "Le froid ___ les pattes du petit rongeur.",
+              "translation": "Die Kälte beißt die Pfoten des kleinen Nagetiers.",
+              "choices": [
+                "mord",
+                "mords",
+                "mordre"
+              ],
+              "correctIndex": 0,
+              "explanation": "Conjugaison verbe 'mordre' avec sujet 'Le froid'"
+            },
+            {
+              "sentence": "Il regarde encore une fois cette forme ___, ce refuge contre l’âpreté du monde.",
+              "translation": "Er sieht sich diese schlafende Form noch einmal an, dieses Zufluchtsort gegen die Schärfe der Welt.",
+              "choices": [
+                "endormie",
+                "endormi",
+                "endormies"
+              ],
+              "correctIndex": 0,
+              "explanation": "Accord avec 'forme' (féminin singulier)"
+            },
+            {
+              "sentence": "Doit-il fuir cette quiétude pour affronter le vide blanc, ou rester à observer comment le silence transforme la peur en ___ ?",
+              "translation": "Soll er diese Ruhe fliehen, um die weiße Leere zu konfrontieren, oder bleiben und beobachten, wie die Angst sich in Frieden verwandelt?",
+              "choices": [
+                "paix",
+                "paisible",
+                "paisiblement"
+              ],
+              "correctIndex": 0,
+              "explanation": "Nom féminin après la préposition 'en'"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1510,
+            "completionTokens": 570,
+            "ms": 223902,
+            "at": "2026-08-17T20:44:09.786Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1610079214",
+          "type": "synonyms",
+          "title": "Überleben im Winter",
+          "desc": "Ein Eichhörnchen kämpft gegen die Kälte.",
+          "icon": "🐿️",
+          "words": [
+            {
+              "base": "froid",
+              "gloss": "kalt",
+              "sentence": "Le froid mord les pattes du petit rongeur, lui rappelant que la contemplation n’alimente pas le ventre.",
+              "synonyms": [
+                {
+                  "w": "glacial",
+                  "g": "eisig"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "chaud",
+                  "g": "warm"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "petit",
+              "gloss": "klein",
+              "sentence": "Le froid mord les pattes du petit rongeur, lui rappelant que la contemplation n’alimente pas le ventre.",
+              "synonyms": [
+                {
+                  "w": "minuscule",
+                  "g": "winzig"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "grand",
+                  "g": "groß"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "silence",
+              "gloss": "Stille",
+              "sentence": "Doit-il fuir cette quiétude pour affronter le vide blanc, ou rester à observer comment le silence transforme la peur en paix ?",
+              "synonyms": [
+                {
+                  "w": "tranquillité",
+                  "g": "Ruhe"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "bruit",
+                  "g": "Lärm"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "hiver",
+              "gloss": "Winter",
+              "sentence": "Il saute, non par courage, mais par nécessité, laissant derrière lui l’illusion d’un hiver doux, pour retrouver la réalité froide et vivante de la survie.",
+              "synonyms": [],
+              "antonyms": [
+                {
+                  "w": "été",
+                  "g": "Sommer"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "tombe",
+              "gloss": "fällt (von Schnee)",
+              "sentence": "La neige tombe plus dense, effaçant les traces au sol, rendant chaque mouvement incertain.",
+              "synonyms": [
+                {
+                  "w": "descend",
+                  "g": "steigt hinab"
+                }
+              ],
+              "antonyms": [],
+              "homophones": [
+                {
+                  "w": "tombent",
+                  "g": "fallen (Plural)"
+                }
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1309,
+            "completionTokens": 839,
+            "ms": 248044,
+            "at": "2026-08-17T20:48:17.830Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1353091320",
+          "type": "conjugation",
+          "title": "Verben im Präsens",
+          "desc": "Fünf französische Verben lernen",
+          "icon": "🐿️",
+          "conjugations": [
+            {
+              "infinitive": "voir",
+              "source": "sehen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "je",
+                  "form": "vois"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "vois"
+                },
+                {
+                  "pronoun": "il/elle/on",
+                  "form": "voit"
+                },
+                {
+                  "pronoun": "nous",
+                  "form": "voyons"
+                },
+                {
+                  "pronoun": "vous",
+                  "form": "voyez"
+                },
+                {
+                  "pronoun": "ils/elles",
+                  "form": "voient"
+                }
+              ]
+            },
+            {
+              "infinitive": "savoir",
+              "source": "wissen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "je",
+                  "form": "sais"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "sais"
+                },
+                {
+                  "pronoun": "il/elle/on",
+                  "form": "sait"
+                },
+                {
+                  "pronoun": "nous",
+                  "form": "savons"
+                },
+                {
+                  "pronoun": "vous",
+                  "form": "savez"
+                },
+                {
+                  "pronoun": "ils/elles",
+                  "form": "savent"
+                }
+              ]
+            },
+            {
+              "infinitive": "tourner",
+              "source": "drehen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "je",
+                  "form": "tourne"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "tournes"
+                },
+                {
+                  "pronoun": "il/elle/on",
+                  "form": "tourne"
+                },
+                {
+                  "pronoun": "nous",
+                  "form": "tournons"
+                },
+                {
+                  "pronoun": "vous",
+                  "form": "tournez"
+                },
+                {
+                  "pronoun": "ils/elles",
+                  "form": "tournent"
+                }
+              ]
+            },
+            {
+              "infinitive": "avoir",
+              "source": "haben",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "j'",
+                  "form": "ai"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "as"
+                },
+                {
+                  "pronoun": "il/elle/on",
+                  "form": "a"
+                },
+                {
+                  "pronoun": "nous",
+                  "form": "avons"
+                },
+                {
+                  "pronoun": "vous",
+                  "form": "avez"
+                },
+                {
+                  "pronoun": "ils/elles",
+                  "form": "ont"
+                }
+              ]
+            },
+            {
+              "infinitive": "être",
+              "source": "sein",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "je",
+                  "form": "suis"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "es"
+                },
+                {
+                  "pronoun": "il/elle/on",
+                  "form": "est"
+                },
+                {
+                  "pronoun": "nous",
+                  "form": "sommes"
+                },
+                {
+                  "pronoun": "vous",
+                  "form": "êtes"
+                },
+                {
+                  "pronoun": "ils/elles",
+                  "form": "sont"
+                }
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "conjugation",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 764,
+            "completionTokens": 822,
+            "ms": 218811,
+            "at": "2026-08-17T20:51:56.641Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": 9,
+          "type": "comprehension",
+          "title": "Das Eichhörnchen und das Murmeltier",
+          "desc": "Verstehe die Geschichte über die Begegnung zwischen einem eiligen Eichhörnchen und einem ruhenden Murmeltier.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum bleibt das Eichhörnchen kurz vor dem Murmeltier stehen?",
+              "choices": [
+                "Es ist zu müde, um weiterzulaufen.",
+                "Der Winter naht und es hat Eile.",
+                "Es will mit dem Murmeltier sprechen.",
+                "Es hat das Murmeltier für einen Baumstamm gehalten."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: 'agité par l’urgence de l’hiver qui approche' (beunruhigt durch die Dringlichkeit des nahenden Winters)."
+            },
+            {
+              "q": "Was versteht das Eichhörnchen über den Unterschied zwischen sich selbst und dem Murmeltier?",
+              "choices": [
+                "Das Murmeltier ist faul, während es fleißig ist.",
+                "Sie haben unterschiedliche Überlebensstrategien: Sammeln versus Schlafen.",
+                "Das Eichhörnchen will auch schlafen gehen.",
+                "Das Murmeltier hat mehr Nüsse als das Eichhörnchen."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text beschreibt: 'L’un accumule le temps en grains de noix, l’autre le dilue dans un sommeil profond' (Einer sammelt Zeit in Nussschalen, der andere verdünnt sie in tiefem Schlaf)."
+            },
+            {
+              "q": "Warum verlässt das Eichhörnchen die ruhige Szene?",
+              "choices": [
+                "Es hat Angst vor dem Wind.",
+                "Es ist hungrig und muss handeln, um zu überleben.",
+                "Das Murmeltier hat es vertrieben.",
+                "Die Sonne scheint wieder hell."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt: 'la contemplation n’alimente pas le ventre' (Kontemplation nährt den Magen nicht) und es springt weg 'par nécessité' (aus Notwendigkeit)."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 872,
+            "completionTokens": 535,
+            "ms": 192172,
+            "at": "2026-08-17T20:55:08.813Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 253807,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1704,
+        "totalCompletionTokens": 666,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 143001,
+            "promptTokens": 956,
+            "completionTokens": 352
+          }
+        ]
+      },
+      "generatedAt": "2026-08-17T20:38:02.833Z",
+      "updatedAt": "2026-08-17T20:55:08.813Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17869980065780000104",
+      "topic": "Brücke der Existenz",
+      "topicEmoji": "❄️",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "fr",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Le vent se lève, emportant les dernières feuilles d’or qui tournoient comme des souvenirs oubliés. L’écureuil observe la marmotte, dont le souffle devient imperceptible, presque invisible dans l’air vif. Il comprend alors que leur différence n’est pas une barrière, mais un pont entre deux manières d’exister : l’un accumule pour survivre, l’autre s’abandonne pour vivre. La neige commence à tomber, couvrant leurs silences d’un linceul blanc et pur. Dans ce calme absolu, le temps semble suspendu, offrant une pause éphémère avant que l’hiver ne prenne possession de la forêt.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and French language teacher. Write a short story directly in French on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in French. Writing style: Contemplative, questioning, abstract ideas. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (full):\nLe petit écureuil, agité par l’urgence de l’hiver qui approche, s’arrêta net devant la masse immobile du marmotte. L’un accumule le temps en grains de noix, l’autre le dilue dans un sommeil profond. Se croisent-ils vraiment ou ne font-ils que frôler deux philosophies opposées de la survie ? Le silence entre eux pesait plus lourd que les branches chargées de neige. Peut-être que la véritable rencontre n’est pas celle des corps, mais celle de leurs silences respectifs, suspendus dans l’air glacé d’une après-midi d’octobre.\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 356,
+        "completionTokens": 150,
+        "ms": 71323,
+        "at": "2026-08-17T20:19:27.889Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 208,
+        "completionTokens": 153,
+        "ms": 38689,
+        "at": "2026-08-17T20:20:06.578Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Der Wind hebt an und trägt die letzten goldenen Blätter davon, die wie vergessene Erinnerungen wirbeln. Das Eichhörnchen beobachtet das Murmeltier, dessen Atem immer undeutlicher wird, fast unsichtbar in der kalten Luft. Da begreift es, dass ihr Unterschied keine Barriere ist, sondern eine Brücke zwischen zwei Arten zu existieren: Der eine sammelt, um zu überleben, der andere gibt sich hin, um zu leben. Der Schnee beginnt zu fallen und bedeckt ihre Stille mit einem weißen, reinen Leichentuch. In dieser absoluten Ruhe scheint die Zeit stillzustehen und gewährt eine flüchtige Pause, bevor der Winter den Wald in Besitz nimmt.",
+      "continuedFrom": "Stille vor dem Winter",
+      "continuedFromId": "tp_17869977371640000022",
+      "storyStyle": "philosophical",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Herbststimmung im Wald",
+          "desc": "Ein Eichhörnchen und ein Murmeltier erleben den Herbst.",
+          "icon": "🍂",
+          "vocab": [
+            {
+              "target": "le vent",
+              "source": "der Wind"
+            },
+            {
+              "target": "l'écureuil",
+              "source": "das Eichhörnchen"
+            },
+            {
+              "target": "la marmotte",
+              "source": "das Murmeltier"
+            },
+            {
+              "target": "la neige",
+              "source": "der Schnee"
+            },
+            {
+              "target": "le souffle",
+              "source": "der Atem"
+            },
+            {
+              "target": "l'hiver",
+              "source": "der Winter"
+            },
+            {
+              "target": "la forêt",
+              "source": "der Wald"
+            },
+            {
+              "target": "tomber",
+              "source": "fallen"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Le vent se lève.",
+              "source": "Der Wind hebt an.",
+              "words": [
+                "Le",
+                "vent",
+                "se",
+                "lève."
+              ]
+            },
+            {
+              "target": "L’écureuil observe la marmotte.",
+              "source": "Das Eichhörnchen beobachtet das Murmeltier.",
+              "words": [
+                "L’écureuil",
+                "observe",
+                "la",
+                "marmotte."
+              ]
+            },
+            {
+              "target": "La neige commence à tomber.",
+              "source": "Der Schnee beginnt zu fallen.",
+              "words": [
+                "La",
+                "neige",
+                "commence",
+                "à",
+                "tomber."
+              ]
+            },
+            {
+              "target": "Le temps semble suspendu.",
+              "source": "Die Zeit scheint stillzustehen.",
+              "words": [
+                "Le",
+                "temps",
+                "semble",
+                "suspendu."
+              ]
+            },
+            {
+              "target": "L’hiver ne prenne possession de la forêt.",
+              "source": "Der Winter den Wald in Besitz nimmt.",
+              "words": [
+                "L’hiver",
+                "ne",
+                "prenne",
+                "possession",
+                "de",
+                "la",
+                "forêt."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 945,
+            "completionTokens": 375,
+            "ms": 139666,
+            "at": "2026-08-17T20:22:26.304Z"
+          }
+        },
+        {
+          "id": 6,
+          "type": "word_forms",
+          "title": "L'automne et l'hiver",
+          "desc": "Exercices sur les formes de mots",
+          "icon": "🍂",
+          "items": [
+            {
+              "sentence": "Le vent se lève, ___ les dernières feuilles d’or.",
+              "translation": "Der Wind erhebt sich und trägt die letzten goldenen Blätter davon.",
+              "choices": [
+                "emportant",
+                "emporte",
+                "emporter"
+              ],
+              "correctIndex": 0,
+              "explanation": "Participe présent après la virgule"
+            },
+            {
+              "sentence": "L’écureuil observe la marmotte, dont le souffle devient ___.",
+              "translation": "Das Eichhörnchen beobachtet das Murmeltier, dessen Atem wird unmerklich.",
+              "choices": [
+                "imperceptible",
+                "imperceptibles",
+                "imperceptiblement"
+              ],
+              "correctIndex": 0,
+              "explanation": "Adjectif singulier après 'devient'"
+            },
+            {
+              "sentence": "Il comprend alors que leur différence n’est pas une ___, mais un pont.",
+              "translation": "Er begreift dann, dass ihr Unterschied keine Barriere ist, sondern eine Brücke.",
+              "choices": [
+                "barrière",
+                "barrières",
+                "barrier"
+              ],
+              "correctIndex": 0,
+              "explanation": "Singulier après 'une'"
+            },
+            {
+              "sentence": "La neige commence à tomber, ___ leurs silences d’un linceul blanc.",
+              "translation": "Der Schnee beginnt zu fallen und bedeckt ihre Stille mit einem weißen Leichentuch.",
+              "choices": [
+                "couvrant",
+                "couvre",
+                "couvert"
+              ],
+              "correctIndex": 0,
+              "explanation": "Participe présent indiquant la conséquence"
+            },
+            {
+              "sentence": "Le temps semble ___, offrant une pause éphémère.",
+              "translation": "Die Zeit scheint angehalten zu sein und bietet eine flüchtige Pause.",
+              "choices": [
+                "suspendu",
+                "suspendre",
+                "suspend"
+              ],
+              "correctIndex": 0,
+              "explanation": "Participe passé après 'sembler' (état)"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1516,
+            "completionTokens": 523,
+            "ms": 206006,
+            "at": "2026-08-17T20:25:52.312Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_394385529",
+          "type": "synonyms",
+          "title": "Écureuil et Marmotte : L'hiver arrive",
+          "desc": "Une rencontre silencieuse entre deux animaux face à l'hiver.",
+          "icon": "🐿️❄️",
+          "words": [
+            {
+              "base": "silence",
+              "gloss": "Stille",
+              "sentence": "Le silence entre eux pesait lourd.",
+              "synonyms": [
+                {
+                  "w": "muet",
+                  "g": "stumm"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "bruit",
+                  "g": "Geräusch"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "hiver",
+              "gloss": "Winter",
+              "sentence": "Dans ce calme absolu, le temps semble suspendu, offrant une pause éphémère avant que l’hiver ne prenne possession de la forêt.",
+              "synonyms": [],
+              "antonyms": [
+                {
+                  "w": "été",
+                  "g": "Sommer"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "s'arrêter",
+              "gloss": "aufhören / stehen bleiben",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "cesser",
+                  "g": "aufhören"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "continuer",
+                  "g": "weitermachen"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "temps",
+              "gloss": "Zeit",
+              "sentence": "Dans ce calme absolu, le temps semble suspendu, offrant une pause éphémère avant que l’hiver ne prenne possession de la forêt.",
+              "synonyms": [
+                {
+                  "w": "durée",
+                  "g": "Dauer"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "sommeil",
+              "gloss": "Schlaf",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "dodo",
+                  "g": "Schnute"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "éveil",
+                  "g": "Erwachen"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "rencontre",
+              "gloss": "Begegnung",
+              "sentence": "Peut-être que la véritable rencontre n’est pas celle des corps.",
+              "synonyms": [
+                {
+                  "w": "trouvaille",
+                  "g": "Fund"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 6,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1300,
+            "completionTokens": 878,
+            "ms": 263303,
+            "at": "2026-08-17T20:30:15.616Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1375546013",
+          "type": "conjugation",
+          "title": "Verben im Präsens",
+          "desc": "Fünf französische Verben lernen",
+          "icon": "🐿️",
+          "conjugations": [
+            {
+              "infinitive": "tourner",
+              "source": "sich drehen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "je",
+                  "form": "tourne"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "tournes"
+                },
+                {
+                  "pronoun": "il/elle/on",
+                  "form": "tourne"
+                },
+                {
+                  "pronoun": "nous",
+                  "form": "tournons"
+                },
+                {
+                  "pronoun": "vous",
+                  "form": "tournez"
+                },
+                {
+                  "pronoun": "ils/elles",
+                  "form": "tournent"
+                }
+              ]
+            },
+            {
+              "infinitive": "emporter",
+              "source": "mitnehmen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "j'",
+                  "form": "emporte"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "emportes"
+                },
+                {
+                  "pronoun": "il/elle/on",
+                  "form": "emporte"
+                },
+                {
+                  "pronoun": "nous",
+                  "form": "emportons"
+                },
+                {
+                  "pronoun": "vous",
+                  "form": "emportez"
+                },
+                {
+                  "pronoun": "ils/elles",
+                  "form": "emportent"
+                }
+              ]
+            },
+            {
+              "infinitive": "voir",
+              "source": "sehen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "je",
+                  "form": "vois"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "vois"
+                },
+                {
+                  "pronoun": "il/elle/on",
+                  "form": "voit"
+                },
+                {
+                  "pronoun": "nous",
+                  "form": "voyons"
+                },
+                {
+                  "pronoun": "vous",
+                  "form": "voyez"
+                },
+                {
+                  "pronoun": "ils/elles",
+                  "form": "voient"
+                }
+              ]
+            },
+            {
+              "infinitive": "tomber",
+              "source": "fallen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "je",
+                  "form": "tombe"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "tombes"
+                },
+                {
+                  "pronoun": "il/elle/on",
+                  "form": "tombe"
+                },
+                {
+                  "pronoun": "nous",
+                  "form": "tombons"
+                },
+                {
+                  "pronoun": "vous",
+                  "form": "tombez"
+                },
+                {
+                  "pronoun": "ils/elles",
+                  "form": "tombent"
+                }
+              ]
+            },
+            {
+              "infinitive": "savoir",
+              "source": "wissen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "je",
+                  "form": "sais"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "sais"
+                },
+                {
+                  "pronoun": "il/elle/on",
+                  "form": "sait"
+                },
+                {
+                  "pronoun": "nous",
+                  "form": "savons"
+                },
+                {
+                  "pronoun": "vous",
+                  "form": "savez"
+                },
+                {
+                  "pronoun": "ils/elles",
+                  "form": "savent"
+                }
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "conjugation",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 741,
+            "completionTokens": 842,
+            "ms": 216630,
+            "at": "2026-08-17T20:33:52.246Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": 9,
+          "type": "comprehension",
+          "title": "Das Eichhörnchen und das Murmeltier",
+          "desc": "Verstehe die Geschichte über zwei Tiere im Herbst.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum ist das Eichhörnchen so unruhig?",
+              "choices": [
+                "Es hat Angst vor dem Wind.",
+                "Der Winter kommt bald und es muss Nüsse sammeln.",
+                "Es sucht nach einem Freund zum Spielen.",
+                "Es ist müde vom Laufen."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt, dass das Eichhörnchen durch die Dringlichkeit des nahenden Winters bewegt wird und Zeit in Form von Nusskörnern ansammelt."
+            },
+            {
+              "q": "Was versteht das Eichhörnchen am Ende der Geschichte?",
+              "choices": [
+                "Dass das Murmeltier krank ist.",
+                "Dass sie beide den Winter überleben müssen.",
+                "Dass ihre Unterschiede eine Verbindung sind, keine Trennung.",
+                "Dass der Wind die Blätter wegwischen wird."
+              ],
+              "correctIndex": 2,
+              "why": "Im zweiten Teil erkennt das Eichhörnchen, dass der Unterschied zwischen ihnen keine Barriere, sondern eine Brücke zwischen zwei Arten zu existieren ist."
+            },
+            {
+              "q": "Wie beschreibt die Geschichte die Beziehung zwischen den beiden Tieren?",
+              "choices": [
+                "Sie sind Feinde.",
+                "Sie haben wenig gemeinsam.",
+                "Sie teilen einen Moment der Stille und des Friedens.",
+                "Sie kämpfen um denselben Platz."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text spricht von einer 'wahren Begegnung' ihrer Schweige und einem 'absoluten Frieden', in dem die Zeit innehält, bevor der Winter beginnt."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 712,
+            "completionTokens": 441,
+            "ms": 139726,
+            "at": "2026-08-17T20:36:11.974Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 249738,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1509,
+        "totalCompletionTokens": 678,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 139666,
+            "promptTokens": 945,
+            "completionTokens": 375
+          }
+        ]
+      },
+      "generatedAt": "2026-08-17T20:20:06.578Z",
+      "updatedAt": "2026-08-17T20:36:11.974Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17869977371640000022",
+      "topic": "Stille vor dem Winter",
+      "topicEmoji": "🐿️",
+      "userTopic": "ein eichhoernchen trifft ein murmeltier",
+      "userPrompt": "ein eichhoernchen trifft ein murmeltier",
+      "lang": "fr",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Le petit écureuil, agité par l’urgence de l’hiver qui approche, s’arrêta net devant la masse immobile du marmotte. L’un accumule le temps en grains de noix, l’autre le dilue dans un sommeil profond. Se croisent-ils vraiment ou ne font-ils que frôler deux philosophies opposées de la survie ? Le silence entre eux pesait plus lourd que les branches chargées de neige. Peut-être que la véritable rencontre n’est pas celle des corps, mais celle de leurs silences respectifs, suspendus dans l’air glacé d’une après-midi d’octobre.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and French language teacher. Write a short story directly in French on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in French. Writing style: Contemplative, questioning, abstract ideas.\n\nWrite a story for the topic: \"ein eichhoernchen trifft ein murmeltier\". Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 139,
+        "completionTokens": 138,
+        "ms": 30774,
+        "at": "2026-08-17T20:14:55.907Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 196,
+        "completionTokens": 140,
+        "ms": 41256,
+        "at": "2026-08-17T20:15:37.163Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Das kleine Eichhörnchen, getrieben von der Dringlichkeit des nahenden Winters, hielt abrupt vor der reglosen Masse des Murmeltiers inne. Der eine häuft die Zeit in Form von Nusskernen an, der andere verdünnt sie in einem tiefen Schlaf. Begegnen sie sich wirklich oder streifen sie nur zwei gegensätzliche Überlebensphilosophien? Das Schweigen zwischen ihnen wog schwerer als die schneelastigen Äste. Vielleicht ist die wahre Begegnung nicht die der Körper, sondern die ihrer jeweiligen Stille, eingefroren in der eisigen Luft eines Oktobernachmittags.",
+      "storyStyle": "philosophical",
+      "lessons": [
+        {
+          "difficulty": 1,
+          "id": "ls_1787033871663",
+          "title": "Stille vor dem Winter",
+          "desc": "Begegnung von Eichhörnchen und Murmeltier",
+          "icon": "🐿️",
+          "vocab": [
+            {
+              "target": "l'écureuil",
+              "source": "das Eichhörnchen"
+            },
+            {
+              "target": "le marmotte",
+              "source": "das Murmeltier"
+            },
+            {
+              "target": "l'hiver",
+              "source": "der Winter"
+            },
+            {
+              "target": "s'arrêter",
+              "source": "anhalten"
+            },
+            {
+              "target": "le silence",
+              "source": "die Stille"
+            },
+            {
+              "target": "la rencontre",
+              "source": "die Begegnung"
+            },
+            {
+              "target": "le sommeil",
+              "source": "der Schlaf"
+            },
+            {
+              "target": "l'automne",
+              "source": "der Herbst"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Le petit écureuil s’arrêta net.",
+              "source": "Das kleine Eichhörnchen hielt abrupt inne.",
+              "words": [
+                "Le",
+                "petit",
+                "écureuil",
+                "s’arrêta",
+                "net."
+              ]
+            },
+            {
+              "target": "L’un accumule le temps en grains de noix.",
+              "source": "Der eine häuft die Zeit in Form von Nusskernen an.",
+              "words": [
+                "L’un",
+                "accumule",
+                "le",
+                "temps",
+                "en",
+                "grains",
+                "de",
+                "noix."
+              ]
+            },
+            {
+              "target": "Le silence entre eux pesait plus lourd.",
+              "source": "Das Schweigen zwischen ihnen wog schwerer.",
+              "words": [
+                "Le",
+                "silence",
+                "entre",
+                "eux",
+                "pesait",
+                "plus",
+                "lourd."
+              ]
+            },
+            {
+              "target": "Peut-être que la véritable rencontre n’est pas celle des corps.",
+              "source": "Vielleicht ist die wahre Begegnung nicht die der Körper.",
+              "words": [
+                "Peut-être",
+                "que",
+                "la",
+                "véritable",
+                "rencontre",
+                "n’est",
+                "pas",
+                "celle",
+                "des",
+                "corps."
+              ]
+            },
+            {
+              "target": "suspendus dans l’air glacé d’une après-midi d’octobre.",
+              "source": "eingefroren in der eisigen Luft eines Oktobernachmittags.",
+              "words": [
+                "suspendus",
+                "dans",
+                "l’air",
+                "glacé",
+                "d’une",
+                "après-midi",
+                "d’octobre."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 888,
+            "completionTokens": 398,
+            "ms": 148795,
+            "at": "2026-08-18T06:17:51.663Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 231274,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 7203,
+        "totalCompletionTokens": 1156,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 159166,
+            "promptTokens": 894,
+            "completionTokens": 427
+          }
+        ],
+        "tokensByType": {
+          "lesson_qc": 5139,
+          "add_lesson": 1286
+        }
+      },
+      "generatedAt": "2026-08-17T20:15:37.165Z",
+      "updatedAt": "2026-08-18T06:18:50.399Z",
+      "createdBy": "admin"
+    },
     {
       "id": "tp_17865786341910000220",
       "topic": "Vittoria Ingannevole",

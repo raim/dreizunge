@@ -1,7 +1,7 @@
-# HANDOVER — v79_p
+# HANDOVER — v80
 
-One page. **Current release `v79_p`** (session 34, three point releases on top of `v79_j`, which closed session 33 after eight point releases on the `v79` line, which was
-cut after session 32 shipped fourteen point releases on the `v78` line). **Read `build_history/roadmap_v79.md` next** — start with its
+One page. **Current release `v80`** (session 34, three point releases on top of `v79_j`, which closed session 33 after eight point releases on the `v79` line, which was
+cut after session 32 shipped fourteen point releases on the `v78` line). **Read `build_history/roadmap_v80.md` next** — start with its
 "⚠️ OPEN AT THE v79 CUT" block — then `INTERNALS.md`, then
 `build_history/v79_session33_notes.md`, then `build_history/v78_session32_notes.md`. What any
 `v78_*` release did is in `roadmap_v78.md`; that file is history now and is not carried forward.
@@ -15,7 +15,7 @@ cut after session 32 shipped fourteen point releases on the `v78` line). **Read 
 | `node test/check-inline.js` | 0 failures |
 | `node test/check-inline.js docs/index.html` | 0 failures |
 
-`APP_VERSION = 'v79_p'`. Corpus: **321 topics, 90 storylines** (August drop, arrived mid-session). **33 languages**, `ui.json` complete
+`APP_VERSION = 'v80'`. Corpus: **321 topics, 90 storylines** (August drop, arrived mid-session). **33 languages**, `ui.json` complete
 for all of them (617 `en` keys), `languages.json` at **1089/1089** name cells.
 
 **These numbers are the ones to trust.** Every session prompt so far has quoted a count that was
@@ -38,6 +38,118 @@ right when written and stale when read. **If a prompt and this file disagree, me
 Session 32 truncated a roadmap **to zero bytes** that way; the exception arrives AFTER the file is
 opened, so a failed write is not a no-op. Write emoji-bearing blocks via a `cat` heredoc to a temp
 file and splice that file in.
+
+## ✅ RULED at the v80 cut — four decisions
+
+**1. Language x lesson-type applicability: MODEL-DECLARED**, cached in `languages.json` with
+provenance, ternary (`yes`/`no`/`different-mechanism`) plus a note, human override wins and is
+marked. A measurement, not an authored language claim. `roadmap_v80.md` §2z.
+
+**2. Observations log: BOTH scopes, keyed by a stable LOCAL id an account can ADOPT.** This was the
+only thing blocking `implementation_plan.md` §8/B1 — **B1 can start now.** Adoption is a LINK, not a
+rename; the local id stays the identity key permanently.
+
+**3. Uploaded images: STORED SERVER-SIDE — as FILES, never inside `lessons.json`.**
+`build-static.js` needs a follow-up decision (omit images in static, or copy assets and rewrite
+paths).
+
+**4. Duplicate storyline titles: SUPERSEDED — the user RENAMED one** to "Dough of the Ancients 2",
+which fixes the `v79_k` fork-marker collision at its source. The enumeration guard (every fork's
+marker distinguishable from the open storyline's label) is now PREVENTIVE and lower priority. **The
+tree still holds the old titles; the next data drop brings the rename.**
+
+## ⚠️ TWO BUGS DIAGNOSED AT THE v80 DROP — do not re-derive them
+
+**1. The storyline title is NEVER generated for a new book** (`implementation_plan.md` §9c). The
+`v78_r` guard — *generate only when there is none* — is correct, but `server.js:5207`/`5215` seed
+`title: chain[0]` (the first chapter's topic name) when the storyline record is created **earlier in
+the same flow**. So a title always exists by the time the guard looks, and the `generateStorylineTitle`
+branch is unreachable. **Do not weaken the guard** (`v78_r` is a user ruling that stopped whole-story
+titles being replaced by tail-only ones); make it able to tell a placeholder from an authored title —
+recommended: a `titleAuto: true` flag. **Checked: `summary` is NOT seeded, so this is title-only.**
+
+**2. The article asymmetry is a COIN FLIP, not a constant bias** (§F3c). Measured on this drop:
+`tp_17869977371640000022` **7 of 8** asymmetric, `tp_17869980065780000104` **0 of 8** — same model,
+same `_genMeta.type`, `rejected: 0`, four minutes apart. A self-contradicting prompt does not bias
+output consistently, it makes it UNSTABLE. **So a single lesson can never validate the fix** — the
+clean chapter is a lucky sample of the broken prompt, and the F3 probe must report a RATE over many
+lessons per `_genMeta.at` cohort.
+
+## ⚠️ THE ARTICLE MESS IS DIAGNOSED — `implementation_plan.md` §F3
+
+German->French vocab with an article on the German side only. **The generation prompt contradicts
+itself**: `BASE FORM ONLY … (with the usual article where the language uses one)` is PER-SIDE and
+appeals to each language's citation convention; `ARTICLE SYMMETRY … both sides or neither` is
+CROSS-SIDE. German cites `der Hund`, French cites bare `chien` — so a model obeying the first rule
+produces exactly the reported defect, and the first rule is stated first and framed as definitional.
+
+**It got worse because the symmetry rule was ADDED beside the contradiction instead of removing it**
+(rule 31 — the `v79_i` failure repeated), because the deterministic normaliser was removed on good
+grounds while `server.js:4438` claims *"the generation prompt still forbids a one-sided article"*
+(it does not, cleanly), and because the QC check degrades quietly when its `siblings` context is
+thin. **Fix by removing the contradicting clause and adding a WORKED COUNTER-EXAMPLE, then measure
+per `_genMeta.at` cohort — not in aggregate, which is the `v80` word-forms lesson.**
+
+`roadmap_v80.md` §2y and §2z carry all four; `implementation_plan.md` §9b has the designs.
+
+
+
+## ⚠️ START HERE: `build_history/implementation_plan.md`
+
+The user's **larger plan (PDF focus)** — ingest, pedagogy/BKT, surface clean-up, lesson types, QC,
+export — is evaluated against these roadmaps in `build_history/implementation_plan.md`, written at
+the v80 cut. **Read it before planning any session**, because it sorts the user's document into
+five tracks at very different scales and says which are blocked and on what.
+
+Its §10 proposes the next three sessions. Its §0 carries four findings that change the plan before
+it starts, including two that are already actioned:
+
+- `bayesian_knowledge_tracing.md` **ARRIVED** and is evaluated in plan §0.1 / §8. Track B is
+  unblocked, but **the blocker was never the BKT maths** — it is skill tagging, skill-ID
+  canonicalisation (which the document omits), and the fact that the existing `{seen, wrong}`
+  counters **cannot be replayed** into a sequential model. **Plan §8/B1, the observations log, is
+  the one item whose value decays if it waits.**
+- `roadmap_v80.md` had **lost two whole open sections** when it was created. **RESTORED verbatim at
+  this cut**, un-reconciled and flagged in place — reconciling them against the plan is the next
+  session's first task.
+- "Are QC tokens recorded?" — **yes**, `lesson_qc` / `story_qc` via `addTokenUsage`. Only a
+  *run-level* total is missing.
+- The ingest architecture question was **revised twice under user challenge** and is now §2.1–§2.7:
+  images need no dependency at all, PDF is the only case needing a ruling, and §2.7 records what two
+  real comic pages show — rotated text, unframed panels, words broken across lines, and all-caps
+  destroying German noun capitalisation.
+
+## `v80` — the cut, with the LIVE-PASS RESULTS in it
+
+**`v79_f` CONFIRMED WORKING** — first real measurement. `tp_17864554460460000107` now holds two
+conjugation lessons: the Aug 11 one with **0 Cyrillic characters** and the regenerated Aug 14 one
+with **307**. The script pin reached the model and the model complied. **Worth a look: the chapter
+now has TWO conjugation lessons where it presumably wants one.**
+
+**`v79_i` — the prompt worked; the headline number cannot show it.** The probe reads 47 items /
+7 pairs (15%) against 46 / 7 (15%) — flat. Per lesson it is not: `tp_872660509`'s OLD word_forms
+lesson is 5 items, **all 5 two-choice**; the REGENERATED one is 6 items with **1**. The corpus-wide
+denominator includes every un-regenerated lesson, so **a fixed prompt cannot move it until the old
+lessons are regenerated** (rule 30). Read the per-lesson breakdown, not the percentage.
+
+**The asymmetric fork is CLOSED by user ruling** — the ancestor was added to
+`sl_1041030875.chapters`. Exactly one record changed. Both sides now count `pizza dough`
+identically. The id mapping was never broken, so no story was deleted.
+
+**⚠️ Still open there, an authoring call:** `sl_182891979` and `sl_1041030875` share title, icon and
+language — the only duplicate title in 90 storylines — so each side's fork link names the storyline
+the learner is already in. Rename one, or merge them.
+
+## `v79_q` — wrap-up sweep
+
+Closed the three side-effects `v79_p` listed as out of scope (a note is not a guard, rule 24),
+including `updateDocDir()`, whose absence meant **a static learner picking Arabic or Hebrew got a
+left-to-right word bank**. Then generalised the pairing guard from one refresher to four, across
+all 19 static overrides — which immediately found **`selectSrcLang → refreshScriptPickers`**, a
+second dropped script-pick reset nobody had gone looking for.
+
+**Remaining soft spot, named not implied:** the REFRESHERS list is a judgement about which calls
+re-sync visible UI. It needs extending when a new one appears.
 
 ## `v79_p` — the stale TTS row was a STATIC-BUILD gap
 
@@ -178,7 +290,7 @@ client's own parent rule and reports what the screen and the completion helpers 
 
 ## What is open
 
-See `roadmap_v79.md` → "⚠️ OPEN AT THE v79 CUT". In short: a **PLANNED REWORK removing
+See `roadmap_v80.md` → "⚠️ OPEN AT THE v79 CUT". In short: a **PLANNED REWORK removing
 `reinforce`/`neutral`/`extend`**, which the per-text learning scheme is the natural replacement for
 — **do not remove them first and design after**; and the **per-text scheme discussion** itself,
 whose prerequisite coverage measurement is already done: 9.2% of story tokens, 8.2% of types,

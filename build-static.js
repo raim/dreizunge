@@ -672,7 +672,14 @@ const staticOverrides = [
   'function selectSrcLang(code, fromForm){',
   '  if(fromForm===undefined) fromForm=true;',
   '  if(code==="all"){ APP.libSrcFilter="all"; const sel=document.getElementById("src-lang-select"); if(sel) sel.value="all"; loadSavedList(); return; }',
+  // v79_q: found by the GENERALISED pairing guard, not by looking — the static selectSrcLang
+  // dropped the same v76_i/v78_q script-pick reset that selectLang did, so on GitHub Pages a
+  // source-language change carried the previous language's script choice into the next request.
+  // Captured before APP.srcLang is overwritten, matching the live `_srcChanged`.
+  '  var _sc=(APP.srcLang!==code);',
   '  APP.srcLang=code;',
+  '  if(_sc) APP.srcScript=null;',
+  '  try{ refreshScriptPickers(); }catch(_e){}',
   '  if(fromForm){ APP.formSrcLang=code; saveSrcLang(); APP.libSrcFilter=code; const sel=document.getElementById("src-lang-select"); if(sel&&sel.value!==code) sel.value=code; }',
   '  ["src-lang-select-footer-ls","src-lang-select-footer-sl"].forEach(function(id){var f=document.getElementById(id);if(f&&f.value!==code)f.value=code;});',
   '  loadUIStrings(code).then(function(){',
@@ -687,6 +694,10 @@ const staticOverrides = [
   'function selectLang(code, silent, fromForm){',
   '  if(fromForm===undefined) fromForm=true;',
   '  if(code==="all"){ APP.libFilter="all"; const sel=document.getElementById("lang-select"); if(sel) sel.value="all"; loadSavedList(); return; }',
+  // v79_q: captured BEFORE APP.lang is overwritten, exactly as the live selectLang does
+  // (`const _langChanged = (APP.lang !== code)`). v78_q: a no-op re-selection must NOT clear the
+  // learner's script pick, so this has to be a real change test, not "always true on first call".
+  '  var _lc=(APP.lang!==code);',
   '  APP.lang=code;',
   // v79_p (user, screenshot of the LIVE static build): this override sets APP.lang and stopped.
   // The live selectLang also refreshes the sound-test row and clears a speech-language override
@@ -704,6 +715,20 @@ const staticOverrides = [
   '    if(String(APP.ttsLang).split("-")[0].toLowerCase()!==_nb) APP.ttsLang=null;',
   '  }',
   '  try{ updateTtsVoiceNote(); }catch(_e){}',
+  // v79_q: the same gap, for the other three side-effects the live selectLang has and this
+  // override dropped. Recorded as out-of-scope at the v79_p cut and closed here rather than left
+  // for a session that would have to rediscover them.
+  //   updateDocDir()      - also marks when the TARGET language is RTL, which is what makes an
+  //                         Arabic/Hebrew word bank and target box render right-to-left. Without
+  //                         it a static learner picking Arabic gets LTR target text.
+  //   updateArcScriptRow()- the script row for the newly chosen language.
+  //   APP.script=null + refreshScriptPickers() - v76_i/v78_q: a different target language may have
+  //                         a different script choice, or none, so the previous pick must not be
+  //                         carried across a REAL change (and must survive a no-op re-selection).
+  '  try{ updateDocDir(); }catch(_e){}',
+  '  try{ updateArcScriptRow(); }catch(_e){}',
+  '  if(_lc) APP.script=null;',
+  '  try{ refreshScriptPickers(); }catch(_e){}',
   '  if(fromForm){ APP.formLang=code; APP.libFilter=code; saveLang(); }',
   '  const sel=document.getElementById("lang-select"); if(fromForm&&sel&&sel.value!==code) sel.value=code;',
   '  const tb=document.getElementById("lang-tutor-banner");',

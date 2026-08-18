@@ -42,24 +42,38 @@ function body(src, name) {
   return src.slice(at, i);
 }
 
-// ── the pairing: live refreshes the row ⇒ the override must too ────────────
-const TTS_REFRESH = /updateTtsVoiceNote\s*\(/;
+// ── the pairing: a live UI-refresh call ⇒ the override must make it too ────
+// v79_q generalises this from `updateTtsVoiceNote` alone. The v79_p fix closed ONE dropped
+// side-effect and the write-up listed three more as out of scope — which is a note telling the
+// next session to check something, and a note is not a guard (rule 24). These are the calls that
+// re-sync visible UI to a changed language; a static override that drops one leaves the page
+// showing the previous language in that respect, silently and only on GitHub Pages.
+const REFRESHERS = [
+  'updateTtsVoiceNote',   // the sound-test row: flag + speech-variant selector
+  'updateDocDir',         // document direction AND the target-is-RTL marker (Arabic word banks)
+  'updateArcScriptRow',   // the script row for the chosen language
+  'refreshScriptPickers', // v76_i/v78_q: the script pick must not survive a real language change
+];
 {
   const owed = [];
   for (const name of new Set(overridden)) {
     const liveBody = body(live, name);
     if (!liveBody) continue;                       // static-only helper, nothing to pair with
-    if (!TTS_REFRESH.test(liveBody)) continue;     // live doesn't refresh either → nothing owed
     // The override's own source, as the builder emits it.
     const at = builder.indexOf("'function " + name + "(");
     const end = builder.indexOf("\n  '}',", at);
     const overrideSrc = builder.slice(at, end < 0 ? at + 4000 : end);
-    if (!TTS_REFRESH.test(overrideSrc)) owed.push(name);
+    for (const call of REFRESHERS) {
+      const re = new RegExp(call + '\\s*\\(');
+      if (re.test(liveBody) && !re.test(overrideSrc)) owed.push(name + ' → ' + call);
+    }
   }
   assert.deepStrictEqual(owed, [],
-    'these static overrides replace a live function that refreshes the sound-test row, but do not ' +
-    'refresh it themselves — on GitHub Pages the row will go stale: ' + owed.join(', '));
-  console.log('  every override of a TTS-refreshing function refreshes it too: OK');
+    'these static overrides replace a live function that re-syncs visible UI to the language, but ' +
+    'do not make that call themselves — on GitHub Pages that part of the page will go stale: ' +
+    owed.join(', '));
+  console.log('  every override makes the UI-refresh calls its live twin makes: OK (' +
+    REFRESHERS.length + ' refreshers x ' + new Set(overridden).size + ' overrides)');
 }
 
 // ── the specific regression, at the layer it is observable ─────────────────
@@ -75,6 +89,7 @@ const TTS_REFRESH = /updateTtsVoiceNote\s*\(/;
     else if (c === '}') { d--; if (!d) { end = i + 1; break; } }
   }
   const winning = docs.slice(last, end);
+  const TTS_REFRESH = /updateTtsVoiceNote\s*\(/;
   assert.ok(TTS_REFRESH.test(winning),
     'THE REGRESSION: the selectLang that WINS in docs/index.html must refresh the sound-test row, ' +
     'or a target-language change leaves the flag and locale selector on the previous language');
@@ -95,7 +110,7 @@ const TTS_REFRESH = /updateTtsVoiceNote\s*\(/;
 // ── What this does NOT establish (rule 34) ────────────────────────────────
 // • Source-level. It proves the call is present and reachable, not that a browser then repaints
 //   the row — that is the device pass.
-// • The pairing key is `updateTtsVoiceNote` specifically. An override that drops some OTHER live
-//   side-effect (updateDocDir, updateArcScriptRow — both absent from the static selectLang, and
-//   deliberately out of scope here) is not covered by this file.
+// • The pairing key is the REFRESHERS list above. An override that drops a live side-effect not on
+//   that list is still not covered — the list is a judgement about which calls re-sync visible UI,
+//   and it needs extending whenever a new one of those appears.
 console.log('unit-static-selectlang-tts: ALL PASSED');

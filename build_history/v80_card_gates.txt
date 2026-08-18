@@ -1,0 +1,60 @@
+elements present in markup : comp-story-text, comp-story-panel, comp-story-spk, comp-next, comp-repeat, comp-drill, comp-crossword, comp-storyboard, comp-vocab, comp-hdr, comp-lessons
+elements that DO NOT EXIST : comp-back
+  (a phantom would read as a real element through lib-dom auto-vivification — rule 16)
+
+
+
+### A. CLASSIC set (completion-driven gate)
+chapter: "Ein neues Kapitel beginnt"  sr<-de  |  lessons: standard, standard, conjugation, conjugation, comprehension, word_forms
+storyline: sl_1271936135 +board
+legend: YES visible | grey disabled | - hidden
+
+tchr   canGen want   rvw    GATE   story-text story-panelstory-spk  next       repeat     drill      crossword  storyboard vocab      hdr        lessons    
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+.      .      .      .      false  YES        -          YES        YES        YES        YES        YES        YES        YES        YES        YES        
+.      .      .      R      false  YES        -          YES        YES        YES        YES        YES        YES        YES        YES        YES        
+.      .      U      .      true   YES        YES        YES        YES        YES        YES        YES        YES        YES        YES        YES        
+.      .      U      R      true   YES        YES        YES        YES        YES        YES        YES        YES        YES        YES        YES        
+.      G      .      .      false  YES        -          YES        YES        YES        YES        YES        YES        YES        YES        YES        
+.      G      .      R      false  YES        -          YES        YES        YES        YES        YES        YES        YES        YES        YES        
+.      G      U      .      true   YES        YES        YES        YES        YES        YES        YES        YES        YES        YES        YES        
+.      G      U      R      true   YES        YES        YES        YES        YES        YES        YES        YES        YES        YES        YES        
+T      .      .      .      false  YES        -          YES        YES        YES        YES        YES        YES        YES        YES        YES        
+T      .      .      R      false  YES        -          YES        YES        YES        YES        YES        YES        YES        YES        YES        
+T      .      U      .      true   YES        YES        YES        YES        YES        YES        YES        YES        YES        YES        YES        
+T      .      U      R      true   YES        YES        YES        YES        YES        YES        YES        YES        YES        YES        YES        
+T      G      .      .      false  YES        -          YES        YES        YES        YES        YES        YES        YES        YES        YES        
+T      G      .      R      false  YES        -          YES        YES        YES        YES        YES        YES        YES        YES        YES        
+T      G      U      .      true   YES        YES        YES        YES        YES        YES        YES        YES        YES        YES        YES        
+T      G      U      R      true   YES        YES        YES        YES        YES        YES        YES        YES        YES        YES        YES        
+
+  all 16 rows: storyUnlocked() followed the seed.
+  no row swallowed an error.
+
+
+### B. MIXED-driven set (coverage-driven gate)
+chapter: "Paese delle Dumplings"  de<-it  |  lessons: standard, word_forms, synonyms, conjugation, mixed, comprehension
+storyline: sl_1653967216 +board
+legend: YES visible | grey disabled | - hidden
+
+tchr   canGen want   rvw    GATE   story-text story-panelstory-spk  next       repeat     drill      crossword  storyboard vocab      hdr        lessons    
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+.      .      .      .      false  YES        -          YES        YES        YES        YES        grey       YES        YES        YES        YES        
+.      .      .      R      false  YES        -          YES        YES        YES        YES        grey       YES        YES        YES        YES        
+.      .      U      .      true   YES        YES        YES        YES        YES        YES        grey       YES        YES        YES        YES        
+.      .      U      R      true   YES        YES        YES        YES        YES        YES        grey       YES        YES        YES        YES        
+.      G      .      .      false  YES        -          YES        YES        YES        YES        grey       YES        YES        YES        YES        
+.      G      .      R      false  YES        -          YES        YES        YES        YES        grey       YES        YES        YES        YES        
+.      G      U      .      true   YES        YES        YES        YES        YES        YES        grey       YES        YES        YES        YES        
+.      G      U      R      true   YES        YES        YES        YES        YES        YES        grey       YES        YES        YES        YES        
+T      .      .      .      false  YES        -          YES        YES        YES        YES        grey       YES        YES        YES        YES        
+T      .      .      R      false  YES        -          YES        YES        YES        YES        grey       YES        YES        YES        YES        
+T      .      U      .      true   YES        YES        YES        YES        YES        YES        grey       YES        YES        YES        YES        
+T      .      U      R      true   YES        YES        YES        YES        YES        YES        grey       YES        YES        YES        YES        
+T      G      .      .      false  YES        -          YES        YES        YES        YES        grey       YES        YES        YES        YES        
+T      G      .      R      false  YES        -          YES        YES        YES        YES        grey       YES        YES        YES        YES        
+T      G      U      .      true   YES        YES        YES        YES        YES        YES        grey       YES        YES        YES        YES        
+T      G      U      R      true   YES        YES        YES        YES        YES        YES        grey       YES        YES        YES        YES        
+
+  all 16 rows: storyUnlocked() followed the seed.
+  no row swallowed an error.
