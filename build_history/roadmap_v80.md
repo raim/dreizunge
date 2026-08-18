@@ -23,9 +23,451 @@ machinery or corpus statistics, not a hand-authored table.
 > `# 0i. LESSON GENERATION REWORK`) were **LOST when `roadmap_v80.md` was created** — the open block
 > was carried from partway down `roadmap_v79.md` and these sat above the cut point. Restored
 > VERBATIM, deliberately un-reconciled: several bullets are superseded by
-> `build_history/implementation_plan.md` (its §0.2 explains), and reconciling them item by item —
+> the folded **THE LARGER PLAN** section below (its `PLAN §0.2` explains), and reconciling them item by item —
 > striking what is superseded WITH A POINTER, keeping what is still open — is the first task of the
 > next session. **Do not delete a bullet silently; that is how the reason for a decision gets lost.**
+
+## ✅ SESSION 35 — the reconciliation pass, and `v80_b`
+
+*Written at the end of session 35. The restored sections below are left VERBATIM and are not
+edited in place; this block is the reconciliation layer over them, so the original wording and the
+judgement about it stay separable.*
+
+### `v80_b` — SHIPPED: a story-gated lesson is not a Replay target while the story is locked
+
+**`PLAN §C1`'s SECOND bug, reproduced, fixed and revert-verified.** The user's
+report: *"via the replay button or otherwise, I could play the comprehension lessons BEFORE the
+chapter-story was unlocked."*
+
+**Cause, measured rather than guessed:** `_firstUnfinishedLessonIdx` has applied a story-lock
+filter since `v71_s`. `_firstCoverageShortLessonIdx` — which the Replay button reaches through
+`repeatForCoverage`, and which the below-mark Next branch falls back to — **never applied it**. The
+rule existed in one of the two resume paths. `v78_l` then made that scan prefer the LEAST-covered
+lesson, and an unplayed comprehension lesson sits at 0%, which is the lowest fraction there is — so
+the ordering change quietly made the missing gate easier to hit.
+
+**Measured on the corpus** (`build_history/probe_gates_v80c1.js`), from an ORDINARY half-played
+chapter — no constructed state, just a learner part-way through the first lesson:
+
+```
+chapters with a story-gated lesson                    102
+  Replay opens a gated lesson, story locked (before)   27 of 94 partly-played
+  Replay opens a gated lesson, story locked (after)     0
+```
+
+**The fix is one rule, not two copies.** The filter moved out of `_firstUnfinishedLessonIdx` into a
+top-level `_storyLockedLesson(L, d)` that both scans call. **Two guards had to be re-wired and the
+reason is worth carrying:** `unit-learner-nav` EXTRACTS `_firstUnfinishedLessonIdx` and evals it
+standalone, so the rule used to travel with the function; it now splices `_storyLockedLesson` in
+alongside it, **deliberately not a stub** — a stub would let that section pass while the real rule
+was broken. `unit-replay-target`'s ordering fixture was passing on an accident: it has no story and
+no progress, so the real `storyUnlocked()` said "locked", and the sections that mean to measure
+ORDER would have started measuring the GATE. It now sets the gate state explicitly, and a new §8
+asserts the new rule **with the discriminator built in** — the same fixture, locked and unlocked,
+must give different answers (rule 33: a green guard near a defect is not evidence about it).
+
+### `v80_h` — SHIPPED: the fork-marker fallback (`PLAN §9b/D8`), and a NEW defect it uncovered
+
+Both items chosen because they **survive TRACK T**: neither touches the progress card.
+
+#### (a) `PLAN §9b/D8` — the fork marker must DISTINGUISH. Preventive, and now enforced.
+
+**First, the measurement the note asked for.** D8 said the tree still carried the OLD duplicate
+titles and that the next drop would bring the rename — *"exactly the kind of quiet data movement the
+protocol says to diff for rather than assume"*. Diffed: **the rename LANDED.** "Dough of the Ancients
+2" is in the tree and there are **0 duplicate-title groups across 91 storylines**. So this is
+preventive, as D8 predicted.
+
+**Shipped:** the marker falls back to naming the BRANCH's own chapter when the other storyline's
+title is empty or identical to the open deck's label. The chapter differs per column by
+construction, so it distinguishes even when two storylines are titled the same.
+
+**Guard:** `unit-fork-display` §8, and it does **two** things on purpose. It sweeps every real fork
+(15 markers) — necessary, but it would pass today and keep passing right until the drop that
+reintroduces a duplicate, which is rule 24 in test form. So it **also injects a synthetic duplicate
+title and an empty one** and asserts the fallback fires. Revert-verified: with the fallback disabled
+the marker reads back the open deck's own label and the section fails.
+
+#### (b) ⚠️ NEW — 7 lessons carry NONE of their chapter's script, and only ONE was known
+
+Looking at `tp_17864554460460000107` (the known duplicate-conjugation topic) showed the expected
+pair — the all-Latin `id=6` and the correct regeneration. **It also showed that lesson `id=9`, the
+COMPREHENSION lesson, is equally all-Latin on a `cyrillic-sr` chapter.** Nobody had flagged it.
+
+Swept (`build_history/probe_lesson_script_v80h.js`): **7 of 96 lessons (7.3%) in non-Latin chapters
+carry zero target-script characters** — 4 comprehension, 2 conjugation, 1 standard, **all Serbian**.
+Arabic, Hebrew and Japanese chapters are clean.
+
+**Why it went unseen is the interesting part.** `v79_f` fixed the PROMPT and
+`unit-script-pin-coverage` guards that all fourteen prompts carry the pin. **But a pin is an
+instruction, and a model can ignore it — nothing checked the OUTPUT.** Rule 34: guard at the layer
+where the claim is observable. "This lesson is in the target script" is observable in the LESSON.
+
+**Shipped:** `lessonScriptDefect(lesson, script)` in `server.js`, taking the alphabet from
+`scripts.json` — **never a hardcoded Unicode range**, so a script added to that file is covered with
+no code change (asserted for `arabic`). It yields **no opinion** for Latin, unstamped, or unknown
+scripts, and does not claim a nearly empty lesson, which is a different defect.
+
+**Guard:** `unit-lesson-script-output`, on synthetic fixtures plus the one pinned real pair (broken
+flagged, regenerated clean). The corpus still holds the 7, so a corpus-wide assertion would be red
+on arrival and then "fixed" by weakening it — that count belongs to the probe.
+
+**⚠️ NOT wired into generation.** `lessonScriptDefect` exists and is guarded; nothing rejects or
+retries on it, because whether a retry actually converges needs a live model to establish. **That is
+the next step, and it is the user's to run.**
+
+**A note on the guard that caught my own mistake:** the fixture builder padded with SPACES, so the
+all-Latin fixture had ~85 Latin characters and never cleared the detector's 200-character floor. The
+`null` assertions in the section above it passed **vacuously**; the explicit non-vacuity assertion
+is what failed and exposed it. Worth remembering next time a non-vacuity line looks like ceremony.
+
+**Not fixed here: the 7 existing lessons.** The detector guards new work. Repairing them means
+regenerating user content, and `v79_f` established that deleting or replacing a lesson is asked
+about first — **the duplicate conjugation pair in `tp_17864554460460000107` is still two lessons and
+still wants a ruling.**
+
+### `v80_g` — SHIPPED: `PLAN §F2`, a word_forms blank must be WHERE A WORD WAS REMOVED
+
+**Chosen because it survives TRACK T.** A malformed item is broken as *structure*, so no
+progress-card redesign obsoletes it — and under TRACK T it gets **more** visible, since the learner
+reaches it by tapping the word in the text.
+
+**The real finding is not that the items are malformed — it is why they PASSED.**
+`validateWordFormsItems` already existed, with salvage steps and a giveaway check. It let
+`"...across the path.___"` (answer `cast`) through because **it only ever asked whether a blank
+EXISTS, never where it is**, and its giveaway check compares whole tokens, so `casting` ≠ `cast`.
+The rule was missing, not broken.
+
+**Shipped:** one structural rejection — terminal punctuation immediately followed by the blank.
+No language knowledge (INTERNALS: "no language knowledge in the code"), and it holds for Arabic
+`\u061F`/`\u06D4`, the CJK `\u3002`, and fullwidth `\uFF01\uFF1F` as well as `.!?`.
+
+**Measured across the corpus** (`build_history/probe_word_forms_defects_v80g.js`, reports only):
+
+```
+word_forms lessons                76
+items                            345
+items with a structural defect     8   (2.3%)
+  ORPHAN_BLANK                     6   (1.7%)   <- now rejected at generation
+  ANSWER_SHOWN_STEM                3   (0.9%)   <- measured, NOT enforced (below)
+```
+
+**Four of the six ORPHAN_BLANK hits are Arabic**, two English — that cross-language spread is the
+evidence the signal is structural rather than an artefact of Latin punctuation.
+
+**⚠️ The stem band is deliberately NOT enforced, and the reason matters.** The first version of the
+detector compared the answer against a 4-character slice of each token, which let 1–2 character
+tokens match nearly anything: it reported 20 hits, of which eyeballing showed only 2 were real
+(`asistiendo` vs `a`, `avrei` vs `a`, `perdono` vs `per`, `there` vs `the`). Tightened to "one whole
+word is a prefix of the other, both ≥ 4 characters", it drops to 3 — but prefix-matching **is** mild
+morphology, and rejecting on it at generation time would discard good items in
+morphologically-rich languages. So it is reported by the probe and left to a human. **A detector
+that is 90% noise is worse than none, and that was only visible because the band was sampled rather
+than trusted.**
+
+**Guard:** `unit-word-forms-defects` pins the DETECTOR on **synthetic** fixtures, not the corpus —
+the corpus still holds those 8 items, so a corpus-driven assertion would be red on arrival and would
+then be "fixed" by weakening it. It extracts `validateWordFormsItems` from `server.js` and runs it,
+so it tests the product function rather than a copy. Five sections, including a **discriminator**
+(a blank immediately before the stop, `"Ieri sono ___."`, must still be accepted — otherwise the
+rule degenerates into "reject anything ending in a blank") and a check that the new reason is the
+one that FIRES rather than being shadowed by an earlier check. Revert-verified.
+
+**Not fixed here: the 8 existing corpus items.** The rule guards NEW generation. Cleaning the corpus
+means editing or regenerating user content, and `v79_f` established that deleting a lesson is asked
+about first.
+
+### `v80_f` — MEASURED: the inflection share. The text-focus design's ceiling is a GENERATION problem, not a matching one
+
+**Taken before designing anything**, because it decides whether "the text turns green" is expressible
+on the existing corpus. Instrument: `build_history/probe_inflection_v80f.js`, output pinned in
+`build_history/v80f_inflection.txt`. **It reports; it does not assert.** Its middle bands are edit
+distance and shared stems, which are not morphology — read the bands, never a single number.
+
+Over **301 chapters / 6,707 highlightable words** (the exact set the app renders: vocab targets plus
+every `_storyWordSources` word):
+
+```
+EXACT     whole token in the story              36.8%
+SUBSTR    inside a token (compound)             10.5%
+--------  WHAT THE APP MATCHES TODAY            47.3%
+NORM      matches once apostrophes/dashes fold   0.2%   <- free, and NEGLIGIBLE
+NEAR/stem shares a stem with a token             9.5%   <- credible inflection
+NEAR/edit only within edit distance              6.6%   <- mostly noise
+ABSENT    nothing in the story resembles it     36.4%   <- THE CEILING
+```
+
+**The headline is ABSENT = 36.4%.** More than a third of the words a chapter teaches do not occur in
+its story **in any form**. No matcher — lemmatiser, LLM, or otherwise — can turn those green, because
+there is nothing to turn. That is not a matching defect; it is the generator writing vocabulary the
+story does not use, and it lands squarely on `PLAN §F3`'s prompt work.
+
+**A matcher is worth about ten points, not fifty.** 47.3% → **56.9%** on the credible band
+(stem-sharing), or 63.6% if the edit-distance band is trusted, which it should not be: its own
+samples include `chaud→chaque`, `vois→fois`, `sais→mais`, `klein→ein`. The apostrophe/dash
+normalisation band was measured on the suspicion that it was a free win — it is **0.2%, 14 words**.
+Measured rather than assumed, and it is not worth a line of code.
+
+**Inflection load differs enormously by language, so one policy will not fit:**
+
+| lang | n | matched today | + stem band | ABSENT |
+|---|---|---|---|---|
+| `en` | 2174 | 58.0% | 4.8% | 31.9% |
+| `it` | 1587 | 43.8% | 15.1% | 35.9% |
+| `de` | 965 | 37.6% | 9.8% | 46.5% |
+| `ar` | 561 | 45.3% | 5.0% | 30.8% |
+| `sr` | 507 | 31.6% | 17.6% | 43.2% |
+| `fr` | 390 | 42.1% | 11.3% | 42.3% |
+| `lb` | 231 | 63.2% | 4.8% | 26.4% |
+
+`en` needs almost no matcher (4.8% stem band); `sr` and `it` are where a matcher pays. `de` has the
+worst ceiling at 46.5% absent — consistent with separable prefixes and compounds, but **this probe
+cannot tell that from bad generation, and should not be read as if it could.**
+
+**⚠️ Two defects in the probe's FIRST version, fixed and worth carrying as a lesson.** It keyed the
+space-less-script exclusion on the topic's `script` stamp — but only **19 of 324 topics carry one**
+(it is stamped where a language has a script CHOICE, i.e. `sr`), so all **13 Japanese chapters were
+scored with a token model that cannot apply to them**: the precise error the exclusion existed to
+prevent, committed by the exclusion itself. Now keyed on `lang`, and the 13 are reported apart
+(30.5% by substring, on 177 words). **A guard that reads the wrong field is worse than no guard.**
+
+**What this means for the design.** The proposal's *"we could use the current highlighting approach
+to map questions to the text"* holds for roughly half the vocabulary and cannot be pushed past ~57%
+by matching alone. The two levers are ordered by payoff:
+1. **Generation-side mapping** (the proposal's own later bullet): have the model emit the surface
+   form as it appears in the text alongside the base form. This addresses the 36.4% as well, because
+   a generator asked to anchor its vocabulary in the text stops producing unanchorable words.
+2. **A matcher** (LLM or lemmatiser) for the existing corpus, worth ~10 points, per-language.
+
+### `v80_e` — SHIPPED: ONE starter card per chapter (user ruling on the `PLAN §C2` / §0c reversal)
+
+**The reversal is ruled: MERGE.** `PLAN §C2` asked for the "next chapter unlocked!" card to be
+*"removed from the flow, going straight to the next entry card"*. **That sentence could not be
+executed as written**, and the reason is a ruling of the user's own: `v77_q` had made the unlocked
+card the STARTER for chapters 2..N and reduced the entry card to chapter one only
+(`_enterViaSummaryCard` bailed on `me > 0`). So for every chapter after the first there WAS no
+"next entry card" to go straight to — removing the unlocked card would have deleted the starter for
+most of the corpus and dropped learners into a lesson unannounced, which is precisely what `v77_i`
+was built to stop.
+
+**What shipped.** The entry card is generalised to every chapter; the unlocked card is deleted.
+
+- `_enterViaSummaryCard` no longer bails on later chapters. Its gate is now *"would this card carry
+  anything?"*: **a summary exists, OR this is not the first chapter.** That reproduces BOTH previous
+  behaviours rather than picking one.
+- `showComplete`'s next-chapter branch opens the chapter directly. The target is still stashed at
+  RENDER time (`APP._unlNext`), which is the part of `v77_i` worth keeping — the render and the
+  click cannot name different chapters.
+- `showStorySummary` picks its title by arrival: `unlocked.title` when carried here by finishing the
+  previous chapter, `summary.title` on a plain entry. A new `#sum-chapter` line names the chapter,
+  carried over from `#unl-chapter` with its styling.
+- `showNextChapterUnlocked()`, the `unlocked-screen` markup and `APP._skipEntryCard` are **deleted**.
+  The flag existed only to stop the two cards stacking; with one card there is nothing to stack.
+
+**⚠️ The measurement that shaped the gate.** Gating on the summary ALONE — the obvious reading of
+"go to the entry card" — would have silently dropped the acknowledgement for every later chapter of
+a summary-less storyline. Measured at this cut: **14 multi-chapter storylines have no summary,
+covering 25 chapters at index ≥ 1.** That is why the `|| isLater` clause exists, and
+`unit-next-chapter-entry` §4 asserts it **on a storyline chosen for having no summary**, with §5
+asserting the other half (a summary-less FIRST chapter still gets no card, so the rule is not
+simply "always show").
+
+**No translate pass.** The `unlocked.*` keys are **reused, not orphaned** — all four are translated
+in all 32 languages, and the merged card needed exactly the wording they already carried. Dropping
+them would have wasted 128 translated cells and adding replacements would have cost 33 languages.
+
+**⚠️ DELIBERATELY LOST, recorded rather than implied.** The old card's ← ("back to the chapter you
+just finished") is gone. After the merge the learner has already moved to the next chapter by the
+time the card renders, so a back link there would return them to a card for the chapter they are now
+IN. The header title still reaches the storyline, from which the previous chapter is one tap away.
+**If the user wants that link back, it needs a different mechanism, not a revert.**
+
+**Guards.** `unit-next-chapter-unlocked.test.js` (v77_i) is **replaced by
+`unit-next-chapter-entry.test.js`** — the screen went, the CLAIM did not, so the file asserts the
+same guarantee against the merged card in six sections. Mutation-tested: dropping `|| isLater`,
+restoring the `me > 0` bail, and dropping the chapter name each fail it. `unit-story-summary`'s
+"does not stack a second interstitial" section is **WITHDRAWN with its reasoning** — the condition
+cannot occur any more — and re-asserted as the property that now matters, plus a pin that
+`_skipEntryCard` has not come back. `smoke-render` drops `unl` from the five-card header parity
+sweep and now asserts the old id has not returned.
+
+**Gate table: no drift.** `probe_gates_v77.js` re-run and diffed. The raw diff against
+`v80_card_gates.txt` shows a column flipping `YES`→`grey` across 16 rows, which reads as a
+regression and is not one: that baseline was generated on the OLDER 321/90 corpus, so the probe
+now SELECTS a different chapter. Re-running the probe against the PRE-MERGE client on the
+CURRENT corpus gives **32 of 32 rows identical**. New baseline: `v80e_card_gates.txt`.
+
+**⚠️ TRACK T (added at the `v80_f` cut) names this card's COPY for removal** — "Kapitel freigeschaltet!" among it. The structural win here (one starter card per chapter) is NOT superseded and TRACK T depends on it; the title and copy are. See TRACK T §T3.
+
+**Still open in `PLAN §C2`:** the third progress bar, the chapter title in the bottom row,
+"text comprehension" labelling, the summary uncollapsed by default. Its last bullet — *"chapter
+entry cards ≥2 remodelled to match chapter 1"* — is **largely discharged by this merge**, since
+those chapters now use the entry card itself.
+
+### `v80_d` — SHIPPED: the document set consolidated from four to two
+
+**Four documents held the same facts and the durable one was the least complete.** The two `v80`
+diagnoses landed in `HANDOVER.md`, the session prompt and the plan, and were **missing from this
+roadmap** until someone noticed. That was the argument, and it is now closed.
+
+- **`implementation_plan.md` — FOLDED IN and DELETED.** It lives in "THE LARGER PLAN" below. Its
+  section labels are preserved with a `PLAN §` prefix, because the plan's bare `§0/§1/§2/§3`
+  collide with this roadmap's own. **A bare `§3` is the highlighting item; `PLAN §3` is Track C.**
+- **`HANDOVER.md` — MERGED into the session prompt and DELETED.** Verified first: **zero references
+  from `test/` or any `.js`/`.json`/`.html`**; the mentions were prose.
+- **`SESSION_PROMPT_v79.md` was still present**, two cuts stale, though the convention says the
+  prompt is RENAMED at each cut and not kept alongside. **Found by the new guard, not by reading.**
+  Archived as `v79_prompt.md`, matching the older convention the `v74`–`v78` prompts already use.
+
+**Three duplications inside the plan were resolved on the way in, not silently:** `PLAN §2.6` and
+`PLAN §2.7` each appeared **twice, byte-identical** (verified by comparison, not by eye) — one copy
+of each dropped; `PLAN §2.5` appeared twice with **different content**, and both are kept with the
+superseded one struck and pointed at the correction.
+
+**`unit-roadmap-version` now guards the NUMBERS, which is what makes this honest** (rule 24: a note
+is not a guard). Prose work cannot be revert-verified the way code can, so the consolidation would
+otherwise have ended as a green suite, a lot of churn, and no evidence. It now pins:
+
+- the prompt's `expect NNN checks` against **run.js's actual `run()` count**, full and `--quick`,
+  derived statically because this test runs *inside* the suite it would otherwise spawn;
+- the prompt's four corpus numbers against `lessons.json`, `languages.json` and `ui.json` — the
+  exact things that rotted (`HANDOVER.md` said 321/90 while the tree held 324/91, written **four
+  minutes after** `lessons.json`, so the number was carried rather than measured);
+- the prompt's `APP_VERSION` against `server.js`;
+- that **exactly one** session prompt exists, and that neither deleted file has been recreated —
+  named explicitly, so restoring the second home for open items has to be a decision rather than a
+  drift.
+
+**Mutation-tested in both directions:** a stale number in the prompt fails it, and so does a real
+change to the suite with the prompt left alone.
+
+**⚠️ One scar worth carrying.** A blanket `str.replace` across four documents, rewriting a filename
+to a phrase, silently mangled six sentences including a heading — *"folded in from the folded THE
+LARGER PLAN section"*. It was caught by grepping for the replacement afterwards. Rule 25's cousin:
+**check what a mechanical rewrite DID, not just that it ran.**
+
+### `v80_c` — SHIPPED: `unit-story-unlocked-page` §6 now discriminates, and it closes an open question
+
+**The guard that could not fail, carried since `v77_p`, now fails under revert.** It had asserted
+`APP._started === _firstUnfinishedLessonIdx(...)` — the product compared against the same product
+function. Its own note said two earlier attempts had concluded the below-mark branch "was never
+entered". **That was half right, and the missing half was the section:**
+
+1. **The branch IS entered** — through `index.html`'s
+   `nextLessonIdx === C.lessonIdx && !C._review && _isStoryGatedLesson(lesson)` line, which forces
+   `nextLessonIdx` to -1 for a learner who has just played the comprehension lesson without fully
+   solving it. **That is the state the user reported from**, which is why scenarios built around a
+   lesson not yet played could never reach it.
+2. **The two candidate targets have to be made to DISAGREE.** An unplayed lesson sits at 0%
+   coverage, which is *also* the least-covered — so both orderings return the same index and any
+   assertion passes either way. They separate only when the gated lesson is PARTLY solved (still
+   unfinished, its done-flag withheld until every item is solved) while an earlier lesson is
+   covered LESS.
+
+Revert-verified both ways: with `v77_p`'s ordering swapped back, Next goes to lesson 0 — **the
+user's reported bug, reproduced** — and §6 fails. Three non-vacuity assertions guard the setup, and
+one of them (`APP._usNextLesson === undefined`) pins that the below-mark branch is the one answering,
+so the section cannot silently drift back to measuring the easy branch.
+
+### ⚠️ CLOSED — the "`_firstUnfinishedLessonIdx` returns -1 with a lesson still unplayed" defect
+
+Carried in the session prompt ("One OPEN DEFECT the user is watching for", in `HANDOVER.md` until it was folded in at `v80_d`) and `INTERNALS.md` §2 since
+`v77_s`, with `if (setComplete(d)) return -1;` named as the prime suspect. **Measured this session:
+the helper is not the thing returning -1.** In every state built here it returned the correct index
+(the comprehension lesson). What goes to -1 is `showComplete`'s **local** `nextLessonIdx`, set
+deliberately by the `v71_s` line above — so the symptom is real, the attribution was wrong, and
+there is no defect in the helper to chase. **`v77_s` did not cure it; it was never broken.**
+
+The behaviour that line produces is now under test by §6 rather than merely described.
+
+### ⚠️ §C1's FIRST bug did NOT reproduce — and the near-miss is the finding
+
+*"I browsed forward to the story card and back, solved no comprehension lesson, yet could proceed to
+the next chapter."* **Not reproduced, and one plausible reproduction of it was an ARTEFACT I nearly
+shipped a fix for.**
+
+Two readings were tested and both died:
+
+1. **`index.html:15493`** (`nextLessonIdx = -1` when the just-played lesson is the gated one) —
+   its comment says the fall-through lands on the below-mark branch where Next greys out, and
+   `v77_o` **deleted the greying**. That looked like a stranded gate. Measured: the below-mark
+   branch catches it correctly and sends the learner back into the comprehension lesson. **No bug.**
+2. **The done-flag write** is guarded by `_record = !(_lc.total > 0) || _lc.solved >= _lc.total`,
+   where `_lc` is `lessonCoverage` — whose universe `v74_c` narrowed to SOURCE ITEMS, while
+   `v71_s`'s rule is stated in QUESTIONS. **36 of the 102 gated lessons have an empty item
+   universe**, so `!(total > 0)` is true and the flag is written however badly the round went. On
+   12 of the 17 such chapters with a successor, a probe could answer everything wrong and walk to
+   the next chapter.
+   **That reproduction is an ARTEFACT.** All 39 empty-universe gated lessons are `error_hunt` /
+   `ai_error_hunt`, never `comprehension` — and `startLesson` sets `C.isErrorHunt`, which the
+   enclosing `if (!C._review && !C.isErrorHunt && !lesson._drill)` **excludes from the recording
+   block entirely**. The probe reached the branch only because it built `APP.cur` by hand without
+   that flag. **The fix was written, measured against the corpus, and then REVERTED** — for
+   comprehension lessons both universes are populated, so switching to the question universe would
+   have changed a working gate with no defect behind it.
+
+**So the first bug is still open, and the next session should not re-derive these two.** What has
+NOT been modelled is the user's actual sequence — *browsing* forward to the story card and back,
+i.e. the summary / story-unlocked pages and the Back link, rather than playing a lesson. That is
+where to look next.
+
+### §0i — RECONCILED against `PLAN §C5/D1.` Four measured findings.
+
+**Nothing below is deleted; each bullet is marked.**
+
+- **~~"BLOCKED on §1 (the pass mark)"~~ — the citation DANGLES.** `§1` resolves to
+  `roadmap_v75.md` §1 (*"The pass mark — needs the USER, not code"*). In THIS file `§1` is
+  `useFullChain`, which is **shipped** — so a reader following the citation lands on a closed item
+  and concludes the block is unblocked. **The pass-mark item was never carried into
+  `roadmap_v80.md`**; it survived only in the handover's "Owed by the user" (`Churros` is 40 items
+  where it was 83 questions). **The blocker is real and still owed by the user.** Cite it as
+  "the pass mark, session prompt → Owed by the user", not as `§1`. **Since `v80_d` it lives in the
+  session prompt's §9**, `HANDOVER.md` having been folded in and deleted.
+- **Bullet 3 (a real re-generate function) — SHIPPED in the v45 line, but NOT what the bullet
+  asks.** `POST /api/storyline/recreate-lessons` + `_runRecreateJob` exist, wired to the storyline
+  bottom row and guarded (`unit-recreate-ui`, `e2e-recreate`). But it runs a FIXED recipe (vocab
+  gate + reinforcement) or an explicit tick-list; **it never reads the chapter's existing lesson
+  types**, which is precisely what "regenerates the EXISTING lesson types with the same settings"
+  means. **Still open — and cheap:** the server already accepts an `addTypes` list, so this is
+  deriving that list from `topic.lessons[].type` rather than new machinery.
+- **Bullet 1 (align the two "add lessons" surfaces) — the misalignment is REAL and STRUCTURAL, and
+  it runs the opposite way to the bullet's assumption.** The storyline picker and the
+  book-generation arc share `ADD_LESSON_TYPES`, whose comment claims *"the two can never drift into
+  offering different sets"* — **but the PER-CHAPTER dropdown is a third entry point and is
+  hand-written markup** (`index.html` ~1144), covered by neither that claim nor
+  `unit-add-lesson-registry` (which guards the SERVER registry). **The drift is not hypothetical:**
+  `v78_j` added grammar+conjugation to the per-chapter menu, `v79_h` added `intro_script` to the
+  registry — **drift in both directions, one release apart, and neither added a guard.**
+  The two also encode one capability in two shapes: reinforcement is a TYPE (`review`) in the
+  registry and an OPTION (`sial-vocab-mode`) per chapter.
+- **Which way the alignment runs:** the per-chapter menu ALREADY has the per-type options the
+  bullet asks for (difficulty, vocab mode, math instruction). **The storyline picker is the one
+  lacking them**, along with the per-type count. So `§C5`'s Generation Card inherits this, and a
+  cheap standing guard — the per-chapter `<select>` against `ADD_LESSON_TYPES` — would close the
+  drift on its own.
+
+### §0's other sub-sections — status against the plan
+
+- **§0a rulings 1 / 2a / 2b / 3** — user rulings, all still standing, all shipped
+  (`v77_l`, `v77_f`, `v77_o`, `v77_u` / `v78_k`). Keep as the record of WHY; nothing to reconcile.
+- **§0b** — both halves DONE (`v77_b`, `v77_c`).
+- **§0c** — the walk is complete. **⚠️ SUPERSEDED IN PART by plan §C2**, which removes the
+  **next-chapter-unlocked card** (`v77_i`) from the flow. §0c BUILT that page; §C2 deletes it from
+  the path. **✅ RESOLVED — the user ruled MERGE, shipped as `v80_e`**: the entry card is generalised
+  to every chapter and the unlocked card is deleted, so one starter card serves both items. The
+  reversal is closed; see the `v80_e` entry at the top of this roadmap. Still open in §0c and unmentioned by the plan:
+  the summary page is reachable by ← but **is not forced before the first question** (an entry-path
+  change the user has not seen — ask first).
+- **§0d** — shipped (`v78_n`, `v77_l`); `comp-drill` confirmed alive (`v77_d`).
+- **§0e ordering** — DROPPED by the user; `PROGRESSIVE STORY REVEAL` replaces it at LOW priority and
+  **the plan does not mention it at all**, so it stays open here and is the only home for it.
+- **§0e vocabulary panel** — cumulative half done (`v77_f`); ordering half dropped with the above.
+  **Still open and unmentioned by the plan:** include vocabulary that was the question or the
+  correct answer in **synonym and word_forms** lessons.
+- **§0f** — shipped (`v77_v`). **§0g** — code shipped (`v77_t`); the **model-prompt change is still
+  OWED BY THE USER** (needs a live model). **§0h** — question navigation, fully open, wants its own
+  session; the plan does not cover it.
+
 
 # 0. THE PROGRESS-CARD REWORK (user, at the v76 cut)
 
@@ -361,7 +803,12 @@ appear in the story" is their sentence and the substitution is a product judgeme
 - `_cardErrors()` empty after any card render, and `_cardHeader(prefix)` + `.card-screen` on any new
   card page.
 
-## 0e. Vocabulary on progress cards
+## 0e. Vocabulary on progress cards — ⚠️ LARGELY SUPERSEDED by TRACK T
+
+> TRACK T puts the highlighted chapter TEXT on every progress card, which subsumes a separate
+> vocabulary panel. The still-open half below (include words that were the question or the correct
+> answer in synonym and word_forms lessons) becomes a question about **which words get highlighted**,
+> not about a panel. Read it that way; do not build the panel.
 
 - **Cumulative per lesson-set**: every word the learner has already solved correctly, not just the
   current lesson's. **User screenshot 2 shows the panel EMPTY** on a comprehension card, because a
@@ -578,7 +1025,7 @@ that was authored, verified and **reverted**, and whose absence `unit-intro-scri
 **Guard:** a source sweep that fails when a lesson type has no applicability policy, mirroring
 `unit-script-pin-coverage` (rule 32 — guard the enumeration). **Scope:** decides only whether a
 lesson is OFFERED; lesson quality stays QC's problem. Full design in
-`build_history/implementation_plan.md` §9b/D1.
+`PLAN §9b/D1.`
 
 ### 2x. TWO BUGS DIAGNOSED AT THE v80 DROP — not yet fixed
 
@@ -593,7 +1040,7 @@ alone replaced a whole-story title with one about its tail. Mark the placeholder
 (`titleAuto: true`, cleared on generation or user edit). **Checked: `summary` is NOT seeded, so the
 summary guard works and this is title-only.** Guard BOTH halves or `v78_r` re-opens: a new book gets
 a title that is not its first chapter's name, AND an existing storyline gaining a chapter keeps its
-title. Full write-up: `implementation_plan.md` §9c.
+title. Full write-up: `PLAN §9c.`
 
 **(b) The vocab article asymmetry is a COIN FLIP, and the prompt contradicts itself.** `prompts.json`
 `vocab.system` says `BASE FORM ONLY … (with the usual article where the language uses one)` — PER
@@ -606,12 +1053,12 @@ four minutes apart. **A self-contradicting instruction does not bias output, it 
 which is why it "seems to have got worse" and why **one lesson can never validate a fix**. Fix by
 REMOVING the contradicting clause plus a worked counter-example (rule 31 — adding another
 prohibition is what made it worse, the `v79_i` failure repeated), then measure a RATE per
-`_genMeta.at` cohort. Full write-up: `implementation_plan.md` §F3/§F3c.
+`_genMeta.at` cohort. Full write-up: `PLAN §F3/`§F3c.
 
 ### 2y. THREE MORE RULINGS (user, at the v80 cut)
 
 **(a) Observations log scope: BOTH — keyed by a stable LOCAL id that an account can later ADOPT.**
-Unblocks `implementation_plan.md` §8/B1, which was waiting only on this. **Adoption is a LINK, not a
+Unblocks `PLAN §8/B1`, which was waiting only on this. **Adoption is a LINK, not a
 rename:** an account accumulates a SET of local ids (one per browser/device), and an observation's
 identity key stays the local id permanently, with `userId` as a resolved attribute. Re-keying to a
 `userId` would make a second device un-adoptable. Payment and accounts themselves remain open.
@@ -1050,7 +1497,7 @@ wart rather than a gap.** Two blocks restart at `1.`: "Rules earned in session 2
 of the corpus cites as rules **10–14**, and which a grep for `^10\.` will therefore never find).
 "Rules earned in session 30" resumes at `15.` and the numbering is continuous from there to 35.
 
-**Do not renumber them.** Every "rule 23", "rule 29", "rule 32" citation across `HANDOVER.md`,
+**Do not renumber them.** Every "rule 23", "rule 29", "rule 32" citation across the session prompt,
 `INTERNALS.md`, the session prompts, the session notes and several test files is by number, and a
 renumber would silently invalidate all of them — the exact failure mode rule 29 is about. When a
 session says "thirty-five standing rules" it means **numbered to 35**, not thirty-five entries;
@@ -1087,10 +1534,13 @@ This block is the standing "definition of done." A fresh session is expected to 
 being re-told; several of these were missed in past sessions (LIVE-TEST updates, i18n listing,
 version bump) and only caught because the user noticed. Treat it as a checklist.
 
-**How to start a session:** read `build_history/HANDOVER.md` first (one page: baseline numbers,
-what is owed by the USER, open decisions), then THIS file (the highest-numbered
-`build_history/roadmap_v*.md` is the current one), then `INTERNALS.md`, then the most recent
-`build_history/v*_session*_notes.md`. Establish the green baseline (`node test/run.js` +
+**How to start a session (REVISED at the `v80_d` cut — there are TWO documents now, not four):**
+read the current **session prompt** first, `build_history/SESSION_PROMPT_v*.md`, highest version
+(baseline numbers, what session 35 shipped, what is owed by the USER, open decisions — it absorbed
+`HANDOVER.md`, which no longer exists), then THIS file (the highest-numbered
+`build_history/roadmap_v*.md` is the current one, and it now carries the folded **THE LARGER PLAN**
+section that was `implementation_plan.md`), then `INTERNALS.md`. The
+`build_history/v*_session*_notes.md` files are history: search them, do not read them cold. Establish the green baseline (`node test/run.js` +
 `node test/check-inline.js`) before touching anything.
 
 **Working rules (per change):**
@@ -1501,3 +1951,1159 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
     and needed a user ruling rather than a fix.
 
 (If you add a new standing rule, append it here so the next session inherits it.)
+
+---
+
+# TRACK T — THE TEXT-FOCUSED PROGRESS CARD (user, at the `v80_f` cut)
+
+*The user's third focus shift on the progress card. Recorded here at the moment it was proposed,
+with the measurements that were taken BEFORE any of it was designed — `v80_f` (the inflection share)
+and the token-density numbers below. **This supersedes parts of §0 and `PLAN §C2`; what it
+supersedes is struck THERE with a pointer here, never silently.***
+
+## T0. The proposal, as given
+
+- **MORE TEXT FOCUS.** The chapter text with highlighted vocabulary is visible on **all** progress
+  cards of that chapter, **even before the text is unlocked**.
+- Highlighted words are **tappable**, opening a random question associated with that word (vocab,
+  word_forms, grammar, conjugation, synonyms…).
+- The text is **progressively solved**: highlight goes **red → green**, red = no associated question
+  solved, green = **all** associated questions solved. Comprehension unlocks only when every
+  highlighted word is green (**or by pass-mark fraction**).
+- **All question cards show the text too** (today only comprehension does), with the word or
+  sentence currently asked **underlined** as well as coloured.
+- **Drop** the chapter-wise progress bars and the progress-card copy ("Mach weiter",
+  "Kapitel freigeschaltet!"). Keep the play buttons for now.
+- Tapping a word opens ONE of its questions; after answering (right or wrong) the next question is a
+  **randomly chosen different word** of the same text, but the learner may always tap another word.
+  Revisiting a word **prefers questions not yet solved**.
+- Mapping: **for now**, reuse the current highlighting; **for new lessons**, change the prompt so the
+  model maps questions to exact words/phrases/sentences. Comprehension lessons should map their
+  "why" explanation to the sentences it refers to.
+- The learner can **select** a word/phrase/sentence and generate a lesson on it interactively (the
+  model or tutor gets the chapter as context).
+- **Later, for comics:** show the panels and project the highlights onto them — needs per-word
+  **coordinates**.
+
+## T1. VERDICT — extend, do not restart. Most of the machinery is already here.
+
+| the design needs | what exists today |
+|---|---|
+| word → its questions | **`_storyWordSources(d)`** → `{word, lessonId, probes}` for synonyms, word_forms, grammar, conjugation |
+| which words are solved | **`_solvedTargetWords`** + **`_solvedExtraWords`**, resolving `probes` through `qid()` against `_solvedMap` |
+| two-tone highlighting | **`_highlightVocabHtml(html, words, strongWords)`** — already LIVE on the storyline chain panel |
+| per-item solved state | `_lessonItemUniverse` / item keys (`v74_c`) |
+| the text on a card | `_renderSummaryField`, `_storyParasHtml`, `furiHtml` |
+
+**The red/green idea is already half-built**: today's dark shade means *any* question about the word
+was answered. Nothing here justifies a new project. **Only the comic-panel coordinates are genuinely
+new**, and they are cleanly isolated.
+
+## T2. ⚠️ TWO OF THE PROPOSAL'S PREMISES DO NOT SURVIVE MEASUREMENT
+
+**(a) "Progress will be obvious from the greening text, so the bars can go."**
+Measured: a chapter has **189 story tokens, of which 12.3 are highlighted — 6%.** Ninety-four per
+cent of the text stays plain however much the learner solves. A learner at half-done sees six green
+words. **Dropping the bars on this reasoning is not supported**; it may still be right for other
+reasons, but it needs its own decision. **Do not treat T0's bullet as settled.**
+
+**(b) "We can use the current highlighting to map questions to the text."**
+It holds for **47.3%** of taught words and cannot be pushed past **~56.9%** by matching alone —
+`v80_f`, above. **36.4% of taught words are ABSENT from the story in any form.** That is a
+GENERATION problem, not a matching one.
+
+**Consequence for T0's ordering:** the proposal treats prompt-side mapping as the *later* option and
+matching as the *now* option. **The measurement inverts that.** Prompt-side mapping is the only
+lever that touches the 36.4%, and it costs one prompt change instead of a per-chapter matcher.
+
+## T3. What it SUPERSEDES — struck at the source, pointing here
+
+- **§0e** vocabulary on progress cards, and **§0d**'s bars → subsumed by the highlighted text
+  (subject to T2a).
+- **`PLAN §C2`**'s third progress bar, bottom-row chapter title, and "text comprehension" labelling
+  → the copy goes with the bars.
+- **`v80_e`'s card copy.** "Kapitel freigeschaltet!" is named for removal. The merged starter card
+  **survives as the container**; its title/copy does not. **`v80_e`'s structural win — one starter
+  card per chapter — is NOT superseded** and this track depends on it.
+- **§0c**'s walk partially collapses: if the text is on every card, the story-unlocked page stops
+  being a separate destination.
+
+## T4. What it makes MORE valuable, not less
+
+- **`PLAN §8/B1`, the observations log.** Per-word question history is exactly what this design reads
+  and exactly what the current `{seen, wrong}` counters cannot replay. **Its value now decays faster.**
+- **The pass mark** (owed by the user). T0's "or via pass mark fraction" makes it load-bearing:
+  green-when-all is unreachable in practice if a word has many questions.
+- **`PLAN §F2`/`§F3`** prompt QC: a malformed item is far more visible when it is reached by tapping
+  a word in the text.
+
+## T5. Open questions the user must settle before building
+
+1. **Green = ALL questions, or a fraction?** Today's shade is ANY. With ~29 items per chapter over
+   ~10 findable words, ALL may be a wall. **Needs the learner-known share** (untaken).
+2. **What about lessons with no story word?** Measured: **82% of items sit in text-anchored
+   lessons**; the orphans are `intro_script` (376 items), `math` (218) and comprehension. Tapping can
+   never reach them — so the play buttons are **permanent**, not transitional, unless those types get
+   another home.
+3. **T2a: do the bars actually go?**
+
+## T6. Build order (proposed, once T5.1 and T5.3 are answered)
+
+1. **Per-word solved FRACTION** — generalise `_solvedExtraWords` from a set to counts. ~1 session.
+2. **The shared text panel** on every progress card and every question screen, with the asked span
+   underlined. ~1 session; `_cardHeader`-style single renderer, or it will drift five ways.
+3. **Tap → one question.** The reverse index exists; building a single-question round from a probe
+   does not. ~2 sessions.
+4. **The gate change** (comprehension unlocks on green) — lands on `_storyLockedLesson` /
+   `storyUnlocked`, i.e. the `v80_b` code. ~1 session.
+5. **Prompt-side exact mapping** — needs a live model. **The user's, not a container's.**
+6. **Comic coordinates** — isolated, last.
+
+---
+
+
+---
+
+# THE LARGER PLAN — folded in from `implementation_plan.md` at the `v80_d` cut
+
+> **⚠️ READ THIS BEFORE CITING ANYTHING BELOW.**
+>
+> The file `build_history/implementation_plan.md` **no longer exists.** It was a one-off evaluation of the
+> user's larger plan (PDF focus) against these roadmaps, written at the `v80` cut, and keeping it
+> alive created a SECOND home for open items — which is exactly how the two `v80` diagnoses came to
+> be recorded in three places and missing from the durable one. It is folded in here whole.
+>
+> **Citation mapping.** Anything that said `implementation_plan.md §X` now reads **`PLAN §X`** and
+> lives in this section. The letter-form labels are unchanged and unambiguous — `PLAN §C1`,
+> `PLAN §D2`, `PLAN §F2`, `PLAN §8/B1`, `PLAN §9b/D8`, `PLAN §9c`, `PLAN §10` — because this roadmap
+> has no sections of its own by those names. **The bare-number labels DO collide**: this roadmap
+> already has a `§0`, `§1`, `§2` and `§3` of its own, and the plan had different ones. That is why
+> every heading below carries the `PLAN §` prefix. **A bare `§3` means the roadmap's highlighting
+> item; `PLAN §3` means Track C.**
+>
+> **Three duplications were resolved on the way in, not silently:**
+> - `PLAN §2.6` and `PLAN §2.7` each appeared **TWICE, byte-identical** (3647 and 4857 bytes). One
+>   copy of each was dropped. Nothing was lost — they were identical, and that was verified by
+>   comparison rather than by eye.
+> - `PLAN §2.5` appeared twice with **different content**: the corrected version
+>   (*"PDF needs NO decision"*, revised under user challenge) and the superseded original
+>   (*"PDF is the only case that still needs a decision"*). **Both are kept**, the original struck
+>   with a pointer, because the reason a decision was reversed is worth more than the tidiness.
+
+## ⚠️ WHAT HAS MOVED SINCE THE PLAN WAS WRITTEN — read this before acting on any section below
+
+The plan was written at the `v80` cut. Sessions 35 acted on it. **These are the deltas; the sections
+themselves are left as written, so the original reasoning stays readable.**
+
+| plan section | status at the `v80_d` cut |
+|---|---|
+| **`PLAN §0.2`** — "I damaged `roadmap_v80.md`, re-carry and reconcile both sections" | **DONE.** Both sections were restored at the `v80` cut and RECONCILED in session 35 — see "SESSION 35 — the reconciliation pass" above. Its prerequisite is discharged. |
+| **`PLAN §0.3`** — duplicate storyline title | **SUPERSEDED by user ruling** (`§2y`): the user RENAMED one to "Dough of the Ancients 2". The fork-marker guard is preventive, not corrective. |
+| **`PLAN §0.3`** — single-chapter `1/1` and 100% bar | **STILL OPEN.** Belongs with `PLAN §C1`, as the plan says. |
+| **`PLAN §0.3`** — `unit-story-unlocked-page` §6 does not discriminate | **DONE, shipped `v80_c`.** It fails under revert now. See the `v80_c` entry above, which also CLOSES the `_firstUnfinishedLessonIdx` "open defect" as a misattribution. |
+| **`PLAN §0.4`** — are QC tokens recorded | **Answered: yes.** Only a run-level total is missing. |
+| **`PLAN §C1`** — the two progress-card gate bugs | **HALF DONE.** The SECOND bug (Replay reaching comprehension before the story unlocked) is **shipped as `v80_b`**, measured 27 of 94 partly-played chapters before / 0 after, revert-verified. The **FIRST bug is NOT reproduced**, and **two readings of it are dead ends** — see the `v80_b` block above before spending time on it. The single-chapter 100% bar and the header off-by-one are still folded in here and untouched. |
+| **`PLAN §10`**, session 1 (repair and reconcile) | **DONE** (sessions 35). |
+| **`PLAN §10`**, session 2 (`§C1`) | **HALF DONE**, as above. |
+| **`PLAN §10`**, session 3 (`§8/B1` or `§D1`) | **UNCHANGED and next.** `§8/B1` is still the only item whose value DECAYS while it waits. |
+
+Everything else below is unchanged and still open.
+
+---
+
+> **Internal cross-references inside this folded section** (`§F3`, `§8/B1`, `§C1` written bare in
+> the plan's own prose) are relative to the PLAN, not to the roadmap above. They were left as
+> written rather than rewritten in 73KB of prose, because a mechanical rewrite of `§` across that
+> much text is exactly the kind of edit that changes a claim by accident.
+
+*Written at the `v80` cut, against `roadmap_v79.md` (shipped history), `roadmap_v80.md` (open
+items), `INTERNALS.md` and the 35 standing rules. No code was written for this document. Every
+claim about the current code below was checked in the tree at this cut; where I could not check
+something, it says so.*
+
+---
+
+## PLAN §0 — Read this first — four findings that change the plan before it starts
+
+### PLAN §0.1 — `bayesian_knowledge_tracing.md` ARRIVED — Track B is unblocked, but not where expected
+
+The document is now in `build_history/`. It is sound, and its central choice is the right one:
+**skills (knowledge components) are the BKT unit, not lessons or chapters**, with one canonical
+skill shared across every story that exercises it (§7), and storyline/language/global progress as
+*aggregations* rather than separate models (§5, §11, §12). That is the standard framing and it
+avoids the usual mistake.
+
+**But the blocking work is not the BKT.** The update rule is about ten lines of arithmetic and needs
+no design. Four things stand between the document and a working implementation, and they were
+checked against the tree at this cut:
+
+**(a) THE EXISTING EVIDENCE CANNOT BE REPLAYED.** `learners.json` stores
+`state.progress.learned["<target>|<source>"].vocab[word] = { source, seen, wrong }` — **aggregate
+counters, not an ordered observation stream.** BKT is sequential: `P(L)` is updated per attempt, in
+order, and "wrong early then right" (learning) is a different state from "right then wrong"
+(decay). From `seen: 7, wrong: 0` neither can be recovered. So either BKT starts from zero evidence
+going forward, or the existing counters seed `pMastery` crudely and the history is discarded. **The
+document's §13 `observations` log is therefore not optional and not a later refinement — it is the
+prerequisite**, and the sooner it starts recording the sooner BKT has anything to run on.
+
+**(b) THE CURRENT KEY CONTRADICTS §7.** Evidence is bucketed by **language PAIR** (`it|de`, `en|de`),
+so a learner meeting German from English and the same learner meeting German from Italian have
+separate records today. §7 explicitly requires one canonical `de:vocab:gehen` regardless of route.
+That is a schema migration, and the pair-keyed data cannot be merged without deciding whether
+source language is a property of the *evidence* (probably yes) or of the *skill* (probably no).
+
+**(c) SKILL TAGGING IS THE REAL COST, AND IT IS LANGUAGE KNOWLEDGE.** §3/§4 require every exercise to
+name the skill it tests. Nothing emits that today. Worse, `de:wordform:gehen:present:1sg` cannot be
+computed by the app from the string `gehe` — it needs lemmatisation and morphological analysis,
+which INTERNALS §4 puts squarely in the model's tier. So skill IDs will be **model output**, and
+**the document does not address canonicalisation**: the same skill will arrive as
+`de:vocab:gehen`, `de:vocabulary:gehen`, `de:vocab:Gehen`, `de:vocab:gehen:infinitive` across
+generations, and §7's "one canonical skill" quietly fails. **A registry with model-proposed IDs
+resolved against existing entries is needed on day one**, not later. This is the single largest
+piece of new machinery in the whole plan and it is invisible in the document.
+
+**(d) THE MASTERY GATES COLLIDE WITH THE APP'S EXISTING PROGRESSION.** §5 redefines story progress as
+"percentage of required skills with P(mastery) >= 0.70" and §6 makes chapter unlocking depend on
+mastery thresholds. Dreizunge **already has** a progression system — `chapterComplete`,
+`lessonCountsFor`/`countedLessons`, the `coverageTarget` pass mark with storyline/chapter override,
+`_slProgressStats` — and it is the most heavily guarded surface in the codebase
+(`probe_gates_v77.js`, the `unit-story-unlocked-*` family, `unit-fork-display` §6). **§5/§6 are a
+REPLACEMENT of that, not an addition.** They are also a product decision, not a technical one: the
+current pass mark is a teacher-set number the user has ruled on more than once.
+
+**Consequence for ordering:** Track B's *instrumentation* can start early and independently; Track
+B's *gates* should be last or never, and must not be assumed. See §8.
+
+**One measurement to take before anything else**, because it decides whether BKT will discriminate
+at all: across all of `learners.json` only **40 words have ever been answered wrong (3.0%)**. With
+the document's suggested `pGuess = 0.20`, `pSlip = 0.10`, an observation stream that is 97% correct
+drives `pMastery` to ceiling almost everywhere — so §6's thresholds would unlock everything
+immediately and §5's percentage would read ~100% for every learner. **Check first whether `wrong`
+counts FIRST attempts or only un-retried ones.** If exercises are retried until correct, the stream
+is not independent, BKT's assumptions do not hold, and the fix is in the answer recording, not in
+the model parameters.
+
+### PLAN §0.2 — I damaged `roadmap_v80.md` at the cut, and this plan lands on the damage
+
+When I created `roadmap_v80.md` I carried the open block from line 611 of `roadmap_v79.md` onward.
+**Two whole open sections sit BEFORE that line and were lost:**
+
+- `# 0. THE PROGRESS-CARD REWORK (user, at the v76 cut)` — with sub-items `0d`…`0h`
+- `# 0i. LESSON GENERATION REWORK (user, at the v76 cut) — BLOCKED on §1`
+
+`roadmap_v80.md` contains zero references to `0d`, `0h`, `0i`, "PROGRESS-CARD REWORK" or "LESSON
+GENERATION REWORK"; `roadmap_v79.md` contains four. This is my error, made in the last ten minutes
+of the previous session, and it is not cosmetic: **those two sections are the direct ancestors of
+this plan's "CLEAN-UP PROGRESS CARDS" and "NEW LESSON GENERATION CARD".**
+
+**Prerequisite task, before any of the below: re-carry both sections into `roadmap_v80.md`, then
+reconcile them against this plan item by item** — each old bullet is either (a) superseded by a new
+one, (b) still open and unmentioned here, or (c) already shipped. A superseded item must be struck
+with a pointer, not silently dropped; that is how `v77_p`'s preview-panel removal stayed
+comprehensible three releases later. Budget half a session.
+
+### PLAN §0.3 — Two open items from session 34 are still unanswered and one is cheap
+
+- **The duplicate storyline title** (`sl_182891979` / `sl_1041030875`, both `🧈🔥 Dough of the
+  Ancients`, the only duplicate in 90) — each side's fork link names the storyline the learner is
+  already in. An authoring call.
+- **Single-chapter storylines read `1/1` and a 100% bar before anything is played** —
+  `_slProgressStats` adds one for the in-progress chapter. This one is **inside the progress-card
+  clean-up below** and should be folded into it rather than fixed separately (§C1).
+- **`unit-story-unlocked-page` §6 does not discriminate under revert** (carried since `v77_p`). It
+  needs no ruling and it is a guard that cannot fail, which is worse than no guard. **Do it first,
+  before the big plan starts** — half a session, and it protects the surface the progress-card
+  rework is about to churn.
+
+### PLAN §0.4 — One question in the plan is already answered
+
+> *"are tokens used for QC recorded? if not they should be."*
+
+**They are.** `server.js` calls `addTokenUsage(_liveTopic(), _lqTok, 'lesson_qc')` and
+`addTokenUsage(tp, _sqTok, 'story_qc')`. Chapter-level QC folds into
+`generationStats.totalPromptTokens/totalCompletionTokens` — the same fields initial generation
+writes, so "total" means total — and both carry a per-type tally in `tokensByType`. What is **not**
+there: the `/api/qc` route itself has no `addTokenUsage` call at its own level, so a bulk QC run
+attributes to the chapters it touched and nowhere else. If you want a *run-level* number ("this QC
+sweep cost X"), that is a small addition and it belongs with the QC card (§F3), not with plumbing.
+
+---
+
+## PLAN §1 — The strategic read: this plan is three products, not one
+
+The plan as written mixes work at incompatible scales. Sorting it that way is most of the planning
+value, because the small items are being blocked by the big ones for no reason.
+
+| Track | What it is | Scale | Depends on |
+|---|---|---|---|
+| **A — Ingest** | Image upload, vision extraction, chaptering, word map | **New subsystem**, weeks | **Nothing — no rulings left.** PDF text already works (§2.5) |
+| **B — Pedagogy** | BKT, adaptive selection, tutor, recommendation, learning arcs | **New subsystem**, weeks | Design doc ARRIVED; B1 can start now, B7 needs a ruling |
+| **C — Surface** | Progress cards, UI/settings card, generation card, QC card, LMGTFY | **Incremental**, 1–2 sessions each | Mostly nothing |
+| **D — Lessons** | Mixed-lesson selection, cases/articles, generic lessons | **Incremental**, 1 session each | Language-knowledge ruling (§5) |
+| **E — Export** | Printable exams and teaching material | **Small, self-contained** | Nothing |
+
+**Recommended order: C → E → D → A → B.** (A moved cheaper after the §2 correction — image ingest needs no dependency at all — but it still follows C, because the ingest UI lands on surfaces C is about to rework.) Reasons, in order of weight:
+
+1. **Track C is where every user complaint in this document actually is.** The screenshots are all
+   surface. Shipping C makes the app better for the corpus that already exists.
+2. **Track A changes the architecture** (§2) and should not be started while the surface is churning.
+3. **Track B needs a corpus and a design document** that do not yet exist (§0.1). It also needs
+   learner data, and the session-33 measurement is stark: across all of `learners.json` only **40
+   words have ever been answered wrong** (574 with any record, 3.0%). **A BKT model fitted on that
+   would be fitting noise.** BKT is the right long-term answer and the wrong next thing.
+4. **Track E is small, has no dependencies, and is the only item with a clear non-digital user.**
+   It is the best "spare half session" filler in the whole plan.
+
+---
+
+## PLAN §2 — INGEST ARCHITECTURE — corrected after the user's challenge
+
+**My first draft of this section was wrong for images, and the user was right.** It framed
+everything around PDF extraction and let the PDF difficulty contaminate the PNG case, which has
+almost none of it. Corrected, with what was checked:
+
+### PLAN §2.1 — What the code already does
+
+The app talks to Ollama over **`/api/chat`** with `messages:[{role,content}]`, using Node's built-in
+`http`/`https` (`qc-lessons.js:67`, and `server.js` carries the same shape). **Ollama's chat API
+accepts `images:[<base64>]` on a message.** So sending a PNG to a vision model is *an extra field on
+a request the app already makes* — no new transport, no new dependency, no `package.json`. The
+"zero-dependency" property is not at risk for image ingest at all.
+
+### PLAN §2.2 — The model can do both jobs, and the protocol is documented
+
+Checked against the Ollama library and the MiniCPM-V CookBook:
+
+- **`minicpm-v4.6` exists** (Ollama library) — SigLIP2-400M + **Qwen3.5-0.8B**, edge-focused,
+  explicitly benchmarked on **RefCOCO** (a referring-expression *grounding* benchmark) and OCRBench.
+- **`minicpm-v4.5` exists** — 8B on Qwen3-8B, OpenCompass 77.2, *"leading performance on OCRBench"*
+  and *"state-of-the-art performance for PDF document parsing"*.
+- **Grounding has a documented protocol** (`MiniCPM-V-CookBook/inference/minicpm-v4_5_grounding.md`):
+  ask `Please provide the bounding box coordinate of the region this sentence describes:
+  <ref>NAME</ref>`; the model answers with `<box>x1 y1 x2 y2</box>`, **normalised to 0–1000**,
+  converted by `x = bbox[0]/1000 * width`.
+
+So: **text extraction and panel coordinates from one model, one call shape, zero dependencies.**
+That is the user's proposal and it is sound.
+
+**Model choice, revised:** the plan's original `minicpm-v:8b-2.6-q4_K_M` is superseded by **`v4.5`**,
+which is the same size class and explicitly better at OCR and document parsing. **`v4.6` is NOT the
+newer-and-better option for this job** — its LLM is 0.8B, built for phones; it is the right pick for
+on-device, the wrong one for ingest quality. Confirm what is pulled with `ollama list`.
+
+### PLAN §2.3 — Cropping is a non-issue — three ways out, cheapest first
+
+My draft implied cropping needed an image library. It does not:
+
+1. **Do not crop.** Store the boxes as data and render each panel with CSS
+   (`background-position`/`object-fit`) or a canvas draw at display time. The original PNG stays the
+   only asset. **Recommended** — it is also reversible, so a bad box is re-editable forever.
+2. **Crop in the browser** with `<canvas>` + `toBlob()` if real files are wanted. Free, no server.
+3. **Crop in pure Node** — genuinely feasible, `zlib` is built in (verified): inflate IDAT, unfilter
+   scanlines, crop, refilter, deflate. A few hundred lines and no dependency. Only worth it for
+   server-side batch.
+
+### PLAN §2.4 — What is still genuinely uncertain — and it is ONE thing
+
+Not "can it do boxes" (it can), but: **the documented example grounds ONE region from a
+description. Comic panel extraction needs N boxes enumerated in reading order, unprompted.** That is
+a different task, and it is where a vision model most plausibly returns *well-formed, plausible,
+wrong* output — coordinates that parse cleanly and do not match the page. That failure is invisible
+unless something compares them to the image.
+
+**So the first move in Track A4 is a measurement, not a feature** — the pattern that has worked all
+session. Roughly 40 lines: post one real `murmel-comics.org/stories/2640` page to `/api/chat` with
+`images:[b64]`, ask for panels, parse `<box>`, and render the boxes back over the source image as an
+HTML overlay for a human to eyeball. Twenty minutes, and it answers what no amount of planning will:
+does it enumerate all panels, in order, at usable precision? Record the answer as a probe with its
+numbers in the header, like `probe_word_forms_v79i.js`.
+
+**Reading order is the second unknown** and may be easier solved deterministically: given boxes,
+sort top-to-bottom then left-to-right (right-to-left for manga) rather than trusting the model's
+sequence. Worth testing both.
+
+### PLAN §2.6 — The interactive word map (user, at the v80 cut) — build it where coordinates are FREE
+
+**The idea:** overlay the image with the coordinates of the extracted text so the learner can click
+a word *in the picture* and get a vocab/grammar question about it.
+
+This is the best fit for the product's own one-line description — *"explore the language of existing
+texts"* — that anything in the plan has, and most of it already exists: the question types are
+built, `_storyWordSources(d)` already collects "what words does this chapter teach", and the
+per-word progress store is keyed by word. **What is new is only the coordinate map and an on-demand
+question for an arbitrary word.**
+
+But the difficulty is wildly different per input type, and that should drive the order:
+
+**Tier 0 — born-digital PDF: coordinates are EXACT and FREE.** `pdf.js`'s text layer returns per-item
+text with a transform matrix — position, scale, font size — for every text run on the page, with no
+model call and no error. **A clickable word map over a PDF page is a rendering exercise, not a
+research one.** If §2.5 goes the `pdf.js` route, this feature comes almost free with it. **Build it
+here first.** It also proves the whole interaction — hit targets, question-on-click, tracking —
+against a source of truth, so that when the image path arrives, only the coordinates are in doubt.
+
+**Tier 1 — images, BUBBLE-level (recommended first image step).** Ask the model for text-block /
+speech-bubble boxes, not words: few per panel, coarse, and the same referring-expression shape as
+panel grounding — the model's demonstrated strength. Clicking a bubble opens the transcribed text as
+**ordinary HTML with each word clickable**. Perfect hit targets, no per-word coordinates needed, and
+it degrades gracefully: a slightly wrong bubble box is still a usable click target, whereas a
+slightly wrong word box lands on the wrong word and teaches the wrong thing.
+
+**Tier 2 — images, true PER-WORD boxes. This is the speculative one, and it is a real step up.**
+A comic page can carry 100+ words. Per-word grounding means either many boxes in one response —
+where confabulation risk scales with count and nothing in the output signals it — or one call per
+word, which is not affordable. **Do not design around this until the §2.4 overlay probe has run**,
+and extend that probe to ask for word boxes in one bubble so both questions are answered by the same
+20 minutes of work.
+
+There is also a **derived** option worth testing cheaply: take the bubble box plus the transcribed
+string and *estimate* word positions by proportional layout inside the box. Free, no extra tokens,
+and probably fine for typeset prose — but comics are hand-lettered with unknown line breaks, so
+expect it to fail exactly where it is being asked to work. Test it against Tier 2 output rather than
+assuming either way.
+
+**Cheap verification, whichever tier ships:** boxes must lie inside the image bounds, must not
+mutually overlap beyond a threshold, and the union of text boxes must account for the extracted
+string. None of that needs language knowledge, and it catches the well-formed-but-wrong failure that
+is otherwise invisible. **A wrong box is worse than no box** — it silently teaches the learner that a
+word means something it does not — so the overlay should fail closed: no confident box, no click
+target.
+
+**One product question, not a technical one:** this feature stores and re-displays someone's
+artwork with an interactive layer on top. The plan already scopes the corpus to *"known texts w/o
+copyright"*; `murmel-comics.org` needs its licence checked before it becomes the demo case, and
+user-uploaded images need a decision about whether they are stored server-side at all.
+
+### PLAN §2.7 — Two REAL pages, read by eye at the v80 cut — what they change
+
+The user supplied two German comics. They bracket the difficulty so well that they should become
+the two fixtures for all of Track A. **Everything below is from reading the pages, not from running
+a model** — these are the things the §2.4 probe has to be built to catch, not results.
+
+**Page B ("Ein Scheissland", signed M. Lüq) — the EASY case, and the right ACCEPTANCE fixture.**
+A clean 2x3 grid of rectangular panels under a title. Caption boxes sit at the top of each panel,
+hand-lettered all-caps. Reading order is unambiguous left-to-right, top-to-bottom, so the
+deterministic sort proposed in §2.4 is provably enough here. Two pieces of *in-scene* text (a sign
+and a banner) sit inside the drawings rather than in caption boxes — a useful wrinkle, because they
+must be distinguishable from narration and are exactly the kind of thing a naive "text on page"
+extraction flattens together.
+
+**Page A ("Weg? Woanders? Oder nur unsichtbar?") — the HARD case, and the right REGRESSION fixture.**
+It defeats four assumptions at once:
+
+1. **Rotated text.** The title runs diagonally; a whole caption runs bottom-to-top at 90 degrees up
+   the middle of the page. **Axis-aligned bounding boxes cannot represent this** — the AABB of a
+   rotated line overlaps everything beside it, so a per-word click map built on AABBs will put the
+   wrong word under the pointer, and the overlap check proposed in §2.6 will fire on correct output.
+   Either boxes carry a rotation, or rotated text is detected and excluded.
+2. **Unframed content.** A large heart illustration and its caption have no panel border at all.
+   **Panel detection by finding rectangles finds nothing there** — grouping has to be semantic.
+3. **Text outside the frame.** Captions sit below their panels rather than inside them, so
+   "associate text with the panel whose box contains it" is wrong on this page and right on page B.
+4. **Genuinely ambiguous reading order.** Where the vertical caption falls relative to the heart
+   caption is a judgement a human makes from layout. A top-to-bottom-then-left-to-right sort will
+   produce a confident wrong answer.
+
+**The finding that reaches beyond the overlay: WORDS ARE BROKEN ACROSS LINES.** Page A hyphenates
+`SON-` / `DERN` across a line break; page B splits `WILL` / `KOMMEN` across lines **with no hyphen
+at all**. This breaks three things, only one of which is the word map:
+
+- the map, because one word occupies two disjoint boxes;
+- **vocabulary extraction**, because the lesson would teach `son` and `dern` as words;
+- **the story text itself**, which would carry the break into every downstream lesson and QC pass.
+
+So de-hyphenation and line-rejoining belong in the extraction step, before anything else sees the
+text — and the no-hyphen case means it cannot be done by looking for hyphens. It is a language
+judgement, so it is the model's, per INTERNALS section 4.
+
+**The finding with the most pedagogical weight: ALL-CAPS DESTROYS GERMAN NOUN CAPITALISATION.**
+Both pages are lettered entirely in capitals. German capitalises nouns, and that distinction is
+information a learner is being taught. `KÖPFE`, `MENSCHEN`, `ANGST`, `SCHATZ` must come back as
+`Köpfe`, `Menschen`, `Angst`, `Schatz`, while adjectives and verbs must not. **Extraction from
+capitals is therefore not transcription, it is restoration**, and the same applies to `SS` -> `ß`
+(`GROSSES` -> `großes`, but `SCHEISSLAND` is a judgement). Hand-drawn umlauts are an accuracy risk on
+top. None of this is the app's to decide; all of it must be asked for explicitly in the prompt and
+then QC'd, because a silently mis-capitalised noun teaches the wrong rule.
+
+**What this implies for the plan:**
+
+- **Ship against page B, regress against page A.** A version that handles B well and *refuses* A
+  cleanly is a good version. A version that produces confident boxes for A is a broken one, and
+  page A is how you find out.
+- **Fail closed becomes a hard requirement, not a nicety** (section 2.6). Page A is the page where
+  plausible-but-wrong output is most likely and least detectable.
+- **The probe needs GROUND TRUTH**, or it measures nothing. Somebody has to transcribe both pages by
+  hand once, into a fixture, including the intended reading order and the restored capitalisation.
+  That is an hour of work and it is what makes every later extraction change measurable instead of
+  eyeballed.
+- **Content curation is not only about copyright.** Page B is pointed political satire; page A is
+  about bereavement. Both are legitimate reading material and neither is automatically suitable for
+  an arbitrary learner or an auto-generated "meet and greet" corpus. The corpus needs a suitability
+  axis alongside the licence one.
+- **Page B is signed by an identifiable artist.** The licence question in section 2.6 is live for
+  this specific page, not hypothetical.
+
+### PLAN §2.5 — PDF needs NO decision — corrected again (user, at the v80 cut)
+
+**My §2 draft asked for a PDF ruling that does not exist.** The user's correction: PDF is used for
+TEXT only and already works; comics arrive as PNG. Checked, and it is more settled than that:
+
+- **`pdf.js` is already loaded**, from `cdnjs` at `index.html:4394-4402` — the same CDN pattern the
+  app already uses for KaTeX. So the "single-file client" property was **already relaxed for exactly
+  this**, and nothing new is being decided.
+- **Extraction already reads per-item GEOMETRY**, not just strings. `page.getTextContent()` items
+  are grouped by `item.transform[5]` (y) and the minimum `item.transform[4]` (x) is kept per line,
+  because — as the `v71_b` comment there says — the vertical gap distinguishes a paragraph break
+  from a wrap and the left edge marks an indent.
+
+**Rasterisation was never needed.** Delete the option list; there is no dependency question, no
+`package.json`, no ruling. The two input paths are simply separate: **PDF/markdown/paste → text,
+already built. PNG → vision model, needs nothing new (§2.1).**
+
+**But this has a consequence for §2.6 that runs the other way, and it is good news:** the exact
+per-word coordinates the word map wants are **already flowing through `_extractPdfText` and being
+discarded.** `content.items` carries a full transform per text run; the current code takes `y` and
+the line-minimum `x` and drops the rest. Tier 0 of the word map is therefore not new plumbing — it
+is *keeping* what is already read, alongside the text that is already produced. That makes it the
+cheapest place in the whole plan to build and prove the click-a-word interaction, against
+coordinates that cannot be wrong.
+
+One caveat to measure rather than assume: pdf.js emits text *runs*, not words. A run may be several
+words or part of one, so word-level boxes need splitting a run by character widths — approximate,
+but bounded and checkable, and vastly better than the image case.
+
+### ~~PLAN §2.5 PDF is the only case that still needs a decision~~ — SUPERSEDED
+
+> **Superseded by `PLAN §2.5` above** (*"PDF needs NO decision — corrected again"*), which the
+> user's challenge produced. Kept, not deleted: this is the version that says what the
+> decision WAS, and a reversal without its original is unreadable three cuts later.
+
+A PDF is not an image; feeding it to a vision model requires **rasterising** it first, and that is
+the one step with no built-in. Options:
+
+- **Rasterise in the browser** with `pdf.js` from a CDN → canvas → PNG → the exact same vision path
+  as 2.1. One code path for PDFs and comics both. Costs the single-file client property for the live
+  app and needs a decision for `docs/index.html`.
+- **Text-layer-only fast path**: `pdf.js` can extract an existing text layer with no model call at
+  all — free and exact for born-digital PDFs, which is most uploaded prose. Fall back to
+  rasterise+vision for scans and comics.
+- Accept a Node dependency (**needs an explicit ruling**, ends a long-held invariant).
+
+**Recommendation: browser `pdf.js` doing text-layer-first, rasterise-on-fallback, feeding the
+existing chat+images path.** Images need no library at all; PDFs need only a client-side one; the
+server stays zero-dependency in every case.
+
+## PLAN §3 — Track C — the surface clean-up (do this first)
+
+Ordered so that each session ends shippable. Every one of these lands on `probe_gates_v77.js`
+territory; **re-run and diff against `v80_card_gates.txt`** (the `v77` table is superseded, and the
+`v80` baseline exists because the drop moved it).
+
+### PLAN §C1 — Progress-card structural fixes (1 session) — the BUGS first, before any cosmetics
+
+Two of the plan's items are **defects**, not design, and they should not wait behind the cosmetic
+list:
+
+- **"I browsed forward to the story card and back, solved no comprehension lesson, yet could
+  proceed to the next chapter."**
+- **"Via the replay button or otherwise, I could play the comprehension lessons BEFORE the
+  chapter-story was unlocked."**
+
+These are the same suspicion from both sides: **the gate is being computed from render state rather
+than from lesson state**, so navigation can move the learner past a gate that never opened. They
+are also the two items most likely to be *masked* by the cosmetic rework, so measure them before
+touching the cards.
+
+**First move is a probe, not an edit** — the pattern that worked for the fork task. Drive
+`chapterComplete`, `lessonCountsFor`/`countedLessons` and the unlock gate directly, reproduce both
+sequences, and report what each says before and after. Fold in the **single-chapter 100% bar**
+(§0.3) here, since it is the same helper (`_slProgressStats` adding one for the in-progress
+chapter) and the same screen.
+
+**Also here:** the storyline header bar being partially green before any question — the plan reads
+this as an index-off-by-one ("current-1"). **Verify that before implementing it**; the same helper
+produces the 100%-on-one-chapter result, so a single root cause may explain both, and fixing them
+as two off-by-ones would leave the real one.
+
+### PLAN §C2 — Progress-card content and copy (1 session)
+
+Low-risk, high-visibility, all guarded by the gate probe:
+
+- ~~third progress bar for comprehension lessons on the entry card;~~ **⚠️ AT RISK from TRACK T**,
+  which proposes dropping the chapter bars entirely. **T2a shows that reasoning is unsupported**
+  (only 6% of story tokens are highlighted), so this is NOT settled either way — do not build the
+  third bar and do not delete the others until the user rules. See TRACK T.
+- the bottom-row message replaced by the **chapter title** on all card states (entry, in-progress,
+  unlocked-in-green) — one change applied consistently, so build it as one helper with a state
+  argument, not four call sites;
+- post-unlock questions labelled **"text comprehension"** rather than by the next chapter's name.
+  **Check `ui.json` for an existing key first** — the plan says to reuse one if present, and adding
+  a key means 33 languages;
+- ~~the "next chapter unlocked!" card **removed from the flow**, going straight to the next entry
+  card;~~ **RULED AND SHIPPED as `v80_e` — MERGE.** As written this was not executable: since
+  `v77_q` there was no entry card for chapters 2..N, because that card WAS it. The entry card is
+  now generalised to every chapter and the unlocked card is deleted. **See the `v80_e` entry at
+  the top of this roadmap.**
+- entry card shows the story summary as the storyline page does, **default uncollapsed**;
+- chapter entry cards ≥2 remodelled to match chapter 1.
+
+**Watch for:** removing a card from the flow interacts with C1's navigation bug. Do C1 first or the
+two fixes will be hard to attribute.
+
+### PLAN §C3 — Read-out everywhere (1 session)
+
+Speech buttons on every vocabulary field and every chapter text field, on the final card too, with
+**each item read in its own language** (vocab in target, translation in source). Clicking an
+individual vocab item reads it.
+
+This is the natural home for **"show the no-TTS-available message when the user clicks speech and
+that language has no voice"** — the app already has `_ttsNoVoice` and the 🗣 pill for exactly this,
+so it is wiring, not new behaviour. It also inherits `v79_n`'s `_speechLocaleFor`, so per-chapter
+speech locale applies automatically. **`unit-speech-locale` §11 already guards that a voice picked
+for one language never speaks another** — the property this feature depends on most.
+
+### PLAN §C4 — The Settings Card and floating pills (1–2 sessions) — the biggest UI change here
+
+A cog pill next to the login pill on **all** pages, including static, absorbing: the UI control row,
+speech-language setting, model selection, sound test, missing-UI-entries, teacher mode, import,
+static export, learners. Plus a **global mute pill** replacing every scattered mute button — while
+keeping all read-out buttons, which are a different thing.
+
+**Three specific risks, from this session's scars:**
+
+1. **The static build re-implements client functions.** `build-static.js` overrides 19 of them.
+   `unit-static-selectlang-tts` now guards that overrides keep their live twin's UI-refresh calls —
+   **extend its `REFRESHERS` list as the SC adds refreshers.** The list is a judgement, and the test
+   says so.
+2. **"Available in the static page" is a requirement, not a footnote.** Model selection, import and
+   learners have no meaning without a server. Decide per item whether it is *hidden* or *disabled
+   with a reason* in static mode, and write the decision down — a silently missing control reads as
+   a bug.
+3. **The mute consolidation touches `data-mute-tip`/`updateMuteButtons`**, which already has a
+   guard (`unit-tts-test-row`) that broke twice this session on text-level pins. Expect to
+   re-anchor it, and re-anchor at the claim.
+
+### PLAN §C5 — Generation Card, QC Card, flag pill (1–2 sessions)
+
+- Generation moves off the main page into its own card, aligned with the storyline and
+  "add lesson" entry points — **this is the resurrected `§0i` from `roadmap_v79.md`** (§0.2), which
+  was marked BLOCKED on §1; check what that block was before assuming it is gone.
+- QC bulk actions get a card with **selectable QC types** (already in the old roadmap).
+- The download-flagged pill shrinks to a filled-flag pill, expanding on click, with a
+  **guarded "clear all flags"** and clearing on GitHub-link click.
+
+### PLAN §C6 — LMGTFY widget (half a session, do it as a filler)
+
+Self-contained and genuinely small: extend a story-interpretation prompt to emit a list of unusual
+or technical terms (`«programma di ricerca»` in `tp_17851387238120000029`), render a collapsible
+floating widget of search links, search engine settable in the SC.
+
+**Two notes.** The prompt must call `scriptPinNote` if it emits target-language text —
+`unit-script-pin-coverage` **sweeps the source** and a new prompt fails until classified. And
+"words the model itself doesn't recognise" is a self-report; treat the list as a *suggestion
+surface*, never as a claim about the language, per the "no language knowledge in the code"
+principle.
+
+---
+
+## PLAN §4 — Track E — export (1 session, no dependencies, do it early)
+
+Printable **(a) exams** (MCQ + text fields) and **(b) teaching material** (full story with vocab
+highlights, full translation without). Both are pure transforms of data that already exists, and
+`_storyWordSources(d)` is already the single collector for "what words does this chapter teach".
+
+**Print, not PDF-generation.** A print stylesheet plus a print-optimised render costs nothing and
+sidesteps §2 entirely; the browser makes the PDF. Only reach for real PDF generation if you need
+server-side batch export, and that is a Track A decision.
+
+This is the item I would slot into any session that finishes early.
+
+---
+
+## PLAN §5 — Track D — lesson types (1 session each, but ONE needs a ruling first)
+
+### PLAN §D1 — Mixed-lesson composition (1 session)
+
+Let the user pick which lessons join a mixed lesson via a dropdown of the chapter's lesson
+ids/titles/types. The plan notes this could optionally include **all lessons of previous chapters**
+and thereby **replace reinforce/extend**. That is the more interesting half and the riskier one:
+replacing an existing feature deserves its own decision and its own release, not a checkbox in a
+dropdown release. **Split it: composition first, reinforce/extend replacement second.**
+
+### PLAN §D2 — Cases and articles — NEEDS A RULING, and it is the "no language knowledge" line
+
+The plan asks for noun cases and definite/indefinite article distinctions (`der/die/das`,
+`ein/eine`; `ova/ovo` vs `taj/ta/to`), and explicitly anticipates *"a table languages × lesson
+types to indicate whether a given lesson type makes sense in that language"*.
+
+**That table is language knowledge in the app**, and `INTERNALS.md` §4 makes its absence a design
+principle with a documented list of known violations. The project has already ruled this way once,
+in a neighbouring case: the `cyrillic-sr` sounds column was authored, mechanically verified, and
+**reverted**, because its absence enforces a `v75_g` ruling — and `unit-intro-script` catches its
+return.
+
+So this needs an explicit decision, and there is a middle path worth considering: **let the MODEL
+declare per-language applicability at generation time and cache the answer as data** (in
+`languages.json`), rather than the app encoding a table. That keeps the knowledge in the tier
+INTERNALS §4 assigns it to, and the cache is then a measurement, not a claim.
+
+The "reveal the full phrase, correct article and word form together" part needs no ruling and can
+ship independently.
+
+### PLAN §D3 — Generic, story-independent lessons (1 session)
+
+A user prompt field producing lessons not tied to a story ("train colour names, include brown").
+The plan's own scoping is right: **standard vocabulary first**, one lesson type, one prompt field,
+following the existing LLM-math precedent. Note the new prompt needs `scriptPinNote` (§C6) and a
+`_genMeta` record like every other generator.
+
+---
+
+## PLAN §6 — Track F — QC rework (1 session, mostly independent)
+
+Ordered by how much each is worth:
+
+**F1. Word-forms QC: detect distractors that also make an error-free sentence.** This is the same
+defect `probe_word_forms_v79i.js` measures, now stated as a QC job. **Read the probe's header
+first**: it is explicitly *"a measuring instrument for a human, NOT a validator — rejecting these
+mechanically would mean the app encoding per-language grammar, which the model owns."* So F1 must
+be **model adjudication**, not a deterministic rule, or it walks straight into §5's problem.
+
+Also carry forward the `v80` finding: the regenerated lesson went from *5 items all two-choice* to
+*6 items with 1 two-choice*, while the corpus-wide percentage stayed flat at 15% because
+un-regenerated lessons dominate the denominator. **QC on old lessons is therefore worth more than
+another prompt revision**, and F1 is how you get it.
+
+**F2. The malformed word-forms items** in `tp_586040741` — the blanked word shown in the sentence
+with the underline appended at the end (`"...across the path.___"`, answer `cast`). This one **is**
+deterministic and safe: the item is broken as *structure*, independent of language — the answer
+token appears in the stem and the blank is not where the word was. No language knowledge needed.
+~~**Do this one first; it is the cheapest real win in the whole document.**~~ **✅ SHIPPED as
+`v80_g`** — the blank-position half. The answer-visible half was measured and deliberately left
+unenforced; see the `v80_g` entry at the top of this roadmap.
+
+**F3. THE ARTICLE MESS — diagnosed at the v80 cut. It is a rule-31 case, and the "fixes" are why it
+got worse.**
+
+The user reports German->French vocab in `tp_17869977371640000022` full of pairs where the German
+side carries an article and the French side does not. Both languages HAVE articles, so this is not a
+"one language lacks them" case. **The generation prompt contains two rules that contradict each
+other**, and the contradiction is not subtle once both are read together. From `prompts.json`,
+`vocab.system`, in this order:
+
+1. `BASE FORM ONLY: give every vocab word in its dictionary/citation form — verbs in the infinitive,
+   nouns in the singular (with the usual article where the language uses one)`
+2. `ARTICLE SYMMETRY for nouns: give the article on BOTH sides ("der Hund" <-> "il cane") or on
+   NEITHER side ("Hund" <-> "cane") — never an article on one side only.`
+
+**Rule 1 is PER-SIDE and appeals to each language's own citation convention. Rule 2 is a CROSS-SIDE
+constraint.** They cannot both be satisfied for a pair whose two languages have different
+lexicographic conventions — and German/French is exactly that pair: German dictionaries cite nouns
+**with** the definite article because it carries gender (`der Hund`), French dictionaries cite the
+bare noun with a gender tag (`chien, n.m.`). **A model following rule 1 faithfully produces
+`der Hund` <-> `chien`, which is precisely the reported defect.** Rule 1 is stated first and is
+framed as the definitional rule ("BASE FORM ONLY"), so it wins.
+
+**Why it got WORSE with the attempts to fix it — three compounding reasons:**
+
+- **The symmetry rule was ADDED next to the contradicting clause rather than reconciling it**
+  (rule 31: *before strengthening an instruction, check whether it is already there and being
+  CONTRADICTED*). This is the same failure as `v79_i`, where the word-forms prompt banned indecidable
+  distractors and recommended them three bullets earlier. Adding a prohibition beside a live
+  contradiction does not remove the contradiction; it makes the prompt longer and the behaviour less
+  predictable.
+- **A deterministic normaliser was removed for good reasons, and nothing replaced its coverage.**
+  `server.js:4438` records it: the old code split `hail` into `grandine`/`hail` and *"dropped the
+  gender an Italian learner needs while symmetric siblings in the same lesson kept theirs. It made
+  lessons LESS consistent than it found them."* Removing it was right — but the comment then says
+  *"the generation prompt still forbids a one-sided article; QC is the safety net"*, and the
+  generation prompt does **not** forbid it cleanly, because of rule 1. **The safety net was hung on
+  a claim that is not true.**
+- **The QC check is context-dependent and degrades quietly.** `qcCheckPair` takes `siblings` — the
+  other vocab items in the same lesson — and `server.js:1536` states that omitting them *"degrades
+  the article check to a judgement without context"*. So the check's strength varies with what it is
+  handed, and a lesson generated wholly one-sided gives it consistent-looking siblings to agree with.
+
+**A fourth contradiction, across prompts:** `vocab` asks for nouns **with** the article; `grammar`
+asks for `"{L} noun in singular form (no article)"` and adds `"target" must have no article
+prepended`, carrying the article in a separate field. Two lesson types, two opposite conventions for
+the same noun. That is defensible per lesson type but it means "the article convention" is not one
+thing in this codebase, and any fix must say which convention applies where.
+
+**The fix, in order, and NOT another sentence of prohibition:**
+
+1. **Remove the contradiction.** Rule 1's parenthetical `(with the usual article where the language
+   uses one)` is the clause to change — it is what invokes per-language citation convention. Decide
+   which convention wins for vocab pairs and state it ONCE.
+2. **Add a WORKED COUNTER-EXAMPLE, not a rule.** The word-forms prompt was fixed this way in
+   `v79_i`: a shown broken item plus its repair. Here that is `der Hund <-> chien` marked BROKEN,
+   with `der Hund <-> le chien` and `Hund <-> chien` both shown as acceptable.
+3. **Then measure.** A probe over the corpus counting one-sided-article pairs per language pair,
+   with the numbers in its header, so "it got worse" stops being an impression. **The `v80` lesson
+   applies: the corpus-wide rate cannot move until lessons are REGENERATED, so measure per
+   `_genMeta.at` cohort, not in aggregate** — that is exactly how the word-forms improvement was
+   nearly missed.
+4. **Only then** revisit whether the QC check should be strengthened. It may be adequate once it is
+   no longer compensating for a self-contradicting prompt.
+
+**Note this is downstream of the D1 ruling.** "Does this language use articles at all" is now a
+model-declared, cached fact — so the symmetry rule can consult data instead of asking the model to
+re-derive it inside every generation.
+
+**F3c. MEASURED at the v80 drop — the contradiction produces a COIN FLIP, not a constant bias.**
+
+The user reported that chapter 1 of the new German->French storyline had the asymmetry and chapter 2
+did not. Measured on the drop:
+
+| chapter | asymmetric vocab pairs |
+|---|---|
+| `tp_17869977371640000022` "Stille vor dem Winter" | **7 of 8** |
+| `tp_17869980065780000104` "Brücke der Existenz" | **0 of 8** |
+
+And the two are **generated identically**: same model (`qwen3.6:35b-a3b`), same `_genMeta.type`
+(`standard`), `rejected: 0` on both, **four minutes apart**. No different prompt, no different code
+path, no retry that could explain it.
+
+**This is the strongest available evidence for the rule-31 diagnosis**, and it sharpens it: a
+self-contradicting instruction does not bias the output consistently, it makes the outcome
+**unstable** — the model resolves the conflict differently from sample to sample. Two consequences:
+
+- **It explains "seems to have gotten worse".** With a coin flip, a run of bad luck reads exactly
+  like a regression, and a run of good luck reads exactly like a fix. Neither impression is
+  measuring anything.
+- **Therefore a single lesson can never validate the fix.** N=1 cannot distinguish "corrected" from
+  "got lucky", and chapter 2 above is precisely a lucky sample of the broken prompt. **The F3 probe
+  must sample MANY lessons per `_genMeta.at` cohort and report a RATE with its denominator**, not an
+  example.
+
+The failure direction also confirms the mechanism exactly: every asymmetric pair has the German
+source carrying the article (`das Eichhörnchen`, `der Winter`, `die Begegnung`) and the French target
+bare (`écureuil`, `hiver`, `rencontre`) — German citation convention applied on one side, French on
+the other, which is what rule 1's `(with the usual article where the language uses one)` asks for.
+
+**F3b. QC PROMPTS BELONG IN `prompts.json` (user, v80 cut).** Partly true already: `storyQc` and
+`srcRepair` live there and are read via `fillPrompt(PROMPTS.storyQc.system, ...)`. **The lesson-level
+QC prompt is still inline in `server.js`.** Moving it is small, but the user's second clause is the
+valuable half — *"more systematically aligned with the generating prompts"*. The article mess is the
+argument for it: **a QC prompt that checks a convention lives in a different file from the
+generation prompt that sets it, so the two drift and nobody notices.** Pairing them — same file,
+adjacent keys, ideally a shared fragment for any rule both must state — is what would have made this
+contradiction visible. Do it as part of the F3 fix, not separately.
+
+**F4. Run-level QC token accounting** (§0.4) — small, do it alongside the QC card.
+
+---
+
+## PLAN §7 — Track A — ingest (multi-session; blocked on §2)
+
+Sequenced so each step is independently useful:
+
+1. **A1 — plain text / markdown upload with a separate chaptering card.** No §2 dependency at all,
+   and it builds the chaptering UI that PDF and comics will reuse. **Also delivers the plan's
+   "allow to edit the source field when generating from an uploaded text"**, which appears twice in
+   the plan and is small.
+2. **A2 — language detection**, both the cheap script-based path and the LLM query. The
+   script-based half already has machinery: `backfill-script.js` and the `script` stamp.
+3. **A3 — the PDF word map** (§2.5/§2.6 Tier 0), not PDF extraction, which already works. Keep the
+   per-item transforms `_extractPdfText` currently discards.
+4. **A4 — comics via vision model.** Needs no dependency and no PDF ruling, so it can start
+   BEFORE A3. **Begin with the §2.4 overlay probe** against `murmel-comics.org/stories/2640`: boxes
+   drawn back over the source page, eyeballed by a human, numbers recorded in the probe header.
+   Panel *enumeration* and reading order are the unknowns, not OCR.
+
+**Check `/api/generate-book` first** — it exists at `server.js:6515` and may already do part of A1.
+And `roadmap_v80.md` §0b records import **"new" mode as POSTPONED by the user**; A1 overlaps it, so
+reconcile rather than re-decide.
+
+---
+
+## PLAN §8 — Track B — pedagogy (UNBLOCKED; staged so each step stands alone)
+
+`bayesian_knowledge_tracing.md` is in `build_history/`. §0.1 evaluates it. The staging below follows
+from that evaluation, and its shape is: **instrument, then tag, then run BKT in the dark, then
+show it, and only then — maybe — let it control anything.**
+
+**B1 — the observations log (do this FIRST, and it can start today).** Append-only, per §13:
+`{userId, skillId, correct, evidence, storylineId, lessonId, timestamp}`. Two properties matter more
+than the schema: **record the FIRST attempt distinctly from retries** (§0.1's measurement), and
+record even when `skillId` is unknown — an observation tagged `null` is recoverable later, an
+observation never written is gone. **This is worth doing before any of Track A**, because every day
+it runs is a day of evidence BKT will have, and the existing counters cannot be replayed into it.
+
+**B2 — the skill registry and canonicalisation.** The piece §0.1(c) says the document omits. Model
+proposes an ID, the app resolves it against existing entries, near-misses are merged, and the
+resolution is recorded so a wrong merge is reversible. **Build the registry before the taggers**, or
+every tagger will mint its own dialect. This is also where the `de:` / language prefix and the
+target-vs-source question from §0.1(b) get settled.
+
+**B3 — tag NEW lessons at generation.** One lesson type first (vocabulary — the same choice §D3
+makes, and `_storyWordSources(d)` already collects the words). Every prompt that gains a skill field
+must still call `scriptPinNote` and record `_genMeta`. Do **not** backfill 321 topics until one type
+has been through QC.
+
+**B4 — BKT in SHADOW MODE.** Compute `pMastery` and show it nowhere. Run it alongside the existing
+`chapterComplete`/pass-mark gate and **log where the two disagree.** This is the measurement that
+tells you whether §5/§6 are worth adopting, and it costs nothing if the answer is no. It also
+surfaces the 97%-correct saturation problem (§0.1) as data rather than as a prediction.
+
+**B5 — surface it read-only.** The §11 aggregate views (vocabulary/grammar/word-forms/reading), and
+§8's corpus-vs-independent split, which is free once `evidence` is recorded. Still controlling
+nothing.
+
+**B6 — the scoped tutor.** *Not* the adaptive tutor of the user's §4 — the small one: a chapter-
+scoped window that knows the story up to and specifically about this chapter. It is independently
+useful, needs no BKT, and belongs with Track C's card work. §9's confidence-weighted chat evidence
+comes much later and needs an update rule the document does not specify.
+
+**B7 — mastery-driven progression (§5/§6). A PRODUCT DECISION, and possibly never.** It replaces a
+gate the user has ruled on repeatedly. Do not start it without an explicit ruling, and not before B4
+has shown what would actually change.
+
+**B8 — the corpus.** Automated meet & greet lessons like `sl_1271936135`, plus out-of-copyright
+texts. A content project as much as a code one, and it gates recommendation (§6 of the user plan):
+a recommender over 90 storylines recommends the same things to everyone.
+
+**B9 — prerequisites and CEFR (§14, §11).** Last. **CEFR mapping is the same language-knowledge
+ruling as §5's languages x lesson-types table** — a CEFR level per skill is a language judgement, so
+it belongs in data the model fills, not in a table the app ships.
+
+**Still true, and it constrains B4 hardest:** at a 3.0% error rate a difficulty policy has almost no
+learner signal to work with and must come from corpus statistics first. The two measurements already
+identified remain the right prerequisites — **inflection share** and **learner-known share** — and
+one pass over the same inventory yields both.
+
+## PLAN §9 — Cross-cutting risks
+
+**R1 — The single file is at 1.14 MB.** Every track adds to it. Nothing in the plan addresses it,
+and `check-inline.js` runtime and browser parse time both scale with it. **Decide before Track A
+whether the client stays one file**, because the ingest UI is the largest single addition proposed.
+
+**R2 — The static build will drift again.** It re-implements 19 functions. Every card in Track C
+either works in static mode or is deliberately absent, and `unit-static-selectlang-tts` only guards
+the refresher pairing. **Expect to extend that guard once per Track C session.**
+
+**R3 — Pricing implies auth, and auth is nowhere in this plan.** "Requires subscription to stably
+store progress", "only direct LLM use will cost" — none of that exists today. It is at least its own
+track and possibly its own product decision. **It should not be discovered mid-Track-B.**
+
+**R4 — The plan has no failure mode for the model.** Ingest, tutor, QC adjudication and term
+extraction all assume a working LLM. The app already handles "no LLM" gracefully; each new
+model-dependent feature needs the same, and the plan's own pricing model makes some of them
+*expected* to be unavailable.
+
+**R5 — Rule 24 applies to this document.** It is a plan, not a guard. Nothing here is protected
+until it is a test.
+
+---
+
+## PLAN §9b — THE DECISIONS STILL OUTSTANDING — the complete list
+
+Everything else in this document is buildable without asking. These are not.
+
+**D1. The languages x lesson-types table — RULED at the v80 cut (user chose the proposed option).**
+
+**Applicability is MODEL-DECLARED, CACHED AS DATA, TERNARY, WITH PROVENANCE.** Not a table the app
+ships, and not a question asked at every generation.
+
+The argument that decided it, kept because it is the reason and not just the outcome: the plan's own
+example proposed *"ova/ovo vs. taj/ta/to"* as Serbian articles. **Serbian has no articles.** Those
+are demonstratives, and the nearer analogue to definiteness in Serbian is **adjective aspect** —
+the definite/indefinite adjective forms (`star` / `stari`) — a different mechanism on a different
+word class. So the cell "Serbian x articles" is neither `true` nor `false`, and the honest answer
+*"no articles; definiteness surfaces through adjective morphology"* is **more useful to the
+generator than the boolean**, because it says what to teach instead. A boolean table is wrong on its
+first interesting cell, and the interesting cells are the only ones needing a table at all.
+
+**The shape:**
+
+- **Ternary plus a note**, never boolean: `yes` / `no` / `different-mechanism`, with a sentence.
+  The note is what turns a refused "cases" request for Italian into a useful preposition lesson.
+- **Cached in `languages.json`**, keyed by `(language, lessonType)`, **with `_genMeta`-style
+  provenance** — model, date, prompt version — exactly as lessons carry it. That is what makes this
+  a MEASUREMENT rather than an authored claim, which is the tier INTERNALS §4 permits, and what
+  makes it re-derivable when the prompt improves and auditable when it is wrong.
+- **A human override wins and is MARKED as an override**, distinguishable from a cached answer. The
+  user is the language authority this project trusts (`v75_g` is exactly that), and an override that
+  looks like a cache entry loses the ruling behind it.
+- **Asked once, not per generation.** Per-generation is non-deterministic — the same language must
+  not get a conjugation lesson on Tuesday and not on Wednesday — and pays tokens repeatedly for a
+  stable fact.
+
+**Why not the alternatives:** a hand-authored table scales badly across two growing axes (33
+languages x ~14 types) and caps quality at the maintainer's linguistics; no gating at all produces
+the incoherent lessons this is meant to prevent.
+
+**The honest cost, recorded rather than glossed:** a wrong CACHED answer is stickier than a wrong
+per-call one, because nothing re-asks. Provenance is the mitigation — a prompt-version change can
+invalidate and re-derive the affected cells.
+
+**Guard it the way this project already guards this shape:** a source SWEEP that fails when a lesson
+type has no applicability policy, mirroring `unit-script-pin-coverage`, which sweeps the source so a
+new prompt cannot skip `scriptPinNote`. Rule 32 — guard the enumeration, not the cells that happened
+to get filled.
+
+**Scope limit:** this decides only whether a lesson is OFFERED. Whether the generated lesson is any
+good remains QC's problem (§F). And the other half of the original request — **revealing the full
+phrase with the correct article and word form together** — needs no table and can ship at any time.
+
+*Unblocks: D2 (cases/articles), D3 (generic lessons) partly, B9 (CEFR, same mechanism).*
+
+**D2. Mastery-driven progression (BKT §5/§6, plan §8/B7).** Replaces the `coverageTarget` pass mark
+you have ruled on repeatedly. §8/B4 runs BKT in shadow mode first, so this can be decided from a
+disagreement log instead of a prediction. **Do not decide it now** — decide it when B4 has data.
+*Blocks: B7 only.*
+
+**D3. Corpus licence AND suitability.** `murmel-comics.org` page B is signed by an identifiable
+artist, so the licence question is concrete, not hypothetical. Separately, suitability is its own
+axis: page B is political satire, page A is about bereavement — both legitimate reading, neither
+automatically right for an auto-generated beginner corpus. *Blocks: B8, and the comic demo.*
+
+**D4. Uploaded images — RULED: STORED SERVER-SIDE (user, v80 cut).**
+
+Three consequences that follow immediately and are design constraints, not opinions:
+
+- **Images must NOT go into `lessons.json`.** It is a single JSON file that every test loads, that
+  `build-static.js` bakes wholesale, and that the corpus checks parse repeatedly. Base64 comic pages
+  would multiply its size by orders of magnitude and slow the entire suite. **Store as files in an
+  asset directory, reference by path from the topic record** — the same relationship `docs/` already
+  has to the corpus.
+- **The static build needs a decision it does not have yet.** `build-static.js` bakes lessons into
+  `docs/index.html`; it cannot bake megabytes of PNG. Either the static export omits images (and
+  image-derived chapters degrade to text-only), or it copies assets alongside and rewrites paths.
+  **Cheapest honest answer: text-only in static, and say so in the UI** rather than shipping a
+  storyline whose pages silently fail to load.
+- **Retention makes D3 sharper, not softer.** Storing a signed artist's page server-side is a
+  stronger act than transiently reading it. The licence question moves from "can we display this"
+  to "can we host this".
+
+**D5. Does the client stay ONE file?** `index.html` is 1.14 MB with a ~972 KB inline script, and the
+ingest UI is the largest single addition proposed. Note §2.5 shows the property is **already**
+partly relaxed — pdf.js and KaTeX both load from CDN — so the question is where the line actually
+is, not whether to cross it. *Blocks: nothing immediately; gets harder the longer it waits.*
+
+**D6. Observations log scope — RULED: BOTH, keyed by a stable local id an account can adopt
+(user, v80 cut).** Payment and accounts remain open; this decides only the key, which was the part
+that blocks §8/B1.
+
+**The design that follows, with the traps named:**
+
+- A client-generated stable id (UUID) in `localStorage`, written on first observation. Every
+  observation carries it. No account needed to start recording — which is what makes B1 startable
+  now.
+- **Adoption must be a LINK, not a rename.** An account accumulates a SET of local ids: one per
+  browser and device. Re-keying observations to a `userId` loses the ability to adopt a second
+  browser later, and breaks if two devices are adopted in either order.
+- **Therefore an observation's identity key is the local id, permanently**, and `userId` is a
+  resolved attribute. This is the choice that is expensive to reverse, so it is stated here rather
+  than discovered at implementation.
+- **Two traps to handle explicitly:** a browser adopted by account A and later signed into account
+  B (the observations do not move — they were A's evidence when made), and clearing `localStorage`
+  (the evidence is orphaned, not lost; an un-adopted id is simply never claimed).
+- Pseudonymous by construction, which is the right default for evidence collected before anyone has
+  agreed to anything.
+
+**D7. Does mixed-lesson composition REPLACE reinforce/extend (§D1)?** Replacing a shipped feature
+deserves its own release and its own decision, not a checkbox. *Blocks: the second half of D1.*
+
+**D8. Duplicate storyline titles — RESOLVED IN THE DATA (user renamed one to "Dough of the
+Ancients 2" at the v80 cut).**
+
+The earlier ruling was "keep both identical", which would have broken the `v79_k` fork marker for
+that pair. The rename removes the defect at its source and is the better fix — the marker renders
+the other storyline's `icon + title`, and two distinguishable titles is exactly what it needs.
+
+**The guard is still worth building, but it is now PREVENTIVE, not corrective**, and should be
+described that way rather than as a bug fix: for every fork in the corpus, the marker must be
+distinguishable from the open storyline's own label. Nothing in the data enforces unique titles, so
+a future duplicate would silently reproduce the defect. `unit-fork-display` already sweeps forks and
+can carry the assertion in a few lines. **Lower priority than it was — it now protects against a
+recurrence rather than fixing a live problem.**
+
+> **✅ SHIPPED as `v80_h`.** The rename was CONFIRMED in the tree first, as the note below asks
+> (0 duplicate-title groups across 91 storylines), so this landed as preventive. The marker now
+> falls back to naming the branch's own chapter, and `unit-fork-display` §8 injects a synthetic
+> duplicate AND an empty title so the sweep cannot pass vacuously. Revert-verified.
+
+**~~Note for the next data drop~~ — DISCHARGED at `v80_h`:** the rename has ARRIVED. The tree now
+carries "Dough of the Ancients 2" and 0 duplicate-title groups. Original note follows.
+
+**Note for the next data drop:** the tree at this cut still carries the OLD duplicate titles; the
+rename lives in the user's copy. The next `lessons.json` will bring it, and a title change is
+exactly the kind of quiet data movement the session protocol says to diff for rather than assume.
+
+## PLAN §9c — THE STORYLINE TITLE IS NEVER GENERATED FOR A NEW BOOK — diagnosed at the v80 cut
+
+**User report:** generating a multi-chapter German->French storyline skipped the title with
+`Storyline title: keeping existing "ein eichhoernchen trifft ein murmeltier — 1"`, and the title had
+to be made by hand afterwards.
+
+**Diagnosed, and it is a precondition that stopped being true.** `server.js:5348` guards the title
+generation with `v78_r`'s rule — *"only when there is none. A continuation must not rename a
+storyline the learner already has"* — which is correct and was a user ruling. But the storyline
+record is created **earlier in the same flow**, at `server.js:5207` and `5215`:
+
+```js
+upsertStoryline({ id: slId, title: chain[0], icon: '📖', chapters: chapterIds, ... })
+```
+
+`chain[0]` is the FIRST CHAPTER'S TOPIC NAME — here `"ein eichhoernchen trifft ein murmeltier — 1"`,
+complete with the auto-numbering suffix. **So by the time the guard asks "is there a title?", there
+always is one.** The `else` branch that calls `generateStorylineTitle` is unreachable for any
+storyline created through this path. The title is not skipped because the storyline is a
+continuation; it is skipped because a PLACEHOLDER was seeded as if it were an authored title.
+
+**The guard is right and must not be weakened** — `v78_r` exists because regenerating a title from
+the new chapters alone replaced a whole-story title with one about its tail. The fix is to make the
+guard able to tell a placeholder from a real title. Options, in preference order:
+
+1. **Do not seed a title at all** for a new storyline (`title: ''` or omitted), letting the existing
+   guard do exactly what it says. Cleanest, but every reader of `sl.title` must tolerate an empty
+   one until the post-pass runs — check the storyline list, the fork marker (which renders
+   `icon + title`), and `build-static.js`.
+2. **Mark the placeholder** — `titleAuto: true`, cleared when a real title is generated or the user
+   edits it. Explicit, survives a crash between the two steps, and makes "was this authored?"
+   answerable elsewhere too. **Recommended.**
+3. Compare `sl.title` to `chain[0]` and treat equality as absent. Cheapest, and wrong the moment a
+   user deliberately names a storyline after its first chapter.
+
+**Guard it where the claim is observable:** a new multi-chapter book gets a title that is NOT its
+first chapter's topic name, and an EXISTING storyline gaining a chapter keeps its title unchanged.
+Both halves are needed — the second is the `v78_r` ruling, and a fix that only asserts the first
+would re-open it.
+
+**Scope checked, not assumed:** the same `_slPre2` pattern guards the storyline SUMMARY at
+`server.js:5373`, but **`summary` is never seeded** by `upsertStoryline` — the only writes are the
+generated one and the user's edit. So the summary guard works as intended and **this is a
+title-only bug**. Fix the title; leave the summary path alone.
+
+## PLAN §10 — Suggested next three sessions — revised after the v80 rulings
+
+Four decisions landed at this cut (§9b D1, D4, D6, D8), which changes what is startable.
+
+1. **Repair and reconcile.** The two restored roadmap sections at the top of `roadmap_v80.md`'s open
+   block — strike what this plan supersedes **with a pointer**, keep what is still open. Then
+   `unit-story-unlocked-page` §6, the guard that does not discriminate under revert. Ends with a
+   roadmap that describes reality and one fewer guard that cannot fail.
+
+2. **C1 — the two progress-card gate bugs**, measured before edited (browse-forward-and-back skipping
+   comprehension; replay reaching comprehension before the story unlocked), with the
+   single-chapter 100% bar and the header-bar off-by-one folded in, since all three may share a root
+   cause in `_slProgressStats`. Highest user-visible value in the document.
+
+3. **Either of two now-unblocked one-session items**, whichever suits:
+   - **§8/B1, the observations log** — unblocked by D6. Append-only, first-attempt distinct from
+     retries, local-id keyed, recording even when `skillId` is unknown. **The only item whose value
+     DECAYS while it waits**, because the existing `{seen, wrong}` counters cannot be replayed.
+   - **The applicability cache** (D1) — model call, ternary + note, provenance, sweep guard. No UI,
+     no migration, and it is the prerequisite for cases/articles lessons and for CEFR.
+
+**Small and independent, for any session that finishes early:** the fork-marker fallback (D8, half a
+session, `unit-fork-display` already has the sweep), **F2** the malformed word-forms detector — the
+cheapest real win in the document — and **Track E**, printable export.
+
+**Still open, and none of it blocks the above:** the corpus licence and suitability question (D3,
+now sharper since images are retained), payment and accounts beyond the key design (D6), whether the
+client stays one file (D5, which only gets harder), and whether mixed lessons replace
+reinforce/extend (D7). **Mastery-driven progression (D2) should NOT be decided until §8/B4 has run
+BKT in shadow mode and produced a disagreement log** — deciding it now would be guessing.
+

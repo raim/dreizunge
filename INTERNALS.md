@@ -156,6 +156,16 @@ would have moved trimming from our code (which keeps the current chapter whole) 
 (which cuts blindly and reports nothing). **Any change that makes a prompt bigger must size the
 context window in the same commit.**
 
+**~~OPEN DEFECT (`v77_s`)~~ — CLOSED at `v80_c`: this was a MISATTRIBUTION, not a defect.**
+Measured across every state built in session 35: `_firstUnfinishedLessonIdx` returned the correct
+index (the unplayed comprehension lesson) in all of them, and the named prime suspect
+(`if (setComplete(d)) return -1;`) was never the exit taken. What actually goes to -1 is
+`showComplete`'s **local** `nextLessonIdx`, set on purpose by the `v71_s` line
+(`nextLessonIdx === C.lessonIdx && !C._review && _isStoryGatedLesson(lesson)`), so that Next cannot
+silently mean "replay the lesson you just played". The learner then falls to the below-mark branch,
+whose behaviour `unit-story-unlocked-page` §6 now pins. **`v77_s` did not cure this; there was
+nothing to cure. Do not chase it again.** The original note follows, kept for the reasoning.
+
 **OPEN DEFECT (`v77_s`) — `_firstUnfinishedLessonIdx` can return -1 with a lesson still unplayed.**
 User-reported: the story was unlocked, a comprehension lesson had never been played, and Next was
 greyed (pre-`v77_o`) / offered a replay. That state requires the helper to have returned -1, because

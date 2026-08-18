@@ -137,13 +137,51 @@ is now preventive, not corrective.
   row follows, and that an RTL target language flips the word bank.
 - **`v79_g`** — play a script-primer lesson: the glyph on render, the tapped chip after.
 
-## 6. BUILDABLE NOW, no ruling needed
+## 6. TASK ONE: CONSOLIDATE THE DOCUMENTS — four files become two
 
-**In `implementation_plan.md` §10's order:** reconcile the two RESTORED roadmap sections at the top
-of `roadmap_v80.md`'s open block (strike what the plan supersedes **with a pointer**), then the
-non-discriminating guard, then §C1's gate bugs. After that, either **§8/B1 the observations log**
-(the only item whose value DECAYS while it waits — the existing `{seen, wrong}` counters cannot be
-replayed) or **the D1 applicability cache**.
+**Do this first, in one session, and do not split it.** Right now the same facts live in up to four
+places and the durable one is the least complete — the two v80 diagnoses landed in HANDOVER, this
+prompt and the plan, and were **missing from `roadmap_v80.md`** until they were noticed. That is the
+whole argument.
+
+**Target state — TWO documents:**
+
+- **`roadmap_v80.md`** — durable. Protocol, standing rules, shipped table, open items, rulings,
+  diagnoses. Per base version. Searched, never read cold.
+- **ONE per-cut document** — this prompt, having absorbed `HANDOVER.md`. It is what the user pastes
+  to start a session and the only thing that describes "now". `HANDOVER.md` and
+  `SESSION_PROMPT_*.md` are the same document today and that duplication is what rotted: this
+  prompt went stale in four ways in one session while the roadmap stayed correct, because it was
+  restating handover content instead of owning anything.
+
+**The work, in order:**
+
+1. **Reconcile the two RESTORED sections** at the top of `roadmap_v80.md`'s open block against
+   `implementation_plan.md`. Strike what the plan supersedes **WITH A POINTER**; keep what is still
+   open. **Never delete a bullet silently** — that is how the reason for a decision is lost.
+2. **Fold `implementation_plan.md` INTO the roadmap and delete it.** It is a one-off evaluation, not
+   a per-cut document; its §10 and its diagnoses are roadmap material. Keeping it alive creates a
+   second home for open items, which is how they went missing in the first place. Do this in the
+   same pass as step 1 — both need the same 400 lines read, and reading them twice is the cost.
+3. **Merge `HANDOVER.md` into this prompt and delete it.** Nothing in `test/` or any script
+   references it (checked at the v80 cut) — only three prose mentions, in the roadmap and here.
+4. **Extend `unit-roadmap-version` to guard the NUMBERS.** The prompt's `expect NNN checks` must
+   match the actual suite, and its corpus counts must match `lessons.json`. Three of the four stale
+   things this session were exactly these, and all were machine-checkable. **This is the step that
+   makes the consolidation honest**, because prose work cannot be revert-verified the way code can —
+   without it, this session ends with a green suite, a lot of churn, and no evidence it went well.
+
+**Do not skip step 4 for time.** A consolidation with no guard is a note telling the next session
+the documents are consistent, and rule 24 says a note is not a guard.
+
+## 6b. THEN, buildable with no ruling needed
+
+**In the folded plan's order:** `unit-story-unlocked-page` §6, the guard that does not discriminate
+under revert. Then **§C1's two progress-card gate bugs**, measured before edited, with the
+single-chapter 100% bar and the header-bar off-by-one folded in — they may share a root cause in
+`_slProgressStats`. Then either **§8/B1 the observations log** (the only item whose value DECAYS
+while it waits — the existing `{seen, wrong}` counters cannot be replayed) or **the D1 applicability
+cache**.
 
 **Small, independent, for a session that finishes early:** the fork-marker fallback (§9b/D8),
 **§F2** the malformed word-forms detector — `"...across the path.___"` with answer `cast`, broken as

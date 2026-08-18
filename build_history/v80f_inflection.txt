@@ -1,0 +1,55 @@
+THE INFLECTION SHARE — measured at the v80_e cut
+
+chapters measured (space-separated languages) : 301
+highlightable words in them                   : 6707
+
+  EXACT     whole token in the story            :   2468  36.8%
+  SUBSTR    inside a token (compound)           :    702  10.5%
+  --------  WHAT THE APP MATCHES TODAY          :   3170  47.3%
+  NORM      matches once apostrophes/dashes fold:     14  0.2%   <- FREE, one line, no model
+  NEAR/stem shares a stem with a token          :    635  9.5%   <- credible inflection
+  NEAR/edit only within edit distance           :    444  6.6%   <- mostly NOISE, see below
+  ABSENT    nothing resembles it                :   2444  36.4%   <- CEILING: no matcher helps
+
+  credible ceiling  (today + norm + stem)      : 56.9%
+  optimistic ceiling (+ edit distance too)     : 63.6%
+
+by target language — inflection load differs enormously:
+  en     n= 2174   today  58.0%   +stem   4.8%   absent  31.9%
+  it     n= 1587   today  43.8%   +stem  15.1%   absent  35.9%
+  de     n=  965   today  37.6%   +stem   9.8%   absent  46.5%
+  ar     n=  561   today  45.3%   +stem   5.0%   absent  30.8%
+  sr     n=  507   today  31.6%   +stem  17.6%   absent  43.2%
+  fr     n=  390   today  42.1%   +stem  11.3%   absent  42.3%
+  lb     n=  231   today  63.2%   +stem   4.8%   absent  26.4%
+  es     n=  100   today  46.0%   +stem  11.0%   absent  40.0%
+  sw     n=   74   today  40.5%   +stem   4.1%   absent  35.1%
+
+space-less languages, reported APART (the token model does not apply):
+  chapters 13, words 177, matched by substring today 30.5%
+
+sample STEM pairs — the credible band:
+  STEM  fr  mordre  ->  mord
+  STEM  fr  tomber  ->  tombe
+  STEM  fr  sauter  ->  saute
+  STEM  fr  denses  ->  dense
+  STEM  fr  nécessiter  ->  nécessité
+  STEM  fr  mords  ->  mord
+  STEM  fr  endormies  ->  endormie
+  STEM  fr  tombent  ->  tombe
+  STEM  fr  emporte  ->  emportant
+  STEM  fr  emporter  ->  emportant
+
+sample EDIT-only pairs — judge the noise yourself:
+  EDIT  fr  dence  ->  dense
+  EDIT  fr  chaud  ->  chaque
+  EDIT  fr  vois  ->  fois
+  EDIT  fr  sais  ->  mais
+  EDIT  fr  suis  ->  puis
+  EDIT  fr  voient  ->  vent
+  EDIT  fr  sais  ->  mais
+  EDIT  fr  savent  ->  vent
+  EDIT  de  großes  ->  grosses
+  EDIT  de  klein  ->  ein
+
+(reported, not asserted — see the header)

@@ -10753,6 +10753,14 @@
           "_arcMode": "reinforce"
         },
         {
+          "id": "ls_1787036743555_em8c",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
+        },
+        {
           "id": 9,
           "type": "comprehension",
           "title": "Das Eichhörnchen und das Murmeltier",
@@ -10806,14 +10814,6 @@
             "at": "2026-08-17T20:55:08.813Z"
           },
           "_arcMode": "reinforce"
-        },
-        {
-          "id": "ls_1787036743555_em8c",
-          "type": "mixed",
-          "title": "🔀 Mischübung",
-          "icon": "🔀",
-          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
-          "perType": 3
         }
       ],
       "generationStats": {
@@ -10838,7 +10838,7 @@
         ]
       },
       "generatedAt": "2026-08-17T20:38:02.833Z",
-      "updatedAt": "2026-08-18T07:05:43.558Z",
+      "updatedAt": "2026-08-18T13:22:59.087Z",
       "createdBy": "admin"
     },
     {
@@ -11374,6 +11374,14 @@
           "qcBy": "translategemma:12b"
         },
         {
+          "id": "ls_1787059371457_onji",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
+        },
+        {
           "id": 9,
           "type": "comprehension",
           "title": "Das Eichhörnchen und das Murmeltier",
@@ -11455,7 +11463,7 @@
         }
       },
       "generatedAt": "2026-08-17T20:20:06.578Z",
-      "updatedAt": "2026-08-18T08:01:35.271Z",
+      "updatedAt": "2026-08-18T13:22:52.974Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-18T07:34:47.689Z"
@@ -13508,183 +13516,6 @@
           }
         },
         {
-          "id": 6,
-          "type": "conjugation",
-          "title": "Spremanje za put u Beč",
-          "desc": "Glagoli za planiranje puta.",
-          "icon": "🚂",
-          "conjugations": [
-            {
-              "infinitive": "biti",
-              "source": "sein",
-              "tense": "present",
-              "forms": [
-                {
-                  "pronoun": "ja",
-                  "form": "sam"
-                },
-                {
-                  "pronoun": "ti",
-                  "form": "si"
-                },
-                {
-                  "pronoun": "on/ona/ono",
-                  "form": "je"
-                },
-                {
-                  "pronoun": "mi",
-                  "form": "smo"
-                },
-                {
-                  "pronoun": "vi",
-                  "form": "ste"
-                },
-                {
-                  "pronoun": "oni/one/ona",
-                  "form": "su"
-                }
-              ]
-            },
-            {
-              "infinitive": "ići",
-              "source": "gehen",
-              "tense": "present",
-              "forms": [
-                {
-                  "pronoun": "ja",
-                  "form": "idem"
-                },
-                {
-                  "pronoun": "ti",
-                  "form": "ideš"
-                },
-                {
-                  "pronoun": "on/ona/ono",
-                  "form": "ide"
-                },
-                {
-                  "pronoun": "mi",
-                  "form": "idemo"
-                },
-                {
-                  "pronoun": "vi",
-                  "form": "idete"
-                },
-                {
-                  "pronoun": "oni/one/ona",
-                  "form": "idu"
-                }
-              ]
-            },
-            {
-              "infinitive": "govoriti",
-              "source": "sprechen",
-              "tense": "present",
-              "forms": [
-                {
-                  "pronoun": "ja",
-                  "form": "govorim"
-                },
-                {
-                  "pronoun": "ti",
-                  "form": "govoriš"
-                },
-                {
-                  "pronoun": "on/ona/ono",
-                  "form": "govori"
-                },
-                {
-                  "pronoun": "mi",
-                  "form": "govorimo"
-                },
-                {
-                  "pronoun": "vi",
-                  "form": "govorite"
-                },
-                {
-                  "pronoun": "oni/one/ona",
-                  "form": "govore"
-                }
-              ]
-            },
-            {
-              "infinitive": "kupiti",
-              "source": "kaufen",
-              "tense": "present",
-              "forms": [
-                {
-                  "pronoun": "ja",
-                  "form": "kupujem"
-                },
-                {
-                  "pronoun": "ti",
-                  "form": "kupuješ"
-                },
-                {
-                  "pronoun": "on/ona/ono",
-                  "form": "kupuje"
-                },
-                {
-                  "pronoun": "mi",
-                  "form": "kupujemo"
-                },
-                {
-                  "pronoun": "vi",
-                  "form": "kupujete"
-                },
-                {
-                  "pronoun": "oni/one/ona",
-                  "form": "kupuju"
-                }
-              ]
-            },
-            {
-              "infinitive": "videti",
-              "source": "sehen",
-              "tense": "present",
-              "forms": [
-                {
-                  "pronoun": "ja",
-                  "form": "vidim"
-                },
-                {
-                  "pronoun": "ti",
-                  "form": "vidiš"
-                },
-                {
-                  "pronoun": "on/ona/ono",
-                  "form": "vidi"
-                },
-                {
-                  "pronoun": "mi",
-                  "form": "vidimo"
-                },
-                {
-                  "pronoun": "vi",
-                  "form": "vidite"
-                },
-                {
-                  "pronoun": "oni/one/ona",
-                  "form": "vide"
-                }
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "conjugation",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": 5,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 746,
-            "completionTokens": 848,
-            "ms": 360282,
-            "at": "2026-08-11T13:49:55.225Z"
-          },
-          "_arcMode": "reinforce"
-        },
-        {
           "difficulty": 1,
           "id": "ls_1786699971785",
           "type": "conjugation",
@@ -14019,7 +13850,7 @@
         }
       },
       "generatedAt": "2026-08-11T13:37:26.046Z",
-      "updatedAt": "2026-08-14T09:52:57.560Z",
+      "updatedAt": "2026-08-18T12:28:59.650Z",
       "createdBy": "admin"
     },
     {

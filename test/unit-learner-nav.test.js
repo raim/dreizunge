@@ -369,9 +369,15 @@ console.log('  static loadSaved parity + i18n keys: OK')
   // v71_s: _firstUnfinishedLessonIdx gained two dependencies — a learner must never be auto-resumed
   // INTO a comprehension lesson whose story is still locked (v60 nav auto-starts whatever this
   // returns, which would put them on questions about text they have not been shown).
+  // v80_b: the story-lock rule moved out of this function into `_storyLockedLesson`, so that the
+  // REPLAY scan (`_firstCoverageShortLessonIdx`) could apply the same rule instead of a second copy
+  // of it. It is spliced in here rather than stubbed: a stub would let this section pass while the
+  // real rule was broken, which is the whole failure mode the extraction style exists to avoid.
+  // The CLAIM below is unchanged — only where the rule is defined moved.
   const fu = new Function('APP', 'lessonCountsFor', 'setComplete', '_firstVisibleMixedIdx',
     '_isStoryGatedLesson', 'storyUnlocked',
-    ext(html, '_firstUnfinishedLessonIdx') + '\nreturn _firstUnfinishedLessonIdx;');
+    ext(html, '_storyLockedLesson') + '\n'
+    + ext(html, '_firstUnfinishedLessonIdx') + '\nreturn _firstUnfinishedLessonIdx;');
   const notGated = () => false, unlocked = () => true;
   const mixedIdx = new Function(ext(html, '_firstVisibleMixedIdx') + '\nreturn _firstVisibleMixedIdx;')();
   const d = { topic: 'MixCh', lessons: [ { id: '1' }, { id: '6', type: 'word_forms' }, { id: 'm', type: 'mixed' } ] };

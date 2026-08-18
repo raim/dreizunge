@@ -290,6 +290,74 @@ const drawn = (html) => new Set(topics.filter(t =>
   console.log('  _cardErrors() empty after every render: OK');
 }
 
+// ── 8. v80_h / PLAN §9b/D8 — the fork marker must DISTINGUISH ──────────────
+// The marker names the OTHER storyline so a learner knows which story the branch leads to. A label
+// equal to the open storyline's own — or empty — names nothing, and the fork becomes two unlabelled
+// columns.
+//
+// ⚠️ PREVENTIVE, not corrective, and the distinction matters for how this is written. The duplicate
+// pair that prompted it was resolved in the DATA: the user renamed one to "Dough of the Ancients 2",
+// and that rename IS in the tree — measured here, 0 duplicate-title groups across the storylines.
+// So a sweep of the corpus alone would pass today and would keep passing right up until the drop
+// that reintroduces a duplicate. That is rule 24 in test form: the sweep is necessary but it cannot
+// be the whole guard.
+//
+// So this section does both: it sweeps every real fork, AND it injects a synthetic duplicate title
+// to prove the fallback fires. Without the injection the section is green for the wrong reason.
+{
+  const titles = storylines.map(s => String(s.title || '').trim().toLowerCase());
+  const dupeGroups = titles.filter((t, i) => t && titles.indexOf(t) !== i).length;
+  assert.strictEqual(dupeGroups, 0,
+    'baseline: the corpus has no duplicate storyline titles (the user\'s rename landed). If this ' +
+    'fails, the corrective case is LIVE again and the fallback below is load-bearing, not preventive');
+
+  // (a) every real fork: the marker is non-empty and differs from the open storyline's own label.
+  let checked = 0;
+  for (const p of PAIRS) {
+    const open = storylines.find(s => s.id === p.openSl);
+    const html = renderSl(p.openSl);
+    const openLbl = (((open && open.icon) || '📖') + ' ' + String((open && open.title) || '')).trim();
+    const marks = [...html.matchAll(/role="button"[^>]*_openStorylineById\(&#39;([^&]+)&#39;\)[^>]*>([^<]*)</g)]
+      .concat([...html.matchAll(/role="button"[^>]*_openStorylineById\('([^']+)'\)[^>]*>([^<]*)</g)]);
+    for (const m of marks) {
+      const label = m[2].trim();
+      if (!label) continue;                       // the open column's empty row, by design
+      assert.notStrictEqual(label, openLbl,
+        `${p.openSl}: a fork marker reads "${label}", which is the open storyline's own label — ` +
+        'the learner cannot tell the branches apart');
+      checked++;
+    }
+  }
+  assert.ok(checked > 0, 'non-vacuity: at least one fork marker was actually inspected');
+  console.log('  every fork marker distinguishes itself from the open deck: OK (' + checked + ' markers)');
+
+  // (b) THE DISCRIMINATOR — force the case the corpus does not contain. The alternative storyline
+  // is retitled to exactly the open one's title; the marker must still distinguish.
+  const p = PAIRS[0];
+  const openSl = storylines.find(s => s.id === p.openSl);
+  const altSl = storylines.find(s => s.id === p.altSl);
+  const openLbl = (((openSl && openSl.icon) || '📖') + ' ' + String((openSl && openSl.title) || '')).trim();
+  for (const [label, patch] of [
+    ['a DUPLICATE title', { title: openSl.title, icon: openSl.icon }],
+    ['an EMPTY title',    { title: '' }],
+  ]) {
+    const forced = storylines.map(s => (s.id === altSl.id ? Object.assign({}, s, patch) : s));
+    C.run(`APP.storylines = ${JSON.stringify(forced)}; true;`, 'force');
+    const html = renderSl(p.openSl);
+    const marks = [...html.matchAll(/_openStorylineById\((?:&#39;|')([^&']+)(?:&#39;|')\)[^>]*>([^<]*)</g)]
+      .map(m => m[2].trim()).filter(Boolean);
+    assert.ok(marks.length > 0, `${label}: a marker is still drawn`);
+    for (const lbl of marks) {
+      assert.notStrictEqual(lbl, openLbl,
+        `${label}: the marker fell back to "${lbl}", which still equals the open deck's label`);
+      assert.ok(lbl.replace(/^\S+\s*/, '').length > 0,
+        `${label}: the marker fell back to an icon with no text — it names nothing`);
+    }
+    console.log(`  fallback fires for ${label}: "${marks[0]}"`);
+  }
+  C.run(`APP.storylines = ${JSON.stringify(storylines)}; true;`, 'restore');
+}
+
 // ── What this test does NOT establish (rule 34) ────────────────────────────
 // • It reads MARKUP. That the wrapper's onclick actually wins over the inner card's `loadSaved` is
 //   a browser event-dispatch fact; `pointer-events:none` on the inner block is asserted as the

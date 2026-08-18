@@ -166,14 +166,25 @@ const settle = () => new Promise(r => setTimeout(r, 50));
     'forward from the entry card starts the lesson the learner came to play');
   console.log('  entry: chapter -> summary card -> the lesson');
 
-  // Arriving from the next-chapter-unlocked card must NOT stack a second interstitial.
-  C.run(`APP._shown = null; APP._started = null; APP._skipEntryCard = true;
-    loadSaved(${JSON.stringify(topic.id)}); true;`, 'from-unlock');
+  // ~~Arriving from the next-chapter-unlocked card must NOT stack a second interstitial.~~
+  // WITHDRAWN at v80_e, because the condition it protected against cannot occur any more. That
+  // card is DELETED and merged into this one (user ruling, PLAN §C2), so there is exactly one
+  // starter card per chapter and nothing for it to stack with. `APP._skipEntryCard` — the flag
+  // this section drove — went with it.
+  //
+  // Re-asserted as the property that actually matters now, which is the same property stated
+  // without the deleted machinery: entering a chapter shows the card ONCE, and going forward from
+  // it lands in the lesson rather than on another card.
+  C.run(`APP._shown = null; APP._started = null;
+    loadSaved(${JSON.stringify(topic.id)}); true;`, 're-enter');
   await settle();
-  assert.notStrictEqual(C.run(`APP._shown`), 'summary-screen',
-    'arriving from the next-chapter card does NOT stack a second interstitial');
-  assert.strictEqual(C.run(`APP._started`), idx, 'it goes straight into the lesson');
-  console.log('  no double interstitial after the next-chapter card');
+  assert.strictEqual(C.run(`APP._shown`), 'summary-screen', 're-entering shows the one starter card');
+  C.run(`document.getElementById('sum-next').onclick(); true;`, 'start');
+  assert.strictEqual(C.run(`APP._started`), idx,
+    'and forward from it lands in the lesson, not on a second interstitial');
+  assert.ok(!/_skipEntryCard/.test(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8')),
+    'the skip flag is gone with the card it existed for — if it returns, so has the double card');
+  console.log('  one starter card per chapter, forward goes to the lesson');
   
 })().catch(e => { console.error(e); process.exit(1); });
 

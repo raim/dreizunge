@@ -1491,8 +1491,12 @@ console.log('  completion card: full storyboard framed by chapter state: OK');
     assert.ok(width(sl), 'the storyline page declares a max-width');
     assert.strictEqual(width(card), width(sl),
       'every page of the progress-card walk shares the storyline page\'s column width');
-    const CARD_SCREENS = ['complete-screen', 'summary-screen', 'unlocked-screen',
+    // v80_e: 'unlocked-screen' is DELETED — the next-chapter-unlocked card was merged into the
+    // entry card ('summary-screen'), which now serves every chapter. Four pages, not five.
+    const CARD_SCREENS = ['complete-screen', 'summary-screen',
                           'unlockstory-screen', 'finished-screen'];
+    assert.ok(!/<div id="unlocked-screen"/.test(ROOT_HTML),
+      'the merged-away next-chapter-unlocked card has not come back under its old id');
     for (const id of CARD_SCREENS) {
       const tag = (ROOT_HTML.match(new RegExp('<div id="' + id + '"[^>]*>')) || [])[0] || '';
       assert.ok(tag, `${id} exists in the markup`);
@@ -1504,7 +1508,8 @@ console.log('  completion card: full storyboard framed by chapter state: OK');
     // only the title row, so the header changed shape as the learner moved through the walk. The
     // parts are asserted per card because a missing bar is invisible otherwise: the card still
     // renders, it just quietly stops matching the page.
-    for (const pre of ['comp', 'sum', 'unl', 'us', 'fin']) {
+    // v80_e: 'unl' is gone — that card was merged into 'sum', which now starts every chapter.
+    for (const pre of ['comp', 'sum', 'us', 'fin']) {
       for (const part of ['-hdr', '-hdr-title', '-hdr-home', '-hdr-prog-bar', '-hdr-prog-txt', '-storyboard']) {
         assert.ok(ROOT_HTML.includes('id="' + pre + part + '"'),
           `${pre}${part} exists — every card header is the storyline page's header`);
@@ -1513,7 +1518,7 @@ console.log('  completion card: full storyboard framed by chapter state: OK');
       assert.ok(ROOT_HTML.indexOf('id="' + pre + '-hdr"') < ROOT_HTML.indexOf('id="' + pre + '-storyboard"'),
         `${pre}: the storyboard sits directly under the header`);
     }
-    // One renderer fills all five, so they cannot drift apart again.
+    // One renderer fills all four, so they cannot drift apart again.
     assert.ok(/function _cardHeader\(/.test(ROOT_HTML),
       'a single _cardHeader fills every card header');
 

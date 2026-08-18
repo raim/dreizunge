@@ -62,4 +62,107 @@ for (const { re, what } of claims) {
 }
 console.log(`  ${checked} version claim(s) in the protocol block name ${base}`);
 
+// ── The per-cut prompt's NUMBERS, against the tree ───────────────────────────
+// v80_d. The document set was consolidated to two files: this roadmap (durable) and ONE session
+// prompt (per-cut). `HANDOVER.md` and `implementation_plan.md` were folded in and deleted.
+//
+// The prompt is the only document that states "now", and at the v80 cut THREE of its four stale
+// claims were numbers — the expected check counts and the corpus counts — every one of them
+// machine-checkable against the tree. Prose work cannot be revert-verified the way code can, so
+// without this the consolidation would end as a green suite, a lot of churn, and no evidence.
+// Rule 24: a note telling the next session to check something is not a guard.
+//
+// Scope, deliberately narrow: this pins NUMBERS the prompt asserts, not its prose.
+const promptFiles = fs.readdirSync(path.join(root, 'build_history'))
+  .map(f => /^SESSION_PROMPT_v(\d+)(?:_([a-z]))?\.md$/.exec(f))
+  .filter(Boolean)
+  .map(m => ({ file: m[0], n: Number(m[1]), pt: m[2] || '' }))
+  .sort((a, b) => a.n - b.n || a.pt.localeCompare(b.pt));
+assert.ok(promptFiles.length, 'build_history contains at least one SESSION_PROMPT_v*.md');
+const prompt = promptFiles[promptFiles.length - 1];
+const ptext = fs.readFileSync(path.join(root, 'build_history', prompt.file), 'utf8');
+
+// The consolidation is itself asserted: recreating either deleted file re-opens the second home for
+// open items that this cut closed. Named explicitly so a future session has to decide, not drift.
+for (const gone of ['HANDOVER.md', 'implementation_plan.md']) {
+  assert.ok(!fs.existsSync(path.join(root, 'build_history', gone)),
+    `build_history/${gone} was folded into the roadmap/prompt and deleted at the v80_d cut — ` +
+    'recreating it re-creates the duplication that let the v80 diagnoses go missing from the ' +
+    'durable document. If it is genuinely wanted back, delete this assertion deliberately.');
+}
+assert.strictEqual(promptFiles.length, 1,
+  `exactly one session prompt should exist (found ${promptFiles.length}: ` +
+  `${promptFiles.map(p => p.file).join(', ')}) — the convention is to RENAME the prompt at each ` +
+  'cut, not to keep the previous one alongside');
+
+// ── 1. The four baseline expectations vs. the actual suite ───────────────────
+// Counted from run.js rather than by running it: this test is INSIDE the suite it would run.
+const runjs = fs.readFileSync(path.join(root, 'test', 'run.js'), 'utf8');
+
+// `expect NNN checks` / `expect NNN` in the prompt's baseline block.
+const full = /node test\/run\.js\s+→ expect (\d+) checks/.exec(ptext);
+const quick = /node test\/run\.js --quick\s+→ expect (\d+)/.exec(ptext);
+assert.ok(full && quick,
+  `${prompt.file} states its baseline as "node test/run.js → expect NNN checks" and ` +
+  '"--quick → expect NNN" — if that block was reworded, update this guard');
+
+// The count is derivable STATICALLY: run.js increments `total` once per run() call, and the e2e
+// block is the only conditional group (`if (!quick) { ... } else { ... }`). So the quick count is
+// every run() call outside that block and the full count is all of them. Counted from source
+// rather than by executing the suite, because THIS TEST IS IN THE SUITE — spawning it here would
+// recurse. Comment lines and the function's own definition are excluded; anything else that looks
+// like a call is one.
+const rl = runjs.split('\n');
+const qStart = rl.findIndex(l => l.trim() === 'if (!quick) {');
+const qEnd = rl.findIndex((l, i) => i > qStart && l.trim() === '} else {');
+assert.ok(qStart > 0 && qEnd > qStart,
+  'run.js still groups the e2e tests in `if (!quick) { ... } else { ... }` — if that changed, ' +
+  'this counting rule needs revisiting rather than re-pinning');
+const isCall = l => !/^\s*\/\//.test(l) && !/function run\(/.test(l) && /(?<![\w.])run\(/.test(l);
+const e2eCount = rl.slice(qStart, qEnd).filter(isCall).length;
+const quickCount = rl.filter((l, i) => !(i >= qStart && i < qEnd)).filter(isCall).length;
+const fullCount = quickCount + e2eCount;
+
+assert.strictEqual(Number(full[1]), fullCount,
+  `${prompt.file} says the full suite is ${full[1]} checks; run.js contains ${fullCount} run() ` +
+  'calls. Whichever is wrong, the prompt is the document that claims to describe "now".');
+assert.strictEqual(Number(quick[1]), quickCount,
+  `${prompt.file} says --quick is ${quick[1]} checks; run.js has ${quickCount} outside the e2e block.`);
+assert.ok(e2eCount > 0, 'non-vacuity: the e2e block contains checks, so the two counts differ');
+console.log(`  ${prompt.file} states baseline ${full[1]} / ${quick[1]}`);
+
+// ── 2. The corpus counts vs. lessons.json et al ──────────────────────────────
+// These are the ones that actually rotted: HANDOVER said 321 topics / 90 storylines at the v80 cut
+// while the tree held 324 / 91, and it had been written FOUR MINUTES after lessons.json — so the
+// number was carried, not measured. That is the whole reason this section exists.
+const store = JSON.parse(fs.readFileSync(path.join(root, 'lessons.json'), 'utf8'));
+const langs = JSON.parse(fs.readFileSync(path.join(root, 'languages.json'), 'utf8'));
+const ui = JSON.parse(fs.readFileSync(path.join(root, 'ui.json'), 'utf8'));
+
+const corpus = /\*\*(\d+) topics, (\d+) storylines, (\d+) languages, (\d+) `en` keys\*\*/.exec(ptext);
+assert.ok(corpus,
+  `${prompt.file} states its corpus as "**N topics, N storylines, N languages, N \`en\` keys**" — ` +
+  'if that sentence was reworded, update this guard rather than dropping it');
+
+const want = [
+  ['topics',     Number(corpus[1]), (store.topics || []).length,      'lessons.json'],
+  ['storylines', Number(corpus[2]), (store.storylines || []).length,  'lessons.json'],
+  ['languages',  Number(corpus[3]), Object.keys(langs).length,        'languages.json'],
+  ['en keys',    Number(corpus[4]), Object.keys(ui.en || {}).length,  'ui.json'],
+];
+for (const [what, stated, actual, src] of want) {
+  assert.strictEqual(stated, actual,
+    `${prompt.file} says ${stated} ${what}, but ${src} holds ${actual}. The PROMPT is the thing to ` +
+    'fix: it describes "now", and a carried count is how three of the four stale items at the v80 ' +
+    'cut happened. Measure, then edit the prompt.');
+}
+console.log(`  corpus counts agree with the tree: ${want.map(w => w[2] + ' ' + w[0]).join(', ')}`);
+
+// ── 3. The prompt names the version it was cut at ────────────────────────────
+const pv = /APP_VERSION = '([^']+)'/.exec(ptext);
+assert.ok(pv, `${prompt.file} states APP_VERSION — if reworded, update this guard`);
+assert.strictEqual(pv[1], vm[1],
+  `${prompt.file} says APP_VERSION = '${pv[1]}' but server.js says '${vm[1]}'`);
+console.log(`  prompt names APP_VERSION ${pv[1]}`);
+
 console.log('unit-roadmap-version: ALL PASSED');

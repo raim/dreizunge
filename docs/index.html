@@ -1419,56 +1419,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <button class="comp-ico primary" id="sum-next">→</button>
     </div>
     <div class="comp-title" id="sum-title" style="margin-top:16px">The story so far</div>
-  </div>
-</div>
-
-<!-- ══ NEXT CHAPTER UNLOCKED ═══════════════════════════════════════════
-     v77_i: the fourth page of the progress-card walk (roadmap §0c). Finishing a chapter opens the
-     next one, and until now that moment passed silently — Next loaded the next chapter directly,
-     so the thing the learner had just EARNED was never named. This card names it, then carries
-     them in.
-
-     It sits ON the existing path rather than beside it: the same Next, the same destination, one
-     acknowledgement in between. ← returns to the progress card, so the walk stays two-way. -->
-<div id="unlocked-screen" class="screen card-screen">
-  <div class="sl-screen-hdr" id="unl-hdr" style="text-align:left">
-    <div class="sl-screen-title-row">
-      <button class="sl-screen-home" onclick="goLandingClean()" id="unl-hdr-home" title="">🌍</button>
-      <span class="sl-screen-title" id="unl-hdr-title" style="cursor:pointer" role="button" tabindex="0"
-            onclick="compBackToStory()"
-            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
-    </div>
-    <div style="height:5px;background:var(--gray-mid);border-radius:2px;overflow:hidden;margin-top:6px">
-      <div id="unl-hdr-prog-bar" style="height:100%;background:var(--green);border-radius:2px;transition:width .3s;width:0%"></div>
-    </div>
-    <div id="unl-hdr-prog-txt" style="font-size:11px;font-weight:800;color:var(--gray-dark);text-align:right;padding:2px 0 0;opacity:.8"></div>
-  </div>
-  <div class="comp-body">
-  <div id="unl-storyboard" style="display:none;margin-top:12px"></div>
-    <div style="text-align:center;font-size:40px;line-height:1.1;margin-top:14px" id="unl-icon">🔓</div>
-    <div class="comp-title" id="unl-title">Next chapter unlocked!</div>
-    <div id="unl-chapter" style="margin-top:14px;text-align:center;font-size:16px;font-weight:900;color:var(--green-dark)"></div>
-    <div id="unl-progress" style="margin-top:14px;text-align:left"></div>
-    <!-- v77_q: the story summary, as on the entry card — this IS the entry card for chapters 2..N.
-         The short collapsible "how the game works" text the user has planned belongs here too, and
-         on the entry card, from the one place both read. -->
-    <!-- v77_r (user): the summary sits in the SAME bordered field as every other body text on the
-         card, with the same read-aloud button (and the translate button when a translation exists),
-         instead of being loose prose. One field shape means one set of affordances: wherever there
-         is text to read, there is a way to hear it. -->
-    <div id="unl-sumbox" style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:var(--white)">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-        <span style="font-size:20px">📖</span>
-        <span style="font-size:13px;font-weight:900;color:var(--green-dark)" id="unl-sumbox-lbl"></span>
-        <button class="spk-ico" id="unl-sum-xlate" style="display:none;margin-left:auto;font-size:11px;font-weight:800;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Nunito,sans-serif"></button>
-        <button class="spk-ico" id="unl-sum-spk" title="">🔊</button>
-      </div>
-      <div id="unl-sumtext" dir="auto" style="font-size:15px;color:var(--text);line-height:1.65"></div>
-    </div>
-    <div id="unl-actions" style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:18px;flex-wrap:wrap">
-      <button class="comp-ico" id="unl-back">←</button>
-      <button class="comp-ico primary" id="unl-next">→</button>
-    </div>
+    <!-- v80_e: names the chapter being opened, on a chapter arrival only. Carried over verbatim
+         from the deleted next-chapter-unlocked card's #unl-chapter, styling included, so the
+         merged card looks like the one it replaces rather than like a new page. -->
+    <div id="sum-chapter" style="display:none;margin-top:8px;text-align:center;font-size:16px;font-weight:900;color:var(--green-dark)"></div>
   </div>
 </div>
 
@@ -5776,6 +5730,14 @@ const STATIC_LESSONS = [
         "_arcMode": "reinforce"
       },
       {
+        "id": "ls_1787036743555_em8c",
+        "type": "mixed",
+        "title": "🔀 Mischübung",
+        "icon": "🔀",
+        "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+        "perType": 3
+      },
+      {
         "id": 9,
         "type": "comprehension",
         "title": "Das Eichhörnchen und das Murmeltier",
@@ -5829,14 +5791,6 @@ const STATIC_LESSONS = [
           "at": "2026-08-17T20:55:08.813Z"
         },
         "_arcMode": "reinforce"
-      },
-      {
-        "id": "ls_1787036743555_em8c",
-        "type": "mixed",
-        "title": "🔀 Mischübung",
-        "icon": "🔀",
-        "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
-        "perType": 3
       }
     ],
     "generationStats": {
@@ -5861,7 +5815,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-08-17T20:38:02.833Z",
-    "updatedAt": "2026-08-18T07:05:43.558Z",
+    "updatedAt": "2026-08-18T13:22:59.087Z",
     "createdBy": "admin"
   },
   {
@@ -6397,6 +6351,14 @@ const STATIC_LESSONS = [
         "qcBy": "translategemma:12b"
       },
       {
+        "id": "ls_1787059371457_onji",
+        "type": "mixed",
+        "title": "🔀 Mischübung",
+        "icon": "🔀",
+        "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+        "perType": 3
+      },
+      {
         "id": 9,
         "type": "comprehension",
         "title": "Das Eichhörnchen und das Murmeltier",
@@ -6478,7 +6440,7 @@ const STATIC_LESSONS = [
       }
     },
     "generatedAt": "2026-08-17T20:20:06.578Z",
-    "updatedAt": "2026-08-18T08:01:35.271Z",
+    "updatedAt": "2026-08-18T13:22:52.974Z",
     "createdBy": "admin",
     "storyQcCheckedBy": "translategemma:12b",
     "storyQcCheckedAt": "2026-08-18T07:34:47.689Z"
@@ -8531,183 +8493,6 @@ const STATIC_LESSONS = [
         }
       },
       {
-        "id": 6,
-        "type": "conjugation",
-        "title": "Spremanje za put u Beč",
-        "desc": "Glagoli za planiranje puta.",
-        "icon": "🚂",
-        "conjugations": [
-          {
-            "infinitive": "biti",
-            "source": "sein",
-            "tense": "present",
-            "forms": [
-              {
-                "pronoun": "ja",
-                "form": "sam"
-              },
-              {
-                "pronoun": "ti",
-                "form": "si"
-              },
-              {
-                "pronoun": "on/ona/ono",
-                "form": "je"
-              },
-              {
-                "pronoun": "mi",
-                "form": "smo"
-              },
-              {
-                "pronoun": "vi",
-                "form": "ste"
-              },
-              {
-                "pronoun": "oni/one/ona",
-                "form": "su"
-              }
-            ]
-          },
-          {
-            "infinitive": "ići",
-            "source": "gehen",
-            "tense": "present",
-            "forms": [
-              {
-                "pronoun": "ja",
-                "form": "idem"
-              },
-              {
-                "pronoun": "ti",
-                "form": "ideš"
-              },
-              {
-                "pronoun": "on/ona/ono",
-                "form": "ide"
-              },
-              {
-                "pronoun": "mi",
-                "form": "idemo"
-              },
-              {
-                "pronoun": "vi",
-                "form": "idete"
-              },
-              {
-                "pronoun": "oni/one/ona",
-                "form": "idu"
-              }
-            ]
-          },
-          {
-            "infinitive": "govoriti",
-            "source": "sprechen",
-            "tense": "present",
-            "forms": [
-              {
-                "pronoun": "ja",
-                "form": "govorim"
-              },
-              {
-                "pronoun": "ti",
-                "form": "govoriš"
-              },
-              {
-                "pronoun": "on/ona/ono",
-                "form": "govori"
-              },
-              {
-                "pronoun": "mi",
-                "form": "govorimo"
-              },
-              {
-                "pronoun": "vi",
-                "form": "govorite"
-              },
-              {
-                "pronoun": "oni/one/ona",
-                "form": "govore"
-              }
-            ]
-          },
-          {
-            "infinitive": "kupiti",
-            "source": "kaufen",
-            "tense": "present",
-            "forms": [
-              {
-                "pronoun": "ja",
-                "form": "kupujem"
-              },
-              {
-                "pronoun": "ti",
-                "form": "kupuješ"
-              },
-              {
-                "pronoun": "on/ona/ono",
-                "form": "kupuje"
-              },
-              {
-                "pronoun": "mi",
-                "form": "kupujemo"
-              },
-              {
-                "pronoun": "vi",
-                "form": "kupujete"
-              },
-              {
-                "pronoun": "oni/one/ona",
-                "form": "kupuju"
-              }
-            ]
-          },
-          {
-            "infinitive": "videti",
-            "source": "sehen",
-            "tense": "present",
-            "forms": [
-              {
-                "pronoun": "ja",
-                "form": "vidim"
-              },
-              {
-                "pronoun": "ti",
-                "form": "vidiš"
-              },
-              {
-                "pronoun": "on/ona/ono",
-                "form": "vidi"
-              },
-              {
-                "pronoun": "mi",
-                "form": "vidimo"
-              },
-              {
-                "pronoun": "vi",
-                "form": "vidite"
-              },
-              {
-                "pronoun": "oni/one/ona",
-                "form": "vide"
-              }
-            ]
-          }
-        ],
-        "_genMeta": {
-          "type": "conjugation",
-          "model": "qwen3.6:35b-a3b",
-          "attempts": null,
-          "valid": 5,
-          "rejected": 0,
-          "rejectReasons": null,
-          "promptTokens": 746,
-          "completionTokens": 848,
-          "ms": 360282,
-          "at": "2026-08-11T13:49:55.225Z"
-        },
-        "_arcMode": "reinforce"
-      },
-      {
         "difficulty": 1,
         "id": "ls_1786699971785",
         "type": "conjugation",
@@ -9042,7 +8827,7 @@ const STATIC_LESSONS = [
       }
     },
     "generatedAt": "2026-08-11T13:37:26.046Z",
-    "updatedAt": "2026-08-14T09:52:57.560Z",
+    "updatedAt": "2026-08-18T12:28:59.650Z",
     "createdBy": "admin"
   },
   {
@@ -150725,11 +150510,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v80', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v80'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v80_h', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v80_h'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"a43e7ec75827","lessons.json":"feba1365da91","ui.json":"bda38a928a7f","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"58b249cb7d41"};
+  APP.buildSources = {"index.html":"c181e60544ca","lessons.json":"fdce571732fb","ui.json":"bda38a928a7f","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"58b249cb7d41"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');
@@ -151840,6 +151625,23 @@ function _isLearner(){ return !APP._teacherMode; }
 // it. So: if the set is already complete under the real rule, return -1; otherwise fall back to the
 // first unfinished counted lesson (for a mixed-driven-but-incomplete set that's the mixed/driver
 // lesson, which is exactly where practice should continue).
+// "Is this lesson closed to the learner because the story is still locked?" — ONE rule, because
+// two resume paths ask it and only one of them used to (v80_b). It lived as a local inside
+// _firstUnfinishedLessonIdx from v71_s; _firstCoverageShortLessonIdx, which the Replay button
+// reaches through repeatForCoverage, never applied it, so Replay opened the comprehension
+// questions about a story the learner had not yet unlocked — implementation_plan.md §C1's second
+// bug. Measured: 54 of the 102 corpus chapters with a story-gated lesson could reach that state
+// (`probe_gates_v80c1.js`).
+//
+// typeof-guarded exactly as the original was: the unit harnesses extract these functions on their
+// own, and an unguarded reference would ReferenceError there. Degrading to "not locked" is the safe
+// direction — it can only offer a lesson, never hide one.
+function _storyLockedLesson(L, d){
+  d = d || APP.lessonData;
+  return typeof _isStoryGatedLesson === 'function'
+    && typeof storyUnlocked === 'function'
+    && _isStoryGatedLesson(L) && !APP._teacherMode && !storyUnlocked(d);
+}
 function _firstUnfinishedLessonIdx(d){
   d = d || APP.lessonData; if(!d) return -1;
   // setComplete reads APP.lessonData/coverage; only meaningful for the active topic. Guard so a
@@ -151854,9 +151656,10 @@ function _firstUnfinishedLessonIdx(d){
   // typeof-guarded like the rest of the coverage machinery: the unit harnesses extract this
   // function on its own, and an unguarded reference would ReferenceError there. Degrading to the
   // pre-v71_s behaviour is the safe direction — it can only offer a lesson, never hide one.
-  const _storyLocked = (L) => typeof _isStoryGatedLesson === 'function'
-    && typeof storyUnlocked === 'function'
-    && _isStoryGatedLesson(L) && !APP._teacherMode && !storyUnlocked(d);
+  // typeof-guarded for the same reason the rule's own internals are: unit harnesses extract this
+  // function and eval it standalone, where a bare reference is a ReferenceError. Degrading to
+  // "not locked" is the safe direction — it can only offer a lesson, never hide one.
+  const _storyLocked = (L) => typeof _storyLockedLesson === 'function' && _storyLockedLesson(L, d);
   const _playable = (L) => !done[L.id] && lessonCountsFor(d, L) && !_storyLocked(L);
   const idx = (d.lessons||[]).findIndex(_playable);
   if(idx >= 0) return idx;
@@ -151907,6 +151710,9 @@ function _firstCoverageShortLessonIdx(){
   let best = -1, bestFrac = Infinity;
   for (const L of countedLessons(d)){
     if (!L || L.type === 'mixed') continue;
+    // v80_b: a story-gated lesson is not a replay target while the story is locked. Same rule as
+    // the resume scan, now shared rather than copied.
+    if (typeof _storyLockedLesson === 'function' && _storyLockedLesson(L, d)) continue;
     const idx = d.lessons.indexOf(L);
     try {
       const c = lessonCoverage(idx);
@@ -152871,10 +152677,26 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
       if (isOwn) {
         out += '<div style="' + _markerBase + '"></div>';
       } else if (_altSl) {
+        // PLAN §9b/D8 (v80_h) — THE MARKER MUST DISTINGUISH. It names the OTHER storyline so the
+        // learner knows which story the branch leads to; a label equal to the open storyline's own,
+        // or empty, names nothing and the fork becomes two unlabelled columns.
+        //
+        // PREVENTIVE, not corrective. The duplicate pair that prompted this was resolved in the
+        // DATA (the user renamed one to "Dough of the Ancients 2", and that rename is in the tree —
+        // 0 duplicate-title groups across 91 storylines at this cut). But NOTHING enforces unique
+        // or non-empty storyline titles, so a future drop can reproduce it silently.
+        //
+        // The fallback names the BRANCH's own chapter, which differs per column by construction —
+        // two columns of one fork are different chapters — so it distinguishes even when two
+        // storylines are titled identically.
+        const _mk = (s, txt) => ((s && s.icon) || '📖') + ' ' + String(txt == null ? '' : txt).trim();
+        const _openLbl = _mk(_slById, _slById && _slById.title).trim();
+        let _lbl = _mk(_altSl, _altSl.title).trim();
+        if (!String(_altSl.title || '').trim() || _lbl === _openLbl) _lbl = _mk(_altSl, kid).trim();
         out += '<div style="' + _markerBase + ';cursor:pointer;text-decoration:underline" role="button" tabindex="0"'
-             + ' title="' + escAttr(_altSl.title || '') + '"'
+             + ' title="' + escAttr(_altSl.title || kid || '') + '"'
              + ' onclick="event.stopPropagation();_openStorylineById(\'' + escJsAttr(_altSl.id) + '\')">'
-             + escHtml((_altSl.icon || '📖') + ' ' + (_altSl.title || '')) + '</div>';
+             + escHtml(_lbl) + '</div>';
       } else {
         // A successor in no storyline at all — there is nothing to name and nowhere to go.
         out += '<div style="' + _markerBase + '"></div>';
@@ -160371,16 +160193,20 @@ function showComplete(review, lessonIdxOverride){
     };
   } else if (!lesson._drill && !_belowThreshold && _nextChapter()) {
     // Chapter finished → the next chapter is now open.
-    // v77_i: Next goes through the next-chapter-unlocked card (§0c's fourth page) instead of
-    // loading the next chapter silently. Same destination, one acknowledgement in between — the
-    // learner is told what they earned before being carried into it. The target is stashed here,
-    // at render time, so the card cannot resolve a different chapter than the button that opened
-    // it (the reason v74_o reused APP._compBack rather than deciding twice).
+    // v77_i had put a next-chapter-unlocked card here; v77_q then made that card the STARTER for
+    // chapters 2..N. v80_e (user ruling) MERGES the two: there is one starter card, the entry card,
+    // and it now serves every chapter (see `_enterViaSummaryCard`). So Next simply opens the next
+    // chapter and the entry card meets the learner on arrival — same destination, same
+    // acknowledgement, one screen instead of two that had drifted apart under different ids.
+    //
+    // The target is still resolved at RENDER time rather than at click time, which is the part of
+    // v77_i worth keeping: the card and the button that opened it cannot name different chapters.
     const ch = _nextChapter();
     APP._unlNext = ch;
     _compIco(compNext, '→', t('complete.next'));
     compNext.style.display = '';
-    compNext.onclick = () => showNextChapterUnlocked();
+    compNext.onclick = () => { const c = APP._unlNext; endDrill();
+      if (c) loadSaved(c.id || encTopic(c.topic)); };
   } else {
     // Nothing left to do (last lesson of last/solo chapter, review).
     //
@@ -161524,44 +161350,12 @@ function showStoryUnlocked(){
 // The target is stashed at RENDER time (APP._unlNext) rather than resolved again here, so the card
 // and the button that opened it cannot disagree about which chapter is next — the same reason
 // v74_o reused APP._compBack instead of deciding a second time.
-function showNextChapterUnlocked(){
-  // v77_q (user): this card is the STARTER for every chapter after the first — the entry card's
-  // job, done at the moment the previous chapter ends. So it carries what the entry card carries:
-  // the same header and storyboard (via _cardHeader), the story SUMMARY, and the chapter progress
-  // bars. The entry card is now genuinely "entry": chapter one only.
-  const ctx = _cardHeader('unl');
-  const ch = APP._unlNext;
-  const nameEl = document.getElementById('unl-chapter');
-  if (nameEl) nameEl.textContent = (ch && (ch.topic || ch.title)) || '';
-  // The story summary, in the same field the entry card uses (v77_r).
-  _renderSummaryField('unl', ctx && ctx.sl);
-  const ttl = document.getElementById('unl-title');
-  if (ttl) ttl.textContent = t('unlocked.title');
-  // Header title is written by _cardHeader alone (v77_q). A second assignment here is how the
-  // storyline icon went missing from four of the five cards while the fraction matched.
-  // The chapter progress bars, from the SAME renderer every other progress card uses — empty on a
-  // first visit to the chapter ahead, which is exactly what a starter card should show.
-  const pr = document.getElementById('unl-progress');
-  if (pr) {
-    let _ph = '';
-    try { _ph = _compProgressHtml((ch && ch.topic) || APP.lessonData?.topic, ctx, { skipStoryRow: true }); }
-    catch(_) { _ph = ''; }
-    pr.innerHTML = _ph;
-    pr.style.display = _ph ? '' : 'none';
-  }
-  const bk = document.getElementById('unl-back');
-  if (bk) { _compIco(bk, '\u2190', t('unlocked.back_card')); bk.onclick = () => { showComplete(true); show('complete-screen'); }; }
-  const nx = document.getElementById('unl-next');
-  if (nx) {
-    _compIco(nx, '\u2192', t('unlocked.next'));
-    nx.onclick = () => { const c = APP._unlNext; endDrill();
-      // v77_k: this card IS the orientation for the next chapter, so the entry card must not
-      // follow it — two interstitials back to back read as friction.
-      APP._skipEntryCard = true;
-      if (c) loadSaved(c.id || encTopic(c.topic)); };
-  }
-  show('unlocked-screen');
-}
+// v80_e (user ruling: MERGE): `showNextChapterUnlocked()` and the `unlocked-screen` markup were
+// DELETED here. The card was `v77_i`'s acknowledgement page and, after `v77_q`, the starter for
+// chapters 2..N — the entry card's job under a second set of ids. `_enterViaSummaryCard` now
+// generalises the entry card to every chapter and `showComplete`'s next-chapter branch opens the
+// chapter directly, so the learner still meets exactly one starter per chapter. The `unlocked.*`
+// ui keys are NOT orphaned: `showStorySummary` reuses them for the chapter-arrival wording.
 
 // ── v77_r (user): the summary field, shared by the entry card and the starter card ───────────
 // "Both the summary on the entry card and the presentation of unlocked chapter should embed their
@@ -161707,7 +161501,22 @@ function showStorySummary(){
   const s = _summaryOfStory();
   _renderSummaryField('sum', s && s.sl);
   const ttl = document.getElementById('sum-title');
-  if (ttl) ttl.textContent = t('summary.title');
+  // v80_e: the card has two arrivals and says which one it is, reusing the keys the deleted
+  // next-chapter-unlocked card already owned. Both are translated in all 32 languages, so this
+  // costs no translate pass — whereas dropping them would have orphaned 128 translated cells.
+  //   'chapter' — carried here by finishing the previous chapter: "Next chapter unlocked!"
+  //   'entry'   — opening a chapter directly: "The story so far"
+  const _arrival = APP._sumArrival === 'chapter' ? 'chapter' : 'entry';
+  if (ttl) ttl.textContent = _arrival === 'chapter' ? t('unlocked.title') : t('summary.title');
+  // The chapter being opened, named — the one thing the unlocked card carried that this page did
+  // not. Shown only on a chapter arrival: on a plain entry the header already names where you are,
+  // and repeating it reads as a dialog.
+  const chEl = document.getElementById('sum-chapter');
+  if (chEl) {
+    const _nm = (_arrival === 'chapter' && APP.lessonData) ? (APP.lessonData.topic || '') : '';
+    chEl.textContent = _nm;
+    chEl.style.display = _nm ? '' : 'none';
+  }
   // Header title is written by _cardHeader alone (v77_q). A second assignment here is how the
   // storyline icon went missing from four of the five cards while the fraction matched.
   // The same storyboard the progress card and the storyline page show, via the same renderer, so
@@ -161758,23 +161567,31 @@ function sumForwardToCard(){ showComplete(true); show('complete-screen'); }
 //     of its own. Two in a row is friction, not orientation.
 // The flag is consumed here whether or not it fires, so it can never leak into a later entry.
 function _enterViaSummaryCard(idx){
-  const skip = !!APP._skipEntryCard;
-  APP._skipEntryCard = false;
   let ok = false;
   try {
-    ok = idx >= 0 && !skip && !!_summaryOfStory();
-    // v77_q (user): ENTRY means the FIRST chapter. Every later chapter is started by the
-    // next-chapter-unlocked card, which now carries the same summary, header and bars — so a
-    // learner meets one starter card per chapter, not two competing ones. A solo chapter (no
-    // storyline) is its own first chapter.
-    if (ok) {
-      const ctx = _storylineForTopic(APP.lessonData?.topic);
-      const ids = (ctx && ctx.sl && ctx.sl.chapters) || [];
-      if (ids.length) {
-        const me = (ctx.topics || []).indexOf(APP.lessonData?.topic);
-        if (me > 0) ok = false;
-      }
-    }
+    // v80_e (user ruling: MERGE): ONE starter card per chapter, for every chapter.
+    //
+    // `v77_q` had split the job in two — the entry card for chapter one, the next-chapter-unlocked
+    // card for 2..N — and the two carried the same header, storyboard, summary field and bars under
+    // different ids. The user's larger plan then asked for the unlocked card to be removed "going
+    // straight to the next entry card", which could not work as written: since `v77_q` there WAS no
+    // entry card for chapters 2..N. Generalising this gate is what makes that sentence true.
+    //
+    // The gate is now "would this card carry anything?", which reproduces BOTH previous behaviours
+    // exactly rather than picking one:
+    //   • a summary exists                -> show it (the `v77_k` rule, unchanged);
+    //   • OR this is not the first chapter -> show it, because arriving from the chapter before is
+    //     the moment `v77_i` existed for ("that moment passed SILENTLY"), and the card carries the
+    //     chapter name, the deck position and real progress bars even with no summary.
+    // Measured at this cut: 14 multi-chapter storylines have no summary, covering 25 chapters at
+    // index >= 1. Gating on the summary ALONE would have silently dropped the acknowledgement for
+    // exactly those 25 — the regression this clause exists to prevent.
+    const ctx = _storylineForTopic(APP.lessonData?.topic);
+    const ids = (ctx && ctx.sl && ctx.sl.chapters) || [];
+    const me = ids.length ? (ctx.topics || []).indexOf(APP.lessonData?.topic) : 0;
+    const isLater = me > 0;
+    APP._sumArrival = isLater ? 'chapter' : 'entry';
+    ok = idx >= 0 && (!!_summaryOfStory() || isLater);
   } catch(_) { ok = false; }
   if (!ok) return false;
   APP._sumNext = { kind: 'lesson', idx: idx };

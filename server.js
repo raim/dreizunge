@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v80';
+const APP_VERSION  = 'v80_h';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -3267,6 +3267,45 @@ function shuffle(a){ const b=[...a]; for(let i=b.length-1;i>0;i--){ const j=Math
 // copy-paste away from recording the wrong provenance for good. Sentinels: '(procedural)' for the
 // non-LLM paths (math, intro_script), '(user-provided)' for a story the user pasted, '(unknown)'
 // where the generator genuinely didn't say.
+// ── v80_h: does this lesson actually contain the target SCRIPT? ──────────────
+// `v79_f` found a Serbian (cyrillic-sr) conjugation lesson written entirely in Latin, and fixed the
+// PROMPT so the script is pinned. `unit-script-pin-coverage` guards that every prompt carries the
+// pin — but a pin is an instruction, and the model can ignore it. Nothing checked the OUTPUT.
+// Swept at the v80_h cut: **7 lessons across 5 Serbian chapters carry ZERO Cyrillic**, of which only
+// one (`tp_17864554460460000107` lesson `id=6`) was known. Four are comprehension, one standard,
+// two conjugation. Arabic, Hebrew and Japanese chapters are clean.
+//
+// Rule 34: guard at the layer where the claim is observable. The claim "this lesson is in the
+// target script" is observable in the LESSON, not in the prompt that asked for it.
+//
+// The alphabet comes from `scripts.json`, never from a hardcoded Unicode range — the script
+// knowledge in this project lives in data (INTERNALS: "no language knowledge in the code"). A script
+// this file does not know, or a Latin one, yields NO OPINION rather than a guess.
+function lessonScriptDefect(lesson, scriptName) {
+  if (!lesson || !scriptName || scriptName === 'latin') return null;
+  const entry = (_scriptsData && typeof _scriptsData === 'object') ? _scriptsData[scriptName] : null;
+  const letters = entry && Array.isArray(entry.letters) ? entry.letters : null;
+  if (!letters || !letters.length) return null;                    // unknown script: no opinion
+  const alphabet = new Set();
+  for (const L of letters) {
+    if (L && L.ch) alphabet.add(String(L.ch));
+    if (L && L.lower) alphabet.add(String(L.lower));
+  }
+  let body;
+  try { body = JSON.stringify(lesson); } catch (_) { return null; }
+  // `_genMeta` and ids are machine fields and are never in the target script; excluding them keeps
+  // the count honest without needing to know which fields carry learner-facing text.
+  body = body.replace(/"_genMeta":\{[^}]*\}/g, '').replace(/"(?:id|type|model|at)":"[^"]*"/g, '');
+  let hits = 0;
+  for (const ch of body) if (alphabet.has(ch)) { hits++; if (hits > 0) break; }
+  if (hits > 0) return null;
+  // Only meaningful when there is enough text for the absence to mean something — a nearly empty
+  // lesson is a different defect and this one should not claim it.
+  const latin = (body.match(/[A-Za-z]/g) || []).length;
+  if (latin < 200) return null;
+  return { defect: 'no-target-script', script: scriptName, latinChars: latin };
+}
+
 function buildGenMeta(o) {
   o = o || {};
   if (!o.model) throw new Error("buildGenMeta: `model` is required — pass the model actually used, or a '(procedural)' / '(user-provided)' / '(unknown)' sentinel");
@@ -3763,6 +3802,26 @@ function validateWordFormsItems(items, story) {
         const re = new RegExp('(^|[^\\p{L}\\p{N}])(' + escapeRe(correct) + ')(?=[^\\p{L}\\p{N}]|$)', 'iu');
         if (re.test(sentence)) sentence = sentence.replace(re, (m, pre) => pre + '___');
         else reasons.push('no ___ blank and answer not in sentence');
+      }
+
+      if (!reasons.length) {
+        // PLAN §F2 (v80_g) — THE BLANK MUST BE WHERE A WORD WAS REMOVED.
+        // The user's report: `"The sun was setting, casting long shadows across the path.___"` with
+        // answer `cast`. Nothing was removed; the blank was appended after a finished sentence, and
+        // the answer is still visible in it as `casting`. This validator let it through because it
+        // only ever asked whether a blank EXISTS, never where.
+        //
+        // Detected as pure STRUCTURE — terminal punctuation immediately followed by the blank —
+        // so it carries no language knowledge and holds for every script. Confirmed across the
+        // corpus by `build_history/probe_word_forms_defects_v80g.js`: 6 items in 345, four of them
+        // Arabic and two English, which is the cross-language evidence that the signal is
+        // structural rather than an artefact of one language's punctuation.
+        //
+        // Deliberately NOT matched: a blank that ends a sentence legitimately (`"He wanted to ___"`,
+        // `"Ieri sono ___."`). The rule fires only when the blank comes AFTER the stop.
+        if (/[.!?\u3002\uFF01\uFF1F\u061F\u06D4]\s*_{3,}\s*[.!?\u3002\uFF01\uFF1F\u061F\u06D4]?\s*$/.test(sentence)) {
+          reasons.push('blank is appended after a finished sentence, not in place of a word');
+        }
       }
 
       if (!reasons.length) {

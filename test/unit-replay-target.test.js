@@ -31,6 +31,11 @@ function client(lessons, cov) {
     APP.lessonData = { topic: 'T', lessons: ${JSON.stringify(lessons)} };
     countedLessons = (d) => d.lessons.filter(L => L && L.type !== 'mixed');
     lessonCoverage = (i) => (${JSON.stringify(cov)})[i] || { solved: 1, total: 1 };
+    // v80_b: these sections are about ORDERING, so the story gate is held OPEN explicitly. It used
+    // to be open only by accident — this fixture has no story and no progress, so the real
+    // storyUnlocked() said "locked", and once the scan started honouring that (v80_b) the ordering
+    // sections would have been measuring the gate instead of the order. Section 8 asserts the gate.
+    storyUnlocked = () => true;
     true;`, 'seed');
   return C;
 }
@@ -132,6 +137,44 @@ const LESSONS = [
   assert.strictEqual(C.run(`_firstCoverageShortLessonIdx()`), 1,
     'a lesson whose coverage throws is skipped and the scan continues');
   console.log('  a throwing coverage call skips that lesson only');
+}
+
+// ── 8. v80_b: a story-gated lesson is not a Replay target while the story is LOCKED ─────────
+// implementation_plan.md §C1, the user's second report: "via the replay button or otherwise, I
+// could play the comprehension lessons BEFORE the chapter-story was unlocked." The resume scan
+// (_firstUnfinishedLessonIdx) had applied this rule since v71_s; this scan never did, so Replay
+// walked straight past the gate. Both now ask the one shared rule, _storyLockedLesson.
+//
+// Measured on the corpus before the fix (`build_history/probe_gates_v80c1.js`): from an ORDINARY
+// half-played chapter, 27 of 94 chapters with a story-gated lesson sent Replay into one. 0 after.
+{
+  const cov = { 0: { solved: 0, total: 10 }, 1: { solved: 5, total: 5 }, 2: { solved: 7, total: 8 } };
+  // Locked: the comprehension lesson is the least covered, so ONLY the gate can keep Replay off it.
+  const CL = loadClient({ quiet: true });
+  CL.run(`LANGS = ${JSON.stringify(LANGS)};
+    APP.lessonData = { topic: 'T', lessons: ${JSON.stringify(LESSONS)} };
+    countedLessons = (d) => d.lessons.filter(L => L && L.type !== 'mixed');
+    lessonCoverage = (i) => (${JSON.stringify(cov)})[i] || { solved: 1, total: 1 };
+    storyUnlocked = () => false;
+    true;`, 'seed');
+  assert.strictEqual(CL.run(`_firstCoverageShortLessonIdx()`), 2,
+    'story LOCKED: Replay skips the comprehension lesson even though it is the least covered');
+  // Non-vacuity, and the discriminator: with the gate OPEN the same fixture picks it. Without this
+  // the section would pass on a rule that never offers a gated lesson at all.
+  const CU = loadClient({ quiet: true });
+  CU.run(`LANGS = ${JSON.stringify(LANGS)};
+    APP.lessonData = { topic: 'T', lessons: ${JSON.stringify(LESSONS)} };
+    countedLessons = (d) => d.lessons.filter(L => L && L.type !== 'mixed');
+    lessonCoverage = (i) => (${JSON.stringify(cov)})[i] || { solved: 1, total: 1 };
+    storyUnlocked = () => true;
+    true;`, 'seed');
+  assert.strictEqual(CU.run(`_firstCoverageShortLessonIdx()`), 0,
+    'story UNLOCKED: the same fixture picks the comprehension lesson — the gate is what differs');
+  // And teacher mode is exempt, as it is everywhere else in this rule.
+  CL.run(`APP._teacherMode = true; true;`);
+  assert.strictEqual(CL.run(`_firstCoverageShortLessonIdx()`), 0,
+    'teacher mode is exempt from the story gate here too');
+  console.log('  story-gated lessons are not Replay targets while the story is locked');
 }
 
 console.log('unit-replay-target: ALL PASSED');

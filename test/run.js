@@ -145,7 +145,9 @@ run('unit: progress-card swallowed errors are visible (v77_b)', 'node', [path.jo
 run('unit: mixed-driven story unlock is reachable by playing (v77_c)', 'node', [path.join(__dirname, 'unit-mixed-unlock-reachable.test.js')]);
 run('unit: story-finished card — the last page of the walk (v77_f)', 'node', [path.join(__dirname, 'unit-story-finished.test.js')]);
 run('unit: story-summary card — the first page of the walk (v77_h)', 'node', [path.join(__dirname, 'unit-story-summary.test.js')]);
-run('unit: next-chapter-unlocked card (v77_i)', 'node', [path.join(__dirname, 'unit-next-chapter-unlocked.test.js')]);
+run('unit: lesson output carries the target script (v80_h)', 'node', [path.join(__dirname, 'unit-lesson-script-output.test.js')]);
+run('unit: word_forms blank position (v80_g, PLAN F2)', 'node', [path.join(__dirname, 'unit-word-forms-defects.test.js')]);
+run('unit: one starter card per chapter (v80_e, was v77_i)', 'node', [path.join(__dirname, 'unit-next-chapter-entry.test.js')]);
 run('unit: story-unlocked page — the third page of the walk (v77_j)', 'node', [path.join(__dirname, 'unit-story-unlocked-page.test.js')]);
 run('unit: comprehension repeat asks only what is left (v77_t)', 'node', [path.join(__dirname, 'unit-comprehension-repeat.test.js')]);
 run('unit: apostrophe forms match in vocabulary highlighting (v77_u)', 'node', [path.join(__dirname, 'unit-apostrophe-match.test.js')]);

@@ -67,6 +67,8 @@ function atUnlock(opts) {
     showComplete(${opts.review ? 'true' : ''}); true;`, 'render');
   return C;
 }
+// The chapter's first story-gated lesson — section 6 needs it by index.
+const GATED_IDX = (TOPIC.lessons || []).findIndex(isPost);
 const gateOpen = C => C.run(`storyUnlocked(APP.lessonData)`);
 const workLeft = C => C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
 
@@ -148,34 +150,96 @@ const workLeft = C => C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
 
 
 
-// ── 6. Next opens the UNPLAYED lesson, never a replay ─────────────────────
+// ── 6. Next opens the UNPLAYED work, never a replay of an earlier lesson ───
 // User report: Next led to a replay of earlier lessons instead of the comprehension questions.
+// `v77_p` fixed that by ordering the below-mark branch's fallback UNFINISHED-first, then
+// coverage-short.
 //
-// FINDING (v77_s), recorded because it changes what this section can claim: showComplete tries
-// `nextLessonIdx >= 0` BEFORE the below-mark branch, so whenever an unfinished lesson exists the
-// next-lesson branch wins and starts it. That is the behaviour asserted here, and it is correct.
+// ⚠️ THIS SECTION DID NOT DISCRIMINATE UNDER REVERT until v80_c, and the note it carried since
+// `v77_p` said so honestly. It asserted `APP._started === _firstUnfinishedLessonIdx(...)`, which
+// compares the product against the same product function — a tautology. Two earlier attempts
+// concluded the below-mark branch "was never entered". **That conclusion was half right, and the
+// missing half is the whole section:**
 //
-// It also means v77_p's re-ordering INSIDE the below-mark branch is unreachable while any lesson
-// is unfinished — that branch only runs when `_firstUnfinishedLessonIdx` is already -1, where its
-// first choice can never match. Two earlier versions of this section tried to revert-verify that
-// ordering and could not, and the reason was the scenario, not the assertion: the branch was never
-// entered. The ordering is kept as a correct fallback, but it is NOT what protects the learner
-// here, and this section does not pretend to test it.
+//   1. The branch IS entered — via index.html's `nextLessonIdx === C.lessonIdx && ...
+//      _isStoryGatedLesson(lesson)` line, which forces `nextLessonIdx` to -1 for a learner who has
+//      just played the comprehension lesson and not fully solved it. That is exactly the state the
+//      user reported from, which is why the earlier scenarios (built around a lesson NOT yet
+//      played) could never reach it.
+//   2. The two candidate targets must be made to DISAGREE. An unplayed lesson sits at 0% coverage,
+//      which is also the least-covered, so both orderings return the same index and any assertion
+//      passes either way. They separate only when the gated lesson is PARTLY solved (so it is
+//      still unfinished, its done-flag being withheld until every item is solved) while an earlier
+//      lesson is covered LESS.
 //
-// The open question the user's screenshot really poses is why `_firstUnfinishedLessonIdx` returned
-// -1 while an unplayed comprehension lesson remained — that is where the replay came from, and it
-// is still unexplained.
+// Built below, and revert-verified: with `v77_p`'s ordering swapped back, Next goes to lesson 0 —
+// the reported bug, reproduced — and this section fails.
 {
-  const C = atUnlock();
-  const unplayed = workLeft(C);
-  assert.ok(unplayed >= 0, 'non-vacuity: there is an unplayed lesson in this chapter');
-  const gated = C.run(`(function(){ var L = APP.lessonData.lessons[${unplayed}];
-    return L ? (L.type || 'standard') : 'none'; })()`);
-  C.run(`APP.progress.storyShown[APP.lessonData.topic] = 1; APP._started = null; showComplete(); true;`, 'again');
+  const C = loadClient({ quiet: true });
+  C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed');
+  C.run(`
+    APP.savedList = ${JSON.stringify(SAVED)};
+    APP.storylines = ${JSON.stringify(store.storylines || [])};
+    // The pass mark is 1 here, not 0.8: at 1 the story-unlock gate skips its coverage test
+    // entirely, so the story can be unlocked (every prep lesson done-flagged) while coverage is
+    // still short — which is what puts the card in the below-mark branch at all.
+    APP.info = { backend:'none', canGenerate:false, coverageThreshold:1 };
+    APP.progress = { completed:{}, solved:{}, chapterDone:{}, learned:{}, storyShown:{} };
+    APP._teacherMode = false; APP._slScreen = {};
+    APP.lessonData = ${JSON.stringify(TOPIC)};
+    if (typeof _invalidateQidUniverse === 'function') _invalidateQidUniverse();
+    (function(){
+      var d = APP.lessonData, m = _solvedMap(d.topic), done = APP.progress.completed[d.topic] = {};
+      (d.lessons||[]).forEach(function(L, i){
+        if (!L) return;
+        var u = Array.from(_lessonItemUniverse(i));
+        if (_isStoryGatedLesson(L)) {
+          // Partly solved: unfinished (no done-flag) but NOT the least-covered lesson.
+          u.slice(0, Math.max(0, u.length - 1)).forEach(function(k){ m[k] = 1; });
+          return;
+        }
+        // Lesson 0 is left barely covered; every other prep lesson is finished outright.
+        if (i === 0) u.slice(0, 2).forEach(function(k){ m[k] = 1; });
+        else u.forEach(function(k){ m[k] = 1; });
+        done[L.id] = { done:true, correct:4, total:4 };
+      });
+      if (typeof _invalidateQidUniverse === 'function') _invalidateQidUniverse();
+    })();
+    APP._shown = null; APP._started = null;
+    show = function(id){ APP._shown = id; };
+    startLesson = function(i){ APP._started = i; return true; };
+    saveProg = function(){};
+    APP.cur = { lessonIdx:${GATED_IDX}, exercises:[], cur:0, correct:1, total:3, mistakes:2,
+                hearts:2, streak:0, bestStreak:0 };
+    showComplete(); true;`, 'render');
+
+  const unfinished = C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
+  const covShort   = C.run(`_firstCoverageShortLessonIdx()`);
+
+  // Non-vacuity, in three parts. Each one is a way this section could go quietly green.
+  assert.strictEqual(C.run(`storyUnlocked(APP.lessonData)`), true,
+    'non-vacuity: the story is unlocked, so the comprehension lesson is legitimately reachable');
+  assert.strictEqual(unfinished, GATED_IDX,
+    'non-vacuity: the unfinished lesson is the story-gated one the learner just played');
+  assert.notStrictEqual(covShort, unfinished,
+    'THE DISCRIMINATOR: the coverage-short target and the unfinished target must DIFFER, or both ' +
+    'orderings give the same answer and this section proves nothing');
+  assert.ok(covShort >= 0 && covShort < unfinished,
+    'and the coverage-short one is EARLIER — "a replay of earlier lessons", as reported');
+  assert.strictEqual(C.run(`APP._usNextLesson`), undefined,
+    'non-vacuity: the next-lesson branch was NOT taken, so the below-mark branch is what answers ' +
+    'here — the entry condition the two earlier attempts could not reach');
+
   C.run(`document.getElementById('comp-next').onclick(); true;`, 'next');
-  assert.strictEqual(C.run(`APP._started`), unplayed,
-    `Next opens the first UNPLAYED lesson (${gated}), never a replay of a finished one`);
-  console.log(`  Next opens the unplayed lesson (${gated}), not a replay`);
+  const started = C.run(`APP._started`);
+  assert.strictEqual(started, unfinished,
+    'Next opens the UNPLAYED comprehension work (lesson ' + unfinished + ')');
+  assert.notStrictEqual(started, covShort,
+    'and NOT the earlier, less-covered lesson (' + covShort + ') — the v77_p ordering, now actually ' +
+    'under test');
+  assert.deepStrictEqual(JSON.parse(C.run(`JSON.stringify(_cardErrors())`)), [],
+    'and nothing was swallowed getting there');
+  console.log('  below the mark, Next opens unplayed work (' + unfinished + ') not a replay (' + covShort + ')');
 }
 
 // ── 7. v77_p (user): no story PREVIEW — locked means locked ────────────────
