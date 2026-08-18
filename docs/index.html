@@ -5829,6 +5829,14 @@ const STATIC_LESSONS = [
           "at": "2026-08-17T20:55:08.813Z"
         },
         "_arcMode": "reinforce"
+      },
+      {
+        "id": "ls_1787036743555_em8c",
+        "type": "mixed",
+        "title": "🔀 Mischübung",
+        "icon": "🔀",
+        "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+        "perType": 3
       }
     ],
     "generationStats": {
@@ -5853,7 +5861,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-08-17T20:38:02.833Z",
-    "updatedAt": "2026-08-17T20:55:08.813Z",
+    "updatedAt": "2026-08-18T07:05:43.558Z",
     "createdBy": "admin"
   },
   {
@@ -5984,16 +5992,19 @@ const STATIC_LESSONS = [
             ]
           },
           {
-            "target": "L’hiver ne prenne possession de la forêt.",
-            "source": "Der Winter den Wald in Besitz nimmt.",
+            "target": "L’hiver prend possession de la forêt.",
+            "source": "Der Winter nimmt den Wald in Besitz.",
             "words": [
               "L’hiver",
-              "ne",
-              "prenne",
+              "prend",
               "possession",
               "de",
               "la",
               "forêt."
+            ],
+            "editedAt": "2026-08-18T07:30:44.830Z",
+            "_manualEdits": [
+              "2026-08-18T07:30:44.830Z"
             ]
           }
         ],
@@ -6085,7 +6096,9 @@ const STATIC_LESSONS = [
           "ms": 206006,
           "at": "2026-08-17T20:25:52.312Z"
         },
-        "_arcMode": "reinforce"
+        "_arcMode": "reinforce",
+        "qcAt": "2026-08-18T08:00:59.972Z",
+        "qcBy": "translategemma:12b"
       },
       {
         "id": "ls_394385529",
@@ -6200,7 +6213,9 @@ const STATIC_LESSONS = [
           "ms": 263303,
           "at": "2026-08-17T20:30:15.616Z"
         },
-        "_arcMode": "reinforce"
+        "_arcMode": "reinforce",
+        "qcAt": "2026-08-18T08:01:35.271Z",
+        "qcBy": "translategemma:12b"
       },
       {
         "id": "ls_1375546013",
@@ -6377,7 +6392,9 @@ const STATIC_LESSONS = [
           "ms": 216630,
           "at": "2026-08-17T20:33:52.246Z"
         },
-        "_arcMode": "reinforce"
+        "_arcMode": "reinforce",
+        "qcAt": "2026-08-18T07:31:44.220Z",
+        "qcBy": "translategemma:12b"
       },
       {
         "id": 9,
@@ -6445,8 +6462,8 @@ const STATIC_LESSONS = [
         "lessons": "qwen3.6:35b-a3b"
       },
       "lessonFormat": "json",
-      "totalPromptTokens": 1509,
-      "totalCompletionTokens": 678,
+      "totalPromptTokens": 12594,
+      "totalCompletionTokens": 952,
       "lessons": [
         {
           "lessonNum": 1,
@@ -6454,11 +6471,17 @@ const STATIC_LESSONS = [
           "promptTokens": 945,
           "completionTokens": 375
         }
-      ]
+      ],
+      "tokensByType": {
+        "lesson_qc": 10864,
+        "story_qc": 495
+      }
     },
     "generatedAt": "2026-08-17T20:20:06.578Z",
-    "updatedAt": "2026-08-17T20:36:11.974Z",
-    "createdBy": "admin"
+    "updatedAt": "2026-08-18T08:01:35.271Z",
+    "createdBy": "admin",
+    "storyQcCheckedBy": "translategemma:12b",
+    "storyQcCheckedAt": "2026-08-18T07:34:47.689Z"
   },
   {
     "id": "tp_17869977371640000022",
@@ -6625,6 +6648,61 @@ const STATIC_LESSONS = [
           "ms": 148795,
           "at": "2026-08-18T06:17:51.663Z"
         }
+      },
+      {
+        "difficulty": 1,
+        "id": "ls_1787036481677",
+        "type": "comprehension",
+        "title": "Stille vor dem Winter",
+        "desc": "Ein kleiner Eichhörnchen und ein Murmeltier treffen sich im Herbst.",
+        "icon": "🧠",
+        "questions": [
+          {
+            "q": "Warum bleibt das Eichhörnchen plötzlich stehen?",
+            "choices": [
+              "Weil es von der Kälte erschrocken ist.",
+              "Weil es ein unbewegliches Murmeltier sieht.",
+              "Weil es eine Nuss gefunden hat.",
+              "Weil es auf sein eigenes Spiegelbild starrt."
+            ],
+            "correctIndex": 1,
+            "why": "Der Text sagt: 's’arrêta net devant la masse immobile du marmotte' (es blieb direkt vor der unbeweglichen Masse des Murmeltiers stehen)."
+          },
+          {
+            "q": "Was beschreibt die Beziehung zwischen den beiden Tieren?",
+            "choices": [
+              "Sie sind alte Freunde, die sich lange nicht gesehen haben.",
+              "Sie kämpfen um denselben Vorrat an Nahrung.",
+              "Sie verkörpern zwei gegensätzliche Überlebensstrategien.",
+              "Sie ignorieren einander vollständig ohne Interesse."
+            ],
+            "correctIndex": 2,
+            "why": "Der Text stellt fest: 'frôler deux philosophies opposées de la survie' (sie berühren nur zwei entgegengesetzte Überlebensphilosophien)."
+          },
+          {
+            "q": "Was ist nach der Auffassung des Erzählers die eigentliche Begegnung?",
+            "choices": [
+              "Der physische Kontakt zwischen den Körpern.",
+              "Das Hören der Schritte im Schnee.",
+              "Die Stille, die zwischen ihnen herrscht.",
+              "Der Anblick der schneebedeckten Äste."
+            ],
+            "correctIndex": 2,
+            "why": "Der Text sagt: 'la véritable rencontre n’est pas celle des corps, mais celle de leurs silences respectifs' (die wahre Begegnung ist nicht die der Körper, sondern die ihrer jeweiligen Stille)."
+          }
+        ],
+        "_genMeta": {
+          "type": "comprehension",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": 1,
+          "valid": 3,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 537,
+          "completionTokens": 490,
+          "ms": 138045,
+          "at": "2026-08-18T07:01:21.677Z"
+        }
       }
     ],
     "generationStats": {
@@ -6637,8 +6715,8 @@ const STATIC_LESSONS = [
         "lessons": "qwen3.6:35b-a3b"
       },
       "lessonFormat": "json",
-      "totalPromptTokens": 7203,
-      "totalCompletionTokens": 1156,
+      "totalPromptTokens": 7740,
+      "totalCompletionTokens": 1646,
       "lessons": [
         {
           "lessonNum": 1,
@@ -6649,11 +6727,11 @@ const STATIC_LESSONS = [
       ],
       "tokensByType": {
         "lesson_qc": 5139,
-        "add_lesson": 1286
+        "add_lesson": 2313
       }
     },
     "generatedAt": "2026-08-17T20:15:37.165Z",
-    "updatedAt": "2026-08-18T06:18:50.399Z",
+    "updatedAt": "2026-08-18T07:01:21.677Z",
     "createdBy": "admin"
   },
   {
@@ -150651,7 +150729,7 @@ async function init() {
   { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v80'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"a43e7ec75827","lessons.json":"fe50c64f286f","ui.json":"bda38a928a7f","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"58b249cb7d41"};
+  APP.buildSources = {"index.html":"a43e7ec75827","lessons.json":"feba1365da91","ui.json":"bda38a928a7f","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"58b249cb7d41"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');
