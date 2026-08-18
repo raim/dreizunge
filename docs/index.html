@@ -5791,6 +5791,27 @@ const STATIC_LESSONS = [
           "at": "2026-08-17T20:55:08.813Z"
         },
         "_arcMode": "reinforce"
+      },
+      {
+        "difficulty": 2,
+        "id": "ls_1787063282011",
+        "type": "error_hunt",
+        "title": "Text Understanding",
+        "desc": "Find the mistakes in the story",
+        "icon": "🔍",
+        "corruptedStory": "Le froid mord les patte du petit rongeur, lui rappelant que la contemplation n’alimente pas le ventre. Il regarde encore une fois cette forme endormie, ce refuge contre l’âpreté du monde, puis se retourne vers les branche nue. La neige tombe plus dense, effaçant les trace au sol, rendant chaque mouvement incertain. Doit-il fuir cette quiétude pour affronter le vide blanc, ou rester à observer comment le silence transforme la peur en paix ? Il saute, non par courage, mais par nécessité, laissant derrière lui l’illusion d’un hiver doux, pour retrouver la réalité froide et vivante de la survie.",
+        "_genMeta": {
+          "type": "error_hunt",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": null,
+          "valid": null,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 637,
+          "completionTokens": 144,
+          "ms": 66490,
+          "at": "2026-08-18T14:28:02.011Z"
+        }
       }
     ],
     "generationStats": {
@@ -5803,8 +5824,8 @@ const STATIC_LESSONS = [
         "lessons": "qwen3.6:35b-a3b"
       },
       "lessonFormat": "json",
-      "totalPromptTokens": 1704,
-      "totalCompletionTokens": 666,
+      "totalPromptTokens": 2341,
+      "totalCompletionTokens": 810,
       "lessons": [
         {
           "lessonNum": 1,
@@ -5812,10 +5833,13 @@ const STATIC_LESSONS = [
           "promptTokens": 956,
           "completionTokens": 352
         }
-      ]
+      ],
+      "tokensByType": {
+        "add_lesson": 781
+      }
     },
     "generatedAt": "2026-08-17T20:38:02.833Z",
-    "updatedAt": "2026-08-18T13:22:59.087Z",
+    "updatedAt": "2026-08-18T14:28:02.011Z",
     "createdBy": "admin"
   },
   {
@@ -150514,7 +150538,7 @@ async function init() {
   { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v80_h'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"c181e60544ca","lessons.json":"fdce571732fb","ui.json":"bda38a928a7f","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"58b249cb7d41"};
+  APP.buildSources = {"index.html":"c181e60544ca","lessons.json":"3ffe1adfe2b8","ui.json":"bda38a928a7f","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"58b249cb7d41"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');

@@ -10814,6 +10814,27 @@
             "at": "2026-08-17T20:55:08.813Z"
           },
           "_arcMode": "reinforce"
+        },
+        {
+          "difficulty": 2,
+          "id": "ls_1787063282011",
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "Le froid mord les patte du petit rongeur, lui rappelant que la contemplation n’alimente pas le ventre. Il regarde encore une fois cette forme endormie, ce refuge contre l’âpreté du monde, puis se retourne vers les branche nue. La neige tombe plus dense, effaçant les trace au sol, rendant chaque mouvement incertain. Doit-il fuir cette quiétude pour affronter le vide blanc, ou rester à observer comment le silence transforme la peur en paix ? Il saute, non par courage, mais par nécessité, laissant derrière lui l’illusion d’un hiver doux, pour retrouver la réalité froide et vivante de la survie.",
+          "_genMeta": {
+            "type": "error_hunt",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": null,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 637,
+            "completionTokens": 144,
+            "ms": 66490,
+            "at": "2026-08-18T14:28:02.011Z"
+          }
         }
       ],
       "generationStats": {
@@ -10826,8 +10847,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1704,
-        "totalCompletionTokens": 666,
+        "totalPromptTokens": 2341,
+        "totalCompletionTokens": 810,
         "lessons": [
           {
             "lessonNum": 1,
@@ -10835,10 +10856,13 @@
             "promptTokens": 956,
             "completionTokens": 352
           }
-        ]
+        ],
+        "tokensByType": {
+          "add_lesson": 781
+        }
       },
       "generatedAt": "2026-08-17T20:38:02.833Z",
-      "updatedAt": "2026-08-18T13:22:59.087Z",
+      "updatedAt": "2026-08-18T14:28:02.011Z",
       "createdBy": "admin"
     },
     {
