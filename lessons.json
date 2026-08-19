@@ -13209,56 +13209,6 @@
       "storyQcCheckedAt": "2026-08-13T05:39:21.077Z"
     },
     {
-      "id": "tp_17865767776190000060",
-      "topic": "EIN SCHEISSLAND Panel 1-2 ES GIBT EIN LAND, WO DIE KÖPFE…",
-      "topicEmoji": "📖",
-      "userTopic": "EIN SCHEISSLAND Panel 1-2 ES GIBT EIN LAND, WO DIE KÖPFE…",
-      "userPrompt": "EIN SCHEISSLAND Panel 1-2 ES GIBT EIN LAND, WO DIE KÖPFE…\n\n[story]\nEIN SCHEISSLAND Panel 1-2 ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRESSEN",
-      "lang": "en",
-      "srcLang": "en",
-      "difficulty": 1,
-      "storyLen": 50,
-      "story": "EIN SCHEISSLAND Panel 1-2 ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRESSEN",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "storyMeta": {
-        "type": "story",
-        "model": "(user-provided)",
-        "attempts": null,
-        "valid": 1,
-        "rejected": 0,
-        "rejectReasons": null,
-        "promptTokens": 0,
-        "completionTokens": 0,
-        "ms": null,
-        "at": "2026-08-12T23:19:17.228Z",
-        "origin": "user-pasted",
-        "source": "recorded at generation"
-      },
-      "translationMeta": {
-        "type": "translation",
-        "model": "qwen3.6:35b-a3b",
-        "attempts": null,
-        "valid": 1,
-        "rejected": 0,
-        "rejectReasons": null,
-        "promptTokens": 149,
-        "completionTokens": 45,
-        "ms": 20389,
-        "at": "2026-08-12T23:19:37.618Z",
-        "origin": "generated",
-        "source": "recorded at generation"
-      },
-      "storyTranslation": "A SHITTY LAND Panel 1-2 There is a land where the heads of all people resemble dumplings because they think they look delicious. They live in constant fear that the giants will come to devour them.",
-      "userStory": "EIN SCHEISSLAND Panel 1-2 ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRESSEN",
-      "continuedFrom": "Parkbesuch beginnt",
-      "continuedFromId": "tp_17862855350130000221",
-      "lessons": [],
-      "generatedAt": "2026-08-12T23:19:37.619Z",
-      "updatedAt": "2026-08-12T23:19:37.619Z",
-      "createdBy": "admin"
-    },
-    {
       "id": "tp_17864554460460000107",
       "topic": "Ein neues Kapitel beginnt",
       "topicEmoji": "📖",
@@ -97730,6 +97680,27 @@
           "_recreated": true
         },
         {
+          "difficulty": 1,
+          "id": "ls_1785847763009",
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "Maybe she didn’t have to be Sevn.\nMaybe she didn’t have to be On.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just rite.",
+          "_genMeta": {
+            "type": "error_hunt",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": null,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1136,
+            "completionTokens": 104,
+            "ms": 83697,
+            "at": "2026-08-04T12:49:23.009Z"
+          }
+        },
+        {
           "id": "ls_1785690723574_10_comprehension",
           "type": "comprehension",
           "title": "Die Reise von i",
@@ -97785,27 +97756,6 @@
           "_recreated": true
         },
         {
-          "difficulty": 1,
-          "id": "ls_1785847763009",
-          "type": "error_hunt",
-          "title": "Text Understanding",
-          "desc": "Find the mistakes in the story",
-          "icon": "🔍",
-          "corruptedStory": "Maybe she didn’t have to be Sevn.\nMaybe she didn’t have to be On.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just rite.",
-          "_genMeta": {
-            "type": "error_hunt",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": null,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 1136,
-            "completionTokens": 104,
-            "ms": 83697,
-            "at": "2026-08-04T12:49:23.009Z"
-          }
-        },
-        {
           "id": "ls_1787147484379_foy2",
           "type": "mixed",
           "title": "🔀 Mischübung",
@@ -97841,7 +97791,7 @@
         }
       },
       "generatedAt": "2026-06-15T13:15:39.863Z",
-      "updatedAt": "2026-08-19T13:51:24.380Z",
+      "updatedAt": "2026-08-19T14:45:24.169Z",
       "id": "tp_17815294559340001022",
       "storyMeta": {
         "type": "story",
@@ -99623,9 +99573,12 @@
               "source": "Kreise"
             },
             {
-              "target": "band -> Band",
-              "source": "Bande",
-              "editedAt": "2026-06-15T13:32:11.791Z"
+              "target": "band",
+              "source": "Band",
+              "editedAt": "2026-08-19T14:43:07.115Z",
+              "_manualEdits": [
+                "2026-08-19T14:43:07.115Z"
+              ]
             },
             {
               "target": "weird",
@@ -99701,94 +99654,6 @@
               "editedAt": "2026-06-15T13:33:07.238Z",
               "_manualEdits": [
                 "2026-06-15T13:33:07.238Z"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "ls_1781530669323",
-          "type": "math",
-          "title": "😀😀😀",
-          "desc": "+ + +",
-          "icon": "😀",
-          "numbers": [
-            1,
-            1,
-            2,
-            3,
-            5,
-            8,
-            13,
-            21,
-            34,
-            55
-          ],
-          "difficulty": 1,
-          "mathInstruction": "add the fibonacci series as sequentially increasing addition questions up to the first three digit numbers, don't skip any step of the fibonacci series.",
-          "exercises": [
-            {
-              "type": "math_calc",
-              "a": "1",
-              "op": "+",
-              "b": "1",
-              "correct": "2",
-              "choices": [
-                "4",
-                "1",
-                "3",
-                "2"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "1",
-              "op": "+",
-              "b": "2",
-              "correct": "3",
-              "choices": [
-                "3",
-                "5",
-                "4",
-                "2"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "2",
-              "op": "+",
-              "b": "3",
-              "correct": "5",
-              "choices": [
-                "5",
-                "9",
-                "7",
-                "3"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "3",
-              "op": "+",
-              "b": "5",
-              "correct": "8",
-              "choices": [
-                "5",
-                "10",
-                "12",
-                "8"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "5",
-              "op": "+",
-              "b": "8",
-              "correct": "13",
-              "choices": [
-                "17",
-                "8",
-                "15",
-                "13"
               ]
             }
           ]
@@ -100010,6 +99875,123 @@
           "_recreated": true
         },
         {
+          "id": "ls_1787147445156_qipn",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
+        },
+        {
+          "id": "ls_1781530669323",
+          "type": "math",
+          "title": "😀😀😀",
+          "desc": "+ + +",
+          "icon": "😀",
+          "numbers": [
+            1,
+            1,
+            2,
+            3,
+            5,
+            8,
+            13,
+            21,
+            34,
+            55
+          ],
+          "difficulty": 1,
+          "mathInstruction": "add the fibonacci series as sequentially increasing addition questions up to the first three digit numbers, don't skip any step of the fibonacci series.",
+          "exercises": [
+            {
+              "type": "math_calc",
+              "a": "1",
+              "op": "+",
+              "b": "1",
+              "correct": "2",
+              "choices": [
+                "4",
+                "1",
+                "3",
+                "2"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "1",
+              "op": "+",
+              "b": "2",
+              "correct": "3",
+              "choices": [
+                "3",
+                "5",
+                "4",
+                "2"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "2",
+              "op": "+",
+              "b": "3",
+              "correct": "5",
+              "choices": [
+                "5",
+                "9",
+                "7",
+                "3"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "3",
+              "op": "+",
+              "b": "5",
+              "correct": "8",
+              "choices": [
+                "5",
+                "10",
+                "12",
+                "8"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "5",
+              "op": "+",
+              "b": "8",
+              "correct": "13",
+              "choices": [
+                "17",
+                "8",
+                "15",
+                "13"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ls_1785849089997_4_error_hunt",
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "In this world, so chaotic and strage,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also want to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stared.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+          "_genMeta": {
+            "type": "error_hunt",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": null,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 598,
+            "completionTokens": 127,
+            "ms": 157399,
+            "at": "2026-08-04T13:11:29.997Z"
+          },
+          "_recreated": true
+        },
+        {
           "id": "ls_1785684485261_4_comprehension",
           "type": "comprehension",
           "title": "Die Suche von kleinen i",
@@ -100063,35 +100045,6 @@
             "at": "2026-08-02T15:28:05.261Z"
           },
           "_recreated": true
-        },
-        {
-          "id": "ls_1785849089997_4_error_hunt",
-          "type": "error_hunt",
-          "title": "Text Understanding",
-          "desc": "Find the mistakes in the story",
-          "icon": "🔍",
-          "corruptedStory": "In this world, so chaotic and strage,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also want to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stared.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
-          "_genMeta": {
-            "type": "error_hunt",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": null,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 598,
-            "completionTokens": 127,
-            "ms": 157399,
-            "at": "2026-08-04T13:11:29.997Z"
-          },
-          "_recreated": true
-        },
-        {
-          "id": "ls_1787147445156_qipn",
-          "type": "mixed",
-          "title": "🔀 Mischübung",
-          "icon": "🔀",
-          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
-          "perType": 3
         }
       ],
       "generationStats": {
@@ -100120,7 +100073,7 @@
         }
       },
       "generatedAt": "2026-06-15T13:04:20.430Z",
-      "updatedAt": "2026-08-19T13:50:45.159Z",
+      "updatedAt": "2026-08-19T14:44:57.449Z",
       "id": "tp_17815287786440000451",
       "storyMeta": {
         "type": "story",
@@ -100545,6 +100498,27 @@
           "_recreated": true
         },
         {
+          "id": "ls_1785848932534_3_error_hunt",
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "“Are you my family?” ask i.\nSeven shoke his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into teares.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heros.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+          "_genMeta": {
+            "type": "error_hunt",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": null,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 587,
+            "completionTokens": 118,
+            "ms": 143397,
+            "at": "2026-08-04T13:08:52.534Z"
+          },
+          "_recreated": true
+        },
+        {
           "id": "ls_1785683533989_3_comprehension",
           "type": "comprehension",
           "title": "Die Suche von kleinen i",
@@ -100600,27 +100574,6 @@
           "_recreated": true
         },
         {
-          "id": "ls_1785848932534_3_error_hunt",
-          "type": "error_hunt",
-          "title": "Text Understanding",
-          "desc": "Find the mistakes in the story",
-          "icon": "🔍",
-          "corruptedStory": "“Are you my family?” ask i.\nSeven shoke his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into teares.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heros.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
-          "_genMeta": {
-            "type": "error_hunt",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": null,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 587,
-            "completionTokens": 118,
-            "ms": 143397,
-            "at": "2026-08-04T13:08:52.534Z"
-          },
-          "_recreated": true
-        },
-        {
           "id": "ls_1787147438474_1dx6",
           "type": "mixed",
           "title": "🔀 Mischübung",
@@ -100655,7 +100608,7 @@
         }
       },
       "generatedAt": "2026-06-15T13:02:31.605Z",
-      "updatedAt": "2026-08-19T13:50:38.476Z",
+      "updatedAt": "2026-08-19T14:44:53.570Z",
       "id": "tp_17815286603790000369",
       "storyMeta": {
         "type": "story",
@@ -100988,6 +100941,27 @@
           "_recreated": true
         },
         {
+          "id": "ls_1785848789079_2_error_hunt",
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "One evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to anothr world.\nA strange world.\nA numbr world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Sevens.”",
+          "_genMeta": {
+            "type": "error_hunt",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": null,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1190,
+            "completionTokens": 180,
+            "ms": 113677,
+            "at": "2026-08-04T13:06:29.079Z"
+          },
+          "_recreated": true
+        },
+        {
           "id": "ls_1785682686476_2_comprehension",
           "type": "comprehension",
           "title": "Die Reise der kleinen i",
@@ -101043,27 +101017,6 @@
           "_recreated": true
         },
         {
-          "id": "ls_1785848789079_2_error_hunt",
-          "type": "error_hunt",
-          "title": "Text Understanding",
-          "desc": "Find the mistakes in the story",
-          "icon": "🔍",
-          "corruptedStory": "One evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to anothr world.\nA strange world.\nA numbr world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Sevens.”",
-          "_genMeta": {
-            "type": "error_hunt",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": null,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 1190,
-            "completionTokens": 180,
-            "ms": 113677,
-            "at": "2026-08-04T13:06:29.079Z"
-          },
-          "_recreated": true
-        },
-        {
           "id": "ls_1787147419733_67qb",
           "type": "mixed",
           "title": "🔀 Mischübung",
@@ -101098,7 +101051,7 @@
         }
       },
       "generatedAt": "2026-06-15T13:00:45.451Z",
-      "updatedAt": "2026-08-19T13:50:19.736Z",
+      "updatedAt": "2026-08-19T14:44:47.990Z",
       "id": "tp_17815285515500000284",
       "storyMeta": {
         "type": "story",
