@@ -254,8 +254,15 @@ const GOOD = { q: 'Warum geht Anna weg?', choices: ['Sie hat Angst', 'Sie ist m�
   assert.ok(!/speakLang\(_why/.test(html), 'the reason is NOT read aloud');
   // And nothing is spoken in its place: the only candidate is the correct OPTION, which is already
   // in the story above, so hearing it teaches nothing the learner cannot see.
-  assert.ok(/if\(!_why && speakBad\) speak\(speakBad,0\.75\);/.test(html),
+  // v80_p re-pinned this. The literal used to be `if(!_why && speakBad) speak(...)`; §0h's replay
+  // mode added a `!replay &&` guard in front, so the TEXT moved. The CLAIM did not (rule 29): the
+  // reveal is still silent exactly when there is a reason. Pinned on `_why` gating the speech, with
+  // any additional guards allowed, so the next guard added here does not read as a regression.
+  assert.ok(/if\((?:[^)]*&&\s*)?!_why && speakBad\) speak\(speakBad,0\.75\);/.test(html),
     'a comprehension reveal is silent; every other exercise type still speaks its answer');
+  // And the replay path must not speak at all — navigating back should be quiet.
+  assert.ok(/if\(!replay && !_why && speakBad\)/.test(html),
+    'replaying an answered question (§0h back-navigation) does not re-speak the answer');
   // Falls back when the model omitted a reason, rather than showing an empty reveal.
   assert.ok(/: \(_diff \|\| `\$\{t\('check\.correct_answer'\)\}/.test(html),
     'with the plain correct answer as the fallback when there is no reason');

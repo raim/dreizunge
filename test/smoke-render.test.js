@@ -390,8 +390,24 @@ console.log('  showComplete: fresh, review, below-mark, drill card, teacher: OK'
     return ex.type;
   })();`, 'comp-panel-negative');
   assert.notStrictEqual(negType, 'NONE', 'a non-comprehension exercise was available for the negative check');
-  assert.ok(!/id="ex-story-panel"/.test(C.document.getElementById('ex-area').innerHTML),
-    `a ${negType} question shows no story panel`);
+  // v80_s (user ruling, option 3): this used to assert a non-comprehension question shows NO story
+  // panel. T0 asks for the text on ALL question cards, so the panel now appears everywhere — and
+  // starts COLLAPSED where the story would give the answer away (word_forms 203/336, error_hunt
+  // 44/47, synonyms 14/34, and the typed kinds, which leak the spelling).
+  //
+  // The CLAIM this negative protected is not dropped, it MOVED: the leak is now handled by the panel
+  // being closed rather than absent. That half is pinned by `unit-story-panel-states` §5; what is
+  // asserted here is the half this file can see — the panel renders, and the ORDER still holds, so
+  // the story never pushes the answer controls off-screen.
+  {
+    const negHtml = C.document.getElementById('ex-area').innerHTML;
+    assert.ok(/id="ex-story-panel"/.test(negHtml),
+      `a ${negType} question now shows the story panel too (T0, ruled v80_s)`);
+    const nStory = negHtml.indexOf('id="ex-story-panel"');
+    const nCheck = negHtml.indexOf('id="cbtn"');
+    assert.ok(nCheck >= 0 && nCheck < nStory,
+      'and it still comes AFTER the Check button, so the answer controls stay reachable');
+  }
   C.run('APP._teacherMode = false; true;');
   console.log('  renderEx: comprehension story panel renders below the answer controls: OK');
 }

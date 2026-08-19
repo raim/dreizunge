@@ -446,6 +446,17 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 /* v74_n: the SOLVED tier keeps exactly what the single tier used to be, so a fully-played chapter
    looks the way it always did; the new, fainter tier is the addition. */
 .story-vocab-hl.solved{background:#fff3c0;font-weight:800}
+/* v80_r / TRACK T: three states. RED = no associated question solved, GREEN = every one solved
+   (§T5.1, ruled ALL), PARTIAL in between — the state the old two-shade scheme could not express.
+   §T5.4 was ruled ACCEPT, so a mostly-red chapter is expected and is an honest report of unfinished
+   work; the colours are therefore muted rather than alarming. `wp-asked` UNDERLINES the span the
+   current question is about, on top of its colour, so the two signals do not compete (T0). */
+.story-vocab-hl.wp-red{background:#fdeaea;font-weight:600}
+.story-vocab-hl.wp-partial{background:#fff3c0;font-weight:700}
+.story-vocab-hl.wp-green{background:#e4f5e4;font-weight:800}
+.story-vocab-hl.wp-asked{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:2px}
+.story-vocab-hl.wp-tap{cursor:pointer}
+.story-vocab-hl.wp-tap:hover{outline:2px solid var(--blue);outline-offset:1px}
 .story-flag-row{padding:6px 14px 10px;display:flex;flex-direction:column;gap:6px}
 
 /* ══ STORY ═══════════════════════════════════════════════════════════ */
@@ -3706,7 +3717,11 @@ const _UNSPACED_SCRIPTS = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}
 function _hlKey(w){
   return String(w == null ? '' : w).replace(/['\u2019\u2018\u02BC\u02B9\u2032]/g, "'").trim().toLowerCase();
 }
-function _highlightVocabHtml(html, words, strongWords) {
+// v80_r / TRACK T step 2: an optional THIRD argument shape. `stateByKey` is a Map from `_hlKey` to
+// 'green' | 'partial' | 'red'; when given, the emitted class carries that state instead of the
+// two-tier solved/unsolved mark. When absent NOTHING changes — every existing caller still gets the
+// v74_n behaviour, which is why this is an extra parameter rather than a replacement.
+function _highlightVocabHtml(html, words, strongWords, stateByKey, underlineKeys) {
   if (!words.length) return html;
   const stripF = w => w.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[[^\]]+\]/g, '$1');
   const strong = new Set((strongWords || []).map(w => _hlKey(stripF(String(w || '')))).filter(Boolean));
@@ -3792,7 +3807,23 @@ function _highlightVocabHtml(html, words, strongWords) {
       // Folded the same way as the set above: the story's U+2019 and the ledger's U+0027 are the
       // same word, so a solved word must earn the strong mark whichever form the author typed.
       const key = _hlKey(stripF(m));
-      return '<mark class="story-vocab-hl' + (strong.has(key) ? ' solved' : '') + '">' + m + '</mark>';
+      // v80_r: three-state colouring when TRACK T supplies a state map, plus an UNDERLINE for the
+      // span the current question is about — underline as well as colour, so the "which word am I
+      // being asked" signal does not compete with the red/green one (T0's explicit requirement).
+      let cls = 'story-vocab-hl' + (strong.has(key) ? ' solved' : '');
+      if (stateByKey) {
+        const st = stateByKey.get ? stateByKey.get(key) : stateByKey[key];
+        cls = 'story-vocab-hl wp-' + (st || 'red');
+      }
+      if (underlineKeys && (underlineKeys.has ? underlineKeys.has(key) : underlineKeys[key])) cls += ' wp-asked';
+      // v80_t / TRACK T step 3: tappable, but ONLY when a state map was supplied — i.e. only on the
+      // TRACK T panel. The storyline and progress-card callers pass no state map and keep inert
+      // marks, so this cannot make text tappable on screens that have no run to start.
+      if (stateByKey) {
+        return '<mark class="' + cls + ' wp-tap" role="button" tabindex="0"'
+             + ' onclick="event.stopPropagation();tapWord(this.textContent)">' + m + '</mark>';
+      }
+      return '<mark class="' + cls + '">' + m + '</mark>';
     });
   });
 }
@@ -12816,6 +12847,11 @@ function startLesson(idx){
   //     down. The drill could never clear a mistake, and counts inflated on every attempt.
   delete C._wrongTargets;
   C.exercises=buildExercises(idx); C.cur=0;
+  // v80_p / §0h: the per-run answer ledger. Indexed by question, written by check() and read
+  // back by renderEx when the learner navigates BACKWARD. It lives on the RUN, so the §0h rule
+  // "the lock lasts only for that question set" holds by construction: replaying from the
+  // progress card builds a new run and a new empty ledger, and the questions are playable again.
+  C.ans=[];
   // A mixed lesson with nothing to pool (no other lessons with playable exercises yet)
   // shouldn't open an empty player — tell the user what to do instead.
   if (lesson.type==='mixed' && (!C.exercises || !C.exercises.length)) {
@@ -13277,6 +13313,10 @@ function renderEx(){
   }
   const ex=C.exercises[C.cur];
   try{ refreshExHintBtn(); }catch(_){}   // v63: per-question help button follows the exercise
+  // v80_p / §0h: the reset is now CONDITIONAL. This one unconditional line is what made backward
+  // navigation lose the learner's answer — renderEx wiped the selection every time, so a question
+  // revisited came back blank and playable. The ledger decides which it is.
+  const _rec = (C.ans||[])[C.cur];
   C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[]; delete C._selPos;
   document.getElementById('prog-fill').style.width=Math.round(C.cur/C.exercises.length*100)+'%';
   renderHearts();
@@ -13319,6 +13359,7 @@ function renderEx(){
     flagBanner+
     '<div id="fb" class="feedback"></div>'+
     '<div class="btn-row">'+
+      `<button class="mute-btn" id="qback" onclick="qPrev()" title="${escAttr(t('ex.back_title'))}" style="flex:0 0 auto;border:2px solid var(--gray-mid);background:var(--white);border-radius:var(--radius-lg);cursor:pointer;font-size:20px;padding:0 16px;display:${C.cur>0?'':'none'}">←</button>`+
       `<button class="check-btn" id="cbtn" onclick="check()" disabled>${t('ex.check')}</button>`+
       `<button class="mute-btn" onclick="toggleMute()" title="${APP.muted?'Unmute':'Mute'}" style="flex:0 0 auto;border:2px solid var(--gray-mid);background:var(--white);border-radius:var(--radius-lg);cursor:pointer;font-size:20px;padding:0 16px;opacity:${APP.muted?'1':'.7'}">${APP.muted?'🔇':'🔊'}</button>`+
       `<button class="kbd-btn${APP.noKeyboard?' kbd-on':''}" onclick="toggleNoKeyboard()" title="${escAttr(t('ex.no_keyboard.title'))}" style="flex:0 0 auto;border:2px solid var(--gray-mid);background:var(--white);border-radius:var(--radius-lg);cursor:pointer;font-size:20px;padding:0 16px;opacity:${APP.noKeyboard?'1':'.7'}">⌨️</button>`+
@@ -13332,6 +13373,16 @@ function renderEx(){
     }
   },350);
 
+
+  // v80_p / §0h: the DOM is built and wired — now put an ALREADY ANSWERED question back the way
+  // the learner left it. Order matters: the selection is restored first, then check(true) paints the
+  // verdict through the same code path a live answer uses, so the two cannot look different.
+  if (_rec) {
+    _restoreAnswer(ex, _rec);
+    try { check(true); } catch(_) {}
+    const _b = document.getElementById('cbtn');
+    if (_b) { _b.disabled = false; _b.textContent = t('check.continue'); _b.className = 'check-btn cont'; }
+  }
 }
 
 // v71_s: the chapter story, shown on a COMPREHENSION question so the learner can actually read the
@@ -13346,29 +13397,107 @@ function renderEx(){
 // chapter; here it would let the learner answer questions about the target-language text without
 // ever reading the target language — which is the one thing a comprehension lesson is for. Worth
 // revisiting as a product decision, not a bug.
+// v80_r / TRACK T step 2: the word-state map and the asked-span set, both derived from the ONE
+// collector (`_wordProgress`, v80_q) so the panel and the progress card cannot disagree about what
+// the learner has.
+function _wordStateMap(d){
+  const m = new Map();
+  try {
+    _wordProgress(d).forEach((rec, w) => {
+      const k = _hlKey(String(w || ''));
+      if (!k) return;
+      // A word can arrive through both sources; the WORST state wins, so a word with an unsolved
+      // question never reads as fully done.
+      const st = _wordState(rec);
+      const prev = m.get(k);
+      const rank = { red: 0, partial: 1, green: 2 };
+      if (prev == null || rank[st] < rank[prev]) m.set(k, st);
+    });
+  } catch(_) {}
+  return m;
+}
+// The span the current question is about. Underlined on top of its colour.
+function _askedKeys(ex){
+  const out = new Set();
+  if (!ex) return out;
+  for (const cand of [ex.target, ex.correct, ex.word, ex.infinitive]) {
+    if (!cand) continue;
+    const list = Array.isArray(cand) ? cand : [cand];
+    list.forEach(x => { const k = _hlKey(stripFuri(String(x || ''))); if (k) out.add(k); });
+  }
+  return out;
+}
+
+// ONE story panel for every question screen. T0: "ALL question cards should ALSO show text (currently
+// only for comprehension questions), and in each question the highlight should indicate the word(s)
+// currently asked (underline additionally to the coloring)."
+//
+// `_cardHeader` is the precedent — one renderer, or five screens drift. The panel is OPEN on a
+// comprehension question, where the text IS the material, and COLLAPSED elsewhere, where it is
+// context: the answer controls must stay reachable without scrolling past several hundred words,
+// which was the user's explicit layout call when this panel was built for comprehension.
 function _exStoryPanelHtml(ex){
-  if(!ex || ex.type !== 'comprehension_mcq') return '';
   const d = APP.lessonData || {};
   const story = d.story || '';
   if(!story) return '';
+  const isComp = !!(ex && ex.type === 'comprehension_mcq');
+  // v80_s — USER RULING, option 3: the panel is on EVERY question card, and COLLAPSED by default
+  // wherever the story would hand over the answer.
+  //
+  // T0 asks for the text everywhere. Measured against that: the story contains the answer for
+  // word_forms 203/336 (60.4%), error_hunt 44/47 (93.6%), synonyms 14/34 (41.2%). `listen_type` and
+  // its siblings leak the SPELLING of the very word being typed, which is the same problem by
+  // another route. A `smoke-render` negative had blocked the panel outright since v71_s without
+  // recording why; this is why.
+  //
+  // The ruling: show it, start it closed on those screens. A learner who opens it is doing what they
+  // could already do from the progress card, so this is a nudge rather than a wall — and the text
+  // focus T0 wants is present on every screen instead of one.
+  //
+  // OPEN only where the text IS the material (comprehension) or cannot give the answer away.
+  // v80_u — USER RULING, superseding v80_s's option 3: the panel is never collapsed.
+  // *"Don't collapse the story text on some questions, it is ok for the user to scan the full text to
+  // find the answer. We now want to keep the user's attention on the text throughout progress cards
+  // and questions."*
+  //
+  // The leakage measured at v80_s is real and unchanged — the story contains the answer for
+  // word_forms 60.4% and error_hunt 93.6% — but it is now an ACCEPTED cost, not a defect: scanning
+  // the text for the answer is reading practice, which is what TRACK T is for.
+  const _open = true;
   // The gate is belt-and-braces: the lesson is already unreachable until the story unlocks
   // (buildPath + _firstUnfinishedLessonIdx), so this should always be true when we get here.
   // If some future path opens the lesson early, showing the story is the safe failure — the
   // alternative is the unanswerable question this release exists to remove.
-  const unlocked = (typeof storyUnlocked === 'function') ? storyUnlocked(d) : true;
-  if(!unlocked && !APP._teacherMode && !APP.info?.canGenerate) return '';
+  // v80_u / T0: the unlock gate is GONE. T0 is explicit — the chapter text "should be visible on ALL
+  // progress cards of that chapter, EVEN BEFORE the chapter text is unlocked", because under TRACK T
+  // the text IS the progress display and a hidden one displays nothing.
+  //
+  // This also explains a report that looked like a static-build bug: in `docs/index.html` the first
+  // questions showed no story, while the same chapter showed one in the app. Not a build difference —
+  // the gate passed in the app because a backend makes `canGenerate` true, and failed in the static
+  // build. One rule, two environments, opposite outcomes.
+  //
+  // ⚠️ The LESSON-level gate is untouched: comprehension lessons are still unreachable until the
+  // story unlocks (`_storyLockedLesson`, v80_b). What changed is only whether the text is DISPLAYED.
   let body;
   try {
-    const solved = (typeof _solvedTargetWords === 'function') ? _solvedTargetWords(d) : [];
+    // Every word the chapter TEACHES is marked, coloured by how much of it the learner has — not
+    // just the solved ones. That is TRACK T's whole point: the text is the progress display.
+    const all = (typeof _storyWordSources === 'function')
+      ? [...new Set(_storyWordSources(d).map(x => x.word)
+          .concat((d.lessons || []).flatMap(L => (L && L.vocab || []).map(v => v && v.target))))].filter(Boolean)
+      : [];
     const rendered = furiHtml(story);
-    body = solved.length ? _highlightVocabHtml(rendered, solved) : rendered;
+    body = all.length
+      ? _highlightVocabHtml(rendered, all, [], _wordStateMap(d), _askedKeys(ex))
+      : rendered;
   } catch(_) { body = escHtml(story); }
   const paras = body.split(/\n\n+/).map(p => `<p dir="auto" style="margin:0 0 8px">${p.replace(/\n/g,'<br>')}</p>`).join('');
   const lang = d.lang || APP.lang;
   const spk = (typeof _lessonIsDialect === 'function' && _lessonIsDialect()) ? '' :
     `<button class="flag-btn" style="margin-bottom:6px" title="${escAttr(t('ex.comprehension.story_listen'))}"
        onclick="speakBodyText(null,'${escAttr(lang)}',APP.lessonData?.story||'')">🔊</button>`;
-  return '<details id="ex-story-panel" open style="margin-top:14px;border:2px solid var(--gray-mid);'
+  return '<details id="ex-story-panel"' + (_open ? ' open' : '') + ' style="margin-top:14px;border:2px solid var(--gray-mid);'
        + 'border-radius:var(--radius-lg);background:var(--white);text-align:left;padding:10px 14px">'
        + `<summary style="cursor:pointer;font-size:13px;font-weight:900;color:var(--gray-dark);outline:none">`
        + `📖 ${escHtml(t('ex.comprehension.story'))}</summary>`
@@ -15052,10 +15181,66 @@ function _glyphSpeakForm(s){
   if (parts.length === 2 && parts[0].toLowerCase() === parts[1].toLowerCase()) return parts[0];
   return s;
 }
-function check(){
-  const C=APP.cur; if(C.answered){ C.cur++; renderEx(); return; }
+// v80_p / §0h: put the DOM back the way the learner left it, from the ledger entry.
+//
+// Restores the SELECTION only; the verdict painting is check(true)'s job, so there is exactly one
+// place that knows what an answered question looks like. Every type whose answer is a selection is
+// covered: choice buttons, synonym tiles, typed input, and the two placed-order kinds, which redraw
+// from `C.placed` through their own updaters (`updateSbox` / `updateMathPlaced`) rather than through
+// a copy of that logic here.
+function _restoreAnswer(ex, rec){
+  const C = APP.cur;
+  C.sel = rec.sel; C.placed = (rec.placed||[]).slice(); C.usedIdx = (rec.usedIdx||[]).slice();
+  try {
+    // choice buttons — matched on displayed text, the same key pickChoice() stores
+    if (rec.sel != null) {
+      document.querySelectorAll('.choice').forEach(b => {
+        if (b.textContent.trim() === String(rec.sel)) b.classList.add('sel');
+      });
+    }
+    // synonym multi-select
+    if (rec.synSel && rec.synSel.length) {
+      document.querySelectorAll('.syn-tile').forEach(b => {
+        if (rec.synSel.indexOf(b.dataset.w||'') >= 0) b.classList.add('sel');
+      });
+    }
+    // typed answers
+    const ti = document.getElementById('type-in');
+    if (ti && rec.typed) ti.value = rec.typed;
+    // placed-order kinds: redraw through the product's own updaters, and grey the used bank chips
+    if (C.placed.length) {
+      if (typeof updateSbox === 'function') { try { updateSbox(); } catch(_) {} }
+      if (typeof updateMathPlaced === 'function') { try { updateMathPlaced(); } catch(_) {} }
+      (C.usedIdx||[]).forEach(i => { const w=document.getElementById('w'+i); if(w) w.classList.add('used'); });
+    }
+  } catch(_) {}
+}
+
+// §0h: back on the QUESTION cards. Forward is unchanged — `_speakAndAdvance` advances one way only
+// and stays that way; this is the other direction, and it never re-grades or re-scores.
+function qPrev(){
+  const C = APP.cur;
+  if (!C || !(C.cur > 0)) return;
+  C.cur--; renderEx();
+}
+
+// v80_p / §0h: `replay` REPAINTS an already-answered question instead of grading a new one. It is a
+// flag on the SAME function rather than a second "paint the answered state" function, deliberately:
+// the painting here is ~60 lines of per-type DOM work interleaved with the scoring, and a second
+// implementation would drift the moment either changed. With one path, a replayed question cannot
+// look different from a live one — that is the property worth having, and it is why the guards
+// below are narrow (`if(!replay)`) rather than the paint being lifted out.
+//
+// A replay must not: score, spend a heart, markSolved, touch the ledger, speak, or auto-advance.
+// It must: set C.answered, show the feedback panel, and mark the choices right/wrong.
+function check(replay){
+  const C=APP.cur; if(C.answered && !replay){ C.cur++; renderEx(); return; }
   const ex=C.exercises[C.cur]; let ok=false;
-  if(_glyphOrderActive(ex)){
+  // On a replay the verdict comes from the LEDGER, never from re-grading the DOM. Re-grading would
+  // be a second source of truth for the same question, and for typed answers it would read whatever
+  // the restored input holds rather than what the learner actually submitted.
+  if(replay){ const _r=(C.ans||[])[C.cur]; ok=!!(_r&&_r.ok); }
+  else if(_glyphOrderActive(ex)){
     // No-keyboard glyph ordering: join the placed glyphs (no spaces) and compare to the target's
     // displayed base (furigana brackets stripped — see tGlyphOrder), with the same diacritic-
     // leniency the typed path uses.
@@ -15078,6 +15263,16 @@ function check(){
   }
   else { ok=(C.sel||'')===ex.correct; }
   C.answered=true;
+  // The ledger entry: the verdict plus everything needed to put the DOM back the way the learner
+  // left it. Written only on a real answer — a replay must never rewrite what it is reading.
+  if(!replay){
+    try {
+      (C.ans||(C.ans=[]))[C.cur] = { ok: ok, sel: C.sel,
+        placed: (C.placed||[]).slice(), usedIdx: (C.usedIdx||[]).slice(),
+        typed: (document.getElementById('type-in')||{}).value || '',
+        synSel: [...document.querySelectorAll('.syn-tile.sel')].map(b=>b.dataset.w||'') };
+    } catch(_) {}
+  }
   try{ refreshExHintBtn(); }catch(_){}   // v63: answered → the tutor may now explain
   const btn=document.getElementById('cbtn'); btn.textContent=t('check.continue'); btn.className='check-btn cont'; btn.disabled=false;
 
@@ -15090,15 +15285,17 @@ function check(){
     return;
   }
   if(ok){
-    C.correct++; C.total++; C.streak++; if(C.streak>C.bestStreak)C.bestStreak=C.streak;
-    try { markSolved(ex); } catch(_) {}   // durable per-question coverage (Commit A)
+    if(!replay){
+      C.correct++; C.total++; C.streak++; if(C.streak>C.bestStreak)C.bestStreak=C.streak;
+      try { markSolved(ex); } catch(_) {}   // durable per-question coverage (Commit A)
+    }
     const revealBody = ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation'
       ? `${furiHtml(ex.correct)}${ex.source ? ' — ' + furiHtml(ex.source) : ''}`
       : (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex') ? escHtml(Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
       : ex.type==='syn_select' ? synRevealHtml(ex)
       : furiHtml(ex.target||ex.correct);
     fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}${(ex.type==='word_form'&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
-    const speakOk = ex.type==='type_conjugation' ? ex.pronoun+' '+stripFuri(ex.correct)
+    const speakOk = ex.type==='type_conjugation' ? _joinPronoun(ex.pronoun, stripFuri(ex.correct))
       : ex.type==='type_plural' ? stripFuri(ex.correct)
       : ex._intro ? _glyphSpeakForm(stripFuri(ex._intro==='glyph_sound' ? ex.source : ex.target))   // the GLYPH, once (case pair collapsed), never the Latin romanization ("dh"→"d-h")
       : ex.type==='mcq_article'      ? ex.article+' '+stripFuri(ex.target)
@@ -15112,13 +15309,14 @@ function check(){
     if(ex.type==='syn_select') document.querySelectorAll('.syn-tile').forEach(b=>{ if(ex.correct.some(c=>c.toLowerCase()===(b.dataset.w||'').toLowerCase())) b.classList.add('ok'); });
     if((ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') && !_glyphOrderActive(ex)) document.getElementById('type-in').classList.add('ok');
     // Auto-advance — speaks once then advances
-    btn.disabled = true;
-    _speakAndAdvance(speakOk);
+    // A replay leaves the button live as "Continue" and says nothing: auto-advancing would carry the
+    // learner forward the instant they navigated back, and re-speaking would make Back noisy.
+    if(!replay){ btn.disabled = true; _speakAndAdvance(speakOk); }
   } else {
-    C.hearts=Math.max(0,C.hearts-1); C.mistakes++; C.total++; C.streak=0;
+    if(!replay){ C.hearts=Math.max(0,C.hearts-1); C.mistakes++; C.total++; C.streak=0; }
     // Remember which words were answered wrongly this round → learned-vocab ledger marks them,
     // so future user-specific retraining can focus on them (see roadmap "my story").
-    try { const wt=(ex.target||ex.correct); if(wt){ (C._wrongTargets||(C._wrongTargets=new Set())).add(stripFuri(String(wt)).trim()); } } catch(_) {}
+    if(!replay){ try { const wt=(ex.target||ex.correct); if(wt){ (C._wrongTargets||(C._wrongTargets=new Set())).add(stripFuri(String(wt)).trim()); } } catch(_) {} }
     // v78_i (user): a conjugation reveal shows the WHOLE phrase, "vi ste", not the bare form "ste".
     // The question asks which form goes with a pronoun, so the answer is the pair — a lone "ste"
     // makes the learner reconstruct the very thing being taught. The read-out has combined the two
@@ -15129,7 +15327,7 @@ function check(){
       : (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex')
       ? escHtml(Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
       : (ex.type==='mcq_conjugation'||ex.type==='type_conjugation') && ex.pronoun
-      ? escHtml(ex.pronoun) + ' ' + furiHtml(ex.correct)
+      ? _joinPronoun(escHtml(ex.pronoun), furiHtml(ex.correct))
       : furiHtml(ex.correct);
     // v71_c: a typed answer shows WHERE it went wrong, character by character. Only for the typed
     // types, and never in no-keyboard glyph mode (there is no typed string to compare).
@@ -15150,7 +15348,7 @@ function check(){
       ? _wrongCorrect
       : (_diff || `${t('check.correct_answer')} <strong>${_wrongCorrect}</strong>`);
     fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${_wrongBody}${(ex.type==='word_form'&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
-    const speakBad = ex.type==='type_conjugation' ? ex.pronoun+' '+stripFuri(ex.correct)
+    const speakBad = ex.type==='type_conjugation' ? _joinPronoun(ex.pronoun, stripFuri(ex.correct))
       : ex.type==='type_plural' ? stripFuri(ex.correct)
       : ex._intro ? _glyphSpeakForm(stripFuri(ex._intro==='glyph_sound' ? ex.source : ex.target))   // glyph, once, not romanization
       : ex.type==='mcq_article'      ? ex.article+' '+stripFuri(ex.target)
@@ -15169,7 +15367,7 @@ function check(){
     // Nothing is spoken in its place: the remaining candidate would be the correct OPTION, and
     // v71_o's other observation still holds — that text is already in the story above, so hearing
     // it teaches nothing the learner cannot see. A comprehension question is a reading exercise.
-    if(!_why && speakBad) speak(speakBad,0.75);
+    if(!replay && !_why && speakBad) speak(speakBad,0.75);
     const _corrStr = Array.isArray(ex.correct) ? ex.correct.join(', ') : ex.correct;
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('bad'); if(b.textContent.trim()===stripFuri(_corrStr))b.classList.add('ok'); });
     if(ex.type==='syn_select') document.querySelectorAll('.syn-tile').forEach(b=>{ const w=(b.dataset.w||'').toLowerCase(); if(ex.correct.some(c=>c.toLowerCase()===w)) b.classList.add('ok'); else if(b.classList.contains('sel')) b.classList.add('bad'); });
@@ -16022,41 +16220,211 @@ function _storyExtraWords(d){
 // Darker shade: the subset whose own question this learner has answered. Same solved map and the
 // same `qid` call `_solvedTargetWords` uses for vocabulary, so the two shades mean the same thing
 // on both kinds of word.
-function _solvedExtraWords(d){
-  if (!d || !d.topic) return [];
+// ── v80_q / TRACK T step 1: per-word PROGRESS, not per-word yes/no ───────────
+//
+// `_solvedExtraWords` and `_solvedTargetWords` each answered "has this word been solved at all?" and
+// returned a SET. TRACK T needs the fraction — a word is RED when none of its questions is solved
+// and GREEN when all of them are (`§T5.1`, ruled: ALL, because a word carries a mean of 1.70
+// questions and 53.6% carry exactly one). A set cannot express the middle.
+//
+// ONE collector, because two would drift: this walks both word sources and returns
+// `{ word: { n, ok, src } }` — `n` questions associated with the word, `ok` of them solved. The two
+// original functions are now thin wrappers over it, so "which words does this chapter teach" and
+// "how much of each does the learner have" can never disagree.
+//
+// `src` is kept because the two callers are NOT interchangeable: the vocab side and the
+// `_storyWordSources` side cover different lessons, and collapsing them would silently change what
+// each existing caller highlights.
+function _wordProgress(d){
+  const out = new Map();
+  if (!d || !d.topic) return out;
   const solvedMap = _solvedMap(d.topic) || {};
-  const keys = Object.keys(solvedMap);
-  if (!keys.length) return [];
-  const have = new Set(keys);
-  const out = new Set();
-  _storyWordSources(d).forEach(s => {
-    (s.probes || []).forEach(p => {
-      let k = null;
-      try { k = qid(p, s.lessonId); } catch(_) { k = null; }
-      if (k && have.has(k)) out.add(s.word);
+  const solvedKeys = Object.keys(solvedMap);
+  // ⚠️ Counted per SOURCE as well as in total, and the difference is not cosmetic. The first version
+  // of this kept one counter per word, which merged the two sources — so solving a `word_forms`
+  // question about a word marked it solved on the VOCAB side too, and `_solvedTargetWords` grew by
+  // 11 words across 59 real chapter/user pairs. TRACK T wants the TOTAL (green = every associated
+  // question, whatever kind); the existing callers want their own side. Both are kept, so neither
+  // has to be reconstructed by a caller that might get it wrong.
+  const bump = (word, src, solved) => {
+    let r = out.get(word);
+    if (!r) { r = { n: 0, ok: 0, bySrc: { extra: { n: 0, ok: 0 }, vocab: { n: 0, ok: 0 } } }; out.set(word, r); }
+    r.n++; if (solved) r.ok++;
+    const b = r.bySrc[src]; if (b) { b.n++; if (solved) b.ok++; }
+  };
+
+  // (a) the extra sources — synonyms, word_forms, grammar, conjugation — which carry explicit probes
+  try {
+    _storyWordSources(d).forEach(s => {
+      (s.probes || []).forEach(p => {
+        let k = null;
+        try { k = qid(p, s.lessonId); } catch(_) { k = null; }
+        if (k) bump(s.word, 'extra', !!solvedMap[k]);
+      });
     });
-  });
-  return [...out].sort((a, b) => b.length - a.length);
-}
-function _solvedTargetWords(d){
-  if (!d || !d.topic) return [];
-  const solvedMap = _solvedMap(d.topic) || {};
-  const out = new Set();
+  } catch(_) {}
+
+  // (b) vocab targets. The membership test is the ORIGINAL one, kept verbatim rather than
+  // simplified: it accepts a solved key belonging to this lesson whose hash matches this word under
+  // THAT key's own question type, which is how "any question kind about this word counts". A
+  // tidier-looking test would quietly change which words light up.
   (d.lessons || []).forEach(L => {
     if (!L || L.id == null) return;
     (L.vocab || []).forEach(v => {
       if (!v || !v.target) return;
       if (_itemWithheld(v)) return;                  // withheld items are not part of the record
-      // Any question kind about this word counts: the learner demonstrated it once.
-      const hit = Object.keys(solvedMap).some(id => id.startsWith(L.id + ':') && qid({ type: 'mcq_source_target', target: v.target, source: v.source }, L.id) === id)
-               || Object.keys(solvedMap).some(id => {
+      const hit = solvedKeys.some(id => id.startsWith(L.id + ':') && qid({ type: 'mcq_source_target', target: v.target, source: v.source }, L.id) === id)
+               || solvedKeys.some(id => {
                     const parts = String(id).split(':');
                     return parts[0] === String(L.id) && _qidHash(_qidCanonical({ type: parts[1], target: v.target, source: v.source })) === parts[2];
                   });
-      if (hit) out.add(v.target);
+      bump(v.target, 'vocab', hit);
     });
   });
-  return [...out].sort((a, b) => b.length - a.length);
+  return out;
+}
+
+// v80_u: join a pronoun to its verb form. French `j'` + `emporte` must be `j'emporte`, not
+// `j' emporte` — with the space, TTS reads the apostrophe aloud ("j apostrophe emporte"), which the
+// user heard on a conjugation lesson. The corpus stores the elided pronoun WITH its apostrophe, so
+// the fix is orthographic, not lexical: an apostrophe-final pronoun binds directly to the form.
+//
+// No language knowledge is added — this is the same class of rule as the apostrophe FOLDING in
+// `_highlightVocabHtml` (v77_u) and as case-insensitivity: it reads a character, not a dictionary.
+// Every apostrophe-like code point counts, since the corpus mixes U+0027 and U+2019.
+function _joinPronoun(pron, form){
+  const p = String(pron == null ? '' : pron).trim();
+  const f = String(form == null ? '' : form);
+  if (!p) return f;
+  return /['\u2019\u2018\u02BC\u2032]$/.test(p) ? p + f : p + ' ' + f;
+}
+
+// ── v80_t / TRACK T step 3: tap a word → the lesson flow ─────────────────────
+//
+// `§T5.2`, ruled: *"tapping a word should enter the usual lesson flow, including questions that are
+// not reachable by tapping, and we keep the play buttons."* So this is a way IN to the existing
+// runner, NOT a parallel one-question mode — which is why there is no new round machinery here. It
+// resolves the word to a (lesson, question) and hands off to `startLesson`, then moves `C.cur` to
+// that question. `§0h` (`v80_p`) is what makes the second half safe: the per-run answer ledger means
+// entering at question N is an ordinary position in the run, not a special state.
+//
+// Every candidate question for a word, newest information first:
+//   { lessonIdx, key, solved }   where `key` is the `qid()` of the question.
+// Both word sources are covered — the probe-bearing lessons and plain vocab — because a learner
+// tapping a word in the story does not know or care which kind of lesson teaches it.
+function _wordQuestions(d, word){
+  const out = [];
+  if (!d || !word) return out;
+  const solvedMap = _solvedMap(d.topic) || {};
+  const want = _hlKey(stripFuri(String(word)));
+  if (!want) return out;
+  // A HIDDEN lesson is not a valid destination: `startLesson` refuses it outside teacher mode, so
+  // offering one would make the tap report success and then do nothing. Found by a fixture whose
+  // best word lived in a hidden lesson — the resolver, not the test, was wrong.
+  const startable = (L) => !!L && (!L._hidden || APP._teacherMode);
+  const idxOf = (lessonId) => (d.lessons || []).findIndex(L => startable(L) && String(L.id) === String(lessonId));
+  try {
+    _storyWordSources(d).forEach(sfc => {
+      if (_hlKey(stripFuri(String(sfc.word))) !== want) return;
+      const li = idxOf(sfc.lessonId);
+      if (li < 0) return;
+      (sfc.probes || []).forEach(pr => {
+        let k = null;
+        try { k = qid(pr, sfc.lessonId); } catch(_) {}
+        if (k) out.push({ lessonIdx: li, key: k, solved: !!solvedMap[k] });
+      });
+    });
+  } catch(_) {}
+  (d.lessons || []).forEach((L, li) => {
+    if (!startable(L) || L.id == null) return;
+    (L.vocab || []).forEach(v => {
+      if (!v || !v.target) return;
+      if (_hlKey(stripFuri(String(v.target))) !== want) return;
+      // A vocab word is asked several ways; the canonical direction is enough to find the lesson,
+      // and the entry-point scan below accepts ANY question about the word in that lesson.
+      let k = null;
+      try { k = qid({ type: 'mcq_source_target', target: v.target, source: v.source }, L.id); } catch(_) {}
+      if (k) out.push({ lessonIdx: li, key: k, solved: !!solvedMap[k] });
+    });
+  });
+  return out;
+}
+
+// Tap handler. T0: "Each tapped word just opens one of potentially several associated questions …
+// Revisiting a word should preferentially ask questions not yet solved."
+//
+// Returns true when it started something, so the caller can fall back rather than swallow a tap
+// that did nothing — a tap with no visible effect is the worst outcome here.
+function tapWord(word){
+  const d = APP.lessonData;
+  const cands = _wordQuestions(d, word);
+  if (!cands.length) return false;
+  // Unsolved first (T0), then any. Ties keep corpus order, which is the lesson order the learner
+  // would otherwise meet them in.
+  const unsolved = cands.filter(c => !c.solved);
+  const pool = unsolved.length ? unsolved : cands;
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  if (!startLesson(pick.lessonIdx)) return false;
+  // The run is built and SHUFFLED by startLesson, so the question's position is only knowable now.
+  // Match on qid — the same key `markSolved` writes — rather than on text, which would match the
+  // wrong exercise whenever a word appears in several questions.
+  const C = APP.cur;
+  const keys = new Set(pool.filter(c => c.lessonIdx === pick.lessonIdx).map(c => c.key));
+  const lid = (d.lessons[pick.lessonIdx] || {}).id;
+  const solvedMap = _solvedMap(d.topic) || {};
+  const want = _hlKey(stripFuri(String(word)));
+  // ONE scan over the built run, matching by qid OR by text, then preferring an unsolved question.
+  //
+  // These were two sequential passes — qid first, text as a fallback — and that was WRONG: when
+  // every qid candidate was solved, the first pass matched a solved question and the text pass never
+  // ran, even though the run held an unsolved question about the same word. A probe only names some
+  // of the ways a word is asked (for vocab, just `mcq_source_target`), so the qid pass is not a
+  // superset of the text pass and cannot be tried first. Caught by the guard, not by reading.
+  const mine = [];
+  for (let i = 0; i < (C.exercises || []).length; i++) {
+    const ex = C.exercises[i];
+    if (!ex) continue;
+    let k = null;
+    try { k = qid(ex, lid); } catch(_) {}
+    const byKey = !!(k && keys.has(k));
+    const byText = [ex.target, ex.correct, ex.base, ex.infinitive].filter(Boolean)
+      .some(x => _hlKey(stripFuri(String(x))) === want);
+    if (byKey || byText) mine.push({ i, solved: !!(k && solvedMap[k]) });
+  }
+  // T0: revisiting a word prefers questions not yet solved.
+  const firstUnsolved = mine.find(x => !x.solved);
+  let at = firstUnsolved ? firstUnsolved.i : (mine.length ? mine[0].i : -1);
+  // No exact match: the lesson still teaches the word, so entering at the top is the honest
+  // fallback — the learner reaches it, just not immediately. Silently doing nothing would be worse.
+  if (at > 0) { C.cur = at; renderEx(); }
+  return true;
+}
+
+// The three states TRACK T paints. Ruled at `§T5.1`: GREEN means EVERY associated question solved.
+function _wordState(rec){
+  if (!rec || !rec.n) return 'red';
+  if (rec.ok >= rec.n) return 'green';
+  return rec.ok > 0 ? 'partial' : 'red';
+}
+
+// Wrappers, unchanged in meaning: "any question about this word solved". Kept because several
+// callers highlight on exactly that, and `v80_q` is a refactor, not a behaviour change — asserted
+// by `unit-word-progress` against 59 real chapter/user pairs captured before the change.
+// Longest first — `_highlightVocabHtml` matches in this order so a short word cannot match inside a
+// longer one. `b.length - a.length` alone is NOT a total order, so equal-length words used to come
+// out in whatever order the underlying Set happened to hold, and the refactor changed that order for
+// two words in the corpus. Tie-broken explicitly: same meaning, and now the output does not depend
+// on insertion order at all.
+const _byLenThenText = (a, b) => (b.length - a.length) || (a < b ? -1 : a > b ? 1 : 0);
+function _solvedExtraWords(d){
+  const out = [];
+  _wordProgress(d).forEach((r, w) => { if (r.bySrc.extra.ok > 0) out.push(w); });
+  return out.sort(_byLenThenText);
+}
+function _solvedTargetWords(d){
+  const out = [];
+  _wordProgress(d).forEach((r, w) => { if (r.bySrc.vocab.ok > 0) out.push(w); });
+  return out.sort(_byLenThenText);
 }
 function _renderCompStory(allDone){
   const d = APP.lessonData || {};

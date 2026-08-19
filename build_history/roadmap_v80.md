@@ -512,7 +512,10 @@ cut a story chapter to ribbons. Watch for cancel-races with the card's other spe
   the explanation for CORRECT answers too — both the source-language explanation and the
   target-language quote.
 
-## 0h. Question navigation — its own release, probably its own session
+## ✅ 0h. Question navigation — **SHIPPED at `v80_p`**
+
+> `C.ans` ledger + `check(replay)` + `qPrev()`. The lock is per-run by construction. See the
+> `v80_p` entry. Original scope note kept:
 
 Back/next on the QUESTION cards. Already-made choices are shown (right or wrong) and cannot be
 reverted, but the lock lasts only for that question set: replaying via the progress card makes them
@@ -1772,14 +1775,13 @@ lever that touches the 36.4%, and it costs one prompt change instead of a per-ch
 usual lesson flow), `T5.3`/`T2a` ruled (the bars stay), `T5.4` ruled (accept the red screen). Nothing
 below waits on the user any more except step 5, which needs a live model.*
 
-1. **Per-word solved FRACTION** — generalise `_solvedExtraWords` from a set to counts. ~1 session.
-2. **The shared text panel** on every progress card and every question screen, with the asked span
-   underlined. ~1 session; `_cardHeader`-style single renderer, or it will drift five ways.
-3. **Tap → the lesson flow.** ⚠️ REVISED by the `§T5.2` ruling: NOT a single-question mode. Resolve
-   word → (lesson, entry point) and hand off to `startLesson`, which already exists. The reverse
-   index exists too (`_storyWordSources` → `probes` → `qid()`), so this is smaller than the ~2
-   sessions first estimated — call it 1, plus whatever "resume at question N" costs, which is `§0h`
-   territory and may want doing first.
+1. ~~**Per-word solved FRACTION**~~ **✅ SHIPPED as `v80_q`** — `_wordProgress` + `_wordState`;
+   both originals are wrappers over it. See the `v80_q` entry.
+2. ~~**The shared text panel**~~ **✅ SHIPPED as `v80_r` + `v80_s`** — renderer, three states,
+   asked-span underline, and the panel on EVERY question card, collapsed where the story leaks the
+   answer (ruled option 3).
+3. ~~**Tap → the lesson flow.**~~ **✅ SHIPPED as `v80_t`** — `_wordQuestions` + `tapWord`, landing
+   on an unsolved question where one exists. `§0h` (`v80_p`) was built first, as this predicted.
 4. **The gate change** (comprehension unlocks on green) — lands on `_storyLockedLesson` /
    `storyUnlocked`, i.e. the `v80_b` code. ~1 session.
 5. **Prompt-side exact mapping** — needs a live model. **The user's, not a container's.**
@@ -2850,6 +2852,291 @@ the v80 cut itself hit, when "WHERE TO START" had grown three items numbered "0"
 sections stayed where they were: `§C1`'s non-reproduction, `§0i — RECONCILED`, and
 `§0`'s sub-section status all sit directly above the sections they annotate, which is the only
 place they make sense.*
+
+### `v80_u` — three fixes from the user's device pass; six items still open
+
+#### (a) The story panel is NEVER collapsed — supersedes `v80_s`'s option 3
+
+*"Don't collapse the story text on some questions… we now want to keep the user's attention on the
+text throughout progress cards and questions."* The leakage measured at `v80_s` is unchanged and real
+— the story contains the answer for word_forms 60.4%, error_hunt 93.6% — but it is now an **ACCEPTED
+COST, not a defect**: scanning the text for the answer is reading practice, which is what TRACK T is
+for. Recorded rather than deleted, so the trade stays visible.
+
+#### (b) ⚠️ The story-unlock gate is GONE from the panel — and it was never a static-build bug
+
+Reported as *"in static `docs/index.html`, the first questions don't show the story"*. **Not a build
+difference.** `_exStoryPanelHtml` deferred to `storyUnlocked`, with an escape for teacher mode or
+`canGenerate`. In the app a backend makes `canGenerate` true, so the panel showed; in the static build
+it is false, so the same chapter showed nothing. **One rule, two environments, opposite outcomes** —
+which is exactly the shape a "static build bug" report takes when the cause is a gate.
+
+T0 settles it anyway: the text is visible *"even before the chapter text is unlocked"*, because under
+TRACK T the text IS the progress display and a hidden one displays nothing. **The LESSON-level gate is
+untouched** — comprehension is still unreachable until the story unlocks (`_storyLockedLesson`).
+
+#### (c) French elision: `j'` + `emporte` is now `j'emporte`
+
+The TTS read *"j apostrophe emporte"* on a conjugation lesson, because the speech string was
+`ex.pronoun + ' ' + correct` and the corpus stores the elided pronoun WITH its apostrophe. The user's
+guess — that the space was the cause — was right; it is not an array-vs-string issue.
+
+`_joinPronoun()` binds an apostrophe-final pronoun directly to the form, for every apostrophe-like
+code point, since the corpus mixes U+0027 and U+2019. **No language knowledge is added**: it reads a
+character, not a dictionary — the same class of rule as the apostrophe FOLDING in
+`_highlightVocabHtml` (`v77_u`) and as case-insensitivity. Applied to both speech strings and to the
+displayed answer, so what is shown and what is spoken cannot disagree.
+
+Guarded and mutation-tested: forcing the panel closed and removing the elision test each fail
+`unit-story-panel-states`.
+
+#### ⚠️ STILL OPEN from the same pass — six items, deliberately not started
+
+1. **Live highlight refresh after answering.** Cheap; the panel is one renderer now (`v80_r`).
+2. **Full SENTENCES should count toward the word counter and highlights** (screenshot 14-09). The
+   sentence-translation question uses a story sentence; nothing marks its words. Needs a decision on
+   whether a sentence marks EVERY word in it or only the taught ones.
+3. **The vocabulary list under the text should show only words NOT in the story**, and may include
+   solved synonyms/antonyms (14-11-13). Small, and it makes the list complementary to the highlights
+   rather than a duplicate of them.
+4. **All progress cards should show the story with the new highlights** (14-07). The completion card
+   currently shows the vocabulary list and no story. This is TRACK T's `§T0` first bullet and the
+   largest of the six.
+5. **The story on the progress/summary cards must use the SAME renderer** as the lesson panel
+   (14-11-13/49). Today those call `_storyParasHtml` + the two-shade highlighter directly — a fourth
+   and fifth renderer, which is precisely the drift `_exStoryPanelHtml` was unified to stop.
+6. **⚠️ A wrong answer should DECREASE the solved counter.** This one is NOT small and should not be
+   done casually: `INTERNALS` records the solved store as **MONOTONIC** — *"one correct answer ever =
+   solved, the coverage model"* — and coverage, chapter completion, the pass mark, `storyUnlocked`
+   and `_firstCoverageShortLessonIdx` all read it. Making it decrease turns a ratchet into a
+   fluctuating value, so a chapter could become INCOMPLETE again and a story could RE-LOCK. That may
+   be exactly what the user wants for TRACK T's colouring, but it needs its own release, a decision
+   about whether the un-solving is scoped to the HIGHLIGHT only or to the whole coverage model, and
+   a re-run of the `v80_b` / `§C1` gate probes.
+
+### `v80_t` — SHIPPED: TRACK T step 3, tapping a word enters the lesson flow
+
+`§T5.2`, ruled: *"tapping a word should enter the usual lesson flow, including questions that are not
+reachable by tapping, and we keep the play buttons."* So this is a way IN to the existing runner, not
+a parallel one-question mode — which is why there is **no new round machinery**.
+
+**Shipped:** `_wordQuestions(d, word)` resolves a word to its candidate questions across both word
+sources; `tapWord(word)` picks one (**unsolved preferred**, T0), calls `startLesson`, and moves
+`C.cur` onto that question. Marks are tappable **only on the TRACK T panel** — the storyline and
+progress-card callers pass no state map and have no run to start. `§0h` (`v80_p`) is what makes the
+landing safe: entering at question N is an ordinary run position, not a special state.
+
+#### Two real product defects, both caught by the guard rather than by reading
+
+- **Hidden lessons were valid tap destinations.** `startLesson` refuses them outside teacher mode, so
+  a tap would report success and then do nothing. Fixed in the resolver, not the test.
+- **The entry-point scan could land on a SOLVED question.** It ran two sequential passes — qid match,
+  then text match — and when every qid candidate was solved, the first pass matched a solved question
+  and the text pass never ran, **even though the run held an unsolved question about the same word**.
+  A probe names only some of the ways a word is asked (for vocab, just `mcq_source_target`), so the
+  qid pass is not a superset of the text pass and cannot be tried first. Now ONE scan matching either
+  way, then preferring unsolved.
+
+#### ⚠️ `buildExercises` is NON-DETERMINISTIC IN CONTENT, not just in order
+
+This is the finding to carry. The guard was flaky through **six** successive attempts and **every
+failure was the TEST being wrong about correct behaviour**. The cause each time was the same
+assumption: that the set of questions about a word is stable across builds. It is not — `startLesson`
+rebuilds and re-samples, so a fixture chosen from one build does not hold on the next.
+
+The fixture sweep, §1 and §4 now all accumulate across several builds instead of asserting on one.
+**Verified 15 consecutive green runs**; a single green run proves nothing here.
+
+**Anything that samples the corpus for a fixture must assume the same.** `unit-question-nav`
+(`v80_p`) hit the shuffled-ORDER version of this; this is the harder, content-level version.
+
+#### ⚠️ Mutation coverage is UNEVEN, and measured rather than assumed
+
+```
+disabling the entry-point scan                   caught 6/6
+dropping the SCAN's unsolved preference          caught 5/6
+dropping the POOL's unsolved preference          caught 1/6   <- effectively unguarded
+```
+
+The pool mutation survives because the scan compensates for a bad pool pick: the pool's remaining job
+is choosing WHICH LESSON when a word is taught in several, and this fixture's word is taught in one.
+Recorded in the test's "does not establish" block rather than glossed — a mutation score quoted as a
+single number would have hidden it.
+
+**Not built, and not an oversight:** T0's *"after answering, the next question is a randomly chosen
+DIFFERENT word"*. The run continues in its own order, which is `§T5.2` working as intended. Word
+hopping would be a further change and a further ruling.
+
+### `v80_s` — TRACK T step 2 COMPLETE: the story panel is on every question card (user ruling, option 3)
+
+**Ruled: option 3.** The panel renders on EVERY question card — T0's requirement — and starts
+**COLLAPSED** wherever the story would hand over the answer. A learner who opens it is doing what
+they could already do from the progress card, so it is a nudge rather than a wall.
+
+**Open by default:** comprehension (the text IS the material) and vocab/listening MCQs, where the
+story cannot give a translation away.
+**Collapsed by default:** `word_form`, `syn_select`, `listen_type`, `type_plural`,
+`type_conjugation`, and the error-hunt kinds — measured leakage of 60.4%, 93.6% and 41.2% for the
+sentence-context types, plus the typed kinds, which leak the SPELLING of the word being typed.
+
+**The `smoke-render` negative was MOVED, not deleted.** It had asserted "a non-comprehension question
+shows no story panel" since `v71_s` with no recorded reason. The claim it protected still holds —
+the leak is now handled by the panel being CLOSED rather than ABSENT — so it now asserts the panel
+renders and still comes AFTER the Check button, which is the half that file can see.
+
+**⚠️ A guard that could not fail, caught by mutation-testing rather than by review.** The first
+version of `unit-story-panel-states` §5 pinned the SOURCE — that `_open ? ' open' : ''` appears in
+the return. Mutating `_open` to a constant `true` — the exact leak the ruling exists to prevent —
+**left it green**: it proved the expression existed, not that it discriminated. Rewritten to RENDER
+each question type and inspect the `open` attribute, which is where the claim is observable
+(rule 34). All three mutations now fail it: `_open = true`, dropping `word_form` from the leak list,
+and disabling the leak test entirely.
+
+**This is the second time this session that pinning source text produced a guard that could not
+fail** (the first was `unit-story-unlocked-page` §6, fixed at `v80_c`). Worth remembering as a habit:
+when a guard's claim is about BEHAVIOUR, rendering and inspecting beats matching the source, and
+mutation-testing is what tells the two apart.
+
+### `v80_r` — TRACK T step 2 (part): one story-panel renderer, three states, asked-span underline. **A RULING IS OWED.**
+
+**Shipped:**
+
+- **`_highlightVocabHtml` gained two optional arguments** — a Map of `_hlKey` → `red|partial|green`
+  and a Set of keys to underline. **When neither is passed, nothing changes**, which is why they are
+  extra parameters rather than a replacement: every existing caller keeps the `v74_n` two-shade
+  behaviour, asserted.
+- **`_wordStateMap(d)`** derives the states from `_wordProgress` (`v80_q`), so the panel and the
+  progress card cannot disagree about what the learner has. A word reachable through both sources
+  takes the WORST state, so one unsolved question stops it reading as done.
+- **`_askedKeys(ex)`** — the span the current question is about, **underlined on top of its colour**
+  (T0: "underline additionally to the coloring"), so the two signals do not compete.
+- **`_exStoryPanelHtml` is now the ONE panel renderer** and is ready for every question type;
+  `_cardHeader` is the precedent.
+- Four CSS classes, guarded — an emitted class with no style rule renders as nothing, which would
+  make an unfinished chapter look finished.
+
+#### ⚠️ THE PANEL IS STILL COMPREHENSION-ONLY, and T0 says it should not be
+
+T0: *"ALL question cards should ALSO show text (currently only for comprehension questions)."*
+Implementing that hit a `smoke-render` negative — *"a non-comprehension question shows no story
+panel"* — which has stood since `v71_s` **with no recorded reason**. Rather than delete it, measured
+what it might be protecting:
+
+```
+word_forms   203 of 336 items (60.4%)  the FILLED sentence appears verbatim in the story
+error_hunt    44 of  47 items (93.6%)  the CORRECTED sentence appears in the story
+synonyms      14 of  34 items (41.2%)
+```
+
+**The story contains the answer.** Opening the panel on those screens turns a fill-the-blank into a
+reading-off exercise. So the guard was protecting something real; its comment simply never said what,
+and now it does.
+
+**This needs a USER RULING, because it trades T0's text focus against answer leakage per lesson
+type** — not a code decision. Options:
+
+1. **Comprehension only** (today). Safe; T0's requirement unmet.
+2. **All types except `word_forms`, `error_hunt`, `synonyms`** — the sentence-context types. Vocab
+   and listening questions would get the panel. **⚠️ `listen_type` still leaks the SPELLING**, so it
+   probably belongs on the exclusion list too.
+3. **All types, panel COLLAPSED by default** on the leaky ones. The learner can still open it, so it
+   is a nudge rather than a wall — and arguably fine, since a determined learner can already open
+   the story from the progress card.
+4. **All types, with the asked sentence masked** in the panel. Most faithful to T0, most work, and
+   it needs the generation-side sentence mapping T0 itself proposes.
+
+**My read: 3.** It satisfies T0, costs almost nothing, and the leak it permits is one the learner can
+already reach by other means. But it is the user's call and the scope is PINNED by
+`unit-story-panel-states` §5 so it cannot widen silently.
+
+### `v80_q` — SHIPPED: TRACK T step 1, the per-word progress collector
+
+`_solvedExtraWords` and `_solvedTargetWords` each answered *"has this word been solved at all?"* and
+returned a SET. TRACK T needs the FRACTION — red when none of a word's questions is solved, green
+when all are (`§T5.1`, ruled ALL). **A set cannot express the middle.**
+
+**Shipped:** `_wordProgress(d)` → `{ word: { n, ok, bySrc } }`, the ONE collector, walking both word
+sources. `_wordState(rec)` returns the three states TRACK T will paint. **Both original functions are
+now thin wrappers over it**, so "which words does this chapter teach" and "how much of each does the
+learner have" cannot drift apart.
+
+**⚠️ THE REFACTOR WAS WRONG ON THE FIRST ATTEMPT, and the method is why that is known.** Before
+touching anything, both functions' output was CAPTURED over **59 real chapter/user pairs** from
+`learners.json` — 379 solved words. After the change: **390**. Eleven words had appeared from
+nowhere.
+
+Cause: one counter per word, which MERGED the two sources — so solving a `word_forms` question about
+a word marked it solved on the VOCAB side too. Fixed by counting per source as well as in total
+(`bySrc`), which is what both audiences actually want: TRACK T needs the TOTAL (green = every
+associated question, whatever kind), the existing callers need their own side.
+
+A second, smaller difference survived that fix: two words swapped places. `b.length - a.length` is
+**not a total order**, so equal-length words came out in whatever order the underlying Set happened
+to hold. Tie-broken by text now — same meaning, and the output no longer depends on insertion order.
+**Final state: sets identical on all 118 captured outputs.**
+
+**This is the concrete value of capture-and-diff over "the tests still pass".** The whole suite was
+green with the contamination bug in place, because no existing test distinguished the two sources.
+
+**Guard:** `unit-word-progress`, five sections against real learner histories — 1506 words, 250
+green / 126 partial / 1130 red. Non-vacuity is asserted for all three states, PARTIAL specifically
+because it is the state a Set could not express. **§3 is the discriminator**: a word solved through
+one source only must not appear in the other's list, checked over 373 genuinely one-sided words.
+Mutation-tested: merging the sources fails it, and so does green = ANY instead of ALL.
+
+**⚠️ NOT established (rule 34):** nothing paints yet. `_wordState` returns the states; no caller uses
+`partial`. `§T5.4` was ruled ACCEPT, so the red-heavy screen ships as-is when step 2 lands. The
+equivalence with the pre-refactor implementation rests on the capture-and-diff done AT the change,
+not on the guard — a captured baseline would rot on the next data drop.
+
+### `v80_p` — SHIPPED: `§0h` question navigation. TRACK T's step 3 is now unblocked.
+
+**`§0h`, verbatim:** *"Already-made choices are shown (right or wrong) and cannot be reverted, but
+the lock lasts only for that question set: replaying via the progress card makes them playable
+again."* Built first because the `§T5.2` ruling put it on TRACK T's critical path — tapping a word
+enters the usual lesson flow, which needs "enter at question N", which is this.
+
+**The obstacle was ONE line.** `renderEx` ran
+`C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];` **unconditionally**, so a question
+revisited came back blank and playable. Everything else followed from that.
+
+**Shipped:**
+
+- **`C.ans`, a per-RUN answer ledger** — verdict plus selection, typed text, syn tiles and placed
+  order. It lives on the RUN, so `§0h`'s "the lock lasts only for that question set" holds **by
+  construction**: replaying builds a new run and an empty ledger. No separate unlock path to get
+  wrong.
+- **`check(replay)`** — a flag on the SAME function rather than a second "paint the answered state"
+  function. The painting is ~60 lines of per-type DOM work interleaved with the scoring, and a
+  second implementation would drift the moment either changed. **With one path, a replayed question
+  cannot look different from a live one.** A replay does not score, spend a heart, `markSolved`,
+  write the ledger, speak, or auto-advance — six narrow `if(!replay)` guards, no lifted code.
+- **`_restoreAnswer`** puts the SELECTION back; the verdict is `check(true)`'s job, so exactly one
+  place knows what an answered question looks like. Placed-order types redraw through the product's
+  own `updateSbox` / `updateMathPlaced` rather than a copy of that logic.
+- **`qPrev()` + a `←` button**, hidden on the first question. Forward is untouched:
+  `_speakAndAdvance` still advances one way only, as `§0h` describes.
+- **On a replay the verdict comes from the LEDGER, never from re-grading the DOM.** Re-grading would
+  be a second source of truth, and for typed answers it would read whatever the restored input holds
+  rather than what the learner submitted.
+
+**Guard:** `unit-question-nav`, six sections, driving a REAL lesson through
+`startLesson`/`renderEx`/`check` rather than asserting on source text. Mutation-tested both ways:
+disabling the restore fails *"still ANSWERED, not blank"*; removing the `!replay` scoring guard fails
+*"the score did NOT change"*.
+
+**⚠️ A fixture bug worth carrying, because it looked exactly like a product bug.** Exercises are
+SHUFFLED per run, so the question at index 0 is not the same TYPE every time. The first version of
+the test assumed choice buttons and failed on **2 runs in 12** — intermittently, which is the worst
+way for a guard to be wrong. The helper now reports the SHAPE it answered and the assertions branch
+on it, so the test measures whichever shape actually occurred. **Verified 15 consecutive green runs
+before shipping**; a single green run would have proved nothing.
+
+**⚠️ NOT established (rule 34):** the sections exercise CHOICE and TYPED questions. The ledger also
+stores synonym tiles and placed-order state and `_restoreAnswer` puts them back, but **no fixture
+drives those types, so their restore is UNVERIFIED.** A device pass on an ordering lesson and a
+synonym lesson is owed. `ui.json` gained one `en` key, `ex.back_title` (617 → 618), owed to the
+translate pass.
 
 ### `v80_o` — `§T5.4` ruled: TRACK T is fully unblocked
 

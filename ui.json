@@ -616,7 +616,8 @@
     "unlocked.next": "Start the next chapter",
     "unlocked.back_card": "Back to the chapter",
     "unlocked.progress": "{done} of {total} chapters",
-    "summary.start": "Start learning"
+    "summary.start": "Start learning",
+    "ex.back_title": "Back to the previous question"
   },
   "nl": {
     "qc.editor.suggests_by": "⚑ {model} stelt voor:",
