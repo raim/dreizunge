@@ -1,0 +1,56 @@
+PLAN §F3 — vocab article symmetry, corpus-wide
+
+vocab pairs seen        : 4643
+pairs COUNTED           : 3069   (both languages have word articles)
+ASYMMETRIC              : 31   1.0%
+
+excluded, and why:
+  no-article-language          912
+  prefix-article-language      499
+  article-list-not-written     163
+
+by language pair:
+  en->it     n=  969   asymmetric    2  0.2%
+  en->de     n=  366   asymmetric    0  0.0%
+  de->en     n=  302   asymmetric   16  5.3%
+  de->it     n=  242   asymmetric    5  2.1%
+  en->lb     n=  174   asymmetric    3  1.7%
+  nl->en     n=  168   asymmetric    0  0.0%
+  es->en     n=  167   asymmetric    0  0.0%
+  de->fr     n=  118   asymmetric    0  0.0%
+  fr->en     n=   87   asymmetric    0  0.0%
+  de->de     n=   86   asymmetric    1  1.2%
+
+per-chapter distribution — §F3c predicts the ENDS, not the middle:
+  all symmetric (0%)        191 chapters
+  partial (1-49%)             4 chapters
+  majority (50-99%)           1 chapters
+  all asymmetric (100%)       2 chapters
+
+the two chapters §F3c named:
+  tp_17869977371640000022  Stille vor dem Winter: 0 of 8 asymmetric (0.0%)
+  tp_17869980065780000104  Brücke der Existenz: 0 of 8 asymmetric (0.0%)
+
+worst chapters:
+    8/8   de->en   Geisterhafte Gestalten
+    8/8   de->en   Dunkel und Geruch
+    4/8   lb->lb   Essen an Luxembourg
+    2/8   en->it   Agricultural Devastation
+    5/23  de->it   Verschwundene Antworten
+    3/14  en->lb   a poem
+    1/86  de->de   osttirol-glossary
+    0/30  de->fr   Ein Gedicht für Constanze
+
+samples:
+  de->it  "die Frage" <-> "domanda"
+  de->it  "die Antwort" <-> "risposta"
+  de->it  "der Bürger" <-> "cittadino"
+  de->it  "der Appell" <-> "appello"
+  de->it  "die Identität" <-> "identità"
+  en->it  "hail" <-> "la grandine"
+  en->it  "damage" <-> "il danno"
+  de->en  "der Nebel" <-> "fog"
+  de->en  "das Summen" <-> "hum"
+  de->en  "die Taschenlampe" <-> "flashlight"
+
+(reported, not asserted — and NOT language-blind; see the header)

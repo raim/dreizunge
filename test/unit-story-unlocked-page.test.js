@@ -69,6 +69,17 @@ function atUnlock(opts) {
 }
 // The chapter's first story-gated lesson — section 6 needs it by index.
 const GATED_IDX = (TOPIC.lessons || []).findIndex(isPost);
+
+// §6 needs MORE than the file-wide TOPIC provides: it must be able to make the two resume helpers
+// DISAGREE, which needs a gated lesson with at least two items (so it can be part-solved and still
+// unfinished) and a prep lesson with enough items to leave barely covered. `find()`-ing one chapter
+// and hoping is how this section broke on the first data drop after it was written — the selection
+// moved and the discriminator precondition stopped holding. So it SWEEPS for a chapter that fits
+// and asserts one was found (rule 32: guard the enumeration, not the instance you happened to get).
+const SIX = store.topics.filter(t =>
+  (t.story || '').length > 100 &&
+  (t.lessons || []).filter(L => L && !L._hidden && !isPost(L)).length >= 2 &&
+  (t.lessons || []).some(L => isPost(L) && !L._hidden));
 const gateOpen = C => C.run(`storyUnlocked(APP.lessonData)`);
 const workLeft = C => C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
 
@@ -174,10 +185,16 @@ const workLeft = C => C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
 //
 // Built below, and revert-verified: with `v77_p`'s ordering swapped back, Next goes to lesson 0 —
 // the reported bug, reproduced — and this section fails.
-{
-  const C = loadClient({ quiet: true });
-  C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed');
-  C.run(`
+// Try each candidate until one produces the DISAGREEMENT this section needs. The first that does
+// is used; if none does, that is a finding about the corpus and this fails loudly rather than
+// quietly measuring nothing.
+let SIX_PICK = null, C = null, unfinished = -1, covShort = -1;
+for (const CAND of SIX) {
+  const GI = (CAND.lessons || []).findIndex(L => isPost(L) && !L._hidden);
+  if (GI < 0) continue;
+  const Ct = loadClient({ quiet: true });
+  Ct.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed');
+  Ct.run(`
     APP.savedList = ${JSON.stringify(SAVED)};
     APP.storylines = ${JSON.stringify(store.storylines || [])};
     // The pass mark is 1 here, not 0.8: at 1 the story-unlock gate skips its coverage test
@@ -186,7 +203,7 @@ const workLeft = C => C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
     APP.info = { backend:'none', canGenerate:false, coverageThreshold:1 };
     APP.progress = { completed:{}, solved:{}, chapterDone:{}, learned:{}, storyShown:{} };
     APP._teacherMode = false; APP._slScreen = {};
-    APP.lessonData = ${JSON.stringify(TOPIC)};
+    APP.lessonData = ${JSON.stringify(CAND)};
     if (typeof _invalidateQidUniverse === 'function') _invalidateQidUniverse();
     (function(){
       var d = APP.lessonData, m = _solvedMap(d.topic), done = APP.progress.completed[d.topic] = {};
@@ -209,17 +226,27 @@ const workLeft = C => C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
     show = function(id){ APP._shown = id; };
     startLesson = function(i){ APP._started = i; return true; };
     saveProg = function(){};
-    APP.cur = { lessonIdx:${GATED_IDX}, exercises:[], cur:0, correct:1, total:3, mistakes:2,
+    APP.cur = { lessonIdx:${GI}, exercises:[], cur:0, correct:1, total:3, mistakes:2,
                 hearts:2, streak:0, bestStreak:0 };
     showComplete(); true;`, 'render');
 
-  const unfinished = C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
-  const covShort   = C.run(`_firstCoverageShortLessonIdx()`);
+  const u = Ct.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
+  const cs = Ct.run(`_firstCoverageShortLessonIdx()`);
+  const gateOK = Ct.run(`storyUnlocked(APP.lessonData)`) === true;
+  const branchOK = Ct.run(`APP._usNextLesson`) === undefined;
+  if (!(gateOK && branchOK && u === GI && cs >= 0 && cs !== u && cs < u)) continue;
+  SIX_PICK = CAND; C = Ct; unfinished = u; covShort = cs; break;
+}
+assert.ok(SIX_PICK,
+  'no corpus chapter can be put into the state this section measures (story unlocked, the gated ' +
+  'lesson unfinished and just played, an EARLIER lesson less covered). If this fails the corpus ' +
+  'changed shape — diagnose it, do not delete the section');
+{
 
   // Non-vacuity, in three parts. Each one is a way this section could go quietly green.
   assert.strictEqual(C.run(`storyUnlocked(APP.lessonData)`), true,
     'non-vacuity: the story is unlocked, so the comprehension lesson is legitimately reachable');
-  assert.strictEqual(unfinished, GATED_IDX,
+  assert.ok(isPost(SIX_PICK.lessons[unfinished]),
     'non-vacuity: the unfinished lesson is the story-gated one the learner just played');
   assert.notStrictEqual(covShort, unfinished,
     'THE DISCRIMINATOR: the coverage-short target and the unfinished target must DIFFER, or both ' +

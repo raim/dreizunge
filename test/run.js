@@ -145,6 +145,9 @@ run('unit: progress-card swallowed errors are visible (v77_b)', 'node', [path.jo
 run('unit: mixed-driven story unlock is reachable by playing (v77_c)', 'node', [path.join(__dirname, 'unit-mixed-unlock-reachable.test.js')]);
 run('unit: story-finished card — the last page of the walk (v77_f)', 'node', [path.join(__dirname, 'unit-story-finished.test.js')]);
 run('unit: story-summary card — the first page of the walk (v77_h)', 'node', [path.join(__dirname, 'unit-story-summary.test.js')]);
+run('unit: storyline title placeholder (v80_l, PLAN 9c)', 'node', [path.join(__dirname, 'unit-storyline-title-auto.test.js')]);
+run('unit: vocab prompt article rule (v80_j, PLAN F3)', 'node', [path.join(__dirname, 'unit-prompt-article-rule.test.js')]);
+run('unit: lesson ids unique within a topic (v80_i)', 'node', [path.join(__dirname, 'unit-lesson-id-unique.test.js')]);
 run('unit: lesson output carries the target script (v80_h)', 'node', [path.join(__dirname, 'unit-lesson-script-output.test.js')]);
 run('unit: word_forms blank position (v80_g, PLAN F2)', 'node', [path.join(__dirname, 'unit-word-forms-defects.test.js')]);
 run('unit: one starter card per chapter (v80_e, was v77_i)', 'node', [path.join(__dirname, 'unit-next-chapter-entry.test.js')]);

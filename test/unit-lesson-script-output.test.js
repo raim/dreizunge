@@ -36,18 +36,29 @@ const latinLesson = (extra) => ({ id: 'x', type: 'conjugation',
   conjugations: [{ infinitive: 'raditi', forms: ['I work here every single day of the week'] }],
   note: pad('This whole lesson is written in the Latin alphabet only and carries plenty of text ', 300) + (extra || '') });
 
-// ── 1. The real, reported case is flagged ──────────────────────────────────
+// ── 1. Real Cyrillic content is NOT flagged ───────────────────────────────
+// ⚠️ REWRITTEN at the v80_i drop. This section used to pin the reported PAIR — the all-Latin
+// `id=6` conjugation lesson and its correct regeneration — and assert that one was flagged and the
+// other clean. **The user then deleted the broken lesson, which is exactly what this detector
+// exists to prompt, and the section failed.** Pinning a corpus item whose whole purpose is to be
+// cleaned up is a guard that breaks on success. Rule 29: the CLAIM did not change, the corpus did.
+//
+// What survives, and is the part worth guarding against real data: the detector must not
+// FALSE-POSITIVE on genuine target-script lessons. The flagged case is synthetic below, where it
+// cannot be deleted out from under the test.
 {
   const store = JSON.parse(fs.readFileSync(path.join(ROOT, 'lessons.json'), 'utf8'));
-  const t = store.topics.find(x => x.id === 'tp_17864554460460000107');
-  assert.ok(t, 'the reported topic is still in the corpus');
-  assert.strictEqual(t.script, 'cyrillic-sr', 'and is still stamped cyrillic-sr');
-  const broken = (t.lessons || []).find(L => L && L.id === 6);
-  const fixed  = (t.lessons || []).find(L => L && L.id === 'ls_1786699971785');
-  assert.ok(broken && fixed, 'both the broken and the regenerated conjugation lessons are present');
-  assert.ok(detect(broken, t.script), 'the all-Latin conjugation lesson is flagged');
-  assert.strictEqual(detect(fixed, t.script), null, 'the regenerated one is NOT flagged');
-  console.log('  the reported pair: broken flagged, regenerated clean');
+  const cyr = store.topics.filter(t => t.script === 'cyrillic-sr' && (t.lessons || []).length);
+  assert.ok(cyr.length, 'the corpus still has cyrillic-sr chapters to check against');
+  let clean = 0, flagged = 0;
+  for (const t of cyr) for (const L of (t.lessons || [])) {
+    if (!L || L._hidden) continue;
+    if (detect(L, t.script)) flagged++; else clean++;
+  }
+  assert.ok(clean > 0,
+    'non-vacuity: real Cyrillic lessons exist and are NOT flagged — otherwise the rule fires on ' +
+    'everything and the sections below prove nothing');
+  console.log(`  real cyrillic-sr corpus: ${clean} clean, ${flagged} still flagged (see probe_lesson_script_v80h.js)`);
 }
 
 // ── 2. ⚠️ NO OPINION where it has no business having one ───────────────────
@@ -110,9 +121,33 @@ const latinLesson = (extra) => ({ id: 'x', type: 'conjugation',
   }
 }
 
+// ── 7. v80_m — a comprehension lesson is NOT claimed by this rule ─────────
+// The v80_h version of this detector flagged 7 lessons and FOUR were comprehension lessons that
+// were not defective. Comprehension questions are written in the SOURCE language throughout the
+// corpus (de->fr gives German questions, ar->en Arabic, it->de Italian) — that is the design, not a
+// bug. Measured across non-Latin-target chapters: comprehension carries target-script text in 1 of
+// 5 lessons, where `standard` is 61 of 62 and synonyms/word_forms/grammar/intro_script/error_hunt
+// are 100%.
+{
+  const comp = { id: 'c', type: 'comprehension',
+    questions: [{ q: 'Warum ist Max\' Pfote schmutzig?', choices: ['Weil er im Park war'], correctIndex: 0 }],
+    note: pad('Alle Fragen und Antworten stehen in der Ausgangssprache, wie im ganzen Korpus. ', 300) };
+  assert.strictEqual(detect(comp, 'cyrillic-sr'), null,
+    'a comprehension lesson written in the source language is NOT a defect');
+  // Non-vacuity: the SAME text under a type that does carry target language IS flagged, so this is
+  // an exemption for one type and not the rule going quiet.
+  const asStandard = Object.assign({}, comp, { type: 'standard' });
+  assert.ok(detect(asStandard, 'cyrillic-sr'),
+    'the same content as a `standard` lesson IS flagged — the exemption is per-type, not blanket');
+  console.log('  comprehension is exempt; the same text as `standard` is still flagged');
+}
+
 // ── What this does NOT establish (rule 34) ─────────────────────────────────
 // • It says nothing about a lesson in the WRONG non-Latin script, nor about one that is mostly
 //   Latin with a token of the target script. Both need a ratio, and a ratio is a language judgement.
+// • It does not distinguish "correct Serbian in the wrong SCRIPT" from "the wrong LANGUAGE". Both
+//   remaining corpus hits are the former — correct Serbian written in gajica rather than Cyrillic —
+//   which is a transliteration away, not a regeneration. The rule cannot tell them apart.
 // • It does not run at generation time yet. `_genMeta` records the flag; nothing rejects or retries
 //   on it, because whether a retry converges needs a live model to establish.
 console.log('unit-lesson-script-output: ALL PASSED');

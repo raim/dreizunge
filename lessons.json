@@ -13,7 +13,7 @@
       "lang": "fr",
       "srcLang": "de",
       "createdAt": "2026-08-17T20:18:16.495Z",
-      "updatedAt": "2026-08-17T21:19:49.851Z",
+      "updatedAt": "2026-08-18T14:31:47.992Z",
       "tokenUsage": {
         "totalPromptTokens": 2597,
         "totalCompletionTokens": 1776,
@@ -14573,110 +14573,6 @@
           }
         },
         {
-          "id": "ls_534284213",
-          "title": "Spavali am Donau",
-          "desc": "Träumen und Flussgeräusche",
-          "icon": "🌊",
-          "vocab": [
-            {
-              "target": "reka",
-              "source": "der Fluss"
-            },
-            {
-              "target": "sanjati",
-              "source": "träumen"
-            },
-            {
-              "target": "vetar",
-              "source": "der Wind"
-            },
-            {
-              "target": "miris",
-              "source": "der Geruch"
-            },
-            {
-              "target": "grad",
-              "source": "die Stadt"
-            },
-            {
-              "target": "tišina",
-              "source": "die Stille"
-            },
-            {
-              "target": "pesak",
-              "source": "der Sand"
-            },
-            {
-              "target": "daljina",
-              "source": "die Ferne"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Reka šapuće priče.",
-              "source": "Der Fluss flüstert Geschichten.",
-              "words": [
-                "Reka",
-                "šapuće",
-                "priče."
-              ]
-            },
-            {
-              "target": "Sanjam o daljini.",
-              "source": "Ich träume von der Ferne.",
-              "words": [
-                "Sanjam",
-                "o",
-                "daljini."
-              ]
-            },
-            {
-              "target": "Vetar donosi miris kiše.",
-              "source": "Der Wind bringt den Geruch des Regens.",
-              "words": [
-                "Vetar",
-                "donosi",
-                "miris",
-                "kiše."
-              ]
-            },
-            {
-              "target": "Grad spava u tišini.",
-              "source": "Die Stadt schläft in der Stille.",
-              "words": [
-                "Grad",
-                "spava",
-                "u",
-                "tišini."
-              ]
-            },
-            {
-              "target": "Pesak je topao na suncu.",
-              "source": "Der Sand ist warm in der Sonne.",
-              "words": [
-                "Pesak",
-                "je",
-                "topao",
-                "na",
-                "suncu."
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 1029,
-            "completionTokens": 331,
-            "ms": 237591,
-            "at": "2026-08-10T15:19:27.859Z"
-          },
-          "_arcMode": "reinforce"
-        },
-        {
           "difficulty": 1,
           "id": "ls_1786376515690",
           "type": "comprehension",
@@ -14757,7 +14653,7 @@
         }
       },
       "generatedAt": "2026-08-10T15:11:16.234Z",
-      "updatedAt": "2026-08-10T15:41:55.690Z",
+      "updatedAt": "2026-08-19T08:15:33.242Z",
       "createdBy": "admin"
     },
     {
@@ -16326,164 +16222,164 @@
         },
         {
           "difficulty": 1,
-          "id": "ls_1786370351359",
+          "id": "ls_1787127555744",
           "type": "conjugation",
           "title": "Geheimnis der Sprache",
-          "desc": "Verben für das Sprachgeheimnis lernen",
+          "desc": "Verben für das Geheimnis lernen",
           "icon": "🗝️",
           "conjugations": [
             {
-              "infinitive": "biti",
+              "infinitive": "бити",
               "source": "sein",
               "tense": "present",
               "forms": [
                 {
-                  "pronoun": "ja",
-                  "form": "sam"
+                  "pronoun": "ја",
+                  "form": "сам"
                 },
                 {
-                  "pronoun": "ti",
-                  "form": "si"
+                  "pronoun": "ти",
+                  "form": "си"
                 },
                 {
-                  "pronoun": "on/ona/ono",
-                  "form": "je"
+                  "pronoun": "он/она/оно",
+                  "form": "је"
                 },
                 {
-                  "pronoun": "mi",
-                  "form": "smo"
+                  "pronoun": "ми",
+                  "form": "смо"
                 },
                 {
-                  "pronoun": "vi",
-                  "form": "ste"
+                  "pronoun": "ви",
+                  "form": "сте"
                 },
                 {
-                  "pronoun": "oni/one/ona",
-                  "form": "su"
+                  "pronoun": "они/оне/она",
+                  "form": "су"
                 }
               ]
             },
             {
-              "infinitive": "ići",
+              "infinitive": "ићи",
               "source": "gehen",
               "tense": "present",
               "forms": [
                 {
-                  "pronoun": "ja",
-                  "form": "idem"
+                  "pronoun": "ја",
+                  "form": "идем"
                 },
                 {
-                  "pronoun": "ti",
-                  "form": "ideš"
+                  "pronoun": "ти",
+                  "form": "идеш"
                 },
                 {
-                  "pronoun": "on/ona/ono",
-                  "form": "ide"
+                  "pronoun": "он/она/оно",
+                  "form": "иде"
                 },
                 {
-                  "pronoun": "mi",
-                  "form": "idemo"
+                  "pronoun": "ми",
+                  "form": "идемо"
                 },
                 {
-                  "pronoun": "vi",
-                  "form": "idete"
+                  "pronoun": "ви",
+                  "form": "идете"
                 },
                 {
-                  "pronoun": "oni/one/ona",
-                  "form": "idu"
+                  "pronoun": "они/оне/она",
+                  "form": "иду"
                 }
               ]
             },
             {
-              "infinitive": "govoriti",
+              "infinitive": "говорити",
               "source": "sprechen",
               "tense": "present",
               "forms": [
                 {
-                  "pronoun": "ja",
-                  "form": "govorim"
+                  "pronoun": "ја",
+                  "form": "говорим"
                 },
                 {
-                  "pronoun": "ti",
-                  "form": "govoriš"
+                  "pronoun": "ти",
+                  "form": "говориш"
                 },
                 {
-                  "pronoun": "on/ona/ono",
-                  "form": "govori"
+                  "pronoun": "он/она/оно",
+                  "form": "говори"
                 },
                 {
-                  "pronoun": "mi",
-                  "form": "govorimo"
+                  "pronoun": "ми",
+                  "form": "говоримо"
                 },
                 {
-                  "pronoun": "vi",
-                  "form": "govorite"
+                  "pronoun": "ви",
+                  "form": "говорите"
                 },
                 {
-                  "pronoun": "oni/one/ona",
-                  "form": "govore"
+                  "pronoun": "они/оне/она",
+                  "form": "говоре"
                 }
               ]
             },
             {
-              "infinitive": "slušati",
-              "source": "hören",
+              "infinitive": "писати",
+              "source": "schreiben",
               "tense": "present",
               "forms": [
                 {
-                  "pronoun": "ja",
-                  "form": "slušam"
+                  "pronoun": "ја",
+                  "form": "пишем"
                 },
                 {
-                  "pronoun": "ti",
-                  "form": "slušaš"
+                  "pronoun": "ти",
+                  "form": "пишеш"
                 },
                 {
-                  "pronoun": "on/ona/ono",
-                  "form": "sluša"
+                  "pronoun": "он/она/оно",
+                  "form": "пише"
                 },
                 {
-                  "pronoun": "mi",
-                  "form": "slušamo"
+                  "pronoun": "ми",
+                  "form": "пишемо"
                 },
                 {
-                  "pronoun": "vi",
-                  "form": "slušate"
+                  "pronoun": "ви",
+                  "form": "пишете"
                 },
                 {
-                  "pronoun": "oni/one/ona",
-                  "form": "slušaju"
+                  "pronoun": "они/оне/она",
+                  "form": "пишу"
                 }
               ]
             },
             {
-              "infinitive": "znati",
-              "source": "wissen",
+              "infinitive": "читати",
+              "source": "lesen",
               "tense": "present",
               "forms": [
                 {
-                  "pronoun": "ja",
-                  "form": "znam"
+                  "pronoun": "ја",
+                  "form": "читам"
                 },
                 {
-                  "pronoun": "ti",
-                  "form": "znaš"
+                  "pronoun": "ти",
+                  "form": "читаš"
                 },
                 {
-                  "pronoun": "on/ona/ono",
-                  "form": "zna"
+                  "pronoun": "он/она/оно",
+                  "form": "чита"
                 },
                 {
-                  "pronoun": "mi",
-                  "form": "znamo"
+                  "pronoun": "ми",
+                  "form": "читамо"
                 },
                 {
-                  "pronoun": "vi",
-                  "form": "znate"
+                  "pronoun": "ви",
+                  "form": "читате"
                 },
                 {
-                  "pronoun": "oni/one/ona",
-                  "form": "znaju"
+                  "pronoun": "они/оне/она",
+                  "form": "читају"
                 }
               ]
             }
@@ -16495,10 +16391,10 @@
             "valid": 5,
             "rejected": 0,
             "rejectReasons": null,
-            "promptTokens": 752,
-            "completionTokens": 853,
-            "ms": 306134,
-            "at": "2026-08-10T13:59:11.359Z"
+            "promptTokens": 839,
+            "completionTokens": 849,
+            "ms": 173426,
+            "at": "2026-08-19T08:19:15.744Z"
           }
         }
       ],
@@ -16512,8 +16408,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 2133,
-        "totalCompletionTokens": 1301,
+        "totalPromptTokens": 2972,
+        "totalCompletionTokens": 2150,
         "lessons": [
           {
             "lessonNum": 1,
@@ -16523,11 +16419,11 @@
           }
         ],
         "tokensByType": {
-          "add_lesson": 1605
+          "add_lesson": 3293
         }
       },
       "generatedAt": "2026-08-10T13:04:14.357Z",
-      "updatedAt": "2026-08-10T13:59:11.359Z",
+      "updatedAt": "2026-08-19T08:19:15.744Z",
       "createdBy": "admin"
     },
     {

@@ -1,0 +1,39 @@
+THE LEARNER-KNOWN SHARE — what TRACK T would actually paint
+
+users with any solved history : 2 of 3
+chapters they have worked      : 59
+highlightable words in those   : 1492
+
+  GREEN   every associated question solved :   129  8.6%
+  PARTIAL some but not all                 :   107  7.2%
+  RED     none                             :  1256  84.2%
+
+per user:
+  raim  chapters= 22  words= 560   green   4.8%   partial   5.7%   red  89.5%
+  test_stu  chapters= 37  words= 932   green  10.9%   partial   8.0%   red  81.0%
+
+chapters where the screen would show:
+  at least one GREEN word : 23 of 59  39.0%
+  NOTHING but red         : 31 of 59  52.5%
+
+questions associated with each highlighted word:
+  1 question  :   803  53.8%
+  2 questions :   564  37.8%
+  3 questions :    31  2.1%
+  4 questions :    68  4.6%
+  5 questions :     1  0.1%
+  6+ questions :    25  1.7%
+  mean 1.69 questions per word
+  -> if this is near 1, "green = ALL" is NOT the wall and the redness is unfinished work
+
+sample worked chapters:
+  0/86 words green   osttirol-glossary
+  10/24 words green   Spaziergang an der Mosel
+  0/33 words green   The Meaning of Being
+  0/32 words green   Cyanobakterien für Energiegewinnung
+  0/8 words green   الصغير i
+  3/36 words green   Constanze am Meer
+  0/14 words green   Nambari na Sheria
+  0/14 words green   Panga na Uamuzi
+
+(reported, not asserted — three users, one install; see the header)

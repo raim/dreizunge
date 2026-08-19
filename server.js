@@ -177,7 +177,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v80_h';
+const APP_VERSION  = 'v80_o';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -306,8 +306,44 @@ function loadStore() {
   } catch(e) { console.warn('Could not read lessons.json:', e.message); }
   return { schemaVersion: SCHEMA_VERSION, topics: [], storylines: [], flags: {} };
 }
+// ── v80_i: lesson ids must be UNIQUE WITHIN A TOPIC ──────────────────────────
+// Progress is keyed by lesson id — `APP.progress.completed[topic][L.id]` in the client, and item
+// keys are `${lessonId}:i:${hash}` — so two lessons in one chapter sharing an id share ONE
+// done-flag. Demonstrated on the corpus as it stood before this cut: marking only the word_forms
+// lesson done made the synonyms AND conjugation lessons read as done too. A learner finishes one
+// of three lessons and the chapter believes all three are finished.
+//
+// The cause is in this file: `word_forms` (id 6), `synonyms` (id 6) and `conjugation` (id 6) are
+// all hardcoded to the same legacy id, so ANY chapter generated with two of those three collides.
+// It is not historical — the two affected chapters in the corpus were cleaned by a user
+// regeneration that happened to assign fresh ids, and the generators still emit 6 today.
+//
+// Fixed HERE rather than at the six push sites, because this is the one choke point every write
+// funnels through (23 call sites) and a seventh insertion path would otherwise reintroduce it.
+// Only DUPLICATES are renamed, and the FIRST holder keeps the id, so existing learner progress
+// keyed on it is untouched; the later lesson gets a fresh id and starts unsolved, which is honest —
+// it was never separately answerable before.
+function _dedupeLessonIds(topics) {
+  let renamed = 0;
+  for (const t of (topics || [])) {
+    const seen = new Set();
+    for (const L of (t.lessons || [])) {
+      if (!L || L.id == null) continue;
+      const id = String(L.id);
+      if (!seen.has(id)) { seen.add(id); continue; }
+      let fresh;
+      do { fresh = 'ls_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8); }
+      while (seen.has(fresh));
+      console.warn(`  lesson id collision in "${t.topic}": ${L.type || 'standard'} had id ${id} -> ${fresh}`);
+      L.id = fresh; seen.add(fresh); renamed++;
+    }
+  }
+  return renamed;
+}
+
 function saveStore(s) {
   try {
+    _dedupeLessonIds(s && s.topics);
     const out = s.schemaVersion >= 29
       ? { schemaVersion: SCHEMA_VERSION, storylines: s.storylines || [], topics: s.topics || [], flags: s.flags || {},
           ...(s.settings ? { settings: s.settings } : {}) }
@@ -3281,8 +3317,21 @@ function shuffle(a){ const b=[...a]; for(let i=b.length-1;i>0;i--){ const j=Math
 // The alphabet comes from `scripts.json`, never from a hardcoded Unicode range — the script
 // knowledge in this project lives in data (INTERNALS: "no language knowledge in the code"). A script
 // this file does not know, or a Latin one, yields NO OPINION rather than a guess.
+// ⚠️ v80_m CORRECTION. The v80_h version of this flagged 7 lessons; FOUR of them were
+// `comprehension` lessons and were NOT defective. Comprehension questions are written in the SOURCE
+// language throughout the corpus — de->fr yields German questions, ar->en Arabic, it->de Italian —
+// which is the design: you read the target-language story and answer in a language you understand.
+// Measured across non-Latin-target chapters: comprehension carries target-script text in 1 lesson
+// of 5, where `standard` is 61 of 62 and `synonyms`, `word_forms`, `grammar`, `intro_script` and
+// `error_hunt` are all 100%. So the absence means nothing for this type and the rule must not claim
+// it. This is a per-TYPE fact about where the app puts each language, not a language fact, so it
+// belongs here rather than in a data file.
 function lessonScriptDefect(lesson, scriptName) {
+  // Kept INSIDE the function deliberately: the probe and unit harness extract this function by
+  // slicing the source and eval it standalone, so a const declared above it is out of scope there.
+  const SOURCE_LANGUAGE_TYPES = ['comprehension'];
   if (!lesson || !scriptName || scriptName === 'latin') return null;
+  if (SOURCE_LANGUAGE_TYPES.indexOf(lesson.type) >= 0) return null;
   const entry = (_scriptsData && typeof _scriptsData === 'object') ? _scriptsData[scriptName] : null;
   const letters = entry && Array.isArray(entry.letters) ? entry.letters : null;
   if (!letters || !letters.length) return null;                    // unknown script: no opinion
@@ -5263,7 +5312,9 @@ function _syncStorylineForTopic(topicRef, continuedFromTopic) {
       setStorylines(allSl.map(s => s.id === partialMatch.id ? partialMatch : s));
     } else {
       // Fork — create a new storyline for the new branch
-      upsertStoryline({ id: slId, title: chain[0], icon: '📖', chapters: chapterIds,
+      // v80_l / PLAN §9c: `title` here is a PLACEHOLDER (the first chapter's topic name), not an
+      // authored title. `titleAuto` says so, so the title post-pass can tell the two apart.
+      upsertStoryline({ id: slId, title: chain[0], titleAuto: true, icon: '📖', chapters: chapterIds,
         lang: topicObj?.lang || null, srcLang: topicObj?.srcLang || null });
     }
   } else if (predecessorMatch) {
@@ -5271,7 +5322,8 @@ function _syncStorylineForTopic(topicRef, continuedFromTopic) {
     predecessorMatch.chapters = chapterIds;
     setStorylines(allSl.map(s => s.id === predecessorMatch.id ? predecessorMatch : s));
   } else {
-    upsertStoryline({ id: slId, title: chain[0], icon: '📖', chapters: chapterIds,
+    // v80_l / PLAN §9c: placeholder, as above.
+    upsertStoryline({ id: slId, title: chain[0], titleAuto: true, icon: '📖', chapters: chapterIds,
       lang: topicObj?.lang || null, srcLang: topicObj?.srcLang || null });
   }
 }
@@ -5408,7 +5460,17 @@ async function _titleStorylinePostPass(chapterIds, base, bj) {
     const _slPre = (() => { try { const all = getStorylines();
       return all.find(s => s.id === _chainId(chapterIds))
           || all.find(s => chapterIds.every(id => (s.chapters||[]).includes(id))) || null; } catch(_) { return null; } })();
-    if (_slPre && String(_slPre.title || '').trim()) {
+    // v80_l / PLAN §9c: the v78_r ruling is UNCHANGED — an existing title is never overwritten. What
+    // changed is that the guard can now tell an AUTHORED title from a PLACEHOLDER. `upsertStoryline`
+    // seeds `title: chain[0]` (the first chapter's topic name, auto-numbering suffix and all) when a
+    // storyline is created, so by the time this ran there was ALWAYS a title and the else-branch was
+    // unreachable for every storyline created through that path. The title was not skipped because
+    // the book was a continuation; it was skipped because a placeholder looked like an author's work.
+    //
+    // `titleAuto` is set at the seed and cleared the moment a real title is written or the user edits
+    // one, so a storyline that predates this flag (no `titleAuto` at all) is treated as AUTHORED —
+    // the safe direction, and the one that preserves the ruling for every existing book.
+    if (_slPre && String(_slPre.title || '').trim() && !_slPre.titleAuto) {
       console.log(`  Storyline title: keeping existing "${String(_slPre.title).slice(0,60)}"`);
     } else {
     const names = ctxTopics.map(t => t.topic);
@@ -5417,7 +5479,10 @@ async function _titleStorylinePostPass(chapterIds, base, bj) {
     const all = getStorylines();
     const sl = all.find(s => s.id === slId)
             || all.find(s => chapterIds.every(id => s.chapters.includes(id)));
-    if (sl) { addTokenUsage(sl, _mTok, 'retitle'); sl.title = title; sl.icon = icon || sl.icon || '📖'; upsertStoryline(sl); }
+    // Clearing `titleAuto` is what stops this running twice: the next chapter added to this book
+    // finds an authored title and the v78_r guard keeps it, exactly as before.
+    if (sl) { addTokenUsage(sl, _mTok, 'retitle'); sl.title = title; sl.icon = icon || sl.icon || '📖';
+              sl.titleAuto = false; upsertStoryline(sl); }
     }
   } catch (e) { console.warn(`  Storyline title post-pass failed: ${e.message}`); }
   // 3) Whole-storyline summary in the source language — same as the storyline-page
@@ -6401,7 +6466,10 @@ http.createServer(async (req, res) => {
         setStorylines(getStorylines().filter(s => s.id !== targetId));
       } else {
         const patch = { id: targetId };
-        if (title     !== undefined) patch.title   = (title||'').slice(0,80);
+        // v80_l / PLAN §9c: a title the USER typed is authored by definition, so clear the
+        // placeholder flag. Without this a hand-named book would be retitled by the post-pass
+        // the next time a chapter was added — the v78_r ruling, broken from the other side.
+        if (title     !== undefined) { patch.title = (title||'').slice(0,80); patch.titleAuto = false; }
         if (icon      !== undefined) patch.icon    = (icon||'📖').slice(0,10);
         if (summary   !== undefined) patch.summary = typeof summary === 'string' ? summary.slice(0,2000) : summary;
         if (tags      !== undefined) patch.tags    = Array.isArray(tags) ? tags.map(t=>String(t).slice(0,50)) : [];
@@ -7071,7 +7139,7 @@ http.createServer(async (req, res) => {
         if (sc === 'title' || sc === 'all') {
           const { result: { title, icon }, tokens: _mTok } = await meterLLMTokens(() => generateStorylineTitle(topics.map(t => t.topic), stories, srcLang));
           addTokenUsage(sl, _mTok, 'retitle');
-          sl.title = title; sl.icon = icon || sl.icon || '📖';
+          sl.title = title; sl.icon = icon || sl.icon || '📖'; sl.titleAuto = false;
           out.title = title; out.icon = sl.icon;
         }
         upsertStoryline(sl);   // persists title AND accumulated tokens for either scope
