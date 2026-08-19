@@ -43,10 +43,16 @@ function seed(o) {
                 exercises: [], ${o.review ? '_review: true,' : ''} cur: 0 };
     true;`, 'seed');
 }
+C.run(`_origChapterIcons = _chapterIconsHtml; true;`);
 const ledger = () => JSON.parse(C.run(`JSON.stringify(_cardErrors())`));
+// v80_z: the progress card's `comp-storyboard` slot now holds the CHAPTER ICON row, so the throw is
+// injected into `_chapterIconsHtml` — the function that actually runs there. Injecting into
+// `_renderCompStoryboard` still "worked" in the sense of not erroring, but nothing called it, so the
+// ledger stayed empty and §2 failed. The CLAIM is unchanged: a throw inside a wrapped block is
+// recorded and still swallowed.
 const breakStoryboard = () =>
-  C.run(`_renderCompStoryboard = function(){ throw new Error('injected: storyboard'); }; true;`);
-const restore = () => C.run(`_renderCompStoryboard = _origStoryboard; true;`);
+  C.run(`_chapterIconsHtml = function(){ throw new Error('injected: chapter icons'); }; true;`);
+const restore = () => C.run(`_chapterIconsHtml = _origChapterIcons; true;`);
 
 // ── 1. A clean render swallows nothing ──────────────────────────────────────
 // Load-bearing as the non-vacuity floor for §2: if the ledger were already non-empty here, §2's
@@ -74,8 +80,8 @@ const restore = () => C.run(`_renderCompStoryboard = _origStoryboard; true;`);
     'by default the catch still swallows — showComplete does not throw');
   const errs = ledger();
   assert.strictEqual(errs.length, 1, 'exactly one site recorded, got ' + JSON.stringify(errs));
-  assert.strictEqual(errs[0].where, 'storyboard', 'the ledger NAMES the site that threw');
-  assert.ok(/injected: storyboard/.test(errs[0].msg), 'the ledger carries the real message');
+  assert.strictEqual(errs[0].where, 'chapter-icons', 'the ledger NAMES the site that threw');
+  assert.ok(/injected: chapter icons/.test(errs[0].msg), 'the ledger carries the real message');
   console.log('  injected throw: recorded as "' + errs[0].where + '", card still rendered');
 }
 
@@ -86,7 +92,7 @@ const restore = () => C.run(`_renderCompStoryboard = _origStoryboard; true;`);
   breakStoryboard();
   let escaped = null;
   try { C.run(`showComplete();`, 'strict-render'); } catch (e) { escaped = e.message; }
-  assert.ok(escaped && /injected: storyboard/.test(escaped),
+  assert.ok(escaped && /injected: chapter icons/.test(escaped),
     'APP._cardStrict makes the throw escape instead of being swallowed (got: ' + escaped + ')');
   console.log('  strict mode: throw escapes showComplete');
 }

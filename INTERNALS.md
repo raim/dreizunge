@@ -782,10 +782,46 @@ moves both decks identically, measured. Where a fork looks asymmetric, the cause
 |---|---|
 | card render errors | `_cardErrors()` — assert empty after any card render |
 | card page scaffolding | `_cardHeader(prefix)` + `.card-screen` (both required for a new card page) |
-| exercise build / answer / advance | `buildExercises(i)`, `pickChoice(i, el)`, `check()`, `markSolved(ex)` |
+| exercise build / answer / advance | `buildExercises(i)`, `pickChoice(i, el)`, `check(replay)`, `markSolved(ex)` |
 | exercise renderer registry | `EX_RENDERERS[ex.type]`, dispatched by `renderEx()` |
-| words this chapter teaches | `_storyWordSources(d)`; solved set via `_solvedTargetWords(d)` |
-| the card truth table | `build_history/probe_gates_v77.js` → `v77_card_gates.md` (**`v76_card_gates.md` superseded**) |
+| words this chapter teaches | `_storyWordSources(d)`; **per-word progress via `_wordProgress(d)`** (see TRACK T below) — `_solvedTargetWords(d)` is now a wrapper over it |
+| the card truth table | `build_history/probe_gates_v77.js` → **`v80i_card_gates.txt`** (`v80e`, `v80`, `v77` and `v76` tables superseded). ⚠️ It SELECTS its chapters from the corpus, so a data drop moves the selection — disambiguate by re-running the PREVIOUS client against the CURRENT corpus |
+
+**TRACK T — the text-focused progress card** (all in `index.html`, built across the `v80` line)
+
+| what | where |
+|---|---|
+| **per-word progress — the ONE collector** | `_wordProgress(d)` → `Map<word, {n, ok, bySrc}>`. `bySrc` is `{extra, vocab, sentence}`; `n`/`ok` are the totals. **`_solvedExtraWords` and `_solvedTargetWords` are thin wrappers over it** — do not compute word state any other way |
+| the three states it paints | `_wordState(rec)` → `'red' \| 'partial' \| 'green'`. GREEN = **every** associated question solved (`§T5.1`, ruled) |
+| **the ONE story renderer** | `_storyBodyHtml(d, {text, highlight, ex})` — used by the question panel AND the progress cards. The FRAMES differ (a `<details>` vs `#comp-story-text`); only the body is shared |
+| the question-screen panel | `_exStoryPanelHtml(ex)` — on **every** question type, never collapsed (`v80_u`), no story-unlock gate (T0) |
+| three-state colouring + asked underline | `_highlightVocabHtml(html, words, strong, stateByKey, underlineKeys)` — the last two are OPTIONAL; omit them and the pre-`v80` two-shade behaviour is unchanged |
+| word → state map / asked span | `_wordStateMap(d)` (worst state wins when a word has two sources), `_askedKeys(ex)` |
+| **tap a word → the lesson flow** | `tapWord(word)` → `_wordQuestions(d, word)` → `startLesson` + `C.cur`. **A way IN to the existing runner, not a one-question mode** (`§T5.2`, ruled). Prefers UNSOLVED questions |
+| the chapter icon row | `_chapterIconsHtml(topicKey, slCtx)` — renders into the `*-storyboard` slot on the cards. **That id is HISTORICAL**: the slot used to hold the storyboard, which now appears only on the storyline page |
+| **the word GATE (opt-in)** | `_wordGateFraction(d)`, `_wordGateTarget(d)`, consumed by `storyUnlocked`. `wordGate` is read topic → storyline → `APP.info`. **UNSET = the old `v71_s` rule, and unset is the default** |
+| the vocabulary list under the text | in `showComplete` — only solved words **NOT** in the story, plus the probe sources. It is the COMPLEMENT of the highlighting, not a copy of it |
+
+**Question navigation (`§0h`, `v80_p`)**
+
+| what | where |
+|---|---|
+| the per-run answer ledger | `C.ans[i] = {ok, sel, placed, usedIdx, typed, synSel}` — created in `startLesson`, so **the lock is per-RUN by construction**: replaying makes the questions playable again |
+| repaint an answered question | `check(replay)` — the SAME function that paints a live answer, with scoring, hearts, `markSolved`, the ledger write, speech and auto-advance guarded off. **One code path, so a replayed question cannot look different from a live one** |
+| restore the selection | `_restoreAnswer(ex, rec)`; placed-order kinds redraw through `updateSbox` / `updateMathPlaced` |
+| back one question | `qPrev()` + the `←` button, hidden on the first question. Forward is unchanged — `_speakAndAdvance` advances one way only |
+
+**⚠️ Invariants worth knowing before you touch any of the above**
+
+- **`buildExercises` is non-deterministic in CONTENT, not just order.** The set of questions a run
+  holds for a given word differs between builds. Any test that samples the corpus for a fixture must
+  accumulate across several builds and be verified over ~15 consecutive runs (`v80_t`).
+- **Lesson ids must be unique WITHIN a topic.** Progress is keyed `completed[topic][L.id]` and item
+  keys are `${lessonId}:i:${hash}`, so duplicates share one done-flag — three lessons with `id: 6`
+  meant finishing one marked all three. Enforced at `saveStore` by `_dedupeLessonIds` (`v80_i`),
+  because the generators still emit literal `id: 6` for word_forms, synonyms AND conjugation.
+- **The solved store is MONOTONIC** — one correct answer ever = solved. `§T7` proposes changing that
+  and is DEFERRED; read its scoping note before touching `markSolved`.
 
 **Roles, menus, scripts**
 
@@ -808,12 +844,25 @@ moves both decks identically, measured. Where a fork looks asymmetric, the cause
 | story prompt assembly | the `else` branch of `generate()` in `server.js`; system from `sysStory()` |
 | context-window sizing | `estimateCtxTokens()` / `_resolveNumCtx()` in `llm.js`; only callers passing `ctxTokens` get a `num_ctx` |
 
+**Generation-side QC detectors** (all in `server.js`; each has a corpus PROBE that reports and a unit guard that pins the DETECTOR on synthetic fixtures)
+
+| what | where |
+|---|---|
+| word_forms blank position | inside `validateWordFormsItems` — rejects a blank appended AFTER sentence-final punctuation. **Pure structure, no language knowledge**, and it holds for Arabic `؟`/`۔`, CJK `。` and fullwidth marks. Probe: `probe_word_forms_defects_v80g.js` |
+| ⚠️ the "answer visible in the stem" half | **MEASURED AND DELIBERATELY NOT ENFORCED.** Prefix-matching is mild morphology and would discard good items in inflected languages. Reported by the probe, left to a human (`v80_g`) |
+| lesson written in the wrong script | `lessonScriptDefect(lesson, scriptName)` — alphabet comes from `scripts.json`, **never a hardcoded Unicode range**, so a script added there is covered with no code change. **EXEMPTS `comprehension`**: those questions are in the SOURCE language by design across the whole corpus (`v80_m` — the `v80_h` version wrongly flagged four of them). Probe: `probe_lesson_script_v80h.js` |
+| unique lesson ids within a topic | `_dedupeLessonIds(topics)`, called from `saveStore` — the ONE choke point all 23 write paths funnel through |
+| the vocab article contradiction | `prompts.json` `vocab.system` — the per-side clause was REMOVED and a worked counter-example added (`v80_j`, rule 31). **Unverified by design**: whether the model obeys needs regeneration across MANY lessons and a re-run of `probe_article_symmetry_v80j.js` against its 1.0%/bimodal baseline |
+
 **Speech**
 
 | what | where |
 |---|---|
 | voice ranking and choice | `_ttsRankVoices(voices, code)`, `_ttsPickVoice()` |
 | which locale a lesson speaks | `activeTtsCode()`, `lessonLang()` / `lessonSrcLang()` |
+| **pronoun + verb form, for speech AND display** | `_joinPronoun(pron, form)` — an apostrophe-final pronoun binds directly (`j'` + `emporte` → `j'emporte`). With a space the TTS reads the apostrophe aloud. **Orthographic, not lexical**: it reads a character, not a dictionary, and covers every apostrophe code point since the corpus mixes U+0027 and U+2019 (`v80_u`) |
+| the story read-aloud | `speakBodyText(el, lang, text)`; the panel's 🔊 and the card's 🔊 read whatever language is currently SHOWN |
+| which language the story panel shows | `APP._compStoryLang` — **shared** by the question panel (`toggleExStoryLang`) and the progress card (`toggleCompStoryLang`), so the two screens cannot disagree |
 
 
 ---

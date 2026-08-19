@@ -33234,10 +33234,10 @@
               ]
             },
             {
-              "target": "anche questo programma di ricerca è stato rivisto ed esteso.",
-              "source": "wurde auch dieses Forschungsprogramm überarbeitet und erweitert.",
+              "target": "Anche questo programma di ricerca è stato rivisto ed esteso.",
+              "source": "Auch dieses Forschungsprogramm wurde überarbeitet und erweitert.",
               "words": [
-                "anche",
+                "Anche",
                 "questo",
                 "programma",
                 "di",
@@ -33247,6 +33247,10 @@
                 "rivisto",
                 "ed",
                 "esteso."
+              ],
+              "editedAt": "2026-08-19T15:20:19.507Z",
+              "_manualEdits": [
+                "2026-08-19T15:20:19.507Z"
               ]
             },
             {
@@ -33262,20 +33266,24 @@
               ]
             },
             {
-              "target": "l’importanza della simbiosi, cioè dell’associazione permanente.",
-              "source": "die Bedeutung der Symbiose, also der dauerhaften Verbindung.",
+              "target": "l’importanza della simbiosi, cioè dell’associazione permanente",
+              "source": "die Bedeutung der Symbiose, also der dauerhaften Verbindung",
               "words": [
                 "l’importanza",
                 "della",
                 "simbiosi,",
                 "cioè",
                 "dell’associazione",
-                "permanente."
+                "permanente"
+              ],
+              "editedAt": "2026-08-19T15:21:16.863Z",
+              "_manualEdits": [
+                "2026-08-19T15:21:16.863Z"
               ]
             },
             {
-              "target": "gli eventi catastrofici come le estinzioni di massa.",
-              "source": "sowie katastrophale Ereignisse wie Massenaussterben.",
+              "target": "gli eventi catastrofici come le estinzioni di massa",
+              "source": "katastrophale Ereignisse wie Massenaussterben",
               "words": [
                 "gli",
                 "eventi",
@@ -33284,7 +33292,11 @@
                 "le",
                 "estinzioni",
                 "di",
-                "massa."
+                "massa"
+              ],
+              "editedAt": "2026-08-19T15:21:16.863Z",
+              "_manualEdits": [
+                "2026-08-19T15:21:16.863Z"
               ]
             }
           ],
@@ -33300,7 +33312,6 @@
             "ms": 195752,
             "at": "2026-07-27T08:13:41.874Z"
           },
-          "qcAt": "2026-07-29T09:07:11.448Z",
           "qcBy": "translategemma:12b",
           "_hidden": false
         },
@@ -33563,8 +33574,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 13842,
-        "totalCompletionTokens": 3448,
+        "totalPromptTokens": 18948,
+        "totalCompletionTokens": 3519,
         "lessons": [
           {
             "lessonNum": 1,
@@ -33574,13 +33585,13 @@
           }
         ],
         "tokensByType": {
-          "lesson_qc": 7111,
+          "lesson_qc": 12288,
           "recreate": 7700,
           "story_qc": 585
         }
       },
       "generatedAt": "2026-07-27T08:10:26.061Z",
-      "updatedAt": "2026-08-04T08:44:12.841Z",
+      "updatedAt": "2026-08-19T15:21:16.865Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-07-29T09:16:07.811Z"
@@ -99547,7 +99558,7 @@
       "srcLang": "de",
       "difficulty": 1,
       "storyLen": 82,
-      "story": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "story": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stared.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
       "storyLang": "target",
       "storyPrompt": "User-provided story",
       "userStory": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
@@ -99817,32 +99828,6 @@
               "homophones": []
             },
             {
-              "base": "they",
-              "gloss": "sie (Plural)",
-              "sentence": "Sometimes they stand in rows.",
-              "synonyms": [
-                {
-                  "w": "them",
-                  "g": "ihnen"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "he",
-              "gloss": "er",
-              "sentence": "He shook his head, saying, 'No.'",
-              "synonyms": [
-                {
-                  "w": "him",
-                  "g": "ihm"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
               "base": "path",
               "gloss": "Weg",
               "sentence": "I followed a glowing path.",
@@ -100028,7 +100013,7 @@
                 "Sie helfen ihr, ihren Platz in der Reihe zu finden.",
                 "Sie ignorieren sie komplett und gehen weg."
               ],
-              "correctIndex": 1,
+              "correctIndex": 0,
               "why": "Der Text sagt: 'All the numbers... came — and judgmentally stare. She’s so different, she’s so small,' noticed One."
             }
           ],
@@ -100073,7 +100058,7 @@
         }
       },
       "generatedAt": "2026-06-15T13:04:20.430Z",
-      "updatedAt": "2026-08-19T14:44:57.449Z",
+      "updatedAt": "2026-08-19T18:09:07.044Z",
       "id": "tp_17815287786440000451",
       "storyMeta": {
         "type": "story",
@@ -100103,7 +100088,8 @@
         "source": "generationStats.models.translation",
         "origin": "generated"
       },
-      "createdBy": "admin"
+      "createdBy": "admin",
+      "aiStory": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall."
     },
     {
       "topic": "Die Welt der Sieben",

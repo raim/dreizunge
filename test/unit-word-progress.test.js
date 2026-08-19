@@ -42,7 +42,7 @@ function look(topic, sMap) {
     if (typeof _invalidateQidUniverse === 'function') _invalidateQidUniverse();
     var d = APP.lessonData, prog = _wordProgress(d), rows = [];
     prog.forEach(function(r, w){
-      rows.push({ w: w, n: r.n, ok: r.ok, state: _wordState(r),
+      rows.push({ w: w, n: r.n, ok: r.ok, state: _wordState(r), bySrc: r.bySrc,
                   ex: r.bySrc.extra, vo: r.bySrc.vocab });
     });
     return JSON.stringify({ rows: rows,
@@ -70,8 +70,12 @@ assert.ok(CASES.length >= 10, `non-vacuity: real learner histories to check agai
       words++;
       assert.ok(row.n > 0, `${row.w}: a tracked word has at least one question`);
       assert.ok(row.ok <= row.n, `${row.w}: solved (${row.ok}) cannot exceed total (${row.n})`);
-      assert.strictEqual(row.n, row.ex.n + row.vo.n, `${row.w}: per-source counts sum to the total`);
-      assert.strictEqual(row.ok, row.ex.ok + row.vo.ok, `${row.w}: per-source solved sum to the total`);
+      // v80_v added a third source (sentences), so the sum is over ALL buckets, not two. Written as
+      // a sum over the object rather than a fixed list, so a fourth source cannot silently break it.
+      const sumN = Object.values(row.bySrc).reduce((a, b) => a + b.n, 0);
+      const sumOk = Object.values(row.bySrc).reduce((a, b) => a + b.ok, 0);
+      assert.strictEqual(row.n, sumN, `${row.w}: per-source counts sum to the total`);
+      assert.strictEqual(row.ok, sumOk, `${row.w}: per-source solved sum to the total`);
       const want = row.ok === 0 ? 'red' : row.ok >= row.n ? 'green' : 'partial';
       assert.strictEqual(row.state, want, `${row.w}: _wordState matches ${row.ok}/${row.n}`);
       if (row.state === 'green') green++; else if (row.state === 'partial') partial++; else red++;

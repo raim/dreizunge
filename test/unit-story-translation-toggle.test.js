@@ -75,7 +75,10 @@ function makeDoc() {
   // Incomplete (teacher peek) truncates BOTH languages the same way.
   APP.lessonData.storyTranslation = 'x'.repeat(300); APP._compStoryLang = 'source';
   _renderCompStory(false);
-  assert.ok(doc.getElementById('comp-story-text').textContent.endsWith('…'), 'preview truncates the shown language');
+  // ⚠️ WITHDRAWN at v80_w — no preview any more; the progress card shows the whole story
+  // whether or not the chapter is finished (T0: keep attention on the text throughout).
+  assert.ok(!doc.getElementById('comp-story-text').textContent.endsWith('…'),
+    'the shown language is NOT truncated (v80_w, superseding the 200-char preview)');
 }
 console.log('  completion card: default target, toggle to translation, 🔊 follows, hidden when absent: OK');
 

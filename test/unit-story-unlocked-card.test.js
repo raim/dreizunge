@@ -217,8 +217,13 @@ function renderCard({ teacher }) {
       })();
       APP._compStoryLang = 'target'; _renderCompStory(true); true;`, 'render');
     const h = C.run(`(function(){ var e=document.getElementById('comp-story-text'); return e ? e.innerHTML : ''; })()`, 'h');
-    return { total: (h.match(/<mark class="story-vocab-hl/g) || []).length,
-             strong: (h.match(/<mark class="story-vocab-hl solved"/g) || []).length };
+    // v80_w: the card renders through `_storyBodyHtml` now, so the two-shade `.solved` class was
+    // replaced by the TRACK T state classes. The CLAIM below is unchanged — marking does not depend
+    // on progress, only the SHADE does — so "strong" is re-read as "not red": a word with any of its
+    // questions answered. Matched on the class list rather than an exact attribute, because the
+    // marks also carry `wp-tap` and an onclick since v80_t.
+    return { total: (h.match(/<mark class="[^"]*story-vocab-hl/g) || []).length,
+             strong: (h.match(/<mark class="[^"]*\bwp-(?:partial|green)\b/g) || []).length };
   };
   const cold = render(0), warm = render(40);
   // Non-vacuity: the fixture must actually contain vocabulary that appears in its story, or every
@@ -415,20 +420,56 @@ function renderCard({ teacher }) {
         return e ? (e.innerHTML.match(/vocab-chip/g) || []).length : 0; })()`, 'c'),
       label: C.run(`(function(){ var e=document.getElementById('words-from-lbl'); return e ? e.textContent : ''; })()`, 'l'),
       solved: C.run(`_solvedTargetWords(APP.lessonData).length`, 's'),
+      // v80_y: the list is now the COMPLEMENT of the highlighted text — only solved words the story
+      // does NOT contain, plus the probe-bearing sources. Computed here the same way the card does.
+      listed: C.run(`(function(){
+        var d = APP.lessonData, low = String(d.story||'').toLowerCase();
+        return _solvedTargetWords(d).concat(_solvedExtraWords(d))
+          .filter(function(w){ return low.indexOf(String(w).toLowerCase()) < 0; })
+          .filter(function(w,i,a){ return a.indexOf(w) === i; }).length;
+      })()`, 'n'),
       roundWords: C.run(`(APP.cur.exercises || []).length`, 'r'),
     };
   };
   const warm = render(40);
   // Non-vacuity: the chapter must have solved vocabulary, or "chips == solved" is 0 == 0.
   assert.ok(warm.solved > 1, `the chapter really does have solved vocabulary (${warm.solved})`);
-  assert.strictEqual(warm.chips, warm.solved,
-    'the panel shows one chip per solved word of the CHAPTER');
+  // ⚠️ CLAIM CHANGED at v80_y (user ruling), not merely re-pinned. The list used to mirror the
+  // highlighted text — the same words said twice, once with red/green state and once without. It is
+  // now the COMPLEMENT: what this chapter teaches that the story does NOT show you. So the count is
+  // the solved words ABSENT from the story, not all solved words.
+  assert.strictEqual(warm.chips, warm.listed,
+    'the panel shows one chip per solved word the story does NOT contain');
+  // ⚠️ The real fixture does NOT exercise the filter — none of its solved words appears in its
+  // story, so `listed === solved` and the equality above would hold with no filter at all. Rather
+  // than assert a non-vacuity that cannot fire, the rule is tested on a case built to trip it.
+  {
+    const C2 = loadClient({ quiet: true });
+    C2.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)};
+      APP.lessonData = { topic:'T', lang:'fr', srcLang:'de',
+        story:'Le chat dort ici.',
+        lessons:[{ id:'L1', vocab:[{target:'chat',source:'Katze'},{target:'oiseau',source:'Vogel'}] }] };
+      APP.progress = { completed:{}, solved:{}, chapterDone:{}, learned:{}, storyShown:{} };
+      _solvedTargetWords = function(){ return ['chat','oiseau']; };   // both solved
+      _solvedExtraWords  = function(){ return []; };
+      true;`, 'synthetic');
+    const kept = JSON.parse(C2.run(`(function(){
+      var d = APP.lessonData, low = String(d.story||'').toLowerCase();
+      return JSON.stringify(_solvedTargetWords(d).concat(_solvedExtraWords(d))
+        .filter(function(w){ return low.indexOf(String(w).toLowerCase()) < 0; }));
+    })()`));
+    assert.deepStrictEqual(kept, ['oiseau'],
+      'a solved word that APPEARS in the story is left to the highlighting; one that does not is ' +
+      'listed — the filter, on a case that actually trips it');
+  }
   assert.strictEqual(warm.label, 'Words you can read in this chapter',
     'and says so, rather than "Words from this lesson"');
   // Fewer solved → fewer chips. The old per-lesson list did not move with progress at all.
   const cool = render(1);
   assert.ok(cool.solved < warm.solved, 'a shorter play solves fewer words');
-  assert.strictEqual(cool.chips, cool.solved, 'and the panel tracks that, chip for chip');
+  // v80_y: tracked against the LISTED count (solved minus what the story already shows), for the
+  // same reason as the warm case above.
+  assert.strictEqual(cool.chips, cool.listed, 'and the panel tracks that, chip for chip');
   // With nothing solved the per-lesson fallback remains — a learner should not face an empty box.
   // Checked on a STANDARD lesson: a mixed round with nothing played has no words of its own to fall
   // back to either (its branch lists what the round drew, and nothing was drawn), which was true

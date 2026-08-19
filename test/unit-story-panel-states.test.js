@@ -129,6 +129,56 @@ const hl = (html, words, strong, states, asked) => C.run(`(function(){
   console.log('  elision joins without a space; other pronouns keep theirs');
 }
 
+// ── 5d. The panel repaints after an answer, and keeps its open state ────
+// TRACK T's premise is that the text IS the progress display; a display that only updates on the
+// next render is not one. Asserted on the SOURCE here because the repaint needs a live run to
+// observe, which `unit-tap-word` has and this file does not — stated rather than implied.
+{
+  const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const at = src.indexOf('function check(replay)');
+  assert.ok(at > 0, 'check(replay) still exists');
+  const body = src.slice(at, src.indexOf('\nfunction ', at + 10));
+  assert.ok(/_sp\.outerHTML = _exStoryPanelHtml\(ex\)/.test(body),
+    'check() repaints the story panel through the SAME renderer that drew it');
+  assert.ok(/if \(!replay\) \{[\s\S]{0,400}_exStoryPanelHtml/.test(body),
+    'and skips it on a replay, which changes no state');
+  assert.ok(/_fresh\.open = _wasOpen/.test(body),
+    'and preserves the open state — never yanking the panel shut under the learner');
+  console.log('  the panel repaints after an answer, preserving its open state');
+}
+
+// ── 5e. The translate toggle, shared with the progress card ─────────────
+// v80_x, user request: the standardized story display gets the translate button "in the same style
+// as previously present in the old progress card story field". It reuses `APP._compStoryLang` — the
+// SAME state the card uses — so the two screens cannot disagree about which language is showing.
+{
+  const panel = (lang, xlate) => C.run(`(function(){
+    APP.lessonData = { topic:'T', lang:'fr', srcLang:'de', story:'Le chat dort.',
+                       storyTranslation: ${JSON.stringify(xlate)}, lessons:[] };
+    APP._teacherMode = false; APP.info = { canGenerate:false };
+    APP._compStoryLang = ${JSON.stringify(lang)};
+    return _exStoryPanelHtml({ type:'mcq_source_target', target:'chat', correct:'chat' });
+  })()`);
+  const withXl = panel('target', 'Die Katze schlaeft.');
+  assert.ok(/id="ex-story-xlate"/.test(withXl), 'the toggle appears when a translation exists');
+  assert.ok(/Le chat dort/.test(withXl), 'and the target story is shown by default');
+
+  const src = panel('source', 'Die Katze schlaeft.');
+  assert.ok(/Katze schlaeft/.test(src), 'flipping to source shows the translation');
+  assert.ok(!/story-vocab-hl/.test(src),
+    'and the translation is NOT highlighted — target words are not in a source text, so marking ' +
+    'them there would match nothing or, worse, coincidental substrings');
+
+  assert.ok(!/ex-story-xlate/.test(panel('target', '')),
+    'no translation, no toggle — a control that leads nowhere is worse than none');
+
+  const src2 = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  assert.ok(/function toggleExStoryLang\(\)/.test(src2), 'the panel has its own toggler');
+  assert.ok(/toggleExStoryLang[\s\S]{0,400}APP\._compStoryLang/.test(src2),
+    'which flips the SAME state the progress card uses — one source of truth, not two');
+  console.log('  translate toggle present, flips language, shares state with the card');
+}
+
 // ── 6. The CSS for all four classes exists ───────────────────────────────
 // A class the renderer emits but the stylesheet lacks is invisible: the word would render unmarked
 // and the panel would silently look finished.

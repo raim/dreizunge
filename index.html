@@ -1257,11 +1257,9 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
        action row, which is what "the actions sit below the text" asks for. -->
   <!-- v65.1: the storyboard for THIS chapter, framed by chapter state (v71_k), so the learner sees
        where they are in the arc. Second row, directly under the header — as on the storyline page. -->
-  <div id="comp-storyboard" style="display:none;margin-top:12px"></div>
   <!-- v60.8: progress bars only — no trophy / %-pill / stat panels (the bars carry the signal).
        v71_m: CHAPTER-level bars only. The along-the-storyline bar moved into the header above, and
        showing it twice on one card was the duplication this row order was meant to remove. -->
-  <div id="comp-progress" style="margin-top:14px;text-align:left"></div>
   <!-- v73_g: one icon per lesson in this chapter, above the play buttons. Clicking starts that
        lesson directly, which is a deliberate alternative route to the mixed lesson rather than a
        bypass of it — the coverage universe is shared, so questions reached this way count exactly
@@ -1300,6 +1298,11 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
   </div>
   <div class="vocab-box" style="margin-top:18px"><div class="vocab-hdr" id="words-from-lbl">Words from this lesson</div><div id="comp-vocab" style="display:flex;flex-wrap:wrap;margin:-3px"></div></div>
   <!-- Below the text: the machinery. -->
+  <!-- v80_z (user): the CHAPTER ICON row — one topicEmoji per chapter, at lesson-icon size,
+       just ABOVE the lesson-type buttons and BELOW the story and vocabulary. The id is
+       historical: this slot used to hold the storyline storyboard, which now appears only on the
+       storyline page. Renaming it would touch 82 client references and 12 test ones. -->
+  <div id="comp-storyboard" style="display:none;margin-top:12px"></div>
   <div id="comp-lessons" style="display:none;margin-top:12px"></div>
   <!-- v60: exactly two buttons. Next opens the next questions directly; Back returns to the
        storyline (deck), or the landing page for a solo chapter. -->
@@ -1326,6 +1329,14 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <button class="comp-ico" id="comp-wipe" style="display:none">🧹</button>
     <button class="comp-ico primary" id="comp-next" onclick="afterComplete()">→</button>
   </div>
+
+  <!-- v80_y (user): the progress BARS sit at the BOTTOM. v81_b (user): below the ACTION row
+       too, so the chapter-icon, lesson-icon and play-button rows are contiguous. Under
+       TRACK T the story is the progress display and leads the card; the bars are the numeric
+       backup and no longer compete with it for the top. The storyline HEADER bar is untouched —
+       it belongs to the header, not to this card. -->
+  <div id="comp-progress" style="margin-top:14px;text-align:left"></div>
+
   <div id="comp-nav-btns" style="display:none;flex-wrap:wrap;justify-content:center;margin-top:8px"></div>
   <!-- v77_n (user): the progress message sits at the BOTTOM, below the play buttons, on every
        progress card. It is a verdict on what just happened, not a heading for what follows — and
@@ -5999,6 +6010,12 @@ async function loadSaved(ref){
       //   • not when arriving from the next-chapter-unlocked card, which has just shown the
       //     learner an interstitial of its own. Two in a row is friction, not orientation.
       if (_enterViaSummaryCard(idx)) return;
+      // v81_b (user ruling): a chapter AFTER THE FIRST lands on its PROGRESS CARD, not in a lesson.
+      // The entry card is now the first chapter's alone (see `_enterViaSummaryCard`), and dropping a
+      // learner straight into a question on arrival would leave the chapter with no arrival screen
+      // at all — the progress card is that screen, and it now carries the story, the highlights, the
+      // chapter icons and the play buttons, so everything the entry card offered is on it.
+      if (idx >= 0 && _isLaterChapter()) { showComplete(true); return; }
       const started = idx>=0 ? (startLesson(idx) !== false) : (showComplete(true), true);
       if(!started){
         const ctx=_storylineForTopic(APP.lessonData?.topic);
@@ -6584,9 +6601,59 @@ function setComplete(d) {
 // with the story-gated (comprehension) lessons removed, and with their questions removed from the
 // coverage denominator. Deliberately does NOT record a chapter-done stamp: this is not chapter
 // completion and must never be mistaken for it.
+// ── v81_a / TRACK T step 4: the WORD gate ────────────────────────────────────
+//
+// T0: "only if ALL questions associated with each highlighted word (or via pass mark fraction) are
+// solved we progress to the comprehension questions."
+//
+// ⚠️ SHIPPED OPT-IN, AND THE MEASUREMENT IS WHY. Making word-green the story gate outright would
+// RE-LOCK 21 of the 22 chapter/learner pairs whose story is unlocked today — 95%. Measured over the
+// real `learners.json`, green fraction of currently-unlocked chapters: 0% for five of them, 1–49%
+// for eleven, 50–79% for five, 100% for one.
+//
+// The cause is not learner laziness: a word accumulates questions from vocab, from sentences
+// (v80_v) and from every probe-bearing lesson, so "all questions about this word" is a much higher
+// bar than "the lessons are done". A story a learner has earned would close again mid-session,
+// which is the same hazard §T7 raises for the solved counter and the reason that item was deferred.
+//
+// So the MECHANISM ships and the SWITCH is the user's: set `wordGate` to a fraction (0..1) on the
+// topic, the storyline, or `APP.info`. Unset — the default — leaves the v71_s rule exactly as it
+// was. There is no partial migration to get wrong: either a chapter is gated the old way or by a
+// number the user chose.
+function _wordGateFraction(d) {
+  d = d || APP.lessonData;
+  if (!d || typeof _wordProgress !== 'function') return null;
+  let tot = 0, green = 0;
+  try {
+    _wordProgress(d).forEach(rec => { tot++; if (rec.ok >= rec.n) green++; });
+  } catch(_) { return null; }
+  if (!tot) return null;                 // nothing tracked: the gate has no opinion
+  return green / tot;
+}
+// The configured threshold, most specific first. `null` = not configured = old rule.
+function _wordGateTarget(d) {
+  d = d || APP.lessonData;
+  const pick = (v) => (typeof v === 'number' && v >= 0 && v <= 1) ? v : null;
+  let v = pick(d && d.wordGate);
+  if (v == null) {
+    try { const sl = _storylineOfTopic(d); v = pick(sl && sl.wordGate); } catch(_) {}
+  }
+  if (v == null) v = pick(APP.info && APP.info.wordGate);
+  return v;
+}
 function storyUnlocked(d) {
   d = d || APP.lessonData;
   if (!d) return false;
+  // v81_a: the word gate, when the user has configured one. It REPLACES the lesson rule rather than
+  // adding to it — an OR would be a no-op, since word-green is the stricter measure in practice, and
+  // an AND would re-lock 95% of earned stories.
+  const _wgT = (typeof _wordGateTarget === 'function') ? _wordGateTarget(d) : null;
+  if (_wgT != null) {
+    const f = _wordGateFraction(d);
+    if (f != null) return f >= _wgT;
+    // A chapter that tracks no words cannot be judged this way; fall through to the lesson rule
+    // rather than answering "unlocked" on no evidence.
+  }
   // No story-gated lesson → the two gates are identical; defer to the real one so there is exactly
   // one answer for the overwhelming majority of chapters.
   if (!_hasStoryGated(d)) return _setCompleteRaw(d);
@@ -6818,16 +6885,27 @@ function buildPath(){
   _slRoots.forEach(r=>walkForTitle(r.topic,[]));
   const slRow=document.getElementById('home-hdr-storyline');
   if(slRow){
-    const slHtml=matchedTitles.map(chain=>{
-      const j=JSON.stringify(chain);
-      const h=j.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0);
-      const cid='c'+Math.abs(h);
-      const meta=slTitles[cid]||slTitles['root:'+chain[0]];
-      if(!meta||!meta.title) return '';
-      return `<span style="cursor:pointer;background:var(--gray-light);border-radius:10px;padding:2px 10px;font-size:12px" onclick="loadSaved('${encTopic(chain[0])}')">${meta.icon||'📖'} ${escHtml(meta.title)}</span>`;
-    }).filter(Boolean).join('');
-    if(slHtml){ slRow.innerHTML=slHtml; slRow.classList.add('visible'); }
-    else { slRow.innerHTML=''; slRow.classList.remove('visible'); }
+    // v80_x — this row was DEAD and its destination was wrong. Two defects, one line apart:
+    //
+    //   1. It looked its storyline up in `slTitles = APP.storylines || {}`, indexed by `'c'+hash`
+    //      and `'root:'+topic`. `APP.storylines` is an ARRAY, so every lookup returned undefined,
+    //      every chip rendered as '', and the row was hidden on every chapter. Measured before
+    //      changing anything: `home-hdr-storyline` came back EMPTY for a chapter that is in a
+    //      storyline. The keys are from a schema this app has not used for many versions.
+    //   2. Its click ran `loadSaved(chain[0])` — loading the FIRST CHAPTER'S TOPIC, not opening the
+    //      storyline. That is the reported bug: with a name that no longer resolves, `loadSaved`
+    //      falls through to the landing page, which is what the user saw.
+    //
+    // Both are fixed by asking the same resolver the cards use. `_storylineForTopic` finds the deck
+    // this chapter belongs to by MEMBERSHIP, so a rename cannot break it, and `_openStorylineById`
+    // is the destination every other storyline link already uses.
+    let _slCtx=null;
+    try { _slCtx=_storylineForTopic(APP.lessonData?.topic); } catch(_) { _slCtx=null; }
+    const _sl=_slCtx&&_slCtx.sl;
+    if(_sl&&_sl.id){
+      slRow.innerHTML=`<span style="cursor:pointer;background:var(--gray-light);border-radius:10px;padding:2px 10px;font-size:12px" role="button" tabindex="0" title="${escAttr(t('complete.back_story'))}" onclick="_openStorylineById('${escJsAttr(_sl.id)}')">${_sl.icon||'📖'} ${escHtml(_sl.title||t('storyline.title'))}</span>`;
+      slRow.classList.add('visible');
+    } else { slRow.innerHTML=''; slRow.classList.remove('visible'); }
   }
 
   // M1: Chapter progress strip
@@ -13428,6 +13506,37 @@ function _askedKeys(ex){
   return out;
 }
 
+// ── v80_w: the ONE story BODY renderer, shared by the question panel and the progress cards ──
+//
+// The question panel and the progress card were highlighting the story through different code: the
+// panel used the TRACK T three-state map, the card still used the v74_n two-shade call. Same story,
+// two meanings, on screens a learner moves between in one tap — which is the exact drift `v74_n`
+// was written to fix once already, reappearing because TRACK T only updated one side.
+//
+// The FRAMES stay different, and should: the question panel is a <details> with a speak button, the
+// card writes into `#comp-story-text` and has a translation toggle. Only the BODY is shared, which
+// is the part that has to agree.
+//
+// `highlight:false` is for the translation view — the words are target-language, so marking them
+// inside a source-language translation would match nothing, or worse, coincidental substrings.
+function _storyBodyHtml(d, opts){
+  const o = opts || {};
+  const text = (o.text != null) ? String(o.text) : String((d && d.story) || '');
+  if (!text) return '';
+  if (o.highlight === false) return _storyParasHtml(furiHtml(text));
+  try {
+    const all = [...new Set(
+      (typeof _storyWordSources === 'function' ? _storyWordSources(d).map(x => x.word) : [])
+        .concat((d.lessons || []).flatMap(L => (L && L.vocab || []).map(v => v && v.target)))
+    )].filter(Boolean);
+    if (!all.length) return _storyParasHtml(furiHtml(text));
+    return _storyParasHtml(
+      _highlightVocabHtml(furiHtml(text), all, [], _wordStateMap(d), _askedKeys(o.ex)));
+  } catch(_) {
+    return _storyParasHtml(furiHtml(text));   // unhighlighted is fine; failing to render is not
+  }
+}
+
 // ONE story panel for every question screen. T0: "ALL question cards should ALSO show text (currently
 // only for comprehension questions), and in each question the highlight should indicate the word(s)
 // currently asked (underline additionally to the coloring)."
@@ -13479,28 +13588,30 @@ function _exStoryPanelHtml(ex){
   //
   // ⚠️ The LESSON-level gate is untouched: comprehension lessons are still unreachable until the
   // story unlocks (`_storyLockedLesson`, v80_b). What changed is only whether the text is DISPLAYED.
-  let body;
-  try {
-    // Every word the chapter TEACHES is marked, coloured by how much of it the learner has — not
-    // just the solved ones. That is TRACK T's whole point: the text is the progress display.
-    const all = (typeof _storyWordSources === 'function')
-      ? [...new Set(_storyWordSources(d).map(x => x.word)
-          .concat((d.lessons || []).flatMap(L => (L && L.vocab || []).map(v => v && v.target))))].filter(Boolean)
-      : [];
-    const rendered = furiHtml(story);
-    body = all.length
-      ? _highlightVocabHtml(rendered, all, [], _wordStateMap(d), _askedKeys(ex))
-      : rendered;
-  } catch(_) { body = escHtml(story); }
-  const paras = body.split(/\n\n+/).map(p => `<p dir="auto" style="margin:0 0 8px">${p.replace(/\n/g,'<br>')}</p>`).join('');
+  // v80_x: the TRANSLATE toggle, in the same style as the progress card's. The story panel and the
+  // progress card now render the same body (v80_w); this gives them the same control too, so a
+  // learner who can flip to the translation on one screen can do it on the other.
+  //
+  // It reuses `toggleCompStoryLang` and `APP._compStoryLang` — the SAME state the card uses — so the
+  // two screens cannot disagree about which language is showing. A second flag would be a second
+  // source of truth for one question.
+  const _xl = String((d && d.storyTranslation) || '').trim();
+  const _showSrc = APP._compStoryLang === 'source' && _xl;
+  const _xlBtn = _xl
+    ? '<button class="spk-ico" id="ex-story-xlate" style="margin-left:auto;font-size:11px;font-weight:800;'
+      + 'background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 8px;'
+      + 'cursor:pointer;font-family:Nunito,sans-serif" onclick="event.stopPropagation();toggleExStoryLang()">'
+      + escHtml(_showSrc ? t('story.show_original') : t('story.show_translation')) + '</button>'
+    : '';
+  const paras = _storyBodyHtml(d, { ex, text: _showSrc ? _xl : story, highlight: !_showSrc });
   const lang = d.lang || APP.lang;
   const spk = (typeof _lessonIsDialect === 'function' && _lessonIsDialect()) ? '' :
     `<button class="flag-btn" style="margin-bottom:6px" title="${escAttr(t('ex.comprehension.story_listen'))}"
        onclick="speakBodyText(null,'${escAttr(lang)}',APP.lessonData?.story||'')">🔊</button>`;
   return '<details id="ex-story-panel"' + (_open ? ' open' : '') + ' style="margin-top:14px;border:2px solid var(--gray-mid);'
        + 'border-radius:var(--radius-lg);background:var(--white);text-align:left;padding:10px 14px">'
-       + `<summary style="cursor:pointer;font-size:13px;font-weight:900;color:var(--gray-dark);outline:none">`
-       + `📖 ${escHtml(t('ex.comprehension.story'))}</summary>`
+       + `<summary style="cursor:pointer;font-size:13px;font-weight:900;color:var(--gray-dark);outline:none;display:flex;align-items:center;gap:8px">`
+       + `📖 ${escHtml(t('ex.comprehension.story'))}${_xlBtn}</summary>`
        + `<div id="ex-story-text" style="margin-top:8px;font-size:15px;line-height:1.6">${spk}${paras}</div>`
        + '</details>';
 }
@@ -15375,6 +15486,25 @@ function check(replay){
     const a=document.getElementById('ex-area'); a.classList.remove('rise-up'); a.classList.add('fall-down'); setTimeout(()=>a.classList.remove('fall-down'),520);
     renderHearts();
   }
+
+  // v80_v: REPAINT THE STORY PANEL after answering. `markSolved` has just run, so the word the
+  // learner worked on may have changed state — and TRACK T's premise is that the text IS the
+  // progress display, which is worth little if it only updates on the next render. Reported by the
+  // user from the device pass.
+  //
+  // Cheap and safe: the panel has been ONE renderer since v80_r, so this repaints through the same
+  // function that drew it. Skipped on a replay, which changes no state and would only cost work.
+  if (!replay) {
+    try {
+      const _sp = document.getElementById('ex-story-panel');
+      if (_sp) {
+        const _wasOpen = _sp.open;
+        _sp.outerHTML = _exStoryPanelHtml(ex);
+        const _fresh = document.getElementById('ex-story-panel');
+        if (_fresh) _fresh.open = _wasOpen;   // never yank the panel shut under the learner
+      }
+    } catch(_) {}
+  }
 }
 
 // ── v77_b: progress-card error visibility ──
@@ -15510,12 +15640,36 @@ function showComplete(review, lessonIdxOverride){
     _cvChips = '';
     try {
       const d = APP.lessonData;
-      const solved = _solvedTargetWords(d);
+      // v80_y (user): only words that do NOT appear in the story, plus solved synonyms/antonyms.
+      //
+      // The list and the highlighted text now sit on the same card (v80_w), so a word visible in
+      // BOTH was said twice — and the highlight says more, because it carries the red/green state.
+      // Filtering makes the list the COMPLEMENT of the text: what this chapter teaches that the
+      // story does not show you. Synonyms and the other probe-bearing sources are included for the
+      // same reason — they are taught here and are usually absent from the prose.
+      //
+      // Substring matching, the same test the highlighter uses to decide what to mark, so a word is
+      // hidden from the list exactly when it is marked in the text. Measured at v80_f: only 47% of
+      // taught words are findable in the story, so this list keeps roughly half its entries rather
+      // than emptying.
+      const _low = String(d.story || '').toLowerCase();
+      const _inStory = (w) => !!w && _low.indexOf(String(w).toLowerCase()) >= 0;
+      const solved = _solvedTargetWords(d).concat(_solvedExtraWords(d))
+        .filter(w => !_inStory(w))
+        .filter((w, i, a) => a.indexOf(w) === i)
+        .sort((a, b) => b.length - a.length);
       if (solved.length) {
         const gloss = new Map();
         (d.lessons || []).forEach(L => (L && L.vocab || []).forEach(v => {
           if (v && v.target && !gloss.has(v.target)) gloss.set(v.target, v.source || '');
         }));
+        // Words from the probe-bearing sources (synonyms, word_forms, grammar, conjugation) have no
+        // vocab row, so they have no gloss — the chip shows the word alone rather than a blank.
+        try {
+          _storyWordSources(d).forEach(sc => {
+            if (sc && sc.word && !gloss.has(sc.word)) gloss.set(sc.word, sc.gloss || '');
+          });
+        } catch(e) { _cardNote('chapter vocab glosses', e); }   // v77_b: never a silent catch here
         _cvChips = solved.map(w => {
           const g = gloss.get(w) || '';
           return `<span class="vocab-chip" dir="auto">${furiHtml(w)}` +
@@ -15950,9 +16104,19 @@ function showComplete(review, lessonIdxOverride){
 
   // Progress summary — along the storyline AND within the chapter. Skipped for a drill (its
   // synthetic topic has no chapter progress of its own).
-  // v65.1: storyboard panel for this chapter (hidden for drills / when there's no board).
-  try { if (lesson._drill) { const b=el('comp-storyboard'); if(b){ b.style.display='none'; b.innerHTML=''; } }
-        else _renderCompStoryboard(topicKey, _slCtx); } catch(_) { if (typeof _cardNote === 'function') _cardNote('storyboard', _); }
+  // v80_z (user): this slot now holds the CHAPTER ICON row, not the storyboard. The progress card
+  // renders it here rather than through `_cardHeader` because it builds its own header block; the
+  // other three cards get the same row from `_cardHeader`, so all four agree.
+  // A drill has no chapter of its own, so the row would misrepresent what it links to — same reason
+  // the lesson-icon row and `comp-hdr` hide there.
+  try {
+    const b = el('comp-storyboard');
+    if (b) {
+      const _h = lesson._drill ? '' : _chapterIconsHtml(topicKey, _slCtx);
+      b.innerHTML = _h;
+      b.style.display = _h ? '' : 'none';
+    }
+  } catch(e) { if (typeof _cardNote === 'function') _cardNote('chapter-icons', e); }
   const _progEl = el('comp-progress');
   if (_progEl) {
     if (lesson._drill) { _progEl.innerHTML = ''; _progEl.style.display = 'none'; }
@@ -16094,7 +16258,16 @@ function showComplete(review, lessonIdxOverride){
     // (that is why it was misnamed until v77_g). A teaser of the reward is not the reward, and on a
     // locked card it pushed the vocabulary — the thing the learner can actually use — below a
     // paragraph they are not meant to read yet. The panel now appears ONLY on a genuine unlock.
-    const _showStory = !!(_story && _allDone2);
+    // ⚠️ v80_w — REVERSES `v77_p`, and the premise is what changed. `v77_p` was a user ruling:
+    // "skip all story preview fields — only show the vocabulary", on the reasoning that a teaser of
+    // the reward is not the reward and pushed the vocabulary below text the learner was not meant to
+    // read yet. Under TRACK T the story is NOT a reward to be earned — it is the progress display,
+    // and T0 is explicit that it appears on ALL progress cards "even before the chapter text is
+    // unlocked". A hidden progress display shows no progress.
+    //
+    // The unlock still means something: it governs the CAPTION and the comprehension lessons
+    // (`_storyLockedLesson`), which remain unreachable until the story opens.
+    const _showStory = !!_story;
     _compStory.style.display = _showStory ? '' : 'none';
     // v74_l is RETIRED here (roadmap ruling 1, shipped v77_l). It used to strip the card back
     // toward Next once the story unlocked, hiding repeat/drill/crossword — the reasoning being that
@@ -16115,6 +16288,7 @@ function showComplete(review, lessonIdxOverride){
     // strand anyone either — it only ever took affordances away.
     if (_showStory) {
       const _lbl = document.getElementById('comp-story-panel-lbl');
+      // The caption is now the only thing the unlock changes on this card.
       if (_lbl) _lbl.textContent = _allDone2 ? t('complete.story_unlocked') : t('complete.story_preview');
       // v77_v (§0f): the story has just opened — read it aloud, unless muted. `_showStory` now
       // means a GENUINE unlock (v77_p removed the locked preview), so this cannot fire on a teaser.
@@ -16248,7 +16422,7 @@ function _wordProgress(d){
   // has to be reconstructed by a caller that might get it wrong.
   const bump = (word, src, solved) => {
     let r = out.get(word);
-    if (!r) { r = { n: 0, ok: 0, bySrc: { extra: { n: 0, ok: 0 }, vocab: { n: 0, ok: 0 } } }; out.set(word, r); }
+    if (!r) { r = { n: 0, ok: 0, bySrc: { extra: { n: 0, ok: 0 }, vocab: { n: 0, ok: 0 }, sentence: { n: 0, ok: 0 } } }; out.set(word, r); }
     r.n++; if (solved) r.ok++;
     const b = r.bySrc[src]; if (b) { b.n++; if (solved) b.ok++; }
   };
@@ -16281,6 +16455,33 @@ function _wordProgress(d){
       bump(v.target, 'vocab', hit);
     });
   });
+  // (c) v80_v — SENTENCES count too. A sentence-translation question puts a whole story sentence in
+  // front of the learner, so the words in it have been worked on; before this, answering one moved
+  // no highlight at all, which the user saw on screen.
+  //
+  // ⚠️ Scoped to words the chapter TEACHES (user ruling). Attributing every word of the sentence
+  // would green function words the learner was never taught and make the text look finished. Only
+  // words already tracked by (a) or (b) can gain a sentence question, so this never INTRODUCES a
+  // word — it only adds evidence about one.
+  const taught = [...out.keys()];
+  if (taught.length) {
+    (d.lessons || []).forEach(L => {
+      if (!L || L.id == null || L._hidden) return;
+      (L.sentences || []).forEach(sent => {
+        const text = String((sent && sent.target) || '');
+        if (!text) return;
+        // Same membership test as the vocab branch: any solved key of this lesson whose hash matches
+        // this sentence under that key's own question type.
+        const hit = solvedKeys.some(id => {
+          const parts = String(id).split(':');
+          return parts[0] === String(L.id)
+              && _qidHash(_qidCanonical({ type: parts[1], target: sent.target, source: sent.source })) === parts[2];
+        });
+        const low = text.toLowerCase();
+        taught.forEach(w => { if (low.indexOf(String(w).toLowerCase()) >= 0) bump(w, 'sentence', hit); });
+      });
+    });
+  }
   return out;
 }
 
@@ -16434,43 +16635,17 @@ function _renderCompStory(allDone){
   const full = showingSource ? _xlate : _story;
   const _el = document.getElementById('comp-story-text');
   if (_el) {
-    const shown = allDone ? full : (full.slice(0, 200) + (full.length > 200 ? '…' : ''));
-    // v71_m: highlight the words this learner has actually SOLVED, the same yellow the storyline
-    // and lesson-set pages use — the story stops being a wall of text and becomes a record of what
-    // they can now read. Only for the target-language story: the words are target-language, so
-    // highlighting them inside a source-language translation would match nothing (or, worse,
-    // coincidental substrings). Falls back to plain text if anything goes wrong; a story that
-    // renders unhighlighted is fine, a story that fails to render is not.
-    let html = null;
-    if (!showingSource) {
-      try {
-        // v74_n: mark the WHOLE chapter's vocabulary, with the solved words in the stronger shade.
-        // This panel used to mark solved words only, while the storyline page marked everything —
-        // so the same story lit up differently depending on which screen you read it from, and a
-        // partly-played chapter looked almost unmarked here. Both meanings are now on the page:
-        // what the chapter teaches, and how much of it you already have.
-        // v78_h: and every other word-bearing source, so a chapter that teaches through
-        // conjugation or word_forms stops showing an almost-unmarked story. Both shades come from
-        // one collector (`_storyWordSources`), so "in your lessons" and "you have answered it"
-        // cannot drift apart the way this panel and the storyline page once did.
-        const all = (d.lessons || []).flatMap(L => (L && L.vocab) || [])
-          .map(v => v && v.target).filter(Boolean)
-          .concat(_storyExtraWords(d))
-          .sort((a, b) => b.length - a.length);
-        const solved = _solvedTargetWords(d).concat(_solvedExtraWords(d))
-          .sort((a, b) => b.length - a.length);
-        if (all.length) html = _highlightVocabHtml(furiHtml(shown), all, solved);
-      } catch(_) { html = null; }
-    }
-    // v74_m: paragraphs. Every other story panel has split on blank lines since v39; this one set
-    // the text flat, so a chapter with 217-of-299's worth of structure arrived as a single slab.
-    // Applied on BOTH branches — the highlighted path and the plain fallback — because losing the
-    // highlighting must not also lose the shape of the text. `furiHtml` is applied on the fallback
-    // too so ruby survives; escaping is furiHtml's job, as on the highlighted branch.
+    // v80_w: the SHARED body renderer, so this card and the question panel colour the same story the
+    // same way. It previously called `_highlightVocabHtml` with the v74_n two-shade arguments while
+    // the panel used the TRACK T three-state map — the same story, two meanings, one tap apart.
+    //
+    // The TRUNCATION is also gone. It showed 200 characters until the chapter was done, which under
+    // TRACK T hides most of the progress display on exactly the cards where the learner is still
+    // working. T0: keep the learner's attention on the text throughout.
     try {
-      _el.innerHTML = _storyParasHtml(html != null ? html : furiHtml(shown));
+      _el.innerHTML = _storyBodyHtml(d, { text: full, highlight: !showingSource });
     } catch(_) {
-      _el.textContent = shown;   // a story that renders unformatted is fine; one that fails is not
+      _el.textContent = full;   // a story that renders unformatted is fine; one that fails is not
     }
   }
   const _btn = document.getElementById('comp-story-xlate');
@@ -16491,6 +16666,22 @@ function _renderCompStory(allDone){
     _spk.setAttribute('onclick', `speakBodyText(null,'${lang}',${showingSource ? 'APP.lessonData?.storyTranslation' : 'APP.lessonData?.story'}||'')`);
   }
 }
+// v80_x: the question panel's toggle. Shares `APP._compStoryLang` with the progress card, and
+// repaints through `_exStoryPanelHtml` — the same renderer that drew the panel — so the flip cannot
+// produce a panel the initial render would not have produced.
+function toggleExStoryLang(){
+  APP._compStoryLang = (APP._compStoryLang === 'source') ? 'target' : 'source';
+  try {
+    const _sp = document.getElementById('ex-story-panel');
+    if (!_sp) return;
+    const _wasOpen = _sp.open;
+    const _ex = APP.cur && APP.cur.exercises ? APP.cur.exercises[APP.cur.cur] : null;
+    _sp.outerHTML = _exStoryPanelHtml(_ex);
+    const _fresh = document.getElementById('ex-story-panel');
+    if (_fresh) _fresh.open = _wasOpen;
+  } catch(_) {}
+}
+
 function toggleCompStoryLang(){
   APP._compStoryLang = (APP._compStoryLang === 'source') ? 'target' : 'source';
   _renderCompStory(storyUnlocked(APP.lessonData));
@@ -16936,6 +17127,55 @@ function _compLessonIconsHtml(){
   return '<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">' + cells.join('') + '</div>';
 }
 
+// ── v80_z (user): the CHAPTER ICON row, replacing the storyboard on the cards ────────────────
+//
+// One `topicEmoji` per chapter of this storyline, at the same size as the lesson-type icons above
+// the play buttons, and clickable through to that chapter. It replaces the storyboard row on all
+// four card prefixes — the storyboard is a picture OF the deck; this is a way THROUGH it, which is
+// what a progress card wants.
+//
+// ⚠️ The storyboard itself is NOT deleted. `v71_k` built it, `unit-storyboard-frames` guards it, and
+// the STORYLINE page still renders it. Only its place on the cards is taken.
+//
+// Locking mirrors the lesson-icon row exactly: a chapter the learner has not reached is shown but
+// not clickable, because an icon that leads to a dead end is worse than a dimmed one. "Reached"
+// means the chapter is the current one, is done, or follows a done chapter — the same walk the deck
+// itself uses, read through `chapterComplete` so this row cannot disagree with the cards.
+function _chapterIconsHtml(topicKey, slCtx){
+  const sl = slCtx && slCtx.sl;
+  if (!sl) return '';
+  const ids = sl.chapters || [];
+  const byId = (slCtx && slCtx.byId) || {};
+  if (ids.length < 2) return '';          // a one-chapter deck has nothing to navigate
+  const here = (slCtx.topics || []).indexOf(topicKey);
+  const cells = [];
+  let prevDone = true;                    // the first chapter is always reachable
+  ids.forEach((cid, i) => {
+    const t = byId[cid];
+    if (!t) return;
+    let done = false;
+    try { done = !!chapterComplete(t); } catch(_) { done = false; }
+    const isHere = (i === here);
+    const reachable = isHere || done || prevDone || APP._teacherMode;
+    prevDone = done;
+    const emoji = t.topicEmoji || '📚';
+    const label = (t.topic || '') + (done ? ' ✓' : '');
+    const base = `title="${escAttr(label)}" style="font-size:22px;line-height:1;padding:4px 6px;border-radius:8px;`;
+    if (isHere) {
+      cells.push(`<span class="comp-chapter-ico here" ${base}background:var(--green-light,#e4f5e4);`
+        + `outline:2px solid var(--green);cursor:default">${emoji}</span>`);
+    } else if (reachable) {
+      cells.push(`<span class="comp-chapter-ico" data-chapter-id="${escAttr(cid)}" ${base}`
+        + `cursor:pointer;background:var(--gray-light)" role="button" tabindex="0"`
+        + ` onclick="event.stopPropagation();loadSaved('${escJsAttr(cid)}')">${emoji}</span>`);
+    } else {
+      cells.push(`<span class="comp-chapter-ico locked" ${base}opacity:.35;cursor:default">${emoji}</span>`);
+    }
+  });
+  if (!cells.length) return '';
+  return '<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">' + cells.join('') + '</div>';
+}
+
 function _compProgressHtml(topicKey, slCtx, opts){
   // v71_m: `markPct` draws the pass mark ON the bar instead of spelling it out underneath. The
   // sentence it replaces ("You must solve 80% of this chapter…") stated a number the learner then
@@ -17191,7 +17431,13 @@ function _renderSummaryField(prefix, sl){
     body.setAttribute('dir', (typeof RTL_LANGS !== 'undefined' && RTL_LANGS.has(lang)) ? 'rtl' : 'ltr');
   }
   const lbl = document.getElementById(prefix + '-sumbox-lbl');
-  if (lbl) lbl.textContent = t('summary.title');
+  // v80_y: `lesson.read_summary` replaces `summary.title`, which is now REMOVED from ui.json.
+  // The two said the same thing, but `summary.title` said it as the English idiom "The story so
+  // far" — a recap — which 31 languages had translated literally as "progress so far". The German
+  // read "Bisheriger Fortschritt" on a card that shows a summary. `lesson.read_summary` is already
+  // "Summary"/"Zusammenfassung" and already translated in all 32 languages, so this fixes every
+  // language at once instead of owing 31 a pass.
+  if (lbl) lbl.textContent = t('lesson.read_summary');
   const spk = document.getElementById(prefix + '-sum-spk');
   if (spk) {
     spk.title = t('lesson.read_aloud');
@@ -17283,7 +17529,17 @@ function _cardHeader(prefix, opts){
     if (px) px.style.display = 'none';
   }
   if (opts.storyboard !== false) {
-    try { _renderCompStoryboard(d.topic, ctx, prefix + '-storyboard'); } catch(_) {}
+    // v80_z (user): the CHAPTER ICON row takes this slot on every card. The element keeps its id —
+    // 82 references and 12 test references make a rename a large blast radius for a cosmetic gain —
+    // so the id is now historical. The STORYLINE page still renders the real storyboard.
+    try {
+      const _box = document.getElementById(prefix + '-storyboard');
+      if (_box) {
+        const _h = _chapterIconsHtml(d.topic, ctx);
+        _box.innerHTML = _h;
+        _box.style.display = _h ? '' : 'none';
+      }
+    } catch(e) { if (typeof _cardNote === 'function') _cardNote('chapter-icons', e); }
   }
   return ctx;
 }
@@ -17316,7 +17572,7 @@ function showStorySummary(){
   //   'chapter' — carried here by finishing the previous chapter: "Next chapter unlocked!"
   //   'entry'   — opening a chapter directly: "The story so far"
   const _arrival = APP._sumArrival === 'chapter' ? 'chapter' : 'entry';
-  if (ttl) ttl.textContent = _arrival === 'chapter' ? t('unlocked.title') : t('summary.title');
+  if (ttl) ttl.textContent = _arrival === 'chapter' ? t('unlocked.title') : t('lesson.read_summary');
   // The chapter being opened, named — the one thing the unlocked card carried that this page did
   // not. Shown only on a chapter arrival: on a plain entry the header already names where you are,
   // and repeating it reads as a dialog.
@@ -17375,6 +17631,18 @@ function sumForwardToCard(){ showComplete(true); show('complete-screen'); }
 //   • not when arriving from the next-chapter-unlocked card, which has just shown an interstitial
 //     of its own. Two in a row is friction, not orientation.
 // The flag is consumed here whether or not it fires, so it can never leak into a later entry.
+// Is the open chapter after the first of its storyline? A solo chapter is its own first chapter.
+// One reader, because two places now branch on it and they must not disagree.
+function _isLaterChapter(d){
+  d = d || APP.lessonData;
+  try {
+    const ctx = _storylineForTopic(d?.topic);
+    const ids = (ctx && ctx.sl && ctx.sl.chapters) || [];
+    if (!ids.length) return false;
+    return (ctx.topics || []).indexOf(d?.topic) > 0;
+  } catch(_) { return false; }
+}
+
 function _enterViaSummaryCard(idx){
   let ok = false;
   try {
@@ -17395,12 +17663,18 @@ function _enterViaSummaryCard(idx){
     // Measured at this cut: 14 multi-chapter storylines have no summary, covering 25 chapters at
     // index >= 1. Gating on the summary ALONE would have silently dropped the acknowledgement for
     // exactly those 25 — the regression this clause exists to prevent.
-    const ctx = _storylineForTopic(APP.lessonData?.topic);
-    const ids = (ctx && ctx.sl && ctx.sl.chapters) || [];
-    const me = ids.length ? (ctx.topics || []).indexOf(APP.lessonData?.topic) : 0;
-    const isLater = me > 0;
-    APP._sumArrival = isLater ? 'chapter' : 'entry';
-    ok = idx >= 0 && (!!_summaryOfStory() || isLater);
+    const isLater = _isLaterChapter();
+    APP._sumArrival = 'entry';
+    // ⚠️ v81_b (user ruling) REVERSES v80_e's generalisation. The entry card is the FIRST chapter's
+    // alone again; a later chapter lands on its PROGRESS CARD instead (see `loadSaved`).
+    //
+    // v80_e had generalised this card to every chapter, because v77_q had made the
+    // next-chapter-unlocked card the starter for chapters 2..N and PLAN §C2 then asked for that card
+    // to be deleted — leaving those chapters with no starter unless the entry card took over. This
+    // ruling picks the other resolution: the PROGRESS CARD is the arrival screen, which it can now
+    // be, because the v80 line put the story, the highlights, the chapter icons and the play buttons
+    // on it. That was not true when v80_e was decided.
+    ok = idx >= 0 && !isLater && !!_summaryOfStory();
   } catch(_) { ok = false; }
   if (!ok) return false;
   APP._sumNext = { kind: 'lesson', idx: idx };

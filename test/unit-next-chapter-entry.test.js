@@ -1,38 +1,29 @@
 // unit-next-chapter-entry.test.js
-// v80_e (user ruling: MERGE) — one starter card per chapter, for every chapter.
+// v81_b (user ruling) — a chapter AFTER THE FIRST lands on its PROGRESS CARD. The entry card is the
+// first chapter's alone.
 //
-// Supersedes unit-next-chapter-unlocked.test.js (v77_i). That card is DELETED. The claim it was
-// built to protect is NOT: finishing a chapter opens the next one, and that moment must not pass
-// silently — v77_i existed because Next called loadSaved directly and the learner arrived
-// mid-lesson without being told what they had earned. So this file asserts the same guarantee
-// against the merged card rather than dropping it with the screen.
+// ⚠️ THIS FILE ASSERTED THE OPPOSITE UNTIL v81_b, and the history is worth keeping because this
+// surface has now been ruled on three times:
+//   • `v77_i` built a next-chapter-unlocked card so finishing a chapter did not pass silently;
+//   • `v77_q` made that card the STARTER for chapters 2..N, leaving the entry card to chapter one;
+//   • `PLAN §C2` asked for the unlocked card to be deleted — which could not work as written, since
+//     it WAS the starter for those chapters;
+//   • `v80_e` resolved that by generalising the ENTRY card to every chapter;
+//   • `v81_b` picks the other resolution: **the PROGRESS CARD is the arrival screen.**
 //
-// Why the merge: v77_q had made the next-chapter-unlocked card the STARTER for chapters 2..N,
-// carrying the entry card's header, storyboard, summary field and bars under a second set of ids.
-// The user's plan (PLAN §C2) then asked for it to be removed "going straight to the next entry
-// card" — which could not work as written, because since v77_q there was no entry card for
-// chapters 2..N. Generalising the entry card is what makes that sentence true.
+// The reason the last one is now available is that the v80 line changed what a progress card IS. It
+// carries the story with its progress highlights, the vocabulary, the chapter icons and the play
+// buttons — everything the entry card offered. That was not true when `v80_e` was decided, so this
+// is a ruling made on different facts, not a reversal of a mistake.
 //
-// Contract, asserted by CLICKING:
-//   1. Finishing a chapter with another ahead → Next opens THAT chapter directly (no interstitial
-//      of its own), and the target is still resolved at render time.
-//   2. On arrival the entry card meets the learner and NAMES the chapter — the acknowledgement
-//      v77_i existed for, now on the card that was already going to be shown.
-//   3. It appears for a later chapter even when the storyline has NO summary. This is the
-//      regression the merge could most easily have introduced: gating on the summary alone would
-//      have silently dropped the acknowledgement for 25 chapters at this cut.
-//   4. Forward from it starts the lesson — it orients, it does not block.
-//
-// ⚠️ DELIBERATELY LOST, recorded rather than implied: the old card's ← ("back to the chapter you
-// just finished") is gone. After the merge the learner has already moved to the next chapter by the
-// time the card renders, so a back link there would return them to a card for the chapter they are
-// now IN, not the one they left. The header title still reaches the storyline, from which the
-// previous chapter is one tap away.
+// The claim `v77_i` was built for still holds and is still asserted: arriving at a chapter must not
+// pass silently, and Next must open the chapter the card names.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const { loadClient, ROOT } = require('./lib-dom');
+const settle = () => new Promise(r => setTimeout(r, 50));
 
 const store = JSON.parse(fs.readFileSync(path.join(ROOT, 'lessons.json'), 'utf8'));
 const LANGS = JSON.parse(fs.readFileSync(path.join(ROOT, 'languages.json'), 'utf8'));
@@ -138,54 +129,45 @@ function arriveAt(topic) {
   console.log('  the destination is stashed at render time');
 }
 
-// ── 3. On arrival the entry card meets the learner and names the chapter ───
+// ── 3. On arrival a LATER chapter shows its PROGRESS CARD ───────────────
+// v81_b. `_enterViaSummaryCard` declines, and `loadSaved` lands on the progress card rather than
+// dropping the learner into a question — a chapter with no arrival screen at all was the failure
+// mode `v77_i` was built to prevent, and it is still prevented, by a different screen.
 {
   const C = arriveAt(SECOND);
-  assert.strictEqual(C.run(`APP._entered`), true,
-    'arriving at a later chapter is met by the entry card');
-  assert.strictEqual(C.run(`APP._shown`), 'summary-screen', 'and that card is the entry card');
-  const named = C.run(`document.getElementById('sum-chapter').textContent || ''`);
-  assert.strictEqual(named, SECOND.topic,
-    'the card NAMES the chapter — the acknowledgement v77_i existed for');
-  assert.strictEqual(C.run(`document.getElementById('sum-chapter').style.display`), '',
-    'and that name is visible');
-  assert.strictEqual(C.run(`document.getElementById('sum-title').textContent`), UI.en['unlocked.title'],
-    'titled as a chapter arrival, reusing the key the deleted card already owned in 32 languages');
-  assert.strictEqual(C.run(`APP._started`), null, 'and it does not skip straight into the lesson');
-  console.log(`  arriving at chapter 2 -> entry card naming "${named}"`);
+  assert.strictEqual(C.run(`_isLaterChapter(APP.lessonData)`), true,
+    'non-vacuity: this chapter really is after the first');
+  assert.strictEqual(C.run(`APP._entered`), false,
+    'the entry card declines for a later chapter (v81_b, reversing v80_e)');
+  console.log('  a later chapter gets no entry card');
 }
 
-// ── 4. It appears with NO summary — the regression the merge could have caused ──
-// Gating on `_summaryOfStory()` alone would drop the acknowledgement for every later chapter of a
-// summary-less storyline: 25 chapters at this cut. This is the discriminating case, so it is
-// asserted on a storyline chosen for having no summary rather than on a convenient one.
+// ── 4. The FIRST chapter still gets its entry card, when there is a summary ──
+// The half of `v77_k` that survives: the entry card is the first chapter's alone, and only when the
+// storyline HAS a summary — otherwise it is a blank page between the learner and their lesson.
 {
-  const C = arriveAt(NS_SECOND);
-  assert.strictEqual(C.run(`!!_summaryOfStory()`), false,
-    'non-vacuity: this storyline genuinely has no summary');
-  assert.strictEqual(C.run(`APP._entered`), true,
-    'a later chapter still gets its starter card when the storyline has no summary');
-  assert.strictEqual(C.run(`document.getElementById('sum-chapter').textContent`), NS_SECOND.topic,
-    'and it still names the chapter');
-  console.log('  no summary: a later chapter still gets its card');
+  const FIRST_WITH = byId[SL.chapters[0]];
+  const C = arriveAt(FIRST_WITH);
+  assert.strictEqual(C.run(`_isLaterChapter(APP.lessonData)`), false, 'non-vacuity: first chapter');
+  assert.ok(C.run(`!!_summaryOfStory()`), 'non-vacuity: this storyline HAS a summary');
+  assert.strictEqual(C.run(`APP._entered`), true, 'the first chapter still shows the entry card');
+  assert.strictEqual(C.run(`APP._shown`), 'summary-screen', 'and that card is the entry card');
+  console.log('  the first chapter keeps its entry card');
 }
 
-// ── 5. The FIRST chapter of a summary-less storyline still gets NO card ────
-// The other half of the gate, and the reason it is not simply "always show": v77_k kept the entry
-// card off a page that would be blank. Without this the section above could pass on a rule that
-// shows the card unconditionally.
+// ── 5. A summary-less FIRST chapter still gets NO card ──────────────────
 {
   const NS_FIRST = byId[SL_NOSUM.chapters[0]];
   const C = arriveAt(NS_FIRST);
-  assert.strictEqual(C.run(`!!_summaryOfStory()`), false, 'non-vacuity: still no summary');
+  assert.strictEqual(C.run(`!!_summaryOfStory()`), false, 'non-vacuity: no summary');
   assert.strictEqual(C.run(`APP._entered`), false,
-    'the FIRST chapter of a summary-less storyline shows no entry card — it would be blank');
+    'a summary-less first chapter shows no entry card — it would be blank');
   console.log('  no summary + first chapter: no card, as before');
 }
 
 // ── 6. Forward starts the lesson — the card orients, it does not block ─────
 {
-  const C = arriveAt(SECOND);
+  const C = arriveAt(byId[SL.chapters[0]]);          // v81_b: the entry card is the first chapter's
   const want = C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
   assert.ok(want >= 0, 'non-vacuity: there is a lesson to start');
   C.run(`document.getElementById('sum-next').onclick(); true;`, 'go');
@@ -194,4 +176,47 @@ function arriveAt(topic) {
   console.log('  forward starts the lesson');
 }
 
+(async () => {
+// ── 7. ⚠️ THE OTHER HALF — a later chapter LANDS on its progress card ────
+// §3 only shows the entry card declines. That alone would be satisfied by dropping the learner
+// straight into a question — the failure `v77_i` was built to prevent. This asserts the DESTINATION.
+//
+// ⚠️ It drives the REAL `loadSaved`, with fetch stubbed to hand back the chapter, NOT a copy of its
+// branch. The first version ran a hand-written copy and **mutation-testing showed it could not fail**
+// when the landing was removed from the product — it was testing its own copy. `unit-story-summary`
+// makes the same point about this same function: proving the decision works while leaving the WIRING
+// unguarded is the gap.
+await (async () => {
+  const C = loadClient({ quiet: true });
+  C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)};
+    APP.savedList = ${JSON.stringify(SAVED)};
+    APP.storylines = ${JSON.stringify(store.storylines || [])};
+    APP.info = { backend:'none', canGenerate:false, coverageThreshold:1 };
+    APP.progress = { completed:{}, solved:{}, chapterDone:{}, learned:{}, storyShown:{} };
+    APP._teacherMode = false;
+    APP._landed = null; APP._started = null;
+    show = function(id){ APP._shown = id; };
+    startLesson = function(i){ APP._started = i; return true; };
+    showComplete = function(){ APP._landed = 'progress-card'; };
+    showStorySummary = function(){ APP._landed = 'entry-card'; };
+    saveProg = function(){};
+    goLessonSet = async function(){ return true; };
+    fetch = function(){ return Promise.resolve({ ok:true,
+      json: function(){ return Promise.resolve(${JSON.stringify(SECOND)}); } }); };
+    loadSaved(${JSON.stringify(SECOND.id)}); true;`, 'land');
+  await settle();
+  assert.strictEqual(C.run(`APP._landed`), 'progress-card',
+    'a later chapter lands on its PROGRESS card');
+  assert.strictEqual(C.run(`APP._started`), null,
+    'and does NOT drop the learner straight into a question — the silent arrival v77_i was built ' +
+    'to prevent is still prevented, by a different screen');
+  console.log('  a later chapter lands on the progress card, not in a question');
+})();
+
+// ── What this does NOT establish (rule 34) ──────────────────────────────
+// • Nothing here says the progress card is a GOOD arrival screen; only that it is the one reached.
+//   That is a device judgement, and it is owed.
+// • The entry card's own contents are `unit-story-summary`'s subject, not this file's.
+
 console.log('unit-next-chapter-entry: ALL PASSED');
+})();

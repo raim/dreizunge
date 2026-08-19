@@ -234,31 +234,41 @@ console.log('  completion card: Next chains lesson→chapter, Back to story/home
   const rcs = ext(html, '_renderCompStory');
   // v71_m: the full-vs-preview rule is unchanged, but the text is now rendered through the yellow
   // solved-word highlighting, so it is assigned as HTML rather than textContent.
-  assert.ok(/const shown = allDone \? full : \(full\.slice\(0, 200\)/.test(rcs),
-    'chapter complete → FULL story; otherwise a 200-char preview (teacher peek)');
-  // v74_n: TWO tiers. The panel marks the whole chapter's vocabulary and passes the solved subset
-  // as the strong shade — it used to mark solved words only, so the same story lit up differently
-  // here and on the storyline page, and a partly-played chapter looked almost unmarked.
-  assert.ok(/_highlightVocabHtml\(furiHtml\(shown\), all, solved\)/.test(rcs),
-    'the whole chapter vocabulary is highlighted, with solved words passed as the strong tier');
-  assert.ok(/if \(!showingSource\)/.test(rcs),
-    'only for the target-language story — target words cannot be found in a source translation');
-  // v74_m: this pinned the exact assignment line, so it broke the moment the panel gained the
-  // paragraph formatting every OTHER story panel has had since v39. The claim worth keeping is the
-  // INTENT — a story that renders unformatted is fine, one that fails to render is not — so it is
-  // asserted as a fallback existing, plus the new structure, rather than as one line of source.
-  assert.ok(/_el\.textContent = shown;/.test(rcs),
-    'and it falls back to plain text rather than failing to render the story at all');
-  assert.ok(/_el\.innerHTML = _storyParasHtml\(/.test(rcs),
-    'the story is emitted as PARAGRAPHS — 217 of 299 shipped chapters contain blank lines');
-  assert.ok(/html != null \? html : furiHtml\(shown\)/.test(rcs),
-    'on both branches: losing the highlighting must not also lose the shape of the text');
+  // ⚠️ REWRITTEN at v80_w. Three claims here were reversed or relocated by TRACK T, and each is
+  // recorded rather than dropped:
+  //   • the 200-char PREVIEW is gone — under TRACK T the story on a progress card IS the progress
+  //     display, and truncating it hides most of that display on exactly the cards where the learner
+  //     is still working (T0: "keep the user's attention on the text throughout");
+  //   • the two-tier `_highlightVocabHtml(furiHtml(shown), all, solved)` call is gone — the card now
+  //     uses the same THREE-state colouring as the question panel;
+  //   • both moved into `_storyBodyHtml`, the shared body renderer, so this card and the question
+  //     panel cannot colour the same story differently again.
+  // What survives unchanged: no highlighting on a source translation, a plain-text fallback, and
+  // paragraphs on both branches.
+  assert.ok(!/slice\(0, 200\)/.test(rcs),
+    'the progress card no longer truncates the story to a preview (v80_w)');
+  assert.ok(/_storyBodyHtml\(d, \{ text: full, highlight: !showingSource \}\)/.test(rcs),
+    'it renders through the SHARED body renderer, so card and question panel agree');
+  // Comments mention the old call by name, so strip them before asserting on the CODE. Matching
+  // prose was the first version's mistake — it failed on its own explanatory comment.
+  const rcsCode = rcs.replace(/\/\/[^\n]*/g, '');
+  assert.ok(!/_highlightVocabHtml/.test(rcsCode),
+    'and no longer carries its own highlighting call — that is the shared renderer\'s job');
+  const body = ext(html, '_storyBodyHtml');
+  assert.ok(/_wordStateMap\(d\)/.test(body),
+    'the shared renderer uses the TRACK T three-state map');
+  assert.ok(/o\.highlight === false/.test(body),
+    'and still skips highlighting for a source translation — target words are not in it');
+  assert.ok(/_storyParasHtml\(furiHtml\(text\)\)/.test(body),
+    'with a plain-text fallback: a story that renders unformatted is fine, one that fails is not');
+  assert.ok(/_el\.textContent = full;/.test(rcs),
+    'and the card keeps its own last-resort fallback');
   // ONE formatter. Two renderers already split stories with the same expression written out twice;
-  // the completion card is now the third caller rather than a fourth copy.
+  // the completion card is now a caller rather than a copy.
   assert.strictEqual((html.match(/function _storyParasHtml\(/g) || []).length, 1,
     'there is exactly one story paragraph formatter');
-  assert.ok(!/\.split\(\/\\n\\n\+\/\)\.map\(p => '<p dir="auto">'/.test(html),
-    'and no renderer still carries its own copy of the split');
+  assert.strictEqual((html.match(/function _storyBodyHtml\(/g) || []).length, 1,
+    'and exactly one story BODY renderer');
   assert.ok(/id="comp-story-panel"[^>]*background:var\(--white\)/.test(html),
     'the story panel is white, so the yellow highlights read clearly');
   assert.ok(/_lbl\.textContent = _allDone2 \? t\('complete\.story_unlocked'\) : t\('complete\.story_preview'\)/.test(sc),
@@ -317,10 +327,20 @@ console.log('  review mode for a re-opened complete chapter (live+static): OK');
   // Must never break the card.
   assert.ok(/catch\(_\)\{ \/\* a malformed board must never break the completion card \*\/ \}/.test(fn),
     'a malformed storyboard degrades silently');
-  assert.ok(/id="comp-storyboard"/.test(html), 'the card has a storyboard slot');
-  assert.ok(/else _renderCompStoryboard\(topicKey, _slCtx\)/.test(html), 'showComplete renders it for non-drill cards');
+  assert.ok(/id="comp-storyboard"/.test(html), 'the slot still exists');
+  // ⚠️ CLAIM CHANGED at v80_z (user ruling): the progress card's `comp-storyboard` slot now holds the
+  // CHAPTER ICON row, not the storyboard. The storyboard FUNCTION is untouched and everything
+  // asserted above it still holds — `v71_k`'s framing is intact and the STORYLINE page still renders
+  // it. What changed is only which of the two occupies this slot on the cards.
+  assert.ok(!/else _renderCompStoryboard\(topicKey, _slCtx\)/.test(html),
+    'showComplete no longer renders the storyboard into the card slot');
+  assert.ok(/_chapterIconsHtml\(topicKey, _slCtx\)/.test(html),
+    'it renders the chapter icon row there instead (v80_z)');
+  // The storyboard renderer survives for the storyline page — deleting it was never the ask.
+  assert.ok(/function _renderCompStoryboard\(/.test(html),
+    'and the storyboard renderer still exists for the storyline page');
 }
-console.log('  chapter storyboard framing on the completion card: OK');
+console.log('  chapter storyboard framing intact; the card slot now holds chapter icons: OK');
 
 
 // ── 5. Static build parity ────────────────────────────────────────────────────

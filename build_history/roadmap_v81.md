@@ -1,44 +1,55 @@
-# Dreizunge roadmap — v80
+# Dreizunge roadmap — v81
 
-*Cut at `v80` (end of session 34). The v79 line's SHIPPED table stays in `roadmap_v79.md` — this
-file carries the protocol, the standing rules and everything still OPEN, so a fresh session reads
-one roadmap and not two. Shipped rows for v79_k…v80 are in `roadmap_v79.md`; nothing in it is
-superseded, it is simply history now.*
+**This is the `v81` line.** Cut from `roadmap_v80.md` at the `v81_a` release, at the end of the
+TRACK T build-out. **`roadmap_v80.md` is kept and is not superseded as a record** — the whole
+`v80` line's release history (`v80_a` … `v80_z`, thirty-odd entries) lives there under
+`# SHIPPED IN THE v80 LINE` and was NOT copied here. Go there for how something was built or why a
+guard is shaped the way it is; this file stays current through the whole v81 line.
 
-## ⚠️ Session protocol — READ FIRST
-
-Unchanged from `roadmap_v75.md`. Re-read its protocol block and its definition-of-done before
-writing anything, plus **"Rules earned in session 28"** and **"Rules earned in session 29"** — eight
-rules now, and each one cost a wrong finding.
-
-Standing design principle: **no language knowledge in the code**, where *permitted* means Unicode
-machinery or corpus statistics, not a hand-authored table.
+> **⚠️ WHAT WAS CARRIED, AND WHAT WAS NOT.** Carried: this protocol block, the findings that govern
+> the open sections, `§0`/`§0i` with their reconciliation, the standing RULES, **TRACK T** (the
+> current focus) and **THE LARGER PLAN** (the folded `implementation_plan.md`). Not carried: the
+> `v80` release entries. Nothing open was dropped — the cut is by KIND, not by judgement about what
+> still matters, so no item had to be assessed to survive it.
 
 ### What is in this file, in order
 
 | section | what it is |
 |---|---|
-| **OPEN AT THE v80 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves |
-| **TRACK T** | the text-focused progress card — the user's current focus shift |
+| **OPEN AT THE v81 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
+| **TRACK T** | the text-focused progress card — the user's current focus. Steps 1–4 shipped in the v80 line; `§T7` is open and needs a ruling |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** |
-| **SHIPPED IN THE v80 LINE** | finished releases, newest first. History, not work. |
 
 Standing rules are in the "Rules earned in session 28…34" blocks — read the **"⚠️ How the rules are
 NUMBERED"** note before citing one.
 
+## ⚠️ Session protocol — READ FIRST
+
+1. **Establish the green baseline before changing anything** — all four checks, and the corpus
+   counts. A differing count is a FINDING, not a stale fixture.
+2. **Measure before editing.** A warning in the notes is a claim about a DESIGN, not about the
+   problem (rule 35). A fixer is not a diagnosis (rule 23).
+3. **Revert-verify every fix and believe the result.** For anything claiming to preserve behaviour,
+   CAPTURE the old output and DIFF it — "the tests still pass" is not the same claim (`v80_q`).
+4. **A note telling the next session to check something is not a guard** (rule 24).
+5. **Guard at the layer where the claim is observable** (rule 34). A guard that pins SOURCE TEXT for
+   a claim about BEHAVIOUR cannot fail — this line cost two releases (`v80_c`, `v80_s`). Render and
+   inspect, then MUTATION-TEST: if breaking the rule leaves the guard green, the guard is wrong.
+6. **`buildExercises` is NON-DETERMINISTIC IN CONTENT, not just order** (`v80_t`). Any test that
+   samples the corpus for a fixture must accumulate across several builds, and be verified over ~15
+   consecutive runs, not one.
+7. A version bump to a new BASE needs its own roadmap. **This is that roadmap for `v81`.**
+8. **Never put emoji in a Python string literal** (rule 25) — write emoji-bearing blocks via a `cat`
+   heredoc and splice the file in. And **check what a mechanical rewrite DID**, not just that it ran
+   (`v80_d` mangled six sentences including a heading).
+
+Standing design principle: **no language knowledge in the code**, where *permitted* means Unicode
+machinery or corpus statistics, not a hand-authored table. Script tables live in `scripts.json`;
+article lists live in a PROBE and must never migrate into the app (`v80_j`).
+
 ---
 
-
-## ⚠️ OPEN AT THE v80 CUT — read these first
-
-> **✅ RESTORED at the v80 cut, RECONCILED at `v80_d`.** The two sections below
-> (`# 0. THE PROGRESS-CARD REWORK` and `# 0i. LESSON GENERATION REWORK`) were **LOST when
-> `roadmap_v80.md` was created** — the open block was carried from partway down `roadmap_v79.md`
-> and these sat above the cut point. They were restored VERBATIM and deliberately left
-> un-reconciled, and **the reconciliation has since been done**: see `§0i — RECONCILED` and
-> `§0's other sub-sections` immediately below, which annotate them without editing them, so the
-> original wording and the judgement about it stay separable. **Do not delete a bullet silently;
-> that is how the reason for a decision gets lost.**
+# ⚠️ OPEN AT THE v81 CUT
 
 ## ✅ FINDINGS THAT GOVERN THE OPEN SECTIONS BELOW
 
@@ -136,6 +147,7 @@ where to look next.
 - **§0f** — shipped (`v77_v`). **§0g** — code shipped (`v77_t`); the **model-prompt change is still
   OWED BY THE USER** (needs a live model). **§0h** — question navigation, fully open, wants its own
   session; the plan does not cover it.
+
 
 
 # 0. THE PROGRESS-CARD REWORK (user, at the v76 cut)
@@ -1256,8 +1268,8 @@ section that was `implementation_plan.md`), then `INTERNALS.md`. The
    enough — no more hand-editing `build-static.js`.
    **Point releases use an alphabetic suffix** (user, v70): the base cut is the bare number and is
    implicitly `a`, so the sequence is `v77` → `v77_b` → `v77_c` → … — the same convention the v69–v76
-   lines ran. **This is the `v80` line.** Roadmaps are per BASE version, so point
-   releases do not each get one — this file stays current through the whole v80 line.
+   lines ran. **This is the `v81` line.** Roadmaps are per BASE version, so point
+   releases do not each get one — this file stays current through the whole v81 line.
    (This paragraph is the one version-specific line in the block and had shipped stale FOUR times by
    session 32 — `roadmap_v73.md` said "the `v72` line", `roadmap_v76.md` said "the `v75` line" for
    its whole run, and this file was written at the v78 cut still naming the v77 line, in BOTH
@@ -1626,6 +1638,99 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 ---
 
+---
+
+# ✅ SHIPPED IN THE v81 LINE
+
+### `v81_b` — the entry card is the FIRST chapter's alone; later chapters land on the progress card
+
+**User ruling.** This surface has now been decided three times, and keeping the sequence visible
+matters more than a tidy file:
+
+- `v77_i` built a next-chapter-unlocked card so finishing a chapter did not pass silently;
+- `v77_q` made that card the STARTER for chapters 2..N, leaving the entry card to chapter one;
+- `PLAN §C2` asked for the unlocked card to be deleted — **which could not work as written**, since it
+  WAS the starter for those chapters;
+- `v80_e` resolved that by generalising the ENTRY card to every chapter;
+- **`v81_b` picks the other resolution: the PROGRESS CARD is the arrival screen.**
+
+**The last one is available now because the v80 line changed what a progress card IS.** It carries
+the story with its progress highlights, the vocabulary, the chapter icons and the play buttons —
+everything the entry card offered. That was not true when `v80_e` was decided, so this is a ruling
+made on **different facts**, not a reversal of a mistake.
+
+`_isLaterChapter(d)` is the one reader for "after the first chapter", because two places branch on it
+now. `_enterViaSummaryCard` declines for a later chapter; `loadSaved` lands it on `showComplete`.
+**The claim `v77_i` was built for still holds and is still asserted**: arriving must not pass
+silently, and the learner is not dropped into a question.
+
+**⚠️ A guard that could not fail, caught by mutation-testing.** The first version of
+`unit-next-chapter-entry` §7 ran a hand-written COPY of `loadSaved`'s branch. Removing the landing
+from the product left it green — it was testing its own copy. Rewritten to drive the REAL `loadSaved`
+with fetch stubbed, which is the pattern `unit-story-summary` already uses and documents: proving the
+decision works while leaving the WIRING unguarded is the gap. **Third time this line has been paid**
+(`v80_c`, `v80_s`, now here) — the protocol item is in the roadmap for a reason.
+
+### `v81_b` — the progress bars sit below the ACTION row
+
+Moved once more, per the user: the chapter-icon row, the lesson-icon row and the play buttons are now
+contiguous, with the bars last. Final order:
+`hdr → story → vocab → chapter icons → lesson icons → actions → progress`.
+
+### `v81_a` — TRACK T step 4, the word gate (OPT-IN)
+
+See TRACK T `§T4`. **Shipped off by default**: switching it on at 1.0 would re-lock 95% of earned
+stories, measured.
+
+**⚠️ Follow-up measurement, at the user's request: does the PASS MARK rescue it? NO.**
+
+```
+READING A — pass mark as the fraction of WORDS green:
+  outer 0.8 → 21 of 22 re-locked      outer 0.5 → 16 re-locked
+  outer 0.3 → 13 re-locked, but 7 chapters open that were never earned
+
+READING B — pass mark WITHIN each word, then all words must clear it:
+  inner 1.0 / 0.8 / 0.7 / 0.6 → identical: 21 of 22 re-locked
+```
+
+**Reading B is flat because there is no resolution to work on: 79.5% of tracked words carry ONE or
+TWO questions** (27.7% one, 51.8% two; mean 2.17). For a one-question word any inner bar above 0
+means "solved"; for a two-question word the only values are 0, 0.5, 1.
+
+**The structural reason:** the lesson gate ALREADY applies the pass mark, at the level of items. The
+word gate re-applies a threshold at the level of WORDS, where each word demands ALL its questions.
+The two multiply. Currently-unlocked chapters sit at a **median of 25% green** (min 0%, max 100%) —
+passing one bar and failing the other by a wide margin.
+
+**User ruling: leave it as it is.** The gate stays available and off. If it is ever wanted, the
+options that do not regress anyone are: per-storyline for NEW books only, or redefining "green" to
+match the chapter's coverage rule — and the latter needs the `§T7` scoping decision first, because it
+changes what green means in the display too.
+
+# ✅ SHIPPED IN THE v80 LINE — where to find it
+
+*The v80 line ran to thirty-odd point releases and its write-ups stay in **`roadmap_v80.md`** under
+`# SHIPPED IN THE v80 LINE`, newest first. They were NOT copied here: they are history, and this file
+is for what is open. Go there for how something was built or why a guard is shaped the way it is.*
+
+**The ones a v81 session is most likely to need:**
+
+| release | what, and why you might need it |
+|---|---|
+| `v80_b` | Replay no longer opens a story-gated lesson while the story is locked. **Also records that `PLAN §C1`'s FIRST bug is NOT reproduced and that TWO readings of it are dead ends** — read this before spending time on it |
+| `v80_c` | `unit-story-unlocked-page` §6 made to discriminate; **closes the `_firstUnfinishedLessonIdx` "open defect" as a MISATTRIBUTION** — do not chase it |
+| `v80_d` | the document consolidation, and the `PLAN §X` citation mapping |
+| `v80_f` | the inflection share: **47.3% findable, 36.4% ABSENT** — the ceiling is a GENERATION problem |
+| `v80_i` | lesson-id collisions; the generators still emit literal `id: 6` for three lesson types |
+| `v80_l` | the learner-known share: **84% RED, 8.7% green**; and `PLAN §9c` |
+| `v80_m` | ⚠️ a CORRECTION to `v80_h` — four of seven "all-Latin" lessons were never defects |
+| `v80_q` | the per-word collector, and **the capture-and-diff method that caught a bug the green suite did not** |
+| `v80_t` | tap → lesson flow, and **`buildExercises` is non-deterministic in CONTENT** |
+| `v80_w` | ONE story renderer; **reverses `v77_p`** |
+| `v80_z` | the chapter icon row; the `*-storyboard` id is now historical |
+
+---
+
 # TRACK T — THE TEXT-FOCUSED PROGRESS CARD (user, at the `v80_f` cut)
 
 *The user's third focus shift on the progress card. Recorded here at the moment it was proposed,
@@ -1806,6 +1911,47 @@ acceptable, but it is a product decision and it is not the one the user was maki
 **Reading 1 is what TRACK T actually needs.** Reading 2 is a different feature — mastery decay —
 which is `PLAN §9b/D2` territory and is already blocked on `§8/B4` running BKT in shadow mode.
 **Do not implement 2 under cover of 1.**
+
+## ✅ T4/STEP 4 — SHIPPED as `v81_a`, OPT-IN, and the measurement is why
+
+T0: *"only if ALL questions associated with each highlighted word (or via pass mark fraction) are
+solved we progress to the comprehension questions."*
+
+**Measured before building it.** Making word-green the story gate outright would **RE-LOCK 21 of the
+22 chapter/learner pairs whose story is unlocked today — 95%.** Green fraction of currently-unlocked
+chapters, over the real `learners.json` at this cut:
+
+```
+  0%      5 chapters
+  1-49%  11
+  50-79%  5
+  100%    1
+```
+
+**The cause is not learner laziness.** A word accumulates questions from vocab, from SENTENCES
+(`v80_v`) and from every probe-bearing lesson, so *"all questions about this word"* is a far higher
+bar than *"the lessons are done"*. A story a learner has EARNED would close again mid-session —
+**the same hazard `§T7` raises for the solved counter, and the reason that item was deferred.**
+
+**So the MECHANISM ships and the SWITCH is the user's.** `wordGate` is read from the topic, then the
+storyline, then `APP.info`; a number in 0..1 is the fraction of tracked words that must be green.
+**Unset — the default, and what every existing learner gets — leaves the `v71_s` rule exactly as it
+was.** It REPLACES the lesson rule rather than combining with it: an `OR` would be a no-op (word-green
+is the stricter measure in practice) and an `AND` is the 95% re-lock.
+
+A chapter that tracks no words falls back to the lesson rule rather than answering "unlocked" on no
+evidence.
+
+**Guard:** `unit-word-gate`, six sections. **§2 is the one that matters today** — with no gate
+configured, a chapter with ALL words green is still LOCKED, i.e. the default ignores the words
+entirely. §3 is the discriminator: the same state, with a threshold set, unlocks — so the gate is
+demonstrably what changed the answer. Mutation-tested.
+
+**⚠️ THE RULING THE USER STILL OWES:** whether to switch it on, and at what fraction. The numbers
+above are the input. Switching it on at 1.0 today would lock 95% of earned stories; a fraction that
+does not regress anyone is somewhere below 0.5 on this install, which is weak as a gate. **The
+honest options are: leave it off, set it per-storyline for new books only, or revisit after the
+`§T7` scoping decision changes what "green" costs.**
 
 ## T6. Build order — ✅ FULLY UNBLOCKED at the `v80_o` cut
 
@@ -2878,1315 +3024,4 @@ reinforce/extend (D7). **Mastery-driven progression (D2) should NOT be decided u
 BKT in shadow mode and produced a disagreement log** — deciding it now would be guessing.
 
 ---
-
-# SHIPPED IN THE v80 LINE
-
-*Moved here at the `v80_k` cut. These nine release write-ups had accumulated **between** the
-protocol block and the first OPEN section, so a reader following the protocol scrolled 569 lines of
-finished work — 17.5% of the file — before reaching anything actionable. That is the rot pattern
-the v80 cut itself hit, when "WHERE TO START" had grown three items numbered "0".*
-
-*Nothing was edited, only relocated, and reordered newest-first. The findings that comment on OPEN
-sections stayed where they were: `§C1`'s non-reproduction, `§0i — RECONCILED`, and
-`§0`'s sub-section status all sit directly above the sections they annotate, which is the only
-place they make sense.*
-
-### `v80_z` — the CHAPTER ICON row replaces the storyboard on the cards
-
-User request: one `topicEmoji` per chapter, at lesson-icon size, between the story/vocabulary and the
-lesson-type buttons, clickable through to that chapter.
-
-**Shipped:** `_chapterIconsHtml(topicKey, slCtx)`, rendered into the `*-storyboard` slot on all four
-card prefixes — the progress card renders it inline (it builds its own header block), the other three
-get it from `_cardHeader`, so all four agree.
-
-**⚠️ The storyboard is NOT deleted, and that distinction is the whole design.** `v71_k` built it,
-`unit-storyboard-frames` guards it, and the **storyline page still renders it**. Only its PLACE on
-the cards is taken. The storyboard is a picture OF the deck; this is a way THROUGH it, which is what
-a progress card wants.
-
-**The element keeps the id `*-storyboard`, and that is deliberate.** Renaming would touch **82 client
-references and 12 test references** for a cosmetic gain. The id is now historical and says so in both
-the markup and `_cardHeader`.
-
-**Locking mirrors the lesson-icon row exactly**, read through `chapterComplete` so the row cannot
-disagree with the cards: the current chapter is marked and **carries no onclick** (a link to the page
-you are on is a dead control); a reached chapter links by **id**, not by name; an unreached one is
-**dimmed and inert** rather than hidden, so the deck stays legible; teacher mode unlocks all of it. A
-drill renders **no row** — a synthetic set has no chapter of its own, the same reason `comp-hdr` and
-the lesson-icon row hide there.
-
-Row order is now: `hdr → story → vocab → chapter icons → lesson buttons → progress bars → actions`.
-
-**Three guards needed updating, and each was a claim change rather than a re-pin:**
-
-- `smoke-render`'s row order — the slot moved down with its new contents.
-- `unit-learner-nav` — asserted `showComplete` renders the storyboard into the card. It now asserts
-  the opposite, **plus** that `_renderCompStoryboard` still exists for the storyline page. Deleting
-  it was never the ask, and a guard that did not say so would let a future session remove it.
-- `unit-card-errors` — injected its fault into `_renderCompStoryboard`, which the card no longer
-  calls, so the ledger stayed empty and §2 failed. **The injection was pointing at a function nobody
-  ran.** Repointed at `_chapterIconsHtml`; the claim (a throw inside a wrapped block is recorded and
-  still swallowed) is unchanged.
-
-**Guard:** `unit-chapter-icons`, six sections. §5 is the discriminator — an unreached chapter is shown
-but not clickable, with non-vacuity both ways (some locked, some reachable) so the rule cannot
-degenerate into "everything is a link". Mutation-tested: forcing `reachable = true` and removing the
-drill guard each fail it.
-
-**⚠️ Two gaps stated rather than claimed:** the `ids.length < 2` rule (a one-chapter deck shows no
-row) is NOT exercised — every fixture is a 3-chapter storyline, and mutation-testing showed it
-unguarded. And the three other card prefixes get the row from shared code that is not separately
-rendered here.
-
-**A fixture bug worth carrying:** §6 first marked the drill on `APP.cur.lesson`, but `showComplete`
-reads `APP.lessonData.lessons[C.lessonIdx]`. It looked right and did nothing, so the section failed
-against correct behaviour — the same class of error as `v80_t`'s shuffled-content fixtures.
-
-### `v80_y` — two of the three layout items, and `summary.title` retired
-
-#### `summary.title` is GONE; `lesson.read_summary` replaces it
-
-The user's suggestion, and it is better than what `v80_x` did. `v80_x` fixed `summary.title` in `en`
-and `de` and left **31 languages holding a translation of the old idiom** — *"The story so far"*,
-which means a recap and which most had rendered literally as *"progress so far"* (German:
-*"Bisheriger Fortschritt"*, on a card showing a summary).
-
-`lesson.read_summary` already reads **`Summary` / `Zusammenfassung`** and is **already translated in
-all 32 languages**. Swapping to it fixes every language at once instead of owing 31 a pass, and
-`summary.title` is removed from `ui.json` entirely (617 `en` keys again).
-
-#### Progress bars moved to the BOTTOM of the progress card
-
-Below the play buttons. Under TRACK T the STORY is the progress display and leads the card; the bars
-are the numeric backup and no longer compete with it for the top. **The storyline HEADER bar is
-untouched** — it belongs to the header, not to this card.
-
-New row order: `hdr → storyboard → story → vocab → lessons → progress → actions`.
-`smoke-render`'s row-order list is updated with the reason; **the `§0d` principle it encodes is
-unchanged** and still separately asserted — the story precedes the icons and the action row.
-
-#### The vocabulary list is now the COMPLEMENT of the highlighted text
-
-Only solved words that do **NOT** appear in the story, plus the probe-bearing sources (synonyms,
-word_forms, grammar, conjugation) which are usually absent from the prose. The list and the
-highlighted text sit on the same card since `v80_w`, so a word in both was said twice — and the
-highlight says more, because it carries the red/green state. The list now answers a different
-question: *what does this chapter teach that the story does not show you?*
-
-Matched by substring, the same test the highlighter uses, so a word is hidden from the list exactly
-when it is marked in the text. `v80_f` measured only 47% of taught words as findable in the story, so
-the list keeps roughly half its entries rather than emptying.
-
-**⚠️ Its guard needed a synthetic case, and the reason is worth carrying.** The real fixture's solved
-words do not appear in its story at all, so `listed === solved` and the equality assertion would hold
-**with no filter at all**. Rather than leave a non-vacuity that cannot fire, the rule is tested on a
-built case where it must bite (`chat` in the story, `oiseau` not). The corpus fixture still checks the
-card matches the rule; the synthetic one checks the rule is a rule.
-
-**A silent catch nearly shipped.** The gloss lookup added `catch(_) {}` inside `showComplete`, which
-`v77_b` bans outright — it reports to `_cardNote` now. `unit-card-errors` caught it, which is exactly
-what that guard exists for.
-
-#### ⚠️ STILL OPEN — the third layout item, and the postponed flow reversal
-
-- **Replace the storyboard row with clickable chapter icons** (`topicEmoji`, at lesson-type-icon
-  size, above the lesson-type buttons, leading to that chapter's progress card). **Not started.** It
-  is bigger than it looks: the storyboard on result cards is `v71_k`'s feature with its own guard
-  (`unit-storyboard-frames`), and `_cardHeader` renders it for FOUR card prefixes, so replacing it is
-  a claim change on an existing feature rather than a layout tweak. It wants its own release.
-- **Entry cards for chapters > 1** — postponed by the user; partly reverses `v80_e`. See `v80_x`.
-
-### `v80_x` — the lesson-set storyline link (TWO defects), the translate toggle, and a mistranslated header
-
-#### ⚠️ The storyline link: the reported bug was the SECOND of two defects
-
-User report: *"in teacher mode, in a lessonset page, clicking the storyline title (top row) leads to
-the main page instead of to the storyline page."* Measured before changing anything, and the row had
-two problems one line apart:
-
-1. **IT NEVER RENDERED.** The chip looked its storyline up in `slTitles = APP.storylines || {}`,
-   indexed by `'c'+hash` and `'root:'+topic` — keys from a schema this app has not used in many
-   versions. `APP.storylines` is an **ARRAY**, so every lookup returned `undefined`, every chip
-   rendered as `''`, and the row was hidden on every chapter. A render of a real storyline chapter
-   returned an **empty** `#home-hdr-storyline`.
-2. **THE DESTINATION WAS WRONG.** The click ran `loadSaved(chain[0])` — loading the first chapter's
-   TOPIC rather than opening the storyline. With a name that no longer resolves, `loadSaved` falls
-   through to the landing page, which is exactly what the user saw.
-
-Both fixed by asking the resolver the cards already use: `_storylineForTopic` finds the deck by
-MEMBERSHIP, so a rename cannot break it, and `_openStorylineById` is the destination every other
-storyline link uses.
-
-**⚠️ Defect 1 is why the user's report and the code disagree.** They saw a row; the code cannot draw
-one. Either their build differs, or the element they clicked is a different one. **The fix is right
-regardless** — a dead lookup and a wrong destination are both defects — but if the symptom persists,
-that is the thread to pull, and it is worth asking WHICH element rather than assuming.
-
-**Guard:** `unit-lessonset-storyline-link` — renders in both modes, names the right storyline, opens
-by id, and shows nothing for a solo chapter. Its fixture is deliberately the SECOND chapter of a
-storyline: the old code keyed off `chain[0]`, so a first chapter would have hidden defect 2 behind a
-coincidence.
-**A harness note worth carrying:** the first version asserted on `className`, which lib-dom does not
-write back when `classList.add` runs — that tests the HARNESS, not the product. Asserted through
-`classList.contains` instead.
-
-#### The translate toggle on the standardized story display
-
-Added to the question panel in the same style as the progress card's, per the user's request. It
-reuses **`APP._compStoryLang` — the same state the card uses** — so the two screens cannot disagree
-about which language is showing; a second flag would be a second source of truth for one question.
-The translation is rendered **unhighlighted**, because target words are not in a source text and
-marking them there would match nothing or, worse, coincidental substrings. No translation, no
-button.
-
-#### `summary.title` was a mistranslated idiom
-
-The entry card read *"📖 Bisheriger Fortschritt"* — a literal German rendering of the English idiom
-*"The story so far"*, which means a recap, not progress. Now **`Summary` / `Zusammenfassung`**.
-
-**⚠️ 31 other languages still hold a translation of the OLD idiom** and are owed a pass: `nl pt fr tr
-hi ar sv ru zh ko it pl es ja he uk cs vi id ro th el fi hu da ca lb sw sr hr sl`. They are not
-wrong for what the key used to say — they are wrong for what it says now, which is a different and
-easier string to translate.
-
-#### ⚠️ STILL OPEN from this device pass — three layout items and one flow reversal
-
-1. **Progress bars to the BOTTOM** of all progress cards, below the play buttons — except the
-   storyline header bar.
-2. **Replace the storyboard row with chapter ICONS** (`topicEmoji`), at lesson-type-icon size, placed
-   just above the lesson-type buttons and below the story and vocabulary, and CLICKABLE through to
-   that chapter's progress card.
-3. **The vocabulary list should show only words NOT in the story** (carried from `v80_v`).
-4. **⚠️ Entry cards for chapters > 1 should be SKIPPED**, jumping straight to that chapter's progress
-   card. **This partly reverses `v80_e`**, which generalised the entry card to every chapter after
-   `v77_q` had made the unlocked card the starter for chapters 2..N. The net effect is that chapters
-   ≥2 get NO starter card and the progress card becomes the arrival screen. That is coherent — but it
-   is the third ruling on this surface, and `v80_e`'s guard (`unit-next-chapter-entry`) asserts the
-   opposite in six sections, so it needs its own release and a careful rewrite of that file rather
-   than a quick edit.
-
-### `v80_w` — ONE story renderer for question cards AND progress cards; `v77_p` reversed
-
-The user asked the obvious question — *"can't we just use the same renderer as on question cards?"* —
-and the answer is yes, once the parts that genuinely differ are separated from the part that must
-agree.
-
-**`_storyBodyHtml(d, opts)` is now the one BODY renderer.** The frames stay different, and should:
-the question panel is a `<details>` with a speak button, the progress card writes into
-`#comp-story-text` and has a translation toggle. Only the body is shared — the part where the two
-screens were disagreeing.
-
-**They really were disagreeing.** The question panel used the TRACK T three-state map; the progress
-card still used the `v74_n` two-shade call. Same story, two meanings, on screens a learner moves
-between in one tap. **That is the exact drift `v74_n` was written to fix once already**, reappearing
-because TRACK T only updated one side of it. A shared body is what stops it recurring — a third
-screen now inherits the rule instead of copying it.
-
-#### ⚠️ `v77_p` is REVERSED, by the same authority that made it
-
-`v77_p` was a user ruling: *"skip all story preview fields — only show the vocabulary."* Its reasoning
-was recorded and is worth keeping: *a teaser of the reward is not the reward*, and on a locked card
-the preview pushed the vocabulary — the thing the learner can use — below a paragraph they were not
-meant to read yet.
-
-**TRACK T removes that PREMISE.** The story is no longer a reward to be earned; it is the progress
-display, and T0 puts it on all progress cards *"even before the chapter text is unlocked"*. A hidden
-progress display shows no progress. The old reasoning is left in the guard rather than deleted: if
-the text-focus direction is ever abandoned, `v77_p` is what to restore.
-
-**The unlock still means something**, and this is pinned: it governs the CAPTION (preview vs
-unlocked) and, more importantly, the comprehension lessons — `_storyLockedLesson` is untouched, so a
-comprehension lesson is still unreachable until the story opens. **Only the DISPLAY changed, not the
-gate.**
-
-#### The 200-character preview is gone
-
-It showed a truncated story until the chapter was finished, which under TRACK T hides most of the
-progress display on exactly the cards where the learner is still working. T0: keep attention on the
-text throughout.
-
-#### Four guards updated, none deleted
-
-- `unit-learner-nav` — three claims rewritten: no truncation, renders through the shared body, and
-  carries no highlighting call of its own. It now also pins that there is exactly ONE
-  `_storyBodyHtml` as well as one `_storyParasHtml`.
-  **⚠️ Its first rewrite failed on its own explanatory COMMENT**, which mentioned the removed call by
-  name; it strips comments before asserting on code. Matching prose is not matching behaviour.
-- `unit-story-translation-toggle` — the two truncation assertions are withdrawn and replaced by the
-  claim that replaces them: an incomplete chapter shows the SAME text as a complete one.
-- `unit-story-unlocked-card` — the `.solved` two-shade match is re-read as "not red"
-  (`wp-partial|wp-green`). The claim is unchanged: marking does not depend on progress, only the
-  shade does.
-- `unit-story-unlocked-page` — asserts the REVERSE of `v77_p`, plus the two things the unlock still
-  governs.
-
-Mutation-tested: restoring `v77_p`'s locked-hide, and making the card render without the shared body,
-each fail.
-
-### `v80_v` — two more from the device pass; `§T7` opened for the deferred one
-
-#### (a) Sentence questions now count toward the word counter and the highlights
-
-A sentence-translation question puts a whole story sentence in front of the learner, but nothing
-marked it: answering one moved no highlight at all, which the user saw on screen.
-`_wordProgress` gained a third source, `sentence`, alongside `extra` and `vocab`.
-
-**⚠️ Scoped to words the chapter TEACHES — the user's ruling, and the right one.** Attributing every
-word of the sentence would green function words nobody was taught and make the text look finished.
-Only words already tracked by the vocab or probe passes can gain a sentence question, so this can
-never INTRODUCE a word into the display — it only adds evidence about one already there.
-
-**Measured effect** on the same 1506 words of real learner history:
-
-```
-             before        after
-GREEN          250          214
-PARTIAL        126          217
-RED           1130         1075
-```
-
-That redistribution is the point: words that looked finished on their vocab question alone now show
-as partial, because a sentence exercising them is still unanswered. **This makes the display stricter,
-not more generous** — worth knowing given `§T5.4`'s ruling to accept a red-heavy screen.
-
-The wrappers `_solvedExtraWords` / `_solvedTargetWords` read `bySrc.extra` / `bySrc.vocab` only, so
-they are unaffected and the `v80_q` capture-and-diff equivalence still holds. `unit-word-progress`
-now sums over ALL buckets rather than two, written so a fourth source cannot silently break it.
-
-#### (b) The story panel repaints after an answer
-
-`markSolved` has just run, so the word the learner worked on may have changed state. TRACK T's premise
-is that the text IS the progress display, and a display that only updates on the next render is not
-one. Cheap because the panel has been ONE renderer since `v80_r` — the repaint calls the same
-function that drew it, skips on a replay (which changes no state), and preserves the open state so
-the panel is never yanked shut under the learner.
-
-#### `§T7` — the deferred item, written up where it belongs
-
-*"A wrongly answered question on a vocab that had been answered correctly should decrease the solved
-counter."* **Deferred by the user; recorded as TRACK T `§T7`**, not in a release entry, because it is
-an OPEN design item and the release entries are history.
-
-The write-up states the blast radius — the solved store is MONOTONIC and is read by coverage, chapter
-completion, the pass mark, `storyUnlocked` and both resume scans, so a fluctuating counter means **a
-finished chapter can become unfinished and an unlocked story can RE-LOCK mid-session** — and names
-the scoping question that has to be answered first: HIGHLIGHT-only (contained, one session, needs a
-second per-word counter) versus THE WHOLE COVERAGE MODEL (its own release, and it must re-run the
-`§C1` gate probes). **Reading 1 is what TRACK T needs; reading 2 is mastery decay, which is
-`PLAN §9b/D2` and already blocked on `§8/B4`.**
-
-#### ⚠️ `unit-tap-word` flaked ONCE after this change — 1 in ~40, cause not established
-
-The `--quick` suite failed it once immediately after the sentence pass landed; 28 subsequent runs
-(12 + 16) were green, as were two full suites. **Not declared fixed.** `v80_t` established that
-`buildExercises` is non-deterministic in CONTENT, and the guard accumulates over builds precisely
-because of that — a rate this low is consistent with a residual sampling case the accumulation does
-not cover.
-
-**If it recurs, do not re-run until green.** Capture the assertion text: the section that fires names
-which invariant broke, and the `v80_t` write-up lists what each section assumes about run content.
-
-#### Still open from the pass — three items
-
-1. The vocabulary list under the text should show only words **NOT** in the story, and may include
-   solved synonyms/antonyms.
-2. **All progress cards should show the story** with the new highlights (`§T0`'s first bullet).
-3. Those cards must use the **SAME renderer** as the lesson panel — they still call `_storyParasHtml`
-   and the two-shade highlighter directly, a 4th and 5th renderer, which is exactly the drift
-   unifying `_exStoryPanelHtml` was meant to stop. **Do 3 with 2; doing 2 alone adds a sixth.**
-
-### `v80_u` — three fixes from the user's device pass; six items still open
-
-#### (a) The story panel is NEVER collapsed — supersedes `v80_s`'s option 3
-
-*"Don't collapse the story text on some questions… we now want to keep the user's attention on the
-text throughout progress cards and questions."* The leakage measured at `v80_s` is unchanged and real
-— the story contains the answer for word_forms 60.4%, error_hunt 93.6% — but it is now an **ACCEPTED
-COST, not a defect**: scanning the text for the answer is reading practice, which is what TRACK T is
-for. Recorded rather than deleted, so the trade stays visible.
-
-#### (b) ⚠️ The story-unlock gate is GONE from the panel — and it was never a static-build bug
-
-Reported as *"in static `docs/index.html`, the first questions don't show the story"*. **Not a build
-difference.** `_exStoryPanelHtml` deferred to `storyUnlocked`, with an escape for teacher mode or
-`canGenerate`. In the app a backend makes `canGenerate` true, so the panel showed; in the static build
-it is false, so the same chapter showed nothing. **One rule, two environments, opposite outcomes** —
-which is exactly the shape a "static build bug" report takes when the cause is a gate.
-
-T0 settles it anyway: the text is visible *"even before the chapter text is unlocked"*, because under
-TRACK T the text IS the progress display and a hidden one displays nothing. **The LESSON-level gate is
-untouched** — comprehension is still unreachable until the story unlocks (`_storyLockedLesson`).
-
-#### (c) French elision: `j'` + `emporte` is now `j'emporte`
-
-The TTS read *"j apostrophe emporte"* on a conjugation lesson, because the speech string was
-`ex.pronoun + ' ' + correct` and the corpus stores the elided pronoun WITH its apostrophe. The user's
-guess — that the space was the cause — was right; it is not an array-vs-string issue.
-
-`_joinPronoun()` binds an apostrophe-final pronoun directly to the form, for every apostrophe-like
-code point, since the corpus mixes U+0027 and U+2019. **No language knowledge is added**: it reads a
-character, not a dictionary — the same class of rule as the apostrophe FOLDING in
-`_highlightVocabHtml` (`v77_u`) and as case-insensitivity. Applied to both speech strings and to the
-displayed answer, so what is shown and what is spoken cannot disagree.
-
-Guarded and mutation-tested: forcing the panel closed and removing the elision test each fail
-`unit-story-panel-states`.
-
-#### ⚠️ STILL OPEN from the same pass — six items, deliberately not started
-
-1. **Live highlight refresh after answering.** Cheap; the panel is one renderer now (`v80_r`).
-2. **Full SENTENCES should count toward the word counter and highlights** (screenshot 14-09). The
-   sentence-translation question uses a story sentence; nothing marks its words. Needs a decision on
-   whether a sentence marks EVERY word in it or only the taught ones.
-3. **The vocabulary list under the text should show only words NOT in the story**, and may include
-   solved synonyms/antonyms (14-11-13). Small, and it makes the list complementary to the highlights
-   rather than a duplicate of them.
-4. **All progress cards should show the story with the new highlights** (14-07). The completion card
-   currently shows the vocabulary list and no story. This is TRACK T's `§T0` first bullet and the
-   largest of the six.
-5. **The story on the progress/summary cards must use the SAME renderer** as the lesson panel
-   (14-11-13/49). Today those call `_storyParasHtml` + the two-shade highlighter directly — a fourth
-   and fifth renderer, which is precisely the drift `_exStoryPanelHtml` was unified to stop.
-6. **⚠️ A wrong answer should DECREASE the solved counter.** This one is NOT small and should not be
-   done casually: `INTERNALS` records the solved store as **MONOTONIC** — *"one correct answer ever =
-   solved, the coverage model"* — and coverage, chapter completion, the pass mark, `storyUnlocked`
-   and `_firstCoverageShortLessonIdx` all read it. Making it decrease turns a ratchet into a
-   fluctuating value, so a chapter could become INCOMPLETE again and a story could RE-LOCK. That may
-   be exactly what the user wants for TRACK T's colouring, but it needs its own release, a decision
-   about whether the un-solving is scoped to the HIGHLIGHT only or to the whole coverage model, and
-   a re-run of the `v80_b` / `§C1` gate probes.
-
-### `v80_t` — SHIPPED: TRACK T step 3, tapping a word enters the lesson flow
-
-`§T5.2`, ruled: *"tapping a word should enter the usual lesson flow, including questions that are not
-reachable by tapping, and we keep the play buttons."* So this is a way IN to the existing runner, not
-a parallel one-question mode — which is why there is **no new round machinery**.
-
-**Shipped:** `_wordQuestions(d, word)` resolves a word to its candidate questions across both word
-sources; `tapWord(word)` picks one (**unsolved preferred**, T0), calls `startLesson`, and moves
-`C.cur` onto that question. Marks are tappable **only on the TRACK T panel** — the storyline and
-progress-card callers pass no state map and have no run to start. `§0h` (`v80_p`) is what makes the
-landing safe: entering at question N is an ordinary run position, not a special state.
-
-#### Two real product defects, both caught by the guard rather than by reading
-
-- **Hidden lessons were valid tap destinations.** `startLesson` refuses them outside teacher mode, so
-  a tap would report success and then do nothing. Fixed in the resolver, not the test.
-- **The entry-point scan could land on a SOLVED question.** It ran two sequential passes — qid match,
-  then text match — and when every qid candidate was solved, the first pass matched a solved question
-  and the text pass never ran, **even though the run held an unsolved question about the same word**.
-  A probe names only some of the ways a word is asked (for vocab, just `mcq_source_target`), so the
-  qid pass is not a superset of the text pass and cannot be tried first. Now ONE scan matching either
-  way, then preferring unsolved.
-
-#### ⚠️ `buildExercises` is NON-DETERMINISTIC IN CONTENT, not just in order
-
-This is the finding to carry. The guard was flaky through **six** successive attempts and **every
-failure was the TEST being wrong about correct behaviour**. The cause each time was the same
-assumption: that the set of questions about a word is stable across builds. It is not — `startLesson`
-rebuilds and re-samples, so a fixture chosen from one build does not hold on the next.
-
-The fixture sweep, §1 and §4 now all accumulate across several builds instead of asserting on one.
-**Verified 15 consecutive green runs**; a single green run proves nothing here.
-
-**Anything that samples the corpus for a fixture must assume the same.** `unit-question-nav`
-(`v80_p`) hit the shuffled-ORDER version of this; this is the harder, content-level version.
-
-#### ⚠️ Mutation coverage is UNEVEN, and measured rather than assumed
-
-```
-disabling the entry-point scan                   caught 6/6
-dropping the SCAN's unsolved preference          caught 5/6
-dropping the POOL's unsolved preference          caught 1/6   <- effectively unguarded
-```
-
-The pool mutation survives because the scan compensates for a bad pool pick: the pool's remaining job
-is choosing WHICH LESSON when a word is taught in several, and this fixture's word is taught in one.
-Recorded in the test's "does not establish" block rather than glossed — a mutation score quoted as a
-single number would have hidden it.
-
-**Not built, and not an oversight:** T0's *"after answering, the next question is a randomly chosen
-DIFFERENT word"*. The run continues in its own order, which is `§T5.2` working as intended. Word
-hopping would be a further change and a further ruling.
-
-### `v80_s` — TRACK T step 2 COMPLETE: the story panel is on every question card (user ruling, option 3)
-
-**Ruled: option 3.** The panel renders on EVERY question card — T0's requirement — and starts
-**COLLAPSED** wherever the story would hand over the answer. A learner who opens it is doing what
-they could already do from the progress card, so it is a nudge rather than a wall.
-
-**Open by default:** comprehension (the text IS the material) and vocab/listening MCQs, where the
-story cannot give a translation away.
-**Collapsed by default:** `word_form`, `syn_select`, `listen_type`, `type_plural`,
-`type_conjugation`, and the error-hunt kinds — measured leakage of 60.4%, 93.6% and 41.2% for the
-sentence-context types, plus the typed kinds, which leak the SPELLING of the word being typed.
-
-**The `smoke-render` negative was MOVED, not deleted.** It had asserted "a non-comprehension question
-shows no story panel" since `v71_s` with no recorded reason. The claim it protected still holds —
-the leak is now handled by the panel being CLOSED rather than ABSENT — so it now asserts the panel
-renders and still comes AFTER the Check button, which is the half that file can see.
-
-**⚠️ A guard that could not fail, caught by mutation-testing rather than by review.** The first
-version of `unit-story-panel-states` §5 pinned the SOURCE — that `_open ? ' open' : ''` appears in
-the return. Mutating `_open` to a constant `true` — the exact leak the ruling exists to prevent —
-**left it green**: it proved the expression existed, not that it discriminated. Rewritten to RENDER
-each question type and inspect the `open` attribute, which is where the claim is observable
-(rule 34). All three mutations now fail it: `_open = true`, dropping `word_form` from the leak list,
-and disabling the leak test entirely.
-
-**This is the second time this session that pinning source text produced a guard that could not
-fail** (the first was `unit-story-unlocked-page` §6, fixed at `v80_c`). Worth remembering as a habit:
-when a guard's claim is about BEHAVIOUR, rendering and inspecting beats matching the source, and
-mutation-testing is what tells the two apart.
-
-### `v80_r` — TRACK T step 2 (part): one story-panel renderer, three states, asked-span underline. **A RULING IS OWED.**
-
-**Shipped:**
-
-- **`_highlightVocabHtml` gained two optional arguments** — a Map of `_hlKey` → `red|partial|green`
-  and a Set of keys to underline. **When neither is passed, nothing changes**, which is why they are
-  extra parameters rather than a replacement: every existing caller keeps the `v74_n` two-shade
-  behaviour, asserted.
-- **`_wordStateMap(d)`** derives the states from `_wordProgress` (`v80_q`), so the panel and the
-  progress card cannot disagree about what the learner has. A word reachable through both sources
-  takes the WORST state, so one unsolved question stops it reading as done.
-- **`_askedKeys(ex)`** — the span the current question is about, **underlined on top of its colour**
-  (T0: "underline additionally to the coloring"), so the two signals do not compete.
-- **`_exStoryPanelHtml` is now the ONE panel renderer** and is ready for every question type;
-  `_cardHeader` is the precedent.
-- Four CSS classes, guarded — an emitted class with no style rule renders as nothing, which would
-  make an unfinished chapter look finished.
-
-#### ⚠️ THE PANEL IS STILL COMPREHENSION-ONLY, and T0 says it should not be
-
-T0: *"ALL question cards should ALSO show text (currently only for comprehension questions)."*
-Implementing that hit a `smoke-render` negative — *"a non-comprehension question shows no story
-panel"* — which has stood since `v71_s` **with no recorded reason**. Rather than delete it, measured
-what it might be protecting:
-
-```
-word_forms   203 of 336 items (60.4%)  the FILLED sentence appears verbatim in the story
-error_hunt    44 of  47 items (93.6%)  the CORRECTED sentence appears in the story
-synonyms      14 of  34 items (41.2%)
-```
-
-**The story contains the answer.** Opening the panel on those screens turns a fill-the-blank into a
-reading-off exercise. So the guard was protecting something real; its comment simply never said what,
-and now it does.
-
-**This needs a USER RULING, because it trades T0's text focus against answer leakage per lesson
-type** — not a code decision. Options:
-
-1. **Comprehension only** (today). Safe; T0's requirement unmet.
-2. **All types except `word_forms`, `error_hunt`, `synonyms`** — the sentence-context types. Vocab
-   and listening questions would get the panel. **⚠️ `listen_type` still leaks the SPELLING**, so it
-   probably belongs on the exclusion list too.
-3. **All types, panel COLLAPSED by default** on the leaky ones. The learner can still open it, so it
-   is a nudge rather than a wall — and arguably fine, since a determined learner can already open
-   the story from the progress card.
-4. **All types, with the asked sentence masked** in the panel. Most faithful to T0, most work, and
-   it needs the generation-side sentence mapping T0 itself proposes.
-
-**My read: 3.** It satisfies T0, costs almost nothing, and the leak it permits is one the learner can
-already reach by other means. But it is the user's call and the scope is PINNED by
-`unit-story-panel-states` §5 so it cannot widen silently.
-
-### `v80_q` — SHIPPED: TRACK T step 1, the per-word progress collector
-
-`_solvedExtraWords` and `_solvedTargetWords` each answered *"has this word been solved at all?"* and
-returned a SET. TRACK T needs the FRACTION — red when none of a word's questions is solved, green
-when all are (`§T5.1`, ruled ALL). **A set cannot express the middle.**
-
-**Shipped:** `_wordProgress(d)` → `{ word: { n, ok, bySrc } }`, the ONE collector, walking both word
-sources. `_wordState(rec)` returns the three states TRACK T will paint. **Both original functions are
-now thin wrappers over it**, so "which words does this chapter teach" and "how much of each does the
-learner have" cannot drift apart.
-
-**⚠️ THE REFACTOR WAS WRONG ON THE FIRST ATTEMPT, and the method is why that is known.** Before
-touching anything, both functions' output was CAPTURED over **59 real chapter/user pairs** from
-`learners.json` — 379 solved words. After the change: **390**. Eleven words had appeared from
-nowhere.
-
-Cause: one counter per word, which MERGED the two sources — so solving a `word_forms` question about
-a word marked it solved on the VOCAB side too. Fixed by counting per source as well as in total
-(`bySrc`), which is what both audiences actually want: TRACK T needs the TOTAL (green = every
-associated question, whatever kind), the existing callers need their own side.
-
-A second, smaller difference survived that fix: two words swapped places. `b.length - a.length` is
-**not a total order**, so equal-length words came out in whatever order the underlying Set happened
-to hold. Tie-broken by text now — same meaning, and the output no longer depends on insertion order.
-**Final state: sets identical on all 118 captured outputs.**
-
-**This is the concrete value of capture-and-diff over "the tests still pass".** The whole suite was
-green with the contamination bug in place, because no existing test distinguished the two sources.
-
-**Guard:** `unit-word-progress`, five sections against real learner histories — 1506 words, 250
-green / 126 partial / 1130 red. Non-vacuity is asserted for all three states, PARTIAL specifically
-because it is the state a Set could not express. **§3 is the discriminator**: a word solved through
-one source only must not appear in the other's list, checked over 373 genuinely one-sided words.
-Mutation-tested: merging the sources fails it, and so does green = ANY instead of ALL.
-
-**⚠️ NOT established (rule 34):** nothing paints yet. `_wordState` returns the states; no caller uses
-`partial`. `§T5.4` was ruled ACCEPT, so the red-heavy screen ships as-is when step 2 lands. The
-equivalence with the pre-refactor implementation rests on the capture-and-diff done AT the change,
-not on the guard — a captured baseline would rot on the next data drop.
-
-### `v80_p` — SHIPPED: `§0h` question navigation. TRACK T's step 3 is now unblocked.
-
-**`§0h`, verbatim:** *"Already-made choices are shown (right or wrong) and cannot be reverted, but
-the lock lasts only for that question set: replaying via the progress card makes them playable
-again."* Built first because the `§T5.2` ruling put it on TRACK T's critical path — tapping a word
-enters the usual lesson flow, which needs "enter at question N", which is this.
-
-**The obstacle was ONE line.** `renderEx` ran
-`C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];` **unconditionally**, so a question
-revisited came back blank and playable. Everything else followed from that.
-
-**Shipped:**
-
-- **`C.ans`, a per-RUN answer ledger** — verdict plus selection, typed text, syn tiles and placed
-  order. It lives on the RUN, so `§0h`'s "the lock lasts only for that question set" holds **by
-  construction**: replaying builds a new run and an empty ledger. No separate unlock path to get
-  wrong.
-- **`check(replay)`** — a flag on the SAME function rather than a second "paint the answered state"
-  function. The painting is ~60 lines of per-type DOM work interleaved with the scoring, and a
-  second implementation would drift the moment either changed. **With one path, a replayed question
-  cannot look different from a live one.** A replay does not score, spend a heart, `markSolved`,
-  write the ledger, speak, or auto-advance — six narrow `if(!replay)` guards, no lifted code.
-- **`_restoreAnswer`** puts the SELECTION back; the verdict is `check(true)`'s job, so exactly one
-  place knows what an answered question looks like. Placed-order types redraw through the product's
-  own `updateSbox` / `updateMathPlaced` rather than a copy of that logic.
-- **`qPrev()` + a `←` button**, hidden on the first question. Forward is untouched:
-  `_speakAndAdvance` still advances one way only, as `§0h` describes.
-- **On a replay the verdict comes from the LEDGER, never from re-grading the DOM.** Re-grading would
-  be a second source of truth, and for typed answers it would read whatever the restored input holds
-  rather than what the learner submitted.
-
-**Guard:** `unit-question-nav`, six sections, driving a REAL lesson through
-`startLesson`/`renderEx`/`check` rather than asserting on source text. Mutation-tested both ways:
-disabling the restore fails *"still ANSWERED, not blank"*; removing the `!replay` scoring guard fails
-*"the score did NOT change"*.
-
-**⚠️ A fixture bug worth carrying, because it looked exactly like a product bug.** Exercises are
-SHUFFLED per run, so the question at index 0 is not the same TYPE every time. The first version of
-the test assumed choice buttons and failed on **2 runs in 12** — intermittently, which is the worst
-way for a guard to be wrong. The helper now reports the SHAPE it answered and the assertions branch
-on it, so the test measures whichever shape actually occurred. **Verified 15 consecutive green runs
-before shipping**; a single green run would have proved nothing.
-
-**⚠️ NOT established (rule 34):** the sections exercise CHOICE and TYPED questions. The ledger also
-stores synonym tiles and placed-order state and `_restoreAnswer` puts them back, but **no fixture
-drives those types, so their restore is UNVERIFIED.** A device pass on an ordering lesson and a
-synonym lesson is owed. `ui.json` gained one `en` key, `ex.back_title` (617 → 618), owed to the
-translate pass.
-
-### `v80_o` — `§T5.4` ruled: TRACK T is fully unblocked
-
-**User ruling: OPTION 1 — accept the mostly-red screen.** It ships as-is. Red means "not done",
-which is true, and `§T2a`'s ruling means the text is a SECONDARY display: the bars carry the headline
-progress signal, so the greening text does not have to. **No extra colouring work, no scoping of the
-panel.** The two alternatives are recorded in `§T5.4` and were not taken.
-
-**Every `§T5` question is now settled**, and `§T6` waits on nothing except its step 5, which needs a
-live model:
-
-| question | outcome |
-|---|---|
-| `T5.1` green = ALL or a fraction? | **MEASURED** `v80_l` — ALL. Mean 1.70 questions per word; 53.6% carry one. |
-| `T5.2` lessons with no story word? | **RULED** `v80_n` — tapping enters the USUAL lesson flow; play buttons stay. |
-| `T2a`/`T5.3` do the bars go? | **RULED** `v80_n` — they stay. |
-| `T5.4` the mostly-red screen? | **RULED** `v80_o` — accept it. |
-
-**⚠️ Written into `§T5.4` so it is not re-opened by surprise:** 84% red is UNFINISHED WORK, not a
-display artefact. If the screen should ever be greener, every lever is upstream and none is a
-colouring change — chapter completion, the **6%** token-highlight density (`§T2a`), and the **47%**
-vocabulary matchability (`v80_f`), of which the last is a GENERATION fix.
-
-**What this means for the build order.** `§T6` is buildable end to end in a container except step 5:
-
-1. per-word solved FRACTION — generalise `_solvedExtraWords` from a set to counts (~1 session)
-2. the shared text panel on every card and question screen (~1 session)
-3. tap → the lesson flow — **revised down by the `T5.2` ruling** to *resolve word → (lesson, entry
-   point) → `startLesson`*, ~1 session, **with `§0h` on its critical path**
-4. the gate change — lands on `_storyLockedLesson` / `storyUnlocked`, i.e. the `v80_b` code
-5. prompt-side exact mapping — **needs a live model; the user's**
-6. comic coordinates — isolated, last
-
-**`§0h` (question navigation) is now the natural first move**, not step 1: step 3 needs "enter the
-lesson at question N", which is exactly what `§0h` is about, and `§0h` was already flagged as wanting
-its own session.
-
-### `v80_n` — DATA DROP: the Serbian script defects are CLEARED, and three TRACK T rulings
-
-#### The drop, diffed
-
-1073 → **1074 lessons**, 324 topics / 91 storylines unchanged. Four topics touched:
-
-| chapter | change |
-|---|---|
-| Flüstern der Zukunft | **`ls_534284213` (standard) DELETED** |
-| Geheimnis der Sprache | **`ls_1786370351359` (conjugation) REPLACED** by `ls_1787127555744` |
-| Flucht ins Leere | + `ls_1787063282011` error_hunt |
-| Brücke der Existenz | + `ls_1787059371457_onji` mixed |
-
-**`probe_lesson_script_v80h.js` now reports 0 of 94.** The two real defects from `v80_m` are gone,
-and the replacement conjugation lesson carries **294 Cyrillic characters** — `бити`, `ја/сам`,
-`ти/си`, `он/она/оно/је` — against 0 in the one it replaced. The console line the user saw
-(*"conjugation prompt pinned to Cyrillic for sr"*) matches what landed.
-
-**⚠️ A win NOT claimed.** `ls_1787059371457_onji` carries a `ls_<timestamp>_<suffix>` id, which looks
-like `v80_i`'s collision-dedupe firing in the wild. **It is not.** The suffix is 4 characters, which
-is the CLIENT's format (`index.html:7582`, `slice(2,6)`); the dedupe mints 6 (`server.js:335`,
-`slice(2,8)`). There is still no evidence `_dedupeLessonIds` has ever fired on real activity — it
-remains preventive.
-
-**`learners.json` also dropped** (one more `chapterDone`). `v80_l`'s numbers re-measured and hold:
-84.2% red / 8.6% green over 59 worked chapters, against 84.1% / 8.7% over 58. **The conclusion is
-not sensitive to the drop.**
-
-#### Three rulings — `PLAN §F3` deferred to the user's own testing
-
-- **`§T2a` — KEEP THE BARS FOR NOW.** The chapter progress bars stay. The greening text cannot carry
-  the progress signal on its own at ~12 highlighted words of ~189, of which ~1 green.
-- **`§T5.2` — tapping a word ENTERS THE USUAL LESSON FLOW**, including questions not themselves
-  reachable by tapping; the play buttons stay. **This simplifies TRACK T materially and corrects
-  `§T6` step 3**, which had specified a single-question mode: tapping is a way IN to the existing
-  runner, so the 376 `intro_script` and 218 `math` items are not stranded, and the build is *resolve
-  word → (lesson, entry point) → `startLesson`* rather than new round machinery. Revised down from
-  ~2 sessions to ~1, **with `§0h` (question navigation) now on its critical path**, since "enter at
-  question N" is exactly what `§0h` is about.
-- **`PLAN §F3`** — the user will test the article fix directly. Baseline for that comparison is
-  `v80j_article_symmetry.txt`: 1.0% overall, **bimodal** (191 chapters at 0%, two at 100%).
-
-### `v80_m` — CORRECTION to `v80_h`: four of the seven "all-Latin" lessons were never defects
-
-**`v80_h` reported 7 lessons carrying none of their chapter's script. The real number is 2.** Four
-of the seven were `comprehension` lessons, and **comprehension questions are written in the SOURCE
-language throughout the corpus** — `de->fr` yields German questions, `ar->en` Arabic, `it->de`
-Italian. That is the design: you read the target-language story and answer in a language you
-understand. The detector had no business claiming them.
-
-**Measured across non-Latin-target chapters**, which is what settles it rather than an opinion:
-
-| type | carries target-script text |
-|---|---|
-| `standard` | 61 of 62 |
-| `synonyms` / `word_forms` / `grammar` / `intro_script` / `error_hunt` | 100% |
-| **`comprehension`** | **1 of 5** |
-
-So absence means nothing for that type. `lessonScriptDefect` now exempts it. **This is a per-TYPE
-fact about where the app puts each language, not a language fact**, so it lives in code rather than
-in `scripts.json`. The guard's new §7 asserts the exemption **with its non-vacuity**: the same text
-under `type: 'standard'` is still flagged, so this is an exemption for one type and not the rule
-going quiet.
-
-**How the error happened, since it is the interesting part.** `v80_h` swept the corpus and found 7;
-the sweep was correct. What was never checked was whether the ABSENCE meant a defect for every type
-it counted. Rule 30 in a new costume: a count is a proxy, and this proxy failed on four cases it
-should have welcomed. The tell was available at the time — one flagged comprehension lesson sat in
-the very topic being examined, and its German questions were visible in the sample output.
-
-**The two REAL defects, and they are milder than "all-Latin" suggests:**
-
-| storyline | chapter | lesson | type |
-|---|---|---|---|
-| Max und die Zukunft | Flüstern der Zukunft | `ls_534284213` | standard |
-| Zwei Schriften, Ein Herz | Geheimnis der Sprache | `ls_1786370351359` | conjugation |
-
-Both contain **correct Serbian written in gajica (Latin) rather than Cyrillic** — `miris`, `grad`,
-`tišina`, `Reka šapuće priče`, `sam/si/je/smo/ste/su`, `ići/idem/ideš`. The vocabulary and the
-grammar are right; only the orthography is wrong for a chapter stamped `cyrillic-sr`. **That is a
-transliteration away, not a regeneration** — and the detector cannot tell that case from a genuine
-wrong-language one, which is now stated in its "does not establish" block.
-
-### `v80_l` — MEASURED: the learner-known share; and SHIPPED: `PLAN §9c`, the storyline title
-
-#### (a) The learner-known share — TRACK T's `§T5.1` answered, and a harder question raised
-
-`build_history/probe_learner_known_v80l.js`, pinned in `v80l_learner_known.txt`. It runs TRACK T's
-own colouring over the REAL history in `learners.json`, driving the product's helpers
-(`_storyWordSources`, `qid()`, `_solvedMap`) rather than re-deriving them.
-
-**`§T5.1` — "green = ALL questions, or a fraction?" — ANSWERED: ALL is not a wall. Use ALL.**
-A highlighted word carries a mean of **1.70** associated questions and **53.6% carry exactly ONE**.
-For most words, "all questions solved" means "the one question solved". The fraction machinery T0
-hedges about is not needed for this reason.
-
-**But the same pass raises the harder question, now `§T5.4`.** Over 58 chapters two users have
-actually worked, 1484 highlighted words:
-
-```
-GREEN   every associated question solved    129    8.7%
-PARTIAL some but not all                    107    7.2%
-RED     none                               1248   84.1%
-
-chapters showing at least one GREEN word     23 of 58   39.7%
-chapters showing NOTHING but red             30 of 58   51.7%
-```
-
-**Composed with the density number from `§T2a`: of ~189 words on screen, ~12 are highlighted and ~1
-is green.** Over half of worked chapters would show no green at all.
-
-**This is not a bug and the fix is not technical** — 84% red is an ACCURATE report that the work is
-unfinished. But T0's premise is that *"progress should be obvious from the greening text"*, and on
-this install it would mostly report "you have done almost nothing". **A design and motivation
-question, and the user's.**
-
-⚠️ Two users with history, one install. A portrait of THIS install, not a population.
-
-#### (b) `PLAN §9c` — SHIPPED. The title generator was unreachable, not skipped.
-
-`upsertStoryline` seeds `title: chain[0]` — the first chapter's topic name, auto-numbering suffix
-and all — when the storyline record is created, which happens **earlier in the same flow** than the
-title post-pass. So the `v78_r` guard's question *"is there a title?"* always answered yes and the
-`generateStorylineTitle` branch was unreachable for every storyline created that way. **The title
-was not skipped because the book was a continuation; it was skipped because a placeholder looked
-like an author's work.**
-
-**Option 2 from the diagnosis, as recommended: mark the placeholder.** `titleAuto: true` at both
-seed sites (fork branch and plain new-storyline branch), and the guard now requires a title that is
-non-empty **and** not a placeholder. **The `v78_r` ruling is not weakened** — that was explicit in
-the diagnosis, and an authored title is still never overwritten.
-
-**The other half, which is where this fix could have broken the ruling from the opposite side:**
-every authoring path CLEARS the flag — the generated title, the user's edit through
-`POST /api/storylines`, and the `storyline-retitle` endpoint. Without that, a book the user named by
-hand would be retitled by the post-pass the next time a chapter was added.
-
-**Legacy books are safe by construction.** A storyline created before this flag has no `titleAuto`
-at all, and `!undefined` is true, so it reads as AUTHORED and keeps its title. Asserted against the
-corpus, not just reasoned: **all 91 existing storylines keep their titles.**
-
-**Guard:** `unit-storyline-title-auto`, five sections, asserting BOTH halves — a fix that only
-proved "new books get a title" would re-open `v78_r`. Mutation-tested: removing the flag from a seed
-site, or the `!titleAuto` from the guard, each fail it. Section 5 pins that `upsertStoryline` still
-seeds no `summary`, since that is what makes the summary guard sound; if it ever starts to, it
-acquires this same bug.
-
-**⚠️ Unverified:** whether `generateStorylineTitle` returns a GOOD title needs a live model. What is
-asserted is that it is now REACHED, which is the bug that was diagnosed.
-
-### `v80_k` — the roadmap reorganised: a MOVE, not a rewrite
-
-**Measured before acting**, because "the roadmap feels big" is not a finding:
-
-```
-lines   1-35    protocol + shipped table
-lines  35-604   nine release write-ups        <- 569 lines, 17.5%
-lines 604-3243  open work, TRACK T, the folded plan
-```
-
-The problem was **position, not size**. A reader following the protocol scrolled 569 lines of
-finished work to reach anything actionable — the same rot pattern the v80 cut itself hit, when
-"WHERE TO START" had grown three items numbered "0". The rest of the file was healthy: pointers
-resolved, eight SUPERSEDED markers all carrying pointers, no contradictions.
-
-**So the release entries MOVED to `# SHIPPED IN THE v80 LINE` at the foot of the file, newest first.
-Three blocks deliberately did NOT move** — `§C1`'s non-reproduction, `§0i — RECONCILED`, and `§0`'s
-sub-section status — because they comment on the sections directly below them and are meaningless
-anywhere else. The protocol block gained a four-row index of the file's own shape, and the RESTORED
-warning was updated: it still said reconciling those sections was "the first task of the next
-session", which has been done since `v80_d`.
-
-**Verified as a move, not an edit.** Headings before 129, after 131 (one renamed, three added).
-Content lines dropped: 10 — all of them the two paragraphs deliberately rewritten. Every one of the
-nine release headings present exactly once. **This check exists because `v80_d`'s blanket
-`str.replace` silently mangled six sentences including a heading; prose cannot be revert-verified,
-so it gets a diff instead.**
-
-**⚠️ NOT cut as `roadmap_v81.md`, deliberately.** The convention is one roadmap per version line and
-this is still v80. A `v81` file describing v80 work reads as wrong two cuts later, and the natural
-boundary is TRACK T — cutting there gives the new file a real reason to exist and a clean thing to
-carry forward.
-
-### `v80_j` — SHIPPED: `PLAN §F3`, the article contradiction removed — and §F3c SHARPENED at corpus scale
-
-#### The measurement first, because §F3c forbids validating this on one lesson
-
-`build_history/probe_article_symmetry_v80j.js` (pinned: `v80j_article_symmetry.txt`). **It is
-explicitly NOT language-blind** — "is this an article" is a language fact, so the article lists are
-hand-written and live in the probe ONLY, never in `server.js` or `index.html`. Pairs where either
-language has no article system (Serbian, Polish, Japanese…) or marks definiteness by PREFIX (Arabic,
-Hebrew) are EXCLUDED and reported as excluded, because a bare noun is correct there and counting it
-would invent a defect.
-
-```
-vocab pairs seen   4643
-pairs COUNTED      3069   (both languages use word articles)
-ASYMMETRIC           31   1.0%
-```
-
-**⚠️ The 1.0% is the least interesting number here. The DISTRIBUTION is the finding:**
-
-```
-all symmetric (0%)      191 chapters
-partial (1-49%)           4
-majority (50-99%)         1
-all asymmetric (100%)     2
-```
-
-**This sharpens §F3c: the coin is flipped ONCE PER LESSON, not per pair.** A per-pair random effect
-would clump around a middle rate; what the corpus shows is the ENDS. The model resolves the
-contradiction once and then applies its resolution consistently to every noun in that lesson. Two
-consequences worth carrying:
-
-- **A 1% corpus rate and an unusable lesson are the same defect.** Two chapters are 8-of-8
-  asymmetric. Averaging hides exactly the cases a learner meets.
-- **It explains the user's report precisely** — "chapter 1 bad, chapter 2 fine" is not inconsistency
-  in the reporting, it is the shape of the defect.
-
-The asymmetry concentrates where the diagnosis predicts: **German as one side** (`de->en` 5.3%,
-`de->it` 2.1%), German being the language whose dictionaries cite `der Hund`.
-
-**⚠️ `tp_17869977371640000022` now measures 0 of 8, where §F3c measured 7 of 8.** The user regenerated
-that lesson at the `v80_i` drop. **This is NOT evidence the prompt was fixed — the fix had not
-shipped yet. It is the coin landing the other way**, and it is the cleanest possible illustration of
-why §F3c says one lesson can never validate anything here.
-
-#### The fix — rule 31 applied, not another prohibition
-
-`prompts.json` `vocab.system`:
-
-- **REMOVED** the contradicting per-side clause from BASE FORM ONLY —
-  ~~`nouns in the singular (with the usual article where the language uses one)`~~. This is the
-  clause that wins today: it is stated first and framed as definitional.
-- **ARTICLE SYMMETRY now says it OVERRIDES each language's own dictionary convention**, and says why
-  — removing the contradiction from the prompt is not enough on its own, because the model still
-  knows German convention; without this the contradiction simply moves from the prompt into the
-  model.
-- **Added a WORKED COUNTER-EXAMPLE** showing both the correct pairing (`der Hund` ↔ `le chien`) and
-  the forbidden one (`der Hund` ↔ `chien`), naming it as the shape a faithful model produces by
-  default. **No new prohibition was added** — that is what made this worse twice.
-
-**Guard:** `unit-prompt-article-rule`. It pins TEXT, which rule 29 warns about, and does so knowingly
-— the claim here IS about the prompt's text, and there is no behavioural layer to assert instead
-because the behaviour is a model's. Four sections, including a count that **exactly ONE bullet
-mentions articles**: a rising count is the signature of the failure mode §F3 names.
-
-**⚠️ WHAT REMAINS UNVERIFIED, and it is the important half.** Nothing here shows the model obeys.
-Judging this needs regeneration against a LIVE model across MANY lessons, then re-running the probe
-against the 1.0% / bimodal baseline above. **That is the user's step.** Until then the prompt is
-consistent and the outcome is unmeasured.
-
-
-### `v80_i` — DATA DROP + a live progress-integrity bug it exposed
-
-#### The drop, diffed rather than assumed
-
-324 topics / 91 storylines (unchanged), 1072 → **1073 lessons**, **4 topics modified**, none added or
-removed.
-
-| topic | change |
-|---|---|
-| `tp_17864554460460000107` *Ein neues Kapitel beginnt* | **`6:conjugation` DELETED** — the all-Latin Serbian lesson `v79_f` found |
-| `tp_17869977371640000022` *Stille vor dem Winter* | `1:standard` replaced by a regenerated standard **+ a new comprehension lesson** |
-| `tp_17869990828330000253` *Flucht ins Leere* | synonyms + conjugation regenerated with fresh ids, **+ a `mixed` lesson** |
-| `tp_17869980065780000104` *Brücke der Existenz* | synonyms + conjugation regenerated with fresh ids |
-
-**⚠️ The deletion landed in `...0107`, not `...0022`** as the accompanying note said. `...0022` GAINED
-a lesson. Recorded because the two are easy to confuse and the note will be read again.
-
-**Still open from `v80_h`:** 6 of 95 lessons in non-Latin chapters carry zero target-script
-characters (was 7 — the deleted one). 4 comprehension, 1 standard, 1 conjugation, all Serbian.
-
-**Gate table: NO client drift.** The raw diff against `v80e_card_gates.txt` shows the crossword
-column flipping `grey`→`YES` across 16 rows. Re-running the SAME client against the PREVIOUS data
-reproduces the v80e baseline **exactly**, so the entire difference is the drop moving the probe's
-chapter selection. New baseline: `v80i_card_gates.txt`. **This is the second cut running where that
-diff looked like a regression and was not** — the check takes one command and should be automatic.
-
-#### ⚠️ THE FINDING: two lessons in one chapter could share an id, and share a done-flag
-
-Reading the diff showed the two regenerated chapters had previously held **three lessons all with
-`id: 6`** — `word_forms`, `synonyms`, `conjugation`.
-
-**Demonstrated, not inferred.** Against the previous corpus: marking ONLY the word_forms lesson done
-made the synonyms AND conjugation lessons read as done. Progress is keyed `completed[topic][L.id]`
-and item keys are `${lessonId}:i:${hash}`, so the three shared one flag. **A learner finishes one of
-three lessons and the chapter believes all three are finished.**
-
-**It is LIVE, not historical.** `server.js` hardcodes `id: 6` for word_forms (3899), synonyms (4151)
-AND conjugation (4368) — **any chapter generated with two of those three collides.** The corpus is
-clean at this cut only because the user's regeneration happened to assign fresh `ls_` ids. Nobody
-was looking for this; it surfaced from diffing a data drop.
-
-**Fixed at `saveStore` — the ONE choke point all 23 write paths funnel through** — rather than at the
-six `lessons.push` sites, where a seventh insertion path would reintroduce it. Only duplicates are
-renamed and **the FIRST holder keeps the id**, so existing learner progress keyed on it survives; the
-later lesson gets a fresh id and starts unsolved, which is honest, since it was never separately
-answerable before.
-
-**Guard:** `unit-lesson-id-unique`, five sections. Section 1 asserts **the generators still collide**
-— so if someone later gives the three types distinct ids, the guard says so rather than the fix
-quietly becoming dead code that still looks green. Others: first-holder-keeps-id, idempotence,
-per-topic scoping (the same id in two chapters is legitimate), and the live corpus being clean.
-
-#### Two guards failed on the drop, both honestly, and both are worth reading
-
-- **`unit-lesson-script-output` §1** pinned the reported PAIR — the broken lesson and its
-  regeneration. The user deleted the broken one, **which is exactly what the detector exists to
-  prompt**, and the section failed. *Pinning a corpus item whose purpose is to be cleaned up is a
-  guard that breaks on success.* Rewritten to sweep real `cyrillic-sr` lessons for the absence of
-  false positives, with the flagged case synthetic.
-- **`unit-story-unlocked-page` §6** — the discriminating section built at `v80_c` — refused to run
-  because its precondition (the two resume helpers must DISAGREE) no longer held for the chapter
-  `find()` happened to return. **It failed rather than passing vacuously, which is the whole point of
-  it.** Now SWEEPS candidate chapters for one that can be put into the state, and asserts one exists.
-
-
-### `v80_h` — SHIPPED: the fork-marker fallback (`PLAN §9b/D8`), and a NEW defect it uncovered
-
-Both items chosen because they **survive TRACK T**: neither touches the progress card.
-
-#### (a) `PLAN §9b/D8` — the fork marker must DISTINGUISH. Preventive, and now enforced.
-
-**First, the measurement the note asked for.** D8 said the tree still carried the OLD duplicate
-titles and that the next drop would bring the rename — *"exactly the kind of quiet data movement the
-protocol says to diff for rather than assume"*. Diffed: **the rename LANDED.** "Dough of the Ancients
-2" is in the tree and there are **0 duplicate-title groups across 91 storylines**. So this is
-preventive, as D8 predicted.
-
-**Shipped:** the marker falls back to naming the BRANCH's own chapter when the other storyline's
-title is empty or identical to the open deck's label. The chapter differs per column by
-construction, so it distinguishes even when two storylines are titled the same.
-
-**Guard:** `unit-fork-display` §8, and it does **two** things on purpose. It sweeps every real fork
-(15 markers) — necessary, but it would pass today and keep passing right until the drop that
-reintroduces a duplicate, which is rule 24 in test form. So it **also injects a synthetic duplicate
-title and an empty one** and asserts the fallback fires. Revert-verified: with the fallback disabled
-the marker reads back the open deck's own label and the section fails.
-
-#### (b) ⚠️ NEW — 7 lessons carry NONE of their chapter's script, and only ONE was known
-
-Looking at `tp_17864554460460000107` (the known duplicate-conjugation topic) showed the expected
-pair — the all-Latin `id=6` and the correct regeneration. **It also showed that lesson `id=9`, the
-COMPREHENSION lesson, is equally all-Latin on a `cyrillic-sr` chapter.** Nobody had flagged it.
-
-~~Swept: **7 of 96 lessons (7.3%)**~~ **⚠️ CORRECTED at `v80_m`: the real number is 2.** The four
-comprehension lessons were NEVER defects — comprehension questions are written in the SOURCE
-language by design. See the `v80_m` entry.
-Arabic, Hebrew and Japanese chapters are clean.
-
-**Why it went unseen is the interesting part.** `v79_f` fixed the PROMPT and
-`unit-script-pin-coverage` guards that all fourteen prompts carry the pin. **But a pin is an
-instruction, and a model can ignore it — nothing checked the OUTPUT.** Rule 34: guard at the layer
-where the claim is observable. "This lesson is in the target script" is observable in the LESSON.
-
-**Shipped:** `lessonScriptDefect(lesson, script)` in `server.js`, taking the alphabet from
-`scripts.json` — **never a hardcoded Unicode range**, so a script added to that file is covered with
-no code change (asserted for `arabic`). It yields **no opinion** for Latin, unstamped, or unknown
-scripts, and does not claim a nearly empty lesson, which is a different defect.
-
-**Guard:** `unit-lesson-script-output`, on synthetic fixtures plus the one pinned real pair (broken
-flagged, regenerated clean). The corpus still holds the 7, so a corpus-wide assertion would be red
-on arrival and then "fixed" by weakening it — that count belongs to the probe.
-
-**⚠️ NOT wired into generation.** `lessonScriptDefect` exists and is guarded; nothing rejects or
-retries on it, because whether a retry actually converges needs a live model to establish. **That is
-the next step, and it is the user's to run.**
-
-**A note on the guard that caught my own mistake:** the fixture builder padded with SPACES, so the
-all-Latin fixture had ~85 Latin characters and never cleared the detector's 200-character floor. The
-`null` assertions in the section above it passed **vacuously**; the explicit non-vacuity assertion
-is what failed and exposed it. Worth remembering next time a non-vacuity line looks like ceremony.
-
-**Not fixed here: the 7 existing lessons.** The detector guards new work. Repairing them means
-regenerating user content, and `v79_f` established that deleting or replacing a lesson is asked
-about first — **the duplicate conjugation pair in `tp_17864554460460000107` is still two lessons and
-still wants a ruling.**
-
-
-### `v80_g` — SHIPPED: `PLAN §F2`, a word_forms blank must be WHERE A WORD WAS REMOVED
-
-**Chosen because it survives TRACK T.** A malformed item is broken as *structure*, so no
-progress-card redesign obsoletes it — and under TRACK T it gets **more** visible, since the learner
-reaches it by tapping the word in the text.
-
-**The real finding is not that the items are malformed — it is why they PASSED.**
-`validateWordFormsItems` already existed, with salvage steps and a giveaway check. It let
-`"...across the path.___"` (answer `cast`) through because **it only ever asked whether a blank
-EXISTS, never where it is**, and its giveaway check compares whole tokens, so `casting` ≠ `cast`.
-The rule was missing, not broken.
-
-**Shipped:** one structural rejection — terminal punctuation immediately followed by the blank.
-No language knowledge (INTERNALS: "no language knowledge in the code"), and it holds for Arabic
-`\u061F`/`\u06D4`, the CJK `\u3002`, and fullwidth `\uFF01\uFF1F` as well as `.!?`.
-
-**Measured across the corpus** (`build_history/probe_word_forms_defects_v80g.js`, reports only):
-
-```
-word_forms lessons                76
-items                            345
-items with a structural defect     8   (2.3%)
-  ORPHAN_BLANK                     6   (1.7%)   <- now rejected at generation
-  ANSWER_SHOWN_STEM                3   (0.9%)   <- measured, NOT enforced (below)
-```
-
-**Four of the six ORPHAN_BLANK hits are Arabic**, two English — that cross-language spread is the
-evidence the signal is structural rather than an artefact of Latin punctuation.
-
-**⚠️ The stem band is deliberately NOT enforced, and the reason matters.** The first version of the
-detector compared the answer against a 4-character slice of each token, which let 1–2 character
-tokens match nearly anything: it reported 20 hits, of which eyeballing showed only 2 were real
-(`asistiendo` vs `a`, `avrei` vs `a`, `perdono` vs `per`, `there` vs `the`). Tightened to "one whole
-word is a prefix of the other, both ≥ 4 characters", it drops to 3 — but prefix-matching **is** mild
-morphology, and rejecting on it at generation time would discard good items in
-morphologically-rich languages. So it is reported by the probe and left to a human. **A detector
-that is 90% noise is worse than none, and that was only visible because the band was sampled rather
-than trusted.**
-
-**Guard:** `unit-word-forms-defects` pins the DETECTOR on **synthetic** fixtures, not the corpus —
-the corpus still holds those 8 items, so a corpus-driven assertion would be red on arrival and would
-then be "fixed" by weakening it. It extracts `validateWordFormsItems` from `server.js` and runs it,
-so it tests the product function rather than a copy. Five sections, including a **discriminator**
-(a blank immediately before the stop, `"Ieri sono ___."`, must still be accepted — otherwise the
-rule degenerates into "reject anything ending in a blank") and a check that the new reason is the
-one that FIRES rather than being shadowed by an earlier check. Revert-verified.
-
-**Not fixed here: the 8 existing corpus items.** The rule guards NEW generation. Cleaning the corpus
-means editing or regenerating user content, and `v79_f` established that deleting a lesson is asked
-about first.
-
-
-### `v80_f` — MEASURED: the inflection share. The text-focus design's ceiling is a GENERATION problem, not a matching one
-
-**Taken before designing anything**, because it decides whether "the text turns green" is expressible
-on the existing corpus. Instrument: `build_history/probe_inflection_v80f.js`, output pinned in
-`build_history/v80f_inflection.txt`. **It reports; it does not assert.** Its middle bands are edit
-distance and shared stems, which are not morphology — read the bands, never a single number.
-
-Over **301 chapters / 6,707 highlightable words** (the exact set the app renders: vocab targets plus
-every `_storyWordSources` word):
-
-```
-EXACT     whole token in the story              36.8%
-SUBSTR    inside a token (compound)             10.5%
---------  WHAT THE APP MATCHES TODAY            47.3%
-NORM      matches once apostrophes/dashes fold   0.2%   <- free, and NEGLIGIBLE
-NEAR/stem shares a stem with a token             9.5%   <- credible inflection
-NEAR/edit only within edit distance              6.6%   <- mostly noise
-ABSENT    nothing in the story resembles it     36.4%   <- THE CEILING
-```
-
-**The headline is ABSENT = 36.4%.** More than a third of the words a chapter teaches do not occur in
-its story **in any form**. No matcher — lemmatiser, LLM, or otherwise — can turn those green, because
-there is nothing to turn. That is not a matching defect; it is the generator writing vocabulary the
-story does not use, and it lands squarely on `PLAN §F3`'s prompt work.
-
-**A matcher is worth about ten points, not fifty.** 47.3% → **56.9%** on the credible band
-(stem-sharing), or 63.6% if the edit-distance band is trusted, which it should not be: its own
-samples include `chaud→chaque`, `vois→fois`, `sais→mais`, `klein→ein`. The apostrophe/dash
-normalisation band was measured on the suspicion that it was a free win — it is **0.2%, 14 words**.
-Measured rather than assumed, and it is not worth a line of code.
-
-**Inflection load differs enormously by language, so one policy will not fit:**
-
-| lang | n | matched today | + stem band | ABSENT |
-|---|---|---|---|---|
-| `en` | 2174 | 58.0% | 4.8% | 31.9% |
-| `it` | 1587 | 43.8% | 15.1% | 35.9% |
-| `de` | 965 | 37.6% | 9.8% | 46.5% |
-| `ar` | 561 | 45.3% | 5.0% | 30.8% |
-| `sr` | 507 | 31.6% | 17.6% | 43.2% |
-| `fr` | 390 | 42.1% | 11.3% | 42.3% |
-| `lb` | 231 | 63.2% | 4.8% | 26.4% |
-
-`en` needs almost no matcher (4.8% stem band); `sr` and `it` are where a matcher pays. `de` has the
-worst ceiling at 46.5% absent — consistent with separable prefixes and compounds, but **this probe
-cannot tell that from bad generation, and should not be read as if it could.**
-
-**⚠️ Two defects in the probe's FIRST version, fixed and worth carrying as a lesson.** It keyed the
-space-less-script exclusion on the topic's `script` stamp — but only **19 of 324 topics carry one**
-(it is stamped where a language has a script CHOICE, i.e. `sr`), so all **13 Japanese chapters were
-scored with a token model that cannot apply to them**: the precise error the exclusion existed to
-prevent, committed by the exclusion itself. Now keyed on `lang`, and the 13 are reported apart
-(30.5% by substring, on 177 words). **A guard that reads the wrong field is worse than no guard.**
-
-**What this means for the design.** The proposal's *"we could use the current highlighting approach
-to map questions to the text"* holds for roughly half the vocabulary and cannot be pushed past ~57%
-by matching alone. The two levers are ordered by payoff:
-1. **Generation-side mapping** (the proposal's own later bullet): have the model emit the surface
-   form as it appears in the text alongside the base form. This addresses the 36.4% as well, because
-   a generator asked to anchor its vocabulary in the text stops producing unanchorable words.
-2. **A matcher** (LLM or lemmatiser) for the existing corpus, worth ~10 points, per-language.
-
-
-### `v80_e` — SHIPPED: ONE starter card per chapter (user ruling on the `PLAN §C2` / §0c reversal)
-
-**The reversal is ruled: MERGE.** `PLAN §C2` asked for the "next chapter unlocked!" card to be
-*"removed from the flow, going straight to the next entry card"*. **That sentence could not be
-executed as written**, and the reason is a ruling of the user's own: `v77_q` had made the unlocked
-card the STARTER for chapters 2..N and reduced the entry card to chapter one only
-(`_enterViaSummaryCard` bailed on `me > 0`). So for every chapter after the first there WAS no
-"next entry card" to go straight to — removing the unlocked card would have deleted the starter for
-most of the corpus and dropped learners into a lesson unannounced, which is precisely what `v77_i`
-was built to stop.
-
-**What shipped.** The entry card is generalised to every chapter; the unlocked card is deleted.
-
-- `_enterViaSummaryCard` no longer bails on later chapters. Its gate is now *"would this card carry
-  anything?"*: **a summary exists, OR this is not the first chapter.** That reproduces BOTH previous
-  behaviours rather than picking one.
-- `showComplete`'s next-chapter branch opens the chapter directly. The target is still stashed at
-  RENDER time (`APP._unlNext`), which is the part of `v77_i` worth keeping — the render and the
-  click cannot name different chapters.
-- `showStorySummary` picks its title by arrival: `unlocked.title` when carried here by finishing the
-  previous chapter, `summary.title` on a plain entry. A new `#sum-chapter` line names the chapter,
-  carried over from `#unl-chapter` with its styling.
-- `showNextChapterUnlocked()`, the `unlocked-screen` markup and `APP._skipEntryCard` are **deleted**.
-  The flag existed only to stop the two cards stacking; with one card there is nothing to stack.
-
-**⚠️ The measurement that shaped the gate.** Gating on the summary ALONE — the obvious reading of
-"go to the entry card" — would have silently dropped the acknowledgement for every later chapter of
-a summary-less storyline. Measured at this cut: **14 multi-chapter storylines have no summary,
-covering 25 chapters at index ≥ 1.** That is why the `|| isLater` clause exists, and
-`unit-next-chapter-entry` §4 asserts it **on a storyline chosen for having no summary**, with §5
-asserting the other half (a summary-less FIRST chapter still gets no card, so the rule is not
-simply "always show").
-
-**No translate pass.** The `unlocked.*` keys are **reused, not orphaned** — all four are translated
-in all 32 languages, and the merged card needed exactly the wording they already carried. Dropping
-them would have wasted 128 translated cells and adding replacements would have cost 33 languages.
-
-**⚠️ DELIBERATELY LOST, recorded rather than implied.** The old card's ← ("back to the chapter you
-just finished") is gone. After the merge the learner has already moved to the next chapter by the
-time the card renders, so a back link there would return them to a card for the chapter they are now
-IN. The header title still reaches the storyline, from which the previous chapter is one tap away.
-**If the user wants that link back, it needs a different mechanism, not a revert.**
-
-**Guards.** `unit-next-chapter-unlocked.test.js` (v77_i) is **replaced by
-`unit-next-chapter-entry.test.js`** — the screen went, the CLAIM did not, so the file asserts the
-same guarantee against the merged card in six sections. Mutation-tested: dropping `|| isLater`,
-restoring the `me > 0` bail, and dropping the chapter name each fail it. `unit-story-summary`'s
-"does not stack a second interstitial" section is **WITHDRAWN with its reasoning** — the condition
-cannot occur any more — and re-asserted as the property that now matters, plus a pin that
-`_skipEntryCard` has not come back. `smoke-render` drops `unl` from the five-card header parity
-sweep and now asserts the old id has not returned.
-
-**Gate table: no drift.** `probe_gates_v77.js` re-run and diffed. The raw diff against
-`v80_card_gates.txt` shows a column flipping `YES`→`grey` across 16 rows, which reads as a
-regression and is not one: that baseline was generated on the OLDER 321/90 corpus, so the probe
-now SELECTS a different chapter. Re-running the probe against the PRE-MERGE client on the
-CURRENT corpus gives **32 of 32 rows identical**. New baseline: `v80e_card_gates.txt`.
-
-**⚠️ TRACK T (added at the `v80_f` cut) names this card's COPY for removal** — "Kapitel freigeschaltet!" among it. The structural win here (one starter card per chapter) is NOT superseded and TRACK T depends on it; the title and copy are. See TRACK T §T3.
-
-**Still open in `PLAN §C2`:** the third progress bar, the chapter title in the bottom row,
-"text comprehension" labelling, the summary uncollapsed by default. Its last bullet — *"chapter
-entry cards ≥2 remodelled to match chapter 1"* — is **largely discharged by this merge**, since
-those chapters now use the entry card itself.
-
-
-### `v80_d` — SHIPPED: the document set consolidated from four to two
-
-**Four documents held the same facts and the durable one was the least complete.** The two `v80`
-diagnoses landed in `HANDOVER.md`, the session prompt and the plan, and were **missing from this
-roadmap** until someone noticed. That was the argument, and it is now closed.
-
-- **`implementation_plan.md` — FOLDED IN and DELETED.** It lives in "THE LARGER PLAN" below. Its
-  section labels are preserved with a `PLAN §` prefix, because the plan's bare `§0/§1/§2/§3`
-  collide with this roadmap's own. **A bare `§3` is the highlighting item; `PLAN §3` is Track C.**
-- **`HANDOVER.md` — MERGED into the session prompt and DELETED.** Verified first: **zero references
-  from `test/` or any `.js`/`.json`/`.html`**; the mentions were prose.
-- **`SESSION_PROMPT_v79.md` was still present**, two cuts stale, though the convention says the
-  prompt is RENAMED at each cut and not kept alongside. **Found by the new guard, not by reading.**
-  Archived as `v79_prompt.md`, matching the older convention the `v74`–`v78` prompts already use.
-
-**Three duplications inside the plan were resolved on the way in, not silently:** `PLAN §2.6` and
-`PLAN §2.7` each appeared **twice, byte-identical** (verified by comparison, not by eye) — one copy
-of each dropped; `PLAN §2.5` appeared twice with **different content**, and both are kept with the
-superseded one struck and pointed at the correction.
-
-**`unit-roadmap-version` now guards the NUMBERS, which is what makes this honest** (rule 24: a note
-is not a guard). Prose work cannot be revert-verified the way code can, so the consolidation would
-otherwise have ended as a green suite, a lot of churn, and no evidence. It now pins:
-
-- the prompt's `expect NNN checks` against **run.js's actual `run()` count**, full and `--quick`,
-  derived statically because this test runs *inside* the suite it would otherwise spawn;
-- the prompt's four corpus numbers against `lessons.json`, `languages.json` and `ui.json` — the
-  exact things that rotted (`HANDOVER.md` said 321/90 while the tree held 324/91, written **four
-  minutes after** `lessons.json`, so the number was carried rather than measured);
-- the prompt's `APP_VERSION` against `server.js`;
-- that **exactly one** session prompt exists, and that neither deleted file has been recreated —
-  named explicitly, so restoring the second home for open items has to be a decision rather than a
-  drift.
-
-**Mutation-tested in both directions:** a stale number in the prompt fails it, and so does a real
-change to the suite with the prompt left alone.
-
-**⚠️ One scar worth carrying.** A blanket `str.replace` across four documents, rewriting a filename
-to a phrase, silently mangled six sentences including a heading — *"folded in from the folded THE
-LARGER PLAN section"*. It was caught by grepping for the replacement afterwards. Rule 25's cousin:
-**check what a mechanical rewrite DID, not just that it ran.**
-
-
-### `v80_c` — SHIPPED: `unit-story-unlocked-page` §6 now discriminates, and it closes an open question
-
-**The guard that could not fail, carried since `v77_p`, now fails under revert.** It had asserted
-`APP._started === _firstUnfinishedLessonIdx(...)` — the product compared against the same product
-function. Its own note said two earlier attempts had concluded the below-mark branch "was never
-entered". **That was half right, and the missing half was the section:**
-
-1. **The branch IS entered** — through `index.html`'s
-   `nextLessonIdx === C.lessonIdx && !C._review && _isStoryGatedLesson(lesson)` line, which forces
-   `nextLessonIdx` to -1 for a learner who has just played the comprehension lesson without fully
-   solving it. **That is the state the user reported from**, which is why scenarios built around a
-   lesson not yet played could never reach it.
-2. **The two candidate targets have to be made to DISAGREE.** An unplayed lesson sits at 0%
-   coverage, which is *also* the least-covered — so both orderings return the same index and any
-   assertion passes either way. They separate only when the gated lesson is PARTLY solved (still
-   unfinished, its done-flag withheld until every item is solved) while an earlier lesson is
-   covered LESS.
-
-Revert-verified both ways: with `v77_p`'s ordering swapped back, Next goes to lesson 0 — **the
-user's reported bug, reproduced** — and §6 fails. Three non-vacuity assertions guard the setup, and
-one of them (`APP._usNextLesson === undefined`) pins that the below-mark branch is the one answering,
-so the section cannot silently drift back to measuring the easy branch.
-
-
-### `v80_b` — SHIPPED: a story-gated lesson is not a Replay target while the story is locked
-
-**`PLAN §C1`'s SECOND bug, reproduced, fixed and revert-verified.** The user's
-report: *"via the replay button or otherwise, I could play the comprehension lessons BEFORE the
-chapter-story was unlocked."*
-
-**Cause, measured rather than guessed:** `_firstUnfinishedLessonIdx` has applied a story-lock
-filter since `v71_s`. `_firstCoverageShortLessonIdx` — which the Replay button reaches through
-`repeatForCoverage`, and which the below-mark Next branch falls back to — **never applied it**. The
-rule existed in one of the two resume paths. `v78_l` then made that scan prefer the LEAST-covered
-lesson, and an unplayed comprehension lesson sits at 0%, which is the lowest fraction there is — so
-the ordering change quietly made the missing gate easier to hit.
-
-**Measured on the corpus** (`build_history/probe_gates_v80c1.js`), from an ORDINARY half-played
-chapter — no constructed state, just a learner part-way through the first lesson:
-
-```
-chapters with a story-gated lesson                    102
-  Replay opens a gated lesson, story locked (before)   27 of 94 partly-played
-  Replay opens a gated lesson, story locked (after)     0
-```
-
-**The fix is one rule, not two copies.** The filter moved out of `_firstUnfinishedLessonIdx` into a
-top-level `_storyLockedLesson(L, d)` that both scans call. **Two guards had to be re-wired and the
-reason is worth carrying:** `unit-learner-nav` EXTRACTS `_firstUnfinishedLessonIdx` and evals it
-standalone, so the rule used to travel with the function; it now splices `_storyLockedLesson` in
-alongside it, **deliberately not a stub** — a stub would let that section pass while the real rule
-was broken. `unit-replay-target`'s ordering fixture was passing on an accident: it has no story and
-no progress, so the real `storyUnlocked()` said "locked", and the sections that mean to measure
-ORDER would have started measuring the GATE. It now sets the gate state explicitly, and a new §8
-asserts the new rule **with the discriminator built in** — the same fixture, locked and unlocked,
-must give different answers (rule 33: a green guard near a defect is not evidence about it).
-
-
-### ⚠️ CLOSED — the "`_firstUnfinishedLessonIdx` returns -1 with a lesson still unplayed" defect
-
-Carried in the session prompt ("One OPEN DEFECT the user is watching for", in `HANDOVER.md` until it was folded in at `v80_d`) and `INTERNALS.md` §2 since
-`v77_s`, with `if (setComplete(d)) return -1;` named as the prime suspect. **Measured this session:
-the helper is not the thing returning -1.** In every state built here it returned the correct index
-(the comprehension lesson). What goes to -1 is `showComplete`'s **local** `nextLessonIdx`, set
-deliberately by the `v71_s` line above — so the symptom is real, the attribution was wrong, and
-there is no defect in the helper to chase. **`v77_s` did not cure it; it was never broken.**
-
-The behaviour that line produces is now under test by §6 rather than merely described.
 

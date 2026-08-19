@@ -283,8 +283,22 @@ assert.ok(SIX_PICK,
          showComplete(); true;`, 'locked');
   assert.strictEqual(C.run(`storyUnlocked(APP.lessonData)`), false,
     'non-vacuity: the story really is locked in this state');
-  assert.strictEqual(C.run(`document.getElementById('comp-story-panel').style.display`), 'none',
-    'no story panel is shown while the story is locked — not even a truncated preview');
+  // ⚠️ REVERSED at v80_w — and by the same authority that made it. `v77_p` was a user ruling
+  // ("skip all story preview fields — only show the vocabulary"), on the reasoning quoted above: a
+  // teaser of the reward is not the reward. TRACK T removes that PREMISE. The story is no longer a
+  // reward to be earned; it is the progress display, and T0 puts it on ALL progress cards "even
+  // before the chapter text is unlocked". A hidden progress display shows no progress.
+  //
+  // The old reasoning is left in place above, because knowing why a rule was reversed matters more
+  // than a tidy file — and if the text-focus direction is ever abandoned, `v77_p` is what to restore.
+  assert.notStrictEqual(C.run(`document.getElementById('comp-story-panel').style.display`), 'none',
+    'the story panel IS shown while the story is locked (v80_w, reversing v77_p)');
+  // What the unlock still governs: the caption, and the comprehension lessons.
+  assert.strictEqual(C.run(`document.getElementById('comp-story-panel-lbl').textContent`),
+    C.run(`t('complete.story_preview')`),
+    'and it is captioned as a preview, not as an unlock — the unlock still means something');
+  assert.strictEqual(C.run(`_storyLockedLesson(APP.lessonData.lessons.find(function(L){ return L && L.type === 'comprehension'; }) || {type:'comprehension'}, APP.lessonData)`), true,
+    'and a comprehension lesson is STILL locked — only the DISPLAY changed, not the gate');
 }
 
 console.log('unit-story-unlocked-page: ALL PASSED');

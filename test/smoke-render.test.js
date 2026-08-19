@@ -1464,8 +1464,20 @@ console.log('  completion card: full storyboard framed by chapter state: OK');
   // v77_n (user): the verdict line moved to the BOTTOM, below the play buttons — it is a verdict on
   // what just happened, not a heading for what follows, and putting it first pushed the storyboard
   // and the bars down so the card no longer opened the way the storyline page does.
-  const ROWS = ['comp-hdr', 'comp-storyboard', 'comp-progress',
-                'comp-story-panel', 'comp-vocab', 'comp-lessons', 'comp-actions', 'comp-title'];
+  // v80_y (user): the progress BARS moved to the BOTTOM, below the play buttons. Under TRACK T the
+  // STORY is the progress display and leads the card; the bars are the numeric backup and no longer
+  // compete with it for the top. `comp-progress` therefore sits after `comp-lessons` now, not before
+  // `comp-story-panel`. The §0d principle this row order encodes is UNCHANGED and still asserted
+  // below: the story precedes the icons and the action row.
+  // v80_z: `comp-storyboard` now holds the CHAPTER ICON row and moved down with it — below the
+  // story and vocabulary, just above the lesson-type buttons. The id is historical (renaming it
+  // would touch 82 client and 12 test references); what it holds changed, and so did its place.
+  // v81_b (user): the progress bars moved below the ACTION row too, so the chapter-icon,
+  // lesson-icon and play-button rows are contiguous — the bars are the numeric footnote and sit
+  // last. The §0d principle is unchanged and still asserted below.
+  const ROWS = ['comp-hdr',
+                'comp-story-panel', 'comp-vocab', 'comp-storyboard', 'comp-lessons', 'comp-actions',
+                'comp-progress', 'comp-title'];
   const order = ROWS.map(id => ROOT_HTML.indexOf('id="' + id + '"'));
   order.forEach((at, i) => assert.ok(at > 0, `${ROWS[i]} exists`));
   for (let i = 1; i < order.length; i++) {
