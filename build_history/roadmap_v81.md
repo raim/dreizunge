@@ -3394,7 +3394,76 @@ contradiction visible. Do it as part of the F3 fix, not separately.
 
 ---
 
-## PLAN §7 — Track A — ingest (multi-session; blocked on §2)
+## PLAN §7 — Track A — ingest and the parallel curriculum pipeline (multi-session)
+
+### PLAN §7.0 — the new lesson architecture: analyse and plan in parallel, deliver through the existing app
+
+**Direction accepted by the user at the `v81_l` cut.** The new approach is different enough upstream
+that TEXT → ANALYSIS → CURRICULUM PLAN should be designed cleanly, but it must **not** become a
+second app. Keep the existing player, editor, export, static publishing, learner progress, and
+playable lesson contract as the delivery path until the new route has demonstrated coverage, quality,
+and recovery across several languages. The critical change is that lessons cease to be primarily
+generated chapter-by-chapter: they execute a persistent learning plan over the whole text. A chapter
+remains a learner delivery boundary, not the boundary of curriculum intelligence.
+
+```
+text source (PDF / text / markdown / comic / generated story)
+  → canonical text model (story → chapters → sentences → stable spans/tokens)
+  → language analysis (lemmas, forms, senses, phrases, frequency, script, provenance)
+  → curriculum planner (what matters in this text, chapter, and for this learner?)
+  → lesson plan (concept → exercise types, ordering, prerequisites, reason)
+  → generator / validator (existing playable lesson types, richer metadata)
+  → existing player / editor / export / static build
+  → append-only observations → per-learner BKT skill estimates
+```
+
+**The semantic ladder is not "every word is a skill":**
+
+```
+token in sentence → normalised surface → lemma or multiword phrase → sense in context → language skill
+```
+
+Thus several forms such as *went*, *goes*, and *going* can contribute to one `go` vocabulary skill
+and separate form skills; *take care of* may be one phrase concept, not three unrelated words.
+Likewise, corpus presence is **not** evidence that a learner knows a word or that it has the same
+sense. Reuse prior analysis, verified lemma data, exercise templates, and error patterns; let the
+planner decide whether the learner needs the concept.
+
+**Version and provenance are mandatory from the first record, not a migration afterthought.** The
+planned fields are `topic.analysisVersion`, `topic.curriculumVersion`, `lesson.pipelineVersion`,
+`lesson.sourceSpans`, `lesson.skillLinks`, and `lesson.planReason`. Every derived lemma, phrase,
+frequency value, or model decision must state how and from which stable source span it was derived.
+That makes re-analysis honest: an older result is visibly old rather than being represented as if the
+current logic had produced it.
+
+**Relationship to shipped Track B:** B1–B4 already supply the bottom of this diagram—append-only
+learner evidence, reviewed target-language canonical IDs, vocabulary lesson links, and shadow BKT.
+They are deliberately narrower than the new planner: current B3 tags only new standard vocabulary
+lessons, and B4 controls nothing. Future `lesson.skillLinks` must preserve that reviewed canonical
+identity rather than invent per-generator dialects.
+
+**Migration sequence (each stage is independently useful):**
+
+1. **CP1 — canonical text + analysis records, report-only.** Define stable story/chapter/sentence/
+   span/token records and provenance. Analyse a small representative corpus without changing any
+   existing lesson, learner state, player, or publishing output. **This is the next implementation
+   slice.**
+2. **CP2 — analysis report.** Add lemma/form/phrase/sense/frequency/script proposals and retain the
+   exact derivation or model evidence. This is language analysis, not client-side morphology; it
+   must expose uncertainty/review rather than silently guessing.
+3. **CP3 — proposed curriculum plan.** Emit concepts, reasons, prerequisites, ordering, and suitable
+   existing exercise families for a text/chapter/learner. Compare it with current generated lessons
+   on a small representative set; still emit no new lessons.
+4. **CP4 — one lesson family through the existing contract.** Start with vocabulary meaning/form,
+   validate it, and retain the legacy generation route in parallel. Only then add language-specific
+   families such as conjugation, grammar, articles, error patterns, and comprehension.
+5. **CP5 — consume the plan read-only.** Let the red→green text progress card read analysis and skill
+   data with a legacy fallback. BKT remains a measurement until a separate product ruling.
+6. **CP6 — retire nothing by assumption.** Consider retiring legacy generation only after the new
+   route has measured multilingual coverage, quality, recovery/re-analysis, and player compatibility.
+
+This section changes architecture upstream, not the current delivery shell. It does **not** authorise
+a parallel player, new progress system, bulk corpus rewrite, or a BKT-driven gate.
 
 Sequenced so each step is independently useful:
 

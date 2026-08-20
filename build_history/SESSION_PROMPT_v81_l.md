@@ -157,6 +157,10 @@ is a materially lower bar. Needs a browser pass, not a code change.
   and controls nothing. `error_hunt`/`ai_error_hunt` and the crossword still grade differently and
   are NOT wired. The next Track B candidate is B5, a read-only aggregate surface, but it needs real
   reviewed evidence to be useful.
+- **`PLAN §7.0` CP1, canonical text + report-only analysis records** — now the first buildable slice
+  of the accepted parallel curriculum pipeline. It defines stable chapter/sentence/span/token IDs
+  and provenance, but must not change existing lessons, player, learner progress, or publishing.
+  See the durable roadmap diagram and migration sequence; CP1 comes before a new generator.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
@@ -201,8 +205,9 @@ is a materially lower bar. Needs a browser pass, not a code change.
 
 ## 5. NOT yours to start
 
-Import "new" mode is POSTPONED. **Track A (ingest, `PLAN §7`)** still needs the user. **Mastery-driven
-progression (`PLAN §9b/D2`) remains a user product decision**: B4 now runs in shadow mode, but it
+Import "new" mode is POSTPONED. **Track A's CP1 report-only analysis (`PLAN §7.0`) is now authorised;
+new input/UI import mode remains postponed.** **Mastery-driven progression (`PLAN §9b/D2`) remains a
+user product decision**: B4 now runs in shadow mode, but it
 must accumulate a meaningful disagreement log before that decision is reconsidered. The
 learner/teacher rework — `_canEdit()` is done; `Edit / rename topic` stays visible by user ruling.
 
