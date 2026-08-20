@@ -3212,6 +3212,15 @@ speech-language setting, model selection, sound test, missing-UI-entries, teache
 static export, learners. Plus a **global mute pill** replacing every scattered mute button — while
 keeping all read-out buttons, which are a different thing.
 
+**Acceptance details retained from the user's original UI brief:**
+
+- The source→target language selector is visually reduced to an **arrow control**: remove its
+  duplicated icons and descriptive text without changing the selected language-pair state.
+- If a lesson is using speech different from its intended target/chapter/storyline locale, the SC
+  shows an explicit status pill and a **one-click restore action** for the intended speech. This is
+  not a second read-out control: it is state visibility and recovery for the global speech setting.
+  Individual read-out buttons remain in place and continue to speak their own field language.
+
 **Three specific risks, from this session's scars:**
 
 1. **The static build re-implements client functions.** `build-static.js` overrides 19 of them.
@@ -3234,6 +3243,10 @@ keeping all read-out buttons, which are a different thing.
 - QC bulk actions get a card with **selectable QC types** (already in the old roadmap).
 - The download-flagged pill shrinks to a filled-flag pill, expanding on click, with a
   **guarded "clear all flags"** and clearing on GitHub-link click.
+- Keep those three cards independently reachable: a Generation Card is the common destination for
+  landing, storyline continuation, and single-chapter "add lesson" affordances; a QC Card owns bulk
+  runs rather than absorbing the local item/story repair controls; the flag pill is adjacent to the
+  login/SC pills and reveals its details only on demand.
 
 ### PLAN §C6 — LMGTFY widget (half a session, do it as a filler)
 
