@@ -202,15 +202,22 @@ function open() {
   console.log(`  check() wiring: live answers recorded (${C.run('_obsLog().length')} total), replay recorded none`);
 
   // B3 path: a canonical skill ID survives real exercise construction and the DOM-facing
-  // `check()` call. Locate the exercise by its source object, rather than assuming a shuffled
-  // exercise order or a particular question type.
+  // `check()` call. Build until the normal random round surfaces a tagged vocabulary exercise;
+  // the builder is intentionally non-deterministic in content, so this steers the fixture instead
+  // of assuming a source-object match or a particular question type.
   const tagged = open();
   const skillId = `${FIX.t.lang}:vocab:registry-proof`;
   const built = tagged.run(`(function(){
-    var item = APP.lessonData.lessons[${FIX.idx}].vocab[0];
-    item.skillId = ${JSON.stringify(skillId)};
-    startLesson(${FIX.idx});
-    var at = APP.cur.exercises.findIndex(function(ex){ return _exFlagTarget(ex) === item; });
+    var vocab = APP.lessonData.lessons[${FIX.idx}].vocab;
+    // Exercise item resolution is content-keyed (not object-identity keyed), and this corpus
+    // fixture may contain duplicate forms. Tag the whole generated vocab pool so whichever
+    // canonical source row the real resolver selects still proves propagation, not sampling luck.
+    vocab.forEach(function(v){ v.skillId = ${JSON.stringify(skillId)}; });
+    var at = -1;
+    for(var attempt = 0; attempt < 40 && at < 0; attempt++) {
+      startLesson(${FIX.idx});
+      at = APP.cur.exercises.findIndex(function(ex){ return ex.skillId === ${JSON.stringify(skillId)}; });
+    }
     if (at < 0) return null;
     APP.cur.cur = at; APP.cur.answered = false; renderEx();
     return APP.cur.exercises[at].skillId || null;
@@ -219,6 +226,8 @@ function open() {
   assert.ok(answer(tagged, false), 'the tagged vocabulary exercise is live-answerable');
   assert.strictEqual(tagged.run(`_obsLog()[0].skillId`), skillId,
     'check() records the canonical skill ID, not null or a model proposal');
+  assert.strictEqual(tagged.run(`APP.progress.bktShadow.skills[${JSON.stringify(skillId)}].attempts`), 1,
+    'the same live observation is consumed by B4 shadow mode after it is appended');
   console.log('  B3 skill path: resolved vocab ID -> exercise -> live observation');
 }
 

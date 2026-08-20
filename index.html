@@ -14659,6 +14659,76 @@ function _storylineIdForTopic(topicName){
   const sl = slArr.find(s => (s.chapters||[]).some(cid => byId[cid]?.topic === topicName));
   return sl ? sl.id : null;
 }
+// ══ PLAN §8/B4 — Bayesian Knowledge Tracing, SHADOW MODE ════════════════════
+// This is deliberately a query over the append-only observation log, never a second scoring
+// path. Recomputing from the log makes a corrupt/stale cached skill state recoverable and keeps
+// BKT strictly downstream of `check()`. It has no reader in a gate, renderer, or lesson picker.
+const BKT_SHADOW = Object.freeze({ version: 1, pInit: 0.20, pLearn: 0.15, pSlip: 0.10,
+  pGuess: 0.20, masteryThreshold: 0.70 });
+function _bktProbability(value, fallback){
+  return (typeof value === 'number' && value >= 0 && value <= 1) ? value : fallback;
+}
+function bktShadowSkills(observations){
+  const p = BKT_SHADOW;
+  const skills = Object.create(null);
+  for(const obs of (Array.isArray(observations) ? observations : [])){
+    const skillId = (obs && typeof obs.skillId === 'string') ? obs.skillId.trim() : '';
+    if(!skillId || typeof obs.correct !== 'boolean') continue;
+    const prev = skills[skillId] || { skillId, pMastery:p.pInit, attempts:0, correct:0, lastSeen:null };
+    const prior = _bktProbability(prev.pMastery, p.pInit);
+    const slip = _bktProbability(p.pSlip, 0.10), guess = _bktProbability(p.pGuess, 0.20);
+    const denom = obs.correct
+      ? prior * (1 - slip) + (1 - prior) * guess
+      : prior * slip + (1 - prior) * (1 - guess);
+    const posterior = denom > 0 ? (obs.correct ? prior * (1 - slip) : prior * slip) / denom : prior;
+    const pMastery = posterior + (1 - posterior) * _bktProbability(p.pLearn, 0.15);
+    skills[skillId] = { skillId, pMastery, attempts:prev.attempts + 1,
+      correct:prev.correct + (obs.correct ? 1 : 0), lastSeen:obs.timestamp || prev.lastSeen || null };
+  }
+  return skills;
+}
+function _bktTopicSkillIds(d){
+  const ids = new Set();
+  for(const lesson of (d?.lessons || [])) for(const item of (lesson?.vocab || [])){
+    const id = (item && typeof item.skillId === 'string') ? item.skillId.trim() : '';
+    if(id) ids.add(id);
+  }
+  return Array.from(ids).sort();
+}
+function _bktShadowStore(){
+  if(!APP.progress) return null;
+  const cur = APP.progress.bktShadow;
+  if(!cur || cur.version !== BKT_SHADOW.version || !cur.skills || !cur.topics || !Array.isArray(cur.disagreements)){
+    APP.progress.bktShadow = { version:BKT_SHADOW.version, params:{...BKT_SHADOW}, skills:{}, topics:{}, disagreements:[] };
+  }
+  return APP.progress.bktShadow;
+}
+// Recompute state and, for a tagged topic only, compare its BKT mastery aggregation with the
+// existing completion/pass-mark result. A disagreement is recorded only when its boolean pair
+// changes, so a long run does not append the same fact once per answer.
+function refreshBktShadow(d){
+  const store = _bktShadowStore(); if(!store) return null;
+  const log = _obsLog();
+  const skills = bktShadowSkills(log);
+  store.skills = skills;
+  const requiredSkillIds = _bktTopicSkillIds(d);
+  if(!d || !requiredSkillIds.length) return null; // legacy/pending topics are not comparable yet
+  const belowSkillIds = requiredSkillIds.filter(id => (skills[id]?.pMastery ?? BKT_SHADOW.pInit) < BKT_SHADOW.masteryThreshold);
+  const bktComplete = belowSkillIds.length === 0;
+  let gateComplete = null;
+  try { if(typeof _setCompleteRaw === 'function') gateComplete = !!_setCompleteRaw(d); }
+  catch(_) {} // shadow telemetry must never interfere with a scored answer or its durable write
+  const topicId = d.id || d.topic || null;
+  const next = { topicId, requiredSkillIds, belowSkillIds, bktComplete, gateComplete,
+    observationCount:log.length, updatedAt:new Date().toISOString() };
+  const prior = store.topics[topicId];
+  if(gateComplete !== null && gateComplete !== bktComplete &&
+     (!prior || prior.gateComplete !== gateComplete || prior.bktComplete !== bktComplete)){
+    store.disagreements.push({ ...next });
+  }
+  store.topics[topicId] = next;
+  return next;
+}
 // Record one graded answer. Mirrors markSolved/markWrong's withheld-item exclusion — a question
 // that cannot be credited or penalised should not be evidence either. `firstAttempt` is an O(n)
 // scan of the log for this qid; fine at real single-learner volumes, revisit with an index if this
@@ -14685,6 +14755,7 @@ function recordObservation(ex, correct){
       firstAttempt,
       timestamp: new Date().toISOString(),
     });
+    refreshBktShadow(d); // B4 shadow only — observes the completed B1/B3 write, never feeds a gate
     saveProg();
   } catch(_) {}
 }

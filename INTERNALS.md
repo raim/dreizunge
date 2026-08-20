@@ -797,7 +797,7 @@ moves both decks identically, measured. Where a fork looks asymmetric, the cause
 | the card truth table | `build_history/probe_gates_v77.js` → **`v80i_card_gates.txt`** (`v80e`, `v80`, `v77` and `v76` tables superseded). ⚠️ It SELECTS its chapters from the corpus, so a data drop moves the selection — disambiguate by re-running the PREVIOUS client against the CURRENT corpus |
 | **the lesson-path node lock** | `buildPath()`'s node loop — `isLocked` is now **exactly** `_storyLocked` (`v81_i`, user ruling). The old sequential half ("previous lesson done") is REMOVED: it was already unenforced everywhere else (`_firstUnfinishedLessonIdx`'s `_playable` never read it, `tapWord` bypasses it). `_prevDone`/`_firstNode` still exist but now only feed the connector-line's CSS, not the lock. Guarded on the RENDERED node in `test/unit-hidden-lessons.test.js` §4 — ⚠️ `buildPath` sets `node.className` by direct property assignment, not parsed markup, so the `lib-dom` stub's `classList`/CSS-selector matching does NOT see it; read `node.className` as a raw string instead |
 
-**PLAN §8/B1–B3 — observations, target-language skills, and vocabulary tags** (`v81_j`–`v81_k`)
+**PLAN §8/B1–B4 — observations, target-language skills, vocabulary tags, and shadow BKT** (`v81_j`–`v81_l`)
 
 | what | where |
 |---|---|
@@ -809,6 +809,8 @@ moves both decks identically, measured. Where a fork looks asymmetric, the cause
 | storyline attribution | `_storylineIdForTopic(topicName)` — a cheap, UI-independent lookup. **Not** `_storylineForTopic`, which is scoped to the storyline browsing screen and does unrelated JSON-encoding work |
 | survives a chapter wipe | `_clearChapterProgress` deliberately does **not** clear `observations` (or `learned`) — both are evidence of what the learner has demonstrated, independent of whether a chapter's gate state is reset |
 | growth ceiling not addressed | `learners.js`'s `MAX_STATE_BYTES` (2MB) caps the whole synced `progress` blob; nothing here prunes the log |
+| **B4 shadow calculation** | `BKT_SHADOW`, `bktShadowSkills(observations)`, and `refreshBktShadow(d)`. Each new graded observation recomputes canonical skill `pMastery` from the append-only log using `{pInit:.20, pLearn:.15, pSlip:.10, pGuess:.20}`. The derived cache is `APP.progress.bktShadow` (`skills`, tagged `topics`, and disagreement transitions) |
+| **B4 boundary** | only topics with reviewed `vocab[].skillId` values are compared. `refreshBktShadow` reads `_setCompleteRaw(d)` only to log a changed `gateComplete`/`bktComplete` disagreement. **No gate, renderer, picker, or progression reader consumes BKT state.** Pending and legacy topics are incomparable (`null`), not failures |
 
 **TRACK T — the text-focused progress card** (all in `index.html`, built across the `v80` line)
 
@@ -849,8 +851,9 @@ moves both decks identically, measured. Where a fork looks asymmetric, the cause
   because the generators still emit literal `id: 6` for word_forms, synonyms AND conjugation.
 - **The solved store is MONOTONIC** — one correct answer ever = solved. `§T7` was RULED at `v81_e` as
   HIGHLIGHT ONLY and did NOT change this: the demotion is a parallel `wrong` map. Anything that would
-  make the solved store fall is reading 2 (mastery decay, `PLAN §9b/D2`, blocked on `§8/B4`) and is
-  not ruled. ⚠️ Its readers include the ROUND BUILDERS, not just coverage and the gates.
+  make the solved store fall is reading 2 (mastery decay, `PLAN §9b/D2`). B4 now gathers shadow
+  evidence, but a change remains unruled until its disagreement log is meaningful. ⚠️ Its readers
+  include the ROUND BUILDERS, not just coverage and the gates.
 
 - **A REVIEW RENDER IS NOT A COMPLETE CHAPTER** (`v81_c`). `showComplete(true)` means "record no
   play"; it does NOT mean "this chapter is finished", and since `v81_b` a later chapter LANDS on it

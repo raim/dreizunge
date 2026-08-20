@@ -1662,6 +1662,31 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_l` — `PLAN §8/B4`, shadow-only Bayesian Knowledge Tracing
+
+**Shipped by: Codex.**
+
+BKT now runs strictly downstream of the append-only observation log, and remains invisible to the
+learner. For every reviewed canonical skill ID it recomputes `pMastery` in observation order using
+the documented `{pLearn:.15, pSlip:.10, pGuess:.20}` parameters and a deliberately explicit
+`.20` initial prior. The derived, recoverable cache lives at `APP.progress.bktShadow`; it contains
+skill state, tagged-topic comparisons, and a disagreement entry only when the pair of existing gate
+result and BKT result changes. Recomputing from source evidence means cache drift never becomes a
+second authority.
+
+Only topics containing B3-reviewed `vocab[].skillId` entries are comparable. The existing
+completion/pass-mark decision is read solely for the telemetry comparison; legacy or pending topics
+are ignored rather than guessed about. No completion helper, renderer, lesson picker, or progression
+policy reads BKT state. This is intentionally measurement, not a mastery gate.
+
+**Guarded** by a new deterministic BKT unit check plus the live `check()` observation test, which
+now proves the newly appended canonical observation is consumed by shadow BKT. Mutation-testing a
+forced BKT-complete result makes the disagreement-transition guard fail. Full / quick suite:
+**235 / 209**.
+
+**Next:** accumulate real reviewed skill-tagged observations, then consider B5's read-only
+aggregate surface. Mastery-driven progression remains a separate user product decision.
+
 ### `v81_k` — `PLAN §8/B2–B3`, target-language skill registry and vocabulary-tagged observations
 
 **Shipped by: Codex.**
@@ -3413,10 +3438,10 @@ reversible same-type aliases. Source is evidence context, never part of a skill'
 vocabulary. Every amended prompt still calls `scriptPinNote` and records `_genMeta`; unregistered
 proposals stay pending beside the row, and no historical topic was backfilled.
 
-**B4 — BKT in SHADOW MODE.** Compute `pMastery` and show it nowhere. Run it alongside the existing
-`chapterComplete`/pass-mark gate and **log where the two disagree.** This is the measurement that
-tells you whether §5/§6 are worth adopting, and it costs nothing if the answer is no. It also
-surfaces the 97%-correct saturation problem (§0.1) as data rather than as a prediction.
+**B4 — BKT in SHADOW MODE. ✅ SHIPPED at `v81_l`.** `pMastery` is recomputed only from reviewed
+skill-tagged observations and shown nowhere. It runs alongside the existing `chapterComplete`/
+pass-mark gate, logging only changed disagreement pairs; it cannot influence progression. It can now
+accumulate the evidence that tells you whether §5/§6 are worth adopting.
 
 **B5 — surface it read-only.** The §11 aggregate views (vocabulary/grammar/word-forms/reading), and
 §8's corpus-vs-independent split, which is free once `evidence` is recorded. Still controlling

@@ -1,21 +1,25 @@
-# Session prompt — written at the `v81_k` cut (end of session 39)
+# Session prompt — written at the `v81_l` cut (end of session 40)
 
 *(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_j.md` was the
 previous one — superseded by this file and renamed, not kept alongside.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_k`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_l`** cut.
+
+**Session 40 shipped `v81_l`: `PLAN §8/B4`, BKT in shadow mode.** A newly appended graded
+observation now recomputes canonical skill mastery from the append-only log using a fixed, explicit
+prior (`.20`) and the plan's `.15/.10/.20` learn/slip/guess parameters. `APP.progress.bktShadow`
+stores the derived skill state, tagged-topic comparisons, and only changed disagreement pairs with
+the existing completion/pass-mark result. It is shown nowhere and cannot affect a gate, renderer,
+picker, or progression. Pending/legacy topics without reviewed vocabulary IDs remain incomparable.
+The BKT and live observation guards were mutation-tested. Full / quick suite: **235 / 209**; corpus
+unchanged at **323 topics, 91 storylines, 33 languages, 617 `en` keys**.
 
 **Session 39 shipped `v81_k`: `PLAN §8/B2–B3`, the target-language skill registry and vocabulary
 tagging foundation.** `skills.json` is server-side, separate from `lessons.json`; model-proposed
 `<target>:vocab:<dictionary-form>` IDs become usable only after explicit review/registration or a
-reversible alias. Source language is evidence context, not skill identity. New standard vocabulary
-lessons retain pending proposals for review but carry only a resolved canonical `skillId` into their
-vocab rows and exercises; `recordObservation()` now writes it. Legacy/pending rows remain `null`.
-No corpus backfill, registry UI, BKT, progression, or player policy changed. A disposable browser
-pass registered `it:vocab:successione`, played it, and confirmed the first-attempt observation with
-that exact canonical ID. Full / quick suite: **234 / 208**; corpus unchanged at **323 topics, 91
-storylines, 33 languages, 617 `en` keys**.
+reversible alias. A disposable browser pass registered `it:vocab:successione`, played it, and
+confirmed the first-attempt observation with that exact canonical ID.
 
 **Session 38 shipped two things and started nothing else.** `v81_i`: one user ruling, delivered
 directly rather than queued — the lesson-path's SEQUENTIAL lock ("previous lesson done") is
@@ -68,14 +72,14 @@ want to eyeball the log in the console anyway.**
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 234 checks
-node test/run.js --quick                  → expect 208
+node test/run.js                          → expect 235 checks
+node test/run.js --quick                  → expect 209
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 languages, 617 `en` keys**.
-`APP_VERSION = 'v81_k'`.
+`APP_VERSION = 'v81_l'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -147,13 +151,12 @@ is a materially lower bar. Needs a browser pass, not a code change.
 
 ## 3. BUILDABLE NOW, no ruling needed
 
-- ~~`PLAN §8/B1`, the observations log~~ **✅ SHIPPED at `v81_j`; B2/B3 skill registry and new
-  vocabulary tagging are ✅ SHIPPED at `v81_k`.** `APP.progress.observations` is append-only and
-  `check()`-graded vocab exercises now record their reviewed canonical target-language skill IDs.
-  `error_hunt`/`ai_error_hunt` and the crossword still grade differently and are NOT wired.
-- **`PLAN §8/B4`, BKT in shadow mode** — now the next Track B step. It must compute `pMastery`,
-  show it nowhere, and log disagreement with the existing chapter/pass-mark gates. It must not alter
-  progression and becomes meaningful only as reviewed skill-tagged observations accumulate.
+- ~~`PLAN §8/B1`, the observations log; B2/B3 registry and new-vocabulary tags; B4 shadow BKT~~
+  **✅ SHIPPED at `v81_j`–`v81_l`.** `APP.progress.observations` remains append-only; reviewed
+  vocabulary IDs now feed `APP.progress.bktShadow`, which compares BKT only with the existing gate
+  and controls nothing. `error_hunt`/`ai_error_hunt` and the crossword still grade differently and
+  are NOT wired. The next Track B candidate is B5, a read-only aggregate surface, but it needs real
+  reviewed evidence to be useful.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
@@ -189,7 +192,7 @@ is a materially lower bar. Needs a browser pass, not a code change.
   No translate pass is owed for it.
 - **The translate pass** for the remaining `en`-only keys, `translate-ui.js --langnames`, the
   `hr` `ui.json` pass, and a **native-speaker check of the `cyrillic-sr` table**.
-- **A device pass on `v81_a` … `v81_j`.** The v80 line changed every card and every question screen: the story
+- **A device pass on `v81_a` … `v81_l`.** The v80 line changed every card and every question screen: the story
   panel is on all of them, never collapsed, three-state coloured, tappable, with a translate toggle;
   the progress bars moved to the bottom; the storyboard row became clickable chapter icons.
   `v81_i` adds one more thing to look at: ordinary lessons on the node path are clickable out of
@@ -199,9 +202,9 @@ is a materially lower bar. Needs a browser pass, not a code change.
 ## 5. NOT yours to start
 
 Import "new" mode is POSTPONED. **Track A (ingest, `PLAN §7`)** still needs the user. **Mastery-driven
-progression (`PLAN §9b/D2`) must NOT be decided** until `§8/B4` has run BKT in shadow mode. The
-learner/teacher rework — `_canEdit()` is done; `Edit / rename topic` stays visible
-by user ruling.
+progression (`PLAN §9b/D2`) remains a user product decision**: B4 now runs in shadow mode, but it
+must accumulate a meaningful disagreement log before that decision is reconsidered. The
+learner/teacher rework — `_canEdit()` is done; `Edit / rename topic` stays visible by user ruling.
 
 **⚠️ THE TRACK T COLOURING NUMBERS MOVED AT `v81_d`** — the denominator used to count questions no
 round can build. GREEN 18.6% → **27.8%**, PARTIAL 19.5% → **11.8%**, mean questions per word 2.20 →
@@ -243,7 +246,8 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
 - `_storyLockedLesson(L, d)` — the ONE "is this lesson closed" rule.
 - `_cardHeader(prefix)` + `.card-screen` — every new card page uses both.
 - `scriptPinNote(lang, script, role)` — every prompt emitting target-language text calls it.
-- `recordObservation(ex, correct)` / `APP.progress.observations` — the `PLAN §8/B1–B3` evidence
-  path (`v81_j`–`v81_k`). See `INTERNALS.md` §6b before extending it: only `check()`-graded
-  exercises are logged, and only resolved vocabulary IDs are non-null; `learners.js`'s
+- `recordObservation(ex, correct)` / `APP.progress.observations` / `refreshBktShadow(d)` — the
+  `PLAN §8/B1–B4` evidence path (`v81_j`–`v81_l`). See `INTERNALS.md` §6b before extending it:
+  only `check()`-graded exercises are logged, only resolved vocabulary IDs feed BKT, and no BKT
+  value may become a reader of progression without a separate product ruling; `learners.js`'s
   `MAX_STATE_BYTES` growth ceiling remains unaddressed.
