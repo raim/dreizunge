@@ -1662,6 +1662,69 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_v` — `PLAN §C5` stage 1: "🌍 home" now means the library, not generation — prep, zero visual change
+
+**Shipped by: Claude Code.** New track: with `PLAN §C0`'s router seam complete (`v81_m`–`v81_u`),
+the user asked what's next and confirmed the intent behind it — splitting the landing page into a
+Generation Card and a corpus/library screen (`PLAN §C5`), plus eventually a Settings Card
+(`PLAN §C4`). Unlike `§C0`, this is real UI redesign, not naming/routing — so it gets the same
+staged treatment `§C0` used, starting with a zero-risk naming/prep stage before any visual change.
+
+**Two consequential design forks were surfaced and ruled on before writing any code.** (1) The
+landing page's language pickers are dual-purpose today — they set the generation form's target
+language AND filter the library list. Splitting the screens forces a choice: duplicate the pickers
+(with two sub-options — synced or fully decoupled) or give only one screen a picker. **Ruled:
+duplicate, and keep them SYNCED** (one shared value on two screens), specifically because
+`selectLang`/`selectSrcLang` already carry SIX separate historical bug-fix references for exactly
+this kind of state coupling going wrong (`v67.1`, `v76_i`, `v78_q`, `v79_o`, …) — decoupling would
+be a real behaviour change, not a layout one, and not what was asked for. (2) "🌍 home" (7 buttons)
+and the stranded-learner fallback currently land on the combined page; once split, they must pick
+ONE destination. **Ruled: the library** — "home" means "see what you've made"; the Generation Card
+gets its own clear "+ Generate new" entry point. A third question — whether to fold in a separate,
+already-documented structural fix (the storyline picker / per-chapter dropdown / book-arc "add
+lesson type" three-way drift, `§0i` reconciled against this plan) — was **ruled OUT of this release**,
+kept as its own follow-up.
+
+**What this release does: ONLY the "home means library" ruling, as pure routing prep, no visual
+change.** `goLibraryClean()`/`showLibraryClean()` added — deliberately BYTE-FOR-BYTE
+`goLandingClean()`'s body today, since the actual screen split (moving `#gen-area` into its own
+`#generation-screen`) has not happened yet; both still show `'landing'`. All 10 callers that meant
+"home" (7 static buttons, 3 JS stranded-learner fallbacks — `loadSaved`'s failed-auto-start,
+`compBackToStory`'s and `confirmQuit`'s solo-chapter branches) rerouted from `showGenerationClean()`
+to `showLibraryClean()`; `build-static.js`'s matching `loadSaved` copy updated too.
+`showGeneration()`/`showGenerationClean()` themselves are UNCHANGED — measured first: all 3 of
+their remaining callers (continuing a storyline, starting a multi-chapter book job, starting a
+single-lesson job) genuinely want the generation FORM, confirming they were never part of the
+"home" confusion.
+
+**Test fallout, sorted the same way as every `§C0` release**: files that stub `goLandingClean`
+directly (5 of them) — checked each one's actual assertions rather than assuming; 4 were
+unaffected (the stub was defensive/never actually asserted on), 1 (`unit-story-unlocked-card.test.js`)
+genuinely exercised the now-rerouted fallback path and needed its stub renamed to `goLibraryClean`.
+`unit-learner-nav.test.js` had 4 source-text pins on the specific rerouted call sites (3 broke as
+true positives; a 4th, checking the `comp-hdr-home` button, turned out to already be a VACUOUSLY
+PASSING weak alternation regex predating this release — tightened while fixing it, not left as
+found). `unit-ui-journeys.test.js`'s three "simulate the 🌍 click" journey blocks (teacher, lesson-
+set, storyline-screen) switched from calling `showGenerationClean()` to `showLibraryClean()`, since
+that's what the real button now calls; `showLibraryClean()` also got its own direct hash-reset spy
+proof, mirroring `showGenerationClean()`'s. **That addition hit a genuine harness bug of my own
+making**: reusing the spy's captured-original variable name (`orig`) across two `C.run()` calls in
+the same persistent vm context left the first spy's closure pointing at the second spy after
+reassignment — `Maximum call stack size exceeded`, real infinite mutual recursion, not a flake.
+Fixed with a distinct variable name (`origLib`) plus restoring `history.replaceState` between the
+two spy setups, and documented as its own gap.
+
+Mutation-tested: temporarily emptied `goLibraryClean()`'s body — `showLibraryClean()`'s dedicated
+hash-reset assertion caught it immediately (`0 !== 1`), independent of the other journey blocks.
+
+node test/run.js: 235 checks, ALL PASSED
+node test/run.js --quick: 209 checks, ALL PASSED
+node build-static.js re-run (index.html + build-static.js both changed); node test/check-inline.js
+and the docs/index.html variant: 0 failures each
+
+**Stage 2 — the actual visual split (moving `#gen-area` + duplicated, synced language pickers into
+a new `#generation-screen`, adding a "+ Generate new" entry point on the library) — is next.**
+
 ### `v81_u` — `PLAN §C0.3`, an EIGHTH surface seamed: storyline-screen, third and last of the ruling — the track's biggest slice
 
 **Shipped by: Claude Code.** The ruling after `v81_r` was "do THREE more, smallest first" —

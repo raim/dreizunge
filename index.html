@@ -1058,7 +1058,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
   <!-- Row 1: Storyline context — ← back, storyline title (link), 🔗 share -->
   <div id="ls-storyline-hdr" class="sl-screen-hdr">
     <div class="sl-screen-title-row">
-      <button class="sl-screen-home" onclick="showGenerationClean()" id="btn-topics" title="Home">🌍</button>
+      <button class="sl-screen-home" onclick="showLibraryClean()" id="btn-topics" title="Home">🌍</button>
       <span id="ls-storyline-icon" style="font-size:20px">📖</span>
       <span id="ls-storyline-title" class="sl-screen-title" style="cursor:pointer" onclick="goStorylineFromLesson()"></span>
       <button class="sl-screen-share" id="share-lesson-btn" onclick="shareLesson()" title="Share">🔗</button>
@@ -1231,7 +1231,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
        chapter with no storyline. The title is also the route back: it replaced "← Back to story". -->
   <div class="sl-screen-hdr" id="comp-hdr" style="display:none;text-align:left">
     <div class="sl-screen-title-row">
-      <button class="sl-screen-home" onclick="showGenerationClean()" id="comp-hdr-home" title="">🌍</button>
+      <button class="sl-screen-home" onclick="showLibraryClean()" id="comp-hdr-home" title="">🌍</button>
       <span class="sl-screen-title" id="comp-hdr-title" style="cursor:pointer" role="button" tabindex="0"
             onclick="compBackToStory()"
             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
@@ -1362,7 +1362,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
 <div id="finished-screen" class="screen card-screen">
   <div class="sl-screen-hdr" id="fin-hdr" style="text-align:left">
     <div class="sl-screen-title-row">
-      <button class="sl-screen-home" onclick="showGenerationClean()" id="fin-hdr-home" title="">🌍</button>
+      <button class="sl-screen-home" onclick="showLibraryClean()" id="fin-hdr-home" title="">🌍</button>
       <span class="sl-screen-title" id="fin-hdr-title" style="cursor:pointer" role="button" tabindex="0"
             onclick="compBackToStory()"
             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
@@ -1407,7 +1407,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
 <div id="summary-screen" class="screen card-screen">
   <div class="sl-screen-hdr" id="sum-hdr" style="text-align:left">
     <div class="sl-screen-title-row">
-      <button class="sl-screen-home" onclick="showGenerationClean()" id="sum-hdr-home" title="">🌍</button>
+      <button class="sl-screen-home" onclick="showLibraryClean()" id="sum-hdr-home" title="">🌍</button>
       <span class="sl-screen-title" id="sum-hdr-title" style="cursor:pointer" role="button" tabindex="0"
             onclick="compBackToStory()"
             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
@@ -1461,7 +1461,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
 <div id="unlockstory-screen" class="screen card-screen">
   <div class="sl-screen-hdr" id="us-hdr" style="text-align:left">
     <div class="sl-screen-title-row">
-      <button class="sl-screen-home" onclick="showGenerationClean()" id="us-hdr-home" title="">🌍</button>
+      <button class="sl-screen-home" onclick="showLibraryClean()" id="us-hdr-home" title="">🌍</button>
       <span class="sl-screen-title" id="us-hdr-title" style="cursor:pointer" role="button" tabindex="0"
             onclick="compBackToStory()"
             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
@@ -1489,7 +1489,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
   <div class="sl-screen">
     <div class="sl-screen-hdr">
       <div class="sl-screen-title-row">
-        <button class="sl-screen-home" onclick="showGenerationClean()" title="Home">🌍</button>
+        <button class="sl-screen-home" onclick="showLibraryClean()" title="Home">🌍</button>
         <span class="sl-screen-title" id="sl-screen-title" style="cursor:default">📖</span>
         <button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="Edit title" style="display:none">✏️</button>
         <button class="sl-screen-share" id="sl-screen-gen-btn" onclick="openRetitleMenu(event)" title="Re-generate titles" style="display:none">✨</button>
@@ -1557,7 +1557,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
   <div class="sl-screen">
     <div class="sl-screen-hdr">
       <div class="sl-screen-title-row">
-        <button class="sl-screen-home" onclick="showGenerationClean()" title="Home">🌍</button>
+        <button class="sl-screen-home" onclick="showLibraryClean()" title="Home">🌍</button>
         <span class="sl-screen-title" id="td-title" style="cursor:default">🎓</span>
         <button class="sl-screen-share" onclick="showTeacher()" title="Refresh">🔄</button>
       </div>
@@ -3344,6 +3344,15 @@ function showGeneration(){ return goLanding(); }
 // in this same release — `showComplete`/`goLanding`'s OTHER remaining surfaces are still future
 // work, but generation itself is now fully behind the seam, as the plan's own ordering asks for.
 function showGenerationClean(){ return goLandingClean(); }
+// PLAN §C5 — stage 1 (user ruling): "🌍 home" and every stranded-learner fallback now name the
+// LIBRARY, not generation — the two are being split into separate screens (`§C0` gave every
+// surface a name; this is the first real screen SPLIT the seam layer was built for). All 7 static
+// "🌍 home" buttons and 3 JS fallback call sites moved from `showGenerationClean()` to this name.
+// `showGeneration()`/`showGenerationClean()` keep their current meaning and callers unchanged —
+// their remaining 3 callers all genuinely want the generation FORM (continuing a storyline,
+// showing a running book/lesson job), never the library. See `goLibraryClean()`'s own comment for
+// why its body is a deliberate placeholder until stage 2 actually splits the screen.
+function showLibraryClean(){ return goLibraryClean(); }
 // Settings has no `.screen` of its own yet (`PLAN §C4` gives it one later) — this wraps the
 // CURRENT popover toggle so callers have one name to reach for regardless of which mechanism
 // settings uses underneath. `APP.screen` is correctly untouched: the underlying screen doesn't
@@ -4022,6 +4031,15 @@ async function goLessonSet(){
   show('lesson-set');
 }
 function goLandingClean(){ history.replaceState(null,'','#'); APP.ttsLang=null; APP._ttsVoiceName=null; _restoreFormLang().finally(()=>{ loadSavedList(); show('landing'); }); }
+// PLAN §C5 — stage 1 of splitting the landing page into a Generation Card and a library/corpus
+// screen (user ruling): "🌍 home" and every stranded-learner fallback now mean "the library", not
+// "generation" — a genuine behaviour change from today, where both landed on the same combined
+// page. This function is a DELIBERATE placeholder: it is byte-for-byte `goLandingClean()` today,
+// because the split has not happened yet — `landing` is still the combined page. Stage 2 (moving
+// `#gen-area` into its own screen) is what makes this body diverge from `goLandingClean()`'s; until
+// then, the two must stay behaviourally identical, or "home" and "generate new" would already
+// disagree about where the (still single) landing page's state should reset to.
+function goLibraryClean(){ history.replaceState(null,'','#'); APP.ttsLang=null; APP._ttsVoiceName=null; _restoreFormLang().finally(()=>{ loadSavedList(); show('landing'); }); }
 
 // ── init ──
 // ══ PDF-to-Storyline ══════════════════════════════════════════════════════════
@@ -6081,7 +6099,7 @@ async function loadSaved(ref){
       if(!started){
         const ctx=_storylineForTopic(APP.lessonData?.topic);
         if(ctx && ctx.sl) showStoryline(ctx.sl.id, ctx.enc);
-        else showGenerationClean();
+        else showLibraryClean();
       }
     }
   }catch(e){ alert('Could not load: '+e.message); }
@@ -17738,7 +17756,7 @@ function compBackToStory(){
   endDrill();
   const b = APP._compBack;
   if (b && b.kind === 'storyline') showStoryline(b.id, b.enc);
-  else showGenerationClean();
+  else showLibraryClean();
 }
 
 // ── v77_j: the story-unlocked card (roadmap §0c, the walk's THIRD page) ──────────────────────
@@ -19368,7 +19386,7 @@ function confirmQuit(){
     const topicKey = APP.lessonData?.topic;
     const ctx = topicKey ? _storylineForTopic(topicKey) : null;
     if(ctx && ctx.sl) showStoryline(ctx.sl.id, ctx.enc);
-    else showGenerationClean();
+    else showLibraryClean();
   } else {
     showLessonSet();
   }

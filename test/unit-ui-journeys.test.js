@@ -152,6 +152,24 @@ async function main() {
   assert.strictEqual(active(C, 'landing'), true, 'showGenerationClean() also activates the landing surface');
   assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen agrees');
   console.log('  generation: the "home" entry point (showGenerationClean) resets the hash and lands on landing too');
+  C.run('history.replaceState = orig; true;', 'generation-clean-restore');
+
+  // PLAN §C5 stage 1 (user ruling): "🌍 home" now means the LIBRARY, not generation —
+  // `showLibraryClean()` is a genuinely NEW seam function (not a rename of `showGenerationClean()`),
+  // proven directly here the same way, rather than only via the other journeys' indirect exits.
+  // Its body is a deliberate placeholder today (byte-for-byte `goLandingClean()`'s effect, since the
+  // screen split has not happened yet — see `goLibraryClean()`'s own comment in index.html), so this
+  // assertion will need re-proving once stage 2 gives the library its own distinct screen.
+  const libCleanCalls = C.run(`
+    window.__spyReplaceState = 0;
+    var origLib = history.replaceState;
+    history.replaceState = function(){ window.__spyReplaceState++; return origLib.apply(history, arguments); };
+    showLibraryClean();
+    window.__spyReplaceState;`, 'library-clean');
+  assert.strictEqual(libCleanCalls, 1, 'showLibraryClean() resets the URL hash (history.replaceState called once)');
+  assert.strictEqual(active(C, 'landing'), true, 'showLibraryClean() also activates the landing surface');
+  assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen agrees');
+  console.log('  generation: the "home" entry point (showLibraryClean) resets the hash and lands on landing too');
 
   // Settings have no dedicated screen yet: the model popover is the current entry/exit surface
   // C4 will absorb. Its open/close transition must leave the underlying landing route intact —
@@ -194,24 +212,25 @@ async function main() {
   assert.strictEqual(C.run('APP.screen'), 'teacher-screen', 'APP.screen agrees');
   assert.ok(C.run("(document.getElementById('td-body').innerHTML || '').length") > 0,
     'the dashboard body rendered its panels rather than staying blank');
-  // The "🌍" home button (`index.html:1560`) is static markup calling `showGenerationClean()` —
-  // this harness never parses raw HTML outside the `<script>` block into its fake DOM (only
-  // JS-rendered `innerHTML` content becomes real nodes; ids fetched via `getElementById` are
-  // auto-vivified stubs with no children), so there is no element to click. Call the function the
-  // button calls, exactly as the "generation" block above already proves it in isolation — what
-  // THIS assertion adds is that the exit still works when reached FROM the teacher screen.
-  C.run('showGenerationClean(); true;', 'teacher-exit');
+  // The "🌍" home button is static markup — this harness never parses raw HTML outside the
+  // `<script>` block into its fake DOM (only JS-rendered `innerHTML` content becomes real nodes;
+  // ids fetched via `getElementById` are auto-vivified stubs with no children), so there is no
+  // element to click. Call the function the button calls instead. v81_v / PLAN §C5 stage 1: that
+  // function is now `showLibraryClean()`, not `showGenerationClean()` — "home" means the library,
+  // a user ruling. Both still land on the SAME 'landing' screen today (the split hasn't happened
+  // yet) — see INTERNALS.md §6b.
+  C.run('showLibraryClean(); true;', 'teacher-exit');
   await settle();
   assert.strictEqual(active(C, 'landing'), true,
-    'the teacher screen\'s "🌍" home button (already-seamed showGenerationClean) returns to landing');
+    'the teacher screen\'s "🌍" home button (already-seamed showLibraryClean) returns to landing');
   assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen returns with it');
   console.log('  teacher dashboard: landing -> rendered panels (via showTeacher) -> landing');
 }
 
 // PLAN §C0.3 — the SECOND of three surfaces ruled together (user, after `v81_r`): lesson-set, the
 // per-chapter lesson list. Like the teacher journey above, the exit (the "🌍" home button) is
-// static markup and unreachable by simulated click in this harness — `showGenerationClean()` is
-// called directly, already proven in isolation by the "generation" block earlier in this file.
+// static markup and unreachable by simulated click in this harness — `showLibraryClean()` is
+// called directly (v81_v / PLAN §C5 stage 1: "home" now means the library, not generation).
 {
   const C = client();
   C.run('loadSavedList = async function(){}; true;', 'lessonset-setup');
@@ -224,10 +243,10 @@ async function main() {
   // bullet for the same shape of gap), so children.length is the assertion that can actually see it.
   assert.ok(C.run("document.getElementById('lesson-path').children.length") > 0,
     'the lesson path rendered its nodes rather than staying blank');
-  C.run('showGenerationClean(); true;', 'lessonset-exit');
+  C.run('showLibraryClean(); true;', 'lessonset-exit');
   await settle();
   assert.strictEqual(active(C, 'landing'), true,
-    'the lesson-set screen\'s "🌍" home button (already-seamed showGenerationClean) returns to landing');
+    'the lesson-set screen\'s "🌍" home button (already-seamed showLibraryClean) returns to landing');
   assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen returns with it');
   console.log('  lesson-set: landing -> rendered lesson path (via showLessonSet) -> landing');
 }
@@ -257,9 +276,10 @@ async function main() {
 // and the biggest: four distinct entry functions, this journey enters through one of them
 // (`showStorylineById`, the one real storyline links use). The exit is the same static-markup gap
 // `v81_r`/`v81_s` already found (the "🌍" home button is unreachable by this harness) — resolved
-// the same way, calling `showGenerationClean()` directly. `closeStorylineScreen()` (the OTHER exit,
-// wired to "← Back") is not exercised here: its only effect is `history.back()`, which this
-// harness's stub `history` object no-ops, so there is nothing observable to assert on it.
+// the same way, calling `showLibraryClean()` directly (v81_v / PLAN §C5 stage 1: "home" now means
+// the library, not generation — a user ruling). `closeStorylineScreen()` (the OTHER exit, wired to
+// "← Back") is not exercised here: its only effect is `history.back()`, which this harness's stub
+// `history` object no-ops, so there is nothing observable to assert on it.
 {
   const C = client();
   C.run('loadSavedList = async function(){}; true;', 'storyline-setup');
@@ -295,10 +315,10 @@ async function main() {
   assert.strictEqual(active(C3, 'storyline-screen'), true,
     'showStorylineByChainId() also activates the storyline screen — the URL/hash entry path, which ' +
     'does NOT call openStorylineScreen at all (it re-renders independently with replaceState)');
-  C.run('showGenerationClean(); true;', 'storyline-exit');
+  C.run('showLibraryClean(); true;', 'storyline-exit');
   await settle();
   assert.strictEqual(active(C, 'landing'), true,
-    'the storyline screen\'s "🌍" home button (already-seamed showGenerationClean) returns to landing');
+    'the storyline screen\'s "🌍" home button (already-seamed showLibraryClean) returns to landing');
   assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen returns with it');
   console.log('  storyline-screen: landing -> rendered chapter cards (via showStorylineById) -> landing');
 }

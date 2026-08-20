@@ -307,7 +307,11 @@ function renderCard({ teacher }) {
                   hearts:3, streak:4, bestStreak:4 };
       APP._navWent = null;
       openStorylineScreen = function(id){ APP._navWent = 'storyline:' + id; };
-      goLandingClean = function(){ APP._navWent = 'landing'; };
+      // v81_v / PLAN §C5 stage 1: the stranded-learner fallback now calls goLibraryClean(), not
+      // goLandingClean() — "home" means the library, a user ruling. Both still show the SAME
+      // 'landing' screen today (the split hasn't happened yet), so the stub keeps the string
+      // 'landing' — see INTERNALS.md §6b.
+      goLibraryClean = function(){ APP._navWent = 'landing'; };
       showComplete(); true;`, 'render');
     return C;
   };

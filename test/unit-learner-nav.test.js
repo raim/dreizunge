@@ -127,11 +127,12 @@ console.log('  helpers: learner gate, resume index (hidden-aware), storyline res
   // Quitting a question (the ✕) must also respect the learner split: back to the story/landing,
   // not the lesson-set editing page. (Reported: "press x and I still get the lesson-set page.")
   const cq = ext(html, 'confirmQuit');
-  // v81_n / PLAN §C0.3: the landing call is now showGenerationClean(), a thin delegate to
-  // goLandingClean() — see INTERNALS.md §6b, "PLAN §C0 — the router seam". Same behaviour, new name.
   // v81_u: showStoryline(...), a thin delegate to openStorylineScreen(...) — see INTERNALS.md §6b.
-  assert.ok(/if\(_isLearner\(\)\)\{[\s\S]*?showStoryline\(ctx\.sl\.id, ctx\.enc\)[\s\S]*?showGenerationClean\(\)/.test(cq),
-    'confirmQuit sends a learner to the storyline/landing');
+  // v81_v / PLAN §C5 stage 1: the stranded-learner fallback is now showLibraryClean(), not
+  // showGenerationClean() — "home" means the library, a user ruling. Both still delegate to the
+  // SAME landing screen today (the split hasn't happened yet) — see INTERNALS.md §6b.
+  assert.ok(/if\(_isLearner\(\)\)\{[\s\S]*?showStoryline\(ctx\.sl\.id, ctx\.enc\)[\s\S]*?showLibraryClean\(\)/.test(cq),
+    'confirmQuit sends a learner to the storyline/library');
   // v81_s / PLAN §C0.3: showLessonSet(), a thin delegate to goLessonSet() — see INTERNALS.md §6b.
   assert.ok(/\} else \{\s*showLessonSet\(\);/.test(cq), 'a teacher still returns to the lesson-set page on quit');
 }
@@ -199,11 +200,11 @@ console.log('  loadSaved: learner auto-start, teacher keeps the page: OK');
   assert.ok(/APP\._compBack = \(sl && slEnc\) \? \{ kind: 'storyline'/.test(sc), 'Back target: storyline when present');
   assert.ok(/: \{ kind: 'landing' \}/.test(sc), 'Back target: landing for a solo chapter');
   const back = ext(html, 'compBackToStory');
-  // v81_n / PLAN §C0.3: showGenerationClean() replaces the direct goLandingClean() call — see
-  // INTERNALS.md §6b, "PLAN §C0 — the router seam".
   // v81_u: showStoryline(...), a thin delegate to openStorylineScreen(...) — see INTERNALS.md §6b.
-  assert.ok(/showStoryline\(b\.id, b\.enc\)/.test(back) && /showGenerationClean\(\)/.test(back),
-    'compBackToStory dispatches to the storyline screen or the landing page');
+  // v81_v / PLAN §C5 stage 1: the solo-chapter fallback is now showLibraryClean() — "home" means
+  // the library, a user ruling. Both still delegate to the SAME landing screen today.
+  assert.ok(/showStoryline\(b\.id, b\.enc\)/.test(back) && /showLibraryClean\(\)/.test(back),
+    'compBackToStory dispatches to the storyline screen or the library');
   // Teacher-only extras.
   assert.ok(/const _teacher = !!APP\._teacherMode/.test(sc), 'card teacher gate keys off teacher MODE (v60.1), not _canEdit');
   // v70_l: pass-mark gate removed; a below-threshold learner is still covered (superset rule).
@@ -228,8 +229,11 @@ console.log('  loadSaved: learner auto-start, teacher keeps the page: OK');
   assert.ok(!/id="comp-back"/.test(html), 'markup: the Back button has been removed');
   assert.ok(/id="comp-hdr-title"[\s\S]{0,200}?onclick="compBackToStory\(\)"/.test(html),
     'markup: the header title is the route back to the storyline');
-  assert.ok(/id="comp-hdr-home"[^>]*/.test(html) && /onclick="goLandingClean\(\)"[^>]*id="comp-hdr-home"|id="comp-hdr-home"/.test(html),
-    'markup: the globe goes to the main page');
+  // v81_v / PLAN §C5 stage 1: "home" now means the library (user ruling) — see INTERNALS.md §6b.
+  // (Previously a weak alternation that matched on `id="comp-hdr-home"` alone regardless of its
+  // onclick; tightened here to actually check the button's destination.)
+  assert.ok(/onclick="showLibraryClean\(\)" id="comp-hdr-home"/.test(html),
+    'markup: the globe goes to the library');
   assert.ok(/onkeydown="if\(event\.key==='Enter'\|\|event\.key===' '\)/.test(html),
     'markup: the header title is keyboard-reachable, which a <button> gave for free');
   assert.ok(/id="comp-progress"/.test(html), 'markup: progress-summary container');
@@ -436,13 +440,14 @@ console.log('  static loadSaved parity + i18n keys: OK')
   assert.ok((start.match(/return false;/g) || []).length >= 2,
     'startLesson returns false on both guard exits (hidden lesson, empty mixed round)');
   assert.ok(/renderEx\(\);\s*return true;/.test(start), 'startLesson returns true once the screen is taken over');
-  // v81_n / PLAN §C0.3: both loadSaveds now call showGenerationClean() — build-static.js's own
-  // re-implementation was updated alongside index.html (INTERNALS §5's "both files" risk).
   // v81_u: showStoryline(...), a thin delegate to openStorylineScreen(...) — see INTERNALS.md §6b.
+  // v81_v / PLAN §C5 stage 1: both loadSaveds now call showLibraryClean() — "home" means the
+  // library, a user ruling — build-static.js's own re-implementation updated alongside index.html
+  // (INTERNALS §5's "both files" risk).
   for (const [src, label] of [[ext(html, 'loadSaved'), 'live'], [ext(builder, 'loadSaved'), 'static']]) {
     assert.ok(/if\(!started\)\{/.test(src) && /showStoryline\(ctx\.sl\.id, ctx\.enc\)/.test(src)
-      && /showGenerationClean\(\)/.test(src),
-      `a failed auto-start falls back to storyline/landing, not the lesson-set page (${label})`);
+      && /showLibraryClean\(\)/.test(src),
+      `a failed auto-start falls back to storyline/library, not the lesson-set page (${label})`);
   }
 }
 console.log('  v68.1 completion-crash cluster: TDZ order, gate scope, mixed resume, stranded-learner routing: OK')

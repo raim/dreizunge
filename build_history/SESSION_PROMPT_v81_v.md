@@ -1,16 +1,25 @@
-# Session prompt — written at the `v81_u` cut (end of session 41)
+# Session prompt — written at the `v81_v` cut (session 41, in progress)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_t.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_u.md` was the
 previous one — superseded by this file and renamed, not kept alongside.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_u`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_v`** cut.
 
-**Session 41 shipped `v81_r` through `v81_u` — all `PLAN §C0.3`.** Two SEPARATE user rulings drove
-this: ruling 1 (after `v81_q`) picked `showTeacher()` alone from a menu of options; ruling 2 (after
-`v81_r` shipped) said do THREE MORE, smallest first, no re-asking between them — `lesson-set` →
-`lesson-screen` → `storyline-screen`. **All three of ruling 2 are now shipped; nothing is currently
-owed on this track.**
+**Session 41, part 2: with `PLAN §C0` (the router seam, `v81_m`–`v81_u`) complete, the user asked
+"what's next?" and confirmed it — splitting the landing page into a Generation Card and a
+corpus/library screen (`PLAN §C5`), eventually also a Settings Card (`PLAN §C4`).** `v81_v` is
+stage 1 of that: pure naming/routing prep, zero visual change, same discipline `§C0` used. **This
+is a NEW, ongoing track** — unlike `§C0`'s renames, `§C5`/`§C4` are real UI redesign, so expect
+staged releases here too, and expect actual visual changes once stage 2 lands. See `v81_v`'s roadmap
+entry for the two design forks ruled on before writing any code (picker duplication + sync, "home"
+now means the library) and why.
+
+**`v81_r` through `v81_u` (part 1) shipped `PLAN §C0.3` — all four remaining named surfaces.** Two
+SEPARATE user rulings drove this: ruling 1 (after `v81_q`) picked `showTeacher()` alone from a menu
+of options; ruling 2 (after `v81_r` shipped) said do THREE MORE, smallest first, no re-asking
+between them — `lesson-set` → `lesson-screen` → `storyline-screen`. **All three of ruling 2 shipped;
+the whole router-seam track is done.**
 
 `v81_r`: a FIFTH surface seamed — the teacher dashboard, chosen directly by the user after `v81_q`'s
 remaining named examples (QC/editing, library browsing) turned out on measurement NOT to be clean
@@ -74,8 +83,39 @@ so breaking it survived silently until a DEDICATED assertion was added — `v81_
 surviving is not proof of correctness" lesson, in the shape of "a seam with several sibling names
 needs its OWN name proven." All four wrapper names are now independently mutation-tested.
 
-**Nothing is currently owed on the router-seam track.** See the roadmap's `v81_r` through `v81_u`
-entries for the full write-ups.
+**The router-seam track (`§C0`) is fully done as of `v81_u`.** See the roadmap's `v81_r` through
+`v81_u` entries for the full write-ups.
+
+**`v81_v` starts `PLAN §C5`: splitting generation off the landing page.** Measured the current
+landing page first: it's three logically distinct chunks on one screen — dual-purpose language
+pickers (set the generation form's target language AND filter the library), the generation form
+itself (`#gen-area`, ~250 lines), and the library/corpus list (`#saved-list` + its header). Two
+consequential design forks surfaced and were ruled on before any code: (1) duplicate the language
+pickers but keep them SYNCED (one shared value on two screens) rather than fully decoupling them —
+chosen because `selectLang`/`selectSrcLang` already carry six separate historical bug-fix
+references for this exact kind of state coupling; (2) "🌍 home" and the stranded-learner fallback
+now mean the LIBRARY, not generation — "home" = "see what you've made," with a dedicated "+
+Generate new" entry point still to come. A third question (whether to fold in the already-documented
+storyline-picker/per-chapter-dropdown/book-arc "add lesson type" drift, `§0i` reconciled against
+this plan) was ruled OUT of this release, kept as its own follow-up.
+
+**`v81_v` itself ships ONLY the "home means library" ruling, as pure routing prep — no visual
+change yet.** `goLibraryClean()`/`showLibraryClean()` added, deliberately byte-for-byte
+`goLandingClean()`'s body today (the actual screen split hasn't happened — both still show
+`'landing'`). All 10 "home" callers (7 static buttons, 3 JS stranded-learner fallbacks) rerouted
+from `showGenerationClean()`; `build-static.js`'s matching copy updated. `showGeneration()`/
+`showGenerationClean()` themselves are unchanged — measured first, confirmed all 3 remaining
+callers genuinely want the generation form. One test-fallout item worth knowing: a source-text
+regex checking the `comp-hdr-home` button was already vacuously passing (a weak alternation
+predating this release) — tightened while fixing it, not left as found. Also hit a genuine bug of
+my own making while adding `showLibraryClean()`'s own mutation-proof: reusing a spy's captured-
+original variable name across two `C.run()` calls in the same persistent vm context caused real
+infinite mutual recursion (`Maximum call stack size exceeded`) — fixed with a distinct variable
+name, documented in `INTERNALS.md` §6b so it isn't rediscovered the hard way.
+
+**Stage 2 — the actual visual split (new `#generation-screen`, duplicated synced language pickers,
+a "+ Generate new" entry point on the library) — is next.** See the roadmap's `v81_v` entry for the
+full write-up.
 
 **Session 40 ran across two agents: Codex shipped `v81_k`/`v81_l`, then ran out of session budget
 mid-work; Claude Code picked up the uncommitted state and shipped `v81_m` through `v81_q`.**
@@ -214,7 +254,7 @@ node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 languages, 617 `en` keys**.
-`APP_VERSION = 'v81_u'`.
+`APP_VERSION = 'v81_v'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -286,14 +326,13 @@ Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 lan
 ## 1. ✅ NO RULING IS CURRENTLY OWED — the queue is clear
 
 *(`v81_i`'s sequential-lock removal was a ruling delivered directly by the user, not drawn from
-this list — nothing below was open because of it, so nothing here changes. `v81_j`–`v81_l` (Track B)
-and `v81_m`–`v81_u` (`PLAN §C0.1`–`§C0.4`, plus five further surfaces) all came from §3 below and
-are struck there as they shipped. `v81_q`'s DELETE decision and `v81_r`'s "which surfaces, in what
-order" choice were both direct user rulings, given when the evidence alone could not settle the
-question — see the roadmap's `v81_q` and `v81_r` entries. **The ruling given right after `v81_r`
-shipped — `lesson-set` (`v81_s`) → `lesson-screen` (`v81_t`) → `storyline-screen` (`v81_u`), smallest
-first, without re-asking between them — is now FULLY SHIPPED.** Nothing on the router-seam track is
-currently owed; if it continues, the next slice is a fresh scoping question, not a standing ruling.)*
+this list — nothing below was open because of it, so nothing here changes. `v81_j`–`v81_u`
+(`PLAN §C0.1`–`§C0.4`, plus five further surfaces, Track B) all came from §3 below and are struck
+there as they shipped — the whole router-seam track is DONE. `PLAN §C5` (`v81_v` onward) is a NEW
+track with its OWN two rulings, given directly when the user confirmed "what's next": (1) duplicate
+the language pickers but keep them synced, not fully decoupled; (2) "🌍 home" now means the library,
+not generation. `v81_v` ships only ruling (2), as routing prep. **Ruling (1) is NOT yet built** —
+stage 2 (the actual `#generation-screen` split) is what implements it, and is next.)*
 
 All three items that headed this section at the `v81_b` cut are closed:
 
@@ -376,6 +415,19 @@ is a materially lower bar. Needs a browser pass, not a code change.
   itself is invisible to its three siblings' tests — needed its own dedicated assertion. See the
   roadmap's `v81_u` entry for the full write-up, including a grep-vs-read lesson about a caller
   nearly missed because two matches looked textually identical.
+- ~~`PLAN §C5` stage 1 — "🌍 home" means the library~~ **✅ SHIPPED at `v81_v`**, pure routing prep,
+  zero visual change (`goLibraryClean()`/`showLibraryClean()`, still byte-for-byte `goLandingClean()`
+  today). 10 callers rerouted (7 buttons, 3 JS fallbacks); `showGeneration()`/`showGenerationClean()`
+  themselves untouched — their 3 remaining callers all genuinely want the generation form.
+- **`PLAN §C5` stage 2 — the actual visual split — is next, no ruling needed** (both design forks
+  already ruled at `v81_v`). Move `#gen-area` (+ `.backend-row`) out of `#landing` into a new
+  `#generation-screen`; duplicate `.lang-box` there, wired as a SYNCED mirror of the existing
+  pickers (same mechanism the footer selectors already use — add the new selects to
+  `selectLang`/`selectSrcLang`'s existing "sync other selectors" list, do NOT give them independent
+  `fromForm` state); repoint `showGeneration()`/`showGenerationClean()` at the new screen instead of
+  `'landing'`; add a "+ Generate new" entry point on the library screen. **Read `INTERNALS.md` §6b's
+  new `PLAN §C5` section before starting** — it names the exact risk (`selectLang`/`selectSrcLang`'s
+  six-bug history) and the exact mechanism to reuse.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
@@ -418,7 +470,7 @@ is a materially lower bar. Needs a browser pass, not a code change.
   No translate pass is owed for it.
 - **The translate pass** for the remaining `en`-only keys, `translate-ui.js --langnames`, the
   `hr` `ui.json` pass, and a **native-speaker check of the `cyrillic-sr` table**.
-- **A device pass on `v81_a` … `v81_u`.** The v80 line changed every card and every question screen: the story
+- **A device pass on `v81_a` … `v81_v`.** The v80 line changed every card and every question screen: the story
   panel is on all of them, never collapsed, three-state coloured, tappable, with a translate toggle;
   the progress bars moved to the bottom; the storyboard row became clickable chapter icons.
   `v81_i` adds one more thing to look at: ordinary lessons on the node path are clickable out of
@@ -443,7 +495,10 @@ is a materially lower bar. Needs a browser pass, not a code change.
   whole track: opening a storyline from the landing list, from the lesson-set page's storyline chip,
   from a fork's greyed alternative branch, from the completion card's "back to storyline" button,
   from a fresh generation, and via a `#sl=` URL/hash link — all should still open the right storyline
-  and look exactly as before (no visual change intended anywhere in this track).
+  and look exactly as before (no visual change intended anywhere in this track). `v81_v` also ships
+  no visual change (it's routing prep only) — worth spot-checking that every "🌍 home" button and a
+  stranded solo-chapter quit still land on the SAME page as before (today, still the combined
+  landing page — that's expected until stage 2 ships).
 
 ## 5. NOT yours to start
 
@@ -500,39 +555,45 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
   `MAX_STATE_BYTES` growth ceiling remains unaddressed.
 - `APP.screen` / `showProgressCard`/`showStory`/`showGeneration`/`showGenerationClean`/`showSettings`/
   `showTeacher`/`showLessonSet`/`showLesson`/`showStoryline`/`showStorylineForTopic`/
-  `showStorylineById`/`showStorylineByChainId` (`v81_n`–`v81_u`, `PLAN §C0.2`/`§C0.3`) — the router
-  seam. See `INTERNALS.md` §6b before extending it: `showComplete`'s own TWO internal self-calls are
-  deliberately NOT rerouted (implementation detail, not an entry point — `unit-coverage-threshold`
-  pins one); `showSettings` deliberately does not correspond to a `.screen` (settings gets one under
-  `PLAN §C4`, a separate track); `showGenerationClean` is NOT the same as `showGeneration` — it also
-  resets the URL hash, and `build-static.js` has its OWN copy of that call site (keep both in sync);
-  `showTeacher` has NO `build-static.js` copy to keep in sync — the static build hides its entry
-  button entirely; `showLessonSet`/`showLesson`/`showStoryline*` DO have `build-static.js` copies —
-  kept in sync at `v81_s`/`v81_t`/`v81_u`; `showLesson` FORWARDS `startLesson`'s return value
-  (`false` on a guard exit) rather than discarding it — callers branch on it; the FOUR
-  `showStoryline*` names wrap FOUR distinct real functions with genuinely different behaviour
-  (push vs. replace history, a fallback that exists on only one of them) — not four names for one
-  underlying call. **Nothing from `PLAN §C0`'s original four-name list has any external caller left
-  un-seamed as of `v81_p`; `v81_r`–`v81_u` add five further surfaces from two separate rulings, BOTH
-  now fully shipped — nothing currently owed on this track.**
-- `test/unit-ui-journeys.test.js` (`v81_m`–`v81_u`, `PLAN §C0`) — the route-parity reference for the
-  FOUR original screens plus the teacher dashboard, lesson-set, lesson-screen, and storyline-screen.
-  Extend it, don't bypass it, if you touch any of them again. ⚠️ Also grep the WHOLE suite for the
-  function being rerouted before shipping ANY future reroute — `v81_o` broke three source-text pins
-  in `unit-learner-nav.test.js` this file does not cover; `v81_p` broke two more, `v81_s` broke four
-  more, `v81_t` broke SIX more (across 14 files referencing `startLesson`), `v81_u` broke 13 more
-  (across 8 files referencing the four storyline entry names — the largest blast radius in this
-  track); the full-suite run is what caught them each time, not a pre-edit grep alone. `v81_r`'s new
-  journey needed a DIFFERENT exit technique than the other four — see `INTERNALS.md` §5, the
-  STATIC-markup-is-never-parsed bullet, which `v81_s`/`v81_u`'s journeys also needed. `v81_s` ALSO
-  hit a second, different harness gap: `innerHTML` never reflects nodes added via `appendChild` —
-  assert `.children.length` for anything `buildPath()`-shaped. `v81_t`'s mutation test needed the
-  SAME standalone-isolation trick `v81_s`'s did: the pre-existing "learner" journey block exercises
-  `showLesson()` indirectly and catches a broken delegate FIRST, before the new block even runs.
-  `v81_u`'s journey needed FOUR separate mutation tests, one per wrapper name — `showStoryline()`
+  `showStorylineById`/`showStorylineByChainId`/`showLibraryClean` (`v81_n`–`v81_v`, `PLAN §C0.2`–
+  `§C5`) — the router seam. See `INTERNALS.md` §6b before extending it: `showComplete`'s own TWO
+  internal self-calls are deliberately NOT rerouted (implementation detail, not an entry point —
+  `unit-coverage-threshold` pins one); `showSettings` deliberately does not correspond to a `.screen`
+  (settings gets one under `PLAN §C4`, a separate track); `showGenerationClean` is NOT the same as
+  `showGeneration` — it also resets the URL hash, and `build-static.js` has its OWN copy of that
+  call site (keep both in sync); `showTeacher` has NO `build-static.js` copy to keep in sync — the
+  static build hides its entry button entirely; `showLessonSet`/`showLesson`/`showStoryline*`/
+  `showLibraryClean` DO have `build-static.js` copies — kept in sync at `v81_s`/`v81_t`/`v81_u`/
+  `v81_v`; `showLesson` FORWARDS `startLesson`'s return value (`false` on a guard exit) rather than
+  discarding it — callers branch on it; the FOUR `showStoryline*` names wrap FOUR distinct real
+  functions with genuinely different behaviour — not four names for one underlying call.
+  **`showLibraryClean` is `§C5`'s first piece, NOT part of `§C0`'s router-seam track** — it exists
+  because "🌍 home" now means the library (user ruling), and its body is a DELIBERATE placeholder
+  (byte-for-byte `goLandingClean()`'s today) until `§C5` stage 2 actually splits the screen; do not
+  "clean up" the apparent duplication before then. **`§C0` itself is fully done** — nothing from its
+  original four-name list has any external caller left un-seamed as of `v81_p`; `v81_r`–`v81_u` add
+  five further surfaces from two separate rulings, all shipped.
+- `test/unit-ui-journeys.test.js` (`v81_m`–`v81_v`, `PLAN §C0`/`§C5`) — the route-parity reference
+  for the FOUR original screens plus the teacher dashboard, lesson-set, lesson-screen, and
+  storyline-screen. Extend it, don't bypass it, if you touch any of them again. ⚠️ Also grep the
+  WHOLE suite for the function being rerouted before shipping ANY future reroute — `v81_o` broke
+  three source-text pins in `unit-learner-nav.test.js` this file does not cover; `v81_p` broke two
+  more, `v81_s` broke four more, `v81_t` broke SIX more (across 14 files referencing `startLesson`),
+  `v81_u` broke 13 more (across 8 files referencing the four storyline entry names), `v81_v` broke 4
+  more (across `unit-learner-nav.test.js`'s pins on the rerouted "home" call sites — one of which was
+  ALREADY a vacuously-passing weak regex before this release, tightened while fixing it) plus 1
+  genuinely-exercised stub rename in `unit-story-unlocked-card.test.js`; the full-suite run is what
+  caught them each time, not a pre-edit grep alone. `v81_r`'s new journey needed a DIFFERENT exit
+  technique than the other four — see `INTERNALS.md` §5, the STATIC-markup-is-never-parsed bullet,
+  which `v81_s`/`v81_u`'s journeys also needed. `v81_s` ALSO hit a second, different harness gap:
+  `innerHTML` never reflects nodes added via `appendChild` — assert `.children.length` for anything
+  `buildPath()`-shaped. `v81_t`'s mutation test needed the SAME standalone-isolation trick `v81_s`'s
+  did. `v81_u`'s journey needed FOUR separate mutation tests, one per wrapper name — `showStoryline()`
   itself is called by NONE of its three siblings, so it was invisible to every other assertion in
-  the file until it got its own; see `INTERNALS.md` §6b's dedicated row on this before assuming
-  "the other three passed" proves a fourth sibling name works too.
+  the file until it got its own. `v81_v`'s own new spy assertion hit a DIFFERENT bug entirely: reuse
+  a spy's captured-original variable name across two `C.run()` calls in the same persistent vm
+  context and you get real infinite mutual recursion, not a flake — use a distinct name (or restore
+  the spied function) per spy setup.
 - `build-static.js`'s `loadSaved` is missing the entire `_isLaterChapter()` branch `index.html` has
   (found at `v81_p`, not fixed) — a learner opening a later chapter in the STATIC build may not land
   on the progress card the way `v81_b`'s ruling intended. Needs its own measurement before a fix.
