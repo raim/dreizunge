@@ -1662,6 +1662,55 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_s` — `PLAN §C0.3`, a SIXTH surface seamed: lesson-set, second of three ruled together
+
+**Shipped by: Claude Code.**
+
+**Scoping first, per the user's own instruction to continue the scoping work.** Measuring
+`storyline-screen` and `lesson-set` (the two surfaces named) found neither maps cleanly onto the
+plan's "QC/editing" or "library browsing" labels the way generation/settings/progress-card did onto
+their labels: both screens mix chapter/chain browsing with scattered edit, QC and generation
+controls in one place — there is no `.screen` boundary that corresponds to "QC/editing" at all. A
+third candidate surfaced during the same pass, not part of the original ask: `lesson-screen` (via
+`startLesson()`, 12 external callers) is a clean literal match for the plan's "exercise running"
+label — same shape as every surface already seamed. Presented all three plus the finding that
+"QC/editing" isn't screen-shaped; **the user ruled: do all three, smallest first** — `lesson-set`,
+then `lesson-screen`, then `storyline-screen`, as separate releases without re-asking between them.
+This entry is the first of that ruling.
+
+**What was done.** `showLessonSet()` added as a thin delegate to the existing `goLessonSet()`.
+Deliberately NOT named `showLibrary` — that label is already taken: `lib.*` in `ui.json` is the
+LANDING page's saved-topics list, a different screen entirely, and reusing the plan's "library
+browsing" wording literally would have collided with it. Four external callers rerouted: the live
+`loadSaved`'s own `await goLessonSet()`, `doGenerate`'s cached-hit branch, one inline "📖 continue"
+button, and `confirmQuit`'s teacher-mode fallback. `build-static.js`'s own `loadSaved`
+re-implementation carries the same call site — updated to match, the same "both files" pairing
+`v81_o`/`v81_p` established. Four pre-existing SOURCE-TEXT pins broke in `unit-learner-nav.test.js`
+(the confirmQuit branch, the live `loadSaved` await, its "after" slice, and the static-parity
+check) — all four true positives, all four fixed by re-pointing the regex at the new name, same as
+`v81_o`'s three and `v81_p`'s two.
+
+**Two harness gaps found and documented while writing the new journey test, not previously written
+down anywhere:** (1) the lesson-set entry assertion first tried `#lesson-path`'s `.innerHTML.length`
+and got zero even though `buildPath()` genuinely appends five real nodes — `innerHTML` in this
+harness only reflects a STRING write (`v73_c`'s parser), never `appendChild`, so `.children.length`
+is the assertion that can actually see DOM built the product's own way. (2) the exit half hit the
+SAME static-markup gap `v81_r` already documented (no static `onclick` is reachable by
+`querySelector` in this harness) — resolved the same way, calling `showGenerationClean()` directly.
+Both written up in `INTERNALS.md` §5.
+
+**Mutation-tested:** made `showLessonSet()` a no-op — the PRE-EXISTING "generation" journey block
+caught it first (its cached-generation-hit path now also calls `showLessonSet()`), crashing before
+the new lesson-set block even ran. Isolated the new block's OWN assertion separately (a standalone
+script, mutation applied, only the new block's setup + first assertion run) to confirm it is not
+merely riding on the earlier block's coverage — it independently goes red. Reverted and diffed
+clean before moving on.
+
+node test/run.js: 235 checks, ALL PASSED (no flake this run)
+node test/run.js --quick: 209 checks, ALL PASSED
+node build-static.js re-run (index.html + build-static.js both changed); node test/check-inline.js
+and the docs/index.html variant: 0 failures each
+
 ### `v81_r` — `PLAN §C0.3`, a FIFTH surface seamed: the teacher dashboard, chosen directly by the user
 
 **Shipped by: Claude Code.**

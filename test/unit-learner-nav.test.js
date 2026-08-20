@@ -131,17 +131,19 @@ console.log('  helpers: learner gate, resume index (hidden-aware), storyline res
   // goLandingClean() — see INTERNALS.md §6b, "PLAN §C0 — the router seam". Same behaviour, new name.
   assert.ok(/if\(_isLearner\(\)\)\{[\s\S]*?openStorylineScreen\(ctx\.sl\.id, ctx\.enc\)[\s\S]*?showGenerationClean\(\)/.test(cq),
     'confirmQuit sends a learner to the storyline/landing');
-  assert.ok(/\} else \{\s*goLessonSet\(\);/.test(cq), 'a teacher still returns to the lesson-set page on quit');
+  // v81_s / PLAN §C0.3: showLessonSet(), a thin delegate to goLessonSet() — see INTERNALS.md §6b.
+  assert.ok(/\} else \{\s*showLessonSet\(\);/.test(cq), 'a teacher still returns to the lesson-set page on quit');
 }
 
 // ── 2. loadSaved routes learners past the lesson-set page (live) ──────────────
 {
   const ls = ext(html, 'loadSaved');
-  assert.ok(/await goLessonSet\(\)/.test(ls), 'loadSaved still runs goLessonSet (lang/dir setup + hash)');
+  // v81_s: showLessonSet(), a thin delegate to goLessonSet() — see INTERNALS.md §6b.
+  assert.ok(/await showLessonSet\(\)/.test(ls), 'loadSaved still runs goLessonSet (lang/dir setup + hash)');
   assert.ok(/if\(_isLearner\(\)\)\{[\s\S]*?_firstUnfinishedLessonIdx\(APP\.lessonData\)[\s\S]*?startLesson\(idx\)/.test(ls),
     'a learner resumes at the first unfinished lesson and auto-starts it');
   // The teacher path is the fall-through: no startLesson call outside the learner branch.
-  const afterGo = ls.slice(ls.indexOf('await goLessonSet()'));
+  const afterGo = ls.slice(ls.indexOf('await showLessonSet()'));
   assert.ok(/_isLearner\(\)/.test(afterGo), 'the branch is gated on _isLearner (teachers keep the page)');
 }
 console.log('  loadSaved: learner auto-start, teacher keeps the page: OK');
@@ -327,7 +329,8 @@ console.log('  chapter storyboard slot: renderer deleted (v81_q), chapter icons 
 // ── 5. Static build parity ────────────────────────────────────────────────────
 {
   const ls = ext(builder, 'loadSaved');
-  assert.ok(/await goLessonSet\(\)/.test(ls), 'static loadSaved awaits goLessonSet');
+  // v81_s: showLessonSet(), a thin delegate to goLessonSet() — see INTERNALS.md §6b.
+  assert.ok(/await showLessonSet\(\)/.test(ls), 'static loadSaved awaits goLessonSet');
   assert.ok(/_isLearner==='function' && _isLearner\(\)/.test(ls) && /_firstUnfinishedLessonIdx\(APP\.lessonData\)/.test(ls),
     'static loadSaved carries the SAME learner branch (parity — the two renderers must not drift)');
   // i18n keys exist (en).

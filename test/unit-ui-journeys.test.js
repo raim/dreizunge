@@ -197,6 +197,30 @@ async function main() {
   assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen returns with it');
   console.log('  teacher dashboard: landing -> rendered panels (via showTeacher) -> landing');
 }
+
+// PLAN §C0.3 — the SECOND of three surfaces ruled together (user, after `v81_r`): lesson-set, the
+// per-chapter lesson list. Like the teacher journey above, the exit (the "🌍" home button) is
+// static markup and unreachable by simulated click in this harness — `showGenerationClean()` is
+// called directly, already proven in isolation by the "generation" block earlier in this file.
+{
+  const C = client();
+  C.run('loadSavedList = async function(){}; true;', 'lessonset-setup');
+  C.run('showLessonSet(); true;', 'lessonset-entry');
+  await settle();
+  assert.strictEqual(active(C, 'lesson-set'), true, 'showLessonSet() activates the lesson-set screen');
+  assert.strictEqual(C.run('APP.screen'), 'lesson-set', 'APP.screen agrees');
+  // buildPath() appends nodes via createElement/appendChild, not an innerHTML string assignment —
+  // this harness's innerHTML getter only reflects STRING writes (see INTERNALS.md §5's className
+  // bullet for the same shape of gap), so children.length is the assertion that can actually see it.
+  assert.ok(C.run("document.getElementById('lesson-path').children.length") > 0,
+    'the lesson path rendered its nodes rather than staying blank');
+  C.run('showGenerationClean(); true;', 'lessonset-exit');
+  await settle();
+  assert.strictEqual(active(C, 'landing'), true,
+    'the lesson-set screen\'s "🌍" home button (already-seamed showGenerationClean) returns to landing');
+  assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen returns with it');
+  console.log('  lesson-set: landing -> rendered lesson path (via showLessonSet) -> landing');
+}
 console.log('unit-ui-journeys: ALL PASSED');
 }
 

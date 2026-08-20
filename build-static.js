@@ -628,7 +628,7 @@ async function loadSaved(ref) {
                    : STATIC_LESSONS.find(l=>l.topic.toLowerCase()===dec.toLowerCase());
   if(!found){ alert('Lesson not found.'); return; }
   APP.lessonData=found;
-  await goLessonSet();
+  await showLessonSet();
   // v60: learners skip the lesson-set page — resume at the first unfinished lesson and start it.
   // (In the static build _teacherMode defaults to false, so this is the normal path.)
   if(typeof _isLearner==='function' && _isLearner()){

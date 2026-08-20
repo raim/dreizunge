@@ -3355,6 +3355,13 @@ function showSettings(ev){ return toggleModelPop(ev); }
 // `showGenerationClean()`), and backend-only — the static build hides its entry button entirely
 // (`APP.info.canGenerate` gates it), so there is no `build-static.js` copy to keep in sync here.
 function showTeacher(){ return openTeacherDashboard(); }
+// PLAN §C0.3 — the SECOND of three surfaces ruled together (user, after `v81_r`): lesson-set, the
+// per-chapter lesson list. Named `showLessonSet` rather than reusing the plan's "library browsing"
+// label directly — that label is already taken by `lib.*` (the landing page's saved-topics list,
+// a different screen entirely). `build-static.js` has its OWN `loadSaved` re-implementation with a
+// matching internal call site — kept in sync here, same as `v81_o`/`v81_p` did for
+// `goLandingClean`/`showComplete`.
+function showLessonSet(){ return goLessonSet(); }
 // Returning to the main form: restore the form's own language selection into the
 // render context (a viewed story may have temporarily overridden APP.srcLang). The
 // main selectors/library filter were never mutated while viewing, so only the context
@@ -6024,7 +6031,7 @@ async function loadSaved(ref){
     // auto-start it. A fully-complete chapter has no unfinished lesson → fall back to showing
     // the page (so a re-opened, done chapter isn't a dead click; the complete card's Next takes
     // over from there). Teachers always land on the page — their editing hub.
-    await goLessonSet();
+    await showLessonSet();
     if(_isLearner()){
       const idx=_firstUnfinishedLessonIdx(APP.lessonData);
       // startLesson returns false when it could not take over the screen (hidden lesson, or a
@@ -6378,7 +6385,7 @@ async function doGenerate(forceRegen){
       if(!APP.progress.completed[resp.data.topic]) APP.progress.completed[resp.data.topic]={};
       saveProg();
       await loadSavedList();
-      goLessonSet();
+      showLessonSet();
     } else {
       // Fire and forget — user can browse while this runs
       startBackgroundJob(resp.jobId, topic);
@@ -16465,7 +16472,7 @@ function showComplete(review, lessonIdxOverride){
   if (_compNav) {
     if (_teacher && !lesson._drill) {
       const lsTitle = APP.lessonData?.topic || t('lesson.set');
-      let navHtml = `<button class="cont-btn" style="font-size:13px;padding:8px 18px;margin:4px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="goLessonSet()">📚 ${escHtml(lsTitle)}</button>`;
+      let navHtml = `<button class="cont-btn" style="font-size:13px;padding:8px 18px;margin:4px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="showLessonSet()">📚 ${escHtml(lsTitle)}</button>`;
       if (sl && slEnc) {
         const slEncAttr = slEnc.replace(/'/g, '%27');
         navHtml += `<button class="cont-btn" style="font-size:13px;padding:8px 18px;margin:4px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="openStorylineScreen('${sl.id}','${slEncAttr}')">📖 ${escHtml(sl.title||t('storyline.title'))}</button>`;
@@ -19341,7 +19348,7 @@ function confirmQuit(){
     if(ctx && ctx.sl) openStorylineScreen(ctx.sl.id, ctx.enc);
     else showGenerationClean();
   } else {
-    goLessonSet();
+    showLessonSet();
   }
 }
 

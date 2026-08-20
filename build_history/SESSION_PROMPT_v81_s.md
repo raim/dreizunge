@@ -1,29 +1,38 @@
-# Session prompt — written at the `v81_r` cut (end of session 41)
+# Session prompt — written at the `v81_s` cut (session 41, in progress)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_q.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_r.md` was the
 previous one — superseded by this file and renamed, not kept alongside.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_r`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_s`** cut.
 
-**Session 41 shipped `v81_r`: `PLAN §C0.3`, a FIFTH surface seamed — the teacher dashboard,
-chosen directly by the user.** After `v81_q`, the plan's own remaining named examples (QC/editing,
-library browsing) turned out on measurement NOT to be clean separable screens — `lesson-set` and
-`storyline-screen` each mix browsing with scattered edit/QC controls, matching the plan's own words
-that these are "scattered controls or panels." Rather than guess which to scope first, three
-measured options plus a lock-behaviour-only option were put to the user directly; **the ruling:
-`teacher-screen` first** — smallest, not on the plan's original four-name list, but the only
-remaining screen with zero seam coverage. `showTeacher()` added as a thin delegate to the existing
-`openTeacherDashboard()`; both external callers rerouted (2 sites — the entry button and the
-dashboard's own refresh button); no `build-static.js` reroute needed, since the static build hides
-the entry button entirely (backend/teacher-only). A new journey added to
-`test/unit-ui-journeys.test.js`, mutation-tested (breaking the delegation turned it red). Along the
-way, documented a previously-unwritten harness fact in `INTERNALS.md` §5: `lib-dom`'s fake document
-never parses STATIC markup outside the `<script>` block, so a static button's inline `onclick`
-cannot be "clicked" by `querySelector` the way a JS-assigned handler like `comp-next`'s can — the
-new journey's exit half calls `showGenerationClean()` directly instead, and says why. `storyline-
-screen` and `lesson-set` remain the two genuinely open, harder-to-scope surfaces if this track
-continues. See the roadmap's `v81_r` entry for the full write-up.
+**Session 41 shipped `v81_r` then `v81_s`, both `PLAN §C0.3`, and is still going: three more
+surfaces ruled together, smallest first.** `v81_r`: a FIFTH surface seamed — the teacher dashboard,
+chosen directly by the user after `v81_q`'s remaining named examples (QC/editing, library browsing)
+turned out on measurement NOT to be clean separable screens. `showTeacher()` wraps
+`openTeacherDashboard()`; 2 callers rerouted; no `build-static.js` reroute needed (backend-only,
+button hidden in the static build). Documented a previously-unwritten harness fact in
+`INTERNALS.md` §5 along the way: `lib-dom`'s fake document never parses STATIC markup outside the
+`<script>` block, so a static button's inline `onclick` is unreachable by `querySelector` — the new
+journey's exit calls `showGenerationClean()` directly instead.
+
+**`v81_s`: continuing the scoping work the user asked for, on `storyline-screen` and `lesson-set`.**
+Measurement found neither is a clean separable screen — both mix browsing with scattered edit/QC/
+generation controls, and **"QC/editing" turns out not to be a screen-shaped surface in this
+codebase at all** (no `.screen` owns it). A THIRD candidate surfaced during scoping, not part of the
+original ask: `lesson-screen` (`startLesson()`, 12 callers) is a clean literal match for "exercise
+running." Presented all three plus the QC/editing finding; **the user ruled: do all three, smallest
+first, without re-asking between them** — `lesson-set`, then `lesson-screen`, then
+`storyline-screen`. `v81_s` is the first: `showLessonSet()` wraps `goLessonSet()`; 4 callers
+rerouted (`index.html`'s `loadSaved`, `doGenerate`'s cached-hit branch, one inline button,
+`confirmQuit`'s teacher fallback); `build-static.js`'s own `loadSaved` updated to match. Four
+pre-existing source-text pins broke in `unit-learner-nav.test.js`, all true positives, all fixed.
+Two more harness gaps documented in `INTERNALS.md` §5: `innerHTML` never reflects nodes added via
+`appendChild` (assert `.children.length` instead), and the same static-markup-click gap `v81_r`
+found applies here too. Mutation-tested with a standalone isolation script, since the existing
+"generation" journey block caught the mutation FIRST and would have masked a vacuous new assertion.
+**`lesson-screen` (exercise running) is next, per the ruling — not a fresh decision to make.** See
+the roadmap's `v81_r` and `v81_s` entries for the full write-ups.
 
 **Session 40 ran across two agents: Codex shipped `v81_k`/`v81_l`, then ran out of session budget
 mid-work; Claude Code picked up the uncommitted state and shipped `v81_m` through `v81_q`.**
@@ -162,7 +171,7 @@ node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 languages, 617 `en` keys**.
-`APP_VERSION = 'v81_r'`.
+`APP_VERSION = 'v81_s'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -235,10 +244,12 @@ Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 lan
 
 *(`v81_i`'s sequential-lock removal was a ruling delivered directly by the user, not drawn from
 this list — nothing below was open because of it, so nothing here changes. `v81_j`–`v81_l` (Track B)
-and `v81_m`–`v81_r` (`PLAN §C0.1`–`§C0.4`, plus the FIFTH surface) all came from §3 below and are
-struck there as they shipped. `v81_q`'s DELETE decision and `v81_r`'s "which surface next" choice
-were both direct user rulings, given when the evidence alone could not settle the question — see the
-roadmap's `v81_q` and `v81_r` entries.)*
+and `v81_m`–`v81_s` (`PLAN §C0.1`–`§C0.4`, plus three further surfaces) all came from §3 below and
+are struck there as they shipped. `v81_q`'s DELETE decision and `v81_r`'s "which surfaces, in what
+order" choice were both direct user rulings, given when the evidence alone could not settle the
+question — see the roadmap's `v81_q` and `v81_r` entries. **The `v81_r` ruling covers `v81_s` and
+whatever ships after it too**: `lesson-set` (`v81_s`), then `lesson-screen`, then `storyline-screen`,
+smallest first, without re-asking between them — so `lesson-screen` next is not a fresh decision.)*
 
 All three items that headed this section at the `v81_b` cut are closed:
 
@@ -298,12 +309,19 @@ is a materially lower bar. Needs a browser pass, not a code change.
   sweep of the app. No new dead paths are known right now.
 - ~~`PLAN §C0.3`, a FIFTH surface — the teacher dashboard~~ **✅ SHIPPED at `v81_r`**, by direct user
   ruling (not on the plan's original four-name list). `showTeacher()` delegates to
-  `openTeacherDashboard()`; both external callers rerouted. **`storyline-screen` and `lesson-set`
-  remain the two genuinely open surfaces** (the plan's "QC/editing" and "library browsing"
-  examples) — measurement at `v81_r` found neither is a clean separable screen yet: both mix
-  browsing with scattered edit/QC controls in one screen, so scoping either correctly is real work,
-  not a rename. If this track continues, that scoping is the next step, not a guess at which
-  control belongs to which future screen.
+  `openTeacherDashboard()`; both external callers rerouted.
+- **"QC/editing" is NOT a screen-shaped surface in this codebase — a scoping finding, not a
+  ruling to re-derive.** Measured at `v81_r`/`v81_s`: `storyline-screen` and `lesson-set` each mix
+  browsing with scattered edit/QC/generation controls; neither has a `.screen` boundary that
+  corresponds to "QC/editing" alone. The router seam owns a screen's ENTRY/EXIT naming, not the
+  separation of concerns mixed inside it — that would be a distinct, later, harder initiative.
+- ~~`PLAN §C0.3`, a SIXTH surface — lesson-set~~ **✅ SHIPPED at `v81_s`**, first of three ruled
+  together (user, after `v81_r`: `lesson-set` → `lesson-screen` → `storyline-screen`, smallest
+  first, no re-asking between them). `showLessonSet()` delegates to `goLessonSet()`; 4 external
+  callers rerouted, `build-static.js`'s own `loadSaved` updated to match. **`lesson-screen`
+  (`startLesson()`, "exercise running" — 12 callers) is next per the ruling, not a fresh choice.**
+  `storyline-screen` (the biggest slice: ~11 direct callers plus 3 resolver functions with their
+  own callers) follows after that.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
@@ -346,7 +364,7 @@ is a materially lower bar. Needs a browser pass, not a code change.
   No translate pass is owed for it.
 - **The translate pass** for the remaining `en`-only keys, `translate-ui.js --langnames`, the
   `hr` `ui.json` pass, and a **native-speaker check of the `cyrillic-sr` table**.
-- **A device pass on `v81_a` … `v81_r`.** The v80 line changed every card and every question screen: the story
+- **A device pass on `v81_a` … `v81_s`.** The v80 line changed every card and every question screen: the story
   panel is on all of them, never collapsed, three-state coloured, tappable, with a translate toggle;
   the progress bars moved to the bottom; the storyboard row became clickable chapter icons.
   `v81_i` adds one more thing to look at: ordinary lessons on the node path are clickable out of
@@ -362,7 +380,9 @@ is a materially lower bar. Needs a browser pass, not a code change.
   dashboard's own rendering — only worth spot-checking that the "🎓 Learners" entry button and the
   dashboard's own 🔄 refresh button still open/refresh it (both now call `showTeacher()` instead of
   `openTeacherDashboard()` directly), which needs a teacher-mode session against a live backend to
-  reach at all.
+  reach at all. `v81_s` ships no visual change either — worth spot-checking that opening any chapter
+  (from the landing library, from a fresh generation, and by quitting a question as a teacher) still
+  lands on the same lesson-set page as before.
 
 ## 5. NOT yours to start
 
@@ -418,23 +438,27 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
   value may become a reader of progression without a separate product ruling; `learners.js`'s
   `MAX_STATE_BYTES` growth ceiling remains unaddressed.
 - `APP.screen` / `showProgressCard`/`showStory`/`showGeneration`/`showGenerationClean`/`showSettings`/
-  `showTeacher` (`v81_n`–`v81_r`, `PLAN §C0.2`/`§C0.3`) — the router seam. See `INTERNALS.md` §6b
-  before extending it: `showComplete`'s own TWO internal self-calls are deliberately NOT rerouted
-  (implementation detail, not an entry point — `unit-coverage-threshold` pins one); `showSettings`
-  deliberately does not correspond to a `.screen` (settings gets one under `PLAN §C4`, a separate
-  track); `showGenerationClean` is NOT the same as `showGeneration` — it also resets the URL hash,
-  and `build-static.js` has its OWN copy of that call site (keep both in sync); `showTeacher` has NO
-  `build-static.js` copy to keep in sync — the static build hides its entry button entirely. **Nothing
-  from `PLAN §C0`'s original four-name list has any external caller left un-seamed as of `v81_p`;
-  `v81_r` added a FIFTH surface, chosen directly by the user rather than drawn from that list.**
-- `test/unit-ui-journeys.test.js` (`v81_m`–`v81_r`, `PLAN §C0`) — the route-parity reference for the
-  FOUR original screens plus the teacher dashboard. Extend it, don't bypass it, if you touch any of
-  them again. ⚠️ Also grep the WHOLE suite for the function being rerouted before shipping ANY future
-  reroute — `v81_o` broke three source-text pins in `unit-learner-nav.test.js` this file does not
-  cover; `v81_p` broke two more the same way, and the pre-edit grep estimate missed two of the three
-  actual breaks across both releases — the full-suite run is what caught them, not the grep. `v81_r`'s
-  new journey needed a DIFFERENT exit technique than the other four — see `INTERNALS.md` §5, the
-  STATIC-markup-is-never-parsed bullet.
+  `showTeacher`/`showLessonSet` (`v81_n`–`v81_s`, `PLAN §C0.2`/`§C0.3`) — the router seam. See
+  `INTERNALS.md` §6b before extending it: `showComplete`'s own TWO internal self-calls are
+  deliberately NOT rerouted (implementation detail, not an entry point — `unit-coverage-threshold`
+  pins one); `showSettings` deliberately does not correspond to a `.screen` (settings gets one under
+  `PLAN §C4`, a separate track); `showGenerationClean` is NOT the same as `showGeneration` — it also
+  resets the URL hash, and `build-static.js` has its OWN copy of that call site (keep both in sync);
+  `showTeacher` has NO `build-static.js` copy to keep in sync — the static build hides its entry
+  button entirely; `showLessonSet` DOES have a `build-static.js` copy (its own `loadSaved`) — kept in
+  sync at `v81_s`. **Nothing from `PLAN §C0`'s original four-name list has any external caller left
+  un-seamed as of `v81_p`; `v81_r`/`v81_s` add three further surfaces, ruled together by the user
+  rather than drawn from that list — `lesson-screen` next, per that ruling.**
+- `test/unit-ui-journeys.test.js` (`v81_m`–`v81_s`, `PLAN §C0`) — the route-parity reference for the
+  FOUR original screens plus the teacher dashboard and lesson-set. Extend it, don't bypass it, if you
+  touch any of them again. ⚠️ Also grep the WHOLE suite for the function being rerouted before
+  shipping ANY future reroute — `v81_o` broke three source-text pins in `unit-learner-nav.test.js`
+  this file does not cover; `v81_p` broke two more the same way, `v81_s` broke four more; the
+  full-suite run is what caught them each time, not a pre-edit grep alone. `v81_r`'s new journey
+  needed a DIFFERENT exit technique than the other four — see `INTERNALS.md` §5, the
+  STATIC-markup-is-never-parsed bullet, which `v81_s`'s journey also needed. `v81_s` ALSO hit a
+  second, different harness gap: `innerHTML` never reflects nodes added via `appendChild` — assert
+  `.children.length` for anything `buildPath()`-shaped.
 - `build-static.js`'s `loadSaved` is missing the entire `_isLaterChapter()` branch `index.html` has
   (found at `v81_p`, not fixed) — a learner opening a later chapter in the STATIC build may not land
   on the progress card the way `v81_b`'s ruling intended. Needs its own measurement before a fix.
