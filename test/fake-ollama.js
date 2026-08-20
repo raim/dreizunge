@@ -37,6 +37,18 @@ const VOCAB_LESSON = {
   ],
 };
 
+// PLAN §8/B3: vocabulary prompts require model-proposed target-language skill IDs. The fake reads
+// the requested language code from that contract so it remains useful for every generated pair.
+function vocabLessonWithSkills(sys) {
+  const m = /skill ID in the form "([^:"]+):vocab:/i.exec(sys);
+  const lang = m ? m[1].toLowerCase() : 'de';
+  const out = JSON.parse(JSON.stringify(VOCAB_LESSON));
+  out.vocab.forEach(item => {
+    item.skillId = lang + ':vocab:' + item.target.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '');
+  });
+  return out;
+}
+
 const srv = http.createServer(async (req, res) => {
   if (req.method === 'GET' && req.url === '/api/tags') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -81,14 +93,15 @@ const srv = http.createServer(async (req, res) => {
       // Table-format lesson (translategemma-style): two markdown tables, vocab then sentences.
       // A non-pipe heading between them lets the server's parseTableLesson stop table 1 correctly.
       kind = 'vocab_table';
+      const skillLang = ((/skill ID in the form "([^:"]+):vocab:/i.exec(sys) || [])[1] || 'de').toLowerCase();
       content = [
         'Table 1 - Vocabulary',
-        '| Lëtzebuergesch word | German meaning | Pronunciation |',
-        '| --- | --- | --- |',
-        '| Haus | house | hows |',
-        '| Katze | cat | kah-tse |',
-        '| Hund | dog | hunt |',
-        '| Baum | tree | bowm |',
+        '| Lëtzebuergesch word | German meaning | Pronunciation | Skill ID |',
+        '| --- | --- | --- | --- |',
+        `| Haus | house | hows | ${skillLang}:vocab:haus |`,
+        `| Katze | cat | kah-tse | ${skillLang}:vocab:katze |`,
+        `| Hund | dog | hunt | ${skillLang}:vocab:hund |`,
+        `| Baum | tree | bowm | ${skillLang}:vocab:baum |`,
         'Table 2 - Sentences',
         '| Lëtzebuergesch sentence | German translation |',
         '| --- | --- |',
@@ -208,7 +221,7 @@ const srv = http.createServer(async (req, res) => {
       kind = 'story';
       content = 'STORYTEXT[' + Date.now() + '] Es war einmal ein Test. Die Katze und das Haus blieben gleich.';
     } else {
-      kind = 'vocab'; content = JSON.stringify(VOCAB_LESSON);
+      kind = 'vocab'; content = JSON.stringify(vocabLessonWithSkills(sys));
     }
     // v76_h: was sys.slice(0, 400). Notes appended AFTER a prompt's `system` block — the script
     // rule, the dialect note, the writing-style note, the continuation note — all fall past 400

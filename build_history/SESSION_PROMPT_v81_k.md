@@ -1,10 +1,21 @@
-# Session prompt — written at the `v81_j` cut (end of session 38)
+# Session prompt — written at the `v81_k` cut (end of session 39)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_i.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_j.md` was the
 previous one — superseded by this file and renamed, not kept alongside.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_j`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_k`** cut.
+
+**Session 39 shipped `v81_k`: `PLAN §8/B2–B3`, the target-language skill registry and vocabulary
+tagging foundation.** `skills.json` is server-side, separate from `lessons.json`; model-proposed
+`<target>:vocab:<dictionary-form>` IDs become usable only after explicit review/registration or a
+reversible alias. Source language is evidence context, not skill identity. New standard vocabulary
+lessons retain pending proposals for review but carry only a resolved canonical `skillId` into their
+vocab rows and exercises; `recordObservation()` now writes it. Legacy/pending rows remain `null`.
+No corpus backfill, registry UI, BKT, progression, or player policy changed. A disposable browser
+pass registered `it:vocab:successione`, played it, and confirmed the first-attempt observation with
+that exact canonical ID. Full / quick suite: **234 / 208**; corpus unchanged at **323 topics, 91
+storylines, 33 languages, 617 `en` keys**.
 
 **Session 38 shipped two things and started nothing else.** `v81_i`: one user ruling, delivered
 directly rather than queued — the lesson-path's SEQUENTIAL lock ("previous lesson done") is
@@ -57,14 +68,14 @@ want to eyeball the log in the console anyway.**
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 231 checks
-node test/run.js --quick                  → expect 207
+node test/run.js                          → expect 234 checks
+node test/run.js --quick                  → expect 208
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 languages, 617 `en` keys**.
-`APP_VERSION = 'v81_j'`.
+`APP_VERSION = 'v81_k'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -136,16 +147,13 @@ is a materially lower bar. Needs a browser pass, not a code change.
 
 ## 3. BUILDABLE NOW, no ruling needed
 
-- ~~`PLAN §8/B1`, the observations log~~ **✅ SHIPPED at `v81_j`.** `APP.progress.observations`,
-  append-only, wired into `check()`. `error_hunt`/`ai_error_hunt` and the crossword are NOT wired
-  (different grading shape — a scoped follow-up). `skillId`/`userId` are `null` until `§8/B2`
-  (skill tagging) and auth (`PLAN §9` R3) exist. See the roadmap's `v81_j` entry for the measurement
-  and the mutation results, and `INTERNALS.md` §6b for the function map.
-- **`PLAN §8/B2`, the skill registry** — the natural next step in this track now B1 exists, but
-  ⚠️ **not pre-cleared the way B1 was.** `§0.1(b)` flags an open call the registry lands on (is
-  source language a property of the evidence, or of the skill? the plan suggests "probably yes" /
-  "probably no" but does not rule) — read `§0.1` and `PLAN §8/B2` in full before assuming this is
-  ruling-free.
+- ~~`PLAN §8/B1`, the observations log~~ **✅ SHIPPED at `v81_j`; B2/B3 skill registry and new
+  vocabulary tagging are ✅ SHIPPED at `v81_k`.** `APP.progress.observations` is append-only and
+  `check()`-graded vocab exercises now record their reviewed canonical target-language skill IDs.
+  `error_hunt`/`ai_error_hunt` and the crossword still grade differently and are NOT wired.
+- **`PLAN §8/B4`, BKT in shadow mode** — now the next Track B step. It must compute `pMastery`,
+  show it nowhere, and log disagreement with the existing chapter/pass-mark gates. It must not alter
+  progression and becomes meaningful only as reviewed skill-tagged observations accumulate.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
@@ -190,9 +198,9 @@ is a materially lower bar. Needs a browser pass, not a code change.
 
 ## 5. NOT yours to start
 
-Import "new" mode is POSTPONED. **Track A (ingest, `PLAN §7`)** and **Track B beyond B1** need the
-user. **Mastery-driven progression (`PLAN §9b/D2`) must NOT be decided** until `§8/B4` has run BKT in
-shadow mode. The learner/teacher rework — `_canEdit()` is done; `Edit / rename topic` stays visible
+Import "new" mode is POSTPONED. **Track A (ingest, `PLAN §7`)** still needs the user. **Mastery-driven
+progression (`PLAN §9b/D2`) must NOT be decided** until `§8/B4` has run BKT in shadow mode. The
+learner/teacher rework — `_canEdit()` is done; `Edit / rename topic` stays visible
 by user ruling.
 
 **⚠️ THE TRACK T COLOURING NUMBERS MOVED AT `v81_d`** — the denominator used to count questions no
@@ -235,7 +243,7 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
 - `_storyLockedLesson(L, d)` — the ONE "is this lesson closed" rule.
 - `_cardHeader(prefix)` + `.card-screen` — every new card page uses both.
 - `scriptPinNote(lang, script, role)` — every prompt emitting target-language text calls it.
-- `recordObservation(ex, correct)` / `APP.progress.observations` — the `PLAN §8/B1` evidence log
-  (`v81_j`). See `INTERNALS.md` §6b's "PLAN §8/B1" table before extending it — in particular the
-  SCOPE note (only `check()`-graded exercises are logged) and the growth-ceiling note
-  (`learners.js`'s `MAX_STATE_BYTES`, unaddressed).
+- `recordObservation(ex, correct)` / `APP.progress.observations` — the `PLAN §8/B1–B3` evidence
+  path (`v81_j`–`v81_k`). See `INTERNALS.md` §6b before extending it: only `check()`-graded
+  exercises are logged, and only resolved vocabulary IDs are non-null; `learners.js`'s
+  `MAX_STATE_BYTES` growth ceiling remains unaddressed.

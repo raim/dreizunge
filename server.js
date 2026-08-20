@@ -7,6 +7,7 @@ const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
 const { parseDialectGlossary, buildDialectTopic } = require('./dialect-glossary.js');
+const { createSkillRegistry, resolveSkill, withRegisteredSkill, withSkillAlias, withoutSkillAlias } = require('./skill-registry.js');
 const { callLLM: _rawCallLLM, callLLMStream: _rawCallLLMStream, ping: pingOllama, release: releaseOllamaModel,
         warmup: _warmupLLM, listModels: listOllamaModels, setRequestTimeout, getRequestTimeout,
         setNumThread, getNumThread, setNumCtxMax, getNumCtxMax, estimateCtxTokens,
@@ -177,7 +178,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v81_j';
+const APP_VERSION  = 'v81_k';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -187,6 +188,10 @@ const SCHEMA_VERSION = 30;
 // is EXPLICIT rather than a read-time default.
 const DEFAULT_USER = 'admin';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
+// PLAN §8/B2: deliberately separate from lessons.json, which is a public static-build input.
+// Skills are pedagogy metadata, not generated lesson content, and remain server-side until B3
+// explicitly starts attaching resolved IDs to new lessons.
+const SKILLS_FILE = process.env.SKILLS_FILE || path.join(__dirname, 'skills.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
 const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
@@ -354,6 +359,55 @@ function saveStore(s) {
     console.error('Could not write lessons.json:', e.message + hint);
   }
 }
+
+function loadSkillRegistry() {
+  try {
+    if (!fs.existsSync(SKILLS_FILE)) return createSkillRegistry();
+    const data = JSON.parse(fs.readFileSync(SKILLS_FILE, 'utf8'));
+    if (!data || data.schemaVersion !== 1 || !Array.isArray(data.skills))
+      throw new Error('expected { schemaVersion: 1, skills: [] }');
+    return createSkillRegistry(data.skills);
+  } catch (e) {
+    // A corrupt registry must not be silently replaced with an empty one: that would turn a
+    // restart into lost canonicalisation. Keep the process up, but make review writes fail closed.
+    console.error('Could not load skills registry:', e.message);
+    return null;
+  }
+}
+
+function saveSkillRegistry(registry) {
+  if (!registry) throw new Error('skills registry is unavailable');
+  const out = { schemaVersion: 1, skills: registry.entries };
+  fs.writeFileSync(SKILLS_FILE, JSON.stringify(out, null, 2) + '\n', 'utf8');
+}
+
+function skillResolutionJson(resolution) {
+  return { proposedId: resolution.proposedId, canonicalId: resolution.canonicalId,
+    skillId: resolution.skillId, status: resolution.status, targetLang: resolution.targetLang,
+    sourceLang: resolution.sourceLang, entry: resolution.entry || null };
+}
+
+// PLAN §8/B3 — a vocabulary generator proposes one primary vocabulary skill per returned word.
+// Registration is intentionally NOT automatic: an unregistered proposal is durable review input,
+// not a reason for a generator to mint its own canonical dialect. Once a reviewer registers or
+// aliases it through B2, later generated rows receive the canonical `skillId` automatically.
+function resolveVocabularySkillTags(vocab, lang, srcLang) {
+  if (!skillRegistry) throw new Error('skills registry is unavailable; refusing to write unreviewable skill tags');
+  const skillIds = new Set();
+  let pending = 0;
+  const tagged = (vocab || []).map((item, index) => {
+    const proposedId = item && typeof item.skillId === 'string' ? item.skillId.trim() : '';
+    if (!proposedId) throw new Error(`Vocabulary item ${index + 1} has no model-proposed skillId`);
+    const resolution = resolveSkill(skillRegistry, proposedId, { targetLang: lang, sourceLang: srcLang });
+    if (resolution.skillId) skillIds.add(resolution.skillId); else pending++;
+    // Never retain the model's unvalidated ID in `skillId`: that field is reserved for a resolved,
+    // canonical skill the player can use in a later B3 follow-up. The proposal/resolution remains
+    // alongside the vocab evidence so a reviewer can decide without re-generating the lesson.
+    return { ...item, skillId: resolution.skillId,
+      skillProposal: skillResolutionJson(resolution) };
+  });
+  return { vocab: tagged, skillIds: Array.from(skillIds), pending };
+}
 // ── UI strings (localisation) ─────────────────────────────────────
 function loadUI() {
   try {
@@ -426,6 +480,7 @@ async function ensureUIForLang(lang) {
 
 
 let store = loadStore();
+let skillRegistry = loadSkillRegistry();
 
 // v69_q: id minting lives at MODULE scope. It was previously nested inside boot() (which encloses
 // most of the file and is invoked once at startup), so it was visible only to other boot()-nested
@@ -1207,6 +1262,7 @@ function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, _unused, 
   if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
   if (lang === 'ja')              sys += P.cjkNote;
   sys += scriptPinNote(lang, script, 'vocab prompt');   // v79_a: same rule the story prompt has had since v76_h
+  sys += skillTagPromptNote(lang, false);
   return sys;
 }
 
@@ -1225,6 +1281,7 @@ function sysLessonFromText(lang, srcLang, lessonNum, totalLessons, difficulty, d
   if (dialect) sys += fillPrompt(P.dialectNote, { dialect });
   if (lang === 'ja') sys += P.cjkNote;
   sys += scriptPinNote(lang, script, 'vocab prompt');   // v79_a
+  sys += skillTagPromptNote(lang, false);
   return sys;
 }
 
@@ -1242,7 +1299,18 @@ function sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, dial
   if (dialect) sys += fillPrompt(P.dialectNote, { dialect });
   if (lang === 'ja') sys += P.cjkNote;
   sys += scriptPinNote(lang, script, 'vocab prompt');   // v79_a
+  sys += skillTagPromptNote(lang, true);
   return sys;
+}
+
+// A model supplies the semantic identifier because lemmatisation is language knowledge. This
+// helper only states the structural contract; the B2 registry validates/canonicalises the result.
+function skillTagPromptNote(lang, tableFormat) {
+  const code = String(lang || '').trim().toLowerCase();
+  if (tableFormat) {
+    return `\n- Add a fourth Vocabulary-table column named "Skill ID". Every vocabulary row must contain one ID in the form "${code}:vocab:<dictionary-form>", using the target-language dictionary form from that row. Do not tag sentence rows.`;
+  }
+  return `\n- Every object in "vocab" MUST include "skillId": one proposed primary skill ID in the form "${code}:vocab:<dictionary-form>". Use the target-language dictionary form from that row. Do not add skill IDs to sentence objects.`;
 }
 
 // Parse two markdown tables (vocabulary, then sentences) from table-format lesson output.
@@ -1285,7 +1353,8 @@ function parseTableLesson(raw, lessonNum, topic) {
   }
 
   const toPair    = r => ({ target: r[0] || '', source: r[1] || '' });
-  const vocab     = vocabRows.slice(0, 8).map(toPair).filter(v => v.target && v.source);
+  const toVocab   = r => r[3] ? { ...toPair(r), skillId: r[3] } : toPair(r);
+  const vocab     = vocabRows.slice(0, 8).map(toVocab).filter(v => v.target && v.source);
   const sentences = sentRows.slice(0, 5).map(toPair).filter(s => s.target && s.source);
 
   if (vocab.length < 1) throw new Error(`Table parse: only ${vocab.length} vocab rows`);
@@ -4540,6 +4609,8 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
       const k = v.target?.toLowerCase(); if (!k || seen.has(k)) return false; seen.add(k); return true;
     }).slice(0, 8);
     if (lesson.vocab.length < 1) throw new Error(`Only ${lesson.vocab.length} unique vocab items`);
+    const skillTags = resolveVocabularySkillTags(lesson.vocab, lang, srcLang);
+    lesson.vocab = skillTags.vocab;
 
     // v71_y: the v71_d article-symmetry REWRITE that used to sit here is gone. It held article lists
     // for 12 languages and always stripped, so it could only ever remove — turning `la grandine` /
@@ -4603,6 +4674,9 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
         icon:  lesson.icon  || '📖',
         vocab: lesson.vocab,
         sentences: lesson.sentences,
+        skillIds: skillTags.skillIds,
+        _skillTags: { type: 'vocab', proposed: lesson.vocab.length, resolved: skillTags.skillIds.length,
+          pending: skillTags.pending },
         _genMeta: buildGenMeta({ type: 'standard', model: OLLAMA_LESSON_MODEL, t0: _t0, valid: (lesson.vocab || []).length, promptTokens, completionTokens }),
       },
       tokens: { lessonNum, ms, promptTokens, completionTokens }
@@ -5966,6 +6040,58 @@ http.createServer(async (req, res) => {
         // server is secure over loopback and insecure over the LAN at the same moment.
         insecureTransport: transportInsecure(req),
         canGenerate: active !== 'none' });
+    }
+    // PLAN §8/B2 — canonical skills are reviewed server-side before any lesson generator uses
+    // them. These routes intentionally do NOT inspect or alter lessons, observations, or player
+    // state. A source language is accepted only as evidence context; target language scopes ID.
+    if (M === 'GET' && url.pathname === '/api/skills') {
+      if (!skillRegistry) return json(res, 503, { error: 'Skills registry is unavailable.' });
+      return json(res, 200, { schemaVersion: 1, skills: skillRegistry.entries });
+    }
+    if (M === 'POST' && url.pathname === '/api/skills/resolve') {
+      if (!skillRegistry) return json(res, 503, { error: 'Skills registry is unavailable.' });
+      let body; try { body = JSON.parse(await readBody(req)); }
+      catch (_) { return json(res, 400, { error: 'Invalid JSON body.' }); }
+      try {
+        return json(res, 200, { resolution: skillResolutionJson(resolveSkill(skillRegistry,
+          body.proposedId, { targetLang: body.targetLang, sourceLang: body.sourceLang })) });
+      } catch (e) { return json(res, 400, { error: e.message }); }
+    }
+    if (M === 'POST' && url.pathname === '/api/skills/register') {
+      if (!skillRegistry) return json(res, 503, { error: 'Skills registry is unavailable.' });
+      let body; try { body = JSON.parse(await readBody(req)); }
+      catch (_) { return json(res, 400, { error: 'Invalid JSON body.' }); }
+      try {
+        const result = withRegisteredSkill(skillRegistry, body.proposedId, {
+          targetLang: body.targetLang, sourceLang: body.sourceLang, label: body.label, aliases: body.aliases,
+        });
+        if (result.changed) { saveSkillRegistry(result.registry); skillRegistry = result.registry; }
+        return json(res, 200, { changed: result.changed, resolution: skillResolutionJson(result.resolution) });
+      } catch (e) { return json(res, 400, { error: e.message }); }
+    }
+    if (M === 'POST' && url.pathname === '/api/skills/alias') {
+      if (!skillRegistry) return json(res, 503, { error: 'Skills registry is unavailable.' });
+      let body; try { body = JSON.parse(await readBody(req)); }
+      catch (_) { return json(res, 400, { error: 'Invalid JSON body.' }); }
+      try {
+        const next = withSkillAlias(skillRegistry, body.skillId, body.alias, body.targetLang);
+        const changed = next !== skillRegistry;
+        if (changed) { saveSkillRegistry(next); skillRegistry = next; }
+        return json(res, 200, { changed, skillId: resolveSkill(skillRegistry, body.skillId,
+          { targetLang: body.targetLang }).skillId });
+      } catch (e) { return json(res, 400, { error: e.message }); }
+    }
+    if (M === 'DELETE' && url.pathname === '/api/skills/alias') {
+      if (!skillRegistry) return json(res, 503, { error: 'Skills registry is unavailable.' });
+      let body; try { body = JSON.parse(await readBody(req)); }
+      catch (_) { return json(res, 400, { error: 'Invalid JSON body.' }); }
+      try {
+        const next = withoutSkillAlias(skillRegistry, body.skillId, body.alias, body.targetLang);
+        const changed = next !== skillRegistry;
+        if (changed) { saveSkillRegistry(next); skillRegistry = next; }
+        return json(res, 200, { changed, skillId: resolveSkill(skillRegistry, body.skillId,
+          { targetLang: body.targetLang }).skillId });
+      } catch (e) { return json(res, 400, { error: e.message }); }
     }
     // Model picker: list the models Ollama has installed, and which are active per role.
     if (M === 'GET' && url.pathname === '/api/models') {

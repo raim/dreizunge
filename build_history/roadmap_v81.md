@@ -1662,6 +1662,39 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_k` — `PLAN §8/B2–B3`, target-language skill registry and vocabulary-tagged observations
+
+**Shipped by: Codex.**
+
+The B1 observations log now has a reviewed, target-language-scoped skill identity for NEW standard
+vocabulary lessons. The pure, read-only text-analysis foundation normalises and tokenises evidence
+without language-specific morphology. `skills.json` is a separate server-side registry: the model
+proposes `<target>:vocab:<dictionary-form>`, an explicit reviewer registration or same-type alias
+resolves it to a canonical ID, and unknown proposals remain pending review rather than minting
+generator-specific skill dialects. Source language is retained as evidence context, not identity.
+
+The B3 tagger is deliberately narrow: only new standard/vocabulary lessons ask for one proposed ID
+per vocab row. Every amended prompt still calls `scriptPinNote`; every generated lesson still carries
+`_genMeta`. A resolved row carries its canonical `skillId` through `buildStandardExercises` into
+`recordObservation`; legacy and pending rows stay `null`, while the full proposal/resolution stays
+alongside the vocab row for review. No existing lesson was backfilled and no progression or player
+decision reads the new data.
+
+**Verified at the behavioural layer:** the observation guard drives a real vocabulary exercise
+through `check()` and confirms the canonical ID is appended; removing exercise metadata propagation
+makes it fail. The registry disk-write and end-to-end tagger guards were likewise mutation-tested.
+A disposable local browser run registered `it:vocab:successione`, played a temporary Italian lesson,
+and produced a first-attempt corpus observation with exactly that `skillId`, topic, lesson, and
+storyline attribution. The real corpus and learner data were untouched.
+
+**Guarded** by three new counted checks: pure text/registry semantics, registry API persistence and
+reversible aliases, and end-to-end generated vocabulary tagging. The observation-log check retains
+its live `check()` path and now proves resolved ID propagation. Full / quick suite: **234 / 208**.
+
+**Still deliberately absent:** a registry UI, automatic registration, backfill, non-vocabulary
+taggers, and BKT/UI/progression behaviour. **B4 is next:** run BKT in shadow mode only and log its
+disagreement with the existing pass-mark/chapter-complete gate.
+
 ### `v81_j` — `PLAN §8/B1`, the observations log (append-only, per bayesian_knowledge_tracing.md §13)
 
 **Shipped by: Claude Code.**
@@ -3372,16 +3405,13 @@ record even when `skillId` is unknown — an observation tagged `null` is recove
 observation never written is gone. **This is worth doing before any of Track A**, because every day
 it runs is a day of evidence BKT will have, and the existing counters cannot be replayed into it.
 
-**B2 — the skill registry and canonicalisation.** The piece §0.1(c) says the document omits. Model
-proposes an ID, the app resolves it against existing entries, near-misses are merged, and the
-resolution is recorded so a wrong merge is reversible. **Build the registry before the taggers**, or
-every tagger will mint its own dialect. This is also where the `de:` / language prefix and the
-target-vs-source question from §0.1(b) get settled.
+**B2 — the skill registry and canonicalisation. ✅ SHIPPED at `v81_k`.** The registry is separate
+from `lessons.json`; model proposals resolve only through explicit target-language registrations or
+reversible same-type aliases. Source is evidence context, never part of a skill's canonical ID.
 
-**B3 — tag NEW lessons at generation.** One lesson type first (vocabulary — the same choice §D3
-makes, and `_storyWordSources(d)` already collects the words). Every prompt that gains a skill field
-must still call `scriptPinNote` and record `_genMeta`. Do **not** backfill 321 topics until one type
-has been through QC.
+**B3 — tag NEW lessons at generation. ✅ SHIPPED at `v81_k`.** One lesson type first: standard
+vocabulary. Every amended prompt still calls `scriptPinNote` and records `_genMeta`; unregistered
+proposals stay pending beside the row, and no historical topic was backfilled.
 
 **B4 — BKT in SHADOW MODE.** Compute `pMastery` and show it nowhere. Run it alongside the existing
 `chapterComplete`/pass-mark gate and **log where the two disagree.** This is the measurement that
@@ -3654,4 +3684,3 @@ reinforce/extend (D7). **Mastery-driven progression (D2) should NOT be decided u
 BKT in shadow mode and produced a disagreement log** — deciding it now would be guessing.
 
 ---
-

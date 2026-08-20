@@ -150483,11 +150483,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v81_j', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v81_j'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v81_k', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v81_k'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"fb8777ceaea8","lessons.json":"b8d1e81f9ad2","ui.json":"595821a44480","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"58b249cb7d41"};
+  APP.buildSources = {"index.html":"e77a8536535a","lessons.json":"b8d1e81f9ad2","ui.json":"595821a44480","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"58b249cb7d41"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');
@@ -155735,12 +155735,19 @@ function buildStandardExercises(lesson, lessonIdx){
   const tv=lesson.vocab||[], ts=lesson.sentences||[];
   const fb=['This is incorrect.','Another wrong answer.','Not the right translation.'];
 
+  // PLAN §8/B3: `skillId` arrives here only after the server registry has resolved the model's
+  // proposal. Preserve it on every question derived from that vocab row; leave legacy/pending
+  // rows and every sentence-derived question untagged so observations remain explicitly null.
+  function taggedVocab(v, ex){
+    if (typeof v.skillId === 'string' && v.skillId.trim()) ex.skillId = v.skillId;
+    return ex;
+  }
   function wV(c,f,p,n){ return shuffle(p.filter(v=>v.target!==c.target)).slice(0,n).map(v=>v[f]); }
   function wS(c,p,n){ return shuffle(p.filter(s=>s.source!==c.source)).slice(0,n).map(s=>s.source); }
-  function mkMcqIE(v,p){ const w=wV(v,'source',p,3); if(w.length<3)return null; return {type:'mcq_target_source',target:v.target,source:v.source,pron:v.pron,correct:v.source,choices:shuffle([v.source,...w])}; }
-  function mkMcqEI(v,p){ const w=wV(v,'target',p,3); if(w.length<3)return null; return {type:'mcq_source_target',source:v.source,target:v.target,correct:v.target,choices:shuffle([v.target,...w])}; }
-  function mkLMcq(v,p){ const w=wV(v,'source',p,3); if(w.length<3)return null; return {type:'listen_mcq',target:v.target,pron:v.pron,correct:v.source,choices:shuffle([v.source,...w])}; }
-  function mkLType(v){ return {type:'listen_type',target:v.target,source:v.source,pron:v.pron,correct:v.target}; }
+  function mkMcqIE(v,p){ const w=wV(v,'source',p,3); if(w.length<3)return null; return taggedVocab(v,{type:'mcq_target_source',target:v.target,source:v.source,pron:v.pron,correct:v.source,choices:shuffle([v.source,...w])}); }
+  function mkMcqEI(v,p){ const w=wV(v,'target',p,3); if(w.length<3)return null; return taggedVocab(v,{type:'mcq_source_target',source:v.source,target:v.target,correct:v.target,choices:shuffle([v.target,...w])}); }
+  function mkLMcq(v,p){ const w=wV(v,'source',p,3); if(w.length<3)return null; return taggedVocab(v,{type:'listen_mcq',target:v.target,pron:v.pron,correct:v.source,choices:shuffle([v.source,...w])}); }
+  function mkLType(v){ return taggedVocab(v,{type:'listen_type',target:v.target,source:v.source,pron:v.pron,correct:v.target}); }
   function mkOrder(s){
     const isJa=(APP.lessonData?.lang||APP.lang)==='ja';
     const sep=isJa?'':' ';
@@ -159149,7 +159156,9 @@ function recordObservation(ex, correct){
     const firstAttempt = !log.some(o => o.qid === id);
     log.push({
       userId: null,
-      skillId: null,
+      // Legacy and pending vocabulary rows carry no ID; a B3-resolved vocab exercise carries its
+      // canonical target-language identity straight through to the evidence record.
+      skillId: (typeof ex.skillId === 'string' && ex.skillId.trim()) ? ex.skillId : null,
       correct: !!correct,
       evidence: 'corpus',   // the only evidence type Dreizunge produces today (doc §8) — every
                              // exercise is generated FROM the corpus, none of it is free/independent use

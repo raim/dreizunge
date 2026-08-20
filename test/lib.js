@@ -71,20 +71,24 @@ async function boot({ log = false, seed = null } = {}) {
   // touching the tracked repo file.
   const uiPath = tmpFile('dz_ui', '.json');
   fs.copyFileSync(path.join(ROOT, 'ui.json'), uiPath);
+  // PLAN §8/B2 registry state is server-only, like learner state: every boot gets an isolated
+  // file so a test cannot create canonical skills in the working tree or leak into another test.
+  const skillsPath = tmpFile('dz_skills', '.json');
+  fs.writeFileSync(skillsPath, JSON.stringify({ schemaVersion: 1, skills: [] }));
 
   const fake = await startFakeOllama(logPath);
   const sport = 30000 + (process.pid % 3000);
   const env = { ...process.env,
     OLLAMA_HOST: 'http://127.0.0.1:' + fake.port, OLLAMA_MODEL: 'fake',
     OLLAMA_LESSON_MODEL: 'fake', OLLAMA_TRANSLATION_MODEL: 'fake',
-    LESSONS_FILE: storePath, UI_FILE: uiPath, PORT: String(sport) };
+    LESSONS_FILE: storePath, UI_FILE: uiPath, SKILLS_FILE: skillsPath, PORT: String(sport) };
   const srv = cp.spawn('node', [SERVER], { cwd: ROOT, env, stdio: ['ignore', 'pipe', 'pipe'] });
   let log_ = '';
   srv.stdout.on('data', d => log_ += d); srv.stderr.on('data', d => log_ += d);
   await waitPort(sport);
 
   return {
-    sport, fport: fake.port, storePath, logPath, uiPath,
+    sport, fport: fake.port, storePath, logPath, uiPath, skillsPath,
     srvlog: () => log_,
     readStore: () => JSON.parse(fs.readFileSync(storePath, 'utf8')),
     readChatLog: () => (logPath && fs.existsSync(logPath))
@@ -95,6 +99,7 @@ async function boot({ log = false, seed = null } = {}) {
       try { fake.child.kill(); } catch (_) {}
       try { fs.unlinkSync(storePath); } catch (_) {}
       try { fs.unlinkSync(uiPath); } catch (_) {}
+      try { fs.unlinkSync(skillsPath); } catch (_) {}
       try { if (logPath) fs.unlinkSync(logPath); } catch (_) {}
     },
   };

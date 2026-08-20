@@ -2,9 +2,9 @@
 // PLAN §8/B1 (v81_j) — the append-only observations log, per bayesian_knowledge_tracing.md §13.
 //
 // Two properties matter more than matching the doc's 6-field schema exactly (the roadmap's own
-// framing): record the FIRST attempt distinctly from retries, and record even when `skillId` is
-// unknown. This file pins both, plus the wiring into `check()` — assertions on the helper alone
-// prove nothing about whether the caller actually invokes it (rule, v71_u).
+// framing): record the FIRST attempt distinctly from retries, and preserve a canonical B3 skill
+// ID when a vocabulary exercise has one. This file pins both, plus the wiring into `check()` —
+// assertions on the helper alone prove nothing about whether the caller actually invokes it.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -78,7 +78,7 @@ function open() {
   console.log('  _storylineIdForTopic: real membership resolved, non-member is null');
 }
 
-// ── 3. recordObservation: full field shape, firstAttempt true→false on repeat, false at v81_i ──
+// ── 3. recordObservation: full field shape, firstAttempt true→false on repeat, null when untagged ──
 {
   const C = open();
   C.run(`APP.cur = { lessonIdx: ${FIX.idx} }; true;`);
@@ -87,7 +87,7 @@ function open() {
   assert.strictEqual(first.length, 1, 'one observation written');
   const o = first[0];
   assert.strictEqual(o.userId, null, 'userId is null (no auth model yet)');
-  assert.strictEqual(o.skillId, null, 'skillId is null (no skill tagging yet, §8/B2)');
+  assert.strictEqual(o.skillId, null, 'an untagged/legacy exercise remains explicitly unassigned');
   assert.strictEqual(o.correct, true, 'correct carries the verdict passed in');
   assert.strictEqual(o.evidence, 'corpus', 'evidence is "corpus" — the only type Dreizunge produces today');
   assert.strictEqual(o.storylineId, FIX.slId, 'storylineId resolved from the open topic');
@@ -200,6 +200,26 @@ function open() {
     }
   }
   console.log(`  check() wiring: live answers recorded (${C.run('_obsLog().length')} total), replay recorded none`);
+
+  // B3 path: a canonical skill ID survives real exercise construction and the DOM-facing
+  // `check()` call. Locate the exercise by its source object, rather than assuming a shuffled
+  // exercise order or a particular question type.
+  const tagged = open();
+  const skillId = `${FIX.t.lang}:vocab:registry-proof`;
+  const built = tagged.run(`(function(){
+    var item = APP.lessonData.lessons[${FIX.idx}].vocab[0];
+    item.skillId = ${JSON.stringify(skillId)};
+    startLesson(${FIX.idx});
+    var at = APP.cur.exercises.findIndex(function(ex){ return _exFlagTarget(ex) === item; });
+    if (at < 0) return null;
+    APP.cur.cur = at; APP.cur.answered = false; renderEx();
+    return APP.cur.exercises[at].skillId || null;
+  })()`);
+  assert.strictEqual(built, skillId, 'a resolved vocab ID is carried onto its built exercise');
+  assert.ok(answer(tagged, false), 'the tagged vocabulary exercise is live-answerable');
+  assert.strictEqual(tagged.run(`_obsLog()[0].skillId`), skillId,
+    'check() records the canonical skill ID, not null or a model proposal');
+  console.log('  B3 skill path: resolved vocab ID -> exercise -> live observation');
 }
 
 console.log('unit-observations-log: ALL PASSED');
