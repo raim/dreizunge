@@ -1234,7 +1234,8 @@
     "unlocked.next": "Start het volgende hoofdstuk",
     "unlocked.back_card": "Terug naar het hoofdstuk",
     "unlocked.progress": "{done} van {total} hoofdstukken",
-    "summary.start": "Begin met leren"
+    "summary.start": "Begin met leren",
+    "ex.back_title": "Terug naar de vorige vraag"
   },
   "pt": {
     "qc.editor.suggests_by": "⚑ Sugestões de: {model}",
@@ -1852,7 +1853,8 @@
     "unlocked.next": "Começar o próximo capítulo",
     "unlocked.back_card": "Voltar ao capítulo",
     "unlocked.progress": "{done} de {total} capítulos",
-    "summary.start": "Começar a aprender"
+    "summary.start": "Começar a aprender",
+    "ex.back_title": "Voltar para a pergunta anterior"
   },
   "fr": {
     "qc.editor.suggests_by": "⚑ Suggéré par {model} :",
@@ -2470,7 +2472,8 @@
     "unlocked.next": "Commencer le chapitre suivant",
     "unlocked.back_card": "Retour au chapitre",
     "unlocked.progress": "{done} sur {total} chapitres",
-    "summary.start": "Commencer l'apprentissage"
+    "summary.start": "Commencer l'apprentissage",
+    "ex.back_title": "Retour à la question précédente"
   },
   "tr": {
     "qc.editor.suggests_by": "⚑ {model} öneriyor:",
@@ -3086,7 +3089,8 @@
     "unlocked.next": "Bir sonraki bölümü başlat",
     "unlocked.back_card": "Bölüme geri dön",
     "unlocked.progress": "{done} / {total} bölüm tamamlandı",
-    "summary.start": "Öğrenmeye başla"
+    "summary.start": "Öğrenmeye başla",
+    "ex.back_title": "Önceki soruya dön"
   },
   "hi": {
     "qc.editor.suggests_by": "⚑ {model} का सुझाव:",
@@ -3704,7 +3708,8 @@
     "unlocked.next": "अगला अध्याय शुरू करें",
     "unlocked.back_card": "अध्याय पर वापस जाएँ",
     "unlocked.progress": "{done} में से {total} अध्याय",
-    "summary.start": "सीखना शुरू करें"
+    "summary.start": "सीखना शुरू करें",
+    "ex.back_title": "पिछले प्रश्न पर वापस जाएँ"
   },
   "de": {
     "qc.editor.suggests_by": "⚑ {model} schlägt vor:",
@@ -4322,7 +4327,8 @@
     "unlocked.next": "Nächstes Kapitel starten",
     "unlocked.back_card": "Zurück zum Kapitel",
     "unlocked.progress": "{done} von {total} Kapiteln",
-    "summary.start": "Lernen beginnen"
+    "summary.start": "Lernen beginnen",
+    "ex.back_title": "Zurück zur vorherigen Frage"
   },
   "ar": {
     "qc.editor.suggests_by": "⚑ يقترح النموذج {model}:",
@@ -4940,7 +4946,8 @@
     "unlocked.next": "ابدأ الفصل التالي",
     "unlocked.back_card": "العودة إلى الفصل",
     "unlocked.progress": "{done} من {total} فصول",
-    "summary.start": "ابدأ التعلم"
+    "summary.start": "ابدأ التعلم",
+    "ex.back_title": "العودة إلى السؤال السابق"
   },
   "sv": {
     "qc.editor.suggests_by": "⚑ {model} föreslår:",
@@ -5558,7 +5565,8 @@
     "unlocked.next": "Starta nästa kapitel",
     "unlocked.back_card": "Tillbaka till kapitlet",
     "unlocked.progress": "{done} av {total} kapitel",
-    "summary.start": "Börja lära dig"
+    "summary.start": "Börja lära dig",
+    "ex.back_title": "Tillbaka till föregående fråga"
   },
   "ru": {
     "qc.editor.suggests_by": "⚑ {model} предлагает:",
@@ -6176,7 +6184,8 @@
     "unlocked.next": "Начать следующую главу",
     "unlocked.back_card": "Вернуться к главе",
     "unlocked.progress": "{done} из {total} глав",
-    "summary.start": "Начать обучение"
+    "summary.start": "Начать обучение",
+    "ex.back_title": "Назад к предыдущему вопросу"
   },
   "zh": {
     "qc.editor.suggests_by": "💡 {model} 推荐：",
@@ -6794,7 +6803,8 @@
     "unlocked.next": "开始新章节",
     "unlocked.back_card": "返回章节",
     "unlocked.progress": "{done} / {total} 章",
-    "summary.start": "开始学习"
+    "summary.start": "开始学习",
+    "ex.back_title": "返回上一题"
   },
   "ko": {
     "qc.editor.suggests_by": "🤖 {model} 추천:",
@@ -7412,7 +7422,8 @@
     "unlocked.next": "다음 챕터 시작",
     "unlocked.back_card": "챕터로 돌아가기",
     "unlocked.progress": "{done} / {total} 챕터 완료",
-    "summary.start": "학습 시작"
+    "summary.start": "학습 시작",
+    "ex.back_title": "이전 문제로 돌아가기"
   },
   "it": {
     "qc.editor.suggests_by": "⚑ {model} suggerisce:",
@@ -8030,7 +8041,8 @@
     "unlocked.next": "Inizia il prossimo capitolo",
     "unlocked.back_card": "Torna al capitolo",
     "unlocked.progress": "{done} di {total} capitoli",
-    "summary.start": "Inizia l'apprendimento"
+    "summary.start": "Inizia l'apprendimento",
+    "ex.back_title": "Torna alla domanda precedente"
   },
   "pl": {
     "qc.editor.suggests_by": "⚑ {model} sugeruje:",
@@ -8648,7 +8660,8 @@
     "unlocked.next": "Rozpocznij kolejny rozdział",
     "unlocked.back_card": "Wróć do rozdziału",
     "unlocked.progress": "{done} z {total} rozdziałów",
-    "summary.start": "Rozpocznij naukę"
+    "summary.start": "Rozpocznij naukę",
+    "ex.back_title": "Powrót do poprzedniego pytania"
   },
   "es": {
     "qc.editor.suggests_by": "⚑ {model} sugiere:",
@@ -9266,7 +9279,8 @@
     "unlocked.next": "Comenzar el siguiente capítulo",
     "unlocked.back_card": "Volver al capítulo",
     "unlocked.progress": "{done} de {total} capítulos",
-    "summary.start": "Comenzar a aprender"
+    "summary.start": "Comenzar a aprender",
+    "ex.back_title": "Volver a la pregunta anterior"
   },
   "ja": {
     "qc.editor.suggests_by": "⚑ {model} が提案:",
@@ -9882,7 +9896,8 @@
     "unlocked.next": "次のレッスンを始める",
     "unlocked.back_card": "レッスンに戻る",
     "unlocked.progress": "{done} / {total} レッスン完了",
-    "summary.start": "学習を開始"
+    "summary.start": "学習を開始",
+    "ex.back_title": "前の問題に戻る"
   },
   "he": {
     "qc.editor.suggests_by": "⚑ מציע: {model}",
@@ -10500,7 +10515,8 @@
     "unlocked.next": "התחל את הפרק הבא",
     "unlocked.back_card": "חזרה לפרק",
     "unlocked.progress": "{done} מתוך {total} פרקים",
-    "summary.start": "התחלת לימוד"
+    "summary.start": "התחלת לימוד",
+    "ex.back_title": "חזרה לשאלה הקודמת"
   },
   "uk": {
     "qc.editor.suggests_by": "⚑ {model} пропонує:",
@@ -11118,7 +11134,8 @@
     "unlocked.next": "Почати наступний розділ",
     "unlocked.back_card": "Повернутися до розділу",
     "unlocked.progress": "{done} з {total} розділів",
-    "summary.start": "Почати навчання"
+    "summary.start": "Почати навчання",
+    "ex.back_title": "Повернутися до попереднього питання"
   },
   "cs": {
     "qc.editor.suggests_by": "⚑ {model} navrhuje:",
@@ -11736,7 +11753,8 @@
     "unlocked.next": "Začněte další kapitolu",
     "unlocked.back_card": "Zpět ke kapitole",
     "unlocked.progress": "{done} z {total} kapitol",
-    "summary.start": "Začít učení"
+    "summary.start": "Začít učení",
+    "ex.back_title": "Zpět k předchozí otázce"
   },
   "vi": {
     "qc.editor.suggests_by": "💡 {model} gợi ý:",
@@ -12354,7 +12372,8 @@
     "unlocked.next": "Bắt đầu chương tiếp theo",
     "unlocked.back_card": "Quay lại chương",
     "unlocked.progress": "{done}/{total} chương đã hoàn thành",
-    "summary.start": "Bắt đầu học"
+    "summary.start": "Bắt đầu học",
+    "ex.back_title": "Quay lại câu hỏi trước"
   },
   "id": {
     "qc.editor.suggests_by": "⚑ {model} menyarankan:",
@@ -12972,7 +12991,8 @@
     "unlocked.next": "Mulai bab berikutnya",
     "unlocked.back_card": "Kembali ke bab",
     "unlocked.progress": "{done} dari {total} bab",
-    "summary.start": "Mulai belajar"
+    "summary.start": "Mulai belajar",
+    "ex.back_title": "Kembali ke pertanyaan sebelumnya"
   },
   "ro": {
     "qc.editor.suggests_by": "⚑ Sugerat de {model}:",
@@ -13590,7 +13610,8 @@
     "unlocked.next": "Începe următorul capitol",
     "unlocked.back_card": "Întoarce-te la capitol",
     "unlocked.progress": "{done} din {total} capitole",
-    "summary.start": "Începe învățarea"
+    "summary.start": "Începe învățarea",
+    "ex.back_title": "Înapoi la întrebarea anterioară"
   },
   "th": {
     "qc.editor.suggests_by": "⚑ {model} แนะนำ:",
@@ -14208,7 +14229,8 @@
     "unlocked.next": "เริ่มบทต่อไป",
     "unlocked.back_card": "กลับไปที่บทนี้",
     "unlocked.progress": "{done} จาก {total} บท",
-    "summary.start": "เริ่มเรียน"
+    "summary.start": "เริ่มเรียน",
+    "ex.back_title": "กลับไปที่คำถามก่อนหน้า"
   },
   "el": {
     "qc.editor.suggests_by": "⚑ Προτείνει το {model}:",
@@ -14826,7 +14848,8 @@
     "unlocked.next": "Ξεκινήστε το επόμενο κεφάλαιο",
     "unlocked.back_card": "Επιστροφή στο κεφάλαιο",
     "unlocked.progress": "{done} από {total} κεφάλαια",
-    "summary.start": "Ξεκινήστε την εκμάθηση"
+    "summary.start": "Ξεκινήστε την εκμάθηση",
+    "ex.back_title": "Επιστροφή στην προηγούμενη ερώτηση"
   },
   "fi": {
     "qc.editor.suggests_by": "⚑ {model} ehdottaa:",
@@ -15444,7 +15467,8 @@
     "unlocked.next": "Aloita seuraava luku",
     "unlocked.back_card": "Takaisin lukuun",
     "unlocked.progress": "{done} / {total} lukua",
-    "summary.start": "Aloita opiskelu"
+    "summary.start": "Aloita opiskelu",
+    "ex.back_title": "Takaisin edelliseen kysymykseen"
   },
   "hu": {
     "qc.editor.suggests_by": "⚑ A {model} javaslatai:",
@@ -16062,7 +16086,8 @@
     "unlocked.next": "Kezdje el a következő fejezetet",
     "unlocked.back_card": "Vissza a fejezethez",
     "unlocked.progress": "{done} / {total} fejezet",
-    "summary.start": "Kezdd el a tanulást"
+    "summary.start": "Kezdd el a tanulást",
+    "ex.back_title": "Vissza az előző kérdéshez"
   },
   "da": {
     "qc.editor.suggests_by": "⚑ Foreslået af {model}:",
@@ -17916,7 +17941,8 @@
     "unlocked.next": "Start de nächste Kapitel",
     "unlocked.back_card": "Zréck zum Kapitel",
     "unlocked.progress": "{done} vu {total} Kapitel",
-    "summary.start": "Luere ufänken"
+    "summary.start": "Luere ufänken",
+    "ex.back_title": "Zréck zur virege Fro."
   },
   "sw": {
     "qc.editor.suggests_by": "⚑ {model} inapendekeza:",
@@ -18534,7 +18560,8 @@
     "unlocked.next": "Anza sura inayofuata",
     "unlocked.back_card": "Rudi kwenye sura",
     "unlocked.progress": "{done} kati ya {total} sura",
-    "summary.start": "Anza kujifunza"
+    "summary.start": "Anza kujifunza",
+    "ex.back_title": "Rudi kwenye swali lililotangulia"
   },
   "sr": {
     "qc.editor.suggests_by": "⚑ {model} predlaže:",
