@@ -1058,7 +1058,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
   <!-- Row 1: Storyline context — ← back, storyline title (link), 🔗 share -->
   <div id="ls-storyline-hdr" class="sl-screen-hdr">
     <div class="sl-screen-title-row">
-      <button class="sl-screen-home" onclick="goLandingClean()" id="btn-topics" title="Home">🌍</button>
+      <button class="sl-screen-home" onclick="showGenerationClean()" id="btn-topics" title="Home">🌍</button>
       <span id="ls-storyline-icon" style="font-size:20px">📖</span>
       <span id="ls-storyline-title" class="sl-screen-title" style="cursor:pointer" onclick="goStorylineFromLesson()"></span>
       <button class="sl-screen-share" id="share-lesson-btn" onclick="shareLesson()" title="Share">🔗</button>
@@ -1231,7 +1231,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
        chapter with no storyline. The title is also the route back: it replaced "← Back to story". -->
   <div class="sl-screen-hdr" id="comp-hdr" style="display:none;text-align:left">
     <div class="sl-screen-title-row">
-      <button class="sl-screen-home" onclick="goLandingClean()" id="comp-hdr-home" title="">🌍</button>
+      <button class="sl-screen-home" onclick="showGenerationClean()" id="comp-hdr-home" title="">🌍</button>
       <span class="sl-screen-title" id="comp-hdr-title" style="cursor:pointer" role="button" tabindex="0"
             onclick="compBackToStory()"
             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
@@ -1362,7 +1362,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
 <div id="finished-screen" class="screen card-screen">
   <div class="sl-screen-hdr" id="fin-hdr" style="text-align:left">
     <div class="sl-screen-title-row">
-      <button class="sl-screen-home" onclick="goLandingClean()" id="fin-hdr-home" title="">🌍</button>
+      <button class="sl-screen-home" onclick="showGenerationClean()" id="fin-hdr-home" title="">🌍</button>
       <span class="sl-screen-title" id="fin-hdr-title" style="cursor:pointer" role="button" tabindex="0"
             onclick="compBackToStory()"
             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
@@ -1407,7 +1407,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
 <div id="summary-screen" class="screen card-screen">
   <div class="sl-screen-hdr" id="sum-hdr" style="text-align:left">
     <div class="sl-screen-title-row">
-      <button class="sl-screen-home" onclick="goLandingClean()" id="sum-hdr-home" title="">🌍</button>
+      <button class="sl-screen-home" onclick="showGenerationClean()" id="sum-hdr-home" title="">🌍</button>
       <span class="sl-screen-title" id="sum-hdr-title" style="cursor:pointer" role="button" tabindex="0"
             onclick="compBackToStory()"
             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
@@ -1461,7 +1461,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
 <div id="unlockstory-screen" class="screen card-screen">
   <div class="sl-screen-hdr" id="us-hdr" style="text-align:left">
     <div class="sl-screen-title-row">
-      <button class="sl-screen-home" onclick="goLandingClean()" id="us-hdr-home" title="">🌍</button>
+      <button class="sl-screen-home" onclick="showGenerationClean()" id="us-hdr-home" title="">🌍</button>
       <span class="sl-screen-title" id="us-hdr-title" style="cursor:pointer" role="button" tabindex="0"
             onclick="compBackToStory()"
             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compBackToStory();}">📖</span>
@@ -1489,7 +1489,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
   <div class="sl-screen">
     <div class="sl-screen-hdr">
       <div class="sl-screen-title-row">
-        <button class="sl-screen-home" onclick="goLandingClean()" title="Home">🌍</button>
+        <button class="sl-screen-home" onclick="showGenerationClean()" title="Home">🌍</button>
         <span class="sl-screen-title" id="sl-screen-title" style="cursor:default">📖</span>
         <button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="Edit title" style="display:none">✏️</button>
         <button class="sl-screen-share" id="sl-screen-gen-btn" onclick="openRetitleMenu(event)" title="Re-generate titles" style="display:none">✨</button>
@@ -1557,7 +1557,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
   <div class="sl-screen">
     <div class="sl-screen-hdr">
       <div class="sl-screen-title-row">
-        <button class="sl-screen-home" onclick="goLandingClean()" title="Home">🌍</button>
+        <button class="sl-screen-home" onclick="showGenerationClean()" title="Home">🌍</button>
         <span class="sl-screen-title" id="td-title" style="cursor:default">🎓</span>
         <button class="sl-screen-share" onclick="openTeacherDashboard()" title="Refresh">🔄</button>
       </div>
@@ -3334,17 +3334,21 @@ function _closeEditorsOnNav(targetId){
 function show(id){ APP.screen = id; _closeEditorsOnNav(id); document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); try{ updateStaticFlagBanner(); }catch(_){} try{ refreshTutorAvailability(); }catch(_){} }   // v62: the tutor follows the learner across screens
 // ── PLAN §C0.2 — explicit screen renderers: a NAMING SEAM, not a rewrite ─────────────────────
 // The plan's own words: "must first preserve every current entry point; no visual redesign
-// bundled in." These four delegate to the functions that already own their rendering — nothing
-// about HOW a screen is built changes here. `PLAN §C0.3` moves surface behind these seams one
-// bounded surface at a time; until then most existing callers keep calling the underlying
-// function directly, which is correct and expected, not an oversight. Two callers ARE rerouted
-// in this same change, because each had exactly one call site and rerouting it costs nothing:
-// `showComplete`'s own Next-button wiring now calls `showStory()`, and the settings pill's click
-// handler now calls `showSettings()`. `unit-ui-journeys.test.js` calls these four names directly
-// where it already exercised the underlying function, so the delegation is proven, not assumed.
+// bundled in." These delegate to the functions that already own their rendering — nothing about
+// HOW a screen is built changes here. `unit-ui-journeys.test.js` calls these names directly where
+// it already exercised the underlying function, so the delegation is proven, not assumed.
 function showProgressCard(review, lessonIdxOverride){ return showComplete(review, lessonIdxOverride); }
 function showStory(){ return showStoryUnlocked(); }
 function showGeneration(){ return goLanding(); }
+// PLAN §C0.3 — first bounded surface moved behind the seam ("start with generation and
+// settings," per the plan). `goLandingClean` is a SECOND, distinct entry into the same screen —
+// it additionally resets the URL hash (`history.replaceState`) — so it gets its own name rather
+// than being folded into `showGeneration`, which would silently drop that behaviour for every
+// caller that needs it. Every caller of both underlying functions (14 sites: 3 JS + 7 inline
+// HTML "home" buttons for `goLandingClean`, 3 JS for `goLanding`) is rerouted onto these two names
+// in this same release — `showComplete`/`goLanding`'s OTHER remaining surfaces are still future
+// work, but generation itself is now fully behind the seam, as the plan's own ordering asks for.
+function showGenerationClean(){ return goLandingClean(); }
 // Settings has no `.screen` of its own yet (`PLAN §C4` gives it one later) — this wraps the
 // CURRENT popover toggle so callers have one name to reach for regardless of which mechanism
 // settings uses underneath. `APP.screen` is correctly untouched: the underlying screen doesn't
@@ -150505,11 +150509,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v81_n', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v81_n'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v81_o', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v81_o'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"f3e930c8b74c","lessons.json":"b8d1e81f9ad2","ui.json":"595821a44480","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"58b249cb7d41"};
+  APP.buildSources = {"index.html":"6d82f0268d25","lessons.json":"b8d1e81f9ad2","ui.json":"595821a44480","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"6390719eae02"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');
@@ -150884,7 +150888,7 @@ async function loadSaved(ref) {
     if(!started){
       const ctx=_storylineForTopic(APP.lessonData?.topic);
       if(ctx && ctx.sl) openStorylineScreen(ctx.sl.id, ctx.enc);
-      else goLandingClean();
+      else showGenerationClean();
     }
   }
 }
@@ -162284,7 +162288,7 @@ function compBackToStory(){
   endDrill();
   const b = APP._compBack;
   if (b && b.kind === 'storyline') openStorylineScreen(b.id, b.enc);
-  else goLandingClean();
+  else showGenerationClean();
 }
 
 // ── v77_j: the story-unlocked card (roadmap §0c, the walk's THIRD page) ──────────────────────
@@ -163910,7 +163914,7 @@ function confirmQuit(){
     const topicKey = APP.lessonData?.topic;
     const ctx = topicKey ? _storylineForTopic(topicKey) : null;
     if(ctx && ctx.sl) openStorylineScreen(ctx.sl.id, ctx.enc);
-    else goLandingClean();
+    else showGenerationClean();
   } else {
     goLessonSet();
   }

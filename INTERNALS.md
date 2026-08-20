@@ -797,15 +797,17 @@ moves both decks identically, measured. Where a fork looks asymmetric, the cause
 | the card truth table | `build_history/probe_gates_v77.js` → **`v80i_card_gates.txt`** (`v80e`, `v80`, `v77` and `v76` tables superseded). ⚠️ It SELECTS its chapters from the corpus, so a data drop moves the selection — disambiguate by re-running the PREVIOUS client against the CURRENT corpus |
 | **the lesson-path node lock** | `buildPath()`'s node loop — `isLocked` is now **exactly** `_storyLocked` (`v81_i`, user ruling). The old sequential half ("previous lesson done") is REMOVED: it was already unenforced everywhere else (`_firstUnfinishedLessonIdx`'s `_playable` never read it, `tapWord` bypasses it). `_prevDone`/`_firstNode` still exist but now only feed the connector-line's CSS, not the lock. Guarded on the RENDERED node in `test/unit-hidden-lessons.test.js` §4 — ⚠️ `buildPath` sets `node.className` by direct property assignment, not parsed markup, so the `lib-dom` stub's `classList`/CSS-selector matching does NOT see it; read `node.className` as a raw string instead |
 
-**PLAN §C0 — the router seam** (`v81_m`–`v81_n`)
+**PLAN §C0 — the router seam** (`v81_m`–`v81_o`)
 
 | what | where |
 |---|---|
 | the one authoritative route state | `APP.screen`, written ONLY by `show(id)`. Never assign it directly — nothing else keeps it in sync |
-| the four explicit renderers | `showProgressCard`/`showStory`/`showGeneration`/`showSettings`, defined right after `show(id)`. **Thin delegates**, not rewrites, to `showComplete`/`showStoryUnlocked`/`goLanding`/`toggleModelPop` |
-| ⚠️ **most existing callers still call the underlying function directly** | only two call sites were rerouted (`compNext.onclick` → `showStory()`, the settings pill → `showSettings()`) — both were the ONLY caller of their underlying function. `showComplete`/`goLanding` each have a dozen-plus other callers, untouched by design; `PLAN §C0.3` moves them, one bounded surface at a time |
+| the explicit renderers | `showProgressCard`/`showStory`/`showGeneration`/`showGenerationClean`/`showSettings`, defined right after `show(id)`. **Thin delegates**, not rewrites, to `showComplete`/`showStoryUnlocked`/`goLanding`/`goLandingClean`/`toggleModelPop` |
+| `showGeneration` vs `showGenerationClean` | NOT interchangeable. `goLandingClean` additionally resets the URL hash (`history.replaceState`) — collapsing the two would silently drop that for every "home" button. `showGenerationClean` is what all 7 header "🌍 home" buttons and the stranded-learner fallbacks call |
+| **generation is fully behind the seam; most of `showComplete`/`showStory` is not** | `v81_o` rerouted EVERY remaining caller of `goLanding`/`goLandingClean` (14 sites, including one inside `build-static.js`'s own `loadSaved`). `showComplete` still has 15+ direct callers, untouched by design — `PLAN §C0.3`'s next bounded surface ("progress/card state plus story navigation") moves those |
+| ⚠️ **`build-static.js` re-implements `loadSaved` separately** | it has its OWN `goLandingClean`/`showGenerationClean` call site — a change to one file's landing-fallback call must be mirrored in the other, or `unit-learner-nav`'s static-parity check goes red (it did, once, at `v81_o`) |
 | `showSettings` is not a `.screen` | settings has none yet (`PLAN §C4`, a separate later track) — it wraps the CURRENT popover toggle. `APP.screen` is correctly untouched by opening/closing it |
-| the acceptance test | `test/unit-ui-journeys.test.js` — the route-parity reference for `§C0.3`. Extend it, don't bypass it, when moving a surface behind these seams |
+| the acceptance test | `test/unit-ui-journeys.test.js` — the route-parity reference for the next `§C0.3` slice. Extend it, don't bypass it, when moving a surface behind these seams. ⚠️ It does NOT catch everything — `v81_o` broke three unrelated SOURCE-TEXT pins in `unit-learner-nav.test.js` that only a full-suite run surfaced |
 
 **PLAN §8/B1–B4 — observations, target-language skills, vocabulary tags, and shadow BKT** (`v81_j`–`v81_l`)
 

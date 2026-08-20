@@ -645,7 +645,7 @@ async function loadSaved(ref) {
     if(!started){
       const ctx=_storylineForTopic(APP.lessonData?.topic);
       if(ctx && ctx.sl) openStorylineScreen(ctx.sl.id, ctx.enc);
-      else goLandingClean();
+      else showGenerationClean();
     }
   }
 }

@@ -127,6 +127,22 @@ async function main() {
   assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen returns with it');
   console.log('  generation: landing form -> generated lesson set -> landing form (via showGeneration)');
 
+  // PLAN §C0.3: showGenerationClean() is a SECOND, distinct entry into the same screen — it also
+  // resets the URL hash, which plain showGeneration() does not. The stub history.replaceState is a
+  // no-op (this harness does not model real URL state), so the distinguishing behaviour is proven
+  // with a spy rather than by reading location.hash back, which would pass whether or not the real
+  // call happened.
+  const cleanCalls = C.run(`
+    window.__spyReplaceState = 0;
+    var orig = history.replaceState;
+    history.replaceState = function(){ window.__spyReplaceState++; return orig.apply(history, arguments); };
+    showGenerationClean();
+    window.__spyReplaceState;`, 'generation-clean');
+  assert.strictEqual(cleanCalls, 1, 'showGenerationClean() resets the URL hash (history.replaceState called once)');
+  assert.strictEqual(active(C, 'landing'), true, 'showGenerationClean() also activates the landing surface');
+  assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen agrees');
+  console.log('  generation: the "home" entry point (showGenerationClean) resets the hash and lands on landing too');
+
   // Settings have no dedicated screen yet: the model popover is the current entry/exit surface
   // C4 will absorb. Its open/close transition must leave the underlying landing route intact —
   // and APP.screen, which only `.screen` roots ever change, must stay 'landing' throughout.

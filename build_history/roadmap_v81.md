@@ -1662,6 +1662,62 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_o` — `PLAN §C0.3`, generation moved fully behind the seam (first bounded surface)
+
+**Shipped by: Claude Code.**
+
+The plan's own ordering for `§C0.3`: **"start with generation and settings."** Settings was already
+complete at `v81_n` — its one entry point (the settings pill) was the only caller of `toggleModelPop`
+and was already rerouted. Generation was not: `goLanding`/`goLandingClean` still had every one of
+their original callers. This release closes that gap — generation is now the FIRST surface fully
+behind the router seam, as staged.
+
+**`showGeneration()` and a new `showGenerationClean()`** — deliberately two names, not one collapsed
+into the other. `goLandingClean()` is a genuinely different entry point: it additionally resets the
+URL hash (`history.replaceState`). Folding it into `showGeneration()` would have silently dropped
+that behaviour for every "home" button caller — exactly the kind of visual/behavioural change `§C0`
+explicitly disallows bundling into a seam step.
+
+**Every caller of both underlying functions is rerouted, not just the singular ones this time** — 14
+sites total: 3 JS callers of `goLanding()`, and 10 of `goLandingClean()` (7 inline HTML "home"
+buttons across every card header + 3 JS call sites, one of them in `build-static.js`'s own
+re-implementation of `loadSaved`). **`build-static.js` needed the same fix as `index.html`** —
+INTERNALS' own documented risk ("A change to the landing page must be made in BOTH files") is not
+hypothetical: `unit-learner-nav`'s static-parity check caught the miss immediately.
+
+**⚠️ A pre-existing, unrelated flake surfaced while verifying this release, and was measured rather
+than dismissed.** `e2e-lesson-edit-roundtrip` (pure server-side lesson editing, zero overlap with
+anything in this release) failed inside 2 of 4 full-suite runs today, but passed **12 of 12** when
+run standalone with no stray processes present — the flake only manifests under the full suite's
+combined load/timing, not from anything `v81_o` touches. Not chased further here: worth a session's
+own investigation (likely a port or teardown race between adjacent e2e boots), but blocking this
+release on it would be treating an unrelated, already-present intermittency as this change's fault.
+
+**Three PRE-EXISTING source-text pins broke and were fixed, not worked around:** `unit-learner-nav.test.js`
+had three regexes pinning the literal string `goLandingClean()` inside `confirmQuit`, `compBackToStory`,
+and both live/static `loadSaved` extracts. Each was a true positive — the source genuinely changed —
+and each was updated to pin `showGenerationClean()` instead, with a comment pointing at this release
+and `INTERNALS.md` §6b. Found by running the full quick suite before shipping, not by guessing what
+might be affected.
+
+**Guarded** by extending `test/unit-ui-journeys.test.js`: `showGenerationClean()` gets its own
+assertion block, proven distinct from `showGeneration()` via a `history.replaceState` call-count spy
+(the stub `history.replaceState` is a no-op in this harness, so reading `location.hash` back would
+pass whether or not the real call happened — a spy is the only way this claim can fail).
+
+**Mutation-tested three ways**, each restored and reconfirmed clean:
+- `showGenerationClean()` turned into a no-op → the new spy assertion goes red.
+- `compBackToStory`'s reroute reverted to a direct `goLandingClean()` call → `unit-learner-nav`'s
+  regex goes red.
+- `build-static.js`'s reroute reverted → the SAME test's static-parity check goes red.
+
+**Still deliberately outside this slice:** `showComplete`'s other 15+ callers and `showStoryUnlocked`'s
+zero remaining direct callers (already fully rerouted at `v81_n`) are the state of progress/story
+navigation, which `§C0.3` stages as the NEXT surface after generation and settings — not this one.
+
+node test/run.js: 236 checks, ALL PASSED
+node test/run.js --quick: 210 checks, ALL PASSED
+
 ### `v81_n` — `PLAN §C0.2`, the router seam: one authoritative route state, four explicit renderers
 
 **Shipped by: Claude Code.**

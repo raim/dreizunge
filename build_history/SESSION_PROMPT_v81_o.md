@@ -1,21 +1,34 @@
-# Session prompt — written at the `v81_n` cut (end of session 40)
+# Session prompt — written at the `v81_o` cut (end of session 40)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_m.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_n.md` was the
 previous one — superseded by this file and renamed, not kept alongside.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_n`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_o`** cut.
 
 **Session 40 ran across two agents: Codex shipped `v81_k`/`v81_l`, then ran out of session budget
-mid-work; Claude Code picked up the uncommitted state and shipped `v81_m` through `v81_n`.**
-`v81_n`: `PLAN §C0.2`, the router seam. `APP.screen` is the one authoritative route state, written
+mid-work; Claude Code picked up the uncommitted state and shipped `v81_m` through `v81_o`.**
+`v81_o`: `PLAN §C0.3`'s first bounded surface — generation is now FULLY behind the router seam, per
+the plan's own ordering ("start with generation and settings"; settings was already done at `v81_n`).
+All 14 remaining callers of `goLanding`/`goLandingClean` (3 + 3 JS, 7 inline HTML "home" buttons)
+rerouted onto `showGeneration()`/`showGenerationClean()` — the latter a NEW seam function, kept
+separate because `goLandingClean` additionally resets the URL hash and folding it into
+`showGeneration` would have silently dropped that. `build-static.js`'s OWN re-implementation of
+`loadSaved` needed the same fix — INTERNALS' documented "both files" risk, not hypothetical:
+`unit-learner-nav`'s static-parity check caught the miss immediately. Three pre-existing source-text
+pins in `unit-learner-nav.test.js` broke as a result (true positives, all fixed, all now point at
+`showGenerationClean()` with a comment naming this release). Mutation-tested three ways, all caught.
+An unrelated one-off e2e flake (`e2e-lesson-edit-roundtrip`) surfaced once during a full-suite run
+and did not reproduce in 3 standalone re-runs — not this release's doing, noted rather than chased.
+
+**`v81_n`: `PLAN §C0.2`, the router seam.** `APP.screen` is the one authoritative route state, written
 only by `show(id)` (already the single funnel for all 21 existing screen transitions — a one-line
 change). Four explicit renderers (`showProgressCard`/`showStory`/`showGeneration`/`showSettings`)
 exist as thin, documented delegates to the functions that already render their screen — nothing
-about HOW a screen renders changed. **Deliberately narrow**: only the two call sites that were each
-their underlying function's SOLE caller got rerouted (`compNext.onclick` → `showStory()`, the
-settings pill → `showSettings()`); `showComplete`'s 15+ other callers and `goLanding`'s dozen are
-untouched — `§C0.3` moves them, one bounded surface at a time. Mutation-tested six ways; one
+about HOW a screen renders changed. **Deliberately narrow at the time**: only the two call sites that
+were each their underlying function's SOLE caller got rerouted (`compNext.onclick` → `showStory()`,
+the settings pill → `showSettings()`); `showComplete`'s 15+ other callers were left for later, and
+`goLanding`'s callers are the ones `v81_o` above just finished. Mutation-tested six ways; one
 mutation (dropping `showSettings`'s event argument) passed on the first attempt because the test
 harness models no real event bubbling — closed with a direct spy rather than left uncovered. Also
 found and fixed, unrelated to this change: `test/unit-next-chapter-unlocked.test.js` was a dead test
@@ -102,7 +115,7 @@ node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 languages, 617 `en` keys**.
-`APP_VERSION = 'v81_n'`.
+`APP_VERSION = 'v81_o'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -145,7 +158,11 @@ Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 lan
    forwarded event argument produced no observable difference, because the harness models no real
    event bubbling. **A mutation surviving is not proof the code is right — it may mean the test
    cannot see that particular failure mode.** Add a more direct assertion (here, a call-count spy)
-   rather than accept the green.
+   rather than accept the green. `v81_o` re-confirmed rule 34 from the OTHER direction: rerouting
+   `goLanding`/`goLandingClean` callers broke THREE pre-existing SOURCE-TEXT pins in
+   `unit-learner-nav.test.js` that had nothing to do with this session's own new tests — a reminder
+   that "run the file I touched" is not the same precaution as "run the full suite before shipping."
+   All three were true positives, not flakes, and all three needed the regex updated, not reverted.
 5. **Never put emoji in a Python string literal** (rule 25); write them via a `cat` heredoc. And
    **check what a mechanical rewrite DID** — `v80_d`'s blanket replace mangled six sentences
    including a heading.
@@ -158,8 +175,8 @@ Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 lan
 
 *(`v81_i`'s sequential-lock removal was a ruling delivered directly by the user, not drawn from
 this list — nothing below was open because of it, so nothing here changes. `v81_j`–`v81_l` (Track B)
-and `v81_m`–`v81_n` (`PLAN §C0.1`/`§C0.2`) all came from §3 below and are struck there as they
-shipped.)*
+and `v81_m`–`v81_o` (`PLAN §C0.1`/`§C0.2`/`§C0.3`'s first slice) all came from §3 below and are
+struck there as they shipped.)*
 
 All three items that headed this section at the `v81_b` cut are closed:
 
@@ -197,12 +214,15 @@ is a materially lower bar. Needs a browser pass, not a code change.
   preserve.
 - ~~`PLAN §C0.2`, the router seam~~ **✅ SHIPPED at `v81_n`.** `APP.screen` is the one authoritative
   route state; `showProgressCard`/`showStory`/`showGeneration`/`showSettings` exist as thin delegates.
-  Only the two SINGLE-caller sites were rerouted onto them — `showComplete`'s other 15+ callers and
-  `goLanding`'s dozen are untouched by design. **`PLAN §C0.3` is next**: move only the surface under
-  active rework (generation and settings first, per the plan) BEHIND these seams, one bounded surface
-  at a time — meaning the OTHER existing callers of `showComplete`/`goLanding` start getting rerouted
-  now, not before. `unit-ui-journeys.test.js` is the acceptance test; keep every assertion in it
-  passing. See `PLAN §C0` for the full ownership rule and migration order.
+- ~~`PLAN §C0.3`, generation moved behind the seam (first bounded surface)~~ **✅ SHIPPED at `v81_o`.**
+  All 14 remaining `goLanding`/`goLandingClean` callers rerouted onto `showGeneration()`/
+  `showGenerationClean()` (a new seam function — `goLandingClean` also resets the URL hash, kept
+  distinct rather than silently dropping that). `build-static.js`'s own `loadSaved` reimplementation
+  updated to match. Generation + settings, the plan's own FIRST surface, is now fully done.
+  **`PLAN §C0.3`'s NEXT bounded surface is next**: "progress/card state plus story navigation" —
+  i.e. `showComplete`'s 15+ OTHER callers, still untouched. `unit-ui-journeys.test.js` is the
+  acceptance test; keep every assertion in it passing. See `PLAN §C0` for the full ownership rule
+  and migration order.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
@@ -227,6 +247,11 @@ is a materially lower bar. Needs a browser pass, not a code change.
 - **`PLAN §F2`'s second half** — the "answer visible in the stem" detector, measured and deliberately
   left unenforced because prefix-matching is mild morphology. Reported by
   `probe_word_forms_defects_v80g.js`.
+- **New: `e2e-lesson-edit-roundtrip` flakes inside the FULL suite** (2 of 4 runs today), but passed
+  **12 of 12** standalone with no stray processes. Pure server-side lesson editing — nothing to do
+  with `v81_m`–`v81_o`. Likely a port or teardown race with an adjacent e2e boot under load; not
+  investigated further this session. Reproduce with several consecutive `node test/run.js` (not
+  `--quick`, since `e2e-*` files are skipped there) before assuming a fix worked.
 
 ## 4. ⚠️ OWED BY THE USER, not doable in a container
 
@@ -238,13 +263,15 @@ is a materially lower bar. Needs a browser pass, not a code change.
   No translate pass is owed for it.
 - **The translate pass** for the remaining `en`-only keys, `translate-ui.js --langnames`, the
   `hr` `ui.json` pass, and a **native-speaker check of the `cyrillic-sr` table**.
-- **A device pass on `v81_a` … `v81_n`.** The v80 line changed every card and every question screen: the story
+- **A device pass on `v81_a` … `v81_o`.** The v80 line changed every card and every question screen: the story
   panel is on all of them, never collapsed, three-state coloured, tappable, with a translate toggle;
   the progress bars moved to the bottom; the storyboard row became clickable chapter icons.
   `v81_i` adds one more thing to look at: ordinary lessons on the node path are clickable out of
   order now — see `build_history/v81i_session38_notes.md` for what should still stay locked.
-  `v81_j`–`v81_n` ship no VISUAL change — `v81_n`'s router seam changes which function ends up
-  calling `show()` at two call sites, never what gets rendered.
+  `v81_j`–`v81_o` ship no VISUAL change — the router seam changes which function ends up calling
+  `show()`/`goLandingClean()`, never what gets rendered. **Worth a specific spot-check anyway**: the
+  seven "🌍 home" buttons (every card header) and the three JS generation-flow entries, since those
+  are the ones `v81_o` mechanically rewired across many scattered sites.
 
 ## 5. NOT yours to start
 
@@ -299,11 +326,15 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
   only `check()`-graded exercises are logged, only resolved vocabulary IDs feed BKT, and no BKT
   value may become a reader of progression without a separate product ruling; `learners.js`'s
   `MAX_STATE_BYTES` growth ceiling remains unaddressed.
-- `APP.screen` / `showProgressCard`/`showStory`/`showGeneration`/`showSettings` (`v81_n`, `PLAN §C0.2`)
-  — the router seam. See `INTERNALS.md` §6b before extending it: most existing callers of the
-  underlying functions are still untouched by design, and `showSettings` deliberately does not
-  correspond to a `.screen` (settings gets one under `PLAN §C4`, a separate track).
-- `test/unit-ui-journeys.test.js` (`v81_m`–`v81_n`, `PLAN §C0`) — the route-parity reference for
-  `§C0.3`. Whoever moves a surface behind the seam must keep every assertion in it passing (rendered
-  screen + `APP.screen` + exit behaviour, not source shape) before removing the code path it
-  currently exercises.
+- `APP.screen` / `showProgressCard`/`showStory`/`showGeneration`/`showGenerationClean`/`showSettings`
+  (`v81_n`–`v81_o`, `PLAN §C0.2`/`§C0.3`) — the router seam. See `INTERNALS.md` §6b before extending
+  it: `showComplete`'s 15+ other callers are still untouched by design (next bounded surface, not
+  done); `showSettings` deliberately does not correspond to a `.screen` (settings gets one under
+  `PLAN §C4`, a separate track); `showGenerationClean` is NOT the same as `showGeneration` — it also
+  resets the URL hash, and `build-static.js` has its OWN copy of the call site (keep both in sync).
+- `test/unit-ui-journeys.test.js` (`v81_m`–`v81_o`, `PLAN §C0`) — the route-parity reference for the
+  NEXT `§C0.3` slice. Whoever moves a surface behind the seam must keep every assertion in it passing
+  (rendered screen + `APP.screen` + exit behaviour, not source shape) before removing the code path
+  it currently exercises. ⚠️ Also grep the WHOLE suite for the function being rerouted before
+  shipping — `v81_o` broke three source-text pins in `unit-learner-nav.test.js` that this file does
+  not cover at all.
