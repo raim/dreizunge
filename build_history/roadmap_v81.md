@@ -1662,6 +1662,55 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_q` — `PLAN §C0.4`, `_renderCompStoryboard` deleted — a proven-dead path, ⚠️ USER RULING OVERRIDES `v80_z`
+
+**Shipped by: Claude Code.**
+
+**A new, explicit user ruling supersedes a standing warning from `v80_z`.** That entry says outright:
+*"The storyboard is NOT deleted, and that distinction is the whole design... Deleting it was never
+the ask, and a guard that did not say so would let a future session remove it."* This session found
+`_renderCompStoryboard` (plus its two helpers `_sbPanelSpans`/`_sbFrameState`) has ZERO live callers
+anywhere — including the storyline page, which `v80_z` believed still used it (it does not: confirmed
+by reading, the storyline page embeds the raw board SVG directly, with no per-panel framing at all).
+**Presented both readings to the user rather than picking one** — genuinely dead now vs. a real
+regression where the storyline page's frame-aware rendering silently got disconnected — because the
+roadmap's own warning meant the evidence alone could not settle which. **The user's answer: delete.**
+That ruling is what authorises this entry; it does not reopen or contradict `v80_z`'s own reasoning,
+which was correct for what was true in that session.
+
+**What was removed**, confirmed a genuine dead end by an exhaustive caller search (grepped the whole
+file for the bare names, not just call syntax, to rule out indirect/reference-only usage too):
+- `_renderCompStoryboard(topicKey, slCtx, boxId)` — the completion card's per-panel storyboard
+  framer (`v65.1`, rewritten `v71_k` for the backwards-span bug: 7 of 22 real storyboards affected).
+- `_sbPanelSpans(chs, chapterCount)` and `_sbFrameState(span, isDone, openChapter)` — single-caller
+  helpers, orphaned the moment their one caller goes. `_sbPanelChapter` (the third `_sb*` helper)
+  STAYS — it is still used by the storyline page's own `_sbNavClick`/`_sbMarkCurrentPanels`.
+- Two stale comments corrected in place rather than left to mislead the next reader: one above
+  `_cardHeader` that still claimed cards reach the storyboard "through the one
+  `_renderCompStoryboard`" (false since `v80_z`), one inside `_cardHeader` itself that said "the
+  STORYLINE page still renders the real storyboard" (true only for the raw image, not the framing).
+
+**Five test files touched, each for a different reason — the same "grep before, full suite after"
+discipline `v81_o`/`v81_p` already established, applied one more time:**
+- `test/unit-storyboard-frames.test.js` — DELETED outright. 155 lines dedicated to `_sbPanelSpans`/
+  `_sbFrameState` in ISOLATION (`new Function(...)` extraction), never proving they were wired into
+  anything real — the exact "tests the helper, not the caller" shape that let this go unnoticed.
+  Unregistered from `test/run.js`.
+- `test/smoke-render.test.js` — its own §12 EXECUTED `_renderCompStoryboard` directly (not a source
+  pin), so it necessarily goes with the function; removed, with a one-line marker in its place
+  naming what used to be there and why, matching the project's own convention for a removed section.
+- `test/unit-learner-nav.test.js` §4c — rewritten, not deleted: the claims about `_renderCompStoryboard`'s
+  own internals are gone, but "the slot exists" and "it holds the chapter icon row" are still real
+  and still asserted, now confirmed NOT to redundantly duplicate `unit-chapter-icons.test.js` (checked
+  first — that file already covers the slot/icon-row claim thoroughly and behaviourally).
+- `test/unit-card-errors.test.js` — one dead line removed (`_origStoryboard`, saved at `v80_z`'s own
+  fix and never read again — a leftover from that session, not this one).
+- `test/lib-dom.js` — a comment naming `_renderCompStoryboard` as the DOMParser stub's motivating
+  example is left as-is: still accurate history for why that parser exists, not a live claim.
+
+node test/run.js: 235 checks, ALL PASSED (236 → 235: one file deleted, none added)
+node test/run.js --quick: 209 checks, ALL PASSED
+
 ### `v81_p` — `PLAN §C0.3`, progress/card state + story navigation moved behind the seam (second bounded surface)
 
 **Shipped by: Claude Code.**

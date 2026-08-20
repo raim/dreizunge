@@ -311,42 +311,17 @@ console.log('  full-story-on-unlock + within/along progress summary: OK');
 console.log('  review mode for a re-opened complete chapter (live+static): OK');
 
 // ── 4c. Chapter storyboard on the completion card (v65.1, reframed v71_k) ───
+// PLAN §C0.4 (user ruling, v81_q): `_renderCompStoryboard` is DELETED — a caller search (including
+// the storyline page, which this section's v80_z comment believed still used it) found none. What
+// remains true and is still worth asserting: the slot exists and holds the chapter icon row.
 {
-  const fn = ext(html, '_renderCompStoryboard');
-  // Reuses the v57 mapping, so what is framed can never disagree with what the board links to.
-  assert.ok(/_sbPanelChapter\(i, groups\.length, chapters\.length, g\.getAttribute\('data-chapter'\)\)/.test(fn),
-    'panels are mapped with the SAME rule the storyboard click handler uses');
-  assert.ok(/const chapterIdx = idx \+ 1;/.test(fn), '_sbPanelChapter is 1-based; the deck index is 0-based');
-  // v71_k: the WHOLE board is shown and framed by state. The v65.1 crop is gone — it returned
-  // early when no panel carried this chapter, which is an empty card on any story whose panels
-  // do not cover every chapter (the reported bug). These assertions replace the crop ones.
-  assert.ok(!/if\(!mine\.length\) return;/.test(fn),
-    'no early return on "this chapter has no panel of its own" — that was the dead end');
-  assert.ok(/_sbPanelSpans\(/.test(fn), 'panels are resolved to chapter SPANS, not single chapters');
-  assert.ok(/_sbFrameState\(spans\[i\], isDone, chapterIdx\)/.test(fn), 'each panel gets a frame state');
-  assert.ok(/document\.importNode\(outer, true\)/.test(fn),
-    'the whole board is adopted, which carries defs/viewBox — nothing is re-stitched');
-  assert.ok(/var\(--green\)/.test(fn) && /var\(--blue\)/.test(fn),
-    'green for a finished span, blue for the chapter just played');
-  // Completion must come from the canonical reader, or a frame could contradict the chapter cards.
-  assert.ok(/chapterComplete\(e\)/.test(fn), 'chapter completion uses the one canonical reader');
-  // Must never break the card.
-  assert.ok(/catch\(_\)\{ \/\* a malformed board must never break the completion card \*\/ \}/.test(fn),
-    'a malformed storyboard degrades silently');
   assert.ok(/id="comp-storyboard"/.test(html), 'the slot still exists');
-  // ⚠️ CLAIM CHANGED at v80_z (user ruling): the progress card's `comp-storyboard` slot now holds the
-  // CHAPTER ICON row, not the storyboard. The storyboard FUNCTION is untouched and everything
-  // asserted above it still holds — `v71_k`'s framing is intact and the STORYLINE page still renders
-  // it. What changed is only which of the two occupies this slot on the cards.
-  assert.ok(!/else _renderCompStoryboard\(topicKey, _slCtx\)/.test(html),
-    'showComplete no longer renders the storyboard into the card slot');
+  assert.ok(!/function _renderCompStoryboard\(/.test(html) && !/_renderCompStoryboard\(topicKey/.test(html),
+    'the deleted storyboard renderer is neither defined nor called (comments may still name it)');
   assert.ok(/_chapterIconsHtml\(topicKey, _slCtx\)/.test(html),
-    'it renders the chapter icon row there instead (v80_z)');
-  // The storyboard renderer survives for the storyline page — deleting it was never the ask.
-  assert.ok(/function _renderCompStoryboard\(/.test(html),
-    'and the storyboard renderer still exists for the storyline page');
+    'the card slot renders the chapter icon row (v80_z)');
 }
-console.log('  chapter storyboard framing intact; the card slot now holds chapter icons: OK');
+console.log('  chapter storyboard slot: renderer deleted (v81_q), chapter icons confirmed: OK');
 
 
 // ── 5. Static build parity ────────────────────────────────────────────────────

@@ -29,8 +29,6 @@ assert.ok(TOPIC, 'the corpus offers a chapter with a story and >=3 lessons');
 const C = loadClient({ quiet: true });
 C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)};
        APP.storylines = ${JSON.stringify(store.storylines || [])}; true;`, 'seed-static');
-C.run(`var _origStoryboard = _renderCompStoryboard; true;`, 'save-original');
-
 function seed(o) {
   o = o || {};
   C.run(`

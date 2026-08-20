@@ -1328,89 +1328,11 @@ console.log('  repeat on finished lessons + crossword cursor highlight: OK');
 
 
 
-// ── 12. Completion-card storyboard framing (v71_k) ───────────────────────────
-// EXECUTED, not asserted over source. The reported bug was an empty card, and the two ways to
-// reproduce it — an early return, or a throw swallowed by the function's own catch — are both
-// invisible to a regex and both end with `comp-storyboard` hidden. So the assertion is on the
-// rendered result: the box is visible and carries the right frames.
-{
-  const board = '<svg viewBox="0 0 1104 194">'
-    + '<defs><linearGradient id="sky"/></defs>'
-    + [1, 3, 4, 6, 7].map((ch, i) =>
-        `<g data-chapter="${ch}"><rect x="${i * 220}" y="0" width="210" height="194"/><text>p${i}</text></g>`).join('')
-    + '</svg>';
-  // 8 chapters, 5 panels — the shape of the user's sl_1725748570, where chapters 2, 5 and 8 have
-  // no panel of their own and used to render nothing at all.
-  const ids = Array.from({ length: 8 }, (_, i) => 'c' + (i + 1));
-  const topics = ids.map((_, i) => 'topic' + (i + 1));
-  const mkCtx = doneUpto => `(() => {
-    APP.progress = APP.progress || {}; APP.progress.completed = {}; APP.progress.chapterDone = {};
-    APP.lessonData = null;
-    const ids = ${JSON.stringify(ids)}, topics = ${JSON.stringify(topics)};
-    const byId = {};
-    ids.forEach((id, i) => {
-      byId[id] = { id, topic: topics[i], lessons: [{ id: 'L' + i, type: 'vocab' }] };
-      if (i < ${'${doneUpto}'.replace('${doneUpto}', String(doneUpto))}) APP.progress.completed[topics[i]] = { ['L' + i]: true };
-    });
-    return { sl: { id: 'slX', chapters: ids, storyboard: ${JSON.stringify(board)} }, byId, topics };
-  })()`;
-
-  const frames = (openTopicIdx, doneUpto) => C.run(`(() => {
-    const ctx = ${mkCtx(doneUpto)};
-    const box = document.getElementById('comp-storyboard');
-    box.children = []; box.style.display = 'none';
-    _renderCompStoryboard('topic${'' + (openTopicIdx + 1)}', ctx);
-    const svg = box.children[0];
-    if (!svg) return { visible: box.style.display !== 'none', panels: null };
-    const gs = svg.children.filter(c => c.tagName === 'G');
-    return {
-      visible: box.style.display !== 'none',
-      width: svg.getAttribute('width'),
-      viewBox: svg.getAttribute('viewBox'),
-      defs: svg.children.some(c => c.tagName === 'DEFS'),
-      panels: gs.length,
-      strokes: gs.map(g => (g.querySelector(':scope > rect').style.stroke || '')),
-    };
-  })()`);
-
-  // The regression itself: chapter 2 owns no panel. Under the crop this card was blank.
-  const ch2 = frames(1, 1);
-  assert.ok(ch2.visible, 'chapter 2 has no panel of its own, yet the storyboard is still shown');
-  assert.strictEqual(ch2.panels, 5, 'the WHOLE board is rendered, not one cropped panel');
-  assert.ok(ch2.defs, 'defs travel with the board so gradients still resolve');
-  assert.strictEqual(ch2.width, '100%', 'the board is scaled to the card');
-  assert.strictEqual(ch2.viewBox, '0 0 1104 194', 'the board keeps its own viewBox');
-  assert.deepStrictEqual(ch2.strokes, ['var(--blue)', '', '', '', ''],
-    'chapter 2 falls inside panel 1 span 1-2, so panel 1 is blue and nothing is green yet');
-
-  // Chapter 8 — the last chapter, also panel-less. The other end of the same bug.
-  const ch8 = frames(7, 7);
-  assert.ok(ch8.visible && ch8.panels === 5, 'the last chapter renders the board too');
-  assert.strictEqual(ch8.strokes[4], 'var(--blue)', 'chapter 8 is inside the final span 7-8');
-  assert.deepStrictEqual(ch8.strokes.slice(0, 4),
-    ['var(--green)', 'var(--green)', 'var(--green)', 'var(--green)'],
-    'chapters 1-6 finished → the first four panels are green');
-
-  // Mid-story: chapter 4 open with 1-3 done. Panel 3 covers 4-5, so it is blue, not green.
-  const ch4 = frames(3, 3);
-  assert.deepStrictEqual(ch4.strokes, ['var(--green)', 'var(--green)', 'var(--blue)', '', ''],
-    'a span containing the open chapter is blue even though earlier spans are green');
-
-  // Nothing played at all — no frame may be green.
-  const fresh = frames(0, 0);
-  assert.ok(fresh.visible, 'a first-ever completion still shows the board');
-  assert.ok(!fresh.strokes.includes('var(--green)'), 'nothing is green before anything is finished');
-
-  // A malformed board must degrade to a hidden box, never a thrown error.
-  const broken = C.run(`(() => {
-    const box = document.getElementById('comp-storyboard');
-    box.children = []; box.style.display = 'none';
-    _renderCompStoryboard('topic1', { sl: { chapters: ['c1'], storyboard: '<not-svg>' }, byId: {}, topics: ['topic1'] });
-    return box.style.display;
-  })()`);
-  assert.strictEqual(broken, 'none', 'a board with no <svg> hides the slot instead of throwing');
-}
-console.log('  completion card: full storyboard framed by chapter state: OK');
+// ── 12. (was: completion-card storyboard framing, v71_k) ─────────────────────
+// PLAN §C0.4 (user ruling, v81_q): `_renderCompStoryboard`, the function this section drove
+// directly, is DELETED — a caller search found none anywhere (the card slot has held the chapter
+// icon row since v80_z, and the storyline page embeds the raw storyboard SVG directly, unframed,
+// never through this renderer). See INTERNALS.md §6b and roadmap_v81.md's v81_q entry.
 
 // ── 13. Card layout: header bar, row order, pass mark (v71_m) ────────────────
 // The card is meant to read as another view of the STORYLINE PAGE. Asserted on the rendered card

@@ -1,14 +1,30 @@
-# Session prompt — written at the `v81_p` cut (end of session 40)
+# Session prompt — written at the `v81_q` cut (end of session 40)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_o.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_p.md` was the
 previous one — superseded by this file and renamed, not kept alongside.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_p`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_q`** cut.
 
 **Session 40 ran across two agents: Codex shipped `v81_k`/`v81_l`, then ran out of session budget
-mid-work; Claude Code picked up the uncommitted state and shipped `v81_m` through `v81_p`.**
-`v81_p`: `PLAN §C0.3`'s SECOND bounded surface — "progress/card state plus story navigation." All
+mid-work; Claude Code picked up the uncommitted state and shipped `v81_m` through `v81_q`.**
+`v81_q`: `PLAN §C0.4` — `_renderCompStoryboard` and its two single-caller helpers DELETED, a
+**genuine, considered exception to "measure, don't ask"**: the roadmap's own `v80_z` entry carried
+an explicit standing warning against exactly this deletion ("deleting it was never the ask... a
+guard that did not say so would let a future session remove it"). A caller search found zero live
+callers anywhere — including the storyline page, which `v80_z` believed still used it (confirmed
+false by reading: it embeds the raw board SVG directly, unframed). Rather than pick a reading, both
+possibilities (proven-dead vs. a silent regression in real, tested functionality) were presented to
+the user; **the user ruled: delete.** Five test files touched for five different reasons — one
+deleted outright (`unit-storyboard-frames.test.js`, 155 lines that tested the helpers only in
+isolation, never proving they were wired into anything — the "tests the helper, not the caller"
+shape that let this go unnoticed), one section rewritten to keep what's still true (`unit-learner-nav`
+§4c), one executed section removed (`smoke-render` §12), one dead line removed
+(`unit-card-errors.test.js`), one comment left alone as valid history (`lib-dom.js`). Also updated
+`roadmap_v80.md`'s `v80_z` entry itself with a pointer, rather than leaving its warning looking
+silently contradicted.
+
+**`v81_p`: `PLAN §C0.3`'s SECOND bounded surface** — "progress/card state plus story navigation." All
 10 remaining EXTERNAL callers of `showComplete(...)` rerouted onto `showProgressCard(...)` (9 in
 `index.html`, 1 in `build-static.js`, same "both files" pattern as `v81_o`). Two internal self-calls
 inside `showComplete`'s own body deliberately left untouched — implementation detail, not an entry
@@ -120,14 +136,14 @@ want to eyeball the log in the console anyway.**
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 236 checks
-node test/run.js --quick                  → expect 210
+node test/run.js                          → expect 235 checks
+node test/run.js --quick                  → expect 209
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 languages, 617 `en` keys**.
-`APP_VERSION = 'v81_p'`.
+`APP_VERSION = 'v81_q'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -181,7 +197,13 @@ Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 lan
    file does NOT catch is not automatically proof the call site is unguarded — one of five mutations
    here was silent in the file first suspected and caught cleanly by a different one
    (`unit-next-chapter-entry.test.js`); the fix was re-running against the right file, not concluding
-   the site needed a brand-new guard.
+   the site needed a brand-new guard. `v81_q` adds a rule of its own: **a zero-callers finding is not
+   by itself permission to delete.** `_renderCompStoryboard` had zero callers AND a standing roadmap
+   warning explicitly anticipating that exact finding and pre-emptively saying not to act on it alone
+   ("deleting it was never the ask"). The caller search was necessary but not sufficient — what
+   settled it was asking the user, presenting BOTH readings (dead vs. a silent regression) rather
+   than picking one, and getting an explicit ruling. Measure, then check for a standing warning
+   before assuming a measurement is the whole story, then ask if the two disagree.
 5. **Never put emoji in a Python string literal** (rule 25); write them via a `cat` heredoc. And
    **check what a mechanical rewrite DID** — `v80_d`'s blanket replace mangled six sentences
    including a heading.
@@ -194,8 +216,9 @@ Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 lan
 
 *(`v81_i`'s sequential-lock removal was a ruling delivered directly by the user, not drawn from
 this list — nothing below was open because of it, so nothing here changes. `v81_j`–`v81_l` (Track B)
-and `v81_m`–`v81_p` (`PLAN §C0.1`/`§C0.2`/`§C0.3`'s two slices) all came from §3 below and are
-struck there as they shipped.)*
+and `v81_m`–`v81_q` (`PLAN §C0.1`–`§C0.4`) all came from §3 below and are struck there as they
+shipped. `v81_q`'s DELETE decision itself was a direct user ruling, given when the evidence alone
+could not settle dead-vs-regression — see the roadmap's `v81_q` entry.)*
 
 All three items that headed this section at the `v81_b` cut are closed:
 
@@ -242,12 +265,18 @@ is a materially lower bar. Needs a browser pass, not a code change.
   `v81_p`.** All 10 remaining EXTERNAL `showComplete` callers rerouted onto `showProgressCard()` (9
   in `index.html`, 1 in `build-static.js`). `showComplete`'s own two internal self-calls are
   deliberately left as-is — implementation detail, not an entry point. **Nothing from `PLAN §C0`'s
-  original example list remains un-seamed.** `PLAN §C0.4` (remove proven-dead paths) or the
-  LATER-staged surfaces (QC/editing, exercise running, library browsing) are next, if this track
-  continues. `unit-ui-journeys.test.js` is still the acceptance test for the FOUR original screens;
-  extend it rather than bypass it if you touch any of them again. Found but NOT fixed at `v81_p`:
-  `build-static.js`'s `loadSaved` is missing the whole `_isLaterChapter()` branch — a genuine
-  static/live divergence, needs its own measurement before its own release.
+  original example list remains un-seamed.** `unit-ui-journeys.test.js` is still the acceptance test
+  for the FOUR original screens; extend it rather than bypass it if you touch any of them again.
+  Found but NOT fixed at `v81_p`: `build-static.js`'s `loadSaved` is missing the whole
+  `_isLaterChapter()` branch — a genuine static/live divergence, needs its own measurement before
+  its own release.
+- ~~`PLAN §C0.4`, remove proven-dead paths~~ **✅ SHIPPED at `v81_q`** (partially — one path found and
+  removed by USER RULING, not a general sweep). `_renderCompStoryboard` + its two single-caller
+  helpers deleted; zero live callers confirmed, but a standing `v80_z` warning meant the finding
+  alone wasn't enough — the user was asked and ruled delete. **This is not "C0.4 is done"** — it is
+  one dead path found and removed while working the C0.2/C0.3 surfaces, not an exhaustive dead-code
+  sweep of the app. The LATER-staged surfaces (QC/editing, exercise running, library browsing) remain
+  open if this track continues; no new dead paths are known right now.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
@@ -288,7 +317,7 @@ is a materially lower bar. Needs a browser pass, not a code change.
   No translate pass is owed for it.
 - **The translate pass** for the remaining `en`-only keys, `translate-ui.js --langnames`, the
   `hr` `ui.json` pass, and a **native-speaker check of the `cyrillic-sr` table**.
-- **A device pass on `v81_a` … `v81_p`.** The v80 line changed every card and every question screen: the story
+- **A device pass on `v81_a` … `v81_q`.** The v80 line changed every card and every question screen: the story
   panel is on all of them, never collapsed, three-state coloured, tappable, with a translate toggle;
   the progress bars moved to the bottom; the storyboard row became clickable chapter icons.
   `v81_i` adds one more thing to look at: ordinary lessons on the node path are clickable out of
@@ -298,7 +327,9 @@ is a materially lower bar. Needs a browser pass, not a code change.
   spot-check anyway**: the seven "🌍 home" buttons and the three JS generation-flow entries
   (`v81_o`), and the drill-completion flow, the story-unlocked page's Back/Next, the summary/finished
   cards' Forward/Back, and the ✕ quit button (`v81_p`) — all mechanically rewired across many
-  scattered sites.
+  scattered sites. `v81_q` removes code, not UI — the completion card's storyboard was ALREADY chapter
+  icons since `v80_z`, so there is nothing new to look at, but it's worth confirming the card still
+  looks exactly the same as before this cut.
 
 ## 5. NOT yours to start
 
@@ -361,7 +392,7 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
   `showGenerationClean` is NOT the same as `showGeneration` — it also resets the URL hash, and
   `build-static.js` has its OWN copy of that call site (keep both in sync). **Nothing from `PLAN
   §C0`'s original four-name list has any external caller left un-seamed as of `v81_p`.**
-- `test/unit-ui-journeys.test.js` (`v81_m`–`v81_p`, `PLAN §C0`) — the route-parity reference for the
+- `test/unit-ui-journeys.test.js` (`v81_m`–`v81_q`, `PLAN §C0`) — the route-parity reference for the
   FOUR original screens. Extend it, don't bypass it, if you touch any of them again. ⚠️ Also grep the
   WHOLE suite for the function being rerouted before shipping ANY future reroute — `v81_o` broke
   three source-text pins in `unit-learner-nav.test.js` this file does not cover; `v81_p` broke two
@@ -370,3 +401,9 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
 - `build-static.js`'s `loadSaved` is missing the entire `_isLaterChapter()` branch `index.html` has
   (found at `v81_p`, not fixed) — a learner opening a later chapter in the STATIC build may not land
   on the progress card the way `v81_b`'s ruling intended. Needs its own measurement before a fix.
+- `_renderCompStoryboard`, `_sbPanelSpans`, and `_sbFrameState` no longer exist (`v81_q`, `PLAN
+  §C0.4`, direct user ruling — see the roadmap's `v81_q` entry and `INTERNALS.md` §6b). If you find a
+  comment or an old branch still naming them, it's stale; the completion card's storyboard slot has
+  been the chapter icon row since `v80_z`, and the storyline page renders the raw board SVG directly,
+  unframed — neither path ever needs these three back. `_sbPanelChapter` is NOT part of this and
+  stays, still driving the storyline page's own `_sbNavClick`/`_sbMarkCurrentPanels`.

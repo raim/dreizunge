@@ -2933,6 +2933,12 @@ place they make sense.*
 
 ### `v80_z` — the CHAPTER ICON row replaces the storyboard on the cards
 
+**⚠️ UPDATE at `v81_q` (`roadmap_v81.md`): `_renderCompStoryboard` WAS DELETED, by explicit user
+ruling, not silently.** The warning below ("deleting it was never the ask") was correct for what was
+true in THIS session — the storyline page's own claim to still use it just turned out not to hold by
+`v81_q`, a caller search found none anywhere, and the user was asked and ruled to delete rather than
+restore. This entry's own reasoning is left exactly as written below; only this note is new.
+
 User request: one `topicEmoji` per chapter, at lesson-icon size, between the story/vocabulary and the
 lesson-type buttons, clickable through to that chapter.
 
