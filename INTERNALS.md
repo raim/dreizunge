@@ -634,6 +634,15 @@ Assert on the produced markup string instead, and note the boundary. Extending `
 runtime `innerHTML` would fix this for every future picker test; it touches every harness in the
 suite, so it wants its own session.
 
+**A JS-assigned `className` is invisible to `classList`/CSS-selector matching (`v81_i`).**
+`el.className = '…'` as a plain property write (e.g. `buildPath`'s `node.className='lesson-node'+…`)
+does **not** update `classList._s`, which is what `matchesCompound` and `querySelectorAll('.foo')`
+actually read — that sync only happens for attributes parsed out of an `innerHTML` string. So
+`node.classList.contains('locked')` and `el.querySelectorAll('.lesson-node')` both silently return
+false/empty against a node built this way, even though the node genuinely carries that class. Read
+`node.className` as a raw string (`.split(/\s+/).includes('locked')`) instead for anything created
+via `createElement` + a direct property assignment.
+
 **Values cross a vm realm boundary.** An array built inside the sandbox has a different
 `Array.prototype`, so `assert.deepStrictEqual(x, [])` fails on the prototype check alone even when
 the contents match. Compare `.length`, or contents element-wise.
@@ -786,12 +795,17 @@ moves both decks identically, measured. Where a fork looks asymmetric, the cause
 | exercise renderer registry | `EX_RENDERERS[ex.type]`, dispatched by `renderEx()` |
 | words this chapter teaches | `_storyWordSources(d)`; **per-word progress via `_wordProgress(d)`** (see TRACK T below) — `_solvedTargetWords(d)` is now a wrapper over it |
 | the card truth table | `build_history/probe_gates_v77.js` → **`v80i_card_gates.txt`** (`v80e`, `v80`, `v77` and `v76` tables superseded). ⚠️ It SELECTS its chapters from the corpus, so a data drop moves the selection — disambiguate by re-running the PREVIOUS client against the CURRENT corpus |
+| **the lesson-path node lock** | `buildPath()`'s node loop — `isLocked` is now **exactly** `_storyLocked` (`v81_i`, user ruling). The old sequential half ("previous lesson done") is REMOVED: it was already unenforced everywhere else (`_firstUnfinishedLessonIdx`'s `_playable` never read it, `tapWord` bypasses it). `_prevDone`/`_firstNode` still exist but now only feed the connector-line's CSS, not the lock. Guarded on the RENDERED node in `test/unit-hidden-lessons.test.js` §4 — ⚠️ `buildPath` sets `node.className` by direct property assignment, not parsed markup, so the `lib-dom` stub's `classList`/CSS-selector matching does NOT see it; read `node.className` as a raw string instead |
 
 **TRACK T — the text-focused progress card** (all in `index.html`, built across the `v80` line)
 
 | what | where |
 |---|---|
 | **per-word progress — the ONE collector** | `_wordProgress(d)` → `Map<word, {n, ok, bySrc}>`. `bySrc` is `{extra, vocab, sentence}`; `n`/`ok` are the totals. **`_solvedExtraWords` and `_solvedTargetWords` are thin wrappers over it** — do not compute word state any other way |
+| **the denominator is BUILDABLE questions only** (`v81_d`) | `_wordProgress` / `_wordQuestions` intersect declared probes with `_lessonQidUniverse`. Declared ≠ buildable: measured 60.8% — `type_conjugation` 0 of 210, `syn_select` 142 of 192. ⚠️ **SCOPED TO THE OPEN CHAPTER**: `_lessonQidUniverse` indexes into `APP.lessonData` and ignores the `d` argument, so for any other chapter it returns an EMPTY set and would filter everything — it fails OPEN there. `_renderChainStory` is the live path (`v74_n`) |
+| **`§T7` demotion — a wrong answer un-greens a word** (`v81_e`) | `APP.progress.wrong[topic][qid]`, written by `markWrong`, CLEARED by `markSolved`. Read by `_wordState` (green → **partial**) and by `_wordQuestions`/`tapWord` (a since-failed question counts as work to do). ⚠️ **HIGHLIGHT ONLY, by user ruling**: it is a SEPARATE counter (`rec.bad`), never subtracted from `n`/`ok`, so `_wordGateFraction` — which reads `ok >= n` — cannot inherit it and a mistake can never re-lock a story. Pinned by `unit-word-progress` §9 |
+| **tapping a word with NO question** (`v81_f`) | `_wordLessons(d, word)` — the ONE "which lessons TEACH this word" resolver, separate from `_wordQuestions` (which answers "which QUESTIONS"). `tapWord` consults it ONLY when there is no question, so a question-less destination never competes with real ones. ⚠️ 79 words are taught only by a HIDDEN lesson and correctly still return false — `startLesson` refuses those, and that is the load-bearing refusal, not `_wordLessons`' own filter |
+| **storyline progress bar vs its label** (`v81_g`) | `_slProgressStats`: `pct` = `doneChapters/total` (the BAR, completion — coverage-aware `chapterComplete`), `unlockedChapters` = `doneChapters + 1` (the LABEL, access — the `v77_p` user ruling). ⚠️ They deliberately DISAGREE: a deck can read 3/3 with a 67% bar. `pct` feeds the three bars, `unlockedChapters` feeds `_slProgressLabel` only |
 | the three states it paints | `_wordState(rec)` → `'red' \| 'partial' \| 'green'`. GREEN = **every** associated question solved (`§T5.1`, ruled) |
 | **the ONE story renderer** | `_storyBodyHtml(d, {text, highlight, ex})` — used by the question panel AND the progress cards. The FRAMES differ (a `<details>` vs `#comp-story-text`); only the body is shared |
 | the question-screen panel | `_exStoryPanelHtml(ex)` — on **every** question type, never collapsed (`v80_u`), no story-unlock gate (T0) |
@@ -820,8 +834,19 @@ moves both decks identically, measured. Where a fork looks asymmetric, the cause
   keys are `${lessonId}:i:${hash}`, so duplicates share one done-flag — three lessons with `id: 6`
   meant finishing one marked all three. Enforced at `saveStore` by `_dedupeLessonIds` (`v80_i`),
   because the generators still emit literal `id: 6` for word_forms, synonyms AND conjugation.
-- **The solved store is MONOTONIC** — one correct answer ever = solved. `§T7` proposes changing that
-  and is DEFERRED; read its scoping note before touching `markSolved`.
+- **The solved store is MONOTONIC** — one correct answer ever = solved. `§T7` was RULED at `v81_e` as
+  HIGHLIGHT ONLY and did NOT change this: the demotion is a parallel `wrong` map. Anything that would
+  make the solved store fall is reading 2 (mastery decay, `PLAN §9b/D2`, blocked on `§8/B4`) and is
+  not ruled. ⚠️ Its readers include the ROUND BUILDERS, not just coverage and the gates.
+
+- **A REVIEW RENDER IS NOT A COMPLETE CHAPTER** (`v81_c`). `showComplete(true)` means "record no
+  play"; it does NOT mean "this chapter is finished", and since `v81_b` a later chapter LANDS on it
+  with work outstanding. Anything asking "is there work left" must ask the DATA (`setComplete` /
+  `_firstUnfinishedLessonIdx`), never the `_review` flag. The old shortcut sent 52 of 72 later
+  chapters straight past their comprehension lesson.
+- **26.1% of highlighted words are DEAD TAPS** (181 of 693, measured `v81_d`). Every mark on the
+  TRACK T panel carries `wp-tap`, but a quarter resolve to no question and `tapWord` returns false
+  with no fallback. Open; `probe_tap_reachable_v81d.js` measures it.
 
 **Roles, menus, scripts**
 

@@ -3,11 +3,13 @@
 // mode and, being unsolvable there, blocked progress to the next lesson and prevented story
 // unlock / 100% progress. Fix: in non-teacher mode hidden lessons are omitted from the path and
 // from all progress/lock/unlock/next computations; in teacher mode they still show and count.
-// These assertions pin the source wiring + the lock-chain semantics (DOM render is browser-tested).
+// These assertions pin the source wiring; §4 additionally renders the real lesson path (buildPath)
+// into a stub DOM and reads the nodes it produces, so the lock claims are checked as behaviour too.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const { loadClient, ROOT } = require('./lib-dom');
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 
 // 1. The shared visibility helper exists, is mode-aware AND mixed-aware (single source of truth).
@@ -78,48 +80,124 @@ assert.ok(/if\(!_lessonCounts\(L\)\) return;/.test(html),
   'render loop omits non-counted lessons');
 assert.ok(!/_mixedOnly/.test(html), 'the old inline _mixedOnly definitions are gone (consolidated)');
 
-// 3. Lock chain no longer keys off the raw previous index (which could be a hidden lesson) but
-//    off the previous COUNTED lesson's done state.
-//    v71_s: a second, independent lock was added alongside it — a comprehension lesson stays
-//    locked until the story is unlocked, wherever it sits on the path. The original rule is
-//    unchanged and still pinned; the new clause is ORed onto it, never replacing it.
-assert.ok(/isLocked=\(!_firstNode&&!_prevDone&&!APP\._teacherMode\)\|\|_storyLocked/.test(html),
-  'lock is based on previous counted lesson, not raw i-1');
+// 3. v81_i (user ruling): the sequential "previous lesson done" lock was REMOVED from the path —
+//    it was already unenforced everywhere except this render (_firstUnfinishedLessonIdx's
+//    _playable never consulted it, tapWord bypasses it: 438 of 447 taps, 98%, measured against a
+//    fresh learner). What must NOT go with it is the STORY GATE, fixed at v80_b after two dead-end
+//    readings — it is now the only lock a node can carry.
+assert.ok(/isLocked=_storyLocked,/.test(html),
+  'the sequential lock is gone: isLocked is exactly the story gate, nothing ORed onto it — ' +
+  '_prevDone may still exist (it now only feeds the connector-line styling), but not here');
 assert.ok(/const _storyLocked = _isStoryGatedLesson\(L\) && !APP\._teacherMode && !storyUnlocked\(d\);/.test(html),
-  'and a story-gated lesson is additionally locked until the story unlocks (teachers exempt)');
+  'a story-gated lesson is locked until the story unlocks (teachers exempt) — unchanged by v81_i');
 assert.ok(!/isLocked=i>0&&!done\[d\.lessons\[i-1\]\.id\]/.test(html),
   'old i-1-based lock removed');
 
-// 4. Logic model: a hidden middle lesson must not block the lesson after it (non-teacher).
-function lockChain(lessons, doneIds, teacher) {
-  const counts = L => teacher || !L._hidden;
-  let prevDone = true, first = true; const out = [];
-  for (const L of lessons) {
-    if (!counts(L)) continue;
-    const isDone = doneIds.has(L.id);
-    const locked = !first && !prevDone && !teacher;
-    out.push({ id: L.id, locked });
-    prevDone = isDone; first = false;
+// 4. The claim above is about BEHAVIOUR, not source text — a regex pinning source text for a claim
+//    about behaviour cannot fail even when the render disagrees (this cost v80_c and v80_s two
+//    releases). So render the real path and read the DOM it produces.
+{
+  const store = JSON.parse(fs.readFileSync(path.join(ROOT, 'lessons.json'), 'utf8'));
+  const LANGS = JSON.parse(fs.readFileSync(path.join(ROOT, 'languages.json'), 'utf8'));
+  const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
+  const C = loadClient({ quiet: true });
+  C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed-static');
+
+  // counts(t, L) mirrors buildPath's own _lessonCounts = L => lessonCountsFor(d, L) exactly, so
+  // "visible" below can never desync from what the render actually omits (mixed-lesson pooling
+  // hides earlier lessons independent of the _hidden flag — filtering on _hidden alone would have
+  // gotten row indices wrong the moment the fixture happened to contain a mixed lesson).
+  const counts = (t, L) => C.run(`lessonCountsFor(${JSON.stringify(t)}, ${JSON.stringify(L)})`, 'cf');
+
+  // Fixture chosen BY SHAPE, not picked once and hand-verified: a chapter where, among the COUNTED
+  // (visible) lessons only — raw array position is not what matters, a mixed lesson can hide
+  // earlier ones — there is (i) a non-story-gated lesson that is NOT the first counted lesson, so
+  // it stands in for "previous counted lesson undone", and (ii) a story-gated one, so the gate
+  // itself is exercised in the same render.
+  // ⚠️ "not first in the RAW lesson array" is not enough: the old sequential lock exempted only the
+  // first COUNTED node (_firstNode), so a candidate that is merely raw-index > 0 but happens to
+  // render as row 0 (everything before it hidden by mixed-pooling) passes vacuously under the very
+  // mutation this section exists to catch — found by mutation-testing this guard, not assumed.
+  let fixture = null;
+  for (const t of store.topics) {
+    const ls = t.lessons || [];
+    if (ls.length < 3) continue;
+    const vis = ls.filter(L => L && counts(t, L));
+    if (vis.length < 2) continue;
+    const gated = vis.find(L => C.run(`_isStoryGatedLesson(${JSON.stringify(L)})`, 'g'));
+    if (!gated) continue;
+    const later = vis.slice(1).find(L => !C.run(`_isStoryGatedLesson(${JSON.stringify(L)})`, 'g2'));
+    if (!later) continue;
+    fixture = { t, gated, later };
+    break;
   }
-  return out;
+  assert.ok(fixture, 'the corpus has a chapter with a story-gated lesson and a later non-gated, ' +
+    'non-first counted lesson — without one this section proves nothing');
+  const { t: topic, gated: gatedL, later: laterL } = fixture;
+  const gatedIdx = topic.lessons.indexOf(gatedL), laterIdx = topic.lessons.indexOf(laterL);
+
+  function render(extra = '') {
+    C.run(`
+      APP.savedList = ${JSON.stringify((store.topics || []).map(x => ({ id: x.id, topic: x.topic, lang: x.lang, srcLang: x.srcLang, lessons: x.lessons })))};
+      APP.storylines = ${JSON.stringify(store.storylines || [])};
+      APP.lessonData = ${JSON.stringify(topic)};
+      APP.lang = ${JSON.stringify(topic.lang)}; APP.srcLang = ${JSON.stringify(topic.srcLang)};
+      APP.info = { backend:'none', canGenerate:false, coverageThreshold:0.8 };
+      APP.progress = { completed:{}, solved:{} };
+      APP._teacherMode = false;
+      ${extra}
+      buildPath(); true;`, 'render-path');
+    // Not querySelectorAll('.lesson-node'): these nodes get their class from a direct
+    // `node.className = …` property assignment (buildPath, not innerHTML markup), and the stub
+    // DOM's classList/selector matching is only kept in sync for PARSED markup — so a class
+    // selector silently returns nothing for a programmatically-set className. Filtering the raw
+    // string is what's actually true of the rendered node either way.
+    const el = C.document.getElementById('lesson-path');
+    return (el.children || []).filter(c => String(c.className || '').includes('lesson-node'));
+  }
+  const isLockedNode = (n) => String(n.className || '').split(/\s+/).includes('locked');
+  const visible = (topic.lessons || []).filter(L => L && counts(topic, L));
+  const rowOf = (L) => visible.indexOf(L);
+
+  // (a) a non-story-gated lesson is clickable regardless of whether the previous lesson is done —
+  //     nothing is marked done at all here, which under the OLD sequential rule would have locked
+  //     every node after the first.
+  {
+    const nodes = render();
+    assert.strictEqual(nodes.length, visible.length,
+      'one rendered node per counted lesson — otherwise rowOf() indexes the wrong node');
+    const later = topic.lessons[laterIdx];
+    const n = nodes[rowOf(later)];
+    assert.ok(n, 'the later non-gated lesson has a rendered node');
+    assert.ok(!isLockedNode(n),
+      'a non-story-gated lesson is NOT locked even though the previous lesson is undone');
+    assert.strictEqual(typeof n.onclick, 'function', 'and it is clickable');
+  }
+
+  // (b) a story-gated lesson stays locked while the story is locked, learner mode.
+  {
+    const nodes = render();
+    assert.strictEqual(C.run(`storyUnlocked(APP.lessonData)`, 'u'), false,
+      'the fixture starts with the story locked, or (b) proves nothing');
+    const gated = topic.lessons[gatedIdx];
+    const n = nodes[rowOf(gated)];
+    assert.ok(n, 'the story-gated lesson has a rendered node');
+    assert.ok(isLockedNode(n), 'it IS locked while the story is locked');
+    assert.notStrictEqual(typeof n.onclick, 'function', 'and carries no click handler');
+  }
+
+  // (c) teacher mode is exempt from the story gate too.
+  {
+    const nodes = render('APP._teacherMode = true;');
+    const gated = topic.lessons[gatedIdx];
+    const n = nodes[rowOf(gated)];
+    assert.ok(!isLockedNode(n), 'in teacher mode the story-gated node is NOT locked');
+    assert.strictEqual(typeof n.onclick, 'function', 'and is clickable');
+  }
+  console.log(`  lesson-path lock (rendered): "${topic.topic}" — non-gated lesson ${laterIdx} clickable ` +
+    `with nothing done, story-gated lesson ${gatedIdx} locked/learner, open/teacher: OK`);
 }
-const lessons = [
-  { id: 'a' },
-  { id: 'h', _hidden: true },   // teacher-hidden, never completed
-  { id: 'b' },
-];
-// Non-teacher: hidden 'h' is dropped; 'a' done → 'b' unlocked (not blocked by 'h').
-const nonTeacher = lockChain(lessons, new Set(['a']), false);
-assert.deepStrictEqual(nonTeacher.map(x => x.id), ['a', 'b'], 'hidden lesson omitted for learner');
-assert.strictEqual(nonTeacher.find(x => x.id === 'b').locked, false, 'next lesson NOT blocked by hidden lesson');
-// If 'a' is NOT done, 'b' is legitimately locked (normal gating still works).
-assert.strictEqual(lockChain(lessons, new Set(), false).find(x => x.id === 'b').locked, true,
-  'normal locking still applies when the real previous lesson is undone');
-// Teacher mode: hidden lesson shows and counts; nothing locked (teacher gating off).
-const teacher = lockChain(lessons, new Set(['a']), true);
-assert.deepStrictEqual(teacher.map(x => x.id), ['a', 'h', 'b'], 'hidden lesson visible to teacher');
-assert.ok(teacher.every(x => !x.locked), 'teacher mode never locks');
-console.log('  hidden lessons: omitted + non-blocking for learner, visible for teacher: OK');
+console.log('  hidden lessons: omitted for learner, visible for teacher: OK');
 
 // 5. Bug: a visible vocab lesson's cross-lesson REVIEW pool must exclude hidden lessons (non-
 //    teacher), or a learner gets quizzed on words from a lesson they can't see.

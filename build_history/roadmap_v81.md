@@ -1173,6 +1173,26 @@ English meanwhile. **`v71_q`: never assert a dropped key absent.**
 
 ---
 
+## ⚠️ STANDING RULE — session 37 (user), IN FORCE UNTIL REVOKED
+
+**"I am the only teacher/student at the moment, so it doesn't really matter if a change affects the
+user progress."**
+
+This is a standing instruction, not a one-off ruling for a single release. Its consequences:
+
+- **Progress impact is NOT a blocker.** A change that invalidates, resets or re-colours existing
+  learner progress may ship on its merits. Do not design around preserving `learners.json`, and do
+  not add migration machinery for it unasked.
+- **It does NOT license skipping measurement.** Keep measuring what a change does to the numbers —
+  the measurements have repeatedly found real defects (`v81_d`'s 92 vanished words, `v81_h`'s
+  colouring shift) and they are how a release is understood. What changes is only the WEIGHT given to
+  a progress regression when deciding whether to ship, not whether it is looked at.
+- **It does NOT relax the monotonic-solved-store rule** (`§T7` reading 1 vs 2). That distinction is
+  about what the app CLAIMS the learner has done, and it is a ruled design boundary, not a
+  data-preservation concern.
+- ⚠️ **Revocable.** If a second learner ever exists, this rule lapses and progress-preserving
+  behaviour becomes load-bearing again. Check it is still in force before leaning on it.
+
 ## ⚠️ How the rules are NUMBERED — read before citing one
 
 **The standing rules run to 35, but the numbering in this file is not continuous, and that is a
@@ -1642,6 +1662,497 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_i` — the lesson-path SEQUENTIAL lock is removed; the story gate is what remains (USER RULING)
+
+**Shipped by: Claude Code.**
+
+The lesson-path node loop (`buildPath`) had TWO locks ORed together: a sequential one ("the
+previous lesson must be done") and the story gate (`_storyLocked`, fixed at `v80_b` after two
+dead-end readings). The sequential half is now GONE — `isLocked` is exactly `_storyLocked`.
+
+**Measured first, not re-derived:** the sequential rule was already ignored everywhere except this
+one render. `_firstUnfinishedLessonIdx`'s `_playable` never consulted it, and `tapWord` bypasses it
+outright — **438 of 447 taps (98%)** on a fresh learner landed on a lesson the path drew as locked.
+Three readers already disagreed with the path; removing the sequential half makes all three agree
+instead of one dissenting.
+
+**What survived, and why it had to:** `_storyLocked` — `_isStoryGatedLesson(L) && !APP._teacherMode
+&& !storyUnlocked(d)` — is untouched. `_prevDone` and `_firstNode` still exist (the connector-line
+"done" styling reads `_prevDone`; `_firstNode` still gates whether a line is drawn before the first
+node), they just no longer feed `isLocked`.
+
+**Guarded on the RENDERED node, not source** (`test/unit-hidden-lessons.test.js` §4) — `buildPath()`
+run through the `lib-dom` stub, reading the actual `className`/`onclick` it produces for three
+claims: (a) a non-story-gated lesson is clickable even with nothing done at all; (b) a story-gated
+lesson stays locked (no click handler) while the story is locked; (c) teacher mode is exempt. The
+fixture is picked BY SHAPE from the corpus (a story-gated + a later non-gated COUNTED lesson), with
+a vacuity guard on the search.
+
+⚠️ **The class-selector trap, found while writing this guard:** `buildPath` sets `node.className =
+…` as a direct JS property assignment, not parsed markup — and the `lib-dom` stub only keeps
+`classList`/CSS-selector matching in sync for innerHTML-parsed attributes. `querySelectorAll('.lesson-node')`
+and `classList.contains('locked')` both silently returned nothing/false against these nodes. Reading
+`node.className` as a raw string is what actually reflects the render; the guard does that instead.
+
+**Mutation-tested in both directions, and the fixture-picker needed a second pass to make it real:**
+- `isLocked = false` (story gate deleted) → claim (b) fails. Caught.
+- `isLocked = (!_firstNode&&!_prevDone&&!APP._teacherMode)||_storyLocked` (sequential lock restored)
+  → claim (a) must fail, since nothing is marked done. **First pass of the fixture picker did NOT
+  catch this** — it required the "later" lesson to be at raw array index > 0, but the sequential
+  lock only exempts the first COUNTED node (`_firstNode`), and the picked fixture's later lesson
+  happened to render as row 0 anyway (a mixed lesson pooled everything ahead of it). A vacuous
+  guard, found by mutation-testing it rather than trusting the green run. Fixed by requiring the
+  later lesson be non-first among the COUNTED lessons, not merely non-first in the raw array — after
+  which the same mutation goes red at claim (a) as intended.
+
+**`probe_gates_v77.js` / `probe_gates_v80c1.js` re-run and diffed against `v80i_card_gates.txt`:**
+the diff exists (selected chapters and one topic's lesson list changed shape), but it is **corpus
+drift, not this change** — re-running the PREVIOUS client (the `v81_h` `index.html`, pre-edit)
+against the same corpus produces the byte-identical diff against the baseline. Diffing prev-client
+output against v81_i's output directly (isolating just the code change) is **empty** for both
+probes.
+
+### `v81_h` — a hidden lesson's words leave the story panel (USER RULING)
+
+**USER RULING:** a hidden lesson stays hidden until the user/teacher explicitly unhides it, and its
+vocabulary should not be part of the learner's lessons at all. (The stronger "hidden until edited"
+was considered and **explicitly ruled against** — nothing unhides on edit.)
+
+`_storyWordSources` was **the one walk in the client that ignored `_hidden`**. Everywhere else
+already honoured it: `countedLessons` (so coverage, the pass mark and chapter completion were always
+clean), `startLesson`, `_wordQuestions`, `_wordLessons`, and even `_wordProgress`'s own VOCAB branch.
+And since `_storyExtraWords` is just this function's output deduped, that single omission put hidden
+lessons' words into the highlighting, made them tappable, and graded them through the probe branch.
+
+**WHY THOSE WORDS ARE STALE, not merely unreachable — measured, because `_hidden` has two origins
+and the assumption was that it meant "the teacher clicked hide":**
+
+```
+44 hidden lessons across 32 topics
+29 of those 32 topics ALSO contain _recreated lessons   <-- the dominant origin
+26 of the 44 still carry vocab, 193 rows
+```
+
+So most hidden lessons come not from the 🫥 button but from the server's **RE-CREATE** path, which
+flags a chapter's existing lessons hidden rather than deleting them (its own comment: hiding
+silently discards progress made against the originals). Those are the lessons a regeneration
+REPLACED. Highlighting their words told the learner "this is taught here" about a lesson that no
+longer exists for them.
+
+**Effect, measured on both surfaces:**
+
+```
+                              v81_g     v81_h
+highlighted words               693       614
+words with NO question          181       102
+DEAD taps                        79         0     <-- with v81_f's routing, the whole 181 is resolved
+tracked words (real learners)  1649      1596
+GREEN                         27.8%     28.4%
+PARTIAL                       11.8%     11.7%
+RED                           60.3%     59.9%
+```
+
+The colouring barely moves because the removed words were overwhelmingly red and ungraded. **Dead
+taps reach ZERO**: `v81_f` routes every question-less word that has a startable teaching lesson, and
+`v81_h` removes the rest from the panel entirely. The two releases together close the item.
+
+**Teacher mode still sees them** — the carve-out is `!L._hidden || APP._teacherMode`, the shape the
+rule already has everywhere else, rather than a second and stricter rule for this one walk.
+
+**⚠️ A GUARD WAS RE-ANCHORED AND THIS TIME THE CLAIM ITSELF MOVED (rule 29).** `unit-tap-word`'s
+`v81_f` block asserted that a MARKED word taught only by a hidden lesson still reports failure — 79
+of the 181 dead taps were exactly that. `v81_h` removes the category, so the fixture stopped
+existing, which is the honest signal that the claim moved rather than the mechanism. The replacement
+states the new rule directly and is stronger: such a word is **not marked**, **not tappable**, and
+**still visible in teacher mode**. Fixtures are found from RAW lesson data, never through
+`_storyWordSources` — searching with the function under test is how the `v81_f` version of this block
+disarmed itself under mutation.
+
+**⚠️ AND `unit-tap-word` FLAKED A THIRD TIME — my own `v81_e` section this time, same lesson.** Its
+non-vacuity required that the question answered wrongly be one of the word's OWN candidates, but
+`answerWrong` answered whatever `tapWord` happened to land on — and `tapWord` may legitimately land
+on a question matched to the word by TEXT rather than by key. So the precondition held 3 to 9 times
+in 14 and sometimes 0, surfacing as roughly 1 failure in 10, and it was caught only because the
+PACKAGED copy failed where the source tree had just passed. Repaired the same way as §4 at `v81_e`:
+the run is now STEERED onto a candidate question before the wrong answer, so `drove > 0` implies the
+check happened. Observations went from 3-of-14 to 10-of-10; **0 failures in 28 consecutive runs**,
+and the `check()` mutation still turns it red.
+
+**Mutation-tested in both directions**, which mattered: letting hidden lessons back into the walk
+turns it red, AND making the exclusion unconditional turns it red. The second only became true when
+the teacher-mode assertion was added — before that, an over-strict version passed the entire suite,
+so the carve-out was a choice nothing held.
+
+### `v81_g` — the storyline BAR measures completion, the LABEL measures access (USER RULING)
+
+`PLAN §C1` + `§0.3`. `_slProgressStats` computed `pct` from `unlockedChapters`, so the bar said how
+much of the deck was OPEN rather than how much was DONE.
+
+**Measured first (the roadmap's own instruction for this item), on a FRESH install:**
+
+```
+deck size    decks    bar before anything is played
+ 1 chapter     27      100%   <-- and the label reads 1/1
+ 2 chapters    22       50%
+ 3 chapters    12       33%
+14 chapters     1        7%
+              ALL 91 storylines lit up at doneChapters = 0; 27 of 91 sat at 100%.
+```
+
+**⚠️ THE PLAN WAS WRONG ON BOTH COUNTS.** It read this as an index off-by-one ("current-1") and as
+two separate bugs (the single-chapter `1/1` and the header bar). It is ONE line, and it is not an
+index. The roadmap's own warning — that fixing them as two off-by-ones would leave the real one —
+was right, which is why the probe came before the edit.
+
+**The `+1` is NOT removed.** It is the `v77_p` user ruling ("the chapter in progress counts, which is
+why a fresh storyline reads 1/2 rather than 0/2"), and that ruling is about the LABEL, which still
+reads `unlockedChapters`. Only the bar moved to `doneChapters`, which is the coverage-aware
+`chapterComplete` rule (`v69_l`) — the same rule the storyboard and deck use, so the bar cannot
+disagree with the chapter ticks beside it.
+
+**Walking a real 3-chapter deck to completion shows the defect had a second end nobody had named:**
+
+```
+                            before                     after
+fresh                  1/3  bar 33%              1/3  bar 0%
+after chapter 1        2/3  bar 67%              2/3  bar 33%
+after chapter 2        3/3  bar 100%  <-- FULL   3/3  bar 67%
+after chapter 3        3/3  bar 100%             3/3  bar 100%
+```
+
+The old bar reached **100% with a chapter still unplayed**. That was never in the report; it is the
+same line seen from the other end of the walk.
+
+**The accepted cost, ruled with the change:** a deck can read **3/3 with a 67% bar**, because "3 of 3
+chapters open" and "2 of 3 finished" are different statements — they always were, but the two
+displays used to say the same number.
+
+**Guard:** `unit-fork-display` §7. It asserts the fresh case across ALL 91 decks, and — because an
+empty bar is trivially achievable by breaking the bar — that it still FILLS, and reaches 100% only
+when the LAST chapter is done. Mutation-tested both ways: reverting `pct` to `unlockedChapters` turns
+it red, and so does removing the `+1`, which would silently reverse `v77_p`.
+
+**⚠️ A GUARD HAD TO BE RE-ANCHORED (rule 29).** `smoke-render` §13 asserted the header bar was
+`!== '0%'` — *"reflects the work already done, not a flat zero"*. That was only ever true because
+`pct` counted unlocked chapters: its fixture flags lesson progress WITHOUT seeding the solved store,
+so `chapterComplete` correctly reports nothing finished and a flat zero is now the honest answer.
+**The old assertion was pinning the defect.** Re-anchored to the claim the section actually makes —
+that the card is another view of the storyline page — by asserting the header bar carries exactly
+what the shared helper computes. That is a PARITY assertion and holds under either definition by
+design, which is the point: it cannot drift from the storyline screen whatever the rule becomes.
+
+### `v81_f` — a question-less word opens the lesson that TEACHES it (USER RULING)
+
+Dead taps, the open half of the user's `v81_b` report and measured at `v81_d`: **181 of 693
+highlighted words (26.1%) did nothing when tapped.** Conjugation infinitives and word-form
+distractors reach the story panel through `_storyWordSources` carrying no probes at all, so
+`_wordQuestions` found nothing and `tapWord` returned `false` — a tap with no visible effect, which
+that function's own comment calls the worst outcome here.
+
+**USER RULING: route the tap into the lesson that teaches the word.** The alternative considered and
+rejected was to stop painting such words tappable.
+
+**Measured before deciding how**: of the 181, **181 had a knowable teaching lesson**, 0 needed a text
+search, 0 were unresolvable. So the routing is a LOOKUP, not a search.
+
+```
+                                 before   after
+highlighted words                   693     693
+words with NO question              181     181   (unchanged — this is a GENERATION fact)
+DEAD taps (tapWord returned false)  181      79
+```
+
+**102 of 181 fixed. The remaining 79 are taught ONLY by a HIDDEN lesson**, which `startLesson`
+refuses outside teacher mode. For those `false` is the honest answer: routing them anywhere would be
+a tap that reports success and then shows the learner a lesson they are not meant to see. **That
+leaves an open question this release does not answer — should the story panel MARK a word whose only
+teaching lesson is hidden?** It is marked, graded by `_wordProgress`, and unreachable. Not changed
+here because it is a highlighting decision, not a tap one.
+
+**`_wordLessons` is a SEPARATE resolver from `_wordQuestions`, deliberately.** That function's
+contract is questions; widening it to return question-less entries would put `{lessonIdx, key: null}`
+into the pool `tapWord` filters on `solved`/`wrong`, silently letting a question-less destination
+compete with real questions for the `§T7` preference. Two resolvers, two contracts, one caller
+choosing between them — and the fallback is consulted ONLY when there is no question, so a word with
+real questions is untouched.
+
+The landing behaviour is not new: `tapWord` has always entered at the top when the lesson teaches a
+word without holding an exact question for it. What is new is that the case is now REACHABLE.
+
+**⚠️ THE PROBE WAS MEASURING THE WRONG LAYER and was fixed first.**
+`probe_tap_reachable_v81d.js` counted `_wordQuestions(...).length === 0` — the RESOLVER. The claim is
+about a TAP (rule 34), and after this change the resolver's answer is deliberately unchanged: it
+still finds no question for all 181. The probe now CALLS `tapWord`, which is why it can show
+181 → 79 at all. A probe pinned one layer below its claim would have reported no improvement from a
+release that fixed 102 cases.
+
+**Guards:** `unit-tap-word` §8, both halves on real corpus words, fixtures chosen by measurement and
+each with a loud non-vacuity assert. Removing the routing fallback turns it red.
+
+**⚠️ TWO HONEST NOTES, both found by mutation rather than by reading:**
+- The hidden-lesson refusal is enforced by **`startLesson`**, not by `_wordLessons`' `startable`
+  filter — verified directly (`startLesson` returns false for a hidden lesson outside teacher mode).
+  The filter is DEFENCE IN DEPTH and removing it does not fail the section. Kept because a resolver
+  that offers a destination its caller will refuse is lying about what it found. Recorded in the file
+  so it cannot be read as evidence for a guard it does not exercise.
+- The hidden-lesson fixture was first searched for USING `_wordLessons` — the function under test —
+  so mutating the rule made the search return nothing, the section skip itself, and the mutation
+  pass. **A guard that disarms itself is worse than no guard.** The fixture is now found from
+  `_storyWordSources` and the lessons' own `_hidden` flags, independently of what is being tested.
+
+### `v81_e` — §T7 reading 1: a wrong answer takes a word out of green (USER RULING: HIGHLIGHT ONLY)
+
+*"A wrongly answered question on a vocab that had been answered correctly should also decrease the
+solved counter."* — raised at the `v80_u` device pass, deferred pending the scoping question, and
+**ruled at `v81_e`: reading 1, HIGHLIGHT ONLY.** `§T7` is now CLOSED.
+
+**The solved store is not touched, and that IS the ruling.** The demotion lives in a second,
+parallel store — `APP.progress.wrong[topic] = { qid: 1 }` — written by `markWrong` on a wrong answer
+and **cleared by `markSolved`** when the question is answered right again. It is read by exactly two
+things: `_wordState`, and the tap resolver. Coverage, the pass mark, `setComplete`,
+`chapterComplete`, `storyUnlocked` and both resume scans keep their current meaning because none of
+them can see it.
+
+Keyed by qid, exactly like the solved store, so the two are read with the same keys and cannot
+disagree about which question is meant. **NOT keyed by item:** the user's sentence is about a
+QUESTION, and an item key would demote a word for a format it was never asked in.
+
+| where | what changed |
+|---|---|
+| `_wrongMap` / `markWrong` | the new store, mirroring `markSolved`'s guards (same withheld-item rule, same qid) |
+| `markSolved` | clears the wrong flag — the demotion must be REPAIRABLE, or the feature only ever takes colour away |
+| `check()` | the wrong-answer branch records it, behind `!replay` like every other judgement there |
+| `_wordProgress` | a separate `bad` tally, **never subtracted from `n`/`ok`** |
+| `_wordState` | `ok >= n && bad > 0` → **partial**, not red |
+| `_wordQuestions` / `tapWord` | a since-failed question counts as work to do, so an amber word is repairable by tapping |
+| `_clearChapterProgress` | wipes the new store too, at the documented single choke point |
+
+**PARTIAL, not red**, because the learner HAS solved those questions and red means "nothing done
+here". Partial is already the "started but not finished" colour, which is the state a word with a
+fresh mistake is in.
+
+**⚠️ THE CONTAINMENT IS ASSERTED, NOT JUST INTENDED.** `_wordGateFraction` is the one gate that reads
+`_wordProgress` directly (`ok >= n`), so it would have inherited the demotion had it been written
+into `n`/`ok` — which is exactly how reading 1 could have become reading 2 by accident, through the
+back door identified when the ruling was explained. `unit-word-progress` §9 asserts the gate fraction
+is unchanged across a wrong answer and that the question stays solved. **If that assertion ever
+fails, reading 1 has silently become reading 2.** Reading 2 remains `PLAN §9b/D2`, blocked on `§8/B4`.
+
+**The `_vocabHit` extraction is proven behaviour-preserving by CAPTURE AND DIFF**, not by "the tests
+still pass" (habit 3). The vocab membership test had to be asked of a second store, so rule 21 says
+extract rather than copy; `n`, `ok` and all three `bySrc` pairs were captured for every word across
+all 66 real learner/chapter pairs — **1715 rows, zero diff**.
+
+**Guards, all mutation-tested:** `unit-word-progress` §8 (demote → repair → restore, driving the
+product's `markWrong` on a real exercise lifted from a built round, not a hand-written store) and §9
+(the containment). `unit-tap-word` §7 (the WIRING — that `check()` itself records it — because
+assertions on each half prove nothing about the join). Removing the demotion, or the `check()` call,
+or the vocab-pass `wrong` flag each turns a named assertion red.
+
+**⚠️ TWO GUARDS WERE WRITTEN AND REJECTED during this, and both rejections are the point:**
+- An end-to-end *"the tap lands on the failed question"* assertion **passed under BOTH mutations of
+  its own rule** — the failed question is often simply first in the rebuilt round, so landing on it
+  proved nothing (`v70_f`: passing for the wrong reason). Measured: the round holds the failed
+  question alongside another about the same word in ~1 of 14 attempts. Replaced by the deterministic
+  half — the failed question re-enters the preferred pool — with the gap recorded in the file.
+- A demotion assertion in `unit-tap-word` **would have failed on a correct product**, because
+  `FIX.keys` are questions matched to the word by qid OR BY TEXT, which is broader than the set the
+  word is GRADED on. Removed; `unit-word-progress` §8 makes that claim properly.
+
+**⚠️ `unit-tap-word` §4 FLAKED AGAIN and the earlier repair was incomplete.** `v81_d` required the
+fixture's two questions to have been seen together ONCE. That is the wrong shape of precondition: a
+pair co-occurring in 1 build of 8 passes selection and then has to turn up again inside §4's bounded
+sample, which misses about 2% of the time — measured at 1 failure in 20 whole-file runs, on top of
+the "0 in 40" the `v81_d` repair had shown. **The precondition is a RATE, not a possibility.**
+`observedKeys` now scores every candidate pair by how many builds actually contain both, the sweep
+keeps the BEST fixture instead of the first acceptable one, and §4 requires 2-of-8 and samples 30
+rounds — roughly 1e-4. The fixture moved from "le silence" at 1/8 to "сунце" at 4/8. **0 failures in
+24 consecutive runs**, and the section's own mutation still turns it red.
+
+### `v81_d` — a word is graded only on questions a round can BUILD (user-reported: never turns green)
+
+*"Some words are impossible to turn green, clicking on them always brings the same question and
+doesn't turn it green, but should randomly select from questions that could turn it green."*
+**Both halves were one cause: the DENOMINATOR, not the picker.**
+
+`_storyWordSources` declares the question SPACE a word could be asked in; the builders emit a
+subset. `_wordProgress` graded each word out of the space, so a word charged with a question no
+round can build could never reach `ok === n` — permanently partial, however much the learner did.
+And because only one of its questions was reachable, tapping kept landing on that same one.
+
+**Measured before anything was edited**, `probe_word_green_v81c.js`, 25 chapters / 473 words, using
+`_lessonQidUniverse` as the oracle — the product's own converged question set, which re-derives from
+`buildExercises` until the union stops growing (so it already handles `v80_t`'s
+content-non-determinism) and is the same universe coverage counts against:
+
+```
+declared probe keys 686, of which BUILDABLE 417 (60.8%)
+
+  type_conjugation     0 / 210    declared for every form; since v78_i the builder emits it only as
+                                  a FALLBACK for a form with no MCQ distractors — which happens
+                                  NOWHERE in this corpus. Not folded into mcq_conjugation either:
+                                  the two share a canonical hash, but qid is `lessonId:TYPE:hash`,
+                                  so they are distinct keys and one is unreachable.
+  syn_select         142 / 192    both `synonyms` and `antonyms` declared for every word, whether or
+                                  not the lesson HAS antonyms (`mode` is part of the canonical).
+  type_plural          4 / 8
+  mcq_conjugation    205 / 210 ,  word_form 50/50 , mcq_article 8/8 , mcq_plural 8/8
+
+52.2% of highlighted words carried at least one unbuildable key -> could never be green.
+232 of 473 were graded on >1 question with exactly ONE buildable -> the reported symptom exactly.
+```
+
+**The fix is the filter, not a list of "which types are really built".** `_wordProgress` and
+`_wordQuestions` intersect declared probes with `_lessonQidUniverse`. No builder knowledge enters the
+client, and a builder that later starts emitting `type_conjugation` is picked up with no change here.
+
+**What it does to the real screen** — `probe_word_green_impact_v81d.js`, over `learners.json`, driving
+`_wordProgress`/`_wordState` rather than re-deriving them (which is why
+`probe_learner_known_v80l.js` could not see this change: it re-implements the colouring inline):
+
+```
+                        before    after
+GREEN                    18.6%    27.8%
+PARTIAL                  19.5%    11.8%
+RED                      61.9%    60.3%
+chapters with any GREEN  62.1%    65.2%
+mean questions per word   2.20     1.79
+```
+
+Most of the movement is PARTIAL -> GREEN, which is the defect being paid back: work already done
+that the denominator refused to credit.
+
+**⚠️ THIS MOVES NUMBERS THE USER HAS ALREADY RULED ON.** `§T5.1` (mean 1.70 questions per word),
+`§T5.4` (the 84% red screen) and `v81_a`'s **"leave the word gate off"** (95% of earned stories
+re-locked; "79.5% of words carry ONE or TWO questions", mean 2.17) were all measured against the
+inflated denominator. None of those rulings is reversed here — but any re-opening of them must
+re-measure first, and the `§T4` block now says so.
+
+**Two hazards were measured rather than assumed, and neither materialised:**
+
+- **92 words left `_wordProgress` entirely** (1741 -> 1649): their only graded questions were
+  unbuildable, so they now have none. They still paint RED — `_highlightVocabHtml` reads
+  `st || 'red'`, so a missing state is red, which is what they were before. No visual change.
+- **Dead taps: 181 before, 181 after** (`probe_tap_reachable_v81d.js`, 693 words). The filter added
+  none, so the fallback that had been drafted for `_wordQuestions` was **not built** — measured
+  first, and the machinery turned out to be unnecessary.
+
+**⚠️ A SEPARATE FINDING, PRE-EXISTING AND NOT FIXED HERE: 26.1% of highlighted words are DEAD TAPS**
+(181 of 693). Every mark on the TRACK T panel gets `wp-tap`, but a quarter of them resolve to no
+question at all, and `tapWord` returns false with no fallback — its own comment calls a tap with no
+visible effect "the worst outcome here". This is squarely in the neighbourhood of the user's report
+and is now measured; it is open.
+
+**⚠️ THE TRAP THIS CHANGE ALMOST SHIPPED, and the guard that caught it.** `_lessonQidUniverse(i)`
+indexes into **`APP.lessonData`** and ignores the `d` passed to `_wordProgress`. For any OTHER
+chapter it returns an empty Set — and an empty Set used as a filter removes every question.
+`_renderChainStory` grades one chapter at a time across a whole chain (`v74_n`), so the first version
+of this change **blanked the darker shade for every chapter of a chain**. Caught by
+`unit-story-highlight-sources` §4, which passes a fixture topic inline: the guard was right and the
+change was wrong. The filter is now scoped to the open chapter and fails OPEN elsewhere. Fixing
+`_lessonQidUniverse` to accept a `d` was the alternative and was NOT taken — it is read by coverage,
+the pass mark and the gates, and widening it for a highlighting fix would put those on a path nothing
+in this session measured.
+
+**⚠️ `unit-tap-word` was FLAKY and is repaired here — the SEVENTH time, and pre-existing.** It failed
+once in 40 whole-file runs on its own non-vacuity assertion (*"at least one run held BOTH a solved
+and an unsolved question"*). **Measured on the pre-`v81_d` client: identically 1 in 40, same
+assertion, same fixture** — so it is not a symptom of the denominator change, and the habit holds
+that every failure of this file has been the TEST being wrong about correct behaviour.
+
+The cause: the fixture was accepted on the UNION of questions seen across builds (`keys.length >= 2`),
+but §4 needs two questions askable **in ONE round** — and `buildExercises` samples, so a word whose
+two questions never co-occur can never put the preference rule to a choice, however many taps are
+sampled. Selection is itself non-deterministic (it picked different chapters on different runs), so
+the precondition had to become a property the fixture is VERIFIED to have rather than a hope about
+which chapter the sweep reaches. `observedKeys` now reports `maxPerBuild` and an actually co-occurring
+PAIR; the fixture is accepted on `maxPerBuild >= 2`; §4 marks everything solved EXCEPT that pair's
+second key, so a build holding the pair is guaranteed to present a choice. Sampling raised 4 -> 8
+builds for selection and 10 -> 24 taps for §4, and deliberately WITHOUT an early exit: extra taps are
+extra chances for the real assertion to fire.
+
+**0 failures in 40 consecutive runs afterwards**, and mutation-tested — deleting the unsolved
+preference in `tapWord` still fails it, on tap 18, so the repair did not soften what it catches.
+
+**Guards:** `unit-word-progress` §6 and §7, both mutation-tested and each failing on its own named
+assertion. §6 asserts the claim at the level it lives — solve everything the lesson CAN ask, and
+every probe-graded word must be GREEN — seeded through `_lessonQidUniverse` itself, so it drives the
+rule rather than a copy. Its chapter is chosen BY MEASUREMENT (one that actually declares keys
+outside the universe) and the section fails loudly if the corpus stops containing such a case, rather
+than going quietly vacuous. §7 pins the chapter-scoping trap by name, because §4 of the other file
+finds it only incidentally.
+
+### `v81_c` — arriving at a chapter is not finishing it (user-reported: comprehension was skipped)
+
+*"It seems we are now skipping the comprehension lesson!!"* — reported at the `v81_b` device pass.
+**Reproduced, diagnosed and fixed. It is a `v81_b` regression, and the mechanism is one expression.**
+
+`showComplete` asked whether the chapter had an in-chapter next as
+`C._review || setComplete(APP.lessonData)`. The comment above it stated the premise: *"a review
+render is by definition already-complete → no in-chapter next"*, which was TRUE while
+`showComplete(true)` was reachable only by RE-OPENING a finished chapter (`v60.1`'s own case).
+**`v81_b` falsified it** by landing a later chapter on that card **on arrival** — precisely the
+moment work is still outstanding. So `nextLessonIdx` was forced to `-1`, Next could not see the
+chapter's own unplayed lesson, and the chain fell through to *"chapter finished → open the next
+one"*.
+
+**Measured before touching anything**, with `probe_comp_skip_v81c.js` — it drives the product's
+`showComplete(true)` over every later chapter in the corpus and **CLICKS `comp-next`**, because the
+claim is about a button:
+
+```
+                                       before      after
+later chapters examined                    72         72
+Next LEAVES for another chapter            52          0
+Next opens the comprehension lesson         0         72
+Next falls back to the storyline           20          0
+card title on arrival        "Lesson complete!" x72   "Keep going!" x72
+```
+
+On every one of the 72, `_firstUnfinishedLessonIdx` was already returning the comprehension lesson —
+the resume rule was right and the card would not consult it. The pass mark was met **without** the
+comprehension lesson (coverage 0.87–0.94 against targets of 0.6–0.8), which is what routed the click
+past the below-threshold branch; this is the §0i "an item is solved by ANY correct answer" bar
+showing up as a behaviour rather than as an argument.
+
+**The title was the same bug wearing different clothes** and is fixed with it: 72 of 72 arrivals
+announced *"Lesson complete!"* when nothing had been answered at all. Scoped to `C._review`, because
+on a REAL completion that copy is true even with lessons remaining.
+
+**The fix asks the DATA, not the render flag.** `setComplete` already answers "is this chapter
+finished" for both kinds of render, so the shortcut only ever changed the answer when it was wrong.
+`C._review` survives as the catch fallback, so a throw degrades to the old behaviour rather than to
+`false`.
+
+**⚠️ A guard had to be RE-ANCHORED, not re-pinned (rule 29).** `unit-story-unlocked-page` §4
+asserted `APP._usNextLesson === undefined` — *"a review render does not reach the next-lesson branch
+at all, this is WHY the page cannot appear"*. That was a statement about the MECHANISM, and the
+section's own note said so in as many words: it recorded that `!C._review` was defence in depth and
+that removing it did not make the section fail. `v81_c` makes the mechanism false deliberately. The
+CLAIM — the page never appears on a review render and never consumes the once-per-chapter showing —
+is untouched and is carried by `_showUnlock`'s own `!C._review`. The mechanism line is deleted
+rather than inverted: pinning "the branch IS now reached" would rebuild the same brittleness one
+release later.
+
+**The new guard is `unit-next-chapter-entry` §8, and §7 is why it had to exist.** §7 proves WHERE a
+later chapter lands but **stubs `showComplete`**, so it could not see what that card then does —
+that gap is exactly where this bug lived. §8 drives the real `loadSaved`, renders the real card and
+clicks the real `comp-next`. **Mutation-tested in both halves separately**: restoring the
+`C._review ||` shortcut fails on *"Next does NOT leave the chapter"*; restoring the old title
+expression fails on *"the arrival card does not announce Lesson complete!"*. The assertions are
+ORDERED so that each mutation is attributable — an assert aborts the file, so a title check placed
+first would have masked a Next regression, and in the first run of this mutation test it did exactly
+that.
+
+Two non-vacuity checks sit in §8 because the corpus can move under it: that the fixture chapter
+really carries a story-gated lesson which is the only thing left to do, and that **the pass mark is
+already met without it** — the state the skip needed. Without the second, a corpus change that put
+the fixture below the mark would let the below-threshold branch rescue the click and the section
+would pass while testing nothing.
+
+**What this does NOT fix:** only the FORWARD path. Whether a learner who taps a lesson icon or a
+play button can reach the comprehension lesson is a different route and is not asserted.
+
 ### `v81_b` — the entry card is the FIRST chapter's alone; later chapters land on the progress card
 
 **User ruling.** This surface has now been decided three times, and keeping the sequence visible
@@ -1874,7 +2385,7 @@ lever that touches the 36.4%, and it costs one prompt change instead of a per-ch
 
    ⚠️ Three users, one install. A portrait of THIS install, not a population.
 
-## T7. DEFERRED — a wrong answer should decrease the solved counter
+## ✅ T7. RULED AND SHIPPED at `v81_e` — a wrong answer takes a word out of green
 
 *Raised by the user at the `v80_u` device pass; **explicitly deferred**, not dropped. Recorded here
 rather than in a release entry because it is an OPEN design item, and the release entries are
@@ -1897,7 +2408,19 @@ Turning a ratchet into a fluctuating value means **a finished chapter can become
 unlocked story can RE-LOCK**, mid-session, as a consequence of one wrong answer. That may be
 acceptable, but it is a product decision and it is not the one the user was making.
 
-**THE SCOPING QUESTION TO ANSWER FIRST** — the two readings differ enormously in blast radius:
+**✅ THE SCOPING QUESTION IS ANSWERED: the user ruled READING 1, HIGHLIGHT ONLY, and it shipped at
+`v81_e`.** The two readings and their blast radius are kept below because the ruling only holds while
+the distinction does — see the `v81_e` entry for the containment guard that pins it.
+
+⚠️ **One reader was MISSING from the list above when the ruling was made**, found by grepping the
+solved store rather than trusting the note (rule 35): the ROUND BUILDERS —
+`buildStandardExercises`, `buildMixedExercises`, `buildComprehensionExercises` and
+`assembleCoverageRound` — all read it to bias rounds toward unsolved questions. Under reading 2,
+un-solving would therefore also change WHICH QUESTIONS GET ASKED, feeding a wrong answer back into
+sampling. That is arguably the most attractive part of the idea and it is the part nobody has costed.
+Anyone re-opening reading 2 must start from that.
+
+**THE TWO READINGS** — they differ enormously in blast radius:
 
 1. **HIGHLIGHT ONLY.** A wrong answer moves the word green → partial in `_wordProgress` / the story
    colouring, and the solved store is untouched. Coverage, completion, the pass mark and the gates
@@ -1947,11 +2470,25 @@ configured, a chapter with ALL words green is still LOCKED, i.e. the default ign
 entirely. §3 is the discriminator: the same state, with a threshold set, unlocks — so the gate is
 demonstrably what changed the answer. Mutation-tested.
 
-**⚠️ THE RULING THE USER STILL OWES:** whether to switch it on, and at what fraction. The numbers
-above are the input. Switching it on at 1.0 today would lock 95% of earned stories; a fraction that
-does not regress anyone is somewhere below 0.5 on this install, which is weak as a gate. **The
-honest options are: leave it off, set it per-storyline for new books only, or revisit after the
-`§T7` scoping decision changes what "green" costs.**
+~~**⚠️ THE RULING THE USER STILL OWES:** whether to switch it on, and at what fraction.~~
+**✅ RULED — see the `v81_a` entry under `# SHIPPED IN THE v81 LINE`: "leave it as it is", the gate
+stays available and off.** The follow-up measurement asked for there (does the pass mark rescue it?
+no) is the input that closed it. The remaining options are CONTINGENT, not owed: per-storyline for
+NEW books only, or redefine "green" to match the chapter's coverage rule — and the latter needs the
+`§T7` scoping decision first.
+
+*Struck at `v81_c`, not deleted. This paragraph and the entry that answers it sat ~245 lines apart in
+one file and disagreed, and the `v81_b` session prompt carried the stale side forward into "THREE
+RULINGS THE USER OWES" — the working rule about cross-checking a carried item against the SHIPPED
+list in the same file, arriving from the other direction: here the OPEN text was the copy that went
+stale.*
+
+The numbers that produced the ruling: switching it on at 1.0 today would lock 95% of earned stories;
+a fraction that does not regress anyone is somewhere below 0.5 on this install, which is weak as a
+gate.
+
+**⚠️ `v81_d` moves these numbers.** They were measured with a denominator that counted questions no
+round can build — see the `v81_d` entry. Any future re-opening of this ruling must re-measure first.
 
 ## T6. Build order — ✅ FULLY UNBLOCKED at the `v80_o` cut
 
@@ -2011,7 +2548,7 @@ themselves are left as written, so the original reasoning stays readable.**
 |---|---|
 | **`PLAN §0.2`** — "I damaged `roadmap_v80.md`, re-carry and reconcile both sections" | **DONE.** Both sections were restored at the `v80` cut and RECONCILED in session 35 — see "SESSION 35 — the reconciliation pass" above. Its prerequisite is discharged. |
 | **`PLAN §0.3`** — duplicate storyline title | **SUPERSEDED by user ruling** (`§2y`): the user RENAMED one to "Dough of the Ancients 2". The fork-marker guard is preventive, not corrective. |
-| **`PLAN §0.3`** — single-chapter `1/1` and 100% bar | **STILL OPEN.** Belongs with `PLAN §C1`, as the plan says. |
+| **`PLAN §0.3`** — single-chapter `1/1` and 100% bar | **✅ RULED AND SHIPPED at `v81_g`** — bar = completion, label = access. ONE root cause with the header bar, not two off-by-ones, and it is NOT the index the plan guessed: `pct` is computed from `unlockedChapters`, so ALL 91 decks show a partly-green bar at `doneChapters = 0` and all 27 single-chapter decks read 1/1 at 100%. The `+1` is the `v77_p` USER RULING and cannot just be removed. See `PLAN §C1` for the one question that needs answering. |
 | **`PLAN §0.3`** — `unit-story-unlocked-page` §6 does not discriminate | **DONE, shipped `v80_c`.** It fails under revert now. See the `v80_c` entry above, which also CLOSES the `_firstUnfinishedLessonIdx` "open defect" as a misattribution. |
 | **`PLAN §0.4`** — are QC tokens recorded | **Answered: yes.** Only a run-level total is missing. |
 | **`PLAN §C1`** — the two progress-card gate bugs | **HALF DONE.** The SECOND bug (Replay reaching comprehension before the story unlocked) is **shipped as `v80_b`**, measured 27 of 94 partly-played chapters before / 0 after, revert-verified. The **FIRST bug is NOT reproduced**, and **two readings of it are dead ends** — see the `v80_b` block above before spending time on it. The single-chapter 100% bar and the header off-by-one are still folded in here and untouched. |
@@ -2432,8 +2969,38 @@ sequences, and report what each says before and after. Fold in the **single-chap
 (§0.3) here, since it is the same helper (`_slProgressStats` adding one for the in-progress
 chapter) and the same screen.
 
-**Also here:** the storyline header bar being partially green before any question — the plan reads
-this as an index-off-by-one ("current-1"). **Verify that before implementing it**; the same helper
+**✅ MEASURED at `v81_f` (session 37), and the plan's reading is WRONG.** The header bar is NOT an
+index off-by-one. Both symptoms are the SAME LINE — `_slProgressStats`'s
+`unlockedChapters = doneChapters + (doneChapters < total ? 1 : 0)` — and `pct` is computed from
+`unlockedChapters`, so the bar measures how much of the deck is OPEN, not how much is DONE. On a
+fresh install, with `doneChapters = 0` everywhere:
+
+```
+deck size   decks   bar shown before anything is played
+ 1 chapter    27     100%   <-- and the label reads 1/1
+ 2 chapters   22      50%
+ 3 chapters   12      33%
+ 4 chapters    9      25%
+ …
+14 chapters    1       7%
+                     ALL 91 storylines show a partly-green bar at doneChapters = 0.
+27 of 91 — every single-chapter deck — read 1/1 and 100% before a single question.
+```
+
+So the roadmap's warning was right: fixing these as two off-by-ones would have left the real one.
+**⚠️ AND THE `+1` IS A USER RULING** (`v77_p`: "the chapter in progress counts, which is why a fresh
+storyline reads 1/2 rather than 0/2"), so it cannot simply be removed — that would reverse a ruling.
+
+**THE RULING NEEDED, and it is one question:** the label and the bar currently mean the same thing.
+The minimal change that keeps `v77_p` intact is to **split them** — the LABEL keeps counting UNLOCKED
+chapters (1/1, 1/2 — the ruled behaviour), while the BAR counts COMPLETED ones, so a fresh deck reads
+1/2 with an empty bar and a single-chapter deck reads 1/1 with an empty bar. The cost is that a deck
+can read 2/2 with a half-full bar, because "2 of 2 chapters open" and "1 of 2 finished" are then
+different statements. The alternative is to leave the bar alone and accept 100%-before-play on 30%
+of the corpus. **Not implemented — a headline number is not ours to redefine (rule 24).**
+
+**The original note:** the plan reads this as an index-off-by-one ("current-1"). **Verify that before
+implementing it**; the same helper
 produces the 100%-on-one-chapter result, so a single root cause may explain both, and fixing them
 as two off-by-ones would leave the real one.
 

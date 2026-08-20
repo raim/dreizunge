@@ -213,10 +213,113 @@ await (async () => {
   console.log('  a later chapter lands on the progress card, not in a question');
 })();
 
+// ── 8. ⚠️ v81_c — ARRIVING IS NOT FINISHING ────────────────────────────────
+// User-reported at the v81_b device pass: *"it seems we are now skipping the comprehension
+// lesson!!"*
+//
+// §7 proves WHERE a later chapter lands. It stubs `showComplete`, so it cannot see what that card
+// then DOES — and that gap was the bug. `showComplete` computed "is there an in-chapter next" as
+// `C._review || setComplete(...)`, on the premise that a review render is by definition an
+// already-complete chapter. v81_b falsified that premise by landing an UNFINISHED chapter here, so
+// Next could not see the chapter's own unplayed lesson and walked on to the next chapter instead.
+// Measured over the corpus before the fix: 0 of 72 later chapters reached their comprehension
+// lesson (`build_history/probe_comp_skip_v81c.js`).
+//
+// So this section runs the REAL `showComplete` and CLICKS the REAL `comp-next` — the claim is about
+// a button, and only pressing it can touch that claim (session-28 rule 2). Two things are asserted
+// because the same premise produced both: where Next goes, and what the card SAYS.
+await (async () => {
+  // A fixture the bug can actually be seen on: a later chapter with a story-gated lesson, at least
+  // one other counted lesson to carry the pass mark, and a NEXT chapter for Next to wrongly walk to.
+  const GATED = (() => {
+    for (const sl of (store.storylines || [])) {
+      const ids = sl.chapters || [];
+      for (let i = 1; i < ids.length - 1; i++) {
+        const t = byId[ids[i]];
+        if (!t || (t.lessons || []).length < 2) continue;
+        const types = (t.lessons || []).map(L => (L && L.type) || 'standard');
+        if (!types.includes('comprehension')) continue;
+        return t;
+      }
+    }
+    return null;
+  })();
+  // Guard the guard against going vacuous on new data: if the corpus stops carrying such a chapter
+  // this section must FAIL LOUDLY, not quietly stop testing anything.
+  assert.ok(GATED, 'the corpus has a NON-LAST later chapter with a comprehension lesson and a sibling');
+
+  const C = loadClient({ quiet: true });
+  C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)};
+    APP.savedList = ${JSON.stringify(SAVED)};
+    APP.storylines = ${JSON.stringify(store.storylines || [])};
+    APP.info = { backend:'none', canGenerate:false, coverageThreshold:0.8 };
+    APP.progress = { completed:{}, solved:{}, chapterDone:{}, learned:{}, storyShown:{} };
+    APP._teacherMode = false; APP._went = null; APP._started = null;
+    show = function(id){ APP._shown = id; };
+    startLesson = function(i){ APP._started = i; return true; };
+    endDrill = function(){};
+    saveProg = function(){};
+    goLessonSet = async function(){ return true; };
+    fetch = function(){ return Promise.resolve({ ok:true,
+      json: function(){ return Promise.resolve(${JSON.stringify(GATED)}); } }); };
+    true;`, 'seed');
+
+  // The reported state: the ordinary lessons are done and solved, the comprehension lesson is not.
+  // Seeded the way the PRODUCT writes it — item keys through `_lessonItemUniverse` — because a
+  // store seeded by hand measures nothing (rule 17).
+  C.run(`APP.lessonData = ${JSON.stringify(GATED)};
+    if (typeof _invalidateQidUniverse === 'function') _invalidateQidUniverse();
+    (function(){
+      var d = APP.lessonData, m = _solvedMap(d.topic);
+      var done = APP.progress.completed[d.topic] = {};
+      countedLessons(d).forEach(function(L){
+        if (_isStoryGatedLesson(L)) return;
+        _lessonItemUniverse(d.lessons.indexOf(L)).forEach(function(k){ m[k] = 1; });
+        done[L.id] = { correct: 4, total: 4 };
+      });
+    })(); true;`, 'state');
+
+  const gatedIdx = C.run(`APP.lessonData.lessons.findIndex(function(L){ return _isStoryGatedLesson(L); })`);
+  assert.ok(gatedIdx >= 0, 'the fixture chapter really carries a story-gated lesson');
+  assert.strictEqual(C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`), gatedIdx,
+    'and it is the one thing left to do — so anything Next does other than open it is a skip');
+  // Non-vacuity for the mechanism the bug ran through: the old code only walked on because the
+  // chapter was ABOVE its pass mark without the comprehension lesson. If a corpus change made this
+  // fixture fall below the mark, the below-threshold branch would rescue it and this section would
+  // pass without exercising the defect at all.
+  assert.ok(C.run(`(function(){ var c = topicCoverage(); return c.total > 0 && (c.solved/c.total) >= _coverageTarget(); })()`),
+    'the pass mark is already met WITHOUT the comprehension lesson — the state the skip needed');
+
+  // Drive the real landing, then watch where the real button goes.
+  C.run(`loadSaved(${JSON.stringify(GATED.id)}); true;`, 'land');
+  await settle();
+  C.run(`loadSaved = function(x){ APP._went = 'CHAPTER:' + String(x); };
+    showStoryUnlocked = function(){ APP._went = 'story-unlocked-page'; };
+    compBackToStory = function(){ APP._went = 'back-to-storyline'; }; true;`, 'watch');
+
+  // The title is READ now and asserted last. Ordering is deliberate: an assert aborts the file, so
+  // if the title check came first a regression in the Next wiring would be masked by it and the two
+  // halves of this fix could not be attributed separately under mutation-testing. Reading before
+  // the click keeps the value the ARRIVAL render produced.
+  const title = C.run(`(document.getElementById('comp-title')||{}).textContent || ''`);
+
+  C.run(`document.getElementById('comp-next').onclick(); true;`, 'forward');
+  assert.strictEqual(C.run(`APP._went`), null,
+    'Next does NOT leave the chapter while its comprehension lesson is unplayed');
+  assert.strictEqual(C.run(`APP._started`), gatedIdx,
+    'Next opens the comprehension lesson itself');
+
+  assert.strictEqual(title, C.run(`t('complete.keep_going')`),
+    'the arrival card does not announce "Lesson complete!" — nothing was played to complete');
+  console.log('  arrival with work left: Next opens the comprehension lesson, card says "keep going"');
+})();
+
 // ── What this does NOT establish (rule 34) ──────────────────────────────
 // • Nothing here says the progress card is a GOOD arrival screen; only that it is the one reached.
 //   That is a device judgement, and it is owed.
 // • The entry card's own contents are `unit-story-summary`'s subject, not this file's.
+// • §8 fixes the FORWARD path. Whether a learner who instead taps a lesson icon or a play button
+//   can still reach the comprehension lesson is a different route and is not asserted here.
 
 console.log('unit-next-chapter-entry: ALL PASSED');
 })();

@@ -366,4 +366,59 @@ const drawn = (html) => new Set(topics.filter(t =>
 //   parent at all (`sl_1041030875` at this cut, whose only chapter continues from a chapter it
 //   does not contain). That deck still shows one card and no fork, because it has no fork parent
 //   to branch from — a membership question in the DATA, left open deliberately.
+
+// ── 7. ⚠️ v81_g — THE BAR MEASURES COMPLETION, THE LABEL MEASURES ACCESS ────
+// `PLAN §C1` + `§0.3`, USER RULING. `pct` used to be `unlockedChapters / totalChapters`, so the bar
+// said how much of the deck was OPEN, not how much was DONE. Measured on a FRESH install: **all 91
+// storylines showed a partly-green bar** before a single question, and all **27 single-chapter decks
+// read 1/1 at 100%**. The plan called it an index off-by-one and two separate bugs; it is neither —
+// one line, and not an index.
+//
+// The `+1` is NOT removed: it is the `v77_p` ruling, and it lives in the LABEL, which is asserted
+// here to still carry it. Only the bar moved.
+{
+  const stats = (ids, completed) => JSON.parse(C.run(`(function(){
+    APP.progress = ${JSON.stringify({ completed: completed || {}, solved: {}, chapterDone: {}, learned: {}, storyShown: {} })};
+    var m = {};
+    ${JSON.stringify(ids)}.forEach(function(id){ m[id] = APP.savedList.filter(function(t){ return t.id === id; })[0]; });
+    var st = _slProgressStats(${JSON.stringify(ids)}, m);
+    return JSON.stringify({ pct: st.pct, label: _slProgressLabel(st), done: st.doneChapters,
+      unlocked: st.unlockedChapters, total: st.totalChapters });
+  })()`));
+
+  // Every deck in the corpus, nothing played.
+  const fresh = storylines
+    .map(s => (s.chapters || []).filter(c => byId.has(c)))
+    .filter(ids => ids.length)
+    .map(ids => ({ ids, st: stats(ids, {}) }));
+  assert.ok(fresh.length > 5, 'non-vacuity: the corpus has storylines to measure');
+  const lit = fresh.filter(f => f.st.pct > 0);
+  assert.deepStrictEqual(lit.map(f => f.ids.length + 'ch@' + f.st.pct + '%'), [],
+    'NO storyline shows a partly-green bar before anything is played — this was 91 of 91, and ' +
+    '27 single-chapter decks at 100%');
+
+  // ⚠️ An empty bar is trivially achievable by breaking the bar. So: it must still FILL, and reach
+  // 100% only when the LAST chapter is done. Before v81_g a 3-chapter deck hit 100% with 2 of 3
+  // finished, which is the same defect at the other end of the walk.
+  const multi = fresh.find(f => f.ids.length >= 3);
+  assert.ok(multi, 'non-vacuity: a deck with at least 3 chapters, so "full early" is observable');
+  const completed = {};
+  const seen = [];
+  multi.ids.forEach(id => {
+    const t = topics.find(x => x.id === id) || {};
+    completed[t.topic] = {};
+    (t.lessons || []).forEach(L => { if (L && L.id != null) completed[t.topic][L.id] = { correct: 4, total: 4 }; });
+    seen.push(stats(multi.ids, completed));
+  });
+  const full = seen.findIndex(s => s.pct >= 100);
+  assert.strictEqual(full, multi.ids.length - 1,
+    `the bar reaches 100% only when the LAST chapter is done (filled at chapter ${full + 1} of ${multi.ids.length})`);
+  assert.ok(seen[0].pct > 0, 'and it does FILL — an empty bar is not the point, an HONEST one is');
+
+  // The v77_p ruling, still intact: the LABEL counts unlocked chapters, so a fresh deck reads 1/N.
+  assert.ok(/^1\//.test(fresh.find(f => f.ids.length >= 2).st.label),
+    'a fresh multi-chapter deck still LABELS 1/N — the v77_p ruling is about the label and survives');
+  console.log(`  bar = completion (0% fresh on all ${fresh.length} decks, 100% only at the end); label keeps 1/N`);
+}
+
 console.log('unit-fork-display: ALL PASSED');

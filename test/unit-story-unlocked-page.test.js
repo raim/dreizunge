@@ -124,24 +124,41 @@ const workLeft = C => C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
 // judging the learner on a review render (INTERNALS: "a review render is not a play"), and this
 // page DOES judge: it writes APP.progress.storyShown.
 //
-// HONEST NOTE, measured rather than assumed: on a review render `nextLessonIdx` is -1, so the
-// next-lesson branch is not reached at all and the page cannot appear for that reason alone. The
-// `!C._review` condition in the product is therefore defence in depth, NOT the thing keeping this
-// section green — removing it does not make this section fail. It is kept because the branch's
-// entry condition is not this section's to guarantee, and because `_markStoryShown` writes
-// progress. The assertions below are written to state what is actually true, so they cannot be
-// read as evidence for a guard they do not exercise (session-28 rule 2).
+// ⚠️ RE-ANCHORED at v81_c (rule 29: when a pin breaks, ask whether the CLAIM changed or only the
+// MECHANISM — and if only the mechanism, re-anchor rather than re-pin).
+//
+// This section used to assert `APP._usNextLesson === undefined`, i.e. "a review render does not
+// reach the next-lesson branch at all — this is WHY the page cannot appear". That was a true
+// statement about the MECHANISM, and the section's own note said so: it recorded that `!C._review`
+// in the product was defence in depth and that removing it did not make this section fail.
+//
+// v81_c made the mechanism false on purpose. A later chapter now LANDS on this card with work
+// outstanding (v81_b), so `_setDone` asks the chapter instead of the render flag and a review
+// render CAN reach the next-lesson branch. The claim this section exists for is untouched: the
+// page must not appear on a review render, and must not consume the once-per-chapter showing,
+// because it WRITES progress and a review render is not a play. Those two assertions are kept and
+// are now the whole of it — carried by `_showUnlock`'s own `!C._review`, which is what the note
+// above already identified as the real guard.
+//
+// The mechanism assertion is deliberately NOT replaced with its inverse. Pinning "the branch IS
+// now reached" here would re-create the same brittleness one release later, and it belongs to a
+// different claim — which `unit-next-chapter-entry` §8 asserts directly, by clicking the button.
 {
   const C = atUnlock({ review: true });
   assert.strictEqual(gateOpen(C), true, 'the gate is open here too, so this is not vacuous');
-  assert.strictEqual(C.run(`APP._usNextLesson`), undefined,
-    'a review render does not reach the next-lesson branch at all — this is WHY the page cannot appear');
+  // Non-vacuity for the RE-ANCHORED claim: the two assertions below only mean something if this
+  // render would otherwise have been a candidate for the page — i.e. the chapter has an unplayed
+  // lesson to move to. Without this, a scenario with nothing left would pass them trivially.
+  // `workLeft` returns -1 when nothing is left, so this must test `>= 0` — `!= null` would be a
+  // non-vacuity check that is itself vacuous, which is the failure mode this file exists to catch.
+  assert.ok(workLeft(C) >= 0,
+    'this chapter still has a lesson to move to, so "the page is not shown" is a real refusal');
   const shown = C.run(`document.getElementById('comp-next').onclick(); APP._shown;`);
   assert.notStrictEqual(shown, 'unlockstory-screen',
-    'and so a review render never opens the story-unlocked page');
+    'a review render never opens the story-unlocked page');
   assert.strictEqual(C.run(`!!APP.progress.storyShown[APP.lessonData.topic]`), false,
     'nor does it consume the once-per-chapter showing');
-  console.log('  review render: branch not reached, page not shown, showing not consumed');
+  console.log('  review render: page not shown, showing not consumed (re-anchored at v81_c)');
 }
 
 // ── 5. The progress card's own story panel is untouched (user ruling) ──────

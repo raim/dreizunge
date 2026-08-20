@@ -1440,7 +1440,25 @@ console.log('  completion card: full storyboard framed by chapter state: OK');
   const bar = C.document.getElementById('comp-hdr-prog-bar');
   const txt = C.document.getElementById('comp-hdr-prog-txt');
   assert.ok(/^\d+%$/.test(bar.style.width || ''), 'the header progress bar is filled with a percentage');
-  assert.notStrictEqual(bar.style.width, '0%', 'and reflects the work already done, not a flat zero');
+  // ⚠️ RE-ANCHORED at v81_g (rule 29: when a pin breaks, ask whether the CLAIM changed or only the
+  // MECHANISM). This asserted `!== '0%'` — "reflects the work already done, not a flat zero" — which
+  // was true only because `pct` counted UNLOCKED chapters, so the bar was non-zero on any deck
+  // whether or not a chapter had been finished. `v81_g` made the bar mean COMPLETION (user ruling),
+  // and this fixture flags lesson progress WITHOUT seeding the solved store, so `chapterComplete` —
+  // the coverage-aware rule — correctly reports nothing finished. A flat zero is now the honest
+  // answer here, and the old assertion was pinning the defect.
+  //
+  // The CLAIM this section makes is that the card is another view of the STORYLINE PAGE, so that is
+  // what is asserted: the header bar carries exactly what the shared helper computes. It cannot
+  // drift from the storyline screen, and it cannot be a hardcoded zero either.
+  const _shared = C.run(`(function(){
+    var m = {}; (APP.savedList||[]).forEach(function(t){ if (t && t.id) m[t.id] = t; });
+    var sl = (APP.storylines||[])[0] || { chapters: [] };
+    return _slProgressStats(sl.chapters || [], m).pct;
+  })()`);
+  assert.strictEqual(bar.style.width, _shared + '%',
+    'the header bar carries exactly the shared helper\'s percentage — the card is another view of ' +
+    'the storyline page, not a second opinion');
   assert.ok(/\d+\/\d+/.test(txt.textContent || ''), 'with the same done/total label as the storyline page');
 
   // A solo chapter has no storyline to be a fraction of — the bar hides rather than showing 0%.

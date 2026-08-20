@@ -7008,16 +7008,19 @@ function buildPath(){
 
   const path=document.getElementById('lesson-path');
   path.innerHTML='';
-  let _prevDone=true;   // "previous" before the first counted lesson is treated as done (unlocks #1)
+  let _prevDone=true;   // v81_i: feeds only the connector-line's "done" styling now, not a lock
   let _firstNode=true;
   d.lessons.forEach((L,i)=>{
     if(!_lessonCounts(L)) return;   // hidden + non-teacher → omit from the path entirely
-    // v71_s: a comprehension lesson is additionally locked until the STORY is unlocked, however
-    // far down the path it sits. Sequential locking alone is not enough — it only says "the
-    // previous lesson is done", which is not the same as "the story has been revealed" once
-    // coverage is part of the gate. Teachers are exempt, as with every other lock here.
+    // v81_i (user ruling): the sequential "previous lesson done" lock was REMOVED — it was already
+    // unenforced everywhere except this path render. _firstUnfinishedLessonIdx's _playable never
+    // consulted it, and tapWord bypasses it outright: measured at 438 of 447 taps (98%) on a fresh
+    // learner landing on a lesson this path drew as locked. Removing it makes three readers agree
+    // instead of one disagreeing. What remains, and must NOT go with it, is the STORY GATE below —
+    // fixed at v80_b after two dead-end readings, the only lock a node can still carry. Teachers
+    // are exempt, as with every other lock here.
     const _storyLocked = _isStoryGatedLesson(L) && !APP._teacherMode && !storyUnlocked(d);
-    const isDone=!!(done[L.id]), isLocked=(!_firstNode&&!_prevDone&&!APP._teacherMode)||_storyLocked, isActive=!isDone&&!isLocked;
+    const isDone=!!(done[L.id]), isLocked=_storyLocked, isActive=!isDone&&!isLocked;
     const lessonScore=typeof done[L.id]==='object'?done[L.id]:null;
     const lessonPct=lessonScore&&lessonScore.total>0?Math.round(100*lessonScore.correct/lessonScore.total):null;
     if(!_firstNode){ const ln=document.createElement('div'); ln.className='path-line'+(_prevDone?' done':''); path.appendChild(ln); }
@@ -8550,6 +8553,10 @@ function _clearChapterProgress(topicKey){
   if(!topicKey) return false;
   if(APP.progress?.completed)   delete APP.progress.completed[topicKey];
   if(APP.progress?.solved)      delete APP.progress.solved[topicKey];   // coverage store (Commit A)
+  // v81_e: the §T7 demotion store. A chapter wiped clean must not come back amber — and this is the
+  // documented ONE list of stores that answer "is this chapter done", which is exactly why it is
+  // added here rather than in a second place.
+  if(APP.progress?.wrong)       delete APP.progress.wrong[topicKey];
   // The cached completeness STAMP that `chapterComplete` trusts AHEAD of the flags. A stamp
   // outlives the progress it described, so leaving it behind is what made a wipe invisible.
   if(APP.progress?.chapterDone) delete APP.progress.chapterDone[topicKey];
@@ -14439,6 +14446,42 @@ function _solvedMap(topic){
   if(!APP.progress.solved[topic]) APP.progress.solved[topic] = {};
   return APP.progress.solved[topic];
 }
+// ── v81_e / §T7 reading 1 (USER RULING: HIGHLIGHT ONLY) ──────────────────────────────────────
+// *"A wrongly answered question on a vocab that had been answered correctly should also decrease
+// the solved counter."*
+//
+// ⚠️ THE SOLVED STORE IS NOT TOUCHED, and that is the whole ruling. `§T7` offered two readings and
+// the user picked the contained one: a wrong answer changes what the STORY COLOURING says, not what
+// the app knows. So this is a SECOND, parallel store — "questions answered wrong since they were
+// last answered right" — read only by `_wordState` and by the tap resolver. Coverage, the pass mark,
+// `setComplete`, `chapterComplete`, `storyUnlocked` and both resume scans keep their current meaning
+// because none of them can see this map, and `_wordProgress`'s `n`/`ok` are left alone so that
+// `_wordGateFraction` (which counts `ok >= n` directly) cannot inherit the demotion either.
+// Reading 2 — `markSolved` gaining an inverse — is mastery decay, is `PLAN §9b/D2`, and is still
+// blocked on `§8/B4`. **Do not implement it under cover of this.**
+//
+// Keyed by qid, exactly like the solved store, so the two are read with the same keys and cannot
+// disagree about which question is meant. NOT keyed by item: the user's sentence is about a
+// QUESTION, and an item key would demote a word for a question format it was never asked in.
+// Shape: APP.progress.wrong[topic] = { qid: 1, … }
+function _wrongMap(topic){
+  if(!APP.progress) return {};
+  if(!APP.progress.wrong) APP.progress.wrong = {};
+  if(!APP.progress.wrong[topic]) APP.progress.wrong[topic] = {};
+  return APP.progress.wrong[topic];
+}
+// Record a wrong answer. Mirrors `markSolved`'s guards — same withheld-item rule, same qid — so a
+// question that cannot be credited cannot be penalised either.
+function markWrong(ex){
+  const topic = APP.lessonData?.topic;
+  if(!topic || !ex) return '';
+  if(_itemWithheld(_exFlagTarget(ex))) return '';
+  const id = qid(ex);
+  if(!id) return '';
+  const m = _wrongMap(topic);
+  if(!m[id]){ m[id] = 1; saveProg(); }
+  return id;
+}
 function isSolved(topic, id){ return !!(id && _solvedMap(topic)[id]); }
 // ── v74_c: migrate a learner's existing question-keyed progress onto item keys ───────────────
 // Progress earned before v74_c is stored as `lessonId:type:hash(canonical)`. The canonical form is
@@ -14523,6 +14566,14 @@ function markSolved(ex){
   const m = _solvedMap(topic);
   let changed = false;
   if(!m[id]){ m[id] = 1; changed = true; }
+  // v81_e / §T7: answering it right again LIFTS the demotion. Without this the amber would be
+  // permanent and the feature would only ever take colour away — the learner could never repair a
+  // word, which is the opposite of what the request is for. The solved store is still monotonic;
+  // it is the separate `wrong` map that clears.
+  try {
+    const w = _wrongMap(topic);
+    if(w[id]){ delete w[id]; changed = true; }
+  } catch(_) {}
   // v74_c: also credit the SOURCE ITEM. Coverage counts items; round assembly still keys on the
   // qid (which question to ask next is a different question from what the learner knows), so both
   // live in this map — they cannot collide because an item key carries the `:i:` marker.
@@ -15425,6 +15476,11 @@ function check(replay){
     if(!replay){ btn.disabled = true; _speakAndAdvance(speakOk); }
   } else {
     if(!replay){ C.hearts=Math.max(0,C.hearts-1); C.mistakes++; C.total++; C.streak=0; }
+    // v81_e / §T7 (user ruling: HIGHLIGHT ONLY). Behind `!replay` for the same reason every other
+    // judgement here is: a replay re-renders an answer already given and must not re-judge it
+    // (INTERNALS, "a review render is not a play"). The flagged case has already returned above, so
+    // a withheld item never reaches this line.
+    if(!replay){ try { markWrong(ex); } catch(_) {} }
     // Remember which words were answered wrongly this round → learned-vocab ledger marks them,
     // so future user-specific retraining can focus on them (see roadmap "my story").
     if(!replay){ try { const wt=(ex.target||ex.correct); if(wt){ (C._wrongTargets||(C._wrongTargets=new Set())).add(stripFuri(String(wt)).trim()); } } catch(_) {} }
@@ -15823,9 +15879,27 @@ function showComplete(review, lessonIdxOverride){
   // v60.1: the set may be mixed-driven, where completion is COVERAGE, not per-lesson done[id].
   // _firstUnfinishedLessonIdx already encodes the real rule (returns -1 when the set is complete,
   // else the lesson to continue — the mixed/driver lesson for a mixed-driven set). Use it so Next
-  // can't get trapped replaying a mixed lesson whose coverage is already satisfied. A review
-  // render (_review) is by definition already-complete → no in-chapter next.
-  const _setDone = C._review || (()=>{ try { return setComplete(APP.lessonData); } catch(_) { return false; } })();
+  // can't get trapped replaying a mixed lesson whose coverage is already satisfied.
+  //
+  // ⚠️ v81_c (user-reported: "it seems we are now skipping the comprehension lesson!!").
+  // This read `C._review || setComplete(...)`, on the premise — stated in the comment it replaces —
+  // that "a review render is by definition already-complete, so there is no in-chapter next". That
+  // premise held while `showComplete(true)` was only ever reached by RE-OPENING a finished chapter
+  // (v60.1's own case). **v81_b falsified it**: a later chapter now LANDS here on arrival, which is
+  // exactly the moment work is still outstanding, so the flag asserted completeness of a chapter
+  // the learner had not started.
+  //
+  // Measured before the change and after it (`build_history/probe_comp_skip_v81c.js`, which drives
+  // this function over every later chapter in the corpus and CLICKS `comp-next`): with the flag in
+  // the expression, 0 of 72 chapters reached their unplayed comprehension lesson — 52 walked on to
+  // the NEXT chapter and 20 fell back to the storyline. Asking the data instead: 72 of 72.
+  //
+  // The flag is not replaced by a narrower flag, because "is there an in-chapter next" is a
+  // question about the CHAPTER and `setComplete` already answers it — a complete chapter returns
+  // true here whether the render is a review or not, so the shortcut only ever changed the answer
+  // when it was wrong. `C._review` survives as the FALLBACK, so a throw degrades to the old
+  // behaviour rather than to `false`.
+  const _setDone = (()=>{ try { return setComplete(APP.lessonData); } catch(_) { return !!C._review; } })();
   let nextLessonIdx = _setDone ? -1 : _firstUnfinishedLessonIdx(APP.lessonData);
   // v71_s: …but never point Next at the comprehension lesson the learner has JUST played and not
   // yet fully solved. Its done-flag is deliberately withheld below 100%, so it stays "unfinished"
@@ -16097,8 +16171,19 @@ function showComplete(review, lessonIdxOverride){
   // one function both sites call rather than being spelled twice.
   const _storyDone = !lesson._drill && _storyAllChaptersDone(_slCtx);
   // Title reflects the gate: below threshold it's not a "complete" celebration but a "keep going".
+  //
+  // v81_c: …and neither is ARRIVING at a chapter with work still in it. Since v81_b a later chapter
+  // lands on this card without playing anything, and the card greeted all 72 such chapters in the
+  // corpus with "Lesson complete!" — measured by `probe_comp_skip_v81c.js`, which reads this very
+  // element. No lesson had been completed; nothing had been answered at all.
+  //
+  // Scoped to `C._review`, and that scope is the whole point: on a REAL completion "Lesson
+  // complete!" is true even when later lessons remain, because one was in fact just finished. It is
+  // only the render that follows no play that must not claim one. `_setDone` is the same reader the
+  // Next wiring uses, so the title and the button cannot disagree about whether work is left.
+  const _arrivalWithWorkLeft = !!C._review && !_setDone;
   const _titleEl = el('comp-title');
-  if (_titleEl) _titleEl.textContent = _belowThreshold ? t('complete.keep_going')
+  if (_titleEl) _titleEl.textContent = (_belowThreshold || _arrivalWithWorkLeft) ? t('complete.keep_going')
                                      : _storyDone      ? t('complete.story_complete')
                                      :                   t('complete.title');
 
@@ -16345,6 +16430,28 @@ function _storyWordSources(d){
   };
   (d && d.lessons || []).forEach(L => {
     if (!L || L.id == null) return;
+    // ⚠️ v81_h (USER RULING) — A HIDDEN LESSON TEACHES THE LEARNER NOTHING, so its words do not
+    // belong on the story panel.
+    //
+    // This was the ONE walk that ignored `_hidden`. Everywhere else already honours it —
+    // `countedLessons` (so coverage, the pass mark and chapter completion are clean), `startLesson`,
+    // `_wordQuestions`, `_wordLessons`, and even `_wordProgress`'s own VOCAB branch. Because
+    // `_storyExtraWords` is just this function's output deduped, that single omission put words from
+    // hidden lessons into the highlighting, made them tappable, and graded them through the probe
+    // branch. It is what left 79 of 693 marked words (11.4%) as dead taps at `v81_f`: marked,
+    // graded, and correctly unreachable, because `startLesson` refuses a hidden lesson.
+    //
+    // WHY THE WORDS ARE STALE, not merely unreachable. Measured over the corpus: 44 hidden lessons
+    // across 32 topics, and **29 of those 32 also contain `_recreated` lessons** — so the dominant
+    // origin is not the teacher's 🫥 button but the server's RE-CREATE path, which flags a chapter's
+    // existing lessons hidden rather than deleting them (its comment: hiding silently discards
+    // progress made against the originals). 26 of the 44 still carry vocab, 193 rows. Those are the
+    // lessons a regeneration REPLACED. Highlighting their words tells the learner "this is taught
+    // here" about a lesson that no longer exists for them.
+    //
+    // Teacher mode still sees them, matching the shape of the rule everywhere else
+    // (`!L._hidden || APP._teacherMode`) rather than introducing a second, stricter one.
+    if (L._hidden && !APP._teacherMode) return;
     const id = L.id;
     // synonyms: the base word AND every alternative offered — all of them are words the lesson
     // puts in front of the learner, which is what the light shade means.
@@ -16420,39 +16527,118 @@ function _wordProgress(d){
   // 11 words across 59 real chapter/user pairs. TRACK T wants the TOTAL (green = every associated
   // question, whatever kind); the existing callers want their own side. Both are kept, so neither
   // has to be reconstructed by a caller that might get it wrong.
-  const bump = (word, src, solved) => {
+  const bump = (word, src, solved, bad) => {
     let r = out.get(word);
-    if (!r) { r = { n: 0, ok: 0, bySrc: { extra: { n: 0, ok: 0 }, vocab: { n: 0, ok: 0 }, sentence: { n: 0, ok: 0 } } }; out.set(word, r); }
+    if (!r) { r = { n: 0, ok: 0, bad: 0, bySrc: { extra: { n: 0, ok: 0 }, vocab: { n: 0, ok: 0 }, sentence: { n: 0, ok: 0 } } }; out.set(word, r); }
     r.n++; if (solved) r.ok++;
+    // v81_e / §T7: counted SEPARATELY from n/ok, never subtracted from them. `_wordState` reads it
+    // to demote green -> partial; `_wordGateFraction` reads `ok >= n` and therefore cannot see it.
+    // That separation IS the "highlight only" ruling, expressed where it can be checked.
+    if (bad) r.bad++;
     const b = r.bySrc[src]; if (b) { b.n++; if (solved) b.ok++; }
   };
+  // The demotion store, read with the same keys as the solved store (v81_e).
+  const wrongMap = _wrongMap(d.topic) || {};
+  const wrongKeys = Object.keys(wrongMap);
 
   // (a) the extra sources — synonyms, word_forms, grammar, conjugation — which carry explicit probes
+  //
+  // ⚠️ v81_d (user-reported: *"some words are impossible to turn green"*). The probes a source
+  // declares are the question SPACE, not what the builders emit — so this denominator was counting
+  // questions no round can ever ask, and a word charged with one could never reach `ok === n`.
+  // Standing rule `v71_s`, in a new place: *when a builder is narrowed, narrow the COVERAGE
+  // UNIVERSE to match; a denominator that counts questions the round will never ask can never be
+  // satisfied.*
+  //
+  // Measured over 25 chapters / 473 words before the change
+  // (`build_history/probe_word_green_v81c.js`): only 60.8% of declared probe keys were buildable.
+  //   type_conjugation     0 of 210 askable — declared for EVERY form, but since `v78_i` the
+  //                        builder emits it only as a FALLBACK for a form with no MCQ distractors,
+  //                        which happens nowhere in this corpus. It is not folded into
+  //                        `mcq_conjugation` either: the two share a canonical hash but `qid` is
+  //                        `lessonId:TYPE:hash`, so they are distinct keys and one is unreachable.
+  //   syn_select         142 of 192 — both `synonyms` and `antonyms` are declared for every word,
+  //                        whether or not the lesson HAS antonyms; `mode` is part of the canonical.
+  //   type_plural          4 of 8.
+  // 52% of highlighted words carried at least one such key and could never be green; 232 of 473
+  // were graded on more than one question with exactly ONE reachable — which is the reported
+  // symptom exactly: tapping always brings the same question and solving it never greens the word.
+  //
+  // The filter is `_lessonQidUniverse`, the PRODUCT's own converged question set (it re-derives
+  // from `buildExercises` until the union stops growing, NEEDED=15/CAP=120). Three reasons it is
+  // the right oracle rather than a list of "which types are really built": it is the same universe
+  // coverage counts against; it already handles `buildExercises` being non-deterministic in CONTENT
+  // (`v80_t`); and it needs no builder knowledge here, so a builder that later starts emitting
+  // `type_conjugation` is picked up with no change to this function. Cached per
+  // `topic|lessonIdx|teacher|audio` — measured at 11–50ms for a whole chapter, once.
+  //
+  // Fails OPEN: if the universe cannot be derived the probe is counted as before, so a word can
+  // still be graded on something rather than silently vanishing from the map.
+  // ⚠️ THE FILTER ONLY APPLIES TO THE OPEN CHAPTER, and this is load-bearing rather than cautious.
+  // `_lessonQidUniverse(i)` indexes into **`APP.lessonData`** — it ignores the `d` handed to this
+  // function — so for any other chapter it derives the wrong lesson or returns an empty Set, and an
+  // empty Set as a filter removes EVERY question. `_renderChainStory` calls `_solvedTargetWords(d)`
+  // once per chapter across a whole chain (v74_n), so this is a live path, not a hypothetical: the
+  // first version of this change blanked the darker shade there. Caught by
+  // `unit-story-highlight-sources` §4, which passes a fixture topic inline — the guard was right and
+  // the change was wrong.
+  //
+  // Fixing `_lessonQidUniverse` to take a `d` was the alternative and was NOT taken: it is read by
+  // coverage, the pass mark and the gates, and widening it for a highlighting fix would put those
+  // on a code path nothing in this session measured.
+  const _sameChapter = !!(APP.lessonData && d && APP.lessonData.topic === d.topic);
   try {
+    const _uniFor = (() => {
+      const cache = new Map();
+      return (lessonId) => {
+        if (!_sameChapter) return null;              // fail OPEN — count the probe, as before
+        const key = String(lessonId);
+        if (cache.has(key)) return cache.get(key);
+        let u = null;
+        try {
+          const i = (d.lessons || []).findIndex(L => L && String(L.id) === key);
+          if (i >= 0) u = _lessonQidUniverse(i);
+        } catch(_) { u = null; }
+        cache.set(key, u);
+        return u;
+      };
+    })();
     _storyWordSources(d).forEach(s => {
+      const uni = _uniFor(s.lessonId);
       (s.probes || []).forEach(p => {
         let k = null;
         try { k = qid(p, s.lessonId); } catch(_) { k = null; }
-        if (k) bump(s.word, 'extra', !!solvedMap[k]);
+        if (!k) return;
+        if (uni && !uni.has(k)) return;          // no round can ask it — it cannot be a denominator
+        const _solved = !!solvedMap[k];
+        bump(s.word, 'extra', _solved, _solved && !!wrongMap[k]);
       });
     });
   } catch(_) {}
 
-  // (b) vocab targets. The membership test is the ORIGINAL one, kept verbatim rather than
-  // simplified: it accepts a solved key belonging to this lesson whose hash matches this word under
-  // THAT key's own question type, which is how "any question kind about this word counts". A
-  // tidier-looking test would quietly change which words light up.
+  // (b) vocab targets.
+  // ⚠️ The membership test is the ORIGINAL one, kept verbatim rather than simplified: it accepts a
+  // solved key belonging to this lesson whose hash matches this word under THAT key's own question
+  // type, which is how "any question kind about this word counts". A tidier-looking test would
+  // quietly change which words light up.
+  //
+  // v81_e EXTRACTED it — unchanged, character for character — because §T7 needs the identical
+  // question asked of a SECOND store, and rule 21 says extract one function both sites call rather
+  // than writing the copy that later drifts. Verified by capture-and-diff over the corpus: `n` and
+  // `ok` are identical for every word before and after the extraction.
+  const _vocabHit = (keys, L, v) =>
+    keys.some(id => id.startsWith(L.id + ':') && qid({ type: 'mcq_source_target', target: v.target, source: v.source }, L.id) === id)
+    || keys.some(id => {
+         const parts = String(id).split(':');
+         return parts[0] === String(L.id) && _qidHash(_qidCanonical({ type: parts[1], target: v.target, source: v.source })) === parts[2];
+       });
   (d.lessons || []).forEach(L => {
     if (!L || L.id == null) return;
     (L.vocab || []).forEach(v => {
       if (!v || !v.target) return;
       if (_itemWithheld(v)) return;                  // withheld items are not part of the record
-      const hit = solvedKeys.some(id => id.startsWith(L.id + ':') && qid({ type: 'mcq_source_target', target: v.target, source: v.source }, L.id) === id)
-               || solvedKeys.some(id => {
-                    const parts = String(id).split(':');
-                    return parts[0] === String(L.id) && _qidHash(_qidCanonical({ type: parts[1], target: v.target, source: v.source })) === parts[2];
-                  });
-      bump(v.target, 'vocab', hit);
+      const hit = _vocabHit(solvedKeys, L, v);
+      bump(v.target, 'vocab', hit, hit && _vocabHit(wrongKeys, L, v));
     });
   });
   // (c) v80_v — SENTENCES count too. A sentence-translation question puts a whole story sentence in
@@ -16472,13 +16658,15 @@ function _wordProgress(d){
         if (!text) return;
         // Same membership test as the vocab branch: any solved key of this lesson whose hash matches
         // this sentence under that key's own question type.
-        const hit = solvedKeys.some(id => {
+        const _sentHit = (keys) => keys.some(id => {
           const parts = String(id).split(':');
           return parts[0] === String(L.id)
               && _qidHash(_qidCanonical({ type: parts[1], target: sent.target, source: sent.source })) === parts[2];
         });
+        const hit = _sentHit(solvedKeys);
+        const bad = hit && _sentHit(wrongKeys);          // v81_e / §T7
         const low = text.toLowerCase();
-        taught.forEach(w => { if (low.indexOf(String(w).toLowerCase()) >= 0) bump(w, 'sentence', hit); });
+        taught.forEach(w => { if (low.indexOf(String(w).toLowerCase()) >= 0) bump(w, 'sentence', hit, bad); });
       });
     });
   }
@@ -16513,10 +16701,55 @@ function _joinPronoun(pron, form){
 //   { lessonIdx, key, solved }   where `key` is the `qid()` of the question.
 // Both word sources are covered — the probe-bearing lessons and plain vocab — because a learner
 // tapping a word in the story does not know or care which kind of lesson teaches it.
+// ⚠️ v81_f — the ONE "which lessons TEACH this word" resolver.
+//
+// `_wordQuestions` answers "which QUESTIONS is this word asked in", and for 181 of 693 highlighted
+// words (26.1%, measured at `v81_d` by `probe_tap_reachable_v81d.js`) the answer is NONE: conjugation
+// infinitives and word-form distractors enter the story panel through `_storyWordSources` carrying no
+// probes at all, so they were marked, made tappable, and then did nothing when tapped —
+// `tapWord`'s own comment calls a tap with no visible effect the worst outcome here.
+//
+// The teaching lesson is nevertheless KNOWN for every one of them: measured 181 of 181 resolvable
+// through `_storyWordSources`, 0 needing a text search, 0 unresolvable. So this is a lookup, not a
+// search, and the routing is exact rather than best-effort.
+//
+// Separate from `_wordQuestions` on purpose. That function's contract is questions, and widening it
+// to return question-less entries would put `{lessonIdx, key: undefined}` into the pool `tapWord`
+// filters on `solved`/`wrong` — silently making a question-less word compete with real questions for
+// the preference. Two resolvers, two contracts, one caller deciding between them.
+function _wordLessons(d, word){
+  const out = [];
+  if (!d || !word) return out;
+  const want = _hlKey(stripFuri(String(word)));
+  if (!want) return out;
+  // Same startability rule as `_wordQuestions` — a hidden lesson is not a valid destination,
+  // because `startLesson` refuses it outside teacher mode and the tap would report a success that
+  // never happened.
+  const startable = (L) => !!L && (!L._hidden || APP._teacherMode);
+  const seen = new Set();
+  const add = (li) => { if (li >= 0 && !seen.has(li)) { seen.add(li); out.push(li); } };
+  try {
+    _storyWordSources(d).forEach(s => {
+      if (_hlKey(stripFuri(String(s.word))) !== want) return;
+      add((d.lessons || []).findIndex(L => startable(L) && String(L.id) === String(s.lessonId)));
+    });
+  } catch(_) {}
+  (d.lessons || []).forEach((L, li) => {
+    if (!startable(L) || L.id == null) return;
+    if ((L.vocab || []).some(v => v && v.target && _hlKey(stripFuri(String(v.target))) === want)) add(li);
+  });
+  return out;
+}
+
 function _wordQuestions(d, word){
   const out = [];
   if (!d || !word) return out;
   const solvedMap = _solvedMap(d.topic) || {};
+  // v81_e / §T7: a question the learner has since got WRONG counts as work to do, so the tap can
+  // reach it. Without this a demoted (amber) word would be unrepairable by tapping — every one of
+  // its questions reads as solved, so the preference below would pick arbitrarily and the learner
+  // could not get back to the one they actually failed.
+  const wrongMap = _wrongMap(d.topic) || {};
   const want = _hlKey(stripFuri(String(word)));
   if (!want) return out;
   // A HIDDEN lesson is not a valid destination: `startLesson` refuses it outside teacher mode, so
@@ -16524,15 +16757,28 @@ function _wordQuestions(d, word){
   // best word lived in a hidden lesson — the resolver, not the test, was wrong.
   const startable = (L) => !!L && (!L._hidden || APP._teacherMode);
   const idxOf = (lessonId) => (d.lessons || []).findIndex(L => startable(L) && String(L.id) === String(lessonId));
+  // v81_d: the same filter `_wordProgress` applies, for the same reason and so the two cannot
+  // disagree about which questions a word HAS. A probe key no round can build is not a candidate:
+  // offering one makes the tap pick a question that then cannot be found in the built run, and the
+  // scan below falls through to matching by TEXT — which is why tapping such a word kept landing on
+  // the one buildable question however many the word appeared to own. Fails OPEN, as there.
   try {
     _storyWordSources(d).forEach(sfc => {
       if (_hlKey(stripFuri(String(sfc.word))) !== want) return;
       const li = idxOf(sfc.lessonId);
       if (li < 0) return;
+      // Same chapter-scoping as `_wordProgress`, and for the same reason: `_lessonQidUniverse`
+      // indexes into `APP.lessonData`, so `li` means nothing for any other chapter.
+      let uni = null;
+      try {
+        if (APP.lessonData && APP.lessonData.topic === d.topic) uni = _lessonQidUniverse(li);
+      } catch(_) { uni = null; }
       (sfc.probes || []).forEach(pr => {
         let k = null;
         try { k = qid(pr, sfc.lessonId); } catch(_) {}
-        if (k) out.push({ lessonIdx: li, key: k, solved: !!solvedMap[k] });
+        if (!k) return;
+        if (uni && !uni.has(k)) return;
+        out.push({ lessonIdx: li, key: k, solved: !!solvedMap[k], wrong: !!wrongMap[k] });
       });
     });
   } catch(_) {}
@@ -16545,7 +16791,7 @@ function _wordQuestions(d, word){
       // and the entry-point scan below accepts ANY question about the word in that lesson.
       let k = null;
       try { k = qid({ type: 'mcq_source_target', target: v.target, source: v.source }, L.id); } catch(_) {}
-      if (k) out.push({ lessonIdx: li, key: k, solved: !!solvedMap[k] });
+      if (k) out.push({ lessonIdx: li, key: k, solved: !!solvedMap[k], wrong: !!wrongMap[k] });
     });
   });
   return out;
@@ -16559,12 +16805,33 @@ function _wordQuestions(d, word){
 function tapWord(word){
   const d = APP.lessonData;
   const cands = _wordQuestions(d, word);
-  if (!cands.length) return false;
   // Unsolved first (T0), then any. Ties keep corpus order, which is the lesson order the learner
   // would otherwise meet them in.
-  const unsolved = cands.filter(c => !c.solved);
+  //
+  // v81_e / §T7: "needs work" now means UNSOLVED **or** answered wrong since it was last right. A
+  // word demoted to amber is amber precisely because of that question, so it is the one the learner
+  // came back for — the alternative is a tap that re-asks something they already have right and
+  // leaves the word amber, which reads as the feature being broken.
+  const unsolved = cands.filter(c => !c.solved || c.wrong);
   const pool = unsolved.length ? unsolved : cands;
-  const pick = pool[Math.floor(Math.random() * pool.length)];
+  // ⚠️ v81_f — USER RULING: route the tap into the lesson that TEACHES the word.
+  //
+  // 26.1% of highlighted words (181 of 693) have no question at all, and this returned `false` for
+  // them: the mark was tappable and the tap did nothing. The alternative ruled against was to stop
+  // painting them tappable. So a question-less word now opens its teaching lesson and the scan below
+  // lands wherever the word appears — or at the top, which is the SAME fallback this function has
+  // always used when a lesson teaches a word without holding an exact question for it (see `at`
+  // below). The behaviour is not new; what is new is that it is now reachable.
+  //
+  // Only consulted when there is no question, so a word with real questions is unaffected — the
+  // preference above still decides, and a question-less destination can never dilute it.
+  const pick = pool.length
+    ? pool[Math.floor(Math.random() * pool.length)]
+    : (() => {
+        const ls = _wordLessons(d, word);
+        return ls.length ? { lessonIdx: ls[Math.floor(Math.random() * ls.length)], key: null } : null;
+      })();
+  if (!pick) return false;
   if (!startLesson(pick.lessonIdx)) return false;
   // The run is built and SHUFFLED by startLesson, so the question's position is only knowable now.
   // Match on qid — the same key `markSolved` writes — rather than on text, which would match the
@@ -16582,6 +16849,7 @@ function tapWord(word){
   // of the ways a word is asked (for vocab, just `mcq_source_target`), so the qid pass is not a
   // superset of the text pass and cannot be tried first. Caught by the guard, not by reading.
   const mine = [];
+  const wrongMap = _wrongMap(d.topic) || {};       // v81_e / §T7
   for (let i = 0; i < (C.exercises || []).length; i++) {
     const ex = C.exercises[i];
     if (!ex) continue;
@@ -16590,7 +16858,9 @@ function tapWord(word){
     const byKey = !!(k && keys.has(k));
     const byText = [ex.target, ex.correct, ex.base, ex.infinitive].filter(Boolean)
       .some(x => _hlKey(stripFuri(String(x))) === want);
-    if (byKey || byText) mine.push({ i, solved: !!(k && solvedMap[k]) });
+    // "Solved" here means "nothing left to do with it" — so a question answered wrong since it was
+    // last right is NOT solved for the purpose of choosing where to land (v81_e).
+    if (byKey || byText) mine.push({ i, solved: !!(k && solvedMap[k] && !wrongMap[k]) });
   }
   // T0: revisiting a word prefers questions not yet solved.
   const firstUnsolved = mine.find(x => !x.solved);
@@ -16602,9 +16872,21 @@ function tapWord(word){
 }
 
 // The three states TRACK T paints. Ruled at `§T5.1`: GREEN means EVERY associated question solved.
+//
+// v81_e / `§T7` reading 1, ruled by the user as HIGHLIGHT ONLY: a question answered WRONG since it
+// was last answered right takes the word out of green. It lands here, and only here, because this
+// function is the single reader that turns the collector's counts into a colour — so the demotion
+// reaches the story colouring and reaches nothing else. In particular `_wordGateFraction` computes
+// `ok >= n` from the record directly and never calls this, so a wrong answer cannot re-lock a story
+// even if the word gate is switched on. That containment is asserted, not just intended
+// (`unit-word-progress` §9).
+//
+// It demotes to PARTIAL rather than to RED: the learner HAS solved these questions, and red means
+// "nothing done here", which would be a lie. Partial is already the "started but not finished"
+// colour, which is exactly the state a word with a fresh mistake is in.
 function _wordState(rec){
   if (!rec || !rec.n) return 'red';
-  if (rec.ok >= rec.n) return 'green';
+  if (rec.ok >= rec.n) return rec.bad > 0 ? 'partial' : 'green';
   return rec.ok > 0 ? 'partial' : 'red';
 }
 
@@ -17072,9 +17354,32 @@ function _slProgressStats(chapterIds, byId){
   const unlockedChapters = totalChapters
     ? Math.min(totalChapters, doneChapters + (doneChapters < totalChapters ? 1 : 0))
     : 0;
+  // ⚠️ v81_g / `PLAN §C1` + `§0.3` (USER RULING) — THE BAR AND THE LABEL NOW MEAN DIFFERENT THINGS.
+  //
+  // `pct` was `unlockedChapters / totalChapters`, so the bar measured how much of the deck was OPEN
+  // rather than how much was DONE. Measured on a FRESH install, with `doneChapters = 0` everywhere:
+  // **all 91 storylines showed a partly-green bar before a single question**, and all **27
+  // single-chapter decks read 1/1 at 100%** — 1 chapter 100%, 2 chapters 50%, 3 chapters 33%, …
+  // 14 chapters 7%.
+  //
+  // ⚠️ The plan read this as an index off-by-one ("current-1") and as TWO bugs. **Both readings are
+  // wrong**: it is ONE line, and it is not an index. The roadmap's own warning — that fixing them as
+  // two off-by-ones would leave the real one — was right, and is why this was measured first.
+  //
+  // The `+1` itself is NOT removed, because it is the `v77_p` user ruling ("the chapter in progress
+  // counts, which is why a fresh storyline reads 1/2 rather than 0/2"). That ruling is about the
+  // LABEL, which still reads `unlockedChapters`. Only the BAR moved to completion.
+  //
+  // The accepted cost, ruled with the change: a deck can read **2/2 with a half-full bar**, because
+  // "2 of 2 chapters open" and "1 of 2 chapters finished" are now different statements — which they
+  // always were, but the two displays used to say the same number.
+  //
+  // `doneChapters` is the coverage-aware `chapterComplete` rule (v69_l), the SAME rule the storyboard
+  // and the deck use, so the bar cannot disagree with the chapter ticks beside it.
+  const pct = totalChapters > 0 ? Math.round(100 * doneChapters / totalChapters) : 0;
   return {
     totalSets, doneSets, doneChapters, totalChapters, unlockedChapters,
-    pct: totalChapters > 0 ? Math.round(100 * unlockedChapters / totalChapters) : 0,
+    pct,
     lessonPct: totalSets > 0 ? Math.round(100 * doneSets / totalSets) : 0,
     scorePct: totalQ > 0 ? Math.round(100 * correctQ / totalQ) : null,
   };
