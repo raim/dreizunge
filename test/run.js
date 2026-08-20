@@ -151,6 +151,7 @@ run('unit: lesson-set storyline link (v80_x)', 'node', [path.join(__dirname, 'un
 run('unit: tap a word to enter the lesson flow (v80_t, TRACK T)', 'node', [path.join(__dirname, 'unit-tap-word.test.js')]);
 run('unit: story panel states + asked underline (v80_r, TRACK T)', 'node', [path.join(__dirname, 'unit-story-panel-states.test.js')]);
 run('unit: per-word progress collector (v80_q, TRACK T)', 'node', [path.join(__dirname, 'unit-word-progress.test.js')]);
+run('unit: the observations log (v81_j, PLAN §8/B1)', 'node', [path.join(__dirname, 'unit-observations-log.test.js')]);
 run('unit: question navigation — back/next (v80_p, §0h)', 'node', [path.join(__dirname, 'unit-question-nav.test.js')]);
 run('unit: storyline title placeholder (v80_l, PLAN 9c)', 'node', [path.join(__dirname, 'unit-storyline-title-auto.test.js')]);
 run('unit: vocab prompt article rule (v80_j, PLAN F3)', 'node', [path.join(__dirname, 'unit-prompt-article-rule.test.js')]);

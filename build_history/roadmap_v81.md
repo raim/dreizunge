@@ -1662,6 +1662,69 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_j` — `PLAN §8/B1`, the observations log (append-only, per bayesian_knowledge_tracing.md §13)
+
+**Shipped by: Claude Code.**
+
+The largest buildable-now item from the `v81_i` prompt: *"the only item whose value DECAYS while it
+waits, because the existing `{seen, wrong}` counters cannot be replayed."* Every graded answer now
+becomes one immutable record in `APP.progress.observations`:
+`{userId, skillId, correct, evidence, storylineId, topicId, lessonId, qid, firstAttempt, timestamp}`.
+
+**Two properties matter more than matching the doc's 6-field schema exactly** (the plan's own
+framing, `PLAN §8`): `skillId` is `null` until skill tagging exists (`§8/B2`) rather than skipping
+the write — an observation written with `skillId:null` is recoverable once tagging lands, one never
+written is gone. `firstAttempt` distinguishes "wrong then right" (learning) from "right then wrong"
+(decay), which `§0.1`'s measurement said the existing aggregate counters cannot supply. `userId` is
+`null` too — there is no auth model yet (`PLAN §9` risk R3), and Dreizunge is single-learner today.
+`qid`/`topicId` are extra fields not in the doc's schema, added because without them there is no way
+to locate WHERE an observation came from before skill tagging exists — which would make the log
+useless for the debugging purpose §13 states it exists for.
+
+**Measured before writing anything**, per the session protocol:
+- `check(replay)` is the ONE grading choke point for every `EX_RENDERERS`-driven exercise type
+  (MCQ, typed, ordering, listening, `syn_select`, math, `comprehension_mcq`) — confirmed by reading
+  it in full rather than assumed. `markSolved(ex)`/`markWrong(ex)` are both called from inside
+  `if(!replay){…}` blocks, and `recordObservation` is wired into both, same guard, same place.
+- `error_hunt`/`ai_error_hunt` (token-tap, whole-lesson grading via `ehToggle`) and the crossword
+  grade through entirely different code paths and are **NOT wired** — a scoped follow-up, not an
+  oversight, matching `§8/B3`'s own staging philosophy ("one lesson type first").
+- Whether the existing `wrong` counter (in the OLD `{seen,wrong}` ledger,
+  `recordLearnedFromLesson`) counts first attempts or every retry — the open question `§0.1` flags
+  as deciding whether BKT will discriminate at all — was traced to source: `check()` never lets the
+  learner retry the SAME question instance; a wrong answer advances and the qid stays unsolved,
+  to be re-served by a LATER round if the builder selects it again. So `wrong` in the old ledger
+  already aggregates ACROSS repeated exposures of a word, not a single first-vs-retry choice — the
+  new log's `firstAttempt` flag is what actually answers `§0.1`'s question going forward, per
+  qid, which the old counters structurally cannot.
+- `_learnerStatePayload()`/`_learnerApplyState`/`LEARNERS.setState` all pass `progress` through
+  without a field whitelist, so `.observations` reaches `learners.json` via the existing sync path
+  with no new plumbing. ⚠️ **Not addressed**: `learners.js`'s `MAX_STATE_BYTES` (2MB) caps the whole
+  synced blob, and nothing here prunes the log — a real ceiling, left for whenever it is hit.
+- `_clearChapterProgress` (the one place that answers "is this chapter done") deliberately does
+  **not** clear `observations`, matching the precedent already set by `learned` — both are evidence
+  of what the learner has demonstrated, independent of a chapter's gate state being reset.
+
+**⚠️ Unavoidable, not a bug:** the log starts EMPTY at this cut, so a word already solved or missed
+before `v81_j` will read `firstAttempt: true` the next time it happens to recur. This is exactly
+`§0.1(a)`'s finding — "the existing evidence cannot be replayed" — restated as a property of a log
+that starts now rather than retroactively.
+
+**Guarded** in `test/unit-observations-log.test.js`: the helper's field shape and `firstAttempt`
+transition in isolation, the withheld-item exclusion (mirrors `markSolved`/`markWrong`), and —
+separately, because assertions on a helper prove nothing about whether its caller invokes it
+(rule, `v71_u`) — the WIRING, driving one real wrong answer and one real correct answer through
+`check()` on a live round and confirming `check(true)` (replay) adds nothing.
+
+**Mutation-tested, four ways, each restored and confirmed clean:**
+- removing the `ok`-branch call → red (the correct-answer count no longer matched)
+- removing the wrong-branch call → red (the wrong-answer count no longer matched)
+- `firstAttempt` forced to always `true` → red (the second-observation assertion caught it)
+- removing the withheld-item check → red (the flagged-item exclusion assertion caught it)
+
+15 consecutive runs of the new file, clean (`buildExercises` is non-deterministic in content,
+`v80_t`, so anything driving a real round needs this before being trusted).
+
 ### `v81_i` — the lesson-path SEQUENTIAL lock is removed; the story gate is what remains (USER RULING)
 
 **Shipped by: Claude Code.**
@@ -2322,8 +2385,8 @@ lever that touches the 36.4%, and it costs one prompt change instead of a per-ch
 
 ## T4. What it makes MORE valuable, not less
 
-- **`PLAN §8/B1`, the observations log.** Per-word question history is exactly what this design reads
-  and exactly what the current `{seen, wrong}` counters cannot replay. **Its value now decays faster.**
+- **`PLAN §8/B1`, the observations log — ✅ SHIPPED at `v81_j`.** Per-word question history is exactly
+  what this design reads and exactly what the current `{seen, wrong}` counters cannot replay.
 - **The pass mark** (owed by the user). T0's "or via pass mark fraction" makes it load-bearing:
   green-when-all is unreachable in practice if a word has many questions.
 - **`PLAN §F2`/`§F3`** prompt QC: a malformed item is far more visible when it is reached by tapping
@@ -2554,7 +2617,7 @@ themselves are left as written, so the original reasoning stays readable.**
 | **`PLAN §C1`** — the two progress-card gate bugs | **HALF DONE.** The SECOND bug (Replay reaching comprehension before the story unlocked) is **shipped as `v80_b`**, measured 27 of 94 partly-played chapters before / 0 after, revert-verified. The **FIRST bug is NOT reproduced**, and **two readings of it are dead ends** — see the `v80_b` block above before spending time on it. The single-chapter 100% bar and the header off-by-one are still folded in here and untouched. |
 | **`PLAN §10`**, session 1 (repair and reconcile) | **DONE** (sessions 35). |
 | **`PLAN §10`**, session 2 (`§C1`) | **HALF DONE**, as above. |
-| **`PLAN §10`**, session 3 (`§8/B1` or `§D1`) | **UNCHANGED and next.** `§8/B1` is still the only item whose value DECAYS while it waits. |
+| **`PLAN §10`**, session 3 (`§8/B1` or `§D1`) | **`§8/B1` ✅ SHIPPED at `v81_j`** — the observations log, wired into `check()`. `§D1` is untouched. |
 
 Everything else below is unchanged and still open.
 

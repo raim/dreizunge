@@ -1,16 +1,21 @@
-# Session prompt — written at the `v81_i` cut (end of session 38)
+# Session prompt — written at the `v81_j` cut (end of session 38)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_h.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_i.md` was the
 previous one — superseded by this file and renamed, not kept alongside.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_i`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_j`** cut.
 
-**Session 38 shipped one user ruling, delivered directly rather than queued, and started nothing
-else.** `v81_i`: the lesson-path's SEQUENTIAL lock ("previous lesson done") is removed — it was
-already unenforced everywhere except this one render (`_firstUnfinishedLessonIdx`'s `_playable`
-never read it, `tapWord` bypasses it: 438 of 447 taps, 98%, on a fresh learner). The STORY GATE
-(`_storyLocked`, `v80_b`) is untouched and is now the only lock a lesson-path node can carry.
+**Session 38 shipped two things and started nothing else.** `v81_i`: one user ruling, delivered
+directly rather than queued — the lesson-path's SEQUENTIAL lock ("previous lesson done") is
+removed, since it was already unenforced everywhere except this one render
+(`_firstUnfinishedLessonIdx`'s `_playable` never read it, `tapWord` bypasses it: 438 of 447 taps,
+98%, on a fresh learner). The STORY GATE (`_storyLocked`, `v80_b`) is untouched and is now the only
+lock a lesson-path node can carry. `v81_j`: `PLAN §8/B1`, the observations log — an append-only
+`APP.progress.observations`, one record per graded answer, wired into `check()`. It was the largest
+buildable-now item at the `v81_i` cut, flagged as the only one whose value decays while it waits.
+No UI; ships silently. `skillId`/`userId` are `null` by design (skill tagging is `§8/B2`, auth is
+`PLAN §9` R3 — neither exists yet).
 
 **Session 37 shipped two user-reported bug fixes plus the `§T7` ruling.** `v81_c`: arriving at a
 later chapter is not finishing it — the progress card's Next was skipping the comprehension lesson
@@ -25,10 +30,11 @@ which takes dead taps to zero.
 
 **⚠️ A STANDING USER RULE was given in session 37 and is IN FORCE UNTIL REVOKED** — one learner only,
 so progress impact is not a blocker on shipping. See the roadmap's STANDING RULE block; it does NOT
-license skipping measurement. **All seven need a device pass; see
+license skipping measurement. **Seven of the eight need a device pass; see
 `build_history/v81h_session37_notes.md` for `v81_c`…`v81_h` (what to click, including the
 containment check that matters most on `v81_e`) and `build_history/v81i_session38_notes.md` for
-`v81_i`.**
+`v81_i`. `v81_j` ships no UI — nothing to click; see `build_history/v81j_session38_notes.md` if you
+want to eyeball the log in the console anyway.**
 
 > **THE DOCUMENT SET IS TWO FILES.**
 > - **`build_history/roadmap_v81.md`** — durable. Protocol, standing rules, the open sections,
@@ -51,14 +57,14 @@ containment check that matters most on `v81_e`) and `build_history/v81i_session3
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 230 checks
-node test/run.js --quick                  → expect 206
+node test/run.js                          → expect 231 checks
+node test/run.js --quick                  → expect 207
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 languages, 617 `en` keys**.
-`APP_VERSION = 'v81_i'`.
+`APP_VERSION = 'v81_j'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -92,7 +98,9 @@ Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 lan
    cannot — do not sample and hope.** Note also that this one was caught only because the PACKAGED
    copy failed where the source tree had just passed: **run the suite in the staged release
    directory, not only in the working tree.** Re-run as the standing precaution at `v81_i` (not
-   touched by that release's change): **0 failures in 40 consecutive runs.**
+   touched by that release's change): **0 failures in 40 consecutive runs.** `v81_j`'s own new file
+   (`unit-observations-log.test.js`, which drives a real round through `check()`) ran clean **15
+   times in a row** before shipping.
 5. **Never put emoji in a Python string literal** (rule 25); write them via a `cat` heredoc. And
    **check what a mechanical rewrite DID** — `v80_d`'s blanket replace mangled six sentences
    including a heading.
@@ -104,7 +112,8 @@ Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 lan
 ## 1. ✅ NO RULING IS CURRENTLY OWED — the queue is clear
 
 *(`v81_i`'s sequential-lock removal was a ruling delivered directly by the user, not drawn from
-this list — nothing below was open because of it, so nothing here changes.)*
+this list — nothing below was open because of it, so nothing here changes. `v81_j` DID come from
+this list — §3's `PLAN §8/B1` — and is struck there.)*
 
 All three items that headed this section at the `v81_b` cut are closed:
 
@@ -127,13 +136,23 @@ is a materially lower bar. Needs a browser pass, not a code change.
 
 ## 3. BUILDABLE NOW, no ruling needed
 
-- **`PLAN §8/B1`, the observations log** — still **the only item whose value DECAYS while it waits**,
-  because the existing `{seen, wrong}` counters cannot be replayed. TRACK T makes it MORE valuable:
-  per-word question history is exactly what that design reads.
+- ~~`PLAN §8/B1`, the observations log~~ **✅ SHIPPED at `v81_j`.** `APP.progress.observations`,
+  append-only, wired into `check()`. `error_hunt`/`ai_error_hunt` and the crossword are NOT wired
+  (different grading shape — a scoped follow-up). `skillId`/`userId` are `null` until `§8/B2`
+  (skill tagging) and auth (`PLAN §9` R3) exist. See the roadmap's `v81_j` entry for the measurement
+  and the mutation results, and `INTERNALS.md` §6b for the function map.
+- **`PLAN §8/B2`, the skill registry** — the natural next step in this track now B1 exists, but
+  ⚠️ **not pre-cleared the way B1 was.** `§0.1(b)` flags an open call the registry lands on (is
+  source language a property of the evidence, or of the skill? the plan suggests "probably yes" /
+  "probably no" but does not rule) — read `§0.1` and `PLAN §8/B2` in full before assuming this is
+  ruling-free.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
-  comprehension lesson, yet could proceed."* **⚠️ TWO readings are already DEAD ENDS** — see the
-  `v80_b` entry in `roadmap_v80.md` before spending time. What is unmodelled is the BROWSING
-  sequence, not a lesson play.
+  comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
+  `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
+  the story-unlocked-page round trip, and cross-chapter browsing in BOTH the live and static
+  builds — all driven through the real call chain, not traced by hand, all clean). **What is still
+  unmodelled is the "Back LINK" specifically, distinct from the "← Back" button the third reading
+  already covers — get the exact click sequence from the user before trying a fourth reading.**
 - ~~`PLAN §C1`'s single-chapter `1/1` and 100% bar, and the header off-by-one~~ **✅ RULED AND SHIPPED
   at `v81_g`**: the BAR now measures completion, the LABEL still counts unlocked chapters (`v77_p`).
   One root cause, and NOT the index off-by-one the plan guessed. `PLAN §C1`'s FIRST gate bug is
@@ -162,11 +181,12 @@ is a materially lower bar. Needs a browser pass, not a code change.
   No translate pass is owed for it.
 - **The translate pass** for the remaining `en`-only keys, `translate-ui.js --langnames`, the
   `hr` `ui.json` pass, and a **native-speaker check of the `cyrillic-sr` table**.
-- **A device pass on `v81_a` … `v81_i`.** The v80 line changed every card and every question screen: the story
+- **A device pass on `v81_a` … `v81_j`.** The v80 line changed every card and every question screen: the story
   panel is on all of them, never collapsed, three-state coloured, tappable, with a translate toggle;
   the progress bars moved to the bottom; the storyboard row became clickable chapter icons.
   `v81_i` adds one more thing to look at: ordinary lessons on the node path are clickable out of
   order now — see `build_history/v81i_session38_notes.md` for what should still stay locked.
+  `v81_j` ships no UI — nothing new to look at there.
 
 ## 5. NOT yours to start
 
@@ -215,3 +235,7 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
 - `_storyLockedLesson(L, d)` — the ONE "is this lesson closed" rule.
 - `_cardHeader(prefix)` + `.card-screen` — every new card page uses both.
 - `scriptPinNote(lang, script, role)` — every prompt emitting target-language text calls it.
+- `recordObservation(ex, correct)` / `APP.progress.observations` — the `PLAN §8/B1` evidence log
+  (`v81_j`). See `INTERNALS.md` §6b's "PLAN §8/B1" table before extending it — in particular the
+  SCOPE note (only `check()`-graded exercises are logged) and the growth-ceiling note
+  (`learners.js`'s `MAX_STATE_BYTES`, unaddressed).

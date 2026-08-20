@@ -8562,6 +8562,11 @@ function _clearChapterProgress(topicKey){
   if(APP.progress?.chapterDone) delete APP.progress.chapterDone[topicKey];
   // The once-per-chapter story-unlocked page is offered again — the learner is starting over.
   if(APP.progress?.storyShown)  delete APP.progress.storyShown[topicKey];
+  // Deliberately NOT cleared here: `APP.progress.learned` (the cumulative vocab ledger) and
+  // `APP.progress.observations` (PLAN §8/B1). Both are EVIDENCE the learner has demonstrated
+  // something, at some point, regardless of whether this chapter's GATE state is reset — the same
+  // distinction the learned ledger already draws by surviving a wipe. Resetting them here would
+  // throw away real history for a re-render the learner asked for.
   return true;
 }
 
@@ -14607,6 +14612,73 @@ function markSolved(ex){
   if (changed) saveProg();                  // monotonic; persist only on new solves
   return id;
 }
+// ══ PLAN §8/B1 — the observations log (append-only) ══════════════════════════════════
+// Every graded answer becomes one immutable record, per bayesian_knowledge_tracing.md §13:
+// {userId, skillId, correct, evidence, storylineId, topicId, lessonId, qid, firstAttempt,
+// timestamp}. Two fields matter more than matching that schema exactly (roadmap, PLAN §8/B1):
+//   - `skillId` is null until skill tagging exists (§8/B2) — an observation written with
+//     skillId:null is recoverable once tagging lands; an observation never written is gone.
+//   - `firstAttempt` distinguishes "wrong then right" (learning) from "right then wrong" (decay)
+//     per §0.1's measurement requirement. The existing `{seen, wrong}` counters cannot supply
+//     this — they are aggregate, not an ordered stream — which is why this log exists at all.
+// `userId` is null too: there is no auth model yet (PLAN §9, risk R3) and Dreizunge is
+// single-learner today, so there is nothing to disambiguate.
+// `qid`/`topicId` are NOT in the doc's 6-field schema but are added here regardless: without them
+// there is no way to locate WHERE an observation came from before skill tagging exists, which
+// would make the log unusable for exactly the debugging purpose §13 states it is for.
+// ⚠️ Unavoidable gap at the moment this ships: the log starts EMPTY, so a word already solved or
+// missed before this cut will read as `firstAttempt: true` the next time it happens to recur —
+// this is §0.1(a)'s "existing evidence cannot be replayed" finding, not a bug in this code.
+// ⚠️ SCOPE at v81_j: wired into `check()`, which covers every EX_RENDERERS-driven exercise type
+// (MCQ, typed, ordering, listening, syn_select, math, comprehension_mcq — the large majority of
+// graded interactions). `error_hunt`/`ai_error_hunt` (token-tap, whole-lesson grading) and the
+// crossword are DIFFERENT grading shapes and are NOT wired yet — left for a follow-up rather than
+// blocking this on a larger rewrite (mirrors B3's own staging: one lesson type first).
+// ⚠️ Growth: nothing here prunes the log. `learners.js` caps a learner's whole synced state at 2MB
+// (`MAX_STATE_BYTES`) — at roughly a couple hundred bytes per observation that is thousands of
+// answers before it matters for one learner, but it is a real ceiling this cut does not address.
+function _obsLog(){
+  if(!APP.progress) return [];
+  if(!Array.isArray(APP.progress.observations)) APP.progress.observations = [];
+  return APP.progress.observations;
+}
+// Cheap, UI-independent lookup — NOT `_storylineForTopic`, which is scoped to the storyline
+// BROWSING screen (prefers `APP._slScreen?.chainId`) and builds a JSON-encoded chapter list this
+// caller never needs. A topic that belongs to no storyline (or several, via a fork) resolves to
+// the first match or null; exact attribution when a topic forks is not needed for this log.
+function _storylineIdForTopic(topicName){
+  const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
+  const byId = Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
+  const sl = slArr.find(s => (s.chapters||[]).some(cid => byId[cid]?.topic === topicName));
+  return sl ? sl.id : null;
+}
+// Record one graded answer. Mirrors markSolved/markWrong's withheld-item exclusion — a question
+// that cannot be credited or penalised should not be evidence either. `firstAttempt` is an O(n)
+// scan of the log for this qid; fine at real single-learner volumes, revisit with an index if this
+// ever profiles hot.
+function recordObservation(ex, correct){
+  try {
+    const d = APP.lessonData; if(!d || !ex) return;
+    if(_itemWithheld(_exFlagTarget(ex))) return;
+    const id = qid(ex); if(!id) return;
+    const log = _obsLog();
+    const firstAttempt = !log.some(o => o.qid === id);
+    log.push({
+      userId: null,
+      skillId: null,
+      correct: !!correct,
+      evidence: 'corpus',   // the only evidence type Dreizunge produces today (doc §8) — every
+                             // exercise is generated FROM the corpus, none of it is free/independent use
+      storylineId: _storylineIdForTopic(d.topic),
+      topicId: d.id || null,
+      lessonId: (d.lessons || [])[APP.cur?.lessonIdx]?.id ?? null,
+      qid: id,
+      firstAttempt,
+      timestamp: new Date().toISOString(),
+    });
+    saveProg();
+  } catch(_) {}
+}
 // ══ Drill — "review my mistakes" (LLM-free, ephemeral) ═══════════════════════════════
 // Closes the loop the ledger has been half of: it records a `wrong` count per word, and until now
 // nothing read it. A drill round pulls the current pair's wrong words straight into the existing
@@ -15450,6 +15522,7 @@ function check(replay){
     if(!replay){
       C.correct++; C.total++; C.streak++; if(C.streak>C.bestStreak)C.bestStreak=C.streak;
       try { markSolved(ex); } catch(_) {}   // durable per-question coverage (Commit A)
+      try { recordObservation(ex, true); } catch(_) {}   // PLAN §8/B1
     }
     const revealBody = ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation'
       ? `${furiHtml(ex.correct)}${ex.source ? ' — ' + furiHtml(ex.source) : ''}`
@@ -15481,6 +15554,7 @@ function check(replay){
     // (INTERNALS, "a review render is not a play"). The flagged case has already returned above, so
     // a withheld item never reaches this line.
     if(!replay){ try { markWrong(ex); } catch(_) {} }
+    if(!replay){ try { recordObservation(ex, false); } catch(_) {} }   // PLAN §8/B1
     // Remember which words were answered wrongly this round → learned-vocab ledger marks them,
     // so future user-specific retraining can focus on them (see roadmap "my story").
     if(!replay){ try { const wt=(ex.target||ex.correct); if(wt){ (C._wrongTargets||(C._wrongTargets=new Set())).add(stripFuri(String(wt)).trim()); } } catch(_) {} }

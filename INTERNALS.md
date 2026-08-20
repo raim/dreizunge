@@ -797,6 +797,18 @@ moves both decks identically, measured. Where a fork looks asymmetric, the cause
 | the card truth table | `build_history/probe_gates_v77.js` → **`v80i_card_gates.txt`** (`v80e`, `v80`, `v77` and `v76` tables superseded). ⚠️ It SELECTS its chapters from the corpus, so a data drop moves the selection — disambiguate by re-running the PREVIOUS client against the CURRENT corpus |
 | **the lesson-path node lock** | `buildPath()`'s node loop — `isLocked` is now **exactly** `_storyLocked` (`v81_i`, user ruling). The old sequential half ("previous lesson done") is REMOVED: it was already unenforced everywhere else (`_firstUnfinishedLessonIdx`'s `_playable` never read it, `tapWord` bypasses it). `_prevDone`/`_firstNode` still exist but now only feed the connector-line's CSS, not the lock. Guarded on the RENDERED node in `test/unit-hidden-lessons.test.js` §4 — ⚠️ `buildPath` sets `node.className` by direct property assignment, not parsed markup, so the `lib-dom` stub's `classList`/CSS-selector matching does NOT see it; read `node.className` as a raw string instead |
 
+**PLAN §8/B1 — the observations log** (`v81_j`)
+
+| what | where |
+|---|---|
+| the append-only log itself | `APP.progress.observations` (array), lazily created by `_obsLog()`. One record per graded answer: `{userId, skillId, correct, evidence, storylineId, topicId, lessonId, qid, firstAttempt, timestamp}` — `userId`/`skillId` are `null` until auth (`PLAN §9` R3) / skill tagging (`PLAN §8/B2`) exist |
+| where it is written | `recordObservation(ex, correct)`, called from `check(replay)` right after `markSolved`/`markWrong`, behind the same `!replay` guard — a replay must not add evidence for an answer already given |
+| **⚠️ SCOPE** | only exercises graded through `check()` (`EX_RENDERERS`-driven types) are logged. `error_hunt`/`ai_error_hunt` and the crossword grade differently and are NOT wired — a follow-up, not an oversight |
+| `firstAttempt` | `!log.some(o => o.qid === id)` at write time — O(n) per write, acceptable at single-learner volumes. The log necessarily starts EMPTY, so anything solved/wrong before this shipped reads as a "first" attempt if it recurs — this is `§0.1(a)`'s "existing evidence cannot be replayed" finding, not new |
+| storyline attribution | `_storylineIdForTopic(topicName)` — a cheap, UI-independent lookup. **Not** `_storylineForTopic`, which is scoped to the storyline browsing screen and does unrelated JSON-encoding work |
+| survives a chapter wipe | `_clearChapterProgress` deliberately does **not** clear `observations` (or `learned`) — both are evidence of what the learner has demonstrated, independent of whether a chapter's gate state is reset |
+| growth ceiling not addressed | `learners.js`'s `MAX_STATE_BYTES` (2MB) caps the whole synced `progress` blob; nothing here prunes the log |
+
 **TRACK T — the text-focused progress card** (all in `index.html`, built across the `v80` line)
 
 | what | where |

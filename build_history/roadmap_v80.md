@@ -80,6 +80,46 @@ NOT been modelled is the user's actual sequence — *browsing* forward to the st
 i.e. the summary / story-unlocked pages and the Back link, rather than playing a lesson. That is
 where to look next.
 
+**⚠️ `v81_j` (session 38): a third reading, actually driving the browsing sequence rather than
+tracing it by hand — and it died too.** Two readings were tried, both against a chapter whose
+comprehension lesson is genuinely unsolved and whose story has genuinely just unlocked (not a
+hand-built shortcut), driven through the REAL `check`/`showComplete`/`showStoryUnlocked`/`loadSaved`
+call chain via `lib-dom`, not simulated:
+
+1. **The story-unlocked page round trip.** Finish the chapter's last prep lesson for real (a
+   non-review `showComplete()`) → click Next, which opens `showStoryUnlocked()` (the literal "story
+   card") → click "← Back", which re-renders the progress card via `showComplete(true)` (a REVIEW
+   render — `C._review = true`, `C.lessonIdx` repointed to the last COUNTED lesson per the
+   `showComplete(true)` contract) → click Next again. **Traced by hand first, and the trace looked
+   dangerous**: `showComplete`'s "finish what you just failed" override (`v77_t`, the block that
+   redirects Next back into a story-gated lesson with work left) is itself gated on `!C._review`, so
+   it is SKIPPED on the post-Back render — but `_target` was already initialised to `nextLessonIdx`
+   (from `_firstUnfinishedLessonIdx`, unaffected by review mode) before that guard is even reached,
+   so the skip changes nothing. **Run, not just traced: Next correctly opened the comprehension
+   lesson.** No bug.
+2. **Cross-chapter browsing, in BOTH the live-style client and the STATIC BUILD** (`docs/index.html`
+   — habit 4's own lesson, "run the suite in the staged release directory," applied here too, since
+   static's `loadSaved` assigns `APP.lessonData` a direct REFERENCE into the module-level
+   `STATIC_LESSONS` array rather than a fresh fetch each time, which looked like exactly the kind of
+   thing that could leak state across chapters). Chapter A (a genuine LATER chapter of a real
+   storyline, so `_isLaterChapter()` is true and the `v81_b` review-card path fires on return) →
+   finish its last prep lesson for real → Next opens the story card → Back → browse away entirely to
+   chapter B via `loadSaved(B)` → browse back to A via `loadSaved(A)`. **In both builds, returning to
+   A correctly routed to A's still-unsolved comprehension lesson** (`_firstUnfinishedLessonIdx`
+   re-derives cleanly from `APP.progress`, which is keyed by topic name and untouched by the
+   reference-sharing — the shared-reference concern was real but turned out not to matter here,
+   because nothing in this path MUTATES the shared lesson object, only the separately-keyed progress
+   store). No bug.
+
+**Two things ruled OUT, not narrowed down to:** neither the review-mode override skip nor a stale
+`APP.lessonData`/global-target reference survives a return to the chapter. **What is still
+completely unmodelled**: the "Back LINK" specifically (as opposed to the "← Back" button on the
+story-unlocked page, which is what reading 1 exercises) — there may be a THIRD navigational element
+this has not identified yet, and the exact click sequence remains unconfirmed since the user's
+original report predates any of this detail. **Recommendation for whoever picks this up next: get
+the exact click sequence from the user before writing a fourth reading** — three plausible
+mechanisms tried and dying is a good reason to stop guessing and ask, not a reason to guess harder.
+
 ### §0i — RECONCILED against `PLAN §C5/D1.` Four measured findings.
 
 **Nothing below is deleted; each bullet is marked.**
