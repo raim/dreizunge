@@ -167,8 +167,37 @@ async function main() {
   assert.strictEqual(active(C, 'landing'), true, 'closing settings preserves the landing surface');
   assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen still untouched after closing');
   console.log('  settings: landing -> model popover -> landing (via showSettings)');
-  console.log('unit-ui-journeys: ALL PASSED');
 }
+
+// PLAN §C0.3 — a NEW bounded surface, not on this file's original four-name list: the teacher
+// dashboard, chosen directly by the user rather than drawn from the plan's example screens.
+// `showTeacher()` is a pure delegate with no distinguishing behaviour of its own to spy on (unlike
+// `showGenerationClean`'s hash reset or `showSettings`'s forwarded event) — walking the real
+// rendered journey through it already proves the delegation.
+{
+  const C = client();
+  C.run(`APP.info = { backend:'ollama', canGenerate:true, coverageThreshold:0.8 };
+    loadSavedList = async function(){}; true;`, 'teacher-setup');
+  C.run('showTeacher(); true;', 'teacher-entry');
+  await settle();
+  assert.strictEqual(active(C, 'teacher-screen'), true, 'showTeacher() activates the teacher screen');
+  assert.strictEqual(C.run('APP.screen'), 'teacher-screen', 'APP.screen agrees');
+  assert.ok(C.run("(document.getElementById('td-body').innerHTML || '').length") > 0,
+    'the dashboard body rendered its panels rather than staying blank');
+  // The "🌍" home button (`index.html:1560`) is static markup calling `showGenerationClean()` —
+  // this harness never parses raw HTML outside the `<script>` block into its fake DOM (only
+  // JS-rendered `innerHTML` content becomes real nodes; ids fetched via `getElementById` are
+  // auto-vivified stubs with no children), so there is no element to click. Call the function the
+  // button calls, exactly as the "generation" block above already proves it in isolation — what
+  // THIS assertion adds is that the exit still works when reached FROM the teacher screen.
+  C.run('showGenerationClean(); true;', 'teacher-exit');
+  await settle();
+  assert.strictEqual(active(C, 'landing'), true,
+    'the teacher screen\'s "🌍" home button (already-seamed showGenerationClean) returns to landing');
+  assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen returns with it');
+  console.log('  teacher dashboard: landing -> rendered panels (via showTeacher) -> landing');
+}
+console.log('unit-ui-journeys: ALL PASSED');
 }
 
 main().catch(err => { console.error(err); process.exit(1); });

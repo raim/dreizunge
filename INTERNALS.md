@@ -713,6 +713,20 @@ own revert. Pair every such negative with a positive assertion proving the rende
 DOM has no `<option>` lists, so the menu populator throws). It is `async`, so flush microtasks
 before reading `#saved-list`.
 
+**Static HTML markup outside the `<script>` block is never parsed into `lib-dom`'s fake document at
+all (`v81_r`).** `loadClient` extracts only the inline `<script>` content and runs it in a vm
+sandbox; the rest of `index.html` (every literal `<button onclick="…">`, `<div id="…">`, etc.) is
+never read. What LOOKS like DOM structure in a test is entirely one of two things: an
+auto-vivified per-id stub handed out by `getElementById` (empty, no children, no attributes — see
+the AUTO-VIVIFIES bullet above), or real parsed nodes created because product code assigned
+`innerHTML` to one of those stubs at runtime (`v73_c`'s parser). A STATIC button's inline `onclick`
+attribute is therefore unreachable by `querySelector`/`getAttribute` — there is no element there to
+find. Simulating a click on one only works when product code has separately fetched it by id and
+assigned a live `.onclick` function (`compNext.onclick = …`), or when the button's markup itself
+came from a runtime `innerHTML` write (`unit-lessonset-storyline-link.test.js`'s
+`#home-hdr-storyline span`). For a plain static button, call the function its `onclick` attribute
+names directly instead, and say why in the test.
+
 **Wiring changes need a run, not source assertions.** When one side sends and the other consumes,
 assertions on each half prove nothing about the join. In `v71_u` the server could ignore `arcTypes`
 entirely with the whole 156-check suite green. If a change is "A now passes X to B", the test must
@@ -797,18 +811,19 @@ moves both decks identically, measured. Where a fork looks asymmetric, the cause
 | the card truth table | `build_history/probe_gates_v77.js` → **`v80i_card_gates.txt`** (`v80e`, `v80`, `v77` and `v76` tables superseded). ⚠️ It SELECTS its chapters from the corpus, so a data drop moves the selection — disambiguate by re-running the PREVIOUS client against the CURRENT corpus |
 | **the lesson-path node lock** | `buildPath()`'s node loop — `isLocked` is now **exactly** `_storyLocked` (`v81_i`, user ruling). The old sequential half ("previous lesson done") is REMOVED: it was already unenforced everywhere else (`_firstUnfinishedLessonIdx`'s `_playable` never read it, `tapWord` bypasses it). `_prevDone`/`_firstNode` still exist but now only feed the connector-line's CSS, not the lock. Guarded on the RENDERED node in `test/unit-hidden-lessons.test.js` §4 — ⚠️ `buildPath` sets `node.className` by direct property assignment, not parsed markup, so the `lib-dom` stub's `classList`/CSS-selector matching does NOT see it; read `node.className` as a raw string instead |
 
-**PLAN §C0 — the router seam** (`v81_m`–`v81_p`)
+**PLAN §C0 — the router seam** (`v81_m`–`v81_r`)
 
 | what | where |
 |---|---|
 | the one authoritative route state | `APP.screen`, written ONLY by `show(id)`. Never assign it directly — nothing else keeps it in sync |
-| the explicit renderers | `showProgressCard`/`showStory`/`showGeneration`/`showGenerationClean`/`showSettings`, defined right after `show(id)`. **Thin delegates**, not rewrites, to `showComplete`/`showStoryUnlocked`/`goLanding`/`goLandingClean`/`toggleModelPop` |
+| the explicit renderers | `showProgressCard`/`showStory`/`showGeneration`/`showGenerationClean`/`showSettings`/`showTeacher`, defined right after `show(id)`. **Thin delegates**, not rewrites, to `showComplete`/`showStoryUnlocked`/`goLanding`/`goLandingClean`/`toggleModelPop`/`openTeacherDashboard` |
 | `showGeneration` vs `showGenerationClean` | NOT interchangeable. `goLandingClean` additionally resets the URL hash (`history.replaceState`) — collapsing the two would silently drop that for every "home" button. `showGenerationClean` is what all 7 header "🌍 home" buttons and the stranded-learner fallbacks call |
-| **generation and progress/card state are now fully behind the seam** | `v81_o` rerouted every `goLanding`/`goLandingClean` caller; `v81_p` rerouted every EXTERNAL `showComplete` caller (10 sites: 9 in `index.html`, 1 in `build-static.js`) onto `showProgressCard`. `showStoryUnlocked` had already lost its one caller at `v81_n`. **What is genuinely left**: nothing on `PLAN §C0`'s original list — the next stage is `§C0.4`, removing proven-dead paths, or moving QC/editing/library browsing (explicitly staged LATER) |
+| **generation and progress/card state are now fully behind the seam** | `v81_o` rerouted every `goLanding`/`goLandingClean` caller; `v81_p` rerouted every EXTERNAL `showComplete` caller (10 sites: 9 in `index.html`, 1 in `build-static.js`) onto `showProgressCard`. `showStoryUnlocked` had already lost its one caller at `v81_n`. **What was left after `v81_p`**: nothing on `PLAN §C0`'s original four-name list — `§C0.4` (dead-path removal) partially shipped at `v81_q`; `v81_r` then seamed a FIFTH surface, `showTeacher()`, chosen directly by the user rather than drawn from the plan's own examples (QC/editing and library browsing, both still scattered across `lesson-set`/`storyline-screen` rather than being clean standalone screens, remain open) |
+| **`showTeacher()`** (`v81_r`) | wraps `openTeacherDashboard()` — the teacher dashboard, backend/teacher-only. Both its external callers (`#teacher-dash-btn`, the dashboard's own 🔄 refresh button) rerouted. No `build-static.js` copy exists to keep in sync: the static build hides the entry button entirely (`APP.info.canGenerate` gates it), so `openTeacherDashboard` is never reachable there |
 | ⚠️ **`showComplete`'s TWO internal self-calls are deliberately NOT rerouted** | lines calling itself indirectly inside its own body (the "Next never greyed" fallback, the chapter-finished branch) are implementation detail, not an external entry point — rerouting them would just be a function referencing a wrapper of itself for no reason. `unit-coverage-threshold` pins one of these directly; leave it alone |
 | ⚠️ **`build-static.js` re-implements `loadSaved` separately, AND is missing a branch `index.html` has** | its own `goLandingClean`/`showComplete` call sites needed matching reroutes (`v81_o`, `v81_p` — `unit-learner-nav`'s static-parity check catches a miss). Separately, and NOT fixed: it has **no `_isLaterChapter()` branch at all** — a learner opening a later chapter in the static build may not land on the progress card the way `v81_b` intended. Found at `v81_p`, left for its own measurement and release |
 | `showSettings` is not a `.screen` | settings has none yet (`PLAN §C4`, a separate later track) — it wraps the CURRENT popover toggle. `APP.screen` is correctly untouched by opening/closing it |
-| the acceptance test | `test/unit-ui-journeys.test.js` — the route-parity reference for the next `§C0.3` slice. Extend it, don't bypass it, when moving a surface behind these seams. ⚠️ It does NOT catch everything — `v81_o` broke three unrelated SOURCE-TEXT pins in `unit-learner-nav.test.js` that only a full-suite run surfaced |
+| the acceptance test | `test/unit-ui-journeys.test.js` — the route-parity reference for the next `§C0.3` slice. Extend it, don't bypass it, when moving a surface behind these seams. ⚠️ It does NOT catch everything — `v81_o` broke three unrelated SOURCE-TEXT pins in `unit-learner-nav.test.js` that only a full-suite run surfaced. `v81_r`'s teacher-dashboard journey exits via a direct `showGenerationClean()` call, not a simulated click on the "🌍" button — that button is STATIC markup, and this harness never parses raw HTML outside the `<script>` block into its fake DOM (only JS-rendered `innerHTML` becomes real nodes), so there was never an element there to click |
 
 **PLAN §8/B1–B4 — observations, target-language skills, vocabulary tags, and shadow BKT** (`v81_j`–`v81_l`)
 

@@ -1662,6 +1662,54 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_r` — `PLAN §C0.3`, a FIFTH surface seamed: the teacher dashboard, chosen directly by the user
+
+**Shipped by: Claude Code.**
+
+**A genuine fork, put to the user rather than guessed.** After `v81_q`, the plan's own remaining
+examples — QC/editing, library browsing — turned out on measurement NOT to be clean, separable
+screens the way generation/settings and progress/story were: `lesson-set` and `storyline-screen`
+each mix chapter/storyline browsing with scattered edit and QC controls in one screen, matching the
+plan's own words that these are "scattered controls or panels," not yet separable. Committing hours
+of work to scoping either of those correctly, on a guess, risked the wrong slice. Presented three
+measured options (`teacher-screen`, `storyline-screen`, `lesson-set`) plus a lock-behaviour-only
+option to the user; **the user ruled: `teacher-screen` first** — smallest, cleanest, and not on the
+plan's original four-name list at all, but the only remaining screen with zero seam coverage and
+near-zero risk.
+
+**What was done.** `showTeacher()` added as a thin delegate to the existing `openTeacherDashboard()`,
+alongside the other four `PLAN §C0.2` renderers. Both external callers rerouted (`#teacher-dash-btn`,
+the dashboard's own 🔄 refresh button) — a small surface: 2 callers total, versus `v81_o`'s 14 and
+`v81_p`'s 10. `build-static.js` needed no matching reroute: the dashboard is backend/teacher-only and
+the static build hides its entry button entirely (`APP.info.canGenerate` gates it), so
+`openTeacherDashboard` is never reachable there — the "both files" risk `v81_o`/`v81_p` hit does not
+apply to this surface. Grepped the whole suite for `openTeacherDashboard`/`teacher-dash-btn` before
+editing (`v81_o`'s established discipline): two files reference the function by name
+(`e2e-teacher-dashboard.test.js`'s source-text pin `async function openTeacherDashboard\(\)`,
+`smoke-render.test.js`'s direct call) — neither touches the button's `onclick` text, and neither
+function was renamed or removed, so both stayed green with no edit.
+
+**A harness fact surfaced and documented while writing the new journey test, not previously
+written down anywhere:** `lib-dom`'s fake document never parses the STATIC markup outside the
+`<script>` block at all — only JS-rendered `innerHTML` becomes real nodes, and ids fetched via
+`getElementById` are auto-vivified stubs with no children. The teacher screen's "🌍" home button is
+plain static markup, so there is no element there for `querySelector` to find and no `.onclick` to
+call — unlike `comp-next`, whose handler is assigned by JS at render time. The new journey therefore
+calls `showGenerationClean()` directly for the exit half, proving the seamed exit still works when
+reached FROM the teacher screen (the entry half already proves `showTeacher()` itself). Documented
+as its own `INTERNALS.md` §5 bullet so the next session does not rediscover this by the same
+detour — a genuine `TypeError`, not a false one, since the selector really does miss.
+
+**Mutation-tested:** temporarily made `showTeacher()` a no-op (`return;`, dropping the delegation) —
+the new journey's very first assertion (`showTeacher() activates the teacher screen`) went red
+immediately. Reverted and diffed clean against the pre-mutation file before moving on.
+
+node test/run.js: 235 checks, ALL PASSED (unchanged — no file added or removed, one existing file
+extended)
+node test/run.js --quick: 209 checks, ALL PASSED
+node build-static.js re-run (index.html changed); node test/check-inline.js and
+`docs/index.html` variant: 0 failures each
+
 ### `v81_q` — `PLAN §C0.4`, `_renderCompStoryboard` deleted — a proven-dead path, ⚠️ USER RULING OVERRIDES `v80_z`
 
 **Shipped by: Claude Code.**

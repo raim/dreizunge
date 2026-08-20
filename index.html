@@ -1039,7 +1039,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importLessons(this)">
         </label>
         <button id="export-static-btn" onclick="exportStatic()" title="Rebuild docs/index.html" style="display:none;font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:8px;padding:5px 10px;background:var(--white);cursor:pointer;color:var(--gray-dark)">🏗 Static</button>
-        <button id="teacher-dash-btn" onclick="openTeacherDashboard()" title="Teacher dashboard" style="display:none;font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:8px;padding:5px 10px;background:var(--white);cursor:pointer;color:var(--gray-dark)">🎓 <span id="teacher-dash-lbl">Learners</span></button>
+        <button id="teacher-dash-btn" onclick="showTeacher()" title="Teacher dashboard" style="display:none;font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:8px;padding:5px 10px;background:var(--white);cursor:pointer;color:var(--gray-dark)">🎓 <span id="teacher-dash-lbl">Learners</span></button>
         <button class="mute-btn" onclick="toggleMute()" title="Mute" style="font-size:18px;border:none;background:none;cursor:pointer;padding:2px 4px;opacity:.7">🔊</button>
       </div>
     </div>
@@ -1559,7 +1559,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <div class="sl-screen-title-row">
         <button class="sl-screen-home" onclick="showGenerationClean()" title="Home">🌍</button>
         <span class="sl-screen-title" id="td-title" style="cursor:default">🎓</span>
-        <button class="sl-screen-share" onclick="openTeacherDashboard()" title="Refresh">🔄</button>
+        <button class="sl-screen-share" onclick="showTeacher()" title="Refresh">🔄</button>
       </div>
     </div>
     <div class="sl-screen-body" id="td-body"></div>
@@ -3349,6 +3349,12 @@ function showGenerationClean(){ return goLandingClean(); }
 // settings uses underneath. `APP.screen` is correctly untouched: the underlying screen doesn't
 // change when this opens or closes.
 function showSettings(ev){ return toggleModelPop(ev); }
+// PLAN §C0.3 — a NEW bounded surface, chosen directly by the user rather than drawn from the
+// plan's original four-name list: the teacher dashboard. Smallest and lowest-risk of what was
+// left unseamed (one entry function, two callers, exits through the already-seamed
+// `showGenerationClean()`), and backend-only — the static build hides its entry button entirely
+// (`APP.info.canGenerate` gates it), so there is no `build-static.js` copy to keep in sync here.
+function showTeacher(){ return openTeacherDashboard(); }
 // Returning to the main form: restore the form's own language selection into the
 // render context (a viewed story may have temporarily overridden APP.srcLang). The
 // main selectors/library filter were never mutated while viewing, so only the context
