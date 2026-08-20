@@ -1974,6 +1974,10 @@ function localizedLangName(targetCode, uiLang) {
 
 var APP = {
   info: {backend:'none',canGenerate:false},
+  // PLAN §C0.2: the one authoritative route state. Written ONLY by show(id) — never assign this
+  // directly. A settings/model popover does not change it: it overlays whichever screen is
+  // already active, it is not a `.screen` root itself (that is PLAN §C4's job, not §C0's).
+  screen: null,
   _teacherMode: true, // live: unlocked by default; static overrides to false
   lessonData: null,
   // When the learner indicates they don't have the right keyboard for the target language,
@@ -3327,7 +3331,25 @@ function _closeEditorsOnNav(targetId){
   }
   if(targetId!=='storyline-screen'){ try{ closeStorylineEditInScreen(); }catch(_){} }
 }
-function show(id){ _closeEditorsOnNav(id); document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); try{ updateStaticFlagBanner(); }catch(_){} try{ refreshTutorAvailability(); }catch(_){} }   // v62: the tutor follows the learner across screens
+function show(id){ APP.screen = id; _closeEditorsOnNav(id); document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); try{ updateStaticFlagBanner(); }catch(_){} try{ refreshTutorAvailability(); }catch(_){} }   // v62: the tutor follows the learner across screens
+// ── PLAN §C0.2 — explicit screen renderers: a NAMING SEAM, not a rewrite ─────────────────────
+// The plan's own words: "must first preserve every current entry point; no visual redesign
+// bundled in." These four delegate to the functions that already own their rendering — nothing
+// about HOW a screen is built changes here. `PLAN §C0.3` moves surface behind these seams one
+// bounded surface at a time; until then most existing callers keep calling the underlying
+// function directly, which is correct and expected, not an oversight. Two callers ARE rerouted
+// in this same change, because each had exactly one call site and rerouting it costs nothing:
+// `showComplete`'s own Next-button wiring now calls `showStory()`, and the settings pill's click
+// handler now calls `showSettings()`. `unit-ui-journeys.test.js` calls these four names directly
+// where it already exercised the underlying function, so the delegation is proven, not assumed.
+function showProgressCard(review, lessonIdxOverride){ return showComplete(review, lessonIdxOverride); }
+function showStory(){ return showStoryUnlocked(); }
+function showGeneration(){ return goLanding(); }
+// Settings has no `.screen` of its own yet (`PLAN §C4` gives it one later) — this wraps the
+// CURRENT popover toggle so callers have one name to reach for regardless of which mechanism
+// settings uses underneath. `APP.screen` is correctly untouched: the underlying screen doesn't
+// change when this opens or closes.
+function showSettings(ev){ return toggleModelPop(ev); }
 // Returning to the main form: restore the form's own language selection into the
 // render context (a viewed story may have temporarily overridden APP.srcLang). The
 // main selectors/library filter were never mutated while viewing, so only the context
@@ -150483,11 +150505,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v81_m', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v81_m'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v81_n', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v81_n'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"36e003fbd0a2","lessons.json":"b8d1e81f9ad2","ui.json":"595821a44480","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"58b249cb7d41"};
+  APP.buildSources = {"index.html":"f3e930c8b74c","lessons.json":"b8d1e81f9ad2","ui.json":"595821a44480","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"58b249cb7d41"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');
@@ -160653,7 +160675,7 @@ function showComplete(review, lessonIdxOverride){
     _compIco(compNext, '→', t('complete.next'));
     compNext.style.display = '';
     compNext.onclick = _showUnlock
-      ? () => showStoryUnlocked()
+      ? () => showStory()
       : () => { endDrill(); startLesson(_target); };
   } else if (_belowThreshold && !lesson._drill) {
     // v77_o (user ruling): NEXT IS NEVER GREYED. It always leads to the next step.

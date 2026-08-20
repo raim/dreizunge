@@ -1662,6 +1662,61 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_n` — `PLAN §C0.2`, the router seam: one authoritative route state, four explicit renderers
+
+**Shipped by: Claude Code.**
+
+`APP.screen` is now the one authoritative route state, written ONLY by `show(id)` — the single
+funnel every one of the 21 existing `show('...')` call sites already went through, so making it
+authoritative needed exactly one line, not a search-and-replace. Four explicit renderer functions
+exist as the plan's own named examples: `showProgressCard`, `showStory`, `showGeneration`,
+`showSettings`. Each is a **thin, documented delegate** to the function that already owns its
+rendering — `showComplete`, `showStoryUnlocked`, `goLanding`, `toggleModelPop` respectively. Nothing
+about HOW a screen renders changed; this is the naming/state seam `PLAN §C0.3` moves surface behind,
+one bounded surface at a time, exactly as staged.
+
+**Scope, deliberately narrow, per the plan's own words** ("must first preserve every current entry
+point; no visual redesign bundled in"): `showComplete` alone has 15+ call sites across the app;
+`goLanding`/`goLandingClean` have a dozen more, several embedded in HTML `onclick` attributes.
+Rewriting all of them now would be exactly the "wholesale rewrite" the plan explicitly disallows.
+Only the two call sites that were genuinely singular got rerouted in this change: `showComplete`'s
+own Next-button wiring (`compNext.onclick`) now calls `showStory()` instead of `showStoryUnlocked()`
+directly, and the settings pill's click handler now calls `showSettings()` instead of
+`toggleModelPop()` directly. Every other existing caller of the four underlying functions is
+untouched — moving them is `§C0.3`'s job, not this one's.
+
+**`showSettings` is a genuine naming seam over a popover, not a screen.** Settings has no `.screen`
+of its own (`PLAN §C4` gives it one, later, in a different track) — `APP.screen` is correctly
+untouched by opening or closing it, matching `unit-ui-journeys.test.js`'s own prior observation that
+the popover "must leave the underlying landing route intact."
+
+**Guarded** by extending `test/unit-ui-journeys.test.js` (not a new file) — the three journeys it
+already locked now enter through the new explicit names (`showProgressCard`, `showGeneration`,
+`showSettings`) instead of the functions they delegate to, proving the delegation IN the locked
+journey rather than by a separate synthetic call, plus an `APP.screen` assertion at every
+transition (including that it stays `'landing'` through the whole settings round trip).
+
+**Mutation-tested six ways**, each restored and reconfirmed clean:
+- `show()` no longer setting `APP.screen` → every `APP.screen` assertion goes red.
+- Each of `showStory`/`showProgressCard`/`showGeneration` turned into a no-op → its journey's
+  screen-activation assertion goes red.
+- `showSettings` dropping its event argument → **passed on the first attempt**, an honest finding:
+  this harness models no real event bubbling, so a lost `stopPropagation()` produced no observable
+  difference in the existing assertions. Closed the gap with a direct spy (`window.__spyStops`,
+  incremented inside a fake `stopPropagation`) rather than leave a mutation the suite couldn't see —
+  re-run after adding it, the same mutation now fails correctly.
+
+**Found and fixed in passing, unrelated to this change:** `test/unit-next-chapter-unlocked.test.js`
+was failing against HEAD before this session touched anything — never registered in `test/run.js`
+(so 236/236 never covered it), testing `showNextChapterUnlocked()`/`unlocked-screen`, both deleted
+at `v80_e` per that cut's own roadmap entry, which states outright the file was "REPLACED BY
+`unit-next-chapter-entry.test.js`." The replacement exists, is registered, and passes. Deleted the
+orphan in its own commit (`109aef0`), separate from this release.
+
+node test/run.js: 236 checks, ALL PASSED (236, not higher — the new assertions extend an existing
+file rather than register a new one; the orphaned-test deletion is a separate, unregistered file)
+node test/run.js --quick: 210 checks, ALL PASSED
+
 ### `v81_m` — `PLAN §C0.1`, journey-transition tests locked before the router seam
 
 **Shipped by: Codex (authored), Claude Code (verified and committed — Codex ran out of session

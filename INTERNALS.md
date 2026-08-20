@@ -797,6 +797,16 @@ moves both decks identically, measured. Where a fork looks asymmetric, the cause
 | the card truth table | `build_history/probe_gates_v77.js` → **`v80i_card_gates.txt`** (`v80e`, `v80`, `v77` and `v76` tables superseded). ⚠️ It SELECTS its chapters from the corpus, so a data drop moves the selection — disambiguate by re-running the PREVIOUS client against the CURRENT corpus |
 | **the lesson-path node lock** | `buildPath()`'s node loop — `isLocked` is now **exactly** `_storyLocked` (`v81_i`, user ruling). The old sequential half ("previous lesson done") is REMOVED: it was already unenforced everywhere else (`_firstUnfinishedLessonIdx`'s `_playable` never read it, `tapWord` bypasses it). `_prevDone`/`_firstNode` still exist but now only feed the connector-line's CSS, not the lock. Guarded on the RENDERED node in `test/unit-hidden-lessons.test.js` §4 — ⚠️ `buildPath` sets `node.className` by direct property assignment, not parsed markup, so the `lib-dom` stub's `classList`/CSS-selector matching does NOT see it; read `node.className` as a raw string instead |
 
+**PLAN §C0 — the router seam** (`v81_m`–`v81_n`)
+
+| what | where |
+|---|---|
+| the one authoritative route state | `APP.screen`, written ONLY by `show(id)`. Never assign it directly — nothing else keeps it in sync |
+| the four explicit renderers | `showProgressCard`/`showStory`/`showGeneration`/`showSettings`, defined right after `show(id)`. **Thin delegates**, not rewrites, to `showComplete`/`showStoryUnlocked`/`goLanding`/`toggleModelPop` |
+| ⚠️ **most existing callers still call the underlying function directly** | only two call sites were rerouted (`compNext.onclick` → `showStory()`, the settings pill → `showSettings()`) — both were the ONLY caller of their underlying function. `showComplete`/`goLanding` each have a dozen-plus other callers, untouched by design; `PLAN §C0.3` moves them, one bounded surface at a time |
+| `showSettings` is not a `.screen` | settings has none yet (`PLAN §C4`, a separate later track) — it wraps the CURRENT popover toggle. `APP.screen` is correctly untouched by opening/closing it |
+| the acceptance test | `test/unit-ui-journeys.test.js` — the route-parity reference for `§C0.3`. Extend it, don't bypass it, when moving a surface behind these seams |
+
 **PLAN §8/B1–B4 — observations, target-language skills, vocabulary tags, and shadow BKT** (`v81_j`–`v81_l`)
 
 | what | where |

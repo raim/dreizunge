@@ -1,7 +1,16 @@
-// PLAN §C0.1 — lock the current screen journeys before C0.2 introduces route state.
+// PLAN §C0.1 — lock the current screen journeys; PLAN §C0.2 introduces the router seam over them.
 //
 // These are deliberately transition tests, not source-shape checks. The router seam may move
 // functions and markup, but it must preserve these rendered outcomes and the interactive exits.
+//
+// §C0.2 update: `APP.screen` (the one authoritative route state, written only by `show(id)`) is
+// now asserted at every screen transition below, alongside the rendered `.active` class — the two
+// must never disagree. The three journeys also now enter through the new explicit renderers
+// (`showProgressCard`, `showGeneration`, `showSettings`) instead of the functions they delegate
+// to, so a faithful delegation is proven IN the locked journey, not by a separate synthetic call.
+// `showStory()` is exercised indirectly: it is what `comp-next`'s onclick calls internally now
+// (rerouted from a direct `showStoryUnlocked()` call, its one call site) — asserting the story
+// screen becomes active after that click already proves the reroute did not break anything.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -64,22 +73,27 @@ async function main() {
     'non-vacuity: prep work genuinely opens the story');
   assert.ok(C.run('_firstUnfinishedLessonIdx(APP.lessonData)') >= 0,
     'and the chapter still has post-story work');
-  C.run('showComplete(); true;', 'progress-card');
+  C.run('showProgressCard(); true;', 'progress-card');
   assert.strictEqual(active(C, 'complete-screen'), true, 'the journey starts on the rendered progress card');
+  assert.strictEqual(C.run('APP.screen'), 'complete-screen', 'APP.screen agrees with the rendered card');
   C.run("document.getElementById('comp-next').onclick(); true;", 'story');
   assert.strictEqual(active(C, 'unlockstory-screen'), true, 'Next enters the story-unlock screen');
+  assert.strictEqual(C.run('APP.screen'), 'unlockstory-screen',
+    'APP.screen tracks the reroute onto showStory() — comp-next used to call showStoryUnlocked() directly');
   assert.ok(C.run("(document.getElementById('us-story').innerHTML || '').length") > 0,
     'the story screen renders its story body');
   C.run("document.getElementById('us-next').onclick(); true;", 'lesson');
   assert.strictEqual(active(C, 'lesson-screen'), true, 'story forward enters the lesson player');
+  assert.strictEqual(C.run('APP.screen'), 'lesson-screen', 'APP.screen follows into the lesson player');
   assert.strictEqual(C.run('APP.cur.lessonIdx'), COMP_IDX,
     'the story forward action starts its resolved comprehension lesson');
   C.run('confirmQuit(); true;', 'return');
   await settle();
   assert.strictEqual(active(C, 'complete-screen'), true, 'quitting the lesson returns a learner to the progress card');
+  assert.strictEqual(C.run('APP.screen'), 'complete-screen', 'APP.screen returns with it');
   assert.deepStrictEqual(JSON.parse(C.run('JSON.stringify(_cardErrors())')), [],
     'no card error was swallowed across the learner journey');
-  console.log('  learner: progress card -> story -> lesson -> progress card');
+  console.log('  learner: progress card -> story -> lesson -> progress card (via showProgressCard/showStory)');
 }
 
 // Generation currently lives on the landing surface. Entering it from a lesson restores the form
@@ -92,9 +106,10 @@ async function main() {
     loadSavedList = async function(){};
     document.getElementById('topic-input').value = 'journey fixture';
     true;`, 'generation-setup');
-  C.run('goLanding(); true;', 'generation-entry');
+  C.run('showGeneration(); true;', 'generation-entry');
   await settle();
   assert.strictEqual(active(C, 'landing'), true, 'returning to generation activates the landing form');
+  assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen agrees — showGeneration() delegates to goLanding()');
   assert.notStrictEqual(C.run("document.getElementById('gen-area').style.display"), 'none',
     'the generation controls are visible on that landing surface');
   C.run(`
@@ -105,24 +120,37 @@ async function main() {
     doGenerate(); true;`, 'generate');
   await settle();
   assert.strictEqual(active(C, 'lesson-set'), true, 'a cached generation exits to the generated lesson set');
-  C.run('goLanding(); true;', 'generation-return');
+  assert.strictEqual(C.run('APP.screen'), 'lesson-set', 'APP.screen follows the generated lesson set');
+  C.run('showGeneration(); true;', 'generation-return');
   await settle();
   assert.strictEqual(active(C, 'landing'), true, 'leaving the generated lesson set returns to generation');
-  console.log('  generation: landing form -> generated lesson set -> landing form');
+  assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen returns with it');
+  console.log('  generation: landing form -> generated lesson set -> landing form (via showGeneration)');
 
   // Settings have no dedicated screen yet: the model popover is the current entry/exit surface
-  // C4 will absorb. Its open/close transition must leave the underlying landing route intact.
-  C.run(`
+  // C4 will absorb. Its open/close transition must leave the underlying landing route intact —
+  // and APP.screen, which only `.screen` roots ever change, must stay 'landing' throughout.
+  //
+  // The popover-state assertion just below does NOT prove showSettings forwards its event
+  // argument to toggleModelPop — dropping that argument produced no observable difference here
+  // (this harness models no real event bubbling, so a lost stopPropagation() is silent). Assert
+  // the forwarding directly instead: a spy counting the call is the only way this can fail.
+  const spyCalls = C.run(`
     document.getElementById('bmodels-pop').style.display = 'none';
-    toggleModelPop({ stopPropagation:function(){} }); true;`, 'settings-entry');
+    window.__spyStops = 0;
+    showSettings({ stopPropagation:function(){ window.__spyStops++; } });
+    window.__spyStops;`, 'settings-entry');
+  assert.strictEqual(spyCalls, 1, 'showSettings forwards its event argument to toggleModelPop (stopPropagation called exactly once)');
   assert.notStrictEqual(C.run("document.getElementById('bmodels-pop').style.display"), 'none',
-    'opening settings exposes the model-settings popover');
+    'opening settings (via showSettings) exposes the model-settings popover');
   assert.strictEqual(active(C, 'landing'), true, 'opening settings keeps the landing surface active');
+  assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen is untouched — settings is not a `.screen` root');
   C.run('closeModelPop(); true;', 'settings-exit');
   assert.strictEqual(C.run("document.getElementById('bmodels-pop').style.display"), 'none',
     'closing settings hides the popover');
   assert.strictEqual(active(C, 'landing'), true, 'closing settings preserves the landing surface');
-  console.log('  settings: landing -> model popover -> landing');
+  assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen still untouched after closing');
+  console.log('  settings: landing -> model popover -> landing (via showSettings)');
   console.log('unit-ui-journeys: ALL PASSED');
 }
 }

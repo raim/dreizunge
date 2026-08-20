@@ -1,20 +1,33 @@
-# Session prompt — written at the `v81_m` cut (end of session 40)
+# Session prompt — written at the `v81_n` cut (end of session 40)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_l.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_m.md` was the
 previous one — superseded by this file and renamed, not kept alongside.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_m`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_n`** cut.
 
 **Session 40 ran across two agents: Codex shipped `v81_k`/`v81_l`, then ran out of session budget
-mid-work; Claude Code picked up the uncommitted state, verified it, and shipped it as `v81_m`.**
-`v81_m`: `PLAN §C0.1`, journey-transition tests — test-only, no functional change. Locks the
+mid-work; Claude Code picked up the uncommitted state and shipped `v81_m` through `v81_n`.**
+`v81_n`: `PLAN §C0.2`, the router seam. `APP.screen` is the one authoritative route state, written
+only by `show(id)` (already the single funnel for all 21 existing screen transitions — a one-line
+change). Four explicit renderers (`showProgressCard`/`showStory`/`showGeneration`/`showSettings`)
+exist as thin, documented delegates to the functions that already render their screen — nothing
+about HOW a screen renders changed. **Deliberately narrow**: only the two call sites that were each
+their underlying function's SOLE caller got rerouted (`compNext.onclick` → `showStory()`, the
+settings pill → `showSettings()`); `showComplete`'s 15+ other callers and `goLanding`'s dozen are
+untouched — `§C0.3` moves them, one bounded surface at a time. Mutation-tested six ways; one
+mutation (dropping `showSettings`'s event argument) passed on the first attempt because the test
+harness models no real event bubbling — closed with a direct spy rather than left uncovered. Also
+found and fixed, unrelated to this change: `test/unit-next-chapter-unlocked.test.js` was a dead test
+for code deleted at `v80_e`, never registered in `test/run.js`, deleted in its own commit.
+
+**`v81_m`: `PLAN §C0.1`, journey-transition tests** — test-only, no functional change. Locks the
 rendered/interactive outcome of the learner walk (progress card → story-unlock → lesson →
 `confirmQuit()` back), the generation landing→cached-generation→landing walk, and the settings
-popover open/close, all of which `§C0.2`'s coming router seam must preserve. Verified independently
-before committing: ran standalone and inside the full suite (both green), and mutation-tested one
-assertion (forcing `_showUnlock` to always route past the story-unlock screen) to confirm it is not
-vacuous.
+popover open/close, all of which `§C0.2`'s router seam had to preserve (and now does). Verified
+independently before committing: ran standalone and inside the full suite (both green), and
+mutation-tested one assertion (forcing `_showUnlock` to always route past the story-unlock screen)
+to confirm it is not vacuous.
 
 **Session 40 also shipped `v81_l`: `PLAN §8/B4`, BKT in shadow mode.** A newly appended graded
 observation now recomputes canonical skill mastery from the append-only log using a fixed, explicit
@@ -89,7 +102,7 @@ node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 languages, 617 `en` keys**.
-`APP_VERSION = 'v81_m'`.
+`APP_VERSION = 'v81_n'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -127,7 +140,12 @@ Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 lan
    (`unit-observations-log.test.js`, which drives a real round through `check()`) ran clean **15
    times in a row** before shipping. `v81_m`'s `unit-ui-journeys.test.js` (inherited mid-flight from
    a different agent) was mutation-tested before being trusted and committed, not merely inherited —
-   don't skip verification just because a guard already exists and already reads green.
+   don't skip verification just because a guard already exists and already reads green. `v81_n`
+   mutation-tested its own six claims and one PASSED that should not have: dropping `showSettings`'s
+   forwarded event argument produced no observable difference, because the harness models no real
+   event bubbling. **A mutation surviving is not proof the code is right — it may mean the test
+   cannot see that particular failure mode.** Add a more direct assertion (here, a call-count spy)
+   rather than accept the green.
 5. **Never put emoji in a Python string literal** (rule 25); write them via a `cat` heredoc. And
    **check what a mechanical rewrite DID** — `v80_d`'s blanket replace mangled six sentences
    including a heading.
@@ -140,7 +158,8 @@ Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 lan
 
 *(`v81_i`'s sequential-lock removal was a ruling delivered directly by the user, not drawn from
 this list — nothing below was open because of it, so nothing here changes. `v81_j`–`v81_l` (Track B)
-and `v81_m` (`PLAN §C0.1`) all came from §3 below and are struck there as they shipped.)*
+and `v81_m`–`v81_n` (`PLAN §C0.1`/`§C0.2`) all came from §3 below and are struck there as they
+shipped.)*
 
 All three items that headed this section at the `v81_b` cut are closed:
 
@@ -175,9 +194,15 @@ is a materially lower bar. Needs a browser pass, not a code change.
   See the durable roadmap diagram and migration sequence; CP1 comes before a new generator.
 - ~~`PLAN §C0.1`, UI journey transition tests~~ **✅ SHIPPED at `v81_m`.** `test/unit-ui-journeys.test.js`
   locks the learner, generation, and settings entry/exit behaviour that `§C0.2`'s router seam must
-  preserve. **`PLAN §C0.2` is next**: one authoritative route state (`APP.screen` or equivalent) and
-  explicit screen renderers, preserving every entry point the C0.1 tests now pin — no visual redesign
-  bundled in. See `PLAN §C0` for the full ownership rule and migration order.
+  preserve.
+- ~~`PLAN §C0.2`, the router seam~~ **✅ SHIPPED at `v81_n`.** `APP.screen` is the one authoritative
+  route state; `showProgressCard`/`showStory`/`showGeneration`/`showSettings` exist as thin delegates.
+  Only the two SINGLE-caller sites were rerouted onto them — `showComplete`'s other 15+ callers and
+  `goLanding`'s dozen are untouched by design. **`PLAN §C0.3` is next**: move only the surface under
+  active rework (generation and settings first, per the plan) BEHIND these seams, one bounded surface
+  at a time — meaning the OTHER existing callers of `showComplete`/`goLanding` start getting rerouted
+  now, not before. `unit-ui-journeys.test.js` is the acceptance test; keep every assertion in it
+  passing. See `PLAN §C0` for the full ownership rule and migration order.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
@@ -213,12 +238,13 @@ is a materially lower bar. Needs a browser pass, not a code change.
   No translate pass is owed for it.
 - **The translate pass** for the remaining `en`-only keys, `translate-ui.js --langnames`, the
   `hr` `ui.json` pass, and a **native-speaker check of the `cyrillic-sr` table**.
-- **A device pass on `v81_a` … `v81_m`.** The v80 line changed every card and every question screen: the story
+- **A device pass on `v81_a` … `v81_n`.** The v80 line changed every card and every question screen: the story
   panel is on all of them, never collapsed, three-state coloured, tappable, with a translate toggle;
   the progress bars moved to the bottom; the storyboard row became clickable chapter icons.
   `v81_i` adds one more thing to look at: ordinary lessons on the node path are clickable out of
   order now — see `build_history/v81i_session38_notes.md` for what should still stay locked.
-  `v81_j`–`v81_m` ship no UI change — nothing new to look at there (`v81_m` is test-only).
+  `v81_j`–`v81_n` ship no VISUAL change — `v81_n`'s router seam changes which function ends up
+  calling `show()` at two call sites, never what gets rendered.
 
 ## 5. NOT yours to start
 
@@ -273,6 +299,11 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
   only `check()`-graded exercises are logged, only resolved vocabulary IDs feed BKT, and no BKT
   value may become a reader of progression without a separate product ruling; `learners.js`'s
   `MAX_STATE_BYTES` growth ceiling remains unaddressed.
-- `test/unit-ui-journeys.test.js` (`v81_m`, `PLAN §C0`) — the route-parity reference for `§C0.2`.
-  Whoever builds the router seam must keep every assertion in it passing (rendered screen + exit
-  behaviour, not source shape) before removing the code path it currently exercises.
+- `APP.screen` / `showProgressCard`/`showStory`/`showGeneration`/`showSettings` (`v81_n`, `PLAN §C0.2`)
+  — the router seam. See `INTERNALS.md` §6b before extending it: most existing callers of the
+  underlying functions are still untouched by design, and `showSettings` deliberately does not
+  correspond to a `.screen` (settings gets one under `PLAN §C4`, a separate track).
+- `test/unit-ui-journeys.test.js` (`v81_m`–`v81_n`, `PLAN §C0`) — the route-parity reference for
+  `§C0.3`. Whoever moves a surface behind the seam must keep every assertion in it passing (rendered
+  screen + `APP.screen` + exit behaviour, not source shape) before removing the code path it
+  currently exercises.
