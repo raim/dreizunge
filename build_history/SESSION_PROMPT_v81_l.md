@@ -161,6 +161,10 @@ is a materially lower bar. Needs a browser pass, not a code change.
   of the accepted parallel curriculum pipeline. It defines stable chapter/sentence/span/token IDs
   and provenance, but must not change existing lessons, player, learner progress, or publishing.
   See the durable roadmap diagram and migration sequence; CP1 comes before a new generator.
+- **`PLAN §C0.1`, UI journey transition tests** — user-selected as the immediate focus before more
+  shared text-panel work. It locks current learner, generation, and settings entry/exit behaviour,
+  then C0.2 introduces an incremental screen/router seam. No player rewrite, changed gate, or visual
+  redesign belongs in the first slice; see `PLAN §C0` for the ownership rule and migration order.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:

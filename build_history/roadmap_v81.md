@@ -3069,6 +3069,49 @@ Ordered so that each session ends shippable. Every one of these lands on `probe_
 territory; **re-run and diff against `v80_card_gates.txt`** (the `v77` table is superseded, and the
 `v80` baseline exists because the drop moved it).
 
+### PLAN §C0 — UI architecture rework: bounded screen ownership, not a rewrite
+
+**Direction accepted by the user at the `v81_l` cut.** Separate generation, settings, QC/editing,
+progress/story, and later library browsing into screen-level surfaces. Do it incrementally while
+each affected flow is reworked—not in a whole-codebase refactor before product work, and not after
+new flows have been cemented into the monolith.
+
+The current client already has a generic `show(id)` switcher and several `.screen` roots, but no
+authoritative `APP.screen`/route state. The landing surface still combines generation with the
+library; settings and QC/editing are scattered controls or panels. Preserve all of their supported
+entry/exit behaviour while giving each future screen one owner.
+
+> **One screen owns its rendering and event wiring; shared state and navigation live outside
+> screens; no screen reaches into another screen's DOM.**
+
+**Implementation sequence:**
+
+1. **C0.1 — lock journey behaviour before moving it.** Add behavioural transition tests for the
+   learner walk (progress card → story → lesson → return), and for generation/settings entry and
+   exit. Test the rendered/interactive route outcome, not the source spelling of a helper. This is
+   the next code slice.
+2. **C0.2 — small router seam.** Make one authoritative route state (`APP.screen` or equivalent)
+   and explicit screen renderers such as `showProgressCard`, `showStory`, `showGeneration`, and
+   `showSettings`. It must first preserve every current entry point; no visual redesign bundled in.
+3. **C0.3 — move only the surface under active rework.** Start with generation and settings, then
+   progress/card state plus story navigation. Move QC/editing, exercise running, and library browsing
+   later, one bounded surface at a time.
+4. **C0.4 — remove only proven-dead paths.** An old story-display or navigation path goes only after
+   route-parity tests cover every supported entry point and a caller search finds none.
+
+**Story-display rule:** retain one canonical story-panel body renderer with mode/options (for example
+`{context:'progress'|'summary'|'unlocked', actions, collapsed}`), rather than accumulating near-
+duplicate story views. Each screen owns its surrounding card/layout and actions; the shared renderer
+owns only the story body. `_storyBodyHtml` is the current seam and must remain the sole body renderer.
+
+**Distribution rule:** keep the single-inline-client/static-build model. “Modules” initially means
+well-delimited functions and state ownership inside `index.html`; external client files are a
+separate architecture decision requiring a deliberately designed and verified embed/bundle path.
+
+This rework does **not** authorise a second app, a playback rewrite, changed gates, altered learner
+progress, or a wholesale DOM rewrite. It is the enabling structure for future progress-card work and
+the new generation/settings/QC pages.
+
 ### PLAN §C1 — Progress-card structural fixes (1 session) — the BUGS first, before any cosmetics
 
 Two of the plan's items are **defects**, not design, and they should not wait behind the cosmetic
