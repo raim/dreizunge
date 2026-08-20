@@ -105,7 +105,8 @@ const visible = (topic.lessons || []).filter(L => L && !L._hidden && !L.hidden);
   startable.forEach(i => {
     const n = Number(i.idx);
     assert.ok(Number.isInteger(n), 'a startable icon carries its lesson index');
-    assert.strictEqual(i.click, `startLesson(${n})`, 'and starts exactly that lesson');
+    // v81_t / PLAN §C0.3: showLesson(idx), a thin delegate to startLesson(idx) — see INTERNALS.md §6b.
+    assert.strictEqual(i.click, `showLesson(${n})`, 'and starts exactly that lesson');
     const L = topic.lessons[n];
     assert.ok(L && !L._hidden && !L.hidden,
       `index ${n} points at a visible lesson — not a row position`);

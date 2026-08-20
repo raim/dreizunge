@@ -641,7 +641,7 @@ async function loadSaved(ref) {
     // _enterViaSummaryCard helper, so there is one decision, not two that can drift.
     // (No backticks in this comment: it lives inside a template literal.)
     if (typeof _enterViaSummaryCard === 'function' && _enterViaSummaryCard(idx)) return;
-    const started = idx>=0 ? (startLesson(idx) !== false) : (showProgressCard(true), true);
+    const started = idx>=0 ? (showLesson(idx) !== false) : (showProgressCard(true), true);
     if(!started){
       const ctx=_storylineForTopic(APP.lessonData?.topic);
       if(ctx && ctx.sl) openStorylineScreen(ctx.sl.id, ctx.enc);

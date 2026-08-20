@@ -1662,6 +1662,66 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_t` — `PLAN §C0.3`, a SEVENTH surface seamed: lesson-screen, second of three ruled together
+
+**Shipped by: Claude Code.** The ruling after `v81_r` was "do THREE more, smallest first" —
+`lesson-set` → `lesson-screen` → `storyline-screen`, no re-asking between them. `v81_s` shipped the
+first; this entry is the second. `storyline-screen` is the third and still open.
+
+**The cleanest match yet to one of the plan's own named examples.** Of the two names left unmatched
+after `v81_q` ("QC/editing", "library browsing"), scoping at `v81_s` found a third candidate not
+part of the original ask: `lesson-screen`, entered through `startLesson(idx)`, is a clean literal
+match for "exercise running" — same one-function-many-callers shape as every surface already seamed,
+unlike `storyline-screen`/`lesson-set` which mix browsing with edit/QC/generation controls. The user
+had already ruled to do it as the second of the three (`v81_r`'s follow-up ruling); this entry ships
+it.
+
+**What was done.** `showLesson(idx)` added as a thin delegate to the existing `startLesson(idx)`.
+Unlike the previous two delegates, `startLesson` returns `false` on real guard exits (a hidden
+lesson a learner cannot reach) and its callers BRANCH on that return value — the delegate forwards
+it (`return startLesson(idx);`), not just calls it for effect. **12 external callers rerouted, the
+largest single reroute in this whole track** (`v81_o`'s 14 spanned two DIFFERENT functions;
+`v81_p`'s 10 was smaller): `loadSaved`'s auto-start, `buildPath`'s lesson-node click,
+`startNextLesson()`, `repeatForCoverage()`, THREE separate `compNext.onclick` branches inside
+`showComplete` (drill-return, coverage-replay, below-threshold-never-greyed), `showStoryUnlocked`'s
+`us-next.onclick`, `showStorySummary`'s `sum-next.onclick`, `tapWord`'s resolved-question start, and
+one chapter-icon `onclick` built via a template literal into `innerHTML` (NOT static markup, so —
+unlike the teacher/lesson-set exit buttons — this one stays reachable by the test harness).
+`build-static.js`'s own `loadSaved` copy carries the same call site — updated to match. **Exit
+needed no new work**: `confirmQuit()` already routes through `showProgressCard`/
+`openStorylineScreen`/`showGenerationClean`/`showLessonSet`, all pre-existing seams from earlier in
+this track.
+
+**14 test files referenced `startLesson` by name** — the largest blast-radius grep in this track.
+Sorted into three groups before touching anything: files that STUB `startLesson = function(){...}`
+to intercept it (unaffected — `showLesson`'s body looks up the identifier fresh at call time, so a
+stub set before the call is honoured exactly as before); files that call `startLesson(...)` DIRECTLY
+as their own test driver, bypassing any wrapper (also unaffected — the function's own behaviour is
+untouched); and files with SOURCE-TEXT PINS on the specific call sites just changed. Six pins in
+that third group broke, across `unit-comp-lesson-icons.test.js` (one, the rendered `onclick` text)
+and `unit-coverage-threshold.test.js`/`unit-learner-nav.test.js` (five, source-shape regexes on
+`showComplete`/`loadSaved`/`repeatForCoverage`'s bodies) — all true positives, all fixed by
+re-pointing the regex at the new name, same discipline as `v81_o`'s three, `v81_p`'s two, `v81_s`'s
+four.
+
+**Mutation-tested with the SAME isolation trick `v81_s` needed, for the same reason.** Breaking
+`showLesson()` (`return false;` instead of delegating) was caught FIRST by the pre-existing
+"learner" journey block (`us-next` calls `showLesson()` internally), which crashed before the new
+lesson-screen journey block ever ran. A standalone script driving only the new block's setup and
+first assertion confirmed it independently goes red — not merely riding on the earlier block's
+coverage.
+
+**One flake observed and cleared during verification, not this release's doing:**
+`unit-observations-log.test.js` failed once inside a `--quick` run (unrelated content — the
+`startLesson`/`check()` round it drives is corpus-sampled, `buildExercises`-shaped
+non-determinism), passed immediately on re-run, and 15/15 standalone. Nothing in this release
+touches observation logging or BKT; noted per the standing flake-verification habit, not chased.
+
+node test/run.js: 235 checks, ALL PASSED
+node test/run.js --quick: 209 checks, ALL PASSED
+node build-static.js re-run (index.html + build-static.js both changed); node test/check-inline.js
+and the docs/index.html variant: 0 failures each
+
 ### `v81_s` — `PLAN §C0.3`, a SIXTH surface seamed: lesson-set, second of three ruled together
 
 **Shipped by: Claude Code.**

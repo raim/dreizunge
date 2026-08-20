@@ -3362,6 +3362,13 @@ function showTeacher(){ return openTeacherDashboard(); }
 // matching internal call site — kept in sync here, same as `v81_o`/`v81_p` did for
 // `goLandingClean`/`showComplete`.
 function showLessonSet(){ return goLessonSet(); }
+// PLAN §C0.3 — the THIRD of three surfaces ruled together (user, after `v81_r`): `lesson-screen`,
+// the exercise runner — a clean literal match for the plan's "exercise running" label, found during
+// `v81_s`'s scoping pass. `startLesson(idx)` returns `false` on its guard exits (a hidden lesson a
+// learner cannot reach); callers branch on that, so this delegate MUST forward the return value,
+// not just the call. `build-static.js` has its OWN copy of the one call site inside its `loadSaved`
+// re-implementation — kept in sync here, same pairing as `showLessonSet`.
+function showLesson(idx){ return startLesson(idx); }
 // Returning to the main form: restore the form's own language selection into the
 // render context (a viewed story may have temporarily overridden APP.srcLang). The
 // main selectors/library filter were never mutated while viewing, so only the context
@@ -6055,7 +6062,7 @@ async function loadSaved(ref){
       // at all — the progress card is that screen, and it now carries the story, the highlights, the
       // chapter icons and the play buttons, so everything the entry card offered is on it.
       if (idx >= 0 && _isLaterChapter()) { showProgressCard(true); return; }
-      const started = idx>=0 ? (startLesson(idx) !== false) : (showProgressCard(true), true);
+      const started = idx>=0 ? (showLesson(idx) !== false) : (showProgressCard(true), true);
       if(!started){
         const ctx=_storylineForTopic(APP.lessonData?.topic);
         if(ctx && ctx.sl) openStorylineScreen(ctx.sl.id, ctx.enc);
@@ -7106,7 +7113,7 @@ function buildPath(){
           ${APP.info.canGenerate&&L.type!=='ai_error_hunt'&&L.type!=='error_hunt'&&(L.vocab||L.sentences||L.items||L.words)?`<button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('qc.btn.lesson')}" onclick="qcRun({topicId:'${d.id}',lessonIdx:${i}},this)">🔍</button>`:''}
         </div>`:''}
       </div>`
-    if(!isLocked) node.onclick=()=>startLesson(i);
+    if(!isLocked) node.onclick=()=>showLesson(i);
     path.appendChild(node);
     _prevDone=isDone; _firstNode=false;
   });
@@ -7336,7 +7343,7 @@ function startNextLesson(){
   if(!APP.lessonData)return;
   const d=APP.lessonData, done=APP.progress.completed[d.topic]||{};
   const nextIdx=d.lessons.findIndex(L=>!done[L.id]&&lessonCountsFor(d,L));
-  if(nextIdx>=0) startLesson(nextIdx);
+  if(nextIdx>=0) showLesson(nextIdx);
 }
 
 // encodeURIComponent doesn't encode ' (apostrophe), which breaks onclick="loadSaved('…')"
@@ -11943,7 +11950,7 @@ function repeatForCoverage(){
   const target = idx >= 0 ? idx : APP.cur?.lessonIdx;
   if (target == null || target < 0) return;
   if (typeof endDrill === 'function') endDrill();
-  startLesson(target);
+  showLesson(target);
 }
 function openCrosswordFromComplete(){
   const idx = APP.cur?.lessonIdx;
@@ -14824,7 +14831,7 @@ function startDrill(){
   const prev = APP._drillPrev || APP.lessonData;
   APP._drillPrev = prev;
   APP.lessonData = { topic: DRILL_TOPIC, lang, srcLang, lessons: [drill], _ephemeral: true };
-  startLesson(0);
+  showLesson(0);
 }
 // Restore the real topic. Returns true if a drill was actually active.
 function endDrill(){
@@ -16122,7 +16129,7 @@ function showComplete(review, lessonIdxOverride){
     compNext.onclick = () => {
       endDrill();
       const idx = _firstUnfinishedLessonIdx(APP.lessonData);
-      if (idx >= 0) startLesson(idx); else showComplete(true);
+      if (idx >= 0) showLesson(idx); else showComplete(true);
     };
   } else if (nextLessonIdx >= 0 && !lesson._drill) {
     // Next lesson in this chapter — start it directly (learners never see the lesson-set page).
@@ -16172,7 +16179,7 @@ function showComplete(review, lessonIdxOverride){
     compNext.style.display = '';
     compNext.onclick = _showUnlock
       ? () => showStory()
-      : () => { endDrill(); startLesson(_target); };
+      : () => { endDrill(); showLesson(_target); };
   } else if (_belowThreshold && !lesson._drill) {
     // v77_o (user ruling): NEXT IS NEVER GREYED. It always leads to the next step.
     //
@@ -16211,7 +16218,7 @@ function showComplete(review, lessonIdxOverride){
           if (typeof _firstCoverageShortLessonIdx === 'function') target = _firstCoverageShortLessonIdx();
         } catch(_) { target = -1; }
       }
-      if (target >= 0 && startLesson(target) !== false) return;
+      if (target >= 0 && showLesson(target) !== false) return;
       showComplete(true); show('complete-screen');
     };
   } else if (!lesson._drill && !_belowThreshold && _nextChapter()) {
@@ -16988,7 +16995,7 @@ function tapWord(word){
         return ls.length ? { lessonIdx: ls[Math.floor(Math.random() * ls.length)], key: null } : null;
       })();
   if (!pick) return false;
-  if (!startLesson(pick.lessonIdx)) return false;
+  if (!showLesson(pick.lessonIdx)) return false;
   // The run is built and SHUFFLED by startLesson, so the question's position is only knowable now.
   // Match on qid — the same key `markSolved` writes — rather than on text, which would match the
   // wrong exercise whenever a word appears in several questions.
@@ -17518,7 +17525,7 @@ function _compLessonIconsHtml(){
     cells.push(locked
       ? `<span class="comp-lesson-ico locked" ${base}opacity:.35;cursor:default">${lessonTypeEmoji(ty)}</span>`
       : `<span class="comp-lesson-ico" data-lesson-idx="${i}" ${base}cursor:pointer;background:var(--gray-light)"`
-        + ` onclick="startLesson(${i})">${lessonTypeEmoji(ty)}</span>`);
+        + ` onclick="showLesson(${i})">${lessonTypeEmoji(ty)}</span>`);
   });
   if (!cells.length) return '';
   return '<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">' + cells.join('') + '</div>';
@@ -17780,7 +17787,7 @@ function showStoryUnlocked(){
     nx.onclick = () => {
       const i = APP._usNextLesson;
       endDrill();
-      if (i != null && i >= 0) startLesson(i); else { showProgressCard(true); show('complete-screen'); }
+      if (i != null && i >= 0) showLesson(i); else { showProgressCard(true); show('complete-screen'); }
     };
   }
   _markStoryShown(d.topic);
@@ -18013,7 +18020,7 @@ function showStorySummary(){
     _compIco(nx, '→', _entry ? t('summary.start') : t('summary.next'));
     nx.onclick = _entry
       ? () => { const g = APP._sumNext; APP._sumNext = null; endDrill();
-                if (!g || startLesson(g.idx) === false) { showProgressCard(true); show('complete-screen'); } }
+                if (!g || showLesson(g.idx) === false) { showProgressCard(true); show('complete-screen'); } }
       : () => sumForwardToCard();
   }
   show('summary-screen');

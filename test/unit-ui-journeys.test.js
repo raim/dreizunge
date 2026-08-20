@@ -31,6 +31,8 @@ const SAVED = store.topics.map(t => ({ id: t.id, topic: t.topic, lang: t.lang, s
   story: t.story, lessons: t.lessons,
   lessonCount: (t.lessons || []).filter(L => L && !L._hidden && !L._aiExamples).length }));
 const COMP_IDX = TOPIC.lessons.findIndex(L => L && L.type === 'comprehension');
+// A plain, non-story-gated lesson — TOPIC is guaranteed to have one (see the TOPIC filter above).
+const PLAIN_IDX = TOPIC.lessons.findIndex(L => L && !L._hidden && !isPost(L) && !L.type);
 const settle = () => new Promise(resolve => setTimeout(resolve, 25));
 
 function client() {
@@ -220,6 +222,27 @@ async function main() {
     'the lesson-set screen\'s "🌍" home button (already-seamed showGenerationClean) returns to landing');
   assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen returns with it');
   console.log('  lesson-set: landing -> rendered lesson path (via showLessonSet) -> landing');
+}
+
+// PLAN §C0.3 — the THIRD of three surfaces ruled together (user, after `v81_r`): `lesson-screen`,
+// the exercise runner ("exercise running" in the plan's own words). The learner journey earlier in
+// this file already exercises `showLesson()` INDIRECTLY (the story-unlock screen's Next button
+// calls it internally) — this block enters it DIRECTLY instead, on a plain non-story-gated lesson,
+// and exits through `confirmQuit()`, which already routes through the seamed `showProgressCard()`.
+{
+  const C = client();
+  assert.ok(PLAIN_IDX >= 0, 'non-vacuity: TOPIC has a plain lesson to start directly');
+  const started = C.run(`showLesson(${PLAIN_IDX})`);
+  assert.strictEqual(started, true, 'showLesson() reports it took over the screen');
+  assert.strictEqual(active(C, 'lesson-screen'), true, 'showLesson() activates the lesson-screen');
+  assert.strictEqual(C.run('APP.screen'), 'lesson-screen', 'APP.screen agrees');
+  assert.strictEqual(C.run('APP.cur.lessonIdx'), PLAIN_IDX, 'the requested lesson index was taken');
+  C.run('confirmQuit(); true;', 'lesson-exit');
+  await settle();
+  assert.strictEqual(active(C, 'complete-screen'), true,
+    'quitting a directly-started lesson returns to the progress card (via the already-seamed showProgressCard)');
+  assert.strictEqual(C.run('APP.screen'), 'complete-screen', 'APP.screen returns with it');
+  console.log('  lesson-screen: direct entry (via showLesson) -> progress card, on a plain lesson');
 }
 console.log('unit-ui-journeys: ALL PASSED');
 }

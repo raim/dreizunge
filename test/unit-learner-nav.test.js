@@ -140,7 +140,8 @@ console.log('  helpers: learner gate, resume index (hidden-aware), storyline res
   const ls = ext(html, 'loadSaved');
   // v81_s: showLessonSet(), a thin delegate to goLessonSet() — see INTERNALS.md §6b.
   assert.ok(/await showLessonSet\(\)/.test(ls), 'loadSaved still runs goLessonSet (lang/dir setup + hash)');
-  assert.ok(/if\(_isLearner\(\)\)\{[\s\S]*?_firstUnfinishedLessonIdx\(APP\.lessonData\)[\s\S]*?startLesson\(idx\)/.test(ls),
+  // v81_t: showLesson(idx), a thin delegate to startLesson(idx) — see INTERNALS.md §6b.
+  assert.ok(/if\(_isLearner\(\)\)\{[\s\S]*?_firstUnfinishedLessonIdx\(APP\.lessonData\)[\s\S]*?showLesson\(idx\)/.test(ls),
     'a learner resumes at the first unfinished lesson and auto-starts it');
   // The teacher path is the fall-through: no startLesson call outside the learner branch.
   const afterGo = ls.slice(ls.indexOf('await showLessonSet()'));
@@ -159,7 +160,8 @@ console.log('  loadSaved: learner auto-start, teacher keeps the page: OK');
   // on — otherwise the questions the learner just got wrong sink out of reach. Per §0a the pin is
   // not re-pointed at the new variable name; the behaviour is asserted by clicking in
   // `unit-comprehension-repeat` §4 and §5. What remains here is structural.
-  assert.ok(/startLesson\(/.test(sc), 'Next starts a lesson in this chapter directly');
+  // v81_t: showLesson(idx), a thin delegate to startLesson(idx) — see INTERNALS.md §6b.
+  assert.ok(/showLesson\(/.test(sc), 'Next starts a lesson in this chapter directly');
   assert.ok(/nextLessonIdx/.test(sc), 'resolved from the next unfinished lesson in this chapter');
   // v77_i: the `loadSaved(...)` call moved OUT of showComplete and into the
   // next-chapter-unlocked card (§0c's fourth page) — Next now names what the learner earned before
@@ -303,11 +305,12 @@ console.log('  full-story-on-unlock + within/along progress summary: OK');
   // and (v68.1) a FAILED auto-start must not strand the learner on the lesson-set page either.
   // v81_o / PLAN §C0.3: showComplete(true) is reached through the showProgressCard seam now — see
   // INTERNALS.md §6b, "PLAN §C0 — the router seam".
+  // v81_t: showLesson(idx), a thin delegate to startLesson(idx) — see INTERNALS.md §6b.
   const ls = ext(html, 'loadSaved');
-  assert.ok(/idx>=0 \? \(startLesson\(idx\) !== false\) : \(showProgressCard\(true\), true\)/.test(ls),
+  assert.ok(/idx>=0 \? \(showLesson\(idx\) !== false\) : \(showProgressCard\(true\), true\)/.test(ls),
     'learner: complete chapter → review card; started lessons are success-checked (live)');
   const lsS = ext(builder, 'loadSaved');
-  assert.ok(/idx>=0 \? \(startLesson\(idx\) !== false\) : \(showProgressCard\(true\), true\)/.test(lsS),
+  assert.ok(/idx>=0 \? \(showLesson\(idx\) !== false\) : \(showProgressCard\(true\), true\)/.test(lsS),
     'learner: complete chapter → review card; started lessons are success-checked (static parity)');
 }
 console.log('  review mode for a re-opened complete chapter (live+static): OK');

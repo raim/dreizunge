@@ -415,12 +415,13 @@ console.log('  pass mark enforced: cannot advance below the threshold (v66.1): O
     'Next is never the drill any more');
   assert.ok(!/_belowThreshold && !lesson\._drill && _firstCoverageShortLessonIdx\(\) >= 0/.test(sc),
     'nor the coverage replay');
-  assert.ok(/endDrill\(\);\s*const idx = _firstUnfinishedLessonIdx\(APP\.lessonData\);\s*if \(idx >= 0\) startLesson\(idx\); else showComplete\(true\);/.test(sc),
+  // v81_t / PLAN §C0.3: showLesson(idx), a thin delegate to startLesson(idx) — see INTERNALS.md §6b.
+  assert.ok(/endDrill\(\);\s*const idx = _firstUnfinishedLessonIdx\(APP\.lessonData\);\s*if \(idx >= 0\) showLesson\(idx\); else showComplete\(true\);/.test(sc),
     'drill Next returns to the launching chapter: resume its questions, else its completion card');
   // The replay route still EXISTS — it moved from Next onto the repeat button, which is the whole
   // point of the change. If it ever stops being reachable the v69.2 dead end returns.
   const rf = ext(html, 'repeatForCoverage');
-  assert.ok(/_firstCoverageShortLessonIdx\(\)/.test(rf) && /startLesson\(target\)/.test(rf),
+  assert.ok(/_firstCoverageShortLessonIdx\(\)/.test(rf) && /showLesson\(target\)/.test(rf),
     'the coverage replay is still reachable, now via the repeat button');
   assert.ok(/id="comp-repeat"[^>]*onclick="repeatForCoverage\(\)"/.test(html),
     'and that button is wired on the card');
