@@ -6041,8 +6041,8 @@ async function loadSaved(ref){
       // learner straight into a question on arrival would leave the chapter with no arrival screen
       // at all — the progress card is that screen, and it now carries the story, the highlights, the
       // chapter icons and the play buttons, so everything the entry card offered is on it.
-      if (idx >= 0 && _isLaterChapter()) { showComplete(true); return; }
-      const started = idx>=0 ? (startLesson(idx) !== false) : (showComplete(true), true);
+      if (idx >= 0 && _isLaterChapter()) { showProgressCard(true); return; }
+      const started = idx>=0 ? (startLesson(idx) !== false) : (showProgressCard(true), true);
       if(!started){
         const ctx=_storylineForTopic(APP.lessonData?.topic);
         if(ctx && ctx.sl) openStorylineScreen(ctx.sl.id, ctx.enc);
@@ -8608,7 +8608,7 @@ function clearThisChapterProgress(){
   _clearChapterProgress(topicKey);
   saveProg();
   try { if (typeof showToast === 'function') showToast(t('chapter.clear_progress_done')); } catch(_) {}
-  try { showComplete(true); } catch(_) {}
+  try { showProgressCard(true); } catch(_) {}
   return true;
 }
 
@@ -13180,7 +13180,7 @@ function aiEhCheck(){
   const contBtn=document.createElement('button');
   contBtn.className='cont-btn'; contBtn.style='margin-top:14px;width:100%';
   contBtn.textContent=t('check.continue');
-  contBtn.onclick=()=>{ showComplete(); };
+  contBtn.onclick=()=>{ showProgressCard(); };
   resultDiv.appendChild(contBtn);
   wrap.after(resultDiv);
   document.getElementById('eh-btn-row').remove();
@@ -13351,7 +13351,7 @@ function ehCheck(){
   const backBtn=document.createElement('button');
   backBtn.className='cont-btn'; backBtn.style='margin-top:14px;width:100%';
   backBtn.textContent=t('complete.continue');
-  backBtn.onclick=()=>{ showComplete(); };
+  backBtn.onclick=()=>{ showProgressCard(); };
   resultDiv.appendChild(backBtn);
   wrap.after(resultDiv);
   // Persist progress including suspect set for replay
@@ -13429,10 +13429,10 @@ function renderEx(){
         // topic's last counted lesson, so `lesson`/`lessonIdx` resolve against the real topic
         // rather than the drill's stale index 0. The card then shows below-mark or complete
         // correctly — the coverage the drill just credited is already in the solved store.
-        showComplete(true); return;
+        showProgressCard(true); return;
       }
     }
-    showComplete(); return;
+    showProgressCard(); return;
   }
   const ex=C.exercises[C.cur];
   try{ refreshExHintBtn(); }catch(_){}   // v63: per-question help button follows the exercise
@@ -17861,14 +17861,14 @@ function showStoryUnlocked(){
     sp.onclick = () => { try { speakBodyText(null, d.lang || APP.lang, d.story || ''); } catch(_) {} };
   }
   const bk = document.getElementById('us-back');
-  if (bk) { _compIco(bk, '\u2190', t('unlocked.back_card')); bk.onclick = () => { showComplete(true); show('complete-screen'); }; }
+  if (bk) { _compIco(bk, '\u2190', t('unlocked.back_card')); bk.onclick = () => { showProgressCard(true); show('complete-screen'); }; }
   const nx = document.getElementById('us-next');
   if (nx) {
     _compIco(nx, '\u2192', t('complete.next'));
     nx.onclick = () => {
       const i = APP._usNextLesson;
       endDrill();
-      if (i != null && i >= 0) startLesson(i); else { showComplete(true); show('complete-screen'); }
+      if (i != null && i >= 0) startLesson(i); else { showProgressCard(true); show('complete-screen'); }
     };
   }
   _markStoryShown(d.topic);
@@ -18097,14 +18097,14 @@ function showStorySummary(){
     _compIco(nx, '→', _entry ? t('summary.start') : t('summary.next'));
     nx.onclick = _entry
       ? () => { const g = APP._sumNext; APP._sumNext = null; endDrill();
-                if (!g || startLesson(g.idx) === false) { showComplete(true); show('complete-screen'); } }
+                if (!g || startLesson(g.idx) === false) { showProgressCard(true); show('complete-screen'); } }
       : () => sumForwardToCard();
   }
   show('summary-screen');
 }
 // Forward = back into the walk, at the progress card this page was opened from. A review render,
 // never a play (INTERNALS: "a review render is not a play").
-function sumForwardToCard(){ showComplete(true); show('complete-screen'); }
+function sumForwardToCard(){ showProgressCard(true); show('complete-screen'); }
 
 // v77_k: the entry decision, as ONE function so the product and its guard cannot diverge — a test
 // that re-types this logic would be testing its own copy (session-28 rule 1). Returns true when it
@@ -18311,7 +18311,7 @@ function _finRenderFinished(){
 }
 // Back = the walk's previous page, i.e. the progress card this card was reached from. A review
 // render, never a play: nothing here was answered (INTERNALS, "a review render is not a play").
-function finBackToCard(){ showComplete(true); show('complete-screen'); }
+function finBackToCard(){ showProgressCard(true); show('complete-screen'); }
 
 function afterComplete() {
   // Reached only by a drill's Next now (the learner card's Next starts the next lesson/chapter
@@ -19424,7 +19424,7 @@ function confirmQuit(){
                      && _idx != null && APP.lessonData.lessons[_idx]
                      && !APP.lessonData.lessons[_idx]._drill;
     if (_canCard) {
-      try { showComplete(true, _idx); return; }
+      try { showProgressCard(true, _idx); return; }
       catch(_) { if (typeof _cardNote === 'function') _cardNote('quit-to-card', _); }
     }
     const topicKey = APP.lessonData?.topic;

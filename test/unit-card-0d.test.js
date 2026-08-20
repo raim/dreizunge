@@ -118,14 +118,15 @@ const rowsOf = (C) => [...(C.document.getElementById('comp-progress').innerHTML 
 
 // ── 6. The ✕ returns to the lesson's own card (item 1) ─────────────────────
 // Asserted on the wiring, because `confirmQuit` ends in a screen switch the stub cannot fully
-// simulate: the learner branch must reach showComplete with the CURRENT index before any
-// storyline fallback, and must skip that for a drill.
+// simulate: the learner branch must reach showComplete (via its showProgressCard seam — v81_o /
+// PLAN §C0.3, see INTERNALS.md §6b) with the CURRENT index before any storyline fallback, and
+// must skip that for a drill.
 {
   const fn = html.slice(html.indexOf('function confirmQuit'), html.indexOf('function confirmQuit') + 2600);
   assert.ok(/_isLearner\(\)/.test(fn), 'the learner branch still exists');
-  assert.ok(/showComplete\(true,\s*_idx\)/.test(fn),
+  assert.ok(/showProgressCard\(true,\s*_idx\)/.test(fn),
     'the learner branch renders the REVIEW card for the lesson being played');
-  const cardAt = fn.indexOf('showComplete(true, _idx)');
+  const cardAt = fn.indexOf('showProgressCard(true, _idx)');
   const slAt = fn.indexOf('openStorylineScreen');
   assert.ok(cardAt > 0 && slAt > cardAt,
     'the card is tried BEFORE the storyline fallback, or the fallback would always win');

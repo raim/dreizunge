@@ -1662,6 +1662,53 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_p` — `PLAN §C0.3`, progress/card state + story navigation moved behind the seam (second bounded surface)
+
+**Shipped by: Claude Code.**
+
+The plan's next `§C0.3` bounded surface, per its own phrasing: **"progress/card state plus story
+navigation."** All 10 remaining EXTERNAL callers of `showComplete(...)` (the ones outside its own
+function body) are rerouted onto `showProgressCard(...)` — 9 in `index.html`, 1 in `build-static.js`
+(the identical "both files" pattern as `v81_o`'s `goLandingClean`). Covers the error-hunt/synonym
+"continue" buttons, `clearThisChapterProgress`'s re-render, the drill-completion flow, the
+story-unlocked page's Back/Next, `sumForwardToCard`, `finBackToCard`, and `confirmQuit`'s ✕ target.
+
+**Two internal self-calls deliberately left untouched, and this is a judgement call worth recording
+as one:** `showComplete`'s own body calls itself indirectly in two branches (line ~16149's "Next
+never greyed" fallback, line ~16239's chapter-finished branch). These are implementation detail, not
+external entry points — the plan's "progress/card state... moved behind the seam" is about how
+OTHER code REACHES the progress card, not about `showComplete`'s own internals referencing a wrapper
+of itself. `unit-coverage-threshold`'s existing pin on the first of these was re-run unmodified and
+still passes, confirming the call sites are exactly where they were.
+
+**Estimating the blast radius BEFORE editing, not after** (measure first, per the session protocol):
+19 test files reference `showComplete(` — 65 occurrences. Grepping specifically for regex SOURCE
+PINS (as opposed to a test's own harness invocation, which is unaffected by rerouting an internal
+application call site) found exactly one candidate (`unit-card-0d.test.js`) before editing. Two more
+were found only by actually running the full suite afterward (`unit-learner-nav.test.js`, twice —
+`loadSaved`'s live+static pins, `confirmQuit`'s pin already covered by the first fix). **The
+estimate was incomplete and the full-suite run is what caught the gap — the habit that mattered was
+running it, not the grep.**
+
+**A genuinely pre-existing bug found in passing, NOT fixed here:** `build-static.js`'s own `loadSaved`
+is missing the ENTIRE `_isLaterChapter()` branch that `index.html`'s carries — a learner opening a
+later chapter in the STATIC build may not land on the progress card the way `v81_b`'s ruling
+intended. Confirmed by reading, not assumed. Left alone deliberately: it is a functional divergence
+needing its own measurement and its own release, not something to bundle into a pure rename.
+
+**Guarded**, mostly by EXISTING tests exercising these call sites behaviourally (DOM clicks: `fin-back`,
+`sum-next`, `us-back`, `us-next`) rather than by source pins — which is why so few pins broke despite
+the size of this change. **Mutation-tested five representative call sites**, chosen for structural
+diversity rather than exhaustively covering all ten: `sumForwardToCard`, `finBackToCard`,
+`confirmQuit`'s `✕`, `loadSaved`'s later-chapter branch (index.html), and `build-static.js`'s own
+reroute. All five caught, though one (`loadSaved`'s later-chapter branch) was caught by
+`unit-next-chapter-entry.test.js`, not the file first suspected (`unit-learner-nav.test.js`, which
+does not exercise that exact branch) — re-run against the RIGHT file once the first came back
+(surprisingly) green, rather than concluding the call site was unguarded.
+
+node test/run.js: 236 checks, ALL PASSED
+node test/run.js --quick: 210 checks, ALL PASSED
+
 ### `v81_o` — `PLAN §C0.3`, generation moved fully behind the seam (first bounded surface)
 
 **Shipped by: Claude Code.**

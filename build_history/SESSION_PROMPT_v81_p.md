@@ -1,14 +1,26 @@
-# Session prompt — written at the `v81_o` cut (end of session 40)
+# Session prompt — written at the `v81_p` cut (end of session 40)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_n.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_o.md` was the
 previous one — superseded by this file and renamed, not kept alongside.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_o`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_p`** cut.
 
 **Session 40 ran across two agents: Codex shipped `v81_k`/`v81_l`, then ran out of session budget
-mid-work; Claude Code picked up the uncommitted state and shipped `v81_m` through `v81_o`.**
-`v81_o`: `PLAN §C0.3`'s first bounded surface — generation is now FULLY behind the router seam, per
+mid-work; Claude Code picked up the uncommitted state and shipped `v81_m` through `v81_p`.**
+`v81_p`: `PLAN §C0.3`'s SECOND bounded surface — "progress/card state plus story navigation." All
+10 remaining EXTERNAL callers of `showComplete(...)` rerouted onto `showProgressCard(...)` (9 in
+`index.html`, 1 in `build-static.js`, same "both files" pattern as `v81_o`). Two internal self-calls
+inside `showComplete`'s own body deliberately left untouched — implementation detail, not an entry
+point. Mostly guarded by EXISTING behavioural tests (DOM clicks), which is why few pins broke despite
+the size; two did break in `unit-learner-nav.test.js` and both were true positives, fixed. Mutation-
+tested five structurally distinct call sites; one was caught by a DIFFERENT test file than first
+suspected (`unit-next-chapter-entry.test.js`, not `unit-learner-nav.test.js`) — re-run against the
+right file rather than concluding the site was unguarded. **Found, not fixed:** `build-static.js`'s
+`loadSaved` is missing the entire `_isLaterChapter()` branch `index.html` has — a real, pre-existing
+static/live divergence, left for its own measurement.
+
+**`v81_o`: `PLAN §C0.3`'s FIRST bounded surface** — generation is now FULLY behind the router seam, per
 the plan's own ordering ("start with generation and settings"; settings was already done at `v81_n`).
 All 14 remaining callers of `goLanding`/`goLandingClean` (3 + 3 JS, 7 inline HTML "home" buttons)
 rerouted onto `showGeneration()`/`showGenerationClean()` — the latter a NEW seam function, kept
@@ -115,7 +127,7 @@ node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 languages, 617 `en` keys**.
-`APP_VERSION = 'v81_o'`.
+`APP_VERSION = 'v81_p'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -163,6 +175,13 @@ Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 lan
    `unit-learner-nav.test.js` that had nothing to do with this session's own new tests — a reminder
    that "run the file I touched" is not the same precaution as "run the full suite before shipping."
    All three were true positives, not flakes, and all three needed the regex updated, not reverted.
+   `v81_p` added a THIRD angle on the same rule: estimating the blast radius by grepping for source
+   pins BEFORE editing found one real pin — the full-suite run afterward found two more the grep
+   missed. **The grep is a sanity check, not a substitute for the run.** And a mutation that a test
+   file does NOT catch is not automatically proof the call site is unguarded — one of five mutations
+   here was silent in the file first suspected and caught cleanly by a different one
+   (`unit-next-chapter-entry.test.js`); the fix was re-running against the right file, not concluding
+   the site needed a brand-new guard.
 5. **Never put emoji in a Python string literal** (rule 25); write them via a `cat` heredoc. And
    **check what a mechanical rewrite DID** — `v80_d`'s blanket replace mangled six sentences
    including a heading.
@@ -175,7 +194,7 @@ Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 lan
 
 *(`v81_i`'s sequential-lock removal was a ruling delivered directly by the user, not drawn from
 this list — nothing below was open because of it, so nothing here changes. `v81_j`–`v81_l` (Track B)
-and `v81_m`–`v81_o` (`PLAN §C0.1`/`§C0.2`/`§C0.3`'s first slice) all came from §3 below and are
+and `v81_m`–`v81_p` (`PLAN §C0.1`/`§C0.2`/`§C0.3`'s two slices) all came from §3 below and are
 struck there as they shipped.)*
 
 All three items that headed this section at the `v81_b` cut are closed:
@@ -219,10 +238,16 @@ is a materially lower bar. Needs a browser pass, not a code change.
   `showGenerationClean()` (a new seam function — `goLandingClean` also resets the URL hash, kept
   distinct rather than silently dropping that). `build-static.js`'s own `loadSaved` reimplementation
   updated to match. Generation + settings, the plan's own FIRST surface, is now fully done.
-  **`PLAN §C0.3`'s NEXT bounded surface is next**: "progress/card state plus story navigation" —
-  i.e. `showComplete`'s 15+ OTHER callers, still untouched. `unit-ui-journeys.test.js` is the
-  acceptance test; keep every assertion in it passing. See `PLAN §C0` for the full ownership rule
-  and migration order.
+- ~~`PLAN §C0.3`, progress/card state + story navigation (second bounded surface)~~ **✅ SHIPPED at
+  `v81_p`.** All 10 remaining EXTERNAL `showComplete` callers rerouted onto `showProgressCard()` (9
+  in `index.html`, 1 in `build-static.js`). `showComplete`'s own two internal self-calls are
+  deliberately left as-is — implementation detail, not an entry point. **Nothing from `PLAN §C0`'s
+  original example list remains un-seamed.** `PLAN §C0.4` (remove proven-dead paths) or the
+  LATER-staged surfaces (QC/editing, exercise running, library browsing) are next, if this track
+  continues. `unit-ui-journeys.test.js` is still the acceptance test for the FOUR original screens;
+  extend it rather than bypass it if you touch any of them again. Found but NOT fixed at `v81_p`:
+  `build-static.js`'s `loadSaved` is missing the whole `_isLaterChapter()` branch — a genuine
+  static/live divergence, needs its own measurement before its own release.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
@@ -263,15 +288,17 @@ is a materially lower bar. Needs a browser pass, not a code change.
   No translate pass is owed for it.
 - **The translate pass** for the remaining `en`-only keys, `translate-ui.js --langnames`, the
   `hr` `ui.json` pass, and a **native-speaker check of the `cyrillic-sr` table**.
-- **A device pass on `v81_a` … `v81_o`.** The v80 line changed every card and every question screen: the story
+- **A device pass on `v81_a` … `v81_p`.** The v80 line changed every card and every question screen: the story
   panel is on all of them, never collapsed, three-state coloured, tappable, with a translate toggle;
   the progress bars moved to the bottom; the storyboard row became clickable chapter icons.
   `v81_i` adds one more thing to look at: ordinary lessons on the node path are clickable out of
   order now — see `build_history/v81i_session38_notes.md` for what should still stay locked.
-  `v81_j`–`v81_o` ship no VISUAL change — the router seam changes which function ends up calling
-  `show()`/`goLandingClean()`, never what gets rendered. **Worth a specific spot-check anyway**: the
-  seven "🌍 home" buttons (every card header) and the three JS generation-flow entries, since those
-  are the ones `v81_o` mechanically rewired across many scattered sites.
+  `v81_j`–`v81_p` ship no VISUAL change — the router seam changes which function ends up calling
+  `show()`/`goLandingClean()`/`showComplete()`, never what gets rendered. **Worth a specific
+  spot-check anyway**: the seven "🌍 home" buttons and the three JS generation-flow entries
+  (`v81_o`), and the drill-completion flow, the story-unlocked page's Back/Next, the summary/finished
+  cards' Forward/Back, and the ✕ quit button (`v81_p`) — all mechanically rewired across many
+  scattered sites.
 
 ## 5. NOT yours to start
 
@@ -327,14 +354,19 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
   value may become a reader of progression without a separate product ruling; `learners.js`'s
   `MAX_STATE_BYTES` growth ceiling remains unaddressed.
 - `APP.screen` / `showProgressCard`/`showStory`/`showGeneration`/`showGenerationClean`/`showSettings`
-  (`v81_n`–`v81_o`, `PLAN §C0.2`/`§C0.3`) — the router seam. See `INTERNALS.md` §6b before extending
-  it: `showComplete`'s 15+ other callers are still untouched by design (next bounded surface, not
-  done); `showSettings` deliberately does not correspond to a `.screen` (settings gets one under
-  `PLAN §C4`, a separate track); `showGenerationClean` is NOT the same as `showGeneration` — it also
-  resets the URL hash, and `build-static.js` has its OWN copy of the call site (keep both in sync).
-- `test/unit-ui-journeys.test.js` (`v81_m`–`v81_o`, `PLAN §C0`) — the route-parity reference for the
-  NEXT `§C0.3` slice. Whoever moves a surface behind the seam must keep every assertion in it passing
-  (rendered screen + `APP.screen` + exit behaviour, not source shape) before removing the code path
-  it currently exercises. ⚠️ Also grep the WHOLE suite for the function being rerouted before
-  shipping — `v81_o` broke three source-text pins in `unit-learner-nav.test.js` that this file does
-  not cover at all.
+  (`v81_n`–`v81_p`, `PLAN §C0.2`/`§C0.3`) — the router seam. See `INTERNALS.md` §6b before extending
+  it: `showComplete`'s own TWO internal self-calls are deliberately NOT rerouted (implementation
+  detail, not an entry point — `unit-coverage-threshold` pins one); `showSettings` deliberately does
+  not correspond to a `.screen` (settings gets one under `PLAN §C4`, a separate track);
+  `showGenerationClean` is NOT the same as `showGeneration` — it also resets the URL hash, and
+  `build-static.js` has its OWN copy of that call site (keep both in sync). **Nothing from `PLAN
+  §C0`'s original four-name list has any external caller left un-seamed as of `v81_p`.**
+- `test/unit-ui-journeys.test.js` (`v81_m`–`v81_p`, `PLAN §C0`) — the route-parity reference for the
+  FOUR original screens. Extend it, don't bypass it, if you touch any of them again. ⚠️ Also grep the
+  WHOLE suite for the function being rerouted before shipping ANY future reroute — `v81_o` broke
+  three source-text pins in `unit-learner-nav.test.js` this file does not cover; `v81_p` broke two
+  more the same way, and the pre-edit grep estimate missed two of the three actual breaks across both
+  releases — the full-suite run is what caught them, not the grep.
+- `build-static.js`'s `loadSaved` is missing the entire `_isLaterChapter()` branch `index.html` has
+  (found at `v81_p`, not fixed) — a learner opening a later chapter in the STATIC build may not land
+  on the progress card the way `v81_b`'s ruling intended. Needs its own measurement before a fix.

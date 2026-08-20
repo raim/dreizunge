@@ -299,11 +299,13 @@ console.log('  full-story-on-unlock + within/along progress summary: OK');
   assert.ok(/!C\._review &&/.test(sc), 'review mode records NO progress (chapter already complete)');
   // loadSaved routes a learner with no unfinished lesson into the review card, not the page —
   // and (v68.1) a FAILED auto-start must not strand the learner on the lesson-set page either.
+  // v81_o / PLAN §C0.3: showComplete(true) is reached through the showProgressCard seam now — see
+  // INTERNALS.md §6b, "PLAN §C0 — the router seam".
   const ls = ext(html, 'loadSaved');
-  assert.ok(/idx>=0 \? \(startLesson\(idx\) !== false\) : \(showComplete\(true\), true\)/.test(ls),
+  assert.ok(/idx>=0 \? \(startLesson\(idx\) !== false\) : \(showProgressCard\(true\), true\)/.test(ls),
     'learner: complete chapter → review card; started lessons are success-checked (live)');
   const lsS = ext(builder, 'loadSaved');
-  assert.ok(/idx>=0 \? \(startLesson\(idx\) !== false\) : \(showComplete\(true\), true\)/.test(lsS),
+  assert.ok(/idx>=0 \? \(startLesson\(idx\) !== false\) : \(showProgressCard\(true\), true\)/.test(lsS),
     'learner: complete chapter → review card; started lessons are success-checked (static parity)');
 }
 console.log('  review mode for a re-opened complete chapter (live+static): OK');
