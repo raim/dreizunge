@@ -293,7 +293,7 @@ async function init() {
   // Hash routing
   if (location.hash.startsWith('#sl=')) {
     const chainId = location.hash.slice(4);
-    _tryOpenStorylineByChainId(chainId);
+    showStorylineByChainId(chainId);
   } else {
     const hashTopic = decodeURIComponent((location.hash.match(/[#&]topic=([^&]*)/) || [])[1] || '');
     if (hashTopic) loadSaved(hashTopic);
@@ -564,7 +564,7 @@ async function loadSavedList() {
     html+='<div class="storyline-group" id="slgroup-'+chainId+'">';
     html+='<div class="storyline-hdr" id="slhdr-'+chainId+'"'
       +' data-chain-id="'+chainId+'" data-chain="'+chainEncoded+'"'
-      +' style="cursor:pointer" onclick="openStorylineScreen(this.dataset.chainId,this.dataset.chain)">'+hdrTitle
+      +' style="cursor:pointer" onclick="showStoryline(this.dataset.chainId,this.dataset.chain)">'+hdrTitle
       +'<button class="ico-btn export" style="font-size:11px;padding:2px 8px" title="Export full story line"'
       +' data-chain="'+chainEncoded+'"'
       +' onclick="event.stopPropagation();openExportMenu(event,JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇</button>'
@@ -644,7 +644,7 @@ async function loadSaved(ref) {
     const started = idx>=0 ? (showLesson(idx) !== false) : (showProgressCard(true), true);
     if(!started){
       const ctx=_storylineForTopic(APP.lessonData?.topic);
-      if(ctx && ctx.sl) openStorylineScreen(ctx.sl.id, ctx.enc);
+      if(ctx && ctx.sl) showStoryline(ctx.sl.id, ctx.enc);
       else showGenerationClean();
     }
   }

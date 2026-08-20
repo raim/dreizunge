@@ -8,6 +8,10 @@
 // Rule 34: what this CANNOT see is said plainly at the bottom — these assertions are on the
 // markup `_renderStorylineScreen` produces, so they prove what is drawn and what a click is wired
 // to, not that a real browser dispatches that click to the wrapper rather than the card inside it.
+//
+// v81_u / PLAN §C0.3: the rendered onclick now reads `showStorylineById(...)`, a thin delegate to
+// `_openStorylineById(...)` — see INTERNALS.md §6b, "PLAN §C0 — the router seam". Every literal
+// pin below was re-pointed at the new name; none of the underlying claims changed.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -146,14 +150,14 @@ const drawn = (html) => new Set(topics.filter(t =>
       `${p.openSl} still renders the old \u2442A/B/C letter marker`);
     // …and the open storyline never labels its own column with its own title as a fork marker.
     const own = storylines.find(s => s.id === p.openSl);
-    assert.ok(!new RegExp('_openStorylineById\\(\'' + own.id + '\'\\)').test(html),
+    assert.ok(!new RegExp('showStorylineById\\(\'' + own.id + '\'\\)').test(html),
       `${p.openSl} must not offer a fork link to ITSELF`);
   }
   console.log('  fork marker is the other storyline title, never a letter, never self: OK');
 }
 
 // ── 4. the greyed branch opens that storyline, and its cards do not open a chapter ──
-// Both halves matter. The wrapper carries `_openStorylineById`; the cards inside are
+// Both halves matter. The wrapper carries `showStorylineById`; the cards inside are
 // pointer-events:none so `savedItemHtml`'s own `loadSaved` onclick cannot win the click.
 {
   for (const p of PAIRS) {
@@ -162,12 +166,12 @@ const drawn = (html) => new Set(topics.filter(t =>
     const m = html.match(/class="sl-fork-alt"[^>]*>/g) || [];
     assert.ok(m.length > 0, `${p.openSl} draws no greyed fork branch`);
     for (const tag of m) {
-      assert.ok(/onclick="_openStorylineById\('sl_/.test(tag),
+      assert.ok(/onclick="showStorylineById\('sl_/.test(tag),
         `a greyed fork branch on ${p.openSl} is not wired to open a storyline: ${tag}`);
     }
     assert.ok(/class="sl-fork-alt"[\s\S]{0,300}?<div style="pointer-events:none">/.test(html),
       `${p.openSl}: the cards inside a greyed branch must be inert so the wrapper takes the click`);
-    assert.ok(html.includes(`_openStorylineById('${p.altSl}')`),
+    assert.ok(html.includes(`showStorylineById('${p.altSl}')`),
       `${p.openSl} must offer a route into ${p.altSl}`);
   }
   console.log('  greyed branch opens the alternative storyline; its cards are inert: OK');
@@ -187,7 +191,7 @@ const drawn = (html) => new Set(topics.filter(t =>
       if (!bOwnsAKid) continue;
       seed({});
       const html = renderSl(a);
-      assert.ok(html.includes(`_openStorylineById('${b}')`),
+      assert.ok(html.includes(`showStorylineById('${b}')`),
         `from ${a} the learner cannot reach fork ${b}`);
       pairsChecked++;
     }
@@ -317,8 +321,8 @@ const drawn = (html) => new Set(topics.filter(t =>
     const open = storylines.find(s => s.id === p.openSl);
     const html = renderSl(p.openSl);
     const openLbl = (((open && open.icon) || '📖') + ' ' + String((open && open.title) || '')).trim();
-    const marks = [...html.matchAll(/role="button"[^>]*_openStorylineById\(&#39;([^&]+)&#39;\)[^>]*>([^<]*)</g)]
-      .concat([...html.matchAll(/role="button"[^>]*_openStorylineById\('([^']+)'\)[^>]*>([^<]*)</g)]);
+    const marks = [...html.matchAll(/role="button"[^>]*showStorylineById\(&#39;([^&]+)&#39;\)[^>]*>([^<]*)</g)]
+      .concat([...html.matchAll(/role="button"[^>]*showStorylineById\('([^']+)'\)[^>]*>([^<]*)</g)]);
     for (const m of marks) {
       const label = m[2].trim();
       if (!label) continue;                       // the open column's empty row, by design
@@ -344,7 +348,7 @@ const drawn = (html) => new Set(topics.filter(t =>
     const forced = storylines.map(s => (s.id === altSl.id ? Object.assign({}, s, patch) : s));
     C.run(`APP.storylines = ${JSON.stringify(forced)}; true;`, 'force');
     const html = renderSl(p.openSl);
-    const marks = [...html.matchAll(/_openStorylineById\((?:&#39;|')([^&']+)(?:&#39;|')\)[^>]*>([^<]*)</g)]
+    const marks = [...html.matchAll(/showStorylineById\((?:&#39;|')([^&']+)(?:&#39;|')\)[^>]*>([^<]*)</g)]
       .map(m => m[2].trim()).filter(Boolean);
     assert.ok(marks.length > 0, `${label}: a marker is still drawn`);
     for (const lbl of marks) {

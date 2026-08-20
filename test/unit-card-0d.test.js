@@ -127,7 +127,8 @@ const rowsOf = (C) => [...(C.document.getElementById('comp-progress').innerHTML 
   assert.ok(/showProgressCard\(true,\s*_idx\)/.test(fn),
     'the learner branch renders the REVIEW card for the lesson being played');
   const cardAt = fn.indexOf('showProgressCard(true, _idx)');
-  const slAt = fn.indexOf('openStorylineScreen');
+  // v81_u / PLAN §C0.3: showStoryline(...), a thin delegate to openStorylineScreen(...) — see INTERNALS.md §6b.
+  const slAt = fn.indexOf('showStoryline');
   assert.ok(cardAt > 0 && slAt > cardAt,
     'the card is tried BEFORE the storyline fallback, or the fallback would always win');
   assert.ok(/_drill/.test(fn.slice(0, cardAt)),

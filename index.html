@@ -3369,6 +3369,21 @@ function showLessonSet(){ return goLessonSet(); }
 // not just the call. `build-static.js` has its OWN copy of the one call site inside its `loadSaved`
 // re-implementation — kept in sync here, same pairing as `showLessonSet`.
 function showLesson(idx){ return startLesson(idx); }
+// PLAN §C0.3 — `storyline-screen`, the LAST of three surfaces ruled together (user, after `v81_r`)
+// and the biggest: FOUR distinct entry semantics already had their own real functions before this
+// seam, so this gets FOUR thin delegates rather than one — the same reasoning `showGeneration`/
+// `showGenerationClean` used for two. `showStoryline` is the raw entry (chainId + pre-encoded
+// chain); `showStorylineForTopic` resolves by topic name and FALLS BACK to a standalone lesson set
+// if no storyline owns it (`loadSaved`) — a real behavioural fork, not just a different lookup;
+// `showStorylineById` resolves by storyline id and PUSHES history (fork switching must stay
+// reversible); `showStorylineByChainId` is for URL/hash entry, REPLACES history, and — unlike the
+// other three — does NOT call `openStorylineScreen` at all: it independently re-renders (own
+// `_renderStorylineScreen` + `show()` calls), so it is a genuinely separate code path, not a thin
+// resolver. `build-static.js` has its OWN copies of three of these four call sites — kept in sync.
+function showStoryline(chainId, encodedChain){ return openStorylineScreen(chainId, encodedChain); }
+function showStorylineForTopic(topicName){ return _openStorylineForTopic(topicName); }
+function showStorylineById(slId){ return _openStorylineById(slId); }
+function showStorylineByChainId(chainId){ return _tryOpenStorylineByChainId(chainId); }
 // Returning to the main form: restore the form's own language selection into the
 // render context (a viewed story may have temporarily overridden APP.srcLang). The
 // main selectors/library filter were never mutated while viewing, so only the context
@@ -5336,7 +5351,7 @@ async function init(){
   if (location.hash.startsWith('#sl=')) {
     // Storyline deep-link — savedList and storylines now populated
     const chainId = location.hash.slice(4);
-    _tryOpenStorylineByChainId(chainId);
+    showStorylineByChainId(chainId);
   } else {
     const hashTopic = decodeURIComponent((location.hash.match(/[#&]topic=([^&]*)/) || [])[1] || '');
     if (hashTopic) loadSaved(hashTopic);
@@ -5860,14 +5875,14 @@ async function loadSavedList(){
     const chainNewest=newestOf(chain);
     const chainDate=chainNewest?new Date(chainNewest).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):''
     const hdrTitle = hasTitle
-      ? `<span class="storyline-title" style="cursor:pointer;flex:1" onclick="event.stopPropagation();openStorylineScreen(this.closest('[data-chain-id]').dataset.chainId,this.closest('[data-chain]').dataset.chain)">
+      ? `<span class="storyline-title" style="cursor:pointer;flex:1" onclick="event.stopPropagation();showStoryline(this.closest('[data-chain-id]').dataset.chainId,this.closest('[data-chain]').dataset.chain)">
           <span style="font-size:18px">${titleIcon}</span>
           <div style="min-width:0">
             <div class="storyline-title-text">${escHtml(titleText)}</div>
             <div class="storyline-title-sub">${(()=>{ const first=byIdAll[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge" style="font-size:10px">${sL.flag}→${tL.flag}</span> `; })()} ${chain.length===1?t('storyline.chapters',{n:1}):t('storyline.chapters_plural',{n:chain.length})}${chainDate?' · '+chainDate:''}</div>
           </div>
          </span>`
-      : `<span class="storyline-title" style="flex:1;cursor:pointer" onclick="event.stopPropagation();openStorylineScreen(this.closest('[data-chain-id]').dataset.chainId,this.closest('[data-chain]').dataset.chain)">
+      : `<span class="storyline-title" style="flex:1;cursor:pointer" onclick="event.stopPropagation();showStoryline(this.closest('[data-chain-id]').dataset.chainId,this.closest('[data-chain]').dataset.chain)">
           ${(()=>{ const first=byIdAll[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge">${sL.flag}→${tL.flag}</span>`; })()}
           <span class="storyline-title-sub">${t('storyline.title')} · ${chain.length===1?t('storyline.chapters',{n:1}):t('storyline.chapters_plural',{n:chain.length})}${chainDate?' · '+chainDate:''}</span>
          </span>`;
@@ -5878,7 +5893,7 @@ async function loadSavedList(){
       : '';
     html += `<div class="storyline-group" id="slgroup-${chainId}">`;
     html += `<div class="storyline-hdr" id="slhdr-${chainId}" data-chain-id="${chainId}" data-chain="${escapedChain}"
-      onclick="openStorylineScreen(this.dataset.chainId,this.dataset.chain)">
+      onclick="showStoryline(this.dataset.chainId,this.dataset.chain)">
       ${hdrTitle}
       <button class="ico-btn export" style="font-size:11px;padding:2px 8px"
         title="${t('lesson.export_storyline_title')}"
@@ -6065,7 +6080,7 @@ async function loadSaved(ref){
       const started = idx>=0 ? (showLesson(idx) !== false) : (showProgressCard(true), true);
       if(!started){
         const ctx=_storylineForTopic(APP.lessonData?.topic);
-        if(ctx && ctx.sl) openStorylineScreen(ctx.sl.id, ctx.enc);
+        if(ctx && ctx.sl) showStoryline(ctx.sl.id, ctx.enc);
         else showGenerationClean();
       }
     }
@@ -6230,7 +6245,7 @@ function startBackgroundJob(jobId, topic){
         APP.activeJob=null; saveActiveJob(null);
         setGenStatus('hidden','');
         showToast(t('toast.generated',{topic:j.data.topic}));
-        _openStorylineForTopic(j.data.topic);
+        showStorylineForTopic(j.data.topic);
       }
       if(j.status==='error'){
         clearInterval(iv);
@@ -6949,7 +6964,7 @@ function buildPath(){
     try { _slCtx=_storylineForTopic(APP.lessonData?.topic); } catch(_) { _slCtx=null; }
     const _sl=_slCtx&&_slCtx.sl;
     if(_sl&&_sl.id){
-      slRow.innerHTML=`<span style="cursor:pointer;background:var(--gray-light);border-radius:10px;padding:2px 10px;font-size:12px" role="button" tabindex="0" title="${escAttr(t('complete.back_story'))}" onclick="_openStorylineById('${escJsAttr(_sl.id)}')">${_sl.icon||'📖'} ${escHtml(_sl.title||t('storyline.title'))}</span>`;
+      slRow.innerHTML=`<span style="cursor:pointer;background:var(--gray-light);border-radius:10px;padding:2px 10px;font-size:12px" role="button" tabindex="0" title="${escAttr(t('complete.back_story'))}" onclick="showStorylineById('${escJsAttr(_sl.id)}')">${_sl.icon||'📖'} ${escHtml(_sl.title||t('storyline.title'))}</span>`;
       slRow.classList.add('visible');
     } else { slRow.innerHTML=''; slRow.classList.remove('visible'); }
   }
@@ -6990,7 +7005,7 @@ function buildPath(){
     const _cpSlId=_cpSl?.id||('sl_'+Math.abs(JSON.stringify(cpChain).split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0)));
     const _cpEnc=encodeURIComponent(JSON.stringify(cpChain));
     cpStrip.style.cursor='pointer';
-    cpStrip.onclick=()=>openStorylineScreen(_cpSlId,_cpEnc);
+    cpStrip.onclick=()=>showStoryline(_cpSlId,_cpEnc);
     cpStrip.innerHTML=`<span style="cursor:pointer">${cpTitle} ↗</span><span style="white-space:nowrap">${cpPos}/${cpTotal} · ${cpDone}/${cpLessons}</span><div class="chain-prog-bar-wrap"><div class="chain-prog-bar" style="width:${cpPct}%"></div></div>`;
     cpStrip.style.display='flex';
   } else {
@@ -8294,7 +8309,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
         if (!String(_altSl.title || '').trim() || _lbl === _openLbl) _lbl = _mk(_altSl, kid).trim();
         out += '<div style="' + _markerBase + ';cursor:pointer;text-decoration:underline" role="button" tabindex="0"'
              + ' title="' + escAttr(_altSl.title || kid || '') + '"'
-             + ' onclick="event.stopPropagation();_openStorylineById(\'' + escJsAttr(_altSl.id) + '\')">'
+             + ' onclick="event.stopPropagation();showStorylineById(\'' + escJsAttr(_altSl.id) + '\')">'
              + escHtml(_lbl) + '</div>';
       } else {
         // A successor in no storyline at all — there is nothing to name and nowhere to go.
@@ -8372,7 +8387,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
     const openable = !!altSl;
     let alt = '<div class="sl-fork-alt" style="opacity:.5' + (openable ? ';cursor:pointer' : '') + '"'
             + (openable ? ' role="button" tabindex="0" title="' + escAttr(altSl.title || '') + '"'
-                        + ' onclick="_openStorylineById(\'' + escJsAttr(altSl.id) + '\')"' : '')
+                        + ' onclick="showStorylineById(\'' + escJsAttr(altSl.id) + '\')"' : '')
             + '><div style="pointer-events:none">';
     names.forEach((n, i) => {
       if (i > 0) alt += '<div class="path-line" style="height:20px"></div>';
@@ -8459,7 +8474,7 @@ window.addEventListener('popstate', function(e) {
   } else if (location.hash.startsWith('#sl=')) {
     // Direct URL navigation without state — try to resolve from saved list
     const chainId = location.hash.slice(4);
-    _tryOpenStorylineByChainId(chainId);
+    showStorylineByChainId(chainId);
   } else {
     APP._slScreen = null;
     // Return to appropriate screen based on hash
@@ -10588,7 +10603,7 @@ async function saveLessonEdits(lessonIdx) {
 function goStorylineFromLesson() {
   const sl = APP._slScreen;
   if (!sl) return;
-  openStorylineScreen(sl.chainId, sl.encodedChain);
+  showStoryline(sl.chainId, sl.encodedChain);
 }
 
 
@@ -15131,7 +15146,7 @@ async function setSpeechLocale(scope, id, raw){
     try { refreshTtsVoiceState(); } catch(_) {}
     try { updateTtsVoiceNote(); } catch(_) {}
     showToast('🗣 ' + (value || t('passmark.inherited')));
-    if(scope==='storyline' && APP._slScreen?.chainId) openStorylineScreen(APP._slScreen.chainId, APP._slScreen.enc);
+    if(scope==='storyline' && APP._slScreen?.chainId) showStoryline(APP._slScreen.chainId, APP._slScreen.enc);
     else if(APP.lessonData) buildPath();
   }catch(e){ showToast(t('qc.toast.save_failed')+': '+e.message); }
 }
@@ -15167,7 +15182,7 @@ async function setPassMark(scope, id, raw){
       if(APP.lessonData && APP.lessonData.id===id){ if(value===null) delete APP.lessonData.coverageTarget; else APP.lessonData.coverageTarget=value; }
     }
     showToast(t('models.threshold_set').replace('{pct}', Math.round((value===null?_coverageTarget():value)*100)));
-    if(scope==='storyline' && APP._slScreen?.chainId) openStorylineScreen(APP._slScreen.chainId, APP._slScreen.enc);
+    if(scope==='storyline' && APP._slScreen?.chainId) showStoryline(APP._slScreen.chainId, APP._slScreen.enc);
     else if(APP.lessonData) buildPath();
   }catch(e){ showToast(t('qc.toast.save_failed')+': '+e.message); }
 }
@@ -16482,7 +16497,7 @@ function showComplete(review, lessonIdxOverride){
       let navHtml = `<button class="cont-btn" style="font-size:13px;padding:8px 18px;margin:4px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="showLessonSet()">📚 ${escHtml(lsTitle)}</button>`;
       if (sl && slEnc) {
         const slEncAttr = slEnc.replace(/'/g, '%27');
-        navHtml += `<button class="cont-btn" style="font-size:13px;padding:8px 18px;margin:4px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="openStorylineScreen('${sl.id}','${slEncAttr}')">📖 ${escHtml(sl.title||t('storyline.title'))}</button>`;
+        navHtml += `<button class="cont-btn" style="font-size:13px;padding:8px 18px;margin:4px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="showStoryline('${sl.id}','${slEncAttr}')">📖 ${escHtml(sl.title||t('storyline.title'))}</button>`;
       }
       _compNav.innerHTML = navHtml;
       _compNav.style.display = 'flex';
@@ -17722,7 +17737,7 @@ function _compProgressHtml(topicKey, slCtx, opts){
 function compBackToStory(){
   endDrill();
   const b = APP._compBack;
-  if (b && b.kind === 'storyline') openStorylineScreen(b.id, b.enc);
+  if (b && b.kind === 'storyline') showStoryline(b.id, b.enc);
   else showGenerationClean();
 }
 
@@ -19352,7 +19367,7 @@ function confirmQuit(){
     }
     const topicKey = APP.lessonData?.topic;
     const ctx = topicKey ? _storylineForTopic(topicKey) : null;
-    if(ctx && ctx.sl) openStorylineScreen(ctx.sl.id, ctx.enc);
+    if(ctx && ctx.sl) showStoryline(ctx.sl.id, ctx.enc);
     else showGenerationClean();
   } else {
     showLessonSet();

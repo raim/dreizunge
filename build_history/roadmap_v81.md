@@ -1662,6 +1662,59 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_u` — `PLAN §C0.3`, an EIGHTH surface seamed: storyline-screen, third and last of the ruling — the track's biggest slice
+
+**Shipped by: Claude Code.** The ruling after `v81_r` was "do THREE more, smallest first" —
+`lesson-set` → `lesson-screen` → `storyline-screen`, no re-asking between them. This is the third
+and last. **All three surfaces from that ruling are now shipped; nothing is currently owed on this
+track.**
+
+**Four distinct entry functions already existed, each with real, different behaviour** — this is
+what made this the biggest slice, not a bigger version of the same shape. `openStorylineScreen`
+(the raw chainId+encodedChain entry, PUSHES history), `_openStorylineForTopic` (resolves by topic
+membership, FALLS BACK to a standalone lesson set if none found), `_openStorylineById` (resolves by
+storyline id, also pushes — the fork-switch destination, reversibility matters there), and
+`_tryOpenStorylineByChainId` (URL/hash entry, REPLACES history, and does not even call
+`openStorylineScreen` — it independently re-renders). Same reasoning `showGeneration`/
+`showGenerationClean` used for two distinct behaviours, scaled to four: `showStoryline`,
+`showStorylineForTopic`, `showStorylineById`, `showStorylineByChainId`, one thin delegate each.
+
+**17 external callers rerouted across `index.html`** (11 direct `openStorylineScreen` calls, 1
+`_openStorylineForTopic`, 3 `_openStorylineById`, 2 `_tryOpenStorylineByChainId`), plus 3 in
+`build-static.js`. **One caller was nearly missed on the first pass**: a grep for
+`_tryOpenStorylineByChainId(chainId);` returned two IDENTICAL-looking lines, and the reflex was to
+assume one was the function's own retry-recursion (`loadSavedList().then(() => …)`) — it was not.
+Reading both call sites in full found the real self-recursion elsewhere (different text entirely)
+and the second "identical" line was a genuine 17th external caller, inside the `popstate` handler.
+**The lesson: a text match found via grep is a location, not a classification** — confirm what a
+call site actually is by reading it, not by how many other matches share its exact substring. The
+three resolver functions' own internal calls into `openStorylineScreen` (and the real
+self-recursion) were deliberately left unrerouted, same treatment as `showComplete`'s two internal
+self-calls at `v81_n`. `closeStorylineScreen` (the "← Back" exit) got no seam name, matching how no
+other close/exit helper in this track got one either.
+
+**8 test files referenced these four function names.** Sorted the same way as `v81_t`'s 14: stubs
+(unaffected — dynamic lookup at call time), direct-call test drivers (unaffected), and source-text
+pins. Pins broke in `unit-card-0d.test.js` (1), `unit-learner-nav.test.js` (3), and — the largest —
+`unit-fork-display.test.js` (8, all checking the RENDERED onclick text of fork markers and greyed
+branches), plus `unit-lessonset-storyline-link.test.js` (1, the lesson-set page's storyline chip).
+All true positives, all fixed by re-pointing at the new names; none of the underlying claims
+changed.
+
+**⚠️ A real mutation-testing gap found and closed, not just repeated from `v81_t`.** The new
+journey's first version proved entry via `showStorylineById` only. Mutation-testing the OTHER three
+wrapper names one at a time found that `showStoryline()` itself — the raw entry every other wrapper
+either calls through or duplicates — is called by NONE of the other three, so breaking it survived
+the entire rest of `unit-ui-journeys.test.js` silently. This is `v81_n`'s "a mutation surviving is
+not proof of correctness" lesson in a new shape: a seam with several sibling names needs its OWN
+name proven, not just its siblings'. Added a dedicated assertion; all four wrapper names are now
+independently mutation-tested and independently confirmed to go red when broken.
+
+node test/run.js: 235 checks, ALL PASSED
+node test/run.js --quick: 209 checks, ALL PASSED
+node build-static.js re-run (index.html + build-static.js both changed); node test/check-inline.js
+and the docs/index.html variant: 0 failures each
+
 ### `v81_t` — `PLAN §C0.3`, a SEVENTH surface seamed: lesson-screen, second of three ruled together
 
 **Shipped by: Claude Code.** The ruling after `v81_r` was "do THREE more, smallest first" —

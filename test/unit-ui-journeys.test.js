@@ -33,6 +33,14 @@ const SAVED = store.topics.map(t => ({ id: t.id, topic: t.topic, lang: t.lang, s
 const COMP_IDX = TOPIC.lessons.findIndex(L => L && L.type === 'comprehension');
 // A plain, non-story-gated lesson — TOPIC is guaranteed to have one (see the TOPIC filter above).
 const PLAIN_IDX = TOPIC.lessons.findIndex(L => L && !L._hidden && !isPost(L) && !L.type);
+// A real storyline with at least one chapter that resolves to a real, saved topic — for the
+// storyline-screen journey. Independent of TOPIC: storyline-screen renders from its own chain args.
+const BY_ID = Object.fromEntries(SAVED.filter(l => l.id).map(l => [l.id, l]));
+const SL = (store.storylines || []).find(s => (s.chapters || []).some(cid => BY_ID[cid]));
+assert.ok(SL, 'the corpus has a storyline with at least one resolvable chapter');
+const SL_TOPIC = BY_ID[SL.chapters.find(cid => BY_ID[cid])].topic;
+const SL_CHAIN = SL.chapters.map(cid => BY_ID[cid]?.topic).filter(Boolean);
+const SL_ENC = encodeURIComponent(JSON.stringify(SL_CHAIN));
 const settle = () => new Promise(resolve => setTimeout(resolve, 25));
 
 function client() {
@@ -243,6 +251,56 @@ async function main() {
     'quitting a directly-started lesson returns to the progress card (via the already-seamed showProgressCard)');
   assert.strictEqual(C.run('APP.screen'), 'complete-screen', 'APP.screen returns with it');
   console.log('  lesson-screen: direct entry (via showLesson) -> progress card, on a plain lesson');
+}
+
+// PLAN §C0.3 — `storyline-screen`, the LAST of three surfaces ruled together (user, after `v81_r`)
+// and the biggest: four distinct entry functions, this journey enters through one of them
+// (`showStorylineById`, the one real storyline links use). The exit is the same static-markup gap
+// `v81_r`/`v81_s` already found (the "🌍" home button is unreachable by this harness) — resolved
+// the same way, calling `showGenerationClean()` directly. `closeStorylineScreen()` (the OTHER exit,
+// wired to "← Back") is not exercised here: its only effect is `history.back()`, which this
+// harness's stub `history` object no-ops, so there is nothing observable to assert on it.
+{
+  const C = client();
+  C.run('loadSavedList = async function(){}; true;', 'storyline-setup');
+  C.run(`showStorylineById(${JSON.stringify(SL.id)}); true;`, 'storyline-entry');
+  await settle();
+  assert.strictEqual(active(C, 'storyline-screen'), true, 'showStorylineById() activates the storyline screen');
+  assert.strictEqual(C.run('APP.screen'), 'storyline-screen', 'APP.screen agrees');
+  assert.ok(C.run("(document.getElementById('sl-screen-body').innerHTML || '').length") > 0,
+    'the storyline body rendered its chapter cards rather than staying blank');
+  // The other three entry names are pure delegates over the SAME `openStorylineScreen`/render path
+  // already proven above — a fresh client() each, checking only that entry lands on the same
+  // screen, is enough to prove the delegation without re-testing the render itself. `showStoryline`
+  // ITSELF is included here too — none of the other three call it (each resolves to
+  // `openStorylineScreen` or, for `showStorylineByChainId`, an independent render path), so it is
+  // otherwise NEVER exercised: mutation-tested this way first, breaking it silently survived every
+  // other assertion in this file.
+  const C1b = client();
+  C1b.run('loadSavedList = async function(){}; true;', 'storyline-raw-setup');
+  C1b.run(`showStoryline(${JSON.stringify(SL.id)}, ${JSON.stringify(SL_ENC)}); true;`, 'storyline-raw-entry');
+  await settle();
+  assert.strictEqual(active(C1b, 'storyline-screen'), true,
+    'showStoryline() itself — the raw entry every other wrapper here delegates through or duplicates — activates the storyline screen');
+  const C2 = client();
+  C2.run('loadSavedList = async function(){}; true;', 'storyline-topic-setup');
+  C2.run(`showStorylineForTopic(${JSON.stringify(SL_TOPIC)}); true;`, 'storyline-topic-entry');
+  await settle();
+  assert.strictEqual(active(C2, 'storyline-screen'), true,
+    'showStorylineForTopic() also activates the storyline screen, resolving by topic membership');
+  const C3 = client();
+  C3.run('loadSavedList = async function(){}; true;', 'storyline-chainid-setup');
+  C3.run(`showStorylineByChainId(${JSON.stringify(SL.id)}); true;`, 'storyline-chainid-entry');
+  await settle();
+  assert.strictEqual(active(C3, 'storyline-screen'), true,
+    'showStorylineByChainId() also activates the storyline screen — the URL/hash entry path, which ' +
+    'does NOT call openStorylineScreen at all (it re-renders independently with replaceState)');
+  C.run('showGenerationClean(); true;', 'storyline-exit');
+  await settle();
+  assert.strictEqual(active(C, 'landing'), true,
+    'the storyline screen\'s "🌍" home button (already-seamed showGenerationClean) returns to landing');
+  assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen returns with it');
+  console.log('  storyline-screen: landing -> rendered chapter cards (via showStorylineById) -> landing');
 }
 console.log('unit-ui-journeys: ALL PASSED');
 }

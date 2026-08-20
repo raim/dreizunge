@@ -79,7 +79,10 @@ console.log(`  the storyline row renders in both modes ("${FIX.sl.title}")`);
 {
   const C = page(true);
   const on = C.run(`document.querySelector('#home-hdr-storyline span').getAttribute('onclick')`);
-  assert.ok(/_openStorylineById\(/.test(on), 'the chip opens the storyline page');
+  // v81_u / PLAN §C0.3: showStorylineById(...), a thin delegate to _openStorylineById(...) — see
+  // INTERNALS.md §6b. The stub above is still on the underlying name, which the delegate reaches
+  // via a fresh identifier lookup at call time — unaffected by the rename.
+  assert.ok(/showStorylineById\(/.test(on), 'the chip opens the storyline page');
   assert.ok(!/loadSaved\(/.test(on),
     'and does NOT loadSaved a topic — that is the call that fell through to the landing page');
   C.run(`eval(document.querySelector('#home-hdr-storyline span').getAttribute('onclick')); true;`);

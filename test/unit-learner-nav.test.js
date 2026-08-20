@@ -129,7 +129,8 @@ console.log('  helpers: learner gate, resume index (hidden-aware), storyline res
   const cq = ext(html, 'confirmQuit');
   // v81_n / PLAN §C0.3: the landing call is now showGenerationClean(), a thin delegate to
   // goLandingClean() — see INTERNALS.md §6b, "PLAN §C0 — the router seam". Same behaviour, new name.
-  assert.ok(/if\(_isLearner\(\)\)\{[\s\S]*?openStorylineScreen\(ctx\.sl\.id, ctx\.enc\)[\s\S]*?showGenerationClean\(\)/.test(cq),
+  // v81_u: showStoryline(...), a thin delegate to openStorylineScreen(...) — see INTERNALS.md §6b.
+  assert.ok(/if\(_isLearner\(\)\)\{[\s\S]*?showStoryline\(ctx\.sl\.id, ctx\.enc\)[\s\S]*?showGenerationClean\(\)/.test(cq),
     'confirmQuit sends a learner to the storyline/landing');
   // v81_s / PLAN §C0.3: showLessonSet(), a thin delegate to goLessonSet() — see INTERNALS.md §6b.
   assert.ok(/\} else \{\s*showLessonSet\(\);/.test(cq), 'a teacher still returns to the lesson-set page on quit');
@@ -200,7 +201,8 @@ console.log('  loadSaved: learner auto-start, teacher keeps the page: OK');
   const back = ext(html, 'compBackToStory');
   // v81_n / PLAN §C0.3: showGenerationClean() replaces the direct goLandingClean() call — see
   // INTERNALS.md §6b, "PLAN §C0 — the router seam".
-  assert.ok(/openStorylineScreen\(b\.id, b\.enc\)/.test(back) && /showGenerationClean\(\)/.test(back),
+  // v81_u: showStoryline(...), a thin delegate to openStorylineScreen(...) — see INTERNALS.md §6b.
+  assert.ok(/showStoryline\(b\.id, b\.enc\)/.test(back) && /showGenerationClean\(\)/.test(back),
     'compBackToStory dispatches to the storyline screen or the landing page');
   // Teacher-only extras.
   assert.ok(/const _teacher = !!APP\._teacherMode/.test(sc), 'card teacher gate keys off teacher MODE (v60.1), not _canEdit');
@@ -436,8 +438,9 @@ console.log('  static loadSaved parity + i18n keys: OK')
   assert.ok(/renderEx\(\);\s*return true;/.test(start), 'startLesson returns true once the screen is taken over');
   // v81_n / PLAN §C0.3: both loadSaveds now call showGenerationClean() — build-static.js's own
   // re-implementation was updated alongside index.html (INTERNALS §5's "both files" risk).
+  // v81_u: showStoryline(...), a thin delegate to openStorylineScreen(...) — see INTERNALS.md §6b.
   for (const [src, label] of [[ext(html, 'loadSaved'), 'live'], [ext(builder, 'loadSaved'), 'static']]) {
-    assert.ok(/if\(!started\)\{/.test(src) && /openStorylineScreen\(ctx\.sl\.id, ctx\.enc\)/.test(src)
+    assert.ok(/if\(!started\)\{/.test(src) && /showStoryline\(ctx\.sl\.id, ctx\.enc\)/.test(src)
       && /showGenerationClean\(\)/.test(src),
       `a failed auto-start falls back to storyline/landing, not the lesson-set page (${label})`);
   }
