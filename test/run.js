@@ -145,6 +145,7 @@ run('unit: progress-card swallowed errors are visible (v77_b)', 'node', [path.jo
 run('unit: mixed-driven story unlock is reachable by playing (v77_c)', 'node', [path.join(__dirname, 'unit-mixed-unlock-reachable.test.js')]);
 run('unit: story-finished card — the last page of the walk (v77_f)', 'node', [path.join(__dirname, 'unit-story-finished.test.js')]);
 run('unit: story-summary card — the first page of the walk (v77_h)', 'node', [path.join(__dirname, 'unit-story-summary.test.js')]);
+run('unit: UI journey transitions (PLAN §C0.1)', 'node', [path.join(__dirname, 'unit-ui-journeys.test.js')]);
 run('unit: word gate on the story unlock (v81_a, TRACK T)', 'node', [path.join(__dirname, 'unit-word-gate.test.js')]);
 run('unit: chapter icon row on the cards (v80_z)', 'node', [path.join(__dirname, 'unit-chapter-icons.test.js')]);
 run('unit: lesson-set storyline link (v80_x)', 'node', [path.join(__dirname, 'unit-lessonset-storyline-link.test.js')]);

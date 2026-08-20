@@ -1,12 +1,22 @@
-# Session prompt — written at the `v81_l` cut (end of session 40)
+# Session prompt — written at the `v81_m` cut (end of session 40)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_j.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_l.md` was the
 previous one — superseded by this file and renamed, not kept alongside.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_l`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_m`** cut.
 
-**Session 40 shipped `v81_l`: `PLAN §8/B4`, BKT in shadow mode.** A newly appended graded
+**Session 40 ran across two agents: Codex shipped `v81_k`/`v81_l`, then ran out of session budget
+mid-work; Claude Code picked up the uncommitted state, verified it, and shipped it as `v81_m`.**
+`v81_m`: `PLAN §C0.1`, journey-transition tests — test-only, no functional change. Locks the
+rendered/interactive outcome of the learner walk (progress card → story-unlock → lesson →
+`confirmQuit()` back), the generation landing→cached-generation→landing walk, and the settings
+popover open/close, all of which `§C0.2`'s coming router seam must preserve. Verified independently
+before committing: ran standalone and inside the full suite (both green), and mutation-tested one
+assertion (forcing `_showUnlock` to always route past the story-unlock screen) to confirm it is not
+vacuous.
+
+**Session 40 also shipped `v81_l`: `PLAN §8/B4`, BKT in shadow mode.** A newly appended graded
 observation now recomputes canonical skill mastery from the append-only log using a fixed, explicit
 prior (`.20`) and the plan's `.15/.10/.20` learn/slip/guess parameters. `APP.progress.bktShadow`
 stores the derived skill state, tagged-topic comparisons, and only changed disagreement pairs with
@@ -72,14 +82,14 @@ want to eyeball the log in the console anyway.**
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 235 checks
-node test/run.js --quick                  → expect 209
+node test/run.js                          → expect 236 checks
+node test/run.js --quick                  → expect 210
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 languages, 617 `en` keys**.
-`APP_VERSION = 'v81_l'`.
+`APP_VERSION = 'v81_m'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -115,7 +125,9 @@ Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 lan
    directory, not only in the working tree.** Re-run as the standing precaution at `v81_i` (not
    touched by that release's change): **0 failures in 40 consecutive runs.** `v81_j`'s own new file
    (`unit-observations-log.test.js`, which drives a real round through `check()`) ran clean **15
-   times in a row** before shipping.
+   times in a row** before shipping. `v81_m`'s `unit-ui-journeys.test.js` (inherited mid-flight from
+   a different agent) was mutation-tested before being trusted and committed, not merely inherited —
+   don't skip verification just because a guard already exists and already reads green.
 5. **Never put emoji in a Python string literal** (rule 25); write them via a `cat` heredoc. And
    **check what a mechanical rewrite DID** — `v80_d`'s blanket replace mangled six sentences
    including a heading.
@@ -127,8 +139,8 @@ Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 lan
 ## 1. ✅ NO RULING IS CURRENTLY OWED — the queue is clear
 
 *(`v81_i`'s sequential-lock removal was a ruling delivered directly by the user, not drawn from
-this list — nothing below was open because of it, so nothing here changes. `v81_j` DID come from
-this list — §3's `PLAN §8/B1` — and is struck there.)*
+this list — nothing below was open because of it, so nothing here changes. `v81_j`–`v81_l` (Track B)
+and `v81_m` (`PLAN §C0.1`) all came from §3 below and are struck there as they shipped.)*
 
 All three items that headed this section at the `v81_b` cut are closed:
 
@@ -161,10 +173,11 @@ is a materially lower bar. Needs a browser pass, not a code change.
   of the accepted parallel curriculum pipeline. It defines stable chapter/sentence/span/token IDs
   and provenance, but must not change existing lessons, player, learner progress, or publishing.
   See the durable roadmap diagram and migration sequence; CP1 comes before a new generator.
-- **`PLAN §C0.1`, UI journey transition tests** — user-selected as the immediate focus before more
-  shared text-panel work. It locks current learner, generation, and settings entry/exit behaviour,
-  then C0.2 introduces an incremental screen/router seam. No player rewrite, changed gate, or visual
-  redesign belongs in the first slice; see `PLAN §C0` for the ownership rule and migration order.
+- ~~`PLAN §C0.1`, UI journey transition tests~~ **✅ SHIPPED at `v81_m`.** `test/unit-ui-journeys.test.js`
+  locks the learner, generation, and settings entry/exit behaviour that `§C0.2`'s router seam must
+  preserve. **`PLAN §C0.2` is next**: one authoritative route state (`APP.screen` or equivalent) and
+  explicit screen renderers, preserving every entry point the C0.1 tests now pin — no visual redesign
+  bundled in. See `PLAN §C0` for the full ownership rule and migration order.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
@@ -200,12 +213,12 @@ is a materially lower bar. Needs a browser pass, not a code change.
   No translate pass is owed for it.
 - **The translate pass** for the remaining `en`-only keys, `translate-ui.js --langnames`, the
   `hr` `ui.json` pass, and a **native-speaker check of the `cyrillic-sr` table**.
-- **A device pass on `v81_a` … `v81_l`.** The v80 line changed every card and every question screen: the story
+- **A device pass on `v81_a` … `v81_m`.** The v80 line changed every card and every question screen: the story
   panel is on all of them, never collapsed, three-state coloured, tappable, with a translate toggle;
   the progress bars moved to the bottom; the storyboard row became clickable chapter icons.
   `v81_i` adds one more thing to look at: ordinary lessons on the node path are clickable out of
   order now — see `build_history/v81i_session38_notes.md` for what should still stay locked.
-  `v81_j` ships no UI — nothing new to look at there.
+  `v81_j`–`v81_m` ship no UI change — nothing new to look at there (`v81_m` is test-only).
 
 ## 5. NOT yours to start
 
@@ -260,3 +273,6 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
   only `check()`-graded exercises are logged, only resolved vocabulary IDs feed BKT, and no BKT
   value may become a reader of progression without a separate product ruling; `learners.js`'s
   `MAX_STATE_BYTES` growth ceiling remains unaddressed.
+- `test/unit-ui-journeys.test.js` (`v81_m`, `PLAN §C0`) — the route-parity reference for `§C0.2`.
+  Whoever builds the router seam must keep every assertion in it passing (rendered screen + exit
+  behaviour, not source shape) before removing the code path it currently exercises.

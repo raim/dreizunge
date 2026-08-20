@@ -1662,6 +1662,32 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_m` — `PLAN §C0.1`, journey-transition tests locked before the router seam
+
+**Shipped by: Codex (authored), Claude Code (verified and committed — Codex ran out of session
+budget mid-work; this was the uncommitted state left behind).**
+
+Test-only, no functional change. Per `§C0`'s own sequencing ("lock journey behaviour before moving
+it... this is the next code slice"), `test/unit-ui-journeys.test.js` pins the rendered/interactive
+outcome of three walks the coming router seam (`§C0.2`) must preserve: the learner's progress card →
+story-unlock screen → comprehension lesson → `confirmQuit()` back to the progress card; the
+generation landing form → cached-generation exit into the lesson set → back to landing; and the
+settings/model popover's open → close, which must leave the landing route untouched throughout.
+Deliberately asserts on rendered screen activity (`.active` class on the screen root) and interactive
+exits, not on which function did the rendering — the router seam is free to move code as long as
+these outcomes hold.
+
+**Verified before committing, not just inherited:** ran the file standalone (green), ran it inside
+the full suite (green at 236), and mutation-tested one assertion — forcing `showComplete`'s
+`_showUnlock` branch to always take the non-unlock path turns "Next enters the story-unlock screen"
+red, confirming the check is not vacuous. Restored and re-verified clean.
+
+APP_VERSION `v81_l` → `v81_m`. No functional `index.html` change; `docs/index.html` picks up only
+the derived version string (`build-static.js` re-run for that and to confirm freshness holds).
+
+node test/run.js: 236 checks, ALL PASSED
+node test/run.js --quick: 210 checks, ALL PASSED
+
 ### `v81_l` — `PLAN §8/B4`, shadow-only Bayesian Knowledge Tracing
 
 **Shipped by: Codex.**
