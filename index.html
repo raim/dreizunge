@@ -307,7 +307,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lang-selector{margin-bottom:14px}
 .lang-pair-row{display:flex;align-items:center;gap:8px}
 .lang-pair-col{flex:1;min-width:0}
-.lang-pair-arrow{flex-shrink:0;font-size:20px;font-weight:800;color:var(--gray-dark);line-height:1;padding-bottom:2px}
+.lang-pair-arrow{flex-shrink:0;font-size:34px;font-weight:900;color:var(--gray-dark);line-height:1;display:flex;align-items:center;height:44px}
 #ui-translate-row button:hover{opacity:.85}
 .lang-select-wrap{position:relative;display:inline-block;width:100%}
 .lang-select{width:100%;padding:10px 36px 10px 14px;font-size:15px;font-weight:700;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
@@ -375,7 +375,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .continue-row{margin-bottom:14px}
 .lang-footer{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px 14px;border-top:1.5px solid var(--gray-mid);margin-top:8px;background:var(--white)}
 .lang-footer-lbl{font-size:16px;flex-shrink:0}
-/* v55_x — the 🗣 label doubles as the SPEECH-STATE pill: normal = we can speak the target
+/* v55_x — the 💬 label doubles as the SPEECH-STATE pill: normal = we can speak the target
    language; .novoice = the system has no voice for it, so we stay silent instead of reading it
    in the wrong language. Separate from the mute button on purpose (capability vs choice). */
 .tts-pill{cursor:default}
@@ -644,6 +644,13 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       </label>
       <button id="export-static-btn" onclick="exportStatic()" title="Rebuild docs/index.html" style="display:none;font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:8px;padding:5px 10px;background:var(--white);cursor:pointer;color:var(--gray-dark)">🏗 Static</button>
       <button id="teacher-dash-btn" onclick="showTeacher()" title="Teacher dashboard" style="display:none;font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:8px;padding:5px 10px;background:var(--white);cursor:pointer;color:var(--gray-dark)">🎓 <span id="teacher-dash-lbl">Learners</span></button>
+      <!-- user follow-up after v81_aa: the teacher-mode toggle, moved here from THREE v78_f
+           instances (a full-width bar + two compact footer icons) now that this Card is reachable
+           from every screen — the original v78_f "reachable from every page" goal is better served
+           by one instance here than by scattering it. -->
+      <button id="teacher-mode-btn" onclick="toggleTeacherMode()"
+        style="font-size:13px;font-weight:700;border:1.5px solid var(--gray-mid);border-radius:20px;padding:5px 16px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif;opacity:.7"
+        title="Unlock all stories">🔓 Teacher mode</button>
     </div>
   </div>
 </div>
@@ -748,7 +755,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           <span class="lang-select-arrow">▾</span>
         </div>
       </div>
-      <div class="lang-pair-arrow">→</div>
+      <div class="lang-pair-arrow">➜</div>
       <div class="lang-pair-col">
         <div class="lang-select-wrap">
           <select class="lang-select" id="lib-lang-select" onchange="selectLang(this.value)" title="I learn">
@@ -801,14 +808,11 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
        mute-btn is removed here too rather than left as a 7th scattered-but-invisible instance. The
        select elements stay, per the existing v79_l decision (onTtsVoiceSelectGlobal still syncs
        them by id) — unrelated to this change. -->
-  <div style="display:none" id="tts-footer-landing"><span class="lang-footer-lbl tts-pill" title="">🗣</span><select class="tts-select" id="tts-lang-select-landing" onchange="onTtsLangSelectGlobal(this.value,'landing')" style="width:auto;font-size:12px" title="Speech language"></select><select class="tts-select" id="tts-voice-select-landing" onchange="onTtsVoiceSelectGlobal(this.value,'landing')" style="display:none;width:auto;max-width:150px;font-size:12px" title="Voice"></select></div>
+  <div style="display:none" id="tts-footer-landing"><span class="lang-footer-lbl tts-pill" title="">💬</span><select class="tts-select" id="tts-lang-select-landing" onchange="onTtsLangSelectGlobal(this.value,'landing')" style="width:auto;font-size:12px" title="Speech language"></select><select class="tts-select" id="tts-voice-select-landing" onchange="onTtsVoiceSelectGlobal(this.value,'landing')" style="display:none;width:auto;max-width:150px;font-size:12px" title="Voice"></select></div>
 
-  <div id="teacher-mode-bar" style="display:none;text-align:center;padding:8px 0 4px">
-    <button id="teacher-mode-btn" onclick="toggleTeacherMode()"
-      style="font-size:13px;font-weight:700;border:1.5px solid var(--gray-mid);border-radius:20px;padding:5px 16px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif;opacity:.7"
-      id="teacher-mode-btn-inner" title="Unlock all stories">🔓 Teacher mode</button>
-  </div>
-
+  <!-- user follow-up after v81_aa: the teacher-mode toggle moved into #settings-modal — a single
+       always-reachable instance now that the Settings Card exists, replacing the three v78_f
+       instances (this bar, plus the two compact footer icons). -->
   <div class="library">
     <div class="lib-hdr" style="flex-wrap:wrap;gap:8px">
       <div class="lib-title" id="lib-title-lbl">📚 Saved lessons</div>
@@ -900,7 +904,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
                  scripts.json _scriptChoice lists it, so it is invisible for every other language. -->
             <div id="src-script-wrap" style="display:none;margin-top:4px"></div>
           </div>
-          <div class="lang-pair-arrow">→</div>
+          <div class="lang-pair-arrow">➜</div>
           <div class="lang-pair-col">
             <div class="lang-select-wrap">
               <select class="lang-select" id="lang-select" onchange="selectLang(this.value)" title="I learn">
@@ -972,7 +976,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           </label>
           <label class="user-story-check-row">
             <input type="checkbox" id="use-dialect-cb" onchange="onUseDialectCb()">
-            <span id="use-dialect-lbl">🗣 I have a dialect glossary (dialect = standard word)</span>
+            <span id="use-dialect-lbl">💬 I have a dialect glossary (dialect = standard word)</span>
           </label>
         </div>
         <div class="pdf-panel" id="pdf-panel">
@@ -1081,7 +1085,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             maxlength="300" style="width:100%;box-sizing:border-box;margin-top:6px;border:1.5px solid var(--gray-mid);border-radius:8px;padding:6px 10px;font-size:12px;font-family:Nunito,sans-serif;color:#222">
           <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
             <button type="button" id="dialect-import-btn" onclick="doDialectImport()"
-              style="font-size:13px;font-weight:700;padding:6px 16px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif">🗣 Build dialect lessons</button>
+              style="font-size:13px;font-weight:700;padding:6px 16px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif">💬 Build dialect lessons</button>
             <span id="dialect-import-status" style="font-size:12px;color:var(--gray-dark)"></span>
           </div>
           <div id="dialect-report" style="margin-top:8px;font-size:12px"></div>
@@ -1275,7 +1279,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <div class="story-hdr" style="display:flex;align-items:center;cursor:pointer" onclick="toggleStory()">
       <span id="read-story-hdr" style="flex:1">📖 Read the story</span>
       <span class="story-arrow" id="story-arrow" style="margin-right:4px">▼</span>
-      <button class="story-icon-btn" onclick="event.stopPropagation();speakStory()" id="speakstory-btn" title="Read aloud">🔊</button>
+      <button class="story-icon-btn" onclick="event.stopPropagation();speakStory()" id="speakstory-btn" title="Read aloud">💬</button>
       <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="event.stopPropagation();toggleStoryRepair()" title="Edit story">✏️</button>
       <button class="story-icon-btn" id="story-qc-btn" onclick="event.stopPropagation();runStoryQc()" title="Proofread with QC model" style="display:none">🔍</button>
       <span id="story-edit-toolbar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap" onclick="event.stopPropagation()">
@@ -1345,13 +1349,14 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <span class="lang-select-arrow">▾</span>
     </div>
     <div style="display:flex;align-items:center;gap:5px;flex-basis:100%;justify-content:center;padding:2px 0 0">
-      <span class="lang-footer-lbl tts-pill" title="">🗣</span>
+      <span class="lang-footer-lbl tts-pill" title="">💬</span>
       <select class="tts-select" id="tts-lang-select-ls" onchange="onTtsLangSelectGlobal(this.value,'ls')" style="width:auto;font-size:12px" title="Speech language"></select>
       <select class="tts-select" id="tts-voice-select-ls" onchange="onTtsVoiceSelectGlobal(this.value,'ls')" style="display:none;width:auto;max-width:150px;font-size:12px" title="Voice"></select>
       <!-- global mute-pill consolidation (PLAN §C4 "keep going"): this footer's own mute-btn is
            gone — the always-reachable #corner-pills mute pill replaces it, same as the library
-           header's copy. -->
-      <button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button><button class="story-icon-btn teacher-ico" id="teacher-ico-ls" style="flex-shrink:0;font-size:18px;opacity:.7"></button>
+           header's copy. Its teacher-mode icon is gone too (user follow-up after v81_aa) — the
+           toggle moved into #settings-modal, a single always-reachable instance. -->
+      <button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button>
     </div>
   </div>
   <div id="ls-passmark" style="border-top:1px solid var(--gray-mid);display:none"></div>
@@ -1437,7 +1442,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <span style="font-size:20px">📖</span>
       <span style="font-size:13px;font-weight:900;color:var(--green-dark)" id="comp-story-panel-lbl">Story unlocked!</span>
       <button class="spk-ico" id="comp-story-xlate" style="display:none;margin-left:auto;font-size:11px;font-weight:800;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Nunito,sans-serif" onclick="toggleCompStoryLang()"></button>
-      <button class="spk-ico" id="comp-story-spk" onclick="speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">🔊</button>
+      <button class="spk-ico" id="comp-story-spk" onclick="speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">💬</button>
     </div>
     <!-- v74_l: NOT italic, and larger. This panel is the reward for finishing the chapter and the
          thing the learner is meant to actually READ — a long italic run at 13px reads as a caption,
@@ -1586,7 +1591,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         <span style="font-size:20px">📖</span>
         <span style="font-size:13px;font-weight:900;color:var(--green-dark)" id="sum-sumbox-lbl"></span>
         <button class="spk-ico" id="sum-sum-xlate" style="display:none;margin-left:auto;font-size:11px;font-weight:800;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Nunito,sans-serif"></button>
-        <button class="spk-ico" id="sum-sum-spk" title="">🔊</button>
+        <button class="spk-ico" id="sum-sum-spk" title="">💬</button>
       </div>
       <div id="sum-sumtext" dir="auto" style="font-size:15px;color:var(--text);line-height:1.65"></div>
     </div>
@@ -1632,7 +1637,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <style>#us-story p{margin:0 0 12px}#us-story p:last-child{margin-bottom:0}</style>
     <div id="us-actions" style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:18px;flex-wrap:wrap">
       <button class="comp-ico" id="us-back">←</button>
-      <button class="comp-ico" id="us-spk">🔊</button>
+      <button class="comp-ico" id="us-spk">💬</button>
       <button class="comp-ico primary" id="us-next">→</button>
     </div>
   </div>
@@ -1692,7 +1697,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <button class="ico-btn recreate" id="sl-bottom-recreate" onclick="recreateStorylineLessons(event)" title="Add lessons to every chapter">➕</button>
     </div>
   <div class="lang-footer" id="lang-footer-storyline">
-    <span class="lang-footer-lbl tts-pill" title="">🗣</span>
+    <span class="lang-footer-lbl tts-pill" title="">💬</span>
     <div class="lang-select-wrap" style="width:auto;display:inline-block">
       <select class="lang-select lang-select-sm" style="width:auto" id="src-lang-select-footer-sl" onchange="selectSrcLang(this.value, false)">
       </select>
@@ -1700,8 +1705,9 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     </div>
     <!-- global mute-pill consolidation (PLAN §C4 "keep going"): this footer's own mute-btn is
          gone — the always-reachable #corner-pills mute pill replaces it, same as the library
-         header's copy. -->
-    <button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button><button class="story-icon-btn teacher-ico" id="teacher-ico-sl" style="flex-shrink:0;font-size:18px;opacity:.7"></button>
+         header's copy. Its teacher-mode icon is gone too (user follow-up after v81_aa) — the
+         toggle moved into #settings-modal, a single always-reachable instance. -->
+    <button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button>
   </div>
   <div id="sl-passmark" style="border-top:1px solid var(--gray-mid);display:none"></div>
   <div class="gen-stats sl-screen-stats" id="sl-screen-prov" style="padding:6px 16px 0;border-top:1px solid var(--gray-mid);margin:0;display:none"></div>
@@ -2942,7 +2948,7 @@ function updateDialectStudio(){
           +t('dialect.review.coverage',{used:ai.coverage.used,total:ai.coverage.total})+'</div>';
       }
       html+='<div style="margin-top:4px;padding:8px 10px;border:1px solid #f0c060;border-radius:8px;background:var(--white)">'
-        +'<div style="font-weight:700;color:#7a4a00;white-space:pre-wrap">🗣 '+escHtml(d.story)+'</div>'
+        +'<div style="font-weight:700;color:#7a4a00;white-space:pre-wrap">💬 '+escHtml(d.story)+'</div>'
         +(d.storyGloss?'<div style="margin-top:6px;font-weight:600;color:#555;white-space:pre-wrap">'+escHtml(d.storyGloss)+'</div>':'')
         +'</div>';
       // For the rewrite method, show the Standard-German source it started from (the scaffold), so
@@ -5544,9 +5550,8 @@ async function init(){
     refreshAccountBadge();
   }catch(_){}
   { const _v=document.getElementById('app-tagline'); if(_v&&APP.info.version) _v.title=APP.info.version; }
-  // Show teacher mode bar in all modes (unlocked by default in live, locked by default in static)
-  const _tmBar2 = document.getElementById('teacher-mode-bar');
-  if (_tmBar2) _tmBar2.style.display = '';
+  // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
+  // #settings-modal, which needs no equivalent forced-visible step — it carries no default hiding).
   await loadLanguages();
   await loadScripts();
   await syncFlagsFromServer();
@@ -5843,7 +5848,7 @@ function savedItemHtml(s, connector, hideStory, hideProv, slChapter) {
           <span id="sis-arrow-${sid}" style="font-size:10px">▼</span>
         </div>
         <span class="story-icon-btn" id="sis-xlate-${sid}" style="display:none;font-size:11px;font-weight:800" onclick="event.stopPropagation();toggleSavedStoryLang('${sid}')"></span>
-        <span class="story-icon-btn" onclick="event.stopPropagation();speakBodyText('sis-body-${sid}')" title="${t('lesson.read_aloud')}">🔊</span>
+        <span class="story-icon-btn" onclick="event.stopPropagation();speakBodyText('sis-body-${sid}')" title="${t('lesson.read_aloud')}">💬</span>
       </div>
       <div class="saved-item-story-body" id="sis-body-${sid}" dir="auto" data-topic="${s.topic.replace(/"/g,'&quot;')}" data-lang="${s.lang||''}"></div>
     </div>
@@ -6147,7 +6152,7 @@ async function loadSavedList(){
         `<div style="display:flex;align-items:center">` +
         `<button class="storyline-story-hdr" style="flex:1" onclick="event.stopPropagation();toggleSlSummary('${chainId}')">` + 
         `${t('lesson.read_summary')}<span class="storyline-story-arrow" id="slsc-summary-arrow-${chainId}">▼</span></button>` +
-        `<button class="storyline-hdr-btn" style="flex-shrink:0" data-speak="slsc-summary-body-${chainId}" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="${t('lesson.read_aloud')}">🔊</button>` +
+        `<button class="storyline-hdr-btn" style="flex-shrink:0" data-speak="slsc-summary-body-${chainId}" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="${t('lesson.read_aloud')}">💬</button>` +
         (_canEdit() ? `<button class="storyline-hdr-btn" style="flex-shrink:0;margin-right:6px" onclick="event.stopPropagation();openSummaryEdit('${chainId}')" title="Edit summary">✏️</button>` : '') +
         `</div>` +
         `<div class="storyline-story-body" id="slsc-summary-body-${chainId}" dir="auto" data-lang="${byIdAll[chain[0]]?.srcLang||''}">` +
@@ -8360,7 +8365,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
         + '<div style="display:flex;align-items:center">'
         + '<button class="storyline-story-hdr" style="flex:1" data-target="' + _sumId + '" onclick="_toggleById(this.dataset.target)">' + '📖 ' 
         + (existingSummary ? t('lesson.read_summary') : t('lesson.no_summary')) + ' ▼</button>'
-        + (existingSummary ? '<button class="storyline-hdr-btn" onclick="speakBodyText(\'' + _sumId + '\')">🔊</button>' : '')
+        + (existingSummary ? '<button class="storyline-hdr-btn" onclick="speakBodyText(\'' + _sumId + '\')">💬</button>' : '')
         + (_canEdit() ? '<button class="storyline-hdr-btn" data-sumid="' + _sumId + '" onclick="event.stopPropagation();openSummaryEdit(null,this.dataset.sumid)" title="Edit summary">✏️</button>' : '')
         + ((_canEdit() && existingSummary) ? '<button class="storyline-hdr-btn" id="sum-qc-btn" onclick="event.stopPropagation();runSummaryQc()" title="' + escAttr(t('qc.summary_btn')) + '">🔍</button>' : '')
         + '</div>'
@@ -8673,7 +8678,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
       '<span style="flex:1">' + t('lesson.read_full_story') + '</span>' +
       `<span class="storyline-story-arrow" id="csarrow-${slscId}">▼</span></div>` +
       `<span class="story-icon-btn" id="csxlate-${slscId}" style="display:none;font-size:11px;font-weight:800;padding:0 6px" onclick="event.stopPropagation();toggleChainStoryLang('${slscId}')"></span>` +
-      `<span class="story-icon-btn" onclick="event.stopPropagation();speakChainStory('${slscId}')">🔊</span>` +
+      `<span class="story-icon-btn" onclick="event.stopPropagation();speakChainStory('${slscId}')">💬</span>` +
       `</div>` +
       `<div class="storyline-story-body" id="csbody-${slscId}" data-chain="${escapedChain}"></div>` +
       '</div>';
@@ -11417,7 +11422,7 @@ function toggleChainStoryLang(chainId){
   const body = document.getElementById('csbody-' + chainId);
   if (body) _renderChainStory(body, chapters, chainId);
 }
-// The 🔊 reads whatever is currently shown, like the results card's does.
+// The 💬 reads whatever is currently shown, like the results card's does.
 function speakChainStory(chainId){
   const chapters = _chainStoryCache[chainId];
   if (!chapters || !chapters.length) return;
@@ -13883,7 +13888,7 @@ function _exStoryPanelHtml(ex){
   const lang = d.lang || APP.lang;
   const spk = (typeof _lessonIsDialect === 'function' && _lessonIsDialect()) ? '' :
     `<button class="flag-btn" style="margin-bottom:6px" title="${escAttr(t('ex.comprehension.story_listen'))}"
-       onclick="speakBodyText(null,'${escAttr(lang)}',APP.lessonData?.story||'')">🔊</button>`;
+       onclick="speakBodyText(null,'${escAttr(lang)}',APP.lessonData?.story||'')">💬</button>`;
   return '<details id="ex-story-panel"' + (_open ? ' open' : '') + ' style="margin-top:14px;border:2px solid var(--gray-mid);'
        + 'border-radius:var(--radius-lg);background:var(--white);text-align:left;padding:10px 14px">'
        + `<summary style="cursor:pointer;font-size:13px;font-weight:900;color:var(--gray-dark);outline:none;display:flex;align-items:center;gap:8px">`
@@ -14140,7 +14145,7 @@ function lBlock(it, pron, hideWord) {
     return hideWord ? '' : `<div class="target-box"><div class="target-box-text" dir="auto">${furiHtml(it)}</div></div>`;
   }
   return `<button class="listen-big" onclick="speak('${esc(it)}')">
-      <span class="listen-icon">🔊</span>
+      <span class="listen-icon">💬</span>
       <div><div class="listen-lbl">Tap to listen</div>${hideWord ? '' : `<div class="listen-word">${furiHtml(it)}</div>`}</div>
     </button><button class="slow-btn" onclick="speak('${esc(it)}',0.5)">🐢 Slow</button>`;
 }
@@ -14329,7 +14334,7 @@ function tGlyphOrder(ex){
 
 
 
-function tRead(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); const spk=_lessonIsDialect()?'':`<button class="spk-ico" onclick="speak('${esc(ex.target)}')">🔊</button>`; return `<div class="ex-badge">${t("ex.badge.read_translate")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.read_translate.q",{lang:Ln})}</div><div class="target-box"><div class="target-box-text" dir="auto">${applyFurigana(ex.target)}</div>${spk}</div>${cGrid(ex.choices,true)}</div>`; }
+function tRead(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); const spk=_lessonIsDialect()?'':`<button class="spk-ico" onclick="speak('${esc(ex.target)}')">💬</button>`; return `<div class="ex-badge">${t("ex.badge.read_translate")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.read_translate.q",{lang:Ln})}</div><div class="target-box"><div class="target-box-text" dir="auto">${applyFurigana(ex.target)}</div>${spk}</div>${cGrid(ex.choices,true)}</div>`; }
 
 function pickChoice(i,el){
   const C=APP.cur;
@@ -15349,7 +15354,7 @@ function speechLocaleRowHtml(scope, id, own, inherited, lang){
          + escHtml(l + (l === base ? ' ★' : '') + (here ? '' : ' ⚠')) + `</option>`;
   }).join('');
   return `<div style="display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;font-size:12px;font-weight:700;color:var(--gray-dark);padding:6px 12px">
-    <span>🗣 ${escHtml(t('tts.test_lbl'))}</span>
+    <span>💬 ${escHtml(t('tts.test_lbl'))}</span>
     <select id="sp-loc-${scope}" title="Speech locale"
       style="padding:4px 6px;border:1.5px solid var(--gray-mid);border-radius:8px;font-weight:800;font-family:inherit"
       onchange="setSpeechLocale('${scope}','${esc(String(id))}',this.value)">${opts}</select>
@@ -15378,7 +15383,7 @@ async function setSpeechLocale(scope, id, raw){
     // variant row are both stale now.
     try { refreshTtsVoiceState(); } catch(_) {}
     try { updateTtsVoiceNote(); } catch(_) {}
-    showToast('🗣 ' + (value || t('passmark.inherited')));
+    showToast('💬 ' + (value || t('passmark.inherited')));
     if(scope==='storyline' && APP._slScreen?.chainId) showStoryline(APP._slScreen.chainId, APP._slScreen.enc);
     else if(APP.lessonData) buildPath();
   }catch(e){ showToast(t('qc.toast.save_failed')+': '+e.message); }
@@ -17352,7 +17357,7 @@ function _renderCompStory(allDone){
       _btn.style.display = 'none';
     }
   }
-  // The 🔊 reads whatever is currently shown.
+  // The 💬 reads whatever is currently shown.
   const _spk = document.getElementById('comp-story-spk');
   if (_spk){
     const lang = showingSource ? (d.srcLang || 'en') : (d.lang || APP.lang);
@@ -18618,22 +18623,20 @@ async function saveSlTags() {
   closeSlTagEditor();
   loadSavedList();
 }
-// v78_f (user): the teacher switch is reachable from every page that has the footer controls, not
-// only the landing page. `_TEACHER_TOGGLES` is the list; ONE updater fills all of them, because
-// three copies of "which icon means which state" is exactly how the storyline connector line
-// drifted in v71_w and how four card headers ended up with four different titles in v77_q.
+// v78_f (user, SUPERSEDED — see the note below): the teacher switch is reachable from every page
+// that has the footer controls, not only the landing page. `_TEACHER_TOGGLES` is the list; ONE
+// updater fills all of them, because three copies of "which icon means which state" is exactly how
+// the storyline connector line drifted in v71_w and how four card headers ended up with four
+// different titles in v77_q.
 //
-// The landing entry is the existing full-width labelled button; the two footer entries are compact
-// icons sitting beside the mute control, per the user's placement ("beside the UI-language and mute
-// controls"). Different presentation, one state.
-//
-// Reachability (v71 rule): the lesson-set page is invisible to learners, so a control placed only
-// there would not exist for the people who need it. Landing and the storyline page are both learner
-// -reachable, which is why all three are wired rather than just the one that was easiest.
+// SUPERSEDED (user follow-up after v81_aa): with the Settings Card (`PLAN §C4`, `v81_y`) now
+// reachable from every screen — the exact reachability property `v78_f` was solving for — the
+// three scattered instances collapsed back into ONE, inside `#settings-modal`. This list stays a
+// list (not a single hard-coded id) on purpose: it is still the ONE place a future instance would
+// register, so the "three copies of which icon means which state" drift this was built to prevent
+// stays prevented if that ever happens again.
 const _TEACHER_TOGGLES = [
   { id: 'teacher-mode-btn', compact: false },
-  { id: 'teacher-ico-ls',   compact: true  },
-  { id: 'teacher-ico-sl',   compact: true  },
 ];
 function updateTeacherModeBtn() {
   // When unlocked (true): show green lock icon = click to lock
@@ -18857,7 +18860,7 @@ function updateTtsVoiceNote(){
   note.innerHTML =
     `<span style="white-space:nowrap">${langTag}</span>`
     + _ttsVariantSelectHtml(lang)
-    + `<button type="button" onclick="ttsTestVoice()" title="${escAttr(t('tts.test_lbl')+' — '+t('tts.voice_warn_q'))}" style="font-size:12px;font-weight:800;padding:5px 12px;border-radius:12px;border:2px solid #f5a623;background:#fff;color:#9a6400;cursor:pointer;font-family:inherit">${escHtml(t('tts.voice_test'))}</button>`;
+    + `<button type="button" onclick="ttsTestVoice()" title="${escAttr(t('tts.test_lbl')+' — '+t('tts.voice_warn_q'))}" style="font-size:12px;font-weight:800;padding:5px 12px;border-radius:12px;border:2px solid #f5a623;background:#fff;color:#9a6400;cursor:pointer;font-family:inherit">💬 ${escHtml(t('tts.voice_test'))}</button>`;
   note.style.display = 'flex';
 }
 
@@ -19211,11 +19214,11 @@ function _ttsMakeUtterance(text, ttsCode, rate) {
   return u;
 }
 
-// No installed voice for this language → stay silent and SAY SO via the 🗣 pill, and AUTO-MUTE.
+// No installed voice for this language → stay silent and SAY SO via the 💬 pill, and AUTO-MUTE.
 // v55_z: this now sets APP.muted (the user asked for auto-mute twice). My earlier objection — that
 // their unmute would resurrect the English-reading-Swahili approximation — is void: _ttsMakeUtterance
 // REFUSES regardless of mute, so unmuting can't bring it back. The mute is the visible state; the
-// refusal is the guarantee. The 🗣 pill still carries the REASON, which the mute button can't
+// refusal is the guarantee. The 💬 pill still carries the REASON, which the mute button can't
 // express (mute alone can't say "your device has no Swahili voice").
 function _ttsNoVoice(ttsCode, langCode) {
   const nice = (LANGS[langCode]||{}).name || langCode || ttsCode;
@@ -19230,17 +19233,17 @@ function _ttsNoVoice(ttsCode, langCode) {
   if (isNew) showToast(t('tts.no_voice_silent', { lang: nice }));
 }
 
-// The 🗣 label doubles as the speech-state pill. Rendered by class so all footers stay in step.
+// The 💬 label doubles as the speech-state pill. Rendered by class so all footers stay in step.
 function renderTtsPill() {
   const els = document.querySelectorAll('.tts-pill');
   els.forEach(el => {
     if (APP._ttsNoVoiceFor) {
       el.classList.add('novoice');
-      el.textContent = '🗣 ' + t('tts.pill_no_voice');
+      el.textContent = '💬 ' + t('tts.pill_no_voice');
       el.title = t('tts.no_voice_hint', { lang: APP._ttsNoVoiceLang || '' });
     } else {
       el.classList.remove('novoice');
-      el.textContent = '🗣';
+      el.textContent = '💬';
       el.title = '';
     }
   });
@@ -19496,7 +19499,7 @@ function onTtsLangSelectGlobal(code, id) {
   refreshTtsVoiceState();   // v55_x: warn on the pill BEFORE the user presses play
 }
 
-// Proactively re-evaluate whether the current speech language has a voice, and update the 🗣 pill.
+// Proactively re-evaluate whether the current speech language has a voice, and update the 💬 pill.
 // Uses _ttsPickVoice so it shares the ONE resolver: undefined (voices still loading) leaves the
 // state untouched — never declare "no voice" during the async getVoices() window.
 // The browser's voice list arrives asynchronously; the first refreshTtsVoiceState() usually runs

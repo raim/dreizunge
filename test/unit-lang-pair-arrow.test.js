@@ -84,10 +84,29 @@ assert.ok(/font-size:\s*\d/.test(arrowRule[1]), 'the arrow has an explicit font-
 assert.ok(/color:/.test(arrowRule[1]), 'the arrow has an explicit color');
 console.log('  .lang-pair-arrow is actually styled (not bare inline text): OK');
 
+// ── 5b. Follow-up user request: thicker + as large as the selectors, but not TALLER ───────────
+// `.lang-select`'s rendered height was measured LIVE in a real browser at 44px (padding 10+10,
+// border 2.5+2.5, ~19px line-height for a 15px font). The arrow's own box is pinned to that exact
+// same 44px via an explicit CSS `height`, with flex-centering, so its bounding box can never
+// exceed the selector's — equal, not taller, by construction rather than by font-metric luck.
+assert.ok(/height:\s*44px/.test(arrowRule[1]),
+  'THE REGRESSION: the arrow\'s box must be pinned to the select\'s own 44px height (measured ' +
+  'live), or "not higher than the selectors" stops being guaranteed by construction');
+// "Thicker": a heavy/bold glyph at a size well above the original 20px, not just a font-weight
+// bump on the original thin arrow (Unicode arrow glyphs largely ignore font-weight).
+const arrowSizeMatch = /font-size:\s*(\d+)px/.exec(arrowRule[1]);
+assert.ok(arrowSizeMatch && Number(arrowSizeMatch[1]) >= 30,
+  'the arrow font-size should be substantially larger than the original 20px to read as "thicker"');
+console.log('  arrow is pinned to the selector\'s own height and sized up for "thicker": OK');
+
 // ── 6. Both copies still carry exactly one arrow each, between the two columns ────────────────
-const arrowCount = (html.match(/<div class="lang-pair-arrow">→<\/div>/g) || []).length;
+// v81_ab (user follow-up): swapped the thin "→" for the heavy round-tipped "➜" specifically for
+// visual weight — a Unicode arrow's thickness is mostly baked into the glyph, not font-weight.
+const arrowCount = (html.match(/<div class="lang-pair-arrow">➜<\/div>/g) || []).length;
 assert.strictEqual(arrowCount, 2, `exactly 2 arrows expected (one per synced copy), found ${arrowCount}`);
-console.log('  exactly one arrow per picker copy (2 total): OK');
+assert.strictEqual((html.match(/<div class="lang-pair-arrow">→<\/div>/g) || []).length, 0,
+  'the original thin arrow must not survive alongside the heavy one');
+console.log('  exactly one HEAVY arrow per picker copy (2 total), no thin arrow left behind: OK');
 
 // ── What this does NOT establish ────────────────────────────────────────────────────────────
 // The actual title values after a real applyUIStrings() run, and the arrow's rendered layout,

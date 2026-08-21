@@ -272,9 +272,8 @@ async function init() {
   // APP.buildSources to tell which corpus a deployed page is actually serving.
   APP.buildSources = ${JSON.stringify(BUILD_SOURCES)};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
-  // Show teacher mode bar (static only)
-  const _tmBar = document.getElementById('teacher-mode-bar');
-  if (_tmBar) _tmBar.style.display = '';
+  // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
+  // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
   APP.libFilter='all'; APP.libSrcFilter='all';
   // Only preset tag filter if the tag actually exists in baked-in storylines
   const _allBakedTags = new Set((Array.isArray(STATIC_STORYLINES)?STATIC_STORYLINES:[]).flatMap(sl=>sl.tags||[]));
@@ -424,7 +423,7 @@ function itemHtml(s, connector, hideStory, hideProv, slChapter) {
         \${t('lesson.read_story_short')}
         <span id="sis-arrow-\${sid}" style="font-size:10px">▼</span>
       </div>
-      <span class="story-icon-btn" data-speak="sis-body-\${sid}" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="\${t('lesson.read_aloud')}">🔊</span>
+      <span class="story-icon-btn" data-speak="sis-body-\${sid}" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="\${t('lesson.read_aloud')}">💬</span>
     </div>
       <div class="saved-item-story-body" id="sis-body-\${sid}" data-topic="\${escapedTopic}" data-lang="\${s.lang||''}"></div>
     </div>
@@ -599,7 +598,7 @@ async function loadSavedList() {
         +'<div style="display:flex;align-items:center">'
         +'<button class="storyline-story-hdr" style="flex:1" data-cid="'+chainId+'" onclick="event.stopPropagation();toggleSlSummary(this.dataset.cid)">'
         +'📖 '+t('lesson.read_summary')+'<span class="storyline-story-arrow" id="slsc-summary-arrow-'+chainId+'">▼</span></button>'
-        +'<button class="storyline-hdr-btn" data-speak="slsc-summary-body-'+chainId+'" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="'+t('lesson.read_aloud')+'">🔊</button>'
+        +'<button class="storyline-hdr-btn" data-speak="slsc-summary-body-'+chainId+'" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="'+t('lesson.read_aloud')+'">💬</button>'
         +'</div>'
         +'<div class="storyline-story-body" id="slsc-summary-body-'+chainId+'" data-lang="'+(byIdAll[chain[0]]?.srcLang||'')+'">'
         +'<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">'+_slSum2.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</p>'

@@ -1,14 +1,12 @@
-# Session prompt — written at the `v81_aa` cut (session 41, in progress)
+# Session prompt — written at the `v81_ab` cut (session 41, in progress)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_z.md` was the
-previous one — superseded by this file and renamed, not kept alongside. `v81_z` was the LAST
-single letter in the old suffix scheme; `v81_aa` picks up with double-letter continuation — the
-least surprising option, and the guard's own `base = APP_VERSION.split('_')[0]` logic already
-handles it with no code change. Keep using this scheme (`v81_ab`, `v81_ac`, …) unless a future
-session has a good reason to switch to `v82_a` instead.)*
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_aa.md` was the
+previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
+letter suffix scheme (`v81_ac`, `v81_ad`, …) unless a future session has a good reason to switch to
+`v82_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_aa`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_ab`** cut.
 
 **Session 41, part 2: with `PLAN §C0` (the router seam, `v81_m`–`v81_u`) complete, the user asked
 "what's next?" and confirmed it — splitting the landing page into a Generation Card and a
@@ -237,10 +235,33 @@ running server and the rebuilt static build — both picker copies, plus confirm
 still correctly updates state, unaffected by this purely visual change. New guard
 `test/unit-lang-pair-arrow.test.js`, 7 checks, 2 mutation-tested.
 
-**§C4 is narrower than it looked, but not done.** Model selection and speech/sound-test are now
-explicitly OUT of this track's scope, permanently (not just deferred). What remains open: the
-speech-mismatch status pill (the other acceptance-detail fork) and the teacher-mode consolidation
-question, which still needs its own ruling before anyone builds it either way.
+**`v81_ab`: three more user follow-ups, sent together right after `v81_aa` shipped.** (1) The
+lang-pair arrow got THICKER and pinned to exactly the select's own live-measured height
+(`height:44px`, flex-centered) so it can never grow taller than the pickers by construction — glyph
+swapped from thin `→` to the heavy round-tipped `➜`. (2) Every "click to hear this text" trigger
+stopped showing 🔊, which was visually indistinguishable from the newly-consolidated global mute
+pill — landed first with 🗣, then an IMMEDIATE follow-up asked for 💬 everywhere the app used 🗣 for
+speech, not just the read-aloud triggers: the tts-pill, the dialect-glossary labels (baked
+per-language in `ui.json`, mechanically swept across all 33 blocks), and the sound-test button. The
+ONE 🗣️ deliberately spared is the icon-picker's own palette entry — a real corruption risk since it
+uses the VS16 variant containing bare 🗣 as a prefix; a negative-lookahead regex protected it,
+verified by an exact count (30 bare + 1 VS16 = 31). New guard
+`test/unit-speech-icon-consistency.test.js`, built on Rule 32 (guard the enumeration). (3) The
+teacher-mode toggle FINALLY consolidated from `v78_f`'s three instances into ONE, inside
+`#settings-modal` — its original reachability justification is now satisfied by the Settings Card
+itself. Both `unit-settings-card.test.js` check #5 and the whole of `unit-teacher-toggle.test.js`
+needed real rewrites (rule 29), not re-anchoring. See the roadmap's `v81_ab` entry for the full
+write-up.
+
+**§C4 is narrower than it looked, and now mostly done.** Model selection and speech/sound-test are
+permanently out of scope; the teacher-mode question is RESOLVED (consolidated). What remains open:
+only the speech-mismatch status pill (the other acceptance-detail fork) — no ruling given on it yet.
+
+**A NEW, larger item is queued but not yet started**: moving UI-language selection from the
+storyline page bottom into Settings — REVERSING a previous decision — including an "overrule
+storyline source language" checkbox and a mismatch warning pill. Sent together with the three
+`v81_ab` items above but substantial enough to be its own release. Needs real measurement of the
+current UI-language-selection mechanism before touching it — not yet done as of this cut.
 
 **Session 40 ran across two agents: Codex shipped `v81_k`/`v81_l`, then ran out of session budget
 mid-work; Claude Code picked up the uncommitted state and shipped `v81_m` through `v81_q`.**
@@ -375,15 +396,17 @@ want to eyeball the log in the console anyway.**
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 240 checks
-node test/run.js --quick                  → expect 214
+node test/run.js                          → expect 241 checks
+node test/run.js --quick                  → expect 215
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut: **323 topics, 91 storylines, 33 languages, 620 `en` keys** (unchanged since
-`v81_y`; `v81_z`/`v81_aa` both moved/removed existing controls only, no new UI strings).
-`APP_VERSION = 'v81_aa'`.
+`v81_y`; `v81_z`/`v81_aa`/`v81_ab` all moved/removed/re-iconed existing controls only, no new UI
+strings — `v81_ab` DID mechanically edit existing values, per-language, for `tts.voice_test`/
+`form.use_dialect`/`dialect.studio.intro`, but added no new keys).
+`APP_VERSION = 'v81_ab'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -466,12 +489,16 @@ only** — shell + the four already-self-contained absorb items (`v81_y`); then,
 (`v81_z`), **model selection and speech-language/sound-test are OUT of this track entirely**
 (context-bound, not global — a closed decision, not a deferral) and **the global mute-pill
 consolidation shipped**; then the user confirmed the "arrow control" acceptance detail's meaning
-(the arrow is inert, not a clickable control) and it **shipped at `v81_aa`**. What remains
-genuinely open: the speech-mismatch status pill (the other acceptance-detail fork) and whether the
-teacher-mode toggle (currently three deliberate `v78_f` instances) should ever be consolidated at
-all — found during `v81_y`'s scoping, still not put to the user. Nothing is currently QUEUED as
-owed; the next session should measure whatever's picked next and present it, the same way
-`v81_y`/`v81_z`/`v81_aa` did, rather than assume any of the above.)*
+(the arrow is inert, not a clickable control) and it **shipped at `v81_aa`**; then THREE more
+follow-ups (arrow thickness, read-aloud icon consistency, teacher-mode consolidation) all shipped
+at `v81_ab`. **The teacher-mode question is now RESOLVED** (consolidated, not just decided). What
+remains genuinely open on `§C4` itself: only the speech-mismatch status pill.
+⚠️ **One item IS queued, not merely open**: the user asked, in the same batch as the three `v81_ab`
+items, to move UI-language selection from the storyline page bottom into Settings (reversing a
+prior decision), with an "overrule storyline source language" checkbox and a mismatch warning pill.
+This is substantial enough to be its own release and had NOT been measured or started as of this
+cut — read the `v81_ab` write-up's closing paragraph before assuming it needs a fresh ruling; it may
+just need measurement first, the same way every other item in this queue did.)*
 
 All three items that headed this section at the `v81_b` cut are closed:
 
@@ -580,9 +607,19 @@ is a materially lower bar. Needs a browser pass, not a code change.
   learn" label above each of the four synced selects is gone, moved to `title=` tooltips via the
   SAME `applyUIStrings()` idiom `v79_o` already used elsewhere. `.lang-pair-arrow` (previously
   unstyled) now has real CSS.
-  **Still owed if this track continues**: the speech-mismatch status pill (the other
-  acceptance-detail fork), and whether to ever consolidate the teacher-mode toggle (found
-  mid-scoping at `v81_y`, still not put to the user). Not started, no ruling given yet on either.
+- ~~Three `v81_ab` follow-ups: arrow thickness, read-aloud icon consistency, teacher-mode
+  consolidation~~ **✅ SHIPPED at `v81_ab`** — arrow pinned to the select's own 44px height, glyph
+  swapped to the heavy `➜`; every read-aloud trigger moved off 🔊 (first to 🗣, then an immediate
+  follow-up to 💬 EVERYWHERE the app used 🗣 for speech — see the roadmap entry for the VS16-safety
+  detail on the icon-picker's own palette entry); the teacher-mode toggle collapsed from THREE
+  `v78_f` instances into ONE inside `#settings-modal`.
+  **Still owed if this track continues**: only the speech-mismatch status pill (the other
+  acceptance-detail fork). Not started, no ruling given yet.
+- **QUEUED, not yet started**: move UI-language selection from the storyline page bottom into
+  Settings (REVERSING a prior decision), with an "overrule storyline source language" checkbox and
+  a mismatch warning pill. Sent in the same batch as the three items above but big enough to be its
+  own release. Needs real measurement of the current mechanism first — see the roadmap's `v81_ab`
+  entry.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
@@ -764,13 +801,27 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
   actually meant to call `toggleMute()` — the class alone is what makes `updateMuteButtons()` rewrite
   it.
 - `.lang-pair-arrow`/`title=` tooltips on the four language selects (`v81_aa`, `PLAN §C4` "arrow
-  control") — the 🗣/📖 icon + "I speak"/"I learn" `<label>` wrapper is gone from BOTH synced
-  copies (`src-lang-select`/`lang-select` on `#generation-screen`, `lib-src-lang-select`/
-  `lib-lang-select` on the library screen). The removed strings are wired to `title=` via
-  `applyUIStrings()`'s `_setAttr(id, 'title', t(key))` — the SAME idiom `v79_o` used for the
-  sound-test row, not a new mechanism; extend that pattern rather than inventing another one if a
-  future control needs the same treatment. See `test/unit-lang-pair-arrow.test.js` and
-  `INTERNALS.md`'s `PLAN §C4` section.
+  control"; sizing SUPERSEDED at `v81_ab`) — the 🗣/📖 icon + "I speak"/"I learn" `<label>` wrapper
+  is gone from BOTH synced copies (`src-lang-select`/`lang-select` on `#generation-screen`,
+  `lib-src-lang-select`/`lib-lang-select` on the library screen). The removed strings are wired to
+  `title=` via `applyUIStrings()`'s `_setAttr(id, 'title', t(key))` — the SAME idiom `v79_o` used
+  for the sound-test row, not a new mechanism; extend that pattern rather than inventing another
+  one if a future control needs the same treatment. The arrow's own CSS now pins `height:44px`
+  (the select's own live-measured height, so it can never grow taller) with the heavy `➜` glyph at
+  `font-size:34px;font-weight:900`. See `test/unit-lang-pair-arrow.test.js` and `INTERNALS.md`'s
+  `PLAN §C4` section.
+- `💬` is now THE speech icon app-wide (`v81_ab`) — every "click to hear this text" trigger, the
+  `.lang-footer-lbl.tts-pill` speech-state pill, the dialect-glossary labels, and the sound-test
+  button. `.mute-btn`'s own `🔊`/`🔇` is a SEPARATE, unrelated concept — don't conflate the two when
+  adding a new speech-related control. See `test/unit-speech-icon-consistency.test.js` (built on
+  Rule 32 — it enumerates every `onclick="...speak...("` call site rather than hand-pinning each
+  one) and `INTERNALS.md`'s `PLAN §C4` section, which also documents the VS16-safety detail for the
+  icon-picker's own untouched `🗣️` palette entry.
+- `#teacher-mode-btn` inside `#settings-modal` is now the ONLY teacher-mode toggle (`v81_ab`,
+  superseding `v78_f`'s three-instance placement). `_TEACHER_TOGGLES` is down to one entry but
+  stayed a list — register a future second instance there, don't hard-code a single id. See
+  `test/unit-teacher-toggle.test.js` (rewritten wholesale for the single-instance claim) and
+  `test/unit-settings-card.test.js` check #5.
 - `test/unit-ui-journeys.test.js` (`v81_m`–`v81_w`, `PLAN §C0`/`§C5`) — the route-parity reference
   for the FOUR original screens plus the teacher dashboard, lesson-set, lesson-screen, and
   storyline-screen. Extend it, don't bypass it, if you touch any of them again. ⚠️ Also grep the

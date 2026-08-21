@@ -1662,6 +1662,78 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_ab` — three user follow-ups: thicker arrow, read-aloud icon consistency, teacher-mode → Settings
+
+**Shipped by: Claude Code.** The user sent four follow-up requests together after `v81_aa` shipped;
+this release covers the first three (the fourth — moving UI-language selection into Settings with
+an "overrule storyline source language" checkbox and a mismatch warning pill — is substantial
+enough to be its own release, still ahead).
+
+**1. The lang-pair arrow: thicker, sized to the selects, never taller.** `.lang-pair-arrow` now
+pins an explicit `height:44px` — the select's own LIVE-measured height — with flex-centering, so
+the arrow's box can never exceed the selector's by construction, not by font-metric estimation. The
+glyph changed from the thin `→` to the heavy round-tipped `➜` (U+279C) at `font-size:34px;font-
+weight:900`; a Unicode arrow's visual weight lives mostly in the character itself, not the CSS
+weight property, which barely affects most symbol glyphs.
+
+**2. Every read-aloud trigger stopped looking like the mute button — landed in two steps.** First
+built with 🗣 (matching the pre-existing speech-state pill, per the user's own framing: "the speech
+icon used e.g. in language selection"). An immediate follow-up asked for 💬 (U+1F4AC) instead,
+applied to literally every 🗣 the app used for speech — not just the ~12 read-aloud triggers this
+was originally scoped to, but the tts-pill itself, the dialect-glossary labels (baked per-language
+in `ui.json`, mechanically swept across all 33 blocks), and the sound-test button. The ONE 🗣️ left
+alone on purpose is the icon-picker's own palette entry (`EMOJI_CATEGORIES`) — a real corruption
+risk, since it uses the VS16 variant (`🗣️`), which contains bare `🗣` as its first codepoint; a
+naive global string replace would have silently mangled it into `💬️` (a dangling variation
+selector on the wrong base character). The actual sweep used a negative lookahead for the VS16
+codepoint specifically to spare that one entry, verified by an exact before/after count (30 bare +
+1 VS16 = 31 total, matching exactly).
+
+Measuring the full read-aloud surface also surfaced a smaller, genuinely separate cleanup: `tts.
+voice_test`'s icon was baked into the translated string itself (`"🔊 1, 2, 3"`, per language) rather
+than added in code — inconsistent with the established convention elsewhere (`gen.title`/`settings.
+title` both add their emoji in code). Since the visible text besides the icon is just digits
+(language-agnostic), stripping the baked prefix across all 33 blocks was a safe mechanical edit, not
+a translation change.
+
+New guard `test/unit-speech-icon-consistency.test.js` (6 checks, 1 mutation-tested), built on Rule
+32 (guard the enumeration, not the instance): it finds every `onclick="...speak...("` call site
+across both `index.html` and `build-static.js`'s two re-implementations, rather than hand-pinning
+each one — plus the two triggers invisible to that enumeration (`#us-spk`, wired via a JS property
+assignment rather than an inline attribute; `#sum-sum-spk`, which has no click handler wired at all
+— a pre-existing, unrelated gap, found but not fixed, out of scope for an icon-only change) — and
+the one deliberate exception (the "🐢 Slow" playback-speed variant, which never showed 🔊 and keeps
+its own turtle+text label).
+
+**3. The teacher-mode toggle, finally consolidated into the Settings Card.** `v78_f`'s original
+placement (three instances: a full-width landing bar plus two compact footer icons) existed
+specifically because no single page reached every learner. That reachability property is now
+satisfied by the Settings Card itself — reachable via `#settings-pill` on every screen, including
+static. All three old instances are gone; `teacher-mode-btn` is the one surviving instance, moved
+into `#settings-modal`'s action row, unchanged internally. `_TEACHER_TOGGLES` shrank to a single
+entry but stayed a list rather than becoming a hard-coded id — the ENUMERATION is still the thing
+worth guarding against future drift, even at one entry. Two now-pointless "force the bar visible"
+snippets (live `init()` and `build-static.js`'s own init override) were removed along with their
+target — `#settings-modal` carries no default hiding, so nothing needed forcing.
+
+Both `test/unit-settings-card.test.js` (check #5) and `test/unit-teacher-toggle.test.js` needed
+REAL rewrites, not re-anchoring (rule 29): the former's claim inverted from "three instances survive
+untouched" to "exactly one instance survives, the old markup is fully gone" (mutation-tested both
+directions); the latter's entire multi-instance-agreement and footer-containment premise no longer
+applies to a single instance, so it was rewritten around what still matters regardless of instance
+count — does clicking the ONE toggle actually flip state, persist to `localStorage`, and show the
+right label each way (mutation-tested).
+
+Verified live in a real browser throughout: the arrow's measured height exactly matches the
+select's (44px = 44px); read-aloud buttons across the story card, completion card, and storyline
+screen all show 💬; the dialect-glossary label shows 💬; the old teacher-mode bar/icons are
+completely gone from the DOM, and the single instance inside the Settings Card correctly flips
+state on click.
+
+`node test/run.js`: 241 checks, ALL PASSED. `node test/run.js --quick`: 215 checks, ALL PASSED.
+`node build-static.js` re-run; `node test/check-inline.js` and the `docs/index.html` variant: 0
+failures each.
+
 ### `v81_aa` — `PLAN §C4`: the "arrow control" acceptance detail
 
 **Shipped by: Claude Code.** `v81_z` flagged this as a housekeeping loose end: `v81_z` was the last

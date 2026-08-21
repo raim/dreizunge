@@ -1,17 +1,14 @@
-// unit-settings-card.test.js — PLAN §C4 stage 1.
+// unit-settings-card.test.js — PLAN §C4 stage 1 (`v81_y`); check #5 updated for a later user
+// follow-up that consolidated the teacher-mode toggle too.
 //
-// The Settings Card absorbs only the items that were already single-instance, self-contained
-// controls: the missing-UI-strings notice (`ui-translate-row`), and the library header's
-// import/export-static/teacher-dashboard actions. It is reachable via a NEW `#settings-pill`,
-// placed next to the existing "Sign in" pill (`#acct-badge`) in a shared `#corner-pills` wrapper —
-// unlike `#acct-badge`, it must be visible on EVERY page, including the static build, which has no
-// accounts at all.
-//
-// Deliberately OUT of scope this pass: the teacher-mode toggle. `v78_f` placed it in THREE
-// instances on purpose (landing/library, the lesson-set footer, the storyline footer), by explicit
-// user ruling ("reachable from every page that has the footer controls") — folding it into one
-// shared Settings Card instance would reverse that ruling, not just relocate a control, so it needs
-// its own decision. Check #5 below guards that this session did not silently do it anyway.
+// The Settings Card absorbs the items that were already single-instance, self-contained controls
+// (the missing-UI-strings notice, import/export-static/teacher-dashboard), PLUS — per an explicit
+// user ruling given after v81_aa — the teacher-mode toggle, which `v78_f` had deliberately placed
+// in THREE instances (landing/library, the lesson-set footer, the storyline footer) specifically
+// for reachability from every page. That reachability property is now satisfied by the Settings
+// Card itself (reachable via `#settings-pill` on every screen, including static), so the three
+// scattered instances collapsed into this one. Check #5 below guards the CURRENT claim — one
+// instance, inside the card, the old three-instance list gone — not the original v78_f one.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -51,21 +48,23 @@ for (const [label, re] of [
   ['#export-static-btn',   /id="export-static-btn"/g],
   ['#teacher-dash-btn',    /id="teacher-dash-btn"/g],
   ['.import-btn label',    /class="import-btn"/g],
+  ['#teacher-mode-btn',    /id="teacher-mode-btn"/g],
 ]) {
   assert.strictEqual(count(re), 1, `${label} must appear exactly once in index.html, found ${count(re)}`);
 }
 console.log('  each moved control appears exactly once: OK');
 
-// ── 2. All four moved controls are actually INSIDE #settings-modal ────────────────────────────
+// ── 2. All five moved controls are actually INSIDE #settings-modal ────────────────────────────
 for (const [label, needle] of [
   ['#ui-translate-row',  'id="ui-translate-row"'],
   ['#export-static-btn', 'id="export-static-btn"'],
   ['#teacher-dash-btn',  'id="teacher-dash-btn"'],
   ['.import-btn label',  'class="import-btn"'],
+  ['#teacher-mode-btn',  'id="teacher-mode-btn"'],
 ]) {
   assert.ok(settingsModal.includes(needle), `${label} must be inside #settings-modal`);
 }
-console.log('  all four moved controls are inside #settings-modal: OK');
+console.log('  all five moved controls are inside #settings-modal: OK');
 
 // Mutation check: the containment assertion above must actually be able to fail. Take a control
 // OUT of the modal slice and confirm the same check then reports it missing.
@@ -97,13 +96,15 @@ console.log('  #corner-pills wraps both the login pill and the settings pill: OK
 }
 console.log('  settings-pill has no default display:none: OK');
 
-// ── 5. Scope boundary: the teacher-mode toggle was NOT folded in ──────────────────────────────
-// Guards against a future session assuming this already happened. If it ever does happen on
-// purpose, this check should be edited alongside that change, not silently left red.
-assert.ok(/const _TEACHER_TOGGLES = \[\s*\{ id: 'teacher-mode-btn', compact: false \},\s*\{ id: 'teacher-ico-ls',\s*compact: true\s*\},\s*\{ id: 'teacher-ico-sl',\s*compact: true\s*\},\s*\];/.test(html),
-  'the teacher-mode toggle still has its v78_f three-instance list — PLAN §C4 stage 1 deliberately ' +
-  'left it alone; consolidating it needs its own ruling, not a silent side effect of this change');
-console.log('  teacher-mode toggle still has its 3 v78_f instances, untouched: OK');
+// ── 5. The teacher-mode toggle is DOWN to one instance, and the old markup is really gone ─────
+// The CURRENT claim (user follow-up after v81_aa), replacing v78_f's three-instance one.
+assert.ok(/const _TEACHER_TOGGLES = \[\s*\{ id: 'teacher-mode-btn', compact: false \},\s*\];/.test(html),
+  '_TEACHER_TOGGLES must be down to the single settings-modal instance');
+for (const gone of ['teacher-mode-bar', 'teacher-ico-ls', 'teacher-ico-sl']) {
+  assert.ok(!html.includes(`id="${gone}"`),
+    `THE REGRESSION: the old v78_f markup (id="${gone}") must be fully gone, not just unlisted`);
+}
+console.log('  teacher-mode toggle is down to the single settings-modal instance, old markup gone: OK');
 
 // ── 6. openSettings()/closeSettings() actually toggle the modal ───────────────────────────────
 {
