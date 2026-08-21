@@ -1,19 +1,20 @@
-# Session prompt — written at the `v81_v` cut (session 41, in progress)
+# Session prompt — written at the `v81_w` cut (session 41, in progress)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_u.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_v.md` was the
 previous one — superseded by this file and renamed, not kept alongside.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_v`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_w`** cut.
 
 **Session 41, part 2: with `PLAN §C0` (the router seam, `v81_m`–`v81_u`) complete, the user asked
 "what's next?" and confirmed it — splitting the landing page into a Generation Card and a
-corpus/library screen (`PLAN §C5`), eventually also a Settings Card (`PLAN §C4`).** `v81_v` is
-stage 1 of that: pure naming/routing prep, zero visual change, same discipline `§C0` used. **This
-is a NEW, ongoing track** — unlike `§C0`'s renames, `§C5`/`§C4` are real UI redesign, so expect
-staged releases here too, and expect actual visual changes once stage 2 lands. See `v81_v`'s roadmap
-entry for the two design forks ruled on before writing any code (picker duplication + sync, "home"
-now means the library) and why.
+corpus/library screen (`PLAN §C5`), eventually also a Settings Card (`PLAN §C4`).** `v81_v` was
+stage 1: pure naming/routing prep, zero visual change. `v81_w` is stage 2: the ACTUAL split, the
+first real visual change of this track — verified in a live browser, not only headlessly. **This is
+a NEW, ongoing track** — unlike `§C0`'s renames, `§C5`/`§C4` are real UI redesign, so expect further
+staged releases (a Settings Card, `§C4`, is still ahead). See `v81_v`'s roadmap entry for the two
+design forks ruled on before writing any code (picker duplication + sync, "home" now means the
+library) and `v81_w`'s entry for how they were actually built.
 
 **`v81_r` through `v81_u` (part 1) shipped `PLAN §C0.3` — all four remaining named surfaces.** Two
 SEPARATE user rulings drove this: ruling 1 (after `v81_q`) picked `showTeacher()` alone from a menu
@@ -113,9 +114,53 @@ original variable name across two `C.run()` calls in the same persistent vm cont
 infinite mutual recursion (`Maximum call stack size exceeded`) — fixed with a distinct variable
 name, documented in `INTERNALS.md` §6b so it isn't rediscovered the hard way.
 
-**Stage 2 — the actual visual split (new `#generation-screen`, duplicated synced language pickers,
-a "+ Generate new" entry point on the library) — is next.** See the roadmap's `v81_v` entry for the
-full write-up.
+**`v81_w`: stage 2, the actual split — the first real visual change in this whole track.**
+`#gen-area` + `.backend-row` + the full `.lang-box` (unchanged internally, same ids, including the
+script sub-pickers) MOVED out of `#landing` into a new `#generation-screen`, styled with the SAME
+`sl-screen`/`sl-screen-hdr`/`sl-screen-body` classes teacher-screen/lesson-set already use — no new
+CSS needed. `goLanding()`/`goLandingClean()` now `show('generation-screen')`; `goLibraryClean()`
+still shows `'landing'` — the two bodies `v81_v` deliberately kept identical finally diverge. A new
+"✨ Generate new" button (`.gen-btn` class, already existed) is the library's entry point.
+
+**A structural surprise found while moving the markup, worth knowing before touching `#landing`
+again**: `.landing-inner` does NOT wrap the whole screen the way its indentation suggests — it
+closes right after the picker + button, and `#tts-footer-landing`/`#teacher-mode-bar`/`.library` are
+children of `#landing` DIRECTLY, not nested inside `.landing-inner`. A naive regex depth-count got
+this wrong twice; a real HTML parser (Python's `html.parser`, stack-tracking) settled it. The file
+also carries one genuinely-orphaned extra `</div>` at the very end — harmless, pre-existing, not a
+bug to fix, just something a structural check must expect rather than flag.
+
+**The library's picker (`lib-src-lang-select`/`lib-lang-select`) is a separate, simpler duplicate** —
+full option list including "all", no script sub-picker (that's a generation-time decision).
+`selectSrcLang`/`selectLang` now sync BOTH directions on a real `fromForm=true` change, but a
+`fromForm=false` footer-driven mid-story view still touches neither select — the library filter
+must not silently follow whatever a learner happens to be reading. `applyUIStrings()` re-clones the
+mirror's options from the canonical select's OWN value (`tgtSel.value`/`srcSel.value`), deliberately
+not `APP.lang`/`APP.srcLang` (the active render context, which can differ while viewing a lesson).
+
+**The static build needed real adaptation.** `renderPill()`'s "hide absent-language options" logic
+used to run once against options that persist in place — now that `lib-lang-select`'s options are
+torn down and rebuilt by every `applyUIStrings()` call, that hiding was silently lost on the next
+language change. Fixed by hoisting it to a module-scope function and re-invoking it from
+`selectSrcLang`'s static override. The old "relabel to 🗣️From/📖To" hack (which assumed one combined
+picker) is gone — two real separate pickers each already read fine as-is. Three `ui.json` strings
+that said "above"/"below" a now-nonexistent combined page were reworded (`en` only, per convention);
+`lib.empty`'s "above" stays literally true on purpose — the new button sits above `#saved-list`.
+
+**Verified in a real running browser** (`preview_start` + `computer`/`get_page_text`/
+`javascript_tool`), not only headlessly, since this is genuine visual work: library renders with no
+generation form visible, the full generation screen opens with every control intact, the home
+button returns cleanly, and the live sync mechanism matches the headless test's claim exactly.
+
+**New dedicated test file `test/unit-lang-picker-sync.test.js`** (6 checks, all mutation-tested) —
+see `INTERNALS.md`'s `PLAN §C5` section for what each one guards. Along the way, found and fixed a
+genuine test-authoring mistake, not a product bug: two `history.replaceState` spy blocks in
+`unit-ui-journeys.test.js` had been passing WITHOUT `await settle()` by timing coincidence, not
+because they were actually synchronous — exposed the moment their destinations diverged from each
+other.
+
+**A Settings Card (`PLAN §C4`) is still ahead if this track continues** — not started, no ruling
+owed on it yet.
 
 **Session 40 ran across two agents: Codex shipped `v81_k`/`v81_l`, then ran out of session budget
 mid-work; Claude Code picked up the uncommitted state and shipped `v81_m` through `v81_q`.**
@@ -188,7 +233,10 @@ stores the derived skill state, tagged-topic comparisons, and only changed disag
 the existing completion/pass-mark result. It is shown nowhere and cannot affect a gate, renderer,
 picker, or progression. Pending/legacy topics without reviewed vocabulary IDs remain incomparable.
 The BKT and live observation guards were mutation-tested. Full / quick suite: **235 / 209**; corpus
-unchanged at **323 topics, 91 storylines, 33 languages, 617 `en` keys**.
+unchanged at that cut, 323 topics, 91 storylines, 33 languages, 617 `en` keys (see "Establish a green
+baseline" above for the CURRENT count — `unit-roadmap-version`'s regex matches the first bolded
+"`N` topics, `N` storylines, `N` languages, `N` `en` keys" pattern in this file, so only ONE mention
+may ever use that exact bold format, deliberately not this one).
 
 **Session 39 shipped `v81_k`: `PLAN §8/B2–B3`, the target-language skill registry and vocabulary
 tagging foundation.** `skills.json` is server-side, separate from `lessons.json`; model-proposed
@@ -247,14 +295,15 @@ want to eyeball the log in the console anyway.**
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 235 checks
-node test/run.js --quick                  → expect 209
+node test/run.js                          → expect 236 checks
+node test/run.js --quick                  → expect 210
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 languages, 617 `en` keys**.
-`APP_VERSION = 'v81_v'`.
+Corpus at this cut: **323 topics, 91 storylines, 33 languages, 619 `en` keys** (2 new keys this
+session: `gen.title`, `lib.generate_new` — `PLAN §C5` stage 2, `v81_w`).
+`APP_VERSION = 'v81_w'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -328,11 +377,12 @@ Corpus at this cut (unchanged this session): **323 topics, 91 storylines, 33 lan
 *(`v81_i`'s sequential-lock removal was a ruling delivered directly by the user, not drawn from
 this list — nothing below was open because of it, so nothing here changes. `v81_j`–`v81_u`
 (`PLAN §C0.1`–`§C0.4`, plus five further surfaces, Track B) all came from §3 below and are struck
-there as they shipped — the whole router-seam track is DONE. `PLAN §C5` (`v81_v` onward) is a NEW
+there as they shipped — the whole router-seam track is DONE. `PLAN §C5` (`v81_v`–`v81_w`) is a NEW
 track with its OWN two rulings, given directly when the user confirmed "what's next": (1) duplicate
 the language pickers but keep them synced, not fully decoupled; (2) "🌍 home" now means the library,
-not generation. `v81_v` ships only ruling (2), as routing prep. **Ruling (1) is NOT yet built** —
-stage 2 (the actual `#generation-screen` split) is what implements it, and is next.)*
+not generation. **Both rulings are now FULLY BUILT** — `v81_v` shipped ruling (2) as routing prep,
+`v81_w` shipped ruling (1) as the actual screen split. Nothing on `PLAN §C5` is currently owed; a
+Settings Card (`PLAN §C4`) remains ahead if this track continues, with no ruling given for it yet.)*
 
 All three items that headed this section at the `v81_b` cut are closed:
 
@@ -419,15 +469,13 @@ is a materially lower bar. Needs a browser pass, not a code change.
   zero visual change (`goLibraryClean()`/`showLibraryClean()`, still byte-for-byte `goLandingClean()`
   today). 10 callers rerouted (7 buttons, 3 JS fallbacks); `showGeneration()`/`showGenerationClean()`
   themselves untouched — their 3 remaining callers all genuinely want the generation form.
-- **`PLAN §C5` stage 2 — the actual visual split — is next, no ruling needed** (both design forks
-  already ruled at `v81_v`). Move `#gen-area` (+ `.backend-row`) out of `#landing` into a new
-  `#generation-screen`; duplicate `.lang-box` there, wired as a SYNCED mirror of the existing
-  pickers (same mechanism the footer selectors already use — add the new selects to
-  `selectLang`/`selectSrcLang`'s existing "sync other selectors" list, do NOT give them independent
-  `fromForm` state); repoint `showGeneration()`/`showGenerationClean()` at the new screen instead of
-  `'landing'`; add a "+ Generate new" entry point on the library screen. **Read `INTERNALS.md` §6b's
-  new `PLAN §C5` section before starting** — it names the exact risk (`selectLang`/`selectSrcLang`'s
-  six-bug history) and the exact mechanism to reuse.
+- ~~`PLAN §C5` stage 2 — the actual visual split~~ **✅ SHIPPED at `v81_w`** — both design forks from
+  `v81_v` are now BUILT, not just ruled. `#gen-area`/`.backend-row`/`.lang-box` moved (unchanged
+  internally) into a new `#generation-screen`; `lib-src-lang-select`/`lib-lang-select` are the
+  library's own synced-mirror duplicate; `showGeneration()`/`showGenerationClean()` now show
+  `'generation-screen'`. Verified in a real browser, not only headlessly. **Nothing is currently
+  owed on `PLAN §C5`.** A Settings Card (`PLAN §C4`) is the next piece of this larger UI-redesign
+  direction if it continues — not started, no ruling given yet on its shape.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
@@ -470,7 +518,7 @@ is a materially lower bar. Needs a browser pass, not a code change.
   No translate pass is owed for it.
 - **The translate pass** for the remaining `en`-only keys, `translate-ui.js --langnames`, the
   `hr` `ui.json` pass, and a **native-speaker check of the `cyrillic-sr` table**.
-- **A device pass on `v81_a` … `v81_v`.** The v80 line changed every card and every question screen: the story
+- **A device pass on `v81_a` … `v81_w`.** The v80 line changed every card and every question screen: the story
   panel is on all of them, never collapsed, three-state coloured, tappable, with a translate toggle;
   the progress bars moved to the bottom; the storyboard row became clickable chapter icons.
   `v81_i` adds one more thing to look at: ordinary lessons on the node path are clickable out of
@@ -497,8 +545,14 @@ is a materially lower bar. Needs a browser pass, not a code change.
   from a fresh generation, and via a `#sl=` URL/hash link — all should still open the right storyline
   and look exactly as before (no visual change intended anywhere in this track). `v81_v` also ships
   no visual change (it's routing prep only) — worth spot-checking that every "🌍 home" button and a
-  stranded solo-chapter quit still land on the SAME page as before (today, still the combined
-  landing page — that's expected until stage 2 ships).
+  stranded solo-chapter quit still land on the SAME page as before. **`v81_w` is the FIRST real
+  visual change in this whole session** — already spot-checked live in a browser during development
+  (see the roadmap's `v81_w` entry for what was clicked through), but worth a second, independent
+  look: the library screen should show NO generation controls at all, just the compact picker, the
+  "✨ Generate new" button, and the saved-lessons list; the generation screen (reached via that
+  button, or via "continue this story"/a fresh multi-chapter job) should show the FULL form exactly
+  as it used to look, just on its own page with a 🌍 home button; and changing the language on
+  EITHER screen's picker should be reflected on the other the next time you look.
 
 ## 5. NOT yours to start
 
@@ -555,7 +609,7 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
   `MAX_STATE_BYTES` growth ceiling remains unaddressed.
 - `APP.screen` / `showProgressCard`/`showStory`/`showGeneration`/`showGenerationClean`/`showSettings`/
   `showTeacher`/`showLessonSet`/`showLesson`/`showStoryline`/`showStorylineForTopic`/
-  `showStorylineById`/`showStorylineByChainId`/`showLibraryClean` (`v81_n`–`v81_v`, `PLAN §C0.2`–
+  `showStorylineById`/`showStorylineByChainId`/`showLibraryClean` (`v81_n`–`v81_w`, `PLAN §C0.2`–
   `§C5`) — the router seam. See `INTERNALS.md` §6b before extending it: `showComplete`'s own TWO
   internal self-calls are deliberately NOT rerouted (implementation detail, not an entry point —
   `unit-coverage-threshold` pins one); `showSettings` deliberately does not correspond to a `.screen`
@@ -567,13 +621,21 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
   `v81_v`; `showLesson` FORWARDS `startLesson`'s return value (`false` on a guard exit) rather than
   discarding it — callers branch on it; the FOUR `showStoryline*` names wrap FOUR distinct real
   functions with genuinely different behaviour — not four names for one underlying call.
-  **`showLibraryClean` is `§C5`'s first piece, NOT part of `§C0`'s router-seam track** — it exists
-  because "🌍 home" now means the library (user ruling), and its body is a DELIBERATE placeholder
-  (byte-for-byte `goLandingClean()`'s today) until `§C5` stage 2 actually splits the screen; do not
-  "clean up" the apparent duplication before then. **`§C0` itself is fully done** — nothing from its
-  original four-name list has any external caller left un-seamed as of `v81_p`; `v81_r`–`v81_u` add
-  five further surfaces from two separate rulings, all shipped.
-- `test/unit-ui-journeys.test.js` (`v81_m`–`v81_v`, `PLAN §C0`/`§C5`) — the route-parity reference
+  **`showGeneration()`/`showGenerationClean()` now show `'generation-screen'`, not `'landing'`** —
+  `v81_w`'s actual split. `showLibraryClean()` still shows `'landing'` — the two bodies `v81_v`
+  deliberately kept byte-for-byte identical have now diverged for real. **`§C0` itself is fully
+  done** — nothing from its original four-name list has any external caller left un-seamed as of
+  `v81_p`; `v81_r`–`v81_u` add five further surfaces from two separate rulings, all shipped.
+- `lib-src-lang-select`/`lib-lang-select` (`v81_w`) — the library screen's OWN synced-mirror
+  duplicate of `src-lang-select`/`lang-select` (which stay on `generation-screen`, unchanged, full
+  `.lang-box` including script sub-pickers). Sync is bidirectional through `selectSrcLang`/
+  `selectLang` themselves (both files — `build-static.js` has its OWN overrides, kept in sync), on a
+  real `fromForm=true` change ONLY — a `fromForm=false` footer-driven mid-story view must not drag
+  the library filter along. `applyUIStrings()` re-clones the mirror's options every call, compared
+  against the CANONICAL select's OWN `.value` (not `APP.lang`/`APP.srcLang`, the active render
+  context, which can differ). See `test/unit-lang-picker-sync.test.js` and `INTERNALS.md`'s
+  `PLAN §C5` section before touching either half of this.
+- `test/unit-ui-journeys.test.js` (`v81_m`–`v81_w`, `PLAN §C0`/`§C5`) — the route-parity reference
   for the FOUR original screens plus the teacher dashboard, lesson-set, lesson-screen, and
   storyline-screen. Extend it, don't bypass it, if you touch any of them again. ⚠️ Also grep the
   WHOLE suite for the function being rerouted before shipping ANY future reroute — `v81_o` broke
@@ -593,7 +655,17 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
   the file until it got its own. `v81_v`'s own new spy assertion hit a DIFFERENT bug entirely: reuse
   a spy's captured-original variable name across two `C.run()` calls in the same persistent vm
   context and you get real infinite mutual recursion, not a flake — use a distinct name (or restore
-  the spied function) per spy setup.
+  the spied function) per spy setup. **`v81_w` found the SAME assertion block's two spy checks had
+  actually been passing WITHOUT `await settle()` by timing coincidence, not because the screen
+  transition is synchronous** (it happens inside an async `.finally()`) — exposed only once the two
+  spies' destinations genuinely diverged from each other; both needed `await settle()` added.
+- **`.landing-inner`'s real nesting is NOT what its indentation suggests** (`v81_w`, found while
+  moving `#gen-area` out) — it closes right after the language picker + "Generate new" button;
+  `#tts-footer-landing`/`#teacher-mode-bar`/`.library` are children of `#landing` DIRECTLY, not
+  nested inside `.landing-inner`. A naive regex depth-count got this wrong twice; verify with a real
+  parser (Python's `html.parser`, stack-tracking) before trusting an assumption about this file's
+  nesting again. The block also carries one genuinely-orphaned extra `</div>` at the very end —
+  harmless, pre-existing, not a bug.
 - `build-static.js`'s `loadSaved` is missing the entire `_isLaterChapter()` branch `index.html` has
   (found at `v81_p`, not fixed) — a learner opening a later chapter in the STATIC build may not land
   on the progress card the way `v81_b`'s ruling intended. Needs its own measurement before a fix.

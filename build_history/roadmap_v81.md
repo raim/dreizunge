@@ -1662,6 +1662,93 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_w` — `PLAN §C5` stage 2: generation gets its own screen — the first REAL visual change of this track
+
+**Shipped by: Claude Code.** Stage 1 (`v81_v`) was pure naming/routing prep with zero visual change.
+This is the actual split: `#gen-area` (topic input, story-upload/PDF/dialect panels, chapter-count
+slider, style/difficulty/format selects, the Generate button), `.backend-row` (model status), and
+the full `.lang-box` (language pickers, including their script sub-pickers) all MOVE — unchanged
+internally, same ids — out of `#landing` into a new `#generation-screen`, styled with the same
+`sl-screen`/`sl-screen-hdr`/`sl-screen-body` classes teacher-screen and lesson-set already use, so
+no new CSS was needed. `goLanding()`/`goLandingClean()` now `show('generation-screen')`;
+`goLibraryClean()` still shows `'landing'` — the two bodies that `v81_v` deliberately kept
+byte-for-byte identical finally diverge. A new "✨ Generate new" button, styled with the existing
+`.gen-btn` class, is the library screen's entry point into it.
+
+**A structural fact about `#landing`'s own markup, wrong in my first mental model and worth knowing
+before touching it again.** `.landing-inner` does NOT wrap the whole screen the way its indentation
+suggests — it closes right after the language picker + "Generate new" button, and
+`#tts-footer-landing`/`#teacher-mode-bar`/`.library` are children of `#landing` DIRECTLY, siblings
+of `.landing-inner`, not nested inside it. Confirmed with a real HTML parser (Python's
+`html.parser`, stack-tracking every `<div>`/`</div>`) after a naive regex-based depth count gave a
+misleading answer twice in a row. The file also carries one genuinely-orphaned extra `</div>` right
+at the end of the block — harmless (browsers silently ignore an unmatched closing tag), pre-existing,
+not something to "fix" — but a parser check written to find real imbalances must expect it, or it
+reports a false positive on a page that has always rendered correctly.
+
+**The library's picker (`lib-src-lang-select`/`lib-lang-select`) is a NEW, separate, SIMPLER
+duplicate — full option list including "all", no script sub-picker** (script choice is a
+generation-time decision; the library filters by language, not script). `selectSrcLang`/`selectLang`
+now sync BOTH directions on a real `fromForm=true` change — changing either select updates the
+other's `.value` — but a `fromForm=false` footer-driven mid-story view still touches neither, the
+same distinction the six-bug-history functions already made for the existing footer selectors.
+`applyUIStrings()` re-clones the mirror's full option list from the canonical select on every call,
+comparing against `tgtSel.value`/`srcSel.value` (the canonical select's OWN value) for which option
+is selected — deliberately NOT `APP.lang`/`APP.srcLang`, which track the active render context and
+can differ from the form's value while viewing an unrelated lesson.
+
+**The static build needed real adaptation, not just a reroute.** `renderPill()`'s "hide absent-
+language options" logic previously ran once against `lang-select`'s own options, which persist in
+place — now that `lib-lang-select`'s options are torn down and rebuilt by every `applyUIStrings()`
+call, that hiding was silently lost on the next language change. Fixed by hoisting the logic to a
+module-scope `_limitLangOptions` function in `build-static.js` and re-invoking it inside
+`selectSrcLang`'s override, the one static-mode path that re-triggers a re-clone. Separately, the
+static build's old "relabel the picker to 🗣️From/📖To" hack — which assumed one combined picker
+doing double duty as both generation form and library filter — is gone entirely: with two real,
+separate pickers, each already reads sensibly as-is, and the generation screen's own picker remains
+genuinely functional (still synced to the library filter) even with generation itself disabled.
+
+**Three UI strings referenced "above"/"below" a now-nonexistent combined page** — `form.offline`,
+`static.info`, and `lib.empty` — reworded in `ui.json`'s `en` table only, per the project's `en`-only
+convention for a changed string. `lib.empty`'s "above" stays literally true: the new "✨ Generate
+new" button was deliberately placed above `#saved-list`.
+
+**Verified in a real running browser, not only headlessly** — `preview_start` + `computer`/
+`get_page_text`/`javascript_tool`, since this release is genuine visual/layout work that headless
+DOM assertions cannot fully cover. Confirmed: the library screen renders with its compact picker and
+the new button, no generation form visible; clicking through opens the full generation screen with
+every control (topic input, story-length/chapters sliders, style, continue-story dropdown fully
+populated, lesson-type controls, Generate button) intact; the 🌍 home button returns cleanly to the
+library; and the sync mechanism itself — changing the library's picker, then checking the canonical
+select's value on the generation screen — works live, matching the headless test's claim exactly.
+
+**New dedicated test file `test/unit-lang-picker-sync.test.js`** guards the sync mechanism on its
+own terms, separate from `unit-ui-journeys.test.js`'s screen-transition focus: both sync directions,
+the `fromForm=false` non-propagation property (a footer-driven mid-story view must not silently
+refilter the library), the "all" reset clearing both selects, the STATIC option lists matching
+source-text (a copy-paste drift risk the runtime clone cannot catch, since it always derives from
+the canonical select regardless of what the static list says), and the onchange wiring on all four
+selects. Six checks, all mutation-tested — including one against a genuine test-authoring mistake of
+my own: `unit-ui-journeys.test.js`'s two `history.replaceState` spy blocks had been passing WITHOUT
+an `await settle()` by what turned out to be a timing coincidence (`goLandingClean()`'s screen
+transition happens inside an async `.finally()`), not because they were actually synchronous — the
+stage-2 rewrite exposed this the moment the two spy blocks' destinations diverged from each other,
+and both needed `await settle()` added to be genuinely deterministic rather than luckily timed.
+
+**Two new `ui.json` keys this release** (`gen.title`, `lib.generate_new`, `en` only) took the corpus
+from 617 to 619 `en` keys — the first time in this session that `unit-roadmap-version`'s corpus-count
+regex had TWO candidate matches in the session prompt at once (the current baseline statement, and a
+still-accurate HISTORICAL mention inside `v81_l`'s own write-up, carried forward verbatim each
+rename). The regex takes the FIRST bolded `**N topics, N storylines, N languages, N \`en\` keys**`
+match in the file, which was the stale historical one — a latent guard fragility that a run of
+UNCHANGED corpus counts across many releases never exposed. Fixed by de-bolding the historical
+mention (still fully readable, no longer regex-matchable) rather than touching the guard itself.
+
+node test/run.js: 236 checks, ALL PASSED (one new test file registered)
+node test/run.js --quick: 210 checks, ALL PASSED
+node build-static.js re-run (index.html + build-static.js both changed); node test/check-inline.js
+and the docs/index.html variant: 0 failures each
+
 ### `v81_v` — `PLAN §C5` stage 1: "🌍 home" now means the library, not generation — prep, zero visual change
 
 **Shipped by: Claude Code.** New track: with `PLAN §C0`'s router seam complete (`v81_m`–`v81_u`),

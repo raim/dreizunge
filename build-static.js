@@ -300,6 +300,19 @@ async function init() {
   }
 }
 
+// PLAN §C5 stage 2: hoisted out of renderPill() so selectSrcLang()/selectLang() can re-apply it —
+// the library's lib-lang-select is a FRESH CLONE every time applyUIStrings() runs (unlike
+// lang-select's own options, which persist in place), so hiding absent-language options once in
+// renderPill() would silently be lost on the next language change.
+const _staticPresentLangs = new Set(STATIC_LESSONS.map(s=>s.lang||'it'));
+function _limitLangOptions(sel){
+  if(!sel) return;
+  Array.from(sel.options).forEach(opt=>{ opt.style.display=(opt.value==='all'||_staticPresentLangs.has(opt.value))?'':'none'; });
+  if(sel.value !== 'all' && !_staticPresentLangs.has(sel.value)){
+    const first=[..._staticPresentLangs][0];
+    if(first){ sel.value=first; if(sel.id==='lang-select'){ APP.lang=first; APP.formLang=first; saveLang(); } }
+  }
+}
 function renderPill() {
   const pill=document.getElementById('bpill'), lbl=document.getElementById('blbl');
   const bmodel=document.getElementById('bmodel');
@@ -338,25 +351,17 @@ function renderPill() {
   note.innerHTML=t('static.info')+'<br><small style="font-weight:600;opacity:.7"><a href="https://github.com/raim/dreizunge" target="_blank" style="color:inherit">github.com/raim/dreizunge</a></small>'; }
 
   // Show flagged-lessons reminder if this build stripped flagged exercises
-  // Limit lang dropdown to languages that have lessons in this build
-  const presentLangs=new Set(STATIC_LESSONS.map(s=>s.lang||'it'));
-  const sel=document.getElementById('lang-select');
-  if(sel){
-    Array.from(sel.options).forEach(opt=>{ opt.style.display=(opt.value==='all'||presentLangs.has(opt.value))?'':'none'; });
-    // If current selection has no lessons, switch to first available
-    if(sel.value !== 'all' && !presentLangs.has(sel.value)){
-      const first=[...presentLangs][0];
-      if(first){ sel.value=first; APP.lang=first; APP.formLang=first; saveLang(); }
-    }
-  }
-  // In static mode the From/To selectors act as library filters, not generation controls.
-  // Relabel them to reflect browse-only purpose.
-  const langPairRow=document.querySelector('.lang-pair-row');
-  if(langPairRow){
-    const cols=langPairRow.querySelectorAll('.lang-pair-col');
-    if(cols[0]){ const lbl=cols[0].querySelector('.form-lbl'); if(lbl) lbl.textContent='🗣️ From'; }
-    if(cols[1]){ const lbl=cols[1].querySelector('.form-lbl'); if(lbl) lbl.textContent='📖 To'; }
-  }
+  // Limit lang dropdown to languages that have lessons in this build. PLAN §C5 stage 2: applied to
+  // BOTH the generation screen's own select AND the library's synced mirror via the hoisted
+  // _limitLangOptions above — selectSrcLang()/selectLang() re-apply it too, since the mirror is
+  // rebuilt from scratch on every language change.
+  _limitLangOptions(document.getElementById('lang-select'));
+  _limitLangOptions(document.getElementById('lib-lang-select'));
+  // The relabel-to-From/To hack this replaced assumed ONE combined picker doing double duty as
+  // both the generation form and the library filter. Now there are two REAL, separate pickers —
+  // the library screen's own (browse-only, its plain "I speak"/"I learn" labels already read fine
+  // as filter labels) and the generation screen's (still literally "I speak"/"I learn", and still
+  // functional: it stays SYNCED to the library filter even though generation itself is disabled).
   // Disable user-story checkboxes — generation not available in static mode
   const useStoryCb=document.getElementById('use-story-cb');
   if(useStoryCb){ useStoryCb.disabled=true; const _ucr=useStoryCb.closest('.user-story-check-row'); if(_ucr){ _ucr.style.opacity='0.4'; _ucr.title='Story input requires the live server'; } }
@@ -671,7 +676,9 @@ const staticOverrides = [
   '// Static: globe resets filter; any other value sets filter + lang. fromForm=false (footer) updates render context only.',
   'function selectSrcLang(code, fromForm){',
   '  if(fromForm===undefined) fromForm=true;',
-  '  if(code==="all"){ APP.libSrcFilter="all"; const sel=document.getElementById("src-lang-select"); if(sel) sel.value="all"; loadSavedList(); return; }',
+  // PLAN §C5 stage 2: sync the library screen's own mirror select too — see index.html's
+  // selectSrcLang for why (both files must stay paired, same as every other line here).
+  '  if(code==="all"){ APP.libSrcFilter="all"; const sel=document.getElementById("src-lang-select"); if(sel) sel.value="all"; const libSel=document.getElementById("lib-src-lang-select"); if(libSel) libSel.value="all"; loadSavedList(); return; }',
   // v79_q: found by the GENERALISED pairing guard, not by looking — the static selectSrcLang
   // dropped the same v76_i/v78_q script-pick reset that selectLang did, so on GitHub Pages a
   // source-language change carried the previous language's script choice into the next request.
@@ -680,9 +687,14 @@ const staticOverrides = [
   '  APP.srcLang=code;',
   '  if(_sc) APP.srcScript=null;',
   '  try{ refreshScriptPickers(); }catch(_e){}',
-  '  if(fromForm){ APP.formSrcLang=code; saveSrcLang(); APP.libSrcFilter=code; const sel=document.getElementById("src-lang-select"); if(sel&&sel.value!==code) sel.value=code; }',
+  '  if(fromForm){ APP.formSrcLang=code; saveSrcLang(); APP.libSrcFilter=code; const sel=document.getElementById("src-lang-select"); if(sel&&sel.value!==code) sel.value=code; const libSel=document.getElementById("lib-src-lang-select"); if(libSel&&libSel.value!==code) libSel.value=code; }',
   '  ["src-lang-select-footer-ls","src-lang-select-footer-sl"].forEach(function(id){var f=document.getElementById(id);if(f&&f.value!==code)f.value=code;});',
   '  loadUIStrings(code).then(function(){',
+  // PLAN §C5 stage 2: applyUIStrings() just rebuilt lib-lang-select's options from scratch —
+  // re-apply the "hide languages absent from this build" filter, or a previously-hidden language
+  // silently reappears in the library filter after any source-language change.
+  '    _limitLangOptions(document.getElementById("lang-select"));',
+  '    _limitLangOptions(document.getElementById("lib-lang-select"));',
   '    loadSavedList();',
   '    if(document.getElementById("lesson-set")?.classList.contains("active")){',
   '      try{buildPath();}catch(_){}',
@@ -693,7 +705,8 @@ const staticOverrides = [
   '}',
   'function selectLang(code, silent, fromForm){',
   '  if(fromForm===undefined) fromForm=true;',
-  '  if(code==="all"){ APP.libFilter="all"; const sel=document.getElementById("lang-select"); if(sel) sel.value="all"; loadSavedList(); return; }',
+  // PLAN §C5 stage 2: sync the library screen's own mirror select too.
+  '  if(code==="all"){ APP.libFilter="all"; const sel=document.getElementById("lang-select"); if(sel) sel.value="all"; const libSel=document.getElementById("lib-lang-select"); if(libSel) libSel.value="all"; loadSavedList(); return; }',
   // v79_q: captured BEFORE APP.lang is overwritten, exactly as the live selectLang does
   // (`const _langChanged = (APP.lang !== code)`). v78_q: a no-op re-selection must NOT clear the
   // learner's script pick, so this has to be a real change test, not "always true on first call".
@@ -731,6 +744,7 @@ const staticOverrides = [
   '  try{ refreshScriptPickers(); }catch(_e){}',
   '  if(fromForm){ APP.formLang=code; APP.libFilter=code; saveLang(); }',
   '  const sel=document.getElementById("lang-select"); if(fromForm&&sel&&sel.value!==code) sel.value=code;',
+  '  const libSel=document.getElementById("lib-lang-select"); if(fromForm&&libSel&&libSel.value!==code) libSel.value=code;',
   '  const tb=document.getElementById("lang-tutor-banner");',
   '  if(tb){ if(code==="de"){ tb.innerHTML="🎓 Try <a href=\\"https://chilperic.github.io/Deutsch-wipa-2026/\\" target=\\"_blank\\" style=\\"color:#1a4fa0;font-weight:800\\">Chilperic\'s German focus tutor</a>"; tb.style.display=""; } else tb.style.display="none"; }',
   '  if(!silent) loadSavedList();',

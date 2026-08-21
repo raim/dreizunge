@@ -106,8 +106,10 @@ async function main() {
   console.log('  learner: progress card -> story -> lesson -> progress card (via showProgressCard/showStory)');
 }
 
-// Generation currently lives on the landing surface. Entering it from a lesson restores the form
-// context; a cached generation opens the lesson set; returning restores the landing form again.
+// PLAN §C5 stage 2 (this release): generation now lives on its OWN screen (`generation-screen`),
+// split from the library (`landing`) — the two screens `v81_v`'s stage 1 only prepared the naming
+// for. Entering it from a lesson restores the form context; a cached generation opens the lesson
+// set; returning re-enters the generation screen, not the library.
 {
   const C = client();
   C.run(`
@@ -118,10 +120,10 @@ async function main() {
     true;`, 'generation-setup');
   C.run('showGeneration(); true;', 'generation-entry');
   await settle();
-  assert.strictEqual(active(C, 'landing'), true, 'returning to generation activates the landing form');
-  assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen agrees — showGeneration() delegates to goLanding()');
+  assert.strictEqual(active(C, 'generation-screen'), true, 'showGeneration() activates the generation screen');
+  assert.strictEqual(C.run('APP.screen'), 'generation-screen', 'APP.screen agrees — showGeneration() delegates to goLanding()');
   assert.notStrictEqual(C.run("document.getElementById('gen-area').style.display"), 'none',
-    'the generation controls are visible on that landing surface');
+    'the generation controls are visible on that screen');
   C.run(`
     goLessonSet = function(){ show('lesson-set'); };
     fetch = function(){ return Promise.resolve({ ok:true, json:function(){ return Promise.resolve({
@@ -133,9 +135,9 @@ async function main() {
   assert.strictEqual(C.run('APP.screen'), 'lesson-set', 'APP.screen follows the generated lesson set');
   C.run('showGeneration(); true;', 'generation-return');
   await settle();
-  assert.strictEqual(active(C, 'landing'), true, 'leaving the generated lesson set returns to generation');
-  assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen returns with it');
-  console.log('  generation: landing form -> generated lesson set -> landing form (via showGeneration)');
+  assert.strictEqual(active(C, 'generation-screen'), true, 'leaving the generated lesson set re-enters the generation screen');
+  assert.strictEqual(C.run('APP.screen'), 'generation-screen', 'APP.screen returns with it');
+  console.log('  generation: generation screen -> generated lesson set -> generation screen (via showGeneration)');
 
   // PLAN §C0.3: showGenerationClean() is a SECOND, distinct entry into the same screen — it also
   // resets the URL hash, which plain showGeneration() does not. The stub history.replaceState is a
@@ -148,32 +150,34 @@ async function main() {
     history.replaceState = function(){ window.__spyReplaceState++; return orig.apply(history, arguments); };
     showGenerationClean();
     window.__spyReplaceState;`, 'generation-clean');
+  await settle();
   assert.strictEqual(cleanCalls, 1, 'showGenerationClean() resets the URL hash (history.replaceState called once)');
-  assert.strictEqual(active(C, 'landing'), true, 'showGenerationClean() also activates the landing surface');
-  assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen agrees');
-  console.log('  generation: the "home" entry point (showGenerationClean) resets the hash and lands on landing too');
+  assert.strictEqual(active(C, 'generation-screen'), true, 'showGenerationClean() also activates the generation screen');
+  assert.strictEqual(C.run('APP.screen'), 'generation-screen', 'APP.screen agrees');
+  console.log('  generation: the generation-flow entry point (showGenerationClean) resets the hash and enters the generation screen');
   C.run('history.replaceState = orig; true;', 'generation-clean-restore');
 
-  // PLAN §C5 stage 1 (user ruling): "🌍 home" now means the LIBRARY, not generation —
-  // `showLibraryClean()` is a genuinely NEW seam function (not a rename of `showGenerationClean()`),
-  // proven directly here the same way, rather than only via the other journeys' indirect exits.
-  // Its body is a deliberate placeholder today (byte-for-byte `goLandingClean()`'s effect, since the
-  // screen split has not happened yet — see `goLibraryClean()`'s own comment in index.html), so this
-  // assertion will need re-proving once stage 2 gives the library its own distinct screen.
+  // PLAN §C5 stage 1 (user ruling): "🌍 home" means the LIBRARY, not generation — `showLibraryClean()`
+  // is a genuinely NEW seam function (not a rename of `showGenerationClean()`), proven directly here
+  // the same way. As of THIS release (stage 2), its destination has genuinely diverged from
+  // `showGenerationClean()`'s: it lands on `landing` (the library screen), while
+  // `showGenerationClean()` above now lands on `generation-screen`.
   const libCleanCalls = C.run(`
     window.__spyReplaceState = 0;
     var origLib = history.replaceState;
     history.replaceState = function(){ window.__spyReplaceState++; return origLib.apply(history, arguments); };
     showLibraryClean();
     window.__spyReplaceState;`, 'library-clean');
+  await settle();
   assert.strictEqual(libCleanCalls, 1, 'showLibraryClean() resets the URL hash (history.replaceState called once)');
-  assert.strictEqual(active(C, 'landing'), true, 'showLibraryClean() also activates the landing surface');
+  assert.strictEqual(active(C, 'landing'), true, 'showLibraryClean() activates the library, not the generation screen');
   assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen agrees');
-  console.log('  generation: the "home" entry point (showLibraryClean) resets the hash and lands on landing too');
+  console.log('  library: the "home" entry point (showLibraryClean) resets the hash and lands on the library');
 
   // Settings have no dedicated screen yet: the model popover is the current entry/exit surface
-  // C4 will absorb. Its open/close transition must leave the underlying landing route intact —
-  // and APP.screen, which only `.screen` roots ever change, must stay 'landing' throughout.
+  // C4 will absorb. Its open/close transition must leave the underlying route intact — opened here
+  // from the library (where showLibraryClean() just left the client), so APP.screen, which only
+  // `.screen` roots ever change, must stay 'landing' throughout.
   //
   // The popover-state assertion just below does NOT prove showSettings forwards its event
   // argument to toggleModelPop — dropping that argument produced no observable difference here
@@ -187,14 +191,14 @@ async function main() {
   assert.strictEqual(spyCalls, 1, 'showSettings forwards its event argument to toggleModelPop (stopPropagation called exactly once)');
   assert.notStrictEqual(C.run("document.getElementById('bmodels-pop').style.display"), 'none',
     'opening settings (via showSettings) exposes the model-settings popover');
-  assert.strictEqual(active(C, 'landing'), true, 'opening settings keeps the landing surface active');
+  assert.strictEqual(active(C, 'landing'), true, 'opening settings keeps the library surface active');
   assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen is untouched — settings is not a `.screen` root');
   C.run('closeModelPop(); true;', 'settings-exit');
   assert.strictEqual(C.run("document.getElementById('bmodels-pop').style.display"), 'none',
     'closing settings hides the popover');
-  assert.strictEqual(active(C, 'landing'), true, 'closing settings preserves the landing surface');
+  assert.strictEqual(active(C, 'landing'), true, 'closing settings preserves the library surface');
   assert.strictEqual(C.run('APP.screen'), 'landing', 'APP.screen still untouched after closing');
-  console.log('  settings: landing -> model popover -> landing (via showSettings)');
+  console.log('  settings: library -> model popover -> library (via showSettings)');
 }
 
 // PLAN §C0.3 — a NEW bounded surface, not on this file's original four-name list: the teacher
