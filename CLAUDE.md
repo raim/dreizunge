@@ -5,7 +5,7 @@ writing to the same `build_history/roadmap_v*.md`, `SESSION_PROMPT_v*.md`, and `
 file (read by Claude Code) and `AGENTS.md` (read by Codex) carry the same content deliberately — the
 two agents must not drift on protocol. **This is a pointer and a summary, not a new source of
 truth**: everything below already exists, spelled out in full with its reasoning, in
-`build_history/roadmap_v81.md`'s "⚠️ Session protocol" block and its "Rules earned in session N"
+`build_history/roadmap_v82.md`'s "⚠️ Session protocol" block and its "Rules earned in session N"
 sections. Read those before inventing anything not covered here.
 
 ## Orient yourself, in this order
@@ -50,7 +50,7 @@ two agents — `unit-roadmap-version` asserts exactly one exists and will catch 
 
 ## Merge conflicts — where they land and how to resolve them
 
-- **Roadmap entries append at the TOP of `# ✅ SHIPPED IN THE v81 LINE`** (or whichever line is
+- **Roadmap entries append at the TOP of `# ✅ SHIPPED IN THE v82 LINE`** (or whichever line is
   current), so that is exactly where a merge conflict between two sessions' work will land. Resolve
   by **keeping BOTH entries**, ordered by version — never by picking one side and discarding the
   other's shipped write-up.
