@@ -631,6 +631,15 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <span style="font-size:18px;font-weight:900" id="settings-title">⚙️ Settings</span>
       <button onclick="closeSettings()" style="margin-left:auto;background:transparent;border:none;font-size:20px;cursor:pointer">×</button>
     </div>
+    <!-- PLAN §C4's last acceptance detail: the global speech-override mismatch pill. Not a
+         second read-out control (individual read-aloud buttons pass their own field's language
+         and bypass APP.ttsLang entirely — see _speakChunks) — this is state visibility + one-
+         click recovery for the GLOBAL override alone. Hidden unless a lesson is open AND
+         APP.ttsLang disagrees with that lesson's own _speechLocaleFor() result. -->
+    <div id="speech-mismatch-pill" style="display:none;align-items:center;gap:8px;margin-bottom:10px;padding:6px 10px;background:#fff4e5;border:1.5px solid #f0a500;border-radius:8px;font-size:11px;font-weight:700;color:#7a4a00;flex-wrap:wrap">
+      <span id="speech-mismatch-text" style="flex:1"></span>
+      <button id="speech-mismatch-restore-btn" onclick="restoreIntendedSpeech()" style="font-size:11px;font-weight:800;padding:3px 10px;border-radius:12px;border:1.5px solid #f0a500;background:var(--white);color:#7a4a00;cursor:pointer;font-family:inherit"></button>
+    </div>
     <!-- user follow-up after v81_ab: UI language, moved here from the storyline page's own
          footer (REVERSING that earlier placement) — now a genuinely separate field from "I
          speak" (APP.srcLang), so generating/playing a story no longer forces the app's own
@@ -2656,14 +2665,17 @@ function openAccount(){
 }
 function closeAccount(){ const m=document.getElementById('acct-modal'); if(m) m.style.display='none'; }
 
-// PLAN §C4 stage 1: the Settings Card. No dynamic state to refresh on open — every row inside it
-// (#ui-translate-row, #export-static-btn, #teacher-dash-btn) already keeps its own visibility
-// current via applyUIStrings()/updateUITranslateRow(), independent of whether the card is open.
+// PLAN §C4 stage 1: the Settings Card. Most rows need no refresh on open — #ui-translate-row,
+// #export-static-btn, #teacher-dash-btn already keep their own visibility current via
+// applyUIStrings()/updateUITranslateRow(), independent of whether the card is open. Two rows are
+// the exception, both synced explicitly here rather than only on their own init/toggle path, so
+// neither can drift from the actual state while the card was closed.
 function openSettings(){
   const m=document.getElementById('settings-modal'); if(m) m.style.display='flex';
   // The overrule checkbox reflects APP state (not markup) — sync on every open rather than only
   // on init/toggle, so it can never drift from the actual persisted value.
   const cb = document.getElementById('overrule-sl-lang-cb'); if (cb) cb.checked = !!APP.overruleStorylineLang;
+  try { updateSpeechMismatchPill(); } catch(_) {}
 }
 function closeSettings(){ const m=document.getElementById('settings-modal'); if(m) m.style.display='none'; }
 
@@ -3240,6 +3252,35 @@ function toggleOverruleStorylineLang(){
     APP._slLangMismatch = APP.overruleStorylineLang && slSrc !== APP.uiLang;
     _renderStorylineScreen(APP._slScreen.chainId, APP._slScreen.encodedChain, APP._slScreen.topics);
   }
+}
+// PLAN §C4's speech-mismatch pill (see _speechMismatchInfo). Computed fresh on every openSettings()
+// call rather than kept live while closed — the same "sync on every open" choice the overrule
+// checkbox above already made, since nothing displays this state while the card is shut.
+function updateSpeechMismatchPill(){
+  const el = document.getElementById('speech-mismatch-pill');
+  if (!el) return;
+  const info = _speechMismatchInfo();
+  if (!info) { el.style.display = 'none'; return; }
+  const txt = document.getElementById('speech-mismatch-text');
+  const btn = document.getElementById('speech-mismatch-restore-btn');
+  if (txt) txt.textContent = t('settings.speech_mismatch', {
+    active: _speechCodeLangName(info.active),
+    intended: _speechCodeLangName(info.intended)
+  });
+  if (btn) btn.textContent = t('settings.speech_restore');
+  el.style.display = 'flex';
+}
+// The one-click restore: clear the override so activeTtsCode() falls through to _speechLocaleFor()
+// on its own — the SAME resolver every read-out already uses, not a second mechanism. Mirrors the
+// goLanding()/goLandingClean()/goLibraryClean() reset pair exactly (APP.ttsLang + APP._ttsVoiceName
+// together), since a stale voice NAME under the old override's code is no more meaningful than the
+// code itself once the override is gone.
+function restoreIntendedSpeech(){
+  APP.ttsLang = null;
+  APP._ttsVoiceName = null;
+  try { _buildGlobalTtsSelectors(); } catch(_) {}
+  try { refreshTtsVoiceState(); } catch(_) {}
+  updateSpeechMismatchPill();
 }
 async function pollJob(jobId, onStep, intervalMs){
   intervalMs = intervalMs || 2000;
@@ -18909,6 +18950,34 @@ function _speechLocaleFor(lang, topicId) {
     if (sl) return sl.speechLocale;
   }
   return fallback;
+}
+
+// PLAN §C4's last acceptance detail: "if a lesson is using speech different from its intended
+// target/chapter/storyline locale, show a status pill + one-click restore for the intended
+// speech." Measured first: the ONLY place speech can drift from _speechLocaleFor's answer is the
+// GLOBAL override, `APP.ttsLang` — the "speech language" picker on the lesson-set footer's sound-
+// test row (`onTtsLangSelectGlobal`/`onTtsSelect`), which lists EVERY language's tts code, not
+// just locale variants of the one being read. Individual read-out buttons that pass an explicit
+// langCode go through `_speechLocaleFor(langCode)` directly (see `_speakChunks`) and never see
+// this override at all — this resolver, and the pill it feeds, are about the override only.
+// Returns null when there is nothing to flag: no lesson open, no override active, or the override
+// already agrees with the lesson's own intended locale.
+function _speechMismatchInfo() {
+  const d = APP.lessonData;
+  if (!d || !d.lang || !APP.ttsLang) return null;
+  const intended = _speechLocaleFor(d.lang, d.id);
+  if (!intended) return null;
+  const norm = c => String(c || '').replace('_', '-').toLowerCase();
+  if (norm(APP.ttsLang) === norm(intended)) return null;
+  return { active: APP.ttsLang, intended };
+}
+// A tts CODE (e.g. 'pl-PL') is not itself a language name — reverse-look-up which LANGS entry
+// carries it (same pattern already used at refreshTtsVoiceState's _ttsNoVoice call) and localize
+// that. Falls back to the raw code for a locale no LANGS entry owns (a future chapter-specific
+// speechLocale variant, e.g. 'it-CH', that no language's own default equals).
+function _speechCodeLangName(code) {
+  const found = Object.keys(LANGS || {}).find(k => (LANGS[k] || {}).tts === code);
+  return found ? localizedLangName(found, APP.uiLang) : code;
 }
 
 function activeTtsCode(){

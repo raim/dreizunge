@@ -573,6 +573,8 @@
     "settings.title": "Settings",
     "settings.overrule_sl_lang": "Fix",
     "settings.overrule_sl_lang_title": "Keep the UI language fixed here, even while playing storylines in other languages",
+    "settings.speech_mismatch": "⚠ Speech is set to {active} — this lesson's own voice is {intended}",
+    "settings.speech_restore": "Restore",
     "teacher.title": "Learners",
     "teacher.loading": "Loading…",
     "teacher.learners": "Learners",

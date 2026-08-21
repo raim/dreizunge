@@ -1662,6 +1662,74 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_ad` — `PLAN §C4`'s LAST piece: the speech-mismatch status pill — **§C4 is now DONE**
+
+**Shipped by: Claude Code.** The last open item on the Settings Card track, from the user's original
+UI brief: *"If a lesson is using speech different from its intended target/chapter/storyline locale,
+the SC shows an explicit status pill and a one-click restore action for the intended speech. This is
+not a second read-out control: it is state visibility and recovery for the global speech setting.
+Individual read-out buttons remain in place and continue to speak their own field language."*
+
+**Measured the mechanism before writing any code**, per the session prompt's own warning that this
+sits next to `v81_ac`'s UI-language work but easy to over-assume overlap with. Found TWO separate,
+unrelated layers: `_speechLocaleFor(lang, topicId)` (`v79_n`) is the AUTHORED "intended" locale —
+chapter, then storyline, then `languages.json`'s default. `APP.ttsLang` is a SEPARATE global
+OVERRIDE, set only by the "speech language" picker on the lesson-set footer's sound-test row
+(`onTtsLangSelectGlobal`/`onTtsSelect`) — which lists every LANGUAGE's tts code, not just locale
+variants of the one being read, so it can point at a wholly different language than the open lesson.
+`activeTtsCode()` prefers `APP.ttsLang` when set; individual read-out buttons that pass an explicit
+langCode go through `_speechLocaleFor(langCode)` directly (`_speakChunks`/`_speakChunksThen`) and
+never consult the override at all — already guarded by `unit-speech-locale.test.js` §11. So the
+"mismatch" the brief describes is exactly one thing: `APP.ttsLang`, when set, disagreeing with
+`_speechLocaleFor()` for the currently open lesson. A drive-by measurement, not itself a defect:
+`buildPath()` (the lesson-set page's own renderer) unconditionally resets `APP.ttsLang` to the
+LANGUAGE's plain default tts on every render — today that happens to equal `_speechLocaleFor()`'s
+own answer for every chapter in the corpus (a `node -e` scan found **zero** topics or storylines
+currently set `speechLocale` at all), so no live mismatch survives a lesson-set re-render. Left
+alone — not this release's scope, and nothing today depends on it changing.
+
+**What shipped**: `_speechMismatchInfo()` (`index.html`, next to `_speechLocaleFor`) — returns
+`{active, intended}` when a lesson is open, an override is active, and the two locales disagree
+(normalized case/underscore), else `null`. `_speechCodeLangName(code)` reverse-looks-up which
+`LANGS` entry owns a tts code and localizes it via the existing `localizedLangName()`, so the pill
+names languages ("Polish"/"Italian"), not raw codes. `#speech-mismatch-pill` inside
+`#settings-modal` (styled like the existing `#sl-lang-mismatch-pill` — same `#fff4e5`/`#f0a500`
+warning-pill convention), refreshed by `updateSpeechMismatchPill()` on every `openSettings()` call
+(the same "sync on every open" choice the overrule checkbox already made, since nothing displays
+this state while the card is closed). `restoreIntendedSpeech()` — the one-click restore — clears
+`APP.ttsLang`/`APP._ttsVoiceName` (the same reset pair `goLanding()`/`goLandingClean()`/
+`goLibraryClean()` already use) so `activeTtsCode()` falls through to `_speechLocaleFor()` on its
+own, not a second mechanism. Two new `en`-only `ui.json` keys: `settings.speech_mismatch`,
+`settings.speech_restore`.
+
+**New guard `test/unit-speech-mismatch-pill.test.js`**, 14 checks: the resolver's null cases (no
+lesson open, no override, override matches — including a case/underscore-normalized match),
+cross-language mismatch reporting, inheriting a chapter- AND storyline-level `speechLocale` as the
+"intended" value (future-proofing — the corpus has none today, but the resolver must not narrow
+`_speechLocaleFor`'s own contract), the pill's hidden/shown states and rendered text, restore
+clearing both fields and re-hiding the pill immediately, `openSettings()` refreshing the pill on
+every open, markup containment inside `#settings-modal`, the wired `onclick`, and the ui.json
+strings. Mutation-tested the resolver three ways (dropping normalization, dropping the no-lesson
+guard, dropping the equality check entirely — each confirmed to flip a real assertion) and the
+`openSettings()` refresh call (removing it leaves the pill hidden on open, confirming check #10 is
+not vacuous).
+
+**Verified live in a real browser** against the running server: opened a saved lesson, set
+`APP.ttsLang` to a different language, opened Settings — the pill appeared with correctly localized
+names in the ACTIVE UI language (German, in the running session: "Polnisch"/"Englisch"), and
+clicking the real Restore button cleared the override and hid the pill immediately. Re-verified the
+resolver + pill text against the rebuilt `docs/index.html` too (LANGS seeded, since the static
+harness only populates it from `init()`, which the test harness deliberately never runs) — same
+correct output. One harness-only false alarm along the way, not a product bug: a throwaway
+verification script called `.click()` on the restore button against the STATIC build's fake DOM and
+saw no effect — `lib-dom.js`'s `click()` is a documented no-op (never dispatches to `onclick`
+attributes), the same known gap `v81_r`/`v81_s` already hit for other static-markup buttons; calling
+`restoreIntendedSpeech()` directly, and a REAL `.click()` in the live browser, both worked correctly.
+
+**`PLAN §C4` is now fully done** — the Settings Card shell, the global mute-pill consolidation, the
+arrow-control acceptance detail, read-aloud icon consistency, the teacher-mode consolidation, UI
+language decoupling, and now the speech-mismatch pill. Nothing is owed on this track.
+
 ### `v81_ac` — UI language decoupled from "I speak", moved into Settings (reversing a prior decision)
 
 **Shipped by: Claude Code.** The fourth of four requests sent together after `v81_aa` shipped — the

@@ -1,12 +1,31 @@
-# Session prompt — written at the `v81_ac` cut (session 41, in progress)
+# Session prompt — written at the `v81_ad` cut (session 41, in progress)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_ab.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_ac.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v81_ad`, `v81_ae`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v81_ae`, `v81_af`, …) unless a future session has a good reason to switch to
 `v82_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_ac`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_ad`** cut.
+
+**`v81_ad`: `PLAN §C4`'s LAST piece — the speech-mismatch status pill — and `§C4` is now fully
+done.** The user's original UI brief: "If a lesson is using speech different from its intended
+target/chapter/storyline locale, the SC shows an explicit status pill and a one-click restore
+action for the intended speech." Measured first: two SEPARATE mechanisms, `_speechLocaleFor()`
+(`v79_n`, the AUTHORED intended locale) and `APP.ttsLang` (a global OVERRIDE, set only by the
+lesson-set footer's "speech language" picker). The mismatch is exactly `APP.ttsLang`, when set,
+disagreeing with `_speechLocaleFor()` for the open lesson — individual read-out buttons pass their
+own explicit langCode and bypass the override entirely, already guarded by
+`unit-speech-locale.test.js` §11. Shipped `_speechMismatchInfo()`, `#speech-mismatch-pill` inside
+`#settings-modal` (styled like the existing `#sl-lang-mismatch-pill`), and
+`restoreIntendedSpeech()` (clears `APP.ttsLang`/`APP._ttsVoiceName`, the same pair
+`goLanding()`/`goLandingClean()`/`goLibraryClean()` already use). A measured non-bug found along
+the way, left alone: `buildPath()` unconditionally resets `APP.ttsLang` to the plain per-language
+default on every lesson-set render, which would shadow a chapter/storyline `speechLocale` if one
+were ever set — but zero topics or storylines in the corpus currently set one, so nothing today is
+affected. New guard `test/unit-speech-mismatch-pill.test.js`, 14 checks, 4 mutation-tested.
+Verified live against both the running server and the rebuilt static build. See the roadmap's
+`v81_ad` entry for the full write-up.
 
 **Session 41, part 2: with `PLAN §C0` (the router seam, `v81_m`–`v81_u`) complete, the user asked
 "what's next?" and confirmed it — splitting the landing page into a Generation Card and a
@@ -285,11 +304,10 @@ the same batch: the checkbox moved onto the picker's own row, and its label shor
 `test/unit-ui-lang-decouple.test.js`, 14 checks, including a live functional repro of the exact
 reported scenario. See the roadmap's `v81_ac` entry for the full write-up.
 
-**§C4 is now essentially done.** Model selection and speech/sound-test are permanently out of
-scope; the teacher-mode question is resolved; UI language is decoupled and relocated. What remains
-open: only the speech-mismatch status pill (the other acceptance-detail fork) — no ruling given on
-it yet, and given how everything else in this track has gone, it likely needs its own measurement
-pass before assuming its shape.
+**`§C4` is now FULLY done, as of `v81_ad`.** Model selection and speech/sound-test are permanently
+out of scope; the teacher-mode question is resolved; UI language is decoupled and relocated; the
+speech-mismatch status pill (the other acceptance-detail fork) shipped at `v81_ad` — see that
+entry above and the roadmap's `v81_ad` write-up. Nothing is owed on this track.
 
 **Session 40 ran across two agents: Codex shipped `v81_k`/`v81_l`, then ran out of session budget
 mid-work; Claude Code picked up the uncommitted state and shipped `v81_m` through `v81_q`.**
@@ -424,17 +442,16 @@ want to eyeball the log in the console anyway.**
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 242 checks
-node test/run.js --quick                  → expect 216
+node test/run.js                          → expect 243 checks
+node test/run.js --quick                  → expect 217
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Corpus at this cut: **323 topics, 91 storylines, 33 languages, 623 `en` keys** (3 new keys this
-session: `storyline.lang_mismatch`, `settings.overrule_sl_lang`, `settings.overrule_sl_lang_title`
-— `PLAN §C4`, `v81_ac`. `v81_ab` mechanically edited existing per-language values but added no new
-keys, which is why the count jumps straight from 620 to 623 here).
-`APP_VERSION = 'v81_ac'`.
+Corpus at this cut: **323 topics, 91 storylines, 33 languages, 625 `en` keys** (2 new keys this
+session: `settings.speech_mismatch`, `settings.speech_restore` — `PLAN §C4`, `v81_ad`, the last
+acceptance-detail fork).
+`APP_VERSION = 'v81_ad'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -524,10 +541,10 @@ at `v81_ab`. Then the fourth, biggest item from that same batch — UI language 
 directly (fully decouple; storyline only) — **shipped at `v81_ac`**, along with a same-session bug
 fix (the overrule flag was being silently bypassed on storyline chapter transitions, because
 `goLessonSet` is shared plumbing `loadSaved()` also uses for those) and two more small follow-ups
-(checkbox moved onto the picker's row, label shortened to "Fix"). **`§C4` is now essentially done.**
-What remains genuinely open: only the speech-mismatch status pill (the other acceptance-detail
-fork) — no ruling given on it yet, likely needs its own measurement pass first, the same way every
-other item in this whole track did.)*
+(checkbox moved onto the picker's row, label shortened to "Fix"). Then the LAST acceptance-detail
+fork, the speech-mismatch status pill, measured and built without needing a further ruling (the
+mechanism was unambiguous once the two speech layers — `_speechLocaleFor()` vs. `APP.ttsLang` —
+were actually traced) — **shipped at `v81_ad`. `§C4` is now FULLY done, nothing owed.**)*
 
 All three items that headed this section at the `v81_b` cut are closed:
 
@@ -642,8 +659,6 @@ is a materially lower bar. Needs a browser pass, not a code change.
   follow-up to 💬 EVERYWHERE the app used 🗣 for speech — see the roadmap entry for the VS16-safety
   detail on the icon-picker's own palette entry); the teacher-mode toggle collapsed from THREE
   `v78_f` instances into ONE inside `#settings-modal`.
-  **Still owed if this track continues**: only the speech-mismatch status pill (the other
-  acceptance-detail fork). Not started, no ruling given yet.
 - ~~UI language DECOUPLED from "I speak", moved into Settings~~ **✅ SHIPPED at `v81_ac`** —
   `APP.uiLang` is now a genuinely separate field (two rulings: fully decouple; storyline only, not
   lesson-set). `#ui-lang-select`/`#overrule-sl-lang-cb` in the Settings Card; the storyline
@@ -654,8 +669,12 @@ is a materially lower bar. Needs a browser pass, not a code change.
   unconditional auto-follow was silently bypassing the overrule flag — fixed by checking storyline
   MEMBERSHIP (`_storylineIdForTopic`), not entry point. Plus two small follow-ups: the checkbox
   moved onto the picker's row, label shortened to "Fix" (tooltip carries the full explanation).
-  **`§C4` is now essentially done** — only the speech-mismatch status pill remains, not started, no
-  ruling given.
+- ~~`PLAN §C4` — the speech-mismatch status pill, the LAST acceptance-detail fork~~ **✅ SHIPPED at
+  `v81_ad`** — `_speechMismatchInfo()` compares the global override `APP.ttsLang` against
+  `_speechLocaleFor()` for the open lesson; `#speech-mismatch-pill` inside `#settings-modal`
+  (styled like `#sl-lang-mismatch-pill`); `restoreIntendedSpeech()` clears the override so
+  `activeTtsCode()` falls through to the resolver on its own. **`§C4` is now FULLY done — nothing
+  is owed on this track.**
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:

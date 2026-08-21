@@ -153,6 +153,7 @@ run('unit: global mute-pill consolidation (PLAN §C4 "keep going")', 'node', [pa
 run('unit: lang-pair arrow control (PLAN §C4 acceptance detail)', 'node', [path.join(__dirname, 'unit-lang-pair-arrow.test.js')]);
 run('unit: speech icon consistency, read-aloud vs mute (user follow-up)', 'node', [path.join(__dirname, 'unit-speech-icon-consistency.test.js')]);
 run('unit: UI language decoupled from "I speak" (user follow-up)', 'node', [path.join(__dirname, 'unit-ui-lang-decouple.test.js')]);
+run('unit: speech-mismatch status pill (PLAN §C4 last acceptance detail)', 'node', [path.join(__dirname, 'unit-speech-mismatch-pill.test.js')]);
 run('unit: word gate on the story unlock (v81_a, TRACK T)', 'node', [path.join(__dirname, 'unit-word-gate.test.js')]);
 run('unit: chapter icon row on the cards (v80_z)', 'node', [path.join(__dirname, 'unit-chapter-icons.test.js')]);
 run('unit: lesson-set storyline link (v80_x)', 'node', [path.join(__dirname, 'unit-lessonset-storyline-link.test.js')]);

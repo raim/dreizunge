@@ -860,8 +860,9 @@ duplicate but stay SYNCED (one shared value, shown on two screens) rather than b
 global mute-pill consolidation; `v81_aa`: the "arrow control" acceptance detail; `v81_ab`: arrow
 visual follow-up + read-aloud icon consistency + the teacher-mode toggle finally consolidated;
 `v81_ac`: UI language DECOUPLED from "I speak" and moved into Settings, reversing an earlier
-placement decision. Model selection and speech-language/sound-test remain RULED OUT of this track
-entirely. What remains open: only the speech-mismatch status pill)
+placement decision; `v81_ad`: the speech-mismatch status pill, the LAST acceptance-detail fork.
+Model selection and speech-language/sound-test remain RULED OUT of this track entirely. **§C4 is
+now fully done — nothing is owed.**)
 
 ⚠️ **naming collision to know about, not a bug**: `showSettings()` (`v81_n`, `PLAN §C0.2`) already
 existed before this track — it is the `#bpill` model-backend pill's click handler, wrapping
@@ -944,6 +945,27 @@ mid-story, non-persistently.
 | **the warning pill** | `#sl-lang-mismatch-pill` inside `_renderStorylineScreen()` — shown when `APP._slLangMismatch` is true, text from `t('storyline.lang_mismatch', {lang: localizedLangName(_firstTopicSrc, APP.uiLang)})`. Re-read (not re-derived) from the flag whichever caller set — `openStorylineScreen()` for the storyline-browsing entry, `goLessonSet()` for a chapter opened via `loadSaved()` (see the bug-fix row above) — since this render function has other callers (e.g. after an edit) where recomputing risks drifting from the value the actual open used |
 | the acceptance tests | `test/unit-ui-lang-decouple.test.js` (14 checks, 2 explicitly mutation-tested, plus a live functional repro exercising the bug scenario and the still-in-scope standalone case side by side): the storyline footer picker is gone while lesson-set's survives; the Settings Card holds both new controls sharing one row with the shortened label + tooltip; `selectSrcLang`'s `fromForm=true` branch provably never reaches `loadUIStrings` while `fromForm=false` still does; `updateDocDir()` reads `uiLang` for chrome direction and STILL reads `APP.lang` for content direction; `openStorylineScreen`'s AND `goLessonSet`'s content-context vs. chrome-language splits (the latter including the storyline-membership gate that fixes the reported bug); the warning pill's markup/wiring/string; `_restoreFormLang()`'s restore-from-persisted-preference; a live functional round-trip of the overrule toggle; and `build-static.js`'s override staying paired. Fallout: ONE pre-existing test (`unit-ui-journeys.test.js`) needed its fixture updated to seed `APP.uiLang` (and persist it via `saveUiLang()`, since `_restoreFormLang()` now compares against a REAL `localStorage` read) — found by running the full suite, not assumed; the other 40 files that also set `APP.srcLang` never actually exercise the router functions this touches, confirmed by the full suite passing clean everywhere else |
 | verified live | real browser, against BOTH the live server and the rebuilt static build: "I speak" changing to German left the (English) UI completely alone; the Settings picker changing UI language to German correctly re-translated the whole chrome without touching `APP.srcLang`; opening a German-source storyline CHAPTER via `loadSaved()` (the exact reported path) with overrule ON kept the UI in English, where it had previously leaked to German; the SAME storyline with overrule OFF auto-followed to German exactly as before this release; a genuinely standalone topic still auto-followed regardless of the fix; returning to the library restored the UI language to the persisted preference; the lesson-set footer's old mid-story-glance behaviour survived unchanged; the checkbox now shares the picker's row with the shortened "Fix" label and the full tooltip |
+
+**`v81_ad` — the speech-mismatch status pill, `PLAN §C4`'s LAST acceptance-detail fork — §C4 is now fully done**
+
+Two SEPARATE mechanisms, measured before writing code: `_speechLocaleFor(lang, topicId)` (`v79_n`)
+is the AUTHORED "intended" locale (chapter, then storyline, then `languages.json`'s default).
+`APP.ttsLang` is a SEPARATE global OVERRIDE, set only by the lesson-set footer's "speech language"
+picker (`onTtsLangSelectGlobal`/`onTtsSelect`) — which lists every LANGUAGE's tts code, not just
+locale variants of the one being read. `activeTtsCode()` prefers `APP.ttsLang` when set; an explicit-
+langCode read-out bypasses it entirely via `_speechLocaleFor(langCode)` directly (`_speakChunks`),
+already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly one comparison:
+`APP.ttsLang` vs. `_speechLocaleFor()` for the open lesson.
+
+| what | where |
+|---|---|
+| the resolver | `_speechMismatchInfo()` (next to `_speechLocaleFor`) — `null` unless a lesson is open, an override is active, AND the two locales disagree (case/underscore normalized); else `{active, intended}` |
+| the pill | `#speech-mismatch-pill` inside `#settings-modal`, styled like the existing `#sl-lang-mismatch-pill` (same warning-pill convention). `updateSpeechMismatchPill()` refreshes it — called from `openSettings()` only (the same "sync on every open" choice `#overrule-sl-lang-cb` already made), not kept live while the card is closed |
+| the restore action | `restoreIntendedSpeech()` clears `APP.ttsLang`/`APP._ttsVoiceName` (the SAME reset pair `goLanding()`/`goLandingClean()`/`goLibraryClean()` already use) so `activeTtsCode()` falls through to `_speechLocaleFor()` on its own — not a second speech mechanism |
+| language names, not raw codes | `_speechCodeLangName(code)` reverse-looks-up which `LANGS` entry owns a tts code (same pattern as `refreshTtsVoiceState`'s `_ttsNoVoice` call) and localizes it via the existing `localizedLangName()` |
+| ⚠️ **a measured non-bug, not this release's scope** | `buildPath()` (the lesson-set page's own renderer) unconditionally resets `APP.ttsLang` to the LANGUAGE's plain default tts on every render, ignoring any chapter/storyline `speechLocale` — today this happens to equal `_speechLocaleFor()`'s own answer for every chapter in the corpus, because **zero topics or storylines currently set `speechLocale` at all** (checked directly against `lessons.json`). If that ever changes, `buildPath` would need to seed from `_speechLocaleFor()` instead — left alone here since nothing today depends on it |
+| the acceptance test | `test/unit-speech-mismatch-pill.test.js`, 14 checks: the resolver's null cases (no lesson, no override, exact match, a normalized-equal match), a genuine cross-language mismatch, inheriting a chapter- AND storyline-level `speechLocale` as "intended" (future-proofing, per the row above), the pill's hidden/shown states and text, restore clearing both fields and re-hiding the pill immediately, `openSettings()` refreshing the pill on every open, markup containment inside `#settings-modal`, the wired `onclick`, and the ui.json strings. Mutation-tested the resolver three ways and the `openSettings()` refresh call |
+| verified live | real browser against the running server (a genuine mismatch showed correctly localized names in the session's active UI language, and a real `.click()` on the Restore button cleared it) and against the rebuilt `docs/index.html` (LANGS seeded manually, since the static harness never runs `init()`). One harness-only false alarm along the way: `lib-dom.js`'s `.click()` is a documented no-op that never dispatches `onclick` — calling `restoreIntendedSpeech()` directly (and the real browser's real click) both confirmed the button is correctly wired |
 
 **PLAN §8/B1–B4 — observations, target-language skills, vocabulary tags, and shadow BKT** (`v81_j`–`v81_l`)
 
