@@ -1,10 +1,10 @@
-# Session prompt — written at the `v81_x` cut (session 41, in progress)
+# Session prompt — written at the `v81_y` cut (session 41, in progress)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_w.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_x.md` was the
 previous one — superseded by this file and renamed, not kept alongside.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_x`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_y`** cut.
 
 **Session 41, part 2: with `PLAN §C0` (the router seam, `v81_m`–`v81_u`) complete, the user asked
 "what's next?" and confirmed it — splitting the landing page into a Generation Card and a
@@ -170,8 +170,26 @@ browser (a plain static HTTP server, not the Node backend) — `display: none`, 
 pattern (assert against the WINNING `renderPill` in `docs/index.html`, not the builder's string-array
 source — the built page defines it twice and the later one wins), and mutation-tests itself.
 
-**A Settings Card (`PLAN §C4`) is still ahead if this track continues** — not started, no ruling
-owed on it yet.
+**`v81_y`: `PLAN §C4` stage 1 — the Settings Card shell, and only that.** The user confirmed
+continuing straight into `§C4`, the roadmap's "biggest UI change" bullet. Scoping it BEFORE writing
+code (measured, not guessed) surfaced a real complication: the teacher-mode toggle, one of the
+listed absorb items, already exists in three deliberate instances by an explicit prior user ruling
+(`v78_f`, "reachable from every page that has the footer controls") — folding it into one shared
+card instance would reverse that ruling, not just relocate a scattered control. Presented this plus
+a staging question; **the user ruled: Stage 1 only** — a `#settings-pill` next to the login pill,
+opening a `#settings-modal` that absorbs the four items that were ALREADY single-instance and
+self-contained (`ui-translate-row`, `export-static-btn`, `teacher-dash-btn`, the import label),
+unchanged internally. Model selection, speech/sound-test, the global mute-pill consolidation, the
+teacher-mode toggle, and both acceptance-detail forks (arrow-control language selector,
+speech-mismatch status pill) are all explicitly deferred to future releases. `test/unit-settings-
+card.test.js` (8 checks, all mutation-tested) guards both what moved and what deliberately did not.
+Verified in a real browser against the live server AND the rebuilt static build. See the roadmap's
+`v81_y` entry for the full write-up, including a naming note: `showSettings()` already existed
+(`v81_n`, the model-backend pill's popover) and is unrelated to this new `openSettings()`/
+`closeSettings()` — both are "settings" in English only.
+
+**§C4 is far from done** — everything named above as deferred is still ahead, plus the teacher-mode
+consolidation question itself needs its own ruling before anyone builds it either way.
 
 **Session 40 ran across two agents: Codex shipped `v81_k`/`v81_l`, then ran out of session budget
 mid-work; Claude Code picked up the uncommitted state and shipped `v81_m` through `v81_q`.**
@@ -306,15 +324,15 @@ want to eyeball the log in the console anyway.**
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 237 checks
-node test/run.js --quick                  → expect 211
+node test/run.js                          → expect 238 checks
+node test/run.js --quick                  → expect 212
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Corpus at this cut: **323 topics, 91 storylines, 33 languages, 619 `en` keys** (unchanged since
-`v81_w`; `v81_x` was a static-build-only fix, no new UI strings).
-`APP_VERSION = 'v81_x'`.
+Corpus at this cut: **323 topics, 91 storylines, 33 languages, 620 `en` keys** (1 new key this
+session: `settings.title` — `PLAN §C4` stage 1, `v81_y`).
+`APP_VERSION = 'v81_y'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -388,12 +406,18 @@ Corpus at this cut: **323 topics, 91 storylines, 33 languages, 619 `en` keys** (
 *(`v81_i`'s sequential-lock removal was a ruling delivered directly by the user, not drawn from
 this list — nothing below was open because of it, so nothing here changes. `v81_j`–`v81_u`
 (`PLAN §C0.1`–`§C0.4`, plus five further surfaces, Track B) all came from §3 below and are struck
-there as they shipped — the whole router-seam track is DONE. `PLAN §C5` (`v81_v`–`v81_w`) is a NEW
+there as they shipped — the whole router-seam track is DONE. `PLAN §C5` (`v81_v`–`v81_x`) is a NEW
 track with its OWN two rulings, given directly when the user confirmed "what's next": (1) duplicate
 the language pickers but keep them synced, not fully decoupled; (2) "🌍 home" now means the library,
-not generation. **Both rulings are now FULLY BUILT** — `v81_v` shipped ruling (2) as routing prep,
-`v81_w` shipped ruling (1) as the actual screen split. Nothing on `PLAN §C5` is currently owed; a
-Settings Card (`PLAN §C4`) remains ahead if this track continues, with no ruling given for it yet.)*
+not generation. **Both rulings are now FULLY BUILT**, plus a same-session follow-up (`v81_x`) — `§C5`
+is done. `PLAN §C4` (the Settings Card) followed immediately, with its OWN scoping ruling: **Stage 1
+only** — shell + the four already-self-contained absorb items (`v81_y`). Deliberately deferred, no
+ruling given yet either way: model selection, speech-language/sound-test, the global mute-pill
+consolidation, the two acceptance-detail forks, AND — found during `v81_y`'s scoping, not yet put to
+the user — whether the teacher-mode toggle (currently three deliberate `v78_f` instances) should
+ever be consolidated into the Settings Card at all. Nothing is currently QUEUED as owed; the next
+session should measure §C4's remaining scope and present it, the same way `v81_y` did, rather than
+assume any of the above.)*
 
 All three items that headed this section at the `v81_b` cut are closed:
 
@@ -484,9 +508,16 @@ is a materially lower bar. Needs a browser pass, not a code change.
   `v81_v` are now BUILT, not just ruled. `#gen-area`/`.backend-row`/`.lang-box` moved (unchanged
   internally) into a new `#generation-screen`; `lib-src-lang-select`/`lib-lang-select` are the
   library's own synced-mirror duplicate; `showGeneration()`/`showGenerationClean()` now show
-  `'generation-screen'`. Verified in a real browser, not only headlessly. **Nothing is currently
-  owed on `PLAN §C5`.** A Settings Card (`PLAN §C4`) is the next piece of this larger UI-redesign
-  direction if it continues — not started, no ruling given yet on its shape.
+  `'generation-screen'`. Verified in a real browser, not only headlessly. A same-session follow-up
+  (`v81_x`) hid the library's "Generate new" button in the static build, where generation is fully
+  disabled. **`PLAN §C5` is done, nothing owed.**
+- ~~`PLAN §C4` stage 1 — the Settings Card shell~~ **✅ SHIPPED at `v81_y`** — `#settings-pill` next to
+  the login pill, `#settings-modal` absorbing `ui-translate-row`/`export-static-btn`/
+  `teacher-dash-btn`/the import label (unchanged internally). **Deliberately stage 1 only, by user
+  ruling** — model selection, speech/sound-test, the global mute-pill consolidation, the two
+  acceptance-detail forks, and whether to ever consolidate the teacher-mode toggle (found mid-scoping,
+  not yet put to the user) are ALL still owed if this track continues. Not started, no ruling given
+  yet on any of them.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
@@ -624,7 +655,9 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
   `§C5`) — the router seam. See `INTERNALS.md` §6b before extending it: `showComplete`'s own TWO
   internal self-calls are deliberately NOT rerouted (implementation detail, not an entry point —
   `unit-coverage-threshold` pins one); `showSettings` deliberately does not correspond to a `.screen`
-  (settings gets one under `PLAN §C4`, a separate track); `showGenerationClean` is NOT the same as
+  — it is the model-backend pill's popover toggle, UNRELATED to the new `PLAN §C4` Settings Card
+  below despite the name (neither is a `.screen` either — both are modals/popovers outside the
+  `APP.screen` router entirely); `showGenerationClean` is NOT the same as
   `showGeneration` — it also resets the URL hash, and `build-static.js` has its OWN copy of that
   call site (keep both in sync); `showTeacher` has NO `build-static.js` copy to keep in sync — the
   static build hides its entry button entirely; `showLessonSet`/`showLesson`/`showStoryline*`/
@@ -646,6 +679,17 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
   against the CANONICAL select's OWN `.value` (not `APP.lang`/`APP.srcLang`, the active render
   context, which can differ). See `test/unit-lang-picker-sync.test.js` and `INTERNALS.md`'s
   `PLAN §C5` section before touching either half of this.
+- `#settings-pill`/`#settings-modal`/`openSettings()`/`closeSettings()` (`v81_y`, `PLAN §C4` stage
+  1) — the Settings Card. `#settings-pill` lives in `#corner-pills`, a shared fixed wrapper with
+  `#acct-badge` (the login pill), and unlike it carries NO default hiding — reachable on every page
+  including static, which never sets `APP.info.canGenerate`. STAGE 1 ONLY: absorbs `ui-translate-
+  row`/`export-static-btn`/`teacher-dash-btn`/the import label, all unchanged internally. The
+  teacher-mode toggle (`_TEACHER_TOGGLES`, three `v78_f` instances) was deliberately left OUT —
+  consolidating it would reverse an explicit prior ruling, not just relocate a control. See
+  `test/unit-settings-card.test.js` and `INTERNALS.md`'s `PLAN §C4` section before extending this —
+  in particular before assuming any of stage 1's deferred items (model selection, speech/sound-test,
+  global mute-pill consolidation, the two acceptance-detail forks) are in scope without a fresh
+  ruling.
 - `test/unit-ui-journeys.test.js` (`v81_m`–`v81_w`, `PLAN §C0`/`§C5`) — the route-parity reference
   for the FOUR original screens plus the teacher dashboard, lesson-set, lesson-screen, and
   storyline-screen. Extend it, don't bypass it, if you touch any of them again. ⚠️ Also grep the

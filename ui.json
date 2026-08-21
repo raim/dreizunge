@@ -569,6 +569,7 @@
     "pdf.aiclean_lbl": "Remove ads & boilerplate",
     "pdf.aiclean_done": "✓ Cleaned — {n} words removed",
     "pdf.aiclean_partial": "Cleaned {ok}, {fail} failed",
+    "settings.title": "Settings",
     "teacher.title": "Learners",
     "teacher.loading": "Loading…",
     "teacher.learners": "Learners",

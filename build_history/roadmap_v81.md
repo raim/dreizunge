@@ -1662,6 +1662,68 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_y` — `PLAN §C4` stage 1: the Settings Card shell
+
+**Shipped by: Claude Code.** The user confirmed continuing straight into `PLAN §C4` (the "biggest UI
+change" bullet in this plan — a cog pill absorbing the UI-translate row, speech-language setting,
+model selection, sound test, teacher mode, import, static export, and learners, plus a global
+mute-pill consolidation). Given the roadmap's own "1-2 sessions" estimate, scoping this first —
+before writing any code — surfaced a genuine complication the roadmap text didn't anticipate: the
+teacher-mode toggle, one of the listed absorb items, already exists in THREE deliberate instances
+(`v78_f`, by explicit prior user ruling: "reachable from every page that has the footer controls",
+because the lesson-set page is invisible to learners). Folding it into one shared Settings Card
+instance would reverse that ruling, not just relocate a scattered control — a genuinely different
+kind of change from the rest of the bullet. Presented this finding plus a staging question; **the
+user ruled: Stage 1, shell + only the items that are single-instance and self-contained already** —
+`ui-translate-row`, `export-static-btn`, `teacher-dash-btn`, the import label — leaving model
+selection, speech/sound-test, the global mute-pill consolidation, and BOTH acceptance-detail forks
+(the arrow-control language selector, the speech-mismatch status pill) for later releases. The
+teacher-mode toggle stays untouched in all three of its existing places, deliberately, pending its
+own ruling.
+
+**The shell**: `#settings-pill` (⚙️), placed next to the existing "Sign in" pill (`#acct-badge`)
+inside a NEW shared `#corner-pills` fixed wrapper — "next to" rather than at a hardcoded pixel
+offset, so it tracks `#acct-badge`'s own width automatically (Sign in vs. a signed-in username).
+`#acct-badge` keeps its id and its existing `display:none`-by-default toggle unchanged; only its
+`position:fixed` moved to the shared wrapper. `#settings-pill` itself carries **no** default hiding —
+unlike the login pill, it must be reachable on every page including the static build, which never
+sets `APP.info.canGenerate`. The card, `#settings-modal`, reuses the exact modal idiom `#acct-modal`
+already established (fixed inset overlay, centered card, `×` close) rather than inventing new visual
+language; `openSettings()`/`closeSettings()` mirror `openAccount()`/`closeAccount()`.
+
+**What moved**: four already-single-instance controls, unchanged internally, including their
+existing show/hide conditions — `#ui-translate-row` (reads `APP.srcLang`, a global, so its DOM
+location never mattered to its own logic), `#export-static-btn`/`#teacher-dash-btn` (both gated on
+`APP.info.canGenerate`, hidden without a backend — unaffected by the move since that gating lives in
+`applyUIStrings()`, not in the moved markup), and the `.import-btn` label (unconditionally visible,
+live and static alike — pre-existing, unrelated to this move). None of `build-static.js` needed a
+single line changed: none of these four ids were ever referenced there, because their visibility was
+already driven entirely by the SAME `applyUIStrings()` the static build reuses verbatim.
+
+**Naming note, not a bug**: `showSettings()` already existed (`v81_n`) as the model-backend pill's
+click handler, wrapping `toggleModelPop()` — entirely unrelated to this section's new
+`openSettings()`/`closeSettings()`. Both are "settings" in English; neither shares code with the
+other. Documented in `INTERNALS.md` so a future grep doesn't conflate them.
+
+New guard `test/unit-settings-card.test.js` (8 checks, all mutation-tested): each moved control
+appears exactly once in `index.html` (the inverse of `§C5`'s deliberate-duplication risk); all four
+are actually inside `#settings-modal`, mutation-tested by pulling one out of the slice; the shared
+`#corner-pills` wrapper actually contains both pills; `#settings-pill` carries no default
+`display:none`, mutation-tested by adding one back; the teacher-mode toggle's `_TEACHER_TOGGLES`
+list still has all three `v78_f` entries untouched, mutation-tested by collapsing it to one; live DOM
+open/close wiring; and the new `settings.title` `ui.json` key (`en` only) is actually wired through
+`applyUIStrings()`.
+
+Verified in a real browser against BOTH the live server and the rebuilt `docs/index.html` (served
+over a plain static HTTP server): the pill opens the card on both the library and generation
+screens, and in the static build `#export-static-btn`/`#teacher-dash-btn` render `display:none` as
+expected while `.import-btn` stays visible, matching their pre-existing static-mode behaviour
+exactly.
+
+`node test/run.js`: 238 checks, ALL PASSED. `node test/run.js --quick`: 212 checks, ALL PASSED.
+`node build-static.js` re-run; `node test/check-inline.js` and the `docs/index.html` variant: 0
+failures each.
+
 ### `v81_x` — static build: hide the library's "Generate new" button
 
 **Shipped by: Claude Code.** A same-session follow-up spotted by the user in a live check of

@@ -553,10 +553,18 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
 <!-- v62: persistent tutor — ONE floating widget, reachable from every screen, holding ONE
      continuous thread. Hidden entirely without a backend (static build included). -->
 <!-- v65: learner account. Hidden without a backend (the static build has no server). -->
-<div id="acct-badge" style="display:none;position:fixed;left:16px;bottom:16px;z-index:900">
-  <button id="acct-btn" onclick="openAccount()" style="display:flex;align-items:center;gap:6px;background:var(--white);border:2px solid var(--gray-mid);border-radius:24px;padding:6px 12px;cursor:pointer;font-family:Nunito,sans-serif;font-weight:800;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.15)">
-    <span>👤</span><span id="acct-name">Sign in</span>
-  </button>
+<!-- PLAN §C4 stage 1: the Settings pill sits in the SAME fixed corner as the login pill, in a
+     shared flex wrapper rather than at a hardcoded offset — so it stays "next to" acct-badge
+     regardless of acct-badge's own width (Sign in vs. a signed-in username). Unlike acct-badge,
+     it is NEVER hidden: it must be reachable on every page, including the static build, which has
+     no accounts at all. -->
+<div id="corner-pills" style="position:fixed;left:16px;bottom:16px;z-index:900;display:flex;align-items:center;gap:8px">
+  <div id="acct-badge" style="display:none">
+    <button id="acct-btn" onclick="openAccount()" style="display:flex;align-items:center;gap:6px;background:var(--white);border:2px solid var(--gray-mid);border-radius:24px;padding:6px 12px;cursor:pointer;font-family:Nunito,sans-serif;font-weight:800;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.15)">
+      <span>👤</span><span id="acct-name">Sign in</span>
+    </button>
+  </div>
+  <button id="settings-pill" onclick="openSettings()" title="Settings" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15)">⚙️</button>
 </div>
     <!-- v70_o: `justify-content:center` on a container whose content is wider than the viewport
          pushes the overflow off BOTH sides, so on a phone the grid sat to the right of the screen
@@ -597,6 +605,39 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <div id="acct-signedin" style="display:none">
       <div style="font-size:13px;margin-bottom:12px" id="acct-signedin-msg"></div>
       <button onclick="doSignOut()" style="width:100%;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid);border-radius:8px;padding:10px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif" id="acct-signout-btn">Sign out</button>
+    </div>
+  </div>
+</div>
+<!-- PLAN §C4 stage 1: the Settings Card. Reachable from #settings-pill above, on EVERY screen
+     (the pill lives outside all .screen divs, same as acct-badge/acct-modal). Absorbs only the
+     items that were already single-instance, self-contained controls: the missing-UI-strings
+     notice (moved from the generation screen's language box, unchanged internally — it reads
+     APP.srcLang, a global, so its DOM location never mattered), and the library header's
+     import/export-static/teacher-dashboard actions (moved unchanged, including their existing
+     applyUIStrings()-driven show/hide conditions). The teacher-mode toggle stays OUT of this pass
+     on purpose: v78_f already placed it deliberately in three instances (landing/library, the
+     lesson-set footer, the storyline footer) by explicit user ruling, "reachable from every page
+     that has the footer controls" — folding it into one shared instance here would reverse that
+     ruling, not just relocate a control, and deserves its own decision. -->
+<div id="settings-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px">
+  <div style="background:var(--white);border-radius:var(--radius-lg);max-width:360px;width:100%;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35);max-height:calc(100vh - 32px);overflow-y:auto;box-sizing:border-box">
+    <div style="display:flex;align-items:center;margin-bottom:12px">
+      <span style="font-size:18px;font-weight:900" id="settings-title">⚙️ Settings</span>
+      <button onclick="closeSettings()" style="margin-left:auto;background:transparent;border:none;font-size:20px;cursor:pointer">×</button>
+    </div>
+    <div id="ui-translate-row" style="display:none;margin-bottom:12px;align-items:center;gap:8px;flex-wrap:wrap">
+      <span id="ui-translate-info" style="font-size:11px;font-weight:700;color:var(--gray-dark)"></span>
+      <button id="ui-translate-btn" onclick="triggerUITranslation()"
+        style="font-size:11px;font-weight:800;padding:3px 10px;border-radius:12px;border:2px solid var(--blue);background:var(--blue-light);color:var(--blue-dark);cursor:pointer;font-family:inherit"></button>
+      <span id="ui-translate-status" style="font-size:11px;font-weight:700;display:none"></span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <label class="import-btn" title="Import lessons.json">
+        ⬆ Import
+        <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importLessons(this)">
+      </label>
+      <button id="export-static-btn" onclick="exportStatic()" title="Rebuild docs/index.html" style="display:none;font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:8px;padding:5px 10px;background:var(--white);cursor:pointer;color:var(--gray-dark)">🏗 Static</button>
+      <button id="teacher-dash-btn" onclick="showTeacher()" title="Teacher dashboard" style="display:none;font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:8px;padding:5px 10px;background:var(--white);cursor:pointer;color:var(--gray-dark)">🎓 <span id="teacher-dash-lbl">Learners</span></button>
     </div>
   </div>
 </div>
@@ -765,13 +806,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <select id="tag-filter-select" style="font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:8px;padding:3px 8px;background:var(--white);color:var(--gray-dark);cursor:pointer;display:none" onchange="setTagFilter(this.value)"><option value=""></option></select>
 
       <div id="title-gen-status" style="display:none;align-items:center;gap:5px;font-size:11px;font-weight:800;background:#e8f0ff;color:#2a4acc;border-radius:12px;padding:3px 10px"></div>
+      <!-- PLAN §C4 stage 1: import/export-static/teacher-dashboard moved into #settings-modal
+           (reachable via #settings-pill on every screen) — unchanged internally, including their
+           existing applyUIStrings()-driven show/hide conditions. -->
       <div style="display:flex;align-items:center;gap:8px;margin-left:auto">        <div class="lib-cnt" id="lib-cnt">0 topics</div>
-        <label class="import-btn" title="Import lessons.json">
-          ⬆ Import
-          <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importLessons(this)">
-        </label>
-        <button id="export-static-btn" onclick="exportStatic()" title="Rebuild docs/index.html" style="display:none;font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:8px;padding:5px 10px;background:var(--white);cursor:pointer;color:var(--gray-dark)">🏗 Static</button>
-        <button id="teacher-dash-btn" onclick="showTeacher()" title="Teacher dashboard" style="display:none;font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:8px;padding:5px 10px;background:var(--white);cursor:pointer;color:var(--gray-dark)">🎓 <span id="teacher-dash-lbl">Learners</span></button>
         <button class="mute-btn" onclick="toggleMute()" title="Mute" style="font-size:18px;border:none;background:none;cursor:pointer;padding:2px 4px;opacity:.7">🔊</button>
       </div>
     </div>
@@ -907,12 +945,8 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
              it visually clear which speech language is being tested. -->
         <div id="tts-voice-note" style="display:none;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:nowrap;white-space:nowrap;margin-top:10px;margin-left:auto;width:fit-content;text-align:right;background:#fff8e0;border-radius:var(--radius-xl);padding:8px 14px;border:2px solid #f5a623;font-size:13px;font-weight:700;color:#444;line-height:1.4"></div>
         <div id="lang-tutor-banner" style="display:none;margin-top:10px;padding:12px 16px;background:#eef6ff;border-radius:10px;border:2px solid #b8d4f8;font-size:13px;font-weight:700;color:#1a4fa0;line-height:1.6"></div>
-        <div id="ui-translate-row" style="display:none;margin-top:8px;align-items:center;gap:8px;flex-wrap:wrap">
-          <span id="ui-translate-info" style="font-size:11px;font-weight:700;color:var(--gray-dark)"></span>
-          <button id="ui-translate-btn" onclick="triggerUITranslation()"
-            style="font-size:11px;font-weight:800;padding:3px 10px;border-radius:12px;border:2px solid var(--blue);background:var(--blue-light);color:var(--blue-dark);cursor:pointer;font-family:inherit"></button>
-          <span id="ui-translate-status" style="font-size:11px;font-weight:700;display:none"></span>
-        </div>
+        <!-- PLAN §C4 stage 1: #ui-translate-row moved into #settings-modal — it reads APP.srcLang,
+             a global, so its DOM location never mattered to its own logic. -->
       </div>
       <div id="gen-area">
         <label class="form-lbl" for="topic-input" id="topic-label">What do you want to learn Italian for?</label>
@@ -2370,6 +2404,7 @@ function applyUIStrings() {
   const _tdBtn = document.getElementById('teacher-dash-btn');
   if (_tdBtn) _tdBtn.style.display = APP.info.canGenerate ? '' : 'none';
   _setText('teacher-dash-lbl', t('teacher.title'));
+  _setText('settings-title', '⚙️ '+t('settings.title'));
   _setText('add-lesson-lbl-card',  '➕ '+t('lib.add_lesson')+':');
   _setText('user-story-clear-btn', '✕ '+t('form.clear_text'));
   _setAttr('user-story-clear-btn', 'title', t('form.clear_text'));
@@ -2543,6 +2578,12 @@ function openAccount(){
   const so=document.getElementById('acct-signout-btn'); if(so) so.textContent = t('acct.signout');
 }
 function closeAccount(){ const m=document.getElementById('acct-modal'); if(m) m.style.display='none'; }
+
+// PLAN §C4 stage 1: the Settings Card. No dynamic state to refresh on open — every row inside it
+// (#ui-translate-row, #export-static-btn, #teacher-dash-btn) already keeps its own visibility
+// current via applyUIStrings()/updateUITranslateRow(), independent of whether the card is open.
+function openSettings(){ const m=document.getElementById('settings-modal'); if(m) m.style.display='flex'; }
+function closeSettings(){ const m=document.getElementById('settings-modal'); if(m) m.style.display='none'; }
 
 async function _acctPost(path, body){
   const r = await fetch(path, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body||{}) });

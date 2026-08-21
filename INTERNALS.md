@@ -856,6 +856,27 @@ duplicate but stay SYNCED (one shared value, shown on two screens) rather than b
 | the acceptance tests | `test/unit-ui-journeys.test.js`'s generation block now asserts `'generation-screen'`, not `'landing'`, for `showGeneration()`/`showGenerationClean()` — and needed `await settle()` added to TWO spy blocks that had been passing without it by what turned out to be timing coincidence, not by being genuinely synchronous (`goLandingClean()`'s screen-transition happens inside an async `.finally()`). **New file `test/unit-lang-picker-sync.test.js`** is the dedicated guard for the sync mechanism itself: both directions of sync, the `fromForm=false` non-propagation property, the "all" reset, the static option lists matching source-text, and the onchange wiring — six checks, all mutation-tested |
 | ⚠️ **the static build's "Generate new" button must be HIDDEN, not left clickable** (`v81_x`, same-session follow-up caught by the user in a live check of `docs/index.html`) | generation is entirely disabled in static mode — a visible `lib-generate-new-btn` opened `#generation-screen` onto nothing but the "no LLM" overlay. `renderPill()` now hides the button next to its existing `#gen-area`/`.backend-row` hiding. Guarded by `test/unit-static-gen-btn-hidden.test.js`, which — like `unit-static-selectlang-tts.test.js` — asserts against the WINNING `renderPill` definition in the BUILT `docs/index.html` (defined twice; the later one wins in a browser), not the builder's string-array source |
 
+**PLAN §C4 — the Settings Card** (`v81_y` — stage 1 only: shell + low-risk items, per an explicit
+user scoping ruling. The roadmap's full bullet is much bigger — model selection, speech-
+language/sound-test, and a global mute-pill consolidation are all still ahead, each its own
+release)
+
+⚠️ **naming collision to know about, not a bug**: `showSettings()` (`v81_n`, `PLAN §C0.2`) already
+existed before this track — it is the `#bpill` model-backend pill's click handler, wrapping
+`toggleModelPop()`. It is UNRELATED to this section's `#settings-modal`/`openSettings()`/
+`closeSettings()`, the new Settings Card. Both are internally called "settings" because both are,
+in English, settings — but they open two different popovers with no shared code. Not user-visible
+(the model pill carries no "Settings" label), but worth knowing before grepping for one and finding
+the other.
+
+| what | where |
+|---|---|
+| **the shell**: `#settings-pill` (⚙️) next to the existing "Sign in" pill | both live inside a NEW shared `#corner-pills` fixed wrapper (bottom-left) — placed "next to" rather than at a hardcoded pixel offset, so it tracks `#acct-badge`'s own width (Sign in vs. a signed-in username) automatically. `#acct-badge` keeps its own id and `display:none`-by-default toggle (`APP.info.canGenerate`-driven), now just without owning the `position:fixed` itself — the wrapper does. `#settings-pill` carries **no** default hiding: unlike the login pill, it must work in the static build, which never sets `canGenerate` |
+| **the card**: `#settings-modal` | same modal idiom as `#acct-modal` (fixed inset overlay, centered white card, `×` close) — not a new visual language. `openSettings()`/`closeSettings()` mirror `openAccount()`/`closeAccount()` exactly. No dynamic state to refresh on open: every row inside keeps its own visibility current via the EXISTING `applyUIStrings()`/`updateUITranslateRow()` calls, unchanged, regardless of whether the card happens to be open |
+| what actually moved in | four already-single-instance, self-contained controls, unchanged internally, including their existing show/hide conditions: `#ui-translate-row` (the missing-UI-strings notice — reads `APP.srcLang`, a global, so its DOM location never mattered to its own logic), `#export-static-btn`/`#teacher-dash-btn` (both `APP.info.canGenerate`-gated, hidden without a backend), and the `.import-btn` label (unconditionally visible, live and static alike — pre-existing, unrelated to this move) |
+| ⚠️ **the teacher-mode toggle is deliberately OUT of this pass** | `v78_f` placed it in THREE instances on purpose — `teacher-mode-btn` (landing/library, full width), `teacher-ico-ls` (lesson-set footer, compact), `teacher-ico-sl` (storyline footer, compact) — by explicit user ruling: reachable from every page that HAS the footer controls, because the lesson-set page itself is invisible to learners. Folding all three into one shared Settings Card instance would reverse that ruling, not just relocate a control that happens to be scattered — it needs its own decision. `test/unit-settings-card.test.js` check #5 guards that this stage did not silently do it anyway |
+| the acceptance tests | `test/unit-settings-card.test.js` — source-text containment checks (mutation-tested: temporarily pulling a control out of the `#settings-modal` slice, and temporarily collapsing `_TEACHER_TOGGLES` to one entry, both confirmed to turn the relevant check red) for what moved and what deliberately did not, plus a live DOM check that `openSettings()`/`closeSettings()` actually toggle the card. Verified in a real browser against BOTH the live server and the built `docs/index.html` (served over a plain static HTTP server) — the pill opens the card on every screen tried, and in static mode `#export-static-btn`/`#teacher-dash-btn` render `display:none` as expected while `.import-btn` stays visible |
+
 **PLAN §8/B1–B4 — observations, target-language skills, vocabulary tags, and shadow BKT** (`v81_j`–`v81_l`)
 
 | what | where |
