@@ -565,6 +565,11 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     </button>
   </div>
   <button id="settings-pill" onclick="openSettings()" title="Settings" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15)">⚙️</button>
+  <!-- PLAN §C4 "keep going": the global mute pill. class="mute-btn" so updateMuteButtons()'s
+       existing document.querySelectorAll('.mute-btn') sync picks it up with no code change —
+       that updater was already generic, only the BUTTON was scattered. Always visible, same
+       reasoning as settings-pill: reachable on every page including static. -->
+  <button id="mute-pill" class="mute-btn" onclick="toggleMute()" title="Mute" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15);opacity:.7">🔊</button>
 </div>
     <!-- v70_o: `justify-content:center` on a container whose content is wider than the viewport
          pushes the overflow off BOTH sides, so on a phone the grid sat to the right of the screen
@@ -792,7 +797,12 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
 
   </div><!-- end landing-inner -->
 
-  <div style="display:none" id="tts-footer-landing"><span class="lang-footer-lbl tts-pill" title="">🗣</span><select class="tts-select" id="tts-lang-select-landing" onchange="onTtsLangSelectGlobal(this.value,'landing')" style="width:auto;font-size:12px" title="Speech language"></select><select class="tts-select" id="tts-voice-select-landing" onchange="onTtsVoiceSelectGlobal(this.value,'landing')" style="display:none;width:auto;max-width:150px;font-size:12px" title="Voice"></select><button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button></div>
+  <!-- global mute-pill consolidation (PLAN §C4 "keep going"): this row is dead markup already
+       (display:none, toggled by nothing — see the v79_l comment near updateTtsVoiceNote), so its
+       mute-btn is removed here too rather than left as a 7th scattered-but-invisible instance. The
+       select elements stay, per the existing v79_l decision (onTtsVoiceSelectGlobal still syncs
+       them by id) — unrelated to this change. -->
+  <div style="display:none" id="tts-footer-landing"><span class="lang-footer-lbl tts-pill" title="">🗣</span><select class="tts-select" id="tts-lang-select-landing" onchange="onTtsLangSelectGlobal(this.value,'landing')" style="width:auto;font-size:12px" title="Speech language"></select><select class="tts-select" id="tts-voice-select-landing" onchange="onTtsVoiceSelectGlobal(this.value,'landing')" style="display:none;width:auto;max-width:150px;font-size:12px" title="Voice"></select></div>
 
   <div id="teacher-mode-bar" style="display:none;text-align:center;padding:8px 0 4px">
     <button id="teacher-mode-btn" onclick="toggleTeacherMode()"
@@ -808,9 +818,9 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <div id="title-gen-status" style="display:none;align-items:center;gap:5px;font-size:11px;font-weight:800;background:#e8f0ff;color:#2a4acc;border-radius:12px;padding:3px 10px"></div>
       <!-- PLAN §C4 stage 1: import/export-static/teacher-dashboard moved into #settings-modal
            (reachable via #settings-pill on every screen) — unchanged internally, including their
-           existing applyUIStrings()-driven show/hide conditions. -->
+           existing applyUIStrings()-driven show/hide conditions. Its mute-btn moved to the global
+           mute pill in #corner-pills (PLAN §C4 "keep going"). -->
       <div style="display:flex;align-items:center;gap:8px;margin-left:auto">        <div class="lib-cnt" id="lib-cnt">0 topics</div>
-        <button class="mute-btn" onclick="toggleMute()" title="Mute" style="font-size:18px;border:none;background:none;cursor:pointer;padding:2px 4px;opacity:.7">🔊</button>
       </div>
     </div>
     <div id="lang-progress-strip" style="margin-bottom:10px"></div>
@@ -1341,7 +1351,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <span class="lang-footer-lbl tts-pill" title="">🗣</span>
       <select class="tts-select" id="tts-lang-select-ls" onchange="onTtsLangSelectGlobal(this.value,'ls')" style="width:auto;font-size:12px" title="Speech language"></select>
       <select class="tts-select" id="tts-voice-select-ls" onchange="onTtsVoiceSelectGlobal(this.value,'ls')" style="display:none;width:auto;max-width:150px;font-size:12px" title="Voice"></select>
-      <button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button><button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button><button class="story-icon-btn teacher-ico" id="teacher-ico-ls" style="flex-shrink:0;font-size:18px;opacity:.7"></button>
+      <!-- global mute-pill consolidation (PLAN §C4 "keep going"): this footer's own mute-btn is
+           gone — the always-reachable #corner-pills mute pill replaces it, same as the library
+           header's copy. -->
+      <button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button><button class="story-icon-btn teacher-ico" id="teacher-ico-ls" style="flex-shrink:0;font-size:18px;opacity:.7"></button>
     </div>
   </div>
   <div id="ls-passmark" style="border-top:1px solid var(--gray-mid);display:none"></div>
@@ -1688,7 +1701,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       </select>
       <span class="lang-select-arrow">▾</span>
     </div>
-    <button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button><button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button><button class="story-icon-btn teacher-ico" id="teacher-ico-sl" style="flex-shrink:0;font-size:18px;opacity:.7"></button>
+    <!-- global mute-pill consolidation (PLAN §C4 "keep going"): this footer's own mute-btn is
+         gone — the always-reachable #corner-pills mute pill replaces it, same as the library
+         header's copy. -->
+    <button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button><button class="story-icon-btn teacher-ico" id="teacher-ico-sl" style="flex-shrink:0;font-size:18px;opacity:.7"></button>
   </div>
   <div id="sl-passmark" style="border-top:1px solid var(--gray-mid);display:none"></div>
   <div class="gen-stats sl-screen-stats" id="sl-screen-prov" style="padding:6px 16px 0;border-top:1px solid var(--gray-mid);margin:0;display:none"></div>
@@ -150752,11 +150768,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v81_y', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v81_y'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v81_z', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v81_z'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"01b62ccc0e4e","lessons.json":"b8d1e81f9ad2","ui.json":"d1e74142cc25","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"5c25ee514b3f"};
+  APP.buildSources = {"index.html":"a5fdcc1f10a8","lessons.json":"b8d1e81f9ad2","ui.json":"d1e74142cc25","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"5c25ee514b3f"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');
@@ -158182,9 +158198,18 @@ function renderEx(){
     flagBanner+
     '<div id="fb" class="feedback"></div>'+
     '<div class="btn-row">'+
-      `<button class="mute-btn" id="qback" onclick="qPrev()" title="${escAttr(t('ex.back_title'))}" style="flex:0 0 auto;border:2px solid var(--gray-mid);background:var(--white);border-radius:var(--radius-lg);cursor:pointer;font-size:20px;padding:0 16px;display:${C.cur>0?'':'none'}">←</button>`+
+      // global mute-pill consolidation (PLAN §C4 "keep going") found a real pre-existing bug here,
+      // fixed as a drive-by: qback carried class="mute-btn" too — copied along with this row's
+      // inline styles when it was created, purely coincidental (.mute-btn itself has no CSS rule,
+      // it exists only as updateMuteButtons()'s querySelectorAll('.mute-btn') target). Since that
+      // updater rewrites textContent/title on EVERY element matching the class, clicking mute
+      // anywhere while a question with cur>0 was open silently turned qback's "←" into a second
+      // 🔇/🔊 icon with the wrong tooltip (onclick stayed qPrev(), so the click itself still
+      // worked — only the label was wrong). Confirmed with a standalone harness repro before
+      // fixing. qback drops the class; its own mute-btn instance (this row's real mute toggle) is
+      // gone entirely, replaced by the always-reachable #corner-pills mute pill.
+      `<button id="qback" onclick="qPrev()" title="${escAttr(t('ex.back_title'))}" style="flex:0 0 auto;border:2px solid var(--gray-mid);background:var(--white);border-radius:var(--radius-lg);cursor:pointer;font-size:20px;padding:0 16px;display:${C.cur>0?'':'none'}">←</button>`+
       `<button class="check-btn" id="cbtn" onclick="check()" disabled>${t('ex.check')}</button>`+
-      `<button class="mute-btn" onclick="toggleMute()" title="${APP.muted?'Unmute':'Mute'}" style="flex:0 0 auto;border:2px solid var(--gray-mid);background:var(--white);border-radius:var(--radius-lg);cursor:pointer;font-size:20px;padding:0 16px;opacity:${APP.muted?'1':'.7'}">${APP.muted?'🔇':'🔊'}</button>`+
       `<button class="kbd-btn${APP.noKeyboard?' kbd-on':''}" onclick="toggleNoKeyboard()" title="${escAttr(t('ex.no_keyboard.title'))}" style="flex:0 0 auto;border:2px solid var(--gray-mid);background:var(--white);border-radius:var(--radius-lg);cursor:pointer;font-size:20px;padding:0 16px;opacity:${APP.noKeyboard?'1':'.7'}">⌨️</button>`+
     '</div>'+
     flagUi+
@@ -163301,28 +163326,32 @@ function ttsTestVoice(){
   speakBodyText(null, lang, t('tts.voice_test_phrase'));
 }
 function updateTtsVoiceNote(){
-  // v49: the sound-test row is ALWAYS shown when a concrete target language is selected —
-  // one compact line: "Test sound" · the 1,2,3 button · "Bad sound? Mute:" · mute button.
+  // v49: the sound-test row is ALWAYS shown when a concrete target language is selected — one
+  // compact line: "Test sound" · the 1,2,3 button.
   // (Previously the whole box only appeared when ttsHasNiceVoice() judged the available
   // voices bad; the heuristic under-warned on some browser/OS combos, so the gating is gone
   // and the long tts.voice_warn_q question is no longer shown inline — it's reused as the
   // Test button's hover tooltip. ttsHasNiceVoice is kept, unit-tested, for potential future
   // use — it no longer drives this row.)
+  // global mute-pill consolidation (PLAN §C4 "keep going") removed this row's own mute button —
+  // the always-reachable #corner-pills mute pill replaces it. Its "Bad sound? Mute:" hint
+  // (tts.mute_hint_short/tts.voice_mute_hint) is now unused; left in ui.json rather than pruned
+  // across every language, per CLAUDE.md's "no unrelated work in a release commit" — a genuinely
+  // separate cleanup, not part of this consolidation.
   const note = document.getElementById('tts-voice-note');
   if(!note) return;
   const lang = (APP.lang && APP.lang !== 'all') ? APP.lang : null;
   if(!lang){ note.style.display = 'none'; return; }          // no specific target → nothing to test
   const L = (typeof LANGS !== 'undefined' && LANGS[lang]) || null;
   const langTag = L ? ` <span style="white-space:nowrap">${L.flag}</span>` : '';
-  // v79_o (user): "remove the Test and Mute: strings to make this row tighter". The two buttons
-  // are a 1,2,3 speaker and a 🔊/🔇 toggle — both self-evident — so the carrier words were paying
-  // for themselves only on first sight. The strings stay in ui.json and move to the `title`
-  // attributes, so the explanation is one hover away and no translation is orphaned.
+  // v79_o (user): "remove the Test and Mute: strings to make this row tighter". The Test button
+  // is a self-evident 1,2,3 speaker icon, so the carrier word was paying for itself only on first
+  // sight. The string stays in ui.json and moves to the `title` attribute, so the explanation is
+  // one hover away and no translation is orphaned.
   note.innerHTML =
     `<span style="white-space:nowrap">${langTag}</span>`
     + _ttsVariantSelectHtml(lang)
-    + `<button type="button" onclick="ttsTestVoice()" title="${escAttr(t('tts.test_lbl')+' — '+t('tts.voice_warn_q'))}" style="font-size:12px;font-weight:800;padding:5px 12px;border-radius:12px;border:2px solid #f5a623;background:#fff;color:#9a6400;cursor:pointer;font-family:inherit">${escHtml(t('tts.voice_test'))}</button>`
-    + `<button type="button" class="mute-btn" data-mute-tip="${escAttr(t('tts.voice_mute_hint'))}" onclick="toggleMute()" title="${escAttr(t('tts.mute_hint_short')+' '+t('tts.voice_mute_hint'))}" style="font-size:18px;border:none;background:none;cursor:pointer;padding:2px 4px;opacity:${APP.muted?'1':'.7'}">${APP.muted?'🔇':'🔊'}</button>`;
+    + `<button type="button" onclick="ttsTestVoice()" title="${escAttr(t('tts.test_lbl')+' — '+t('tts.voice_warn_q'))}" style="font-size:12px;font-weight:800;padding:5px 12px;border-radius:12px;border:2px solid #f5a623;background:#fff;color:#9a6400;cursor:pointer;font-family:inherit">${escHtml(t('tts.voice_test'))}</button>`;
   note.style.display = 'flex';
 }
 

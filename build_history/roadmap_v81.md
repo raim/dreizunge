@@ -1662,6 +1662,73 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_z` — `PLAN §C4` "keep going": the global mute-pill consolidation, and a real bug found along the way
+
+**Shipped by: Claude Code.** The user said "keep going" on `§C4`. Before building, presented two
+findings from measuring the remaining roadmap bullet: (1) model selection and speech-language/
+sound-test are CONTEXT-BOUND (model choice only matters while generating; speech/sound-test only
+matters for whichever lesson is open) — unlike stage 1's genuinely global items — so folding them
+into the Settings Card would mean either stale/inactive controls outside their context or real
+added complexity; (2) the global mute-pill consolidation itself is a well-scoped, still-global next
+slice, though the roadmap already flagged it as its own risk. **The user ruled both**: leave model
+selection and speech/sound-test where they are (their absorption into `§C4` is now considered
+CLOSED, not merely deferred), and build the mute-pill consolidation next.
+
+**What shipped**: `#mute-pill` (`class="mute-btn"`) joins `#corner-pills`, next to Settings and
+Sign-in. Six scattered `.mute-btn` instances came out: the dead, always-hidden
+`#tts-footer-landing` copy (documented since `v79_l` as toggled by nothing — removing its mute
+button is safe; the select elements it also carries stay, unrelated to this change); the library
+header; the `lesson-set`/`storyline-screen` footers; the question-nav row's own toggle; and the
+sound-test row's copy. `updateMuteButtons()` needed ZERO code changes — it already drove every
+`.mute-btn` generically via `querySelectorAll`, so consolidation was purely a markup move.
+`build-static.js` needed zero changes either: neither `toggleMute`/`updateMuteButtons` nor
+`updateTtsVoiceNote` are overridden there, so the live edits apply to the static build verbatim.
+
+**A real, previously-unknown bug, found while measuring the scatter and fixed as a drive-by**:
+`#qback` (the question-nav "← previous question" button) carried `class="mute-btn"` too — a
+coincidental copy-paste artifact from sharing this row's inline styles when it was built (`.mute-btn`
+carries no CSS rule of its own; it exists only as `updateMuteButtons()`'s query-selector target).
+Because that updater rewrites `textContent`/`title` on every matching element, clicking mute
+ANYWHERE while a question with `cur>0` was open silently turned qback's "←" into a second 🔇/🔊 icon
+with the WRONG tooltip — the click handler stayed `qPrev()`, so the button still worked, only its
+label lied. Reproduced with a standalone harness script BEFORE fixing (confirmed the corruption)
+and again AFTER (confirmed clean) — not inferred from reading the code alone. Fixed by dropping the
+stray class; nothing else about `#qback` changed.
+
+**Test fallout, both genuine claim changes (rule 29), not just re-anchoring**: `unit-tts-test-
+row.test.js` previously asserted the sound-test row's mute button and its `data-mute-tip` WERE
+present — inverted to assert they are now ABSENT, since that is what actually shipped, plus a
+positive regression guard (`!/class="mute-btn"/`, `!/toggleMute\(\)/`, `!/data-mute-tip/`) rather
+than just deleting the old assertions. `unit-speech-locale.test.js` §10 previously asserted
+`tts.mute_hint_short` survives as a tooltip (not orphaned) — changed to assert it no longer appears
+at all, since the button whose tooltip it was is gone. Both `ui.json` keys
+(`tts.mute_hint_short`/`tts.voice_mute_hint`) are left in place, unused, rather than pruned across
+every language — a genuinely separate cleanup, out of scope for this release.
+
+**New guard `test/unit-mute-consolidation.test.js`** (6 checks, all mutation-tested): exactly one
+real `.mute-btn` remains file-wide — the count regex requires an immediately-preceding `<button`,
+because a naive text search over-matches this file's own two explanatory comments that literally
+contain the string `class="mute-btn"`; it lives inside `#corner-pills`; `updateMuteButtons()` is
+unchanged; `#qback` no longer carries the stray class; and a live-DOM repro of the FIXED bug (built
+via `innerHTML`, since the harness never parses static markup into real nodes) confirms a mute
+toggle updates the real pill and leaves a "←"-alike button untouched.
+
+**Verified live** against the running server: the corner pill toggles correctly and is the ONLY
+`.mute-btn` in the DOM; the library header, `lesson-set` footer, and generation screen's sound-test
+row all confirmed mute-button-free. (A live repro of the qback bug itself, inside an actual running
+question, was attempted but not completed — the dev server's saved progress made every readily
+reachable lesson resolve straight to its completion screen rather than a mid-question state; the
+harness-level before/after repro already gives a deterministic, direct proof of both the bug and
+the fix, so this was not chased further.)
+
+**Housekeeping note for the next session**: `v81_z` is the last letter available in this suffix
+scheme. The NEXT release needs a new naming convention (`v81_aa`? `v82_a`?) — nothing here decides
+that, it is simply flagged so it is not a surprise.
+
+`node test/run.js`: 239 checks, ALL PASSED. `node test/run.js --quick`: 213 checks, ALL PASSED.
+`node build-static.js` re-run; `node test/check-inline.js` and the `docs/index.html` variant: 0
+failures each.
+
 ### `v81_y` — `PLAN §C4` stage 1: the Settings Card shell
 
 **Shipped by: Claude Code.** The user confirmed continuing straight into `PLAN §C4` (the "biggest UI

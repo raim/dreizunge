@@ -196,14 +196,23 @@ const resolve = (lang, id) => C.run(
   // welcomed (rule 30). What "visible" means is textContent, so that is what gets asserted.
   const visible = C.run(`document.getElementById('tts-voice-note').textContent`, 'row2txt');
   const en = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8')).en;
-  for (const k of ['tts.test_lbl', 'tts.mute_hint_short']) {
-    const s = en[k];
-    if (!s) continue;
-    assert.ok(!visible.includes(s), `"${s}" (${k}) must no longer be visible text, got: ${visible}`);
+  {
+    const s = en['tts.test_lbl'];
+    assert.ok(!visible.includes(s), `"${s}" (tts.test_lbl) must no longer be visible text, got: ${visible}`);
     assert.ok(/title="/.test(html) && html.includes(s),
-      `"${s}" (${k}) must survive as a tooltip, not be orphaned`);
+      `"${s}" (tts.test_lbl) must survive as a tooltip, not be orphaned`);
   }
-  console.log('  Test/Mute carrier words removed but not orphaned: OK');
+  // PLAN §C4 "keep going" (global mute-pill consolidation): tts.mute_hint_short was THIS row's
+  // mute button's own tooltip carrier word — the button is gone (muting is global now, via
+  // #corner-pills), so unlike tts.test_lbl this one is not "surviving as a tooltip" anymore. It
+  // must be absent from the row entirely, not just invisible as body text.
+  {
+    const s = en['tts.mute_hint_short'];
+    assert.ok(!html.includes(s),
+      `THE REGRESSION: "${s}" (tts.mute_hint_short) must not appear at all — the sound-test row's ` +
+      `own mute button was consolidated away, this string has nothing left to be a tooltip for`);
+  }
+  console.log('  Test carrier word removed but not orphaned; Mute carrier word gone entirely: OK');
 }
 
 // ── 11. a voice choice for ONE language never speaks another (v79_o) ──────

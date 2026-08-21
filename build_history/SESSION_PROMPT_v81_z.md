@@ -1,10 +1,12 @@
-# Session prompt — written at the `v81_y` cut (session 41, in progress)
+# Session prompt — written at the `v81_z` cut (session 41, in progress)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_x.md` was the
-previous one — superseded by this file and renamed, not kept alongside.)*
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_y.md` was the
+previous one — superseded by this file and renamed, not kept alongside. ⚠️ `v81_z` is the LAST
+letter in this suffix scheme — the NEXT release needs a new naming convention, e.g. `v81_aa` or
+`v82_a`. Nothing here decides which; just don't be surprised by it.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_y`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_z`** cut.
 
 **Session 41, part 2: with `PLAN §C0` (the router seam, `v81_m`–`v81_u`) complete, the user asked
 "what's next?" and confirmed it — splitting the landing page into a Generation Card and a
@@ -188,8 +190,30 @@ Verified in a real browser against the live server AND the rebuilt static build.
 (`v81_n`, the model-backend pill's popover) and is unrelated to this new `openSettings()`/
 `closeSettings()` — both are "settings" in English only.
 
-**§C4 is far from done** — everything named above as deferred is still ahead, plus the teacher-mode
-consolidation question itself needs its own ruling before anyone builds it either way.
+**`v81_z`: "keep going" on `§C4` — the global mute-pill consolidation, plus a real bug found along
+the way.** Before building, presented two findings: (1) model selection and speech-language/
+sound-test are CONTEXT-BOUND (model choice only matters while generating; speech/sound-test only
+matters for the open lesson) — unlike stage 1's genuinely global items; (2) the mute-pill
+consolidation is itself well-scoped and still global. **The user ruled both**: leave model
+selection/speech-sound-test alone — their absorption into `§C4` is now CLOSED, not deferred — and
+build the mute pill. `#mute-pill` joined `#corner-pills`; six scattered `.mute-btn` instances
+removed (a dead always-hidden copy, the library header, the `lesson-set`/`storyline-screen`
+footers, the question-nav row, the sound-test row). `updateMuteButtons()` needed zero code changes
+— it was already generic. **Found and fixed as a drive-by**: `#qback` (the "← previous question"
+button) carried `class="mute-btn"` too, a coincidental copy-paste artifact — clicking mute anywhere
+while a question was open silently corrupted qback's "←" into a speaker icon (the click still
+worked, only the label lied). Reproduced with a standalone harness script both BEFORE and AFTER the
+fix. Two pre-existing guards needed genuine claim changes, not re-anchoring (rule 29):
+`unit-tts-test-row.test.js` and `unit-speech-locale.test.js` §10 both used to require the
+sound-test row's mute button present — inverted to require it absent. New guard
+`test/unit-mute-consolidation.test.js`, 6 checks, all mutation-tested. See the roadmap's `v81_z`
+entry for the full write-up.
+
+**§C4 is narrower than it looked, but not done.** Model selection and speech/sound-test are now
+explicitly OUT of this track's scope, permanently (not just deferred). What remains open: the two
+acceptance-detail forks (arrow-control language selector, speech-mismatch status pill) and the
+teacher-mode consolidation question, which still needs its own ruling before anyone builds it
+either way.
 
 **Session 40 ran across two agents: Codex shipped `v81_k`/`v81_l`, then ran out of session budget
 mid-work; Claude Code picked up the uncommitted state and shipped `v81_m` through `v81_q`.**
@@ -324,15 +348,15 @@ want to eyeball the log in the console anyway.**
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 238 checks
-node test/run.js --quick                  → expect 212
+node test/run.js                          → expect 239 checks
+node test/run.js --quick                  → expect 213
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Corpus at this cut: **323 topics, 91 storylines, 33 languages, 620 `en` keys** (1 new key this
-session: `settings.title` — `PLAN §C4` stage 1, `v81_y`).
-`APP_VERSION = 'v81_y'`.
+Corpus at this cut: **323 topics, 91 storylines, 33 languages, 620 `en` keys** (unchanged since
+`v81_y`; `v81_z` moved/removed existing controls only, no new UI strings).
+`APP_VERSION = 'v81_z'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -410,14 +434,16 @@ there as they shipped — the whole router-seam track is DONE. `PLAN §C5` (`v81
 track with its OWN two rulings, given directly when the user confirmed "what's next": (1) duplicate
 the language pickers but keep them synced, not fully decoupled; (2) "🌍 home" now means the library,
 not generation. **Both rulings are now FULLY BUILT**, plus a same-session follow-up (`v81_x`) — `§C5`
-is done. `PLAN §C4` (the Settings Card) followed immediately, with its OWN scoping ruling: **Stage 1
-only** — shell + the four already-self-contained absorb items (`v81_y`). Deliberately deferred, no
-ruling given yet either way: model selection, speech-language/sound-test, the global mute-pill
-consolidation, the two acceptance-detail forks, AND — found during `v81_y`'s scoping, not yet put to
-the user — whether the teacher-mode toggle (currently three deliberate `v78_f` instances) should
-ever be consolidated into the Settings Card at all. Nothing is currently QUEUED as owed; the next
-session should measure §C4's remaining scope and present it, the same way `v81_y` did, rather than
-assume any of the above.)*
+is done. `PLAN §C4` (the Settings Card) followed with TWO further scoping rulings: **Stage 1
+only** — shell + the four already-self-contained absorb items (`v81_y`); then, on "keep going"
+(`v81_z`), **model selection and speech-language/sound-test are OUT of this track entirely**
+(context-bound, not global — a closed decision, not a deferral) and **the global mute-pill
+consolidation shipped**. What remains genuinely open: the two acceptance-detail forks (arrow-control
+language selector, speech-mismatch status pill) and whether the teacher-mode toggle (currently
+three deliberate `v78_f` instances) should ever be consolidated at all — found during `v81_y`'s
+scoping, still not put to the user. Nothing is currently QUEUED as owed; the next session should
+measure whatever's picked next and present it, the same way `v81_y`/`v81_z` did, rather than assume
+any of the above.)*
 
 All three items that headed this section at the `v81_b` cut are closed:
 
@@ -514,10 +540,17 @@ is a materially lower bar. Needs a browser pass, not a code change.
 - ~~`PLAN §C4` stage 1 — the Settings Card shell~~ **✅ SHIPPED at `v81_y`** — `#settings-pill` next to
   the login pill, `#settings-modal` absorbing `ui-translate-row`/`export-static-btn`/
   `teacher-dash-btn`/the import label (unchanged internally). **Deliberately stage 1 only, by user
-  ruling** — model selection, speech/sound-test, the global mute-pill consolidation, the two
-  acceptance-detail forks, and whether to ever consolidate the teacher-mode toggle (found mid-scoping,
-  not yet put to the user) are ALL still owed if this track continues. Not started, no ruling given
-  yet on any of them.
+  ruling.**
+- ~~`PLAN §C4` "keep going" — the global mute-pill consolidation~~ **✅ SHIPPED at `v81_z`** —
+  `#mute-pill` joins `#corner-pills`; six scattered `.mute-btn` instances removed;
+  `updateMuteButtons()` needed no code changes (already generic). **Found and fixed a real bug along
+  the way**: `#qback` carried `class="mute-btn"` too, silently corrupting its "←" label on any mute
+  toggle while a question was open — see the roadmap entry. **Also ruled OUT of `§C4` entirely, not
+  deferred**: model selection and speech-language/sound-test, both context-bound rather than global.
+  **Still owed if this track continues**: the two acceptance-detail forks (arrow-control language
+  selector, speech-mismatch status pill), and whether to ever consolidate the teacher-mode toggle
+  (found mid-scoping at `v81_y`, still not put to the user). Not started, no ruling given yet on
+  either.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
@@ -687,9 +720,17 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
   teacher-mode toggle (`_TEACHER_TOGGLES`, three `v78_f` instances) was deliberately left OUT —
   consolidating it would reverse an explicit prior ruling, not just relocate a control. See
   `test/unit-settings-card.test.js` and `INTERNALS.md`'s `PLAN §C4` section before extending this —
-  in particular before assuming any of stage 1's deferred items (model selection, speech/sound-test,
-  global mute-pill consolidation, the two acceptance-detail forks) are in scope without a fresh
-  ruling.
+  in particular before assuming model selection or speech/sound-test belong here: `v81_z` ruled
+  BOTH out of this track entirely, not just deferred.
+- `#mute-pill` (`v81_z`, `PLAN §C4` "keep going") — the global mute pill, also in `#corner-pills`,
+  `class="mute-btn"` so `updateMuteButtons()`'s existing `querySelectorAll('.mute-btn')` sync drives
+  it with no code change. Six scattered instances were removed to make this the ONLY one — see
+  `test/unit-mute-consolidation.test.js` and `INTERNALS.md`'s `PLAN §C4` section. ⚠️ `.mute-btn` has
+  NO CSS rule — it exists purely as this query-selector target, which is exactly how a stray
+  `class="mute-btn"` on an unrelated button (`#qback`, fixed this release) silently corrupted that
+  button's label on every mute toggle. Before giving ANY new button `class="mute-btn"`, check it is
+  actually meant to call `toggleMute()` — the class alone is what makes `updateMuteButtons()` rewrite
+  it.
 - `test/unit-ui-journeys.test.js` (`v81_m`–`v81_w`, `PLAN §C0`/`§C5`) — the route-parity reference
   for the FOUR original screens plus the teacher dashboard, lesson-set, lesson-screen, and
   storyline-screen. Extend it, don't bypass it, if you touch any of them again. ⚠️ Also grep the
