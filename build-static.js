@@ -329,6 +329,11 @@ function renderPill() {
   // C5: replace entire generation area with static info message
   const _genArea = document.getElementById('gen-area');
   if (_genArea) _genArea.style.display = 'none';
+  // C5 stage 2 follow-up: the library's own "Generate new" button leads to a screen that's entirely
+  // disabled in static mode (gen-area hidden, overlay warning shown below) — hide the button itself
+  // rather than let it open a screen with nothing usable on it.
+  const _libGenBtn = document.getElementById('lib-generate-new-btn');
+  if (_libGenBtn) _libGenBtn.style.display = 'none';
   // Hide PDF upload (live-only)
   const _pdfRow = document.querySelector('label:has(#use-pdf-cb)');
   if (_pdfRow) _pdfRow.style.display = 'none';

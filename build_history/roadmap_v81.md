@@ -1662,6 +1662,30 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_x` — static build: hide the library's "Generate new" button
+
+**Shipped by: Claude Code.** A same-session follow-up spotted by the user in a live check of
+`docs/index.html` right after `v81_w` shipped: the library screen's new "✨ Generate new" button
+(`lib-generate-new-btn`) was visible in the STATIC build, but generation is entirely disabled there —
+`renderPill()` already hides `#gen-area` and swaps in a warning overlay ("no LLM available"). A
+visible button that opens a screen with nothing usable on it reads as a bug, not a feature; the fix
+hides the button itself in `build-static.js`'s `renderPill()`, next to the existing `#gen-area`/
+`.backend-row` hiding it already does.
+
+Verified against the BUILT artifact in a real browser (`docs/index.html` served over a plain static
+HTTP server, not the Node backend), the same standard `unit-static-selectlang-tts.test.js` already
+set for this kind of claim: `getElementById('lib-generate-new-btn')` computed `display: none`.
+
+New guard, `test/unit-static-gen-btn-hidden.test.js`, follows that same file's established pattern —
+it extracts the WINNING `renderPill` definition from `docs/index.html` (the built page defines it
+twice: the live copy, then the static override; the later one wins in a browser) rather than
+checking `build-static.js`'s string-array source, and mutation-tests itself by removing the hide line
+and confirming the assertion then fails.
+
+`node test/run.js`: 237 checks, ALL PASSED. `node test/run.js --quick`: 211 checks, ALL PASSED.
+`node build-static.js` re-run; `node test/check-inline.js` and the `docs/index.html` variant: 0
+failures each.
+
 ### `v81_w` — `PLAN §C5` stage 2: generation gets its own screen — the first REAL visual change of this track
 
 **Shipped by: Claude Code.** Stage 1 (`v81_v`) was pure naming/routing prep with zero visual change.

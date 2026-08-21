@@ -8045,7 +8045,7 @@ const STATIC_LESSONS = [
           "at": "2026-08-13T00:05:59.556Z"
         },
         "_recreated": true,
-        "_hidden": true,
+        "_hidden": false,
         "qcAt": "2026-08-13T05:33:26.003Z",
         "qcBy": "translategemma:12b"
       },
@@ -8355,7 +8355,7 @@ const STATIC_LESSONS = [
         },
         "qcAt": "2026-08-13T05:37:19.839Z",
         "qcBy": "translategemma:12b",
-        "_hidden": true
+        "_hidden": false
       },
       {
         "id": "ls_1786580676053_svdj",
@@ -8449,7 +8449,7 @@ const STATIC_LESSONS = [
       }
     },
     "generatedAt": "2026-08-12T23:44:11.213Z",
-    "updatedAt": "2026-08-13T06:38:59.246Z",
+    "updatedAt": "2026-08-21T05:36:06.910Z",
     "createdBy": "admin",
     "coverageTarget": 0.7,
     "storyQcCheckedBy": "translategemma:12b",
@@ -150711,11 +150711,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v81_w', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v81_w'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v81_x', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v81_x'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"444950679c4e","lessons.json":"b8d1e81f9ad2","ui.json":"03389ddc34ef","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"9f2795efc53f"};
+  APP.buildSources = {"index.html":"444950679c4e","lessons.json":"f7a974478ea6","ui.json":"03389ddc34ef","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"5c25ee514b3f"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');
@@ -150774,6 +150774,11 @@ function renderPill() {
   // C5: replace entire generation area with static info message
   const _genArea = document.getElementById('gen-area');
   if (_genArea) _genArea.style.display = 'none';
+  // C5 stage 2 follow-up: the library's own "Generate new" button leads to a screen that's entirely
+  // disabled in static mode (gen-area hidden, overlay warning shown below) — hide the button itself
+  // rather than let it open a screen with nothing usable on it.
+  const _libGenBtn = document.getElementById('lib-generate-new-btn');
+  if (_libGenBtn) _libGenBtn.style.display = 'none';
   // Hide PDF upload (live-only)
   const _pdfRow = document.querySelector('label:has(#use-pdf-cb)');
   if (_pdfRow) _pdfRow.style.display = 'none';

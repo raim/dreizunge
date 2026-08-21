@@ -1,10 +1,10 @@
-# Session prompt — written at the `v81_w` cut (session 41, in progress)
+# Session prompt — written at the `v81_x` cut (session 41, in progress)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_v.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_w.md` was the
 previous one — superseded by this file and renamed, not kept alongside.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_w`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_x`** cut.
 
 **Session 41, part 2: with `PLAN §C0` (the router seam, `v81_m`–`v81_u`) complete, the user asked
 "what's next?" and confirmed it — splitting the landing page into a Generation Card and a
@@ -159,6 +159,17 @@ genuine test-authoring mistake, not a product bug: two `history.replaceState` sp
 because they were actually synchronous — exposed the moment their destinations diverged from each
 other.
 
+**`v81_x`: same-session follow-up — the static build's library "Generate new" button is now
+hidden.** The user spotted it in a live check of `docs/index.html` right after `v81_w` shipped:
+generation is entirely disabled in the static build (`#gen-area` hidden, a warning overlay in its
+place), so a visible "✨ Generate new" button on the library screen opened a screen with nothing
+usable on it. `renderPill()` in `build-static.js` now hides `lib-generate-new-btn` too, next to the
+`#gen-area`/`.backend-row` hiding it already did. Verified against the BUILT artifact in a real
+browser (a plain static HTTP server, not the Node backend) — `display: none`, confirmed. New guard
+`test/unit-static-gen-btn-hidden.test.js` follows `unit-static-selectlang-tts.test.js`'s established
+pattern (assert against the WINNING `renderPill` in `docs/index.html`, not the builder's string-array
+source — the built page defines it twice and the later one wins), and mutation-tests itself.
+
 **A Settings Card (`PLAN §C4`) is still ahead if this track continues** — not started, no ruling
 owed on it yet.
 
@@ -295,15 +306,15 @@ want to eyeball the log in the console anyway.**
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 236 checks
-node test/run.js --quick                  → expect 210
+node test/run.js                          → expect 237 checks
+node test/run.js --quick                  → expect 211
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Corpus at this cut: **323 topics, 91 storylines, 33 languages, 619 `en` keys** (2 new keys this
-session: `gen.title`, `lib.generate_new` — `PLAN §C5` stage 2, `v81_w`).
-`APP_VERSION = 'v81_w'`.
+Corpus at this cut: **323 topics, 91 storylines, 33 languages, 619 `en` keys** (unchanged since
+`v81_w`; `v81_x` was a static-build-only fix, no new UI strings).
+`APP_VERSION = 'v81_x'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
