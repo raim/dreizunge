@@ -631,6 +631,25 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <span style="font-size:18px;font-weight:900" id="settings-title">⚙️ Settings</span>
       <button onclick="closeSettings()" style="margin-left:auto;background:transparent;border:none;font-size:20px;cursor:pointer">×</button>
     </div>
+    <!-- user follow-up after v81_ab: UI language, moved here from the storyline page's own
+         footer (REVERSING that earlier placement) — now a genuinely separate field from "I
+         speak" (APP.srcLang), so generating/playing a story no longer forces the app's own
+         chrome to switch language. "Fix" is the "overrule storyline source language"
+         checkbox: default OFF preserves the OLD auto-follow-on-open behaviour for storylines
+         (lesson-set, out of scope, still always auto-follows); ON pins the UI here regardless,
+         and the storyline screen shows a mismatch pill when that leaves the two disagreeing. -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+      <span style="font-size:12px;font-weight:800;color:var(--gray-dark)">UI</span>
+      <div class="lang-select-wrap" style="width:auto;display:inline-block">
+        <select class="lang-select lang-select-sm" style="width:auto" id="ui-lang-select" onchange="selectUiLang(this.value)">
+        </select>
+        <span class="lang-select-arrow">▾</span>
+      </div>
+      <label id="overrule-sl-lang-row" title="Keep the UI language fixed here, even while playing storylines in other languages" style="display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--gray-dark);cursor:pointer">
+        <input type="checkbox" id="overrule-sl-lang-cb" onchange="toggleOverruleStorylineLang()">
+        <span id="overrule-sl-lang-lbl">Fix</span>
+      </label>
+    </div>
     <div id="ui-translate-row" style="display:none;margin-bottom:12px;align-items:center;gap:8px;flex-wrap:wrap">
       <span id="ui-translate-info" style="font-size:11px;font-weight:700;color:var(--gray-dark)"></span>
       <button id="ui-translate-btn" onclick="triggerUITranslation()"
@@ -1666,6 +1685,11 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         <span id="sl-tags-display" style="font-size:11px;color:var(--gray-dark);cursor:pointer" onclick="openSlTagEditor()"></span>
         <button class="storyline-hdr-btn" id="sl-tag-edit-btn" style="font-size:11px;display:none" onclick="openSlTagEditor()">🏷</button>
       </div>
+      <!-- user follow-up after v81_ab: shown when the "overrule storyline source language"
+           Settings checkbox is on AND this storyline's own source language differs from the
+           fixed UI language — the UI is not auto-following, and any un-translated content in
+           this storyline is in its OWN source language, not necessarily the UI's. -->
+      <div id="sl-lang-mismatch-pill" style="display:none;margin:0 14px 8px;padding:6px 10px;background:#fff4e5;border:1.5px solid #f0a500;border-radius:8px;font-size:11px;font-weight:700;color:#7a4a00"></div>
       <div id="sl-tag-editor" style="display:none;padding:4px 14px 8px">
         <input id="sl-tag-input" style="width:100%;font-size:12px;border:1.5px solid var(--gray-mid);border-radius:5px;padding:3px 8px;font-family:Nunito,sans-serif;box-sizing:border-box" placeholder="Tags, semicolon-separated…">
         <div style="display:flex;gap:6px;margin-top:4px">
@@ -1696,17 +1720,17 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <button class="ico-btn" id="sl-bottom-delete" onclick="deleteCurrentStoryline()" title="Delete storyline" style="color:var(--red)">🗑️</button>
       <button class="ico-btn recreate" id="sl-bottom-recreate" onclick="recreateStorylineLessons(event)" title="Add lessons to every chapter">➕</button>
     </div>
+  <!-- global mute-pill consolidation (PLAN §C4 "keep going"): this footer's own mute-btn is
+       gone — the always-reachable #corner-pills mute pill replaces it, same as the library
+       header's copy. Its teacher-mode icon is gone too (user follow-up after v81_aa) — the
+       toggle moved into #settings-modal, a single always-reachable instance. Its UI-language
+       picker is gone too (a further user follow-up, same release as this comment) — moved into
+       #settings-modal as well, with an "overrule storyline source language" checkbox replacing
+       what this footer used to do implicitly on every mid-story glance. The .tts-pill (💬,
+       SPEECH-VOICE availability — an unrelated concern, class-driven by ALL `.tts-pill`
+       elements uniformly) and the stop-gen button both stay. -->
   <div class="lang-footer" id="lang-footer-storyline">
     <span class="lang-footer-lbl tts-pill" title="">💬</span>
-    <div class="lang-select-wrap" style="width:auto;display:inline-block">
-      <select class="lang-select lang-select-sm" style="width:auto" id="src-lang-select-footer-sl" onchange="selectSrcLang(this.value, false)">
-      </select>
-      <span class="lang-select-arrow">▾</span>
-    </div>
-    <!-- global mute-pill consolidation (PLAN §C4 "keep going"): this footer's own mute-btn is
-         gone — the always-reachable #corner-pills mute pill replaces it, same as the library
-         header's copy. Its teacher-mode icon is gone too (user follow-up after v81_aa) — the
-         toggle moved into #settings-modal, a single always-reachable instance. -->
     <button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button>
   </div>
   <div id="sl-passmark" style="border-top:1px solid var(--gray-mid);display:none"></div>
@@ -1749,11 +1773,11 @@ function _buildLangsFromData(data) {
 
 const RTL_LANGS = new Set(['ar','he','fa','ur']);
 function updateDocDir() {
-  // The DOCUMENT direction follows the *UI* language (APP.srcLang) — so an
-  // English→Arabic lesson keeps a left-to-right interface; only an Arabic-UI
-  // session flips the whole layout. (Previously this keyed on the target
-  // language, which wrongly RTL-ed the entire UI for any →Arabic lesson.)
-  const uiLang = APP.srcLang || 'en';
+  // The DOCUMENT direction follows the *UI* language (APP.uiLang — genuinely separate from
+  // APP.srcLang since the user follow-up after v81_ab) — so an English→Arabic lesson keeps a
+  // left-to-right interface; only an Arabic-UI session flips the whole layout. (Previously this
+  // keyed on the target language, which wrongly RTL-ed the entire UI for any →Arabic lesson.)
+  const uiLang = APP.uiLang || 'en';
   document.documentElement.dir = RTL_LANGS.has(uiLang) ? 'rtl' : 'ltr';
   // Independently, mark when the *target* (content) language is RTL, so only
   // the actual target-language text fields (word bank, target boxes, read
@@ -2146,10 +2170,22 @@ var APP = {
   formLang: loadLang(),
   formSrcLang: loadSrcLang(),
   // The active render context. On the landing form this mirrors formLang/formSrcLang;
-  // while viewing a saved story/chapter it follows the story's language (so UI strings
-  // render in the story's source language). Restored from the form snapshot on return.
+  // while viewing a saved story/chapter it follows the story's language for CONTENT purposes
+  // (translation hints, generation payloads, per-word ledgers — see the many `APP.srcLang`
+  // call sites). Restored from the form snapshot on return. As of the user follow-up after
+  // `v81_ab`, this NO LONGER also drives which language the UI CHROME renders in — that is
+  // `APP.uiLang`, a separate, independently-set field (see below).
   lang: loadLang(),
   srcLang: loadSrcLang(),
+  // The UI/chrome display language — genuinely separate from `srcLang` now, so "I speak" (what
+  // language a NEW lesson gets generated for) and "which language the app's own buttons/labels
+  // are in" can differ. Set via the Settings Card's own picker (`selectUiLang`), not by the
+  // generation form. `overruleStorylineLang`: when true, opening a storyline does NOT auto-follow
+  // `uiLang` to that storyline's own source language (the pre-existing behaviour, still the
+  // default) — the UI stays fixed wherever the user set it, even while playing/generating
+  // stories in other source languages.
+  uiLang: loadUiLang(),
+  overruleStorylineLang: loadOverruleStorylineLang(),
   difficulty: loadDifficulty(),
   storyLen: loadStoryLen(),
   numChapters: loadNumChapters(),
@@ -2234,8 +2270,12 @@ function applyUIStrings() {
   updateDocDir();
   const L = LANGS[APP.lang] || LANGS.it || {name:'Italian', flag:'🇮🇹', tts:null};
   const S = LANGS[APP.srcLang] || LANGS.en || {name:'English', flag:'🇬🇧', tts:null};
-  // Use localized language name (e.g. 'Italienisch' not 'Italian' in German UI)
-  const tgtLangName = localizedLangName(APP.lang, APP.srcLang);
+  // Use localized language name (e.g. 'Italienisch' not 'Italian' in German UI) — named IN
+  // APP.uiLang, not APP.srcLang, since the user follow-up after v81_ab made those separate
+  // fields (this one drives the topic-label text below). `srcLangName` on the next line is
+  // dead within this function (like `S` above it) — a DIFFERENT local of the same name, scoped
+  // to `updateTranslationLangHint()`, is the one actually used for the translation hint/label.
+  const tgtLangName = localizedLangName(APP.lang, APP.uiLang);
   const srcLangName = localizedLangName(APP.srcLang, APP.srcLang);
   // Static elements
   // Update vocab mode option labels
@@ -2308,12 +2348,13 @@ function applyUIStrings() {
   _setVal('user-translation-input', null, t('form.translation_placeholder_short'));
   _setVal('story-repair-input', null, t('form.story_rewrite_placeholder'));
   _setVal('story-flag-input', null, t('form.story_flag_placeholder'));
-  // Translate target selector options into UI language;
-  // source selector shows each language in its own language (self-labelled)
+  // Translate target selector options into UI language (APP.uiLang, not APP.srcLang — see the
+  // user follow-up after v81_ab); source selector shows each language in its own language
+  // (self-labelled, so it doesn't need APP.uiLang at all — see the loop right below this one)
   const tgtSel = document.getElementById('lang-select');
   if (tgtSel) Array.from(tgtSel.options).forEach(opt => {
     const L = LANGS[opt.value]; if (!L) return;
-    opt.text = L.flag + ' ' + localizedLangName(opt.value, APP.srcLang);
+    opt.text = L.flag + ' ' + localizedLangName(opt.value, APP.uiLang);
   });
   const srcSel = document.getElementById('src-lang-select');
   if (srcSel) Array.from(srcSel.options).forEach(opt => {
@@ -2321,8 +2362,9 @@ function applyUIStrings() {
     // Each language names itself in its own language
     opt.text = L.flag + ' ' + (localizedLangName(opt.value, opt.value) || L.name);
   });
-  // Sync footer selects — clone options from main selects
-  ['ls','sl'].forEach(suffix => {
+  // Sync footer selects — clone options from main selects. Only 'ls' (lesson-set) still exists;
+  // the storyline one moved to Settings (user follow-up after v81_ab).
+  ['ls'].forEach(suffix => {
     const ft = document.getElementById('lang-select-footer-' + suffix);
     const fs = document.getElementById('src-lang-select-footer-' + suffix);
     if (fs && srcSel) {
@@ -2427,6 +2469,17 @@ function applyUIStrings() {
   if (_tdBtn) _tdBtn.style.display = APP.info.canGenerate ? '' : 'none';
   _setText('teacher-dash-lbl', t('teacher.title'));
   _setText('settings-title', '⚙️ '+t('settings.title'));
+  _setText('overrule-sl-lang-lbl', t('settings.overrule_sl_lang'));
+  _setAttr('overrule-sl-lang-row', 'title', t('settings.overrule_sl_lang_title'));
+  // Sync the Settings UI-language picker: full option list (self-labelled, same technique as
+  // src-lang-select's own options), selected value tracks APP.uiLang — NOT APP.srcLang, the
+  // field it was split from (user follow-up after v81_ab).
+  { const uiSel = document.getElementById('ui-lang-select');
+    if (uiSel && srcSel) uiSel.innerHTML = Array.from(srcSel.options)
+      .filter(o => o.value !== 'all')
+      .map(o => `<option value="${o.value}"${o.value===APP.uiLang?' selected':''}>${o.text}</option>`)
+      .join('');
+  }
   _setText('add-lesson-lbl-card',  '➕ '+t('lib.add_lesson')+':');
   _setText('user-story-clear-btn', '✕ '+t('form.clear_text'));
   _setAttr('user-story-clear-btn', 'title', t('form.clear_text'));
@@ -2448,7 +2501,9 @@ function _uiTranslateRow(state, infoText, btnText, statusText) {
 }
 
 async function triggerUITranslation() {
-  const lang = APP.srcLang;
+  // This IS the UI language, not "I speak" (APP.srcLang) — separate fields since the user
+  // follow-up after v81_ab.
+  const lang = APP.uiLang;
   if (!lang || lang === 'en') return;
   const langName = LANGS[lang]?.name || lang;
   _uiTranslateRow('running', '', '', '⏳ Translating…');
@@ -2604,7 +2659,12 @@ function closeAccount(){ const m=document.getElementById('acct-modal'); if(m) m.
 // PLAN §C4 stage 1: the Settings Card. No dynamic state to refresh on open — every row inside it
 // (#ui-translate-row, #export-static-btn, #teacher-dash-btn) already keeps its own visibility
 // current via applyUIStrings()/updateUITranslateRow(), independent of whether the card is open.
-function openSettings(){ const m=document.getElementById('settings-modal'); if(m) m.style.display='flex'; }
+function openSettings(){
+  const m=document.getElementById('settings-modal'); if(m) m.style.display='flex';
+  // The overrule checkbox reflects APP state (not markup) — sync on every open rather than only
+  // on init/toggle, so it can never drift from the actual persisted value.
+  const cb = document.getElementById('overrule-sl-lang-cb'); if (cb) cb.checked = !!APP.overruleStorylineLang;
+}
 function closeSettings(){ const m=document.getElementById('settings-modal'); if(m) m.style.display='none'; }
 
 async function _acctPost(path, body){
@@ -2663,6 +2723,15 @@ function loadLang(){ return localStorage.getItem('imp3_lang')||'it'; }
 function saveLang(){ localStorage.setItem('imp3_lang',APP.formLang); }
 function loadSrcLang(){ return localStorage.getItem('imp3_srclang')||'en'; }
 function saveSrcLang(){ localStorage.setItem('imp3_srclang',APP.formSrcLang); }
+// user follow-up after v81_ab: UI language is now a genuinely SEPARATE field from `srcLang`
+// ("I speak" — the generation-form/content-source language). Falls back to the EXISTING
+// `imp3_srclang` value when no dedicated UI-language preference has ever been saved, so an
+// existing learner's UI does not silently change on this release — it just becomes independently
+// adjustable going forward.
+function loadUiLang(){ try { return localStorage.getItem('imp3_uilang') || loadSrcLang(); } catch(_) { return 'en'; } }
+function saveUiLang(){ try { localStorage.setItem('imp3_uilang', APP.uiLang); } catch(_) {} }
+function loadOverruleStorylineLang(){ try { return localStorage.getItem('imp3_overrule_sl') === '1'; } catch(_) { return false; } }
+function saveOverruleStorylineLang(){ try { localStorage.setItem('imp3_overrule_sl', APP.overruleStorylineLang ? '1' : '0'); } catch(_) {} }
 
 // ── Toast + share — pure DOM, no server dependency ────────────────────
 function showToast(msg){
@@ -2831,7 +2900,7 @@ function onUseStoryCb(){
 }
 function topicLabelText(){
   const tgtL=LANGS[APP.lang]||LANGS.it;
-  return t('form.topic_label',{lang:localizedLangName(APP.lang,APP.srcLang)});
+  return t('form.topic_label',{lang:localizedLangName(APP.lang,APP.uiLang)});
 }
 function clearUserStory(){
   const ta=document.getElementById('user-story-input');
@@ -3034,13 +3103,28 @@ function selectSrcLang(code, fromForm){
     const libSel=document.getElementById('lib-src-lang-select');
     if(libSel && libSel.value!==code) libSel.value=code;
   }
-  // Footer selectors always mirror the active render-context language
-  ['src-lang-select-footer-ls','src-lang-select-footer-sl'].forEach(id=>{const f=document.getElementById(id);if(f&&f.value!==code)f.value=code;});
+  // Footer selectors always mirror the active render-context language. Only `-ls` (lesson-set)
+  // still exists — the storyline one moved to Settings (user follow-up after v81_ab).
+  ['src-lang-select-footer-ls'].forEach(id=>{const f=document.getElementById(id);if(f&&f.value!==code)f.value=code;});
   updateTranslationLangHint();
   // v76_i: same as selectLang — a new source language has its own script choice, or none.
   // v78_q: only when it really changed (see selectLang).
   if (_srcChanged) APP.srcScript = null;
   try { refreshScriptPickers(); } catch(_){}
+  // "I speak" (fromForm=true, the generation form/library filter) no longer touches the UI
+  // language AT ALL — user follow-up after v81_ab explicitly decoupled the two, specifically so
+  // generating a story asks for a source language independent of which language the app's own
+  // chrome is in. Still need to re-render the library (libSrcFilter changed), just not gated
+  // behind a UI-string reload that no longer happens.
+  if(fromForm){
+    if(document.getElementById('saved-list')) loadSavedList();
+    return;
+  }
+  // fromForm=false (the lesson-set footer, mid-story glance — the ONLY remaining caller of this
+  // branch) still changes what language the app's OWN text is in, same as before decoupling —
+  // this is a TRANSIENT override of APP.uiLang (not persisted via saveUiLang; _restoreFormLang()
+  // puts the saved preference back on return to the form, same as it always restored APP.srcLang).
+  APP.uiLang = code;
   loadUIStrings(code).then(() => {
     try { refreshAccountBadge(); } catch(_) {}   // v70_m: strings exist now — repaint the badge
     const lbl=document.getElementById('topic-label');
@@ -3119,6 +3203,42 @@ function selectLang(code, silent, fromForm){
   }
   if(!silent){
     if(document.getElementById('saved-list')) loadSavedList();
+  }
+}
+// user follow-up after v81_ab: the Settings Card's own UI-language picker. Genuinely separate
+// from selectSrcLang() — this is the ONLY thing that changes APP.uiLang from a real, PERSISTED
+// user action (selectSrcLang's fromForm=false branch also touches it, but only transiently, for
+// the lesson-set footer's mid-story glance). Re-renders whatever's currently on screen, the same
+// "retranslate the active sub-screen" step selectSrcLang used to do before decoupling.
+async function selectUiLang(code){
+  APP.uiLang = code;
+  saveUiLang();
+  await loadUIStrings(code);
+  try { refreshAccountBadge(); } catch(_) {}
+  const lbl=document.getElementById('topic-label');
+  if(lbl && !document.getElementById('use-story-cb')?.checked) lbl.textContent=topicLabelText();
+  if(document.getElementById('saved-list')) loadSavedList();
+  if(document.getElementById('lesson-set')?.classList.contains('active')) {
+    try { buildPath(); } catch(_) {}
+  } else if(document.getElementById('storyline-screen')?.classList.contains('active') && APP._slScreen) {
+    _renderStorylineScreen(APP._slScreen.chainId, APP._slScreen.encodedChain, APP._slScreen.topics);
+  }
+}
+// The "overrule storyline source language" checkbox. Default (unchecked) preserves the pre-
+// existing auto-follow-on-open behaviour for storylines; checked pins APP.uiLang regardless of
+// which storyline is opened — openStorylineScreen() reads this flag, not this function.
+function toggleOverruleStorylineLang(){
+  APP.overruleStorylineLang = !APP.overruleStorylineLang;
+  saveOverruleStorylineLang();
+  const cb = document.getElementById('overrule-sl-lang-cb');
+  if (cb) cb.checked = APP.overruleStorylineLang;
+  // Re-evaluate the mismatch pill immediately if a storyline is already open — otherwise it would
+  // only update on the NEXT storyline open, leaving a stale pill state on the one you're viewing.
+  if(document.getElementById('storyline-screen')?.classList.contains('active') && APP._slScreen) {
+    const firstTopic = (APP.savedList||[]).find(l => l.topic === APP._slScreen.topics[0]);
+    const slSrc = firstTopic?.srcLang || 'en';
+    APP._slLangMismatch = APP.overruleStorylineLang && slSrc !== APP.uiLang;
+    _renderStorylineScreen(APP._slScreen.chainId, APP._slScreen.encodedChain, APP._slScreen.topics);
   }
 }
 async function pollJob(jobId, onStep, intervalMs){
@@ -3603,19 +3723,22 @@ function showStorylineForTopic(topicName){ return _openStorylineForTopic(topicNa
 function showStorylineById(slId){ return _openStorylineById(slId); }
 function showStorylineByChainId(chainId){ return _tryOpenStorylineByChainId(chainId); }
 // Returning to the main form: restore the form's own language selection into the
-// render context (a viewed story may have temporarily overridden APP.srcLang). The
-// main selectors/library filter were never mutated while viewing, so only the context
-// and the UI-string language need restoring.
+// render context (a viewed story may have temporarily overridden APP.srcLang), AND restore the
+// persisted UI-language preference (a viewed lesson-set may have temporarily overridden
+// APP.uiLang too — see selectSrcLang's fromForm=false branch and goLessonSet's auto-follow).
+// The main selectors/library filter were never mutated while viewing, so only the two render-
+// context fields and the UI-string language need restoring.
 async function _restoreFormLang(){
-  const srcChanged = APP.srcLang !== APP.formSrcLang;
   APP.lang    = APP.formLang;
   APP.srcLang = APP.formSrcLang;
-  // Re-key the direction flags off the restored form languages. loadUIStrings→
-  // applyUIStrings does this too, but only runs below when the SOURCE changed — a
-  // target-only override (goLessonSet) would otherwise leave a stale tgt-rtl.
+  const uiLangChanged = APP.uiLang !== loadUiLang();
+  APP.uiLang = loadUiLang();   // undo any temporary override — a no-op if nothing touched it
+  // Re-key the direction flags off the restored UI language. loadUIStrings→applyUIStrings does
+  // this too, but only runs below when it actually changed — a target-only override (goLessonSet)
+  // would otherwise leave a stale tgt-rtl.
   updateDocDir();
   updateTranslationLangHint();
-  if(srcChanged){ await loadUIStrings(APP.formSrcLang); }
+  if(uiLangChanged){ await loadUIStrings(APP.uiLang); }
 }
 // PLAN §C5 stage 2: shows 'generation-screen', not 'landing' — the two screens split at v81_w.
 // loadSavedList() is still called here: the generation screen's "continue this story" dropdown
@@ -4221,12 +4344,29 @@ async function goLessonSet(){
   if(APP.lessonData) {
     // Render this lesson's chrome in its own source language WITHOUT touching the
     // form's selection: only the active render context (APP.srcLang) and the mid-story
-    // footer selectors change; the main-page selector, library filter, and form
+    // footer selector change; the main-page selector, library filter, and form
     // snapshot are left intact and restored on return to the landing form.
     const lSrc = APP.lessonData.srcLang || 'en';
     if (lSrc && lSrc !== APP.srcLang) {
       APP.srcLang = lSrc;
-      ['src-lang-select-footer-ls','src-lang-select-footer-sl'].forEach(id=>{const f=document.getElementById(id);if(f)f.value=lSrc;});
+      const f = document.getElementById('src-lang-select-footer-ls'); if(f) f.value=lSrc;
+    }
+    // BUG FIX (user report, same release as the feature): "storyline only" does not mean "this
+    // FUNCTION, goLessonSet, is out of scope" — it means "a STANDALONE lesson-set is out of
+    // scope." goLessonSet is ALSO the shared plumbing loadSaved() uses to open/continue a
+    // STORYLINE'S OWN chapters (every "next chapter" transition inside a storyline runs through
+    // here, not through openStorylineScreen again), so its old unconditional auto-follow was
+    // silently overriding the overrule setting on every chapter change — the UI would snap back
+    // to that chapter's source language even with "keep fixed" checked. Fixed by checking
+    // storyline MEMBERSHIP, not entry point: a chapter belonging to a storyline respects the
+    // overrule flag exactly like openStorylineScreen's own check; a genuinely standalone topic
+    // (no storyline owns it) keeps the old unconditional behaviour, since THAT case really is
+    // still out of the "storyline only" ruling's scope.
+    const _slId = _storylineIdForTopic(APP.lessonData.topic);
+    const _slOverruled = _slId && APP.overruleStorylineLang;
+    APP._slLangMismatch = !!(_slOverruled && lSrc !== APP.uiLang);
+    if (lSrc && lSrc !== APP.uiLang && !_slOverruled) {
+      APP.uiLang = lSrc;
       await loadUIStrings(lSrc);
     }
     // Same for the TARGET render context: the opened lesson's language, not the form's
@@ -5556,7 +5696,7 @@ async function init(){
   await loadScripts();
   await syncFlagsFromServer();
   updateStaticFlagBanner();
-  await loadUIStrings(APP.srcLang);
+  await loadUIStrings(APP.uiLang);   // boot in the persisted UI language, not "I speak"
   // Restore source lang selector first so selectLang can read APP.srcLang
   const ssel=document.getElementById('src-lang-select');
   if(ssel) ssel.value='all'; // start at globe (no filter)
@@ -8130,9 +8270,19 @@ async function openStorylineScreen(chainId, encodedChain) {
   // touching the form's selection (see goLessonSet); restored on return to landing.
   const firstTopic = (APP.savedList||[]).find(l => l.topic === topics[0]);
   const slSrc = firstTopic?.srcLang || 'en';
-  if (slSrc && slSrc !== APP.srcLang) {
-    APP.srcLang = slSrc;
-    ['src-lang-select-footer-ls','src-lang-select-footer-sl'].forEach(id=>{const f=document.getElementById(id);if(f)f.value=slSrc;});
+  // Content context (translation hints, generation payloads) always follows the storyline's own
+  // source language — unaffected by the overrule setting below, which is about the UI CHROME
+  // language only.
+  if (slSrc && slSrc !== APP.srcLang) APP.srcLang = slSrc;
+  // user follow-up after v81_ab: the storyline page's own UI-language footer is gone (moved to
+  // Settings) and this auto-follow is now the "overrule storyline source language" checkbox's
+  // whole reason to exist. Default (unchecked) is the OLD behaviour, unchanged: the UI still
+  // follows whatever storyline you open. Checked: the UI stays fixed at APP.uiLang regardless —
+  // `_slLangMismatch` records whether that leaves a mismatch, read by the warning pill in
+  // `_renderStorylineScreen`.
+  APP._slLangMismatch = APP.overruleStorylineLang && slSrc !== APP.uiLang;
+  if (!APP.overruleStorylineLang && slSrc && slSrc !== APP.uiLang) {
+    APP.uiLang = slSrc;
     await loadUIStrings(slSrc);
   }
   history.pushState({ slChainId: chainId, slChain: encodedChain }, '', '#sl=' + chainId);
@@ -8225,6 +8375,22 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   const icon = slMeta?.icon || '📖';
   const title = slMeta?.title || topics[0];
   if (titleEl) titleEl.textContent = icon + ' ' + title;
+  // user follow-up after v81_ab: the "overrule storyline source language" mismatch warning.
+  // APP._slLangMismatch is set by openStorylineScreen(), the one caller that knows this
+  // storyline's OWN source language — re-read here rather than re-deriving it, since this
+  // function also runs from other entry points (e.g. after an edit) where recomputing it would
+  // risk drifting from the value the open actually used.
+  { const _mp = document.getElementById('sl-lang-mismatch-pill');
+    if (_mp) {
+      if (APP._slLangMismatch) {
+        const _firstTopicSrc = (APP.savedList||[]).find(l => l.topic === topics[0])?.srcLang || 'en';
+        _mp.textContent = t('storyline.lang_mismatch', { lang: localizedLangName(_firstTopicSrc, APP.uiLang) });
+        _mp.style.display = '';
+      } else {
+        _mp.style.display = 'none';
+      }
+    }
+  }
 
   // Wire edit form with current title/icon
   const editInput = document.getElementById('sl-screen-edit-input');

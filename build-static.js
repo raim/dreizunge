@@ -283,7 +283,7 @@ async function init() {
   const _ts=document.getElementById('lang-select'); if(_ts) _ts.value='all';
   // Static default: show all languages (globe), don't filter by APP.lang
   APP.libFilter='all'; APP.libSrcFilter='all';
-  await loadUIStrings(APP.srcLang);
+  await loadUIStrings(APP.uiLang);   // boot in the persisted UI language, not "I speak"
   restoreDiffSelect();
   renderPill();
   await loadSavedList();
@@ -692,7 +692,14 @@ const staticOverrides = [
   '  if(_sc) APP.srcScript=null;',
   '  try{ refreshScriptPickers(); }catch(_e){}',
   '  if(fromForm){ APP.formSrcLang=code; saveSrcLang(); APP.libSrcFilter=code; const sel=document.getElementById("src-lang-select"); if(sel&&sel.value!==code) sel.value=code; const libSel=document.getElementById("lib-src-lang-select"); if(libSel&&libSel.value!==code) libSel.value=code; }',
-  '  ["src-lang-select-footer-ls","src-lang-select-footer-sl"].forEach(function(id){var f=document.getElementById(id);if(f&&f.value!==code)f.value=code;});',
+  // Only "-ls" (lesson-set) still exists — the storyline footer moved into Settings (user
+  // follow-up after v81_ab; both files' selectSrcLang stay paired, matching every other line here).
+  '  ["src-lang-select-footer-ls"].forEach(function(id){var f=document.getElementById(id);if(f&&f.value!==code)f.value=code;});',
+  // "I speak" (fromForm=true) no longer touches the UI language at all — decoupled the same way
+  // the live selectSrcLang was. fromForm=false (the lesson-set footer, the ONLY remaining caller)
+  // still does, same as before decoupling — this IS the mid-story UI-language glance.
+  '  if(fromForm){ if(document.getElementById("saved-list")) loadSavedList(); return; }',
+  '  APP.uiLang=code;',
   '  loadUIStrings(code).then(function(){',
   // PLAN §C5 stage 2: applyUIStrings() just rebuilt lib-lang-select's options from scratch —
   // re-apply the "hide languages absent from this build" filter, or a previously-hidden language

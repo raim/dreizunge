@@ -1662,6 +1662,118 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_ac` — UI language decoupled from "I speak", moved into Settings (reversing a prior decision)
+
+**Shipped by: Claude Code.** The fourth of four requests sent together after `v81_aa` shipped — the
+biggest one, deliberately held for its own release given its architectural weight. Before touching
+any code, measured the ACTUAL mechanism (rather than assuming from the ask alone): `APP.srcLang`
+was already the field `loadUIStrings()`/`applyUIStrings()` rendered the app's chrome in, AND the
+"I speak" field for generation/content — one field, two roles. Opening a lesson-set OR a storyline
+auto-overwrote it (and, with it, the visible UI language) to match that content's own source
+language; the footer selectors on both pages did the same thing manually, mid-story,
+non-persistently. Two genuine design forks surfaced from that measurement, put to the user directly
+before writing any code:
+
+1. **Field scope** — keep "I speak" and "UI language" as one field (the overrule checkbox only
+   stops PLAYING a story from auto-changing it), or fully decouple into two separate fields so
+   GENERATING a story also stops forcing a UI-language change? **Ruled: fully decouple.**
+2. **Lesson-set scope** — does the overrule checkbox and the Settings relocation cover BOTH
+   lesson-set and storyline (same mechanism, same purpose, avoiding the "same mechanism,
+   inconsistent instances" drift this session's own teacher-mode consolidation had just fixed), or
+   storyline only, as literally named? **Ruled: storyline only** — lesson-set keeps its old
+   conflated auto-follow behaviour untouched, permanently, no overrule option there.
+
+**The new field**: `APP.uiLang` (`loadUiLang()`/`saveUiLang()`, `localStorage['imp3_uilang']`) —
+falls back to the EXISTING `imp3_srclang` value when nothing has ever been saved, so an existing
+learner's UI does not silently change on this release, only becomes independently adjustable going
+forward. `APP.overruleStorylineLang` (default OFF) preserves the pre-existing storyline auto-follow
+behaviour exactly until a user opts in.
+
+**Scoping the ~61 existing `APP.srcLang` call sites was the actual work.** Only the ones that
+render the app's own CHROME became `APP.uiLang`: `updateDocDir()`'s `dir` check (its OTHER half,
+`tgt-rtl` content-direction marking, stays keyed on `APP.lang` — untouched, a genuinely separate
+concern), every `loadUIStrings()`/`applyUIStrings()` caller, the target-select's own option-label
+loop, `topicLabelText()`, and `_restoreFormLang()`'s restore-on-return. The other ~55 usages
+(generation-request payloads, translation hints, per-word learned-ledger keys, tutor scope, content
+fallbacks) are UNTOUCHED — deliberately, since those are "I speak"/content concerns that only
+superficially resemble UI-chrome concerns.
+
+**`selectSrcLang(code, fromForm)` is where the actual decoupling lives**: `fromForm=true` (the
+generation form's own "I speak" picker, both synced copies) no longer calls `loadUIStrings` at
+all — returns early right after updating the library filter. `fromForm=false` (the lesson-set
+footer, the ONLY remaining caller now that the storyline footer is gone) still sets `APP.uiLang`
+and reloads UI strings, preserving its old "mid-story glance in another language" behaviour
+exactly — transient, never persisted, same as it never persisted `APP.srcLang` either.
+`build-static.js` has its own copy of this function; kept paired, along with its own `init()`
+override (`loadUIStrings(APP.uiLang)`, not `APP.srcLang`).
+
+**`openStorylineScreen()` split into two independent checks**: `APP.srcLang = slSrc` runs
+unconditionally (content context always follows the storyline's own source language, regardless of
+overrule). The UI-language auto-follow is gated behind `!APP.overruleStorylineLang`.
+`APP._slLangMismatch` is computed on every open for the warning pill, whether or not the auto-follow
+actually ran. `goLessonSet`'s own auto-follow stays unconditional on BOTH fields, no overrule
+option — the "storyline only" ruling in code — split into two `if`s only because the two fields CAN
+now independently differ, which is what keeps `updateDocDir()` correct; not a behaviour change.
+
+**What shipped in the Settings Card**: `#ui-lang-select` (`selectUiLang(code)`) and
+`#overrule-sl-lang-cb` (`toggleOverruleStorylineLang()`, re-evaluating the mismatch pill
+immediately if a storyline happens to already be open). The storyline footer's language `<select>`
+is gone; its speech-voice pill and stop-gen button stay, unrelated to language selection.
+Lesson-set's own footer picker is completely untouched. The warning pill
+(`#sl-lang-mismatch-pill`) shows `t('storyline.lang_mismatch', {lang: ...})` when the flag is set,
+re-reading (not re-deriving) the flag `openStorylineScreen()` already computed.
+
+Fallout: ONE pre-existing test (`unit-ui-journeys.test.js`) needed its fixture updated to seed
+`APP.uiLang` (and persist it via `saveUiLang()`, since `_restoreFormLang()` now compares against a
+real `localStorage` read) — found by running the full suite, not assumed; the other 40 files that
+also set `APP.srcLang` never actually exercise the router functions this touches, confirmed by the
+full suite passing clean everywhere else on the first post-fix run.
+
+**A real bug, reported by the user in the same session and reproduced live before fixing:** in
+`docs/index.html`, starting a new question would SOMETIMES switch the UI back to the lesson's own
+source language even with "Fix" checked. Root cause: "storyline only" had been implemented as "the
+`openStorylineScreen` function is in scope, `goLessonSet` is not" — but `goLessonSet` is not just
+the standalone lesson-set's own entry point, it is the SHARED plumbing `loadSaved()` uses for
+EVERY chapter open, including a storyline's own "continue to the next chapter." Its old,
+unconditional auto-follow was silently overriding the overrule flag on every chapter transition —
+exactly matching "some but not all" (only chapter TRANSITIONS re-trigger it; answering within an
+already-open chapter does not). Confirmed with `window.__uiLangLog`-style call-site instrumentation
+in a live browser BEFORE writing the fix, not guessed from reading the code. Fixed by checking
+storyline MEMBERSHIP (`_storylineIdForTopic`), not entry point: a chapter belonging to a storyline
+now respects the overrule flag exactly like `openStorylineScreen`'s own check; a genuinely
+standalone topic (no storyline owns it) keeps the old unconditional behaviour, which really is
+still out of the "storyline only" ruling's scope. `build-static.js` needed no separate fix —
+`goLessonSet` (and the `loadSaved` override that calls it) are not among its 19 re-implemented
+functions, so the live fix applies verbatim.
+
+**Two small follow-ups, same batch:** the checkbox moved onto the picker's own row (dropped the
+`flex-basis:100%` that forced it onto a line of its own), and its visible label shortened from
+"Keep fixed while playing storylines" to "Fix" — the fuller explanation survives as a hover
+tooltip (`settings.overrule_sl_lang_title`), the same convention `v79_o` already established for
+the sound-test row.
+
+New guard `test/unit-ui-lang-decouple.test.js` (14 checks, 2 explicitly mutation-tested, plus a
+live functional repro that exercises both the bug scenario and the still-in-scope standalone case
+side by side) — extended in place
+rather than split into a second file, since it is the same feature and the same user follow-up
+batch: the storyline-membership gate in `goLessonSet`, a live functional repro of the EXACT
+reported scenario (a storyline chapter with overrule on leaves `uiLang` alone; a standalone topic
+still auto-follows), and the shortened-label/tooltip/same-row checks.
+
+Verified live in a real browser, against BOTH the live server and the rebuilt static build:
+"I speak" changing to German left the (English) UI completely alone; the Settings picker changing
+UI language to German correctly re-translated the whole chrome without touching `APP.srcLang`;
+opening a German-source storyline chapter via `loadSaved()` (the exact reported path) with overrule
+ON kept the UI in English, where it had previously leaked to German; the SAME storyline with
+overrule OFF auto-followed to German exactly as before this release; a genuinely standalone topic
+still auto-followed regardless of the fix; returning to the library restored the UI language to the
+persisted preference; the lesson-set footer's old mid-story-glance behaviour survived unchanged;
+the checkbox now shares the picker's row with the shortened "Fix" label and the full tooltip.
+
+`node test/run.js`: 242 checks, ALL PASSED. `node test/run.js --quick`: 216 checks, ALL PASSED.
+`node build-static.js` re-run; `node test/check-inline.js` and the `docs/index.html` variant: 0
+failures each.
+
 ### `v81_ab` — three user follow-ups: thicker arrow, read-aloud icon consistency, teacher-mode → Settings
 
 **Shipped by: Claude Code.** The user sent four follow-up requests together after `v81_aa` shipped;

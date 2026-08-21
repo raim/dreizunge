@@ -55,6 +55,12 @@ function client() {
     APP.lessonData = ${JSON.stringify(TOPIC)};
     APP.lang = APP.formLang = ${JSON.stringify(TOPIC.lang)};
     APP.srcLang = APP.formSrcLang = ${JSON.stringify(TOPIC.srcLang)};
+    // APP.uiLang (user follow-up after v81_ab) matching srcLang keeps goLessonSet's auto-follow
+    // AND _restoreFormLang's restore-to-persisted-preference both a no-op here, same as this
+    // fixture already assumed before uiLang existed — this file is about screen TRANSITIONS, not
+    // the UI-language decoupling, which has its own dedicated test. saveUiLang() (not just setting
+    // the field) matters: _restoreFormLang() compares against loadUiLang()'s READ of localStorage.
+    APP.uiLang = ${JSON.stringify(TOPIC.srcLang)}; saveUiLang();
     if (typeof _invalidateQidUniverse === 'function') _invalidateQidUniverse();
     (function(){
       var d = APP.lessonData, solved = _solvedMap(d.topic);

@@ -1,12 +1,12 @@
-# Session prompt — written at the `v81_ab` cut (session 41, in progress)
+# Session prompt — written at the `v81_ac` cut (session 41, in progress)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_aa.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_ab.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v81_ac`, `v81_ad`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v81_ad`, `v81_ae`, …) unless a future session has a good reason to switch to
 `v82_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_ab`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_ac`** cut.
 
 **Session 41, part 2: with `PLAN §C0` (the router seam, `v81_m`–`v81_u`) complete, the user asked
 "what's next?" and confirmed it — splitting the landing page into a Generation Card and a
@@ -253,15 +253,43 @@ itself. Both `unit-settings-card.test.js` check #5 and the whole of `unit-teache
 needed real rewrites (rule 29), not re-anchoring. See the roadmap's `v81_ab` entry for the full
 write-up.
 
-**§C4 is narrower than it looked, and now mostly done.** Model selection and speech/sound-test are
-permanently out of scope; the teacher-mode question is RESOLVED (consolidated). What remains open:
-only the speech-mismatch status pill (the other acceptance-detail fork) — no ruling given on it yet.
+**`v81_ac`: the fourth follow-up, UI language DECOUPLED from "I speak" — the biggest single piece
+of `§C4`, deliberately held for its own release.** Measured first: `APP.srcLang` was already doing
+double duty as BOTH "I speak" (content/generation) AND the field `loadUIStrings()` rendered the
+chrome in — opening any lesson-set or storyline auto-overwrote it (and the visible UI language)
+to match that content's own source language. Two design forks put to the user directly before
+writing code: **(1) field scope — ruled FULLY DECOUPLE** (a genuinely separate `APP.uiLang`, not
+one field wearing two hats, so generating/playing a story never forces the chrome to switch);
+**(2) lesson-set scope — ruled STORYLINE ONLY** (lesson-set's identical auto-follow stays
+untouched, permanently, no overrule option there). Of ~61 `APP.srcLang` call sites, only the ones
+rendering CHROME became `APP.uiLang` (`updateDocDir`'s `dir` half, the `loadUIStrings` call chain,
+`topicLabelText`, `_restoreFormLang`'s restore) — the other ~55 (generation payloads, translation
+hints, ledger keys, tutor scope) stayed untouched on purpose. `selectSrcLang`'s `fromForm=true`
+branch (the "I speak" picker) no longer calls `loadUIStrings` at all; `fromForm=false` (the
+lesson-set footer, the only remaining caller) still does. New Settings controls:
+`#ui-lang-select`/`selectUiLang()` and `#overrule-sl-lang-cb`/`toggleOverruleStorylineLang()`. The
+storyline footer's own picker is gone (moved to Settings); lesson-set's is untouched. New warning
+pill `#sl-lang-mismatch-pill` on the storyline screen.
 
-**A NEW, larger item is queued but not yet started**: moving UI-language selection from the
-storyline page bottom into Settings — REVERSING a previous decision — including an "overrule
-storyline source language" checkbox and a mismatch warning pill. Sent together with the three
-`v81_ab` items above but substantial enough to be its own release. Needs real measurement of the
-current UI-language-selection mechanism before touching it — not yet done as of this cut.
+**A real bug, reported in the same session and reproduced live before fixing**: in
+`docs/index.html`, starting a new question SOMETIMES switched the UI back to the lesson's source
+language even with the fix-checkbox on. Root cause: `goLessonSet` is not just the standalone
+lesson-set's entry point — it's the SHARED plumbing `loadSaved()` uses for every chapter open,
+INCLUDING a storyline's own "continue to the next chapter," and its unconditional auto-follow was
+silently overriding the overrule flag on every transition ("some but not all" = only chapter
+transitions re-trigger it). Fixed by checking storyline MEMBERSHIP (`_storylineIdForTopic`), not
+entry point — a chapter belonging to a storyline now respects overrule; a genuinely standalone
+topic keeps the old unconditional behaviour, still correctly out of scope. Two more follow-ups in
+the same batch: the checkbox moved onto the picker's own row, and its label shortened to "Fix"
+(full explanation moved to a hover tooltip, same convention `v79_o` established). New guard
+`test/unit-ui-lang-decouple.test.js`, 14 checks, including a live functional repro of the exact
+reported scenario. See the roadmap's `v81_ac` entry for the full write-up.
+
+**§C4 is now essentially done.** Model selection and speech/sound-test are permanently out of
+scope; the teacher-mode question is resolved; UI language is decoupled and relocated. What remains
+open: only the speech-mismatch status pill (the other acceptance-detail fork) — no ruling given on
+it yet, and given how everything else in this track has gone, it likely needs its own measurement
+pass before assuming its shape.
 
 **Session 40 ran across two agents: Codex shipped `v81_k`/`v81_l`, then ran out of session budget
 mid-work; Claude Code picked up the uncommitted state and shipped `v81_m` through `v81_q`.**
@@ -396,17 +424,17 @@ want to eyeball the log in the console anyway.**
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 241 checks
-node test/run.js --quick                  → expect 215
+node test/run.js                          → expect 242 checks
+node test/run.js --quick                  → expect 216
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Corpus at this cut: **323 topics, 91 storylines, 33 languages, 620 `en` keys** (unchanged since
-`v81_y`; `v81_z`/`v81_aa`/`v81_ab` all moved/removed/re-iconed existing controls only, no new UI
-strings — `v81_ab` DID mechanically edit existing values, per-language, for `tts.voice_test`/
-`form.use_dialect`/`dialect.studio.intro`, but added no new keys).
-`APP_VERSION = 'v81_ab'`.
+Corpus at this cut: **323 topics, 91 storylines, 33 languages, 623 `en` keys** (3 new keys this
+session: `storyline.lang_mismatch`, `settings.overrule_sl_lang`, `settings.overrule_sl_lang_title`
+— `PLAN §C4`, `v81_ac`. `v81_ab` mechanically edited existing per-language values but added no new
+keys, which is why the count jumps straight from 620 to 623 here).
+`APP_VERSION = 'v81_ac'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -491,14 +519,15 @@ only** — shell + the four already-self-contained absorb items (`v81_y`); then,
 consolidation shipped**; then the user confirmed the "arrow control" acceptance detail's meaning
 (the arrow is inert, not a clickable control) and it **shipped at `v81_aa`**; then THREE more
 follow-ups (arrow thickness, read-aloud icon consistency, teacher-mode consolidation) all shipped
-at `v81_ab`. **The teacher-mode question is now RESOLVED** (consolidated, not just decided). What
-remains genuinely open on `§C4` itself: only the speech-mismatch status pill.
-⚠️ **One item IS queued, not merely open**: the user asked, in the same batch as the three `v81_ab`
-items, to move UI-language selection from the storyline page bottom into Settings (reversing a
-prior decision), with an "overrule storyline source language" checkbox and a mismatch warning pill.
-This is substantial enough to be its own release and had NOT been measured or started as of this
-cut — read the `v81_ab` write-up's closing paragraph before assuming it needs a fresh ruling; it may
-just need measurement first, the same way every other item in this queue did.)*
+at `v81_ab`. Then the fourth, biggest item from that same batch — UI language DECOUPLED from
+"I speak", moved into Settings, reversing a prior placement decision, with two more forks ruled
+directly (fully decouple; storyline only) — **shipped at `v81_ac`**, along with a same-session bug
+fix (the overrule flag was being silently bypassed on storyline chapter transitions, because
+`goLessonSet` is shared plumbing `loadSaved()` also uses for those) and two more small follow-ups
+(checkbox moved onto the picker's row, label shortened to "Fix"). **`§C4` is now essentially done.**
+What remains genuinely open: only the speech-mismatch status pill (the other acceptance-detail
+fork) — no ruling given on it yet, likely needs its own measurement pass first, the same way every
+other item in this whole track did.)*
 
 All three items that headed this section at the `v81_b` cut are closed:
 
@@ -615,11 +644,18 @@ is a materially lower bar. Needs a browser pass, not a code change.
   `v78_f` instances into ONE inside `#settings-modal`.
   **Still owed if this track continues**: only the speech-mismatch status pill (the other
   acceptance-detail fork). Not started, no ruling given yet.
-- **QUEUED, not yet started**: move UI-language selection from the storyline page bottom into
-  Settings (REVERSING a prior decision), with an "overrule storyline source language" checkbox and
-  a mismatch warning pill. Sent in the same batch as the three items above but big enough to be its
-  own release. Needs real measurement of the current mechanism first — see the roadmap's `v81_ab`
-  entry.
+- ~~UI language DECOUPLED from "I speak", moved into Settings~~ **✅ SHIPPED at `v81_ac`** —
+  `APP.uiLang` is now a genuinely separate field (two rulings: fully decouple; storyline only, not
+  lesson-set). `#ui-lang-select`/`#overrule-sl-lang-cb` in the Settings Card; the storyline
+  footer's own picker is gone; `openStorylineScreen`/`goLessonSet` both gate their UI-language
+  auto-follow behind the overrule flag (the LATTER only for topics that belong to a storyline —
+  see the bug fix below). **A real bug found and fixed in the same release**: `goLessonSet` is
+  shared plumbing `loadSaved()` uses for a storyline's own chapter transitions too, so its old
+  unconditional auto-follow was silently bypassing the overrule flag — fixed by checking storyline
+  MEMBERSHIP (`_storylineIdForTopic`), not entry point. Plus two small follow-ups: the checkbox
+  moved onto the picker's row, label shortened to "Fix" (tooltip carries the full explanation).
+  **`§C4` is now essentially done** — only the speech-mismatch status pill remains, not started, no
+  ruling given.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
@@ -822,6 +858,17 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
   stayed a list — register a future second instance there, don't hard-code a single id. See
   `test/unit-teacher-toggle.test.js` (rewritten wholesale for the single-instance claim) and
   `test/unit-settings-card.test.js` check #5.
+- `APP.uiLang`/`APP.overruleStorylineLang` (`v81_ac`, `PLAN §C4`) — `uiLang` is the UI CHROME
+  language, genuinely separate from `APP.srcLang` ("I speak"/content). Only touch `APP.uiLang` for
+  something that actually renders CHROME text (`loadUIStrings`/`applyUIStrings`, `updateDocDir`'s
+  `dir` half, `topicLabelText`) — everything else stays on `APP.srcLang`, deliberately, even where
+  it looks similar. ⚠️ `goLessonSet` is NOT just the standalone lesson-set's entry point — it's
+  shared plumbing `loadSaved()` uses for EVERY chapter open, storyline chapters included. A future
+  auto-follow/language-sync added there needs the SAME storyline-membership check
+  (`_storylineIdForTopic`) `openStorylineScreen` and `goLessonSet` both already use, or it will
+  silently bypass the overrule flag exactly like the `v81_ac`-same-release bug did. See
+  `test/unit-ui-lang-decouple.test.js` and `INTERNALS.md`'s `PLAN §C4` section before touching any
+  of this.
 - `test/unit-ui-journeys.test.js` (`v81_m`–`v81_w`, `PLAN §C0`/`§C5`) — the route-parity reference
   for the FOUR original screens plus the teacher dashboard, lesson-set, lesson-screen, and
   storyline-screen. Extend it, don't bypass it, if you touch any of them again. ⚠️ Also grep the
