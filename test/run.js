@@ -150,6 +150,7 @@ run('unit: language picker sync, generation screen <-> library (PLAN §C5)', 'no
 run('unit: static build hides library "Generate new" button (v81_x)', 'node', [path.join(__dirname, 'unit-static-gen-btn-hidden.test.js')]);
 run('unit: Settings Card shell (PLAN §C4 stage 1)', 'node', [path.join(__dirname, 'unit-settings-card.test.js')]);
 run('unit: global mute-pill consolidation (PLAN §C4 "keep going")', 'node', [path.join(__dirname, 'unit-mute-consolidation.test.js')]);
+run('unit: lang-pair arrow control (PLAN §C4 acceptance detail)', 'node', [path.join(__dirname, 'unit-lang-pair-arrow.test.js')]);
 run('unit: word gate on the story unlock (v81_a, TRACK T)', 'node', [path.join(__dirname, 'unit-word-gate.test.js')]);
 run('unit: chapter icon row on the cards (v80_z)', 'node', [path.join(__dirname, 'unit-chapter-icons.test.js')]);
 run('unit: lesson-set storyline link (v80_x)', 'node', [path.join(__dirname, 'unit-lessonset-storyline-link.test.js')]);

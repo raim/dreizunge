@@ -73,11 +73,15 @@ console.log(`  ${checked} version claim(s) in the protocol block name ${base}`);
 // Rule 24: a note telling the next session to check something is not a guard.
 //
 // Scope, deliberately narrow: this pins NUMBERS the prompt asserts, not its prose.
+// v81_aa: the suffix ran out of single letters at v81_z, so this now allows one-or-more —
+// `v81_aa`, `v81_ab`, … The sort must order by LENGTH first, then alphabetically, or plain
+// string comparison would put `aa` before `z` (wrong: `z` shipped first, `aa` is the overflow
+// that comes AFTER it, same as spreadsheet columns).
 const promptFiles = fs.readdirSync(path.join(root, 'build_history'))
-  .map(f => /^SESSION_PROMPT_v(\d+)(?:_([a-z]))?\.md$/.exec(f))
+  .map(f => /^SESSION_PROMPT_v(\d+)(?:_([a-z]+))?\.md$/.exec(f))
   .filter(Boolean)
   .map(m => ({ file: m[0], n: Number(m[1]), pt: m[2] || '' }))
-  .sort((a, b) => a.n - b.n || a.pt.localeCompare(b.pt));
+  .sort((a, b) => a.n - b.n || a.pt.length - b.pt.length || a.pt.localeCompare(b.pt));
 assert.ok(promptFiles.length, 'build_history contains at least one SESSION_PROMPT_v*.md');
 const prompt = promptFiles[promptFiles.length - 1];
 const ptext = fs.readFileSync(path.join(root, 'build_history', prompt.file), 'utf8');

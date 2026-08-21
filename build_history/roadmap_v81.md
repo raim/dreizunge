@@ -1662,6 +1662,64 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v81 LINE
 
+### `v81_aa` — `PLAN §C4`: the "arrow control" acceptance detail
+
+**Shipped by: Claude Code.** `v81_z` flagged this as a housekeeping loose end: `v81_z` was the last
+letter in this session's naming suffix, so this release needed a new convention. Went with
+double-letter continuation (`v81_aa`), the least surprising option. **Turned out to need one real
+guard fix, not zero**: `unit-roadmap-version.test.js`'s `base = APP_VERSION.split('_')[0]` logic
+handled it fine, but its SEPARATE `SESSION_PROMPT_v*.md` filename regex
+(`/^SESSION_PROMPT_v(\d+)(?:_([a-z]))?\.md$/`) matched only a SINGLE trailing letter — `v81_aa.md`
+failed to match at all, tripping "`build_history` contains at least one `SESSION_PROMPT_v*.md`"
+after the rename. Fixed by widening to `[a-z]+` and, separately, fixing the sort comparator: plain
+`localeCompare` would have ordered `aa` BEFORE `z` (wrong — `z` shipped first; `aa` is the overflow
+that comes after it, the same relationship spreadsheet columns have), so the sort now compares
+LENGTH first, then alphabetically. Verified in isolation with a synthetic filename list
+(`x, y, z, aa, ab` correctly ordered, `ab` picked as "highest") rather than trusting the fix by
+inspection alone, since the real `build_history` only ever holds one prompt file at a time and so
+could not exercise the multi-suffix ordering case itself.
+
+The actual work: one of `§C4`'s two acceptance-detail forks, deferred at `v81_y`/`v81_z` pending
+confirmation. The user flagged a possible misunderstanding on the term itself — "arrow control" —
+before greenlighting the build. Explained the reading (the roadmap's one condensed sentence: "The
+source→target language selector is visually reduced to an arrow control: remove its duplicated
+icons and descriptive text without changing the selected language-pair state" — no other source
+exists in the tracked history); **the user confirmed it was correct, and specifically confirmed the
+arrow is INERT** — a plain separator glyph, not a clickable control, with the two `<select>`s
+underneath staying exactly as interactive as before. Worth catching before building, not after:
+a static-vs-clickable ambiguity in "control" is exactly the kind of thing cheap to ask and expensive
+to discover wrong.
+
+**What shipped:** the 🗣/📖 icon + `<label data-i18n="form.i_speak"/"form.i_learn">` pair that sat
+above each of the FOUR language selects (both synced copies — `src-lang-select`/`lang-select` on
+`#generation-screen`, `lib-src-lang-select`/`lib-lang-select` on the library screen, per `v81_w`'s
+sync mechanism — since both are literally "the source→target language selector") is gone. The
+removed strings survive as `title=` tooltips on the selects, wired through `applyUIStrings()`'s
+existing `_setAttr(id, 'title', t(key))` idiom — the SAME convention `v79_o` already established for
+the sound-test row ("the strings stay in ui.json and move to the title attributes"), not a new
+mechanism. `.lang-pair-arrow` — a div that already existed in the markup with a bare, entirely
+unstyled "→" character — is now the primary visual separator and got real CSS (`font-size:20px`,
+`font-weight:800`, `color:var(--gray-dark)`) to match.
+
+**Drive-by cleanup, in the same edit for the exact reason it became dead**: the generic
+`document.querySelectorAll('.form-lbl[data-i18n]')` sweep in `applyUIStrings()` existed to translate
+exactly these two labels and nothing else — removed rather than left as a silent no-op, since it had
+literally zero elements left to match. An adjacent, already-dead, UNRELATED line
+(`const spkLbl = document.querySelector('.form-lbl[for-i-speak]')`, a selector that never matched
+anything before OR after this change — confirmed by grep, not assumed) sat in the exact block being
+restructured and was removed alongside it.
+
+Verified live in a real browser, against both the running server and the rebuilt static build: both
+the generation screen's and the library's copies show the correct tooltip text, the arrow renders
+styled, and — the acceptance detail's own explicit claim — changing a language still correctly
+updates `APP.lang`/`APP.srcLang`, unaffected by this purely visual change. New guard
+`test/unit-lang-pair-arrow.test.js` (7 checks, 2 mutation-tested); `unit-roadmap-version.test.js`
+itself fixed per the naming-scheme finding above.
+
+`node test/run.js`: 240 checks, ALL PASSED. `node test/run.js --quick`: 214 checks, ALL PASSED.
+`node build-static.js` re-run; `node test/check-inline.js` and the `docs/index.html` variant: 0
+failures each.
+
 ### `v81_z` — `PLAN §C4` "keep going": the global mute-pill consolidation, and a real bug found along the way
 
 **Shipped by: Claude Code.** The user said "keep going" on `§C4`. Before building, presented two

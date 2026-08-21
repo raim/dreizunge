@@ -857,9 +857,10 @@ duplicate but stay SYNCED (one shared value, shown on two screens) rather than b
 | ⚠️ **the static build's "Generate new" button must be HIDDEN, not left clickable** (`v81_x`, same-session follow-up caught by the user in a live check of `docs/index.html`) | generation is entirely disabled in static mode — a visible `lib-generate-new-btn` opened `#generation-screen` onto nothing but the "no LLM" overlay. `renderPill()` now hides the button next to its existing `#gen-area`/`.backend-row` hiding. Guarded by `test/unit-static-gen-btn-hidden.test.js`, which — like `unit-static-selectlang-tts.test.js` — asserts against the WINNING `renderPill` definition in the BUILT `docs/index.html` (defined twice; the later one wins in a browser), not the builder's string-array source |
 
 **PLAN §C4 — the Settings Card** (`v81_y` stage 1: shell + low-risk items; `v81_z` "keep going":
-global mute-pill consolidation. Model selection and speech-language/sound-test were explicitly
-RULED OUT of this track entirely — see below — so what remains open is narrower than the roadmap's
-original bullet suggested: the two acceptance-detail forks and the teacher-mode question)
+global mute-pill consolidation; `v81_aa`: the "arrow control" acceptance detail. Model selection
+and speech-language/sound-test were explicitly RULED OUT of this track entirely — see below — so
+what remains open is narrower than the roadmap's original bullet suggested: the speech-mismatch
+status pill and the teacher-mode question)
 
 ⚠️ **naming collision to know about, not a bug**: `showSettings()` (`v81_n`, `PLAN §C0.2`) already
 existed before this track — it is the `#bpill` model-backend pill's click handler, wrapping
@@ -877,6 +878,22 @@ the other.
 | ⚠️ **the teacher-mode toggle is deliberately OUT of this pass** | `v78_f` placed it in THREE instances on purpose — `teacher-mode-btn` (landing/library, full width), `teacher-ico-ls` (lesson-set footer, compact), `teacher-ico-sl` (storyline footer, compact) — by explicit user ruling: reachable from every page that HAS the footer controls, because the lesson-set page itself is invisible to learners. Folding all three into one shared Settings Card instance would reverse that ruling, not just relocate a control that happens to be scattered — it needs its own decision. `test/unit-settings-card.test.js` check #5 guards that this stage did not silently do it anyway |
 | the acceptance tests | `test/unit-settings-card.test.js` — source-text containment checks (mutation-tested: temporarily pulling a control out of the `#settings-modal` slice, and temporarily collapsing `_TEACHER_TOGGLES` to one entry, both confirmed to turn the relevant check red) for what moved and what deliberately did not, plus a live DOM check that `openSettings()`/`closeSettings()` actually toggle the card. Verified in a real browser against BOTH the live server and the built `docs/index.html` (served over a plain static HTTP server) — the pill opens the card on every screen tried, and in static mode `#export-static-btn`/`#teacher-dash-btn` render `display:none` as expected while `.import-btn` stays visible |
 | ⚠️ **model selection and speech-language/sound-test were RULED OUT of the Settings Card entirely**, not just deferred (`v81_z` scoping) | both are CONTEXT-BOUND — model choice only means anything while generating, speech/sound-test only means anything for whichever lesson is currently open — unlike every genuinely global item stage 1 absorbed. The model popover (`#bpill`/`toggleModelPop()`) stays on `#generation-screen`; the sound-test row (`#tts-voice-note`) stays wherever a lesson is being read. If this is ever revisited, it needs its own ruling, not an assumption that the roadmap's original list still applies verbatim |
+
+**`v81_aa` — the "arrow control" acceptance detail**
+
+The user's original UI brief, condensed to one roadmap sentence: "The source→target language
+selector is visually reduced to an arrow control: remove its duplicated icons and descriptive text
+without changing the selected language-pair state." Confirmed with the user before building — the
+arrow is INERT, a plain separator glyph, not a clickable control; only the wrapper (icon + label)
+around each `<select>` goes, not the selects' own interactivity.
+
+| what | where |
+|---|---|
+| what was removed | the 🗣/📖 icon + `<label data-i18n="form.i_speak"/"form.i_learn">` pair that sat above each of the FOUR selects (`src-lang-select`/`lang-select` on `#generation-screen`, `lib-src-lang-select`/`lib-lang-select` on the library screen — both synced copies got the same treatment, since both are literally this same selector) |
+| where the strings went | `title=` tooltips on the selects themselves — same convention `v79_o` already established for the sound-test row ("the strings stay in ui.json and move to the title attributes, so the explanation is one hover away and no translation is orphaned"). Static markup carries the English placeholder (`title="I speak"`/`title="I learn"`); `applyUIStrings()` wires the real localized value via `_setAttr(id, 'title', t(key))`, the SAME idiom every other title-tooltip in that function already uses |
+| what became dead, and was removed rather than left as a no-op | the generic `document.querySelectorAll('.form-lbl[data-i18n]')` sweep — it existed to translate exactly these two labels and nothing else, so once they were gone it had zero elements left to match. An adjacent, already-dead, unrelated line (`const spkLbl = document.querySelector('.form-lbl[for-i-speak]')` — a selector that never matched anything, before OR after this change) was removed in the same edit since it sat in the exact block being restructured |
+| the arrow itself | `.lang-pair-arrow` previously had NO CSS rule at all (bare "→" text, default inline flow) — now styled (`font-size:20px`, `font-weight:800`, `color:var(--gray-dark)`), since it graduated from a minor decorative touch next to two fully-labeled columns to the PRIMARY visual separator between two now-bare selects. `.lang-pair-row` changed `align-items` from `flex-end` to `center` — moot for the columns themselves (each is now just one child, so any alignment looks the same), but centers the arrow properly against them |
+| the acceptance test | `test/unit-lang-pair-arrow.test.js` (7 checks, 2 mutation-tested): no icon/label survives beside any of the four selects; each carries a static `title=` placeholder; `applyUIStrings()`'s wiring exists for the real value; the dead sweep is gone; the arrow rule has real `font-size`/`color`; exactly 2 arrows exist file-wide (one per synced copy). Note what it does NOT establish: `applyUIStrings()` has enough unrelated DOM dependencies (per `unit-lang-picker-sync.test.js`'s own experience) that a full harness run of it needs shimming disproportionate to what this file is about — the actual title VALUES after a real run, and the live rendered layout, were verified in a real browser instead (both screens, plus a live language change confirming the selected-pair STATE is unaffected), against both the live server and the rebuilt static build |
 
 **`v81_z` — global mute-pill consolidation ("keep going" past stage 1)**
 

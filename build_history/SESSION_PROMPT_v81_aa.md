@@ -1,12 +1,14 @@
-# Session prompt — written at the `v81_z` cut (session 41, in progress)
+# Session prompt — written at the `v81_aa` cut (session 41, in progress)
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_y.md` was the
-previous one — superseded by this file and renamed, not kept alongside. ⚠️ `v81_z` is the LAST
-letter in this suffix scheme — the NEXT release needs a new naming convention, e.g. `v81_aa` or
-`v82_a`. Nothing here decides which; just don't be surprised by it.)*
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_z.md` was the
+previous one — superseded by this file and renamed, not kept alongside. `v81_z` was the LAST
+single letter in the old suffix scheme; `v81_aa` picks up with double-letter continuation — the
+least surprising option, and the guard's own `base = APP_VERSION.split('_')[0]` logic already
+handles it with no code change. Keep using this scheme (`v81_ab`, `v81_ac`, …) unless a future
+session has a good reason to switch to `v82_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v81_z`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v81_aa`** cut.
 
 **Session 41, part 2: with `PLAN §C0` (the router seam, `v81_m`–`v81_u`) complete, the user asked
 "what's next?" and confirmed it — splitting the landing page into a Generation Card and a
@@ -209,11 +211,36 @@ sound-test row's mute button present — inverted to require it absent. New guar
 `test/unit-mute-consolidation.test.js`, 6 checks, all mutation-tested. See the roadmap's `v81_z`
 entry for the full write-up.
 
+**`v81_aa`: the "arrow control" acceptance detail — and a naming-scheme housekeeping item resolved
+along the way.** `v81_z` was the last single letter in the old suffix scheme, so this release
+needed a new convention — went with double-letter continuation (`v81_aa`), the least surprising
+option, no guard changes needed since `base = APP_VERSION.split('_')[0]` already handles it.
+
+The actual work: one of `§C4`'s two remaining acceptance-detail forks, deferred at `v81_y`/`v81_z`
+pending confirmation. **The user flagged a possible misunderstanding on the term itself before
+greenlighting the build** — explained the reading (the roadmap's one condensed sentence is the
+ONLY source; no earlier elaboration exists anywhere in the tracked history), and **the user
+confirmed it was correct, specifically confirming the arrow is INERT** — a plain separator glyph,
+not a clickable control; the two `<select>`s underneath stay exactly as interactive as before.
+Worth asking before building: a static-vs-clickable ambiguity in "control" is cheap to catch early
+and expensive to discover wrong.
+
+Shipped: the 🗣/📖 icon + "I speak"/"I learn" `<label>` pair above each of the FOUR selects (both
+synced `v81_w` copies) is gone — moved into `title=` tooltips via `applyUIStrings()`'s EXISTING
+`_setAttr(id, 'title', t(key))` idiom (the same convention `v79_o` already used for the sound-test
+row), not a new mechanism. `.lang-pair-arrow` — a div that already existed with a bare, entirely
+unstyled "→" — got real CSS now that it's the primary separator instead of a minor decorative
+touch. Drive-by cleanup in the same edit: the now-dead `.form-lbl[data-i18n]` sweep (it existed to
+translate exactly these two labels) was removed rather than left as a silent no-op, along with one
+adjacent, already-dead, unrelated line sitting in the same block. Verified live against both the
+running server and the rebuilt static build — both picker copies, plus confirming a language change
+still correctly updates state, unaffected by this purely visual change. New guard
+`test/unit-lang-pair-arrow.test.js`, 7 checks, 2 mutation-tested.
+
 **§C4 is narrower than it looked, but not done.** Model selection and speech/sound-test are now
-explicitly OUT of this track's scope, permanently (not just deferred). What remains open: the two
-acceptance-detail forks (arrow-control language selector, speech-mismatch status pill) and the
-teacher-mode consolidation question, which still needs its own ruling before anyone builds it
-either way.
+explicitly OUT of this track's scope, permanently (not just deferred). What remains open: the
+speech-mismatch status pill (the other acceptance-detail fork) and the teacher-mode consolidation
+question, which still needs its own ruling before anyone builds it either way.
 
 **Session 40 ran across two agents: Codex shipped `v81_k`/`v81_l`, then ran out of session budget
 mid-work; Claude Code picked up the uncommitted state and shipped `v81_m` through `v81_q`.**
@@ -348,15 +375,15 @@ want to eyeball the log in the console anyway.**
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 239 checks
-node test/run.js --quick                  → expect 213
+node test/run.js                          → expect 240 checks
+node test/run.js --quick                  → expect 214
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut: **323 topics, 91 storylines, 33 languages, 620 `en` keys** (unchanged since
-`v81_y`; `v81_z` moved/removed existing controls only, no new UI strings).
-`APP_VERSION = 'v81_z'`.
+`v81_y`; `v81_z`/`v81_aa` both moved/removed existing controls only, no new UI strings).
+`APP_VERSION = 'v81_aa'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -434,16 +461,17 @@ there as they shipped — the whole router-seam track is DONE. `PLAN §C5` (`v81
 track with its OWN two rulings, given directly when the user confirmed "what's next": (1) duplicate
 the language pickers but keep them synced, not fully decoupled; (2) "🌍 home" now means the library,
 not generation. **Both rulings are now FULLY BUILT**, plus a same-session follow-up (`v81_x`) — `§C5`
-is done. `PLAN §C4` (the Settings Card) followed with TWO further scoping rulings: **Stage 1
+is done. `PLAN §C4` (the Settings Card) followed with several further scoping rulings: **Stage 1
 only** — shell + the four already-self-contained absorb items (`v81_y`); then, on "keep going"
 (`v81_z`), **model selection and speech-language/sound-test are OUT of this track entirely**
 (context-bound, not global — a closed decision, not a deferral) and **the global mute-pill
-consolidation shipped**. What remains genuinely open: the two acceptance-detail forks (arrow-control
-language selector, speech-mismatch status pill) and whether the teacher-mode toggle (currently
-three deliberate `v78_f` instances) should ever be consolidated at all — found during `v81_y`'s
-scoping, still not put to the user. Nothing is currently QUEUED as owed; the next session should
-measure whatever's picked next and present it, the same way `v81_y`/`v81_z` did, rather than assume
-any of the above.)*
+consolidation shipped**; then the user confirmed the "arrow control" acceptance detail's meaning
+(the arrow is inert, not a clickable control) and it **shipped at `v81_aa`**. What remains
+genuinely open: the speech-mismatch status pill (the other acceptance-detail fork) and whether the
+teacher-mode toggle (currently three deliberate `v78_f` instances) should ever be consolidated at
+all — found during `v81_y`'s scoping, still not put to the user. Nothing is currently QUEUED as
+owed; the next session should measure whatever's picked next and present it, the same way
+`v81_y`/`v81_z`/`v81_aa` did, rather than assume any of the above.)*
 
 All three items that headed this section at the `v81_b` cut are closed:
 
@@ -547,10 +575,14 @@ is a materially lower bar. Needs a browser pass, not a code change.
   the way**: `#qback` carried `class="mute-btn"` too, silently corrupting its "←" label on any mute
   toggle while a question was open — see the roadmap entry. **Also ruled OUT of `§C4` entirely, not
   deferred**: model selection and speech-language/sound-test, both context-bound rather than global.
-  **Still owed if this track continues**: the two acceptance-detail forks (arrow-control language
-  selector, speech-mismatch status pill), and whether to ever consolidate the teacher-mode toggle
-  (found mid-scoping at `v81_y`, still not put to the user). Not started, no ruling given yet on
-  either.
+- ~~`PLAN §C4` — the "arrow control" acceptance detail~~ **✅ SHIPPED at `v81_aa`** — user confirmed
+  the reading (the arrow is inert, not clickable) before building. The 🗣/📖 icon + "I speak"/"I
+  learn" label above each of the four synced selects is gone, moved to `title=` tooltips via the
+  SAME `applyUIStrings()` idiom `v79_o` already used elsewhere. `.lang-pair-arrow` (previously
+  unstyled) now has real CSS.
+  **Still owed if this track continues**: the speech-mismatch status pill (the other
+  acceptance-detail fork), and whether to ever consolidate the teacher-mode toggle (found
+  mid-scoping at `v81_y`, still not put to the user). Not started, no ruling given yet on either.
 - **`PLAN §C1`'s FIRST gate bug** — *"browsed forward to the story card and back, solved no
   comprehension lesson, yet could proceed."* **⚠️ THREE readings are already DEAD ENDS** — see the
   `v80_b` entry in `roadmap_v80.md` before spending time (a third, `v81_j`, was added this session:
@@ -731,6 +763,14 @@ form**, and a matcher is worth ~10 points, not fifty — **the ceiling is a GENE
   button's label on every mute toggle. Before giving ANY new button `class="mute-btn"`, check it is
   actually meant to call `toggleMute()` — the class alone is what makes `updateMuteButtons()` rewrite
   it.
+- `.lang-pair-arrow`/`title=` tooltips on the four language selects (`v81_aa`, `PLAN §C4` "arrow
+  control") — the 🗣/📖 icon + "I speak"/"I learn" `<label>` wrapper is gone from BOTH synced
+  copies (`src-lang-select`/`lang-select` on `#generation-screen`, `lib-src-lang-select`/
+  `lib-lang-select` on the library screen). The removed strings are wired to `title=` via
+  `applyUIStrings()`'s `_setAttr(id, 'title', t(key))` — the SAME idiom `v79_o` used for the
+  sound-test row, not a new mechanism; extend that pattern rather than inventing another one if a
+  future control needs the same treatment. See `test/unit-lang-pair-arrow.test.js` and
+  `INTERNALS.md`'s `PLAN §C4` section.
 - `test/unit-ui-journeys.test.js` (`v81_m`–`v81_w`, `PLAN §C0`/`§C5`) — the route-parity reference
   for the FOUR original screens plus the teacher dashboard, lesson-set, lesson-screen, and
   storyline-screen. Extend it, don't bypass it, if you touch any of them again. ⚠️ Also grep the

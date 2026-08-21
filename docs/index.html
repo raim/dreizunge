@@ -305,8 +305,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 
 .lang-box{background:var(--white);border-radius:var(--radius-xl);padding:16px 22px;box-shadow:0 8px 32px rgba(0,0,0,.08);border:2px solid var(--gray-mid);margin-bottom:10px}
 .lang-selector{margin-bottom:14px}
-.lang-pair-row{display:flex;align-items:flex-end;gap:8px}
+.lang-pair-row{display:flex;align-items:center;gap:8px}
 .lang-pair-col{flex:1;min-width:0}
+.lang-pair-arrow{flex-shrink:0;font-size:20px;font-weight:800;color:var(--gray-dark);line-height:1;padding-bottom:2px}
 #ui-translate-row button:hover{opacity:.85}
 .lang-select-wrap{position:relative;display:inline-block;width:100%}
 .lang-select{width:100%;padding:10px 36px 10px 14px;font-size:15px;font-weight:700;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
@@ -707,9 +708,8 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
   <div class="lang-box" id="lib-lang-box">
     <div class="lang-pair-row">
       <div class="lang-pair-col">
-        🗣 <label class="form-lbl" data-i18n="form.i_speak">I speak</label>
         <div class="lang-select-wrap">
-          <select class="lang-select" id="lib-src-lang-select" onchange="selectSrcLang(this.value)">
+          <select class="lang-select" id="lib-src-lang-select" onchange="selectSrcLang(this.value)" title="I speak">
             <option value="all">🌐</option>
             <option value="en">🇬🇧 English</option>
             <option value="it">🇮🇹 Italian</option>
@@ -750,9 +750,8 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       </div>
       <div class="lang-pair-arrow">→</div>
       <div class="lang-pair-col">
-        📖 <label class="form-lbl" data-i18n="form.i_learn">I learn</label>
         <div class="lang-select-wrap">
-          <select class="lang-select" id="lib-lang-select" onchange="selectLang(this.value)">
+          <select class="lang-select" id="lib-lang-select" onchange="selectLang(this.value)" title="I learn">
             <option value="all">🌐</option>
             <option value="it">🇮🇹 Italian</option>
             <option value="en">🇬🇧 English</option>
@@ -858,9 +857,8 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <div class="lang-box">
         <div class="lang-pair-row">
           <div class="lang-pair-col">
-            🗣 <label class="form-lbl" data-i18n="form.i_speak">I speak</label>
             <div class="lang-select-wrap">
-              <select class="lang-select" id="src-lang-select" onchange="selectSrcLang(this.value)">
+              <select class="lang-select" id="src-lang-select" onchange="selectSrcLang(this.value)" title="I speak">
                 <option value="all">🌐</option>
                 <option value="en">🇬🇧 English</option>
                 <option value="it">🇮🇹 Italian</option>
@@ -904,9 +902,8 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           </div>
           <div class="lang-pair-arrow">→</div>
           <div class="lang-pair-col">
-            📖 <label class="form-lbl" data-i18n="form.i_learn">I learn</label>
             <div class="lang-select-wrap">
-              <select class="lang-select" id="lang-select" onchange="selectLang(this.value)">
+              <select class="lang-select" id="lang-select" onchange="selectLang(this.value)" title="I learn">
                 <option value="all">🌐</option>
                 <option value="it">🇮🇹 Italian</option>
                 <option value="en">🇬🇧 English</option>
@@ -2267,13 +2264,16 @@ function applyUIStrings() {
   try { updateTtsVoiceNote(); } catch(_){}
   _setText('comp-title',    t('complete.title'));
   _setText('words-from-lbl', t('lesson.words_from'));
-  // Labels
-  const spkLbl = document.querySelector('.form-lbl[for-i-speak]');
-  // Form labels via class iteration
-  document.querySelectorAll('.form-lbl[data-i18n]').forEach(el => {
-    const key = el.dataset.i18n;
-    el.textContent = t(key, {lang: L.name, slang: S.name});
-  });
+  // PLAN §C4 "arrow control": the "I speak"/"I learn" icon+label pair that used to sit above each
+  // picker is gone — the acceptance detail from the user's original UI brief ("remove its
+  // duplicated icons and descriptive text without changing the selected language-pair state").
+  // The strings survive as `title=` tooltips on the selects themselves, same convention as the
+  // sound-test row's `v79_o` tightening — not orphaned, one hover away. Applies to BOTH synced
+  // copies (generation screen + library), same as everything else about this pair.
+  _setAttr('src-lang-select',     'title', t('form.i_speak'));
+  _setAttr('lang-select',         'title', t('form.i_learn'));
+  _setAttr('lib-src-lang-select', 'title', t('form.i_speak'));
+  _setAttr('lib-lang-select',     'title', t('form.i_learn'));
   // Furigana row
   const furiSpan = document.querySelector('#furigana-row span');
   if (furiSpan) furiSpan.textContent = t('furigana.show');
@@ -150768,11 +150768,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v81_z', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v81_z'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v81_aa', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v81_aa'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"a5fdcc1f10a8","lessons.json":"b8d1e81f9ad2","ui.json":"d1e74142cc25","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"5c25ee514b3f"};
+  APP.buildSources = {"index.html":"4e3531931ed6","lessons.json":"b8d1e81f9ad2","ui.json":"d1e74142cc25","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"5c25ee514b3f"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');
