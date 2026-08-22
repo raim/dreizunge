@@ -2,6 +2,39 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_379498431",
+      "title": "Die zwei Ziegen",
+      "titleAuto": true,
+      "icon": "📖",
+      "chapters": [
+        "tp_17874285175630000039"
+      ],
+      "lang": "sr",
+      "srcLang": "de",
+      "createdAt": "2026-08-22T19:59:01.531Z",
+      "updatedAt": "2026-08-22T20:02:46.197Z",
+      "tokenUsage": {
+        "totalPromptTokens": 214,
+        "totalCompletionTokens": 71,
+        "tokensByType": {
+          "summary": 285
+        }
+      },
+      "summary": "Die Geschichte handelt von zwei sturen Ziegenböcken, die sich auf einer sehr schmalen Brücke begegnen. Da keiner der beiden bereit ist, zurückzuweichen, beginnen sie zu kämpfen. Am Ende fallen beide in den Fluss und verlieren ihren Kampf. Die Erzählung dient zudem dem Training des kyrillischen Alphabets.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 214,
+        "completionTokens": 71,
+        "ms": 21800,
+        "at": "2026-08-22T20:02:46.197Z"
+      }
+    },
+    {
       "id": "sl_1835515392",
       "title": "Zwei Wege im Winter",
       "icon": "🐿️",
@@ -10237,6 +10270,990 @@
   ],
   "topics": [
     {
+      "id": "tp_17874285175630000039",
+      "topic": "Die zwei Ziegen",
+      "topicEmoji": "🐐",
+      "userTopic": "die zwei ziegen",
+      "userPrompt": "die zwei ziegen\n\n[story]\nОва прича говори о два тврдоглава јарца која су се срела на веома уском мосту. Пошто ниједан од њих није хтео да се повуче, почели су да се боре и на крају су обојица пала у реку. Текст је приказан на ћирилици како би вам помогао у вежбању овог писма.",
+      "lang": "sr",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Ова прича говори о два тврдоглава јарца која су се срела на веома уском мосту. Пошто ниједан од њих није хтео да се повуче, почели су да се боре и на крају су обојица пала у реку. Текст је приказан на ћирилици како би вам помогао у вежбању овог писма.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-08-22T19:54:55.644Z",
+        "origin": "user-pasted",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 153,
+        "completionTokens": 71,
+        "ms": 21917,
+        "at": "2026-08-22T19:55:17.562Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Diese Geschichte handelt von zwei sturen Ziegenböcken, die sich auf einer sehr schmalen Brücke begegneten. Da keiner von ihnen zurückweichen wollte, begannen sie zu kämpfen und am Ende fielen beide in den Fluss. Der Text ist in kyrillischer Schrift dargestellt, um Ihnen beim Üben dieser Schriftart zu helfen.",
+      "userStory": "Ова прича говори о два тврдоглава јарца која су се срела на веома уском мосту. Пошто ниједан од њих није хтео да се повуче, почели су да се боре и на крају су обојица пала у реку. Текст је приказан на ћирилици како би вам помогао у вежбању овог писма.",
+      "storyStyle": "neutral",
+      "script": "cyrillic-sr",
+      "lessons": [
+        {
+          "id": "ls_1787429110200_s8jx",
+          "type": "intro_script",
+          "script": "cyrillic-sr",
+          "rtl": false,
+          "difficulty": 1,
+          "title": "🔡 Serbian Cyrillic",
+          "icon": "🔡",
+          "desc": "Serbian Cyrillic — 8 Buchstaben",
+          "letters": [
+            {
+              "ch": "Д",
+              "lower": "д",
+              "name": "de",
+              "translit": "d",
+              "ipa": "d"
+            },
+            {
+              "ch": "Ш",
+              "lower": "ш",
+              "name": "ša",
+              "translit": "š",
+              "ipa": "ʃ"
+            },
+            {
+              "ch": "Ж",
+              "lower": "ж",
+              "name": "že",
+              "translit": "ž",
+              "ipa": "ʒ"
+            },
+            {
+              "ch": "А",
+              "lower": "а",
+              "name": "a",
+              "translit": "a",
+              "ipa": "a"
+            },
+            {
+              "ch": "Ц",
+              "lower": "ц",
+              "name": "ce",
+              "translit": "c",
+              "ipa": "ts"
+            },
+            {
+              "ch": "К",
+              "lower": "к",
+              "name": "ka",
+              "translit": "k",
+              "ipa": "k"
+            },
+            {
+              "ch": "Р",
+              "lower": "р",
+              "name": "er",
+              "translit": "r",
+              "ipa": "r"
+            },
+            {
+              "ch": "С",
+              "lower": "с",
+              "name": "es",
+              "translit": "s",
+              "ipa": "s"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "Д д",
+              "target": "d",
+              "correct": "d",
+              "choices": [
+                "č",
+                "nj",
+                "c",
+                "d"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "d (de)",
+              "target": "Д д",
+              "correct": "Д д",
+              "choices": [
+                "Г г",
+                "Д д",
+                "Ђ ђ",
+                "Џ џ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Ш ш",
+              "target": "š",
+              "correct": "š",
+              "choices": [
+                "š",
+                "m",
+                "d",
+                "e"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "š (ša)",
+              "target": "Ш ш",
+              "correct": "Ш ш",
+              "choices": [
+                "Ш ш",
+                "Л л",
+                "Н н",
+                "В в"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Ж ж",
+              "target": "ž",
+              "correct": "ž",
+              "choices": [
+                "dž",
+                "ž",
+                "t",
+                "ć"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ž (že)",
+              "target": "Ж ж",
+              "correct": "Ж ж",
+              "choices": [
+                "Ђ ђ",
+                "Љ љ",
+                "Ж ж",
+                "К к"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "А а",
+              "target": "a",
+              "correct": "a",
+              "choices": [
+                "lj",
+                "n",
+                "a",
+                "ć"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "a",
+              "target": "А а",
+              "correct": "А а",
+              "choices": [
+                "А а",
+                "Е е",
+                "Р р",
+                "Д д"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Ц ц",
+              "target": "c",
+              "correct": "c",
+              "choices": [
+                "p",
+                "r",
+                "nj",
+                "c"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "c (ce)",
+              "target": "Ц ц",
+              "correct": "Ц ц",
+              "choices": [
+                "Ц ц",
+                "Ч ч",
+                "Р р",
+                "С с"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "К к",
+              "target": "k",
+              "correct": "k",
+              "choices": [
+                "h",
+                "a",
+                "k",
+                "đ"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "k (ka)",
+              "target": "К к",
+              "correct": "К к",
+              "choices": [
+                "Г г",
+                "О о",
+                "К к",
+                "Ж ж"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Р р",
+              "target": "r",
+              "correct": "r",
+              "choices": [
+                "e",
+                "r",
+                "c",
+                "dž"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "r (er)",
+              "target": "Р р",
+              "correct": "Р р",
+              "choices": [
+                "Ш ш",
+                "Х х",
+                "Њ њ",
+                "Р р"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "С с",
+              "target": "s",
+              "correct": "s",
+              "choices": [
+                "l",
+                "s",
+                "ž",
+                "d"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "s (es)",
+              "target": "С с",
+              "correct": "С с",
+              "choices": [
+                "М м",
+                "Л л",
+                "Ћ ћ",
+                "С с"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "с",
+              "pron": "s",
+              "correct": "С с",
+              "choices": [
+                "Е е",
+                "С с",
+                "Ћ ћ",
+                "Б б"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "а",
+              "pron": "a",
+              "correct": "А а",
+              "choices": [
+                "Х х",
+                "Ж ж",
+                "Ј ј",
+                "А а"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ш",
+              "pron": "š",
+              "correct": "Ш ш",
+              "choices": [
+                "Љ љ",
+                "Ш ш",
+                "З з",
+                "Ф ф"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "р",
+              "pron": "r",
+              "correct": "Р р",
+              "choices": [
+                "Ц ц",
+                "Р р",
+                "Ф ф",
+                "Ж ж"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "д",
+              "pron": "d",
+              "correct": "Д д",
+              "choices": [
+                "Т т",
+                "Н н",
+                "Ј ј",
+                "Д д"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 8,
+            "at": "2026-08-22T20:05:10.202Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "Zwei sture Ziegenböcke",
+          "desc": "Lektion über zwei widerspenstige Ziegen auf einer Brücke",
+          "icon": "🐐",
+          "vocab": [
+            {
+              "target": "прича",
+              "source": "die Geschichte",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "sr:vocab:прича",
+                "canonicalId": "sr:vocab:прича",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "sr",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "јарац",
+              "source": "der Ziegenbock",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "sr:vocab:јарац",
+                "canonicalId": "sr:vocab:јарац",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "sr",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "мост",
+              "source": "die Brücke",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "sr:vocab:мост",
+                "canonicalId": "sr:vocab:мост",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "sr",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "река",
+              "source": "der Fluss",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "sr:vocab:река",
+                "canonicalId": "sr:vocab:река",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "sr",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "узак",
+              "source": "schmal",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "sr:vocab:узак",
+                "canonicalId": "sr:vocab:узак",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "sr",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "тврдоглав",
+              "source": "stur",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "sr:vocab:тврдоглав",
+                "canonicalId": "sr:vocab:тврдоглав",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "sr",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "борити се",
+              "source": "kämpfen",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "sr:vocab:борити се",
+                "canonicalId": "sr:vocab:борити се",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "sr",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "повући се",
+              "source": "zurückweichen",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "sr:vocab:повући се",
+                "canonicalId": "sr:vocab:повући се",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "sr",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Ова прича говори о два јарца.",
+              "source": "Diese Geschichte handelt von zwei Ziegenböcken.",
+              "skillId": "sr:sentence:01",
+              "words": [
+                "Ова",
+                "прича",
+                "говори",
+                "о",
+                "два",
+                "јарца."
+              ]
+            },
+            {
+              "target": "Срели су се на уском мосту.",
+              "source": "Sie begegneten sich auf einer schmalen Brücke.",
+              "skillId": "sr:sentence:02",
+              "words": [
+                "Срели",
+                "су",
+                "се",
+                "на",
+                "уском",
+                "мосту."
+              ]
+            },
+            {
+              "target": "Ниједан није хтео да се повуче.",
+              "source": "Keiner wollte zurückweichen.",
+              "skillId": "sr:sentence:03",
+              "words": [
+                "Ниједан",
+                "није",
+                "хтео",
+                "да",
+                "се",
+                "повуче."
+              ]
+            },
+            {
+              "target": "Почели су да се боре.",
+              "source": "Sie begannen zu kämpfen.",
+              "skillId": "sr:sentence:04",
+              "words": [
+                "Почели",
+                "су",
+                "да",
+                "се",
+                "боре."
+              ]
+            },
+            {
+              "target": "Обојица су пала у реку.",
+              "source": "Beide fielen in den Fluss.",
+              "skillId": "sr:sentence:05",
+              "words": [
+                "Обојица",
+                "су",
+                "пала",
+                "у",
+                "реку."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 930,
+            "completionTokens": 654,
+            "ms": 223830,
+            "at": "2026-08-22T19:59:01.458Z"
+          }
+        },
+        {
+          "id": "ls_1787429548503_0_intro_script",
+          "type": "intro_script",
+          "script": "cyrillic-sr",
+          "rtl": false,
+          "difficulty": 1,
+          "title": "🔡 Serbian Cyrillic",
+          "desc": "Serbian Cyrillic — 8 letters",
+          "icon": "🔡",
+          "letters": [
+            {
+              "ch": "Џ",
+              "lower": "џ",
+              "name": "dže",
+              "translit": "dž",
+              "ipa": "dʒ"
+            },
+            {
+              "ch": "С",
+              "lower": "с",
+              "name": "es",
+              "translit": "s",
+              "ipa": "s"
+            },
+            {
+              "ch": "Е",
+              "lower": "е",
+              "name": "e",
+              "translit": "e",
+              "ipa": "e"
+            },
+            {
+              "ch": "М",
+              "lower": "м",
+              "name": "em",
+              "translit": "m",
+              "ipa": "m"
+            },
+            {
+              "ch": "И",
+              "lower": "и",
+              "name": "i",
+              "translit": "i",
+              "ipa": "i"
+            },
+            {
+              "ch": "Ф",
+              "lower": "ф",
+              "name": "ef",
+              "translit": "f",
+              "ipa": "f"
+            },
+            {
+              "ch": "У",
+              "lower": "у",
+              "name": "u",
+              "translit": "u",
+              "ipa": "u"
+            },
+            {
+              "ch": "Ц",
+              "lower": "ц",
+              "name": "ce",
+              "translit": "c",
+              "ipa": "ts"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "Џ џ",
+              "target": "dž",
+              "correct": "dž",
+              "choices": [
+                "dž",
+                "k",
+                "j",
+                "f"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "dž (dže)",
+              "target": "Џ џ",
+              "correct": "Џ џ",
+              "choices": [
+                "Ц ц",
+                "Џ џ",
+                "П п",
+                "Љ љ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "С с",
+              "target": "s",
+              "correct": "s",
+              "choices": [
+                "u",
+                "n",
+                "s",
+                "nj"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "s (es)",
+              "target": "С с",
+              "correct": "С с",
+              "choices": [
+                "Ш ш",
+                "А а",
+                "С с",
+                "Н н"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Е е",
+              "target": "e",
+              "correct": "e",
+              "choices": [
+                "j",
+                "r",
+                "g",
+                "e"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "e",
+              "target": "Е е",
+              "correct": "Е е",
+              "choices": [
+                "Е е",
+                "Л л",
+                "С с",
+                "Ч ч"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "М м",
+              "target": "m",
+              "correct": "m",
+              "choices": [
+                "ć",
+                "h",
+                "m",
+                "k"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "m (em)",
+              "target": "М м",
+              "correct": "М м",
+              "choices": [
+                "Р р",
+                "Н н",
+                "Ж ж",
+                "М м"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "И и",
+              "target": "i",
+              "correct": "i",
+              "choices": [
+                "i",
+                "ž",
+                "č",
+                "s"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "i",
+              "target": "И и",
+              "correct": "И и",
+              "choices": [
+                "И и",
+                "Љ љ",
+                "Г г",
+                "Ј ј"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Ф ф",
+              "target": "f",
+              "correct": "f",
+              "choices": [
+                "s",
+                "f",
+                "lj",
+                "đ"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "f (ef)",
+              "target": "Ф ф",
+              "correct": "Ф ф",
+              "choices": [
+                "Љ љ",
+                "Н н",
+                "Ф ф",
+                "Ђ ђ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "У у",
+              "target": "u",
+              "correct": "u",
+              "choices": [
+                "p",
+                "nj",
+                "b",
+                "u"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "u",
+              "target": "У у",
+              "correct": "У у",
+              "choices": [
+                "Ч ч",
+                "Е е",
+                "У у",
+                "П п"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "Ц ц",
+              "target": "c",
+              "correct": "c",
+              "choices": [
+                "l",
+                "c",
+                "p",
+                "z"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "c (ce)",
+              "target": "Ц ц",
+              "correct": "Ц ц",
+              "choices": [
+                "У у",
+                "Е е",
+                "Ц ц",
+                "Њ њ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ф",
+              "pron": "f",
+              "correct": "Ф ф",
+              "choices": [
+                "И и",
+                "Ф ф",
+                "С с",
+                "Ђ ђ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "е",
+              "pron": "e",
+              "correct": "Е е",
+              "choices": [
+                "Ч ч",
+                "Џ џ",
+                "Е е",
+                "Њ њ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "м",
+              "pron": "m",
+              "correct": "М м",
+              "choices": [
+                "М м",
+                "О о",
+                "П п",
+                "Ч ч"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "у",
+              "pron": "u",
+              "correct": "У у",
+              "choices": [
+                "Х х",
+                "Љ љ",
+                "О о",
+                "У у"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ц",
+              "pron": "c",
+              "correct": "Ц ц",
+              "choices": [
+                "К к",
+                "Ц ц",
+                "Ч ч",
+                "Ђ ђ"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "attempts": null,
+            "valid": 21,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "ms": 2,
+            "at": "2026-08-22T20:12:28.503Z"
+          },
+          "_recreated": true
+        }
+      ],
+      "generationStats": {
+        "totalMs": 293508,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 4045,
+        "totalCompletionTokens": 1697,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 223827,
+            "promptTokens": 930,
+            "completionTokens": 654
+          }
+        ],
+        "tokensByType": {
+          "recreate": 3697
+        }
+      },
+      "generatedAt": "2026-08-22T19:55:17.563Z",
+      "updatedAt": "2026-08-22T20:12:28.503Z",
+      "createdBy": "admin"
+    },
+    {
       "id": "tp_17869990828330000253",
       "topic": "Flucht ins Leere",
       "topicEmoji": "🌬️",
@@ -18206,14 +19223,6 @@
           "qcBy": "translategemma:12b"
         },
         {
-          "id": "ls_1786289563846_dezb",
-          "type": "mixed",
-          "title": "🔀 Mischübung",
-          "icon": "🔀",
-          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
-          "perType": 3
-        },
-        {
           "difficulty": 1,
           "id": "ls_1786355226452",
           "type": "grammar",
@@ -18473,6 +19482,14 @@
           "_recreated": true
         },
         {
+          "id": "ls_1786289563846_dezb",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
+        },
+        {
           "id": "ls_1786288667889_0_comprehension",
           "type": "comprehension",
           "title": "Anas Neue Freunde",
@@ -18555,7 +19572,7 @@
         }
       },
       "generatedAt": "2026-08-09T14:17:02.396Z",
-      "updatedAt": "2026-08-10T11:12:06.217Z",
+      "updatedAt": "2026-08-22T15:03:01.550Z",
       "createdBy": "admin",
       "script": "latin",
       "coverageTarget": 0.65
@@ -91393,6 +92410,28 @@
             "ms": 302399,
             "at": "2026-06-24T02:29:14.431Z"
           }
+        },
+        {
+          "difficulty": 2,
+          "id": "ls_1787427997568",
+          "type": "writing",
+          "title": "Mein Lernfortschritt",
+          "desc": "Describe your language learning progress.",
+          "icon": "📈",
+          "prompt": "Beschreibe kurz, wie du deinen Fortschritt beim Deutschlernen verfolgst. Welche Methoden oder Apps nutzt du? Fühlst du dich motiviert?",
+          "hint": "Briefly describe how you track your German learning progress. What methods or apps do you use? Do you feel motivated?",
+          "_genMeta": {
+            "type": "writing",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 1,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 451,
+            "completionTokens": 105,
+            "ms": 30770,
+            "at": "2026-08-22T19:46:37.568Z"
+          }
         }
       ],
       "generationStats": {
@@ -91400,8 +92439,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 1184,
-        "totalCompletionTokens": 572,
+        "totalPromptTokens": 1635,
+        "totalCompletionTokens": 677,
         "lessons": [
           {
             "lessonNum": 1,
@@ -91415,10 +92454,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "add_lesson": 556
+        }
       },
       "generatedAt": "2026-06-16T10:11:40.373Z",
-      "updatedAt": "2026-07-14T14:39:17.057Z",
+      "updatedAt": "2026-08-22T19:46:37.568Z",
       "id": "tp_17816054439060000253",
       "storyMeta": {
         "type": "story",

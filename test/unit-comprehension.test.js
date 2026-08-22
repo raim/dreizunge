@@ -124,14 +124,18 @@ const GOOD = { q: 'Warum geht Anna weg?', choices: ['Sie hat Angst', 'Sie ist m�
 // 'standard' — a dead menu entry. Every clamp on the path must name it.
 {
   assert.ok(/VALID_FORMATS=new Set\(\[[^\]]*'comprehension'/.test(html), 'client clamp accepts it');
-  assert.strictEqual((server.match(/'word_forms','inflections','comprehension'\]\.includes\(lessonFormat\)/g) || []).length, 2,
+  // v82_e: 'writing' (PLAN §D4) joined the same two clamps comprehension lives in.
+  assert.strictEqual((server.match(/'word_forms','inflections','comprehension','writing'\]\.includes\(lessonFormat\)/g) || []).length, 2,
     'BOTH server routes accept it — one of the two was the v68.1 bug');
   assert.ok(/lessonFormat === 'comprehension' \? \(\) => generateComprehension\(/.test(server), 'the route dispatches to it');
   assert.ok(/comprehension: \(c\) => generateComprehension\(/.test(server), 'so does the add-lesson registry');
   // Story gate: offered only where a story exists.
   assert.ok(/\$\{\(s && s\.story\) \? `<option value="comprehension"/.test(html),
     'the per-set menu offers it only for a chapter that HAS a story');
-  assert.ok(/if \(!hasStory && _fmtSel\.value === 'comprehension'\) _fmtSel\.value = 'standard';/.test(html),
+  // v82_e: rewritten (not just re-anchored — rule 29) when `writing` (PLAN §D4) joined comprehension
+  // on this exact gate, and fixed to run AFTER the dialect sweep (see unit-dialect-panel.test.js for
+  // the full story: the dialect sweep used to silently undo this hide when it ran second).
+  assert.ok(/if \(!\(APP\.lessonData && String\(APP\.lessonData\.story \|\| ''\)\.trim\(\)\)\s*\n\s*&& \['comprehension', 'writing'\]\.includes\(_fmtSel\.value\)\) _fmtSel\.value = 'standard';/.test(html),
     'and a storyless chapter cannot leave it selected');
   assert.ok(/if \(!storyText\) throw new Error\('Comprehension lessons need a story/.test(server),
     'the generator refuses rather than inventing questions without a story');

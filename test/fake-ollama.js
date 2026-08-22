@@ -116,6 +116,14 @@ const srv = http.createServer(async (req, res) => {
       kind = 'storyline_title'; content = JSON.stringify({ title: 'The Fake Saga', icon: '📘' });
     } else if (/concise summary|captures the main arc/i.test(sys)) {
       kind = 'summary'; content = 'FAKE SUMMARY: a tidy recap of the chapters and their vocabulary themes, in the source language.';
+    } else if (/Check ONLY typos and grammar/i.test(sys)) {
+      // PLAN §D4 (v82): live writing-feedback grading. Deliberately checked BEFORE the generic QC
+      // branch below — this prompt reuses that branch's own "Reply EXACTLY one of" phrasing (the
+      // same qcCheckPair convention, for consistency), so it would otherwise be swallowed by it.
+      // FAKE_WRITING_REPLY lets a test drive both shapes the parser must handle: the requested
+      // "<wrong> => <fix> — <note>" lines, and "OK".
+      kind = 'writing_feedback';
+      content = process.env.FAKE_WRITING_REPLY || 'Ich habe => Ich habe ein — verb needs an object here\ngeht gut => geht es gut — missing "es"';
     } else if (/Reply EXACTLY one of/i.test(sys)) {
       // QC pair-check: flag the source side with a fixed correction (deterministic).
       kind = 'qc'; content = 'S: KORRIGIERT';
@@ -187,6 +195,14 @@ const srv = http.createServer(async (req, res) => {
           { sentence: 'Die Katze und das ___ blieben gleich.', translation: 'The cat and the house stayed the same.',
             choices: ['Haus', 'Häuser', 'Hauses', 'Häusern'], correctIndex: 0, explanation: 'Nominativ Singular, neutrum.' },
         ],
+      });
+    } else if (/"writing" exercise generator/i.test(sys)) {
+      // PLAN §D4 (v82): the writing lesson's STEM — a short task, generated once like every other
+      // type. Grading (the live half) is a separate branch below, matched on its own system prompt.
+      kind = 'writing_task';
+      content = JSON.stringify({
+        title: 'Writing practice', desc: 'Write a short text and get feedback', icon: '✍️',
+        prompt: 'Beschreibe dein Lieblingshaus.', hint: 'Describe your favourite house.',
       });
     } else if (/You clean text extracted from a PDF/i.test(sys)) {
       // v69_m: deletion-only, as the contract requires — drop any line that looks like page

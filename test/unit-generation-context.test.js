@@ -42,7 +42,9 @@ function body(name) {
 // problem while reporting "all accounted for" is worse than none.
 {
   const inPrompts = Object.keys(prompts).filter(k => /\{story\}/.test(JSON.stringify(prompts[k]))).sort();
-  assert.deepStrictEqual(inPrompts, ['comprehension', 'inflections', 'synonyms', 'tutor', 'vocabFromText', 'wordForms'],
+  // v82_e: 'writing' (PLAN §D4) joined this set — generateWriting embeds the whole story so the
+  // model can write a task related to it, and sizes num_ctx for it (checked in section 2 below).
+  assert.deepStrictEqual(inPrompts, ['comprehension', 'inflections', 'synonyms', 'tutor', 'vocabFromText', 'wordForms', 'writing'],
     'the set of prompts.json entries embedding the FULL story has changed. A new one must either ' +
     'size num_ctx (see generateSynonyms) or cap the text (see the standard vocab branch, which ' +
     'slices to 1200 chars) — then add it here.\n  found: ' + inPrompts.join(', '));
@@ -65,7 +67,7 @@ function body(name) {
 
 // ── 2. Every full-story lesson generator sizes num_ctx ──────────────────────
 {
-  for (const fn of ['generateWordForms', 'generateInflections', 'generateSynonyms', 'generateComprehension', 'generateOneLesson']) {
+  for (const fn of ['generateWordForms', 'generateInflections', 'generateSynonyms', 'generateComprehension', 'generateOneLesson', 'generateWriting']) {
     const src = body(fn);
     assert.ok(/callLLMLesson\(/.test(src), fn + ' calls the lesson model');
     assert.ok(/ctxTokens:/.test(src),

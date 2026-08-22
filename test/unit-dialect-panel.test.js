@@ -64,15 +64,27 @@ assert.ok(/_fmtSel\.querySelectorAll\('\.opt-ai-authoring'\)\.forEach/.test(html
   'openAddLesson hides the LLM-authoring options for dialect topics');
 // v71_l: comprehension joins the LLM-authoring set. Its generator runs in the base language and
 // would write standard-German questions about dialect text, so the same guarantee applies.
-assert.ok(/if \(_isDia && \['synonyms','word_forms','inflections','error_hunt','comprehension'\]\.includes\(_fmtSel\.value\)\) _fmtSel\.value = 'standard'/.test(html),
+// v82_e: `writing` (PLAN §D4) joins it too, for the same reason.
+assert.ok(/if \(_isDia && \['synonyms','word_forms','inflections','error_hunt','comprehension','writing'\]\.includes\(_fmtSel\.value\)\) _fmtSel\.value = 'standard'/.test(html),
   'a blocked format resets to standard for dialect');
 assert.ok(/<option value="comprehension" class="opt-ai-authoring opt-needs-story"/.test(html),
   'comprehension is tagged as LLM-authoring, so the dialect gate above catches it');
-// It additionally needs a STORY — questions are written against the text — so it carries a second
-// gate that the other authoring types do not.
-assert.ok(/const compOpt = _fmtSel\.querySelector\('\.opt-needs-story'\);/.test(html),
-  'the no-story gate is wired');
-assert.ok(/if \(!hasStory && _fmtSel\.value === 'comprehension'\) _fmtSel\.value = 'standard';/.test(html),
+assert.ok(/<option value="writing" class="opt-ai-authoring opt-needs-story"/.test(html),
+  'writing is tagged the same way comprehension is');
+// It additionally needs a STORY — questions/tasks are written against the text — so it carries a
+// second gate the other authoring types do not. `querySelectorAll`, not `querySelector`: two
+// options now carry `.opt-needs-story` (comprehension, writing), and MUST run AFTER the dialect
+// sweep above — that sweep unconditionally re-shows every `.opt-ai-authoring` option for a
+// non-dialect topic, which used to silently undo this hide when it ran first (a real bug, found
+// live while adding `writing` forced a second look at this function; fixed at v82_e by reordering).
+assert.ok(/_fmtSel\.querySelectorAll\('\.opt-needs-story'\)\.forEach\(needsStoryOpt => \{/.test(html),
+  'the no-story gate is wired for every needs-story option');
+const _dialectPanelBody = html.slice(html.indexOf("function openAddLesson("), html.indexOf("function closeAddLesson("));
+const _needsStoryGateAt = _dialectPanelBody.indexOf("querySelectorAll('.opt-needs-story')");
+const _aiAuthoringGateAt = _dialectPanelBody.indexOf("querySelectorAll('.opt-ai-authoring')");
+assert.ok(_needsStoryGateAt > _aiAuthoringGateAt && _aiAuthoringGateAt > 0,
+  'the no-story gate runs AFTER the dialect sweep, so it has the last word on visibility');
+assert.ok(/if \(!\(APP\.lessonData && String\(APP\.lessonData\.story \|\| ''\)\.trim\(\)\)\s*\n\s*&& \['comprehension', 'writing'\]\.includes\(_fmtSel\.value\)\) _fmtSel\.value = 'standard';/.test(html),
   'and a chapter with no story resets the selection instead of offering an impossible format');
 // The AI error-hunt is a PURE human-edit diff (no LLM) — it must NOT be gated for dialect (it's the
 // ideal tool for correcting dialect slop). Assert we did NOT hide it.

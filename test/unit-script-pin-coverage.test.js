@@ -41,6 +41,7 @@ const NEEDS_PIN = {
   generateInflections:  'lemma/form MCQs quoting surface-form words from the target-language story',
   generateSynonyms:     'synonyms, antonyms and homophones in the target language',
   generateComprehension: 'questions and answer choices in the target language',
+  generateWriting:      'the writing task itself is written in the target language (PLAN §D4, v82)',
   generateMathLLM:      'word problems are prose in the target language',
   generateStoryQc:      'returns a CORRECTED COPY of the story — target text',
   generateDialectStory: 'a story in a dialect of the target language',

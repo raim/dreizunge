@@ -280,6 +280,7 @@ if (!quick) {
   run('e2e: ui.json hot-reload', 'node', [path.join(__dirname, 'e2e-ui-reload.test.js')]);
   run('e2e: upload filename stored on storyline', 'node', [path.join(__dirname, 'e2e-bookfile.test.js')]);
   run('e2e: word_forms lesson generation', 'node', [path.join(__dirname, 'e2e-word-forms.test.js')]);
+  run('e2e: writing lesson type (PLAN §D4)', 'node', [path.join(__dirname, 'e2e-writing.test.js')]);
   run('e2e: script choice reaches the model (v76_h)', 'node', [path.join(__dirname, 'e2e-script-choice.test.js')]);
   run('e2e: synonyms context sentences', 'node', [path.join(__dirname, 'e2e-synonyms.test.js')]);
   run('e2e: LLM chapter split', 'node', [path.join(__dirname, 'e2e-chapter-split.test.js')]);

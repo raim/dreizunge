@@ -1234,6 +1234,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
               <option value="synonyms">🔁 Synonyms — synonyms, antonyms &amp; homophones</option>
               <option value="error_hunt">🔍 Error Hunt — find mistakes in the story</option>
               <option value="comprehension">🧠 Comprehension — questions about the story</option>
+              <option value="writing">✍️ Writing — write a short text, get feedback</option>
             </select>
             <span class="format-select-arrow">▾</span>
           </div>
@@ -1358,6 +1359,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <option value="conjugation" class="opt-ai-authoring">🔤 Conjugation</option>
       <option value="error_hunt" class="opt-ai-authoring">🔍 Error Hunt</option>
       <option value="comprehension" class="opt-ai-authoring opt-needs-story" style="display:none">🧠 Comprehension</option>
+      <option value="writing" class="opt-ai-authoring opt-needs-story" style="display:none">✍️ Writing</option>
       <option value="math">🔢 Math</option>
       <option value="mixed">🔀 Mixed review (no AI)</option>
       <option value="intro_script" class="opt-intro-script" style="display:none">🔡 Learn the script (no AI)</option>
@@ -1850,6 +1852,13 @@ const LESSON_TYPE_META = {
   // no story at runtime; the story is required to GENERATE, which is why the type is offered only
   // for chapters that have one.
   comprehension: { emoji: '🧠', key: 'lesson.type.comprehension', build: (l) => buildComprehensionExercises(l), editorBranch: (ls, li, fo) => _editorBranchComprehension(ls, li, fo) },
+  // PLAN §D4 (v82): free-text writing + live feedback. Like error_hunt, this builds no playable
+  // EX_RENDERERS exercises (build:()=>[]) — startLesson() branches on lesson.type==='writing' the
+  // same way it already branches for error_hunt, calling renderWriting() instead of renderEx().
+  // Grading needs a LIVE model call at submission time (/api/writing-feedback), which is also why
+  // this type is POST-story (_POST_STORY_TYPES below) and hidden entirely when APP.info.canGenerate
+  // is false — the static build has no server behind it to grade anything.
+  writing:       { emoji: '✍️', key: 'lesson.type.writing',       build: () => [], editorBranch: (ls, li, fo) => _editorBranchWriting(ls, li, fo) },
 };
 function lessonTypeMeta(type) { return LESSON_TYPE_META[type] || LESSON_TYPE_META.standard; }
 function lessonTypeEmoji(type) { return lessonTypeMeta(type).emoji; }
@@ -1864,6 +1873,7 @@ const LESSON_DESC_KEY = {
   grammar: 'lesson.type.desc.grammar', conjugation: 'lesson.type.desc.conjugation',
   error_hunt: 'lesson.type.desc.error_hunt', ai_error_hunt: 'lesson.type.desc.ai_error_hunt',
   word_forms: 'lesson.type.desc.word_forms', inflections: 'lesson.type.desc.inflections',
+  writing: 'lesson.type.desc.writing',
   mixed: 'lesson.type.desc.mixed',
   intro_script: 'lesson.type.desc.intro_script',
   math: 'lesson.type.desc.math', standard: 'lesson.type.desc.vocab', all_types: 'lesson.type.desc.vocab',
@@ -2442,7 +2452,7 @@ function applyUIStrings() {
   // Update format-select option labels
   const formatSel = document.getElementById('format-select');
   if (formatSel) {
-    const formatKeys = { 'standard': 'form.format.standard', 'all_types': 'form.format.all_types', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation', 'synonyms': 'form.format.synonyms', 'word_forms': 'form.format.word_forms', 'inflections': 'form.format.inflections', 'math': 'form.format.math', 'intro_script': 'form.format.intro_script', 'comprehension': 'form.format.comprehension' };
+    const formatKeys = { 'standard': 'form.format.standard', 'all_types': 'form.format.all_types', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation', 'synonyms': 'form.format.synonyms', 'word_forms': 'form.format.word_forms', 'inflections': 'form.format.inflections', 'math': 'form.format.math', 'intro_script': 'form.format.intro_script', 'comprehension': 'form.format.comprehension', 'writing': 'form.format.writing' };
     Array.from(formatSel.options).forEach(opt => {
       if (formatKeys[opt.value]) { const lbl=t(formatKeys[opt.value]); if(lbl && lbl!==formatKeys[opt.value]) opt.text=lbl; }
     });
@@ -2915,7 +2925,7 @@ function restoreStyleSelect(){
 // Every value the #format-select picker offers must be accepted here — an option missing from this
 // set is silently rewritten to 'standard' on selection, i.e. a dead menu entry (v68.1: word_forms
 // and synonyms were visible but clamped away, for single AND book/multi-chapter generation).
-const VALID_FORMATS=new Set(['standard','all_types','error_hunt','grammar','conjugation','math','word_forms','inflections','synonyms','comprehension']);
+const VALID_FORMATS=new Set(['standard','all_types','error_hunt','grammar','conjugation','math','word_forms','inflections','synonyms','comprehension','writing']);
 function onFormatSelect(v){
   APP.lessonFormat=VALID_FORMATS.has(v)?v:'standard'; saveLessonFormat();
   const sel=document.getElementById('format-select'); if(sel) sel.value=APP.lessonFormat;
@@ -6129,6 +6139,7 @@ function savedItemHtml(s, connector, hideStory, hideProv, slChapter) {
         <option value="error_hunt">🔍 ${t('lesson.type.error_hunt')}</option>
         <option value="math">🔢 ${t('lesson.type.math')}</option>
         ${(s && s.story) ? `<option value="comprehension">🧠 ${t('lesson.type.comprehension')}</option>` : ''}
+        ${(s && s.story) ? `<option value="writing">✍️ ${t('lesson.type.writing')}</option>` : ''}
         ${scriptLessonAvailableForSet(s) ? `<option value="intro_script">🔡 ${t('lesson.type.intro_script')}</option>` : ''}
       </select>
       <select class="addlesson-select" id="sial-diff-${sid}" title="Difficulty">
@@ -7000,7 +7011,9 @@ async function _pollGenBook(bookId, total){
 //
 // A new lesson type declares its phase HERE, once, instead of being added to two tables and
 // forgotten from a third.
-const _POST_STORY_TYPES = new Set(['comprehension', 'error_hunt', 'ai_error_hunt']);
+// `writing` (PLAN §D4, v82) joins this set for the same reason comprehension does: the task is
+// generated FROM the chapter's story, so requiring it before the story unlocks would be circular.
+const _POST_STORY_TYPES = new Set(['comprehension', 'error_hunt', 'ai_error_hunt', 'writing']);
 function lessonPhase(L){
   const ty = (L && typeof L === 'object') ? (L.type || 'standard') : (L || 'standard');
   return _POST_STORY_TYPES.has(ty) ? 'post' : 'prep';
@@ -8193,16 +8206,6 @@ function openAddLesson(sid, enc) {
       introOpt.style.display = show ? '' : 'none';
       if (!show && _fmtSel.value === 'intro_script') _fmtSel.value = 'standard';
     }
-    // v71_l: comprehension quizzes are written AGAINST the story, so the option only appears for a
-    // chapter that has one. Same shape as the intro-script gate above: hide, and reset the select
-    // if it was left pointing at a format this topic cannot generate.
-    const compOpt = _fmtSel.querySelector('.opt-needs-story');
-    if (compOpt) {
-      const hasStory = !!(APP.lessonData && String(APP.lessonData.story || '').trim());
-      compOpt.style.display = hasStory ? '' : 'none';
-      compOpt.disabled = !hasStory;
-      if (!hasStory && _fmtSel.value === 'comprehension') _fmtSel.value = 'standard';
-    }
     // For DIALECT topics, hide the LLM-authoring lesson types (synonyms/word_forms/error_hunt).
     // Those generators run in the base language (de) and don't know the dialect — they'd inject
     // standard-German or mis-judged content into a dialect topic, breaking the "no invented dialect"
@@ -8212,7 +8215,22 @@ function openAddLesson(sid, enc) {
       opt.style.display = _isDia ? 'none' : '';
       opt.disabled = _isDia;
     });
-    if (_isDia && ['synonyms','word_forms','inflections','error_hunt','comprehension'].includes(_fmtSel.value)) _fmtSel.value = 'standard';
+    if (_isDia && ['synonyms','word_forms','inflections','error_hunt','comprehension','writing'].includes(_fmtSel.value)) _fmtSel.value = 'standard';
+    // v71_l: comprehension quizzes (and, since v82_e, writing tasks) are written AGAINST the story,
+    // so the option only appears for a chapter that has one. Same shape as the intro-script gate
+    // above: hide, and reset the select if it was left pointing at a format this topic cannot
+    // generate. MUST run AFTER the dialect sweep above, not before: that sweep unconditionally
+    // re-shows every `.opt-ai-authoring` option whenever the topic is not a dialect, which silently
+    // undid this exact hide for comprehension whenever it ran second — a real, pre-existing bug,
+    // found live while adding `writing` (also needs-story) forced a second look at this function.
+    // `querySelectorAll`, not `querySelector`: two options now carry `.opt-needs-story`.
+    _fmtSel.querySelectorAll('.opt-needs-story').forEach(needsStoryOpt => {
+      const hasStory = !!(APP.lessonData && String(APP.lessonData.story || '').trim());
+      needsStoryOpt.style.display = hasStory ? '' : 'none';
+      needsStoryOpt.disabled = !hasStory;
+    });
+    if (!(APP.lessonData && String(APP.lessonData.story || '').trim())
+        && ['comprehension', 'writing'].includes(_fmtSel.value)) _fmtSel.value = 'standard';
   }
   const _mathInstrRow = document.getElementById('sial-math-instr-row-' + sid);
   const _reinforceRow = document.getElementById('sial-reinforce-row-' + sid);
@@ -9211,6 +9229,9 @@ const ADD_LESSON_TYPES = [
   { v: 'grammar',    emoji: '📐', key: 'lesson.type.grammar' },
   { v: 'conjugation',emoji: '🔤', key: 'lesson.type.conjugation' },
   { v: 'comprehension', emoji: '🧠', key: 'lesson.type.comprehension', needsStory: true },
+  // PLAN §D4 (v82): the writing TASK is generated here like every other type; grading is a live
+  // model call at play time, not part of this batch generation at all.
+  { v: 'writing', emoji: '✍️', key: 'lesson.type.writing', needsStory: true },
   { v: 'error_hunt', emoji: '🔍', key: 'lesson.type.error_hunt', needsStory: true },
   { v: 'math',       emoji: '🔢', key: 'lesson.type.math' },
   // v79_h (user report, sl_1567412712 — an en→ar storyline): the script lesson was reachable from
@@ -10705,6 +10726,19 @@ function _editorBranchSynonyms(ls, li, flaggedOnly){
   
   return html;
 }
+// PLAN §D4 (v82): the writing lesson has exactly one editable field — the task itself — not a
+// per-item array like every other type's editor branch. `flaggedOnly` is accepted for the shared
+// signature but has nothing to filter: there is no per-item flag on a single task.
+function _editorBranchWriting(ls, li){
+  return `<div class="editor-entry" id="ee-${li}-writing-0">
+    <div class="editor-field"><label>Task (shown to the learner, in the target language)</label>
+      <textarea data-li="${li}" data-type="writing" data-field="prompt" rows="2">${escAttr(ls.prompt||'')}</textarea>
+    </div>
+    <div class="editor-field"><label>Hint (source-language translation of the task, optional)</label>
+      <input data-li="${li}" data-type="writing" data-field="hint" value="${escAttr(ls.hint||'')}">
+    </div>
+  </div>`;
+}
 function _editorBranchComprehension(ls, li, flaggedOnly){
   let html = '';
   const qs = ls.questions || [];
@@ -11094,6 +11128,9 @@ function _syncEditorFromDOM(li, opts) {
     } else if (type === 'grammar') {
       const fi = +inp.dataset.fi;
       if (ls.grammar && ls.grammar[fi]) ls.grammar[fi][field] = inp.value;
+    } else if (type === 'writing') {
+      // PLAN §D4 (v82): a single field on the lesson itself, not a per-item array.
+      if (field === 'prompt' || field === 'hint') ls[field] = inp.value.trim();
     } else if (type === 'letter') {
       const fi = +inp.dataset.fi;
       if (ls.letters && ls.letters[fi]) {
@@ -13604,6 +13641,7 @@ function startLesson(idx){
   const lesson=APP.lessonData.lessons[idx];
   C.lessonIdx=idx;
   C.isErrorHunt=(lesson.type==='error_hunt'||lesson.type==='ai_error_hunt');
+  C.isWriting=(lesson.type==='writing');   // PLAN §D4 (v82) — own render path, like error_hunt
   C.isGrammar=(lesson.type==='grammar');
   C.isConjugation=(lesson.type==='conjugation');
   C.ehSuspect=new Set(); C.ehChecked=false;
@@ -13635,6 +13673,8 @@ function startLesson(idx){
     const lesson=APP.lessonData.lessons[idx];
     if(lesson.type==='ai_error_hunt') renderAiErrorHunt();
     else renderErrorHunt();
+  } else if(C.isWriting) {
+    renderWriting();
   } else renderEx();
   return true;
 }
@@ -14012,6 +14052,107 @@ function ehCheck(){
     total: editTokens.size+wrong
   };
   saveProg();
+}
+
+// ── PLAN §D4 (v82): free-text writing + live feedback ────────────────────────
+// Bypasses buildExercises/EX_RENDERERS entirely (LESSON_TYPE_META.writing.build returns []) — the
+// same shape error_hunt uses, and for the same reason: this is not a set of graded exercises, it is
+// one task graded by a LIVE model call at submission time, not stored content. Phase 1 only: the
+// feedback route checks typos + grammar, never content (see server.js's PROMPTS.writingFeedback).
+function renderWriting(){
+  const C=APP.cur;
+  const lesson=APP.lessonData.lessons[C.lessonIdx];
+  document.getElementById('hearts').innerHTML='';
+  const el=document.getElementById('ex-area');
+  const topicKey=APP.lessonData.topic;
+  const saved=APP.progress.completed?.[topicKey]?.[lesson.id];
+  const promptHtml =
+    `<div style="font-size:12px;font-weight:700;color:var(--gray-dark);margin-bottom:6px">${t('ex.writing.instruction')}</div>`+
+    `<div class="writing-prompt" dir="auto" style="font-size:15px;font-weight:700;margin-bottom:6px">${escHtml(lesson.prompt||'')}</div>`+
+    (lesson.hint ? `<div style="font-size:12px;opacity:.7;margin-bottom:10px">${escHtml(lesson.hint)}</div>` : '');
+  // A submission needs a LIVE model to grade — the static build (and any live session whose
+  // backend is down) cannot offer it. Same honest-degradation call already made elsewhere for
+  // features a server-less build cannot support, rather than showing a textarea that can never be
+  // checked.
+  if (!APP.info?.canGenerate) {
+    el.innerHTML =
+      `<div class="ex-badge">${t('ex.badge.writing')}</div>`+
+      '<div class="card">'+ promptHtml +
+      `<div style="font-size:13px;font-weight:700;color:var(--red)">${t('ex.writing.offline')}</div>`+
+      `<div style="margin-top:10px;text-align:center"><button class="cont-btn" onclick="showProgressCard()">${t('complete.continue')}</button></div>`+
+      '</div>';
+    return;
+  }
+  const priorText = (saved && typeof saved.text === 'string') ? saved.text : '';
+  el.innerHTML =
+    `<div class="ex-badge">${t('ex.badge.writing')}</div>`+
+    '<div class="card">'+ promptHtml +
+    `<textarea id="wr-input" rows="5" dir="auto" placeholder="${escAttr(t('ex.writing.placeholder'))}" style="width:100%;box-sizing:border-box;font-size:14px;border:1.5px solid var(--gray-mid);border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;resize:vertical">${escHtml(priorText)}</textarea>`+
+    '<div id="wr-btn-row" style="margin-top:10px;text-align:center">'+
+    `<button class="big-btn" id="wr-submit-btn" onclick="writingSubmit()">${t('ex.writing.submit')}</button>`+
+    '</div>'+
+    '<div id="wr-feedback"></div>'+
+    '</div>';
+  if (saved && Array.isArray(saved.issues)) _writingRenderFeedback(!!saved.ok, saved.issues);
+}
+
+async function writingSubmit(){
+  const C=APP.cur;
+  const lesson=APP.lessonData.lessons[C.lessonIdx];
+  const ta=document.getElementById('wr-input');
+  const text=(ta?.value||'').trim();
+  if (!text) { showToast(t('ex.writing.empty')); return; }
+  const btn=document.getElementById('wr-submit-btn');
+  if (btn) { btn.disabled=true; btn.textContent=t('ex.writing.grading'); }
+  try {
+    const r = await fetch('/api/writing-feedback', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ text, lang: APP.lessonData?.lang||APP.lang, srcLang: APP.lessonData?.srcLang||APP.srcLang, prompt: lesson.prompt||'' }) });
+    const data = await r.json().catch(()=>({}));
+    if (!r.ok || data.error) { showToast(data.error || t('ex.writing.failed')); return; }
+    const topicKey=APP.lessonData.topic;
+    if (!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
+    APP.progress.completed[topicKey][lesson.id] = { text, ok: !!data.ok, issues: data.issues||[], checkedAt: new Date().toISOString() };
+    saveProg();
+    _writingRenderFeedback(!!data.ok, data.issues||[]);
+  } catch(e) {
+    showToast(t('ex.writing.failed'));
+  } finally {
+    if (btn) { btn.disabled=false; btn.textContent=t('ex.writing.submit'); }
+  }
+}
+
+function _writingRenderFeedback(ok, issues){
+  const fb=document.getElementById('wr-feedback');
+  if (!fb) return;
+  const rows = (issues||[]).map(is => (!is.wrong && !is.fix)
+    ? `<div style="margin:4px 0;font-size:13px">${escHtml(is.note||'')}</div>`
+    : `<div style="margin:4px 0;font-size:13px"><del>${escHtml(is.wrong)}</del> → <strong>${escHtml(is.fix)}</strong>`+
+      (is.note ? ` <span style="color:var(--gray-dark)">— ${escHtml(is.note)}</span>` : '')+'</div>'
+  ).join('');
+  fb.innerHTML =
+    `<div style="margin-top:12px;padding-top:10px;border-top:1.5px solid var(--gray-mid)">`+
+    (ok ? `<div style="font-weight:800;color:var(--green)">✅ ${t('ex.writing.no_issues')}</div>`
+        : `<div style="font-weight:800;color:var(--orange)">${t('ex.writing.issues_found',{n:(issues||[]).length})}</div>${rows}`)+
+    '</div>'+
+    '<div style="margin-top:10px;display:flex;gap:8px;justify-content:center">'+
+      `<button class="flag-btn" onclick="writingRevise()">${t('ex.writing.revise')}</button>`+
+      `<button class="cont-btn" style="flex:1" onclick="showProgressCard()">${t('complete.continue')}</button>`+
+    '</div>';
+  const btnRow=document.getElementById('wr-btn-row');
+  if (btnRow) btnRow.style.display='none';
+  const ta=document.getElementById('wr-input');
+  if (ta) ta.disabled=true;
+}
+
+// Lets the learner rewrite and resubmit — a fresh /api/writing-feedback call, not a re-check of the
+// stored reply, since the text (and therefore the mistakes) may have changed.
+function writingRevise(){
+  const ta=document.getElementById('wr-input');
+  const fb=document.getElementById('wr-feedback');
+  const btnRow=document.getElementById('wr-btn-row');
+  if (ta) ta.disabled=false;
+  if (fb) fb.innerHTML='';
+  if (btnRow) btnRow.style.display='';
 }
 
 function renderHearts(){

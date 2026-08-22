@@ -1666,6 +1666,103 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v82 LINE
 
+### `v82_e` — new lesson type `writing` (`PLAN §D4`, phase 1: typos + grammar), the app's first play-time-graded exercise, plus a real drive-by bug found reusing the gate it needed
+
+**Shipped by: Claude Code.** Full build of `PLAN §D4` phase 1, following its own architectural
+analysis from the previous session almost exactly: the STEM (a short writing task) is generated ONCE
+at chapter-generation time like every other lesson type, through the existing `ADD_LESSON_GENERATORS`/
+`ARC_LESSON_TYPES` machinery; grading is a genuinely new shape — a LIVE model call at PLAY time, the
+first lesson type to need one (`/api/tutor` was the only precedent, and it isn't a lesson generator).
+
+**What ships:**
+- **`generateWriting`** (server.js) — one attempt per call, no salvage loop (there is only one field
+  to validate: a non-empty `prompt`). Sizes `num_ctx`/timeout against the full chapter story it
+  embeds, same as `generateInflections`/`generateComprehension` — caught by
+  `unit-generation-context.test.js`'s sweep, which classifies every `sys*`/`generate*` function and
+  failed correctly the first time this was omitted.
+- **`/api/writing-feedback`** — stateless, POST `{text, lang, srcLang, prompt}` → `{ok, issues[]}`.
+  No job, no `lessons.json` write, nothing to QC in advance (there is no "advance" — the submission
+  doesn't exist until the learner writes it). `parseWritingFeedback` parses the model's
+  `"<wrong> => <fix> — <note>"` lines (the same free-text-not-JSON convention `qcCheckPair` already
+  uses, for the same robustness reason) or `"OK"`; a reply in neither shape is surfaced as one
+  freeform note rather than silently dropped.
+- **Client**: `LESSON_TYPE_META.writing` (`build:()=>[]`, same as `error_hunt` — this bypasses
+  `buildExercises`/`EX_RENDERERS` entirely). `startLesson()` gained `C.isWriting`, routed to a new
+  `renderWriting()` — its own render path, parallel to `renderErrorHunt()`, not a new `EX_RENDERERS`
+  entry (`unit-renderex-registry.test.js` pins that registry's exact key set; `writing` was correctly
+  never added to it). Submitting marks the lesson solved via the existing `APP.progress.completed`
+  mechanism (no `qid`, no `_wordProgress` involvement — same non-participation as `error_hunt`),
+  stores the submission + feedback for restore-on-revisit, and offers "✏️ Revise & resubmit".
+- **`writing` joins `_POST_STORY_TYPES`** — the task is generated from the chapter's story, so (like
+  `comprehension`) it is gated behind the story unlocking, not offered as prep.
+- **Static-build degradation, stated honestly**: `renderWriting()` checks `APP.info.canGenerate` and
+  shows "not available in this offline version" instead of a textarea that could never be graded —
+  the static build has no server behind it at all, which is the whole point of it. Verified in a live
+  browser by toggling the flag and re-rendering.
+
+**The bug found reusing the gate, not introduced by it:** `openAddLesson`'s per-chapter card menu
+hides format options needing a story via `.opt-needs-story`, and hides LLM-authoring formats for
+dialect topics via `.opt-ai-authoring` — `comprehension` (and now `writing`) carry BOTH classes. The
+two gates ran in the wrong order: the dialect sweep ran SECOND and unconditionally re-showed every
+`.opt-ai-authoring` option whenever the topic was not a dialect, silently undoing the story-gate's
+hide for any storyless, non-dialect chapter. **Comprehension had this bug too, since `v71_l`** —
+adding `writing` to the same two-class shape is what forced a second look at the function.
+Reproduced with a standalone simulation (not just read): confirmed the option ends up visible+enabled
+with no story present, then confirmed the fix (reordering + `querySelector` → `querySelectorAll`,
+since two options now share `.opt-needs-story`) closes it. `unit-dialect-panel.test.js` and
+`unit-comprehension.test.js` rewritten (not just re-anchored, rule 29) for the new source shape.
+
+**Model choice — measured, not assumed:** the route originally called `callLLMQC` (the QC-role model,
+`translategemma:12b` here) on the reasoning that grading is a QC-shaped job. **Live-tested against
+the real server before accepting that**: `translategemma:12b` ignored the requested
+`"<wrong> => <fix> — <note>"` line format entirely, answering with full corrected sentences instead
+(parsed by the freeform-note fallback, technically working but not the designed per-mistake shape),
+and took 101s. The same prompt against `OLLAMA_LESSON_MODEL` (`qwen3.6:35b-a3b`, the app's default)
+followed the format exactly, found more real mistakes, and took 25s. Switched to `callLLMLesson` —
+the measurement matches the a-priori reasoning once stated correctly: explaining *why* a sentence is
+wrong, with structured output, is a pedagogical-generation task (like `grammar`/`conjugation`, which
+already use `callLLMLesson`), not a translation-faithfulness check.
+
+**Verified live**, real server + real `qwen3.6:35b-a3b`, on an existing chapter ("Integrating Diverse
+Exercises", DE→EN): generation produced a genuine on-topic task first attempt
+("_Beschreibe kurz, wie du deinen Fortschritt beim Deutschlernen verfolgst…_") with a correct EN
+hint; a submission with real German article/case errors came back with 3-4 correctly identified,
+correctly explained mistakes; a clean submission came back `OK`; the browser round trip (type →
+submit → "Checking…" → rendered feedback list → persisted → restored on revisiting the lesson →
+"Revise & resubmit" clears feedback and re-enables the textarea with the prior text) all confirmed by
+driving the real DOM, not just reading source. `_cardErrors()` empty throughout.
+
+**⚠️ Live-tested against the ALREADY-RUNNING dev server, found mid-session** — a stale `v82_b`
+instance had been up 5+ hours with `lessons.json` written ~2 minutes prior, matching the exact
+near-miss shape `v82_c`'s session flagged (concurrent edits, in-memory store, a restart can clobber
+them). Asked the user before restarting rather than assuming; while verifying, a second, genuinely
+concurrent generation job ("Die zwei Ziegen", sr→de) appeared and completed cleanly alongside — real
+user activity, not caused by this session. **Corpus moved as a result, not from this feature's own
+data**: 323→**324 topics**, 91→**92 storylines** (unrelated `lessons.json` content from that
+concurrent job); the `writing` addition to "Integrating Diverse Exercises" is one more lesson on an
+existing topic, not a new one.
+
+**A real, pre-existing flake reconfirmed, not caused**: `e2e-lesson-edit-roundtrip`'s `updatedAt`
+timing assertion failed 4/15 standalone runs after this session's 2 added field-edit cases, vs 2/15
+on the exact same previous commit before them — same order of magnitude as `v82_c`'s own
+5/20↔3/20 finding. Still nothing to do with UI work; still not this session's to fix.
+
+**Testing**: 248/221/0/0 full baseline green. New `e2e-writing.test.js` (generation shape +
+`_genMeta`, both feedback-parse shapes via `fake-ollama.js`'s new branches, 400s on missing
+text/lang). `unit-add-lesson-registry.test.js`, `unit-generation-context.test.js`,
+`unit-script-pin-coverage.test.js`, `unit-comprehension.test.js`, `unit-dialect-panel.test.js`, and
+`e2e-lesson-edit-roundtrip.test.js` all extended for the new type (the last one caught a second real
+bug: `writing`'s `prompt`/`hint` fields were missing from `/api/lessons/edit`'s merge whitelist,
+reproducing the exact `v75_e` "accepted with 200, dropped silently" failure mode fresh for this type
+— fixed before it could ship). `docs/index.html` rebuilt. Fourteen new `en`-only `ui.json` keys.
+
+**Not done, by design (phase 1 scope)**: content feedback (phase 2, explicitly flagged as likely
+needing a stronger model). The client-side markdown export (`_ceChapterParts`) has no `writing`
+branch — consistent with several other types (`math`, `mixed`, `intro_script`) already absent from
+it, not a new gap this type introduces. A dedicated editor-branch behavioral test (beyond the
+existing source-shape registry guards) was not added, matching the proportional-effort level of this
+type's editor UI (one textarea, one input).
+
 ### `v82_d` — three small user-reported fixes on the `inflections` feature's own screens
 
 **Shipped by: Claude Code.** Three independent user reports against `v82_c`'s new material, each
@@ -2898,6 +2995,53 @@ The plan's own scoping is right: **standard vocabulary first**, one lesson type,
 following the existing LLM-math precedent. Note the new prompt needs `scriptPinNote` (§C6) and a
 `_genMeta` record like every other generator.
 
+### PLAN §D4 — Free-text WRITING + feedback (user, `v82` cut) — a new CATEGORY, not just a new type
+
+*"The user is supposed to WRITE a short text on a given topic, and a new model prompt receives that
+text and provides feedback on typos, grammar, and eventually also content. First versions likely
+already work with our current default model."*
+
+**Architecturally distinct from every lesson type shipped so far, in one specific way worth naming
+before building it:** every existing type — `standard` through `inflections` — is generated ONCE, at
+chapter-generation time, validated, stored, and then PLAYED many times from that static content. This
+type cannot work that way. The learner's submission does not exist until they write it, so grading it
+needs a LIVE model call **at play time**, not a batch one at generation time. The only existing
+precedent for a live, per-session model call is the tutor chat (`callLLMTutor`/`callLLMTutorStream`,
+`OLLAMA_TUTOR_MODEL`) — not any lesson generator. That has real consequences, not just an
+implementation detail:
+
+- **The static build cannot offer it at all.** `docs/index.html` has no server behind it — that is
+  the whole point of the static build — and grading needs one. Either this lesson type is excluded
+  from the static export entirely (say so in the UI, the same honest-degradation call already made
+  for D4/images in §9b), or it is the first feature that makes "no server needed" no longer true for
+  part of the app. **Worth surfacing now, before anyone assumes it "just works" in both modes like
+  everything else does.**
+- **It needs a new play-time API route**, not just a new generator function — every other type's
+  server-side surface is `generate*` (batch) + `qcCheck*` (batch); this needs the shape of
+  `/api/tutor` (live, per-request) instead, with the SUBMITTED TEXT as the payload rather than a
+  topic/difficulty pair.
+- **There is no single "correct answer" to store or check against**, unlike every MCQ/fill-in/select
+  type — the model's feedback (typos found, grammar corrections, eventually content commentary) IS
+  the exercise output, generated fresh per submission, not selected from pre-authored choices. QC in
+  the existing sense (checking one generator's OUTPUT against a rubric before showing it to a
+  learner) does not apply the same way here — there is nothing to QC in advance, because there is no
+  advance.
+
+**Scoping, following the user's own staging:**
+1. **Typos + grammar first** — the narrower, more mechanically checkable half, and the one the user
+   already expects to work with the current default model.
+2. **Content feedback second**, explicitly flagged by the user as likely needing a stronger model or
+   more careful prompting — "does this text actually address the topic" is a harder judgement than
+   "is this sentence grammatical."
+
+**Open, not decided here:** what the learner-facing UI is (a text box + submit, presumably new —
+nothing existing takes free-form prose input at play time), whether a submission is stored at all
+(and if so, whether it goes in `lessons.json` alongside everything else, or somewhere separate, given
+it is per-learner content generated at play time rather than per-topic content generated once — closer
+in shape to `APP.progress`/observations than to a lesson's own `items`/`vocab`), and whether/how this
+interacts with the learner-progress and coverage machinery every other exercise type feeds (`markSolved`,
+`_wordProgress`, the pass mark) — a free-text submission has no `qid` in the existing sense.
+
 ---
 
 ## PLAN §6 — Track F — QC rework (1 session, mostly independent)
@@ -3417,5 +3561,66 @@ now sharper since images are retained), payment and accounts beyond the key desi
 client stays one file (D5, which only gets harder), and whether mixed lessons replace
 reinforce/extend (D7). **Mastery-driven progression (D2) should NOT be decided until §8/B4 has run
 BKT in shadow mode and produced a disagreement log** — deciding it now would be guessing.
+
+---
+
+## PLAN §11 — Teacher-mode generator tutor (user, `v82` cut) — conversational authoring, not another form
+
+*"Generator/teacher-mode version of the tutor, where you can tell it to generate lesson types in a
+certain way and the LLM decides how, similar to how I can tell YOU (Claude Sonnet) to generate
+storylines or lessons. For example, we want to upload a PDF and the model suggests the best
+split-into-chapters splits and types of lessons to generate, and it can actually do that! This may
+require a more powerful model than our current default qwen3.6?"*
+
+**What this is, precisely, because it is easy to conflate with two things it is not:**
+- **Not §7.0's CP1–CP6 pipeline.** That is a fully automated batch pipeline (canonicalize → analyse
+  → plan → generate), designed to run without a human in the loop once built, chapter by chapter. This
+  is the OPPOSITE shape: a human — the teacher — steers generation turn by turn through natural
+  language, the way the user directs a session with Claude Code itself. §7.0 is relevant as a likely
+  SUPPLIER of the underlying moves (chaptering, lesson-type suggestion) this surface would call, not
+  as the thing being proposed.
+- **Not the existing student-facing tutor**, reused wholesale. The `v62` tutor (`callLLMTutor`/
+  `callLLMTutorStream`, one persistent floating thread, `OLLAMA_TUTOR_MODEL`) is the right STARTING
+  MATERIAL — same chat shape, same streaming, arguably the same per-role model slot — but it is
+  presently pure conversation: it answers, it does not act. This proposal needs the model to actually
+  DO things (split a chapter, generate a specific lesson type with specific instructions), which the
+  current tutor has no mechanism for at all.
+
+**The hard part is exactly that gap: getting the model from "here is what I would generate" to
+actually generating it.** Two shapes worth naming, not deciding between yet:
+1. **Tool/function calling** — the model emits a structured call (`generate_lesson({type, topic,
+   difficulty, instructions})`, `split_chapters({boundaries})`), the app executes it against the
+   EXISTING generator functions (`ADD_LESSON_GENERATORS`, `generateOneLesson`, the book-generation
+   chaptering already in `/api/generate-book`), and reports the result back into the conversation.
+   This reuses everything already built for one-shot generation — the tutor turn becomes a director,
+   not a new author.
+2. **Structured-output parsing** — cheaper to build, more brittle: ask for a JSON plan in the reply
+   and parse it, no true tool-calling needed. Degrades worse when the model doesn't comply, which is
+   exactly the concern the user raised about model capability.
+
+**The user's own capability question is the right one to lead with, not an afterthought:** local
+models via Ollama vary widely in tool-calling reliability, and `qwen3.6:35b-a3b` (the current default
+for `story`/`lessons`) was never evaluated for it — every existing generator call is single-shot,
+structured-JSON-in-structured-JSON-out, never a multi-turn plan-then-act loop. **This is a genuine
+prerequisite to measure, not a formality**: before building either shape above, run a small probe —
+a handful of realistic "split this PDF into chapters and pick lesson types" requests against the
+current default and whatever stronger model is being considered, and record whether tool calls (or
+parseable structured plans) come back reliably. The app's model-role architecture already has the
+seam this needs: a new role (or reusing `OLLAMA_TUTOR_MODEL`) that can be pointed at a different,
+possibly larger model independent of `OLLAMA_LESSON_MODEL`, the same way `qc` and `tutor` already run
+separate models from `story`/`lessons` today.
+
+**The PDF example in the user's own framing is not a separate feature — it is THE first concrete use
+case**, and it already has groundwork: §7.0's A1 (plain text/markdown upload with a chaptering card)
+and A3 (the PDF word map) are the ingest half; this section is the CONVERSATIONAL layer that would
+sit on top and let the teacher steer those same moves by instruction ("split at the natural scene
+breaks, not evenly," "make chapter 3 a comprehension-heavy review") rather than only through a form.
+
+**Not scoped here, deliberately:** which specific actions the tutor can trigger first (a minimal
+useful set, not "everything §5/§7 can generate," is worth choosing explicitly rather than defaulting
+to "all of it"), how a partially-wrong generated plan gets corrected mid-conversation rather than
+restarted, and whether this is a NEW screen/widget or an extension of the existing tutor thread
+(reusing v62's ONE continuous thread would mean student help and teacher authoring share a
+transcript, which may or may not be wanted — a real product question, not a technical one).
 
 ---

@@ -178,7 +178,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v82_d';
+const APP_VERSION  = 'v82_e';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -4671,6 +4671,77 @@ async function generateComprehension(topic, lang, srcLang, difficulty, jobId, op
   throw new Error(`Comprehension generation failed after ${MAX_ATTEMPTS} attempts: ${lastError}`);
 }
 
+// ── writing lesson type (PLAN §D4, v82) ───────────────────────────────────────
+// "The user is supposed to WRITE a short text on a given topic, and a new model prompt receives
+// that text and provides feedback on typos, grammar, and eventually also content." Architecturally
+// distinct from every lesson type above it: this one is generated ONCE like the rest (a short
+// writing TASK, here), but PLAYING it needs a LIVE model call at submission time — there is no
+// correct answer to store, so nothing about grading belongs in this function. See the
+// `/api/writing-feedback` route below for that half, and `roadmap_v82.md`'s `PLAN §D4` for the
+// full split. Phase 1 only: typos + grammar. Content feedback is explicitly a later phase.
+async function generateWriting(topic, lang, srcLang, difficulty, jobId, opts) {
+  const _t0 = Date.now();
+  opts = opts || {};
+  const { story } = opts;
+  if (!story || !String(story).trim()) throw new Error('writing: no story available');
+  const L = langName(lang, opts.script || null), S = langName(srcLang || 'en');
+  const sys = fillPrompt(PROMPTS.writing.system, { L, S, diff: difficultyLabel(difficulty || 2) })
+            + scriptPinNote(lang, opts.script || null, 'writing prompt');
+  const userMsg = fillPrompt(PROMPTS.writing.user, { L, story });
+  const MAX_ATTEMPTS = 3;
+  let tp = 0, tc = 0, lastError = '';
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Writing task attempt ${attempt}/${MAX_ATTEMPTS}…`);
+    console.log(`    Writing attempt ${attempt}…`);
+    // This prompt embeds the WHOLE chapter story (PROMPTS.writing.user), so num_ctx must be sized
+    // against it — same as every other full-story generator (generateInflections, generateSynonyms,
+    // generateComprehension). Without this Ollama truncates a long prompt SILENTLY at its default
+    // (~4096 tokens), and the task would be written from a fragment the model never admits to.
+    const _ctxTokens = estimateCtxTokens(sys.length + userMsg.length, 500 * THINK_TOKEN_MULT);
+    const _timeout = Math.ceil(getRequestTimeout() * THINK_TIMEOUT_MULT);
+    const { text: raw, promptTokens, completionTokens } =
+      await callLLMLesson(sys, userMsg, 500, { ctxTokens: _ctxTokens, timeoutMs: _timeout });
+    tp += promptTokens; tc += completionTokens;
+    let parsed = null;
+    try { parsed = JSON.parse(stripRaw(raw)); }
+    catch(_) { try { parsed = extractJSON(raw); } catch(_2) { parsed = null; } }
+    const prompt = (parsed && typeof parsed.prompt === 'string') ? parsed.prompt.trim() : '';
+    if (!prompt) { lastError = 'No usable "prompt" in response'; continue; }
+    console.log(`    Writing: task "${prompt.slice(0, 60)}${prompt.length > 60 ? '…' : ''}"`);
+    return {
+      lesson: {
+        id: 10, type: 'writing',
+        title: parsed.title || 'Writing practice',
+        desc:  parsed.desc  || 'Write a short text and get feedback',
+        icon:  parsed.icon  || '✍️',
+        prompt,
+        hint: (typeof parsed.hint === 'string') ? parsed.hint.trim() : '',
+        _genMeta: buildGenMeta({ type: 'writing', model: OLLAMA_LESSON_MODEL, t0: _t0, attempts: attempt, valid: 1, promptTokens: tp, completionTokens: tc }),
+      },
+      tokens: { promptTokens: tp, completionTokens: tc },
+    };
+  }
+  throw new Error(`Writing generation failed after ${MAX_ATTEMPTS} attempts: ${lastError}`);
+}
+
+// Parse a /api/writing-feedback reply. The prompt asks for "OK" or one "<wrong> => <fix> — <note>"
+// line per mistake — the same text-not-JSON shape qcCheckPair/_qcParseOkOrSug use, chosen for the
+// same reason: robust on a small model that may not hit a strict JSON schema. A reply that is
+// neither "OK" nor in the requested shape is surfaced as a single freeform note rather than
+// silently discarded — a real answer in the wrong format is still more useful than none.
+function parseWritingFeedback(text) {
+  const reply = String(text || '').trim();
+  if (!reply || /^ok[.!]?$/i.test(reply)) return { ok: true, issues: [] };
+  const issues = [];
+  const arrowRe = /^(.+?)\s*=>\s*(.+?)(?:\s*[—–-]\s*(.*))?$/;
+  for (const line of reply.split('\n').map(l => l.trim()).filter(Boolean)) {
+    const m = line.match(arrowRe);
+    if (m) issues.push({ wrong: m[1].trim(), fix: m[2].trim(), note: (m[3] || '').trim() });
+  }
+  if (issues.length) return { ok: false, issues };
+  return { ok: false, issues: [{ wrong: '', fix: '', note: reply.slice(0, 500) }] };
+}
+
 // ── Generate conjugation lesson ───────────────────────────────────────────────
 async function generateConjugation(topic, lang, srcLang, difficulty, jobId, opts) {
   const _t0 = Date.now();
@@ -5271,7 +5342,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
                       script: userOpts.script || null,
                       chainStory: _chainStory.text, chainStoryChapters: _chainStory.chapters };
 
-  if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math' || lessonFormat === 'synonyms' || lessonFormat === 'word_forms' || lessonFormat === 'comprehension' || lessonFormat === 'inflections') {
+  if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math' || lessonFormat === 'synonyms' || lessonFormat === 'word_forms' || lessonFormat === 'comprehension' || lessonFormat === 'inflections' || lessonFormat === 'writing') {
     const genFn   = lessonFormat === 'math'
       ? (mathInstruction
           ? () => generateMathLLM(lang, srcLang, difficulty, mathInstruction, jobId)
@@ -5282,6 +5353,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
                   : lessonFormat === 'word_forms'   ? () => generateWordForms(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   : lessonFormat === 'inflections'  ? () => generateInflections(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   : lessonFormat === 'comprehension' ? () => generateComprehension(topic, lang, srcLang, difficulty, jobId, chainOpts)
+                  : lessonFormat === 'writing'      ? () => generateWriting(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   :                                   () => generateConjugation(topic, lang, srcLang, difficulty, jobId, chainOpts);
     const label   = lessonFormat === 'math'        ? 'Math'
                   : lessonFormat === 'error_hunt'  ? 'Error-hunt'
@@ -5290,6 +5362,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
                   : lessonFormat === 'word_forms'   ? 'Word-forms'
                   : lessonFormat === 'inflections'  ? 'Inflections'
                   : lessonFormat === 'comprehension' ? 'Comprehension'
+                  : lessonFormat === 'writing'       ? 'Writing'
                   :                                   'Conjugation';
     try {
       const { lesson, tokens } = await genFn();
@@ -5397,6 +5470,7 @@ const ADD_LESSON_GENERATORS = {
   comprehension: (c) => generateComprehension(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
   word_forms:  (c) => generateWordForms(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
   inflections: (c) => generateInflections(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
+  writing:     (c) => generateWriting(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
   math:        (c) => c.addMathInstr
     ? generateMathLLM(c.lang, c.srcLang, c.diff, c.addMathInstr, c.jobId, c.script || null)
     : generateMath(c.story, c.diff, c.addMathOps || null),
@@ -5415,7 +5489,10 @@ const ARC_LESSON_TYPES = ['standard', 'review', 'word_forms', 'inflections', 'sy
                           // storyline-level run that ticked it would have had it dropped here,
                           // silently and with no error. The client gate and this list are the two
                           // halves of one decision and both had to change.
-                          'intro_script'];
+                          // v82_e: `writing` (PLAN §D4) — the STEM (a writing task) is generated
+                          // here like every other type; grading happens live at play time via
+                          // /api/writing-feedback, not through this batch path at all.
+                          'intro_script', 'writing'];
 function sanitizeArcTypes(list) {
   if (!Array.isArray(list)) return null;
   const seen = new Set();
@@ -6911,7 +6988,7 @@ http.createServer(async (req, res) => {
       if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
       if (topic !== resolvedTopic) body.topic = resolvedTopic;
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
-      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms','word_forms','inflections','comprehension'].includes(lessonFormat) ? lessonFormat : 'standard';   // v68.1: word_forms was missing — the picker offered it but the route clamped it to 'standard'. v71_l: comprehension added here at the same time as the picker entry, which is the pairing that guard enforces. inflections added the same way, deliberately, this session.
+      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms','word_forms','inflections','comprehension','writing'].includes(lessonFormat) ? lessonFormat : 'standard';   // v68.1: word_forms was missing — the picker offered it but the route clamped it to 'standard'. v71_l: comprehension added here at the same time as the picker entry, which is the pairing that guard enforces. inflections added the same way, deliberately, this session. writing added the same way at v82_e.
       const wcMax = body.userStory ? 2000 : 1000;
       const wc = Math.max(100, Math.min(wcMax, parseInt(storyLen, 10) || 300));
       // contFrom: used for storyline chain tracking AND story continuation context.
@@ -7019,7 +7096,7 @@ http.createServer(async (req, res) => {
       if (!Array.isArray(chaptersIn) || chaptersIn.length === 0)
         return json(res, 400, { error: 'No chapters provided' });
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
-      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms','word_forms','inflections','comprehension'].includes(lessonFormat) ? lessonFormat : 'standard';   // v68.1: word_forms was missing — the picker offered it but the route clamped it to 'standard'. v71_l: comprehension added here at the same time as the picker entry, which is the pairing that guard enforces. inflections added the same way, deliberately, this session.
+      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms','word_forms','inflections','comprehension','writing'].includes(lessonFormat) ? lessonFormat : 'standard';   // v68.1: word_forms was missing — the picker offered it but the route clamped it to 'standard'. v71_l: comprehension added here at the same time as the picker entry, which is the pairing that guard enforces. inflections added the same way, deliberately, this session. writing added the same way at v82_e.
       // Arc: each chapter gets the lesson types the user ticked, generated in reinforce mode.
       // v71_u: the client now sends `arcTypes` (the shared tick-list, same as the storyline
       // add-lessons run). `arcMode` is still honoured for older clients and is translated into a
@@ -7304,6 +7381,12 @@ http.createServer(async (req, res) => {
           })) : orig.conjugations,
           ...(edited.corruptedStory !== undefined ? { corruptedStory: edited.corruptedStory } : {}),
           ...(edited.correctStory   !== undefined ? { correctStory:   edited.correctStory   } : {}),
+          // writing (PLAN §D4, v82): single-field lesson, same shape as corruptedStory/correctStory
+          // above — reproduced the v75_e bug fresh (a new lesson type's own fields are not on this
+          // whitelist by default) before this line existed, caught by e2e-lesson-edit-roundtrip's
+          // registry-coverage check.
+          ...(edited.prompt !== undefined ? { prompt: edited.prompt } : {}),
+          ...(edited.hint   !== undefined ? { hint:   edited.hint   } : {}),
           // v75_e: the math editor's own inputs (_editorReadInputsMath writes exactly these two).
           // Same omission as `questions` above — changing the number pool or the operator set
           // returned 200 and changed nothing.
@@ -7339,7 +7422,7 @@ http.createServer(async (req, res) => {
       // Dialect topics: refuse LLM-authoring formats. Those generators run in the base language and
       // don't know the dialect — they'd inject standard-German / mis-judged content into a dialect
       // topic. Only the dialect-safe formats are allowed (standard vocab, math, mixed review).
-      const _DIALECT_BLOCKED_FMTS = new Set(['synonyms','word_forms','inflections','error_hunt','grammar','conjugation','all_types']);
+      const _DIALECT_BLOCKED_FMTS = new Set(['synonyms','word_forms','inflections','error_hunt','grammar','conjugation','all_types','writing']);
       if (saved._dialect && _DIALECT_BLOCKED_FMTS.has(fmt)) {
         return json(res, 400, { error: 'That lesson type is not available for dialect topics (it would generate non-dialect content). Use Standard, Math, or Mixed review.' });
       }
@@ -7709,6 +7792,41 @@ http.createServer(async (req, res) => {
         return json(res, 200, { reply, promptTokens, completionTokens });
       } catch(e) {
         return json(res, 502, { error: `Tutor failed: ${e.message}` });
+      }
+    }
+    // PLAN §D4 (v82) — grade a `writing` lesson's submission. The only play-time API route in the
+    // app besides /api/tutor: every other lesson type is generated once and played from static
+    // content, but there is no submission to grade until the learner writes it. Stateless like the
+    // tutor route — the server stores nothing here; the client decides what (if anything) to keep
+    // (see renderWriting() in index.html). Phase 1 only: typos + grammar, per the roadmap's staging.
+    if (M === 'POST' && url.pathname === '/api/writing-feedback') {
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend for writing feedback.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const clip = (s, n) => String(s == null ? '' : s).slice(0, n);
+      const lang = clip(body.lang, 8), srcLang = clip(body.srcLang || 'en', 8);
+      const text = clip(body.text, 3000).trim();
+      const promptTask = clip(body.prompt, 500);
+      if (!lang) return json(res, 400, { error: 'Missing lang' });
+      if (!text) return json(res, 400, { error: 'Nothing to check — write something first.' });
+      const L = langName(lang), S = langName(srcLang);
+      const sys = fillPrompt(PROMPTS.writingFeedback.system, { L, S, prompt: promptTask || '(no task given)' });
+      const userMsg = fillPrompt(PROMPTS.writingFeedback.user, { L, text });
+      try {
+        // Live-tested against BOTH candidates before picking: OLLAMA_QC_MODEL (translategemma:12b,
+        // a translation-faithfulness checker) ignored the requested "<wrong> => <fix> — <note>" line
+        // format entirely — it answered with full corrected sentences and explanations instead, 2.5x
+        // slower — while OLLAMA_LESSON_MODEL (qwen3.6:35b-a3b, the default) followed it exactly and
+        // found more real mistakes. This is a pedagogical-explanation task, closer in kind to
+        // grammar/conjugation generation (which already use callLLMLesson) than to a translation
+        // check, so the measurement matches the a-priori reasoning, not just this one run.
+        const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 500);
+        const { ok, issues } = parseWritingFeedback(stripRaw(String(raw || '')));
+        console.log(`  Writing feedback (${lang}←${srcLang}): ${text.length} chars, ${issues.length} issue(s)`);
+        return json(res, 200, { ok, issues, promptTokens, completionTokens });
+      } catch(e) {
+        return json(res, 502, { error: `Writing feedback failed: ${e.message}` });
       }
     }
     if (M === 'POST' && url.pathname === '/api/story-qc') {

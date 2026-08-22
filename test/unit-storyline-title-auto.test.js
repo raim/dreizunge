@@ -75,19 +75,29 @@ const src = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
 // A book created before this flag existed has no `titleAuto` at all. `!undefined` is true, so it
 // reads as authored and keeps its title — the safe direction, and the one that preserves v78_r for
 // every book already on disk. Asserted against the real corpus so it is not just a claim about JS.
+//
+// v82_e: scoped to LEGACY storylines specifically (no `titleAuto` at all), not "every storyline on
+// disk" — a real storyline created live during that session's own verification (`sl_379498431`,
+// "Die zwei Ziegen") is the corpus's first to carry `titleAuto: true`, and correctly so: its title
+// pass had not (yet) run, which is the FEATURE working, not a regression of the legacy guarantee
+// this section actually checks. A storyline WITH the flag is exactly the case sections 1-3 already
+// cover via the mechanism itself; this section is about the ones the mechanism never touches.
 {
   const store = JSON.parse(fs.readFileSync(path.join(ROOT, 'lessons.json'), 'utf8'));
   const sls = store.storylines || [];
   assert.ok(sls.length, 'non-vacuity: the corpus has storylines');
-  const withFlag = sls.filter(s => s.titleAuto !== undefined).length;
   const titled = sls.filter(s => String(s.title || '').trim()).length;
   assert.strictEqual(titled, sls.length, 'every existing storyline has a title');
-  // None of them carries the flag yet, so every one of them would be left alone.
-  const wouldKeep = sls.filter(s => String(s.title || '').trim() && !s.titleAuto).length;
-  assert.strictEqual(wouldKeep, sls.length,
-    'every storyline already on disk would KEEP its title under the new guard — ' +
-    `${sls.length - wouldKeep} would not`);
-  console.log(`  all ${sls.length} existing storylines keep their titles (${withFlag} carry the new flag)`);
+  const legacy = sls.filter(s => s.titleAuto === undefined);
+  const flagged = sls.filter(s => s.titleAuto !== undefined);
+  assert.ok(legacy.length > 0, 'non-vacuity: the corpus still has legacy (pre-flag) storylines');
+  // Every LEGACY storyline would be left alone under the new guard.
+  const wouldKeep = legacy.filter(s => String(s.title || '').trim() && !s.titleAuto).length;
+  assert.strictEqual(wouldKeep, legacy.length,
+    'every LEGACY storyline already on disk would KEEP its title under the new guard — ' +
+    `${legacy.length - wouldKeep} would not`);
+  console.log(`  all ${legacy.length} legacy storylines keep their titles (${flagged.length} carry ` +
+    `the new flag: ${flagged.map(s => s.id).join(', ')})`);
 }
 
 // ── 5. Summary is untouched — this is a title-only bug ────────────────────

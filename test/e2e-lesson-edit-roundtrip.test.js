@@ -47,6 +47,7 @@ const SEED = {
         edits: [{ find: 'x', replace: 'y' }] },
       { id: 'l_aieh', type: 'ai_error_hunt', title: 'A', corruptedStory: 'ORIGINAL ai corrupt' },
       { id: 'l_mix', type: 'mixed', title: 'X', perType: 3 },
+      { id: 'l_wr', type: 'writing', title: 'Y', prompt: 'ORIGINAL Schreibe über dein Haus.', hint: 'ORIGINAL Write about your house.' },
     ],
     generatedAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
   }],
@@ -76,6 +77,8 @@ const CASES = [
   ['error_hunt',    'l_eh',    'corruptedStory',               l => { l.corruptedStory = 'EDITED corrupt'; },          s => s.corruptedStory === 'EDITED corrupt'],
   ['ai_error_hunt', 'l_aieh',  'corruptedStory',               l => { l.corruptedStory = 'EDITED ai'; },               s => s.corruptedStory === 'EDITED ai'],
   ['mixed',         'l_mix',   'perType',                      l => { l.perType = 5; },                                s => s.perType === 5],
+  ['writing',       'l_wr',    'prompt',                       l => { l.prompt = 'EDITED prompt'; },                   s => s.prompt === 'EDITED prompt'],
+  ['writing',       'l_wr',    'hint',                         l => { l.hint = 'EDITED hint'; },                       s => s.hint === 'EDITED hint'],
 ];
 
 (async () => {

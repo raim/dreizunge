@@ -16,7 +16,7 @@ const lit = src.slice(src.indexOf('const ADD_LESSON_GENERATORS = {'),
 assert.ok(lit.startsWith('const ADD_LESSON_GENERATORS'), 'registry literal not found');
 
 const genNames = ['generateOneLesson','generateErrorHunt','generateGrammar','generateConjugation',
-  'generateSynonyms','generateWordForms','generateInflections','generateMathLLM','generateMath','generateIntroScript'];
+  'generateSynonyms','generateWordForms','generateInflections','generateWriting','generateMathLLM','generateMath','generateIntroScript'];
 const calls = [];
 const stubs = genNames.map(n => `function ${n}(){ __calls.push({ fn:'${n}', args:[].slice.call(arguments) }); return {lesson:{},_stub:'${n}'}; }`).join('\n');
 const { ADD_LESSON_GENERATORS } = new Function('__calls',
@@ -47,7 +47,7 @@ assert.strictEqual(c.fn, 'generateErrorHunt');
 assert.deepStrictEqual(c.args, ['the story','de',2,'job1',[{target:'w'}],{tag:'SHARED'}],
   'error_hunt arg shape (chainVocab.words + sharedGenOpts)');
 
-for (const [fmt, fn] of [['grammar','generateGrammar'],['conjugation','generateConjugation'],['synonyms','generateSynonyms'],['word_forms','generateWordForms'],['inflections','generateInflections']]) {
+for (const [fmt, fn] of [['grammar','generateGrammar'],['conjugation','generateConjugation'],['synonyms','generateSynonyms'],['word_forms','generateWordForms'],['inflections','generateInflections'],['writing','generateWriting']]) {
   c = callOf(fmt);
   assert.strictEqual(c.fn, fn, `${fmt} -> ${fn}`);
   assert.deepStrictEqual(c.args, ['My Topic','de','en',2,'job1',{tag:'SHARED'}], `${fmt} arg shape (sharedGenOpts)`);
@@ -76,7 +76,7 @@ assert.deepStrictEqual(c.args, ['de', { script: null, difficulty: ctx.diff, srcL
 
 // 3) Exactly the expected fmt set — nothing dropped, nothing extra.
 assert.deepStrictEqual(Object.keys(ADD_LESSON_GENERATORS).sort(),
-  ['comprehension','conjugation','error_hunt','grammar','inflections','intro_script','math','standard','synonyms','word_forms'],
+  ['comprehension','conjugation','error_hunt','grammar','inflections','intro_script','math','standard','synonyms','word_forms','writing'],
   'registry fmt set');
 console.log('  every fmt maps to the right generator with the right args: OK');
 
