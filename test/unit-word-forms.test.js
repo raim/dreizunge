@@ -15,7 +15,15 @@ function extract(name) {
   for (; i < src.length; i++) { if (src[i] === '{') depth++; else if (src[i] === '}') { depth--; if (!depth) { i++; break; } } }
   return src.slice(at, i);
 }
+// v82_c: the validator now reads UNSPACED_SCRIPTS_RE (see unit-unspaced-scripts-parity.test.js for
+// its own dedicated coverage) — pull the const in too, or every extraction here throws ReferenceError.
+function extractConst(name) {
+  const m = new RegExp('const ' + name + '\\s*=\\s*(/.*/[a-z]*);').exec(src);
+  assert.ok(m, 'not found: const ' + name);
+  return 'const ' + name + ' = ' + m[1] + ';';
+}
 const { validateWordFormsItems } = new Function(
+  extractConst('UNSPACED_SCRIPTS_RE') + '\n' +
   extract('_wfNorm') + '\n' + extract('validateWordFormsItems') + '\nreturn { validateWordFormsItems };')();
 
 const STORY = 'Seven shook his head. The cat and the house stayed the same. She walked to the river.';

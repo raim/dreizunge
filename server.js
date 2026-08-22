@@ -178,7 +178,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v82_b';
+const APP_VERSION  = 'v82_c';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -1839,6 +1839,51 @@ async function qcCheckCloze(item, lang, srcLang, userComment) {
   return _qcParseOkOrSug(text);
 }
 
+// QC an inflections item: {sentence, surfaceForm, lemma, lemmaChoices, lemmaCorrectIndex,
+// formLabel, formChoices, formCorrectIndex, translation, explanation}. Verifies surfaceForm really
+// is an inflection of lemma as used in the sentence, the marked-correct lemma/form choices are
+// right, the distractors are genuinely wrong, and the explanation is accurate — all in ONE call,
+// since the two questions describe the SAME inflection and checking them apart could miss an
+// internal inconsistency (e.g. a lemma that's right but a form label that doesn't match it).
+async function qcCheckInflection(item, lang, srcLang, userComment) {
+  const L = langName(lang), S = langName(srcLang || 'en');
+  const lemmaChoices = Array.isArray(item.lemmaChoices) ? item.lemmaChoices : [];
+  const formChoices = Array.isArray(item.formChoices) ? item.formChoices : [];
+  const correctLemma = lemmaChoices[item.lemmaCorrectIndex];
+  const correctForm = formChoices[item.formCorrectIndex];
+  if (!item.sentence || !item.surfaceForm || !lemmaChoices.length || !formChoices.length ||
+      correctLemma == null || correctForm == null) return { ok: true };
+  const sentence = _qcStripFuri(item.sentence);
+  const system =
+    `You check one ${L} "inflection" exercise for a language learner who speaks ${S}. The learner ` +
+    `sees a real ${L} sentence with one word highlighted (the "surface form"), and answers two ` +
+    `multiple-choice questions: what is that word's DICTIONARY (lemma) form, and what GRAMMATICAL ` +
+    `FORM is it (case, number, tense, person, degree, definiteness — whatever applies).\n` +
+    `Verify ALL of:\n` +
+    `1. The surface form genuinely appears in the sentence, spelled as given.\n` +
+    `2. The surface form is genuinely an INFLECTED/DERIVED form of the marked-correct lemma (not ` +
+    `the same word already in dictionary form, and not an unrelated word).\n` +
+    `3. The marked-correct lemma is the ACTUAL dictionary form of the surface form (for a noun in a ` +
+    `language with grammatical gender, the lemma should include its article).\n` +
+    `4. The other lemma choices do NOT also correctly describe this word (they must be wrong but plausible).\n` +
+    `5. The marked-correct form label correctly names the grammatical form of the surface form here.\n` +
+    `6. The other form-label choices do NOT also correctly describe it.\n` +
+    `7. The ${S} translation matches the sentence, and the explanation is accurate.\n` +
+    (userComment && String(userComment).trim()
+      ? `The user reports: "${String(userComment).trim().replace(/"/g,"'").slice(0,200)}". Consider it.\n` : '') +
+    `Reply EXACTLY "OK" if everything is correct. Otherwise reply with ONE short sentence naming ` +
+    `the single most important problem and the fix. No preamble, no quotes.`;
+  const user =
+    `Sentence: ${sentence}\n` +
+    `Surface form (highlighted word): ${item.surfaceForm}\n` +
+    `Lemma options: ${lemmaChoices.map((c,i) => `${i===item.lemmaCorrectIndex?'[correct] ':''}${c}`).join(' | ')}\n` +
+    `Form-label options: ${formChoices.map((c,i) => `${i===item.formCorrectIndex?'[correct] ':''}${c}`).join(' | ')}\n` +
+    `Translation (${S}): ${item.translation || '(none)'}\n` +
+    `Explanation: ${item.explanation || '(none)'}`;
+  const { text } = await callLLMQC(system, user, 150);
+  return _qcParseOkOrSug(text);
+}
+
 // QC a synonyms entry: {base, gloss, synonyms:[{w,g}], antonyms:[...], homophones:[...]}.
 // Verifies the gloss fits base, listed synonyms really are synonyms in the target language,
 // antonyms are真 opposites, homophones sound alike. Returns {ok} | {ok:false, sug}.
@@ -2223,18 +2268,26 @@ async function _runQc(jobId, topics, opts) {
           if (checked % 5 === 0)
             jobStep(jobId, `[${model}] QC ${_liveTopic().topic} — ${checked} checked, ${flagged} flagged…`);
         };
-        // Dispatch by lesson type. vocab/sentences exist on standard lessons; word_forms uses
-        // `items` (cloze); synonyms uses `words` (related-word sets); grammar uses `grammar`
-        // (noun target/source + article/plural); conjugation uses `conjugations` (infinitive +
-        // source translation). intro_script is curated data (human QC only); math and the two
-        // error-hunt types are intentionally out of scope. Anything else falls through to the
-        // generic vocab/sentences scan.
+        // Dispatch by lesson type. vocab/sentences exist on standard lessons; word_forms AND
+        // inflections both use `items` (the array name is shared, the shape is not — word_forms is
+        // a cloze pair, inflections is a lemma+form pair, hence two separate checkers); synonyms
+        // uses `words` (related-word sets); grammar uses `grammar` (noun target/source +
+        // article/plural); conjugation uses `conjugations` (infinitive + source translation).
+        // intro_script is curated data (human QC only); math and the two error-hunt types are
+        // intentionally out of scope. Anything else falls through to the generic vocab/sentences scan.
         let _lessonQcRan = true;
         if (ls.type === 'word_forms') {
           for (let _i = 0; _i < (ls.items || []).length; _i++) {
             const item = ls.items[_i];
             if (!item || !item.sentence) continue;
             await _check(item, () => qcCheckCloze(item, tp.lang, tp.srcLang, item.userFlag?.comment), 'cloze',
+                         undefined, (L) => (L.items || [])[_i]);
+          }
+        } else if (ls.type === 'inflections') {
+          for (let _i = 0; _i < (ls.items || []).length; _i++) {
+            const item = ls.items[_i];
+            if (!item || !item.sentence) continue;
+            await _check(item, () => qcCheckInflection(item, tp.lang, tp.srcLang, item.userFlag?.comment), 'inflection',
                          undefined, (L) => (L.items || [])[_i]);
           }
         } else if (ls.type === 'synonyms') {
@@ -3874,6 +3927,18 @@ async function generateGrammar(topic, lang, srcLang, difficulty, jobId, opts) {
   throw new Error(`Grammar generation failed after ${MAX_ATTEMPTS} attempts: ${lastError}`);
 }
 
+// v82_c (user report + follow-up): the "whole word" check both this validator's SALVAGE-2 and
+// validateInflectionsItems' own equivalent rely on assumes a SPACED script — it requires a
+// non-letter/non-digit (or a string edge) flanking the match. In an unspaced script that assumption
+// is simply false: Japanese has no whitespace between words, so a genuinely correct surfaceForm
+// sitting between two other kana/kanji characters has a LETTER on both sides and can never satisfy
+// the boundary lookaround, however correct it is — rejected as "not found as a whole word" no matter
+// how right the model was. Kept in sync with index.html's `_UNSPACED_SCRIPTS`, byte-for-byte
+// (asserted by unit-unspaced-scripts-parity.test.js): this app already solved the identical problem
+// for story highlighting (`_highlightVocabHtml`, v73_d/v78_k) by dropping the boundary requirement
+// for exactly these scripts and matching a bare substring instead — the same fix, applied here.
+const UNSPACED_SCRIPTS_RE = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Thai}\p{Script=Lao}\p{Script=Khmer}\p{Script=Myanmar}]/u;
+
 // ── word_forms lesson type ───────────────────────────────────────────────────
 // Fill-in-the-blank exercises drawn from sentences that appear in the story: one
 // word is blanked (___) and 4 forms of that word are offered, the original being
@@ -3916,9 +3981,15 @@ function validateWordFormsItems(items, story) {
 
       // SALVAGE 2 — auto-insert the blank if the model forgot it but the correct word
       // is present as a whole word in the sentence (replace the first occurrence).
+      // v82_c: an UNSPACED script (see UNSPACED_SCRIPTS_RE above) has no boundary to require —
+      // match the bare substring instead, and replace it directly (no leading boundary group to
+      // preserve, unlike the spaced case).
       if (!/_{3,}/.test(sentence)) {
-        const re = new RegExp('(^|[^\\p{L}\\p{N}])(' + escapeRe(correct) + ')(?=[^\\p{L}\\p{N}]|$)', 'iu');
-        if (re.test(sentence)) sentence = sentence.replace(re, (m, pre) => pre + '___');
+        const unspaced = UNSPACED_SCRIPTS_RE.test(correct);
+        const re = unspaced
+          ? new RegExp('(' + escapeRe(correct) + ')', 'iu')
+          : new RegExp('(^|[^\\p{L}\\p{N}])(' + escapeRe(correct) + ')(?=[^\\p{L}\\p{N}]|$)', 'iu');
+        if (re.test(sentence)) sentence = unspaced ? sentence.replace(re, '___') : sentence.replace(re, (m, pre) => pre + '___');
         else reasons.push('no ___ blank and answer not in sentence');
       }
 
@@ -4025,6 +4096,156 @@ async function generateWordForms(topic, lang, srcLang, difficulty, jobId, opts) 
     };
   }
   throw new Error(`Word-forms generation failed after ${MAX_ATTEMPTS} attempts: ${lastError}`);
+}
+
+// ── inflections lesson type ────────────────────────────────────────────────
+// User-designed follow-up to the inflection-coverage measurement (v80_f): "36.4% of taught words
+// are ABSENT from the story in any form — that is a GENERATION problem, not a matching one." This
+// type does not try to force the story or the standard vocab lesson to agree; it works the OTHER
+// direction, mirroring word_forms above: draw from words the story ALREADY contains, in whatever
+// inflected/derived form they actually appear (not the dictionary form standard vocab teaches), and
+// build TWO multiple-choice questions per word — the lemma, and the grammatical form/derivation
+// that connects the surface form back to it. Per the user's own design conversation: no grammatical
+// taxonomy is hard-coded here (no fixed list of cases/tenses/genders) — the MODEL supplies both the
+// correct label and the wrong-but-plausible distractor labels, per word, the same way it already
+// supplies distractors for every other MCQ in the app. This is the same "model-declared, not
+// app-authored" shape `PLAN §9b` ruling D1 already established for language-applicability facts.
+function _inflNorm(s) {
+  return String(s == null ? '' : s).toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+}
+// Validate a batch of inflections items against the source story. Pure; returns {valid, rejected[]}
+// so the generator can drop bad items and log why — same shape as validateWordFormsItems.
+function validateInflectionsItems(items, story) {
+  const storyNorm = _inflNorm(story);
+  const escapeRe = s => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // Dedupe a choice list case-insensitively and re-point the correct index at the given value —
+  // the SAME salvage word_forms already uses for its own single choices array, applied to BOTH of
+  // this type's two lists. A weak model often pads with repeats; that should not kill the item.
+  const dedupe = (choicesRaw, correctVal) => {
+    let cs = (Array.isArray(choicesRaw) ? choicesRaw : []).map(c => String(c == null ? '' : c).trim()).filter(Boolean);
+    const seen = new Set(); const deduped = [];
+    for (const c of cs) { const k = c.toLowerCase(); if (!seen.has(k)) { seen.add(k); deduped.push(c); } }
+    cs = deduped;
+    let ci = cs.findIndex(c => c.toLowerCase() === String(correctVal || '').toLowerCase());
+    if (cs.length > 6) {
+      const keepAt = ci >= 0 ? ci : 0;
+      const correct = cs[keepAt];
+      cs = [correct, ...cs.filter((_, i) => i !== keepAt)].slice(0, 6);
+      ci = 0;
+    }
+    return { choices: cs, correctIndex: ci };
+  };
+  const valid = [], rejected = [];
+  for (const item of (items || [])) {
+    const reasons = [];
+    const sentence = (item && typeof item.sentence === 'string') ? item.sentence.trim() : '';
+    const surfaceForm = (item && typeof item.surfaceForm === 'string') ? item.surfaceForm.trim() : '';
+    const lemma = (item && typeof item.lemma === 'string') ? item.lemma.trim() : '';
+    const formLabel = (item && typeof item.formLabel === 'string') ? item.formLabel.trim() : '';
+    const { choices: lemmaChoices, correctIndex: lemmaCorrectIndex } = dedupe(item && item.lemmaChoices, lemma);
+    const { choices: formChoices, correctIndex: formCorrectIndex } = dedupe(item && item.formChoices, formLabel);
+
+    if (!sentence) reasons.push('missing sentence');
+    if (!surfaceForm) reasons.push('missing surfaceForm');
+    if (!lemma) reasons.push('missing lemma');
+    if (!formLabel) reasons.push('missing formLabel');
+    if (lemmaChoices.length < 2) reasons.push('need at least 2 lemma choices');
+    if (formChoices.length < 2) reasons.push('need at least 2 form choices');
+    if (lemmaCorrectIndex < 0) reasons.push('lemma not found among its own lemmaChoices');
+    if (formCorrectIndex < 0) reasons.push('formLabel not found among its own formChoices');
+
+    if (!reasons.length) {
+      // The whole point of this type: surfaceForm must be a word GENUINELY present in the
+      // sentence, as a whole word — not a paraphrase, not invented. Same word-boundary regex
+      // shape validateWordFormsItems uses for its own answer-in-sentence check, including its
+      // v82_c unspaced-script carve-out (UNSPACED_SCRIPTS_RE, above `_wfNorm`) — without it, every
+      // genuinely correct Japanese/Thai/etc. surfaceForm not touching punctuation would fail here.
+      const re = UNSPACED_SCRIPTS_RE.test(surfaceForm)
+        ? new RegExp('(' + escapeRe(surfaceForm) + ')', 'iu')
+        : new RegExp('(^|[^\\p{L}\\p{N}])(' + escapeRe(surfaceForm) + ')(?=[^\\p{L}\\p{N}]|$)', 'iu');
+      if (!re.test(sentence)) reasons.push('surfaceForm not found as a whole word in sentence');
+      // A GENUINE inflection differs from its own lemma — if the model just echoed the lemma
+      // back, there is no derivation here to teach.
+      if (_inflNorm(surfaceForm) === _inflNorm(lemma)) reasons.push('surfaceForm equals lemma — not an inflection');
+      // Same translation-is-not-just-the-sentence check word_forms already applies.
+      const trNorm = _inflNorm(item.translation || '');
+      const trWords = trNorm.split(' ').filter(Boolean);
+      if (trNorm && (trNorm === _inflNorm(sentence) || (trWords.length >= 3 && storyNorm.includes(trNorm)))) {
+        reasons.push('translation is the target-language sentence, not a translation');
+      }
+    }
+
+    if (reasons.length) rejected.push({ item, reasons });
+    else valid.push({
+      sentence, surfaceForm,
+      translation: String((item && item.translation) == null ? '' : item.translation).trim(),
+      lemma, lemmaChoices, lemmaCorrectIndex,
+      formLabel, formChoices, formCorrectIndex,
+      explanation: String((item && item.explanation) == null ? '' : item.explanation).trim(),
+    });
+  }
+  return { valid, rejected };
+}
+
+async function generateInflections(topic, lang, srcLang, difficulty, jobId, opts) {
+  const _t0 = Date.now();
+  opts = opts || {};
+  const { story } = opts;
+  if (!story || !String(story).trim()) throw new Error('inflections: no story available');
+  const _inflScript = opts.script || null;
+  const L = langName(lang, _inflScript); const S = langName(srcLang || 'en');
+  const n = (difficulty <= 1) ? 4 : (difficulty >= 3 ? 7 : 5);
+  const sys = fillPrompt(PROMPTS.inflections.system, { L, S, EXAMPLE: fillPrompt(promptExample(PROMPTS.inflections, lang, srcLang), { L, S }) })
+            + scriptPinNote(lang, _inflScript, 'inflections prompt');
+  const userMsg = fillPrompt(PROMPTS.inflections.user, { L, S, story, n });
+  const MAX_ATTEMPTS = 3;
+  let totalPromptTokens = 0, totalCompletionTokens = 0, lastError = '';
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Inflections lesson attempt ${attempt}/${MAX_ATTEMPTS}…`);
+    console.log(`    Inflections attempt ${attempt}…`);
+    // Same silent-truncation guard word_forms carries (v72_f) — this prompt also embeds the whole
+    // chapter story, so num_ctx must be sized against it rather than left at Ollama's default.
+    const _ctxTokens = estimateCtxTokens(sys.length + userMsg.length, 1800 * THINK_TOKEN_MULT);
+    const _timeout = Math.ceil(getRequestTimeout() * THINK_TIMEOUT_MULT);
+    const { text: raw, promptTokens, completionTokens } =
+      await callLLMLesson(sys, userMsg, 1800, { ctxTokens: _ctxTokens, timeoutMs: _timeout });
+    totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
+    const cleaned = raw.replace(/\`\`\`json|\`\`\`/g, '').trim();
+    let parsed;
+    try { parsed = JSON.parse(cleaned); }
+    catch(e) {
+      try { parsed = extractJSON(raw); }
+      catch(e2) { lastError = 'JSON extract failed: ' + stripRaw(raw).slice(0, 60); continue; }
+    }
+    if (!Array.isArray(parsed.items) || parsed.items.length === 0) { lastError = 'No items in response'; continue; }
+    const { valid, rejected } = validateInflectionsItems(parsed.items, story);
+    if (rejected.length > 0) {
+      console.warn(`    Inflections: ${rejected.length} item(s) rejected:`);
+      rejected.forEach(r => console.warn(`      "${String(r.item && r.item.surfaceForm || '').slice(0, 30)}": ${r.reasons.join(', ')}`));
+    }
+    if (valid.length < 1) { lastError = `No valid items after filtering (${rejected.length} rejected)`; continue; }
+    console.log(`    Inflections: ${valid.length} valid item(s) (${rejected.length} rejected)`);
+    return {
+      lesson: {
+        id: 7, type: 'inflections',
+        title: parsed.title || 'Inflections',
+        desc:  parsed.desc  || 'Word forms and their dictionary form',
+        icon:  parsed.icon  || '🧬',
+        items: valid,
+        _genMeta: buildGenMeta({ type: 'inflections', model: OLLAMA_LESSON_MODEL, t0: _t0, attempts: attempt, valid: valid.length, rejected: rejected.length, rejectReasons: genReasonHist(rejected), promptTokens: totalPromptTokens, completionTokens: totalCompletionTokens }),
+      },
+      tokens: { promptTokens: totalPromptTokens, completionTokens: totalCompletionTokens },
+    };
+  }
+  // Unlike word_forms (which can always find SOME word to blank), a language with little or no
+  // inflection may genuinely have nothing to offer here (the prompt tells the model to return an
+  // empty items array in that case) — but an empty array fails the "No items in response" check
+  // above and retries like any other empty response, then surfaces as this same error after
+  // MAX_ATTEMPTS. That is deliberate, not a bug to route around: it matches how every other
+  // per-type generator in this file fails when a chapter genuinely has nothing to offer it (see
+  // ADD_LESSON_GENERATORS's callers — a thrown error is caught and the type is skipped in an
+  // "all types" bundle, or surfaced to the user on an explicit single-type add-lesson request).
+  throw new Error(`Inflections generation failed after ${MAX_ATTEMPTS} attempts: ${lastError}`);
 }
 
 // ── Generate synonyms / antonyms / homophones lesson ──────────────────────────
@@ -5050,7 +5271,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
                       script: userOpts.script || null,
                       chainStory: _chainStory.text, chainStoryChapters: _chainStory.chapters };
 
-  if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math' || lessonFormat === 'synonyms' || lessonFormat === 'word_forms' || lessonFormat === 'comprehension') {
+  if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math' || lessonFormat === 'synonyms' || lessonFormat === 'word_forms' || lessonFormat === 'comprehension' || lessonFormat === 'inflections') {
     const genFn   = lessonFormat === 'math'
       ? (mathInstruction
           ? () => generateMathLLM(lang, srcLang, difficulty, mathInstruction, jobId)
@@ -5059,6 +5280,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
                   : lessonFormat === 'grammar'      ? () => generateGrammar(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   : lessonFormat === 'synonyms'     ? () => generateSynonyms(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   : lessonFormat === 'word_forms'   ? () => generateWordForms(topic, lang, srcLang, difficulty, jobId, chainOpts)
+                  : lessonFormat === 'inflections'  ? () => generateInflections(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   : lessonFormat === 'comprehension' ? () => generateComprehension(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   :                                   () => generateConjugation(topic, lang, srcLang, difficulty, jobId, chainOpts);
     const label   = lessonFormat === 'math'        ? 'Math'
@@ -5066,6 +5288,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
                   : lessonFormat === 'grammar'      ? 'Grammar'
                   : lessonFormat === 'synonyms'     ? 'Synonyms'
                   : lessonFormat === 'word_forms'   ? 'Word-forms'
+                  : lessonFormat === 'inflections'  ? 'Inflections'
                   : lessonFormat === 'comprehension' ? 'Comprehension'
                   :                                   'Conjugation';
     try {
@@ -5173,6 +5396,7 @@ const ADD_LESSON_GENERATORS = {
   synonyms:    (c) => generateSynonyms(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
   comprehension: (c) => generateComprehension(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
   word_forms:  (c) => generateWordForms(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
+  inflections: (c) => generateInflections(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
   math:        (c) => c.addMathInstr
     ? generateMathLLM(c.lang, c.srcLang, c.diff, c.addMathInstr, c.jobId, c.script || null)
     : generateMath(c.story, c.diff, c.addMathOps || null),
@@ -5184,7 +5408,7 @@ const ADD_LESSON_GENERATORS = {
 // ADD_LESSON_TYPES; anything outside it is dropped rather than trusted, since it arrives over HTTP.
 // `review` and `standard` are not in ADD_LESSON_GENERATORS (both are generateOneLesson with
 // different vocab modes), so they are named here explicitly.
-const ARC_LESSON_TYPES = ['standard', 'review', 'word_forms', 'synonyms', 'grammar',
+const ARC_LESSON_TYPES = ['standard', 'review', 'word_forms', 'inflections', 'synonyms', 'grammar',
                           'conjugation', 'comprehension', 'error_hunt', 'math',
                           // v79_h: `intro_script` is in ADD_LESSON_GENERATORS and was reachable
                           // from the per-chapter dropdown, but not from this whitelist — so a
@@ -6687,7 +6911,7 @@ http.createServer(async (req, res) => {
       if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
       if (topic !== resolvedTopic) body.topic = resolvedTopic;
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
-      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms','word_forms','comprehension'].includes(lessonFormat) ? lessonFormat : 'standard';   // v68.1: word_forms was missing — the picker offered it but the route clamped it to 'standard'. v71_l: comprehension added here at the same time as the picker entry, which is the pairing that guard enforces
+      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms','word_forms','inflections','comprehension'].includes(lessonFormat) ? lessonFormat : 'standard';   // v68.1: word_forms was missing — the picker offered it but the route clamped it to 'standard'. v71_l: comprehension added here at the same time as the picker entry, which is the pairing that guard enforces. inflections added the same way, deliberately, this session.
       const wcMax = body.userStory ? 2000 : 1000;
       const wc = Math.max(100, Math.min(wcMax, parseInt(storyLen, 10) || 300));
       // contFrom: used for storyline chain tracking AND story continuation context.
@@ -6795,7 +7019,7 @@ http.createServer(async (req, res) => {
       if (!Array.isArray(chaptersIn) || chaptersIn.length === 0)
         return json(res, 400, { error: 'No chapters provided' });
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
-      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms','word_forms','comprehension'].includes(lessonFormat) ? lessonFormat : 'standard';   // v68.1: word_forms was missing — the picker offered it but the route clamped it to 'standard'. v71_l: comprehension added here at the same time as the picker entry, which is the pairing that guard enforces
+      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms','word_forms','inflections','comprehension'].includes(lessonFormat) ? lessonFormat : 'standard';   // v68.1: word_forms was missing — the picker offered it but the route clamped it to 'standard'. v71_l: comprehension added here at the same time as the picker entry, which is the pairing that guard enforces. inflections added the same way, deliberately, this session.
       // Arc: each chapter gets the lesson types the user ticked, generated in reinforce mode.
       // v71_u: the client now sends `arcTypes` (the shared tick-list, same as the storyline
       // add-lessons run). `arcMode` is still honoured for older clients and is translated into a
@@ -7115,7 +7339,7 @@ http.createServer(async (req, res) => {
       // Dialect topics: refuse LLM-authoring formats. Those generators run in the base language and
       // don't know the dialect — they'd inject standard-German / mis-judged content into a dialect
       // topic. Only the dialect-safe formats are allowed (standard vocab, math, mixed review).
-      const _DIALECT_BLOCKED_FMTS = new Set(['synonyms','word_forms','error_hunt','grammar','conjugation','all_types']);
+      const _DIALECT_BLOCKED_FMTS = new Set(['synonyms','word_forms','inflections','error_hunt','grammar','conjugation','all_types']);
       if (saved._dialect && _DIALECT_BLOCKED_FMTS.has(fmt)) {
         return json(res, 400, { error: 'That lesson type is not available for dialect topics (it would generate non-dialect content). Use Standard, Math, or Mixed review.' });
       }

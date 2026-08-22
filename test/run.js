@@ -57,6 +57,8 @@ run('unit: lesson-row subtitle', 'node', [path.join(__dirname, 'unit-lesson-subt
 run('unit: lowercase title + app.motto tagline (v49)', 'node', [path.join(__dirname, 'unit-app-motto.test.js')]);
 run('unit: word_forms validator', 'node', [path.join(__dirname, 'unit-word-forms.test.js')]);
 run('unit: word_forms client play', 'node', [path.join(__dirname, 'unit-word-forms-client.test.js')]);
+run('unit: inflections validator (v82_c)', 'node', [path.join(__dirname, 'unit-inflections.test.js')]);
+run('unit: unspaced-script whole-word matching, client/server parity (v82_c)', 'node', [path.join(__dirname, 'unit-unspaced-scripts-parity.test.js')]);
 run('unit: synonyms in-context builder', 'node', [path.join(__dirname, 'unit-synonyms.test.js')]);
 run('unit: story context + num_ctx sizing per generator (v72_f)', 'node', [path.join(__dirname, 'unit-generation-context.test.js')]);
 run('unit: sentence segmentation client/server parity (v72_a)', 'node', [path.join(__dirname, 'unit-sentence-segmentation.test.js')]);
@@ -203,6 +205,7 @@ run('unit: one definition of chapter-complete (v69_l)', 'node', [path.join(__dir
 run('unit: chapter-level clear progress (v78_e)', 'node', [path.join(__dirname, 'unit-chapter-clear-progress.test.js')]);
 run('unit: teacher-mode switch on every page (v78_f)', 'node', [path.join(__dirname, 'unit-teacher-toggle.test.js')]);
 run('unit: story highlight — all word sources, two shades (v78_h)', 'node', [path.join(__dirname, 'unit-story-highlight-sources.test.js')]);
+run('unit: story panels aligned — renderStoryText joins _storyWordSources (v82_c)', 'node', [path.join(__dirname, 'unit-story-panel-alignment.test.js')]);
 run('unit: highlight splits multi-token entries (v78_k)', 'node', [path.join(__dirname, 'unit-highlight-split.test.js')]);
 run('unit: multi-chapter job carries the chosen script (v78_p)', 'node', [path.join(__dirname, 'unit-book-script.test.js')]);
 run('unit: script pin reaches every target-text prompt (v79_f)', 'node', [path.join(__dirname, 'unit-script-pin-coverage.test.js')]);

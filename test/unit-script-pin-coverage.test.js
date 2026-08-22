@@ -38,6 +38,7 @@ const NEEDS_PIN = {
   sysGrammar:           'gender/plural drills spelled in the target language',
   sysConjugation:       'verb forms — the reported tp_17864554460460000107',
   generateWordForms:    'inflected forms of target words',
+  generateInflections:  'lemma/form MCQs quoting surface-form words from the target-language story',
   generateSynonyms:     'synonyms, antonyms and homophones in the target language',
   generateComprehension: 'questions and answer choices in the target language',
   generateMathLLM:      'word problems are prose in the target language',

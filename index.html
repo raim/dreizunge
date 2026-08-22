@@ -1230,6 +1230,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
               <option value="all_types">🎯 All types — standard + word forms + synonyms + error hunt</option>
               <option value="math">🔢 Math — numbers from the story</option>
               <option value="word_forms">🧩 Word Forms — pick the form that fits</option>
+              <option value="inflections">🧬 Inflections — name the lemma and the form</option>
               <option value="synonyms">🔁 Synonyms — synonyms, antonyms &amp; homophones</option>
               <option value="error_hunt">🔍 Error Hunt — find mistakes in the story</option>
               <option value="comprehension">🧠 Comprehension — questions about the story</option>
@@ -1349,6 +1350,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <option value="standard">📚 Standard</option>
       <option value="synonyms" class="opt-ai-authoring">🔁 Synonyms</option>
       <option value="word_forms" class="opt-ai-authoring">🧩 Word Forms</option>
+      <option value="inflections" class="opt-ai-authoring">🧬 Inflections</option>
       <!-- v78_j (user): grammar and conjugation were hidden from the SINGLE-CHAPTER add-lesson
            menu while the storyline-wide arc offered them. Both are full registry types with
            builders, editors and labels; there was no gate, only an omission. -->
@@ -1831,6 +1833,11 @@ const LESSON_TYPE_META = {
   error_hunt:    { emoji: '🔍', key: 'lesson.type.error_hunt',    build: () => [], editorBranch: (ls, li, fo) => _editorBranchErrorHunt(ls, li, fo), editorAfterSync: (ls, li) => _editorAfterSyncErrorHunt(ls, li) },
   ai_error_hunt: { emoji: '🔎', key: 'lesson.type.ai_error_hunt', build: () => [], editorBranch: (ls, li, fo) => _editorBranchAiErrorHunt(ls, li, fo) },
   word_forms:    { emoji: '🧩', key: 'lesson.type.word_forms',    build: (l) => buildWordFormsExercises(l), editorBranch: (ls, li, fo) => _editorBranchWordForms(ls, li, fo) },
+  // User-designed follow-up (v82) to the v80_f inflection-coverage measurement: draws from words
+  // the story ALREADY contains in an inflected/derived form, and asks two MCQs per word — the
+  // lemma, and the grammatical form connecting it back — closing the highlight/tap coverage gap
+  // without changing the story or the standard vocab lesson at all. See _storyWordSources below.
+  inflections:   { emoji: '🧬', key: 'lesson.type.inflections',   build: (l) => buildInflectionsExercises(l), editorBranch: (ls, li, fo) => _editorBranchInflections(ls, li, fo) },
   math:          { emoji: '🔢', key: 'lesson.type.math',          build: (l) => buildMathExercises(l), editorBranch: (ls, li, fo) => _editorBranchMath(ls, li, fo), editorReadInputs: (ls, li) => _editorReadInputsMath(ls, li) },
   mixed:         { emoji: '🔀', key: 'lesson.type.mixed',         build: (l, i) => buildMixedExercises(l, i), editorBranch: (ls, li, fo) => _editorBranchMixed(ls, li, fo) },
   intro_script:  { emoji: '🔡', key: 'lesson.type.intro_script',  build: (l) => buildIntroScriptExercises(l), editorBranch: (ls, li, fo) => _editorBranchIntroScript(ls, li, fo) },
@@ -1852,7 +1859,7 @@ const LESSON_DESC_KEY = {
   comprehension: 'lesson.type.desc.comprehension',
   grammar: 'lesson.type.desc.grammar', conjugation: 'lesson.type.desc.conjugation',
   error_hunt: 'lesson.type.desc.error_hunt', ai_error_hunt: 'lesson.type.desc.ai_error_hunt',
-  word_forms: 'lesson.type.desc.word_forms',
+  word_forms: 'lesson.type.desc.word_forms', inflections: 'lesson.type.desc.inflections',
   mixed: 'lesson.type.desc.mixed',
   intro_script: 'lesson.type.desc.intro_script',
   math: 'lesson.type.desc.math', standard: 'lesson.type.desc.vocab', all_types: 'lesson.type.desc.vocab',
@@ -2431,7 +2438,7 @@ function applyUIStrings() {
   // Update format-select option labels
   const formatSel = document.getElementById('format-select');
   if (formatSel) {
-    const formatKeys = { 'standard': 'form.format.standard', 'all_types': 'form.format.all_types', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation', 'synonyms': 'form.format.synonyms', 'word_forms': 'form.format.word_forms', 'math': 'form.format.math', 'intro_script': 'form.format.intro_script', 'comprehension': 'form.format.comprehension' };
+    const formatKeys = { 'standard': 'form.format.standard', 'all_types': 'form.format.all_types', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation', 'synonyms': 'form.format.synonyms', 'word_forms': 'form.format.word_forms', 'inflections': 'form.format.inflections', 'math': 'form.format.math', 'intro_script': 'form.format.intro_script', 'comprehension': 'form.format.comprehension' };
     Array.from(formatSel.options).forEach(opt => {
       if (formatKeys[opt.value]) { const lbl=t(formatKeys[opt.value]); if(lbl && lbl!==formatKeys[opt.value]) opt.text=lbl; }
     });
@@ -2904,7 +2911,7 @@ function restoreStyleSelect(){
 // Every value the #format-select picker offers must be accepted here — an option missing from this
 // set is silently rewritten to 'standard' on selection, i.e. a dead menu entry (v68.1: word_forms
 // and synonyms were visible but clamped away, for single AND book/multi-chapter generation).
-const VALID_FORMATS=new Set(['standard','all_types','error_hunt','grammar','conjugation','math','word_forms','synonyms','comprehension']);
+const VALID_FORMATS=new Set(['standard','all_types','error_hunt','grammar','conjugation','math','word_forms','inflections','synonyms','comprehension']);
 function onFormatSelect(v){
   APP.lessonFormat=VALID_FORMATS.has(v)?v:'standard'; saveLessonFormat();
   const sel=document.getElementById('format-select'); if(sel) sel.value=APP.lessonFormat;
@@ -4361,17 +4368,26 @@ function _storyParasHtml(html) {
     .join('');
 }
 
+// v82_c (user follow-up): aligned with every other story panel — `_renderSavedStory`,
+// `_renderChainStory` and `_storyBodyHtml` all light up EVERY word-bearing source (via
+// `_storyExtraWords`/`_storyWordSources`) with the solved subset in a stronger shade (v74_n /
+// v78_h). This one panel — the topic-detail screen's own collapsible story, `#story-body` — was
+// never brought forward: it only ever read `L.vocab`, and gated even that on the owning lesson
+// being fully COMPLETE. Both were pre-v74_n behaviour that survived because nothing exercised this
+// panel's content. v74_n's ruling was explicit that the mark means "something from your
+// vocabulary occurs here", not "you have learned this word" — so gating on completion was already
+// the thing that ruling argued against, not a separate design worth keeping. No tap here, same as
+// every other read-only panel (v80_t): tapping needs an active run to jump into, and this screen,
+// like the library and storyline panels, has none.
 function renderStoryText(d, targetEl){
   const body=targetEl||document.getElementById('story-body'); if(!body) return;
-  const done=APP.progress.completed?.[d.topic]||{};
-  // In library context (targetEl provided) highlight all vocab; on home screen highlight completed only
-  const vocabWords=(d.lessons||[])
-    .filter(L=>targetEl||done[L.id])
-    .flatMap(L=>L.vocab||[])
-    .map(v=>v.target).filter(Boolean)
-    .sort((a,b)=>b.length-a.length);
+  const vocabWords=(d.lessons||[]).filter(Boolean).flatMap(L=>L.vocab||[]).map(v=>v&&v.target).filter(Boolean);
+  const extraWords=(typeof _storyExtraWords==='function') ? _storyExtraWords(d) : [];
+  const allWords=[...vocabWords, ...extraWords].filter(Boolean).sort((a,b)=>b.length-a.length);
+  let solved=[];
+  try { solved=_solvedTargetWords(d).concat(_solvedExtraWords(d)); } catch(_) { solved=[]; }
   let rendered=furiHtml(d.story||'');
-  if(vocabWords.length) rendered = _highlightVocabHtml(rendered, vocabWords);
+  if(allWords.length) rendered = _highlightVocabHtml(rendered, allWords, solved);
   const spkBtn=''; // speaker moved to story-hdr
   body.innerHTML=spkBtn+_storyParasHtml(rendered);
 }
@@ -6103,6 +6119,7 @@ function savedItemHtml(s, connector, hideStory, hideProv, slChapter) {
         <option value="standard">📚 ${t('lesson.type.vocab')}</option>
         <option value="synonyms">🔁 ${t('lesson.type.synonyms')}</option>
         <option value="word_forms">🧩 ${t('lesson.type.word_forms')}</option>
+        <option value="inflections">🧬 ${t('lesson.type.inflections')}</option>
         <option value="grammar">📐 ${t('lesson.type.grammar')}</option>
         <option value="conjugation">🔤 ${t('lesson.type.conjugation')}</option>
         <option value="error_hunt">🔍 ${t('lesson.type.error_hunt')}</option>
@@ -8169,7 +8186,7 @@ function openAddLesson(sid, enc) {
       opt.style.display = _isDia ? 'none' : '';
       opt.disabled = _isDia;
     });
-    if (_isDia && ['synonyms','word_forms','error_hunt','comprehension'].includes(_fmtSel.value)) _fmtSel.value = 'standard';
+    if (_isDia && ['synonyms','word_forms','inflections','error_hunt','comprehension'].includes(_fmtSel.value)) _fmtSel.value = 'standard';
   }
   const _mathInstrRow = document.getElementById('sial-math-instr-row-' + sid);
   const _reinforceRow = document.getElementById('sial-reinforce-row-' + sid);
@@ -8177,7 +8194,7 @@ function openAddLesson(sid, enc) {
   // lessons and intro_script (where reinforce = letters from earlier chapters, extend = letters
   // new this chapter). Math has no use for it. It still requires the chapter to continue a story
   // (prior chapters to reinforce/extend against) — that's encoded in the row's initial display.
-  const _MODE_FORMATS = new Set(['standard','all_types','word_forms','synonyms','grammar','conjugation','error_hunt','intro_script']);
+  const _MODE_FORMATS = new Set(['standard','all_types','word_forms','inflections','synonyms','grammar','conjugation','error_hunt','intro_script']);
   if (_fmtSel && _mathInstrRow) {
     const _hasPriorRow = _reinforceRow && _reinforceRow.dataset.hasPrior === '1';
     const _toggleRows = () => {
@@ -9163,6 +9180,7 @@ const ADD_LESSON_TYPES = [
   { v: 'standard',   emoji: '📖', key: 'form.format.standard' },
   { v: 'review',     emoji: '🔁', key: 'gen.vocab_mode_reinforce' },
   { v: 'word_forms', emoji: '🧩', key: 'lesson.type.word_forms' },
+  { v: 'inflections', emoji: '🧬', key: 'lesson.type.inflections' },
   { v: 'synonyms',   emoji: '🔀', key: 'lesson.type.synonyms' },
   { v: 'grammar',    emoji: '📐', key: 'lesson.type.grammar' },
   { v: 'conjugation',emoji: '🔤', key: 'lesson.type.conjugation' },
@@ -10230,6 +10248,32 @@ function wfEditorDeleteChoice(li, fi, ci) {
   if (it.correctIndex >= it.choices.length) it.correctIndex = Math.max(0, it.choices.length - 1);
   renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
 }
+// Same two functions as wfEditorAddChoice/wfEditorDeleteChoice, parametrized by WHICH of an
+// inflections item's two choice lists ('lemma' or 'form') is being edited — one item, two
+// independent MCQs, so one add/delete pair threaded by which list rather than two near-duplicates.
+function inflEditorAddChoice(li, fi, which) {
+  const ls = APP.lessonData?.lessons?.[li];
+  const it = ls && ls.items && ls.items[fi];
+  if (!it) return;
+  _syncEditorFromDOM(li);
+  const key = which === 'lemma' ? 'lemmaChoices' : 'formChoices';
+  if (!Array.isArray(it[key])) it[key] = [];
+  it[key].push('');
+  renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
+}
+function inflEditorDeleteChoice(li, fi, which, ci) {
+  const ls = APP.lessonData?.lessons?.[li];
+  const it = ls && ls.items && ls.items[fi];
+  const choicesKey = which === 'lemma' ? 'lemmaChoices' : 'formChoices';
+  const correctKey = which === 'lemma' ? 'lemmaCorrectIndex' : 'formCorrectIndex';
+  if (!it || !Array.isArray(it[choicesKey]) || ci < 0 || ci >= it[choicesKey].length) return;
+  _syncEditorFromDOM(li);
+  it[choicesKey].splice(ci, 1);
+  if (ci === it[correctKey]) it[correctKey] = 0;
+  else if (ci < it[correctKey]) it[correctKey] = Math.max(0, it[correctKey] - 1);
+  if (it[correctKey] >= it[choicesKey].length) it[correctKey] = Math.max(0, it[choicesKey].length - 1);
+  renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
+}
 
 function synEditorDelete(li, wi, cat, ri) {
   const ls = APP.lessonData?.lessons?.[li];
@@ -10700,7 +10744,47 @@ function _editorBranchWordForms(ls, li, flaggedOnly){
       </div>`;
     });
 
-  
+
+  return html;
+}
+// Same shape as _editorBranchWordForms, extended for TWO choice lists (lemma, form) per item
+// instead of one. data-type="infl" tags every field for _syncEditorFromDOM's own branch.
+function _editorBranchInflections(ls, li, flaggedOnly){
+  let html = '';
+
+    const items = ls.items || [];
+    if (!items.length) html += `<em style="color:var(--gray-dark);font-size:13px">No items</em>`;
+    const _choiceGroup = (li, fi, which, choices, correctIdx, label) => `
+        <div style="display:flex;align-items:center;gap:6px;margin-top:7px">
+          <div style="font-size:11px;font-weight:800;opacity:.6">${escHtml(label)} (● = correct)</div>
+          <button class="storyline-hdr-btn" style="padding:0 7px;font-size:13px;line-height:1.4;margin-left:auto" onclick="inflEditorAddChoice(${li},${fi},'${which}')" title="Add choice">＋</button>
+        </div>
+        ${choices.map((c, ci) => `<div style="display:flex;gap:6px;align-items:center;margin-top:3px">
+          <input type="radio" name="infl-${which}-correct-${li}-${fi}" data-li="${li}" data-type="infl" data-fi="${fi}" data-field="${which}Correct" data-ci="${ci}" ${ci===correctIdx?'checked':''} title="Mark as correct">
+          <input data-li="${li}" data-type="infl" data-fi="${fi}" data-field="${which}Choice" data-ci="${ci}" value="${escAttr(c||'')}" style="flex:1">
+          <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="inflEditorDeleteChoice(${li},${fi},'${which}',${ci})" title="Remove choice">✕</button>
+        </div>`).join('')}`;
+    items.forEach((it, fi) => {
+      const lemmaChoices = Array.isArray(it.lemmaChoices) ? it.lemmaChoices : [];
+      const formChoices  = Array.isArray(it.formChoices)  ? it.formChoices  : [];
+      html += `<div class="editor-entry${it.userFlag?' flagged':''}${it.userRating?' starred':''}${it.userDelete?' del-candidate':''}" id="ee-${li}-infl-${fi}">
+        <div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-bottom:2px">
+          ${_flagBtnHtml(li, 'infl', fi, it)}
+          <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','infl',${fi})">🗑</button>
+        </div>
+        <div class="editor-field"><label>Sentence</label><input data-li="${li}" data-type="infl" data-fi="${fi}" data-field="sentence" value="${escAttr(it.sentence||'')}"></div>
+        <div class="editor-field"><label>Surface form</label><input data-li="${li}" data-type="infl" data-fi="${fi}" data-field="surfaceForm" value="${escAttr(it.surfaceForm||'')}" placeholder="the exact word as it appears above"></div>
+        <div class="editor-field"><label>Translation</label><input data-li="${li}" data-type="infl" data-fi="${fi}" data-field="translation" value="${escAttr(it.translation||'')}"></div>
+        <div class="editor-field"><label>Explanation</label><input data-li="${li}" data-type="infl" data-fi="${fi}" data-field="explanation" value="${escAttr(it.explanation||'')}" placeholder="e.g. plural of 'der Kopf', formed with -e and umlaut"></div>
+        ${_choiceGroup(li, fi, 'lemma', lemmaChoices, it.lemmaCorrectIndex, 'Lemma choices')}
+        ${_choiceGroup(li, fi, 'form', formChoices, it.formCorrectIndex, 'Form-label choices')}
+        ${_qcNoteHtml(li, 'infl', fi, it)}
+        ${_flagBoxHtml(li, 'infl', fi, it, false)}
+        ${_starNoteHtml(it)}
+        ${_delNoteHtml(it)}
+      </div>`;
+    });
+
   return html;
 }
 function _editorBranchStandard(ls, li, flaggedOnly){
@@ -10824,7 +10908,7 @@ function qcDismiss(li, type, fi){ _qcMutateItem(li, type, +fi, false); }
 // ── Manual user flags (item.userFlag = { comment, at }) ───────────────────
 function _editorItem(li, type, fi){
   const ls = APP.lessonData?.lessons?.[li]; if(!ls) return null;
-  const arr = type==='vocab'?ls.vocab : type==='sentence'?ls.sentences : type==='wf'?ls.items : type==='syn'?ls.words : type==='math'?ls.exercises : type==='letter'?ls.letters : type==='grammar'?ls.grammar : (type==='conj'||type==='conj-meta')?ls.conjugations : null;
+  const arr = type==='vocab'?ls.vocab : type==='sentence'?ls.sentences : type==='wf'?ls.items : type==='infl'?ls.items : type==='syn'?ls.words : type==='math'?ls.exercises : type==='letter'?ls.letters : type==='grammar'?ls.grammar : (type==='conj'||type==='conj-meta')?ls.conjugations : null;
   return (arr && arr[fi]) || null;
 }
 // "Good example" ⭐ rating button for an editor item header. Parallel to the flag
@@ -11040,6 +11124,19 @@ function _syncEditorFromDOM(li, opts) {
         else if (field === 'choice') { const ci = +inp.dataset.ci; if (Array.isArray(it.choices) && ci >= 0 && ci < it.choices.length) it.choices[ci] = inp.value; }
         else if (field === 'correct') { if (inp.checked) { const ci = +inp.dataset.ci; if (Number.isInteger(ci)) it.correctIndex = ci; } }
       }
+    } else if (type === 'infl') {
+      const fi = +inp.dataset.fi;
+      const it = ls.items && ls.items[fi];
+      if (it) {
+        if (field === 'sentence') it.sentence = inp.value;
+        else if (field === 'surfaceForm') it.surfaceForm = inp.value;
+        else if (field === 'translation') it.translation = inp.value;
+        else if (field === 'explanation') it.explanation = inp.value;
+        else if (field === 'lemmaChoice') { const ci = +inp.dataset.ci; if (Array.isArray(it.lemmaChoices) && ci >= 0 && ci < it.lemmaChoices.length) it.lemmaChoices[ci] = inp.value; }
+        else if (field === 'lemmaCorrect') { if (inp.checked) { const ci = +inp.dataset.ci; if (Number.isInteger(ci)) it.lemmaCorrectIndex = ci; } }
+        else if (field === 'formChoice') { const ci = +inp.dataset.ci; if (Array.isArray(it.formChoices) && ci >= 0 && ci < it.formChoices.length) it.formChoices[ci] = inp.value; }
+        else if (field === 'formCorrect') { if (inp.checked) { const ci = +inp.dataset.ci; if (Number.isInteger(ci)) it.formCorrectIndex = ci; } }
+      }
     }
   });
   // Per-type post-loop sync (B-phase-3): error_hunt reconciles its corrupted-story edits.
@@ -11167,7 +11264,7 @@ function deleteEditorItem(li, type, idx) {
   if (!ls) return;
   _syncEditorFromDOM(li);   // preserve unsaved edits to other entries before re-render
   // Static build: mark as delete candidate instead of destroying it (rides the export).
-  const _ARR = { vocab:'vocab', sentence:'sentences', grammar:'grammar', conj:'conjugations', 'eh-edit':'edits', wf:'items', letter:'letters' }[type];
+  const _ARR = { vocab:'vocab', sentence:'sentences', grammar:'grammar', conj:'conjugations', 'eh-edit':'edits', wf:'items', infl:'items', letter:'letters' }[type];
   if (typeof STATIC_LESSONS !== 'undefined' && _staticSoftDelete(_ARR && ls[_ARR] && ls[_ARR][idx])) {
     renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
     return;
@@ -11179,6 +11276,7 @@ function deleteEditorItem(li, type, idx) {
   else if (type === 'eh-edit')  { ls.edits = (ls.edits||[]).filter((_,i)=>i!==idx); }
   else if (type === 'cq')       { ls.questions = (ls.questions||[]).filter((_,i)=>i!==idx); }
   else if (type === 'wf')       { ls.items = (ls.items||[]).filter((_,i)=>i!==idx); }
+  else if (type === 'infl')     { ls.items = (ls.items||[]).filter((_,i)=>i!==idx); }
   else if (type === 'letter')   { ls.letters = (ls.letters||[]).filter((_,i)=>i!==idx); delete ls.exercises; }
   // Re-render editor to update indices
   renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
@@ -12815,6 +12913,32 @@ function buildWordFormsExercises(lesson){
   return shuffle(exs);
 }
 
+// One lesson ITEM (a word seen in an inflected/derived form in the story) becomes TWO exercises —
+// "what's the lemma" and "what form is this" — the SAME "one lesson type, several exercise types"
+// shape `standard` already uses for its vocab array. Both share the item's sentence/surfaceForm/
+// translation/explanation; only `type`/`correct`/`target`/`choices` differ per question.
+function buildInflectionsExercises(lesson){
+  const items = lesson.items || [];
+  const exs = [];
+  items.forEach(it => {
+    if(!it) return;
+    if(!Array.isArray(it.lemmaChoices) || it.lemmaChoices.length < 2) return;
+    if(!Array.isArray(it.formChoices) || it.formChoices.length < 2) return;
+    const lci = it.lemmaCorrectIndex, fci = it.formCorrectIndex;
+    if(!Number.isInteger(lci) || lci < 0 || lci >= it.lemmaChoices.length) return;
+    if(!Number.isInteger(fci) || fci < 0 || fci >= it.formChoices.length) return;
+    const correctLemma = it.lemmaChoices[lci];
+    const correctForm  = it.formChoices[fci];
+    const shared = { sentence: it.sentence || '', surfaceForm: it.surfaceForm || '',
+      translation: it.translation || '', explanation: it.explanation || '' };
+    exs.push({ ...shared, type:'inflection_lemma',
+      correct: correctLemma, target: correctLemma, choices: shuffle(it.lemmaChoices.slice()) });
+    exs.push({ ...shared, type:'inflection_form',
+      correct: correctForm, target: correctForm, choices: shuffle(it.formChoices.slice()) });
+  });
+  return shuffle(exs);
+}
+
 
 // ══ Grammar exercises (gender/article/plural) ════════════════════════════════
 
@@ -13887,6 +14011,8 @@ const EX_RENDERERS = {
   math_calc:         (ex) => tMathCalc(ex),
   math_latex:        (ex) => tMathLatex(ex),
   word_form:         (ex) => tWordForm(ex),
+  inflection_lemma:  (ex) => tInflectionLemma(ex),
+  inflection_form:   (ex) => tInflectionForm(ex),
   syn_select:        (ex) => tSynSelect(ex),
   mcq_article:       (ex) => tMcqArticle(ex),
   mcq_plural:        (ex) => tMcqPlural(ex),
@@ -14220,6 +14346,33 @@ function tWordForm(ex){
     ? `<div style="margin:8px 0 2px;font-size:13px;color:var(--gray-dark)">${escHtml(ex.translation)}</div>` : '';
   return sentenceMcqCard({ badge:`🧩 ${t('ex.badge.word_form')}`, question:'', sentenceHtml, hint, choices:ex.choices });
 }
+// Inflections: the story sentence shown WHOLE (unlike word_form, nothing is blanked — the point is
+// to show the surface form as it actually appears), with that one word highlighted. Reuses
+// `_synContext`'s long-sentence clamp and tSynSelect's own highlight-one-word technique rather than
+// inventing either. Two renderers, one per question the shared item produces — see
+// buildInflectionsExercises.
+function _inflectionSentenceHtml(ex){
+  let sentenceHtml = escHtml(_synContext(ex.sentence || '', ex.surfaceForm || ''));
+  if (ex.surfaceForm) {
+    const re = new RegExp('(' + String(ex.surfaceForm).replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'i');
+    sentenceHtml = sentenceHtml.replace(re, '<span style="color:var(--blue);font-weight:900;text-decoration:underline">$1</span>');
+  }
+  return sentenceHtml;
+}
+function tInflectionLemma(ex){
+  const sentenceHtml = _inflectionSentenceHtml(ex);
+  const question = `<span style="font-weight:800">${t('ex.inflection.q_lemma', { word: qWord(furiHtml(ex.surfaceForm||'')) })}</span>`;
+  const hint = ex.translation
+    ? `<div style="margin:8px 0 2px;font-size:13px;color:var(--gray-dark)">${escHtml(ex.translation)}</div>` : '';
+  return sentenceMcqCard({ badge:`🧬 ${t('ex.badge.inflection_lemma')}`, question, sentenceHtml, hint, choices:ex.choices });
+}
+function tInflectionForm(ex){
+  const sentenceHtml = _inflectionSentenceHtml(ex);
+  const question = `<span style="font-weight:800">${t('ex.inflection.q_form', { word: qWord(furiHtml(ex.surfaceForm||'')) })}</span>`;
+  const hint = ex.translation
+    ? `<div style="margin:8px 0 2px;font-size:13px;color:var(--gray-dark)">${escHtml(ex.translation)}</div>` : '';
+  return sentenceMcqCard({ badge:`🧬 ${t('ex.badge.inflection_form')}`, question, sentenceHtml, hint, choices:ex.choices });
+}
 // Synonyms/antonyms in context: the base word shown inside its story sentence
 // (highlighted), pick the word similar/opposite to it. Reuses the syn ui entries.
 // v70_m: a synonym card's context should be the ONE sentence containing the word. Generated
@@ -14369,43 +14522,53 @@ function rubyToBracket(text){
 
 // Characters that legitimately carry a [reading] in our bracket notation: kanji and
 // katakana (loanwords like ボール[ぼーる] keep their reading). A [reading] after a single
-// hiragana or punctuation is treated as a mistaken annotation and stripped. (The class is
-// inlined in each function below so each stays self-contained.)
-
+// hiragana or punctuation is treated as a mistaken annotation and stripped.
+//
+// v82_c (measured against the live default model, qwen3.6:35b-a3b): asked to add furigana, it
+// reliably produces BASE[the kanji spelling] on a word it already knows the kanji for — ぼく[僕],
+// ボール[球] — backwards from what a reading is (僕/球 are kanji, never valid inside a reading).
+// The base-character check alone can't catch the katakana case (ボール IS a legitimate base — 17
+// real ボール[ぼーる] pairs already exist in the corpus, and narrowing the base class to kanji-only
+// would have silently discarded them). The actual discriminator is the READING's own script: a
+// genuine reading is pure kana, never kanji. ONE definition, shared by every renderer below — was
+// three independently duplicated regex pairs before this, which is how a kanji-content reading went
+// unnoticed by all three for as long as it did.
+function _furiParts(text) {
+  const s = String(text == null ? '' : text);
+  if (!s) return [];
+  // Pass 1: a bracket following anything OTHER than a kanji/katakana run is never valid furigana —
+  // strip the bracket, keep whatever preceded it untouched (a hiragana/punctuation annotation
+  // mistake, e.g. ぼく[僕] → ぼく — but NOT ボール[球], whose base IS katakana; pass 2 catches that).
+  const cleaned = s.replace(/([^\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff])\[[^\]]+\]/g, '$1');
+  const re = /([\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff]+)\[([^\]]+)\]/g;
+  const isKanaReading = (r) => /^[\u3040-\u30ff]+$/.test(r);
+  const parts = []; let last = 0, m;
+  while ((m = re.exec(cleaned)) !== null) {
+    if (m.index > last) parts.push({ type: 'text', text: cleaned.slice(last, m.index) });
+    if (isKanaReading(m[2])) parts.push({ type: 'furi', base: m[1], reading: m[2] });
+    else parts.push({ type: 'text', text: m[1] });   // reading isn't kana — a reverse gloss, not a reading
+    last = m.index + m[0].length;
+  }
+  if (last < cleaned.length) parts.push({ type: 'text', text: cleaned.slice(last) });
+  return parts;
+}
 function applyFurigana(text) {
   if(!text) return text;
-  // Strip any [reading] that follows a non-base char (kana/punctuation annotated by mistake)
-  text = text.replace(/([^\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff])\[[^\]]+\]/g, '$1');
-  if(APP.showFurigana){
-    return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff]+)\[([^\]]+)\]/g,
-      '<ruby>$1<rt>$2</rt></ruby>');
-  } else {
-    return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff]+)\[([^\]]+)\]/g, '$1');
-  }
+  return _furiParts(text).map(p => p.type === 'text' ? p.text :
+    (APP.showFurigana ? `<ruby>${p.base}<rt>${p.reading}</rt></ruby>` : p.base)).join('');
 }
 // Strip kanji[よみ] bracket annotations for TTS — speak only the base, not the reading
 function stripFuri(text) {
   if(!text) return '';
-  text = text.replace(/([^\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff])\[[^\]]+\]/g, '$1');
-  return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff]+)\[([^\]]+)\]/g, '$1');
+  return _furiParts(text).map(p => p.type === 'text' ? p.text : p.base).join('');
 }
 // Like applyFurigana but also HTML-escapes plain text segments — safe for innerHTML contexts
 // where the input hasn't been escaped yet (lBlock, word-order tokens).
 function furiHtml(text) {
   if(!text) return '';
-  // Strip any [reading] that follows a non-base char before processing
-  text = text.replace(/([^\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff])\[[^\]]+\]/g, '$1');
-  const re=/([\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff]+)\[([^\]]+)\]/g;
-  const parts=[]; let last=0, m;
-  while((m=re.exec(text))!==null){
-    if(m.index>last) parts.push(escHtml(text.slice(last,m.index)));
-    parts.push(APP.showFurigana
-      ? `<ruby>${escHtml(m[1])}<rt>${escHtml(m[2])}</rt></ruby>`
-      : escHtml(m[1]));
-    last=m.index+m[0].length;
-  }
-  parts.push(escHtml(text.slice(last)));
-  return parts.join('');
+  return _furiParts(text).map(p => p.type === 'text' ? escHtml(p.text) :
+    (APP.showFurigana ? `<ruby>${escHtml(p.base)}<rt>${escHtml(p.reading)}</rt></ruby>` : escHtml(p.base))
+  ).join('');
 }
 // Tokenise a Japanese sentence into word-sized chunks, keeping each furigana group
 // BASE[reading] (BASE = kanji or katakana) intact. Protect-and-restore so a katakana group
@@ -14769,6 +14932,13 @@ function _resolveExItemEntry(ex, ls){
     const it=(ls.items||[]).find(x=>norm(x.sentence)===norm(ex.sentence));
     if(it) return { item:it, arrayKey:'items' };
   }
+  if((ex.type==='inflection_lemma'||ex.type==='inflection_form') && ex.sentence){
+    // Both exercises this lesson type produces share ONE item (see buildInflectionsExercises) —
+    // matching by sentence alone finds the right item regardless of which of the two questions
+    // this is, same as word_form's own lookup one line up.
+    const it=(ls.items||[]).find(x=>norm(x.sentence)===norm(ex.sentence));
+    if(it) return { item:it, arrayKey:'items' };
+  }
   if(ex.type==='syn_select' && ex.base){
     const w=(ls.words||[]).find(x=>norm(x.base)===norm(ex.base));
     if(w) return { item:w, arrayKey:'words' };
@@ -14858,6 +15028,14 @@ function _qidCanonical(ex){
       return [ex._intro || '', n(ex.target), n(ex.source)].join('|');
     case 'word_form':
       return [n(ex.sentence), n(ex.correct)].join('|');       // blanked sentence + answer
+    case 'inflection_lemma':
+    case 'inflection_form':
+      // Both questions can share one sentence+surfaceForm (they come from the SAME item — see
+      // buildInflectionsExercises), so the type itself (via ex.type, already namespacing the id
+      // one level up — see the "exercise TYPE is part of the id" note above) plus the correct
+      // answer is enough to keep the two distinct; surfaceForm included defensively in case two
+      // different items ever share one sentence.
+      return [n(ex.sentence), n(ex.surfaceForm), n(ex.correct)].join('|');
     case 'syn_select':
       return [ex.mode || '', n(ex.base)].join('|');           // same base, syn vs antonym = distinct
     case 'comprehension_mcq':
@@ -14932,6 +15110,7 @@ const _ITEM_ARRAYS = {
   grammar:       ['grammar'],
   conjugation:   ['conjugations'],
   word_forms:    ['items'],
+  inflections:   ['items'],
   synonyms:      ['words'],
   comprehension: ['questions'],
   intro_script:  ['letters'],
@@ -16172,7 +16351,7 @@ function check(replay){
       : (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex') ? escHtml(Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
       : ex.type==='syn_select' ? synRevealHtml(ex)
       : furiHtml(ex.target||ex.correct);
-    fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}${(ex.type==='word_form'&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
+    fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}${((ex.type==='word_form'||ex.type==='inflection_lemma'||ex.type==='inflection_form')&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
     const speakOk = ex.type==='type_conjugation' ? _joinPronoun(ex.pronoun, stripFuri(ex.correct))
       : ex.type==='type_plural' ? stripFuri(ex.correct)
       : ex._intro ? _glyphSpeakForm(stripFuri(ex._intro==='glyph_sound' ? ex.source : ex.target))   // the GLYPH, once (case pair collapsed), never the Latin romanization ("dh"→"d-h")
@@ -16231,7 +16410,7 @@ function check(replay){
       : ex.type==='syn_select'
       ? _wrongCorrect
       : (_diff || `${t('check.correct_answer')} <strong>${_wrongCorrect}</strong>`);
-    fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${_wrongBody}${(ex.type==='word_form'&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
+    fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${_wrongBody}${((ex.type==='word_form'||ex.type==='inflection_lemma'||ex.type==='inflection_form')&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
     const speakBad = ex.type==='type_conjugation' ? _joinPronoun(ex.pronoun, stripFuri(ex.correct))
       : ex.type==='type_plural' ? stripFuri(ex.correct)
       : ex._intro ? _glyphSpeakForm(stripFuri(ex._intro==='glyph_sound' ? ex.source : ex.target))   // glyph, once, not romanization
@@ -16496,8 +16675,12 @@ function showComplete(review, lessonIdxOverride){
         vocabItems = lesson.vocab.map(v=>`<span class="vocab-chip">${furiHtml(v.target)}${v.source?'<small style="opacity:.55;font-weight:600;margin-left:4px">'+furiHtml(v.source)+'</small>':''}</span>`).join('');
       } else if (lesson?.words?.length) {            // synonyms
         vocabItems = lesson.words.map(w=>`<span class="vocab-chip">${furiHtml(w.base||'')}${w.gloss?'<small style="opacity:.55;font-weight:600;margin-left:4px">'+escHtml(w.gloss)+'</small>':''}</span>`).join('');
-      } else if (lesson?.items?.length) {            // word_forms (cloze)
-        vocabItems = lesson.items.map(it=>{ const c=Array.isArray(it.choices)?it.choices[it.correctIndex]:''; return c?`<span class="vocab-chip">${furiHtml(c)}</span>`:''; }).filter(Boolean).join('');
+      } else if (lesson?.items?.length) {            // word_forms (cloze) / inflections
+        vocabItems = lesson.items.map(it=>{
+          const c = Array.isArray(it.choices) ? it.choices[it.correctIndex]
+            : (it.surfaceForm || '');            // inflections: no single "choices" array
+          return c?`<span class="vocab-chip">${furiHtml(c)}</span>`:'';
+        }).filter(Boolean).join('');
       } else if (lesson?.grammar?.length) {
         vocabItems = lesson.grammar.map(g=>`<span class="vocab-chip">${g.target} <small style="opacity:.6">${g.article||''} / ${g.plural||'—'}</small></span>`).join('');
       } else if (lesson?.conjugations?.length) {
@@ -17183,6 +17366,23 @@ function _storyWordSources(d){
       const correct = it.choices[it.correctIndex];
       const probe = [{ type: 'word_form', sentence: it.sentence, correct }];
       it.choices.forEach(c => push(c, id, c === correct ? probe : []));
+    });
+    // inflections: the SURFACE FORM (the word as it actually appears in the story) is what gets
+    // marked and made tappable — the whole point of this type (user-designed follow-up) is closing
+    // the highlight/tap coverage gap for solved article+noun (or similarly inflected) vocabulary.
+    // Both questions one item produces (lemma + form) are real routes back to the SAME occurrence,
+    // so both probes ride along together. Unlike word_forms' choices (real word forms genuinely
+    // worth marking), lemmaChoices/formChoices are plausible WRONG ANSWERS — often not real words
+    // present anywhere in the story at all — so only surfaceForm itself is pushed, never the
+    // distractor lists. Guarded on the SAME shape check (`Array.isArray`) that keeps this block from
+    // ever misreading a word_forms lesson's own `items` — the two types never share one lesson.
+    (L.items || []).forEach(it => {
+      if (!it || !it.surfaceForm || !Array.isArray(it.lemmaChoices) || !Array.isArray(it.formChoices)) return;
+      const probe = [
+        { type: 'inflection_lemma', sentence: it.sentence, surfaceForm: it.surfaceForm, correct: it.lemmaChoices[it.lemmaCorrectIndex] },
+        { type: 'inflection_form',  sentence: it.sentence, surfaceForm: it.surfaceForm, correct: it.formChoices[it.formCorrectIndex] },
+      ];
+      push(it.surfaceForm, id, probe);
     });
     // grammar: the noun and its plural.
     (L.grammar || []).forEach(g => {
@@ -20082,7 +20282,7 @@ function _ceEhDiff(correct, corrupted, html){
   }).join('').trim();
 }
 const _CE_TYPE_LABEL = { standard:'Vocabulary', vocab:'Vocabulary', grammar:'Grammar', conjugation:'Conjugation',
-  synonyms:'Synonyms & antonyms', word_forms:'Word forms', error_hunt:'Error hunt', ai_error_hunt:'AI error hunt', math:'Math', mixed:'Mixed review' };
+  synonyms:'Synonyms & antonyms', word_forms:'Word forms', inflections:'Inflections', error_hunt:'Error hunt', ai_error_hunt:'AI error hunt', math:'Math', mixed:'Mixed review' };
 function _ceLessonMeta(ls, t){
   const bits = [_CE_TYPE_LABEL[ls.type]||ls.type||'Lesson'];
   const diff = ls.difficulty!=null ? ls.difficulty : (t&&t.difficulty);
@@ -20106,6 +20306,12 @@ function _ceChapterParts(t, includeLessons){
       blocks.push({ kind:'conjugations', items: ls.conjugations.map(c=>[stripFuri(c.verb ?? c.infinitive ?? ''), stripFuri(c.form ?? c.conjugated ?? ''), c.translation ?? c.pronoun ?? ''].filter(Boolean)) });
     if(Array.isArray(ls.items)&&ls.items.length&&ls.type==='word_forms')
       blocks.push({ kind:'word_forms', items: ls.items.map(it=>{ const correct=Array.isArray(it.choices)?it.choices[it.correctIndex]:''; return [stripFuri(it.sentence||''), correct||'', it.translation||''].filter((x,i)=>i<2||x); }) });
+    if(Array.isArray(ls.items)&&ls.items.length&&ls.type==='inflections')
+      blocks.push({ kind:'inflections', items: ls.items.map(it=>{
+        const lemma = Array.isArray(it.lemmaChoices) ? it.lemmaChoices[it.lemmaCorrectIndex] : '';
+        const form  = Array.isArray(it.formChoices)  ? it.formChoices[it.formCorrectIndex]   : '';
+        return [stripFuri(it.surfaceForm||''), lemma||'', form||'', it.translation||''].filter((x,i)=>i<3||x);
+      }) });
     if(Array.isArray(ls.words)&&ls.words.length&&ls.type==='synonyms')
       blocks.push({ kind:'synonyms', items: ls.words.map(w=>[stripFuri(w.base ?? w.word ?? ''), (w.synonyms||[]).join(', '), (w.antonyms||[]).length?'↔ '+(w.antonyms||[]).join(', '):''].filter((x,i)=>i<2||x)) });
     if(ls.type==='error_hunt'&&ls.corruptedStory&&story)
@@ -20135,7 +20341,7 @@ function _ceRenderMarkdown(docs, includeLessons){
         for(const b of ls.blocks){
           if(b.kind==='eh'){ out.push('_Error hunt — ~~struck~~ = altered text · **bold** = correct:_\n'); out.push(_ceEhDiff(b.correct,b.corrupted,false)+'\n'); }
           else if(b.kind==='aeh'){ for(const e of b.items) out.push(`- ${_ceEhDiff(e.correct,e.corrupted,false)}${e.reason?'  _('+e.reason+')_':''}`); }
-          else if(b.kind==='vocab'||b.kind==='sentences'||b.kind==='word_forms'||b.kind==='synonyms'){ for(const row of b.items){ const [a,...rest]=row; const tail=rest.filter(Boolean).join(' · '); out.push(`- **${a}**${tail?' — '+tail:''}`); } }
+          else if(b.kind==='vocab'||b.kind==='sentences'||b.kind==='word_forms'||b.kind==='inflections'||b.kind==='synonyms'){ for(const row of b.items){ const [a,...rest]=row; const tail=rest.filter(Boolean).join(' · '); out.push(`- **${a}**${tail?' — '+tail:''}`); } }
           else { for(const row of b.items) out.push(`- ${row.join(' — ')}`); }
         }
         out.push('');
@@ -20162,7 +20368,7 @@ function _ceRenderHtml(docs, includeLessons){
           if(b.kind==='eh'){ body.push('<p class="eh-legend"><del>struck</del> = altered text · <ins>green</ins> = correct</p>'); body.push(`<p class="eh">${_ceEhDiff(b.correct,b.corrupted,true)}</p>`); }
           else if(b.kind==='aeh'){ body.push('<ul class="eh-list">'); for(const e of b.items) body.push(`<li>${_ceEhDiff(e.correct,e.corrupted,true)}${e.reason?` <span class="reason">(${E(e.reason)})</span>`:''}</li>`); body.push('</ul>'); }
           else { body.push('<ul>');
-            if(b.kind==='vocab'||b.kind==='sentences'||b.kind==='word_forms'||b.kind==='synonyms') for(const row of b.items){ const [a,...rest]=row; const tail=rest.filter(Boolean).join(' · '); body.push(`<li><strong>${E(a)}</strong>${tail?' — '+E(tail):''}</li>`); }
+            if(b.kind==='vocab'||b.kind==='sentences'||b.kind==='word_forms'||b.kind==='inflections'||b.kind==='synonyms') for(const row of b.items){ const [a,...rest]=row; const tail=rest.filter(Boolean).join(' · '); body.push(`<li><strong>${E(a)}</strong>${tail?' — '+E(tail):''}</li>`); }
             else for(const row of b.items) body.push(`<li>${E(row.join(' — '))}</li>`);
             body.push('</ul>'); }
         }

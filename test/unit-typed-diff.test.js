@@ -26,7 +26,7 @@ assert.ok(wrongC, 'the wrong-character threshold is a module-level constant');
 const MAX_WRONG = parseInt(wrongC[0].match(/\d+/)[0], 10);
 const M = new Function('const Intl = globalThis.Intl;\n' + maxC[0] + '\n' + wrongC[0] + '\n' +
   extract('_graphemes') + extract('normDiacritics') + extract('_charEq') + extract('_alignChars') +
-  extract('stripFuri') + extract('typedDiffHtml') +
+  extract('_furiParts') + extract('stripFuri') + extract('typedDiffHtml') +
   "\nfunction escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}" +
   "\nfunction t(k){return k;}" +
   '\nreturn { _graphemes, _alignChars, typedDiffHtml };')();

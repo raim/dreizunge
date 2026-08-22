@@ -42,7 +42,7 @@ function body(name) {
 // problem while reporting "all accounted for" is worse than none.
 {
   const inPrompts = Object.keys(prompts).filter(k => /\{story\}/.test(JSON.stringify(prompts[k]))).sort();
-  assert.deepStrictEqual(inPrompts, ['comprehension', 'synonyms', 'tutor', 'vocabFromText', 'wordForms'],
+  assert.deepStrictEqual(inPrompts, ['comprehension', 'inflections', 'synonyms', 'tutor', 'vocabFromText', 'wordForms'],
     'the set of prompts.json entries embedding the FULL story has changed. A new one must either ' +
     'size num_ctx (see generateSynonyms) or cap the text (see the standard vocab branch, which ' +
     'slices to 1200 chars) — then add it here.\n  found: ' + inPrompts.join(', '));
@@ -65,7 +65,7 @@ function body(name) {
 
 // ── 2. Every full-story lesson generator sizes num_ctx ──────────────────────
 {
-  for (const fn of ['generateWordForms', 'generateSynonyms', 'generateComprehension', 'generateOneLesson']) {
+  for (const fn of ['generateWordForms', 'generateInflections', 'generateSynonyms', 'generateComprehension', 'generateOneLesson']) {
     const src = body(fn);
     assert.ok(/callLLMLesson\(/.test(src), fn + ' calls the lesson model');
     assert.ok(/ctxTokens:/.test(src),

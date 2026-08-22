@@ -1,33 +1,45 @@
-# Session prompt — written at the `v82_b` cut
+# Session prompt — written at the `v82_c` cut
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v82_a.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v82_b.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v82_c`, `v82_d`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v82_d`, `v82_e`, …) unless a future session has a good reason to switch to
 `v83_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v82_b`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v82_c`** cut.
 
-**`v82_b`, in brief** (full write-up in `roadmap_v82.md`): a batch of five user-reported UI items
-sent together — the progress-card and question-card story panels unified into one real design
-(chapter title instead of a generic caption, both now a collapsible `<details>`), the old single
-"🌐 Original/Translation" text toggle replaced by two flag buttons across all FOUR places it
-existed, the library's "Generate new" button fixed to size-and-center on its own content, and the
-storyline footer's orphaned 💬 icon hidden by default everywhere it lives (only shown when there is
-an actual no-voice warning) — plus three same-session follow-ups (button centering, confirming the
-button's i18n wiring and removing a vestigial dead attribute found while checking).
+**`v82_c`, in brief** (full write-up in `roadmap_v82.md`): a new lesson type, `inflections` —
+closes the `v80_f` coverage gap (36.4% of taught words absent from the story in any form) by
+scanning the ALREADY-GENERATED story for inflected surface forms and building two MCQs per word
+(lemma, grammatical form), registering in `_storyWordSources` so the words become highlighted and
+tappable — without touching story generation or the standard vocab lesson's own dictionary-form
+teaching. Full registry sweep mirroring `word_forms` everywhere it's wired in.
 
-**⚠️ The significant part of this release**: while measuring item #1–2, the user reported (with a
-screenshot) that two fully-solved vocabulary words showed red and were untappable on the progress
-card. Root cause, reproduced against the user's own real saved data before any code changed: the
-`v78_k` split-token rule (a multi-word vocab entry like "das Land" also marks its bare noun "Land"
-where the story shows only the noun) was taught to the OLD two-tier solved-set, but never to the
-NEWER three-state colour lookup (`v80_r`) or to the tap resolvers — so a split token's own key was
-never a key those maps actually held, and every solved article+noun vocab word silently defaulted
-to red/untappable the moment the story showed the bare noun (the common case). Fixed with the SAME
-rule already established for the solved-set, not a new one — see `roadmap_v82.md`'s `v82_b` entry
-for the full mechanism, the fix, and how it was verified against the actual reported data both
-offline and live in the running server.
+**Three follow-ups, each a real find, not busywork:**
+1. **A story-panel alignment gap** — the topic-detail screen's `#story-body` panel was the one
+   place `_storyWordSources` never reached; it read only `L.vocab`, gated on lesson COMPLETION
+   (pre-`v74_n` behaviour the other three panels had already moved past). Fixed, with a real
+   null-safety regression caught and fixed along the way.
+2. **A Japanese-specific matching bug** — `word_forms`/`inflections`' word-boundary check assumes a
+   spaced script; Japanese has none, so a genuinely correct surface form could never pass unless it
+   touched punctuation. Fixed and **live-tested against a real Japanese story** — 4 valid items, all
+   genuinely mid-run, verified tappable end-to-end in the browser.
+3. **A furigana pipeline that turned out to be nearly nonfunctional** — 11 of 12 LLM-generated
+   Japanese stories in the corpus have no working furigana. Two separate fixes, both A/B-tested
+   against the live default model: the generation prompt (measured 8/9 → 9/9 correct on a real
+   reference text), and — found DURING that test — a render-side defect where the model attaches a
+   KANJI spelling backwards onto a word it already knows the kanji for, which the prompt fix alone
+   could not and should not have tried to fully suppress. Fixed by checking that a furigana READING
+   is pure kana, not by narrowing which bases can carry one (which would have broken 17 legitimate
+   existing annotations).
+
+**⚠️ A near-miss on user data, not a loss, but a workflow lesson worth carrying forward**: this dev
+workflow (mutate `lessons.json` through a running server, restart the server to pick up code
+changes) can silently overwrite a concurrent edit, because the server holds the whole array in
+memory and never re-reads from disk except at startup. It happened once this session (the user's own
+browser edits on the Scheißland topic got clobbered by a stale restart) and was caught and fixed —
+by the user themselves, via `b321857`, before this session even noticed. **Restart-then-verify
+against the live API before any further mutating call** is the habit this earned, not a one-off.
 
 ## This is a new BASE LINE, cut from `v81` at `v82_a`
 
@@ -65,15 +77,16 @@ closing `PLAN §C4` — see `roadmap_v81.md`'s own `v81_ad` entry for the full w
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 243 checks
-node test/run.js --quick                  → expect 217
+node test/run.js                          → expect 246 checks
+node test/run.js --quick                  → expect 220
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Corpus at this cut: **323 topics, 91 storylines, 33 languages, 625 `en` keys** (unchanged — this
-release touched no `lessons.json`/`languages.json`/`ui.json` content).
-`APP_VERSION = 'v82_b'`.
+Corpus at this cut: **323 topics, 91 storylines, 33 languages, 632 `en` keys** (`v82_c` added 7 new
+`en`-only keys for the `inflections` lesson type; not yet translated — needs the offline translate
+pass before those languages catch up).
+`APP_VERSION = 'v82_c'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -122,6 +135,15 @@ is a materially lower bar. Needs a browser pass, not a code change.
 
 ## 3. BUILDABLE NOW, no ruling needed
 
+- **Difficulty-tiered furigana density is dead code, found at `v82_c`.** `prompts.json` still holds
+  `story.furiganaNote1/2/3` (beginner: annotate every kanji without exception / standard / advanced:
+  only rare kanji) from a ~v40-era design where `sysStory` took a `difficulty` parameter and selected
+  between them. The CURRENT `sysStory(lang, isContinuation, wordCount, dialect, writingStyle, script)`
+  has no `difficulty` parameter at all and always uses the flat fallback (`furiganaNote`, fixed this
+  session). Flagged, not restored — a real feature regression, but restoring it is a scoped, separate
+  piece of work, not a fix. If picked up: check whether `furiganaNote1/2/3`'s OWN wording needs the
+  same "mandatory for the whole story, worked example" treatment `furiganaNote` just got, since they
+  share its pre-fix weakness.
 - **`PLAN §7.0` CP1, canonical text + report-only analysis records** — the first buildable slice of
   the accepted parallel curriculum pipeline. It defines stable chapter/sentence/span/token IDs and
   provenance, but must not change existing lessons, player, learner progress, or publishing. See the
@@ -142,8 +164,12 @@ is a materially lower bar. Needs a browser pass, not a code change.
   left unenforced because prefix-matching is mild morphology. Reported by
   `probe_word_forms_defects_v80g.js`.
 - **`e2e-lesson-edit-roundtrip` flakes inside the FULL suite, still unfixed.** Last seen: 1 of 235 on
-  a first full-suite run, clean on immediate re-run and standalone. Nothing to do with UI work — pure
-  server-side lesson editing, likely a port/teardown race under load. Reproduce with several
+  a first full-suite run, clean on immediate re-run and standalone. Reproduced again at `v82_c`
+  purely by adding 3 more field-edit cases for `inflections` (no logic change to the test's own
+  timing-sensitive block): baseline 5/20 standalone runs failed BEFORE those cases were added, 3/20
+  after — same order of magnitude, confirming the flake is pre-existing and load-shaped, not
+  introduced by the new cases. Nothing to do with UI work — pure server-side lesson editing, likely a
+  port/teardown race under load. Reproduce with several
   consecutive `node test/run.js` (not `--quick`) before assuming a fix worked, and before blaming any
   future session's change.
 

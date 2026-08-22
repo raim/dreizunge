@@ -13,7 +13,7 @@ function extract(name){
   return html.slice(at, i);
 }
 const constLine = html.match(/const _CE_TYPE_LABEL = \{[^}]*\};/)[0];
-const fns = ['escHtml','stripFuri','ehTokenize','ehLcsOps','_ceEhDiff','_ceLessonMeta',
+const fns = ['escHtml','_furiParts','stripFuri','ehTokenize','ehLcsOps','_ceEhDiff','_ceLessonMeta',
   '_ceIndexes','_ceSlDoc','_ceResolveDocs','_ceChapterParts','_ceRenderMarkdown','_ceRenderHtml','_clientBuildExport'];
 const src = constLine + '\n' + fns.map(extract).join('\n') + '\nreturn { _clientBuildExport };';
 const { _clientBuildExport } = new Function(src)();

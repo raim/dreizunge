@@ -106548,6 +106548,118 @@
               ]
             }
           ]
+        },
+        {
+          "difficulty": 2,
+          "id": "ls_1787397040392",
+          "type": "inflections",
+          "title": "Japanese Verb Inflections",
+          "desc": "Practice identifying verb forms in context.",
+          "icon": "📚",
+          "items": [
+            {
+              "sentence": "英語の先生は日本語が下手で、ここに長く住んでいるにもかかわらず、私たちの文化や言葉の奥深さを説明する必要がある。",
+              "surfaceForm": "住んでいる",
+              "translation": "The English teacher is bad at Japanese, and despite having lived here for a long time, they need to explain the depth of our culture and language.",
+              "lemma": "住む",
+              "lemmaChoices": [
+                "住む",
+                "住ん",
+                "住んで",
+                "住んだ"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "present progressive (te-form + iru)",
+              "formChoices": [
+                "present progressive (te-form + iru)",
+                "past tense",
+                "negative",
+                "imperative"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "'Sumondeiru' is the present progressive form of 'sumu' (to live), indicating an ongoing state."
+            },
+            {
+              "sentence": "しかし、今日は少し違った。",
+              "surfaceForm": "違った",
+              "translation": "However, today was a little different.",
+              "lemma": "違う",
+              "lemmaChoices": [
+                "違う",
+                "違い",
+                "違っ",
+                "異な"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "past tense (ta-form)",
+              "formChoices": [
+                "past tense (ta-form)",
+                "present tense",
+                "negative",
+                "conditional"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "'Chigatta' is the past tense form of 'chigau' (to be different)."
+            },
+            {
+              "sentence": "先生はいつも通り、笑顔で教室に入ってきた。",
+              "surfaceForm": "入ってきた",
+              "translation": "The teacher entered the classroom with a smile, as usual.",
+              "lemma": "入る",
+              "lemmaChoices": [
+                "入る",
+                "入り",
+                "入って",
+                "入った"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "past tense with directional auxiliary (te-form + kita)",
+              "formChoices": [
+                "past tense with directional auxiliary (te-form + kita)",
+                "present tense",
+                "negative",
+                "volitional"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "'Hairatte kita' combines the te-form of 'hairu' (to enter) with 'kita' (came), indicating movement towards the speaker."
+            },
+            {
+              "sentence": "生徒たちが笑い声を漏らすと、先生は少し困った表情をした。",
+              "surfaceForm": "した",
+              "translation": "When the students let out a laugh, the teacher made a slightly troubled expression.",
+              "lemma": "する",
+              "lemmaChoices": [
+                "する",
+                "し",
+                "して",
+                "しない"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "past tense",
+              "formChoices": [
+                "past tense",
+                "present tense",
+                "negative",
+                "conditional"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "'Shita' is the past tense form of 'suru' (to do/make), used here in the compound verb 'shita' (made a face)."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 2,
+            "valid": 4,
+            "rejected": 1,
+            "rejectReasons": {
+              "lemma not found among its own lemmaChoices": 1
+            },
+            "promptTokens": 3218,
+            "completionTokens": 2773,
+            "ms": 632751,
+            "at": "2026-08-22T11:10:40.392Z"
+          }
         }
       ],
       "generationStats": {
@@ -106555,8 +106667,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 1405,
-        "totalCompletionTokens": 801,
+        "totalPromptTokens": 4623,
+        "totalCompletionTokens": 3574,
         "lessons": [
           {
             "lessonNum": 1,
@@ -106570,10 +106682,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "add_lesson": 5991
+        }
       },
       "generatedAt": "2026-06-10T13:33:03.492Z",
-      "updatedAt": "2026-06-10T13:38:52.409Z",
+      "updatedAt": "2026-08-22T11:10:40.392Z",
       "id": "tp_2072510715",
       "continuedFromId": null,
       "storyMeta": {

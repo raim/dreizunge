@@ -124,7 +124,7 @@ const GOOD = { q: 'Warum geht Anna weg?', choices: ['Sie hat Angst', 'Sie ist m�
 // 'standard' — a dead menu entry. Every clamp on the path must name it.
 {
   assert.ok(/VALID_FORMATS=new Set\(\[[^\]]*'comprehension'/.test(html), 'client clamp accepts it');
-  assert.strictEqual((server.match(/'word_forms','comprehension'\]\.includes\(lessonFormat\)/g) || []).length, 2,
+  assert.strictEqual((server.match(/'word_forms','inflections','comprehension'\]\.includes\(lessonFormat\)/g) || []).length, 2,
     'BOTH server routes accept it — one of the two was the v68.1 bug');
   assert.ok(/lessonFormat === 'comprehension' \? \(\) => generateComprehension\(/.test(server), 'the route dispatches to it');
   assert.ok(/comprehension: \(c\) => generateComprehension\(/.test(server), 'so does the add-lesson registry');

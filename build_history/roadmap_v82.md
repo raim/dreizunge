@@ -1666,6 +1666,109 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v82 LINE
 
+### `v82_c` — new lesson type `inflections`, a story-panel alignment fix found along the way, and a Japanese-specific bug hunt that reached all the way into a live model call
+
+**Shipped by: Claude Code.** One continuous arc: a new lesson type the user asked for after a bug
+report, a follow-up alignment question that turned up a real defect, and a design discussion
+("which languages would this work for? Japanese wouldn't, could we fix that?") that turned into
+two separate, verified fixes.
+
+**1. New lesson type `inflections`.** Closes the `v80_f` measurement (36.4% of taught words absent
+from the story in any form) WITHOUT touching story generation or the standard vocab lesson's
+dictionary-form teaching — user's explicit ruling: "but then we would never teach the lemma form,
+only via specialized lesson types?" Mechanism: scan the ALREADY-GENERATED story for words appearing
+in an inflected/derived surface form, and build TWO MCQs per word — "what is the lemma?" and "what
+grammatical form is this?" — with the model supplying BOTH correct answers AND distractors, no
+hardcoded grammar taxonomy in the app (same "model-declared, not app-authored" precedent as `PLAN
+§9b` ruling D1). An `explanation` field reuses the `word_forms` feedback convention. **Registers in
+`_storyWordSources`** (user: "yes it should register") — pushing only `surfaceForm`, never the
+lemma/form distractor choices, since those are often not real words present in the story at all.
+Full registry sweep mirroring `word_forms` everywhere it's registered: `ADD_LESSON_GENERATORS`,
+`ARC_LESSON_TYPES`, both format-clamp whitelists, `_DIALECT_BLOCKED_FMTS`, QC dispatch,
+`LESSON_TYPE_META`, `_ITEM_ARRAYS`, `_qidCanonical`, the editor branch + choice-add/delete pair, the
+per-chapter and storyline-level add-lesson menus, the export view's block builder and both render
+formats. Deliberately did NOT add it to `all_types`'s bundled extra-lesson list — unlike the other
+registries, that one changes runtime generation cost on every "all types" run, a product call the
+session flagged rather than made unilaterally. 7 new `en`-only `ui.json` keys.
+
+**2. Story-panel alignment, found while answering the user's follow-up question.** `renderStoryText`
+(the topic-detail screen's own collapsible `#story-body`) turned out to be the one story panel
+`_storyWordSources` never reached — it read `L.vocab` alone, gated even that on the owning lesson
+being marked COMPLETE. Both were pre-`v74_n` behaviour: that ruling was explicit the mark means
+"something from your vocabulary occurs here," not "you have learned this word," so the completion
+gate was already the thing it argued against, just never revisited on this one panel. Now aligned
+with the other three panels (`_renderSavedStory`, `_renderChainStory`, `_storyBodyHtml`): every
+word-bearing source lights up, unconditional on completion, with the solved subset in the stronger
+shade via `_solvedTargetWords`/`_solvedExtraWords`. Still no tap here — `v80_t`'s rule that tapping
+needs an active run to jump into, which this read-only panel has none of, holds. Caught a real
+null-safety regression while removing the old completion filter (it had incidentally also guarded
+against a null lesson entry) — fixed with an explicit `.filter(Boolean)`, covered by the new test's
+malformed-data case.
+
+**3. Unspaced-script whole-word matching — the Japanese generation gap.** Asked which languages the
+new prompt would give meaningful results for, and whether a similar prompt could work for languages
+where it wouldn't (Japanese, named by the user): both `validateInflectionsItems` and
+`validateWordFormsItems`'s SALVAGE-2 auto-blank shared a word-boundary regex
+(`(^|[^\p{L}\p{N}])surfaceForm(?=[^\p{L}\p{N}]|$)`) that assumes a SPACED script — Japanese has no
+whitespace between words, so a genuinely correct `surfaceForm` sitting between two other kana/kanji
+characters has a LETTER on both sides and can never satisfy the boundary, however right the model
+was. Not a new bug — `word_forms` already had it, `inflections` inherited it by faithfully mirroring
+that generator. Fixed with `UNSPACED_SCRIPTS_RE` (server.js), byte-identical to the client's
+`_UNSPACED_SCRIPTS` and parity-tested — the SAME carve-out `_highlightVocabHtml` already established
+for story highlighting (`v73_d`/`v78_k`), applied here to the validators. **Live-tested against a
+real Japanese story** (`tp_2072510715`, ja→en): 4 valid items, every one of them a genuinely mid-run
+surface form with no adjacent punctuation on at least one side — exactly the shape the old validator
+could never have accepted. Verified end-to-end in the browser: the story panel highlights `住んでいる`
+(fully mid-sentence), tapping it opens a real exercise card with the correct answer among shuffled
+choices.
+
+**4. Furigana — two separate, verified fixes, not one.** Asked to check whether an existing Japanese
+storyline had furigana; it didn't, and neither did 11 of 12 LLM-generated Japanese stories in the
+whole corpus (the 13th, a real furigana example, turned out to be user-pasted, not model-generated).
+The recurring artifact — a single `。[にほんご]` bracket appended to the very end of three unrelated
+stories — is the prompt's OWN worked example (`日本語[にほんご]`) being echoed back rather than applied
+throughout. Also found, unused since ~v40: three difficulty-tiered variants
+(`furiganaNote1/2/3`, beginner/standard/advanced density) that `sysStory` was once wired to select by
+difficulty and no longer is — flagged, not restored; out of scope for this fix.
+  - **(a) Prompt fix** (`prompts.json`'s `story.furiganaNote`): now explicit that annotation is
+    mandatory for the WHOLE story, every occurrence not just the first, with a worked full-sentence
+    example. **A/B tested against the live default model** (qwen3.6:35b-a3b) on a real reference text
+    (`texts/f0094e-marui-v4.md`, with a known-correct bracket-notation answer to grade against): old
+    wording 8/9 correct kanji-run annotations with one wrong-scope error, new wording 9/9 with none.
+  - **(b) Render-side fix, found DURING that A/B test**: the model reliably attaches a KANJI SPELLING
+    in brackets after a word it already knows the kanji for — `ぼく[僕]`, `ボール[球]` — backwards from
+    what a reading is, and the prompt fix alone did not stop it (widened it to katakana, if anything).
+    `furiHtml`/`applyFurigana`/`stripFuri` were three independently duplicated regex pairs, each
+    checking only that the BASE before a bracket is kanji/katakana — never that the READING inside it
+    is actually kana. Unified into one `_furiParts` definition that checks both: a genuine reading is
+    PURE kana, never kanji, regardless of what the base is. Narrowing the base class alone (the
+    session's first instinct) would have silently broken 17 legitimate `ボール[ぼーる]` pairs already in
+    the corpus — checking the reading's own script is what actually discriminates the two cases without
+    touching them. Verified live in the browser: `ボール[ぼーる]` still renders as ruby, `ボール[球]` and
+    `ぼく[僕]` are correctly stripped to their bare base.
+
+**⚠️ A near-miss on user data, resolved before it became a loss.** The dev server holds `lessons.json`
+in memory and writes the WHOLE array back on any mutation — restarting it (done here to pick up code
+changes) resets that memory to whatever is on disk at that moment. The user had independently unhidden
+two lessons and deleted one on the Scheißland topic via their own browser session, mid-session; a
+server restart on this session's side loaded a stale pre-edit copy, and the user reported their edits
+"seem overwritten." By the time it was checked, the user had already re-applied and committed their
+fix (`b321857`) themselves. Confirmed the running server was still serving that stale copy (started
+before the fix commit) and restarted it fresh before any further mutating call, verified the live API
+now matches disk exactly. No data was actually lost, but the mechanism is real and will recur with
+this workflow — restart-then-verify before any further generation call is now the working habit,
+not just for this session.
+
+**Testing**: 246/220/0/0 full baseline green, all new/changed tests mutation-tested where the guard
+claims something specific (`unit-inflections`, `unit-unspaced-scripts-parity`,
+`unit-story-panel-alignment`, the new cases in `unit-furigana`). Fixed 4 other test files that broke
+when `furiHtml`/`stripFuri` gained the `_furiParts` dependency, and registered 3 new test files that
+had been written but never wired into `test/run.js` (a real gap, caught only by explicitly counting).
+`docs/index.html` rebuilt. Verified live throughout — real generations against the running server for
+both the German (Scheißland) and Japanese (Misguided Teacher) topics, tap-to-question in the browser
+for both, and the furigana fix checked directly against `furiHtml` in the live client, not only in
+the headless harness.
+
 ### `v82_b` — user UI-feedback batch: shared story panel, flag buttons, and a real word-highlight/tap regression found and fixed
 
 **Shipped by: Claude Code.** A batch of five user-reported items sent together, plus three same-

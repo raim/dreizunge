@@ -64,7 +64,7 @@ assert.ok(/_fmtSel\.querySelectorAll\('\.opt-ai-authoring'\)\.forEach/.test(html
   'openAddLesson hides the LLM-authoring options for dialect topics');
 // v71_l: comprehension joins the LLM-authoring set. Its generator runs in the base language and
 // would write standard-German questions about dialect text, so the same guarantee applies.
-assert.ok(/if \(_isDia && \['synonyms','word_forms','error_hunt','comprehension'\]\.includes\(_fmtSel\.value\)\) _fmtSel\.value = 'standard'/.test(html),
+assert.ok(/if \(_isDia && \['synonyms','word_forms','inflections','error_hunt','comprehension'\]\.includes\(_fmtSel\.value\)\) _fmtSel\.value = 'standard'/.test(html),
   'a blocked format resets to standard for dialect');
 assert.ok(/<option value="comprehension" class="opt-ai-authoring opt-needs-story"/.test(html),
   'comprehension is tagged as LLM-authoring, so the dialect gate above catches it');

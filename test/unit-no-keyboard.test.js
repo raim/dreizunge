@@ -34,7 +34,7 @@ console.log('  glyphTokens: grapheme clustering + round-trip (Arabic/Latin/Hangu
 
 // ── furigana seam: a Japanese target with furigana brackets must be stripped to its displayed
 // base BEFORE tokenizing, or the brackets/readings leak in as tiles (and reveal pronunciation).
-const stripFuri = new Function('APP', ext(html, 'stripFuri') + '\nreturn stripFuri;')({ showFurigana: false });
+const stripFuri = new Function('APP', ext(html, '_furiParts') + '\n' + ext(html, 'stripFuri') + '\nreturn stripFuri;')({ showFurigana: false });
 const jaTarget = '猫[ねこ]が好[す]き';
 const jaBase = stripFuri(jaTarget);
 assert.strictEqual(jaBase, '猫が好き', 'stripFuri reduces furigana target to its base');

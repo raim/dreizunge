@@ -26,6 +26,8 @@ const expected = {
   math_calc:         'tMathCalc',
   math_latex:        'tMathLatex',
   word_form:         'tWordForm',
+  inflection_lemma:  'tInflectionLemma',
+  inflection_form:   'tInflectionForm',
   syn_select:        'tSynSelect',
   mcq_article:       'tMcqArticle',
   mcq_plural:        'tMcqPlural',
