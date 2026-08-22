@@ -1,166 +1,221 @@
 // unit-story-translation-toggle.test.js
 // v60.6 — when a story has a stored source-language translation (the auto-translate pass's
-// storyTranslation), show a toggle in the "read story" panels to switch languages. Two panels:
-// the completion card (comp-story-*) and the landing saved-item story (sis-*). Contract:
-//   • The toggle button is HIDDEN unless storyTranslation exists.
-//   • Default view is the target-language story; toggling swaps to the translation and back.
-//   • The button labels the OTHER language (showing target → "Translation", source → "Original").
-//   • The completion card's 🔊 reads whichever language is shown.
+// storyTranslation), offer a way to switch languages in every "read story" panel.
+//
+// REWRITTEN (user follow-up): the single "🌐 Original/Translation" TEXT toggle button is replaced
+// everywhere by TWO FLAG buttons (`_storyFlagButtonsHtml`, shared by all four instances) — clicking
+// a flag SHOWS that language rather than blindly flipping. The same follow-up also unified the
+// progress card's and question card's panel FRAMES (both are now `<details>` with a chapter TITLE,
+// the flags, and the speak button in one summary row — previously the frames were deliberately
+// different, only the body was shared). Four instances, all covered here:
+//   1. the progress card (`comp-story-*`)
+//   2. the question-card panel (`ex-story-*`)
+//   3. the library's saved-item story reader (`sis-*`)
+//   4. the storyline's combined "read full story" panel (`cs*`)
+// Contract, per instance:
+//   • The flag pair is HIDDEN unless storyTranslation exists — nothing to switch to.
+//   • Default view is the target-language story; clicking a flag sets that language explicitly.
+//   • Clicking the ALREADY-active flag is a harmless no-op re-render, not a flip away from it.
+//   • Each flag's tooltip names its language, localized to APP.uiLang.
+//   • The progress card's and question panel's 🔊 read whichever language is shown.
 //   • Vocab highlighting applies only to the target story (a translation isn't the target lang).
-//   • The static build gets it for free (whole topics baked, storyTranslation preserved).
+//   • The static build gets it for free (whole topics baked, storyTranslation preserved) — same
+//     claim as before, unaffected by this rewrite.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
-const ROOT = path.join(__dirname, '..');
+const { loadClient, ROOT } = require('./lib-dom');
+
 const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const builder = fs.readFileSync(path.join(ROOT, 'build-static.js'), 'utf8');
+const LANGS_JSON = JSON.parse(fs.readFileSync(path.join(ROOT, 'languages.json'), 'utf8'));
+const uiJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
 
-function ext(src, name) {
-  let at = src.indexOf('\nfunction ' + name + '(') + 1;
-  if (at < 1) at = src.indexOf('\nasync function ' + name + '(') + 1;
-  assert.ok(at >= 1, `found ${name}`);
-  const b = src.indexOf('{', at);
-  let d = 0, i = b;
-  for (; i < src.length; i++) { const c = src[i]; if (c === '{') d++; else if (c === '}') { d--; if (!d) { i++; break; } } }
-  return src.slice(at, i);
+function seedLangs(C) {
+  C.run(`LANGS = ${JSON.stringify(LANGS_JSON)}; UI_STRINGS = ${JSON.stringify(uiJson.en)}; APP.uiLang = 'en'; true;`);
 }
 
-// DOM stub factory.
-function makeDoc() {
-  const els = {};
-  const mk = id => els[id] || (els[id] = {
-    style: {}, dataset: {},
-    setAttribute(k, v) { this['_a_' + k] = v; }, getAttribute(k) { return this['_a_' + k]; },
-    get textContent() { return this._t; }, set textContent(v) { this._t = v; },
-    get innerHTML() { return this._h; }, set innerHTML(v) { this._h = v; },
-    classList: { contains: () => false, toggle: () => {} },
-  });
-  return { getElementById: mk, _els: els };
-}
-
-// ── 1. Completion card toggle (behavioral) ───────────────────────────────────
+// ── 1. _storyFlagButtonsHtml itself — the shared primitive ─────────────────────────────────────
 {
-  const doc = makeDoc();
-  const APP = { lang: 'de', _compStoryLang: 'target',
-    lessonData: { story: 'ZIEL story', storyTranslation: 'SOURCE translation', lang: 'it', srcLang: 'de' } };
-  const t = k => ({ 'story.show_translation': 'Translation', 'story.show_original': 'Original' }[k] || k);
-  // v71_s: toggleCompStoryLang re-renders against the STORY-UNLOCK gate (storyUnlocked), not full
-  // chapter completion — the story is readable before the comprehension lesson has been played.
-  const { _renderCompStory, toggleCompStoryLang } = new Function('document', 'APP', 't', 'setComplete',
-    'storyUnlocked',
-    ext(html, '_renderCompStory') + '\n' + ext(html, 'toggleCompStoryLang') +
-    '\nreturn { _renderCompStory, toggleCompStoryLang };')(doc, APP, t, () => true, () => true);
+  const C = loadClient({ quiet: true });
+  seedLangs(C);
 
-  _renderCompStory(true);
-  assert.strictEqual(doc.getElementById('comp-story-text').textContent, 'ZIEL story', 'defaults to the target story');
-  assert.strictEqual(doc.getElementById('comp-story-xlate').style.display, '', 'toggle visible when a translation exists');
-  assert.strictEqual(doc.getElementById('comp-story-xlate').textContent, 'Translation', 'button offers the translation first');
+  const hidden = C.run(`_storyFlagButtonsHtml('it', 'de', false, 'target', l => 'x(' + l + ')')`);
+  assert.strictEqual(hidden, '', 'no translation -> nothing rendered, same as the button it replaces');
 
-  toggleCompStoryLang();
-  assert.strictEqual(doc.getElementById('comp-story-text').textContent, 'SOURCE translation', 'toggles to the translation');
-  assert.strictEqual(doc.getElementById('comp-story-xlate').textContent, 'Original', 'button now offers the original');
-  assert.ok(doc.getElementById('comp-story-spk').getAttribute('onclick').includes('storyTranslation'),
+  const html2 = C.run(`_storyFlagButtonsHtml('it', 'de', true, 'target', l => 'setLang(\\'' + l + '\\')')`);
+  assert.ok(html2.includes('setLang(\'target\')') && html2.includes('setLang(\'source\')'),
+    'both flags are wired via the SAME callback, one per language');
+  assert.ok(/🇮🇹/.test(html2) && /🇩🇪/.test(html2), 'the target and source flags themselves render');
+  assert.ok(/title="Italian"/.test(html2) && /title="German"/.test(html2),
+    'each flag\'s tooltip names its language (localized, falls back to LANGS[].name here)');
+
+  console.log('  _storyFlagButtonsHtml: hidden without a translation, wired + labeled with both flags: OK');
+}
+
+// Mutation check: prove the "hidden without a translation" claim can fail.
+{
+  const from = 'function _storyFlagButtonsHtml(targetLang, srcLang, hasTranslation, current, onClickFor) {\n  if (!hasTranslation) return \'\';';
+  assert.ok(html.includes(from), 'mutation anchor found');
+  const mutated = html.replace(from, from.replace('if (!hasTranslation) return \'\';', '// guard removed'));
+  const C = loadClient({ quiet: true, file: (() => {
+    const p = path.join(ROOT, 'test', '.tmp-mutated-flags.html');
+    fs.writeFileSync(p, mutated);
+    return p;
+  })() });
+  seedLangs(C);
+  const got = C.run(`_storyFlagButtonsHtml('it', 'de', false, 'target', l => l)`);
+  assert.notStrictEqual(got, '', 'THE MUTATION: removing the hasTranslation guard must produce non-empty output');
+  fs.unlinkSync(path.join(ROOT, 'test', '.tmp-mutated-flags.html'));
+  console.log('  mutation check: removing the no-translation guard breaks the hidden-when-absent claim: OK');
+}
+
+// ── 2. Progress card: title, flags, collapse frame, 🔊 follows the shown language ──────────────
+{
+  const C = loadClient({ quiet: true });
+  seedLangs(C);
+  C.run(`
+    APP.lang = 'it';
+    APP.lessonData = { topic: 'La Selezione Naturale', story: 'ZIEL story', storyTranslation: 'SOURCE translation', lang: 'it', srcLang: 'de', lessons: [] };
+    APP._compStoryLang = 'target';
+    true;`);
+  C.run(`_renderCompStory(); true;`);
+
+  assert.strictEqual(C.run(`document.getElementById('comp-story-panel-lbl').textContent`), 'La Selezione Naturale',
+    'THE ACCEPTANCE CLAIM: the panel title is the CHAPTER title, not a generic caption');
+  assert.strictEqual(C.run(`document.getElementById('comp-story-text').textContent`), 'ZIEL story',
+    'defaults to the target story');
+  assert.ok(C.run(`document.getElementById('comp-story-flags').innerHTML`).includes('🇮🇹'),
+    'flags render into #comp-story-flags when a translation exists');
+  // NOT asserted here: tagName === 'DETAILS' / .open === true. lib-dom never parses STATIC markup
+  // outside the <script> block (INTERNALS.md §5) — #comp-story-panel is static, so getElementById()
+  // hands back a generic stub div, not the real <details>. The <details open> claim is a SOURCE-TEXT
+  // check instead, in the "markup + static parity" section below, where it belongs.
+
+  C.run(`toggleCompStoryLang('source'); true;`);
+  assert.strictEqual(C.run(`document.getElementById('comp-story-text').textContent`), 'SOURCE translation',
+    'setting "source" shows the translation');
+  assert.ok(C.run(`document.getElementById('comp-story-spk').getAttribute('onclick')`).includes('storyTranslation'),
     'the 🔊 reads the translation while it is shown');
 
-  toggleCompStoryLang();
-  assert.strictEqual(doc.getElementById('comp-story-text').textContent, 'ZIEL story', 'toggles back to the target');
+  // Clicking the ALREADY-active flag is a no-op re-set, not a flip.
+  C.run(`toggleCompStoryLang('source'); true;`);
+  assert.strictEqual(C.run(`document.getElementById('comp-story-text').textContent`), 'SOURCE translation',
+    'THE ACCEPTANCE CLAIM: re-setting the already-active language does not flip away from it');
 
-  // No translation → toggle hidden, story still shown.
-  APP.lessonData.storyTranslation = ''; APP._compStoryLang = 'target';
-  _renderCompStory(true);
-  assert.strictEqual(doc.getElementById('comp-story-xlate').style.display, 'none', 'no translation → toggle hidden');
-  assert.strictEqual(doc.getElementById('comp-story-text').textContent, 'ZIEL story', 'story still shown without a translation');
+  C.run(`toggleCompStoryLang('target'); true;`);
+  assert.strictEqual(C.run(`document.getElementById('comp-story-text').textContent`), 'ZIEL story',
+    'setting "target" restores the original');
 
-  // Incomplete (teacher peek) truncates BOTH languages the same way.
-  APP.lessonData.storyTranslation = 'x'.repeat(300); APP._compStoryLang = 'source';
-  _renderCompStory(false);
-  // ⚠️ WITHDRAWN at v80_w — no preview any more; the progress card shows the whole story
-  // whether or not the chapter is finished (T0: keep attention on the text throughout).
-  assert.ok(!doc.getElementById('comp-story-text').textContent.endsWith('…'),
-    'the shown language is NOT truncated (v80_w, superseding the 200-char preview)');
+  // No translation -> flags empty, story still shown.
+  C.run(`APP.lessonData.storyTranslation = ''; APP._compStoryLang = 'target'; _renderCompStory(); true;`);
+  assert.strictEqual(C.run(`document.getElementById('comp-story-flags').innerHTML`), '',
+    'no translation -> no flags rendered');
+  assert.strictEqual(C.run(`document.getElementById('comp-story-text').textContent`), 'ZIEL story',
+    'story still shown without a translation');
 }
-console.log('  completion card: default target, toggle to translation, 🔊 follows, hidden when absent: OK');
+console.log('  progress card: chapter title, collapsible frame, flags set (not flip), 🔊 follows: OK');
 
-// ── 2. Saved-item card toggle (behavioral) ───────────────────────────────────
+// ── 3. Question-card panel: same frame, same flags, title falls back sanely ────────────────────
 {
-  const doc = makeDoc();
-  const t = k => ({ 'story.show_translation': 'Translation', 'story.show_original': 'Original' }[k] || k);
-  const furiHtml = s => s;                       // identity for the test
-  const _highlightVocabHtml = (s) => '[HL]' + s; // marker so we can detect highlighting
-  const cache = {};
-  const env = new Function('document', 't', 'furiHtml', '_highlightVocabHtml', '_savedStoryCache',
-    ext(html, '_renderSavedStory') + '\n' + ext(html, 'toggleSavedStoryLang') +
-    '\nreturn { _renderSavedStory, toggleSavedStoryLang };');
-  const { _renderSavedStory, toggleSavedStoryLang } = env(doc, t, furiHtml, _highlightVocabHtml, cache);
+  const C = loadClient({ quiet: true });
+  seedLangs(C);
+  C.run(`
+    APP.lang = 'it';
+    APP.lessonData = { topic: 'La Selezione Naturale', story: 'ZIEL story', storyTranslation: 'SOURCE translation', lang: 'it', srcLang: 'de', lessons: [] };
+    APP._compStoryLang = 'target';
+    true;`);
+  const panelHtml = C.run(`_exStoryPanelHtml({ type: 'comprehension_mcq' })`);
+  assert.ok(panelHtml.startsWith('<details id="ex-story-panel" open'),
+    'THE ACCEPTANCE CLAIM: open by default, same as the progress card');
+  assert.ok(panelHtml.includes('La Selezione Naturale'),
+    'THE ACCEPTANCE CLAIM: the question panel ALSO shows the chapter title, not "The story"');
+  assert.ok(panelHtml.includes('🇮🇹') && panelHtml.includes('🇩🇪'), 'both flags render');
+  assert.ok(/<summary[^>]*>.*🇮🇹.*🇩🇪.*💬/s.test(panelHtml.replace(/\n/g, '')) || (
+    panelHtml.indexOf('</summary>') > panelHtml.indexOf('🇮🇹') &&
+    panelHtml.indexOf('</summary>') > panelHtml.indexOf('💬')
+  ), 'THE ACCEPTANCE CLAIM: title, flags, AND the speak button all sit inside the same <summary> row');
 
-  cache['x'] = { story: 'ZIEL', storyTranslation: 'SOURCE',
-    lessons: [{ vocab: [{ target: 'ZIEL' }] }] };
-  const body = doc.getElementById('sis-body-x'); body.dataset.storyLang = 'target';
-  _renderSavedStory('x');
-  assert.ok(doc.getElementById('sis-body-x').innerHTML.includes('ZIEL'), 'shows the target story');
-  assert.ok(doc.getElementById('sis-body-x').innerHTML.includes('[HL]'), 'target story gets vocab highlighting');
-  assert.strictEqual(doc.getElementById('sis-xlate-x').style.display, '', 'toggle visible with a translation');
-
-  toggleSavedStoryLang('x');
-  assert.ok(doc.getElementById('sis-body-x').innerHTML.includes('SOURCE'), 'toggles to the translation');
-  assert.ok(!doc.getElementById('sis-body-x').innerHTML.includes('[HL]'), 'translation is NOT vocab-highlighted (not the target language)');
-  assert.strictEqual(doc.getElementById('sis-xlate-x').textContent, 'Original', 'button offers the original');
-
-  // No translation → toggle hidden.
-  cache['y'] = { story: 'ONLY', storyTranslation: '', lessons: [] };
-  doc.getElementById('sis-body-y').dataset.storyLang = 'target';
-  _renderSavedStory('y');
-  assert.strictEqual(doc.getElementById('sis-xlate-y').style.display, 'none', 'no translation → toggle hidden');
+  // No topic title -> falls back to the old generic label rather than showing nothing.
+  const noTopic = C.run(`(function(){ const save = APP.lessonData.topic; APP.lessonData.topic = ''; const h = _exStoryPanelHtml({type:'comprehension_mcq'}); APP.lessonData.topic = save; return h; })()`);
+  assert.ok(noTopic.includes(uiJson.en['ex.comprehension.story']), 'a missing topic falls back to the old generic label');
 }
-console.log('  saved-item card: target-with-highlight, toggle to plain translation, hidden when absent: OK');
+console.log('  question-card panel: same frame as the progress card, title+flags+speech in one row: OK');
 
-// ── 3. Markup + static parity ─────────────────────────────────────────────────
+// ── 4. Saved-item card (library reader): flags, highlighting still target-only ─────────────────
 {
-  assert.ok(/id="comp-story-xlate"[^>]*onclick="toggleCompStoryLang\(\)"/.test(html), 'completion card has the toggle button');
-  assert.ok(/id="sis-xlate-\$\{sid\}"[^>]*onclick="event\.stopPropagation\(\);toggleSavedStoryLang\('\$\{sid\}'\)"/.test(html),
-    'saved-item card has the toggle button');
-  // The loader caches the whole loaded topic so the toggle needs no re-fetch.
-  const ts = ext(html, 'toggleSavedStory');
-  assert.ok(/_savedStoryCache\[id\] = d/.test(ts), 'toggleSavedStory caches the loaded topic for the toggle');
+  const C = loadClient({ quiet: true });
+  seedLangs(C);
+  C.run(`
+    _savedStoryCache['x'] = { story: 'ZIEL', storyTranslation: 'SOURCE', lang: 'it', srcLang: 'de',
+      lessons: [{ vocab: [{ target: 'ZIEL' }] }] };
+    document.getElementById('sis-body-x').dataset.storyLang = 'target';
+    _renderSavedStory('x');
+    true;`);
+  assert.ok(C.run(`document.getElementById('sis-body-x').innerHTML`).includes('ZIEL'), 'shows the target story');
+  assert.ok(C.run(`document.getElementById('sis-flags-x').innerHTML`).includes('🇮🇹'), 'flags render with a translation');
+
+  C.run(`toggleSavedStoryLang('x', 'source'); true;`);
+  assert.ok(C.run(`document.getElementById('sis-body-x').innerHTML`).includes('SOURCE'), 'setting "source" shows the translation');
+
+  // No translation -> flags empty.
+  C.run(`
+    _savedStoryCache['y'] = { story: 'ONLY', storyTranslation: '', lang: 'it', srcLang: 'de', lessons: [] };
+    document.getElementById('sis-body-y').dataset.storyLang = 'target';
+    _renderSavedStory('y');
+    true;`);
+  assert.strictEqual(C.run(`document.getElementById('sis-flags-y').innerHTML`), '', 'no translation -> no flags');
+}
+console.log('  saved-item card: flags render/hide correctly, set (not flip) the shown language: OK');
+
+// ── 5. Markup + static parity ───────────────────────────────────────────────────────────────────
+{
+  assert.ok(/<details id="comp-story-panel" open/.test(html), 'progress card panel is a <details open>');
+  assert.ok(/id="comp-story-flags"/.test(html), 'progress card has a flags mount point');
+  assert.ok(!/comp-story-xlate|ex-story-xlate|sis-xlate-|csxlate-/.test(html),
+    'THE REGRESSION: none of the four old text-toggle ids survive anywhere in the file');
+  // The loader still caches the whole loaded topic so the flags need no re-fetch.
+  const tssStart = html.indexOf('\nasync function toggleSavedStory(');
+  assert.ok(tssStart >= 0, 'toggleSavedStory found');
+  const savedStoryFn = html.slice(tssStart);
+  assert.ok(/_savedStoryCache\[id\] = d/.test(savedStoryFn.slice(0, savedStoryFn.indexOf('\n}'))),
+    'toggleSavedStory caches the loaded topic for the flags to use');
   // build-static bakes whole topics (spreads ...topic), so storyTranslation survives → static gets
   // the feature with no extra code. Assert the serializer doesn't drop it.
   assert.ok(/\{ \.\.\.topic, lessons: publicLessons \}/.test(builder) || /return topic;/.test(builder),
     'static serializer keeps whole topics (storyTranslation preserved)');
-  const ui = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
-  assert.ok(ui.en['story.show_translation'] && ui.en['story.show_original'], 'i18n keys present');
 }
-console.log('  markup + cache + static parity + i18n: OK');
+console.log('  markup: <details> frame, flags mount points, old toggle ids fully gone, static parity: OK');
 
-console.log('unit-story-translation-toggle: ALL PASSED');
-
-// ── v70_p: the storyline "read full story" panel gets the same toggle ────────
-// The results card could switch a chapter between target and source; the storyline's combined
-// full-story dropdown could not. Same contract, so it is tested against the same expectations.
+// ── 6. Storyline "read full story" panel gets the same flag treatment ──────────────────────────
 {
-  // This file is otherwise source-based; the toggle needs a live DOM to exercise.
-  const { loadClient } = require('./lib-dom');
   const C2 = loadClient({ quiet: true });
+  seedLangs(C2);
   const chapters = [
     { topic: 'Ch one', lang: 'it', srcLang: 'de', story: 'La selezione naturale.', storyTranslation: 'Die natürliche Selektion.', lessons: [] },
     { topic: 'Ch two', lang: 'it', srcLang: 'de', story: 'Le mutazioni.',          storyTranslation: 'Die Mutationen.',           lessons: [] },
   ];
   C2.run(`APP.lang='it'; APP.srcLang='de'; _chainStoryCache['ch1'] = ${JSON.stringify(chapters)}; true;`);
   const body = C2.document.getElementById('csbody-ch1');
-  const btn  = C2.document.getElementById('csxlate-ch1');
 
   C2.run(`_renderChainStory(document.getElementById('csbody-ch1'), _chainStoryCache['ch1'], 'ch1');`);
   assert.ok(/La selezione naturale/.test(body.innerHTML), 'target text renders by default');
   assert.ok(!/natürliche Selektion/.test(body.innerHTML), 'and not the translation');
-  assert.notStrictEqual(btn.style.display, 'none', 'the toggle is offered when a translation exists');
+  assert.ok(C2.document.getElementById('csflags-ch1').innerHTML.includes('🇮🇹'),
+    'the flags are offered when a translation exists (from the FIRST chapter\'s language pair)');
 
-  C2.run(`toggleChainStoryLang('ch1');`);
-  assert.ok(/natürliche Selektion/.test(body.innerHTML), 'toggling shows the translation');
+  C2.run(`toggleChainStoryLang('ch1', 'source');`);
+  assert.ok(/natürliche Selektion/.test(body.innerHTML), 'setting "source" shows the translation');
   assert.ok(/Die Mutationen/.test(body.innerHTML), 'for every chapter, not just the first');
   assert.ok(!/La selezione naturale/.test(body.innerHTML), 'and hides the original');
 
-  C2.run(`toggleChainStoryLang('ch1');`);
-  assert.ok(/La selezione naturale/.test(body.innerHTML), 'toggling back restores the original');
+  C2.run(`toggleChainStoryLang('ch1', 'source');`);
+  assert.ok(/natürliche Selektion/.test(body.innerHTML),
+    'THE ACCEPTANCE CLAIM: re-setting the already-active language does not flip back to target');
+
+  C2.run(`toggleChainStoryLang('ch1', 'target');`);
+  assert.ok(/La selezione naturale/.test(body.innerHTML), 'setting "target" restores the original');
 
   // A chapter with no translation falls back to its original rather than showing a gap.
   C2.run(`_chainStoryCache['ch2'] = [
@@ -172,13 +227,13 @@ console.log('unit-story-translation-toggle: ALL PASSED');
   assert.ok(/Eins\./.test(b2), 'the translated chapter shows its translation');
   assert.ok(/Due\./.test(b2), 'the untranslated chapter still shows its original');
 
-  // No translations at all → no toggle.
+  // No translations at all -> no flags.
   C2.run(`_chainStoryCache['ch3'] = [{ topic:'C', lang:'it', srcLang:'de', story:'Tre.', lessons:[] }];
     _renderChainStory(document.getElementById('csbody-ch3'), _chainStoryCache['ch3'], 'ch3');`);
-  assert.strictEqual(C2.document.getElementById('csxlate-ch3').style.display, 'none',
-    'no toggle when nothing is translated');
+  assert.strictEqual(C2.document.getElementById('csflags-ch3').innerHTML, '',
+    'no translation anywhere in the chain -> no flags');
 
-  // 🔊 reads whatever is shown — the results card behaves the same way.
+  // 🔊 reads whatever is shown — unaffected by the flag rewrite.
   const spoken = C2.run(`(function(){
     let got = null;
     const orig = globalThis.speakBodyText;
@@ -191,5 +246,7 @@ console.log('unit-story-translation-toggle: ALL PASSED');
   assert.ok(/natürliche Selektion/.test(spoken.text), 'the speaker reads the translation when shown');
   assert.strictEqual(spoken.lang, 'de', 'and uses the source language for it');
 
-  console.log('  v70_p: storyline full-story translation toggle + speaker: OK');
+  console.log('  storyline full-story panel: flags set per-chapter-pair, all-chapters, fallback, 🔊: OK');
 }
+
+console.log('unit-story-translation-toggle: ALL PASSED');

@@ -310,10 +310,13 @@ assert.ok(SIX_PICK,
   // than a tidy file — and if the text-focus direction is ever abandoned, `v77_p` is what to restore.
   assert.notStrictEqual(C.run(`document.getElementById('comp-story-panel').style.display`), 'none',
     'the story panel IS shown while the story is locked (v80_w, reversing v77_p)');
-  // What the unlock still governs: the caption, and the comprehension lessons.
+  // RE-ANCHORED (user follow-up, rule 29): the unlock/preview CAPTION this section documented —
+  // literally the "Vorschau der Geschichte" shape the user later reported as wrong — is gone. The
+  // panel now shows the chapter's own title regardless of lock state; what the unlock still governs
+  // is the comprehension-lesson gate alone, asserted right below.
   assert.strictEqual(C.run(`document.getElementById('comp-story-panel-lbl').textContent`),
-    C.run(`t('complete.story_preview')`),
-    'and it is captioned as a preview, not as an unlock — the unlock still means something');
+    C.run(`APP.lessonData.topic`),
+    'the panel is captioned with the CHAPTER TITLE, locked or not — no preview/unlock wording');
   assert.strictEqual(C.run(`_storyLockedLesson(APP.lessonData.lessons.find(function(L){ return L && L.type === 'comprehension'; }) || {type:'comprehension'}, APP.lessonData)`), true,
     'and a comprehension lesson is STILL locked — only the DISPLAY changed, not the gate');
 }

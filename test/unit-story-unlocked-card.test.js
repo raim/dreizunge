@@ -81,6 +81,7 @@ function renderCard({ teacher }) {
     unlocked: C.run(`storyUnlocked(APP.lessonData)`, 'u'),
     coverageLeft: C.run(`(typeof _firstCoverageShortLessonIdx === 'function') && _firstCoverageShortLessonIdx() >= 0`, 'c'),
     label: C.run(`(function(){ var e=document.getElementById('comp-story-panel-lbl'); return e ? e.textContent : ''; })()`, 'l'),
+    topic: topic.topic,
     next: vis('comp-next'), repeat: vis('comp-repeat'),
     drill: vis('comp-drill'), crossword: vis('comp-crossword'),
   };
@@ -90,7 +91,11 @@ function renderCard({ teacher }) {
   // Non-vacuity: the story must actually be unlocked, or "the card is quiet" is trivially true
   // because there is no story-unlocked card at all.
   assert.strictEqual(learner.unlocked, true, 'the fixture really does unlock the story');
-  assert.strictEqual(learner.label, 'read and understand the chapter', 'and the card says so');
+  // RE-ANCHORED (user follow-up, rule 29): the label is no longer an instruction string — it is
+  // the chapter's own title (same field #topic-name-big uses), regardless of lock state.
+  // `complete.story_unlocked` survives in ui.json (deliberately, per the project's convention of
+  // not pruning orphaned translations) but is no longer wired to this element.
+  assert.strictEqual(learner.label, learner.topic, 'and the card is captioned with the chapter title');
   assert.strictEqual(learner.next, 'shown', 'Next is offered');
   // v77_l (ruling 1): v74_l's hide-list is RETIRED. It used to hide drill/crossword — and Repeat
   // once coverage was complete — so that four routes back into practice would not argue against a

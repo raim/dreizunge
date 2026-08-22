@@ -147,10 +147,12 @@ const hl = (html, words, strong, states, asked) => C.run(`(function(){
   console.log('  the panel repaints after an answer, preserving its open state');
 }
 
-// ── 5e. The translate toggle, shared with the progress card ─────────────
-// v80_x, user request: the standardized story display gets the translate button "in the same style
+// ── 5e. The translate flags, shared with the progress card ──────────────
+// v80_x, user request: the standardized story display gets a translate control "in the same style
 // as previously present in the old progress card story field". It reuses `APP._compStoryLang` — the
 // SAME state the card uses — so the two screens cannot disagree about which language is showing.
+// RE-ANCHORED (later user follow-up, rule 29): the single text toggle became two flag buttons
+// (`_storyFlagButtonsHtml`) that SET the language rather than flip it — same underlying state.
 {
   const panel = (lang, xlate) => C.run(`(function(){
     APP.lessonData = { topic:'T', lang:'fr', srcLang:'de', story:'Le chat dort.',
@@ -160,23 +162,25 @@ const hl = (html, words, strong, states, asked) => C.run(`(function(){
     return _exStoryPanelHtml({ type:'mcq_source_target', target:'chat', correct:'chat' });
   })()`);
   const withXl = panel('target', 'Die Katze schlaeft.');
-  assert.ok(/id="ex-story-xlate"/.test(withXl), 'the toggle appears when a translation exists');
+  assert.ok(/class="story-flag-btns"/.test(withXl), 'the flags appear when a translation exists');
+  assert.ok(/toggleExStoryLang\('target'\)/.test(withXl) && /toggleExStoryLang\('source'\)/.test(withXl),
+    'each flag SETS its own language explicitly');
   assert.ok(/Le chat dort/.test(withXl), 'and the target story is shown by default');
 
   const src = panel('source', 'Die Katze schlaeft.');
-  assert.ok(/Katze schlaeft/.test(src), 'flipping to source shows the translation');
+  assert.ok(/Katze schlaeft/.test(src), 'setting "source" shows the translation');
   assert.ok(!/story-vocab-hl/.test(src),
     'and the translation is NOT highlighted — target words are not in a source text, so marking ' +
     'them there would match nothing or, worse, coincidental substrings');
 
-  assert.ok(!/ex-story-xlate/.test(panel('target', '')),
-    'no translation, no toggle — a control that leads nowhere is worse than none');
+  assert.ok(!/story-flag-btns/.test(panel('target', '')),
+    'no translation, no flags — a control that leads nowhere is worse than none');
 
   const src2 = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-  assert.ok(/function toggleExStoryLang\(\)/.test(src2), 'the panel has its own toggler');
+  assert.ok(/function toggleExStoryLang\(lang\)/.test(src2), 'the panel has its own setter');
   assert.ok(/toggleExStoryLang[\s\S]{0,400}APP\._compStoryLang/.test(src2),
-    'which flips the SAME state the progress card uses — one source of truth, not two');
-  console.log('  translate toggle present, flips language, shares state with the card');
+    'which sets the SAME state the progress card uses — one source of truth, not two');
+  console.log('  translate flags present, set the language explicitly, share state with the card');
 }
 
 // ── 6. The CSS for all four classes exists ───────────────────────────────

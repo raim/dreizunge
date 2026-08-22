@@ -489,19 +489,36 @@ assert.ok(FIX.n >= 1, 'the fixture word has at least one real question in a buil
       for (const t of store.topics) {
         if (!(t.lessons || []).some(L => L && L._hidden)) continue;
         const C2 = open(t, {});
+        // user-follow-up fix (this session): a vocab TARGET now also matches its own split tokens
+        // (_vocabTargetMatchesKey — "die Regierung" reaches a tap on bare "Regierung"), so an OPEN
+        // lesson's article+noun vocab entry can legitimately cover a word a hidden lesson ALSO
+        // teaches via a different field (.words/.verbs). The picker below must know that too, or it
+        // can flag a word as "hidden-only" that a real tap now correctly (and safely) resolves
+        // through the open lesson's vocab instead — not a gate failure, a stale fixture (rule 29).
         const w = C2.run(`(function(){
           var d = APP.lessonData;
           var openWords = {}, hidWords = [];
           (d.lessons||[]).forEach(function(L){
             if (!L) return;
-            var bag = [];
-            ((L.words)||[]).forEach(function(x){ if (x && x.base) bag.push(x.base); });
-            ((L.vocab)||[]).forEach(function(v){ if (v && v.target) bag.push(v.target); });
-            ((L.verbs)||[]).forEach(function(v){ if (v && v.infinitive) bag.push(v.infinitive); });
-            bag.forEach(function(x){
+            var plain = [], vocabTargets = [];
+            ((L.words)||[]).forEach(function(x){ if (x && x.base) plain.push(x.base); });
+            ((L.vocab)||[]).forEach(function(v){ if (v && v.target) vocabTargets.push(v.target); });
+            ((L.verbs)||[]).forEach(function(v){ if (v && v.infinitive) plain.push(v.infinitive); });
+            plain.forEach(function(x){
               var k = _hlKey(stripFuri(String(x)));
               if (!k) return;
               if (L._hidden) hidWords.push([k, x]); else openWords[k] = 1;
+            });
+            vocabTargets.forEach(function(x){
+              var k = _hlKey(stripFuri(String(x)));
+              if (!k) return;
+              if (L._hidden) { hidWords.push([k, x]); return; }
+              openWords[k] = 1;
+              // Same split-token equivalence _vocabTargetMatchesKey applies for a real tap.
+              String(x).trim().split(/\\s+/).filter(Boolean).forEach(function(t){
+                var tk = _hlKey(stripFuri(t));
+                if (tk) openWords[tk] = 1;
+              });
             });
           });
           for (var i = 0; i < hidWords.length; i++) {

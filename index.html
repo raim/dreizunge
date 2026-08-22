@@ -827,7 +827,18 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       </div>
     </div>
   </div>
-  <button type="button" class="gen-btn" id="lib-generate-new-btn" onclick="showGeneration()" style="margin-bottom:10px" data-i18n="lib.generate_new">✨ Generate new</button>
+  <!-- user follow-up: .gen-btn defaults to width:100% (right for #gen-btn, the actual generation
+       form's submit button, flex:1 in its own row) — this button is the LIBRARY's entry point,
+       sitting alone, and should size to its own content instead of stretching the panel. Scoped to
+       THIS instance only; the shared class is untouched. `display:block` + auto side margins center
+       it — a bare `width:auto` on an inline-block button leaves it stuck at the left edge, which was
+       the immediate follow-up (a button sized to its content still needs its OWN alignment rule).
+       i18n is real: `applyUIStrings()` has an explicit `_setText('lib-generate-new-btn',
+       t('lib.generate_new'))` call (this button predates the generic `.form-lbl[data-i18n]` sweep
+       and was always excluded from it, per that call's own comment) — the `data-i18n=` attribute
+       below never did anything and the sweep it would have needed is gone since v81_aa; removed as
+       a drive-by rather than left as a misleading no-op. -->
+  <button type="button" class="gen-btn" id="lib-generate-new-btn" onclick="showGeneration()" style="display:block;width:auto;margin:0 auto 10px">✨ Generate new</button>
 
   </div><!-- end landing-inner -->
 
@@ -1463,25 +1474,34 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
        old name promised "the story is unlocked", which was true in only some of them.
        §0c adds a genuinely distinct story-unlocked PAGE to the walk, and the two would have
        collided — so the panel is named for what it is and the old name is now free.
-       Note it is the whole bordered PANEL: `comp-story-panel-lbl` is the caption inside it, and
-       `comp-story-text` / `-spk` / `-xlate` are its children. -->
-  <div id="comp-story-panel" style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:var(--white)">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+       Note it is the whole bordered PANEL: `comp-story-panel-lbl` is the CHAPTER TITLE (user
+       follow-up: was a generic "Story preview"/"Story unlocked!" caption, now just the chapter's
+       own name, same field `#topic-name-big` already uses), and `comp-story-text` / `-spk` /
+       `comp-story-flags` are its children. Converted from a plain DIV to a DETAILS element (same
+       user follow-up — deliberately not spelled with angle brackets: `unit-screen-structure`'s
+       naive tag counter was fooled by exactly this shape of literal tag text inside a comment, once
+       already, per its own header). The collapse control is the browser's OWN SUMMARY disclosure
+       marker — the
+       SAME mechanism `_exStoryPanelHtml`'s question-card panel already uses, re-used rather than
+       re-implemented, not a second custom widget. `open` by default, matching the question panel's
+       own "never collapse by default" ruling (v80_u). -->
+  <details id="comp-story-panel" open style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:var(--white)">
+    <summary style="display:flex;align-items:center;gap:10px;margin-bottom:6px;cursor:pointer;outline:none">
       <span style="font-size:20px">📖</span>
-      <span style="font-size:13px;font-weight:900;color:var(--green-dark)" id="comp-story-panel-lbl">Story unlocked!</span>
-      <button class="spk-ico" id="comp-story-xlate" style="display:none;margin-left:auto;font-size:11px;font-weight:800;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Nunito,sans-serif" onclick="toggleCompStoryLang()"></button>
-      <button class="spk-ico" id="comp-story-spk" onclick="speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">💬</button>
-    </div>
+      <span style="font-size:15px;font-weight:900;color:var(--text)" id="comp-story-panel-lbl">Chapter</span>
+      <span id="comp-story-flags"></span>
+      <button class="spk-ico" id="comp-story-spk" onclick="event.stopPropagation();speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">💬</button>
+    </summary>
     <!-- v74_l: NOT italic, and larger. This panel is the reward for finishing the chapter and the
          thing the learner is meant to actually READ — a long italic run at 13px reads as a caption,
          which is what it looked like in the play-test screenshots. 15px upright, same line-height
          ratio. The story is in the TARGET language, often with diacritics or a non-Latin script,
          and italic synthesis mangles several of those. -->
-    <div id="comp-story-text" style="font-size:15px;color:var(--text);line-height:1.65"></div>
+    <div id="comp-story-text" style="font-size:15px;color:var(--text);line-height:1.65;margin-top:8px"></div>
     <!-- v74_m: the same paragraph rhythm .story-body has had since v39. Without it the <p>s this
          panel now emits would stack with no gap and read as one block again. -->
     <style>#comp-story-text p{margin:0 0 12px}#comp-story-text p:last-child{margin-bottom:0}</style>
-  </div>
+  </details>
   <div class="vocab-box" style="margin-top:18px"><div class="vocab-hdr" id="words-from-lbl">Words from this lesson</div><div id="comp-vocab" style="display:flex;flex-wrap:wrap;margin:-3px"></div></div>
   <!-- Below the text: the machinery. -->
   <!-- v80_z (user): the CHAPTER ICON row — one topicEmoji per chapter, at lesson-icon size,
@@ -1737,8 +1757,12 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
        #settings-modal as well, with an "overrule storyline source language" checkbox replacing
        what this footer used to do implicitly on every mid-story glance. The .tts-pill (💬,
        SPEECH-VOICE availability — an unrelated concern, class-driven by ALL `.tts-pill`
-       elements uniformly) and the stop-gen button both stay. -->
-  <div class="lang-footer" id="lang-footer-storyline">
+       elements uniformly) and the stop-gen button both stay — but with the picker gone, the SAME
+       `.lang-footer` divider styling (full-width border-top, generous section padding) that used
+       to introduce a whole picker row now wraps a single icon and reads as a stray leftover
+       fragment (user follow-up). Shrunk to fit what actually remains, rather than keep dressing it
+       as a section it no longer is. -->
+  <div class="lang-footer" id="lang-footer-storyline" style="border-top:none;margin-top:0;padding:4px 16px;justify-content:flex-end">
     <span class="lang-footer-lbl tts-pill" title="">💬</span>
     <button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button>
   </div>
@@ -2462,7 +2486,10 @@ function applyUIStrings() {
   _setAttr('gen-topic-title-btn',  'title', t('lesson.gen_topic_title'));
   _setAttr('sl-screen-gen-btn',    'title', t('lesson.gen_topic_title'));
   _setAttr('sl-screen-edit-btn',    'title', t('ui.edit_title'));
-  _setText('comp-story-panel-lbl', t('complete.story_unlocked'));
+  // user follow-up: comp-story-panel-lbl is now the CHAPTER TITLE (d.topic), not a translated
+  // caption — it must NOT be re-set here on a language change, or it would clobber the title with
+  // a stale "Story unlocked!" string the moment applyUIStrings() next runs. _renderCompStory() sets
+  // it from the lesson data directly, same as #topic-name-big does.
   updateTeacherModeBtn();
   _buildGlobalTtsSelectors();
   _setAttr('sl-screen-summary-btn', 'title', t('lesson.gen_summary'));
@@ -4235,6 +4262,34 @@ function _highlightVocabHtml(html, words, strongWords, stateByKey, underlineKeys
     const toks = splitTokens(raw);
     if (toks.length > 1) toks.forEach(t => { const k = _hlKey(stripF(t)); if (k) strong.add(k); });
   });
+  // User-reported regression, found this session: v78_k's split-token rule (a multi-word entry like
+  // "das Land" ALSO marks its bare noun "Land") was never taught to the v80_r STATE lookup below —
+  // unlike `strong` two lines up, which already expands to split-token keys. A split token's OWN key
+  // ("land") is never a key `stateByKey` actually holds (that map is keyed by the WHOLE vocab entry,
+  // "das land"), so every solved article+noun vocab word rendered its split-off noun as `wp-red`
+  // regardless of its real state — reproduced live: `tp_17865782512120000000`'s "das Land"/"die
+  // Angst", both fully solved, painted "LAND"/"ANGST" red in the story text while their OWN vocab-
+  // chip state (`_wordProgress`) correctly said green. Fixed the SAME way `strong` already is: each
+  // split token inherits its whole phrase's state as a FALLBACK ONLY — a token that already has its
+  // own direct state (a genuine single-word vocab entry) keeps that, never overwritten by an
+  // unrelated phrase that happens to share a word.
+  let getState = null;
+  if (stateByKey) {
+    const direct = k => (stateByKey.get ? stateByKey.get(k) : stateByKey[k]);
+    const fallback = new Map();
+    words.forEach(w => {
+      if (_UNSPACED_SCRIPTS.test(stripF(String(w || '')))) return;
+      const toks = splitTokens(w);
+      if (toks.length <= 1) return;
+      const fullSt = direct(_hlKey(stripF(String(w || ''))));
+      if (fullSt === undefined) return;
+      toks.forEach(t => {
+        const k = _hlKey(stripF(t));
+        if (k && direct(k) === undefined && !fallback.has(k)) fallback.set(k, fullSt);
+      });
+    });
+    getState = k => { const v = direct(k); return v !== undefined ? v : fallback.get(k); };
+  }
   // Longest-first so a phrase wins over one of its own words ("il forno a legna" before "forno").
   const bySize = a => a.sort((x, y) => y.length - x.length);
   const parts = [];
@@ -4268,8 +4323,8 @@ function _highlightVocabHtml(html, words, strongWords, stateByKey, underlineKeys
       // span the current question is about — underline as well as colour, so the "which word am I
       // being asked" signal does not compete with the red/green one (T0's explicit requirement).
       let cls = 'story-vocab-hl' + (strong.has(key) ? ' solved' : '');
-      if (stateByKey) {
-        const st = stateByKey.get ? stateByKey.get(key) : stateByKey[key];
+      if (getState) {
+        const st = getState(key);
         cls = 'story-vocab-hl wp-' + (st || 'red');
       }
       if (underlineKeys && (underlineKeys.has ? underlineKeys.has(key) : underlineKeys[key])) cls += ' wp-asked';
@@ -6028,7 +6083,7 @@ function savedItemHtml(s, connector, hideStory, hideProv, slChapter) {
           ${t('lesson.read_story_short')}
           <span id="sis-arrow-${sid}" style="font-size:10px">▼</span>
         </div>
-        <span class="story-icon-btn" id="sis-xlate-${sid}" style="display:none;font-size:11px;font-weight:800" onclick="event.stopPropagation();toggleSavedStoryLang('${sid}')"></span>
+        <span id="sis-flags-${sid}" style="display:inline-flex"></span>
         <span class="story-icon-btn" onclick="event.stopPropagation();speakBodyText('sis-body-${sid}')" title="${t('lesson.read_aloud')}">💬</span>
       </div>
       <div class="saved-item-story-body" id="sis-body-${sid}" dir="auto" data-topic="${s.topic.replace(/"/g,'&quot;')}" data-lang="${s.lang||''}"></div>
@@ -7821,17 +7876,20 @@ function _renderSavedStory(id){
   if(!showingSource && allVocab.length) rendered = _highlightVocabHtml(rendered, allVocab);
   body.innerHTML=rendered.split(/\n\n+/).map(p=>'<p dir="auto">'+p.replace(/\n/g,'<br>')+'</p>').join('');
   body.setAttribute('dir','auto');
-  // Toggle button: shown only when a translation exists; labels the OTHER language.
-  const btn=document.getElementById('sis-xlate-'+id);
-  if(btn){
-    if(xlate){ btn.style.display=''; btn.textContent = showingSource ? t('story.show_original') : t('story.show_translation'); }
-    else btn.style.display='none';
+  // user follow-up: flag buttons replace the old text toggle — shown only when a translation exists.
+  const flagsEl=document.getElementById('sis-flags-'+id);
+  if(flagsEl){
+    flagsEl.innerHTML = _storyFlagButtonsHtml(
+      d.lang || APP.lang, d.srcLang || 'en', !!xlate,
+      showingSource ? 'source' : 'target',
+      lang => `toggleSavedStoryLang('${id}','${lang}')`);
   }
 }
-function toggleSavedStoryLang(id){
+// user follow-up: SETS the language a flag names, rather than blindly flipping.
+function toggleSavedStoryLang(id, lang){
   const body=document.getElementById('sis-body-'+id);
   if(!body) return;
-  body.dataset.storyLang = (body.dataset.storyLang==='source') ? 'target' : 'source';
+  body.dataset.storyLang = (lang === 'source') ? 'source' : 'target';
   _renderSavedStory(id);
 }
 
@@ -8884,7 +8942,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
       `<div class="storyline-story-hdr" style="flex:1" role="button" tabindex="0" onclick="toggleChainStory('${slscId}')">` +
       '<span style="flex:1">' + t('lesson.read_full_story') + '</span>' +
       `<span class="storyline-story-arrow" id="csarrow-${slscId}">▼</span></div>` +
-      `<span class="story-icon-btn" id="csxlate-${slscId}" style="display:none;font-size:11px;font-weight:800;padding:0 6px" onclick="event.stopPropagation();toggleChainStoryLang('${slscId}')"></span>` +
+      `<span id="csflags-${slscId}" style="display:inline-flex;padding:0 4px"></span>` +
       `<span class="story-icon-btn" onclick="event.stopPropagation();speakChainStory('${slscId}')">💬</span>` +
       `</div>` +
       `<div class="storyline-story-body" id="csbody-${slscId}" data-chain="${escapedChain}"></div>` +
@@ -11612,20 +11670,25 @@ function _renderChainStory(body, chapters, chainId) {
   }).join('');
   _syncChainXlateBtn(chainId, chapters);
 }
-// Show the toggle only when at least one chapter HAS a translation, and label it with the language
-// it would switch TO — the same contract as the results card's button.
+// user follow-up: flag buttons replace the old text toggle, shown only when at least one chapter
+// HAS a translation. A chain spans several chapters, usually one consistent language pair — the
+// FIRST chapter supplies the flags, the same "first one wins" convention the fork-mismatch pill
+// already uses for a storyline's source language.
 function _syncChainXlateBtn(chainId, chapters){
-  const btn = document.getElementById('csxlate-' + chainId);
-  if (!btn) return;
+  const el = document.getElementById('csflags-' + chainId);
+  if (!el) return;
   const any = (chapters || []).some(d => d && d.storyTranslation);
-  if (!any){ if (btn.style) btn.style.display = 'none'; return; }
-  if (btn.style) btn.style.display = '';
-  btn.textContent = (_chainStoryLang[chainId] === 'source') ? t('story.show_original') : t('story.show_translation');
+  const first = (chapters || [])[0] || {};
+  el.innerHTML = _storyFlagButtonsHtml(
+    first.lang || APP.lang, first.srcLang || 'en', any,
+    (_chainStoryLang[chainId] === 'source') ? 'source' : 'target',
+    lang => `toggleChainStoryLang('${chainId}','${lang}')`);
 }
-function toggleChainStoryLang(chainId){
+// user follow-up: SETS the language a flag names, rather than blindly flipping.
+function toggleChainStoryLang(chainId, lang){
   const chapters = _chainStoryCache[chainId];
   if (!chapters) return;
-  _chainStoryLang[chainId] = (_chainStoryLang[chainId] === 'source') ? 'target' : 'source';
+  _chainStoryLang[chainId] = (lang === 'source') ? 'source' : 'target';
   const body = document.getElementById('csbody-' + chainId);
   if (body) _renderChainStory(body, chapters, chainId);
 }
@@ -14025,6 +14088,31 @@ function _storyBodyHtml(d, opts){
   }
 }
 
+// User follow-up: replace every "🌐 Original/Translation" TEXT toggle with two flag buttons — one
+// per language, clicking either SHOWS that language rather than blindly flipping. The four existing
+// instances (progress card, question panel, the library's saved-story reader, the storyline chain
+// view) each keep their own state variable and re-render path; this only builds the shared MARKUP +
+// interaction, exactly like `_storyBodyHtml` is the one shared BODY renderer. `onClickFor(lang)`
+// lets each caller wire its own existing state-setter (`toggleCompStoryLang`/`toggleExStoryLang`/
+// `toggleSavedStoryLang`/`toggleChainStoryLang`, all changed from a blind flip to an explicit set —
+// see each definition) without this function needing to know which one. Hidden entirely when no
+// translation exists, same as the button it replaces — there is nothing to switch to.
+function _storyFlagButtonsHtml(targetLang, srcLang, hasTranslation, current, onClickFor) {
+  if (!hasTranslation) return '';
+  const one = (lang, code) => {
+    const L = (typeof LANGS !== 'undefined' && LANGS[code]) || {};
+    const active = current === lang;
+    return `<button type="button" class="spk-ico story-flag-btn" `
+      + `title="${escAttr(localizedLangName(code, APP.uiLang))}" `
+      + `onclick="event.stopPropagation();${onClickFor(lang)}" `
+      + `style="font-size:16px;line-height:1;padding:2px 4px;border-radius:6px;`
+      + `border:1.5px solid ${active ? 'var(--blue)' : 'var(--gray-mid)'};background:var(--white);`
+      + `cursor:pointer;opacity:${active ? '1' : '.5'}">${escHtml(L.flag || '🌐')}</button>`;
+  };
+  return `<span class="story-flag-btns" style="display:inline-flex;gap:3px;margin-left:auto">`
+    + one('target', targetLang) + one('source', srcLang) + `</span>`;
+}
+
 // ONE story panel for every question screen. T0: "ALL question cards should ALSO show text (currently
 // only for comprehension questions), and in each question the highlight should indicate the word(s)
 // currently asked (underline additionally to the coloring)."
@@ -14083,24 +14171,30 @@ function _exStoryPanelHtml(ex){
   // It reuses `toggleCompStoryLang` and `APP._compStoryLang` — the SAME state the card uses — so the
   // two screens cannot disagree about which language is showing. A second flag would be a second
   // source of truth for one question.
+  //
+  // user follow-up: this panel is now the SAME frame as the progress card's — collapse control
+  // (the native `<summary>` marker, unchanged), CHAPTER TITLE instead of a generic "The story"
+  // caption, flag buttons instead of a text toggle, and the speak button in the SAME header row
+  // (it used to sit above the body text instead) — see _storyFlagButtonsHtml and the progress
+  // card's own #comp-story-panel markup, the two are now genuinely one design, re-used not
+  // re-implemented, just two different mount points (static markup vs. a template string).
   const _xl = String((d && d.storyTranslation) || '').trim();
   const _showSrc = APP._compStoryLang === 'source' && _xl;
-  const _xlBtn = _xl
-    ? '<button class="spk-ico" id="ex-story-xlate" style="margin-left:auto;font-size:11px;font-weight:800;'
-      + 'background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 8px;'
-      + 'cursor:pointer;font-family:Nunito,sans-serif" onclick="event.stopPropagation();toggleExStoryLang()">'
-      + escHtml(_showSrc ? t('story.show_original') : t('story.show_translation')) + '</button>'
-    : '';
+  const _flagsHtml = _storyFlagButtonsHtml(
+    d.lang || APP.lang, d.srcLang || 'en', !!_xl,
+    _showSrc ? 'source' : 'target',
+    lang => `toggleExStoryLang('${lang}')`);
   const paras = _storyBodyHtml(d, { ex, text: _showSrc ? _xl : story, highlight: !_showSrc });
   const lang = d.lang || APP.lang;
+  const title = escHtml(d.topic || t('ex.comprehension.story'));
   const spk = (typeof _lessonIsDialect === 'function' && _lessonIsDialect()) ? '' :
-    `<button class="flag-btn" style="margin-bottom:6px" title="${escAttr(t('ex.comprehension.story_listen'))}"
-       onclick="speakBodyText(null,'${escAttr(lang)}',APP.lessonData?.story||'')">💬</button>`;
+    `<button class="spk-ico" title="${escAttr(t('ex.comprehension.story_listen'))}"
+       onclick="event.stopPropagation();speakBodyText(null,'${escAttr(lang)}',APP.lessonData?.story||'')">💬</button>`;
   return '<details id="ex-story-panel"' + (_open ? ' open' : '') + ' style="margin-top:14px;border:2px solid var(--gray-mid);'
        + 'border-radius:var(--radius-lg);background:var(--white);text-align:left;padding:10px 14px">'
        + `<summary style="cursor:pointer;font-size:13px;font-weight:900;color:var(--gray-dark);outline:none;display:flex;align-items:center;gap:8px">`
-       + `📖 ${escHtml(t('ex.comprehension.story'))}${_xlBtn}</summary>`
-       + `<div id="ex-story-text" style="margin-top:8px;font-size:15px;line-height:1.6">${spk}${paras}</div>`
+       + `<span style="font-size:20px">📖</span><span>${title}</span>${_flagsHtml}${spk}</summary>`
+       + `<div id="ex-story-text" style="margin-top:8px;font-size:15px;line-height:1.6">${paras}</div>`
        + '</details>';
 }
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
@@ -16958,9 +17052,6 @@ function showComplete(review, lessonIdxOverride){
   const _compStory = document.getElementById('comp-story-panel');
   if (_compStory) {
     const _story = APP.lessonData?.story || '';
-    // v71_s: the story unlocks on the NARROWED gate — everything except the comprehension lessons,
-    // which are about this very story. `setComplete` still governs chapter completion below.
-    const _allDone2 = storyUnlocked(APP.lessonData);
     // v77_p (user): "skip all story preview fields — only show the vocabulary". The panel used to
     // appear while the story was still LOCKED, truncated, for a teacher or anyone with canGenerate
     // (that is why it was misnamed until v77_g). A teaser of the reward is not the reward, and on a
@@ -16973,8 +17064,10 @@ function showComplete(review, lessonIdxOverride){
     // and T0 is explicit that it appears on ALL progress cards "even before the chapter text is
     // unlocked". A hidden progress display shows no progress.
     //
-    // The unlock still means something: it governs the CAPTION and the comprehension lessons
-    // (`_storyLockedLesson`), which remain unreachable until the story opens.
+    // The unlock still means something: it governs the comprehension lessons
+    // (`_storyLockedLesson`), which remain unreachable until the story opens — computed there, not
+    // here; this block no longer needs the narrowed-gate value itself (user follow-up removed the
+    // caption text it used to drive, and nothing else in this block read it).
     const _showStory = !!_story;
     _compStory.style.display = _showStory ? '' : 'none';
     // v74_l is RETIRED here (roadmap ruling 1, shipped v77_l). It used to strip the card back
@@ -16995,9 +17088,6 @@ function showComplete(review, lessonIdxOverride){
     // it only at 100%, so no learner was ever stranded below the mark. Removing the list cannot
     // strand anyone either — it only ever took affordances away.
     if (_showStory) {
-      const _lbl = document.getElementById('comp-story-panel-lbl');
-      // The caption is now the only thing the unlock changes on this card.
-      if (_lbl) _lbl.textContent = _allDone2 ? t('complete.story_unlocked') : t('complete.story_preview');
       // v77_v (§0f): the story has just opened — read it aloud, unless muted. `_showStory` now
       // means a GENUINE unlock (v77_p removed the locked preview), so this cannot fire on a teaser.
       // Not on a review render: re-opening a finished chapter is not the moment of unlocking.
@@ -17015,7 +17105,7 @@ function showComplete(review, lessonIdxOverride){
       // the target-language story and its translation. Defaults to the target story; a full story
       // shows in full, a not-yet-complete teacher preview is truncated the same way in both langs.
       APP._compStoryLang = 'target';   // reset on every card render
-      _renderCompStory(_allDone2);
+      _renderCompStory();
       const _spk = document.getElementById('comp-story-spk');
       if (_spk) _spk.style.display = (typeof _lessonIsDialect==='function' && _lessonIsDialect()) ? 'none' : '';
     }
@@ -17340,6 +17430,23 @@ function _joinPronoun(pron, form){
 // to return question-less entries would put `{lessonIdx, key: undefined}` into the pool `tapWord`
 // filters on `solved`/`wrong` — silently making a question-less word compete with real questions for
 // the preference. Two resolvers, two contracts, one caller deciding between them.
+//
+// User-reported regression, found this session alongside the highlight-colour one above: a vocab
+// entry is authored WITH its article ("das Land"), but `_highlightVocabHtml`'s OWN split-token rule
+// (v78_k) marks the bare noun the story actually shows ("Land") — so a learner taps exactly what is
+// visibly highlighted. Both `_wordQuestions` and `_wordLessons` compared the tapped key against the
+// vocab target's FULL, unsplit key only, so "Land" never matched "das Land" and the tap silently
+// found nothing for any solved article+noun vocab word (the same gap the colour fix above closed for
+// display state). Shared here so both resolvers, and any future one, apply the SAME rule
+// `_highlightVocabHtml` already uses to decide a match exists — the article-noise ruling (session
+// 30) is about what gets MARKED, not a second definition of "matches".
+function _vocabTargetMatchesKey(target, want) {
+  const raw = String(target == null ? '' : target);
+  if (!want || !raw) return false;
+  if (_hlKey(stripFuri(raw)) === want) return true;
+  if (_UNSPACED_SCRIPTS.test(raw)) return false;   // no token boundary to split on
+  return raw.trim().split(/\s+/).filter(Boolean).some(t => _hlKey(stripFuri(t)) === want);
+}
 function _wordLessons(d, word){
   const out = [];
   if (!d || !word) return out;
@@ -17359,7 +17466,7 @@ function _wordLessons(d, word){
   } catch(_) {}
   (d.lessons || []).forEach((L, li) => {
     if (!startable(L) || L.id == null) return;
-    if ((L.vocab || []).some(v => v && v.target && _hlKey(stripFuri(String(v.target))) === want)) add(li);
+    if ((L.vocab || []).some(v => v && v.target && _vocabTargetMatchesKey(v.target, want))) add(li);
   });
   return out;
 }
@@ -17409,7 +17516,7 @@ function _wordQuestions(d, word){
     if (!startable(L) || L.id == null) return;
     (L.vocab || []).forEach(v => {
       if (!v || !v.target) return;
-      if (_hlKey(stripFuri(String(v.target))) !== want) return;
+      if (!_vocabTargetMatchesKey(v.target, want)) return;
       // A vocab word is asked several ways; the canonical direction is enough to find the lesson,
       // and the entry-point scan below accepts ANY question about the word in that lesson.
       let k = null;
@@ -17532,12 +17639,24 @@ function _solvedTargetWords(d){
   _wordProgress(d).forEach((r, w) => { if (r.bySrc.vocab.ok > 0) out.push(w); });
   return out.sort(_byLenThenText);
 }
-function _renderCompStory(allDone){
+// `allDone` was accepted but never read inside this function (the caption it used to drive lived
+// in showComplete()'s own block, then that caption itself was replaced by the chapter title — user
+// follow-up) — dropped as a drive-by cleanup while every call site was already being touched for
+// the flag-button change below. `storyUnlocked(APP.lessonData)` still gates the comprehension
+// lessons elsewhere via `_storyLockedLesson`; nothing about that gate changed.
+//
+// user follow-up: this is now the ONE function that owns the whole panel's dynamic content — title,
+// flags, body, and speaker — not just the body+flags as before. showComplete() used to set the
+// title separately (once, on card render); folded in here so a call to THIS function alone (the
+// toggle handlers make one on every click) never leaves any part of the panel stale.
+function _renderCompStory(){
   const d = APP.lessonData || {};
   const _story = d.story || '';
   const _xlate = d.storyTranslation || '';
   const showingSource = APP._compStoryLang === 'source' && _xlate;
   const full = showingSource ? _xlate : _story;
+  const _lbl = document.getElementById('comp-story-panel-lbl');
+  if (_lbl) _lbl.textContent = d.topic || '';
   const _el = document.getElementById('comp-story-text');
   if (_el) {
     // v80_w: the SHARED body renderer, so this card and the question panel colour the same story the
@@ -17553,29 +17672,30 @@ function _renderCompStory(allDone){
       _el.textContent = full;   // a story that renders unformatted is fine; one that fails is not
     }
   }
-  const _btn = document.getElementById('comp-story-xlate');
-  if (_btn){
-    if (_xlate){
-      _btn.style.display = '';
-      // The button offers the OTHER language: showing target → "show translation"; showing
-      // source → "show original".
-      _btn.textContent = showingSource ? t('story.show_original') : t('story.show_translation');
-    } else {
-      _btn.style.display = 'none';
-    }
+  // user follow-up: two flag buttons replace the old single "🌐 Original/Translation" text toggle
+  // — see _storyFlagButtonsHtml. `toggleCompStoryLang(lang)` now SETS the language explicitly
+  // rather than flipping, so each flag's onclick names the language IT shows, not "the other one".
+  const _flagsEl = document.getElementById('comp-story-flags');
+  if (_flagsEl) {
+    _flagsEl.innerHTML = _storyFlagButtonsHtml(
+      d.lang || APP.lang, d.srcLang || 'en', !!_xlate,
+      showingSource ? 'source' : 'target',
+      lang => `toggleCompStoryLang('${lang}')`);
   }
   // The 💬 reads whatever is currently shown.
   const _spk = document.getElementById('comp-story-spk');
   if (_spk){
     const lang = showingSource ? (d.srcLang || 'en') : (d.lang || APP.lang);
-    _spk.setAttribute('onclick', `speakBodyText(null,'${lang}',${showingSource ? 'APP.lessonData?.storyTranslation' : 'APP.lessonData?.story'}||'')`);
+    _spk.setAttribute('onclick', `event.stopPropagation();speakBodyText(null,'${lang}',${showingSource ? 'APP.lessonData?.storyTranslation' : 'APP.lessonData?.story'}||'')`);
   }
 }
 // v80_x: the question panel's toggle. Shares `APP._compStoryLang` with the progress card, and
-// repaints through `_exStoryPanelHtml` — the same renderer that drew the panel — so the flip cannot
-// produce a panel the initial render would not have produced.
-function toggleExStoryLang(){
-  APP._compStoryLang = (APP._compStoryLang === 'source') ? 'target' : 'source';
+// repaints through `_exStoryPanelHtml` — the same renderer that drew the panel — so a re-render
+// cannot produce a panel the initial render would not have produced.
+// user follow-up: SETS the language a flag names, rather than blindly flipping — same change as
+// `toggleCompStoryLang`.
+function toggleExStoryLang(lang){
+  APP._compStoryLang = (lang === 'source') ? 'source' : 'target';
   try {
     const _sp = document.getElementById('ex-story-panel');
     if (!_sp) return;
@@ -17587,9 +17707,12 @@ function toggleExStoryLang(){
   } catch(_) {}
 }
 
-function toggleCompStoryLang(){
-  APP._compStoryLang = (APP._compStoryLang === 'source') ? 'target' : 'source';
-  _renderCompStory(storyUnlocked(APP.lessonData));
+// user follow-up: SETS the language a flag names, rather than blindly flipping — two flag buttons
+// each call this with their OWN lang ('target'/'source'), so clicking the already-active one is a
+// harmless no-op re-render, not a flip away from it.
+function toggleCompStoryLang(lang){
+  APP._compStoryLang = (lang === 'source') ? 'source' : 'target';
+  _renderCompStory();
 }
 
 // ── Persistent tutor widget (v62) ────────────────────────────────────────────
@@ -19469,6 +19592,12 @@ function _ttsNoVoice(ttsCode, langCode) {
 }
 
 // The 💬 label doubles as the speech-state pill. Rendered by class so all footers stay in step.
+// User follow-up: with no warning active this pill is a static, non-interactive 💬 doing nothing —
+// on the storyline footer specifically (its old UI-language picker sibling moved to Settings at
+// v81_ac) that read as a stray leftover icon. Hidden by default now, everywhere `.tts-pill` lives
+// (the lesson-set footer too, for the SAME reason class-driven-uniformly is the rule here — see the
+// storyline-footer comment this pill's markup carries), shown only when there is something to warn
+// about.
 function renderTtsPill() {
   const els = document.querySelectorAll('.tts-pill');
   els.forEach(el => {
@@ -19476,10 +19605,12 @@ function renderTtsPill() {
       el.classList.add('novoice');
       el.textContent = '💬 ' + t('tts.pill_no_voice');
       el.title = t('tts.no_voice_hint', { lang: APP._ttsNoVoiceLang || '' });
+      el.style.display = '';
     } else {
       el.classList.remove('novoice');
       el.textContent = '💬';
       el.title = '';
+      el.style.display = 'none';
     }
   });
 }

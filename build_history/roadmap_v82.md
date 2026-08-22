@@ -1664,6 +1664,98 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 ---
 
+# ✅ SHIPPED IN THE v82 LINE
+
+### `v82_b` — user UI-feedback batch: shared story panel, flag buttons, and a real word-highlight/tap regression found and fixed
+
+**Shipped by: Claude Code.** A batch of five user-reported items sent together, plus three same-
+session follow-ups, plus one significant bug found while working the first item and fixed in the
+same release.
+
+**1–2. The progress-card and question-card story panels are now genuinely ONE design, not two that
+happen to share a body renderer.** Before this release the BODY was shared (`_storyBodyHtml`,
+`v80_w`) but the FRAME was deliberately kept separate — a documented decision ("the question panel
+is a `<details>` with a speak button, the card writes into `#comp-story-text` and has a translation
+toggle. Only the BODY is shared"). The user asked for the frames to match too: **`#comp-story-panel`
+converted from a plain `<div>` to a `<details open>`** (the SAME native disclosure-marker mechanism
+the question panel already used — re-used, not re-implemented), and **the panel's caption — a
+generic "Story preview"/"Story unlocked!" string — replaced by the CHAPTER'S OWN TITLE** (the same
+field `#topic-name-big` already reads), on BOTH panels. The unlock/preview distinction those two
+caption strings used to carry is not lost — `_storyLockedLesson` still gates the comprehension
+lesson exactly as before, it just no longer shows up as caption text. `_renderCompStory()` now owns
+the WHOLE panel's dynamic content (title, flags, body, speaker) in one place, having previously left
+the title to a separate block inside `showComplete()`.
+
+**3. Every "🌐 Original/Translation" TEXT toggle — four separate instances — replaced by TWO FLAG
+BUTTONS** (`_storyFlagButtonsHtml`, new shared renderer next to `_storyBodyHtml`): the progress card,
+the question panel, the library's saved-story reader, and the storyline's combined "read full story"
+panel. Each flag now SETS its language explicitly (clicking the already-active one is a harmless
+no-op) rather than blindly flipping a single button's state — `toggleCompStoryLang`,
+`toggleExStoryLang`, `toggleSavedStoryLang`, and `toggleChainStoryLang` all changed from `()` to
+`(lang)` accordingly. Each flag's tooltip names its language, localized to `APP.uiLang` via the
+existing `localizedLangName()`. `test/unit-story-translation-toggle.test.js` rewritten wholesale for
+the new contract (rule 29) — the old hand-rolled `ext()`-based harness for two of the four instances
+was also replaced with `loadClient()` throughout, since the new code depends on globals (`LANGS`,
+`localizedLangName`) the old harness never seeded.
+
+**4. The library's "✨ Generate new" button** no longer inherits `.gen-btn`'s `width:100%` (correct
+for the actual generation-form submit button, `flex:1` in its own row; wrong for this one, which
+sits alone) — `display:block` + auto side margins, so it sizes to its own content AND centers, a
+same-session follow-up after the first width-only fix left it stuck at the left edge.
+
+**5. The storyline footer's leftover 💬 icon** — orphaned since its sibling UI-language picker moved
+to Settings at `v81_ac` — turned out to be `.tts-pill`, the speech-voice-availability warning, which
+is inert and purely decorative except when a language genuinely has no synthesizable voice. **User
+ruling: hidden by default everywhere `.tts-pill` lives** (the storyline footer AND the lesson-set
+footer, same shared `renderTtsPill()`), shown only when there is an actual warning — rather than
+just repositioning an icon that has no purpose most of the time.
+
+**Drive-by**: a vestigial `data-i18n="lib.generate_new"` attribute on the Generate-new button — found
+while confirming the button DOES have working i18n (it does: an explicit
+`_setText('lib-generate-new-btn', t('lib.generate_new'))` call in `applyUIStrings()`, predating and
+excluded from the generic `.form-lbl[data-i18n]` sweep that `v81_aa` later removed entirely). The
+attribute never did anything and the mechanism it would have needed no longer exists — removed
+rather than left as a misleading no-op.
+
+**⚠️ A significant regression found and fixed while measuring item #1–2, reported live by the user
+mid-session with a screenshot**: two solved vocabulary words ("die Angst", "das Land") showed RED
+and were UNTAPPABLE on the progress card despite being fully solved. Root cause, reproduced against
+the user's own real saved progress (`tp_17865782512120000000`) before touching any code:
+`_highlightVocabHtml`'s split-token rule (`v78_k`, session 29/30 ruling — a multi-word vocab entry
+like "das Land" also marks its bare noun "Land" where the story shows only the noun) was taught to
+the OLDER two-tier solved-set (`strong`), but never to the NEWER three-state colour lookup
+(`stateByKey`, `v80_r`) or to the tap resolvers (`_wordQuestions`/`_wordLessons`). A split token's
+own key ("land") was never a key those maps actually held (keyed by the WHOLE vocab entry, "das
+land"), so every solved article+noun vocab word silently defaulted to red and untappable the moment
+the story showed the bare noun — which is the common case, since running prose rarely repeats the
+article.
+
+**Fixed with the SAME rule already established for the solved-set**, not a new one: `_highlightVocabHtml`
+now builds a state-lookup fallback (`getState`) where a split token inherits its whole phrase's
+state UNLESS it already has its own direct state (a genuine single-word vocab entry is never
+overwritten by an unrelated phrase sharing a word). A new shared `_vocabTargetMatchesKey(target,
+want)` gives `_wordQuestions`/`_wordLessons` the identical split-token equivalence for their OWN
+vocab-target matching, so a tap on the highlighted word now finds the same question the colour
+claims is solved.
+
+**Verified against the real report**: reproduced the exact bug (`_storyBodyHtml` painting "LAND"/
+"ANGST" `wp-red` with the user's actual solved map), fixed it, reproduced the fix turning both
+`wp-green` with the SAME data, and confirmed live in the running server (setting the real qid solved
+and watching `#comp-story-text` flip green on re-render; `_wordQuestions('ANGST')` now resolves a
+real question). New checks appended to `test/unit-highlight-split.test.js` (the file that already
+owns the split-token RULE this bug violated): the state-map fallback, the direct-state-wins-over-
+fallback case, non-vacuity (no state anywhere still defaults red), the tap-resolver fix, and the
+full phrase itself still matching — 2 mutation-tested. **Fallout, not a regression**: one existing
+`unit-tap-word.test.js` fixture picked a word ("Regierung") that, thanks to the fix, now has a
+LEGITIMATE open-lesson route via a different vocab entry sharing a split token — not a gate failure
+(the hidden-lesson gate itself, `startable(L)`, is untouched and re-verified intact with a genuinely
+hidden-only word instead). Re-run 15/15 standalone given this file's documented flakiness history.
+
+**Testing**: 243/217/0/0 full baseline green; `docs/index.html` rebuilt. Verified live throughout —
+against the running server directly (not only headlessly) for the panel frame, the flags, the button
+centering, the tts-pill hiding, and the highlight/tap fix specifically against the reporting user's
+own real data.
+
 # ✅ SHIPPED IN THE v81 LINE — where to find it
 
 *The v81 line ran to thirty-odd point releases and its write-ups stay in **`roadmap_v81.md`** under

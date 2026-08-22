@@ -285,8 +285,15 @@ console.log('  completion card: Next chains lesson→chapter, Back to story/home
     'and exactly one story BODY renderer');
   assert.ok(/id="comp-story-panel"[^>]*background:var\(--white\)/.test(html),
     'the story panel is white, so the yellow highlights read clearly');
-  assert.ok(/_lbl\.textContent = _allDone2 \? t\('complete\.story_unlocked'\) : t\('complete\.story_preview'\)/.test(sc),
-    'unlock vs preview label reflects completion');
+  // RE-ANCHORED (user follow-up, rule 29 — a genuine claim change): the unlock-vs-preview CAPTION
+  // is gone entirely, replaced by the chapter's own title (same field #topic-name-big already
+  // uses) — the unlock/preview distinction this label used to carry no longer shows up as text
+  // here, though the underlying gate (`_storyLockedLesson`) is untouched. Set inside
+  // `_renderCompStory`, not `showComplete`, now — it owns the whole panel's dynamic content.
+  assert.ok(/_lbl\.textContent = d\.topic \|\| ''/.test(rcs),
+    'the panel title is the chapter\'s own name, not an unlock/preview caption');
+  assert.ok(!/complete\.story_preview|complete\.story_unlocked/.test(sc),
+    'THE REGRESSION: the old caption strings must not survive in showComplete');
   const prog = ext(html, '_compProgressHtml');
   assert.ok(/complete\.chapter_progress/.test(prog) && /complete\.story_progress/.test(prog),
     'progress summary covers within-chapter AND along-storyline');

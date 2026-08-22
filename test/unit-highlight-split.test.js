@@ -145,3 +145,118 @@ console.log('unit-highlight-split: ALL PASSED');
   assert.ok(marks(hl('Το σπίτι είναι όμορφο.', ['ΣΠΊΤΙ'])).length >= 1, 'Greek folds case too');
   console.log('  matching folds case in Latin, Cyrillic and Greek, and in the solved shade');
 }
+
+// ── User-reported regression, found this session: the STATE map never learned the split rule ──
+//
+// v78_k split a multi-word vocab entry ("das Land") so its bare noun ("Land") gets MARKED where the
+// story shows only the noun — deliberate, per the ruling above. v80_r later added a THIRD state
+// (green/partial/red) via a separate `stateByKey` map, keyed by the WHOLE, unsplit vocab entry
+// ("das land"). The state LOOKUP was never given the same split-token treatment `strong` (the older
+// two-tier set, a few sections up) already has — so a split token's own key ("land") was never a key
+// `stateByKey` actually held, and the lookup silently fell through to the 'red' default regardless
+// of the real state.
+//
+// Reported live: `tp_17865782512120000000` ("Paese delle Dumplings") — "die Angst" and "das Land",
+// both fully solved, painted "ANGST"/"LAND" red in the story text while their own vocab-chip state
+// (`_wordProgress`) correctly said green. Reproduced below with the SAME shape (a solved two-word
+// vocab entry whose story text shows only the bare noun), not the literal corpus data — this file
+// tests the mechanism, `test/unit-tap-word.test.js`/probes are where real-corpus reproductions
+// belong.
+{
+  const stateHl = (story, words, stateByKey, underlineKeys) =>
+    C.run(`_highlightVocabHtml(${JSON.stringify(story)}, ${JSON.stringify(words)}, [],` +
+          `${JSON.stringify(stateByKey)}${underlineKeys ? `, ${JSON.stringify(underlineKeys)}` : ''})`, 'sh');
+  const stateMarks = (html) => [...html.matchAll(/<mark class="story-vocab-hl (wp-\w+)[^"]*"[^>]*>([^<]*)<\/mark>/g)]
+    .map(m => ({ state: m[1], text: m[2] }));
+
+  // "das land" is the ONLY key in the state map (the whole vocab entry, exactly what _wordProgress
+  // produces) — the story shows the bare noun. Before the fix this fell through to wp-red.
+  const html = stateHl('Es gibt ein Land.', ['das Land'], { 'das land': 'green' });
+  const got = stateMarks(html);
+  assert.ok(got.length >= 1, `something is marked (got ${JSON.stringify(got)})`);
+  assert.ok(got.every(m => m.state === 'wp-green'),
+    `THE ACCEPTANCE CLAIM: a split token inherits its whole phrase's state as a fallback, ` +
+    `got ${JSON.stringify(got)}`);
+
+  // A token that has its OWN direct state must keep it — not be overwritten by an unrelated phrase
+  // that happens to share a word. "der Kopf" is green; a SEPARATE single-word entry "Kopf" (however
+  // unlikely in real data) with its own red state must stay red, not inherit the phrase's green.
+  const html2 = stateHl('Der Kopf und Kopf.', ['der Kopf', 'Kopf'],
+    { 'der kopf': 'green', 'kopf': 'red' });
+  const got2 = stateMarks(html2);
+  assert.ok(got2.some(m => m.text === 'Kopf' && m.state === 'wp-red'),
+    `a token's OWN direct state wins over the fallback, got ${JSON.stringify(got2)}`);
+
+  // Non-vacuity: without ANY state supplied for the phrase, the split token still correctly falls
+  // through to the 'red' default — the fallback only fires when the FULL phrase actually has state.
+  const html3 = stateHl('Es gibt ein Land.', ['das Land'], {});
+  assert.ok(stateMarks(html3).every(m => m.state === 'wp-red'),
+    'no state anywhere -> red default still applies, the fallback did not invent one');
+
+  console.log('  the STATE map now honours the SAME split-token rule the older solved-set already did');
+}
+
+// ── Same regression, the OTHER half: tap/question resolution never learned the split rule either ─
+//
+// `_wordQuestions`/`_wordLessons` compared the tapped key against a vocab target's FULL key only —
+// so tapping "Land" (what the highlight actually marks) found nothing for the vocab entry "das
+// Land", even though the SAME word, solved, was reachable by its full phrase. This is the reason the
+// user's report also said "untappable", not just "red".
+{
+  const LC = loadClient({ quiet: true });
+  LC.run(`LANGS = ${JSON.stringify(LANGS)}; true;`);
+  LC.run(`
+    APP.lessonData = { topic: 'T', lang: 'de', srcLang: 'it', story: 'Es gibt ein Land.',
+      lessons: [{ id: 1, type: undefined, vocab: [{ target: 'das Land', source: 'il paese' }] }] };
+    APP._teacherMode = false;
+    true;`);
+  const qs = JSON.parse(LC.run(`JSON.stringify(_wordQuestions(APP.lessonData, 'Land'))`));
+  assert.strictEqual(qs.length, 1,
+    `THE ACCEPTANCE CLAIM: tapping the split-off noun finds the phrase's own question, got ${JSON.stringify(qs)}`);
+  assert.strictEqual(qs[0].lessonIdx, 0, 'pointing at the lesson that actually teaches it');
+  const ls = JSON.parse(LC.run(`JSON.stringify(_wordLessons(APP.lessonData, 'Land'))`));
+  assert.deepStrictEqual(ls, [0], '_wordLessons agrees');
+  // The full phrase itself must still match too — the split rule is additive, not a replacement.
+  const qsFull = JSON.parse(LC.run(`JSON.stringify(_wordQuestions(APP.lessonData, 'das Land'))`));
+  assert.strictEqual(qsFull.length, 1, 'the full phrase itself is still a valid tap target');
+  console.log('  _wordQuestions/_wordLessons resolve a split-token tap to its whole vocab entry: OK');
+}
+
+// ── Mutation check: both fixes must be provably necessary, not vacuous ─────────────────────────
+{
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  // 1. The state fallback.
+  const stateAnchor = 'let getState = null;\n  if (stateByKey) {';
+  assert.ok(html.includes(stateAnchor), 'state-fallback mutation anchor found');
+  const mutatedState = html.replace(stateAnchor, 'let getState = null; if (false) {');
+  const tmpState = path.join(ROOT, 'test', '.tmp-mutated-state.html');
+  fs.writeFileSync(tmpState, mutatedState);
+  const MC = loadClient({ quiet: true, file: tmpState });
+  MC.run(`LANGS = ${JSON.stringify(LANGS)}; true;`);
+  const mutatedHtml = MC.run(`_highlightVocabHtml('Es gibt ein Land.', ['das Land'], [], ${JSON.stringify({ 'das land': 'green' })})`);
+  fs.unlinkSync(tmpState);
+  assert.ok(!/wp-green/.test(mutatedHtml),
+    'THE MUTATION: disabling the state fallback must lose the correct green state');
+
+  // 2. The vocab-target split match.
+  const matchAnchor = 'function _vocabTargetMatchesKey(target, want) {';
+  assert.ok(html.includes(matchAnchor), 'vocab-match mutation anchor found');
+  const mutatedMatch = html.replace(
+    'if (_hlKey(stripFuri(raw)) === want) return true;\n  if (_UNSPACED_SCRIPTS.test(raw)) return false;   // no token boundary to split on\n  return raw.trim().split(/\\s+/).filter(Boolean).some(t => _hlKey(stripFuri(t)) === want);',
+    'return _hlKey(stripFuri(raw)) === want;');
+  assert.notStrictEqual(mutatedMatch, html, 'the match-function mutation must actually change something');
+  const tmpMatch = path.join(ROOT, 'test', '.tmp-mutated-match.html');
+  fs.writeFileSync(tmpMatch, mutatedMatch);
+  const MC2 = loadClient({ quiet: true, file: tmpMatch });
+  MC2.run(`
+    APP.lessonData = { topic: 'T', lang: 'de', srcLang: 'it', story: 'Es gibt ein Land.',
+      lessons: [{ id: 1, type: undefined, vocab: [{ target: 'das Land', source: 'il paese' }] }] };
+    APP._teacherMode = false;
+    true;`);
+  const mutatedQs = MC2.run(`JSON.stringify(_wordQuestions(APP.lessonData, 'Land'))`);
+  fs.unlinkSync(tmpMatch);
+  assert.strictEqual(mutatedQs, '[]',
+    'THE MUTATION: reverting to an exact-only match must make the split-token tap find nothing again');
+
+  console.log('  mutation-tested: both fixes are load-bearing, not vacuous');
+}

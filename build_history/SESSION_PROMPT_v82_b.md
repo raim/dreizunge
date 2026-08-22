@@ -1,12 +1,33 @@
-# Session prompt — written at the `v82_a` cut (fresh base line)
+# Session prompt — written at the `v82_b` cut
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v81_ad.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v82_a.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v82_b`, `v82_c`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v82_c`, `v82_d`, …) unless a future session has a good reason to switch to
 `v83_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v82_a`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v82_b`** cut.
+
+**`v82_b`, in brief** (full write-up in `roadmap_v82.md`): a batch of five user-reported UI items
+sent together — the progress-card and question-card story panels unified into one real design
+(chapter title instead of a generic caption, both now a collapsible `<details>`), the old single
+"🌐 Original/Translation" text toggle replaced by two flag buttons across all FOUR places it
+existed, the library's "Generate new" button fixed to size-and-center on its own content, and the
+storyline footer's orphaned 💬 icon hidden by default everywhere it lives (only shown when there is
+an actual no-voice warning) — plus three same-session follow-ups (button centering, confirming the
+button's i18n wiring and removing a vestigial dead attribute found while checking).
+
+**⚠️ The significant part of this release**: while measuring item #1–2, the user reported (with a
+screenshot) that two fully-solved vocabulary words showed red and were untappable on the progress
+card. Root cause, reproduced against the user's own real saved data before any code changed: the
+`v78_k` split-token rule (a multi-word vocab entry like "das Land" also marks its bare noun "Land"
+where the story shows only the noun) was taught to the OLD two-tier solved-set, but never to the
+NEWER three-state colour lookup (`v80_r`) or to the tap resolvers — so a split token's own key was
+never a key those maps actually held, and every solved article+noun vocab word silently defaulted
+to red/untappable the moment the story showed the bare noun (the common case). Fixed with the SAME
+rule already established for the solved-set, not a new one — see `roadmap_v82.md`'s `v82_b` entry
+for the full mechanism, the fix, and how it was verified against the actual reported data both
+offline and live in the running server.
 
 ## This is a new BASE LINE, cut from `v81` at `v82_a`
 
@@ -26,18 +47,9 @@ unchanged, with a short "where to find it" pointer table replacing the v81 line'
 See its own header for the exact carried/not-carried split (identical in kind to the `v80`→`v81`
 cut's own).
 
-**The most recent release, `v81_ad`, in brief** (full write-up in `roadmap_v81.md`): the
-speech-mismatch status pill. Two separate mechanisms exist — `_speechLocaleFor()` (`v79_n`, the
-AUTHORED intended locale: chapter → storyline → language default) and `APP.ttsLang` (a SEPARATE
-global override, set only by the lesson-set footer's "speech language" picker). `activeTtsCode()`
-prefers the override when set; individual read-aloud buttons pass an explicit langCode and bypass
-it entirely. `_speechMismatchInfo()` flags when the two disagree; `#speech-mismatch-pill` inside
-`#settings-modal` shows it; `restoreIntendedSpeech()` is the one-click fix (clears the override, the
-same reset pair `goLanding()` already uses). A measured non-bug found along the way, left alone:
-`buildPath()` unconditionally resets the override to the plain per-language default on every
-lesson-set render — today harmless, since zero topics or storylines in the corpus set a chapter/
-storyline-specific `speechLocale` at all. New guard `test/unit-speech-mismatch-pill.test.js`, 14
-checks, verified live against both the running server and the rebuilt static build.
+**`v81_ad`** (the release the cut itself happened at) shipped the speech-mismatch status pill,
+closing `PLAN §C4` — see `roadmap_v81.md`'s own `v81_ad` entry for the full write-up, or
+`roadmap_v82.md`'s pointer table for the short form.
 
 ## Orient yourself
 
@@ -59,9 +71,9 @@ node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Corpus at this cut: **323 topics, 91 storylines, 33 languages, 625 `en` keys** (unchanged from the
-`v81_ad` cut — a base-version bump alone does not touch the corpus).
-`APP_VERSION = 'v82_a'`.
+Corpus at this cut: **323 topics, 91 storylines, 33 languages, 625 `en` keys** (unchanged — this
+release touched no `lessons.json`/`languages.json`/`ui.json` content).
+`APP_VERSION = 'v82_b'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
