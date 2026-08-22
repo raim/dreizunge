@@ -195,6 +195,7 @@ run('unit: continue-story pin survives filters (v76_j)', 'node', [path.join(__di
 run('unit: docs/ storyline survives the language filter (v76_k)', 'node', [path.join(__dirname, 'unit-static-storyline-filter.test.js')]);
 run('unit: translate-ui --langnames request path (v76_c)', 'node', [path.join(__dirname, 'unit-langnames.test.js')]);
 run('unit: correct answer advances after the read-out (v75_h)', 'node', [path.join(__dirname, 'unit-speak-advance.test.js')]);
+run('unit: inflection_form answer speaks in the source language (v82_d)', 'node', [path.join(__dirname, 'unit-inflection-speak-lang.test.js')]);
 run('unit: coverage-driven mixed round + drill credit-back (v69.1)', 'node', [path.join(__dirname, 'unit-mixed-coverage-round.test.js')]);
 run('unit: ui translation QC (validator + translate-ui --qc) (v69_f)', 'node', [path.join(__dirname, 'unit-ui-qc.test.js')]);
 run('unit: error-hunt validation + retry (v69_g)', 'node', [path.join(__dirname, 'unit-error-hunt-validation.test.js')]);

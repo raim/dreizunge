@@ -1666,6 +1666,52 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v82 LINE
 
+### `v82_d` — three small user-reported fixes on the `inflections` feature's own screens
+
+**Shipped by: Claude Code.** Three independent user reports against `v82_c`'s new material, each
+fixed and live-verified in the running app.
+
+**1. `inflection_form`'s answer read-out spoke the wrong language.** Its answer is a grammatical-form
+LABEL in the SOURCE language (e.g. Italian "nominativo plurale" for a German lesson) — unlike every
+other exercise type's reveal text, including `inflection_lemma`'s own (a genuine target-language
+lemma). `check()`'s `speakOk`/`speakBad` had no case for either inflection type, so both fell into
+the generic default (`stripFuri(ex.target)`, spoken with the TARGET voice) — correct for
+`inflection_lemma` by accident, audibly wrong for `inflection_form`. Fixed with `speakOkLang`/
+`speakBadLang` plus a new optional `langCode` parameter on `_speakAndAdvance` (default unchanged for
+every other caller). Verified live: intercepted `speak`/`speakLang` in the browser and confirmed
+`inflection_form` now calls `speakLang(text, 'it', …)` while `inflection_lemma` still calls plain
+`speak()`.
+
+**2. The entry card's section order had drifted from the progress card's.** `summary-screen` was
+deliberately built at `v77_o` to mirror `complete-screen`'s THEN-current order (storyboard → bars →
+content), but `complete-screen`'s own order changed twice since (`v80_y`/`v81_b` moved its bars to
+the bottom and its content-box to the top) and the entry card was never brought forward. Reordered to
+match: content-box → chapter icons → action button → progress bars → verdict line, on both cards now.
+Guard added in `unit-story-summary.test.js`, asserted on SOURCE POSITION rather than a live DOM walk
+— deliberately: `loadClient()`'s harness never loads index.html's `<body>`, only its `<script>`, and
+nothing in the client ever reorders these containers at runtime, so source position IS the render
+order here, not a proxy that could diverge from it.
+
+**3. The progress card's ← skipped past intervening chapters — twice fixed, the second time by user
+correction.** On chapter 2+ it always opened the storyline-WIDE summary, regardless of chapter
+position, so a learner on chapter 5 could never step back to chapter 4's own card — only ever to the
+walk's very start. First cut routed ← through `loadSaved` (the same call → makes going forward),
+which seemed right by symmetry — but `loadSaved`'s own arrival gate (`_enterViaSummaryCard`, `v81_b`)
+shows chapter 1's ENTRY card whenever chapter 1 is the target, correct for arriving there NORMALLY
+but not for arriving BY GOING BACK. **User correction, precise**: "chapter 2's ← should lead to
+chapter 1's PROGRESS card; only chapter 1's OWN ← should lead to the entry/summary." Fixed with a new
+`_backToChapterProgress`, deliberately NOT `loadSaved` — same fetch shape, same `showLessonSet()`
+housekeeping, but never consults `_enterViaSummaryCard`, so the entry-card decision only ever fires
+on a NORMAL arrival (opening a chapter from the storyline deck, resuming a session), never on
+arriving by going back. Verified live on a real 3-chapter storyline: chapter 3's ← → chapter 2's
+progress card; chapter 2's ← → chapter 1's progress card (not its entry card); chapter 1's own ← →
+the storyline summary, unchanged. `unit-next-chapter-entry.test.js` gained two new sections
+(mutation-tested against both the original bug and the first, over-symmetric fix).
+
+**Testing**: 247/221/0/0 full baseline green (the same pre-existing `e2e-lesson-edit-roundtrip`
+timing flake reconfirmed unrelated, per its now-documented 5/20↔3/20 baseline). `docs/index.html`
+rebuilt. One new `en`-only `ui.json` key (`complete.prev_chapter`).
+
 ### `v82_c` — new lesson type `inflections`, a story-panel alignment fix found along the way, and a Japanese-specific bug hunt that reached all the way into a live model call
 
 **Shipped by: Claude Code.** One continuous arc: a new lesson type the user asked for after a bug

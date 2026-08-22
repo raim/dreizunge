@@ -300,6 +300,7 @@
     "teacher.unlock_tooltip": "Unlock all stories",
     "complete.story_unlocked": "read and understand the chapter",
     "complete.next": "Next",
+    "complete.prev_chapter": "Previous chapter",
     "complete.back_story": "← Back to story",
     "complete.back_home": "← Back",
     "complete.chapter_progress": "This chapter",

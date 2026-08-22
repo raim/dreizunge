@@ -1,44 +1,40 @@
-# Session prompt — written at the `v82_c` cut
+# Session prompt — written at the `v82_d` cut
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v82_b.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v82_c.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v82_d`, `v82_e`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v82_e`, `v82_f`, …) unless a future session has a good reason to switch to
 `v83_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v82_c`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v82_d`** cut.
 
 **`v82_c`, in brief** (full write-up in `roadmap_v82.md`): a new lesson type, `inflections` —
 closes the `v80_f` coverage gap (36.4% of taught words absent from the story in any form) by
 scanning the ALREADY-GENERATED story for inflected surface forms and building two MCQs per word
 (lemma, grammatical form), registering in `_storyWordSources` so the words become highlighted and
 tappable — without touching story generation or the standard vocab lesson's own dictionary-form
-teaching. Full registry sweep mirroring `word_forms` everywhere it's wired in.
+teaching. Plus three follow-ups found along the way: a story-panel alignment gap (`renderStoryText`
+never reached `_storyWordSources`), a Japanese-specific word-boundary matching bug (live-tested
+against a real Japanese story), and a furigana pipeline that turned out to be nearly nonfunctional
+(11 of 12 LLM-generated Japanese stories had no working furigana — two separate, A/B-tested fixes).
 
-**Three follow-ups, each a real find, not busywork:**
-1. **A story-panel alignment gap** — the topic-detail screen's `#story-body` panel was the one
-   place `_storyWordSources` never reached; it read only `L.vocab`, gated on lesson COMPLETION
-   (pre-`v74_n` behaviour the other three panels had already moved past). Fixed, with a real
-   null-safety regression caught and fixed along the way.
-2. **A Japanese-specific matching bug** — `word_forms`/`inflections`' word-boundary check assumes a
-   spaced script; Japanese has none, so a genuinely correct surface form could never pass unless it
-   touched punctuation. Fixed and **live-tested against a real Japanese story** — 4 valid items, all
-   genuinely mid-run, verified tappable end-to-end in the browser.
-3. **A furigana pipeline that turned out to be nearly nonfunctional** — 11 of 12 LLM-generated
-   Japanese stories in the corpus have no working furigana. Two separate fixes, both A/B-tested
-   against the live default model: the generation prompt (measured 8/9 → 9/9 correct on a real
-   reference text), and — found DURING that test — a render-side defect where the model attaches a
-   KANJI spelling backwards onto a word it already knows the kanji for, which the prompt fix alone
-   could not and should not have tried to fully suppress. Fixed by checking that a furigana READING
-   is pure kana, not by narrowing which bases can carry one (which would have broken 17 legitimate
-   existing annotations).
+**`v82_d`, in brief**: three more user-reported fixes, all against `v82_c`'s own new material —
+`inflection_form`'s answer read-out was spoken in the wrong voice (target instead of source
+language); the entry card's section order had drifted from the progress card's (a `v77_o`-era order
+that never followed two later reorderings of its sibling); and the progress card's ← skipped past
+intervening chapters straight to the storyline-wide summary. The third one is worth reading in full
+in `roadmap_v82.md` — the FIRST fix (routing ← through `loadSaved`, mirroring how → already works)
+looked right by symmetry and passed its own tests, but the user caught that it was still wrong one
+level down (chapter 2's ← landed on chapter 1's ENTRY card, not its PROGRESS card) and gave a precise
+correction. Worth internalizing: passing tests confirm a fix does what IT claims, not that the claim
+itself was the right one — the user's read of what the app should do was still the deciding signal.
 
-**⚠️ A near-miss on user data, not a loss, but a workflow lesson worth carrying forward**: this dev
-workflow (mutate `lessons.json` through a running server, restart the server to pick up code
-changes) can silently overwrite a concurrent edit, because the server holds the whole array in
-memory and never re-reads from disk except at startup. It happened once this session (the user's own
+**⚠️ A near-miss on user data at the `v82_c` cut, not a loss, but a workflow lesson worth carrying
+forward**: this dev workflow (mutate `lessons.json` through a running server, restart the server to
+pick up code changes) can silently overwrite a concurrent edit, because the server holds the whole
+array in memory and never re-reads from disk except at startup. It happened once (the user's own
 browser edits on the Scheißland topic got clobbered by a stale restart) and was caught and fixed —
-by the user themselves, via `b321857`, before this session even noticed. **Restart-then-verify
+by the user themselves, via `b321857`, before that session even noticed. **Restart-then-verify
 against the live API before any further mutating call** is the habit this earned, not a one-off.
 
 ## This is a new BASE LINE, cut from `v81` at `v82_a`
@@ -77,16 +73,17 @@ closing `PLAN §C4` — see `roadmap_v81.md`'s own `v81_ad` entry for the full w
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 246 checks
-node test/run.js --quick                  → expect 220
+node test/run.js                          → expect 247 checks
+node test/run.js --quick                  → expect 221
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Corpus at this cut: **323 topics, 91 storylines, 33 languages, 632 `en` keys** (`v82_c` added 7 new
-`en`-only keys for the `inflections` lesson type; not yet translated — needs the offline translate
-pass before those languages catch up).
-`APP_VERSION = 'v82_c'`.
+Corpus at this cut: **323 topics, 91 storylines, 33 languages, 633 `en` keys** (`v82_c` added 7 new
+`en`-only keys for the `inflections` lesson type; `v82_d` added 1 more — `complete.prev_chapter` —
+for the progress-card back-button fix. None yet translated — needs the offline translate pass before
+those languages catch up).
+`APP_VERSION = 'v82_d'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file

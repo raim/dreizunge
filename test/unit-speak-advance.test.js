@@ -173,5 +173,46 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   }
   console.log('  no voice for the language: silent, and still advances: OK');
 
+  // ── 7. `langCode` picks a DIFFERENT voice than the lesson's target language ────────────────
+  // v82_d (user report): inflection_form's answer is a grammatical-form label in the SOURCE
+  // language (Italian, for a German lesson) — reading it with the target voice was audibly wrong.
+  // `_speakAndAdvance(text, langCode)` exists so a caller can override which voice speaks, without
+  // touching the target-voice default every other exercise type still relies on.
+  {
+    install(300, `globalThis.speechSynthesis.getVoices = function(){
+                    return [{ name:'DE', lang:'de-DE', localService:true },
+                            { name:'IT', lang:'it-IT', localService:true }]; };
+                  LANGS = { de: { name:'German', tts:'de-DE' }, it: { name:'Italian', tts:'it-IT' },
+                            en: { name:'English', tts:'en-GB' } };
+                  globalThis.__spokeUtt = [];
+                  globalThis.__origSpeak = speechSynthesis.speak;
+                  speechSynthesis.speak = function(u){ __spokeUtt.push({ text:u.text, lang:u.lang }); __origSpeak(u); };`);
+    runAdvance('nominativo plurale');
+    // No langCode: the default-arg call reads with the LESSON's target voice (de-DE) — the existing
+    // behaviour, unaffected by this parameter existing at all.
+    await sleep(600);
+    let s = JSON.parse(C.run(`JSON.stringify(__spokeUtt)`));
+    assert.strictEqual(s.length, 1, 'one utterance spoken');
+    assert.strictEqual(s[0].lang, 'de-DE', 'omitting langCode still speaks with the TARGET voice — the default is unchanged');
+  }
+  console.log('  omitting langCode: unchanged target-voice default: OK');
+  {
+    install(300, `globalThis.speechSynthesis.getVoices = function(){
+                    return [{ name:'DE', lang:'de-DE', localService:true },
+                            { name:'IT', lang:'it-IT', localService:true }]; };
+                  LANGS = { de: { name:'German', tts:'de-DE' }, it: { name:'Italian', tts:'it-IT' },
+                            en: { name:'English', tts:'en-GB' } };
+                  globalThis.__spokeUtt = [];
+                  globalThis.__origSpeak = speechSynthesis.speak;
+                  speechSynthesis.speak = function(u){ __spokeUtt.push({ text:u.text, lang:u.lang }); __origSpeak(u); };`);
+    C.run(`_speakAndAdvance('nominativo plurale', 'it'); true;`);
+    await sleep(600);
+    const s = JSON.parse(C.run(`JSON.stringify(__spokeUtt)`));
+    assert.strictEqual(s.length, 1, 'one utterance spoken');
+    assert.strictEqual(s[0].lang, 'it-IT',
+      `passing langCode='it' speaks with the ITALIAN voice, not the lesson's target (German) — got ${s[0] && s[0].lang}`);
+  }
+  console.log('  langCode="it" overrides the target voice with Italian: OK');
+
   console.log('unit-speak-advance: ALL PASSED');
 })().catch(e => { console.error(e && e.stack || e); process.exit(1); });

@@ -118,6 +118,46 @@ const state = (C, id) => C.run(`(function(){ var e=document.getElementById(${JSO
   console.log('  entry card: shows the same progress bars as the progress card');
 }
 
+// ── 6. Section ORDER matches the progress card's — v82_e (user report, with two screenshots) ──
+// The entry card (summary-screen) and the progress card (complete-screen) are two separate STATIC
+// markup blocks in index.html, not one shared render — so nothing stops them drifting apart, and
+// they had: the progress card moved its bars to the BOTTOM (v80_y/v81_b) and its content-box to the
+// TOP, but the entry card was never brought forward from the v77_o-era order it was written to.
+//
+// Asserted on SOURCE POSITION rather than a live DOM walk — deliberately, not as a shortcut. Both
+// cards are STATIC markup (`loadClient()`'s harness never loads index.html's <body>, only its
+// <script>, so there is no live tree to walk here at all), and nothing in the client ever reorders
+// these containers at runtime (confirmed: every `sum-*`/`comp-*` reference in index.html is a
+// `getElementById` read/write, never an `insertBefore`/`append` reorder) — so source position IS
+// the render order, not a proxy that could diverge from it the way a regex over computed text can.
+{
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  // Absolute source position, not scoped to the screen — safe because every id checked here is
+  // already prefixed distinctly per screen (`sum-*` vs `comp-*`), so there is no cross-screen
+  // collision to guard against, and each element must exist exactly once in the file.
+  const posOf = (elId) => {
+    const re = new RegExp(`id="${elId}"`, 'g');
+    const hits = [...html.matchAll(re)];
+    assert.strictEqual(hits.length, 1, `${elId} appears exactly once in index.html (got ${hits.length})`);
+    return hits[0].index;
+  };
+  const orderOf = (ids) =>
+    ids.map(([label, elId]) => [label, posOf(elId)])
+       .sort((a, b) => a[1] - b[1]).map(p => p[0]);
+  const entryOrder = orderOf(
+    [['content', 'sum-sumbox'], ['storyboard', 'sum-storyboard'], ['actions', 'sum-actions'],
+     ['bars', 'sum-progress'], ['title', 'sum-title']]);
+  const progressOrder = orderOf(
+    [['content', 'comp-story-panel'], ['storyboard', 'comp-storyboard'], ['actions', 'comp-actions'],
+     ['bars', 'comp-progress'], ['title', 'comp-title']]);
+  assert.deepStrictEqual(entryOrder, ['content', 'storyboard', 'actions', 'bars', 'title'],
+    `entry card section order — got ${JSON.stringify(entryOrder)}`);
+  assert.deepStrictEqual(entryOrder, progressOrder,
+    `entry card and progress card must present content/storyboard/actions/bars/title in the SAME ` +
+    `order — entry: ${JSON.stringify(entryOrder)}, progress: ${JSON.stringify(progressOrder)}`);
+  console.log('  entry card section order matches the progress card\'s: OK');
+}
+
 
 
 // loadSaved is async (it awaits fetch and goLessonSet), so the assertions must run after the

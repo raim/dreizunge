@@ -314,6 +314,80 @@ await (async () => {
   console.log('  arrival with work left: Next opens the comprehension lesson, card says "keep going"');
 })();
 
+// ── 9. v82_e (user ruling, corrected) — chapter 2's ← lands on chapter 1's PROGRESS card ───────
+// First cut of this fix reused `loadSaved` (the same call Next makes going forward), which seemed
+// right by symmetry — but `loadSaved`'s own arrival gate (`_enterViaSummaryCard`, v81_b) shows
+// chapter 1's ENTRY card whenever chapter 1 is the target, which is right for arriving NORMALLY but
+// not for arriving BY GOING BACK. User ruling: "chapter 2's back should lead to chapter 1's
+// progress card; only chapter 1's OWN back should lead to the entry/summary." So ← now calls
+// `_backToChapterProgress`, not `loadSaved` — drives the REAL button, with `fetch` stubbed to hand
+// back chapter 1's data, exactly as §7 already does for the forward direction (v71_u rule: an
+// assertion on a helper alone proves nothing about whether the button actually calls it).
+await (async () => {
+  const C = loadClient({ quiet: true });
+  C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed');
+  C.run(`${BOOT}
+    APP.lessonData = ${JSON.stringify(SECOND)};
+    APP.lang = ${JSON.stringify(SECOND.lang)}; APP.srcLang = ${JSON.stringify(SECOND.srcLang)};
+    APP.cur = { lessonIdx:0, exercises:[], cur:0, correct:4, total:4, mistakes:0 };
+    if (typeof _invalidateQidUniverse === 'function') _invalidateQidUniverse();
+    (function(){
+      var m = _solvedMap(APP.lessonData.topic);
+      countedLessons(APP.lessonData).forEach(function(L){
+        _lessonItemUniverse(APP.lessonData.lessons.indexOf(L)).forEach(function(k){ m[k]=1; }); });
+      var d = APP.progress.completed[APP.lessonData.topic] = {};
+      countedLessons(APP.lessonData).forEach(function(L){ d[L.id] = {done:true, correct:4, total:4}; });
+    })();
+    setComplete(APP.lessonData);
+    APP._summaryOpened = false;
+    showStorySummary = function(){ APP._summaryOpened = true; };
+    showComplete(); true;`, 'render');
+  assert.strictEqual(C.run(`document.getElementById('comp-prev').style.display`), '',
+    'non-vacuity: ← is actually offered on this chapter\'s progress card');
+  C.run(`goLessonSet = async function(){ return true; };
+    fetch = function(){ return Promise.resolve({ ok:true,
+      json: function(){ return Promise.resolve(${JSON.stringify(FIRST)}); } }); };
+    document.getElementById('comp-prev').onclick(); true;`, 'back');
+  await settle();
+  assert.strictEqual(C.run(`APP.lessonData && APP.lessonData.topic`), FIRST.topic,
+    '← loaded the PREVIOUS chapter specifically, not some other one');
+  assert.strictEqual(C.run(`APP._shown`), 'complete-screen',
+    'and landed on its PROGRESS card, not the entry/summary card `loadSaved` would have shown for chapter 1');
+  assert.strictEqual(C.run(`APP._summaryOpened`), false,
+    '← does NOT open the storyline-wide summary on a later chapter');
+  console.log(`  chapter 2's ← loads "${FIRST.topic}"'s PROGRESS card, not its entry card or the storyline summary`);
+})();
+
+// ── 10. Regression guard: chapter 1's OWN ← still opens the storyline summary ──────────────────
+// The fix is scoped to "a chapter with a predecessor" — chapter 1 has none, so it must keep the
+// v77_h behaviour exactly, not lose its ← control or silently do nothing.
+await (async () => {
+  const C = loadClient({ quiet: true });
+  C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed');
+  C.run(`${BOOT}
+    APP.lessonData = ${JSON.stringify(FIRST)};
+    APP.lang = ${JSON.stringify(FIRST.lang)}; APP.srcLang = ${JSON.stringify(FIRST.srcLang)};
+    APP.cur = { lessonIdx:0, exercises:[], cur:0, correct:4, total:4, mistakes:0 };
+    if (typeof _invalidateQidUniverse === 'function') _invalidateQidUniverse();
+    (function(){
+      var m = _solvedMap(APP.lessonData.topic);
+      countedLessons(APP.lessonData).forEach(function(L){
+        _lessonItemUniverse(APP.lessonData.lessons.indexOf(L)).forEach(function(k){ m[k]=1; }); });
+      var d = APP.progress.completed[APP.lessonData.topic] = {};
+      countedLessons(APP.lessonData).forEach(function(L){ d[L.id] = {done:true, correct:4, total:4}; });
+    })();
+    setComplete(APP.lessonData);
+    APP._summaryOpened = false;
+    showStorySummary = function(){ APP._summaryOpened = true; };
+    showComplete(); true;`, 'render');
+  C.run(`document.getElementById('comp-prev').onclick(); true;`, 'back');
+  assert.strictEqual(C.run(`APP._loadedSaved`), null,
+    'chapter 1\'s ← does not try to load a "previous chapter" — there is none');
+  assert.strictEqual(C.run(`APP._summaryOpened`), true,
+    'chapter 1\'s ← still opens the storyline summary, unchanged');
+  console.log('  chapter 1\'s ← still opens the storyline summary (unchanged): OK');
+})();
+
 // ── What this does NOT establish (rule 34) ──────────────────────────────
 // • Nothing here says the progress card is a GOOD arrival screen; only that it is the one reached.
 //   That is a device judgement, and it is owed.

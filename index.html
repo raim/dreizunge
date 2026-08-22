@@ -1626,12 +1626,14 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <div id="sum-hdr-prog-txt" style="font-size:11px;font-weight:800;color:var(--gray-dark);text-align:right;padding:2px 0 0;opacity:.8"></div>
   </div>
   <div class="comp-body">
-    <!-- v77_o (user): the entry card is laid out like every other progress card — storyboard first,
-         then the bars, then the content, with the title line at the BOTTOM (v77_n). Its own 📖 icon
-         is gone: the storyboard is the picture, and two images stacked read as a dialog rather than
-         as the same page the storyline shows. -->
-    <div id="sum-storyboard" style="display:none;margin-top:12px"></div>
-    <div id="sum-progress" style="margin-top:14px;text-align:left"></div>
+    <!-- v82_e (user): re-aligned with complete-screen's CURRENT order, which moved on twice since
+         v77_o wrote the comment this replaces — v80_y/v81_b later pulled the progress bars down to
+         sit below the action row on the progress card, and this entry card never followed. Order is
+         now identical in kind: the content (here, the summary box — complete-screen's counterpart is
+         the story panel + vocab) leads, then the storyboard, then the actions, then the bars, then
+         the verdict line at the bottom (v77_n, unchanged). Its own 📖 icon is still gone: the
+         storyboard is the picture, and two images stacked read as a dialog rather than as the same
+         page the storyline shows. -->
     <!-- v77_r (user): the summary sits in the SAME bordered field as every other body text on the
          card, with the same read-aloud button (and the translate button when a translation exists),
          instead of being loose prose. One field shape means one set of affordances: wherever there
@@ -1645,9 +1647,11 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       </div>
       <div id="sum-sumtext" dir="auto" style="font-size:15px;color:var(--text);line-height:1.65"></div>
     </div>
+    <div id="sum-storyboard" style="display:none;margin-top:12px"></div>
     <div id="sum-actions" style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:18px;flex-wrap:wrap">
       <button class="comp-ico primary" id="sum-next">→</button>
     </div>
+    <div id="sum-progress" style="margin-top:14px;text-align:left"></div>
     <div class="comp-title" id="sum-title" style="margin-top:16px">The story so far</div>
     <!-- v80_e: names the chapter being opened, on a chapter arrival only. Carried over verbatim
          from the deleted next-chapter-unlocked card's #unl-chapter, styling included, so the
@@ -6566,6 +6570,28 @@ async function loadSaved(ref){
         else showLibraryClean();
       }
     }
+  }catch(e){ alert('Could not load: '+e.message); }
+}
+
+// v82_e (user ruling): the progress card's ← always shows the PREVIOUS CHAPTER'S PROGRESS CARD —
+// even when that chapter is chapter 1, which `loadSaved`'s own arrival gate (`_enterViaSummaryCard`,
+// v81_b) would otherwise show the ENTRY card for. Deliberately NOT `loadSaved`: "chapter 2's back
+// leads to chapter 1's progress card; only chapter 1's OWN back leads to the entry/summary" means
+// the entry-card decision must never fire on arrival BY GOING BACK, only on arriving normally
+// (opening the chapter from the storyline deck, continuing a session, etc.) — which is exactly what
+// `loadSaved` still handles, unchanged, everywhere else. Same fetch shape as `loadSaved`, same
+// `showLessonSet()` housekeeping (language/dir sync, hash, buildPath), different landing rule.
+async function _backToChapterProgress(ref){
+  try{
+    const isId=/^tp_\d+$/.test(String(ref));
+    const r=await fetch('/api/lessons/load?'+(isId?('id='+ref):('topic='+ref)));
+    if(!r.ok) throw new Error('Not found');
+    APP.lessonData=await r.json();
+    await showLessonSet();
+    // Teacher stays on the lesson-set editing hub, same as loadSaved's own teacher branch — this
+    // button is learner-facing, but a teacher previewing a learner's session must not be forced past
+    // the page they actually edit from.
+    if(_isLearner()) showProgressCard(true);
   }catch(e){ alert('Could not load: '+e.message); }
 }
 
@@ -16361,6 +16387,12 @@ function check(replay){
       : (ex.type==='math_calc'||ex.type==='math_order') ? (Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
       : ex.type==='syn_select' ? stripFuri(ex.correct.join(', '))
       : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+stripFuri(ex.target) : stripFuri(ex.target));
+    // v82_d (user report): inflection_form's answer is a grammatical-form LABEL in the SOURCE
+    // language (e.g. Italian "nominativo plurale" for a German lesson), unlike every other type
+    // above, whose reveal text is genuinely target-language. Falling into the generic branch above
+    // and reading it with the target voice was audibly wrong. inflection_lemma is NOT included here
+    // — its target IS the target-language lemma, so the default (target voice) is already correct.
+    const speakOkLang = ex.type==='inflection_form' ? (APP.lessonData?.srcLang||APP.srcLang||'en') : null;
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
     { const a=document.getElementById('ex-area'); if(a){ a.classList.remove('fall-down'); a.classList.add('rise-up'); setTimeout(()=>a.classList.remove('rise-up'),520); } }
     if(ex.type==='syn_select') document.querySelectorAll('.syn-tile').forEach(b=>{ if(ex.correct.some(c=>c.toLowerCase()===(b.dataset.w||'').toLowerCase())) b.classList.add('ok'); });
@@ -16368,7 +16400,7 @@ function check(replay){
     // Auto-advance — speaks once then advances
     // A replay leaves the button live as "Continue" and says nothing: auto-advancing would carry the
     // learner forward the instant they navigated back, and re-speaking would make Back noisy.
-    if(!replay){ btn.disabled = true; _speakAndAdvance(speakOk); }
+    if(!replay){ btn.disabled = true; _speakAndAdvance(speakOk, speakOkLang); }
   } else {
     if(!replay){ C.hearts=Math.max(0,C.hearts-1); C.mistakes++; C.total++; C.streak=0; }
     // v81_e / §T7 (user ruling: HIGHLIGHT ONLY). Behind `!replay` for the same reason every other
@@ -16420,6 +16452,9 @@ function check(replay){
       : (ex.type==='math_calc'||ex.type==='math_order') ? (Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
       : ex.type==='syn_select' ? stripFuri(ex.correct.join(', '))
       : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+stripFuri(ex.target) : stripFuri(ex.target));
+    // v82_d: same source-language exception as speakOkLang above — inflection_form's answer is an
+    // Italian (source-language) form label, not target-language text.
+    const speakBadLang = ex.type==='inflection_form' ? (APP.lessonData?.srcLang||APP.srcLang||'en') : null;
     // v74_q: the reason is SHOWN, not spoken. v71_o read it aloud in the learner's own language on
     // the argument that the reason is the useful thing to hear — but it means a target-language
     // lesson suddenly speaks the learner's native language mid-round, in a different voice (the
@@ -16430,7 +16465,7 @@ function check(replay){
     // Nothing is spoken in its place: the remaining candidate would be the correct OPTION, and
     // v71_o's other observation still holds — that text is already in the story above, so hearing
     // it teaches nothing the learner cannot see. A comprehension question is a reading exercise.
-    if(!replay && !_why && speakBad) speak(speakBad,0.75);
+    if(!replay && !_why && speakBad) { if(speakBadLang) speakLang(speakBad, speakBadLang, 0.75); else speak(speakBad,0.75); }
     const _corrStr = Array.isArray(ex.correct) ? ex.correct.join(', ') : ex.correct;
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('bad'); if(b.textContent.trim()===stripFuri(_corrStr))b.classList.add('ok'); });
     if(ex.type==='syn_select') document.querySelectorAll('.syn-tile').forEach(b=>{ const w=(b.dataset.w||'').toLowerCase(); if(ex.correct.some(c=>c.toLowerCase()===w)) b.classList.add('ok'); else if(b.classList.contains('sel')) b.classList.add('bad'); });
@@ -16843,6 +16878,20 @@ function showComplete(review, lessonIdxOverride){
     return null;
   };
 
+  // v82_e (user report): the chapter IMMEDIATELY before this one in the deck, or null on the
+  // storyline's first chapter (nothing to go back to) or a standalone topic (`_slCtx` null). Unlike
+  // `_nextChapter()` this does not scan for "unfinished" — going back is revisiting what came
+  // before, not hunting for outstanding work, so it is always exactly one step, always the same
+  // chapter regardless of completion state.
+  const _prevChapter = () => {
+    if (!_slCtx) return null;
+    const { sl, byId, topics } = _slCtx;
+    const myIdx = topics.indexOf(topicKey);
+    if (myIdx <= 0) return null;
+    const ids = sl.chapters || [];
+    return byId[ids[myIdx - 1]] || null;
+  };
+
   // v66.1: ENFORCE the pass mark. Previously a learner who had played every lesson but was below
   // the threshold still got "Next" → next chapter, because _firstUnfinishedLessonIdx returns -1 once
   // every lesson has a done-flag. The chapter was correctly marked incomplete, but nothing stopped
@@ -17180,12 +17229,30 @@ function showComplete(review, lessonIdxOverride){
     // summary (37 of 84 do not), so the control can never lead to a blank page — hidden rather
     // than greyed, because "there is no summary" is not a state the learner can act their way out
     // of, unlike an empty drill. Not offered on a drill: its topic is synthetic.
+    //
+    // v82_e (user report, then a correction): that was right for chapter 1, where there IS no
+    // previous chapter — but on chapter 2+ it sent ← to the STORYLINE-WIDE summary every time,
+    // skipping past every chapter in between. First fix routed through `loadSaved` (the same call
+    // Next makes going forward), which seemed right by symmetry — but `loadSaved`'s own arrival
+    // gate (`_enterViaSummaryCard`, v81_b) shows chapter 1's ENTRY card whenever chapter 1 is the
+    // target, which is correct for arriving at chapter 1 NORMALLY but not for arriving there BY
+    // GOING BACK from chapter 2: user ruling — "chapter 2's back should lead to chapter 1's
+    // PROGRESS card; only chapter 1's OWN back should lead to the entry/summary." So this does NOT
+    // reuse `loadSaved` — `_backToChapterProgress` below fetches the same way but always forces the
+    // progress card, deliberately never consulting `_enterViaSummaryCard`.
     const _pv = document.getElementById('comp-prev');
     if (_pv) {
-      const _hasSummary = !lesson._drill && !!_summaryOfStory();
-      _compIco(_pv, '←', t('summary.open'));
-      _pv.style.display = _hasSummary ? '' : 'none';
-      _pv.onclick = () => { APP._sumNext = null; showStorySummary(); };   // walk mode: forward returns here
+      const _prevCh = !lesson._drill ? _prevChapter() : null;
+      if (_prevCh) {
+        _compIco(_pv, '←', t('complete.prev_chapter'));
+        _pv.style.display = '';
+        _pv.onclick = () => { endDrill(); _backToChapterProgress(_prevCh.id || encTopic(_prevCh.topic)); };
+      } else {
+        const _hasSummary = !lesson._drill && !!_summaryOfStory();
+        _compIco(_pv, '←', t('summary.open'));
+        _pv.style.display = _hasSummary ? '' : 'none';
+        _pv.onclick = () => { APP._sumNext = null; showStorySummary(); };   // walk mode: forward returns here
+      }
     }
     const _rp = document.getElementById('comp-repeat');
     if(_rp){
@@ -19552,7 +19619,13 @@ function speakBodyText(bodyId,langCode,preText){
 // ── Speech-gated advance ─────────────────────────────────────────────────────
 // Speaks text and advances to next exercise when speech ends (or times out).
 // Minimum delay 350ms even if no speech, to avoid flash.
-function _speakAndAdvance(text) {
+// v82_d (user report): `langCode` is optional and defaults to the lesson's TARGET language exactly
+// as before — every existing caller (speakOk for every ordinary exercise type) is unaffected. It
+// exists for the one case whose reveal text is genuinely in the SOURCE language, not the target
+// (`inflection_form`'s formLabel, e.g. Italian "nominativo plurale" for a German lesson) — the
+// generic fallback used to read that text with the TARGET voice, because this function only ever
+// knew one language. `_ttsMakeUtterance`'s own resolution mirrors `_speakChunksThen`'s.
+function _speakAndAdvance(text, langCode) {
   const C = APP.cur;
   const doAdvance = () => { C.cur++; renderEx(); };
   if (APP.muted) { setTimeout(doAdvance, 350); return; }
@@ -19560,11 +19633,11 @@ function _speakAndAdvance(text) {
     setTimeout(doAdvance, text ? 900 : 350);
     return;
   }
-  const ttsCode = activeTtsCode();
+  const ttsCode = langCode ? (_speechLocaleFor(langCode) || langCode) : activeTtsCode();
   if (!_ttsMakeUtterance(text, ttsCode, 0.9)) {
     // No voice for this language: stay silent rather than let an English voice spell out "Mtu" as
     // "M t u". MUST still advance, or a listening exercise would hang forever on the silent item.
-    _ttsNoVoice(ttsCode, APP.lessonData?.lang || APP.lang);
+    _ttsNoVoice(ttsCode, langCode || APP.lessonData?.lang || APP.lang);
     setTimeout(doAdvance, 900);
     return;
   }
@@ -19609,8 +19682,8 @@ function _speakAndAdvance(text) {
     if (idlePolls >= 3 && (sawSpeech || Date.now() - t0 > START_GRACE_MS)) advance();
   }, 300);
   const wasSpeaking = speechSynthesis.speaking || speechSynthesis.pending;
-  if (wasSpeaking) { speechSynthesis.cancel(); setTimeout(() => _speakChunksThen(chunks, null, 0.9, 0, advance), 50); }
-  else _speakChunksThen(chunks, null, 0.9, 0, advance);
+  if (wasSpeaking) { speechSynthesis.cancel(); setTimeout(() => _speakChunksThen(chunks, langCode || null, 0.9, 0, advance), 50); }
+  else _speakChunksThen(chunks, langCode || null, 0.9, 0, advance);
 }
 
 function _ttsChunks(text) {

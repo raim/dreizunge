@@ -258,7 +258,12 @@ const GOOD = { q: 'Warum geht Anna weg?', choices: ['Sie hat Angst', 'Sie ist m�
   // mode added a `!replay &&` guard in front, so the TEXT moved. The CLAIM did not (rule 29): the
   // reveal is still silent exactly when there is a reason. Pinned on `_why` gating the speech, with
   // any additional guards allowed, so the next guard added here does not read as a regression.
-  assert.ok(/if\((?:[^)]*&&\s*)?!_why && speakBad\) speak\(speakBad,0\.75\);/.test(html),
+  // v82_d moved the TEXT again — speak(speakBad,0.75) is now one of two branches
+  // (speakLang(speakBad, speakBadLang, 0.75) is the other, for inflection_form's source-language
+  // reveal) — so the pin now only requires `speak(speakBad,0.75)` to appear SOMEWHERE inside the
+  // `!_why` gate, not immediately after it. The claim under test — silent when `_why` is set — is
+  // unchanged; which branch fires when it ISN'T is out of scope for this file.
+  assert.ok(/if\((?:[^)]*&&\s*)?!_why && speakBad\)[\s\S]{0,120}speak\(speakBad,0\.75\);/.test(html),
     'a comprehension reveal is silent; every other exercise type still speaks its answer');
   // And the replay path must not speak at all — navigating back should be quiet.
   assert.ok(/if\(!replay && !_why && speakBad\)/.test(html),
