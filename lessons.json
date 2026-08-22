@@ -12723,86 +12723,6 @@
           }
         },
         {
-          "id": "ls_1786579559556_0_word_forms",
-          "type": "word_forms",
-          "title": "Angst und Angst",
-          "desc": "Lernwortschatz: Angst, Riesen, Menschen",
-          "icon": "😱",
-          "items": [
-            {
-              "sentence": "WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE ___ KOMMEN, UM SIE AUFZUFRESSEN.",
-              "translation": "Perché pensano di essere deliziosi, vivono nella costante paura che i giganti vengano a mangiarli.",
-              "choices": [
-                "Riese",
-                "Riesen",
-                "Riesin"
-              ],
-              "correctIndex": 1,
-              "explanation": "Plural: 'die' e il verbo plurale 'kommen' richiedono il plurale."
-            },
-            {
-              "sentence": "ES GIBT EIN LAND, WO DIE KÖPFE ALLER ___ KNÖDELN GLEICHEN.",
-              "translation": "C'è un paese dove le teste di tutte le persone sono come gnocchi.",
-              "choices": [
-                "Mensch",
-                "Menschen",
-                "Männer"
-              ],
-              "correctIndex": 1,
-              "explanation": "Plural: 'aller' (genitivo plurale) richiede il sostantivo al plurale."
-            },
-            {
-              "sentence": "WEIL SIE ___, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST.",
-              "translation": "Perché pensano di essere deliziosi, vivono nella costante paura.",
-              "choices": [
-                "meint",
-                "meinen",
-                "meinte"
-              ],
-              "correctIndex": 1,
-              "explanation": "Coniugazione: il soggetto 'Sie' (loro) richiede la desinenza -en."
-            },
-            {
-              "sentence": "ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN ___.",
-              "translation": "C'è un paese dove le teste di tutte le persone sono come gnocchi.",
-              "choices": [
-                "gleichen",
-                "gleich",
-                "ähnlich"
-              ],
-              "correctIndex": 0,
-              "explanation": "Verbo: 'gleichen' è il verbo corretto per 'assomigliare a', usato qui con 'wie' implicito o struttura comparativa."
-            },
-            {
-              "sentence": "WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ___.",
-              "translation": "Perché pensano di essere deliziosi, vivono nella costante paura.",
-              "choices": [
-                "Angst",
-                "Angste",
-                "Angstes"
-              ],
-              "correctIndex": 0,
-              "explanation": "Genitivo: 'der' (femminile singolare) richiede la forma base 'Angst'."
-            }
-          ],
-          "_genMeta": {
-            "type": "word_forms",
-            "model": "qwen3.6:35b-a3b",
-            "attempts": 1,
-            "valid": 5,
-            "rejected": 0,
-            "rejectReasons": {},
-            "promptTokens": 984,
-            "completionTokens": 684,
-            "ms": 278704,
-            "at": "2026-08-13T00:05:59.556Z"
-          },
-          "_recreated": true,
-          "_hidden": true,
-          "qcAt": "2026-08-13T05:33:26.003Z",
-          "qcBy": "translategemma:12b"
-        },
-        {
           "id": "ls_1786579907773_0_synonyms",
           "type": "synonyms",
           "title": "Angst vor den Riesen",
@@ -12867,32 +12787,6 @@
               "homophones": []
             },
             {
-              "base": "Riesen",
-              "gloss": "giganti",
-              "sentence": "WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRESSEN.",
-              "synonyms": [
-                {
-                  "w": "Riesinnen",
-                  "g": "gigantesse"
-                }
-              ],
-              "antonyms": [],
-              "homophones": [],
-              "qcByModel": {
-                "translategemma:12b": {
-                  "sug": "X is not a synonym of Riesen.",
-                  "field": "note",
-                  "at": "2026-08-13T05:35:14.734Z"
-                }
-              },
-              "qc": {
-                "sug": "X is not a synonym of Riesen.",
-                "field": "note",
-                "at": "2026-08-13T05:35:14.734Z",
-                "by": "translategemma:12b"
-              }
-            },
-            {
               "base": "lecker",
               "gloss": "delizioso",
               "sentence": "WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRESSEN.",
@@ -12928,7 +12822,7 @@
             "at": "2026-08-13T00:11:47.773Z"
           },
           "_recreated": true,
-          "_hidden": true
+          "_hidden": false
         },
         {
           "difficulty": 1,
@@ -13108,7 +13002,117 @@
           },
           "qcAt": "2026-08-13T05:37:19.839Z",
           "qcBy": "translategemma:12b",
-          "_hidden": true
+          "_hidden": false
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1787392297707",
+          "type": "inflections",
+          "title": "Inflessioni nel testo",
+          "desc": "Riconosci le forme grammaticali",
+          "icon": "🇩🇪",
+          "items": [
+            {
+              "sentence": "ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN.",
+              "surfaceForm": "KÖPFE",
+              "translation": "Ci sono paesi dove le teste di tutte le persone assomigliano a gnocchi.",
+              "lemma": "der Kopf",
+              "lemmaChoices": [
+                "der Kopf",
+                "die Kopf",
+                "den Kopf",
+                "des Kopfes"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "nominativo plurale",
+              "formChoices": [
+                "nominativo plurale",
+                "accusativo singolare",
+                "genitivo singolare",
+                "dativo plurale"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Plurale di 'der Kopf', formato con -e e umlaut."
+            },
+            {
+              "sentence": "ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN.",
+              "surfaceForm": "MENSCHEN",
+              "translation": "Ci sono paesi dove le teste di tutte le persone assomigliano a gnocchi.",
+              "lemma": "der Mensch",
+              "lemmaChoices": [
+                "der Mensch",
+                "die Mensch",
+                "den Menschen",
+                "des Menschen"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "genitivo plurale",
+              "formChoices": [
+                "nominativo singolare",
+                "accusativo plurale",
+                "genitivo plurale",
+                "dativo singolare"
+              ],
+              "formCorrectIndex": 2,
+              "explanation": "Genitivo plurale di 'der Mensch', usato dopo la preposizione 'aller' (tutti)."
+            },
+            {
+              "sentence": "WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRESSEN.",
+              "surfaceForm": "STÄNDIGEN",
+              "translation": "Poiché pensano di sembrare gustosi, vivono nella costante paura che i giganti vengano a divorarli.",
+              "lemma": "ständig",
+              "lemmaChoices": [
+                "ständig",
+                "ständigen",
+                "ständiger",
+                "ständige"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "declinazione debole dativo femminile",
+              "formChoices": [
+                "forma base",
+                "declinazione debole dativo femminile",
+                "declinazione forte nominativo maschile",
+                "comparativo"
+              ],
+              "formCorrectIndex": 1,
+              "explanation": "Aggettivo 'ständig' declinato in forma debole al dativo femminile singolare dopo l'articolo determinativo 'der'."
+            },
+            {
+              "sentence": "WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRESSEN.",
+              "surfaceForm": "RIESEN",
+              "translation": "Poiché pensano di sembrare gustosi, vivono nella costante paura che i giganti vengano a divorarli.",
+              "lemma": "der Riese",
+              "lemmaChoices": [
+                "der Riese",
+                "die Riesen",
+                "den Riesen",
+                "des Riesen"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "nominativo plurale",
+              "formChoices": [
+                "nominativo singolare",
+                "nominativo plurale",
+                "accusativo singolare",
+                "genitivo singolare"
+              ],
+              "formCorrectIndex": 1,
+              "explanation": "Plurale di 'der Riese', formato con -en."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1317,
+            "completionTokens": 1012,
+            "ms": 282451,
+            "at": "2026-08-22T09:51:37.707Z"
+          }
         },
         {
           "id": "ls_1786580676053_svdj",
@@ -13184,8 +13188,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 13092,
-        "totalCompletionTokens": 3367,
+        "totalPromptTokens": 14409,
+        "totalCompletionTokens": 4379,
         "lessons": [
           {
             "lessonNum": 1,
@@ -13196,13 +13200,13 @@
         ],
         "tokensByType": {
           "recreate": 4643,
-          "add_lesson": 1579,
+          "add_lesson": 3908,
           "lesson_qc": 8571,
           "story_qc": 351
         }
       },
       "generatedAt": "2026-08-12T23:44:11.213Z",
-      "updatedAt": "2026-08-13T06:38:59.246Z",
+      "updatedAt": "2026-08-22T10:45:03.681Z",
       "createdBy": "admin",
       "coverageTarget": 0.7,
       "storyQcCheckedBy": "translategemma:12b",
