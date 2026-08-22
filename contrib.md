@@ -37,6 +37,8 @@
 | michim | italian consulting | .5|
 | harald | it's a text understanding app | .5|
 | c | LMGTFY widget | 1|
+| thomas | but why? | .5|
+| c | student writing test and feedback | |
 
 # data/code tokens
 
