@@ -1,12 +1,28 @@
-# Session prompt — written at the `v82_g` cut
+# Session prompt — written at the `v82_h` cut
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v82_f.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v82_g.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v82_h`, `v82_i`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v82_i`, `v82_j`, …) unless a future session has a good reason to switch to
 `v83_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v82_g`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v82_h`** cut.
+
+**`v82_h`, in brief** (full write-up in `roadmap_v82.md`): diagnosed and fixed the
+`e2e-lesson-edit-roundtrip` timing flake, reconfirmed as "pre-existing, load-shaped" at `v82_c`,
+`v82_e`, and `v82_g` without ever being traced to its cause. Root cause: every `updatedAt` stamp in
+`server.js` was a bare `new Date().toISOString()` (millisecond resolution), and two saves for the
+same record landing in the same wall-clock millisecond — genuinely possible under load, when Node's
+event loop falls behind and then processes a backlog in one synchronous burst — produced identical
+timestamps, which is exactly the property the flaky assertion checks. Fixed with a new
+`stampUpdated(saved)` helper that bumps the previous value forward by 1ms whenever `Date.now()`
+would not strictly exceed it, consolidating **nine** inline stamp sites onto one choke point (not
+just the four the failing test happened to exercise). Verified at the layer where the claim is
+observable: a new `unit-stamp-updated.test.js` FORCES the same-millisecond collision by pinning
+`Date.now()`, rather than relying on the flaky test going quiet by luck — mutation-tested, and
+checks no raw stamp site survives anywhere in server.js. Stress-tested past reasonable doubt: 35
+consecutive standalone runs + 4 consecutive full-suite runs, all clean (39/39), against a documented
+pre-fix baseline of ~2–4 failures per 15–20 runs.
 
 **`v82_g`, in brief** (full write-up in `roadmap_v82.md`): user request — sentence-ordering exercises
 (`order`, the shuffled-word-bank type) now only trigger for sentences of ≤5 words. `mkOrder`'s
@@ -124,8 +140,8 @@ closing `PLAN §C4` — see `roadmap_v81.md`'s own `v81_ad` entry for the full w
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 249 checks
-node test/run.js --quick                  → expect 222
+node test/run.js                          → expect 250 checks
+node test/run.js --quick                  → expect 223
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -133,12 +149,12 @@ node test/check-inline.js docs/index.html → expect 0 failures
 Corpus at this cut: **324 topics, 92 storylines, 33 languages, 651 `en` keys** (`v82_c` added 7 new
 `en`-only keys for the `inflections` lesson type; `v82_d` added 1 more — `complete.prev_chapter` —
 for the progress-card back-button fix; `v82_e` added 14 more for the `writing` lesson type; `v82_f`
-added 4 more — the correctness-verdict labels; `v82_g` added none — no new user-facing string. None
-yet translated — needs the offline translate pass before those languages catch up). **The
-topic/storyline counts did not move at this cut** — they carry forward `v82_e`'s own bookkeeping (a
-genuinely concurrent generation job on the dev server, observed mid-verification, not this session's
-own data; see `roadmap_v82.md`'s `v82_e` entry).
-`APP_VERSION = 'v82_g'`.
+added 4 more — the correctness-verdict labels; `v82_g`/`v82_h` added none — no new user-facing
+string. None yet translated — needs the offline translate pass before those languages catch up).
+**The topic/storyline counts did not move at this cut** — they carry forward `v82_e`'s own
+bookkeeping (a genuinely concurrent generation job on the dev server, observed mid-verification, not
+this session's own data; see `roadmap_v82.md`'s `v82_e` entry).
+`APP_VERSION = 'v82_h'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -215,18 +231,11 @@ is a materially lower bar. Needs a browser pass, not a code change.
 - **`PLAN §F2`'s second half** — the "answer visible in the stem" detector, measured and deliberately
   left unenforced because prefix-matching is mild morphology. Reported by
   `probe_word_forms_defects_v80g.js`.
-- **`e2e-lesson-edit-roundtrip` flakes inside the FULL suite, still unfixed.** Last seen: 1 of 235 on
-  a first full-suite run, clean on immediate re-run and standalone. Reproduced again at `v82_c`
-  purely by adding 3 more field-edit cases for `inflections` (no logic change to the test's own
-  timing-sensitive block): baseline 5/20 standalone runs failed BEFORE those cases were added, 3/20
-  after — same order of magnitude, confirming the flake is pre-existing and load-shaped, not
-  introduced by the new cases. **Reconfirmed again at `v82_e`** after adding 2 more cases for
-  `writing`: 4/15 standalone runs failed on the new commit, 2/15 on the exact same PREVIOUS commit —
-  same order of magnitude a third time. Nothing to do with UI work — pure server-side lesson editing,
-  likely a port/teardown race under load, and specifically the `updatedAt`-moved-non-vacuity
-  assertion each time, never the field-persistence assertions themselves. Reproduce with several
-  consecutive `node test/run.js` (not `--quick`) before assuming a fix worked, and before blaming any
-  future session's change.
+- ~~`e2e-lesson-edit-roundtrip` flakes inside the FULL suite~~ — **✅ FIXED at `v82_h`.** Root cause
+  was `updatedAt`'s millisecond-resolution timestamp colliding under load; see that entry in
+  `roadmap_v82.md`. 39/39 stress runs clean post-fix. If it EVER reappears, it is a NEW bug, not this
+  one recurring — `unit-stamp-updated.test.js` would have to be wrong for the old cause to still
+  apply, so diagnose fresh rather than assuming the old root cause survived.
 - **`PLAN §D4`'s content-correctness judging shipped at `v82_f`**, on the user's own follow-up
   request, ahead of the roadmap's original phased schedule — turned out `qwen3.6:35b-a3b` (the
   current default) handles it well without a model swap, contrary to the roadmap's own earlier

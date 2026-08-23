@@ -178,7 +178,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v82_g';
+const APP_VERSION  = 'v82_h';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -344,6 +344,24 @@ function _dedupeLessonIds(topics) {
     }
   }
   return renamed;
+}
+
+// Stamp `saved.updatedAt`, guaranteeing it strictly ADVANCES on every call — even when two saves
+// for the same record land within the same wall-clock millisecond, which `new Date().toISOString()`
+// alone cannot tell apart. That is not a rare corner case: under load, Node's event loop can fall
+// behind and then process a backlog of already-arrived requests in one tight synchronous burst, so
+// several saves genuinely can share a millisecond. Without this, "did this record change" (a save,
+// future sync/diff logic, a test asserting a write happened) can observe the SAME updatedAt across
+// two real, distinct saves. Root cause of a flake `e2e-lesson-edit-roundtrip` reconfirmed as
+// "pre-existing, load-shaped" three times over (v82_c, v82_e, v82_g) without being diagnosed — the
+// test's own repeated re-confirmation is exactly what this fixes, not a coincidence it stopped at.
+function stampUpdated(saved) {
+  if (!saved) return null;
+  const prevMs = saved.updatedAt ? Date.parse(saved.updatedAt) : NaN;
+  const nowMs = Date.now();
+  const t = Number.isFinite(prevMs) && nowMs <= prevMs ? prevMs + 1 : nowMs;
+  saved.updatedAt = new Date(t).toISOString();
+  return saved.updatedAt;
 }
 
 function saveStore(s) {
@@ -6264,7 +6282,7 @@ async function _runRecreateJob(jobId, startId, opts) {
     });
     addTokenUsage(topic, _rcTok, 'recreate');
     topic.lessons = [...(topic.lessons || []), ...newLessons];
-    topic.updatedAt = new Date().toISOString();
+    stampUpdated(topic);
     saveStore(store);   // persist per-chapter so progress survives a mid-run failure
     prevRef = topic.id;
   }
@@ -6550,7 +6568,7 @@ http.createServer(async (req, res) => {
       if (!saved) return json(res, 404, { error: `Topic not found: ${String(body.id).slice(0, 40)}` });
       const source = sanitizeTopicSource(body.source);
       if (source) saved.source = source; else delete saved.source;
-      saved.updatedAt = new Date().toISOString();
+      stampUpdated(saved);
       saveStore(store);
       console.log(`  Source ${source ? 'set' : 'cleared'}: ${saved.id} "${saved.topic}"${source ? ` — ${Object.keys(source).join('/')}` : ''}`);
       return json(res, 200, { ok: true, source: source || null });
@@ -7230,7 +7248,7 @@ http.createServer(async (req, res) => {
           fresh._dialect.curated = false;   // a NEW story resets approval — it must be re-reviewed
           fresh._dialect.curatedAt = null;
           fresh.aiGenerated = true;
-          fresh.updatedAt = new Date().toISOString();
+          stampUpdated(fresh);
           upsert(fresh);
           const covStr = out.coverage ? ` [coverage ${out.coverage.used}/${out.coverage.total}]` : '';
           console.log(`  🤖 Dialect story (${out.method||'direct'}) for "${fresh.topic}"${storyTopic?` (topic: ${storyTopic})`:''}${covStr} — needs review`);
@@ -7254,7 +7272,7 @@ http.createServer(async (req, res) => {
       topic._dialect.curated = wantCurated;
       topic._dialect.curatedAt = wantCurated ? new Date().toISOString() : null;
       if (topic._dialect.aiStory) topic._dialect.aiStory.needsReview = !wantCurated;
-      topic.updatedAt = new Date().toISOString();
+      stampUpdated(topic);
       upsert(topic);
       console.log(`  🗣 Dialect "${topic.topic}" story approved=${wantCurated}`);
       return json(res, 200, { ok: true, id: topic.id, curated: wantCurated });
@@ -7296,7 +7314,7 @@ http.createServer(async (req, res) => {
       }
       const _storyChanged = (saved.story !== story);
       saved.story = story;
-      saved.updatedAt = new Date().toISOString();
+      stampUpdated(saved);
       // A changed story invalidates any prior clean QC on lessons whose checkable content is
       // derived from the story text (error-hunt variants). The ai_error_hunt lesson is rebuilt
       // fresh below (losing its stamp anyway); clear the others explicitly.
@@ -7422,7 +7440,7 @@ http.createServer(async (req, res) => {
         }
         return merged;
       });
-      saved.updatedAt = new Date().toISOString();
+      stampUpdated(saved);
       saveStore(store);
       console.log(`  Edited lessons for "${saved.topic}"`);
       return json(res, 200, { ok: true });
@@ -7525,7 +7543,7 @@ http.createServer(async (req, res) => {
         // Always append — ➕ button adds a new lesson set, never replaces
         saved.lessons.push(newLesson);
         console.log(`    Appended ${fmt} lesson (id ${newLesson.id}), total: ${saved.lessons.length}`);
-        saved.updatedAt = new Date().toISOString();
+        stampUpdated(saved);
         saveStore(store);
         return { lesson: newLesson, topic: saved.topic, lessonCount: saved.lessons.length };
       };
@@ -7942,7 +7960,7 @@ http.createServer(async (req, res) => {
       if (!t.aiStory) t.aiStory = prop.against || t.story;
       const originalForDiff = t.aiStory;
       t.story = acceptedStory;
-      t.updatedAt = new Date().toISOString();
+      stampUpdated(t);
       // Stamp the QC model on the topic (parallel to qcBy on lessons).
       t.storyQcBy = (prop.meta && prop.meta.model) || OLLAMA_QC_MODEL;
       t.storyQcAt = new Date().toISOString();
@@ -8104,7 +8122,7 @@ http.createServer(async (req, res) => {
             // Drift-safe: apply only the community flags/ratings/_miscFlags onto our items;
             // leave the maintainer's content untouched.
             mergeFlagsIntoTopic(exists, l);
-            exists.updatedAt = new Date().toISOString();
+            stampUpdated(exists);
           } else {
             // Update in place preserving generatedAt
             Object.assign(exists, l, { generatedAt: exists.generatedAt, updatedAt: new Date().toISOString() });

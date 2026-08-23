@@ -114,6 +114,7 @@ run('unit: drill lessons — review my mistakes (v54)', 'node', [path.join(__dir
 run('unit: storyline SVG storyboard (v55)', 'node', [path.join(__dirname, 'unit-storyboard.test.js')]);
 run('unit: storyboard panels → lesson navigation (v57)', 'node', [path.join(__dirname, 'unit-storyboard-nav.test.js')]);
 run('unit: provenance fields — source + createdBy (v58)', 'node', [path.join(__dirname, 'unit-provenance-fields.test.js')]);
+run('unit: stampUpdated — same-millisecond save collision', 'node', [path.join(__dirname, 'unit-stamp-updated.test.js')]);
 run('unit: cumulative token usage — meter + attribution (v59)', 'node', [path.join(__dirname, 'unit-token-usage.test.js')]);
 run('unit: learner navigation + completion card (v60)', 'node', [path.join(__dirname, 'unit-learner-nav.test.js')]);
 run('unit: reasoning-model safety — think:false on prose/JSON gen (v60.5)', 'node', [path.join(__dirname, 'unit-reasoning-model-safety.test.js')]);

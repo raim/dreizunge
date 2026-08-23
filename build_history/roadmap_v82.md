@@ -1666,6 +1666,60 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v82 LINE
 
+### `v82_h` — the `e2e-lesson-edit-roundtrip` flake, diagnosed and fixed: `updatedAt` now strictly advances
+
+**Shipped by: Claude Code, on user request** ("dig into the updatedAt flak[e]") — the item flagged
+at the end of `v82_g` as the strongest "worth actually fixing" backlog candidate.
+
+**Root cause, finally diagnosed rather than reconfirmed a fourth time**: every `updatedAt` write in
+`server.js` was a bare `saved.updatedAt = new Date().toISOString()` — millisecond resolution, no
+protection against two saves for the same record landing in the same wall-clock millisecond. That
+is not a rare corner case under load: Node's event loop can fall behind and then process a backlog
+of already-arrived requests in one tight synchronous burst, so several `Date.now()` calls genuinely
+can share a millisecond. `e2e-lesson-edit-roundtrip`'s own non-vacuity check
+(`after.updatedAt !== before`, added at `v75_e` specifically to catch "a 200 is not evidence of a
+save") is exactly the property this breaks — and it had been RECONFIRMED as "pre-existing,
+load-shaped" at `v82_c`, `v82_e`, and `v82_g`, three releases running, without anyone tracing it to
+this line.
+
+**The fix**: a new `stampUpdated(saved)` helper (server.js, next to `saveStore`) that reads the
+record's own previous `updatedAt`, and if `Date.now()` would not be strictly GREATER than it, bumps
+the previous value forward by 1ms instead — guaranteeing every call advances the timestamp, however
+many calls land in the same real millisecond. All **nine** inline `X.updatedAt = new
+Date().toISOString()` sites across `server.js` were consolidated onto this one choke point (four in
+the routes `e2e-lesson-edit-roundtrip` exercises; five more found by grepping for the same pattern
+under different variable names — `topic`, `fresh`, `t`, `exists` — in the re-create/dialect-approval/
+story-QC-accept/merge-import paths). Fixing only the four the failing test happened to touch would
+have left the identical bug live everywhere else `updatedAt` is stamped.
+
+**Verified at the layer where the claim is observable, not just by the flake going quiet**: a new
+`unit-stamp-updated.test.js` extracts the real function and FORCES the exact collision — pins
+`Date.now()` to one fixed millisecond and calls `stampUpdated` three times running, asserting each
+call strictly advances `updatedAt` — rather than hoping a lucky run of the flaky e2e test proves
+anything. Mutation-tested: reverting to the naive `new Date().toISOString()` pattern turns it red.
+Also asserts the single-choke-point property directly (zero remaining raw
+`.updatedAt = new Date().toISOString()` sites; `stampUpdated(` referenced ≥10 times), so a future
+site reverting to the old pattern is caught immediately rather than waiting for another flake report.
+
+**The flake itself, stress-tested past the point of reasonable doubt**: 35 consecutive standalone
+runs of `e2e-lesson-edit-roundtrip` (20 + 15, split across two batches) and 4 consecutive FULL-suite
+runs (`node test/run.js`, not `--quick` — the load-shaped context the flake actually occurred in) —
+all clean, 39/39, against a documented pre-fix baseline of roughly 2–4 failures per 15–20 runs.
+
+**A source-text guard updated, not just re-anchored**: `unit-provenance-fields.test.js` pinned the
+literal `saved.updatedAt = new Date().toISOString();` string inside the `/api/topic-source` route as
+evidence "edit bumps updatedAt and persists." Re-anchored on `stampUpdated(saved);` — same claim,
+new mechanism.
+
+**Not restarted/live-verified in the browser**: this is a pure server-side data-integrity fix with no
+learner-visible behaviour change (the effect is only on `updatedAt`'s precision under contention,
+never surfaced in the UI) — the mutation-tested unit test plus the stress-tested e2e run are the
+right verification layer here, per the existing test file's own stated reasoning ("this is about
+what ends up on disk").
+
+**Testing**: 250/223/0/0 full baseline green (39/39 stress runs of the previously-flaky test, all
+clean). `docs/index.html` rebuilt. No new `ui.json` keys.
+
 ### `v82_g` — sentence-ordering exercises are now length-gated (≤5 words)
 
 **Shipped by: Claude Code, on user request**: *"Sentence ordering lesson should only be triggered

@@ -86,7 +86,11 @@ console.log('  upsert createdBy stamp + schema 30 write / >=29 read: OK');
   assert.ok(/const source = sanitizeTopicSource\(body\.source\);/.test(route), 'route stores the SANITIZED source');
   assert.ok(/if \(source\) saved\.source = source; else delete saved\.source;/.test(route),
     'null result CLEARS the field (never an empty object in storage)');
-  assert.ok(/saved\.updatedAt = new Date\(\)\.toISOString\(\);/.test(route) && /saveStore\(store\)/.test(route),
+  // v82_h: the inline stamp was pulled into a shared stampUpdated() helper (server.js), which
+  // guarantees updatedAt strictly advances even across two saves in the same wall-clock
+  // millisecond — the root cause of a flake e2e-lesson-edit-roundtrip reconfirmed three releases
+  // running without being diagnosed. Re-anchored on the new call, same claim.
+  assert.ok(/stampUpdated\(saved\);/.test(route) && /saveStore\(store\)/.test(route),
     'edit bumps updatedAt and persists');
   const proj = server.slice(server.indexOf("url.pathname === '/api/lessons'"),
                             server.indexOf('lessonTypes: (() => {'));
