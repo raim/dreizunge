@@ -1,15 +1,23 @@
-# Session prompt — written at the `v83_e` cut
+# Session prompt — written at the `v83_f` cut
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_d.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_e.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v83_f`, `v83_g`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v83_g`, `v83_h`, …) unless a future session has a good reason to switch to
 `v84_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v83_e`** release —
-the header-row back/forward arrows now render the EXACT glyph `.lang-pair-arrow` uses (➜, weight
-900), not just a heavier stroke on `←`/`→`. A user follow-up to `v83_d`, itself a follow-up to
-`v83_c`, on top of `v83_b`'s `PLAN §12` — none of these are PLAN items.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v83_f`** release —
+TWO rulings on the progress-card/question-card redesign arc: the story field no longer fills the
+screen (`v83_c`'s fill-height chain REVOKED), and question cards' own story panel is now COLLAPSED
+by default (superseding `v80_u`'s "never collapsed"). Both are user requests, not PLAN items, on top
+of the same arc as `v83_c`…`v83_e` and `v83_b`'s `PLAN §12`.
+
+**⚠️ Read this before touching either progress-card OR question-card story panel behaviour**: this
+arc has now reversed itself twice in six point releases (`v83_c` added fill-height, `v83_f` revoked
+it; `v80_u` said never-collapse, `v83_f` said always-collapse). Do not re-derive or re-litigate
+either — both are settled AS OF `v83_f`, recorded with their full history in the comments at the
+CSS/JS site itself, not just here. If a THIRD reversal is ever requested, add it to that same
+recorded chain rather than treating it as a fresh decision with no history.
 
 **`v83_a`, in brief**: a new BASE LINE, cut from `v82` at the user's own request rather than at a
 milestone, to hand off `PLAN §12` to a clean-context session. No code changed at that cut.
@@ -71,21 +79,43 @@ WHERE the button leads (title/display/disabled/onclick) stays mirrored, unchange
 computed `transform` read `matrix(-1, 0, 0, 1, 0, 0)`, and the live `.lang-pair-arrow` on the same
 page was cross-checked (`34px`/`900`, same character) — confirmed to actually match, not assumed to.
 
+**`v83_f`, in brief** (full write-up in `roadmap_v83.md`): TWO rulings, landing together. First, a
+REVOCATION — *"progress card text field do NOT have to fill the full height of the available
+screen"* — `v83_c`'s flex chain was REMOVED (not disabled; a dead-but-present rule that still looks
+live is worse than none). Second, a NEW default on a DIFFERENT panel — *"on all question cards the
+story text field should be collapsed by default"* — `_exStoryPanelHtml`'s `#ex-story-panel` (the
+question/exercise screens' own panel, distinct from the progress card's `#comp-story-panel`) flips
+from always-open to always-collapsed, unconditionally, superseding `v80_u`'s "never collapsed"
+ruling (itself a supersession of `v80_s`'s original scoped-collapse ruling — the THIRD ruling on this
+one line, all three recorded in the comment). **Four separate test files had pinned the OLD `open`
+behaviour, and all four needed the SAME fix** — `unit-story-panel-states.test.js` (the main
+behavioural guard, all 8 question types), `unit-story-translation-toggle.test.js` (an explicit "same
+as the progress card" claim, now false — the two panels deliberately differ), `smoke-render.test.js`
+(comprehension's own "text IS the material" exception, now gone), and `unit-progress-card-nav.test.js`
+(rewritten from asserting the flex-fill rules EXIST to asserting they do NOT — guarding the
+revocation itself, so a later session reaching for the same shape of fix trips a red test rather than
+silently reintroducing it). **Live-verified**: `comp-story-panel`'s computed `flex` read the default
+(`0 1 auto`, not `1`) with height matching real content (2299px, neither capped nor stretched);
+`ex-story-panel` rendered `open === false` with no `open` attribute, on a real question card reached
+through the normal lesson flow.
+
 **The throughline worth carrying forward again**: `v83_b` was the third release running where a live
 generation against the real model was what actually confirmed a feature works, not source-reading.
-`v83_c`/`v83_d`/`v83_e` are the same discipline applied to a UI change: exploring the ACTUAL markup
-before deciding scope or reaching for a fix, running the result in a real browser tab rather than
-asserting from CSS alone, and — `v83_e` specifically — going back to MEASURE the thing the user
-pointed at ("the same as used between...") rather than guessing what "even thicker" meant in the
-abstract. Two point releases in a row (`v83_d`, `v83_e`) were direct user follow-ups landing WHILE the
-previous one was still fresh — expect iteration, and keep each one small and separately verified
-rather than batching guesses about what a still-open request might mean next.
+`v83_c`…`v83_f` are the same discipline applied to a UI change: exploring the ACTUAL markup before
+deciding scope or reaching for a fix, running the result in a real browser tab rather than asserting
+from CSS alone, MEASURING the thing the user points at (`v83_e`) rather than guessing what "even
+thicker" meant in the abstract, and — `v83_f` specifically — treating a REVOCATION as seriously as an
+addition: guard its absence, don't just delete the code and hope nothing notices. Four point releases
+in a row (`v83_c`…`v83_f`) were direct user follow-ups, several landing WHILE the previous one was
+still fresh, and one reversing an earlier one outright — expect iteration and reversal both, keep
+each change small and separately verified, and never treat "the user already decided this" as
+settled once a later message says otherwise.
 
 ## Orient yourself
 
 1. **This file**, whole.
 2. `build_history/roadmap_v83.md` — its **index table** and the **⚠️ Session protocol** block first,
-   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`…`v83_e` were
+   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`…`v83_f` were
    built. (Nothing is in TRACK T right now — steps 1–4 and `§T7` all shipped in the v81 line.)
 3. `INTERNALS.md` — constants, silent-failure modes, invariants, harness limits. **§6b is a
    feature → function map** — read it BEFORE grepping for where anything lives.
@@ -102,7 +132,7 @@ node test/check-inline.js docs/index.html → expect 0 failures
 Corpus at this cut: **327 topics, 92 storylines, 33 languages, 657 `en` keys** (unchanged from
 `v83_c` — this release reused `complete.nav_open`/`complete.nav_title` for the entry card's own
 popup rather than minting new keys, so the `en` count did not move).
-`APP_VERSION = 'v83_e'`.
+`APP_VERSION = 'v83_f'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -230,10 +260,12 @@ document order instead of the `_text`-then-children shape) before touching this 
 - **Three UI features running now, ALL live-verified by an AGENT only, NONE by the user's own device
   pass**: `PLAN §12`'s selection popover (`v83_b`, positioning, the grammar/meaning buttons,
   coexistence with the per-word tap on a touch device), the progress card's nav/bars popup (`v83_c`,
-  the flex-fill story panel on a REAL short story — the agent's checks used real chapters but not a
-  systematic range of lengths — and touch ergonomics on a real phone), and the entry card's own copy
-  of that popup (`v83_d`, same caveats). All three are worth one combined device pass rather than
-  three separate ones, since they share the same popup/header-row interaction pattern.
+  touch ergonomics on a real phone — NOT the fill-height story panel, which `v83_f` revoked), and the
+  entry card's own copy of that popup (`v83_d`, same caveat). All three are worth one combined device
+  pass rather than three separate ones, since they share the same popup/header-row interaction
+  pattern — and while at it, both `v83_f` rulings (no fill-height, question cards collapsed by
+  default) are worth a look too, on a range of REAL story lengths, not just the one chapter each
+  agent check happened to use.
 
 ## 5. NOT yours to start
 
@@ -287,9 +319,13 @@ reference and not duplicated in INTERNALS.md.
 - `_cardErrors()` — assert it is empty after any card render you add.
 - `_storyBodyHtml(d, opts)` — **the ONE story renderer** for question panels and progress cards. Also
   the ONE place `PLAN §12`'s selection hook (`.story-selectable`) is applied — see
-  `_storySelInit`/`_storySelMaybeShow` (index.html). Its `#complete-screen` caller now sits inside a
-  `flex:1` chain (`v83_c`) so the panel fills available screen height; the other callers are
-  unaffected.
+  `_storySelInit`/`_storySelMaybeShow` (index.html). ⚠️ `v83_c` had wrapped its `#complete-screen`
+  caller in a `flex:1` chain to fill available screen height — `v83_f` REVOKED that; the panel is
+  back to natural content sizing on every caller, no special case.
+- `_exStoryPanelHtml(ex)` — the question/exercise screens' own story panel (`#ex-story-panel`,
+  distinct from the progress card's `#comp-story-panel`). Collapsed by default since `v83_f`
+  (`const _open = false`), unconditionally — no comprehension exception. Third ruling on this line;
+  read its own comment before changing the default again.
 - `_wordProgress(d)` / `_wordState(rec)` — **the ONE per-word progress collector.**
 - `_storyLockedLesson(L, d)` — the ONE "is this lesson closed" rule.
 - `_cardHeader(prefix)` + `.card-screen` — every new card page uses both.

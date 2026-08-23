@@ -127,8 +127,14 @@ console.log('  progress card: chapter title, collapsible frame, flags set (not f
     APP._compStoryLang = 'target';
     true;`);
   const panelHtml = C.run(`_exStoryPanelHtml({ type: 'comprehension_mcq' })`);
-  assert.ok(panelHtml.startsWith('<details id="ex-story-panel" open'),
-    'THE ACCEPTANCE CLAIM: open by default, same as the progress card');
+  // user (progress-card redesign follow-up): "on all question cards the story text field should be
+  // collapsed by default" — SUPERSEDES the "open by default, same as the progress card" claim this
+  // pinned before. The two panels now deliberately DIFFER: #comp-story-panel (the progress card's
+  // own field, untouched by this ruling) still opens by default; #ex-story-panel (this one, on every
+  // question card) does not. Same FRAME either way — collapse control, title, flags, speech button —
+  // just a different starting state.
+  assert.ok(panelHtml.startsWith('<details id="ex-story-panel" style='),
+    'THE ACCEPTANCE CLAIM: collapsed by default, UNLIKE the progress card\'s own panel');
   assert.ok(panelHtml.includes('La Selezione Naturale'),
     'THE ACCEPTANCE CLAIM: the question panel ALSO shows the chapter title, not "The story"');
   assert.ok(panelHtml.includes('🇮🇹') && panelHtml.includes('🇩🇪'), 'both flags render');

@@ -367,7 +367,11 @@ console.log('  showComplete: fresh, review, below-mark, drill card, teacher: OK'
   assert.strictEqual(built, 'OK', 'a comprehension exercise was built and rendered');
   const q = C.document.getElementById('ex-area').innerHTML;
   assert.ok(/id="ex-story-panel"/.test(q), 'the story panel is rendered on a comprehension question');
-  assert.ok(/<details[^>]*\sopen/.test(q), 'and is open by default — on this question the text IS the material');
+  // user (progress-card redesign follow-up): "on all question cards the story text field should be
+  // collapsed by default" — SUPERSEDES the earlier "open on comprehension, where the text IS the
+  // material" claim. No exception for comprehension anymore; see unit-story-panel-states.test.js §5
+  // for the full ruling history.
+  assert.ok(!/<details[^>]*\sopen/.test(q), 'and is COLLAPSED by default, same as every other question type now');
   assert.ok(/Die Katze sass im Baum/.test(q), 'the story text is actually present');
   // ORDER is the requirement: answer controls first, story last.
   const iChoices = q.indexOf('class="choices');   // comprehension renders `choices one-col`

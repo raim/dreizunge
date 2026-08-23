@@ -6,7 +6,10 @@
 // full available screen." Then, as an immediate follow-up: "navigation and next buttons could also
 // be used on the entry card, incl. the progress bars" — extending the SAME pattern to the entry/
 // summary card, which has no back button to duplicate (just next). Then: "use thicker arrows for
-// back/forward buttons in the story header."
+// back/forward buttons in the story header." Then: "even thicker arrow, e.g. the same as used
+// between the source and target language selectors." Then, REVOKED: "progress card text field do
+// NOT have to fill the full height of the available screen" — §6 below guards the ABSENCE of the
+// flex-fill chain, on purpose, not just its removal.
 //
 // Scope: `complete-screen` (the "progress card") AND `summary-screen` (the "entry card"). The
 // finished/unlocked-story cards were not asked and were not touched — see unit-story-summary.test.js
@@ -19,12 +22,14 @@
 //   2. Each card's header row carries a ☰ trigger BEFORE its translation control(s), and a
 //      duplicated next (complete-screen also duplicates back) — and ONLY those.
 //   3. `_mirrorNavBtn(srcId, dstId)` — the ONE mirror rule shared by `_syncCompHdrNav` and
-//      `_syncSumHdrNav` — copies a source button's FINAL resolved state, not a re-derivation.
+//      `_syncSumHdrNav` — copies a source button's FUNCTIONAL resolved state (title/display/
+//      disabled/onclick), NOT its glyph, which is fixed markup since v83_e.
 //   4. Both popups close on every screen change/re-render (`_closeCardNavPopups()`, called from the
 //      same show(id) choke point PLAN §12's selection popover uses) and the comp one explicitly
 //      before a crossword opens (the one path that shows another overlay without a screen change).
-//   5. The story panel is a flex:1 child of a flex:1 .comp-body, scoped to #complete-screen alone.
-//   6. The header-row back/forward duplicates render with a visibly heavier stroke.
+//   5. REVOKED: the story panel no longer fills available screen height — §6 asserts the absence.
+//   6. The header-row back/forward duplicates render `.lang-pair-arrow`'s own glyph (➜, weight 900),
+//      `comp-story-prev` horizontally flipped — see §8.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -211,25 +216,26 @@ console.log('  both popups\' lifecycle: close on navigation (real show(), not ju
 }
 console.log('  closeCrossword: fallback scroll target updated for the relocated #comp-actions: OK');
 
-// ── 6. The story field fills available screen height — SCOPED to #complete-screen ─
+// ── 6. "Fill the full available screen" — REVOKED, and stays revoked ─────────
+// v83_c shipped a #complete-screen-scoped flex:1 chain (.comp-body -> #comp-story-panel[open] ->
+// #comp-story-text) so a short story stretched to fill the viewport. The user's own follow-up
+// revoked it explicitly: "progress card text field do NOT have to fill the full height of the
+// available screen." Guarded here as an ABSENCE, not just left untested — a later session re-adding
+// something that LOOKS like the same fix (the shape is a natural one to reach for) should trip this,
+// not silently reintroduce a rejected design.
 {
-  assert.ok(/#complete-screen \.comp-body\{display:flex;flex-direction:column;flex:1;min-height:0\}/.test(html),
-    'comp-body grows to fill .screen\'s min-height:100vh, scoped to complete-screen');
-  assert.ok(/#complete-screen #comp-story-panel\{display:flex;flex-direction:column\}/.test(html)
-         && /#complete-screen #comp-story-panel\[open\]\{flex:1\}/.test(html),
-    'the story panel grows to fill comp-body\'s remaining space, but only while open');
-  assert.ok(/#complete-screen #comp-story-text\{flex:1\}/.test(html),
-    'the text itself (not just its border) stretches — a short story still fills the bordered field');
-  // Non-vacuity: the OTHER three card screens share .comp-body/.comp-title and were not asked to
-  // change — the rule must be id-scoped, not a plain .comp-body{flex:1} that would also stretch
-  // finished-screen/summary-screen/unlockstory-screen. The entry card's OWN redesign (this file's
-  // §1-4) is a separate ask (nav + bars into a popup) — it was never asked to also fill the screen.
-  assert.ok(!/(?<!#complete-screen )\.comp-body\{display:flex;flex-direction:column;flex:1/.test(html),
-    'the flex-fill rule is scoped to #complete-screen, not applied to the shared .comp-body class');
-  assert.ok(!/#summary-screen[^{]*\{[^}]*flex:1/.test(html) && !/#sum-sumbox\{[^}]*flex:1/.test(html),
-    'the entry card was not asked to fill the screen and was not changed to');
+  for (const frag of [
+    '#complete-screen .comp-body{display:flex;flex-direction:column;flex:1;min-height:0}',
+    '#complete-screen #comp-story-panel{display:flex;flex-direction:column}',
+    '#complete-screen #comp-story-panel[open]{flex:1}',
+    '#complete-screen #comp-story-text{flex:1}',
+  ]) assert.ok(!html.includes(frag), `REVOKED: "${frag}" must not be back in the stylesheet`);
+  // The panel and its flag-cancelling rule (a genuinely separate concern — header-row layout, not
+  // screen-filling) must still be there; only the fill-height chain was removed.
+  assert.ok(html.includes('#comp-story-panel .story-flag-btns{margin-left:0}'),
+    'the UNRELATED flag-position override survives the revocation');
 }
-console.log('  "fill the full available screen": flex:1 chain scoped to #complete-screen alone, entry card untouched: OK');
+console.log('  "fill the full available screen": REVOKED and guarded to stay that way: OK');
 
 // ── 7. ui.json — the popup strings, reused across both cards (en only) ───────
 {

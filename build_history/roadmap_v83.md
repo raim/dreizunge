@@ -29,7 +29,7 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_e` — header-row back/forward arrows now render the EXACT `.lang-pair-arrow` glyph (➜, weight 900), not just a heavier stroke on `←`/`→`; `_mirrorNavBtn` stopped mirroring `textContent` so the fixed glyph survives re-renders. `v83_d` — the entry/summary card gets the SAME nav/bars popup `v83_c` gave the progress card (shared `_mirrorNavBtn`/`_closeCardNavPopups`). `v83_c` — progress-card redesign: nav/icon rows + progress bars moved into a popup, story field fills the screen (complete-screen only). `v83_b` — `PLAN §12` built end to end: the tutor's reply language moved from `srcLang` to `APP.uiLang` (user ruling, whole tutor not just the new flow), and the new text-selection popover itself |
+| **SHIPPED IN THE v83 LINE** | `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen (the `v83_c` flex chain was removed, guarded to stay absent). **NEW**: question cards' `#ex-story-panel` now COLLAPSED by default, unconditionally (superseding `v80_u`'s "never collapsed" — third ruling on this line, all three recorded). `v83_e` — header-row back/forward arrows now render the EXACT `.lang-pair-arrow` glyph (➜, weight 900), not just a heavier stroke on `←`/`→`. `v83_d` — the entry/summary card gets the SAME nav/bars popup `v83_c` gave the progress card. `v83_c` — progress-card redesign: nav/icon rows + progress bars moved into a popup (complete-screen only). `v83_b` — `PLAN §12` built end to end: the tutor's reply language moved from `srcLang` to `APP.uiLang`, and the new text-selection popover itself |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, the interactive text-selection tutor, shipped at `v83_b` — see the SHIPPED section above. |
 
@@ -1685,6 +1685,60 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_f` — REVOKED the fill-screen story field; question cards' story panel now collapsed by default
+
+**Shipped by: Claude Code, on user request** — two rulings, landing together:
+
+1. *"revoking earlier change: progress card text field do NOT have to fill the full height of the
+   available screen."* The `v83_c` flex chain (`#complete-screen .comp-body{flex:1}` →
+   `#comp-story-panel[open]{flex:1}` → `#comp-story-text{flex:1}`) is REMOVED, not disabled — a
+   dead-but-present rule that LOOKS like it should still apply is worse than no rule at all. The
+   story panel is back to its natural, content-sized height, same as every other card screen.
+   `#comp-story-panel .story-flag-btns{margin-left:0}` — a genuinely separate concern (header-row
+   layout, not screen-filling) — was kept; only the fill-height chain went.
+2. *"new default: on all question cards the story text field should be collapsed by default."* This
+   is `_exStoryPanelHtml`'s `#ex-story-panel` — a DIFFERENT panel from `#comp-story-panel` above,
+   used on the exercise/question screens, not the progress card. `_open` flips from `true` to
+   `false`, UNCONDITIONALLY — no exception for `comprehension_mcq`, where `v80_s`'s own original
+   scoped-collapse ruling had kept it open ("the text IS the material"). This is the THIRD ruling on
+   this one line in the file's history: `v80_s` (collapsed, scoped) → `v80_u` (never collapsed, all
+   types, superseding `v80_s`) → this release (collapsed, all types, superseding `v80_u`). All three
+   are recorded in the comment, not just the latest — the point of keeping the history is that a
+   FOURTH reversal reads the same way as the first three, not as a mystery.
+
+**The two panels now deliberately DIFFER**, and that difference is itself asserted: the progress
+card's `#comp-story-panel` still opens by default (untouched by ruling 2 — it is not a "question
+card"); the question screens' `#ex-story-panel` does not. One old test (`unit-story-translation-
+toggle.test.js`) had explicitly pinned "open by default, same as the progress card" as an
+ACCEPTANCE CLAIM — rewritten to state the new, now-different claim, with the two panels' relationship
+spelled out rather than left implicit.
+
+**Verified at the layer where the claim is observable, four times over** — every test that rendered
+`_exStoryPanelHtml` and checked its `open` state got the SAME fix, not a patch on just the one that
+happened to fail first:
+- `unit-story-panel-states.test.js` §5 — the main behavioural guard, all 8 question types, rewritten
+  to assert absence of `open` (was: presence).
+- `unit-story-translation-toggle.test.js` — the "same as the progress card" claim rewritten to state
+  the two panels differ.
+- `smoke-render.test.js` — the comprehension-specific "open — the text IS the material" exception
+  rewritten to confirm there is no exception anymore.
+- `unit-progress-card-nav.test.js` §6 — rewritten from asserting the flex-fill rules EXIST to
+  asserting they do NOT — a REVOCATION guard, not a deletion, so a future re-addition (the shape is a
+  natural one to reach for again) trips a red test rather than silently landing.
+
+**Mutation-tested**: reverting `_open` to `true` turns all three panel-state tests red (confirmed
+independently for each, not just once and assumed to generalize); re-inserting the flex-fill CSS
+turns `unit-progress-card-nav.test.js` §6 red.
+
+**Live-verified in a real browser**: `comp-story-panel`'s computed `flex` read `0 1 auto` (the
+default, not `1`) and its rendered height matched its actual content (2299px for a long real story —
+not artificially capped, not artificially stretched); `ex-story-panel` rendered with
+`panel.open === false` and no `open` attribute in its markup, on a real question card reached via
+the normal lesson flow.
+
+**Testing**: 253/226/0/0 full baseline green — same counts (four existing test files rewritten, none
+added or removed). `docs/index.html` rebuilt. No `ui.json` change.
 
 ### `v83_e` — header-row arrows match the language-pair arrow exactly, not just a heavier stroke
 

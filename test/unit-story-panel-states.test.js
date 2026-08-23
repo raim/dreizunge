@@ -6,9 +6,10 @@
 // extra parameters rather than a replacement — every existing caller still gets the v74_n two-shade
 // behaviour.
 //
-// ⚠️ SCOPE, ruled at v80_s (option 3): the panel is on EVERY question card and starts COLLAPSED where
-// the story would give the answer away — word_forms 203/336 (60.4%), error_hunt 44/47 (93.6%),
-// synonyms 14/34 (41.2%), and the typed kinds, which leak the spelling. §5 pins both halves.
+// ⚠️ SCOPE: the panel is on EVERY question card. Its default open/closed state has been RULED THREE
+// TIMES — v80_s (collapsed, scoped to leak-prone types), v80_u (never collapsed, all types), and
+// most recently the progress-card-redesign follow-up (collapsed, ALL types, no exception) — see §5
+// for the current ruling and its own history.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -73,11 +74,15 @@ const hl = (html, words, strong, states, asked) => C.run(`(function(){
   console.log('  the asked span is underlined in addition to its colour');
 }
 
-// ── 5. The panel is on EVERY question card and is NEVER collapsed ───────
-// v80_u, user ruling superseding v80_s's option 3: *"Don't collapse the story text on some
-// questions… we now want to keep the user's attention on the text throughout."* The leakage measured
-// at v80_s is unchanged and now an ACCEPTED cost — scanning the text for the answer is reading
-// practice, which is what TRACK T is for.
+// ── 5. The panel is on EVERY question card and is COLLAPSED by default ──
+// v80_u had ruled it NEVER collapsed (*"Don't collapse the story text on some questions… we now want
+// to keep the user's attention on the text throughout"*), which itself superseded v80_s's original
+// scoped-collapse ruling. SUPERSEDED AGAIN, user follow-up to the progress-card redesign: "on all
+// question cards the story text field should be collapsed by default" — unconditional, no exception
+// for comprehension the way v80_s's own scoped version had one. The leakage measured at v80_s
+// (word_forms 60.4%, error_hunt 93.6% of the story containing the answer) is unaffected either
+// way: the panel still RENDERS and is one tap away, same as it always has been — only the starting
+// `open` attribute flips.
 //
 // Asserted by RENDERING, not by matching source: the v80_s version of this pinned
 // `_open ? ' open' : ''` and could not fail when `_open` was mutated to a constant.
@@ -93,10 +98,10 @@ const hl = (html, words, strong, states, asked) => C.run(`(function(){
   for (const ty of types) {
     const h = mk(ty);
     assert.ok(/id="ex-story-panel"/.test(h), `${ty}: the story panel is rendered (T0)`);
-    assert.ok(/<details id="ex-story-panel" open/.test(h),
-      `${ty}: and it is OPEN — the panel is never collapsed (v80_u)`);
+    assert.ok(/<details id="ex-story-panel" style=/.test(h) && !/<details id="ex-story-panel" open/.test(h),
+      `${ty}: and it is COLLAPSED by default — no exception for comprehension either`);
   }
-  console.log(`  panel rendered and open on all ${types.length} question types`);
+  console.log(`  panel rendered and collapsed by default on all ${types.length} question types`);
 }
 
 // ── 5b. ⚠️ It renders even when the story is NOT unlocked ───────────────

@@ -292,19 +292,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
    the header markup was copied. */
 .card-screen{padding:0 0 40px;max-width:540px;width:100%;text-align:center;margin:0 auto;align-items:stretch}
 .comp-body{padding:12px 16px 0}
-/* user (progress-card redesign): the story panel should "ideally always fill the full available
-   screen" — SCOPED to #complete-screen alone, since .comp-body/.comp-title are shared by three
-   other card screens (finished/summary/unlocked) this request did not ask to change. .screen is
-   already a flex column with min-height:100vh (see .screen above); making .comp-body the one
-   flex:1 child lets it claim whatever of that 100vh the fixed-height header (#comp-hdr) does not
-   use. #comp-story-panel is then the one flex:1 child WITHIN comp-body, so on a short story the
-   bordered field itself stretches to fill the remaining screen instead of shrinking to its text;
-   on a long story flex:1 still only sets a MINIMUM (flex-basis:auto content still grows past it),
-   so the page scrolls exactly as it always has — nothing here caps height, only floors it. */
-#complete-screen .comp-body{display:flex;flex-direction:column;flex:1;min-height:0}
-#complete-screen #comp-story-panel{display:flex;flex-direction:column}
-#complete-screen #comp-story-panel[open]{flex:1}
-#complete-screen #comp-story-text{flex:1}
+/* user (progress-card redesign): the story panel used to be made to "fill the full available
+   screen" via a #complete-screen-scoped flex:1 chain (.comp-body -> #comp-story-panel[open] ->
+   #comp-story-text). REVOKED by the user's own follow-up — the panel is back to its natural,
+   content-sized height, same as every other card screen. Removed rather than left disabled, so a
+   later read of this file does not find dead rules that look like they should still apply. */
 /* The flags' own margin-left:auto (_storyFlagButtonsHtml, shared by 4 callers) is right FOR THOSE
    callers, each the last thing in their row. Here they sit before the speak button inside a
    wrapper that already carries its own margin-left:auto (see the summary row markup) — cancelled
@@ -152725,11 +152717,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v83_e', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v83_e'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v83_f', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v83_f'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"7399c26dcb31","lessons.json":"2e65c15d3de2","ui.json":"76cfc45cade0","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"bf4e560125c6"};
+  APP.buildSources = {"index.html":"5b4d9e434d70","lessons.json":"2e65c15d3de2","ui.json":"76cfc45cade0","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"bf4e560125c6"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -160667,7 +160659,15 @@ function _exStoryPanelHtml(ex){
   // The leakage measured at v80_s is real and unchanged — the story contains the answer for
   // word_forms 60.4% and error_hunt 93.6% — but it is now an ACCEPTED cost, not a defect: scanning
   // the text for the answer is reading practice, which is what TRACK T is for.
-  const _open = true;
+  //
+  // user (progress-card redesign follow-up) — RULING REVERSED again: "on all question cards the
+  // story text field should be collapsed by default." No exception stated for comprehension (v80_s's
+  // own nuance) — collapsed unconditionally, same as v80_s's blanket option before it, not its
+  // scoped one. The panel and its `<summary>` control are unchanged; only the starting `open`
+  // attribute flips. The v80_s leakage measurement is unaffected either way — it was never about
+  // whether the panel starts open, only about whether the story is reachable AT ALL, which it still
+  // is, one tap away.
+  const _open = false;
   // The gate is belt-and-braces: the lesson is already unreachable until the story unlocks
   // (buildPath + _firstUnfinishedLessonIdx), so this should always be true when we get here.
   // If some future path opens the lesson early, showing the story is the safe failure — the
