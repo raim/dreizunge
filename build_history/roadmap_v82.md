@@ -1666,6 +1666,65 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v82 LINE
 
+### `v82_i` — difficulty-tiered furigana density, restored (found dead at `v82_c`, autonomous backlog pick)
+
+**Shipped by: Claude Code**, from the `v82_h` backlog's "buildable now, no ruling needed" list
+("continue with items you don't need input on").
+
+**What was dead**: `prompts.json` held three difficulty-tiered furigana notes
+(`furiganaNote1/2/3` — beginner: every kanji without exception / standard / advanced: only rare
+kanji) from a ~v40-era design where `sysStory` took a `difficulty` parameter and selected between
+them. The current signature had dropped that parameter somewhere along the way; every Japanese
+story fell back to the flat `furiganaNote`, regardless of the chapter's actual difficulty. Found and
+flagged (not fixed) at `v82_c`, explicitly as separate scoped work, with a note worth reading before
+picking it up: *"check whether `furiganaNote1/2/3`'s OWN wording needs the same 'mandatory for the
+whole story, worked example' treatment `furiganaNote` just got, since they share its pre-fix
+weakness."* It did — restoring the SELECTION alone, without also fixing that shared weakness, would
+have shipped three notes with the exact defect `v82_c` had just found and fixed in the flat one.
+
+**What shipped**: `sysStory` regained its `difficulty` parameter (its one call site, in `generate()`,
+already had `difficulty` in scope — no plumbing needed beyond passing it through). A new
+`_furiganaNoteFor(P, difficulty)` selects `furiganaNote1`/`furiganaNote2`/`furiganaNote3` for
+difficulty 1/2/3 and falls back to the flat `furiganaNote` for anything else (a caller that forgets
+to pass a difficulty degrades to the pre-restoration behaviour, not a throw). All three tiered notes
+were rewritten with the same "MANDATORY, FOR THE WHOLE STORY" framing and a worked example
+`furiganaNote` itself was fixed with at `v82_c` — not just their selection restored verbatim.
+
+**Measured, not assumed — and the first attempt was wrong, left visible rather than hidden**: tier 3
+("advanced/sparse — skip common N4/N5 kanji") is the one tier where "whether to annotate" needs a
+frequency judgement, which this project deliberately keeps out of hard-coded application logic
+(INTERNALS §4). The first version avoided that judgement entirely — an abstract "be consistent"
+instruction with no worked example. **Live-tested against the real model and it did not work**: a
+difficulty-3 story came back annotated at essentially the SAME density as difficulty-1 (~24/24 kanji
+compounds bracketed) — the model defaulted to "annotate everything" without a concrete example to
+anchor "sparse" against. This matches the project's own `v82_c` finding exactly: an abstract
+instruction is not what moves model behaviour, a worked example is. Revised tier 3 to include one,
+using deliberately uncontroversial common-vs-rare kanji (私/毎日/日本語/勉強 — universally first-lesson
+vocabulary — left bare; 難解/熟語 — genuinely intermediate/advanced — bracketed), framed as an
+explicit CONTRAST against beginner density rather than an isolated rule. **Re-tested live and it
+worked**: a difficulty-3 story came back with roughly 7 of ~30 kanji compounds bracketed — visibly,
+substantially sparser, while difficulty-1 stayed at full coverage. Both real generations, both
+inspected by hand against the actual model output, not asserted from the prompt text alone.
+
+**Verified at the layer where the claim is observable**: new `unit-furigana-difficulty.test.js`
+extracts the real `sysStory`/`_furiganaNoteFor` functions and runs them with stubbed dependencies —
+each of the three difficulties selects its own distinct note; a missing/unrecognised difficulty
+falls back to the flat note; non-Japanese languages carry no furigana note at any difficulty; all
+three restored notes carry the same mandatory-whole-story language the flat note already has.
+Mutation-tested (reverting `_furiganaNoteFor` to the flat-only call turns it red).
+`unit-book-script.test.js`'s source-text pin on `sysStory`'s call shape was re-anchored (the new
+`difficulty` argument means `userOpts.script` is no longer the LAST argument) — same claim, updated
+anchor.
+
+**Corpus grew by 3 topics from this session's own live verification** (327, up from 324) — real
+generated Japanese content ("a walk in the park," diff 1; "a walk in the mountains" and "cooking
+dinner at home," diff 3, the second used to confirm the revised tier-3 wording), left in the corpus
+as genuine demonstrations of the restored feature, the same way prior furigana verification passes
+have.
+
+**Testing**: 251/224/0/0 full baseline green. `docs/index.html` rebuilt. No new `ui.json` keys (a
+generation-prompt change, nothing user-facing in the UI).
+
 ### `v82_h` — the `e2e-lesson-edit-roundtrip` flake, diagnosed and fixed: `updatedAt` now strictly advances
 
 **Shipped by: Claude Code, on user request** ("dig into the updatedAt flak[e]") — the item flagged

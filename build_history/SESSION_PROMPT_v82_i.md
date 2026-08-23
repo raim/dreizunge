@@ -1,12 +1,27 @@
-# Session prompt — written at the `v82_h` cut
+# Session prompt — written at the `v82_i` cut
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v82_g.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v82_h.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v82_i`, `v82_j`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v82_j`, `v82_k`, …) unless a future session has a good reason to switch to
 `v83_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v82_h`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v82_i`** cut.
+
+**`v82_i`, in brief** (full write-up in `roadmap_v82.md`): restored difficulty-tiered furigana
+density, picked autonomously from the `v82_h` backlog ("continue with items you don't need input
+on"). `sysStory` regained the `difficulty` parameter it lost around ~v40, selecting among
+`furiganaNote1/2/3` (beginner/standard/advanced) instead of always falling back to the flat note.
+All three tiers were also rewritten with the same "mandatory for the whole story" + worked-example
+structure `furiganaNote` itself got fixed with at `v82_c` — restoring the selection alone would have
+shipped three notes with that exact pre-fix weakness. **The first version of tier 3 (sparse/advanced)
+was measured live and found NOT to work**: an abstract "be consistent, skip common kanji" instruction
+with no worked example produced the SAME full-coverage density as beginner mode. Revised with a
+concrete, deliberately uncontroversial worked example (common N5 vocabulary left bare, genuinely
+advanced vocabulary bracketed) — re-tested live and confirmed visibly sparser (~7/30 kanji compounds
+vs. ~24/24 at beginner). Both real generations inspected by hand, not asserted from prompt text.
+New `unit-furigana-difficulty.test.js` extracts and runs the real functions, mutation-tested. Corpus
+grew by 3 topics (327, up from 324) from this session's own live verification, left in place.
 
 **`v82_h`, in brief** (full write-up in `roadmap_v82.md`): diagnosed and fixed the
 `e2e-lesson-edit-roundtrip` timing flake, reconfirmed as "pre-existing, load-shaped" at `v82_c`,
@@ -140,21 +155,22 @@ closing `PLAN §C4` — see `roadmap_v81.md`'s own `v81_ad` entry for the full w
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 250 checks
-node test/run.js --quick                  → expect 223
+node test/run.js                          → expect 251 checks
+node test/run.js --quick                  → expect 224
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Corpus at this cut: **324 topics, 92 storylines, 33 languages, 651 `en` keys** (`v82_c` added 7 new
+Corpus at this cut: **327 topics, 92 storylines, 33 languages, 651 `en` keys** (`v82_c` added 7 new
 `en`-only keys for the `inflections` lesson type; `v82_d` added 1 more — `complete.prev_chapter` —
 for the progress-card back-button fix; `v82_e` added 14 more for the `writing` lesson type; `v82_f`
-added 4 more — the correctness-verdict labels; `v82_g`/`v82_h` added none — no new user-facing
-string. None yet translated — needs the offline translate pass before those languages catch up).
-**The topic/storyline counts did not move at this cut** — they carry forward `v82_e`'s own
-bookkeeping (a genuinely concurrent generation job on the dev server, observed mid-verification, not
-this session's own data; see `roadmap_v82.md`'s `v82_e` entry).
-`APP_VERSION = 'v82_h'`.
+added 4 more — the correctness-verdict labels; `v82_g`/`v82_h`/`v82_i` added none — no new
+user-facing string. None yet translated — needs the offline translate pass before those languages
+catch up). **Topics moved at this cut**: 324→327, from THIS session's own live furigana
+verification (3 real Japanese generations, kept in the corpus) — see `roadmap_v82.md`'s `v82_i`
+entry. Storylines carry forward `v82_e`'s own unrelated bookkeeping (a genuinely concurrent
+generation job on the dev server, observed mid-verification that session).
+`APP_VERSION = 'v82_i'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -203,15 +219,10 @@ is a materially lower bar. Needs a browser pass, not a code change.
 
 ## 3. BUILDABLE NOW, no ruling needed
 
-- **Difficulty-tiered furigana density is dead code, found at `v82_c`.** `prompts.json` still holds
-  `story.furiganaNote1/2/3` (beginner: annotate every kanji without exception / standard / advanced:
-  only rare kanji) from a ~v40-era design where `sysStory` took a `difficulty` parameter and selected
-  between them. The CURRENT `sysStory(lang, isContinuation, wordCount, dialect, writingStyle, script)`
-  has no `difficulty` parameter at all and always uses the flat fallback (`furiganaNote`, fixed this
-  session). Flagged, not restored — a real feature regression, but restoring it is a scoped, separate
-  piece of work, not a fix. If picked up: check whether `furiganaNote1/2/3`'s OWN wording needs the
-  same "mandatory for the whole story, worked example" treatment `furiganaNote` just got, since they
-  share its pre-fix weakness.
+- ~~Difficulty-tiered furigana density is dead code~~ — **✅ RESTORED at `v82_i`.** `sysStory` regained
+  `difficulty`, selecting `furiganaNote1/2/3` by tier; all three got the same mandatory-whole-story
+  fix `furiganaNote` had. Tier 3's first wording was live-tested and found NOT to produce sparse
+  output — fixed with a concrete worked example, re-tested and confirmed. See `roadmap_v82.md`.
 - **`PLAN §7.0` CP1, canonical text + report-only analysis records** — the first buildable slice of
   the accepted parallel curriculum pipeline. It defines stable chapter/sentence/span/token IDs and
   provenance, but must not change existing lessons, player, learner progress, or publishing. See the

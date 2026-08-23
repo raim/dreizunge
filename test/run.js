@@ -210,6 +210,7 @@ run('unit: story highlight — all word sources, two shades (v78_h)', 'node', [p
 run('unit: story panels aligned — renderStoryText joins _storyWordSources (v82_c)', 'node', [path.join(__dirname, 'unit-story-panel-alignment.test.js')]);
 run('unit: highlight splits multi-token entries (v78_k)', 'node', [path.join(__dirname, 'unit-highlight-split.test.js')]);
 run('unit: multi-chapter job carries the chosen script (v78_p)', 'node', [path.join(__dirname, 'unit-book-script.test.js')]);
+run('unit: difficulty-tiered furigana density, restored', 'node', [path.join(__dirname, 'unit-furigana-difficulty.test.js')]);
 run('unit: script pin reaches every target-text prompt (v79_f)', 'node', [path.join(__dirname, 'unit-script-pin-coverage.test.js')]);
 run('unit: script-primer glyph card — layout, speech, badge (v79_g)', 'node', [path.join(__dirname, 'unit-intro-glyph-card.test.js')]);
 run('unit: storyline add-lessons offers the script lesson (v79_h)', 'node', [path.join(__dirname, 'unit-storyline-script-lesson.test.js')]);

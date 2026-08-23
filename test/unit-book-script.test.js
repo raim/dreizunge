@@ -61,7 +61,11 @@ const server = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
   assert.ok(/script,\s*srcScript\s*\}\s*=\s*body/.test(server.replace(/\s+/g, ' ')) ||
             /script, srcScript \} = body/.test(server.replace(/\s+/g, ' ')),
     'and the book handler destructures them from the body at all');
-  assert.ok(/sysStory\([^)]*userOpts\.script\)/.test(server),
+  // v82_i: sysStory gained a trailing `difficulty` param (restoring the difficulty-tiered furigana
+  // density lost since ~v40), so `userOpts.script` is no longer the LAST argument. Re-anchored on
+  // "appears somewhere in the call", not "is the final argument" — the claim (script reaches the
+  // call) is unchanged.
+  assert.ok(/sysStory\([^)]*userOpts\.script[^)]*\)/.test(server),
     'the story prompt is built with the chosen script — symptom 1');
   assert.ok(/script:\s*userOpts\.script/.test(server),
     'and the saved topic is stamped with it — which is what the arc primer later reads');

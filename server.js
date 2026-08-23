@@ -178,7 +178,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v82_h';
+const APP_VERSION  = 'v82_i';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -2644,7 +2644,23 @@ function sysTranslation(lang, srcLang) {
 }
 
 // ── Story prompts ─────────────────────────────────────────────────────
-function sysStory(lang, isContinuation, wordCount, dialect, writingStyle, script) {
+// Difficulty-tiered furigana density, RESTORED (found dead since ~v40 at v82_c, flagged rather than
+// fixed there as separate scoped work). `sysStory` used to take a `difficulty` parameter and select
+// among `furiganaNote1/2/3` (beginner: every kanji without exception / standard / advanced: only
+// rare kanji); the current signature dropped it somewhere along the way and every story fell back to
+// the flat `furiganaNote`, regardless of the chapter's actual difficulty. `furiganaNote1/2/3` shared
+// the flat note's own pre-v82_c weakness (no "mandatory for the whole story" language, no worked
+// example — the exact gap that let the model echo its example once near the end instead of applying
+// it throughout), fixed here the same way for all three, not just restoring the selection. An
+// unrecognised/missing difficulty falls back to the flat note, so a caller that forgets to pass one
+// degrades to the pre-restoration behaviour rather than throwing.
+function _furiganaNoteFor(P, difficulty) {
+  if (difficulty === 1) return P.furiganaNote1;
+  if (difficulty === 3) return P.furiganaNote3;
+  if (difficulty === 2) return P.furiganaNote2;
+  return P.furiganaNote;
+}
+function sysStory(lang, isContinuation, wordCount, dialect, writingStyle, script, difficulty) {
   const L = langName(lang, script);
   const wc = Math.max(100, Math.min(1000, wordCount || 300));
   const paraLo = Math.max(1, Math.floor(wc / 100));
@@ -2659,7 +2675,7 @@ function sysStory(lang, isContinuation, wordCount, dialect, writingStyle, script
   // to have a weaker version of it than the story prompt, so there is now one.
   sys += scriptPinNote(lang, script, 'story prompt');
   if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
-  if (lang === 'ja')              sys += P.furiganaNote;
+  if (lang === 'ja')              sys += _furiganaNoteFor(P, difficulty);
   if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
   if (isContinuation)             sys += P.continuationNote;
   return sys;
@@ -5205,7 +5221,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       // flips think:true AND bumps the token budget + timeout so the answer survives the think
       // block. (Mirrors the v55_c think:false applied to QC/storyboard.) `_sOpts` is computed
       // above, because the context budget is sized against its reply allowance.
-      const storySystem = sysStory(lang, !!prevStory, storyLen, userDialect, storyStyle, userOpts.script);
+      const storySystem = sysStory(lang, !!prevStory, storyLen, userDialect, storyStyle, userOpts.script, difficulty);
       // v79_b: num_ctx and the timeout, but ONLY when the chain is actually being fed — a single
       // chapter has never come near the default and does not need a bigger window reserved for it
       // (the KV cache grows with num_ctx, so asking for one is not free). Math.max means this can
