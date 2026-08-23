@@ -1,13 +1,14 @@
-# Session prompt — written at the `v83_c` cut
+# Session prompt — written at the `v83_d` cut
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_b.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_c.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v83_d`, `v83_e`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v83_e`, `v83_f`, …) unless a future session has a good reason to switch to
 `v84_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v83_c`** release —
-the progress-card popup redesign (a fresh user ask, not a PLAN item), on top of `v83_b`'s `PLAN §12`.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v83_d`** release —
+the entry card gets the SAME nav/bars popup `v83_c` gave the progress card, plus thicker header-row
+back/forward arrows. Both are fresh user asks, not PLAN items, on top of `v83_b`'s `PLAN §12`.
 
 **`v83_a`, in brief**: a new BASE LINE, cut from `v82` at the user's own request rather than at a
 milestone, to hand off `PLAN §12` to a clean-context session. No code changed at that cut.
@@ -36,20 +37,38 @@ asserted: header-row order, label mirroring, popup open/close (☰, ×, backdrop
 crossword early-close), and the story panel's measured height against a mobile viewport all checked
 against the running app, not just the CSS/JS source.
 
+**`v83_d`, in brief** (full write-up in `roadmap_v83.md`): two immediate follow-ups to `v83_c`. First,
+*"navigation and next buttons could also be used on the entry card, incl. the progress bars"* — the
+SAME popup pattern, extended to `summary-screen`/`#sum-sumbox`, which has no back button (only NEXT
+was duplicated). Rather than copy-pasting the mirror/close logic a second time, both were made
+properly SHARED: `_syncCompHdrNav`'s inline mirror closure became a top-level `_mirrorNavBtn(srcId,
+dstId)` that both cards' sync functions call, and `show(id)` now calls a new `_closeCardNavPopups()`
+that closes both popups (closing whichever was never open is a harmless no-op) instead of the one
+direct `closeCompNav()` call it had. The `ui.json` strings are reused verbatim, not duplicated.
+Second, *"use thicker arrows for back/forward buttons in the story header"* — a CSS
+`-webkit-text-stroke`, not a Unicode glyph swap, specifically so it wouldn't fight `_mirrorNavBtn`'s
+own `dst.textContent = src.textContent` line. **A second instance of the SAME test-invariant
+supersession `v83_c` hit once already** — `unit-story-summary.test.js`'s own entry-card ordering
+sub-assertion broke a second time for the identical reason (its storyboard/actions/bars moved into a
+popup too) and was rewritten again, to the same shape as the progress card's own claim.
+**Live-verified in a real browser**, via the actual navigation flow (not a synthetic fixture): opened
+a real chapter, landed on the entry card naturally, confirmed the popup, the mirrored NEXT button's
+real localized label, and all three close paths.
+
 **The throughline worth carrying forward again**: `v83_b` was the third release running where a live
 generation against the real model was what actually confirmed a feature works, not source-reading.
-`v83_c` is the same discipline applied to a UI change: exploring the ACTUAL markup of all four card
-screens (not assuming from the request's wording) is what caught that "progress cards" plural did
-not mean "change all four," and running the redesign in a real browser tab (not just asserting from
-CSS) is what confirmed the flex-fill layout, the popup lifecycle, and the label mirroring actually
-work end to end.
+`v83_c`/`v83_d` are the same discipline applied to a UI change: exploring the ACTUAL markup before
+deciding scope, running the redesign in a real browser tab rather than asserting from CSS alone, and
+— new at `v83_d` — noticing that a SECOND request extending the SAME feature is an opportunity to
+extract the shared logic properly (`_mirrorNavBtn`, `_closeCardNavPopups`) rather than copy-pasting a
+second near-identical implementation.
 
 ## Orient yourself
 
 1. **This file**, whole.
 2. `build_history/roadmap_v83.md` — its **index table** and the **⚠️ Session protocol** block first,
-   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`/`v83_c` were built.
-   (Nothing is in TRACK T right now — steps 1–4 and `§T7` all shipped in the v81 line.)
+   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`/`v83_c`/`v83_d` were
+   built. (Nothing is in TRACK T right now — steps 1–4 and `§T7` all shipped in the v81 line.)
 3. `INTERNALS.md` — constants, silent-failure modes, invariants, harness limits. **§6b is a
    feature → function map** — read it BEFORE grepping for where anything lives.
 
@@ -62,12 +81,10 @@ node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Corpus at this cut: **327 topics, 92 storylines, 33 languages, 657 `en` keys** (topics/storylines/
-languages unchanged since `v83_a`; `en` keys grew by 2 this release — `complete.nav_open`,
-`complete.nav_title` — for the new popup trigger/heading, not yet translated into the other 32
-languages, which fall back to English on those two keys until the offline translate pass catches
-up).
-`APP_VERSION = 'v83_c'`.
+Corpus at this cut: **327 topics, 92 storylines, 33 languages, 657 `en` keys** (unchanged from
+`v83_c` — this release reused `complete.nav_open`/`complete.nav_title` for the entry card's own
+popup rather than minting new keys, so the `en` count did not move).
+`APP_VERSION = 'v83_d'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -91,9 +108,15 @@ N" blocks — this is the short form, not a replacement for reading those before
 2b. **When a NEW request deliberately supersedes an OLD test invariant, REWRITE the test to state
    what holds NOW, with the supersession explained inline — don't just loosen or delete the
    assertion.** `v83_c` hit this twice (`unit-story-summary.test.js`'s cross-card parity claim,
-   `smoke-render.test.js`'s single row-order chain) — both were legitimate PAST design decisions a
-   real product change now overrides, and both were rewritten to assert the new, narrower claim that
-   actually survives, rather than weakened into silence.
+   `smoke-render.test.js`'s single row-order chain); `v83_d` hit the SAME test a THIRD time
+   (`unit-story-summary.test.js`'s entry-card self-order sub-assertion, once the entry card's own
+   machinery moved into a popup too) — every one a legitimate PAST design decision a real product
+   change now overrides, and every one rewritten to assert the new, narrower claim that actually
+   survives, rather than weakened into silence.
+2c. **When a second request extends a feature you JUST built, extract the shared logic — don't
+   copy-paste a near-identical second implementation.** `v83_d`'s mirror/close-popup logic became
+   `_mirrorNavBtn`/`_closeCardNavPopups`, called by both cards, specifically because `v83_c`'s own
+   versions were written as if only one card would ever need them.
 3. **For any refactor claiming to preserve behaviour, CAPTURE the old output and DIFF it.** "The
    tests still pass" is a weaker claim — a whole suite has been green with a real contamination bug
    in place before, found only by diffing real data.
@@ -111,10 +134,13 @@ N" blocks — this is the short form, not a replacement for reading those before
    release where it was RIGHT on the first try, but was still verified live rather than trusted.
 8. **Ask before restarting a dev server you did not start, and before deleting data you did not
    create** (`v82_e`, `v82_f`). Check `lessons.json`'s mtime and the server's reported version
-   before touching either. `v83_b`/`v83_c` both needed a live check and solved it by starting a
-   THROWAWAY server on a spare port instead of touching the one already running — reusable: neither
+   before touching either. `v83_b`/`v83_c`/`v83_d` all needed a live check and solved it by starting
+   a THROWAWAY server on a spare port instead of touching the one already running — reusable: neither
    `/api/tutor` nor a plain browser click-through writes `lessons.json`, so a spare-port instance is
-   safe for verifying either without any risk to the shared data or another session's process.
+   safe for verifying either without any risk to the shared data or another session's process. (One
+   snag worth knowing: the default story model is a large MoE model whose warmup can take a while —
+   set `OLLAMA_MODEL=qwen2.5:7b` on the throwaway instance for a fast boot when a live model call
+   isn't actually what you're checking.)
 
 ---
 
@@ -168,9 +194,9 @@ document order instead of the `_text`-then-children shape) before touching this 
 - **`PLAN §F3`** — the article prompt fix shipped at `v80_j` and is **UNVERIFIED BY DESIGN**.
   Regenerate MANY lessons, then re-run `probe_article_symmetry_v80j.js` against its baseline: **1.0%
   overall but BIMODAL** (191 chapters at 0%, two at 100%). **One lesson proves nothing.**
-- **The translate pass** for the remaining `en`-only keys (2 new ones from `v83_c`, 4 from `v83_b`,
-  plus whatever was already outstanding), `translate-ui.js --langnames`, the `hr` `ui.json` pass, and
-  a **native-speaker check of the `cyrillic-sr` table**.
+- **The translate pass** for the remaining `en`-only keys (2 from `v83_c`, reused not duplicated at
+  `v83_d`; 4 from `v83_b`; plus whatever was already outstanding), `translate-ui.js --langnames`, the
+  `hr` `ui.json` pass, and a **native-speaker check of the `cyrillic-sr` table**.
 - **A device pass on the WHOLE `v81_a`…`v81_ad` UI-redesign arc — never done by the user.** The v80
   line changed every card and question screen; `v81` then split generation off the landing page
   (`§C5`) and built the Settings Card with its floating pills, mute-pill consolidation, and the
@@ -180,15 +206,13 @@ document order instead of the `_text`-then-children shape) before touching this 
   own release entries (`v81_w` onward especially — the first and biggest real visual changes) for
   exactly what to click through; `build_history/v81i_session38_notes.md` also still applies for what
   should stay locked on the lesson path.
-- **`PLAN §12`'s own new UI, never seen by the user in a real browser.** Live-verified by an AGENT
-  (`v83_b`), against a real model call and in a real browser tab — not the same thing as the user's
-  own device pass. The selection-popover UX itself (positioning, the grammar/meaning buttons,
-  coexistence with the per-word tap on a touch device) is worth a look before calling it done-done.
-- **`v83_c`'s progress-card popup, same caveat.** Live-verified by an AGENT (header-row layout, the
-  popup's open/close paths, the flex-fill story panel against a mobile viewport) — not the user's own
-  device pass. Worth a look, especially the "text field fills the full available screen" effect on a
-  REAL short story (the agent's check used one real chapter; a range of story lengths, and the
-  popup's touch ergonomics on a real phone, are still unverified).
+- **Three UI features running now, ALL live-verified by an AGENT only, NONE by the user's own device
+  pass**: `PLAN §12`'s selection popover (`v83_b`, positioning, the grammar/meaning buttons,
+  coexistence with the per-word tap on a touch device), the progress card's nav/bars popup (`v83_c`,
+  the flex-fill story panel on a REAL short story — the agent's checks used real chapters but not a
+  systematic range of lengths — and touch ergonomics on a real phone), and the entry card's own copy
+  of that popup (`v83_d`, same caveats). All three are worth one combined device pass rather than
+  three separate ones, since they share the same popup/header-row interaction pattern.
 
 ## 5. NOT yours to start
 
@@ -219,9 +243,10 @@ reference and not duplicated in INTERNALS.md.
 - `probe_gates_v77.js` — re-run **and diff** after any progress-card change. **⚠️ It SELECTS its
   chapters from the corpus, so a data drop moves the selection.** Disambiguate by re-running the
   PREVIOUS client against the CURRENT corpus. Baseline: `v80i_card_gates.txt`. **Note it renders
-  the card structurally, not through a browser — it will not see the `v83_c` popup at all** (the
-  chapter icons/lesson icons/bars it inspects now render inside `#comp-nav-modal`, not on the main
-  page); re-check whether this probe still measures what it claims before relying on it post-`v83_c`.
+  the card structurally, not through a browser — it will not see either the `v83_c` or `v83_d`
+  popup at all** (the chapter icons/lesson icons/bars it inspects now render inside
+  `#comp-nav-modal`/`#sum-nav-modal`, not on either card's main page); re-check whether this probe
+  still measures what it claims before relying on it.
 - `probe_word_green_impact_v81d.js` — what TRACK T's colouring paints, through `_wordProgress` /
   `_wordState`. `PROBE_CLIENT=` diffs two builds. Use this one for anything about the screen.
 - `probe_word_green_v81c.js` — declared probe keys vs the BUILDABLE universe (60.8% at `v81_d`).
@@ -252,15 +277,16 @@ reference and not duplicated in INTERNALS.md.
   `_tutorGatherContext()` sends `uiLang` (reply language) ADDITIVELY alongside the unchanged
   `srcLang` (retrieval content-pairing + ledger lookup) — the two are genuinely different jobs, see
   `roadmap_v83.md`'s `v83_b` entry before touching either.
-- `openCompNav()`/`closeCompNav()` — the `v83_c` popup, same open/close shape as
-  `openSettings()`/`closeSettings()` just above them in the file. `closeCompNav()` is called from
-  `show(id)`'s own multi-`try` chain (same choke point PLAN §12's `_storySelHide()` uses) and
-  explicitly from `openCrosswordFromComplete()` — the one path that shows another overlay without a
-  screen change.
-- `_syncCompHdrNav()` — mirrors `comp-prev`/`comp-next`'s FINAL resolved state onto the story panel's
-  header-row duplicate pair. Called once, at the very end of `showComplete()`. A generic copy, not a
-  re-derivation — extend the MIRROR if a third button ever needs duplicating, don't re-derive its
-  destination logic a second time.
+- `openCompNav()`/`closeCompNav()` (`v83_c`) and `openSumNav()`/`closeSumNav()` (`v83_d`) — one popup
+  per card, same open/close shape as `openSettings()`/`closeSettings()` just above them in the file.
+  `_closeCardNavPopups()` closes BOTH and is what `show(id)`'s own multi-`try` chain actually calls
+  (same choke point PLAN §12's `_storySelHide()` uses); `openCrosswordFromComplete()` calls
+  `closeCompNav()` directly and explicitly — the one path that shows another overlay without a
+  screen change, and the entry card has no equivalent case.
+- `_mirrorNavBtn(srcId, dstId)` (`v83_d`) — the ONE shared rule that mirrors a source nav button's
+  FINAL resolved state onto a header-row duplicate. `_syncCompHdrNav()` (end of `showComplete()`)
+  and `_syncSumHdrNav()` (end of `showStorySummary()`) both call it — extend a THIRD sync function
+  the same way if a third card ever needs this, don't re-derive the mirror rule itself.
 - `recordObservation(ex, correct)` / `APP.progress.observations` / `refreshBktShadow(d)` — the
   `PLAN §8/B1–B4` evidence path. See `INTERNALS.md` §6b before extending it: only `check()`-graded
   exercises are logged, only resolved vocabulary IDs feed BKT, and no BKT value may become a reader

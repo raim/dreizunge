@@ -3,25 +3,28 @@
 // bars into a popup, reachable via one button in the header row of the text field, before the text
 // translation buttons. Only the back/next button should be duplicated ... in the navigation popup,
 // and in the text field header row. ... progress card text fields should ideally always fill the
-// full available screen."
+// full available screen." Then, as an immediate follow-up: "navigation and next buttons could also
+// be used on the entry card, incl. the progress bars" — extending the SAME pattern to the entry/
+// summary card, which has no back button to duplicate (just next). Then: "use thicker arrows for
+// back/forward buttons in the story header."
 //
-// Scope: complete-screen ONLY (the "progress card" in this project's own vocabulary). The entry/
-// summary/finished/unlocked-story cards were not asked to change and keep their old layout — see
-// unit-story-summary.test.js's §6 and smoke-render.test.js's row-order section for how the two old
-// cross-card/row-order invariants this redesign supersedes were updated, not just loosened.
+// Scope: `complete-screen` (the "progress card") AND `summary-screen` (the "entry card"). The
+// finished/unlocked-story cards were not asked and were not touched — see unit-story-summary.test.js
+// §6 and smoke-render.test.js's row-order section for how the two old cross-card/row-order
+// invariants THIS PAIR of screens' redesign supersedes were rewritten, not just loosened.
 //
 // Contract under test:
-//   1. `#comp-nav-modal` — the popup — holds comp-storyboard/comp-lessons/comp-actions/
-//      comp-progress/comp-nav-btns, UNCHANGED elements just relocated (same ids, same renderers).
-//   2. The story panel's summary row carries a ☰ trigger BEFORE the translation flags, and a
-//      duplicated back/next pair — ONLY those two are duplicated.
-//   3. `_syncCompHdrNav()` mirrors comp-prev/comp-next's FINAL resolved state onto the duplicate
-//      pair — a generic copy, not a re-derivation of showComplete's ~7 branches.
-//   4. The popup closes on every screen change/re-render (the same show(id) choke point PLAN §12's
-//      selection popover uses) and explicitly before a crossword opens (the one path that shows
-//      another overlay without a screen change).
-//   5. The story panel is a flex:1 child of a flex:1 .comp-body, scoped to #complete-screen alone —
-//      other card screens share .comp-body and were not asked to change.
+//   1. `#comp-nav-modal` / `#sum-nav-modal` — the two popups — hold their card's relocated
+//      machinery, UNCHANGED elements just moved (same ids, same renderers).
+//   2. Each card's header row carries a ☰ trigger BEFORE its translation control(s), and a
+//      duplicated next (complete-screen also duplicates back) — and ONLY those.
+//   3. `_mirrorNavBtn(srcId, dstId)` — the ONE mirror rule shared by `_syncCompHdrNav` and
+//      `_syncSumHdrNav` — copies a source button's FINAL resolved state, not a re-derivation.
+//   4. Both popups close on every screen change/re-render (`_closeCardNavPopups()`, called from the
+//      same show(id) choke point PLAN §12's selection popover uses) and the comp one explicitly
+//      before a crossword opens (the one path that shows another overlay without a screen change).
+//   5. The story panel is a flex:1 child of a flex:1 .comp-body, scoped to #complete-screen alone.
+//   6. The header-row back/forward duplicates render with a visibly heavier stroke.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -46,129 +49,151 @@ const posOf = (id) => {
   return hits[0].index;
 };
 
-// ── 1. The popup: relocated, not reimplemented ────────────────────────────────
+// ── 1. Both popups: relocated, not reimplemented ──────────────────────────────
 {
-  assert.ok(/id="comp-nav-modal"/.test(html), 'the popup exists');
-  const modalStart = posOf('comp-nav-modal');
-  const modalBlock = html.slice(modalStart, html.indexOf('</div>\n</div>\n\n', modalStart) + 20);
-  for (const id of ['comp-storyboard', 'comp-lessons', 'comp-actions', 'comp-progress', 'comp-nav-btns']) {
-    assert.ok(posOf(id) > modalStart, `${id} is inside (after the start of) #comp-nav-modal`);
+  for (const [modalId, kids] of [
+    ['comp-nav-modal', ['comp-storyboard', 'comp-lessons', 'comp-actions', 'comp-progress', 'comp-nav-btns']],
+    ['sum-nav-modal',  ['sum-storyboard', 'sum-actions', 'sum-progress']],
+  ]) {
+    const modalStart = posOf(modalId);
+    for (const id of kids) assert.ok(posOf(id) > modalStart, `${id} is inside (after the start of) #${modalId}`);
+    assert.ok(new RegExp(`id="${modalId}" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba\\(0,0,0,\\.45\\)`).test(html),
+      `#${modalId} uses the same fixed-overlay shape as #settings-modal`);
   }
-  // Relocated, not rewritten: the buttons the popup renders are byte-for-byte the ones showComplete
-  // already knows how to populate — same ids, same onclick wiring, nothing re-implemented.
+  // Relocated, not rewritten: the buttons each popup renders are byte-for-byte the ones its card's
+  // own render function already knows how to populate — same ids, same onclick wiring.
   for (const frag of [
     'id="comp-prev" style="display:none"',
     'onclick="repeatForCoverage()"', 'onclick="startDrill()"', 'onclick="openCrosswordFromComplete()"',
     'id="comp-next" onclick="afterComplete()"',
-  ]) assert.ok(html.includes(frag), `unchanged action button markup survives: ${frag}`);
-  // Same overlay pattern as #settings-modal, reused rather than reinvented.
-  assert.ok(/id="comp-nav-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba\(0,0,0,\.45\)/.test(html),
-    'the popup uses the same fixed-overlay shape as #settings-modal');
-  assert.ok(/max-height:calc\(100vh - 32px\);overflow-y:auto/.test(modalBlock),
-    'the popup box scrolls internally on a short viewport, matching #settings-modal');
+    'id="sum-next">',
+  ]) assert.ok(html.includes(frag), `unchanged action markup survives: ${frag}`);
 }
-console.log('  popup: holds the relocated machinery unchanged, same overlay pattern as #settings-modal: OK');
+console.log('  both popups: hold each card\'s relocated machinery unchanged, same overlay pattern as #settings-modal: OK');
 
-// ── 2. The header row: ☰ before the flags, back/next duplicated (and ONLY those) ─
+// ── 2. Each header row: ☰ before translation control(s), ONLY next[/back] duplicated ─
 {
   const panelStart = posOf('comp-story-panel');
-  const summaryEnd = html.indexOf('</summary>', panelStart);
-  const summary = html.slice(panelStart, summaryEnd);
+  const summary = html.slice(panelStart, html.indexOf('</summary>', panelStart));
   const order = ['comp-story-prev', 'comp-story-nav-btn', 'comp-story-flags', 'comp-story-spk', 'comp-story-next']
     .map(id => summary.indexOf(`id="${id}"`));
-  order.forEach((at, i) => assert.ok(at > 0, `element ${i} of the header row exists in the summary`));
-  for (let i = 1; i < order.length; i++) assert.ok(order[i] > order[i - 1], 'header-row elements are in the required order');
+  order.forEach((at, i) => assert.ok(at > 0, `element ${i} of the progress-card header row exists`));
+  for (let i = 1; i < order.length; i++) assert.ok(order[i] > order[i - 1], 'progress-card header-row elements are in the required order');
   assert.ok(summary.indexOf('comp-story-nav-btn') < summary.indexOf('comp-story-flags'),
     'the ☰ popup trigger sits BEFORE the translation flags, per the request');
-  // ONLY back/next are duplicated: no OTHER comp-* action id (repeat/drill/crossword/wipe) gets a
-  // comp-story-* twin anywhere in the file.
-  for (const id of ['comp-story-repeat', 'comp-story-drill', 'comp-story-crossword', 'comp-story-wipe']) {
-    assert.ok(!html.includes(`id="${id}"`), `${id} must NOT exist — only back/next are duplicated`);
-  }
   assert.ok(/onclick="event\.stopPropagation\(\);openCompNav\(\);"/.test(summary),
     'the ☰ button opens the popup, and stops the click from also toggling the <details>');
-}
-console.log('  header row: ☰ before the flags, ONLY back/next duplicated, click-toggle guarded: OK');
 
-// ── 3. _syncCompHdrNav: a generic mirror, not a re-derivation ────────────────
+  const sumStart = posOf('sum-sumbox');
+  const sumRow = html.slice(sumStart, html.indexOf('</div>', html.indexOf('sum-sumtext', sumStart)));
+  const sumOrder = ['sum-sum-nav-btn', 'sum-sum-xlate', 'sum-sum-spk', 'sum-sum-next']
+    .map(id => sumRow.indexOf(`id="${id}"`));
+  sumOrder.forEach((at, i) => assert.ok(at > 0, `element ${i} of the entry-card header row exists`));
+  for (let i = 1; i < sumOrder.length; i++) assert.ok(sumOrder[i] > sumOrder[i - 1], 'entry-card header-row elements are in the required order');
+  assert.ok(sumRow.indexOf('sum-sum-nav-btn') < sumRow.indexOf('sum-sum-xlate'),
+    'the entry card\'s ☰ trigger ALSO sits before its translation control');
+  assert.ok(/onclick="openSumNav\(\);"/.test(sumRow), 'the entry card\'s ☰ button opens its own popup');
+
+  // ONLY next/back are duplicated anywhere — no OTHER action id (repeat/drill/crossword/wipe) gets
+  // a header-row twin on EITHER card, and the entry card (no back button at all) gets no sum-sum-prev.
+  for (const id of ['comp-story-repeat', 'comp-story-drill', 'comp-story-crossword', 'comp-story-wipe', 'sum-sum-prev']) {
+    assert.ok(!html.includes(`id="${id}"`), `${id} must NOT exist`);
+  }
+}
+console.log('  both header rows: ☰ before translation control(s), ONLY next[/back] duplicated: OK');
+
+// ── 3. _mirrorNavBtn: the ONE mirror rule, shared and non-vacuous ────────────
 {
-  const sync = extFn(html, '_syncCompHdrNav');
-  assert.ok(/dst\.textContent = src\.textContent/.test(sync) && /dst\.title = src\.title/.test(sync)
-         && /dst\.style\.display = src\.style\.display/.test(sync) && /dst\.disabled = src\.disabled/.test(sync),
-    'every piece of comp-next/comp-prev\'s resolved state is copied, not re-derived');
-  assert.ok(/mirror\('comp-prev', 'comp-story-prev'\)/.test(sync) && /mirror\('comp-next', 'comp-story-next'\)/.test(sync),
-    'both pairs are mirrored');
-  // Called LAST — after every showComplete branch has had a chance to set comp-next/comp-prev.
+  const mirrorFn = extFn(html, '_mirrorNavBtn');
+  assert.ok(/dst\.textContent = src\.textContent/.test(mirrorFn) && /dst\.title = src\.title/.test(mirrorFn)
+         && /dst\.style\.display = src\.style\.display/.test(mirrorFn) && /dst\.disabled = src\.disabled/.test(mirrorFn),
+    'every piece of the source button\'s resolved state is copied, not re-derived');
+  const compSync = extFn(html, '_syncCompHdrNav'), sumSync = extFn(html, '_syncSumHdrNav');
+  assert.ok(/_mirrorNavBtn\('comp-prev', 'comp-story-prev'\)/.test(compSync) && /_mirrorNavBtn\('comp-next', 'comp-story-next'\)/.test(compSync),
+    '_syncCompHdrNav mirrors both pairs through the shared rule');
+  assert.ok(/_mirrorNavBtn\('sum-next', 'sum-sum-next'\)/.test(sumSync) && !/comp-/.test(sumSync),
+    '_syncSumHdrNav mirrors only next (no back button exists on the entry card) through the SAME shared rule');
+  // Called LAST in each card's own render — after every branch that can set the source button.
   const sc = extFn(html, 'showComplete');
-  const syncAt = sc.indexOf('_syncCompHdrNav()');
-  const showAt = sc.lastIndexOf("show('complete-screen')");
-  assert.ok(syncAt > 0 && showAt > syncAt, 'the sync runs after every branch, right before show(complete-screen)');
+  assert.ok(sc.indexOf('_syncCompHdrNav()') > 0 && sc.lastIndexOf("show('complete-screen')") > sc.indexOf('_syncCompHdrNav()'),
+    'showComplete syncs after every branch, right before show(complete-screen)');
+  const ss = extFn(html, 'showStorySummary');
+  assert.ok(ss.indexOf('_syncSumHdrNav()') > 0 && ss.lastIndexOf("show('summary-screen')") > ss.indexOf('_syncSumHdrNav()'),
+    'showStorySummary syncs after its own branch, right before show(summary-screen)');
 
-  // Behavioural: build two bare stub buttons and confirm the mirror actually copies state.
+  // Behavioural: build bare stub buttons and confirm the shared mirror actually copies state, for
+  // BOTH cards' pairs — proving the SAME function, not two look-alikes, drives both.
   const C = loadClient({ quiet: true });
-  const out = C.run(`(() => {
-    const mk = (id) => { const el = document.getElementById(id); el.tagName='BUTTON'; return el; };
-    const src = mk('comp-next'); src.textContent = '→'; src.title = 'Next chapter';
-    src.style.display = ''; src.disabled = false; src.onclick = () => { window.__clicked = 'real'; };
-    const dst = mk('comp-story-next');
-    _syncCompHdrNav();
-    dst.onclick({ stopPropagation: () => { window.__stopped = true; } });
-    return { text: dst.textContent, title: dst.title, display: dst.style.display,
-             className: dst.className, clicked: window.__clicked, stopped: window.__stopped };
-  })()`);
-  assert.strictEqual(out.text, '→', 'textContent mirrored');
-  assert.strictEqual(out.title, 'Next chapter', 'title mirrored');
-  assert.strictEqual(out.display, '', 'display mirrored (visible)');
-  assert.strictEqual(out.className, 'spk-ico', 'not disabled → no .disabled class');
-  assert.strictEqual(out.clicked, 'real', 'the duplicate\'s onclick actually calls comp-next\'s own handler');
-  assert.ok(out.stopped, 'the duplicate stops propagation itself (it sits inside the toggling <summary>)');
+  for (const [srcId, dstId] of [['comp-next', 'comp-story-next'], ['sum-next', 'sum-sum-next']]) {
+    const out = C.run(`(() => {
+      const mk = (id) => { const el = document.getElementById(id); el.tagName='BUTTON'; return el; };
+      const src = mk('${srcId}'); src.textContent = '→'; src.title = 'Onward';
+      src.style.display = ''; src.disabled = false; src.onclick = () => { window.__clicked = '${srcId}'; };
+      const dst = mk('${dstId}');
+      _mirrorNavBtn('${srcId}', '${dstId}');
+      dst.onclick({ stopPropagation: () => { window.__stopped = '${dstId}'; } });
+      return { text: dst.textContent, title: dst.title, display: dst.style.display,
+               className: dst.className, clicked: window.__clicked, stopped: window.__stopped };
+    })()`);
+    assert.strictEqual(out.text, '→', `${dstId}: textContent mirrored`);
+    assert.strictEqual(out.title, 'Onward', `${dstId}: title mirrored`);
+    assert.strictEqual(out.display, '', `${dstId}: display mirrored (visible)`);
+    assert.strictEqual(out.className, 'spk-ico', `${dstId}: not disabled → no .disabled class`);
+    assert.strictEqual(out.clicked, srcId, `${dstId}: the duplicate's onclick actually calls the source's own handler`);
+    assert.strictEqual(out.stopped, dstId, `${dstId}: the duplicate stops propagation itself`);
 
-  // A DISABLED source must mirror as disabled, with the visual class.
-  const out2 = C.run(`(() => {
-    const src = document.getElementById('comp-next');
-    src.disabled = true; src.style.display = 'none';
-    const dst = document.getElementById('comp-story-next');
-    _syncCompHdrNav();
-    return { display: dst.style.display, disabled: dst.disabled, className: dst.className };
-  })()`);
-  assert.strictEqual(out2.display, 'none', 'a hidden source mirrors as hidden');
-  assert.strictEqual(out2.disabled, true, 'a disabled source mirrors as disabled');
-  assert.strictEqual(out2.className, 'spk-ico disabled', 'the disabled class is applied to the duplicate');
+    // A DISABLED source must mirror as disabled, with the visual class.
+    const out2 = C.run(`(() => {
+      const src = document.getElementById('${srcId}');
+      src.disabled = true; src.style.display = 'none';
+      _mirrorNavBtn('${srcId}', '${dstId}');
+      const dst = document.getElementById('${dstId}');
+      return { display: dst.style.display, disabled: dst.disabled, className: dst.className };
+    })()`);
+    assert.strictEqual(out2.display, 'none', `${dstId}: a hidden source mirrors as hidden`);
+    assert.strictEqual(out2.disabled, true, `${dstId}: a disabled source mirrors as disabled`);
+    assert.strictEqual(out2.className, 'spk-ico disabled', `${dstId}: the disabled class is applied`);
+  }
 }
-console.log('  _syncCompHdrNav: mirrors text/title/display/disabled/onclick, runs last, non-vacuous: OK');
+console.log('  _mirrorNavBtn: ONE shared rule drives both cards\' sync, mirrors text/title/display/disabled/onclick, non-vacuous: OK');
 
-// ── 4. The popup closes on navigation, and explicitly before a crossword opens ──
+// ── 4. Both popups close on navigation, and comp\'s explicitly before a crossword opens ─
 {
-  assert.ok(/try\{ closeCompNav\(\); \}catch\(_\)\{\}/.test(extFn(html, 'show')),
-    'show(id) closes the popup on every screen change/re-render — same choke point PLAN §12 uses');
+  assert.ok(/try\{ _closeCardNavPopups\(\); \}catch\(_\)\{\}/.test(extFn(html, 'show')),
+    'show(id) closes BOTH card-nav popups on every screen change/re-render — same choke point PLAN §12 uses');
+  const closeAll = extFn(html, '_closeCardNavPopups');
+  assert.ok(/closeCompNav\(\)/.test(closeAll) && /closeSumNav\(\)/.test(closeAll),
+    '_closeCardNavPopups closes both — closing whichever was never open is a harmless no-op');
   const ocfc = extFn(html, 'openCrosswordFromComplete');
   assert.ok(/closeCompNav\(\)/.test(ocfc) && ocfc.indexOf('closeCompNav()') < ocfc.indexOf('openCrossword(idx)'),
-    'openCrosswordFromComplete closes the nav popup BEFORE showing the crossword overlay ' +
+    'openCrosswordFromComplete closes its own nav popup BEFORE showing the crossword overlay ' +
     '(openCrossword does not call show(), so the generic close above never fires here)');
-  // Behavioural: openCompNav/closeCompNav actually toggle the element.
-  const C = loadClient({ quiet: true });
-  const seq = C.run(`(() => {
-    const m = document.getElementById('comp-nav-modal');
-    const before = m.style.display;
-    openCompNav(); const afterOpen = m.style.display;
-    closeCompNav(); const afterClose = m.style.display;
-    return { before, afterOpen, afterClose };
-  })()`);
-  assert.strictEqual(seq.afterOpen, 'flex', 'openCompNav shows the popup');
-  assert.strictEqual(seq.afterClose, 'none', 'closeCompNav hides it');
-  // Mutation check by construction: show(id) really calls the SAME closeCompNav, not a look-alike —
-  // exercised for real (not just source-pinned) by calling the actual show() against a stub screen.
-  const C2 = loadClient({ quiet: true });
-  const seq2 = C2.run(`(() => {
-    document.getElementById('comp-nav-modal').style.display = 'flex';
-    document.getElementById('landing').classList = { add(){}, remove(){} };
-    document.querySelectorAll = () => [];
-    try { show('landing'); } catch(_) {}
-    return document.getElementById('comp-nav-modal').style.display;
-  })()`);
-  assert.strictEqual(seq2, 'none', 'calling the REAL show() closes an open nav popup, end to end');
+
+  // Behavioural: openCompNav/closeCompNav and openSumNav/closeSumNav each actually toggle their own
+  // element, and calling the REAL show() closes BOTH regardless of which was open.
+  for (const [openFn, closeFn, modalId] of [['openCompNav', 'closeCompNav', 'comp-nav-modal'], ['openSumNav', 'closeSumNav', 'sum-nav-modal']]) {
+    const C = loadClient({ quiet: true });
+    const seq = C.run(`(() => {
+      const m = document.getElementById('${modalId}');
+      ${openFn}(); const afterOpen = m.style.display;
+      ${closeFn}(); const afterClose = m.style.display;
+      return { afterOpen, afterClose };
+    })()`);
+    assert.strictEqual(seq.afterOpen, 'flex', `${openFn} shows #${modalId}`);
+    assert.strictEqual(seq.afterClose, 'none', `${closeFn} hides #${modalId}`);
+
+    const C2 = loadClient({ quiet: true });
+    const seq2 = C2.run(`(() => {
+      document.getElementById('${modalId}').style.display = 'flex';
+      document.getElementById('landing').classList = { add(){}, remove(){} };
+      document.querySelectorAll = () => [];
+      try { show('landing'); } catch(_) {}
+      return document.getElementById('${modalId}').style.display;
+    })()`);
+    assert.strictEqual(seq2, 'none', `calling the REAL show() closes an open #${modalId}, end to end`);
+  }
 }
-console.log('  popup lifecycle: closes on navigation (real show(), not just source-pinned) and before crossword: OK');
+console.log('  both popups\' lifecycle: close on navigation (real show(), not just source-pinned) and comp\'s before crossword: OK');
 
 // ── 5. closeCrossword's fallback no longer scrolls to a now-hidden element ───
 {
@@ -189,16 +214,36 @@ console.log('  closeCrossword: fallback scroll target updated for the relocated 
     'the text itself (not just its border) stretches — a short story still fills the bordered field');
   // Non-vacuity: the OTHER three card screens share .comp-body/.comp-title and were not asked to
   // change — the rule must be id-scoped, not a plain .comp-body{flex:1} that would also stretch
-  // finished-screen/summary-screen/unlockstory-screen.
+  // finished-screen/summary-screen/unlockstory-screen. The entry card's OWN redesign (this file's
+  // §1-4) is a separate ask (nav + bars into a popup) — it was never asked to also fill the screen.
   assert.ok(!/(?<!#complete-screen )\.comp-body\{display:flex;flex-direction:column;flex:1/.test(html),
     'the flex-fill rule is scoped to #complete-screen, not applied to the shared .comp-body class');
+  assert.ok(!/#summary-screen[^{]*\{[^}]*flex:1/.test(html) && !/#sum-sumbox\{[^}]*flex:1/.test(html),
+    'the entry card was not asked to fill the screen and was not changed to');
 }
-console.log('  "fill the full available screen": flex:1 chain scoped to #complete-screen alone: OK');
+console.log('  "fill the full available screen": flex:1 chain scoped to #complete-screen alone, entry card untouched: OK');
 
-// ── 7. ui.json — new strings exist (en only, per project convention) ─────────
+// ── 7. ui.json — the popup strings, reused across both cards (en only) ───────
 {
   for (const k of ['complete.nav_open', 'complete.nav_title']) assert.ok(ui.en[k], `ui.json en has ${k}`);
+  // One concept, shared: the entry card's popup does NOT get its own second pair of keys.
+  assert.ok(!ui.en['sum.nav_open'] && !ui.en['sum.nav_title'], 'no duplicate key pair was minted for the entry card');
+  const aus = extFn(html, 'applyUIStrings');
+  assert.ok(/sum-sum-nav-btn.*complete\.nav_open/.test(aus) && /sum-nav-modal-title.*complete\.nav_title/.test(aus),
+    'the entry card\'s popup trigger/heading are localized through the SAME two keys');
 }
-console.log('  ui.json: new popup strings present, en only: OK');
+console.log('  ui.json: the popup strings are shared across both cards, en only: OK');
+
+// ── 8. "Thicker arrows" — the header-row back/forward duplicates only ────────
+{
+  assert.ok(/#comp-story-prev,#comp-story-next,#sum-sum-next\{font-weight:900;-webkit-text-stroke:\.6px currentColor\}/.test(html),
+    'the header-row duplicates render with a heavier stroke than the plain ←/→ glyph');
+  // Non-vacuity: the rule must not have accidentally been written to select something else, and
+  // must NOT also thicken the popup's own comp-prev/comp-next (a different visual language — those
+  // use the chunky .comp-ico button style already, not this thin-glyph header row).
+  assert.ok(!/#comp-prev,#comp-next\{[^}]*text-stroke/.test(html) && !/\.comp-ico\{[^}]*text-stroke/.test(html),
+    'the thicker-stroke rule targets only the header-row duplicates, not the popup\'s own buttons');
+}
+console.log('  thicker arrows: applied to the header-row back/forward duplicates only: OK');
 
 console.log('unit-progress-card-nav: ALL PASSED');

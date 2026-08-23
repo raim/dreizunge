@@ -118,15 +118,23 @@ const state = (C, id) => C.run(`(function(){ var e=document.getElementById(${JSO
   console.log('  entry card: shows the same progress bars as the progress card');
 }
 
-// ── 6. Section ORDER — v82_e (user report, with two screenshots); RESCOPED at the progress-card
-// popup redesign, see below ──
+// ── 6. Section ORDER — v82_e (user report, with two screenshots); SUPERSEDED at the progress-card
+// popup redesign (v83_c), extended to this card as an immediate follow-up — see below ──
 // The entry card (summary-screen) and the progress card (complete-screen) are two separate STATIC
 // markup blocks in index.html, not one shared render — so nothing stops them drifting apart, and
 // they had: the progress card moved its bars to the BOTTOM (v80_y/v81_b) and its content-box to the
 // TOP, but the entry card was never brought forward from the v77_o-era order it was written to.
-// v82_e's fix made the two cards match section-for-section; the progress-card popup redesign
-// deliberately ends that parity for the progress card alone — see the comment below the entry-card
-// assertion for what replaced it and why.
+// v82_e's fix made the two cards match section-for-section.
+//
+// v83_c's popup redesign — "move the navigation control icon rows and the progress bars into a
+// popup" — shipped for the progress card first, then the user asked for the SAME treatment on the
+// entry card ("navigation and next buttons could also be used on the entry card, incl. the progress
+// bars"). Both cards' storyboard/actions/bars moved OFF the scrolling page into their own popup
+// (`#comp-nav-modal` / `#sum-nav-modal`), so the OLD section-for-section parity claim this test used
+// to assert is superseded on BOTH sides now, not just one — replaced by the narrower claim that
+// actually survives on each: content leads, the verdict/title is last, on the card's own SCROLLING
+// page (the popup, when open, is a separate overlay, not a row of "the page" in the sense this test
+// measures).
 //
 // Asserted on SOURCE POSITION rather than a live DOM walk — deliberately, not as a shortcut. Both
 // cards are STATIC markup (`loadClient()`'s harness never loads index.html's <body>, only its
@@ -148,29 +156,14 @@ const state = (C, id) => C.run(`(function(){ var e=document.getElementById(${JSO
   const orderOf = (ids) =>
     ids.map(([label, elId]) => [label, posOf(elId)])
        .sort((a, b) => a[1] - b[1]).map(p => p[0]);
-  const entryOrder = orderOf(
-    [['content', 'sum-sumbox'], ['storyboard', 'sum-storyboard'], ['actions', 'sum-actions'],
-     ['bars', 'sum-progress'], ['title', 'sum-title']]);
-  assert.deepStrictEqual(entryOrder, ['content', 'storyboard', 'actions', 'bars', 'title'],
-    `entry card section order — got ${JSON.stringify(entryOrder)}`);
-  // user (progress-card redesign): SUPERSEDES the cross-card parity claim this section used to
-  // assert. The progress card's storyboard/actions/bars moved OFF the scrolling page entirely, into
-  // `#comp-nav-modal` — a popup reached via the ☰ button in the story panel's own header row. The
-  // entry/summary card above was NOT asked to change and keeps exactly its old mirrored layout, so
-  // the two cards can no longer read as "one shared row order" the way this test used to require —
-  // that was always a proxy for "moving between the two screens feels the same," and it no longer
-  // can, by the user's own design: the progress card now deliberately reads DIFFERENTLY, text-first,
-  // precisely because it is the one this redesign is about.
-  //
-  // What DOES still hold, and is asserted instead: content still leads the progress card's own
-  // scrolling page, and the verdict/title is still the LAST thing on it — the popup, when open, is
-  // a separate overlay on top, not a row of "the page" in the sense this test measures.
-  const progressPageOrder = orderOf(
-    [['content', 'comp-story-panel'], ['title', 'comp-title']]);
+  const entryPageOrder = orderOf([['content', 'sum-sumbox'], ['title', 'sum-title']]);
+  assert.deepStrictEqual(entryPageOrder, ['content', 'title'],
+    `entry card's own scrolling-page order — got ${JSON.stringify(entryPageOrder)}`);
+  const progressPageOrder = orderOf([['content', 'comp-story-panel'], ['title', 'comp-title']]);
   assert.deepStrictEqual(progressPageOrder, ['content', 'title'],
     `progress card's own scrolling-page order — got ${JSON.stringify(progressPageOrder)}`);
-  console.log('  entry card keeps its own order; the progress card leads with content and closes ' +
-    'with the verdict on its own page (machinery now lives in a popup): OK');
+  console.log('  both cards lead with content and close with the verdict on their own page ' +
+    '(machinery now lives in a popup on each): OK');
 }
 
 

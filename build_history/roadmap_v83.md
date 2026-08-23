@@ -29,7 +29,7 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_c` — progress-card redesign: nav/icon rows + progress bars moved into a popup, story field fills the screen (complete-screen only). `v83_b` — `PLAN §12` built end to end: the tutor's reply language moved from `srcLang` to `APP.uiLang` (user ruling, whole tutor not just the new flow), and the new text-selection popover itself |
+| **SHIPPED IN THE v83 LINE** | `v83_d` — the entry/summary card gets the SAME nav/bars popup `v83_c` gave the progress card (shared `_mirrorNavBtn`/`_closeCardNavPopups`), plus thicker header-row back/forward arrows. `v83_c` — progress-card redesign: nav/icon rows + progress bars moved into a popup, story field fills the screen (complete-screen only). `v83_b` — `PLAN §12` built end to end: the tutor's reply language moved from `srcLang` to `APP.uiLang` (user ruling, whole tutor not just the new flow), and the new text-selection popover itself |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, the interactive text-selection tutor, shipped at `v83_b` — see the SHIPPED section above. |
 
@@ -1685,6 +1685,76 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_d` — entry card gets the same nav/bars popup; header-row back/forward arrows made heavier
+
+**Shipped by: Claude Code, on user follow-up** — two small requests landing right after `v83_c`
+shipped: *"navigation and next buttons could also be used on the entry card, incl. the progress
+bars"*, then *"use thicker arrows for back/forward buttons in the story header."*
+
+**What shipped:**
+- **The entry/summary card (`summary-screen`, `#sum-sumbox`) gets the SAME popup treatment
+  `v83_c` gave the progress card** — a ☰ trigger in its own header row (before its translate
+  button, mirroring "before the text translation buttons" from the original request), and its
+  storyboard/action-row/progress-bars relocated into a new `#sum-nav-modal`, same overlay shape as
+  `#comp-nav-modal`/`#settings-modal`. The entry card has no back button (`sum-actions` only ever
+  held `sum-next`), so only NEXT is duplicated there — asserted directly (no `sum-sum-prev` exists).
+- **The mirror logic was made properly shared, not copy-pasted a second time.** `_syncCompHdrNav`'s
+  inline `mirror` closure was extracted into a top-level `_mirrorNavBtn(srcId, dstId)`; both
+  `_syncCompHdrNav` (progress card, called at the end of `showComplete()`) and the new
+  `_syncSumHdrNav` (entry card, called at the end of `showStorySummary()`) call the SAME function,
+  so the mirroring RULE itself — text/title/aria-label/display/disabled/onclick, with the
+  duplicate's own `stopPropagation()` — cannot drift between the two cards.
+- **The popup-closing choke point was generalized the same way.** `show(id)` used to call
+  `closeCompNav()` directly; it now calls a new `_closeCardNavPopups()`, which closes BOTH
+  `comp-nav-modal` and `sum-nav-modal` (closing whichever was never open is a harmless no-op —
+  simpler than tracking which screen owns which popup). `openCrosswordFromComplete()`'s own
+  explicit `closeCompNav()` call (the one path that opens an overlay without a screen change) is
+  unchanged — the entry card has no equivalent same-screen-overlay case to worry about.
+- **The strings are shared, not duplicated**: `complete.nav_open`/`complete.nav_title` — already
+  added at `v83_c` — are reused verbatim for the entry card's own ☰ button and popup heading. One
+  concept ("open navigation & progress"), one pair of `ui.json` keys, asserted directly (no
+  `sum.nav_open`/`sum.nav_title` were minted).
+- **Thicker back/forward arrows**: `#comp-story-prev,#comp-story-next,#sum-sum-next` gained
+  `font-weight:900` + `-webkit-text-stroke:.6px currentColor` — a stroke, not a Unicode glyph swap,
+  specifically so `_mirrorNavBtn`'s `dst.textContent = src.textContent` line stays untouched and
+  the duplicate always shows exactly whatever its source button shows, just heavier. Scoped to the
+  header-row duplicates only — the popup's own `comp-prev`/`comp-next`/`sum-next` keep their
+  existing chunky `.comp-ico` button style, a different visual language that was never asked to
+  change.
+
+**A second, structurally identical old-invariant supersession**: `unit-story-summary.test.js`'s §6
+had ALREADY been rewritten once at `v83_c` (the cross-card parity claim, superseded for the
+progress card alone). Extending the SAME redesign to the entry card broke that section's OWN
+self-consistency sub-assertion a second time — the entry card's storyboard/actions/bars, like the
+progress card's, no longer sit in a fixed position relative to its title once they moved into a
+popup. Rewritten again, to the same shape as the progress card's own claim: each card leads with
+content and closes with the verdict on its own SCROLLING page, popup excluded.
+
+**Verified at the layer where the claim is observable**: `unit-progress-card-nav.test.js` extended
+(not a new file) to cover both cards symmetrically — both popups' contents and overlay shape, both
+header rows' element order and "☰ before the translation control(s)" claim, `_mirrorNavBtn` itself
+exercised behaviourally for BOTH `comp-next`→`comp-story-next` and `sum-next`→`sum-sum-next` (same
+loop, same assertions, proving one shared function drives both rather than two look-alikes), both
+popups' close-on-navigate wired through the REAL `show()`, the shared `ui.json` keys, and the
+thicker-arrow rule with a non-vacuity check that it does NOT also apply to the popup's own chunky
+buttons. **Mutation-tested**: removing `_syncSumHdrNav`'s call to `_mirrorNavBtn`, dropping
+`closeSumNav()` from `_closeCardNavPopups`, and unscoping the thicker-arrow selector each
+independently turn the test red.
+
+**Live-verified in a real browser** (a throwaway spare-port server, same pattern as `v83_b`/`v83_c`):
+opened a real chapter whose storyline has a summary, landed on the entry card naturally via the
+normal navigation flow (not a synthetic fixture), confirmed the header-row order, the ☰ popup
+opening with real storyboard/action/progress content, all three close paths (×, backdrop, click-
+inside-stays-open), and the mirrored NEXT button's title correctly localized ("Lernen beginnen", a
+German string — proving the mirror pulls the REAL resolved label, not a placeholder). Also
+re-verified the progress card's own popup and header-row arrows still work after the shared-function
+refactor, computed `font-weight:900`/`-webkit-text-stroke-width:0.6px` on both `comp-story-next` and
+`sum-sum-next`.
+
+**Testing**: 253/226/0/0 full baseline green — SAME counts as `v83_c` (the existing test file was
+extended, not duplicated, so the check count didn't move). `docs/index.html` rebuilt. No new
+`ui.json` keys (the two `v83_c` added are reused, asserted directly).
 
 ### `v83_c` — progress-card redesign: nav/bars into a popup, the story field fills the screen
 
