@@ -124,6 +124,7 @@ run('unit: clean card + coverage threshold gate (v60.8)', 'node', [path.join(__d
 run('unit: persistent tutor widget (v62)', 'node', [path.join(__dirname, 'unit-tutor.test.js')]);
 run('unit: tutor retrieval — spoiler-safe + scoped (v62)', 'node', [path.join(__dirname, 'unit-tutor-retrieval.test.js')]);
 run('unit: tutor streaming replies (v64)', 'node', [path.join(__dirname, 'unit-tutor-streaming.test.js')]);
+run('unit: select story text → ask the tutor (PLAN §12, v83_b)', 'node', [path.join(__dirname, 'unit-tutor-selection.test.js')]);
 run('unit: learner accounts + server-side state (v65)', 'node', [path.join(__dirname, 'unit-learners.test.js')]);
 run('unit: TLS warning predicates + wiring (v70_b)', 'node', [path.join(__dirname, 'unit-tls-transport.test.js')]);
 run('unit: lesson-id integrity (v67.1)', 'node', [path.join(__dirname, 'unit-lesson-id-integrity.test.js')]);

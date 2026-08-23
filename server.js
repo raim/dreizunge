@@ -178,7 +178,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v83_a';
+const APP_VERSION  = 'v83_b';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -7750,6 +7750,13 @@ http.createServer(async (req, res) => {
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
       const clip = (s, n) => String(s == null ? '' : s).slice(0, n);
       const srcLang = clip(body.srcLang || 'en', 8), lang = clip(body.lang || 'en', 8);
+      // v83_b (PLAN §12, user ruling): the tutor's REPLY language is the learner's UI LANGUAGE, not
+      // srcLang ("I speak X") — the two are a genuinely separate setting since v81_ac, and the ask
+      // was explicit for the WHOLE tutor, not just the new segment-explain flow. srcLang keeps its
+      // own, different job below (tutorRetrieveContext's content-pairing filter) — only the REPLY
+      // LANGUAGE moves. Falls back to srcLang so a client that hasn't sent uiLang yet (a cached
+      // static-build copy, or any future stray caller) behaves exactly as before.
+      const uiLang = clip(body.uiLang || body.srcLang || 'en', 8);
       // v62: the tutor is reachable from anywhere, so a chapter story is no longer required — a
       // global question has none. When present (chapter/lesson scope) it is sent inline by the
       // client because it is always the most relevant context.
@@ -7781,7 +7788,7 @@ http.createServer(async (req, res) => {
       const lastStudent = [...history].reverse().find(m => m.role === 'student');
       const retrieved = tutorRetrieveContext({
         question: lastStudent ? lastStudent.text : '', scope, completed, lang, srcLang });
-      const S = langName(srcLang), L = langName(lang);
+      const S = langName(uiLang), L = langName(lang);
       const sys = fillPrompt(PROMPTS.tutor.system, {
         S, L,
         story: story.trim() || '(the learner is not currently inside a chapter)',
@@ -7804,7 +7811,7 @@ http.createServer(async (req, res) => {
         const transcript = history.map(m => (m.role === 'student' ? 'Student: ' : 'Tutor: ') + m.text).join('\n');
         userMsg = `Conversation so far:\n${transcript}\n\nReply as the tutor (one short turn).`;
       }
-      const _logReply = (reply) => console.log(`  Tutor [${scope.kind}] reply (${lang}←${srcLang}): ${reply.length} chars${wrongWords.length ? `, focus ${wrongWords.length}w` : ''}${retrieved.used.length ? `, ctx: ${retrieved.used.join(' | ')}` : ''}`);
+      const _logReply = (reply) => console.log(`  Tutor [${scope.kind}] reply (${lang}←${uiLang}): ${reply.length} chars${wrongWords.length ? `, focus ${wrongWords.length}w` : ''}${retrieved.used.length ? `, ctx: ${retrieved.used.join(' | ')}` : ''}`);
 
       // v64: STREAMING (opt-in via body.stream). Server-Sent Events, so the learner sees the reply
       // appear word by word instead of waiting on "thinking…". The whole-reply JSON path below is

@@ -699,6 +699,13 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <button id="tutor-widget-send" onclick="sendTutorMessage()" style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:0 14px;font-weight:800;cursor:pointer">→</button>
   </div>
 </div>
+<!-- PLAN §12: shown when the learner selects free text inside a story panel (`.story-selectable`,
+     `_storyBodyHtml`) — a SECOND interaction over the same container, alongside the existing
+     per-word tap. Positioned in JS (`_storySelShowPopover`) next to the selection itself. -->
+<div id="story-sel-popover" style="display:none;position:absolute;z-index:902;gap:4px;background:var(--white);border:1.5px solid var(--blue);border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.25);padding:4px">
+  <button type="button" onclick="_storySelExplain('grammar')" style="font-size:12px;font-weight:800;border:none;border-radius:6px;padding:6px 10px;background:var(--gray-light);color:var(--text);cursor:pointer;white-space:nowrap">🔤 <span id="story-sel-grammar-lbl"></span></button>
+  <button type="button" onclick="_storySelExplain('meaning')" style="font-size:12px;font-weight:800;border:none;border-radius:6px;padding:6px 10px;background:var(--gray-light);color:var(--text);cursor:pointer;white-space:nowrap">💬 <span id="story-sel-meaning-lbl"></span></button>
+</div>
 <div id="gen-status" onclick="onGenStatusClick()">
   <span id="gen-status-spinner">⏳</span>
   <span id="gen-status-text">Generating…</span>
@@ -3744,7 +3751,7 @@ function _closeEditorsOnNav(targetId){
   }
   if(targetId!=='storyline-screen'){ try{ closeStorylineEditInScreen(); }catch(_){} }
 }
-function show(id){ APP.screen = id; _closeEditorsOnNav(id); document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); try{ updateStaticFlagBanner(); }catch(_){} try{ refreshTutorAvailability(); }catch(_){} }   // v62: the tutor follows the learner across screens
+function show(id){ APP.screen = id; _closeEditorsOnNav(id); document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); try{ updateStaticFlagBanner(); }catch(_){} try{ refreshTutorAvailability(); }catch(_){} try{ _storySelHide(); }catch(_){} }   // v62: the tutor follows the learner across screens; PLAN §12: a stale selection popover must not survive a navigation
 // ── PLAN §C0.2 — explicit screen renderers: a NAMING SEAM, not a rewrite ─────────────────────
 // The plan's own words: "must first preserve every current entry point; no visual redesign
 // bundled in." These delegate to the functions that already own their rendering — nothing about
@@ -5809,6 +5816,7 @@ async function _reconnectBookJob() {
 async function init(){
   try{ const r=await fetch('/api/info'); APP.info=await r.json(); }catch(e){ APP.info={backend:'none',canGenerate:false}; }
   try{ _tutorLoadThread(); refreshTutorAvailability(); }catch(_){}   // v62: persistent tutor thread + widget
+  try{ _storySelInit(); }catch(_){}   // PLAN §12: select story text → ask the tutor, wired once
   // v65: resolve any signed-in learner and adopt the server's copy (server wins).
   try{
     const _me = await fetch('/api/auth/me').then(r=>r.json()).catch(()=>null);
@@ -14389,16 +14397,22 @@ function _storyBodyHtml(d, opts){
   const text = (o.text != null) ? String(o.text) : String((d && d.story) || '');
   if (!text) return '';
   if (o.highlight === false) return _storyParasHtml(furiHtml(text));
+  // PLAN §12: wrap the TARGET-language, highlighted body in a marker the free-text selection
+  // listener looks for — every caller of this ONE renderer gets "select text, ask the tutor" for
+  // free, no per-caller wiring. Deliberately NOT added to the `highlight === false` branch above:
+  // that path renders the SOURCE-language / translation view, where a selection would be asking the
+  // tutor about the wrong language's text — same reasoning that already turns highlighting off there.
+  const wrap = html => '<div class="story-selectable" data-tutor-select="1">' + html + '</div>';
   try {
     const all = [...new Set(
       (typeof _storyWordSources === 'function' ? _storyWordSources(d).map(x => x.word) : [])
         .concat((d.lessons || []).flatMap(L => (L && L.vocab || []).map(v => v && v.target)))
     )].filter(Boolean);
-    if (!all.length) return _storyParasHtml(furiHtml(text));
-    return _storyParasHtml(
-      _highlightVocabHtml(furiHtml(text), all, [], _wordStateMap(d), _askedKeys(o.ex)));
+    if (!all.length) return wrap(_storyParasHtml(furiHtml(text)));
+    return wrap(_storyParasHtml(
+      _highlightVocabHtml(furiHtml(text), all, [], _wordStateMap(d), _askedKeys(o.ex))));
   } catch(_) {
-    return _storyParasHtml(furiHtml(text));   // unhighlighted is fine; failing to render is not
+    return wrap(_storyParasHtml(furiHtml(text)));   // unhighlighted is fine; failing to render is not
   }
 }
 
@@ -18186,6 +18200,8 @@ function _tutorApplyLabels(){
   set('tutor-widget-input', el => el.placeholder  = t('tutor.placeholder'));
   set('tutor-fab-btn',      el => el.title        = t('tutor.open'));
   set('tutor-widget-clear', el => el.title        = t('tutor.clear'));
+  set('story-sel-grammar-lbl', el => el.textContent = t('tutor.sel_grammar'));
+  set('story-sel-meaning-lbl', el => el.textContent = t('tutor.sel_meaning'));
 }
 
 // ── Scope: where is the learner asking from? ─────────────────────────────────
@@ -18228,6 +18244,10 @@ function _tutorRenderScope(){
 function _tutorGatherContext(){
   const sc = _tutorScope();
   const lang = sc.lang || APP.lang, srcLang = sc.srcLang || APP.srcLang;
+  // v83_b (PLAN §12, user ruling): the tutor's REPLY language is APP.uiLang, a separate,
+  // independently-set field since v81_ac — not srcLang ("I speak X"). srcLang keeps its existing,
+  // different job below (the ledger lookup) and on the server (retrieval's content-pairing filter).
+  const uiLang = APP.uiLang || srcLang;
   const led = _learnedLedger(lang, srcLang);
   const vocab = led.vocab || {};
   // Hardest-first: the words the learner keeps getting wrong lead the focus list.
@@ -18246,7 +18266,7 @@ function _tutorGatherContext(){
     .filter(([, m]) => m && Object.keys(m).length > 0).map(([topic]) => topic).slice(0, 400);
   // The current chapter's story is sent inline when we're on/near it (cheap, always relevant).
   const story = (sc.kind === 'chapter' || sc.kind === 'lesson') ? (APP.lessonData?.story || '') : '';
-  return { scope: sc, lang, srcLang, story, wrongWords: wrongWords.slice(0,40), knownWords, completed };
+  return { scope: sc, lang, srcLang, uiLang, story, wrongWords: wrongWords.slice(0,40), knownWords, completed };
 }
 
 // v63: describe the exercise currently on screen in one readable line, plus whether it has been
@@ -18285,6 +18305,107 @@ function askTutorAboutQuestion(){
   _tutorState.history.push({ role:'student', text: t(q.answered ? 'tutor.explain_q' : 'tutor.hint_q') });
   _tutorSaveThread(); _tutorRender();
   _tutorSend(false);
+}
+
+// ── PLAN §12: select story text → ask the tutor ──────────────────────────────
+// A SECOND, independent interaction over the same rendered story container the per-word tap already
+// uses (`_storyBodyHtml`'s `<mark class="wp-tap">` / `tapWord`, untouched by any of this — a plain
+// click collapses the selection, so `sel.isCollapsed` below already tells the two apart). A free-text
+// mouse/touch selection shows a small popover offering "grammar" or "meaning"; either composes a
+// normal STUDENT turn — the same shape `askTutorAboutQuestion` above already uses for a question
+// hint — and sends it through the existing single tutor thread. No new /api/tutor payload shape is
+// needed beyond the `uiLang` reply-language field added above: this is just another student message.
+//
+// SNAPPING RULE: raw, exactly as the browser selected it (trimmed, internal whitespace collapsed) —
+// no word- or sentence-boundary snapping. Deliberately: aligning to word boundaries across scripts
+// would need per-language tokenisation, exactly the "no language knowledge in the code" line this
+// project holds everywhere else (script tables in scripts.json, no article lists in the app, …). The
+// learner visually chose the span; what they chose is what gets asked about.
+const _STORY_SEL_MIN = 2, _STORY_SEL_MAX = 400;
+let _storySelText = '';
+
+function _storySelInit(){
+  document.addEventListener('mouseup', _storySelMaybeShow);
+  document.addEventListener('touchend', _storySelMaybeShow);
+  window.addEventListener('scroll', _storySelHide, { passive:true, capture:true });
+  // A click outside both the story container and the popover itself dismisses it — otherwise it
+  // would linger, stale, over an unrelated screen.
+  document.addEventListener('mousedown', (e) => {
+    const pop = document.getElementById('story-sel-popover');
+    if (pop && pop.style.display !== 'none' && !pop.contains(e.target)) _storySelHide();
+  });
+}
+
+function _storySelMaybeShow(){
+  // Let the browser finish updating the selection before reading it back (matters for touchend).
+  setTimeout(() => {
+    if (!APP.info?.canGenerate) return;   // no live tutor to send this to — same honest gate the
+                                           // widget itself uses (refreshTutorAvailability), so the
+                                           // popover simply never appears rather than offering
+                                           // something that can never resolve (v82_e's own call)
+    const sel = window.getSelection && window.getSelection();
+    if (!sel || sel.isCollapsed || sel.rangeCount === 0) { return; }
+    const range = sel.getRangeAt(0);
+    const anchor = range.commonAncestorContainer;
+    const el = anchor.nodeType === 1 ? anchor : anchor.parentElement;
+    const host = el && el.closest && el.closest('.story-selectable');
+    if (!host) return;   // selection isn't (entirely) inside a story body — leave it alone
+    const text = _selectionSegmentText(range);
+    if (text.length < _STORY_SEL_MIN || text.length > _STORY_SEL_MAX) { _storySelHide(); return; }
+    _storySelText = text;
+    _storySelShowPopover(range);
+  }, 0);
+}
+
+// Furigana readings sit in the DOM as ordinary text (`<ruby>base<rt>reading</rt></ruby>`, furiHtml),
+// so a raw selection.toString() across one folds the READING into the segment too — the one real
+// DOM-shape gotcha `_storyBodyHtml`'s markup has. Read the selection's own HTML, then hand it to the
+// pure string helper below (kept separate so the actual stripping logic is testable without a live
+// Range/Selection).
+function _selectionSegmentText(range){
+  const div = document.createElement('div');
+  div.appendChild(range.cloneContents());
+  return _plainTextNoFurigana(div.innerHTML);
+}
+function _plainTextNoFurigana(html){
+  const div = document.createElement('div');
+  div.innerHTML = String(html || '').replace(/<rt[^>]*>[\s\S]*?<\/rt>/gi, '');
+  return (div.textContent || '').replace(/\s+/g, ' ').trim();
+}
+
+function _storySelShowPopover(range){
+  const pop = document.getElementById('story-sel-popover');
+  if (!pop) return;
+  _tutorApplyLabels();
+  const r = range.getBoundingClientRect();
+  pop.style.display = 'flex';
+  pop.style.top = Math.max(8, r.top - 44 + window.scrollY) + 'px';
+  pop.style.left = '0px';   // measure first, then clamp using the popover's own width
+  const w = pop.offsetWidth || 160;
+  const left = Math.min(Math.max(8, r.left + r.width/2 + window.scrollX - w/2),
+                         window.scrollX + document.documentElement.clientWidth - w - 8);
+  pop.style.left = left + 'px';
+}
+
+function _storySelHide(){
+  const pop = document.getElementById('story-sel-popover');
+  if (pop) pop.style.display = 'none';
+  _storySelText = '';
+}
+
+// Grammar/meaning tap: a real STUDENT turn, pre-filled by the client — closer to `_tutorSend`'s
+// NON-opening path (a real history entry, sent as the first item) than to its `opening:true` path,
+// same as askTutorAboutQuestion just above.
+function _storySelExplain(mode){
+  const text = _storySelText;
+  _storySelHide();
+  if (!text || !APP.info?.canGenerate) return;
+  if (!_tutorState.open) toggleTutorWidget();      // opens (and greets on a first-ever thread)
+  const key = mode === 'grammar' ? 'tutor.sel_grammar_q' : 'tutor.sel_meaning_q';
+  _tutorState.history.push({ role:'student', text: t(key, { segment: text }) });
+  _tutorSaveThread(); _tutorRender();
+  _tutorSend(false);
+  try{ window.getSelection && window.getSelection().removeAllRanges(); }catch(_){}
 }
 
 // Show the per-question 🦉 only when a backend exists and we're inside an exercise.

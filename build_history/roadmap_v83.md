@@ -29,8 +29,9 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
+| **SHIPPED IN THE v83 LINE** | `v83_b` — `PLAN §12` built end to end: the tutor's reply language moved from `srcLang` to `APP.uiLang` (user ruling, whole tutor not just the new flow), and the new text-selection popover itself |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
-| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** New at this cut: **`PLAN §12`**, the interactive text-selection tutor this cut was made for. |
+| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, the interactive text-selection tutor, shipped at `v83_b` — see the SHIPPED section above. |
 
 Standing rules are in the "Rules earned in session 28…34" blocks — read the **"⚠️ How the rules are
 NUMBERED"** note before citing one.
@@ -1682,6 +1683,93 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 ---
+
+# ✅ SHIPPED IN THE v83 LINE
+
+### `v83_b` — `PLAN §12`, the interactive text-selection tutor: select story text → ask the tutor
+
+**Shipped by: Claude Code**, continuing the handoff `v83_a` was cut to start.
+
+**The ruling this cut needed first**: `PLAN §12`'s own text flagged one real question that had to be
+settled before the request payload could be designed — does the tutor reply in `APP.uiLang` for the
+NEW segment-explanation flow only, or does the WHOLE tutor move off `srcLang`? Asked the user
+directly rather than guessing; the answer was **the whole tutor** — every reply, the existing
+floating-widget conversation included, not just this new flow.
+
+**What shipped, in two parts:**
+
+1. **The ruling, wired through additively, not as a rename.** `srcLang` ("I speak X") and
+   `APP.uiLang` (the UI-language setting, decoupled since `v81_ac`) do TWO DIFFERENT JOBS in the
+   tutor's existing machinery — `srcLang` also drives `tutorRetrieveContext`'s content-pairing
+   filter and the client's learned-ledger lookup, neither of which is about reply language at all.
+   Collapsing both onto one field would have broken retrieval. Instead: `_tutorGatherContext()` now
+   sends a new `uiLang` field (`APP.uiLang || srcLang`) ALONGSIDE the unchanged `srcLang`; the
+   `/api/tutor` route reads it (`body.uiLang || body.srcLang || 'en'`, so an old cached client
+   degrades to the exact previous behaviour) and uses it for `S` — the prompt's reply-language
+   variable — while `srcLang` keeps driving retrieval exactly as before. The prompt's own persona
+   line ("student whose native language is `{S}`…") was softened to "student who reads and writes in
+   `{S}`…", since `{S}` no longer necessarily names a native tongue.
+   **Live-verified, not just asserted from the prompt text**: a real call to a locally-started
+   throwaway server (`qwen2.5:7b`, a fresh instance on a spare port — the OTHER session's own
+   already-running dev server was left untouched, per rule 8) with `srcLang:'en'`, `uiLang:'fr'`
+   asking about a German grammar segment came back **entirely in French**, correctly explaining the
+   German ("`ging` est la forme du verbe au passé simple…"). Rule 9 applied directly: the first
+   reasonable-looking design (drop `srcLang` and add `uiLang` in its place) would have broken
+   retrieval silently — found by reading `tutorRetrieveContext`'s signature before writing any code,
+   not by a red test later.
+
+2. **The new mechanism**: a SECOND, independent interaction over the same rendered story container
+   the per-word tap already uses. `_storyBodyHtml` (the ONE story renderer) now wraps its
+   TARGET-language, highlighted output in `<div class="story-selectable" data-tutor-select="1">` —
+   every one of its callers (progress card, question panel, saved-story reader, storyline chain view)
+   gets the new affordance for free, no per-caller wiring. The `highlight === false` branch (the
+   source-language/translation view) is deliberately NOT wrapped, for the same reason it already
+   skips highlighting — selecting there would ask the tutor about the wrong language's text. A single
+   document-level `mouseup`/`touchend` listener (`_storySelInit`, wired once at boot) reads
+   `window.getSelection()`; a COLLAPSED selection (a plain click, e.g. on a `wp-tap` `<mark>`) is
+   ignored, which is what lets the free-text selection and the existing per-word tap coexist over the
+   same container without either eating the other's click. A small popover
+   (`#story-sel-popover`) offers "grammar" / "meaning"; either composes a pre-filled STUDENT turn via
+   two new `ui.json` templates and sends it through the EXISTING single tutor thread
+   (`_tutorState.history` → `_tutorSend(false)`) — the same shape `askTutorAboutQuestion` already
+   uses for the per-question hint button, and no new `/api/tutor` payload shape beyond `uiLang` above.
+   **Snapping rule**: raw, exactly as selected (trimmed, whitespace-collapsed) — no word/sentence
+   alignment, deliberately, since that would need per-language tokenisation, exactly the "no language
+   knowledge in the code" line this project holds everywhere else. **The one real DOM-shape gotcha**,
+   measured rather than assumed: furigana readings (`<ruby>base<rt>reading</rt></ruby>`, `furiHtml`)
+   sit in the DOM as ordinary text, so a raw `selection.toString()` across one folds the READING into
+   the segment too (confirmed: `<ruby>漢字<rt>かんじ</rt></ruby>` selected whole would otherwise yield
+   "漢字かんじ", not "漢字"). Fixed by stripping `<rt>` before reading the text back out
+   (`_selectionSegmentText`/`_plainTextNoFurigana`), the latter a pure string helper kept separate
+   from the Range/DOM plumbing specifically so it is testable without a live browser selection.
+
+**Verified at the layer where the claim is observable**: new `unit-tutor-selection.test.js` (9
+sections) — the server's `uiLang`-drives-reply / `srcLang`-keeps-retrieval split, the client's
+additive `uiLang` field, the prompt's softened persona line, `_storyBodyHtml`'s selectable wrapper
+present on the highlighted path and ABSENT on the source-language path (executed via `loadClient`,
+not just source-pinned), `_plainTextNoFurigana` behaviourally exercised (furigana reading excluded,
+non-vacuously — the reading text is confirmed present in the input and absent from the output;
+whitespace collapsed; entities decoded), the selection listener's gating and coexistence-with-tap
+reasoning, the pre-filled-student-turn composition, the popover markup and its localized labels, and
+the four new `ui.json` keys. **Mutation-tested**: reverting the `<rt>`-strip, the `.story-selectable`
+wrap, and the server's `S = langName(uiLang)` line each independently turn the new test red.
+
+**Found and flagged, not fixed (out of scope for this cut)**: `test/lib-dom.js`'s `textContent`
+getter mis-orders trailing text that follows a child element (`'x<b>A</b>y'.textContent` comes back
+wrong) — a pre-existing defect in the shared test-stub, found while designing this test's fixtures,
+worked around by choosing fixtures without trailing text rather than fixed inline. Flagged as a
+separate background task rather than folded into this release.
+
+**Testing**: 252/225/0/0 full baseline green (from 251/224 — one new test file). `docs/index.html`
+rebuilt. `ui.json` en gained 4 keys (`tutor.sel_grammar`, `tutor.sel_meaning`, `tutor.sel_grammar_q`,
+`tutor.sel_meaning_q`), not yet translated into the other 32 languages (falls back to English there,
+same as every other untranslated key).
+
+**Not scoped here, unchanged from the plan**: the exact UI is a minimal two-button popover, not
+richer; the segment-explanation turn shares the SAME single tutor thread as general Q&A (no separate
+scoped mini-conversation); "grammar" and "meaning" are two `ui.json` templates, not two
+`prompts.json` server-side variants (no server prompt change was needed at all, since this reuses the
+tutor's existing free-form conversation path rather than inventing a new one).
 
 # ✅ SHIPPED IN THE v82 LINE — where to find it
 
