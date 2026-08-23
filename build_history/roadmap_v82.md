@@ -1666,6 +1666,83 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v82 LINE
 
+### `v82_f` — user redesign of `writing`: a real comprehension question, source-language only, with the LLM judging correctness against the story
+
+**Shipped by: Claude Code, on the user's own follow-up** immediately after `v82_e` shipped. Two
+corrections to that release's design, given verbatim: *"The writing lesson should ask a question
+about the text, similar to the comprehension lesson, and the LLM should also judge whether the
+answer is correct."* and *"the question should only be asked in the source language, no need for
+target language translation here. the LLM judgment must receive the question to evaluate whether it
+was answered correctly."*
+
+**What changed, precisely:**
+- The lesson's stem is no longer a bilingual `prompt` (target language) + `hint` (source language)
+  pair inviting a free personal-opinion answer. It is now ONE `question` field, source-language ONLY,
+  a genuine reading-comprehension question about the chapter's story — the same shape
+  `comprehension`'s own `q` already has. The learner still WRITES their answer, in the target
+  language; only the QUESTION's bilingualism was removed, per the user's second point.
+- `/api/writing-feedback` now receives `question` AND `story` alongside `text` (both required,
+  `story` capped at 4000 chars — the same choice `/api/tutor` already made for its own story field,
+  and one of the two alternatives `unit-generation-context.test.js`'s own header documents). Grading
+  judges TWO separate things in one call: CONTENT correctness against the story, and the same
+  typo/grammar check `v82_e` shipped. `parseWritingFeedback` now expects a leading
+  `"CORRECTNESS: <correct|partially correct|incorrect> — <note>"` line, followed by zero or more of
+  the existing `"<wrong> => <fix> — <note>"` lines; a reply with no recognisable CORRECTNESS line
+  falls back to `correctness:'unknown'` with the raw reply as the note — the same "never silently
+  discard a real answer" principle `v82_e`'s parser used, extended to the new leading line.
+- Client: `renderWriting()` shows only the question (no hint line); the feedback card now shows a
+  verdict (✅🟡❌❔ + a translated label + the model's explanation) ABOVE the existing language-issue
+  list, so the two judgements read as separate things, matching the prompt's own instruction that
+  neither should contaminate the other. `_editorBranchWriting`/`/api/lessons/edit`'s whitelist follow
+  the same field rename (`question` replacing `prompt`+`hint`).
+
+**Verified live**, real server + real `qwen3.6:35b-a3b`, against "Integrating Diverse Exercises"
+(the same chapter `v82_e` used): generation produced a genuine on-topic comprehension question,
+source-language only, first attempt. Three graded submissions, each confirming a different verdict
+and no cross-contamination between the two judgements:
+- a **partially correct**, grammatically flawed answer → verdict correctly named what was missing
+  from the story, PLUS 3-5 real German capitalization/case corrections, each cleanly split
+- a **fully correct**, well-formed answer paraphrasing the story → still graded "partially correct"
+  by a demanding-but-defensible reading (missed one sub-detail) — worth knowing as the model's actual
+  strictness, not a bug
+- a **completely irrelevant** answer ("the cat slept in the garden") → verdict correctly "incorrect";
+  **one honest rough edge found and left as a measured limitation, not silently smoothed over**: the
+  model folded its "this doesn't belong here" commentary into the language-issues list as a fake
+  arrow-format line on a sentence that has NO actual grammar mistake, despite the prompt's explicit
+  instruction not to let content affect the language notes. Functionally harmless (the learner still
+  sees an accurate, if slightly redundant, message) but a real, live-measured imperfection in prompt
+  compliance on this edge case specifically — off-topic answers, not the common partially/fully
+  correct cases, which stayed clean across every test.
+The full browser round trip (type → submit → "Checking…" → verdict + issues rendered → persisted →
+restored identically on revisiting the lesson) was re-confirmed with the new shape. `_cardErrors()`
+empty throughout.
+
+**A second stale-corpus-selection bug found and fixed, same class as `v82_e`'s dialect-gate one**:
+`unit-comp-lesson-icons.test.js` searches the real corpus for a topic with a story-gated
+`comprehension` lesson and enough OTHER, startable lessons to prove several icons are clickable.
+A real topic gained a `writing` lesson too (see below) and still satisfied every existing criterion
+while leaving only ONE non-story-gated lesson — the test's own "several are startable" assumption,
+never previously false because `comprehension` was the only story-gated type in the whole corpus.
+Fixed by widening the selection's story-gated exclusion set from `{comprehension}` to
+`{comprehension, writing}` and requiring ≥2 genuinely startable lessons explicitly, rather than
+inferring it from the other conditions.
+
+**Data cleanup, with the user's explicit permission**: two `writing` lessons generated under `v82_e`'s
+now-superseded bilingual-prompt shape were found on disk — one from this session's own `v82_e`
+live-verification pass, one the user generated themselves via their own live session while trying
+the new feature (`sl_...`'s topic "Vittoria Ingannevole", lesson "Riesen und Fantasie" — real,
+if experimental, user activity, confirmed live and unrelated to this session). Both would have
+rendered with a blank question under the reworked shape. Asked before touching either; both deleted
+(not migrated — a two-lesson, same-day design iteration is not a migration case) and freshly
+regenerated where useful for verification. **The user's own "Die zwei Ziegen" storyline, mentioned
+explicitly as not-to-be-touched, was never read or modified.**
+
+**Testing**: 248/221/0/0 full baseline green. `unit-generation-context.test.js` extended (`writingFeedback`
+joins the full-story-prompt classification, capped not sized — documented as the deliberate
+alternative). `e2e-writing.test.js` rewritten for the new stem/feedback shapes, including the
+non-compliant-reply fallback case. `e2e-lesson-edit-roundtrip.test.js`'s writing case follows the
+field rename. `docs/index.html` rebuilt. Four new `en`-only `ui.json` keys (the verdict labels).
+
 ### `v82_e` — new lesson type `writing` (`PLAN §D4`, phase 1: typos + grammar), the app's first play-time-graded exercise, plus a real drive-by bug found reusing the gate it needed
 
 **Shipped by: Claude Code.** Full build of `PLAN §D4` phase 1, following its own architectural

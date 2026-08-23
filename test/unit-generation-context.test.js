@@ -44,7 +44,13 @@ function body(name) {
   const inPrompts = Object.keys(prompts).filter(k => /\{story\}/.test(JSON.stringify(prompts[k]))).sort();
   // v82_e: 'writing' (PLAN §D4) joined this set — generateWriting embeds the whole story so the
   // model can write a task related to it, and sizes num_ctx for it (checked in section 2 below).
-  assert.deepStrictEqual(inPrompts, ['comprehension', 'inflections', 'synonyms', 'tutor', 'vocabFromText', 'wordForms', 'writing'],
+  // v82_f: 'writingFeedback' joined too — grading now judges CONTENT correctness against the story
+  // (not just typos/grammar), so the live /api/writing-feedback route needs it as well. This one
+  // takes the OTHER documented alternative — CAP, not size num_ctx (see that route: `clip(body.story,
+  // 4000)`, the same choice /api/tutor already made for its own story field) — a single chapter's
+  // story is well inside that bound (longest measured on the corpus: 4,691 chars), and the route is
+  // not a `sys*`/`generate*` function this file's §2 loop would otherwise require sizing from.
+  assert.deepStrictEqual(inPrompts, ['comprehension', 'inflections', 'synonyms', 'tutor', 'vocabFromText', 'wordForms', 'writing', 'writingFeedback'],
     'the set of prompts.json entries embedding the FULL story has changed. A new one must either ' +
     'size num_ctx (see generateSynonyms) or cap the text (see the standard vocab branch, which ' +
     'slices to 1200 chars) — then add it here.\n  found: ' + inPrompts.join(', '));

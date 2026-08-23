@@ -116,14 +116,17 @@ const srv = http.createServer(async (req, res) => {
       kind = 'storyline_title'; content = JSON.stringify({ title: 'The Fake Saga', icon: '📘' });
     } else if (/concise summary|captures the main arc/i.test(sys)) {
       kind = 'summary'; content = 'FAKE SUMMARY: a tidy recap of the chapters and their vocabulary themes, in the source language.';
-    } else if (/Check ONLY typos and grammar/i.test(sys)) {
-      // PLAN §D4 (v82): live writing-feedback grading. Deliberately checked BEFORE the generic QC
-      // branch below — this prompt reuses that branch's own "Reply EXACTLY one of" phrasing (the
-      // same qcCheckPair convention, for consistency), so it would otherwise be swallowed by it.
-      // FAKE_WRITING_REPLY lets a test drive both shapes the parser must handle: the requested
-      // "<wrong> => <fix> — <note>" lines, and "OK".
+    } else if (/CORRECTNESS/.test(sys)) {
+      // PLAN §D4 (v82) / v82_f: live writing-feedback grading. Deliberately checked BEFORE the
+      // generic QC branch below — that branch matches on "Reply EXACTLY one of", which this prompt
+      // no longer shares (v82_f reworded it), but keeping the check first costs nothing and one
+      // fewer coupling to worry about if either prompt's wording moves again.
+      // FAKE_WRITING_REPLY lets a test drive the shapes the parser must handle: a CORRECTNESS line
+      // alone, or one followed by "<wrong> => <fix> — <note>" mistake lines.
       kind = 'writing_feedback';
-      content = process.env.FAKE_WRITING_REPLY || 'Ich habe => Ich habe ein — verb needs an object here\ngeht gut => geht es gut — missing "es"';
+      content = process.env.FAKE_WRITING_REPLY ||
+        'CORRECTNESS: partially correct — The story says the cat was in the house, not the garden.\n' +
+        'Ich habe => Ich habe ein — verb needs an object here\ngeht gut => geht es gut — missing "es"';
     } else if (/Reply EXACTLY one of/i.test(sys)) {
       // QC pair-check: flag the source side with a fixed correction (deterministic).
       kind = 'qc'; content = 'S: KORRIGIERT';
@@ -197,12 +200,13 @@ const srv = http.createServer(async (req, res) => {
         ],
       });
     } else if (/"writing" exercise generator/i.test(sys)) {
-      // PLAN §D4 (v82): the writing lesson's STEM — a short task, generated once like every other
-      // type. Grading (the live half) is a separate branch below, matched on its own system prompt.
+      // PLAN §D4 (v82): the writing lesson's STEM — a comprehension question, generated once like
+      // every other type. Grading (the live half) is a separate branch below, matched on its own
+      // system prompt. v82_f: source-language-only `question`, replacing the bilingual `prompt`/`hint`.
       kind = 'writing_task';
       content = JSON.stringify({
-        title: 'Writing practice', desc: 'Write a short text and get feedback', icon: '✍️',
-        prompt: 'Beschreibe dein Lieblingshaus.', hint: 'Describe your favourite house.',
+        title: 'Writing practice', desc: 'Answer a question and get feedback', icon: '✍️',
+        question: 'Where was the cat?',
       });
     } else if (/You clean text extracted from a PDF/i.test(sys)) {
       // v69_m: deletion-only, as the contract requires — drop any line that looks like page

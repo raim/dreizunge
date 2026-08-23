@@ -32,16 +32,26 @@ const UI    = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
 // It must precede a STARTABLE lesson specifically: a locked (story-gated) one carries no index at
 // all, so a hidden lesson followed only by the comprehension lesson still leaves every asserted
 // index equal to its row position. Both narrowings were found by the revert coming back clean.
+// Mirrors index.html's `_POST_STORY_TYPES` (kept as a local copy — this file runs BEFORE
+// loadClient(), searching the raw corpus, so the client's own set isn't available yet). Any type in
+// here is story-gated and therefore never "startable" under the fresh-progress fixture below;
+// section 3 needs REAL prep lessons to prove several icons are clickable, so both the "is there a
+// visible lesson after the hidden one" check and the topic search itself must look past these.
+const _POST_STORY_LIKE = new Set(['comprehension', 'writing']);
 const _hiddenBeforeVisible = (t) => {
   const ls = t.lessons || [];
   const h = ls.findIndex(L => L && (L._hidden || L.hidden));
   if (h < 0) return false;
-  return ls.some((L, i) => L && i > h && !L._hidden && !L.hidden && L.type !== 'comprehension');
+  return ls.some((L, i) => L && i > h && !L._hidden && !L.hidden && !_POST_STORY_LIKE.has(L.type));
 };
 const topic = (store.topics || []).find(t =>
   (t.lessons || []).some(L => L && L.type === 'comprehension') &&
   !(t.lessons || []).some(L => L && L.type === 'mixed' && !L._hidden) &&
   _hiddenBeforeVisible(t) &&
+  // At least 2 genuinely startable (non-story-gated, visible) lessons — found necessary at v82_f
+  // when a real corpus topic picked up a `writing` lesson ALONGSIDE its `comprehension` one, which
+  // still satisfied every criterion above while leaving only one prep lesson startable.
+  (t.lessons || []).filter(L => L && !L._hidden && !L.hidden && !_POST_STORY_LIKE.has(L.type)).length >= 2 &&
   (t.lessons || []).length >= 4);
 assert.ok(topic, 'the corpus has a classic chapter with a story-gated lesson and a hidden one before a visible one');
 

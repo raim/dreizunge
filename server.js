@@ -178,7 +178,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v82_e';
+const APP_VERSION  = 'v82_f';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -4705,17 +4705,17 @@ async function generateWriting(topic, lang, srcLang, difficulty, jobId, opts) {
     let parsed = null;
     try { parsed = JSON.parse(stripRaw(raw)); }
     catch(_) { try { parsed = extractJSON(raw); } catch(_2) { parsed = null; } }
-    const prompt = (parsed && typeof parsed.prompt === 'string') ? parsed.prompt.trim() : '';
-    if (!prompt) { lastError = 'No usable "prompt" in response'; continue; }
-    console.log(`    Writing: task "${prompt.slice(0, 60)}${prompt.length > 60 ? '…' : ''}"`);
+    // v82_f (user): a reading-comprehension QUESTION, in {S} only — not a bilingual free-topic task.
+    const question = (parsed && typeof parsed.question === 'string') ? parsed.question.trim() : '';
+    if (!question) { lastError = 'No usable "question" in response'; continue; }
+    console.log(`    Writing: question "${question.slice(0, 60)}${question.length > 60 ? '…' : ''}"`);
     return {
       lesson: {
         id: 10, type: 'writing',
         title: parsed.title || 'Writing practice',
-        desc:  parsed.desc  || 'Write a short text and get feedback',
+        desc:  parsed.desc  || 'Answer the question in writing and get feedback',
         icon:  parsed.icon  || '✍️',
-        prompt,
-        hint: (typeof parsed.hint === 'string') ? parsed.hint.trim() : '',
+        question,
         _genMeta: buildGenMeta({ type: 'writing', model: OLLAMA_LESSON_MODEL, t0: _t0, attempts: attempt, valid: 1, promptTokens: tp, completionTokens: tc }),
       },
       tokens: { promptTokens: tp, completionTokens: tc },
@@ -4729,17 +4729,36 @@ async function generateWriting(topic, lang, srcLang, difficulty, jobId, opts) {
 // same reason: robust on a small model that may not hit a strict JSON schema. A reply that is
 // neither "OK" nor in the requested shape is surfaced as a single freeform note rather than
 // silently discarded — a real answer in the wrong format is still more useful than none.
+// v82_f (user): the reply now carries TWO judgments — a CORRECTNESS verdict against the story (does
+// the answer actually address the question), and the same typo/grammar issue list as before. The
+// two must never contaminate each other (the prompt says so explicitly): a language mistake in an
+// otherwise-correct answer should not lower the verdict, and a correct-but-clumsy answer should
+// still surface its typos.
 function parseWritingFeedback(text) {
   const reply = String(text || '').trim();
-  if (!reply || /^ok[.!]?$/i.test(reply)) return { ok: true, issues: [] };
-  const issues = [];
+  const lines = reply.split('\n').map(l => l.trim()).filter(Boolean);
   const arrowRe = /^(.+?)\s*=>\s*(.+?)(?:\s*[—–-]\s*(.*))?$/;
-  for (const line of reply.split('\n').map(l => l.trim()).filter(Boolean)) {
+  const verdictRe = /^CORRECTNESS:\s*(correct|partially correct|incorrect)\s*(?:[—–-]\s*(.*))?$/i;
+  let correctness = null, correctnessNote = '';
+  const issues = [];
+  const stray = [];
+  for (const line of lines) {
+    const vm = line.match(verdictRe);
+    if (vm && !correctness) { correctness = vm[1].toLowerCase(); correctnessNote = (vm[2] || '').trim(); continue; }
     const m = line.match(arrowRe);
-    if (m) issues.push({ wrong: m[1].trim(), fix: m[2].trim(), note: (m[3] || '').trim() });
+    if (m) { issues.push({ wrong: m[1].trim(), fix: m[2].trim(), note: (m[3] || '').trim() }); continue; }
+    stray.push(line);
   }
-  if (issues.length) return { ok: false, issues };
-  return { ok: false, issues: [{ wrong: '', fix: '', note: reply.slice(0, 500) }] };
+  if (!correctness) {
+    // The model ignored the requested shape entirely — surface the whole reply as an "unknown"
+    // verdict rather than silently discarding a real answer (same fallback principle phase 1 used).
+    return { correctness: 'unknown', correctnessNote: reply.slice(0, 500), ok: issues.length === 0, issues };
+  }
+  // A stray line after a recognised verdict (the model added commentary outside the requested
+  // shape) is folded into the verdict note rather than dropped, same "don't discard a real answer"
+  // principle applied to the smaller case.
+  if (stray.length) correctnessNote = [correctnessNote, ...stray].filter(Boolean).join(' ').slice(0, 500);
+  return { correctness, correctnessNote, ok: issues.length === 0, issues };
 }
 
 // ── Generate conjugation lesson ───────────────────────────────────────────────
@@ -7384,9 +7403,9 @@ http.createServer(async (req, res) => {
           // writing (PLAN §D4, v82): single-field lesson, same shape as corruptedStory/correctStory
           // above — reproduced the v75_e bug fresh (a new lesson type's own fields are not on this
           // whitelist by default) before this line existed, caught by e2e-lesson-edit-roundtrip's
-          // registry-coverage check.
-          ...(edited.prompt !== undefined ? { prompt: edited.prompt } : {}),
-          ...(edited.hint   !== undefined ? { hint:   edited.hint   } : {}),
+          // registry-coverage check. `question` (v82_f, replacing `prompt`/`hint`): the source-
+          // language comprehension question the learner writes an answer to.
+          ...(edited.question !== undefined ? { question: edited.question } : {}),
           // v75_e: the math editor's own inputs (_editorReadInputsMath writes exactly these two).
           // Same omission as `questions` above — changing the number pool or the operator set
           // returned 200 and changed nothing.
@@ -7798,7 +7817,11 @@ http.createServer(async (req, res) => {
     // app besides /api/tutor: every other lesson type is generated once and played from static
     // content, but there is no submission to grade until the learner writes it. Stateless like the
     // tutor route — the server stores nothing here; the client decides what (if anything) to keep
-    // (see renderWriting() in index.html). Phase 1 only: typos + grammar, per the roadmap's staging.
+    // (see renderWriting() in index.html).
+    // v82_f (user): the question is now a genuine reading-comprehension question (source-language
+    // only — see PROMPTS.writing), and grading judges CONTENT correctness against the story as well
+    // as typos/grammar — the judge needs the question AND the story to do that, unlike phase 1's
+    // typo-only check which needed neither.
     if (M === 'POST' && url.pathname === '/api/writing-feedback') {
       if (active === 'none') return json(res, 503, { error: 'No LLM backend for writing feedback.' });
       let body;
@@ -7807,24 +7830,29 @@ http.createServer(async (req, res) => {
       const clip = (s, n) => String(s == null ? '' : s).slice(0, n);
       const lang = clip(body.lang, 8), srcLang = clip(body.srcLang || 'en', 8);
       const text = clip(body.text, 3000).trim();
-      const promptTask = clip(body.prompt, 500);
+      const question = clip(body.question, 500).trim();
+      // Capped, not num_ctx-sized (unit-generation-context.test.js's own documented alternative) —
+      // the same choice /api/tutor already made for its own story field, and a single chapter's
+      // story is well inside this bound (longest measured on the corpus: 4,691 chars).
+      const story = clip(body.story, 4000).trim();
       if (!lang) return json(res, 400, { error: 'Missing lang' });
       if (!text) return json(res, 400, { error: 'Nothing to check — write something first.' });
+      if (!question) return json(res, 400, { error: 'Missing question' });
+      if (!story) return json(res, 400, { error: 'Missing story' });
       const L = langName(lang), S = langName(srcLang);
-      const sys = fillPrompt(PROMPTS.writingFeedback.system, { L, S, prompt: promptTask || '(no task given)' });
+      const sys = fillPrompt(PROMPTS.writingFeedback.system, { L, S, question, story });
       const userMsg = fillPrompt(PROMPTS.writingFeedback.user, { L, text });
       try {
-        // Live-tested against BOTH candidates before picking: OLLAMA_QC_MODEL (translategemma:12b,
-        // a translation-faithfulness checker) ignored the requested "<wrong> => <fix> — <note>" line
-        // format entirely — it answered with full corrected sentences and explanations instead, 2.5x
-        // slower — while OLLAMA_LESSON_MODEL (qwen3.6:35b-a3b, the default) followed it exactly and
-        // found more real mistakes. This is a pedagogical-explanation task, closer in kind to
+        // Live-tested against BOTH candidates before picking (phase 1): OLLAMA_QC_MODEL
+        // (translategemma:12b, a translation-faithfulness checker) ignored the requested line format
+        // entirely and was markedly slower, while OLLAMA_LESSON_MODEL (qwen3.6:35b-a3b, the default)
+        // followed it exactly. This is a pedagogical-judgement task, closer in kind to
         // grammar/conjugation generation (which already use callLLMLesson) than to a translation
-        // check, so the measurement matches the a-priori reasoning, not just this one run.
+        // check — the measurement matches the a-priori reasoning, not just that one run.
         const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 500);
-        const { ok, issues } = parseWritingFeedback(stripRaw(String(raw || '')));
-        console.log(`  Writing feedback (${lang}←${srcLang}): ${text.length} chars, ${issues.length} issue(s)`);
-        return json(res, 200, { ok, issues, promptTokens, completionTokens });
+        const { correctness, correctnessNote, ok, issues } = parseWritingFeedback(stripRaw(String(raw || '')));
+        console.log(`  Writing feedback (${lang}←${srcLang}): ${text.length} chars, verdict=${correctness}, ${issues.length} language issue(s)`);
+        return json(res, 200, { correctness, correctnessNote, ok, issues, promptTokens, completionTokens });
       } catch(e) {
         return json(res, 502, { error: `Writing feedback failed: ${e.message}` });
       }

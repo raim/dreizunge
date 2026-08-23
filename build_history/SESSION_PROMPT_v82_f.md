@@ -1,12 +1,31 @@
-# Session prompt — written at the `v82_e` cut
+# Session prompt — written at the `v82_f` cut
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v82_d.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v82_e.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v82_f`, `v82_g`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v82_g`, `v82_h`, …) unless a future session has a good reason to switch to
 `v83_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v82_e`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v82_f`** cut.
+
+**`v82_f`, in brief** (full write-up in `roadmap_v82.md`): the user redesigned `writing` immediately
+after `v82_e` shipped it, from two live corrections: the lesson's stem became a genuine
+reading-comprehension QUESTION about the story (like `comprehension`'s own `q`), asked in the
+SOURCE language only — not the earlier bilingual target-language task + source-language hint pair —
+and grading now judges CONTENT correctness against the story (via a `"CORRECTNESS: <verdict> —
+<note>"` reply line) alongside the typo/grammar check `v82_e` shipped. `/api/writing-feedback` now
+needs `question` + `story` (capped, not num_ctx-sized) to make that judgement. Live-tested three
+verdicts (partially correct, incorrect, and a demanding-but-defensible "partially correct" on a
+genuinely good answer) against the real model — clean separation between the two judgements in the
+common cases, with one honest, left-as-measured rough edge on a completely off-topic answer (the
+model folded a "this is irrelevant" comment into the language-issues list as a fake grammar
+"correction" on a sentence that has no actual mistake). Also found and fixed a second stale-corpus-
+selection bug of the same class `v82_e`'s dialect-gate one was: a test's "several lessons are
+startable" fixture search had implicitly assumed `comprehension` was the corpus's only story-gated
+lesson type, which stopped being true once a real topic gained a `writing` lesson too. Two
+now-incompatible `writing` lessons in the old bilingual shape were found on disk (one this session's
+own `v82_e` verification artefact, one the user's own — asked before touching either, both deleted
+with permission, the user's separate "Die zwei Ziegen" storyline untouched throughout).
 
 **`v82_e`, in brief** (full write-up in `roadmap_v82.md`): built `PLAN §D4` phase 1 — a new lesson
 type, `writing`, the app's first lesson type graded by a LIVE model call at PLAY time rather than
@@ -100,14 +119,16 @@ node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Corpus at this cut: **324 topics, 92 storylines, 33 languages, 647 `en` keys** (`v82_c` added 7 new
+Corpus at this cut: **324 topics, 92 storylines, 33 languages, 651 `en` keys** (`v82_c` added 7 new
 `en`-only keys for the `inflections` lesson type; `v82_d` added 1 more — `complete.prev_chapter` —
-for the progress-card back-button fix; `v82_e` added 14 more for the `writing` lesson type. None yet
-translated — needs the offline translate pass before those languages catch up). **The topic/storyline
-counts moved for a reason unrelated to this cut's own feature** — see `roadmap_v82.md`'s `v82_e`
-entry: a genuinely concurrent generation job on the dev server, observed mid-verification, not this
-session's own data.
-`APP_VERSION = 'v82_e'`.
+for the progress-card back-button fix; `v82_e` added 14 more for the `writing` lesson type; `v82_f`
+added 4 more — the correctness-verdict labels. None yet translated — needs the offline translate
+pass before those languages catch up). **The topic/storyline counts did not move at this cut** —
+they carry forward `v82_e`'s own bookkeeping (a genuinely concurrent generation job on the dev
+server, observed mid-verification, not this session's own data; see `roadmap_v82.md`'s `v82_e`
+entry). Two now-superseded `writing` lessons (old bilingual shape) WERE deleted at this cut, with
+permission — that changes lesson counts inside two topics, not the topic/storyline counts above.
+`APP_VERSION = 'v82_f'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -196,11 +217,18 @@ is a materially lower bar. Needs a browser pass, not a code change.
   assertion each time, never the field-persistence assertions themselves. Reproduce with several
   consecutive `node test/run.js` (not `--quick`) before assuming a fix worked, and before blaming any
   future session's change.
-- **`PLAN §D4` phase 2 — content feedback for the `writing` lesson type.** Phase 1 (typos + grammar)
-  shipped at `v82_e`. Phase 2 ("does this text actually address the task") was explicitly flagged by
-  the user as likely needing a stronger model or more careful prompting than phase 1's — worth a
-  quick capability check against the current default (`qwen3.6:35b-a3b`) before assuming it needs a
-  swap, the same way `v82_e` measured rather than assumed for phase 1's own model choice.
+- **`PLAN §D4`'s content-correctness judging shipped at `v82_f`**, on the user's own follow-up
+  request, ahead of the roadmap's original phased schedule — turned out `qwen3.6:35b-a3b` (the
+  current default) handles it well without a model swap, contrary to the roadmap's own earlier
+  caution that it "likely" would need one. **One honest rough edge, live-measured and left
+  unaddressed, not silently smoothed over**: on a completely off-topic answer specifically, the model
+  sometimes folds its "this is irrelevant" commentary into the language-issues list as a fake
+  arrow-format "correction" on a sentence that has no actual grammar mistake — harmless to the
+  learner (still an accurate message) but a real prompt-compliance gap on that one edge case. If
+  picked up: reproduce across more than the three verdicts this session tested before deciding
+  whether it is worth a prompt change, and measure against several REAL learner answers, not just
+  synthetic ones — the same "one lesson proves nothing" caution `PLAN §F3` already carries elsewhere
+  in this document.
 
 ## 4. ⚠️ OWED BY THE USER, not doable in a container
 

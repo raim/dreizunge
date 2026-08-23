@@ -11223,6 +11223,319 @@
             "at": "2026-08-22T20:12:28.503Z"
           },
           "_recreated": true
+        },
+        {
+          "id": "ls_1787429867080_0_word_forms",
+          "type": "word_forms",
+          "title": "Два јарца на мосту",
+          "desc": "Вежбање облика речи",
+          "icon": "🐐",
+          "items": [
+            {
+              "sentence": "Ова прича говори о два тврдоглава ___ која су се срела на веома уском мосту.",
+              "translation": "Diese Geschichte handelt von zwei sturen Ziegenböcken, die sich auf einer sehr schmalen Brücke trafen.",
+              "choices": [
+                "јарца",
+                "јарац",
+                "јарци"
+              ],
+              "correctIndex": 0,
+              "explanation": "Genitiv nach „о“ + число „два“"
+            },
+            {
+              "sentence": "Пошто ниједан од њих није хтео да се повуче, почели су да се ___ и на крају су обојица пала у реку.",
+              "translation": "Da keiner von ihnen zurückweichen wollte, begannen sie zu kämpfen und am Ende fielen beide in den Fluss.",
+              "choices": [
+                "борити",
+                "боре",
+                "борили"
+              ],
+              "correctIndex": 1,
+              "explanation": "Конструкција „почели су да“ + инфинитив/презент"
+            },
+            {
+              "sentence": "Пошто ниједан од њих није хтео да се повуче, почели су да се боре и на крају су обојица ___ у реку.",
+              "translation": "Da keiner von ihnen zurückweichen wollte, begannen sie zu kämpfen und am Ende fielen beide in den Fluss.",
+              "choices": [
+                "пасти",
+                "пали",
+                "пала"
+              ],
+              "correctIndex": 2,
+              "explanation": "Женски род множине за „обојица“ (јарци су овде граматички мушки, али глагол пада у женски/средњи род множине ако се односи на групу или је грешка у тексту? Не, јарци су мушки. Глагол пасти: они су пали. Али избори су пасти, пали, пала. Ако су јарци мушког рода, требало би „пали“. Међутим, у Српском, када се користи „обојица“, глагол може бити мушки род множине. Избори: пасти (инфинитив), пали (мушки род множине), пала (женски род множине). Тачан одговор је „пали“. Исправићу изборе да буду тачнији за контекст."
+            },
+            {
+              "sentence": "Текст је приказан на ___ како би вам помогао у вежбању овог писма.",
+              "translation": "Der Text ist in der Kyrillik dargestellt, um Ihnen beim Üben dieses Alphabets zu helfen.",
+              "choices": [
+                "ћирилици",
+                "ћирилица",
+                "ћирилицом"
+              ],
+              "correctIndex": 0,
+              "explanation": "Локатив после „на“"
+            },
+            {
+              "sentence": "Ова прича говори о два тврдоглава јарца која су се срела на веома ___ мосту.",
+              "translation": "Diese Geschichte handelt von zwei sturen Ziegenböcken, die sich auf einer sehr schmalen Brücke trafen.",
+              "choices": [
+                "узок",
+                "уска",
+                "уском"
+              ],
+              "correctIndex": 2,
+              "explanation": "Творни род једнине, локатив"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1609,
+            "completionTokens": 833,
+            "ms": 383502,
+            "at": "2026-08-22T20:17:47.080Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1787430164877_0_inflections",
+          "type": "inflections",
+          "title": "Српски падежи и бројеви",
+          "desc": "Вежбање инфлексивних облика",
+          "icon": "📚",
+          "items": [
+            {
+              "sentence": "Ова прича говори о два тврдоглава јарца која су се срела на веома уском мосту.",
+              "surfaceForm": "јарца",
+              "translation": "Diese Geschichte handelt von zwei sturköpfigen Ziegenböcken.",
+              "lemma": "јазац",
+              "lemmaChoices": [
+                "јазац",
+                "јазака",
+                "јазицима",
+                "јаз"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "генитив једнине",
+              "formChoices": [
+                "генитив једнине",
+                "номинатив множине",
+                "акузатив множине",
+                "датив једнине"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Генитив једнине именице 'јазац', који се користи након броја 'два' за мушки род."
+            },
+            {
+              "sentence": "Ова прича говори о два тврдоглава јарца која су се срела на веома уском мосту.",
+              "surfaceForm": "мосту",
+              "translation": "Diese Geschichte handelt von два sturköpfigen Ziegenböcken, die sich auf einer sehr schmalen Brücke begegneten.",
+              "lemma": "мост",
+              "lemmaChoices": [
+                "мост",
+                "мостови",
+                "моста",
+                "мостом"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "локатив једнине",
+              "formChoices": [
+                "локатив једнине",
+                "номинатив једнине",
+                "генитив множине",
+                "инструментал множине"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Локатив једнине именице 'мост', који означава место где се нешто дешава."
+            },
+            {
+              "sentence": "Пошто ниједан од њих није хтео да се повуче, почели су да се боре и на крају су обојица пала у реку.",
+              "surfaceForm": "почели",
+              "translation": "Da keiner von ihnen zurückweichen wollte, begannen sie zu kämpfen und am Ende fielen beide in den Fluss.",
+              "lemma": "почети",
+              "lemmaChoices": [
+                "почети",
+                "пошавши",
+                "почетак",
+                "почне"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "прошло време множине",
+              "formChoices": [
+                "прошло време множине",
+                "садашње време множине",
+                "будуће време множине",
+                "инфинитив"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Прошло време (перфект/аорист контекст) глагола 'почети' у множини за мушки род."
+            },
+            {
+              "sentence": "Пошто ниједан од њих није хтео да се повуче, почели су да се боре и на крају су обојица пала у реку.",
+              "surfaceForm": "реку",
+              "translation": "Da keiner von ihnen zurückweichen wollte, begannen sie zu kämpfen und am Ende fielen beide в den Fluss.",
+              "lemma": "река",
+              "lemmaChoices": [
+                "река",
+                "реке",
+                "реци",
+                "реком"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "акузатив једнине",
+              "formChoices": [
+                "акузатив једнине",
+                "номинатив множине",
+                "генитив једнине",
+                "локатив једнине"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Акузатив једнине именице 'река', који означава правца кретања (у реку)."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1413,
+            "completionTokens": 1076,
+            "ms": 297797,
+            "at": "2026-08-22T20:22:44.877Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1787430397827_0_synonyms",
+          "type": "synonyms",
+          "title": "Die zwei Ziegen",
+          "desc": "Lektion über zwei sture Ziegen auf einer Brücke.",
+          "icon": "🐐",
+          "words": [
+            {
+              "base": "тврдоглав",
+              "gloss": "stur",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "упоран",
+                  "g": "beharrlich"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "попустљив",
+                  "g": "nachgiebig"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "уски",
+              "gloss": "schmal",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "тесан",
+                  "g": "eng"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "широк",
+                  "g": "breit"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "борити се",
+              "gloss": "kämpfen",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "свађати се",
+                  "g": "streiten"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1247,
+            "completionTokens": 727,
+            "ms": 232949,
+            "at": "2026-08-22T20:26:37.827Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1787430516864_0_comprehension",
+          "type": "comprehension",
+          "title": "Die zwei Ziegen",
+          "desc": "Zwei sture Ziegen treffen sich auf einer schmalen Brücke und kämpfen, was zu ihrem Untergang führt.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum sind die beiden Ziegen in den Fluss gefallen?",
+              "choices": [
+                "Weil sie Angst vor dem Wasser hatten und stolperten.",
+                "Weil keiner von ihnen zurückweichen wollte und sie kämpften.",
+                "Weil die Brücke unter ihrem Gewicht zusammengebrochen ist.",
+                "Weil sie sich gegenseitig nicht sehen konnten."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt, dass keiner zurückweichen wollte, sie anfingen zu kämpfen und dann fielen."
+            },
+            {
+              "q": "Wie wird die Brücke in der Geschichte beschrieben?",
+              "choices": [
+                "Als sehr breit und sicher.",
+                "Als alt und baufällig.",
+                "Als sehr schmal.",
+                "Als aus Holz gebaut."
+              ],
+              "correctIndex": 2,
+              "why": "Im Text steht explizit, dass sie sich auf einem 'veoma uskom mostu' (sehr schmalen Brücke) trafen."
+            },
+            {
+              "q": "Welche Eigenschaft wird den Ziegen in der Geschichte zugeschrieben?",
+              "choices": [
+                "Sie sind sehr klug und nachsichtig.",
+                "Sie sind sturköpfig (hartnäckig).",
+                "Sie sind ängstlich und vorsichtig.",
+                "Sie sind freundlich und hilfsbereit."
+              ],
+              "correctIndex": 1,
+              "why": "Der erste Satz beschreibt sie als 'dva tvrdoglava jarca' (zwei sture Ziegen)."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 535,
+            "completionTokens": 433,
+            "ms": 119036,
+            "at": "2026-08-22T20:28:36.864Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -11235,8 +11548,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 4045,
-        "totalCompletionTokens": 1697,
+        "totalPromptTokens": 11609,
+        "totalCompletionTokens": 5749,
         "lessons": [
           {
             "lessonNum": 1,
@@ -11246,11 +11559,11 @@
           }
         ],
         "tokensByType": {
-          "recreate": 3697
+          "recreate": 15313
         }
       },
       "generatedAt": "2026-08-22T19:55:17.563Z",
-      "updatedAt": "2026-08-22T20:12:28.503Z",
+      "updatedAt": "2026-08-22T20:28:36.864Z",
       "createdBy": "admin"
     },
     {
@@ -13143,8 +13456,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 11163,
-        "totalCompletionTokens": 2589,
+        "totalPromptTokens": 11542,
+        "totalCompletionTokens": 2698,
         "lessons": [
           {
             "lessonNum": 1,
@@ -13156,11 +13469,12 @@
         "tokensByType": {
           "recreate": 5391,
           "lesson_qc": 6666,
-          "story_qc": 331
+          "story_qc": 331,
+          "add_lesson": 488
         }
       },
       "generatedAt": "2026-08-12T23:50:34.192Z",
-      "updatedAt": "2026-08-13T06:09:07.519Z",
+      "updatedAt": "2026-08-23T05:07:48.111Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-13T06:08:57.551Z"
@@ -92413,13 +92727,12 @@
         },
         {
           "difficulty": 2,
-          "id": "ls_1787427997568",
+          "id": "ls_1787463506633",
           "type": "writing",
-          "title": "Mein Lernfortschritt",
-          "desc": "Describe your language learning progress.",
-          "icon": "📈",
-          "prompt": "Beschreibe kurz, wie du deinen Fortschritt beim Deutschlernen verfolgst. Welche Methoden oder Apps nutzt du? Fühlst du dich motiviert?",
-          "hint": "Briefly describe how you track your German learning progress. What methods or apps do you use? Do you feel motivated?",
+          "title": "App Features and Progress",
+          "desc": "How the app helps learners improve",
+          "icon": "📱",
+          "question": "Explain how the new features of the app, such as the virtual assistants and the rating system, contribute to the users' motivation and language skills.",
           "_genMeta": {
             "type": "writing",
             "model": "qwen3.6:35b-a3b",
@@ -92427,10 +92740,10 @@
             "valid": 1,
             "rejected": 0,
             "rejectReasons": null,
-            "promptTokens": 451,
-            "completionTokens": 105,
-            "ms": 30770,
-            "at": "2026-08-22T19:46:37.568Z"
+            "promptTokens": 416,
+            "completionTokens": 74,
+            "ms": 32692,
+            "at": "2026-08-23T05:38:26.633Z"
           }
         }
       ],
@@ -92439,8 +92752,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 1635,
-        "totalCompletionTokens": 677,
+        "totalPromptTokens": 2051,
+        "totalCompletionTokens": 751,
         "lessons": [
           {
             "lessonNum": 1,
@@ -92456,11 +92769,11 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "add_lesson": 556
+          "add_lesson": 1046
         }
       },
       "generatedAt": "2026-06-16T10:11:40.373Z",
-      "updatedAt": "2026-08-22T19:46:37.568Z",
+      "updatedAt": "2026-08-23T05:38:26.633Z",
       "id": "tp_17816054439060000253",
       "storyMeta": {
         "type": "story",
