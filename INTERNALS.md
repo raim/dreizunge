@@ -1087,6 +1087,20 @@ already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly o
 | the story read-aloud | `speakBodyText(el, lang, text)`; the panel's 🔊 and the card's 🔊 read whatever language is currently SHOWN |
 | which language the story panel shows | `APP._compStoryLang` — **shared** by the question panel (`toggleExStoryLang`) and the progress card (`toggleCompStoryLang`), so the two screens cannot disagree |
 
+**`PLAN §7.0` CP1 — canonical text + analysis records** (`v83_h`, TWO NEW STANDALONE FILES, not part of `index.html`/`server.js`)
+
+| what | where |
+|---|---|
+| the pure core | `canonical-text.js` → `buildCanonicalText(topic)` — takes a `lessons.json`-shaped topic, returns a chapter→sentence→token record tree. `chapterId` REUSES the topic's own `id`; `sentenceId`/`tokenId` are POSITION-derived (`{chapterId}:s{n}`, `{sentenceId}:t{n}`), deterministic across independent calls on unchanged text |
+| sentence/token splitting | `splitCanonicalSentences(text)` (sentence-level, paragraph-aware — mirrors server.js's `qcSplitSentences` but ALSO keeps paragraph breaks, which that one discards), `tokenizeCanonicalSentence(text, lang)` (CJK vs spaced, script-class only — mirrors `jaTokenize`/`CJK_LANGS`/`isPunct`) |
+| staleness detection | `textHash(s)` / `sourceTextHash` — a truncated SHA-1, NOT a security property, purely so a future consumer can tell whether the text at a stable id has drifted since the record was built |
+| provenance | `cp1Provenance(extra)` — deliberately NOT server.js's `buildGenMeta` (that shape is for MODEL generation calls; CP1 makes none) |
+| the CLI | `build-canonical-text.js` — report-only by default, `--write` to persist, same convention as `backfill-script.js`. `--out <path>` redirects output (used by the test suite so a run never resizes the committed `canonical-text.json`). Selects a deterministic representative sample (one topic per language, then fills to `--limit`) unless `--all`/`--topic` is given |
+| the output store | `canonical-text.json` — keyed by chapter id, entirely separate from `lessons.json`. **Nothing reads it yet** — CP1 is report-only by design; do not wire it into the player without a CP2+ ruling |
+| ⚠️ **why neither file `require`s server.js** | server.js binds an HTTP port as a side effect of being loaded (no `require.main` guard) — requiring it from an offline analysis script would start a live server. The needed tokenisation primitives are COPIED instead, mirroring the SAME duplication convention already used for `jaTokenize` between server.js and index.html |
+| ⚠️ **a self-referential test-guard trap, found while building this** | `unit-canonical-text.test.js` checks "no server.js dependency" by scanning `canonical-text.js`'s source for a literal `require` call naming it — and the file's OWN explanatory comment had spelled that exact call as an example of what it was NOT doing, which the regex matched. Same class of trap `unit-screen-structure`/`unit-card-consistency` already document: **never spell a source-scanned pattern in a comment near the code it checks** |
+| ⚠️ **Unicode Private Use Area sentinels must be `\uXXXX` escapes, never literal characters** | the ported `jaTokenize`'s U+E000/U+E001 sentinels silently became empty strings mid-edit when written as literal characters — invisible control characters do not reliably survive file edits/tooling. Caught only by generating real furigana-bearing output and finding the group split apart, not by a clean diff |
+
 
 ---
 

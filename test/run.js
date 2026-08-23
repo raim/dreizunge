@@ -151,6 +151,7 @@ run('unit: story-finished card — the last page of the walk (v77_f)', 'node', [
 run('unit: story-summary card — the first page of the walk (v77_h)', 'node', [path.join(__dirname, 'unit-story-summary.test.js')]);
 run('unit: progress + entry card nav/bars popups (v83_c/v83_d)', 'node', [path.join(__dirname, 'unit-progress-card-nav.test.js')]);
 run('unit: story-panel border colour, red→green with comprehension progress (v83_g)', 'node', [path.join(__dirname, 'unit-story-border-color.test.js')]);
+run('unit: PLAN §7.0 CP1 — canonical text + analysis records, report-only', 'node', [path.join(__dirname, 'unit-canonical-text.test.js')]);
 run('unit: UI journey transitions (PLAN §C0.1)', 'node', [path.join(__dirname, 'unit-ui-journeys.test.js')]);
 run('unit: language picker sync, generation screen <-> library (PLAN §C5)', 'node', [path.join(__dirname, 'unit-lang-picker-sync.test.js')]);
 run('unit: static build hides library "Generate new" button (v81_x)', 'node', [path.join(__dirname, 'unit-static-gen-btn-hidden.test.js')]);

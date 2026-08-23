@@ -29,9 +29,9 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_g` — the progress-card story panel's border shifts red→green with comprehension ("understanding") progress specifically (a user ruling between two candidate "pass marks" — see the entry). `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen. **NEW**: question cards' `#ex-story-panel` now COLLAPSED by default, unconditionally. `v83_e` — header-row back/forward arrows now render the EXACT `.lang-pair-arrow` glyph. `v83_d` — the entry/summary card gets the SAME nav/bars popup `v83_c` gave the progress card. `v83_c` — progress-card redesign: nav/icon rows + progress bars moved into a popup. `v83_b` — `PLAN §12` built end to end |
+| **SHIPPED IN THE v83 LINE** | `v83_h` — `PLAN §7.0` CP1: canonical text + analysis records, report-only — the first buildable slice of Track A's accepted parallel-curriculum direction. New standalone `canonical-text.js`/`build-canonical-text.js`, never touching `lessons.json`. `v83_g` — the progress-card story panel's border shifts red→green with comprehension progress. `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen; question cards' `#ex-story-panel` now COLLAPSED by default. `v83_e`/`v83_d`/`v83_c` — the progress-card/entry-card popup redesign. `v83_b` — `PLAN §12` built end to end |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
-| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, the interactive text-selection tutor, shipped at `v83_b` — see the SHIPPED section above. |
+| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h` — see the SHIPPED section above. CP2–CP6 remain open, in sequence. |
 
 Standing rules are in the "Rules earned in session 28…34" blocks — read the **"⚠️ How the rules are
 NUMBERED"** note before citing one.
@@ -1685,6 +1685,103 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_h` — `PLAN §7.0` CP1: canonical text + analysis records, report-only
+
+**Shipped by: Claude Code, on user request** ("PLAN §7.0 CP1", after the plan's own text was
+explained back to the user). The first buildable slice of Track A's accepted parallel-curriculum
+direction (§0's own migration sequence: *"CP1 — canonical text + analysis records, report-only.
+Define stable story/chapter/sentence/span/token records and provenance. Analyse a small
+representative corpus without changing any existing lesson, learner state, player, or publishing
+output. This is the next implementation slice."*).
+
+**What shipped**: two new files, deliberately outside `server.js`/`index.html`'s existing structure.
+
+- **`canonical-text.js`** — the pure, testable core. `buildCanonicalText(topic)` takes one topic
+  exactly as shaped in `lessons.json` and derives a chapter → sentence → token record tree:
+  - `chapterId` REUSES the topic's own existing `id` verbatim — CP1 does not invent a second id
+    scheme at the chapter level, the plan's own "stable... records" requirement is already met there.
+  - `sentenceId`/`tokenId` are POSITION-derived (`{chapterId}:s{n}`, `{sentenceId}:t{n}`) from a
+    DETERMINISTIC split — asserted directly: two independent calls on the same input produce
+    byte-identical id sequences, not merely "probably the same."
+  - Sentence splitting is SENTENCE-level (mirroring `server.js`'s own `qcSplitSentences` — after a
+    sentence-ender + closing quote/bracket, not on commas, which is `splitSentences`'s OWN, different
+    clause-level job for `ai_error_hunt`), paragraph-aware (`qcSplitSentences` itself discards
+    paragraph breaks; CP1 cannot afford to, since chapter structure is part of what "stable" means,
+    so a `paraBreakBefore` flag was added rather than copying that loss forward).
+  - Token splitting reuses the SAME script-class logic `server.js`'s `jaTokenize`/`CJK_LANGS`/
+    `isPunct` already encode (CJK vs spaced, no per-language table) — copied, not imported (see
+    below for why), with the furigana-group protection (`BASE[reading]` stays one token) verified
+    behaviourally, not assumed to have survived the copy.
+  - `textHash`/`sourceTextHash` (SHA-1, truncated, no security property claimed) give a future
+    consumer the plan's own required "an older result is visibly old" signal — unchanged text keeps
+    its hash, changed text does not, asserted both ways.
+  - Provenance is a NEW shape (`stage`, `pipelineVersion`, `producedBy`, `at`), deliberately NOT
+    `server.js`'s `buildGenMeta` — `buildGenMeta`'s shape (`model`, `promptTokens`, `rejectReasons`…)
+    describes a MODEL generation call, and CP1 makes none: it is a deterministic transform with no
+    LLM in the loop, so forcing it into that shape would fabricate fields that do not apply.
+  - **Standalone on purpose, not `require`-ing `server.js`**: `server.js` binds an HTTP port as a
+    side effect of being loaded (no `require.main` guard exists), so requiring it from an offline
+    analysis module would start a live server as a side effect of running an analysis script.
+    Instead the small amount of needed logic is COPIED, mirroring the same duplication convention
+    this project already uses for `jaTokenize` between `server.js` and `index.html` (two copies, kept
+    in step by comment cross-reference, because there is no bundler here to share one).
+- **`build-canonical-text.js`** — the CLI wrapper, same report-only-by-default / `--write`-to-persist
+  convention `backfill-script.js` already established. Selects a representative sample by default
+  (one topic per language currently in the corpus, then fills to `--limit`, 24 by default) —
+  deterministic, no randomness, so two runs select the same sample. Writes to its OWN new store,
+  `canonical-text.json`, **never** to `lessons.json` — asserted BOTH by pinning the source (no write
+  call targets the `LESSONS` path anywhere) AND behaviourally, by running the real CLI against the
+  real corpus and diffing `lessons.json` byte-for-byte before and after, for BOTH the report-only and
+  the `--write` path (the word "write" refers to the CLI's OWN output file, never the corpus).
+
+**A subtle self-referential guard bug, found and fixed while writing the test itself**: the "does not
+depend on `server.js`" claim is checked by scanning `canonical-text.js`'s own source for a literal
+`require` call naming it — and the file's own EXPLANATORY COMMENT, written first, happened to spell
+that exact call as an example of what it was NOT doing. The regex matched the comment, not real code,
+and the test failed for a reason that had nothing to do with the claim. Reworded the comment to avoid
+spelling the pattern (the same trap, and the same fix, the project's `unit-screen-structure`/
+`unit-card-consistency` tests already document for their own source-scanned patterns) rather than
+loosening the check.
+
+**A second correctness bug, found by ACTUALLY RUNNING the code rather than trusting the copy**: the
+first draft of the ported `jaTokenize` silently dropped the Unicode Private Use Area sentinel
+characters (U+E000 / U+E001) that protect a kanji+furigana group from being split — they became
+empty strings partway through authoring the file, which would have made every furigana-bearing
+Japanese sentence's tokens wrong in a way no type-check or lint would have caught. Caught only by
+generating real output (`東京[とうきょう]に行きます` → checking the furigana group survived as ONE
+token) and finding it broken, then rewritten with explicit `\uXXXX` escape sequences throughout
+rather than literal invisible characters, which do not reliably survive file edits/tooling the way an
+escape sequence does. Re-verified after the fix — this project's own rule 9 ("a live model call needs
+a live test") generalises here to "generated code needs live output, not just a clean diff."
+
+**Verified at the layer where the claim is observable**: new `unit-canonical-text.test.js` (9
+sections) — purity (no `server.js` dependency, no file I/O in the core module), sentence/token
+splitting behaviour (including the furigana-survival case and a non-vacuity check that non-CJK
+languages all share ONE branch, no per-language table), id/hash determinism across independently
+made calls, provenance shape, required-field enforcement, and the `lessons.json`-untouched claim
+exercised by actually running the real CLI against the real corpus and diffing the file, not by
+reading the source and trusting it. **Mutation-tested**: swapping a stable id for `Math.random()`,
+and injecting a real write to `lessons.json` into the CLI, each independently turn the test red.
+
+**A file-management decision worth recording**: the test suite writes its OWN CLI-exercise output to
+a `--out`-redirected SCRATCH path (a temp directory, cleaned up after), never to the real, COMMITTED
+`canonical-text.json` — a test run must not resize a checked-in artifact as a side effect, the same
+principle `build-static.js`'s `docs/index.html` already follows (regenerated as an explicit release
+step, not a test side effect). `build-canonical-text.js` gained a `--out <path>` flag specifically so
+the test could do this without needing its own copy of the CLI's argument parsing.
+
+**Testing**: 255/228/0/0 full baseline green (from 254/227 — one new test file). `docs/index.html`
+rebuilt (unaffected by this release's content, but regenerated per protocol since a new base cut).
+The committed `canonical-text.json` holds the default representative sample: 24 chapters spanning
+all 14 languages currently in the corpus, 153 sentences, 2266 tokens. No `ui.json` change — this
+release has no user-facing surface at all, by design (report-only, no player/UI integration; that is
+a LATER stage in the migration sequence, not CP1's).
+
+**Not scoped here, deliberately** (per the plan's own migration sequence, unchanged): CP2's lemma/
+form/phrase/sense/frequency analysis, CP3's curriculum planning, CP4's new lesson-generation route,
+CP5's progress-card integration, and CP6's retirement of anything legacy. None of those are
+authorised by this slice; nothing here changes what a learner sees or plays.
 
 ### `v83_g` — the progress-card story panel's border shifts red→green with comprehension progress
 
