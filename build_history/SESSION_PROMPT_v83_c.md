@@ -1,44 +1,54 @@
-# Session prompt — written at the `v83_b` cut
+# Session prompt — written at the `v83_c` cut
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_a.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_b.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v83_c`, `v83_d`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v83_d`, `v83_e`, …) unless a future session has a good reason to switch to
 `v84_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v83_b`** release —
-`PLAN §12` (the interactive text-selection tutor) built end to end, the reason the `v83_a` cut was
-made.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v83_c`** release —
+the progress-card popup redesign (a fresh user ask, not a PLAN item), on top of `v83_b`'s `PLAN §12`.
 
 **`v83_a`, in brief**: a new BASE LINE, cut from `v82` at the user's own request rather than at a
-milestone, to hand off `PLAN §12` to a clean-context session. No code changed at that cut — only
-`roadmap_v83.md`, `INTERNALS.md`, and the session prompt were written.
+milestone, to hand off `PLAN §12` to a clean-context session. No code changed at that cut.
 
 **`v83_b`, in brief** (full write-up in `roadmap_v83.md`'s `# SHIPPED IN THE v83 LINE`): `PLAN §12`
-shipped whole, in one release. The plan's own text flagged one real ruling needed before the request
-payload could even be designed — reply in `APP.uiLang` for the new flow only, or move the WHOLE tutor
-off `srcLang`? Asked the user directly; the answer was **the whole tutor**. Wired ADDITIVELY, not as
-a rename — `srcLang` still drives `tutorRetrieveContext`'s content-pairing filter and the client's
-ledger lookup, genuinely different jobs from the reply-language `S` variable, which now reads
-`APP.uiLang` with a `srcLang` fallback for an old cached client. **Live-verified against a real model,
-not just asserted from the prompt text**: a throwaway server on a spare port (the OTHER session's own
-already-running dev server was left untouched — rule 8) confirmed a reply requested with
-`srcLang:'en'`/`uiLang:'fr'` came back entirely in French. The new mechanism itself — a second,
-independent free-text-selection popover ("grammar"/"meaning") coexisting with the existing per-word
-tap over the same `_storyBodyHtml` container — reuses the tutor's existing single-thread conversation
-path entirely; no new `/api/tutor` payload shape was needed beyond the `uiLang` field above. One real
-DOM-shape gotcha was measured and fixed: furigana readings (`<ruby>base<rt>reading</rt></ruby>`) sit
-in the DOM as ordinary text, so a raw `selection.toString()` would fold the READING into a selected
-segment — stripped before use. **The throughline worth carrying forward again**: this is the THIRD
-release running (`v82_e`, `v82_i`, now `v83_b`) where a live generation against the real model — not
-source-reading, not a plausible design — was what actually confirmed the feature works. Keep
-budgeting for it.
+(the interactive text-selection tutor) shipped whole. The one ruling it needed — reply in
+`APP.uiLang` for the new flow only, or the WHOLE tutor? — was asked directly; the answer was the
+whole tutor, wired additively (`srcLang` keeps its own, different retrieval/ledger job). **Live-
+verified against a real model**, not just asserted from the prompt text: a throwaway server on a
+spare port confirmed a reply requested with `srcLang:'en'`/`uiLang:'fr'` came back entirely in
+French.
+
+**`v83_c`, in brief** (full write-up in `roadmap_v83.md`): a fresh mid-session user request, not a
+PLAN item — *"move the navigation control icon rows and the progress bars into a popup, reachable
+via one button in the header row of the text field, before the text translation buttons. Only the
+back/next button should be duplicated ... progress card text fields should ideally always fill the
+full available screen."* Scoped to `complete-screen` alone (this project's own "the progress card"),
+decided by reading all four card screens' actual markup rather than guessing at "progress cards"
+plural — the entry/summary card has almost nothing to hide (one button, always-empty bars) and was
+left unchanged. The popup RELOCATES existing elements (same ids, same renderers, nothing
+reimplemented); a new `_syncCompHdrNav()` mirrors `comp-prev`/`comp-next`'s FINAL resolved state onto
+a header-row duplicate pair rather than re-deriving showComplete's ~7 destination branches. **Two old
+test invariants this redesign knowingly supersedes were rewritten to state what actually holds now,
+not just loosened** — see the roadmap entry for both. **Live-verified in a real browser**, not just
+asserted: header-row order, label mirroring, popup open/close (☰, ×, backdrop, real navigation, the
+crossword early-close), and the story panel's measured height against a mobile viewport all checked
+against the running app, not just the CSS/JS source.
+
+**The throughline worth carrying forward again**: `v83_b` was the third release running where a live
+generation against the real model was what actually confirmed a feature works, not source-reading.
+`v83_c` is the same discipline applied to a UI change: exploring the ACTUAL markup of all four card
+screens (not assuming from the request's wording) is what caught that "progress cards" plural did
+not mean "change all four," and running the redesign in a real browser tab (not just asserting from
+CSS) is what confirmed the flex-fill layout, the popup lifecycle, and the label mirroring actually
+work end to end.
 
 ## Orient yourself
 
 1. **This file**, whole.
 2. `build_history/roadmap_v83.md` — its **index table** and the **⚠️ Session protocol** block first,
-   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `PLAN §12` was actually built.
+   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`/`v83_c` were built.
    (Nothing is in TRACK T right now — steps 1–4 and `§T7` all shipped in the v81 line.)
 3. `INTERNALS.md` — constants, silent-failure modes, invariants, harness limits. **§6b is a
    feature → function map** — read it BEFORE grepping for where anything lives.
@@ -46,18 +56,18 @@ budgeting for it.
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 252 checks
-node test/run.js --quick                  → expect 225
+node test/run.js                          → expect 253 checks
+node test/run.js --quick                  → expect 226
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Corpus at this cut: **327 topics, 92 storylines, 33 languages, 655 `en` keys** (topics/storylines/
-languages unchanged from `v83_a`; `en` keys grew by 4 — `tutor.sel_grammar`, `tutor.sel_meaning`,
-`tutor.sel_grammar_q`, `tutor.sel_meaning_q` — for the new selection popover, not yet translated into
-the other 32 languages, which fall back to English on those four keys until the offline translate
-pass catches up).
-`APP_VERSION = 'v83_b'`.
+Corpus at this cut: **327 topics, 92 storylines, 33 languages, 657 `en` keys** (topics/storylines/
+languages unchanged since `v83_a`; `en` keys grew by 2 this release — `complete.nav_open`,
+`complete.nav_title` — for the new popup trigger/heading, not yet translated into the other 32
+languages, which fall back to English on those two keys until the offline translate pass catches
+up).
+`APP_VERSION = 'v83_c'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -73,10 +83,17 @@ pass catches up).
 N" blocks — this is the short form, not a replacement for reading those before citing one.)*
 
 1. **Measure before editing.** A warning in the notes is a claim about a DESIGN, not about the
-   problem (rule 35).
+   problem (rule 35). `v83_c`'s own version: read all four card screens' ACTUAL markup before
+   deciding which ones a "progress cards" (plural) request touched — it was one, not four.
 2. **Guard at the layer where the claim is observable** (rule 34). A guard that pins SOURCE TEXT for
    a claim about BEHAVIOUR cannot fail — cost multiple releases across the v80/v81 lines. Render and
    inspect, then **MUTATION-TEST**: break the rule and check the guard goes red.
+2b. **When a NEW request deliberately supersedes an OLD test invariant, REWRITE the test to state
+   what holds NOW, with the supersession explained inline — don't just loosen or delete the
+   assertion.** `v83_c` hit this twice (`unit-story-summary.test.js`'s cross-card parity claim,
+   `smoke-render.test.js`'s single row-order chain) — both were legitimate PAST design decisions a
+   real product change now overrides, and both were rewritten to assert the new, narrower claim that
+   actually survives, rather than weakened into silence.
 3. **For any refactor claiming to preserve behaviour, CAPTURE the old output and DIFF it.** "The
    tests still pass" is a weaker claim — a whole suite has been green with a real contamination bug
    in place before, found only by diffing real data.
@@ -94,10 +111,10 @@ N" blocks — this is the short form, not a replacement for reading those before
    release where it was RIGHT on the first try, but was still verified live rather than trusted.
 8. **Ask before restarting a dev server you did not start, and before deleting data you did not
    create** (`v82_e`, `v82_f`). Check `lessons.json`'s mtime and the server's reported version
-   before touching either. `v83_b` needed a live generation and solved it by starting a THROWAWAY
-   server on a spare port instead of touching the one already running — that pattern is reusable:
-   `/api/tutor` and `/api/writing-feedback` are both stateless, so a spare-port instance is safe for
-   verifying either without any risk to `lessons.json` or another session's process.
+   before touching either. `v83_b`/`v83_c` both needed a live check and solved it by starting a
+   THROWAWAY server on a spare port instead of touching the one already running — reusable: neither
+   `/api/tutor` nor a plain browser click-through writes `lessons.json`, so a spare-port instance is
+   safe for verifying either without any risk to the shared data or another session's process.
 
 ---
 
@@ -108,7 +125,16 @@ N" blocks — this is the short form, not a replacement for reading those before
 `Churros` is 40 items where it was 83 questions, and an item is solved by ANY correct answer, so 80%
 is a materially lower bar. Needs a browser pass, not a code change.
 
-## 2. BUILDABLE NOW, no ruling needed
+## 2. `test/lib-dom.js`'s `textContent` ordering bug — a fix is IN PROGRESS, elsewhere
+
+Found while building `v83_b`'s own test: trailing text after a child element
+(`'x<b>A</b>y'.textContent`) comes back mis-ordered — a pre-existing defect in the shared DOM test
+stub. Flagged as a background task at the `v83_b` cut; **the user has since started that task in a
+separate session, running independently of this one.** Don't duplicate the work — check whether it
+has landed (a fix to `test/lib-dom.js`'s `textContent` getter, likely walking `childNodes` in
+document order instead of the `_text`-then-children shape) before touching this yourself.
+
+## 3. BUILDABLE NOW, no ruling needed
 
 - **`PLAN §7.0` CP1, canonical text + report-only analysis records** — the first buildable slice of
   the accepted parallel curriculum pipeline. It defines stable chapter/sentence/span/token IDs and
@@ -136,20 +162,15 @@ is a materially lower bar. Needs a browser pass, not a code change.
   tested before deciding whether it is worth a prompt change, and measure against several REAL
   learner answers, not just synthetic ones — the same "one lesson proves nothing" caution `PLAN §F3`
   already carries elsewhere in this document.
-- **`test/lib-dom.js`'s `textContent` ordering bug**, found while building `v83_b`'s own test:
-  trailing text after a child element (`'x<b>A</b>y'.textContent`) comes back mis-ordered — a
-  pre-existing defect in the shared DOM test stub, not something `v83_b` introduced or needed to fix.
-  Flagged as a separate background task; worth picking up since any future test relying on
-  `textContent` after a mixed text+element run will hit the same bug.
 
-## 3. ⚠️ OWED BY THE USER, not doable in a container
+## 4. ⚠️ OWED BY THE USER, not doable in a container
 
 - **`PLAN §F3`** — the article prompt fix shipped at `v80_j` and is **UNVERIFIED BY DESIGN**.
   Regenerate MANY lessons, then re-run `probe_article_symmetry_v80j.js` against its baseline: **1.0%
   overall but BIMODAL** (191 chapters at 0%, two at 100%). **One lesson proves nothing.**
-- **The translate pass** for the remaining `en`-only keys (4 new ones from `v83_b`, plus whatever was
-  already outstanding), `translate-ui.js --langnames`, the `hr` `ui.json` pass, and a
-  **native-speaker check of the `cyrillic-sr` table**.
+- **The translate pass** for the remaining `en`-only keys (2 new ones from `v83_c`, 4 from `v83_b`,
+  plus whatever was already outstanding), `translate-ui.js --langnames`, the `hr` `ui.json` pass, and
+  a **native-speaker check of the `cyrillic-sr` table**.
 - **A device pass on the WHOLE `v81_a`…`v81_ad` UI-redesign arc — never done by the user.** The v80
   line changed every card and question screen; `v81` then split generation off the landing page
   (`§C5`) and built the Settings Card with its floating pills, mute-pill consolidation, and the
@@ -159,12 +180,17 @@ is a materially lower bar. Needs a browser pass, not a code change.
   own release entries (`v81_w` onward especially — the first and biggest real visual changes) for
   exactly what to click through; `build_history/v81i_session38_notes.md` also still applies for what
   should stay locked on the lesson path.
-- **`PLAN §12`'s own new UI, never seen by the user in a real browser.** `v83_b` was verified against
-  a live model call and by the test suite, but the selection-popover UX itself (positioning, the
-  grammar/meaning buttons, coexistence with the per-word tap on a touch device) has not had a human
-  look at it. Worth a pass before calling the feature done-done.
+- **`PLAN §12`'s own new UI, never seen by the user in a real browser.** Live-verified by an AGENT
+  (`v83_b`), against a real model call and in a real browser tab — not the same thing as the user's
+  own device pass. The selection-popover UX itself (positioning, the grammar/meaning buttons,
+  coexistence with the per-word tap on a touch device) is worth a look before calling it done-done.
+- **`v83_c`'s progress-card popup, same caveat.** Live-verified by an AGENT (header-row layout, the
+  popup's open/close paths, the flex-fill story panel against a mobile viewport) — not the user's own
+  device pass. Worth a look, especially the "text field fills the full available screen" effect on a
+  REAL short story (the agent's check used one real chapter; a range of story lengths, and the
+  popup's touch ergonomics on a real phone, are still unverified).
 
-## 4. NOT yours to start
+## 5. NOT yours to start
 
 Import "new" mode is POSTPONED. **Track A's CP1 report-only analysis (`PLAN §7.0`) is authorised;
 new input/UI import mode remains postponed.** **Mastery-driven progression (`PLAN §9b/D2`) remains a
@@ -192,12 +218,17 @@ reference and not duplicated in INTERNALS.md.
 - `probe_gates_v80c1.js` — the `PLAN §C1` gate probe. Reports, does not assert.
 - `probe_gates_v77.js` — re-run **and diff** after any progress-card change. **⚠️ It SELECTS its
   chapters from the corpus, so a data drop moves the selection.** Disambiguate by re-running the
-  PREVIOUS client against the CURRENT corpus. Baseline: `v80i_card_gates.txt`.
+  PREVIOUS client against the CURRENT corpus. Baseline: `v80i_card_gates.txt`. **Note it renders
+  the card structurally, not through a browser — it will not see the `v83_c` popup at all** (the
+  chapter icons/lesson icons/bars it inspects now render inside `#comp-nav-modal`, not on the main
+  page); re-check whether this probe still measures what it claims before relying on it post-`v83_c`.
 - `probe_word_green_impact_v81d.js` — what TRACK T's colouring paints, through `_wordProgress` /
   `_wordState`. `PROBE_CLIENT=` diffs two builds. Use this one for anything about the screen.
 - `probe_word_green_v81c.js` — declared probe keys vs the BUILDABLE universe (60.8% at `v81_d`).
 - `probe_comp_skip_v81c.js` — drives `showComplete(true)` over every later chapter and CLICKS
-  `comp-next`. Re-run after ANY change to the progress card's Next wiring.
+  `comp-next`. Re-run after ANY change to the progress card's Next wiring. **Clicks `comp-next`
+  directly by id — unaffected by `v83_c`'s relocation into the popup, since the id and its onclick
+  are unchanged.**
 - `probe_tap_reachable_v81d.js` — highlighted words whose tap resolves to nothing. A related but
   DIFFERENT question from "which free-text selections does the `PLAN §12` popover accept" (that one
   is answered — raw, as-selected, no snapping; see `roadmap_v83.md`'s `v83_b` entry).
@@ -208,17 +239,28 @@ reference and not duplicated in INTERNALS.md.
   **All report; none assert.** The article one is explicitly NOT language-blind — its article lists
   must never migrate into the app.
 - `_cardErrors()` — assert it is empty after any card render you add.
-- `_storyBodyHtml(d, opts)` — **the ONE story renderer** for question panels and progress cards. Now
-  also the ONE place the `PLAN §12` selection hook (`.story-selectable`) is applied, so every caller
-  gets it for free — see `_storySelInit`/`_storySelMaybeShow` (index.html) for the listener itself.
+- `_storyBodyHtml(d, opts)` — **the ONE story renderer** for question panels and progress cards. Also
+  the ONE place `PLAN §12`'s selection hook (`.story-selectable`) is applied — see
+  `_storySelInit`/`_storySelMaybeShow` (index.html). Its `#complete-screen` caller now sits inside a
+  `flex:1` chain (`v83_c`) so the panel fills available screen height; the other callers are
+  unaffected.
 - `_wordProgress(d)` / `_wordState(rec)` — **the ONE per-word progress collector.**
 - `_storyLockedLesson(L, d)` — the ONE "is this lesson closed" rule.
 - `_cardHeader(prefix)` + `.card-screen` — every new card page uses both.
 - `scriptPinNote(lang, script, role)` — every prompt emitting target-language text calls it.
 - `_tutorGatherContext()` / `_tutorRenderScope()` / `/api/tutor` — the tutor's core machinery.
-  `_tutorGatherContext()` now sends `uiLang` (reply language) ADDITIVELY alongside the unchanged
+  `_tutorGatherContext()` sends `uiLang` (reply language) ADDITIVELY alongside the unchanged
   `srcLang` (retrieval content-pairing + ledger lookup) — the two are genuinely different jobs, see
   `roadmap_v83.md`'s `v83_b` entry before touching either.
+- `openCompNav()`/`closeCompNav()` — the `v83_c` popup, same open/close shape as
+  `openSettings()`/`closeSettings()` just above them in the file. `closeCompNav()` is called from
+  `show(id)`'s own multi-`try` chain (same choke point PLAN §12's `_storySelHide()` uses) and
+  explicitly from `openCrosswordFromComplete()` — the one path that shows another overlay without a
+  screen change.
+- `_syncCompHdrNav()` — mirrors `comp-prev`/`comp-next`'s FINAL resolved state onto the story panel's
+  header-row duplicate pair. Called once, at the very end of `showComplete()`. A generic copy, not a
+  re-derivation — extend the MIRROR if a third button ever needs duplicating, don't re-derive its
+  destination logic a second time.
 - `recordObservation(ex, correct)` / `APP.progress.observations` / `refreshBktShadow(d)` — the
   `PLAN §8/B1–B4` evidence path. See `INTERNALS.md` §6b before extending it: only `check()`-graded
   exercises are logged, only resolved vocabulary IDs feed BKT, and no BKT value may become a reader

@@ -29,7 +29,7 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_b` — `PLAN §12` built end to end: the tutor's reply language moved from `srcLang` to `APP.uiLang` (user ruling, whole tutor not just the new flow), and the new text-selection popover itself |
+| **SHIPPED IN THE v83 LINE** | `v83_c` — progress-card redesign: nav/icon rows + progress bars moved into a popup, story field fills the screen (complete-screen only). `v83_b` — `PLAN §12` built end to end: the tutor's reply language moved from `srcLang` to `APP.uiLang` (user ruling, whole tutor not just the new flow), and the new text-selection popover itself |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, the interactive text-selection tutor, shipped at `v83_b` — see the SHIPPED section above. |
 
@@ -1685,6 +1685,106 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_c` — progress-card redesign: nav/bars into a popup, the story field fills the screen
+
+**Shipped by: Claude Code, on user request** (not from a PLAN item — a fresh product ask, given
+mid-session): *"move the navigation control icon rows and the progress bars into a popup, reachable
+via one button in the header row of the text field, before the text translation buttons. Only the
+back/next button should be duplicated and be present ... in the navigation popup, and in the text
+field header row. ... progress card text fields should ideally always fill the full available
+screen."*
+
+**Scope, decided by exploring the markup before writing anything**: "the progress card" is
+`complete-screen` specifically — the term this project's own vocabulary (TRACK T, the roadmap
+throughout) has always used for it, and the one screen whose "machinery" (chapter icons, lesson
+icons, the repeat/drill/crossword/wipe/next row, the progress bars) is substantial enough to justify
+hiding it. The entry/summary card (`summary-screen`, `#sum-sumbox`) has the same header-row SHAPE
+but almost nothing to hide — one button, and progress bars that are ALWAYS EMPTY by design (it sits
+before any question of the chapter, per its own `v77_h` comment) — so it was left unchanged, as were
+`finished-screen` and `unlockstory-screen`, neither of which shares the header-row shape at all. Not
+asked, and not assumed: this reading came from reading the actual markup of all four card screens
+before deciding, not from guessing at "progress cards" (plural, in the request) meaning all of them.
+
+**What shipped:**
+- **The popup (`#comp-nav-modal`)** holds `comp-storyboard`/`comp-lessons`/`comp-actions`/
+  `comp-progress`/`comp-nav-btns` — RELOCATED, not reimplemented. Every one of these ids is still
+  populated by the exact same code inside `showComplete()` as before (`document.getElementById(id)`
+  reads/writes, never `insertBefore`/`append`), so moving the MARKUP could not and did not change how
+  any of it renders. Same overlay shape as the existing `#settings-modal` (fixed, centered,
+  `max-height:calc(100vh-32px)` with internal scroll), reused rather than invented from scratch.
+  `openCompNav()`/`closeCompNav()` mirror `openSettings()`/`closeSettings()` exactly.
+- **The story panel's header row** gained a ☰ trigger, placed BEFORE the translation flags per the
+  request, plus a duplicated back/next pair (`comp-story-prev`/`comp-story-next`) — and, per the
+  request, ONLY that pair: repeat/drill/crossword/wipe stay popup-only, asserted directly (no
+  `comp-story-repeat` etc. exists anywhere).
+- **`_syncCompHdrNav()`**, called once at the very end of `showComplete()` (after all ~7 branches
+  that can set `comp-next`'s destination have run): a GENERIC mirror of `comp-prev`/`comp-next`'s
+  final resolved state (text, title, aria-label, display, disabled, className, onclick) onto the
+  header-row duplicates — not a re-derivation of the branch logic, which would have needed touching
+  ~300 lines across the below-threshold/next-chapter/story-unlock/drill branches and would drift the
+  moment any of them changed. The duplicate wraps the mirrored onclick in its own
+  `stopPropagation()`, since it sits inside the `<summary>` that toggles the details element open/
+  closed.
+- **The popup closes automatically on every screen change or re-render** — one line added to
+  `show(id)`'s existing multi-`try` chain (the same choke point PLAN §12's selection popover uses;
+  `show('complete-screen')` runs at the end of every `showComplete()` call too, including a same-
+  screen refresh after wiping progress, so this covers that case for free) — and **explicitly before
+  a crossword opens** (`openCrosswordFromComplete()`), the one path that shows another overlay
+  without a screen change and so never passes through `show()`. `closeCrossword()`'s own "scroll the
+  learner back" fallback, which used to target `#comp-actions`, now tries `#comp-story-panel` first —
+  `#comp-actions` is inside the (by then closed) popup and would no longer be a useful scroll target.
+- **"Fill the full available screen"**: `#complete-screen .comp-body{flex:1}` (claiming whatever of
+  `.screen`'s existing `min-height:100vh` the header doesn't use) → `#comp-story-panel[open]{flex:1}`
+  → `#comp-story-text{flex:1}`. A FLOOR, not a cap: on a short story the bordered field stretches to
+  fill the remaining screen instead of shrinking to its text; on a long story `flex:1` doesn't stop
+  content from growing past it, so the page scrolls exactly as it always has. SCOPED to
+  `#complete-screen` specifically — `.comp-body`/`.comp-title` are a shared class across all four
+  card screens, and the other three were not asked to change; a plain `.comp-body{flex:1}` would
+  have stretched their content too. Asserted as non-vacuous in the new test (the unscoped form of
+  the rule must NOT appear anywhere in the file).
+
+**Two old test invariants were SUPERSEDED, not just loosened — both rewritten to state what actually
+holds now, with the supersession explained inline:**
+- `unit-story-summary.test.js` §6 (`v82_e`) used to assert the entry/summary card and the progress
+  card carry `content/storyboard/actions/bars/title` in the identical source order — a proxy for
+  "moving between the two screens feels the same." That symmetry is exactly what this redesign ends,
+  by the user's own design, for the progress card alone. Replaced with two narrower, still-true
+  claims: the entry card keeps its own order (unchanged), and the progress card's own SCROLLING PAGE
+  (excluding the popup, which is a separate overlay) still leads with content and closes with the
+  verdict.
+- `smoke-render.test.js`'s row-order section (`v77_l`/`v80_y`/`v81_b`, roadmap §0d: "the story
+  leads") used to assert one chain from `comp-hdr` through to `comp-title` last. Split into two: the
+  MAIN page's own order (still "the story leads, the verdict is last" — §0d's principle, over a
+  shorter page) and the popup's OWN internal order (unchanged, just relocated as a whole). §0d's
+  LOAD-BEARING half — the story precedes the actions — still holds in absolute source position
+  (the actions just happen to be in a popup now) and stayed asserted on its own, unedited.
+
+**Verified at the layer where the claim is observable**: new `unit-progress-card-nav.test.js` (7
+sections) — the popup's contents and overlay shape, the header row's element order and the "☰
+before the flags" claim, `_syncCompHdrNav` exercised BEHAVIOURALLY (not just source-pinned: a real
+mirror call, a real disabled-state mirror, the duplicate's onclick actually invoking the source
+button's own handler), the popup's close-on-navigate wired through the REAL `show()` function (not
+only regex-pinned — called for real against a stub screen and the popup's `display` checked
+afterward), the crossword-open early-close, `closeCrossword`'s updated fallback, and the
+`#complete-screen`-scoped flex-fill rule with an explicit non-vacuity check that the unscoped form is
+absent. **Mutation-tested**: removing the `disabled` mirror line, removing `show(id)`'s
+`closeCompNav()` call, and unscoping the `.comp-body{flex:1}` rule each independently turn the new
+test red.
+
+**Live-verified in a real browser** (a throwaway server on a spare port, per the `v83_b` pattern —
+the other session's own already-running dev server left untouched): header-row order confirmed
+(← 📖 label [☰ flags 💬] →), `comp-story-next`'s title correctly mirrored from `comp-next` ("Next"),
+the popup opens/closes via the ☰ button, the × button, and a backdrop click (but NOT a click inside
+the box), auto-closes on a real navigation (`showLibraryClean()`, confirmed after its async
+`_restoreFormLang().finally()` resolved — an artifact of my first, too-fast check, not a bug), and
+explicitly closes before the crossword overlay opens. The story panel measured 552px tall against an
+812px mobile viewport with a header above it — `flex:1` filling the remaining space, confirmed live
+rather than only asserted from the CSS source.
+
+**Testing**: 253/226/0/0 full baseline green (from 252/225 — one new test file). `docs/index.html`
+rebuilt. `ui.json` en gained 2 keys (`complete.nav_open`, `complete.nav_title`), not yet translated
+into the other 32 languages.
 
 ### `v83_b` — `PLAN §12`, the interactive text-selection tutor: select story text → ask the tutor
 

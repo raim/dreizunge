@@ -149,6 +149,7 @@ run('unit: progress-card swallowed errors are visible (v77_b)', 'node', [path.jo
 run('unit: mixed-driven story unlock is reachable by playing (v77_c)', 'node', [path.join(__dirname, 'unit-mixed-unlock-reachable.test.js')]);
 run('unit: story-finished card — the last page of the walk (v77_f)', 'node', [path.join(__dirname, 'unit-story-finished.test.js')]);
 run('unit: story-summary card — the first page of the walk (v77_h)', 'node', [path.join(__dirname, 'unit-story-summary.test.js')]);
+run('unit: progress-card nav/bars popup (v83_c)', 'node', [path.join(__dirname, 'unit-progress-card-nav.test.js')]);
 run('unit: UI journey transitions (PLAN §C0.1)', 'node', [path.join(__dirname, 'unit-ui-journeys.test.js')]);
 run('unit: language picker sync, generation screen <-> library (PLAN §C5)', 'node', [path.join(__dirname, 'unit-lang-picker-sync.test.js')]);
 run('unit: static build hides library "Generate new" button (v81_x)', 'node', [path.join(__dirname, 'unit-static-gen-btn-hidden.test.js')]);

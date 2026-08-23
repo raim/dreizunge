@@ -1415,20 +1415,40 @@ console.log('  repeat on finished lessons + crossword cursor highlight: OK');
   // v81_b (user): the progress bars moved below the ACTION row too, so the chapter-icon,
   // lesson-icon and play-button rows are contiguous — the bars are the numeric footnote and sit
   // last. The §0d principle is unchanged and still asserted below.
-  const ROWS = ['comp-hdr',
-                'comp-story-panel', 'comp-vocab', 'comp-storyboard', 'comp-lessons', 'comp-actions',
-                'comp-progress', 'comp-title'];
-  const order = ROWS.map(id => ROOT_HTML.indexOf('id="' + id + '"'));
-  order.forEach((at, i) => assert.ok(at > 0, `${ROWS[i]} exists`));
-  for (let i = 1; i < order.length; i++) {
-    assert.ok(order[i] > order[i - 1],
-      `the story leads: ${ROWS[i]} must come after ${ROWS[i - 1]} on the card`);
+  // user (progress-card redesign): SUPERSEDES the single tail-to-head chain this used to assert.
+  // `comp-storyboard`/`comp-lessons`/`comp-actions`/`comp-progress` are no longer part of the
+  // scrolling page at all — they moved into `#comp-nav-modal`, a popup reached via the ☰ button in
+  // the story panel's own header row (`_syncCompHdrNav`'s comment explains the duplicated
+  // back/next pair). Asserting their position relative to `comp-title` is no longer a meaningful
+  // claim: the two are never on screen "at the same time" the way rows in one scrolling page are.
+  // Split in two: the MAIN page's own order (still "the story leads, the verdict is last" — §0d's
+  // principle, now expressed over a shorter page), and the popup's OWN internal order (unchanged
+  // from before the redesign, just relocated as a whole). §0d's load-bearing half — the story
+  // precedes the actions — still holds in absolute source position and is asserted on its own,
+  // exactly as before.
+  const MAIN_ROWS = ['comp-hdr', 'comp-story-panel', 'comp-vocab', 'comp-title'];
+  const mainOrder = MAIN_ROWS.map(id => ROOT_HTML.indexOf('id="' + id + '"'));
+  mainOrder.forEach((at, i) => assert.ok(at > 0, `${MAIN_ROWS[i]} exists`));
+  for (let i = 1; i < mainOrder.length; i++) {
+    assert.ok(mainOrder[i] > mainOrder[i - 1],
+      `the story leads the scrolling page: ${MAIN_ROWS[i]} must come after ${MAIN_ROWS[i - 1]}`);
+  }
+  const POPUP_ROWS = ['comp-storyboard', 'comp-lessons', 'comp-actions', 'comp-progress'];
+  const popupOrder = POPUP_ROWS.map(id => ROOT_HTML.indexOf('id="' + id + '"'));
+  popupOrder.forEach((at, i) => assert.ok(at > 0, `${POPUP_ROWS[i]} exists`));
+  for (let i = 1; i < popupOrder.length; i++) {
+    assert.ok(popupOrder[i] > popupOrder[i - 1],
+      `inside the nav popup: ${POPUP_ROWS[i]} must come after ${POPUP_ROWS[i - 1]}`);
   }
   // The load-bearing half, stated on its own so a failure names the principle rather than a pair.
   assert.ok(ROOT_HTML.indexOf('id="comp-story-panel"') < ROOT_HTML.indexOf('id="comp-actions"'),
-    'the story text comes BEFORE the action buttons (§0d)');
-  assert.ok(ROOT_HTML.indexOf('id="comp-title"') > ROOT_HTML.indexOf('id="comp-actions"'),
-    'and the verdict line comes AFTER them (v77_n)');
+    'the story text comes BEFORE the action buttons (§0d) — still true with the actions in a popup');
+  // user (progress-card redesign): SUPERSEDES this v77_n comparison specifically. `comp-actions`
+  // now lives inside the popup, which the MAIN_ROWS chain above already established comes AFTER
+  // `comp-title` in source position — so this line's old claim ("title after actions") is now
+  // backwards by construction, not by regression: title is the last row of the scrolling PAGE,
+  // popup content is a separate overlay entirely. MAIN_ROWS already covers "title is last on the
+  // page an unopened card shows"; nothing here needs comparing title against popup-only ids anymore.
   // The card screens must STRETCH their children, or the header renders as a narrow pill instead of
   // the storyline page's full-width bar however faithfully its markup is copied (v77_n).
   assert.ok(/\.card-screen\{[^}]*align-items:stretch/.test(ROOT_HTML),

@@ -190,6 +190,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .target-box{background:var(--blue-light);border:2px solid var(--blue);border-radius:var(--radius);padding:12px 15px;margin:10px 0 4px;display:flex;align-items:center;gap:8px}
 .target-box-text{font-size:18px;font-weight:800;color:var(--blue-dark);flex:1}
 .spk-ico{background:none;border:none;cursor:pointer;font-size:20px;padding:2px}
+.spk-ico.disabled,.spk-ico:disabled{opacity:.35;cursor:not-allowed}
 .pron{font-size:11px;color:var(--gray-dark);font-style:italic;margin-top:3px}ruby{ruby-align:center}rt{font-size:0.55em;color:var(--gray-dark);font-style:normal}
 .choices{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
 .choices.one-col{grid-template-columns:1fr}
@@ -280,6 +281,24 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
    the header markup was copied. */
 .card-screen{padding:0 0 40px;max-width:540px;width:100%;text-align:center;margin:0 auto;align-items:stretch}
 .comp-body{padding:12px 16px 0}
+/* user (progress-card redesign): the story panel should "ideally always fill the full available
+   screen" — SCOPED to #complete-screen alone, since .comp-body/.comp-title are shared by three
+   other card screens (finished/summary/unlocked) this request did not ask to change. .screen is
+   already a flex column with min-height:100vh (see .screen above); making .comp-body the one
+   flex:1 child lets it claim whatever of that 100vh the fixed-height header (#comp-hdr) does not
+   use. #comp-story-panel is then the one flex:1 child WITHIN comp-body, so on a short story the
+   bordered field itself stretches to fill the remaining screen instead of shrinking to its text;
+   on a long story flex:1 still only sets a MINIMUM (flex-basis:auto content still grows past it),
+   so the page scrolls exactly as it always has — nothing here caps height, only floors it. */
+#complete-screen .comp-body{display:flex;flex-direction:column;flex:1;min-height:0}
+#complete-screen #comp-story-panel{display:flex;flex-direction:column}
+#complete-screen #comp-story-panel[open]{flex:1}
+#complete-screen #comp-story-text{flex:1}
+/* The flags' own margin-left:auto (_storyFlagButtonsHtml, shared by 4 callers) is right FOR THOSE
+   callers, each the last thing in their row. Here they sit before the speak button inside a
+   wrapper that already carries its own margin-left:auto (see the summary row markup) — cancelled
+   only in this one context, not on the shared function's other 3 callers. */
+#comp-story-panel .story-flag-btns{margin-left:0}
 .comp-title{font-size:28px;font-weight:900;color:var(--text);margin-bottom:4px}
 .vocab-box{width:100%;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:14px 16px;margin-bottom:18px;text-align:left;box-shadow:var(--shadow-card)}
 .vocab-hdr{font-size:11px;font-weight:900;color:var(--gray);text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px}.vocab-chip{display:inline-flex;align-items:center;gap:4px;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:20px;padding:3px 10px;font-size:13px;font-weight:700;margin:3px;
@@ -1497,11 +1516,24 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
        re-implemented, not a second custom widget. `open` by default, matching the question panel's
        own "never collapse by default" ruling (v80_u). -->
   <details id="comp-story-panel" open style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:var(--white)">
+    <!-- user (progress-card redesign): the nav/progress popup trigger (before the translation
+         flags, per the request) plus a duplicated back/next pair — the ONLY controls duplicated
+         between this row and the popup (`#comp-nav-modal` below). Everything else that used to sit
+         below the story (chapter icons, lesson icons, the repeat/drill/crossword/wipe row, the
+         progress bars) moved INTO the popup, unmodified — this row is a second entry point to the
+         same elements, not a new implementation of them. `_syncCompHdrNav()` (showComplete) mirrors
+         `comp-prev`/`comp-next`'s resolved state onto `comp-story-prev`/`comp-story-next` every
+         render, so the two pairs can never disagree about where "back"/"forward" lead. -->
     <summary style="display:flex;align-items:center;gap:10px;margin-bottom:6px;cursor:pointer;outline:none">
+      <button class="spk-ico" id="comp-story-prev" style="display:none" onclick="event.stopPropagation();" title="">←</button>
       <span style="font-size:20px">📖</span>
       <span style="font-size:15px;font-weight:900;color:var(--text)" id="comp-story-panel-lbl">Chapter</span>
-      <span id="comp-story-flags"></span>
-      <button class="spk-ico" id="comp-story-spk" onclick="event.stopPropagation();speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">💬</button>
+      <span style="display:flex;align-items:center;gap:6px;margin-left:auto">
+        <button class="spk-ico" id="comp-story-nav-btn" onclick="event.stopPropagation();openCompNav();" title="">☰</button>
+        <span id="comp-story-flags"></span>
+        <button class="spk-ico" id="comp-story-spk" onclick="event.stopPropagation();speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">💬</button>
+      </span>
+      <button class="spk-ico" id="comp-story-next" style="display:none" onclick="event.stopPropagation();" title="">→</button>
     </summary>
     <!-- v74_l: NOT italic, and larger. This panel is the reward for finishing the chapter and the
          thing the learner is meant to actually READ — a long italic run at 13px reads as a caption,
@@ -1514,54 +1546,62 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <style>#comp-story-text p{margin:0 0 12px}#comp-story-text p:last-child{margin-bottom:0}</style>
   </details>
   <div class="vocab-box" style="margin-top:18px"><div class="vocab-hdr" id="words-from-lbl">Words from this lesson</div><div id="comp-vocab" style="display:flex;flex-wrap:wrap;margin:-3px"></div></div>
-  <!-- Below the text: the machinery. -->
-  <!-- v80_z (user): the CHAPTER ICON row — one topicEmoji per chapter, at lesson-icon size,
-       just ABOVE the lesson-type buttons and BELOW the story and vocabulary. The id is
-       historical: this slot used to hold the storyline storyboard, which now appears only on the
-       storyline page. Renaming it would touch 82 client references and 12 test ones. -->
-  <div id="comp-storyboard" style="display:none;margin-top:12px"></div>
-  <div id="comp-lessons" style="display:none;margin-top:12px"></div>
-  <!-- v60: exactly two buttons. Next opens the next questions directly; Back returns to the
-       storyline (deck), or the landing page for a solo chapter. -->
-  <!-- v70_g: one action row. Icons only; the former button text is the tooltip. Secondary options
-       sit left of the primary action so the eye lands on the forward move last. Below the pass
-       mark the primary becomes REPEAT (↻) rather than Next (→) — the learner picks among repeat,
-       drill, crossword and whatever is added later, instead of Next silently meaning one of them. -->
-  <div id="comp-actions" style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:14px;flex-wrap:wrap">
-    <!-- v77_h: ← to the summary card, the walk's first page. A NEW id: the old `comp-back` was
-         deleted in v71_k and unit-card-consistency asserts its absence on purpose, so the §0c
-         spine is built rather than revived. Hidden when this storyline has no summary — 37 of 84
-         do not — so the control never leads to a blank page. Handler assigned in JS (the stub DOM
-         cannot click an inline one). -->
-    <button class="comp-ico" id="comp-prev" style="display:none">←</button>
-    <button class="comp-ico" id="comp-repeat" style="display:none" onclick="repeatForCoverage()">↻</button>
-    <button class="comp-ico" id="comp-drill" style="display:none" onclick="startDrill()">🎯</button>
-    <button class="comp-ico" id="comp-crossword" style="display:none" onclick="openCrosswordFromComplete()">🔠</button>
-    <!-- v78_e (user): wipe THIS CHAPTER's progress, the chapter-level counterpart to the
-         storyline-wide control on the storyline page. Both go through _clearChapterProgress, so a
-         chapter wiped from here forgets exactly what a chapter wiped from there forgets — including
-         the `chapterDone` stamp that v77_s found surviving a wipe. Hidden on a drill (its topic is
-         synthetic and has no progress of its own). Handler assigned in JS: the stub DOM cannot
-         click an inline one (standing rule 22). -->
-    <button class="comp-ico" id="comp-wipe" style="display:none">🧹</button>
-    <button class="comp-ico primary" id="comp-next" onclick="afterComplete()">→</button>
-  </div>
-
-  <!-- v80_y (user): the progress BARS sit at the BOTTOM. v81_b (user): below the ACTION row
-       too, so the chapter-icon, lesson-icon and play-button rows are contiguous. Under
-       TRACK T the story is the progress display and leads the card; the bars are the numeric
-       backup and no longer compete with it for the top. The storyline HEADER bar is untouched —
-       it belongs to the header, not to this card. -->
-  <div id="comp-progress" style="margin-top:14px;text-align:left"></div>
-
-  <div id="comp-nav-btns" style="display:none;flex-wrap:wrap;justify-content:center;margin-top:8px"></div>
   <!-- v77_n (user): the progress message sits at the BOTTOM, below the play buttons, on every
-       progress card. It is a verdict on what just happened, not a heading for what follows — and
-       putting it first pushed the storyboard and the bars down, so the card no longer opened the
-       way the storyline page does. Reading order is now: header, storyboard, bars, the story, its
-       words, the lesson icons, the actions — then the verdict. -->
+       progress card. It is a verdict on what just happened, not a heading for what follows. -->
   <div class="comp-title" id="comp-title" style="margin-top:16px">Lesson complete!</div>
   </div><!-- /.comp-body -->
+  <!-- user (progress-card redesign): "the machinery" — chapter icons, lesson icons, the action row,
+       the progress bars, the teacher-only extra nav — moved OFF the scrolling page and INTO this
+       popup, reached via the ☰ button in the story panel's own header row (`comp-story-nav-btn`,
+       before the translation flags, per the request). Each element keeps its id and is populated
+       by the exact same code in `showComplete()` as before — relocating the MARKUP does not change
+       how any of it is rendered, only where it lives, so none of that logic needed to move. Same
+       overlay pattern as `#settings-modal` (position:fixed, centered, `max-height:calc(100vh-32px)`
+       so it scrolls internally on a short viewport rather than growing past it), reused rather than
+       reinvented. Closed automatically by `show(id)` on every screen change/re-render (mirrors how
+       `_storySelHide()`, PLAN §12, keeps ITS popover from surviving a navigation) and explicitly by
+       `openCrosswordFromComplete()`, the one path that opens ANOTHER modal on top without a screen
+       change. -->
+  <div id="comp-nav-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px" onclick="if(event.target===this) closeCompNav()">
+    <div style="background:var(--white);border-radius:var(--radius-lg);max-width:480px;width:100%;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35);max-height:calc(100vh - 32px);overflow-y:auto;box-sizing:border-box;text-align:center">
+      <div style="display:flex;align-items:center;margin-bottom:12px">
+        <span style="font-size:16px;font-weight:900" id="comp-nav-modal-title"></span>
+        <button onclick="closeCompNav()" style="margin-left:auto;background:transparent;border:none;font-size:20px;cursor:pointer">×</button>
+      </div>
+      <!-- v80_z (user): the CHAPTER ICON row — one topicEmoji per chapter, at lesson-icon size. The
+           id is historical: this slot used to hold the storyline storyboard, which now appears only
+           on the storyline page. Renaming it would touch 82 client references and 12 test ones. -->
+      <div id="comp-storyboard" style="display:none"></div>
+      <div id="comp-lessons" style="display:none;margin-top:12px"></div>
+      <!-- v60: exactly two buttons. Next opens the next questions directly; Back returns to the
+           storyline (deck), or the landing page for a solo chapter. -->
+      <!-- v70_g: one action row. Icons only; the former button text is the tooltip. Secondary
+           options sit left of the primary action so the eye lands on the forward move last. -->
+      <div id="comp-actions" style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:14px;flex-wrap:wrap">
+        <!-- v77_h: ← to the summary card, the walk's first page. A NEW id: the old `comp-back` was
+             deleted in v71_k and unit-card-consistency asserts its absence on purpose, so the §0c
+             spine is built rather than revived. Hidden when this storyline has no summary — 37 of 84
+             do not — so the control never leads to a blank page. Handler assigned in JS (the stub
+             DOM cannot click an inline one). -->
+        <button class="comp-ico" id="comp-prev" style="display:none">←</button>
+        <button class="comp-ico" id="comp-repeat" style="display:none" onclick="repeatForCoverage()">↻</button>
+        <button class="comp-ico" id="comp-drill" style="display:none" onclick="startDrill()">🎯</button>
+        <button class="comp-ico" id="comp-crossword" style="display:none" onclick="openCrosswordFromComplete()">🔠</button>
+        <!-- v78_e (user): wipe THIS CHAPTER's progress, the chapter-level counterpart to the
+             storyline-wide control on the storyline page. Both go through _clearChapterProgress, so
+             a chapter wiped from here forgets exactly what a chapter wiped from there forgets —
+             including the `chapterDone` stamp that v77_s found surviving a wipe. Hidden on a drill
+             (its topic is synthetic and has no progress of its own). Handler assigned in JS: the
+             stub DOM cannot click an inline one (standing rule 22). -->
+        <button class="comp-ico" id="comp-wipe" style="display:none">🧹</button>
+        <button class="comp-ico primary" id="comp-next" onclick="afterComplete()">→</button>
+      </div>
+      <!-- v80_y (user): the progress BARS sit at the BOTTOM. v81_b (user): below the ACTION row
+           too, so the chapter-icon, lesson-icon and play-button rows are contiguous. -->
+      <div id="comp-progress" style="margin-top:14px;text-align:left"></div>
+      <div id="comp-nav-btns" style="display:none;flex-wrap:wrap;justify-content:center;margin-top:8px"></div>
+    </div>
+  </div>
 </div>
 
 <!-- ══ STORY FINISHED ══════════════════════════════════════════════════
@@ -2366,6 +2406,10 @@ function applyUIStrings() {
   try { updateTtsVoiceNote(); } catch(_){}
   _setText('comp-title',    t('complete.title'));
   _setText('words-from-lbl', t('lesson.words_from'));
+  // progress-card redesign: the ☰ popup trigger (story panel header) and the popup's own heading.
+  _setAttr('comp-story-nav-btn', 'title', t('complete.nav_open'));
+  _setAttr('comp-story-nav-btn', 'aria-label', t('complete.nav_open'));
+  _setText('comp-nav-modal-title', t('complete.nav_title'));
   // PLAN §C4 "arrow control": the "I speak"/"I learn" icon+label pair that used to sit above each
   // picker is gone — the acceptance detail from the user's original UI brief ("remove its
   // duplicated icons and descriptive text without changing the selected language-pair state").
@@ -2733,6 +2777,13 @@ function openSettings(){
   try { updateSpeechMismatchPill(); } catch(_) {}
 }
 function closeSettings(){ const m=document.getElementById('settings-modal'); if(m) m.style.display='none'; }
+
+// user (progress-card redesign): the ☰ button in the story panel's header row opens this — chapter
+// icons, lesson icons, the repeat/drill/crossword/wipe/next row, and the progress bars, all moved
+// off the scrolling page (see #comp-nav-modal's own comment for why). Same open/close shape as
+// openSettings/closeSettings just above, reused rather than reinvented.
+function openCompNav(){ const m=document.getElementById('comp-nav-modal'); if(m) m.style.display='flex'; }
+function closeCompNav(){ const m=document.getElementById('comp-nav-modal'); if(m) m.style.display='none'; }
 
 async function _acctPost(path, body){
   const r = await fetch(path, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body||{}) });
@@ -3751,7 +3802,7 @@ function _closeEditorsOnNav(targetId){
   }
   if(targetId!=='storyline-screen'){ try{ closeStorylineEditInScreen(); }catch(_){} }
 }
-function show(id){ APP.screen = id; _closeEditorsOnNav(id); document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); try{ updateStaticFlagBanner(); }catch(_){} try{ refreshTutorAvailability(); }catch(_){} try{ _storySelHide(); }catch(_){} }   // v62: the tutor follows the learner across screens; PLAN §12: a stale selection popover must not survive a navigation
+function show(id){ APP.screen = id; _closeEditorsOnNav(id); document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); try{ updateStaticFlagBanner(); }catch(_){} try{ refreshTutorAvailability(); }catch(_){} try{ _storySelHide(); }catch(_){} try{ closeCompNav(); }catch(_){} }   // v62: the tutor follows the learner across screens; PLAN §12: a stale selection popover must not survive a navigation; progress-card redesign: neither must a stale nav popup — this fires on every showComplete() re-render too, since it ends with show('complete-screen')
 // ── PLAN §C0.2 — explicit screen renderers: a NAMING SEAM, not a rewrite ─────────────────────
 // The plan's own words: "must first preserve every current entry point; no visual redesign
 // bundled in." These delegate to the functions that already own their rendering — nothing about
@@ -12634,6 +12685,31 @@ function _compBtnState(btn, available, reason){
   btn.classList.toggle('disabled', !available);
   if (!available && reason) btn.title = reason;
 }
+// user (progress-card redesign): mirror comp-prev/comp-next's FINAL resolved state onto the
+// duplicated pair in the story panel's header row (comp-story-prev/comp-story-next), so the two
+// pairs can never disagree about where "back"/"forward" lead. A generic COPY, not a re-derivation:
+// comp-next's destination depends on ~7 branches of state in showComplete() this function does not
+// see and does not need to — mirroring the element AFTER every branch has run is the only way to
+// never drift from it, and stays correct if a future branch changes what comp-next does. Called
+// once, at the very end of showComplete().
+function _syncCompHdrNav(){
+  const mirror = (srcId, dstId) => {
+    const src = document.getElementById(srcId), dst = document.getElementById(dstId);
+    if (!src || !dst) return;
+    dst.textContent = src.textContent;
+    dst.title = src.title;
+    try { dst.setAttribute('aria-label', src.getAttribute('aria-label') || src.title); } catch(_) {}
+    dst.style.display = src.style.display;
+    dst.disabled = src.disabled;
+    dst.className = 'spk-ico' + (src.disabled ? ' disabled' : '');
+    // The duplicate needs its OWN stopPropagation (it sits inside the <summary> that toggles the
+    // details open/closed) in addition to whatever comp-prev/comp-next's own onclick does.
+    const inner = src.onclick;
+    dst.onclick = (e) => { try { e.stopPropagation(); } catch(_) {} if (inner) inner(e); };
+  };
+  mirror('comp-prev', 'comp-story-prev');
+  mirror('comp-next', 'comp-story-next');
+}
 // v70_l: replay to raise coverage. Separate from Next so BOTH can be offered — a finished lesson
 // still needs a way back in when the storyline's pass mark is higher than the lesson-level ones.
 function repeatForCoverage(){
@@ -12646,6 +12722,10 @@ function repeatForCoverage(){
 function openCrosswordFromComplete(){
   const idx = APP.cur?.lessonIdx;
   if (idx == null) return;
+  // progress-card redesign: this button now lives INSIDE #comp-nav-modal. openCrossword() shows
+  // #cw-modal without a screen change, so show(id)'s own closeCompNav() call never fires here —
+  // close it explicitly, or the two overlays would stack.
+  try{ closeCompNav(); }catch(_){}
   openCrossword(idx);
 }
 function openCrossword(lessonIdx, attempt){
@@ -12698,8 +12778,14 @@ function closeCrossword(){
   APP._cw = null;
   // v70_o: the modal scrolls the page on a phone, so closing it could leave the viewport parked
   // somewhere unrelated. Put the learner back on the card they came from.
+  // progress-card redesign: #comp-actions (reached via openCrosswordFromComplete) now lives inside
+  // the CLOSED #comp-nav-modal at this point, so scrolling to it would target a hidden element.
+  // #comp-story-panel is the dominant visible content post-redesign — scroll there instead; the
+  // old #comp-actions/#complete-card targets stay as fallbacks for whatever else reaches this path
+  // (#complete-card has never existed in this markup — a pre-existing, harmless dead fallback).
   try {
-    const card = document.getElementById('comp-actions') || document.getElementById('complete-card');
+    const card = document.getElementById('comp-story-panel') || document.getElementById('comp-actions')
+                 || document.getElementById('complete-card');
     if (card && typeof card.scrollIntoView === 'function') card.scrollIntoView({ block: 'center' });
   } catch(_) {}
 }
@@ -17536,6 +17622,9 @@ function showComplete(review, lessonIdxOverride){
       if (_spk) _spk.style.display = (typeof _lessonIsDialect==='function' && _lessonIsDialect()) ? 'none' : '';
     }
   }
+  // progress-card redesign: the header-row back/next duplicate, mirrored AFTER every branch above
+  // has resolved comp-prev/comp-next — see _syncCompHdrNav's own comment for why it must run last.
+  try { _syncCompHdrNav(); } catch(e) { if (typeof _cardNote === 'function') _cardNote('hdr-nav-sync', e); }
   // v61: end-of-chapter tutor entry (shown only with a live backend + a story; not for drills).
   show('complete-screen');
 }

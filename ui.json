@@ -350,6 +350,8 @@
     "toast.export_preparing": "⏳ Preparing export…",
     "complete.nav_lessonset": "📚 Lesson set",
     "complete.nav_storyline": "📖 Storyline",
+    "complete.nav_open": "Chapter navigation & progress",
+    "complete.nav_title": "Navigation & progress",
     "lesson.type.desc.vocab": "Vocabulary and sentences with translations",
     "lesson.type.desc.grammar": "Noun gender, articles and plural forms",
     "lesson.type.desc.conjugation": "Verb conjugation in present tense",
