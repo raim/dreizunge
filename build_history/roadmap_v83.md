@@ -29,7 +29,7 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_d` — the entry/summary card gets the SAME nav/bars popup `v83_c` gave the progress card (shared `_mirrorNavBtn`/`_closeCardNavPopups`), plus thicker header-row back/forward arrows. `v83_c` — progress-card redesign: nav/icon rows + progress bars moved into a popup, story field fills the screen (complete-screen only). `v83_b` — `PLAN §12` built end to end: the tutor's reply language moved from `srcLang` to `APP.uiLang` (user ruling, whole tutor not just the new flow), and the new text-selection popover itself |
+| **SHIPPED IN THE v83 LINE** | `v83_e` — header-row back/forward arrows now render the EXACT `.lang-pair-arrow` glyph (➜, weight 900), not just a heavier stroke on `←`/`→`; `_mirrorNavBtn` stopped mirroring `textContent` so the fixed glyph survives re-renders. `v83_d` — the entry/summary card gets the SAME nav/bars popup `v83_c` gave the progress card (shared `_mirrorNavBtn`/`_closeCardNavPopups`). `v83_c` — progress-card redesign: nav/icon rows + progress bars moved into a popup, story field fills the screen (complete-screen only). `v83_b` — `PLAN §12` built end to end: the tutor's reply language moved from `srcLang` to `APP.uiLang` (user ruling, whole tutor not just the new flow), and the new text-selection popover itself |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, the interactive text-selection tutor, shipped at `v83_b` — see the SHIPPED section above. |
 
@@ -1685,6 +1685,54 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_e` — header-row arrows match the language-pair arrow exactly, not just a heavier stroke
+
+**Shipped by: Claude Code, on user follow-up** — `v83_d`'s CSS-stroke "thicker arrows" fix was not
+enough: *"even thicker arrow, e.g. the same as used between the source and target language
+selectors."*
+
+**What that reference arrow actually is, measured before touching anything**: `.lang-pair-arrow`
+(between `src-lang-select`/`lang-select`) is `➜` — U+279C HEAVY ROUND-TIPPED RIGHTWARDS ARROW, not
+the plain `→` (U+2192) `comp-story-next`/`comp-story-prev`/`sum-sum-next` had been showing — at
+`font-size:34px;font-weight:900`. `-webkit-text-stroke` on the THIN glyph (`v83_d`'s fix) can thicken
+a stroke but cannot turn one Unicode character into a visually different, heavier-BY-DESIGN one; the
+user's own "even thicker" made that gap concrete.
+
+**What shipped**: the three header-row duplicates now render `➜` itself — the SAME character, same
+`font-weight:900` — scaled to `26px` rather than copied at `34px`, which would have dwarfed the
+20px `📖`/`☰`/`💬` icons already in that row. `comp-story-prev` has no natural "heavy leftwards"
+counterpart to reach for, so it reuses the exact same `➜` glyph with `transform:scaleX(-1)` — a
+horizontal flip, not `rotate(180deg)` (which would also flip vertically for an asymmetric glyph) —
+rather than introducing a second, possibly visually-mismatched character.
+
+**This forced a real design change, not just a bigger number**: `_mirrorNavBtn` (`v83_d`) used to
+copy `dst.textContent = src.textContent`, so the duplicate always showed whatever plain `←`/`→`
+`comp-prev`/`comp-next` happened to show. Once the duplicate's glyph is meant to be a FIXED, heavier
+character distinct from the source's own thin one, mirroring `textContent` would silently overwrite
+it back to `←`/`→` on every render. Removed that one line; the glyph is now static markup, set once,
+never touched by the sync. Everything ABOUT WHERE THE BUTTON LEADS — title, aria-label, display,
+disabled, onclick — is still mirrored, unchanged; only the icon decoupled.
+
+**Verified at the layer where the claim is observable**: `unit-progress-card-nav.test.js` §3 and §8
+rewritten (not just re-asserted) — §3 now asserts `_mirrorNavBtn` does NOT touch `textContent`, and
+behaviourally seeds the destination with ITS OWN glyph (`➜`, distinct from the source's plain `→`)
+before mirroring, to prove the mirror leaves it alone rather than merely happening not to change it
+in a test that never gave it a reason to. §8 confirms the reference arrow really is `➜`/900 (so the
+match is verified, not assumed), that both forward duplicates render the same character+weight
+statically in markup, and that `comp-story-prev` specifically carries `transform:scaleX(-1)` on the
+SAME glyph rather than a different one. **Mutation-tested**: removing the flip transform and
+re-adding the textContent-mirror line each independently turn the test red.
+
+**Live-verified in a real browser**: `getComputedStyle` on all three duplicates confirmed
+`font-size:26px;font-weight:900` and the resolved glyph `➜`; `comp-story-prev`'s computed
+`transform` read `matrix(-1, 0, 0, 1, 0, 0)` — `scaleX(-1)`, applied and rendering, not just present
+in the stylesheet. Cross-checked against the live `.lang-pair-arrow` reference on the same page
+(`34px`/`900`, same character) to confirm the two genuinely match by the property the user named,
+not by assumption.
+
+**Testing**: 253/226/0/0 full baseline green — same counts as `v83_c`/`v83_d` (test file extended
+again, no new file). `docs/index.html` rebuilt. No `ui.json` change.
 
 ### `v83_d` — entry card gets the same nav/bars popup; header-row back/forward arrows made heavier
 

@@ -191,12 +191,17 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .target-box-text{font-size:18px;font-weight:800;color:var(--blue-dark);flex:1}
 .spk-ico{background:none;border:none;cursor:pointer;font-size:20px;padding:2px}
 .spk-ico.disabled,.spk-ico:disabled{opacity:.35;cursor:not-allowed}
-/* user: "use thicker arrows for back/forward buttons in the story header" — the ←/→ glyph itself
-   (Nunito has no bold shape for it that font-weight alone reliably picks up), so a text-stroke
-   fills the stroke out visually thicker without changing the character — keeps _syncCompHdrNav's
-   `dst.textContent = src.textContent` mirror untouched, so the duplicate always shows exactly
-   whatever comp-prev/comp-next itself is showing, just heavier. */
-#comp-story-prev,#comp-story-next,#sum-sum-next{font-weight:900;-webkit-text-stroke:.6px currentColor}
+/* user: "use thicker arrows for back/forward buttons in the story header", then "even thicker ...
+   the same as used between the source and target language selectors" — that is `.lang-pair-arrow`
+   below (➜, U+279C HEAVY ROUND-TIPPED RIGHTWARDS ARROW, weight 900), at 34px between two selects.
+   Same GLYPH and weight here, scaled down to fit a 20px icon row rather than copied at 34px, which
+   would dwarf the 📖/☰/💬 it sits beside. comp-story-prev shares the SAME glyph, horizontally
+   flipped — there is no "heavy leftwards" counterpart character, and a mirrored ➜ reads correctly
+   as "back" without needing one. Static, not mirrored: _mirrorNavBtn no longer copies textContent
+   (see its own comment) — a fixed glyph makes more sense than reproducing whatever comp-prev/
+   comp-next's OWN thin ←/→ happens to be. */
+#comp-story-next,#sum-sum-next{font-size:26px;font-weight:900}
+#comp-story-prev{font-size:26px;font-weight:900;display:inline-block;transform:scaleX(-1)}
 .pron{font-size:11px;color:var(--gray-dark);font-style:italic;margin-top:3px}ruby{ruby-align:center}rt{font-size:0.55em;color:var(--gray-dark);font-style:normal}
 .choices{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
 .choices.one-col{grid-template-columns:1fr}
@@ -1531,7 +1536,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
          `comp-prev`/`comp-next`'s resolved state onto `comp-story-prev`/`comp-story-next` every
          render, so the two pairs can never disagree about where "back"/"forward" lead. -->
     <summary style="display:flex;align-items:center;gap:10px;margin-bottom:6px;cursor:pointer;outline:none">
-      <button class="spk-ico" id="comp-story-prev" style="display:none" onclick="event.stopPropagation();" title="">←</button>
+      <button class="spk-ico" id="comp-story-prev" style="display:none" onclick="event.stopPropagation();" title="">➜</button>
       <span style="font-size:20px">📖</span>
       <span style="font-size:15px;font-weight:900;color:var(--text)" id="comp-story-panel-lbl">Chapter</span>
       <span style="display:flex;align-items:center;gap:6px;margin-left:auto">
@@ -1539,7 +1544,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         <span id="comp-story-flags"></span>
         <button class="spk-ico" id="comp-story-spk" onclick="event.stopPropagation();speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">💬</button>
       </span>
-      <button class="spk-ico" id="comp-story-next" style="display:none" onclick="event.stopPropagation();" title="">→</button>
+      <button class="spk-ico" id="comp-story-next" style="display:none" onclick="event.stopPropagation();" title="">➜</button>
     </summary>
     <!-- v74_l: NOT italic, and larger. This panel is the reward for finishing the chapter and the
          thing the learner is meant to actually READ — a long italic run at 13px reads as a caption,
@@ -1705,7 +1710,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           <button class="spk-ico" id="sum-sum-xlate" style="display:none;font-size:11px;font-weight:800;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Nunito,sans-serif"></button>
           <button class="spk-ico" id="sum-sum-spk" title="">💬</button>
         </span>
-        <button class="spk-ico" id="sum-sum-next" style="display:none" title="">→</button>
+        <button class="spk-ico" id="sum-sum-next" style="display:none" title="">➜</button>
       </div>
       <div id="sum-sumtext" dir="auto" style="font-size:15px;color:var(--text);line-height:1.65"></div>
     </div>
@@ -152720,11 +152725,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v83_d', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v83_d'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v83_e', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v83_e'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"f311d2db82eb","lessons.json":"2e65c15d3de2","ui.json":"76cfc45cade0","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"bf4e560125c6"};
+  APP.buildSources = {"index.html":"7399c26dcb31","lessons.json":"2e65c15d3de2","ui.json":"76cfc45cade0","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"bf4e560125c6"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -158780,10 +158785,13 @@ function _compBtnState(btn, available, reason){
 // header-row duplicate — not a re-derivation of whatever branch logic decided that state (comp-
 // next's destination alone depends on ~7 branches in showComplete()). Shared by BOTH cards'
 // sync functions below, so the mirroring rule itself cannot drift between them.
+// user follow-up: textContent is NOT mirrored (it was, until the "thicker arrows" request made the
+// duplicate's glyph a fixed, heavier ➜ — see the CSS comment on #comp-story-next). The FUNCTIONAL
+// state (where it leads, whether it can be clicked) still must never drift from the source; the
+// ICON is static markup now, on purpose, same reasoning either way: don't re-derive per-branch.
 function _mirrorNavBtn(srcId, dstId){
   const src = document.getElementById(srcId), dst = document.getElementById(dstId);
   if (!src || !dst) return;
-  dst.textContent = src.textContent;
   dst.title = src.title;
   try { dst.setAttribute('aria-label', src.getAttribute('aria-label') || src.title); } catch(_) {}
   dst.style.display = src.style.display;

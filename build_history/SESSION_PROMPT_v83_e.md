@@ -1,14 +1,15 @@
-# Session prompt — written at the `v83_d` cut
+# Session prompt — written at the `v83_e` cut
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_c.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_d.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v83_e`, `v83_f`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v83_f`, `v83_g`, …) unless a future session has a good reason to switch to
 `v84_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v83_d`** release —
-the entry card gets the SAME nav/bars popup `v83_c` gave the progress card, plus thicker header-row
-back/forward arrows. Both are fresh user asks, not PLAN items, on top of `v83_b`'s `PLAN §12`.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v83_e`** release —
+the header-row back/forward arrows now render the EXACT glyph `.lang-pair-arrow` uses (➜, weight
+900), not just a heavier stroke on `←`/`→`. A user follow-up to `v83_d`, itself a follow-up to
+`v83_c`, on top of `v83_b`'s `PLAN §12` — none of these are PLAN items.
 
 **`v83_a`, in brief**: a new BASE LINE, cut from `v82` at the user's own request rather than at a
 milestone, to hand off `PLAN §12` to a clean-context session. No code changed at that cut.
@@ -55,19 +56,36 @@ popup too) and was rewritten again, to the same shape as the progress card's own
 a real chapter, landed on the entry card naturally, confirmed the popup, the mirrored NEXT button's
 real localized label, and all three close paths.
 
+**`v83_e`, in brief** (full write-up in `roadmap_v83.md`): `v83_d`'s stroke fix was not enough —
+*"even thicker arrow, e.g. the same as used between the source and target language selectors."*
+Measured what that reference (`.lang-pair-arrow`) actually IS before touching anything: `➜` (U+279C
+HEAVY ROUND-TIPPED RIGHTWARDS ARROW), not the plain `→` the header duplicates had been showing, at
+`font-size:34px;font-weight:900`. A stroke on a thin glyph cannot become a different, heavier-BY-
+DESIGN character — so the three duplicates now render `➜` itself (scaled to 26px, so it doesn't
+dwarf the row's other 20px icons), and `comp-story-prev` reuses the SAME glyph with
+`transform:scaleX(-1)` rather than reaching for a different "leftwards" character with no guarantee
+of matching visual weight. This forced `_mirrorNavBtn` to stop copying `textContent` — a fixed,
+static glyph can't survive being overwritten back to `←`/`→` on every render — while everything about
+WHERE the button leads (title/display/disabled/onclick) stays mirrored, unchanged. **Live-verified**:
+`getComputedStyle` on all three duplicates read `font-size:26px;font-weight:900`, `comp-story-prev`'s
+computed `transform` read `matrix(-1, 0, 0, 1, 0, 0)`, and the live `.lang-pair-arrow` on the same
+page was cross-checked (`34px`/`900`, same character) — confirmed to actually match, not assumed to.
+
 **The throughline worth carrying forward again**: `v83_b` was the third release running where a live
 generation against the real model was what actually confirmed a feature works, not source-reading.
-`v83_c`/`v83_d` are the same discipline applied to a UI change: exploring the ACTUAL markup before
-deciding scope, running the redesign in a real browser tab rather than asserting from CSS alone, and
-— new at `v83_d` — noticing that a SECOND request extending the SAME feature is an opportunity to
-extract the shared logic properly (`_mirrorNavBtn`, `_closeCardNavPopups`) rather than copy-pasting a
-second near-identical implementation.
+`v83_c`/`v83_d`/`v83_e` are the same discipline applied to a UI change: exploring the ACTUAL markup
+before deciding scope or reaching for a fix, running the result in a real browser tab rather than
+asserting from CSS alone, and — `v83_e` specifically — going back to MEASURE the thing the user
+pointed at ("the same as used between...") rather than guessing what "even thicker" meant in the
+abstract. Two point releases in a row (`v83_d`, `v83_e`) were direct user follow-ups landing WHILE the
+previous one was still fresh — expect iteration, and keep each one small and separately verified
+rather than batching guesses about what a still-open request might mean next.
 
 ## Orient yourself
 
 1. **This file**, whole.
 2. `build_history/roadmap_v83.md` — its **index table** and the **⚠️ Session protocol** block first,
-   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`/`v83_c`/`v83_d` were
+   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`…`v83_e` were
    built. (Nothing is in TRACK T right now — steps 1–4 and `§T7` all shipped in the v81 line.)
 3. `INTERNALS.md` — constants, silent-failure modes, invariants, harness limits. **§6b is a
    feature → function map** — read it BEFORE grepping for where anything lives.
@@ -84,7 +102,7 @@ node test/check-inline.js docs/index.html → expect 0 failures
 Corpus at this cut: **327 topics, 92 storylines, 33 languages, 657 `en` keys** (unchanged from
 `v83_c` — this release reused `complete.nav_open`/`complete.nav_title` for the entry card's own
 popup rather than minting new keys, so the `en` count did not move).
-`APP_VERSION = 'v83_d'`.
+`APP_VERSION = 'v83_e'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -101,7 +119,10 @@ N" blocks — this is the short form, not a replacement for reading those before
 
 1. **Measure before editing.** A warning in the notes is a claim about a DESIGN, not about the
    problem (rule 35). `v83_c`'s own version: read all four card screens' ACTUAL markup before
-   deciding which ones a "progress cards" (plural) request touched — it was one, not four.
+   deciding which ones a "progress cards" (plural) request touched — it was one, not four. `v83_e`'s:
+   when the user names a REFERENCE ("the same as used between X and Y"), go read what that reference
+   actually is (glyph, weight, size) before picking a fix — a bigger number on the wrong property
+   (`v83_d`'s stroke) is not the same claim as matching the thing pointed at.
 2. **Guard at the layer where the claim is observable** (rule 34). A guard that pins SOURCE TEXT for
    a claim about BEHAVIOUR cannot fail — cost multiple releases across the v80/v81 lines. Render and
    inspect, then **MUTATION-TEST**: break the rule and check the guard goes red.
@@ -283,10 +304,14 @@ reference and not duplicated in INTERNALS.md.
   (same choke point PLAN §12's `_storySelHide()` uses); `openCrosswordFromComplete()` calls
   `closeCompNav()` directly and explicitly — the one path that shows another overlay without a
   screen change, and the entry card has no equivalent case.
-- `_mirrorNavBtn(srcId, dstId)` (`v83_d`) — the ONE shared rule that mirrors a source nav button's
-  FINAL resolved state onto a header-row duplicate. `_syncCompHdrNav()` (end of `showComplete()`)
-  and `_syncSumHdrNav()` (end of `showStorySummary()`) both call it — extend a THIRD sync function
-  the same way if a third card ever needs this, don't re-derive the mirror rule itself.
+- `_mirrorNavBtn(srcId, dstId)` (`v83_d`, glyph-mirroring dropped at `v83_e`) — the ONE shared rule
+  that mirrors a source nav button's FINAL resolved state onto a header-row duplicate.
+  `_syncCompHdrNav()` (end of `showComplete()`) and `_syncSumHdrNav()` (end of `showStorySummary()`)
+  both call it — extend a THIRD sync function the same way if a third card ever needs this, don't
+  re-derive the mirror rule itself. **Does NOT mirror `textContent` since `v83_e`** — the header-row
+  duplicates show a FIXED glyph (`➜`, matching `.lang-pair-arrow`'s own character and weight,
+  `comp-story-prev` flipped via `transform:scaleX(-1)`), set once in markup; only title/aria-label/
+  display/disabled/onclick are still copied from the source button.
 - `recordObservation(ex, correct)` / `APP.progress.observations` / `refreshBktShadow(d)` — the
   `PLAN §8/B1–B4` evidence path. See `INTERNALS.md` §6b before extending it: only `check()`-graded
   exercises are logged, only resolved vocabulary IDs feed BKT, and no BKT value may become a reader

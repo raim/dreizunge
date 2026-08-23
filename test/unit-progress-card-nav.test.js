@@ -103,11 +103,17 @@ console.log('  both popups: hold each card\'s relocated machinery unchanged, sam
 console.log('  both header rows: ☰ before translation control(s), ONLY next[/back] duplicated: OK');
 
 // ── 3. _mirrorNavBtn: the ONE mirror rule, shared and non-vacuous ────────────
+// The GLYPH is deliberately NOT mirrored (see §8) — a fixed, heavier ➜ replaced the mirrored ←/→
+// once the "thicker arrows... same as the language-selector pair" request landed. Everything about
+// where the button LEADS still must be copied, or the duplicate could point somewhere the source
+// doesn't.
 {
   const mirrorFn = extFn(html, '_mirrorNavBtn');
-  assert.ok(/dst\.textContent = src\.textContent/.test(mirrorFn) && /dst\.title = src\.title/.test(mirrorFn)
+  assert.ok(!/dst\.textContent/.test(mirrorFn),
+    'the icon glyph is NOT mirrored — it is fixed markup now (§8), not a copy of the source\'s ←/→');
+  assert.ok(/dst\.title = src\.title/.test(mirrorFn)
          && /dst\.style\.display = src\.style\.display/.test(mirrorFn) && /dst\.disabled = src\.disabled/.test(mirrorFn),
-    'every piece of the source button\'s resolved state is copied, not re-derived');
+    'every piece of the source button\'s FUNCTIONAL state (title/display/disabled/onclick) is still copied, not re-derived');
   const compSync = extFn(html, '_syncCompHdrNav'), sumSync = extFn(html, '_syncSumHdrNav');
   assert.ok(/_mirrorNavBtn\('comp-prev', 'comp-story-prev'\)/.test(compSync) && /_mirrorNavBtn\('comp-next', 'comp-story-next'\)/.test(compSync),
     '_syncCompHdrNav mirrors both pairs through the shared rule');
@@ -121,21 +127,23 @@ console.log('  both header rows: ☰ before translation control(s), ONLY next[/b
   assert.ok(ss.indexOf('_syncSumHdrNav()') > 0 && ss.lastIndexOf("show('summary-screen')") > ss.indexOf('_syncSumHdrNav()'),
     'showStorySummary syncs after its own branch, right before show(summary-screen)');
 
-  // Behavioural: build bare stub buttons and confirm the shared mirror actually copies state, for
-  // BOTH cards' pairs — proving the SAME function, not two look-alikes, drives both.
+  // Behavioural: build bare stub buttons and confirm the shared mirror actually copies FUNCTIONAL
+  // state, for BOTH cards' pairs — proving the SAME function, not two look-alikes, drives both. The
+  // destination starts with its OWN fixed glyph ("➜", distinct from the source's plain "→") to prove
+  // the mirror leaves it alone rather than merely happening not to change it.
   const C = loadClient({ quiet: true });
   for (const [srcId, dstId] of [['comp-next', 'comp-story-next'], ['sum-next', 'sum-sum-next']]) {
     const out = C.run(`(() => {
       const mk = (id) => { const el = document.getElementById(id); el.tagName='BUTTON'; return el; };
       const src = mk('${srcId}'); src.textContent = '→'; src.title = 'Onward';
       src.style.display = ''; src.disabled = false; src.onclick = () => { window.__clicked = '${srcId}'; };
-      const dst = mk('${dstId}');
+      const dst = mk('${dstId}'); dst.textContent = '➜';
       _mirrorNavBtn('${srcId}', '${dstId}');
       dst.onclick({ stopPropagation: () => { window.__stopped = '${dstId}'; } });
       return { text: dst.textContent, title: dst.title, display: dst.style.display,
                className: dst.className, clicked: window.__clicked, stopped: window.__stopped };
     })()`);
-    assert.strictEqual(out.text, '→', `${dstId}: textContent mirrored`);
+    assert.strictEqual(out.text, '➜', `${dstId}: its own fixed glyph is untouched by the mirror`);
     assert.strictEqual(out.title, 'Onward', `${dstId}: title mirrored`);
     assert.strictEqual(out.display, '', `${dstId}: display mirrored (visible)`);
     assert.strictEqual(out.className, 'spk-ico', `${dstId}: not disabled → no .disabled class`);
@@ -234,16 +242,31 @@ console.log('  "fill the full available screen": flex:1 chain scoped to #complet
 }
 console.log('  ui.json: the popup strings are shared across both cards, en only: OK');
 
-// ── 8. "Thicker arrows" — the header-row back/forward duplicates only ────────
+// ── 8. "Even thicker ... the same as used between the source and target language
+// selectors" — the header-row duplicates now share `.lang-pair-arrow`'s actual GLYPH ─────
 {
-  assert.ok(/#comp-story-prev,#comp-story-next,#sum-sum-next\{font-weight:900;-webkit-text-stroke:\.6px currentColor\}/.test(html),
-    'the header-row duplicates render with a heavier stroke than the plain ←/→ glyph');
-  // Non-vacuity: the rule must not have accidentally been written to select something else, and
-  // must NOT also thicken the popup's own comp-prev/comp-next (a different visual language — those
-  // use the chunky .comp-ico button style already, not this thin-glyph header row).
-  assert.ok(!/#comp-prev,#comp-next\{[^}]*text-stroke/.test(html) && !/\.comp-ico\{[^}]*text-stroke/.test(html),
-    'the thicker-stroke rule targets only the header-row duplicates, not the popup\'s own buttons');
+  // The reference: `.lang-pair-arrow` (between src-lang-select/lang-select) uses ➜, weight 900.
+  assert.ok(/\.lang-pair-arrow\{[^}]*font-weight:900[^}]*\}/.test(html) && html.includes('class="lang-pair-arrow">➜<'),
+    'the reference arrow really is ➜ at weight 900 — the glyph this section matches');
+  // Both forward duplicates render that SAME glyph, statically (not mirrored — see §3).
+  for (const id of ['comp-story-next', 'sum-sum-next']) {
+    assert.ok(new RegExp(`id="${id}"[^>]*>➜<`).test(html), `${id} shows the ➜ glyph in its markup`);
+  }
+  assert.ok(/#comp-story-next,#sum-sum-next\{font-size:26px;font-weight:900\}/.test(html),
+    'both forward duplicates share one weight-900 sizing rule');
+  // comp-story-prev has no "heavy leftwards" character to reach for — it reuses the SAME ➜ glyph,
+  // horizontally flipped, rather than a different (and possibly visually mismatched) character.
+  assert.ok(/id="comp-story-prev"[^>]*>➜</.test(html), 'comp-story-prev ALSO uses ➜ in markup, not a left-pointing character');
+  assert.ok(/#comp-story-prev\{font-size:26px;font-weight:900;display:inline-block;transform:scaleX\(-1\)\}/.test(html),
+    'comp-story-prev flips the SAME glyph horizontally to read as "back"');
+  // Non-vacuity: must not also apply to the popup's own comp-prev/comp-next/sum-next — those keep
+  // their existing chunky .comp-ico button style, a different visual language never asked to change.
+  assert.ok(!/#comp-prev,#comp-next\{[^}]*font-size:26px/.test(html) && !/\.comp-ico\{[^}]*transform:scaleX/.test(html),
+    'the heavy-glyph rule targets only the header-row duplicates, not the popup\'s own buttons');
+  // The actual FLIP rendering (does scaleX(-1) really read as "back", is 26px legible next to the
+  // row's other 20px icons) needs a real layout engine — lib-dom has none — so it is checked live
+  // in a browser, not here; see the roadmap entry for that pass.
 }
-console.log('  thicker arrows: applied to the header-row back/forward duplicates only: OK');
+console.log('  thicker arrows: header-row duplicates now share the language-pair arrow\'s own glyph and weight: OK');
 
 console.log('unit-progress-card-nav: ALL PASSED');
