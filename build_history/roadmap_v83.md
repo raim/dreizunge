@@ -29,7 +29,7 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen (the `v83_c` flex chain was removed, guarded to stay absent). **NEW**: question cards' `#ex-story-panel` now COLLAPSED by default, unconditionally (superseding `v80_u`'s "never collapsed" — third ruling on this line, all three recorded). `v83_e` — header-row back/forward arrows now render the EXACT `.lang-pair-arrow` glyph (➜, weight 900), not just a heavier stroke on `←`/`→`. `v83_d` — the entry/summary card gets the SAME nav/bars popup `v83_c` gave the progress card. `v83_c` — progress-card redesign: nav/icon rows + progress bars moved into a popup (complete-screen only). `v83_b` — `PLAN §12` built end to end: the tutor's reply language moved from `srcLang` to `APP.uiLang`, and the new text-selection popover itself |
+| **SHIPPED IN THE v83 LINE** | `v83_g` — the progress-card story panel's border shifts red→green with comprehension ("understanding") progress specifically (a user ruling between two candidate "pass marks" — see the entry). `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen. **NEW**: question cards' `#ex-story-panel` now COLLAPSED by default, unconditionally. `v83_e` — header-row back/forward arrows now render the EXACT `.lang-pair-arrow` glyph. `v83_d` — the entry/summary card gets the SAME nav/bars popup `v83_c` gave the progress card. `v83_c` — progress-card redesign: nav/icon rows + progress bars moved into a popup. `v83_b` — `PLAN §12` built end to end |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, the interactive text-selection tutor, shipped at `v83_b` — see the SHIPPED section above. |
 
@@ -1685,6 +1685,68 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_g` — the progress-card story panel's border shifts red→green with comprehension progress
+
+**Shipped by: Claude Code, on user request**: *"the currently green colored frame around the story
+field on the progress card could also change from red to green, based on how far away the user is
+from the pass mark to get to understanding questions."*
+
+**The ruling this needed first**: the app has TWO distinct "pass marks" visible on this card — the
+chapter's general coverage threshold (`_topicMarkPct`, drawn on the topic %-solved bar) and the
+comprehension ("understanding") lessons' own separate 100%-required gate (`v71_s`, tracked via
+`_postRows`). Asked directly rather than guessing; the user picked the SECOND — comprehension
+progress specifically, matching their own wording most directly.
+
+**What shipped**: two small, independently reusable functions (`_sumCoverageFrac(rows)`,
+`_redGreenHex(frac)`) rather than one border-specific one — a future caller wanting just the number
+doesn't have to unpick it from a colour string. `_sumCoverageFrac` reduces `_postRows` — the SAME
+array `showComplete()` already builds for the post-unlock progress bars, walking every story-gated
+lesson in the chapter via `_isStoryGatedLesson`/`lessonCoverage` — to ONE fraction by SUMMING
+solved/total across every row (not averaging per-lesson fractions; a chapter with one small solved
+lesson and one large unsolved one should read as mostly-unsolved, not 50/50). Empty input (no
+comprehension lesson in this chapter) returns 1 — nothing gates "understanding" here, so there is
+nothing to be far FROM, which is why an all-vocabulary chapter reads fully green, the panel's own
+pre-existing default. `_redGreenHex` linearly interpolates between `--red`/`--green`'s ACTUAL hex
+values (`#ff4b4b`/`#58cc02`, measured from the stylesheet, not assumed) rather than a guessed
+palette, clamped to `[0,1]`. `_postRows` was hoisted OUTSIDE the drill/non-drill branch in
+`showComplete()` (previously scoped inside the `else`) so a drill — which never populates it — still
+resolves to the same green default rather than a stale colour left over from whichever card rendered
+before it.
+
+**Verified at the layer where the claim is observable**: new `unit-story-border-color.test.js` — the
+two pure functions tested in isolation (an asymmetric fixture specifically chosen so "sum" and
+"average" disagree, both endpoints exact, a midpoint computed independently and checked exactly,
+both-direction clamping), the wiring pinned in `showComplete()` itself (declaration order, which
+array feeds the colour), and a full behavioural pass reusing `unit-card-0d.test.js`'s own proven
+2-question-comprehension-lesson fixture: 0/2 solved → exact red, 1/2 → the exact midpoint hex (not
+just "some non-endpoint colour"), 2/2 → exact green, a chapter with NO comprehension lesson → green,
+and a drill → green. **Mutation-tested**: swapping the sum for an average, disconnecting the wiring
+call, and corrupting one reference colour each independently turn the test red.
+
+**Live-verified against a real corpus chapter** (a throwaway spare-port server, the by-now-standard
+pattern — the user's OWN main server, freshly restarted this same session for the `ui.json`
+staleness bug below, was left untouched a second time): a real 3-question comprehension lesson at
+0/3 solved read exact red (`rgb(255,75,75)`); marking all 3 solved re-rendered exact green
+(`rgb(88,204,2)`); marking exactly 1 of 3 solved produced `rgb(199,118,51)` — checked against the
+independently-computed 1/3 interpolation by hand, not just "looks orange."
+
+**Separately, in the same session: a stale-server bug, and a mobile-access question, neither a code
+defect**:
+- The user reported the new popup's title showing literally as `"complete.nav_title"`. Diagnosed,
+  not guessed at: the server the user's browser was pointed at (port 3000) had been running
+  continuously since BEFORE the `v83_a` cut (reporting `v82_i`) — it had none of this whole line's
+  work, not just the one string. `ui.json` on disk was already correct; even a plain content-only
+  rewrite of the file didn't get the stale process to pick it up (its `fs.watch`-based hot-reload
+  did not fire, for a reason not fully diagnosed — the process was restarted rather than debugged
+  further, since a restart was the correct fix either way). Restarted with the user's explicit
+  permission; confirmed via direct API calls that both strings resolve correctly post-restart.
+- The user couldn't reach the app from their phone on the same network, at `localhost:3000`. Not a
+  network/firewall issue: `localhost` on a mobile device means the device itself. Pointed them at the
+  server's own printed LAN address (`http://192.168.0.180:3000`) instead — no code change needed.
+
+**Testing**: 254/227/0/0 full baseline green (from 253/226 — one new test file). `docs/index.html`
+rebuilt. No `ui.json` change.
 
 ### `v83_f` — REVOKED the fill-screen story field; question cards' story panel now collapsed by default
 

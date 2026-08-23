@@ -16077,6 +16077,30 @@ function lessonCoverage(lessonIdx){
   const total = universe.size;
   return { solved, total, pct: total>0 ? Math.round(100*solved/total) : 0 };
 }
+// user request: the progress card's story-panel border shifts red→green with how close the learner
+// is to fully solving the chapter's story-gated ("understanding"/comprehension) lessons — the SAME
+// v71_s 100%-required gate `showComplete`'s own `_postRows` already measures per lesson. Two small,
+// separately reusable pieces rather than one border-specific function, so a future caller wanting
+// just the fraction (a number) doesn't have to unpick it from a colour string.
+//
+// Reduces an array of {solved,total} rows (exactly `_postRows`'s own shape) to ONE fraction. Empty
+// input (no story-gated lesson in this chapter) returns 1 — nothing gates "understanding" here, so
+// there is nothing to be far FROM, which is why an all-vocab chapter reads as fully green, not red.
+function _sumCoverageFrac(rows){
+  if (!rows || !rows.length) return 1;
+  let solved = 0, total = 0;
+  rows.forEach(r => { solved += r.solved || 0; total += r.total || 0; });
+  return total > 0 ? solved / total : 1;
+}
+// Linear red→green interpolation for a 0..1 fraction, blended between --red/--green's OWN hex
+// values (#ff4b4b / #58cc02) rather than a guessed palette, so the border reads as the same colour
+// scale the rest of the app already uses, not a new one.
+function _redGreenHex(frac){
+  const f = Math.max(0, Math.min(1, Number(frac) || 0));
+  const RED = [0xff, 0x4b, 0x4b], GREEN = [0x58, 0xcc, 0x02];
+  const mix = RED.map((r, i) => Math.round(r + (GREEN[i] - r) * f));
+  return '#' + mix.map(v => v.toString(16).padStart(2, '0')).join('');
+}
 // Topic-level coverage across the COUNTED lessons (respects the mixed-only / hidden rule via
 // countedLessons). This is the set-level completion fraction.
 function topicCoverage(skipStoryGated){
@@ -17468,6 +17492,15 @@ function showComplete(review, lessonIdxOverride){
     }
   } catch(e) { if (typeof _cardNote === 'function') _cardNote('chapter-icons', e); }
   const _progEl = el('comp-progress');
+  // user request: the story panel's border shifts red→green with how close the learner is to fully
+  // solving this chapter's comprehension ("understanding") lessons — the SAME v71_s 100%-required
+  // gate `_postRows` below measures per-lesson, aggregated across the whole chapter (not just
+  // whichever lesson was just played, same reasoning as v78_n's own "every card of the chapter").
+  // Declared here, OUTSIDE the drill/non-drill branch below, so both feed the SAME variable rather
+  // than a second copy of the story-gated-lesson walk. A drill's synthetic topic has none — `[]`
+  // aggregates to a fraction of 1 (nothing to be far FROM), which is the panel's own pre-existing
+  // default colour anyway.
+  let _postRows = [];
   if (_progEl) {
     if (lesson._drill) { _progEl.innerHTML = ''; _progEl.style.display = 'none'; }
     else {
@@ -17492,7 +17525,6 @@ function showComplete(review, lessonIdxOverride){
       // Labelled with each lesson's OWN TITLE — data, not a new ui.json key, so this needs no
       // translation pass (the same choice `v73_d` made for the gate row it generalises). Marked at
       // 100 because a story-gated lesson must be fully solved (v71_s).
-      let _postRows = [];
       try {
         const _d2 = APP.lessonData;
         (_d2?.lessons || []).forEach((L, i) => {
@@ -17507,6 +17539,11 @@ function showComplete(review, lessonIdxOverride){
       _progEl.innerHTML = _ph;
     }
   }
+  // user request: apply the red→green border now that _postRows (above) reflects THIS render.
+  try {
+    const _spEl = el('comp-story-panel');
+    if (_spEl) _spEl.style.borderColor = _redGreenHex(_sumCoverageFrac(_postRows));
+  } catch(e) { if (typeof _cardNote === 'function') _cardNote('story-border-color', e); }
 
   // v73_g: the per-lesson icon row. Hidden rather than emptied when there is nothing to show, so
   // the card does not carry a stray 12px gap above the buttons.

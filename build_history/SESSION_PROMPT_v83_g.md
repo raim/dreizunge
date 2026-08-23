@@ -1,23 +1,34 @@
-# Session prompt — written at the `v83_f` cut
+# Session prompt — written at the `v83_g` cut
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_e.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_f.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v83_g`, `v83_h`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v83_h`, `v83_i`, …) unless a future session has a good reason to switch to
 `v84_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v83_f`** release —
-TWO rulings on the progress-card/question-card redesign arc: the story field no longer fills the
-screen (`v83_c`'s fill-height chain REVOKED), and question cards' own story panel is now COLLAPSED
-by default (superseding `v80_u`'s "never collapsed"). Both are user requests, not PLAN items, on top
-of the same arc as `v83_c`…`v83_e` and `v83_b`'s `PLAN §12`.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v83_g`** release —
+the progress card's story-panel border now shifts red→green with how close the learner is to fully
+solving THIS chapter's comprehension ("understanding") lessons specifically — one of two candidate
+"pass marks" on the card, and the user was asked directly which one before building anything. A user
+request, not a PLAN item, on the same progress-card/question-card arc as `v83_c`…`v83_f` and `v83_b`'s
+`PLAN §12`.
 
-**⚠️ Read this before touching either progress-card OR question-card story panel behaviour**: this
-arc has now reversed itself twice in six point releases (`v83_c` added fill-height, `v83_f` revoked
-it; `v80_u` said never-collapse, `v83_f` said always-collapse). Do not re-derive or re-litigate
-either — both are settled AS OF `v83_f`, recorded with their full history in the comments at the
-CSS/JS site itself, not just here. If a THIRD reversal is ever requested, add it to that same
-recorded chain rather than treating it as a fresh decision with no history.
+**⚠️ Read this before touching progress-card, question-card, OR story-panel behaviour**: this arc has
+now reversed itself twice in seven point releases (`v83_c` added fill-height, `v83_f` revoked it;
+`v80_u` said never-collapse, `v83_f` said always-collapse) and gained a THIRD distinct visual signal
+at `v83_g` (border colour, tied to comprehension coverage specifically — NOT the general chapter pass
+mark, which is a DIFFERENT number already shown on the topic bar). Do not re-derive or re-litigate any
+of it — all three are settled AS OF `v83_g`, recorded with full history in the comments at the CSS/JS
+site itself, not just here. If a FOURTH change is ever requested, add it to that same recorded chain.
+
+**Also from this session, both fixed but NOT code defects — know these before assuming a bug report
+means broken code**: (1) a user-reported string showing as its raw `ui.json` key turned out to be a
+LONG-RUNNING, un-restarted server process (`v82_i`, from before this whole line) — restarted with
+permission, not debugged as a hot-reload bug, though its `fs.watch`-based ui.json hot-reload also
+never fired for a plain content rewrite, which is worth a closer look if it recurs. (2) "can't access
+from my phone" was `localhost` meaning the phone itself, not a network/firewall issue — pointed the
+user at the server's own printed LAN address instead. Check whether a NEW bug report might be either
+of these shapes (stale process, `localhost` confusion) before assuming it needs a code fix.
 
 **`v83_a`, in brief**: a new BASE LINE, cut from `v82` at the user's own request rather than at a
 milestone, to hand off `PLAN §12` to a clean-context session. No code changed at that cut.
@@ -99,23 +110,44 @@ silently reintroducing it). **Live-verified**: `comp-story-panel`'s computed `fl
 `ex-story-panel` rendered `open === false` with no `open` attribute, on a real question card reached
 through the normal lesson flow.
 
+**`v83_g`, in brief** (full write-up in `roadmap_v83.md`): *"the currently green colored frame around
+the story field on the progress card could also change from red to green, based on how far away the
+user is from the pass mark to get to understanding questions."* Two candidate "pass marks" exist on
+this card — the chapter's general coverage threshold, and the comprehension lessons' own separate
+100%-required gate — genuinely different numbers that could both plausibly be called "the pass
+mark." Asked which one directly rather than picking; the answer was the comprehension-specific one.
+`_sumCoverageFrac(rows)` reduces `_postRows` (the SAME array the post-unlock progress bars already
+build) to one fraction by SUMMING across every story-gated lesson, not averaging per-lesson
+fractions; `_redGreenHex(frac)` interpolates `--red`/`--green`'s actual hex values. `_postRows` was
+hoisted outside `showComplete()`'s drill/non-drill branch so a drill (which never populates it)
+still resolves to the same green default rather than a stale colour. **Live-verified against a real
+corpus chapter**: 0/3 solved read exact red, all 3 solved read exact green, exactly 1/3 solved
+produced the precise linear-interpolation colour, checked by hand against the fraction, not just
+"looks orange." **Separately, in the same session, two bug reports that turned out NOT to be code
+defects**: a popup string showing its own `ui.json` key name was a long-running un-restarted server
+(`v82_i`, predating this whole line) — restarted with permission; and "can't reach it from my phone"
+was `localhost` meaning the phone itself, fixed by pointing at the server's own LAN address. Both are
+worth checking for before assuming a NEW bug report needs a code change.
+
 **The throughline worth carrying forward again**: `v83_b` was the third release running where a live
 generation against the real model was what actually confirmed a feature works, not source-reading.
-`v83_c`…`v83_f` are the same discipline applied to a UI change: exploring the ACTUAL markup before
+`v83_c`…`v83_g` are the same discipline applied to a UI change: exploring the ACTUAL markup before
 deciding scope or reaching for a fix, running the result in a real browser tab rather than asserting
 from CSS alone, MEASURING the thing the user points at (`v83_e`) rather than guessing what "even
-thicker" meant in the abstract, and — `v83_f` specifically — treating a REVOCATION as seriously as an
-addition: guard its absence, don't just delete the code and hope nothing notices. Four point releases
-in a row (`v83_c`…`v83_f`) were direct user follow-ups, several landing WHILE the previous one was
-still fresh, and one reversing an earlier one outright — expect iteration and reversal both, keep
-each change small and separately verified, and never treat "the user already decided this" as
-settled once a later message says otherwise.
+thicker" meant in the abstract, treating a REVOCATION as seriously as an addition (`v83_f`), and —
+`v83_g` specifically — ASKING when a request is genuinely ambiguous between two real, different
+things the app already has, rather than picking the more obvious-looking one and risking visible
+rework. Five point releases in a row (`v83_c`…`v83_g`) were direct user follow-ups, several landing
+WHILE the previous one was still fresh, and one reversing an earlier one outright — expect iteration
+and reversal both, keep each change small and separately verified, and never treat "the user already
+decided this" as settled once a later message says otherwise. Also expect the OCCASIONAL report that
+isn't a code bug at all (stale process, `localhost` confusion) — diagnose before assuming.
 
 ## Orient yourself
 
 1. **This file**, whole.
 2. `build_history/roadmap_v83.md` — its **index table** and the **⚠️ Session protocol** block first,
-   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`…`v83_f` were
+   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`…`v83_g` were
    built. (Nothing is in TRACK T right now — steps 1–4 and `§T7` all shipped in the v81 line.)
 3. `INTERNALS.md` — constants, silent-failure modes, invariants, harness limits. **§6b is a
    feature → function map** — read it BEFORE grepping for where anything lives.
@@ -123,16 +155,21 @@ settled once a later message says otherwise.
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 253 checks
-node test/run.js --quick                  → expect 226
+node test/run.js                          → expect 254 checks
+node test/run.js --quick                  → expect 227
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Corpus at this cut: **327 topics, 92 storylines, 33 languages, 657 `en` keys** (unchanged from
-`v83_c` — this release reused `complete.nav_open`/`complete.nav_title` for the entry card's own
-popup rather than minting new keys, so the `en` count did not move).
-`APP_VERSION = 'v83_f'`.
+Corpus at this cut: **327 topics, 92 storylines, 33 languages, 657 `en` keys** (unchanged since
+`v83_c` — no release since has minted a new `ui.json` key; `v83_g` needed no user-facing string at
+all, the border colour is pure CSS/JS).
+`APP_VERSION = 'v83_g'`.
+
+⚠️ **The user's own main dev server (port 3000) needs a MANUAL restart to see `v83_g`** — it was
+last restarted mid-session for the `v82_i`-staleness bug above, and every code change since (this
+release included) has landed on disk but not in that running process. Ask before restarting it
+again; don't assume it's current just because it was fresh a few releases ago.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
@@ -326,6 +363,11 @@ reference and not duplicated in INTERNALS.md.
   distinct from the progress card's `#comp-story-panel`). Collapsed by default since `v83_f`
   (`const _open = false`), unconditionally — no comprehension exception. Third ruling on this line;
   read its own comment before changing the default again.
+- `_sumCoverageFrac(rows)` / `_redGreenHex(frac)` (`v83_g`, near `lessonCoverage`) — the progress
+  card's `#comp-story-panel` border colour, red→green with comprehension ("understanding") coverage
+  specifically, NOT the chapter's general pass mark (`_topicMarkPct`) — a user ruling between the
+  two, don't assume which one a future colour/indicator request means. Fed by `_postRows`, the SAME
+  array the post-unlock progress bars use — one measure, not two that could drift.
 - `_wordProgress(d)` / `_wordState(rec)` — **the ONE per-word progress collector.**
 - `_storyLockedLesson(L, d)` — the ONE "is this lesson closed" rule.
 - `_cardHeader(prefix)` + `.card-screen` — every new card page uses both.
