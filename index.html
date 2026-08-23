@@ -11984,7 +11984,14 @@ function buildStandardExercises(lesson, lessonIdx){
   const exs=[];
   tv.forEach(v=>{ const e=mkLMcq(v,allV); if(e)exs.push(e); });
   pick(tv,Math.ceil(tv.length/2)).forEach(v=>{ const e=mkMcqEI(v,allV); if(e)exs.push(e); });
-  pick(ts,3).forEach(s=>exs.push(mkOrder(s)));
+  // User request: ordering a long sentence's shuffled word bank is a much harder puzzle than a
+  // short one, so only short sentences (≤5 words) are offered for it — read_translate below stays
+  // unfiltered, this is about the ORDERING task specifically, not sentence eligibility in general.
+  // `s.words` is the same per-sentence token count mkOrder itself trusts (falling back to
+  // jaTokenize only for Japanese, inside mkOrder) — if none qualify, no order exercise is built at
+  // all rather than falling back to a long one.
+  const tsOrderable = ts.filter(s => Array.isArray(s.words) && s.words.length > 0 && s.words.length <= 5);
+  pick(tsOrderable,3).forEach(s=>exs.push(mkOrder(s)));
   //pick(ts,3).forEach(s=>exs.push(mkRead(s,allS)));
   pick(ts,3).forEach(s=>exs.push(mkRead(s,ts)));
   pick(tv,2).forEach(v=>exs.push(mkLType(v)));

@@ -152481,11 +152481,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v82_f', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v82_f'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v82_g', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v82_g'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"b44a14807826","lessons.json":"778441219ba6","ui.json":"a79aa7f48f5c","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"bf4e560125c6"};
+  APP.buildSources = {"index.html":"ea544e61dfa1","lessons.json":"778441219ba6","ui.json":"a79aa7f48f5c","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"bf4e560125c6"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -157895,7 +157895,14 @@ function buildStandardExercises(lesson, lessonIdx){
   const exs=[];
   tv.forEach(v=>{ const e=mkLMcq(v,allV); if(e)exs.push(e); });
   pick(tv,Math.ceil(tv.length/2)).forEach(v=>{ const e=mkMcqEI(v,allV); if(e)exs.push(e); });
-  pick(ts,3).forEach(s=>exs.push(mkOrder(s)));
+  // User request: ordering a long sentence's shuffled word bank is a much harder puzzle than a
+  // short one, so only short sentences (≤5 words) are offered for it — read_translate below stays
+  // unfiltered, this is about the ORDERING task specifically, not sentence eligibility in general.
+  // `s.words` is the same per-sentence token count mkOrder itself trusts (falling back to
+  // jaTokenize only for Japanese, inside mkOrder) — if none qualify, no order exercise is built at
+  // all rather than falling back to a long one.
+  const tsOrderable = ts.filter(s => Array.isArray(s.words) && s.words.length > 0 && s.words.length <= 5);
+  pick(tsOrderable,3).forEach(s=>exs.push(mkOrder(s)));
   //pick(ts,3).forEach(s=>exs.push(mkRead(s,allS)));
   pick(ts,3).forEach(s=>exs.push(mkRead(s,ts)));
   pick(tv,2).forEach(v=>exs.push(mkLType(v)));

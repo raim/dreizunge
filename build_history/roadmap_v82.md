@@ -1666,6 +1666,40 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v82 LINE
 
+### `v82_g` — sentence-ordering exercises are now length-gated (≤5 words)
+
+**Shipped by: Claude Code, on user request**: *"Sentence ordering lesson should only be triggered
+for short sentences, max 5 words."*
+
+**What changed**: `buildStandardExercises`'s `order` exercise (`mkOrder` — shuffle a sentence's words
+into a word bank, learner reassembles it) previously drew its 3 candidate sentences from the whole
+`ts` (lesson sentences) pool regardless of length, per the `v75_d` ruling that "the word bank is
+scaffolding enough" for a beginner. This request narrows that scaffolding claim: it holds for a
+short sentence, not an arbitrarily long one. A new `tsOrderable` filter (`s.words.length <= 5` — the
+same per-sentence token count `mkOrder` itself already trusts, falling back to `jaTokenize` only for
+Japanese, inside `mkOrder`) feeds ONLY that exercise type; `read_translate` and every other
+sentence-derived type are untouched, since this is about the ordering task's difficulty
+specifically, not the sentence's eligibility for the lesson in general. A lesson whose sentences are
+all too long simply builds NO `order` exercise — never a fallback to a long one, matching how
+`mkOrder`'s own site already behaves when its candidate pool is empty.
+
+**Denominator-neutral, for the same reason `v75_d` was**: the coverage universe counts a sentence as
+an ITEM (reachable via `read_translate`), and ordering is one more way to ask about that same item —
+removing the `order` variant for a long sentence does not remove the sentence from the pass mark's
+denominator. Confirmed by the full suite staying green, including the coverage/qid-universe tests
+that would have caught a denominator shift.
+
+**Verified**: a real-function extraction test (`unit-order-sentence-length.test.js`, new) runs the
+ACTUAL `buildStandardExercises` body — not a source-text regex — against a 5-word sentence (kept), a
+6-word one (excluded, boundary case), a mixed lesson where the LONG sentence sits first in the array
+(proving the short one is chosen deliberately, not just because `pick()` grabbed the front), and an
+all-long lesson (no order exercise at all). Mutation-tested: reverting the filter turns the new
+guard red. Also confirmed live in the running app via the real `buildStandardExercises` function
+against a 3-word/10-word pair — exactly one `order` exercise built, for the short sentence.
+
+**Testing**: 249/222/0/0 full baseline green. `docs/index.html` rebuilt. No new `ui.json` keys (no
+new user-facing string).
+
 ### `v82_f` — user redesign of `writing`: a real comprehension question, source-language only, with the LLM judging correctness against the story
 
 **Shipped by: Claude Code, on the user's own follow-up** immediately after `v82_e` shipped. Two

@@ -223,6 +223,7 @@ run('unit: script pick survives re-selection (v78_q)', 'node', [path.join(__dirn
 run('unit: continuation post-pass context + no overwrite (v78_r)', 'node', [path.join(__dirname, 'unit-continuation-postpass.test.js')]);
 run('smoke: render paths execute (buildPath/storyline/complete/renderEx)', 'node', [path.join(__dirname, 'smoke-render.test.js')]);
 run('unit: beginner-mode exercise types (v69.2)', 'node', [path.join(__dirname, 'unit-beginner-types.test.js')]);
+run('unit: sentence-ordering length gate (max 5 words)', 'node', [path.join(__dirname, 'unit-order-sentence-length.test.js')]);
 run('unit: crossword layout engine (v70_c)', 'node', [path.join(__dirname, 'unit-crossword-layout.test.js')]);
 run('unit: stable per-question IDs (qid) — Commit A', 'node', [path.join(__dirname, 'unit-qid-stability.test.js')]);
 run('unit: coverage model (fraction/assembly/complete) — Commit B', 'node', [path.join(__dirname, 'unit-coverage.test.js')]);

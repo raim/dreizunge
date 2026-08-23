@@ -1,12 +1,23 @@
-# Session prompt — written at the `v82_f` cut
+# Session prompt — written at the `v82_g` cut
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v82_e.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v82_f.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v82_g`, `v82_h`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v82_h`, `v82_i`, …) unless a future session has a good reason to switch to
 `v83_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v82_f`** cut.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v82_g`** cut.
+
+**`v82_g`, in brief** (full write-up in `roadmap_v82.md`): user request — sentence-ordering exercises
+(`order`, the shuffled-word-bank type) now only trigger for sentences of ≤5 words. `mkOrder`'s
+candidate pool (`buildStandardExercises`) is filtered on `s.words.length` before picking, leaving
+`read_translate` and every other sentence-derived type untouched — this is about the ORDERING task's
+difficulty specifically. A lesson with only long sentences now offers no `order` exercise at all,
+never a fallback to a long one. Denominator-neutral for the same reason `v75_d` (which first allowed
+`order` at every difficulty) already established: a sentence is an ITEM via `read_translate`
+regardless of whether it also gets an ordering variant. Verified by running the real
+`buildStandardExercises` function (not a source regex) against short/long/mixed fixtures, mutation-
+tested, and confirmed live in the running app.
 
 **`v82_f`, in brief** (full write-up in `roadmap_v82.md`): the user redesigned `writing` immediately
 after `v82_e` shipped it, from two live corrections: the lesson's stem became a genuine
@@ -113,8 +124,8 @@ closing `PLAN §C4` — see `roadmap_v81.md`'s own `v81_ad` entry for the full w
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 248 checks
-node test/run.js --quick                  → expect 221
+node test/run.js                          → expect 249 checks
+node test/run.js --quick                  → expect 222
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -122,13 +133,12 @@ node test/check-inline.js docs/index.html → expect 0 failures
 Corpus at this cut: **324 topics, 92 storylines, 33 languages, 651 `en` keys** (`v82_c` added 7 new
 `en`-only keys for the `inflections` lesson type; `v82_d` added 1 more — `complete.prev_chapter` —
 for the progress-card back-button fix; `v82_e` added 14 more for the `writing` lesson type; `v82_f`
-added 4 more — the correctness-verdict labels. None yet translated — needs the offline translate
-pass before those languages catch up). **The topic/storyline counts did not move at this cut** —
-they carry forward `v82_e`'s own bookkeeping (a genuinely concurrent generation job on the dev
-server, observed mid-verification, not this session's own data; see `roadmap_v82.md`'s `v82_e`
-entry). Two now-superseded `writing` lessons (old bilingual shape) WERE deleted at this cut, with
-permission — that changes lesson counts inside two topics, not the topic/storyline counts above.
-`APP_VERSION = 'v82_f'`.
+added 4 more — the correctness-verdict labels; `v82_g` added none — no new user-facing string. None
+yet translated — needs the offline translate pass before those languages catch up). **The
+topic/storyline counts did not move at this cut** — they carry forward `v82_e`'s own bookkeeping (a
+genuinely concurrent generation job on the dev server, observed mid-verification, not this session's
+own data; see `roadmap_v82.md`'s `v82_e` entry).
+`APP_VERSION = 'v82_g'`.
 
 > **These four expectations and the four corpus numbers are GUARDED** by `unit-roadmap-version`
 > against the actual suite and against the data files. **If that test fails, the number in THIS file
