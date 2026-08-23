@@ -815,6 +815,7 @@ moves both decks identically, measured. Where a fork looks asymmetric, the cause
 | card render errors | `_cardErrors()` — assert empty after any card render |
 | card page scaffolding | `_cardHeader(prefix)` + `.card-screen` (both required for a new card page) |
 | exercise build / answer / advance | `buildExercises(i)`, `pickChoice(i, el)`, `check(replay)`, `markSolved(ex)` |
+| **sentence-ordering (`order`) length gate** (`v82_g`) | `buildStandardExercises`'s `tsOrderable` filter — only sentences with `s.words.length <= 5` are candidates for `mkOrder`; a lesson whose sentences are all longer builds no `order` exercise at all (never a fallback to a long one). `read_translate` and every other sentence-derived type are unaffected — this is about the ORDERING task's own difficulty, not the sentence's eligibility |
 | exercise renderer registry | `EX_RENDERERS[ex.type]`, dispatched by `renderEx()` |
 | words this chapter teaches | `_storyWordSources(d)`; **per-word progress via `_wordProgress(d)`** (see TRACK T below) — `_solvedTargetWords(d)` is now a wrapper over it |
 | the card truth table | `build_history/probe_gates_v77.js` → **`v80i_card_gates.txt`** (`v80e`, `v80`, `v77` and `v76` tables superseded). ⚠️ It SELECTS its chapters from the corpus, so a data drop moves the selection — disambiguate by re-running the PREVIOUS client against the CURRENT corpus |
@@ -1056,6 +1057,7 @@ already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly o
 | the chain fed to prompts | `collectChainStory(node, budget)`, budget `CHAIN_STORY_CHARS` |
 | story prompt assembly | the `else` branch of `generate()` in `server.js`; system from `sysStory()` |
 | context-window sizing | `estimateCtxTokens()` / `_resolveNumCtx()` in `llm.js`; only callers passing `ctxTokens` get a `num_ctx` |
+| **difficulty-tiered furigana density** (`v82_i`, restored — dead since ~v40) | `sysStory(...,  difficulty)`'s last parameter selects via `_furiganaNoteFor(P, difficulty)` among `prompts.json`'s `story.furiganaNote1/2/3` (beginner/standard/advanced); an unrecognised/missing difficulty falls back to the flat `story.furiganaNote`. All three tiers carry the same "MANDATORY, FOR THE WHOLE STORY" + worked-example structure the flat note was fixed with at `v82_c` — the tier-3 (sparse) wording specifically needed a CONCRETE worked example to actually produce sparse output; an abstract "be selective" instruction alone measured as producing full coverage, same density as beginner |
 
 **Generation-side QC detectors** (all in `server.js`; each has a corpus PROBE that reports and a unit guard that pins the DETECTOR on synthetic fixtures)
 
@@ -1065,6 +1067,7 @@ already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly o
 | ⚠️ the "answer visible in the stem" half | **MEASURED AND DELIBERATELY NOT ENFORCED.** Prefix-matching is mild morphology and would discard good items in inflected languages. Reported by the probe, left to a human (`v80_g`) |
 | lesson written in the wrong script | `lessonScriptDefect(lesson, scriptName)` — alphabet comes from `scripts.json`, **never a hardcoded Unicode range**, so a script added there is covered with no code change. **EXEMPTS `comprehension`**: those questions are in the SOURCE language by design across the whole corpus (`v80_m` — the `v80_h` version wrongly flagged four of them). Probe: `probe_lesson_script_v80h.js` |
 | unique lesson ids within a topic | `_dedupeLessonIds(topics)`, called from `saveStore` — the ONE choke point all 23 write paths funnel through |
+| **`updatedAt` stamping** (`v82_h`) | `stampUpdated(saved)`, next to `saveStore` — the ONE choke point all nine stamp sites funnel through. Guarantees the timestamp strictly ADVANCES even when two saves for the same record land in the same wall-clock millisecond (bumps the previous value +1ms rather than reusing `Date.now()` verbatim) — genuinely possible under load, and the root cause of a flake reconfirmed three releases running before being traced here. Any NEW route that stamps a topic/lesson's `updatedAt` must call this, not `new Date().toISOString()` directly — `unit-stamp-updated.test.js` asserts zero raw stamp sites remain |
 | the vocab article contradiction | `prompts.json` `vocab.system` — the per-side clause was REMOVED and a worked counter-example added (`v80_j`, rule 31). **Unverified by design**: whether the model obeys needs regeneration across MANY lessons and a re-run of `probe_article_symmetry_v80j.js` against its 1.0%/bimodal baseline |
 
 **Speech**
