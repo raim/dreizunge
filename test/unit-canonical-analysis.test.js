@@ -49,6 +49,11 @@ console.log('  canonical-analysis.js: standalone, no server.js dependency, model
   assert.ok(sys.includes('German') && sys.includes('English'), 'both the target and source language NAMES appear in the system prompt');
   assert.ok(/lemma/.test(sys) && /form/.test(sys) && /sense/.test(sys) && /confidence/.test(sys) && /phrases/.test(sys),
     'the prompt asks for every field the plan names: lemma, form, sense, confidence, phrases');
+  // v83_p: a real user report found "kommen" (lemma, infinitive) paired against "venne" (sense,
+  // past tense) downstream — a register mismatch. The prompt must explicitly forbid the model from
+  // switching the sense gloss to the dictionary/citation form.
+  assert.ok(/same grammatical form/i.test(sys) && /infinitive/i.test(sys),
+    'the prompt explicitly instructs the sense gloss to stay in the SAME grammatical register as the token itself, not switch to the infinitive/citation form');
   const parsedUser = JSON.parse(user);
   assert.deepStrictEqual(parsedUser.tokens, [{ i: 0, surface: 'Katze' }, { i: 1, surface: 'schläft' }],
     'the model is given the REAL token list with 0-based indices — asked to annotate, not re-tokenise');
@@ -77,6 +82,11 @@ console.log('  buildAnalysisPrompt: language names + full token list + every req
   assert.strictEqual(r.tokens[2].lemma, null, 'a token the model never answered for is NOT fabricated a lemma');
   assert.strictEqual(r.tokens[2].confidence, 'unresolved', '"unresolved" (never answered) is a state DISTINCT from "low" (answered, unsure)');
   assert.strictEqual(r.tokens.every(t => t.reviewed === false), true, 'nothing is pre-marked reviewed — that is a later stage\'s job');
+  // v83_p: surface comes from OUR OWN token list, not the model — known even for the unresolved
+  // token, and even when it differs from the lemma the model proposed.
+  assert.strictEqual(r.tokens[0].surface, 'Katze');
+  assert.strictEqual(r.tokens[1].surface, 'schläft', 'the surface form ("schläft") is preserved even though the model\'s lemma ("schlafen") differs from it');
+  assert.strictEqual(r.tokens[2].surface, 'heute', 'surface is known for the UNRESOLVED token too — it comes from our own token list, never from the model');
 
   // Malformed JSON degrades the SAME way for every token, rather than throwing.
   const broken = ca.parseAnalysisReply('not json at all', tokens);

@@ -29,9 +29,9 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_o` — bug fix, found by a REAL user run of `apply-cp-lessons.js` against `qwen3.6:35b-a3b`: `analyzeSentence` (CP2) now sends `think:false`, fixing an "Ollama returned empty response" failure on reasoning-capable models — the exact, previously-diagnosed `v71_o` failure mode server.js's own generator already avoided, which CP2 had never adopted. `v83_n` — `apply-cp-lessons.js`: the FIRST script in `PLAN §7.0` that WRITES into a real `lessons.json`, additively, with cross-chapter dedup. `v83_l`/`v83_m` — `PLAN §7.0` CP5 (silent, then visible on request): the FIRST CP stage to touch `index.html`/`server.js`. `v83_h`–`v83_k` — `PLAN §7.0` CP1–CP4: canonical text → analysis (model-in-the-loop) → curriculum plan → one lesson family, all report-only/inert. `v83_b`–`v83_g` — `PLAN §12` (text-selection tutor) and a progress-card/question-card UI arc (popup redesign, thicker arrows, fill-height REVOKED, red→green border) — see each entry below for full detail |
+| **SHIPPED IN THE v83 LINE** | `v83_p` — bug fix, found by the USER REVIEWING a real generated lesson: CP2's `sense` gloss now stays in the SAME grammatical register as the token itself (no more infinitive-vs-conjugated mismatches), and CP4's `vocab[i].target` now uses the SURFACE form (not the dictionary lemma) paired against that register-matched sense — fixing a real "kommen"/"venne" mismatch. A SECOND bug found while fixing the first: `apply-cp-lessons.js`'s cross-chapter dedup compared by `target` (now surface), silently breaking for inflected words — fixed to compare by `lemma`. `v83_o` — bug fix, found by a REAL user run against `qwen3.6:35b-a3b`: CP2 now sends `think:false`, fixing an "Ollama returned empty response" failure on reasoning-capable models. `v83_n` — `apply-cp-lessons.js`: the FIRST script in `PLAN §7.0` that WRITES into a real `lessons.json`, additively, with cross-chapter dedup. `v83_l`/`v83_m` — `PLAN §7.0` CP5 (silent, then visible on request): the FIRST CP stage to touch `index.html`/`server.js`. `v83_h`–`v83_k` — `PLAN §7.0` CP1–CP4: canonical text → analysis (model-in-the-loop) → curriculum plan → one lesson family, all report-only/inert. `v83_b`–`v83_g` — `PLAN §12` (text-selection tutor) and a progress-card/question-card UI arc — see each entry below for full detail |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
-| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 at `v83_i`, CP3 at `v83_j`, CP4 at `v83_k`, CP5 at `v83_l`/`v83_m` (silent then visible). `v83_n` (`apply-cp-lessons.js`, bug-fixed at `v83_o`) is the FIRST script that actually writes CP1-4-derived lessons into `lessons.json`, additively — not itself a numbered CP stage, a browser-reachable follow-up to CP4. CP6 remains open (a CONDITIONAL, not a queued slice — see `v83_l`'s own SESSION_PROMPT). |
+| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 at `v83_i`, CP3 at `v83_j`, CP4 at `v83_k`, CP5 at `v83_l`/`v83_m` (silent then visible). `v83_n` (`apply-cp-lessons.js`, bug-fixed at `v83_o`/`v83_p`) is the FIRST script that actually writes CP1-4-derived lessons into `lessons.json`, additively — not itself a numbered CP stage, a browser-reachable follow-up to CP4. CP6 remains open (a CONDITIONAL, not a queued slice — see `v83_l`'s own SESSION_PROMPT). |
 
 Standing rules are in the "Rules earned in session 28…34" blocks — read the **"⚠️ How the rules are
 NUMBERED"** note before citing one.
@@ -1685,6 +1685,76 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_p` — bug fix: register-consistent target/source pairs (found by the user, reading a real lesson)
+
+**Found by the user**, reading the `v83_o` (`qwen3.6:35b-a3b`) lesson word-by-word: *"we still have
+'venne/kommen', so an inflected verb is translated with the german lemma/infinitive."* Exactly right
+— `kommen` (the LEMMA, infinitive) was shown as the vocabulary word, paired against `venne` (the
+SENSE, Italian past tense) as its translation. Two words in the SAME target/source pair, in two
+DIFFERENT grammatical registers.
+
+**Two compounding causes, both fixed**:
+
+1. **CP2's own prompt never told the model to keep the gloss's register consistent with the
+   token.** `sense` is deliberately "what this token means HERE, not a generic dictionary
+   definition" (the design that produced the GOOD, sophisticated readings — "esistere (in senso
+   impersonale)" for the idiomatic "es gibt", "lei (riferito al governo)" correctly tracing a
+   pronoun back two sentences — reviewed and praised the same session). But nothing told the model
+   WHICH register to answer in, so it sometimes glossed with an infinitive, sometimes with a
+   conjugated form, inconsistently. Fixed: `buildAnalysisPrompt` now explicitly requires "the SAME
+   grammatical form as the token itself... never switch to the dictionary/citation form."
+2. **CP4 paired the WRONG field against `sense` in the first place.** Even with the model's own
+   register now consistent, `curriculum-lesson.js` was pairing `target: c.lemma` (ALWAYS the
+   dictionary/infinitive form, by definition) against `source: c.sense` (whatever register the token
+   actually had) — a mismatch was baked into the packaging, independent of what the model said.
+
+**The fix, end to end**: CP2's `parseAnalysisReply` now carries `surface` — the token's own literal
+text, from OUR OWN token list (known even for an `unresolved` token, since it never depended on the
+model answering at all). CP3's `extractVocabConcepts` tracks `surface` per occurrence and picks it
+from the EXACT SAME occurrence chosen for `sense` — picking them independently could still pair one
+occurrence's surface against a DIFFERENT occurrence's differently-inflected sense, reintroducing the
+same mismatch one level down. CP4's `emitVocabLesson` now sets `target: c.surface || c.lemma`
+(register-matched to `source`), and keeps `lemma` as its OWN separate field — the concept's stable
+dictionary identity is not lost, just no longer what is shown as the primary word.
+
+**⚠️ A second, real bug found WHILE fixing the first**: `apply-cp-lessons.js`'s cross-chapter dedup
+built its "already taught" set from `vocab.target`. Once `target` became the surface form, that
+silently broke dedup for exactly the inflected words this whole fix is about — a later chapter's
+candidate `lemma` ("kommen") would never match an earlier chapter's `target` ("kam"), since they are
+now different strings by design. Fixed: `vocabTargetsOf` prefers `v.lemma || v.target` (a LEGACY
+lesson's vocab item has no `lemma` field at all, so it still falls back to `target` there, its own
+closest thing to a lemma). This is exactly the kind of ripple a fix to one stage's OUTPUT SHAPE can
+have on a DOWNSTREAM consumer that quietly assumed the old shape — found only by re-running the full
+test suite for the affected files, not by reasoning about the fix in isolation.
+
+**Verified at the layer where the claim is observable**: a direct, hand-built fixture proves
+`surface`/`sense` are chosen from the SAME (high-confidence) occurrence, not independently — a
+concept whose high-confidence occurrence is "nahm"/"took" (past tense) and whose OTHER, low-confidence
+occurrence is "nimmt"/"takes" (present tense) must resolve to "nahm"/"took", never a cross-occurrence
+mix. `unit-curriculum-lesson.test.js` proves `target` uses `surface`, register-matched to `source`,
+with `lemma` still carried separately. `unit-apply-cp-lessons.test.js` gained a NEW section: a
+hand-built pre-existing `_pipeline:'cp4'` lesson with `target`/`lemma` deliberately DIFFERENT (`target:
+'kam'`, `lemma:'kommen'`), proving a later storyline chapter still correctly excludes "kommen" —
+comparing by target alone would have missed it, exactly the bug just described.
+
+**Mutation-tested**: reverting CP3's same-occurrence surface/sense selection to pick surface from a
+DIFFERENT (the last) occurrence — RED. Reverting CP4's `target` back to `c.lemma` — RED. Reverting
+`apply-cp-lessons.js`'s dedup identity back to `target`-only — RED, caught by the hand-built
+register-mismatched fixture described above.
+
+**Testing**: 260/228/0/0 full baseline green against the committed `lessons.json` (checked the same
+careful way as `v83_o` — the user's own uncommitted CP4 evaluation data is excluded from this commit
+too). No `ui.json` change.
+
+**A pattern worth naming**: THREE real bugs across `v83_o`/`v83_p` were found not by this session's
+own testing, but by the USER actually using the tool for its intended purpose — running it against a
+real model, and reading a real generated lesson closely enough to notice a subtle register
+inconsistency. The fake-Ollama test harness, however rigorous, cannot catch either class of bug: one
+needs a REAL reasoning model to fail against, the other needs a human's actual linguistic judgment
+about what "correct" looks like. Track A's own report-only/inert design bought exactly the safety
+margin needed for this kind of real-world contact to be cheap and low-risk rather than a corpus
+incident.
 
 ### `v83_o` — bug fix: CP2's `analyzeSentence` sends `think:false` (found by a real user run)
 

@@ -1,52 +1,46 @@
-# Session prompt — written at the `v83_o` cut
+# Session prompt — written at the `v83_p` cut
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_n.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_o.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v83_p`, `v83_q`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v83_q`, `v83_r`, …) unless a future session has a good reason to switch to
 `v84_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v83_o`** release —
-a BUG FIX, found by the user running `apply-cp-lessons.js` for real: `canonical-analysis.js`'s
-`analyzeSentence` (CP2) now sends `think:false` on every model call. Without it, a reasoning-capable
-model (the user hit this with `qwen3.6:35b-a3b`) burns its whole token budget "thinking" and the call
-fails with `Ollama returned empty response` — the EXACT, already-diagnosed `v71_o` bug this project's
-OWN legacy generator solved years ago (`server.js`'s `OLLAMA_THINK` table), which CP2 had simply
-never adopted because it was built and tested only against the fake-Ollama harness, which cannot
-simulate a reasoning model at all.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v83_p`** release —
+a BUG FIX, found by the user actually reading a real generated lesson word-by-word: *"we still have
+'venne/kommen', so an inflected verb is translated with the german lemma/infinitive."* CP2's `sense`
+gloss now stays in the same grammatical register as the token itself (no more infinitive-vs-
+conjugated mismatches), and CP4's `vocab[i].target` now uses the SURFACE form (what the learner
+actually saw), not the dictionary lemma, paired against that register-matched sense. A SECOND real
+bug was found WHILE fixing the first: `apply-cp-lessons.js`'s cross-chapter dedup compared by
+`target` (now the surface form), which silently broke matching for inflected words — fixed to
+compare by `lemma` instead (falling back to `target` for legacy lessons, which have no `lemma`
+field). Both bugs, `v83_p`'s and `v83_o`'s before it, were found by the user actually USING the tool
+against a real model and reading real output — not by this session's own testing, which cannot
+simulate either failure mode (a reasoning model's behaviour, or a human's linguistic judgment).
 
-**`v83_h`–`v83_n`, condensed — the whole `PLAN §7.0` arc so far**: CP1 (`v83_h`) — stable text
-records, no model call. CP2 (`v83_i`) — the model-in-the-loop stage, one real LLM call per sentence
-(now bug-fixed at `v83_o`). CP3 (`v83_j`) — curriculum plan, no model call. CP4 (`v83_k`) — one
-lesson family, proven playable, still unreachable by anyone. CP5 (`v83_l` silent, `v83_m` visible) —
-the FIRST stage to touch `index.html`/`server.js`, a small "🧪 Experimental" row in the progress
-card's nav popup. `apply-cp-lessons.js` (`v83_n`) — the FIRST script that WRITES real, additive,
-`_pipeline:'cp4'`-tagged lessons into `lessons.json`, with cross-chapter dedup. A separate,
-code-free roadmap note (between `v83_m` and `v83_n`) distinguishes that SIMPLE dedup from the harder,
-explicitly-deferred "genuine cross-chapter curriculum sequencing." Full write-ups in
-`roadmap_v83.md`'s `# SHIPPED IN THE v83 LINE`.
-
-**`v83_o`'s own fix, plus what it caught**: `unit-canonical-analysis.test.js` gained a §10 that
-inspects the ACTUAL HTTP request body via `fake-ollama.js`'s own request log to confirm `think:false`
-is really on the wire — mutation-tested (removing it goes RED). **A separate, useful side-finding
-while checking the full suite after the fix**: `unit-replay-focus.test.js` failed, but only because
-the user's own uncommitted, locally-generated CP4 test lesson (still sitting in THEIR `lessons.json`
-from evaluating `v83_n`) has an unusual shape (`sentences: []`, several rare/function-word items) that
-perturbs that test's corpus-wide simulation. Confirmed NOT a `v83_o` regression (reverting
-`lessons.json` to committed state makes it pass again) — `lessons.json` is excluded from the `v83_o`
-commit entirely, same treatment `ui.json` got at `v83_h`/`v83_i`. **If a CP4-pipeline lesson is EVER
-considered for permanent inclusion, it may need to be a nicer fixture first** — real sentences, fewer
-rare/function-word-only items — before the rest of the suite can assume its shape.
+**`v83_h`–`v83_o`, condensed — the whole `PLAN §7.0` arc**: CP1 (`v83_h`) — stable text records, no
+model call. CP2 (`v83_i`, `think:false` fix at `v83_o`, register fix at `v83_p`) — the model-in-the-
+loop stage, one real LLM call per sentence. CP3 (`v83_j`, surface/sense same-occurrence fix at
+`v83_p`) — curriculum plan, no model call. CP4 (`v83_k`, target-field fix at `v83_p`) — one lesson
+family, proven playable, still unreachable by anyone through the UI. CP5 (`v83_l` silent, `v83_m`
+visible) — the FIRST stage to touch `index.html`/`server.js`. `apply-cp-lessons.js` (`v83_n`, two bug
+fixes at `v83_o`/`v83_p`) — the FIRST script that WRITES real, additive, `_pipeline:'cp4'`-tagged
+lessons into `lessons.json`, with cross-chapter dedup. A separate, code-free roadmap note (between
+`v83_m` and `v83_n`) distinguishes SIMPLE cross-chapter dedup (built) from the harder, explicitly-
+deferred "genuine cross-chapter curriculum sequencing." Full write-ups in `roadmap_v83.md`'s
+`# SHIPPED IN THE v83 LINE`.
 
 ⚠️ **Check `git status --short lessons.json` at the start of this session.** If it shows modified,
-that is very likely the user's own real, uncommitted CP4-pipeline evaluation data (see above) — not
-yours to revert, commit, or "fix" without asking. Ask what they want done with it before touching it.
+that is very likely the user's own real, uncommitted CP4-pipeline evaluation data — not yours to
+revert, commit, or "fix around" without asking. `v83_o`/`v83_p` both excluded it from their commits;
+the same dance (back up, `git checkout --`, build/test, restore) is documented in both write-ups.
 
 ## Orient yourself
 
 1. **This file**, whole.
 2. `build_history/roadmap_v83.md` — its **index table** and the **⚠️ Session protocol** block first,
-   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`…`v83_o` were built, and
+   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`…`v83_p` were built, and
    `PLAN §7.0`'s own migration sequence (§0) — **including the multi-chapter note right after the
    migration sequence list**, before touching any further multi-chapter work.
 3. `INTERNALS.md` — constants, silent-failure modes, invariants, harness limits. **§6b is a
@@ -66,12 +60,14 @@ Corpus at this cut: **327 topics, 92 storylines, 33 languages, 659 `en` keys** (
 COMMITTED, 24 chapters); `canonical-analysis.json` (CP2), `curriculum-plan.json` (CP3),
 `curriculum-lesson.json` (CP4) — none committed by default. `apply-cp-lessons.js` (`v83_n`) is the
 ONLY thing that can add a real lesson to `lessons.json`, only with explicit `--write`.
-`APP_VERSION = 'v83_o'`.
+`APP_VERSION = 'v83_p'`.
 
-⚠️ **`node test/run.js` will show a red `unit-replay-focus` (or similar corpus-shape-sensitive test)
-if the user's own uncommitted CP4 test lesson is present in `lessons.json` at the time** — this is
-NOT a code regression; verify by checking `git diff --stat lessons.json` first, and if it's non-empty,
-that is very likely why. Do not "fix" the test to tolerate that shape without being asked to.
+⚠️ **A CP4-pipeline lesson's `vocab[i]` shape changed at `v83_p`**: it now has `{target, source,
+lemma, conceptId}` — `target` is the SURFACE form, `lemma` is a NEW, separate field carrying the
+dictionary form. A lesson generated BEFORE `v83_p` (the user's own two evaluation runs, `v83_n`'s
+qwen2.5:7b and `v83_o`'s qwen3.6:35b-a3b) will still have the OLD shape (`target` = lemma, no
+separate `lemma` field) — do not assume every `_pipeline:'cp4'` lesson in a real corpus has the new
+shape without checking its own `provenance.pipelineVersion`/generation date first.
 
 ⚠️ **The user's own main dev server (port 3000) needs a MANUAL restart to see anything past
 `v83_f`** — check its reported version against `APP_VERSION` before assuming it's current, and ask
@@ -91,31 +87,32 @@ before restarting it.
 N" blocks — this is the short form, not a replacement for reading those before citing one.)*
 
 1. **Measure before editing.**
-2. **Guard at the layer where the claim is observable** (rule 34). `v83_o`'s version: the `think:false`
-   fix was verified by inspecting the ACTUAL HTTP REQUEST BODY (via fake-ollama.js's own request log),
-   not by reading the source and trusting the argument was passed through correctly.
-2b/2c. Rewrite superseded invariants explicitly; extract shared logic on a second use.
+2. **Guard at the layer where the claim is observable** (rule 34).
 3. **For any refactor claiming to preserve behaviour, CAPTURE the old output and DIFF it.**
 4. **`buildExercises` is NON-DETERMINISTIC IN CONTENT, not just order** (`v80_t`).
 5. **A zero-callers finding is not by itself permission to delete** (`v81_q`).
-6. **Never put emoji in a Python string literal** (rule 25); write them via a `cat` heredoc.
+6. **Never put emoji in a Python string literal** (rule 25).
 7. **A live model call needs a live test, not a plausible prompt** (`v82_e`, `v82_i`, `v83_b`,
-   `v83_i`, `v83_n`). **`v83_o`'s own sharpening: the fake-Ollama harness cannot simulate a
-   REASONING model at all** — this exact bug was invisible to every test until a real user ran a real
-   reasoning-capable model. A test suite passing 100% against a scripted fake is NOT the same claim as
-   "this works against real models," and CP2 specifically is the one stage in this whole track that
-   makes a real model call — treat it with proportionally more suspicion of "have we actually tried
-   this against a real, current-generation model" than the deterministic stages.
+   `v83_i`, `v83_n`, `v83_o`). **`v83_p`'s own sharpening: a live model call ALSO needs a real
+   HUMAN reading the output closely** — `v83_o`'s fix made the pipeline WORK against a real model;
+   `v83_p`'s fix made what it PRODUCED actually correct. Neither bug was reachable by any amount of
+   testing against the fake harness, and neither was reachable by just "running it and seeing it
+   didn't crash" — `v83_p`'s bug produced a perfectly well-formed, non-crashing, WRONG lesson.
 8. **Ask before restarting a dev server you did not start, and before deleting data you did not
-   create.** `v83_o`'s version: the SAME caution applies to a user's own uncommitted `lessons.json`
-   test data — check `git status`/`git diff --stat` before assuming an unexpected diff is yours to
-   revert or fix around.
+   create.** Applies equally to the user's own uncommitted `lessons.json` evaluation data.
 9. **A test file's `--write`/output path must never be the real, COMMITTED artifact** (`v83_h`).
 10. **Mutation-testing a `--write` CLI must redirect BOTH input and output to scratch copies BEFORE
    mutating** (`v83_i`, incident; every release since, applied correctly).
 11. **When a change is the FIRST of its kind to touch the live app, or to WRITE to a real corpus, ASK
    how far it should go before building** (`v83_l`/`v83_m`, `v83_n`).
 12. **When the user's own estimate of a task's difficulty is wrong, say so plainly** (`v83_n`).
+13. **A fix to one stage's OUTPUT SHAPE can silently break a DOWNSTREAM consumer that assumed the OLD
+   shape** (`v83_p`, new) — changing CP4's `target` field from lemma to surface silently broke
+   `apply-cp-lessons.js`'s own cross-chapter dedup, which read `vocab.target` assuming it WAS the
+   lemma. Caught only by re-running the FULL test suite for every affected file after the first fix,
+   not by reasoning about that one fix in isolation. Any future change to a shared record shape
+   (CP1's token record, CP2's analysis record, CP3's concept record, CP4's lesson shape) needs the
+   SAME sweep: what else reads this field, and does it still mean what that reader assumes?
 
 ---
 
@@ -133,16 +130,16 @@ session.** Check whether it has landed before touching this yourself.
 
 ## 3. `PLAN §7.0` — the natural next slices, if the user wants to continue
 
-- **Evaluate more real CP4 output.** The user is actively comparing qwen2.5:7b vs qwen3.6:35b-a3b
-  output quality on the SAME chapter right now — a direct continuation of this exact thread, not a
-  new ask. Read back whatever they generated next; the last reviewed sample (qwen2.5:7b) had TWO
-  clear lemmatization/sense errors out of 8 words and one bare-function-word item ("ein") — see if the
-  larger model does better, and whether a SYSTEMATIC pattern (not just "small models sometimes err")
-  emerges worth fixing in CP2's own prompt or CP3's concept selection.
+- **Re-evaluate CP4 output with the register fix in place.** The user's own two evaluation runs
+  (`v83_n` qwen2.5:7b, `v83_o` qwen3.6:35b-a3b) both predate `v83_p` — worth re-running (`--replace`)
+  to see the corrected target/source pairing on real output, not just the hand-built test fixtures.
 - **Browser reachability** (UI checkbox + background job for CP2's slow calls) and **CP6** (still a
   CONDITION, not a queued slice) both remain open, neither authorised without the user naming it.
 - **The multi-chapter roadmap note's HARDER half** — genuine cross-chapter curriculum sequencing —
   stays explicitly deferred.
+- **The function-word filtering gap**, named in `v83_n`'s own write-up ("ein" proposed as a
+  standalone vocabulary item) — still open, unaffected by `v83_p`'s fix.
+- **Confidence not surviving into CP4's written lesson** — also named in `v83_n`, also still open.
 
 ## 4. BUILDABLE NOW, no ruling needed
 
@@ -156,8 +153,8 @@ session.** Check whether it has landed before touching this yourself.
 - **`translate-ui.js --langnames`, the `hr` `ui.json` pass, native-speaker check of `cyrillic-sr`.**
 - **Device passes** on the `v81` UI arc and the `v83_b`…`v83_m` progress-card arc.
 - **Deciding what to do with the CP4 test lesson(s) they've generated** — keep, discard, regenerate
-  with the larger model, or use as the seed for fixing CP2/CP3's known gaps (function-word filtering,
-  confidence not surviving into CP4's written output — both named in `v83_n`'s own write-up).
+  with `v83_p`'s fix, or use as the seed for fixing CP2/CP3's still-open gaps (function-word
+  filtering, confidence not surviving into CP4's written output).
 
 ## 6. NOT yours to start
 
@@ -180,18 +177,23 @@ number, if it turns out to work well in real use.
 **Before grepping for where something lives, check `INTERNALS.md` §6b.**
 
 - **`canonical-text.js`/`build-canonical-text.js`** (`v83_h`, CP1) — no model call. Committed output.
-- **`canonical-analysis.js`/`build-canonical-analysis.js`** (`v83_i`, CP2, bug-fixed `v83_o`) —
-  model-in-the-loop, now sends `think:false` on every call.
-- **`curriculum-plan.js`/`build-curriculum-plan.js`** (`v83_j`, CP3) — no model call. Also carries
-  `excludeAlreadyTaughtConcepts` (`v83_n`).
+- **`canonical-analysis.js`/`build-canonical-analysis.js`** (`v83_i`, CP2) — model-in-the-loop.
+  `think:false` on every call (`v83_o`). `parseAnalysisReply` now carries `surface` per token
+  (`v83_p`) — the token's own literal text, known even when unresolved.
+- **`curriculum-plan.js`/`build-curriculum-plan.js`** (`v83_j`, CP3) — no model call.
+  `excludeAlreadyTaughtConcepts` (`v83_n`). `surface`/`sense` chosen from the SAME occurrence
+  (`v83_p`) — never independently, or the register mismatch reappears one level down.
 - **`curriculum-lesson.js`/`build-curriculum-lesson.js`** (`v83_k`, CP4) — no model call, never
-  writes `lessons.json` on its own.
+  writes `lessons.json`. `vocab[i] = {target: surface, source: sense, lemma, conceptId}` (`v83_p`) —
+  target/source are register-matched; lemma is a separate field.
 - **`GET /api/cp-shadow/:chapterId`** / `cp5ShadowFor` (server.js, `v83_l`) — READ-ONLY.
 - **`refreshCp5Shadow(d)` / `_renderCp5Row(cp)`** (index.html, `v83_l`/`v83_m`) — the small visible
   row, resets synchronously, never influences the red→green border.
 - **`apply-cp-lessons.js`** (`v83_n`) — THE script that writes real lessons. `--topic`/`--storyline`,
-  `--write`, `--replace`, `--lessons`/`--out`. Tagged `_pipeline:'cp4'`. Do NOT `require` server.js
-  from ANY of the five standalone CP files.
+  `--write`, `--replace`, `--lessons`/`--out`. `vocabTargetsOf` (its cross-chapter dedup identity
+  function) compares by `lemma` first, falling back to `target` for legacy lessons (`v83_p` — this
+  MUST stay lemma-first, or dedup silently breaks for every inflected word again). Do NOT `require`
+  server.js from ANY of the five standalone CP files.
 - `test/lib.js`'s `boot({ log, seed, extraEnv })` — `extraEnv` (`v83_l`) merges into the spawned
   server's env.
 - `probe_gates_v80c1.js`, `probe_gates_v77.js` (⚠️ diff after progress-card changes, baseline

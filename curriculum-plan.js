@@ -45,7 +45,7 @@ function extractVocabConcepts(chapterAnalysis) {
       let c = byLemma.get(t.lemma);
       if (!c) { c = { lemma: t.lemma, forms: new Set(), occurrences: [] }; byLemma.set(t.lemma, c); }
       if (t.form) c.forms.add(t.form);
-      c.occurrences.push({ tokenId: t.tokenId, sentenceId: s.sentenceId, sentenceIdx: sIdx, sense: t.sense, confidence: t.confidence });
+      c.occurrences.push({ tokenId: t.tokenId, sentenceId: s.sentenceId, sentenceIdx: sIdx, surface: t.surface, sense: t.sense, confidence: t.confidence });
     });
   });
   return Array.from(byLemma.values()).map(c => buildVocabConcept(chapterAnalysis, c));
@@ -55,7 +55,13 @@ function buildVocabConcept(chapterAnalysis, c) {
   const forms = Array.from(c.forms);
   const hasMultipleForms = forms.length > 1;
   const anyLow = c.occurrences.some(o => o.confidence !== 'high');
-  const bestSense = (c.occurrences.find(o => o.confidence === 'high' && o.sense) || c.occurrences.find(o => o.sense) || {}).sense || null;
+  // v83_p: bestSurface comes from the EXACT SAME occurrence as bestSense, not independently chosen
+  // -- a target/source pair built from two DIFFERENT occurrences could pair one occurrence's surface
+  // form against a different occurrence's (differently-inflected) sense, reintroducing the same
+  // register mismatch this whole change exists to fix.
+  const bestOcc = c.occurrences.find(o => o.confidence === 'high' && o.sense) || c.occurrences.find(o => o.sense) || c.occurrences[0];
+  const bestSense = bestOcc.sense || null;
+  const bestSurface = bestOcc.surface || c.lemma;
   const families = ['standard'];
   if (hasMultipleForms) { families.push('word_forms'); families.push('inflections'); }
   if (forms.some(f => /verb/i.test(f))) families.push('conjugation');
@@ -70,6 +76,7 @@ function buildVocabConcept(chapterAnalysis, c) {
     conceptId: chapterAnalysis.chapterId + ':concept:vocab:' + c.lemma,
     type: 'vocab',
     lemma: c.lemma,
+    surface: bestSurface,
     lang: chapterAnalysis.lang,
     sense: bestSense,
     forms,

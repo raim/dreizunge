@@ -71,7 +71,10 @@ function buildAnalysisPrompt(sentenceText, tokens, langName, srcLangName) {
     '  - "form": its grammatical form in this sentence (part of speech plus any relevant inflection, ' +
     'e.g. "verb, 3rd person singular past")\n' +
     '  - "sense": a short gloss IN ' + S + ' of what this token specifically means HERE, in this ' +
-    'sentence -- not a generic dictionary definition\n' +
+    'sentence -- not a generic dictionary definition. Keep the SAME grammatical form as the token ' +
+    'itself: if the token is a conjugated/inflected form, give a conjugated/inflected gloss in the ' +
+    'SAME tense/person/number (e.g. a past-tense verb token gets a past-tense gloss, not an ' +
+    'infinitive) -- never switch to the dictionary/citation form here, that is what "lemma" is for\n' +
     '  - "confidence": "high" or "low" -- use "low" whenever you are guessing rather than sure\n' +
     'Also propose "phrases": contiguous runs of TWO OR MORE tokens that function as one multiword ' +
     'unit (phrasal verbs, fixed expressions, idioms) that should be taught together rather than ' +
@@ -96,6 +99,14 @@ function buildAnalysisPrompt(sentenceText, tokens, langName, srcLangName) {
 // uncertainty/review rather than silently guessing"), and NOT fabricated as if answered. A
 // malformed/unparseable reply degrades the SAME way for every token, rather than throwing --a
 // analysis run over many sentences must survive one bad reply, not abort the whole chapter.
+//
+// `surface` (v83_p): the token's own literal text, from OUR OWN token list, not the model's reply --
+// known regardless of whether the model answered at all. A user report found "kommen" (the LEMMA,
+// infinitive) paired against "venne" (the SENSE, past tense) as a target/source vocabulary pair one
+// level up in CP4 -- a register mismatch. `lemma` is deliberately the dictionary/citation form (the
+// concept's stable identity); `surface` is what the learner will ACTUALLY see in the story, in the
+// SAME grammatical register the sense gloss now (also v83_p, see buildAnalysisPrompt) is instructed
+// to match. CP4 pairs `surface`+`sense` for the target/source shown to a learner, not `lemma`+`sense`.
 function parseAnalysisReply(raw, tokens) {
   let parsed;
   try { parsed = extractJSON(raw); } catch (e) { parsed = {}; }
@@ -106,11 +117,11 @@ function parseAnalysisReply(raw, tokens) {
   const tokenResults = tokens.map(tok => {
     const m = byIdx.get(tok.idx);
     if (!m || typeof m !== 'object') {
-      return { tokenId: tok.tokenId, idx: tok.idx, lemma: null, form: null, sense: null,
+      return { tokenId: tok.tokenId, idx: tok.idx, surface: tok.text, lemma: null, form: null, sense: null,
         confidence: 'unresolved', reviewed: false };
     }
     return {
-      tokenId: tok.tokenId, idx: tok.idx,
+      tokenId: tok.tokenId, idx: tok.idx, surface: tok.text,
       lemma: (typeof m.lemma === 'string' && m.lemma) ? m.lemma : null,
       form: (typeof m.form === 'string' && m.form) ? m.form : null,
       sense: (typeof m.sense === 'string' && m.sense) ? m.sense : null,

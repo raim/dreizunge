@@ -59,6 +59,18 @@ function fixturePlan(n) {
   assert.strictEqual(lesson.vocab.length, 8, 'capped at 8 — the SAME cap generateOneLesson applies to a model\'s own vocab list, for parity');
   assert.strictEqual(lesson.vocab[0].target, 'Haus'); assert.strictEqual(lesson.vocab[0].source, 'house');
   assert.strictEqual(lesson.vocab[0].conceptId, 'tp_fix:concept:vocab:Haus', 'each vocab item traces back to the exact CP3 concept it came from');
+  assert.strictEqual(lesson.vocab[0].lemma, 'Haus', 'lemma is ALWAYS carried on the vocab item, even a concept with no separate surface field (where target falls back to the lemma too — see the register-consistency case below for when surface differs from lemma)');
+
+  // v83_p: target is the SURFACE form (what the learner actually sees), not the dictionary lemma —
+  // a real user report found the two mismatched in register ("kommen"/infinitive paired against
+  // "venne"/past tense) one stage downstream of here. `lemma` is carried as ITS OWN field.
+  const registerPlan = { chapterId: 'tp_reg', concepts: [
+    { type: 'vocab', lemma: 'kommen', surface: 'kam', sense: 'came', conceptId: 'tp_reg:concept:vocab:kommen', sourceSpans: [], planReason: 'x' },
+  ] };
+  const registerLesson = cl.emitVocabLesson(registerPlan);
+  assert.strictEqual(registerLesson.vocab[0].target, 'kam', 'target is the SURFACE form ("kam"), not the lemma ("kommen") — register-matched to the sense');
+  assert.strictEqual(registerLesson.vocab[0].source, 'came', 'source stays the contextual sense, same tense as the target');
+  assert.strictEqual(registerLesson.vocab[0].lemma, 'kommen', 'the dictionary lemma is still carried, as its own separate field — not lost, just not what is SHOWN as the primary word');
   assert.deepStrictEqual(lesson.sentences, [], 'sentences are deliberately empty at this stage — no new model call was made to translate one');
   assert.deepStrictEqual(lesson.skillLinks, [], 'skillLinks deliberately unresolved — real skill-registry integration is a later decision, not invented here');
   assert.strictEqual(lesson.sourceSpans.length, 8, 'sourceSpans carries every emitted concept\'s own real tokenIds forward');

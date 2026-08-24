@@ -11,8 +11,11 @@
 // proposed a lemma and a contextual sense for every resolved token, and CP3 already decided WHICH of
 // those are worth teaching, in what order, and why. Turning a CP3 vocab concept into a
 // `lessons.json`-SHAPED lesson object is packaging, not a fresh judgment about meaning -- the target
-// is the concept's own lemma, the source is the concept's own CP2-derived sense. No invention
-// happens here that CP1-3 had not already done and recorded.
+// is the concept's own SURFACE form (v83_p: what the learner actually saw in the story, NOT the
+// dictionary lemma -- pairing the lemma against a contextually-inflected sense produced a real,
+// user-reported register mismatch), the source is the concept's own CP2-derived sense, and `lemma`
+// is carried as its own separate field. No invention happens here that CP1-3 had not already done
+// and recorded.
 //
 // SCOPE, stated up front the way every earlier stage has: vocabulary (meaning/form) ONLY, per the
 // plan's own "start with" wording -- conjugation/grammar/articles/error-patterns/comprehension are
@@ -68,7 +71,12 @@ function emitVocabLesson(plan, opts) {
     title: opts.title || `Vocabulary — ${plan.chapterId}`,
     desc: opts.desc || `${vocabConcepts.length} word(s) proposed by PLAN §7.0 CP1-3 for ${plan.chapterId}`,
     icon: '📖',
-    vocab: vocabConcepts.map(c => ({ target: c.lemma, source: c.sense || '', conceptId: c.conceptId })),
+    // v83_p: target is the SURFACE form (what the learner actually sees in the story), paired with
+    // the CONTEXTUAL sense -- both in the SAME grammatical register (a user report found "kommen"
+    // (lemma, infinitive) paired against "venne" (sense, past tense) — a register mismatch one
+    // level up, at CP3, where surface/sense are now chosen from the SAME occurrence). `lemma` is
+    // kept as its own field: the concept's stable dictionary identity, not what is shown/taught.
+    vocab: vocabConcepts.map(c => ({ target: c.surface || c.lemma, source: c.sense || '', lemma: c.lemma, conceptId: c.conceptId })),
     sentences: [],   // deliberately empty at this stage -- see file header
     skillLinks: [],  // deliberately unresolved -- see file header
     sourceSpans: vocabConcepts.flatMap(c => c.sourceSpans || []),

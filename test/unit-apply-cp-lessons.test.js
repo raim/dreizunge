@@ -106,6 +106,30 @@ function run(args, env) {
   }
   console.log('  cross-chapter dedup sees THIS RUN\'s own earlier additions too, not only pre-existing legacy lessons: OK');
 
+  // ── 4b. Dedup compares by LEMMA, not by the (now inflected-surface) target (v83_p) ──
+  // A hand-built pre-existing cp4-pipeline lesson whose target/lemma DIFFER, exactly the register
+  // fix's own shape — target "kam" (surface, past tense), lemma "kommen" (dictionary form). If dedup
+  // compared target-to-target it would never catch a later chapter proposing lemma "kommen" (the
+  // fake model echoes a token's own surface, lowercased, as its lemma — so a story containing the
+  // literal word "kommen" makes the fake propose lemma:"kommen" too).
+  {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'apply-dedup-lemma-'));
+    const c1 = { id: 'tp_c1', topic: 'One', lang: 'de', srcLang: 'en', story: 'Er kam gestern.', lessons: [
+      { id: 1, type: 'standard', _pipeline: 'cp4', vocab: [{ target: 'kam', lemma: 'kommen', source: 'came' }] },
+    ] };
+    const c2 = { id: 'tp_c2', topic: 'Two', lang: 'de', srcLang: 'en', story: 'Wird kommen bald.', lessons: [] };
+    const f = seedFile(dir, [structuredClone(c1), structuredClone(c2)], [{ id: 'sl_z', title: 'Z', chapters: ['tp_c1', 'tp_c2'] }]);
+    run(['--storyline', 'sl_z', '--lessons', f, '--out', f, '--write'], env);
+    const after = JSON.parse(fs.readFileSync(f, 'utf8'));
+    const c2Added = after.topics[1].lessons.find(l => l._pipeline === 'cp4');
+    assert.ok(c2Added, 'chapter 2 got a new lesson');
+    const c2Lemmas = c2Added.vocab.map(v => (v.lemma || v.target).toLowerCase());
+    assert.ok(!c2Lemmas.includes('kommen'),
+      `chapter 2 must NOT re-propose "kommen" — chapter 1's lesson already taught it (as surface "kam"); comparing by TARGET alone would have missed this (got ${JSON.stringify(c2Lemmas)})`);
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+  console.log('  cross-chapter dedup compares by LEMMA (not the now-inflected surface target) — a register-mismatched pre-existing lesson still excludes the concept correctly: OK');
+
   // ── 5. Idempotent by default; --replace swaps cleanly without starving itself ──
   {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'apply-idem-'));

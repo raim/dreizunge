@@ -55,8 +55,14 @@ function langDisplayName(code) { return (langsData[code] && langsData[code].name
 
 const PIPELINE_TAG = 'cp4';   // marks a lesson this script added, so it is identifiable and skippable/removable
 
+// "Already taught" identity for cross-chapter dedup. v83_p: prefer `lemma` over `target` — since
+// that release, a CP4-emitted vocab item's `target` is the SURFACE form the learner actually saw
+// (e.g. "kam"), while `excludeAlreadyTaughtConcepts` compares against a LATER chapter's candidate
+// `lemma` (e.g. "kommen"). Comparing target-to-target would silently stop matching across chapters
+// for exactly the inflected words this fix was for. A LEGACY lesson's vocab item has no `lemma`
+// field at all, so it falls back to `target` there (its own target IS its closest thing to a lemma).
 function vocabTargetsOf(lesson) {
-  return (lesson && Array.isArray(lesson.vocab) ? lesson.vocab : []).map(v => v && v.target).filter(Boolean);
+  return (lesson && Array.isArray(lesson.vocab) ? lesson.vocab : []).map(v => v && (v.lemma || v.target)).filter(Boolean);
 }
 
 // Every topic id that comes BEFORE `topicId` in the same storyline, in order. A topic that belongs

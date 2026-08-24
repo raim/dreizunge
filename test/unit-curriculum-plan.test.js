@@ -43,15 +43,15 @@ function fixtureChapter() {
     chapterId: 'tp_fix', lang: 'de',
     sentences: [
       { sentenceId: 'tp_fix:s0', tokens: [
-          { tokenId: 'tp_fix:s0:t0', lemma: 'nehmen', form: 'verb, inf.', sense: 'to take', confidence: 'high' },
-          { tokenId: 'tp_fix:s0:t1', lemma: 'Sorge', form: 'noun', sense: 'care', confidence: 'high' },
+          { tokenId: 'tp_fix:s0:t0', lemma: 'nehmen', surface: 'nahm', form: 'verb, past', sense: 'took', confidence: 'high' },
+          { tokenId: 'tp_fix:s0:t1', lemma: 'Sorge', surface: 'Sorge', form: 'noun', sense: 'care', confidence: 'high' },
         ], phrases: [
           { tokenIds: ['tp_fix:s0:t0', 'tp_fix:s0:t1'], lemma: 'sich kümmern um', gloss: 'to take care of', confidence: 'high' },
         ] },
       { sentenceId: 'tp_fix:s1', tokens: [
-          { tokenId: 'tp_fix:s1:t0', lemma: 'nehmen', form: 'verb, 3sg pres.', sense: 'takes', confidence: 'low' },
-          { tokenId: 'tp_fix:s1:t1', lemma: 'Haus', form: 'noun', sense: 'house', confidence: 'high' },
-          { tokenId: 'tp_fix:s1:t2', lemma: null, form: null, sense: null, confidence: 'unresolved' },
+          { tokenId: 'tp_fix:s1:t0', lemma: 'nehmen', surface: 'nimmt', form: 'verb, 3sg pres.', sense: 'takes', confidence: 'low' },
+          { tokenId: 'tp_fix:s1:t1', lemma: 'Haus', surface: 'Haus', form: 'noun', sense: 'house', confidence: 'high' },
+          { tokenId: 'tp_fix:s1:t2', lemma: null, surface: 'und', form: null, sense: null, confidence: 'unresolved' },
         ], phrases: [] },
     ],
   };
@@ -64,12 +64,22 @@ function fixtureChapter() {
   const nehmen = concepts.find(c => c.lemma === 'nehmen');
   assert.strictEqual(nehmen.frequency, 2, 'two occurrences of the same lemma aggregate into ONE concept with frequency 2, not two concepts');
   assert.deepStrictEqual(nehmen.sourceSpans, ['tp_fix:s0:t0', 'tp_fix:s1:t0'], 'sourceSpans lists every occurrence\'s real tokenId');
-  assert.strictEqual(nehmen.sense, 'to take', 'the HIGH-confidence occurrence\'s sense is preferred over the low-confidence one');
+  assert.strictEqual(nehmen.sense, 'took', 'the HIGH-confidence occurrence\'s sense is preferred over the low-confidence one');
   assert.strictEqual(nehmen.confidence, 'low', 'ANY low-confidence occurrence pulls the whole concept\'s confidence down — nothing is silently averaged away');
   const sorge = concepts.find(c => c.lemma === 'Sorge');
   assert.strictEqual(sorge.confidence, 'high', 'a lemma with only high-confidence occurrences stays high');
+
+  // v83_p: surface is chosen from the SAME occurrence as sense — a real user report found the
+  // dictionary lemma ("kommen", infinitive) paired against a differently-inflected sense ("venne",
+  // past tense) one stage downstream. "nahm" (this fixture's high-confidence occurrence's surface)
+  // must pair with "took" (that SAME occurrence's sense), never with "nimmt" (the OTHER occurrence's
+  // surface, low-confidence) — pairing across occurrences would just move the register mismatch here.
+  assert.strictEqual(nehmen.surface, 'nahm', 'surface comes from the SAME occurrence chosen for sense ("took"/"nahm" are the SAME (high-confidence) occurrence — both past tense, register-consistent');
+  assert.notStrictEqual(nehmen.surface, nehmen.lemma, 'non-vacuity: the chosen surface genuinely differs from the dictionary lemma here — this fixture would not catch a regression back to always using the lemma if surface happened to equal it');
+  const haus = concepts.find(c => c.lemma === 'Haus');
+  assert.strictEqual(haus.surface, 'Haus', 'a lemma whose only occurrence already matches its own citation form still gets a correct (if unremarkable) surface');
 }
-console.log('  extractVocabConcepts: aggregated per lemma, sourceSpans complete, confidence rolls up conservatively (any low pulls the whole concept down): OK');
+console.log('  extractVocabConcepts: aggregated per lemma, sourceSpans complete, confidence rolls up conservatively (any low pulls the whole concept down), surface/sense chosen from the SAME occurrence: OK');
 
 // ── 3. suitableFamilies / planReason: evidence-derived, not guessed ──────────
 {
