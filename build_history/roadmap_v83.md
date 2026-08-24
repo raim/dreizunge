@@ -29,9 +29,9 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_n` — `apply-cp-lessons.js`: the FIRST script in `PLAN §7.0` that WRITES into a real `lessons.json`. Chains CP1→CP2→CP3→CP4 per topic/storyline, appends an ADDITIVE, clearly-tagged lesson (byte-for-byte proven never to touch an existing lesson), applies cross-chapter dedup (`curriculum-plan.js`'s new `excludeAlreadyTaughtConcepts`, the SIMPLE half of the multi-chapter roadmap note), idempotent by default with a `--replace` mode. `v83_m` — `PLAN §7.0` CP5, made VISIBLE: a small, clearly-"experimental"-labelled row in the progress card's nav popup, shown ONLY when CP1-4 data exists for the chapter. `v83_l` — `PLAN §7.0` CP5: silent shadow-mode consumption of the curriculum plan — the FIRST CP stage to touch `index.html`/`server.js`. `v83_k` — `PLAN §7.0` CP4: vocabulary lesson through the existing contract, report-only, NO model call, NEVER touches `lessons.json`. `v83_j` — `PLAN §7.0` CP3: proposed curriculum plan, report-only, NO model call. `v83_i` — `PLAN §7.0` CP2: analysis report, report-only, model-in-the-loop. `v83_h` — `PLAN §7.0` CP1: canonical text + analysis records, report-only — the first buildable slice of Track A. `v83_g` — the progress-card story panel's border shifts red→green with comprehension progress. `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen; question cards' `#ex-story-panel` now COLLAPSED by default. `v83_e`/`v83_d`/`v83_c` — the progress-card/entry-card popup redesign. `v83_b` — `PLAN §12` built end to end |
+| **SHIPPED IN THE v83 LINE** | `v83_o` — bug fix, found by a REAL user run of `apply-cp-lessons.js` against `qwen3.6:35b-a3b`: `analyzeSentence` (CP2) now sends `think:false`, fixing an "Ollama returned empty response" failure on reasoning-capable models — the exact, previously-diagnosed `v71_o` failure mode server.js's own generator already avoided, which CP2 had never adopted. `v83_n` — `apply-cp-lessons.js`: the FIRST script in `PLAN §7.0` that WRITES into a real `lessons.json`, additively, with cross-chapter dedup. `v83_l`/`v83_m` — `PLAN §7.0` CP5 (silent, then visible on request): the FIRST CP stage to touch `index.html`/`server.js`. `v83_h`–`v83_k` — `PLAN §7.0` CP1–CP4: canonical text → analysis (model-in-the-loop) → curriculum plan → one lesson family, all report-only/inert. `v83_b`–`v83_g` — `PLAN §12` (text-selection tutor) and a progress-card/question-card UI arc (popup redesign, thicker arrows, fill-height REVOKED, red→green border) — see each entry below for full detail |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
-| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 at `v83_i`, CP3 at `v83_j`, CP4 at `v83_k`, CP5 at `v83_l`/`v83_m` (silent then visible). `v83_n` (`apply-cp-lessons.js`) is the FIRST script that actually writes CP1-4-derived lessons into `lessons.json`, additively — not itself a numbered CP stage, a browser-reachable follow-up to CP4. CP6 remains open (a CONDITIONAL, not a queued slice — see `v83_l`'s own SESSION_PROMPT). |
+| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 at `v83_i`, CP3 at `v83_j`, CP4 at `v83_k`, CP5 at `v83_l`/`v83_m` (silent then visible). `v83_n` (`apply-cp-lessons.js`, bug-fixed at `v83_o`) is the FIRST script that actually writes CP1-4-derived lessons into `lessons.json`, additively — not itself a numbered CP stage, a browser-reachable follow-up to CP4. CP6 remains open (a CONDITIONAL, not a queued slice — see `v83_l`'s own SESSION_PROMPT). |
 
 Standing rules are in the "Rules earned in session 28…34" blocks — read the **"⚠️ How the rules are
 NUMBERED"** note before citing one.
@@ -1685,6 +1685,50 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_o` — bug fix: CP2's `analyzeSentence` sends `think:false` (found by a real user run)
+
+**Found by the user, running `apply-cp-lessons.js` for real** against `qwen3.6:35b-a3b` (the SAME
+model this topic's own legacy lessons were generated with, specifically to get a fair, apples-to-
+apples comparison after `v83_n`'s own qwen2.5:7b demo). The run crashed:
+
+```
+Error: Ollama returned empty response
+    at IncomingMessage.<anonymous> (/home/raim/programs/dreizunge/app/llm.js:246:39)
+```
+
+**This is not a new failure mode** — it is the EXACT, already-diagnosed `v71_o` bug this project
+fixed for its OWN legacy generator years ago. `qwen3.6:35b-a3b` is a reasoning-capable model; without
+an explicit `think:false`, it spends its whole token budget "thinking" before ever emitting an
+answer, and the response comes back with no content at all. server.js's own `OLLAMA_THINK` table
+(near line 240, comment literally naming "a 35B-a3b model" as the case that motivated it) already
+solves this for the `story`/`lessons` roles — CP2's `analyzeSentence` is doing the SAME kind of task
+(structured JSON on a budget) and had simply never adopted the fix, because it was built and tested
+entirely against the fake-Ollama harness, which has no concept of a reasoning model to fail against.
+
+**The fix**: `canonical-analysis.js`'s `analyzeSentence` now passes `think: false` on every call.
+
+**Verified at the layer where the claim is observable, not by re-reading the source**:
+`unit-canonical-analysis.test.js` gained a new §10 that makes a REAL HTTP call through
+`test/fake-ollama.js` and inspects `fake-ollama.js`'s own request log (`FAKE_LOG`) to confirm
+`think:false` is genuinely present in the request BODY sent over the wire — not merely passed as a
+JS argument somewhere upstream. **Mutation-tested**: removing `think: false` from the `callLLM` call
+— RED, confirming the guard actually depends on the fix being present.
+
+**A real, useful side-finding, not itself fixed here**: while investigating the full test suite after
+this fix, `unit-replay-focus.test.js` failed — but ONLY because the user's own locally-generated
+CP4-pipeline test lesson (still uncommitted, uninvolved in this release) was sitting in their working
+`lessons.json` at the time. That lesson's shape (`sentences: []`, several single-occurrence/function-
+word vocabulary items) is different enough from a normal generated lesson that it perturbs
+`unit-replay-focus.test.js`'s corpus-wide simulation. Confirmed NOT a `v83_o` regression by reverting
+`lessons.json` to its committed state and re-running (passes cleanly) — `lessons.json` is therefore
+excluded from this commit entirely, same treatment as `ui.json` at `v83_h`/`v83_i`. Worth remembering
+if a CP4-pipeline lesson is ever considered for permanent inclusion in the committed corpus: it may
+need to be a "nicer" fixture (real sentences, fewer rare/function-word items) before the rest of the
+test suite can assume its shape the way it assumes a legacy-generated lesson's shape.
+
+**Testing**: 260/228/0/0 full baseline green when checked against the COMMITTED `lessons.json` (the
+one failure surfaced above is not a `v83_o` regression, confirmed above). No `ui.json` change.
 
 ### `v83_n` — `apply-cp-lessons.js`: the first script that WRITES CP1-4 lessons into a real corpus
 

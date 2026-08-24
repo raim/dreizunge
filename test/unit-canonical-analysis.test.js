@@ -221,5 +221,41 @@ console.log('  cp2Provenance: CP2-specific shape, model field present (a real ca
   }
   console.log('  build-canonical-analysis.js: reads CP1\'s store, canonical-text.json and lessons.json both provably untouched: OK');
 
+  // ── 10. think:false is actually sent on the wire (v83_o) ─────────────────────
+  // A real user run against a REAL reasoning-capable model (qwen3.6:35b-a3b) failed with "Ollama
+  // returned empty response" — the exact, previously-diagnosed v71_o failure mode server.js's own
+  // OLLAMA_THINK table already solved for its own structured-JSON roles, which analyzeSentence had
+  // never adopted. The fake-Ollama harness cannot SIMULATE a reasoning model (it has no concept of
+  // one), so this section checks the one thing it CAN prove: the actual HTTP request body genuinely
+  // carries think:false, via fake-ollama.js's own request logging — not by reading the source and
+  // trusting the argument was wired through correctly.
+  {
+    // fake-ollama.js reads FAKE_LOG from its OWN process.env at startup — set via startFakeOllama's
+    // own `logPath` argument (it spawns the fake as a child with that env var already set), not by
+    // setting FAKE_LOG inside the script that calls analyzeSentence.
+    const logPath = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'cp2-think-')), 'chat.jsonl');
+    const fake4 = await startFakeOllama(logPath);
+    try {
+      const scriptPath = path.join(path.dirname(logPath), 'run.js');
+      fs.writeFileSync(scriptPath, `
+        process.env.OLLAMA_HOST = 'http://127.0.0.1:${fake4.port}';
+        const { analyzeSentence } = require(${JSON.stringify(path.join(ROOT, 'canonical-analysis.js'))});
+        const sentenceRec = { sentenceId: 's0', text: 'Katze schläft',
+          tokens: [ { tokenId: 't0', idx: 0, text: 'Katze' }, { tokenId: 't1', idx: 1, text: 'schläft' } ] };
+        analyzeSentence('fake', sentenceRec, { langName: 'German', srcLangName: 'English' })
+          .then(() => process.exit(0)).catch(e => { console.error(e); process.exit(1); });
+      `);
+      execFileSync(process.execPath, [scriptPath], { cwd: ROOT, timeout: 20000 });
+      const lines = fs.readFileSync(logPath, 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l));
+      assert.strictEqual(lines.length, 1, 'exactly one model call was made for one sentence');
+      assert.strictEqual(lines[0].opts.think, false,
+        `analyzeSentence must send think:false on the wire — this is the exact fix for the real "Ollama returned empty response" failure a live qwen3.6:35b-a3b run hit (got opts.think=${lines[0].opts.think})`);
+    } finally {
+      fake4.child.kill();
+      fs.rmSync(path.dirname(logPath), { recursive: true, force: true });
+    }
+  }
+  console.log('  analyzeSentence sends think:false on the wire — the real fix for a reasoning model\'s empty-response failure, checked at the HTTP layer: OK');
+
   console.log('unit-canonical-analysis: ALL PASSED');
 })().catch(e => { console.error(e); process.exit(1); });

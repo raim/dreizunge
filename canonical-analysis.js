@@ -145,10 +145,19 @@ function parseAnalysisReply(raw, tokens) {
 }
 
 // One model call for ONE sentence record (as produced by canonical-text.js's buildCanonicalText).
+//
+// think:false -- v83_o, found via a REAL user run against qwen3.6:35b-a3b, not the fake-Ollama test
+// harness (which cannot simulate a reasoning model at all). server.js's own OLLAMA_THINK table
+// (v60.7, "the v71_o empty-response bug") already solved exactly this failure mode for its own
+// structured-JSON roles ("story"/"lessons" stay non-thinking always; only "tutor" reasons) -- CP2's
+// task (propose lemma/form/sense per token, structured JSON on a budget) is in that SAME category,
+// and simply never inherited the fix. Without it, a reasoning-capable model burns its whole token
+// budget "thinking" before ever emitting an answer, and the call fails with "Ollama returned empty
+// response" -- the exact error a live qwen3.6:35b-a3b run produced before this fix.
 async function analyzeSentence(model, sentenceRec, opts) {
   opts = opts || {};
   const { sys, user } = buildAnalysisPrompt(sentenceRec.text, sentenceRec.tokens, opts.langName, opts.srcLangName);
-  const { text } = await callLLM(model, sys, user, 1536, { temperature: 0.1 });
+  const { text } = await callLLM(model, sys, user, 1536, { temperature: 0.1, think: false });
   const { tokens, phrases, phrasesDropped } = parseAnalysisReply(text, sentenceRec.tokens);
   return {
     sentenceId: sentenceRec.sentenceId,
