@@ -29,9 +29,9 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_i` — `PLAN §7.0` CP2: analysis report (lemma/form/phrase/sense/frequency/script proposals), report-only, model-in-the-loop. New standalone `canonical-analysis.js`/`build-canonical-analysis.js`, sits on top of CP1's `canonical-text.json`, never touching it or `lessons.json`. `v83_h` — `PLAN §7.0` CP1: canonical text + analysis records, report-only — the first buildable slice of Track A's accepted parallel-curriculum direction. New standalone `canonical-text.js`/`build-canonical-text.js`, never touching `lessons.json`. `v83_g` — the progress-card story panel's border shifts red→green with comprehension progress. `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen; question cards' `#ex-story-panel` now COLLAPSED by default. `v83_e`/`v83_d`/`v83_c` — the progress-card/entry-card popup redesign. `v83_b` — `PLAN §12` built end to end |
+| **SHIPPED IN THE v83 LINE** | `v83_j` — `PLAN §7.0` CP3: proposed curriculum plan (concepts/reasons/prerequisites/ordering/suitable exercise families), report-only, NO model call. New standalone `curriculum-plan.js`/`build-curriculum-plan.js`, sits on top of CP2's `canonical-analysis.json`, reads `lessons.json` read-only for comparison, writes neither. `v83_i` — `PLAN §7.0` CP2: analysis report (lemma/form/phrase/sense/frequency/script proposals), report-only, model-in-the-loop. New standalone `canonical-analysis.js`/`build-canonical-analysis.js`, sits on top of CP1's `canonical-text.json`, never touching it or `lessons.json`. `v83_h` — `PLAN §7.0` CP1: canonical text + analysis records, report-only — the first buildable slice of Track A's accepted parallel-curriculum direction. New standalone `canonical-text.js`/`build-canonical-text.js`, never touching `lessons.json`. `v83_g` — the progress-card story panel's border shifts red→green with comprehension progress. `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen; question cards' `#ex-story-panel` now COLLAPSED by default. `v83_e`/`v83_d`/`v83_c` — the progress-card/entry-card popup redesign. `v83_b` — `PLAN §12` built end to end |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
-| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 shipped at `v83_i` — see the SHIPPED section above. CP3–CP6 remain open, in sequence. |
+| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 shipped at `v83_i`, CP3 shipped at `v83_j` — see the SHIPPED section above. CP4–CP6 remain open, in sequence. |
 
 Standing rules are in the "Rules earned in session 28…34" blocks — read the **"⚠️ How the rules are
 NUMBERED"** note before citing one.
@@ -1685,6 +1685,94 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_j` — `PLAN §7.0` CP3: proposed curriculum plan (concepts/prerequisites/ordering), report-only
+
+**Shipped by: Claude Code, on user request** ("ok for CP3", immediately after `v83_i` shipped CP2).
+Third buildable slice of Track A's migration sequence (`§0`: *"CP3 — proposed curriculum plan. Emit
+concepts, reasons, prerequisites, ordering, and suitable existing exercise families for a
+text/chapter/learner. Compare it with current generated lessons on a small representative set; still
+emit no new lessons."*). **Unlike CP2, this stage makes NO new model call** — CP2 already did the
+language-knowledge work (what a token means, what form it is); CP3's job is a POLICY decision over
+facts CP2 already established, which is aggregation and ordering, not a second opinion on meaning. It
+stays a deterministic transform, the same category CP1 was in, and keeps "what does this mean" (CP2)
+cleanly separate from "should we teach it, and when" (CP3).
+
+**Scope, stated up front the way CP1/CP2 both did**: plans are CHAPTER/TEXT-level only, not
+LEARNER-level — the plan's own migration sequence puts per-learner adaptation at CP5 ("consume the
+plan read-only" against skill data); building it here would be guessing at a policy nobody has ruled
+on yet.
+
+**What shipped**: one new file, sitting ON TOP of CP2's own output.
+
+- **`curriculum-plan.js`** — the deterministic core.
+  - `extractVocabConcepts`/`extractPhraseConcepts` aggregate a CP2 chapter analysis record PER
+    LEMMA / PER PHRASE STRING across every sentence — a lemma occurring five times becomes ONE
+    concept with `frequency:5`, not five separate proposals. A token CP2 itself left `unresolved`
+    contributes no concept at all (there is nothing to propose from a token CP2 could not resolve).
+  - **`suitableFamilies`/`planReason` are derived ONLY from evidence already in the CP2 record** —
+    never a guessed family with no support. Multiple distinct `form` strings for the same lemma
+    triggers `word_forms`/`inflections`; a `form` string containing "verb" triggers `conjugation`;
+    any occurrence below `'high'` confidence pulls the WHOLE concept's rolled-up confidence down to
+    `'low'`, never silently averaged away. `planReason` names the specific evidence in prose (which
+    forms, how many occurrences, whether anything was low-confidence), not a generic label.
+  - **Prerequisites**: `linkPhrasePrerequisites` — a phrase concept depends on the VOCAB concepts
+    (if proposed) covering its own constituent tokens' lemmas, "teach the parts before the whole."
+    This is the ONE prerequisite relationship this stage has actual evidence for; it deliberately
+    does NOT model grammar-level teaching order (present tense before past tense, say) — that needs
+    language knowledge this deterministic layer does not have and should not invent.
+  - **Ordering**: `orderConcepts` — base priority is frequency-desc / first-occurrence-asc, but a
+    Kahn's-algorithm-style pass ALWAYS places prerequisites before their dependents, even against a
+    large frequency advantage (a phrase can be more frequent than one of its own component words).
+    Mutation-tested directly: a synthetic phrase at frequency 5 whose prerequisite sits at frequency
+    1 still sorts the prerequisite first.
+  - **`compareWithExistingLessons`** — the plan's own "compare it with current generated lessons"
+    requirement, READ-ONLY against a real `lessons.json` topic's already-generated lessons
+    (case-insensitive lemma-vs-`vocab.target` match). Reports the gap in BOTH directions: proposed
+    concepts not yet taught, and existing taught vocabulary CP3 never proposed (useful as its own
+    signal — a taught word CP2/CP3 never surfaced is worth a second look).
+  - Provenance (`cp3Provenance`) is CP3-specific and, like CP1's, carries NO `model` field — no LLM
+    call happened at this stage.
+- **`build-curriculum-plan.js`** — the CLI wrapper. Reads CP2's OWN `canonical-analysis.json` as
+  input (never re-derives concepts from `lessons.json` directly — CP3 sits on top of CP2's own
+  lemma/form/phrase/sense proposals). Reads `lessons.json` too, but ONLY read-only, for the
+  comparison step. Report-only by default, `--write`/`--out`/`--in`/`--lessons` same redirect
+  convention CP1/CP2's CLIs already established. No `OLLAMA_*` configuration needed at all — this
+  CLI makes no model call, so it runs fast regardless of how many chapters are selected.
+
+**Verified at the layer where the claim is observable**: `unit-curriculum-plan.test.js` (8 sections)
+— standalone/no-server.js-dependency/no-model-call, concept aggregation (per-lemma, not
+per-occurrence, with correct sourceSpans and conservative confidence roll-up), evidence-derived
+`suitableFamilies`/`planReason` (a single-form noun gets ONLY the plain vocab family, never a guessed
+grammar/conjugation one), phrase concepts + prerequisite resolution to REAL constituent vocab concept
+ids, ordering (prerequisites never violated even against a large frequency advantage, falling back to
+plain frequency order when there are none), `compareWithExistingLessons` (case-insensitive, reports
+the gap in both directions, degrades safely with no topic), end-to-end wiring + CP3-specific
+provenance, and a full CLI integration test chaining the REAL CP1 → CP2 (via a fake Ollama) → CP3
+pipeline, asserting the real committed `lessons.json` is read but never written.
+
+**Mutation-tested**: forcing `orderConcepts`'s readiness check to always report "ready" (i.e.
+ignoring prerequisites entirely) — RED, caught by the same large-frequency-advantage fixture used to
+prove the property in the first place. The "never writes `lessons.json`" guard was mutation-tested
+**SAFELY this time**, applying the standing rule `v83_i`'s own incident produced: `--lessons` was
+pointed at a SCRATCH copy before mutating the CLI to write into it. The scratch copy changed
+(confirming the mutation is real and the guard's underlying claim would be caught), and the REAL,
+committed `lessons.json` was never touched at any point — verified both before and after via
+`git diff --stat`.
+
+**Testing**: 257/228/0/0 full baseline green (from 256/228 — one new test file, registered inside
+`test/run.js`'s `if (!quick)` block like CP2's, since its CLI-integration section spawns a fake
+Ollama via `test/lib.js`). No `lessons.json`, `canonical-text.json`, or `canonical-analysis.json`
+change — all three provably byte-identical before/after every run. No `ui.json` change either — CP3
+has no user-facing surface, same as CP1/CP2. `ui.json` again deliberately excluded from this commit,
+same reasoning as `v83_h`/`v83_i` — the user's own `translate-ui.js` pass may still be the live owner
+of that file's current state.
+
+**Not scoped here, deliberately**: CP4's new lesson-generation route (actually emitting playable
+lessons through the existing contract, starting with vocabulary meaning/form), CP5's progress-card
+integration, and CP6's retirement of anything legacy. Also NOT scoped: any per-LEARNER adaptation of
+the plan (explicitly CP5's job, once skill data exists to consume) — this stage's concepts are
+chapter/text-level only.
 
 ### `v83_i` — `PLAN §7.0` CP2: analysis report (lemma/form/phrase/sense/frequency/script), report-only
 

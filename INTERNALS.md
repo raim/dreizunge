@@ -1115,6 +1115,20 @@ already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly o
 | the CLI | `build-canonical-analysis.js` — reads CP1's OWN `canonical-text.json` (not `lessons.json` directly — CP2 sits on top of CP1's sentence/token boundaries, never re-derives its own). Report-only by default, `--write` to persist to its own `canonical-analysis.json`, `--out`/`--in` redirect for testing. Default `--limit` is 2 chapters (not CP1's 24) — model calls are slow, unlike CP1's deterministic transform |
 | ⚠️ **mutation-testing a `--write` CLI is not risk-free** | the first mutation-test run for this CLI's guard used a mutated CLI that wrote into the REAL committed `canonical-text.json` (a hand-edited mutation bypassed the `--out` redirect entirely). Caught immediately via `git status`/`git diff --stat`, restored with `git checkout --`. **A future mutation test of a `--write` CLI should point `--in`/`--out` at scratch copies of BOTH the input and output before mutating**, not rely on the mutation "probably" respecting the redirect flags |
 
+**`PLAN §7.0` CP3 — proposed curriculum plan: concepts/prerequisites/ordering** (`v83_j`, ONE NEW STANDALONE FILE, sits ON TOP of CP2's output, NO model call of its own)
+
+| what | where |
+|---|---|
+| the core, deterministic (no LLM call) | `curriculum-plan.js` → `buildCurriculumPlan(chapterAnalysis, opts)` aggregates a CP2 chapter analysis record into `vocab`/`phrase` CONCEPTS. UNLIKE CP1/CP2, this stage never touches `llm.js` at all — it is a policy decision over facts CP2 already established, not a second opinion on what a word means |
+| concept extraction | `extractVocabConcepts` (one concept per distinct RESOLVED lemma, aggregated across every sentence — an unresolved token contributes no concept), `extractPhraseConcepts` (one per distinct validated CP2 phrase string) |
+| the uncertainty/evidence contract | `suitableFamilies`/`planReason` are derived ONLY from evidence already in the CP2 record (multiple distinct `form` strings → `word_forms`/`inflections`; a `form` containing "verb" → `conjugation`; any non-`high` occurrence pulls the whole concept's `confidence` down to `'low'`) — never a guessed family with no supporting evidence |
+| prerequisites | `linkPhrasePrerequisites` — a phrase concept depends on the VOCAB concepts (if proposed) covering its own constituent tokens' lemmas ("teach the parts before the whole"). The ONLY prerequisite relationship this stage has evidence for; it does NOT model grammar-level teaching order (e.g. tense before tense) |
+| ordering | `orderConcepts` — frequency-desc / first-occurrence-asc as the base priority, but a Kahn's-algorithm-style pass ALWAYS places prerequisites before their dependents, even against a large frequency advantage (mutation-tested: a phrase with frequency 5 whose prerequisite has frequency 1 still sorts the prerequisite first) |
+| comparing against what's already generated | `compareWithExistingLessons(vocabConcepts, topic)` — READ-ONLY, case-insensitive lemma-vs-`vocab.target` match against a REAL `lessons.json` topic's already-generated lessons. Reports the gap in BOTH directions (proposed-but-not-taught, and taught-but-not-proposed) |
+| provenance | `cp3Provenance(extra)` — CP3-specific, carries NO `model` field (same reasoning as CP1's `cp1Provenance`: no LLM call happened at this stage) |
+| the CLI | `build-curriculum-plan.js` — reads CP2's OWN `canonical-analysis.json` as input (never re-derives concepts from `lessons.json` directly), and reads `lessons.json` too but ONLY read-only, for the comparison step. Report-only by default, `--write`/`--out`/`--in`/`--lessons` same redirect convention as CP1/CP2's CLIs |
+| ⚠️ **this mutation test was done SAFELY, learning from CP2's incident** | the "never writes `lessons.json`" guard was mutation-tested by pointing `--lessons` at a SCRATCH copy before mutating the CLI to write into it — the scratch copy changed (proving the mutation is real and the guard would catch it), the REAL committed `lessons.json` never touched at any point. Applies the standing rule CP2's incident produced |
+
 
 ---
 
