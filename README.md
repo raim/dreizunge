@@ -21,15 +21,26 @@ https://raim.github.io/dreizunge/
 ### Option A — one-line install (recommended)
 
 Clones the repo, installs Ollama if it isn't already on your machine, checks your disk/RAM can
-actually handle the recommended model, and pulls it — `qwen3.6:35b-a3b`, the BEST-quality option
+actually handle the recommended model, pulls it — `qwen3.6:35b-a3b`, the BEST-quality option
 per a real measured comparison (see `build_history/roadmap_v83.md`: zero translation errors vs. two
-on the smaller `qwen2.5:7b`, on the same real chapter). It prints the exact command to start the app
-— it does not start it for you. Requires only Node.js (>=14) and git already installed; safe to
-re-run (it updates the checkout instead of re-cloning).
+on the smaller `qwen2.5:7b`, on the same real chapter) — and installs a `dreizunge` command onto your
+PATH (at `~/.local/bin`). Requires only Node.js (>=14) and git already installed; safe to re-run (it
+updates the checkout instead of re-cloning).
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/raim/dreizunge/main/install.sh | sh
 ```
+
+From then on, just run:
+
+```bash
+dreizunge
+```
+
+— starts the server and opens it in your browser automatically (add `--no-browser` to skip that; set
+`PORT` to use a different port). If `~/.local/bin` isn't already on your PATH, the installer tells you
+the exact line to add to your shell profile; until then, or if you'd rather not use the launcher, the
+manual command it also prints (`cd ... && node server.js`) always works too.
 
 `qwen3.6:35b-a3b` is a big download (~20+ GB) and wants real RAM to run well — the script warns if
 your RAM looks tight and refuses if your disk clearly doesn't have room for it. If that doesn't suit

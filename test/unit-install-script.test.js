@@ -136,4 +136,26 @@ console.log('  install.sh: does not auto-start the server -- prints the start co
 }
 console.log('  install.sh: resource check (RAM warn <16GB, disk refuse <25GB, default-model-only) present with correct thresholds: OK');
 
+// ── 10. The `dreizunge` PATH launcher gets installed (v84_c) ─────────────────
+// bin/dreizunge itself is verified behaviourally (real symlinked run) by
+// test/unit-dreizunge-launcher.test.js -- this section checks install.sh's OWN half: that it
+// actually wires the launcher onto PATH, idempotently, without clobbering something it doesn't own.
+{
+  assert.ok(fs.existsSync(path.join(ROOT, 'bin', 'dreizunge')), 'bin/dreizunge exists at the repo root');
+  assert.ok(/ABS_DIR=\$\(cd "\$DIR" && pwd\)/.test(src),
+    'an ABSOLUTE checkout path is captured -- the launcher is invoked long after this script exits, from an arbitrary cwd, so a relative $DIR would resolve to the wrong place then');
+  assert.ok(/LAUNCHER_SRC="\$ABS_DIR\/bin\/dreizunge"/.test(src), 'the launcher source is resolved from the absolute checkout path');
+  assert.ok(/LAUNCHER_TARGET="\$HOME\/\.local\/bin\/dreizunge"/.test(src), 'installed to ~/.local/bin -- no sudo required, standard user-writable PATH location');
+  assert.ok(/if \[ -f "\$LAUNCHER_SRC" \]/.test(src), 'installing the launcher is conditional on it actually existing in this checkout -- never assumed');
+  assert.ok(/if \[ -e "\$LAUNCHER_TARGET" \] && \[ ! -L "\$LAUNCHER_TARGET" \]/.test(src),
+    'refuses to touch a pre-existing TARGET that is not a symlink this installer manages -- the same "refuse rather than silently overwrite" discipline as the non-git-directory guard');
+  assert.ok(/if \[ -L "\$LAUNCHER_TARGET" \] && \[ "\$\(readlink "\$LAUNCHER_TARGET"\)" = "\$LAUNCHER_SRC" \]/.test(src),
+    'an ALREADY-correct symlink is detected and reported as already-installed, not silently re-logged as freshly installed every re-run');
+  assert.ok(/ln -sf "\$LAUNCHER_SRC" "\$LAUNCHER_TARGET"/.test(src), 'a genuinely new/changed link uses ln -sf (idempotent by construction)');
+  assert.ok(/is not on your PATH yet/.test(src), 'warns (not fails) when ~/.local/bin is not on PATH, with the exact export line to add');
+  assert.ok(/if \[ "\$LAUNCHER_INSTALLED" -eq 1 \]/.test(src),
+    'the final "how to start it" message leads with `dreizunge` ONLY when the launcher actually installed -- never claims a command exists that is not really there');
+}
+console.log('  install.sh: installs the `dreizunge` PATH launcher, idempotently, without clobbering an unrelated file at the target path: OK');
+
 console.log('unit-install-script: ALL PASSED');

@@ -62,6 +62,11 @@ else
   git clone "$REPO_URL" "$DIR"
 fi
 
+# Absolute path to the checkout -- everything from here on needs it to survive OUTLIVING this
+# script's own working directory (the `dreizunge` launcher below is invoked long after, from
+# wherever the user happens to be, so a relative $DIR would resolve to the wrong place then).
+ABS_DIR=$(cd "$DIR" && pwd)
+
 # ── 3. Ollama ──────────────────────────────────────────────────────────────
 if has ollama; then
   log "Ollama already installed"
@@ -136,11 +141,46 @@ else
   ollama pull "$MODEL"
 fi
 
-# ── 6. Done — print how to start it, don't start it ourselves ────────────────
+# ── 6. Install a `dreizunge` launcher on PATH ─────────────────────────────
+# Optional and best-effort: makes starting the app as simple as typing `dreizunge` from any
+# directory, instead of remembering the cd + env vars in the final message below. Never a hard
+# requirement -- that manual command always works regardless of whether this step succeeds.
+LAUNCHER_SRC="$ABS_DIR/bin/dreizunge"
+LAUNCHER_TARGET="$HOME/.local/bin/dreizunge"
+LAUNCHER_INSTALLED=0
+if [ -f "$LAUNCHER_SRC" ]; then
+  mkdir -p "$HOME/.local/bin"
+  chmod +x "$LAUNCHER_SRC"
+  if [ -e "$LAUNCHER_TARGET" ] && [ ! -L "$LAUNCHER_TARGET" ]; then
+    warn "$LAUNCHER_TARGET already exists and isn't a symlink this installer manages -- leaving it alone."
+  else
+    if [ -L "$LAUNCHER_TARGET" ] && [ "$(readlink "$LAUNCHER_TARGET")" = "$LAUNCHER_SRC" ]; then
+      log "'dreizunge' launcher already installed at $LAUNCHER_TARGET"
+    else
+      # ln -sf is idempotent by construction: re-linking to the same (or an updated) target on a
+      # re-run just repoints the symlink, never touches anything this installer didn't itself create.
+      ln -sf "$LAUNCHER_SRC" "$LAUNCHER_TARGET"
+      log "Installed the 'dreizunge' command at $LAUNCHER_TARGET"
+    fi
+    LAUNCHER_INSTALLED=1
+    case ":$PATH:" in
+      *":$HOME/.local/bin:"*) : ;;
+      *) warn "\$HOME/.local/bin is not on your PATH yet, so 'dreizunge' won't be found until it is. Add this to your shell profile (~/.bashrc, ~/.zshrc, ...), then open a new shell:
+    export PATH=\"\$HOME/.local/bin:\$PATH\"" ;;
+    esac
+  fi
+fi
+
+# ── 7. Done — print how to start it, don't start it ourselves ────────────────
 # Deliberately does NOT exec the server: an installer that ends by launching a long-running
 # foreground process is surprising (piped through `curl | sh`, it also leaves stdin already
 # consumed by curl). Every other step here is idempotent and safe to re-run; starting the app is
 # the one step left for the user to do explicitly, whenever they're ready.
 log "Install complete. Start Dreizunge with:"
+if [ "$LAUNCHER_INSTALLED" -eq 1 ]; then
+  printf '\n    dreizunge\n\n'
+  log "(starts the server and opens your browser automatically; add --no-browser to skip that)"
+  log "Or, without the launcher:"
+fi
 printf '\n    cd %s && OLLAMA_MODEL=%s PORT=%s node server.js\n\n' "$DIR" "$MODEL" "$PORT"
 log "Then open http://localhost:$PORT in your browser."

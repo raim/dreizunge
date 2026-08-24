@@ -1,0 +1,74 @@
+#!/bin/sh
+# dreizunge — starts the local Dreizunge server and opens it in your browser.
+#
+#   dreizunge               start on the default port (3000), open the browser once it's ready
+#   dreizunge --no-browser  start without opening a browser tab (for headless/server use)
+#   PORT=8080 dreizunge     start on a different port
+#
+# Installed by install.sh as a symlink at ~/.local/bin/dreizunge (or wherever DREIZUNGE_DIR/PATH
+# conventions put it) — this script finds the real checkout by following that symlink back to its
+# OWN source, so it works from any directory, the same shape as `jupyter notebook` or `ollama serve`.
+# Safe to run directly too (`./bin/dreizunge` from inside a checkout, no install needed).
+set -eu
+
+usage() {
+  printf 'Usage: dreizunge [--no-browser]\n\n'
+  printf '  --no-browser   start the server without opening a browser tab\n'
+  printf '  -h, --help     show this message\n\n'
+  printf 'Env: PORT (default 3000), OLLAMA_MODEL and friends — same as running node server.js\n'
+  printf 'directly, since that is exactly what this does, plus opening the browser for you.\n'
+}
+
+NO_BROWSER=0
+for arg in "$@"; do
+  case "$arg" in
+    --no-browser) NO_BROWSER=1 ;;
+    -h|--help) usage; exit 0 ;;
+    *) printf 'Unknown option: %s\n\n' "$arg" >&2; usage >&2; exit 1 ;;
+  esac
+done
+
+# Resolve the REAL script location by following symlinks by hand — `readlink -f` is a GNU
+# extension macOS's default BSD readlink doesn't support, so this walks the chain itself instead
+# of assuming a flag that would silently break on half this project's own stated platforms.
+SELF="$0"
+while [ -L "$SELF" ]; do
+  LINK=$(readlink "$SELF")
+  case "$LINK" in
+    /*) SELF="$LINK" ;;
+    *)  SELF="$(dirname "$SELF")/$LINK" ;;
+  esac
+done
+APP_DIR=$(cd "$(dirname "$SELF")/.." && pwd)
+
+[ -f "$APP_DIR/server.js" ] || {
+  printf 'ERROR: could not find server.js next to this script (looked in %s).\n' "$APP_DIR" >&2
+  printf 'This launcher expects to live at <checkout>/bin/dreizunge — if it got moved on its own,\n' >&2
+  printf 'move it back, or just run: cd <checkout> && node server.js\n' >&2
+  exit 1
+}
+
+export PORT="${PORT:-3000}"
+
+# Open the browser once the server actually answers, in the BACKGROUND — the server itself runs
+# in the foreground below (Ctrl-C stops it, exactly like running `node server.js` directly), so
+# this can't block that. Silent by design if it can't open anything: worst case, the log line
+# server.js itself prints (Local: http://localhost:$PORT) is what the user reads instead.
+if [ "$NO_BROWSER" -eq 0 ]; then
+  ( i=0
+    while [ "$i" -lt 30 ]; do
+      if command -v curl >/dev/null 2>&1 && curl -fsS "http://localhost:$PORT/api/info" >/dev/null 2>&1; then
+        url="http://localhost:$PORT"
+        if command -v xdg-open >/dev/null 2>&1; then xdg-open "$url" >/dev/null 2>&1
+        elif command -v open >/dev/null 2>&1; then open "$url" >/dev/null 2>&1
+        fi
+        break
+      fi
+      i=$((i + 1))
+      sleep 1
+    done
+  ) &
+fi
+
+cd "$APP_DIR"
+exec node server.js

@@ -39,7 +39,7 @@ this file stays current through the whole v84 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v84 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v84 LINE** | `v84_b` — PWA install support (`manifest.json`/`icon.svg`/`sw.js`, local server only): browsers can offer "Install App," windowed, no tabs/omnibox. Registration confirmed working by the USER, same day, in real Google Chrome on Ubuntu via `localhost:3000` (a sandboxed preview browser had failed during the build itself, flagged as unverified at the time — now measured). A LAN IP over plain HTTP (tested on Android) still shows no install option — a separate, well-understood limitation (service workers need a secure context; HTTPS/a TLS proxy is the real fix, matching the app's own existing insecure-transport warning), not a bug in this release. Also fixed, found while building this: `test/lib-dom.js`'s `loadClient()` had a fragile trailing-regex that assumed `init();` was the LAST statement in the client script — the first code ever added after it (this release's own SW registration) silently un-suppressed `init()` in ~80 unit tests. Fixed by anchoring on the `@static-engine-end` marker instead. |
+| **SHIPPED IN THE v84 LINE** | `v84_c` — the `dreizunge` PATH launcher (`bin/dreizunge`, installed onto `~/.local/bin` by `install.sh`): starts the server, opens the browser once it answers, `--no-browser` to skip — the `jupyter notebook` shape, discussed and deferred at the `v83` cut, built now on direct request. Verified with a real symlinked-from-elsewhere run against a stub server AND a real `install.sh` end-to-end run confirming idempotent install + a genuine working launch. `v84_b` — PWA install support (`manifest.json`/`icon.svg`/`sw.js`, local server only): browsers can offer "Install App," windowed, no tabs/omnibox. Registration confirmed working by the USER, same day, in real Google Chrome on Ubuntu via `localhost:3000` (a sandboxed preview browser had failed during the build itself, flagged as unverified at the time — now measured). A LAN IP over plain HTTP (tested on Android) still shows no install option — a separate, well-understood limitation (service workers need a secure context; HTTPS/a TLS proxy is the real fix, matching the app's own existing insecure-transport warning), not a bug in this release. Also fixed, found while building this: `test/lib-dom.js`'s `loadClient()` had a fragile trailing-regex that assumed `init();` was the LAST statement in the client script — the first code ever added after it (this release's own SW registration) silently un-suppressed `init()` in ~80 unit tests. Fixed by anchoring on the `@static-engine-end` marker instead. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, all of CP1–5) are BOTH fully shipped — see `roadmap_v83.md`'s own `# SHIPPED IN THE v83 LINE` for how. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). No new PLAN track is open as of this cut. |
 
@@ -1720,6 +1720,62 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v84 LINE
+
+### `v84_c` — the `dreizunge` PATH launcher
+
+**Shipped by: Claude Code, on user request.** The launcher discussed alongside `install.sh` at the
+`v83` cut and explicitly deferred then ("not yet, just the message") — proposed again as this
+session's own "what would you do next" pick after `v84_b`'s PWA work landed and was confirmed
+working, and built on direct request: "ok build the dreizunge PATH launcher."
+
+**What shipped**: `bin/dreizunge` — a small POSIX `sh` script (same style as `install.sh`) that
+resolves its OWN real location by following symlinks by hand (portable to macOS's non-GNU
+`readlink`, unlike `readlink -f`), `cd`s to the checkout it lives in, starts `node server.js` in the
+FOREGROUND (Ctrl-C stops it, exactly like running the command directly — no daemonizing, no log
+files to manage), and opens the default browser to it once the port actually answers (backgrounded
+so it never blocks the server; silent if it can't find `xdg-open`/`open`). `--no-browser` skips that,
+matching `jupyter notebook`'s own convention. `install.sh` gained a new step: it symlinks
+`bin/dreizunge` to `~/.local/bin/dreizunge` (no `sudo`, standard user-writable PATH location),
+idempotently (an existing correct symlink is detected and reported as already-installed, not
+re-logged as freshly installed every re-run; a pre-existing FILE at that path that isn't a symlink
+this installer manages is left alone, matching the same "refuse rather than silently overwrite"
+discipline as the non-git-checkout guard), and warns — with the exact line to add — if
+`~/.local/bin` isn't on `PATH` yet. The final "how to start it" message now leads with `dreizunge`
+when the launcher installed successfully, falling back to the manual `cd ... && node server.js`
+command either way.
+
+**Verified behaviourally, twice over**: `bin/dreizunge` itself, via a real run against a scratch
+checkout with a genuine (stub) HTTP server standing in for `server.js` — invoked through a symlink
+from an unrelated `cwd`, exactly the shape real daily use takes, proving the symlink-resolution and
+`cd` logic actually work, not just that the source reads correctly. `install.sh`'s own install step,
+via a real end-to-end run in a scratch `$HOME` (seeded with a local checkout carrying `bin/dreizunge`,
+since it isn't pushed to the real GitHub repo the script clones from until this release lands) —
+confirmed the symlink gets created, confirmed a SECOND run correctly reports "already installed"
+rather than re-doing the work, and confirmed the installed symlink, invoked for real, actually starts
+the REAL app (`{"version":"v84_b", ...}` from a genuine `/api/info` response) with the right `PORT`.
+
+**Testing**: `test/unit-dreizunge-launcher.test.js` (new) — real POSIX `sh -n` syntax, executable +
+shebang, `--help`/unknown-option handling via real invocations, a missing `server.js` fails with a
+clear message rather than doing something undefined, and the full symlinked-from-elsewhere real run
+described above. `test/unit-install-script.test.js` gained §10 — structural checks for the
+absolute-path capture (`ABS_DIR`), the idempotency gate, the refuse-non-symlink guard, the PATH
+warning, and the launcher-only-if-installed gate on the final message.
+
+**Mutation-tested**: `bin/dreizunge` — reverting to a raw `dirname "$0"` (breaking symlink
+resolution) — RED. Dropping the `server.js` existence check — RED. `install.sh` — dropping the
+refuse-non-symlink guard — RED. Forcing the final message's `dreizunge`-first branch unconditionally
+— RED. All four restored, confirmed clean via `diff`.
+
+**Testing**: 264/230/0/0 full baseline green (from 263/229 — one new test file, registered
+UNCONDITIONALLY like `unit-install-script.test.js` itself, since it spawns only its OWN stub
+subprocess, never `test/lib.js`'s `boot()`/fake-Ollama machinery — confirmed non-vacuously by
+`unit-run-summary.test.js`'s own server-spawning detector, which did not flag it). No `lessons.json`
+change.
+
+**Not scoped here, deliberately**: a Windows/PowerShell equivalent (the whole `install.sh`
+family stays POSIX-only, per the still-open, discussion-only Windows note from the `v83` line); any
+daemonizing/background-service mode (the launcher deliberately mirrors `jupyter notebook`'s
+foreground-process shape, not a system-service one — a genuinely different feature, not asked for).
 
 ### `v84_b` — PWA install support (manifest + service worker), local server only
 
