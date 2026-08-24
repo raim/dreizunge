@@ -174,4 +174,47 @@ console.log('  popover: markup present, wired to both modes, labels localized: O
 }
 console.log('  ui.json: new selection-popover strings present, en only: OK');
 
+// ── 10. Touch devices get a DIFFERENT popover placement than desktop (v84_d) ────
+// User report: on a phone the popover WAS appearing, just hidden underneath the browser's OWN
+// native "Copy / Share" selection toolbar, which draws directly above the selection — a screen
+// position this page cannot see or out-z-index (it's browser-chrome UI, not part of the DOM).
+// Desktop (mouse selection, no native toolbar to collide with) keeps the original near-the-
+// selection placement; touch gets a fixed spot well clear of it instead of trying to guess/avoid
+// wherever the native toolbar happens to render.
+{
+  // Desktop: no touch signals on `navigator`/`window` — the harness's own default sandbox shape.
+  const desktop = loadClient({ quiet: true });
+  const dPop = desktop.run(`
+    _storySelShowPopover({ getBoundingClientRect: () => ({ top: 300, left: 100, width: 50, height: 20 }) });
+    ({ position: document.getElementById('story-sel-popover').style.position,
+       top: document.getElementById('story-sel-popover').style.top,
+       transform: document.getElementById('story-sel-popover').style.transform });
+  `, 'desktop-popover');
+  assert.strictEqual(dPop.position, 'absolute', 'desktop: popover is absolute-positioned (document coordinates, scroll-aware)');
+  // `top`'s exact pixel value depends on window.scrollY, which this minimal DOM stub does not
+  // define (a pre-existing harness gap, unrelated to this fix) — not asserted precisely here; the
+  // point of this section is the BRANCH taken, not desktop's own (unchanged) pixel math.
+  assert.ok(/px$/.test(dPop.top), 'desktop: top is still set to SOME pixel value (the assignment itself does not throw)');
+  assert.strictEqual(dPop.transform, 'none', 'desktop: no centering transform (left is computed/clamped directly)');
+
+  // Touch: maxTouchPoints > 0, the real-world signal a phone browser sets.
+  const touch = loadClient({ quiet: true });
+  touch.run(`navigator.maxTouchPoints = 5; true;`, 'seed-touch');
+  const tPop = touch.run(`
+    _storySelShowPopover({ getBoundingClientRect: () => ({ top: 300, left: 100, width: 50, height: 20 }) });
+    ({ position: document.getElementById('story-sel-popover').style.position,
+       bottom: document.getElementById('story-sel-popover').style.bottom,
+       left: document.getElementById('story-sel-popover').style.left,
+       transform: document.getElementById('story-sel-popover').style.transform });
+  `, 'touch-popover');
+  assert.strictEqual(tPop.position, 'fixed', 'touch: popover is fixed-positioned (viewport-relative, ignores scroll)');
+  assert.ok(/bottom-bar-h/.test(tPop.bottom), 'touch: pinned above #bottom-bar via the SAME shared height variable, not a re-guessed number');
+  assert.strictEqual(tPop.left, '50%', 'touch: horizontally centered, not anchored to the (invisible-to-us) selection position');
+  assert.strictEqual(tPop.transform, 'translateX(-50%)', 'touch: centering transform actually applied');
+
+  // Non-vacuity: the two paths really do disagree, not just on unrelated fields.
+  assert.notStrictEqual(dPop.position, tPop.position, 'sanity: desktop and touch genuinely take different code paths');
+}
+console.log('  touch devices get a fixed, bar-adjacent popover placement; desktop keeps the near-selection one: OK');
+
 console.log('unit-tutor-selection: ALL PASSED');

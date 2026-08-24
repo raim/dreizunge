@@ -21,6 +21,16 @@
   --text:#3c3c3c;--white:#fff;
   --radius:12px;--radius-lg:16px;--radius-xl:24px;
   --shadow-card:0 4px 0 rgba(0,0,0,.1);
+  /* user follow-up: the corner-pill cluster (account/settings/mute) and the tutor fab, previously
+     two separate floating widgets in opposite corners, now share one full-width #bottom-bar. Its
+     tallest child (tutor-fab-btn, sized down to 44px to sit more evenly with the 36px settings/mute
+     pills) plus 10px padding top/bottom sets this height; every OTHER fixed-bottom element (.toast,
+     #gen-status, .static-flag-banner) offsets FROM this variable rather than a re-guessed number, so
+     they stay clear of the bar without drifting out of sync with it if its content ever changes
+     size. Does NOT include the safe-area inset the bar itself also pads for — that's extra headroom
+     on notched phones, harmless to omit from a shared clearance number the others just need to clear
+     the bar's typical case by. */
+  --bottom-bar-h:64px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-height:100vh}
@@ -72,7 +82,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .gen-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 7px 0 var(--green-dark)}
 .gen-btn:active:not(:disabled){transform:translateY(2px);box-shadow:0 2px 0 var(--green-dark)}
 .gen-btn:disabled{background:var(--gray-mid);color:var(--gray);box-shadow:0 4px 0 #ccc;cursor:not-allowed}
-.offline-note{font-size:12px;color:#990000;font-weight:700;text-align:center;margin-top:8px;display:none}.static-flag-banner{display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:1200;width:calc(100% - 24px);max-width:560px;align-items:center;gap:10px;background:#fff4e0;border:2px solid #ff9600;border-radius:var(--radius-lg);padding:10px 14px;font-size:12px;font-weight:700;color:#c26000;box-shadow:0 6px 24px rgba(0,0,0,.18)}.static-flag-banner button{flex-shrink:0;background:#ff9600;color:#fff;border:none;border-radius:var(--radius);padding:6px 12px;font-size:12px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer}.static-flag-banner button:hover{background:#e08800}
+.offline-note{font-size:12px;color:#990000;font-weight:700;text-align:center;margin-top:8px;display:none}.static-flag-banner{display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--bottom-bar-h) + 12px);z-index:1200;width:calc(100% - 24px);max-width:560px;align-items:center;gap:10px;background:#fff4e0;border:2px solid #ff9600;border-radius:var(--radius-lg);padding:10px 14px;font-size:12px;font-weight:700;color:#c26000;box-shadow:0 6px 24px rgba(0,0,0,.18)}.static-flag-banner button{flex-shrink:0;background:#ff9600;color:#fff;border:none;border-radius:var(--radius);padding:6px 12px;font-size:12px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer}.static-flag-banner button:hover{background:#e08800}
 
 .examples{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:20px}
 .chip{background:var(--white);border:2px solid var(--gray-mid);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--gray-dark);font-family:'Nunito',sans-serif;transition:border-color .1s,color .1s}
@@ -129,7 +139,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .ico-btn.regen:hover{border-color:var(--blue)}
 
 .gen-overlay{position:fixed;inset:0;background:rgba(240,244,248,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:14px}
-#gen-status{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:200;
+#gen-status{position:fixed;bottom:calc(var(--bottom-bar-h) + 12px);left:50%;transform:translateX(-50%);z-index:200;
   display:none;align-items:center;gap:9px;
   background:var(--white);border:2px solid var(--gray-mid);border-radius:20px;
   padding:9px 16px;box-shadow:0 4px 18px rgba(0,0,0,.13);
@@ -525,7 +535,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 /* ══ RATING ══════════════════════════════════════════════════════════ */
 
 /* ══ TOAST ═══════════════════════════════════════════════════════════ */
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;font-size:13px;font-weight:700;padding:9px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
+.toast{position:fixed;bottom:calc(var(--bottom-bar-h) + 12px);left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;font-size:13px;font-weight:700;padding:9px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px}
 .modal-box{background:var(--white);border-radius:var(--radius-xl);box-shadow:0 8px 40px rgba(0,0,0,.25);width:100%;max-width:560px;display:flex;flex-direction:column;max-height:90vh}
@@ -585,19 +595,36 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
      shared flex wrapper rather than at a hardcoded offset — so it stays "next to" acct-badge
      regardless of acct-badge's own width (Sign in vs. a signed-in username). Unlike acct-badge,
      it is NEVER hidden: it must be reachable on every page, including the static build, which has
-     no accounts at all. -->
-<div id="corner-pills" style="position:fixed;left:16px;bottom:16px;z-index:900;display:flex;align-items:center;gap:8px">
-  <div id="acct-badge" style="display:none">
-    <button id="acct-btn" onclick="openAccount()" style="display:flex;align-items:center;gap:6px;background:var(--white);border:2px solid var(--gray-mid);border-radius:24px;padding:6px 12px;cursor:pointer;font-family:Nunito,sans-serif;font-weight:800;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.15)">
-      <span>👤</span><span id="acct-name">Sign in</span>
-    </button>
+     no accounts at all.
+     user follow-up (mobile): this cluster and the tutor fab (`#tutor-fab`, formerly its own
+     independently-fixed widget in the OPPOSITE corner — moved up to sit right beside this, see the
+     comment where it used to live) now share ONE full-width `#bottom-bar`, so the bottom of the
+     screen reads as a single toolbar rather than two floating clusters. `#corner-pills` and
+     `#tutor-fab` keep their OWN ids/markup/JS-visibility-toggling exactly as before (relocated, not
+     reimplemented, same discipline `#comp-nav-modal`'s own relocation used) — only their POSITIONING
+     changed, from each being independently `position:fixed` to both being plain flex children of
+     the new shared bar. -->
+<div id="bottom-bar" style="position:fixed;left:0;right:0;bottom:0;z-index:900;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));background:rgba(255,255,255,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1.5px solid var(--gray-mid);box-sizing:border-box">
+  <div id="corner-pills" style="display:flex;align-items:center;gap:8px">
+    <div id="acct-badge" style="display:none">
+      <button id="acct-btn" onclick="openAccount()" style="display:flex;align-items:center;gap:6px;background:var(--white);border:2px solid var(--gray-mid);border-radius:24px;padding:6px 12px;cursor:pointer;font-family:Nunito,sans-serif;font-weight:800;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.15)">
+        <span>👤</span><span id="acct-name">Sign in</span>
+      </button>
+    </div>
+    <button id="settings-pill" onclick="openSettings()" title="Settings" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15)">⚙️</button>
+    <!-- PLAN §C4 "keep going": the global mute pill. class="mute-btn" so updateMuteButtons()'s
+         existing document.querySelectorAll('.mute-btn') sync picks it up with no code change —
+         that updater was already generic, only the BUTTON was scattered. Always visible, same
+         reasoning as settings-pill: reachable on every page including static. -->
+    <button id="mute-pill" class="mute-btn" onclick="toggleMute()" title="Mute" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15);opacity:.7">🔊</button>
   </div>
-  <button id="settings-pill" onclick="openSettings()" title="Settings" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15)">⚙️</button>
-  <!-- PLAN §C4 "keep going": the global mute pill. class="mute-btn" so updateMuteButtons()'s
-       existing document.querySelectorAll('.mute-btn') sync picks it up with no code change —
-       that updater was already generic, only the BUTTON was scattered. Always visible, same
-       reasoning as settings-pill: reachable on every page including static. -->
-  <button id="mute-pill" class="mute-btn" onclick="toggleMute()" title="Mute" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15);opacity:.7">🔊</button>
+  <!-- v62: persistent tutor fab — relocated INTO #bottom-bar (user follow-up); still its own id,
+       still hidden/shown by refreshTutorAvailability() exactly as before (that function toggles
+       THIS div's display, not the outer bar's — the bar itself is always present once any
+       backend-gated or always-on child inside it is). -->
+  <div id="tutor-fab" style="display:none">
+    <button id="tutor-fab-btn" onclick="toggleTutorWidget()" title="" style="width:44px;height:44px;border-radius:50%;background:var(--blue);color:#fff;border:none;box-shadow:0 4px 12px rgba(0,0,0,.28);cursor:pointer;font-size:22px;line-height:1">🦉</button>
+  </div>
 </div>
     <!-- v70_o: `justify-content:center` on a container whose content is wider than the viewport
          pushes the overflow off BOTH sides, so on a phone the grid sat to the right of the screen
@@ -709,10 +736,13 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     </div>
   </div>
 </div>
-<div id="tutor-fab" style="display:none;position:fixed;right:16px;bottom:16px;z-index:900">
-  <button id="tutor-fab-btn" onclick="toggleTutorWidget()" title="" style="width:52px;height:52px;border-radius:50%;background:var(--blue);color:#fff;border:none;box-shadow:0 4px 12px rgba(0,0,0,.28);cursor:pointer;font-size:24px;line-height:1">🦉</button>
-</div>
-<div id="tutor-widget" style="display:none;position:fixed;right:16px;bottom:16px;z-index:901;width:min(380px,calc(100vw - 32px));max-height:min(560px,calc(100vh - 32px));background:var(--white);border:2px solid var(--blue);border-radius:var(--radius-lg);box-shadow:0 8px 28px rgba(0,0,0,.3);display:none;flex-direction:column;overflow:hidden">
+<!-- #tutor-fab used to live here as its own independently `position:fixed` widget in the bottom-
+     right corner — relocated INTO #bottom-bar, next to #corner-pills (see the comment there), on
+     the same user follow-up that unified the two floating clusters into one row. -->
+<!-- v62: opens ABOVE #bottom-bar now (was right:16px;bottom:16px, the same corner the fab used to
+     float in) — it would otherwise sit UNDER/overlapping the new bar. Still bottom-right, still its
+     own id, still shown/hidden by refreshTutorAvailability(); only the vertical offset changed. -->
+<div id="tutor-widget" style="display:none;position:fixed;right:16px;bottom:calc(var(--bottom-bar-h) + 12px);z-index:901;width:min(380px,calc(100vw - 32px));max-height:min(560px,calc(100vh - var(--bottom-bar-h) - 44px));background:var(--white);border:2px solid var(--blue);border-radius:var(--radius-lg);box-shadow:0 8px 28px rgba(0,0,0,.3);display:none;flex-direction:column;overflow:hidden">
   <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--blue);color:#fff;font-weight:800;font-size:13px;flex:0 0 auto">
     <span style="font-size:16px">🦉</span>
     <span id="tutor-widget-title">Tutor</span>
@@ -1531,17 +1561,26 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
          progress bars) moved INTO the popup, unmodified — this row is a second entry point to the
          same elements, not a new implementation of them. `_syncCompHdrNav()` (showComplete) mirrors
          `comp-prev`/`comp-next`'s resolved state onto `comp-story-prev`/`comp-story-next` every
-         render, so the two pairs can never disagree about where "back"/"forward" lead. -->
-    <summary style="display:flex;align-items:center;gap:10px;margin-bottom:6px;cursor:pointer;outline:none">
-      <button class="spk-ico" id="comp-story-prev" style="display:none" onclick="event.stopPropagation();" title="">➜</button>
-      <span style="font-size:20px">📖</span>
-      <span style="font-size:15px;font-weight:900;color:var(--text)" id="comp-story-panel-lbl">Chapter</span>
-      <span style="display:flex;align-items:center;gap:6px;margin-left:auto">
-        <button class="spk-ico" id="comp-story-nav-btn" onclick="event.stopPropagation();openCompNav();" title="">☰</button>
-        <span id="comp-story-flags"></span>
-        <button class="spk-ico" id="comp-story-spk" onclick="event.stopPropagation();speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">💬</button>
+         render, so the two pairs can never disagree about where "back"/"forward" lead.
+         user follow-up (mobile): a long chapter title pushed this whole row wider than a phone
+         screen, since the title had no truncation and everything else (menu, flags, read, nav) had
+         to fit beside it on the SAME line. Split into two: title/flags/read on top (the title now
+         truncates with an ellipsis instead of forcing an overflow, same treatment `.topic-name-big`
+         already uses elsewhere), prev/menu/next centered on their own row below. Same elements, same
+         ids, same onclick handlers — only the grouping changed, so `_syncCompHdrNav`/`_mirrorNavBtn`
+         (both ID-keyed, not position-keyed) needed no changes. -->
+    <summary style="display:flex;flex-direction:column;gap:8px;margin-bottom:6px;cursor:pointer;outline:none">
+      <span style="display:flex;align-items:center;gap:8px;min-width:0">
+        <span style="font-size:20px;flex:none">📖</span>
+        <span style="font-size:15px;font-weight:900;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="comp-story-panel-lbl">Chapter</span>
+        <span id="comp-story-flags" style="flex:none"></span>
+        <button class="spk-ico" id="comp-story-spk" onclick="event.stopPropagation();speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud" style="flex:none">💬</button>
       </span>
-      <button class="spk-ico" id="comp-story-next" style="display:none" onclick="event.stopPropagation();" title="">➜</button>
+      <span style="display:flex;align-items:center;justify-content:center;gap:18px">
+        <button class="spk-ico" id="comp-story-prev" style="display:none" onclick="event.stopPropagation();" title="">➜</button>
+        <button class="spk-ico" id="comp-story-nav-btn" onclick="event.stopPropagation();openCompNav();" title="">☰</button>
+        <button class="spk-ico" id="comp-story-next" style="display:none" onclick="event.stopPropagation();" title="">➜</button>
+      </span>
     </summary>
     <!-- v74_l: NOT italic, and larger. This panel is the reward for finishing the chapter and the
          thing the learner is meant to actually READ — a long italic run at 13px reads as a caption,
@@ -152728,11 +152767,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v84_c', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v84_c'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v84_d', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v84_d'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"fb63a7730251","lessons.json":"2e65c15d3de2","ui.json":"810e0f7753a9","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"bf4e560125c6"};
+  APP.buildSources = {"index.html":"aa46fcb74f9c","lessons.json":"2e65c15d3de2","ui.json":"810e0f7753a9","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"bf4e560125c6"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -160509,8 +160548,11 @@ function renderEx(){
       `<button class="check-btn" id="cbtn" onclick="check()" disabled>${t('ex.check')}</button>`+
       `<button class="kbd-btn${APP.noKeyboard?' kbd-on':''}" onclick="toggleNoKeyboard()" title="${escAttr(t('ex.no_keyboard.title'))}" style="flex:0 0 auto;border:2px solid var(--gray-mid);background:var(--white);border-radius:var(--radius-lg);cursor:pointer;font-size:20px;padding:0 16px;opacity:${APP.noKeyboard?'1':'.7'}">⌨️</button>`+
     '</div>'+
-    flagUi+
-    _exStoryPanelHtml(ex);
+    // user follow-up: flag/star moved BELOW the collapsed story panel — they used to sit directly
+    // under the answer controls, ABOVE the story, which put them before content a learner might
+    // still want to check first. Pure reorder, same two pieces of markup, nothing else changed.
+    _exStoryPanelHtml(ex)+
+    flagUi;
   if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>{
     if(_ttsUnlocked){ speak(ex.target); }
     else {
@@ -160531,9 +160573,10 @@ function renderEx(){
 }
 
 // v71_s: the chapter story, shown on a COMPREHENSION question so the learner can actually read the
-// text they are being asked about. Placed at the very END of the exercise area — after the choices,
-// the feedback line and the Check button — because the answer controls must stay reachable without
-// scrolling past a story that can run several hundred words (user's explicit layout call).
+// text they are being asked about. Placed right after the choices, the feedback line and the Check
+// button — because the answer controls must stay reachable without scrolling past a story that can
+// run several hundred words (user's explicit layout call). The flag/star row (`flagUi`) is the one
+// thing still placed AFTER it (user follow-up) — it used to sit before this panel.
 //
 // Open by default: on a comprehension question the text is not supplementary, it is the material.
 // Collapsible so a learner who has read it can fold it away and keep the question in view.
@@ -164681,12 +164724,34 @@ function _plainTextNoFurigana(html){
   return (div.textContent || '').replace(/\s+/g, ' ').trim();
 }
 
+// user report: on a phone, the popover WAS appearing — just hidden underneath the browser's OWN
+// native "Copy / Share" selection toolbar, which mobile Chrome/Safari draw directly above the
+// selection, at a screen position this page has no visibility into and cannot out-z-index (it is
+// browser-chrome UI, not part of the DOM). Anchoring near the selection is a losing game on touch,
+// so touch devices get a different strategy entirely: a fixed spot well clear of wherever the
+// native toolbar draws, rather than trying to guess/avoid it. Desktop (mouse selection, no native
+// toolbar to collide with) keeps the original near-the-selection placement unchanged.
+function _isTouchDevice(){
+  return ('ontouchstart' in window) || (navigator.maxTouchPoints || 0) > 0;
+}
 function _storySelShowPopover(range){
   const pop = document.getElementById('story-sel-popover');
   if (!pop) return;
   _tutorApplyLabels();
-  const r = range.getBoundingClientRect();
   pop.style.display = 'flex';
+  if (_isTouchDevice()){
+    // Pinned just above #bottom-bar (v84_d) — `position:fixed` so it stays put regardless of
+    // scroll, unlike the desktop path below which anchors to document coordinates.
+    pop.style.position = 'fixed';
+    pop.style.top = 'auto';
+    pop.style.bottom = 'calc(var(--bottom-bar-h) + 12px)';
+    pop.style.left = '50%';
+    pop.style.transform = 'translateX(-50%)';
+    return;
+  }
+  pop.style.position = 'absolute';
+  pop.style.transform = 'none';
+  const r = range.getBoundingClientRect();
   pop.style.top = Math.max(8, r.top - 44 + window.scrollY) + 'px';
   pop.style.left = '0px';   // measure first, then clamp using the popover's own width
   const w = pop.offsetWidth || 160;

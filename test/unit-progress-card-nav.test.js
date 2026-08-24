@@ -76,19 +76,30 @@ const posOf = (id) => {
 }
 console.log('  both popups: hold each card\'s relocated machinery unchanged, same overlay pattern as #settings-modal: OK');
 
-// ── 2. Each header row: ☰ before translation control(s), ONLY next[/back] duplicated ─
+// ── 2a. Progress-card header row: split into TWO rows (mobile, user follow-up) ────────
+// SUPERSEDES this section's original invariant ("☰ before the translation flags, all in one
+// row") — a later, mobile-specific follow-up reported a long chapter title pushing that single
+// row wider than a phone screen, and asked for two explicit rows instead: title/flags/read on
+// top, prev/menu/next centered below. That regroups ☰ with prev/next rather than with the
+// flags — the opposite of the old "☰ before flags" rule — so this is REWRITTEN to state what
+// holds now, not loosened to tolerate both shapes. Scoped to the progress/complete card only;
+// the entry/summary card below was not asked and was not touched.
 {
   const panelStart = posOf('comp-story-panel');
   const summary = html.slice(panelStart, html.indexOf('</summary>', panelStart));
-  const order = ['comp-story-prev', 'comp-story-nav-btn', 'comp-story-flags', 'comp-story-spk', 'comp-story-next']
-    .map(id => summary.indexOf(`id="${id}"`));
-  order.forEach((at, i) => assert.ok(at > 0, `element ${i} of the progress-card header row exists`));
-  for (let i = 1; i < order.length; i++) assert.ok(order[i] > order[i - 1], 'progress-card header-row elements are in the required order');
-  assert.ok(summary.indexOf('comp-story-nav-btn') < summary.indexOf('comp-story-flags'),
-    'the ☰ popup trigger sits BEFORE the translation flags, per the request');
+  const at = (id) => { const i = summary.indexOf(`id="${id}"`); assert.ok(i > 0, `${id} exists in the progress-card header row`); return i; };
+  const lbl = at('comp-story-panel-lbl'), flags = at('comp-story-flags'), spk = at('comp-story-spk');
+  const prev = at('comp-story-prev'), nav = at('comp-story-nav-btn'), next = at('comp-story-next');
+  assert.ok(lbl < flags && flags < spk, 'row 1 order: title, then translation flags, then the read-aloud button');
+  assert.ok(prev < nav && nav < next, 'row 2 order: prev, then the ☰ popup trigger, then next');
+  assert.ok(spk < prev, 'row 1 (title/flags/read) is entirely ABOVE row 2 (prev/menu/next) -- the two rows do not interleave');
   assert.ok(/onclick="event\.stopPropagation\(\);openCompNav\(\);"/.test(summary),
     'the ☰ button opens the popup, and stops the click from also toggling the <details>');
+}
+console.log('  progress-card header row: title/flags/read on top, prev/☰/next centered below (mobile follow-up): OK');
 
+// ── 2b. Entry-card header row: unchanged, still ☰-before-translation, one row ─────────
+{
   const sumStart = posOf('sum-sumbox');
   const sumRow = html.slice(sumStart, html.indexOf('</div>', html.indexOf('sum-sumtext', sumStart)));
   const sumOrder = ['sum-sum-nav-btn', 'sum-sum-xlate', 'sum-sum-spk', 'sum-sum-next']
@@ -105,7 +116,7 @@ console.log('  both popups: hold each card\'s relocated machinery unchanged, sam
     assert.ok(!html.includes(`id="${id}"`), `${id} must NOT exist`);
   }
 }
-console.log('  both header rows: ☰ before translation control(s), ONLY next[/back] duplicated: OK');
+console.log('  entry-card header row (unchanged): ☰ before translation control(s); ONLY next[/back] duplicated anywhere: OK');
 
 // ── 3. _mirrorNavBtn: the ONE mirror rule, shared and non-vacuous ────────────
 // The GLYPH is deliberately NOT mirrored (see §8) — a fixed, heavier ➜ replaced the mirrored ←/→

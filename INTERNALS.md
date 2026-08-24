@@ -1194,6 +1194,17 @@ already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly o
 | verified | `test/e2e-pwa-install.test.js` (spawns a real server) — all three files served with correct status/MIME/content; `index.html` wires manifest/theme-color/registration with a silent catch; `docs/index.html` does not attempt registration; `sw.js`'s fetch handler structurally can never intercept `/api/*` (comment-stripped before the check) |
 | mutation-tested | wrong `Content-Type` for `/sw.js` — RED. Removing the silent `.catch(() => {})` — RED. Dropping `sw.js`'s `SHELL` allow-list gate — RED. `loadClient()`: reverting to the old trailing-regex — RED (reproduces the 80-test crash). Forcing the marker branch unconditionally — RED |
 
+**Mobile progress-card UI follow-ups** (`v84_d`, real-device driven)
+
+| what | where |
+|---|---|
+| `#comp-story-panel`'s header row is TWO rows | title/flags/read on top (title now truncates via `flex:1;overflow:hidden;text-overflow:ellipsis`, like `.topic-name-big`), prev/☰/next centered below. `_syncCompHdrNav`/`_mirrorNavBtn` are ID-keyed, unaffected. Scoped to the progress/complete card only — the entry/summary card's header row is untouched, still one row |
+| `#bottom-bar` (repo root markup, `index.html`) | wraps `#corner-pills` (account/settings/mute) and `#tutor-fab` (owl), both UNCHANGED in id/markup/JS-toggling — only their positioning moved from independently-fixed to flex children of one shared, full-width, translucent (`rgba(255,255,255,.85)` + `backdrop-filter:blur(8px)`) bar. `--bottom-bar-h` CSS var is the one place its height is stated; `.toast`/`#gen-status`/`.static-flag-banner`/`#tutor-widget`'s reopened position all offset FROM it |
+| `_exStoryPanelHtml(ex) + flagUi` (was `flagUi + _exStoryPanelHtml(ex)`) | question-card flag/star row moved below the collapsed story panel — pure reorder in the `ex-area` innerHTML assembly, no markup changes |
+| `_isTouchDevice()` / `_storySelShowPopover` touch branch | mobile "ask the tutor" selection popover was rendering correctly but hidden under the browser's OWN native "Copy/Share" selection toolbar (browser-chrome UI, no page-level z-index can beat it). Touch devices (`'ontouchstart' in window \|\| navigator.maxTouchPoints > 0`) now get `position:fixed`, pinned above `#bottom-bar` via the SAME `--bottom-bar-h` var, horizontally centered — deliberately NOT anchored near the selection at all. Desktop keeps the original near-selection placement |
+| verified live | `showComplete()` against a real 46-char chapter title on a real 375px mobile viewport (2 rows, no overflow, title genuinely truncates); `#bottom-bar` confirmed full-width/translucent, `#tutor-widget` confirmed opening above it; touch-popover fix confirmed with `navigator.maxTouchPoints` genuinely emulated, ignoring a mid-screen fake selection rect entirely |
+| mutation-tested | progress-card header reverted to single-row order — RED. `_isTouchDevice()` forced to always `false` — RED |
+
 ---
 
 **Keep 6b current the cheap way:** when a session's write-up names a function it had to hunt for,

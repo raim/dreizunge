@@ -39,7 +39,7 @@ this file stays current through the whole v84 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v84 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v84 LINE** | `v84_c` — the `dreizunge` PATH launcher (`bin/dreizunge`, installed onto `~/.local/bin` by `install.sh`): starts the server, opens the browser once it answers, `--no-browser` to skip — the `jupyter notebook` shape, discussed and deferred at the `v83` cut, built now on direct request. Verified with a real symlinked-from-elsewhere run against a stub server AND a real `install.sh` end-to-end run confirming idempotent install + a genuine working launch. `v84_b` — PWA install support (`manifest.json`/`icon.svg`/`sw.js`, local server only): browsers can offer "Install App," windowed, no tabs/omnibox. Registration confirmed working by the USER, same day, in real Google Chrome on Ubuntu via `localhost:3000` (a sandboxed preview browser had failed during the build itself, flagged as unverified at the time — now measured). A LAN IP over plain HTTP (tested on Android) still shows no install option — a separate, well-understood limitation (service workers need a secure context; HTTPS/a TLS proxy is the real fix, matching the app's own existing insecure-transport warning), not a bug in this release. Also fixed, found while building this: `test/lib-dom.js`'s `loadClient()` had a fragile trailing-regex that assumed `init();` was the LAST statement in the client script — the first code ever added after it (this release's own SW registration) silently un-suppressed `init()` in ~80 unit tests. Fixed by anchoring on the `@static-engine-end` marker instead. |
+| **SHIPPED IN THE v84 LINE** | `v84_d` — four mobile progress-card UI follow-ups, real-device driven: `#comp-story-panel`'s header row split into two (title/flags/read on top, prev/☰/next below — a long title was overflowing on phones); the corner-pill cluster and tutor fab unified into one full-width translucent `#bottom-bar`; question-card flag/star buttons moved below the collapsed story panel; the mobile "ask the tutor" selection popover — found to be rendering correctly but hidden under the browser's own native selection toolbar — now pins to a fixed spot above `#bottom-bar` on touch devices instead of trying to anchor near the (browser-chrome-obscured) selection. `v84_c` — the `dreizunge` PATH launcher (`bin/dreizunge`, installed onto `~/.local/bin` by `install.sh`): starts the server, opens the browser once it answers, `--no-browser` to skip — the `jupyter notebook` shape, discussed and deferred at the `v83` cut, built now on direct request. Verified with a real symlinked-from-elsewhere run against a stub server AND a real `install.sh` end-to-end run confirming idempotent install + a genuine working launch. `v84_b` — PWA install support (`manifest.json`/`icon.svg`/`sw.js`, local server only): browsers can offer "Install App," windowed, no tabs/omnibox. Registration confirmed working by the USER, same day, in real Google Chrome on Ubuntu via `localhost:3000` (a sandboxed preview browser had failed during the build itself, flagged as unverified at the time — now measured). A LAN IP over plain HTTP (tested on Android) still shows no install option — a separate, well-understood limitation (service workers need a secure context; HTTPS/a TLS proxy is the real fix, matching the app's own existing insecure-transport warning), not a bug in this release. Also fixed, found while building this: `test/lib-dom.js`'s `loadClient()` had a fragile trailing-regex that assumed `init();` was the LAST statement in the client script — the first code ever added after it (this release's own SW registration) silently un-suppressed `init()` in ~80 unit tests. Fixed by anchoring on the `@static-engine-end` marker instead. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, all of CP1–5) are BOTH fully shipped — see `roadmap_v83.md`'s own `# SHIPPED IN THE v83 LINE` for how. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). No new PLAN track is open as of this cut. |
 
@@ -1720,6 +1720,88 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v84 LINE
+
+### `v84_d` — mobile progress-card UI follow-ups (four items, real-device driven)
+
+**Shipped by: Claude Code, on user request** — a batch of four mobile UI reports, all from the
+user actually using the app on their phone after `v84_b`/`v84_c` (PWA install + the launcher made
+that easy for the first time this session).
+
+1. **Progress-card header row split in two** (`#comp-story-panel`'s `<summary>`): a long chapter
+   title pushed the whole row (title + translation flags + read button + prev/menu/next) wider than
+   a phone screen, since the title carried no truncation and everything else had to fit beside it on
+   ONE line. Split into two rows: title/flags/read on top (the title now gets the same `flex:1;
+   overflow:hidden;text-overflow:ellipsis` truncation `.topic-name-big` already uses elsewhere,
+   instead of forcing an overflow), prev/☰/next centered on their own row below. Same elements, same
+   ids, same onclick handlers — `_syncCompHdrNav`/`_mirrorNavBtn` are both ID-keyed, not
+   position-keyed, so neither needed a change. This REGROUPS ☰ with prev/next instead of with the
+   flags, the opposite of the `v83_c` "☰ before the translation flags" rule — `unit-progress-card-nav`
+   §2a REWRITTEN (not loosened) to state the new invariant, with the supersession explained inline.
+   Scoped to the progress/complete card only; the entry/summary card's header row was NOT touched.
+2. **The bottom-left corner-pill cluster (account/settings/mute) and the bottom-right tutor fab —
+   previously two separate floating widgets in opposite corners — now share ONE full-width
+   `#bottom-bar`** (`rgba(255,255,255,.85)` + `backdrop-filter:blur(8px)`, `border-top`, safe-area
+   inset padding for notched phones). `#corner-pills` and `#tutor-fab` keep their OWN ids, markup,
+   and JS-visibility-toggling exactly as before (relocated, not reimplemented — `refreshTutorAvailability()`
+   still just toggles `#tutor-fab`'s `display`, unaware its parent changed) — only their POSITIONING
+   changed, from each independently `position:fixed` to both being flex children of the shared bar.
+   `tutor-fab-btn` sized down 52px→44px to sit more evenly with the 36px settings/mute pills.
+   A new `--bottom-bar-h` CSS variable is the ONE place the bar's height is stated; `.toast`,
+   `#gen-status`, `.static-flag-banner`, and `#tutor-widget`'s own reopened position all offset FROM
+   it (`calc(var(--bottom-bar-h) + Npx)`) rather than each re-guessing a number that would drift out
+   of sync if the bar's content ever changes size.
+3. **Question-card flag/star buttons moved BELOW the collapsed story panel** (`#ex-story-panel`) —
+   pure reorder in the `ex-area` innerHTML assembly (`_exStoryPanelHtml(ex) + flagUi` instead of
+   `flagUi + _exStoryPanelHtml(ex)`), same two pieces of markup, nothing else changed. They used to
+   sit directly under the answer controls, ABOVE the story panel.
+4. **Mobile text-selection "ask the tutor" popover was hidden underneath the browser's OWN native
+   "Copy / Share" selection toolbar** — user's own precise diagnosis, correcting an earlier
+   over-broad "it doesn't work on mobile" report: the popover WAS appearing, just covered by
+   browser-chrome UI this page has no visibility into and cannot out-z-index (native mobile
+   selection toolbars draw directly above/around the selection, at a screen position no amount of
+   page-level `z-index` can beat). Fix: a NEW `_isTouchDevice()` check
+   (`'ontouchstart' in window || navigator.maxTouchPoints > 0`) branches `_storySelShowPopover` —
+   desktop (mouse selection, no native toolbar to collide with) keeps the original near-the-selection
+   placement; touch gets a `position:fixed` spot pinned just above `#bottom-bar` (via the SAME
+   `--bottom-bar-h` variable item 2 introduced), horizontally centered, deliberately NOT anchored
+   anywhere near the selection's own screen position — sidesteps the geometry-guessing problem
+   entirely rather than trying to predict where a given OS/browser draws its own toolbar.
+
+**Verified live, not just structurally**, for the two layout items: `showComplete()` invoked directly
+against a real chapter with a 46-character title (`"Cellular Oscillation & Transcript Localization"`)
+on a real 375px-wide mobile viewport — confirmed 2 rows render, the whole card stays within the
+viewport (`summaryOverflowsViewport: false`), the title genuinely truncates
+(`scrollWidth > clientWidth`). `#bottom-bar` confirmed full-width (`375px === innerWidth`),
+translucent, `#tutor-widget` confirmed it now opens ABOVE the bar (`widget.bottom <= bar.top`) instead
+of underneath it. The touch-popover fix confirmed live too: with `navigator.maxTouchPoints` genuinely
+emulated (this session's mobile-preset browser sets it for real, not simulated), the popover renders
+`position:fixed`, horizontally centered, clearing the bar — regardless of a fake selection rect
+positioned mid-screen, proving it is NOT anchoring to the selection at all on touch, by design.
+
+**Testing**: `test/unit-progress-card-nav.test.js` §2a rewritten (order supersession, explained
+inline — see item 1 above); §2b (entry card) untouched, still asserts the OLD single-row shape,
+correctly, since that card was not touched. `test/unit-tutor-selection.test.js` gained §10 — a real
+`loadClient()` run driving `_storySelShowPopover` under both a default (non-touch) sandbox and one
+with `navigator.maxTouchPoints` set, asserting the two paths genuinely disagree on `position`/
+`bottom`/`transform`, not just on unrelated fields. **Mutation-tested**: reverting the progress-card
+header to single-row DOM order — RED. Forcing `_isTouchDevice()` to always return `false` — RED
+(touch path silently never firing is exactly the class of regression this guards against). Both
+restored, confirmed clean via `diff`. Every pre-existing test touching these areas
+(`unit-settings-card`, `unit-mute-consolidation`, `unit-speech-locale`, `unit-tts-test-row`,
+`unit-tutor`, `unit-card-consistency`, `unit-dialect-mute`, `unit-story-unlocked-card`,
+`unit-story-unlocked-page`, `unit-story-translation-toggle`, `unit-student-flags`, `smoke-render`,
+`unit-story-panel-states`, `unit-static-teacher`) re-run individually and confirmed green with ZERO
+changes needed — the "relocated, not reimplemented" discipline held.
+
+**Testing**: 264/230/0/0 full baseline green (unchanged counts — no new test FILES this release, only
+existing files extended/rewritten). `docs/index.html` rebuilt; all four changes live in the shared
+client engine (before `@static-engine-end`), so they carry into the static build unmodified — the
+touch-popover fix is inert there regardless, since `_storySelMaybeShow` is already gated on
+`canGenerate`, which the static build never has. No `lessons.json` change.
+
+**Not scoped here**: the entry/summary card's OWN header-row nav (raised as a FOLLOW-UP request in
+the same conversation, arriving as this release was being finalized — queued for the NEXT release,
+not folded in here to keep this one a clean, already-verified checkpoint).
 
 ### `v84_c` — the `dreizunge` PATH launcher
 
