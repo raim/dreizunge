@@ -4138,6 +4138,52 @@ a parallel player, new progress system, bulk corpus rewrite, or a BKT-driven gat
 > assuming it is a small extension of (1); they were kept separate on purpose in the conversation that
 > produced this note, precisely because the two have very different effort/necessity profiles.
 
+> **📝 NOTE, added after `v83_p` shipped — REAL-WORLD EVALUATION, `v83_n`→`v83_p`.** The user ran
+> `apply-cp-lessons.js` for real, twice, against the SAME chapter (`tp_17865786341910000220`,
+> "Vittoria Ingannevole", de→it, 8-word vocabulary lesson each time), and reviewed both outputs
+> word-by-word against the real source text. This is the first genuine quality signal Track A has
+> produced — recorded here so it is not lost to chat history, and so a future session does not
+> re-derive it from scratch or re-litigate a question already answered by real evidence.
+>
+> **Run 1 — `qwen2.5:7b`** (the throwaway-server default model this whole project's own docs
+> recommend for quick checks — NOT this topic's own legacy-generation model): 2 of 8 words wrong.
+> `"riesen"` proposed as the LEMMA for a token that appears singular in the story (`RIESE`) — a real
+> lemmatisation error (plural form proposed for a singular occurrence) — glossed `"mostro"`
+> ("monster") instead of `"gigante"` ("giant"). `"geben"` (from the idiom "es gibt") glossed
+> `"offre"` ("offers") instead of correctly reading the idiomatic "there is/exists" sense. One more
+> item, `"ein"` (the bare indefinite article), was translated with a stray trailing hyphen ("un-",
+> not a real word) — weak, though not as clearly wrong as the two above.
+>
+> **Run 2 — `qwen3.6:35b-a3b`** (the SAME model this topic's own LEGACY lessons were generated
+> with, chosen deliberately for a fair, apples-to-apples comparison, and the run that surfaced the
+> `v83_o` `think:false` bug before it could complete): ZERO wrong translations. `"Riese"` correctly
+> lemmatised (singular, matching the story) and correctly glossed `"gigante"`. `"geben"` correctly
+> read as `"esistere (in senso impersonale)"` — the idiomatic sense, explained. A NEW item this run
+> surfaced, `"sie"`, was correctly traced back across two sentences to its real antecedent ("die
+> Regierung") and glossed accordingly — genuinely sophisticated contextual disambiguation, exactly
+> what CP2's design intends. This SAME run is also what surfaced the `v83_p` register-mismatch bug
+> (`"kommen"`/`"venne"`), independent of translation correctness — a lemma/surface packaging bug at
+> CP4, not a CP2 language-analysis error.
+>
+> **What this evidence actually supports**: the two clear CP2 accuracy errors in run 1 look like a
+> SMALL-MODEL limitation, not a flaw in the pipeline's own design — run 2, same chapter, same
+> prompt, larger model, zero equivalent errors, plus noticeably more sophisticated context-tracking.
+> **This should inform any future decision about which model a browser-triggered CP2 call defaults
+> to** — `qwen2.5:7b`-class models are cheap in a throwaway-server dev-loop sense but demonstrably
+> weaker for this specific task; do not assume the DEFAULT dev-check model is an adequate PRODUCTION
+> default without re-measuring.
+>
+> **Two gaps this evidence surfaced that remain OPEN, unaffected by `v83_o`/`v83_p`'s fixes** (first
+> named in `v83_n`'s own roadmap write-up, repeated here since they are exactly the kind of finding
+> this note exists to keep from being lost): (1) **no function-word filtering** — a bare article
+> (`"ein"`) was proposed as a standalone vocabulary item in BOTH runs, regardless of model size; CP2/
+> CP3 have no mechanism to recognise and exclude/deprioritise pure grammatical function words the
+> way the legacy generator's own prompt evidently does. (2) **confidence does not survive into CP4's
+> written lesson** — CP2/CP3 track a `confidence` per proposal, but `emitVocabLesson`'s final
+> `vocab[i]` object never carries it; a reviewer (or a future UI) cannot tell from the written lesson
+> alone which words the model was actually unsure about, even though that information existed
+> earlier in the pipeline and was simply dropped at the last packaging step.
+
 Sequenced so each step is independently useful:
 
 1. **A1 — plain text / markdown upload with a separate chaptering card.** No §2 dependency at all,
