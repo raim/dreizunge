@@ -184,7 +184,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v84_a';
+const APP_VERSION  = 'v84_b';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6347,6 +6347,24 @@ http.createServer(async (req, res) => {
     if (M === 'GET' && url.pathname === '/') {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end(fs.readFileSync(path.join(__dirname, 'index.html')));
+    }
+    // ── PWA install support (v84_b) ───────────────────────────────────────────
+    // Three small, real, on-disk files — not embeddable into the single-file client, since a
+    // manifest must be its own fetchable resource and a service worker must be its own same-origin
+    // script the browser can register. `/sw.js` gets `no-cache` explicitly: browsers already
+    // re-check it periodically, but a stray long-lived cache header here would delay that check and
+    // make a service-worker update land later than it should.
+    if (M === 'GET' && url.pathname === '/manifest.json') {
+      res.writeHead(200, { 'Content-Type': 'application/manifest+json; charset=utf-8' });
+      return res.end(fs.readFileSync(path.join(__dirname, 'manifest.json')));
+    }
+    if (M === 'GET' && url.pathname === '/sw.js') {
+      res.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8', 'Cache-Control': 'no-cache' });
+      return res.end(fs.readFileSync(path.join(__dirname, 'sw.js')));
+    }
+    if (M === 'GET' && url.pathname === '/icon.svg') {
+      res.writeHead(200, { 'Content-Type': 'image/svg+xml; charset=utf-8' });
+      return res.end(fs.readFileSync(path.join(__dirname, 'icon.svg')));
     }
     // ── Learner accounts + server-side state (v65) ───────────────────────────
     // The server is the source of truth for a signed-in learner; the client keeps a localStorage

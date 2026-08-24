@@ -39,7 +39,7 @@ this file stays current through the whole v84 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v84 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v84 LINE** | nothing yet — this line was just cut |
+| **SHIPPED IN THE v84 LINE** | `v84_b` — PWA install support (`manifest.json`/`icon.svg`/`sw.js`, local server only): browsers can offer "Install App," windowed, no tabs/omnibox. Registration itself could NOT be confirmed in a real browser this session (only a sandboxed preview browser was available) — reasoned-through, not measured; the user should check in a real browser first. Also fixed, found while building this: `test/lib-dom.js`'s `loadClient()` had a fragile trailing-regex that assumed `init();` was the LAST statement in the client script — the first code ever added after it (this release's own SW registration) silently un-suppressed `init()` in ~80 unit tests. Fixed by anchoring on the `@static-engine-end` marker instead. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, all of CP1–5) are BOTH fully shipped — see `roadmap_v83.md`'s own `# SHIPPED IN THE v83 LINE` for how. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). No new PLAN track is open as of this cut. |
 
@@ -1721,8 +1721,90 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v84 LINE
 
-*(Nothing shipped yet — this line was just cut, at the user's own request, for a fresh session.
-New entries append at the TOP of this section, per the project's own standing convention.)*
+### `v84_b` — PWA install support (manifest + service worker), local server only
+
+**Shipped by: Claude Code, on user request.** Followed directly from the assistant's own suggested
+"what to do next" at the `v84_a` cut: "should i start a new session for this or could you do it?" —
+answered "I can do it right here" (already has the context loaded; the `v84` cut was for document
+size, not a work checkpoint) and built it in the same session.
+
+**What shipped**: `manifest.json` (name/short_name/description/`start_url`/`scope`/`display:
+"standalone"`/`theme_color: "#58cc02"` matching the app's own green branding/`icons`), `icon.svg`
+(the same 🌍 the favicon already uses, centered on a rounded green square — a real served file, not a
+data URI, since manifest icons need their own fetchable URL), and `sw.js` (a minimal service worker:
+caches the APP SHELL ONLY — `/`, `/manifest.json`, `/icon.svg` — network-first with a cache fallback
+for true offline reloads; every other request, especially every `/api/*` call, is left COMPLETELY
+ALONE, since caching a live LLM/model call would mean silently serving a stale or wrong answer).
+`server.js` gained three small `GET` routes serving these files with the correct MIME types (`/sw.js`
+explicitly sets `Cache-Control: no-cache` so the browser's own periodic update-check isn't delayed).
+`index.html` gained `<link rel="manifest">` + `<meta name="theme-color">` in `<head>`, and a
+feature-detected, silently-caught `navigator.serviceWorker.register('/sw.js')` call.
+
+**Deliberately scoped to the LOCAL server only, not the static GitHub Pages build** — extending this
+to `docs/index.html` would need a second manifest with GitHub-Pages-appropriate `start_url`/`scope`
+(a subpath, not `/`) and a build-static.js copy step, real added complexity not authorized here. The
+registration call lives BELOW `index.html`'s own `@static-engine-end` marker (the same one
+`build-static.js`'s slicer already excludes from the static build), so it is automatically absent
+from `docs/index.html` — verified, not just assumed (see testing below). The `<link rel="manifest">`
+tag itself IS copied into `docs/index.html` (it lives above the marker, in `<head>`) — harmless there,
+a 404 the browser silently ignores.
+
+**⚠️ What is NOT proven: that a real browser actually completes registration.** Attempted in the only
+browser available in this session (the sandboxed preview pane) and failed with Chrome's generic "An
+unknown error occurred when fetching the script." Real Chrome (via the Claude-in-Chrome connector)
+was not available either (extension not connected). Diagnosed as far as possible without a second
+real browser: `/sw.js` fetches byte-correct via a plain `fetch()` with the right MIME type and the
+SAME `Transfer-Encoding: chunked` the already-working `/` route uses; the server never logged a
+request for any of the registration attempts, meaning the failure happened before a real network call
+was even dispatched. This is strong circumstantial evidence the SANDBOXED PREVIEW BROWSER restricts
+Service Worker registration for isolation reasons (a known category of limitation for automated/
+remote browser testing tools), not a bug in what's served — but it is reasoned-through, not measured,
+exactly the same honesty gap `install.sh`'s Windows support carries. **The user needs to open the real
+local server in a real browser** (DevTools → Application → Service Workers, or the install icon in
+the address bar / "Install Dreizunge…" in the menu) before this claim can be called verified.
+
+**A real, unrelated bug found and fixed while building this** (not a PWA bug — a TEST HARNESS bug):
+`test/lib-dom.js`'s `loadClient()` suppresses `index.html`'s live bootstrap (`init()`, network-bound,
+would test the stubs rather than the client) via `m[1].replace(/\ninit\(\);\s*$/, ...)` — a regex
+that ASSUMED `init();` was the very last statement in the script. Adding the SW-registration code
+after `init();` broke that assumption for the first time ever, silently un-suppressing `init()` in
+**~80 of the suite's unit tests** (everything using `loadClient()` against `index.html`) — the real
+network-bound bootstrap ran against the harness's stub `fetch` (which resolves empty objects), leaving
+`LANGS`/`APP.lang` unpopulated and crashing deep inside `applyUIStrings`. The harness's OWN self-check
+guard for exactly this (`if (/\ninit\(\);/.test(src.slice(-200))) throw ...`) also missed it, because
+its fixed 200-character tail window no longer reached `init();` once six lines of new code pushed it
+further from the end of the string — the guard went stale on the very first change that should have
+tripped it. **Fixed at the root**: `loadClient()` now anchors on the `@static-engine-end` MARKER
+(the same one `build-static.js`'s own slicer already uses) for `index.html`, falling back to the
+original trailing-regex ONLY for `docs/index.html` (the static build, which build-static.js does not
+carry the marker into, and which still ends in a bare trailing `init();`) — checked with `markerIdx
+>= 0 ? ... : ...`, both branches verified against real files, not assumed. The self-check guard now
+scans the WHOLE resulting `src`, not a fixed-size tail slice, closing the exact gap that let this
+through undetected. **Mutation-tested**: reverting to the old trailing-regex — RED (reproduces the
+original 80-test crash exactly). Forcing the marker branch unconditionally (breaking the
+`docs/index.html` fallback) — RED. Both restored, confirmed clean.
+
+**Testing**: `test/e2e-pwa-install.test.js` (new, spawns a real server via `boot()` — registered
+inside `run.js`'s `!quick` block) — `/manifest.json`/`/sw.js`/`/icon.svg` all served with correct
+status/MIME type/content (byte-identical to the file on disk for `sw.js`); the manifest's own
+declared icon actually resolves; `index.html` carries the manifest link, theme-color, and a
+feature-detected, silently-caught registration call; `docs/index.html` does NOT attempt registration;
+`sw.js`'s fetch handler structurally can never intercept an `/api/*` path (comments stripped before
+the check, so the file's own explanatory prose mentioning "/api/" doesn't false-positive the guard —
+found and fixed while writing this exact test). Mutation-tested: wrong `Content-Type` for `/sw.js` —
+RED. Removing the silent `.catch(() => {})` on registration — RED. Dropping `sw.js`'s `SHELL`
+allow-list gate (falling back to intercepting every GET) — RED. All restored clean.
+
+**Testing**: 263/229/0/0 full baseline green (from 262/229 — one new e2e file, registered inside the
+`!quick` block, so the quick count is unchanged). `docs/index.html` rebuilt and reconfirmed to exclude
+the registration call. No `lessons.json` change.
+
+**Not scoped here, deliberately**: GitHub Pages / static-build PWA support (a second manifest +
+build-static.js copy step — real added complexity, not authorized); a `dreizunge` PATH launcher
+(discussed and explicitly deferred at the `v83` cut, unrelated to this); actual confirmation that
+registration succeeds in a real, unrestricted browser (see the caveat above — this is the one thing
+in this release that is reasoned-through rather than measured, and should be the first thing checked
+in a real browser before calling PWA install support genuinely done).
 
 # TRACK T — THE TEXT-FOCUSED PROGRESS CARD (user, at the `v80_f` cut)
 

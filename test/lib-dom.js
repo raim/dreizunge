@@ -547,11 +547,37 @@ function loadClient(opts = {}) {
   const html = fs.readFileSync(opts.file || path.join(ROOT, 'index.html'), 'utf8');
   const m = html.match(/<script>([\s\S]*)<\/script>/);
   if (!m) throw new Error('could not find the inline client script');
-  // Strip ONLY the bootstrap call. Everything else — every function and top-level statement — is
-  // evaluated exactly as shipped. init() is async and network-bound; running it would test the
+  // Strip the LIVE BOOTSTRAP — init() itself, and anything wired to run after it (e.g. the v84_b
+  // PWA service-worker registration). Everything ELSE — every function and top-level statement —
+  // is evaluated exactly as shipped. init() is async and network-bound; running it would test the
   // stubs, not the client.
-  let src = m[1].replace(/\ninit\(\);\s*$/, '\n/* init() suppressed by the smoke harness */\n');
-  if (/\ninit\(\);/.test(src.slice(-200))) throw new Error('bootstrap call not neutralised — harness would run init()');
+  //
+  // TWO shapes, because this loads TWO different artefacts (opts.file, v76_k):
+  //   - index.html (live): carries the `@static-engine-end` MARKER — the same one build-static.js's
+  //     own slicer uses — so everything from the marker onward is suppressed, no matter how much
+  //     code follows it. v84_b found the OLD trailing-regex approach's exact failure mode the hard
+  //     way: `/\ninit\(\);\s*$/` assumed init() was the LAST statement in the script, so the first
+  //     bit of code ever added after it (the SW registration) silently un-suppressed init() — and
+  //     the self-check guard below it ALSO missed this, because it only inspected `src.slice(-200)`,
+  //     and the added code had pushed `init();` outside that tail window.
+  //   - docs/index.html (the static GitHub Pages build): build-static.js does NOT carry the marker
+  //     comment into its own output — it slices on the marker at BUILD time and never repeats it —
+  //     and appends its own trailing `init();` with nothing after it. The marker-based approach
+  //     above can't apply there (there is no marker to find), so this falls back to the ORIGINAL
+  //     trailing-regex for that shape specifically — still correct for it, since docs/index.html
+  //     never gained the PWA registration code in the first place (excluded by this very marker in
+  //     the SOURCE, before build-static.js even runs).
+  const MARKER = '// @static-engine-end';
+  const markerIdx = m[1].indexOf(MARKER);
+  let src = markerIdx >= 0
+    ? m[1].slice(0, markerIdx) + '\n/* live bootstrap (init() + anything after it) suppressed by the smoke harness */\n'
+    : m[1].replace(/\ninit\(\);\s*$/, '\n/* init() suppressed by the smoke harness */\n');
+  // Checks the WHOLE resulting src, not a fixed-size tail slice — the exact gap that let the v84_b
+  // bug through undetected. Matches a top-level CALL statement specifically (a newline immediately
+  // followed by `init();`, zero indentation) — `async function init(){` earlier in the SAME src does
+  // not match this (it starts with "async", not "init"), so this cannot false-positive on the
+  // function's own definition.
+  if (/\ninit\(\);/.test(src)) throw new Error('bootstrap call not neutralised — harness would run init()');
 
   const doc = makeDocument();
   const calls = { fetch: [], toasts: [], errors: [] };

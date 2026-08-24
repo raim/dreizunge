@@ -1,0 +1,13 @@
+{
+  "name": "Dreizunge",
+  "short_name": "Dreizunge",
+  "description": "Learn vocabulary for any topic in any language, with AI-generated lessons.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f0f4f8",
+  "theme_color": "#58cc02",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
