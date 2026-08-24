@@ -263,6 +263,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .type-input:focus{border-color:var(--blue)}
 .type-input.ok{border-color:var(--green);background:var(--green-light)}
 .type-input.bad{border-color:var(--red);background:var(--red-light)}
+.type-input-row{display:flex;gap:8px;margin-top:8px}
+.type-input-row .type-input{margin-top:0;flex:1}
+.mic-btn{flex:none;width:44px;border:2.5px solid var(--gray-mid);border-radius:var(--radius);background:var(--white);cursor:pointer;font-size:19px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0}
+.mic-btn:hover{border-color:var(--blue)}
+.mic-btn.listening{border-color:var(--blue);background:var(--blue-light);animation:mic-pulse 1s ease-in-out infinite}
+.mic-btn.mcq-mic{width:auto;margin-top:8px;padding:8px 14px;gap:6px}
+@keyframes mic-pulse{0%,100%{opacity:1}50%{opacity:.45}}
 .feedback{width:100%;border-radius:var(--radius-lg);padding:13px 16px;margin-bottom:12px;display:none}
 .feedback.ok{background:var(--green-light);border:2.5px solid var(--green);display:block}
 .feedback.bad{background:var(--red-light);border:2.5px solid var(--red);display:block}
@@ -622,8 +629,13 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
        still hidden/shown by refreshTutorAvailability() exactly as before (that function toggles
        THIS div's display, not the outer bar's — the bar itself is always present once any
        backend-gated or always-on child inside it is). -->
-  <div id="tutor-fab" style="display:none">
+  <div id="tutor-fab" style="display:none;position:relative">
     <button id="tutor-fab-btn" onclick="toggleTutorWidget()" title="" style="width:44px;height:44px;border-radius:50%;background:var(--blue);color:#fff;border:none;box-shadow:0 4px 12px rgba(0,0,0,.28);cursor:pointer;font-size:22px;line-height:1">🦉</button>
+    <!-- v84_g (user request): a reply landing while the widget is CLOSED used to be genuinely
+         invisible — the fetch/stream keeps running either way (nothing aborts it), the reply is
+         saved into the thread, but nothing signalled it had arrived until the learner happened to
+         reopen the tutor. A speech-bubble pill above the fab, cleared the moment the widget opens. -->
+    <button id="tutor-fab-badge" onclick="toggleTutorWidget()" style="display:none;position:absolute;bottom:52px;right:0;background:var(--blue);color:#fff;font-size:11px;font-weight:800;padding:6px 10px;border:none;border-radius:12px;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.25);cursor:pointer;font-family:inherit"></button>
   </div>
 </div>
     <!-- v70_o: `justify-content:center` on a container whose content is wider than the viewport
@@ -13419,7 +13431,7 @@ function tMcqArticle(ex) {
 <div class="card">
   <div class="qtext" dir="auto">${t('ex.mcq_article.q', {word: qWord(escHtml(ex.target))})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${furiHtml(ex.source)}</div>
-  ${cGrid(ex.choices, false)}
+  ${cGrid(ex.choices, false, null, true)}
 </div>`;
 }
 
@@ -13428,7 +13440,7 @@ function tMcqPlural(ex) {
 <div class="card">
   <div class="qtext" dir="auto">${t('ex.mcq_plural.q', {word: qWord(escHtml(ex.target))})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${furiHtml(ex.source)}</div>
-  ${cGrid(ex.choices, false)}
+  ${cGrid(ex.choices, false, null, true)}
 </div>`;
 }
 
@@ -13437,10 +13449,10 @@ function tTypePlural(ex) {
 <div class="card">
   <div class="qtext" dir="auto">${t('ex.type_plural.q', {word: qWord(escHtml(ex.target))})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${furiHtml(ex.source)}</div>
-  <input id="type-in" class="type-input" dir="auto" autocomplete="off" autocorrect="off" spellcheck="false"
+  <div class="type-input-row"><input id="type-in" class="type-input" dir="auto" autocomplete="off" autocorrect="off" spellcheck="false"
     placeholder="${t('ex.type_in_placeholder')}"
     oninput="onType()"
-    onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()">
+    onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()">${_typeMicBtnHtml()}</div>
 </div>`;
 }
 
@@ -13559,7 +13571,7 @@ function tMcqConjugation(ex) {
 <div class="card">
   <div class="qtext" dir="auto">${t('ex.mcq_conjugation.q', {pronoun: ex.pronoun, verb: ex.infinitive})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.pronoun} — ${furiHtml(ex.source)}</div>
-  ${cGrid(ex.choices, false)}
+  ${cGrid(ex.choices, false, null, true)}
 </div>`;
 }
 
@@ -13568,10 +13580,10 @@ function tTypeConjugation(ex) {
 <div class="card">
   <div class="qtext" dir="auto">${t('ex.type_conjugation.q', {pronoun: ex.pronoun, verb: ex.infinitive})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.pronoun} — ${furiHtml(ex.source)}</div>
-  <input id="type-in" class="type-input" dir="auto" autocomplete="off" autocorrect="off" spellcheck="false"
+  <div class="type-input-row"><input id="type-in" class="type-input" dir="auto" autocomplete="off" autocorrect="off" spellcheck="false"
     placeholder="${t('ex.type_in_placeholder')}"
     oninput="onType()"
-    onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()">
+    onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()">${_typeMicBtnHtml()}</div>
 </div>`;
 }
 
@@ -14731,7 +14743,10 @@ function _exStoryPanelHtml(ex){
        + '</details>';
 }
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
-function cGrid(cs,one,mode){ return `<div class="choices${one?' one-col':''}${mode==='chips'?' chips':''}">${cs.map((c,i)=>`<button class="choice" dir="auto" id="c${i}" onclick="pickChoice(${i},this)">${furiHtml(c)}</button>`).join('')}</div>`; }
+// `speakable` (v84_g): only the callers whose `choices` are confirmed TARGET-language text pass
+// true (mcq_article/mcq_plural/mcq_conjugation) — see `_mcqSpeechStart`'s own comment for why the
+// source-language-choice MCQ types (mcq_target_source, listen_mcq, comprehension_mcq) never do.
+function cGrid(cs,one,mode,speakable){ return `<div class="choices${one?' one-col':''}${mode==='chips'?' chips':''}">${cs.map((c,i)=>`<button class="choice" dir="auto" id="c${i}" onclick="pickChoice(${i},this)">${furiHtml(c)}</button>`).join('')}</div>${speakable?_mcqMicBtnHtml():''}`; }
 // Shared card for sentence-context MCQs (word_forms + synonyms-in-context). The
 // sentence div is omitted when empty (no story sentence was found).
 function sentenceMcqCard({badge, question, sentenceHtml, hint, choices}){
@@ -15164,7 +15179,7 @@ function tLMcq(ex){ const S=lessonSrcLang(); const Sn=localizedLessonLangName(AP
   if(APP.muted){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:qWord(applyFurigana(ex.target))})}</div>${cGrid(ex.choices,false)}</div>`; }
   return `<div class="ex-badge">${t("ex.badge.listen_mcq")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" dir="auto" style="margin-bottom:10px">${t("ex.listen_mcq.q",{lang:Sn})}</div>${lBlock(ex.target,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
 function tLType(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang);
-  const inputHtml = `<input class="type-input" id="type-in" dir="auto" type="text" placeholder="${t("ex.listen_type.placeholder",{lang:Ln})}" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">`;
+  const inputHtml = `<div class="type-input-row"><input class="type-input" id="type-in" dir="auto" type="text" placeholder="${t("ex.listen_type.placeholder",{lang:Ln})}" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">${_typeMicBtnHtml()}</div>`;
   // When globally muted, there's nothing to hear — fall back to translating the shown source
   // into the target by typing it. Same type-in / ex.correct check path, no audio needed.
   if(APP.muted){ const S=lessonSrcLang(); return `<div class="ex-badge">${S.flag}→${L.flag} ${t("ex.badge.type_translate",{lang:Ln})}</div><div class="card"><div class="qtext" dir="auto" style="margin-bottom:10px">${t("ex.type_translate.q",{lang:Ln})}</div><div class="target-box"><div class="target-box-text" dir="auto">${furiHtml(ex.source)}</div></div>${inputHtml}</div>`; }
@@ -16707,6 +16722,87 @@ function typedDiffHtml(typed, correct) {
     + `<div class="td-row"><span class="td-lbl">${t('check.you_typed')}</span><span class="td-chars" dir="auto">${rowT}</span></div>`
     + `<div class="td-row"><span class="td-lbl">${t('check.correct_answer')}</span><span class="td-chars" dir="auto">${rowC}</span></div>`
     + `</div>`;
+}
+
+// ══ Speech-recognition answer checking (v84_g) ═══════════════════════════════
+// A mic button next to a typed-answer input, or a shared one under an MCQ's choices. Both funnel
+// into `_micListen`, which owns the button's "listening" visual state so neither caller repeats it.
+//
+// The current exercise's language, not the UI language: recognized speech must be set to LISTEN
+// for the language the learner is answering IN, the same locale `_speechLocaleFor` already hands
+// TTS for this exact lesson/chapter/storyline.
+function _speechExLocale(){
+  const lang = APP.lessonData?.lang || APP.lang;
+  return _speechLocaleFor(lang, APP.lessonData?.id);
+}
+
+function _typeMicBtnHtml(){
+  if(!_speechRecognitionSupported()) return '';
+  return `<button type="button" class="mic-btn" id="type-mic-btn" title="${escAttr(t('ex.mic_tooltip'))}" onclick="_typeSpeechStart(this)">🎤</button>`;
+}
+function _mcqMicBtnHtml(){
+  if(!_speechRecognitionSupported()) return '';
+  return `<button type="button" class="mic-btn mcq-mic" id="mcq-mic-btn" title="${escAttr(t('ex.mic_tooltip'))}" onclick="_mcqSpeechStart(this)">🎤</button>`;
+}
+
+// Owns the button's listening state; hands the caller the transcript alternatives (or null) once
+// recognition ends. A genuine error (permission denied, mic unavailable — NOT a plain "didn't hear
+// anything", which is the ordinary outcome of staying silent or being misheard) surfaces as a toast
+// here, once, so neither caller below needs its own error-message branch.
+function _micListen(btn, onDone){
+  if(btn){ btn.classList.add('listening'); btn.disabled = true; }
+  _speechRecognizeOnce(_speechExLocale(), (alts, err) => {
+    if(!alts && err && err !== 'no-match' && err !== 'unsupported') showToast(t('ex.mic_error'));
+    onDone(alts);
+  }, () => { if(btn){ btn.classList.remove('listening'); btn.disabled = false; } });
+}
+
+// Recognized speech vs. a typed-answer exercise (listen_type/type_plural/type_conjugation). A
+// match against `ex.correct` — same forgiving `normDiacritics` compare the typed path already uses
+// — fills the input with the canonical answer and checks it immediately: green, advance, exactly
+// like pressing Enter on a correct typed answer. Anything else fills the input with what was HEARD
+// (so the learner sees and can correct it) but never auto-submits: a misheard word must never
+// silently spend a heart the learner didn't actually get wrong.
+function _typeSpeechStart(btn){
+  const C = APP.cur, ex = C && C.exercises && C.exercises[C.cur];
+  if(!ex || C.answered) return;
+  _micListen(btn, (alts) => {
+    // `alts` is null for both plain silence/no-speech AND a genuine error — `_micListen` already
+    // toasted the error case; showing a SECOND toast here would just overwrite that more specific
+    // message with the generic "didn't catch that", so this only has anything to say when there
+    // IS a transcript to judge.
+    if(!alts) return;
+    const inp = document.getElementById('type-in'); if(!inp) return;
+    const correct = normDiacritics(ex.correct);
+    const hit = alts.some(a => normDiacritics(a) === correct);
+    if(hit){ inp.value = ex.correct; onType(); check(); }
+    else { inp.value = alts[0]; onType(); showToast(t('ex.mic_no_match')); }
+  });
+}
+
+// Recognized speech vs. a target-language-choice MCQ (mcq_article/mcq_plural/mcq_conjugation —
+// see the `speakable:true` call sites in cGrid's callers, deliberately NOT every MCQ: choice text
+// has to be in the language `_speechExLocale` is listening for, which rules out the source-language
+// choice types (mcq_target_source/listen_mcq's translations, comprehension_mcq's reasoning options)
+// — recognizing target-locale speech against source-language text would just never match). Matched
+// ONLY against the CORRECT choice, never any wrong one: a hit taps that choice exactly as a real
+// tap would (`pickChoice`, so it turns green and advances through the existing check() path); a
+// miss changes nothing, so a misheard word can never spend a heart on an answer the learner never
+// actually chose.
+function _mcqSpeechStart(btn){
+  const C = APP.cur, ex = C && C.exercises && C.exercises[C.cur];
+  if(!ex || C.answered) return;
+  _micListen(btn, (alts) => {
+    // Same reasoning as `_typeSpeechStart`: a null `alts` may already have been toasted as a real
+    // error, so this stays quiet rather than clobbering that message with a generic one.
+    if(!alts) return;
+    const correct = normDiacritics(stripFuri(ex.correct));
+    const said = alts.some(a => normDiacritics(a) === correct);
+    if(!said){ showToast(t('ex.mic_no_match')); return; }
+    const idx = (ex.choices||[]).findIndex(c => normDiacritics(stripFuri(c)) === correct);
+    const el = idx >= 0 ? document.getElementById('c'+idx) : null;
+    if(el) pickChoice(idx, el); else showToast(t('ex.mic_no_match'));
+  });
 }
 
 function normDiacritics(s){
@@ -18476,7 +18572,7 @@ function toggleCompStoryLang(lang){
 // uses it to retrieve the right context. Requires a live backend (hidden entirely without one).
 const _TUTOR_KEY = 'dz_tutor_thread';
 const _TUTOR_MAX_TURNS = 60;     // keep the stored thread bounded; the server also caps what it reads
-let _tutorState = { history: [], busy: false, open: false };
+let _tutorState = { history: [], busy: false, open: false, unread: false };
 let _tutorStreaming = '';   // v64: text of the reply currently streaming in (not yet in history)
 
 function _tutorLoadThread(){
@@ -18510,6 +18606,7 @@ function _tutorApplyLabels(){
   set('tutor-widget-title', el => el.textContent = t('tutor.title'));
   set('tutor-widget-input', el => el.placeholder  = t('tutor.placeholder'));
   set('tutor-fab-btn',      el => el.title        = t('tutor.open'));
+  set('tutor-fab-badge',    el => el.textContent  = t('tutor.reply_ready'));
   set('tutor-widget-clear', el => el.title        = t('tutor.clear'));
   set('story-sel-grammar-lbl', el => el.textContent = t('tutor.sel_grammar'));
   set('story-sel-meaning-lbl', el => el.textContent = t('tutor.sel_meaning'));
@@ -18796,11 +18893,31 @@ function toggleTutorWidget(){
   _tutorState.open = !_tutorState.open;
   refreshTutorAvailability();
   if(_tutorState.open){
+    _tutorClearUnread();   // v84_g: opening is what the badge was waiting for
     _tutorRender();
     const inp = document.getElementById('tutor-widget-input'); if(inp) inp.focus();
     // First ever open → let the tutor greet and offer a starting point.
     if(!_tutorState.history.length) _tutorSend(true);
   }
+}
+
+// v84_g (user request): "if an answer arrives [while closed], the tutor could give a sign, like a
+// speech bubble." Nothing else signals this — closing the widget is a pure CSS toggle (see
+// `refreshTutorAvailability`), so the fetch/stream that's already in flight keeps running and the
+// reply lands into `_tutorState.history` regardless of whether anyone can see it happen. Both sides
+// of that: `_tutorNoteReplyLanded` at every place a reply actually lands (below and in `_tutorSend`/
+// `_tutorReadStream`), `_tutorClearUnread` only when the widget is reopened — never on a timer or a
+// screen change, so the badge stays up exactly as long as the reply genuinely went unseen.
+function _tutorNoteReplyLanded(){
+  if(_tutorState.open) return;
+  _tutorState.unread = true;
+  const b = document.getElementById('tutor-fab-badge');
+  if(b) b.style.display = 'block';
+}
+function _tutorClearUnread(){
+  _tutorState.unread = false;
+  const b = document.getElementById('tutor-fab-badge');
+  if(b) b.style.display = 'none';
 }
 function clearTutorThread(){
   if(!confirm(t('tutor.clear_confirm'))) return;
@@ -18862,7 +18979,7 @@ async function _tutorSend(opening){
     } else {
       let data={}; try{ data=await r.json(); }catch(_){}
       if(!r.ok || !data.reply) showToast((data&&data.error)||t('tutor.failed'));
-      else { _tutorState.history.push({ role:'tutor', text:data.reply }); _tutorSaveThread(); }
+      else { _tutorState.history.push({ role:'tutor', text:data.reply }); _tutorSaveThread(); _tutorNoteReplyLanded(); }
     }
   }catch(e){ showToast(t('tutor.failed')); }
   finally{
@@ -18892,14 +19009,14 @@ async function _tutorReadStream(body){
       if(msg.delta){ _tutorStreaming += msg.delta; _tutorRender(); }
       if(msg.done){
         const text = (msg.reply || _tutorStreaming || '').trim();
-        if(text){ _tutorState.history.push({ role:'tutor', text }); _tutorSaveThread(); }
+        if(text){ _tutorState.history.push({ role:'tutor', text }); _tutorSaveThread(); _tutorNoteReplyLanded(); }
         _tutorStreaming = ''; finished = true;
       }
     }
   }
   // Stream cut short without a terminal frame: keep whatever arrived rather than losing it.
   if(!finished && _tutorStreaming.trim()){
-    _tutorState.history.push({ role:'tutor', text:_tutorStreaming.trim() }); _tutorSaveThread();
+    _tutorState.history.push({ role:'tutor', text:_tutorStreaming.trim() }); _tutorSaveThread(); _tutorNoteReplyLanded();
   }
   _tutorStreaming = '';
 }
@@ -20004,6 +20121,50 @@ function _speechLocaleFor(lang, topicId) {
     if (sl) return sl.speechLocale;
   }
   return fallback;
+}
+
+// v84_g (user request): browser-native speech recognition, reused for answer checking. Chosen
+// explicitly over standing up a local Whisper-class model — the simplest of the three options
+// `roadmap_v83.md`'s "recording a spoken reply" note laid out, and the one with a real, named
+// trade-off: inconsistent support (weak/absent in Safari/Firefox), and on Chrome the audio goes to
+// Google's own servers, not local, unlike this app's Ollama story generation. Scored the SAME way
+// "Listening + type" already checks a typed answer: recognized TEXT compared to the target string
+// (via the exercise-flow callers below), never audio-to-audio — no new comparison logic, no
+// pronunciation-quality scoring (explicitly out of scope, same as the roadmap note).
+function _speechRecognitionCtor(){ return window.SpeechRecognition || window.webkitSpeechRecognition || null; }
+function _speechRecognitionSupported(){ return !!_speechRecognitionCtor(); }
+
+let _activeRecognition = null;   // one mic session at a time; starting a new one aborts any prior
+
+// Runs one recognition pass in `lang` (a BCP-47 tag — callers pass `_speechLocaleFor`'s answer, the
+// SAME locale TTS already speaks this lesson in). `onResult(alternatives, errCode)` fires exactly
+// once: `alternatives` is an array of candidate transcripts on success, or null with an error code
+// ('unsupported'|'error'|'no-match'|a SpeechRecognition error name) on failure. `onEnd` always
+// fires once, after `onResult`, regardless of outcome — callers use it only to reset button UI, so
+// that reset logic isn't duplicated across every success/failure branch.
+function _speechRecognizeOnce(lang, onResult, onEnd){
+  const Ctor = _speechRecognitionCtor();
+  if(!Ctor){ onResult(null, 'unsupported'); if(onEnd) onEnd(); return null; }
+  try{ if(_activeRecognition) _activeRecognition.abort(); }catch(_){}
+  const rec = new Ctor();
+  _activeRecognition = rec;
+  rec.lang = lang || '';
+  rec.interimResults = false;
+  rec.maxAlternatives = 3;   // a few candidates widen the match without the caller re-deriving them
+  let settled = false;
+  rec.onresult = (e) => {
+    settled = true;
+    const r = e.results && e.results[0];
+    onResult(r ? Array.from(r).map(a => a.transcript) : null);
+  };
+  rec.onerror = (e) => { if(!settled){ settled = true; onResult(null, e.error || 'error'); } };
+  rec.onend = () => {
+    if(_activeRecognition === rec) _activeRecognition = null;
+    if(!settled){ settled = true; onResult(null, 'no-match'); }
+    if(onEnd) onEnd();
+  };
+  try{ rec.start(); }catch(_){ settled = true; onResult(null, 'error'); if(onEnd) onEnd(); return null; }
+  return rec;
 }
 
 // PLAN §C4's last acceptance detail: "if a lesson is using speech different from its intended

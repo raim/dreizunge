@@ -126,6 +126,7 @@ run('unit: persistent tutor widget (v62)', 'node', [path.join(__dirname, 'unit-t
 run('unit: tutor retrieval — spoiler-safe + scoped (v62)', 'node', [path.join(__dirname, 'unit-tutor-retrieval.test.js')]);
 run('unit: tutor streaming replies (v64)', 'node', [path.join(__dirname, 'unit-tutor-streaming.test.js')]);
 run('unit: select story text → ask the tutor (PLAN §12, v83_b)', 'node', [path.join(__dirname, 'unit-tutor-selection.test.js')]);
+run('unit: tutor "I have an answer" badge (v84_g)', 'node', [path.join(__dirname, 'unit-tutor-reply-badge.test.js')]);
 run('unit: learner accounts + server-side state (v65)', 'node', [path.join(__dirname, 'unit-learners.test.js')]);
 run('unit: TLS warning predicates + wiring (v70_b)', 'node', [path.join(__dirname, 'unit-tls-transport.test.js')]);
 run('unit: lesson-id integrity (v67.1)', 'node', [path.join(__dirname, 'unit-lesson-id-integrity.test.js')]);
@@ -249,6 +250,7 @@ run('unit: dialect TTS approximate detection (M1)', 'node', [path.join(__dirname
   run('unit: dialect story generator + gate (M2)', 'node', [path.join(__dirname, 'unit-dialect-story.test.js')]);
   run('unit: dialect mute + no-lang prompt', 'node', [path.join(__dirname, 'unit-dialect-mute.test.js')]);
 run('unit: no-keyboard glyph ordering (v48)', 'node', [path.join(__dirname, 'unit-no-keyboard.test.js')]);
+run('unit: speech-recognition answer checking (v84_g)', 'node', [path.join(__dirname, 'unit-speech-recognition.test.js')]);
 run('unit: hidden lessons omitted/non-blocking in static (v48)', 'node', [path.join(__dirname, 'unit-hidden-lessons.test.js')]);
 run('unit: inline onclick escaping (read-story SyntaxError)', 'node', [path.join(__dirname, 'unit-inline-escaping.test.js')]);
 run('unit: error-hunt content-aware RTL', 'node', [path.join(__dirname, 'unit-error-hunt-rtl.test.js')]);

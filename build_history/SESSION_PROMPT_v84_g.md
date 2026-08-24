@@ -1,23 +1,32 @@
-# Session prompt — written at the `v84_f` cut
+# Session prompt — written at the `v84_g` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
-one alongside. Keep using the double-letter suffix scheme (`v84_g`, `v84_h`, …) unless a future
+one alongside. Keep using the double-letter suffix scheme (`v84_h`, `v84_i`, …) unless a future
 session has a good reason to switch to `v85_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v84_f`** — a test-harness fix, not a
-product change, with a real process lesson attached: `test/lib-dom.js`'s `textContent` getter
-mis-ordered text following a child element (`'x<b>A</b>y'` → trailing `y` misplaced before the `A`).
-**⚠️ Read the full `v84_f` entry in `roadmap_v84.md` before naming a version letter yourself**: this
-fix was originally shipped in a DIFFERENT session as `v83_g`, but a SECOND session independently cut
-its OWN `v83_g` (the story-panel border-color feature) from the same `v83_f` parent at the same time —
-neither could see the other's concurrent work. The border-color one reached `main` first and the line
-continued through it (`v83_h`…`v84_e`); this fix's commit was orphaned, never merged, and invisible to
-`unit-roadmap-version` (which only checks the roadmap/prompt pair that IS on `main` — it cannot see a
-commit that never reached it). Found and re-applied only because this session was asked to commit it
-and checked `main`'s actual history first, rather than trusting the local branch. **If two sessions
-might be running concurrently, check `main`'s own `git log` for the actual next free version letter
-before naming a release — the local `SESSION_PROMPT` alone is not enough.**
+zero-dependency Node language-learning app). Picking up from **`v84_g`** — TWO features landing
+together (full write-up in `roadmap_v84.md`'s own `v84_g` entry): (1) browser-native speech
+recognition reused for answer checking — typed-answer exercises first, then the three MCQ types
+whose choices are confirmed target-language text (`mcq_article`/`mcq_plural`/`mcq_conjugation`),
+deliberately NOT the source-language-choice types; a match checks/taps the answer, a miss never
+auto-submits or auto-selects, so a misheard word can never spend a heart the learner didn't actually
+get wrong; and (2) a "reply ready" speech-bubble badge on the tutor fab, raised only when a reply
+lands while the widget is closed (nothing else signals this — closing is a pure CSS toggle, the
+in-flight request keeps running regardless), cleared only by reopening. **⚠️ Speech recognition has
+NO live human-voice verification** — this container's sandboxed preview browser cannot grant real
+microphone access; everything is tested via a mocked `SpeechRecognition` constructor (mutation-tested
+against the real matching/scoping logic), which proves the WIRING is correct but says nothing about
+real recognition accuracy on a real device. See `# ⚠️ OWED BY THE USER` below.
+
+**Process note carried from `v84_f`, still worth reading before naming a version letter yourself**:
+that release's own fix had originally shipped in a DIFFERENT session as `v83_g`, but a SECOND session
+independently cut its OWN `v83_g` (a story-panel border-color feature) from the same `v83_f` parent at
+the same time — neither could see the other's concurrent work, and the orphaned commit sat invisible
+to `unit-roadmap-version` (which only checks the roadmap/prompt pair that IS on `main`) until a later
+session checked `main`'s actual history before naming its own next release. **If two sessions might be
+running concurrently, check `main`'s own `git log` for the actual next free version letter — the local
+`SESSION_PROMPT` alone is not enough.**
 
 **`v84_e`, condensed** (full write-up in `roadmap_v84.md`) — a SECOND mobile follow-up batch, sent
 while `v84_d` was still being finalized (same real-phone-use conversation), refining two of `v84_d`'s
@@ -69,24 +78,25 @@ API vs. cloud call; pronunciation-quality scoring is hard and out of scope).
 1. **This file**, whole.
 2. `build_history/roadmap_v84.md` — its **index table** and **⚠️ Session protocol** block first, then
    `# ⚠️ OPEN AT THE v84 CUT` (findings, `§0`/`§0i`, the standing RULES — now 37, see "Rules earned in
-   the v83 line" for the two newest), then `# SHIPPED IN THE v84 LINE` for `v84_f`'s orphaned-fix
-   recovery (and the version-collision process lesson), `v84_e`'s second mobile batch, `v84_d`'s
-   first, `v84_c`'s launcher, and `v84_b`'s PWA work — read all of it before touching any of those
-   areas.
+   the v83 line" for the two newest), then `# SHIPPED IN THE v84 LINE` for `v84_g`'s speech-
+   recognition + tutor-badge pair, `v84_f`'s orphaned-fix recovery (and the version-collision process
+   lesson), `v84_e`'s second mobile batch, `v84_d`'s first, `v84_c`'s launcher, and `v84_b`'s PWA work
+   — read all of it before touching any of those areas.
 3. `INTERNALS.md` — constants, silent-failure modes, invariants. **§6b is a feature → function map**
    — read it BEFORE grepping for where anything lives.
 
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 265 checks
-node test/run.js --quick                  → expect 231
+node test/run.js                          → expect 267 checks
+node test/run.js --quick                  → expect 233
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Corpus at this cut: **327 topics, 92 storylines, 33 languages, 659 `en` keys** (unchanged since
-`v83_m` — `v84_f` is a test-harness fix, no `ui.json`/`lessons.json` change). `APP_VERSION = 'v84_f'`.
+Corpus at this cut: **327 topics, 92 storylines, 33 languages, 663 `en` keys** (topics/storylines/
+languages unchanged since `v83_m`; `en` keys 659→663, the 4 speech/tutor-badge strings `v84_g` added).
+`APP_VERSION = 'v84_g'`.
 
 ⚠️ **Check `git status --short lessons.json` at the start of this session.** If it shows modified,
 that is very likely the user's own real, uncommitted `PLAN §7.0`/CP4-pipeline evaluation data — not
@@ -151,13 +161,36 @@ code — flag that up front.
 - See `roadmap_v84.md`'s carried-forward `# ⚠️ OPEN AT THE v84 CUT` for the older, still-unresolved
   items (§C1's first bug, §0i's reconciliation) — read before assuming any of them are new.
 
+## ⚠️ OWED BY THE USER, not doable in a container
+
+- **Speech recognition (`v84_g`) has NO live human-voice pass.** Everything shipped is tested against
+  a MOCKED `SpeechRecognition` constructor (feature detection, the correctness-matching logic, the
+  MCQ scoping, the error/no-match toast priority — all mutation-tested), which proves the wiring is
+  right but says nothing about real recognition accuracy: locale correctness on an actual accent,
+  background-noise robustness, or whether the browser's own permission prompt behaves as expected on
+  a real phone. Needs a device pass on both surfaces (a typed-answer exercise, and at least one of
+  the three enabled MCQ types) before trusting this beyond "the code path is correct."
+- **Windows installability** (two tiers laid out in `roadmap_v83.md`, discussion-only) — neither
+  ruled nor queued.
+
 ## NOT yours to start without the user naming it
 
 `PLAN §7.0` CP6 (a CONDITIONAL, not a queued slice). Mastery-driven progression (`PLAN §9b/D2`) — a
-user product decision. Windows installability and mic-based speech comparison (both discussion-only,
-`roadmap_v83.md`) — neither ruled, neither queued.
+user product decision.
 
 ## Standing tools — use them
+
+- `_speechRecognizeOnce(lang, onResult, onEnd)` (`v84_g`) — the ONE browser-`SpeechRecognition`
+  wrapper; `_typeSpeechStart`/`_mcqSpeechStart` are its only two callers. `_speechExLocale()` is what
+  feeds it the lesson's own locale (via the existing `_speechLocaleFor`, unchanged). Extend an
+  exercise type here by adding a THIRD caller, not by re-deriving the recognizer plumbing.
+- `cGrid(cs, one, mode, speakable)`'s 4th argument (`v84_g`) — pass `true` ONLY when `choices` is
+  confirmed target-language text (read the exercise BUILDER, not the type name — `mcq_target_source`/
+  `listen_mcq`'s `choices` are source-language despite the "target" in one of those names).
+- `_tutorNoteReplyLanded()` / `_tutorClearUnread()` (`v84_g`) — the tutor-fab "reply ready" badge.
+  Landed calls are at all three history-push sites in `_tutorSend`/`_tutorReadStream`; the only clear
+  call is in `toggleTutorWidget()`. A fourth reply-landing site, if one is ever added, needs the same
+  call — nothing derives this generically.
 
 **Before grepping for where something lives, check `INTERNALS.md` §6b.** The whole `PLAN §7.0`
 pipeline (`canonical-text.js`/`canonical-analysis.js`/`curriculum-plan.js`/`curriculum-lesson.js`/
