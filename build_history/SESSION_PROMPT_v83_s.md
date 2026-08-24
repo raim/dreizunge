@@ -1,37 +1,51 @@
-# Session prompt — written at the `v83_r` cut
+# Session prompt — written at the `v83_s` cut
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_q.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_r.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v83_s`, `v83_t`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v83_t`, `v83_u`, …) unless a future session has a good reason to switch to
 `v84_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v83_r`** release —
-**`qwen3.6:35b-a3b` is now the default/recommended model in BOTH `install.sh` and `README.md`**
-(previously `qwen2.5:7b`), on direct user request, following the real measured comparison written up
-alongside `v83_n`–`v83_p` (zero translation errors vs. two on the smaller model, same real chapter).
-`qwen2.5:7b` stays documented in both files as the lighter, still-solid `DREIZUNGE_MODEL`/
-`OLLAMA_MODEL` override, not silently dropped.
+zero-dependency Node language-learning app). Fresh session picking up from the **`v83_s`** release —
+two `install.sh` follow-ups from the SAME conversation that shipped `v83_r`, both raised by the user
+reviewing the installer's own behaviour: (1) it no longer `exec node server.js`s at the end — a
+`curl \| sh` installer ending in a long-running foreground process was surprising, so it now PRINTS
+the exact start command and exits; (2) it gained a resource sanity check before the (possibly large)
+model pull — RAM WARNS under 16GB (mmap means a lower-RAM machine can still run it, just slower),
+disk REFUSES under 25GB free at Ollama's OWN model store (`OLLAMA_MODELS` or its real default
+`~/.ollama` — NOT the tiny checkout dir), both gated to the built-in default model only, since a
+`DREIZUNGE_MODEL` override could be any size. Both new sections mutation-tested (4 mutations, all
+RED). No new test FILE — both live inside the existing `test/unit-install-script.test.js` (§8/§9), so
+the check count is unchanged from `v83_r` (262).
 
-**Making the reasoning model the default surfaced a THIRD live instance of the `v83_o` bug**, found
-by re-running `install.sh` end-to-end against the new default (not by source review): `llm.js`'s own
-`warmup()` — called once at server startup — sent no `think:false`, so it silently failed to warm up
-the model ("not ready (Ollama returned empty response) — continuing"). Fixed identically to `v83_o`.
-Verified at the HTTP layer in a NEW file, `test/e2e-warmup-think.test.js` — split out from the
-otherwise-static `unit-reasoning-model-safety.test.js` because it spawns a fake Ollama server, and
-folding it in there would have violated `unit-run-summary.test.js`'s own `--quick` guard (`v70_b`),
-which caught exactly that on the first attempt at this fix, unloosened. Mutation-tested both the
-model-default assertion and the `think:false` fix — both RED without the change, restored clean.
+**Also discussed, NOT built this round** — the user asked about a `dreizunge` PATH launcher (starts
+the server + opens the browser, the shape `jupyter notebook` already uses) and the longer-run
+"standalone app" direction. Both were laid out with real trade-offs; the user chose "not yet" for the
+launcher and **PWA install** (manifest + service worker, closest to this project's zero-dependency
+philosophy) as the direction for the standalone-app question — but NEITHER is built. If asked to
+continue either, this is not new ground: the options were already surveyed in this same conversation,
+recorded in `roadmap_v83.md`'s own `v83_s` write-up — read that before re-surveying.
+
+**`v83_r`, condensed**: `qwen3.6:35b-a3b` became the default/recommended model in BOTH `install.sh`
+and `README.md` (previously `qwen2.5:7b`), following the real measured comparison written up
+alongside `v83_n`–`v83_p` (zero translation errors vs. two on the smaller model, same real chapter).
+`qwen2.5:7b` stays documented in both as the lighter override. Making the reasoning model the default
+surfaced a THIRD live instance of the `v83_o` bug: `llm.js`'s own `warmup()` (called once at server
+startup) sent no `think:false`, so it silently failed to warm the model up — fixed identically to
+`v83_o`, verified at the HTTP layer in a new file (`test/e2e-warmup-think.test.js`, split out from the
+otherwise-static `unit-reasoning-model-safety.test.js` because it spawns a fake Ollama server —
+folding it in there tripped `unit-run-summary.test.js`'s own `--quick` guard, `v70_b`, unloosened).
 
 **`v83_q`, condensed**: `install.sh`, a one-line `curl \| sh` local installer (README.md's new
 "Option A"). Completely UNRELATED to `PLAN §7.0`/Track A — a distribution/onboarding convenience.
 Clones the repo (or updates an existing checkout), installs Ollama via Ollama's OWN official
 installer if not already present, confirms it's reachable, pulls the recommended model if not
-already pulled, and starts the server. Every mutating step is idempotency-gated; verified with a REAL
-end-to-end run against the real GitHub repo, which also surfaced that the public repo was still
-several releases behind local `HEAD` at the time (`v83_h`…`v83_p` were all local-only commits) —
-**this has since been pushed, at `v83_r`, per the user's own explicit request** ("then feel free to
-push").
+already pulled. Every mutating step is idempotency-gated; verified with a REAL end-to-end run against
+the real GitHub repo, which also surfaced that the public repo was still several releases behind
+local `HEAD` at the time (`v83_h`…`v83_p` were all local-only commits) — **this has since been
+pushed, at `v83_r`, per the user's own explicit request** ("then feel free to push"). `install.sh`
+does NOT currently push automatically or on its own schedule — it was a one-time, explicitly-asked
+push; do not assume standing permission to push again without being asked.
 
 **Before `v83_q`, `PLAN §7.0`'s own real-world evaluation was also written up properly** (a separate,
 code-free roadmap commit): the user ran `apply-cp-lessons.js` twice against the same chapter,
@@ -66,18 +80,19 @@ deferred "genuine cross-chapter curriculum sequencing." Full write-ups in `roadm
 
 ⚠️ **Check `git status --short lessons.json` at the start of this session.** If it shows modified,
 that is very likely the user's own real, uncommitted CP4-pipeline evaluation data — not yours to
-revert, commit, or "fix around" without asking. `v83_o`/`v83_p`/`v83_r` all excluded it from their
-commits; the same dance (back up, `git checkout --`, build/test, restore) is documented in each
+revert, commit, or "fix around" without asking. `v83_o`/`v83_p`/`v83_r`/`v83_s` all excluded it from
+their commits; the same dance (back up, `git checkout --`, build/test, restore) is documented in each
 write-up.
 
 ## Orient yourself
 
 1. **This file**, whole.
 2. `build_history/roadmap_v83.md` — its **index table** and the **⚠️ Session protocol** block first,
-   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`…`v83_r` were built, and
+   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`…`v83_s` were built, and
    `PLAN §7.0`'s own migration sequence (§0) — **including the multi-chapter note AND the real-world
    evaluation note right after it**, before touching any further `PLAN §7.0` work. `install.sh`
-   (`v83_q`/`v83_r`) is unrelated to any of that — see its own entries near the bottom of `# SHIPPED`.
+   (`v83_q`/`v83_r`/`v83_s`) is unrelated to any of that — see its own entries near the bottom of
+   `# SHIPPED`.
 3. `INTERNALS.md` — constants, silent-failure modes, invariants, harness limits. **§6b is a
    feature → function map** — read it BEFORE grepping for where anything lives.
 
@@ -95,9 +110,9 @@ Corpus at this cut: **327 topics, 92 storylines, 33 languages, 659 `en` keys** (
 COMMITTED, 24 chapters); `canonical-analysis.json` (CP2), `curriculum-plan.json` (CP3),
 `curriculum-lesson.json` (CP4) — none committed by default. `apply-cp-lessons.js` (`v83_n`) is the
 ONLY thing that can add a real lesson to `lessons.json`, only with explicit `--write`. `install.sh`
-(`v83_q`, model default changed at `v83_r`) is a NEW, unrelated file at the repo root — the one-line
-installer, see its own section below.
-`APP_VERSION = 'v83_r'`.
+(`v83_q`; model default changed at `v83_r`; no-auto-start + resource check at `v83_s`) is a NEW,
+unrelated file at the repo root — the one-line installer, see its own section below.
+`APP_VERSION = 'v83_s'`.
 
 ⚠️ **A CP4-pipeline lesson's `vocab[i]` shape changed at `v83_p`**: it now has `{target, source,
 lemma, conceptId}` — `target` is the SURFACE form, `lemma` is a NEW, separate field carrying the
@@ -191,6 +206,10 @@ session.** Check whether it has landed before touching this yourself.
 - **`PLAN §C1`'s FIRST gate bug**, **the dead-taps HIGHLIGHTING question**, **`PLAN §F2`'s second
   half**, **`PLAN §D4`'s one measured rough edge** — see `roadmap_v83.md`'s own detail for each;
   unchanged since `v83_n`.
+- **PWA install support** (manifest + service worker) — the user's own chosen direction for the
+  "standalone app" question raised at `v83_s`, not yet built. A `dreizunge` PATH launcher (starts the
+  server, opens the browser — `jupyter notebook`'s own shape) was ALSO discussed and explicitly
+  deferred ("not yet"), distinct from the PWA question — don't conflate the two if picking this up.
 
 ## 5. ⚠️ OWED BY THE USER, not doable in a container
 
@@ -239,13 +258,15 @@ number, if it turns out to work well in real use.
   function) compares by `lemma` first, falling back to `target` for legacy lessons (`v83_p` — this
   MUST stay lemma-first, or dedup silently breaks for every inflected word again). Do NOT `require`
   server.js from ANY of the five standalone CP files.
-- **`install.sh`** (`v83_q`, repo root; default model changed to `qwen3.6:35b-a3b` at `v83_r`) — the
-  one-line `curl \| sh` installer, UNRELATED to any of the `PLAN §7.0` files above. Every mutating
-  step is idempotency-gated (see `INTERNALS.md`'s own entry for the exact list) — if you touch this
-  file, re-verify EACH gate still fires (a real `sh -n` check plus the structural assertions in
-  `test/unit-install-script.test.js` are necessary but not sufficient; the real proof was an actual
-  end-to-end run against the real GitHub repo, documented in `v83_q`'s own roadmap write-up — repeat
-  that manually after any real change here).
+- **`install.sh`** (`v83_q`, repo root; default model changed to `qwen3.6:35b-a3b` at `v83_r`;
+  no-auto-start + RAM/disk sanity check at `v83_s`) — the one-line `curl \| sh` installer, UNRELATED
+  to any of the `PLAN §7.0` files above. Ends by PRINTING the start command, never runs the server
+  itself. Every mutating step is idempotency-gated (see `INTERNALS.md`'s own entry for the exact
+  list) — if you touch this file, re-verify EACH gate still fires (a real `sh -n` check plus the
+  structural assertions in `test/unit-install-script.test.js` are necessary but not sufficient; the
+  real proof was an actual end-to-end run against the real GitHub repo, documented in each version's
+  own roadmap write-up — repeat that manually after any real change here). The resource check's
+  thresholds (RAM warn <16GB, disk refuse <25GB) are gated to the BUILT-IN default model only.
 - **`llm.js`'s `warmup(model, log)`** (`think:false` added `v83_r`) — called once at server startup
   via `server.js`'s `_warmupLLM(OLLAMA_MODEL, …)`. Guarded at the HTTP layer by
   `test/e2e-warmup-think.test.js`, registered inside `run.js`'s `!quick` block (it spawns a fake

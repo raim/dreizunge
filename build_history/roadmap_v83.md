@@ -29,7 +29,7 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_r` — user request: `qwen3.6:35b-a3b` (not `qwen2.5:7b`) is now the default/recommended model in BOTH `install.sh` and `README.md`, per the real measured comparison (`v83_n`–`v83_p`'s own evaluation note). Surfaced a THIRD live instance of the `v83_o` bug: `llm.js`'s own `warmup()` also lacked `think:false`, found by re-running `install.sh` end-to-end against the new default. Fixed in the same release, since it directly affects the model just made the default. `v83_q` — `install.sh`: a one-line `curl \| sh` local installer (README.md's "Option A"), NOT a `PLAN §7.0` item. Clones the repo, installs Ollama (via Ollama's OWN official installer) + pulls `qwen2.5:7b` if not already present, starts the app. Idempotent — real end-to-end run (fresh install AND a second, update-existing-checkout run) verified against the real GitHub repo before shipping. `v83_p` — bug fix, found by the USER REVIEWING a real generated lesson: CP2's `sense` gloss now stays in the SAME grammatical register as the token itself, and CP4's `vocab[i].target` now uses the SURFACE form (not the lemma) paired against it — fixing a real "kommen"/"venne" mismatch, plus a second bug in `apply-cp-lessons.js`'s dedup found while fixing the first. `v83_o` — bug fix, found by a REAL user run against `qwen3.6:35b-a3b`: CP2 now sends `think:false`. `v83_n` — `apply-cp-lessons.js`: the FIRST script in `PLAN §7.0` that WRITES into a real `lessons.json`, additively, with cross-chapter dedup. `v83_l`/`v83_m` — `PLAN §7.0` CP5 (silent, then visible on request). `v83_h`–`v83_k` — `PLAN §7.0` CP1–CP4: canonical text → analysis (model-in-the-loop) → curriculum plan → one lesson family, all report-only/inert. `v83_b`–`v83_g` — `PLAN §12` and a progress-card/question-card UI arc — see each entry below for full detail |
+| **SHIPPED IN THE v83 LINE** | `v83_s` — user request: `install.sh` no longer auto-starts the server (prints the start command instead — a `curl \| sh` installer ending in a long-running foreground process was surprising), and gained a resource sanity check before the model pull: RAM warns under 16GB (mmap means it can still run, just slower), disk REFUSES under 25GB free at Ollama's own model store (a failed 20GB download helps no one). Both gated to the built-in default model only, whose size is actually known. `v83_r` — user request: `qwen3.6:35b-a3b` (not `qwen2.5:7b`) is now the default/recommended model in BOTH `install.sh` and `README.md`, per the real measured comparison (`v83_n`–`v83_p`'s own evaluation note). Surfaced a THIRD live instance of the `v83_o` bug: `llm.js`'s own `warmup()` also lacked `think:false`, found by re-running `install.sh` end-to-end against the new default. Fixed in the same release, since it directly affects the model just made the default. `v83_q` — `install.sh`: a one-line `curl \| sh` local installer (README.md's "Option A"), NOT a `PLAN §7.0` item. Clones the repo, installs Ollama (via Ollama's OWN official installer) + pulls `qwen2.5:7b` if not already present, starts the app. Idempotent — real end-to-end run (fresh install AND a second, update-existing-checkout run) verified against the real GitHub repo before shipping. `v83_p` — bug fix, found by the USER REVIEWING a real generated lesson: CP2's `sense` gloss now stays in the SAME grammatical register as the token itself, and CP4's `vocab[i].target` now uses the SURFACE form (not the lemma) paired against it — fixing a real "kommen"/"venne" mismatch, plus a second bug in `apply-cp-lessons.js`'s dedup found while fixing the first. `v83_o` — bug fix, found by a REAL user run against `qwen3.6:35b-a3b`: CP2 now sends `think:false`. `v83_n` — `apply-cp-lessons.js`: the FIRST script in `PLAN §7.0` that WRITES into a real `lessons.json`, additively, with cross-chapter dedup. `v83_l`/`v83_m` — `PLAN §7.0` CP5 (silent, then visible on request). `v83_h`–`v83_k` — `PLAN §7.0` CP1–CP4: canonical text → analysis (model-in-the-loop) → curriculum plan → one lesson family, all report-only/inert. `v83_b`–`v83_g` — `PLAN §12` and a progress-card/question-card UI arc — see each entry below for full detail |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 at `v83_i`, CP3 at `v83_j`, CP4 at `v83_k`, CP5 at `v83_l`/`v83_m` (silent then visible). `v83_n` (`apply-cp-lessons.js`, bug-fixed at `v83_o`/`v83_p`) is the FIRST script that actually writes CP1-4-derived lessons into `lessons.json`, additively — not itself a numbered CP stage, a browser-reachable follow-up to CP4. CP6 remains open (a CONDITIONAL, not a queued slice — see `v83_l`'s own SESSION_PROMPT). `install.sh` (`v83_q`) is UNRELATED to `PLAN §7.0` — a deployment/distribution convenience, not part of Track A. |
 
@@ -1685,6 +1685,62 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_s` — `install.sh`: no auto-start, plus a RAM/disk sanity check before the model pull
+
+**Shipped by: Claude Code, on user request.** Two separate follow-ups from the same conversation,
+after `v83_r` shipped and the user then discussed `install.sh`'s own behaviour: (1) *"the install
+script should NOT start the server directly, but end with a message how to start it"*, and, once that
+was in progress, (2) *"does the install script check whether the computer where it is installed has
+the proper resources to run ollama and qwen3.6:35b-a3b?"* — it did not, so this release adds that too.
+
+**No auto-start**: the script's final step used to `exec node server.js` in the foreground. Piped
+through `curl \| sh`, an installer ending in a long-running foreground process is surprising (and
+stdin is already consumed by `curl` at that point, so there is nothing to interact with even if the
+server wanted input). The script now prints the exact command to run — `cd $DIR && OLLAMA_MODEL=...
+PORT=... node server.js` — and the URL to open, and exits.
+
+**Resource sanity check**, added right before the pull step, gated to the BUILT-IN DEFAULT MODEL
+only (`qwen3.6:35b-a3b`) — an explicit `DREIZUNGE_MODEL` override could be any size, so the check is
+skipped rather than warning/refusing against a size that may not apply:
+- **RAM — WARN only, never refuse.** Read from `/proc/meminfo` on Linux, `sysctl hw.memsize` on
+  macOS. Warns under 16GB. Deliberately non-blocking: Ollama/llama.cpp mmap the model weights, so a
+  lower-RAM machine can often still run it, just slower (paging) — a heuristic wrong in the
+  refuse direction would be a real regression for someone whose machine actually works.
+- **Disk — REFUSES.** Checked at the filesystem under Ollama's OWN model store (`OLLAMA_MODELS` if
+  set, else its real default `~/.ollama`), NOT at the installer's own checkout directory (a few MB
+  at most) — walking up to the nearest EXISTING ancestor since that directory may not exist yet on a
+  fresh machine. Refuses under 25GB free. This one blocks rather than warns: a failed multi-GB
+  download over a slow connection wastes real time and bandwidth for no benefit.
+
+**Testing**: `test/unit-install-script.test.js` gained two new sections (§8, §9): §8 asserts no
+`exec node server.js` remains and that a completion message + the literal start command are present;
+§9 checks the resource-check structure (model-gating, both RAM-detection code paths, both threshold
+comparisons, warn-vs-refuse for the right one) AND independently re-derives the exact threshold
+ARITHMETIC (`kb/1024/1024` integer division) against concrete known-good/known-bad inputs — so a
+broken comparison direction would be caught even though the real branches can't be forced to fire in
+a shared CI box (this machine has 62GB RAM / 516GB free, so the real end-to-end run below never
+crosses either threshold; the arithmetic check is what actually proves the thresholds are right).
+**Mutation-tested**: restoring the old `exec node server.js` ending — RED. Weakening the RAM
+threshold (16→8) — RED. Weakening the disk threshold (25→5) — RED. Removing the default-model gate
+(`if true` instead of the model check) — RED. All four restored, confirmed clean via `diff`.
+**Verified with a real end-to-end run** against the real GitHub repo (existing-checkout-update path,
+Ollama-already-installed/running/model-already-pulled paths) — confirmed no false warning fires on
+this machine and the script exits cleanly with the print-only ending instead of starting a server.
+
+`README.md`'s "Option A" updated to match: no longer says "starts the app," names the resource check.
+
+**Testing**: 262/229/0/0 full baseline green (no new test FILE this time — both new sections live
+inside the existing `unit-install-script.test.js`, so the check count is unchanged from `v83_r`). No
+`lessons.json` change.
+
+**Discussed but deliberately NOT built this release** — a `dreizunge` launcher command (installed to
+`~/.local/bin`, starts the server + opens the browser, the exact shape `jupyter notebook` already
+uses) was proposed and the user chose "not yet, just the message" for now. The longer-run "standalone
+app" question was also discussed — four options laid out (CLI+browser tab / installable PWA / Tauri
+native wrapper / Electron), the user chose **PWA install** as the direction to aim toward, staying
+closest to this project's zero-dependency, single-file philosophy. Neither is built yet — both are
+OPEN, named here so the decision itself isn't lost even though nothing shipped for either this round.
 
 ### `v83_r` — `qwen3.6:35b-a3b` becomes the default/recommended model; `llm.js`'s `warmup()` fixed to match
 

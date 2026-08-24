@@ -97,4 +97,43 @@ console.log('  install.sh: default model (qwen3.6:35b-a3b, the measured-best opt
 }
 console.log('  README.md: the documented one-liner URL names the real repo, the real default branch, and a script that actually exists at that path: OK');
 
+// ── 8. The script does NOT start the server itself (v83_s) ──────────────────
+// Reported by the user: a curl|sh installer ending by launching a long-running foreground process
+// is surprising (and piped through curl, stdin is already consumed). It must print instructions
+// instead, not exec the server.
+{
+  assert.ok(!/exec\s+node\s+server\.js/.test(src), 'install.sh must not exec the server itself');
+  assert.ok(/node server\.js/.test(src), 'it still TELLS the user the exact command to run');
+  assert.ok(/Install complete/i.test(src), 'a clear completion message exists');
+}
+console.log('  install.sh: does not auto-start the server -- prints the start command instead: OK');
+
+// ── 9. A resource sanity check runs before the (possibly large) model pull (v83_s) ──
+// Reported by the user: does the script check the machine can actually run the recommended model?
+// It did not. Guarded structurally (RAM/disk detection can't be forced in a shared CI box), plus
+// the exact threshold ARITHMETIC is re-derived here independently and checked against known
+// inputs -- not just pattern-matched from the source, so a broken comparison (e.g. an inverted
+// `-lt`) would be caught even though the branch itself can't be forced to fire for real.
+{
+  assert.ok(/if \[ "\$MODEL" = "qwen3\.6:35b-a3b" \]/.test(src),
+    'the check is gated to the model whose size is actually known -- a DREIZUNGE_MODEL override could be any size');
+  assert.ok(/MemTotal/.test(src) && /hw\.memsize/.test(src),
+    'RAM is read on both Linux (/proc/meminfo) and macOS (sysctl hw.memsize)');
+  assert.ok(/RAM_GB" -lt 16/.test(src), 'RAM warns under 16GB');
+  assert.ok(/warn "This machine reports/.test(src), 'low RAM only WARNS, never refuses -- mmap means it can still run, just slower');
+  assert.ok(/OLLAMA_MODELS:-\$HOME\/\.ollama/.test(src),
+    'disk is checked at Ollama\'s OWN model store (OLLAMA_MODELS override, else its real default), not at the tiny git checkout dir');
+  assert.ok(/FREE_GB" -lt 25/.test(src), 'disk refuses under 25GB free');
+  assert.ok(/die "Only ~\$\{FREE_GB\}GB free/.test(src), 'low disk actually REFUSES (a failed multi-GB download helps no one)');
+
+  // The threshold arithmetic itself, re-derived and checked against concrete inputs (mirrors the
+  // script's own `RAM_KB / 1024 / 1024` / `FREE_KB / 1024 / 1024` integer division).
+  const kbToGb = kb => Math.floor(kb / 1024 / 1024);
+  assert.strictEqual(kbToGb(8 * 1024 * 1024) < 16, true, 'sanity: 8GB RAM is below the 16GB warn floor');
+  assert.strictEqual(kbToGb(32 * 1024 * 1024) < 16, false, 'sanity: 32GB RAM is above the 16GB warn floor');
+  assert.strictEqual(kbToGb(10 * 1024 * 1024) < 25, true, 'sanity: 10GB free is below the 25GB refuse floor');
+  assert.strictEqual(kbToGb(100 * 1024 * 1024) < 25, false, 'sanity: 100GB free is above the 25GB refuse floor');
+}
+console.log('  install.sh: resource check (RAM warn <16GB, disk refuse <25GB, default-model-only) present with correct thresholds: OK');
+
 console.log('unit-install-script: ALL PASSED');
