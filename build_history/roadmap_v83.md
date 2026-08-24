@@ -1686,6 +1686,61 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v83 LINE
 
+### 📝 Note — Windows installability for a non-coder (discussion only, no code, after `v83_s`)
+
+The user asked how hard it would be to install and run on a standard (non-coder) Windows machine —
+today: not supported (`install.sh` is POSIX `sh`; Windows has no `sh` by default, and the platform
+check just warns and continues, untested there). Laid out as TWO separable tiers, not built:
+
+- **Tier 1 — "works if you follow written steps."** Both hard dependencies already ship real native
+  Windows installers (Ollama's own `.exe`, Node's own `.msi`, both double-click/no-terminal), and the
+  repo itself needs no `git` — GitHub's own "Download ZIP" works. The one remaining friction point is
+  one terminal command to actually start the server (Windows 11's right-click "Open in Terminal"
+  helps; Windows 10 is more obscure). This tier is basically a **documentation** job — a Windows
+  section in `README.md`.
+- **Tier 2 — "a real one-line/one-click installer, zero terminal typing."** `winget` (built into
+  Windows 10 2004+/11) is the real analog of `apt`/`brew` for non-interactive Ollama+Node installs.
+  PowerShell (preinstalled everywhere, `irm <url> | iex` is the Windows analog of `curl | sh`) can do
+  the rest — download/extract, the same RAM/disk sanity check via `Get-CimInstance`, and drop a
+  desktop shortcut (a small `.bat`/`.vbs`) so every run AFTER the one install command is a genuine
+  double-click. New surface: one new script mirroring `install.sh`'s logic, not a rewrite.
+
+**The real constraint either way**: unlike `install.sh` (verified with real end-to-end runs against a
+real Linux box before shipping), **none of this can be verified without an actual Windows machine** —
+whichever tier gets built, expect it to ship reasoned-through rather than measured, with the first
+real Windows run belonging to the user. **Not queued — the user said "not required for now."**
+
+### 📝 Note — recording a spoken reply for pronunciation/answer checking (discussion only, no code)
+
+The user asked, for a future roadmap item: how hard would it be to record a learner's spoken reply
+via the microphone and compare it to the correct answer "as it would be spoken by the TTS"? Broken
+into three genuinely different pieces, with very different difficulty:
+
+1. **Recording itself — trivial.** The browser's own `MediaRecorder`/`getUserMedia` — a client-only
+   feature, no new backend dependency, no conflict with the zero-dependency-Node philosophy.
+2. **"Did the learner say the right WORDS" (text-level correctness) — moderate, and the real design
+   decision is WHICH speech-to-text.** This resolves the "compare it to what the TTS would say"
+   framing as comparing RECOGNIZED TEXT to the target sentence's own text — not audio-to-audio — so
+   the downstream comparison is FREE: the app already has answer-normalization/matching logic for
+   target-language text (the existing "Listening + type" exercise type solves exactly this problem).
+   The only new piece is speech-to-text itself, and it has a real trade-off, not a clear best answer:
+   the browser's own Web Speech API is the fastest path but is inconsistently supported (weak/absent
+   in Safari and Firefox) and, in Chrome, actually calls Google's servers under the hood — NOT local,
+   in tension with this project's whole "local LLM via Ollama" / self-hosted framing. A genuinely
+   local/offline STT (e.g. Whisper-class models) is a real new dependency in Ollama's own weight
+   class — a legitimate option, but its own infrastructure decision, not a quick add-on.
+3. **"Did the learner say it CORRECTLY" (pronunciation-quality scoring, phoneme-level) — hard, likely
+   out of scope for now.** This is the audio-to-audio interpretation of the user's question, and it's
+   a materially harder, research-adjacent problem (forced alignment, phoneme-level scoring) — the kind
+   of thing dedicated products (Duolingo, ELSA Speak) build with specialized models or paid cloud APIs
+   (Azure/Google pronunciation assessment), not something to bolt on casually.
+
+**Recommended shape if this is ever built**: piece 1 + piece 2 only (word-level correctness via STT,
+reusing existing text-comparison), explicitly NOT piece 3 (pronunciation scoring) — and the STT
+choice (local model vs. browser API vs. a cloud call) needs its own explicit ruling before any code,
+the same way the local-vs-cloud LLM choice did for the rest of this app. **Not queued — for the
+roadmap only, per the user's own framing.**
+
 ### `v83_s` — `install.sh`: no auto-start, plus a RAM/disk sanity check before the model pull
 
 **Shipped by: Claude Code, on user request.** Two separate follow-ups from the same conversation,
