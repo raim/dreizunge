@@ -18,8 +18,22 @@ https://raim.github.io/dreizunge/
 
 ## Quick start
 
+### Option A — one-line install (recommended)
 
-### Option A — Local Qwen via Ollama
+Clones the repo, installs Ollama if it isn't already on your machine, pulls the recommended
+`qwen2.5:7b` model, and starts the app — all in one command. Requires only Node.js (>=14) and git
+already installed; safe to re-run (it updates the checkout instead of re-cloning).
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/raim/dreizunge/main/install.sh | sh
+```
+
+Then open **http://localhost:3000**. Override the checkout location, model, or port with
+`DREIZUNGE_DIR`, `DREIZUNGE_MODEL`, or `PORT` env vars, e.g.
+`DREIZUNGE_MODEL=translategemma PORT=8080 curl -fsSL .../install.sh | sh`. See `install.sh` itself
+for exactly what it does — it does not do anything the manual steps in Option B below don't also do.
+
+### Option B — manual install, Local Qwen via Ollama
 
 The slim models qwen2.5:7b and translategemma both work well.
 
@@ -53,7 +67,7 @@ OLLAMA_TRANSLATION_MODEL=translategemma OLLAMA_MODEL=qwen2.5:7b node server.js
 ```
 
 
-### Option B — Offline only (no LLM)
+### Option C — Offline only (no LLM)
 
 ```bash
 LLM_BACKEND=none node server.js

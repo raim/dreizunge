@@ -1169,6 +1169,15 @@ already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly o
 | a chapter with nothing new to teach | `emitVocabLesson` already throws "no vocab concepts to teach" when the dedup filter leaves nothing — caught and logged as a clean skip, never a forced empty lesson |
 | ⚠️ **the strongest proof, reused from CP4** | `unit-apply-cp-lessons.test.js` §7 reads a lesson THIS SCRIPT actually wrote to disk back exactly as the real app would, and runs it through the REAL, unmodified `buildStandardExercises` — real playable exercises come out |
 
+**`install.sh`** (`v83_q`, one-line local installer — README.md's "Option A", NOT a `PLAN §7.0` item)
+
+| what | where |
+|---|---|
+| what it does | `curl -fsSL https://raw.githubusercontent.com/raim/dreizunge/main/install.sh \| sh` — clones the repo (or updates an existing checkout), installs Ollama via Ollama's OWN official installer if not already present, makes sure Ollama is actually reachable (starts it in the background if not), pulls `qwen2.5:7b` (README.md's own recommended quick-start model — the installer does not invent its own default), and starts the server in the foreground |
+| ⚠️ **every mutating step is gated behind an idempotency check** | existing checkout → update, not re-clone; Ollama already installed → skip its installer; Ollama already running → skip starting it; model already pulled → skip pulling it. The ONE genuinely destructive-adjacent case (a non-git directory already occupying the target path) REFUSES rather than silently overwriting |
+| what it deliberately does NOT do | auto-install Node.js or git — both are CHECKED (`has node \|\| die`, `has git \|\| die`) with clear manual-install guidance, never silently installed. Only Ollama was explicitly asked for; the script does not quietly expand that into installing a language runtime or VCS tool nobody asked it to |
+| verified | `test/unit-install-script.test.js` — real `sh -n` syntax validity (not eyeballed), executable + correct shebang, `set -eu` present, every idempotency gate checked structurally, README.md's own documented one-liner cross-referenced against the real default branch (`main`, checked via `git symbolic-ref` before writing either file) and the real script path. **Also exercised as a REAL end-to-end run** (fresh install AND the update-existing-checkout path) against the real GitHub repo before shipping — see `roadmap_v83.md`'s own `v83_q` write-up for that run's actual output, including the finding that the public repo was still several releases behind local `HEAD` at the time |
+| mutation-tested | disabling the "Ollama already installed" check (forcing the installer branch even when Ollama is present) — RED. Disabling the "refuse a non-git directory" guard (silently overwriting it instead) — RED |
 
 ---
 

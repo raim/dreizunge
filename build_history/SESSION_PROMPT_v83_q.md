@@ -1,23 +1,40 @@
-# Session prompt — written at the `v83_p` cut
+# Session prompt — written at the `v83_q` cut
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_o.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_p.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v83_q`, `v83_r`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v83_r`, `v83_s`, …) unless a future session has a good reason to switch to
 `v84_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v83_p`** release —
-a BUG FIX, found by the user actually reading a real generated lesson word-by-word: *"we still have
-'venne/kommen', so an inflected verb is translated with the german lemma/infinitive."* CP2's `sense`
-gloss now stays in the same grammatical register as the token itself (no more infinitive-vs-
-conjugated mismatches), and CP4's `vocab[i].target` now uses the SURFACE form (what the learner
-actually saw), not the dictionary lemma, paired against that register-matched sense. A SECOND real
-bug was found WHILE fixing the first: `apply-cp-lessons.js`'s cross-chapter dedup compared by
-`target` (now the surface form), which silently broke matching for inflected words — fixed to
-compare by `lemma` instead (falling back to `target` for legacy lessons, which have no `lemma`
-field). Both bugs, `v83_p`'s and `v83_o`'s before it, were found by the user actually USING the tool
-against a real model and reading real output — not by this session's own testing, which cannot
-simulate either failure mode (a reasoning model's behaviour, or a human's linguistic judgment).
+zero-dependency Node language-learning app). Fresh session picking up from the **`v83_q`** release —
+**`install.sh`, a one-line `curl \| sh` local installer** (README.md's new "Option A"). Completely
+UNRELATED to `PLAN §7.0`/Track A — a distribution/onboarding convenience the user asked for directly
+("let's move to something completely different"). Clones the repo (or updates an existing checkout),
+installs Ollama via Ollama's OWN official installer if not already present, confirms it's reachable,
+pulls `qwen2.5:7b` (README.md's own already-documented quick-start model) if not already pulled, and
+starts the server. Every mutating step is idempotency-gated; verified with a REAL end-to-end run
+(fresh install AND a second, update-existing-checkout run) against the real GitHub repo, which also
+surfaced that the public repo was still several releases behind local `HEAD` (`v83_h`…`v83_p` are all
+local-only commits — this project only pushes when the user asks).
+
+**Before `v83_q`, `PLAN §7.0`'s own real-world evaluation was also written up properly** (a separate,
+code-free roadmap commit, right before `v83_q`): the user ran `apply-cp-lessons.js` twice against the
+same chapter, comparing `qwen2.5:7b` (2 clear CP2 accuracy errors) against `qwen3.6:35b-a3b` (zero
+errors, more sophisticated context-tracking) — read that note (`roadmap_v83.md`, right after the
+multi-chapter note) before assuming anything about model-choice tradeoffs for this pipeline; it's
+real evidence, not a guess. Two gaps that evidence surfaced remain OPEN: no function-word filtering,
+and confidence not surviving into CP4's written lesson.
+
+**`v83_o`/`v83_p`, condensed — two real bugs, both found by the user actually using the tool**:
+`v83_o` fixed CP2 sending no `think:false`, which crashed against a real reasoning model
+(`qwen3.6:35b-a3b`) with "Ollama returned empty response" — the exact, previously-solved `v71_o`
+failure mode CP2 had never inherited. `v83_p` fixed a register mismatch the user caught reading real
+output word-by-word (*"we still have 'venne/kommen'..."*) — CP2's sense gloss now matches the
+token's own grammatical register, and CP4's `target` field now uses the SURFACE form (not the
+dictionary lemma) paired against it; fixing that ALSO required fixing a second bug it silently
+introduced in `apply-cp-lessons.js`'s own cross-chapter dedup (which had been comparing by `target`).
+Neither bug was reachable by this session's own testing — one needs a real reasoning model to fail
+against, the other needs a human's actual linguistic judgment.
 
 **`v83_h`–`v83_o`, condensed — the whole `PLAN §7.0` arc**: CP1 (`v83_h`) — stable text records, no
 model call. CP2 (`v83_i`, `think:false` fix at `v83_o`, register fix at `v83_p`) — the model-in-the-
@@ -40,17 +57,18 @@ the same dance (back up, `git checkout --`, build/test, restore) is documented i
 
 1. **This file**, whole.
 2. `build_history/roadmap_v83.md` — its **index table** and the **⚠️ Session protocol** block first,
-   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`…`v83_p` were built, and
-   `PLAN §7.0`'s own migration sequence (§0) — **including the multi-chapter note right after the
-   migration sequence list**, before touching any further multi-chapter work.
+   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`…`v83_q` were built, and
+   `PLAN §7.0`'s own migration sequence (§0) — **including the multi-chapter note AND the real-world
+   evaluation note right after it**, before touching any further `PLAN §7.0` work. `install.sh`
+   (`v83_q`) is unrelated to any of that — see its own entry near the bottom of `# SHIPPED`.
 3. `INTERNALS.md` — constants, silent-failure modes, invariants, harness limits. **§6b is a
    feature → function map** — read it BEFORE grepping for where anything lives.
 
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 260 checks
-node test/run.js --quick                  → expect 228
+node test/run.js                          → expect 261 checks
+node test/run.js --quick                  → expect 229
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -59,8 +77,10 @@ Corpus at this cut: **327 topics, 92 storylines, 33 languages, 659 `en` keys** (
 `v83_m`). Five CP-pipeline files exist alongside `lessons.json`: `canonical-text.json` (CP1,
 COMMITTED, 24 chapters); `canonical-analysis.json` (CP2), `curriculum-plan.json` (CP3),
 `curriculum-lesson.json` (CP4) — none committed by default. `apply-cp-lessons.js` (`v83_n`) is the
-ONLY thing that can add a real lesson to `lessons.json`, only with explicit `--write`.
-`APP_VERSION = 'v83_p'`.
+ONLY thing that can add a real lesson to `lessons.json`, only with explicit `--write`. `install.sh`
+(`v83_q`) is a NEW, unrelated file at the repo root — the one-line installer, see its own section
+below.
+`APP_VERSION = 'v83_q'`.
 
 ⚠️ **A CP4-pipeline lesson's `vocab[i]` shape changed at `v83_p`**: it now has `{target, source,
 lemma, conceptId}` — `target` is the SURFACE form, `lemma` is a NEW, separate field carrying the
@@ -194,6 +214,12 @@ number, if it turns out to work well in real use.
   function) compares by `lemma` first, falling back to `target` for legacy lessons (`v83_p` — this
   MUST stay lemma-first, or dedup silently breaks for every inflected word again). Do NOT `require`
   server.js from ANY of the five standalone CP files.
+- **`install.sh`** (`v83_q`, repo root) — the one-line `curl \| sh` installer, UNRELATED to any of
+  the `PLAN §7.0` files above. Every mutating step is idempotency-gated (see `INTERNALS.md`'s own
+  entry for the exact list) — if you touch this file, re-verify EACH gate still fires (a real
+  `sh -n` check plus the structural assertions in `test/unit-install-script.test.js` are necessary
+  but not sufficient; the real proof was an actual end-to-end run against the real GitHub repo,
+  documented in `v83_q`'s own roadmap write-up — repeat that manually after any real change here).
 - `test/lib.js`'s `boot({ log, seed, extraEnv })` — `extraEnv` (`v83_l`) merges into the spawned
   server's env.
 - `probe_gates_v80c1.js`, `probe_gates_v77.js` (⚠️ diff after progress-card changes, baseline

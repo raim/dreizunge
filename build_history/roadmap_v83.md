@@ -29,9 +29,9 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_p` — bug fix, found by the USER REVIEWING a real generated lesson: CP2's `sense` gloss now stays in the SAME grammatical register as the token itself (no more infinitive-vs-conjugated mismatches), and CP4's `vocab[i].target` now uses the SURFACE form (not the dictionary lemma) paired against that register-matched sense — fixing a real "kommen"/"venne" mismatch. A SECOND bug found while fixing the first: `apply-cp-lessons.js`'s cross-chapter dedup compared by `target` (now surface), silently breaking for inflected words — fixed to compare by `lemma`. `v83_o` — bug fix, found by a REAL user run against `qwen3.6:35b-a3b`: CP2 now sends `think:false`, fixing an "Ollama returned empty response" failure on reasoning-capable models. `v83_n` — `apply-cp-lessons.js`: the FIRST script in `PLAN §7.0` that WRITES into a real `lessons.json`, additively, with cross-chapter dedup. `v83_l`/`v83_m` — `PLAN §7.0` CP5 (silent, then visible on request): the FIRST CP stage to touch `index.html`/`server.js`. `v83_h`–`v83_k` — `PLAN §7.0` CP1–CP4: canonical text → analysis (model-in-the-loop) → curriculum plan → one lesson family, all report-only/inert. `v83_b`–`v83_g` — `PLAN §12` (text-selection tutor) and a progress-card/question-card UI arc — see each entry below for full detail |
+| **SHIPPED IN THE v83 LINE** | `v83_q` — `install.sh`: a one-line `curl \| sh` local installer (README.md's "Option A"), NOT a `PLAN §7.0` item. Clones the repo, installs Ollama (via Ollama's OWN official installer) + pulls `qwen2.5:7b` if not already present, starts the app. Idempotent — real end-to-end run (fresh install AND a second, update-existing-checkout run) verified against the real GitHub repo before shipping. `v83_p` — bug fix, found by the USER REVIEWING a real generated lesson: CP2's `sense` gloss now stays in the SAME grammatical register as the token itself, and CP4's `vocab[i].target` now uses the SURFACE form (not the lemma) paired against it — fixing a real "kommen"/"venne" mismatch, plus a second bug in `apply-cp-lessons.js`'s dedup found while fixing the first. `v83_o` — bug fix, found by a REAL user run against `qwen3.6:35b-a3b`: CP2 now sends `think:false`. `v83_n` — `apply-cp-lessons.js`: the FIRST script in `PLAN §7.0` that WRITES into a real `lessons.json`, additively, with cross-chapter dedup. `v83_l`/`v83_m` — `PLAN §7.0` CP5 (silent, then visible on request). `v83_h`–`v83_k` — `PLAN §7.0` CP1–CP4: canonical text → analysis (model-in-the-loop) → curriculum plan → one lesson family, all report-only/inert. `v83_b`–`v83_g` — `PLAN §12` and a progress-card/question-card UI arc — see each entry below for full detail |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
-| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 at `v83_i`, CP3 at `v83_j`, CP4 at `v83_k`, CP5 at `v83_l`/`v83_m` (silent then visible). `v83_n` (`apply-cp-lessons.js`, bug-fixed at `v83_o`/`v83_p`) is the FIRST script that actually writes CP1-4-derived lessons into `lessons.json`, additively — not itself a numbered CP stage, a browser-reachable follow-up to CP4. CP6 remains open (a CONDITIONAL, not a queued slice — see `v83_l`'s own SESSION_PROMPT). |
+| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 at `v83_i`, CP3 at `v83_j`, CP4 at `v83_k`, CP5 at `v83_l`/`v83_m` (silent then visible). `v83_n` (`apply-cp-lessons.js`, bug-fixed at `v83_o`/`v83_p`) is the FIRST script that actually writes CP1-4-derived lessons into `lessons.json`, additively — not itself a numbered CP stage, a browser-reachable follow-up to CP4. CP6 remains open (a CONDITIONAL, not a queued slice — see `v83_l`'s own SESSION_PROMPT). `install.sh` (`v83_q`) is UNRELATED to `PLAN §7.0` — a deployment/distribution convenience, not part of Track A. |
 
 Standing rules are in the "Rules earned in session 28…34" blocks — read the **"⚠️ How the rules are
 NUMBERED"** note before citing one.
@@ -1685,6 +1685,65 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_q` — `install.sh`: a one-line local installer (unrelated to `PLAN §7.0`)
+
+**Shipped by: Claude Code, on user request** ("can we provide a simple install script, via the
+`curl ... | sh` pipeline... this must include ollama and its models"). Completely unrelated to Track
+A — a distribution/onboarding convenience, README.md's own new "Option A."
+
+**What it does, in order**: checks for `node`/`git` (hard requirements, checked with clear
+manual-install guidance, NEVER silently auto-installed — only Ollama was explicitly asked for);
+clones the repo into `./dreizunge` (or updates an existing checkout with `git pull --ff-only`);
+installs Ollama via Ollama's OWN official installer (`curl -fsSL https://ollama.com/install.sh |
+sh`) only if `ollama` isn't already on PATH; confirms Ollama is actually reachable and starts it in
+the background if not (the official Linux installer's systemd service isn't guaranteed on every
+platform); pulls `qwen2.5:7b` — README.md's OWN already-documented recommended quick-start model,
+not an independently invented default — only if not already pulled; starts the server in the
+foreground on `http://localhost:3000`.
+
+**Every mutating step is gated behind an idempotency check**, so the whole script is safe to
+re-run: existing checkout → update, not re-clone; Ollama present → skip its installer; Ollama
+reachable → skip starting it; model present → skip pulling it. The ONE genuinely destructive-
+adjacent case — a non-git directory already occupying the target path — REFUSES with a clear
+message rather than silently overwriting it.
+
+**Verified by an ACTUAL end-to-end run**, not just source review: run once against a clean scratch
+directory (fresh clone from the real `github.com/raim/dreizunge`, Ollama-already-installed/running/
+model-already-pulled paths all exercised for real since this machine already had them), confirmed
+the server actually answered a real `/api/info` request; run a SECOND time immediately after,
+confirming the update-existing-checkout path correctly ran `git pull` ("Already up to date") instead
+of re-cloning. **A genuinely useful side-finding from that real run**: the cloned checkout reported
+`APP_VERSION: v83_c` — the public GitHub repo was still several releases behind local `HEAD` at the
+time (`v83_h`…`v83_p` were all local-only commits, per this project's own "commit or push only when
+the user asks" convention) — recorded here as a plain fact about the state of the world at this cut,
+not a defect in the installer, which correctly pulled whatever the real remote actually had.
+
+**Testing**: `test/unit-install-script.test.js` (7 sections) — real POSIX `sh -n` syntax validity
+(not eyeballed), executable + correct shebang, `set -eu` present, every idempotency gate checked
+structurally, node/git confirmed as CHECKED-not-installed prerequisites (with a check that
+`apt install`/`brew install` appear only as guidance TEXT inside error messages, never as a bare
+command line the script itself would execute), the default model cross-checked against README.md's
+own existing recommendation, and README.md's documented one-liner URL cross-referenced against the
+real default branch (`main`, confirmed via `git symbolic-ref refs/remotes/origin/HEAD` before either
+file was written) and the real script path. **Mutation-tested**: disabling the "Ollama already
+installed" check (forcing the installer branch unconditionally) — RED. Disabling the "refuse a
+non-git directory" guard (silently overwriting it) — RED.
+
+**Documentation**: `README.md`'s "Quick start" section gained a new "Option A — one-line install
+(recommended)" at the top; the previous manual walkthrough is kept, renumbered "Option B," as the
+by-hand fallback the installer itself does not replace or duplicate logic from — it literally
+automates those same documented steps.
+
+**Testing**: 261/229/0/0 full baseline green (from 260/228 — one new test file, registered
+UNCONDITIONALLY like most lightweight unit tests, since it makes no network call and spawns no
+server of its own — it only shells out to `sh -n` for a syntax check). No `lessons.json` change.
+
+**Not scoped here, deliberately**: Windows/WSL support (the platform check warns and continues
+rather than refusing, but nothing here was tested there); auto-installing Node.js or git (both stay
+hard, checked requirements by design — see above); a `--yes`/non-interactive flag (every step here
+is either idempotent-checked or additive, so none of them currently need a confirmation prompt a
+piped `curl | sh` invocation couldn't show anyway).
 
 ### `v83_p` — bug fix: register-consistent target/source pairs (found by the user, reading a real lesson)
 
