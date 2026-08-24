@@ -639,6 +639,8 @@
     "drill.done": "Drill complete — back to your progress",
     "drill.none": "No mistakes to drill yet",
     "complete.repeat_none": "Nothing left to replay here",
+    "complete.cp5_label": "🧪 Experimental word analysis",
+    "complete.cp5_summary": "{covered} of {proposed} proposed word(s) already in this chapter’s lessons, {new} new",
     "crossword.none": "Not enough words for a crossword",
     "crossword.pick_cell": "Pick a square to see its clue",
     "ex.comprehension.story": "The story",

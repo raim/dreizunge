@@ -1603,6 +1603,12 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
            too, so the chapter-icon, lesson-icon and play-button rows are contiguous. -->
       <div id="comp-progress" style="margin-top:14px;text-align:left"></div>
       <div id="comp-nav-btns" style="display:none;flex-wrap:wrap;justify-content:center;margin-top:8px"></div>
+      <!-- PLAN §7.0 CP5 (v83_m, user: "build the visible CP5 surface"): populated ONLY when
+           refreshCp5Shadow's fetch resolves with real data for THIS chapter — see _renderCp5Row.
+           Absent for the overwhelming majority of chapters (nothing has been analysed for them),
+           which is exactly the "legacy fallback" the plan's own text asks for: nothing to see here
+           is the DEFAULT, not a loading state pretending to be one. -->
+      <div id="comp-cp5-row" style="display:none;margin-top:12px;padding-top:10px;border-top:1px solid var(--gray-light);text-align:left;font-size:12px;color:var(--gray-dark)"></div>
     </div>
   </div>
 </div>
@@ -15789,12 +15795,14 @@ function _bktShadowStore(){
   }
   return APP.progress.bktShadow;
 }
-// PLAN §7.0 CP5 (v83_l): "consume the plan read-only." Mirrors the B4/BKT shadow pattern directly —
-// a silent, fire-and-forget lookup against /api/cp-shadow/:chapterId, recorded into its own
-// persisted store, NEVER touching the DOM, the border colour, or any pass-mark/gate logic. For the
-// vast majority of chapters (the CP1-4 pipeline has been run against only a handful) the endpoint
-// returns `available:false` and this is a complete no-op beyond the store lookup itself — that IS
-// the "legacy fallback" the plan's own §0 text asks for: nothing changes for an unanalysed chapter.
+// PLAN §7.0 CP5 (v83_l silent; v83_m user: "build the visible CP5 surface"): "consume the plan
+// read-only." A fire-and-forget lookup against /api/cp-shadow/:chapterId, recorded into its own
+// persisted store — and, since v83_m, ALSO painted into #comp-cp5-row (the nav popup, not the main
+// card — the red→green border and everything else v83_g-onward established stays untouched). For
+// the vast majority of chapters (the CP1-4 pipeline has been run against only a handful) the
+// endpoint returns `available:false` and this is a complete no-op, row included — that IS the
+// "legacy fallback" the plan's own §0 text asks for: nothing to see is the default, not a loading
+// state pretending to be one.
 function _cp5ShadowStore(){
   if(!APP.progress) return null;
   const cur = APP.progress.cp5Shadow;
@@ -15802,6 +15810,25 @@ function _cp5ShadowStore(){
     APP.progress.cp5Shadow = { version:CP5_SHADOW_VERSION, topics:{} };
   }
   return APP.progress.cp5Shadow;
+}
+// Paints #comp-cp5-row IF (a) the element exists (it may not, e.g. a stale cached DOM) and (b) the
+// learner is STILL looking at the SAME chapter this response is about — the fetch can resolve after
+// a `next`/`back` navigation, and painting chapter X's data onto chapter Y's popup would be a real
+// bug, not a cosmetic one. Marked "experimental" in its own label (ui.json) rather than presented as
+// settled fact — this is a proposal from a report-only pipeline, not a verified claim.
+function _renderCp5Row(cp){
+  try {
+    const rowEl = document.getElementById('comp-cp5-row'); if(!rowEl) return;
+    const curTopicId = APP.lessonData && (APP.lessonData.id || APP.lessonData.topic);
+    if(!curTopicId || curTopicId !== cp.chapterId) return;
+    const cmp = cp.comparison;
+    if(!cmp) return;   // no matching lessons.json topic found server-side — nothing honest to show
+    const summary = t('complete.cp5_summary',
+      { covered: cmp.coveredByExisting, proposed: cmp.proposedCount, new: (cmp.notCoveredByExisting||[]).length });
+    rowEl.innerHTML = '<div style="font-weight:700;margin-bottom:2px">' + escHtml(t('complete.cp5_label')) +
+      '</div><div>' + escHtml(summary) + '</div>';
+    rowEl.style.display = 'block';
+  } catch(_) {}
 }
 // Fire-and-forget: called from showComplete() right after the card has finished rendering. Never
 // awaited by its caller and never throws synchronously — a network failure, a missing endpoint (the
@@ -15818,6 +15845,7 @@ function refreshCp5Shadow(d){
         if(!cp || !cp.available) return;   // the common case — nothing to record, nothing changes
         store.topics[topicId] = { ...cp, updatedAt:new Date().toISOString() };
         if(typeof saveProg === 'function') saveProg();
+        if(typeof _renderCp5Row === 'function') _renderCp5Row(cp);
       })
       .catch(()=>{});   // offline / static build / server down — silently stays the legacy fallback
   } catch(_) {}
@@ -17580,7 +17608,13 @@ function showComplete(review, lessonIdxOverride){
     if (_spEl) _spEl.style.borderColor = _redGreenHex(_sumCoverageFrac(_postRows));
   } catch(e) { if (typeof _cardNote === 'function') _cardNote('story-border-color', e); }
 
-  // PLAN §7.0 CP5: silent shadow lookup only — never awaited, never touches anything rendered above.
+  // PLAN §7.0 CP5: reset #comp-cp5-row SYNCHRONOUSLY on every render — the popup's DOM persists
+  // across an SPA navigation between chapters, so without this a stale row from a PREVIOUS chapter
+  // (one that had CP5 data) would still be showing when a DIFFERENT chapter's card renders, until/
+  // unless that chapter's own async lookup happens to resolve and overwrite it. The lookup itself is
+  // fire-and-forget below and never awaited; only the reset needs to happen inline with the render.
+  try { const _cp5El = el('comp-cp5-row'); if (_cp5El) { _cp5El.style.display = 'none'; _cp5El.innerHTML = ''; } }
+  catch(e) { if (typeof _cardNote === 'function') _cardNote('cp5-row-reset', e); }
   if (typeof refreshCp5Shadow === 'function') refreshCp5Shadow(APP.lessonData);
 
   // v73_g: the per-lesson icon row. Hidden rather than emptied when there is nothing to show, so

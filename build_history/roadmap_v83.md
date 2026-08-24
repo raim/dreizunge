@@ -29,9 +29,9 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_l` — `PLAN §7.0` CP5: silent shadow-mode consumption of the curriculum plan — the FIRST CP stage to touch `index.html`/`server.js`, still ZERO visible effect (user-ruled: mirror the B4/BKT shadow pattern, not a visible signal). New read-only `GET /api/cp-shadow/:chapterId` + client-side `refreshCp5Shadow`; proven byte-identical rendering with/without CP data available. `v83_k` — `PLAN §7.0` CP4: vocabulary lesson through the existing contract, report-only, NO model call, NEVER touches `lessons.json`. `v83_j` — `PLAN §7.0` CP3: proposed curriculum plan (concepts/reasons/prerequisites/ordering/suitable exercise families), report-only, NO model call. `v83_i` — `PLAN §7.0` CP2: analysis report (lemma/form/phrase/sense/frequency/script proposals), report-only, model-in-the-loop. `v83_h` — `PLAN §7.0` CP1: canonical text + analysis records, report-only — the first buildable slice of Track A's accepted parallel-curriculum direction. `v83_g` — the progress-card story panel's border shifts red→green with comprehension progress. `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen; question cards' `#ex-story-panel` now COLLAPSED by default. `v83_e`/`v83_d`/`v83_c` — the progress-card/entry-card popup redesign. `v83_b` — `PLAN §12` built end to end |
+| **SHIPPED IN THE v83 LINE** | `v83_m` — `PLAN §7.0` CP5, made VISIBLE: a small, clearly-"experimental"-labelled row in the progress card's nav popup, shown ONLY when CP1-4 data exists for the chapter (user asked for this by name after trying `v83_l`'s silent version). Row resets synchronously on every render; mutation-tested against both a stale-data leak and a wrong-chapter leak from a late response. `v83_l` — `PLAN §7.0` CP5: silent shadow-mode consumption of the curriculum plan — the FIRST CP stage to touch `index.html`/`server.js`, ZERO visible effect at that cut (user-ruled: mirror the B4/BKT shadow pattern). New read-only `GET /api/cp-shadow/:chapterId` + client-side `refreshCp5Shadow`. `v83_k` — `PLAN §7.0` CP4: vocabulary lesson through the existing contract, report-only, NO model call, NEVER touches `lessons.json`. `v83_j` — `PLAN §7.0` CP3: proposed curriculum plan (concepts/reasons/prerequisites/ordering/suitable exercise families), report-only, NO model call. `v83_i` — `PLAN §7.0` CP2: analysis report (lemma/form/phrase/sense/frequency/script proposals), report-only, model-in-the-loop. `v83_h` — `PLAN §7.0` CP1: canonical text + analysis records, report-only — the first buildable slice of Track A's accepted parallel-curriculum direction. `v83_g` — the progress-card story panel's border shifts red→green with comprehension progress. `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen; question cards' `#ex-story-panel` now COLLAPSED by default. `v83_e`/`v83_d`/`v83_c` — the progress-card/entry-card popup redesign. `v83_b` — `PLAN §12` built end to end |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
-| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 at `v83_i`, CP3 at `v83_j`, CP4 at `v83_k`, CP5 at `v83_l` — see the SHIPPED section above. CP6 remains open. |
+| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 at `v83_i`, CP3 at `v83_j`, CP4 at `v83_k`, CP5 at `v83_l`/`v83_m` (silent then visible) — see the SHIPPED section above. CP6 remains open (a CONDITIONAL, not a queued slice — see `v83_l`'s own SESSION_PROMPT). |
 
 Standing rules are in the "Rules earned in session 28…34" blocks — read the **"⚠️ How the rules are
 NUMBERED"** note before citing one.
@@ -1685,6 +1685,63 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_m` — `PLAN §7.0` CP5 made VISIBLE: a small, clearly-experimental row on the progress card
+
+**Shipped by: Claude Code, on user request** ("build the visible CP5 surface" — chosen from a
+three-way follow-up question after the user confirmed the `v83_l` demo worked and asked "what's
+next"). Not a new migration stage — a direct follow-up to `v83_l`'s own CP5, upgrading it from
+silent to visible per the user's own explicit choice.
+
+**What shipped**: `#comp-cp5-row`, a new element inside `#comp-nav-modal` (the progress card's nav
+popup — NOT the main card, and NOT anywhere near the red→green border `v83_g` established), hidden
+and empty by default. `refreshCp5Shadow`'s existing fetch, when it resolves with `available:true`,
+now ALSO calls a new `_renderCp5Row(cp)`, which paints the row with the real comparison numbers
+(`{covered} of {proposed} proposed word(s)…, {new} new`) under a label explicitly marked
+"🧪 Experimental word analysis" (`ui.json`: `complete.cp5_label`/`complete.cp5_summary`, new `en`
+keys) — presented as a pipeline PROPOSAL, not a verified fact about the learner.
+
+**Two correctness properties this needed that the silent version never had to worry about**:
+
+1. **The row must reset SYNCHRONOUSLY on every render, before the async lookup even starts.** The
+   popup's DOM persists across an in-app chapter navigation (this is a single-page app); without an
+   explicit reset, a stale row from a PREVIOUS chapter that HAD CP5 data would keep showing while a
+   DIFFERENT chapter (almost certainly with none) is now open, until/unless that chapter's own async
+   lookup happened to resolve and overwrite it — which, for the common `available:false` case, never
+   happens at all. Fixed by clearing `display`/`innerHTML` inline in `showComplete()`, right before
+   `refreshCp5Shadow` is called.
+2. **A response that resolves LATE, after the learner has already navigated to a different chapter,
+   must never paint onto the wrong chapter's row.** `_renderCp5Row` checks `cp.chapterId` against
+   `APP.lessonData`'s CURRENT id before touching the DOM — a fetch in flight has no way to know the
+   learner moved on while it was waiting.
+
+**A real bug caught by an EXISTING standing guard, not a new test of mine**: `unit-card-errors.test.js`
+(`v77_b`'s own "no silent catch survives in `showComplete`" structural check) went RED the first time
+the reset code landed — a bare `catch(_) {}` around the reset, exactly the pattern that test exists
+to forbid. Fixed to match the SAME convention every other `try`/`catch` in `showComplete` already
+uses: `catch(e) { if (typeof _cardNote === 'function') _cardNote('cp5-row-reset', e); }`. A useful
+reminder that a standing project-wide guard can catch a mistake in brand-new code just as well as an
+old one, and is worth running (not just the feature's OWN new tests) before calling a change done.
+
+**Verified at the layer where the claim is observable**: `unit-cp5-shadow.test.js`'s §5 was REWRITTEN
+(per the project's own standing rule — state what holds NOW, with the supersession explained inline,
+don't just loosen an old assertion) from "byte-identical no matter what" to "byte-identical EXCEPT
+`#comp-cp5-row`, which shows the real fetched numbers when available and stays truly empty/hidden
+otherwise" — still checked against real rendered output, not assumed. Two NEW sections: the
+synchronous-reset property (checked on the SAME client instance across two renders, simulating an SPA
+navigation, not two fresh page loads) and the late-response-onto-the-wrong-chapter guard.
+
+**Mutation-tested**: removing the synchronous reset — RED (the previous chapter's row stayed visible
+into the next chapter's render). Removing `_renderCp5Row`'s current-chapter check — RED (a
+late-resolving response for a chapter the learner had left painted onto the row anyway).
+
+**Testing**: `unit-cp5-shadow.test.js`'s file count is unchanged (an existing test file extended, not
+a new one — no `test/run.js` registration change needed). Full baseline surfaced ONE unrelated,
+pre-existing flake (`e2e-teacher-dashboard`, 5/5 clean in isolation, nothing CP5-touching in its own
+test) — noted, not chased, per the project's own flaky-test protocol (reproduce before treating as a
+regression; this one plainly is not one). 259/228/0/0 green otherwise. No `lessons.json`/
+`canonical-text.json`/`canonical-analysis.json`/`curriculum-plan.json` change. `ui.json` gained
+exactly the two new `en` keys this row needed, nothing else.
 
 ### `v83_l` — `PLAN §7.0` CP5: silent shadow-mode consumption of the curriculum plan
 
