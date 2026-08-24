@@ -39,7 +39,7 @@ this file stays current through the whole v84 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v84 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v84 LINE** | `v84_g` — browser-native speech recognition for answer checking (typed-answer exercises first, then the target-language-choice MCQ types only), and a "reply ready" speech-bubble badge on the tutor fab when a reply lands while the widget is closed. `v84_f` — fixed `test/lib-dom.js`'s `textContent` trailing-text ordering bug, orphaned by a genuine two-session `v83_g` NAME COLLISION (both cut a release called `v83_g` from the same `v83_f` parent; the story-panel-border one reached `main` first and the line continued through it, this fix's commit never merged in and sat undetected since `unit-roadmap-version` can't see a commit that isn't on `main`). `v84_e` — a second mobile follow-up batch: nav icons (prev/☰/next) moved BELOW the whole text field on BOTH progress and entry cards (superseding `v84_d`'s own two-row-within-summary split); the entry card's "next" now goes to the chapter's progress card instead of starting a lesson directly; a short tap on PLAIN story/summary text now advances like Next (built on the SAME `sel.isCollapsed` signal `PLAN §12`'s selection popover already trusts), while a highlighted word keeps its own tap-to-lesson behaviour and a drag-select still opens the grammar/meaning popover — all verified via real DOM `.click()` dispatch, not just direct function calls. `v84_d` — four mobile progress-card UI follow-ups, real-device driven: `#comp-story-panel`'s header row split into two (title/flags/read on top, prev/☰/next below — a long title was overflowing on phones); the corner-pill cluster and tutor fab unified into one full-width translucent `#bottom-bar`; question-card flag/star buttons moved below the collapsed story panel; the mobile "ask the tutor" selection popover — found to be rendering correctly but hidden under the browser's own native selection toolbar — now pins to a fixed spot above `#bottom-bar` on touch devices instead of trying to anchor near the (browser-chrome-obscured) selection. `v84_c` — the `dreizunge` PATH launcher (`bin/dreizunge`, installed onto `~/.local/bin` by `install.sh`): starts the server, opens the browser once it answers, `--no-browser` to skip — the `jupyter notebook` shape, discussed and deferred at the `v83` cut, built now on direct request. Verified with a real symlinked-from-elsewhere run against a stub server AND a real `install.sh` end-to-end run confirming idempotent install + a genuine working launch. `v84_b` — PWA install support (`manifest.json`/`icon.svg`/`sw.js`, local server only): browsers can offer "Install App," windowed, no tabs/omnibox. Registration confirmed working by the USER, same day, in real Google Chrome on Ubuntu via `localhost:3000` (a sandboxed preview browser had failed during the build itself, flagged as unverified at the time — now measured). A LAN IP over plain HTTP (tested on Android) still shows no install option — a separate, well-understood limitation (service workers need a secure context; HTTPS/a TLS proxy is the real fix, matching the app's own existing insecure-transport warning), not a bug in this release. Also fixed, found while building this: `test/lib-dom.js`'s `loadClient()` had a fragile trailing-regex that assumed `init();` was the LAST statement in the client script — the first code ever added after it (this release's own SW registration) silently un-suppressed `init()` in ~80 unit tests. Fixed by anchoring on the `@static-engine-end` marker instead. |
+| **SHIPPED IN THE v84 LINE** | `v84_h` — speech recognition widened to the source-language-choice MCQ types too (`mcq_target_source`/`listen_mcq`), via a `speakable:'target'\|'source'` kind on `cGrid` so recognition listens in whichever language a call site's choices actually are; still excludes `comprehension_mcq` and the glyph-picking script-primer item. `v84_g` — browser-native speech recognition for answer checking (typed-answer exercises first, then the target-language-choice MCQ types only), and a "reply ready" speech-bubble badge on the tutor fab when a reply lands while the widget is closed. `v84_f` — fixed `test/lib-dom.js`'s `textContent` trailing-text ordering bug, orphaned by a genuine two-session `v83_g` NAME COLLISION (both cut a release called `v83_g` from the same `v83_f` parent; the story-panel-border one reached `main` first and the line continued through it, this fix's commit never merged in and sat undetected since `unit-roadmap-version` can't see a commit that isn't on `main`). `v84_e` — a second mobile follow-up batch: nav icons (prev/☰/next) moved BELOW the whole text field on BOTH progress and entry cards (superseding `v84_d`'s own two-row-within-summary split); the entry card's "next" now goes to the chapter's progress card instead of starting a lesson directly; a short tap on PLAIN story/summary text now advances like Next (built on the SAME `sel.isCollapsed` signal `PLAN §12`'s selection popover already trusts), while a highlighted word keeps its own tap-to-lesson behaviour and a drag-select still opens the grammar/meaning popover — all verified via real DOM `.click()` dispatch, not just direct function calls. `v84_d` — four mobile progress-card UI follow-ups, real-device driven: `#comp-story-panel`'s header row split into two (title/flags/read on top, prev/☰/next below — a long title was overflowing on phones); the corner-pill cluster and tutor fab unified into one full-width translucent `#bottom-bar`; question-card flag/star buttons moved below the collapsed story panel; the mobile "ask the tutor" selection popover — found to be rendering correctly but hidden under the browser's own native selection toolbar — now pins to a fixed spot above `#bottom-bar` on touch devices instead of trying to anchor near the (browser-chrome-obscured) selection. `v84_c` — the `dreizunge` PATH launcher (`bin/dreizunge`, installed onto `~/.local/bin` by `install.sh`): starts the server, opens the browser once it answers, `--no-browser` to skip — the `jupyter notebook` shape, discussed and deferred at the `v83` cut, built now on direct request. Verified with a real symlinked-from-elsewhere run against a stub server AND a real `install.sh` end-to-end run confirming idempotent install + a genuine working launch. `v84_b` — PWA install support (`manifest.json`/`icon.svg`/`sw.js`, local server only): browsers can offer "Install App," windowed, no tabs/omnibox. Registration confirmed working by the USER, same day, in real Google Chrome on Ubuntu via `localhost:3000` (a sandboxed preview browser had failed during the build itself, flagged as unverified at the time — now measured). A LAN IP over plain HTTP (tested on Android) still shows no install option — a separate, well-understood limitation (service workers need a secure context; HTTPS/a TLS proxy is the real fix, matching the app's own existing insecure-transport warning), not a bug in this release. Also fixed, found while building this: `test/lib-dom.js`'s `loadClient()` had a fragile trailing-regex that assumed `init();` was the LAST statement in the client script — the first code ever added after it (this release's own SW registration) silently un-suppressed `init()` in ~80 unit tests. Fixed by anchoring on the `@static-engine-end` marker instead. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, all of CP1–5) are BOTH fully shipped — see `roadmap_v83.md`'s own `# SHIPPED IN THE v83 LINE` for how. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). No new PLAN track is open as of this cut. |
 
@@ -1720,6 +1720,55 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v84 LINE
+
+### `v84_h` — speech recognition widened to source-language-choice MCQ types
+
+**Shipped by: Claude Code, on direct user follow-up** to `v84_g`, after confirming the mic button
+worked on a typed-answer exercise: *"please allow microphone and speech recognition also for MCQ
+question, where the recognized word is not shown, but once the correct word is recognized the button
+turns green as if clicked."* The "recognized word not shown, button turns green" behaviour was
+already exactly what `v84_g` built for its three target-language-choice MCQ types — the actual gap
+was that `mcq_target_source` and `listen_mcq`, both very common MCQ shapes (translate the target word
+into your own language), had NO mic button at all, because their `choices` are SOURCE-language text
+and `v84_g`'s recognizer only ever listened in the TARGET locale.
+
+**The fix, not a bigger hammer**: `cGrid`'s `speakable` parameter changed from a boolean to
+`'target'|'source'` — which language THIS call site's `choices` are actually written in, still read
+from each exercise builder rather than guessed from the type name (`mcq_target_source`'s own choices
+are source-language despite "target" in the type's own name; confirmed again by reading `mkMcqIE`/
+`mkLMcq` in `index.html`, not re-derived from memory). `_speechExLocale(kind)` resolves either the
+existing per-chapter TARGET locale (`_speechLocaleFor`, unchanged) or the SOURCE language's plain
+`LANGS[srcLang].tts` (`lessonSrcLang().tts` — no per-chapter override exists for source language
+anywhere else in the app, so none was invented here either). `_mcqMicBtnHtml`/`_mcqSpeechStart` both
+now take that `kind` and thread it straight through to `_micListen`, which was the one function that
+needed to stop assuming "always target."
+
+**Newly wired**: `mcq_target_source` (`tMcqIE`) and BOTH of `listen_mcq`'s non-intro branches
+(`tLMcq` — the normal listening card and its `APP.muted` read-the-target fallback; same `ex.choices`
+either way). **Deliberately still NOT wired**: `comprehension_mcq` (full source-language reasoning
+sentences — a poor one-shot speech-match target) and `tLMcq`'s OWN `_intro` branch (the script-primer
+"hear a sound, pick a glyph" item) — that one's `choices` genuinely ARE target-language text (raw
+script glyphs, confirmed in the `_intro:'listen_glyph'` builder), but a learner cannot usefully SPEAK
+a bare glyph character the way they can speak a word; recognized speech would compare against the raw
+character and simply never match, so enabling a button there would be worse than no button.
+
+**Testing**: `test/unit-speech-recognition.test.js` extended — the MCQ-scoping assertion now checks
+BOTH kinds land on the right callers (source-checked against `tMcqIE`/`tLMcq`'s actual bodies, not
+just asserted), a new behavioural section drives a `mcq_target_source`-shaped question with a
+SOURCE-language transcript through the real `pickChoice` path, and a new locale-resolution section
+pins that `'target'` and `'source'` genuinely resolve to different locales for a mixed-language
+lesson (the ONE thing the mocked recognizer itself can't exercise, since it ignores `lang`).
+Mutation-tested: reverting `_speechExLocale`'s source branch, and reverting `tMcqIE`'s own
+`speakable:'source'`, both turned the corresponding new assertion red.
+
+**Testing overall**: no new `test/run.js` entries (existing file extended, not a new one) — baseline
+stays 267/233. `docs/index.html` rebuilt. No `ui.json` change (no new strings needed).
+
+**Unrelated, landed in the same window**: commit `63ff97e` fixed `unit-replay-focus` (broken by the
+`e2b93bd` lesson-content commit between `v84_g` and `v84_h`) — a genuinely concurrent session,
+correctly scoped to touch only that one test file while this release was mid-flight on the same
+branch. See `SESSION_PROMPT_v84_h.md` for the full account; not this session's own work, so not
+written up again here.
 
 ### `v84_g` — browser-native speech recognition for answer checking, and a tutor "reply ready" badge
 

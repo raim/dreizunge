@@ -13431,7 +13431,7 @@ function tMcqArticle(ex) {
 <div class="card">
   <div class="qtext" dir="auto">${t('ex.mcq_article.q', {word: qWord(escHtml(ex.target))})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${furiHtml(ex.source)}</div>
-  ${cGrid(ex.choices, false, null, true)}
+  ${cGrid(ex.choices, false, null, 'target')}
 </div>`;
 }
 
@@ -13440,7 +13440,7 @@ function tMcqPlural(ex) {
 <div class="card">
   <div class="qtext" dir="auto">${t('ex.mcq_plural.q', {word: qWord(escHtml(ex.target))})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${furiHtml(ex.source)}</div>
-  ${cGrid(ex.choices, false, null, true)}
+  ${cGrid(ex.choices, false, null, 'target')}
 </div>`;
 }
 
@@ -13571,7 +13571,7 @@ function tMcqConjugation(ex) {
 <div class="card">
   <div class="qtext" dir="auto">${t('ex.mcq_conjugation.q', {pronoun: ex.pronoun, verb: ex.infinitive})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.pronoun} — ${furiHtml(ex.source)}</div>
-  ${cGrid(ex.choices, false, null, true)}
+  ${cGrid(ex.choices, false, null, 'target')}
 </div>`;
 }
 
@@ -14743,10 +14743,11 @@ function _exStoryPanelHtml(ex){
        + '</details>';
 }
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
-// `speakable` (v84_g): only the callers whose `choices` are confirmed TARGET-language text pass
-// true (mcq_article/mcq_plural/mcq_conjugation) — see `_mcqSpeechStart`'s own comment for why the
-// source-language-choice MCQ types (mcq_target_source, listen_mcq, comprehension_mcq) never do.
-function cGrid(cs,one,mode,speakable){ return `<div class="choices${one?' one-col':''}${mode==='chips'?' chips':''}">${cs.map((c,i)=>`<button class="choice" dir="auto" id="c${i}" onclick="pickChoice(${i},this)">${furiHtml(c)}</button>`).join('')}</div>${speakable?_mcqMicBtnHtml():''}`; }
+// `speakable` (v84_g, widened v84_h): 'target' or 'source' — which language this call site's
+// `choices` are actually written in, read from the exercise BUILDER for each caller, never guessed
+// from the type name. Omitted (falsy) for the few types where speech recognition would not work
+// well — see `_mcqSpeechStart`'s own comment for exactly which, and why.
+function cGrid(cs,one,mode,speakable){ return `<div class="choices${one?' one-col':''}${mode==='chips'?' chips':''}">${cs.map((c,i)=>`<button class="choice" dir="auto" id="c${i}" onclick="pickChoice(${i},this)">${furiHtml(c)}</button>`).join('')}</div>${speakable?_mcqMicBtnHtml(speakable):''}`; }
 // Shared card for sentence-context MCQs (word_forms + synonyms-in-context). The
 // sentence div is omitted when empty (no story sentence was found).
 function sentenceMcqCard({badge, question, sentenceHtml, hint, choices}){
@@ -15103,7 +15104,7 @@ function tMathCalc(ex){
 // so the emphasis is now presentational and consistent across languages, and RTL/CJK strings no
 // longer carry stray Latin quotes. Takes ALREADY-SAFE html (furigana/escaped) like its call sites.
 function qWord(html){ return `<span class="q-word">${html}</span>`; }
-function tMcqIE(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:qWord(applyFurigana(ex.target))})}</div><div style="margin:10px 0">${lBlock(ex.target,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
+function tMcqIE(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:qWord(applyFurigana(ex.target))})}</div><div style="margin:10px 0">${lBlock(ex.target,ex.pron)}</div>${cGrid(ex.choices,false,null,'source')}</div>`; }
 function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang);
   const dia=_lessonIsDialect();
   // v69_i (user request): the question no longer names the target language — the badge above it
@@ -15168,6 +15169,10 @@ function tLMcq(ex){ const S=lessonSrcLang(); const Sn=localizedLessonLangName(AP
   // be HIDDEN (showing it would reveal the answer, since the choices are glyphs). When muted /
   // no audio, fall back to showing the transliteration (ex.pron) as the prompt → still pick the
   // glyph — a valid no-audio question that doesn't give the answer away.
+  // v84_h: no `speakable` here even though `ex.choices` IS target-language text (raw glyphs, per
+  // `_intro:'listen_glyph'`'s builder) — a learner cannot USEFULLY speak a bare script glyph the way
+  // they can speak a word; recognized speech would compare against the raw character and just never
+  // match. Same reasoning excludes the chips-mode glyph_sound/sound_glyph intro items elsewhere.
   if(ex._intro){
     if(APP.muted){
       return `<div class="ex-badge">🔡 ${t("ex.badge.intro_pick_letter")}</div><div class="card"><div class="qtext" dir="auto" style="margin-bottom:10px">${t("ex.intro_pick_letter.q",{sound:escHtml(ex.pron||'')})}</div>${cGrid(ex.choices,false)}</div>`;
@@ -15176,8 +15181,8 @@ function tLMcq(ex){ const S=lessonSrcLang(); const Sn=localizedLessonLangName(AP
   }
   // When globally muted, the audio gives nothing — fall back to a read-the-target MCQ
   // (show the target word as text, still pick the source). Same data, same check path.
-  if(APP.muted){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:qWord(applyFurigana(ex.target))})}</div>${cGrid(ex.choices,false)}</div>`; }
-  return `<div class="ex-badge">${t("ex.badge.listen_mcq")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" dir="auto" style="margin-bottom:10px">${t("ex.listen_mcq.q",{lang:Sn})}</div>${lBlock(ex.target,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
+  if(APP.muted){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:qWord(applyFurigana(ex.target))})}</div>${cGrid(ex.choices,false,null,'source')}</div>`; }
+  return `<div class="ex-badge">${t("ex.badge.listen_mcq")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" dir="auto" style="margin-bottom:10px">${t("ex.listen_mcq.q",{lang:Sn})}</div>${lBlock(ex.target,ex.pron)}${cGrid(ex.choices,false,null,'source')}</div>`; }
 function tLType(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang);
   const inputHtml = `<div class="type-input-row"><input class="type-input" id="type-in" dir="auto" type="text" placeholder="${t("ex.listen_type.placeholder",{lang:Ln})}" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">${_typeMicBtnHtml()}</div>`;
   // When globally muted, there's nothing to hear — fall back to translating the shown source
@@ -16724,14 +16729,18 @@ function typedDiffHtml(typed, correct) {
     + `</div>`;
 }
 
-// ══ Speech-recognition answer checking (v84_g) ═══════════════════════════════
+// ══ Speech-recognition answer checking (v84_g, MCQ coverage widened v84_h) ═══
 // A mic button next to a typed-answer input, or a shared one under an MCQ's choices. Both funnel
 // into `_micListen`, which owns the button's "listening" visual state so neither caller repeats it.
 //
-// The current exercise's language, not the UI language: recognized speech must be set to LISTEN
-// for the language the learner is answering IN, the same locale `_speechLocaleFor` already hands
-// TTS for this exact lesson/chapter/storyline.
-function _speechExLocale(){
+// `kind` ('target'|'source') says which language recognition must LISTEN for — an exercise's
+// TARGET-language answer, or (v84_h) a TARGET→SOURCE MCQ's own source-language choices (e.g.
+// "what does {target word} mean?", choices in the learner's own language). Never the UI language:
+// this is always about what the CHOICES/ANSWER are actually written in, per call site — see
+// `_mcqSpeechStart`'s own comment for exactly which MCQ types pass which kind, and why some pass
+// neither.
+function _speechExLocale(kind){
+  if(kind === 'source') return lessonSrcLang().tts;
   const lang = APP.lessonData?.lang || APP.lang;
   return _speechLocaleFor(lang, APP.lessonData?.id);
 }
@@ -16740,18 +16749,18 @@ function _typeMicBtnHtml(){
   if(!_speechRecognitionSupported()) return '';
   return `<button type="button" class="mic-btn" id="type-mic-btn" title="${escAttr(t('ex.mic_tooltip'))}" onclick="_typeSpeechStart(this)">🎤</button>`;
 }
-function _mcqMicBtnHtml(){
+function _mcqMicBtnHtml(kind){
   if(!_speechRecognitionSupported()) return '';
-  return `<button type="button" class="mic-btn mcq-mic" id="mcq-mic-btn" title="${escAttr(t('ex.mic_tooltip'))}" onclick="_mcqSpeechStart(this)">🎤</button>`;
+  return `<button type="button" class="mic-btn mcq-mic" id="mcq-mic-btn" title="${escAttr(t('ex.mic_tooltip'))}" onclick="_mcqSpeechStart(this, ${JSON.stringify(kind)})">🎤</button>`;
 }
 
 // Owns the button's listening state; hands the caller the transcript alternatives (or null) once
 // recognition ends. A genuine error (permission denied, mic unavailable — NOT a plain "didn't hear
 // anything", which is the ordinary outcome of staying silent or being misheard) surfaces as a toast
 // here, once, so neither caller below needs its own error-message branch.
-function _micListen(btn, onDone){
+function _micListen(btn, locale, onDone){
   if(btn){ btn.classList.add('listening'); btn.disabled = true; }
-  _speechRecognizeOnce(_speechExLocale(), (alts, err) => {
+  _speechRecognizeOnce(locale, (alts, err) => {
     if(!alts && err && err !== 'no-match' && err !== 'unsupported') showToast(t('ex.mic_error'));
     onDone(alts);
   }, () => { if(btn){ btn.classList.remove('listening'); btn.disabled = false; } });
@@ -16766,7 +16775,7 @@ function _micListen(btn, onDone){
 function _typeSpeechStart(btn){
   const C = APP.cur, ex = C && C.exercises && C.exercises[C.cur];
   if(!ex || C.answered) return;
-  _micListen(btn, (alts) => {
+  _micListen(btn, _speechExLocale('target'), (alts) => {
     // `alts` is null for both plain silence/no-speech AND a genuine error — `_micListen` already
     // toasted the error case; showing a SECOND toast here would just overwrite that more specific
     // message with the generic "didn't catch that", so this only has anything to say when there
@@ -16780,19 +16789,24 @@ function _typeSpeechStart(btn){
   });
 }
 
-// Recognized speech vs. a target-language-choice MCQ (mcq_article/mcq_plural/mcq_conjugation —
-// see the `speakable:true` call sites in cGrid's callers, deliberately NOT every MCQ: choice text
-// has to be in the language `_speechExLocale` is listening for, which rules out the source-language
-// choice types (mcq_target_source/listen_mcq's translations, comprehension_mcq's reasoning options)
-// — recognizing target-locale speech against source-language text would just never match). Matched
-// ONLY against the CORRECT choice, never any wrong one: a hit taps that choice exactly as a real
-// tap would (`pickChoice`, so it turns green and advances through the existing check() path); a
-// miss changes nothing, so a misheard word can never spend a heart on an answer the learner never
-// actually chose.
-function _mcqSpeechStart(btn){
+// Recognized speech vs. an MCQ, in whichever language `kind` says the CHOICES are actually written
+// in — never guessed, always matching the `speakable:'target'|'source'` value the caller passed
+// `cGrid`, which itself was set by reading the exercise BUILDER, not the type's name (`mcq_target_
+// source`'s own choices are source-language despite "target" being in the type name). Deliberately
+// still NOT every MCQ: `tComprehension`'s options are full source-language REASONING sentences, not
+// short answers — a poor match target for one-shot speech recognition — and the script-primer glyph
+// chips (`_intro==='glyph_sound'`) are transliterations, not real words in either language. Neither
+// passes a `speakable` kind.
+//
+// Matched ONLY against the CORRECT choice, never any wrong one, and NEVER shown — no transcript is
+// displayed on this path (unlike the typed-answer path, which shows what it heard): a hit taps that
+// choice exactly as a real tap would (`pickChoice`, so it turns green and advances through the
+// existing check() path); a miss changes nothing, so a misheard word can never spend a heart on an
+// answer the learner never actually chose.
+function _mcqSpeechStart(btn, kind){
   const C = APP.cur, ex = C && C.exercises && C.exercises[C.cur];
   if(!ex || C.answered) return;
-  _micListen(btn, (alts) => {
+  _micListen(btn, _speechExLocale(kind), (alts) => {
     // Same reasoning as `_typeSpeechStart`: a null `alts` may already have been toasted as a real
     // error, so this stays quiet rather than clobbering that message with a generic one.
     if(!alts) return;

@@ -1,23 +1,38 @@
-# Session prompt — written at the `v84_g` cut
+# Session prompt — written at the `v84_h` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
-one alongside. Keep using the double-letter suffix scheme (`v84_h`, `v84_i`, …) unless a future
+one alongside. Keep using the double-letter suffix scheme (`v84_i`, `v84_j`, …) unless a future
 session has a good reason to switch to `v85_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v84_g`** — TWO features landing
-together (full write-up in `roadmap_v84.md`'s own `v84_g` entry): (1) browser-native speech
-recognition reused for answer checking — typed-answer exercises first, then the three MCQ types
-whose choices are confirmed target-language text (`mcq_article`/`mcq_plural`/`mcq_conjugation`),
-deliberately NOT the source-language-choice types; a match checks/taps the answer, a miss never
+zero-dependency Node language-learning app). Picking up from **`v84_h`** — full write-up in
+`roadmap_v84.md`'s own `v84_g`/`v84_h` entries; condensed here:
+
+**`v84_g`**: browser-native speech recognition reused for answer checking — typed-answer exercises
+first, then (initially) the three MCQ types whose choices were confirmed target-language text
+(`mcq_article`/`mcq_plural`/`mcq_conjugation`). A match checks/taps the answer; a miss never
 auto-submits or auto-selects, so a misheard word can never spend a heart the learner didn't actually
-get wrong; and (2) a "reply ready" speech-bubble badge on the tutor fab, raised only when a reply
-lands while the widget is closed (nothing else signals this — closing is a pure CSS toggle, the
-in-flight request keeps running regardless), cleared only by reopening. **⚠️ Speech recognition has
-NO live human-voice verification** — this container's sandboxed preview browser cannot grant real
-microphone access; everything is tested via a mocked `SpeechRecognition` constructor (mutation-tested
-against the real matching/scoping logic), which proves the WIRING is correct but says nothing about
-real recognition accuracy on a real device. See `# ⚠️ OWED BY THE USER` below.
+get wrong. Also a "reply ready" speech-bubble badge on the tutor fab, raised only when a reply lands
+while the widget is closed (nothing else signals this — closing is a pure CSS toggle, the in-flight
+request keeps running regardless), cleared only by reopening.
+
+**`v84_h`**: a direct user follow-up widened the MCQ coverage to the SOURCE-language-choice types too
+(`mcq_target_source`/`listen_mcq` — very common "translate this word" questions) by making `cGrid`'s
+`speakable` a `'target'|'source'` kind instead of a boolean, so recognition listens in whichever
+language a call site's choices actually are. Still excludes `comprehension_mcq` (full reasoning
+sentences) and the script-primer glyph-picking item (a learner cannot usefully SPEAK a bare glyph).
+
+**⚠️ Speech recognition itself IS now live-verified, partially** — the user tested it on a real
+Android phone and confirmed it works, after two real deployment gaps were found and fixed along the
+way: (1) the `v84_f`/`v84_g` work had only ever landed on the `claude/serene-greider-b45015` branch,
+never merged to `main` — the user's own live server was running `main`, so nothing was there to test
+until the branch was fast-forwarded in; (2) worth remembering for ANY future browser-API feature:
+Chrome's Speech Recognition API (like the PWA install prompt before it) requires a SECURE CONTEXT
+(HTTPS or `localhost`) — over a LAN IP on plain HTTP the API constructor is simply absent, which looks
+identical to "unsupported" from this app's own feature-detection. **Still NOT verified**: the WIDENED
+MCQ coverage (`v84_h` itself, source-language matching) — the user's own confirmation was for the
+typed-answer path built at `v84_g`, before the MCQ widening shipped. See `# ⚠️ OWED BY THE USER`
+below for exactly what that leaves outstanding.
 
 **Process note carried from `v84_f`, still worth reading before naming a version letter yourself**:
 that release's own fix had originally shipped in a DIFFERENT session as `v83_g`, but a SECOND session
@@ -78,10 +93,10 @@ API vs. cloud call; pronunciation-quality scoring is hard and out of scope).
 1. **This file**, whole.
 2. `build_history/roadmap_v84.md` — its **index table** and **⚠️ Session protocol** block first, then
    `# ⚠️ OPEN AT THE v84 CUT` (findings, `§0`/`§0i`, the standing RULES — now 37, see "Rules earned in
-   the v83 line" for the two newest), then `# SHIPPED IN THE v84 LINE` for `v84_g`'s speech-
-   recognition + tutor-badge pair, `v84_f`'s orphaned-fix recovery (and the version-collision process
-   lesson), `v84_e`'s second mobile batch, `v84_d`'s first, `v84_c`'s launcher, and `v84_b`'s PWA work
-   — read all of it before touching any of those areas.
+   the v83 line" for the two newest), then `# SHIPPED IN THE v84 LINE` for `v84_h`'s MCQ-coverage
+   widening, `v84_g`'s speech-recognition + tutor-badge pair, `v84_f`'s orphaned-fix recovery (and the
+   version-collision process lesson), `v84_e`'s second mobile batch, `v84_d`'s first, `v84_c`'s
+   launcher, and `v84_b`'s PWA work — read all of it before touching any of those areas.
 3. `INTERNALS.md` — constants, silent-failure modes, invariants. **§6b is a feature → function map**
    — read it BEFORE grepping for where anything lives.
 
@@ -95,8 +110,21 @@ node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut: **327 topics, 92 storylines, 33 languages, 663 `en` keys** (topics/storylines/
-languages unchanged since `v83_m`; `en` keys 659→663, the 4 speech/tutor-badge strings `v84_g` added).
-`APP_VERSION = 'v84_g'`.
+languages unchanged since `v83_m`; `en` keys 659→663, the 4 speech/tutor-badge strings `v84_g` added,
+`v84_h` added none). `APP_VERSION = 'v84_h'`.
+
+✅ **`unit-replay-focus` is FIXED — a genuinely concurrent session landed it mid-`v84_h`, commit
+`63ff97e`, "in this same worktree."** Spawned as a background task (`task_08149dde`) when the user's
+own real `lessons.json` commit (`e2b93bd`, "added inspo for t, noble-like lessons" — a PLAN §7.0
+CP1-3-proposed vocabulary lesson) made the test's fixture-selection land on that new lesson and fail
+deterministically. The bug was in the TEST, not the product: its `seed()` helper never set
+`APP.cur.lessonIdx`, so `assembleCoverageRound`'s bare `qid(ex)` lookups silently resolved against
+lesson index 0 instead of the fixture's own — "worked" only because every prior fixture happened to
+sit at index 0. Fixed, verified 15/15, mutation-tested — full write-up in that commit's own message.
+**Worth noting as a process fact, not a caution**: that session committed directly to THIS branch
+while a different, unrelated release (`v84_h`, this one) was mid-flight in the same place, and scoped
+itself to touch only the one file the fix needed — a working example of two concurrent sessions
+sharing a branch safely, the thing the `v83_g` collision (`v84_f`'s own entry) got wrong.
 
 ⚠️ **Check `git status --short lessons.json` at the start of this session.** If it shows modified,
 that is very likely the user's own real, uncommitted `PLAN §7.0`/CP4-pipeline evaluation data — not
@@ -163,13 +191,19 @@ code — flag that up front.
 
 ## ⚠️ OWED BY THE USER, not doable in a container
 
-- **Speech recognition (`v84_g`) has NO live human-voice pass.** Everything shipped is tested against
-  a MOCKED `SpeechRecognition` constructor (feature detection, the correctness-matching logic, the
-  MCQ scoping, the error/no-match toast priority — all mutation-tested), which proves the wiring is
-  right but says nothing about real recognition accuracy: locale correctness on an actual accent,
-  background-noise robustness, or whether the browser's own permission prompt behaves as expected on
-  a real phone. Needs a device pass on both surfaces (a typed-answer exercise, and at least one of
-  the three enabled MCQ types) before trusting this beyond "the code path is correct."
+- **Speech recognition's typed-answer path (`v84_g`) IS live-verified** — the user confirmed it
+  working on a real Android phone. Getting there surfaced two real gaps, both fixed: the work had
+  only reached the `claude/serene-greider-b45015` branch, never `main` (where the user's live server
+  actually runs) — merged in; and Chrome's Speech Recognition API needs a SECURE CONTEXT (HTTPS or
+  `localhost`), so it's silently absent over a LAN IP on plain HTTP, same restriction the PWA-install
+  feature already hit. **Still NOT device-verified**: any of the target-language MCQ types
+  (`mcq_article`/`mcq_plural`/`mcq_conjugation`), and NONE of `v84_h`'s widened source-language MCQ
+  coverage (`mcq_target_source`/`listen_mcq`) — everything past the one confirmed typed-answer case is
+  still only proven against a MOCKED `SpeechRecognition` constructor (feature detection, correctness-
+  matching, MCQ scoping both kinds, locale resolution, error/no-match toast priority — all mutation-
+  tested), which proves the WIRING but says nothing about real recognition accuracy: locale
+  correctness on an actual accent, background-noise robustness, or whether a real MCQ tap-via-voice
+  feels right in practice.
 - **Windows installability** (two tiers laid out in `roadmap_v83.md`, discussion-only) — neither
   ruled nor queued.
 
@@ -181,12 +215,19 @@ user product decision.
 ## Standing tools — use them
 
 - `_speechRecognizeOnce(lang, onResult, onEnd)` (`v84_g`) — the ONE browser-`SpeechRecognition`
-  wrapper; `_typeSpeechStart`/`_mcqSpeechStart` are its only two callers. `_speechExLocale()` is what
-  feeds it the lesson's own locale (via the existing `_speechLocaleFor`, unchanged). Extend an
-  exercise type here by adding a THIRD caller, not by re-deriving the recognizer plumbing.
-- `cGrid(cs, one, mode, speakable)`'s 4th argument (`v84_g`) — pass `true` ONLY when `choices` is
-  confirmed target-language text (read the exercise BUILDER, not the type name — `mcq_target_source`/
-  `listen_mcq`'s `choices` are source-language despite the "target" in one of those names).
+  wrapper; `_typeSpeechStart`/`_mcqSpeechStart` are its only two callers, via `_micListen(btn, locale,
+  onDone)`. `_speechExLocale(kind)` (`kind`: `'target'|'source'`, v84_h) is what resolves the locale —
+  `'target'` reuses the existing `_speechLocaleFor` unchanged, `'source'` is the plain
+  `lessonSrcLang().tts` (no per-chapter override exists for source language anywhere else in the app).
+  Extend an exercise type here by adding a THIRD caller, not by re-deriving the recognizer plumbing.
+- `cGrid(cs, one, mode, speakable)`'s 4th argument (`v84_g`, widened `v84_h`) — pass `'target'` or
+  `'source'`, whichever language THIS call site's `choices` actually are, read from the exercise
+  BUILDER, never guessed from the type name (`mcq_target_source`/`listen_mcq`'s own `choices` are
+  source-language despite "target" in one of those names). Omit entirely for a type where speech
+  recognition would not work well — `comprehension_mcq` (full reasoning sentences) and the
+  script-primer glyph-picking item (`tLMcq`'s own `_intro` branch — its choices genuinely ARE
+  target-language text, but a bare glyph isn't something a learner can usefully SPEAK) are the two
+  currently excluded on purpose, not by oversight.
 - `_tutorNoteReplyLanded()` / `_tutorClearUnread()` (`v84_g`) — the tutor-fab "reply ready" badge.
   Landed calls are at all three history-push sites in `_tutorSend`/`_tutorReadStream`; the only clear
   call is in `toggleTutorWidget()`. A fourth reply-landing site, if one is ever added, needs the same
