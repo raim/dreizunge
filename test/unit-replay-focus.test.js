@@ -34,6 +34,20 @@ for (const t of store.topics) {
 }
 assert.ok(topic, 'the corpus has a standard lesson with enough vocab');
 
+// `APP.cur.lessonIdx` MUST be set to `li` here — `assembleCoverageRound` resolves each exercise's
+// solved-state with a bare `qid(ex)` (no explicit lesson id), which falls back to
+// `APP.cur.lessonIdx` (see §8's own note on this below). Real play always sets it immediately
+// before building a round (openLesson). Omitting it here used to be silently harmless only because
+// the fixture lesson this file picks (the first standard lesson with >=6 vocab, scanned in
+// `store.topics` order) happened to sit at `li === 0` — the client's own default for the field — so
+// the accidental fallback matched by coincidence. lessons.json's `e2b93bd` ("added inspo for t,
+// noble-like lessons") added a lesson that moved the picked fixture to `li === 4`, and every solved
+// lookup inside `assembleCoverageRound` started missing: the "review" bucket stayed permanently
+// empty and already-solved questions kept getting re-served, which is EXACTLY the pre-v69.2 defect
+// this whole feature exists to prevent (see the header comment). Convergence still "worked", just
+// slower and non-deterministically (worst 4, avg ~3.3 rather than always 3) — the coverage-focus
+// machinery was silently running on stale/wrong state, not vacuously idle, so nothing here failed
+// loudly until a fixture with `li !== 0` exposed it.
 const seed = (tgt) => C.run(`
   APP.lessonData = ${JSON.stringify(topic)};
   APP.lang = ${JSON.stringify(topic.lang)}; APP.srcLang = ${JSON.stringify(topic.srcLang)};
@@ -41,6 +55,7 @@ const seed = (tgt) => C.run(`
   APP.lessonData.coverageTarget = ${tgt};
   APP.progress = { completed:{}, solved:{}, learned:{} };
   APP.progress.solved[APP.lessonData.topic] = {};
+  APP.cur.lessonIdx = ${li};
   APP._teacherMode = false; APP.muted = false; true;`, 'seed');
 
 const LID = JSON.stringify(topic.lessons[li].id);
