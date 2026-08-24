@@ -4,9 +4,11 @@ This repo is worked on by **both Claude Code and OpenAI's Codex**, alternating s
 writing to the same `build_history/roadmap_v*.md`, `SESSION_PROMPT_v*.md`, and `INTERNALS.md`. This
 file (read by Claude Code) and `AGENTS.md` (read by Codex) carry the same content deliberately — the
 two agents must not drift on protocol. **This is a pointer and a summary, not a new source of
-truth**: everything below already exists, spelled out in full with its reasoning, in
-`build_history/roadmap_v82.md`'s "⚠️ Session protocol" block and its "Rules earned in session N"
-sections. Read those before inventing anything not covered here.
+truth**: everything below already exists, spelled out in full with its reasoning, in the CURRENT
+`build_history/roadmap_v*.md` (highest-numbered file)'s "⚠️ Session protocol" block and its "Rules
+earned in session N" / "Rules earned in the vNN line" sections. Read those before inventing anything
+not covered here. **Do not hardcode a specific roadmap filename here** — this pointer itself went
+stale for a full release line once already (found and fixed at the `v84` cut) by naming one.
 
 ## Orient yourself, in this order
 
