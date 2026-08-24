@@ -13585,6 +13585,95 @@
             "at": "2026-08-13T00:39:54.350Z"
           },
           "_recreated": true
+        },
+        {
+          "id": "ls_1787562422637_cp4",
+          "type": "standard",
+          "title": "Vocabulary — tp_17865786341910000220",
+          "desc": "8 word(s) proposed by PLAN §7.0 CP1-3 for tp_17865786341910000220",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "sie",
+              "source": "lei (riferito al governo)",
+              "conceptId": "tp_17865786341910000220:concept:vocab:sie"
+            },
+            {
+              "target": "kommen",
+              "source": "venne",
+              "conceptId": "tp_17865786341910000220:concept:vocab:kommen"
+            },
+            {
+              "target": "dann",
+              "source": "poi",
+              "conceptId": "tp_17865786341910000220:concept:vocab:dann"
+            },
+            {
+              "target": "nie",
+              "source": "mai",
+              "conceptId": "tp_17865786341910000220:concept:vocab:nie"
+            },
+            {
+              "target": "ein",
+              "source": "un",
+              "conceptId": "tp_17865786341910000220:concept:vocab:ein"
+            },
+            {
+              "target": "Riese",
+              "source": "gigante",
+              "conceptId": "tp_17865786341910000220:concept:vocab:Riese"
+            },
+            {
+              "target": "geben",
+              "source": "esistere (in senso impersonale)",
+              "conceptId": "tp_17865786341910000220:concept:vocab:geben"
+            },
+            {
+              "target": "ja",
+              "source": "già / davvero (enfasi)",
+              "conceptId": "tp_17865786341910000220:concept:vocab:ja"
+            }
+          ],
+          "sentences": [],
+          "skillLinks": [],
+          "sourceSpans": [
+            "tp_17865786341910000220:s2:t11",
+            "tp_17865786341910000220:s3:t0",
+            "tp_17865786341910000220:s0:t1",
+            "tp_17865786341910000220:s0:t2",
+            "tp_17865786341910000220:s0:t3",
+            "tp_17865786341910000220:s0:t4",
+            "tp_17865786341910000220:s0:t5",
+            "tp_17865786341910000220:s1:t0",
+            "tp_17865786341910000220:s1:t1"
+          ],
+          "planReason": [
+            "appears 2 time(s) in this sample; in 2 distinct forms (pronoun, dative feminine singular; pronoun, 3rd person singular nominative feminine) — a form-recognition exercise is warranted",
+            "appears 1 time(s) in this sample",
+            "appears 1 time(s) in this sample",
+            "appears 1 time(s) in this sample",
+            "appears 1 time(s) in this sample",
+            "appears 1 time(s) in this sample",
+            "appears 1 time(s) in this sample",
+            "appears 1 time(s) in this sample"
+          ],
+          "pipelineVersion": 1,
+          "provenance": {
+            "stage": "CP4",
+            "pipelineVersion": 1,
+            "producedBy": "curriculum-lesson.js",
+            "at": "2026-08-24T09:07:02.637Z",
+            "chapterId": "tp_17865786341910000220",
+            "conceptCount": 8
+          },
+          "_pipeline": "cp4",
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "source": "PLAN §7.0 CP1-4 pipeline",
+            "valid": 8,
+            "at": "2026-08-24T09:07:02.637Z"
+          }
         }
       ],
       "generationStats": {
