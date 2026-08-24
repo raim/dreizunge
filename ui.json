@@ -265,7 +265,6 @@
     "ex.type_conjugation.q": "Type the form for \"{pronoun}\" + {verb}",
     "lib.add_lesson": "Add lesson",
     "ex.type_in_placeholder": "Type your answer…",
-    "ex.mic_tooltip": "Speak your answer",
     "ex.mic_no_match": "Didn't catch that — try again, or answer by hand",
     "ex.mic_error": "Couldn't use the microphone — check the browser's permission",
     "form.lesson_type_hdr": "Lesson type",
