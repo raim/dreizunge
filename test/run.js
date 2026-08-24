@@ -265,6 +265,7 @@ run('unit: storyline theme by story style', 'node', [path.join(__dirname, 'unit-
 if (!quick) {
   run('e2e: skill registry API (v81_k, PLAN §8/B2)', 'node', [path.join(__dirname, 'unit-skill-registry-api.test.js')]);
   run('e2e: vocabulary skill tagging (v81_k, PLAN §8/B3)', 'node', [path.join(__dirname, 'e2e-skill-tagging.test.js')]);
+  run('e2e: PLAN §7.0 CP2 — lemma/form/phrase/sense/frequency/script analysis via a real (fake) LLM call', 'node', [path.join(__dirname, 'unit-canonical-analysis.test.js')]);
   // Moved inside the block in v70_b: these six spawn a real server + fake Ollama, but were
   // registered outside it, so --quick spawned servers despite this file's header promising
   // it skips them. The promise now holds.

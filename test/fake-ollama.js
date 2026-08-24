@@ -240,6 +240,27 @@ const srv = http.createServer(async (req, res) => {
     } else if (/Write the continuation now|Write a story for the topic|Plain prose/i.test(usr)) {
       kind = 'story';
       content = 'STORYTEXT[' + Date.now() + '] Es war einmal ein Test. Die Katze und das Haus blieben gleich.';
+    } else if (/careful linguistic analyst/i.test(sys)) {
+      // PLAN §7.0 CP2: token-level lemma/form/sense analysis (canonical-analysis.js). Reads the
+      // token list straight back out of the user message so it works for whatever sentence a test
+      // constructs, and DELIBERATELY OMITS any token whose surface is exactly "ZZZOMIT" — the
+      // fixture unit-canonical-analysis.test.js uses to prove a token the (fake) model never
+      // answered for surfaces as "unresolved", not silently dropped or fabricated.
+      kind = 'canonical_analysis';
+      let payload = {};
+      try { payload = JSON.parse(usr); } catch (_) {}
+      const toks = Array.isArray(payload.tokens) ? payload.tokens : [];
+      const out = { tokens: [], phrases: [] };
+      toks.forEach(t => {
+        if (t.surface === 'ZZZOMIT') return;
+        out.tokens.push({ i: t.i, lemma: String(t.surface || '').toLowerCase(),
+          form: 'noun', sense: 'fake sense for ' + t.surface, confidence: 'high' });
+      });
+      if (toks.length >= 2) {
+        out.phrases.push({ start: toks[0].i, end: toks[1].i,
+          lemma: toks[0].surface + ' ' + toks[1].surface, gloss: 'fake phrase gloss', confidence: 'low' });
+      }
+      content = JSON.stringify(out);
     } else {
       kind = 'vocab'; content = JSON.stringify(vocabLessonWithSkills(sys));
     }

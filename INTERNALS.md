@@ -1101,6 +1101,20 @@ already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly o
 | ⚠️ **a self-referential test-guard trap, found while building this** | `unit-canonical-text.test.js` checks "no server.js dependency" by scanning `canonical-text.js`'s source for a literal `require` call naming it — and the file's OWN explanatory comment had spelled that exact call as an example of what it was NOT doing, which the regex matched. Same class of trap `unit-screen-structure`/`unit-card-consistency` already document: **never spell a source-scanned pattern in a comment near the code it checks** |
 | ⚠️ **Unicode Private Use Area sentinels must be `\uXXXX` escapes, never literal characters** | the ported `jaTokenize`'s U+E000/U+E001 sentinels silently became empty strings mid-edit when written as literal characters — invisible control characters do not reliably survive file edits/tooling. Caught only by generating real furigana-bearing output and finding the group split apart, not by a clean diff |
 
+**`PLAN §7.0` CP2 — analysis report: lemma/form/phrase/sense/frequency/script** (`v83_i`, ONE NEW STANDALONE FILE, sits ON TOP of CP1's output — asked for by the user by name)
+
+| what | where |
+|---|---|
+| the core, model-in-the-loop | `canonical-analysis.js` → `analyzeSentence(model, sentenceRec, opts)` makes ONE real LLM call per CP1 sentence record, proposing lemma/form/sense per token plus multiword `phrases`. UNLIKE CP1, this stage genuinely needs a model — a lemma/sense cannot be derived from Unicode script classes |
+| the model call itself | goes through `llm.js`'s `callLLM` — the SAME standalone, side-effect-free module `server.js` itself requires. No bespoke HTTP client, no `server.js` dependency (that would bind a port) |
+| the uncertainty contract | `parseAnalysisReply(raw, tokens)` — every result is ALIGNED TO THE REAL TOKEN LIST, never to whatever the model returned. A token the model's JSON never mentions gets `confidence:'unresolved'` — a state DISTINCT from the model answering `'low'`. Never dropped, never fabricated. Exercised through a REAL HTTP call to `test/fake-ollama.js`'s new `careful linguistic analyst` branch (not just a hand-written string), per rule 7 |
+| phrase validation | contiguous, in-range spans only; an invalid phrase (out-of-range, non-integer, backwards) is dropped and counted in `phrasesDropped`, never coerced |
+| frequency (no model call) | `computeFrequency(analyzedChapters)` — deterministic, keyed `"lang::lemma"` so the same surface string in two languages is never merged. Explicitly a SAMPLE frequency (whatever chapters one CLI run analysed), not a corpus-wide claim |
+| script (no model call) | `scriptsForLangCP2(lang)` — reads `scripts.json`'s `_langScript` directly (a plain JSON data file, safe to `require`), defaulting to `['latin']` for any language it has no entry for, mirroring server.js's own `scriptsForLang` default |
+| provenance | `cp2Provenance(extra)` — UNLIKE CP1's `cp1Provenance`, this one DOES carry a `model` field, because a real LLM call produced the content it describes |
+| the CLI | `build-canonical-analysis.js` — reads CP1's OWN `canonical-text.json` (not `lessons.json` directly — CP2 sits on top of CP1's sentence/token boundaries, never re-derives its own). Report-only by default, `--write` to persist to its own `canonical-analysis.json`, `--out`/`--in` redirect for testing. Default `--limit` is 2 chapters (not CP1's 24) — model calls are slow, unlike CP1's deterministic transform |
+| ⚠️ **mutation-testing a `--write` CLI is not risk-free** | the first mutation-test run for this CLI's guard used a mutated CLI that wrote into the REAL committed `canonical-text.json` (a hand-edited mutation bypassed the `--out` redirect entirely). Caught immediately via `git status`/`git diff --stat`, restored with `git checkout --`. **A future mutation test of a `--write` CLI should point `--in`/`--out` at scratch copies of BOTH the input and output before mutating**, not rely on the mutation "probably" respecting the redirect flags |
+
 
 ---
 

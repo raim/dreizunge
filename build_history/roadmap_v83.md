@@ -29,9 +29,9 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_h` — `PLAN §7.0` CP1: canonical text + analysis records, report-only — the first buildable slice of Track A's accepted parallel-curriculum direction. New standalone `canonical-text.js`/`build-canonical-text.js`, never touching `lessons.json`. `v83_g` — the progress-card story panel's border shifts red→green with comprehension progress. `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen; question cards' `#ex-story-panel` now COLLAPSED by default. `v83_e`/`v83_d`/`v83_c` — the progress-card/entry-card popup redesign. `v83_b` — `PLAN §12` built end to end |
+| **SHIPPED IN THE v83 LINE** | `v83_i` — `PLAN §7.0` CP2: analysis report (lemma/form/phrase/sense/frequency/script proposals), report-only, model-in-the-loop. New standalone `canonical-analysis.js`/`build-canonical-analysis.js`, sits on top of CP1's `canonical-text.json`, never touching it or `lessons.json`. `v83_h` — `PLAN §7.0` CP1: canonical text + analysis records, report-only — the first buildable slice of Track A's accepted parallel-curriculum direction. New standalone `canonical-text.js`/`build-canonical-text.js`, never touching `lessons.json`. `v83_g` — the progress-card story panel's border shifts red→green with comprehension progress. `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen; question cards' `#ex-story-panel` now COLLAPSED by default. `v83_e`/`v83_d`/`v83_c` — the progress-card/entry-card popup redesign. `v83_b` — `PLAN §12` built end to end |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
-| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h` — see the SHIPPED section above. CP2–CP6 remain open, in sequence. |
+| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 shipped at `v83_i` — see the SHIPPED section above. CP3–CP6 remain open, in sequence. |
 
 Standing rules are in the "Rules earned in session 28…34" blocks — read the **"⚠️ How the rules are
 NUMBERED"** note before citing one.
@@ -1685,6 +1685,110 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_i` — `PLAN §7.0` CP2: analysis report (lemma/form/phrase/sense/frequency/script), report-only
+
+**Shipped by: Claude Code, on user request** ("PLAN §7.0 CP2", asked for by name immediately after
+`v83_h` shipped CP1). The second buildable slice of Track A's migration sequence (`§0`: *"CP2 — add
+lemma/form/phrase/sense/frequency/script proposals and retain the exact derivation or model
+evidence. This is language analysis, not client-side morphology; it must expose uncertainty/review
+rather than silently guessing."*). Unlike CP1, CP2 is genuinely **model-in-the-loop** — a lemma or a
+contextual sense cannot be derived from Unicode script classes the way sentence/token splitting
+could; this is real language knowledge, which the project's own standing principle keeps out of a
+hand-written table.
+
+**What shipped**: one new file, sitting ON TOP of CP1's own output.
+
+- **`canonical-analysis.js`** — the model-in-the-loop core.
+  - `analyzeSentence(model, sentenceRec, opts)` makes ONE real LLM call per CP1 sentence record
+    (`canonical-text.js`'s own `{sentenceId, tokens}` shape — CP2 never re-derives tokenisation, it
+    only annotates the tokens CP1 already produced), asking for `lemma`/`form`/`sense`/`confidence`
+    per token plus multiword `phrases`.
+  - **The model call goes through `llm.js`** — the SAME standalone, side-effect-free module
+    `server.js` itself already requires (`callLLM`). This resolves CP1's own "why not require
+    server.js" concern cleanly: CP1 had no model call to make, so the question of HOW to make one
+    without binding a port never came up; CP2 needed the answer, and it already existed as a shared,
+    safe-to-require module — no new HTTP client was written.
+  - **The uncertainty contract, the plan's central CP2 requirement**: `parseAnalysisReply(raw,
+    tokens)` aligns the model's reply to the REAL token list, never to whatever the model happened to
+    send back. A token the model's JSON never mentions becomes `{lemma:null, form:null, sense:null,
+    confidence:'unresolved'}` — a state provably DISTINCT from the model answering `'low'` (unsure
+    but it tried) or `'high'` (confident). Neither state is ever silently dropped or fabricated into
+    the other. A malformed/unparseable reply degrades every token to `'unresolved'` rather than
+    throwing — one bad reply must not abort an entire chapter's analysis.
+  - **Phrase proposals are validated against the real token list** before being kept: contiguous,
+    in-range spans only. An invalid one (out-of-range index, non-integer, end before start, a span
+    crossing a gap in the token list) is dropped and counted in `phrasesDropped`, never coerced into
+    something that looks valid.
+  - **`frequency` and `script` need no model call at all** — both are the two fields in the plan's
+    list that are genuinely deterministic. `computeFrequency(analyzedChapters)` counts lemma
+    occurrences keyed `"lang::lemma"` (so the same surface string in two languages is never merged)
+    over whatever chapters ONE run actually analysed — explicitly a SAMPLE frequency, not a
+    corpus-wide claim, since this stage never analyses the whole corpus at once.
+    `scriptsForLangCP2(lang)` reads `scripts.json`'s `_langScript` directly — a plain JSON data file,
+    safe to `require` with no side effects, unlike server.js's code — defaulting to `['latin']` for
+    any language without a special entry, mirroring server.js's own `scriptsForLang` default.
+  - **Provenance is CP2-specific and DOES carry a `model` field** — unlike CP1's `cp1Provenance`,
+    which deliberately omits one because CP1 makes no model call, CP2's `cp2Provenance` records which
+    model produced the proposals it describes, since a real LLM call actually happened.
+  - **Standalone on purpose, same reasoning as CP1**: does not `require` server.js (binds a port as a
+    side effect of loading). The one thing CP2 needed that CP1 did not — an actual model call — was
+    already available as its own safe, standalone module (`llm.js`), so no duplication was needed
+    here the way CP1 had to duplicate `jaTokenize`.
+- **`build-canonical-analysis.js`** — the CLI wrapper. Reads CP1's OWN `canonical-text.json` as
+  input, **not** `lessons.json` directly — CP2 sits on top of CP1's sentence/token boundaries in the
+  migration sequence, and re-deriving them independently would risk drifting from CP1's own ids.
+  Report-only by default, `--write` to persist to its own separate `canonical-analysis.json`,
+  `--out`/`--in` redirect for testing (same convention `build-canonical-text.js` established at
+  `v83_h`). Default `--limit` is 2 chapters, not CP1's 24 — model calls are slow, CP1's transform was
+  not.
+
+**Verified at the layer where the claim is observable, including a REAL model call**:
+`unit-canonical-analysis.test.js` (9 sections) — standalone/no-server.js-dependency, prompt
+construction (language names, full token list, every plan-named field), reply parsing (resolved /
+low-confidence / unresolved distinguished, malformed replies degrade safely), phrase validation
+(valid spans kept with real tokenIds, invalid ones dropped and counted), `computeFrequency`
+(deterministic, language-separated), `scriptsForLangCP2` (deterministic, sensible default),
+provenance shape (CP2-specific, carries `model`), and — per rule 7, "a live model call needs a live
+test, not a plausible prompt" — **a REAL HTTP round trip** to `test/fake-ollama.js`'s new `careful
+linguistic analyst` branch (added this release, reads the token list straight back out of the
+request and deliberately omits any token surfaced as `ZZZOMIT`, so the "unresolved" path is proven
+over a real network call, not just against a hand-written string), plus a full CLI integration test
+(byte-for-byte diffs of both `canonical-text.json` and `lessons.json` before/after report-only AND
+`--write` runs, cross-referencing the analysed chapter id against CP1's real store).
+
+**Mutation-tested**: swapping the "unresolved" sentinel for "low" on a missing token — RED. Injecting
+an extra write into `canonical-text.json` inside the CLI's `--write` branch — RED. **A safety lesson
+from doing the second one**: the mutation was hand-edited directly into the CLI rather than routed
+through the `--out`/`--in` flags, so it wrote straight into the REAL, COMMITTED `canonical-text.json`
+on disk — caught immediately via `git status`/`git diff --stat` and restored with `git checkout --`,
+but it should not have been possible to get that far. **A future mutation test of a `--write` CLI
+should point BOTH `--in` and `--out` at scratch copies before mutating**, not trust that the mutation
+will happen to respect the redirect flags — recorded in `INTERNALS.md`'s CP2 section so it is not
+relearned.
+
+**Testing**: 256/228/0/0 full baseline green (from 255/228 — one new test file, registered inside
+`test/run.js`'s `if (!quick)` block since, UNLIKE CP1's test, this one genuinely spawns a fake-Ollama
+server via `test/lib.js`'s `startFakeOllama` — `unit-run-summary`'s own server-spawning-strays guard
+caught it being mis-registered outside that block on the first attempt, exactly the class of mistake
+it exists to catch). No `lessons.json`
+or `canonical-text.json` change — both provably byte-identical before/after every run, report-only
+and `--write` alike. No `ui.json` change either — CP2 has no user-facing surface, same as CP1. (The
+committed `docs/index.html` rebuild for this cut was done against the repo's actual committed
+`ui.json`, not against a concurrent, uncommitted live translation pass running in the user's own
+terminal at the time — see that pass's own note below.)
+
+**A concurrent-work note, not a code change**: while finishing `v83_h`'s own baseline verification, a
+large, unexplained `ui.json` diff turned up mid-investigation. It was not a test-suite side effect —
+`ps aux` found a live `translate-ui.js --threads 5` process running in the user's own terminal
+(`pts/2`), doing exactly the translation pass they had separately mentioned doing. `ui.json` was left
+out of the `v83_h` and `v83_i` commits entirely, on purpose, so this release does not race that
+concurrent work; the user's translation pass is a separate, later commit.
+
+**Not scoped here, deliberately**: CP3's curriculum planning, CP4's new lesson-generation route,
+CP5's progress-card integration, and CP6's retirement of anything legacy. None of those are
+authorised by this release — the migration sequence itself says each stage is "independently
+useful," not that the next one is pre-approved.
 
 ### `v83_h` — `PLAN §7.0` CP1: canonical text + analysis records, report-only
 
