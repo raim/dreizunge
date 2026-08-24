@@ -39,7 +39,7 @@ this file stays current through the whole v84 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v84 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v84 LINE** | `v84_e` — a second mobile follow-up batch: nav icons (prev/☰/next) moved BELOW the whole text field on BOTH progress and entry cards (superseding `v84_d`'s own two-row-within-summary split); the entry card's "next" now goes to the chapter's progress card instead of starting a lesson directly; a short tap on PLAIN story/summary text now advances like Next (built on the SAME `sel.isCollapsed` signal `PLAN §12`'s selection popover already trusts), while a highlighted word keeps its own tap-to-lesson behaviour and a drag-select still opens the grammar/meaning popover — all verified via real DOM `.click()` dispatch, not just direct function calls. `v84_d` — four mobile progress-card UI follow-ups, real-device driven: `#comp-story-panel`'s header row split into two (title/flags/read on top, prev/☰/next below — a long title was overflowing on phones); the corner-pill cluster and tutor fab unified into one full-width translucent `#bottom-bar`; question-card flag/star buttons moved below the collapsed story panel; the mobile "ask the tutor" selection popover — found to be rendering correctly but hidden under the browser's own native selection toolbar — now pins to a fixed spot above `#bottom-bar` on touch devices instead of trying to anchor near the (browser-chrome-obscured) selection. `v84_c` — the `dreizunge` PATH launcher (`bin/dreizunge`, installed onto `~/.local/bin` by `install.sh`): starts the server, opens the browser once it answers, `--no-browser` to skip — the `jupyter notebook` shape, discussed and deferred at the `v83` cut, built now on direct request. Verified with a real symlinked-from-elsewhere run against a stub server AND a real `install.sh` end-to-end run confirming idempotent install + a genuine working launch. `v84_b` — PWA install support (`manifest.json`/`icon.svg`/`sw.js`, local server only): browsers can offer "Install App," windowed, no tabs/omnibox. Registration confirmed working by the USER, same day, in real Google Chrome on Ubuntu via `localhost:3000` (a sandboxed preview browser had failed during the build itself, flagged as unverified at the time — now measured). A LAN IP over plain HTTP (tested on Android) still shows no install option — a separate, well-understood limitation (service workers need a secure context; HTTPS/a TLS proxy is the real fix, matching the app's own existing insecure-transport warning), not a bug in this release. Also fixed, found while building this: `test/lib-dom.js`'s `loadClient()` had a fragile trailing-regex that assumed `init();` was the LAST statement in the client script — the first code ever added after it (this release's own SW registration) silently un-suppressed `init()` in ~80 unit tests. Fixed by anchoring on the `@static-engine-end` marker instead. |
+| **SHIPPED IN THE v84 LINE** | `v84_f` — fixed `test/lib-dom.js`'s `textContent` trailing-text ordering bug, orphaned by a genuine two-session `v83_g` NAME COLLISION (both cut a release called `v83_g` from the same `v83_f` parent; the story-panel-border one reached `main` first and the line continued through it, this fix's commit never merged in and sat undetected since `unit-roadmap-version` can't see a commit that isn't on `main`). `v84_e` — a second mobile follow-up batch: nav icons (prev/☰/next) moved BELOW the whole text field on BOTH progress and entry cards (superseding `v84_d`'s own two-row-within-summary split); the entry card's "next" now goes to the chapter's progress card instead of starting a lesson directly; a short tap on PLAIN story/summary text now advances like Next (built on the SAME `sel.isCollapsed` signal `PLAN §12`'s selection popover already trusts), while a highlighted word keeps its own tap-to-lesson behaviour and a drag-select still opens the grammar/meaning popover — all verified via real DOM `.click()` dispatch, not just direct function calls. `v84_d` — four mobile progress-card UI follow-ups, real-device driven: `#comp-story-panel`'s header row split into two (title/flags/read on top, prev/☰/next below — a long title was overflowing on phones); the corner-pill cluster and tutor fab unified into one full-width translucent `#bottom-bar`; question-card flag/star buttons moved below the collapsed story panel; the mobile "ask the tutor" selection popover — found to be rendering correctly but hidden under the browser's own native selection toolbar — now pins to a fixed spot above `#bottom-bar` on touch devices instead of trying to anchor near the (browser-chrome-obscured) selection. `v84_c` — the `dreizunge` PATH launcher (`bin/dreizunge`, installed onto `~/.local/bin` by `install.sh`): starts the server, opens the browser once it answers, `--no-browser` to skip — the `jupyter notebook` shape, discussed and deferred at the `v83` cut, built now on direct request. Verified with a real symlinked-from-elsewhere run against a stub server AND a real `install.sh` end-to-end run confirming idempotent install + a genuine working launch. `v84_b` — PWA install support (`manifest.json`/`icon.svg`/`sw.js`, local server only): browsers can offer "Install App," windowed, no tabs/omnibox. Registration confirmed working by the USER, same day, in real Google Chrome on Ubuntu via `localhost:3000` (a sandboxed preview browser had failed during the build itself, flagged as unverified at the time — now measured). A LAN IP over plain HTTP (tested on Android) still shows no install option — a separate, well-understood limitation (service workers need a secure context; HTTPS/a TLS proxy is the real fix, matching the app's own existing insecure-transport warning), not a bug in this release. Also fixed, found while building this: `test/lib-dom.js`'s `loadClient()` had a fragile trailing-regex that assumed `init();` was the LAST statement in the client script — the first code ever added after it (this release's own SW registration) silently un-suppressed `init()` in ~80 unit tests. Fixed by anchoring on the `@static-engine-end` marker instead. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, all of CP1–5) are BOTH fully shipped — see `roadmap_v83.md`'s own `# SHIPPED IN THE v83 LINE` for how. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). No new PLAN track is open as of this cut. |
 
@@ -1720,6 +1720,49 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v84 LINE
+
+### `v84_f` — fixed `test/lib-dom.js`'s `textContent` trailing-text ordering bug (orphaned by a `v83_g` version collision)
+
+**Shipped by: Claude Code, on user request** — closes a fix that was flagged as "in progress,
+elsewhere" as far back as `SESSION_PROMPT_v83_b.md`, and then genuinely lost to a real merge hazard:
+**two sessions independently cut a release named `v83_g` from the same `v83_f` parent** — one shipped
+this `lib-dom.js` fix, the other shipped the story-panel border-color feature (now in this line as
+`v83_g`, commit `d9bbefa`). Both used the identical next-letter version name because neither could see
+the other's concurrent work. The story-panel `v83_g` reached `main` first and the line continued
+through it (`v83_h`…`v84_e`); the `lib-dom.js` fix commit was never merged in and sat as an orphaned
+commit on an unrelated branch, invisible to `unit-roadmap-version` (which only ever checks the ONE
+roadmap/prompt pair that IS on `main`) — a red baseline would never have caught this, since `main`'s
+own tree was never red. Found only because this session was asked to commit that orphaned work and
+checked `main`'s history first. **The underlying bug was still live on `main`**: confirmed
+`test/lib-dom.js`'s `textContent` getter was still the old `_text`-then-`children` shape before
+reapplying the fix here.
+
+**The fix itself** (unchanged from the orphaned commit): `parseHtmlInto`'s `flushText()` had appended
+every text run at a nesting level — both BEFORE and AFTER child elements — into one `_text` string on
+the parent, discarding where each run actually fell relative to the children. The `textContent`
+getter then reduced with `_text` as the INITIAL accumulator and each child's own text appended AFTER
+it, so trailing text always landed ahead of the children's text regardless of source order:
+`'x<b>A</b>y'` came back with the `y` misplaced before the `A` instead of `'xAy'`. Now walks
+`childNodes` — which `parseHtmlInto` already populates in real document order — instead of
+`_text`-then-`children`; `insertBefore`/`insertAdjacentElement`/`after`/`before`/`replaceChildren`
+brought into sync with `childNodes` so the getter's new reliance on it doesn't regress those mutation
+paths.
+
+**Mutation-tested**: reverted the getter to the old shape, confirmed the regression test fails exactly
+as described (`'xyA' !== 'xAy'`), confirmed it passes again on the fix.
+
+**Testing**: new `test/unit-lib-dom-textcontent.test.js` (trailing text after a child — the bug; the
+`<ruby>A<rt>B</rt></ruby>` case from the original report; leading text; text on both sides; children
+with no surrounding text; plain text). Wired into `test/run.js`; baseline moved from 264/230 to
+**265/231**. `docs/index.html` rebuilt (only the baked `APP_VERSION` moved — no `index.html` source
+touched, test-harness only). No `ui.json` change.
+
+⚠️ **Worth naming as a process gap, not just a fix**: nothing currently prevents two concurrent
+sessions from picking the same next version letter off the same parent commit. `unit-roadmap-version`
+guards the roadmap/prompt pair that's actually on `main`, but has no way to see a commit that never
+reached `main` at all. If concurrent-session work becomes routine, checking `main`'s actual `git log`
+for the intended next version letter before naming a release — not just reading the local
+`SESSION_PROMPT` — is what would have caught this earlier.
 
 ### `v84_e` — nav-below-text, entry-card next → progress card, tap-to-advance on plain story text
 

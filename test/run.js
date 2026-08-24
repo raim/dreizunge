@@ -34,6 +34,7 @@ const docs = path.join(ROOT, 'docs', 'index.html');
 if (fs.existsSync(docs)) run('inline script: docs/index.html', 'node', [path.join(__dirname, 'check-inline.js'), docs]);
 run('ui.json parses', 'node', ['-e', "require(path.join('" + ROOT.replace(/\\/g, '\\\\') + "','ui.json'));console.log('  ui.json: OK')"]);
 run('lessons.json parses', 'node', ['-e', "require(path.join('" + ROOT.replace(/\\/g, '\\\\') + "','lessons.json'));console.log('  lessons.json: OK')"]);
+run('harness: lib-dom textContent ordering', 'node', [path.join(__dirname, 'unit-lib-dom-textcontent.test.js')]);
 
 // 2) Unit tests — always run.
 run('unit: id-based resolvers (item 2)', 'node', [path.join(__dirname, 'unit-resolvers.test.js')]);

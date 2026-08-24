@@ -1,23 +1,36 @@
-# Session prompt — written at the `v84_e` cut
+# Session prompt — written at the `v84_f` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
-one alongside. Keep using the double-letter suffix scheme (`v84_f`, `v84_g`, …) unless a future
+one alongside. Keep using the double-letter suffix scheme (`v84_g`, `v84_h`, …) unless a future
 session has a good reason to switch to `v85_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v84_e`** — a SECOND mobile follow-up
-batch, sent while `v84_d` was still being finalized (same real-phone-use conversation), refining two
-of `v84_d`'s own decisions and adding a genuinely new interaction: (1) nav icons (prev/☰/next) moved
-BELOW the whole text field on BOTH progress and entry cards — superseding `v84_d`'s own two-row-
-within-`<summary>` split, which this follow-up explicitly said didn't go far enough; (2) the entry
-card's "next" now goes to the chapter's own progress card instead of starting a lesson directly (the
-old `v77_k`-era "two destinations" design collapsed to one); (3) a short tap on PLAIN story/summary
-text now advances like Next — built on the SAME `sel.isCollapsed` signal `PLAN §12`'s selection
-popover already trusts, so a drag-select still opens that popover unchanged; (4) a highlighted word
+zero-dependency Node language-learning app). Picking up from **`v84_f`** — a test-harness fix, not a
+product change, with a real process lesson attached: `test/lib-dom.js`'s `textContent` getter
+mis-ordered text following a child element (`'x<b>A</b>y'` → trailing `y` misplaced before the `A`).
+**⚠️ Read the full `v84_f` entry in `roadmap_v84.md` before naming a version letter yourself**: this
+fix was originally shipped in a DIFFERENT session as `v83_g`, but a SECOND session independently cut
+its OWN `v83_g` (the story-panel border-color feature) from the same `v83_f` parent at the same time —
+neither could see the other's concurrent work. The border-color one reached `main` first and the line
+continued through it (`v83_h`…`v84_e`); this fix's commit was orphaned, never merged, and invisible to
+`unit-roadmap-version` (which only checks the roadmap/prompt pair that IS on `main` — it cannot see a
+commit that never reached it). Found and re-applied only because this session was asked to commit it
+and checked `main`'s actual history first, rather than trusting the local branch. **If two sessions
+might be running concurrently, check `main`'s own `git log` for the actual next free version letter
+before naming a release — the local `SESSION_PROMPT` alone is not enough.**
+
+**`v84_e`, condensed** (full write-up in `roadmap_v84.md`) — a SECOND mobile follow-up batch, sent
+while `v84_d` was still being finalized (same real-phone-use conversation), refining two of `v84_d`'s
+own decisions and adding a genuinely new interaction: (1) nav icons (prev/☰/next) moved BELOW the
+whole text field on BOTH progress and entry cards — superseding `v84_d`'s own two-row-within-
+`<summary>` split, which this follow-up explicitly said didn't go far enough; (2) the entry card's
+"next" now goes to the chapter's own progress card instead of starting a lesson directly (the old
+`v77_k`-era "two destinations" design collapsed to one); (3) a short tap on PLAIN story/summary text
+now advances like Next — built on the SAME `sel.isCollapsed` signal `PLAN §12`'s selection popover
+already trusts, so a drag-select still opens that popover unchanged; (4) a highlighted word
 (`tapWord()`/`.wp-tap`) keeps its own tap-to-lesson behaviour, per the user's own explicit follow-up
 clarification sent right after item 3 shipped. All verified via REAL DOM `.click()` dispatch against
-a real chapter's real data, not just direct function calls. Full write-up in `roadmap_v84.md`'s own
-`v84_e` entry — read it before touching any of these areas again.
+a real chapter's real data, not just direct function calls.
 
 **`v84_d`, condensed** — the FIRST mobile follow-up batch, same conversation: `#comp-story-panel`'s
 header row split into two (superseded above); the corner-pill cluster and tutor fab unified into one
@@ -56,23 +69,24 @@ API vs. cloud call; pronunciation-quality scoring is hard and out of scope).
 1. **This file**, whole.
 2. `build_history/roadmap_v84.md` — its **index table** and **⚠️ Session protocol** block first, then
    `# ⚠️ OPEN AT THE v84 CUT` (findings, `§0`/`§0i`, the standing RULES — now 37, see "Rules earned in
-   the v83 line" for the two newest), then `# SHIPPED IN THE v84 LINE` for `v84_e`'s second mobile
-   batch, `v84_d`'s first, `v84_c`'s launcher, and `v84_b`'s PWA work + the `lib-dom.js` fix — read
-   all of it before touching any of those areas.
+   the v83 line" for the two newest), then `# SHIPPED IN THE v84 LINE` for `v84_f`'s orphaned-fix
+   recovery (and the version-collision process lesson), `v84_e`'s second mobile batch, `v84_d`'s
+   first, `v84_c`'s launcher, and `v84_b`'s PWA work — read all of it before touching any of those
+   areas.
 3. `INTERNALS.md` — constants, silent-failure modes, invariants. **§6b is a feature → function map**
    — read it BEFORE grepping for where anything lives.
 
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 264 checks
-node test/run.js --quick                  → expect 230
+node test/run.js                          → expect 265 checks
+node test/run.js --quick                  → expect 231
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut: **327 topics, 92 storylines, 33 languages, 659 `en` keys** (unchanged since
-`v83_m`). `APP_VERSION = 'v84_e'`.
+`v83_m` — `v84_f` is a test-harness fix, no `ui.json`/`lessons.json` change). `APP_VERSION = 'v84_f'`.
 
 ⚠️ **Check `git status --short lessons.json` at the start of this session.** If it shows modified,
 that is very likely the user's own real, uncommitted `PLAN §7.0`/CP4-pipeline evaluation data — not

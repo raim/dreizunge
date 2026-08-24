@@ -326,7 +326,7 @@ function makeElement(tag = 'div', id = '', doc = null) {
     },
     appendChild(c) { if (c && c.nodeType === 1) c._parent = this; this.children.push(c); this.childNodes.push(c); return c; },
     removeChild(c) { this.children = this.children.filter(x => x !== c); this.childNodes = this.childNodes.filter(x => x !== c); return c; },
-    insertBefore(c) { if (c && c.nodeType === 1) c._parent = this; this.children.unshift(c); return c; },
+    insertBefore(c) { if (c && c.nodeType === 1) c._parent = this; this.children.unshift(c); this.childNodes.unshift(c); return c; },
     remove() { const p = this._parent; if (p) p.removeChild(this); },
     // v73_c: real matching over the parsed tree.
     //
@@ -361,14 +361,14 @@ function makeElement(tag = 'div', id = '', doc = null) {
     getBoundingClientRect() { return { top: 0, left: 0, right: 0, bottom: 0, width: 100, height: 20 }; },
     animate() { return { finished: Promise.resolve(), cancel() {} }; },
     insertAdjacentHTML() {},
-    insertAdjacentElement(pos, el) { this.children.push(el); return el; },
+    insertAdjacentElement(pos, el) { this.children.push(el); this.childNodes.push(el); return el; },
     insertAdjacentText() {},
     // ChildNode.after/before insert siblings. The stub has no real tree, so they behave like the
     // adjacent-insert stubs above: accept the nodes, run no layout. Enough for code that appends a
     // results panel after an element (e.g. ehCheck) without needing it queried back.
-    after(...nodes) { (this.parentNode || this).children.push(...nodes.filter(n => typeof n === 'object')); },
-    before(...nodes) { (this.parentNode || this).children.push(...nodes.filter(n => typeof n === 'object')); },
-    replaceChildren() { this.children = []; },
+    after(...nodes) { const p = (this.parentNode || this), n = nodes.filter(n => typeof n === 'object'); p.children.push(...n); p.childNodes.push(...n); },
+    before(...nodes) { const p = (this.parentNode || this), n = nodes.filter(n => typeof n === 'object'); p.children.push(...n); p.childNodes.push(...n); },
+    replaceChildren() { this.children = []; this.childNodes = []; },
     contains() { return false; },
     matches() { return false; },
     cloneNode() { return makeElement(this.tagName, this.id); },
@@ -392,10 +392,22 @@ function makeElement(tag = 'div', id = '', doc = null) {
   // textContent follows the DOM: reading concatenates descendant text, writing replaces children.
   // Before v73_c it was a plain field, so an element filled via innerHTML reported '' — which is
   // exactly why card titles and button labels could only be checked by regexing markup.
+  //
+  // Text has to be walked via childNodes, in document order, NOT via `_text` + children. `_text`
+  // (set by flushText in parseHtmlInto) accumulates ALL of an element's own text — both before AND
+  // after its child elements — into one blob, so a naive "_text then children" walk always put
+  // trailing text ahead of interleaved children's text. childNodes preserves the real interleaving:
+  // parseHtmlInto pushes a text node the instant it flushes, right where it occurred, and element
+  // children go in via appendChild at the point they open. Elements with no childNodes (raw
+  // <script>/<style> bodies, or textContent set directly) fall back to `_text`, which is exactly
+  // their whole content in those cases.
   Object.defineProperty(el, 'textContent', {
     get() {
-      if (!el.children.length) return el._text;
-      const walk = (n) => (n.children || []).reduce((acc, c) => acc + (c.nodeType === 1 ? walk(c) : (c.textContent || '')), n._text || '');
+      const walk = (n) => {
+        if (n.nodeType === 3) return n.textContent || '';
+        if (!n.childNodes || !n.childNodes.length) return n._text || '';
+        return n.childNodes.reduce((acc, c) => acc + walk(c), '');
+      };
       return walk(el);
     },
     set(v) { el._text = String(v == null ? '' : v); el.children = []; el.childNodes = []; el._html = ''; },
