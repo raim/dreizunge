@@ -3896,6 +3896,42 @@ identity rather than invent per-generator dialects.
 This section changes architecture upstream, not the current delivery shell. It does **not** authorise
 a parallel player, new progress system, bulk corpus rewrite, or a BKT-driven gate.
 
+> **📝 NOTE, added after `v83_m` shipped, during planning for browser integration (user conversation,
+> not yet built) — MULTI-CHAPTER / STORYLINE-WIDE GENERATION.**
+>
+> Batch processing across many chapters in ONE run already works today — every CP1-4 CLI already
+> accepts `--limit N`/`--all`, proven at `v83_h` (24 chapters, 14 languages, one command). What does
+> **not** exist yet is the pipeline being AWARE it is looking at one continuous, ordered story.
+> Two genuinely different pieces of work were distinguished in that conversation, and they should
+> stay distinguished rather than being built (or deferred) as one lump:
+>
+> 1. **Cross-chapter DEDUPLICATION — SIMPLE, do this early, probably alongside the first browser-
+>    reachable slice.** Before choosing chapter N's vocabulary, exclude lemmas already taught in
+>    chapters 1…N-1 of the SAME storyline. Needs no new model call and no new pipeline stage:
+>    `compareWithExistingLessons` (CP3) already does almost this — it just needs widening from "this
+>    chapter's own lessons" to "every earlier chapter's lessons in the storyline" (a loop over the
+>    storyline's earlier topics, unioning their `vocab.target` values) — plus a filter step in CP4
+>    before it picks its top N concepts. `emitVocabLesson` already degrades cleanly to "skip, nothing
+>    new to teach" when a chapter's remaining vocab concepts are empty, so "generate less or no
+>    lesson for an already-covered chapter" falls out for free once the filter exists. **Without
+>    this, running the pipeline across multiple chapters of one story has a real failure mode**: the
+>    same highest-frequency words get re-proposed as "new" in every chapter, since CP3's ranking has
+>    no memory between chapters today — worse than the legacy generator, which already avoids this
+>    via its own `chainVocab`/`vocabMode:'extend'` mechanism. Mirror that existing mechanism's
+>    *intent*, not its implementation (CP3's concepts have stable ids; the comparison can be a lookup
+>    against `conceptId`/`lemma`, not a fuzzy word-list diff the way the legacy prompt hint is).
+> 2. **Genuine cross-chapter curriculum SEQUENCING — moderate effort (roughly CP3-sized), NOT
+>    necessary for now.** Deciding WHAT to teach WHEN across a whole story's arc (e.g. "teach this in
+>    chapter 2 because chapter 5's phrase needs it as a prerequisite") is real design work: it needs
+>    every chapter's analysis available before any one chapter's plan is finalised, and a genuinely
+>    different data shape (a storyline-level plan, not N independent chapter-level ones). **Explicitly
+>    NOT authorised or scoped by this note** — defer until (1) has shipped and been used for real, and
+>    only revisit if the simpler dedup alone proves insufficient in practice.
+>
+> Neither piece changes CP1 or CP2 at all — both are CP3/CP4-only extensions. Do not build (2) by
+> assuming it is a small extension of (1); they were kept separate on purpose in the conversation that
+> produced this note, precisely because the two have very different effort/necessity profiles.
+
 Sequenced so each step is independently useful:
 
 1. **A1 — plain text / markdown upload with a separate chaptering card.** No §2 dependency at all,
