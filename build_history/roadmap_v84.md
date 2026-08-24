@@ -39,7 +39,7 @@ this file stays current through the whole v84 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v84 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v84 LINE** | `v84_k` — `syn_select` (synonym/antonym tiles) gets speech input (select+colour a tile live, green if correct/red if not, never auto-checks), then EVERY per-exercise mic button is replaced by ONE persistent pill in the bottom bar that auto-listens the instant a speakable question is on screen and re-arms itself continuously until answered — plus a real stale-generation bug (a slow pass from a PREVIOUS question silently marking the NEXT one wrong) found by this session's own mutation-testing and fixed. `v84_i` — closed a real gap `v84_h` missed (`mcq_source_target`/`tMcqEI`, a common vocabulary MCQ sharing its render function with the script-primer intro items, now correctly gets a target-locale mic too), and the MCQ mic now SHOWS what it heard in `#mcq-mic-heard` — green and left standing on a match, self-clearing after a timeout otherwise — reversing `v84_g`'s original "never shown" design on direct user request. `v84_h` — speech recognition widened to the source-language-choice MCQ types too (`mcq_target_source`/`listen_mcq`), via a `speakable:'target'\|'source'` kind on `cGrid` so recognition listens in whichever language a call site's choices actually are; still excludes `comprehension_mcq` and the glyph-picking script-primer item. `v84_g` — browser-native speech recognition for answer checking (typed-answer exercises first, then the target-language-choice MCQ types only), and a "reply ready" speech-bubble badge on the tutor fab when a reply lands while the widget is closed. `v84_f` — fixed `test/lib-dom.js`'s `textContent` trailing-text ordering bug, orphaned by a genuine two-session `v83_g` NAME COLLISION (both cut a release called `v83_g` from the same `v83_f` parent; the story-panel-border one reached `main` first and the line continued through it, this fix's commit never merged in and sat undetected since `unit-roadmap-version` can't see a commit that isn't on `main`). `v84_e` — a second mobile follow-up batch: nav icons (prev/☰/next) moved BELOW the whole text field on BOTH progress and entry cards (superseding `v84_d`'s own two-row-within-summary split); the entry card's "next" now goes to the chapter's progress card instead of starting a lesson directly; a short tap on PLAIN story/summary text now advances like Next (built on the SAME `sel.isCollapsed` signal `PLAN §12`'s selection popover already trusts), while a highlighted word keeps its own tap-to-lesson behaviour and a drag-select still opens the grammar/meaning popover — all verified via real DOM `.click()` dispatch, not just direct function calls. `v84_d` — four mobile progress-card UI follow-ups, real-device driven: `#comp-story-panel`'s header row split into two (title/flags/read on top, prev/☰/next below — a long title was overflowing on phones); the corner-pill cluster and tutor fab unified into one full-width translucent `#bottom-bar`; question-card flag/star buttons moved below the collapsed story panel; the mobile "ask the tutor" selection popover — found to be rendering correctly but hidden under the browser's own native selection toolbar — now pins to a fixed spot above `#bottom-bar` on touch devices instead of trying to anchor near the (browser-chrome-obscured) selection. `v84_c` — the `dreizunge` PATH launcher (`bin/dreizunge`, installed onto `~/.local/bin` by `install.sh`): starts the server, opens the browser once it answers, `--no-browser` to skip — the `jupyter notebook` shape, discussed and deferred at the `v83` cut, built now on direct request. Verified with a real symlinked-from-elsewhere run against a stub server AND a real `install.sh` end-to-end run confirming idempotent install + a genuine working launch. `v84_b` — PWA install support (`manifest.json`/`icon.svg`/`sw.js`, local server only): browsers can offer "Install App," windowed, no tabs/omnibox. Registration confirmed working by the USER, same day, in real Google Chrome on Ubuntu via `localhost:3000` (a sandboxed preview browser had failed during the build itself, flagged as unverified at the time — now measured). A LAN IP over plain HTTP (tested on Android) still shows no install option — a separate, well-understood limitation (service workers need a secure context; HTTPS/a TLS proxy is the real fix, matching the app's own existing insecure-transport warning), not a bug in this release. Also fixed, found while building this: `test/lib-dom.js`'s `loadClient()` had a fragile trailing-regex that assumed `init();` was the LAST statement in the client script — the first code ever added after it (this release's own SW registration) silently un-suppressed `init()` in ~80 unit tests. Fixed by anchoring on the `@static-engine-end` marker instead. |
+| **SHIPPED IN THE v84 LINE** | `v84_l` — speech recognition now listens CONTINUOUSLY (one `SpeechRecognition` session per question instead of a restart on every phrase) to cut down Android's audible start/stop tone, which JS cannot suppress directly; the mic pill's tap is now a MUTE toggle instead of "retry" (redundant once listening is continuous), muted being a standing preference that survives navigating between questions; a three-dot listening animation replaces the 🎤 glyph while a session is open; plus TWO real bugs found by this session's own mutation-testing and live rendering — a stop-before-check ordering hazard that could spawn a superfluous second session right after a correct answer, and an inline-style specificity bug (spanning `v84_k` too) that had silently made the pill's own active/listening/muted colours complete no-ops the whole time. `v84_k` — `syn_select` (synonym/antonym tiles) gets speech input (select+colour a tile live, green if correct/red if not, never auto-checks), then EVERY per-exercise mic button is replaced by ONE persistent pill in the bottom bar that auto-listens the instant a speakable question is on screen and re-arms itself continuously until answered — plus a real stale-generation bug (a slow pass from a PREVIOUS question silently marking the NEXT one wrong) found by this session's own mutation-testing and fixed. `v84_i` — closed a real gap `v84_h` missed (`mcq_source_target`/`tMcqEI`, a common vocabulary MCQ sharing its render function with the script-primer intro items, now correctly gets a target-locale mic too), and the MCQ mic now SHOWS what it heard in `#mcq-mic-heard` — green and left standing on a match, self-clearing after a timeout otherwise — reversing `v84_g`'s original "never shown" design on direct user request. `v84_h` — speech recognition widened to the source-language-choice MCQ types too (`mcq_target_source`/`listen_mcq`), via a `speakable:'target'\|'source'` kind on `cGrid` so recognition listens in whichever language a call site's choices actually are; still excludes `comprehension_mcq` and the glyph-picking script-primer item. `v84_g` — browser-native speech recognition for answer checking (typed-answer exercises first, then the target-language-choice MCQ types only), and a "reply ready" speech-bubble badge on the tutor fab when a reply lands while the widget is closed. `v84_f` — fixed `test/lib-dom.js`'s `textContent` trailing-text ordering bug, orphaned by a genuine two-session `v83_g` NAME COLLISION (both cut a release called `v83_g` from the same `v83_f` parent; the story-panel-border one reached `main` first and the line continued through it, this fix's commit never merged in and sat undetected since `unit-roadmap-version` can't see a commit that isn't on `main`). `v84_e` — a second mobile follow-up batch: nav icons (prev/☰/next) moved BELOW the whole text field on BOTH progress and entry cards (superseding `v84_d`'s own two-row-within-summary split); the entry card's "next" now goes to the chapter's progress card instead of starting a lesson directly; a short tap on PLAIN story/summary text now advances like Next (built on the SAME `sel.isCollapsed` signal `PLAN §12`'s selection popover already trusts), while a highlighted word keeps its own tap-to-lesson behaviour and a drag-select still opens the grammar/meaning popover — all verified via real DOM `.click()` dispatch, not just direct function calls. `v84_d` — four mobile progress-card UI follow-ups, real-device driven: `#comp-story-panel`'s header row split into two (title/flags/read on top, prev/☰/next below — a long title was overflowing on phones); the corner-pill cluster and tutor fab unified into one full-width translucent `#bottom-bar`; question-card flag/star buttons moved below the collapsed story panel; the mobile "ask the tutor" selection popover — found to be rendering correctly but hidden under the browser's own native selection toolbar — now pins to a fixed spot above `#bottom-bar` on touch devices instead of trying to anchor near the (browser-chrome-obscured) selection. `v84_c` — the `dreizunge` PATH launcher (`bin/dreizunge`, installed onto `~/.local/bin` by `install.sh`): starts the server, opens the browser once it answers, `--no-browser` to skip — the `jupyter notebook` shape, discussed and deferred at the `v83` cut, built now on direct request. Verified with a real symlinked-from-elsewhere run against a stub server AND a real `install.sh` end-to-end run confirming idempotent install + a genuine working launch. `v84_b` — PWA install support (`manifest.json`/`icon.svg`/`sw.js`, local server only): browsers can offer "Install App," windowed, no tabs/omnibox. Registration confirmed working by the USER, same day, in real Google Chrome on Ubuntu via `localhost:3000` (a sandboxed preview browser had failed during the build itself, flagged as unverified at the time — now measured). A LAN IP over plain HTTP (tested on Android) still shows no install option — a separate, well-understood limitation (service workers need a secure context; HTTPS/a TLS proxy is the real fix, matching the app's own existing insecure-transport warning), not a bug in this release. Also fixed, found while building this: `test/lib-dom.js`'s `loadClient()` had a fragile trailing-regex that assumed `init();` was the LAST statement in the client script — the first code ever added after it (this release's own SW registration) silently un-suppressed `init()` in ~80 unit tests. Fixed by anchoring on the `@static-engine-end` marker instead. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, all of CP1–5) are BOTH fully shipped — see `roadmap_v83.md`'s own `# SHIPPED IN THE v83 LINE` for how. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). No new PLAN track is open as of this cut. |
 
@@ -1720,6 +1720,93 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v84 LINE
+
+### `v84_l` — continuous listening (far fewer beeps), a mute toggle, and a listening animation
+
+**Shipped by: Claude Code, on THREE direct user follow-ups, landing together** (the third arrived
+mid-session, before the first two ever reached `main`): *"please suppress all (or most, if you think
+some are important) sound effects (beeps) from the new speech recognition system. also we want it to
+be active all the time, except the microphone icon is pressed to mute input."* Then, separately:
+*"when the speech recognition is active, can we have a permanent animation (a wave or dots) that is
+animated when speech is actively recognized/interpreted by the system, and still if not?"*
+
+**1. Fewer beeps.** Nothing in the Web Speech API lets a page suppress the audible tone Android Chrome
+plays on every `SpeechRecognition.start()` — that control simply does not exist at the JS level. The
+`v84_g`…`v84_k` design listened ONCE then restarted after EVERY single result (a mismatch, plain
+silence, anything) — for a continuously-listening feature, that meant a beep roughly every few
+seconds for as long as a speakable question was on screen. The fix: `rec.continuous = true`
+(`_speechListenSession`, replacing the one-shot `_speechRecognizeOnce`). ONE recognizer instance now
+stays open across MANY spoken phrases within a question, firing a phrase callback repeatedly without
+ever stopping/restarting the underlying audio session — the tone now plays once per QUESTION (or once
+per resume from mute), not once per phrase. A `'type'`/`'mcq'` MATCH still explicitly stops the
+session (the correct-answer TTS reveal is about to play, and a still-open mic risks hearing its own
+voice); `'syn'` never stops on a match, since `syn_select` genuinely wants MORE words next. The
+browser's own silence timeout still exists even in continuous mode — when it fires with no error, the
+session resumes automatically (still "always listening"); a genuine hard error (permission denied, no
+mic, offline) stops for good, toasted once.
+
+**2. The pill is now a MUTE TOGGLE, not a "retry."** With continuous listening already covering
+"try again," the old click-to-retry meaning was redundant — the user's own framing directly replaces
+it: a tap now flips `APP.micMuted` (mirroring `APP.muted`'s own not-persisted-across-loads shape).
+Muted stops the session immediately and shows a distinct red "muted" pill state (vs. the blue
+"active" one); unmuting resumes listening for whatever's currently on screen via the SAME
+`_speechMicRefresh()` every render already calls. Muted is a STANDING preference — surviving a render
+to a different speakable question, not reset per-question, matching "except the microphone icon is
+pressed to mute input" (not "except for this one question").
+
+**3. A listening animation.** The Web Speech API exposes no "hearing something right now" signal
+(`interimResults` stays off — see `v84_g`'s own reasoning for why), so there is no honest way to make
+an indicator react to actual speech; the user's own "and still if not" confirms that's fine — one
+continuous animation for as long as the session is genuinely open, not an attempt to fake real-time
+audio reactivity. Three small dots (`.mic-dots`, CSS `@keyframes mic-dot-bounce`, staggered
+`animation-delay`) replace the 🎤 glyph while `.listening` is present — the SAME class the pill
+already carried, added/removed by the exact session lifecycle `_speechStartSession`/
+`_speechListenSession` already owned; no new state was needed, only a new thing to show for it.
+
+**Two real bugs found by this session's OWN mutation-testing and live rendering, neither reported by
+the user:**
+- **An ordering hazard.** `_speechStopListening()` was originally called BEFORE `check()`/
+  `pickChoice()` on a match. Stopping a session can fire its `onend` event SYNCHRONOUSLY (confirmed in
+  the test mock; real browsers vary but the hazard is real either way) — and `onend`'s own "should I
+  resume?" logic reads `APP.cur.answered` to decide. Stop-then-check meant that read happened before
+  `check()` had set `answered`, so the just-answered question's session would resume into a SECOND,
+  entirely superfluous session instead of staying stopped. Caught immediately by the very first
+  mutation-test of the new continuous-session code (an assertion expecting exactly one `.start()` call
+  got two) — fixed by reordering to check-then-stop, documented inline so a future edit doesn't
+  silently reintroduce it.
+- **An inline-style specificity bug spanning `v84_k` AND `v84_l`, invisible to every test written so
+  far.** The pill's `background`/`border`/`opacity` had been set in its own inline `style=""` since
+  `v84_k` — and an inline style always wins over a stylesheet rule regardless of class specificity, so
+  `.active`/`.listening`/`.muted`'s colour and opacity changes had been complete no-ops the ENTIRE
+  time; only the dots-vs-icon `display` swap (built in THIS release) ever visibly worked, because
+  nothing inline was fighting it. `test/lib-dom.js` cannot catch this class of bug at all — it does
+  not implement real CSS cascade/specificity — so it was invisible to every one of this arc's
+  mutation-tested unit tests across five releases. Found only by actually starting a throwaway server
+  on a spare port (the running server was reading the MAIN checkout, not this uncommitted work — a
+  second confirmation of the `v84_g`-era branch/`main` lesson) and reading the pill's real COMPUTED
+  style in a live browser, not assumed correct because the rules existed and the tests were green.
+  Fixed by moving the default look into a base `#speech-mic-pill{}` stylesheet rule and keeping the
+  state rules as compound `#speech-mic-pill.xxx` selectors, which out-specificity it.
+
+**Testing**: `test/unit-speech-recognition.test.js` rewritten again around the continuous-session
+model — a new mock (`mockSessions`) scripts what EACH successive `.start()` call does (not just what
+happens within one), letting tests assert on SESSION COUNT directly (`window.__micStarts`/`__micStops`
+/`__micAborts`), which is the only way to actually prove "fewer beeps" rather than just "still
+correct." Covers: one session absorbing several phrases with zero restarts; a `'type'`/`'mcq'` match
+stopping the session vs. a `'syn'` match NOT stopping it; natural (soft) session-end auto-resuming;
+a hard error stopping for good; mute stopping immediately and unmute resuming; muted surviving a
+render; the stale-generation guard re-verified under the new long-lived-session shape; and a SOURCE-
+level guard (the one claim in this file lib-dom genuinely cannot observe by rendering) pinning that
+the inline style never re-gains `background`/`border`/`opacity` and that the state rules stay
+compound selectors. Mutation-tested throughout, including both bugs above and the new CSS guard
+itself. **A second process lesson, same shape as `v84_k`'s own**: two more test blocks (mute/unmute,
+and the natural-session-end resume) each left an orphaned, still-listening session with a pending
+timer that would have auto-resumed forever once fired — caught only because the test PROCESS itself
+hung well past when all assertions had already printed "OK," not because any assertion failed. Fixed
+by giving every such mock a way to actually terminate, the same discipline `v84_k` had to learn once
+already.
+
+**Testing overall**: no new `test/run.js` entries. `docs/index.html` rebuilt. No `ui.json` change.
 
 ### `v84_k` — synonym-lesson speech input, then a full redesign: ONE persistent mic, always listening
 

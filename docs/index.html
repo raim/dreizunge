@@ -268,9 +268,27 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .mic-heard{font-size:13px;font-weight:700;color:var(--gray-dark);font-style:italic;opacity:.85;transition:color .2s,opacity .2s}
 .mic-heard.match{color:var(--green-dark);font-style:normal;opacity:1}
 .mic-heard:empty{display:none}
+/* v84_l: base look lives HERE, not in the element's own inline `style=""` — an inline `background`/
+   `border`/`opacity` always wins over a stylesheet class regardless of specificity, which silently
+   made `.active`/`.listening`/`.muted` below dead code for exactly those three properties (found by
+   actually rendering the pill and reading its computed style, not assumed from the rules existing).
+   The state rules below use a compound `#speech-mic-pill.xxx` selector specifically so they
+   out-specificity this bare-ID base rule and actually win. */
+#speech-mic-pill{background:var(--white);border:2px solid var(--gray-mid);opacity:.3}
 #speech-mic-pill:disabled{cursor:default}
 #speech-mic-pill.active{opacity:1;border-color:var(--blue)}
 #speech-mic-pill.listening{border-color:var(--blue);background:var(--blue-light);animation:mic-pulse 1s ease-in-out infinite}
+#speech-mic-pill.muted{opacity:1;border-color:var(--red);background:var(--red-light)}
+/* v84_l: a dots indicator swaps in for the 🎤 glyph while a session is genuinely open (`.listening`)
+   — animates continuously, not tied to any per-phrase event (see the HTML comment at the pill for
+   why: the Web Speech API has no "hearing something right now" signal to reflect honestly). */
+#speech-mic-pill .mic-dots{display:none;align-items:center;justify-content:center;gap:3px}
+#speech-mic-pill.listening .mic-icon{display:none}
+#speech-mic-pill.listening .mic-dots{display:flex}
+#speech-mic-pill .mic-dots span{width:4px;height:4px;border-radius:50%;background:var(--blue-dark);animation:mic-dot-bounce 1.1s ease-in-out infinite}
+#speech-mic-pill .mic-dots span:nth-child(2){animation-delay:.15s}
+#speech-mic-pill .mic-dots span:nth-child(3){animation-delay:.3s}
+@keyframes mic-dot-bounce{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-3px);opacity:1}}
 .feedback{width:100%;border-radius:var(--radius-lg);padding:13px 16px;margin-bottom:12px;display:none}
 .feedback.ok{background:var(--green-light);border:2.5px solid var(--green);display:block}
 .feedback.bad{background:var(--red-light);border:2.5px solid var(--red);display:block}
@@ -628,8 +646,14 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <!-- v84_k (user request): ONE persistent speech-input control, not a button per exercise. Inert
          (disabled, greyed via CSS) whenever the current screen/exercise has nothing speakable;
          active + auto-listening the instant a speakable question is on screen, no tap required —
-         see _speechMicRefresh(), called from renderEx() and show(). -->
-    <button id="speech-mic-pill" disabled onclick="_speechMicPillClick()" title="Speak your answer" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15);opacity:.3">🎤</button>
+         see _speechMicRefresh(), called from renderEx() and show(). v84_l: a dots indicator
+         (`.mic-dots`) replaces the 🎤 glyph while a session is genuinely open (`.listening`, added/
+         removed by _speechStartSession/_speechListenSession — the SAME lifecycle that already
+         existed, no new state) — it animates continuously for as long as that class is present,
+         whether or not a phrase happens to be mid-recognition at that instant: the Web Speech API
+         exposes no "actively hearing something right now" signal (interim results are off), so a
+         decorative always-on indicator is the honest one, not one pretending to reflect real audio. -->
+    <button id="speech-mic-pill" disabled onclick="_speechMicPillClick()" title="Speak your answer" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15)"><span class="mic-icon">🎤</span><span class="mic-dots"><span></span><span></span><span></span></span></button>
   </div>
   <!-- v62: persistent tutor fab — relocated INTO #bottom-bar (user follow-up); still its own id,
        still hidden/shown by refreshTutorAvailability() exactly as before (that function toggles
@@ -2370,6 +2394,11 @@ var APP = {
   // every type-the-target exercise is replaced by a glyph-ordering exercise (tap the letters
   // into order, like sentence ordering but per-glyph). Persisted across sessions.
   noKeyboard: (() => { try { return localStorage.getItem('imp3_noKeyboard') === '1'; } catch(_) { return false; } })(),
+  // Speech-INPUT mute (v84_l, user request: "active all the time, except the microphone icon is
+  // pressed to mute input") — the mirror of `muted` above but for the mic, not TTS. Deliberately NOT
+  // persisted, same as `muted`: every fresh load starts with speech input active, matching "active by
+  // default." Toggled only by `_speechMicPillClick()`.
+  micMuted: false,
   // The form's own (persisted) language selection — what generation uses and what
   // the main-page selectors display. Stays constant while a saved story is viewed.
   formLang: loadLang(),
@@ -152884,11 +152913,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v84_k', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v84_k'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v84_l', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v84_l'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"445b19835a64","lessons.json":"4f484fab4f3a","ui.json":"f80cfbf23fb6","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"bf4e560125c6"};
+  APP.buildSources = {"index.html":"63ac1a6e015c","lessons.json":"4f484fab4f3a","ui.json":"f80cfbf23fb6","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"bf4e560125c6"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -162889,9 +162918,14 @@ function typedDiffHtml(typed, correct) {
 // v84_g/h/i built this per-exercise: a mic button next to the typed-answer input, another under an
 // MCQ's choices. v84_k (user request) replaced BOTH with the single persistent `#speech-mic-pill` in
 // the bottom bar — inert/greyed whenever the current question has nothing speakable, active and
-// LISTENING AUTOMATICALLY the instant a speakable one is on screen, no tap required, and re-arming
-// itself after every result (match or not) until the question is answered or changes. One button, in
-// one place, that just does the right thing for whatever is currently on screen.
+// LISTENING AUTOMATICALLY the instant a speakable one is on screen, no tap required. v84_l (two more
+// direct user requests): (1) the pill's tap now MUTES/unmutes speech input — "active all the time,
+// except the microphone icon is pressed to mute input" — replacing its old "retry now" meaning, which
+// continuous listening had already made redundant; (2) listening is now ONE continuous session per
+// question rather than a per-phrase restart, because Android plays an audible tone on every
+// `SpeechRecognition.start()` that JS cannot suppress — restarting after every mismatch/silence (the
+// original design) meant a beep every few seconds; `continuous:true` (`_speechListenSession`) keeps
+// the SAME session open across many phrases, so the tone plays once per question, not once per word.
 //
 // `kind` ('target'|'source') says which language recognition must LISTEN for — an exercise's
 // TARGET-language answer, or a TARGET→SOURCE MCQ's own source-language choices (e.g. "what does
@@ -162905,7 +162939,7 @@ function _speechExLocale(kind){
 }
 
 // The ONE place that decides "is this exercise speakable, and how". Returns `{kind, locale}` or
-// null. `kind` drives which matching shape `_speechRun` uses ('type' fills+checks an input, 'mcq'
+// null. `kind` drives which matching shape `_speechHandlePhrase` uses ('type' fills+checks an input, 'mcq'
 // taps a choice, 'syn' selects a multi-select tile); `locale` ('target'|'source') is only meaningful
 // for 'mcq', since 'type' and 'syn' are always target-language by construction.
 //
@@ -162963,130 +162997,124 @@ function _micShowHeard(el, text, matched){
 // and must never toast or halt the loop, or "always listening" would mean "toasts every few seconds."
 const _MIC_HARD_ERRORS = new Set(['not-allowed', 'service-not-allowed', 'audio-capture', 'network', 'error', 'unsupported']);
 
-// Owns the mic pill's listening state; hands the caller the transcript alternatives (or null) AND
-// whether this was a hard failure worth stopping over, once recognition ends.
-function _micListen(btn, locale, onDone){
-  if(btn){ btn.classList.add('listening'); }
-  _speechRecognizeOnce(locale, (alts, err) => {
-    const hard = !alts && _MIC_HARD_ERRORS.has(err);
-    if(hard) showToast(t('ex.mic_error'));
-    onDone(alts, hard);
-  }, () => { if(btn) btn.classList.remove('listening'); });
-}
-
-// One recognition pass for the CURRENT exercise, dispatched by `cfg.kind`. Matching/scoring rules
-// are UNCHANGED from the per-exercise-button era, just no longer tied to a button that only exists
-// while that one exercise is on screen:
-//   'type' — a match against `ex.correct` fills the canonical answer and checks it (green, advance);
-//            a miss fills the input with what was HEARD (so the learner sees/can correct it) but
-//            never auto-submits — a misheard word must never silently spend a heart.
-//   'mcq'  — matched ONLY against the CORRECT choice, never any wrong one; a hit taps it via the real
-//            `pickChoice` (green, advances); a miss changes nothing on the card. What was heard is
-//            always shown in `#mcq-mic-heard`, matched or not.
-//   'syn'  — matched against ANY offered choice (not just correct ones — a distractor is a valid,
-//            selectable tile exactly like a tap on it would be); a hit SELECTS that tile and colours
-//            it live (green if correct, red otherwise), but never checks/advances — syn_select asks
-//            for several words, so speech here is an alternative to a TAP, not a submit trigger. A
-//            red tile is cleared by a manual tap (`synToggle` already strips the preview colour on
-//            de-select), exactly the escape hatch the user asked for.
-// Calls `onDone(hardErr)` when the pass is fully resolved, so `_speechAutoLoop` knows whether to
-// re-arm itself. `gen` is the generation THIS pass was started under (see `_speechGen`) — re-checked
-// the instant the async result arrives, before touching any DOM: a pass takes real wall-clock time
-// (the learner speaking), during which the question can genuinely change (advance, Back, a faster
-// manual tap superseding it). Without this check a stale pass would fill/tap/colour whatever exercise
-// HAPPENS to be on screen when it finally resolves — using an `ex` object captured from the OLD
-// question — which can silently mark a learner wrong on a question they never even attempted.
-function _speechRun(cfg, btn, gen, onDone){
-  const C = APP.cur, ex = C && C.exercises && C.exercises[C.cur];
-  if(!ex || C.answered){ onDone(false); return; }
-  _micListen(btn, _speechExLocale(cfg.locale), (alts, hard) => {
-    if(gen !== _speechGen){ onDone(true); return; }   // stale — question changed while listening; do nothing, don't re-arm for it
-    if(!alts){ onDone(hard); return; }
-    if(cfg.kind === 'type'){
-      const inp = document.getElementById('type-in');
-      if(inp){
-        const correct = normDiacritics(ex.correct);
-        const hit = alts.some(a => normDiacritics(a) === correct);
-        if(hit){ inp.value = ex.correct; onType(); check(); }
-        else { inp.value = alts[0]; onType(); showToast(t('ex.mic_no_match')); }
-      }
-    } else if(cfg.kind === 'mcq'){
-      const heard = document.getElementById('mcq-mic-heard');
-      const correct = normDiacritics(stripFuri(ex.correct));
-      const said = alts.some(a => normDiacritics(a) === correct);
-      _micShowHeard(heard, alts[0], said);
-      if(said){
-        const idx = (ex.choices||[]).findIndex(c => normDiacritics(stripFuri(c)) === correct);
-        const el = idx >= 0 ? document.getElementById('c'+idx) : null;
-        if(el) pickChoice(idx, el); else showToast(t('ex.mic_no_match'));
-      } else showToast(t('ex.mic_no_match'));
-    } else if(cfg.kind === 'syn'){
-      const tiles = [...document.querySelectorAll('.syn-tile')];
-      const said = alts.map(a => normDiacritics(a));
-      const hit = said.map(w => tiles.find(b => normDiacritics(stripFuri(b.dataset.w||'')) === w)).find(Boolean);
-      if(hit){
-        const isCorrect = (ex.correct||[]).some(c => normDiacritics(stripFuri(c)) === normDiacritics(stripFuri(hit.dataset.w||'')));
-        hit.classList.add('sel');
-        hit.classList.toggle('ok', isCorrect);
-        hit.classList.toggle('bad', !isCorrect);
-        document.getElementById('cbtn').disabled = document.querySelectorAll('.syn-tile.sel').length===0;
-      } else showToast(t('ex.mic_no_match'));
-    }
-    onDone(hard);
-  });
-}
-
-// Bumped every time a NEW top-level listening attempt starts — a fresh render (`_speechMicRefresh`)
-// or a manual pill tap (`_speechMicPillClick`) — so a STALE auto-relisten chain (still waiting on a
-// pass that started for a question no longer on screen, or superseded by a manual tap) can tell it is
-// stale and stop, rather than acting on/re-arming for the wrong question.
+// Bumped every time listening state changes for a NEW reason — a fresh render (`_speechMicRefresh`)
+// or a mute toggle (`_speechMicPillClick`) — so a phrase or session-end from an OLDER generation can
+// tell it is stale and do nothing, rather than acting on/resuming for the wrong question or the wrong
+// mute state.
 let _speechGen = 0;
 
-// The loop: run one pass, then — if still the same generation and the question is still unanswered —
-// run another. This IS "always listening" (the user's own framing: "for lessons that take speech
-// input we always activate it per default"): the mic re-arms itself after every result without the
-// learner ever tapping it again, and stops the instant it no longer should (a match that advances, a
-// manual Check, a real permission/hardware error) rather than needing to be told to stop.
-function _speechAutoLoop(gen, cfg){
+// One recognized phrase, dispatched by `cfg.kind`. Re-reads `APP.cur`/`ex` FRESH every time (never
+// captured once at session-start) and re-checks the generation before touching anything — a
+// CONTINUOUS session can span the exact moment the question changes, and acting on a phrase using
+// stale state is the bug `v84_k`'s own mutation-testing found and fixed; that guard survives the move
+// to long-lived sessions unchanged. Matching/scoring rules are otherwise UNCHANGED from the
+// per-exercise-button era:
+//   'type' — a match against `ex.correct` fills the canonical answer and checks it (green, advance;
+//            also STOPS the session — the correct-answer TTS reveal is about to play, and a still-open
+//            mic would risk hearing its own voice). A miss fills the input with what was HEARD (so
+//            the learner sees/can correct it) but never auto-submits.
+//   'mcq'  — matched ONLY against the CORRECT choice; a hit taps it via the real `pickChoice` (green,
+//            advances — same stop-before-reveal reasoning) and shows what was heard in
+//            `#mcq-mic-heard`; a miss changes nothing on the card, but still shows what was heard.
+//   'syn'  — matched against ANY offered choice (a distractor is exactly as selectable as a real tap
+//            on it); a hit SELECTS that tile and colours it live, but never checks/advances/stops the
+//            session — syn_select asks for several words, so speech here is an alternative to a TAP.
+//
+// ⚠️ `_speechStopListening()` runs AFTER `check()`/`pickChoice()`, not before, on purpose: stopping
+// can fire the session's `onend` SYNCHRONOUSLY (real browsers vary; the test mock always does), which
+// runs `_speechStartSession`'s own "should I resume?" check — and that check reads `APP.cur.answered`
+// to decide. Stop first and `answered` is still false, so it resumes into a SECOND session for a
+// question that was, in that instant, already correctly answered. `check()`/`pickChoice()` set
+// `answered` before any of that can happen, so stopping after them is what makes the resume-check see
+// the truth. Found by this session's own mutation-testing, not assumed correct from the ordering
+// "reading naturally."
+function _speechHandlePhrase(gen, cfg, alts){
+  if(gen !== _speechGen) return;
+  const C = APP.cur, ex = C && C.exercises && C.exercises[C.cur];
+  if(!ex || C.answered) return;
+  if(cfg.kind === 'type'){
+    const inp = document.getElementById('type-in');
+    if(inp){
+      const correct = normDiacritics(ex.correct);
+      const hit = alts.some(a => normDiacritics(a) === correct);
+      if(hit){ inp.value = ex.correct; onType(); check(); _speechStopListening(); }
+      else { inp.value = alts[0]; onType(); showToast(t('ex.mic_no_match')); }
+    }
+  } else if(cfg.kind === 'mcq'){
+    const heard = document.getElementById('mcq-mic-heard');
+    const correct = normDiacritics(stripFuri(ex.correct));
+    const said = alts.some(a => normDiacritics(a) === correct);
+    _micShowHeard(heard, alts[0], said);
+    if(said){
+      const idx = (ex.choices||[]).findIndex(c => normDiacritics(stripFuri(c)) === correct);
+      const el = idx >= 0 ? document.getElementById('c'+idx) : null;
+      if(el){ pickChoice(idx, el); _speechStopListening(); } else showToast(t('ex.mic_no_match'));
+    } else showToast(t('ex.mic_no_match'));
+  } else if(cfg.kind === 'syn'){
+    const tiles = [...document.querySelectorAll('.syn-tile')];
+    const said = alts.map(a => normDiacritics(a));
+    const hit = said.map(w => tiles.find(b => normDiacritics(stripFuri(b.dataset.w||'')) === w)).find(Boolean);
+    if(hit){
+      const isCorrect = (ex.correct||[]).some(c => normDiacritics(stripFuri(c)) === normDiacritics(stripFuri(hit.dataset.w||'')));
+      hit.classList.add('sel');
+      hit.classList.toggle('ok', isCorrect);
+      hit.classList.toggle('bad', !isCorrect);
+      document.getElementById('cbtn').disabled = document.querySelectorAll('.syn-tile.sel').length===0;
+    } else showToast(t('ex.mic_no_match'));
+  }
+}
+
+// Starts (or resumes) the persistent listening SESSION for the current gen/cfg — ONE continuous
+// recognizer, not a per-phrase restart (see `_speechListenSession`'s own comment for why). Re-arms
+// itself on the browser's own natural session end (its silence timeout, still present even in
+// continuous mode) unless the generation is stale, the question got answered, or the end was a HARD
+// error (toasted once here, not retried blindly — "always listening" cannot mean "toasts on a loop").
+function _speechStartSession(gen, cfg){
   if(gen !== _speechGen) return;
   const pill = document.getElementById('speech-mic-pill');
-  _speechRun(cfg, pill, gen, (hard) => {
-    if(gen !== _speechGen) return;
-    if(APP.cur && APP.cur.answered) return;
-    if(hard) return;
-    _speechAutoLoop(gen, cfg);
-  });
+  if(pill) pill.classList.add('listening');
+  _speechListenSession(_speechExLocale(cfg.locale),
+    (alts) => _speechHandlePhrase(gen, cfg, alts),
+    (hard) => {
+      if(pill) pill.classList.remove('listening');
+      if(gen !== _speechGen || APP.micMuted) return;
+      if(APP.cur && APP.cur.answered) return;
+      if(hard){ showToast(t('ex.mic_error')); return; }
+      _speechStartSession(gen, cfg);   // the browser's own silence timeout — resume automatically
+    });
 }
 
 // Called on every question render (`renderEx`) and every screen change (`show`) — the ONE place that
-// decides what the persistent bottom-bar mic pill should look like RIGHT NOW, and starts the
-// auto-listening loop when there's something to listen for. A fresh generation here invalidates any
-// previous loop still in flight (see `_speechGen`), so navigating away or advancing to a new question
-// can never leave a stale recognizer half-listening for something that's no longer on screen.
+// decides what the persistent bottom-bar mic pill should look like RIGHT NOW. ALWAYS stops whatever
+// session was running first (even when nothing new starts — e.g. advancing to a non-speakable
+// question): a session left running into a new question is exactly the risk `_speechHandlePhrase`'s
+// own generation check exists for, and letting the mic stay open into a correct-answer TTS reveal
+// risks it hearing its own voice. Then starts a fresh session, UNLESS speech input is muted
+// (`APP.micMuted` — "active all the time, except the microphone icon is pressed to mute input").
 function _speechMicRefresh(){
   const gen = ++_speechGen;
+  _speechStopListening();
   const pill = document.getElementById('speech-mic-pill');
   if(!pill) return;
   const ex = APP.cur && Array.isArray(APP.cur.exercises) ? APP.cur.exercises[APP.cur.cur] : null;
   const cfg = _speechRecognitionSupported() ? _speechKindFor(ex) : null;
   pill.disabled = !cfg;
-  pill.classList.toggle('active', !!cfg);
+  pill.classList.toggle('active', !!cfg && !APP.micMuted);
+  pill.classList.toggle('muted', !!cfg && !!APP.micMuted);
   pill.classList.remove('listening');
-  if(cfg) _speechAutoLoop(gen, cfg);
+  pill.title = !cfg ? 'Speak your answer' : (APP.micMuted ? 'Speech input muted — tap to unmute' : 'Speech input active — tap to mute');
+  if(cfg && !APP.micMuted) _speechStartSession(gen, cfg);
 }
 
-// Manual tap: starts a FRESH generation (superseding any in-flight auto-loop pass, whose own
-// eventual callback will see the generation mismatch and quietly stop rather than double-looping)
-// and begins listening immediately. Mostly useful to retry right away after a miss rather than
-// waiting out whatever gap is between automatic re-arms — the auto-loop already covers the ordinary
-// case, so this exists for the learner who wants to jump back in sooner.
+// The pill's ONLY job is now a MUTE TOGGLE (user request: "active all the time, except the microphone
+// icon is pressed to mute input") — a tap no longer means "retry now" (continuous listening already
+// covers that). Muting stops the session immediately; unmuting re-evaluates and restarts it for
+// whatever's currently on screen, via the exact same `_speechMicRefresh()` every render already uses.
 function _speechMicPillClick(){
   const pill = document.getElementById('speech-mic-pill');
   if(!pill || pill.disabled) return;
-  const ex = APP.cur && Array.isArray(APP.cur.exercises) ? APP.cur.exercises[APP.cur.cur] : null;
-  const cfg = _speechKindFor(ex);
-  if(!cfg) return;
-  _speechAutoLoop(++_speechGen, cfg);
+  APP.micMuted = !APP.micMuted;
+  _speechMicRefresh();
 }
 
 function normDiacritics(s){
@@ -166420,35 +166448,47 @@ function _speechRecognitionSupported(){ return !!_speechRecognitionCtor(); }
 
 let _activeRecognition = null;   // one mic session at a time; starting a new one aborts any prior
 
-// Runs one recognition pass in `lang` (a BCP-47 tag — callers pass `_speechLocaleFor`'s answer, the
-// SAME locale TTS already speaks this lesson in). `onResult(alternatives, errCode)` fires exactly
-// once: `alternatives` is an array of candidate transcripts on success, or null with an error code
-// ('unsupported'|'error'|'no-match'|a SpeechRecognition error name) on failure. `onEnd` always
-// fires once, after `onResult`, regardless of outcome — callers use it only to reset button UI, so
-// that reset logic isn't duplicated across every success/failure branch.
-function _speechRecognizeOnce(lang, onResult, onEnd){
+// v84_l (user request): CONTINUOUS, not one-shot-then-restart. Android Chrome plays an audible
+// start/stop tone on every `SpeechRecognition.start()` — nothing in the Web Speech API lets a page
+// suppress that — so the original v84_g…k design (listen once, restart after EVERY single result,
+// match or not) meant a beep roughly every few seconds for as long as a speakable question was on
+// screen. `continuous:true` keeps ONE recognizer instance open across many spoken phrases, firing
+// `onPhrase` repeatedly without ever stopping/restarting the underlying audio session — the tone now
+// plays once per SESSION (a new question, or resuming from mute), not once per phrase or silent gap.
+// `onSessionEnd(hardErr)` fires when the session truly stops — a real error, or the browser's own
+// silence timeout (continuous mode still has one; the caller decides whether to resume).
+function _speechListenSession(lang, onPhrase, onSessionEnd){
   const Ctor = _speechRecognitionCtor();
-  if(!Ctor){ onResult(null, 'unsupported'); if(onEnd) onEnd(); return null; }
+  if(!Ctor){ onSessionEnd(true); return null; }
   try{ if(_activeRecognition) _activeRecognition.abort(); }catch(_){}
   const rec = new Ctor();
   _activeRecognition = rec;
   rec.lang = lang || '';
+  rec.continuous = true;
   rec.interimResults = false;
   rec.maxAlternatives = 3;   // a few candidates widen the match without the caller re-deriving them
-  let settled = false;
+  let lastErr = null;
   rec.onresult = (e) => {
-    settled = true;
-    const r = e.results && e.results[0];
-    onResult(r ? Array.from(r).map(a => a.transcript) : null);
+    const from = typeof e.resultIndex === 'number' ? e.resultIndex : 0;
+    for(let i = from; i < e.results.length; i++){
+      const r = e.results[i];
+      if(r) onPhrase(Array.from(r).map(a => a.transcript));
+    }
   };
-  rec.onerror = (e) => { if(!settled){ settled = true; onResult(null, e.error || 'error'); } };
+  rec.onerror = (e) => { lastErr = e.error || 'error'; };
   rec.onend = () => {
     if(_activeRecognition === rec) _activeRecognition = null;
-    if(!settled){ settled = true; onResult(null, 'no-match'); }
-    if(onEnd) onEnd();
+    onSessionEnd(!!lastErr && _MIC_HARD_ERRORS.has(lastErr));
   };
-  try{ rec.start(); }catch(_){ settled = true; onResult(null, 'error'); if(onEnd) onEnd(); return null; }
+  try{ rec.start(); }catch(_){ onSessionEnd(true); return null; }
   return rec;
+}
+
+// Ends whatever session is currently running — muting, a match about to speak the reveal aloud
+// (leaving the mic open while TTS plays risks it RE-RECOGNIZING its own voice as a phrase), or a
+// fresh session about to replace it. A no-op if nothing is listening.
+function _speechStopListening(){
+  try{ if(_activeRecognition) _activeRecognition.stop(); }catch(_){}
 }
 
 // PLAN §C4's last acceptance detail: "if a lesson is using speech different from its intended

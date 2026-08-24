@@ -1,12 +1,12 @@
-# Session prompt — written at the `v84_k` cut
+# Session prompt — written at the `v84_l` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
-one alongside. Keep using the double-letter suffix scheme (`v84_l`, `v84_m`, …) unless a future
+one alongside. Keep using the double-letter suffix scheme (`v84_m`, `v84_n`, …) unless a future
 session has a good reason to switch to `v85_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v84_k`** — full write-up in
-`roadmap_v84.md`'s own `v84_g`…`v84_k` entries; condensed here. **This whole arc has been driven by
+zero-dependency Node language-learning app). Picking up from **`v84_l`** — full write-up in
+`roadmap_v84.md`'s own `v84_g`…`v84_l` entries; condensed here. **This whole arc has been driven by
 REAL device testing**, not just written specs — every release past `v84_g` exists because the user
 actually tried the previous one on a real Android phone and reported back what was genuinely missing
 or wrong, which is worth reading as the whole shape of how this feature got built.
@@ -22,31 +22,55 @@ widened MCQ coverage to the SOURCE-language-choice types too (`mcq_target_source
 the `v84_h` audit only read those closely) and made the MCQ mic SHOW what it heard, reversing `v84_g`'s
 original "never shown" design.
 
-**`v84_k`, TWO more direct follow-ups landing in one release** (the second arrived mid-session, before
-the first ever reached `main`): (1) `syn_select` (synonym/antonym multi-select tiles) got speech input
-— a recognized word SELECTS+COLOURS a tile live (green if correct, red otherwise), never auto-checks,
-since a round asks for several words; (2) after trying that on the phone, EVERY per-exercise mic
-button — including the one just added for (1) — was replaced by ONE persistent pill,
-`#speech-mic-pill`, in the bottom bar: inert/greyed when nothing on screen is speakable, active and
-listening AUTOMATICALLY the instant something is (no tap needed), and — on the user's own explicit
-choice between two options offered — RE-ARMING itself continuously after every result until the
-question is answered or changes. `_speechKindFor(ex)` is now the one place speakability is decided,
-directly unit-tested rather than implicit in template wiring. **A real bug found by this session's OWN
-mutation-testing** (not reported by the user): a stale recognition pass from a PREVIOUS question could
-resolve AFTER the learner had already advanced, and — because only the RESTART decision checked the
-generation, not the result-handling callback itself — would silently fill/check the NEW question using
-the OLD question's matched answer. Fixed, with a targeted regression test that races a slow pass
-against a fast one.
+**`v84_k`, condensed**: `syn_select` (synonym/antonym tiles) got speech input — a recognized word
+SELECTS+COLOURS a tile live (green if correct, red otherwise), never auto-checks. Then EVERY
+per-exercise mic button (including the one just added) was replaced by ONE persistent pill,
+`#speech-mic-pill`, in the bottom bar — auto-listening the instant a speakable question renders, no
+tap needed. `_speechKindFor(ex)` became the one place speakability is decided, directly unit-tested.
+A real stale-generation bug (found by this session's own mutation-testing, not the user) — a delayed
+pass from a PREVIOUS question could silently fill/check the NEW question — was fixed.
+
+**`v84_l`, THREE more direct follow-ups landing together**: *"please suppress all (or most...) sound
+effects (beeps)... also we want it to be active all the time, except the microphone icon is pressed
+to mute input."* (1) Android plays an audible tone on every `SpeechRecognition.start()` that JS
+cannot suppress — `v84_k`'s design restarted after EVERY phrase/mismatch, meaning a beep every few
+seconds. Replaced with ONE `continuous:true` session per question (`_speechListenSession`) — the tone
+now plays once per question, not once per phrase. A `'type'`/`'mcq'` match still explicitly stops the
+session (about to speak the reveal aloud); `'syn'` never does (more words may follow). The browser's
+own silence timeout still auto-resumes (still "always listening"); a hard error stops for good. (2)
+The pill's tap is now a MUTE TOGGLE (`APP.micMuted`, not persisted, mirroring `APP.muted`), replacing
+its old "retry" meaning — redundant once listening is continuous. Muted is a STANDING preference,
+surviving navigation to another speakable question. A THIRD follow-up, mid-session: *"can we have a
+permanent animation (a wave or dots)... animated when speech is actively recognized... and still if
+not?"* — three dots (`.mic-dots`) now replace the 🎤 glyph while `.listening` is present, animating
+continuously (the Web Speech API has no "hearing something right now" signal to react to honestly, and
+the user's own "still if not" confirms that's the right call).
+
+**TWO real bugs found by this session's OWN mutation-testing and live rendering, neither reported by
+the user**: (1) `_speechStopListening()` originally ran BEFORE `check()`/`pickChoice()` on a match —
+stopping can fire `onend` SYNCHRONOUSLY, whose own resume-decision reads `APP.cur.answered`, which
+hadn't been set yet — spawning a superfluous second session right after a correct answer. Fixed by
+reordering to check-then-stop. (2) The pill's `background`/`border`/`opacity` had been set in its own
+inline `style=""` since `v84_k` — an inline style always beats a stylesheet rule regardless of class
+specificity, so `.active`/`.listening`/`.muted`'s colours had been complete no-ops THE WHOLE TIME,
+invisible to `test/lib-dom.js` (no real CSS cascade) across FIVE releases of mutation-tested "green"
+tests. Found only by starting a throwaway server on a spare port and reading the pill's actual
+COMPUTED style in a real browser — not assumed correct because the rules existed and every test
+passed. Fixed by moving the default look to a base `#speech-mic-pill{}` rule and keeping the state
+rules as compound `#speech-mic-pill.xxx` selectors.
 
 **⚠️ Speech recognition is live-verified on the ORIGINAL typed-answer + basic-MCQ surfaces (`v84_g`/
-`v84_h`, confirmed via real phone use across this whole arc). `v84_k` itself — the bottom-bar
-relocation, the auto-listen/auto-relisten behaviour, and the `syn_select` tile colouring — has NOT
-been tried on a real device yet.** Getting speech recognition working live at all surfaced two
-deployment gaps worth remembering for ANY future browser-API feature: (1) work can sit on a feature
-branch while the user's own live server runs `main` — always fast-forward `main` before assuming
-"shipped" means "reachable"; (2) Chrome's Speech Recognition API (like the PWA install prompt before
-it) requires a SECURE CONTEXT (HTTPS or `localhost`) — over a LAN IP on plain HTTP the constructor is
-simply absent, indistinguishable from "unsupported." See `# ⚠️ OWED BY THE USER` below.
+`v84_h`, confirmed via real phone use across this whole arc). `v84_k` AND `v84_l` — the bottom-bar
+redesign, `syn_select` tile colouring, continuous listening, the mute toggle, and the listening
+animation — have NOT been tried on a real device yet.** Getting speech recognition working live at all
+surfaced two deployment gaps worth remembering for ANY future browser-API feature: (1) work can sit on
+a feature branch while the user's own live server runs `main` — always fast-forward `main` before
+assuming "shipped" means "reachable" (this came up AGAIN this release: verifying the dots animation
+against `localhost:3000` initially showed nothing, because that's the user's real server reading the
+MAIN checkout, not this uncommitted worktree — a throwaway spare-port instance was needed instead);
+(2) Chrome's Speech Recognition API (like the PWA install prompt before it) requires a SECURE CONTEXT
+(HTTPS or `localhost`) — over a LAN IP on plain HTTP the constructor is simply absent, indistinguishable
+from "unsupported." See `# ⚠️ OWED BY THE USER` below.
 
 **Process note carried from `v84_f`, still worth reading before naming a version letter yourself**:
 that release's own fix had originally shipped in a DIFFERENT session as `v83_g`, but a SECOND session
@@ -107,11 +131,12 @@ API vs. cloud call; pronunciation-quality scoring is hard and out of scope).
 1. **This file**, whole.
 2. `build_history/roadmap_v84.md` — its **index table** and **⚠️ Session protocol** block first, then
    `# ⚠️ OPEN AT THE v84 CUT` (findings, `§0`/`§0i`, the standing RULES — now 37, see "Rules earned in
-   the v83 line" for the two newest), then `# SHIPPED IN THE v84 LINE` for `v84_k`'s syn_select-plus-
-   bottom-bar-redesign release, `v84_i`'s missed-gap-plus-heard-field release, `v84_h`'s MCQ-coverage
-   widening, `v84_g`'s speech-recognition + tutor-badge pair, `v84_f`'s orphaned-fix recovery (and the
-   version-collision process lesson), `v84_e`'s second mobile batch, `v84_d`'s first, `v84_c`'s
-   launcher, and `v84_b`'s PWA work — read all of it before touching any of those areas.
+   the v83 line" for the two newest), then `# SHIPPED IN THE v84 LINE` for `v84_l`'s continuous-
+   listening-plus-mute release, `v84_k`'s syn_select-plus-bottom-bar-redesign release, `v84_i`'s
+   missed-gap-plus-heard-field release, `v84_h`'s MCQ-coverage widening, `v84_g`'s speech-recognition
+   + tutor-badge pair, `v84_f`'s orphaned-fix recovery (and the version-collision process lesson),
+   `v84_e`'s second mobile batch, `v84_d`'s first, `v84_c`'s launcher, and `v84_b`'s PWA work — read
+   all of it before touching any of those areas.
 3. `INTERNALS.md` — constants, silent-failure modes, invariants. **§6b is a feature → function map**
    — read it BEFORE grepping for where anything lives.
 
@@ -125,9 +150,9 @@ node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut: **327 topics, 92 storylines, 33 languages, 662 `en` keys** (topics/storylines/
-languages unchanged since `v83_m`; `en` keys: `v84_g` added 4, `v84_h`/`v84_i` added none, `v84_k`
-REMOVED 1 — `ex.mic_tooltip`, orphaned once every per-exercise mic button it labelled was replaced by
-the one persistent pill's own hardcoded title — net 659→662). `APP_VERSION = 'v84_k'`.
+languages unchanged since `v83_m`; `en` keys: `v84_g` added 4, `v84_h`/`v84_i`/`v84_l` added none,
+`v84_k` REMOVED 1 — `ex.mic_tooltip`, orphaned once every per-exercise mic button it labelled was
+replaced by the one persistent pill's own hardcoded title — net 659→662). `APP_VERSION = 'v84_l'`.
 
 ✅ **`unit-replay-focus` is FIXED — a genuinely concurrent session landed it mid-`v84_h`, commit
 `63ff97e`, "in this same worktree."** Spawned as a background task (`task_08149dde`) when the user's
@@ -209,13 +234,18 @@ code — flag that up front.
 
 - **Speech recognition is live-verified only on the ORIGINAL `v84_g`/`v84_h` surfaces** (typed-answer,
   and MCQ well enough that the user's own bug report about the target/source asymmetry proved they'd
-  tried both directions). **`v84_k` — the ENTIRE bottom-bar redesign — has NOT been tried on a real
-  device yet**: does auto-listen-on-render actually feel right, or intrusive? Does continuous
-  re-listening drain battery or become annoying in a quiet room where the mic keeps "hearing" nothing?
-  Does the pill read clearly as active/listening/inert at a glance? Does `syn_select`'s live red/green
-  tile colouring make sense mid-round on a small screen? All of this is only proven against a MOCKED
-  `SpeechRecognition` constructor — proves the WIRING (including a real stale-generation bug this
-  session's own mutation-testing found and fixed), says nothing about how it actually feels to use.
+  tried both directions). **`v84_k` AND `v84_l` — the bottom-bar redesign, `syn_select` colouring,
+  continuous listening, the mute toggle, and the listening-dots animation — have NOT been tried on a
+  real device yet.** Specifically worth checking: does `v84_l`'s continuous session actually cut the
+  beeping the way the user asked for, or does the browser still make SOME noise per question that a
+  mock can't reveal? Does the browser's own silence-timeout resume feel natural, or does it introduce
+  an audible gap the user notices? Does the muted (red) vs. active (blue) pill state read clearly at a
+  glance? Does the three-dot animation read as "listening" rather than as decoration? All of this is
+  only proven against a MOCKED `SpeechRecognition` constructor plus one throwaway-port desktop-browser
+  check of computed CSS — proves the WIRING (including two real bugs this session's own
+  mutation-testing and live rendering found and fixed, neither reported by the user: a stop-before-check
+  ordering hazard, and a `background`/`border`/`opacity` inline style silently overriding every state
+  class for two whole releases), says nothing about how it actually SOUNDS or feels to use on a phone.
 - **Windows installability** (two tiers laid out in `roadmap_v83.md`, discussion-only) — neither
   ruled nor queued.
 
@@ -231,19 +261,36 @@ user product decision.
   not by scattering a new `cGrid` call site or template check — this function is what
   `_speechMicRefresh()` reads to decide the pill's state, so anything not represented here is
   invisible to it regardless of what a template renders.
-- `_speechMicRefresh()` (`v84_k`) — called from `renderEx()` and `show()`; the ONE place that sets
-  `#speech-mic-pill`'s disabled/active state AND starts auto-listening. Bumps `_speechGen` every call.
-  `_speechAutoLoop(gen, cfg)` is the re-arming loop itself (runs a pass via `_speechRun`, restarts
-  unless the generation is stale, the question is answered, or the pass hard-errored);
-  `_speechMicPillClick()` is the manual-tap entry point, which also bumps the generation (so a click
-  cleanly supersedes an in-flight auto pass rather than double-looping).
-- `_speechRun(cfg, btn, gen, onDone)` (`v84_k`) — one recognition pass, dispatched by `cfg.kind`.
-  **Re-checks `gen !== _speechGen` the INSTANT the async result arrives, before any DOM write** — a
-  pass takes real wall-clock time, during which the question can change, and a stale pass acting on
-  whatever's CURRENTLY on screen (using its OWN closure-captured `ex`) is exactly the bug this
-  session's own mutation-testing found: it silently filled/checked a NEW question with an OLD
-  question's matched answer. The `_speechAutoLoop`-level generation check alone does NOT cover this —
-  that one only gates whether to RESTART, by which point the DOM may already be wrong.
+- `_speechMicRefresh()` (`v84_k`, rewritten `v84_l`) — called from `renderEx()` and `show()`; the ONE
+  place that sets `#speech-mic-pill`'s disabled/active/muted state. ALWAYS stops whatever session was
+  running first (`_speechStopListening()`), even when nothing new starts, then starts a fresh one via
+  `_speechStartSession(gen, cfg)` UNLESS `APP.micMuted`. Bumps `_speechGen` every call.
+  `_speechMicPillClick()` (`v84_l`) is now a pure MUTE TOGGLE — flips `APP.micMuted`, then calls this
+  same function to react — it no longer means "retry," which continuous listening made redundant.
+- `_speechListenSession(lang, onPhrase, onSessionEnd)` (`v84_l`, replacing `v84_g`'s one-shot
+  `_speechRecognizeOnce`) — sets `rec.continuous = true` and keeps ONE recognizer open across MANY
+  phrases, so Android's un-suppressible start/stop tone plays once per SESSION, not once per phrase.
+  `_speechStartSession(gen, cfg)` is the caller that owns resuming it on the browser's own silence
+  timeout (a soft `onSessionEnd`) — unless the generation is stale, muted, answered, or the end was a
+  HARD error (`_MIC_HARD_ERRORS`, toasted once, never retried blindly).
+- `_speechHandlePhrase(gen, cfg, alts)` (`v84_l`, replacing `v84_k`'s `_speechRun`) — one recognized
+  phrase, dispatched by `cfg.kind`. **Re-checks `gen !== _speechGen` the INSTANT it runs, before any
+  DOM write** — a session is long-lived now, so a phrase can arrive well after the question changed,
+  and acting on stale state is the bug `v84_k`'s own mutation-testing found and fixed; that guard
+  survived the move to continuous sessions unchanged. **⚠️ On a `'type'`/`'mcq'` match, `check()`/
+  `pickChoice()` MUST run BEFORE `_speechStopListening()`, not after** — stopping can fire `onend`
+  SYNCHRONOUSLY, and `onSessionEnd`'s own resume-decision reads `APP.cur.answered`; stop-first left
+  that read seeing `false` and spawned a superfluous second session. Found by `v84_l`'s own first
+  mutation-test of this code, documented inline at the call site — don't "simplify" the ordering back.
+- **`#speech-mic-pill`'s look lives in a base stylesheet rule, NOT its inline `style=""`** (`v84_l`
+  fix). An inline style ALWAYS wins over a stylesheet rule regardless of class specificity — the pill
+  had `background`/`border`/`opacity` inline since `v84_k`, which made `.active`/`.listening`/`.muted`
+  completely inert for two releases without a single test noticing, because `test/lib-dom.js` doesn't
+  implement a real CSS cascade. Only a computed-style check in an actual browser caught it. If you ever
+  add a new visual state to this pill (or copy this pattern elsewhere), keep colour/border/opacity OUT
+  of any inline `style=""` and in a class rule instead, and add/extend the SOURCE-LEVEL guard in
+  `test/unit-speech-recognition.test.js` (section 2b) that greps the inline style for exactly these
+  properties — it's the only thing standing between this bug and recurring silently again.
 - `_speechExLocale(kind)` (`v84_g`, `kind` added `v84_h`) — resolves the recognizer's locale.
   `'target'` reuses the existing `_speechLocaleFor` unchanged; `'source'` is the plain
   `lessonSrcLang().tts` (no per-chapter override exists for source language anywhere else in the app).

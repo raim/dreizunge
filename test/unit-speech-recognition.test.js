@@ -1,32 +1,33 @@
 // unit-speech-recognition.test.js
-// v84_g — browser-native speech recognition reused for answer checking (user request, following up
-// on the discussion-only "recording a spoken reply" note in roadmap_v83.md). MCQ coverage widened at
-// v84_h, a missed gap closed and a "heard" field added at v84_i. v84_k (two direct user follow-ups
-// landing in the same session, before either reached main): syn_select (multi-select synonym/antonym
-// tiles) got speech coverage too — select+colour a tile live, never auto-check/advance — and then,
-// once tried live, EVERY per-exercise mic button (including the one syn_select had just gained) was
-// replaced with ONE persistent pill in the bottom bar (`#speech-mic-pill`, next to the mute pill):
-// inert/greyed whenever the current question has nothing speakable, active and LISTENING
-// AUTOMATICALLY the instant a speakable one renders (no tap required), and re-arming itself after
-// every result — match or not — until the question is answered or changes ("we always activate it
-// per default"). Contract under test:
-//   • `_speechKindFor(ex)` is the ONE place that decides speakability — direct, exhaustive coverage
-//     of every wired type, every exclusion (comprehension, script-primer intro variants, no-keyboard
-//     glyph-order mode), and the two types whose render function is SHARED with an intro variant
-//     (`mcq_source_target`, `listen_mcq` — the exact gap that shipped unwired at v84_h).
-//   • `_speechMicRefresh()` (called from `renderEx`/`show`) sets the pill's disabled/active state to
-//     match, and starts auto-listening when there's something to listen for.
-//   • The auto-loop re-arms after a SOFT outcome (no-speech, no-match, a superseded/aborted pass) and
-//     stops after a HARD one (permission denied, no mic, offline) or once the question is answered.
-//   • Matching/scoring per kind is UNCHANGED from the per-button era: 'type' fills+checks on a match,
-//     never auto-submits on a miss; 'mcq' taps the CORRECT choice only, transcript always shown; 'syn'
-//     selects+colours ANY offered tile (green if correct, red otherwise), never checks/advances.
+// v84_g — browser-native speech recognition reused for answer checking. MCQ coverage widened at
+// v84_h, a missed gap closed and a "heard" field added at v84_i. v84_k replaced every per-exercise
+// mic button with one persistent bottom-bar pill (`#speech-mic-pill`) that auto-listens the instant a
+// speakable question renders. v84_l — two more direct user requests, from real use: (1) Android plays
+// an audible tone on every `SpeechRecognition.start()` that JS cannot suppress, and the v84_k design
+// (restart after EVERY phrase/mismatch) meant a beep every few seconds — replaced with ONE
+// `continuous:true` session per question (`_speechListenSession`), so the tone plays once per
+// question, not once per phrase; (2) the pill's tap now MUTES/unmutes speech input ("active all the
+// time, except the microphone icon is pressed to mute input"), replacing its old "retry now" meaning,
+// which continuous listening had already made redundant. Contract under test:
+//   • `_speechKindFor(ex)` is still the one place that decides speakability — unchanged by this file.
+//   • ONE session per question: several phrases (matches, mismatches, silence) are handled WITHOUT a
+//     second `.start()` call — verified by counting real mock invocations, not just outcomes.
+//   • A 'type'/'mcq' MATCH explicitly stops the session (about to speak the reveal aloud); a 'syn'
+//     match does NOT (syn_select never advances on a single word, keep listening for more).
+//   • The browser's own natural session end (silence timeout) auto-resumes, unless muted, answered,
+//     or the end was a hard error (toasted once, not retried blindly).
+//   • The pill: tap toggles `APP.micMuted` — muted stops listening immediately and shows the muted
+//     state; unmuting resumes for whatever's currently on screen. Muted survives a render (navigating
+//     between speakable questions while muted does NOT auto-resume).
+//   • The stale-generation guard (v84_k's own mutation-tested fix) still holds under continuous
+//     sessions: a phrase arriving after the question changed never touches the new question's DOM.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const { loadClient, ROOT } = require('./lib-dom');
 
+const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const LANGS = JSON.parse(fs.readFileSync(path.join(ROOT, 'languages.json'), 'utf8'));
 const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
 
@@ -34,7 +35,7 @@ function client() {
   const C = loadClient({ quiet: true });
   C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)};
     APP.lessonData = { id:'t1', lang:'de', srcLang:'en' };
-    APP.lang='de'; APP.srcLang='en'; APP.muted = true; APP.noKeyboard = false;
+    APP.lang='de'; APP.srcLang='en'; APP.muted = true; APP.micMuted = false; APP.noKeyboard = false;
     APP.info = { backend:'none', canGenerate:false };
     renderEx = function(){};   // the eventual _speakAndAdvance timer must not need a real round
     show = function(){}; speak = function(){};
@@ -42,323 +43,282 @@ function client() {
   return C;
 }
 
-// A mock SpeechRecognition constructor whose `.start()` consumes the NEXT step of a scripted
-// sequence (the last step repeats once exhausted) — lets a test drive several chained auto-relisten
-// passes and assert on how many actually happened. Fires onresult XOR onerror on a real
-// setTimeout(0) — same event-loop tick shape a real implementation uses — then always fires onend.
-function mockCtorSeq(steps) {
-  return `window.__micCalls = 0;
+// A mock SpeechRecognition constructor emulating ONE continuous session: `steps` is an ordered list
+// where each item is either `{alts,delay?}` (fires onresult with one phrase), `{err,delay?}` (fires
+// onerror then onend — the session dies), or the string `'end'` (fires onend with no error — the
+// browser's own silence timeout, the ordinary way a continuous session dies without user action).
+// `.stop()` ends the session gracefully (fires onend, matching the real API); `.abort()` just cancels
+// pending steps without firing onend (matching how the ORIGINAL mock behaved, and how production code
+// never actually depends on abort firing anything). `window.__micStarts/__micStops/__micAborts` count
+// real calls, so tests can assert on SESSION COUNT, not just outcomes — the whole point of this
+// release is fewer sessions (fewer beeps), so a passing assertion has to be able to catch a
+// regression back to "restart on every phrase."
+// `sessions` is an array of STEP-LISTS — `sessions[N]` scripts the (N+1)th `.start()` call (clamped
+// to the last one once exhausted). Most tests only care about a single session's worth of steps;
+// `mockSession(steps)` is the shorthand for that (wraps in `[steps]`). Test 9 uses `mockSessions`
+// directly, with a SEPARATE (empty) step-list for the second session, so that session's own
+// behaviour can never coincidentally produce the same outcome as the first — the isolation the
+// stale-generation test needs to actually prove what it claims.
+function mockSessions(sessions) {
+  return `window.__micStarts = 0; window.__micStops = 0; window.__micAborts = 0;
   window.SpeechRecognition = function(){
     var self = this;
+    var stopped = false, timers = [];
     this.start = function(){
-      window.__micCalls++;
-      var steps = ${JSON.stringify(steps)};
-      var step = steps[Math.min(window.__micCalls - 1, steps.length - 1)];
-      setTimeout(function(){
-        if(step.err){ if(self.onerror) self.onerror({error: step.err}); }
-        else { if(self.onresult) self.onresult({results:[(step.alts||[]).map(function(t){ return {transcript:t}; })]}); }
-        if(self.onend) self.onend();
-      }, step.delay || 0);
+      window.__micStarts++;
+      stopped = false;
+      var allSessions = ${JSON.stringify(sessions)};
+      var steps = allSessions[Math.min(window.__micStarts - 1, allSessions.length - 1)] || [];
+      steps.forEach(function(step, i){
+        var delay = (step && typeof step === 'object' && step.delay != null) ? step.delay : (i * 10);
+        timers.push(setTimeout(function(){
+          if(stopped) return;
+          if(step === 'end'){ stopped = true; if(self.onend) self.onend(); return; }
+          if(step.err){ stopped = true; if(self.onerror) self.onerror({error: step.err}); if(self.onend) self.onend(); return; }
+          if(self.onresult) self.onresult({ resultIndex: 0, results: [(step.alts||[]).map(function(t){ return {transcript:t}; }) ] });
+        }, delay));
+      });
     };
-    this.abort = function(){};
+    this.stop = function(){ window.__micStops++; if(!stopped){ stopped = true; timers.forEach(clearTimeout); if(self.onend) self.onend(); } };
+    this.abort = function(){ window.__micAborts++; if(!stopped){ stopped = true; timers.forEach(clearTimeout); } };
   };`;
 }
-const mockCtor = (alts, err) => mockCtorSeq([{ alts, err }]);
-const settle = (ms) => new Promise(r => setTimeout(r, ms || 30));
+const mockSession = (steps) => mockSessions([steps]);
+const settle = (ms) => new Promise(r => setTimeout(r, ms || 40));
 
 (async () => {
 
-// ── 1. _speechKindFor: the one speakability map, exhaustive ──────────────────
+// ── 1. _speechKindFor: unchanged by this release — a light smoke check, not a re-derivation ──
 {
   const C = client();
-  // JSON.stringify INSIDE the vm, not a cross-realm deepStrictEqual on the returned object — a plain
-  // object literal built inside loadClient's sandbox has that context's OWN Object prototype, not
-  // this process's, so comparing object identity/shape directly is a false-negative trap.
   const kf = (ex) => C.run(`JSON.stringify(_speechKindFor(${JSON.stringify(ex)}))`);
-  // Typed-answer, target locale.
-  for (const type of ['listen_type', 'type_plural', 'type_conjugation']) {
-    assert.strictEqual(kf({ type }), JSON.stringify({ kind: 'type' }), `${type} is speakable as 'type'`);
-  }
-  // No-keyboard glyph-order mode swaps the typed template entirely — nothing to listen INTO.
-  C.run('APP.noKeyboard = true;');
-  assert.strictEqual(kf({ type: 'listen_type' }), 'null', 'no-keyboard mode: typed types are not speakable (no #type-in exists)');
-  C.run('APP.noKeyboard = false;');
-  // MCQ, target locale.
-  for (const type of ['mcq_article', 'mcq_plural', 'mcq_conjugation']) {
-    assert.strictEqual(kf({ type }), JSON.stringify({ kind: 'mcq', locale: 'target' }), `${type} is speakable as MCQ/target`);
-  }
-  // mcq_source_target: target locale UNLESS it's the script-primer intro variant (the v84_h gap).
-  assert.strictEqual(kf({ type: 'mcq_source_target' }), JSON.stringify({ kind: 'mcq', locale: 'target' }),
-    'mcq_source_target (regular vocabulary) is speakable as MCQ/target — the v84_i fix');
-  assert.strictEqual(kf({ type: 'mcq_source_target', _intro: 'glyph_sound' }), 'null', 'mcq_source_target glyph_sound intro is NOT speakable');
-  assert.strictEqual(kf({ type: 'mcq_source_target', _intro: 'sound_glyph' }), 'null', 'mcq_source_target sound_glyph intro is NOT speakable');
-  // MCQ, source locale.
-  assert.strictEqual(kf({ type: 'mcq_target_source' }), JSON.stringify({ kind: 'mcq', locale: 'source' }), 'mcq_target_source is speakable as MCQ/source');
-  assert.strictEqual(kf({ type: 'listen_mcq' }), JSON.stringify({ kind: 'mcq', locale: 'source' }), 'listen_mcq (regular) is speakable as MCQ/source');
-  assert.strictEqual(kf({ type: 'listen_mcq', _intro: 'listen_glyph' }), 'null', 'listen_mcq glyph-picking intro is NOT speakable');
-  // syn_select.
-  assert.strictEqual(kf({ type: 'syn_select' }), JSON.stringify({ kind: 'syn' }), 'syn_select is speakable');
-  // Never speakable: full-sentence / non-vocabulary types, and no exercise at all.
-  for (const type of ['comprehension_mcq', 'order', 'math_calc', 'math_order', 'math_latex', 'read_translate']) {
-    assert.strictEqual(kf({ type }), 'null', `${type} is never speakable`);
-  }
-  assert.strictEqual(kf(null), 'null', 'no current exercise → not speakable');
+  assert.strictEqual(kf({ type: 'type_plural' }), JSON.stringify({ kind: 'type' }));
+  assert.strictEqual(kf({ type: 'mcq_target_source' }), JSON.stringify({ kind: 'mcq', locale: 'source' }));
+  assert.strictEqual(kf({ type: 'syn_select' }), JSON.stringify({ kind: 'syn' }));
+  assert.strictEqual(kf({ type: 'comprehension_mcq' }), 'null');
 }
-console.log('  _speechKindFor: exhaustive speakability map, incl. shared-function intro exclusions and no-keyboard: OK');
+console.log('  _speechKindFor: unchanged (full exhaustive coverage lives in its own commit history): OK');
 
-// ── 2. The pill: disabled/active state follows _speechMicRefresh(), feature-detected ──
+// ── 2. Pill states: inert, active, muted — via _speechMicRefresh() ───────────────
 {
-  const C = client();   // no SpeechRecognition global at all
+  const C = client();   // no SpeechRecognition at all
   C.run(`APP.cur = { exercises: [{ type:'type_plural', correct:'Katzen' }], cur:0, answered:false };
     _speechMicRefresh(); true;`);
   const r = C.run(`({ disabled: document.getElementById('speech-mic-pill').disabled,
     active: document.getElementById('speech-mic-pill').classList.contains('active') })`);
-  assert.strictEqual(r.disabled, true, 'unsupported browser: the pill stays disabled even for a speakable exercise');
-  assert.strictEqual(r.active, false, 'and never gets the active class');
+  assert.strictEqual(r.disabled, true, 'unsupported: disabled regardless of speakability');
+  assert.strictEqual(r.active, false);
 }
 {
   const C = client();
-  C.run(mockCtor(['x']));
-  C.run(`APP.cur = { exercises: [{ type:'order' }], cur:0, answered:false };   // NOT speakable
-    _speechMicRefresh(); true;`);
-  const r = C.run(`document.getElementById('speech-mic-pill').disabled`);
-  assert.strictEqual(r, true, 'a non-speakable exercise disables the pill even when SpeechRecognition IS supported');
-}
-{
-  const C = client();
-  // A hard error, not a plain mismatch: the pill's disabled/active state is set SYNCHRONOUSLY by
-  // _speechMicRefresh(), before the async recognition pass it kicks off even runs — but that pass
-  // still starts for real, and since answered() never becomes true for THIS synthetic exercise, a
-  // mock that never matches and never hard-errors would auto-relisten forever (the intended
-  // production behaviour) and leave this test process hanging. A hard error lets it self-terminate
-  // after one pass without touching what this block actually asserts on.
-  C.run(mockCtor(null, 'not-allowed'));
+  C.run(mockSession([{ err: 'not-allowed' }]));   // self-terminates; this block only checks sync state
   C.run(`APP.cur = { exercises: [{ type:'type_plural', correct:'Katzen' }], cur:0, answered:false };
     _speechMicRefresh(); true;`);
   const r = C.run(`({ disabled: document.getElementById('speech-mic-pill').disabled,
-    active: document.getElementById('speech-mic-pill').classList.contains('active') })`);
-  assert.strictEqual(r.disabled, false, 'a speakable exercise, supported browser: the pill is enabled');
-  assert.strictEqual(r.active, true, 'and marked active');
-  await settle();   // let the one pending (hard-erroring) pass finish before this vm is abandoned
+    active: document.getElementById('speech-mic-pill').classList.contains('active'),
+    muted: document.getElementById('speech-mic-pill').classList.contains('muted') })`);
+  assert.strictEqual(r.disabled, false, 'speakable + supported: enabled');
+  assert.strictEqual(r.active, true);
+  assert.strictEqual(r.muted, false);
+  await settle();
 }
-console.log('  pill state: disabled unless BOTH supported and speakable, active otherwise: OK');
-
-// ── 3. Auto-start: a speakable render listens WITHOUT any click, and a match checks/advances ──
 {
   const C = client();
-  C.run(mockCtor(['Katzen']));
+  C.run(mockSession([{ err: 'not-allowed' }]));
+  C.run(`APP.micMuted = true;
+    APP.cur = { exercises: [{ type:'type_plural', correct:'Katzen' }], cur:0, answered:false };
+    _speechMicRefresh(); true;`);
+  const r = C.run(`({ active: document.getElementById('speech-mic-pill').classList.contains('active'),
+    muted: document.getElementById('speech-mic-pill').classList.contains('muted'), starts: window.__micStarts })`);
+  assert.strictEqual(r.muted, true, 'muted overrides speakability in the pill\'s own visual state');
+  assert.strictEqual(r.active, false);
+  assert.strictEqual(r.starts, 0, 'and, critically, NOTHING actually starts listening while muted');
+}
+console.log('  pill state: inert unless supported+speakable, muted overrides active, muted never starts a session: OK');
+
+// ── 2b. The pill's inline `style=""` must never re-set background/border/opacity — SOURCE-level,
+//        because lib-dom (this whole file's harness) does not implement real CSS cascade/specificity,
+//        so it is the one claim here that literally cannot be observed by rendering and reading a
+//        computed style the way every other assertion in this file is. Found by actually loading the
+//        page in a real browser and reading its COMPUTED style: an inline `background`/`border`/
+//        `opacity` always beats a stylesheet rule regardless of selector specificity, which had
+//        silently made `.active`/`.listening`/`.muted`'s colour/opacity changes complete no-ops —
+//        the dots-vs-icon swap "worked" only because `display` was never fought over inline.
+{
+  const btnAt = html.indexOf('id="speech-mic-pill"');
+  assert.ok(btnAt >= 0, '#speech-mic-pill exists');
+  const tagEnd = html.indexOf('>', btnAt);
+  const openTag = html.slice(Math.max(0, btnAt - 40), tagEnd);
+  const styleAttr = /style="([^"]*)"/.exec(openTag);
+  assert.ok(styleAttr, '#speech-mic-pill has an inline style attribute');
+  for (const prop of ['background:', 'border:', 'opacity:']) {
+    assert.ok(!styleAttr[1].includes(prop),
+      `the inline style must NOT set ${prop} — it would silently beat every .active/.listening/.muted rule below`);
+  }
+  // …and something must still set the INERT default (a base #speech-mic-pill{} rule, not the removed inline one).
+  const baseRule = /#speech-mic-pill\{[^}]*background:[^}]*border:[^}]*opacity:/.exec(html)
+    || /#speech-mic-pill\{[^}]*opacity:[^}]*border:[^}]*background:/.exec(html);
+  assert.ok(baseRule, 'a base #speech-mic-pill{} stylesheet rule sets the default background/border/opacity');
+  // The state rules must be compound (#speech-mic-pill.active, not bare .active) — a bare-class rule
+  // has LOWER specificity than the base bare-ID rule above and would lose to it, the exact shape of
+  // bug this test exists to catch (just one level removed — inline vs. ID this time, ID vs. class here).
+  for (const cls of ['active', 'listening', 'muted']) {
+    assert.ok(new RegExp('#speech-mic-pill\\.' + cls + '\\{').test(html),
+      `.${cls} must be written as the compound selector #speech-mic-pill.${cls}, not a bare .${cls}`);
+  }
+}
+console.log('  pill CSS: state colours are NOT shadowed by an inline style, and out-specificity the base rule: OK');
+
+// ── 3. ONE session, several phrases: no restart between a mismatch and the eventual match ──
+{
+  const C = client();
+  C.run(mockSession([{ alts: ['Hunde'] }, { alts: ['Maus'] }, { alts: ['Katzen'] }]));
   C.run(`APP.cur = { exercises: [{ type:'type_plural', target:'Katze', correct:'Katzen', source:'cat' }],
     cur:0, answered:false, hearts:3, correct:0, total:0, streak:0, bestStreak:0, ans:[] };
     document.getElementById('type-in').value = '';
-    _speechMicRefresh();   // simulates what renderEx() now does on every question — no click at all
-    true;`);
-  await settle();
-  const r = C.run(`({ calls: window.__micCalls, answered: APP.cur.answered,
-    val: document.getElementById('type-in').value, ok: document.getElementById('type-in').classList.contains('ok') })`);
-  assert.strictEqual(r.calls, 1, 'listening started on its own, with no _speechMicPillClick() call anywhere in this test');
-  assert.strictEqual(r.answered, true, 'a matching transcript answers the question, exactly as the old per-button path did');
-  assert.strictEqual(r.val, 'Katzen', 'filled with the canonical answer');
-  assert.strictEqual(r.ok, true, 'and turns green');
-}
-console.log('  auto-start: a speakable render listens with zero clicks, a match checks/advances: OK');
-
-// ── 4. Auto-RELISTEN: a soft miss re-arms itself, with no toast-spam, until a later attempt matches ──
-{
-  const C = client();
-  C.run(mockCtorSeq([{ alts: ['Hunde'] }, { err: 'no-speech' }, { alts: ['Katzen'] }]));
-  C.run(`APP.cur = { exercises: [{ type:'type_plural', target:'Katze', correct:'Katzen', source:'cat' }],
-    cur:0, answered:false, hearts:3, correct:0, total:0, streak:0, bestStreak:0, ans:[] };
-    document.getElementById('type-in').value = '';
-    document.getElementById('toast').textContent = '';
     _speechMicRefresh();
     true;`);
-  await settle(120);   // three chained passes, each a real setTimeout(0) hop
-  const r = C.run(`({ calls: window.__micCalls, answered: APP.cur.answered,
-    val: document.getElementById('type-in').value, toast: document.getElementById('toast').textContent })`);
-  assert.strictEqual(r.calls, 3, 'a mismatch AND a plain silence both re-armed automatically — three passes ran unattended');
-  assert.strictEqual(r.answered, true, 'the third pass matched and answered the question');
-  assert.strictEqual(r.val, 'Katzen', 'filled with the canonical answer from the pass that actually matched');
-  assert.strictEqual(r.toast, UI.en['ex.mic_no_match'], 'the LAST toast is the mismatch one — "no-speech" never toasted at all, so it never overwrote/spammed');
+  await settle(80);
+  const r = C.run(`({ starts: window.__micStarts, stops: window.__micStops, answered: APP.cur.answered,
+    val: document.getElementById('type-in').value })`);
+  assert.strictEqual(r.starts, 1, 'THREE phrases (two mismatches, one match) handled by exactly ONE session — this is the whole point of the release');
+  assert.strictEqual(r.answered, true, 'the third phrase matched and answered the question');
+  assert.strictEqual(r.val, 'Katzen');
+  assert.strictEqual(r.stops, 1, 'the session was explicitly stopped once the match landed (about to speak the reveal aloud)');
 }
-console.log('  auto-relisten: mismatches and plain silence both re-arm automatically, no toast-spam, until a match lands: OK');
+console.log('  one continuous session handles several phrases with zero restarts, until a match stops it: OK');
 
-// ── 5. A HARD error stops the loop — no infinite retry, no toast-spam on a real permission problem ──
+// ── 4. syn_select: a match does NOT stop the session — still listening for more words ──
 {
   const C = client();
-  C.run(mockCtor(null, 'not-allowed'));
-  C.run(`APP.cur = { exercises: [{ type:'type_plural', target:'Katze', correct:'Katzen' }],
-    cur:0, answered:false, hearts:3, correct:0, total:0, streak:0, bestStreak:0, ans:[] };
-    document.getElementById('toast').textContent = '';
-    _speechMicRefresh();
-    true;`);
-  await settle(120);   // long enough that a (bug-)looping implementation would have retried several times
-  const r = C.run(`({ calls: window.__micCalls, toast: document.getElementById('toast').textContent, answered: APP.cur.answered })`);
-  assert.strictEqual(r.calls, 1, 'a genuine permission error stops the loop after ONE attempt, not an infinite retry');
-  assert.strictEqual(r.toast, UI.en['ex.mic_error'], 'toasted once, with the permissions message');
-  assert.strictEqual(r.answered, false, 'never answers the question');
-}
-console.log('  hard errors: the auto-loop stops after one attempt, toasted once, never spins: OK');
-
-// ── 6. MCQ (target locale), via auto-start: a match taps the CORRECT choice, transcript shown ──
-{
-  const C = client();
-  C.run(mockCtor(['Katzen']));
-  C.run(`APP.cur = { exercises: [{ type:'mcq_plural', target:'Katze', correct:'Katzen',
-      choices:['Katzen','Katze','Katzes','Katzens'] }],
-    cur:0, answered:false, hearts:3, correct:0, total:0, streak:0, bestStreak:0, ans:[] };
-    ['Katzen','Katze','Katzes','Katzens'].forEach(function(w,i){
-      var b = document.getElementById('c'+i); b.textContent = w; b.classList.add('choice');
-    });
-    _speechMicRefresh();
-    true;`);
-  await settle();
-  const r = C.run(`({ answered: APP.cur.answered, sel: APP.cur.sel,
-    ok0: document.getElementById('c0').classList.contains('ok'),
-    heardText: document.getElementById('mcq-mic-heard').textContent,
-    heardMatch: document.getElementById('mcq-mic-heard').classList.contains('match') })`);
-  assert.strictEqual(r.answered, true, 'a matching transcript answers via the real pickChoice/check path');
-  assert.strictEqual(r.sel, 'Katzen', 'the CORRECT choice was the one tapped');
-  assert.strictEqual(r.ok0, true, 'and turns green');
-  assert.strictEqual(r.heardText, 'Katzen', 'what was heard IS shown next to the choices');
-  assert.strictEqual(r.heardMatch, true, 'green, matching the tapped choice');
-}
-console.log('  MCQ (target), auto-started: matches, taps, shows what it heard: OK');
-
-// ── 6b. MCQ (source locale): a source-language transcript matches a source-choice MCQ ─────
-{
-  const C = client();
-  C.run(mockCtor(['cat']));
-  C.run(`APP.cur = { exercises: [{ type:'mcq_target_source', target:'Katze', correct:'cat',
-      choices:['cat','dog','house','tree'] }],
-    cur:0, answered:false, hearts:3, correct:0, total:0, streak:0, bestStreak:0, ans:[] };
-    ['cat','dog','house','tree'].forEach(function(w,i){
-      var b = document.getElementById('c'+i); b.textContent = w; b.classList.add('choice');
-    });
-    _speechMicRefresh();
-    true;`);
-  await settle();
-  const r = C.run(`({ answered: APP.cur.answered, sel: APP.cur.sel })`);
-  assert.strictEqual(r.answered, true, 'a source-language transcript answers a source-choice MCQ');
-  assert.strictEqual(r.sel, 'cat', 'the correct SOURCE-language choice was tapped');
-}
-console.log('  MCQ (source), auto-started: listens in the right language, matches: OK');
-
-// ── 7. syn_select: voice SELECTS+COLOURS a tile live, never checks/advances the round ────
-function synClient() {
-  const C = client();
+  C.run(mockSession([{ alts: ['rasch'] }, { alts: ['flott'] }]));
   C.run(`APP.cur = { exercises: [{ type:'syn_select', mode:'synonyms', base:'schnell',
       correct:['rasch','flott'], choices:['rasch','flott','langsam','müde'] }],
     cur:0, answered:false, hearts:3, correct:0, total:0, streak:0, bestStreak:0, ans:[] };
     ['rasch','flott','langsam','müde'].forEach(function(w,i){
       var b = document.getElementById('st'+i); b.textContent = w; b.dataset.w = w; b.classList.add('syn-tile');
     });
-    document.getElementById('cbtn').disabled = true;`);
-  return C;
+    document.getElementById('cbtn').disabled = true;
+    _speechMicRefresh();
+    true;`);
+  await settle(80);
+  const r = C.run(`({ starts: window.__micStarts, stops: window.__micStops,
+    ok0: document.getElementById('st0').classList.contains('ok'),
+    ok1: document.getElementById('st1').classList.contains('ok'), answered: APP.cur.answered })`);
+  assert.strictEqual(r.starts, 1, 'still one session for both words');
+  assert.strictEqual(r.stops, 0, 'a syn_select match never stops the session — more words may follow');
+  assert.strictEqual(r.ok0, true, 'first correct word selected+greened');
+  assert.strictEqual(r.ok1, true, 'second correct word ALSO selected+greened, same session');
+  assert.strictEqual(r.answered, false, 'still never auto-checks/advances');
 }
-// syn_select NEVER sets `answered` on its own (a tile match/mismatch is just a selection, not a
-// verdict — see _speechRun's own comment) — so unlike every other kind, the auto-loop here has no
-// natural stopping point of its own to reach. Every mock below therefore scripts a SECOND, hard-
-// erroring step: the first step is the one actually under test, and the second one is purely so the
-// loop's own (correct, intended) auto-relisten behaviour terminates instead of running forever in
-// the background once this test block returns — the exact behaviour section 4 tests on the syn_select
-// case's typed/MCQ cousins, exercised here only as a safe stopping mechanism, not the point of the test.
-{
-  const C = synClient();
-  C.run(mockCtorSeq([{ alts: ['rasch'] }, { err: 'not-allowed' }]));
-  C.run(`_speechMicRefresh(); true;`);
-  await settle();
-  const r = C.run(`({ answered: APP.cur.answered, sel0: document.getElementById('st0').classList.contains('sel'),
-    ok0: document.getElementById('st0').classList.contains('ok'), cbtnDisabled: document.getElementById('cbtn').disabled })`);
-  assert.strictEqual(r.sel0, true, 'a recognized correct synonym IS selected, exactly like a tap');
-  assert.strictEqual(r.ok0, true, 'and coloured green immediately');
-  assert.strictEqual(r.answered, false, 'a single correct word does NOT check/advance — syn_select asks for several');
-  assert.strictEqual(r.cbtnDisabled, false, 'Check becomes available, same as a manual tap');
-}
-{
-  const C = synClient();
-  C.run(mockCtorSeq([{ alts: ['langsam'] }, { err: 'not-allowed' }]));   // langsam: a real distractor, not one of ex.correct
-  C.run(`_speechMicRefresh(); true;`);
-  await settle();
-  const r = C.run(`({ sel2: document.getElementById('st2').classList.contains('sel'),
-    bad2: document.getElementById('st2').classList.contains('bad'), answered: APP.cur.answered })`);
-  assert.strictEqual(r.sel2, true, 'a wrong-but-offered word is still selected, exactly like a tap on it would be');
-  assert.strictEqual(r.bad2, true, 'and coloured RED — "needs to be de-selected by tapping"');
-  assert.strictEqual(r.answered, false, 'still never auto-checks');
-}
-{
-  // Tapping a reddened tile clears BOTH the selection and the colour (the escape hatch).
-  const C = synClient();
-  C.run(mockCtorSeq([{ alts: ['langsam'] }, { err: 'not-allowed' }]));
-  C.run(`_speechMicRefresh(); true;`);
-  await settle();
-  const before = C.run(`document.getElementById('st2').classList.contains('bad')`);
-  assert.strictEqual(before, true, 'sanity: red before the tap');
-  const after = C.run(`synToggle(2, document.getElementById('st2'));
-    ({ sel: document.getElementById('st2').classList.contains('sel'), bad: document.getElementById('st2').classList.contains('bad') })`);
-  assert.strictEqual(after.sel, false, 'a tap de-selects it');
-  assert.strictEqual(after.bad, false, 'and clears the red preview — fully neutral, not red-but-unselected');
-}
-console.log('  syn_select, auto-started: correct→green+selected, wrong→red+selected, a tap clears both, never auto-checks: OK');
+console.log('  syn_select: a match keeps the SAME session listening for more words, never stops it: OK');
 
-// ── 8. Manual tap (_speechMicPillClick) works the same way as auto-start, and does nothing when inert ──
-{
-  const C = client();   // unsupported: no SpeechRecognition
-  C.run(`APP.cur = { exercises: [{ type:'type_plural', correct:'Katzen' }], cur:0, answered:false };
-    _speechMicRefresh();   // sets the pill's real disabled state
-    _speechMicPillClick();
-    ({ calls: window.__micCalls || 0 });`);
-  const calls = C.run(`window.__micCalls || 0`);
-  assert.strictEqual(calls, 0, 'clicking a disabled/inert pill (no SpeechRecognition) starts nothing');
-}
+// ── 5. The browser\'s own silence timeout ends the session — auto-resumes with a SECOND start ──
 {
   const C = client();
-  C.run(mockCtor(['Katzen']));
+  // Session 1 dies immediately with a plain (no-error) 'end' — the natural timeout. Session 2 (the
+  // resumed one) matches. Deliberately TWO SEPARATE sessions, not one script that repeats itself —
+  // a single repeating ['end', {alts:...}] script would have session 2 ALSO immediately fire its own
+  // 'end' step, triggering a third resume, a fourth, … a runaway restart loop indistinguishable from
+  // the very regression this test exists to catch.
+  C.run(mockSessions([['end'], [{ alts: ['Katzen'] }]]));
   C.run(`APP.cur = { exercises: [{ type:'type_plural', target:'Katze', correct:'Katzen' }],
     cur:0, answered:false, hearts:3, correct:0, total:0, streak:0, bestStreak:0, ans:[] };
     document.getElementById('type-in').value = '';
-    _speechMicRefresh();   // establishes the enabled pill; no auto-match yet since alts arrive async
+    _speechMicRefresh();
     true;`);
-  // Immediately (before the auto pass's own setTimeout(0) fires) simulate a manual tap — exercises
-  // the same code path a real early tap would.
-  C.run(`_speechMicPillClick(); true;`);
-  await settle();
-  const r = C.run(`({ answered: APP.cur.answered, val: document.getElementById('type-in').value })`);
-  assert.strictEqual(r.answered, true, 'a manual tap resolves the SAME way an auto-started pass would');
-  assert.strictEqual(r.val, 'Katzen', 'same matching logic, same result');
+  await settle(100);
+  const r = C.run(`({ starts: window.__micStarts, answered: APP.cur.answered })`);
+  assert.strictEqual(r.starts, 2, 'a soft/natural session end DOES get a fresh session — this is still "always listening"');
+  assert.strictEqual(r.answered, true, 'and the resumed session went on to match');
 }
-console.log('  manual tap: inert pill does nothing, an active one behaves exactly like auto-start: OK');
+console.log('  a natural (non-error) session end auto-resumes with a fresh session: OK');
 
-// ── 9. A STALE pass from a PREVIOUS question must never act once a NEWER one is on screen ────
-// The scenario the generation guard exists for: a recognition pass is in flight for question A when
-// the learner advances to question B before it resolves (plausible — a slow/delayed browser result
-// racing a fast manual Next, or simply the next render firing while A's mic is still listening). Once
-// A's pass finally resolves, it must NOT fill/check B's `#type-in` with A's own matched answer — that
-// would silently mark the learner wrong on a question they had not even attempted yet.
+// ── 6. A hard error stops for good — no restart, toasted once ────────────────────
 {
   const C = client();
-  // Step 1 (question A's pass) resolves SLOWLY with A's own matching transcript; step 2 (question
-  // B's pass, started before step 1 resolves) hard-errors immediately so it doesn't itself interfere
-  // with what this test is isolating.
-  C.run(mockCtorSeq([{ alts: ['Katzen'], delay: 60 }, { err: 'not-allowed' }]));
-  C.run(`APP.cur = { exercises: [{ type:'type_plural', target:'Katze', correct:'Katzen', source:'cat' }],
+  C.run(mockSession([{ err: 'not-allowed' }]));
+  C.run(`APP.cur = { exercises: [{ type:'type_plural', correct:'Katzen' }],
     cur:0, answered:false, hearts:3, correct:0, total:0, streak:0, bestStreak:0, ans:[] };
-    document.getElementById('type-in').value = '';
-    _speechMicRefresh();   // question A: starts listening, will resolve in 60ms with a MATCH for A
+    document.getElementById('toast').textContent = '';
+    _speechMicRefresh();
     true;`);
-  // Before A's pass resolves, "advance" to a DIFFERENT question B — same shape, different answer, so
-  // A's transcript is provably wrong for it.
-  C.run(`APP.cur = { exercises: [{ type:'type_plural', target:'Hund', correct:'Hunde', source:'dog' }],
-    cur:0, answered:false, hearts:3, correct:0, total:0, streak:0, bestStreak:0, ans:[] };
-    document.getElementById('type-in').value = '';
-    _speechMicRefresh();   // question B: a fresh generation — A's still-pending pass is now STALE
-    true;`);
-  await settle(120);   // long enough for A's 60ms-delayed pass to resolve
-  const r = C.run(`({ val: document.getElementById('type-in').value, answered: APP.cur.answered, calls: window.__micCalls })`);
-  assert.strictEqual(r.calls, 2, 'sanity: both passes actually ran (A slow, B fast-erroring)');
-  assert.strictEqual(r.val, '', 'A\'s stale match never touched B\'s #type-in — still empty, not filled with "Katzen"');
-  assert.strictEqual(r.answered, false, 'and B was never wrongly marked answered by an answer the learner never gave for IT');
+  await settle(80);
+  const r = C.run(`({ starts: window.__micStarts, toast: document.getElementById('toast').textContent })`);
+  assert.strictEqual(r.starts, 1, 'a hard error never gets a second session');
+  assert.strictEqual(r.toast, UI.en['ex.mic_error']);
 }
-console.log('  stale generation: a delayed pass from a PREVIOUS question never acts on the CURRENT one: OK');
+console.log('  a hard error stops for good, toasted once, no restart loop: OK');
+
+// ── 7. Mute: stops the session immediately; unmute resumes it ────────────────────
+{
+  const C = client();
+  C.run(mockSession(['end']));   // never resolves a phrase on its own — isolates the mute/unmute effect
+  C.run(`APP.cur = { exercises: [{ type:'type_plural', correct:'Katzen' }], cur:0, answered:false };
+    _speechMicRefresh(); true;`);
+  const before = C.run(`window.__micStarts`);
+  assert.strictEqual(before, 1, 'sanity: listening after the initial render');
+  const mid = C.run(`_speechMicPillClick();
+    ({ stops: window.__micStops, muted: document.getElementById('speech-mic-pill').classList.contains('muted'),
+       active: document.getElementById('speech-mic-pill').classList.contains('active') })`);
+  assert.strictEqual(mid.stops, 1, 'tapping the pill stops the running session immediately');
+  assert.strictEqual(mid.muted, true, 'and the pill shows muted');
+  assert.strictEqual(mid.active, false);
+  const after = C.run(`_speechMicPillClick();
+    ({ starts: window.__micStarts, muted: document.getElementById('speech-mic-pill').classList.contains('muted'),
+       active: document.getElementById('speech-mic-pill').classList.contains('active') })`);
+  assert.strictEqual(after.starts, 2, 'tapping again resumes — a fresh session starts');
+  assert.strictEqual(after.muted, false);
+  assert.strictEqual(after.active, true);
+  // Clean up: the resumed session's own 'end' step is still pending (its 0ms timer hasn't fired
+  // within this synchronous block) and, left alone, would auto-resume forever once it does — the
+  // SAME orphaned-background-loop hazard v84_k's own tests already had to learn about, just via the
+  // mute path instead of a never-matching mock. Muting again clears that pending timer for good.
+  C.run(`APP.micMuted = true; _speechMicRefresh(); true;`);
+}
+console.log('  mute/unmute: a tap stops listening immediately, a second tap resumes it: OK');
+
+// ── 8. Muted survives a render — navigating between speakable questions while muted stays muted ──
+{
+  const C = client();
+  C.run(mockSession(['end']));
+  C.run(`APP.cur = { exercises: [{ type:'type_plural', correct:'Katzen' }], cur:0, answered:false };
+    _speechMicRefresh();
+    APP.micMuted = true; _speechMicRefresh();   // mute, mid-round
+    true;`);
+  const starts1 = C.run(`window.__micStarts`);
+  // Simulate advancing to a DIFFERENT (still speakable) question — same as a real renderEx() call.
+  C.run(`APP.cur = { exercises: [{ type:'type_plural', correct:'Hunde' }], cur:0, answered:false };
+    _speechMicRefresh(); true;`);
+  const r = C.run(`({ starts: window.__micStarts, muted: document.getElementById('speech-mic-pill').classList.contains('muted') })`);
+  assert.strictEqual(r.starts, starts1, 'no new session starts for the new question — mute is a standing preference, not per-question');
+  assert.strictEqual(r.muted, true, 'the pill still shows muted on the new question');
+}
+console.log('  muted is a standing preference — surviving a render/navigation to another speakable question: OK');
+
+// ── 9. Stale generation: a phrase arriving after the question changed must never act ──
+{
+  const C = client();
+  // Session 1 (question A): resolves SLOWLY with A's own matching transcript. Session 2 (question B,
+  // started before session 1 resolves): deliberately EMPTY — no steps of its own at all — so any
+  // observed effect on B's DOM can only have come from A's stale, superseded pass, never from a
+  // coincidental match/mismatch B's own (freshly-started) session might otherwise have produced.
+  C.run(mockSessions([[{ alts: ['Katzen'], delay: 60 }], []]));
+  C.run(`APP.cur = { exercises: [{ type:'type_plural', target:'Katze', correct:'Katzen' }],
+    cur:0, answered:false, hearts:3, correct:0, total:0, streak:0, bestStreak:0, ans:[] };
+    document.getElementById('type-in').value = '';
+    _speechMicRefresh();   // question A
+    true;`);
+  C.run(`APP.cur = { exercises: [{ type:'type_plural', target:'Hund', correct:'Hunde' }],
+    cur:0, answered:false, hearts:3, correct:0, total:0, streak:0, bestStreak:0, ans:[] };
+    document.getElementById('type-in').value = '';
+    _speechMicRefresh();   // question B — A's own session is stopped, but its pending phrase timer still fires later`);
+  await settle(120);
+  const r = C.run(`({ val: document.getElementById('type-in').value, answered: APP.cur.answered })`);
+  assert.strictEqual(r.val, '', 'A\'s stale "Katzen" phrase never touched B\'s #type-in');
+  assert.strictEqual(r.answered, false, 'B was never wrongly marked answered by an answer the learner never gave for IT');
+}
+console.log('  stale generation: a delayed phrase from a PREVIOUS question never acts on the CURRENT one: OK');
 
 console.log('unit-speech-recognition: ALL PASSED');
 })().catch(e => { console.error(e); process.exit(1); });
