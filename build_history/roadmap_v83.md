@@ -29,7 +29,7 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_q` — `install.sh`: a one-line `curl \| sh` local installer (README.md's "Option A"), NOT a `PLAN §7.0` item. Clones the repo, installs Ollama (via Ollama's OWN official installer) + pulls `qwen2.5:7b` if not already present, starts the app. Idempotent — real end-to-end run (fresh install AND a second, update-existing-checkout run) verified against the real GitHub repo before shipping. `v83_p` — bug fix, found by the USER REVIEWING a real generated lesson: CP2's `sense` gloss now stays in the SAME grammatical register as the token itself, and CP4's `vocab[i].target` now uses the SURFACE form (not the lemma) paired against it — fixing a real "kommen"/"venne" mismatch, plus a second bug in `apply-cp-lessons.js`'s dedup found while fixing the first. `v83_o` — bug fix, found by a REAL user run against `qwen3.6:35b-a3b`: CP2 now sends `think:false`. `v83_n` — `apply-cp-lessons.js`: the FIRST script in `PLAN §7.0` that WRITES into a real `lessons.json`, additively, with cross-chapter dedup. `v83_l`/`v83_m` — `PLAN §7.0` CP5 (silent, then visible on request). `v83_h`–`v83_k` — `PLAN §7.0` CP1–CP4: canonical text → analysis (model-in-the-loop) → curriculum plan → one lesson family, all report-only/inert. `v83_b`–`v83_g` — `PLAN §12` and a progress-card/question-card UI arc — see each entry below for full detail |
+| **SHIPPED IN THE v83 LINE** | `v83_r` — user request: `qwen3.6:35b-a3b` (not `qwen2.5:7b`) is now the default/recommended model in BOTH `install.sh` and `README.md`, per the real measured comparison (`v83_n`–`v83_p`'s own evaluation note). Surfaced a THIRD live instance of the `v83_o` bug: `llm.js`'s own `warmup()` also lacked `think:false`, found by re-running `install.sh` end-to-end against the new default. Fixed in the same release, since it directly affects the model just made the default. `v83_q` — `install.sh`: a one-line `curl \| sh` local installer (README.md's "Option A"), NOT a `PLAN §7.0` item. Clones the repo, installs Ollama (via Ollama's OWN official installer) + pulls `qwen2.5:7b` if not already present, starts the app. Idempotent — real end-to-end run (fresh install AND a second, update-existing-checkout run) verified against the real GitHub repo before shipping. `v83_p` — bug fix, found by the USER REVIEWING a real generated lesson: CP2's `sense` gloss now stays in the SAME grammatical register as the token itself, and CP4's `vocab[i].target` now uses the SURFACE form (not the lemma) paired against it — fixing a real "kommen"/"venne" mismatch, plus a second bug in `apply-cp-lessons.js`'s dedup found while fixing the first. `v83_o` — bug fix, found by a REAL user run against `qwen3.6:35b-a3b`: CP2 now sends `think:false`. `v83_n` — `apply-cp-lessons.js`: the FIRST script in `PLAN §7.0` that WRITES into a real `lessons.json`, additively, with cross-chapter dedup. `v83_l`/`v83_m` — `PLAN §7.0` CP5 (silent, then visible on request). `v83_h`–`v83_k` — `PLAN §7.0` CP1–CP4: canonical text → analysis (model-in-the-loop) → curriculum plan → one lesson family, all report-only/inert. `v83_b`–`v83_g` — `PLAN §12` and a progress-card/question-card UI arc — see each entry below for full detail |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 at `v83_i`, CP3 at `v83_j`, CP4 at `v83_k`, CP5 at `v83_l`/`v83_m` (silent then visible). `v83_n` (`apply-cp-lessons.js`, bug-fixed at `v83_o`/`v83_p`) is the FIRST script that actually writes CP1-4-derived lessons into `lessons.json`, additively — not itself a numbered CP stage, a browser-reachable follow-up to CP4. CP6 remains open (a CONDITIONAL, not a queued slice — see `v83_l`'s own SESSION_PROMPT). `install.sh` (`v83_q`) is UNRELATED to `PLAN §7.0` — a deployment/distribution convenience, not part of Track A. |
 
@@ -1685,6 +1685,56 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_r` — `qwen3.6:35b-a3b` becomes the default/recommended model; `llm.js`'s `warmup()` fixed to match
+
+**Shipped by: Claude Code, on user request** ("let's use qwen3.6:35b-a3b as the default/best model in
+both README.md and the install script. then feel free to push"). Direct follow-up to `v83_q`
+(`install.sh`) and to the real qwen2.5:7b vs qwen3.6:35b-a3b evaluation note recorded alongside
+`v83_n`–`v83_p`: zero translation errors on `qwen3.6:35b-a3b` vs two on `qwen2.5:7b`, on the same real
+chapter, plus more sophisticated context-tracking (correctly traced "sie" back to "die Regierung").
+
+**What changed**: `install.sh`'s `MODEL="${DREIZUNGE_MODEL:-qwen2.5:7b}"` → `qwen3.6:35b-a3b`, with
+its comments/log lines updated to be honest about the size (~20+ GB, wants real RAM) and to name
+`qwen2.5:7b` as the lighter `DREIZUNGE_MODEL` override, not silently dropped. `README.md`'s "Option
+A" now describes `qwen3.6:35b-a3b` as the BEST-quality option per the measured comparison; "Option
+B"'s intro and command examples lead with it while keeping `qwen2.5:7b` documented as the lighter
+alternative; the `ollama stop` reminder now names the new default.
+
+**A THIRD live instance of the `v83_o` bug, found by re-running `install.sh` end-to-end** against the
+new default (this machine already had `qwen3.6:35b-a3b` pulled): server startup logged `Warming up
+qwen3.6:35b-a3b… not ready (Ollama returned empty response) — continuing`. Root cause: `llm.js`'s own
+`warmup(model, log)` — called once at server startup via `server.js`'s `_warmupLLM(OLLAMA_MODEL, …)`
+— calls `_callOllama(model, '', 'hi', 1)` with a 1-token budget and, like CP2's `analyzeSentence`
+before the `v83_o` fix, no `think:false`. A reasoning model spends the whole budget "thinking" and
+the call returns empty. Degrades gracefully (doesn't crash startup) but silently fails to do its one
+job — pre-warming the model users are now steered toward by default. Fixed with the identical
+one-line pattern as `v83_o`: `{ think: false }` added to the `_callOllama` call inside `warmup`.
+Judged in-scope for this release (not a separately-flagged follow-up) because the change being
+shipped is exactly what surfaces it — the new default is a reasoning model, and shipping the default
+change without this fix would ship a broken startup message for anyone following the new
+recommendation.
+
+**Testing**: verified at the HTTP layer, not by source review — the same rigor the `v83_o` CP2 guard
+used, since a source regex cannot prove `opts` actually reached the wire. Because the check spawns a
+fake Ollama server (via `test/lib.js`'s `startFakeOllama`), it lives in its OWN new file,
+`test/e2e-warmup-think.test.js`, registered inside `run.js`'s `if (!quick)` block — folding it into
+the otherwise-static, always-run `unit-reasoning-model-safety.test.js` would have made that whole
+file a `--quick` straggler, exactly the failure mode `unit-run-summary.test.js` (`v70_b`) exists to
+catch (and DID catch, on the first attempt at this fix — the guard was tried inline first, went red
+against its own `--quick` contract, and the check was split out instead of the guard being loosened).
+`test/unit-install-script.test.js`'s §6 (model-default cross-check) updated to assert
+`qwen3.6:35b-a3b` as the default while confirming `qwen2.5:7b` is still documented in both files, not
+silently dropped.
+
+**Mutation-tested**: reverting `install.sh`'s default back to `qwen2.5:7b` — `unit-install-script`
+RED. Removing `{ think: false }` from `llm.js`'s `warmup()` — `e2e-warmup-think` RED (`opts.think`
+came back `null` instead of `false`). Both restored, confirmed clean via `diff`.
+
+**Testing**: 262/229/0/0 full baseline green (from 261/229 — one new e2e file, registered inside the
+`!quick` block so the quick count is unchanged). No `lessons.json` change (the user's own live
+evaluation data was backed up, `git checkout --`'d out for testing, and restored after, per the
+established per-release dance).
 
 ### `v83_q` — `install.sh`: a one-line local installer (unrelated to `PLAN §7.0`)
 

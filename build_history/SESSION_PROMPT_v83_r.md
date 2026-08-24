@@ -1,42 +1,58 @@
-# Session prompt — written at the `v83_q` cut
+# Session prompt — written at the `v83_r` cut
 
-*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_p.md` was the
+*(Rename this file for the version the session WRAPS UP WITH. `SESSION_PROMPT_v83_q.md` was the
 previous one — superseded by this file and renamed, not kept alongside. Keep using the double-
-letter suffix scheme (`v83_r`, `v83_s`, …) unless a future session has a good reason to switch to
+letter suffix scheme (`v83_s`, `v83_t`, …) unless a future session has a good reason to switch to
 `v84_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Fresh session picking up from the **`v83_q`** release —
-**`install.sh`, a one-line `curl \| sh` local installer** (README.md's new "Option A"). Completely
-UNRELATED to `PLAN §7.0`/Track A — a distribution/onboarding convenience the user asked for directly
-("let's move to something completely different"). Clones the repo (or updates an existing checkout),
-installs Ollama via Ollama's OWN official installer if not already present, confirms it's reachable,
-pulls `qwen2.5:7b` (README.md's own already-documented quick-start model) if not already pulled, and
-starts the server. Every mutating step is idempotency-gated; verified with a REAL end-to-end run
-(fresh install AND a second, update-existing-checkout run) against the real GitHub repo, which also
-surfaced that the public repo was still several releases behind local `HEAD` (`v83_h`…`v83_p` are all
-local-only commits — this project only pushes when the user asks).
+zero-dependency Node language-learning app). Fresh session picking up from the **`v83_r`** release —
+**`qwen3.6:35b-a3b` is now the default/recommended model in BOTH `install.sh` and `README.md`**
+(previously `qwen2.5:7b`), on direct user request, following the real measured comparison written up
+alongside `v83_n`–`v83_p` (zero translation errors vs. two on the smaller model, same real chapter).
+`qwen2.5:7b` stays documented in both files as the lighter, still-solid `DREIZUNGE_MODEL`/
+`OLLAMA_MODEL` override, not silently dropped.
+
+**Making the reasoning model the default surfaced a THIRD live instance of the `v83_o` bug**, found
+by re-running `install.sh` end-to-end against the new default (not by source review): `llm.js`'s own
+`warmup()` — called once at server startup — sent no `think:false`, so it silently failed to warm up
+the model ("not ready (Ollama returned empty response) — continuing"). Fixed identically to `v83_o`.
+Verified at the HTTP layer in a NEW file, `test/e2e-warmup-think.test.js` — split out from the
+otherwise-static `unit-reasoning-model-safety.test.js` because it spawns a fake Ollama server, and
+folding it in there would have violated `unit-run-summary.test.js`'s own `--quick` guard (`v70_b`),
+which caught exactly that on the first attempt at this fix, unloosened. Mutation-tested both the
+model-default assertion and the `think:false` fix — both RED without the change, restored clean.
+
+**`v83_q`, condensed**: `install.sh`, a one-line `curl \| sh` local installer (README.md's new
+"Option A"). Completely UNRELATED to `PLAN §7.0`/Track A — a distribution/onboarding convenience.
+Clones the repo (or updates an existing checkout), installs Ollama via Ollama's OWN official
+installer if not already present, confirms it's reachable, pulls the recommended model if not
+already pulled, and starts the server. Every mutating step is idempotency-gated; verified with a REAL
+end-to-end run against the real GitHub repo, which also surfaced that the public repo was still
+several releases behind local `HEAD` at the time (`v83_h`…`v83_p` were all local-only commits) —
+**this has since been pushed, at `v83_r`, per the user's own explicit request** ("then feel free to
+push").
 
 **Before `v83_q`, `PLAN §7.0`'s own real-world evaluation was also written up properly** (a separate,
-code-free roadmap commit, right before `v83_q`): the user ran `apply-cp-lessons.js` twice against the
-same chapter, comparing `qwen2.5:7b` (2 clear CP2 accuracy errors) against `qwen3.6:35b-a3b` (zero
-errors, more sophisticated context-tracking) — read that note (`roadmap_v83.md`, right after the
-multi-chapter note) before assuming anything about model-choice tradeoffs for this pipeline; it's
-real evidence, not a guess. Two gaps that evidence surfaced remain OPEN: no function-word filtering,
-and confidence not surviving into CP4's written lesson.
+code-free roadmap commit): the user ran `apply-cp-lessons.js` twice against the same chapter,
+comparing `qwen2.5:7b` (2 clear CP2 accuracy errors) against `qwen3.6:35b-a3b` (zero errors, more
+sophisticated context-tracking) — read that note (`roadmap_v83.md`, right after the multi-chapter
+note) before assuming anything about model-choice tradeoffs for this pipeline; it's real evidence,
+not a guess, and it is now what `v83_r`'s own default-model decision rests on. Two gaps that evidence
+surfaced remain OPEN: no function-word filtering, and confidence not surviving into CP4's written
+lesson.
 
 **`v83_o`/`v83_p`, condensed — two real bugs, both found by the user actually using the tool**:
 `v83_o` fixed CP2 sending no `think:false`, which crashed against a real reasoning model
 (`qwen3.6:35b-a3b`) with "Ollama returned empty response" — the exact, previously-solved `v71_o`
-failure mode CP2 had never inherited. `v83_p` fixed a register mismatch the user caught reading real
-output word-by-word (*"we still have 'venne/kommen'..."*) — CP2's sense gloss now matches the
-token's own grammatical register, and CP4's `target` field now uses the SURFACE form (not the
-dictionary lemma) paired against it; fixing that ALSO required fixing a second bug it silently
+failure mode CP2 had never inherited (`v83_r` found and fixed a THIRD, independent instance of this
+same gap, in `llm.js`'s `warmup()` — see above). `v83_p` fixed a register mismatch the user caught
+reading real output word-by-word (*"we still have 'venne/kommen'..."*) — CP2's sense gloss now
+matches the token's own grammatical register, and CP4's `target` field now uses the SURFACE form (not
+the dictionary lemma) paired against it; fixing that ALSO required fixing a second bug it silently
 introduced in `apply-cp-lessons.js`'s own cross-chapter dedup (which had been comparing by `target`).
-Neither bug was reachable by this session's own testing — one needs a real reasoning model to fail
-against, the other needs a human's actual linguistic judgment.
 
-**`v83_h`–`v83_o`, condensed — the whole `PLAN §7.0` arc**: CP1 (`v83_h`) — stable text records, no
+**`v83_h`–`v83_p`, condensed — the whole `PLAN §7.0` arc**: CP1 (`v83_h`) — stable text records, no
 model call. CP2 (`v83_i`, `think:false` fix at `v83_o`, register fix at `v83_p`) — the model-in-the-
 loop stage, one real LLM call per sentence. CP3 (`v83_j`, surface/sense same-occurrence fix at
 `v83_p`) — curriculum plan, no model call. CP4 (`v83_k`, target-field fix at `v83_p`) — one lesson
@@ -50,24 +66,25 @@ deferred "genuine cross-chapter curriculum sequencing." Full write-ups in `roadm
 
 ⚠️ **Check `git status --short lessons.json` at the start of this session.** If it shows modified,
 that is very likely the user's own real, uncommitted CP4-pipeline evaluation data — not yours to
-revert, commit, or "fix around" without asking. `v83_o`/`v83_p` both excluded it from their commits;
-the same dance (back up, `git checkout --`, build/test, restore) is documented in both write-ups.
+revert, commit, or "fix around" without asking. `v83_o`/`v83_p`/`v83_r` all excluded it from their
+commits; the same dance (back up, `git checkout --`, build/test, restore) is documented in each
+write-up.
 
 ## Orient yourself
 
 1. **This file**, whole.
 2. `build_history/roadmap_v83.md` — its **index table** and the **⚠️ Session protocol** block first,
-   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`…`v83_q` were built, and
+   then the standing RULES, then `# SHIPPED IN THE v83 LINE` for how `v83_b`…`v83_r` were built, and
    `PLAN §7.0`'s own migration sequence (§0) — **including the multi-chapter note AND the real-world
    evaluation note right after it**, before touching any further `PLAN §7.0` work. `install.sh`
-   (`v83_q`) is unrelated to any of that — see its own entry near the bottom of `# SHIPPED`.
+   (`v83_q`/`v83_r`) is unrelated to any of that — see its own entries near the bottom of `# SHIPPED`.
 3. `INTERNALS.md` — constants, silent-failure modes, invariants, harness limits. **§6b is a
    feature → function map** — read it BEFORE grepping for where anything lives.
 
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 261 checks
+node test/run.js                          → expect 262 checks
 node test/run.js --quick                  → expect 229
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
@@ -78,9 +95,9 @@ Corpus at this cut: **327 topics, 92 storylines, 33 languages, 659 `en` keys** (
 COMMITTED, 24 chapters); `canonical-analysis.json` (CP2), `curriculum-plan.json` (CP3),
 `curriculum-lesson.json` (CP4) — none committed by default. `apply-cp-lessons.js` (`v83_n`) is the
 ONLY thing that can add a real lesson to `lessons.json`, only with explicit `--write`. `install.sh`
-(`v83_q`) is a NEW, unrelated file at the repo root — the one-line installer, see its own section
-below.
-`APP_VERSION = 'v83_q'`.
+(`v83_q`, model default changed at `v83_r`) is a NEW, unrelated file at the repo root — the one-line
+installer, see its own section below.
+`APP_VERSION = 'v83_r'`.
 
 ⚠️ **A CP4-pipeline lesson's `vocab[i]` shape changed at `v83_p`**: it now has `{target, source,
 lemma, conceptId}` — `target` is the SURFACE form, `lemma` is a NEW, separate field carrying the
@@ -133,6 +150,14 @@ N" blocks — this is the short form, not a replacement for reading those before
    not by reasoning about that one fix in isolation. Any future change to a shared record shape
    (CP1's token record, CP2's analysis record, CP3's concept record, CP4's lesson shape) needs the
    SAME sweep: what else reads this field, and does it still mean what that reader assumes?
+14. **A per-caller `think:false` fix does not generalize — every OTHER caller of a raw model call
+   needs the SAME check, independently** (`v83_r`, new) — `v83_o` fixed CP2's `analyzeSentence`;
+   `v83_r` found a THIRD, unrelated caller (`llm.js`'s own `warmup()`) with the identical gap, months
+   later, only because changing the DEFAULT MODEL happened to exercise it end-to-end. Grep for every
+   `_callOllama`/`callLLM` call site before trusting that "the reasoning-model bug is fixed" — one
+   fixed call site proves nothing about the others. Also: a NEW test that spawns a server belongs in
+   its OWN e2e file, not folded into an existing always-run unit file — `unit-run-summary.test.js`
+   (`v70_b`) will catch it if you try, and the fix is to split the file, never to loosen that guard.
 
 ---
 
@@ -214,12 +239,17 @@ number, if it turns out to work well in real use.
   function) compares by `lemma` first, falling back to `target` for legacy lessons (`v83_p` — this
   MUST stay lemma-first, or dedup silently breaks for every inflected word again). Do NOT `require`
   server.js from ANY of the five standalone CP files.
-- **`install.sh`** (`v83_q`, repo root) — the one-line `curl \| sh` installer, UNRELATED to any of
-  the `PLAN §7.0` files above. Every mutating step is idempotency-gated (see `INTERNALS.md`'s own
-  entry for the exact list) — if you touch this file, re-verify EACH gate still fires (a real
-  `sh -n` check plus the structural assertions in `test/unit-install-script.test.js` are necessary
-  but not sufficient; the real proof was an actual end-to-end run against the real GitHub repo,
-  documented in `v83_q`'s own roadmap write-up — repeat that manually after any real change here).
+- **`install.sh`** (`v83_q`, repo root; default model changed to `qwen3.6:35b-a3b` at `v83_r`) — the
+  one-line `curl \| sh` installer, UNRELATED to any of the `PLAN §7.0` files above. Every mutating
+  step is idempotency-gated (see `INTERNALS.md`'s own entry for the exact list) — if you touch this
+  file, re-verify EACH gate still fires (a real `sh -n` check plus the structural assertions in
+  `test/unit-install-script.test.js` are necessary but not sufficient; the real proof was an actual
+  end-to-end run against the real GitHub repo, documented in `v83_q`'s own roadmap write-up — repeat
+  that manually after any real change here).
+- **`llm.js`'s `warmup(model, log)`** (`think:false` added `v83_r`) — called once at server startup
+  via `server.js`'s `_warmupLLM(OLLAMA_MODEL, …)`. Guarded at the HTTP layer by
+  `test/e2e-warmup-think.test.js`, registered inside `run.js`'s `!quick` block (it spawns a fake
+  Ollama server).
 - `test/lib.js`'s `boot({ log, seed, extraEnv })` — `extraEnv` (`v83_l`) merges into the spawned
   server's env.
 - `probe_gates_v80c1.js`, `probe_gates_v77.js` (⚠️ diff after progress-card changes, baseline

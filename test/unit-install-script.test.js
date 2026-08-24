@@ -74,11 +74,18 @@ console.log('  install.sh: node/git are checked prerequisites, never silently au
 
 // ── 6. The model default matches what README.md itself recommends ────────
 {
-  assert.ok(/MODEL="\$\{DREIZUNGE_MODEL:-qwen2\.5:7b\}"/.test(src), 'the default model is qwen2.5:7b');
-  assert.ok(/qwen2\.5:7b/.test(readme) && /both work well/.test(readme),
-    'README.md itself recommends this same model for the quick-start path — the installer\'s default is not an independent guess');
+  // qwen3.6:35b-a3b, not qwen2.5:7b — changed after a real, measured comparison (see
+  // roadmap_v83.md): zero translation errors vs. two on the smaller model, same real chapter.
+  assert.ok(/MODEL="\$\{DREIZUNGE_MODEL:-qwen3\.6:35b-a3b\}"/.test(src), 'the default model is qwen3.6:35b-a3b, the measured-best option');
+  assert.ok(/qwen3\.6:35b-a3b/.test(readme) && /best-quality|BEST-quality|best quality/.test(readme),
+    'README.md itself recommends this same model as the best-quality option — the installer\'s default is not an independent guess');
+  // The lighter alternative must still be named SOMEWHERE, not silently dropped — a big model is
+  // the right DEFAULT for quality, but hiding the lightweight escape hatch would be a real regression
+  // for anyone on a smaller machine.
+  assert.ok(/qwen2\.5:7b/.test(src), 'install.sh itself still mentions qwen2.5:7b as the lighter DREIZUNGE_MODEL override, not just README');
+  assert.ok(/qwen2\.5:7b/.test(readme), 'README.md still documents qwen2.5:7b as the lighter alternative, not silently dropped when the default changed');
 }
-console.log('  install.sh: default model (qwen2.5:7b) matches README.md\'s own documented recommendation: OK');
+console.log('  install.sh: default model (qwen3.6:35b-a3b, the measured-best option) matches README.md\'s own recommendation; the lighter qwen2.5:7b alternative is still documented in both: OK');
 
 // ── 7. README.md's documented one-liner points at a URL this repo can actually serve ──
 {

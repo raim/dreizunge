@@ -86,7 +86,13 @@ async function warmup(model, log) {
   const write = log || (s => process.stdout.write(s));
   write(`  Warming up ${model}… `);
   try {
-    await _callOllama(model, '', 'hi', 1);
+    // think:false (found live, v83_r): server.js's only caller warms the STORY-role model, and
+    // server.js's own OLLAMA_THINK table already marks that role non-thinking always. Without this,
+    // a reasoning-capable model (e.g. qwen3.6:35b-a3b, now README.md's own recommended default)
+    // spends its 1-token budget "thinking" and the call fails "Ollama returned empty response" —
+    // the SAME failure mode CP2's analyzeSentence had (v83_o) and for the identical reason: no
+    // caller had ever exercised this against a real reasoning model before.
+    await _callOllama(model, '', 'hi', 1, { think: false });
     write('ready ✓\n');
   } catch(e) { write(`not ready (${String(e.message||e).slice(0,50)}) — continuing\n`); }
 }

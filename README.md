@@ -21,21 +21,26 @@ https://raim.github.io/dreizunge/
 ### Option A — one-line install (recommended)
 
 Clones the repo, installs Ollama if it isn't already on your machine, pulls the recommended
-`qwen2.5:7b` model, and starts the app — all in one command. Requires only Node.js (>=14) and git
+`qwen3.6:35b-a3b` model — the BEST-quality option, per a real measured comparison (see
+`build_history/roadmap_v83.md`: zero translation errors vs. two on the smaller `qwen2.5:7b`, on the
+same real chapter) — and starts the app, all in one command. Requires only Node.js (>=14) and git
 already installed; safe to re-run (it updates the checkout instead of re-cloning).
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/raim/dreizunge/main/install.sh | sh
 ```
 
-Then open **http://localhost:3000**. Override the checkout location, model, or port with
-`DREIZUNGE_DIR`, `DREIZUNGE_MODEL`, or `PORT` env vars, e.g.
-`DREIZUNGE_MODEL=translategemma PORT=8080 curl -fsSL .../install.sh | sh`. See `install.sh` itself
-for exactly what it does — it does not do anything the manual steps in Option B below don't also do.
+Then open **http://localhost:3000**. `qwen3.6:35b-a3b` is a big download (~20+ GB) and wants real
+RAM to run well — if that doesn't suit your machine, use the much smaller (and still solid)
+`qwen2.5:7b` instead: `DREIZUNGE_MODEL=qwen2.5:7b curl -fsSL .../install.sh | sh`. Override the
+checkout location or port too, with `DREIZUNGE_DIR` / `PORT`. See `install.sh` itself for exactly
+what it does — it does not do anything the manual steps in Option B below don't also do.
 
-### Option B — manual install, Local Qwen via Ollama
+### Option B — manual install, Local LLM via Ollama
 
-The slim models qwen2.5:7b and translategemma both work well.
+`qwen3.6:35b-a3b` is the best-quality model measured so far (see Option A above) — use it if your
+machine has the RAM and disk for a ~20+ GB model. `qwen2.5:7b` is a much lighter, still-solid
+alternative, and `translategemma` works better for rarer languages qwen doesn't speak well.
 
 NOTE: use translategemma for rarer languages, but use qwen for
 Asian languages.
@@ -45,25 +50,27 @@ Asian languages.
 # 1. Install Ollama on Xubuntu 24.04
 curl -fsSL https://ollama.com/install.sh | sh
 
-# 2. Pull a model: the slim language-oriented LLMs seem to work best:
+# 2. Pull a model — qwen3.6:35b-a3b for the best quality (large download):
+ollama pull qwen3.6:35b-a3b
+# ...or the much smaller, still solid qwen2.5:7b:
 ollama pull qwen2.5:7b
 
 # 3. Start the app — Ollama is auto-detected
 node server.js
 
 # Or set the model explicitly:
-OLLAMA_MODEL=qwen2.5:7b node server.js
+OLLAMA_MODEL=qwen3.6:35b-a3b node server.js
 
 # For languages that qwen doesn't speak, translategemma
 # works better, e.g. Letzebuergesch or Swahili: set explicitly
-OLLAMA_TRANSLATION_MODEL=translategemma OLLAMA_MODEL=qwen2.5:7b node server.js
+OLLAMA_TRANSLATION_MODEL=translategemma OLLAMA_MODEL=qwen3.6:35b-a3b node server.js
 
 
 ```
 **When finished, don't forget to stop the model and free up your RAM:**
 
 ``` bash
- ollama stop qwen2.5:7b
+ ollama stop qwen3.6:35b-a3b
 ```
 
 

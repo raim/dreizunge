@@ -270,6 +270,7 @@ if (!quick) {
   run('e2e: PLAN §7.0 CP3 — proposed curriculum plan (concepts/prerequisites/ordering), report-only', 'node', [path.join(__dirname, 'unit-curriculum-plan.test.js')]);
   run('e2e: PLAN §7.0 CP4 — vocabulary lesson through the existing contract, validated via real buildStandardExercises', 'node', [path.join(__dirname, 'unit-curriculum-lesson.test.js')]);
   run('e2e: PLAN §7.0 CP5 — silent shadow-mode consumption of the curriculum plan (progress card unchanged)', 'node', [path.join(__dirname, 'unit-cp5-shadow.test.js')]);
+  run('e2e: llm.js warmup() sends think:false on the wire (v83_r)', 'node', [path.join(__dirname, 'e2e-warmup-think.test.js')]);
   run('e2e: PLAN §7.0 apply-cp-lessons.js — additive CP1-4 lesson writes, cross-chapter dedup', 'node', [path.join(__dirname, 'unit-apply-cp-lessons.test.js')]);
   // Moved inside the block in v70_b: these six spawn a real server + fake Ollama, but were
   // registered outside it, so --quick spawned servers despite this file's header promising

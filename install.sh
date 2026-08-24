@@ -5,8 +5,9 @@
 #
 # Clones the repo, installs Ollama (via Ollama's OWN official installer — this script does not
 # reimplement platform-specific Ollama packaging itself) if it isn't already present, makes sure
-# the Ollama server is actually reachable, pulls the recommended quick-start model, and starts the
-# app in the foreground on http://localhost:3000.
+# the Ollama server is actually reachable, pulls the recommended BEST model (qwen3.6:35b-a3b — a
+# large download; set DREIZUNGE_MODEL=qwen2.5:7b for a much smaller, still-solid alternative), and
+# starts the app in the foreground on http://localhost:3000.
 #
 # Safe to RE-RUN: every step checks what is already there before acting — nothing here is
 # destructive. Set DREIZUNGE_DIR / DREIZUNGE_MODEL / PORT to override the defaults below.
@@ -17,7 +18,7 @@ set -eu
 
 REPO_URL="https://github.com/raim/dreizunge.git"
 DIR="${DREIZUNGE_DIR:-dreizunge}"
-MODEL="${DREIZUNGE_MODEL:-qwen2.5:7b}"   # README.md's own recommended quick-start model
+MODEL="${DREIZUNGE_MODEL:-qwen3.6:35b-a3b}"   # README.md's own recommended BEST model (measured, see roadmap_v83.md)
 PORT="${PORT:-3000}"
 OLLAMA_URL="${OLLAMA_HOST:-http://127.0.0.1:11434}"
 
@@ -88,14 +89,16 @@ else
     || die "Ollama did not come up after 15s -- check /tmp/dreizunge-ollama.log, then re-run this script."
 fi
 
-# ── 4. Pull the recommended quick-start model ─────────────────────────────
-# README.md: "The slim models qwen2.5:7b and translategemma both work well... use translategemma
-# for rarer languages, but use qwen for Asian languages." qwen2.5:7b is the one this script pulls
-# automatically; pull translategemma yourself later (`ollama pull translategemma`) if you need it.
+# ── 4. Pull the recommended model ─────────────────────────────────────────
+# qwen3.6:35b-a3b is README.md's own recommended BEST-quality model, per a real measured comparison
+# (roadmap_v83.md: zero translation errors vs. two on the smaller qwen2.5:7b, on the same real
+# chapter). It is a big download (~20+ GB) and wants real RAM to run well -- if that doesn't suit
+# your machine, Ctrl-C now and set DREIZUNGE_MODEL=qwen2.5:7b (much smaller, still solid) instead;
+# `ollama pull translategemma` afterwards if you need rarer languages qwen doesn't speak well.
 if ollama list 2>/dev/null | awk '{print $1}' | grep -qx "$MODEL"; then
   log "Model $MODEL already pulled"
 else
-  log "Pulling $MODEL (several GB the first time -- this can take a while)"
+  log "Pulling $MODEL -- this is a LARGE model (~20+ GB); the first pull can take a while"
   ollama pull "$MODEL"
 fi
 
