@@ -1129,6 +1129,17 @@ already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly o
 | the CLI | `build-curriculum-plan.js` — reads CP2's OWN `canonical-analysis.json` as input (never re-derives concepts from `lessons.json` directly), and reads `lessons.json` too but ONLY read-only, for the comparison step. Report-only by default, `--write`/`--out`/`--in`/`--lessons` same redirect convention as CP1/CP2's CLIs |
 | ⚠️ **this mutation test was done SAFELY, learning from CP2's incident** | the "never writes `lessons.json`" guard was mutation-tested by pointing `--lessons` at a SCRATCH copy before mutating the CLI to write into it — the scratch copy changed (proving the mutation is real and the guard would catch it), the REAL committed `lessons.json` never touched at any point. Applies the standing rule CP2's incident produced |
 
+**`PLAN §7.0` CP4 — vocabulary lesson through the existing contract** (`v83_k`, ONE NEW STANDALONE FILE, sits ON TOP of CP3's output, NO model call, NEVER touches `lessons.json` — a PARALLEL route, the legacy generator is completely untouched)
+
+| what | where |
+|---|---|
+| the core, deterministic (no LLM call) | `curriculum-lesson.js` → `emitVocabLesson(plan, opts)` turns a CP3 chapter plan's VOCAB concepts into ONE lesson object shaped exactly like server.js's own `generateOneLesson` output (`id`/`type`/`title`/`desc`/`icon`/`vocab`/`sentences`), plus the plan's own mandatory provenance fields (`sourceSpans`/`planReason`/`pipelineVersion`) CP1-3 have carried all along. Capped at 8 vocab items, the SAME cap `generateOneLesson` applies |
+| deliberately empty fields, not faked | `sentences: []` (a real example sentence needs translating the exact story sentence, a genuine NEW model call this stage does not make) and `skillLinks: []` (real skill-registry integration would invent a per-generator dialect the plan's own text warns against — left an explicit open TODO, not shortcut) |
+| "validate it" | `validateLessonShape(lesson)` — the SAME structural floor `generateOneLesson` enforces on its own model output (non-empty vocab, no duplicate targets, non-empty target/source, the identical-source-target ratio — `IDENTICAL_MIN_ITEMS`/`IDENTICAL_MIN_RATIO` copied verbatim from server.js's own v53_g measurement) — reports (`{valid, errors, warnings}`), never throws |
+| ⚠️ **the STRONGEST proof, at the layer where the claim is actually observable** | `unit-curriculum-lesson.test.js` §4 extracts the REAL, UNMODIFIED `buildStandardExercises` straight from `index.html` (the same `new Function(...)` extraction pattern `unit-beginner-types.test.js` already uses) and runs a CP4-emitted lesson through it — REAL playable exercises come out, not just a shape that looks right on paper. This is what "validate it" actually means, not merely a schema check |
+| the CLI | `build-curriculum-lesson.js` — reads CP3's OWN `curriculum-plan.json` as input (never `canonical-analysis.json` or `lessons.json` directly). Report-only by default, `--write`/`--out`/`--in`/`--max-items` same redirect convention as CP1-3's CLIs. No `OLLAMA_*` configuration needed — no model call |
+| the output store | `curriculum-lesson.json` — entirely separate from `lessons.json`. **Nothing reads it yet, nothing is wired into the player** — CP4 is a new PARALLEL route per the plan's own text, not a replacement; that's CP6's call, later, after multilingual coverage/quality/recovery are all measured |
+
 
 ---
 

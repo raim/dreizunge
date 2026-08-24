@@ -29,9 +29,9 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_j` — `PLAN §7.0` CP3: proposed curriculum plan (concepts/reasons/prerequisites/ordering/suitable exercise families), report-only, NO model call. New standalone `curriculum-plan.js`/`build-curriculum-plan.js`, sits on top of CP2's `canonical-analysis.json`, reads `lessons.json` read-only for comparison, writes neither. `v83_i` — `PLAN §7.0` CP2: analysis report (lemma/form/phrase/sense/frequency/script proposals), report-only, model-in-the-loop. New standalone `canonical-analysis.js`/`build-canonical-analysis.js`, sits on top of CP1's `canonical-text.json`, never touching it or `lessons.json`. `v83_h` — `PLAN §7.0` CP1: canonical text + analysis records, report-only — the first buildable slice of Track A's accepted parallel-curriculum direction. New standalone `canonical-text.js`/`build-canonical-text.js`, never touching `lessons.json`. `v83_g` — the progress-card story panel's border shifts red→green with comprehension progress. `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen; question cards' `#ex-story-panel` now COLLAPSED by default. `v83_e`/`v83_d`/`v83_c` — the progress-card/entry-card popup redesign. `v83_b` — `PLAN §12` built end to end |
+| **SHIPPED IN THE v83 LINE** | `v83_k` — `PLAN §7.0` CP4: vocabulary lesson through the existing contract, report-only, NO model call, NEVER touches `lessons.json`. New standalone `curriculum-lesson.js`/`build-curriculum-lesson.js`, sits on top of CP3's `curriculum-plan.json`; "validate it" proven by running an emitted lesson through the REAL, unmodified client `buildStandardExercises`. `v83_j` — `PLAN §7.0` CP3: proposed curriculum plan (concepts/reasons/prerequisites/ordering/suitable exercise families), report-only, NO model call. `v83_i` — `PLAN §7.0` CP2: analysis report (lemma/form/phrase/sense/frequency/script proposals), report-only, model-in-the-loop. `v83_h` — `PLAN §7.0` CP1: canonical text + analysis records, report-only — the first buildable slice of Track A's accepted parallel-curriculum direction. `v83_g` — the progress-card story panel's border shifts red→green with comprehension progress. `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen; question cards' `#ex-story-panel` now COLLAPSED by default. `v83_e`/`v83_d`/`v83_c` — the progress-card/entry-card popup redesign. `v83_b` — `PLAN §12` built end to end |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
-| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 shipped at `v83_i`, CP3 shipped at `v83_j` — see the SHIPPED section above. CP4–CP6 remain open, in sequence. |
+| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 at `v83_i`, CP3 at `v83_j`, CP4 at `v83_k` — see the SHIPPED section above. CP5–CP6 remain open, in sequence. |
 
 Standing rules are in the "Rules earned in session 28…34" blocks — read the **"⚠️ How the rules are
 NUMBERED"** note before citing one.
@@ -1685,6 +1685,96 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_k` — `PLAN §7.0` CP4: vocabulary lesson through the existing contract, report-only
+
+**Shipped by: Claude Code, on user request** ("continue", immediately after `v83_j` shipped CP3, in
+response to being told CP4 was next). Fourth buildable slice of Track A's migration sequence (`§0`:
+*"CP4 — one lesson family through the existing contract. Start with vocabulary meaning/form, validate
+it, and retain the legacy generation route in parallel. Only then add language-specific families such
+as conjugation, grammar, articles, error patterns, and comprehension."*). **A genuine change in kind**
+from CP1–CP3: this is the first stage that emits something LESSON-shaped rather than a pure report —
+but it still makes NO new model call, still never touches `lessons.json`, and the legacy generator is
+completely untouched, so nothing actually reachable by a real learner changed.
+
+**Why no new model call, again**: CP2 already proposed a lemma and a contextual sense for every
+resolved token; CP3 already decided which of those are worth teaching, in what order, and why.
+Turning a CP3 vocab concept into a `lessons.json`-shaped lesson object is packaging, not a fresh
+judgment about meaning — the target is the concept's own lemma, the source is the concept's own
+CP2-derived sense. Nothing is invented here that CP1–3 had not already done and recorded.
+
+**What shipped**: one new file, sitting ON TOP of CP3's own output.
+
+- **`curriculum-lesson.js`** — the deterministic core.
+  - `emitVocabLesson(plan, opts)` turns a CP3 chapter plan's VOCAB concepts (already frequency/
+    prerequisite-ordered) into ONE lesson object shaped EXACTLY like server.js's own
+    `generateOneLesson` output (`id`/`type`/`title`/`desc`/`icon`/`vocab`/`sentences`), plus the
+    plan's own §0 MANDATORY provenance fields (`sourceSpans`/`planReason`/`pipelineVersion`) that
+    CP1–3 have been carrying all along but that had nowhere lesson-shaped to land until now. Capped
+    at 8 vocab items — the SAME cap `generateOneLesson` applies to a model's own vocab list, for
+    parity. A plan with zero vocab concepts (e.g. phrase-only) REFUSES rather than emitting an empty
+    stub lesson.
+  - **Two fields left deliberately empty, not faked**: `sentences: []` — a real example sentence
+    would need translating the EXACT story sentence a concept occurs in, which is a genuine (if
+    narrow) NEW model call this stage does not make, recorded as future work rather than silently
+    filled with a placeholder translation. `skillLinks: []` — the plan's own §7.0 text warns that
+    "future `lesson.skillLinks` must preserve [B2's] reviewed canonical identity rather than invent
+    per-generator dialects"; wiring real skill tagging here, standalone and without going through the
+    reviewed registry, would mean inventing exactly that dialect, so it stays an explicit open TODO.
+  - **"Validate it"**: `validateLessonShape(lesson)` checks the SAME structural floor
+    `generateOneLesson` already enforces on its own model output before accepting it — non-empty
+    vocab, no duplicate targets (case-insensitive), non-empty target/source, and the identical-
+    source-target ratio server.js's own generator already tracks (`IDENTICAL_MIN_ITEMS`/
+    `IDENTICAL_MIN_RATIO`, copied verbatim from its `v53_g` measurement — reported as an ADVISORY
+    warning here, not a hard fail, since the CLOSE-language-pair leniency depends on
+    `isCloseLangPair`, a per-language table this pure module deliberately does not duplicate
+    speculatively). Returns a report (`{valid, errors, warnings}`), never throws — matching this
+    whole pipeline's "expose, don't silently guess" ethic.
+  - **THE key claim, proven at the layer where it's actually observable**: rather than trust the
+    schema check alone, `unit-curriculum-lesson.test.js` §4 extracts the REAL, UNMODIFIED client-side
+    `buildStandardExercises` straight out of `index.html` (the SAME `new Function(...)` extraction
+    pattern `unit-beginner-types.test.js` already established) and runs a CP4-emitted lesson through
+    it. REAL playable exercises come out — MCQs built from the actual vocab CP4 emitted, tracing back
+    to the real target/source strings, not placeholders. This is what "validate it" actually means:
+    the SAME code path a real learner's browser runs, not a shape that merely looks right on paper.
+- **`build-curriculum-lesson.js`** — the CLI wrapper. Reads CP3's OWN `curriculum-plan.json` as
+  input (never `canonical-analysis.json` or `lessons.json` directly). Report-only by default,
+  `--write`/`--out`/`--in`/`--max-items` same redirect convention as CP1–3's CLIs. No `OLLAMA_*`
+  configuration needed at all — no model call happens here either.
+
+**Verified at the layer where the claim is observable**: `unit-curriculum-lesson.test.js` (5
+sections) — standalone/no-server.js-dependency/no-model-call, `emitVocabLesson` shape/capping/
+provenance-carry-forward/empty-plan-refusal, `validateLessonShape` (same structural floor as
+`generateOneLesson`, identical-ratio advisory not blocking, never throws even on garbage input), the
+REAL-`buildStandardExercises` playability proof described above, and a full CLI integration test
+chaining the REAL CP1 → CP2 (fake Ollama) → CP3 → CP4 pipeline, asserting the real committed
+`lessons.json` AND CP3's own `curriculum-plan.json` are both provably untouched.
+
+**Mutation-tested**: disabling the duplicate-target check in `validateLessonShape` — RED, caught by
+the exact fixture built to prove that property. The "never writes anyone else's store" guard was
+mutation-tested SAFELY, same standing rule `v83_i`'s incident produced and `v83_j` already applied
+correctly: `--in` was pointed at a SCRATCH copy of a real, full-pipeline-produced `curriculum-plan.json`
+before mutating the CLI to write into it — the scratch copy changed (mutation confirmed real), the
+real corpus files (`lessons.json`, `canonical-text.json`, `canonical-analysis.json`, and CP3's own
+output — none of which are even committed by default except CP1's) were never at risk, verified via
+`git diff --stat` before and after.
+
+**Testing**: 258/228/0/0 full baseline green (from 257/228 — one new test file, registered inside
+`test/run.js`'s `if (!quick)` block like CP2/CP3's own, since its CLI-integration section spawns a
+fake Ollama to build the real CP1→CP2 half of the chain). No `lessons.json`, `canonical-text.json`,
+`canonical-analysis.json`, or `curriculum-plan.json` change — all provably byte-identical before/after
+every run. No `ui.json` change either — CP4 has no user-facing surface, same as CP1–3.
+`curriculum-lesson.json` (CP4's own output) is NOT committed by default, same reasoning as CP2/CP3's
+own stores.
+
+**Not scoped here, deliberately**: example sentences (needs a narrow, new, translate-the-real-
+sentence model call — not built), real skill-registry wiring (`skillLinks` stays empty, an explicit
+TODO), every OTHER lesson family the plan names for LATER within CP4 itself (conjugation, grammar,
+articles, error patterns, comprehension — "only then," per the plan's own wording), CP5's
+progress-card integration, and CP6's retirement of anything legacy. **CP4's emitted lessons are not
+reachable by a real learner in any way** — `curriculum-lesson.json` is read by nothing, wired into
+nothing; that wiring decision belongs to CP5/CP6, after multilingual coverage and quality are
+actually measured across more than this stage's own tests.
 
 ### `v83_j` — `PLAN §7.0` CP3: proposed curriculum plan (concepts/prerequisites/ordering), report-only
 
