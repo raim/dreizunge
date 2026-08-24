@@ -29,9 +29,9 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_m` — `PLAN §7.0` CP5, made VISIBLE: a small, clearly-"experimental"-labelled row in the progress card's nav popup, shown ONLY when CP1-4 data exists for the chapter (user asked for this by name after trying `v83_l`'s silent version). Row resets synchronously on every render; mutation-tested against both a stale-data leak and a wrong-chapter leak from a late response. `v83_l` — `PLAN §7.0` CP5: silent shadow-mode consumption of the curriculum plan — the FIRST CP stage to touch `index.html`/`server.js`, ZERO visible effect at that cut (user-ruled: mirror the B4/BKT shadow pattern). New read-only `GET /api/cp-shadow/:chapterId` + client-side `refreshCp5Shadow`. `v83_k` — `PLAN §7.0` CP4: vocabulary lesson through the existing contract, report-only, NO model call, NEVER touches `lessons.json`. `v83_j` — `PLAN §7.0` CP3: proposed curriculum plan (concepts/reasons/prerequisites/ordering/suitable exercise families), report-only, NO model call. `v83_i` — `PLAN §7.0` CP2: analysis report (lemma/form/phrase/sense/frequency/script proposals), report-only, model-in-the-loop. `v83_h` — `PLAN §7.0` CP1: canonical text + analysis records, report-only — the first buildable slice of Track A's accepted parallel-curriculum direction. `v83_g` — the progress-card story panel's border shifts red→green with comprehension progress. `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen; question cards' `#ex-story-panel` now COLLAPSED by default. `v83_e`/`v83_d`/`v83_c` — the progress-card/entry-card popup redesign. `v83_b` — `PLAN §12` built end to end |
+| **SHIPPED IN THE v83 LINE** | `v83_n` — `apply-cp-lessons.js`: the FIRST script in `PLAN §7.0` that WRITES into a real `lessons.json`. Chains CP1→CP2→CP3→CP4 per topic/storyline, appends an ADDITIVE, clearly-tagged lesson (byte-for-byte proven never to touch an existing lesson), applies cross-chapter dedup (`curriculum-plan.js`'s new `excludeAlreadyTaughtConcepts`, the SIMPLE half of the multi-chapter roadmap note), idempotent by default with a `--replace` mode. `v83_m` — `PLAN §7.0` CP5, made VISIBLE: a small, clearly-"experimental"-labelled row in the progress card's nav popup, shown ONLY when CP1-4 data exists for the chapter. `v83_l` — `PLAN §7.0` CP5: silent shadow-mode consumption of the curriculum plan — the FIRST CP stage to touch `index.html`/`server.js`. `v83_k` — `PLAN §7.0` CP4: vocabulary lesson through the existing contract, report-only, NO model call, NEVER touches `lessons.json`. `v83_j` — `PLAN §7.0` CP3: proposed curriculum plan, report-only, NO model call. `v83_i` — `PLAN §7.0` CP2: analysis report, report-only, model-in-the-loop. `v83_h` — `PLAN §7.0` CP1: canonical text + analysis records, report-only — the first buildable slice of Track A. `v83_g` — the progress-card story panel's border shifts red→green with comprehension progress. `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen; question cards' `#ex-story-panel` now COLLAPSED by default. `v83_e`/`v83_d`/`v83_c` — the progress-card/entry-card popup redesign. `v83_b` — `PLAN §12` built end to end |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
-| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 at `v83_i`, CP3 at `v83_j`, CP4 at `v83_k`, CP5 at `v83_l`/`v83_m` (silent then visible) — see the SHIPPED section above. CP6 remains open (a CONDITIONAL, not a queued slice — see `v83_l`'s own SESSION_PROMPT). |
+| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 at `v83_i`, CP3 at `v83_j`, CP4 at `v83_k`, CP5 at `v83_l`/`v83_m` (silent then visible). `v83_n` (`apply-cp-lessons.js`) is the FIRST script that actually writes CP1-4-derived lessons into `lessons.json`, additively — not itself a numbered CP stage, a browser-reachable follow-up to CP4. CP6 remains open (a CONDITIONAL, not a queued slice — see `v83_l`'s own SESSION_PROMPT). |
 
 Standing rules are in the "Rules earned in session 28…34" blocks — read the **"⚠️ How the rules are
 NUMBERED"** note before citing one.
@@ -1685,6 +1685,98 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_n` — `apply-cp-lessons.js`: the first script that WRITES CP1-4 lessons into a real corpus
+
+**Shipped by: Claude Code, on user request** ("ok", confirming a proposed next step after a
+conversation about whether/how the CP1-4 pipeline could reach the browser generator page). NOT a
+numbered CP stage — a follow-up to CP4, scoped as "generate test lessons now, via script," and
+explicitly the shared engine a future browser "add lessons" checkbox would call into later, per the
+user's own "keep it working in parallel to the existing routine" framing.
+
+**Why this one is different from everything CP1-5 shipped**: every earlier release in this whole
+track was either a pure report, an inert output nothing reads, or (CP5) a read-only lookup with zero
+write path anywhere. This is the first thing that actually adds real, playable content to the real,
+committed `lessons.json`. Named plainly to the user before building it, and built with the same
+additive-only, reversible discipline the whole track has followed — this is a NEW route beside the
+legacy generator, not a replacement for any part of it.
+
+**A conversation before the code**: the user asked, across several exchanges, whether this pipeline
+reaches the browser today (it does not — confirmed, corrected an implicit assumption), what would be
+needed to make it reachable (a UI trigger, a background job for CP2's slow per-sentence model calls,
+a decision about additive-vs-replace, skill-registry wiring, sentence generation — none authorised
+yet), whether it works across multiple chapters (batch processing already did, at the CLI level;
+genuine cross-chapter AWARENESS did not), and specifically whether "don't re-teach an already-covered
+word" would be simple. That LAST question corrected an earlier over-estimate in this same
+conversation — the full "learning arc" (deciding what to teach WHEN across a whole story, prerequisite
+-aware) is genuinely CP3-sized work; the narrower "just don't re-propose already-taught words" is not,
+and was recorded as its own multi-chapter roadmap note (added in a standalone, code-free commit,
+right before this one) distinguishing the two rather than conflating them.
+
+**What shipped**:
+
+- **`curriculum-plan.js` gained `excludeAlreadyTaughtConcepts(concepts, alreadyTaughtLemmas)`** — the
+  SIMPLE half of the multi-chapter note. A stateless filter: given any concept list (vocab or phrase)
+  and a set of already-taught lemma strings, excludes anything already covered, case-insensitively.
+  No ordering, no prerequisite decision — that harder half stays explicitly deferred.
+- **`apply-cp-lessons.js`** — the orchestration script.
+  - `--topic <id>` (one chapter) or `--storyline <id>` (every chapter, IN ORDER, via the storyline's
+    own `chapters` array — no chain-walking needed, that array is already ordered).
+  - Chains `buildCanonicalText` (CP1) → `analyzeChapter` (CP2, the one real model call) →
+    `buildCurriculumPlan` (CP3) → the new dedup filter → `emitVocabLesson` (CP4) → `validateLessonShape`
+    for each selected topic, then appends the result.
+  - **Cross-chapter dedup, concretely**: for chapter N, "already taught" is the union of (a) that
+    topic's own pre-existing lessons' vocabulary and (b) every EARLIER chapter's taught vocabulary —
+    tracked in an in-memory map that grows as the loop proceeds, so it sees BOTH pre-existing legacy
+    lessons AND lessons this SAME run has just added to earlier chapters, not only what was already on
+    disk before the script started.
+  - **⚠️ Additive-only, proven byte-for-byte**: the target topic's own pre-existing lesson and a
+    completely unrelated topic are both diffed as byte-identical before/after a real `--write` run —
+    not inferred from "the code only pushes," actually checked against real output.
+  - **Idempotent by default**: a topic that already carries a `_pipeline:'cp4'`-tagged lesson is
+    skipped — checked BEFORE the expensive, real, model-calling CP1-4 chain runs, so a no-op costs
+    nothing. `--replace` swaps the old lesson for a freshly regenerated one.
+  - **⚠️ A real bug, found and fixed while building this**: the first version of `--replace` excluded
+    the OLD lesson being replaced from "already taught" incorrectly — it INCLUDED it, meaning every
+    word that lesson taught looked "already covered" by itself, so a `--replace` run always emitted an
+    empty lesson (or none at all). Fixed by excluding the topic's own `_pipeline:'cp4'` lesson from the
+    "already taught" union specifically when `REPLACE` is true. Mutation-tested: a `--replace` run now
+    provably recovers the SAME vocabulary as the lesson it's replacing, not a starved, near-empty one.
+  - `--lessons <path>` / `--out <path>` redirect the READ and WRITE targets independently — every test
+    exercises the real CLI against real fixtures without ever opening the real committed `lessons.json`.
+  - A written lesson is stamped `_pipeline:'cp4'` (identifiable, reversible) and a `_genMeta` matching
+    the shape server.js's own add-lesson route always ensures exists, honestly describing what actually
+    happened (a real CP2 model call, not a fabricated single-shot generation).
+
+**Verified at the layer where the claim is observable**: `unit-apply-cp-lessons.test.js` (7 sections)
+— additive-only (byte-for-byte, target AND unrelated topics), report-only-by-default, cross-chapter
+dedup against a pre-existing LEGACY lesson in an earlier chapter, cross-chapter dedup against THIS
+RUN's own earlier addition (no pre-existing legacy lesson involved at all — proving the in-memory
+tracking, not just the disk-based comparison), idempotency + `--replace`'s self-starvation bug fixed
+and mutation-tested, a chapter with nothing new left skipped cleanly (no forced empty lesson), and —
+reusing CP4's own strongest proof layer — a lesson this script ACTUALLY WROTE to disk, read back
+exactly as the real app would, builds real playable exercises through the unmodified
+`buildStandardExercises`.
+
+**Mutation-tested**: replacing the additive append with a destructive overwrite of the whole lessons
+array — RED (caught the target topic's own pre-existing lesson disappearing). Disabling the
+earlier-chapter dedup lookup — RED (a later chapter re-proposed a word its own earlier chapter had
+already taught). Both confirmed the guards they claim to be, not merely present.
+
+**Testing**: 260/228/0/0 full baseline green (from 259/228 — one new test file, registered inside
+`test/run.js`'s `if (!quick)` block since it spawns a fake Ollama to exercise the real CP1-4 chain).
+The real, committed `lessons.json` (and every other real CP-pipeline store) is untouched by every test
+in this file — confirmed via `git diff --stat` throughout development, not merely by never opening the
+real path in the test source. No `ui.json` change.
+
+**Not scoped here, deliberately**: any browser UI trigger (the actual "add lessons" checkbox this
+script is meant to sit behind eventually), a background-job wrapper for CP2's slow per-sentence calls
+(needed before this could run from a single HTTP request), example-sentence generation (CP4's own
+still-open TODO), real skill-registry wiring (also still open — a written lesson's vocab items carry
+no `skillId`, degrading gracefully to the SAME "legacy/pending, no ID" state the observation/BKT
+pipeline already handles for untagged lessons), and the HARDER half of the multi-chapter note (genuine
+cross-chapter curriculum sequencing) — explicitly deferred by the roadmap note this release's own
+conversation produced, not by this script's own scope alone.
 
 ### `v83_m` — `PLAN §7.0` CP5 made VISIBLE: a small, clearly-experimental row on the progress card
 

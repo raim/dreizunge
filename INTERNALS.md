@@ -1152,6 +1152,18 @@ already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly o
 | ⚠️ **the "silent" claim from `v83_l` is now a NARROWER "identical except one element" claim** | per the project's own standing rule (rewrite a superseded invariant, don't just loosen it), `unit-cp5-shadow.test.js` §5 now strips `#comp-cp5-row` out of the captured markup before diffing — everything else must still be byte-identical, and `#comp-cp5-row` itself must show the exact real fetched numbers |
 | test infra addition (`v83_l`) | `test/lib.js`'s `boot({..., extraEnv})` — a backward-compatible optional param merged into the spawned server's env, so a test can point `CURRICULUM_PLAN_FILE` at a scratch fixture without every OTHER e2e test paying for a dedicated per-boot isolated file |
 
+**`apply-cp-lessons.js`** (`v83_n`) — the FIRST script in this whole track that WRITES into a real `lessons.json`. Everything through CP1-5 (`v83_h`…`v83_m`) was deliberately inert or report-only.
+
+| what | where |
+|---|---|
+| what it does | Chains CP1→CP2→CP3→CP4 for `--topic <id>` or every chapter of `--storyline <id>` (in order), and appends an ADDITIVE, clearly-tagged (`_pipeline:'cp4'`) "standard" vocab lesson per topic. Report-only by default, `--write` to persist — same convention as every CP CLI. `--lessons`/`--out` redirect BOTH the read and write target, independently, for safe testing |
+| ⚠️ **NEVER edits or removes an existing lesson** | proven byte-for-byte in `unit-apply-cp-lessons.test.js` §1 — a target topic's own pre-existing lesson AND a completely unrelated topic are both diffed as byte-identical before/after a real `--write` run, not just "the count looks right" |
+| cross-chapter dedup | `curriculum-plan.js`'s new `excludeAlreadyTaughtConcepts(concepts, alreadyTaughtLemmas)` — the SIMPLE half of the multi-chapter roadmap note (see `roadmap_v83.md`'s `PLAN §7.0` §0). Before choosing a chapter's vocabulary, EARLIER chapters in the same storyline (by the storyline's own `chapters` array) have their taught vocabulary excluded — both pre-existing LEGACY lessons AND this SAME script's own earlier-chapter additions within the same run (`alreadyTaughtByTopicId`, grows chapter by chapter as the loop proceeds) |
+| ⚠️ **`--replace` must exclude the OLD lesson it is about to replace from "already taught"** | a real bug found while building this script: without this, every re-run would starve itself — the words a lesson taught last time would look "already covered" by that very lesson, leaving nothing to regenerate. Fixed (`ownLessons` filters out the topic's own `_pipeline:'cp4'` lesson when `REPLACE` is true) and mutation-tested (`unit-apply-cp-lessons.test.js` §5 asserts a `--replace` run recovers the SAME vocabulary, not an empty lesson) |
+| idempotent by default | a second run with no `--replace` skips a topic that already carries a `_pipeline:'cp4'` lesson — checked BEFORE the (real, model-calling) CP1-4 chain runs, so a no-op run costs nothing |
+| a chapter with nothing new to teach | `emitVocabLesson` already throws "no vocab concepts to teach" when the dedup filter leaves nothing — caught and logged as a clean skip, never a forced empty lesson |
+| ⚠️ **the strongest proof, reused from CP4** | `unit-apply-cp-lessons.test.js` §7 reads a lesson THIS SCRIPT actually wrote to disk back exactly as the real app would, and runs it through the REAL, unmodified `buildStandardExercises` — real playable exercises come out |
+
 
 ---
 

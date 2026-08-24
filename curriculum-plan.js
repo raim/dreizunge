@@ -181,6 +181,18 @@ function compareWithExistingLessons(vocabConcepts, topic) {
   return { proposedCount: vocabConcepts.length, coveredByExisting, notCoveredByExisting, existingNotProposed };
 }
 
+// PLAN §7.0, multi-chapter note (added after v83_m, ahead of apply-cp-lessons.js): the SIMPLE half of
+// cross-chapter awareness — "don't re-teach a word already covered EARLIER in this storyline." Takes
+// whatever concept list a caller already has (vocab or phrase, doesn't matter — a phrase concept
+// whose OWN lemma happens to already be taught is excluded too) and a set of already-taught lemma
+// strings from EARLIER chapters. Deliberately NOT the harder "genuine cross-chapter sequencing" the
+// roadmap note keeps separate — this is a stateless filter, no ordering/prerequisite decision at all.
+function excludeAlreadyTaughtConcepts(concepts, alreadyTaughtLemmas) {
+  const taught = new Set(Array.from(alreadyTaughtLemmas || []).map(l => String(l).toLowerCase()));
+  if (!taught.size) return concepts.slice();
+  return concepts.filter(c => !taught.has(String(c.lemma || '').toLowerCase()));
+}
+
 // The one function build-curriculum-plan.js calls per chapter. Takes a CP2 chapter analysis record
 // and (optionally) the matching lessons.json topic for the comparison step.
 function buildCurriculumPlan(chapterAnalysis, opts) {
@@ -209,5 +221,6 @@ module.exports = {
   linkPhrasePrerequisites,
   orderConcepts,
   compareWithExistingLessons,
+  excludeAlreadyTaughtConcepts,
   buildCurriculumPlan,
 };
