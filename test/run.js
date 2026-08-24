@@ -268,6 +268,7 @@ if (!quick) {
   run('e2e: PLAN §7.0 CP2 — lemma/form/phrase/sense/frequency/script analysis via a real (fake) LLM call', 'node', [path.join(__dirname, 'unit-canonical-analysis.test.js')]);
   run('e2e: PLAN §7.0 CP3 — proposed curriculum plan (concepts/prerequisites/ordering), report-only', 'node', [path.join(__dirname, 'unit-curriculum-plan.test.js')]);
   run('e2e: PLAN §7.0 CP4 — vocabulary lesson through the existing contract, validated via real buildStandardExercises', 'node', [path.join(__dirname, 'unit-curriculum-lesson.test.js')]);
+  run('e2e: PLAN §7.0 CP5 — silent shadow-mode consumption of the curriculum plan (progress card unchanged)', 'node', [path.join(__dirname, 'unit-cp5-shadow.test.js')]);
   // Moved inside the block in v70_b: these six spawn a real server + fake Ollama, but were
   // registered outside it, so --quick spawned servers despite this file's header promising
   // it skips them. The promise now holds.

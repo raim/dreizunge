@@ -63,7 +63,14 @@ async function startFakeOllama(logPath) {
 
 // Boot fake Ollama + the real server against a fresh temp store.
 // Returns { sport, fport, storePath, logPath, srvlog(), stop() }.
-async function boot({ log = false, seed = null } = {}) {
+// `extraEnv` (PLAN §7.0 CP5, v83_l): a plain object merged into the spawned server's env, AFTER the
+// isolated file paths above so a caller could in principle override those too, but its actual
+// purpose is for env-configurable inputs that do NOT get their own per-boot isolation by default
+// (e.g. CURRICULUM_PLAN_FILE — a read-only, low-traffic lookup where the common case is "the file
+// doesn't exist", so it is not worth every e2e test's boot() paying for a dedicated temp file the
+// way UI_FILE/SKILLS_FILE/LESSONS_FILE do). Defaults to nothing extra, so every EXISTING caller is
+// unaffected.
+async function boot({ log = false, seed = null, extraEnv = null } = {}) {
   const storePath = tmpFile('dz_store', '.json');
   const logPath = log ? tmpFile('dz_chatlog', '.jsonl') : null;
   fs.writeFileSync(storePath, JSON.stringify(seed || { schemaVersion: 29, topics: [], storylines: [], flags: {}, progress: {} }));
@@ -81,7 +88,8 @@ async function boot({ log = false, seed = null } = {}) {
   const env = { ...process.env,
     OLLAMA_HOST: 'http://127.0.0.1:' + fake.port, OLLAMA_MODEL: 'fake',
     OLLAMA_LESSON_MODEL: 'fake', OLLAMA_TRANSLATION_MODEL: 'fake',
-    LESSONS_FILE: storePath, UI_FILE: uiPath, SKILLS_FILE: skillsPath, PORT: String(sport) };
+    LESSONS_FILE: storePath, UI_FILE: uiPath, SKILLS_FILE: skillsPath, PORT: String(sport),
+    ...(extraEnv || {}) };
   const srv = cp.spawn('node', [SERVER], { cwd: ROOT, env, stdio: ['ignore', 'pipe', 'pipe'] });
   let log_ = '';
   srv.stdout.on('data', d => log_ += d); srv.stderr.on('data', d => log_ += d);

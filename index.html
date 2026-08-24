@@ -15749,6 +15749,8 @@ function _storylineIdForTopic(topicName){
 // BKT strictly downstream of `check()`. It has no reader in a gate, renderer, or lesson picker.
 const BKT_SHADOW = Object.freeze({ version: 1, pInit: 0.20, pLearn: 0.15, pSlip: 0.10,
   pGuess: 0.20, masteryThreshold: 0.70 });
+// PLAN §7.0 CP5 (v83_l) — see refreshCp5Shadow below.
+const CP5_SHADOW_VERSION = 1;
 function _bktProbability(value, fallback){
   return (typeof value === 'number' && value >= 0 && value <= 1) ? value : fallback;
 }
@@ -15786,6 +15788,39 @@ function _bktShadowStore(){
     APP.progress.bktShadow = { version:BKT_SHADOW.version, params:{...BKT_SHADOW}, skills:{}, topics:{}, disagreements:[] };
   }
   return APP.progress.bktShadow;
+}
+// PLAN §7.0 CP5 (v83_l): "consume the plan read-only." Mirrors the B4/BKT shadow pattern directly —
+// a silent, fire-and-forget lookup against /api/cp-shadow/:chapterId, recorded into its own
+// persisted store, NEVER touching the DOM, the border colour, or any pass-mark/gate logic. For the
+// vast majority of chapters (the CP1-4 pipeline has been run against only a handful) the endpoint
+// returns `available:false` and this is a complete no-op beyond the store lookup itself — that IS
+// the "legacy fallback" the plan's own §0 text asks for: nothing changes for an unanalysed chapter.
+function _cp5ShadowStore(){
+  if(!APP.progress) return null;
+  const cur = APP.progress.cp5Shadow;
+  if(!cur || cur.version !== CP5_SHADOW_VERSION || !cur.topics){
+    APP.progress.cp5Shadow = { version:CP5_SHADOW_VERSION, topics:{} };
+  }
+  return APP.progress.cp5Shadow;
+}
+// Fire-and-forget: called from showComplete() right after the card has finished rendering. Never
+// awaited by its caller and never throws synchronously — a network failure, a missing endpoint (the
+// static/offline build has no server to ask at all), or a malformed reply must all degrade to
+// "nothing happened", the same as the chapter never having been analysed.
+function refreshCp5Shadow(d){
+  try {
+    if(!d) return;
+    const topicId = d.id || d.topic || null; if(!topicId) return;
+    const store = _cp5ShadowStore(); if(!store) return;
+    fetch('/api/cp-shadow/' + encodeURIComponent(topicId))
+      .then(r => r && r.ok ? r.json() : null)
+      .then(cp => {
+        if(!cp || !cp.available) return;   // the common case — nothing to record, nothing changes
+        store.topics[topicId] = { ...cp, updatedAt:new Date().toISOString() };
+        if(typeof saveProg === 'function') saveProg();
+      })
+      .catch(()=>{});   // offline / static build / server down — silently stays the legacy fallback
+  } catch(_) {}
 }
 // Recompute state and, for a tagged topic only, compare its BKT mastery aggregation with the
 // existing completion/pass-mark result. A disagreement is recorded only when its boolean pair
@@ -17544,6 +17579,9 @@ function showComplete(review, lessonIdxOverride){
     const _spEl = el('comp-story-panel');
     if (_spEl) _spEl.style.borderColor = _redGreenHex(_sumCoverageFrac(_postRows));
   } catch(e) { if (typeof _cardNote === 'function') _cardNote('story-border-color', e); }
+
+  // PLAN §7.0 CP5: silent shadow lookup only — never awaited, never touches anything rendered above.
+  if (typeof refreshCp5Shadow === 'function') refreshCp5Shadow(APP.lessonData);
 
   // v73_g: the per-lesson icon row. Hidden rather than emptied when there is nothing to show, so
   // the card does not carry a stray 12px gap above the buttons.

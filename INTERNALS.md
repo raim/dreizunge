@@ -1140,6 +1140,18 @@ already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly o
 | the CLI | `build-curriculum-lesson.js` — reads CP3's OWN `curriculum-plan.json` as input (never `canonical-analysis.json` or `lessons.json` directly). Report-only by default, `--write`/`--out`/`--in`/`--max-items` same redirect convention as CP1-3's CLIs. No `OLLAMA_*` configuration needed — no model call |
 | the output store | `curriculum-lesson.json` — entirely separate from `lessons.json`. **Nothing reads it yet, nothing is wired into the player** — CP4 is a new PARALLEL route per the plan's own text, not a replacement; that's CP6's call, later, after multilingual coverage/quality/recovery are all measured |
 
+**`PLAN §7.0` CP5 — silent shadow-mode consumption of the curriculum plan** (`v83_l`, the FIRST CP stage to touch `index.html`/`server.js` at all, still zero visible effect — mirrors the B4/BKT shadow pattern directly)
+
+| what | where |
+|---|---|
+| the user's own scoping ruling | asked directly (this being the first CP stage with any live-app surface): **silent shadow-mode wiring**, not a visible signal — "mirrors the project's own B4/BKT pattern... nothing visible changes yet, logged/testable only" |
+| the server route | `GET /api/cp-shadow/:chapterId` (server.js) — READ-ONLY, no POST/write path anywhere. `cp5ShadowFor(chapterId)` reads `CURRICULUM_PLAN_FILE` (env-overridable, mirrors `UI_FILE`/`SKILLS_FILE`/`LESSONS_FILE`) fresh from disk each call (no `fs.watch` — this artifact is not live-edited the way `ui.json`/`prompts.json` are). Absence (the overwhelming common case — CP1-4 have been run against only a handful of chapters) returns `{chapterId, available:false}`, not a 404/error |
+| the comparison itself | reuses `curriculum-plan.js`'s OWN `compareWithExistingLessons` — `server.js` requiring a CP-stage file is the OPPOSITE direction of the "don't require server.js" constraint CP1-4's files carry, and is exactly the same already-established pattern as requiring `llm.js` |
+| the client hook | `refreshCp5Shadow(d)` (index.html) — fire-and-forget, called from `showComplete()` right after the `v83_g` border-colour block. NEVER awaited by its caller, NEVER throws synchronously, degrades to a complete no-op on `available:false`, a failed fetch, or no `APP.progress` at all — this is what makes the static/offline build (no server to ask) automatically safe too |
+| where the shadow lands | `APP.progress.cp5Shadow` (`_cp5ShadowStore()`, `CP5_SHADOW_VERSION`) — a NEW, separate, versioned store, mirroring `bktShadow`'s own shape exactly. Never read by any renderer or gate |
+| ⚠️ **the central claim, CHECKED not assumed** | `unit-cp5-shadow.test.js` §5 renders the SAME fixture twice — once with the default no-op fetch stub, once with a stubbed `available:true` CP5 response — and diffs the ENTIRE `#complete-screen` markup, not just the border colour. Byte-identical, both ways. **Mutation-tested**: a deliberate late DOM write from inside `refreshCp5Shadow`'s `.then()` callback was caught ONLY after the test was fixed to `await settle()` before capturing state — an earlier draft that read synchronously (before the fire-and-forget fetch resolves) passed even with the mutation present. Read that section's own comment before trusting a similar "renders the same" claim elsewhere: an async side-channel needs the test to actually wait for it |
+| test infra addition | `test/lib.js`'s `boot({..., extraEnv})` — a new, backward-compatible optional param merged into the spawned server's env, so a test can point `CURRICULUM_PLAN_FILE` at a scratch fixture without every OTHER e2e test paying for a dedicated per-boot isolated file (unlike `UI_FILE`/`SKILLS_FILE`/`LESSONS_FILE`, which every boot always isolates) |
+
 
 ---
 

@@ -29,9 +29,9 @@ this file stays current through the whole v83 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v83 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v83 LINE** | `v83_k` — `PLAN §7.0` CP4: vocabulary lesson through the existing contract, report-only, NO model call, NEVER touches `lessons.json`. New standalone `curriculum-lesson.js`/`build-curriculum-lesson.js`, sits on top of CP3's `curriculum-plan.json`; "validate it" proven by running an emitted lesson through the REAL, unmodified client `buildStandardExercises`. `v83_j` — `PLAN §7.0` CP3: proposed curriculum plan (concepts/reasons/prerequisites/ordering/suitable exercise families), report-only, NO model call. `v83_i` — `PLAN §7.0` CP2: analysis report (lemma/form/phrase/sense/frequency/script proposals), report-only, model-in-the-loop. `v83_h` — `PLAN §7.0` CP1: canonical text + analysis records, report-only — the first buildable slice of Track A's accepted parallel-curriculum direction. `v83_g` — the progress-card story panel's border shifts red→green with comprehension progress. `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen; question cards' `#ex-story-panel` now COLLAPSED by default. `v83_e`/`v83_d`/`v83_c` — the progress-card/entry-card popup redesign. `v83_b` — `PLAN §12` built end to end |
+| **SHIPPED IN THE v83 LINE** | `v83_l` — `PLAN §7.0` CP5: silent shadow-mode consumption of the curriculum plan — the FIRST CP stage to touch `index.html`/`server.js`, still ZERO visible effect (user-ruled: mirror the B4/BKT shadow pattern, not a visible signal). New read-only `GET /api/cp-shadow/:chapterId` + client-side `refreshCp5Shadow`; proven byte-identical rendering with/without CP data available. `v83_k` — `PLAN §7.0` CP4: vocabulary lesson through the existing contract, report-only, NO model call, NEVER touches `lessons.json`. `v83_j` — `PLAN §7.0` CP3: proposed curriculum plan (concepts/reasons/prerequisites/ordering/suitable exercise families), report-only, NO model call. `v83_i` — `PLAN §7.0` CP2: analysis report (lemma/form/phrase/sense/frequency/script proposals), report-only, model-in-the-loop. `v83_h` — `PLAN §7.0` CP1: canonical text + analysis records, report-only — the first buildable slice of Track A's accepted parallel-curriculum direction. `v83_g` — the progress-card story panel's border shifts red→green with comprehension progress. `v83_f` — **REVOKED**: the progress-card story field no longer fills the screen; question cards' `#ex-story-panel` now COLLAPSED by default. `v83_e`/`v83_d`/`v83_c` — the progress-card/entry-card popup redesign. `v83_b` — `PLAN §12` built end to end |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
-| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 at `v83_i`, CP3 at `v83_j`, CP4 at `v83_k` — see the SHIPPED section above. CP5–CP6 remain open, in sequence. |
+| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` shipped at `v83_b`; `PLAN §7.0` CP1 shipped at `v83_h`, CP2 at `v83_i`, CP3 at `v83_j`, CP4 at `v83_k`, CP5 at `v83_l` — see the SHIPPED section above. CP6 remains open. |
 
 Standing rules are in the "Rules earned in session 28…34" blocks — read the **"⚠️ How the rules are
 NUMBERED"** note before citing one.
@@ -1685,6 +1685,89 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 ---
 
 # ✅ SHIPPED IN THE v83 LINE
+
+### `v83_l` — `PLAN §7.0` CP5: silent shadow-mode consumption of the curriculum plan
+
+**Shipped by: Claude Code, on user request** ("ok, continue", after CP4 shipped and after being told
+CP5 was next). Fifth slice of Track A's migration sequence (`§0`: *"CP5 — consume the plan read-only.
+Let the red→green text progress card read analysis and skill data with a legacy fallback. BKT
+remains a measurement until a separate product ruling."*). **The FIRST CP stage that touches
+`index.html`/`server.js` at all** — CP1–4 were entirely standalone files nothing loaded. Framed this
+way to the user before starting, since it is a genuinely different risk profile from CP1–4's pure
+backend work.
+
+**A scoping question asked BEFORE building, not guessed at**: with zero chapters carrying committed
+CP2–4 output, "read analysis and skill data with a legacy fallback" would hit the fallback 100% of
+the time in practice right now — so what should CP5 actually DO? Two options were put to the user:
+silent shadow-mode wiring (mirroring the project's own already-shipped B4/BKT pattern — the card
+gains the ABILITY to read CP1-4 data when present, computes what it would show, but nothing visible
+changes, logged/testable only) versus visibly surfacing something small when data exists. **The user
+chose silent shadow-mode wiring.** This decision shaped the whole implementation below.
+
+**What shipped**:
+
+- **`GET /api/cp-shadow/:chapterId`** (server.js) — READ-ONLY, no POST/write path anywhere on this
+  route. `cp5ShadowFor(chapterId)` reads a new `CURRICULUM_PLAN_FILE` env-overridable path (mirroring
+  the established `UI_FILE`/`SKILLS_FILE`/`LESSONS_FILE` convention) fresh from disk on each call —
+  no `fs.watch` hot-reload machinery, since unlike `ui.json`/`prompts.json` this artifact is not
+  live-edited during a session, it is the output of a manually-run pipeline. **Absence is the NORMAL
+  case, not an error** — the overwhelming majority of the corpus has never had CP1-4 run against it,
+  so the route returns `{chapterId, available:false}` with a 200, never a 404.
+  - **The comparison itself reuses `curriculum-plan.js`'s OWN `compareWithExistingLessons`** —
+    `server.js` now `require`s `curriculum-plan.js` directly. This is the OPPOSITE direction of the
+    "don't require server.js" constraint every CP1-4 file's own header documents (that constraint
+    exists because server.js binds a port as a side effect of loading; server.js requiring one of
+    THOSE files back binds nothing new, and is exactly the same already-established pattern this
+    project already uses for `llm.js`).
+- **`refreshCp5Shadow(d)`** (index.html) — fire-and-forget, hooked into `showComplete()` right after
+  the `v83_g` border-colour computation. Fetches the new route for the current chapter's id; on
+  `available:true`, records into a NEW, separate, versioned store (`APP.progress.cp5Shadow`,
+  `_cp5ShadowStore()`, `CP5_SHADOW_VERSION`) via the existing `saveProg()` — mirroring `bktShadow`'s
+  shape closely. On EVERY degenerate case (unavailable, `ok:false`, a rejected fetch — the static/
+  offline build has no server to ask at all — or no `APP.progress` yet) it is a PROVABLE no-op: no
+  store write, no `saveProg` call, and it never throws synchronously regardless of what the caller
+  passes it.
+- **`test/lib.js`'s `boot({..., extraEnv})`** — a small, backward-compatible test-infrastructure
+  addition: an optional object merged into the spawned server's env, so ONE test can point
+  `CURRICULUM_PLAN_FILE` at a scratch fixture without every OTHER e2e test paying for a dedicated
+  per-boot isolated file the way `UI_FILE`/`SKILLS_FILE`/`LESSONS_FILE` always do (those are edited
+  live by tests; `curriculum-plan.json` almost never exists at all, so isolating it by default for
+  every boot would be overhead for a case that essentially never fires).
+
+**⚠️ The central claim — "silent" — was CHECKED against real rendered output, not assumed from the
+source**: `unit-cp5-shadow.test.js` §5 renders the SAME real fixture (reused from
+`unit-story-border-color.test.js`'s own TOPIC) TWICE — once with the harness's default no-op `fetch`
+stub, once with a stubbed `available:true` CP5 response — and diffs the ENTIRE `#complete-screen`
+markup, not merely the border colour. Byte-identical, both ways.
+
+**A real mutation-testing gap, found and fixed while building this test**: the first draft of §5 read
+DOM state SYNCHRONOUSLY, right after `showComplete()` returned. A deliberate mutation that had
+`refreshCp5Shadow`'s `.then()` callback write into the border colour (simulating exactly the "not
+actually silent" bug this test exists to catch) **passed anyway** — because that callback runs on a
+LATER tick than the fire-and-forget fetch's synchronous call site, and the test captured state before
+that tick arrived. Fixed by awaiting a `settle()` helper (the same 60ms-`setTimeout` pattern
+`unit-story-finished.test.js` already established) before capturing state in BOTH renders. Re-run
+against the SAME mutation afterward: correctly RED. Recorded as its own lesson: an async side-channel
+claim needs the test to actually wait for the async work, not just avoid it.
+
+**Testing**: `unit-cp5-shadow.test.js` (5 sections) — the read-only route degrading safely for the
+common (`available:false`) case, a real comparison when CP3 data genuinely exists (cross-referenced
+against a real seeded topic, not a stub), the client hook recording a real fetched payload, the
+provable no-op property across every degenerate input, and the byte-identical-rendering proof
+described above. **Mutation-tested**: the late-DOM-write scenario above (caught only after the
+`settle()` fix), and a hardcoded/fake comparison value swapped in for the real
+`compareWithExistingLessons` call — RED, confirming the server route's comparison is genuinely
+derived from the real corpus, not a stub. 259/228/0/0 full baseline green (from 258/228 — one new
+test file, registered inside `test/run.js`'s `if (!quick)` block since it spawns a real server via
+`boot()`). No `lessons.json`, `canonical-text.json`, `canonical-analysis.json`, or
+`curriculum-plan.json` change. `ui.json` unaffected — the one new string-free, purely mechanical
+route/hook needed no `en` key of its own.
+
+**Not scoped here, deliberately**: any VISIBLE surface for CP1-4's data (the user's own ruling — a
+LATER decision, if the shadow log this stage now accumulates ever motivates one). BKT-style
+"skill data" consumption specifically (the plan's own text mentions it alongside "analysis data") —
+this release wires up the CURRICULUM-PLAN half only; a skill-registry-aware extension of the SAME
+shadow pattern is a natural follow-up, not built here. CP6's retirement of anything legacy.
 
 ### `v83_k` — `PLAN §7.0` CP4: vocabulary lesson through the existing contract, report-only
 

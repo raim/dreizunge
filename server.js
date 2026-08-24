@@ -15,6 +15,12 @@ const { callLLM: _rawCallLLM, callLLMStream: _rawCallLLMStream, ping: pingOllama
 const { AsyncLocalStorage } = require('async_hooks');
 const { buildExport } = require('./export-lessons');
 const LEARNERS = require('./learners');
+// PLAN §7.0 CP5: read-only consumption of CP3's curriculum plan (see cp5ShadowFor below). Requiring
+// curriculum-plan.js from HERE is the opposite direction of the constraint its own file header
+// documents — that file must never require server.js (it would bind a port as a side effect of an
+// offline analysis script); server.js requiring IT back is the same, already-established pattern as
+// requiring llm.js, and adds no write path of any kind.
+const { compareWithExistingLessons } = require('./curriculum-plan.js');
 
 // ── Learner sessions (v65) ───────────────────────────────────────────────────
 // Cookie-based, HttpOnly so page scripts can never read the token, SameSite=Lax so it isn't sent
@@ -178,7 +184,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v83_k';
+const APP_VERSION  = 'v83_l';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -193,6 +199,10 @@ const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.j
 // explicitly starts attaching resolved IDs to new lessons.
 const SKILLS_FILE = process.env.SKILLS_FILE || path.join(__dirname, 'skills.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
+// PLAN §7.0 CP5: CP3's own report-only output store. Almost always ABSENT (it is not committed by
+// default, and only exists for chapters someone has explicitly run the CP1-4 pipeline against) —
+// that absence IS the normal case, not an error; cp5ShadowFor degrades to `available:false` for it.
+const CURRICULUM_PLAN_FILE = process.env.CURRICULUM_PLAN_FILE || path.join(__dirname, 'curriculum-plan.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
 const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
 // Model roles are runtime-mutable (see setRuntimeModels / GET+POST /api/models) so a user can
@@ -684,6 +694,30 @@ function findSaved(topic) {
 function findSavedById(id) {
   const arr = store.schemaVersion >= 29 ? store.topics : store.lessons;
   return arr.find(l => l.id === id) || null;
+}
+
+// PLAN §7.0 CP5: "consume the plan read-only." Read fresh from disk each call rather than caching —
+// CURRICULUM_PLAN_FILE is a rarely-changing, manually-produced pipeline artifact (not something a
+// live session edits the way ui.json/prompts.json are, so it needs none of their fs.watch hot-reload
+// machinery), and this route is low-traffic (fired once per chapter completion, not per request).
+// Absence is the NORMAL case (§0's "legacy fallback") — the vast majority of the corpus has never
+// had CP1-4 run against it, so `available:false` is what most calls return, not an error state.
+function cp5ShadowFor(chapterId) {
+  if (!chapterId) return { chapterId: null, available: false };
+  let planStore;
+  try { planStore = JSON.parse(fs.readFileSync(CURRICULUM_PLAN_FILE, 'utf8')); }
+  catch (e) { return { chapterId, available: false }; }   // file absent or unreadable — the common case
+  const plan = planStore && planStore.chapters && planStore.chapters[chapterId];
+  if (!plan) return { chapterId, available: false };
+  const topic = findSavedById(chapterId);
+  const vocabConcepts = (plan.concepts || []).filter(c => c.type === 'vocab');
+  const comparison = topic ? compareWithExistingLessons(vocabConcepts, topic) : null;
+  return {
+    chapterId, available: true,
+    conceptCount: plan.conceptCount,
+    comparison,
+    planProvenance: plan.provenance || null,
+  };
 }
 
 // Walk the chain by continuedFromId and collect all vocab/grammar/conjugation
@@ -7198,6 +7232,15 @@ http.createServer(async (req, res) => {
         `  continuedFrom=${base.continuedFrom||'-'}`);
       _runBookJob(bookId, chaptersIn, base);  // fire-and-forget; runs server-side
       return json(res, 202, { bookId, chapters: chaptersIn.length });
+    }
+
+    // ── PLAN §7.0 CP5: read-only curriculum-plan shadow lookup ──────────
+    // GET-only, no write path exists anywhere on this route. Silent by design on the client side —
+    // see refreshCp5Shadow() in index.html — this endpoint just answers "is there anything to read
+    // for this chapter", it never influences what a learner sees.
+    if (M === 'GET' && url.pathname.startsWith('/api/cp-shadow/')) {
+      const chapterId = decodeURIComponent(url.pathname.slice('/api/cp-shadow/'.length));
+      return json(res, 200, cp5ShadowFor(chapterId));
     }
 
     // ── Book job progress ──────────────────────────────────────────────
