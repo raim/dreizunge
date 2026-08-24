@@ -39,7 +39,7 @@ this file stays current through the whole v84 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v84 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v84 LINE** | `v84_d` — four mobile progress-card UI follow-ups, real-device driven: `#comp-story-panel`'s header row split into two (title/flags/read on top, prev/☰/next below — a long title was overflowing on phones); the corner-pill cluster and tutor fab unified into one full-width translucent `#bottom-bar`; question-card flag/star buttons moved below the collapsed story panel; the mobile "ask the tutor" selection popover — found to be rendering correctly but hidden under the browser's own native selection toolbar — now pins to a fixed spot above `#bottom-bar` on touch devices instead of trying to anchor near the (browser-chrome-obscured) selection. `v84_c` — the `dreizunge` PATH launcher (`bin/dreizunge`, installed onto `~/.local/bin` by `install.sh`): starts the server, opens the browser once it answers, `--no-browser` to skip — the `jupyter notebook` shape, discussed and deferred at the `v83` cut, built now on direct request. Verified with a real symlinked-from-elsewhere run against a stub server AND a real `install.sh` end-to-end run confirming idempotent install + a genuine working launch. `v84_b` — PWA install support (`manifest.json`/`icon.svg`/`sw.js`, local server only): browsers can offer "Install App," windowed, no tabs/omnibox. Registration confirmed working by the USER, same day, in real Google Chrome on Ubuntu via `localhost:3000` (a sandboxed preview browser had failed during the build itself, flagged as unverified at the time — now measured). A LAN IP over plain HTTP (tested on Android) still shows no install option — a separate, well-understood limitation (service workers need a secure context; HTTPS/a TLS proxy is the real fix, matching the app's own existing insecure-transport warning), not a bug in this release. Also fixed, found while building this: `test/lib-dom.js`'s `loadClient()` had a fragile trailing-regex that assumed `init();` was the LAST statement in the client script — the first code ever added after it (this release's own SW registration) silently un-suppressed `init()` in ~80 unit tests. Fixed by anchoring on the `@static-engine-end` marker instead. |
+| **SHIPPED IN THE v84 LINE** | `v84_e` — a second mobile follow-up batch: nav icons (prev/☰/next) moved BELOW the whole text field on BOTH progress and entry cards (superseding `v84_d`'s own two-row-within-summary split); the entry card's "next" now goes to the chapter's progress card instead of starting a lesson directly; a short tap on PLAIN story/summary text now advances like Next (built on the SAME `sel.isCollapsed` signal `PLAN §12`'s selection popover already trusts), while a highlighted word keeps its own tap-to-lesson behaviour and a drag-select still opens the grammar/meaning popover — all verified via real DOM `.click()` dispatch, not just direct function calls. `v84_d` — four mobile progress-card UI follow-ups, real-device driven: `#comp-story-panel`'s header row split into two (title/flags/read on top, prev/☰/next below — a long title was overflowing on phones); the corner-pill cluster and tutor fab unified into one full-width translucent `#bottom-bar`; question-card flag/star buttons moved below the collapsed story panel; the mobile "ask the tutor" selection popover — found to be rendering correctly but hidden under the browser's own native selection toolbar — now pins to a fixed spot above `#bottom-bar` on touch devices instead of trying to anchor near the (browser-chrome-obscured) selection. `v84_c` — the `dreizunge` PATH launcher (`bin/dreizunge`, installed onto `~/.local/bin` by `install.sh`): starts the server, opens the browser once it answers, `--no-browser` to skip — the `jupyter notebook` shape, discussed and deferred at the `v83` cut, built now on direct request. Verified with a real symlinked-from-elsewhere run against a stub server AND a real `install.sh` end-to-end run confirming idempotent install + a genuine working launch. `v84_b` — PWA install support (`manifest.json`/`icon.svg`/`sw.js`, local server only): browsers can offer "Install App," windowed, no tabs/omnibox. Registration confirmed working by the USER, same day, in real Google Chrome on Ubuntu via `localhost:3000` (a sandboxed preview browser had failed during the build itself, flagged as unverified at the time — now measured). A LAN IP over plain HTTP (tested on Android) still shows no install option — a separate, well-understood limitation (service workers need a secure context; HTTPS/a TLS proxy is the real fix, matching the app's own existing insecure-transport warning), not a bug in this release. Also fixed, found while building this: `test/lib-dom.js`'s `loadClient()` had a fragile trailing-regex that assumed `init();` was the LAST statement in the client script — the first code ever added after it (this release's own SW registration) silently un-suppressed `init()` in ~80 unit tests. Fixed by anchoring on the `@static-engine-end` marker instead. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, all of CP1–5) are BOTH fully shipped — see `roadmap_v83.md`'s own `# SHIPPED IN THE v83 LINE` for how. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). No new PLAN track is open as of this cut. |
 
@@ -1720,6 +1720,81 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v84 LINE
+
+### `v84_e` — nav-below-text, entry-card next → progress card, tap-to-advance on plain story text
+
+**Shipped by: Claude Code, on user request** — a second follow-up batch, sent while `v84_d` was
+being finalized (same real-phone-use conversation), refining/superseding two of its own decisions
+and adding a genuinely new interaction.
+
+1. **Progress AND entry card: navigation icons (prev/☰/next) moved BELOW the whole text field**,
+   not just into a second row of the header as `v84_d` item 1 did. `v84_d`'s two-row split kept
+   prev/☰/next INSIDE `<summary>`; this follow-up explicitly asked for them below the text — so they
+   now live OUTSIDE `#comp-story-panel`'s `<details>` entirely, as a sibling row after it (NOT inside
+   the collapsible body: the panel is user-collapsible, and a nav row placed inside the body would
+   vanish along with the rest of it whenever a learner collapsed the panel — living outside keeps
+   prev/☰/next reachable regardless). Same move applied to the entry card (`#sum-sumbox`, which
+   `v84_d` deliberately left untouched) — this follow-up named it explicitly. `unit-progress-card-nav`
+   §2a REWRITTEN a second time (superseding its OWN `v84_d`-era rewrite), §2b (entry card, previously
+   "unchanged") now rewritten too since it genuinely changed this time.
+2. **The entry card's "next" no longer starts a lesson directly — it goes to the chapter's own
+   progress card**, same destination the "walk" (← from progress card) path already used. The two
+   destinations `sum-next` used to have (`v77_k`'s own "TWO destinations, because this page has two
+   roles" design) are now ONE — landing on the hub is still "starting" the chapter, just not skipping
+   past it into a question. `unit-next-chapter-entry` §6 and `unit-story-summary` §6 (two sections)
+   REWRITTEN — both originally asserted the OLD "forward starts the lesson" behaviour as an explicit
+   product decision (`v81_b`-era), now superseded, with the supersession explained inline in both.
+3. **A short tap on PLAIN (unhighlighted) story/summary text now behaves like Next** — on the
+   progress card, starts a newly-unlocked lesson (e.g. comprehension) via whatever `comp-next`
+   already resolves to; on the entry card, goes to the chapter's progress card (item 2, above). A
+   longer press or a drag-select is left alone: on the entry card that means ordinary text selection;
+   on the progress card it means the EXISTING grammar/meaning popover (`PLAN §12`, unchanged) still
+   opens. **Built on the SAME signal `PLAN §12` already trusts** (`sel.isCollapsed` — "a plain click
+   collapses the selection, so this already tells the two apart") rather than a second, competing
+   gesture detector — `_storyTapMaybeAdvance`, bound to `click` (not `mouseup`/`touchend` like `PLAN
+   §12`'s own listener) specifically for its natural `event.target`, which `_storySelMaybeShow` never
+   needed since it only ever read selection STATE. Scoped to exactly `#comp-story-text`/`#sum-sumtext`
+   by id allow-list — NOT the shared `.story-selectable` class both share with the question-card's
+   own collapsed story panel (`#ex-story-text`) and any future reuse of `_storyBodyHtml`, since
+   "tap advances" only makes sense where there is a well-defined next step.
+4. **User's own explicit follow-up clarification, sent right after item 3 shipped**: the tap-advances
+   behaviour must NEVER shadow a HIGHLIGHTED word's own existing tap-to-lesson behaviour
+   (`tapWord()`/`.wp-tap`) — only a tap on genuinely plain text should advance. Checked via
+   `e.target.closest('.wp-tap')`, the SAME class `tapWord`'s own markup already carries — not by
+   re-deriving what "highlighted" means.
+
+**Verified live, real DOM event dispatch, not just direct function calls**: `target.click()` on a
+real `<p>` inside a real chapter's `#comp-story-text` (loaded via `showComplete()` against real
+corpus data) genuinely bubbled to `document`'s click listener and called a spied `comp-next.onclick`
+exactly once; the same real dispatch on a synthetic `<mark class="wp-tap">` inside the same container
+did NOT call it; the entry card's `#sum-sumtext` confirmed the same for `sum-next`. Layout confirmed
+via `getBoundingClientRect()`: the nav row's `top` sits at/after `#comp-story-panel`'s own `bottom`,
+and `<summary>` now has exactly 4 flat children (icon/title/flags/read — no nested nav row).
+
+**Testing**: `test/unit-tutor-selection.test.js` gained §11 — a real `loadClient()` fixture with a
+plain-text span AND a synthetic `.wp-tap` mark inside `#comp-story-text`/`#sum-sumtext`, spied
+`comp-next`/`sum-next` `onclick`s, and a mocked `window.getSelection` toggled between collapsed and
+"dragged" states — six checks: plain tap fires Next; a highlighted-word tap does NOT (count stays);
+a drag-select does NOT; the entry card's plain tap fires ITS Next; a tap outside both containers does
+nothing (non-vacuity — not a page-wide catch-all); a DISABLED Next does not fire even on an
+otherwise-qualifying tap. ⚠️ Cross-realm gotcha hit and fixed while writing this: `assert.deepStrictEqual`
+on a plain object returned directly from `C.run()` (a DIFFERENT `vm.Context`, hence a different
+`Object` prototype) fails even when every key/value is genuinely equal — fixed by round-tripping
+through `JSON.parse(C.run('JSON.stringify(...)'))`, the same pattern already used elsewhere in this
+suite for exactly this reason.
+
+**Mutation-tested**: dropping the `.wp-tap` exclusion — RED. Dropping the drag-select exclusion —
+RED. Dropping the `disabled` check — RED. All three restored, confirmed clean via `diff`. Every
+pre-existing test touching the entry/progress-card nav areas re-run and either passed unchanged
+(the six files `v84_d` already re-verified) or was deliberately rewritten with the supersession
+explained inline (`unit-progress-card-nav` §2a/§2b, `unit-next-chapter-entry` §6, `unit-story-summary`
+§6).
+
+**Testing**: 264/230/0/0 full baseline green (unchanged counts — no new test FILES this release,
+only existing files extended/rewritten). `docs/index.html` rebuilt; the tap-to-advance feature lives
+in the shared client engine (before `@static-engine-end`), so it carries into the static build, but
+is inert there in practice since `comp-next`/`sum-next` still resolve to whatever the static build's
+own navigation already does — no NEW static-only risk introduced. No `lessons.json` change.
 
 ### `v84_d` — mobile progress-card UI follow-ups (four items, real-device driven)
 

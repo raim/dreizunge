@@ -1198,12 +1198,23 @@ already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly o
 
 | what | where |
 |---|---|
-| `#comp-story-panel`'s header row is TWO rows | title/flags/read on top (title now truncates via `flex:1;overflow:hidden;text-overflow:ellipsis`, like `.topic-name-big`), prev/☰/next centered below. `_syncCompHdrNav`/`_mirrorNavBtn` are ID-keyed, unaffected. Scoped to the progress/complete card only — the entry/summary card's header row is untouched, still one row |
+| ⚠️ `#comp-story-panel`'s header row is TWO rows | SUPERSEDED at `v84_e` — see its own table below: nav moved OUT of `<summary>` entirely, below the whole text field. Kept here only as the "title now truncates via `flex:1;overflow:hidden;text-overflow:ellipsis`, like `.topic-name-big`" fact, which is STILL true |
 | `#bottom-bar` (repo root markup, `index.html`) | wraps `#corner-pills` (account/settings/mute) and `#tutor-fab` (owl), both UNCHANGED in id/markup/JS-toggling — only their positioning moved from independently-fixed to flex children of one shared, full-width, translucent (`rgba(255,255,255,.85)` + `backdrop-filter:blur(8px)`) bar. `--bottom-bar-h` CSS var is the one place its height is stated; `.toast`/`#gen-status`/`.static-flag-banner`/`#tutor-widget`'s reopened position all offset FROM it |
 | `_exStoryPanelHtml(ex) + flagUi` (was `flagUi + _exStoryPanelHtml(ex)`) | question-card flag/star row moved below the collapsed story panel — pure reorder in the `ex-area` innerHTML assembly, no markup changes |
 | `_isTouchDevice()` / `_storySelShowPopover` touch branch | mobile "ask the tutor" selection popover was rendering correctly but hidden under the browser's OWN native "Copy/Share" selection toolbar (browser-chrome UI, no page-level z-index can beat it). Touch devices (`'ontouchstart' in window \|\| navigator.maxTouchPoints > 0`) now get `position:fixed`, pinned above `#bottom-bar` via the SAME `--bottom-bar-h` var, horizontally centered — deliberately NOT anchored near the selection at all. Desktop keeps the original near-selection placement |
 | verified live | `showComplete()` against a real 46-char chapter title on a real 375px mobile viewport (2 rows, no overflow, title genuinely truncates); `#bottom-bar` confirmed full-width/translucent, `#tutor-widget` confirmed opening above it; touch-popover fix confirmed with `navigator.maxTouchPoints` genuinely emulated, ignoring a mid-screen fake selection rect entirely |
 | mutation-tested | progress-card header reverted to single-row order — RED. `_isTouchDevice()` forced to always `false` — RED |
+
+**Second mobile follow-up batch** (`v84_e`, same conversation — nav-below-text, entry→progress, tap-to-advance)
+
+| what | where |
+|---|---|
+| nav (prev/☰/next) moved BELOW the whole text field | on BOTH `#comp-story-panel` and `#sum-sumbox` — lives as a sibling row AFTER the `<details>`/box, NOT inside the collapsible body (a user CAN collapse `#comp-story-panel`; a nav row inside the body would vanish with it). Supersedes `v84_d`'s own two-row-within-`<summary>` split |
+| `sum-next`'s `onclick` (`showComplete()`/summary render fn, `index.html`) | no longer branches on `_entry` (ENTRY vs WALK) — both cases now call `sumForwardToCard()` (the chapter's own progress card). The `_entry`-derived LABEL ("Start" vs "Next") is unchanged; only the destination changed |
+| `_storyTapMaybeAdvance()` / `_storyTapInit()` | bound to `click` on `document`. Scoped by id allow-list to `#comp-story-text`/`#sum-sumtext` only (NOT the shared `.story-selectable` class those share with `#ex-story-text`). Excludes `.wp-tap` (highlighted words keep `tapWord()`'s own behaviour) and any tap that leaves a real (non-collapsed) selection behind (the SAME `sel.isCollapsed` signal `PLAN §12`'s `_storySelMaybeShow` already trusts). Explicit `!btn.disabled` check — deliberately calls `.onclick()` directly rather than `.click()`, since the test harness's `.click()` is a no-op stub |
+| verified live | real `target.click()` DOM dispatch (not a direct function call) on a `<p>` inside a REAL chapter's `#comp-story-text`, spied `comp-next.onclick`, confirmed fires exactly once; same dispatch on a synthetic `.wp-tap` mark confirmed it does NOT; `#sum-sumtext` confirmed the same for `sum-next` |
+| mutation-tested | dropping the `.wp-tap` exclusion — RED. Dropping the drag-select exclusion — RED. Dropping the `disabled` check — RED |
+| ⚠️ cross-realm `vm.Context` gotcha (found writing this) | `assert.deepStrictEqual` on a plain object returned DIRECTLY from `C.run()` (`test/lib-dom.js`) fails even when every key/value is equal, since the object's `[[Prototype]]` belongs to a different `vm.Context`'s `Object`. Fix: round-trip through `JSON.parse(C.run('JSON.stringify(...)'))` |
 
 ---
 

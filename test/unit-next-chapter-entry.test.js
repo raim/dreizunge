@@ -165,15 +165,23 @@ function arriveAt(topic) {
   console.log('  no summary + first chapter: no card, as before');
 }
 
-// ── 6. Forward starts the lesson — the card orients, it does not block ─────
+// ── 6. Forward now goes to the chapter's OWN progress card, not straight into a question ──
+// SUPERSEDES this section's original claim ("forward starts the lesson directly, the card orients,
+// it does not block") — a later user follow-up asked for the entry card's Next to behave like every
+// OTHER chapter's Next: land on the progress card (the hub — a lesson starts from there, one tap
+// away), rather than skip straight past it into a question. Rewritten to state what holds now, with
+// the supersession explained inline, not loosened to tolerate both shapes.
 {
   const C = arriveAt(byId[SL.chapters[0]]);          // v81_b: the entry card is the first chapter's
   const want = C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
-  assert.ok(want >= 0, 'non-vacuity: there is a lesson to start');
+  assert.ok(want >= 0, 'non-vacuity: there IS a lesson forward could have started (proves the next assertion is a real behaviour change, not a data gap)');
+  assert.strictEqual(C.run(`APP._started`), null, 'non-vacuity: nothing started before the click');
   C.run(`document.getElementById('sum-next').onclick(); true;`, 'go');
-  assert.strictEqual(C.run(`APP._started`), want,
-    'forward starts the lesson the learner came to play');
-  console.log('  forward starts the lesson');
+  assert.strictEqual(C.run(`APP._started`), null, 'forward no longer starts a lesson directly');
+  assert.strictEqual(C.run(`APP._shown`), 'complete-screen', 'forward shows the progress/complete card instead');
+  assert.strictEqual(C.run(`document.getElementById('comp-story-panel-lbl').textContent`), FIRST.topic,
+    'and it is a REAL render of THIS chapter\'s own progress card (comp-story-panel-lbl carries its title), not just the show() stub firing');
+  console.log('  forward goes to the chapter\'s progress card, not straight into a question');
 }
 
 (async () => {

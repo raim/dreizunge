@@ -1563,24 +1563,21 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
          `comp-prev`/`comp-next`'s resolved state onto `comp-story-prev`/`comp-story-next` every
          render, so the two pairs can never disagree about where "back"/"forward" lead.
          user follow-up (mobile): a long chapter title pushed this whole row wider than a phone
-         screen, since the title had no truncation and everything else (menu, flags, read, nav) had
-         to fit beside it on the SAME line. Split into two: title/flags/read on top (the title now
-         truncates with an ellipsis instead of forcing an overflow, same treatment `.topic-name-big`
-         already uses elsewhere), prev/menu/next centered on their own row below. Same elements, same
-         ids, same onclick handlers — only the grouping changed, so `_syncCompHdrNav`/`_mirrorNavBtn`
-         (both ID-keyed, not position-keyed) needed no changes. -->
-    <summary style="display:flex;flex-direction:column;gap:8px;margin-bottom:6px;cursor:pointer;outline:none">
-      <span style="display:flex;align-items:center;gap:8px;min-width:0">
-        <span style="font-size:20px;flex:none">📖</span>
-        <span style="font-size:15px;font-weight:900;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="comp-story-panel-lbl">Chapter</span>
-        <span id="comp-story-flags" style="flex:none"></span>
-        <button class="spk-ico" id="comp-story-spk" onclick="event.stopPropagation();speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud" style="flex:none">💬</button>
-      </span>
-      <span style="display:flex;align-items:center;justify-content:center;gap:18px">
-        <button class="spk-ico" id="comp-story-prev" style="display:none" onclick="event.stopPropagation();" title="">➜</button>
-        <button class="spk-ico" id="comp-story-nav-btn" onclick="event.stopPropagation();openCompNav();" title="">☰</button>
-        <button class="spk-ico" id="comp-story-next" style="display:none" onclick="event.stopPropagation();" title="">➜</button>
-      </span>
+         screen. `v84_d` first split it into two rows WITHIN this summary (title/flags/read on top,
+         prev/menu/next below) — superseded again, immediately after, by this same follow-up
+         conversation: "move the navigation icons... BELOW the text field", not just below the title.
+         The nav trio now lives OUTSIDE this `<details>` entirely, as its own row after it — NOT
+         inside the collapsible body either, because a user CAN manually collapse this panel (its own
+         summary still toggles on click), and a nav row placed inside the body would vanish along
+         with the rest of the body when they did. Living outside keeps prev/menu/next reachable
+         regardless of collapse state. Same elements, same ids, same onclick handlers throughout —
+         only the grouping/position changed, so `_syncCompHdrNav`/`_mirrorNavBtn` (both ID-keyed, not
+         position-keyed) needed no changes. -->
+    <summary style="display:flex;align-items:center;gap:8px;min-width:0;margin-bottom:6px;cursor:pointer;outline:none">
+      <span style="font-size:20px;flex:none">📖</span>
+      <span style="font-size:15px;font-weight:900;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="comp-story-panel-lbl">Chapter</span>
+      <span id="comp-story-flags" style="flex:none"></span>
+      <button class="spk-ico" id="comp-story-spk" onclick="event.stopPropagation();speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud" style="flex:none">💬</button>
     </summary>
     <!-- v74_l: NOT italic, and larger. This panel is the reward for finishing the chapter and the
          thing the learner is meant to actually READ — a long italic run at 13px reads as a caption,
@@ -1592,6 +1589,11 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
          panel now emits would stack with no gap and read as one block again. -->
     <style>#comp-story-text p{margin:0 0 12px}#comp-story-text p:last-child{margin-bottom:0}</style>
   </details>
+  <div style="display:flex;align-items:center;justify-content:center;gap:18px;margin-top:8px">
+    <button class="spk-ico" id="comp-story-prev" style="display:none" title="">➜</button>
+    <button class="spk-ico" id="comp-story-nav-btn" onclick="openCompNav();" title="">☰</button>
+    <button class="spk-ico" id="comp-story-next" style="display:none" title="">➜</button>
+  </div>
   <div class="vocab-box" style="margin-top:18px"><div class="vocab-hdr" id="words-from-lbl">Words from this lesson</div><div id="comp-vocab" style="display:flex;flex-wrap:wrap;margin:-3px"></div></div>
   <!-- v77_n (user): the progress message sits at the BOTTOM, below the play buttons, on every
        progress card. It is a verdict on what just happened, not a heading for what follows. -->
@@ -1743,18 +1745,26 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <div id="sum-sumbox" style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:var(--white)">
       <!-- user (progress-card redesign, extended to the entry card): the same ☰ popup trigger and
            duplicated NEXT — no back button here, this card has none to duplicate — as
-           #comp-story-panel's own header row. See #sum-nav-modal below for what moved into it. -->
+           #comp-story-panel's own header row. See #sum-nav-modal below for what moved into it.
+           user follow-up: ☰/NEXT relocated BELOW #sum-sumtext (as their own row, see right after
+           this box closes) — same move `#comp-story-panel` just made, for the same reason (keep
+           navigation off the text-field header row). This card's own label (`sum-sumbox-lbl`) is a
+           FIXED short string ("Summary"), never a variable-length title, so unlike the progress
+           card it never risked the overflow that started this — moved anyway, for one consistent
+           shape across both cards. -->
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
         <span style="font-size:20px">📖</span>
         <span style="font-size:13px;font-weight:900;color:var(--green-dark)" id="sum-sumbox-lbl"></span>
         <span style="display:flex;align-items:center;gap:6px;margin-left:auto">
-          <button class="spk-ico" id="sum-sum-nav-btn" onclick="openSumNav();" title="">☰</button>
           <button class="spk-ico" id="sum-sum-xlate" style="display:none;font-size:11px;font-weight:800;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Nunito,sans-serif"></button>
           <button class="spk-ico" id="sum-sum-spk" title="">💬</button>
         </span>
-        <button class="spk-ico" id="sum-sum-next" style="display:none" title="">➜</button>
       </div>
       <div id="sum-sumtext" dir="auto" style="font-size:15px;color:var(--text);line-height:1.65"></div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:18px;margin-top:8px">
+      <button class="spk-ico" id="sum-sum-nav-btn" onclick="openSumNav();" title="">☰</button>
+      <button class="spk-ico" id="sum-sum-next" style="display:none" title="">➜</button>
     </div>
     <div class="comp-title" id="sum-title" style="margin-top:16px">The story so far</div>
     <!-- v80_e: names the chapter being opened, on a chapter arrival only. Carried over verbatim
@@ -5955,6 +5965,7 @@ async function init(){
   try{ const r=await fetch('/api/info'); APP.info=await r.json(); }catch(e){ APP.info={backend:'none',canGenerate:false}; }
   try{ _tutorLoadThread(); refreshTutorAvailability(); }catch(_){}   // v62: persistent tutor thread + widget
   try{ _storySelInit(); }catch(_){}   // PLAN §12: select story text → ask the tutor, wired once
+  try{ _storyTapInit(); }catch(_){}   // mobile follow-up: a short tap on plain story text advances
   // v65: resolve any signed-in learner and adopt the server's copy (server wins).
   try{
     const _me = await fetch('/api/auth/me').then(r=>r.json()).catch(()=>null);
@@ -18730,6 +18741,48 @@ function _storySelExplain(mode){
   try{ window.getSelection && window.getSelection().removeAllRanges(); }catch(_){}
 }
 
+// ── Mobile follow-up: a short tap on PLAIN story text advances, like Next ────────────────────
+// User request, on the progress and entry cards specifically: "tapping shortly on the [story/
+// summary] text field should have the same function as the next button... tapping longer or
+// dragging should still allow to select text" (entry card) / "...should open the grammar/meaning
+// selection" (progress card) — i.e. reuse the SAME tap-vs-drag signal PLAN §12 above already
+// trusts (`sel.isCollapsed` — "a plain click collapses the selection, so this already tells the
+// two apart"), rather than inventing a second, parallel gesture detector.
+//
+// ⚠️ User's own explicit follow-up clarification: this must NEVER shadow a HIGHLIGHTED word's own
+// existing tap-to-lesson behaviour (`tapWord()`/`.wp-tap`) — only a tap on PLAIN, unhighlighted
+// text advances. Checked by target, not by re-deriving what "highlighted" means: `.closest('.wp-tap')`
+// is the SAME class `tapWord`'s own markup already carries.
+//
+// Bound to `click` (not mouseup/touchend, unlike PLAN §12 above) specifically FOR its natural
+// `event.target` — `_storySelMaybeShow` has no event parameter at all, since it only ever needed
+// selection STATE, not a click location. `click` fires uniformly for mouse and touch taps, and
+// (per the browser's own native behaviour, the same fact PLAN §12 relies on) does not fire — or
+// leaves a non-collapsed selection behind — after a genuine drag-select, so the isCollapsed check
+// below is real protection, not a formality.
+//
+// Scoped to exactly TWO containers, by id allow-list, not by the shared `.story-selectable` class
+// those two share with OTHER surfaces (the question-card's own collapsed story panel,
+// `#ex-story-text`; any future reuse of `_storyBodyHtml`): "tap advances" only makes sense where
+// there IS a well-defined next step, which is these two cards and no others.
+function _storyTapInit(){
+  document.addEventListener('click', _storyTapMaybeAdvance);
+}
+function _storyTapMaybeAdvance(e){
+  const host = e.target.closest && e.target.closest('#comp-story-text, #sum-sumtext');
+  if (!host) return;
+  if (e.target.closest('.wp-tap')) return;   // a highlighted word keeps its OWN behaviour, untouched
+  const sel = window.getSelection && window.getSelection();
+  if (sel && !sel.isCollapsed && sel.rangeCount > 0 && String(sel.toString() || '').trim()) return;
+  const btn = document.getElementById(host.id === 'comp-story-text' ? 'comp-next' : 'sum-next');
+  // An explicit disabled check, not .click() — a mid-chapter Next that is currently disabled
+  // (mandatory work still open) must stay disabled here too, checked directly rather than relying
+  // on a real browser's native click-suppression (which this project's own DOM test harness does
+  // not simulate, and which would make this whole feature untestable behaviourally rather than
+  // just by source inspection).
+  if (btn && !btn.disabled && typeof btn.onclick === 'function') btn.onclick();
+}
+
 // Show the per-question 🦉 only when a backend exists and we're inside an exercise.
 function refreshExHintBtn(){
   const b = document.getElementById('ex-hint-btn');
@@ -19463,9 +19516,15 @@ function showStorySummary(){
     pr.innerHTML = _ph;
     pr.style.display = _ph ? '' : 'none';
   }
-  // v77_k: forward has TWO destinations, because this page now has two roles.
-  //   ENTRY  — reached by opening a chapter: forward starts the lesson the learner came to play.
-  //   WALK   — reached by <- from the progress card: forward goes back to that card.
+  // v77_k: forward used to have TWO destinations, because this page has two roles.
+  //   ENTRY  — reached by opening a chapter: forward used to start the lesson the learner came to
+  //            play DIRECTLY. User follow-up (mobile): "the entry card next button should NOT open
+  //            the first/next question of the first chapter, but the chapter progress card" — so
+  //            ENTRY now goes to the SAME destination WALK already did (the progress card is the
+  //            hub; a lesson starts from there, one tap away, same as every other chapter). The
+  //            label keeps saying "Start" for entry — landing on the chapter's own hub is still
+  //            "starting" it, just not skipping straight past it into a question.
+  //   WALK   — reached by <- from the progress card: forward goes back to that card, unchanged.
   // The target is stashed by whoever opened the page rather than guessed here, so the page and its
   // opener cannot disagree (the same reason v74_o reused APP._compBack instead of deciding twice).
   const _tgt = APP._sumNext;
@@ -19473,10 +19532,7 @@ function showStorySummary(){
   const nx = document.getElementById('sum-next');
   if (nx) {
     _compIco(nx, '→', _entry ? t('summary.start') : t('summary.next'));
-    nx.onclick = _entry
-      ? () => { const g = APP._sumNext; APP._sumNext = null; endDrill();
-                if (!g || showLesson(g.idx) === false) { showProgressCard(true); show('complete-screen'); } }
-      : () => sumForwardToCard();
+    nx.onclick = () => { APP._sumNext = null; endDrill(); sumForwardToCard(); };
   }
   // user follow-up: mirror sum-next's just-resolved state onto the header-row duplicate, AFTER the
   // branch above has decided it — same ordering requirement _syncCompHdrNav documents.

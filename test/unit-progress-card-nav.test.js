@@ -76,39 +76,59 @@ const posOf = (id) => {
 }
 console.log('  both popups: hold each card\'s relocated machinery unchanged, same overlay pattern as #settings-modal: OK');
 
-// ── 2a. Progress-card header row: split into TWO rows (mobile, user follow-up) ────────
-// SUPERSEDES this section's original invariant ("☰ before the translation flags, all in one
-// row") — a later, mobile-specific follow-up reported a long chapter title pushing that single
-// row wider than a phone screen, and asked for two explicit rows instead: title/flags/read on
-// top, prev/menu/next centered below. That regroups ☰ with prev/next rather than with the
-// flags — the opposite of the old "☰ before flags" rule — so this is REWRITTEN to state what
-// holds now, not loosened to tolerate both shapes. Scoped to the progress/complete card only;
-// the entry/summary card below was not asked and was not touched.
+// ── 2a. Progress card: nav row moved BELOW the whole text field (mobile follow-up #2) ────
+// SUPERSEDES §2a's own PRIOR rewrite (from the SAME conversation): that pass split one overflowing
+// row into two, but still nested prev/☰/next INSIDE <summary> (a second row of it). This follow-up
+// asked to move them BELOW the text field entirely — i.e. below the whole collapsible box, not just
+// below the title. Deliberately placed OUTSIDE the <details> element (a sibling after it), not
+// inside its collapsible BODY either: #comp-story-panel is user-collapsible (its own <summary>
+// still toggles on click), so a nav row placed inside the body would vanish whenever a learner
+// collapsed the panel — living outside keeps prev/☰/next reachable regardless of collapse state.
 {
   const panelStart = posOf('comp-story-panel');
+  const detailsEnd = html.indexOf('</details>', panelStart);
   const summary = html.slice(panelStart, html.indexOf('</summary>', panelStart));
+  // The header row is now ONLY title/flags/read — no nav trio inside it at all.
+  for (const id of ['comp-story-prev', 'comp-story-nav-btn', 'comp-story-next']) {
+    assert.ok(!summary.includes(`id="${id}"`), `${id} must NOT be inside the <summary> anymore`);
+  }
   const at = (id) => { const i = summary.indexOf(`id="${id}"`); assert.ok(i > 0, `${id} exists in the progress-card header row`); return i; };
   const lbl = at('comp-story-panel-lbl'), flags = at('comp-story-flags'), spk = at('comp-story-spk');
-  const prev = at('comp-story-prev'), nav = at('comp-story-nav-btn'), next = at('comp-story-next');
-  assert.ok(lbl < flags && flags < spk, 'row 1 order: title, then translation flags, then the read-aloud button');
-  assert.ok(prev < nav && nav < next, 'row 2 order: prev, then the ☰ popup trigger, then next');
-  assert.ok(spk < prev, 'row 1 (title/flags/read) is entirely ABOVE row 2 (prev/menu/next) -- the two rows do not interleave');
-  assert.ok(/onclick="event\.stopPropagation\(\);openCompNav\(\);"/.test(summary),
-    'the ☰ button opens the popup, and stops the click from also toggling the <details>');
-}
-console.log('  progress-card header row: title/flags/read on top, prev/☰/next centered below (mobile follow-up): OK');
+  assert.ok(lbl < flags && flags < spk, 'header row order: title, then translation flags, then the read-aloud button');
 
-// ── 2b. Entry-card header row: unchanged, still ☰-before-translation, one row ─────────
+  // The nav trio lives in its own row, AFTER </details> — found within the vocab box that always
+  // immediately follows it, so this is scoped to the real next sibling, not just "somewhere later".
+  const vocabAt = html.indexOf('class="vocab-box"', detailsEnd);
+  assert.ok(vocabAt > detailsEnd && vocabAt - detailsEnd < 400,
+    'the vocab box (the panel\'s own next sibling) is found close after </details> -- scopes the nav-row search to the real gap between them, not the whole rest of the file');
+  const navRow = html.slice(detailsEnd, vocabAt);
+  const nAt = (id) => { const i = navRow.indexOf(`id="${id}"`); assert.ok(i > 0, `${id} exists in the nav row below the text field`); return i; };
+  const prev = nAt('comp-story-prev'), nav = nAt('comp-story-nav-btn'), next = nAt('comp-story-next');
+  assert.ok(prev < nav && nav < next, 'nav-row order: prev, then the ☰ popup trigger, then next');
+  assert.ok(/onclick="openCompNav\(\);"/.test(navRow), 'the ☰ button opens the popup');
+  // No longer inside a <details>/<summary> click-toggle, so stopPropagation is no longer needed —
+  // its ABSENCE here is itself a signal the buttons genuinely left the collapsible header.
+  assert.ok(!/event\.stopPropagation/.test(navRow), 'the nav row does not carry the now-unneeded stopPropagation guard');
+}
+console.log('  progress card: header row is title/flags/read only; prev/☰/next moved below the whole text field: OK');
+
+// ── 2b. Entry card: SAME move, mirrored (mobile follow-up #2 explicitly named both cards) ──
 {
-  const sumStart = posOf('sum-sumbox');
-  const sumRow = html.slice(sumStart, html.indexOf('</div>', html.indexOf('sum-sumtext', sumStart)));
-  const sumOrder = ['sum-sum-nav-btn', 'sum-sum-xlate', 'sum-sum-spk', 'sum-sum-next']
-    .map(id => sumRow.indexOf(`id="${id}"`));
-  sumOrder.forEach((at, i) => assert.ok(at > 0, `element ${i} of the entry-card header row exists`));
-  for (let i = 1; i < sumOrder.length; i++) assert.ok(sumOrder[i] > sumOrder[i - 1], 'entry-card header-row elements are in the required order');
-  assert.ok(sumRow.indexOf('sum-sum-nav-btn') < sumRow.indexOf('sum-sum-xlate'),
-    'the entry card\'s ☰ trigger ALSO sits before its translation control');
-  assert.ok(/onclick="openSumNav\(\);"/.test(sumRow), 'the entry card\'s ☰ button opens its own popup');
+  const boxStart = posOf('sum-sumbox');
+  const boxEnd = html.indexOf('id="sum-title"', boxStart);
+  const headerRow = html.slice(boxStart, html.indexOf('id="sum-sumtext"', boxStart));
+  for (const id of ['sum-sum-nav-btn', 'sum-sum-next']) {
+    assert.ok(!headerRow.includes(`id="${id}"`), `${id} must NOT be inside the entry-card header row anymore`);
+  }
+  const hAt = (id) => { const i = headerRow.indexOf(`id="${id}"`); assert.ok(i > 0, `${id} exists in the entry-card header row`); return i; };
+  const xlate = hAt('sum-sum-xlate'), spk = hAt('sum-sum-spk');
+  assert.ok(xlate < spk, 'header row order: translation control, then the read-aloud button');
+
+  const navRow = html.slice(html.indexOf('id="sum-sumtext"', boxStart), boxEnd);
+  const nAt = (id) => { const i = navRow.indexOf(`id="${id}"`); assert.ok(i > 0, `${id} exists in the entry card's nav row below the text field`); return i; };
+  const nav = nAt('sum-sum-nav-btn'), next = nAt('sum-sum-next');
+  assert.ok(nav < next, 'nav-row order: the ☰ popup trigger, then next (no back button — this card has none to duplicate)');
+  assert.ok(/onclick="openSumNav\(\);"/.test(navRow), 'the entry card\'s ☰ button opens its own popup');
 
   // ONLY next/back are duplicated anywhere — no OTHER action id (repeat/drill/crossword/wipe) gets
   // a header-row twin on EITHER card, and the entry card (no back button at all) gets no sum-sum-prev.
@@ -116,7 +136,7 @@ console.log('  progress-card header row: title/flags/read on top, prev/☰/next 
     assert.ok(!html.includes(`id="${id}"`), `${id} must NOT exist`);
   }
 }
-console.log('  entry-card header row (unchanged): ☰ before translation control(s); ONLY next[/back] duplicated anywhere: OK');
+console.log('  entry card: header row is translation/read only; ☰/next moved below the text field too (mirrors the progress card): OK');
 
 // ── 3. _mirrorNavBtn: the ONE mirror rule, shared and non-vacuous ────────────
 // The GLYPH is deliberately NOT mirrored (see §8) — a fixed, heavier ➜ replaced the mirrored ←/→

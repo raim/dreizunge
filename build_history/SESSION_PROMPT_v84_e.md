@@ -1,25 +1,30 @@
-# Session prompt — written at the `v84_d` cut
+# Session prompt — written at the `v84_e` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
-one alongside. Keep using the double-letter suffix scheme (`v84_e`, `v84_f`, …) unless a future
+one alongside. Keep using the double-letter suffix scheme (`v84_f`, `v84_g`, …) unless a future
 session has a good reason to switch to `v85_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v84_d`** — four mobile progress-card
-UI follow-ups, ALL from the user actually using the app on their own phone (made possible for the
-first time this session by `v84_b`/`v84_c`): (1) `#comp-story-panel`'s header row split into two —
-title/flags/read on top, prev/☰/next centered below — a long chapter title was overflowing a phone
-screen; (2) the corner-pill cluster (account/settings/mute) and the tutor fab, previously two
-floating widgets in opposite corners, now share one full-width translucent `#bottom-bar`
-(`--bottom-bar-h` CSS var, everything else fixed-bottom offsets from it); (3) question-card flag/star
-buttons moved below the collapsed story panel (pure reorder); (4) the mobile "ask the tutor" selection
-popover — found to be rendering correctly, just hidden under the phone's own native "Copy/Share"
-selection toolbar (a real, precise diagnosis from the user, correcting an earlier vaguer "doesn't work
-on mobile" report) — now pins `position:fixed` above `#bottom-bar` on touch devices instead of trying
-to anchor near a selection whose on-screen native-toolbar collision this page cannot see or avoid. All
-four verified live against a real 375px mobile viewport, not just structurally. Full write-up (with
-exactly what was verified and how) in `roadmap_v84.md`'s own `v84_d` entry — read it before touching
-any of these four areas again.
+zero-dependency Node language-learning app). Picking up from **`v84_e`** — a SECOND mobile follow-up
+batch, sent while `v84_d` was still being finalized (same real-phone-use conversation), refining two
+of `v84_d`'s own decisions and adding a genuinely new interaction: (1) nav icons (prev/☰/next) moved
+BELOW the whole text field on BOTH progress and entry cards — superseding `v84_d`'s own two-row-
+within-`<summary>` split, which this follow-up explicitly said didn't go far enough; (2) the entry
+card's "next" now goes to the chapter's own progress card instead of starting a lesson directly (the
+old `v77_k`-era "two destinations" design collapsed to one); (3) a short tap on PLAIN story/summary
+text now advances like Next — built on the SAME `sel.isCollapsed` signal `PLAN §12`'s selection
+popover already trusts, so a drag-select still opens that popover unchanged; (4) a highlighted word
+(`tapWord()`/`.wp-tap`) keeps its own tap-to-lesson behaviour, per the user's own explicit follow-up
+clarification sent right after item 3 shipped. All verified via REAL DOM `.click()` dispatch against
+a real chapter's real data, not just direct function calls. Full write-up in `roadmap_v84.md`'s own
+`v84_e` entry — read it before touching any of these areas again.
+
+**`v84_d`, condensed** — the FIRST mobile follow-up batch, same conversation: `#comp-story-panel`'s
+header row split into two (superseded above); the corner-pill cluster and tutor fab unified into one
+full-width translucent `#bottom-bar` (`--bottom-bar-h` CSS var, still current); question-card
+flag/star buttons moved below the collapsed story panel; the mobile selection popover — found
+rendering correctly but hidden under the phone's own native "Copy/Share" toolbar — now pins above
+`#bottom-bar` on touch devices via `_isTouchDevice()`.
 
 **`v84_b`/`v84_c`, condensed** — PWA install support (confirmed working for real in Google Chrome on
 Ubuntu, same day it shipped; a LAN IP over plain HTTP separately does NOT get an install option,
@@ -51,9 +56,9 @@ API vs. cloud call; pronunciation-quality scoring is hard and out of scope).
 1. **This file**, whole.
 2. `build_history/roadmap_v84.md` — its **index table** and **⚠️ Session protocol** block first, then
    `# ⚠️ OPEN AT THE v84 CUT` (findings, `§0`/`§0i`, the standing RULES — now 37, see "Rules earned in
-   the v83 line" for the two newest), then `# SHIPPED IN THE v84 LINE` for `v84_d`'s four mobile UI
-   items, `v84_c`'s launcher, and `v84_b`'s PWA work + the `lib-dom.js` fix — read all of it before
-   touching any of those areas.
+   the v83 line" for the two newest), then `# SHIPPED IN THE v84 LINE` for `v84_e`'s second mobile
+   batch, `v84_d`'s first, `v84_c`'s launcher, and `v84_b`'s PWA work + the `lib-dom.js` fix — read
+   all of it before touching any of those areas.
 3. `INTERNALS.md` — constants, silent-failure modes, invariants. **§6b is a feature → function map**
    — read it BEFORE grepping for where anything lives.
 
@@ -67,7 +72,7 @@ node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut: **327 topics, 92 storylines, 33 languages, 659 `en` keys** (unchanged since
-`v83_m`). `APP_VERSION = 'v84_d'`.
+`v83_m`). `APP_VERSION = 'v84_e'`.
 
 ⚠️ **Check `git status --short lessons.json` at the start of this session.** If it shows modified,
 that is very likely the user's own real, uncommitted `PLAN §7.0`/CP4-pipeline evaluation data — not
@@ -106,34 +111,19 @@ the v83 line" blocks — this is the short form.)*
 
 # WHERE TO START
 
-## ⚠️ A follow-up UI batch (four more items) arrived as `v84_d` was being finalized — do this next
+## The mobile UI follow-up arc is DONE — closed, don't re-open without a reason
 
-Sent by the user mid-session, immediately after the `v84_d` batch above (real phone use, same
-session): (1) move progress/entry-card navigation icons (arrows + ☰) BELOW the text field entirely —
-NOT just into a second row of the summary, as `v84_d` item 1 did; applies to BOTH the progress card
-AND the entry/summary card (`v84_d` deliberately left the entry card's header untouched — this is
-what supersedes that). (2) The entry card's "next" button should go to CHAPTER 1's progress/complete
-card, not straight into the first question. (3) A SHORT tap on the entry card's summary text should
-do what "next" does (per item 2); a longer tap/drag should still allow text selection. (4) Same shape
-on progress cards: a short tap on the story text should behave like "next" (e.g. start a now-unlocked
-comprehension lesson); a longer tap/drag should open the EXISTING grammar/meaning selection popover
-(`PLAN §12`, `_storySelShowPopover`/`_storySelMaybeShow` — the exact mechanism `v84_d` item 4 just
-touched). **User's own explicit clarification, sent right after item 4**: the short-tap-advances
-behaviour must NOT fire on a HIGHLIGHTED word — those already lead to their own lesson via
-`tapWord()`/`.wp-tap` and must keep doing exactly that. Only a tap on PLAIN, unhighlighted text
-should behave like "next." This is not an edge case to handle later — it is the FIRST thing to get
-right, since `tapWord()`'s existing behaviour is the one this must not regress.
+Two full batches (`v84_d`, `v84_e`), all from real phone use in the same conversation, all verified
+live. Nothing known-broken remains on this surface. If the user reports something new here, treat it
+as genuinely new feedback (their phone, their real usage), not a reopening of a settled decision.
 
-**Real design risk worth flagging explicitly, not just building through**: distinguishing a "short
-tap on plain text" from "a tap on a highlighted word" from "the start of a drag-to-select gesture"
-needs a real threshold (time and/or movement) PLUS a target check (`.closest('.wp-tap')` or
-equivalent — the highlighted-word exclusion above), and must coexist with THREE other things already
-listening on the same text: `tapWord()` (per-word tap-to-lookup, `.wp-tap` marks — must keep firing,
-unchanged, for a highlighted word), the `story-selectable` selection-to-tutor listener `v84_d` just
-touched, and (for the entry card) whatever currently handles a tap there today (check before assuming
-nothing does). Read `_storySelMaybeShow`/`_storySelInit` closely — it already solved a related
-coexistence problem (`sel.isCollapsed` distinguishes a plain click from a real selection) that a
-short-tap-vs-drag threshold will need to sit alongside, not replace.
+## My suggestion: re-evaluate `apply-cp-lessons.js` output with `v83_p`'s register fix
+
+Carried forward from `v84_d`'s own prompt, since the mobile arc took priority instead: the user's own
+two `PLAN §7.0` evaluation runs (`v83_n` qwen2.5:7b, `v83_o` qwen3.6:35b-a3b) both predate `v83_p`'s
+register-mismatch fix. Re-running with `--replace` would show whether the fix actually produces
+correct output on real content. Leans more on the user's own judgment (reading translations) than
+code — flag that up front.
 
 ## Other buildable-now items, unranked
 
@@ -179,5 +169,19 @@ follow-up batch above changes what's IN `#bottom-bar`, re-check whether this num
 reality (currently sized for the 44px `tutor-fab-btn`).
 
 `_isTouchDevice()` (`v84_d`, `index.html`) — `'ontouchstart' in window || navigator.maxTouchPoints > 0`.
-Used once so far (`_storySelShowPopover`'s touch/desktop branch) but is the right primitive for the
-follow-up batch's tap-vs-drag distinction too — don't invent a second detection.
+Used by `_storySelShowPopover`'s touch/desktop branch.
+
+`_storyTapMaybeAdvance()`/`_storyTapInit()` (`v84_e`, `index.html`) — a short tap on plain
+`#comp-story-text`/`#sum-sumtext` fires `comp-next`/`sum-next`. Reuses `PLAN §12`'s own
+`sel.isCollapsed` signal (NOT a new time/movement threshold) to tell a tap from a drag-select, and
+excludes `.wp-tap` (highlighted words) by target. If you touch this, re-verify with a REAL DOM
+`.click()` dispatch (`test/unit-tutor-selection.test.js` §11 already does this) — a direct function
+call alone would not have caught the cross-realm `vm.Context` gotcha this section's own testing hit
+(`assert.deepStrictEqual` on an object returned straight from `C.run()` fails even when equal —
+round-trip through `JSON.stringify`/`JSON.parse` instead).
+
+`sum-next`'s onclick (`index.html`, the `showComplete()`-adjacent summary render function) — both
+the ENTRY and WALK cases now call `sumForwardToCard()`; the `_entry`-derived label ("Start"/"Next")
+is the only thing still branching on `_entry`. If a future change needs the entry card to start a
+lesson directly again, that is a explicit product reversal, not a bug fix — confirm with the user
+first, the same way this change itself came from an explicit user request.

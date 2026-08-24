@@ -174,8 +174,12 @@ const state = (C, id) => C.run(`(function(){ var e=document.getElementById(${JSO
 const settle = () => new Promise(r => setTimeout(r, 50));
 
 // ── 6. v77_k: the summary card is the ACTUAL ENTRY POINT ───────────────────
-// Opening a chapter shows the summary first, and its forward starts the lesson the learner came
-// to play. Driven through loadSaved — the real entry path — rather than by calling the renderer.
+// Opening a chapter shows the summary first. Driven through loadSaved — the real entry path —
+// rather than by calling the renderer.
+// ⚠️ Forward's DESTINATION changed (user follow-up, superseding the ORIGINAL "starts the lesson the
+// learner came to play" claim this section made): it now shows the chapter's own progress card
+// instead of skipping straight into a question — see unit-next-chapter-entry.test.js §6 for the
+// fuller write-up of the same change, asserted there non-vacuously against a real render.
 (async () => {
   const topic = (SL_WITH.chapters || []).map(c => byId[c]).find(t => t && (t.lessons || []).length);
   const C = loadClient({ quiet: true });
@@ -210,9 +214,11 @@ const settle = () => new Promise(r => setTimeout(r, 50));
     'entering a chapter shows the summary card FIRST');
   assert.strictEqual(C.run(`APP._started`), null, 'and does not start the lesson underneath it');
   C.run(`document.getElementById('sum-next').onclick(); true;`, 'start');
-  assert.strictEqual(C.run(`APP._started`), idx,
-    'forward from the entry card starts the lesson the learner came to play');
-  console.log('  entry: chapter -> summary card -> the lesson');
+  assert.strictEqual(C.run(`APP._started`), null,
+    'forward from the entry card no longer starts a lesson directly (superseded — see unit-next-chapter-entry.test.js §6)');
+  assert.strictEqual(C.run(`APP._shown`), 'complete-screen',
+    'forward shows the progress/complete card instead');
+  console.log('  entry: chapter -> summary card -> its own progress card (not straight into a lesson)');
 
   // ~~Arriving from the next-chapter-unlocked card must NOT stack a second interstitial.~~
   // WITHDRAWN at v80_e, because the condition it protected against cannot occur any more. That
@@ -222,17 +228,19 @@ const settle = () => new Promise(r => setTimeout(r, 50));
   //
   // Re-asserted as the property that actually matters now, which is the same property stated
   // without the deleted machinery: entering a chapter shows the card ONCE, and going forward from
-  // it lands in the lesson rather than on another card.
+  // it lands on its progress card (not a lesson directly — see the supersession note above — and
+  // not on another interstitial either).
   C.run(`APP._shown = null; APP._started = null;
     loadSaved(${JSON.stringify(topic.id)}); true;`, 're-enter');
   await settle();
   assert.strictEqual(C.run(`APP._shown`), 'summary-screen', 're-entering shows the one starter card');
   C.run(`document.getElementById('sum-next').onclick(); true;`, 'start');
-  assert.strictEqual(C.run(`APP._started`), idx,
-    'and forward from it lands in the lesson, not on a second interstitial');
+  assert.strictEqual(C.run(`APP._started`), null, 'forward still does not start a lesson directly');
+  assert.strictEqual(C.run(`APP._shown`), 'complete-screen',
+    'and forward from it lands on the progress card, not on a second interstitial');
   assert.ok(!/_skipEntryCard/.test(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8')),
     'the skip flag is gone with the card it existed for — if it returns, so has the double card');
-  console.log('  one starter card per chapter, forward goes to the lesson');
+  console.log('  one starter card per chapter, forward goes to its progress card');
   
 })().catch(e => { console.error(e); process.exit(1); });
 

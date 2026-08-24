@@ -217,4 +217,65 @@ console.log('  ui.json: new selection-popover strings present, en only: OK');
 }
 console.log('  touch devices get a fixed, bar-adjacent popover placement; desktop keeps the near-selection one: OK');
 
+// ── 11. A short tap on PLAIN story text advances, like Next (mobile follow-up) ──
+// User request: on the progress/entry cards, a short tap on plain (unhighlighted) story text
+// should do what Next does; a tap on a HIGHLIGHTED word must keep ITS OWN existing behaviour
+// (tapWord); a drag-select must be left alone (it opens the grammar/meaning popover instead, via
+// the UNCHANGED §10 mechanism above). Reuses the SAME `sel.isCollapsed` signal §10 already trusts.
+{
+  const C = loadClient({ quiet: true });
+  const setup = C.run(`
+    document.getElementById('comp-story-text').innerHTML =
+      '<span id="plain-span">plain text</span><mark class="story-vocab-hl wp-tap" id="hl-mark">Wort</mark>';
+    document.getElementById('sum-sumtext').innerHTML = '<span id="sum-plain-span">summary text</span>';
+    let compNextCalls = 0, sumNextCalls = 0;
+    document.getElementById('comp-next').onclick = () => { compNextCalls++; };
+    document.getElementById('sum-next').onclick = () => { sumNextCalls++; };
+    window.__calls = () => ({ compNextCalls, sumNextCalls });
+    true;
+  `, 'setup');
+  assert.ok(setup, 'fixture set up');
+
+  const collapsed = () => C.run(`window.getSelection = () => ({ isCollapsed: true, rangeCount: 0 }); true;`);
+  const dragged = () => C.run(`window.getSelection = () => ({ isCollapsed: false, rangeCount: 1, toString: () => 'dragged text' }); true;`);
+
+  // A) Tap on PLAIN progress-card text (no real selection) -> comp-next fires.
+  collapsed();
+  C.run(`_storyTapMaybeAdvance({ target: document.getElementById('plain-span') }); true;`, 'tap-plain-comp');
+  assert.deepStrictEqual(JSON.parse(C.run(`JSON.stringify(window.__calls())`)), { compNextCalls: 1, sumNextCalls: 0 },
+    'a tap on plain progress-card text calls comp-next exactly once');
+
+  // B) Tap on the HIGHLIGHTED word -> comp-next must NOT fire (tapWord's own job, untouched here).
+  collapsed();
+  C.run(`_storyTapMaybeAdvance({ target: document.getElementById('hl-mark') }); true;`, 'tap-hl');
+  assert.deepStrictEqual(JSON.parse(C.run(`JSON.stringify(window.__calls())`)), { compNextCalls: 1, sumNextCalls: 0 },
+    'a tap on a HIGHLIGHTED word does not ALSO call comp-next — count stays at 1 from (A)');
+
+  // C) A drag-select over plain text -> comp-next must NOT fire (the selection popover's job).
+  dragged();
+  C.run(`_storyTapMaybeAdvance({ target: document.getElementById('plain-span') }); true;`, 'drag-plain');
+  assert.deepStrictEqual(JSON.parse(C.run(`JSON.stringify(window.__calls())`)), { compNextCalls: 1, sumNextCalls: 0 },
+    'a drag-select over plain text does not call comp-next — count stays at 1');
+
+  // D) Tap on the entry card's plain summary text -> sum-next fires.
+  collapsed();
+  C.run(`_storyTapMaybeAdvance({ target: document.getElementById('sum-plain-span') }); true;`, 'tap-plain-sum');
+  assert.deepStrictEqual(JSON.parse(C.run(`JSON.stringify(window.__calls())`)), { compNextCalls: 1, sumNextCalls: 1 },
+    'a tap on plain entry-card text calls sum-next exactly once');
+
+  // E) A tap OUTSIDE both containers does nothing at all (non-vacuity: this isn't a global catch-all).
+  collapsed();
+  C.run(`_storyTapMaybeAdvance({ target: document.getElementById('comp-hdr-title') }); true;`, 'tap-outside');
+  assert.deepStrictEqual(JSON.parse(C.run(`JSON.stringify(window.__calls())`)), { compNextCalls: 1, sumNextCalls: 1 },
+    'a tap outside both containers calls neither — this is not a page-wide catch-all');
+
+  // F) A disabled Next must not fire even on an otherwise-qualifying tap.
+  C.run(`document.getElementById('comp-next').disabled = true; true;`);
+  collapsed();
+  C.run(`_storyTapMaybeAdvance({ target: document.getElementById('plain-span') }); true;`, 'tap-disabled');
+  assert.deepStrictEqual(JSON.parse(C.run(`JSON.stringify(window.__calls())`)), { compNextCalls: 1, sumNextCalls: 1 },
+    'a DISABLED Next does not fire even on an otherwise-qualifying tap');
+}
+console.log('  a short tap on plain story/summary text advances like Next; highlighted words and drag-selects are both left alone: OK');
+
 console.log('unit-tutor-selection: ALL PASSED');
