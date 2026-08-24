@@ -1,21 +1,27 @@
 // unit-speech-recognition.test.js
 // v84_g — browser-native speech recognition reused for answer checking (user request, following up
 // on the discussion-only "recording a spoken reply" note in roadmap_v83.md). MCQ coverage widened at
-// v84_h (direct follow-up: "please allow microphone... also for MCQ question, where the recognized
-// word is not shown, but once the correct word is recognized the button turns green as if clicked")
-// — cGrid's `speakable` flag became 'target'|'source' so recognition can LISTEN in whichever
-// language a given MCQ's choices are actually written in, instead of only ever the target locale.
+// v84_h (direct follow-up: "please allow microphone... also for MCQ question... the button turns
+// green as if clicked") — cGrid's `speakable` flag became 'target'|'source' so recognition can
+// LISTEN in whichever language a given MCQ's choices are actually written in. Widened AGAIN and
+// changed at v84_i (a second direct follow-up, after live-testing on a real phone): `mcq_source_
+// target` (tMcqEI) — a very common vocabulary MCQ, shown source, choices in TARGET — had been missed
+// entirely at v84_h (its function is shared with the script-primer intro items, and only THOSE got
+// read closely); and the MCQ path now SHOWS what it heard, in `#mcq-mic-heard`, a direct reversal of
+// v84_g's original "never shown" design — green and left standing on a match, self-clearing after a
+// timeout otherwise ("clear words with some timeout if they don't match" — the user's own framing).
 // Contract under test:
 //   • Feature-detected: no mic button anywhere without window.SpeechRecognition/webkitSpeechRecognition.
 //   • Typed-answer exercises (listen_type/type_plural/type_conjugation) get a mic button that fills
 //     the input with recognized speech; a match against ex.correct checks it immediately (green,
 //     advance); a non-match fills the input with what was HEARD but never auto-submits.
 //   • MCQ types get a mic button wherever cGrid's `speakable` kind is threaded through: 'target' for
-//     mcq_article/mcq_plural/mcq_conjugation, 'source' for mcq_target_source/listen_mcq (confirmed by
-//     reading the exercise builders, not guessed from type names) — but NOT comprehension_mcq (full
-//     reasoning sentences, a poor speech-match target) or the script-primer glyph/chip intro items
-//     (a learner cannot usefully SPEAK a bare glyph). A match taps the CORRECT choice via the real
-//     pickChoice path, with the transcript never shown; anything else changes nothing.
+//     mcq_article/mcq_plural/mcq_conjugation/mcq_source_target, 'source' for mcq_target_source/
+//     listen_mcq (confirmed by reading the exercise builders, not guessed from type names) — but NOT
+//     comprehension_mcq (full reasoning sentences, a poor speech-match target) or the script-primer
+//     glyph/chip intro items (a learner cannot usefully SPEAK a bare glyph). A match taps the CORRECT
+//     choice via the real pickChoice path AND shows what was heard, green; a non-match shows what was
+//     heard too, but self-clears after a timeout, and never taps anything.
 //   • A genuine recognition ERROR is toasted once; a plain non-match toast never overwrites it.
 'use strict';
 const assert = require('assert');
@@ -89,11 +95,16 @@ console.log('  feature detection: no button unsupported, wired button when suppo
 
 // ── 2. MCQ scoping: speakable kind matches each caller's ACTUAL choice language ──
 {
-  // 'target': mcq_article/mcq_plural/mcq_conjugation (choices are target-language grammar forms).
+  // 'target': mcq_article/mcq_plural/mcq_conjugation (choices are target-language grammar forms),
+  // and (v84_i) mcq_source_target (tMcqEI) — a real gap at v84_h, missed because tMcqEI is SHARED
+  // with the script-primer intro items and only those got read closely at the time; mkMcqEI's own
+  // `choices` are target-language words (`choices:shuffle([v.target,...w])`).
   const article = extFn('tMcqArticle'), plural = extFn('tMcqPlural'), conj = extFn('tMcqConjugation');
+  const ei = extFn('tMcqEI');
   for (const [name, body] of [['tMcqArticle', article], ['tMcqPlural', plural], ['tMcqConjugation', conj]]) {
     assert.ok(/cGrid\(ex\.choices,\s*false,\s*null,\s*'target'\)/.test(body), `${name} passes speakable:'target' to cGrid`);
   }
+  assert.ok(/cGrid\(ex\.choices,\s*false,\s*null,\s*'target'\)/.test(ei), 'tMcqEI (mcq_source_target) passes speakable:\'target\'');
   // 'source': mcq_target_source (tMcqIE) and listen_mcq (tLMcq)'s two NON-intro branches — both
   // builders (mkMcqIE/mkLMcq) put v.source into `choices`, confirmed by reading them, not the type
   // name (mcq_target_source's own choices are source-language despite "target" in the type name).
@@ -101,15 +112,18 @@ console.log('  feature detection: no button unsupported, wired button when suppo
   assert.ok(/cGrid\(ex\.choices,\s*false,\s*null,\s*'source'\)/.test(ie), 'tMcqIE (mcq_target_source) passes speakable:\'source\'');
   assert.strictEqual((lmcq.match(/cGrid\(ex\.choices,\s*false,\s*null,\s*'source'\)/g) || []).length, 2,
     'tLMcq passes speakable:\'source\' on BOTH its non-intro branches (muted fallback + normal)');
-  // Never speakable at all: comprehension (full reasoning sentences) and tLMcq's OWN intro/glyph
-  // branch (raw script glyphs — a learner cannot usefully SPEAK a bare character). The 4th-argument
-  // anchor matters here too — `cGrid(ex.choices, true)` elsewhere is the unrelated `one` (one-col)
-  // parameter, not `speakable`.
+  // Never speakable at all: comprehension (full reasoning sentences), and BOTH functions' OWN
+  // script-primer intro/glyph branches (raw script glyphs/transliterations — a learner cannot
+  // usefully SPEAK a bare character). The 4th-argument anchor matters here too — `cGrid(ex.choices,
+  // true)` elsewhere is the unrelated `one` (one-col) parameter, not `speakable`.
   const comp = extFn('tComprehension');
   assert.ok(!/cGrid\([^,]+,[^,]+,[^,]+,\s*'(target|source)'\)/.test(comp), 'tComprehension never gets a mic button');
-  const introBlock = lmcq.slice(lmcq.indexOf('if(ex._intro)'), lmcq.indexOf('// When globally muted'));
-  assert.ok(!/cGrid\([^,]+,[^,]+,[^,]+,\s*'(target|source)'\)/.test(introBlock),
+  const lmcqIntro = lmcq.slice(lmcq.indexOf('if(ex._intro)'), lmcq.indexOf('// When globally muted'));
+  assert.ok(!/cGrid\([^,]+,[^,]+,[^,]+,\s*'(target|source)'\)/.test(lmcqIntro),
     'tLMcq\'s own _intro (glyph-picking) branch never gets a mic button');
+  const eiIntro = ei.slice(ei.indexOf("_intro === 'glyph_sound'"), ei.indexOf('const q = t("ex.mcq_source_target.q"'));
+  assert.ok(!/cGrid\([^,]+,[^,]+,[^,]+,\s*'(target|source)'\)/.test(eiIntro),
+    'tMcqEI\'s own _intro (glyph_sound/sound_glyph chips) branch never gets a mic button');
 }
 console.log('  MCQ scoping: speakable kind matches each caller\'s real choice language, glyph/prose types excluded: OK');
 
@@ -152,7 +166,8 @@ console.log('  typed answer: matching speech checks and turns the input green: O
 }
 console.log('  typed answer: a mismatch fills what was heard, never auto-submits: OK');
 
-// ── 5. MCQ (target locale): recognized speech matching the CORRECT choice taps it ──
+// ── 5. MCQ (target locale): recognized speech matching the CORRECT choice taps it,
+//        and #mcq-mic-heard shows it, green ──
 {
   const C = client();
   C.run(mockCtor(['Katzen']));
@@ -168,14 +183,40 @@ console.log('  typed answer: a mismatch fills what was heard, never auto-submits
   const r = C.run(`({ answered: APP.cur.answered, sel: APP.cur.sel,
     ok0: document.getElementById('c0').classList.contains('ok'),
     sel0: document.getElementById('c0').classList.contains('sel'),
-    log: document.getElementById('toast').textContent })`);
+    heardText: document.getElementById('mcq-mic-heard').textContent,
+    heardMatch: document.getElementById('mcq-mic-heard').classList.contains('match') })`);
   assert.strictEqual(r.answered, true, 'a matching transcript answers via the real pickChoice/check path');
   assert.strictEqual(r.sel, 'Katzen', 'the CORRECT choice was the one tapped');
   assert.strictEqual(r.sel0, true, 'choice 0 (the correct one) is marked selected');
   assert.strictEqual(r.ok0, true, 'and turns green, same as a real tap');
-  assert.strictEqual(r.log, '', 'the recognized transcript is never shown anywhere — unlike the typed-answer path');
+  assert.strictEqual(r.heardText, 'Katzen', 'v84_i: what was heard IS shown, a reversal of the v84_g "never shown" design');
+  assert.strictEqual(r.heardMatch, true, 'the heard field itself turns green on a match');
 }
-console.log('  MCQ (target): speech matching the correct choice taps it via pickChoice, turns green, transcript hidden: OK');
+console.log('  MCQ (target): speech matching the correct choice taps it, turns green, AND shows what was heard: OK');
+
+// ── 5b. MCQ: a MISMATCH still shows what was heard, but WITHOUT the green class, and it
+//         self-clears after the timeout (never lingers) ──
+{
+  const C = client();
+  C.run(mockCtor(['Katze']));
+  C.run(`APP.cur = { exercises: [{ type:'mcq_plural', target:'Katze', correct:'Katzen',
+      choices:['Katzen','Katze','Katzes','Katzens'] }],
+    cur:0, answered:false, hearts:3, correct:0, total:0, streak:0, bestStreak:0, ans:[] };
+    ['Katzen','Katze','Katzes','Katzens'].forEach(function(w,i){
+      var b = document.getElementById('c'+i); b.textContent = w; b.classList.add('choice');
+    });
+    _mcqSpeechStart(document.getElementById('mcq-mic-btn'), 'target');
+    true;`);
+  await settle();
+  const mid = C.run(`({ text: document.getElementById('mcq-mic-heard').textContent,
+    match: document.getElementById('mcq-mic-heard').classList.contains('match') })`);
+  assert.strictEqual(mid.text, 'Katze', 'the mismatched word IS shown too, not just the matching one');
+  assert.strictEqual(mid.match, false, 'but WITHOUT the green "match" class');
+  await new Promise(r => setTimeout(r, C.run('_MIC_HEARD_CLEAR_MS') + 200));
+  const after = C.run(`document.getElementById('mcq-mic-heard').textContent`);
+  assert.strictEqual(after, '', 'a non-matching word self-clears after the timeout — "clear words with some timeout if they don\'t match"');
+}
+console.log('  MCQ: a mismatch shows what was heard (not green), and self-clears after the timeout: OK');
 
 // ── 6. MCQ (target locale): speech that does not match the correct choice changes nothing ──
 {

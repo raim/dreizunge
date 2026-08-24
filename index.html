@@ -268,8 +268,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .mic-btn{flex:none;width:44px;border:2.5px solid var(--gray-mid);border-radius:var(--radius);background:var(--white);cursor:pointer;font-size:19px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0}
 .mic-btn:hover{border-color:var(--blue)}
 .mic-btn.listening{border-color:var(--blue);background:var(--blue-light);animation:mic-pulse 1s ease-in-out infinite}
-.mic-btn.mcq-mic{width:auto;margin-top:8px;padding:8px 14px;gap:6px}
+.mic-btn.mcq-mic{width:auto;padding:8px 14px;gap:6px}
 @keyframes mic-pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.mic-row{display:inline-flex;align-items:center;gap:8px;margin-top:8px}
+.mic-heard{font-size:13px;font-weight:700;color:var(--gray-dark);font-style:italic;opacity:.85;transition:color .2s,opacity .2s}
+.mic-heard.match{color:var(--green-dark);font-style:normal;opacity:1}
+.mic-heard:empty{display:none}
 .feedback{width:100%;border-radius:var(--radius-lg);padding:13px 16px;margin-bottom:12px;display:none}
 .feedback.ok{background:var(--green-light);border:2.5px solid var(--green);display:block}
 .feedback.bad{background:var(--red-light);border:2.5px solid var(--red);display:block}
@@ -15134,7 +15138,7 @@ function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=loc
          + `<div class="qglyph" dir="auto">${furiHtml(ex.source)}</div>${cGrid(ex.choices,false,'chips')}</div>`;
   }
   const q = t("ex.mcq_source_target.q",{word:qWord(furiHtml(ex.source))});
-  return `<div class="ex-badge">${S.flag}→${L.flag} ${badge}</div><div class="card"><div class="qtext" dir="auto">${q}</div>${cGrid(ex.choices,false)}</div>`; }
+  return `<div class="ex-badge">${S.flag}→${L.flag} ${badge}</div><div class="card"><div class="qtext" dir="auto">${q}</div>${cGrid(ex.choices,false,null,'target')}</div>`; }
 // v79_g: read the glyph aloud when the card appears, in the TARGET voice — the point of a script
 // primer is to attach a sound to a shape, and the learner should not have to hunt for a speaker
 // button to get it. Deliberately silent when muted or when the device has no voice for the
@@ -16749,9 +16753,31 @@ function _typeMicBtnHtml(){
   if(!_speechRecognitionSupported()) return '';
   return `<button type="button" class="mic-btn" id="type-mic-btn" title="${escAttr(t('ex.mic_tooltip'))}" onclick="_typeSpeechStart(this)">🎤</button>`;
 }
+// v84_i (user request): the recognized word/phrase IS shown here — a direct reversal of v84_g's own
+// "never shown" MCQ design, once MCQ coverage widened enough that seeing what the mic heard became
+// worth more than keeping it hidden. `#mcq-mic-heard` is a single shared id, same as `#mcq-mic-btn`
+// itself — only one question card is ever on screen at a time.
 function _mcqMicBtnHtml(kind){
   if(!_speechRecognitionSupported()) return '';
-  return `<button type="button" class="mic-btn mcq-mic" id="mcq-mic-btn" title="${escAttr(t('ex.mic_tooltip'))}" onclick="_mcqSpeechStart(this, ${JSON.stringify(kind)})">🎤</button>`;
+  return `<span class="mic-row"><button type="button" class="mic-btn mcq-mic" id="mcq-mic-btn" title="${escAttr(t('ex.mic_tooltip'))}" onclick="_mcqSpeechStart(this, ${JSON.stringify(kind)})">🎤</button><span class="mic-heard" id="mcq-mic-heard" aria-live="polite"></span></span>`;
+}
+
+const _MIC_HEARD_CLEAR_MS = 2500;   // how long a NON-matching "heard" word lingers before self-clearing
+
+// Shows what was just heard next to a mic button. A MATCH turns it green and stays (the round is
+// about to advance on its own); anything else clears itself after a short timeout rather than
+// lingering as stale, possibly-confusing text once the learner has moved past it — "clear words with
+// some timeout if they don't match" was the user's own framing. The timer lives ON the element so a
+// second recognition pass started before the first one's timeout fires cleanly supersedes it, rather
+// than two competing timers racing to clear/not-clear the same span.
+function _micShowHeard(el, text, matched){
+  if(!el) return;
+  el.textContent = text || '';
+  el.classList.toggle('match', !!matched);
+  clearTimeout(el._micClearTimer);
+  if(!matched){
+    el._micClearTimer = setTimeout(() => { el.textContent = ''; el.classList.remove('match'); }, _MIC_HEARD_CLEAR_MS);
+  }
 }
 
 // Owns the button's listening state; hands the caller the transcript alternatives (or null) once
@@ -16795,14 +16821,14 @@ function _typeSpeechStart(btn){
 // source`'s own choices are source-language despite "target" being in the type name). Deliberately
 // still NOT every MCQ: `tComprehension`'s options are full source-language REASONING sentences, not
 // short answers — a poor match target for one-shot speech recognition — and the script-primer glyph
-// chips (`_intro==='glyph_sound'`) are transliterations, not real words in either language. Neither
-// passes a `speakable` kind.
+// chips (`_intro==='glyph_sound'`/`'sound_glyph'`/`'listen_glyph'`) ask the learner to SPEAK a bare
+// character, which recognized text can never usefully match. Neither passes a `speakable` kind.
 //
-// Matched ONLY against the CORRECT choice, never any wrong one, and NEVER shown — no transcript is
-// displayed on this path (unlike the typed-answer path, which shows what it heard): a hit taps that
-// choice exactly as a real tap would (`pickChoice`, so it turns green and advances through the
-// existing check() path); a miss changes nothing, so a misheard word can never spend a heart on an
-// answer the learner never actually chose.
+// Matched ONLY against the CORRECT choice, never any wrong one — a hit taps that choice exactly as a
+// real tap would (`pickChoice`, so it turns green and advances through the existing check() path); a
+// miss changes nothing on the CARD, so a misheard word can never spend a heart on an answer the
+// learner never actually chose. What was heard IS shown, in `#mcq-mic-heard` (v84_i) — green and
+// left standing on a match, cleared after a timeout otherwise (`_micShowHeard`).
 function _mcqSpeechStart(btn, kind){
   const C = APP.cur, ex = C && C.exercises && C.exercises[C.cur];
   if(!ex || C.answered) return;
@@ -16810,8 +16836,10 @@ function _mcqSpeechStart(btn, kind){
     // Same reasoning as `_typeSpeechStart`: a null `alts` may already have been toasted as a real
     // error, so this stays quiet rather than clobbering that message with a generic one.
     if(!alts) return;
+    const heard = document.getElementById('mcq-mic-heard');
     const correct = normDiacritics(stripFuri(ex.correct));
     const said = alts.some(a => normDiacritics(a) === correct);
+    _micShowHeard(heard, alts[0], said);
     if(!said){ showToast(t('ex.mic_no_match')); return; }
     const idx = (ex.choices||[]).findIndex(c => normDiacritics(stripFuri(c)) === correct);
     const el = idx >= 0 ? document.getElementById('c'+idx) : null;
