@@ -39,7 +39,7 @@ this file stays current through the whole v84 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v84 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v84 LINE** | `v84_b` — PWA install support (`manifest.json`/`icon.svg`/`sw.js`, local server only): browsers can offer "Install App," windowed, no tabs/omnibox. Registration itself could NOT be confirmed in a real browser this session (only a sandboxed preview browser was available) — reasoned-through, not measured; the user should check in a real browser first. Also fixed, found while building this: `test/lib-dom.js`'s `loadClient()` had a fragile trailing-regex that assumed `init();` was the LAST statement in the client script — the first code ever added after it (this release's own SW registration) silently un-suppressed `init()` in ~80 unit tests. Fixed by anchoring on the `@static-engine-end` marker instead. |
+| **SHIPPED IN THE v84 LINE** | `v84_b` — PWA install support (`manifest.json`/`icon.svg`/`sw.js`, local server only): browsers can offer "Install App," windowed, no tabs/omnibox. Registration confirmed working by the USER, same day, in real Google Chrome on Ubuntu via `localhost:3000` (a sandboxed preview browser had failed during the build itself, flagged as unverified at the time — now measured). A LAN IP over plain HTTP (tested on Android) still shows no install option — a separate, well-understood limitation (service workers need a secure context; HTTPS/a TLS proxy is the real fix, matching the app's own existing insecure-transport warning), not a bug in this release. Also fixed, found while building this: `test/lib-dom.js`'s `loadClient()` had a fragile trailing-regex that assumed `init();` was the LAST statement in the client script — the first code ever added after it (this release's own SW registration) silently un-suppressed `init()` in ~80 unit tests. Fixed by anchoring on the `@static-engine-end` marker instead. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, all of CP1–5) are BOTH fully shipped — see `roadmap_v83.md`'s own `# SHIPPED IN THE v83 LINE` for how. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). No new PLAN track is open as of this cut. |
 
@@ -1749,19 +1749,28 @@ from `docs/index.html` — verified, not just assumed (see testing below). The `
 tag itself IS copied into `docs/index.html` (it lives above the marker, in `<head>`) — harmless there,
 a 404 the browser silently ignores.
 
-**⚠️ What is NOT proven: that a real browser actually completes registration.** Attempted in the only
-browser available in this session (the sandboxed preview pane) and failed with Chrome's generic "An
-unknown error occurred when fetching the script." Real Chrome (via the Claude-in-Chrome connector)
-was not available either (extension not connected). Diagnosed as far as possible without a second
-real browser: `/sw.js` fetches byte-correct via a plain `fetch()` with the right MIME type and the
-SAME `Transfer-Encoding: chunked` the already-working `/` route uses; the server never logged a
-request for any of the registration attempts, meaning the failure happened before a real network call
-was even dispatched. This is strong circumstantial evidence the SANDBOXED PREVIEW BROWSER restricts
-Service Worker registration for isolation reasons (a known category of limitation for automated/
-remote browser testing tools), not a bug in what's served — but it is reasoned-through, not measured,
-exactly the same honesty gap `install.sh`'s Windows support carries. **The user needs to open the real
-local server in a real browser** (DevTools → Application → Service Workers, or the install icon in
-the address bar / "Install Dreizunge…" in the menu) before this claim can be called verified.
+**✅ UPDATE, same day: confirmed working by the user in a real browser.** Registration was attempted
+only in the sandboxed preview pane during the build itself, and failed there with Chrome's generic
+"An unknown error occurred when fetching the script" — diagnosed as far as possible without a second
+real browser (`/sw.js` fetched byte-correct via plain `fetch()`, correct MIME type, the server never
+even logged the attempt), reasoned as the SANDBOX restricting Service Worker registration for
+isolation reasons, not a bug in what's served, but explicitly flagged as unverified pending a real
+test. **The user then opened `http://localhost:3000` in real Google Chrome on Ubuntu and confirmed
+the install genuinely works** — this claim is now MEASURED, not reasoned-through.
+
+**A second, genuinely separate finding from the same follow-up conversation**: the user then tried
+their Android phone over the LAN (`http://192.168.0.180:3000`) and found no install option there
+either — but this is a DIFFERENT, well-understood cause, unrelated to anything in this release's own
+code. Service workers require a "secure context" (HTTPS, or the `localhost`/`127.0.0.1` loopback
+exception) — a LAN IP over plain HTTP does not qualify, and Chrome's own address bar already signals
+this (a ⚠️ warning triangle instead of a lock icon). This is the SAME underlying limitation
+`transportInsecure()`/`warnInsecureTransport()` (server.js) already warn about for credentials over
+HTTP — PWA install and secure-cookie handling share one root cause, not two. Workarounds discussed:
+(1) `chrome://flags/#unsafely-treat-insecure-origin-as-secure` on the phone, adding the LAN URL — a
+dev-only per-device flag, not a real fix; (2) a TLS-terminating reverse proxy (Caddy/nginx/a tunnel)
+in front of the server for real LAN/phone use — the same fix the existing insecure-transport warning
+already recommends, not yet built, not authorized, a genuine future-deployment concern rather than a
+bug in this release.
 
 **A real, unrelated bug found and fixed while building this** (not a PWA bug — a TEST HARNESS bug):
 `test/lib-dom.js`'s `loadClient()` suppresses `index.html`'s live bootstrap (`init()`, network-bound,
@@ -1801,10 +1810,11 @@ the registration call. No `lessons.json` change.
 
 **Not scoped here, deliberately**: GitHub Pages / static-build PWA support (a second manifest +
 build-static.js copy step — real added complexity, not authorized); a `dreizunge` PATH launcher
-(discussed and explicitly deferred at the `v83` cut, unrelated to this); actual confirmation that
-registration succeeds in a real, unrestricted browser (see the caveat above — this is the one thing
-in this release that is reasoned-through rather than measured, and should be the first thing checked
-in a real browser before calling PWA install support genuinely done).
+(discussed and explicitly deferred at the `v83` cut, unrelated to this); HTTPS/a TLS-terminating
+reverse proxy for real LAN/phone installability (needed for the LAN finding above — matches the
+already-existing insecure-transport warning's own recommendation, not built, a future-deployment
+concern the user themselves judged as such: "probably only required for a future deployment on a
+real server").
 
 # TRACK T — THE TEXT-FOCUSED PROGRESS CARD (user, at the `v80_f` cut)
 

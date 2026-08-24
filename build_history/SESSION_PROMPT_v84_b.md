@@ -7,13 +7,16 @@ session has a good reason to switch to `v85_a` instead.)*
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
 zero-dependency Node language-learning app). Picking up from **`v84_b`** — PWA install support
 (`manifest.json`/`icon.svg`/`sw.js`, local server only): browsers can offer "Install App," windowed,
-no tabs/omnibox. **⚠️ Registration itself is UNVERIFIED in a real browser** — only a sandboxed
-preview browser was available this session, and it failed there with Chrome's generic "unknown error
-fetching the script" despite the file serving byte-correct; reasoned as a sandbox restriction (the
-server never even logged the attempt), not disproven. **The single highest-value first action this
-session: open the local server in a REAL browser and check** (DevTools → Application → Service
-Workers, or the install icon in the address bar). See `roadmap_v84.md`'s own `v84_b` entry for the
-full diagnosis before re-investigating from scratch.
+no tabs/omnibox. **✅ Registration is CONFIRMED working** — a sandboxed preview browser failed during
+the build itself (Chrome's generic "unknown error fetching the script," reasoned as a sandbox
+restriction, not a bug), but the user then verified it for real in Google Chrome on Ubuntu via
+`localhost:3000`, same day. **One separate, real, still-open limitation found in that same
+follow-up**: a LAN IP over plain HTTP (tested on Android, `http://192.168.0.180:3000`) gets NO
+install option — service workers need a secure context (HTTPS or the `localhost` loopback
+exception), which a LAN address never satisfies. Same root cause as the app's own existing
+insecure-transport warning, not a new bug. Fix (not built): a TLS-terminating reverse proxy in front
+of the server — judged by the user themselves as "probably only required for a future deployment,"
+not an immediate priority. See `roadmap_v84.md`'s own `v84_b` entry for the full story.
 
 **Also fixed at `v84_b`, found while building the above** (a test-harness bug, not a PWA bug):
 `test/lib-dom.js`'s `loadClient()` had a fragile trailing-regex assuming `init();` was the LAST
@@ -99,17 +102,20 @@ the v83 line" blocks — this is the short form.)*
 
 # WHERE TO START
 
-## My suggestion: verify PWA registration in a REAL browser first
+## PWA install support is DONE — closed, don't re-open without a reason
 
-Before building anything new on top of `v84_b`'s PWA work, close its one open question: does
-`navigator.serviceWorker.register('/sw.js')` actually succeed outside the sandboxed preview browser?
-Open `http://localhost:3000` (or wherever the user's dev server runs) in a real Chrome/Edge/Firefox,
-check DevTools → Application → Service Workers for an active worker, and check whether the browser
-offers to install the app. If it works: `roadmap_v84.md`'s `v84_b` entry can be updated from
-"reasoned-through" to "measured," and PWA install support is genuinely done. If it fails for real
-(not just in the sandbox): the failure mode is now a REAL bug to diagnose, with a real browser's own
-DevTools console/network tab available for the first time — a much better starting position than this
-session had.
+Confirmed working in a real browser (Google Chrome, Ubuntu, `localhost:3000`) the same day it shipped
+— see `roadmap_v84.md`'s `v84_b` entry. The one remaining, SEPARATE limitation (a LAN IP over plain
+HTTP gets no install option, since service workers need a secure context) is well-understood, not a
+bug, and its real fix (a TLS-terminating reverse proxy) is explicitly a future-deployment concern the
+user themselves deprioritized — don't build it unless asked.
+
+## My suggestion: pick from the buildable-now list below
+
+Nothing as clearly pre-chosen as PWA was this time — genuinely the user's call. Two that stand out:
+**re-evaluating `apply-cp-lessons.js` output with `v83_p`'s register fix** (closes a real, still-open
+gap in previously-shipped work), or **a `dreizunge` PATH launcher** (small, same zero-dependency
+spirit as the PWA work, previously deferred rather than declined).
 
 ## Other buildable-now items, unranked
 
