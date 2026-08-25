@@ -1,15 +1,31 @@
-# Session prompt — written at the `v84_m` cut
+# Session prompt — written at the `v84_n` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
-one alongside. Keep using the double-letter suffix scheme (`v84_n`, `v84_o`, …) unless a future
+one alongside. Keep using the double-letter suffix scheme (`v84_o`, `v84_p`, …) unless a future
 session has a good reason to switch to `v85_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v84_m`** — full write-up in
-`roadmap_v84.md`'s own `v84_g`…`v84_m` entries; condensed here. **This whole arc has been driven by
-REAL device testing**, not just written specs — every release past `v84_g` exists because the user
-actually tried the previous one on a real Android phone and reported back what was genuinely missing
-or wrong, which is worth reading as the whole shape of how this feature got built.
+zero-dependency Node language-learning app). Picking up from **`v84_n`** — full write-up in
+`roadmap_v84.md`'s own `v84_g`…`v84_n` entries; condensed here.
+
+**`v84_n`, condensed** (docs-only, no code): the user asked "what's next, back to the installation
+scripts?" — pointing at `roadmap_v83.md`'s discussion-only "Windows installability" note (two tiers
+laid out, neither built, explicitly "not required for now" at the time). Asked which tier via
+`AskUserQuestion`; the user picked **Tier 1 — written steps, no code** over Tier 2 (a real
+`winget`+PowerShell installer). Added a `## Windows` section to `README.md`: Ollama's/Node's own
+native installers (both double-click), GitHub's "Download ZIP" (no `git` needed), the one genuinely
+OS-specific step (opening a terminal in that folder — Windows 11 vs. 10 differ), then the SAME
+`ollama pull`/`node server.js` commands Option B already documents for Linux/macOS. `install.sh` line
+16 already said "read README.md ... for Windows/WSL notes" — this section is what that comment was
+pointing at before the content existed. **Not tested on a real Windows machine — reasoned, not
+measured, said so in the README itself**; `test/unit-install-script.test.js`'s existing README/
+`install.sh` cross-checks still pass (confirmed by re-running, not assumed). Tier 2 remains
+discussion-only, not queued.
+
+**This whole speech-recognition arc (`v84_g`→`v84_m`) has been driven by REAL device testing**, not
+just written specs — every release past `v84_g` exists because the user actually tried the previous
+one on a real Android phone and reported back what was genuinely missing or wrong, which is worth
+reading as the whole shape of how this feature got built.
 
 **`v84_g`→`v84_i`, condensed**: browser-native speech recognition reused for answer checking.
 `v84_g` covered typed-answer exercises and the three target-choice MCQ types
@@ -149,12 +165,13 @@ API vs. cloud call; pronunciation-quality scoring is hard and out of scope).
 1. **This file**, whole.
 2. `build_history/roadmap_v84.md` — its **index table** and **⚠️ Session protocol** block first, then
    `# ⚠️ OPEN AT THE v84 CUT` (findings, `§0`/`§0i`, the standing RULES — now 37, see "Rules earned in
-   the v83 line" for the two newest), then `# SHIPPED IN THE v84 LINE` for `v84_m`'s interim-results-
-   plus-floating-pill release, `v84_l`'s continuous-listening-plus-mute release, `v84_k`'s
-   syn_select-plus-bottom-bar-redesign release, `v84_i`'s missed-gap-plus-heard-field release, `v84_h`'s
-   MCQ-coverage widening, `v84_g`'s speech-recognition + tutor-badge pair, `v84_f`'s orphaned-fix
-   recovery (and the version-collision process lesson), `v84_e`'s second mobile batch, `v84_d`'s first,
-   `v84_c`'s launcher, and `v84_b`'s PWA work — read all of it before touching any of those areas.
+   the v83 line" for the two newest), then `# SHIPPED IN THE v84 LINE` for `v84_n`'s Windows-docs
+   release, `v84_m`'s interim-results-plus-floating-pill release, `v84_l`'s continuous-listening-
+   plus-mute release, `v84_k`'s syn_select-plus-bottom-bar-redesign release, `v84_i`'s
+   missed-gap-plus-heard-field release, `v84_h`'s MCQ-coverage widening, `v84_g`'s speech-recognition +
+   tutor-badge pair, `v84_f`'s orphaned-fix recovery (and the version-collision process lesson),
+   `v84_e`'s second mobile batch, `v84_d`'s first, `v84_c`'s launcher, and `v84_b`'s PWA work — read
+   all of it before touching any of those areas.
 3. `INTERNALS.md` — constants, silent-failure modes, invariants. **§6b is a feature → function map**
    — read it BEFORE grepping for where anything lives.
 
@@ -168,12 +185,14 @@ node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut: **327 topics, 92 storylines, 33 languages, 662 `en` keys** (topics/storylines/
-languages unchanged since `v83_m`; `en` keys: `v84_g` added 4, `v84_h`/`v84_i`/`v84_l`/`v84_m` added
-none, `v84_k` REMOVED 1 — `ex.mic_tooltip`, orphaned once every per-exercise mic button it labelled was
-replaced by the one persistent pill's own hardcoded title — net 659→662). `APP_VERSION = 'v84_m'`.
-`v84_m` added tests INSIDE the existing `test/unit-speech-recognition.test.js` (no new test FILE), so
-the 267/233 counts above are unchanged from `v84_l` — don't be alarmed that a release with new test
-coverage didn't move either number; `test/run.js`'s "checks" count is per FILE, not per assertion.
+languages unchanged since `v83_m`; `en` keys: `v84_g` added 4, `v84_h`/`v84_i`/`v84_l`/`v84_m`/`v84_n`
+added none, `v84_k` REMOVED 1 — `ex.mic_tooltip`, orphaned once every per-exercise mic button it
+labelled was replaced by the one persistent pill's own hardcoded title — net 659→662).
+`APP_VERSION = 'v84_n'`. `v84_m` added tests INSIDE the existing `test/unit-speech-recognition.test.js`
+(no new test FILE), and `v84_n` touched only `README.md` (no test file needed a change at all — the
+EXISTING `test/unit-install-script.test.js` already cross-checks README/`install.sh` consistency), so
+the 267/233 counts above are unchanged since `v84_l` — don't be alarmed that two releases with real
+content didn't move either number; `test/run.js`'s "checks" count is per FILE, not per assertion.
 
 ✅ **`unit-replay-focus` is FIXED — a genuinely concurrent session landed it mid-`v84_h`, commit
 `63ff97e`, "in this same worktree."** Spawned as a background task (`task_08149dde`) when the user's
@@ -272,8 +291,12 @@ code — flag that up front.
   class for two whole releases, PLUS a third thing this release deliberately did NOT ship — a
   same-session-reuse optimization caught defeating the stale-generation guarantee before it ever
   reached a commit), says nothing about how it actually SOUNDS or feels to use on a phone.
-- **Windows installability** (two tiers laid out in `roadmap_v83.md`, discussion-only) — neither
-  ruled nor queued.
+- **Windows Tier 1 (`v84_n`'s new `README.md` section) is unverified on a real Windows machine** —
+  reasoned from both dependencies shipping official installers, not measured. If the user (or anyone)
+  tries it on real Windows, the steps themselves are the thing to confirm, not just that the app runs.
+- **Windows Tier 2** (a real `winget`+PowerShell one-click installer, laid out in `roadmap_v83.md`) —
+  still discussion-only; the user picked Tier 1 at the `v84_n` cut, Tier 2 remains neither ruled out
+  nor queued.
 
 ## NOT yours to start without the user naming it
 

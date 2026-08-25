@@ -97,6 +97,43 @@ In offline mode you can only load lessons that were already saved in lessons.jso
 
 ---
 
+## Windows
+
+`install.sh` (Option A above) needs a `sh`-compatible shell, which Windows doesn't have by default —
+there's no one-line installer for Windows yet. The same steps done by hand still work, and both
+dependencies ship real double-click Windows installers, so no coding experience is needed:
+
+1. **Install Ollama** — download and run the official installer from
+   [ollama.com/download/windows](https://ollama.com/download/windows) (double-click, no terminal).
+2. **Install Node.js** — download and run the official LTS installer (`.msi`) from
+   [nodejs.org](https://nodejs.org) (double-click, no terminal).
+3. **Download this app** — on the GitHub page, click the green **Code** button, then
+   **Download ZIP**, and extract it anywhere. No `git` needed.
+4. **Open a terminal in that folder**:
+   - Windows 11: right-click the folder → **Open in Terminal**.
+   - Windows 10: hold Shift and right-click the folder → **Open PowerShell window here** (or open
+     PowerShell/Command Prompt and `cd` to the folder yourself).
+5. **Pull a model**, in that terminal:
+   ```
+   ollama pull qwen2.5:7b
+   ```
+   (a smaller model that's still solid — see Option A above for the bigger, best-quality
+   `qwen3.6:35b-a3b`, if your machine has the RAM/disk for a ~20+ GB download).
+6. **Start the app**, in the same terminal:
+   ```
+   node server.js
+   ```
+   then open `http://localhost:3000` in your browser.
+
+Every step after installing Ollama and Node is the same as the manual steps in Option B above —
+Windows just needs its terminal opened a different way (step 4).
+
+⚠️ Not yet tested on a real Windows machine — reasoned from Ollama and Node.js both shipping official
+Windows installers and the app having no OS-specific code, not measured against an actual run. If
+something doesn't work as described here, please let us know.
+
+---
+
 
 ## Open in browser
 
