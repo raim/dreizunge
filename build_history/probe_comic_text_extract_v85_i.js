@@ -91,6 +91,31 @@
 //   engineering alone — but not yet production-ready: OCR letter accuracy and crop-bleed handling
 //   still need either better prompting, a deterministic post-process, or padding/generous-crop
 //   handling in the UI (e.g. re-cropping tighter after an initial pass) before this could ship.
+//
+// RESULTS — MODEL COMPARISON: qwen2.5vl:7b, same v2 prompt, same crop, same session (Aug 25 2026):
+//
+//   PERFECT MATCH on both fields, first try, no further prompt tuning:
+//     CAPTION: So wurde zur Abschreckung an der Grenze von der Regierung ein großes Schild aufgestellt
+//     IN-SCENE: Riesen sind hier nicht willkommen
+//   This resolves EVERY outstanding defect from both minicpm-v4.5 runs in one shot: correct case
+//   throughout (as v2 already achieved), the OCR letter error is GONE ("nicht", not "mcht"), the
+//   line-broken word is correctly REJOINED ("willkommen", not "will kommen" — never achieved by any
+//   minicpm-v4.5 prompt variant), and there is no unlabeled bleed-through line from the adjacent
+//   panel's sliver in the crop (v2's new defect) — it silently ignored the intrusion correctly.
+//
+//   COST: 294.0s — 3.5-4.5x slower than either minicpm-v4.5 text-extraction run (65-84s) on the same
+//   crop, same machine. Prompt-token count was also far higher (1468 vs 469) despite an IDENTICAL
+//   prompt string and image — qwen2.5vl's vision encoder evidently tokenizes the image into
+//   substantially more vision tokens (consistent with its known native-resolution/dynamic-patching
+//   ViT), which is the likely driver of both the higher token count and the added latency, not
+//   response length (completion was actually shorter: 40 tokens vs 49).
+//
+//   VERDICT: unambiguous quality win, real speed cost. For a per-panel production pipeline (the
+//   "user draws N panels, model extracts each" design), qwen2.5vl:7b at ~5 minutes/panel on this
+//   CPU-only machine is slow but plausibly tolerable for an offline/background import job (unlike the
+//   interactive multi-call panel-FINDING probes, this call happens once per panel, not N times per
+//   page). Worth re-testing on Page A (the hard §2.7 fixture — rotated text, unframed panels, text
+//   outside its box) before trusting this generalizes past the one easy panel tested here.
 
 const fs = require('fs');
 const path = require('path');

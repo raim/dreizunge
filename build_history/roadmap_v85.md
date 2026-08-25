@@ -2913,6 +2913,55 @@ proved partially, iterably fixable). Still not production-ready, and no ruling h
 whether to pursue this over the other two paths — but this is the first `§2.4` measurement with more
 good news than bad.
 
+### PLAN §2.4 — RESULT PART 3 (Aug 25 2026, same session) — a different model changes the picture entirely
+
+User asked "could we use a more powerful model?" No GPU exists on this machine (`lspci` confirms
+Intel integrated graphics only, no CUDA), so a genuinely bigger local model was expected to be
+impractically slow; a same-size-class BUT different/newer architecture was tried instead: pulled
+`qwen2.5vl:7b` (6.0GB) and re-ran every probe from PART 1 and PART 2 against it, unchanged prompts,
+same fixture, same crop, for a clean model-vs-model comparison:
+
+- **Text extraction** (`probe_comic_text_extract_v85_i.js`): a PERFECT match on both fields, first
+  try — resolved every remaining minicpm-v4.5 defect at once (the OCR letter error, the un-rejoined
+  split word, AND the crop-bleed-through line) at a cost of ~294s vs ~65-85s per call.
+- **One-shot panel enumeration** (`probe_comic_panels_v85_i.js`): correct format (unlike minicpm,
+  which ignored the requested tag), CORRECT COUNT (6), and a clean, consistent, evenly-spaced grid in
+  EXACT reading order — no confabulation, no repetition loop, the single failure mode this whole probe
+  series was built to catch. ~296s for the call.
+- **Stateless grounding** (`probe_comic_panels_grounded_v85_i.js`): the one place qwen2.5vl:7b did
+  NOT do well — 2 of 6 boxes came back geometrically inverted (negative height), and two others
+  duplicated the same region, the identical consistency failure minicpm-v4.5 had with this exact
+  strategy. Much faster though (1.6-1.9 min for all 7 calls vs 8-10 min) — machine load had dropped
+  by this point in the session, so per-call cost is not directly comparable across the two models'
+  runs.
+- **Stateful grounding** (`probe_comic_panels_stateful_v85_i.js`): clean success — fixed exactly what
+  stateless grounding got wrong (no negative boxes, no duplicates), a consistent 6-panel grid matching
+  the one-shot result. 2.5 min for all 7 calls. Notably, feeding prior answers into context helped
+  qwen2.5vl:7b (stateless→stateful went from broken to clean) but did NOT help minicpm-v4.5 in the
+  same test (stateless→stateful stayed broken, differently) — the value of "give the model its own
+  prior answers" is model-dependent, not a universal fix.
+
+A parser bug was found and fixed along the way (not a model defect): the number-matching regexes
+across all three panel-finding probes required literal digits only, so a legitimately negative
+boundary coordinate (`<box>-10 -6 378 394</box>`, a corner panel's box slightly overshooting the image
+edge) silently produced a garbled, wrong-looking box instead of a parse failure or a correct negative
+value. Fixed by allowing an optional `-` per coordinate in all three probe files' parsers — worth
+remembering for any production parser built on this protocol.
+
+**VERDICT.** `qwen2.5vl:7b` passes 3 of the 4 tasks tested cleanly (text extraction, one-shot
+enumeration, stateful grounding) and fails the 4th (stateless grounding) in the SAME way `minicpm-v4.5`
+did. This is a genuinely different picture than PART 1: **the simplest strategy — one-shot
+enumeration — now works outright**, on the easy fixture, with this model. Two things are still
+unverified: (1) whether this generalizes to `§2.7`'s HARD fixture (Page A — rotated text, unframed
+panels, text outside its panel, ambiguous order), the actual regression case the whole `§2.4` protocol
+was designed to stress-test, not yet tried with any model; (2) per-call latency (~5 min for a single
+qwen2.5vl:7b vision call when the machine is under its earlier load, as low as ~15-20s when it is not)
+is workload-dependent on this CPU-only box, not a fixed number — real production timing needs
+measuring under realistic concurrent load, not this session's on-and-off contention. **No ruling has
+been made on which panel-finding strategy (if any) to build on, nor on whether Track A4 moves forward
+with `qwen2.5vl:7b`, a cloud backend (not yet tried), or the manual-panel-selection design from PART 2
+— all three remain live options with real positive signal behind them now.**
+
 ### PLAN §2.6 — The interactive word map (user, at the v80 cut) — build it where coordinates are FREE
 
 **The idea:** overlay the image with the coordinates of the extracted text so the learner can click

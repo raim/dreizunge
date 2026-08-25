@@ -62,6 +62,30 @@
 //   different prompts than the one this run tested and need their own measurement before ruling
 //   in/out. See the human-reviewed overlay for the visual read: the first-4 boxes look right; do not
 //   trust the rest.
+//
+// RESULTS — MODEL COMPARISON: qwen2.5vl:7b, SAME one-shot prompt, SAME image (Aug 25 2026):
+//
+//   All 6 panels came back, correctly formatted (`<box>x1 y1 x2 y2</box>`, matching the requested
+//   tag — unlike minicpm-v4.5, which ignored the tag form entirely), CORRECT COUNT, and in exact
+//   reading order — the deterministic top-to-bottom/left-to-right sort matches the model's own
+//   numbering EXACTLY (`orderMatches: true`), something none of the three minicpm-v4.5 strategies
+//   ever achieved. The boxes form a clean, consistent, evenly-spaced 2x3 grid: two columns
+//   (widths ~383 and ~356), three rows of near-identical height (~332-334 each). NO confabulation,
+//   NO repetition, no runaway panel count. One minor flaw: the last row's y2 = 1088, slightly past
+//   the 0-1000 normalization bound (a clampable rounding/overshoot error, not a structural one).
+//   296.0s for the call (1244 prompt tok, 148 completion tok) — in the same ballpark as minicpm-
+//   v4.5's warm one-shot call (382.9s), despite the much better output.
+//
+//   NOTE: the raw response used a MIXED separator within one box ("406,389" — comma, no space —
+//   next to "23 57" — space only). The original whitespace-only parser regex found ZERO panels on
+//   this response even though the model had answered essentially perfectly; the parser was widened
+//   to accept `[\s,]+` as a separator. Worth remembering for any production parser: don't assume a
+//   single consistent separator convention within one response, even from a well-behaved model.
+//
+//   VERDICT: on THIS fixture, qwen2.5vl:7b's one-shot enumeration solves the exact problem this
+//   probe was built to catch — no further probing of panel-finding strategies (grounded, stateful)
+//   may even be necessary for this model; the simplest strategy already works. Worth confirming
+//   against the HARD §2.7 fixture (Page A) before concluding this generalizes.
 
 const fs = require('fs');
 const path = require('path');
@@ -77,8 +101,10 @@ const DEFAULT_IMG =
 const IMG_PATH = process.argv[2] || DEFAULT_IMG;
 
 const OUT_DIR = path.dirname(IMG_PATH);
-const OVERLAY_HTML = path.join(OUT_DIR, 'probe_comic_panels_overlay.html');
-const RAW_TXT = path.join(OUT_DIR, 'probe_comic_panels_raw_response.txt');
+const RUN_TAG = process.env.PROBE_RUN_TAG || '';
+const TAG_SUFFIX = RUN_TAG ? `_${RUN_TAG}` : '';
+const OVERLAY_HTML = path.join(OUT_DIR, `probe_comic_panels_overlay${TAG_SUFFIX}.html`);
+const RAW_TXT = path.join(OUT_DIR, `probe_comic_panels_raw_response${TAG_SUFFIX}.txt`);
 
 const PROMPT = `This image is one page of a comic. It is laid out as a grid of rectangular panels.
 List every panel on the page, in reading order (top row first, left to right within each row, then
@@ -127,9 +153,12 @@ function parsePanels(text) {
   // Accept EITHER the requested `<box>x1 y1 x2 y2</box>` form OR a bare `x1 y1 x2 y2` /
   // `[x1,y1] to [x2,y2]` form — v85_i's first real run showed the model ignoring the tag format
   // for its early (plausible-looking) panels while still numbering them "Panel N:", so a strict
-  // parse would silently report zero panels even though useful numbers were present.
-  const reTag = /Panel\s*(\d+)\s*:?\s*<box>\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*<\/box>/gi;
-  const reBare = /Panel\s*(\d+)\s*:\s*\[?\s*([\d.]+)[,\s]+([\d.]+)\s*\]?\s*(?:to|,|\s)\s*\[?\s*([\d.]+)[,\s]+([\d.]+)\s*\]?/gi;
+  // parse would silently report zero panels even though useful numbers were present. Separators
+  // between the four numbers are `[\s,]+` (space OR comma OR both) — qwen2.5vl:7b's run mixed the
+  // two within one box ("406,389" then a space elsewhere), which a whitespace-only regex missed
+  // entirely despite the model having answered correctly.
+  const reTag = /Panel\s*(\d+)\s*:?\s*<box>\s*(-?[\d.]+)[\s,]+(-?[\d.]+)[\s,]+(-?[\d.]+)[\s,]+(-?[\d.]+)\s*<\/box>/gi;
+  const reBare = /Panel\s*(\d+)\s*:\s*\[?\s*(-?[\d.]+)[,\s]+(-?[\d.]+)\s*\]?\s*(?:to|,|\s)\s*\[?\s*(-?[\d.]+)[,\s]+(-?[\d.]+)\s*\]?/gi;
   const panels = [];
   const seen = new Set();
   for (const re of [reTag, reBare]) {

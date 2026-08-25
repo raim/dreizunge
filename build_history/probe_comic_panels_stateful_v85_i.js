@@ -42,6 +42,29 @@
 //   backend behaves differently, or whether the roadmap's own coarser §2.6 Tier 1 target (bubble-
 //   level boxes, not precise panel-grid splitting) is the more realistic near-term goal regardless of
 //   model.
+//
+// RESULTS — MODEL COMPARISON: qwen2.5vl:7b, same stateful strategy (Aug 25 2026):
+//
+//   Clean success — all 6 boxes well-formed, non-negative, no duplicates, forming a consistent 2x3
+//   grid closely matching the one-shot result on the same model (see probe_comic_panels_v85_i.js's
+//   qwen2.5vl comparison): [0,63,378,394], [386,57,749,390], [8,406,375,740], [386,405,749,740],
+//   [8,753,376,1084], [385,753,749,1084] — two clean columns, three evenly-spaced rows, zero overlap.
+//   19-30s per call, 2.5 min total for all 7 calls.
+//
+//   Notably, this FIXES exactly what qwen2.5vl:7b's own STATELESS grounding run got wrong (negative-
+//   height boxes on panels 1/3, duplicate regions on panels 5/6 — see
+//   probe_comic_panels_grounded_v85_i.js's qwen2.5vl comparison) — i.e. for THIS model, feeding prior
+//   answers back into context is what stateless grounding was missing. That is the OPPOSITE of what
+//   happened with minicpm-v4.5, where stateful context did NOT fix stateless grounding's consistency
+//   problem (both stayed broken, in different ways).
+//
+//   VERDICT: qwen2.5vl:7b now has TWO working panel-finding strategies (one-shot enumeration AND
+//   stateful grounding), both producing a clean, correct 6-panel grid on the easy fixture, and one
+//   broken strategy (stateless grounding). Combined with its clean text-extraction result (see
+//   probe_comic_text_extract_v85_i.js), this model has now passed every task tested on Page B. The
+//   real open question is no longer "can any model do this" — it's whether this generalizes to §2.7's
+//   HARD fixture (Page A: rotated text, unframed panels, text outside its panel, ambiguous order),
+//   which has not been tested with any model yet.
 
 const fs = require('fs');
 const path = require('path');
@@ -58,8 +81,10 @@ const DEFAULT_IMG =
 const IMG_PATH = process.argv[2] || DEFAULT_IMG;
 
 const OUT_DIR = path.dirname(IMG_PATH);
-const OVERLAY_HTML = path.join(OUT_DIR, 'probe_comic_panels_stateful_overlay.html');
-const LOG_TXT = path.join(OUT_DIR, 'probe_comic_panels_stateful_log.txt');
+const RUN_TAG = process.env.PROBE_RUN_TAG || '';
+const TAG_SUFFIX = RUN_TAG ? `_${RUN_TAG}` : '';
+const OVERLAY_HTML = path.join(OUT_DIR, `probe_comic_panels_stateful_overlay${TAG_SUFFIX}.html`);
+const LOG_TXT = path.join(OUT_DIR, `probe_comic_panels_stateful_log${TAG_SUFFIX}.txt`);
 
 function callOllamaVision(model, prompt, imgB64, numPredict) {
   return new Promise((resolve, reject) => {
@@ -99,8 +124,10 @@ function parseCount(text) {
 }
 
 function parseBox(text) {
-  let m = text.match(/<box>\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*<\/box>/i);
-  if (!m) m = text.match(/\[?\s*([\d.]+)[,\s]+([\d.]+)\s*\]?\s*(?:to|,)?\s*\[?\s*([\d.]+)[,\s]+([\d.]+)\s*\]?/);
+  // -? on each group — see probe_comic_panels_grounded_v85_i.js's parseBox for why (a legitimately
+  // negative boundary coordinate silently mismatched the whole box under a digit-only pattern).
+  let m = text.match(/<box>\s*(-?[\d.]+)[\s,]+(-?[\d.]+)[\s,]+(-?[\d.]+)[\s,]+(-?[\d.]+)\s*<\/box>/i);
+  if (!m) m = text.match(/\[?\s*(-?[\d.]+)[,\s]+(-?[\d.]+)\s*\]?\s*(?:to|,)?\s*\[?\s*(-?[\d.]+)[,\s]+(-?[\d.]+)\s*\]?/);
   if (!m) return null;
   return [Number(m[1]), Number(m[2]), Number(m[3]), Number(m[4])];
 }

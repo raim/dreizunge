@@ -76,6 +76,32 @@
 //   further per remaining panel, or (b) a fundamentally different one-shot strategy that avoids both
 //   this run's inconsistency AND the original one-shot run's confabulation/repetition. Neither is
 //   free; this is the point where a design conversation is more valuable than another probe call.
+//
+// RESULTS — MODEL COMPARISON: qwen2.5vl:7b, same stateless grounding strategy (Aug 25 2026):
+//
+//   Much cheaper: count call 4-6s, all 6 grounding calls 14-20s each, 1.6-1.9 min total for all 7
+//   calls (vs 8-10 min for minicpm-v4.5) — machine load had dropped by this point in the session
+//   (other large models likely evicted after their keep_alive), so this is not a clean model-vs-model
+//   speed comparison, just a note that per-call cost is not fixed.
+//
+//   First attempt exposed a PARSER bug, not (only) a model bug: `<box>-10 -6 378 394</box>` — a
+//   plausible slightly-negative boundary coordinate — silently mismatched entirely under a
+//   digit-only regex, producing garbage output ("box=[6,37,8,394]", no relation to the input). Fixed
+//   by allowing an optional `-` on every coordinate; see `parseBox`'s comment.
+//
+//   With the parser fixed, the MODEL's own output is still bad: panels 1 and 3 came back with
+//   NEGATIVE-HEIGHT boxes (`y1=-5, y2=-386`; `y1=-548, y2=-740`) — geometrically inverted, not just
+//   imprecise. And panels 5 and 6 landed on nearly the SAME region again (`[389,760,746,1085]` vs
+//   `[385,759,740,1086]`) — the identical duplicate-region failure minicpm-v4.5 had with this same
+//   stateless strategy.
+//
+//   VERDICT: a genuinely striking result — the SAME model that produced a clean, fully-correct 2x3
+//   grid under ONE-SHOT enumeration (see probe_comic_panels_v85_i.js's qwen2.5vl comparison) degrades
+//   badly under STATELESS per-panel grounding, the exact task §2.2's protocol was validated for. This
+//   says the failure mode measured across this whole probe series is not simply "weaker models
+//   confabulate more" — it is closely tied to WHICH TASK SHAPE is asked of a given model. For
+//   qwen2.5vl:7b specifically, one-shot enumeration is the strategy to build on; stateless (and,
+//   untested here, stateful) grounding is not.
 
 const fs = require('fs');
 const path = require('path');
@@ -134,8 +160,12 @@ function parseCount(text) {
 }
 
 function parseBox(text) {
-  let m = text.match(/<box>\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*<\/box>/i);
-  if (!m) m = text.match(/\[?\s*([\d.]+)[,\s]+([\d.]+)\s*\]?\s*(?:to|,)?\s*\[?\s*([\d.]+)[,\s]+([\d.]+)\s*\]?/);
+  // -? on each group: a boundary panel can legitimately be reported with a slightly negative
+  // coordinate (overshooting the image edge by a few units), and the original digit-only groups
+  // silently mismatched the whole box in that case (qwen2.5vl:7b's first grounded run) rather than
+  // just losing precision on one corner.
+  let m = text.match(/<box>\s*(-?[\d.]+)[\s,]+(-?[\d.]+)[\s,]+(-?[\d.]+)[\s,]+(-?[\d.]+)\s*<\/box>/i);
+  if (!m) m = text.match(/\[?\s*(-?[\d.]+)[,\s]+(-?[\d.]+)\s*\]?\s*(?:to|,)?\s*\[?\s*(-?[\d.]+)[,\s]+(-?[\d.]+)\s*\]?/);
   if (!m) return null;
   return [Number(m[1]), Number(m[2]), Number(m[3]), Number(m[4])];
 }
