@@ -256,6 +256,7 @@ run('unit: bottom-bar hide/show toggle (v85_b)', 'node', [path.join(__dirname, '
 run('unit: generator-page wizard shell (PLAN §13 milestone 1, v85_c)', 'node', [path.join(__dirname, 'unit-gen-wizard.test.js')]);
 run('unit: per-chapter lesson-type override (PLAN §13 milestone 3, v85_f)', 'node', [path.join(__dirname, 'unit-per-chapter-types.test.js')]);
 run('unit: post-generation storyboard/QC toggles (PLAN §13 milestone 4, v85_g)', 'node', [path.join(__dirname, 'unit-post-gen-features.test.js')]);
+run('unit: generation-time attribution fields (PLAN §13 milestone 5, v85_i)', 'node', [path.join(__dirname, 'unit-gen-attribution.test.js')]);
 run('unit: hidden lessons omitted/non-blocking in static (v48)', 'node', [path.join(__dirname, 'unit-hidden-lessons.test.js')]);
 run('unit: inline onclick escaping (read-story SyntaxError)', 'node', [path.join(__dirname, 'unit-inline-escaping.test.js')]);
 run('unit: error-hunt content-aware RTL', 'node', [path.join(__dirname, 'unit-error-hunt-rtl.test.js')]);

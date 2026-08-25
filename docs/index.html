@@ -1268,6 +1268,24 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
               id="user-translation-ph" placeholder="Paste the translation here."
               oninput="autoResizeTextarea(this)"></textarea>
           </div>
+          <!-- PLAN §13 milestone 5, item 2 (v85_i, user ruling: cover both the pasted-story path AND
+               the PDF/document upload path) — attribution fields at GENERATION TIME. The schema
+               (topic.source={author,licence,url,note}) and endpoint (POST /api/topic-source) already
+               existed, reachable only post-hoc via openProvEdit()/saveProvEdit() on the progress
+               card. These 4 inputs are the SAME 4 fields, same ui.json placeholder keys (prov.*,
+               already translated in all 33 languages — no new strings needed), just reachable before
+               the topic exists yet. Read by _readGenAttribution() at generate time; applied by
+               _applyGenAttribution() once the topic id(s) are known (see doGenerate()/
+               pdfGenerateAll()'s own comments for exactly where). Deliberately no visibility gate of
+               its own — it inherits #user-story-panel's, since attribution only makes sense once the
+               learner has said "this is my own story or document", covering BOTH the pasted-text and
+               uploaded-file cases that panel already handles. -->
+          <div id="gen-source-row" style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:6px">
+            <input id="gen-src-author" placeholder="Author" maxlength="120" style="flex:1;min-width:110px;font-size:12px;font-family:'Nunito',sans-serif;padding:4px 8px;border:1.5px solid var(--gray-mid);border-radius:6px">
+            <input id="gen-src-licence" placeholder="Licence" maxlength="80" style="flex:1;min-width:110px;font-size:12px;font-family:'Nunito',sans-serif;padding:4px 8px;border:1.5px solid var(--gray-mid);border-radius:6px">
+            <input id="gen-src-url" placeholder="URL / DOI" maxlength="300" style="flex:1;min-width:110px;font-size:12px;font-family:'Nunito',sans-serif;padding:4px 8px;border:1.5px solid var(--gray-mid);border-radius:6px">
+            <input id="gen-src-note" placeholder="Note" maxlength="500" style="flex:1;min-width:110px;font-size:12px;font-family:'Nunito',sans-serif;padding:4px 8px;border:1.5px solid var(--gray-mid);border-radius:6px">
+          </div>
         </div>
 
         <div class="user-story-panel" id="dialect-panel">
@@ -2680,6 +2698,13 @@ function applyUIStrings() {
   _setText('per-chapter-lbl', t('gen.per_chapter_lbl'));
   _setText('post-gen-storyboard-lbl', t('gen.post_gen_storyboard_lbl'));
   _setText('post-gen-qc-lbl', t('gen.post_gen_qc_lbl'));
+  // PLAN §13 milestone 5, item 2 (v85_i): the SAME prov.* keys the post-hoc #prov-stats editor
+  // already uses (openProvEdit()) — one shared vocabulary for "attribution fields", not a second
+  // set of near-duplicate strings.
+  _setAttr('gen-src-author', 'placeholder', t('prov.author'));
+  _setAttr('gen-src-licence', 'placeholder', t('prov.licence'));
+  _setAttr('gen-src-url', 'placeholder', t('prov.url'));
+  _setAttr('gen-src-note', 'placeholder', t('prov.note'));
   // PLAN §C5 stage 2: the generation screen's own header title and the library's "+ Generate new"
   // entry point — neither is a `.form-lbl[data-i18n]`, so they need an explicit set here rather
   // than riding the generic sweep those get.
@@ -6126,6 +6151,10 @@ async function pdfGenerateAll() {
     // alone and the primer would disagree with the checkbox the client just computed.
     body.script = APP.script || null; body.srcScript = APP.srcScript || null;
   }
+  // PLAN §13 milestone 5, item 2 (v85_i): one shared attribution for the whole uploaded document,
+  // regardless of how many chapters its text was split into — captured here, before the request
+  // fires, same reason perChapterTypes/postGen are.
+  const genAttribution = _readGenAttribution();
   _pdfChunks.forEach(c => c.status = 'pending');
   _renderPdfChunks();
   try {
@@ -6137,8 +6166,19 @@ async function pdfGenerateAll() {
     document.getElementById('pdf-gen-btn').style.display = 'none';
     setGenStatus('running', `📖 0/${_pdfChunks.length}`);
     // The server now drives generation; this poll is only an observer and can be
-    // safely interrupted by a refresh (generation continues server-side).
-    _pollBookJob(_pdfBookId);
+    // safely interrupted by a refresh (generation continues server-side). Chained with .then(), not
+    // awaited — pdfGenerateAll() stays fire-and-forget for the book job exactly as before this
+    // milestone; _pollBookJob() now returns its own final job status purely so this ONE new caller
+    // can read chapters[].topicId.
+    if(genAttribution){
+      _pollBookJob(_pdfBookId).then(finalJob => {
+        if(finalJob && finalJob.status === 'done' && Array.isArray(finalJob.chapters)){
+          _applyGenAttribution(finalJob.chapters.map(c => c && c.topicId).filter(Boolean), genAttribution);
+        }
+      });
+    } else {
+      _pollBookJob(_pdfBookId);
+    }
   } catch(e) {
     _pdfBookId = null;
     showToast('⚠ ' + e.message.slice(0,60));
@@ -6168,11 +6208,16 @@ function _applyBookProgress(j) {
 }
 
 async function _pollBookJob(bookId) {
+  // v85_i: `j` hoisted out of the loop and RETURNED — previously discarded (its one pre-existing
+  // caller fired it and moved on). The one new caller, PLAN §13 milestone 5's attribution wiring,
+  // needs the final job's `chapters[].topicId` to apply the shared attribution to every chapter the
+  // upload was split into. `undefined` on the re-entrant guard (a poll was already running) or the
+  // 404 branch (job gone) — callers must handle that, same shape `_pollGenBook`'s own `null` case.
   if (_pdfBookPolling) return;
   _pdfBookPolling = true;
+  let j = null;
   try {
     while (true) {
-      let j = null;
       try {
         const pr = await fetch('/api/book-job/' + bookId);
         if (pr.status === 404) break;            // job gone (e.g. server restart)
@@ -6197,6 +6242,7 @@ async function _pollBookJob(bookId) {
     const done = _pdfChunks.filter(c=>c.status==='done').length;
     if (done) showToast('✅ ' + done + '/' + _pdfChunks.length + ' chapters generated');
   }
+  return j;
 }
 
 async function pdfCancelBook() {
@@ -153364,11 +153410,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v85_h', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v85_h'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v85_i', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v85_i'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"90f24145a170","lessons.json":"97240b842ae5","ui.json":"cc2085c10fb0","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"343f54cde710"};
+  APP.buildSources = {"index.html":"0bdf4f1ca595","lessons.json":"97240b842ae5","ui.json":"cc2085c10fb0","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"343f54cde710"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -156478,6 +156524,37 @@ async function saveProvEdit(btn){
     if (row) { if (j.source) row.source = j.source; else delete row.source; }
     renderProvStats(d);
   } catch(e) { showToast('\u26a0 ' + e.message); if (btn) btn.disabled = false; }
+}
+
+// PLAN §13 milestone 5, item 2 (v85_i) — attribution fields at GENERATION TIME (#gen-source-row,
+// inside #user-story-panel). Reuses the EXISTING schema/endpoint saveProvEdit() above already uses
+// (sanitizeTopicSource() server-side, POST /api/topic-source) — these two helpers are the ONLY new
+// code, everything they call already existed. Read BEFORE the generate request fires (same reason
+// perChapterTypes/postGen are — the fields live on a screen the learner may leave before generation
+// finishes) and applied AFTER a real topic id is known, from whichever of the THREE completion paths
+// reached one: doGenerate()'s cached-hit branch, startBackgroundJob()'s own completion, or
+// pdfGenerateAll()'s book-job completion (potentially several chapter ids, one shared attribution
+// applied to each — a single uploaded document is one source regardless of how many chapters its
+// text was split into).
+function _readGenAttribution(){
+  const v = id => (document.getElementById(id)?.value || '').trim();
+  const source = { author: v('gen-src-author'), licence: v('gen-src-licence'), url: v('gen-src-url'), note: v('gen-src-note') };
+  return Object.values(source).some(Boolean) ? source : null;
+}
+async function _applyGenAttribution(ids, source){
+  if(!source || !Array.isArray(ids) || !ids.length) return;
+  for(const id of ids){
+    if(!id) continue;
+    try{
+      const r = await fetch('/api/topic-source', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ id, source }) });
+      const j = await r.json();
+      if(r.ok && j.source){
+        const row = (APP.savedList || []).find(x => x.id === id);
+        if(row) row.source = j.source;
+        if(APP.lessonData && APP.lessonData.id === id) APP.lessonData.source = j.source;
+      }
+    }catch(e){ /* one topic's attribution failing must not stop the rest of the batch */ }
+  }
 }
 
 // ── Storyboard panels as lesson navigation (v57) ─────────────────────────────

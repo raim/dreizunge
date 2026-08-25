@@ -44,9 +44,9 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_h` — `PLAN §13` milestone 5, PART 1: fixed `doDialectImport()`'s hardcoded `base:'de'`/`source:'de'` (both client AND server — the server itself ignored whatever the client sent). Attribution-fields wiring (milestone 5's second item) is IN PROGRESS — see below. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
+| **SHIPPED IN THE v85 LINE** | `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
-| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13` is NEW at this cut** — the generator-page redesign, scoped and approved this session; read it before starting `SESSION_PROMPT_v85_a.md`'s own "what to do next." |
+| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13`** — the generator-page redesign, scoped at the `v85_a` cut — **is now FULLY SHIPPED** (all five milestones, `v85_c` through `v85_i`); its own section below still carries the full assessment/build-order text for reference, but nothing in it is open any more. The browser-reachable single-chapter CP1-4 pipeline it deferred remains its own, separate, not-yet-started follow-up. |
 
 Standing rules are in the "Rules earned in session 28…34" blocks, plus two more from the `v83` line and
 three from the `v84` line (search "Rules earned in the v84 line") — read the **"⚠️ How the rules are
@@ -1762,6 +1762,71 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_i — `PLAN §13` milestone 5, part 2 (LAST item): attribution fields at generation time — `PLAN §13` IS NOW FULLY DONE
+
+Continuing the same session, past `v85_h`'s own completion. The user's ruling on `v85_h`'s own
+"how far should this go" question: cover BOTH the single-pasted-story path AND the PDF/document-
+upload path (not just the narrower single-story-only option, not skipped entirely).
+
+**What already existed, confirmed by reading it** (per this line's own standing discipline): the
+schema (`topic.source = {author, licence, url, note}`, sanitized by `sanitizeTopicSource()`) and the
+endpoint (`POST /api/topic-source`, resolves by an EXISTING topic `id`) — both proven working by
+`openProvEdit()`/`saveProvEdit()`, the post-hoc editor on the progress card (`#prov-stats`). Nothing
+server-side needed to change at all; this item is pure client-side wiring plus 4 new input elements.
+
+**What shipped**: `#gen-source-row` — 4 inputs (author/licence/url/note) inside `#user-story-panel`,
+reusing the SAME `ui.json` placeholder keys (`prov.author`/`prov.licence`/`prov.url`/`prov.note`,
+already translated into all 33 languages) the post-hoc editor already uses — zero new UI strings.
+Deliberately no visibility gate of its own: it inherits `#user-story-panel`'s, since attribution only
+makes sense once the learner has said "this is my own story or document" — covering both the
+pasted-text and uploaded-file cases that panel already handles, and correctly excluding the default
+LLM-topic path (nothing external to attribute there).
+
+Two small shared helpers: `_readGenAttribution()` (reads the 4 fields, returns `null` if all empty —
+so nothing is ever sent/applied for a plain LLM-topic generation) and `_applyGenAttribution(ids,
+source)` (one `POST /api/topic-source` call per id, sequential, each id's own failure isolated from
+the rest — mirrors `_applyPerChapterTypes`'s own per-call isolation).
+
+**Wired into THREE completion paths, each read in full before touching anything** — the exact scope
+question `v85_h`'s own investigation flagged as unresolved:
+
+1. **Single pasted story** (`useStory`, `doGenerate()`'s plain `/api/generate` branch) — TWO
+   sub-completions, both covered: the immediate `resp.cached` hit (id known right away), and the
+   async `startBackgroundJob()` path. The latter needed `genAttribution` threaded as a NEW 3rd
+   parameter, riding on `APP.activeJob` (and so its `localStorage` copy) so a page reload mid-
+   generation doesn't lose it — `resumeBackgroundJob()`'s own TWO branches (job finished while the
+   page was closed; job still running, re-attach) both needed the same threading, found only by
+   reading that function in full as instructed.
+2. **PDF/document upload** (`pdfGenerateAll()`, an entirely separate function from `doGenerate()`) —
+   one shared attribution captured once, applied to EVERY resulting chapter id (a single uploaded
+   document is one source, however many chapters its text was split into). `_pollBookJob()` — like
+   `_pollGenBook()` at `v85_f` and `v85_g` — previously discarded its own final job status; now
+   returns it (`chapters[].topicId`), the ONLY way to reach the chapter ids this needed.
+3. **Default LLM-topic generation** (no pasted/uploaded source) — correctly untouched: `useStory` is
+   false, `_readGenAttribution()`'s own fields are simply never read for that path's own body
+   construction, and `pdfGenerateAll()` is never reached without an actual upload.
+
+**Tests**: new `test/unit-gen-attribution.test.js` (11 checks, several mutation-tested): markup
+nesting; `_readGenAttribution()`'s null-vs-filled shape; all three completion paths independently
+(cached-hit, background-job dispatch AND its own completion, BOTH `resumeBackgroundJob()` branches,
+the PDF path applying to every chapter AND correctly skipping the call entirely when no fields were
+filled); `_pollBookJob()`'s return value (mutation-tested); `_applyGenAttribution()`'s per-id call
+shape, cache updates on success, and failure isolation (mutation-tested). One new `run()` line
+(272→273 full, 238→239 quick). Full suite green, `check-inline` clean on both `index.html` and the
+rebuilt `docs/index.html`.
+
+**Verified live** against the running dev server (`index.html`-only changes — genuinely live, unlike
+`v85_h`'s server-side half): all three completion paths confirmed end to end with the network layer
+stubbed (avoiding a real LLM call for a pure wiring check) — `_readGenAttribution()`'s exact shape,
+`doGenerate()`'s cached and background-job branches, `startBackgroundJob()`'s own completion, and
+`pdfGenerateAll()` applying one shared attribution across two simulated chapters.
+
+**`PLAN §13` is now FULLY DONE** — all five milestones shipped (`v85_c` through `v85_i`, eight
+releases total across this one session's continuous work on it). Owed: a real end-to-end run of the
+attribution wiring against a live LLM backend (all three paths were verified with the network
+stubbed, matching the same gap `v85_e`/`v85_f`/`v85_g` already carry) — not watched click-to-saved-
+attribution by a human yet.
 
 ## ✅ v85_h — `PLAN §13` milestone 5, part 1: the `doDialectImport()` language-pair bug
 
