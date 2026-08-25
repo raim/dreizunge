@@ -39,7 +39,8 @@
 | c | LMGTFY widget | 1|
 | thomas | but why? grammar tests | .5|
 | c | student writing test and feedback | .5|
-| thomas | speech recognition, noble type lessons | .5| 
+| thomas | speech recognition, noble type lessons | .5|
+| chris | agent-assisted coding advice | 1| 
 
 # data/code tokens
 
