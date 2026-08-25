@@ -2873,6 +2873,46 @@ splitting) which may not need reliable full-page panel enumeration to be useful.
 Track A4 by writing panel-splitting production code — the measurement says it isn't ready, and no
 ruling has been made on which of the two forward paths (if either) to take next.**
 
+### PLAN §2.4 — RESULT PART 2 (Aug 25 2026, same session) — a THIRD forward path, tested, more promising
+
+User's own idea, put directly to the failure just measured: if panel ENUMERATION is what breaks, take
+it out of the model's job entirely — let the USER draw the panel rectangles by hand (mouse drag on a
+canvas overlaying the uploaded image; `§2.3`'s existing "store boxes as data, don't crop for storage"
+decision covers this regardless of who drew the box), and give the model only the narrower, different
+task of TEXT EXTRACTION from an already-correct, already-known region. None of the three panel-finding
+probes above tested this — they all tested localization, never extraction-from-a-known-region.
+
+Measured with a new probe, `probe_comic_text_extract_v85_i.js`, on a hand-cropped real panel from the
+same Page B fixture (panel 3 — chosen because it contains BOTH of `§2.7`'s flagged risks in one panel:
+a caption vs. an in-scene sign that must be told apart, and a word split across a line break with no
+hyphen, "WILL"/"KOMMEN", that must be rejoined). Two runs:
+
+- **v1** (plain instructions): the caption/in-scene SPLIT was exactly right and the caption's letters
+  matched perfectly, but case-restoration and word-rejoining — the two specific transformations `§2.7`
+  flagged as highest-value — were both ignored outright (not attempted-and-wrong, just skipped), plus
+  one OCR letter error ("nicht" → "mcht"). ~65s, far cheaper than any panel-finding call.
+- **v2** (added a worked example + "your answer is WRONG if it contains any word in all capital
+  letters" framing): **case-restoration was FULLY fixed** — the caption came back a perfect, correctly-
+  cased, correctly-umlauted match to ground truth, and the in-scene field's case fixed too. Word-
+  rejoining and the OCR letter error were UNCHANGED by this fix (different failure category — visual
+  recognition and a structural instruction don't respond to the same prompt lever). A NEW defect
+  appeared: the crop deliberately included a small sliver of the *next* panel (realistic — a human-
+  drawn box will rarely be pixel-perfect), and the model transcribed that bleed-through as an
+  unlabeled third line instead of ignoring it.
+
+**VERDICT.** This is the most promising result in the whole `§2.4` series. The single highest-
+pedagogical-weight requirement (German case restoration — without it the app would silently teach
+wrong noun capitalization) is solvable with prompt engineering alone, and ported across text sources
+once fixed. What's NOT yet solved: OCR letter-level accuracy (didn't move with any prompt change
+tried), line-rejoin (didn't move either), and crop-boundary bleed-through (newly discovered, means a
+production UI needs either generous-then-tightened cropping or an explicit "ignore any text touching
+the crop edge" instruction). **This changes the forward-path picture from PART 1 above**: rather than
+"different backend" or "fall back to Tier 1 bubble-level," a THIRD path now has real positive signal —
+manual panel selection (removing localization risk entirely) + model text-extraction (which just
+proved partially, iterably fixable). Still not production-ready, and no ruling has been made on
+whether to pursue this over the other two paths — but this is the first `§2.4` measurement with more
+good news than bad.
+
 ### PLAN §2.6 — The interactive word map (user, at the v80 cut) — build it where coordinates are FREE
 
 **The idea:** overlay the image with the coordinates of the extracted text so the learner can click
