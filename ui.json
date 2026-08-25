@@ -661,7 +661,12 @@
     "unlocked.back_card": "Back to the chapter",
     "unlocked.progress": "{done} of {total} chapters",
     "summary.start": "Start learning",
-    "ex.back_title": "Back to the previous question"
+    "ex.back_title": "Back to the previous question",
+    "gen.wizard_step1": "1 · Language",
+    "gen.wizard_step2": "2 · Text",
+    "gen.wizard_step3": "3 · Lessons",
+    "gen.wizard_back": "← Back",
+    "gen.wizard_next": "Next →"
   },
   "nl": {
     "qc.editor.suggests_by": "⚑ {model} stelt voor:",

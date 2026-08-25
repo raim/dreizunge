@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_b` — two small user-requested fixes, done BEFORE starting `PLAN §13` milestone 1: speech-recognition auto-activation removed (mic starts muted, `startLesson()` re-mutes every round); a `#bottom-bar-toggle` button hides/shows `#bottom-bar` |
+| **SHIPPED IN THE v85 LINE** | `v85_c` — `PLAN §13` milestone 1: the generator-page wizard shell (`#gen-wizard`, 3 `.gen-card`s, pure re-layout). `v85_b` — two small user-requested fixes, done first: speech-recognition auto-activation removed; a `#bottom-bar-toggle` button hides/shows `#bottom-bar` |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13` is NEW at this cut** — the generator-page redesign, scoped and approved this session; read it before starting `SESSION_PROMPT_v85_a.md`'s own "what to do next." |
 
@@ -1762,6 +1762,87 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_c — `PLAN §13` milestone 1: the generator-page wizard shell
+
+*"PLAN §13 milestone 1, and continue until you need decisions from me"* — the user's own instruction
+to proceed past `v85_b`'s small fixes into the generator-page redesign itself. `PLAN §13`'s approved
+build order lists milestone 1 as "wizard shell + language/script + text-source cards, pure re-layout,
+zero behaviour change" — exactly what shipped here; nothing from milestones 2-5 (chaptering,
+lesson-selection, additional-features cards) was touched.
+
+**What moved, and what didn't.** `#generation-screen`'s `.sl-screen-body` used to lay out
+`.backend-row` → `.lang-box` → `#gen-area` (topic/text-source fields → `#gen-form-section` → `#gen-btn-row`)
+→ `#offline-note`, all always visible at once. A new `#gen-wizard` now wraps everything from `.lang-box`
+through `#gen-btn-row` into THREE `.gen-card`s, showing exactly one at a time:
+
+- **`#gen-card-1`** — `.lang-box` (source/target language + script pickers), UNCHANGED internally.
+- **`#gen-card-2`** — `#topic-label`/`#topic-input`, `#user-story-checks`, `#pdf-panel`,
+  `#user-story-panel`, `#dialect-panel` — the whole "text source" cluster (default LLM topic prompt;
+  "I have my own story or document" → paste or PDF/doc upload; "I have a dialect glossary"), UNCHANGED
+  internally. `unit-dialect-panel.test.js`'s own source-ordering guard (dialect-panel before
+  gen-form-section) still holds — both now live inside card 2, which is entirely before card 3 in the
+  markup, same relative order as always.
+- **`#gen-card-3`** — a catch-all: `#gen-form-section` (chaptering/style/continue/lesson-type/diff/
+  format) + `#gen-btn-row` (the pre-existing "Generate lessons →" button), UNCHANGED internally. This
+  is milestones 2-5's own future territory — splitting it into its own cards is exactly what those
+  releases will do; nothing here anticipates or blocks that.
+
+**`.backend-row` and `#offline-note` stay OUTSIDE `#gen-wizard`**, exactly where they were (before and
+after, respectively) — global context that isn't step content. `#gen-area`'s own id/wrapper is
+UNCHANGED and still directly observable (`unit-ui-journeys.test.js`'s "the generation controls are
+visible on that screen" check against its `style.display` still passes untouched) — it now simply
+contains cards 2 and 3 instead of their content directly.
+
+**The stepper** (`#gen-wizard-steps`) reuses the EXISTING `.pdf-stepper`/`.pdf-step`/`.pdf-step.active`
+visual language verbatim — until now a per-chunk PDF-import progress indicator, now also a page-level
+one, per `PLAN §13`'s own approved approach ("reuse the existing pill visual language for a page-level
+stepper"). Three pills ("1 · Language" / "2 · Text" / "3 · Lessons"), clickable (`onclick="_genWizardGoto(n)"`)
+for free/ungated jump navigation — no validation gates a step, matching "default settings allow to just
+click through or skip the navigation."
+
+**Navigation**: `_genWizardGoto(n)` (clamped `[1,3]`), `_genWizardNext()`/`_genWizardBack()` (delta ±1,
+same clamp). Each card's own Back/Next buttons are NEW, small, wizard-only controls
+(`#gen-step-back-2`/`#gen-step-next-1`/etc.) placed adjacent to — never inside — the unchanged existing
+markup, so no existing button row (`#gen-btn-row` in particular) needed touching. `show(id)` — the ONE
+authoritative route function (`PLAN §C0`) — now resets the wizard to step 1 whenever
+`id==='generation-screen'`, so re-entering the screen (from `goLanding()`/`goLandingClean()`, its only
+two callers) always starts fresh, even if a learner had navigated deep into the wizard and left.
+
+**No new validation, no behaviour change**: `#topic-input` was ALREADY required before this existed
+(`doGenerate()`'s own guard, untouched) — the wizard only made an already-mandatory field's VISIBILITY
+sequential, it did not add a new requirement. Every existing `onchange`/`onclick` handler, every id, is
+byte-for-byte unchanged; `_genWizardGoto`/`_genWizardNext`/`_genWizardBack` are the ONLY new functions.
+
+**New `ui.json` (`en` only, per convention)**: `gen.wizard_step1/2/3`, `gen.wizard_back`,
+`gen.wizard_next` (662 → 667 `en` keys) — wired in `applyUIStrings()` via `_setText`, with matching
+static English fallback text in the raw HTML so there is no flash-of-empty-pill before it runs (same
+convention `#topic-label`/`#gen-screen-title` already use).
+
+**Verified live** in the Browser pane against the running dev server (`index.html` is read fresh per
+request — `fs.readFileSync`, no server restart needed to see it): default entry lands on card 1;
+Next → card 2 (topic field), typed a topic, value survives navigating away and back; Next → card 3
+(chaptering/style/continue/lesson-type, the real "Generate lessons →" button); Back × 2 returns to
+card 2 with the typed topic still there; "I have my own story" reveals `#user-story-panel` correctly
+nested inside card 2; unchecking it and checking "I have a dialect glossary" reveals `#dialect-panel`
+and hides `#gen-form-section`/`#gen-btn-row` exactly as `onUseDialectCb()` always did (both live in
+card 3, untouched); manually opening `#pdf-panel` (the PDF/document-upload path) renders correctly
+nested inside card 2 with the wizard's own Back button still present; pill-click direct-jump navigation
+confirmed; `#gen-area`'s own `display` never became `'none'` at any point.
+
+**Tests**: new `test/unit-gen-wizard.test.js` (6 checks) — markup nesting (`.lang-box`/topic-input/
+pdf-panel/user-story-panel/dialect-panel/gen-form-section/gen-btn-row each inside their own card),
+default state, `_genWizardNext()`/`_genWizardBack()` clamping at both ends, `_genWizardGoto()` direct
+jump, `show('generation-screen')` resetting to step 1 (mutation-tested: removing the hook goes red),
+and the `#gen-area`-untouched invariant. `test/run.js`: one new `run()` line (269→270 full, 235→236
+quick). Full suite green, `check-inline` clean on both `index.html` and the rebuilt `docs/index.html`.
+
+**Not done here, by design** (still open, per `PLAN §13`'s own build order): milestones 2-5
+(chaptering card + "create storyline now" shortcut; lesson-selection card + reworded label +
+per-chapter override; additional-features card as toggles; the small independent gap-fills — the
+`doDialectImport()` `continue-select`-ignoring bug, attribution fields); the browser-reachable
+single-chapter CP1-4 pipeline (sequenced AFTER milestones 1-5, needs its own background-job design);
+comic/image import and cross-chapter arc-sequencing remain explicitly out of scope.
 
 ## ✅ v85_b — two small fixes, requested by the user before starting `PLAN §13` milestone 1
 
