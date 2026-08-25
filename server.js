@@ -184,7 +184,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v85_l';
+const APP_VERSION  = 'v85_m';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6174,6 +6174,12 @@ async function _runBookJob(bookId, chunks, base) {
         }
       }
 
+      // PLAN §2.4 / Track A4 milestone 3 (v85_m): a comic-sourced chunk carries its drawn panels
+      // (box, extracted text, cropped image) alongside the plain text `chunks[i].text` already
+      // became `data.story` via `userStory` above. upsert() spreads `data` with no field whitelist,
+      // so attaching it here is sufficient — no schema migration needed. Absent for every other
+      // chunk source (PDF, pasted text, generated) — `data.comicPanels` simply never gets set.
+      if (chunks[i].comicPanels) data.comicPanels = chunks[i].comicPanels;
       // v69_q: pass the parent's stored id, not only its name, so chaining is id-based and two
       // chapters sharing a title cannot collapse onto each other.
       const saved = _persistGenerated(data, contFrom, parent ? parent.id : null);

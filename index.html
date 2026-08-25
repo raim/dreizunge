@@ -1340,6 +1340,8 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           <div id="comic-panel-actions" style="display:none;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
             <button type="button" id="comic-extract-btn" onclick="comicExtractPanels()"
               style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif">✨ <span id="comic-extract-lbl">Extract text</span></button>
+            <button type="button" id="comic-create-btn" onclick="comicCreateChapter()"
+              style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--blue-dark);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif">📖 <span id="comic-create-lbl">Create chapter</span></button>
             <button type="button" id="comic-clear-btn" onclick="comicClearPanels()"
               style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🗑 <span id="comic-clear-lbl">Clear panels</span></button>
             <span id="comic-panel-count" style="font-size:12px;color:var(--gray-dark)"></span>
@@ -2778,6 +2780,7 @@ function applyUIStrings() {
   { const cc=document.getElementById('comic-choose-lbl'); if(cc) cc.textContent=t('form.comic_choose'); }
   { const ccl=document.getElementById('comic-clear-lbl'); if(ccl) ccl.textContent=t('form.comic_clear'); }
   { const cel=document.getElementById('comic-extract-lbl'); if(cel) cel.textContent=t('form.comic_extract'); }
+  { const ccl2=document.getElementById('comic-create-lbl'); if(ccl2) ccl2.textContent=t('form.comic_create'); }
   _renderSplitModes();
   { const cl=document.getElementById('pdf-cleanup-lbl'); if(cl) cl.textContent=t('pdf.cleanup_lbl'); }
   { const al=document.getElementById('pdf-aiclean-lbl'); if(al) al.textContent=t('pdf.aiclean_lbl'); }
@@ -3750,6 +3753,92 @@ function _comicApplyExtraction(panels){
   if(!Array.isArray(panels)) return;
   panels.forEach((p,i)=>{ if(APP_COMIC.boxes[i]) APP_COMIC.boxes[i].text=p; });
   _comicRenderList();
+}
+
+// ── Comic chapter formation (PLAN §2.4 / Track A4 milestone 3, v85_m) ──────────────────────────
+// Feeds the extracted panels into the SAME /api/generate-book pipeline pdfGenerateAll() already
+// uses — one uploaded page = one chunk = one chapter, per the milestone's own scoping. Deliberately
+// NOT built on _pollBookJob()/_applyBookProgress(): both are hardwired to #pdf-panel's own state
+// (_pdfChunks, #pdf-gen-btn) — confirmed by reading them, the same "checked, not assumed" discipline
+// milestone 2's scoping used for startBackgroundJob. This gets its own sibling poller below.
+//
+// User ruling: each panel's caption AND in-scene text both become part of the story (caption first,
+// then in-scene, panels separated by a blank line) — keeps sign/banner text learnable via the normal
+// vocab/comprehension pipeline, at the cost of prose that occasionally reads as "and the sign says X".
+function _comicBuildStoryText(){
+  return _comicPanels().map(b=>{
+    const t=b.text||{}; const lines=[t.caption, t.inScene].filter(Boolean);
+    return lines.join('\n');
+  }).filter(Boolean).join('\n\n');
+}
+
+let _comicBookId=null, _comicBookPolling=false;
+
+async function comicCreateChapter(){
+  const boxes=_comicPanels();
+  if(!boxes.length) return;
+  const text=_comicBuildStoryText();
+  if(!text){ showToast(t('form.comic_create_failed')+': no extracted text yet'); return; }
+  const btn=document.getElementById('comic-create-btn');
+  const extractBtn=document.getElementById('comic-extract-btn');
+  const status=document.getElementById('comic-extract-status');
+  if(btn) btn.disabled=true; if(extractBtn) extractBtn.disabled=true;
+  if(status) status.textContent=t('form.comic_extracting');
+  try{
+    // Placeholder title only — _runBookJob's own post-pass assigns the real, coherent title
+    // (skipMeta:true, same as every other chunk-based chapter), same convention pdfGenerateAll's
+    // chunks rely on. Derived from the story's own opening words rather than a generic label, so a
+    // mid-generation refresh still shows something recognizable in the chunk list.
+    const title=text.replace(/\s+/g,' ').trim().slice(0,40) || 'Comic chapter';
+    const comicPanels=boxes.map(b=>({ x1:b.x1, y1:b.y1, x2:b.x2, y2:b.y2,
+      caption:(b.text&&b.text.caption)||'', inScene:(b.text&&b.text.inScene)||'',
+      image:_comicCropDataUrl(b) }));
+    const body={
+      lang: APP.lang||'it', srcLang: APP.srcLang||'en', difficulty: APP.difficulty||2,
+      lessonFormat: APP.lessonFormat||'standard', storyStyle: null,
+      chunks: [{ title, text, wordCount: text.split(/\s+/).filter(Boolean).length, comicPanels }],
+    };
+    const r=await fetch('/api/generate-book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok){ if(status) status.textContent=''; showToast(t('form.comic_create_failed')+': '+(data.error||r.status)); if(btn) btn.disabled=false; if(extractBtn) extractBtn.disabled=false; return; }
+    _comicBookId=data.bookId;
+    _pollComicBookJob(_comicBookId);
+  }catch(e){
+    if(status) status.textContent='';
+    showToast(t('form.comic_create_failed')+': '+e.message);
+    if(btn) btn.disabled=false; if(extractBtn) extractBtn.disabled=false;
+  }
+}
+
+// A structural SIBLING of _pollBookJob() (same poll-every-2s-against-/api/book-job/:id shape) — NOT
+// a reuse: that function is hardwired to #pdf-panel's own _pdfChunks/#pdf-gen-btn.
+async function _pollComicBookJob(bookId){
+  if(_comicBookPolling) return;
+  _comicBookPolling=true;
+  const status=document.getElementById('comic-extract-status');
+  try{
+    while(true){
+      let j=null;
+      try{
+        const pr=await fetch('/api/book-job/'+bookId);
+        if(pr.status===404) break;
+        j=await pr.json();
+      }catch(e){ await _sleep(2000); continue; }
+      if(status && j.chapters && j.chapters[0]) status.textContent=j.chapters[0].status==='active' ? t('form.comic_extracting') : '';
+      if(j.status==='done'||j.status==='error'||j.status==='cancelled'){
+        if(j.status==='error') showToast(t('form.comic_create_failed')+': '+(j.error||''));
+        else if(j.status==='done') showToast(t('toast.generated',{topic:(j.chapters&&j.chapters[0]&&j.chapters[0].title)||''}));
+        break;
+      }
+      await _sleep(2000);
+    }
+  }finally{
+    _comicBookPolling=false; _comicBookId=null;
+    if(status) status.textContent='';
+    const btn=document.getElementById('comic-create-btn'); if(btn) btn.disabled=false;
+    const extractBtn=document.getElementById('comic-extract-btn'); if(extractBtn) extractBtn.disabled=false;
+    await loadSavedList();
+  }
 }
 
 // ── Dialect studio (M2 controls, shown on a dialect topic's lesson-set page) ──

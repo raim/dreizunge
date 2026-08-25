@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
+| **SHIPPED IN THE v85 LINE** | `v85_m` — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels, live-verified end-to-end (both halves) against the real model. `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13`** — the generator-page redesign, scoped at the `v85_a` cut — **is now FULLY SHIPPED** (all five milestones, `v85_c` through `v85_i`); its own section below still carries the full assessment/build-order text for reference, but nothing in it is open any more. The browser-reachable single-chapter CP1-4 pipeline it deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -1762,6 +1762,52 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_m — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels
+
+User: "continue" — resuming Track A4 after `v85_l`'s fix. No open ruling blocked starting this
+milestone; one genuine content-design question was asked first (how caption + in-scene text should
+combine into the story) — user chose both, caption then in-scene per panel.
+
+**Investigated before building, per this line's own standing discipline**: confirmed `generate()`'s
+`userStory` handling stores chunk text VERBATIM as `story` (no model rewrite) — exactly like PDF/
+pasted-story chapters, which is why joining panel text into one chunk is sufficient. Confirmed (again)
+that `_pollBookJob()`/`_applyBookProgress()` are hardwired to `#pdf-panel`'s own state and do not
+reuse directly — a new sibling poller was written, the third time this exact pattern (server-side job
+primitive reuses cleanly, client-side polling wrapper needs its own sibling) has recurred this line.
+
+**What shipped**: one uploaded comic page = one chunk = one chapter, through the SAME
+`/api/generate-book` endpoint PDF/pasted-story uploads use. `_comicBuildStoryText()` joins panels in
+reading order; `comicCreateChapter()` builds the request (re-cropping each panel fresh for the
+`comicPanels` payload); `_pollComicBookJob()` tracks completion. Server-side, `_runBookJob` gained one
+line attaching `chunks[i].comicPanels` onto the persisted topic — `upsert()` already spreads its input
+with no field whitelist, so no schema migration was needed.
+
+**Live-verified against the real model, both halves of the pipeline together**: reused `v85_l`'s own
+confirmed-correct extracted text (no need to re-run vision extraction) and posted it straight through
+the real `/api/comic-extract`→`/api/generate-book` chain. First attempt hit a real, pre-existing
+lesson-generation flake unrelated to this milestone (a model-proposed-skillId failure, known
+non-determinism in `qwen3.6:35b-a3b`'s lesson output); an identical retry succeeded, confirming it
+was a one-off, not a bug here. The persisted topic's `story` matched the extraction exactly,
+`comicPanels` carried correct box/caption/inScene/image data, and a real lesson generated from it.
+
+**A live-verification side effect was found and cleaned up**: the verification server used the
+DEFAULT `lessons.json` path (unlike the e2e harness's isolated temp files), so the test chapter was
+briefly written into the user's REAL corpus. Caught immediately via a before/after topic-id diff,
+removed with `DELETE /api/lessons/delete`, confirmed byte-for-byte back to the committed baseline —
+aside from two of the user's OWN unrelated real edits made on their separate live server during the
+same window (a QC proposal, a lesson update), correctly left untouched. Worth remembering: any live
+verification against the real `server.js` needs an explicit `LESSONS_FILE` override (or equally
+careful cleanup) to avoid this — the e2e harness's `boot()` already does this correctly; a manual
+`PORT=NNNN node server.js` does not, by default.
+
+New `test/e2e-comic-chapter.test.js` (real fresh-spawned server + fake Ollama) and
+`test/unit-comic-chapter.test.js` (client side, mocked crop + fetch). `INTERNALS.md` §6b has the full
+mechanism table.
+
+**Not started**: milestone 4 (progress-card integration — comic-sourced chapters display panels
+instead of plain text, per the standing ruling from earlier in this line: comic-sourced chapters
+only, Tier 1 word-highlighting via the existing vocab-highlighting machinery on the transcribed text).
 
 ## ✅ v85_l — `PLAN §2.4` follow-up: German case-restoration fix, confirmed exact-match on real content
 
