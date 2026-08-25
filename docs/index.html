@@ -3386,8 +3386,13 @@ async function doDialectImport(){
   if(statusEl) statusEl.textContent=t('dialect.status.importing');
   if(reportEl) reportEl.innerHTML='';
   try{
+    // PLAN §13 milestone 5 (v85_h): base/source used to be hardcoded to a fixed German value
+    // regardless of the language pair actually selected on card 1 (#src-lang-select/#lang-select,
+    // which write into APP.srcLang/APP.lang) — dialect import could only ever target German. Now
+    // sends the REAL selected pair; the server-side hardcode (buildDialectTopic's own caller in
+    // server.js, same default) was fixed the same cut, since it was ALSO ignoring the client's value.
     const r=await fetch('/api/dialect-import',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ text, label, attribution, base:'de', source:'de' })});
+      body:JSON.stringify({ text, label, attribution, base:APP.lang, source:APP.srcLang })});
     const data=await r.json().catch(()=>({}));
     if(!r.ok){ if(statusEl) statusEl.textContent=''; showToast(t('dialect.toast.failed')+': '+(data.error||r.status)); return; }
     if(statusEl) statusEl.textContent=t('dialect.status.done',{rows:data.rows,lessons:data.lessons});
@@ -153359,11 +153364,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v85_g', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v85_g'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v85_h', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v85_h'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"a7a9a3687adc","lessons.json":"97240b842ae5","ui.json":"cc2085c10fb0","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"343f54cde710"};
+  APP.buildSources = {"index.html":"90f24145a170","lessons.json":"97240b842ae5","ui.json":"cc2085c10fb0","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"343f54cde710"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).

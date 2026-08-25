@@ -91,3 +91,19 @@ assert.ok(/if \(!\(APP\.lessonData && String\(APP\.lessonData\.story \|\| ''\)\.
 assert.ok(!/_huntLbl\.style\.display = _isDia \? 'none'/.test(html),
   'AI error-hunt (human-correction diff) is NOT hidden for dialect');
 console.log('  Option A (UI): LLM-authoring add-lesson types hidden for dialect; human-edit AI-hunt kept: OK');
+
+// ── PLAN §13 milestone 5 (v85_h): doDialectImport() sends the REAL selected language pair ──
+// Was hardcoded `base:'de', source:'de'` regardless of #src-lang-select/#lang-select's actual
+// values — dialect import could only ever target German. Static-analysis check (matching this
+// file's own convention) against the function source; the runtime behaviour itself (a real request
+// body carrying APP.lang/APP.srcLang) was verified live in the Browser pane, and the server-side
+// half of this same bug (buildDialectTopic's caller also hardcoded base:'de', ignoring whatever the
+// client sent) is covered by test/e2e-dialect-import.test.js's own new check.
+{
+  const fnImport = ext('doDialectImport');
+  assert.ok(!/base\s*:\s*'de'/.test(fnImport), 'doDialectImport() no longer hardcodes base:\'de\'');
+  assert.ok(!/source\s*:\s*'de'/.test(fnImport), 'doDialectImport() no longer hardcodes source:\'de\'');
+  assert.ok(/base\s*:\s*APP\.lang/.test(fnImport), 'doDialectImport() sends base:APP.lang (the actual selected target language)');
+  assert.ok(/source\s*:\s*APP\.srcLang/.test(fnImport), 'doDialectImport() sends source:APP.srcLang (the actual selected source language)');
+}
+console.log('  doDialectImport(): sends APP.lang/APP.srcLang, not a hardcoded \'de\'/\'de\' pair: OK');

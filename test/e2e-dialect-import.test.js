@@ -58,6 +58,23 @@ const { boot, get, post, assert } = require('./lib');
     assert(rBad2.status === 400, 'empty glossary rejected');
     console.log('  validation: name required, empty text rejected: OK');
 
+    // 4b) PLAN §13 milestone 5 (v85_h): base/source used to be hardcoded 'de' server-side too
+    // (buildDialectTopic's own default, ignoring whatever the client sent) — dialect import could
+    // only ever target German regardless of the client's actual selected language pair. A real
+    // base/source pair now reaches the saved topic's lang/srcLang.
+    const rLang = await post(sport, '/api/dialect-import', { text: 'moien = bonjour', label: 'Luxlang', base: 'fr', srcLang: 'en', source: 'en' });
+    assert(rLang.status === 200 && rLang.body.ok, 'import with an explicit base/source still succeeds');
+    const savedLang = (env.readStore().topics || []).find(t => t.id === rLang.body.id);
+    assert(savedLang.lang === 'fr', 'the saved topic\'s lang follows the sent base (fr), not a hardcoded de (got ' + savedLang.lang + ')');
+    assert(savedLang.srcLang === 'en', 'the saved topic\'s srcLang follows the sent source (en) (got ' + savedLang.srcLang + ')');
+    // Omitting base/source still falls back to 'de'/'de' — the SAME default buildDialectTopic
+    // already had; this fix only stopped the server from OVERRIDING a real value, it did not change
+    // the no-value-sent default.
+    const rDefault = await post(sport, '/api/dialect-import', { text: 'moien = hallo', label: 'DefaultLang' });
+    const savedDefault = (env.readStore().topics || []).find(t => t.id === rDefault.body.id);
+    assert(savedDefault.lang === 'de' && savedDefault.srcLang === 'de', 'omitting base/source still defaults to de/de, unchanged from before this fix');
+    console.log('  base/source follow the client\'s actual selected language pair (was hardcoded to de): OK');
+
     // 5) Story-driven generation: a topic+instructions dialect story is the review sample —
     //    always allowed, always marked aiGenerated + needsReview.
     const rStory1 = await post(sport, '/api/dialect-story', { id: r.body.id, topic: 'a day in the mountains', instructions: 'Bavarian-style, keep it simple' });

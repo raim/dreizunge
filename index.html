@@ -3381,8 +3381,13 @@ async function doDialectImport(){
   if(statusEl) statusEl.textContent=t('dialect.status.importing');
   if(reportEl) reportEl.innerHTML='';
   try{
+    // PLAN §13 milestone 5 (v85_h): base/source used to be hardcoded to a fixed German value
+    // regardless of the language pair actually selected on card 1 (#src-lang-select/#lang-select,
+    // which write into APP.srcLang/APP.lang) — dialect import could only ever target German. Now
+    // sends the REAL selected pair; the server-side hardcode (buildDialectTopic's own caller in
+    // server.js, same default) was fixed the same cut, since it was ALSO ignoring the client's value.
     const r=await fetch('/api/dialect-import',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ text, label, attribution, base:'de', source:'de' })});
+      body:JSON.stringify({ text, label, attribution, base:APP.lang, source:APP.srcLang })});
     const data=await r.json().catch(()=>({}));
     if(!r.ok){ if(statusEl) statusEl.textContent=''; showToast(t('dialect.toast.failed')+': '+(data.error||r.status)); return; }
     if(statusEl) statusEl.textContent=t('dialect.status.done',{rows:data.rows,lessons:data.lessons});

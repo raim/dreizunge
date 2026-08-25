@@ -184,7 +184,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v85_g';
+const APP_VERSION  = 'v85_h';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -7366,9 +7366,14 @@ http.createServer(async (req, res) => {
       // reported (not auto-fixed) so the user can correct the source and re-import.
       const { rows, report } = parseDialectGlossary(text, { threeCol: !!body.threeCol });
       if (!rows.length) return json(res, 400, { error: 'No rows parsed', report });
+      // PLAN §13 milestone 5 (v85_h) — was hardcoded `base: 'de'` here regardless of what the
+      // client sent, so dialect import could target ONLY German no matter which language pair the
+      // learner had selected. `source` already read `body.source` (with the same sanitize-and-
+      // fall-back-to-'de' shape) — `base` now matches it, so the client's actual selected pair
+      // (APP.lang/APP.srcLang, sent as base/source) finally reaches buildDialectTopic().
       const topic = buildDialectTopic(rows, {
         label,
-        base: 'de', source: body.source ? String(body.source).slice(0, 8) : 'de',
+        base: body.base ? String(body.base).slice(0, 8) : 'de', source: body.source ? String(body.source).slice(0, 8) : 'de',
         note: body.note ? String(body.note).slice(0, 500) : '',
         attribution: body.attribution ? String(body.attribution).slice(0, 300) : '',
       }, { id: _newTopicId(), perLesson: Math.max(1, Math.min(50, parseInt(body.perLesson, 10) || 12)), now: new Date().toISOString() });

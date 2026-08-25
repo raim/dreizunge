@@ -1311,6 +1311,20 @@ ruling needed)
 
 ---
 
+**`v85_h` — `PLAN §13` milestone 5, part 1: the `doDialectImport()` language-pair bug** (see
+`roadmap_v85.md`'s own `v85_h` entry for the full write-up)
+
+| what | where |
+|---|---|
+| **the bug was on BOTH sides, not just the client** | `doDialectImport()` (`index.html`) hardcoded `base:'de', source:'de'` in its request body — AND `/api/dialect-import`'s handler (`server.js`) ALSO hardcoded `base: 'de'` in its own call to `buildDialectTopic()` (`dialect-glossary.js`), ignoring whatever the client sent. Fixing only one side would have done nothing |
+| the fix | client now sends `base:APP.lang, source:APP.srcLang` (the live selected pair from `#src-lang-select`/`#lang-select` on card 1 — confirmed via `buildDialectTopic()`'s own `lang: base, srcLang: source` mapping that these are exactly the right fields); server now reads `body.base` (sanitized the same way `body.source` already was), instead of hardcoding it. Omitting `base`/`source` in the request still defaults to `'de'`/`'de'`, unchanged |
+| ⚠️ **`#continue-select` (the control the original bug note named) is a red herring** — worth knowing before re-deriving this | it lives inside `#continue-row`/`#gen-form-section` (chaptering), which `onUseDialectCb()` already HIDES while dialect mode is active — not reachable from the dialect form at all. The control that actually matters is the language pickers on card 1, which stay visible in dialect mode |
+| ⚠️ **`server.js` changes need a FRESH PROCESS to verify live, not the user's own dev server** | confirmed via `/api/info` that the user's long-running port-3000 server was STILL running `v85_b`'s code throughout this entire session — Node loads route-handling code once at startup, unlike `index.html` (`fs.readFileSync` per request). A `curl` against port 3000 testing this exact fix gave a false negative. `test/lib.js`'s `boot()` (spawns a fresh `node server.js` per e2e run) is the correct verification path for any `server.js` change — and it doesn't need the user's restart-permission at all |
+| the acceptance tests | `test/unit-dialect-panel.test.js` extended (static-analysis, matching that file's convention): the function no longer contains a hardcoded `base:'de'`, and does reference `APP.lang`/`APP.srcLang`. `test/e2e-dialect-import.test.js` extended (2 checks against a real fresh-spawned server): an explicit `base`/`source` pair lands on the saved topic's `lang`/`srcLang`; omitting both still defaults to `de`/`de`. Both mutation-tested |
+| ⚠️ **milestone 5's SECOND item (attribution fields at generation time) was investigated, not built** | turned out to fork across at least three distinct completion paths (`useStory`'s single-story branch, the entirely separate `pdfGenerateAll()` upload pipeline, and the no-external-source default LLM-topic path) — see `roadmap_v85.md`'s own `v85_h` entry and the current `SESSION_PROMPT`'s "WHERE TO START" for the full scoping question, unresolved as of this cut |
+
+---
+
 **Keep 6b current the cheap way:** when a session's write-up names a function it had to hunt for,
 add the row. A wrong row is worse than a missing one, so only add names verified in that session.
 

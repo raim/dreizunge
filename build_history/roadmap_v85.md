@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_g` — `PLAN §13` milestone 4: the additional-features card — storyboard + QC as opt-in toggles on the multi-chapter book-generation path, both reusing existing endpoints (no new server work), scoped narrower than the full milestone (single-chapter QC left as a documented follow-up). `v85_f` — milestone 3: label reword + per-chapter lesson-type override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the generator-page wizard shell. `v85_b` — two small user-requested fixes, done first |
+| **SHIPPED IN THE v85 LINE** | `v85_h` — `PLAN §13` milestone 5, PART 1: fixed `doDialectImport()`'s hardcoded `base:'de'`/`source:'de'` (both client AND server — the server itself ignored whatever the client sent). Attribution-fields wiring (milestone 5's second item) is IN PROGRESS — see below. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13` is NEW at this cut** — the generator-page redesign, scoped and approved this session; read it before starting `SESSION_PROMPT_v85_a.md`'s own "what to do next." |
 
@@ -1762,6 +1762,54 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_h — `PLAN §13` milestone 5, part 1: the `doDialectImport()` language-pair bug
+
+Continuing the same session, past milestone 4's own completion. Milestone 5's first item, named
+explicitly at the `v85_a` assessment: *"`doDialectImport()` does not read `#continue-select` at all,
+and hardcodes `base:'de', source:'de'` regardless of the actual selected pair."* Reading the code
+found the bug was WORSE than the note implied on one count and NARROWER on another:
+
+- **Worse**: it wasn't only the client. `server.js`'s own `/api/dialect-import` handler ALSO hardcoded
+  `base: 'de'` in its call to `buildDialectTopic()` — completely ignoring whatever the client sent, so
+  fixing only the client would have had zero effect without a server fix too.
+- **Narrower**: `#continue-select` itself lives inside `#continue-row`, part of `#gen-form-section`
+  (chaptering), which `onUseDialectCb()` already HIDES while dialect mode is active — so the control
+  named in the note is not literally reachable from the dialect form at all. The actual "selected
+  pair" that matters here is `APP.lang`/`APP.srcLang` (written by `#src-lang-select`/`#lang-select` on
+  card 1, which STAYS visible and live in dialect mode) — reading `buildDialectTopic()`
+  (`dialect-glossary.js`) confirmed `meta.base`/`meta.source` map directly to the saved topic's
+  `lang`/`srcLang`, exactly the semantics `APP.lang`/`APP.srcLang` already carry.
+
+**Fix**: `doDialectImport()` now sends `base:APP.lang, source:APP.srcLang` (was `base:'de',
+source:'de'`, unconditionally). `server.js`'s `/api/dialect-import` handler now reads `body.base`
+(sanitized the same way `body.source` already was) instead of hardcoding it. Omitting `base`/`source`
+in the request still falls back to `'de'`/`'de'` — the pre-existing default, unchanged.
+
+**Tests**: `test/unit-dialect-panel.test.js` extended (static-analysis check, matching that file's own
+convention — the function no longer contains a hardcoded `base:'de'`, and does reference
+`APP.lang`/`APP.srcLang`). `test/e2e-dialect-import.test.js` extended (2 new checks against a REAL,
+freshly-spawned server process — the ONLY way to genuinely verify a `server.js` change live, since
+Node loads route-handling code once at process start; the user's own long-running dev server was
+confirmed, via `/api/info`, to STILL be running `v85_b`'s code throughout this entire session — every
+prior "verified live" claim this line made was about `index.html`, served fresh per request, never
+about server-side logic, until this cut): an explicit `base:'fr', source:'en'` pair lands on the saved
+topic's `lang`/`srcLang`; omitting both still defaults to `de`/`de`. Both mutation-tested.
+
+⚠️ **A live-verification mistake, caught and corrected within this same cut**: restoring `index.html`
+from a stale local backup (taken mid-session for an EARLIER, unrelated mutation test) briefly
+reverted this cut's own client-side fix back to the pre-fix state — caught immediately by
+`git diff --stat index.html` showing a suspiciously-full revert, fixed by reapplying the fix and
+re-verifying against `git diff` before proceeding. Recorded because it is a real "mutation testing
+against a stale copy is trap-shaped like the very stale-copy bugs it's supposed to be finding"
+lesson, not because anything shipped wrong — the mistake was caught before any commit.
+
+Full suite green (272/238, unchanged counts — no new test files, only existing ones extended),
+`check-inline` clean on both `index.html` and the rebuilt `docs/index.html`.
+
+**Milestone 5's second item — attribution fields for generation-time text sources — is separately
+scoped below** (see the next entry, or check `roadmap_v85.md`'s own current tail if reading this
+after that entry has landed).
 
 ## ✅ v85_g — `PLAN §13` milestone 4: the additional-features card
 
