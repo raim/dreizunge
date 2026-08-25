@@ -8,7 +8,13 @@
 // `continuous:true` session per question (`_speechListenSession`), so the tone plays once per
 // question, not once per phrase; (2) the pill's tap now MUTES/unmutes speech input ("active all the
 // time, except the microphone icon is pressed to mute input"), replacing its old "retry now" meaning,
-// which continuous listening had already made redundant. Contract under test:
+// which continuous listening had already made redundant. v84_m — two more direct user requests: (1)
+// "still a lot of beeps" — `interimResults` is now on, a commonly-reported mitigation for Android's
+// silence timeout firing more readily with it off; (2) "the currently recognized word should be shown
+// in a floating pill" — replaces the old per-MCQ-only `#mcq-mic-heard` span with ONE persistent
+// `#mic-heard-pill`, updated LIVE by interim results (neutral, no self-clear) and settled by the final
+// result (green+stays on a match, red+self-clears on a miss), for 'type'/'mcq'/'syn' alike. Contract
+// under test:
 //   • `_speechKindFor(ex)` is still the one place that decides speakability — unchanged by this file.
 //   • ONE session per question: several phrases (matches, mismatches, silence) are handled WITHOUT a
 //     second `.start()` call — verified by counting real mock invocations, not just outcomes.
@@ -20,7 +26,11 @@
 //     state; unmuting resumes for whatever's currently on screen. Muted survives a render (navigating
 //     between speakable questions while muted does NOT auto-resume).
 //   • The stale-generation guard (v84_k's own mutation-tested fix) still holds under continuous
-//     sessions: a phrase arriving after the question changed never touches the new question's DOM.
+//     sessions: a phrase arriving after the question changed never touches the new question's DOM —
+//     and the SAME guard now protects `_speechHandleInterim` too, not just `_speechHandlePhrase`.
+//   • `#mic-heard-pill`: an interim result shows live and NEVER arms a self-clear timer; a final match
+//     shows styled as a match and never self-clears; a final miss shows styled as a miss and DOES arm
+//     the self-clear timer.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -44,15 +54,17 @@ function client() {
 }
 
 // A mock SpeechRecognition constructor emulating ONE continuous session: `steps` is an ordered list
-// where each item is either `{alts,delay?}` (fires onresult with one phrase), `{err,delay?}` (fires
-// onerror then onend — the session dies), or the string `'end'` (fires onend with no error — the
-// browser's own silence timeout, the ordinary way a continuous session dies without user action).
-// `.stop()` ends the session gracefully (fires onend, matching the real API); `.abort()` just cancels
-// pending steps without firing onend (matching how the ORIGINAL mock behaved, and how production code
-// never actually depends on abort firing anything). `window.__micStarts/__micStops/__micAborts` count
-// real calls, so tests can assert on SESSION COUNT, not just outcomes — the whole point of this
-// release is fewer sessions (fewer beeps), so a passing assertion has to be able to catch a
-// regression back to "restart on every phrase."
+// where each item is either `{alts,delay?}` (fires onresult with one FINAL phrase — `isFinal:true` on
+// the result, matching the real API's shape now that `_speechListenSession` branches on it),
+// `{interim,delay?}` (fires onresult with a single NOT-YET-FINAL alternative — `isFinal:false`),
+// `{err,delay?}` (fires onerror then onend — the session dies), or the string `'end'` (fires onend
+// with no error — the browser's own silence timeout, the ordinary way a continuous session dies
+// without user action). `.stop()` ends the session gracefully (fires onend, matching the real API);
+// `.abort()` just cancels pending steps without firing onend (matching how the ORIGINAL mock behaved,
+// and how production code never actually depends on abort firing anything). `window.__micStarts/
+// __micStops/__micAborts` count real calls, so tests can assert on SESSION COUNT, not just outcomes —
+// the whole point of the v84_l release this mock was built for is fewer sessions (fewer beeps), so a
+// passing assertion has to be able to catch a regression back to "restart on every phrase."
 // `sessions` is an array of STEP-LISTS — `sessions[N]` scripts the (N+1)th `.start()` call (clamped
 // to the last one once exhausted). Most tests only care about a single session's worth of steps;
 // `mockSession(steps)` is the shorthand for that (wraps in `[steps]`). Test 9 uses `mockSessions`
@@ -75,7 +87,13 @@ function mockSessions(sessions) {
           if(stopped) return;
           if(step === 'end'){ stopped = true; if(self.onend) self.onend(); return; }
           if(step.err){ stopped = true; if(self.onerror) self.onerror({error: step.err}); if(self.onend) self.onend(); return; }
-          if(self.onresult) self.onresult({ resultIndex: 0, results: [(step.alts||[]).map(function(t){ return {transcript:t}; }) ] });
+          if(step.interim != null){
+            var ir = [{transcript: step.interim}]; ir.isFinal = false;
+            if(self.onresult) self.onresult({ resultIndex: 0, results: [ir] });
+            return;
+          }
+          var fr = (step.alts||[]).map(function(t){ return {transcript:t}; }); fr.isFinal = true;
+          if(self.onresult) self.onresult({ resultIndex: 0, results: [fr] });
         }, delay));
       });
     };
@@ -180,11 +198,15 @@ console.log('  pill CSS: state colours are NOT shadowed by an inline style, and 
     true;`);
   await settle(80);
   const r = C.run(`({ starts: window.__micStarts, stops: window.__micStops, answered: APP.cur.answered,
-    val: document.getElementById('type-in').value })`);
+    val: document.getElementById('type-in').value,
+    heard: document.getElementById('mic-heard-pill').textContent,
+    heardMatch: document.getElementById('mic-heard-pill').classList.contains('match') })`);
   assert.strictEqual(r.starts, 1, 'THREE phrases (two mismatches, one match) handled by exactly ONE session — this is the whole point of the release');
   assert.strictEqual(r.answered, true, 'the third phrase matched and answered the question');
   assert.strictEqual(r.val, 'Katzen');
   assert.strictEqual(r.stops, 1, 'the session was explicitly stopped once the match landed (about to speak the reveal aloud)');
+  assert.strictEqual(r.heard, 'Katzen', 'the floating pill settles on the final matched phrase');
+  assert.strictEqual(r.heardMatch, true, 'and is styled as a match — the round is about to advance');
 }
 console.log('  one continuous session handles several phrases with zero restarts, until a match stops it: OK');
 
@@ -319,6 +341,64 @@ console.log('  muted is a standing preference — surviving a render/navigation 
   assert.strictEqual(r.answered, false, 'B was never wrongly marked answered by an answer the learner never gave for IT');
 }
 console.log('  stale generation: a delayed phrase from a PREVIOUS question never acts on the CURRENT one: OK');
+
+// ── 10. An interim result shows live in the floating pill — neutral, and NEVER arms the self-clear
+//        timer (that's what makes it safe for it to keep changing under the learner's own speech
+//        without ever looking like a settled miss). Called directly rather than through the mock/a
+//        real delay, so the "no timer was armed" claim is checked exactly, not inferred from waiting
+//        out `_MIC_HEARD_CLEAR_MS` (2.5s) in a unit test.
+{
+  const C = client();
+  C.run(`APP.cur = { exercises: [{ type:'type_plural', correct:'Katzen' }], cur:0, answered:false };
+    _speechGen = 5;
+    _speechHandleInterim(5, 'Kat');
+    true;`);
+  const r = C.run(`({ text: document.getElementById('mic-heard-pill').textContent,
+    show: document.getElementById('mic-heard-pill').classList.contains('show'),
+    match: document.getElementById('mic-heard-pill').classList.contains('match'),
+    bad: document.getElementById('mic-heard-pill').classList.contains('bad'),
+    hasTimer: !!document.getElementById('mic-heard-pill')._micClearTimer })`);
+  assert.strictEqual(r.text, 'Kat', 'an interim result shows live in the floating pill');
+  assert.strictEqual(r.show, true);
+  assert.strictEqual(r.match, false, 'interim is neutral, not styled as a match');
+  assert.strictEqual(r.bad, false, 'interim is neutral, not styled as a miss');
+  assert.strictEqual(r.hasTimer, false, 'an interim result must never arm the self-clear timer — only a final MISS does (test 12)');
+}
+console.log('  an interim result shows live in the floating pill, neutral, never arming a self-clear timer: OK');
+
+// ── 11. The stale-generation guard covers _speechHandleInterim too, not just _speechHandlePhrase ──
+{
+  const C = client();
+  C.run(`APP.cur = { exercises: [{ type:'type_plural', correct:'Katzen' }], cur:0, answered:false };
+    _speechGen = 5;
+    document.getElementById('mic-heard-pill').textContent = '';
+    _speechHandleInterim(4, 'stale');   // gen 4, but _speechGen is 5 — must be a no-op
+    true;`);
+  const text = C.run(`document.getElementById('mic-heard-pill').textContent`);
+  assert.strictEqual(text, '', 'a stale-generation interim result never reaches the floating pill');
+}
+console.log('  _speechHandleInterim respects the same stale-generation guard as _speechHandlePhrase: OK');
+
+// ── 12. A final MISS shows in the pill styled distinctly and DOES arm the self-clear timer ──
+{
+  const C = client();
+  C.run(mockSession([{ alts: ['Maus'] }]));   // never matches 'Katzen'
+  C.run(`APP.cur = { exercises: [{ type:'type_plural', correct:'Katzen' }], cur:0, answered:false };
+    document.getElementById('type-in').value = '';
+    _speechMicRefresh();
+    true;`);
+  await settle(40);
+  const r = C.run(`({ text: document.getElementById('mic-heard-pill').textContent,
+    match: document.getElementById('mic-heard-pill').classList.contains('match'),
+    bad: document.getElementById('mic-heard-pill').classList.contains('bad'),
+    hasTimer: !!document.getElementById('mic-heard-pill')._micClearTimer })`);
+  assert.strictEqual(r.text, 'Maus');
+  assert.strictEqual(r.match, false);
+  assert.strictEqual(r.bad, true, 'a final miss is styled distinctly from a neutral interim result');
+  assert.strictEqual(r.hasTimer, true, 'and arms the self-clear timer — an interim result never does (test 10)');
+  C.run(`APP.micMuted = true; _speechMicRefresh(); true;`);   // cleanup: stop the still-open session
+}
+console.log('  a final miss shows in the pill (styled distinctly) and arms its self-clear timer: OK');
 
 console.log('unit-speech-recognition: ALL PASSED');
 })().catch(e => { console.error(e); process.exit(1); });

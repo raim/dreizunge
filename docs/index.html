@@ -264,10 +264,20 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .type-input.ok{border-color:var(--green);background:var(--green-light)}
 .type-input.bad{border-color:var(--red);background:var(--red-light)}
 @keyframes mic-pulse{0%,100%{opacity:1}50%{opacity:.45}}
-.mic-row{display:inline-flex;align-items:center;gap:8px;margin-top:8px}
-.mic-heard{font-size:13px;font-weight:700;color:var(--gray-dark);font-style:italic;opacity:.85;transition:color .2s,opacity .2s}
-.mic-heard.match{color:var(--green-dark);font-style:normal;opacity:1}
-.mic-heard:empty{display:none}
+/* v84_m (user: "the currently recognized word should be shown in a floating pill"): ONE persistent
+   pill floats above the bottom-bar mic (`#speech-mic-wrap` gives it a `position:relative` anchor,
+   same pattern `#tutor-fab`/`#tutor-fab-badge` already use). `interimResults` is now on, so this
+   updates LIVE as the recognizer hears partial speech (neutral/grey, no self-clear — the next event
+   naturally replaces it), then settles on the FINAL result: green+stays on a match (the round is
+   about to advance on its own), or red and self-clears after `_MIC_HEARD_CLEAR_MS` on a miss —
+   "clear words with some timeout if they don't match" was the user's own framing, unchanged from the
+   per-MCQ span this replaces. Replaces the old per-card `.mic-heard`/`#mcq-mic-heard` (MCQ-only,
+   v84_i) — the pill is universal, showing live speech for 'type'/'mcq'/'syn' questions alike. */
+#speech-mic-wrap{position:relative}
+#mic-heard-pill{display:none;position:absolute;bottom:44px;left:50%;transform:translateX(-50%);max-width:60vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:var(--white);border:2px solid var(--gray-mid);border-radius:14px;padding:4px 10px;font-size:12px;font-weight:700;font-style:italic;color:var(--gray-dark);box-shadow:0 2px 8px rgba(0,0,0,.15);pointer-events:none}
+#mic-heard-pill.show{display:block}
+#mic-heard-pill.match{color:var(--green-dark);font-style:normal;border-color:var(--green);background:var(--green-light)}
+#mic-heard-pill.bad{color:#990000;font-style:normal;border-color:var(--red);background:var(--red-light)}
 /* v84_l: base look lives HERE, not in the element's own inline `style=""` — an inline `background`/
    `border`/`opacity` always wins over a stylesheet class regardless of specificity, which silently
    made `.active`/`.listening`/`.muted` below dead code for exactly those three properties (found by
@@ -650,10 +660,20 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
          (`.mic-dots`) replaces the 🎤 glyph while a session is genuinely open (`.listening`, added/
          removed by _speechStartSession/_speechListenSession — the SAME lifecycle that already
          existed, no new state) — it animates continuously for as long as that class is present,
-         whether or not a phrase happens to be mid-recognition at that instant: the Web Speech API
-         exposes no "actively hearing something right now" signal (interim results are off), so a
-         decorative always-on indicator is the honest one, not one pretending to reflect real audio. -->
-    <button id="speech-mic-pill" disabled onclick="_speechMicPillClick()" title="Speak your answer" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15)"><span class="mic-icon">🎤</span><span class="mic-dots"><span></span><span></span><span></span></span></button>
+         whether or not a phrase happens to be mid-recognition at that instant — this stayed true even
+         after v84_m turned `interimResults` on (see below): that gave the app a live PARTIAL-TRANSCRIPT
+         signal, fed into the floating pill next to it, not a "the mic is actively picking up sound
+         right now" signal, which the Web Speech API still does not expose — so the dots remain a
+         decorative always-on indicator, not one pretending to reflect real audio. -->
+    <!-- v84_m (user: "the currently recognized word should be shown in a floating pill"): the wrap
+         gives `#mic-heard-pill` a `position:relative` anchor to float above the mic button itself,
+         same pattern `#tutor-fab`/`#tutor-fab-badge` already use just below. `interimResults` is now
+         on (see `_speechListenSession`'s own comment) — this pill is what makes that live text
+         actually useful to the learner, not just an internal detail. -->
+    <div id="speech-mic-wrap" style="position:relative">
+      <span id="mic-heard-pill" aria-live="polite"></span>
+      <button id="speech-mic-pill" disabled onclick="_speechMicPillClick()" title="Speak your answer" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15)"><span class="mic-icon">🎤</span><span class="mic-dots"><span></span><span></span><span></span></span></button>
+    </div>
   </div>
   <!-- v62: persistent tutor fab — relocated INTO #bottom-bar (user follow-up); still its own id,
        still hidden/shown by refreshTutorAvailability() exactly as before (that function toggles
@@ -152913,11 +152933,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v84_l', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v84_l'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v84_m', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v84_m'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"63ac1a6e015c","lessons.json":"4f484fab4f3a","ui.json":"f80cfbf23fb6","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"bf4e560125c6"};
+  APP.buildSources = {"index.html":"fdeadff2aa93","lessons.json":"4f484fab4f3a","ui.json":"f80cfbf23fb6","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"bf4e560125c6"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -159605,7 +159625,7 @@ function tMcqArticle(ex) {
 <div class="card">
   <div class="qtext" dir="auto">${t('ex.mcq_article.q', {word: qWord(escHtml(ex.target))})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${furiHtml(ex.source)}</div>
-  ${cGrid(ex.choices, false, null, 'target')}
+  ${cGrid(ex.choices, false)}
 </div>`;
 }
 
@@ -159614,7 +159634,7 @@ function tMcqPlural(ex) {
 <div class="card">
   <div class="qtext" dir="auto">${t('ex.mcq_plural.q', {word: qWord(escHtml(ex.target))})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${furiHtml(ex.source)}</div>
-  ${cGrid(ex.choices, false, null, 'target')}
+  ${cGrid(ex.choices, false)}
 </div>`;
 }
 
@@ -159745,7 +159765,7 @@ function tMcqConjugation(ex) {
 <div class="card">
   <div class="qtext" dir="auto">${t('ex.mcq_conjugation.q', {pronoun: ex.pronoun, verb: ex.infinitive})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.pronoun} — ${furiHtml(ex.source)}</div>
-  ${cGrid(ex.choices, false, null, 'target')}
+  ${cGrid(ex.choices, false)}
 </div>`;
 }
 
@@ -160918,14 +160938,16 @@ function _exStoryPanelHtml(ex){
        + '</details>';
 }
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
-// `speakable` (v84_g, widened v84_h): 'target' or 'source' — which language this call site's
-// `choices` are actually written in, read from the exercise BUILDER for each caller, never guessed
-// from the type name. Omitted (falsy) for the few types where speech recognition would not work
-// well — see `_speechKindFor`'s own comment for exactly which, and why.
-// v84_k: `speakable` no longer renders its OWN mic button — the single persistent `#speech-mic-pill`
-// (bottom bar) drives every exercise now. It still renders the "what did it hear" label, contextual
-// to THIS question's choices, wherever recognition is possible at all.
-function cGrid(cs,one,mode,speakable){ return `<div class="choices${one?' one-col':''}${mode==='chips'?' chips':''}">${cs.map((c,i)=>`<button class="choice" dir="auto" id="c${i}" onclick="pickChoice(${i},this)">${furiHtml(c)}</button>`).join('')}</div>${speakable&&_speechRecognitionSupported()?'<span class="mic-heard" id="mcq-mic-heard" aria-live="polite"></span>':''}`; }
+// v84_g/`v84_h` had a 4th `speakable` ('target'|'source') param here, read from each call site's
+// exercise builder, purely to render an inline "what did it hear" span next to THIS card's choices.
+// v84_k already stopped it rendering its own mic BUTTON (the persistent `#speech-mic-pill` in the
+// bottom bar drives every exercise). v84_m (user: "the currently recognized word should be shown in
+// a floating pill") replaced the inline span too, with the ONE persistent `#mic-heard-pill` floating
+// above that same bottom-bar mic — populated directly by `_speechHandlePhrase`/`_speechHandleInterim`,
+// not per-card — so `speakable` had nothing left to drive and was removed from every call site rather
+// than left as a dead parameter. Speakability itself was never decided here anyway — `_speechKindFor`
+// is and remains the one place for that, independent of this template layer.
+function cGrid(cs,one,mode){ return `<div class="choices${one?' one-col':''}${mode==='chips'?' chips':''}">${cs.map((c,i)=>`<button class="choice" dir="auto" id="c${i}" onclick="pickChoice(${i},this)">${furiHtml(c)}</button>`).join('')}</div>`; }
 // Shared card for sentence-context MCQs (word_forms + synonyms-in-context). The
 // sentence div is omitted when empty (no story sentence was found).
 function sentenceMcqCard({badge, question, sentenceHtml, hint, choices}){
@@ -161289,7 +161311,7 @@ function tMathCalc(ex){
 // so the emphasis is now presentational and consistent across languages, and RTL/CJK strings no
 // longer carry stray Latin quotes. Takes ALREADY-SAFE html (furigana/escaped) like its call sites.
 function qWord(html){ return `<span class="q-word">${html}</span>`; }
-function tMcqIE(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:qWord(applyFurigana(ex.target))})}</div><div style="margin:10px 0">${lBlock(ex.target,ex.pron)}</div>${cGrid(ex.choices,false,null,'source')}</div>`; }
+function tMcqIE(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:qWord(applyFurigana(ex.target))})}</div><div style="margin:10px 0">${lBlock(ex.target,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
 function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang);
   const dia=_lessonIsDialect();
   // v69_i (user request): the question no longer names the target language — the badge above it
@@ -161319,7 +161341,7 @@ function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=loc
          + `<div class="qglyph" dir="auto">${furiHtml(ex.source)}</div>${cGrid(ex.choices,false,'chips')}</div>`;
   }
   const q = t("ex.mcq_source_target.q",{word:qWord(furiHtml(ex.source))});
-  return `<div class="ex-badge">${S.flag}→${L.flag} ${badge}</div><div class="card"><div class="qtext" dir="auto">${q}</div>${cGrid(ex.choices,false,null,'target')}</div>`; }
+  return `<div class="ex-badge">${S.flag}→${L.flag} ${badge}</div><div class="card"><div class="qtext" dir="auto">${q}</div>${cGrid(ex.choices,false)}</div>`; }
 // v79_g: read the glyph aloud when the card appears, in the TARGET voice — the point of a script
 // primer is to attach a sound to a shape, and the learner should not have to hunt for a speaker
 // button to get it. Deliberately silent when muted or when the device has no voice for the
@@ -161366,8 +161388,8 @@ function tLMcq(ex){ const S=lessonSrcLang(); const Sn=localizedLessonLangName(AP
   }
   // When globally muted, the audio gives nothing — fall back to a read-the-target MCQ
   // (show the target word as text, still pick the source). Same data, same check path.
-  if(APP.muted){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:qWord(applyFurigana(ex.target))})}</div>${cGrid(ex.choices,false,null,'source')}</div>`; }
-  return `<div class="ex-badge">${t("ex.badge.listen_mcq")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" dir="auto" style="margin-bottom:10px">${t("ex.listen_mcq.q",{lang:Sn})}</div>${lBlock(ex.target,ex.pron)}${cGrid(ex.choices,false,null,'source')}</div>`; }
+  if(APP.muted){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:qWord(applyFurigana(ex.target))})}</div>${cGrid(ex.choices,false)}</div>`; }
+  return `<div class="ex-badge">${t("ex.badge.listen_mcq")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" dir="auto" style="margin-bottom:10px">${t("ex.listen_mcq.q",{lang:Sn})}</div>${lBlock(ex.target,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
 function tLType(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang);
   const inputHtml = `<input class="type-input" id="type-in" dir="auto" type="text" placeholder="${t("ex.listen_type.placeholder",{lang:Ln})}" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">`;
   // When globally muted, there's nothing to hear — fall back to translating the shown source
@@ -162971,22 +162993,32 @@ function _speechKindFor(ex){
   }
 }
 
-const _MIC_HEARD_CLEAR_MS = 2500;   // how long a NON-matching "heard" word lingers before self-clearing
+const _MIC_HEARD_CLEAR_MS = 2500;   // how long a NON-matching FINAL "heard" word lingers before self-clearing
 
-// Shows what was just heard next to an MCQ's choices (`#mcq-mic-heard` — the typed-answer path shows
-// it by filling the real input instead; syn_select shows it by colouring the tile itself). A MATCH
-// turns it green and stays (the round is about to advance on its own); anything else clears itself
-// after a short timeout rather than lingering as stale, possibly-confusing text once the learner has
-// moved past it — "clear words with some timeout if they don't match" was the user's own framing.
-// The timer lives ON the element so a later pass started before an earlier timeout fires cleanly
-// supersedes it, rather than two competing timers racing to clear/not-clear the same span.
-function _micShowHeard(el, text, matched){
+// Shows what's currently/just been heard in the ONE persistent `#mic-heard-pill`, floating above the
+// bottom-bar mic (v84_m, user: "the currently recognized word should be shown in a floating pill" —
+// replaces the old per-MCQ-only `#mcq-mic-heard` span). `state` is one of three things:
+//   null     — an INTERIM result: live, unsettled, may still change. Neutral styling, no self-clear —
+//              the next interim or final result naturally supersedes it.
+//   'match'  — a FINAL result that matched the expected answer. Green and stays (the round is about
+//              to advance on its own).
+//   'bad'    — a FINAL result that did NOT match. Clears itself after `_MIC_HEARD_CLEAR_MS` rather
+//              than lingering as stale, possibly-confusing text once the learner has moved past it —
+//              "clear words with some timeout if they don't match" was the user's own v84_h framing,
+//              unchanged here.
+// The timer lives on the pill itself so a later pass started before an earlier timeout fires cleanly
+// supersedes it, rather than two competing timers racing to clear/not-clear the same pill.
+function _micShowHeard(text, state){
+  const el = document.getElementById('mic-heard-pill');
   if(!el) return;
-  el.textContent = text || '';
-  el.classList.toggle('match', !!matched);
+  text = text || '';
+  el.textContent = text;
+  el.classList.toggle('show', !!text);
+  el.classList.toggle('match', state === 'match');
+  el.classList.toggle('bad', state === 'bad');
   clearTimeout(el._micClearTimer);
-  if(!matched){
-    el._micClearTimer = setTimeout(() => { el.textContent = ''; el.classList.remove('match'); }, _MIC_HEARD_CLEAR_MS);
+  if(state === 'bad'){
+    el._micClearTimer = setTimeout(() => { el.textContent = ''; el.classList.remove('show','match','bad'); }, _MIC_HEARD_CLEAR_MS);
   }
 }
 
@@ -163014,11 +163046,13 @@ let _speechGen = 0;
 //            mic would risk hearing its own voice). A miss fills the input with what was HEARD (so
 //            the learner sees/can correct it) but never auto-submits.
 //   'mcq'  — matched ONLY against the CORRECT choice; a hit taps it via the real `pickChoice` (green,
-//            advances — same stop-before-reveal reasoning) and shows what was heard in
-//            `#mcq-mic-heard`; a miss changes nothing on the card, but still shows what was heard.
+//            advances — same stop-before-reveal reasoning); a miss changes nothing on the card.
 //   'syn'  — matched against ANY offered choice (a distractor is exactly as selectable as a real tap
 //            on it); a hit SELECTS that tile and colours it live, but never checks/advances/stops the
 //            session — syn_select asks for several words, so speech here is an alternative to a TAP.
+// All three now also update the ONE floating `#mic-heard-pill` via `_micShowHeard` (v84_m) — 'mcq'
+// used to be the only kind that showed what it heard (in its own per-card span); the pill being
+// universal is what makes showing it for 'type'/'syn' too free.
 //
 // ⚠️ `_speechStopListening()` runs AFTER `check()`/`pickChoice()`, not before, on purpose: stopping
 // can fire the session's `onend` SYNCHRONOUSLY (real browsers vary; the test mock always does), which
@@ -163037,14 +163071,14 @@ function _speechHandlePhrase(gen, cfg, alts){
     if(inp){
       const correct = normDiacritics(ex.correct);
       const hit = alts.some(a => normDiacritics(a) === correct);
+      _micShowHeard(alts[0], hit ? 'match' : 'bad');
       if(hit){ inp.value = ex.correct; onType(); check(); _speechStopListening(); }
       else { inp.value = alts[0]; onType(); showToast(t('ex.mic_no_match')); }
     }
   } else if(cfg.kind === 'mcq'){
-    const heard = document.getElementById('mcq-mic-heard');
     const correct = normDiacritics(stripFuri(ex.correct));
     const said = alts.some(a => normDiacritics(a) === correct);
-    _micShowHeard(heard, alts[0], said);
+    _micShowHeard(alts[0], said ? 'match' : 'bad');
     if(said){
       const idx = (ex.choices||[]).findIndex(c => normDiacritics(stripFuri(c)) === correct);
       const el = idx >= 0 ? document.getElementById('c'+idx) : null;
@@ -163054,6 +163088,7 @@ function _speechHandlePhrase(gen, cfg, alts){
     const tiles = [...document.querySelectorAll('.syn-tile')];
     const said = alts.map(a => normDiacritics(a));
     const hit = said.map(w => tiles.find(b => normDiacritics(stripFuri(b.dataset.w||'')) === w)).find(Boolean);
+    _micShowHeard(alts[0], hit ? 'match' : 'bad');
     if(hit){
       const isCorrect = (ex.correct||[]).some(c => normDiacritics(stripFuri(c)) === normDiacritics(stripFuri(hit.dataset.w||'')));
       hit.classList.add('sel');
@@ -163062,6 +163097,19 @@ function _speechHandlePhrase(gen, cfg, alts){
       document.getElementById('cbtn').disabled = document.querySelectorAll('.syn-tile.sel').length===0;
     } else showToast(t('ex.mic_no_match'));
   }
+}
+
+// Live "still hearing" feedback (v84_m) — fires for every not-yet-final interim result, well before
+// `_speechHandlePhrase` ever sees a finished phrase. Deliberately does NO matching of its own: interim
+// text can still revise itself (e.g. "Hau" becoming "Haus" a moment later), so acting on it early
+// risks a premature/wrong trigger on a still-changing guess — it exists purely to make the floating
+// pill feel LIVE, the actual scoring stays on final results only, unchanged from before interim
+// results existed.
+function _speechHandleInterim(gen, text){
+  if(gen !== _speechGen) return;
+  const C = APP.cur;
+  if(!C || C.answered) return;
+  if(text) _micShowHeard(text, null);
 }
 
 // Starts (or resumes) the persistent listening SESSION for the current gen/cfg — ONE continuous
@@ -163075,6 +163123,7 @@ function _speechStartSession(gen, cfg){
   if(pill) pill.classList.add('listening');
   _speechListenSession(_speechExLocale(cfg.locale),
     (alts) => _speechHandlePhrase(gen, cfg, alts),
+    (text) => _speechHandleInterim(gen, text),
     (hard) => {
       if(pill) pill.classList.remove('listening');
       if(gen !== _speechGen || APP.micMuted) return;
@@ -163091,9 +163140,22 @@ function _speechStartSession(gen, cfg){
 // own generation check exists for, and letting the mic stay open into a correct-answer TTS reveal
 // risks it hearing its own voice. Then starts a fresh session, UNLESS speech input is muted
 // (`APP.micMuted` — "active all the time, except the microphone icon is pressed to mute input").
+//
+// v84_m considered — and REJECTED — reusing an already-open session across two consecutive
+// same-language questions to avoid the extra start/stop tone: `_speechHandlePhrase` reads `APP.cur`
+// fresh, so it LOOKS safe on the surface, but it would silently defeat the exact guarantee test #9
+// (`unit-speech-recognition.test.js`) mutation-tests — `_speechStopListening()`'s `.stop()` is what
+// cancels a still-pending recognized phrase from the OLD question before it can ever reach the NEW
+// one; skip that stop and a slow, late-arriving word from a question the learner already left can
+// silently land in the next question's answer field. That guarantee (a question change always fully
+// discards whatever the mic was still resolving) was worth keeping over one fewer tone per question —
+// see `_speechListenSession`'s own comment for the change that actually was made to cut beeps
+// (`interimResults`). The floating `#mic-heard-pill` is always cleared here — a word left over from
+// the PREVIOUS question, matched or not, has nothing to do with the one now on screen.
 function _speechMicRefresh(){
   const gen = ++_speechGen;
   _speechStopListening();
+  _micShowHeard('', null);
   const pill = document.getElementById('speech-mic-pill');
   if(!pill) return;
   const ex = APP.cur && Array.isArray(APP.cur.exercises) ? APP.cur.exercises[APP.cur.cur] : null;
@@ -166457,7 +166519,16 @@ let _activeRecognition = null;   // one mic session at a time; starting a new on
 // plays once per SESSION (a new question, or resuming from mute), not once per phrase or silent gap.
 // `onSessionEnd(hardErr)` fires when the session truly stops — a real error, or the browser's own
 // silence timeout (continuous mode still has one; the caller decides whether to resume).
-function _speechListenSession(lang, onPhrase, onSessionEnd){
+// v84_m (user: "still a lot of beeps" + "the currently recognized word should be shown in a floating
+// pill"): `interimResults` is now ON. Two independent reasons, one flag: (1) some Android builds fire
+// their silence timeout more readily when interim results are off, since the engine has nothing to
+// report until a phrase finalizes — turning them on is a commonly-reported mitigation, keeping the
+// underlying platform session (not just our own `continuous:true` request) alive longer between the
+// audible restarts we can't otherwise avoid; (2) it's what makes "currently recognized word" a
+// meaningful, LIVE thing to show at all — final-only results only ever showed a word after the fact.
+// `onInterim(text)` fires for every not-yet-final result (top alternative only — interim results
+// rarely carry more than one); `onPhrase(alts)` is unchanged, firing only once a result is final.
+function _speechListenSession(lang, onPhrase, onInterim, onSessionEnd){
   const Ctor = _speechRecognitionCtor();
   if(!Ctor){ onSessionEnd(true); return null; }
   try{ if(_activeRecognition) _activeRecognition.abort(); }catch(_){}
@@ -166465,14 +166536,16 @@ function _speechListenSession(lang, onPhrase, onSessionEnd){
   _activeRecognition = rec;
   rec.lang = lang || '';
   rec.continuous = true;
-  rec.interimResults = false;
+  rec.interimResults = true;
   rec.maxAlternatives = 3;   // a few candidates widen the match without the caller re-deriving them
   let lastErr = null;
   rec.onresult = (e) => {
     const from = typeof e.resultIndex === 'number' ? e.resultIndex : 0;
     for(let i = from; i < e.results.length; i++){
       const r = e.results[i];
-      if(r) onPhrase(Array.from(r).map(a => a.transcript));
+      if(!r) continue;
+      if(r.isFinal) onPhrase(Array.from(r).map(a => a.transcript));
+      else onInterim(r[0] ? r[0].transcript : '');
     }
   };
   rec.onerror = (e) => { lastErr = e.error || 'error'; };
