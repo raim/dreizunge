@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_f` — `PLAN §13` milestone 3: reworded the "learning arc" label away from that framing (already `ui.json`-routed, one-line fix); added a per-chapter lesson-type override at generation time, ruled by the user as "sequential, reusing existing per-chapter endpoint" (no new server-side per-chapter body shape). `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the generator-page wizard shell. `v85_b` — two small user-requested fixes, done first: speech-recognition auto-activation removed; a `#bottom-bar-toggle` button hides/shows `#bottom-bar` |
+| **SHIPPED IN THE v85 LINE** | `v85_g` — `PLAN §13` milestone 4: the additional-features card — storyboard + QC as opt-in toggles on the multi-chapter book-generation path, both reusing existing endpoints (no new server work), scoped narrower than the full milestone (single-chapter QC left as a documented follow-up). `v85_f` — milestone 3: label reword + per-chapter lesson-type override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the generator-page wizard shell. `v85_b` — two small user-requested fixes, done first |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13` is NEW at this cut** — the generator-page redesign, scoped and approved this session; read it before starting `SESSION_PROMPT_v85_a.md`'s own "what to do next." |
 
@@ -1762,6 +1762,78 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_g — `PLAN §13` milestone 4: the additional-features card
+
+Continuing the same session, past milestone 3's own completion. Two toggles — storyboard and QC —
+per the original assessment: *"storyboard and QC (`/api/qc`) both exist as separate manual triggers;
+folding them into the generation flow as toggles is wiring, not new pipeline work."* Investigated
+first (same discipline `v85_d`'s shortcut and `v85_f`'s per-chapter override both used) — this time
+the claim held up cleanly on both counts:
+
+- **Storyboard**: `POST /api/storyline-storyboard` — reading the handler, `topics` in the body is an
+  array of TOPIC NAMES (strings), resolved server-side via `findSaved(name)`; no full topic objects
+  needed client-side.
+- **QC**: `qcRun(scope, btn)` — the SAME function the storyline screen's own manual "QC all chapters"
+  button already calls — already accepts `{storylineId}` and loops every chapter of that storyline
+  server-side in ONE request (confirmed reading `/api/qc`'s handler: `if (storylineId) { topics =
+  sl.chapters.map(...) }`).
+
+**What shipped**: `#post-gen-row` on `#gen-card-4`, two checkboxes ("🎬 Generate a storyboard", "🔍
+Proofread with QC after generating"), same multi-chapter-only gate `#gen-arc-row`/`#per-chapter-row`
+already use (`onNumChaptersSlider()`, extended again). `doGenerate()`'s multi-chapter branch captures
+`postGen = {storyboard, qc}` BEFORE the request fires (same reasoning `perChapterTypes` uses — the
+checkboxes live on a screen the learner may leave). After the book job completes, chained AFTER
+`_applyPerChapterTypes` (sequential, not concurrent — gentler on the backend, and QC has more content
+to check once any per-chapter extras have landed), `_applyPostGenFeatures(finalJob, postGen)` runs:
+
+- Resolves the NEW storyline by finding, in the freshly-`loadSavedList()`-refreshed
+  `APP.storylines`, the entry whose `.chapters` includes the book's first chapter id — cheaper and
+  more robust than trying to recompute the server's own `_chainId()` hash client-side (not exposed to
+  the client at all).
+- If `storyboard` is on AND a storyline was resolved: calls `/api/storyline-storyboard` with the
+  resolved `slId` and REAL topic names read from `APP.savedList` (which, by this point, carry the
+  ACTUAL — possibly retitled by the automatic title post-pass — names, not `newBookJob()`'s
+  placeholder titles).
+- If `qc` is on: calls `qcRun({storylineId})` when a storyline was resolved, falling back to
+  `qcRun({topicId: <first chapter>})` otherwise (theoretical fallback — this release's own gate means
+  a storyline should always resolve in practice, since it's multi-chapter-only).
+- Each toggle's own failure is isolated (try/catch around storyboard; `qcRun` already never throws
+  uncaught) — a failed storyboard call must not block QC from still running.
+
+**Deliberately scoped narrower than the full milestone**: wired ONLY onto the multi-chapter
+book-completion path. Single-chapter generation already has its own EXISTING manual QC trigger
+(`#story-qc-btn`, a SEPARATE route, `/api/story-qc`) reachable immediately after a chapter lands on
+the lesson-set page — automating that path too is a smaller, separate follow-up, not folded in here.
+Title/summary generation was deliberately left untouched: reading `_runBookJob`'s own post-pass
+confirmed it already runs automatically server-side (chapter titles, storyline title, storyline
+summary, all with "never overwrite an authored value" guards already in place) — the original
+assessment's "storyboard and QC... as toggles" sentence never named it, so it stays exactly as-is.
+
+**New `ui.json` (`en` only)**: `gen.post_gen_storyboard_lbl`, `gen.post_gen_qc_lbl` (673 → 675 `en`
+keys).
+
+**Tests**: new `test/unit-post-gen-features.test.js` (7 checks, several mutation-tested): markup
+nesting; the visibility gate + reset; `doGenerate()` only calling `_applyPostGenFeatures` when at
+least one toggle is on (mutation-tested); the storyboard call's exact body shape and `qcRun`'s scope,
+each toggle independently on/off; the "no storyline resolved" case — storyboard genuinely SKIPPED
+(not entered-then-silently-crashed on `sl.id` being null — the mutation test here needed a second
+signal, `setGenStatus` never called with the storyboard status, since a guard-less crash and a
+deliberate skip look IDENTICAL from the `fetch` stub's own side, both showing zero storyboard calls);
+and failure isolation (a rejected storyboard call does not prevent `qcRun` from still running,
+mutation-tested by removing the QC call entirely). One new `run()` line (271→272 full, 237→238
+quick). Full suite green, `check-inline` clean on both `index.html` and the rebuilt `docs/index.html`.
+
+**Verified live** against the running dev server (network/`_applyPostGenFeatures`/`qcRun` stubbed to
+avoid a real LLM call for a pure wiring check): `doGenerate()` confirmed to capture `postGen` and call
+`_applyPostGenFeatures` with the right options after the book job resolves; `_applyPostGenFeatures`
+itself confirmed to resolve the storyline, call the storyboard endpoint with the right `slId`+topic
+names, call `qcRun` with `{storylineId}`, and update `APP.storylines`' own cached entry with the
+returned storyboard SVG.
+
+**Owed**: a real end-to-end run against a live LLM backend — a book generated, then the storyboard
+actually rendering and QC actually flagging/fixing real content — has not been watched by a human
+(same gap `v85_e`'s shortcut and `v85_f`'s per-chapter override both still carry).
 
 ## ✅ v85_f — `PLAN §13` milestone 3: lesson-selection card polish + per-chapter override
 

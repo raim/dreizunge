@@ -672,7 +672,9 @@
     "gen.wizard_create_now_hint": "Generates the chapters with the standard lesson set only, skipping extra types and the per-chapter learning arc — add more lesson types per chapter later from the storyline screen.",
     "gen.per_chapter_lbl": "🎯 Choose lesson types per chapter",
     "gen.per_chapter_heading": "Chapter {n}",
-    "gen.per_chapter_done": "extra lessons"
+    "gen.per_chapter_done": "extra lessons",
+    "gen.post_gen_storyboard_lbl": "🎬 Generate a storyboard",
+    "gen.post_gen_qc_lbl": "🔍 Proofread with QC after generating"
   },
   "nl": {
     "qc.editor.suggests_by": "⚑ {model} stelt voor:",

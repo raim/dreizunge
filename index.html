@@ -1452,6 +1452,26 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           </label>
           <div id="per-chapter-list" style="display:none;margin:6px 0 0 24px"></div>
         </div>
+        <!-- PLAN §13 milestone 4 (v85_g) — additional features as opt-in toggles, per the original
+             assessment: storyboard and QC both already exist as separate MANUAL triggers (the
+             storyline screen's own 🎬 button; qcRun()'s {storylineId}/{topicId} scopes) — this wires
+             them onto the multi-chapter book-completion path, no new server work. Same multi-chapter-
+             only gate #gen-arc-row/#per-chapter-row already use (a storyboard needs >1 chapter to be
+             a "board" of anything; QC's own {topicId} scope already covers the single-chapter case
+             via the EXISTING post-hoc buttons — this release scopes to the book path only, see
+             _applyPostGenFeatures()'s own comment). Title/summary generation is DELIBERATELY left
+             alone — already automatic server-side (confirmed by reading _runBookJob's post-pass), and
+             the original assessment's own "storyboard and QC... as toggles" sentence never named it. -->
+        <div id="post-gen-row" style="display:none;margin-top:10px">
+          <label class="user-story-check-row">
+            <input type="checkbox" id="post-gen-storyboard-cb">
+            <span id="post-gen-storyboard-lbl">🎬 Generate a storyboard</span>
+          </label>
+          <label class="user-story-check-row">
+            <input type="checkbox" id="post-gen-qc-cb">
+            <span id="post-gen-qc-lbl">🔍 Proofread with QC after generating</span>
+          </label>
+        </div>
         <div id="gen-btn-row" style="display:flex;gap:8px;align-items:center"><button class="gen-btn" id="gen-btn" onclick="doGenerate()" style="flex:1">Generate lessons →</button><button class="stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="font-size:20px;border:none;background:none;cursor:pointer;padding:4px 6px;display:none;flex-shrink:0">🛑</button></div>
         </div><!-- end gen-card-4 -->
         </div><!-- end gen-form-section -->
@@ -2653,6 +2673,8 @@ function applyUIStrings() {
   _setText('gen-create-now-btn', t('gen.wizard_create_now'));
   _setAttr('gen-create-now-btn', 'title', t('gen.wizard_create_now_hint'));
   _setText('per-chapter-lbl', t('gen.per_chapter_lbl'));
+  _setText('post-gen-storyboard-lbl', t('gen.post_gen_storyboard_lbl'));
+  _setText('post-gen-qc-lbl', t('gen.post_gen_qc_lbl'));
   // PLAN §C5 stage 2: the generation screen's own header title and the library's "+ Generate new"
   // entry point — neither is a `.form-lbl[data-i18n]`, so they need an explicit set here rather
   // than riding the generic sweep those get.
@@ -3232,6 +3254,15 @@ function onNumChaptersSlider(v){
   const perChRow=document.getElementById('per-chapter-row'); if(perChRow) perChRow.style.display=APP.numChapters>1?'':'none';
   if(APP.numChapters<=1 && document.getElementById('per-chapter-cb')){ document.getElementById('per-chapter-cb').checked=false; onPerChapterCb(); }
   else if(document.getElementById('per-chapter-cb')?.checked){ _renderPerChapterTypes(); }
+  // PLAN §13 milestone 4 (v85_g): the storyboard/QC toggles, same multi-chapter-only gate — a
+  // storyboard needs >1 chapter to be a "board" of anything, and this release scopes QC's own toggle
+  // to the same book-completion path (see _applyPostGenFeatures()'s own comment for why single-
+  // chapter QC isn't wired here). Unchecking on drop-to-1, matching the per-chapter row's own hygiene.
+  const postGenRow=document.getElementById('post-gen-row'); if(postGenRow) postGenRow.style.display=APP.numChapters>1?'':'none';
+  if(APP.numChapters<=1){
+    const sbCb=document.getElementById('post-gen-storyboard-cb'); if(sbCb) sbCb.checked=false;
+    const qcCb=document.getElementById('post-gen-qc-cb'); if(qcCb) qcCb.checked=false;
+  }
 }
 // The "teach the script per chapter" opt-in only makes sense when generating multiple chapters
 // AND the target uses a script the source language doesn't (so there's an alphabet to teach).
@@ -7289,6 +7320,11 @@ async function doGenerate(forceRegen){
     const perChapterOn = document.getElementById('per-chapter-cb')?.checked;
     const perChapterTypes = perChapterOn ? _readPerChapterTypes(nCh) : null;
     if(!perChapterOn && document.getElementById('gen-arc-cb')?.checked){ gbody.arc=true; gbody.arcTypes=readArcTypeChecks('gen-arc-types'); gbody.arcScript=!!document.getElementById('gen-arc-script-cb')?.checked; }
+    // PLAN §13 milestone 4 (v85_g): the storyboard/QC toggles, captured here for the SAME reason
+    // perChapterTypes is — #post-gen-row lives on a screen the learner may leave long before the
+    // book job completes.
+    const postGen = { storyboard: !!document.getElementById('post-gen-storyboard-cb')?.checked,
+                       qc: !!document.getElementById('post-gen-qc-cb')?.checked };
     try{
       const r=await fetch('/api/generate-book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(gbody)});
       const resp=await r.json();
@@ -7301,7 +7337,13 @@ async function doGenerate(forceRegen){
       // (previously discarded) purely so this ONE new caller can read it; every other behaviour of
       // _pollGenBook is unchanged.
       const _bookPromise = _pollGenBook(resp.bookId, nCh);
-      if(perChapterTypes) _bookPromise.then(finalJob => _applyPerChapterTypes(finalJob, perChapterTypes));
+      // v85_g: per-chapter lessons BEFORE storyboard/QC — sequential, not concurrent, same "gentle on
+      // the backend" reasoning _applyPerChapterTypes' own sequential loop uses, and QC reads more
+      // useful content once any per-chapter extras have already landed.
+      _bookPromise.then(async finalJob => {
+        if(perChapterTypes) await _applyPerChapterTypes(finalJob, perChapterTypes);
+        if(postGen.storyboard || postGen.qc) await _applyPostGenFeatures(finalJob, postGen);
+      });
     }catch(e){ showToast('⚠ '+e.message); }
     return;
   }
@@ -9783,6 +9825,57 @@ async function _applyPerChapterTypes(finalJob, perChapterTypes){
     }
   }
   setGenStatus('done', `🎯 ${done}/${total} ${t('gen.per_chapter_done')}`);
+  await loadSavedList();
+}
+// PLAN §13 milestone 4 (v85_g) — the additional-features toggles (#post-gen-row). Runs AFTER the
+// book job finishes, same chaining shape _applyPerChapterTypes uses. `opts = {storyboard, qc}`,
+// captured by doGenerate() BEFORE the request fires (same reason as perChapterTypes: the checkboxes
+// live on a screen the learner may leave long before the job completes).
+//
+// Storyboard: resolves the NEW storyline by finding, in the freshly-reloaded APP.storylines, the
+// entry whose .chapters includes this book's first chapter id — cheaper and more robust than trying
+// to recompute the server's own _chainId() hash client-side, which isn't exposed to the client at
+// all. Topic NAMES (not full objects) are what /api/storyline-storyboard actually wants (it resolves
+// them server-side via findSaved(name)) — read from APP.savedList, which loadSavedList() (called by
+// _pollGenBook right before it returns) has already refreshed with the REAL, possibly-retitled names,
+// not the placeholder titles newBookJob() seeded before generation.
+//
+// QC: reuses qcRun({storylineId}) UNCHANGED — the exact function/endpoint the storyline screen's own
+// manual QC button already calls, which already loops every chapter server-side in ONE request. No
+// new server work for either toggle.
+//
+// Scope, deliberately narrower than "storyboard and QC as toggles" could be: this release wires both
+// ONLY onto the multi-chapter book-completion path (same reasoning #post-gen-row's own gate uses —
+// storyboard needs >1 chapter to mean anything). Single-chapter QC already has its own EXISTING
+// manual trigger (#story-qc-btn, calling the separate /api/story-qc route) reachable immediately
+// after a single chapter lands on the lesson-set page — automating that path too is a smaller,
+// separate follow-up, not folded in here to keep this release's own surface reviewable.
+async function _applyPostGenFeatures(finalJob, opts){
+  if(!finalJob || finalJob.status!=='done' || !Array.isArray(finalJob.chapters) || !opts) return;
+  const chapterIds = finalJob.chapters.map(c=>c && c.topicId).filter(Boolean);
+  if(!chapterIds.length) return;
+  const sl = Array.isArray(APP.storylines) ? APP.storylines.find(s => (s.chapters||[]).includes(chapterIds[0])) : null;
+  if(opts.storyboard && sl){
+    try{
+      const byId = new Map((APP.savedList||[]).map(s=>[s.id,s]));
+      const topicNames = chapterIds.map(id => byId.get(id)?.topic).filter(Boolean);
+      if(topicNames.length){
+        setGenStatus('running', `🎬 ${t('storyboard.title')}`);
+        const r = await fetch('/api/storyline-storyboard', { method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ slId: sl.id, topics: topicNames }) });
+        const data = await r.json();
+        if(r.ok && data.storyboard && Array.isArray(APP.storylines)){
+          const idx = APP.storylines.findIndex(s=>s.id===sl.id);
+          if(idx>=0) APP.storylines[idx].storyboard = data.storyboard;
+        }
+      }
+    }catch(e){ /* best-effort — a failed storyboard must not block QC or leave the flow stuck */ }
+  }
+  if(opts.qc){
+    // qcRun() already toasts/logs its own errors and never throws uncaught — no extra try/catch
+    // needed, matching how its one existing caller (the storyline screen's manual QC button) uses it.
+    await qcRun({ storylineId: sl ? sl.id : undefined, topicId: sl ? undefined : chapterIds[0] });
+  }
   await loadSavedList();
 }
 function readLessonTypeChecks(container, cls){

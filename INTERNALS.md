@@ -1295,6 +1295,22 @@ never per-chapter, today)
 
 ---
 
+**`v85_g` — `PLAN §13` milestone 4: the additional-features card (storyboard + QC toggles)** (see
+`roadmap_v85.md`'s own `v85_g` entry for the full write-up — unlike `v85_d`/`v85_f`, THIS
+investigation found the plan's "reuses existing machinery" claim held up cleanly on both counts, no
+ruling needed)
+
+| what | where |
+|---|---|
+| **`#post-gen-row`** (on `#gen-card-4`) | two checkboxes, `#post-gen-storyboard-cb`/`#post-gen-qc-cb`, same multi-chapter-only gate `onNumChaptersSlider()` already applies to `#gen-arc-row`/`#per-chapter-row` (extended again) — including unchecking both if the learner drops back to 1 chapter |
+| **`doGenerate()`'s multi-chapter branch** | captures `postGen = {storyboard, qc}` BEFORE the `/api/generate-book` request fires (same reasoning `perChapterTypes` uses). Chained onto `_pollGenBook()`'s returned promise AFTER `_applyPerChapterTypes` (sequential — gentler on the backend, and QC has more content once per-chapter extras have landed), and ONLY when at least one toggle is on |
+| **`_applyPostGenFeatures(finalJob, opts)`** | resolves the NEW storyline from the freshly-`loadSavedList()`-refreshed `APP.storylines` by finding the entry whose `.chapters` includes the book's first chapter id (cheaper than recomputing the server's `_chainId()` hash, which isn't exposed client-side at all). If `storyboard` is on AND a storyline resolved: `POST /api/storyline-storyboard` with the resolved `slId` + REAL topic NAMES read from `APP.savedList` (the ACTUAL, possibly-retitled names — `/api/storyline-storyboard`'s handler resolves topics server-side via `findSaved(name)`, confirmed by reading it, so names are all it needs). If `qc` is on: `qcRun({storylineId})` — the SAME function/endpoint the storyline screen's own manual "QC all chapters" button already calls, which already loops every chapter in ONE request — falling back to `qcRun({topicId: <first chapter>})` if no storyline resolved (a defensive fallback; this release's own multi-chapter-only gate means a storyline should always resolve in practice) |
+| ⚠️ **deliberately scoped narrower than the full milestone** | wired ONLY onto the multi-chapter book-completion path. Single-chapter generation keeps its own EXISTING separate manual trigger (`#story-qc-btn` → `/api/story-qc`, a DIFFERENT route from `/api/qc`) — automating that path too is left as a documented follow-up, not folded in here |
+| ⚠️ **title/summary generation deliberately left untouched** | reading `_runBookJob`'s own post-pass (`server.js`) confirmed chapter titles, storyline title, and storyline summary ALL already run automatically, with "never overwrite an authored value" guards already in place — the original assessment's "storyboard and QC... as toggles" sentence never named title generation, so `v85_g` didn't touch it |
+| the acceptance tests | new `test/unit-post-gen-features.test.js` (7 checks, several mutation-tested): markup nesting, the visibility gate + reset, `doGenerate()` only calling `_applyPostGenFeatures` when needed, the storyboard/qc calls' exact shapes with each toggle independently on/off, the "no storyline resolved" skip (mutation-tested with a SECOND signal — `setGenStatus` never called with the storyboard status — because a guard-less crash on `sl.id` being null and a deliberate skip both show zero storyboard `fetch` calls from the stub's own side; the fetch-count check alone didn't distinguish them, worth remembering for the next similar guard), and failure isolation (a rejected storyboard call doesn't block `qcRun`) |
+
+---
+
 **Keep 6b current the cheap way:** when a session's write-up names a function it had to hunt for,
 add the row. A wrong row is worse than a missing one, so only add names verified in that session.
 
