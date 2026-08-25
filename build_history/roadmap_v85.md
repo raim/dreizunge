@@ -2819,6 +2819,60 @@ numbers in the header, like `probe_word_forms_v79i.js`.
 sort top-to-bottom then left-to-right (right-to-left for manga) rather than trusting the model's
 sequence. Worth testing both.
 
+### PLAN §2.4 — RESULT (Aug 25 2026) — the overlay probe ran, three strategies, all negative
+
+The probe finally ran, against the exact fixture named above (`murmel-comics.org/stories/2640`,
+fetched with the user's one-off authorization for this internal dev probe; local copy kept only in
+the session scratchpad, not the repo — the site's own licence is still unchecked, see `§2.7`). Model:
+`minicpm-v4.5` (`§2.2`'s actual recommendation — pulled fresh for this, not the already-present
+`v4.6`/`v:8b-2.6`). Machine: this dev box, CPU-only, with two OTHER large models also resident during
+every call (`qwen3.6:35b`, `qwen2.5:7b`) — not a clean single-model bench, but this app's real
+deployment shape is exactly this kind of shared box, so the numbers are not irrelevant.
+
+Three DIFFERENT strategies were tried, each getting its own probe file (all three now committed under
+`build_history/`, each with its full numeric results in its own header — read them for the raw
+per-call output, this is a summary):
+
+1. **`probe_comic_panels_v85_i.js` — one-shot enumeration** ("list every panel, in reading order, one
+   `<box>` per line"). The first 4 of 6 true panels came back genuinely well-formed and consistent — a
+   clean, evenly-spaced 2-column grid. From panel 5 on the response DEGENERATED: confabulated
+   self-correction prose leaking into what should be terse coordinate lines, an invented in-panel sign
+   text, and by panel ~14 an outright repetition loop, ending with 26 claimed "panels" for a page that
+   has 6. One call, 6.4 minutes.
+
+2. **`probe_comic_panels_grounded_v85_i.js` — stateless per-panel grounding**, `§2.2`'s actual proven
+   protocol (one `<ref>NAME</ref>` → `<box>` call per panel, no shared memory between calls). A quick
+   separate count call was cheap and correct both times it was tried (0.7-66s, "6", right answer). The
+   FIRST attempt used a full instructional sentence as the `<ref>` NAME with a 48-token budget — the
+   model echoed the whole sentence back before answering, truncating the box's last number on 4 of 6
+   calls. The SECOND attempt (short name, no-echo instruction, 200-token budget) fixed the echo/
+   truncation, but surfaced a DIFFERENT problem: six fully independent calls do not agree on a
+   consistent layout — two different claimed panel numbers landed on nearly the same, overlapping
+   region. Individually plausible boxes, no global consistency. ~8-10 minutes per full run (7 calls).
+
+3. **`probe_comic_panels_stateful_v85_i.js` — stateful grounding** (each call is told the boxes
+   already found for earlier panels and instructed to answer with a different region — directly
+   targeting finding 2's consistency problem). Did not fix it: panel sizes came back wildly
+   inconsistent (one plausible 355×315 panel next to a 50×50 sliver, nowhere near panel-sized), and 2
+   of 6 calls STILL degenerated — one response literally contained HTML anchor-tag markup
+   (`rel="noopener noreferrer" target="_blank">670</a>`) in place of a fourth coordinate, unprompted
+   and unrelated to anything in the conversation. 8.7 minutes.
+
+**VERDICT.** Three structurally different prompt strategies, three different failure modes, all on
+the EASY/acceptance fixture (`§2.7`'s clean 2×3-grid "Page B") — none produced a fully self-consistent
+set of correctly-sized, non-overlapping panel boxes. The one thing that stayed reliable across every
+run was the cheap "how many panels?" count call. Per the user's own decision after reviewing all three
+overlays live, THIS IS NOT A PROMPTING PROBLEM TO KEEP ITERATING ON — it is either a model-quantization
+ceiling (`minicpm-v4.5` at this build) or a machine-load ceiling (CPU-only, three large models
+resident), or both, and either way further prompt tuning on this exact setup has diminishing odds of
+paying off. **Track A4 (comic panel-grid extraction) is NOT ruled out, but is NOT viable as measured.**
+Two forward paths, neither started: (a) the same probes against a different backend (larger/
+un-quantized model, GPU, or a cloud vision API) to separate "the model" from "the approach" as the
+cause; (b) fall back to `§2.6`'s own coarser Tier 1 target (bubble-level boxes, not precise panel-grid
+splitting) which may not need reliable full-page panel enumeration to be useful. **Do not resume
+Track A4 by writing panel-splitting production code — the measurement says it isn't ready, and no
+ruling has been made on which of the two forward paths (if either) to take next.**
+
 ### PLAN §2.6 — The interactive word map (user, at the v80 cut) — build it where coordinates are FREE
 
 **The idea:** overlay the image with the coordinates of the extracted text so the learner can click
