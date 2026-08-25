@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_c` — `PLAN §13` milestone 1: the generator-page wizard shell (`#gen-wizard`, 3 `.gen-card`s, pure re-layout). `v85_b` — two small user-requested fixes, done first: speech-recognition auto-activation removed; a `#bottom-bar-toggle` button hides/shows `#bottom-bar` |
+| **SHIPPED IN THE v85 LINE** | `v85_d` — `PLAN §13` milestone 2 (chaptering-card split only — the "create storyline now" shortcut is OPEN, see below). `v85_c` — milestone 1: the generator-page wizard shell (`#gen-wizard`, pure re-layout). `v85_b` — two small user-requested fixes, done first: speech-recognition auto-activation removed; a `#bottom-bar-toggle` button hides/shows `#bottom-bar` |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13` is NEW at this cut** — the generator-page redesign, scoped and approved this session; read it before starting `SESSION_PROMPT_v85_a.md`'s own "what to do next." |
 
@@ -1762,6 +1762,88 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_d — `PLAN §13` milestone 2, PARTIAL: the chaptering-card split (the "create storyline now" shortcut is OPEN — see below)
+
+Continuing the same *"PLAN §13 milestone 1, and continue until you need decisions from me"* session.
+`PLAN §13`'s build order bundles milestone 2 as ONE item: "chaptering card + 'create storyline now'
+shortcut." Investigating the shortcut before building it surfaced a real ambiguity — see "OPEN" below
+— so this cut ships ONLY the chaptering-card split (unambiguous, same pure-re-layout discipline as
+milestone 1) and stops there, per the session's own instruction to continue until a decision is
+needed.
+
+**What moved.** What was `#gen-card-3`'s catch-all (everything from `v85_c` not yet split: chaptering
+AND lesson-selection AND Generate, all in one card) is now TWO cards:
+
+- **`#gen-card-3`** — chaptering: `#story-len-row`, `#num-chapters-row` (incl. `#gen-arc-row`),
+  `#style-wrap`, `#continue-row` (incl. `#reinforce-prior-row`/`#use-full-chain-row`). UNCHANGED
+  internally. Gained a "Next →" button (`#gen-step-next-3`) alongside its existing "← Back".
+- **`#gen-card-4`** — lesson-selection + Generate: `#lesson-type-hdr`, `#diff-wrap`, `#format-wrap`,
+  and `#gen-btn-row` (the pre-existing "Generate lessons →" button, MOVED to be nested one level
+  deeper than before — see the next paragraph for why that's safe). UNCHANGED internally. Only a
+  "← Back" (`#gen-step-back-4`) — it's the last step, the existing Generate button already serves as
+  the terminal action, no new "Next" needed.
+
+**The one structural subtlety, worth recording because it is exactly the kind of thing this codebase's
+own rules warn about**: `#gen-form-section` used to wrap chaptering+lesson-selection as ONE
+undifferentiated block, and `onUseDialectCb()` hides it with a SINGLE `gf.style.display=on?'none':''`
+line (unchanged, not touched this cut) to suppress "the normal generation form" while dialect mode is
+active. Splitting that block into two SEPARATE `.gen-card`s risked breaking that single-toggle
+guarantee — hiding `#gen-form-section` would only visibly matter for whichever card the wizard
+currently shows, silently leaving the OTHER card reachable if a learner navigated to it while dialect
+mode was on. Fixed by keeping `#gen-form-section`'s own open/close tags at their ORIGINAL span (still
+wrapping BOTH new cards, completely unchanged) and nesting `#gen-card-3`/`#gen-card-4` INSIDE it —
+so `onUseDialectCb()`'s one line still hides both atomically, and `#gen-btn-row`'s move from a SIBLING
+of `#gen-form-section` to a DESCENDANT of it (inside `#gen-card-4`) is harmless: `onUseDialectCb()`'s
+own separate `gbr.style.display` toggle on it still runs, now merely redundant with the section-level
+hide rather than load-bearing alone. Verified live: checking "I have a dialect glossary" with the
+wizard on card 3 hides `#gen-form-section` (both cards) atomically, exactly as before the split.
+`unit-dialect-panel.test.js`'s own checks (§3 the function source, §4 dialect-panel's SOURCE-ORDER
+position relative to `#gen-form-section`) are untouched by this — neither moved.
+
+**Stepper**: grew a 4th pill ("3 · Chapters" / "4 · Lessons" — "3 · Lessons" from `v85_c` was
+reworded, since it's no longer accurate once card 3 became chaptering specifically).
+
+**New `ui.json`** (`en` only): `gen.wizard_step4` (new key); `gen.wizard_step3`'s VALUE changed
+("3 · Lessons" → "3 · Chapters") — not a new key, so this is a net +1 (667 → 668 `en` keys).
+
+**Tests**: `test/unit-gen-wizard.test.js` rewritten in place (no new `run()` line needed — same file,
+now 7 checks instead of 6): the new markup-nesting split (chaptering fields → card 3, lesson-selection
++ `gen-btn-row` → card 4), the NEW `#gen-form-section`-wraps-both-cards structural check (mutation-
+tested: moving `#gen-form-section`'s close tag to right after card 3 turns it red), 4-step clamping
+(was 3), direct-jump to card 4, the `show()` reset now asserted from step 4, and the `#gen-area`
+invariant. Full suite green (270/236, same counts as `v85_c` — no new test FILE this cut), `check-
+inline` clean on both `index.html` and the rebuilt `docs/index.html`. Verified live in the Browser
+pane: all four cards paginate correctly with real form state (typed topic, chaptering slider,
+lesson-format select) surviving navigation; dialect-mode atomic hide re-confirmed post-split.
+
+### ⚠️ OPEN, found while scoping this cut — needs a decision before building
+
+**The "create storyline now, add lessons later" shortcut was investigated, not built.** `PLAN §13`'s
+own text says it "reuses the existing empty-lesson-type no-op (`index.html`,
+`if(!addTypes || !addTypes.length) return;`)" — but that no-op lives in `recreateStorylineLessons()`,
+which calls `/api/storyline/recreate-lessons`, a POST-HOC "add lessons to an ALREADY-EXISTING
+storyline" endpoint. It is NOT part of the INITIAL generation flow (`doGenerate()` →
+`/api/generate-book` for multi-chapter, `/api/generate` for single-chapter). Reading
+`/api/generate-book`'s own handler (`server.js`): `lessonFormat` always clamps to `'standard'` when
+absent/invalid — there is no `'none'` value, so the INITIAL batch always generates at least the
+standard vocab/sentence lesson set per chapter; "arc" (the OPTIONAL per-chapter extra types) is
+already skippable (unchecking `#gen-arc-cb`), but that only stops the EXTRA arc types, not the base
+`lessonFormat` set. **There is currently no server-supported "chapters only, zero lessons" generation
+mode** — the existing no-op this plan text points at solves a DIFFERENT problem (post-hoc addition to
+an existing storyline) than "generate now with nothing, add everything later" would need. Building the
+button as literally described would need either (a) new server-side scoping (a real `'none'`
+`lessonFormat`, or an equivalent "skip lesson generation for this batch" flag threaded through
+`/api/generate-book`/`/api/generate` and whatever downstream code assumes at least one lesson exists
+per chapter), or (b) a narrower reinterpretation — e.g. the shortcut just means "skip the arc,
+generate the DEFAULT standard set only, then use the storyline screen's own existing 'add lessons' to
+layer more on later" (which needs NO new server work, since the arc-off + standard-only path already
+exists — but this is "start with a default lesson set" as `PLAN §13`'s own step 5 wording is
+disambiguated, not the "chapters only" framing "add lessons later" suggests). **Not doable without a
+ruling on which of these is meant** — the roadmap's own condensed text points at a plan-mode
+transcript from the original scoping session that isn't reachable from here; asking the user directly
+is faster and more reliable than guessing. Left as the FIRST item for the next session — see
+`SESSION_PROMPT_v85_d.md`'s own "WHERE TO START".
 
 ## ✅ v85_c — `PLAN §13` milestone 1: the generator-page wizard shell
 

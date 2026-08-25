@@ -664,7 +664,8 @@
     "ex.back_title": "Back to the previous question",
     "gen.wizard_step1": "1 · Language",
     "gen.wizard_step2": "2 · Text",
-    "gen.wizard_step3": "3 · Lessons",
+    "gen.wizard_step3": "3 · Chapters",
+    "gen.wizard_step4": "4 · Lessons",
     "gen.wizard_back": "← Back",
     "gen.wizard_next": "Next →"
   },
