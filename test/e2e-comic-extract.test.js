@@ -86,6 +86,31 @@ const FAKE_IMG = (n) => 'data:image/jpeg;base64,' + Buffer.from('fake-panel-' + 
       console.log('  validation: empty batch and over-cap batch both rejected with 400: OK');
     }
 
+    // ── 5. The German-specific worked example is INCLUDED for lang:'de' and OMITTED for every
+    //      other language — live-verified (v85_l) as the actual necessary ingredient for German
+    //      case-restoration on real comic art; a regression here would silently undo that fix.
+    //      Each job runs FIRE-AND-FORGET server-side (the route returns the jobId immediately,
+    //      before the Ollama call happens) — must wait for 'done', not just for the POST to
+    //      resolve, or the log read below races the actual HTTP call and silently reads stale
+    //      entries (caught live: an unwaited version of this test read the WRONG entries and
+    //      failed for the wrong reason) ──────────────────────────────────────────────────────
+    {
+      const deStart = await post(sport, '/api/comic-extract', { images: [FAKE_IMG(5)], lang: 'de' });
+      await waitJob(sport, deStart.body.jobId);
+      const frStart = await post(sport, '/api/comic-extract', { images: [FAKE_IMG(6)], lang: 'fr' });
+      await waitJob(sport, frStart.body.jobId);
+      const entries = env.readChatLog().filter(e => e.kind === 'comic_extract');
+      const deEntry = entries[entries.length - 2], frEntry = entries[entries.length - 1];
+      assert(/Worked example/.test(deEntry.usr), "lang:'de' prompt includes the worked example");
+      assert(!/Worked example/.test(frEntry.usr), "lang:'fr' prompt does NOT include German's worked example");
+      // The base PRINCIPLE (case-restoration is conditional on the script having case at all, German
+      // named only as an ILLUSTRATIVE example of a per-language rule) is UNCONDITIONAL — present for
+      // every language, not just German. Only the full worked-example block is lang-gated.
+      assert(/capitalizes every common noun/.test(frEntry.usr),
+        'the base principle text (which mentions German as an example) is present even for non-German languages');
+      console.log("  the German-specific worked example is included ONLY for lang:'de': OK");
+    }
+
     console.log('e2e-comic-extract: ALL PASSED');
   } finally {
     env.stop();

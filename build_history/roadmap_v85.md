@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
+| **SHIPPED IN THE v85 LINE** | `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13`** — the generator-page redesign, scoped at the `v85_a` cut — **is now FULLY SHIPPED** (all five milestones, `v85_c` through `v85_i`); its own section below still carries the full assessment/build-order text for reference, but nothing in it is open any more. The browser-reachable single-chapter CP1-4 pipeline it deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -1762,6 +1762,42 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_l — `PLAN §2.4` follow-up: German case-restoration fix, confirmed exact-match on real content
+
+User: "continue" — resuming Track A4 after `v85_k`. That session's own prompt flagged one open
+question before milestone 3: `v85_k`'s live check found case-restoration didn't fire on a SYNTHETIC
+test panel, never re-tested against real comic art. Asked the user whether to check first; chose yes.
+
+**Round 2** — re-ran the exact production prompt (unchanged from `v85_k`) against the SAME real comic
+panel this session's earlier probes used (known ground truth), through the actual `/api/comic-extract`
+route on a fresh server. Result: case-restoration STILL did not fire — disproving the "maybe synthetic
+text doesn't read as comic lettering" hypothesis from `v85_k`. Everything else was correct, and
+actually BETTER than the original probe run (zero OCR errors this time, "WILLKOMMEN" correctly
+rejoined). This is a controlled, meaningful result: same image, same model, only the prompt differed
+from the probe that DID achieve case-restoration — the worked example genuinely was the necessary
+ingredient, not something that happened to correlate with an unrelated variable.
+
+**Fix**: restored the German-specific worked example into `_comicExtractPrompt`, but CONDITIONALLY —
+gated on `lang === 'de'`, the one language this session has real ground truth for. Every other
+language stays principle-only (case-restoration phrased so the model decides whether its script has
+case at all), explicitly flagged as UNMEASURED, not silently assumed to work the same way.
+
+**Round 3** — re-ran the same real panel through the FIXED prompt, same production route: an EXACT
+match to ground truth on both fields ("So wurde zur Abschreckung an der Grenze von der Regierung ein
+großes Schild aufgestellt" / "Riesen sind hier nicht willkommen"), correct case, correct umlaut,
+correct word join, zero OCR errors.
+
+A real bug was found and fixed in the new test written to guard this: the first version of
+`e2e-comic-extract.test.js`'s new §5 (checking the worked example appears only for `lang:'de'`) raced
+the extraction job's own fire-and-forget async execution — reading the request log immediately after
+the POST resolved, before the job's actual Ollama call had necessarily happened yet, produced a
+failure for the WRONG reason (stale log entries, not the conditional itself). Fixed by waiting for job
+completion (`waitJob`) before reading the log — the same pattern the file's other sections already used
+correctly, now applied consistently.
+
+Live-verified server ran on `PORT=3457` again (not the user's own — found bound to port 3000 across
+both `v85_k` and `v85_l`, untouched).
 
 ## ✅ v85_k — `PLAN §2.4` / Track A4 milestone 2: batch text extraction, `qwen2.5vl:7b`
 

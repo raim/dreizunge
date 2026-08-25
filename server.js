@@ -184,7 +184,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v85_k';
+const APP_VERSION  = 'v85_l';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6369,36 +6369,51 @@ async function _runRecreateJob(jobId, startId, opts) {
 // why that split was chosen over any of the three model-driven panel-finding strategies (all three
 // failed differently; see the four probe scripts under build_history/).
 //
-// PROMPT: generalized across all 33 target languages, not hardcoded to German — despite this
-// session's own measurement being German-only (the only fixture ever tested). Two things are made
-// CONDITIONAL rather than assumed universal:
+// PROMPT: generalized across all 33 target languages where possible, but with a CONFIRMED-NECESSARY
+// worked example restored for German specifically — see the two live-verification rounds below.
+// Two things are made CONDITIONAL rather than assumed universal:
 //   - case restoration only applies to scripts that HAVE case at all (many of this app's target
 //     scripts do not) — phrased so the MODEL decides that, per this app's standing philosophy of not
 //     encoding per-language grammar in code (§2's own "the app does not encode per-language grammar
 //     — the model does" principle, restated here for the same reason)
-//   - German's specific "capitalize every common noun" rule is named as an EXAMPLE of the kind of
-//     per-language rule that can exist, not asserted as a universal one
-// The literal worked example that fixed German case-restoration in the probe (probe_comic_text_
-// extract_v85_i.js's v2 run) was deliberately NOT carried over verbatim — a German-specific example
-// baked into a multilingual prompt risks biasing OTHER languages toward German's own capitalization
-// pattern. This generalization is UNTESTED beyond German; flagged, not silently assumed equivalent.
+//   - a worked example of case-restoration is only INCLUDED for German (`lang === 'de'`), the one
+//     language this session has real ground truth for. For every other language, the instruction is
+//     principle-only — UNTESTED, not silently assumed equivalent to German's validated result.
 //
-// LIVE-VERIFIED FINDING (v85_k, real qwen2.5vl:7b call, not the fake test backend): content extraction
-// worked correctly end-to-end through the whole pipeline, but case-restoration did NOT fire on a
-// SYNTHETIC test panel (plain rendered sans-serif text, "THE CAT SITS ON THE MAT" stayed ALL CAPS in
-// the response) — plausibly because plain computer-rendered text doesn't visually read as "comic
-// lettering" the way real panel art does, so the model had no visual cue to trigger the instruction.
-// Not yet re-verified against a REAL comic panel with this generalized (non-German-specific,
-// no-worked-example) prompt — the probes that validated case-restoration used a German-specific
-// worked example this production prompt deliberately does not carry. Worth a follow-up real-panel
-// measurement before trusting this instruction fires reliably in production.
+// LIVE-VERIFICATION HISTORY (both real qwen2.5vl:7b calls, not the fake test backend):
+//   Round 1 (v85_k, synthetic test panel — plain rendered sans-serif text): case-restoration did NOT
+//   fire with the principle-only prompt. Hypothesis at the time: maybe synthetic text doesn't visually
+//   read as "comic lettering".
+//   Round 2 (v85_l, the SAME real comic panel this session's own probes used, ground truth known):
+//   case-restoration STILL did not fire with the principle-only prompt — disproving the "synthetic
+//   image" hypothesis. Everything else was correct and in fact BETTER than the original probe (no OCR
+//   error this time, "WILLKOMMEN" correctly rejoined) — the model reads real comic art well; it simply
+//   does not infer case-restoration from a description of the rule alone. The worked example was the
+//   necessary ingredient, confirmed by controlled comparison (same image, same model, only the prompt
+//   differed), not merely correlated with an earlier probe's success.
+//   Fix: restored the worked example, conditionally, for `lang === 'de'` only (the one case with real
+//   evidence). Every other language remains principle-only and UNMEASURED — do not extend this
+//   confidence to them without their own live check first.
+//   Round 3 (v85_l, same panel, re-run against the FIXED prompt): EXACT match to ground truth on
+//   both fields — "So wurde zur Abschreckung an der Grenze von der Regierung ein großes Schild
+//   aufgestellt" / "Riesen sind hier nicht willkommen", correct case, correct umlaut, correct word
+//   join, zero OCR errors. Confirms the fix through the ACTUAL production code path (the real
+//   /api/comic-extract route on a fresh server, not a standalone probe re-implementation).
 //
-// Also addresses a defect the probes found and did NOT fix by prompting alone in either run: crop-
-// boundary bleed-through (an imprecise, realistic human-drawn box catching a sliver of the ADJACENT
-// panel, which the model then transcribed as an unlabeled extra line). New instruction below targets
-// it directly — untested against a real bleed-through case, since this session had no more probe
-// budget left to re-verify after adding it; worth confirming on the first real multi-panel run.
-function _comicExtractPrompt(langName) {
+// Also addresses a defect the probes found and did NOT fix by prompting alone in either probe run:
+// crop-boundary bleed-through (an imprecise, realistic human-drawn box catching a sliver of the
+// ADJACENT panel, which the model then transcribed as an unlabeled extra line). The instruction below
+// targets it directly; not yet isolated in its own controlled re-test (round 2's crop was tight, no
+// adjacent-panel sliver present) — still worth confirming on a real multi-panel bleed-through case.
+function _comicExtractPrompt(langName, lang) {
+  const capsExample = lang === 'de' ? `
+
+Worked example — if the source panel showed, in all caps: "ES GIBT EIN LAND WO DIE KOEPFE ALLER
+MENSCHEN GLEICHEN", the correct output is: "Es gibt ein Land, wo die Köpfe aller Menschen gleichen." —
+note: EVERY word is lowercase except "Es" (sentence start) and the three nouns "Land", "Köpfe",
+"Menschen" (German capitalizes all nouns, nothing else); "KOEPFE" became "Köpfe" (restore umlauts
+written as "OE"/"AE"/"UE"). Live-confirmed necessary for German: the same instruction WITHOUT this
+example failed to restore case at all, on two separate real test images.` : '';
   return `This image is a single panel cropped from a comic page written in ${langName}. Comic
 lettering is conventionally ALL CAPS as a stylistic convention of the artwork — it does not
 necessarily reflect the real capitalization of the underlying ${langName} text. If ${langName} is
@@ -6406,7 +6421,7 @@ written in a script that distinguishes upper-case and lower-case letters, restor
 capitalization (sentence-initial capitals, proper nouns, and any of ${langName}'s own additional
 capitalization rules — for example, German capitalizes every common noun, not just sentence starts and
 proper nouns) rather than transcribing the capital letters literally. If ${langName} does not
-distinguish case, ignore this instruction and transcribe normally.
+distinguish case, ignore this instruction and transcribe normally.${capsExample}
 
 There may be two kinds of text in this panel:
 1. A CAPTION or narration box (plain text, usually no border or a simple rectangular box, at the top
@@ -6448,7 +6463,7 @@ async function _runComicExtractJob(jobId, images, lang) {
     try {
       const b64 = String(images[i] || '').replace(/^data:image\/\w+;base64,/, '');
       if (!b64) throw new Error('empty image');
-      const { text } = await callLLMVision('', _comicExtractPrompt(name), 400,
+      const { text } = await callLLMVision('', _comicExtractPrompt(name, lang), 400,
         { images: [b64], temperature: 0.1 });
       results.push({ ..._parseComicExtraction(text), error: null });
     } catch (e) {
