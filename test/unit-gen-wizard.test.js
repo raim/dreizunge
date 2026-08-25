@@ -170,4 +170,66 @@ console.log('  show(\'generation-screen\'): always resets the wizard to step 1, 
 }
 console.log("  #gen-area's own display is never touched by wizard navigation: OK");
 
+// ── 8. _genWizardCreateNow(): the "create storyline now, add lessons later" shortcut ─────────────
+// v85_e — the user's ruling on the v85_d open question: "skip the arc, standard set only." NOT a new
+// server-side "zero lessons" mode: forces the arc checkbox off and the format to 'standard', then
+// calls the UNMODIFIED doGenerate() — the same call the normal Generate button makes. Verified here
+// that it forces BOTH fields correctly (even when they started the opposite way) and calls
+// doGenerate() exactly once; doGenerate() itself is stubbed so this stays a pure wiring test, not an
+// end-to-end generation test (that's `doGenerate()`'s own existing coverage elsewhere).
+{
+  const C = client();
+  const r = C.run(`document.getElementById('gen-arc-cb').checked = true;   // simulate arc left on
+    onFormatSelect('error_hunt');   // simulate a non-standard format already chosen
+    let doGenerateCalls = 0;
+    doGenerate = function(){ doGenerateCalls++; };
+    _genWizardCreateNow();
+    ({ arcAfter: document.getElementById('gen-arc-cb').checked,
+       lessonFormatAfter: APP.lessonFormat,
+       formatSelectAfter: document.getElementById('format-select').value,
+       doGenerateCalls: doGenerateCalls })`);
+  assert.strictEqual(r.arcAfter, false, '_genWizardCreateNow() unchecks #gen-arc-cb, even when it started checked');
+  assert.strictEqual(r.lessonFormatAfter, 'standard', "_genWizardCreateNow() forces APP.lessonFormat to 'standard' (what doGenerate() actually reads)");
+  assert.strictEqual(r.formatSelectAfter, 'standard', "_genWizardCreateNow() syncs #format-select's own displayed value too");
+  assert.strictEqual(r.doGenerateCalls, 1, '_genWizardCreateNow() calls the UNMODIFIED doGenerate() exactly once');
+}
+console.log('  _genWizardCreateNow(): forces arc off + format standard, then calls doGenerate() unmodified: OK');
+
+// ── 9. _genWizardCreateNow() is a no-op on fields already at their target state ───────────────────
+// Mutation-adjacent sanity: calling it when arc is ALREADY off and format is ALREADY 'standard' must
+// not throw or double-toggle anything (onFormatSelect('standard') is only called when needed).
+{
+  const C = client();
+  const r = C.run(`document.getElementById('gen-arc-cb').checked = false;
+    onFormatSelect('standard');
+    let doGenerateCalls = 0;
+    doGenerate = function(){ doGenerateCalls++; };
+    _genWizardCreateNow();
+    ({ arcAfter: document.getElementById('gen-arc-cb').checked,
+       lessonFormatAfter: APP.lessonFormat, doGenerateCalls: doGenerateCalls })`);
+  assert.strictEqual(r.arcAfter, false, 'arc stays off');
+  assert.strictEqual(r.lessonFormatAfter, 'standard', 'format stays standard');
+  assert.strictEqual(r.doGenerateCalls, 1, 'doGenerate() is still called exactly once, no double-toggle side effects');
+}
+console.log('  _genWizardCreateNow(): already-at-target fields are a clean no-op-on-those-fields, doGenerate() still runs: OK');
+
+// ── 10. doGenerate()'s empty-topic guard reveals card 2 before focusing (v85_e fix) ───────────────
+// The wizard (v85_c) can leave #topic-input's own card hidden when this guard fires. Before v85_e,
+// .focus() on a display:none field was silently invisible — this is the fix, mutation-tested.
+{
+  const C = client();
+  const r = C.run(`_genWizardGoto(3);   // simulate having navigated past card 2 without typing a topic
+    var before = _genWizardStep;
+    document.getElementById('topic-input').value = '';
+    APP.lessonFormat = 'standard';
+    document.getElementById('continue-select').innerHTML = '<option value="">— new story —</option>';
+    doGenerate();
+    ({ before: before, after: _genWizardStep,
+       c2: document.getElementById('gen-card-2').style.display })`);
+  assert.strictEqual(r.before, 3, 'setup: wizard was on card 3 (topic card hidden) when the empty-topic guard fires');
+  assert.strictEqual(r.after, 2, "doGenerate() reveals card 2 (the topic field's own card) before focusing it");
+  assert.strictEqual(r.c2, '', 'card 2 is actually visible after the guard fires');
+}
+console.log("  doGenerate()'s empty-topic guard reveals #gen-card-2 before .focus() — no more silent no-op: OK");
+
 console.log('unit-gen-wizard: ALL PASSED');

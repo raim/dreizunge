@@ -667,7 +667,9 @@
     "gen.wizard_step3": "3 · Chapters",
     "gen.wizard_step4": "4 · Lessons",
     "gen.wizard_back": "← Back",
-    "gen.wizard_next": "Next →"
+    "gen.wizard_next": "Next →",
+    "gen.wizard_create_now": "📖 Create storyline now, add lessons later",
+    "gen.wizard_create_now_hint": "Generates the chapters with the standard lesson set only, skipping extra types and the per-chapter learning arc — add more lesson types per chapter later from the storyline screen."
   },
   "nl": {
     "qc.editor.suggests_by": "⚑ {model} stelt voor:",

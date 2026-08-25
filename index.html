@@ -1394,6 +1394,16 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <input type="checkbox" id="use-full-chain-cb" checked> <span id="use-full-chain-lbl"></span>
           </label>
         </div>
+        <!-- PLAN §13 milestone 2's own shortcut (v85_e, user ruling: "skip the arc, standard set
+             only" — no new server work, reuses the EXISTING arc-off + standard-format generation
+             path unchanged, see _genWizardCreateNow()'s own comment). Deliberately its own row,
+             separate from the Back/Next nav below — a shortcut is an alternative to stepping through
+             card 4, not a step in the same sequence. -->
+        <div style="text-align:center;margin-top:12px">
+          <button type="button" id="gen-create-now-btn" onclick="_genWizardCreateNow()"
+            title="Generates the chapters with the standard lesson set only, skipping extra types and the per-chapter learning arc — add more lesson types per chapter later from the storyline screen."
+            style="font-size:12px;font-weight:700;padding:6px 14px;border:1.5px dashed var(--gray-mid);border-radius:8px;background:var(--white);color:var(--gray-dark);cursor:pointer;font-family:Nunito,sans-serif">📖 Create storyline now, add lessons later</button>
+        </div>
         </div><!-- end gen-card-3 -->
         <div class="gen-card" id="gen-card-4" style="display:none">
       <div class="gen-card-nav" style="display:flex;justify-content:flex-start;margin-bottom:10px">
@@ -2627,6 +2637,8 @@ function applyUIStrings() {
   _setText('gen-step-back-3', t('gen.wizard_back'));
   _setText('gen-step-next-3', t('gen.wizard_next'));
   _setText('gen-step-back-4', t('gen.wizard_back'));
+  _setText('gen-create-now-btn', t('gen.wizard_create_now'));
+  _setAttr('gen-create-now-btn', 'title', t('gen.wizard_create_now_hint'));
   // PLAN §C5 stage 2: the generation screen's own header title and the library's "+ Generate new"
   // entry point — neither is a `.form-lbl[data-i18n]`, so they need an explicit set here rather
   // than riding the generic sweep those get.
@@ -4068,6 +4080,21 @@ function _genWizardGoto(n){
 }
 function _genWizardNext(){ _genWizardGoto(_genWizardStep+1); }
 function _genWizardBack(){ _genWizardGoto(_genWizardStep-1); }
+// PLAN §13 milestone 2's "create storyline now, add lessons later" shortcut (v85_e, user ruling on
+// the `v85_d` open question: "skip the arc, standard set only" — NOT a new server-side "zero lessons"
+// mode; "add more later" means the storyline screen's EXISTING per-chapter "add lessons" dropdown,
+// unchanged, same as it always has). Forces the two fields that decide "how many lesson types" —
+// #gen-arc-cb off (book generation's optional per-chapter extras) and #format-select to 'standard'
+// (via the REAL onFormatSelect(), so APP.lessonFormat — what doGenerate() actually reads — updates
+// too, not just the select's displayed value) — then calls the UNMODIFIED doGenerate(), exactly the
+// same call the normal "Generate lessons →" button makes. No new pipeline, no new endpoint: this is
+// wiring onto the arc-off + standard-format path that already existed.
+function _genWizardCreateNow(){
+  const arcCb = document.getElementById('gen-arc-cb');
+  if(arcCb && arcCb.checked) arcCb.checked = false;
+  if(APP.lessonFormat !== 'standard') onFormatSelect('standard');
+  doGenerate();
+}
 function _closeEditorsOnNav(targetId){
   // Editors live on specific screens; navigating away (to a different lessonset/
   // chapter or any other screen) via the nav buttons should close them. Silent:
@@ -7185,7 +7212,16 @@ async function doGenerate(forceRegen){
   const myStory = (contVal==='__my__');
   const myStoryData = myStory ? myStoryPayload(APP.lang, APP.srcLang) : null;
   if(myStory && (!myStoryData || !myStoryData.vocab.length)){ showToast(t('toast.my_story_soon')); return; }
-  if(!myStory&&!['error_hunt'].includes(APP.lessonFormat)&&(!topic||topic.length<2)){ document.getElementById('topic-input').focus(); return; }
+  // v85_e: the wizard (v85_c) can have #topic-input's own card (#gen-card-2) hidden when this guard
+  // fires — a learner who clicked Next past it, or used the "create storyline now" shortcut on card 3
+  // without typing a topic first. `.focus()` on a display:none field is silently invisible, which is
+  // exactly the "surprise, an empty run costs the user a long wait for nothing" this guard exists to
+  // avoid — reveal card 2 first, so the pre-existing "focus draws the eye to the missing topic"
+  // behaviour actually still does that. No-op, harmless, if the wizard isn't present at all.
+  if(!myStory&&!['error_hunt'].includes(APP.lessonFormat)&&(!topic||topic.length<2)){
+    try{ _genWizardGoto(2); }catch(_){}
+    document.getElementById('topic-input').focus(); return;
+  }
   if(APP.lessonFormat==='error_hunt'&&!topic&&!contVal){ showToast(t('toast.select_story')); return; }
   if(!APP.info.canGenerate) return;
   if(APP.activeJob){ showToast(t('toast.already_generating',{topic:APP.activeJob.topic})); return; }

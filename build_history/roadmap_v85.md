@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_d` — `PLAN §13` milestone 2 (chaptering-card split only — the "create storyline now" shortcut is OPEN, see below). `v85_c` — milestone 1: the generator-page wizard shell (`#gen-wizard`, pure re-layout). `v85_b` — two small user-requested fixes, done first: speech-recognition auto-activation removed; a `#bottom-bar-toggle` button hides/shows `#bottom-bar` |
+| **SHIPPED IN THE v85 LINE** | `v85_e` — `PLAN §13` milestone 2 is now FULLY shipped: the "create storyline now, add lessons later" shortcut, ruled by the user as "skip the arc, standard set only" (no new server work). `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the generator-page wizard shell (`#gen-wizard`, pure re-layout). `v85_b` — two small user-requested fixes, done first: speech-recognition auto-activation removed; a `#bottom-bar-toggle` button hides/shows `#bottom-bar` |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13` is NEW at this cut** — the generator-page redesign, scoped and approved this session; read it before starting `SESSION_PROMPT_v85_a.md`'s own "what to do next." |
 
@@ -1763,6 +1763,65 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v85 LINE
 
+## ✅ v85_e — `PLAN §13` milestone 2 completed: the "create storyline now, add lessons later" shortcut
+
+The user's ruling on `v85_d`'s own `### ⚠️ OPEN` question, asked directly rather than guessed at:
+**"skip the arc, standard set only."** Not the alternative (a new server-side "zero lessons"
+generation mode) and not "skip the shortcut entirely" — the narrower reading, confirmed cheap because
+it needs no new server work at all.
+
+**What it does.** `#gen-card-3` (chaptering) gained a new button, `#gen-create-now-btn` ("📖 Create
+storyline now, add lessons later"), below its existing fields, separate from the Back/Next nav row (a
+shortcut is an alternative to stepping through card 4, not a step in the same sequence). Its handler,
+`_genWizardCreateNow()`, forces the two fields that decide "how many lesson types get generated" —
+`#gen-arc-cb` off (skips the optional per-chapter learning-arc extras for book generation) and
+`#format-select` to `'standard'` (via the REAL `onFormatSelect('standard')`, so `APP.lessonFormat` —
+what `doGenerate()` actually reads, not the `<select>`'s own displayed value — updates too) — then
+calls the completely UNMODIFIED `doGenerate()`, the exact same call the normal "Generate lessons →"
+button makes. Zero new pipeline code, zero new endpoint: this reuses the arc-off + standard-format
+generation path that already existed, wired onto a convenience button. "Add lessons later" means via
+the storyline screen's EXISTING per-chapter "add lessons" dropdown — unchanged, same as it always has
+worked for any chapter regardless of how it was first generated.
+
+**A real bug found and fixed along the way, not scope creep — it affects the EXISTING Generate button
+too, not just this new shortcut**: `doGenerate()`'s empty-topic guard (`if(!topic||topic.length<2))
+document.getElementById('topic-input').focus()`) predates the wizard and assumed `#topic-input` was
+always visible. Since `v85_c`, a learner can reach `#gen-card-3`/`#gen-card-4` — where `#topic-input`'s
+own `#gen-card-2` is `display:none` — without ever typing a topic (wizard navigation is deliberately
+ungated, "click through defaults" was the whole point). `.focus()` on a hidden field is silently
+invisible, which is exactly the "an empty run costs the user a long wait for nothing" outcome that
+guard exists to prevent. This shortcut button makes the failure mode MORE reachable (it lives on card
+3, past the topic field), which is what surfaced it. Fixed at the one guard itself: it now calls
+`_genWizardGoto(2)` before focusing, revealing the topic field's own card first — a two-line, wrapped
+in the same guard that already existed, no behaviour change for the CASE that already worked (topic
+present). Fixes both the shortcut path and the pre-existing "Generate" button path with one change.
+
+**New `ui.json` (`en` only)**: `gen.wizard_create_now`, `gen.wizard_create_now_hint` (the button's
+title/tooltip, spelling out the actual mechanism since the button's own short label — kept close to
+`PLAN §13`'s original phrasing — reads as "zero lessons" but the real behaviour is "standard set
+only") (668 → 670 `en` keys).
+
+**Tests**: `test/unit-gen-wizard.test.js` extended in place (same file, no new `run()` line, now 10
+checks): `_genWizardCreateNow()` forces both fields even when they start at the opposite state and
+calls `doGenerate()` exactly once (mutation-tested, both fields independently); a no-op-on-already-
+correct-fields sanity check; and the `doGenerate()` empty-topic-guard fix (mutation-tested: reverting
+the `_genWizardGoto(2)` call goes red). Full suite green (270/236, same counts), `check-inline` clean
+on both `index.html` and the rebuilt `docs/index.html`.
+
+**Verified live** against the running dev server: the shortcut correctly forces arc-off and
+format-standard and invokes `doGenerate()` (verified with `doGenerate` temporarily stubbed, to avoid
+spending a real LLM call purely on UI-wiring verification — the underlying `doGenerate()` call path
+itself is exercised elsewhere in the suite, unchanged by this cut). ⚠️ The new `ui.json` strings did
+NOT show translated text live in the browser — the running dev server's `fs.watch(UI_FILE, …)`
+hot-reload did not pick up the edit (a known Node/editor-tool interaction: an editor that writes via
+temp-file-then-rename can silently stop a `fs.watch` watcher for the original path). Not a code bug —
+confirmed via `curl /api/ui?lang=en` that the server's in-memory copy was simply stale, unrelated to
+whether the STRINGS THEMSELVES are correct (they are: `node -e "require('./ui.json')"` parses clean,
+and the automated tests load the file fresh, independent of any running server). Static English
+fallback text is embedded in the raw HTML either way, so nothing was ever visibly broken — only the
+live dev server's OWN in-memory cache was stale, and it needs the restart the session protocol already
+gates behind asking first.
+
 ## ✅ v85_d — `PLAN §13` milestone 2, PARTIAL: the chaptering-card split (the "create storyline now" shortcut is OPEN — see below)
 
 Continuing the same *"PLAN §13 milestone 1, and continue until you need decisions from me"* session.
@@ -1817,7 +1876,7 @@ inline` clean on both `index.html` and the rebuilt `docs/index.html`. Verified l
 pane: all four cards paginate correctly with real form state (typed topic, chaptering slider,
 lesson-format select) surviving navigation; dialect-mode atomic hide re-confirmed post-split.
 
-### ⚠️ OPEN, found while scoping this cut — needs a decision before building
+### ⚠️ OPEN, found while scoping this cut — needs a decision before building — ✅ RESOLVED at `v85_e`, see that entry above
 
 **The "create storyline now, add lessons later" shortcut was investigated, not built.** `PLAN §13`'s
 own text says it "reuses the existing empty-lesson-type no-op (`index.html`,
