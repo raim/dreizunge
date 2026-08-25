@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
+| **SHIPPED IN THE v85 LINE** | `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13`** — the generator-page redesign, scoped at the `v85_a` cut — **is now FULLY SHIPPED** (all five milestones, `v85_c` through `v85_i`); its own section below still carries the full assessment/build-order text for reference, but nothing in it is open any more. The browser-reachable single-chapter CP1-4 pipeline it deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -1762,6 +1762,48 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_j — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI (client-side only)
+
+New session, continuing straight from the `PLAN §2.4` probe/scoping work recorded earlier in this
+same file (see "PLAN §2.4 — RESULT PART 1/2/3" and "PLAN §2.4 — UI SCOPING" above). User: "start."
+
+**What shipped**: a new `#comic-panel` (sibling of `#pdf-panel`/`#user-story-panel`/`#dialect-panel`
+inside `#gen-card-2`), gated by a new `use-comic-cb` checkbox — the same exclusive-mode shape
+`onUseDialectCb()` already established, now made mutually exclusive in BOTH directions against BOTH
+other modes (a small hook added to `onUseStoryCb()`/`onUseDialectCb()` each, since neither knew about
+a third mode; the pre-existing story↔dialect asymmetry — dialect excludes story, story never excluded
+dialect — was left exactly as found, out of scope for this addition).
+
+The actual new thing: a canvas-based rectangle-drawing UI over an uploaded image — mouse AND touch
+(`_comicPointerStart/Move/End` through one shared coordinate extractor), storing panel boxes in
+NATURAL IMAGE PIXEL coordinates (not the 0-1000-normalized space this session's vision-model probes
+used — that conversion, if still needed, belongs at extraction time, not this milestone). A drag in
+any direction normalizes correctly; a near-zero drag (a stray click/tap) is rejected rather than
+stored as a degenerate panel. The resulting box list supports reorder (↑/↓, bounds-checked) and
+delete, with numbered/colored badges matching the canvas overlay.
+
+**NO model call anywhere in this release** — extraction is milestone 2, deliberately deferred (per
+the milestone plan's own build order: ship the model-independent part first). `_comicPanels()` is the
+accessor milestone 2 will read through, already in place, returning a defensive copy.
+
+One guard worth flagging: `_comicRedraw()`'s `if(!ctx) return` — genuinely load-bearing, not defensive
+dead code. Mutation-tested: removing it throws a `TypeError` on `canvas.getContext` as early as
+`onUseComicCb()`'s own `comicClearPanels()` call, since `test/lib-dom.js`'s DOM stub has no 2D canvas
+support at all (confirmed live, not just asserted).
+
+Verified live in the browser (fresh preview server, not the user's own — no server.js change this
+release anyway): checkbox → panel opens → uploaded a synthetic test image → drew two boxes via real
+mouse drags → reorder and delete both confirmed visually → unchecking clears everything → checking
+"own story" while comic was open correctly closed comic (exclusivity confirmed live, not just in the
+unit test).
+
+4 new `ui.json` keys, `en` only per standing rule (`form.use_comic`/`comic_help`/`comic_choose`/
+`comic_clear`). New `test/unit-comic-panel-ui.test.js` (10 checks). `INTERNALS.md` §6b has the full
+mechanism table.
+
+**Not started**: milestones 2-4 (extraction, chapter formation, progress-card integration) — see the
+"PLAN §2.4 — UI SCOPING" section for the plan, unchanged by this release.
 
 ## ✅ v85_i — `PLAN §13` milestone 5, part 2 (LAST item): attribution fields at generation time — `PLAN §13` IS NOW FULLY DONE
 

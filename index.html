@@ -1182,6 +1182,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <input type="checkbox" id="use-dialect-cb" onchange="onUseDialectCb()">
             <span id="use-dialect-lbl">💬 I have a dialect glossary (dialect = standard word)</span>
           </label>
+          <label class="user-story-check-row">
+            <input type="checkbox" id="use-comic-cb" onchange="onUseComicCb()">
+            <span id="use-comic-lbl">🖼️ I have a comic page image</span>
+          </label>
         </div>
         <div class="pdf-panel" id="pdf-panel">
           <div id="pdf-chunk-list" class="pdf-chunk-list"></div>
@@ -1311,6 +1315,33 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <span id="dialect-import-status" style="font-size:12px;color:var(--gray-dark)"></span>
           </div>
           <div id="dialect-report" style="margin-top:8px;font-size:12px"></div>
+        </div>
+
+        <!-- PLAN §2.4 / Track A4 milestone 1 (v85_j): comic upload + panel-drawing UI. No model calls —
+             this panel only lets the user draw panel rectangles over an uploaded page and manage the
+             resulting list; text extraction (milestone 2) reads _comicPanels() built here but is not
+             wired up yet. Mirrors #dialect-panel's exclusive-mode toggle (onUseComicCb ~ onUseDialectCb). -->
+        <div class="user-story-panel" id="comic-panel">
+          <div style="font-size:12px;color:var(--gray-dark);margin-bottom:6px" id="comic-help">
+            Upload a comic page, then drag a rectangle around each panel, in reading order. You can
+            delete or reorder panels afterward.
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+            <input type="file" id="comic-file-input" accept="image/png,image/jpeg" style="display:none" onchange="onComicFileChosen(this)">
+            <button type="button" id="comic-choose-btn" onclick="document.getElementById('comic-file-input').click()"
+              style="font-size:12px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"><span id="comic-choose-lbl">🖼️ Upload a comic page</span></button>
+            <span id="comic-upload-status" style="font-size:11px;color:var(--gray-dark)"></span>
+          </div>
+          <div id="comic-draw-wrap" style="display:none;position:relative;max-width:100%;touch-action:none">
+            <img id="comic-draw-img" style="display:block;max-width:100%;height:auto;user-select:none;-webkit-user-drag:none" draggable="false">
+            <canvas id="comic-draw-canvas" style="position:absolute;top:0;left:0;cursor:crosshair"></canvas>
+          </div>
+          <div id="comic-panel-list" style="display:flex;flex-direction:column;gap:4px;margin-top:8px"></div>
+          <div id="comic-panel-actions" style="display:none;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+            <button type="button" id="comic-clear-btn" onclick="comicClearPanels()"
+              style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🗑 <span id="comic-clear-lbl">Clear panels</span></button>
+            <span id="comic-panel-count" style="font-size:12px;color:var(--gray-dark)"></span>
+          </div>
         </div>
 
       <div class="gen-card-nav" style="display:flex;justify-content:space-between;margin-top:10px">
@@ -2739,6 +2770,10 @@ function applyUIStrings() {
   if (useStoryLbl) useStoryLbl.textContent = t('form.use_story');
   { const ud=document.getElementById('use-dialect-lbl'); if(ud) ud.textContent=t('form.use_dialect'); }
   { const ub=document.getElementById('upload-choose-lbl'); if(ub) ub.textContent=t('form.upload_doc'); }
+  { const uc=document.getElementById('use-comic-lbl'); if(uc) uc.textContent=t('form.use_comic'); }
+  { const ch=document.getElementById('comic-help'); if(ch) ch.textContent=t('form.comic_help'); }
+  { const cc=document.getElementById('comic-choose-lbl'); if(cc) cc.textContent=t('form.comic_choose'); }
+  { const ccl=document.getElementById('comic-clear-lbl'); if(ccl) ccl.textContent=t('form.comic_clear'); }
   _renderSplitModes();
   { const cl=document.getElementById('pdf-cleanup-lbl'); if(cl) cl.textContent=t('pdf.cleanup_lbl'); }
   { const al=document.getElementById('pdf-aiclean-lbl'); if(al) al.textContent=t('pdf.aiclean_lbl'); }
@@ -3351,6 +3386,11 @@ function onUseStoryCb(){
     document.getElementById('user-translation-panel').classList.remove('open');
     _clearUpload();
   }
+  // v85_j: comic mode is exclusive against this one too (mirrors onUseDialectCb's own story-exclusion
+  // below) — otherwise #comic-panel and #user-story-panel could both show at once, each hiding/showing
+  // #topic-input differently. Does NOT touch the pre-existing story vs. dialect asymmetry (dialect
+  // already excludes story; story never excluded dialect) — out of scope for this addition.
+  if(on){ const uc=document.getElementById('use-comic-cb'); if(uc&&uc.checked){ uc.checked=false; onUseComicCb(); } }
   const lbl=document.getElementById('topic-label');
   if(lbl) lbl.textContent=on?t('form.topic_label_story'):topicLabelText();
 }
@@ -3382,7 +3422,11 @@ function onUseDialectCb(){
   // Hide the OTHER form toggles (own-story/translation) while in dialect mode to avoid confusion,
   // but keep the dialect checkbox itself usable (it lives in the same row group).
   // We do this by dimming siblings rather than hiding the group that contains our own checkbox.
-  if(on){ const us=document.getElementById('use-story-cb'); if(us&&us.checked){ us.checked=false; onUseStoryCb(); } }
+  if(on){
+    const us=document.getElementById('use-story-cb'); if(us&&us.checked){ us.checked=false; onUseStoryCb(); }
+    // v85_j: same reasoning as onUseStoryCb's new comic-exclusion hook above — added on this side too.
+    const uc=document.getElementById('use-comic-cb'); if(uc&&uc.checked){ uc.checked=false; onUseComicCb(); }
+  }
 }
 function onDialectFileChosen(input){
   const f=input.files&&input.files[0]; if(!f) return;
@@ -3433,6 +3477,171 @@ async function doDialectImport(){
   }catch(e){ if(statusEl) statusEl.textContent=''; showToast(t('dialect.toast.failed')+': '+e.message); }
   finally{ if(btn){ btn.disabled=false; } }
 }
+// ── Comic panel-drawing UI (PLAN §2.4 / Track A4 milestone 1, v85_j) ──────────────────────────
+// Client-side only: upload an image, draw panel rectangles over it, manage the list. No model call
+// anywhere in this block — text extraction is milestone 2. Boxes are stored in NATURAL image pixel
+// coordinates (not the 0-1000 normalized space this session's probes used for talking to a vision
+// model) — that conversion, if still needed at all, belongs at extraction time, not here; storing
+// raw pixels keeps this milestone's data independent of any later backend/model choice.
+const APP_COMIC = { dataUrl: null, naturalW: 0, naturalH: 0, boxes: [], drawing: null };
+
+function onUseComicCb(){
+  const on=document.getElementById('use-comic-cb').checked;
+  const panel=document.getElementById('comic-panel');
+  if(panel) panel.classList.toggle('open',on);
+  // Same exclusive-mode shape as onUseDialectCb: comic import replaces the normal generation form
+  // for now (milestone 3 will feed extracted chapters back into it; not this milestone's job).
+  const gf=document.getElementById('gen-form-section'); if(gf) gf.style.display=on?'none':'';
+  const gbr=document.getElementById('gen-btn-row'); if(gbr) gbr.style.display=on?'none':'';
+  const topicLbl=document.getElementById('topic-label'); if(topicLbl) topicLbl.style.display=on?'none':'';
+  const topicRow=document.getElementById('topic-input'); if(topicRow) topicRow.style.display=on?'none':'';
+  if(on){
+    const us=document.getElementById('use-story-cb'); if(us&&us.checked){ us.checked=false; onUseStoryCb(); }
+    const ud=document.getElementById('use-dialect-cb'); if(ud&&ud.checked){ ud.checked=false; onUseDialectCb(); }
+  } else {
+    comicClearPanels();
+    APP_COMIC.dataUrl=null; APP_COMIC.naturalW=0; APP_COMIC.naturalH=0;
+    const wrap=document.getElementById('comic-draw-wrap'); if(wrap) wrap.style.display='none';
+    const status=document.getElementById('comic-upload-status'); if(status) status.textContent='';
+  }
+}
+
+function onComicFileChosen(input){
+  const f=input.files&&input.files[0]; if(!f) return;
+  const status=document.getElementById('comic-upload-status');
+  const r=new FileReader();
+  r.onload=()=>{
+    APP_COMIC.dataUrl=String(r.result||'');
+    const img=document.getElementById('comic-draw-img');
+    img.onload=()=>{
+      APP_COMIC.naturalW=img.naturalWidth; APP_COMIC.naturalH=img.naturalHeight;
+      comicClearPanels();   // a new image invalidates any boxes drawn over the old one
+      document.getElementById('comic-draw-wrap').style.display='';
+      if(status) status.textContent='';
+      _comicSetupCanvas();
+    };
+    img.src=APP_COMIC.dataUrl;
+  };
+  r.onerror=()=>{ if(status) status.textContent='⚠ could not read file'; };
+  if(status) status.textContent='loading…';
+  r.readAsDataURL(f);
+  input.value='';
+}
+
+// Canvas is sized to the DISPLAYED (CSS) size of the image, not its natural resolution — it only
+// draws selection rectangles, never the image itself, so 1:1-with-natural would be wasted work and
+// would need its own resize-observer to stay in sync with responsive CSS width. Coordinates are
+// converted to natural-pixel space at mouseup/touchend, once, when a box is actually committed.
+function _comicSetupCanvas(){
+  const img=document.getElementById('comic-draw-img');
+  const canvas=document.getElementById('comic-draw-canvas');
+  const cssW=img.clientWidth, cssH=img.clientHeight;
+  canvas.width=cssW; canvas.height=cssH;
+  canvas.style.width=cssW+'px'; canvas.style.height=cssH+'px';
+  // Re-attach handlers each time in case cloning/resizing ever recreated the element; cheap and
+  // idempotent (removeEventListener on a never-added listener is a silent no-op).
+  canvas.onmousedown=null; canvas.onmousemove=null; canvas.onmouseup=null; canvas.onmouseleave=null;
+  canvas.addEventListener('mousedown', _comicPointerStart);
+  canvas.addEventListener('mousemove', _comicPointerMove);
+  canvas.addEventListener('mouseup', _comicPointerEnd);
+  canvas.addEventListener('mouseleave', _comicPointerCancel);
+  canvas.addEventListener('touchstart', _comicPointerStart, {passive:false});
+  canvas.addEventListener('touchmove', _comicPointerMove, {passive:false});
+  canvas.addEventListener('touchend', _comicPointerEnd, {passive:false});
+  canvas.addEventListener('touchcancel', _comicPointerCancel, {passive:false});
+  _comicRedraw();
+}
+
+function _comicEventXY(e){
+  const canvas=document.getElementById('comic-draw-canvas');
+  const rect=canvas.getBoundingClientRect();
+  const pt=(e.touches&&e.touches[0]) || (e.changedTouches&&e.changedTouches[0]) || e;
+  return { x: pt.clientX-rect.left, y: pt.clientY-rect.top };
+}
+function _comicPointerStart(e){
+  e.preventDefault();
+  const {x,y}=_comicEventXY(e);
+  APP_COMIC.drawing={x1:x,y1:y,x2:x,y2:y};
+  _comicRedraw();
+}
+function _comicPointerMove(e){
+  if(!APP_COMIC.drawing) return;
+  e.preventDefault();
+  const {x,y}=_comicEventXY(e);
+  APP_COMIC.drawing.x2=x; APP_COMIC.drawing.y2=y;
+  _comicRedraw();
+}
+function _comicPointerEnd(e){
+  if(!APP_COMIC.drawing) return;
+  e.preventDefault();
+  const d=APP_COMIC.drawing; APP_COMIC.drawing=null;
+  const canvas=document.getElementById('comic-draw-canvas');
+  const sx=APP_COMIC.naturalW/canvas.width, sy=APP_COMIC.naturalH/canvas.height;
+  const x1=Math.round(Math.min(d.x1,d.x2)*sx), y1=Math.round(Math.min(d.y1,d.y2)*sy);
+  const x2=Math.round(Math.max(d.x1,d.x2)*sx), y2=Math.round(Math.max(d.y1,d.y2)*sy);
+  // A click/tap with no real drag produces a degenerate box — ignore it rather than store a
+  // zero-area "panel" the extraction step would have nothing to crop.
+  if(x2-x1<8 || y2-y1<8){ _comicRedraw(); return; }
+  APP_COMIC.boxes.push({x1,y1,x2,y2});
+  _comicRedraw(); _comicRenderList();
+}
+function _comicPointerCancel(){ APP_COMIC.drawing=null; _comicRedraw(); }
+
+const _COMIC_COLORS=['#e6194b','#3cb44b','#4363d8','#f58231','#911eb4','#46f0f0','#f032e6','#bcf60c'];
+function _comicRedraw(){
+  const canvas=document.getElementById('comic-draw-canvas'); if(!canvas||!canvas.getContext) return;
+  const ctx=canvas.getContext('2d'); if(!ctx) return;   // no 2D canvas support (or a test harness stub)
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const sx=canvas.width/(APP_COMIC.naturalW||1), sy=canvas.height/(APP_COMIC.naturalH||1);
+  APP_COMIC.boxes.forEach((b,i)=>{
+    const x=b.x1*sx, y=b.y1*sy, w=(b.x2-b.x1)*sx, h=(b.y2-b.y1)*sy;
+    const color=_COMIC_COLORS[i%_COMIC_COLORS.length];
+    ctx.strokeStyle=color; ctx.lineWidth=3; ctx.strokeRect(x,y,w,h);
+    ctx.fillStyle=color; ctx.fillRect(x,y,20,18);
+    ctx.fillStyle='#fff'; ctx.font='bold 12px sans-serif'; ctx.fillText(String(i+1),x+6,y+13);
+  });
+  if(APP_COMIC.drawing){
+    const d=APP_COMIC.drawing;
+    ctx.strokeStyle='#333'; ctx.lineWidth=2; ctx.setLineDash([5,3]);
+    ctx.strokeRect(Math.min(d.x1,d.x2),Math.min(d.y1,d.y2),Math.abs(d.x2-d.x1),Math.abs(d.y2-d.y1));
+    ctx.setLineDash([]);
+  }
+}
+function _comicRenderList(){
+  const list=document.getElementById('comic-panel-list'); if(!list) return;
+  const actions=document.getElementById('comic-panel-actions');
+  const count=document.getElementById('comic-panel-count');
+  if(!APP_COMIC.boxes.length){ list.innerHTML=''; if(actions) actions.style.display='none'; return; }
+  if(actions) actions.style.display='flex';
+  if(count) count.textContent=APP_COMIC.boxes.length+' panel'+(APP_COMIC.boxes.length===1?'':'s');
+  list.innerHTML=APP_COMIC.boxes.map((b,i)=>{
+    const color=_COMIC_COLORS[i%_COMIC_COLORS.length];
+    return `<div style="display:flex;align-items:center;gap:6px;padding:4px 8px;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;font-size:12px">
+      <span style="display:inline-block;width:16px;height:16px;border-radius:3px;background:${color};color:#fff;text-align:center;font-weight:800;font-size:11px;line-height:16px">${i+1}</span>
+      <span style="flex:1;color:var(--gray-dark)">${b.x2-b.x1}×${b.y2-b.y1}px</span>
+      <button type="button" onclick="comicMovePanel(${i},-1)" ${i===0?'disabled':''} style="border:none;background:none;cursor:pointer;font-size:13px" title="Move up">↑</button>
+      <button type="button" onclick="comicMovePanel(${i},1)" ${i===APP_COMIC.boxes.length-1?'disabled':''} style="border:none;background:none;cursor:pointer;font-size:13px" title="Move down">↓</button>
+      <button type="button" onclick="comicDeletePanel(${i})" style="border:none;background:none;cursor:pointer;font-size:13px;color:var(--red-dark)" title="Delete">✕</button>
+    </div>`;
+  }).join('');
+}
+function comicDeletePanel(i){
+  APP_COMIC.boxes.splice(i,1);
+  _comicRedraw(); _comicRenderList();
+}
+function comicMovePanel(i,dir){
+  const j=i+dir; if(j<0||j>=APP_COMIC.boxes.length) return;
+  const tmp=APP_COMIC.boxes[i]; APP_COMIC.boxes[i]=APP_COMIC.boxes[j]; APP_COMIC.boxes[j]=tmp;
+  _comicRedraw(); _comicRenderList();
+}
+function comicClearPanels(){
+  APP_COMIC.boxes=[]; APP_COMIC.drawing=null;
+  _comicRedraw(); _comicRenderList();
+}
+// milestone 2's extraction step reads panels through this accessor rather than APP_COMIC directly,
+// so the storage shape above can change without hunting down every call site.
+function _comicPanels(){ return APP_COMIC.boxes.map(b=>({...b})); }
+
 // ── Dialect studio (M2 controls, shown on a dialect topic's lesson-set page) ──
 // Flow: enter a topic (+ optional dialect instructions) → generate a coherent dialect story (the
 // review sample, always marked AI/needs-review) → read it below → approve it (records human
