@@ -4404,6 +4404,29 @@ a parallel player, new progress system, bulk corpus rewrite, or a BKT-driven gat
 > alone which words the model was actually unsure about, even though that information existed
 > earlier in the pipeline and was simply dropped at the last packaging step.
 
+> **📝 ADDENDUM, `v84_n` cut — the `v83_p` re-run this note asked for was ATTEMPTED, not completed.**
+> The user asked to re-run `apply-cp-lessons.js --topic tp_17865786341910000220 --replace` against
+> `qwen3.6:35b-a3b` specifically to see whether `v83_p`'s register fix now produces a correct
+> `kommen`/`kam`-style pairing (confirmed first: the topic's existing `cp4` lesson in `lessons.json`,
+> `ls_1787562422637_cp4`, still carries the ORIGINAL buggy `target:"kommen"`/`source:"venne"` pair
+> with no `lemma` field at all — its `_genMeta.at` timestamp is ~47 minutes BEFORE `v83_p`'s own
+> commit, confirming it predates the fix and was never regenerated, since `apply-cp-lessons.js`
+> additively never touches an existing lesson). Two attempts against the real Ollama server both
+> failed to complete: attempt 1 (report-only) was killed by an over-eager `timeout 300` wrapper
+> around the shell command, not the script itself, while still mid-analysis. Attempt 2 (against a
+> scratch copy of `lessons.json`, `--write` so the actual output could be inspected — the REAL
+> `lessons.json` was never touched by either attempt, confirmed by checksum before and after) ran the
+> full 12 minutes and hit `llm.js`'s own `OLLAMA_TIMEOUT` (720000ms default) with `Error: Ollama
+> timeout`. **Root cause was the machine, not the code**: at the time, free RAM was under 1GB (out of
+> 62GB, ~6GB in swap), THREE Ollama models were simultaneously loaded with an effectively-infinite
+> `keep_alive` (`qwen3.6:35b-a3b` ~25GB + `translategemma:12b` ~8GB + `qwen2.5:7b` ~5GB), and FIVE
+> concurrent Claude Code sessions were running on the same box — very likely at least one of them
+> also issuing Ollama calls against the SAME single-threaded (`-np 1`) inference server this script
+> was queued behind. Reported to the user with the concrete numbers rather than silently retried
+> against an overloaded machine; the user chose to skip it for now. **Still open, still worth doing**
+> when the machine isn't under this much concurrent load — nothing about `v83_p`'s actual code fix
+> was disproven, the test itself just never got to run to completion.
+
 Sequenced so each step is independently useful:
 
 1. **A1 — plain text / markdown upload with a separate chaptering card.** No §2 dependency at all,
