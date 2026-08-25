@@ -1275,6 +1275,26 @@ see `roadmap_v85.md`'s own `v85_e` entry for the full write-up)
 
 ---
 
+**`v85_f` — `PLAN §13` milestone 3: label reword + per-chapter lesson-type override** (the user's
+ruling on how the override should work — *"sequential, reusing existing per-chapter endpoint"*, NOT a
+new server-side per-chapter `arcTypes` body shape — see `roadmap_v85.md`'s own `v85_f` entry for the
+full write-up and the investigation that found `/api/generate-book`'s `arcTypes` is uniform per book,
+never per-chapter, today)
+
+| what | where |
+|---|---|
+| **the label reword** | `form.arc_lbl` — ALREADY one shared `ui.json` key for both `#gen-arc-lbl` and `#pdf-arc-lbl`, translated into all 33 languages. `en` value changed to "🎯 Add more lesson types to each chapter" (+ matching static HTML fallback in both places); other languages lag until translated, same pattern `v85_d`'s `gen.wizard_step3` reword used |
+| **`#per-chapter-row`** (on `#gen-card-4`) | checkbox + `#per-chapter-list`, same multi-chapter-only visibility gate `onNumChaptersSlider()` already applies to `#gen-arc-row` (extended, not duplicated) — including resetting (uncheck + hide) if the learner drops back to 1 chapter with it already open |
+| **`_renderPerChapterTypes()`** | renders ONE `renderLessonTypeChecks()` tick-list PER PLANNED CHAPTER (`1..APP.numChapters` — chapters don't exist yet, only a count is known), each its own container (`#per-chapter-types-N`) + class (`pc-lt-check-N`) so `_readPerChapterTypes(n)` can read them back independently as an array of arrays |
+| **`renderLessonTypeChecks()`'s new `noMixed` option** | suppresses the "🔀 finish with mixed review" row — `mixed` owns no content of its own, it's created CLIENT-SIDE against an already-loaded chapter's lesson list (`doAddLesson()`'s own `mixed` branch), which the per-chapter picker never loads (only `topicId`s, once the book job finishes). The TWO existing callers (`renderArcTypeChecks`, `doAddLesson`'s own card) omit the option and are UNCHANGED — proven by a dedicated test, not just asserted |
+| **the override REPLACES the shared arc for that generation** | `doGenerate()`'s multi-chapter branch captures `perChapterTypes` via `_readPerChapterTypes(nCh)` BEFORE the `/api/generate-book` request fires (the picker's own DOM lives on a screen the learner may leave long before the book job finishes) and skips setting `gbody.arc`/`gbody.arcTypes` entirely when the override is on — even if `#gen-arc-cb` is left checked. A type must never be requested twice for the same chapter |
+| **`_applyPerChapterTypes(finalJob, perChapterTypes)`** | runs AFTER the book job completes (chained via `.then()` onto `_pollGenBook()`'s own returned promise, not awaited inline — `doGenerate()` stays fire-and-forget for the book job exactly as before this milestone). One `/api/lessons/add-lesson` call per (chapter, type) pair, SEQUENTIALLY (gentle on the backend); one call's failure is caught and does not abort the rest of the batch |
+| ⚠️ **`_pollGenBook()` now RETURNS the final job status** | previously fire-and-forget, its resolution discarded by its one pre-existing caller. Hoisted `j` out of the polling loop and added `return j;` at the end — the ONLY new caller (`_applyPerChapterTypes`) needs `chapters[].topicId`; every other behaviour is unchanged |
+| the acceptance tests | new `test/unit-per-chapter-types.test.js` (8 checks, several mutation-tested): markup nesting, the visibility gate + reset, exactly N real rows rendered, `noMixed` proven not to affect existing callers, per-row read independence, `doGenerate()` never setting `gbody.arc` when the override is on, `_applyPerChapterTypes()`'s call targeting/skip logic/failure isolation, and `_pollGenBook()`'s return value. `test/unit-recreate-ui.test.js` (pre-existing, checks `form.arc_lbl`'s KEY exists, not its value) needed no change |
+| ⚠️ **two harness gotchas hit writing that file, both now documented in its own header** | `document.getElementById`/`.querySelector` NEVER return null on a miss (`lib-dom.js` auto-vivifies an empty `<div>` stub, deliberately) — `!!getElementById(...)`/`!!querySelector(...)` are therefore ALWAYS true; check `.tagName` against the expected real result (or a container's `.children.length`) instead. Separately, `vm.runInContext` (`C.run()`) executes each string as a plain script — a bare top-level `await` inside one is a SyntaxError; wrap async work in its own `(async()=>{...})()` IIFE inside the string, do the real `await` OUTSIDE via a `settle()`-style delay between separate `C.run()` calls (the shape `unit-ui-journeys.test.js` already used) |
+
+---
+
 **Keep 6b current the cheap way:** when a session's write-up names a function it had to hunt for,
 add the row. A wrong row is worse than a missing one, so only add names verified in that session.
 

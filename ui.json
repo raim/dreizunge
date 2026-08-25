@@ -467,7 +467,7 @@
     "story.edit.saved_local": "✓ Saved — export to keep your changes",
     "story.edit.static_no_aihunt": "✓ Saved. Regenerating the AI error hunt needs the full app.",
     "form.format.word_forms": "🧩 Word Forms — pick the form that fits",
-    "form.arc_lbl": "🎯 Build a learning arc per chapter",
+    "form.arc_lbl": "🎯 Add more lesson types to each chapter",
     "sl.continue": "Continue",
     "sl.download": "Download",
     "sl.clear_progress": "Clear progress",
@@ -669,7 +669,10 @@
     "gen.wizard_back": "← Back",
     "gen.wizard_next": "Next →",
     "gen.wizard_create_now": "📖 Create storyline now, add lessons later",
-    "gen.wizard_create_now_hint": "Generates the chapters with the standard lesson set only, skipping extra types and the per-chapter learning arc — add more lesson types per chapter later from the storyline screen."
+    "gen.wizard_create_now_hint": "Generates the chapters with the standard lesson set only, skipping extra types and the per-chapter learning arc — add more lesson types per chapter later from the storyline screen.",
+    "gen.per_chapter_lbl": "🎯 Choose lesson types per chapter",
+    "gen.per_chapter_heading": "Chapter {n}",
+    "gen.per_chapter_done": "extra lessons"
   },
   "nl": {
     "qc.editor.suggests_by": "⚑ {model} stelt voor:",

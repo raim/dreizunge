@@ -1226,7 +1226,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           <div id="pdf-arc-row" style="display:none">
             <label class="user-story-check-row">
               <input type="checkbox" id="pdf-arc-cb">
-              <span id="pdf-arc-lbl">🎯 Build a learning arc per chapter</span>
+              <span id="pdf-arc-lbl">🎯 Add more lesson types to each chapter</span>
             </label>
             <!-- v71_u: the two-option <select> here became the shared tick-list. Same operation as the
                  storyline "add lessons" run, which has had the full picker since v71_p — so a type
@@ -1335,7 +1335,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           <div id="gen-arc-row" style="display:none;margin-top:6px">
             <label class="user-story-check-row">
               <input type="checkbox" id="gen-arc-cb" checked>
-              <span id="gen-arc-lbl">🎯 Build a learning arc per chapter</span>
+              <span id="gen-arc-lbl">🎯 Add more lesson types to each chapter</span>
             </label>
             <div id="gen-arc-types" class="user-story-checks" style="margin:3px 0 0 24px"></div>
             <label class="user-story-check-row" id="gen-arc-script-row" style="display:none;margin:4px 0 0 24px">
@@ -1438,6 +1438,19 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             </select>
             <span class="format-select-arrow">▾</span>
           </div>
+        </div>
+        <!-- PLAN §13 milestone 3 (v85_f, user ruling: "sequential, reusing existing per-chapter
+             endpoint" — NOT a new server-side per-chapter arcTypes body shape). Only meaningful for
+             multi-chapter generation, same gate #gen-arc-row already uses — see
+             onNumChaptersSlider()'s own toggle for both. When on, this REPLACES the shared "arc"
+             checkbox on card 3 for THIS generation (doGenerate() forces arc:false), so a type is
+             never requested twice for the same chapter. -->
+        <div id="per-chapter-row" style="display:none;margin-top:10px">
+          <label class="user-story-check-row">
+            <input type="checkbox" id="per-chapter-cb" onchange="onPerChapterCb()">
+            <span id="per-chapter-lbl">🎯 Choose lesson types per chapter</span>
+          </label>
+          <div id="per-chapter-list" style="display:none;margin:6px 0 0 24px"></div>
         </div>
         <div id="gen-btn-row" style="display:flex;gap:8px;align-items:center"><button class="gen-btn" id="gen-btn" onclick="doGenerate()" style="flex:1">Generate lessons →</button><button class="stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="font-size:20px;border:none;background:none;cursor:pointer;padding:4px 6px;display:none;flex-shrink:0">🛑</button></div>
         </div><!-- end gen-card-4 -->
@@ -2639,6 +2652,7 @@ function applyUIStrings() {
   _setText('gen-step-back-4', t('gen.wizard_back'));
   _setText('gen-create-now-btn', t('gen.wizard_create_now'));
   _setAttr('gen-create-now-btn', 'title', t('gen.wizard_create_now_hint'));
+  _setText('per-chapter-lbl', t('gen.per_chapter_lbl'));
   // PLAN §C5 stage 2: the generation screen's own header title and the library's "+ Generate new"
   // entry point — neither is a `.form-lbl[data-i18n]`, so they need an explicit set here rather
   // than riding the generic sweep those get.
@@ -3211,6 +3225,13 @@ function onNumChaptersSlider(v){
   const arcRow=document.getElementById('gen-arc-row'); if(arcRow) arcRow.style.display=APP.numChapters>1?'':'none';
   if(APP.numChapters>1) renderArcTypeChecks('gen-arc-types');
   updateArcScriptRow();
+  // PLAN §13 milestone 3 (v85_f): the per-chapter override, same multi-chapter-only gate as the arc
+  // row above (they are alternatives, not both meaningful at once — see doGenerate()'s own comment).
+  // If it's already toggled on, re-render: the row COUNT depends on APP.numChapters, so a chapter-
+  // count change while it's open must rebuild the list, not leave a stale number of rows.
+  const perChRow=document.getElementById('per-chapter-row'); if(perChRow) perChRow.style.display=APP.numChapters>1?'':'none';
+  if(APP.numChapters<=1 && document.getElementById('per-chapter-cb')){ document.getElementById('per-chapter-cb').checked=false; onPerChapterCb(); }
+  else if(document.getElementById('per-chapter-cb')?.checked){ _renderPerChapterTypes(); }
 }
 // The "teach the script per chapter" opt-in only makes sense when generating multiple chapters
 // AND the target uses a script the source language doesn't (so there's an alphabet to teach).
@@ -7259,7 +7280,15 @@ async function doGenerate(forceRegen){
     // "script lessons were never made" are the same bug seen twice.
     gbody.script = APP.script || null; gbody.srcScript = APP.srcScript || null;
     if(APP.storyStyle && APP.storyStyle!=='creative') gbody.storyStyle=APP.storyStyle;
-    if(document.getElementById('gen-arc-cb')?.checked){ gbody.arc=true; gbody.arcTypes=readArcTypeChecks('gen-arc-types'); gbody.arcScript=!!document.getElementById('gen-arc-script-cb')?.checked; }
+    // PLAN §13 milestone 3 (v85_f): the per-chapter override REPLACES the shared arc for this
+    // generation — a type must never be requested twice for the same chapter (once via arc, once
+    // via _applyPerChapterTypes' own follow-up calls). Captured here, BEFORE the request fires, into
+    // a plain array (not read again later — #per-chapter-types-N containers this reads from live
+    // inside #gen-card-4, which _pollGenBook's own completion may run long after the learner has
+    // navigated elsewhere and those containers no longer exist).
+    const perChapterOn = document.getElementById('per-chapter-cb')?.checked;
+    const perChapterTypes = perChapterOn ? _readPerChapterTypes(nCh) : null;
+    if(!perChapterOn && document.getElementById('gen-arc-cb')?.checked){ gbody.arc=true; gbody.arcTypes=readArcTypeChecks('gen-arc-types'); gbody.arcScript=!!document.getElementById('gen-arc-script-cb')?.checked; }
     try{
       const r=await fetch('/api/generate-book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(gbody)});
       const resp=await r.json();
@@ -7267,7 +7296,12 @@ async function doGenerate(forceRegen){
       showToast(t('toast.generating',{topic}));
       setGenStatus('running',`📖 0/${nCh}`);
       showGeneration();
-      _pollGenBook(resp.bookId, nCh);
+      // v85_f: chained with .then(), not awaited — doGenerate() itself stays fire-and-forget for the
+      // book job exactly as before this milestone. _pollGenBook now returns its own final job status
+      // (previously discarded) purely so this ONE new caller can read it; every other behaviour of
+      // _pollGenBook is unchanged.
+      const _bookPromise = _pollGenBook(resp.bookId, nCh);
+      if(perChapterTypes) _bookPromise.then(finalJob => _applyPerChapterTypes(finalJob, perChapterTypes));
     }catch(e){ showToast('⚠ '+e.message); }
     return;
   }
@@ -7312,8 +7346,13 @@ async function doGenerate(forceRegen){
 // Observe a generated multi-chapter batch via the standard generation pill
 // (independent of the PDF panel). Generation runs server-side and survives refresh.
 async function _pollGenBook(bookId, total){
+  // v85_f: `j` hoisted out of the loop and RETURNED — previously discarded (every caller before this
+  // milestone fired this and moved on). The one new caller, PLAN §13 milestone 3's per-chapter
+  // override, needs the final job's `chapters[].topicId` to target its own follow-up calls. `null`
+  // on the 404 branch (job gone) or a fetch error that never resolved — callers must handle that,
+  // same as `_applyPerChapterTypes`'s own `!finalJob` guard does.
+  let j=null;
   while(true){
-    let j=null;
     try{
       const r=await fetch('/api/book-job/'+bookId);
       if(r.status===404) break;             // job gone (e.g. server restart)
@@ -7336,6 +7375,7 @@ async function _pollGenBook(bookId, total){
     await _sleep(2000);
   }
   await loadSavedList();
+  return j;
 }
 
 // @static-exclude-end — static build resumes here. The client engine below
@@ -9643,11 +9683,19 @@ function renderLessonTypeChecks(container, opts){
     // Reading it (see readLessonTypeChecks) appends `mixed` only when at least one real type is
     // ticked, which is what makes an empty mixed round unreachable from this form rather than
     // merely discouraged.
-    + `<div style="border-top:1px solid var(--gray-mid);margin:8px 0 6px"></div>
+    //
+    // v85_f: `o.noMixed` skips this row entirely — added for the per-chapter override picker
+    // (PLAN §13 milestone 3), which targets chapters individually via /api/lessons/add-lesson (a
+    // real lesson type per call); `mixed` owns no content of its own and is created CLIENT-SIDE
+    // against a chapter's already-loaded lesson list, which the per-chapter picker never loads (it
+    // only knows each chapter's id once the book job finishes) — genuinely out of scope for that
+    // caller, not simply omitted. The two EXISTING callers (arc, add-lesson) are unaffected: `o.noMixed`
+    // is undefined for both, same as before this option existed.
+    + (o.noMixed ? '' : `<div style="border-top:1px solid var(--gray-mid);margin:8px 0 6px"></div>
       <label class="user-story-check-row" style="gap:7px">
         <input type="checkbox" class="${(o.cls || 'lt-check')}-mixed" ${o.mixed ? 'checked' : ''}>
         <span>🔀 ${escHtml(t('form.finish_mixed'))}</span>
-      </label>`;
+      </label>`);
 }
 // v71_u: render an arc tick-list into one of the book/generate forms. Both call this, so the two
 // forms cannot drift apart the way the old two-option <select>s did. Rendered lazily (on the form
@@ -9667,6 +9715,75 @@ function renderArcTypeChecks(containerId, opts){
 // for nothing (the same reasoning as _pickLessonTypes' empty guard).
 function readArcTypeChecks(containerId){
   return readLessonTypeChecks(document.getElementById(containerId), 'arc-lt-check');
+}
+// PLAN §13 milestone 3 (v85_f) — the per-chapter lesson-type override, gated behind #per-chapter-cb
+// on #gen-card-4. Toggling it on renders ONE renderLessonTypeChecks() tick-list per PLANNED chapter
+// (1..APP.numChapters — chapters don't exist yet at this point, only a count), each in its own
+// container/class pair so they read back independently. Genuinely re-renders on every toggle-on
+// (unlike renderArcTypeChecks's dataset.rendered guard) — the row count itself can change if the
+// learner adjusts the chapter-count slider first, so there is no stable "already populated" state to
+// preserve across that.
+function onPerChapterCb(){
+  const on = document.getElementById('per-chapter-cb')?.checked;
+  const list = document.getElementById('per-chapter-list');
+  if(list) list.style.display = on ? '' : 'none';
+  if(on) _renderPerChapterTypes();
+}
+function _renderPerChapterTypes(){
+  const list = document.getElementById('per-chapter-list');
+  if(!list) return;
+  const n = Math.max(1, Math.min(20, APP.numChapters||1));
+  const hasScript = typeof needsIntroScript==='function' && needsIntroScript(APP.lang, APP.srcLang, { script: APP.script, srcScript: APP.srcScript });
+  let html = '';
+  for(let i=1;i<=n;i++){
+    html += `<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:800;color:var(--gray-dark);margin-bottom:2px">${escHtml(t('gen.per_chapter_heading',{n:i}))}</div><div id="per-chapter-types-${i}"></div></div>`;
+  }
+  list.innerHTML = html;
+  // Rendered AFTER the innerHTML write above (each container must exist in the DOM first) — same
+  // two-pass shape renderArcTypeChecks's own single-container version doesn't need, only required
+  // here because there are N containers built from one string.
+  for(let i=1;i<=n;i++){
+    renderLessonTypeChecks(document.getElementById('per-chapter-types-'+i),
+      { cls:'pc-lt-check-'+i, checked:[], hasStory:true, hasScript, noMixed:true });
+  }
+}
+// Array of arrays, index 0 = chapter 1 — the shape doGenerate()/`_applyPerChapterTypes` both expect.
+function _readPerChapterTypes(n){
+  const out = [];
+  for(let i=1;i<=n;i++) out.push(readLessonTypeChecks(document.getElementById('per-chapter-types-'+i), 'pc-lt-check-'+i));
+  return out;
+}
+// Runs AFTER the book job finishes (chained onto _pollGenBook's own returned final status — see
+// doGenerate()'s multi-chapter branch). For each chapter that finished with a real topicId and has
+// its own selected extra types, calls the SAME /api/lessons/add-lesson endpoint doAddLesson() already
+// uses for the post-hoc per-chapter "add lesson" card — once per (chapter, type) pair, SEQUENTIALLY
+// (user ruling on the v85_e-era open question: reuse the existing endpoint, no new server-side
+// per-chapter arcTypes shape). One lesson's failure is isolated — it does not abort the rest of the
+// batch, matching how a learner adding lessons one at a time post-hoc would experience failures too.
+async function _applyPerChapterTypes(finalJob, perChapterTypes){
+  if(!finalJob || finalJob.status!=='done' || !Array.isArray(finalJob.chapters) || !Array.isArray(perChapterTypes)) return;
+  const diff = APP.difficulty || 2;
+  let total = 0;
+  finalJob.chapters.forEach((c,i)=>{ total += (perChapterTypes[i]||[]).length; });
+  if(!total) return;
+  let done = 0;
+  for(let i=0;i<finalJob.chapters.length;i++){
+    const ch = finalJob.chapters[i];
+    const types = perChapterTypes[i]||[];
+    if(!ch || !ch.topicId || !types.length) continue;
+    for(const fmt of types){
+      try{
+        setGenStatus('running', `🎯 ${done+1}/${total}`);
+        const r = await fetch('/api/lessons/add-lesson', { method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ id: ch.topicId, lessonFormat: fmt, difficulty: diff, vocabMode:'neutral' }) });
+        const resp = await r.json();
+        if(r.ok && resp.jobId) await pollJob(resp.jobId);
+      }catch(e){ /* one lesson's failure must not stop the rest of the per-chapter batch */ }
+      done++;
+    }
+  }
+  setGenStatus('done', `🎯 ${done}/${total} ${t('gen.per_chapter_done')}`);
+  await loadSavedList();
 }
 function readLessonTypeChecks(container, cls){
   if(!container) return [];

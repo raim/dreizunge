@@ -254,6 +254,7 @@ run('unit: speech-recognition answer checking (v84_g)', 'node', [path.join(__dir
 run('unit: mic starts off, re-mutes every lesson (v85_b)', 'node', [path.join(__dirname, 'unit-mic-lesson-reset.test.js')]);
 run('unit: bottom-bar hide/show toggle (v85_b)', 'node', [path.join(__dirname, 'unit-bottom-bar-toggle.test.js')]);
 run('unit: generator-page wizard shell (PLAN §13 milestone 1, v85_c)', 'node', [path.join(__dirname, 'unit-gen-wizard.test.js')]);
+run('unit: per-chapter lesson-type override (PLAN §13 milestone 3, v85_f)', 'node', [path.join(__dirname, 'unit-per-chapter-types.test.js')]);
 run('unit: hidden lessons omitted/non-blocking in static (v48)', 'node', [path.join(__dirname, 'unit-hidden-lessons.test.js')]);
 run('unit: inline onclick escaping (read-story SyntaxError)', 'node', [path.join(__dirname, 'unit-inline-escaping.test.js')]);
 run('unit: error-hunt content-aware RTL', 'node', [path.join(__dirname, 'unit-error-hunt-rtl.test.js')]);

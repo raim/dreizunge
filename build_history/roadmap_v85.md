@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_e` — `PLAN §13` milestone 2 is now FULLY shipped: the "create storyline now, add lessons later" shortcut, ruled by the user as "skip the arc, standard set only" (no new server work). `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the generator-page wizard shell (`#gen-wizard`, pure re-layout). `v85_b` — two small user-requested fixes, done first: speech-recognition auto-activation removed; a `#bottom-bar-toggle` button hides/shows `#bottom-bar` |
+| **SHIPPED IN THE v85 LINE** | `v85_f` — `PLAN §13` milestone 3: reworded the "learning arc" label away from that framing (already `ui.json`-routed, one-line fix); added a per-chapter lesson-type override at generation time, ruled by the user as "sequential, reusing existing per-chapter endpoint" (no new server-side per-chapter body shape). `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the generator-page wizard shell. `v85_b` — two small user-requested fixes, done first: speech-recognition auto-activation removed; a `#bottom-bar-toggle` button hides/shows `#bottom-bar` |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13` is NEW at this cut** — the generator-page redesign, scoped and approved this session; read it before starting `SESSION_PROMPT_v85_a.md`'s own "what to do next." |
 
@@ -1762,6 +1762,73 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_f — `PLAN §13` milestone 3: lesson-selection card polish + per-chapter override
+
+Continuing the same session, past milestone 2's own completion. Two pieces, both confirmed in scope
+at the `v85_a` assessment.
+
+**Piece 1 — the "learning arc" label reword.** Turned out to be a one-line fix: `#gen-arc-lbl` and the
+PDF path's identical `#pdf-arc-lbl` were ALREADY both wired to the same `ui.json` key,
+`form.arc_lbl` — already translated into all 33 languages (a pre-existing "ONE mechanism, no drift"
+design, not something this cut built). Changed the `en` value from "🎯 Build a learning arc per
+chapter" to "🎯 Add more lesson types to each chapter" (plus the matching static HTML fallback in
+both places) — plain language describing exactly what the checkbox does (reveals a tick-list of
+additional lesson types), no "arc" framing. Other 32 languages lag until translated, same accepted
+pattern as `v85_d`'s own `gen.wizard_step3` reword.
+
+**Piece 2 — the per-chapter lesson-type override**, the user's ruling: *"sequential, reusing existing
+per-chapter endpoint"* — investigated first (same discipline `v85_d`'s shortcut investigation used):
+`/api/generate-book`'s `arcTypes` is a SINGLE list applied uniformly to every chapter in a book — there
+is no per-chapter-different mechanism server-side today, and building one would be real new work. The
+chosen alternative reuses `/api/lessons/add-lesson` — the SAME endpoint `doAddLesson()`'s own post-hoc
+per-chapter "add lesson" card already calls, confirmed by reading it: it accepts `id` alone (no
+`topic` needed), which is exactly what a just-finished book job's `chapters[].topicId` provides.
+
+**What shipped**: a new `#per-chapter-row` on `#gen-card-4`, gated behind the same multi-chapter-only
+visibility rule `#gen-arc-row` already uses (`onNumChaptersSlider()`, extended). Checking
+`#per-chapter-cb` renders one `renderLessonTypeChecks()` tick-list PER PLANNED CHAPTER (1..
+`APP.numChapters` — chapters don't exist yet at this point, only a count) via a new
+`_renderPerChapterTypes()`; `_readPerChapterTypes(n)` reads them back as an array of arrays. The
+override REPLACES the shared arc for that generation — `doGenerate()`'s multi-chapter branch now
+captures `perChapterTypes` BEFORE the request fires (the picker's own containers live on a screen the
+learner may navigate away from long before the book job finishes) and skips setting `gbody.arc`
+entirely when it's on, even if `#gen-arc-cb` is left checked — a type must never be requested twice
+for the same chapter. After the book job completes, `_applyPerChapterTypes(finalJob, perChapterTypes)`
+calls `/api/lessons/add-lesson` once per (chapter, type) pair, SEQUENTIALLY, isolating each call's own
+failure so one bad request never aborts the rest of the batch. `_pollGenBook()` — previously
+fire-and-forget, its resolution discarded — now RETURNS the final job status so this one new caller
+can read `chapters[].topicId`; every other caller/behaviour of it is unchanged.
+
+**`renderLessonTypeChecks()` gained one new option, `noMixed`**, added because the per-chapter picker
+targets a real lesson TYPE per call — `mixed` owns no content of its own (it's created CLIENT-SIDE
+against an already-loaded chapter's lesson list, per `doAddLesson()`'s own `mixed` branch), which the
+per-chapter picker never loads. `noMixed:true` suppresses that row; both EXISTING callers (the arc
+picker, the post-hoc add-lesson card) omit the option and are unaffected — proven by a dedicated test.
+
+**New `ui.json` (`en` only)**: `gen.per_chapter_lbl`, `gen.per_chapter_heading` ("Chapter {n}"),
+`gen.per_chapter_done`; `form.arc_lbl`'s value changed, not a new key (670 → 673 `en` keys).
+
+**Tests**: new `test/unit-per-chapter-types.test.js` (8 checks, several mutation-tested): markup
+nesting; the visibility gate + reset-on-drop-to-1-chapter; exactly N rows rendered with real content
+(not harness auto-vivification — see the file's own harness-notes header, two real gotchas hit and
+recorded: `getElementById`/`querySelector` never return null on a miss, and `vm.runInContext` rejects
+top-level `await`); `noMixed` proven to not affect existing callers; `_readPerChapterTypes`'s per-row
+independence; `doGenerate()` never setting `gbody.arc` when the override is on (mutation-tested);
+`_applyPerChapterTypes()`'s call count/targeting/failure-isolation (mutation-tested, twice); and
+`_pollGenBook()`'s return value (mutation-tested). One new `run()` line (270→271 full, 236→237 quick).
+`test/unit-recreate-ui.test.js` (pre-existing, checks `form.arc_lbl`'s KEY exists, not its value) still
+passes untouched. Full suite green, `check-inline` clean on both `index.html` and the rebuilt
+`docs/index.html`.
+
+**Verified live** against the running dev server: 3-chapter generation rendered exactly 3 per-chapter
+rows, each independently tickable; `doGenerate()` confirmed (with `fetch`/`_pollGenBook`/
+`_applyPerChapterTypes` temporarily stubbed, to avoid a real LLM call for a pure wiring check) to never
+set `gbody.arc` when the override is on, even with `#gen-arc-cb` left checked.
+
+**Owed**: a real end-to-end run against a live LLM backend — chapters generated, then the per-chapter
+follow-up calls actually firing and landing the right lesson types on the right chapters — has not
+been watched by a human. The wiring is proven; the live model round-trip is not.
 
 ## ✅ v85_e — `PLAN §13` milestone 2 completed: the "create storyline now, add lessons later" shortcut
 
