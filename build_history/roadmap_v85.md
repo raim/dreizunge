@@ -2962,6 +2962,74 @@ been made on which panel-finding strategy (if any) to build on, nor on whether T
 with `qwen2.5vl:7b`, a cloud backend (not yet tried), or the manual-panel-selection design from PART 2
 — all three remain live options with real positive signal behind them now.**
 
+### PLAN §2.4 — UI SCOPING (Aug 25 2026, same session) — the manual-panel-selection design, milestone plan
+
+User: "start scoping the UI." This is the PART 2 design — user draws panel rectangles by hand,
+removing localization from the model's job, model only extracts text per drawn panel — chosen because
+it tested more reliably than any model-driven panel-FINDING strategy in PART 1/3. Two rulings made
+before scoping: **uploaded page images are stored inline as base64 in `lessons.json`** (consistent
+with the existing "everything is one JSON store" architecture; no static-asset route exists anywhere
+in this app today, and building one is out of scope for now — revisit if corpus size becomes a real
+problem); **panels are drawn first, extracted in one batch afterward**, not one-at-a-time with a wait
+after each rectangle.
+
+**What already exists and where this plugs in** (verified by reading the actual code, not assumed):
+- `#gen-card-2`'s text-source cluster (`#pdf-panel`/`#user-story-panel`/`#dialect-panel`, each a
+  sibling `<div>` gated by its own checkbox in `#user-story-checks`) is the right home for a NEW
+  sibling `#comic-panel` — the existing upload entry point (`#upload-file-input`, `onUploadFileChosen`)
+  is text-shaped end to end (PDF/txt branch, then a chunking-into-chapters pipeline) and cannot carry
+  an image through it; this needs its own parallel path, not a branch inside the existing one.
+- `_storyBodyHtml(d, opts)` is the ONE shared story renderer already reaching every progress card,
+  question panel, and the storyline chain view (the precedent: translation-toggling and
+  highlighting both reach every caller for free through this one function). A new branch here,
+  keyed on a new `d.comicPanels` field, is the correct integration point for PART 2's progress-card
+  ruling (comic-sourced chapters only) — low risk, because it is one data-shape check in code every
+  consumer already shares, not four separate call sites to keep in sync.
+- The SERVER-SIDE job primitive (`newJob`/`jobStep`/`jobDone`/`jobFail`, the generic `/api/job/:id`
+  poll route) is genuinely generic — `data` is an opaque payload, not tied to story-generation. A new
+  comic-extraction job type can call it exactly like `_runBookJob` does. The CLIENT-SIDE
+  `startBackgroundJob` wrapper does NOT reuse directly — it is hardwired to story-generation's own
+  completion actions (`showStorylineForTopic`, `j.data.topic`) — a new, structurally similar sibling
+  function is needed, following the pattern, not the code. (Checked per rule 12 — the "reuses existing
+  machinery" claim holds for the server half, not the client half.)
+- `llm.js`'s `_callOllama` has NO `images` support today — every one of this session's probe scripts
+  hand-rolled its own raw HTTP call to `/api/chat` because of this. Production code should add
+  `opts.images` to the existing call (it already has an `opts` bag for `think`/`stop`/`ctxTokens` —
+  same shape), not keep the probes' one-off duplication.
+- Per `§2.3`, cropping happens CLIENT-SIDE via `<canvas>` + `toBlob()`/`toDataURL()` (free, no new
+  dependency) — the probes' crops were made with a system ImageMagick call, which is not available
+  inside the deployed app; the production path was always meant to be the browser canvas route this
+  session's fixture work skipped only because it was faster to script.
+
+**Milestone plan** (mirrors `PLAN §13`'s own build order — ship the model-independent part first):
+
+1. **Upload entry + panel-drawing UI, no model calls.** New `#comic-panel` (image file input, accepts
+   image types — `#upload-file-input`'s `accept` needs extending or a second input), the uploaded
+   image displayed with a canvas overlay for mouse-drag rectangle drawing, a list of drawn boxes with
+   delete/reorder, reading order = draw order (adjustable). Entirely testable without touching
+   `server.js`/`llm.js` at all — the first new UI affordance of its kind in this app (no drag-rectangle
+   precedent exists), so this alone is real, not-trivial client-side work.
+2. **Batch extraction.** "Extract text" action crops each drawn box client-side (canvas), sends all N
+   crops to a NEW server endpoint/job (`llm.js` gets `opts.images`; a new job type mirrors
+   `_runBookJob`'s shape), a new client-side poller (sibling to, not a reuse of, `startBackgroundJob`)
+   shows one combined wait instead of N interruptions, matching this session's own probe-validated
+   prompt (worked example for case-restoration, caption/in-scene labeling).
+3. **Chapter formation.** Panel texts, in reading order, concatenate into the ordinary `d.story` field
+   (backward-compatible with every existing text consumer: vocab extraction, comprehension questions,
+   search) — comic-sourced content becomes chunked text feeding the SAME chaptering/lesson-type
+   pipeline PDF/pasted-story uploads already use. `d.comicPanels` (box, text, kind, image) is stored
+   alongside for milestone 4.
+4. **Progress-card integration** (comic-sourced chapters only, per the standing ruling). New branch in
+   `_storyBodyHtml`: when `d.comicPanels` is present, render each panel's image with its transcribed
+   text, each WORD individually clickable/highlightable via the EXISTING vocab-highlighting machinery
+   (`_highlightVocabHtml`) applied to the transcribed text — Tier 1 per `§2.6`, not per-word image
+   coordinates (Tier 2, still explicitly out of scope, still not measured).
+
+**Not yet started — no code written for any of this.** No ruling yet on which vision model/backend
+milestone 2 targets (open per PART 3 above), nor on exact box-storage schema field names. Milestone 1
+has no such dependency and could start independently of that open question, since it touches no model
+at all.
+
 ### PLAN §2.6 — The interactive word map (user, at the v80 cut) — build it where coordinates are FREE
 
 **The idea:** overlay the image with the coordinates of the extracted text so the learner can click
