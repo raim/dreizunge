@@ -70750,12 +70750,7 @@
           "vocab": [
             {
               "target": "addition",
-              "source": "الإضافة",
-              "qc": {
-                "sug": "الإضافة应该是加法",
-                "field": "source",
-                "at": "2026-06-26T10:59:09.902Z"
-              }
+              "source": "الإضافة"
             },
             {
               "target": "subtraction",
@@ -70779,17 +70774,25 @@
             },
             {
               "target": "confuse",
-              "source": "يرتبك",
-              "qc": {
-                "sug": "ي 혼란에 빠지다",
-                "field": "source",
-                "at": "2026-06-26T10:59:31.026Z"
-              }
+              "source": "يرتبك"
             },
             {
               "target": "beats",
               "source": "بنبض",
-              "editedAt": "2026-06-26T11:02:44.612Z"
+              "editedAt": "2026-06-26T11:02:44.612Z",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "ينبض",
+                  "field": "source",
+                  "at": "2026-08-24T23:03:08.711Z"
+                }
+              },
+              "qc": {
+                "sug": "ينبض",
+                "field": "source",
+                "at": "2026-08-24T23:03:08.711Z",
+                "by": "translategemma:12b"
+              }
             }
           ],
           "sentences": [
@@ -70803,7 +70806,20 @@
                 "plus",
                 "sign."
               ],
-              "editedAt": "2026-06-26T11:03:23.416Z"
+              "editedAt": "2026-06-26T11:03:23.416Z",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "لقد رأت علامة زائد.",
+                  "field": "source",
+                  "at": "2026-08-24T23:04:29.080Z"
+                }
+              },
+              "qc": {
+                "sug": "لقد رأت علامة زائد.",
+                "field": "source",
+                "at": "2026-08-24T23:04:29.080Z",
+                "by": "translategemma:12b"
+              }
             },
             {
               "target": "He added two numbers.",
@@ -70813,12 +70829,7 @@
                 "added",
                 "two",
                 "numbers."
-              ],
-              "qc": {
-                "sug": "اضافَ اثنين من الأرقام",
-                "field": "target",
-                "at": "2026-06-26T10:59:49.161Z"
-              }
+              ]
             },
             {
               "target": "They subtracted the cost.",
@@ -70828,12 +70839,7 @@
                 "subtracted",
                 "the",
                 "cost."
-              ],
-              "qc": {
-                "sug": "طرحوا التكلفة منa",
-                "field": "source",
-                "at": "2026-06-26T10:59:55.600Z"
-              }
+              ]
             },
             {
               "target": "Multiply the numbers together.",
@@ -70845,9 +70851,17 @@
                 "together."
               ],
               "qc": {
-                "sug": "ضرب الأرقام في بعضها",
+                "sug": "اضربوا الأرقام ببعضها البعض.",
                 "field": "source",
-                "at": "2026-06-26T11:00:05.174Z"
+                "at": "2026-08-24T23:09:11.158Z",
+                "by": "translategemma:12b"
+              },
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "اضربوا الأرقام ببعضها البعض.",
+                  "field": "source",
+                  "at": "2026-08-24T23:09:11.158Z"
+                }
               }
             },
             {
@@ -70858,12 +70872,7 @@
                 "answer",
                 "equals",
                 "four."
-              ],
-              "qc": {
-                "sug": "الإجابة تساوي أربعةً",
-                "field": "source",
-                "at": "2026-06-26T11:00:14.532Z"
-              }
+              ]
             }
           ],
           "_genMeta": {
@@ -70899,12 +70908,7 @@
             },
             {
               "target": "divide",
-              "source": "قسم",
-              "qc": {
-                "sug": "قسموا",
-                "field": "source",
-                "at": "2026-06-26T11:00:25.003Z"
-              }
+              "source": "قسم"
             },
             {
               "target": "number",
@@ -70912,15 +70916,36 @@
             },
             {
               "target": "where",
-              "source": "أين"
+              "source": "أين",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "اين",
+                  "field": "source",
+                  "at": "2026-08-24T23:17:59.282Z"
+                }
+              },
+              "qc": {
+                "sug": "اين",
+                "field": "source",
+                "at": "2026-08-24T23:17:59.282Z",
+                "by": "translategemma:12b"
+              }
             },
             {
               "target": "little",
               "source": "صغير",
               "qc": {
-                "sug": "صغيره",
+                "sug": "قليل",
                 "field": "source",
-                "at": "2026-06-26T11:00:34.645Z"
+                "at": "2026-08-24T23:19:17.100Z",
+                "by": "translategemma:12b"
+              },
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "قليل",
+                  "field": "source",
+                  "at": "2026-08-24T23:19:17.100Z"
+                }
               }
             },
             {
@@ -70969,12 +70994,7 @@
                 "get",
                 "the",
                 "product."
-              ],
-              "qc": {
-                "sug": "ضرب الأرقام للحصول على المنتج.",
-                "field": "source",
-                "at": "2026-06-26T11:01:05.254Z"
-              }
+              ]
             },
             {
               "target": "Divide the total by the number of items.",
@@ -70988,12 +71008,7 @@
                 "number",
                 "of",
                 "items."
-              ],
-              "qc": {
-                "sug": "قسم الكليّة على عدد العناصر.",
-                "field": "source",
-                "at": "2026-06-26T11:01:15.045Z"
-              }
+              ]
             },
             {
               "target": "Where do you live, little one?",
@@ -71005,12 +71020,7 @@
                 "live,",
                 "little",
                 "one?"
-              ],
-              "qc": {
-                "sug": "أين تسكن يا صغيراً؟",
-                "field": "source",
-                "at": "2026-06-26T11:01:28.627Z"
-              }
+              ]
             }
           ],
           "_genMeta": {
@@ -71214,8 +71224,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 2573,
-        "totalCompletionTokens": 823,
+        "totalPromptTokens": 12157,
+        "totalCompletionTokens": 1001,
         "lessons": [
           {
             "lessonNum": 1,
@@ -71231,11 +71241,13 @@
         },
         "modelsSource": "backfill:generationStats.model (single-model label)",
         "tokensByType": {
-          "recreate": 2503
+          "recreate": 2503,
+          "lesson_qc": 9401,
+          "story_qc": 361
         }
       },
       "generatedAt": "2026-06-26T09:58:01.075Z",
-      "updatedAt": "2026-08-11T12:09:27.083Z",
+      "updatedAt": "2026-08-24T23:31:13.060Z",
       "id": "tp_17824682478370000180",
       "storyMeta": {
         "type": "story",
@@ -71266,7 +71278,35 @@
         "source": "generationStats.models.translation",
         "origin": "generated"
       },
-      "createdBy": "admin"
+      "createdBy": "admin",
+      "storyQcCheckedBy": "translategemma:12b",
+      "storyQcCheckedAt": "2026-08-24T23:31:13.060Z",
+      "storyQcProposal": {
+        "corrected": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma; there’s a dot,\npeople still confuse: which one’s what?",
+        "against": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+        "verdict": "corrected",
+        "rejected": false,
+        "changedSentences": 1,
+        "totalSentences": 14,
+        "changedRatio": 0.071,
+        "wordEditRatio": 0.018,
+        "meta": {
+          "type": "story_qc",
+          "model": "translategemma:12b",
+          "attempts": null,
+          "valid": 1,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 278,
+          "completionTokens": 83,
+          "ms": 138591,
+          "at": "2026-08-24T23:31:13.060Z",
+          "verdict": "corrected",
+          "changedRatio": 0.071,
+          "wordEditRatio": 0.018
+        },
+        "at": "2026-08-24T23:31:13.060Z"
+      }
     },
     {
       "topic": "الصغير i",
@@ -125023,6 +125063,198 @@
               "reason": ""
             }
           ]
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1787655563520",
+          "title": "Job Search Basics",
+          "desc": "Essential words for finding work in Germany",
+          "icon": "💼",
+          "vocab": [
+            {
+              "target": "die Arbeit",
+              "source": "the job",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:die Arbeit",
+                "canonicalId": "de:vocab:die arbeit",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "der Beruf",
+              "source": "the profession",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:der Beruf",
+                "canonicalId": "de:vocab:der beruf",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "suchen",
+              "source": "to search",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:suchen",
+                "canonicalId": "de:vocab:suchen",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "bewerben",
+              "source": "to apply",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:bewerben",
+                "canonicalId": "de:vocab:bewerben",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "die Sprache",
+              "source": "the language",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:die Sprache",
+                "canonicalId": "de:vocab:die sprache",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "der Lehrer",
+              "source": "the teacher",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:der Lehrer",
+                "canonicalId": "de:vocab:der lehrer",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "das Land",
+              "source": "the country",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:das Land",
+                "canonicalId": "de:vocab:das land",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "die Universität",
+              "source": "the university",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:die Universität",
+                "canonicalId": "de:vocab:die universität",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Ich suche eine Arbeit.",
+              "source": "I am looking for a job.",
+              "words": [
+                "Ich",
+                "suche",
+                "eine",
+                "Arbeit."
+              ]
+            },
+            {
+              "target": "Der Beruf ist schwer.",
+              "source": "The profession is difficult.",
+              "words": [
+                "Der",
+                "Beruf",
+                "ist",
+                "schwer."
+              ]
+            },
+            {
+              "target": "Wir lernen die Sprache.",
+              "source": "We are learning the language.",
+              "words": [
+                "Wir",
+                "lernen",
+                "die",
+                "Sprache."
+              ]
+            },
+            {
+              "target": "Das Land ist groß.",
+              "source": "The country is large.",
+              "words": [
+                "Das",
+                "Land",
+                "ist",
+                "groß."
+              ]
+            },
+            {
+              "target": "Die Universität ist alt.",
+              "source": "The university is old.",
+              "words": [
+                "Die",
+                "Universität",
+                "ist",
+                "alt."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1101,
+            "completionTokens": 389,
+            "ms": 318076,
+            "at": "2026-08-25T10:59:23.520Z"
+          }
         }
       ],
       "generationStats": {
@@ -125030,8 +125262,8 @@
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 755,
-        "totalCompletionTokens": 1034,
+        "totalPromptTokens": 4058,
+        "totalCompletionTokens": 2000,
         "lessons": [
           {
             "promptTokens": 395,
@@ -125043,10 +125275,13 @@
           "translation": "qwen2.5:7b",
           "lessons": "qwen2.5:7b"
         },
-        "modelsSource": "backfill:generationStats.model (single-model label)"
+        "modelsSource": "backfill:generationStats.model (single-model label)",
+        "tokensByType": {
+          "add_lesson": 4269
+        }
       },
       "generatedAt": "2026-06-01T17:53:08.297Z",
-      "updatedAt": "2026-06-06T13:20:51.559Z",
+      "updatedAt": "2026-08-25T10:59:23.520Z",
       "repairStats": {
         "repairCount": 1,
         "totalMs": 586714,
