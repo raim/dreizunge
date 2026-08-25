@@ -214,6 +214,19 @@ function parseHtmlInto(markup, parent, doc) {
   return parent;
 }
 
+// v85_b — a plain `{}` already let every existing test read/write named properties directly
+// (`el.style.display = 'none'`, `el.style.bottom`, …); `--custom-property` names work exactly the
+// same way as a plain JS object key, so `setProperty`/`getPropertyValue`/`removeProperty` are thin
+// wrappers over that SAME storage, not a step toward real CSS resolution (calc(), cascade, computed
+// values stay explicitly out of scope per the file header — `getComputedStyle` below is unaffected).
+function makeStyle() {
+  return {
+    setProperty(name, value) { this[name] = value; },
+    getPropertyValue(name) { const v = this[name]; return v === undefined ? '' : v; },
+    removeProperty(name) { const v = this[name]; delete this[name]; return v === undefined ? '' : v; },
+  };
+}
+
 // Clear an element for reuse, without replacing the object (identity rule) and without touching the
 // method surface, which callers may already hold references to.
 function resetElement(el, tag) {
@@ -229,7 +242,7 @@ function resetElement(el, tag) {
   el.disabled = false;
   el.checked = false;
   el.value = '';
-  el.style = {};
+  el.style = makeStyle();
   return el;
 }
 
@@ -314,7 +327,7 @@ function selectAll(root, sel) {
 function makeElement(tag = 'div', id = '', doc = null) {
   const el = {
     tagName: String(tag).toUpperCase(), id, nodeType: 1, _doc: doc,
-    style: {}, dataset: {}, children: [], childNodes: [],
+    style: makeStyle(), dataset: {}, children: [], childNodes: [],
     _html: '', _text: '', value: '', checked: false, disabled: false, _attrs: {},
     className: '', title: '', href: '', src: '', download: '',
     classList: {

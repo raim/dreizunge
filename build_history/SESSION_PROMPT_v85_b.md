@@ -1,26 +1,32 @@
-# Session prompt — written at the `v85_a` cut
+# Session prompt — written at the `v85_b` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. Keep using the double-letter suffix scheme (`v85_b`, `v85_c`, …) unless a future
 session has a good reason to switch to `v86_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v85_a`**, cut fresh from
-`roadmap_v84.md` at the user's own request ("let's cut to v85 for this, and perhaps we start the next
-steps in a new session") — the "this" being a generator-page redesign the user proposed, assessed
-against the existing codebase and `PLAN §7.0` this same session, and scoped into
-`roadmap_v85.md`'s new **`PLAN §13`**. This file is short on purpose (a fresh cut, not an
-accumulated one) — read `PLAN §13` itself before starting anything, it carries the real detail this
-prompt only points at.
+zero-dependency Node language-learning app). Picking up from **`v85_b`** — `v85_a` was a fresh cut
+from `roadmap_v84.md`, the "this" being a generator-page redesign the user proposed, assessed against
+the existing codebase and `PLAN §7.0`, and scoped into `roadmap_v85.md`'s **`PLAN §13`**. `v85_b`
+itself shipped two small, UNRELATED user requests made explicitly BEFORE starting `PLAN §13`'s own
+work — see `roadmap_v85.md`'s `v85_b` entry under `# SHIPPED IN THE v85 LINE` for the full detail: (1)
+speech-recognition auto-activation removed (the mic now starts muted and `startLesson()` re-mutes
+every round — the learner must tap `#speech-mic-pill` to activate it, per lesson); (2) a
+`#bottom-bar-toggle` button (left edge, sibling of `#bottom-bar`) to hide/show the whole bottom bar,
+persisted, also collapsing `--bottom-bar-h` so above-bar-anchored widgets settle to the true bottom
+while it's hidden. **Neither touched `PLAN §13` or its milestone 1** — that is still exactly where
+`v85_a` left it: read `PLAN §13` itself before starting anything on it, it carries the real detail
+this prompt only points at.
 
 ## Orient yourself, in this order
 
 1. **This file**, whole.
 2. `build_history/roadmap_v85.md` — its **index table** and **⚠️ Session protocol** block first, then
+   the `v85_b` shipped entry (top of `# SHIPPED IN THE v85 LINE`) for what just shipped, then
    **`PLAN §13`** (search for it — near the end, under "THE LARGER PLAN") for the generator-page
    redesign in full: what already exists vs. what's genuinely new, the one real conflict with
    `PLAN §7.0`'s own deferred cross-chapter arc-sequencing note (found and reconciled with the user
-   directly this cut), and the approved build order.
+   directly at the `v85_a` cut), and the approved build order.
 3. `INTERNALS.md` **§6b, the feature → function map** — read it BEFORE grepping for where anything
    lives.
 4. `roadmap_v84.md`'s own `# SHIPPED IN THE v84 LINE` if you need to know HOW something already
@@ -29,14 +35,15 @@ prompt only points at.
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 267 checks
-node test/run.js --quick                  → expect 233
+node test/run.js                          → expect 269 checks
+node test/run.js --quick                  → expect 235
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut: **327 topics, 92 storylines, 33 languages, 662 `en` keys** (unchanged from the
-`v84` line's end — this cut touched no code, no `lessons.json`, no `ui.json`). `APP_VERSION = 'v85_a'`.
+`v84` line's end — `v85_b` touched no `lessons.json`, no `ui.json`, only `index.html`/`build-static.js`
+code plus its own two new test files). `APP_VERSION = 'v85_b'`.
 
 ⚠️ **Check `git status --short lessons.json` at the start of this session.** If it shows modified,
 that is very likely the user's own real, uncommitted evaluation/play data — not yours to revert,

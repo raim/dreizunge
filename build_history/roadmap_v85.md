@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | nothing yet — this line was just cut |
+| **SHIPPED IN THE v85 LINE** | `v85_b` — two small user-requested fixes, done BEFORE starting `PLAN §13` milestone 1: speech-recognition auto-activation removed (mic starts muted, `startLesson()` re-mutes every round); a `#bottom-bar-toggle` button hides/shows `#bottom-bar` |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13` is NEW at this cut** — the generator-page redesign, scoped and approved this session; read it before starting `SESSION_PROMPT_v85_a.md`'s own "what to do next." |
 
@@ -1763,7 +1763,56 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v85 LINE
 
-nothing yet — this line was just cut
+## ✅ v85_b — two small fixes, requested by the user before starting `PLAN §13` milestone 1
+
+Two direct user requests, unrelated to each other and to the generator-page redesign, done first
+because the user asked for them explicitly before any `PLAN §13` work: *"before proceeding with the
+generator redesign, let's do some small fixes: remove auto-activation of speech recognition, the user
+must explicitly click the microphone icon to activate for a given lesson. allow to hide the bottom
+navigation bar via a button on the left."*
+
+**1. Speech-recognition auto-activation removed.** `v84_k`…`v84_m` made `#speech-mic-pill` listen the
+instant a speakable question rendered, with a tap only muting/unmuting — "active all the time, except
+the microphone icon is pressed to mute input." The user now wants the opposite default: **off** until
+explicitly activated, per lesson. `APP.micMuted` now defaults `true` (was `false`); `startLesson()`
+re-mutes on every new round (`APP.micMuted = true`, alongside its other per-round resets) so a mic left
+active from a PREVIOUS lesson cannot leak into a new one — a learner must tap the pill again for each
+lesson. Once activated, the existing continuous-listening design (one session per question, auto-
+resume on the browser's own silence timeout, stale-generation guard) is completely unchanged — only
+the DEFAULT and the per-lesson reset moved. The pill's title text was reworded to match ("Speech input
+off — tap to activate" / "…active — tap to deactivate"), not tested anywhere so safe to change.
+Guarded by the new `test/unit-mic-lesson-reset.test.js` (fresh-client default; `startLesson()`
+re-mutes even when the mic was left active by a previous lesson, mutation-tested by removing the reset
+line). `test/unit-speech-recognition.test.js` was UNCHANGED — its `client()` helper drives
+`_speechMicRefresh()` directly with an explicit `APP.micMuted` override per test, never through
+`startLesson()`, so the new default/reset is invisible to it and none of its 12 checks needed touching.
+
+**2. `#bottom-bar` hide/show toggle.** A new `#bottom-bar-toggle` button — its own independently
+`position:fixed` element, left edge of the screen, deliberately a SIBLING of `#bottom-bar` in the
+markup (not a child of `#corner-pills`) so it stays clickable even while the bar itself is
+`display:none`. `toggleBottomBar()` flips a new persisted `APP.bottomBarHidden`
+(`localStorage['imp3_bottombar_hidden']`, same `imp3_*` convention as `noKeyboard`/`libSrcFilter`/etc.)
+and calls `_applyBottomBarVisibility()`, the one function that actually applies it: sets
+`#bottom-bar`'s `display`, swaps the toggle glyph (▾ hide / ▴ show) and title, and — the one non-obvious
+part — collapses the shared `--bottom-bar-h` custom property to `0px` while hidden, so every OTHER
+widget already anchored "above the bar" via that same variable (`#gen-status`, `.toast`,
+`#tutor-widget`, `.static-flag-banner`, the touch story-selection popover from
+`unit-tutor-selection.test.js`) settles to the true bottom instead of leaving a 64px gap for a bar
+that is no longer there — no per-widget change needed, they all read the custom property live.
+`_applyBottomBarVisibility()` is called once at `init()` (both the live `index.html` and
+`build-static.js`'s own separate `init()` override — the "both files" pairing this codebase's own
+history keeps re-learning the hard way) so a persisted "hidden" preference survives a reload. Only
+`#bottom-bar` itself is affected — the lesson path, question prev/next row, and progress-card nav
+popups are unrelated surfaces, untouched. Guarded by the new `test/unit-bottom-bar-toggle.test.js`:
+markup (`#bottom-bar-toggle` is a sibling, not nested), default state, one tap (bar hidden, glyph
+flips, `--bottom-bar-h` computed as `0px`), a second tap (fully restored), and persistence (both
+toggle directions write `localStorage`, matching the scope `unit-teacher-toggle.test.js` already uses
+for its own persisted flag — the harness builds `APP.bottomBarHidden` from `localStorage` at
+module-load time, before test code gets control, so the READ side is exercised by construction, not
+re-assertable in isolation there).
+
+Both fixes: 2 new test files, 2 new `run()` lines in `test/run.js` (267→269 full, 233→235 quick).
+`docs/index.html` rebuilt (`node build-static.js`) to carry both.
 
 ---
 

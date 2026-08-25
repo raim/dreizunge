@@ -251,6 +251,8 @@ run('unit: dialect TTS approximate detection (M1)', 'node', [path.join(__dirname
   run('unit: dialect mute + no-lang prompt', 'node', [path.join(__dirname, 'unit-dialect-mute.test.js')]);
 run('unit: no-keyboard glyph ordering (v48)', 'node', [path.join(__dirname, 'unit-no-keyboard.test.js')]);
 run('unit: speech-recognition answer checking (v84_g)', 'node', [path.join(__dirname, 'unit-speech-recognition.test.js')]);
+run('unit: mic starts off, re-mutes every lesson (v85_b)', 'node', [path.join(__dirname, 'unit-mic-lesson-reset.test.js')]);
+run('unit: bottom-bar hide/show toggle (v85_b)', 'node', [path.join(__dirname, 'unit-bottom-bar-toggle.test.js')]);
 run('unit: hidden lessons omitted/non-blocking in static (v48)', 'node', [path.join(__dirname, 'unit-hidden-lessons.test.js')]);
 run('unit: inline onclick escaping (read-story SyntaxError)', 'node', [path.join(__dirname, 'unit-inline-escaping.test.js')]);
 run('unit: error-hunt content-aware RTL', 'node', [path.join(__dirname, 'unit-error-hunt-rtl.test.js')]);

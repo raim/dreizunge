@@ -289,6 +289,7 @@ async function init() {
   await loadSavedList();
   try { updateTeacherModeBtn(); } catch (_) {}      // reflect restored teacher mode
   try { updateStaticFlagBanner(); } catch (_) {}    // show the download & submit pill on first load
+  try { _applyBottomBarVisibility(); } catch (_) {} // v85_b: apply the persisted bottom-bar hidden state
   // Hash routing
   if (location.hash.startsWith('#sl=')) {
     const chainId = location.hash.slice(4);

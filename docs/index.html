@@ -640,6 +640,15 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
      reimplemented, same discipline `#comp-nav-modal`'s own relocation used) — only their POSITIONING
      changed, from each being independently `position:fixed` to both being plain flex children of
      the new shared bar. -->
+<!-- v85_b (user: "allow to hide the bottom navigation bar via a button on the left") — its own
+     independently-fixed element, OUTSIDE #bottom-bar, so it stays reachable even while the bar
+     itself is display:none. NOT a flex child of #corner-pills — that group would disappear along
+     with the bar. toggleBottomBar() is the only writer of APP.bottomBarHidden;
+     _applyBottomBarVisibility() (called once at init, and by toggleBottomBar()) is the only reader,
+     and is what also collapses --bottom-bar-h so the floating widgets anchored above the bar
+     (#gen-status, .toast, #tutor-widget, .static-flag-banner) settle to the true bottom instead of
+     leaving a gap for a bar that is no longer there. -->
+<button id="bottom-bar-toggle" onclick="toggleBottomBar()" title="Hide bottom bar" style="position:fixed;left:8px;bottom:8px;z-index:902;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1.5px solid var(--gray-mid);cursor:pointer;font-size:12px;line-height:1;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15)">▾</button>
 <div id="bottom-bar" style="position:fixed;left:0;right:0;bottom:0;z-index:900;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));background:rgba(255,255,255,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1.5px solid var(--gray-mid);box-sizing:border-box">
   <div id="corner-pills" style="display:flex;align-items:center;gap:8px">
     <div id="acct-badge" style="display:none">
@@ -654,9 +663,11 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
          reasoning as settings-pill: reachable on every page including static. -->
     <button id="mute-pill" class="mute-btn" onclick="toggleMute()" title="Mute" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15);opacity:.7">🔊</button>
     <!-- v84_k (user request): ONE persistent speech-input control, not a button per exercise. Inert
-         (disabled, greyed via CSS) whenever the current screen/exercise has nothing speakable;
-         active + auto-listening the instant a speakable question is on screen, no tap required —
-         see _speechMicRefresh(), called from renderEx() and show(). v84_l: a dots indicator
+         (disabled, greyed via CSS) whenever the current screen/exercise has nothing speakable.
+         v84_k–v84_m auto-listened the instant a speakable question rendered; v85_b REMOVED that
+         auto-activation (user request) — it now starts MUTED every lesson (`startLesson()`) and the
+         learner must tap the pill to activate speech input for that lesson, via
+         _speechMicRefresh()/_speechMicPillClick(). v84_l: a dots indicator
          (`.mic-dots`) replaces the 🎤 glyph while a session is genuinely open (`.listening`, added/
          removed by _speechStartSession/_speechListenSession — the SAME lifecycle that already
          existed, no new state) — it animates continuously for as long as that class is present,
@@ -2414,11 +2425,14 @@ var APP = {
   // every type-the-target exercise is replaced by a glyph-ordering exercise (tap the letters
   // into order, like sentence ordering but per-glyph). Persisted across sessions.
   noKeyboard: (() => { try { return localStorage.getItem('imp3_noKeyboard') === '1'; } catch(_) { return false; } })(),
-  // Speech-INPUT mute (v84_l, user request: "active all the time, except the microphone icon is
-  // pressed to mute input") — the mirror of `muted` above but for the mic, not TTS. Deliberately NOT
-  // persisted, same as `muted`: every fresh load starts with speech input active, matching "active by
-  // default." Toggled only by `_speechMicPillClick()`.
-  micMuted: false,
+  // Speech-INPUT mute — the mirror of `muted` above but for the mic, not TTS. v84_l made this
+  // "active all the time, except the microphone icon is pressed to mute input"; v85_b REVERSED that
+  // default (user: auto-activation must go — the learner clicks the mic to turn it on, per lesson).
+  // Starts muted; `startLesson()` re-mutes on every new round so a learner must explicitly tap
+  // `#speech-mic-pill` (`_speechMicPillClick()`) to activate speech input for THAT lesson — it then
+  // stays active across that lesson's questions (continuous-listening design, unchanged). Deliberately
+  // NOT persisted across reloads, same as `muted`.
+  micMuted: true,
   // The form's own (persisted) language selection — what generation uses and what
   // the main-page selectors display. Stays constant while a saved story is viewed.
   formLang: loadLang(),
@@ -2457,6 +2471,11 @@ var APP = {
   // v76_j: the story pinned by "continue story", persisted like the other form choices (user's
   // ruling). repopulateContinueSelect() re-offers it whatever the language filters say.
   contPin: (() => { try { return localStorage.getItem('imp3_contpin') || null; } catch(_) { return null; } })(),
+  // v85_b (user: "allow to hide the bottom navigation bar via a button on the left") — persisted so a
+  // learner who hides it stays uncluttered across reloads. `_applyBottomBarVisibility()` (called once
+  // at init, and by `toggleBottomBar()`) is the ONE place that reads this to actually show/hide
+  // `#bottom-bar` and its always-visible `#bottom-bar-toggle` handle.
+  bottomBarHidden: (() => { try { return localStorage.getItem('imp3_bottombar_hidden') === '1'; } catch(_) { return false; } })(),
   cur: {lessonIdx:0,exercises:[],cur:0,hearts:3,mistakes:0,correct:0,total:0,streak:0,bestStreak:0,
         answered:false,sel:null,placed:[],usedIdx:[]}
 };
@@ -66345,12 +66364,7 @@ const STATIC_LESSONS = [
         "vocab": [
           {
             "target": "addition",
-            "source": "الإضافة",
-            "qc": {
-              "sug": "الإضافة应该是加法",
-              "field": "source",
-              "at": "2026-06-26T10:59:09.902Z"
-            }
+            "source": "الإضافة"
           },
           {
             "target": "subtraction",
@@ -66374,17 +66388,25 @@ const STATIC_LESSONS = [
           },
           {
             "target": "confuse",
-            "source": "يرتبك",
-            "qc": {
-              "sug": "ي 혼란에 빠지다",
-              "field": "source",
-              "at": "2026-06-26T10:59:31.026Z"
-            }
+            "source": "يرتبك"
           },
           {
             "target": "beats",
             "source": "بنبض",
-            "editedAt": "2026-06-26T11:02:44.612Z"
+            "editedAt": "2026-06-26T11:02:44.612Z",
+            "qcByModel": {
+              "translategemma:12b": {
+                "sug": "ينبض",
+                "field": "source",
+                "at": "2026-08-24T23:03:08.711Z"
+              }
+            },
+            "qc": {
+              "sug": "ينبض",
+              "field": "source",
+              "at": "2026-08-24T23:03:08.711Z",
+              "by": "translategemma:12b"
+            }
           }
         ],
         "sentences": [
@@ -66398,7 +66420,20 @@ const STATIC_LESSONS = [
               "plus",
               "sign."
             ],
-            "editedAt": "2026-06-26T11:03:23.416Z"
+            "editedAt": "2026-06-26T11:03:23.416Z",
+            "qcByModel": {
+              "translategemma:12b": {
+                "sug": "لقد رأت علامة زائد.",
+                "field": "source",
+                "at": "2026-08-24T23:04:29.080Z"
+              }
+            },
+            "qc": {
+              "sug": "لقد رأت علامة زائد.",
+              "field": "source",
+              "at": "2026-08-24T23:04:29.080Z",
+              "by": "translategemma:12b"
+            }
           },
           {
             "target": "He added two numbers.",
@@ -66408,12 +66443,7 @@ const STATIC_LESSONS = [
               "added",
               "two",
               "numbers."
-            ],
-            "qc": {
-              "sug": "اضافَ اثنين من الأرقام",
-              "field": "target",
-              "at": "2026-06-26T10:59:49.161Z"
-            }
+            ]
           },
           {
             "target": "They subtracted the cost.",
@@ -66423,12 +66453,7 @@ const STATIC_LESSONS = [
               "subtracted",
               "the",
               "cost."
-            ],
-            "qc": {
-              "sug": "طرحوا التكلفة منa",
-              "field": "source",
-              "at": "2026-06-26T10:59:55.600Z"
-            }
+            ]
           },
           {
             "target": "Multiply the numbers together.",
@@ -66440,9 +66465,17 @@ const STATIC_LESSONS = [
               "together."
             ],
             "qc": {
-              "sug": "ضرب الأرقام في بعضها",
+              "sug": "اضربوا الأرقام ببعضها البعض.",
               "field": "source",
-              "at": "2026-06-26T11:00:05.174Z"
+              "at": "2026-08-24T23:09:11.158Z",
+              "by": "translategemma:12b"
+            },
+            "qcByModel": {
+              "translategemma:12b": {
+                "sug": "اضربوا الأرقام ببعضها البعض.",
+                "field": "source",
+                "at": "2026-08-24T23:09:11.158Z"
+              }
             }
           },
           {
@@ -66453,12 +66486,7 @@ const STATIC_LESSONS = [
               "answer",
               "equals",
               "four."
-            ],
-            "qc": {
-              "sug": "الإجابة تساوي أربعةً",
-              "field": "source",
-              "at": "2026-06-26T11:00:14.532Z"
-            }
+            ]
           }
         ],
         "_genMeta": {
@@ -66494,12 +66522,7 @@ const STATIC_LESSONS = [
           },
           {
             "target": "divide",
-            "source": "قسم",
-            "qc": {
-              "sug": "قسموا",
-              "field": "source",
-              "at": "2026-06-26T11:00:25.003Z"
-            }
+            "source": "قسم"
           },
           {
             "target": "number",
@@ -66507,15 +66530,36 @@ const STATIC_LESSONS = [
           },
           {
             "target": "where",
-            "source": "أين"
+            "source": "أين",
+            "qcByModel": {
+              "translategemma:12b": {
+                "sug": "اين",
+                "field": "source",
+                "at": "2026-08-24T23:17:59.282Z"
+              }
+            },
+            "qc": {
+              "sug": "اين",
+              "field": "source",
+              "at": "2026-08-24T23:17:59.282Z",
+              "by": "translategemma:12b"
+            }
           },
           {
             "target": "little",
             "source": "صغير",
             "qc": {
-              "sug": "صغيره",
+              "sug": "قليل",
               "field": "source",
-              "at": "2026-06-26T11:00:34.645Z"
+              "at": "2026-08-24T23:19:17.100Z",
+              "by": "translategemma:12b"
+            },
+            "qcByModel": {
+              "translategemma:12b": {
+                "sug": "قليل",
+                "field": "source",
+                "at": "2026-08-24T23:19:17.100Z"
+              }
             }
           },
           {
@@ -66564,12 +66608,7 @@ const STATIC_LESSONS = [
               "get",
               "the",
               "product."
-            ],
-            "qc": {
-              "sug": "ضرب الأرقام للحصول على المنتج.",
-              "field": "source",
-              "at": "2026-06-26T11:01:05.254Z"
-            }
+            ]
           },
           {
             "target": "Divide the total by the number of items.",
@@ -66583,12 +66622,7 @@ const STATIC_LESSONS = [
               "number",
               "of",
               "items."
-            ],
-            "qc": {
-              "sug": "قسم الكليّة على عدد العناصر.",
-              "field": "source",
-              "at": "2026-06-26T11:01:15.045Z"
-            }
+            ]
           },
           {
             "target": "Where do you live, little one?",
@@ -66600,12 +66634,7 @@ const STATIC_LESSONS = [
               "live,",
               "little",
               "one?"
-            ],
-            "qc": {
-              "sug": "أين تسكن يا صغيراً؟",
-              "field": "source",
-              "at": "2026-06-26T11:01:28.627Z"
-            }
+            ]
           }
         ],
         "_genMeta": {
@@ -66809,8 +66838,8 @@ const STATIC_LESSONS = [
       "backend": "ollama",
       "model": "qwen2.5:7b",
       "lessonFormat": "json",
-      "totalPromptTokens": 2573,
-      "totalCompletionTokens": 823,
+      "totalPromptTokens": 12157,
+      "totalCompletionTokens": 1001,
       "lessons": [
         {
           "lessonNum": 1,
@@ -66826,11 +66855,13 @@ const STATIC_LESSONS = [
       },
       "modelsSource": "backfill:generationStats.model (single-model label)",
       "tokensByType": {
-        "recreate": 2503
+        "recreate": 2503,
+        "lesson_qc": 9401,
+        "story_qc": 361
       }
     },
     "generatedAt": "2026-06-26T09:58:01.075Z",
-    "updatedAt": "2026-08-11T12:09:27.083Z",
+    "updatedAt": "2026-08-24T23:31:13.060Z",
     "id": "tp_17824682478370000180",
     "storyMeta": {
       "type": "story",
@@ -66861,7 +66892,35 @@ const STATIC_LESSONS = [
       "source": "generationStats.models.translation",
       "origin": "generated"
     },
-    "createdBy": "admin"
+    "createdBy": "admin",
+    "storyQcCheckedBy": "translategemma:12b",
+    "storyQcCheckedAt": "2026-08-24T23:31:13.060Z",
+    "storyQcProposal": {
+      "corrected": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma; there’s a dot,\npeople still confuse: which one’s what?",
+      "against": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "verdict": "corrected",
+      "rejected": false,
+      "changedSentences": 1,
+      "totalSentences": 14,
+      "changedRatio": 0.071,
+      "wordEditRatio": 0.018,
+      "meta": {
+        "type": "story_qc",
+        "model": "translategemma:12b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 278,
+        "completionTokens": 83,
+        "ms": 138591,
+        "at": "2026-08-24T23:31:13.060Z",
+        "verdict": "corrected",
+        "changedRatio": 0.071,
+        "wordEditRatio": 0.018
+      },
+      "at": "2026-08-24T23:31:13.060Z"
+    }
   },
   {
     "topic": "الصغير i",
@@ -152933,11 +152992,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v85_a', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v85_a'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v85_b', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v85_b'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"fdeadff2aa93","lessons.json":"4f484fab4f3a","ui.json":"f80cfbf23fb6","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"bf4e560125c6"};
+  APP.buildSources = {"index.html":"234e26a9886a","lessons.json":"3c68d563025c","ui.json":"f80cfbf23fb6","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"343f54cde710"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -152956,6 +153015,7 @@ async function init() {
   await loadSavedList();
   try { updateTeacherModeBtn(); } catch (_) {}      // reflect restored teacher mode
   try { updateStaticFlagBanner(); } catch (_) {}    // show the download & submit pill on first load
+  try { _applyBottomBarVisibility(); } catch (_) {} // v85_b: apply the persisted bottom-bar hidden state
   // Hash routing
   if (location.hash.startsWith('#sl=')) {
     const chainId = location.hash.slice(4);
@@ -160083,6 +160143,11 @@ function startLesson(idx){
   }
   C.hearts=3; C.mistakes=0; C.correct=0; C.total=0; C.streak=0; C.bestStreak=0;
   C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[]; delete C._selPos;
+  // v85_b (user: remove speech-recognition auto-activation): every new lesson round starts with the
+  // mic OFF — a learner must explicitly tap #speech-mic-pill to turn it on for THIS lesson. Without
+  // this reset, a mic left active from a previous lesson (or the default) would silently keep
+  // listening into a lesson the learner never asked it to.
+  APP.micMuted = true;
   show('lesson-screen');
   if(C.isErrorHunt) {
     const lesson=APP.lessonData.lessons[idx];
@@ -162940,7 +163005,11 @@ function typedDiffHtml(typed, correct) {
 // v84_g/h/i built this per-exercise: a mic button next to the typed-answer input, another under an
 // MCQ's choices. v84_k (user request) replaced BOTH with the single persistent `#speech-mic-pill` in
 // the bottom bar — inert/greyed whenever the current question has nothing speakable, active and
-// LISTENING AUTOMATICALLY the instant a speakable one is on screen, no tap required. v84_l (two more
+// LISTENING AUTOMATICALLY the instant a speakable one is on screen, no tap required. **v85_b (user
+// request) REMOVED that auto-activation**: the pill now starts MUTED every lesson (`startLesson()`
+// resets `APP.micMuted = true`), and the learner must tap it once to activate speech input for that
+// lesson — see `_speechMicRefresh()`'s own comment. Everything below about the CONTINUOUS-SESSION
+// mechanics, once active, is otherwise unchanged. v84_l (two more
 // direct user requests): (1) the pill's tap now MUTES/unmutes speech input — "active all the time,
 // except the microphone icon is pressed to mute input" — replacing its old "retry now" meaning, which
 // continuous listening had already made redundant; (2) listening is now ONE continuous session per
@@ -163139,7 +163208,8 @@ function _speechStartSession(gen, cfg){
 // question): a session left running into a new question is exactly the risk `_speechHandlePhrase`'s
 // own generation check exists for, and letting the mic stay open into a correct-answer TTS reveal
 // risks it hearing its own voice. Then starts a fresh session, UNLESS speech input is muted
-// (`APP.micMuted` — "active all the time, except the microphone icon is pressed to mute input").
+// (`APP.micMuted`) — which, since v85_b, is the default: `startLesson()` re-mutes on every new round,
+// so nothing auto-listens until the learner taps the pill to activate it for that lesson.
 //
 // v84_m considered — and REJECTED — reusing an already-open session across two consecutive
 // same-language questions to avoid the extra start/stop tone: `_speechHandlePhrase` reads `APP.cur`
@@ -163164,7 +163234,7 @@ function _speechMicRefresh(){
   pill.classList.toggle('active', !!cfg && !APP.micMuted);
   pill.classList.toggle('muted', !!cfg && !!APP.micMuted);
   pill.classList.remove('listening');
-  pill.title = !cfg ? 'Speak your answer' : (APP.micMuted ? 'Speech input muted — tap to unmute' : 'Speech input active — tap to mute');
+  pill.title = !cfg ? 'Speak your answer' : (APP.micMuted ? 'Speech input off — tap to activate' : 'Speech input active — tap to deactivate');
   if(cfg && !APP.micMuted) _speechStartSession(gen, cfg);
 }
 
@@ -166274,6 +166344,29 @@ function updateMuteButtons() {
     b.title = b.dataset.muteTip || (APP.muted ? 'Unmute' : 'Mute');
     b.style.opacity = APP.muted ? '1' : '.7';
   });
+}
+// v85_b (user: "allow to hide the bottom navigation bar via a button on the left") — toggles
+// #bottom-bar itself (settings/mute/mic pills, tutor fab), NOT any other nav surface (lesson path,
+// question prev/next, progress-card nav — all unrelated, unaffected). #bottom-bar-toggle stays
+// visible either way (it lives OUTSIDE #bottom-bar in the markup) so the bar is always recoverable.
+function toggleBottomBar() {
+  APP.bottomBarHidden = !APP.bottomBarHidden;
+  try { localStorage.setItem('imp3_bottombar_hidden', APP.bottomBarHidden ? '1' : '0'); } catch(_) {}
+  _applyBottomBarVisibility();
+}
+// The one place that actually applies APP.bottomBarHidden to the DOM — called here by
+// toggleBottomBar() and once at init() for the persisted/default state. Also collapses
+// --bottom-bar-h to 0 while hidden, so everything already anchored "above the bar" via that shared
+// var (#gen-status, .toast, #tutor-widget, .static-flag-banner, the touch story-selection popover —
+// see unit-tutor-selection.test.js) settles to the true bottom instead of leaving a gap for a bar
+// that isn't there — no per-element change needed, they all read the custom property live.
+function _applyBottomBarVisibility() {
+  const bar = document.getElementById('bottom-bar');
+  const btn = document.getElementById('bottom-bar-toggle');
+  const hidden = !!APP.bottomBarHidden;
+  if (bar) bar.style.display = hidden ? 'none' : 'flex';
+  if (btn) { btn.textContent = hidden ? '▴' : '▾'; btn.title = hidden ? 'Show bottom bar' : 'Hide bottom bar'; }
+  document.documentElement.style.setProperty('--bottom-bar-h', hidden ? '0px' : '64px');
 }
 // ── No-keyboard mode: split a target into orderable glyph tokens ───────────────
 // Grapheme clusters keep a base letter together with its combining marks (e.g. Arabic
