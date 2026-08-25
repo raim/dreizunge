@@ -184,7 +184,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v85_j';
+const APP_VERSION  = 'v85_k';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -226,6 +226,13 @@ let OLLAMA_QC_MODEL          = process.env.OLLAMA_QC_MODEL
 // is a different job from lesson JSON generation — defaulting to the story model (both produce
 // natural-language prose). Independently settable in the model menu.
 let OLLAMA_TUTOR_MODEL       = process.env.OLLAMA_TUTOR_MODEL       || OLLAMA_MODEL;
+// Vision (PLAN §2.4 / Track A4 milestone 2): comic-panel text extraction. Its own role, and
+// deliberately NOT falling back to OLLAMA_MODEL the way every other role does — the default text
+// model (qwen3.6:35b-a3b) has no vision capability at all, so silently inheriting it would produce a
+// confusing "model can't see images" failure instead of a clear one. Default is `qwen2.5vl:7b` per
+// this session's own measured comparison (roadmap_v85.md, PLAN §2.4 RESULT PART 3) — the ONLY model,
+// of the two tried, that passed one-shot panel enumeration AND text extraction cleanly.
+let OLLAMA_VISION_MODEL      = process.env.OLLAMA_VISION_MODEL      || 'qwen2.5vl:7b';
 // (The request timeout lives in llm.js — runtime-adjustable via setRequestTimeout/getRequestTimeout;
 //  there is no separate server-side copy.)
 // Lesson output format: 'json' (default) or 'table' (markdown table, better for
@@ -277,6 +284,7 @@ function thinkOpts(role, baseTokens) {
 function currentModels() {
   return { story: OLLAMA_MODEL, translation: OLLAMA_TRANSLATION_MODEL,
            lessons: OLLAMA_LESSON_MODEL, qc: OLLAMA_QC_MODEL, tutor: OLLAMA_TUTOR_MODEL,
+           vision: OLLAMA_VISION_MODEL,
            lessonFormat: OLLAMA_LESSON_FORMAT, numThread: getNumThread(),
            think: { story: OLLAMA_THINK.story, lessons: OLLAMA_THINK.lessons, tutor: OLLAMA_THINK.tutor },
            timeoutMs: getRequestTimeout() };
@@ -285,13 +293,18 @@ function setRuntimeModels(next) {
   next = next || {};
   const pick = v => (typeof v === 'string' && v.trim()) ? v.trim() : null;
   const all = pick(next.model);
+  // `vision` deliberately does NOT fall back to `all`/story-model — see OLLAMA_VISION_MODEL's own
+  // comment: the general "one model for everything" override is a text-model convenience and would
+  // silently point vision calls at a model with no vision capability.
   const story = pick(next.story) || all, transl = pick(next.translation) || all,
-        lessons = pick(next.lessons) || all, qc = pick(next.qc) || all, tutor = pick(next.tutor) || all;
+        lessons = pick(next.lessons) || all, qc = pick(next.qc) || all, tutor = pick(next.tutor) || all,
+        vision = pick(next.vision);
   if (story)   OLLAMA_MODEL             = story;
   if (transl)  OLLAMA_TRANSLATION_MODEL = transl;
   if (lessons) OLLAMA_LESSON_MODEL      = lessons;
   if (qc)      OLLAMA_QC_MODEL          = qc;
   if (tutor)   OLLAMA_TUTOR_MODEL       = tutor;
+  if (vision)  OLLAMA_VISION_MODEL      = vision;
   // Per-role reasoning toggles: story, lessons, tutor.
   if (next.think && typeof next.think === 'object') {
     if (typeof next.think.story === 'boolean')   OLLAMA_THINK.story   = next.think.story;
@@ -1474,6 +1487,13 @@ function callLLMTranslation(system, userMsg, maxTokens, opts) {
 // QC pass — its own role (defaults to the translation model). See qcCheckPair et al.
 function callLLMQC(system, userMsg, maxTokens, opts) {
   return _callLLM(OLLAMA_QC_MODEL, system, userMsg, maxTokens, opts);
+}
+// Vision (PLAN §2.4 / Track A4 milestone 2): comic-panel text extraction. Goes through the SAME
+// _callLLM metering choke point every other role does — opts.images (see llm.js's own comment on
+// _callOllama) rides through unchanged, since _callLLM is a pass-through wrapper around whatever
+// opts the caller provides.
+function callLLMVision(system, userMsg, maxTokens, opts) {
+  return _callLLM(OLLAMA_VISION_MODEL, system, userMsg, maxTokens, opts);
 }
 // v66.1: the tutor is handed a "Student: / Tutor:" transcript, so a model will happily continue
 // BOTH sides and invent the learner's answers (reported). Three defences, weakest to strongest:
@@ -6340,6 +6360,111 @@ async function _runRecreateJob(jobId, startId, opts) {
   return { recreated, hidden, chapters: chapterIds.length };
 }
 
+// ── Comic panel text extraction (PLAN §2.4 / Track A4 milestone 2) ────────────────────────────
+// One vision-model call per user-drawn panel crop, sequentially, tolerating one panel's failure
+// without losing the rest of the batch (same shape as _runRecreateJob's per-type try/catch above).
+// The panel-FINDING problem this whole PLAN §2.4 line of probes was built to catch is a NON-issue
+// here by construction: the box is human-drawn, so the model is never asked to locate anything, only
+// to read text out of an already-correct region — see roadmap_v85.md's own "PLAN §2.4" sections for
+// why that split was chosen over any of the three model-driven panel-finding strategies (all three
+// failed differently; see the four probe scripts under build_history/).
+//
+// PROMPT: generalized across all 33 target languages, not hardcoded to German — despite this
+// session's own measurement being German-only (the only fixture ever tested). Two things are made
+// CONDITIONAL rather than assumed universal:
+//   - case restoration only applies to scripts that HAVE case at all (many of this app's target
+//     scripts do not) — phrased so the MODEL decides that, per this app's standing philosophy of not
+//     encoding per-language grammar in code (§2's own "the app does not encode per-language grammar
+//     — the model does" principle, restated here for the same reason)
+//   - German's specific "capitalize every common noun" rule is named as an EXAMPLE of the kind of
+//     per-language rule that can exist, not asserted as a universal one
+// The literal worked example that fixed German case-restoration in the probe (probe_comic_text_
+// extract_v85_i.js's v2 run) was deliberately NOT carried over verbatim — a German-specific example
+// baked into a multilingual prompt risks biasing OTHER languages toward German's own capitalization
+// pattern. This generalization is UNTESTED beyond German; flagged, not silently assumed equivalent.
+//
+// LIVE-VERIFIED FINDING (v85_k, real qwen2.5vl:7b call, not the fake test backend): content extraction
+// worked correctly end-to-end through the whole pipeline, but case-restoration did NOT fire on a
+// SYNTHETIC test panel (plain rendered sans-serif text, "THE CAT SITS ON THE MAT" stayed ALL CAPS in
+// the response) — plausibly because plain computer-rendered text doesn't visually read as "comic
+// lettering" the way real panel art does, so the model had no visual cue to trigger the instruction.
+// Not yet re-verified against a REAL comic panel with this generalized (non-German-specific,
+// no-worked-example) prompt — the probes that validated case-restoration used a German-specific
+// worked example this production prompt deliberately does not carry. Worth a follow-up real-panel
+// measurement before trusting this instruction fires reliably in production.
+//
+// Also addresses a defect the probes found and did NOT fix by prompting alone in either run: crop-
+// boundary bleed-through (an imprecise, realistic human-drawn box catching a sliver of the ADJACENT
+// panel, which the model then transcribed as an unlabeled extra line). New instruction below targets
+// it directly — untested against a real bleed-through case, since this session had no more probe
+// budget left to re-verify after adding it; worth confirming on the first real multi-panel run.
+function _comicExtractPrompt(langName) {
+  return `This image is a single panel cropped from a comic page written in ${langName}. Comic
+lettering is conventionally ALL CAPS as a stylistic convention of the artwork — it does not
+necessarily reflect the real capitalization of the underlying ${langName} text. If ${langName} is
+written in a script that distinguishes upper-case and lower-case letters, restore normal ${langName}
+capitalization (sentence-initial capitals, proper nouns, and any of ${langName}'s own additional
+capitalization rules — for example, German capitalizes every common noun, not just sentence starts and
+proper nouns) rather than transcribing the capital letters literally. If ${langName} does not
+distinguish case, ignore this instruction and transcribe normally.
+
+There may be two kinds of text in this panel:
+1. A CAPTION or narration box (plain text, usually no border or a simple rectangular box, at the top
+   or bottom of the panel).
+2. IN-SCENE text that is part of the drawn scene itself (e.g. text on a sign, banner, or object the
+   characters are looking at).
+
+List each separately, labeled "CAPTION:" or "IN-SCENE:" (omit a label entirely if this panel has no
+text of that kind). Within each, if a single word is broken across two lines, rejoin it into one word
+— only insert a hyphen if the source image actually shows one; do not add a hyphen that isn't there.
+Do not transcribe any text that is only partially visible at the very edge of this image — it likely
+belongs to an adjacent panel, not this one. Output only the labeled transcriptions, nothing else.`;
+}
+
+// Parse a "CAPTION: ...\nIN-SCENE: ..." response into { caption, inScene }. Either field may be ''
+// if that label never appeared (a silent, valid panel — e.g. a wordless action panel) or if parsing
+// found nothing recognizable (a genuine extraction failure, indistinguishable from "no text" at this
+// layer — the raw text is kept alongside so a human reviewing results can tell them apart).
+function _parseComicExtraction(raw) {
+  const text = String(raw || '');
+  const cap = /CAPTION:\s*([\s\S]*?)(?=\n?IN-SCENE:|$)/i.exec(text);
+  const scene = /IN-SCENE:\s*([\s\S]*?)$/i.exec(text);
+  return {
+    caption: cap ? cap[1].trim() : '',
+    inScene: scene ? scene[1].trim() : '',
+    raw: text.trim(),
+  };
+}
+
+// images: array of { dataUrl } — full `data:image/...;base64,XXXX` strings as the client's canvas
+// crop produced them (NOT bare base64 — stripped here, once, so this is the only place that has to
+// know Ollama wants the bare form). lang: the topic's own target-language CODE, resolved to a display
+// name via langName() for the prompt (never sent as a code — the model reasons about language NAMES).
+async function _runComicExtractJob(jobId, images, lang) {
+  const name = langName(lang || 'en');
+  const results = [];
+  for (let i = 0; i < images.length; i++) {
+    jobStep(jobId, `[${OLLAMA_VISION_MODEL}] Extracting panel ${i + 1}/${images.length}…`);
+    try {
+      const b64 = String(images[i] || '').replace(/^data:image\/\w+;base64,/, '');
+      if (!b64) throw new Error('empty image');
+      const { text } = await callLLMVision('', _comicExtractPrompt(name), 400,
+        { images: [b64], temperature: 0.1 });
+      results.push({ ..._parseComicExtraction(text), error: null });
+    } catch (e) {
+      // One panel's failure must not lose the rest of the batch — same reasoning as
+      // _runRecreateJob's per-type try/catch above. The failed slot still gets a result object (with
+      // an error field) so the client's panel list stays index-aligned with what it sent.
+      console.warn(`  [comic-extract] panel ${i + 1} failed: ${e.message}`);
+      jobStep(jobId, `⚠ panel ${i + 1} failed — continuing…`);
+      results.push({ caption: '', inScene: '', raw: '', error: e.message });
+    }
+  }
+  const failed = results.filter(r => r.error).length;
+  console.log(`  [comic-extract] done: ${results.length} panel(s), ${failed} failed`);
+  jobDone(jobId, { panels: results });
+}
+
 http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://localhost:${PORT}`);
     const M   = req.method.toUpperCase();
@@ -6435,6 +6560,7 @@ http.createServer(async (req, res) => {
         ollamaLessonModel: OLLAMA_LESSON_MODEL,
         ollamaQcModel: OLLAMA_QC_MODEL,
         ollamaTutorModel: OLLAMA_TUTOR_MODEL,
+        ollamaVisionModel: OLLAMA_VISION_MODEL,
         ollamaLessonFormat: OLLAMA_LESSON_FORMAT,
         // v55_r: the client's colour-scheme picker reads this — the names live ONLY here, so the
         // list can never drift out of sync with STORYBOARD_SCHEMES (no duplicated list client-side).
@@ -6513,7 +6639,7 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
-      const requested = [body.model, body.story, body.translation, body.lessons, body.qc, body.tutor]
+      const requested = [body.model, body.story, body.translation, body.lessons, body.qc, body.tutor, body.vision]
         .filter(v => typeof v === 'string' && v.trim()).map(v => v.trim());
       const hasTimeout = body.timeoutMs != null && Number.isFinite(parseInt(body.timeoutMs, 10));
       // v71_q: numThread — CPU threads Ollama may use. 0/empty means "leave it to Ollama", which is
@@ -6523,7 +6649,7 @@ http.createServer(async (req, res) => {
         (typeof body.think.story === 'boolean' || typeof body.think.lessons === 'boolean'
          || typeof body.think.tutor === 'boolean');
       if (!requested.length && !hasTimeout && !hasThink && !hasThreads)
-        return json(res, 400, { error: 'Nothing to set. Provide story, translation, lessons, qc, tutor, model, timeoutMs, think, or numThread.' });
+        return json(res, 400, { error: 'Nothing to set. Provide story, translation, lessons, qc, tutor, vision, model, timeoutMs, think, or numThread.' });
       if (requested.length) {
         const available = await listOllamaModels();
         if (available.length) {
@@ -7166,6 +7292,38 @@ http.createServer(async (req, res) => {
         jobFail(jobId, e.message);
       }).finally(() => {
         generatingTopics.delete(topicKey);
+      });
+      return json(res, 202, { jobId });
+    }
+
+    // ── Comic panel text extraction (PLAN §2.4 / Track A4 milestone 2) — async, returns jobId ──
+    // Body: { images: [dataUrl, ...], lang }. images are already CROPPED client-side (canvas
+    // toDataURL per drawn box) — the server never sees the full page, only the panels the user
+    // selected, and never has to locate anything. No caching, no persistence here: this route only
+    // extracts text; turning the result into a chapter/topic is milestone 3's job, not this one's.
+    if (M === 'POST' && url.pathname === '/api/comic-extract') {
+      if (active === 'none')
+        return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
+      // Normalize to strings (a non-string entry becomes '') but do NOT drop empty ones — the
+      // client's panel list is INDEX-ALIGNED with this array (see _comicApplyExtraction's own
+      // comment), so a filter here would desync "panel 3 failed" from which panel actually failed.
+      // An empty/invalid entry still reaches _runComicExtractJob, which turns it into a per-panel
+      // error result at its own natural place in the array, not a silently-shrunk batch.
+      const images = Array.isArray(body.images) ? body.images.map(s => typeof s === 'string' ? s : '') : [];
+      if (!images.length || images.every(s => !s)) return json(res, 400, { error: 'No images provided.' });
+      // A generous but real cap: each call is a real vision-model round trip (this session's own
+      // measurement: 15s-5min depending on machine load), and an unbounded batch from the client
+      // could tie up the job queue indefinitely on a bad request.
+      if (images.length > 30) return json(res, 400, { error: 'Too many panels in one batch (max 30).' });
+      const lang = typeof body.lang === 'string' && body.lang.trim() ? body.lang.trim() : 'en';
+      const jobId = newJob();
+      console.log(`  Comic extraction: ${images.length} panel(s), lang=${lang}, model=${OLLAMA_VISION_MODEL} job=${jobId}`);
+      _runComicExtractJob(jobId, images, lang).catch(e => {
+        console.error('  Comic extraction error:', e.message);
+        jobFail(jobId, e.message);
       });
       return json(res, 202, { jobId });
     }

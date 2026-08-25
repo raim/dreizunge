@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
+| **SHIPPED IN THE v85 LINE** | `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13`** — the generator-page redesign, scoped at the `v85_a` cut — **is now FULLY SHIPPED** (all five milestones, `v85_c` through `v85_i`); its own section below still carries the full assessment/build-order text for reference, but nothing in it is open any more. The browser-reachable single-chapter CP1-4 pipeline it deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -1762,6 +1762,55 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_k — `PLAN §2.4` / Track A4 milestone 2: batch text extraction, `qwen2.5vl:7b`
+
+User: "qwen2.5vl:7b, and go for milestone 2" — resolving the one open ruling milestone 1 left (which
+vision model/backend to target) and greenlighting the next milestone in one message.
+
+**What shipped**: the full extraction pipeline — client crops each drawn box (`<canvas>`, full
+resolution, not the CSS-scaled drawing overlay), batches all crops into one `POST /api/comic-extract`,
+a new server-side job (`_runComicExtractJob`, one `qwen2.5vl:7b` call per panel, sequential, tolerant
+of one panel's failure), a new client-side poller (`_startComicExtractJob`, a structural sibling of
+`startBackgroundJob` — confirmed at scoping time NOT to reuse directly), merged back into the panel
+list with a text preview.
+
+Plumbing added along the way, all following existing patterns rather than inventing new ones:
+`llm.js`'s `_callOllama` gained `opts.images` (every prior vision call in this codebase, all four
+`§2.4` probe scripts, hand-rolled its own HTTP request because this was missing). `server.js` gained
+`OLLAMA_VISION_MODEL` as a full runtime-mutable role (same shape as story/translation/lessons/qc/tutor)
+— deliberately NOT falling back to the general model override, since the default text model has no
+vision capability at all. `callLLMVision()` goes through the same token-metering choke point as every
+other role.
+
+**The extraction prompt was generalized**, not copied verbatim from the probe scripts — those were
+German-only (the only language ever measured). Case-restoration is now phrased so the MODEL decides
+whether it applies (many of this app's 33 target scripts have no case distinction at all), and
+German's own noun-capitalization rule is named as an EXAMPLE of a per-language rule, not asserted
+universally. The probe's literal worked example (the single most effective fix for German case-
+restoration) was deliberately NOT carried into the generalized prompt — a German example risked
+biasing every other language toward German's own pattern.
+
+**A real bug was caught by the e2e test, not assumed away**: the route handler originally FILTERED
+empty/invalid entries out of the incoming `images` array before the job ever saw them, silently
+desyncing the client's index-aligned `APP_COMIC.boxes` from the server's `panels[]` response the
+moment any panel failed. Fixed to normalize-not-filter, rejecting only a wholly-empty batch.
+
+**Live-verified against the REAL model**, not just the fake test backend — a fresh server on port
+3457 (the user's own real dev server was found already bound to port 3000; left untouched). Full
+pipeline confirmed working end-to-end. One honest finding: case-restoration did NOT fire on a
+synthetic test panel (plain rendered text, not real comic art) — plausibly because the model had no
+visual "this is comic lettering" cue to act on. Not yet re-verified against a real panel with this
+exact generalized prompt; flagged in `_comicExtractPrompt`'s own comment as a follow-up measurement,
+not silently assumed equivalent to the probe's German-specific result.
+
+New tests: `test/e2e-comic-extract.test.js` (real fresh-spawned server + fake Ollama — this is a
+server.js change, needs a fresh process per the standing rule) and `test/unit-comic-extraction.test.js`
+(client side, mocked canvas + fetch). `test/fake-ollama.js` gained a `comic_extract` routing branch
+and now logs attached `images`. `INTERNALS.md` §6b has the full mechanism table.
+
+**Not started**: milestone 3 (chapter formation from extracted panels) and milestone 4 (progress-card
+integration) — see roadmap's "PLAN §2.4 — UI SCOPING" section, unchanged by this release.
 
 ## ✅ v85_j — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI (client-side only)
 

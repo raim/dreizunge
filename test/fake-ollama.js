@@ -240,6 +240,14 @@ const srv = http.createServer(async (req, res) => {
     } else if (/Write the continuation now|Write a story for the topic|Plain prose/i.test(usr)) {
       kind = 'story';
       content = 'STORYTEXT[' + Date.now() + '] Es war einmal ein Test. Die Katze und das Haus blieben gleich.';
+    // PLAN §2.4 / Track A4 milestone 2 (v85_k): comic-panel text extraction. system is EMPTY for
+    // this call (unlike every other role) — see server.js's callLLMVision/_comicExtractPrompt — so
+    // this is a `usr`-keyed branch, matching the prompt's own opening sentence. A test can force a
+    // specific canned reply by putting a recognizable marker in place of the real crop's content —
+    // there's nothing to key on in a real image, but the fake never SEES the image anyway.
+    } else if (/single panel cropped from a comic page/i.test(usr)) {
+      kind = 'comic_extract';
+      content = /FORCE_EMPTY/.test(usr) ? '' : 'CAPTION: Fake caption text.\nIN-SCENE: Fake sign text.';
     } else if (/careful linguistic analyst/i.test(sys)) {
       // PLAN §7.0 CP2: token-level lemma/form/sense analysis (canonical-analysis.js). Reads the
       // token list straight back out of the user message so it works for whatever sentence a test
@@ -275,9 +283,17 @@ const srv = http.createServer(async (req, res) => {
     // and the standing rule is that a wiring change needs a run rather than a source pin. `think`
     // is here for the same reason: the per-role reasoning toggle was guarded only by source slices
     // until now, and one of them broke on a line move while its claim stayed true.
+    // images: captured as LENGTH + a short prefix, not the full base64 — a real crop can be tens of
+    // KB and this log is read back into a test process; a test that needs to prove "an image arrived
+    // and looked like the one sent" only needs to compare a prefix, not round-trip the whole blob.
+    const _userMsg = msgs.find(m => m.role === 'user') || {};
+    const _images = Array.isArray(_userMsg.images)
+      ? _userMsg.images.map(s => ({ len: String(s || '').length, prefix: String(s || '').slice(0, 12) }))
+      : null;
     const _opts = { think: (typeof body.think === 'boolean' ? body.think : null),
                     num_ctx: (body.options && body.options.num_ctx) || null,
-                    num_predict: (body.options && body.options.num_predict) || null };
+                    num_predict: (body.options && body.options.num_predict) || null,
+                    images: _images };
     if (LOG) { try { fs.appendFileSync(LOG, JSON.stringify({ kind, sys: sys.slice(0, 8000), usr, opts: _opts }) + '\n'); } catch (_) {} }
     res.writeHead(200, { 'Content-Type': 'application/json' });
     return res.end(JSON.stringify({ message: { role: 'assistant', content }, done: true }));

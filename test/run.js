@@ -258,6 +258,7 @@ run('unit: per-chapter lesson-type override (PLAN §13 milestone 3, v85_f)', 'no
 run('unit: post-generation storyboard/QC toggles (PLAN §13 milestone 4, v85_g)', 'node', [path.join(__dirname, 'unit-post-gen-features.test.js')]);
 run('unit: generation-time attribution fields (PLAN §13 milestone 5, v85_i)', 'node', [path.join(__dirname, 'unit-gen-attribution.test.js')]);
 run('unit: comic upload + panel-drawing UI (PLAN §2.4 Track A4 milestone 1, v85_j)', 'node', [path.join(__dirname, 'unit-comic-panel-ui.test.js')]);
+run('unit: comic panel batch extraction, client side (PLAN §2.4 Track A4 milestone 2, v85_k)', 'node', [path.join(__dirname, 'unit-comic-extraction.test.js')]);
 run('unit: hidden lessons omitted/non-blocking in static (v48)', 'node', [path.join(__dirname, 'unit-hidden-lessons.test.js')]);
 run('unit: inline onclick escaping (read-story SyntaxError)', 'node', [path.join(__dirname, 'unit-inline-escaping.test.js')]);
 run('unit: error-hunt content-aware RTL', 'node', [path.join(__dirname, 'unit-error-hunt-rtl.test.js')]);
@@ -311,6 +312,7 @@ if (!quick) {
   run('e2e: synonyms context sentences', 'node', [path.join(__dirname, 'e2e-synonyms.test.js')]);
   run('e2e: LLM chapter split', 'node', [path.join(__dirname, 'e2e-chapter-split.test.js')]);
   run('e2e: re-create storyline lessons', 'node', [path.join(__dirname, 'e2e-recreate.test.js')]);
+  run('e2e: comic panel text extraction (PLAN §2.4 Track A4 milestone 2, v85_k)', 'node', [path.join(__dirname, 'e2e-comic-extract.test.js')]);
   run('e2e: model picker + table-format + split-translation + provenance', 'node', [path.join(__dirname, 'e2e-models.test.js')]);
 } else {
   console.log('\n(skipping e2e tests: --quick)');

@@ -235,7 +235,15 @@ function _callOllama(model, system, userMsg, maxTokens, opts) {
         // Ollama keeps deciding and small calls keep their small KV cache.
         ...(_resolveNumCtx(opts) ? { num_ctx: _resolveNumCtx(opts) } : {}),
         ...(Array.isArray(opts?.stop) && opts.stop.length ? { stop: opts.stop } : {}) },
-      messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }]
+      // opts.images: an array of base64-encoded image strings (NO `data:...;base64,` prefix — raw
+      // base64 only, per Ollama's own /api/chat contract), attached to the USER message. Added for
+      // PLAN §2.4 / Track A4 milestone 2 (comic panel text extraction) — every prior vision call in
+      // this codebase was a one-off probe script with its own hand-rolled HTTP request BECAUSE this
+      // was missing; this is the one place that duplication should now converge on. Not threaded
+      // into callLLMStream's own request body below — no streaming caller needs images yet.
+      messages: [{ role: 'system', content: system },
+        { role: 'user', content: userMsg,
+          ...(Array.isArray(opts?.images) && opts.images.length ? { images: opts.images } : {}) }]
     });
     const req = lib.request({
       hostname: u.hostname,

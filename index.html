@@ -1338,9 +1338,12 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           </div>
           <div id="comic-panel-list" style="display:flex;flex-direction:column;gap:4px;margin-top:8px"></div>
           <div id="comic-panel-actions" style="display:none;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+            <button type="button" id="comic-extract-btn" onclick="comicExtractPanels()"
+              style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif">✨ <span id="comic-extract-lbl">Extract text</span></button>
             <button type="button" id="comic-clear-btn" onclick="comicClearPanels()"
               style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🗑 <span id="comic-clear-lbl">Clear panels</span></button>
             <span id="comic-panel-count" style="font-size:12px;color:var(--gray-dark)"></span>
+            <span id="comic-extract-status" style="font-size:11px;color:var(--gray-dark)"></span>
           </div>
         </div>
 
@@ -2774,6 +2777,7 @@ function applyUIStrings() {
   { const ch=document.getElementById('comic-help'); if(ch) ch.textContent=t('form.comic_help'); }
   { const cc=document.getElementById('comic-choose-lbl'); if(cc) cc.textContent=t('form.comic_choose'); }
   { const ccl=document.getElementById('comic-clear-lbl'); if(ccl) ccl.textContent=t('form.comic_clear'); }
+  { const cel=document.getElementById('comic-extract-lbl'); if(cel) cel.textContent=t('form.comic_extract'); }
   _renderSplitModes();
   { const cl=document.getElementById('pdf-cleanup-lbl'); if(cl) cl.textContent=t('pdf.cleanup_lbl'); }
   { const al=document.getElementById('pdf-aiclean-lbl'); if(al) al.textContent=t('pdf.aiclean_lbl'); }
@@ -3617,13 +3621,28 @@ function _comicRenderList(){
   list.innerHTML=APP_COMIC.boxes.map((b,i)=>{
     const color=_COMIC_COLORS[i%_COMIC_COLORS.length];
     return `<div style="display:flex;align-items:center;gap:6px;padding:4px 8px;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;font-size:12px">
-      <span style="display:inline-block;width:16px;height:16px;border-radius:3px;background:${color};color:#fff;text-align:center;font-weight:800;font-size:11px;line-height:16px">${i+1}</span>
-      <span style="flex:1;color:var(--gray-dark)">${b.x2-b.x1}×${b.y2-b.y1}px</span>
+      <span style="display:inline-block;width:16px;height:16px;border-radius:3px;background:${color};color:#fff;text-align:center;font-weight:800;font-size:11px;line-height:16px;flex-shrink:0">${i+1}</span>
+      <span style="flex:1;color:var(--gray-dark);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escAttr(_comicPanelSummary(b))}">${_comicPanelSummaryHtml(b)}</span>
       <button type="button" onclick="comicMovePanel(${i},-1)" ${i===0?'disabled':''} style="border:none;background:none;cursor:pointer;font-size:13px" title="Move up">↑</button>
       <button type="button" onclick="comicMovePanel(${i},1)" ${i===APP_COMIC.boxes.length-1?'disabled':''} style="border:none;background:none;cursor:pointer;font-size:13px" title="Move down">↓</button>
       <button type="button" onclick="comicDeletePanel(${i})" style="border:none;background:none;cursor:pointer;font-size:13px;color:var(--red-dark)" title="Delete">✕</button>
     </div>`;
   }).join('');
+}
+// Plain-text summary (for the title= tooltip, which needs no markup) and an HTML version (for the
+// row itself) of one panel's state: not yet extracted → its pixel size; extracted → a preview of
+// whatever text came back; failed → the error, prefixed so it reads as a failure, not content.
+function _comicPanelSummary(b){
+  if(!b.text) return (b.x2-b.x1)+'×'+(b.y2-b.y1)+'px';
+  if(b.text.error) return '⚠ '+b.text.error;
+  const parts=[b.text.caption, b.text.inScene].filter(Boolean);
+  return parts.length ? parts.join(' / ') : '(no text found)';
+}
+function _comicPanelSummaryHtml(b){
+  if(!b.text) return escHtml((b.x2-b.x1)+'×'+(b.y2-b.y1)+'px');
+  if(b.text.error) return '<span style="color:var(--red-dark)">⚠ '+escHtml(b.text.error)+'</span>';
+  const parts=[b.text.caption, b.text.inScene].filter(Boolean);
+  return parts.length ? escHtml(parts.join(' / ')) : '<em>(no text found)</em>';
 }
 function comicDeletePanel(i){
   APP_COMIC.boxes.splice(i,1);
@@ -3641,6 +3660,97 @@ function comicClearPanels(){
 // milestone 2's extraction step reads panels through this accessor rather than APP_COMIC directly,
 // so the storage shape above can change without hunting down every call site.
 function _comicPanels(){ return APP_COMIC.boxes.map(b=>({...b})); }
+
+// ── Comic panel text extraction (PLAN §2.4 / Track A4 milestone 2, v85_k) ──────────────────────
+// Crops each drawn box CLIENT-SIDE (canvas — §2.3's own "crop in the browser, free, no server-side
+// dependency" option), sends all crops to the server in ONE batch call (per the user's own ruling:
+// draw first, extract in one batch afterward — not one wait per rectangle), and polls a NEW job
+// endpoint. Deliberately NOT built on startBackgroundJob() — that function is hardwired to story-
+// generation's own completion actions (showStorylineForTopic, j.data.topic); this is a structurally
+// similar SIBLING, following the same poll shape, not a reuse of the code (checked, not assumed —
+// see roadmap_v85.md's "PLAN §2.4 — UI SCOPING" section for why).
+
+// Crops the ORIGINAL full-resolution image (via the already-loaded #comic-draw-img element, which
+// holds it at natural resolution regardless of how small the CSS-displayed canvas is) to one box's
+// natural-pixel bounds. Returns a full data: URL — the server strips the `data:...;base64,` prefix
+// itself (see _comicExtractPrompt's caller, server.js), so the client never has to know Ollama's
+// bare-base64 requirement.
+function _comicCropDataUrl(box){
+  const img=document.getElementById('comic-draw-img');
+  const c=document.createElement('canvas');
+  c.width=Math.max(1,box.x2-box.x1); c.height=Math.max(1,box.y2-box.y1);
+  const ctx=c.getContext('2d');
+  ctx.drawImage(img, box.x1, box.y1, c.width, c.height, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', 0.92);
+}
+
+async function comicExtractPanels(){
+  const boxes=_comicPanels();
+  if(!boxes.length) return;
+  const btn=document.getElementById('comic-extract-btn');
+  const status=document.getElementById('comic-extract-status');
+  if(btn) btn.disabled=true;
+  if(status) status.textContent=t('form.comic_extracting');
+  try{
+    const images=boxes.map(_comicCropDataUrl);
+    const r=await fetch('/api/comic-extract',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({images, lang:APP.lang})});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok){ if(status) status.textContent=''; showToast(t('form.comic_extract_failed')+': '+(data.error||r.status)); if(btn) btn.disabled=false; return; }
+    _startComicExtractJob(data.jobId);
+  }catch(e){
+    if(status) status.textContent='';
+    showToast(t('form.comic_extract_failed')+': '+e.message);
+    if(btn) btn.disabled=false;
+  }
+}
+
+// A structural SIBLING of startBackgroundJob() (same poll-every-2s-against-/api/job/:id shape), not
+// a reuse of it — see this block's own header comment for why reuse wasn't possible here.
+function _startComicExtractJob(jobId){
+  const status=document.getElementById('comic-extract-status');
+  const btn=document.getElementById('comic-extract-btn');
+  const iv=setInterval(async ()=>{
+    try{
+      const r=await fetch('/api/job/'+jobId);
+      if(!r.ok) throw new Error('Poll failed: '+r.status);
+      const j=await r.json();
+      if(j.step && status) status.textContent=j.step;
+      if(j.status==='done'){
+        clearInterval(iv);
+        _comicApplyExtraction(j.data && j.data.panels);
+        if(status) status.textContent='';
+        if(btn) btn.disabled=false;
+      }
+      if(j.status==='error'){
+        clearInterval(iv);
+        if(status) status.textContent='';
+        showToast(t('form.comic_extract_failed')+': '+j.error);
+        if(btn) btn.disabled=false;
+      }
+      if(j.status==='cancelled'){
+        clearInterval(iv);
+        if(status) status.textContent='';
+        if(btn) btn.disabled=false;
+      }
+    }catch(e){
+      clearInterval(iv);
+      if(status) status.textContent='';
+      showToast(t('form.comic_extract_failed')+': '+e.message);
+      if(btn) btn.disabled=false;
+    }
+  }, 2000);
+}
+
+// Merges the server's per-panel results back onto APP_COMIC.boxes BY INDEX — images were sent in
+// exactly APP_COMIC.boxes' own order (via _comicPanels()), and the server preserves that order even
+// when an individual panel's extraction failed (a placeholder result, not a skipped slot — see
+// server.js's _runComicExtractJob), so index alignment holds even after a partial failure.
+function _comicApplyExtraction(panels){
+  if(!Array.isArray(panels)) return;
+  panels.forEach((p,i)=>{ if(APP_COMIC.boxes[i]) APP_COMIC.boxes[i].text=p; });
+  _comicRenderList();
+}
 
 // ── Dialect studio (M2 controls, shown on a dialect topic's lesson-set page) ──
 // Flow: enter a topic (+ optional dialect instructions) → generate a coherent dialect story (the
