@@ -44,9 +44,9 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_m` — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels, live-verified end-to-end (both halves) against the real model. `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
+| **SHIPPED IN THE v85 LINE** | `v85_n` — `PLAN §2.4` / Track A4 milestone 4: progress-card integration. **TRACK A4 IS NOW FULLY SHIPPED** (all four milestones, `v85_j` through `v85_n`). `v85_m` — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels, live-verified end-to-end (both halves) against the real model. `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
-| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13`** — the generator-page redesign, scoped at the `v85_a` cut — **is now FULLY SHIPPED** (all five milestones, `v85_c` through `v85_i`); its own section below still carries the full assessment/build-order text for reference, but nothing in it is open any more. The browser-reachable single-chapter CP1-4 pipeline it deferred remains its own, separate, not-yet-started follow-up. |
+| **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13`** — the generator-page redesign, scoped at the `v85_a` cut — **is now FULLY SHIPPED** (all five milestones, `v85_c` through `v85_i`); its own section below still carries the full assessment/build-order text for reference, but nothing in it is open any more. **`PLAN §2.4` / Track A4** (comic/image ingest) — the four-milestone manual-panel-selection design chosen after the `§2.4` overlay-probe measurements — **is now FULLY SHIPPED** (`v85_j` UI, `v85_k`/`v85_l` extraction, `v85_m` chapter formation, `v85_n` progress-card integration); its own "PLAN §2.4" sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
 Standing rules are in the "Rules earned in session 28…34" blocks, plus two more from the `v83` line and
 three from the `v84` line (search "Rules earned in the v84 line") — read the **"⚠️ How the rules are
@@ -1762,6 +1762,36 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_n — `PLAN §2.4` / Track A4 milestone 4: progress-card integration — TRACK A4 IS NOW FULLY SHIPPED
+
+User: "go" — resuming Track A4 after `v85_m`. No open ruling blocked starting this LAST milestone in
+the original plan.
+
+**What shipped**: a new branch in `_storyBodyHtml` — the ONE shared story renderer already reaching
+every progress card, question panel, storyline chain view, and saved-story reader — keyed on
+`d.comicPanels`. Comic-sourced chapters ONLY, per the standing ruling made earlier in this line; every
+other chapter's rendering is byte-for-byte unchanged (confirmed: full suite green, zero regressions).
+Each drawn panel gets its own card: the panel's own image above its own transcribed text, run through
+the EXACT SAME word-highlighting chain (`furiHtml`→`_highlightVocabHtml`→`_storyParasHtml`) the plain-
+text path already uses — Tier 1 per `PLAN §2.6` (bubble/panel-level, ordinary clickable HTML text),
+not per-word image coordinates (Tier 2, still explicitly out of scope).
+
+**This completes Track A4's original 4-milestone plan** (`v85_j` UI, `v85_k`/`v85_l` extraction,
+`v85_m` chapter formation, `v85_n` this release) — the same "milestone plan fully shipped" shape
+`PLAN §13` reached earlier this session.
+
+A genuinely new DOM-stub harness limitation was found and worked around while writing this release's
+tests: beyond the documented "`querySelector` never returns null on a miss" gotcha, a nested
+`.querySelector(...).innerHTML` on a sub-element pulled from an earlier `.querySelectorAll(...)`
+result does not reflect real content, even though `.textContent` and attribute reads on the exact same
+match work correctly. Worked around by parsing the raw HTML string directly for the two test
+assertions that needed it.
+
+**Live-verified with an explicitly-isolated `LESSONS_FILE`** this time — `v85_m`'s mistake (using the
+default path, briefly polluting the real corpus) was not repeated. Injected a synthetic comic-sourced
+topic directly and screenshotted the rendered output: two panels, correct per-panel vocab highlighting,
+one panel deliberately given no image — confirmed it renders no broken image element.
 
 ## ✅ v85_m — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels
 
