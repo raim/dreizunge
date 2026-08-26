@@ -184,7 +184,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v85_q';
+const APP_VERSION  = 'v85_r';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -438,8 +438,25 @@ function resolveVocabularySkillTags(vocab, lang, srcLang) {
   let pending = 0;
   const tagged = (vocab || []).map((item, index) => {
     const proposedId = item && typeof item.skillId === 'string' ? item.skillId.trim() : '';
-    if (!proposedId) throw new Error(`Vocabulary item ${index + 1} has no model-proposed skillId`);
-    const resolution = resolveSkill(skillRegistry, proposedId, { targetLang: lang, sourceLang: srcLang });
+    // v85_r: a missing or malformed skillId on ONE item used to throw here, which discarded the
+    // WHOLE lesson (7 good vocab items + 5 sentences + a real LLM call) and forced a full retry —
+    // plausibly the "3 failed attempts, 462s" flakiness reported at v85_p. Both failure shapes are
+    // exactly the case this module's own header already names for an UNREGISTERED proposal: "durable
+    // review input, not a reason for [anything] to [fail]" — a model dropping the field, or getting
+    // the format wrong, on one of eight items is the same kind of imperfect-but-recoverable evidence,
+    // not a reason to burn a full regeneration over the other seven. Resolve what can be resolved;
+    // record the rest as pending, same as an unregistered-but-well-formed proposal always has.
+    let resolution;
+    if (!proposedId) {
+      resolution = { proposedId: '', canonicalId: null, skillId: null, status: 'missing',
+        targetLang: lang, sourceLang: srcLang, entry: null };
+    } else {
+      try { resolution = resolveSkill(skillRegistry, proposedId, { targetLang: lang, sourceLang: srcLang }); }
+      catch (e) {
+        resolution = { proposedId, canonicalId: null, skillId: null, status: 'malformed: ' + e.message,
+          targetLang: lang, sourceLang: srcLang, entry: null };
+      }
+    }
     if (resolution.skillId) skillIds.add(resolution.skillId); else pending++;
     // Never retain the model's unvalidated ID in `skillId`: that field is reserved for a resolved,
     // canonical skill the player can use in a later B3 follow-up. The proposal/resolution remains

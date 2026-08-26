@@ -39,12 +39,21 @@ const VOCAB_LESSON = {
 
 // PLAN §8/B3: vocabulary prompts require model-proposed target-language skill IDs. The fake reads
 // the requested language code from that contract so it remains useful for every generated pair.
-function vocabLessonWithSkills(sys) {
+//
+// v85_r: when the user message carries the SKILLDEFECT marker (a topic name a test controls), two
+// items come back defective — one with the "skillId" field dropped entirely, one with a malformed
+// value (wrong target-language prefix) — the two real shapes a small/local model has been observed
+// to produce on an imperfect item out of eight. This is what `resolveVocabularySkillTags`'s v85_r
+// fix exists to tolerate without discarding the whole lesson; see e2e-skill-tagging.test.js.
+function vocabLessonWithSkills(sys, usr) {
   const m = /skill ID in the form "([^:"]+):vocab:/i.exec(sys);
   const lang = m ? m[1].toLowerCase() : 'de';
+  const defect = /SKILLDEFECT/.test(usr || '');
   const out = JSON.parse(JSON.stringify(VOCAB_LESSON));
-  out.vocab.forEach(item => {
+  out.vocab.forEach((item, i) => {
     item.skillId = lang + ':vocab:' + item.target.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '');
+    if (defect && i === 1) delete item.skillId;                          // field dropped entirely
+    if (defect && i === 2) item.skillId = 'xx:vocab:' + item.target.toLowerCase();  // wrong lang prefix
   });
   return out;
 }
@@ -287,7 +296,7 @@ const srv = http.createServer(async (req, res) => {
       }
       content = JSON.stringify(out);
     } else {
-      kind = 'vocab'; content = JSON.stringify(vocabLessonWithSkills(sys));
+      kind = 'vocab'; content = JSON.stringify(vocabLessonWithSkills(sys, usr));
     }
     // v76_h: was sys.slice(0, 400). Notes appended AFTER a prompt's `system` block — the script
     // rule, the dialect note, the writing-style note, the continuation note — all fall past 400

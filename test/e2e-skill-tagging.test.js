@@ -47,6 +47,40 @@ async function waitJob(sport, jobId) {
     assert.ok(calls.length, 'vocabulary prompt reached the model');
     assert.ok(calls.some(x => /skillId/.test(x.sys)), 'JSON vocabulary prompt requires per-item model skill IDs');
     console.log('  B3 vocab tagging: target-language proposals, reviewed resolution, pending review: OK');
+
+    // v85_r: a missing or malformed skillId on ONE vocab item used to throw and discard the WHOLE
+    // lesson (see resolveVocabularySkillTags's own comment) — plausibly the "3 failed attempts,
+    // 462s" flakiness reported at v85_p. The fake's SKILLDEFECT marker (in the topic, reaching the
+    // user message) drops item[1]'s skillId entirely and gives item[2] a wrong-language-prefix one;
+    // both are recoverable-by-design now, not fatal.
+    r = await post(env.sport, '/api/generate',
+      { topic: 'Skill tagging SKILLDEFECT', lang: 'de', srcLang: 'en', difficulty: 2, storyLen: 80 });
+    assert.strictEqual(r.status, 202, 'generation accepted');
+    const defectJob = await waitJob(env.sport, r.body.jobId);
+    assert.ok(defectJob && defectJob.status === 'done',
+      'a lesson with defective per-item skill IDs still completes on the FIRST attempt, not after retries: ' +
+      (defectJob && defectJob.error));
+    const defectTopic = env.readStore().topics.find(t => t.topic === defectJob.data.topic);
+    assert.ok(defectTopic, 'the defective-skill-ID topic still persisted');
+    const defectLesson = defectTopic.lessons[0];
+    assert.strictEqual(defectLesson.vocab.length, 8, 'all 8 vocab items survive — none dropped for a bad skillId');
+    assert.strictEqual(defectLesson.vocab[1].skillId, null, 'the item with no proposed skillId has none resolved');
+    assert.strictEqual(defectLesson.vocab[1].skillProposal.status, 'missing',
+      'a dropped skillId field is recorded as "missing", not thrown');
+    assert.strictEqual(defectLesson.vocab[2].skillId, null, 'the item with a malformed skillId has none resolved');
+    assert.ok(/^malformed:/.test(defectLesson.vocab[2].skillProposal.status),
+      'a malformed skillId (wrong target-language prefix) is recorded as "malformed: <reason>", not thrown');
+    assert.strictEqual(defectLesson.vocab[0].skillProposal.status, 'exact',
+      'a well-formed proposal on another item (already-registered "de:vocab:haus") resolves normally, ' +
+      'unaffected by its neighbours\' defects');
+    // Scoped to the actual per-lesson vocab call ("Lesson N of M") — the fake's fallback routing
+    // tags OTHER unrelated calls (a warm-up ping, the topic/emoji metadata call) as kind:'vocab' too,
+    // and those also carry the topic name, so filtering on SKILLDEFECT alone overcounts.
+    const defectCalls = env.readChatLog().filter(x =>
+      x.kind === 'vocab' && /SKILLDEFECT/.test(x.usr || '') && /Lesson \d+ of \d+/.test(x.usr || ''));
+    assert.strictEqual(defectCalls.length, 1,
+      'exactly one model call was needed for the lesson itself — the defect did not trigger a retry-and-regenerate');
+    console.log('  B3 vocab tagging: a missing or malformed per-item skillId degrades gracefully, no whole-lesson retry: OK');
   } finally {
     env.stop();
   }

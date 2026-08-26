@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_q` — `unit-ui-journeys.test.js` investigation: the carried-forward `#lang-select` crash, diagnosed as a test-harness-only DOM-stub gap (confirmed unreachable in a real browser) and fixed with two per-file harness shims, no application code touched. `v85_p` — real-usage bug fixes from the user's own first live test: one chapter per drawn panel (not one per page), storyboard generation made opt-in everywhere (was unconditional since v68.1 for EVERY book-job caller, not just comics — fixed a latent no-op in `PLAN §13` milestone 4's own toggle too). `v85_o` — `PLAN §2.4` follow-up: auto-detect panels (a suggestion pre-filling the manual-drawing UI), plus a real angle-bracket parser gap found and fixed by this milestone's own live verification. `v85_n` — `PLAN §2.4` / Track A4 milestone 4: progress-card integration. **TRACK A4 IS NOW FULLY SHIPPED** (all four milestones, `v85_j` through `v85_n`). `v85_m` — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels, live-verified end-to-end (both halves) against the real model. `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
+| **SHIPPED IN THE v85 LINE** | `v85_r` — model-reliability round: the `v80_j` article-symmetry fix generalised to `vocabFromText.system` (its second caller, never fixed before), and `resolveVocabularySkillTags` no longer discards a whole lesson for one item's missing/malformed skillId (the likely "3 failed attempts" cause) — chapter-title post-pass investigated, hardened already, no new defect found, left open for live repro. `v85_q` — `unit-ui-journeys.test.js` investigation: the carried-forward `#lang-select` crash, diagnosed as a test-harness-only DOM-stub gap (confirmed unreachable in a real browser) and fixed with two per-file harness shims, no application code touched. `v85_p` — real-usage bug fixes from the user's own first live test: one chapter per drawn panel (not one per page), storyboard generation made opt-in everywhere (was unconditional since v68.1 for EVERY book-job caller, not just comics — fixed a latent no-op in `PLAN §13` milestone 4's own toggle too). `v85_o` — `PLAN §2.4` follow-up: auto-detect panels (a suggestion pre-filling the manual-drawing UI), plus a real angle-bracket parser gap found and fixed by this milestone's own live verification. `v85_n` — `PLAN §2.4` / Track A4 milestone 4: progress-card integration. **TRACK A4 IS NOW FULLY SHIPPED** (all four milestones, `v85_j` through `v85_n`). `v85_m` — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels, live-verified end-to-end (both halves) against the real model. `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13`** — the generator-page redesign, scoped at the `v85_a` cut — **is now FULLY SHIPPED** (all five milestones, `v85_c` through `v85_i`); its own section below still carries the full assessment/build-order text for reference, but nothing in it is open any more. **`PLAN §2.4` / Track A4** (comic/image ingest) — the four-milestone manual-panel-selection design chosen after the `§2.4` overlay-probe measurements — **is now FULLY SHIPPED** (`v85_j` UI, `v85_k`/`v85_l` extraction, `v85_m` chapter formation, `v85_n` progress-card integration); its own "PLAN §2.4" sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -1762,6 +1762,89 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_r — model-reliability round: two of three `v85_p`-deferred issues DIAGNOSED and FIXED
+
+The user's own real test at `v85_p` deferred three model-reliability issues for their own dedicated
+round ("ok, go"). Two are real, code-level defects, both found by READING, not guessing, and both
+fixed at the layer the diagnosis pointed to. The third is examined below and left open, honestly,
+because code reading found no further defect to fix.
+
+**1. Vocab article-pairing inconsistency — FIXED. A `v80_j` fix that never covered its second caller.**
+
+`PLAN §F3`/`§F3c` diagnosed and fixed this exact defect at `v80_j`: `prompts.json`'s `vocab.system`
+contradicted itself, saying BASE FORM ONLY nouns take "the usual article where the language uses
+one" (PER-SIDE, German cites `der Hund`) right next to ARTICLE SYMMETRY, which is CROSS-SIDE — for
+German↔French they cannot both hold. `v80_j` removed the per-side clause and added an
+overrides-dictionary-convention explanation plus a worked counter-example, guarded by
+`unit-prompt-article-rule.test.js`. **That guard checked `vocab.system` only.**
+`prompts.json`'s `vocabFromText.system` — the prompt used whenever a story arrives WITH a parallel
+translation, which is every user-pasted story+translation, every PDF upload, AND (since `v85_j`)
+every comic-panel chapter, since `generateOneLesson` routes every `userTranslation` caller there —
+carried the IDENTICAL contradiction, word for word, untouched for five releases. Rule 8's shape one
+level down: a per-caller fix does not generalize to other callers of the same primitive: "generate
+vocab" has (at least) two prompt-level callers, and only one was ever fixed. Found by reading
+`prompts.json` directly (not inferred), confirmed by re-running `build_history/probe_article_symmetry_v80j.js`
+against the current corpus — a stable 1.1% corpus-wide rate, essentially unchanged from `v80_j`'s 1.0%,
+which is consistent with `vocabFromText`'s callers (comic/PDF/pasted-story lessons) never having
+received the fix at all. **Fixed**: `vocabFromText.system` now carries the exact same
+override-and-worked-example text `vocab.system` does.
+`unit-prompt-article-rule.test.js` **generalised** to loop over both prompt keys, so a THIRD such
+caller cannot slip past this guard the way the second one did — mutation-tested by reintroducing the
+old contradiction into `vocabFromText.system` and confirming the guard goes red. `vocabTable.system`
+(the markdown-table format for non-JSON models) has no BASE FORM ONLY line at all, so nothing to
+contradict there — a separate, pre-existing, NOT-yet-reported gap (no base-form instruction for that
+path at all), left alone rather than folded into this fix.
+**Unverified against a live model** — same honesty `v80_j` itself stated: judging the fix needs
+regeneration across many lessons against a live model, then a re-run of the probe. That is the user's
+step.
+
+**2. Skill-ID generation flakiness — FIXED. An all-or-nothing throw on a per-item field.**
+
+`resolveVocabularySkillTags` required every vocab item to carry a well-formed, resolvable
+`skillId` — a missing field threw outright (`Vocabulary item N has no model-proposed skillId`), and a
+present-but-malformed one (wrong target-language prefix, wrong segment count) threw from inside
+`canonicalSkillId` uncaught. Either throw discarded the WHOLE lesson (all 8 vocab items + 5 sentences
++ a real, slow LLM call) from inside `withRetry`'s 3-attempt loop — a very plausible mechanism for the
+reported "3 failed attempts, 462s": one imperfect item out of eight, on EVERY attempt, is enough to
+exhaust all three and fail the lesson outright. This directly contradicts the registry module's own
+stated design (`skill-registry.js`'s header): an unresolvable proposal is "durable review input," not
+a reason to fail — a design already honoured for a well-formed-but-UNREGISTERED proposal (silently
+recorded as `pending`), just never extended to a MISSING or MALFORMED one.
+**Fixed**: both failure shapes now degrade the same way an unregistered proposal already did — the
+item's `skillId` stays `null`, `skillProposal.status` records `'missing'` or `'malformed: <reason>'`,
+and the other seven items resolve completely normally. Mutation-tested by reverting the fix and
+confirming a new e2e case (`e2e-skill-tagging.test.js`, using a new `SKILLDEFECT` marker in
+`test/fake-ollama.js` that drops one item's `skillId` and corrupts another's) fails with the OLD
+exact error message, then passes with the fix, AND asserts only ONE model call was needed for the
+lesson (no retry-and-regenerate).
+**This is a mechanical, deterministic fix** (a JS exception path, not a prompt), so unlike item 1 it
+needed no live-model measurement to validate the code-level claim — the e2e fixture reproduces the
+exact defect shape without needing a real model at all. Whether the REAL model actually produces
+missing/malformed skill IDs at the rate the user's report implies is separately still worth watching
+in real usage, but the app no longer treats that as fatal either way.
+
+**3. Chapter-title post-pass failures — INVESTIGATED, NOT FIXED. No further static defect found.**
+
+`generateChapterMeta`/`_generateChapterMetaOnce` is already substantially hardened: 3 attempts,
+`think:false`, a 4-rung parsing ladder (`JSON.parse` → `extractArray` → `salvageArray` → per-object
+regex, plus a `v77_x` pair-array fallback for `["title","emoji"]` shapes with no wrapping object), and
+a "keep the best partial seen" policy so an incomplete attempt is never simply discarded. The single
+most severe PREVIOUSLY-diagnosed failure mode — a continuation post-pass seeing only the newly added
+chapters, "0/2 titles came back named" from a mid-story fragment with no beginning — was already fixed
+in an earlier release (`_titleStorylinePostPass` now passes the WHOLE chain, applying titles only to
+the new chapters). The `60*n+120` figure in `_generateChapterMetaOnce`'s `_callLLM` call is a TOKEN
+budget, not a timeout, and is generous for the prompt's own "2-5 words" title constraint — checked,
+not assumed, by reading `callLLM`'s signature (`maxTokens`, 4th positional arg). No NEW code-level
+defect was found by reading this path. **This item needs a live-model reproduction to make further
+progress** — per the project's own standing rule, a live model call needs a live test, and this is
+exactly that case: nothing left here is diagnosable from source alone. Left open for the user's own
+next real test, or a dedicated live-verification round.
+
+Baseline: `node test/run.js` → 283 checks, 2 known failures (both `lessons.json` corpus-drift,
+unrelated). `node test/run.js --quick` → 245 checks, same 2. Both `check-inline.js` → 0 failures.
+`docs/index.html` rebuilt from the COMMITTED `lessons.json` (same `git show HEAD:lessons.json`
+pattern `v85_q` established), not the user's live/uncommitted one.
 
 ## ✅ v85_q — `unit-ui-journeys.test.js` investigation: the `#lang-select` crash, DIAGNOSED and FIXED
 
