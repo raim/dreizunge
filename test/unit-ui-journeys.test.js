@@ -74,6 +74,45 @@ function client() {
     APP.cur = { lessonIdx:0, exercises:[], cur:0, correct:4, total:4, mistakes:0,
                 hearts:3, streak:2, bestStreak:2 };
     saveProg = function(){};
+    // HARNESS SHIM (INTERNALS -> harness limits, same as unit-continue-pin.test.js /
+    // unit-lang-picker-sync.test.js): lib-dom's stub DOM never parses the STATIC markup outside the
+    // <script> block (see its own "runtime innerHTML parsing" note), so these selects — real,
+    // populated <select>s in the actual page from page load, well before any script statement can
+    // run — come back from getElementById() as auto-vivified stubs with no .options here. The
+    // storyline journey below is the one path in this file that reaches applyUIStrings()
+    // (openStorylineScreen -> loadUIStrings, when the storyline's own source language differs from
+    // APP.uiLang), and Array.from(undefined) throws without this. Confirmed NOT reachable in a real
+    // browser: this file's static #lang-select etc. are parsed before the inline <script> tag runs.
+    ['lang-select','src-lang-select','lib-lang-select','lib-src-lang-select',
+     'diff-select','format-select','style-select','vocab-mode-select','user-story-lang'].forEach(function(id){
+      var e = document.getElementById(id);
+      if (e) Object.defineProperty(e, 'options', { configurable:true, get:function(){ return []; } });
+    });
+    // Second HARNESS SHIM, same root cause, different shape: applyUIStrings() also walks
+    // document.querySelectorAll('.addlesson-select') — a class selector, not a fixed id, matching
+    // <select>s the storyline screen renders DYNAMICALLY (real parsed SELECT nodes with real OPTION
+    // children this time, since v73_c's runtime innerHTML parsing DOES cover JS-rendered markup —
+    // the gap here is that lib-dom's element model has no SELECT/OPTION semantics at all, so even a
+    // genuinely-parsed <select> has no .options). Exercised only via the second, exit-time
+    // loadUIStrings() call inside _restoreFormLang() (goLibraryClean(), reached when
+    // openStorylineScreen's own APP.uiLang override left it out of step with the persisted
+    // loadUiLang() — see that function's own comment). Wrapping querySelectorAll, rather than
+    // pre-registering ids, is the only option here: the storyline screen's addlesson-select ids are
+    // suffixed per chapter ("sial-fmt-" + sid) and not known ahead of the render.
+    (function(){
+      var origQSA = document.querySelectorAll.bind(document);
+      document.querySelectorAll = function(sel){
+        var els = origQSA(sel);
+        els.forEach(function(el){
+          if (el && el.tagName === 'SELECT' && !Object.prototype.hasOwnProperty.call(el, 'options')) {
+            Object.defineProperty(el, 'options', { configurable:true, get:function(){
+              return el.children.filter(function(c){ return c.tagName === 'OPTION'; });
+            }});
+          }
+        });
+        return els;
+      };
+    })();
     true;`, 'setup');
   return C;
 }

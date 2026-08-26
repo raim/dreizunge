@@ -1,49 +1,44 @@
-# Session prompt — written at the `v85_p` cut
+# Session prompt — written at the `v85_q` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. Keep using the double-letter suffix scheme (`v85_p`, `v85_q`, …) unless a future
 session has a good reason to switch to `v86_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v85_p`**. This cut is different from
-every prior comic-panel release: the fixes came from the USER'S OWN FIRST REAL END-TO-END TEST of the
-shipped feature (upload → draw → auto-detect → extract → create chapter, on their real server), not
-from a probe or this session's own verification. Real usage found real problems no amount of
-self-testing had.
+zero-dependency Node language-learning app). Picking up from **`v85_q`**. This cut is a single item:
+the `unit-ui-journeys.test.js` `#lang-select` crash carried unfixed since `v85_o` (two releases) is
+now diagnosed and fixed. **Test-only — no application code changed.**
 
-**What just shipped (`v85_p`)**, both per explicit user rulings:
+**What just shipped (`v85_q`)**:
 
-1. **One chapter per drawn panel, not one per page.** The original milestone-3 scoping decision
-   didn't match what the user wanted once they actually tried it ("seems to have only one chapter
-   instead of 6, one per panel"). `comicCreateChapter()` now builds one `chunks` entry PER PANEL
-   (each with its OWN `comicPanels`, its own fresh crop); `_runBookJob`'s EXISTING sequential
-   chaining (already used for multi-chunk PDF splits) links them automatically — no new server-side
-   chaining logic, confirmed by reading it first.
-2. **Storyboard generation made opt-in EVERYWHERE**, not just for comics. Found: `_runBookJob`'s
-   storyboard post-pass had run UNCONDITIONALLY for every `/api/generate-book` caller since v68.1 —
-   PDF uploads too, confirmed via code read to be universal and pre-existing, not something the comic
-   feature introduced. This also explained a LATENT BUG in `PLAN §13` milestone 4's own
-   `#post-gen-storyboard-cb` toggle: captured client-side but never actually sent in the initial
-   request, so the unconditional server pass always beat it to the punch — the toggle had been a
-   silent no-op the whole time it existed. Fixed with a new `postGenStoryboard` gate, threaded by
-   ALL THREE callers (comic — new; PDF — had NO such control at all before, also new; the wizard's
-   own multi-chapter flow — fixes its own latent no-op).
+Diagnosed the crash as a **test-harness DOM-stub artifact, confirmed NOT reachable in a real
+browser** — not the application bug it could have been. Two distinct manifestations of the same root
+cause (`lib-dom.js` never parses the page's STATIC markup, and has no `SELECT`/`OPTION` semantics for
+markup it DOES parse dynamically), both fixed with per-file harness shims in
+`unit-ui-journeys.test.js`, matching the existing convention in `unit-continue-pin.test.js` /
+`unit-lang-picker-sync.test.js` for the first, and a new (but same-spirit) `querySelectorAll` wrapper
+for the second, which had no precedent since it needs to catch dynamically-ID'd `<select>`s. Full
+diagnosis chain, the "confirmed unreachable in a real browser" argument, and the mutation-testing
+trail are in `roadmap_v85.md`'s `v85_q` entry — read it before touching `unit-ui-journeys.test.js` or
+`lib-dom.js` again, so the same investigation doesn't get re-run from scratch.
 
-**Deferred, per the user's own explicit choice** (general model-reliability issues, confirmed to
-affect PDF generation too, not comic-specific — worth their own dedicated round): skill-ID generation
-flakiness (3 failed attempts, 462s, in the user's own real test), chapter-title post-pass failures,
-vocab article-pairing inconsistency (German-with-article paired against English-without).
+`docs/index.html` was rebuilt for this release from the **committed** `lessons.json` (via
+`git show HEAD:lessons.json` into a temp file, passed as `build-static.js`'s first argument) —
+**not** the working tree's, which is the user's own live, uncommitted data (691 lines of it at this
+cut; see the warning below). This keeps the static build honest about what's actually shipped without
+touching or incorporating the user's private in-progress corpus.
 
-See `roadmap_v85.md`'s `v85_p` entry and `INTERNALS.md` §6b for the full mechanism table.
+See `roadmap_v85.md`'s `v85_q` entry and `INTERNALS.md` §6b (comic-panel subsystem, unaffected by this
+cut) for the full mechanism table.
 
 ## Orient yourself, in this order
 
 1. **This file**, whole.
 2. `build_history/roadmap_v85.md` — its **index table** and **⚠️ Session protocol** block first, then
-   the `v85_p` shipped entry.
-3. `INTERNALS.md` **§6b** — SIX consecutive comic-panel rows now exist (`v85_j` UI, `v85_k`/`v85_l`
+   the `v85_q` shipped entry.
+3. `INTERNALS.md` **§6b** — SIX consecutive comic-panel rows still stand (`v85_j` UI, `v85_k`/`v85_l`
    extraction, `v85_m` chapter formation, `v85_n` progress-card, `v85_o` auto-detect, `v85_p`
-   real-usage fixes) — read all six before touching any part of this subsystem.
+   real-usage fixes) — unaffected by `v85_q`, but still read all six before touching that subsystem.
 
 ## Establish a green baseline before changing anything
 
@@ -55,32 +50,33 @@ node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
 Corpus at this cut: **327 topics, 92 storylines, 33 languages, 686 `en` keys** (UNCHANGED from
-`v85_o` — this cut's new UI controls reused existing `gen.post_gen_storyboard_lbl`/`form.arc_lbl`
-keys, no new strings). `APP_VERSION = 'v85_p'`.
+`v85_p` — this cut touched a test file only, no new strings, no corpus edit). `APP_VERSION = 'v85_q'`.
 
-⚠️ **THREE known failures in the baseline, not two** — both `run.js` and `run.js --quick` show, beyond
-the two `lessons.json`-mismatch ones, `unit: UI journey transitions (PLAN §C0.1)`. This is a REAL,
-PRE-EXISTING, DATA-TRIGGERED bug, confirmed unrelated to `v85_j`-`v85_p`'s own code (reproduces
-identically against the `v85_n` committed `index.html`, using the same live data). See the dedicated
-section below — carried forward unfixed from `v85_o`, per the user's own explicit choice to finalize
-releases first and investigate separately. **This is now TWO sessions old — worth actually doing the
-investigation this cut, unless something more urgent comes up.**
+⚠️ **TWO known failures in the baseline** (back down from three — the `unit-ui-journeys` one is FIXED
+this cut): both `run.js` and `run.js --quick` show `unit: current roadmap names the current line`
+and `unit: docs/ built from current sources`, both because the WORKING-TREE `lessons.json` has grown
+past what's committed (the user's own live testing — see the warning right below). Both are
+DATA-DRIFT failures, not code bugs, and both will keep failing between releases as the user's own
+corpus grows — that is expected, not a regression to chase.
 
 ⚠️ **Check `git status --short lessons.json` at the start of this session.** The user is actively
 using this app for real work on their own separate, long-running dev server (found bound to port 3000
-across `v85_k` through `v85_p`, never touched) — including, this cut, actually testing the comic
-feature end-to-end themselves and reporting real bugs. If `lessons.json` shows modified, that is their
-own data — not yours to revert, commit, or "fix around" without asking. `git checkout -- lessons.json`
-and `git add -A` were BOTH blocked by this environment's own permission classifier earlier in the
-`v85` line; use `git show HEAD:lessons.json > /tmp/somewhere.json` (read-only) and stage files
-explicitly by name.
+across `v85_k` through `v85_q`, never touched) — including comic-feature testing that added 691 lines
+of new storylines/topics during the `v85_p`→`v85_q` window alone. If `lessons.json` shows modified,
+that is their own data — not yours to revert, commit, or "fix around" without asking. `git checkout
+-- lessons.json` and `git add -A` were BOTH blocked by this environment's own permission classifier
+earlier in the `v85` line; use `git show HEAD:lessons.json > /tmp/somewhere.json` (read-only) and
+stage files explicitly by name. **`v85_q` needed this exact pattern for real** (not just for
+inspection): `build-static.js` was invoked with that temp file as its explicit first argument to
+rebuild `docs/index.html` from the committed corpus, never the dirty working-tree one — the pattern to
+repeat verbatim any time a release needs a docs rebuild while `lessons.json` is dirty.
 
 ⚠️ **A manual `PORT=NNNN node server.js` live-verification run is NOT data-isolated by default** —
 pass `LESSONS_FILE=/tmp/...`. `v85_m` learned this the hard way; every cut since has done it right.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
-> fix** — unless the failure is one of the two documented `lessons.json`/`unit-ui-journeys` items.
+> fix** — unless the failure is one of the two documented `lessons.json` items above.
 
 ## The habits that cost this project the most (full incident history: `roadmap_v84.md`'s "Rules
 earned in session N…the v84 line" blocks)
@@ -151,14 +147,23 @@ earned in session N…the v84 line" blocks)
     (chapter granularity, storyboard scope) via `AskUserQuestion`, one clear bug fixed outright
     (missing lesson-type controls, no ambiguity), and two items explicitly deferred at the user's own
     request rather than silently expanded into.
+31. **A crash reproduced only inside a DOM-stub test harness needs the "would this survive in a real
+    browser" question answered before it is treated as an app bug** — `v85_q`'s own `#lang-select`
+    crash traced to `lib-dom.js` never parsing static markup outside the `<script>` block, so the
+    fix belonged in the test (a harness shim, matching two existing precedents), not the app. Fixing
+    ONE manifestation surfaced a SECOND, different-shaped instance of the identical root cause
+    (a dynamically-rendered `<select>` this harness genuinely parses but has no `.options` semantics
+    for) — the same "a per-caller fix does not generalize" shape as rule 8, one level down in the
+    stack.
+32. **Rebuilding a generated artifact (`docs/index.html`) while `lessons.json` is dirty with the
+    user's own live data needs the BUILD SCRIPT pointed at the COMMITTED file, not the working tree
+    one** — `build-static.js`'s `[lessons.json]` argument exists for exactly this; `git show
+    HEAD:lessons.json > /tmp/x.json` then `node build-static.js /tmp/x.json` rebuilds honestly without
+    ever reading, let alone incorporating, the user's uncommitted data.
 
 # WHERE TO START
 
-**Do the `unit-ui-journeys.test.js` investigation this cut** (see the dedicated section above and the
-one it inherited from `v85_o`) — it's carried unfixed for two releases now. Determine whether
-`applyUIStrings()`'s `#lang-select` crash is a real, user-facing bug (reachable in an actual browser)
-or purely a test-harness DOM-stub-timing artifact, before deciding whether it needs an application
-fix, a test fix, or both.
+**The `unit-ui-journeys.test.js` investigation is DONE** (`v85_q`) — nothing carried forward from it.
 
 **The deferred model-reliability issues** (skill-ID flakiness, title-gen flakiness, vocab article-
 pairing) are real and reported by the user directly — worth their own dedicated investigation
@@ -186,10 +191,10 @@ separate, not-yet-scoped follow-up.
 - **The skill-ID / title-gen / vocab-pairing model-reliability issues** — real, reported by the user
   directly, deferred at their own request. Needs its own investigation round.
 - **`v85_p`'s own fixes, against the user's real environment** — mechanically verified via e2e tests
-  with a real server + fake LLM backend, but NOT live-verified against the real model this cut (a
-  deliberate choice — see this file's own note above). The user is already testing this live.
+  with a real server + fake LLM backend, but NOT live-verified against the real model (a deliberate
+  choice — see `roadmap_v85.md`'s `v85_p` entry). The user is already testing this live.
 
 ## Standing tools — use them
 
 `INTERNALS.md` §6b has the full feature → function map. The six comic-panel entries (`v85_j` through
-`v85_p`) are consecutive rows — read all six before touching any part of this subsystem.
+`v85_p`) are consecutive rows — read all six before touching any part of that subsystem.

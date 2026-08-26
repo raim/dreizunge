@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_p` — real-usage bug fixes from the user's own first live test: one chapter per drawn panel (not one per page), storyboard generation made opt-in everywhere (was unconditional since v68.1 for EVERY book-job caller, not just comics — fixed a latent no-op in `PLAN §13` milestone 4's own toggle too). `v85_o` — `PLAN §2.4` follow-up: auto-detect panels (a suggestion pre-filling the manual-drawing UI), plus a real angle-bracket parser gap found and fixed by this milestone's own live verification. `v85_n` — `PLAN §2.4` / Track A4 milestone 4: progress-card integration. **TRACK A4 IS NOW FULLY SHIPPED** (all four milestones, `v85_j` through `v85_n`). `v85_m` — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels, live-verified end-to-end (both halves) against the real model. `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
+| **SHIPPED IN THE v85 LINE** | `v85_q` — `unit-ui-journeys.test.js` investigation: the carried-forward `#lang-select` crash, diagnosed as a test-harness-only DOM-stub gap (confirmed unreachable in a real browser) and fixed with two per-file harness shims, no application code touched. `v85_p` — real-usage bug fixes from the user's own first live test: one chapter per drawn panel (not one per page), storyboard generation made opt-in everywhere (was unconditional since v68.1 for EVERY book-job caller, not just comics — fixed a latent no-op in `PLAN §13` milestone 4's own toggle too). `v85_o` — `PLAN §2.4` follow-up: auto-detect panels (a suggestion pre-filling the manual-drawing UI), plus a real angle-bracket parser gap found and fixed by this milestone's own live verification. `v85_n` — `PLAN §2.4` / Track A4 milestone 4: progress-card integration. **TRACK A4 IS NOW FULLY SHIPPED** (all four milestones, `v85_j` through `v85_n`). `v85_m` — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels, live-verified end-to-end (both halves) against the real model. `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13`** — the generator-page redesign, scoped at the `v85_a` cut — **is now FULLY SHIPPED** (all five milestones, `v85_c` through `v85_i`); its own section below still carries the full assessment/build-order text for reference, but nothing in it is open any more. **`PLAN §2.4` / Track A4** (comic/image ingest) — the four-milestone manual-panel-selection design chosen after the `§2.4` overlay-probe measurements — **is now FULLY SHIPPED** (`v85_j` UI, `v85_k`/`v85_l` extraction, `v85_m` chapter formation, `v85_n` progress-card integration); its own "PLAN §2.4" sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -1762,6 +1762,59 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_q — `unit-ui-journeys.test.js` investigation: the `#lang-select` crash, DIAGNOSED and FIXED
+
+The `unit-ui-journeys.test.js` storyline-screen crash carried unfixed since `v85_o` (two releases) is
+now diagnosed, confirmed, and fixed — a TEST-ONLY fix, no application code touched.
+
+**Diagnosis, in order:**
+
+1. Reproduced directly (`node test/unit-ui-journeys.test.js`): `applyUIStrings()` throws
+   `TypeError: undefined is not iterable` at `Array.from(tgtSel.options)`, where
+   `tgtSel = document.getElementById('lang-select')`.
+2. `lib-dom.js`'s `loadClient()` extracts and runs ONLY the `<script>...</script>` block via regex
+   (`test/lib-dom.js:572-573`) — it never parses the STATIC markup around it into the fake DOM.
+   `getElementById` on an id it has never seen returns an auto-vivified `<div>` stub
+   (`test/lib-dom.js:444`) with no `.options`, regardless of what the real element actually is.
+3. In the real page, `<select id="lang-select">` (index.html:1113, with its real `<option>`
+   children) is STATIC markup that sits well before the `<script>` tag (index.html:2183) in document
+   order — a browser parses and constructs those DOM nodes as it reads the file, long before it
+   reaches (let alone executes) the inline script. **Confirmed NOT reachable in a real browser at
+   all**: `applyUIStrings()`'s call sites are all deep application logic (menu navigation, storyline
+   open/close), never anything that could run before the full page — including `#lang-select` — has
+   parsed.
+4. This exact class of harness gap already has TWO precedents with an established fix pattern —
+   `unit-continue-pin.test.js` and `unit-lang-picker-sync.test.js` both carry a "HARNESS SHIM" block
+   that defines a `.options` getter (`configurable:true, get: () => []`) on the same fixed list of
+   canonical select ids, with the exact same reasoning documented inline. `unit-ui-journeys.test.js`
+   was simply the one file that had never needed it yet — nothing wrong with the shim design itself.
+5. Fixing that surfaced a SECOND, related crash on the SAME root cause: `applyUIStrings()` also walks
+   `document.querySelectorAll('.addlesson-select')`, matching `<select>`s the storyline screen
+   renders DYNAMICALLY (`_renderStorylineScreen`, ids suffixed per chapter). These ARE real,
+   `parseHtmlInto`-parsed `SELECT` nodes with real `OPTION` children (v73_c's runtime innerHTML
+   parsing does cover JS-rendered markup) — but `lib-dom.js`'s element model has no `SELECT`/`OPTION`
+   semantics at all, so even a genuinely-parsed `<select>` has no `.options`. Reached only via the
+   storyline screen's EXIT path (`showLibraryClean()` → `goLibraryClean()` → `_restoreFormLang()` →
+   a SECOND `loadUIStrings()` call, gated on `APP.uiLang` having drifted from `loadUiLang()` — which
+   `openStorylineScreen()`'s own language auto-follow deliberately does). Confirmed real and always-
+   safe in a browser by the same document-order argument: `_renderStorylineScreen()` has already run
+   (synchronously inserting real `<option>`-bearing `<select>`s via `innerHTML`) by the time this
+   second call can happen.
+
+**Fix**: two harness shims added to `unit-ui-journeys.test.js`'s own `client()` setup, matching the
+existing convention of scoping such shims per-file rather than editing `lib-dom.js`'s shared element
+model (a broader change affecting every other test file, and out of scope for a two-release-old
+carried bug). The first mirrors the two precedents' fixed-id list exactly. The second — new, no
+precedent existed for a CLASS-matched dynamic `<select>` — wraps `document.querySelectorAll` to patch
+any newly-seen `SELECT` node's `.options` on the fly, since the storyline screen's add-lesson select
+ids are chapter-suffixed and not known ahead of the render.
+
+**Mutation-tested by construction**: each shim was added one at a time, and the test was re-run after
+each — crash, then a DIFFERENT crash (the second root cause, previously masked by the first), then
+green. Full baseline re-confirmed after: `node test/run.js` → 283 checks, 2 failures (both the
+documented `lessons.json`-drift ones, unrelated); `node test/run.js --quick` → 245 checks, same 2.
+Corpus counts unchanged (327/92/33/686) — no new UI strings, no corpus edit.
 
 ## ✅ v85_p — real-usage bug fixes: one chapter per panel, storyboard opt-in everywhere
 
