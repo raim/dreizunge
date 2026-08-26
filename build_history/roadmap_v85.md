@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_n` — `PLAN §2.4` / Track A4 milestone 4: progress-card integration. **TRACK A4 IS NOW FULLY SHIPPED** (all four milestones, `v85_j` through `v85_n`). `v85_m` — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels, live-verified end-to-end (both halves) against the real model. `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
+| **SHIPPED IN THE v85 LINE** | `v85_o` — `PLAN §2.4` follow-up: auto-detect panels (a suggestion pre-filling the manual-drawing UI), plus a real angle-bracket parser gap found and fixed by this milestone's own live verification. `v85_n` — `PLAN §2.4` / Track A4 milestone 4: progress-card integration. **TRACK A4 IS NOW FULLY SHIPPED** (all four milestones, `v85_j` through `v85_n`). `v85_m` — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels, live-verified end-to-end (both halves) against the real model. `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13`** — the generator-page redesign, scoped at the `v85_a` cut — **is now FULLY SHIPPED** (all five milestones, `v85_c` through `v85_i`); its own section below still carries the full assessment/build-order text for reference, but nothing in it is open any more. **`PLAN §2.4` / Track A4** (comic/image ingest) — the four-milestone manual-panel-selection design chosen after the `§2.4` overlay-probe measurements — **is now FULLY SHIPPED** (`v85_j` UI, `v85_k`/`v85_l` extraction, `v85_m` chapter formation, `v85_n` progress-card integration); its own "PLAN §2.4" sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -1762,6 +1762,35 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_o — `PLAN §2.4` follow-up: auto-detect panels (an addition beyond the original 4-milestone plan)
+
+User, after Track A4 was already fully shipped: "how about auto recognition of panels. did'nt it work
+reasonably well with qwen?" — an accurate memory of `§2.4` RESULT PART 3: `qwen2.5vl:7b`'s one-shot
+enumeration was the ONE panel-FINDING strategy that came back clean (correct count, order, no
+confabulation), though only ever measured on the EASY fixture. Answered honestly (yes, but caveated —
+one run, easy fixture only, hard fixture never tried with anything) and offered three options; user
+chose to build it as a SUGGESTION on top of the manual-drawing UI, not a replacement.
+
+**What shipped**: `POST /api/comic-detect-panels` — the SAME one-shot enumeration prompt and parser
+from `probe_comic_panels_v85_i.js`, carried into production — pre-fills `APP_COMIC.boxes` from the
+model's answer, in the exact same shape a hand-drawn box uses, fully editable/deletable afterward
+through the existing milestone-1 UI. A third sibling poller (`_startComicDetectJob`, alongside
+extraction's and chapter-formation's own) — the server-side job primitive keeps reusing cleanly; the
+client-side wrapper keeps needing its own, now a FOUR-TIME-confirmed pattern for this codebase.
+
+**A real parser gap was found by this milestone's OWN live verification — not by any prior probe.**
+First live run against the real Page B fixture, through the actual production route: 0 of 6 panels
+parsed, despite the model answering essentially perfectly (near-identical box values to the original
+probe's own success). The model had wrapped coordinates in bare ANGLE brackets
+(`Panel 1: <23 58 407 396>`) — a third format neither the requested `<box>` tag nor the existing
+bracket/bare fallback (square brackets only) accounted for. Fixed (`[\[<]?`/`[\]>]?` accepts either
+bracket style), MUTATION-TESTED (reverted the fix, confirmed the guard test goes red — 2 of 4 panels
+instead of 4), then re-verified against the SAME real fixture again: all 6 panels, a clean 2×3 grid,
+matching the original probe's own successful values almost exactly.
+
+Live verification this cut used an EXPLICITLY-ISOLATED `LESSONS_FILE` throughout (the `v85_m` mistake
+was not repeated a third time) — confirmed clean, the real corpus never touched.
 
 ## ✅ v85_n — `PLAN §2.4` / Track A4 milestone 4: progress-card integration — TRACK A4 IS NOW FULLY SHIPPED
 

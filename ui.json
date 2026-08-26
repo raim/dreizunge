@@ -91,6 +91,8 @@
     "form.comic_extract_failed": "Extraction failed",
     "form.comic_create": "📖 Create chapter",
     "form.comic_create_failed": "Chapter creation failed",
+    "form.comic_detect": "🔍 Auto-detect panels",
+    "form.comic_detect_failed": "Auto-detect failed",
     "form.story_label": "Story (in target language)",
     "form.arc_mode_vocab": "➕🔁 New + review vocabulary",
     "form.arc_mode_grammar": "🧩🔁 Word forms + synonyms",

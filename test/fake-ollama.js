@@ -248,6 +248,23 @@ const srv = http.createServer(async (req, res) => {
     } else if (/single panel cropped from a comic page/i.test(usr)) {
       kind = 'comic_extract';
       content = /FORCE_EMPTY/.test(usr) ? '' : 'CAPTION: Fake caption text.\nIN-SCENE: Fake sign text.';
+    // PLAN §2.4 / Track A4 milestone 5 (v85_o): comic panel auto-detection (one-shot enumeration).
+    // Same empty-system shape as comic_extract above, keyed on THIS prompt's own opening sentence
+    // instead (distinct enough not to collide: "one page of a comic" vs "single panel cropped from
+    // a comic page"). The prompt is a FIXED CONSTANT (server.js's _COMIC_DETECT_PROMPT takes no
+    // per-request parameters, unlike _comicExtractPrompt's lang) — there is no per-request signal
+    // this fake could key a variant response on, so unlike comic_extract's (also unreachable, for
+    // the same reason) FORCE_EMPTY, this branch does not attempt one. Malformed/inverted-box
+    // handling is tested client-side instead (unit-comic-detect.test.js), where the actual
+    // filtering logic lives. Canned response MIXES two real formats within one reply — panels 1-2 use
+    // the requested `<box>` tag, panels 3-4 use bare ANGLE brackets (`<20 410 480 740>`), the format
+    // v85_o's OWN live re-verification found the real qwen2.5vl:7b actually producing on a real page
+    // (a genuine parser gap at the time, fixed the same cut) — so this test exercises BOTH parser
+    // branches from one response, not just the idealized always-`<box>` case.
+    } else if (/one page of a comic/i.test(usr)) {
+      kind = 'comic_detect';
+      content = ['Panel 1: <box>20 60 480 390</box>', 'Panel 2: <box>520 60 980 390</box>',
+                 'Panel 3: <20 410 480 740>', 'Panel 4: <520 410 980 740>'].join('\n');
     } else if (/careful linguistic analyst/i.test(sys)) {
       // PLAN §7.0 CP2: token-level lemma/form/sense analysis (canonical-analysis.js). Reads the
       // token list straight back out of the user message so it works for whatever sentence a test

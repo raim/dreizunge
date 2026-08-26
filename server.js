@@ -184,7 +184,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v85_n';
+const APP_VERSION  = 'v85_o';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6486,6 +6486,75 @@ async function _runComicExtractJob(jobId, images, lang) {
   jobDone(jobId, { panels: results });
 }
 
+// ── Comic panel AUTO-DETECTION (PLAN §2.4 / Track A4 milestone 5, v85_o) ──────────────────────
+// A SUGGESTION, not a requirement — pre-fills the box list the same way a hand-drawn box would,
+// fully editable/deletable/re-drawable afterward through the EXISTING milestone-1 UI. This is
+// deliberately the ONE-SHOT ENUMERATION strategy from the §2.4 probe series
+// (probe_comic_panels_v85_i.js), not per-panel grounding — that probe's own qwen2.5vl:7b comparison
+// (roadmap_v85.md, "PLAN §2.4 — RESULT PART 3") found one-shot enumeration the ONE panel-FINDING
+// strategy that came back clean (correct count, correct order, no confabulation) with this model,
+// while stateless grounding still failed even with qwen2.5vl. Only ever measured on §2.7's EASY
+// fixture (Page B) — the HARD fixture (Page A: rotated text, unframed panels, ambiguous order) has
+// never been tried with any strategy. This is exactly why detection is a SUGGESTION the user reviews,
+// not an auto-apply: a wrong box here costs one click to delete, not a silently wrong chapter.
+const _COMIC_DETECT_PROMPT = `This image is one page of a comic. It is laid out as a grid of rectangular panels.
+List every panel on the page, in reading order (top row first, left to right within each row, then
+the next row down). For each panel output exactly one line in this format:
+
+Panel <n>: <box>x1 y1 x2 y2</box>
+
+where x1,y1 is the top-left corner and x2,y2 is the bottom-right corner of the panel's bounding box,
+with each coordinate normalized to the 0-1000 range (0,0 = top-left of the whole image, 1000,1000 =
+bottom-right of the whole image). Output nothing else: no preamble, no explanation, just the numbered
+list of panels, one per line.`;
+
+// Parser carried over VERBATIM from probe_comic_panels_v85_i.js's own (twice-corrected) parsePanels —
+// accepts the requested `<box>x1 y1 x2 y2</box>` form AND a bare/bracketed fallback, `[\s,]+` as the
+// separator between all four numbers (a real qwen2.5vl:7b response mixed comma-only and space-only
+// separators WITHIN one box), and an optional leading `-` per coordinate (a real boundary-panel
+// response used a slightly negative coordinate, which a digit-only pattern silently mismatched into a
+// garbled box instead of a correct negative value — see that probe's own comment for the full story).
+function _parseComicDetectedPanels(text) {
+  const reTag = /Panel\s*(\d+)\s*:?\s*<box>\s*(-?[\d.]+)[\s,]+(-?[\d.]+)[\s,]+(-?[\d.]+)[\s,]+(-?[\d.]+)\s*<\/box>/gi;
+  // v85_o LIVE-VERIFIED FINDING (not in any prior probe): the real model sometimes wraps coordinates
+  // in bare ANGLE brackets — `Panel 1: <23 58 407 396>` — a third format neither the probe's original
+  // `<box>` tag nor its bracket/bare fallback (square brackets only) accounted for. Caught because
+  // this milestone's own live check re-ran the EXACT real Page B fixture through the actual
+  // production route and got 0 panels parsed despite the model answering essentially perfectly
+  // (near-identical box values to the original probe's own successful run) — a parser gap, not a
+  // model regression. `[\[<]?`/`[\]>]?` accepts EITHER bracket style, or none.
+  const reBare = /Panel\s*(\d+)\s*:\s*[\[<]?\s*(-?[\d.]+)[,\s]+(-?[\d.]+)\s*[\]>]?\s*(?:to|,|\s)\s*[\[<]?\s*(-?[\d.]+)[,\s]+(-?[\d.]+)\s*[\]>]?/gi;
+  const panels = []; const seen = new Set();
+  for (const re of [reTag, reBare]) {
+    let m;
+    while ((m = re.exec(text))) {
+      if (seen.has(m[1])) continue;
+      seen.add(m[1]);
+      panels.push({ claimedN: Number(m[1]), box: [Number(m[2]), Number(m[3]), Number(m[4]), Number(m[5])] });
+    }
+  }
+  panels.sort((a, b) => a.claimedN - b.claimedN);
+  return panels.map(p => p.box);   // client only needs ordered boxes, not the model's own numbering
+}
+
+// image: a single full-page data URL (unlike extraction, this call sees the WHOLE uploaded page, not
+// a crop — it is the one place in this feature that still asks the model to locate something, by
+// design: the suggestion this produces is what the user edits BEFORE any crop is made).
+async function _runComicDetectJob(jobId, image) {
+  jobStep(jobId, `[${OLLAMA_VISION_MODEL}] Detecting panels…`);
+  const b64 = String(image || '').replace(/^data:image\/\w+;base64,/, '');
+  if (!b64) return jobFail(jobId, 'empty image');
+  try {
+    const { text } = await callLLMVision('', _COMIC_DETECT_PROMPT, 1024, { images: [b64], temperature: 0.1 });
+    const panels = _parseComicDetectedPanels(text);
+    console.log(`  [comic-detect] done: ${panels.length} panel(s) suggested`);
+    jobDone(jobId, { panels });   // boxes normalized 0-1000 — client converts to its own natural pixels
+  } catch (e) {
+    console.error('  [comic-detect] failed:', e.message);
+    jobFail(jobId, e.message);
+  }
+}
+
 http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://localhost:${PORT}`);
     const M   = req.method.toUpperCase();
@@ -7344,6 +7413,27 @@ http.createServer(async (req, res) => {
       console.log(`  Comic extraction: ${images.length} panel(s), lang=${lang}, model=${OLLAMA_VISION_MODEL} job=${jobId}`);
       _runComicExtractJob(jobId, images, lang).catch(e => {
         console.error('  Comic extraction error:', e.message);
+        jobFail(jobId, e.message);
+      });
+      return json(res, 202, { jobId });
+    }
+
+    // ── Comic panel AUTO-DETECTION (PLAN §2.4 / Track A4 milestone 5) — async, returns jobId ──
+    // Body: { image: dataUrl }. A SUGGESTION only — see _runComicDetectJob's own comment. Returns
+    // boxes normalized 0-1000 (the model's own coordinate space); the client converts to its own
+    // natural-pixel storage using the image dimensions it already has loaded.
+    if (M === 'POST' && url.pathname === '/api/comic-detect-panels') {
+      if (active === 'none')
+        return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
+      const image = typeof body.image === 'string' ? body.image : '';
+      if (!image) return json(res, 400, { error: 'No image provided.' });
+      const jobId = newJob();
+      console.log(`  Comic panel detection: model=${OLLAMA_VISION_MODEL} job=${jobId}`);
+      _runComicDetectJob(jobId, image).catch(e => {
+        console.error('  Comic detection error:', e.message);
         jobFail(jobId, e.message);
       });
       return json(res, 202, { jobId });

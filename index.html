@@ -1341,6 +1341,11 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <img id="comic-draw-img" style="display:block;max-width:100%;height:auto;user-select:none;-webkit-user-drag:none" draggable="false">
             <canvas id="comic-draw-canvas" style="position:absolute;top:0;left:0;cursor:crosshair"></canvas>
           </div>
+          <div id="comic-detect-row" style="display:none;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap">
+            <button type="button" id="comic-detect-btn" onclick="comicDetectPanels()"
+              style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🔍 <span id="comic-detect-lbl">Auto-detect panels</span></button>
+            <span id="comic-detect-status" style="font-size:11px;color:var(--gray-dark)"></span>
+          </div>
           <div id="comic-panel-list" style="display:flex;flex-direction:column;gap:4px;margin-top:8px"></div>
           <div id="comic-panel-actions" style="display:none;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
             <button type="button" id="comic-extract-btn" onclick="comicExtractPanels()"
@@ -2786,6 +2791,7 @@ function applyUIStrings() {
   { const ccl=document.getElementById('comic-clear-lbl'); if(ccl) ccl.textContent=t('form.comic_clear'); }
   { const cel=document.getElementById('comic-extract-lbl'); if(cel) cel.textContent=t('form.comic_extract'); }
   { const ccl2=document.getElementById('comic-create-lbl'); if(ccl2) ccl2.textContent=t('form.comic_create'); }
+  { const cdl=document.getElementById('comic-detect-lbl'); if(cdl) cdl.textContent=t('form.comic_detect'); }
   _renderSplitModes();
   { const cl=document.getElementById('pdf-cleanup-lbl'); if(cl) cl.textContent=t('pdf.cleanup_lbl'); }
   { const al=document.getElementById('pdf-aiclean-lbl'); if(al) al.textContent=t('pdf.aiclean_lbl'); }
@@ -3514,6 +3520,7 @@ function onUseComicCb(){
     comicClearPanels();
     APP_COMIC.dataUrl=null; APP_COMIC.naturalW=0; APP_COMIC.naturalH=0;
     const wrap=document.getElementById('comic-draw-wrap'); if(wrap) wrap.style.display='none';
+    const detectRow=document.getElementById('comic-detect-row'); if(detectRow) detectRow.style.display='none';
     const status=document.getElementById('comic-upload-status'); if(status) status.textContent='';
   }
 }
@@ -3529,6 +3536,7 @@ function onComicFileChosen(input){
       APP_COMIC.naturalW=img.naturalWidth; APP_COMIC.naturalH=img.naturalHeight;
       comicClearPanels();   // a new image invalidates any boxes drawn over the old one
       document.getElementById('comic-draw-wrap').style.display='';
+      const detectRow=document.getElementById('comic-detect-row'); if(detectRow) detectRow.style.display='flex';
       if(status) status.textContent='';
       _comicSetupCanvas();
     };
@@ -3844,6 +3852,88 @@ async function _pollComicBookJob(bookId){
     const extractBtn=document.getElementById('comic-extract-btn'); if(extractBtn) extractBtn.disabled=false;
     await loadSavedList();
   }
+}
+
+// ── Comic panel AUTO-DETECTION (PLAN §2.4 / Track A4 milestone 5, v85_o) ────────────────────────
+// A SUGGESTION, not a replacement for manual drawing — pre-fills APP_COMIC.boxes exactly the way a
+// hand-drawn box would (same storage shape), then the user reviews/adjusts/deletes through the
+// EXISTING milestone-1 UI before extracting. Chosen because qwen2.5vl:7b's ONE-SHOT enumeration
+// (this exact prompt) was the one panel-FINDING strategy that came back clean in this session's own
+// probes (roadmap_v85.md, "PLAN §2.4 — RESULT PART 3") — but only ever measured on the EASY §2.7
+// fixture, never the hard one, which is exactly why this stays a reviewable suggestion.
+let _comicDetectPolling=false;
+
+async function comicDetectPanels(){
+  if(!APP_COMIC.dataUrl) return;
+  const btn=document.getElementById('comic-detect-btn');
+  const status=document.getElementById('comic-detect-status');
+  if(btn) btn.disabled=true;
+  if(status) status.textContent=t('form.comic_extracting');
+  try{
+    const r=await fetch('/api/comic-detect-panels',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({image:APP_COMIC.dataUrl})});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok){ if(status) status.textContent=''; showToast(t('form.comic_detect_failed')+': '+(data.error||r.status)); if(btn) btn.disabled=false; return; }
+    _startComicDetectJob(data.jobId);
+  }catch(e){
+    if(status) status.textContent='';
+    showToast(t('form.comic_detect_failed')+': '+e.message);
+    if(btn) btn.disabled=false;
+  }
+}
+
+// A structural SIBLING of _startComicExtractJob()/_pollComicBookJob() (same poll-every-2s shape,
+// its own state) — not a reuse, same reasoning as those two.
+function _startComicDetectJob(jobId){
+  if(_comicDetectPolling) return;
+  _comicDetectPolling=true;
+  const status=document.getElementById('comic-detect-status');
+  const btn=document.getElementById('comic-detect-btn');
+  const iv=setInterval(async ()=>{
+    try{
+      const r=await fetch('/api/job/'+jobId);
+      if(!r.ok) throw new Error('Poll failed: '+r.status);
+      const j=await r.json();
+      if(j.step && status) status.textContent=j.step;
+      if(j.status==='done'){
+        clearInterval(iv); _comicDetectPolling=false;
+        _comicApplyDetectedPanels(j.data && j.data.panels);
+        if(status) status.textContent='';
+        if(btn) btn.disabled=false;
+      }
+      if(j.status==='error'){
+        clearInterval(iv); _comicDetectPolling=false;
+        if(status) status.textContent='';
+        showToast(t('form.comic_detect_failed')+': '+j.error);
+        if(btn) btn.disabled=false;
+      }
+      if(j.status==='cancelled'){
+        clearInterval(iv); _comicDetectPolling=false;
+        if(status) status.textContent='';
+        if(btn) btn.disabled=false;
+      }
+    }catch(e){
+      clearInterval(iv); _comicDetectPolling=false;
+      if(status) status.textContent='';
+      showToast(t('form.comic_detect_failed')+': '+e.message);
+      if(btn) btn.disabled=false;
+    }
+  }, 2000);
+}
+
+// Converts the server's normalized-0-1000 boxes to APP_COMIC's own natural-pixel storage (the SAME
+// shape a hand-drawn box uses — _comicPointerEnd, milestone 1 — so every existing consumer, reorder,
+// delete, redraw, extraction, all work identically on a detected box). REPLACES any current boxes
+// (a fresh detection is a fresh suggestion, not merged with hand-drawn ones already present) — the
+// user can always redraw/delete afterward through the existing UI if that is not what they wanted.
+function _comicApplyDetectedPanels(panels){
+  if(!Array.isArray(panels) || !panels.length) { showToast(t('form.comic_detect_failed')+': no panels found'); return; }
+  const w=APP_COMIC.naturalW||1, h=APP_COMIC.naturalH||1;
+  APP_COMIC.boxes=panels.map(b=>({
+    x1:Math.max(0,Math.round(b[0]/1000*w)), y1:Math.max(0,Math.round(b[1]/1000*h)),
+    x2:Math.min(w,Math.round(b[2]/1000*w)), y2:Math.min(h,Math.round(b[3]/1000*h)),
+  })).filter(b=>b.x2>b.x1 && b.y2>b.y1);   // a malformed box (e.g. inverted/degenerate) is dropped, not stored broken
+  _comicRedraw(); _comicRenderList();
 }
 
 // ── Dialect studio (M2 controls, shown on a dialect topic's lesson-set page) ──
