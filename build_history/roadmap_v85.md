@@ -89,6 +89,108 @@ article lists live in a PROBE and must never migrate into the app (`v80_j`).
 ---
 
 # ⚠️ OPEN AT THE v85 CUT
+
+## 🆕 REPORTED AT THE `v85_r` CUT, NOT YET TRIAGED OR BUILT
+
+*Recorded per the user's own explicit request ("since I am running out of tokens, try to add these
+to the roadmap only") — investigated just enough to make each entry actionable without re-deriving,
+but deliberately NOT implemented this cut. Read each entry's own "found" note before starting; it
+names the exact file/line/mechanism so the next session doesn't have to re-locate it.*
+
+### A. Remove the app version from the UI
+
+**Ask:** the app version (currently `v85_o` in the user's own report — they're on an older running
+build; the code itself is at `v85_r` as of this cut) doesn't need to be shown on the website/app.
+
+**Found:** it is NOT shown as visible text anywhere — the only surface is a HOVER TOOLTIP.
+`index.html:6843`: `{ const _v=document.getElementById('app-tagline'); if(_v&&APP.info.version)
+_v.title=APP.info.version; }` sets `title=` (a browser tooltip) on `#app-tagline` (the "we are the
+world" motto span, `index.html:877`). No other client-side surface reads `APP.info.version` for
+display (checked: the only other `.version` hits in `index.html` are the unrelated BKT-shadow/CP5
+schema version fields, not the app version).
+
+**Scope note for whoever picks this up:** removing the TOOLTIP is a one-line deletion at
+`index.html:6843`. Whether `APP.info.version` / the server's `/api/info` `version` field should also
+stop being SENT is a separate question — `server.js`'s `/api/info` route (`APP_VERSION` in the JSON
+body) and `APP_VERSION` itself are used elsewhere for real purposes (the release process,
+`unit-version-derivation`/`unit-static-freshness`'s own guards, `docs/index.html`'s baked
+`info.version`) — those should almost certainly stay; only the CLIENT-FACING tooltip is what the user
+is asking to lose. Confirm that reading before touching anything past line 6843.
+
+### B. Progress card: word-tap sometimes speaks the WRONG question, then self-corrects
+
+**Ask:** tapping a highlighted word on the progress card to jump to a question about it often plays
+the SPEECH for a different question. The next tap/interaction is fine.
+
+**Found, with high confidence — a genuine double-render race, not a vague "sometimes":**
+- `tapWord(word)` (`index.html:19687`) picks a target question, then calls `showLesson(pick.lessonIdx)`
+  (`index.html:19717`) — which is `startLesson()` (`index.html:14925`), and `startLesson` UNCONDITIONALLY
+  sets `C.cur=0` and calls `renderEx()` once at its own end (`index.html:14973`), rendering whatever
+  exercise happens to be FIRST in the freshly-built, shuffled run — almost never the word's own
+  question.
+- Back in `tapWord`, once the run exists, it scans for the exercise that actually matches the tapped
+  word and does `if (at > 0) { C.cur = at; renderEx(); }` (`index.html:19752`) — a SECOND `renderEx()`
+  call, synchronously right after the first, to correct onto the right question. (When `at === 0` —
+  the target happens to already be first — there is no second call, and no bug: this matches "often",
+  not "always".)
+- `renderEx()` itself, for `listen_mcq`/`listen_type` exercises, does `setTimeout(()=>{ ...
+  speak(ex.target); }, 350)` (`index.html:15603-15607`) to auto-read the question aloud. **Nothing
+  cancels a PENDING timeout from a previous `renderEx()` call before scheduling a new one.** Two
+  `renderEx()` calls fired back-to-back (the exact shape `tapWord` produces whenever `at > 0`) queue
+  TWO independent 350ms timers, ~0ms apart — one closing over exercise 0's (wrong) `ex.target`, one
+  over the correct exercise's. Both fire, in that order, both call `speak()` on the shared TTS output;
+  whichever the browser's speech-synthesis engine does NOT fully suppress on the second call is what
+  the learner hears — which is exactly "speech for a different question, then it works again" (a
+  single subsequent tap that lands with `at===0`, or simply doesn't re-render twice, never has the race).
+- Scoped to `listen_mcq`/`listen_type` questions specifically (the only two types `renderEx()` wires
+  to auto-speak) — a word whose target question is some other type would not show this symptom at all,
+  which is worth confirming against the user's own report if it comes up again.
+
+**Likely fix shape, not applied:** the safest-looking option is a single module-level
+`_pendingSpeakTimeout` id, `clearTimeout`'d at the very top of `renderEx()` before scheduling a new
+one — the same "cancel-then-restart" shape the file already uses for other stateful UI (e.g. mic
+mute). NOT verified by writing or running it this cut — do that first, then mutation-test by
+temporarily removing the clear and confirming a double-`renderEx()` case still races.
+
+### C. Comic panel auto-detection misses real panel boundaries; no manual resize
+
+**Ask + evidence:** `/home/raim/Pictures/dreizunge/Screenshot_2026-08-26_11-35-31.jpg` — a hand-drawn
+6-panel comic page (2 columns × 3 rows), run through `comicDetectPanels()`. The six auto-detected
+boxes (numbered 1-6, colour-coded) are all visibly offset from the real panel borders — several
+straddle TWO panels' worth of vertical space, drifting down and across rows rather than tracking the
+drawn rectangles. The user also wants to be able to RESIZE an individual panel box after drawing or
+auto-detection, not just delete/reorder it.
+
+**Found on the misalignment:**
+- `_comicApplyDetectedPanels` (`index.html:3980`) does a plain, correct 0-1000→pixel scale
+  (`b[0]/1000*w` etc., against `APP_COMIC.naturalW/H`) with no axis-swap or off-by-one visible in the
+  arithmetic — checked directly, not assumed. The bug is very unlikely to be in this conversion code.
+- The auto-detect feature's OWN `v85_o` roadmap entry already flags exactly this risk in advance:
+  the one-shot enumeration prompt "was...measured on the EASY `§2.7` fixture, never the HARD one" —
+  and the screenshot's page (hand-drawn, uneven panel borders, dense text close to the frame) is
+  much closer to a "hard" fixture than the clean typeset one the prompt was validated against.
+  **Most likely a MODEL-ACCURACY limitation on hand-drawn pages, not a new code defect** — but this is
+  inference from the existing measurement gap, not a fresh probe against THIS image. The
+  `SESSION_PROMPT_v85_q.md`/`_r.md` lineage already separately lists "the HARD `§2.7` fixture (Page A)
+  never tried with any model/strategy" as a standing gap; this screenshot is a second, independent,
+  real-world instance of that same untested case, not a coincidence.
+- **Before trying another prompt/strategy fix:** run the actual `/api/comic-detect-panels` call
+  against this exact image (or a redacted equivalent) and look at the RAW model response's box
+  coordinates next to the image dimensions — confirm whether the numbers themselves are wrong (model
+  accuracy) or whether something in the request (image resize/orientation metadata, EXIF rotation)
+  changes `naturalW`/`naturalH` between what the model saw and what the client scales against. Only
+  the first half of that check was done this cut (the client-side arithmetic); the request-shape half
+  (what the model actually received) was not.
+
+**Found on the resize gap — a real, confirmed absence, not a bug:** grepped the whole comic-panel
+block (`_comicRedraw` `index.html:3638`, `_comicRenderList` `index.html:3657`, and everything between)
+for "resize"/"dragHandle" — nothing. The milestone-1 UI (`v85_j`) only ever supported drawing a new
+box, deleting one, and reordering the list; there has never been an affordance to adjust an EXISTING
+box's edges, manually-drawn or auto-detected. This is a small, well-scoped, standalone feature request
+— drag handles on each `.comic-panel-box`'s corners/edges, updating that box's `x1/y1/x2/y2` in
+`APP_COMIC.boxes` and re-rendering — not a fix to anything else here, and independent of whatever the
+auto-detect accuracy investigation finds.
+
 ## ✅ FINDINGS THAT GOVERN THE OPEN SECTIONS BELOW
 
 *The reconciliation layer over the two RESTORED sections, plus the one diagnosis a future session
