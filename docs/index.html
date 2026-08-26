@@ -1243,6 +1243,14 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
                  reachable from a book at all). Rendered by renderLessonTypeChecks on form open. -->
             <div id="pdf-arc-types" class="user-story-checks" style="margin:3px 0 0 24px"></div>
           </div>
+          <!-- v85_p: the storyboard post-pass used to run unconditionally for every /api/generate-book
+               call (v68.1) — this checkbox actually gates it now (see server.js's own comment on
+               _runBookJob's postGenStoryboard). Reuses the SAME ui.json key card 4's own storyboard
+               toggle uses, so the label stays in sync across both surfaces. -->
+          <label class="user-story-check-row" id="pdf-storyboard-row">
+            <input type="checkbox" id="pdf-storyboard-cb">
+            <span id="pdf-storyboard-lbl">🎬 Generate a storyboard</span>
+          </label>
           <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
             <button type="button" id="pdf-gen-btn" onclick="pdfGenerateAll()"
               style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif;display:none">
@@ -1347,6 +1355,22 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <span id="comic-detect-status" style="font-size:11px;color:var(--gray-dark)"></span>
           </div>
           <div id="comic-panel-list" style="display:flex;flex-direction:column;gap:4px;margin-top:8px"></div>
+          <!-- v85_p (real-usage bug report): the comic flow had NO lesson-type/storyboard controls at
+               all — comicCreateChapter() always fired an immediate, bare-vocab-only, unconditional-
+               storyboard generation with no chance to configure anything, unlike #pdf-panel's own
+               embedded #pdf-arc-row. Mirrors that exact pattern rather than routing through the
+               wizard's card 4 (comics, like PDF uploads, act from their own panel's button). -->
+          <div id="comic-arc-row" style="display:none;margin-top:8px">
+            <label class="user-story-check-row">
+              <input type="checkbox" id="comic-arc-cb">
+              <span id="comic-arc-lbl">🎯 Add more lesson types to each chapter</span>
+            </label>
+            <div id="comic-arc-types" class="user-story-checks" style="margin:3px 0 0 24px"></div>
+          </div>
+          <label class="user-story-check-row" id="comic-storyboard-row" style="display:none">
+            <input type="checkbox" id="comic-storyboard-cb">
+            <span id="comic-storyboard-lbl">🎬 Generate a storyboard</span>
+          </label>
           <div id="comic-panel-actions" style="display:none;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
             <button type="button" id="comic-extract-btn" onclick="comicExtractPanels()"
               style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif">✨ <span id="comic-extract-lbl">Extract text</span></button>
@@ -2743,6 +2767,7 @@ function applyUIStrings() {
   _setAttr('gen-create-now-btn', 'title', t('gen.wizard_create_now_hint'));
   _setText('per-chapter-lbl', t('gen.per_chapter_lbl'));
   _setText('post-gen-storyboard-lbl', t('gen.post_gen_storyboard_lbl'));
+  _setText('pdf-storyboard-lbl', t('gen.post_gen_storyboard_lbl'));
   _setText('post-gen-qc-lbl', t('gen.post_gen_qc_lbl'));
   // PLAN §13 milestone 5, item 2 (v85_i): the SAME prov.* keys the post-hoc #prov-stats editor
   // already uses (openProvEdit()) — one shared vocabulary for "attribution fields", not a second
@@ -2797,6 +2822,8 @@ function applyUIStrings() {
   { const cel=document.getElementById('comic-extract-lbl'); if(cel) cel.textContent=t('form.comic_extract'); }
   { const ccl2=document.getElementById('comic-create-lbl'); if(ccl2) ccl2.textContent=t('form.comic_create'); }
   { const cdl=document.getElementById('comic-detect-lbl'); if(cdl) cdl.textContent=t('form.comic_detect'); }
+  { const cal=document.getElementById('comic-arc-lbl'); if(cal) cal.textContent=t('form.arc_lbl'); }
+  { const csl=document.getElementById('comic-storyboard-lbl'); if(csl) csl.textContent=t('gen.post_gen_storyboard_lbl'); }
   _renderSplitModes();
   { const cl=document.getElementById('pdf-cleanup-lbl'); if(cl) cl.textContent=t('pdf.cleanup_lbl'); }
   { const al=document.getElementById('pdf-aiclean-lbl'); if(al) al.textContent=t('pdf.aiclean_lbl'); }
@@ -3636,8 +3663,16 @@ function _comicRenderList(){
   const list=document.getElementById('comic-panel-list'); if(!list) return;
   const actions=document.getElementById('comic-panel-actions');
   const count=document.getElementById('comic-panel-count');
-  if(!APP_COMIC.boxes.length){ list.innerHTML=''; if(actions) actions.style.display='none'; return; }
+  const arcRow=document.getElementById('comic-arc-row');
+  const sbRow=document.getElementById('comic-storyboard-row');
+  if(!APP_COMIC.boxes.length){
+    list.innerHTML=''; if(actions) actions.style.display='none';
+    if(arcRow) arcRow.style.display='none'; if(sbRow) sbRow.style.display='none';
+    return;
+  }
   if(actions) actions.style.display='flex';
+  if(arcRow){ arcRow.style.display=''; renderArcTypeChecks('comic-arc-types'); }
+  if(sbRow) sbRow.style.display='';
   if(count) count.textContent=APP_COMIC.boxes.length+' panel'+(APP_COMIC.boxes.length===1?'':'s');
   list.innerHTML=APP_COMIC.boxes.map((b,i)=>{
     const color=_COMIC_COLORS[i%_COMIC_COLORS.length];
@@ -3783,11 +3818,14 @@ function _comicApplyExtraction(panels){
 // User ruling: each panel's caption AND in-scene text both become part of the story (caption first,
 // then in-scene, panels separated by a blank line) — keeps sign/banner text learnable via the normal
 // vocab/comprehension pipeline, at the cost of prose that occasionally reads as "and the sign says X".
-function _comicBuildStoryText(){
-  return _comicPanels().map(b=>{
-    const t=b.text||{}; const lines=[t.caption, t.inScene].filter(Boolean);
-    return lines.join('\n');
-  }).filter(Boolean).join('\n\n');
+// v85_p (real-usage bug report): ONE CHAPTER PER PANEL, not one chapter per page — reversing the
+// original milestone-3 scoping decision after the user's own first real test made clear a whole
+// page collapsed into a single chapter wasn't what they wanted. Each panel becomes its own `chunks`
+// entry; _runBookJob ALREADY chains multiple chunks into one connected storyline sequentially (the
+// same machinery a multi-chapter PDF split already uses) — no new server-side chaining logic needed,
+// confirmed by reading _runBookJob before relying on it.
+function _comicPanelText(b){
+  const t=b.text||{}; return [t.caption, t.inScene].filter(Boolean).join('\n');
 }
 
 let _comicBookId=null, _comicBookPolling=false;
@@ -3795,26 +3833,39 @@ let _comicBookId=null, _comicBookPolling=false;
 async function comicCreateChapter(){
   const boxes=_comicPanels();
   if(!boxes.length) return;
-  const text=_comicBuildStoryText();
-  if(!text){ showToast(t('form.comic_create_failed')+': no extracted text yet'); return; }
+  if(!boxes.some(b=>_comicPanelText(b))){ showToast(t('form.comic_create_failed')+': no extracted text yet'); return; }
   const btn=document.getElementById('comic-create-btn');
   const extractBtn=document.getElementById('comic-extract-btn');
   const status=document.getElementById('comic-extract-status');
   if(btn) btn.disabled=true; if(extractBtn) extractBtn.disabled=true;
   if(status) status.textContent=t('form.comic_extracting');
   try{
-    // Placeholder title only — _runBookJob's own post-pass assigns the real, coherent title
-    // (skipMeta:true, same as every other chunk-based chapter), same convention pdfGenerateAll's
-    // chunks rely on. Derived from the story's own opening words rather than a generic label, so a
-    // mid-generation refresh still shows something recognizable in the chunk list.
-    const title=text.replace(/\s+/g,' ').trim().slice(0,40) || 'Comic chapter';
-    const comicPanels=boxes.map(b=>({ x1:b.x1, y1:b.y1, x2:b.x2, y2:b.y2,
-      caption:(b.text&&b.text.caption)||'', inScene:(b.text&&b.text.inScene)||'',
-      image:_comicCropDataUrl(b) }));
+    // v85_p (real-usage bug report): the comic panel had NO lesson-type/storyboard controls at all
+    // before — comicCreateChapter() fired immediately with no chance to configure anything, unlike
+    // #pdf-panel's own embedded #pdf-arc-row. Mirrors that exact pattern.
+    const arcOn=document.getElementById('comic-arc-cb')?.checked;
+    const arcTypes=arcOn?readArcTypeChecks('comic-arc-types'):null;
+    const postGenStoryboard=!!document.getElementById('comic-storyboard-cb')?.checked;
+    // A panel with no extracted text yet contributes NO chapter — filtered out rather than sent as
+    // an empty/broken chunk. comicPanels metadata for a skipped panel is simply not attached
+    // anywhere; the user can re-extract that one panel and create the chapter again.
+    const chunks=boxes.map(b=>{
+      const text=_comicPanelText(b); if(!text) return null;
+      // Placeholder title only — _runBookJob's own post-pass assigns the real, coherent title
+      // (skipMeta:true, same as every other chunk-based chapter), same convention pdfGenerateAll's
+      // chunks rely on.
+      const title=text.replace(/\s+/g,' ').trim().slice(0,40) || 'Comic panel';
+      const comicPanels=[{ x1:b.x1, y1:b.y1, x2:b.x2, y2:b.y2,
+        caption:(b.text&&b.text.caption)||'', inScene:(b.text&&b.text.inScene)||'',
+        image:_comicCropDataUrl(b) }];
+      return { title, text, wordCount: text.split(/\s+/).filter(Boolean).length, comicPanels };
+    }).filter(Boolean);
     const body={
       lang: APP.lang||'it', srcLang: APP.srcLang||'en', difficulty: APP.difficulty||2,
       lessonFormat: APP.lessonFormat||'standard', storyStyle: null,
-      chunks: [{ title, text, wordCount: text.split(/\s+/).filter(Boolean).length, comicPanels }],
+      chunks,
+      ...(arcOn ? { arc:true, arcTypes } : {}),
+      postGenStoryboard,
     };
     const r=await fetch('/api/generate-book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const data=await r.json().catch(()=>({}));
@@ -6641,6 +6692,10 @@ async function pdfGenerateAll() {
     // attributed to the storyline server-side. Omitted when nothing was spent.
     ...( (_aiCleanTokens.promptTokens || _aiCleanTokens.completionTokens)
          ? { cleanupTokens: { ..._aiCleanTokens } } : {} ),
+    // v85_p: this panel had NO storyboard control at all before — the server generated one for every
+    // upload UNCONDITIONALLY regardless (see server.js's own comment on _runBookJob). Now opt-in,
+    // same as the wizard's own card-4 toggle.
+    postGenStoryboard: !!document.getElementById('pdf-storyboard-cb')?.checked,
   };
   if (document.getElementById('pdf-arc-cb')?.checked) {
     body.arc = true;
@@ -153913,11 +153968,11 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v85_o', coverageThreshold: 0.8 };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v85_o'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v85_p', coverageThreshold: 0.8 };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v85_p'; }
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"a2d77313e07a","lessons.json":"97240b842ae5","ui.json":"0da4877a7c53","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"343f54cde710"};
+  APP.buildSources = {"index.html":"d8b7a5b3971c","lessons.json":"97240b842ae5","ui.json":"0da4877a7c53","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"343f54cde710"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).

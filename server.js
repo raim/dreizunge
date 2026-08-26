@@ -184,7 +184,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v85_o';
+const APP_VERSION  = 'v85_p';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6217,12 +6217,24 @@ async function _runBookJob(bookId, chunks, base) {
     // false, includeStory false). Its exact form is deliberately NOT spelled out: a test sweeps
     // this file to prove the automatic call is gone, and a comment quoting it would fail the very
     // check it documents.
-    // Storyboard post-pass (v68.1, queued in the v68 notes): one whole-storyline board at the end
-    // of every book/multi-chapter job — the same artefact the storyline 🎨 button makes, via the
-    // same shared helper, so the deck opens with its board instead of an empty slot. Runs AFTER
-    // titling (panels caption against the final chapter set) and after QC (a slow board must never
-    // delay content flags). Best-effort; never fails the book. Storyline resolution mirrors the
-    // title/sourceFile post-passes: chain id first, chapters-inclusion fallback.
+    // Storyboard post-pass (v68.1, queued in the v68 notes; made OPT-IN at v85_p per user report).
+    // One whole-storyline board at the end of the job — the same artefact the storyline 🎨 button
+    // makes, via the same shared helper, so the deck opens with its board instead of an empty slot.
+    // Runs AFTER titling (panels caption against the final chapter set) and after QC (a slow board
+    // must never delay content flags). Best-effort; never fails the book. Storyline resolution
+    // mirrors the title/sourceFile post-passes: chain id first, chapters-inclusion fallback.
+    //
+    // v85_p FIX: this ran UNCONDITIONALLY for every book/multi-chapter job since v68.1 — for EVERY
+    // caller of /api/generate-book (PDF/document uploads, comic chapters, and the wizard's own
+    // multi-chapter "generated" flow), regardless of any storyboard checkbox. This made PLAN §13
+    // milestone 4's own `#post-gen-storyboard-cb` opt-in toggle a SILENT NO-OP for book-style
+    // generation in practice: by the time its own post-job client call ran, this unconditional pass
+    // had already created the board, and the shared helper never overwrites one that exists — so the
+    // toggle appeared to work (nothing crashed) while doing nothing. Found via a real user report
+    // ("we don't want storyboards as a standard generation unless explicitly selected") after testing
+    // the comic-upload feature; confirmed via a direct code read to be a PRE-EXISTING gap affecting
+    // every book-job caller, not something the comic feature introduced. Now gated on
+    // `base.postGenStoryboard` (threaded from `body.postGenStoryboard` by every caller below).
     try {
       const chapterIds = bj.chapters.map(c => c.topicId).filter(Boolean);
       const topicData = chapterIds.map(id => findSavedById(id)).filter(Boolean);
@@ -6233,14 +6245,16 @@ async function _runBookJob(bookId, chunks, base) {
                 || all.find(s => chapterIds.every(id => (s.chapters || []).includes(id)));
         // v69_p (user request): the ✨ upload cleanup is spent BEFORE any storyline exists — it runs
         // on the upload panel's chunks. The client accumulates that spend and sends it with the
-        // book job, so it can be attributed here rather than vanishing from the ledger.
+        // book job, so it can be attributed here rather than vanishing from the ledger. DELIBERATELY
+        // outside the postGenStoryboard gate below — a token-accounting fix, not a generation step;
+        // the spend already happened regardless of whether a board gets drawn this run.
         if (sl && base.cleanupTokens && (base.cleanupTokens.promptTokens || base.cleanupTokens.completionTokens)) {
           addTokenUsage(sl, base.cleanupTokens, 'cleanup');
           upsertStoryline(sl);
           console.log(`  [book ${bookId}] upload-cleanup tokens attributed to the storyline: `
             + `${(base.cleanupTokens.promptTokens||0) + (base.cleanupTokens.completionTokens||0)}`);
         }
-        if (sl && !sl.storyboard) {   // never overwrite a board someone already made
+        if (sl && !sl.storyboard && base.postGenStoryboard) {   // opt-in (v85_p) + never overwrite an existing board
           bj.status = 'storyboard';
           await _storyboardForStoryline(sl.id, topicData, null);
           console.log(`  [book ${bookId}] storyboard post-pass done`);
@@ -7496,6 +7510,9 @@ http.createServer(async (req, res) => {
           : null,
         continuedFrom: rootParent ? rootParent.id : null, userStoryLang: userStoryLang || null,
         arc: arcEnabled, arcTypes: _arcTypes,
+        // v85_p: opt-in gate for _runBookJob's own storyboard post-pass — see that function's own
+        // comment for why this used to run unconditionally for every caller of this route.
+        postGenStoryboard: !!body.postGenStoryboard,
         // Retained for logging/back-compat only — nothing downstream branches on it since v71_u.
         arcMode: arcMode === 'grammar' ? 'grammar' : 'vocab',
         // Arc script-teaching opt-in. Default ON when the target uses a script the source

@@ -1,18 +1,15 @@
 // unit-comic-chapter.test.js
-// PLAN §2.4 / Track A4 milestone 3 (v85_m) — client-side half of chapter formation. The server half
-// (comicPanels surviving generate-book's pipeline onto the persisted topic, story text verbatim) is
-// covered by e2e-comic-chapter.test.js (a real fresh-spawned server). This file covers:
-//   • §1 _comicBuildStoryText(): joins each panel's caption then in-scene text (the user's own
-//     ruling — both, not caption-only), panels separated by a blank line, panels with NEITHER field
-//     skipped entirely (not an empty paragraph).
-//   • §2 comicCreateChapter(): zero panels is a no-op; panels with no extracted text at all fails
-//     cleanly (no network call); a real batch builds the correct /api/generate-book body (chunks[0]
-//     carries the joined text AND a comicPanels array — box + caption/inScene + a fresh crop per
-//     panel), disables both action buttons, and hands the returned bookId to _pollComicBookJob() —
-//     a SIBLING of _pollBookJob(), not a reuse (that function is hardwired to #pdf-panel's own state).
-//   • §3/§4 _pollComicBookJob(): a real 2000ms poll interval (same convention as
-//     unit-gen-attribution.test.js's own startBackgroundJob() test), covering both 'done' and
-//     'error' outcomes — both must re-enable the buttons and clear the status, not leave the UI stuck.
+// PLAN §2.4 Track A4 milestone 3, REDESIGNED at v85_p — client-side half of ONE-CHAPTER-PER-PANEL
+// chapter formation (reversed from v85_m's original "one page = one chunk = one chapter" after a
+// real user report). The server half (N chunks -> N chained chapters, each with its own comicPanels)
+// is covered by e2e-comic-chapter.test.js. This file covers:
+//   • §1 _comicPanelText(): joins ONE panel's own caption+in-scene text (no cross-panel joining
+//     anymore — that was the old, now-removed _comicBuildStoryText()).
+//   • §2 comicCreateChapter(): zero panels / no extracted text anywhere are no-ops; a real batch
+//     builds ONE chunk PER PANEL (not one joined chunk), each carrying its OWN comicPanels entry
+//     with a FRESH crop; a panel with no extracted text contributes NO chunk (filtered, not sent
+//     broken); the arc/storyboard controls (new in v85_p, real-usage bug fixes) are read and
+//     threaded into the request body correctly, in both directions (checked and unchecked).
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -34,24 +31,25 @@ function client() {
 
 async function main() {
 
-// ── 1. _comicBuildStoryText(): caption+inScene per panel, blank-line separated, skips empty panels ──
+// ── 1. _comicPanelText(): ONE panel's own caption+in-scene, no cross-panel joining ──
 {
   const C = client();
-  const r = C.run(`APP_COMIC.boxes = [
-      { x1:0,y1:0,x2:1,y2:1, text: { caption:'Cap one.', inScene:'Sign one.' } },
-      { x1:1,y1:1,x2:2,y2:2, text: { caption:'Cap two.', inScene:'' } },
-      { x1:2,y1:2,x2:3,y2:3, text: { caption:'', inScene:'Sign only.' } },
-      { x1:3,y1:3,x2:4,y2:4 },   // never extracted at all (no .text)
-      { x1:4,y1:4,x2:5,y2:5, text: { caption:'', inScene:'' } },   // extracted, panel had no text
-    ];
-    _comicBuildStoryText()`);
-  assert.strictEqual(r,
-    'Cap one.\nSign one.\n\nCap two.\n\nSign only.',
-    'caption+inScene joined per panel, panels blank-line separated, panels with neither field skipped entirely (not an empty paragraph)');
+  const r = JSON.parse(C.run(`JSON.stringify({
+    both: _comicPanelText({ text: { caption:'Cap.', inScene:'Sign.' } }),
+    captionOnly: _comicPanelText({ text: { caption:'Cap only.', inScene:'' } }),
+    inSceneOnly: _comicPanelText({ text: { caption:'', inScene:'Sign only.' } }),
+    neither: _comicPanelText({ text: { caption:'', inScene:'' } }),
+    unextracted: _comicPanelText({})
+  })`));
+  assert.strictEqual(r.both, 'Cap.\nSign.', 'caption then in-scene, joined with a newline, for ONE panel');
+  assert.strictEqual(r.captionOnly, 'Cap only.', 'caption-only panel: just the caption, no stray newline');
+  assert.strictEqual(r.inSceneOnly, 'Sign only.', 'in-scene-only panel: just the in-scene text');
+  assert.strictEqual(r.neither, '', 'a panel with neither field is an empty string');
+  assert.strictEqual(r.unextracted, '', 'a never-extracted panel (no .text at all) is an empty string, not a crash');
 }
-console.log('  _comicBuildStoryText(): caption then in-scene per panel, blank-line separated, empty panels skipped: OK');
+console.log('  _comicPanelText(): one panel\'s own caption+in-scene text, no cross-panel joining: OK');
 
-// ── 2a. comicCreateChapter(): zero panels is a no-op ──────────────────────────────
+// ── 2a. comicCreateChapter(): zero panels / no extracted text anywhere are no-ops ──
 {
   const C = client();
   C.run(`APP_COMIC.boxes = [];
@@ -60,31 +58,27 @@ console.log('  _comicBuildStoryText(): caption then in-scene per panel, blank-li
     (async()=>{ await comicCreateChapter(); })();
     true;`, 't2a');
   await settle();
-  const called = JSON.parse(C.run('JSON.stringify(window._fetchCalled)'));
-  assert.strictEqual(called, false, 'zero drawn panels: comicCreateChapter() never calls fetch');
+  assert.strictEqual(JSON.parse(C.run('JSON.stringify(window._fetchCalled)')), false, 'zero panels: no-op');
 }
-console.log('  comicCreateChapter(): zero panels is a no-op: OK');
-
-// ── 2b. comicCreateChapter(): panels exist but none have extracted text — fails cleanly ──
 {
   const C = client();
   C.run(`APP_COMIC.boxes = [{x1:0,y1:0,x2:1,y2:1}];   // never extracted
     window._fetchCalled = false;
     fetch = function(){ window._fetchCalled = true; return Promise.resolve({ok:true,json:function(){return Promise.resolve({});}}); };
     (async()=>{ await comicCreateChapter(); })();
-    true;`, 't2b');
+    true;`, 't2a2');
   await settle();
-  const called = JSON.parse(C.run('JSON.stringify(window._fetchCalled)'));
-  assert.strictEqual(called, false, 'no extracted text on any panel: comicCreateChapter() never calls fetch (fails before the network, not after)');
+  assert.strictEqual(JSON.parse(C.run('JSON.stringify(window._fetchCalled)')), false, 'no extracted text anywhere: no-op, no network call');
 }
-console.log('  comicCreateChapter(): no extracted text anywhere fails cleanly, no network call: OK');
+console.log('  comicCreateChapter(): zero panels / nothing extracted are both clean no-ops: OK');
 
-// ── 2c. comicCreateChapter(): correct POST body, disables buttons, hands off to the poller ──
+// ── 2b. comicCreateChapter(): ONE CHUNK PER PANEL, fresh crops, a textless panel is filtered ──
 {
   const C = client();
   C.run(`APP_COMIC.boxes = [
       { x1:0,y1:0,x2:10,y2:10, text: { caption:'Cap A', inScene:'' } },
-      { x1:5,y1:5,x2:15,y2:15, text: { caption:'Cap B', inScene:'Scene B' } },
+      { x1:5,y1:5,x2:15,y2:15, text: { caption:'', inScene:'' } },      // extracted, but nothing found — must be filtered
+      { x1:9,y1:9,x2:19,y2:19, text: { caption:'Cap C', inScene:'Scene C' } },
     ];
     window._cropCalls = [];
     _comicCropDataUrl = function(b){ window._cropCalls.push(b.x1); return 'CROP_' + b.x1; };
@@ -95,76 +89,52 @@ console.log('  comicCreateChapter(): no extracted text anywhere fails cleanly, n
       window._fetchCall = { url: url, method: opts.method, body: JSON.parse(opts.body) };
       return Promise.resolve({ ok:true, json: function(){ return Promise.resolve({ bookId:'book_xyz' }); } });
     };
+    document.getElementById('comic-arc-cb').checked = false;
+    document.getElementById('comic-storyboard-cb').checked = false;
+    (async()=>{ await comicCreateChapter(); })();
+    true;`, 't2b');
+  await settle();
+  const r = JSON.parse(C.run(`JSON.stringify({ fetchCall: window._fetchCall, startedWith: window._startedWith,
+    cropCalls: window._cropCalls })`));
+  assert.strictEqual(r.fetchCall.url, '/api/generate-book', 'POSTs to the SAME endpoint pdfGenerateAll() uses');
+  const chunks = r.fetchCall.body.chunks;
+  assert.strictEqual(chunks.length, 2, 'exactly 2 chunks — the textless panel (2nd) was filtered out, not sent broken');
+  assert.strictEqual(chunks[0].text, 'Cap A', 'chunk 0 is panel 0\'s OWN text');
+  assert.strictEqual(chunks[1].text, 'Cap C\nScene C', 'chunk 1 is panel 2\'s OWN text (skipping the filtered panel 1) — NOT joined with chunk 0');
+  assert.strictEqual(chunks[0].comicPanels.length, 1, 'chunk 0 carries exactly ONE comicPanels entry (its own), not all three');
+  assert.deepStrictEqual([chunks[0].comicPanels[0].x1, chunks[0].comicPanels[0].image], [0, 'CROP_0'], 'chunk 0\'s comicPanels entry is panel 0\'s own box + a FRESH crop');
+  assert.deepStrictEqual([chunks[1].comicPanels[0].x1, chunks[1].comicPanels[0].image], [9, 'CROP_9'], 'chunk 1\'s comicPanels entry is panel 2\'s own box + its own fresh crop');
+  assert.strictEqual(r.fetchCall.body.arc, undefined, 'arc omitted entirely when the checkbox is unchecked (not sent as false)');
+  assert.strictEqual(r.fetchCall.body.postGenStoryboard, false, 'postGenStoryboard explicitly false when unchecked');
+  assert.strictEqual(r.startedWith, 'book_xyz', 'hands the returned bookId to _pollComicBookJob');
+}
+console.log('  comicCreateChapter(): ONE chunk per panel (not joined), fresh per-panel crops, a textless panel is filtered, not sent broken: OK');
+
+// ── 2c. comicCreateChapter(): arc + storyboard controls, when CHECKED, are threaded into the body ──
+{
+  const C = client();
+  C.run(`APP_COMIC.boxes = [{ x1:0,y1:0,x2:10,y2:10, text: { caption:'Cap A', inScene:'' } }];
+    _comicCropDataUrl = function(){ return 'X'; };
+    _pollComicBookJob = function(){};
+    window._readArcTypesCalledWith = null;
+    readArcTypeChecks = function(id){ window._readArcTypesCalledWith = id; return ['grammar']; };
+    window._fetchCall = null;
+    fetch = function(url, opts){
+      window._fetchCall = JSON.parse(opts.body);
+      return Promise.resolve({ ok:true, json: function(){ return Promise.resolve({ bookId:'book_2' }); } });
+    };
+    document.getElementById('comic-arc-cb').checked = true;
+    document.getElementById('comic-storyboard-cb').checked = true;
     (async()=>{ await comicCreateChapter(); })();
     true;`, 't2c');
   await settle();
-  const r = JSON.parse(C.run(`JSON.stringify({ fetchCall: window._fetchCall, startedWith: window._startedWith,
-    cropCalls: window._cropCalls,
-    createBtnDisabled: document.getElementById('comic-create-btn').disabled,
-    extractBtnDisabled: document.getElementById('comic-extract-btn').disabled })`));
-  assert.strictEqual(r.fetchCall.url, '/api/generate-book', 'POSTs to the SAME endpoint pdfGenerateAll() uses');
-  assert.strictEqual(r.fetchCall.method, 'POST', 'uses POST');
-  const chunk = r.fetchCall.body.chunks[0];
-  assert.strictEqual(chunk.text, 'Cap A\n\nCap B\nScene B', 'chunk text is the joined story text');
-  assert.strictEqual(chunk.comicPanels.length, 2, 'one comicPanels entry per drawn panel');
-  assert.deepStrictEqual(
-    [chunk.comicPanels[0].x1, chunk.comicPanels[0].caption, chunk.comicPanels[0].image],
-    [0, 'Cap A', 'CROP_0'], 'panel 0: box coords, caption, and a FRESH crop (not a cached one) all present');
-  assert.deepStrictEqual(
-    [chunk.comicPanels[1].x1, chunk.comicPanels[1].inScene, chunk.comicPanels[1].image],
-    [5, 'Scene B', 'CROP_5'], 'panel 1: box coords, inScene, and its own fresh crop all present');
-  assert.strictEqual(r.startedWith, 'book_xyz', 'hands the returned bookId to _pollComicBookJob (a SIBLING of _pollBookJob, not the same function)');
-  assert.strictEqual(r.createBtnDisabled, true, 'the create-chapter button is disabled while the request is in flight');
-  assert.strictEqual(r.extractBtnDisabled, true, 'the extract button is ALSO disabled — redrawing/re-extracting mid-creation would race the just-sent snapshot');
+  const r = JSON.parse(C.run(`JSON.stringify({ fetchCall: window._fetchCall, arcTypesCalledWith: window._readArcTypesCalledWith })`));
+  assert.strictEqual(r.fetchCall.arc, true, 'arc:true sent when the checkbox is checked');
+  assert.deepStrictEqual(r.fetchCall.arcTypes, ['grammar'], 'arcTypes read from the SAME shared tick-list PDF/wizard use');
+  assert.strictEqual(r.arcTypesCalledWith, 'comic-arc-types', 'reads from #comic-arc-types, the comic panel\'s own container');
+  assert.strictEqual(r.fetchCall.postGenStoryboard, true, 'postGenStoryboard:true sent when that checkbox is checked');
 }
-console.log('  comicCreateChapter(): correct POST body (joined text + comicPanels with fresh crops), disables both buttons, hands off to its own poller: OK');
-
-// ── 3. _pollComicBookJob(): a 'done' status re-enables both buttons and clears status ──
-{
-  const C = client();
-  C.run(`document.getElementById('comic-create-btn').disabled = true;
-    document.getElementById('comic-extract-btn').disabled = true;
-    window._loadSavedListCalled = false;
-    loadSavedList = function(){ window._loadSavedListCalled = true; return Promise.resolve(); };
-    fetch = function(url){
-      return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve({
-        status:'done', chapters:[{status:'done', title:'A Comic Chapter', topicId:'tp_x'}] }); } });
-    };
-    _pollComicBookJob('book_done');
-    true;`, 't3');
-  await settle(2200);   // the real 2000ms poll interval
-  const r = JSON.parse(C.run(`JSON.stringify({ createBtnDisabled: document.getElementById('comic-create-btn').disabled,
-    extractBtnDisabled: document.getElementById('comic-extract-btn').disabled,
-    status: document.getElementById('comic-extract-status').textContent,
-    loadSavedListCalled: window._loadSavedListCalled })`));
-  assert.strictEqual(r.createBtnDisabled, false, "a 'done' status re-enables the create-chapter button");
-  assert.strictEqual(r.extractBtnDisabled, false, "a 'done' status re-enables the extract button");
-  assert.strictEqual(r.status, '', "a 'done' status clears the in-progress status text");
-  assert.strictEqual(r.loadSavedListCalled, true, "a 'done' status refreshes the saved list so the new chapter appears");
-}
-console.log("  _pollComicBookJob(): a 'done' status re-enables both buttons, clears status, refreshes the saved list: OK");
-
-// ── 4. _pollComicBookJob(): an 'error' status recovers cleanly ────────────────────
-{
-  const C = client();
-  C.run(`document.getElementById('comic-create-btn').disabled = true;
-    document.getElementById('comic-extract-btn').disabled = true;
-    loadSavedList = function(){ return Promise.resolve(); };
-    fetch = function(){
-      return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve({
-        status:'error', error:'model unreachable', chapters:[{status:'error'}] }); } });
-    };
-    _pollComicBookJob('book_err');
-    true;`, 't4');
-  await settle(2200);
-  const r = JSON.parse(C.run(`JSON.stringify({ createBtnDisabled: document.getElementById('comic-create-btn').disabled,
-    extractBtnDisabled: document.getElementById('comic-extract-btn').disabled,
-    status: document.getElementById('comic-extract-status').textContent })`));
-  assert.strictEqual(r.createBtnDisabled, false, "an 'error' status re-enables the create-chapter button");
-  assert.strictEqual(r.extractBtnDisabled, false, "an 'error' status re-enables the extract button");
-  assert.strictEqual(r.status, '', "an 'error' status clears the status text rather than leaving it stuck");
-}
-console.log("  _pollComicBookJob(): an 'error' status recovers cleanly, buttons never stuck disabled: OK");
+console.log('  comicCreateChapter(): arc + storyboard controls, when checked, are correctly threaded into the request: OK');
 
 console.log('unit-comic-chapter: ALL PASSED');
 }

@@ -260,6 +260,7 @@ run('unit: generation-time attribution fields (PLAN §13 milestone 5, v85_i)', '
 run('unit: comic upload + panel-drawing UI (PLAN §2.4 Track A4 milestone 1, v85_j)', 'node', [path.join(__dirname, 'unit-comic-panel-ui.test.js')]);
 run('unit: comic panel batch extraction, client side (PLAN §2.4 Track A4 milestone 2, v85_k)', 'node', [path.join(__dirname, 'unit-comic-extraction.test.js')]);
 run('unit: comic chapter formation, client side (PLAN §2.4 Track A4 milestone 3, v85_m)', 'node', [path.join(__dirname, 'unit-comic-chapter.test.js')]);
+run('unit: post-gen storyboard opt-in fix, client side (v85_p)', 'node', [path.join(__dirname, 'unit-postgen-storyboard-optin.test.js')]);
 run('unit: comic story-panel progress-card rendering (PLAN §2.4 Track A4 milestone 4, v85_n)', 'node', [path.join(__dirname, 'unit-comic-story-panel.test.js')]);
 run('unit: comic panel auto-detection, client side (PLAN §2.4 Track A4 milestone 5, v85_o)', 'node', [path.join(__dirname, 'unit-comic-detect.test.js')]);
 run('unit: hidden lessons omitted/non-blocking in static (v48)', 'node', [path.join(__dirname, 'unit-hidden-lessons.test.js')]);
@@ -318,6 +319,7 @@ if (!quick) {
   run('e2e: comic panel text extraction (PLAN §2.4 Track A4 milestone 2, v85_k)', 'node', [path.join(__dirname, 'e2e-comic-extract.test.js')]);
   run('e2e: comic chapter formation (PLAN §2.4 Track A4 milestone 3, v85_m)', 'node', [path.join(__dirname, 'e2e-comic-chapter.test.js')]);
   run('e2e: comic panel auto-detection (PLAN §2.4 Track A4 milestone 5, v85_o)', 'node', [path.join(__dirname, 'e2e-comic-detect.test.js')]);
+  run('e2e: post-gen storyboard opt-in fix, book-job pipeline (v85_p)', 'node', [path.join(__dirname, 'e2e-postgen-storyboard-optin.test.js')]);
   run('e2e: model picker + table-format + split-translation + provenance', 'node', [path.join(__dirname, 'e2e-models.test.js')]);
 } else {
   console.log('\n(skipping e2e tests: --quick)');

@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_o` — `PLAN §2.4` follow-up: auto-detect panels (a suggestion pre-filling the manual-drawing UI), plus a real angle-bracket parser gap found and fixed by this milestone's own live verification. `v85_n` — `PLAN §2.4` / Track A4 milestone 4: progress-card integration. **TRACK A4 IS NOW FULLY SHIPPED** (all four milestones, `v85_j` through `v85_n`). `v85_m` — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels, live-verified end-to-end (both halves) against the real model. `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
+| **SHIPPED IN THE v85 LINE** | `v85_p` — real-usage bug fixes from the user's own first live test: one chapter per drawn panel (not one per page), storyboard generation made opt-in everywhere (was unconditional since v68.1 for EVERY book-job caller, not just comics — fixed a latent no-op in `PLAN §13` milestone 4's own toggle too). `v85_o` — `PLAN §2.4` follow-up: auto-detect panels (a suggestion pre-filling the manual-drawing UI), plus a real angle-bracket parser gap found and fixed by this milestone's own live verification. `v85_n` — `PLAN §2.4` / Track A4 milestone 4: progress-card integration. **TRACK A4 IS NOW FULLY SHIPPED** (all four milestones, `v85_j` through `v85_n`). `v85_m` — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels, live-verified end-to-end (both halves) against the real model. `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13`** — the generator-page redesign, scoped at the `v85_a` cut — **is now FULLY SHIPPED** (all five milestones, `v85_c` through `v85_i`); its own section below still carries the full assessment/build-order text for reference, but nothing in it is open any more. **`PLAN §2.4` / Track A4** (comic/image ingest) — the four-milestone manual-panel-selection design chosen after the `§2.4` overlay-probe measurements — **is now FULLY SHIPPED** (`v85_j` UI, `v85_k`/`v85_l` extraction, `v85_m` chapter formation, `v85_n` progress-card integration); its own "PLAN §2.4" sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -1762,6 +1762,56 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_p — real-usage bug fixes: one chapter per panel, storyboard opt-in everywhere
+
+The user's own first real end-to-end test of the whole comic feature (upload → draw 6 panels → auto-
+detect confirmed working → extract → create chapter), on their real live server, surfaced FOUR real
+findings in one message — the most valuable kind of feedback this whole line has gotten, since it's
+the first time a human actually used the shipped thing rather than this session verifying it alone:
+
+1. **Skill-ID generation flakiness** (3 failed attempts, 462s) and **chapter-title post-pass
+   failures** — confirmed by the user to ALSO happen on conventional PDF generation, not comic-
+   specific. **Deferred, per the user's own explicit choice** — general model-reliability issues
+   worth their own dedicated investigation, not mixed into this round.
+2. **"Generate chapter" bypassed lesson-type selection and unexpectedly ran a storyboard.**
+   Investigated: `_runBookJob`'s storyboard post-pass has run UNCONDITIONALLY for every
+   `/api/generate-book` caller since v68.1 — PDF uploads too, not something the comic feature
+   introduced. This ALSO explained a latent bug in `PLAN §13` milestone 4's own storyboard/QC
+   toggle: captured client-side but never actually sent in the initial request, so the unconditional
+   server pass always beat it to the punch, making the toggle a silent no-op the whole time.
+   **User's ruling: make it opt-in everywhere**, not just for comics — gated on a new
+   `postGenStoryboard` flag, threaded by all three callers (comic, PDF — which had no such control
+   at all before either — and the wizard's own multi-chapter flow, fixing its latent no-op too).
+3. **Vocab article-pairing inconsistency** (German-with-article paired against English-without) —
+   confirmed general, not comic-specific. **Deferred**, same reasoning as item 1.
+4. **"One chapter instead of 6, one per panel."** The original milestone-3 scoping decision ("one
+   page = one chunk = one chapter") did not match what the user actually wanted once they tried it.
+   **Reversed, per the user's ruling**: each drawn panel now becomes its own chapter.
+   `comicCreateChapter()` builds one `chunks` entry per panel; `_runBookJob`'s EXISTING sequential
+   chaining (already used for a multi-chunk PDF split) links them into one storyline automatically —
+   confirmed by reading it before relying on it, no new server-side chaining logic needed.
+
+Also fixed the comic panel's own missing lesson-type controls (`#comic-arc-row`, mirroring
+`#pdf-arc-row`'s exact existing pattern — the panel had NO way to request grammar/comprehension/etc.
+lessons before, always just the bare vocab lesson) — a direct consequence of investigating item 2.
+
+A PRE-EXISTING test (`e2e-book-formats.test.js`) had encoded the OLD unconditional storyboard
+behaviour as an assertion — found by re-running the full suite after the fix, exactly the "a fix to
+one stage's output shape can silently break a downstream consumer that assumed the old shape" rule.
+Flipped (not deleted) to match the new, correct default.
+
+**Not live-verified against the real model this cut** — these are mechanical/request-shape fixes
+(chunk count, field wiring, a boolean gate), thoroughly covered by e2e tests against a real server +
+real job/store pipeline with a fake LLM backend. A live check would mostly re-exercise the MODEL
+RELIABILITY issues the user explicitly asked to defer — they are already testing this feature live on
+their own server, which is the live-verification path for this cut.
+
+Also found, during THIS cut's own baseline check (not caused by any of this cut's code, confirmed):
+a real, pre-existing, data-triggered bug in `unit-ui-journeys.test.js`'s storyline-screen scenario,
+exposed for the first time by the corpus growing during this exact session. Flagged prominently in
+the session prompt for a dedicated follow-up, per the user's own explicit choice to finalize this
+release first and investigate separately.
 
 ## ✅ v85_o — `PLAN §2.4` follow-up: auto-detect panels (an addition beyond the original 4-milestone plan)
 

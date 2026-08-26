@@ -1,9 +1,9 @@
-// E2E: PLAN §2.4 / Track A4 milestone 3 (v85_m) — a comic-sourced chunk's `comicPanels` field
-// survives generate-book's whole pipeline onto the persisted topic, and the chunk's text becomes
-// the chapter's story VERBATIM (no model rewrite — confirmed by reading generate()'s own userStory
-// handling before building this: `if (userStory) story = userStory.trim();`). This is pure data
-// plumbing, not a new model-call shape, so no new fake-ollama routing is needed — the existing
-// chunk-based book generation path (already exercised by e2e-bookfile.test.js et al.) covers it.
+// E2E: PLAN §2.4 Track A4 milestone 3, REDESIGNED at v85_p — ONE CHAPTER PER PANEL, not one chapter
+// per page. Reversed after a real user report: the original "whole page = one chunk = one chapter"
+// scoping decision (still true for milestone 3 as originally shipped, v85_m) did not match what the
+// user actually wanted once they tried it for real. Each panel is now its own `chunks` entry;
+// _runBookJob's EXISTING chaining (already used for a multi-chunk PDF split) links them into one
+// storyline automatically — no new server-side chaining logic, confirmed before relying on it.
 const { boot, post, waitBookJob, assert } = require('./lib');
 
 (async () => {
@@ -11,44 +11,55 @@ const { boot, post, waitBookJob, assert } = require('./lib');
   let failed = false;
   try {
     const { sport } = env;
-    const STORY_TEXT = 'So wurde ein großes Schild aufgestellt.\n\nRiesen sind hier nicht willkommen.';
-    const COMIC_PANELS = [
-      { x1: 0, y1: 0, x2: 100, y2: 150, caption: 'So wurde ein großes Schild aufgestellt.', inScene: '', image: 'data:image/jpeg;base64,AAAA' },
-      { x1: 100, y1: 0, x2: 200, y2: 150, caption: '', inScene: 'Riesen sind hier nicht willkommen.', image: 'data:image/jpeg;base64,BBBB' },
-    ];
+    // .trim() matches generate()'s own `story = userStory.trim()` — the fixture's .repeat() leaves a
+    // trailing space the STORED story does not carry.
+    const PANEL_TEXT = (n) => `Panel ${n} caption text, unique per panel. `.repeat(4).trim();
+    const panelChunk = (n, x1) => ({
+      title: `Panel ${n}`, text: PANEL_TEXT(n), wordCount: 20,
+      comicPanels: [{ x1, y1: 0, x2: x1 + 100, y2: 150, caption: PANEL_TEXT(n), inScene: '',
+                      image: `data:image/jpeg;base64,PANEL${n}` }],
+    });
 
-    // ── 1. A comic-sourced chunk's comicPanels survive onto the persisted topic ────
+    // ── 1. Three panels -> three CHAINED chapters, each with its OWN comicPanels ──
     const start = await post(sport, '/api/generate-book', {
       lang: 'de', srcLang: 'en', difficulty: 2, lessonFormat: 'standard',
-      chunks: [{ title: 'Comic chapter', text: STORY_TEXT, wordCount: STORY_TEXT.split(/\s+/).length,
-                 comicPanels: COMIC_PANELS }],
+      chunks: [panelChunk(1, 0), panelChunk(2, 100), panelChunk(3, 200)],
     });
     assert(start.status === 202, 'book accepted (got ' + start.status + ' ' + start.raw + ')');
-    const final = await waitBookJob(sport, start.body.bookId, { timeoutMs: 90000 });
+    const final = await waitBookJob(sport, start.body.bookId, { timeoutMs: 120000 });
     assert(final && final.status === 'done', 'book done (status=' + (final && final.status) + ', err=' + (final && final.error) + ')');
-    const topicId = final.chapters[0].topicId;
-    assert(topicId, 'the chapter has a persisted topic id');
+    assert(final.chapters.length === 3, 'exactly 3 chapters — one per panel, not one for the whole page (got ' + final.chapters.length + ')');
+    const topicIds = final.chapters.map(c => c.topicId);
+    assert(topicIds.every(Boolean), 'every panel got its own persisted topic id');
+    assert(new Set(topicIds).size === 3, 'three DISTINCT topic ids, not the same chapter reused');
 
     const store = env.readStore();
-    const topic = store.topics.find(t => t.id === topicId);
-    assert(topic, 'the persisted topic exists in the store');
-    assert(topic.story === STORY_TEXT, 'the chapter\'s story is the chunk text VERBATIM, not model-rewritten\n  got: ' + JSON.stringify(topic.story));
-    assert(Array.isArray(topic.comicPanels) && topic.comicPanels.length === 2, 'comicPanels survived onto the persisted topic (got ' + JSON.stringify(topic.comicPanels) + ')');
-    assert(topic.comicPanels[0].caption === COMIC_PANELS[0].caption, 'panel 0 caption matches what was sent');
-    assert(topic.comicPanels[1].inScene === COMIC_PANELS[1].inScene, 'panel 1 inScene matches what was sent');
-    assert(topic.comicPanels[0].image === COMIC_PANELS[0].image, 'panel 0 image (cropped data URL) survived unchanged');
-    console.log('  comicPanels survive generate-book\'s pipeline onto the persisted topic, story is verbatim: OK');
+    const topics = topicIds.map(id => store.topics.find(t => t.id === id));
+    topics.forEach((topic, i) => {
+      assert(topic, `chapter ${i + 1}'s topic exists in the store`);
+      assert(topic.story === PANEL_TEXT(i + 1), `chapter ${i + 1}'s story is THAT panel's own text, verbatim (got ${JSON.stringify(topic.story).slice(0, 60)})`);
+      assert(Array.isArray(topic.comicPanels) && topic.comicPanels.length === 1, `chapter ${i + 1} carries exactly its OWN one panel's comicPanels, not all three's`);
+      assert(topic.comicPanels[0].caption === PANEL_TEXT(i + 1), `chapter ${i + 1}'s comicPanels caption matches THAT panel, not a mixed-up one`);
+    });
+    console.log('  3 panels -> 3 chained chapters, each with its OWN story text and comicPanels (not mixed up): OK');
 
-    // ── 2. An ORDINARY (non-comic) chunk gets NO comicPanels field — additive, not a default ──
+    // Chained into one storyline — the SAME chaining PDF's own multi-chunk splitting already uses.
+    const sls = store.storylines || [];
+    const sl = sls.find(s => topicIds.every(id => (s.chapters || []).includes(id)));
+    assert(sl, 'all 3 panel-chapters landed in ONE chained storyline, not three separate ones');
+    console.log('  the 3 panel-chapters are chained into ONE storyline: OK');
+
+    // ── 2. A panel with NO extracted text contributes NO chapter (filtered client-side, but the
+    //      server-side contract this test proves is: a chunks array can legitimately have fewer
+    //      entries than panels were drawn — nothing here requires all panels to produce a chapter) ──
     const start2 = await post(sport, '/api/generate-book', {
       lang: 'de', srcLang: 'en', difficulty: 2, lessonFormat: 'standard',
-      chunks: [{ title: 'Plain chapter', text: 'Ein ganz normaler Text ohne Comic.', wordCount: 6 }],
+      chunks: [panelChunk(1, 0)],   // only 1 of (hypothetically) several drawn panels had real text
     });
     const final2 = await waitBookJob(sport, start2.body.bookId, { timeoutMs: 90000 });
-    assert(final2 && final2.status === 'done', 'plain book done');
-    const plainTopic = env.readStore().topics.find(t => t.id === final2.chapters[0].topicId);
-    assert(plainTopic && plainTopic.comicPanels === undefined, 'a chunk with no comicPanels does not get one fabricated on its persisted topic');
-    console.log('  an ordinary (non-comic) chunk gets no comicPanels field: OK');
+    assert(final2 && final2.status === 'done', 'a single-panel chunks array still works (chapter formation does not require a minimum panel count)');
+    assert(final2.chapters.length === 1, 'exactly 1 chapter for 1 chunk');
+    console.log('  a shorter chunks array (some panels had no text) still forms a valid, smaller storyline: OK');
 
     console.log('e2e-comic-chapter: ALL PASSED');
   } catch (e) {
