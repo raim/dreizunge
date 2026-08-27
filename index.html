@@ -15495,8 +15495,21 @@ const EX_RENDERERS = {
   mcq_conjugation:   (ex) => tMcqConjugation(ex),
   type_conjugation:  (ex) => tTypeConjugation(ex),
 };
+// v85_s (user-reported): tapping a highlighted word on the progress card sometimes played the
+// SPEECH for a DIFFERENT question, self-correcting on the next interaction. Root cause: tapWord()
+// calls showLesson(), which renders exercise 0 (startLesson's own unconditional first render), then
+// — once the run exists — corrects onto the word's REAL question with a second renderEx() call, right
+// away, in the same synchronous pass. Each renderEx() for a listen_mcq/listen_type exercise queues
+// its own 350ms auto-speak timeout (see below); nothing cancelled the FIRST one before the second was
+// scheduled, so two timers raced to speak() on the same shared TTS output, and whichever the browser
+// did not fully preempt is what the learner heard — almost always the WRONG (exercise-0) one, since
+// it was scheduled and therefore fires first. Cancelling any still-pending timeout at the top of
+// EVERY renderEx() call (not only inside the listen-type branch, so a listen→non-listen double-render
+// is covered too) closes the race at its source rather than patching the symptom.
+let _speakTimeout = null;
 function renderEx(){
   const C=APP.cur;
+  clearTimeout(_speakTimeout); _speakTimeout = null;
   try{ _speechMicRefresh(); }catch(_){}   // v84_k: every question render re-evaluates the mic pill
   if(C.cur>=C.exercises.length){
     // v71_h: a finished drill returns to the LAUNCHING chapter's completion card rather than
@@ -15600,7 +15613,8 @@ function renderEx(){
     // still want to check first. Pure reorder, same two pieces of markup, nothing else changed.
     _exStoryPanelHtml(ex)+
     flagUi;
-  if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>{
+  if(ex.type==='listen_mcq'||ex.type==='listen_type') _speakTimeout = setTimeout(()=>{
+    _speakTimeout = null;
     if(_ttsUnlocked){ speak(ex.target); }
     else {
       _ttsPendingAfterUnlock={text:ex.target,rate:undefined};

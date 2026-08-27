@@ -12,12 +12,12 @@
       "lang": "de",
       "srcLang": "en",
       "createdAt": "2026-08-26T14:55:11.285Z",
-      "updatedAt": "2026-08-26T15:00:46.539Z",
+      "updatedAt": "2026-08-27T14:42:30.149Z",
       "tokenUsage": {
-        "totalPromptTokens": 1130,
-        "totalCompletionTokens": 1556,
+        "totalPromptTokens": 1324,
+        "totalCompletionTokens": 1576,
         "tokensByType": {
-          "retitle": 219,
+          "retitle": 433,
           "summary": 301,
           "storyboard": 2166
         }
@@ -11244,8 +11244,8 @@
   "topics": [
     {
       "id": "tp_17877559633380000510",
-      "topic": "Laura fiebert ihrer Hochzeit entgegen. L",
-      "topicEmoji": "📖",
+      "topic": "Wedding Fever",
+      "topicEmoji": "💍",
       "userTopic": "Laura fiebert ihrer Hochzeit entgegen. L",
       "userPrompt": "Laura fiebert ihrer Hochzeit entgegen. L\n\n[story]\nLaura fiebert ihrer Hochzeit entgegen. Lisa kann keine Kinder bekommen. Barbara läuft ein Hund zu. Verena erbt eine Luxusvilla. Jolie wird entlassen. Petra findet die Liebe. Brigitte schwitzt. Emma freut sich. Tina hat Angst.\nMit bösem Humor und viel Liebe zu ihren Figuren feiert Jovana Reisinger die Frauen, ihre Wut und Ausdauer in einer frauenfeindlichen Welt.",
       "lang": "de",
@@ -11767,7 +11767,13 @@
                   "g": "negligence"
                 }
               ],
-              "homophones": []
+              "homophones": [],
+              "userFlag": {
+                "comment": "Nachlässigkeit is not the opposite of Ausdauer",
+                "correct": "",
+                "at": "2026-08-27T14:26:06.453Z",
+                "mode": "student"
+              }
             }
           ],
           "_genMeta": {
@@ -12211,7 +12217,7 @@
         }
       ],
       "generatedAt": "2026-08-26T14:52:43.338Z",
-      "updatedAt": "2026-08-26T16:31:50.837Z",
+      "updatedAt": "2026-08-27T14:26:06.462Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-26T16:12:54.190Z"
