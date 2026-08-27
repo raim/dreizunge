@@ -49,18 +49,22 @@ node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-Corpus at this cut: **327 topics, 92 storylines, 33 languages, 686 `en` keys** (UNCHANGED — this cut
-added one test, no new strings, no corpus edit). `APP_VERSION = 'v85_s'`.
+Corpus at this cut: **333 topics, 95 storylines, 33 languages, 686 `en` keys**. NOT unchanged this
+time — grown from `v85_r`'s 327/92, entirely from the user's OWN two commits made mid-session
+(`dd74876`/`ea47c82`, "worked on/added new image-based lesson[s]"), fully COMMITTED before this cut's
+own baseline was measured. `APP_VERSION = 'v85_s'`.
 
-⚠️ **The baseline may show 0, 1, or 2 known failures depending on the user's OWN corpus growth since
+⚠️ **The baseline may show 0, 1, or 2 known failures depending on the user's OWN corpus growth AFTER
 this cut** — `unit: current roadmap names the current line` and `unit: docs/ built from current
-sources` both fail ONLY when the WORKING-TREE `lessons.json` has grown past what's committed (the
-user's own live testing on their separate dev server — see the warning right below). **At the exact
-moment this cut was committed, both of those passed** (`lessons.json` happened to match `HEAD`
-exactly) — a genuine change from `v85_q`/`v85_r`, where the user's live growth had already outpaced
-the commit. Don't be alarmed if they're red again by the time you read this; that is the user living
-their life, not a regression. Both are DATA-DRIFT failures, never a code bug — diagnose which file
-(`lessons.json` topic/storyline counts vs. this file's stated numbers) before touching anything.
+sources` both fail ONLY when the WORKING-TREE `lessons.json` has grown past what's committed here (the
+user's own live testing on their separate dev server — see the warning right below). **At this cut's
+own commit, both pass** — the corpus numbers above and the `docs/index.html` rebuild both reflect the
+CURRENT committed `lessons.json` exactly, not a stale snapshot. Don't be alarmed if they're red again
+by the time you read this; that is the user living their life, not a regression. Both are DATA-DRIFT
+failures, never a code bug — diagnose which file (`lessons.json` topic/storyline counts vs. this
+file's stated numbers) before touching anything, and if the working tree is CLEAN (`git status
+--short lessons.json` empty) yet the counts still disagree, the fix is to UPDATE THIS FILE's numbers
+to match the tree, the same way this cut just did for `v85_r`'s.
 
 ⚠️ **A separate, real thing observed THIS cut, worth naming explicitly:** `docs/index.html` showed as
 modified on disk PARTWAY THROUGH the session, built from a `lessons.json` state that matched NEITHER
@@ -73,7 +77,11 @@ this cut needed a genuine `docs/index.html` rebuild anyway (a real `index.html` 
 safe to just rebuild it fresh from the COMMITTED `lessons.json` and overwrite whatever was there:
 `docs/index.html` is a GENERATED artifact with nothing hand-authored in it, unlike `lessons.json`
 itself. The distinction that matters: never read or bake the user's UNCOMMITTED personal data into a
-build; freely regenerate a build ARTIFACT from safe, committed sources whenever code changes require it.
+build; freely regenerate a build ARTIFACT from safe, committed sources whenever code changes require
+it. **Resolution**: by the time this cut actually committed, the user's own two corpus commits had
+landed and `lessons.json` was clean again — so the FINAL `docs/index.html` rebuild used the plain
+default (`node build-static.js`, no temp-file argument), which was safe again at that point because
+the working tree was, once more, exactly the committed truth.
 
 ⚠️ **Check `git status --short lessons.json` at the start of this session.** The user is actively
 using this app for real work on their own separate, long-running dev server (found bound to port 3000
