@@ -37,7 +37,7 @@ this file stays current through the whole `v86` line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v86 CUT** | fresh, top-of-file summary of everything still genuinely open, then the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v86 LINE** | `v86_f` — item I: a fixed 90°-clockwise-per-click rotate button for the uploaded/captured comic image, using the SAME offscreen-canvas-redraw shape as the existing downscale step, routed through the SAME `img.onload -> _comicFinishSetup()` path a fresh upload uses — so natural dimensions are read from the rotated image itself and panel-box invalidation comes for free from the existing "new image clears boxes" precedent, no new logic needed. `v86_e` — item K: the SAME mobile-backgrounding fix extended to `_pollComicBookJob` (book/chapter creation), the one poller `v86_d` explicitly left open — required its own small refactor (a `while`+`sleep` loop split into a re-invokable `_comicBookCheckOnce()`, gated on the pre-existing `_comicBookId`) rather than a copy-paste, since it wasn't `setInterval`-shaped like the other two. Preserves one deliberate behavioural difference: a network hiccup mid-poll is NOT terminal here (unlike extract/detect), matching the original code exactly. Six new tests exercise the REAL function for the first time (every prior test mocked it). `v86_d` — mobile-backgrounding fix: `setInterval`-based polling for comic extraction AND detection can be throttled/suspended on a backgrounded phone tab, stranding a client that never learns its job finished (confirmed live: the user's own console showed server-side success while the UI stayed stuck). Fixed with a shared `visibilitychange` listener that re-checks any in-flight job off-schedule the instant the tab becomes visible again; `_pollComicBookJob` has the same class of gap and is explicitly NOT yet fixed (item K below). Also: a second live bug found mid-session — auto-detect silently dropped a malformed/inverted box with NO toast unless every suggested box was dropped (confirmed live: server said "4 panel(s) suggested", UI showed 3, no explanation) — now toasts on any drop, partial or total. Also item J: a "use whole image as one panel" shortcut button. `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
+| **SHIPPED IN THE v86 LINE** | `v86_g` — item L: a comic/image chapter's progress card and question panel showed STALE text after a story edit (`_comicStoryPanelsHtml` reads `comicPanels[].caption`/`inScene`, a separate copy of the text `/api/save-story` never touched) — fixed by syncing `comicPanels[0]` on save for the unambiguous SINGLE-panel case (multi-panel deliberately left as item O, genuinely ambiguous). Item M: drag-to-move a panel box (`_comicHitBox`), the companion to the existing resize handles — a handle grab still wins at a box's own corner. Item N: a "3 shown, 4 detected" report investigated and found to be a likely MODEL accuracy limitation, not a code bug (no merging logic exists) — not changed this cut, flagged for a live-model probe if wanted. `v86_f` — item I: a fixed 90°-clockwise-per-click rotate button for the uploaded/captured comic image, using the SAME offscreen-canvas-redraw shape as the existing downscale step, routed through the SAME `img.onload -> _comicFinishSetup()` path a fresh upload uses — so natural dimensions are read from the rotated image itself and panel-box invalidation comes for free from the existing "new image clears boxes" precedent, no new logic needed. `v86_e` — item K: the SAME mobile-backgrounding fix extended to `_pollComicBookJob` (book/chapter creation), the one poller `v86_d` explicitly left open — required its own small refactor (a `while`+`sleep` loop split into a re-invokable `_comicBookCheckOnce()`, gated on the pre-existing `_comicBookId`) rather than a copy-paste, since it wasn't `setInterval`-shaped like the other two. Preserves one deliberate behavioural difference: a network hiccup mid-poll is NOT terminal here (unlike extract/detect), matching the original code exactly. Six new tests exercise the REAL function for the first time (every prior test mocked it). `v86_d` — mobile-backgrounding fix: `setInterval`-based polling for comic extraction AND detection can be throttled/suspended on a backgrounded phone tab, stranding a client that never learns its job finished (confirmed live: the user's own console showed server-side success while the UI stayed stuck). Fixed with a shared `visibilitychange` listener that re-checks any in-flight job off-schedule the instant the tab becomes visible again; `_pollComicBookJob` has the same class of gap and is explicitly NOT yet fixed (item K below). Also: a second live bug found mid-session — auto-detect silently dropped a malformed/inverted box with NO toast unless every suggested box was dropped (confirmed live: server said "4 panel(s) suggested", UI showed 3, no explanation) — now toasts on any drop, partial or total. Also item J: a "use whole image as one panel" shortcut button. `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, `PLAN §7.0` Track A (CP1–5), and `PLAN §13` are ALL fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). `PLAN §2.4` / Track A4 (comic/image ingest) is fully shipped as its FOUR-milestone core, plus a `v85_o` auto-detect follow-up, plus a `v85_t` panel-resize follow-up, plus a `v85_u` resize-sync fix — its own sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -239,6 +239,96 @@ asking**: the CP1-6 pipeline's cross-chapter arc-sequencing; spell-check-driven 
 generation. The browser-reachable single-chapter CP1-4 pipeline (deferred by `PLAN §13`) remains a
 separate, not-yet-scoped follow-up. `vocabTable.system` has no BASE FORM ONLY instruction at all —
 not a contradiction, just an absence — left alone.
+
+### ✅ L. Progress card / question panel show STALE text for a comic/image chapter after a story edit — SHIPPED `v86_g`
+
+**User-reported LIVE bug** (real topic `sl_1597155858`, "Clean Restroom"): "I had fixed the extracted
+text and made an AI error hunt lesson. The correct text is shown on the storyline and lesson-set
+cards, but on the progress card the wrong text is shown, which should only show up for the error hunt
+lesson." Confirmed by reading the actual stored data (read-only — `lessons.json` was never modified):
+`story` held the corrected text ("...vorreste trovarlo..."), but `comicPanels[0].caption`/`inScene`
+still held the ORIGINAL OCR'd text with the exact typo the user had fixed
+("...vorrestevoletrovarlo..."). Root cause: `_comicStoryPanelsHtml` (the progress-card/question-panel
+renderer for any chapter with `comicPanels`) builds its displayed text EXCLUSIVELY from each panel's
+own `caption`/`inScene` fields — a completely separate copy of the text, extracted once at upload
+time — never from `story` at all. `/api/save-story` (both the "story repair" UI's write-back and the
+`error_hunt` editor's "corrected story" field POST here) updated `story` correctly but never touched
+`comicPanels`, so those two surfaces kept showing the pre-edit text FOREVER after, while storyline/
+lesson-set cards (which read `story` directly) correctly showed the fix.
+
+**Fixed for the UNAMBIGUOUS single-panel case**: `/api/save-story` now syncs `comicPanels[0].caption`
+to the full corrected story (clearing `inScene`, not leaving it stale alongside the synced caption) —
+`_comicStoryPanelsHtml`'s own `[caption, inScene].join('\n')` then reproduces `story` exactly.
+Multi-panel chapters are deliberately left untouched: there is no way to know which edited sentence
+belongs to which panel from one flat story string (see item O below — a genuinely harder, separate
+follow-up, not guessed at here).
+
+**Test coverage**: a new e2e test (`e2e-save-story-comic-sync.test.js`, real server + isolated temp
+store) covers all four cases — single-panel sync (caption+inScene both correct), multi-panel left
+untouched, no-comicPanels-at-all (no crash, nothing created), and an unchanged story re-saved is a
+no-op. Mutation-tested twice: dropping the `length === 1` guard (syncing multi-panel too) broke the
+multi-panel test; dropping the `inScene` clear broke that specific assertion. Both restored, diff
+clean.
+
+### ✅ M. Drag-to-move a comic panel box — SHIPPED `v86_g`
+
+**Ask**: "i can resize the selected comic panels now, but it would be nice to also be able to move
+them" — the natural companion to `v85_t`'s own resize handles. Before this, a pointer-down inside an
+existing box's BODY (not on a handle) fell through to `_comicPointerStart`'s drawing branch,
+starting a brand-new overlapping box instead of relocating the existing one.
+
+**Built**: `_comicHitBox(x,y)` (same last-drawn-first scan convention as `_comicHitHandle`) finds
+which box, if any, the pointer landed inside; if a handle is ALSO hit, the handle wins (checked
+first, unchanged ordering) — resize still takes priority over move at a box's own corners. A move
+translates the box by the dragged delta (converted to natural pixels the same way resize already is),
+clamped at the image boundary as ONE offset so the box's width/height are preserved EXACTLY (never
+clamped per-edge independently, which would distort its shape against the wall).
+
+**Test coverage**: five new tests — a body drag translates and preserves size (not a new draw, not a
+resize); a handle grab still takes priority even at a box's own corner; clamping at the image boundary
+preserves size exactly; a grab outside any box still draws a new one (regression check); and
+`_comicPointerCancel()` clears the new `moving` state too. Mutation-tested twice: removing the
+boundary clamp broke the clamp test; removing the handle-priority check broke the EXISTING `v85_t`
+resize test (§7) first — a handle-priority regression breaks resize before it breaks move, since
+resize depends on the same ordering. Both restored, diff clean.
+
+### N. Comic auto-detect panel-boundary accuracy — investigated, likely a MODEL limitation, not a code bug
+
+**User-reported**, same real-device round: a manually-defined 4-panel comic (a borderless,
+newspaper-strip-style four-panel layout, no hard gutters between panels) detected "4 panel(s)
+suggested" per the console log, but only 3 boxes appeared, with one box visibly spanning what a human
+would call two separate panels.
+
+**Investigated, NOT changed this cut** — the evidence points away from a code bug: `_comicApplyDetectedPanels`
+(re-read in full this cut) has ZERO merging logic — each of the server's boxes is converted to natural
+pixels INDEPENDENTLY; the only thing it can do to a box is drop it whole (malformed/inverted) or keep
+it exactly as detected. There is no code path by which two genuinely separate, well-formed detected
+boxes could merge into one on screen. The two remaining explanations are (a) the vision model's OWN
+raw coordinates for that box already described an oversized region — a genuine accuracy limitation for
+this specific, hard-to-segment layout, consistent with `roadmap_v85.md`'s own `v85_u` finding that
+this exact model has real, separate accuracy limits on panel geometry (not the same issue as that
+cut's canvas-desync bug, which WAS a real code fix) — or (b) the `v86_d` partial-drop toast (which
+would have read "3/4") wasn't seen — either it faded before the screenshot, or the browser served a
+cached pre-`v86_d` `index.html` (the server reads `index.html` fresh per request, so this would only
+happen via BROWSER-side caching, not a stale server process).
+
+**Not pursued further this cut** — improving detection accuracy for borderless layouts is real,
+separate prompt/model work (a live-model investigation, not a quick fix), and the user can already
+work around a missed panel by hand-drawing it (fully supported) or using the new drag-to-move (item M)
+to fix a wrongly-placed one. Worth a live-model probe if the user wants it pursued — flagged here
+rather than guessed at blind.
+
+### O. Multi-panel `comicPanels` sync on a story edit — genuinely harder, not scoped
+
+Item L's own fix (above) is deliberately narrow: only a chapter with EXACTLY ONE comic panel gets its
+`comicPanels[0]` synced when `story` is edited. A chapter with multiple panels has no way to know
+which edited SENTENCE belongs to which PANEL from a single flat story string — the story-edit UI edits
+one continuous text, but the per-panel split (`caption`/`inScene` per box) was a one-time OCR
+extraction with no preserved mapping back to sentence ranges. A real fix would need either (a) a
+per-panel edit UI (edit each panel's own text separately, not the whole story at once) or (b) a
+sentence-alignment heuristic (risky — a wrong alignment would silently scramble which image a caption
+sits next to, worse than today's merely-stale text). Not scoped further this cut; flagged so it is not
+silently forgotten.
 
 ## ✅ FINDINGS THAT GOVERN THE OPEN SECTIONS BELOW
 
@@ -1952,6 +2042,48 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v86 LINE
+
+## ✅ v86_g — progress-card comic-panel text sync fix (item L), drag-to-move panels (item M)
+
+Fourth same-session cut in the `v86_d`…`v86_g` real-device-testing round. The user reported three
+things at once: a stale-text bug (item L, below), a recurrence of "fewer panels shown than detected"
+(investigated as item N — a likely model limitation, NOT changed this cut, see its own write-up
+above), and a drag-to-move feature request (item M).
+
+**Item L — progress card / question panel showed STALE text for a comic/image chapter after a story
+edit.** Root-caused by reading the actual stored data for the user's real reported topic
+(`sl_1597155858`, read-only — `lessons.json` untouched): `story` held the human-corrected text, but
+`comicPanels[0].caption`/`inScene` still held the ORIGINAL OCR'd text with the exact typo the user had
+fixed. `_comicStoryPanelsHtml` (the renderer both the progress card and question panel use for any
+`comicPanels`-bearing chapter) builds its text exclusively from the per-panel fields, never from
+`story` — and `/api/save-story` never touched them. Fixed for the unambiguous single-panel case: the
+route now syncs `comicPanels[0].caption` to the full corrected story (clearing `inScene`) whenever
+`story` actually changes. Multi-panel chapters are deliberately left untouched (item O — genuinely
+harder, not guessed at). New e2e test (`e2e-save-story-comic-sync.test.js`, real server, isolated temp
+store): single-panel sync, multi-panel untouched, no-comicPanels no-crash, unchanged-story no-op — 4
+cases. Mutation-tested twice (the length===1 guard, the inScene clear) — both caught, restored.
+
+**Item M — drag-to-move a comic panel box**, the natural companion to `v85_t`'s own resize handles.
+`_comicHitBox(x,y)` finds which box a pointer-down landed inside (same last-drawn-first convention as
+the existing handle hit-test); a handle grab still takes priority at a box's own corner (unchanged
+ordering — resize wins there). A move translates the box by the dragged delta, clamped at the image
+boundary as ONE offset so width/height are preserved EXACTLY, never distorted by clamping each edge
+independently. Five new tests in `unit-comic-panel-ui.test.js` §12b. Mutation-tested twice: removing
+the boundary clamp broke the new clamp test directly; removing the handle-priority check broke the
+EXISTING `v85_t` resize test FIRST (§7) — the two features share that ordering, so a regression in it
+shows up on whichever test runs first, not just the newest one.
+
+Baseline: `node test/run.js` → 285 checks (up one — the new e2e test file is now registered),
+`unit-roadmap-version` 0 failures (post-ceremony, corpus counts re-measured fresh: the user was
+actively testing DURING this cut, so topics/storylines moved from 333/95 to 334/96 mid-session —
+a live snapshot, not a stale fixture). One EXPECTED, unavoidable failure in `unit-static-freshness`:
+`lessons.json` was DIRTY at release time (the user's own live session), so `docs/index.html` was
+rebuilt from the last COMMITTED `lessons.json` rather than the dirty working copy — per the standing
+rule, never bake a learner's uncommitted live data into a generated artifact — which that guard
+correctly flags as a fingerprint mismatch against whatever's currently on disk. Not a regression; will
+clear on its own once `lessons.json` is next clean. Both `check-inline.js` → 0 failures. `docs/index.html`
+rebuilt (from the committed source). No new `en` keys this cut. `lessons.json` untouched throughout
+(read-only, to diagnose item L — never staged/committed/reverted). `APP_VERSION = 'v86_g'`.
 
 ## ✅ v86_f — item I: rotate the uploaded/captured comic image
 

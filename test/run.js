@@ -320,6 +320,7 @@ if (!quick) {
   run('e2e: comic panel text extraction (PLAN §2.4 Track A4 milestone 2, v85_k)', 'node', [path.join(__dirname, 'e2e-comic-extract.test.js')]);
   run('e2e: comic chapter formation (PLAN §2.4 Track A4 milestone 3, v85_m)', 'node', [path.join(__dirname, 'e2e-comic-chapter.test.js')]);
   run('e2e: comic panel auto-detection (PLAN §2.4 Track A4 milestone 5, v85_o)', 'node', [path.join(__dirname, 'e2e-comic-detect.test.js')]);
+  run('e2e: save-story syncs comicPanels for a single-panel chapter (v86_g)', 'node', [path.join(__dirname, 'e2e-save-story-comic-sync.test.js')]);
   run('e2e: post-gen storyboard opt-in fix, book-job pipeline (v85_p)', 'node', [path.join(__dirname, 'e2e-postgen-storyboard-optin.test.js')]);
   run('e2e: model picker + table-format + split-translation + provenance', 'node', [path.join(__dirname, 'e2e-models.test.js')]);
 } else {

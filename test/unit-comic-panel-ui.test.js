@@ -468,6 +468,88 @@ console.log('  comicUseWholeImageAsPanel(): replaces any existing boxes, does no
 }
 console.log('  comicUseWholeImageAsPanel(): a no-op when no image is loaded yet: OK');
 
+// ── 12b. Panel MOVE via dragging a box's body (v86_g, user-requested) ─────────────────────────────
+// "i can resize the selected comic panels now, but it would be nice to also be able to move them."
+// A pointer-down INSIDE a box's body (not on a handle) now translates the whole box, instead of
+// drawing a new overlapping one — the drag-to-move companion to §7's own resize handles.
+{
+  const C = client();
+  // Same 2x-scale shape as §7's own resize test, so the SAME sx/sy conversion is exercised.
+  const r = JSON.parse(C.run(`APP_COMIC.naturalW = 1000; APP_COMIC.naturalH = 500;
+    var canvas = document.getElementById('comic-draw-canvas'); canvas.width = 500; canvas.height = 250;
+    APP_COMIC.boxes = [{x1:200,y1:100,x2:400,y2:300}];   // canvas-space: (100,50)-(200,150)
+    // Grab well INSIDE the box body (canvas (150,100), natural (300,200)) — nowhere near a handle —
+    // and drag by canvas (+20,+10) -> natural (+40,+20).
+    _comicPointerStart({ preventDefault:function(){}, clientX:150, clientY:100 });
+    var drawingAfterGrab = APP_COMIC.drawing, resizingAfterGrab = APP_COMIC.resizing;
+    _comicPointerMove({ preventDefault:function(){}, clientX:170, clientY:110 });
+    _comicPointerEnd({ preventDefault:function(){}, clientX:170, clientY:110 });
+    JSON.stringify({ boxes: APP_COMIC.boxes, drawingAfterGrab: drawingAfterGrab,
+      resizingAfterGrab: resizingAfterGrab, movingAfterEnd: APP_COMIC.moving })`));
+  assert.strictEqual(r.drawingAfterGrab, null, 'grabbing a box body does NOT also start a new box draw');
+  assert.strictEqual(r.resizingAfterGrab, null, 'grabbing a box body does NOT start a resize');
+  assert.strictEqual(r.boxes.length, 1, 'moving does not create a spurious second box');
+  assert.deepStrictEqual(r.boxes[0], { x1: 240, y1: 120, x2: 440, y2: 320 },
+    'the box translates by the dragged delta, scaled to natural pixels — width (200) and height (200) UNCHANGED');
+  assert.strictEqual(r.movingAfterEnd, null, 'pointerEnd clears the move state');
+}
+console.log('  move: dragging a box\'s body translates it, preserving size, not a new draw or a resize: OK');
+
+{
+  // A grab still on a HANDLE (even though handles sit at a box's own corners, technically "inside"
+  // its body too) takes priority — resize, not move. Ordering matters: handle-hit-test runs first.
+  const C = client();
+  const r = JSON.parse(C.run(`APP_COMIC.naturalW = 500; APP_COMIC.naturalH = 500;
+    var canvas = document.getElementById('comic-draw-canvas'); canvas.width = 500; canvas.height = 500;
+    APP_COMIC.boxes = [{x1:100,y1:100,x2:300,y2:300}];
+    _comicPointerStart({ preventDefault:function(){}, clientX:300, clientY:300 });   // SE handle
+    JSON.stringify({ resizing: APP_COMIC.resizing, moving: APP_COMIC.moving })`));
+  assert.ok(r.resizing, 'a grab on a handle still resizes, even though it is technically inside the box body too');
+  assert.strictEqual(r.moving, null, 'the SAME grab does not ALSO start a move — handle wins');
+}
+console.log('  move: a handle grab still takes priority over move (handle hit-test runs first): OK');
+
+{
+  // A drag clamps at the image boundary as ONE offset — the box's size must stay EXACTLY the same
+  // (not distorted by clamping each edge independently against the wall).
+  const C = client();
+  const r = JSON.parse(C.run(`APP_COMIC.naturalW = 500; APP_COMIC.naturalH = 500;
+    var canvas = document.getElementById('comic-draw-canvas'); canvas.width = 500; canvas.height = 500;
+    APP_COMIC.boxes = [{x1:50,y1:50,x2:150,y2:150}];   // 100x100 box, 50px from the top-left edge
+    _comicPointerStart({ preventDefault:function(){}, clientX:100, clientY:100 });   // inside the body
+    _comicPointerMove({ preventDefault:function(){}, clientX:-500, clientY:-500 });   // drag way off-image
+    JSON.stringify({ box: APP_COMIC.boxes[0] })`));
+  assert.deepStrictEqual(r.box, { x1: 0, y1: 0, x2: 100, y2: 100 },
+    'clamped to the top-left corner, box size (100x100) EXACTLY preserved, not distorted');
+}
+console.log('  move: dragging past the image boundary clamps as one offset, box size exactly preserved: OK');
+
+{
+  // A grab OUTSIDE any box still draws a new one — move must not swallow ordinary drawing clicks.
+  const C = client();
+  const r = JSON.parse(C.run(`APP_COMIC.naturalW = 500; APP_COMIC.naturalH = 500;
+    var canvas = document.getElementById('comic-draw-canvas'); canvas.width = 500; canvas.height = 500;
+    APP_COMIC.boxes = [{x1:0,y1:0,x2:50,y2:50}];
+    _comicPointerStart({ preventDefault:function(){}, clientX:300, clientY:300 });   // far outside the box
+    _comicPointerMove({ preventDefault:function(){}, clientX:400, clientY:400 });
+    _comicPointerEnd({ preventDefault:function(){}, clientX:400, clientY:400 });
+    JSON.stringify({ boxes: APP_COMIC.boxes })`));
+  assert.strictEqual(r.boxes.length, 2, 'a drag outside any box still draws a brand-new second box');
+  assert.deepStrictEqual(r.boxes[0], { x1: 0, y1: 0, x2: 50, y2: 50 }, 'the existing box is untouched');
+}
+console.log('  move: a grab outside any box still draws a new one, existing boxes untouched: OK');
+
+{
+  // _comicPointerCancel() also clears `moving` — same as drawing/resizing (mid-gesture interruption,
+  // e.g. touchcancel, must not leave stale state a later gesture could misread).
+  const C = client();
+  const r = JSON.parse(C.run(`APP_COMIC.moving = { i:0, startX:0, startY:0, orig:{x1:0,y1:0,x2:10,y2:10} };
+    _comicPointerCancel();
+    JSON.stringify({ moving: APP_COMIC.moving, drawing: APP_COMIC.drawing, resizing: APP_COMIC.resizing })`));
+  assert.strictEqual(r.moving, null, '_comicPointerCancel() clears moving state too');
+}
+console.log('  move: _comicPointerCancel() clears moving state, same as drawing/resizing: OK');
+
 // ── 13. comicRotateImage() / _comicRotatedDims() (v86_f, user-requested, item I) ──────────────────
 // A photo can come in sideways (portrait comic page shot in landscape, or vice versa). Fixed
 // 90°-clockwise-per-click, same offscreen-canvas-redraw shape as onComicFileChosen's own downscale

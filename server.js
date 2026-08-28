@@ -184,7 +184,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v86_f';
+const APP_VERSION  = 'v86_g';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -7711,6 +7711,24 @@ http.createServer(async (req, res) => {
       }
       const _storyChanged = (saved.story !== story);
       saved.story = story;
+      // v86_g (user-reported LIVE bug): a comic/image-derived chapter's progress card and question
+      // panel render from `comicPanels[i].caption`/`inScene` (_comicStoryPanelsHtml in index.html),
+      // NOT from `story` — a completely separate copy of the text, extracted once at upload time and
+      // never touched by this route. A story edit here (via the "story repair" UI or the error-hunt
+      // editor's "corrected story" field, both of which POST here) updated `story` correctly but left
+      // the per-panel copy stale FOREVER after, so those two surfaces kept showing the OLD text while
+      // every other surface (storyline card, lesson-set card — both read `story` directly) showed the
+      // fix. Confirmed against a real reported case: `story` held the corrected text, `comicPanels[0]`
+      // still held the original OCR'd text with the exact reported typo.
+      // Only handled for the UNAMBIGUOUS single-panel case: collapse the edited story into `caption`
+      // alone (clearing `inScene`) so the renderer's own `[caption, inScene].join('\n')` reproduces
+      // `story` exactly. A chapter with MULTIPLE panels has no way to know which edited sentence
+      // belongs to which panel from a single flat story string — deliberately left unfixed rather than
+      // guessed at; flagged in roadmap_v86.md as a genuine, harder follow-up.
+      if (_storyChanged && Array.isArray(saved.comicPanels) && saved.comicPanels.length === 1) {
+        saved.comicPanels[0].caption = story;
+        delete saved.comicPanels[0].inScene;
+      }
       stampUpdated(saved);
       // A changed story invalidates any prior clean QC on lessons whose checkable content is
       // derived from the story text (error-hunt variants). The ai_error_hunt lesson is rebuilt

@@ -3560,7 +3560,11 @@ async function doDialectImport(){
 // v85_t (user): `resizing` tracks an in-progress edge/corner drag on an EXISTING box —
 // { i: box index, handle: one of 'nw'/'ne'/'sw'/'se' } — mutually exclusive with `drawing`
 // (a new box). See _comicHitHandle()/_comicPointerStart() for how one wins over the other.
-const APP_COMIC = { dataUrl: null, naturalW: 0, naturalH: 0, boxes: [], drawing: null, resizing: null };
+// v86_g (user-requested): `moving` tracks an in-progress drag of an EXISTING box's whole BODY (not a
+// handle) — { i, startX, startY (canvas-space pointer position at pointer-down), orig (the box's own
+// x1/y1/x2/y2 at pointer-down) } — mutually exclusive with both `resizing` and `drawing`. See
+// _comicHitBox()/_comicPointerStart() for how the three are told apart.
+const APP_COMIC = { dataUrl: null, naturalW: 0, naturalH: 0, boxes: [], drawing: null, resizing: null, moving: null };
 // v85_u (user-reported, confirmed): "when I zoom in/out on the page, the selected panel squares move
 // relative to the image." `_comicSetupCanvas()`'s own comment already named this gap when it was
 // written ("would need its own resize-observer to stay in sync with responsive CSS width") but never
@@ -3775,11 +3779,30 @@ function _comicHitHandle(x, y){
   }
   return null;
 }
+// v86_g (user-requested): "i can resize the selected comic panels now, but it would be nice to also
+// be able to move them." A pointer-down INSIDE an existing box's body (not on a resize handle) now
+// MOVES the whole box, instead of starting a new box overlapping it — scanned last-drawn-first, same
+// convention as _comicHitHandle, so an overlapping later box wins (matches what's visually on top).
+function _comicHitBox(x, y){
+  const canvas=document.getElementById('comic-draw-canvas'); if(!canvas) return null;
+  const sx=canvas.width/(APP_COMIC.naturalW||1), sy=canvas.height/(APP_COMIC.naturalH||1);
+  for(let i=APP_COMIC.boxes.length-1; i>=0; i--){
+    const b=APP_COMIC.boxes[i];
+    if(x>=b.x1*sx && x<=b.x2*sx && y>=b.y1*sy && y<=b.y2*sy) return i;
+  }
+  return null;
+}
 function _comicPointerStart(e){
   e.preventDefault();
   const {x,y}=_comicEventXY(e);
   const hit=_comicHitHandle(x,y);
   if(hit){ APP_COMIC.resizing=hit; return; }   // grabbed a handle — resize, don't start a new box
+  const hitBox=_comicHitBox(x,y);
+  if(hitBox!=null){
+    const b=APP_COMIC.boxes[hitBox];
+    APP_COMIC.moving={ i: hitBox, startX: x, startY: y, orig: { x1:b.x1, y1:b.y1, x2:b.x2, y2:b.y2 } };
+    return;
+  }
   APP_COMIC.drawing={x1:x,y1:y,x2:x,y2:y};
   _comicRedraw();
 }
@@ -3804,6 +3827,26 @@ function _comicPointerMove(e){
     _comicRedraw();
     return;
   }
+  if(APP_COMIC.moving){
+    e.preventDefault();
+    const {x,y}=_comicEventXY(e);
+    const canvas=document.getElementById('comic-draw-canvas');
+    const sx=APP_COMIC.naturalW/canvas.width, sy=APP_COMIC.naturalH/canvas.height;
+    const m=APP_COMIC.moving;
+    const b=APP_COMIC.boxes[m.i]; if(!b) { APP_COMIC.moving=null; return; }
+    const w=m.orig.x2-m.orig.x1, h=m.orig.y2-m.orig.y1;
+    // Translate, not resize — the box's own WIDTH/HEIGHT never change during a move. The delta is
+    // clamped to keep the box fully inside the image (never clamped per-edge independently, which
+    // would distort the box's shape against an image boundary — clamped as ONE offset instead, so
+    // the box always keeps its original size, just stops sliding further once an edge hits the wall).
+    let dx=Math.round((x-m.startX)*sx), dy=Math.round((y-m.startY)*sy);
+    dx=Math.max(-m.orig.x1, Math.min(dx, APP_COMIC.naturalW-m.orig.x2));
+    dy=Math.max(-m.orig.y1, Math.min(dy, APP_COMIC.naturalH-m.orig.y2));
+    b.x1=m.orig.x1+dx; b.x2=m.orig.x2+dx;
+    b.y1=m.orig.y1+dy; b.y2=m.orig.y2+dy;
+    _comicRedraw();
+    return;
+  }
   if(!APP_COMIC.drawing) return;
   e.preventDefault();
   const {x,y}=_comicEventXY(e);
@@ -3814,6 +3857,12 @@ function _comicPointerEnd(e){
   if(APP_COMIC.resizing){
     e.preventDefault();
     APP_COMIC.resizing=null;
+    _comicRedraw(); _comicRenderList();
+    return;
+  }
+  if(APP_COMIC.moving){
+    e.preventDefault();
+    APP_COMIC.moving=null;
     _comicRedraw(); _comicRenderList();
     return;
   }
@@ -3830,7 +3879,7 @@ function _comicPointerEnd(e){
   APP_COMIC.boxes.push({x1,y1,x2,y2});
   _comicRedraw(); _comicRenderList();
 }
-function _comicPointerCancel(){ APP_COMIC.drawing=null; APP_COMIC.resizing=null; _comicRedraw(); }
+function _comicPointerCancel(){ APP_COMIC.drawing=null; APP_COMIC.resizing=null; APP_COMIC.moving=null; _comicRedraw(); }
 
 const _COMIC_COLORS=['#e6194b','#3cb44b','#4363d8','#f58231','#911eb4','#46f0f0','#f032e6','#bcf60c'];
 function _comicRedraw(){
@@ -157987,12 +158036,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v86_f', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v86_g', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"a92c12c09307","lessons.json":"b0d44801cfc0","ui.json":"0f0bb54a6dc0","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"3826e452f85d"};
+  APP.buildSources = {"index.html":"e040d859f12d","lessons.json":"b0d44801cfc0","ui.json":"0f0bb54a6dc0","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"3826e452f85d"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
