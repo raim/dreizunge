@@ -1441,6 +1441,88 @@ real server and reporting back what broke)
 | the acceptance tests | `test/e2e-postgen-storyboard-optin.test.js` (the core fix, both directions, mutation-tested — reverting the gate makes the "omitted" case go red). `test/unit-postgen-storyboard-optin.test.js` (client threading for `pdfGenerateAll()` and `doGenerate()`). `test/e2e-comic-chapter.test.js` and `test/unit-comic-chapter.test.js` REWRITTEN for one-chapter-per-panel (N chunks, N chained chapters, each with its own story/comicPanels, a textless panel filtered not broken). `test/e2e-book-formats.test.js`'s own storyboard assertion — a PRE-EXISTING test that encoded the OLD unconditional behaviour — was FLIPPED (not deleted) to match the new, correct, opt-in default; found by re-running the full suite after the fix, exactly the "downstream consumer assumed the old shape" rule this project's own standing discipline warns about |
 | **not live-verified against the real model this cut** | these are mechanical/request-shape fixes (chunk count, field wiring, a boolean gate), thoroughly covered by e2e tests against a real server + real job/store pipeline (just a fake LLM backend) — a live check would mostly re-exercise MODEL RELIABILITY, which the user explicitly asked to defer to a separate round. The user is already testing this feature live on their own server; that is the live-verification path for this cut |
 
+**`v85_t` — panel resize via corner handles** (user: "i can resize the selected comic panels now,
+but…" — no, wait, that ask came LATER, at `v86_g`; this cut is what MADE that later request possible
+at all, by adding resize in the first place. Milestone-1 UI only ever let a learner draw/delete/reorder
+boxes, never adjust an EXISTING one's edges)
+
+| what | where |
+|---|---|
+| **hit-testing** | `_COMIC_HANDLES = ['nw','ne','sw','se']`, `_comicHandleXY(b, handle, sx, sy)` (a corner's CANVAS-space coordinate for a given box), `_comicHitHandle(x, y)` (scans `APP_COMIC.boxes` LAST-drawn-first — so an overlapping later box's handle wins, matching what's visually on top — against a `_COMIC_HANDLE_HIT = 12`px tolerance) |
+| **`_comicPointerStart`'s dispatch** | a handle hit sets `APP_COMIC.resizing = {i, handle}` and returns WITHOUT starting a new box draw — checked BEFORE the fallback "start drawing" branch, so grabbing a handle never also begins an overlapping new box |
+| **`_comicPointerMove`'s resize branch** | moves ONLY the handle's own edge(s) (`nw`/`sw` move `x1`, `ne`/`se` move `x2`; `nw`/`ne` move `y1`, `sw`/`se` move `y2`), clamped against the OPPOSITE edge with an 8-canvas-px-converted-to-natural-px floor (`minGapX`/`minGapY`) so a fast drag can't invert the box or shrink it to zero mid-gesture — clamped LIVE, not corrected after the fact |
+| **`APP_COMIC.resizing`** | mutually exclusive with `drawing` (and, from `v86_g` on, `moving` — see below); `_comicPointerEnd`/`_comicPointerCancel` both clear it |
+| new draw affordance | `_comicRedraw()` now also draws an 8×8px filled+white-outlined square at each box's 4 corners, for EVERY box (not just a "selected" one — this UI has no such concept), so resize handles are discoverable without a prior click |
+| the acceptance tests | `unit-comic-panel-ui.test.js` §7 (3 checks): grabbing a handle resizes correctly (2x-scale conversion, same shape as the drawing test), a drag away from any handle still draws a new box (resize must not swallow ordinary drawing), a handle dragged past the opposite corner clamps to the 8px floor rather than inverting |
+
+**`v85_u` — canvas/image resize-sync fix, PLUS a genuine model-accuracy finding** (user-reported: "when
+i zoom in/out on the page, the selected panel squares move relative to the image")
+
+| what | where |
+|---|---|
+| **root cause** | `_comicSetupCanvas()` sized the canvas ONCE, at upload time, to `#comic-draw-img`'s then-current CSS size — any LATER resize (zoom, orientation change, responsive reflow) left the canvas's own `width`/`height` stale, so the SAME `sx`/`sy` conversion `_comicRedraw()`/hit-testing use drew/hit-tested against the WRONG scale |
+| **`_comicWatchImageResize()`/`_comicUnwatchImageResize()`** | a `ResizeObserver` on `#comic-draw-img` that re-calls `_comicSetupCanvas()` on every real size change — watching a SECOND time disconnects the first observer first (does not stack); closing comic mode disconnects it (does not leak). Wired into `_comicFinishSetup()`, the SAME function every image-load path (upload, camera, and later `v86_f`'s rotate) already funnels through |
+| **the SEPARATE model-accuracy finding this cut also made** | a live probe against the real fixture found the auto-detect model (`qwen2.5vl:7b`) has genuine, measured accuracy limits on panel geometry for a HARD (ambiguous/borderless) layout — a finding independent of this cut's own code fix, and one that resurfaced again at `v86_g`'s own item N (see below) |
+| the acceptance tests | `unit-comic-panel-ui.test.js` §8 (4 checks): a ResizeObserver notification re-syncs the canvas (spy-based, since this harness doesn't model real resize events), watching twice disconnects the first observer, closing comic mode disconnects it, and a source check that the real image-load path actually wires up the watch (this harness's `FileReader` gap means `onComicFileChosen`'s own onload path can't be driven behaviourally — same limitation `v86_c`/`v86_f` below hit again) |
+
+**`v86_c` — a `v85_u` REGRESSION found and fixed (duplicate canvas listeners), plus camera capture**
+(user, after real testing: "panel recognition is really bad, this worked better before the fix, and
+occured twice" — a manually-drawn 4-panel comic showing only 3 boxes, one spanning two panels' width)
+
+| what | where |
+|---|---|
+| **the regression** | `_comicSetupCanvas()` called `addEventListener` for all 8 pointer/touch events on EVERY invocation, no matching removal — harmless before `v85_u` (ran once per image), but `v85_u`'s own `ResizeObserver` made it run REPEATEDLY per image, so a single real drag could fire `_comicPointerStart`/`Move`/`End` multiple times each, corrupting an in-progress box mid-gesture |
+| **the fix** | split SIZING (idempotent, safe to re-run) from LISTENER WIRING, now guarded by a module-level `_comicListenersWired` flag — wires the canvas's pointer/touch listeners EXACTLY ONCE for the page's whole lifetime (`#comic-draw-canvas` is static markup, never recreated) |
+| **camera capture** | `#comic-camera-input` (`<input type="file" accept="image/*" capture="environment">`) + `#comic-camera-btn`, routed through the SAME `onComicFileChosen()` as a regular upload — `capture="environment"` opens the device camera directly on mobile, harmlessly ignored (falls back to an ordinary picker) on desktop |
+| **`_comicDownscaleDims(w, h, maxDim)`/`_COMIC_MAX_DIM = 1600`** | pure sizing math (split out for testability, no `Image`/canvas dependency) — ANY chosen image (camera OR file pick, both funnel through `onComicFileChosen`) is downscaled to at most 1600px on its long edge via an offscreen-canvas re-encode (JPEG, quality 0.88) before it ever becomes `APP_COMIC.dataUrl`. No 2D canvas support (or this harness's own DOM stub) falls back to the ORIGINAL, unresized image rather than losing the upload |
+| new `ui.json` key, `en` only | `form.comic_camera` |
+| the acceptance tests | `unit-comic-panel-ui.test.js` §9 (listener-stacking, via a counting spy on `addEventListener` — asserts EXACTLY 8 registrations across THREE `_comicSetupCanvas()` calls, not 24; mutation-tested to `actual: 24, expected: 8`, the exact predicted 3×8 multiplier), §10 (camera markup), §11 (`_comicDownscaleDims` math: both orientations, exactly-at-limit no-op, already-small no-op, zero-dimension guard) |
+
+**`v86_d` — mobile-backgrounding fix for the extract/detect pollers, a silent-panel-drop UX fix, plus
+item J** (user, mid-generation, on a phone: extraction finished server-side per the console log, but
+"the generator interface seems to have lost that" — the client never applied a completed job)
+
+| what | where |
+|---|---|
+| **root cause** | mobile browsers throttle/suspend `setInterval` on a backgrounded tab — `_startComicExtractJob`/`_startComicDetectJob`'s normal 2000ms poll could be delayed indefinitely or never fire again while the phone was locked, even though the server had already finished |
+| **the fix — a re-invokable check function per poller** | `_comicExtractJobId`/`_comicExtractCheckOnce(jobId)` and `_comicDetectJobId`/`_comicDetectCheckOnce(jobId)` — each check re-validates its tracked job id BOTH before and after its own `await fetch(...)`, so a stale/superseded call (a later interval tick, a newer job, or — from `v86_e` on — an off-schedule visibility-triggered call) is a safe no-op, never re-applying an already-finished or already-superseded result. `_startComicExtractJob`/`_startComicDetectJob` are now thin: they set the tracked id and call the check function on the SAME 2000ms interval as before — the foregrounded case is unchanged |
+| **the shared `visibilitychange` listener** | ONE listener for all comic pollers (extended to a THIRD, `_comicBookId`/`_comicBookCheckOnce`, at `v86_e` — see below): on the tab becoming visible again, calls each poller's own check function off-schedule, on top of (not instead of) its normal interval |
+| **the silent-panel-drop UX fix** (found mid-session, same cut, from a SECOND live report: "the console actually said 4 panels where detected… 3 shown in the browser") | `_comicApplyDetectedPanels` was already correctly dropping a malformed/inverted box (`v85_o`) — but SILENTLY, unless every suggested box was dropped (only the fully-empty case toasted). Now toasts on ANY drop, naming the kept/suggested counts (`form.comic_detect_partial`) for a partial drop, and the previously-unguarded "every suggestion was malformed" case (0 survivors from a non-empty input) now fails cleanly with the existing "no panels found" toast instead of silently leaving `APP_COMIC.boxes` empty |
+| **item J — `comicUseWholeImageAsPanel()`** | `#comic-single-panel-btn`, sets `APP_COMIC.boxes = [{x1:0,y1:0,x2:naturalW,y2:naturalH}]` — REPLACES existing boxes (matches auto-detect's own "fresh detection replaces" precedent), no-ops with no image loaded |
+| new `ui.json` keys, `en` only | `form.comic_single_panel`, `form.comic_detect_partial` |
+| the acceptance tests | `unit-comic-extraction.test.js`/`unit-comic-detect.test.js` §8 (mobile-backgrounding: job-id tracking, an off-schedule check applies a result correctly, a stale job id is a no-op never calling `fetch`, source check on the listener's own wiring); `unit-comic-detect.test.js` §7b/§7c (partial-drop toast, all-malformed-drop toast); `unit-comic-panel-ui.test.js` §12 (item J: full-image box, replace-not-append, no-op with no image) |
+
+**`v86_e` — item K: the SAME mobile-backgrounding fix extended to `_pollComicBookJob`** (book/chapter
+creation — the one poller `v86_d` explicitly left open, since it wasn't `setInterval`-shaped)
+
+| what | where |
+|---|---|
+| **the shape difference** | `_pollComicBookJob` was a single `async function` running one `while(true){ …; await _sleep(2000); }` loop with a `try/finally` for cleanup — no standalone "check" step to re-invoke off-schedule without restructuring |
+| **the refactor** | split into `_comicBookCheckOnce(bookId)` (one fetch-and-handle step, gated on the PRE-EXISTING `_comicBookId` — no new tracking variable needed) + `_comicBookFinish()` (the old `finally` block's cleanup, now called explicitly on any terminal branch). `_pollComicBookJob` is now a thin loop calling the check function each iteration, stopping once `_comicBookId` no longer matches |
+| **preserved deliberately, NOT "fixed" into consistency** | a network failure mid-poll is NOT terminal here (unlike `_comicExtractCheckOnce`/`_comicDetectCheckOnce`, which DO toast+clear-state on a fetch failure) — book creation can run long, a flaky blip shouldn't abort the whole flow, matching the ORIGINAL pre-refactor behaviour exactly |
+| the acceptance tests | `unit-comic-chapter.test.js` §3 (6 checks, the REAL functions for the first time — every prior test in this file mocked `_pollComicBookJob` itself): `'done'`/`'error'`/404-gone statuses, the network-hiccup-is-not-terminal case (fetch rejects once then succeeds — a real ~2s wait), the off-schedule/stale-id safety shape, and a source check that the shared listener now also calls `_comicBookCheckOnce(_comicBookId)` |
+
+**`v86_f` — item I: rotate the uploaded/captured image** (user, testing camera capture: a photo can
+come in sideways)
+
+| what | where |
+|---|---|
+| **`comicRotateImage()`/`_comicRotatedDims(w, h)`** | fixed 90°-clockwise-per-click (`#comic-rotate-btn`, placed FIRST in `#comic-detect-row` — rotating is naturally a before-you-draw-panels step). Same offscreen-canvas-redraw shape as `onComicFileChosen`'s own downscale step (`canvas.translate(rw,0); canvas.rotate(Math.PI/2); ctx.drawImage(img,0,0,w,h)`, the standard 90°-CW-onto-a-swapped-dimension-canvas recipe), then routes through the SAME `img.onload -> _comicFinishSetup(img, status)` shape a fresh upload uses — so `APP_COMIC.naturalW`/`naturalH` are read straight from the newly-loaded ROTATED image (no hand-computed dimension math to drift out of sync), and panel-box invalidation comes for free from `_comicFinishSetup`'s own existing `comicClearPanels()` call — no new invalidation logic needed at all |
+| **chosen over the coordinate-transform alternative** | any panel boxes already drawn are invalidated by a rotation (matches the pre-existing "a new image invalidates old boxes" precedent) rather than recomputed through the rotation transform — the SIMPLER of two options scoped at `v86_c`, since rotation is naturally a before-you-draw-panels step |
+| **test-coverage note, worth remembering for ANY future canvas-drawing function** | this harness's DOM stub has NO 2D canvas context at all — normally a testability GAP (source-check-only, like `onComicFileChosen`'s own downscale branch), but here it means the function's OWN no-context FALLBACK branch is exactly what fires on every test run, so THAT branch is directly, behaviourally testable (does it throw? does it corrupt state before bailing?) — not a consolation prize, real coverage of what this harness actually exercises |
+| the acceptance tests | `unit-comic-panel-ui.test.js` §12b/§13/§14: `_comicRotatedDims` swap math, a no-op with no image (spy confirms no canvas even created), the no-2D-context fallback (does not throw, leaves state untouched — mutation-tested), a source check that the real path reaches `_comicFinishSetup()`, markup/wiring |
+
+**`v86_g` — item L: progress-card comic-panel text sync on a story edit, item M: drag-to-move a panel
+box** (user reported both, plus item N below, in the same real-device-testing round)
+
+| what | where |
+|---|---|
+| **item L's root cause** | `_comicStoryPanelsHtml` (the progress-card/question-panel renderer for any `comicPanels`-bearing chapter — see `v85_n` above) builds its text EXCLUSIVELY from `comicPanels[i].caption`/`inScene`, a SEPARATE copy of the text extracted once at upload time — never from `story` at all. `/api/save-story` (server.js) updates `story` but had never touched `comicPanels`, so a human-corrected story stayed stale on those two surfaces forever, confirmed against the user's real reported topic by reading its actual stored data (`lessons.json`, read-only) |
+| **item L's fix** | `/api/save-story` now syncs `comicPanels[0].caption` to the full corrected story (clearing `inScene`) whenever `story` actually changes AND the chapter has EXACTLY ONE panel — the unambiguous case. A multi-panel chapter is deliberately left untouched (see `roadmap_v86.md`'s item O — no way to know which edited sentence belongs to which panel from one flat story string) |
+| **item M — `_comicHitBox(x, y)`** | finds which box (if any) a pointer-down landed inside, same last-drawn-first scan convention as `_comicHitHandle`. Checked AFTER the handle hit-test in `_comicPointerStart` (a handle grab still wins at a box's own corner — unchanged ordering) but BEFORE the "start a new box" fallback. `APP_COMIC.moving = {i, startX, startY, orig}` tracks the drag; `_comicPointerMove`'s move branch translates the box by the delta (converted to natural pixels the same way resize already is), clamped at the image boundary as ONE offset so width/height are preserved EXACTLY (never distorted by clamping each edge independently against the wall) |
+| the acceptance tests | new `test/e2e-save-story-comic-sync.test.js` (real server, isolated temp store, 4 cases: single-panel sync, multi-panel untouched, no-comicPanels no-crash, unchanged-story no-op — mutation-tested twice). `unit-comic-panel-ui.test.js` §12b (move, 5 checks: body-drag translates+preserves size, handle-priority still wins, boundary clamp preserves size exactly, a grab outside any box still draws new, `_comicPointerCancel` clears `moving` too — mutation-tested twice) |
+| **item N (investigated, NOT a code change)** | a "3 shown, 4 detected" report was investigated by re-reading `_comicApplyDetectedPanels` in full — it has ZERO merging logic, so the leading explanation is a genuine model-accuracy limitation on a borderless/hard-to-segment layout (echoing `v85_u`'s own finding above), not a fresh bug. See `roadmap_v86.md`'s item N for the full write-up; flagged for a live-model probe if the user wants it pursued, not built |
+
 ---
 
 **Keep 6b current the cheap way:** when a session's write-up names a function it had to hunt for,
