@@ -1,5 +1,7 @@
 // E2E: POST /api/storyline/recreate-lessons hides the existing lessons (kept) and
 // appends freshly generated arc lessons per chapter (gate + reinforcement from ch.2).
+const fs = require('fs');
+const path = require('path');
 const { boot, post, get, assert, sleep } = require('./lib');
 
 const STORY = 'Es war einmal ein Test. Die Katze und das Haus blieben gleich.';
@@ -60,6 +62,33 @@ async function waitJob(sport, jobId, timeoutMs = 90000) {
     console.log('  c1 lessons:', c1.lessons.map(l => (l._hidden ? 'hidden:' : 'new:') + l.type).join(', '));
     console.log('  c2 lessons:', c2.lessons.map(l => (l._hidden ? 'hidden:' : (l._arcMode || 'new') + ':') + l.type).join(', '));
     console.log('  job result:', JSON.stringify(fin.data || fin.result || {}));
+
+    // ── v86_k (user-requested, real example: a chapter requesting 8 lesson types — word_forms
+    //    finished, THEN inflections started; an interruption right there would have lost the
+    //    already-finished word_forms lesson entirely under the OLD per-CHAPTER-only save). This
+    //    e2e run already re-confirms the FINAL cumulative result is unaffected (assertions above,
+    //    unchanged from before this fix). A genuine MID-RUN snapshot (proving persistence happens
+    //    PER LESSON, not batched until the chapter finishes) is not attempted here: fake-ollama.js
+    //    has no configurable response delay, and this run typically completes in well under one
+    //    poll interval — trying to catch it mid-flight would be flaky, not a real guarantee. Instead,
+    //    a SOURCE-LEVEL check confirms the actual mechanism: `persistLesson` exists, calls
+    //    `saveStore(store)` on every invocation, and is the ONLY thing every success site in
+    //    _runRecreateJob calls — the old batch-only `topic.lessons = [...(topic.lessons||[]),
+    //    ...newLessons]` line is gone. Mutation-tested (see the fix's own roadmap entry).
+    const serverSrc = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
+    const fnAt = serverSrc.indexOf('async function _runRecreateJob');
+    const fnEnd = serverSrc.indexOf('\n// ── Comic panel text extraction', fnAt);
+    const fnSrc = serverSrc.slice(fnAt, fnEnd > fnAt ? fnEnd : undefined);
+    assert(/const persistLesson = \(lesson\) => \{[\s\S]{0,200}saveStore\(store\);/.test(fnSrc),
+      'persistLesson exists and calls saveStore(store) on every invocation');
+    const persistCalls = (fnSrc.match(/persistLesson\(lesson\)/g) || []).length;
+    assert(persistCalls === 4, 'all four lesson-success sites call persistLesson (addTypes tick-list, ' +
+      'legacy gate, legacy grammar-arc reinforcement, legacy vocab-review reinforcement) — got ' + persistCalls);
+    assert(!/topic\.lessons = \[\.\.\.\(topic\.lessons \|\| \[\]\), \.\.\.newLessons\]/.test(fnSrc),
+      'the OLD batch-only append (topic.lessons = [...newLessons], once per CHAPTER) is gone — ' +
+      'replaced by the per-lesson persistLesson calls above');
+    console.log('  persistLesson: exists, calls saveStore per lesson, wired into all 4 success sites, old batch-append removed (source check): OK');
+
     console.log('e2e-recreate: ALL PASSED');
   } catch (e) {
     failed = true;

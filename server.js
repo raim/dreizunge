@@ -184,7 +184,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v86_j';
+const APP_VERSION  = 'v86_k';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6163,7 +6163,18 @@ async function _runBookJob(bookId, chunks, base) {
               reviewOpts: { userDialect: null, writingStyle: base.storyStyle || null,
                             storyLang: base.userStoryLang || null },
             });
-            if (lesson) data.lessons.push(lesson);
+            if (lesson) {
+              data.lessons.push(lesson);
+              // v86_k: same fix as _runRecreateJob's own persistLesson — a chapter can request
+              // several arc types here (base.arcTypes), and the chapter used to stay UNPERSISTED
+              // until every single one finished (the one _persistGenerated call, further down,
+              // after this whole loop). Persisting after EACH successful type means an interruption
+              // partway through never loses the ones that already succeeded. Safe to call
+              // incrementally: _persistGenerated/upsert() match by data.id, assigning one on the
+              // FIRST call and updating the SAME entry in place on every call after — confirmed by
+              // reading upsert() before relying on it, not assumed.
+              _persistGenerated(data, contFrom, parent ? parent.id : null);
+            }
           } catch (e) {
             // One failing type must not abandon the others: a whole book run is a long wait, and
             // losing it to a format the model fumbled on one chapter is the worst outcome here.
@@ -6321,6 +6332,26 @@ async function _runRecreateJob(jobId, startId, opts) {
     }
     const newLessons = [];
     const stamp = (lesson, suffix) => { lesson.id = 'ls_' + Date.now() + '_' + i + '_' + suffix; lesson._recreated = true; };
+    // v86_k (user-requested, real example: 8 lesson types requested for ONE chapter — word_forms
+    // finished with 5 valid items, THEN inflections started; if anything had interrupted the run at
+    // that exact point, the already-finished word_forms lesson would have been lost right along with
+    // whatever came after it). Persist EACH lesson the instant it finishes, not just once per CHAPTER
+    // after every requested type completes — the old per-chapter save (further down, now reduced to
+    // just the aggregate token-usage stamp) gave ZERO protection when a single chapter requests many
+    // types in one run, which is exactly the reported case: `chapterIds.length` was 1. Appends
+    // directly to `topic.lessons` (not just the local `newLessons` accumulator, which still exists —
+    // purely for the informational `recreated` count and console summary, not for persistence).
+    // Trade-off, deliberate: this writes the WHOLE store to disk once per lesson instead of once per
+    // chapter — more disk I/O during a large multi-type run, in exchange for never losing already-
+    // finished work to a later type's failure or an external interruption. `saveStore` is a plain
+    // synchronous `fs.writeFileSync`, so no ordering/race concern from calling it more often in this
+    // already-sequential (`for`/`await`) loop.
+    const persistLesson = (lesson) => {
+      newLessons.push(lesson); recreated++;
+      topic.lessons = [...(topic.lessons || []), lesson];
+      stampUpdated(topic);
+      saveStore(store);
+    };
     // Gate: this chapter's own standard vocab lesson.
     // v59: meter this chapter's whole re-creation (gate + reinforcement, all formats)
     // and fold it into the chapter's cumulative totals — the roadmap's exact example
@@ -6352,7 +6383,7 @@ async function _runRecreateJob(jobId, startId, opts) {
                                  script: topic.script || null,    // v79_f
                                  chainStory: chainStory.text, chainStoryChapters: chainStory.chapters } }));
             }
-            if (lesson) { stamp(lesson, aType); newLessons.push(lesson); recreated++; }
+            if (lesson) { stamp(lesson, aType); persistLesson(lesson); }
           } catch (e) {
             // One failing type must not abandon the other selections, or a whole run is lost to a
             // format the model happened to fumble on one chapter.
@@ -6364,7 +6395,7 @@ async function _runRecreateJob(jobId, startId, opts) {
       }
       try {
         const { lesson } = await generateOneLesson(lang, srcLang, topic.topic, 1, 1, [], story, diff, jobId, { story, vocabMode: null });
-        if (lesson) { stamp(lesson, 'gate'); newLessons.push(lesson); recreated++; }
+        if (lesson) { stamp(lesson, 'gate'); persistLesson(lesson); }
       } catch (e) { console.warn(`  [recreate] chapter ${i + 1} gate failed: ${e.message}`); }
       // Reinforcement from the second chapter on.
       if (i >= 1) {
@@ -6375,22 +6406,23 @@ async function _runRecreateJob(jobId, startId, opts) {
             try {
               const rFn = rType === 'synonyms' ? generateSynonyms : generateWordForms;
               const { lesson } = await rFn(topic.topic, lang, srcLang, diff, jobId, { chainVocab, vocabMode: 'reinforce', story });
-              if (lesson) { stamp(lesson, rType); lesson._arcMode = 'reinforce'; newLessons.push(lesson); recreated++; }
+              if (lesson) { stamp(lesson, rType); lesson._arcMode = 'reinforce'; persistLesson(lesson); }
             } catch (e) { console.warn(`  [recreate] chapter ${i + 1} ${rType} reinforce failed: ${e.message}`); }
           }
         } else {
           try {
             const { lesson } = await generateOneLesson(lang, srcLang, topic.topic, 1, 1, [], story, diff, jobId,
               { story, chainVocab: chainVocab.words || [], vocabMode: 'reinforce' });
-            if (lesson) { stamp(lesson, 'review'); lesson._arcMode = 'reinforce'; if (!lesson.title) lesson.title = 'Review words'; if (!lesson.icon) lesson.icon = '🔁'; newLessons.push(lesson); recreated++; }
+            if (lesson) { stamp(lesson, 'review'); lesson._arcMode = 'reinforce'; if (!lesson.title) lesson.title = 'Review words'; if (!lesson.icon) lesson.icon = '🔁'; persistLesson(lesson); }
           } catch (e) { console.warn(`  [recreate] chapter ${i + 1} vocab review failed: ${e.message}`); }
         }
       }
     });
     addTokenUsage(topic, _rcTok, 'recreate');
-    topic.lessons = [...(topic.lessons || []), ...newLessons];
-    stampUpdated(topic);
-    saveStore(store);   // persist per-chapter so progress survives a mid-run failure
+    // Each lesson above was already appended to topic.lessons and saved individually (persistLesson)
+    // the moment it finished — this final save covers ONLY the aggregate token-usage stamp just
+    // added, which addTokenUsage mutates in memory but never persists itself.
+    saveStore(store);
     prevRef = topic.id;
   }
   console.log(`  [${addTypes ? 'add-lessons' : 'recreate'}] done: ${recreated} new lesson(s) across ${chapterIds.length} chapter(s), ${hidden} hidden`);

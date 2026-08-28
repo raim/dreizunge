@@ -37,7 +37,7 @@ this file stays current through the whole `v86` line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v86 CUT** | fresh, top-of-file summary of everything still genuinely open, then the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v86 LINE** | `v86_j` — the user's own answers on AE/AF from `v86_i`: AF resolved (they never actually watched the screen for the toast — `showToast()` has never logged to console, likely never a bug) and its own console-message ask was built; AE's own leading hypothesis (page discarded/reloaded) was REFUTED by the user's answer (state survived backgrounding almost exactly), so instead of a speculative fix, rich diagnostic console logging was added throughout the whole visibility-recovery mechanism (all three comic pollers' own check functions, plus the shared listener logging UNCONDITIONALLY on every fire) — diagnostic only, no behaviour change, but the next occurrence should be immediately diagnosable from console output alone. `v86_i` — a real showToast() dead-guard bug found and fixed while investigating two live-testing reports (not the cause of either, ruled out specifically). Live-testing round on `v86_d`–`v86_h` began: items L/I/M confirmed working; two problems (AE: mobile-backgrounding recovery did not recover on a real device; AF: the partial-drop toast/panel-count mismatch recurred) investigated but NOT resolved — both need the user's own answers to specific diagnostic questions before a confident fix, not a guess. `v86_h` — `INTERNALS.md` §6b caught up (doc-only). From a 16-item real-usage batch: item Q (comprehension questions must be independently answerable, a prompt-only fix), plus three unrelated small fixes — tutor logs on ASK now (not just on a completed reply), a QC 'rewrite' verdict (large change-ratio, not necessarily corruption) can now be ACCEPTED after human review (only 'corrupt' stays hard-blocked), and the static build's own `init()` now wires `_storyTapInit()` (tap-to-advance on plain story text was silently dead there). The other 13 items scoped into the roadmap as items P–AC, not built this cut. `v86_g` — item L: a comic/image chapter's progress card and question panel showed STALE text after a story edit (`_comicStoryPanelsHtml` reads `comicPanels[].caption`/`inScene`, a separate copy of the text `/api/save-story` never touched) — fixed by syncing `comicPanels[0]` on save for the unambiguous SINGLE-panel case (multi-panel deliberately left as item O, genuinely ambiguous). Item M: drag-to-move a panel box (`_comicHitBox`), the companion to the existing resize handles — a handle grab still wins at a box's own corner. Item N: a "3 shown, 4 detected" report investigated and found to be a likely MODEL accuracy limitation, not a code bug (no merging logic exists) — not changed this cut, flagged for a live-model probe if wanted. `v86_f` — item I: a fixed 90°-clockwise-per-click rotate button for the uploaded/captured comic image, using the SAME offscreen-canvas-redraw shape as the existing downscale step, routed through the SAME `img.onload -> _comicFinishSetup()` path a fresh upload uses — so natural dimensions are read from the rotated image itself and panel-box invalidation comes for free from the existing "new image clears boxes" precedent, no new logic needed. `v86_e` — item K: the SAME mobile-backgrounding fix extended to `_pollComicBookJob` (book/chapter creation), the one poller `v86_d` explicitly left open — required its own small refactor (a `while`+`sleep` loop split into a re-invokable `_comicBookCheckOnce()`, gated on the pre-existing `_comicBookId`) rather than a copy-paste, since it wasn't `setInterval`-shaped like the other two. Preserves one deliberate behavioural difference: a network hiccup mid-poll is NOT terminal here (unlike extract/detect), matching the original code exactly. Six new tests exercise the REAL function for the first time (every prior test mocked it). `v86_d` — mobile-backgrounding fix: `setInterval`-based polling for comic extraction AND detection can be throttled/suspended on a backgrounded phone tab, stranding a client that never learns its job finished (confirmed live: the user's own console showed server-side success while the UI stayed stuck). Fixed with a shared `visibilitychange` listener that re-checks any in-flight job off-schedule the instant the tab becomes visible again; `_pollComicBookJob` has the same class of gap and is explicitly NOT yet fixed (item K below). Also: a second live bug found mid-session — auto-detect silently dropped a malformed/inverted box with NO toast unless every suggested box was dropped (confirmed live: server said "4 panel(s) suggested", UI showed 3, no explanation) — now toasts on any drop, partial or total. Also item J: a "use whole image as one panel" shortcut button. `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
+| **SHIPPED IN THE v86 LINE** | `v86_k` — item S: each lesson is now persisted the instant it finishes during multi-type generation, not batched until the whole chapter completes — fixed in BOTH `_runRecreateJob` (the user's own reported case) and `_runBookJob`'s own arc-reinforcement loop (found to have the same gap while checking whether the fix generalized), each confirmed safe to call incrementally by reading `upsert()`'s own id-matching behaviour first. Item F's live-verification half: `probe_article_symmetry_v80j.js` re-run against the full live corpus confirms the `v85_r` fix took hold (the two originally-named chapters are now 0% asymmetric; overall rate is 1.3% and mostly explained by correct per-language citation convention, not a defect). `v86_j` — the user's own answers on AE/AF from `v86_i`: AF resolved (they never actually watched the screen for the toast — `showToast()` has never logged to console, likely never a bug) and its own console-message ask was built; AE's own leading hypothesis (page discarded/reloaded) was REFUTED by the user's answer (state survived backgrounding almost exactly), so instead of a speculative fix, rich diagnostic console logging was added throughout the whole visibility-recovery mechanism (all three comic pollers' own check functions, plus the shared listener logging UNCONDITIONALLY on every fire) — diagnostic only, no behaviour change, but the next occurrence should be immediately diagnosable from console output alone. `v86_i` — a real showToast() dead-guard bug found and fixed while investigating two live-testing reports (not the cause of either, ruled out specifically). Live-testing round on `v86_d`–`v86_h` began: items L/I/M confirmed working; two problems (AE: mobile-backgrounding recovery did not recover on a real device; AF: the partial-drop toast/panel-count mismatch recurred) investigated but NOT resolved — both need the user's own answers to specific diagnostic questions before a confident fix, not a guess. `v86_h` — `INTERNALS.md` §6b caught up (doc-only). From a 16-item real-usage batch: item Q (comprehension questions must be independently answerable, a prompt-only fix), plus three unrelated small fixes — tutor logs on ASK now (not just on a completed reply), a QC 'rewrite' verdict (large change-ratio, not necessarily corruption) can now be ACCEPTED after human review (only 'corrupt' stays hard-blocked), and the static build's own `init()` now wires `_storyTapInit()` (tap-to-advance on plain story text was silently dead there). The other 13 items scoped into the roadmap as items P–AC, not built this cut. `v86_g` — item L: a comic/image chapter's progress card and question panel showed STALE text after a story edit (`_comicStoryPanelsHtml` reads `comicPanels[].caption`/`inScene`, a separate copy of the text `/api/save-story` never touched) — fixed by syncing `comicPanels[0]` on save for the unambiguous SINGLE-panel case (multi-panel deliberately left as item O, genuinely ambiguous). Item M: drag-to-move a panel box (`_comicHitBox`), the companion to the existing resize handles — a handle grab still wins at a box's own corner. Item N: a "3 shown, 4 detected" report investigated and found to be a likely MODEL accuracy limitation, not a code bug (no merging logic exists) — not changed this cut, flagged for a live-model probe if wanted. `v86_f` — item I: a fixed 90°-clockwise-per-click rotate button for the uploaded/captured comic image, using the SAME offscreen-canvas-redraw shape as the existing downscale step, routed through the SAME `img.onload -> _comicFinishSetup()` path a fresh upload uses — so natural dimensions are read from the rotated image itself and panel-box invalidation comes for free from the existing "new image clears boxes" precedent, no new logic needed. `v86_e` — item K: the SAME mobile-backgrounding fix extended to `_pollComicBookJob` (book/chapter creation), the one poller `v86_d` explicitly left open — required its own small refactor (a `while`+`sleep` loop split into a re-invokable `_comicBookCheckOnce()`, gated on the pre-existing `_comicBookId`) rather than a copy-paste, since it wasn't `setInterval`-shaped like the other two. Preserves one deliberate behavioural difference: a network hiccup mid-poll is NOT terminal here (unlike extract/detect), matching the original code exactly. Six new tests exercise the REAL function for the first time (every prior test mocked it). `v86_d` — mobile-backgrounding fix: `setInterval`-based polling for comic extraction AND detection can be throttled/suspended on a backgrounded phone tab, stranding a client that never learns its job finished (confirmed live: the user's own console showed server-side success while the UI stayed stuck). Fixed with a shared `visibilitychange` listener that re-checks any in-flight job off-schedule the instant the tab becomes visible again; `_pollComicBookJob` has the same class of gap and is explicitly NOT yet fixed (item K below). Also: a second live bug found mid-session — auto-detect silently dropped a malformed/inverted box with NO toast unless every suggested box was dropped (confirmed live: server said "4 panel(s) suggested", UI showed 3, no explanation) — now toasts on any drop, partial or total. Also item J: a "use whole image as one panel" shortcut button. `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, `PLAN §7.0` Track A (CP1–5), and `PLAN §13` are ALL fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). `PLAN §2.4` / Track A4 (comic/image ingest) is fully shipped as its FOUR-milestone core, plus a `v85_o` auto-detect follow-up, plus a `v85_t` panel-resize follow-up, plus a `v85_u` resize-sync fix — its own sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -144,13 +144,25 @@ reproduction with the raw model response captured — this container now has a l
 confirmed (`v85_t`/`v85_u`), worth checking whether the TEXT model roles this needs are ALSO
 installed before assuming a container still can't attempt this.
 
-### F. `v85_r`'s article-symmetry fix — needs live verification, PLUS a new live recurrence + a new ask (from `v85_r`, extended this cut)
+### ✅ F (live-verification half). `v85_r`'s article-symmetry fix — CONFIRMED against the live corpus, `v86_k`
 
-The fix (generalising the `v80_j` article-symmetry prompt correction to its second caller,
-`vocabFromText.system`) is mechanically sound and guarded, but has never been regenerated against a
-live model. Re-run `build_history/probe_article_symmetry_v80j.js` against fresh output once the user
-has generated real lessons through the fixed path (particularly anything routing through
-`vocabFromText` — comic panels, PDF uploads, pasted story+translation).
+`build_history/probe_article_symmetry_v80j.js` (a pure static analysis of `lessons.json`, no live
+model call, read-only) re-run against the full live corpus: **1.3% asymmetric overall (40 of 3141
+countable pairs)** — low. More directly: **the two SPECIFIC chapters `§F3c` originally named as
+asymmetric are now BOTH 0 of 8 (0.0%)** — `tp_17869977371640000022` ("Stille vor dem Winter") and
+`tp_17869980065780000104` ("Brücke der Existenz"). This is a real, direct confirmation the `v85_r` fix
+took hold, not an inference — the EXACT cases the probe was written to track are now clean.
+
+The two remaining "100% asymmetric" chapters this run found (`Geisterhafte Gestalten`, `Dunkel und
+Geruch`, both `de→en`) were spot-checked directly and are NOT a regression — every pair is a plain
+concrete-noun vocab flashcard (`der Nebel`↔`fog`, `das Herz`↔`heart`, `der Weg`↔`trail`, …) where the
+German side correctly carries its citation-form gender article and the English side is correctly the
+bare dictionary form — the SAME "each side follows its own language's own citation convention"
+pattern found while spot-checking the corpus for quality earlier this cut. The probe's own header
+warns it explicitly: "reported, not asserted… this cannot be language-blind" — it flags every
+gender-marked German noun paired with a bare English gloss as "asymmetric" whether or not that's
+actually correct, which is most of the 1.3%. **Live-verification half of item F is done.** The
+"add explanations" ask (below) remains open and unbuilt.
 
 **New live recurrence, this cut**: a fresh storyline (`sl_1833389129`) generated German entries WITH
 articles ("die Liebe") paired with English entries that sometimes ALSO carried an article ("the
@@ -163,9 +175,16 @@ prefix a noun with its article to indicate GRAMMATICAL GENDER (a genuine, load-b
 side — the ASYMMETRY is baked into what "correct" looks like in each language's own reference
 convention, not necessarily a model hallucination each time. This reframes the bug: it may not be
 fully fixable by prompt correction alone (asking the model to drop the German article loses the
-gender signal a learner needs; keeping it but adding an English article is simply wrong) — needs
-re-examination against this specific hypothesis before assuming `v85_r`'s existing fix is insufficient
-versus not yet regenerated/verified.
+gender signal a learner needs; keeping it but adding an English article is simply wrong).
+
+**Re-examined against this specific hypothesis, this cut (both the corpus-quality spot-check above and
+the live-verification paragraph above): confirmed correct, not a bug.** `Wedding Fever`'s own vocab
+(`sl_1833389129` itself) shows exactly the predicted pattern — `die Liebe`↔"love", `die Angst`↔"fear",
+`der Humor`↔"humor" (English correctly bare, abstract/generic sense) alongside `die Hochzeit`↔"the
+wedding", `der Hund`↔"the dog" (English correctly WITH "the", concrete/specific sense) — genuinely
+correct per-word English judgment, not random inconsistency. The user's own report reacted to the
+surface pattern (German always has an article, English sometimes doesn't) without it necessarily being
+wrong; no further prompt work is needed for the symmetry question itself.
 
 **New ask, same report**: rather than (or in addition to) suppressing the asymmetry, ask the
 generating model to produce a short EXPLANATION for cases where an article genuinely belongs on one
@@ -424,7 +443,7 @@ mid-run) — the two together cover "don't lose parsing work" and "don't lose ge
 respectively, and might share one underlying mechanism (write progressively, not once at the end) once
 designed together rather than separately.
 
-### S. Write each lesson into the store AS IT FINISHES during multi-lesson generation, not all at once at the end
+### ✅ S. Write each lesson into the store AS IT FINISHES during multi-lesson generation — SHIPPED `v86_k`
 
 **Ask, with a concrete real log** showing exactly why this matters: a `word_forms` lesson finished
 generating (5 valid items, 1 rejected — a normal, successful result) and the user's own annotation on
@@ -435,14 +454,48 @@ interface seems to have lost that" — is the SAME class of loss, one step over:
 server, not yet visible/durable to the client), the already-finished `word_forms` lesson is lost too,
 even though it was already done.
 
-**Directly continues this session's own theme** (the `v86_d`/`v86_e` mobile-backgrounding fixes were
-about the CLIENT losing track of a finished job; this is about the SERVER's own multi-lesson loop not
-persisting incremental progress at all) — worth prioritizing together with that work in a future
-session. **Not scoped in detail this cut**: needs reading `_runBookJob`'s (and the "all_types"/arc
-multi-generator loop's) own per-type generation sequence to find where a `saveStore(store)` call could
-be safely inserted after each successful type completes, and to check whether the job-status/progress
-reporting already surfaces "which types are done so far" in a way a resumed/reloaded client could use
-(if not, that's part of this item too, not a separate one).
+**Built in BOTH multi-type generation paths, not just the one the report came from** — the standing
+"a per-caller fix does not generalize to other callers of the same primitive" rule, applied
+proactively this time rather than discovered as a gap later:
+- **`_runRecreateJob`** (the exact function behind the user's own log — "Re-creating chapter"/"Add
+  storyline lessons"): a new `persistLesson(lesson)` closure appends the lesson to `topic.lessons` and
+  calls `saveStore(store)` IMMEDIATELY, wired into all FOUR lesson-success sites in the function (the
+  `addTypes` tick-list loop, the legacy gate lesson, the legacy grammar-arc reinforcement loop, the
+  legacy vocab-review reinforcement). The old batch-only `topic.lessons = [...(topic.lessons||[]),
+  ...newLessons]` (once per CHAPTER, after every requested type finished) is gone — replaced by a
+  final save that covers only the aggregate token-usage stamp `addTokenUsage` adds afterward (which
+  mutates `topic` but never persists itself).
+- **`_runBookJob`'s own arc-reinforcement loop** (initial book/PDF/comic generation, `base.arc` mode,
+  chapters 2+): found to have the EXACT same gap while checking whether the fix generalized —
+  `data.lessons.push(lesson)` for each requested `arcType`, with the chapter staying entirely
+  unpersisted until ONE `_persistGenerated` call after the whole loop finished. Fixed by calling
+  `_persistGenerated(data, contFrom, parent ? parent.id : null)` right after each successful arc
+  lesson. Confirmed SAFE to call repeatedly before making this change, not assumed: `_persistGenerated`
+  wraps `upsert()`, which matches by `data.id` — the FIRST call assigns a fresh id (mutating `data`
+  directly, so later calls on the same `data` object see it already set) and every call after updates
+  the SAME store entry in place, never creating a duplicate.
+
+**Trade-off, deliberate and documented in both code sites**: this writes the WHOLE store to disk once
+per lesson instead of once per chapter — more disk I/O during a large multi-type run, in exchange for
+never losing already-finished work to a later type's failure or an external interruption. `saveStore`
+is a plain synchronous `fs.writeFileSync`, so no ordering/race concern from calling it more often in
+an already-sequential (`for`/`await`) loop.
+
+**Test coverage**: both fixes are SOURCE-LEVEL checks (`e2e-recreate.test.js`, `e2e-book-arc-types.test.js`),
+not a genuine mid-run snapshot — `fake-ollama.js` has no configurable response delay, and these runs
+typically complete well under one poll interval, so trying to catch a real interruption mid-flight
+would be flaky, not a real guarantee. Mutation-tested (both files): removing a `persistLesson`/
+`_persistGenerated` call, or removing `saveStore` from inside `persistLesson`, breaks the corresponding
+new assertion. Both existing e2e tests for these functions (`e2e-recreate.test.js`,
+`e2e-book-arc-types.test.js`) still pass unchanged, confirming the FINAL cumulative result is
+unaffected — only WHEN persistence happens changed, not WHAT gets persisted.
+
+**Not done this cut, explicitly**: whether the job-status/progress reporting could surface "which
+types are done so far" to a client that reconnects mid-run (the client-side half of this same
+robustness story) — the server-side durability fix stands on its own regardless, but a resumed/
+reloaded client still can't currently SEE partial progress live; it would just find it already there
+on next load. Item R (intermediate "unfinished" project state) remains the natural home for that
+client-facing half, if picked up later.
 
 ### T. Two questions initiated via text-selection → grammar click were never answered (screenshot, needs reproduction)
 
@@ -2477,6 +2530,43 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v86 LINE
+
+## ✅ v86_k — item S (incremental lesson persistence, both generation paths) + item F's live-verification half confirmed
+
+The user, asked "what would you do next?", approved building item S plus a quick article-symmetry
+live-verification alongside it, from the recommendation given.
+
+**Item S — persist each lesson AS IT FINISHES during multi-lesson generation**, not batched until the
+whole chapter completes. Built in the function behind the user's own real report
+(`_runRecreateJob`/"Re-creating chapter…"/"Add storyline lessons") via a new `persistLesson(lesson)`
+closure, wired into all four lesson-success sites in that function. Then, checking whether the fix
+generalized (per this line's own standing rule), found `_runBookJob`'s own arc-reinforcement loop
+(initial book/PDF/comic generation, chapters 2+) had the EXACT same gap and fixed it too, by calling
+`_persistGenerated(...)` after each successful arc lesson instead of once after the whole loop —
+confirmed safe to call repeatedly by reading `upsert()`'s own id-matching logic first, not assumed.
+Trade-off, deliberate: more disk writes during a large multi-type run, in exchange for never losing
+already-finished work to a later type's failure or an external interruption.
+
+**Item F's live-verification half — CONFIRMED.** `build_history/probe_article_symmetry_v80j.js`
+(static analysis of the live corpus, no live model call, read-only) re-run: the two chapters `§F3c`
+originally named as asymmetric are now BOTH 0% asymmetric — direct confirmation the `v85_r` fix took
+hold. Overall corpus rate: 1.3% (40/3141 countable pairs), and spot-checking the two remaining "100%
+asymmetric" chapters found them to be correct per-language citation convention (German cites with
+gender article, English cites bare), not a defect — the same pattern already found while spot-checking
+corpus quality earlier this cut. The "add explanations for genuine asymmetry" ask (the other half of
+item F) remains open and unbuilt.
+
+**Test coverage**: `e2e-recreate.test.js` and `e2e-book-arc-types.test.js` both gained a new
+source-level check (a genuine mid-run behavioural snapshot isn't attempted — `fake-ollama.js` has no
+configurable delay, these runs complete well under one poll interval, so trying to catch an
+interruption mid-flight would be flaky, not a real guarantee). Both mutation-tested twice (missing
+`persistLesson`/`_persistGenerated` call, missing `saveStore` inside `persistLesson`) — both caught,
+restored, diff clean. Both EXISTING e2e tests for these functions still pass unchanged, confirming the
+final cumulative result is unaffected — only WHEN persistence happens changed.
+
+Baseline: `node test/run.js` → 287 checks (unchanged — no new test files, all new coverage landed
+inside the two existing e2e test files). `lessons.json` untouched throughout (read-only, for the
+article-symmetry probe and the corpus spot-checks it built on). `APP_VERSION = 'v86_k'`.
 
 ## ✅ v86_j — the user's own answers on AE/AF: AF resolved (never watched the screen), AE gets full diagnostic logging
 

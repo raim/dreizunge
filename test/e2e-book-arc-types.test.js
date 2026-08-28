@@ -11,6 +11,8 @@
 // assertion still passed, because each half was individually correct — nothing checked that the
 // list actually reaches the generator. That is exactly how a wiring change looks finished while
 // doing nothing, so the assertion belongs at the only level that can see it: a real run.
+const fs = require('fs');
+const path = require('path');
 const { boot, post, waitBookJob, assert } = require('./lib');
 
 (async () => {
@@ -95,6 +97,25 @@ const { boot, post, waitBookJob, assert } = require('./lib');
     assert((lReview[0].type || 'standard') === 'standard',
       'and it is the vocab-review lesson it always was (got ' + (lReview[0].type || 'standard') + ')');
     console.log('  legacy arcMode back-compat: OK');
+
+    // ── v86_k (user-requested): a chapter's arc-reinforcement types used to all be generated in
+    //    memory (data.lessons.push) before the ONE _persistGenerated call at the end of that
+    //    chapter's whole processing — an interruption partway through the arc loop (base.arcTypes
+    //    can have many entries, e.g. the real report that motivated this: 8 types on one chapter)
+    //    lost every type that HAD already succeeded, not just the ones still pending. Same class of
+    //    gap as _runRecreateJob's own (fixed in the same cut, see e2e-recreate.test.js), and the same
+    //    honest-fallback reasoning applies: fake-ollama has no configurable delay, so a genuine
+    //    mid-run snapshot would be flaky, not a real guarantee — a source-level check instead.
+    const serverSrc = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
+    const fnAt = serverSrc.indexOf('async function _runBookJob');
+    const fnEnd = serverSrc.indexOf('\nasync function _runComicExtractJob', fnAt);
+    const fnSrc = serverSrc.slice(fnAt, fnEnd > fnAt ? fnEnd : undefined);
+    const arcLoopAt = fnSrc.indexOf('for (const aType of _types)');
+    const arcLoopEnd = fnSrc.indexOf('\n      }', arcLoopAt);
+    const arcLoopSrc = fnSrc.slice(arcLoopAt, arcLoopEnd);
+    assert(/data\.lessons\.push\(lesson\);\s*\n[\s\S]{0,900}_persistGenerated\(data, contFrom, parent \? parent\.id : null\);/.test(arcLoopSrc),
+      'the arc-reinforcement loop persists immediately after EACH successful lesson, not just once at the end of the whole chapter');
+    console.log('  arc-reinforcement loop persists incrementally, per lesson (source check): OK');
 
     console.log('e2e-book-arc-types: ALL PASSED');
   } catch (e) {
