@@ -21,6 +21,13 @@ const LEARNERS = require('./learners');
 // offline analysis script); server.js requiring IT back is the same, already-established pattern as
 // requiring llm.js, and adds no write path of any kind.
 const { compareWithExistingLessons } = require('./curriculum-plan.js');
+// PLAN §7.0 CP1/CP2, item W ("text explorer" mode, roadmap_v86.md) step 2: the same safe-require
+// direction as curriculum-plan.js above — canonical-text.js/canonical-analysis.js are "standalone on
+// purpose" (their own file headers forbid requiring server.js BACK, since that would bind an HTTP
+// port as a side effect of an offline analysis script), so server.js requiring THEM is the
+// established, already-precedented direction, not a new risk.
+const { buildCanonicalText } = require('./canonical-text.js');
+const { analyzeChapter } = require('./canonical-analysis.js');
 
 // ── Learner sessions (v65) ───────────────────────────────────────────────────
 // Cookie-based, HttpOnly so page scripts can never read the token, SameSite=Lax so it isn't sent
@@ -184,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v86_n';
+const APP_VERSION  = 'v86_o';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -203,6 +210,12 @@ const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 // default, and only exists for chapters someone has explicitly run the CP1-4 pipeline against) —
 // that absence IS the normal case, not an error; cp5ShadowFor degrades to `available:false` for it.
 const CURRICULUM_PLAN_FILE = process.env.CURRICULUM_PLAN_FILE || path.join(__dirname, 'curriculum-plan.json');
+// PLAN §7.0 CP1/CP2, item W step 2: the per-chapter analysis CACHE _runAnalysisJob writes into and
+// analysisShadowFor reads back — same "reread fresh from disk each call, absence is the common case"
+// reasoning as CURRICULUM_PLAN_FILE above, but UNLIKE that file (a manually-produced, read-only CLI
+// artifact server.js never writes) this store IS written by the server itself — the first read/write
+// path CP1/CP2 output has ever had from server.js, rather than only from the standalone CLI scripts.
+const ANALYSIS_STORE_FILE = process.env.CANONICAL_ANALYSIS_FILE || path.join(__dirname, 'canonical-analysis.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
 const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
 // Model roles are runtime-mutable (see setRuntimeModels / GET+POST /api/models) so a user can
@@ -767,6 +780,101 @@ function cp5ShadowFor(chapterId) {
   };
 }
 
+// PLAN §7.0 CP1/CP2, item W ("text explorer" mode, roadmap_v86.md) step 2 — the per-chapter analysis
+// cache _runAnalysisJob (below) writes into and analysisShadowFor reads back. Same "read fresh from
+// disk each call" reasoning as cp5ShadowFor above (low-traffic, not a live-edited file) — absence is
+// the NORMAL case here too: `{schemaVersion:1, chapters:{}}` for a store that has never been written,
+// exactly like the file never having existed.
+function readAnalysisStore() {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(ANALYSIS_STORE_FILE, 'utf8'));
+    if (parsed && typeof parsed === 'object') { parsed.chapters = parsed.chapters || {}; return parsed; }
+  } catch (e) { /* absent or unreadable — the common case */ }
+  return { schemaVersion: 1, chapters: {} };
+}
+// Read-modify-write, single chapter at a time — safe here because a chapter can only ever be
+// analysing under ONE job at a time (the analyzingChapters lock in _runAnalysisJob's own caller), so
+// there is no concurrent-writer race to guard against the way a multi-writer store would need.
+function writeAnalysisChapter(chapterId, record) {
+  const store = readAnalysisStore();
+  store.schemaVersion = 1;
+  store.chapters[chapterId] = record;
+  store.generatedAt = new Date().toISOString();
+  store.chapterCount = Object.keys(store.chapters).length;
+  fs.writeFileSync(ANALYSIS_STORE_FILE, JSON.stringify(store, null, 2), 'utf8');
+}
+// The GET route's own read path (item W step 3) — same absent -> available:false shape as
+// cp5ShadowFor, so the client-side pattern (fetch, degrade silently, paint only when real data
+// exists) can be reused verbatim rather than inventing a second contract shape.
+//
+// `stale` has no cp5ShadowFor analogue: curriculum-plan.json is a manually-produced, static
+// snapshot with nothing live to compare against, but this cache IS compared against the chapter's
+// CURRENT story text on every read — a story edit after analysis invalidates the cached result
+// without the server needing to eagerly recompute anything (CP1 is cheap enough to re-run on every
+// read just to hash-compare; re-running CP2 itself is NOT, and stays purely client-triggered).
+function analysisShadowFor(chapterId) {
+  if (!chapterId) return { chapterId: null, available: false };
+  const store = readAnalysisStore();
+  const rec = store.chapters[chapterId];
+  if (!rec) return { chapterId, available: false };
+  let stale = false;
+  const topic = findSavedById(chapterId);
+  if (topic) {
+    try { stale = buildCanonicalText(topic).sourceTextHash !== rec.sourceTextHash; } catch (e) { /* leave stale:false — a broken re-hash must not hide an otherwise-good cached result */ }
+  }
+  return {
+    chapterId, available: true, stale,
+    sentenceCount: rec.sentenceCount, tokenCount: rec.tokenCount,
+    sentences: rec.sentences,
+    model: (rec.provenance && rec.provenance.model) || null,
+    analyzedAt: rec.analyzedAt || null,
+  };
+}
+
+// PLAN §7.0 CP1+CP2, item W step 2: run CP1 (instant, deterministic) then CP2 (slow — one model call
+// PER SENTENCE, sequential; see canonical-analysis.js's own file-header comment and roadmap_v86.md's
+// "12+ minutes even on a warm model" finding for a 4-sentence chapter) for ONE chapter, on demand,
+// caching the result so a chapter is only ever analysed once. Mirrors _runComicExtractJob's/
+// _runComicDetectJob's own shape (newJob/jobStep/jobDone/jobFail) — the exact precedent item W's own
+// recommended path calls out, not a new job pattern invented for this feature.
+async function _runAnalysisJob(jobId, topic) {
+  try {
+    jobStep(jobId, 'CP1: building canonical text…');
+    const chapter = buildCanonicalText(topic);
+    if (!chapter.sentenceCount) { jobFail(jobId, 'No sentences to analyse.'); return; }
+    jobStep(jobId, `[${OLLAMA_ANALYSIS_MODEL}] CP2: analysing ${chapter.sentenceCount} sentence(s)…`);
+    const result = await analyzeChapter(OLLAMA_ANALYSIS_MODEL, chapter, {
+      langName: langName(topic.lang), srcLangName: langName(topic.srcLang || 'en'),
+    });
+    // canonical-analysis.js's own analyzeChapter (deliberately, per its own file header — CP2 is
+    // token-level analysis, not a second copy of CP1's sentence boundaries) does NOT carry the raw
+    // sentence TEXT or paragraph-break flag through into its result. A client renderer (item W step
+    // 4) needs both to place each token back into the actual story layout without re-deriving CP1's
+    // own tokenisation client-side, so they are stitched on here, from CP1's OWN `chapter.sentences`
+    // — same array, same order, one call each in analyzeChapter's own sequential loop, so a
+    // same-index zip is exact, not a guess.
+    const enrichedSentences = result.sentences.map((s, i) => ({
+      ...s,
+      text: (chapter.sentences[i] && chapter.sentences[i].text) || '',
+      paraBreakBefore: !!(chapter.sentences[i] && chapter.sentences[i].paraBreakBefore),
+    }));
+    writeAnalysisChapter(topic.id, {
+      ...result,
+      sentences: enrichedSentences,
+      sourceTextHash: chapter.sourceTextHash,
+      analyzedAt: new Date().toISOString(),
+    });
+    console.log(`  [analysis] ${topic.id}: ${result.sentenceCount} sentence(s), ${result.tokenCount} token(s) — cached`);
+    jobDone(jobId, { chapterId: topic.id, available: true,
+      sentenceCount: result.sentenceCount, tokenCount: result.tokenCount });
+  } catch (e) {
+    console.error('  [analysis] failed:', e.message);
+    jobFail(jobId, e.message);
+  } finally {
+    analyzingChapters.delete(topic.id);
+  }
+}
+
 // Walk the chain by continuedFromId and collect all vocab/grammar/conjugation
 // targets from all prior chapters, deduplicated. Returns { words, nouns, verbs }.
 // startRef is the PARENT reference: a tp_ id (preferred) or a topic name
@@ -1154,6 +1262,9 @@ function jobFail(id, err) {
 
 // ── Generation lock ───────────────────────────────────────────────────
 const generatingTopics = new Set();
+// PLAN §7.0 CP1/CP2, item W step 2: chapterId -> jobId, so a second "hover mode" visit to a chapter
+// already being analysed reuses the SAME job instead of starting a duplicate multi-minute CP2 run.
+const analyzingChapters = new Map();
 
 // ── Language config (from languages.json) ────────────────────────────
 let _langsData = {};
@@ -7633,6 +7744,43 @@ http.createServer(async (req, res) => {
     if (M === 'GET' && url.pathname.startsWith('/api/cp-shadow/')) {
       const chapterId = decodeURIComponent(url.pathname.slice('/api/cp-shadow/'.length));
       return json(res, 200, cp5ShadowFor(chapterId));
+    }
+
+    // ── PLAN §7.0 CP1/CP2, item W ("text explorer" mode) step 3: read-only per-token analysis ──
+    // lookup, mirroring cp-shadow's own shape exactly (absent -> available:false, GET-only, no
+    // write path here — the write path is the POST route immediately below).
+    if (M === 'GET' && url.pathname.startsWith('/api/analysis/')) {
+      const chapterId = decodeURIComponent(url.pathname.slice('/api/analysis/'.length));
+      return json(res, 200, analysisShadowFor(chapterId));
+    }
+
+    // ── item W step 2: kick off (or reuse) the background CP1+CP2 job for one chapter ──────────
+    // Body: none — the chapter id is the resource, same as the GET route above. A cached, non-stale
+    // result short-circuits with 200 (no job at all); otherwise a job starts (or an already-running
+    // one for this SAME chapter is reused) and 202 + jobId is returned, polled via the existing
+    // /api/job/:id route every other background job already uses.
+    if (M === 'POST' && url.pathname.startsWith('/api/analyze-chapter/')) {
+      await readBody(req); // no fields used — the chapter id is the resource (path param), but the
+                            // request body must still be drained like every other POST route here.
+      const chapterId = decodeURIComponent(url.pathname.slice('/api/analyze-chapter/'.length));
+      const topic = chapterId ? findSavedById(chapterId) : null;
+      if (!topic) return json(res, 404, { error: 'No chapter with that id.' });
+      if (!topic.story || !String(topic.story).trim()) return json(res, 400, { error: 'Chapter has no story text.' });
+      const shadow = analysisShadowFor(chapterId);
+      if (shadow.available && !shadow.stale) return json(res, 200, { cached: true, ...shadow });
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
+      const existingJobId = analyzingChapters.get(chapterId);
+      if (existingJobId && jobs.has(existingJobId) && jobs.get(existingJobId).status === 'running')
+        return json(res, 202, { jobId: existingJobId });
+      const jobId = newJob();
+      analyzingChapters.set(chapterId, jobId);
+      console.log(`  Analyzing chapter: ${chapterId} model=${OLLAMA_ANALYSIS_MODEL} job=${jobId}`);
+      _runAnalysisJob(jobId, topic).catch(e => {
+        console.error('  Analysis job error:', e.message);
+        jobFail(jobId, e.message);
+        analyzingChapters.delete(chapterId);
+      });
+      return json(res, 202, { jobId });
     }
 
     // ── Book job progress ──────────────────────────────────────────────

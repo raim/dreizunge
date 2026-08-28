@@ -1,0 +1,223 @@
+// unit-text-explorer.test.js
+// PLAN §7.0 CP1/CP2, item W ("text explorer" mode, roadmap_v86.md) step 4 — the CLIENT half.
+// Server-side steps 2-3 (background job + per-chapter cache, GET /api/analysis/:id) are covered by
+// e2e-analysis.test.js against a real (fake) LLM backend; this file covers the client's own
+// rendering + fetch-orchestration logic in isolation, the same split unit-cp5-shadow.test.js uses
+// for its own client half.
+//
+// Contract under test:
+//   1. toggleTextExplorer() flips APP._textExplorer, forces APP._compStoryLang back to 'target'
+//      (the analysis is of the TARGET-language story; a translation view has nothing to show), and
+//      kicks off _ensureTextExplorerData() only when turning ON.
+//   2. _ensureTextExplorerData(): a fresh, non-stale GET hit goes straight to 'ready' — no POST is
+//      ever made. An unavailable/stale GET triggers the POST job-kickoff route.
+//   3. _teSentenceHtml()/_teTokenMarkHtml(): each token is wrapped in its own <mark> with the real
+//      lemma/form/sense as data-* attributes, using forward-only substring alignment against the
+//      sentence's own raw text — a token that cannot be found is skipped, not corrupting the rest.
+//   4. _textExplorerBodyHtml(): the four cache states (loading/analyzing/error/ready) each render
+//      their own distinct, correct markup.
+//   5. HTML/attribute injection in a token's lemma/form/sense cannot break out of the mark's
+//      attributes or inject a tag — escAttr/escHtml both do real work here, not just prose text.
+//   6. _renderCompStory(): with APP._textExplorer on, the progress card's story body actually
+//      renders via _textExplorerBodyHtml (real per-word marks), not _storyBodyHtml — checked
+//      end-to-end against the DOM, not just by reading the source's own branch.
+'use strict';
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const { loadClient, ROOT } = require('./lib-dom');
+
+const LANGS = JSON.parse(fs.readFileSync(path.join(ROOT, 'languages.json'), 'utf8'));
+const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
+const settle = () => new Promise(r => setTimeout(r, 60));
+
+const SEED_COMMON = `
+  LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)};
+  APP.savedList = []; APP.storylines = [];
+  APP.lang = 'de'; APP.srcLang = 'en';
+  APP.info = { backend:'none', canGenerate:false, coverageThreshold:0.8 };
+  APP.progress = { completed: {}, solved: {}, chapterDone:{}, learned:{} };
+  APP._teacherMode = false;
+`;
+
+const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
+  story: 'Der Hund lauft.', lessons: [] };
+
+(async () => {
+  // ── 1. toggleTextExplorer: flips state, forces 'target', triggers the fetch only when turning ON ──
+  {
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON + `
+      APP.lessonData = ${JSON.stringify(TOPIC)};
+      APP._compStoryLang = 'source';
+      APP.cur = { lessonIdx: 0, exercises: [], cur: 0, correct: 1, total: 1, mistakes: 0, hearts: 3, streak: 1, bestStreak: 1 };
+      document.getElementById = function(id){
+        if (id === 'comp-story-panel-lbl' || id === 'comp-story-text' || id === 'comp-story-flags' ||
+            id === 'comp-story-spk' || id === 'comp-story-explorer-btn')
+          return { textContent:'', innerHTML:'', style:{}, setAttribute(){}, dataset:{} };
+        return null;
+      };
+      var fetchCalls = [];
+      fetch = function(u, opts){ fetchCalls.push(u); return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve({ chapterId:'tp_te1', available:false }); } }); };
+      toggleTextExplorer();
+      true;`, 'toggle-on');
+    assert.strictEqual(C.run('APP._textExplorer'), true, 'toggling ON sets APP._textExplorer');
+    assert.strictEqual(C.run('APP._compStoryLang'), 'target', 'toggling ON forces the flag state back to target — analysis has nothing to say about a translation');
+    await settle();
+    assert.ok(C.run('fetchCalls').includes('/api/analysis/tp_te1'), 'toggling ON kicked off the GET analysis lookup for the CURRENT chapter');
+
+    C.run(`fetchCalls = []; toggleTextExplorer(); true;`, 'toggle-off');
+    assert.strictEqual(C.run('APP._textExplorer'), false, 'toggling again turns it back OFF');
+    await settle();
+    assert.strictEqual(C.run('fetchCalls.length'), 0, 'toggling OFF makes no fetch at all');
+  }
+  console.log('  toggleTextExplorer: flips state, forces target-language view, fetches only on toggle-ON: OK');
+
+  // ── 2a. _ensureTextExplorerData: a fresh, non-stale cache hit goes straight to ready, no POST ──
+  {
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON + `
+      APP.lessonData = ${JSON.stringify(TOPIC)};
+      document.getElementById = function(){ return { textContent:'', innerHTML:'', style:{}, setAttribute(){}, dataset:{} }; };
+      var posted = false;
+      fetch = function(u, opts){
+        if(opts && opts.method === 'POST'){ posted = true; return Promise.resolve({ ok:true, status:202, json: function(){ return Promise.resolve({jobId:'should-not-happen'}); } }); }
+        return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve(
+          { chapterId:'tp_te1', available:true, stale:false, sentenceCount:1, tokenCount:3,
+            sentences:[{ sentenceId:'tp_te1:s0', text:'Der Hund lauft.', paraBreakBefore:false,
+              tokens:[{tokenId:'t0',idx:0,surface:'Der',lemma:'der',form:'article',sense:'the',confidence:'high'}],
+              phrases:[] }] }); } });
+      };
+      _ensureTextExplorerData();
+      true;`, 'ensure-fresh-hit');
+    await settle();
+    assert.strictEqual(C.run('posted'), false, 'a fresh cache hit never POSTs a new analysis job');
+    const entry = JSON.parse(C.run(`JSON.stringify(APP._teCache['tp_te1'])`));
+    assert.strictEqual(entry.status, 'ready', 'the cache entry reaches ready status');
+    assert.strictEqual(entry.data.sentences[0].tokens[0].lemma, 'der', 'the real fetched analysis data is recorded');
+  }
+  console.log('  _ensureTextExplorerData: a fresh cache hit reaches ready with NO analysis job started: OK');
+
+  // ── 2b. _ensureTextExplorerData: unavailable -> triggers the POST job-kickoff route ──────────
+  {
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON + `
+      APP.lessonData = ${JSON.stringify(TOPIC)};
+      document.getElementById = function(){ return { textContent:'', innerHTML:'', style:{}, setAttribute(){}, dataset:{} }; };
+      var postedUrl = null;
+      fetch = function(u, opts){
+        if(opts && opts.method === 'POST'){ postedUrl = u; return Promise.resolve({ ok:true, status:202, json: function(){ return Promise.resolve({jobId:'j123'}); } }); }
+        return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve({ chapterId:'tp_te1', available:false }); } });
+      };
+      // _startTextExplorerJob's own setInterval is the REAL Node timer in this harness (lib-dom's
+      // sandbox maps it straight through) — stubbed here so this test doesn't leave a live 2s
+      // interval running forever and hanging the test process. Recording the interval's OWN
+      // callback lets us assert one was actually scheduled without ever letting it fire.
+      var scheduledIntervalFn = null;
+      setInterval = function(fn){ scheduledIntervalFn = fn; return 999; };
+      _ensureTextExplorerData();
+      true;`, 'ensure-miss');
+    await settle();
+    assert.strictEqual(C.run('postedUrl'), '/api/analyze-chapter/tp_te1', 'an unavailable GET triggers the POST job-kickoff route for the SAME chapter');
+    assert.strictEqual(C.run('_textExplorerJobId'), 'j123', 'the returned jobId is recorded for the shared poller/visibilitychange hook');
+    const entry = JSON.parse(C.run(`JSON.stringify(APP._teCache['tp_te1'])`));
+    assert.strictEqual(entry.status, 'analyzing', 'the cache entry moves to analyzing while the job runs');
+    assert.strictEqual(C.run('typeof scheduledIntervalFn'), 'function', 'a real polling interval was scheduled for the new job (2s poll shape, matching the comic pollers)');
+  }
+  console.log('  _ensureTextExplorerData: an unavailable/stale cache triggers a real analysis job, tracked for polling: OK');
+
+  // ── 3. _teSentenceHtml/_teTokenMarkHtml: real per-token marks, forward-only alignment ─────────
+  {
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON, 'seed-3');
+    const html = C.run(`_teSentenceHtml({ text:'Der Hund lauft.', tokens:[
+      {surface:'Der', lemma:'der', form:'article', sense:'the', confidence:'high'},
+      {surface:'Hund', lemma:'hund', form:'noun', sense:'dog', confidence:'high'},
+      {surface:'lauft', lemma:'laufen', form:'verb', sense:'runs', confidence:'low'},
+    ]})`);
+    assert.ok(html.includes('data-lemma="der"') && html.includes('data-form="article"') && html.includes('data-sense="the"'),
+      `first token carries its real lemma/form/sense as data attributes (got ${html})`);
+    assert.ok(html.includes('te-tok-low'), 'the low-confidence token gets the fainter te-tok-low class');
+    assert.ok(html.includes('>Der<') && html.includes('>Hund<') && html.includes('>lauft<'), 'each token surface appears as its own mark\'s text');
+    assert.ok(html.includes('.'), 'trailing punctuation (not a token) survives as plain text after the last mark');
+    console.log('  _teSentenceHtml: real per-token marks with lemma/form/sense/confidence, trailing punctuation preserved: OK');
+
+    // A token whose surface cannot be found (index drift) is skipped, not corrupting the sentence.
+    const html2 = C.run(`_teSentenceHtml({ text:'Der Hund lauft.', tokens:[
+      {surface:'Der', lemma:'der', form:'article', sense:'the', confidence:'high'},
+      {surface:'ZZZNOTPRESENT', lemma:'x', form:'x', sense:'x', confidence:'high'},
+      {surface:'lauft', lemma:'laufen', form:'verb', sense:'runs', confidence:'high'},
+    ]})`);
+    assert.ok(html2.includes('>Der<') && html2.includes('>lauft<') && !html2.includes('ZZZNOTPRESENT'),
+      `a token that cannot be found in the sentence text is skipped, the rest still renders (got ${html2})`);
+    console.log('  _teSentenceHtml: a token with no real match in its own sentence text is skipped, not corrupting: OK');
+  }
+
+  // ── 4. _textExplorerBodyHtml: the four cache states each render distinctly ─────────────────────
+  {
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON, 'seed-4');
+    const withEntry = (entry) => C.run(`
+      APP._teCache = APP._teCache || {};
+      APP._teCache['tp_te1'] = ${JSON.stringify(entry)};
+      _textExplorerBodyHtml(${JSON.stringify(TOPIC)});`);
+
+    assert.ok(withEntry({ status: 'loading' }).includes('te-status'), 'loading renders the status paragraph');
+    const analyzing = withEntry({ status: 'analyzing', step: 'CP2: analysing 3 sentence(s)…' });
+    assert.ok(analyzing.includes('CP2: analysing 3 sentence'), `analyzing shows the real live job step (got ${analyzing})`);
+    const errored = withEntry({ status: 'error', error: 'boom' });
+    assert.ok(errored.includes('boom'), `error state shows the real error message (got ${errored})`);
+    const ready = withEntry({ status: 'ready', data: { sentences: [
+      { sentenceId:'s0', text:'Der Hund lauft.', paraBreakBefore:false,
+        tokens:[{surface:'Der',lemma:'der',form:'article',sense:'the',confidence:'high'}] },
+      { sentenceId:'s1', text:'Die Katze schlaft.', paraBreakBefore:true,
+        tokens:[{surface:'Die',lemma:'die',form:'article',sense:'the',confidence:'high'}] },
+    ] } });
+    assert.ok(ready.includes('te-tok'), 'ready state renders real per-word marks');
+    // paraBreakBefore on sentence 1 -> two separate <p> paragraphs, not one run-on paragraph.
+    assert.strictEqual((ready.match(/<p /g) || []).length, 2, `a paraBreakBefore sentence starts its OWN paragraph (got ${ready})`);
+  }
+  console.log('  _textExplorerBodyHtml: loading/analyzing/error/ready each render their own correct markup, paragraph breaks respected: OK');
+
+  // ── 5. Injection safety: a hostile lemma/form/sense cannot break out of the attribute or tag ──
+  {
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON, 'seed-5');
+    const html = C.run(`_teSentenceHtml({ text:'Hallo', tokens:[
+      {surface:'Hallo', lemma:'"><script>alert(1)</script>', form:'x" onmouseover="alert(2)', sense:'y', confidence:'high'},
+    ]})`);
+    assert.ok(!html.includes('<script>'), `a lemma containing a literal <script> tag must not survive unescaped (got ${html})`);
+    assert.ok(!/onmouseover="alert/.test(html), `a form value must not be able to inject a NEW attribute via an unescaped quote (got ${html})`);
+    console.log('  token data-* attributes: a hostile lemma/form/sense cannot inject a tag or a new attribute: OK');
+  }
+
+  // ── 6. _renderCompStory(): explorer ON actually renders via _textExplorerBodyHtml, end-to-end ──
+  {
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON + `
+      APP.lessonData = ${JSON.stringify(TOPIC)};
+      APP._teCache = { tp_te1: { status:'ready', data: { sentences:[
+        { sentenceId:'s0', text:'Der Hund lauft.', paraBreakBefore:false,
+          tokens:[{surface:'Der',lemma:'der',form:'article',sense:'the',confidence:'high'},
+                  {surface:'Hund',lemma:'hund',form:'noun',sense:'dog',confidence:'high'},
+                  {surface:'lauft',lemma:'laufen',form:'verb',sense:'runs',confidence:'high'}] },
+      ] } } };
+      APP._textExplorer = true; APP._compStoryLang = 'target';
+      APP.cur = { lessonIdx: 0, exercises: [], cur: 0, correct: 1, total: 1, mistakes: 0, hearts: 3, streak: 1, bestStreak: 1 };
+      _renderCompStory();
+      true;`, 'render-explorer-on');
+    const bodyHtml = C.run(`document.getElementById('comp-story-text').innerHTML`);
+    assert.ok(bodyHtml.includes('te-tok'), `explorer ON: the story panel body actually contains real per-word marks (got ${bodyHtml})`);
+    assert.ok(bodyHtml.includes('data-lemma="hund"'), 'the real cached analysis data reaches the rendered DOM, not a placeholder');
+
+    // Turn it off: the SAME element now renders through the ORIGINAL _storyBodyHtml path — no
+    // te-tok marks at all (this fixture has no vocab, so highlighting would be empty either way,
+    // but the explorer-specific status/marks must be gone).
+    C.run(`APP._textExplorer = false; _renderCompStory(); true;`, 'render-explorer-off');
+    const bodyHtml2 = C.run(`document.getElementById('comp-story-text').innerHTML`);
+    assert.ok(!bodyHtml2.includes('te-tok'), `explorer OFF: no te-tok marks remain — back to the normal story renderer (got ${bodyHtml2})`);
+  }
+  console.log('  _renderCompStory(): explorer ON renders real per-word analysis marks into the DOM; OFF reverts cleanly: OK');
+
+  console.log('unit-text-explorer: ALL PASSED');
+})().catch(e => { console.error(e); process.exit(1); });

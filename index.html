@@ -536,6 +536,16 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .story-vocab-hl.wp-asked{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:2px}
 .story-vocab-hl.wp-tap{cursor:pointer}
 .story-vocab-hl.wp-tap:hover{outline:2px solid var(--blue);outline-offset:1px}
+/* PLAN §7.0 CP1/CP2, item W ("text explorer" mode) step 4: EVERY word gets a mark here (not just
+   this chapter's own vocabulary, unlike .story-vocab-hl above), so a distinct, cooler-toned scheme
+   keeps the two views from reading as the same feature — this one answers "what is this word",
+   not "have I learned this word". `.te-tok-low`/`.te-tok-unresolved` are visibly fainter, matching
+   this project's own "muted, not alarming" convention for a state that just means less certain. */
+.te-tok{background:#eaf2ff;border-radius:3px;padding:0 2px;cursor:pointer}
+.te-tok:hover{outline:2px solid var(--blue);outline-offset:1px}
+.te-tok-low{background:#f2f2f2;color:var(--gray-dark)}
+.te-tok-unresolved{background:none;border-bottom:1px dashed var(--gray-mid)}
+.te-status{color:var(--gray-dark);font-style:italic}
 .story-flag-row{padding:6px 14px 10px;display:flex;flex-direction:column;gap:6px}
 
 /* ══ STORY ═══════════════════════════════════════════════════════════ */
@@ -1862,6 +1872,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <span style="font-size:20px;flex:none">📖</span>
       <span style="font-size:15px;font-weight:900;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="comp-story-panel-lbl">Chapter</span>
       <span id="comp-story-flags" style="flex:none"></span>
+      <!-- PLAN §7.0 CP1/CP2, item W ("text explorer" mode, roadmap_v86.md) step 4: independent of
+           the translation flags — explorer mode always shows the TARGET-language text (what CP1/CP2
+           analysed), so toggling it also forces the flag state back to 'target' (toggleTextExplorer). -->
+      <button class="spk-ico" id="comp-story-explorer-btn" onclick="event.stopPropagation();toggleTextExplorer()" title="Text explorer — tap any word for its grammar" style="flex:none">🔍</button>
       <button class="spk-ico" id="comp-story-spk" onclick="event.stopPropagation();speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud" style="flex:none">💬</button>
     </summary>
     <!-- v74_l: NOT italic, and larger. This panel is the reward for finishing the chapter and the
@@ -4327,11 +4341,15 @@ function _startComicDetectJob(jobId){
 // already looking at. Logs unconditionally (even when nothing is tracked, so a session with no
 // in-flight comic job at all still shows the listener is alive and firing on visibility changes).
 document.addEventListener('visibilitychange', ()=>{
-  console.log('visibilitychange: state='+document.visibilityState+' extractJob='+_comicExtractJobId+' detectJob='+_comicDetectJobId+' bookJob='+_comicBookId);
+  console.log('visibilitychange: state='+document.visibilityState+' extractJob='+_comicExtractJobId+' detectJob='+_comicDetectJobId+' bookJob='+_comicBookId+' analysisJob='+_textExplorerJobId);
   if(document.visibilityState!=='visible') return;
   if(_comicExtractJobId) _comicExtractCheckOnce(_comicExtractJobId);
   if(_comicDetectJobId) _comicDetectCheckOnce(_comicDetectJobId);
   if(_comicBookId) _comicBookCheckOnce(_comicBookId);
+  // PLAN §7.0 CP1/CP2, item W step 4: same mobile-backgrounding fix as the three comic pollers above
+  // — CP2 is the slowest job this whole app kicks off (minutes, not seconds), so a backgrounded tab
+  // missing its own 2s poll matters here at least as much as it does for comic extraction.
+  if(_textExplorerJobId) _textExplorerCheckOnce(_textExplorerJobId);
 });
 
 // Converts the server's normalized-0-1000 boxes to APP_COMIC's own natural-pixel storage (the SAME
@@ -20248,11 +20266,29 @@ function _renderCompStory(){
     // show instead — `d.storyTranslation` is one flat string for the whole chapter); the story side
     // now passes nothing, letting `_storyBodyHtml`'s own default AND its comic-panel branch both work
     // exactly as they were built to.
-    try {
-      _el.innerHTML = _storyBodyHtml(d, { text: showingSource ? full : null, highlight: !showingSource });
-    } catch(_) {
-      _el.textContent = full;   // a story that renders unformatted is fine; one that fails is not
+    // PLAN §7.0 CP1/CP2, item W ("text explorer" mode) step 4: an independent VIEW, not a highlight
+    // variant of _storyBodyHtml — every word gets a mark (not just this chapter's own vocabulary),
+    // sourced from the per-token CP1/CP2 cache rather than a vocab word list. `!showingSource` guards
+    // it the same way `highlight` already does: the analysis is of the TARGET-language story, so it
+    // has nothing to say about a translation view (toggleTextExplorer forces target on toggle-on, but
+    // this stays defensive in case the two states ever disagree for any other reason).
+    if (APP._textExplorer && !showingSource) {
+      try { _el.innerHTML = _textExplorerBodyHtml(d); }
+      catch(_) { _el.textContent = full; }
+    } else {
+      try {
+        _el.innerHTML = _storyBodyHtml(d, { text: showingSource ? full : null, highlight: !showingSource });
+      } catch(_) {
+        _el.textContent = full;   // a story that renders unformatted is fine; one that fails is not
+      }
     }
+  }
+  const _expBtn = document.getElementById('comp-story-explorer-btn');
+  if (_expBtn) {
+    _expBtn.title = t('text_explorer.toggle_title');
+    _expBtn.style.opacity = APP._textExplorer ? '1' : '.5';
+    _expBtn.style.borderRadius = '6px';
+    _expBtn.style.border = '1.5px solid ' + (APP._textExplorer ? 'var(--blue)' : 'transparent');
   }
   // user follow-up: two flag buttons replace the old single "🌐 Original/Translation" text toggle
   // — see _storyFlagButtonsHtml. `toggleCompStoryLang(lang)` now SETS the language explicitly
@@ -20295,6 +20331,191 @@ function toggleExStoryLang(lang){
 function toggleCompStoryLang(lang){
   APP._compStoryLang = (lang === 'source') ? 'source' : 'target';
   _renderCompStory();
+}
+
+// ── PLAN §7.0 CP1/CP2, item W ("text explorer" mode, roadmap_v86.md) step 4 ──────────────────────
+// Client half of the recommended path's last piece: a view toggle next to the translation flags,
+// reusing the EXISTING /api/analysis + /api/analyze-chapter routes (steps 2-3) rather than any new
+// server surface. Per-chapter, in-memory only (APP._teCache) — not persisted, same lifetime as
+// APP._compStoryLang, which this feature sits right next to.
+//
+// `toggleTextExplorer` forces the flag state back to 'target' on toggle-ON: the analysis is of
+// `topic.story` specifically (CP1/CP2's own input), so showing it over a translation would be
+// showing the wrong language's grammar for the words on screen.
+function toggleTextExplorer(){
+  APP._textExplorer = !APP._textExplorer;
+  if (APP._textExplorer) APP._compStoryLang = 'target';
+  _renderCompStory();
+  if (APP._textExplorer) _ensureTextExplorerData();
+}
+function _teCacheStore(){
+  if (!APP._teCache) APP._teCache = {};   // chapterId -> {status:'loading'|'analyzing'|'ready'|'error', data, step, error}
+  return APP._teCache;
+}
+// Fetches the cached analysis if one exists; otherwise triggers (or reuses) the background job and
+// hands off to the poller. Never throws — every branch degrades to an 'error' cache entry that
+// _textExplorerBodyHtml renders as a short status line, the same "fail soft, not silently" pattern
+// refreshCp5Shadow already uses for its own fire-and-forget fetch.
+async function _ensureTextExplorerData(){
+  const d = APP.lessonData, chapterId = d && d.id;
+  const store = _teCacheStore();
+  if (!chapterId) return;   // an unsaved/preview chapter has no id for CP1 to key on — nothing to fetch
+  // Only an EXISTING entry counts as "already in flight or done" — checked BEFORE creating this
+  // call's own entry, or a fresh 'loading' entry would immediately match its own just-created state
+  // and short-circuit every single call, including the very first one.
+  const existing = store[chapterId];
+  if (existing && (existing.status === 'ready' || existing.status === 'loading' || existing.status === 'analyzing')) { _renderCompStory(); return; }
+  const entry = store[chapterId] = { status: 'loading', error: null };
+  _renderCompStory();
+  try {
+    const r = await fetch('/api/analysis/' + encodeURIComponent(chapterId));
+    const cp = r && r.ok ? await r.json() : null;
+    if (cp && cp.available && !cp.stale) { entry.status = 'ready'; entry.data = cp; _renderCompStory(); return; }
+    entry.status = 'analyzing'; entry.step = t('text_explorer.analyzing');
+    _renderCompStory();
+    const start = await fetch('/api/analyze-chapter/' + encodeURIComponent(chapterId),
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+    const sb = await start.json().catch(() => null);
+    if (!start.ok) { entry.status = 'error'; entry.error = (sb && sb.error) || ('HTTP ' + start.status); _renderCompStory(); return; }
+    if (sb && sb.cached) { entry.status = 'ready'; entry.data = sb; _renderCompStory(); return; }
+    if (!sb || !sb.jobId) { entry.status = 'error'; entry.error = (sb && sb.error) || 'unavailable'; _renderCompStory(); return; }
+    _startTextExplorerJob(chapterId, sb.jobId);
+  } catch (e) {
+    entry.status = 'error'; entry.error = String((e && e.message) || e);
+    _renderCompStory();
+  }
+}
+// Poller, same shape as _startComicExtractJob/_comicExtractCheckOnce (v86_d's own mobile-
+// backgrounding fix) — module-level job id lets the shared visibilitychange listener below trigger
+// an immediate re-check the instant a backgrounded tab becomes visible again, instead of only ever
+// waiting on the 2s timer (which mobile browsers can throttle or suspend while backgrounded).
+let _textExplorerJobId = null, _textExplorerChapterId = null;
+async function _textExplorerCheckOnce(jobId){
+  if (_textExplorerJobId !== jobId) return;
+  const chapterId = _textExplorerChapterId;
+  const entry = chapterId && _teCacheStore()[chapterId];
+  try {
+    const r = await fetch('/api/job/' + jobId);
+    if (!r.ok) throw new Error('Poll failed: ' + r.status);
+    const j = await r.json();
+    if (_textExplorerJobId !== jobId) return;   // superseded while the fetch was in flight
+    if (entry && j.step) entry.step = j.step;
+    if (j.status === 'done') {
+      _textExplorerJobId = null;
+      const gr = await fetch('/api/analysis/' + encodeURIComponent(chapterId)).then(x => x.json()).catch(() => null);
+      if (entry) {
+        if (gr && gr.available) { entry.status = 'ready'; entry.data = gr; }
+        else { entry.status = 'error'; entry.error = 'analysis missing after the job finished'; }
+      }
+      _renderCompStory();
+      return;
+    }
+    if (j.status === 'error' || j.status === 'cancelled') {
+      _textExplorerJobId = null;
+      if (entry) { entry.status = 'error'; entry.error = j.error || j.status; }
+      _renderCompStory();
+      return;
+    }
+    _renderCompStory();   // still running — repaint so a changed `step` label is visible
+  } catch (e) {
+    if (_textExplorerJobId !== jobId) return;
+    _textExplorerJobId = null;
+    if (entry) { entry.status = 'error'; entry.error = String((e && e.message) || e); }
+    _renderCompStory();
+  }
+}
+function _startTextExplorerJob(chapterId, jobId){
+  _textExplorerJobId = jobId; _textExplorerChapterId = chapterId;
+  const iv = setInterval(() => {
+    if (_textExplorerJobId !== jobId) { clearInterval(iv); return; }
+    _textExplorerCheckOnce(jobId);
+  }, 2000);
+}
+
+// The view itself. Built DIRECTLY from the cached per-sentence CP1/CP2 data (text + tokens), not by
+// highlighting an already-rendered story — see _teSentenceHtml for why that alignment is safer than
+// a shared regex pass over the whole story the way _highlightVocabHtml works for the vocab view.
+function _textExplorerBodyHtml(d){
+  const chapterId = d && d.id;
+  const wrap = html => '<div class="story-selectable">' + html + '</div>';
+  if (!chapterId) return '<p class="te-status" dir="auto">' + escHtml(t('text_explorer.error', { error: 'no chapter id' })) + '</p>';
+  const entry = _teCacheStore()[chapterId];
+  if (!entry || entry.status === 'loading') return '<p class="te-status" dir="auto">' + escHtml(t('text_explorer.loading')) + '</p>';
+  if (entry.status === 'analyzing') return '<p class="te-status" dir="auto">' + escHtml(entry.step || t('text_explorer.analyzing')) + '</p>';
+  if (entry.status === 'error') return '<p class="te-status" dir="auto">' + escHtml(t('text_explorer.error', { error: entry.error || '' })) + '</p>';
+  const sentences = (entry.data && entry.data.sentences) || [];
+  if (!sentences.length) return wrap(_storyParasHtml(furiHtml(d.story || '')));
+  // Paragraph breaks are CP1's OWN `paraBreakBefore` flag (a blank line in the source story) — a
+  // plain single newline WITHIN a paragraph is not preserved at the sentence-record level at all
+  // (canonical-text.js's own splitCanonicalSentences trims each paragraph as one run before
+  // splitting on sentence punctuation), so this cannot reproduce single-line-break layout the way
+  // _storyParasHtml's direct `\n`->`<br>` pass over the raw story can. A real but minor gap — the
+  // rest of the paragraph structure (and every word's own analysis) is unaffected by it.
+  let out = '', para = '';
+  sentences.forEach((s, i) => {
+    if (i > 0 && s.paraBreakBefore) { out += '<p dir="auto">' + para + '</p>'; para = ''; }
+    else if (para) para += ' ';
+    para += _teSentenceHtml(s);
+  });
+  if (para) out += '<p dir="auto">' + para + '</p>';
+  return wrap(out);
+}
+// ONE sentence's HTML. Walks the sentence's OWN raw text with a cursor, finding each token's
+// surface by a forward-only indexOf from where the last token ended — never joins tokens back
+// together with a guessed whitespace rule the way a token-list-to-string reconstruction would have
+// to. A token whose surface cannot be found from the cursor onward (CP1/CP2 index drift, or a
+// degenerate reply) is simply skipped — it survives as part of the surrounding PLAIN text instead
+// of corrupting the rest of the sentence, the same "degrade, don't corrupt" convention
+// _highlightVocabHtml's own regex-compile fallback uses.
+function _teSentenceHtml(s){
+  const text = String((s && s.text) || '');
+  const tokens = Array.isArray(s && s.tokens) ? s.tokens : [];
+  let out = '', cursor = 0;
+  tokens.forEach(tok => {
+    const surface = String((tok && tok.surface) || '');
+    if (!surface) return;
+    const p = text.indexOf(surface, cursor);
+    if (p < 0) return;
+    out += escHtml(text.slice(cursor, p));
+    out += _teTokenMarkHtml(tok, surface);
+    cursor = p + surface.length;
+  });
+  out += escHtml(text.slice(cursor));
+  return out;
+}
+function _teTokenMarkHtml(tok, surface){
+  const conf = (tok && tok.confidence) || 'unresolved';
+  const cls = 'te-tok' + (conf === 'low' ? ' te-tok-low' : conf === 'unresolved' ? ' te-tok-unresolved' : '');
+  const attrs = ['lemma', 'form', 'sense'].map(k => `data-${k}="${escAttr((tok && tok[k]) || '')}"`).join(' ');
+  return `<mark class="${cls}" role="button" tabindex="0" data-surface="${escAttr(surface)}" data-conf="${escAttr(conf)}" ${attrs}`
+    + ` onclick="event.stopPropagation();_teShowWordPopover(event,this)">${escHtml(surface)}</mark>`;
+}
+// Same fixed-position, click-to-dismiss popup shape as openRetitleMenu (storyline retitle menu) —
+// re-derived rather than shared, since that one is a list of buttons and this is a read-only info
+// card, but the positioning/dismiss logic is identical on purpose.
+function _teShowWordPopover(ev, el){
+  document.getElementById('te-word-pop')?.remove();
+  const ds = el.dataset;
+  const pop = document.createElement('div');
+  pop.id = 'te-word-pop';
+  pop.style.cssText = 'position:fixed;z-index:9999;max-width:min(320px,calc(100vw - 24px));'
+    + 'background:var(--white);border:1.5px solid var(--gray-mid);border-radius:10px;'
+    + 'box-shadow:0 4px 16px rgba(0,0,0,.18);padding:10px 12px;font-size:13px;line-height:1.5;color:var(--text)';
+  const rows = [`<div style="font-weight:900;font-size:15px;margin-bottom:4px">${escHtml(ds.surface || '')}</div>`];
+  if (ds.lemma) rows.push(`<div><span style="opacity:.6">${escHtml(t('text_explorer.lemma'))}:</span> ${escHtml(ds.lemma)}</div>`);
+  if (ds.form) rows.push(`<div><span style="opacity:.6">${escHtml(t('text_explorer.form'))}:</span> ${escHtml(ds.form)}</div>`);
+  if (ds.sense) rows.push(`<div><span style="opacity:.6">${escHtml(t('text_explorer.sense'))}:</span> ${escHtml(ds.sense)}</div>`);
+  if (ds.conf === 'low') rows.push(`<div style="color:#b06000;font-weight:700;margin-top:4px">⚠ ${escHtml(t('text_explorer.low_confidence'))}</div>`);
+  if (ds.conf === 'unresolved' || !ds.lemma) rows.push(`<div style="opacity:.6;font-style:italic;margin-top:4px">${escHtml(t('text_explorer.unresolved'))}</div>`);
+  pop.innerHTML = rows.join('');
+  document.body.appendChild(pop);
+  const r = pop.getBoundingClientRect();
+  let x = ev.clientX, y = ev.clientY + 8;
+  if (x + r.width > innerWidth - 8) x = innerWidth - r.width - 8;
+  if (y + r.height > innerHeight - 8) y = ev.clientY - r.height - 8;
+  pop.style.left = Math.max(8, x) + 'px';
+  pop.style.top = Math.max(8, y) + 'px';
+  setTimeout(() => document.addEventListener('click', () => document.getElementById('te-word-pop')?.remove(), { once: true }), 0);
 }
 
 // ── Persistent tutor widget (v62) ────────────────────────────────────────────

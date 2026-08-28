@@ -37,7 +37,7 @@ this file stays current through the whole `v86` line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v86 CUT** | fresh, top-of-file summary of everything still genuinely open, then the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v86 LINE** | `v86_n` — `PLAN §7.0` CP2 groundwork (item W reconciliation, step 1 of 4): a new `OLLAMA_ANALYSIS_MODEL` role, same runtime-switchable pattern as every other role (`currentModels()`/`setRuntimeModels()`/`/api/models`/`/api/info`), falls back to `OLLAMA_MODEL` (unlike vision) since analysis needs no special capability — but nothing calls it yet, this is groundwork only for a future CP1/CP2 browser integration. Steps 2–4 (background job + cache, GET endpoint, client UI) deliberately deferred to a fresh session (this track is explicitly tagged "multi-session"). `v86_m` — item AB (the "unrelated context" half): `tutorRetrieveContext`'s "grab up to 4 topics by recency" fallback (fires when the question tokenizes to nothing) is now gated on a new `hasHistory` flag (`/api/tutor` passes `history.length > 0`) — a topic-less mid-conversation continuation ("finish that sentence please") now retrieves nothing instead of grabbing unrelated topics by recency, while a genuinely fresh/opening question still gets grounding. Live-verified against the real `qwen3.6:35b-a3b` model on a real corpus topic pair: the opening-question case still grounds correctly, and the continuation case now sends no `ctx:` at all (prompt tokens 1282→667) with the reply staying coherent from history alone. `docs/index.html` also rebuilt (unrelated staleness from the `c8fa64d` lessons commit, cleared). A new, unrelated reproducible red flagged not fixed: `unit-article-choices` now fails deterministically (one live `it`-language article lesson can't build a full MCQ), not corpus noise. `v86_l` — item AA: the teacher-mode toggle became a dropdown with two explicit named options ("Teacher"/"Student") instead of a bare "click to flip" lock icon — `_teacherMode` (the underlying boolean gating dozens of call sites app-wide) unchanged, only the control's own presentation changed. `v86_k` — item S: each lesson is now persisted the instant it finishes during multi-type generation, not batched until the whole chapter completes — fixed in BOTH `_runRecreateJob` (the user's own reported case) and `_runBookJob`'s own arc-reinforcement loop (found to have the same gap while checking whether the fix generalized), each confirmed safe to call incrementally by reading `upsert()`'s own id-matching behaviour first. Item F's live-verification half: `probe_article_symmetry_v80j.js` re-run against the full live corpus confirms the `v85_r` fix took hold (the two originally-named chapters are now 0% asymmetric; overall rate is 1.3% and mostly explained by correct per-language citation convention, not a defect). `v86_j` — the user's own answers on AE/AF from `v86_i`: AF resolved (they never actually watched the screen for the toast — `showToast()` has never logged to console, likely never a bug) and its own console-message ask was built; AE's own leading hypothesis (page discarded/reloaded) was REFUTED by the user's answer (state survived backgrounding almost exactly), so instead of a speculative fix, rich diagnostic console logging was added throughout the whole visibility-recovery mechanism (all three comic pollers' own check functions, plus the shared listener logging UNCONDITIONALLY on every fire) — diagnostic only, no behaviour change, but the next occurrence should be immediately diagnosable from console output alone. `v86_i` — a real showToast() dead-guard bug found and fixed while investigating two live-testing reports (not the cause of either, ruled out specifically). Live-testing round on `v86_d`–`v86_h` began: items L/I/M confirmed working; two problems (AE: mobile-backgrounding recovery did not recover on a real device; AF: the partial-drop toast/panel-count mismatch recurred) investigated but NOT resolved — both need the user's own answers to specific diagnostic questions before a confident fix, not a guess. `v86_h` — `INTERNALS.md` §6b caught up (doc-only). From a 16-item real-usage batch: item Q (comprehension questions must be independently answerable, a prompt-only fix), plus three unrelated small fixes — tutor logs on ASK now (not just on a completed reply), a QC 'rewrite' verdict (large change-ratio, not necessarily corruption) can now be ACCEPTED after human review (only 'corrupt' stays hard-blocked), and the static build's own `init()` now wires `_storyTapInit()` (tap-to-advance on plain story text was silently dead there). The other 13 items scoped into the roadmap as items P–AC, not built this cut. `v86_g` — item L: a comic/image chapter's progress card and question panel showed STALE text after a story edit (`_comicStoryPanelsHtml` reads `comicPanels[].caption`/`inScene`, a separate copy of the text `/api/save-story` never touched) — fixed by syncing `comicPanels[0]` on save for the unambiguous SINGLE-panel case (multi-panel deliberately left as item O, genuinely ambiguous). Item M: drag-to-move a panel box (`_comicHitBox`), the companion to the existing resize handles — a handle grab still wins at a box's own corner. Item N: a "3 shown, 4 detected" report investigated and found to be a likely MODEL accuracy limitation, not a code bug (no merging logic exists) — not changed this cut, flagged for a live-model probe if wanted. `v86_f` — item I: a fixed 90°-clockwise-per-click rotate button for the uploaded/captured comic image, using the SAME offscreen-canvas-redraw shape as the existing downscale step, routed through the SAME `img.onload -> _comicFinishSetup()` path a fresh upload uses — so natural dimensions are read from the rotated image itself and panel-box invalidation comes for free from the existing "new image clears boxes" precedent, no new logic needed. `v86_e` — item K: the SAME mobile-backgrounding fix extended to `_pollComicBookJob` (book/chapter creation), the one poller `v86_d` explicitly left open — required its own small refactor (a `while`+`sleep` loop split into a re-invokable `_comicBookCheckOnce()`, gated on the pre-existing `_comicBookId`) rather than a copy-paste, since it wasn't `setInterval`-shaped like the other two. Preserves one deliberate behavioural difference: a network hiccup mid-poll is NOT terminal here (unlike extract/detect), matching the original code exactly. Six new tests exercise the REAL function for the first time (every prior test mocked it). `v86_d` — mobile-backgrounding fix: `setInterval`-based polling for comic extraction AND detection can be throttled/suspended on a backgrounded phone tab, stranding a client that never learns its job finished (confirmed live: the user's own console showed server-side success while the UI stayed stuck). Fixed with a shared `visibilitychange` listener that re-checks any in-flight job off-schedule the instant the tab becomes visible again; `_pollComicBookJob` has the same class of gap and is explicitly NOT yet fixed (item K below). Also: a second live bug found mid-session — auto-detect silently dropped a malformed/inverted box with NO toast unless every suggested box was dropped (confirmed live: server said "4 panel(s) suggested", UI showed 3, no explanation) — now toasts on any drop, partial or total. Also item J: a "use whole image as one panel" shortcut button. `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
+| **SHIPPED IN THE v86 LINE** | `v86_o` — item W steps 2-4 (the rest of the CP1/CP2 browser integration): a background job (`_runAnalysisJob`, CP1 then CP2, cached per chapter id via a new `analyzingChapters` lock so concurrent requests share one job), `GET /api/analysis/:chapterId` mirroring `cp5ShadowFor`'s own shape (absent → `available:false`, plus a new `stale` field for a post-analysis story edit) and `POST /api/analyze-chapter/:chapterId` (cache-hit short-circuit, else 202+jobId polled via the existing `/api/job/:id`), and a client "text explorer" view — a 🔍 toggle next to the translation flags, per-token `<mark>` highlighting built directly from the cached data via forward-only substring alignment (not a shared-word-list regex pass), a click popover, and the SAME mobile-backgrounding-safe poller shape (+ shared `visibilitychange` hook) the three comic pollers already use. Two real bugs found and fixed by this cut's own tests (a test-isolation leak into the real `canonical-analysis.json`, and a genuine self-mutation bug where the fetch guard matched its own just-created cache entry and short-circuited every call). Live-verified against the real `qwen3.6:35b-a3b` model on the SAME chapter the `v83_n`/`v83_p` note measured: ~13-14 minutes wall-clock for 4 sentences on this container's CPU-only inference (consistent with the prior "12+ minutes" finding), zero apparent wrong lemma/form/sense across 26 tokens, correct cross-sentence antecedent gender-agreement, plus 4 well-formed multi-word phrases. `v86_n` — `PLAN §7.0` CP2 groundwork (item W reconciliation, step 1 of 4): a new `OLLAMA_ANALYSIS_MODEL` role, same runtime-switchable pattern as every other role (`currentModels()`/`setRuntimeModels()`/`/api/models`/`/api/info`), falls back to `OLLAMA_MODEL` (unlike vision) since analysis needs no special capability — but nothing calls it yet, this is groundwork only for a future CP1/CP2 browser integration. Steps 2–4 (background job + cache, GET endpoint, client UI) deliberately deferred to a fresh session (this track is explicitly tagged "multi-session"). `v86_m` — item AB (the "unrelated context" half): `tutorRetrieveContext`'s "grab up to 4 topics by recency" fallback (fires when the question tokenizes to nothing) is now gated on a new `hasHistory` flag (`/api/tutor` passes `history.length > 0`) — a topic-less mid-conversation continuation ("finish that sentence please") now retrieves nothing instead of grabbing unrelated topics by recency, while a genuinely fresh/opening question still gets grounding. Live-verified against the real `qwen3.6:35b-a3b` model on a real corpus topic pair: the opening-question case still grounds correctly, and the continuation case now sends no `ctx:` at all (prompt tokens 1282→667) with the reply staying coherent from history alone. `docs/index.html` also rebuilt (unrelated staleness from the `c8fa64d` lessons commit, cleared). A new, unrelated reproducible red flagged not fixed: `unit-article-choices` now fails deterministically (one live `it`-language article lesson can't build a full MCQ), not corpus noise. `v86_l` — item AA: the teacher-mode toggle became a dropdown with two explicit named options ("Teacher"/"Student") instead of a bare "click to flip" lock icon — `_teacherMode` (the underlying boolean gating dozens of call sites app-wide) unchanged, only the control's own presentation changed. `v86_k` — item S: each lesson is now persisted the instant it finishes during multi-type generation, not batched until the whole chapter completes — fixed in BOTH `_runRecreateJob` (the user's own reported case) and `_runBookJob`'s own arc-reinforcement loop (found to have the same gap while checking whether the fix generalized), each confirmed safe to call incrementally by reading `upsert()`'s own id-matching behaviour first. Item F's live-verification half: `probe_article_symmetry_v80j.js` re-run against the full live corpus confirms the `v85_r` fix took hold (the two originally-named chapters are now 0% asymmetric; overall rate is 1.3% and mostly explained by correct per-language citation convention, not a defect). `v86_j` — the user's own answers on AE/AF from `v86_i`: AF resolved (they never actually watched the screen for the toast — `showToast()` has never logged to console, likely never a bug) and its own console-message ask was built; AE's own leading hypothesis (page discarded/reloaded) was REFUTED by the user's answer (state survived backgrounding almost exactly), so instead of a speculative fix, rich diagnostic console logging was added throughout the whole visibility-recovery mechanism (all three comic pollers' own check functions, plus the shared listener logging UNCONDITIONALLY on every fire) — diagnostic only, no behaviour change, but the next occurrence should be immediately diagnosable from console output alone. `v86_i` — a real showToast() dead-guard bug found and fixed while investigating two live-testing reports (not the cause of either, ruled out specifically). Live-testing round on `v86_d`–`v86_h` began: items L/I/M confirmed working; two problems (AE: mobile-backgrounding recovery did not recover on a real device; AF: the partial-drop toast/panel-count mismatch recurred) investigated but NOT resolved — both need the user's own answers to specific diagnostic questions before a confident fix, not a guess. `v86_h` — `INTERNALS.md` §6b caught up (doc-only). From a 16-item real-usage batch: item Q (comprehension questions must be independently answerable, a prompt-only fix), plus three unrelated small fixes — tutor logs on ASK now (not just on a completed reply), a QC 'rewrite' verdict (large change-ratio, not necessarily corruption) can now be ACCEPTED after human review (only 'corrupt' stays hard-blocked), and the static build's own `init()` now wires `_storyTapInit()` (tap-to-advance on plain story text was silently dead there). The other 13 items scoped into the roadmap as items P–AC, not built this cut. `v86_g` — item L: a comic/image chapter's progress card and question panel showed STALE text after a story edit (`_comicStoryPanelsHtml` reads `comicPanels[].caption`/`inScene`, a separate copy of the text `/api/save-story` never touched) — fixed by syncing `comicPanels[0]` on save for the unambiguous SINGLE-panel case (multi-panel deliberately left as item O, genuinely ambiguous). Item M: drag-to-move a panel box (`_comicHitBox`), the companion to the existing resize handles — a handle grab still wins at a box's own corner. Item N: a "3 shown, 4 detected" report investigated and found to be a likely MODEL accuracy limitation, not a code bug (no merging logic exists) — not changed this cut, flagged for a live-model probe if wanted. `v86_f` — item I: a fixed 90°-clockwise-per-click rotate button for the uploaded/captured comic image, using the SAME offscreen-canvas-redraw shape as the existing downscale step, routed through the SAME `img.onload -> _comicFinishSetup()` path a fresh upload uses — so natural dimensions are read from the rotated image itself and panel-box invalidation comes for free from the existing "new image clears boxes" precedent, no new logic needed. `v86_e` — item K: the SAME mobile-backgrounding fix extended to `_pollComicBookJob` (book/chapter creation), the one poller `v86_d` explicitly left open — required its own small refactor (a `while`+`sleep` loop split into a re-invokable `_comicBookCheckOnce()`, gated on the pre-existing `_comicBookId`) rather than a copy-paste, since it wasn't `setInterval`-shaped like the other two. Preserves one deliberate behavioural difference: a network hiccup mid-poll is NOT terminal here (unlike extract/detect), matching the original code exactly. Six new tests exercise the REAL function for the first time (every prior test mocked it). `v86_d` — mobile-backgrounding fix: `setInterval`-based polling for comic extraction AND detection can be throttled/suspended on a backgrounded phone tab, stranding a client that never learns its job finished (confirmed live: the user's own console showed server-side success while the UI stayed stuck). Fixed with a shared `visibilitychange` listener that re-checks any in-flight job off-schedule the instant the tab becomes visible again; `_pollComicBookJob` has the same class of gap and is explicitly NOT yet fixed (item K below). Also: a second live bug found mid-session — auto-detect silently dropped a malformed/inverted box with NO toast unless every suggested box was dropped (confirmed live: server said "4 panel(s) suggested", UI showed 3, no explanation) — now toasts on any drop, partial or total. Also item J: a "use whole image as one panel" shortcut button. `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, `PLAN §7.0` Track A (CP1–5), and `PLAN §13` are ALL fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). `PLAN §2.4` / Track A4 (comic/image ingest) is fully shipped as its FOUR-milestone core, plus a `v85_o` auto-detect follow-up, plus a `v85_t` panel-resize follow-up, plus a `v85_u` resize-sync fix — its own sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -532,7 +532,7 @@ from ONE image" — the second option reuses far more existing machinery and is 
 Directly related to item R/S above (a multi-image batch is exactly the kind of longer-running,
 multi-step job that benefits from incremental persistence).
 
-### W. "Text explorer" mode — hover/click any word in the story to see its full grammatical analysis, independent of playing lessons
+### ✅ W. "Text explorer" mode — hover/click any word in the story to see its full grammatical analysis, independent of playing lessons — SHIPPED `v86_o`
 
 **The user's own words: "THIS WILL BE A REALLY NICE FEATURE."** Ask: with the newer word-by-word
 analysis pipeline (the same per-word grammatical breakdown `inflections` lessons already generate),
@@ -613,6 +613,17 @@ scoped in fine detail** (exact cache invalidation rule, exact job-progress UI, e
 content/styling) — this reconciliation settles WHERE the data comes from and confirms it is buildable
 on already-measured, already-partially-wired infrastructure; it does not yet commit to a build order
 or a release size.
+
+**✅ ALL FOUR STEPS SHIPPED `v86_o`** — see that release's own roadmap section (under
+`# ✅ SHIPPED IN THE v86 LINE`) for the full build + live-verification write-up. Step 4's client UI
+ended up reusing NEITHER `_highlightVocabHtml` nor the `wp-tap` hook this note originally guessed at —
+per-token analysis has no shared vocab word list to regex-match against, and the same surface form can
+carry a different analysis at a different occurrence, so the real implementation builds the view
+DIRECTLY from the cached per-sentence data (forward-only substring alignment against each sentence's
+own raw text) instead. Cache invalidation is "serve stale, label it, don't auto-refresh"; job-progress
+UI is a single status line; the per-word popup shows lemma/form/sense/confidence. Only the completion/
+progress card panel got the toggle — the question panel's own story view (`_exStoryPanelHtml`) did
+not, a natural small follow-up.
 
 ### X. Alternative-correct-answer handling for typing/ordering (and similar) lesson types — user's own thoughts, recorded verbatim
 
@@ -2618,6 +2629,129 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v86 LINE
+
+## ✅ v86_o — item W steps 2-4: background CP1+CP2 job, per-chapter cache, GET shadow, client "text explorer" view
+
+Picked up from `v86_n`'s own "WHERE TO START" — a fresh session with a full, unhurried budget, per
+rule 9 (a track tagged "(multi-session)" is a standing judgment call, not overridden without a real
+reason). Builds all three remaining steps of item W's recommended path in one cut.
+
+**Step 2 — background job + per-chapter cache (server.js).** `ANALYSIS_STORE_FILE`
+(`canonical-analysis.json`, env-overridable via `CANONICAL_ANALYSIS_FILE`) is read fresh from disk
+each call, same "absence is the normal case" philosophy as `CURRICULUM_PLAN_FILE` — but UNLIKE that
+file (a manually-produced CLI artifact server.js never writes), this one genuinely IS written by the
+server: `_runAnalysisJob(jobId, topic)` runs CP1 (`buildCanonicalText`, instant) then CP2
+(`analyzeChapter`, one model call per sentence, sequential) and caches the result keyed by chapter
+id, mirroring `_runComicExtractJob`/`_runComicDetectJob`'s exact `newJob`/`jobStep`/`jobDone`/
+`jobFail` shape — the precedent item W's own recommended path named. `analyzingChapters` (a
+`chapterId -> jobId` Map, same pattern as the existing `generatingTopics` lock) prevents a second
+concurrent request for the SAME chapter from starting a duplicate multi-minute job — it reuses the
+in-flight job's id instead. Each cached record is enriched with CP1's own raw sentence `text` and
+`paraBreakBefore` flag (canonical-analysis.js's own `analyzeChapter` deliberately does not carry
+these — CP2 is token-level analysis, not a second copy of CP1's sentence boundaries) so the client
+renderer (step 4) needs no second CP1 pass of its own to place tokens back into the real story
+layout.
+
+**Step 3 — GET endpoint mirroring `cp5ShadowFor`'s own shape (server.js).**
+`GET /api/analysis/:chapterId` — absent → `available:false`, no legacy behaviour change, same as
+`cp-shadow`. One field `cp5ShadowFor` has no analogue for: `stale` — re-hashes the chapter's LIVE
+story text via CP1 (cheap) on every read and compares against the hash recorded at analysis time; a
+post-analysis story edit marks the cached result stale WITHOUT deleting it (old-but-labelled beats a
+silent gap). `POST /api/analyze-chapter/:chapterId` is the trigger half: a fresh, non-stale cache hit
+short-circuits with `200 {cached:true, ...}` (no job at all — repeat "hover mode" visits cost
+nothing); otherwise it starts (or reuses, via `analyzingChapters`) a job and returns `202 {jobId}`,
+polled through the EXISTING `/api/job/:id` route every other background job already uses.
+
+**Step 4 — the client "text explorer" view (index.html).** A 🔍 toggle button
+(`#comp-story-explorer-btn`) next to the translation flags in the progress card's story panel.
+`toggleTextExplorer()` forces the flag state back to `'target'` on toggle-ON — the analysis is of
+`topic.story` specifically, so a translation view has nothing to show. `_ensureTextExplorerData()`
+fetches the GET shadow; on a miss/stale result it POSTs the job-kickoff route and hands off to a
+poller (`_startTextExplorerJob`/`_textExplorerCheckOnce`) built as a structural sibling of the three
+comic pollers (`_startComicExtractJob` etc.) — SAME 2s-interval shape, and hooked into the SAME
+shared `visibilitychange` listener those three already use (`v86_d`'s mobile-backgrounding fix), since
+CP2 is the slowest job this app kicks off (minutes, not seconds) and a backgrounded tab missing its
+own poll matters here at least as much as it does for comic extraction.
+
+The view itself (`_textExplorerBodyHtml`/`_teSentenceHtml`/`_teTokenMarkHtml`) is built DIRECTLY from
+the cached per-sentence data, not by highlighting an already-rendered story the way
+`_highlightVocabHtml` works for the vocab view (that function matches a shared WORD LIST via one
+regex pass; per-token analysis has no such list, and the same surface form can carry a different
+analysis at a different occurrence). Each sentence's raw text is walked with a cursor; each token's
+`surface` is located by a forward-only `indexOf` from where the previous token ended, so tokens are
+never rejoined with a guessed whitespace rule — a token that cannot be found (index drift) is simply
+skipped, surviving as part of the surrounding plain text instead of corrupting the rest of the
+sentence (same "degrade, don't corrupt" convention as `_highlightVocabHtml`'s own regex-compile
+fallback). Click (`_teShowWordPopover`) shows lemma/form/sense/confidence in a small popup — same
+`position:fixed`, computed-from-click-coordinates, dismiss-on-next-document-click shape as
+`openRetitleMenu` (the storyline retitle menu), re-derived rather than shared since that one is a
+button list and this is a read-only info card. New CSS (`.te-tok`/`.te-tok-low`/`.te-tok-unresolved`/
+`.te-status`) uses a distinct cooler-toned palette from `.story-vocab-hl` so the two views read as
+different features — "what is this word" vs. "have I learned this word". 9 new `en`-only `ui.json`
+keys (`text_explorer.*`).
+
+**Two real bugs found and fixed by the tests written for this cut, not just written to pass:**
+1. **A test-isolation bug** (`e2e-analysis.test.js`'s own first draft): `boot()` was called with no
+   `CANONICAL_ANALYSIS_FILE` override, so the new store's default path (the real, committed-adjacent
+   `canonical-analysis.json` in the project root) received real fixture data from the test run —
+   confirmed via `git status --short` showing it as a new untracked file. UNLIKE `curriculum-plan.json`
+   (never server-written, so `unit-cp5-shadow.test.js` can safely rely on the real root's copy being
+   absent), this store genuinely IS written by the job under test, so every boot needs its own scratch
+   file — fixed the same way that file's own `scratchPlan` fixture does, via `tmpFile()` + `extraEnv`.
+2. **A genuine self-mutation bug**, caught by `unit-text-explorer.test.js`, not a fixture accident:
+   `_ensureTextExplorerData`'s first draft created a fresh cache entry with `status:'loading'`, THEN
+   immediately checked "is the status ready/loading/analyzing — if so, bail", which matched the entry
+   it had JUST created on every single call, so the very first invocation always short-circuited
+   before ever fetching anything. Fixed by checking a PRE-EXISTING entry (looked up before this call
+   creates its own) rather than the one just created — the mutation-testing discipline this project's
+   own rules ask for (rule: "break the thing a guard claims to protect and watch it go red") caught
+   this on the first real run, not a review.
+
+**Live-verified, not just fake-LLM-tested** — CP2's own real cost was explicitly the thing to budget
+for this cut. A separate, isolated server instance (its own port, its own scratch cache file, real
+Ollama, `qwen3.6:35b-a3b` — never touching the user's own long-running dev server, already running
+against the same `lessons.json`) analysed `tp_17865786341910000220` ("Vittoria Ingannevole", de→it) —
+the SAME chapter the `v83_n`→`v83_p` note already measured, chosen deliberately for a direct
+comparison against evidence already on record. **Timing**: 4 sentences / 26 tokens took ~13-14 minutes
+wall-clock on this container's CPU-only inference (`ollama ps` showed `size_vram:0` for every loaded
+model) — consistent with (slightly over) the roadmap's own prior "12+ minutes even on a warm model"
+finding; not a new problem, and not investigated further, since it is inherent to the container's
+hardware, not this feature's code. **Quality**: zero apparent wrong lemma/form/sense across all 26
+tokens, matching run 2's original 0/8 finding for this exact chapter — `Riese` correctly lemmatised
+singular → `gigante`; `geben`/`GIBT` correctly read idiomatically → `esiste (in senso impersonale)`;
+`SIE` (chapter 4, "she was re-elected") correctly tagged grammatically FEMININE, matching `die
+Regierung` and not the neuter `das Land` — the same cross-sentence antecedent resolution the original
+CLI run demonstrated, visible here in the grammar tag itself rather than a separate field; `KAM`
+(lemma `kommen`, sense `venne`) confirms the `v83_p` surface/sense register-matching fix holds in this
+exact production code path. PLUS 4 well-formed multi-word phrases the original single-chapter
+CLI-only measurement did not separately call out (`es gibt keine`, `sich mit etwas brüsten`, `dank
+ihr`, `wieder gewählt werden`). The one already-known, already-documented gap (no function-word
+filtering — bare `EIN` still surfaces as its own vocabulary-shaped item) is UNCHANGED, not a new
+finding.
+
+**Test coverage**: `e2e-analysis.test.js` (7 checks, real HTTP round trips against a fresh-spawned
+server + fake Ollama) — job lifecycle to `done`, one model call per sentence proven via the fake's own
+request log, a fresh cache hit short-circuits with no new job/call, a story edit marks the cache stale
+without deleting it, a stale chapter genuinely re-analyses, and two concurrent POSTs for the same
+chapter share one job. `unit-text-explorer.test.js` (9 checks, client-only via `loadClient`) — toggle
+state/fetch orchestration, cache-hit vs. job-kickoff paths, forward-only token alignment (including
+the "token not found, skip without corrupting" case), all four render states, HTML/attribute injection
+safety for a hostile lemma/form/sense, and an end-to-end DOM check that explorer-ON actually paints
+real per-word marks (and explorer-OFF cleanly reverts).
+
+**Not done this cut, explicitly**: the question-panel's own story view (`_exStoryPanelHtml`) did not
+get the explorer toggle — only the completion/progress card panel did, per item W's own original ask
+("the progress card's vocab highlighting"); extending it is a natural, small follow-up once this
+lands. No richer "analysing…" progress UI than a single status line (no per-sentence progress bar). No
+auto-refresh-on-stale — a stale cache is served labelled, not silently re-triggered.
+
+Baseline: `node test/run.js` → 289 checks (287 + this cut's 2 new test files: `e2e-analysis.test.js`
+and `unit-text-explorer.test.js`, one `run()` call each). `node test/run.js --quick` → 249 (`
+unit-text-explorer.test.js` runs in `--quick` too — pure client-DOM, no server spawn — but
+`e2e-analysis.test.js` is e2e-only). 9 new `en` keys (692→701). `lessons.json` untouched throughout
+(`git status --short lessons.json` confirmed clean before and after). `docs/index.html` rebuilt AFTER
+the `APP_VERSION` edit (not before — the exact ordering mistake `v86_m`/`v86_n` both made and caught,
+not repeated this time). `APP_VERSION = 'v86_o'`.
 
 ## ✅ v86_n — PLAN §7.0 CP2 groundwork: a new `analysis` model role (item W reconciliation, step 1 of 4)
 
@@ -4715,8 +4849,10 @@ identity rather than invent per-generator dialects.
    slice of this already shipped**: `cp5ShadowFor()`/`GET /api/cp-shadow/:chapterId` (server.js) reads
    CP3's `curriculum-plan.json` and paints a concept-count summary into the chapter-complete popup —
    but this reads CP3 (concepts), not CP1/CP2 (per-token lemma/form/sense). **Item W ("text explorer"
-   mode, roadmap section above) is THIS bullet's per-token half, reconciled but not built** — see its
-   own section for the full CP1/CP2 integration gap analysis and recommended path.
+   mode, roadmap section above) is THIS bullet's per-token half — ✅ SHIPPED `v86_o`**: a background
+   CP1+CP2 job + per-chapter cache, `GET /api/analysis/:chapterId` mirroring `cp5ShadowFor`'s own
+   shape, and a client toggle view painting real per-token lemma/form/sense directly from the story.
+   See item W's own roadmap section for the full build + live-verification write-up.
 6. **CP6 — retire nothing by assumption.** Consider retiring legacy generation only after the new
    route has measured multilingual coverage, quality, recovery/re-analysis, and player compatibility.
 
