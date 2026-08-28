@@ -230,6 +230,15 @@ const GOOD = { q: 'Warum geht Anna weg?', choices: ['Sie hat Angst', 'Sie ist mÃ
     'the template asks for {S} throughout');
   assert.ok(/The STORY is in \{L\}/.test(P.system), 'while the story itself stays in the target language');
 
+  // v86_h (user-reported): a comprehension question could depend on info only available from
+  // ANOTHER question in the same quiz, not from the story text alone â€” genuinely different from
+  // (b) below (the chain-context gap that was already closed), since the chain story IS already in
+  // context; this is about one question in a quiz leaning on a DIFFERENT question in that SAME quiz.
+  assert.ok(/answerable ON ITS OWN, from the story text alone/.test(P.system),
+    'each question must be independently answerable from the story, not from a sibling question');
+  assert.ok(/never write a question whose answer depends on having read or answered a DIFFERENT question/.test(P.system),
+    'the prompt explicitly forbids inter-question dependency within one quiz');
+
   // (b) The whole chain up to this chapter, not one chapter in isolation.
   assert.ok(/function collectChainStory\(saved, maxChars\)/.test(server), 'the chain walker exists');
   assert.ok(/const _chainStory = collectChainStory\(saved\);/.test(server), 'add-lesson builds it');

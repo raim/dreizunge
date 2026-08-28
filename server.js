@@ -184,7 +184,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v86_g';
+const APP_VERSION  = 'v86_h';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -8187,6 +8187,14 @@ http.createServer(async (req, res) => {
       const lastStudent = [...history].reverse().find(m => m.role === 'student');
       const retrieved = tutorRetrieveContext({
         question: lastStudent ? lastStudent.text : '', scope, completed, lang, srcLang });
+      // v86_h (user-reported): a stuck/broken tutor reply previously left NO trace at all in the
+      // console — only a completed reply logged anything (_logReply below), so a request that never
+      // finished (crashed, hung, or the learner navigated away mid-stream) was invisible to any later
+      // diagnosis. Logging on ASK too means every request leaves a footprint regardless of outcome,
+      // and — since it's logged BEFORE the model call — lets a wrong/unexpected `ctx:` retrieval be
+      // caught at the moment it happens, not only inferred after the fact from a reply that mentions
+      // unrelated topics.
+      console.log(`  Tutor [${scope.kind}] asked (${lang}←${uiLang})${scope.label ? `, scope: ${scope.label}` : ''}${retrieved.used.length ? `, ctx: ${retrieved.used.join(' | ')}` : ''}`);
       const S = langName(uiLang), L = langName(lang);
       const sys = fillPrompt(PROMPTS.tutor.system, {
         S, L,
@@ -8339,7 +8347,13 @@ http.createServer(async (req, res) => {
       if (!t) return json(res, 404, { error: 'Topic not found' });
       const prop = t.storyQcProposal;
       if (!prop || !prop.corrected) return json(res, 400, { error: 'No QC proposal to accept' });
-      if (prop.rejected) return json(res, 409, { error: 'Proposal was flagged as a rewrite; not acceptable' });
+      // v86_h (user-reported, real case: a comic-extracted sign, a legitimate uppercase fix on a
+      // SHORT text tripped the ratio-based 'rewrite' threshold despite being exactly correct): only
+      // 'corrupt' (genuine model corruption — run-together words, eaten whitespace, _qcCorruption's
+      // own signal) is now hard-blocked. 'rewrite' (a large CHANGE RATIO, which a short text trips
+      // easily even for a small, valid edit) still shows its warning client-side but a human who has
+      // reviewed the diff can now accept it, same as an ordinary 'corrected' proposal.
+      if (prop.verdict === 'corrupt') return json(res, 409, { error: 'Proposal appears corrupted (not a genuine proofread); not acceptable' });
       // Staleness guard: the proposal was diffed against `prop.against`. If the story has changed
       // since (a hand-edit, or a re-QC), applying it would compute against the wrong baseline.
       if (prop.against !== undefined && prop.against !== t.story) {
@@ -8462,7 +8476,8 @@ http.createServer(async (req, res) => {
       if (!sl) return json(res, 404, { error: 'Storyline not found' });
       const prop = sl.summaryQcProposal;
       if (!prop || !prop.corrected) return json(res, 400, { error: 'No summary QC proposal to accept' });
-      if (prop.rejected) return json(res, 409, { error: 'Proposal was flagged as a rewrite; not acceptable' });
+      // v86_h: same relaxation as /api/story-qc/accept above — only 'corrupt' is hard-blocked now.
+      if (prop.verdict === 'corrupt') return json(res, 409, { error: 'Proposal appears corrupted (not a genuine proofread); not acceptable' });
       if (prop.against !== undefined && prop.against !== sl.summary) {
         delete sl.summaryQcProposal; upsertStoryline(sl);
         return json(res, 409, { error: 'Summary changed since this proposal was generated; discarded. Re-run QC.' });

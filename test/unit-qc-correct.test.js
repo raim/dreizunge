@@ -141,7 +141,11 @@ assert.ok(/saveStore\(store\)/.test(proposeRoute), 'proposal is persisted');
 
 // accept route: pins aiStory to the original, sets t.story, stamps QC, rebuilds ai_error_hunt.
 const acceptRoute = server.slice(server.indexOf("url.pathname === '/api/story-qc/accept'"), server.indexOf("url.pathname === '/api/story-qc/discard'"));
-assert.ok(/if \(prop\.rejected\) return json\(res, 409/.test(acceptRoute), 'a rejected proposal cannot be accepted');
+// v86_h (user-reported): only 'corrupt' (genuine model corruption) is hard-blocked now — a 'rewrite'
+// verdict (large change-RATIO alone, which a SHORT text trips easily even for a small valid fix) can
+// be accepted after a human reviews the diff, same as an ordinary 'corrected' proposal.
+assert.ok(/if \(prop\.verdict === 'corrupt'\) return json\(res, 409/.test(acceptRoute), "only a 'corrupt' proposal is hard-blocked from acceptance");
+assert.ok(!/if \(prop\.rejected\) return json\(res, 409/.test(acceptRoute), "the OLD blanket 'rejected' gate (which also caught 'rewrite') is gone");
 assert.ok(/if \(!t\.aiStory\) t\.aiStory = prop\.against/.test(acceptRoute), 'accept pins aiStory to the original (if unset)');
 assert.ok(/t\.story = acceptedStory;/.test(acceptRoute), 'accept applies the (possibly partial) correction to t.story');
 assert.ok(/t\.storyQcBy = /.test(acceptRoute) && /t\.storyQcAt = /.test(acceptRoute), 'accept stamps the QC model + time on the topic');
@@ -344,7 +348,9 @@ assert.ok(/against: sl\.summary/.test(sumPropose), 'proposal records the summary
 assert.ok(!/\bsl\.summary = /.test(sumPropose), 'propose never overwrites sl.summary');
 assert.ok(/active === 'none'/.test(sumPropose), 'propose requires an LLM backend');
 const sumAccept = server.slice(server.indexOf("url.pathname === '/api/summary-qc/accept'"), server.indexOf("url.pathname === '/api/summary-qc/discard'"));
-assert.ok(/if \(prop\.rejected\) return json\(res, 409/.test(sumAccept), 'a rejected summary proposal cannot be accepted');
+// v86_h: same relaxation as the story-QC accept route above.
+assert.ok(/if \(prop\.verdict === 'corrupt'\) return json\(res, 409/.test(sumAccept), "only a 'corrupt' summary proposal is hard-blocked from acceptance");
+assert.ok(!/if \(prop\.rejected\) return json\(res, 409/.test(sumAccept), "the OLD blanket 'rejected' gate is gone for summary QC too");
 assert.ok(/prop\.against !== undefined && prop\.against !== sl\.summary/.test(sumAccept), 'accept guards staleness');
 assert.ok(/acceptedText\.indexOf\(pair\.corrected\)/.test(sumAccept), 'accept reuses the revert-unselected reconstruction (spacing-safe)');
 assert.ok(/sl\.summary = acceptedText;/.test(sumAccept), 'accept writes the (partial) correction to sl.summary');
@@ -354,6 +360,23 @@ assert.ok(!/active === 'none'/.test(sumAccept), 'accept needs no backend (pure a
 
 // Client shares the renderer (no duplicate diff/reconstruction logic — parity-trap avoidance).
 assert.ok(/function _renderQcProposalInto\(prop, o\)/.test(client), 'a shared QC-proposal renderer exists');
+// v86_h (user-reported, real case: a comic-extracted sign — the model's fix was exactly right but
+// only "Discard" was ever offered): only isCorrupt (genuine model corruption) now suppresses the
+// accept button + select-all/none toggle. isRw ('rewrite', large change-ratio ALONE — a short text
+// trips this easily even for a small valid edit) still shows its own warning (unchanged — the `hdr`
+// ternary above this block still branches on isRw) but no longer hides the accept button.
+{
+  const rendFn = client.slice(client.indexOf('function _renderQcProposalInto'), client.indexOf('function _qcSelectedIdx'));
+  assert.ok(/const actions = isCorrupt\s*\n\s*\? .*discardCall/.test(rendFn),
+    'actions (accept+discard vs. discard-only) gate on isCorrupt, not isRw');
+  assert.ok(!/const actions = isRw/.test(rendFn), 'the OLD isRw-gated actions block is gone');
+  assert.ok(/const selToggle = \(!isCorrupt && sents\.length >= 2\)/.test(rendFn),
+    'the select-all/none toggle ALSO gates on isCorrupt now, not isRw — a rewrite proposal with 2+ sentences can still pick which fixes to keep');
+  // The warning HEADER is a SEPARATE concern from the action buttons — isRw still distinguishes the
+  // rewrite-warning text from the corrupt-warning text; only what's ACTIONABLE changed.
+  assert.ok(/const hdr = isCorrupt[\s\S]{0,120}qc\.corrupt_warn[\s\S]{0,40}: isRw[\s\S]{0,120}qc\.rewrite_warn/.test(rendFn),
+    'the header still shows the RIGHT warning text for each verdict — only whether accept is offered changed');
+}
 assert.ok(/renderStoryQcProposal[\s\S]{0,120}_renderQcProposalInto/.test(client), 'story QC delegates to the shared renderer');
 assert.ok(/_renderQcProposalInto\(APP\._slScreen\._summaryQcProp/.test(client), 'summary QC uses the shared renderer');
 assert.ok((client.match(/function _qcChangedPairs\(/g) || []).length === 1, '_qcChangedPairs defined once (not duplicated for summary)');

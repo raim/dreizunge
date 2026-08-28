@@ -539,7 +539,7 @@
     "storyboard.menu": "Storyboard options",
     "qc.clean": "✓ The proofreader found no errors — the story is already clean.",
     "qc.review_hdr": "Proofreader suggestions",
-    "qc.rewrite_warn": "⚠ The proofreader rewrote the story rather than correcting it — likely too broken to QC. Discard and edit by hand, or regenerate.",
+    "qc.rewrite_warn": "⚠ The proofreader made a LARGE change (a lot of text differs from the original) — review the diff carefully before accepting, or discard and edit by hand.",
     "qc.no_visible": "No sentence-level changes to show.",
     "qc.accept": "✓ Accept corrections",
     "qc.discard": "Discard",

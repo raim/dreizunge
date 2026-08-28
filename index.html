@@ -5392,11 +5392,17 @@ function _renderQcProposalInto(prop, o) {
     : isRw
     ? '<div style="font-weight:700;color:#b45309">' + escHtml(t('qc.rewrite_warn')) + '</div>'
     : '<div style="font-weight:700;color:var(--text)">' + escHtml(t('qc.review_hdr')) + ' (' + sents.length + ')</div>';
-  const actions = isRw
+  // v86_h (user-reported): 'rewrite' (isRw) used to ALSO suppress the accept button, leaving only
+  // "discard" even when the model got a real, valid fix exactly right — a large CHANGE RATIO alone
+  // (which a SHORT text, e.g. a comic-extracted sign, trips easily even for a small, correct edit)
+  // is not the same signal as 'corrupt' (genuine model corruption — run-together words, eaten
+  // whitespace). Only isCorrupt now suppresses accept; a 'rewrite' proposal still shows its warning
+  // (hdr, above) but lets a human who has reviewed the diff accept it, same as an ordinary proposal.
+  const actions = isCorrupt
     ? '<button class="story-repair-btn" style="background:var(--gray-mid);color:var(--text);padding:4px 10px;font-size:12px" onclick="' + o.discardCall + '">' + escHtml(t('qc.discard')) + '</button>'
     : '<button class="story-repair-btn" style="padding:4px 10px;font-size:12px" onclick="' + o.acceptCall + '">' + escHtml(t('qc.accept_selected')) + '</button>'
       + ' <button class="story-repair-btn" style="background:var(--gray-mid);color:var(--text);padding:4px 10px;font-size:12px" onclick="' + o.discardCall + '">' + escHtml(t('qc.discard')) + '</button>';
-  const selToggle = (!isRw && sents.length >= 2)
+  const selToggle = (!isCorrupt && sents.length >= 2)
     ? '<div style="font-size:11px;margin:4px 0"><a href="#" onclick="_qcToggleAll(\'' + o.panelId + '\',\'' + o.cbClass + '\',true);return false" style="color:var(--accent)">' + escHtml(t('qc.all')) + '</a> · <a href="#" onclick="_qcToggleAll(\'' + o.panelId + '\',\'' + o.cbClass + '\',false);return false" style="color:var(--accent)">' + escHtml(t('qc.none')) + '</a></div>'
     : '';
   panel.innerHTML = hdr + selToggle + '<div style="margin:8px 0;max-height:260px;overflow:auto">' + (rows || '<em>' + escHtml(t('qc.no_visible')) + '</em>') + '</div>' + '<div style="display:flex;gap:6px;margin-top:6px">' + actions + '</div>';

@@ -126,8 +126,19 @@ console.log('  /api/models recognises every role incl. tutor (v62.1 regression):
   assert.ok(/return json\(res, 200, \{ reply, promptTokens, completionTokens \}\)/.test(route),
     'returns one reply plus token usage');
   assert.ok(/Tutor returned an empty reply/.test(route), 'an empty model reply is reported, not shown blank');
+  // v86_h (user-reported): a stuck/broken reply used to leave NO console trace at all — only a
+  // completed reply logged anything (_logReply). Logging on ASK too, BEFORE the model call, means
+  // every request leaves a footprint regardless of outcome, and lets an unexpected `ctx:` retrieval
+  // be caught at the moment it happens rather than only inferred from a reply that never arrives.
+  assert.ok(/console\.log\(`  Tutor \[\$\{scope\.kind\}\] asked \(\$\{lang\}←\$\{uiLang\}\)/.test(route),
+    'the route logs on ASK, before the model call, not just on a completed reply');
+  const askAt = route.indexOf('] asked (');
+  const replyAt = route.indexOf('_logReply = (reply)');
+  assert.ok(askAt > 0 && replyAt > 0 && askAt < replyAt,
+    'the ask-time log is defined BEFORE _logReply — i.e. before the model call, not after');
 }
 console.log('  /api/tutor: stateless, guarded, all untrusted input capped: OK');
+console.log('  /api/tutor: logs on ASK (before the model call), not just on a completed reply: OK');
 
 // ── 3. The prompt focuses on errors and bounds vocabulary ────────────────────
 {

@@ -37,7 +37,7 @@ this file stays current through the whole `v86` line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v86 CUT** | fresh, top-of-file summary of everything still genuinely open, then the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v86 LINE** | `v86_g` — item L: a comic/image chapter's progress card and question panel showed STALE text after a story edit (`_comicStoryPanelsHtml` reads `comicPanels[].caption`/`inScene`, a separate copy of the text `/api/save-story` never touched) — fixed by syncing `comicPanels[0]` on save for the unambiguous SINGLE-panel case (multi-panel deliberately left as item O, genuinely ambiguous). Item M: drag-to-move a panel box (`_comicHitBox`), the companion to the existing resize handles — a handle grab still wins at a box's own corner. Item N: a "3 shown, 4 detected" report investigated and found to be a likely MODEL accuracy limitation, not a code bug (no merging logic exists) — not changed this cut, flagged for a live-model probe if wanted. `v86_f` — item I: a fixed 90°-clockwise-per-click rotate button for the uploaded/captured comic image, using the SAME offscreen-canvas-redraw shape as the existing downscale step, routed through the SAME `img.onload -> _comicFinishSetup()` path a fresh upload uses — so natural dimensions are read from the rotated image itself and panel-box invalidation comes for free from the existing "new image clears boxes" precedent, no new logic needed. `v86_e` — item K: the SAME mobile-backgrounding fix extended to `_pollComicBookJob` (book/chapter creation), the one poller `v86_d` explicitly left open — required its own small refactor (a `while`+`sleep` loop split into a re-invokable `_comicBookCheckOnce()`, gated on the pre-existing `_comicBookId`) rather than a copy-paste, since it wasn't `setInterval`-shaped like the other two. Preserves one deliberate behavioural difference: a network hiccup mid-poll is NOT terminal here (unlike extract/detect), matching the original code exactly. Six new tests exercise the REAL function for the first time (every prior test mocked it). `v86_d` — mobile-backgrounding fix: `setInterval`-based polling for comic extraction AND detection can be throttled/suspended on a backgrounded phone tab, stranding a client that never learns its job finished (confirmed live: the user's own console showed server-side success while the UI stayed stuck). Fixed with a shared `visibilitychange` listener that re-checks any in-flight job off-schedule the instant the tab becomes visible again; `_pollComicBookJob` has the same class of gap and is explicitly NOT yet fixed (item K below). Also: a second live bug found mid-session — auto-detect silently dropped a malformed/inverted box with NO toast unless every suggested box was dropped (confirmed live: server said "4 panel(s) suggested", UI showed 3, no explanation) — now toasts on any drop, partial or total. Also item J: a "use whole image as one panel" shortcut button. `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
+| **SHIPPED IN THE v86 LINE** | `v86_h` — `INTERNALS.md` §6b caught up (doc-only). From a 16-item real-usage batch: item Q (comprehension questions must be independently answerable, a prompt-only fix), plus three unrelated small fixes — tutor logs on ASK now (not just on a completed reply), a QC 'rewrite' verdict (large change-ratio, not necessarily corruption) can now be ACCEPTED after human review (only 'corrupt' stays hard-blocked), and the static build's own `init()` now wires `_storyTapInit()` (tap-to-advance on plain story text was silently dead there). The other 13 items scoped into the roadmap as items P–AC, not built this cut. `v86_g` — item L: a comic/image chapter's progress card and question panel showed STALE text after a story edit (`_comicStoryPanelsHtml` reads `comicPanels[].caption`/`inScene`, a separate copy of the text `/api/save-story` never touched) — fixed by syncing `comicPanels[0]` on save for the unambiguous SINGLE-panel case (multi-panel deliberately left as item O, genuinely ambiguous). Item M: drag-to-move a panel box (`_comicHitBox`), the companion to the existing resize handles — a handle grab still wins at a box's own corner. Item N: a "3 shown, 4 detected" report investigated and found to be a likely MODEL accuracy limitation, not a code bug (no merging logic exists) — not changed this cut, flagged for a live-model probe if wanted. `v86_f` — item I: a fixed 90°-clockwise-per-click rotate button for the uploaded/captured comic image, using the SAME offscreen-canvas-redraw shape as the existing downscale step, routed through the SAME `img.onload -> _comicFinishSetup()` path a fresh upload uses — so natural dimensions are read from the rotated image itself and panel-box invalidation comes for free from the existing "new image clears boxes" precedent, no new logic needed. `v86_e` — item K: the SAME mobile-backgrounding fix extended to `_pollComicBookJob` (book/chapter creation), the one poller `v86_d` explicitly left open — required its own small refactor (a `while`+`sleep` loop split into a re-invokable `_comicBookCheckOnce()`, gated on the pre-existing `_comicBookId`) rather than a copy-paste, since it wasn't `setInterval`-shaped like the other two. Preserves one deliberate behavioural difference: a network hiccup mid-poll is NOT terminal here (unlike extract/detect), matching the original code exactly. Six new tests exercise the REAL function for the first time (every prior test mocked it). `v86_d` — mobile-backgrounding fix: `setInterval`-based polling for comic extraction AND detection can be throttled/suspended on a backgrounded phone tab, stranding a client that never learns its job finished (confirmed live: the user's own console showed server-side success while the UI stayed stuck). Fixed with a shared `visibilitychange` listener that re-checks any in-flight job off-schedule the instant the tab becomes visible again; `_pollComicBookJob` has the same class of gap and is explicitly NOT yet fixed (item K below). Also: a second live bug found mid-session — auto-detect silently dropped a malformed/inverted box with NO toast unless every suggested box was dropped (confirmed live: server said "4 panel(s) suggested", UI showed 3, no explanation) — now toasts on any drop, partial or total. Also item J: a "use whole image as one panel" shortcut button. `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, `PLAN §7.0` Track A (CP1–5), and `PLAN §13` are ALL fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). `PLAN §2.4` / Track A4 (comic/image ingest) is fully shipped as its FOUR-milestone core, plus a `v85_o` auto-detect follow-up, plus a `v85_t` panel-resize follow-up, plus a `v85_u` resize-sync fix — its own sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -144,7 +144,7 @@ reproduction with the raw model response captured — this container now has a l
 confirmed (`v85_t`/`v85_u`), worth checking whether the TEXT model roles this needs are ALSO
 installed before assuming a container still can't attempt this.
 
-### F. `v85_r`'s article-symmetry fix — needs live verification (from `v85_r`)
+### F. `v85_r`'s article-symmetry fix — needs live verification, PLUS a new live recurrence + a new ask (from `v85_r`, extended this cut)
 
 The fix (generalising the `v80_j` article-symmetry prompt correction to its second caller,
 `vocabFromText.system`) is mechanically sound and guarded, but has never been regenerated against a
@@ -152,16 +152,43 @@ live model. Re-run `build_history/probe_article_symmetry_v80j.js` against fresh 
 has generated real lessons through the fixed path (particularly anything routing through
 `vocabFromText` — comic panels, PDF uploads, pasted story+translation).
 
+**New live recurrence, this cut**: a fresh storyline (`sl_1833389129`) generated German entries WITH
+articles ("die Liebe") paired with English entries that sometimes ALSO carried an article ("the
+love" — which no fluent speaker would actually say) and sometimes didn't, inconsistently. The user's
+own diagnosis, worth recording verbatim since it's a real, specific hypothesis: this likely traces to
+the underlying LEXICON data the vocab-generation prompt draws from — German dictionaries conventionally
+prefix a noun with its article to indicate GRAMMATICAL GENDER (a genuine, load-bearing convention:
+"die Liebe" tells a learner it's feminine), while English dictionaries have no equivalent convention
+(gender-neutral), so a source that pairs "die Liebe" ↔ "the love" isn't wrong per se on the German
+side — the ASYMMETRY is baked into what "correct" looks like in each language's own reference
+convention, not necessarily a model hallucination each time. This reframes the bug: it may not be
+fully fixable by prompt correction alone (asking the model to drop the German article loses the
+gender signal a learner needs; keeping it but adding an English article is simply wrong) — needs
+re-examination against this specific hypothesis before assuming `v85_r`'s existing fix is insufficient
+versus not yet regenerated/verified.
+
+**New ask, same report**: rather than (or in addition to) suppressing the asymmetry, ask the
+generating model to produce a short EXPLANATION for cases where an article genuinely belongs on one
+side but not the other (the gender-marking convention above is exactly the kind of thing worth
+explaining once, briefly, rather than hiding) — and show that explanation on the question card AFTER
+the learner answers, so it becomes a small grammar note rather than a silently "wrong-looking" pair.
+This is new scope, not yet designed: would need a new field on the vocab item (something like
+`articleNote`), a prompt addition asking for it ONLY when relevant (not padding every item), and a
+question-card UI slot to show it post-answer (mirroring how `writing`'s own feedback note already
+shows post-submit). Not started — folded in here since it's the same underlying phenomenon.
+
 ### G. Live-verify the whole `v85_s`/`v85_t`/`v85_u` mechanical fixes on a real device
 
 The word-tap speech-race fix, the panel resize handles, and the resize-sync fix are all
 mutation-tested (proven NOT to regress what they claim to fix) but none has been touched, heard, or
 seen by a human on a real device yet.
 
-### H. `INTERNALS.md` §6b needs new comic-panel rows
+### ✅ H. `INTERNALS.md` §6b comic-panel rows — SHIPPED (doc-only commit, same session)
 
-C1 (panel resize, `v85_t`), the resize-sync fix (`v85_u`), the listener-stacking fix and camera
-capture (`v86_c`) are all undocumented there — three cuts overdue now.
+Caught up in full: `v85_t` (resize), `v85_u` (resize-sync fix + its own model-accuracy finding),
+`v86_c` (listener-stacking regression + camera capture), `v86_d` (mobile-backgrounding fix +
+silent-drop toast + item J), `v86_e` (item K), `v86_f` (item I), `v86_g` (items L/M/N) — seven cuts
+of backlog, all written up to the section's own quality bar (function names, not line numbers).
 
 ### ✅ I. Rotate the uploaded/captured image — SHIPPED `v86_f`
 
@@ -329,6 +356,257 @@ per-panel edit UI (edit each panel's own text separately, not the whole story at
 sentence-alignment heuristic (risky — a wrong alignment would silently scramble which image a caption
 sits next to, worse than today's merely-stale text). Not scoped further this cut; flagged so it is not
 silently forgotten.
+
+## 🆕 A NEW BATCH — 16 items from real usage, evaluated at the `v86_h` cut
+
+The user handed over a batch of 16 real-usage notes at once, asking that the easy ones (or ones
+fitting this cut's own theme) be built now and the rest scoped into the roadmap. Four were built —
+Q (comprehension prompt fix), plus three UNRELATED-to-comics small fixes that also shipped this cut:
+tutor ask-time logging, the QC accept-on-rewrite relaxation, and the static-build tap-to-advance
+parity fix (all three are their own top-level bullets in the `v86_h` shipped entry, not lettered here,
+since they were not part of this batch's own items — listed together only because they landed the
+same cut). The rest are scoped below, lettered P onward, continuing straight from O above.
+
+### P. Inflection MCQ distractors sometimes mix grammatical DIMENSIONS — needs live-model work, not a code fix
+
+**User's report**, with a real example: for a question whose correct answer is "plural", the model
+sometimes offers "dative"/"genitive" as WRONG options alongside the genuinely plausible "singular" —
+mixing the NUMBER dimension (singular/plural) with the CASE dimension (nominative/dative/genitive) in
+one distractor set, when only same-dimension alternatives make a clean multiple-choice question.
+
+**Investigated — this is a prompt-COMPLIANCE gap, not a missing rule.** `prompts.json`'s
+`inflections.system` ALREADY instructs: *"Wrong choices must be OTHER REAL, PLAUSIBLE labels for the
+SAME DIMENSION (e.g. if the correct answer is 'plural', a wrong choice could be 'singular' or
+'genitive plural' — not something absurd)."* The model isn't following this reliably. Two paths
+forward, neither attempted this cut: (a) stronger prompt engineering — a few-shot example showing a
+BAD (mixed-dimension) distractor set being corrected to a GOOD (same-dimension) one, which this prompt
+currently lacks (it only has a positive worked example, no contrastive one); (b) a post-generation
+validation pass — but this would need to know, per language, which form LABELS belong to the same
+grammatical dimension, which is exactly the kind of hand-authored linguistic table this project's own
+standing design principle forbids ("no language knowledge in the code" — script tables are the one
+sanctioned exception, grammar categories are not). **Recommendation: (a), verified with a live model,
+not (b).** Needs a live test with a real human reading several generated items before/after a prompt
+change — this codebase's own standing rule 7 ("a live model call needs a live test AND a real human
+reading the output").
+
+### Q. ✅ Comprehension questions must be answerable independently of each other — SHIPPED `v86_h` (prompt only, not live-verified)
+
+**User's report**: a comprehension quiz asked a question only answerable using information from a
+DIFFERENT question in the SAME quiz, not from the chapter's own story text.
+
+**Investigated first** — `unit-comprehension.test.js` §9(b) already confirmed comprehension questions
+are generated against the WHOLE CHAIN up to this chapter (`collectChainStory`), not the current
+chapter in isolation, so this is NOT a missing-context bug; it's specifically about one question
+leaning on a SIBLING question within the same quiz, which the prompt never explicitly forbade.
+
+**Fixed**: `prompts.json`'s `comprehension.system` gained one new rule: *"Each question must be
+answerable ON ITS OWN, from the story text alone — never write a question whose answer depends on
+having read or answered a DIFFERENT question in this same quiz."* Low-risk (a prompt addition, easily
+reversible, no code-logic change) — built now despite not being live-verified, unlike item P, because
+the fix itself is simply asking for something the existing prompt structure already assumes but never
+stated, not a new capability the model needs to be taught. **Not live-verified this cut** — flag for a
+live check once the user next generates a comprehension lesson.
+
+### R. Save an intermediate "unfinished" project state after text parsing, before lesson generation
+
+**Ask**: after chapters/stories are defined (from a PDF, images, or LLM text-split) but before
+lessons are generated, persist that intermediate state as its own resumable project — tagged
+"unfinished" — so a session that stops here (closed tab, lost connection, or simply "I'll finish this
+later") doesn't lose the parsing work and can resume straight into lesson generation.
+
+**Not scoped in detail this cut** — this is a genuinely new PERSISTENCE SHAPE, not a small addition:
+needs a new store concept (an "unfinished project" distinct from a playable topic — chapters/stories
+exist but `lessons: []`), a UI surface to list and resume them (see item U below — likely the SAME
+popover), and decisions about where in the existing `/api/generate-book`-style pipeline the
+intermediate save point sits (right after chapter-splitting, before the per-chapter lesson-generation
+loop begins). Related directly to item S below (which is about NOT losing ALREADY-GENERATED lessons
+mid-run) — the two together cover "don't lose parsing work" and "don't lose generation work",
+respectively, and might share one underlying mechanism (write progressively, not once at the end) once
+designed together rather than separately.
+
+### S. Write each lesson into the store AS IT FINISHES during multi-lesson generation, not all at once at the end
+
+**Ask, with a concrete real log** showing exactly why this matters: a `word_forms` lesson finished
+generating (5 valid items, 1 rejected — a normal, successful result) and the user's own annotation on
+the log says *"save this lesson here, before starting next"* — immediately followed by the NEXT
+lesson type (`inflections`) beginning generation. If the run is interrupted anywhere after that point
+(the user's own earlier report this session — "started an extraction from a photo… the generator
+interface seems to have lost that" — is the SAME class of loss, one step over: work completed by the
+server, not yet visible/durable to the client), the already-finished `word_forms` lesson is lost too,
+even though it was already done.
+
+**Directly continues this session's own theme** (the `v86_d`/`v86_e` mobile-backgrounding fixes were
+about the CLIENT losing track of a finished job; this is about the SERVER's own multi-lesson loop not
+persisting incremental progress at all) — worth prioritizing together with that work in a future
+session. **Not scoped in detail this cut**: needs reading `_runBookJob`'s (and the "all_types"/arc
+multi-generator loop's) own per-type generation sequence to find where a `saveStore(store)` call could
+be safely inserted after each successful type completes, and to check whether the job-status/progress
+reporting already surfaces "which types are done so far" in a way a resumed/reloaded client could use
+(if not, that's part of this item too, not a separate one).
+
+### T. Two questions initiated via text-selection → grammar click were never answered (screenshot, needs reproduction)
+
+Referenced screenshot shows two such questions in an unanswered state. Per this project's own standing
+category for this shape of report ("Bugs needing reproduction — ask the user for the case"): the
+selection→grammar-question flow (`PLAN §12`) needs to be exercised live, ideally by the user narrating
+the exact steps, before a code diagnosis is attempted — "never answered" could mean the UI simply
+never re-surfaced them (a rendering/state gap) or that the underlying generation itself failed
+silently (no error shown). Not investigated further this cut; flagged for reproduction.
+
+### U. A popover listing all running/scheduled jobs, including unfinished projects, linking to their storyline/lesson-set pages
+
+**Ask**: a single place to see everything in flight — the user's own note: "likely related to existing
+roadmap items." It is: this would be the natural HOME for item R's own "unfinished projects" list, and
+overlaps with the EXISTING job-store primitive (`newJob`/`jobStep`/`jobDone`/`jobFail`, already used by
+every comic/PDF/book-generation job) — the server already tracks "what's running", just with no
+aggregate client-facing view of it. Not scoped in detail: needs an endpoint listing active jobs (the
+in-memory `jobs` Map has no owner/session concept currently — every job is anonymous, so "whose jobs"
+needs deciding for a multi-learner deployment), plus the "unfinished projects" list from item R once
+that exists. A real, moderately-sized feature — its own release, not a quick add.
+
+### V. Multiple image upload for comic generation — each image becomes its own chapter (as if it were a single panel); allow "add images" after the first upload
+
+**Ask**: batch-upload several comic pages/photos at once, each treated the way item J's own "use whole
+image as one panel" already treats a single image — one chapter per image — plus an "add more images"
+affordance so the flow isn't strictly "upload once, done."
+
+**A real, moderately-sized feature, not scoped this cut** — the existing comic UI (`APP_COMIC`) is
+built around ONE image at a time (`dataUrl`, `naturalW/H`, `boxes` — all singular). Multi-image would
+need either a genuinely new state shape (an array of per-image states) or a simpler MVP: treat "add
+images" as "repeat the single-image upload→chapter flow N times, chaining chapters the same way
+`comicCreateChapter()`'s own one-chapter-per-panel redesign (`v85_p`) already chains multiple panels
+from ONE image" — the second option reuses far more existing machinery and is worth scoping first.
+Directly related to item R/S above (a multi-image batch is exactly the kind of longer-running,
+multi-step job that benefits from incremental persistence).
+
+### W. "Text explorer" mode — hover/click any word in the story to see its full grammatical analysis, independent of playing lessons
+
+**The user's own words: "THIS WILL BE A REALLY NICE FEATURE."** Ask: with the newer word-by-word
+analysis pipeline (the same per-word grammatical breakdown `inflections` lessons already generate),
+add an optional VIEW — a button next to the existing translation toggle — where the progress-card's
+vocab highlighting is replaced by highlighting for EVERY word, and hovering/clicking a word shows its
+grammatical form (case, tense, etc. — whatever `inflections`' own `formLabel` already captures) without
+needing to start any lesson at all. Positioned explicitly as independent of lesson-playing: "dreizunge
+just works as a text explorer."
+
+**Not scoped this cut** — a real, appealing feature, but needs real design work: where does the
+per-word analysis data come from for a word NOT already covered by a generated `inflections` lesson
+(every word in the story, not just the subset `inflections` happened to pick)? Two directions worth
+weighing later: (a) a NEW, cheaper generation pass specifically for "annotate every word", separate
+from the existing (selective, exercise-shaped) `inflections` generator; or (b) reuse the SAME
+`inflections` generator but with a prompt asking for full coverage instead of a curated subset, if the
+existing per-word analysis quality holds up at that scale. Either way this is its own release.
+
+### X. Alternative-correct-answer handling for typing/ordering (and similar) lesson types — user's own thoughts, recorded verbatim
+
+**The problem, from a real screenshot**: for a typing exercise, a DIFFERENT word than the one marked
+correct would often ALSO be valid (a genuine synonym or equally-natural phrasing) — the learner is
+marked wrong for a linguistically correct answer. Same shape for sentence-ordering: some alternative
+word orders are often ALSO grammatically valid, not just the one order stored as "the" answer.
+
+**The user's own proposed strategies, recorded here exactly as given, for a future session to weigh
+rather than re-derive:**
+1. **Ask the generating model to list all alternatives that would also be correct**, at generation
+   time — the answer becomes a SET, not a single string. Lowest additional latency (one prompt
+   addition), but asks the model to anticipate every valid alternative up front, which it may do
+   incompletely.
+2. **A post-generation pass that fills in valid alternatives** — a separate step after the main
+   generation, specifically tasked with enumerating alternatives for each already-generated item.
+   Decouples "generate the exercise" from "anticipate alternatives", possibly higher quality per-item
+   but adds a whole extra generation pass to every affected lesson type.
+3. **Look in the app's OWN corpus for the same question with a different correct answer already
+   recorded** — a cross-topic consistency check: if the exact same word/sentence appears as a
+   correctly-accepted alternative answer elsewhere in the corpus, allow it here too. Free at
+   generation time, but only helps once the corpus already contains the alternative somewhere — cold
+   for a brand-new phrase, and needs a real "same question" matching definition (exact string? stemmed?
+   semantic?) which is itself non-trivial.
+4. **A short LLM call ONLY when the learner's answer is marked wrong**, to judge whether their answer
+   would ALSO be acceptable — asked reactively, not up front. Cheapest on the common (correct-answer)
+   path, adds one live model call to the WRONG-answer path specifically, and needs a fast/cheap model
+   role to not noticeably slow down the "you got it wrong" feedback moment.
+
+**Not designed or scoped further this cut** — genuinely needs a decision among these (or a combination
+— e.g. #1 for the common case, #4 as a fallback for whatever #1 misses) before any code. Worth noting:
+this is the SAME underlying category of problem as the "add explanations for article asymmetry" ask in
+item F above — both are about a generation-time judgment being too rigid for genuine linguistic
+plurality — so a future session designing one might productively look at the other too, though they
+are not the same fix.
+
+### Y. Storyline-card UI redesign: fuse title-edit, title/summary/storyboard generation, and QC buttons into ONE popover behind a single pencil-icon button
+
+**Ask, with a real screenshot** of the current button sprawl. A real, moderately-sized UI-only
+redesign (no new backend capability — every action already exists, this is purely about how they're
+surfaced) — not scoped further this cut. The natural next step is an inventory of every button/control
+currently on the storyline card that this popover would need to fold in, before any layout work
+starts.
+
+### Z. Word-tap question routing: after answering a question reached by tapping a highlighted word, return to the SAME place "Next" would have led — but play through ALL questions tied to that word first
+
+**Ask**: currently, tapping a highlighted word jumps into whatever lesson TYPE the tap happened to
+route to, and answering it presumably returns somewhere lesson-type-specific. The ask has two parts:
+(1) the RETURN destination after answering should be the same place clicking "Next" (or tapping a
+NON-highlighted word) would have led — i.e. the normal forward-progress route, not something
+type-specific; (2) before returning, if that SAME word has OTHER questions across DIFFERENT lesson
+types, play through all of them first, in sequence, rather than stopping after just the one the tap
+happened to land on.
+
+**Not scoped this cut** — needs reading `tapWord()`'s own current routing/return logic in full first
+(not attempted this cut), plus a design decision on ORDER when a word has multiple tied questions
+across types (lesson-type order? generation order? does it matter to the learner?). A real UX
+improvement, self-contained to the tap-to-lesson mechanism, but non-trivial once multiple questions
+per word need sequencing.
+
+### AA. Teacher-mode button → a dropdown with two explicit options, "Teacher" and "Student"
+
+**Ask**: replace the current single toggle button with a dropdown offering both modes by name, rather
+than an implicit "click to flip" toggle. Small, self-contained, no backend change — `_teacherMode`
+already exists as the underlying state (`updateTeacherModeBtn()`, referenced in `build-static.js`'s own
+`init()` at `PLAN §C4`'s stage-1 shell). Genuinely close to "easy" — the main work is a markup/CSS
+dropdown plus swapping the click handler for two explicit onclick targets — but not built this cut
+given the size of the rest of this batch; a good candidate for a future session's first pass.
+
+### AB. Tutor: a stuck/broken reply + an apparently-unrelated retrieved context (investigated this cut, needs live reproduction for the rest)
+
+**User's report**: on a specific lesson-set (`tp_17877559633380000510`), a tutor question was only
+partially answered and the reply got stuck mid-sentence; the console log named FOUR completely
+unrelated topics as retrieved context ("Job in Germany | AI & Math Basics | AI & Code Efficiency |
+Interview Drinks").
+
+**The "unrelated context" half — root-caused by reading `tutorRetrieveContext` (server.js) in full**:
+its scoring loop only includes a ZERO-keyword-overlap topic when `qt.size` (the question's own token
+count) is 0 OR nothing has been picked yet (`if (qt.size && overlap === 0 && used.length) continue;`)
+— by DESIGN, so a genuinely topic-less question still gets SOME grounding rather than none. But when a
+question tokenizes to (near-)nothing meaningful — a short continuation like "finish that sentence
+please", which doesn't need NEW topic retrieval at all since the real context is the conversation
+HISTORY the tutor already receives separately — this same fallback degrades to "grab up to 4 topics by
+RECENCY, regardless of relevance", which is exactly the shape of the reported log line. **A real,
+plausible fix, not built this cut**: skip the recency-fallback specifically when `history.length > 0`
+(an ongoing conversation already has real context to lean on) — reserve it for a genuinely FRESH/
+opening question with no history at all. Needs a live-model check before shipping (this codebase's own
+rule 7) to confirm the change doesn't regress the "give some grounding for a genuinely topic-less
+opening question" case the fallback was originally built for.
+
+**The "stuck mid-sentence" half — could NOT be correlated to this specific report.**
+`learners.json`'s own `tutorThread` array (read-only, checked this cut) stores only `{role, text}` per
+message — no timestamp, no scope tag — so the exact broken exchange can't be located after the fact
+from stored data alone. Needs live reproduction. **This cut's own `v86_h` release directly helps the
+NEXT occurrence**: the tutor route now logs on ASK (before the model call), not just on a completed
+reply, so a future stuck/broken request will leave a trace even if it never finishes — see the `v86_h`
+shipped entry.
+
+### AC. Main page / storyline page: show chapter icons (with green progress frames) or comic/image thumbnails instead of the storyboard, when available — a fallback hierarchy
+
+**Ask**: replace the storyboard illustration with something more informative depending on what data a
+chapter/storyline actually has: (i) comic/image thumbnails, if the chapter has `comicPanels` or a
+similar single-image source; (ii) the generated storyboard SVG, if one exists; (iii) chapter icons with
+progress frames (the same visual already used in the progress card's own navigation popover), as the
+universal fallback when neither of the above exists.
+
+**Not scoped this cut** — a real, moderately-sized UI feature. Worth noting it dovetails naturally with
+item A (moving comic images out of `lessons.json`) — once comic panel images live in their own
+server-side asset store rather than inline base64 in the topic record, serving a THUMBNAIL for this
+hierarchy's own tier (i) becomes cheaper (a smaller derived image, not the full-resolution panel crop)
+— worth sequencing AFTER item A rather than before, if both are ever picked up.
 
 ## ✅ FINDINGS THAT GOVERN THE OPEN SECTIONS BELOW
 
@@ -2042,6 +2320,68 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v86 LINE
+
+## ✅ v86_h — `INTERNALS.md` catch-up (doc-only), item Q, plus three small fixes from a 16-item batch
+
+The user handed over 16 real-usage notes at once ("evaluate the following, start the easy ones… and
+integrate the rest into the roadmap"), alongside "start on INTERNALS" while they live-verified the
+`v86_d`–`v86_g` round on their device. `INTERNALS.md` §6b was caught up first (doc-only commit,
+`be31e4d` — seven cuts of comic-panel rows, `v85_t` through `v86_g`). The 16-item batch was triaged:
+four items built (Q below, plus three unrelated small fixes bundled into this same release since they
+landed the same session), the other 13 scoped into `roadmap_v86.md` as items P through AC (see the "A
+NEW BATCH" section above) rather than guessed at without a live check or a real design decision.
+
+**Item Q — comprehension questions must be independently answerable**: a reported quiz asked a
+question only answerable using a DIFFERENT question's own info. `unit-comprehension.test.js` already
+confirmed the chapter-CHAIN context was fine (`collectChainStory`) — this was specifically about one
+question leaning on a SIBLING question in the same quiz, never explicitly forbidden. Fixed with one new
+rule in `prompts.json`'s `comprehension.system`: *"Each question must be answerable ON ITS OWN, from
+the story text alone — never write a question whose answer depends on having read or answered a
+DIFFERENT question in this same quiz."* Low-risk prompt addition, built despite not being live-verified
+this cut (unlike item P, which needs a live check before any change) — it states something the prompt
+structure already assumed but never said, not a new capability.
+
+**Tutor: log on ASK, not just on a completed reply** — a stuck/broken tutor reply (reported this same
+batch, item AB) previously left NO console trace at all. `/api/tutor` now logs `Tutor [kind] asked
+(lang←uiLang), ctx: ...` BEFORE the model call (mirroring `_logReply`'s own shape for the reply side),
+so every request leaves a footprint regardless of outcome, and an unexpected `ctx:` retrieval is
+visible at the moment it happens rather than only inferred from a reply that never arrives.
+
+**QC: a 'rewrite' verdict can now be ACCEPTED, not just discarded** — user report, real case: a
+comic-extracted sign's uppercase fix was exactly right, but only "Discard" was ever offered.
+`classifyStoryQc`'s 'rewrite' verdict fires on change-RATIO alone (which a SHORT text trips easily even
+for a small, valid edit) — a genuinely different signal from 'corrupt' (`_qcCorruption`'s own detection
+of actual model corruption: run-together words, eaten whitespace). Both `/api/story-qc/accept` and
+`/api/summary-qc/accept` now block only `verdict === 'corrupt'`; the client's shared
+`_renderQcProposalInto` now shows BOTH accept+discard (and the select-all/none toggle) for a 'rewrite'
+proposal, gating only on `isCorrupt` — the warning TEXT itself is unchanged (still distinguishes
+rewrite from corrupt), only what's actionable changed. `qc.rewrite_warn`'s `en` string reworded to
+match ("review the diff carefully before accepting", not "discard and regenerate").
+
+**Static build: tap-to-advance on plain story text was silently dead** — user report: clicking the
+summary/unhighlighted story text in a static-build progress card didn't advance, unlike the regular
+build. Root cause: `_storyTapInit()` (the mobile follow-up wiring a tap-to-advance listener) is called
+from the REGULAR `init()`, which lives inside the `@static-exclude` region `build-static.js` drops
+entirely — and build-static.js's OWN replacement `init()` never called it. The function itself
+(`_storyTapInit`/`_storyTapMaybeAdvance`) was present and correct in the static bundle the whole time —
+this was a missing WIRE-UP, not a missing function. Fixed by adding the call to build-static.js's own
+`init()`. `_storySelInit` (select text → ask the tutor) is correctly still absent there — that one
+genuinely needs a live backend, unlike pure client-side navigation.
+
+**Test coverage**: `unit-tutor.test.js` (ask-log source check + ordering-before-`_logReply` check,
+mutation-tested), `unit-qc-correct.test.js` (both accept routes' relaxed gate, both pinned tests
+UPDATED not just extended since the old blanket check is gone; client button-gating source check;
+mutation-tested three times — story route, summary route, client `actions`/`selToggle`),
+`unit-comprehension.test.js` (the new prompt rule, mutation-tested), new
+`test/unit-static-story-tap-parity.test.js` (asserts against the BUILT `docs/index.html`'s own `init()`,
+same convention as `unit-static-gen-btn-hidden.test.js` — includes its own built-in mutation check).
+
+Baseline: `node test/run.js` → 286 checks (up one — the new static-parity test file is now
+registered), `unit-static-freshness` may show its usual one EXPECTED failure if `lessons.json` is
+still dirty from the user's own live testing (see `v86_g`'s own note on this — not a regression).
+`docs/index.html` rebuilt from the last COMMITTED `lessons.json`. One `en` string reworded
+(`qc.rewrite_warn`), no new keys. `lessons.json` untouched throughout (read-only, for item AB's
+diagnosis). `APP_VERSION = 'v86_h'`.
 
 ## ✅ v86_g — progress-card comic-panel text sync fix (item L), drag-to-move panels (item M)
 

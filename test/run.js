@@ -159,6 +159,7 @@ run('unit: bin/dreizunge — PATH launcher, symlink resolution + real end-to-end
 run('unit: UI journey transitions (PLAN §C0.1)', 'node', [path.join(__dirname, 'unit-ui-journeys.test.js')]);
 run('unit: language picker sync, generation screen <-> library (PLAN §C5)', 'node', [path.join(__dirname, 'unit-lang-picker-sync.test.js')]);
 run('unit: static build hides library "Generate new" button (v81_x)', 'node', [path.join(__dirname, 'unit-static-gen-btn-hidden.test.js')]);
+run('unit: static build wires tap-to-advance on story text (v86_h)', 'node', [path.join(__dirname, 'unit-static-story-tap-parity.test.js')]);
 run('unit: Settings Card shell (PLAN §C4 stage 1)', 'node', [path.join(__dirname, 'unit-settings-card.test.js')]);
 run('unit: global mute-pill consolidation (PLAN §C4 "keep going")', 'node', [path.join(__dirname, 'unit-mute-consolidation.test.js')]);
 run('unit: lang-pair arrow control (PLAN §C4 acceptance detail)', 'node', [path.join(__dirname, 'unit-lang-pair-arrow.test.js')]);

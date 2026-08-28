@@ -291,6 +291,12 @@ async function init() {
   try { updateTeacherModeBtn(); } catch (_) {}      // reflect restored teacher mode
   try { updateStaticFlagBanner(); } catch (_) {}    // show the download & submit pill on first load
   try { _applyBottomBarVisibility(); } catch (_) {} // v85_b: apply the persisted bottom-bar hidden state
+  // v86_h (user-reported): static init() never called this — pure client-side navigation (tap plain
+  // story text/summary to advance, same as clicking Next), no backend involved, so there was no
+  // reason for it to be missing here; just never added when the feature shipped in the REGULAR
+  // init() (mobile follow-up, see index.html's own _storyTapInit comment). _storySelInit (select
+  // text -> ASK THE TUTOR) is correctly still absent: that one genuinely needs a live backend.
+  try { _storyTapInit(); } catch (_) {} // mobile follow-up: a short tap on plain story text advances
   // Hash routing
   if (location.hash.startsWith('#sl=')) {
     const chainId = location.hash.slice(4);
