@@ -37,7 +37,7 @@ this file stays current through the whole `v86` line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v86 CUT** | fresh, top-of-file summary of everything still genuinely open, then the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v86 LINE** | `v86_e` — item K: the SAME mobile-backgrounding fix extended to `_pollComicBookJob` (book/chapter creation), the one poller `v86_d` explicitly left open — required its own small refactor (a `while`+`sleep` loop split into a re-invokable `_comicBookCheckOnce()`, gated on the pre-existing `_comicBookId`) rather than a copy-paste, since it wasn't `setInterval`-shaped like the other two. Preserves one deliberate behavioural difference: a network hiccup mid-poll is NOT terminal here (unlike extract/detect), matching the original code exactly. Six new tests exercise the REAL function for the first time (every prior test mocked it). `v86_d` — mobile-backgrounding fix: `setInterval`-based polling for comic extraction AND detection can be throttled/suspended on a backgrounded phone tab, stranding a client that never learns its job finished (confirmed live: the user's own console showed server-side success while the UI stayed stuck). Fixed with a shared `visibilitychange` listener that re-checks any in-flight job off-schedule the instant the tab becomes visible again; `_pollComicBookJob` has the same class of gap and is explicitly NOT yet fixed (item K below). Also: a second live bug found mid-session — auto-detect silently dropped a malformed/inverted box with NO toast unless every suggested box was dropped (confirmed live: server said "4 panel(s) suggested", UI showed 3, no explanation) — now toasts on any drop, partial or total. Also item J: a "use whole image as one panel" shortcut button. `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
+| **SHIPPED IN THE v86 LINE** | `v86_f` — item I: a fixed 90°-clockwise-per-click rotate button for the uploaded/captured comic image, using the SAME offscreen-canvas-redraw shape as the existing downscale step, routed through the SAME `img.onload -> _comicFinishSetup()` path a fresh upload uses — so natural dimensions are read from the rotated image itself and panel-box invalidation comes for free from the existing "new image clears boxes" precedent, no new logic needed. `v86_e` — item K: the SAME mobile-backgrounding fix extended to `_pollComicBookJob` (book/chapter creation), the one poller `v86_d` explicitly left open — required its own small refactor (a `while`+`sleep` loop split into a re-invokable `_comicBookCheckOnce()`, gated on the pre-existing `_comicBookId`) rather than a copy-paste, since it wasn't `setInterval`-shaped like the other two. Preserves one deliberate behavioural difference: a network hiccup mid-poll is NOT terminal here (unlike extract/detect), matching the original code exactly. Six new tests exercise the REAL function for the first time (every prior test mocked it). `v86_d` — mobile-backgrounding fix: `setInterval`-based polling for comic extraction AND detection can be throttled/suspended on a backgrounded phone tab, stranding a client that never learns its job finished (confirmed live: the user's own console showed server-side success while the UI stayed stuck). Fixed with a shared `visibilitychange` listener that re-checks any in-flight job off-schedule the instant the tab becomes visible again; `_pollComicBookJob` has the same class of gap and is explicitly NOT yet fixed (item K below). Also: a second live bug found mid-session — auto-detect silently dropped a malformed/inverted box with NO toast unless every suggested box was dropped (confirmed live: server said "4 panel(s) suggested", UI showed 3, no explanation) — now toasts on any drop, partial or total. Also item J: a "use whole image as one panel" shortcut button. `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, `PLAN §7.0` Track A (CP1–5), and `PLAN §13` are ALL fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). `PLAN §2.4` / Track A4 (comic/image ingest) is fully shipped as its FOUR-milestone core, plus a `v85_o` auto-detect follow-up, plus a `v85_t` panel-resize follow-up, plus a `v85_u` resize-sync fix — its own sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -163,7 +163,14 @@ seen by a human on a real device yet.
 C1 (panel resize, `v85_t`), the resize-sync fix (`v85_u`), the listener-stacking fix and camera
 capture (`v86_c`) are all undocumented there — three cuts overdue now.
 
-### I. Rotate the uploaded/captured image (from `v86_c` real-device testing)
+### ✅ I. Rotate the uploaded/captured image — SHIPPED `v86_f`
+
+Was: "a small button to rotate the photo" (from `v86_c` real-device testing). Built with option (a)
+from the scoping below (rotating invalidates any drawn panel boxes, matching the existing "a new
+image invalidates old boxes" precedent) — see the `v86_f` shipped entry for the implementation and its
+test coverage. No longer open.
+
+<details><summary>Original scoping (kept for the record)</summary>
 
 **Ask**: a small button to rotate the photo — the user is testing the new camera-capture route
 (`v86_c`) and a photo can come in sideways (portrait comic page shot in landscape, or vice versa,
@@ -184,6 +191,8 @@ transform, preserving already-drawn work at the cost of real geometry code (a 90
 `(x,y)` in the OLD frame to `(y, newW-x)`/`(newH-y, x)` in the new one, per rotation direction — doable,
 but adds a genuine coordinate-transform surface worth its own test coverage, not a "small button").
 **Recommend (a)** unless the user specifically wants panels preserved across a rotation.
+
+</details>
 
 ### ✅ J. A "single panel" shortcut — SHIPPED `v86_d`
 
@@ -1943,6 +1952,44 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v86 LINE
+
+## ✅ v86_f — item I: rotate the uploaded/captured comic image
+
+Direct continuation of the `v86_d`/`v86_e` real-device-testing round, built at the user's own "please
+continue with the rotate item". Built exactly as scoped at the `v86_c` cut, with option (a) — a
+rotation invalidates any panel boxes already drawn, rather than recomputing their coordinates through
+the rotation transform.
+
+**Implementation**: a fixed 90°-clockwise-per-click `#comic-rotate-btn` (click again for
+180°/270°), placed FIRST in `#comic-detect-row` — same row/timing as the detect and single-panel
+buttons (shown once an image is loaded), positioned first since rotating is naturally a
+before-you-draw-panels step. `comicRotateImage()` uses the SAME offscreen-canvas-redraw shape as
+`onComicFileChosen`'s own downscale step: draws the current image onto a fresh canvas with SWAPPED
+dimensions (`_comicRotatedDims(w, h)`, a pure `{rw:h, rh:w}` swap split out for testability, mirroring
+`_comicDownscaleDims`'s own precedent), re-encodes to JPEG, then routes through the exact same
+`img.onload -> _comicFinishSetup(img, status)` shape a brand-new upload uses. This was the key design
+win: `APP_COMIC.naturalW`/`naturalH` are read straight from the newly-loaded ROTATED image rather than
+computed by hand (no risk of the two ever drifting out of sync), and panel-box invalidation
+(`comicClearPanels()`, already inside `_comicFinishSetup`) comes for free — no new invalidation logic
+needed at all, just reuse of the existing "new image → clear boxes" path.
+
+**Test coverage**: `_comicRotatedDims()` is pure and directly tested (landscape, portrait, square). A
+no-op with no image loaded is tested behaviourally (spies on `document.createElement` to confirm a
+canvas is never even created). The REAL rotate path (with a working 2D canvas context) can't be driven
+behaviourally in this harness — same class of gap as `onComicFileChosen`'s own downscale branch — but
+this harness's DOM stub has NO 2D canvas context at all (confirmed directly, same gap
+`_comicRedraw`'s own test already documents), which means the FALLBACK branch (`if(!ctx) return;`) is
+exactly what fires on every test run here — so that branch, unusually, IS directly testable: confirmed
+it does not throw and leaves `APP_COMIC.dataUrl`/`naturalW`/`naturalH` completely untouched (the safe
+no-op), rather than corrupting them mid-rotation. A source-level check confirms the real path reaches
+`_comicFinishSetup()`. Markup checks confirm the button lives in `#comic-detect-row` and is wired to
+`comicRotateImage()`. Mutation-tested three times: removing the no-context guard threw immediately
+(`ctx.translate` on `undefined`); removing the no-op guard broke the "never creates a canvas" test;
+removing the `_comicFinishSetup()` call broke the source check. All three restored, diff clean.
+
+Baseline: `node test/run.js` → 284 checks, 0 failures (post-ceremony). Both `check-inline.js` → 0
+failures. `docs/index.html` rebuilt. One new `en` key, `form.comic_rotate` (690 total, up from 689).
+`lessons.json` untouched throughout. `APP_VERSION = 'v86_f'`.
 
 ## ✅ v86_e — item K: the same mobile-backgrounding fix extended to the book/chapter-creation poller
 

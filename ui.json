@@ -92,6 +92,7 @@
     "form.comic_extract_failed": "Extraction failed",
     "form.comic_create": "📖 Create chapter",
     "form.comic_create_failed": "Chapter creation failed",
+    "form.comic_rotate": "🔄 Rotate",
     "form.comic_detect": "🔍 Auto-detect panels",
     "form.comic_single_panel": "🖼️ Use whole image as one panel",
     "form.comic_detect_failed": "Auto-detect failed",

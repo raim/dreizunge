@@ -1358,6 +1358,14 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <canvas id="comic-draw-canvas" style="position:absolute;top:0;left:0;cursor:crosshair"></canvas>
           </div>
           <div id="comic-detect-row" style="display:none;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap">
+            <!-- v86_f (item I, user-requested): a photo can come in sideways (portrait comic page shot
+                 in landscape, or vice versa — common on a phone that doesn't lock orientation). Fixed
+                 90°-clockwise-per-click, same as the detect/single-panel buttons: shown once an image
+                 is loaded, placed FIRST since rotating is naturally a before-you-draw-panels step —
+                 rotating clears any panel boxes already drawn (comicClearPanels(), via the SAME
+                 _comicFinishSetup() a fresh upload goes through), matching that existing precedent. -->
+            <button type="button" id="comic-rotate-btn" onclick="comicRotateImage()"
+              style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🔄 <span id="comic-rotate-lbl">Rotate</span></button>
             <button type="button" id="comic-detect-btn" onclick="comicDetectPanels()"
               style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🔍 <span id="comic-detect-lbl">Auto-detect panels</span></button>
             <!-- v86_d (user-requested, item J): a single box spanning the whole image — for a lone
@@ -2830,6 +2838,7 @@ function applyUIStrings() {
   { const ccl=document.getElementById('comic-clear-lbl'); if(ccl) ccl.textContent=t('form.comic_clear'); }
   { const cel=document.getElementById('comic-extract-lbl'); if(cel) cel.textContent=t('form.comic_extract'); }
   { const ccl2=document.getElementById('comic-create-lbl'); if(ccl2) ccl2.textContent=t('form.comic_create'); }
+  { const crl=document.getElementById('comic-rotate-lbl'); if(crl) crl.textContent=t('form.comic_rotate'); }
   { const cdl=document.getElementById('comic-detect-lbl'); if(cdl) cdl.textContent=t('form.comic_detect'); }
   { const csl=document.getElementById('comic-single-panel-lbl'); if(csl) csl.textContent=t('form.comic_single_panel'); }
   { const cal=document.getElementById('comic-arc-lbl'); if(cal) cal.textContent=t('form.arc_lbl'); }
@@ -3654,6 +3663,38 @@ function onComicFileChosen(input){
   if(status) status.textContent='loading…';
   r.readAsDataURL(f);
   input.value='';
+}
+
+// v86_f (item I, user-requested): fixed 90°-clockwise-per-click rotation — click again for 180°/270°.
+// Same offscreen-canvas-redraw approach as the downscale step above: draws the CURRENT image rotated
+// onto a fresh canvas with SWAPPED dimensions, re-encodes, then routes through the SAME
+// img.onload -> _comicFinishSetup(img, status) shape a brand-new upload uses — so APP_COMIC.naturalW/
+// naturalH are read straight from the newly-loaded ROTATED image rather than computed by hand, and any
+// panel boxes already drawn are invalidated (comicClearPanels(), inside _comicFinishSetup) — the
+// SIMPLER of the two options scoped in roadmap_v86.md's item I: rotation is naturally a
+// before-you-draw-panels step, matching the existing "a new image invalidates old boxes" precedent
+// rather than adding real coordinate-transform code to preserve them.
+function _comicRotatedDims(w, h){
+  // A 90° rotation always swaps width/height — split out (matches _comicDownscaleDims' own precedent)
+  // so the swap itself is testable without a real canvas.
+  return { rw: h, rh: w };
+}
+function comicRotateImage(){
+  if(!APP_COMIC.dataUrl || !(APP_COMIC.naturalW>0) || !(APP_COMIC.naturalH>0)) return;
+  const img=document.getElementById('comic-draw-img');
+  const w=APP_COMIC.naturalW, h=APP_COMIC.naturalH;
+  const {rw,rh}=_comicRotatedDims(w,h);
+  const canvas=document.createElement('canvas');
+  canvas.width=rw; canvas.height=rh;
+  const ctx=canvas.getContext && canvas.getContext('2d');
+  if(!ctx) return;   // no 2D canvas support (or this harness's own DOM stub) — leave the image untouched
+  ctx.translate(rw,0);
+  ctx.rotate(Math.PI/2);
+  ctx.drawImage(img,0,0,w,h);
+  APP_COMIC.dataUrl=canvas.toDataURL('image/jpeg',0.88);
+  const status=document.getElementById('comic-upload-status');
+  img.onload=()=>{ _comicFinishSetup(img, status); };
+  img.src=APP_COMIC.dataUrl;
 }
 
 // Canvas is sized to the DISPLAYED (CSS) size of the image, not its natural resolution — it only

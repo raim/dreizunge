@@ -468,6 +468,84 @@ console.log('  comicUseWholeImageAsPanel(): replaces any existing boxes, does no
 }
 console.log('  comicUseWholeImageAsPanel(): a no-op when no image is loaded yet: OK');
 
+// ── 13. comicRotateImage() / _comicRotatedDims() (v86_f, user-requested, item I) ──────────────────
+// A photo can come in sideways (portrait comic page shot in landscape, or vice versa). Fixed
+// 90°-clockwise-per-click, same offscreen-canvas-redraw shape as onComicFileChosen's own downscale
+// step — routes through the SAME img.onload -> _comicFinishSetup(img, status) path a fresh upload
+// uses, so rotating clears any panel boxes already drawn (comicClearPanels(), inside
+// _comicFinishSetup) — the SIMPLER of the two options scoped in roadmap_v86.md's item I.
+{
+  const r = JSON.parse(client().run(`JSON.stringify({
+    landscape: _comicRotatedDims(800, 500),
+    portrait: _comicRotatedDims(500, 800),
+    square: _comicRotatedDims(600, 600),
+  })`));
+  assert.deepStrictEqual(r.landscape, { rw: 500, rh: 800 }, 'a 90° rotation SWAPS width/height');
+  assert.deepStrictEqual(r.portrait, { rw: 800, rh: 500 }, 'swap works the other orientation too');
+  assert.deepStrictEqual(r.square, { rw: 600, rh: 600 }, 'a square stays the same size (swap is a no-op numerically)');
+}
+console.log('  _comicRotatedDims(): a 90° rotation swaps width/height: OK');
+
+{
+  // A no-op with no image loaded — must not create a canvas or touch APP_COMIC at all.
+  const C = client();
+  C.run(`APP_COMIC.dataUrl = null; APP_COMIC.naturalW = 0; APP_COMIC.naturalH = 0;
+    window._canvasCreated = false;
+    const origCreate = document.createElement.bind(document);
+    document.createElement = function(tag){ if(tag === 'canvas') window._canvasCreated = true; return origCreate(tag); };
+    comicRotateImage();
+    true;`, 't13-noop');
+  const r = JSON.parse(C.run(`JSON.stringify({ canvasCreated: window._canvasCreated, dataUrl: APP_COMIC.dataUrl })`));
+  assert.strictEqual(r.canvasCreated, false, 'no image loaded: comicRotateImage() never even creates a canvas');
+  assert.strictEqual(r.dataUrl, null, 'APP_COMIC.dataUrl is untouched');
+}
+console.log('  comicRotateImage(): a no-op when no image is loaded yet — never creates a canvas: OK');
+
+{
+  // With an image loaded: this harness's own DOM stub has no 2D canvas context (checked directly,
+  // same gap §6 above already documents for _comicRedraw) — comicRotateImage() must not throw, and
+  // must leave APP_COMIC.dataUrl/naturalW/naturalH UNCHANGED (the safe fallback), exactly like
+  // _comicDownscaleDims' own no-context fallback in onComicFileChosen. Mutation-tested: removing the
+  // `if(!ctx) return;` guard throws immediately (ctx.translate on undefined), confirmed below.
+  const C = client();
+  const threw = C.run(`APP_COMIC.dataUrl = 'data:image/jpeg;base64,ORIGINAL';
+    APP_COMIC.naturalW = 800; APP_COMIC.naturalH = 500;
+    let threw = false;
+    try{ comicRotateImage(); }catch(e){ threw = true; }
+    JSON.stringify(threw)`);
+  assert.strictEqual(JSON.parse(threw), false, 'comicRotateImage() does not throw with no 2D canvas context (guard present)');
+  const r = JSON.parse(C.run(`JSON.stringify({ dataUrl: APP_COMIC.dataUrl, w: APP_COMIC.naturalW, h: APP_COMIC.naturalH })`));
+  assert.strictEqual(r.dataUrl, 'data:image/jpeg;base64,ORIGINAL', 'no 2D context: the image is left UNTOUCHED, not corrupted');
+  assert.strictEqual(r.w, 800, 'naturalW is untouched by the no-context fallback');
+  assert.strictEqual(r.h, 500, 'naturalH is untouched by the no-context fallback');
+}
+console.log('  comicRotateImage(): harness-safe with no 2D canvas support — leaves the image untouched, does not throw: OK');
+
+{
+  // Source check: this harness can't drive the REAL (working-canvas) rotate path behaviourally (same
+  // class of gap as onComicFileChosen's own downscale branch — see this file's own §comment near
+  // "onComicFileChosen's real image-load path" above) — but the source shows it reaches
+  // _comicFinishSetup() via the exact same img.onload shape a fresh upload uses, so panel-box
+  // invalidation (comicClearPanels(), inside _comicFinishSetup) and natural-dimension pickup both
+  // apply identically after a rotation.
+  const fnStart = html.indexOf('function comicRotateImage');
+  const fnSrc = html.slice(fnStart, html.indexOf('\n}', fnStart) + 2);
+  assert.ok(/img\.onload\s*=\s*\(\)\s*=>\s*\{\s*_comicFinishSetup\(img,\s*status\);/.test(fnSrc),
+    'comicRotateImage()\'s real (working-canvas) path reaches _comicFinishSetup() via img.onload, exactly like a fresh upload');
+}
+console.log('  comicRotateImage(): the real image-load path reaches _comicFinishSetup() (source check): OK');
+
+// ── 14. Markup: #comic-rotate-btn exists, wired to comicRotateImage(), shown alongside detect/single-panel ──
+{
+  const panelAt = html.indexOf('id="comic-panel"');
+  const rowAt = html.indexOf('id="comic-detect-row"', panelAt);
+  const rowEnd = html.indexOf('id="comic-panel-list"', rowAt);
+  const within = (needle) => { const at = html.indexOf(needle, rowAt); return at > rowAt && at < rowEnd; };
+  assert.ok(within('id="comic-rotate-btn"'), '#comic-rotate-btn lives inside #comic-detect-row, alongside detect/single-panel');
+  assert.ok(/id="comic-rotate-btn"[^>]*onclick="comicRotateImage\(\)"/.test(html), '#comic-rotate-btn calls comicRotateImage()');
+}
+console.log('  markup: #comic-rotate-btn exists in #comic-detect-row, wired to comicRotateImage(): OK');
+
 console.log('unit-comic-panel-ui: ALL PASSED');
 }
 
