@@ -353,6 +353,12 @@ console.log('  showComplete: fresh, review, below-mark, drill card, teacher: OK'
   seed();
   const built = C.run(`(() => {
     APP.lessonData.story = 'Die Katze sass im Baum.\\n\\nDas Haus war still.';
+    // v86_a: the corpus-picked fixture topic can be a REAL comic-derived one (this app's own corpus
+    // now has several) — since v86_a's own fix made _exStoryPanelHtml() actually reach the
+    // comic-panel branch (PLAN §2.4 milestone 4), overriding .story here without ALSO clearing any
+    // pre-existing .comicPanels would render the OLD panel captions instead of the text this test
+    // just set. This block is about the generic comprehension story panel, not comic panels.
+    delete APP.lessonData.comicPanels;
     APP.lessonData.lessons.push({ id: 'smk_comp', type: 'comprehension', questions: [
       { q: 'Wo sass die Katze?', choices: ['Im Baum','Im Haus','Im Wasser'], correctIndex: 0, why: 'x' } ] });
     const i = APP.lessonData.lessons.length - 1;

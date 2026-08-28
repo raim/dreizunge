@@ -19,6 +19,13 @@
 //     vocab word inside one panel's text gets wrapped in <mark class="...wp-tap">.
 //   • §6 a panel with only caption (or only in-scene) text joins cleanly, no stray blank line/<br>.
 //   • §7 a panel with no image (undefined) renders no broken <img> tag.
+//   • §8 (v86_a, user-reported) THE REAL CALLERS actually reach the branch. §1-§7 all call
+//     _storyBodyHtml() DIRECTLY, which proved the function correct but never proved either real
+//     caller (_renderCompStory / _exStoryPanelHtml) ever reaches it — and neither did, in real
+//     usage, for every release from v85_n through v85_u: both passed an explicit `text:` override
+//     UNCONDITIONALLY, which defeats the `o.text == null` check regardless of whether the override
+//     happens to equal the default (exactly what §3 above documents as correct — it IS correct for
+//     _storyBodyHtml itself, the bug was entirely in what its two callers chose to pass it).
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -163,6 +170,64 @@ console.log('  a panel with only caption text (empty in-scene) joins cleanly, no
   assert.strictEqual((panelBlocks[1].match(/comic-story-panel-img/g) || []).length, 0, 'a panel with no image renders NO <img> tag (not a broken/empty-src one)');
 }
 console.log('  a panel with no image renders no <img> tag at all, rather than a broken one: OK');
+
+// ── 8. THE REAL CALLERS actually reach the comic-panel branch (v86_a, user-reported) ─────────────
+// Every case above calls _storyBodyHtml() DIRECTLY — proving the function itself is correct, but
+// NOT that either of its two real callers (_renderCompStory for the progress card,
+// _exStoryPanelHtml for the question panel) ever reaches the branch. They didn't: both
+// UNCONDITIONALLY passed an explicit `text:` override (identical in VALUE to _storyBodyHtml's own
+// default on the story side, so no prior test caught it), which defeats the `o.text == null` check
+// regardless of whether the override happens to equal the default — §3 above even documents that
+// exact defeating behaviour as a correct, intentional feature. A real comic-derived topic's panel
+// images therefore NEVER rendered on either surface, confirmed by the user after `v85_n`/`v85_t`/
+// `v85_u` all shipped without catching it. Fixed by passing `text: null` on the STORY side (letting
+// _storyBodyHtml's own default and comic-panel branch both fire) and keeping an explicit override
+// ONLY for the TRANSLATION side, which has no per-panel data to show instead.
+{
+  const C = client();
+  C.run(`
+    document.getElementById('use-comic-cb');   // harmless touch, not required
+    APP.lessonData = ${JSON.stringify(COMIC_TOPIC)};
+    APP.progress = { completed:{}, solved:{}, chapterDone:{}, learned:{}, storyShown:{} };
+    APP._compStoryLang = 'target';
+    true;`, 'comp-story-setup');
+  const out = C.run(`_renderCompStory(); document.getElementById('comp-story-text').innerHTML;`);
+  assert.ok(out.includes('comic-story-panels'),
+    '_renderCompStory() (the PROGRESS CARD\'s real renderer) reaches the comic-panel branch for a comic-sourced topic');
+  assert.ok(out.includes('data:image/jpeg;base64,AAAA'),
+    'and the actual panel image is present, not just the container');
+}
+console.log('  THE REAL PROGRESS-CARD RENDERER (_renderCompStory) reaches the comic-panel branch: OK');
+
+{
+  // The translation side must NOT show panels (no per-panel translation exists) — falls back to the
+  // plain flat-text path, same as before this fix, on that one side only.
+  const C = client();
+  const topic = { ...JSON.parse(JSON.stringify(COMIC_TOPIC)), storyTranslation: 'A translated story.' };
+  C.run(`
+    APP.lessonData = ${JSON.stringify(topic)};
+    APP.progress = { completed:{}, solved:{}, chapterDone:{}, learned:{}, storyShown:{} };
+    APP._compStoryLang = 'source';
+    true;`, 'comp-story-translation-setup');
+  const out = C.run(`_renderCompStory(); document.getElementById('comp-story-text').innerHTML;`);
+  assert.ok(!out.includes('comic-story-panels'),
+    'showing the TRANSLATION side does not attempt to show per-panel images (no per-panel translation data exists)');
+  assert.ok(out.includes('A translated story.'), 'the translation text itself still renders');
+}
+console.log('  the TRANSLATION side of the progress card still falls back to plain text (no per-panel translation): OK');
+
+{
+  const C = client();
+  C.run(`
+    APP.lessonData = ${JSON.stringify(COMIC_TOPIC)};
+    APP._compStoryLang = 'target';
+    true;`, 'ex-story-setup');
+  const out = C.run(`_exStoryPanelHtml({ type: 'comprehension_mcq' });`);
+  assert.ok(out.includes('comic-story-panels'),
+    '_exStoryPanelHtml() (the QUESTION PANEL\'s real renderer) also reaches the comic-panel branch');
+  assert.ok(out.includes('data:image/jpeg;base64,AAAA'), 'and the actual panel image is present there too');
+}
+console.log('  THE REAL QUESTION-PANEL RENDERER (_exStoryPanelHtml) also reaches the comic-panel branch: OK');
 
 console.log('unit-comic-story-panel: ALL PASSED');
 }

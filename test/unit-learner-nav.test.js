@@ -261,7 +261,12 @@ console.log('  completion card: Next chains lesson→chapter, Back to story/home
   // paragraphs on both branches.
   assert.ok(!/slice\(0, 200\)/.test(rcs),
     'the progress card no longer truncates the story to a preview (v80_w)');
-  assert.ok(/_storyBodyHtml\(d, \{ text: full, highlight: !showingSource \}\)/.test(rcs),
+  // v86_a: loosened from pinning the EXACT `text: full` argument — that literal shape is what
+  // legitimately changed this cut (a comic-sourced chapter now needs `text: null` on the story side
+  // so _storyBodyHtml's own comic-panel branch can fire; see that fix's own comment). The durable
+  // claim this assertion is actually about — SOME call into the shared renderer, gated on
+  // `!showingSource` — still holds and is what's checked now.
+  assert.ok(/_storyBodyHtml\(d, \{[^}]*highlight: !showingSource[^}]*\}\)/.test(rcs),
     'it renders through the SHARED body renderer, so card and question panel agree');
   // Comments mention the old call by name, so strip them before asserting on the CODE. Matching
   // prose was the first version's mistake — it failed on its own explanatory comment.

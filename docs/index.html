@@ -157791,12 +157791,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v86_a', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v86_b', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"a55097e6929b","lessons.json":"b0d44801cfc0","ui.json":"79289a0f8137","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"3826e452f85d"};
+  APP.buildSources = {"index.html":"f65624670c4f","lessons.json":"b0d44801cfc0","ui.json":"79289a0f8137","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"3826e452f85d"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -166005,7 +166005,11 @@ function _exStoryPanelHtml(ex){
     d.lang || APP.lang, d.srcLang || 'en', !!_xl,
     _showSrc ? 'source' : 'target',
     lang => `toggleExStoryLang('${lang}')`);
-  const paras = _storyBodyHtml(d, { ex, text: _showSrc ? _xl : story, highlight: !_showSrc });
+  // v86_a: same fix as _renderCompStory's own comment — passing `text: story` (identical to
+  // _storyBodyHtml's own default) still defeated its comic-panel branch, since that check is on
+  // IDENTITY (an override was passed at all), not on value equality. Only the translation side needs
+  // an explicit override now.
+  const paras = _storyBodyHtml(d, { ex, text: _showSrc ? _xl : null, highlight: !_showSrc });
   const lang = d.lang || APP.lang;
   const title = escHtml(d.topic || t('ex.comprehension.story'));
   const spk = (typeof _lessonIsDialect === 'function' && _lessonIsDialect()) ? '' :
@@ -169976,8 +169980,21 @@ function _renderCompStory(){
     // The TRUNCATION is also gone. It showed 200 characters until the chapter was done, which under
     // TRACK T hides most of the progress display on exactly the cards where the learner is still
     // working. T0: keep the learner's attention on the text throughout.
+    //
+    // v86_a (user-reported): passing `text: full` UNCONDITIONALLY — even on the plain STORY side,
+    // where `full` is just `d.story` again — defeated `_storyBodyHtml`'s own `o.text == null &&
+    // d.comicPanels` branch (`PLAN §2.4` / Track A4 milestone 4, `v85_n`) every single time, since
+    // that check is on IDENTITY (was an override passed at all), not on whether the override
+    // happens to equal the default. A comic-sourced chapter's panel images therefore NEVER rendered
+    // on the progress card through this, the ONLY real caller that reaches it for that surface —
+    // confirmed by actually rendering a real comic-derived topic through this exact function, not
+    // just by reading `_storyBodyHtml`'s own (correct) internal branch in isolation. Only the
+    // TRANSLATION side genuinely needs an override (comic panels have no per-panel translation to
+    // show instead — `d.storyTranslation` is one flat string for the whole chapter); the story side
+    // now passes nothing, letting `_storyBodyHtml`'s own default AND its comic-panel branch both work
+    // exactly as they were built to.
     try {
-      _el.innerHTML = _storyBodyHtml(d, { text: full, highlight: !showingSource });
+      _el.innerHTML = _storyBodyHtml(d, { text: showingSource ? full : null, highlight: !showingSource });
     } catch(_) {
       _el.textContent = full;   // a story that renders unformatted is fine; one that fails is not
     }

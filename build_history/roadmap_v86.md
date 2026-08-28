@@ -37,7 +37,7 @@ this file stays current through the whole `v86` line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v86 CUT** | fresh, top-of-file summary of everything still genuinely open, then the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v86 LINE** | empty at the cut — nothing has shipped in this line yet |
+| **SHIPPED IN THE v86 LINE** | `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, `PLAN §7.0` Track A (CP1–5), and `PLAN §13` are ALL fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). `PLAN §2.4` / Track A4 (comic/image ingest) is fully shipped as its FOUR-milestone core, plus a `v85_o` auto-detect follow-up, plus a `v85_t` panel-resize follow-up, plus a `v85_u` resize-sync fix — its own sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -126,11 +126,15 @@ of the recommendation before anyone starts** — this touches the wizard shell a
 
 ### D. Tier 2 per-word image-coordinate vocab highlighting (from `v85_u`, restated from `PLAN §2.6`)
 
-The user's own explicit next step after confirming Tier 1 (panel image above transcribed text,
-already shipped at `v85_n`) works: highlighting vocabulary words AT THEIR LOCATION IN THE IMAGE
-itself. Explicitly out of scope since `PLAN §2.4` was first scoped, still unmeasured, needs its own
-design pass (does a vision model return per-word bounding boxes reliably enough to trust, at what
-granularity, rendered how) before anyone estimates it.
+**⚠️ Correction (`v86_b`): Tier 1 was NOT actually working when this item was written.** `v85_u`
+(and `v85_n` before it) believed panel-image-above-text was confirmed shipped and live — it was not;
+see `roadmap_v86.md`'s `v86_b` entry for the real bug (both real callers of the shared story renderer
+defeated the comic-panel branch unconditionally) and its fix. Tier 1 is NOW genuinely live as of
+`v86_b`. This item (Tier 2, per-word coordinates) is UNCHANGED and still the real next step the user
+asked for: highlighting vocabulary words AT THEIR LOCATION IN THE IMAGE itself, not just in the
+transcribed text below it. Explicitly out of scope since `PLAN §2.4` was first scoped, still
+unmeasured, needs its own design pass (does a vision model return per-word bounding boxes reliably
+enough to trust, at what granularity, rendered how) before anyone estimates it.
 
 ### E. Chapter-title post-pass failures (from `v85_r`)
 
@@ -1878,7 +1882,76 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v86 LINE
 
-*Nothing yet — this line was just cut. The first release entry goes at the top of this section.*
+## ✅ v86_b — comic panels on the progress card: the REAL bug found and fixed (`v85_n` never actually worked)
+
+The user, immediately after `v86_a`: "i still don't see the comic panels in the progress cards."
+Directly contradicts `v85_u`'s own conclusion ("confirmed ALREADY BUILT, traced end to end") — that
+conclusion was WRONG, and this entry corrects the record rather than quietly overwriting it.
+
+**What the earlier investigation got right**: `_storyBodyHtml`'s own internal branch
+(`o.text == null && Array.isArray(d.comicPanels) && d.comicPanels.length → _comicStoryPanelsHtml(d, o)`)
+is correct, and `unit-comic-story-panel.test.js` correctly proves it — by calling `_storyBodyHtml`
+DIRECTLY. **What it never checked**: whether either of `_storyBodyHtml`'s two REAL callers
+(`_renderCompStory` for the progress card, `_exStoryPanelHtml` for the question panel) ever actually
+reaches that branch. Neither did. Confirmed by RENDERING a real comic-derived topic from the user's
+own `lessons.json` (`tp_17877559633380000510`, "Wedding Fever") through `_renderCompStory()` itself,
+not through `_storyBodyHtml` in isolation — the panel image was absent, exactly as the user reported.
+
+**Root cause**: both callers pass an explicit `text:` override to `_storyBodyHtml`
+UNCONDITIONALLY — `_renderCompStory`: `{ text: full, highlight: !showingSource }`;
+`_exStoryPanelHtml`: `{ ex, text: _showSrc ? _xl : story, highlight: !_showSrc }`. `_storyBodyHtml`'s
+own comic-panel gate is `o.text == null` — checking WHETHER an override was passed, not whether the
+override happens to EQUAL the default. On the plain story side (the common case), `full`/`story` are
+literally `d.story` — the exact same value `_storyBodyHtml` would have used anyway — so the override
+was functionally a no-op for VALUE, yet still defeated the branch by existing at all. This is why no
+prior manual/live check caught it: the rendered TEXT was byte-identical whether or not the branch
+fired; only a comic-sourced chapter specifically, checked for the PANEL IMAGE specifically, would
+ever show the difference — and apparently nobody had, including this project's own `v85_n` "live
+verification" (which very likely tested `_storyBodyHtml` directly too, or a since-changed caller,
+not the real UI path as it exists today).
+
+**Fix**: both call sites now pass `text: null` on the STORY side (letting `_storyBodyHtml`'s own
+default AND comic-panel branch both fire) and keep an explicit override ONLY on the TRANSLATION side
+(`showingSource`/`_showSrc`), which genuinely needs one — `d.storyTranslation` is one flat string for
+the whole chapter, with no per-panel breakdown to show instead, so falling back to plain text there
+is correct, not a bug.
+
+**Test coverage added, closing the exact gap that let this ship unnoticed**: `unit-comic-story-panel.test.js`
+§8 — three new cases that call the REAL functions (`_renderCompStory()`, `_exStoryPanelHtml()`), not
+`_storyBodyHtml` directly, proving the whole chain end to end: the progress card reaches the branch,
+the question panel reaches the branch, and the translation side correctly does NOT (falls back to
+plain text). Mutation-tested: reverted both call sites to their old shape, confirmed the new tests
+fail with the exact symptom, restored.
+
+**Collateral, found while verifying**: this fix's own correctness is high-blast-radius —
+`_renderCompStory`/`_exStoryPanelHtml` run on EVERY progress card and EVERY question, not just comic
+ones — so the full suite was run repeatedly, and it found two REAL, pre-existing issues the fix
+exposed, both fixed here too:
+- `unit-learner-nav.test.js` pinned the OLD `_storyBodyHtml(d, { text: full, highlight:
+  !showingSource })` call as a literal source-text regex — exactly the "guard pins SOURCE TEXT for a
+  claim about BEHAVIOUR" anti-pattern this project's own rules warn against. Loosened to check for
+  the DURABLE claim (a call into the shared renderer, gated on `!showingSource`) rather than the
+  exact argument shape, which is precisely what legitimately changes here. Mutation-tested — the
+  loosened version still catches a real regression.
+- `smoke-render.test.js`'s own corpus-picked fixture topic (chosen by `chapters.find(...)` from a
+  real storyline) turned out to ALREADY be a real comic-derived topic (the corpus has several now,
+  since `v85_j`-`v85_p`) — a pre-existing rule-29 case ("a test that reads the real, live
+  `lessons.json` can go from green to red purely from the corpus growing") that this fix's own
+  correctness newly exposed: one test block overrides `.story` without clearing `.comicPanels`,
+  so once the branch became reachable it rendered the OLD panel captions instead of the synthetic
+  text the test just set. Fixed by clearing `.comicPanels` in that one block, which is testing the
+  generic (non-comic) comprehension story panel and was never meant to exercise comic behaviour.
+
+**A live model backend was NOT needed for this fix** — this is a pure rendering/wiring bug, verified
+entirely against real STORED data (the user's own comic-derived topics, already generated) through
+the DOM-stub harness. No probe, no Ollama call.
+
+Baseline: `node test/run.js` → ALL 284 CHECKS PASSED. `node test/run.js --quick` → ALL 246 CHECKS
+PASSED (both re-run clean after the fixture/guard fixes above — two DIFFERENT transient flakes
+appeared and cleared across intermediate runs, confirmed unrelated by re-running each standalone:
+`unit-observations-log.test.js` and `unit-dreizunge-launcher.test.js`, neither touched by this
+cut). Both `check-inline.js` → 0 failures. `docs/index.html` rebuilt. `lessons.json` untouched
+throughout. `APP_VERSION = 'v86_b'`.
 
 # TRACK T — THE TEXT-FOCUSED PROGRESS CARD (user, at the `v80_f` cut)
 
