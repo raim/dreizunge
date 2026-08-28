@@ -37,7 +37,7 @@ this file stays current through the whole `v86` line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v86 CUT** | fresh, top-of-file summary of everything still genuinely open, then the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v86 LINE** | `v86_h` — `INTERNALS.md` §6b caught up (doc-only). From a 16-item real-usage batch: item Q (comprehension questions must be independently answerable, a prompt-only fix), plus three unrelated small fixes — tutor logs on ASK now (not just on a completed reply), a QC 'rewrite' verdict (large change-ratio, not necessarily corruption) can now be ACCEPTED after human review (only 'corrupt' stays hard-blocked), and the static build's own `init()` now wires `_storyTapInit()` (tap-to-advance on plain story text was silently dead there). The other 13 items scoped into the roadmap as items P–AC, not built this cut. `v86_g` — item L: a comic/image chapter's progress card and question panel showed STALE text after a story edit (`_comicStoryPanelsHtml` reads `comicPanels[].caption`/`inScene`, a separate copy of the text `/api/save-story` never touched) — fixed by syncing `comicPanels[0]` on save for the unambiguous SINGLE-panel case (multi-panel deliberately left as item O, genuinely ambiguous). Item M: drag-to-move a panel box (`_comicHitBox`), the companion to the existing resize handles — a handle grab still wins at a box's own corner. Item N: a "3 shown, 4 detected" report investigated and found to be a likely MODEL accuracy limitation, not a code bug (no merging logic exists) — not changed this cut, flagged for a live-model probe if wanted. `v86_f` — item I: a fixed 90°-clockwise-per-click rotate button for the uploaded/captured comic image, using the SAME offscreen-canvas-redraw shape as the existing downscale step, routed through the SAME `img.onload -> _comicFinishSetup()` path a fresh upload uses — so natural dimensions are read from the rotated image itself and panel-box invalidation comes for free from the existing "new image clears boxes" precedent, no new logic needed. `v86_e` — item K: the SAME mobile-backgrounding fix extended to `_pollComicBookJob` (book/chapter creation), the one poller `v86_d` explicitly left open — required its own small refactor (a `while`+`sleep` loop split into a re-invokable `_comicBookCheckOnce()`, gated on the pre-existing `_comicBookId`) rather than a copy-paste, since it wasn't `setInterval`-shaped like the other two. Preserves one deliberate behavioural difference: a network hiccup mid-poll is NOT terminal here (unlike extract/detect), matching the original code exactly. Six new tests exercise the REAL function for the first time (every prior test mocked it). `v86_d` — mobile-backgrounding fix: `setInterval`-based polling for comic extraction AND detection can be throttled/suspended on a backgrounded phone tab, stranding a client that never learns its job finished (confirmed live: the user's own console showed server-side success while the UI stayed stuck). Fixed with a shared `visibilitychange` listener that re-checks any in-flight job off-schedule the instant the tab becomes visible again; `_pollComicBookJob` has the same class of gap and is explicitly NOT yet fixed (item K below). Also: a second live bug found mid-session — auto-detect silently dropped a malformed/inverted box with NO toast unless every suggested box was dropped (confirmed live: server said "4 panel(s) suggested", UI showed 3, no explanation) — now toasts on any drop, partial or total. Also item J: a "use whole image as one panel" shortcut button. `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
+| **SHIPPED IN THE v86 LINE** | `v86_i` — a real showToast() dead-guard bug found and fixed while investigating two live-testing reports (not the cause of either, ruled out specifically). Live-testing round on `v86_d`–`v86_h` began: items L/I/M confirmed working; two problems (AE: mobile-backgrounding recovery did not recover on a real device; AF: the partial-drop toast/panel-count mismatch recurred) investigated but NOT resolved — both need the user's own answers to specific diagnostic questions before a confident fix, not a guess. `v86_h` — `INTERNALS.md` §6b caught up (doc-only). From a 16-item real-usage batch: item Q (comprehension questions must be independently answerable, a prompt-only fix), plus three unrelated small fixes — tutor logs on ASK now (not just on a completed reply), a QC 'rewrite' verdict (large change-ratio, not necessarily corruption) can now be ACCEPTED after human review (only 'corrupt' stays hard-blocked), and the static build's own `init()` now wires `_storyTapInit()` (tap-to-advance on plain story text was silently dead there). The other 13 items scoped into the roadmap as items P–AC, not built this cut. `v86_g` — item L: a comic/image chapter's progress card and question panel showed STALE text after a story edit (`_comicStoryPanelsHtml` reads `comicPanels[].caption`/`inScene`, a separate copy of the text `/api/save-story` never touched) — fixed by syncing `comicPanels[0]` on save for the unambiguous SINGLE-panel case (multi-panel deliberately left as item O, genuinely ambiguous). Item M: drag-to-move a panel box (`_comicHitBox`), the companion to the existing resize handles — a handle grab still wins at a box's own corner. Item N: a "3 shown, 4 detected" report investigated and found to be a likely MODEL accuracy limitation, not a code bug (no merging logic exists) — not changed this cut, flagged for a live-model probe if wanted. `v86_f` — item I: a fixed 90°-clockwise-per-click rotate button for the uploaded/captured comic image, using the SAME offscreen-canvas-redraw shape as the existing downscale step, routed through the SAME `img.onload -> _comicFinishSetup()` path a fresh upload uses — so natural dimensions are read from the rotated image itself and panel-box invalidation comes for free from the existing "new image clears boxes" precedent, no new logic needed. `v86_e` — item K: the SAME mobile-backgrounding fix extended to `_pollComicBookJob` (book/chapter creation), the one poller `v86_d` explicitly left open — required its own small refactor (a `while`+`sleep` loop split into a re-invokable `_comicBookCheckOnce()`, gated on the pre-existing `_comicBookId`) rather than a copy-paste, since it wasn't `setInterval`-shaped like the other two. Preserves one deliberate behavioural difference: a network hiccup mid-poll is NOT terminal here (unlike extract/detect), matching the original code exactly. Six new tests exercise the REAL function for the first time (every prior test mocked it). `v86_d` — mobile-backgrounding fix: `setInterval`-based polling for comic extraction AND detection can be throttled/suspended on a backgrounded phone tab, stranding a client that never learns its job finished (confirmed live: the user's own console showed server-side success while the UI stayed stuck). Fixed with a shared `visibilitychange` listener that re-checks any in-flight job off-schedule the instant the tab becomes visible again; `_pollComicBookJob` has the same class of gap and is explicitly NOT yet fixed (item K below). Also: a second live bug found mid-session — auto-detect silently dropped a malformed/inverted box with NO toast unless every suggested box was dropped (confirmed live: server said "4 panel(s) suggested", UI showed 3, no explanation) — now toasts on any drop, partial or total. Also item J: a "use whole image as one panel" shortcut button. `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, `PLAN §7.0` Track A (CP1–5), and `PLAN §13` are ALL fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). `PLAN §2.4` / Track A4 (comic/image ingest) is fully shipped as its FOUR-milestone core, plus a `v85_o` auto-detect follow-up, plus a `v85_t` panel-resize follow-up, plus a `v85_u` resize-sync fix — its own sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -607,6 +607,73 @@ item A (moving comic images out of `lessons.json`) — once comic panel images l
 server-side asset store rather than inline base64 in the topic record, serving a THUMBNAIL for this
 hierarchy's own tier (i) becomes cheaper (a smaller derived image, not the full-resolution panel crop)
 — worth sequencing AFTER item A rather than before, if both are ever picked up.
+
+## 🆕 LIVE-TESTING ROUND ON `v86_d`–`v86_h` (`v86_i` cut) — 2 unresolved problems, need the user's own answers
+
+The user began live-verifying the whole round per `v86_h`'s own recommendation. **Confirmed working**:
+item L (progress-card text sync, `sl_1597155858`), items I/M (rotate + drag-to-move, "feel right on a
+touchscreen"). **Two real problems reported, investigated this cut, NOT resolved** — both need a
+specific answer from the user before a confident fix (rather than a guess) can be attempted.
+
+### AE. The mobile-backgrounding recovery fix (`v86_d`) did NOT recover, on a real device
+
+**Reported**: backgrounded the tab mid-extraction, brought it back, still got "Chapter creation
+failed: no extracted text yet" — but the CONSOLE showed the server had genuinely finished
+(`[comic-extract] done: 1 panel(s), 0 failed`).
+
+**Investigated, ruled out**: (a) the service worker (`sw.js`) — read in full, confirmed NETWORK-FIRST
+by design (`fetch(req).then(...).catch(() => caches.match(req))`), so an online client always gets the
+current page; not a stale-cache explanation. (b) job expiry on the server — a completed job stays in
+the `jobs` Map for 5 minutes (`jobDone`'s own `_scheduleCleanup(id, 5*60*1000)`), a generous window
+unless the tab was backgrounded far longer than that.
+
+**Leading, NOT YET CONFIRMED hypothesis**: mobile browsers (iOS Safari especially, and Android Chrome
+under memory pressure) can fully DISCARD a backgrounded tab's JS execution context and reload the page
+fresh when revisited — a materially different failure mode from "the timer was merely throttled",
+which is the ONLY scenario `v86_d`'s own `visibilitychange`-listener fix can help with (it depends on
+the JS context, and therefore `_comicExtractJobId`, surviving backgrounding). If the page was actually
+discarded and reloaded, there is NO in-memory state left for any listener to recover — the fix would
+need a fundamentally different shape: persist the in-flight job's identity to `localStorage` before
+backgrounding, and check it on every fresh page `init()` (not just via `visibilitychange`), so even a
+full reload can resume checking a job that might have finished while gone.
+
+**Needs from the user before building anything**: (1) did the page look freshly reloaded when you
+returned to it (back at the top, any state/scroll lost), or did it look exactly as you'd left it? (2)
+roughly how long was the tab backgrounded — seconds, ~1 minute, several minutes? These two answers
+distinguish "page discarded, needs the localStorage-based redesign above" from "page survived, the
+listener itself has a real bug not yet found by reading" — worth confirming before spending real
+implementation effort on the wrong one.
+
+### AF. The auto-detect partial-drop toast (`v86_d`) did not appear; the panel-count mismatch recurred
+
+**Reported**: on a 4-panel comic (console: `[comic-detect] done: 4 panel(s) suggested`), the browser
+still showed 3 panels, with NO toast and no console message about a skip.
+
+**Investigated**: `_comicApplyDetectedPanels`'s own code, re-read in full — with `panels.length===4`
+and one box filtered as malformed (`converted.length===3`), the `3 < 4` toast condition SHOULD fire;
+no code path was found that would silently skip it. **One likely explanation, worth checking with the
+user directly**: `showToast()` has never logged anything to the CONSOLE — it is a purely VISUAL popup
+that fades after 2.2 seconds (`showToast._timer`, unchanged this session). The user's own evidence for
+"no toast" was "no skipped message in the console" — but a toast was never going to appear there
+regardless of whether the fix works; it needs to be seen on SCREEN, in that ~2-second window. This may
+simply be a report based on the wrong evidence, not proof the fix didn't fire.
+
+**The panel-COUNT mismatch itself is separate from the toast question** and matches item N's own
+already-recorded finding (a likely model-accuracy limitation, no merging logic exists in the code) —
+but the user's own new observation is sharper and worth recording verbatim: *"it looks like the widths
+of the three detected panels could correspond to the widths of the first three panels, with the fourth
+just shifted outside and dropped"* — consistent with `_comicApplyDetectedPanels`'s own clamping math
+(`x2` is clamped to `Math.min(w, ...)` but `x1` is only clamped to `Math.max(0, ...)`, never capped
+against `w` — if the model's own coordinate space assumption drifts, a box positioned entirely past the
+image's right edge would have `x1 > w`, get `x2` clamped down to `w`, land with `x2 <= x1`, and
+correctly get dropped as malformed by the EXISTING filter — not a bug, but confirms the mechanism by
+which a genuinely-detected 4th box can vanish without corrupting anything else).
+
+**Needs from the user**: did you actually watch the SCREEN (not the console) for a couple of seconds
+right after detection finished, or only check the console log? If the toast genuinely never showed
+even when watched for, that is a real, different bug from what's diagnosed above and needs a fresh
+look — the code reading above did not find one, so the honest position for now is "either fine and
+just under-observed, or wrong in a way not yet located."
 
 ## ✅ FINDINGS THAT GOVERN THE OPEN SECTIONS BELOW
 
@@ -2320,6 +2387,32 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v86 LINE
+
+## ✅ v86_i — `showToast()`'s dead null-guard fixed; live-testing round on `v86_d`–`v86_h` begins
+
+The user started live-verifying `v86_d`–`v86_h` on their device (per `v86_h`'s own recommended next
+step) and reported back mid-round: the progress-card fix (item L) confirmed WORKING; rotate and
+drag-to-move (items I/M) confirmed feeling right on a touchscreen. **Two real, still-open problems**
+surfaced — see "OPEN AT THE v86 CUT" items AE/AF below for the full investigation; NOT resolved this
+cut, genuinely needs the user's own answers to two diagnostic questions before a real fix can be
+attempted rather than guessed at.
+
+**Found and fixed while investigating (unrelated to either open problem, confirmed by ruling it out
+specifically)**: `showToast()`'s own null-guard checked `t` (the global translate function — a
+function reference, ALWAYS truthy, so the check was dead code) instead of `toastEl`, the element it
+had just looked up two words earlier. Harmless in the app's actual current shape (`#toast` is static
+markup, always present in the DOM — confirmed, which is exactly why this was NOT the explanation for
+either reported problem), but genuinely wrong: had `#toast` ever been conditionally absent, the
+ORIGINAL bug would throw (`toastEl.textContent` on `null`) instead of the intended silent no-op. New
+`test/unit-show-toast-guard.test.js` (2 checks: happy path, and the absent-element no-op — via a
+`document.getElementById` spy, since this harness's DOM stub elements have no working `.parentNode` to
+physically remove the element through). Mutation-tested: reverting to the old `t` check reproduces the
+exact original throw, confirmed by the new test failing for the right reason. Restored, diff clean.
+
+Baseline: `node test/run.js` → 287 checks. `lessons.json` untouched throughout — read only, to rule
+out an unrelated live-corpus-drift failure (`unit-article-choices`, confirmed via a direct before/
+after comparison against the committed tree to be pure live-data drift, unrelated to any code this
+session touched). `APP_VERSION = 'v86_i'`.
 
 ## ✅ v86_h — `INTERNALS.md` catch-up (doc-only), item Q, plus three small fixes from a 16-item batch
 

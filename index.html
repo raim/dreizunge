@@ -3279,7 +3279,12 @@ function saveOverruleStorylineLang(){ try { localStorage.setItem('imp3_overrule_
 
 // ── Toast + share — pure DOM, no server dependency ────────────────────
 function showToast(msg){
-  const toastEl=document.getElementById('toast'); if(!t) return;
+  // v86_i: found while investigating a live report of a "missing" toast — this guard checked the
+  // global translate function `t` (always truthy, a dead no-op) instead of `toastEl`, the element it
+  // just looked up. Harmless in practice (#toast is static markup, always present — never actually
+  // null), but genuinely wrong; if this element were ever conditionally absent, the ORIGINAL bug
+  // would throw on the next line (`toastEl.textContent=msg` on null) instead of silently no-opping.
+  const toastEl=document.getElementById('toast'); if(!toastEl) return;
   toastEl.textContent=msg; toastEl.classList.add('show');
   clearTimeout(showToast._timer);
   showToast._timer=setTimeout(()=>toastEl.classList.remove('show'),2200);

@@ -3284,7 +3284,12 @@ function saveOverruleStorylineLang(){ try { localStorage.setItem('imp3_overrule_
 
 // ── Toast + share — pure DOM, no server dependency ────────────────────
 function showToast(msg){
-  const toastEl=document.getElementById('toast'); if(!t) return;
+  // v86_i: found while investigating a live report of a "missing" toast — this guard checked the
+  // global translate function `t` (always truthy, a dead no-op) instead of `toastEl`, the element it
+  // just looked up. Harmless in practice (#toast is static markup, always present — never actually
+  // null), but genuinely wrong; if this element were ever conditionally absent, the ORIGINAL bug
+  // would throw on the next line (`toastEl.textContent=msg` on null) instead of silently no-opping.
+  const toastEl=document.getElementById('toast'); if(!toastEl) return;
   toastEl.textContent=msg; toastEl.classList.add('show');
   clearTimeout(showToast._timer);
   showToast._timer=setTimeout(()=>toastEl.classList.remove('show'),2200);
@@ -158042,12 +158047,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v86_h', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v86_i', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"1bfde40d080a","lessons.json":"b0d44801cfc0","ui.json":"73970f14f497","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"d7c9353f56a8"};
+  APP.buildSources = {"index.html":"bd4c45da0ff6","lessons.json":"b0d44801cfc0","ui.json":"73970f14f497","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"d7c9353f56a8"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
