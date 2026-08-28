@@ -542,13 +542,77 @@ grammatical form (case, tense, etc. — whatever `inflections`' own `formLabel` 
 needing to start any lesson at all. Positioned explicitly as independent of lesson-playing: "dreizunge
 just works as a text explorer."
 
-**Not scoped this cut** — a real, appealing feature, but needs real design work: where does the
-per-word analysis data come from for a word NOT already covered by a generated `inflections` lesson
-(every word in the story, not just the subset `inflections` happened to pick)? Two directions worth
-weighing later: (a) a NEW, cheaper generation pass specifically for "annotate every word", separate
-from the existing (selective, exercise-shaped) `inflections` generator; or (b) reuse the SAME
-`inflections` generator but with a prompt asking for full coverage instead of a curated subset, if the
-existing per-word analysis quality holds up at that scale. Either way this is its own release.
+**⚠️ RECONCILED (not built, scoping only) — this is the SAME feature as `PLAN §7.0` CP5, arrived at
+independently from the UI side rather than the pipeline side.** CP5's own migration-sequence spec,
+written at the `v81_l` cut, reads word for word: *"Let the red→green text progress card read analysis
+and skill data with a legacy fallback"* (see `PLAN §7.0` below). Item W's original write-up (above)
+never cross-referenced it and considered only two options — (a) a new dedicated generation pass, or
+(b) repurpose the exercise-shaped `inflections` generator — missing the third, already-built,
+already-measured option this reconciliation exists to record:
+
+- **(c) surface CP1 (`canonical-text.js`) + CP2 (`canonical-analysis.js`) output directly.** CP2's
+  own prompt already asks the model, per sentence, for exactly item W's per-word data — `{lemma, form,
+  sense, confidence}` for EVERY token, explicitly instructed to **never omit one** (unlike
+  `inflections`, which only covers a curated exercise subset). This has been measured on a real
+  chapter, not just designed: the production model (`qwen3.6:35b-a3b`) got zero wrong translations
+  with genuinely sophisticated context tracking; the cheap dev model (`qwen2.5:7b`) got 2/8 wrong (see
+  the `v83_n`→`v83_p` note under `PLAN §7.0` below). Option (c) needs no new prompt design and no new
+  quality measurement — both already exist for this exact data shape.
+
+**What's actually already wired, checked this cut, module by module:**
+- **CP1** (`canonical-text.js`, `buildCanonicalText(topic)`) is pure/deterministic, no model call, and
+  explicitly safe for `server.js` to `require()` directly (the "standalone on purpose" header only
+  forbids the OTHER direction — CP1/CP2 must never require `server.js`, since loading it binds an HTTP
+  port as a side effect). **Already run at corpus scale once**: `canonical-text.json` (24 chapters, 14
+  languages, committed at `v83_h`) exists in the repo today, though `server.js` has no read path for
+  it — the file is a CLI-only artifact, never served.
+- **CP2** (`canonical-analysis.js`, `analyzeChapter(model, chapter, opts)`) is also safe to
+  `require()` from `server.js` — it depends only on `llm.js`, which `server.js` **already requires**
+  (line 14, aliased `_rawCallLLM` etc.) and on `scripts.json`, plain data. But CP2 takes an explicit
+  `model` string, not one of `server.js`'s existing per-role model settings
+  (`OLLAMA_LESSON_MODEL`/`OLLAMA_TUTOR_MODEL`/etc, the runtime-switchable roles `/api/models` already
+  manages) — a browser-reachable CP2 needs its OWN role added to that system, a small, mechanical
+  addition (same shape as `OLLAMA_VISION_MODEL`'s own dedicated-role precedent), not a design
+  question. **Never run at corpus scale**: `canonical-analysis.json` (CP2's own output file) has never
+  been committed — only the single spot-measured chapter above exists as evidence. **The real cost
+  finding**: CP2 makes ONE model call PER SENTENCE, sequentially — a live test this session found "one
+  4-sentence chapter took 12+ minutes even on a warm model" (`PLAN §13`'s own note). On-demand,
+  synchronous computation is not viable for a "hover any word" feature; this MUST be pre-computed and
+  cached, not computed per-request.
+- **CP3 has a real, live, but NARROW integration already** — `cp5ShadowFor()` in `server.js` (line
+  735) reads `curriculum-plan.json` (CP3's own output file, almost always absent — the common case,
+  degrading to `available:false`) and serves a per-chapter CONCEPT-COUNT summary + a comparison
+  against existing lessons via `GET /api/cp-shadow/:chapterId`, painted into a small collapsed
+  developer/curator row (`#comp-cp5-row`) in the chapter-complete popup. **This is not item W** — it's
+  a concept-level coverage summary, not per-token lemma/form/sense — but it IS the exact end-to-end
+  pattern (absent-by-default file → `available:false` fallback → a small GET route → a client function
+  that paints a row only when real data exists) that a CP1/CP2 read path for item W should mirror,
+  proven to already work in production rather than needing to be designed from scratch.
+- **No server-side read/compute path exists for CP1/CP2 output at all, at any granularity.** This is
+  the one genuine remaining gap, not a design question: `canonical-text.json`/`canonical-analysis.json`
+  are flat CLI artifacts server.js has never opened.
+
+**Recommended path (not started, no code changed this cut)**, in the order each piece becomes useful
+on its own:
+1. Give CP2 its own model role in the existing runtime-switchable role system (mechanical).
+2. Design the background-job shape to run CP1 (instant) then CP2 (slow) for ONE chapter on demand,
+   reusing the existing `jobs` Map / `newJob`/`jobStep`/`jobDone` infrastructure `_runBookJob` and the
+   comic pipeline already use for exactly this "kick off slow server-side work, poll for completion"
+   shape — cache the result keyed by chapter id (matching the plan's own reserved
+   `topic.analysisVersion` field, never yet an actual stored field) so a chapter is only ever analysed
+   once, not on every hover-mode visit.
+3. A new GET endpoint mirroring `cp5ShadowFor`'s own shape (absent → `available:false`, no legacy
+   behaviour change) to serve the cached per-token data.
+4. Only then the client UI: a view toggle next to the translation button, reusing the EXISTING
+   highlight/click machinery (`_highlightVocabHtml`, the `wp-tap` hook the tutor's own text-selection
+   feature already reuses) rather than building new interaction plumbing — this step is the smallest
+   of the four once 1–3 exist.
+
+Steps 1–3 need no product decision, only implementation; step 4 is genuinely new UI. **Still not
+scoped in fine detail** (exact cache invalidation rule, exact job-progress UI, exact per-word popup
+content/styling) — this reconciliation settles WHERE the data comes from and confirms it is buildable
+on already-measured, already-partially-wired infrastructure; it does not yet commit to a build order
+or a release size.
 
 ### X. Alternative-correct-answer handling for typing/ordering (and similar) lesson types — user's own thoughts, recorded verbatim
 
@@ -4601,7 +4665,12 @@ identity rather than invent per-generator dialects.
    validate it, and retain the legacy generation route in parallel. Only then add language-specific
    families such as conjugation, grammar, articles, error patterns, and comprehension.
 5. **CP5 — consume the plan read-only.** Let the red→green text progress card read analysis and skill
-   data with a legacy fallback. BKT remains a measurement until a separate product ruling.
+   data with a legacy fallback. BKT remains a measurement until a separate product ruling. **A narrow
+   slice of this already shipped**: `cp5ShadowFor()`/`GET /api/cp-shadow/:chapterId` (server.js) reads
+   CP3's `curriculum-plan.json` and paints a concept-count summary into the chapter-complete popup —
+   but this reads CP3 (concepts), not CP1/CP2 (per-token lemma/form/sense). **Item W ("text explorer"
+   mode, roadmap section above) is THIS bullet's per-token half, reconciled but not built** — see its
+   own section for the full CP1/CP2 integration gap analysis and recommended path.
 6. **CP6 — retire nothing by assumption.** Consider retiring legacy generation only after the new
    route has measured multilingual coverage, quality, recovery/re-analysis, and player compatibility.
 
