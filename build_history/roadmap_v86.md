@@ -37,7 +37,7 @@ this file stays current through the whole `v86` line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v86 CUT** | fresh, top-of-file summary of everything still genuinely open, then the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v86 LINE** | `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
+| **SHIPPED IN THE v86 LINE** | `v86_d` — mobile-backgrounding fix: `setInterval`-based polling for comic extraction AND detection can be throttled/suspended on a backgrounded phone tab, stranding a client that never learns its job finished (confirmed live: the user's own console showed server-side success while the UI stayed stuck). Fixed with a shared `visibilitychange` listener that re-checks any in-flight job off-schedule the instant the tab becomes visible again; `_pollComicBookJob` has the same class of gap and is explicitly NOT yet fixed (item K below). Also: a second live bug found mid-session — auto-detect silently dropped a malformed/inverted box with NO toast unless every suggested box was dropped (confirmed live: server said "4 panel(s) suggested", UI showed 3, no explanation) — now toasts on any drop, partial or total. Also item J: a "use whole image as one panel" shortcut button. `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, `PLAN §7.0` Track A (CP1–5), and `PLAN §13` are ALL fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). `PLAN §2.4` / Track A4 (comic/image ingest) is fully shipped as its FOUR-milestone core, plus a `v85_o` auto-detect follow-up, plus a `v85_t` panel-resize follow-up, plus a `v85_u` resize-sync fix — its own sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -185,7 +185,12 @@ transform, preserving already-drawn work at the cost of real geometry code (a 90
 but adds a genuine coordinate-transform surface worth its own test coverage, not a "small button").
 **Recommend (a)** unless the user specifically wants panels preserved across a rotation.
 
-### J. A "single panel" shortcut — treat the whole image as ONE panel (from `v86_c` real-device testing)
+### ✅ J. A "single panel" shortcut — SHIPPED `v86_d`
+
+Was: "treat the whole image as ONE panel" (from `v86_c` real-device testing). Built exactly as scoped
+below — see the `v86_d` shipped entry for the final test coverage. No longer open.
+
+<details><summary>Original scoping (kept for the record)</summary>
 
 **Ask**: a button to take a complete photo/image as one panel, without manually drawing (or
 auto-detecting) a box around it — useful for a single illustration, a one-panel comic, or any image
@@ -198,6 +203,19 @@ in `#comic-detect-row`, shown at the same point once an image is loaded) that se
 existing boxes, matching auto-detect's own already-established "a fresh detection replaces prior
 boxes rather than merging" precedent (`unit-comic-detect.test.js`) — then `_comicRedraw()` +
 `_comicRenderList()`, the same two calls every other box-mutating action already ends with.
+
+</details>
+
+### K. `_pollComicBookJob` has the same mobile-backgrounding vulnerability as the two pollers fixed at `v86_d`
+
+**Not fixed this cut, named explicitly** (see the `v86_d` shipped entry). The book/chapter-creation
+poller (`_pollComicBookJob`) uses a `while`+`sleep`-shaped loop, not the `setInterval` shape
+`_startComicExtractJob`/`_startComicDetectJob` had — so the SAME fix (a re-invokable check function
+gated by a tracked job id, called off-schedule from a shared `visibilitychange` listener) needs its
+own small adaptation, not a copy-paste. The live bug that motivated `v86_d` was specifically about
+comic-panel EXTRACTION, so this was out of scope for that fix, but the underlying browser behaviour
+(mobile tab backgrounding suspends timers) applies identically to any long-running client-side poll —
+book/chapter creation can easily run long enough to be affected on a real device.
 
 **Explicitly out of scope, confirmed with the user across the whole `v85` line — do not reopen without
 asking**: the CP1-6 pipeline's cross-chapter arc-sequencing; spell-check-driven auto error-hunt
@@ -1917,6 +1935,97 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v86 LINE
+
+## ✅ v86_d — mobile-backgrounding fix for both comic pollers, a silent-panel-drop fix, plus item J (single-panel shortcut)
+
+**Live bug, reported mid-session**: "on my phone, i started an extraction from a photo, console said:
+[server log showing `[comic-extract] done: 1 panel(s), 0 failed`] ... yet the generator interface
+seems to have lost that. 'create chapters' still said that it requires text extraction first." The
+server-side job had genuinely completed — the client just never applied the result.
+
+**Root cause**: standard mobile-browser behaviour, not a logic bug in the extraction/detection code
+itself. `_startComicExtractJob`/`_startComicDetectJob` each poll `/api/job/:id` via a plain
+`setInterval(…, 2000)`. Mobile browsers throttle or fully suspend `setInterval` timers on a
+backgrounded tab (screen lock, app-switch, even just scrolling away in some browsers) — so a poll
+that was mid-flight when the phone locked can be delayed indefinitely, or never fire again at all,
+even though the SERVER finished the job seconds later. Confirmed via the user's own console log
+(server-side success) against a grep of the whole codebase turning up zero existing
+`visibilitychange` handling anywhere — this class of bug was simply never guarded against.
+
+**Fix**: a shared `document.addEventListener('visibilitychange', …)` listener that, whenever the tab
+becomes visible again, immediately re-checks any job still tracked as in-flight — an OFF-SCHEDULE
+check, not waiting on the (possibly still-suspended) interval to tick. Required refactoring both
+pollers to expose a re-invokable check function gated by a module-level tracked job id
+(`_comicExtractJobId`/`_comicExtractCheckOnce()`, `_comicDetectJobId`/`_comicDetectCheckOnce()`) — the
+existing `setInterval` callback now just calls the same function on its own schedule, so the normal
+(foregrounded) case is unchanged; this is purely additive. Each check function re-validates its job id
+is still the CURRENT one both before AND after its own `await fetch(...)` (a second call — from the
+listener, from a later interval tick, or from a newer job superseding an old one — must be a safe
+no-op, not a stale re-application of an already-finished or already-superseded result).
+
+**Explicitly NOT fixed this cut**: `_pollComicBookJob` (the book/chapter-creation poller) has the
+SAME `setInterval`-based vulnerability and was not touched — its `while`+`sleep`-shaped loop needs its
+own small refactor to expose a re-checkable id the same way `_startComicExtractJob`/
+`_startComicDetectJob` now do. Named here explicitly, not silently left unfixed (rule: a per-caller
+fix does not generalize to other callers of the same primitive) — carried to "OPEN AT THE v86 CUT"
+below as item K.
+
+**Test coverage**: this harness stubs `addEventListener` as a total no-op and has no
+`visibilityState`/`visibilitychange` support at all (checked directly — same class of gap already hit
+twice this line, for `ResizeObserver` and for `FileReader`), so the listener firing itself can't be
+driven behaviourally. Split into what's honestly testable: (a) `_comicExtractJobId`/`_comicDetectJobId`
+correctly track the in-flight job — the exact state the listener reads — and clear to `null` on every
+terminal status; (b) an OFF-SCHEDULE call to `_comicExtractCheckOnce()`/`_comicDetectCheckOnce()` (the
+listener's own call shape — not from the interval) still correctly applies a `done` result; (c) a
+STALE/superseded job id passed to either check function is a no-op that never even calls `fetch`,
+proving a late-arriving stale check cannot clobber a newer, still-current job; (d) a source-level check
+(the established fallback pattern) confirming the listener's own wiring — the `visibilityState!==
+'visible'` guard, and that it calls BOTH check functions, not just one. Mutation-tested twice: removing
+the stale-job guard inside `_comicExtractCheckOnce` failed test (c) with the exact predicted shape
+(`fetch` got called when it shouldn't have); removing the visibility-state guard AND the detect-poller
+call from the listener failed test (d). Both restored, diff confirmed clean.
+
+**A second, related live bug, found mid-session while verifying the fix above**: the user re-tested
+comic auto-detection and reported the same "fewer panels shown than expected" SHAPE again — but this
+time the console proved it wasn't the `v86_c` listener regression (auto-detect fills boxes
+programmatically via `_comicApplyDetectedPanels`, it never goes through the pointer/drag listeners
+that bug was about): "the console actually said 4 panels where detected: … `[comic-detect] done: 4
+panel(s) suggested`" while the UI showed only 3. Root cause, found by reading (not guessing):
+`_comicApplyDetectedPanels` already correctly drops a malformed/inverted box (`x2<=x1` or `y2<=y1` —
+shipped back at `v85_o`, covered by `unit-comic-detect.test.js` §5) — that filtering itself was never
+the bug. What was missing: dropping was completely SILENT unless EVERY suggested box turned out
+malformed (the existing "no panels found" toast only fired on a fully-empty result). A PARTIAL drop —
+exactly this case, 1 of 4 boxes malformed — left the user staring at fewer panels than the model
+reported with zero explanation. **Fixed**: `_comicApplyDetectedPanels` now toasts on ANY drop, not
+just a total one — a partial drop names the kept/suggested counts (`form.comic_detect_partial`, a new
+`en` string), and the previously-unguarded case of "every suggestion turned out malformed" (0
+survivors from a non-empty input — distinct from the server sending zero panels) now fails cleanly
+with the existing "no panels found" toast instead of silently leaving `APP_COMIC.boxes` empty. Two new
+tests cover both: a 2-of-4 partial drop (toast names "2/4"), and an all-4-malformed drop (0 survivors,
+existing boxes left untouched). Mutation-tested: removed the partial-drop toast call, confirmed the
+new test fails with `actual: 0, expected: 1` toasts. Restored, diff clean. This does NOT rule out a
+genuine model-accuracy limitation also being at play (the `v85_u` line already found the vision model
+itself has real, separate accuracy limits on panel geometry) — but the user can now at least SEE that
+a panel was dropped and investigate from there, instead of silently losing data with no signal.
+
+**Item J — single-panel shortcut, built same cut** (scoped at the `v86_c` cut, from the user's own
+real-device testing ask: "a 'single-panel' button, to take a complete photo/image as one panel"). A
+new `#comic-single-panel-btn` ("🖼️ Use whole image as one panel") calls
+`comicUseWholeImageAsPanel()`, which sets `APP_COMIC.boxes = [{x1:0, y1:0, x2:naturalW, y2:naturalH}]`
+— REPLACING any existing boxes, matching auto-detect's own already-established "a fresh detection
+replaces prior boxes rather than merging" precedent — then redraws and re-renders the panel list, the
+same two calls every other box-mutating action already ends with. A no-op with no image loaded (guards
+on `naturalW`/`naturalH` both being positive). Three new tests cover: the full-image box shape, that a
+second call REPLACES rather than appends to an existing box, and the no-image no-op.
+
+Baseline (checked BEFORE the version bump / docs rebuild): `node test/run.js` → 284 checks, 2 failures
+(the SESSION_PROMPT's own stale version-name claim and `docs/index.html`'s own staleness — both
+routine, resolved by the release ceremony itself). `node test/run.js --quick` → 246 checks, same 2.
+Both `check-inline.js` → 0 failures. After the ceremony (version bump, roadmap/prompt update, docs
+rebuild): `node test/run.js` → 284 checks, 0 failures. `docs/index.html` rebuilt. Two new `en` keys
+this cut — `form.comic_single_panel`, `form.comic_detect_partial` (689 total, up from 687).
+`lessons.json` untouched throughout (checked clean before AND after both live-bug fixes and the
+release). `APP_VERSION = 'v86_d'`.
 
 ## ✅ v86_c — a v85_u REGRESSION found and fixed (duplicate canvas listeners), plus camera capture with auto-downscale
 

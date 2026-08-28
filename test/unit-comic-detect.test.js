@@ -168,6 +168,95 @@ console.log('  _comicApplyDetectedPanels(): a fresh detection replaces prior box
 }
 console.log('  _comicApplyDetectedPanels(): an empty result fails cleanly with a toast, leaves existing boxes untouched: OK');
 
+// ── 7b. _comicApplyDetectedPanels(): a PARTIAL drop (some malformed, some good) also toasts, not just
+//        a total drop (v86_d — user-reported LIVE bug: server log said "4 panel(s) suggested", the UI
+//        showed only 3, with no explanation at all — §5 above already proved the FILTERING was
+//        correct; what was missing was telling the user it happened) ─────────────────────────────────
+{
+  const C = client();
+  C.run(`APP_COMIC.naturalW=1000; APP_COMIC.naturalH=1000;
+    window._toasts = [];
+    showToast = function(msg){ window._toasts.push(msg); };
+    _comicApplyDetectedPanels([[100,100,50,50], [200,200,400,400], [300,300,600,600], [10,900,20,890]]);   // 4 in, 2 malformed
+    true;`, 't7b');
+  const r = JSON.parse(C.run(`JSON.stringify({ boxCount: APP_COMIC.boxes.length, toastCount: window._toasts.length, toasts: window._toasts })`));
+  assert.strictEqual(r.boxCount, 2, 'the 2 well-formed boxes still survive (same filtering as §5)');
+  assert.strictEqual(r.toastCount, 1, 'a PARTIAL drop (2 of 4 kept) shows exactly one toast — previously this was completely silent');
+  assert.ok(r.toasts[0].indexOf('2/4') >= 0, 'the toast names the actual kept/suggested counts, not a generic message: ' + r.toasts[0]);
+}
+console.log('  _comicApplyDetectedPanels(): a PARTIAL drop also toasts, naming the kept/suggested counts (previously silent): OK');
+
+{
+  // Every suggested box is malformed (0 survivors, but the INPUT array was non-empty) — must fail
+  // the same clean way as the "server sent literally zero panels" case, not silently leave 0 boxes.
+  const C = client();
+  C.run(`APP_COMIC.naturalW=1000; APP_COMIC.naturalH=1000;
+    APP_COMIC.boxes=[{x1:1,y1:1,x2:2,y2:2}];
+    window._toasts = [];
+    showToast = function(msg){ window._toasts.push(msg); };
+    _comicApplyDetectedPanels([[100,100,50,50], [10,900,20,890]]);   // both malformed
+    true;`, 't7c');
+  const r = JSON.parse(C.run(`JSON.stringify({ boxes: APP_COMIC.boxes, toastCount: window._toasts.length })`));
+  assert.strictEqual(r.toastCount, 1, 'ALL suggested boxes malformed (0 survivors) fails cleanly with a toast, not a silent no-op');
+  assert.deepStrictEqual(r.boxes, [{x1:1,y1:1,x2:2,y2:2}], 'existing boxes are left untouched when every suggestion turns out malformed');
+}
+console.log('  _comicApplyDetectedPanels(): ALL suggestions malformed (0 survivors) fails cleanly, existing boxes untouched: OK');
+
+// ── 8. Mobile-backgrounding fix (v86_d): _comicDetectJobId + an off-schedule check ────────────────
+// SIBLING of unit-comic-extraction.test.js's own §8 — same user-reported live bug (mobile tab
+// backgrounding suspends setInterval, stranding the client mid-poll), same fix shape: a shared
+// visibilitychange listener calls _comicDetectCheckOnce() directly, off-schedule, when the tab
+// becomes visible again. See that file's §8 comment for the full root-cause writeup; the listener's
+// OWN wiring is checked once, jointly, in THAT file's §8b (it re-checks both pollers from one place).
+{
+  const C = client();
+  const r = JSON.parse(C.run(`
+    fetch = function(){ return new Promise(function(){}); };   // never resolves — job stays "in flight"
+    _startComicDetectJob('job_pending');
+    JSON.stringify({ jobIdWhileRunning: _comicDetectJobId })`));
+  assert.strictEqual(r.jobIdWhileRunning, 'job_pending',
+    '_comicDetectJobId is set while a job is in flight — what the visibilitychange listener checks before re-polling');
+  // Cleanup: null out the tracked id so the pending real setInterval's NEXT tick sees a mismatch and
+  // clears itself, rather than ticking forever and keeping the test process alive (see the sibling
+  // comment in unit-comic-extraction.test.js's own §8 for the full reasoning).
+  C.run(`_comicDetectJobId = null; true;`);
+}
+console.log('  _comicDetectJobId tracks the in-flight job (what the visibility listener checks): OK');
+
+{
+  const C = client();
+  C.run(`APP_COMIC.naturalW = 1000; APP_COMIC.naturalH = 500;
+    window._appliedWith = null;
+    _comicApplyDetectedPanels = function(panels){ window._appliedWith = panels; };
+    fetch = function(){ return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve({
+      status:'done', data: { panels: [[100,100,400,400]] } }); } }); };
+    _comicDetectJobId = 'job_offschedule';   // as if an earlier setInterval tick had started this job
+    _comicDetectCheckOnce('job_offschedule');   // the visibilitychange listener's own call shape
+    true;`, 't8-offschedule');
+  await settle();
+  const r = JSON.parse(C.run(`JSON.stringify({ appliedWith: window._appliedWith, jobIdAfter: _comicDetectJobId })`));
+  assert.deepStrictEqual(r.appliedWith, [[100,100,400,400]],
+    'an OFF-SCHEDULE check (called directly, not from the 2000ms interval) still applies a done result correctly — the exact mechanism the mobile-backgrounding fix depends on');
+  assert.strictEqual(r.jobIdAfter, null, 'the tracked job id is cleared once the off-schedule check sees a terminal status');
+}
+console.log('  an OFF-SCHEDULE check (the visibility-recovery shape) applies a done result correctly: OK');
+
+{
+  // A stale/superseded jobId must be a no-op — cannot clobber a newer, still-current job.
+  const C = client();
+  C.run(`window._fetchCalled = false;
+    fetch = function(){ window._fetchCalled = true; return Promise.resolve({ ok:true, status:200,
+      json: function(){ return Promise.resolve({ status:'done', data:{panels:[]} }); } }); };
+    _comicDetectJobId = 'job_current';
+    _comicDetectCheckOnce('job_stale');   // a DIFFERENT (superseded) id
+    true;`, 't8-stale');
+  await settle();
+  const r = JSON.parse(C.run(`JSON.stringify({ fetchCalled: window._fetchCalled, jobIdAfter: _comicDetectJobId })`));
+  assert.strictEqual(r.fetchCalled, false, 'a check for a SUPERSEDED job id never even calls fetch');
+  assert.strictEqual(r.jobIdAfter, 'job_current', 'the actually-current job id is untouched by the stale check');
+}
+console.log('  a check for a superseded job id is a no-op — cannot clobber a newer, still-current job: OK');
+
 console.log('unit-comic-detect: ALL PASSED');
 }
 

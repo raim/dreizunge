@@ -1360,6 +1360,11 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           <div id="comic-detect-row" style="display:none;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap">
             <button type="button" id="comic-detect-btn" onclick="comicDetectPanels()"
               style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🔍 <span id="comic-detect-lbl">Auto-detect panels</span></button>
+            <!-- v86_d (user-requested, item J): a single box spanning the whole image — for a lone
+                 illustration or a one-panel comic, drawing/auto-detecting a box around the whole page
+                 is pure friction. Same row/timing as auto-detect (shown once an image is loaded). -->
+            <button type="button" id="comic-single-panel-btn" onclick="comicUseWholeImageAsPanel()"
+              style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🖼️ <span id="comic-single-panel-lbl">Use whole image as one panel</span></button>
             <span id="comic-detect-status" style="font-size:11px;color:var(--gray-dark)"></span>
           </div>
           <div id="comic-panel-list" style="display:flex;flex-direction:column;gap:4px;margin-top:8px"></div>
@@ -2826,6 +2831,7 @@ function applyUIStrings() {
   { const cel=document.getElementById('comic-extract-lbl'); if(cel) cel.textContent=t('form.comic_extract'); }
   { const ccl2=document.getElementById('comic-create-lbl'); if(ccl2) ccl2.textContent=t('form.comic_create'); }
   { const cdl=document.getElementById('comic-detect-lbl'); if(cdl) cdl.textContent=t('form.comic_detect'); }
+  { const csl=document.getElementById('comic-single-panel-lbl'); if(csl) csl.textContent=t('form.comic_single_panel'); }
   { const cal=document.getElementById('comic-arc-lbl'); if(cal) cal.textContent=t('form.arc_lbl'); }
   { const csl=document.getElementById('comic-storyboard-lbl'); if(csl) csl.textContent=t('gen.post_gen_storyboard_lbl'); }
   _renderSplitModes();
@@ -3862,6 +3868,17 @@ function comicClearPanels(){
   APP_COMIC.boxes=[]; APP_COMIC.drawing=null;
   _comicRedraw(); _comicRenderList();
 }
+// v86_d (user-requested, item J): a lone illustration or a one-panel comic needs no manual box —
+// one box spanning the whole image IS the panel. REPLACES any existing boxes rather than appending,
+// matching _comicApplyDetectedPanels' own "a fresh detection replaces prior boxes" precedent — a
+// learner choosing this after already drawing/detecting panels almost certainly wants to start over
+// with the whole-image shortcut, not add a redundant giant box alongside smaller ones.
+function comicUseWholeImageAsPanel(){
+  if(!(APP_COMIC.naturalW>0) || !(APP_COMIC.naturalH>0)) return;   // no image loaded yet
+  APP_COMIC.boxes=[{x1:0,y1:0,x2:APP_COMIC.naturalW,y2:APP_COMIC.naturalH}];
+  APP_COMIC.drawing=null;
+  _comicRedraw(); _comicRenderList();
+}
 // milestone 2's extraction step reads panels through this accessor rather than APP_COMIC directly,
 // so the storage shape above can change without hunting down every call site.
 function _comicPanels(){ return APP_COMIC.boxes.map(b=>({...b})); }
@@ -3912,38 +3929,60 @@ async function comicExtractPanels(){
 
 // A structural SIBLING of startBackgroundJob() (same poll-every-2s-against-/api/job/:id shape), not
 // a reuse of it — see this block's own header comment for why reuse wasn't possible here.
-function _startComicExtractJob(jobId){
+//
+// v86_d (user-reported, LIVE bug, real device): a job that finishes while the phone's browser tab is
+// BACKGROUNDED (screen locked, app switched away) can go unnoticed — mobile browsers throttle or
+// fully suspend setInterval timers on a backgrounded tab, so a poll that would normally catch a
+// 'done' status within 2s can be delayed indefinitely, or, under aggressive background suspension on
+// some mobile browsers, simply never fire again until something else wakes the page. Reported live:
+// the server's own log showed successful completion ("[comic-extract] done: 1 panel(s), 0 failed")
+// while the client's UI never applied it — comicCreateChapter() kept refusing with "no extracted text
+// yet" because APP_COMIC.boxes[i].text was never written. _comicExtractJobId (module-level, set for
+// the duration of one poll) lets the shared visibilitychange listener below trigger an IMMEDIATE
+// re-check the instant the tab becomes visible again, instead of waiting on a timer that may have
+// been suspended the whole time the learner's phone was locked. The interval itself is UNCHANGED —
+// this is additive, not a replacement — so the normal (foregrounded) case behaves exactly as before.
+let _comicExtractJobId=null;
+async function _comicExtractCheckOnce(jobId){
+  if(_comicExtractJobId!==jobId) return;   // superseded by a later call, or already finished
   const status=document.getElementById('comic-extract-status');
   const btn=document.getElementById('comic-extract-btn');
-  const iv=setInterval(async ()=>{
-    try{
-      const r=await fetch('/api/job/'+jobId);
-      if(!r.ok) throw new Error('Poll failed: '+r.status);
-      const j=await r.json();
-      if(j.step && status) status.textContent=j.step;
-      if(j.status==='done'){
-        clearInterval(iv);
-        _comicApplyExtraction(j.data && j.data.panels);
-        if(status) status.textContent='';
-        if(btn) btn.disabled=false;
-      }
-      if(j.status==='error'){
-        clearInterval(iv);
-        if(status) status.textContent='';
-        showToast(t('form.comic_extract_failed')+': '+j.error);
-        if(btn) btn.disabled=false;
-      }
-      if(j.status==='cancelled'){
-        clearInterval(iv);
-        if(status) status.textContent='';
-        if(btn) btn.disabled=false;
-      }
-    }catch(e){
-      clearInterval(iv);
+  try{
+    const r=await fetch('/api/job/'+jobId);
+    if(!r.ok) throw new Error('Poll failed: '+r.status);
+    const j=await r.json();
+    if(_comicExtractJobId!==jobId) return;   // a newer job started while this fetch was in flight
+    if(j.step && status) status.textContent=j.step;
+    if(j.status==='done'){
+      _comicExtractJobId=null;
+      _comicApplyExtraction(j.data && j.data.panels);
       if(status) status.textContent='';
-      showToast(t('form.comic_extract_failed')+': '+e.message);
       if(btn) btn.disabled=false;
     }
+    if(j.status==='error'){
+      _comicExtractJobId=null;
+      if(status) status.textContent='';
+      showToast(t('form.comic_extract_failed')+': '+j.error);
+      if(btn) btn.disabled=false;
+    }
+    if(j.status==='cancelled'){
+      _comicExtractJobId=null;
+      if(status) status.textContent='';
+      if(btn) btn.disabled=false;
+    }
+  }catch(e){
+    if(_comicExtractJobId!==jobId) return;
+    _comicExtractJobId=null;
+    if(status) status.textContent='';
+    showToast(t('form.comic_extract_failed')+': '+e.message);
+    if(btn) btn.disabled=false;
+  }
+}
+function _startComicExtractJob(jobId){
+  _comicExtractJobId=jobId;
+  const iv=setInterval(()=>{
+    if(_comicExtractJobId!==jobId){ clearInterval(iv); return; }
+    _comicExtractCheckOnce(jobId);
   }, 2000);
 }
 
@@ -4089,42 +4128,69 @@ async function comicDetectPanels(){
 
 // A structural SIBLING of _startComicExtractJob()/_pollComicBookJob() (same poll-every-2s shape,
 // its own state) — not a reuse, same reasoning as those two.
+//
+// v86_d: same mobile-backgrounding fix as _startComicExtractJob's own comment — _comicDetectJobId
+// lets the shared visibilitychange listener trigger an immediate re-check on this poller too.
+let _comicDetectJobId=null;
+async function _comicDetectCheckOnce(jobId){
+  if(_comicDetectJobId!==jobId) return;
+  const status=document.getElementById('comic-detect-status');
+  const btn=document.getElementById('comic-detect-btn');
+  try{
+    const r=await fetch('/api/job/'+jobId);
+    if(!r.ok) throw new Error('Poll failed: '+r.status);
+    const j=await r.json();
+    if(_comicDetectJobId!==jobId) return;
+    if(j.step && status) status.textContent=j.step;
+    if(j.status==='done'){
+      _comicDetectJobId=null; _comicDetectPolling=false;
+      _comicApplyDetectedPanels(j.data && j.data.panels);
+      if(status) status.textContent='';
+      if(btn) btn.disabled=false;
+    }
+    if(j.status==='error'){
+      _comicDetectJobId=null; _comicDetectPolling=false;
+      if(status) status.textContent='';
+      showToast(t('form.comic_detect_failed')+': '+j.error);
+      if(btn) btn.disabled=false;
+    }
+    if(j.status==='cancelled'){
+      _comicDetectJobId=null; _comicDetectPolling=false;
+      if(status) status.textContent='';
+      if(btn) btn.disabled=false;
+    }
+  }catch(e){
+    if(_comicDetectJobId!==jobId) return;
+    _comicDetectJobId=null; _comicDetectPolling=false;
+    if(status) status.textContent='';
+    showToast(t('form.comic_detect_failed')+': '+e.message);
+    if(btn) btn.disabled=false;
+  }
+}
 function _startComicDetectJob(jobId){
   if(_comicDetectPolling) return;
   _comicDetectPolling=true;
-  const status=document.getElementById('comic-detect-status');
-  const btn=document.getElementById('comic-detect-btn');
-  const iv=setInterval(async ()=>{
-    try{
-      const r=await fetch('/api/job/'+jobId);
-      if(!r.ok) throw new Error('Poll failed: '+r.status);
-      const j=await r.json();
-      if(j.step && status) status.textContent=j.step;
-      if(j.status==='done'){
-        clearInterval(iv); _comicDetectPolling=false;
-        _comicApplyDetectedPanels(j.data && j.data.panels);
-        if(status) status.textContent='';
-        if(btn) btn.disabled=false;
-      }
-      if(j.status==='error'){
-        clearInterval(iv); _comicDetectPolling=false;
-        if(status) status.textContent='';
-        showToast(t('form.comic_detect_failed')+': '+j.error);
-        if(btn) btn.disabled=false;
-      }
-      if(j.status==='cancelled'){
-        clearInterval(iv); _comicDetectPolling=false;
-        if(status) status.textContent='';
-        if(btn) btn.disabled=false;
-      }
-    }catch(e){
-      clearInterval(iv); _comicDetectPolling=false;
-      if(status) status.textContent='';
-      showToast(t('form.comic_detect_failed')+': '+e.message);
-      if(btn) btn.disabled=false;
-    }
+  _comicDetectJobId=jobId;
+  const iv=setInterval(()=>{
+    if(_comicDetectJobId!==jobId){ clearInterval(iv); return; }
+    _comicDetectCheckOnce(jobId);
   }, 2000);
 }
+
+// v86_d: ONE shared listener for BOTH comic pollers — see _startComicExtractJob's own comment for
+// the full "mobile background throttling" diagnosis. Fires an IMMEDIATE re-check the instant the tab
+// becomes visible again, on top of (not instead of) each poller's own interval, so the foregrounded
+// case is completely unaffected and the backgrounded-then-resumed case no longer has to wait on a
+// timer that may have been suspended the whole time. `_pollComicBookJob` (book/chapter CREATION, a
+// much longer-running job) has the SAME class of vulnerability and is NOT yet covered here — book
+// creation wasn't what the user's own live report was about, and its while+sleep shape needs its own
+// small refactor to expose a re-checkable id the same way; left open, named explicitly rather than
+// silently un-fixed (see roadmap_v86.md).
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState!=='visible') return;
+  if(_comicExtractJobId) _comicExtractCheckOnce(_comicExtractJobId);
+  if(_comicDetectJobId) _comicDetectCheckOnce(_comicDetectJobId);
+});
 
 // Converts the server's normalized-0-1000 boxes to APP_COMIC's own natural-pixel storage (the SAME
 // shape a hand-drawn box uses — _comicPointerEnd, milestone 1 — so every existing consumer, reorder,
@@ -4134,10 +4200,20 @@ function _startComicDetectJob(jobId){
 function _comicApplyDetectedPanels(panels){
   if(!Array.isArray(panels) || !panels.length) { showToast(t('form.comic_detect_failed')+': no panels found'); return; }
   const w=APP_COMIC.naturalW||1, h=APP_COMIC.naturalH||1;
-  APP_COMIC.boxes=panels.map(b=>({
+  const converted=panels.map(b=>({
     x1:Math.max(0,Math.round(b[0]/1000*w)), y1:Math.max(0,Math.round(b[1]/1000*h)),
     x2:Math.min(w,Math.round(b[2]/1000*w)), y2:Math.min(h,Math.round(b[3]/1000*h)),
   })).filter(b=>b.x2>b.x1 && b.y2>b.y1);   // a malformed box (e.g. inverted/degenerate) is dropped, not stored broken
+  // A dropped box used to be a SILENT no-op — the user saw fewer panels than the model actually
+  // reported (confirmed live: server log said "4 panel(s) suggested", UI showed 3) with no
+  // explanation. Surface it: a full drop (every suggested box was malformed) reuses the existing
+  // "no panels found" toast; a PARTIAL drop gets its own toast naming the count, same as the
+  // all-dropped case already did before this fix — never silent either way.
+  if(!converted.length){ showToast(t('form.comic_detect_failed')+': no panels found'); return; }
+  APP_COMIC.boxes=converted;
+  if(converted.length<panels.length){
+    showToast(t('form.comic_detect_partial')+': '+converted.length+'/'+panels.length);
+  }
   _comicRedraw(); _comicRenderList();
 }
 

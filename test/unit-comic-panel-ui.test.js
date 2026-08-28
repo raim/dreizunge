@@ -430,6 +430,44 @@ console.log('  camera capture: #comic-camera-input (capture="environment") route
 }
 console.log('  _comicDownscaleDims(): correct scale math, both orientations, no-op when already small enough: OK');
 
+// ── 12. comicUseWholeImageAsPanel() (v86_d, user-requested, item J) ───────────────────────────────
+{
+  const C = client();
+  const r = JSON.parse(C.run(`
+    APP_COMIC.naturalW = 800; APP_COMIC.naturalH = 500;
+    comicUseWholeImageAsPanel();
+    JSON.stringify({ boxes: APP_COMIC.boxes })`));
+  assert.strictEqual(r.boxes.length, 1, 'exactly one box is created');
+  assert.deepStrictEqual(r.boxes[0], { x1: 0, y1: 0, x2: 800, y2: 500 },
+    'the box spans the ENTIRE image, in natural pixels');
+}
+console.log('  comicUseWholeImageAsPanel(): one box spanning the whole image: OK');
+
+{
+  // REPLACES existing boxes, matching auto-detect's own "a fresh detection replaces prior boxes"
+  // precedent — not append, which would leave a redundant giant box alongside smaller ones.
+  const C = client();
+  const r = JSON.parse(C.run(`
+    APP_COMIC.naturalW = 800; APP_COMIC.naturalH = 500;
+    APP_COMIC.boxes = [{x1:10,y1:10,x2:100,y2:100},{x1:200,y1:10,x2:300,y2:100}];
+    comicUseWholeImageAsPanel();
+    JSON.stringify({ boxes: APP_COMIC.boxes })`));
+  assert.strictEqual(r.boxes.length, 1, 'the two pre-existing boxes are REPLACED, not appended to');
+  assert.deepStrictEqual(r.boxes[0], { x1: 0, y1: 0, x2: 800, y2: 500 });
+}
+console.log('  comicUseWholeImageAsPanel(): replaces any existing boxes, does not append: OK');
+
+{
+  // A no-op with no image loaded (naturalW/H both 0) — must not create a degenerate zero-area box.
+  const C = client();
+  const r = JSON.parse(C.run(`
+    APP_COMIC.naturalW = 0; APP_COMIC.naturalH = 0;
+    comicUseWholeImageAsPanel();
+    JSON.stringify({ boxes: APP_COMIC.boxes })`));
+  assert.strictEqual(r.boxes.length, 0, 'no image loaded (naturalW/H are 0) — no degenerate box is created');
+}
+console.log('  comicUseWholeImageAsPanel(): a no-op when no image is loaded yet: OK');
+
 console.log('unit-comic-panel-ui: ALL PASSED');
 }
 

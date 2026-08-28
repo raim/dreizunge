@@ -182,6 +182,84 @@ console.log("  _startComicExtractJob(): an 'error' status clears state cleanly, 
 }
 console.log('  _comicApplyExtraction(): merges by index, tolerates fewer results than boxes and non-array input: OK');
 
+// ── 8. Mobile-backgrounding fix (v86_d, user-reported LIVE bug): _comicExtractJobId + an
+//      off-schedule check ────────────────────────────────────────────────────────────────────────
+// Reported live: the server's own log showed a successful extraction, but the client's UI never
+// applied it — comicCreateChapter() kept refusing with "no extracted text yet". Root cause: mobile
+// browsers throttle/suspend setInterval on a backgrounded tab, so the normal 2000ms poll can be
+// delayed indefinitely or never fire again. Fix: a shared visibilitychange listener calls
+// _comicExtractCheckOnce()/_comicDetectCheckOnce() directly — an OFF-SCHEDULE check, not waiting for
+// the interval — whenever the tab becomes visible again. This harness has no visibilityState/
+// visibilitychange support at all (checked: not in lib-dom.js), so the listener's OWN wiring is a
+// source check (§8b below); what IS behaviourally testable, and is the actual mechanism the fix
+// depends on, is (a) that _comicExtractJobId correctly tracks the in-flight job so the listener knows
+// whether there's anything to re-check, and (b) that calling the check function OFF-SCHEDULE (not
+// from the interval) still correctly applies a result — proven here directly.
+{
+  const C = client();
+  const r = JSON.parse(C.run(`
+    fetch = function(){ return new Promise(function(){}); };   // never resolves — job stays "in flight"
+    _startComicExtractJob('job_pending');
+    JSON.stringify({ jobIdWhileRunning: _comicExtractJobId })`));
+  assert.strictEqual(r.jobIdWhileRunning, 'job_pending',
+    '_comicExtractJobId is set while a job is in flight — this is exactly what the visibilitychange listener checks before re-polling');
+  // Cleanup: _startComicExtractJob's own setInterval is still live (fetch never resolves, so its
+  // guard never sees a mismatch). Null out the tracked id directly so the NEXT 2000ms tick sees
+  // _comicExtractJobId !== jobId and clears itself — otherwise this real interval would tick forever
+  // and keep the whole test process alive.
+  C.run(`_comicExtractJobId = null; true;`);
+}
+console.log('  _comicExtractJobId tracks the in-flight job (what the visibility listener checks): OK');
+
+{
+  const C = client();
+  C.run(`APP_COMIC.boxes = [{x1:0,y1:0,x2:10,y2:10}];
+    fetch = function(){ return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve({
+      status:'done', data: { panels: [ { caption:'Off-schedule', inScene:'', error:null } ] } }); } }); };
+    _comicExtractJobId = 'job_offschedule';   // as if an earlier setInterval tick had started this job
+    _comicExtractCheckOnce('job_offschedule');   // the visibilitychange listener's own call shape
+    true;`, 't8-offschedule');
+  await settle();
+  const r = JSON.parse(C.run(`JSON.stringify({ text: APP_COMIC.boxes[0].text, jobIdAfter: _comicExtractJobId })`));
+  assert.strictEqual(r.text.caption, 'Off-schedule',
+    'an OFF-SCHEDULE check (called directly, not from the 2000ms interval) still applies a done result correctly — the exact mechanism the mobile-backgrounding fix depends on');
+  assert.strictEqual(r.jobIdAfter, null, 'the tracked job id is cleared once the off-schedule check sees a terminal status');
+}
+console.log('  an OFF-SCHEDULE check (the visibility-recovery shape) applies a done result correctly: OK');
+
+{
+  // A stale/superseded jobId (e.g. the listener fires for a job that already finished, or a NEWER
+  // job has since started) must be a no-op, not silently re-apply/overwrite fresher state.
+  const C = client();
+  C.run(`APP_COMIC.boxes = [{x1:0,y1:0,x2:10,y2:10}];
+    window._fetchCalled = false;
+    fetch = function(){ window._fetchCalled = true; return Promise.resolve({ ok:true, status:200,
+      json: function(){ return Promise.resolve({ status:'done', data:{panels:[]} }); } }); };
+    _comicExtractJobId = 'job_current';
+    _comicExtractCheckOnce('job_stale');   // a DIFFERENT (superseded) id
+    true;`, 't8-stale');
+  await settle();
+  const r = JSON.parse(C.run(`JSON.stringify({ fetchCalled: window._fetchCalled, jobIdAfter: _comicExtractJobId })`));
+  assert.strictEqual(r.fetchCalled, false, 'a check for a SUPERSEDED job id never even calls fetch — a stale re-check cannot clobber a newer job');
+  assert.strictEqual(r.jobIdAfter, 'job_current', 'the actually-current job id is untouched by the stale check');
+}
+console.log('  a check for a superseded job id is a no-op — cannot clobber a newer, still-current job: OK');
+
+// ── 8b. The shared visibilitychange listener: wiring (source check — this harness has no
+//       visibilityState/visibilitychange support to drive it behaviourally, checked directly) ─────
+{
+  const idx = html.indexOf("addEventListener('visibilitychange'");
+  assert.ok(idx > 0, "a visibilitychange listener is registered");
+  const block = html.slice(html.indexOf('{', idx), html.indexOf('});', idx));
+  assert.ok(/visibilityState\s*!==\s*'visible'/.test(block),
+    'the listener bails out unless the tab is actually visible (not just any visibility CHANGE, including going hidden)');
+  assert.ok(/_comicExtractCheckOnce\(_comicExtractJobId\)/.test(block),
+    'the listener re-checks the comic-extract job (gated on _comicExtractJobId being set)');
+  assert.ok(/_comicDetectCheckOnce\(_comicDetectJobId\)/.test(block),
+    'the listener ALSO re-checks the comic-detect job — the same class of bug affects both pollers');
+}
+console.log('  visibilitychange listener: checks visibility state, re-checks BOTH comic pollers (source check): OK');
+
 console.log('unit-comic-extraction: ALL PASSED');
 }
 
