@@ -3532,6 +3532,29 @@ async function doDialectImport(){
 // { i: box index, handle: one of 'nw'/'ne'/'sw'/'se' } — mutually exclusive with `drawing`
 // (a new box). See _comicHitHandle()/_comicPointerStart() for how one wins over the other.
 const APP_COMIC = { dataUrl: null, naturalW: 0, naturalH: 0, boxes: [], drawing: null, resizing: null };
+// v85_u (user-reported, confirmed): "when I zoom in/out on the page, the selected panel squares move
+// relative to the image." `_comicSetupCanvas()`'s own comment already named this gap when it was
+// written ("would need its own resize-observer to stay in sync with responsive CSS width") but never
+// built it — #comic-draw-img is `max-width:100%;height:auto` (responsive), while the canvas overlay
+// was only EVER sized once, at image-load time. Any later change to the image's rendered CSS size —
+// window resize, orientation change, or a browser zoom level that reflows the responsive image
+// (confirmed: zoom on this page's layout does change #comic-draw-img's clientWidth/clientHeight, not
+// just the rendering scale) — left the canvas's OWN width/height frozen at the old value, so its
+// absolutely-positioned overlay drifted out of registration with the now-different-sized image
+// beneath it. A ResizeObserver (not a window resize listener — it fires on the IMAGE's own box size
+// changing for ANY reason, including CSS reflow a window-resize event would miss) re-runs
+// _comicSetupCanvas() whenever that happens; the boxes THEMSELVES are stored in natural pixels and
+// need no change at all — only the redraw's own scale factor was ever stale.
+let _comicResizeObserver = null;
+function _comicWatchImageResize(){
+  _comicUnwatchImageResize();
+  const img=document.getElementById('comic-draw-img'); if(!img||typeof ResizeObserver==='undefined') return;
+  _comicResizeObserver=new ResizeObserver(()=>{ _comicSetupCanvas(); });
+  _comicResizeObserver.observe(img);
+}
+function _comicUnwatchImageResize(){
+  if(_comicResizeObserver){ try{ _comicResizeObserver.disconnect(); }catch(_){} _comicResizeObserver=null; }
+}
 
 function onUseComicCb(){
   const on=document.getElementById('use-comic-cb').checked;
@@ -3552,6 +3575,7 @@ function onUseComicCb(){
     const wrap=document.getElementById('comic-draw-wrap'); if(wrap) wrap.style.display='none';
     const detectRow=document.getElementById('comic-detect-row'); if(detectRow) detectRow.style.display='none';
     const status=document.getElementById('comic-upload-status'); if(status) status.textContent='';
+    _comicUnwatchImageResize();   // v85_u: nothing left to keep in sync once the image is gone
   }
 }
 
@@ -3569,6 +3593,7 @@ function onComicFileChosen(input){
       const detectRow=document.getElementById('comic-detect-row'); if(detectRow) detectRow.style.display='flex';
       if(status) status.textContent='';
       _comicSetupCanvas();
+      _comicWatchImageResize();   // v85_u: keep the canvas in sync as the image's rendered size changes
     };
     img.src=APP_COMIC.dataUrl;
   };
@@ -3579,9 +3604,14 @@ function onComicFileChosen(input){
 }
 
 // Canvas is sized to the DISPLAYED (CSS) size of the image, not its natural resolution — it only
-// draws selection rectangles, never the image itself, so 1:1-with-natural would be wasted work and
-// would need its own resize-observer to stay in sync with responsive CSS width. Coordinates are
-// converted to natural-pixel space at mouseup/touchend, once, when a box is actually committed.
+// draws selection rectangles, never the image itself, so 1:1-with-natural would be wasted work.
+// v85_u: this function is now ALSO re-invoked by a ResizeObserver (_comicWatchImageResize) whenever
+// #comic-draw-img's rendered size changes for any reason, so the "would need its own resize-observer
+// to stay in sync" gap this comment used to name is closed — see APP_COMIC's own v85_u comment for
+// the full story. Coordinates are converted to natural-pixel space at mouseup/touchend, once, when a
+// box is actually committed — that half is unaffected by a later resize, since boxes are stored in
+// natural pixels and only the DISPLAY scale factor (recomputed on every _comicRedraw call) was ever
+// stale.
 function _comicSetupCanvas(){
   const img=document.getElementById('comic-draw-img');
   const canvas=document.getElementById('comic-draw-canvas');

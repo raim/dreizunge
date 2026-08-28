@@ -184,7 +184,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v85_t';
+const APP_VERSION  = 'v85_u';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6500,8 +6500,17 @@ async function _runComicExtractJob(jobId, images, lang) {
     try {
       const b64 = String(images[i] || '').replace(/^data:image\/\w+;base64,/, '');
       if (!b64) throw new Error('empty image');
+      // v85_u (user-reported, real failure on a mobile-phone photo): a vision call had NEVER passed
+      // ctxTokens, so Ollama fell back to its own default num_ctx (4096) — fine for the text prompt
+      // alone, but a photographed page encodes into far more vision tokens than a scan/screenshot
+      // crop does (reported: 4507 tokens needed, just over the 4096 default). Unlike the TEXT-only
+      // estimateCtxTokens() this file's other LLM calls use, there is no cheap way to predict an
+      // image's own token cost from here — it depends on resolution and the model's own patch-size
+      // tokenization, neither of which this server introspects. Rather than guess, ask for the full
+      // configured ceiling: these are per-panel, infrequent calls (not a hot loop), so there is no
+      // meaningful cost to always requesting getNumCtxMax() instead of trying to estimate low.
       const { text } = await callLLMVision('', _comicExtractPrompt(name, lang), 400,
-        { images: [b64], temperature: 0.1 });
+        { images: [b64], temperature: 0.1, ctxTokens: getNumCtxMax() });
       results.push({ ..._parseComicExtraction(text), error: null });
     } catch (e) {
       // One panel's failure must not lose the rest of the batch — same reasoning as
@@ -6576,7 +6585,10 @@ async function _runComicDetectJob(jobId, image) {
   const b64 = String(image || '').replace(/^data:image\/\w+;base64,/, '');
   if (!b64) return jobFail(jobId, 'empty image');
   try {
-    const { text } = await callLLMVision('', _COMIC_DETECT_PROMPT, 1024, { images: [b64], temperature: 0.1 });
+    // v85_u: same fix as _runComicExtractJob's own comment — a full-resolution photo can exceed
+    // Ollama's 4096-token default before this ever asked for more.
+    const { text } = await callLLMVision('', _COMIC_DETECT_PROMPT, 1024,
+      { images: [b64], temperature: 0.1, ctxTokens: getNumCtxMax() });
     const panels = _parseComicDetectedPanels(text);
     console.log(`  [comic-detect] done: ${panels.length} panel(s) suggested`);
     jobDone(jobId, { panels });   // boxes normalized 0-1000 — client converts to its own natural pixels

@@ -261,6 +261,99 @@ console.log('  resize: a drag away from any handle still draws a new box, existi
 }
 console.log('  resize: a handle dragged past the opposite corner clamps to the minimum size, never inverts: OK');
 
+// ── 8. Canvas stays in sync with the image's rendered size (v85_u, user-reported) ─────────────
+// "when I zoom in/out on the page, the selected panel squares move relative to the image" —
+// #comic-draw-img is responsive (max-width:100%), but the canvas overlay was only ever sized ONCE,
+// at image-load. This harness has no real ResizeObserver semantics (no real layout at all), so a
+// fake one is installed that lets the test invoke the observer's callback itself — the same shape
+// unit-speak-advance.test.js uses for speechSynthesis. The claim under test is the WIRING (does a
+// size-change notification actually re-run _comicSetupCanvas), not real browser resize behaviour.
+{
+  const C = client();
+  const r = JSON.parse(C.run(`
+    globalThis.__roCallbacks = [];
+    globalThis.ResizeObserver = function(cb){
+      __roCallbacks.push(cb);
+      this.observe = function(){};
+      this.disconnect = function(){};
+    };
+    var img = document.getElementById('comic-draw-img');
+    var canvas = document.getElementById('comic-draw-canvas');
+    APP_COMIC.naturalW = 1000; APP_COMIC.naturalH = 1000;
+    img.clientWidth = 500; img.clientHeight = 500;
+    _comicSetupCanvas();   // the real app calls this once at image-load, before ever watching resize
+    _comicWatchImageResize();
+    var sizeBeforeResize = { w: canvas.width, h: canvas.height };
+    // The page reflows (window resize, zoom, orientation change — any of them) and the image's own
+    // rendered size changes; the browser would fire the ResizeObserver callback for that.
+    img.clientWidth = 300; img.clientHeight = 300;
+    __roCallbacks[__roCallbacks.length - 1]();
+    JSON.stringify({ sizeBeforeResize: sizeBeforeResize, sizeAfterResize: { w: canvas.width, h: canvas.height },
+      observerCount: __roCallbacks.length })`));
+  assert.deepStrictEqual(r.sizeBeforeResize, { w: 500, h: 500 }, 'canvas took the image size at watch-start time');
+  assert.strictEqual(r.observerCount, 1, 'exactly one observer was installed for one _comicWatchImageResize() call');
+  assert.deepStrictEqual(r.sizeAfterResize, { w: 300, h: 300 },
+    'the canvas is RESIZED to match the image\'s new rendered size when the observer fires — this is ' +
+    'the fix: before it, the canvas stayed frozen at its old size while the (responsive) image resized');
+}
+console.log('  resize-sync: a ResizeObserver notification re-syncs the canvas to the image\'s new size: OK');
+
+{
+  // Re-watching (a second image upload) must not stack observers — only the LATEST one should be live.
+  const C = client();
+  const r = JSON.parse(C.run(`
+    globalThis.__roCallbacks = [];
+    globalThis.__disconnected = 0;
+    globalThis.ResizeObserver = function(cb){
+      __roCallbacks.push(cb);
+      this.observe = function(){};
+      this.disconnect = function(){ __disconnected++; };
+    };
+    var img = document.getElementById('comic-draw-img');
+    APP_COMIC.naturalW = 500; APP_COMIC.naturalH = 500;
+    img.clientWidth = 200; img.clientHeight = 200;
+    _comicWatchImageResize();
+    _comicWatchImageResize();   // a second image chosen without the first ever being unwatched
+    JSON.stringify({ observerCount: __roCallbacks.length, disconnected: __disconnected })`));
+  assert.strictEqual(r.observerCount, 2, 'two ResizeObserver instances were created (one per watch call)');
+  assert.strictEqual(r.disconnected, 1, 'the FIRST one was disconnected before the second was installed — no stacking');
+}
+console.log('  resize-sync: watching a second time disconnects the first observer, does not stack: OK');
+
+{
+  // Closing comic mode must release the observer, not leak it across an open/close cycle.
+  const C = client();
+  const r = JSON.parse(C.run(`
+    globalThis.__disconnected = 0;
+    globalThis.ResizeObserver = function(cb){
+      this.observe = function(){};
+      this.disconnect = function(){ __disconnected++; };
+    };
+    var img = document.getElementById('comic-draw-img');
+    APP_COMIC.naturalW = 500; APP_COMIC.naturalH = 500;
+    img.clientWidth = 200; img.clientHeight = 200;
+    document.getElementById('use-comic-cb').checked = true; onUseComicCb();
+    _comicWatchImageResize();
+    document.getElementById('use-comic-cb').checked = false; onUseComicCb();   // closes comic mode
+    JSON.stringify({ disconnected: __disconnected })`));
+  assert.strictEqual(r.disconnected, 1, 'turning comic mode off disconnects the resize observer — no leak across open/close');
+}
+console.log('  resize-sync: closing comic mode disconnects the observer, does not leak: OK');
+
+// The three cases above prove _comicWatchImageResize()/_comicUnwatchImageResize() themselves work —
+// what they can't prove is that onComicFileChosen's real image-load path actually CALLS the watch
+// function. That integration can't be driven behaviourally here: onComicFileChosen uses a real
+// FileReader, which this harness's sandbox does not stub (unlike speechSynthesis or ResizeObserver,
+// adding one is a shared-infrastructure change out of scope for one feature's test). A source check
+// for the call site, immediately after the existing _comicSetupCanvas() call, is the honest fallback
+// — paired with the behavioural proof above that the function itself does the right thing.
+{
+  const onload = html.slice(html.indexOf('img.onload=()=>{'), html.indexOf('img.src=APP_COMIC.dataUrl'));
+  assert.ok(/_comicSetupCanvas\(\);\s*\n\s*_comicWatchImageResize\(\);/.test(onload),
+    'onComicFileChosen\'s img.onload handler calls _comicWatchImageResize() right after _comicSetupCanvas()');
+}
+console.log('  resize-sync: the real image-load path wires up the resize watch (source check, paired with the behavioural proof above): OK');
+
 console.log('unit-comic-panel-ui: ALL PASSED');
 }
 

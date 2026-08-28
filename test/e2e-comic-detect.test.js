@@ -20,7 +20,7 @@ async function waitJob(sport, jobId, timeoutMs = 30000) {
 const FAKE_PAGE = 'data:image/jpeg;base64,' + Buffer.from('fake-comic-page').toString('base64');
 
 (async () => {
-  const env = await boot();
+  const env = await boot({ log: true });
   try {
     const { sport } = env;
 
@@ -36,6 +36,16 @@ const FAKE_PAGE = 'data:image/jpeg;base64,' + Buffer.from('fake-comic-page').toS
       assert(JSON.stringify(panels[0]) === JSON.stringify([20, 60, 480, 390]), 'panel 1 box matches the model response exactly, in order (got ' + JSON.stringify(panels[0]) + ')');
       assert(JSON.stringify(panels[1]) === JSON.stringify([520, 60, 980, 390]), 'panel 2 box matches, in order (got ' + JSON.stringify(panels[1]) + ')');
       console.log('  4-panel detection: parsed correctly, in order, matching the fake model response: OK');
+    }
+
+    // ── 1b. v85_u: same context-size fix as comic-extract — a full-page photo's own vision-token
+    //       cost can exceed Ollama's 4096 default before the request even reaches num_predict.
+    {
+      const entries = env.readChatLog().filter(e => e.kind === 'comic_detect');
+      assert(entries.length >= 1, 'fake-ollama logged the comic_detect request');
+      entries.forEach((e, i) => assert(e.opts && e.opts.num_ctx >= 8192,
+        `comic-detect request ${i} asks for a large num_ctx, not Ollama's small default (got ${e.opts && e.opts.num_ctx})`));
+      console.log('  comic-detect request asks for a large num_ctx (mobile-photo context-size fix): OK');
     }
 
     // ── 2. Validation: no image ────────────────────────────────────────────────

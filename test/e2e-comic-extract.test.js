@@ -62,6 +62,16 @@ const FAKE_IMG = (n) => 'data:image/jpeg;base64,' + Buffer.from('fake-panel-' + 
       console.log('  images attached to the Ollama request, data: prefix stripped before sending: OK');
     }
 
+    // ── 2b. v85_u (user-reported, real failure on a mobile photo): the request must ask for a
+    //       large num_ctx, not silently ride Ollama's 4096 default — a full-resolution photo's own
+    //       vision-token cost can exceed 4096 before the text prompt is even counted.
+    {
+      const entries = env.readChatLog().filter(e => e.kind === 'comic_extract');
+      entries.forEach((e, i) => assert(e.opts && e.opts.num_ctx >= 8192,
+        `comic-extract request ${i} asks for a large num_ctx, not Ollama's small default (got ${e.opts && e.opts.num_ctx})`));
+      console.log('  every comic-extract request asks for a large num_ctx (mobile-photo context-size fix): OK');
+    }
+
     // ── 3. One panel fails (an empty/invalid crop), the rest of the batch still completes,
     //      and results stay INDEX-ALIGNED with what was sent (not compacted) ──────────────────
     {

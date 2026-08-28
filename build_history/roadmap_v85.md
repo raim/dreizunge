@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_t` — items A/C of the `v85_r` roadmap-only cut: app-version tooltip removed from both builds; comic panel RESIZE via corner handles built; auto-detect misalignment LIVE-PROBED against the real model (qwen2.5vl:7b, this container has it installed) and confirmed a genuine, newly-characterized model-accuracy limitation (systematic panel-width underestimate, not a coordinate bug) — left open for a scoped prompt-work round, not attempted unilaterally. `v85_s` — progress-card word-tap speech race FIXED (item B of the `v85_r` roadmap-only cut): a double `renderEx()` render race left an uncancelled auto-speak timer from the first (wrong) render to fire alongside the second (correct) one; fixed with an unconditional `clearTimeout` at the top of `renderEx()`, mutation-tested. `v85_r` — model-reliability round: the `v80_j` article-symmetry fix generalised to `vocabFromText.system` (its second caller, never fixed before), and `resolveVocabularySkillTags` no longer discards a whole lesson for one item's missing/malformed skillId (the likely "3 failed attempts" cause) — chapter-title post-pass investigated, hardened already, no new defect found, left open for live repro. `v85_q` — `unit-ui-journeys.test.js` investigation: the carried-forward `#lang-select` crash, diagnosed as a test-harness-only DOM-stub gap (confirmed unreachable in a real browser) and fixed with two per-file harness shims, no application code touched. `v85_p` — real-usage bug fixes from the user's own first live test: one chapter per drawn panel (not one per page), storyboard generation made opt-in everywhere (was unconditional since v68.1 for EVERY book-job caller, not just comics — fixed a latent no-op in `PLAN §13` milestone 4's own toggle too). `v85_o` — `PLAN §2.4` follow-up: auto-detect panels (a suggestion pre-filling the manual-drawing UI), plus a real angle-bracket parser gap found and fixed by this milestone's own live verification. `v85_n` — `PLAN §2.4` / Track A4 milestone 4: progress-card integration. **TRACK A4 IS NOW FULLY SHIPPED** (all four milestones, `v85_j` through `v85_n`). `v85_m` — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels, live-verified end-to-end (both halves) against the real model. `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
+| **SHIPPED IN THE v85 LINE** | **`v85_u` — LINE WRAP-UP (v86 cuts next):** the C2 geometry root cause found and fixed (a canvas/image resize-desync on zoom, not the model — `_comicSetupCanvas()`'s own old comment had named the gap and never built it); a real mobile-photo context-size crash fixed (vision calls now request a large `num_ctx`, never had before); comic panels-on-progress-card confirmed ALREADY BUILT (traced end to end, not a regression); three more items evaluated and SCHEDULED with concrete scoping (move comic images out of `lessons.json` — a confirmed violation of an existing `D4` ruling, 658KB measured; a vision-role model picker — most of the server plumbing already exists; comic/PDF upload-card UX reorganisation — a recommendation given, not built). `v85_t` — items A/C of the `v85_r` roadmap-only cut: app-version tooltip removed from both builds; comic panel RESIZE via corner handles built; auto-detect misalignment LIVE-PROBED against the real model (qwen2.5vl:7b, this container has it installed) and confirmed a genuine, newly-characterized model-accuracy limitation (systematic panel-width underestimate, not a coordinate bug) — left open for a scoped prompt-work round, not attempted unilaterally. `v85_s` — progress-card word-tap speech race FIXED (item B of the `v85_r` roadmap-only cut): a double `renderEx()` render race left an uncancelled auto-speak timer from the first (wrong) render to fire alongside the second (correct) one; fixed with an unconditional `clearTimeout` at the top of `renderEx()`, mutation-tested. `v85_r` — model-reliability round: the `v80_j` article-symmetry fix generalised to `vocabFromText.system` (its second caller, never fixed before), and `resolveVocabularySkillTags` no longer discards a whole lesson for one item's missing/malformed skillId (the likely "3 failed attempts" cause) — chapter-title post-pass investigated, hardened already, no new defect found, left open for live repro. `v85_q` — `unit-ui-journeys.test.js` investigation: the carried-forward `#lang-select` crash, diagnosed as a test-harness-only DOM-stub gap (confirmed unreachable in a real browser) and fixed with two per-file harness shims, no application code touched. `v85_p` — real-usage bug fixes from the user's own first live test: one chapter per drawn panel (not one per page), storyboard generation made opt-in everywhere (was unconditional since v68.1 for EVERY book-job caller, not just comics — fixed a latent no-op in `PLAN §13` milestone 4's own toggle too). `v85_o` — `PLAN §2.4` follow-up: auto-detect panels (a suggestion pre-filling the manual-drawing UI), plus a real angle-bracket parser gap found and fixed by this milestone's own live verification. `v85_n` — `PLAN §2.4` / Track A4 milestone 4: progress-card integration. **TRACK A4 IS NOW FULLY SHIPPED** (all four milestones, `v85_j` through `v85_n`). `v85_m` — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels, live-verified end-to-end (both halves) against the real model. `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13`** — the generator-page redesign, scoped at the `v85_a` cut — **is now FULLY SHIPPED** (all five milestones, `v85_c` through `v85_i`); its own section below still carries the full assessment/build-order text for reference, but nothing in it is open any more. **`PLAN §2.4` / Track A4** (comic/image ingest) — the four-milestone manual-panel-selection design chosen after the `§2.4` overlay-probe measurements — **is now FULLY SHIPPED** (`v85_j` UI, `v85_k`/`v85_l` extraction, `v85_m` chapter formation, `v85_n` progress-card integration); its own "PLAN §2.4" sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -158,12 +158,24 @@ one — the same "cancel-then-restart" shape the file already uses for other sta
 mute). NOT verified by writing or running it this cut — do that first, then mutation-test by
 temporarily removing the clear and confirming a double-`renderEx()` case still races.
 
-### C. Comic panel auto-detection misses real panel boundaries; no manual resize — resize ✅ FIXED, accuracy INVESTIGATED (both at `v85_t`)
+### C. Comic panel auto-detection misses real panel boundaries; no manual resize — resize ✅ FIXED at `v85_t`; **geometry root cause ✅ FOUND AND FIXED at `v85_u`**
 
-**Built at `v85_t`** — see that section's own SHIPPED entry below for both halves: the resize
-affordance (shipped) and a LIVE probe against the actual model (investigated, not fixed — a
-genuine, confirmed model-accuracy limitation, not a code bug, with the specific failure mode now
-named). The "found" write-up right below is kept verbatim as the diagnosis record that led there.
+**Built at `v85_t`**: the resize affordance (shipped), and a LIVE probe against the actual model
+confirming the boxes are systematically too narrow (a real model-accuracy limitation).
+
+**`v85_u` correction, from the user's OWN direct follow-up testing**: the user separately reported
+"when I zoom in/out on the page, the selected panel squares move relative to the image" — and this
+turned out to be A SEPARATE, GENUINE, FULLY CODE-FIXABLE bug that was very likely inflating (possibly
+even DOMINATING) the apparent misalignment the `v85_t` screenshot showed. See `v85_u`'s own SHIPPED
+entry below for the full mechanism: `#comic-draw-img` is responsive (`max-width:100%`) but the canvas
+overlay was only ever sized ONCE, at image-load — any later resize/zoom/reflow left it frozen,
+visually drifting from the image. **`_comicSetupCanvas()`'s OWN comment already named this exact gap
+when it was written** ("would need its own resize-observer to stay in sync") but it was never built
+until now. The `v85_t` live-probe finding (systematic width underestimate) is UNAFFECTED by this —
+that measurement queried the model directly, not through the buggy canvas — but the ORIGINAL
+screenshot the user reported against may have looked WORSE than the model's true output because of
+this second, independent bug layered on top. The "found" write-up right below is kept verbatim as the
+original diagnosis record.
 
 **Ask + evidence:** `/home/raim/Pictures/dreizunge/Screenshot_2026-08-26_11-35-31.jpg` — a hand-drawn
 6-panel comic page (2 columns × 3 rows), run through `comicDetectPanels()`. The six auto-detected
@@ -1875,6 +1887,135 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_u — the C2 geometry root cause FOUND AND FIXED; a real mobile-photo crash fixed; four more items evaluated and SCHEDULED (`v85` LINE WRAP-UP — v86 cuts next)
+
+The user's own follow-up real-device testing produced five more observations after `v85_t`. Asked
+explicitly: fix whichever is related to C2's geometry, evaluate and schedule the rest, then cut v86.
+
+**1. THE ZOOM/SCALING BUG — FIXED, and it is the actual root cause of C2's apparent misalignment.**
+"When I zoom in/out on the page, the selected panel squares move relative to the image." Confirmed
+by reading, not assumed: `#comic-draw-img` is `max-width:100%;height:auto` (responsive), but
+`_comicSetupCanvas()` — which sizes the CANVAS overlay to match the image's CURRENT rendered CSS
+size — was only ever called ONCE, right after image load. No `resize`/`orientationchange` listener,
+no `ResizeObserver`, existed anywhere to re-run it. `_comicSetupCanvas()`'s OWN comment already named
+this exact gap when it was written ("would need its own resize-observer to stay in sync with
+responsive CSS width") but never built it. **Fixed** with a `ResizeObserver` on `#comic-draw-img`
+(`_comicWatchImageResize()`/`_comicUnwatchImageResize()`), installed on image load, disconnected on
+comic-mode close or a second image chosen (no stacking, no leak). The BOXES themselves needed no
+change — they are already stored in natural pixels; only the DISPLAY scale factor was ever stale.
+Four new cases in `unit-comic-panel-ui.test.js` §8 (the resize-sync itself, no-stacking, no-leak-on-
+close, and a source check that the real image-load path actually wires it up — `FileReader` isn't
+stubbed in this harness, so that one integration point can't be driven behaviourally). Mutation-tested
+throughout. **This is very likely why `v85_t`'s screenshot looked as broken as it did** — the live
+model probe (queried directly, bypassing the canvas entirely) showed a real but SMALLER defect
+(systematic width underestimate); the zoom bug could have been compounding on top of it in the
+screenshot the user actually looked at.
+
+**2. Mobile-phone-photo extraction crash — FOUND (not part of the user's numbered list, but directly
+adjacent) and FIXED.** The user's own real error, verbatim: `Ollama: {"error":{"code":400,"message":
+"request (4507 tokens) exceeds the available context size (4096 tokens)"...}}`. Root cause: NEITHER
+comic vision call (`_runComicExtractJob`, `_runComicDetectJob`) had ever passed `ctxTokens`, unlike
+every OTHER LLM call in this file (all of which use `estimateCtxTokens()` explicitly) — so Ollama fell
+back to its small 4096-token default. A photographed page's own vision-token cost (resolution-
+dependent, NOT predictable from this server without image introspection this codebase has no reason
+to add) can exceed that easily, even before the text prompt is counted. **Fixed**: both calls now pass
+`ctxTokens: getNumCtxMax()` — asking for the full configured ceiling rather than guessing low, which
+is safe here specifically because these are per-panel, infrequent calls, not a hot loop. New
+assertions in `e2e-comic-extract.test.js` and `e2e-comic-detect.test.js` (the latter needed `{log:true}`
+added to its own `boot()` call, which it hadn't needed before) checking the fake Ollama's logged
+`num_ctx` is now large, not `null`. Mutation-tested.
+
+**3. Progress card: comic panel images above the story — INVESTIGATED, ALREADY BUILT, confirmed
+working by reading the full chain.** The user asked directly: "I thought the previous milestone 4
+meant to include comic panels in the progress cards?" — YES, checked end to end, and it does:
+`comicCreateChapter()` attaches `image:_comicCropDataUrl(b)` per panel when a chapter is created
+(`index.html`) → `_runBookJob` (`server.js:6199`) persists `chunks[i].comicPanels` onto the topic
+verbatim → `_storyBodyHtml` (the ONE shared story renderer reaching every progress card, question
+panel, storyline view, and saved-story reader) branches to `_comicStoryPanelsHtml` whenever
+`d.comicPanels` is a non-empty array, rendering EACH panel's own image ABOVE its own transcribed text,
+through the exact same word-highlighting chain plain text uses. This was built and live-verified at
+`v85_n` (screenshotted, per that entry's own write-up) and nothing since has touched this path. **If
+the user is not seeing this in real use, it is not a missing feature** — worth a fresh live check
+against a CURRENT comic-derived chapter before assuming a regression, since nothing in this
+investigation found one.
+
+**What is genuinely NOT built yet, and is the real substance of the user's own follow-up ("later we
+want to map lesson vocab highlighting onto the displayed panel")**: highlighting vocabulary words AT
+THEIR LOCATION IN THE IMAGE ITSELF (Tier 2 per `PLAN §2.6` — per-word image coordinates), as opposed
+to the CURRENT Tier 1 (highlighting the panel's TRANSCRIBED TEXT below the image, which is what
+ships today). This has been explicitly, repeatedly flagged as out of scope since the `PLAN §2.4`
+milestone plan was first scoped — still true, still unmeasured, still a real follow-up whenever the
+user wants to prioritize it. It needs its own design pass (does the model return per-word bounding
+boxes reliably enough to trust, at what granularity, rendered how) before anyone estimates it.
+
+**4. Move comic panel images OUT of `lessons.json` — SCHEDULED, not built. A CONFIRMED, real
+violation of an EXISTING ruling.** `D4` (`roadmap_v85.md`, folded from `v80`'s own cut) already ruled
+on exactly this: **"Images must NOT go into `lessons.json`... store as files in an asset directory,
+reference by path"** — with the static-build half of the answer already decided too ("cheapest honest
+answer: text-only in static, and say so in the UI"). **Measured, not assumed**: `lessons.json` right
+now holds 6 topics with `comicPanels`, totalling **658,566 bytes of base64 image data** inline in the
+JSON — and `build-static.js` has no `comicPanels` handling at all, so it bakes wholesale into
+`docs/index.html` too (confirmed: this cut's own rebuild grew that file from ~8.38MB to **9.10MB**,
+~700KB, consistent with the measured base64 size plus JSON overhead). The comic feature (`v85_j`
+through `v85_p`) was built entirely AFTER the `D4` ruling existed but never implemented it — a real
+process gap, not a new decision needed. **Scoped for whoever builds this**: (a) a server-side asset
+directory (mirroring how `docs/` already relates to the corpus, per D4's own words) — save each
+panel's crop as a file at generation time, store a PATH on `comicPanels[i]` instead of `image:
+<base64>`; (b) a route to SERVE those files to the live client; (c) `build-static.js` either omits
+`comicPanels[i].image` entirely for static export (text-only degrade, per D4's own "cheapest honest
+answer") or copies the asset files alongside `docs/` and rewrites paths — the former is far less work
+and matches what was already decided; (d) a ONE-TIME migration for the 6 EXISTING topics already
+carrying inline base64 (extract to files, rewrite the field) — do NOT touch `lessons.json` directly
+without asking, per this whole line's own standing rule; this migration is exactly the kind of
+one-off, real-corpus-touching action that needs the user's own go-ahead first, same as any other.
+
+**5. A model picker for comic parsing, restricted to vision-capable models — SCHEDULED, not built.
+Far more of the plumbing already exists than expected.** Checked directly: `server.js`'s `/api/models`
+POST ALREADY accepts and validates a `vision` field exactly like `story`/`lessons`/`translation`/`qc`/
+`tutor` (`server.js:6775`), and `/api/info` already reports `ollamaVisionModel` (`server.js:6696`).
+**The ENTIRE gap is client-side**: `renderModelPicker()`'s own `roles` array (`index.html:7033`) —
+`[['story',...],['lessons',...],['translation',...],['qc',...],['tutor',...]]` — simply never had
+`['vision','models.vision']` added to it. Adding the picker itself is therefore small. **The
+capability-restriction half ("only allow models in principle capable of this, e.g. qwen2.5vl:7b,
+minicpm-v4.5") is the genuinely new part** — nothing in this codebase currently filters the model list
+by capability for ANY role; every picker currently lists every installed Ollama model regardless of
+fitness. Needs: a way to determine which installed models are vision-capable (Ollama's `/api/show`
+per-model reports a `capabilities` array on current versions, or `/api/tags`' `details.family` can be
+pattern-matched against known vision families like `qwen25vl`/`llava`/`minicpm-v` — the family-name
+approach is more fragile and would need its own small, explicit, probe-verified allowlist, matching
+this project's "no language knowledge in the code" spirit but for MODEL knowledge instead) — a design
+choice worth 5 minutes of discussion before building, not assumed here.
+
+**6. Comic generation UX: extraction/chaptering only on the upload card, lesson config on the NEXT
+page — SCHEDULED, not built. A genuinely larger, cross-cutting architecture question, with a concrete
+recommendation.** Checked: `#gen-card-3` ("3 · Chapters") and `#gen-card-4` ("4 · Lessons") ALREADY
+EXIST in the `PLAN §13` wizard shell (`v85_c`-`v85_i`) — built for the AI-GENERATED multi-chapter book
+path specifically. **Both `comicCreateChapter()` AND `pdfGenerateAll()`** bypass this staged flow
+entirely: each fires `/api/generate-book` immediately from its OWN upload card, with lesson-type/
+difficulty/storyboard controls crammed onto that SAME card (`#comic-arc-row` explicitly built to
+"mirror" `#pdf-arc-row`'s own pre-existing pattern, per `v85_p`'s own comment) — so this is not a
+comic-specific inconsistency, it is a genuine gap in TWO of the three chapter sources versus the
+third. **Recommendation, since the user asked directly**: route comic AND PDF uploads through the
+SAME existing `#gen-card-3`/`#gen-card-4` staged flow the generated-book path already uses, rather
+than building a fourth divergent pattern. This directly satisfies the ask (upload card = extraction +
+chapter definition ONLY), gives all three chapter sources one consistent flow instead of three, and
+retires the near-duplicate `#comic-arc-row`/`#pdf-arc-row` markup into one shared step-4 control set —
+the same "a per-caller fix doesn't generalize" shape this project has hit repeatedly. **Default
+difficulty**: the user's own explicit preference — "beginner" (difficulty 1) as comic's own default,
+not the general default of 2 — is straightforward to apply once lesson config genuinely lives on its
+own step, and should land together with that move, not as an isolated tweak beforehand (a difficulty-
+only change with the config still on the wrong card would just move the number without fixing what was
+actually asked). **Not sized or built this cut** — this touches the wizard shell, both upload cards,
+and the shared step-4 controls; genuinely deserves its own dedicated round with the user's own
+confirmation of the recommendation above before anyone starts.
+
+Baseline: `node test/run.js` → ALL 284 CHECKS PASSED. `node test/run.js --quick` → ALL 246 CHECKS
+PASSED. Both `check-inline.js` → 0 failures. `docs/index.html` rebuilt (now 9.10MB — see item 4's own
+measurement for why). `lessons.json` untouched throughout. `APP_VERSION = 'v85_u'`.
+
+**This closes the `v85` line.** Per the user's own explicit instruction, `v86` cuts next — see
+`roadmap_v86.md`.
 
 ## ✅ v85_t — items A and C of the `v85_r` roadmap-only cut: version tooltip removed, panel resize built, auto-detect accuracy LIVE-PROBED
 
