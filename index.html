@@ -1343,6 +1343,14 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <input type="file" id="comic-file-input" accept="image/png,image/jpeg" style="display:none" onchange="onComicFileChosen(this)">
             <button type="button" id="comic-choose-btn" onclick="document.getElementById('comic-file-input').click()"
               style="font-size:12px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"><span id="comic-choose-lbl">🖼️ Upload a comic page</span></button>
+            <!-- v86_c (user-requested): `capture="environment"` opens the device camera DIRECTLY on a
+                 phone/tablet browser (skips the gallery picker) — ignored on desktop, where this just
+                 behaves like an ordinary file picker, so no device-sniffing is needed to show/hide it.
+                 Routes through the SAME onComicFileChosen()/_COMIC_MAX_DIM downscale as a regular
+                 upload — a raw camera photo is capped to the same "apt resolution" either way. -->
+            <input type="file" id="comic-camera-input" accept="image/*" capture="environment" style="display:none" onchange="onComicFileChosen(this)">
+            <button type="button" id="comic-camera-btn" onclick="document.getElementById('comic-camera-input').click()"
+              style="font-size:12px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"><span id="comic-camera-lbl">📷 Take a photo</span></button>
             <span id="comic-upload-status" style="font-size:11px;color:var(--gray-dark)"></span>
           </div>
           <div id="comic-draw-wrap" style="display:none;position:relative;max-width:100%;touch-action:none">
@@ -2813,6 +2821,7 @@ function applyUIStrings() {
   { const uc=document.getElementById('use-comic-lbl'); if(uc) uc.textContent=t('form.use_comic'); }
   { const ch=document.getElementById('comic-help'); if(ch) ch.textContent=t('form.comic_help'); }
   { const cc=document.getElementById('comic-choose-lbl'); if(cc) cc.textContent=t('form.comic_choose'); }
+  { const ccam=document.getElementById('comic-camera-lbl'); if(ccam) ccam.textContent=t('form.comic_camera'); }
   { const ccl=document.getElementById('comic-clear-lbl'); if(ccl) ccl.textContent=t('form.comic_clear'); }
   { const cel=document.getElementById('comic-extract-lbl'); if(cel) cel.textContent=t('form.comic_extract'); }
   { const ccl2=document.getElementById('comic-create-lbl'); if(ccl2) ccl2.textContent=t('form.comic_create'); }
@@ -3579,6 +3588,33 @@ function onUseComicCb(){
   }
 }
 
+// v86_c (user-requested): a raw camera photo can be many megapixels — far more than a comic page's
+// hand lettering needs to stay legible, and exactly the kind of oversized upload the v85_u mobile-
+// photo context-size fix had to work around after the fact rather than avoid. Downscale ANY chosen
+// image (camera capture or a regular file pick — both funnel through onComicFileChosen) to at most
+// _COMIC_MAX_DIM on its long edge before it ever becomes APP_COMIC.dataUrl, so what gets drawn on,
+// stored, and eventually uploaded is capped from the start. 1600px keeps hand-lettered text legible
+// (checked against the real fixtures this session's own live comic-detect probe used) while keeping
+// the base64 payload a small fraction of a raw phone photo's.
+const _COMIC_MAX_DIM = 1600;
+function _comicFinishSetup(img, status){
+  APP_COMIC.naturalW=img.naturalWidth; APP_COMIC.naturalH=img.naturalHeight;
+  comicClearPanels();   // a new image invalidates any boxes drawn over the old one
+  document.getElementById('comic-draw-wrap').style.display='';
+  const detectRow=document.getElementById('comic-detect-row'); if(detectRow) detectRow.style.display='flex';
+  if(status) status.textContent='';
+  _comicSetupCanvas();
+  _comicWatchImageResize();   // v85_u: keep the canvas in sync as the image's rendered size changes
+}
+// Pure sizing math, split out so it's testable without a real Image/canvas decode. Returns null
+// when no resize is needed (already within budget), else the target {cw,ch} — Math.round on each
+// axis independently, same as the call site always did, so an odd aspect ratio can't drift the two
+// axes' rounding out of sync with what actually gets drawn.
+function _comicDownscaleDims(w, h, maxDim){
+  if(!(w>0) || !(h>0) || Math.max(w,h)<=maxDim) return null;
+  const scale=maxDim/Math.max(w,h);
+  return { cw: Math.round(w*scale), ch: Math.round(h*scale) };
+}
 function onComicFileChosen(input){
   const f=input.files&&input.files[0]; if(!f) return;
   const status=document.getElementById('comic-upload-status');
@@ -3587,13 +3623,24 @@ function onComicFileChosen(input){
     APP_COMIC.dataUrl=String(r.result||'');
     const img=document.getElementById('comic-draw-img');
     img.onload=()=>{
-      APP_COMIC.naturalW=img.naturalWidth; APP_COMIC.naturalH=img.naturalHeight;
-      comicClearPanels();   // a new image invalidates any boxes drawn over the old one
-      document.getElementById('comic-draw-wrap').style.display='';
-      const detectRow=document.getElementById('comic-detect-row'); if(detectRow) detectRow.style.display='flex';
-      if(status) status.textContent='';
-      _comicSetupCanvas();
-      _comicWatchImageResize();   // v85_u: keep the canvas in sync as the image's rendered size changes
+      const dims=_comicDownscaleDims(img.naturalWidth, img.naturalHeight, _COMIC_MAX_DIM);
+      if(dims){
+        const {cw,ch}=dims;
+        const canvas=document.createElement('canvas');
+        canvas.width=cw; canvas.height=ch;
+        const ctx=canvas.getContext && canvas.getContext('2d');
+        if(ctx){
+          ctx.drawImage(img,0,0,cw,ch);
+          const resized=canvas.toDataURL('image/jpeg',0.88);
+          APP_COMIC.dataUrl=resized;
+          img.onload=()=>{ _comicFinishSetup(img, status); };   // now for the RESIZED image
+          img.src=resized;
+          return;
+        }
+        // No 2D canvas support (or this harness's own DOM stub) — fall back to the original,
+        // unresized image rather than lose the upload entirely.
+      }
+      _comicFinishSetup(img, status);
     };
     img.src=APP_COMIC.dataUrl;
   };
@@ -3612,23 +3659,37 @@ function onComicFileChosen(input){
 // box is actually committed — that half is unaffected by a later resize, since boxes are stored in
 // natural pixels and only the DISPLAY scale factor (recomputed on every _comicRedraw call) was ever
 // stale.
+//
+// v86_c (user-reported REGRESSION, confirmed): this used to call addEventListener for all 8
+// pointer/touch events EVERY time it ran, with no matching removeEventListener first —
+// `canvas.onmousedown=null` etc. cleared the unused on*-PROPERTY handlers, not the
+// addEventListener-registered ones, so it did nothing to prevent stacking. Before v85_u this ran
+// EXACTLY ONCE per uploaded image (from onComicFileChosen's own img.onload), so the bug was latent —
+// one listener each, harmless. v85_u's OWN fix made this ALSO run from a ResizeObserver, which fires
+// more than once per image by design (once on observe(), again on every real size change) — so from
+// v85_u onward, drawing a SINGLE box could fire _comicPointerStart/Move/End multiple times each,
+// duplicating pushed boxes and/or corrupting an in-progress drag by re-entering it mid-gesture —
+// exactly the "one box spans two panels" shape the user reported, TWICE. Split: listener wiring now
+// happens ONCE (guarded by _comicListenersWired), sizing/redraw stays idempotent and safe to call as
+// often as the observer likes.
+let _comicListenersWired = false;
 function _comicSetupCanvas(){
   const img=document.getElementById('comic-draw-img');
   const canvas=document.getElementById('comic-draw-canvas');
   const cssW=img.clientWidth, cssH=img.clientHeight;
   canvas.width=cssW; canvas.height=cssH;
   canvas.style.width=cssW+'px'; canvas.style.height=cssH+'px';
-  // Re-attach handlers each time in case cloning/resizing ever recreated the element; cheap and
-  // idempotent (removeEventListener on a never-added listener is a silent no-op).
-  canvas.onmousedown=null; canvas.onmousemove=null; canvas.onmouseup=null; canvas.onmouseleave=null;
-  canvas.addEventListener('mousedown', _comicPointerStart);
-  canvas.addEventListener('mousemove', _comicPointerMove);
-  canvas.addEventListener('mouseup', _comicPointerEnd);
-  canvas.addEventListener('mouseleave', _comicPointerCancel);
-  canvas.addEventListener('touchstart', _comicPointerStart, {passive:false});
-  canvas.addEventListener('touchmove', _comicPointerMove, {passive:false});
-  canvas.addEventListener('touchend', _comicPointerEnd, {passive:false});
-  canvas.addEventListener('touchcancel', _comicPointerCancel, {passive:false});
+  if(!_comicListenersWired){
+    _comicListenersWired=true;
+    canvas.addEventListener('mousedown', _comicPointerStart);
+    canvas.addEventListener('mousemove', _comicPointerMove);
+    canvas.addEventListener('mouseup', _comicPointerEnd);
+    canvas.addEventListener('mouseleave', _comicPointerCancel);
+    canvas.addEventListener('touchstart', _comicPointerStart, {passive:false});
+    canvas.addEventListener('touchmove', _comicPointerMove, {passive:false});
+    canvas.addEventListener('touchend', _comicPointerEnd, {passive:false});
+    canvas.addEventListener('touchcancel', _comicPointerCancel, {passive:false});
+  }
   _comicRedraw();
 }
 

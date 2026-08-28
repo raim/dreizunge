@@ -37,7 +37,7 @@ this file stays current through the whole `v86` line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v86 CUT** | fresh, top-of-file summary of everything still genuinely open, then the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v86 LINE** | `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
+| **SHIPPED IN THE v86 LINE** | `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, `PLAN §7.0` Track A (CP1–5), and `PLAN §13` are ALL fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). `PLAN §2.4` / Track A4 (comic/image ingest) is fully shipped as its FOUR-milestone core, plus a `v85_o` auto-detect follow-up, plus a `v85_t` panel-resize follow-up, plus a `v85_u` resize-sync fix — its own sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -1881,6 +1881,75 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v86 LINE
+
+## ✅ v86_c — a v85_u REGRESSION found and fixed (duplicate canvas listeners), plus camera capture with auto-downscale
+
+The user, after testing `v86_b` for real: "panel recognition is really bad, this worked better before
+the fix, and occured twice" — a manually-defined 4-panel comic showing only 3 boxes, one of them
+spanning two whole panels' width. **This is a genuine regression from `v85_u`'s own resize-sync fix**,
+confirmed by reading, not inferred from the symptom shape alone.
+
+**Root cause**: `_comicSetupCanvas()` called `addEventListener` for all 8 pointer/touch events
+(`mousedown`/`mousemove`/`mouseup`/`mouseleave`/`touchstart`/`touchmove`/`touchend`/`touchcancel`) on
+EVERY invocation, with no matching `removeEventListener` first. Its own comment claimed this was
+"idempotent (removeEventListener on a never-added listener is a silent no-op)" — WRONG: the
+`canvas.onmousedown=null` etc. lines right above it clear the unused `on*`-PROPERTY handlers (never
+used anywhere in this codebase), which is a COMPLETELY SEPARATE mechanism from
+`addEventListener`-registered ones; clearing one does nothing to the other. **Before `v85_u` this ran
+EXACTLY ONCE per uploaded image** (only ever called from `onComicFileChosen`'s own `img.onload`), so
+the bug was latent — one listener each, harmless. `v85_u`'s own fix made this ALSO run from a
+`ResizeObserver`, which by design fires MORE THAN ONCE per observed element (once immediately on
+`observe()`, again on every real size change) — so from `v85_u` onward, a SINGLE real drag gesture
+could fire `_comicPointerStart`/`Move`/`End` multiple times each, corrupting an in-progress drag by
+re-entering it mid-gesture. This is a textbook case of the standing rule: a "safe-looking" fix (adding
+a resize-observer callback) can defeat an existing guarantee (exactly-once listener registration)
+whose enforcement lived entirely in "this function only ever runs once" — an assumption that was
+never stated, checked, or tested, because there was never a REASON to before `v85_u` gave this
+function a second, repeating call path.
+
+**Fix**: split canvas SIZING (safe and idempotent — resets `canvas.width`/`height` and redraws,
+called as often as the observer likes) from LISTENER WIRING (now guarded by a module-level
+`_comicListenersWired` flag, runs exactly once for the page's whole lifetime — correct, since
+`#comic-draw-canvas` is static markup, never recreated/cloned, so a one-time-ever wiring is not just
+sufficient but MORE correct than the original "re-attach in case cloning ever recreated the element"
+reasoning, which was speculative and never actually true in this codebase).
+
+**Test coverage**: this harness stubs `addEventListener` as a total no-op (real event dispatch isn't
+modelled at all), so the regression itself can't be reproduced by simulating a real multi-fire drag —
+instead, `unit-comic-panel-ui.test.js` §9 replaces `canvas.addEventListener` with a counting spy (the
+same technique the `v85_u` ResizeObserver tests already use for a different global) and asserts
+EXACTLY 8 registrations total across THREE `_comicSetupCanvas()` calls, not 24. Mutation-tested:
+reverted the guard, confirmed the new test fails with `actual: 24, expected: 8` — the EXACT multiplier
+(3 calls × 8 events) the fix's own diagnosis predicts, not just "some larger number." Restored.
+
+**Camera capture with automatic downscaling — built, same cut** (the user's second, unrelated ask).
+A new `#comic-camera-input` (`<input type="file" accept="image/*" capture="environment">`) and
+`#comic-camera-btn` ("📷 Take a photo") sit alongside the existing "Upload a comic page" button —
+`capture="environment"` opens the device camera DIRECTLY on a phone/tablet browser, and is simply
+ignored (harmless, falls back to an ordinary file picker) on desktop, so no device-sniffing is needed
+to show or hide it. Routes through the SAME `onComicFileChosen()` handler as a regular upload — no
+new code path to duplicate-maintain. **"Apt resolution"**: any chosen image (camera capture OR a
+regular file pick — both funnel through the one handler) is now downscaled to at most 1600px on its
+long edge before it ever becomes `APP_COMIC.dataUrl`, via an offscreen canvas re-encode to JPEG
+(quality 0.88) — caps what gets drawn on, stored, and eventually uploaded, directly addressing the
+SAME class of problem `v85_u`'s own mobile-photo context-size fix had to work around after the fact
+(a raw camera photo can be many megapixels; 1600px keeps hand-lettered comic text legible while
+keeping the base64 payload a small fraction of the original — also a small, incidental step toward
+item 4's own `lessons.json`-bloat concern, though the full fix there is still the scoped, unbuilt
+server-side migration). The pure scaling math is split into `_comicDownscaleDims(w, h, maxDim)` —
+testable without any `Image`/`canvas` dependency — with 5 new cases covering landscape, portrait,
+exactly-at-the-limit (no-op), already-small (no-op), and a degenerate zero-dimension guard (no
+divide-by-zero into `NaN`). A missing/unavailable 2D canvas context (or this harness's own DOM stub)
+falls back to the ORIGINAL, unresized image rather than losing the upload entirely.
+
+Baseline (checked BEFORE the version bump / docs rebuild below, while the new `en` key and the
+still-stale `docs/index.html` were the only two things behind): `node test/run.js` → 284 checks, 2
+failures (the SESSION_PROMPT's stated `en`-key count and `docs/index.html`'s own staleness — both
+routine consequences of this cut's own edits, not `lessons.json` drift, both resolved by the release
+ceremony itself: the corpus-count line below and the rebuild). `node test/run.js --quick` → 246
+checks, same 2. Both `check-inline.js` → 0 failures. `docs/index.html` rebuilt. New `en` key
+`form.comic_camera` (687 total, up from 686 — the only corpus change this cut). `lessons.json`
+untouched throughout. `APP_VERSION = 'v86_c'`.
 
 ## ✅ v86_b — comic panels on the progress card: the REAL bug found and fixed (`v85_n` never actually worked)
 

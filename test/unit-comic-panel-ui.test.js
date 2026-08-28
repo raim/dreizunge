@@ -347,12 +347,88 @@ console.log('  resize-sync: closing comic mode disconnects the observer, does no
 // adding one is a shared-infrastructure change out of scope for one feature's test). A source check
 // for the call site, immediately after the existing _comicSetupCanvas() call, is the honest fallback
 // — paired with the behavioural proof above that the function itself does the right thing.
+// v86_c: the sequence now lives in _comicFinishSetup() (extracted so the downscale-then-reload path
+// can call it a second time without duplicating the whole setup) — checked there directly, plus that
+// onComicFileChosen's own onload path actually reaches it.
 {
-  const onload = html.slice(html.indexOf('img.onload=()=>{'), html.indexOf('img.src=APP_COMIC.dataUrl'));
-  assert.ok(/_comicSetupCanvas\(\);\s*\n\s*_comicWatchImageResize\(\);/.test(onload),
-    'onComicFileChosen\'s img.onload handler calls _comicWatchImageResize() right after _comicSetupCanvas()');
+  const fn = html.slice(html.indexOf('function _comicFinishSetup'), html.indexOf('function onComicFileChosen'));
+  assert.ok(/_comicSetupCanvas\(\);\s*\n\s*_comicWatchImageResize\(\);/.test(fn),
+    '_comicFinishSetup() calls _comicWatchImageResize() right after _comicSetupCanvas()');
+  const fnStart = html.indexOf('function onComicFileChosen');
+  const onComicFileChosenSrc = html.slice(fnStart, html.indexOf('\n// Canvas is sized to the DISPLAYED', fnStart));
+  assert.ok(/_comicFinishSetup\(img,\s*status\)/.test(onComicFileChosenSrc),
+    'onComicFileChosen\'s real image-load path reaches _comicFinishSetup()');
 }
 console.log('  resize-sync: the real image-load path wires up the resize watch (source check, paired with the behavioural proof above): OK');
+
+// ── 9. _comicSetupCanvas() does NOT re-register pointer/touch listeners on repeat calls
+//      (v86_c, user-reported REGRESSION, confirmed and fixed) ─────────────────────────────────────
+// "panel recognition is really bad, this worked better before the fix, and occurred twice" — a box
+// spanning two whole panels. Root cause: _comicSetupCanvas() called addEventListener for all 8
+// pointer/touch events on EVERY call, with no matching removeEventListener — harmless when it only
+// ever ran ONCE per image (before v85_u), but v85_u's OWN resize-sync fix made it ALSO run from a
+// ResizeObserver, which fires more than once by design. From v85_u onward, a single real drag could
+// invoke _comicPointerStart/Move/End multiple times each — this harness stubs addEventListener as a
+// no-op (real event dispatch isn't modelled), so the only way to observe registration COUNT here is
+// to replace it with a counting spy, the same shape the ResizeObserver tests above already use.
+{
+  const C = client();
+  const r = JSON.parse(C.run(`
+    globalThis.__addCalls = {};
+    var canvas = document.getElementById('comic-draw-canvas');
+    var img = document.getElementById('comic-draw-img');
+    img.clientWidth = 400; img.clientHeight = 300;
+    canvas.addEventListener = function(type){ __addCalls[type] = (__addCalls[type]||0) + 1; };
+    _comicSetupCanvas();
+    _comicSetupCanvas();   // simulates a second ResizeObserver firing on the SAME canvas element
+    _comicSetupCanvas();   // and a third — the exact shape that used to stack duplicate listeners
+    JSON.stringify(__addCalls)`));
+  const total = Object.values(r).reduce((a, b) => a + b, 0);
+  assert.strictEqual(total, 8,
+    `exactly 8 listeners registered (one per pointer/touch event) across THREE _comicSetupCanvas() ` +
+    `calls, not 24 — got ${JSON.stringify(r)}. Re-registering on every call is what let a single real ` +
+    'gesture fire the SAME handler multiple times, corrupting an in-progress drag.');
+  assert.strictEqual(r.mousedown, 1, 'mousedown registered exactly once, not once per _comicSetupCanvas() call');
+  assert.strictEqual(r.touchmove, 1, 'touchmove registered exactly once, not once per _comicSetupCanvas() call');
+}
+console.log('  _comicSetupCanvas(): listeners register exactly once across repeated calls, no stacking: OK');
+
+// ── 10. Camera capture (v86_c, user-requested) ────────────────────────────────────────────────────
+{
+  const panelAt = html.indexOf('id="comic-panel"');
+  const panelEnd = html.indexOf('id="comic-draw-wrap"', panelAt);   // scope to the upload row itself
+  const within = (needle) => { const at = html.indexOf(needle, panelAt); return at > panelAt && at < panelEnd; };
+  assert.ok(within('id="comic-camera-input"'), '#comic-camera-input exists inside #comic-panel');
+  assert.ok(/id="comic-camera-input"[^>]*capture="environment"/.test(html),
+    '#comic-camera-input carries capture="environment" — opens the device camera directly on mobile, ' +
+    'ignored (harmlessly) on desktop, so no device-sniffing is needed');
+  assert.ok(/id="comic-camera-input"[^>]*accept="image\/\*"/.test(html), '#comic-camera-input accepts any image type');
+  assert.ok(/id="comic-camera-input"[^>]*onchange="onComicFileChosen\(this\)"/.test(html),
+    '#comic-camera-input routes through the SAME handler as a regular upload — same downscale, same setup');
+  assert.ok(/id="comic-camera-btn"[^>]*onclick="document\.getElementById\('comic-camera-input'\)\.click\(\)"/.test(html),
+    '#comic-camera-btn triggers the camera input');
+}
+console.log('  camera capture: #comic-camera-input (capture="environment") routes through the same upload handler: OK');
+
+// ── 11. _comicDownscaleDims(): pure sizing math, no Image/canvas dependency ──────────────────────
+{
+  const C = client();
+  const r = JSON.parse(C.run(`JSON.stringify({
+    tooLarge:    _comicDownscaleDims(4000, 3000, 1600),
+    exactlyMax:  _comicDownscaleDims(1600, 900, 1600),
+    smaller:     _comicDownscaleDims(800, 600, 1600),
+    portrait:    _comicDownscaleDims(1200, 4000, 1600),
+    zeroWidth:   _comicDownscaleDims(0, 3000, 1600),
+  })`));
+  assert.deepStrictEqual(r.tooLarge, { cw: 1600, ch: 1200 },
+    'a 4000x3000 image (long edge 4000) scales to 1600 on the long edge, short edge scaled proportionally');
+  assert.strictEqual(r.exactlyMax, null, 'an image exactly AT the max dimension needs no resize (not >, so no wasted re-encode)');
+  assert.strictEqual(r.smaller, null, 'an image already smaller than the max needs no resize');
+  assert.deepStrictEqual(r.portrait, { cw: 480, ch: 1600 },
+    'a PORTRAIT image scales correctly too — the long edge (height here) is what gets capped');
+  assert.strictEqual(r.zeroWidth, null, 'a degenerate zero-dimension input is rejected, not divided-by-zero into NaN');
+}
+console.log('  _comicDownscaleDims(): correct scale math, both orientations, no-op when already small enough: OK');
 
 console.log('unit-comic-panel-ui: ALL PASSED');
 }

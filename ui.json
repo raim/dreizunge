@@ -85,6 +85,7 @@
     "form.use_comic": "🖼️ I have a comic page image",
     "form.comic_help": "Upload a comic page, then drag a rectangle around each panel, in reading order. Drag a corner to resize a panel, or delete/reorder it afterward.",
     "form.comic_choose": "🖼️ Upload a comic page",
+    "form.comic_camera": "📷 Take a photo",
     "form.comic_clear": "🗑 Clear panels",
     "form.comic_extract": "✨ Extract text",
     "form.comic_extracting": "Starting…",
