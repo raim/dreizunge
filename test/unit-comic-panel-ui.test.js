@@ -200,6 +200,67 @@ console.log('  _comicPanels(): returns a defensive copy, not a live reference in
 }
 console.log('  _comicRedraw(): harness-safe (no-2D-context guard) — mutation-tested by this very assertion: OK');
 
+// ── 7. Panel RESIZE via corner handles (v85_t, user-requested) ───────────────────
+// The milestone-1 UI never let a learner adjust an EXISTING box — only draw new ones, delete, or
+// reorder. This adds drag handles at each box's 4 corners; these cases exercise the hit-testing,
+// the actual resize, the minimum-size floor, and that ordinary drawing (away from any handle) is
+// unaffected.
+{
+  const C = client();
+  // 2x scale, same shape as §3's own drawing test, so the SAME sx/sy conversion is exercised for
+  // resize as for a fresh draw — a handle at natural (200,100) sits at canvas (100,50).
+  const r = JSON.parse(C.run(`APP_COMIC.naturalW = 1000; APP_COMIC.naturalH = 500;
+    var canvas = document.getElementById('comic-draw-canvas'); canvas.width = 500; canvas.height = 250;
+    APP_COMIC.boxes = [{x1:200,y1:100,x2:400,y2:300}];   // canvas-space: (100,50)-(200,150)
+    // Grab the SE handle (canvas (200,150)) and drag it out to canvas (250,200) -> natural (500,400).
+    _comicPointerStart({ preventDefault:function(){}, clientX:200, clientY:150 });
+    var drawingAfterGrab = APP_COMIC.drawing;
+    _comicPointerMove({ preventDefault:function(){}, clientX:250, clientY:200 });
+    _comicPointerEnd({ preventDefault:function(){}, clientX:250, clientY:200 });
+    JSON.stringify({ boxes: APP_COMIC.boxes, drawingAfterGrab: drawingAfterGrab, resizingAfterEnd: APP_COMIC.resizing })`));
+  assert.strictEqual(r.drawingAfterGrab, null, 'grabbing a handle does NOT also start a new box draw');
+  assert.strictEqual(r.boxes.length, 1, 'resizing does not create a spurious second box');
+  assert.deepStrictEqual(r.boxes[0], { x1: 200, y1: 100, x2: 500, y2: 400 },
+    'dragging the SE handle moves ONLY x2/y2, scaled to natural pixels the same way a fresh draw is');
+  assert.strictEqual(r.resizingAfterEnd, null, 'pointerEnd clears the resize state');
+}
+console.log('  resize: grabbing a corner handle resizes the box, not a new draw, correctly scaled: OK');
+
+{
+  // A drag that starts nowhere NEAR any handle still draws a new box — resize must not swallow
+  // ordinary drawing clicks.
+  const C = client();
+  const r = JSON.parse(C.run(`APP_COMIC.naturalW = 500; APP_COMIC.naturalH = 500;
+    var canvas = document.getElementById('comic-draw-canvas'); canvas.width = 500; canvas.height = 500;
+    APP_COMIC.boxes = [{x1:0,y1:0,x2:50,y2:50}];   // handles cluster near the top-left corner
+    _comicPointerStart({ preventDefault:function(){}, clientX:300, clientY:300 });   // far away
+    _comicPointerMove({ preventDefault:function(){}, clientX:400, clientY:400 });
+    _comicPointerEnd({ preventDefault:function(){}, clientX:400, clientY:400 });
+    JSON.stringify({ boxes: APP_COMIC.boxes })`));
+  assert.strictEqual(r.boxes.length, 2, 'a drag far from any handle still draws a brand-new second box');
+  assert.deepStrictEqual(r.boxes[0], { x1: 0, y1: 0, x2: 50, y2: 50 }, 'the existing box is untouched');
+  assert.deepStrictEqual(r.boxes[1], { x1: 300, y1: 300, x2: 400, y2: 400 }, 'the new box is the fresh drag');
+}
+console.log('  resize: a drag away from any handle still draws a new box, existing ones untouched: OK');
+
+{
+  // Dragging a handle PAST the opposite corner must not invert the box (x1>x2) or shrink it below
+  // the same "8 canvas px" floor a freshly-drawn degenerate box is rejected for — clamped live,
+  // during the drag, not corrected after the fact.
+  const C = client();
+  const r = JSON.parse(C.run(`APP_COMIC.naturalW = 500; APP_COMIC.naturalH = 500;
+    var canvas = document.getElementById('comic-draw-canvas'); canvas.width = 500; canvas.height = 500;
+    APP_COMIC.boxes = [{x1:100,y1:100,x2:300,y2:300}];
+    _comicPointerStart({ preventDefault:function(){}, clientX:300, clientY:300 });   // SE handle
+    _comicPointerMove({ preventDefault:function(){}, clientX:0, clientY:0 });   // dragged past NW corner
+    JSON.stringify({ box: APP_COMIC.boxes[0] })`));
+  assert.ok(r.box.x2 > r.box.x1, 'x1 stays less than x2 even when the SE handle is dragged past NW');
+  assert.ok(r.box.y2 > r.box.y1, 'y1 stays less than y2 even when the SE handle is dragged past NW');
+  assert.strictEqual(r.box.x2 - r.box.x1, 8, 'width is clamped to exactly the 8px floor, not inverted or zero');
+  assert.strictEqual(r.box.y2 - r.box.y1, 8, 'height is clamped to exactly the 8px floor, not inverted or zero');
+}
+console.log('  resize: a handle dragged past the opposite corner clamps to the minimum size, never inverts: OK');
+
 console.log('unit-comic-panel-ui: ALL PASSED');
 }
 

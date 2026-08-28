@@ -1,8 +1,10 @@
 // unit-app-motto.test.js
 // v49: the main-page title is lowercase "dreizunge" and the visible version number is
 // replaced by a localized motto (new en-only ui key `app.motto`, rendered slightly
-// larger). The running version must stay reachable: both the server client and the
-// static build write it into the motto span's tooltip (title attribute) instead.
+// larger). v49 kept the running version reachable via the motto span's tooltip (title
+// attribute); v85_t (user, direct request) removed that too — the version is no longer
+// surfaced in the UI at all, in either build. `APP.info.version` itself is unchanged
+// (still populated by both builds) — it simply has no client-side reader left.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -31,11 +33,13 @@ const _motLangs = Object.keys(ui).filter(l => l !== 'en');
 const _motHave = _motLangs.filter(l => ui[l]['app.motto'] !== undefined).length;
 assert.ok(_motHave >= _motLangs.length - 3, 'app.motto translated across (nearly) all languages');
 
-// Version stays reachable as the tooltip in BOTH builds.
-assert.ok(/getElementById\('app-tagline'\); if\(_v&&APP\.info\.version\) _v\.title=APP\.info\.version/.test(html),
-  'server client writes version into motto tooltip');
-assert.ok(/getElementById\('app-tagline'\); if\(_v\) _v\.title='(\$\{APP_VERSION\}|v\d+)'/.test(staticJs),
-  'static build writes the (derived) version into motto tooltip');
+// v85_t: the version tooltip is GONE in both builds — checked as an absence, not just an
+// unasserted omission, so a future re-add (echoing v49's own compromise) has to pass here
+// deliberately rather than slip back in unnoticed.
+assert.ok(!/getElementById\('app-tagline'\).*\.title\s*=/.test(html),
+  'server client no longer writes anything into the motto tooltip');
+assert.ok(!/getElementById\('app-tagline'\).*\.title\s*=/.test(staticJs),
+  'static build no longer writes anything into the motto tooltip');
 
-console.log('  lowercase title + app.motto tagline (version in tooltip): OK');
+console.log('  lowercase title + app.motto tagline (version no longer surfaced anywhere): OK');
 console.log('unit-app-motto: ALL PASSED');

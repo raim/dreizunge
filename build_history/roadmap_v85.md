@@ -44,7 +44,7 @@ file stays current through the whole v85 line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v85 CUT** | the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v85 LINE** | `v85_s` — progress-card word-tap speech race FIXED (item B of the `v85_r` roadmap-only cut): a double `renderEx()` render race left an uncancelled auto-speak timer from the first (wrong) render to fire alongside the second (correct) one; fixed with an unconditional `clearTimeout` at the top of `renderEx()`, mutation-tested. `v85_r` — model-reliability round: the `v80_j` article-symmetry fix generalised to `vocabFromText.system` (its second caller, never fixed before), and `resolveVocabularySkillTags` no longer discards a whole lesson for one item's missing/malformed skillId (the likely "3 failed attempts" cause) — chapter-title post-pass investigated, hardened already, no new defect found, left open for live repro. `v85_q` — `unit-ui-journeys.test.js` investigation: the carried-forward `#lang-select` crash, diagnosed as a test-harness-only DOM-stub gap (confirmed unreachable in a real browser) and fixed with two per-file harness shims, no application code touched. `v85_p` — real-usage bug fixes from the user's own first live test: one chapter per drawn panel (not one per page), storyboard generation made opt-in everywhere (was unconditional since v68.1 for EVERY book-job caller, not just comics — fixed a latent no-op in `PLAN §13` milestone 4's own toggle too). `v85_o` — `PLAN §2.4` follow-up: auto-detect panels (a suggestion pre-filling the manual-drawing UI), plus a real angle-bracket parser gap found and fixed by this milestone's own live verification. `v85_n` — `PLAN §2.4` / Track A4 milestone 4: progress-card integration. **TRACK A4 IS NOW FULLY SHIPPED** (all four milestones, `v85_j` through `v85_n`). `v85_m` — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels, live-verified end-to-end (both halves) against the real model. `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
+| **SHIPPED IN THE v85 LINE** | `v85_t` — items A/C of the `v85_r` roadmap-only cut: app-version tooltip removed from both builds; comic panel RESIZE via corner handles built; auto-detect misalignment LIVE-PROBED against the real model (qwen2.5vl:7b, this container has it installed) and confirmed a genuine, newly-characterized model-accuracy limitation (systematic panel-width underestimate, not a coordinate bug) — left open for a scoped prompt-work round, not attempted unilaterally. `v85_s` — progress-card word-tap speech race FIXED (item B of the `v85_r` roadmap-only cut): a double `renderEx()` render race left an uncancelled auto-speak timer from the first (wrong) render to fire alongside the second (correct) one; fixed with an unconditional `clearTimeout` at the top of `renderEx()`, mutation-tested. `v85_r` — model-reliability round: the `v80_j` article-symmetry fix generalised to `vocabFromText.system` (its second caller, never fixed before), and `resolveVocabularySkillTags` no longer discards a whole lesson for one item's missing/malformed skillId (the likely "3 failed attempts" cause) — chapter-title post-pass investigated, hardened already, no new defect found, left open for live repro. `v85_q` — `unit-ui-journeys.test.js` investigation: the carried-forward `#lang-select` crash, diagnosed as a test-harness-only DOM-stub gap (confirmed unreachable in a real browser) and fixed with two per-file harness shims, no application code touched. `v85_p` — real-usage bug fixes from the user's own first live test: one chapter per drawn panel (not one per page), storyboard generation made opt-in everywhere (was unconditional since v68.1 for EVERY book-job caller, not just comics — fixed a latent no-op in `PLAN §13` milestone 4's own toggle too). `v85_o` — `PLAN §2.4` follow-up: auto-detect panels (a suggestion pre-filling the manual-drawing UI), plus a real angle-bracket parser gap found and fixed by this milestone's own live verification. `v85_n` — `PLAN §2.4` / Track A4 milestone 4: progress-card integration. **TRACK A4 IS NOW FULLY SHIPPED** (all four milestones, `v85_j` through `v85_n`). `v85_m` — `PLAN §2.4` / Track A4 milestone 3: chapter formation from extracted panels, live-verified end-to-end (both halves) against the real model. `v85_l` — `PLAN §2.4` follow-up: German case-restoration fix (a conditional worked example), confirmed EXACT match to ground truth on the real fixture through the production route. `v85_k` — `PLAN §2.4` / Track A4 milestone 2: batch text extraction against `qwen2.5vl:7b`, live-verified against the real model. `v85_j` — `PLAN §2.4` / Track A4 milestone 1: comic upload + panel-drawing UI, client-side only, no model call. `v85_i` — `PLAN §13` milestone 5, PART 2 (LAST item): attribution fields at generation time, covering both the single-pasted-story path AND the PDF/document-upload path (user ruling). **`PLAN §13` IS NOW FULLY DONE.** `v85_h` — milestone 5 part 1: the `doDialectImport()` language-pair bug. `v85_g` — milestone 4: storyboard/QC toggles. `v85_f` — milestone 3: label reword + per-chapter override. `v85_e` — milestone 2 completed: the "create storyline now" shortcut. `v85_d` — the chaptering-card split. `v85_c` — milestone 1: the wizard shell. `v85_b` — two small user-requested fixes, done first |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12` and `PLAN §7.0` (Track A, CP1–5) are BOTH fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). **`PLAN §13`** — the generator-page redesign, scoped at the `v85_a` cut — **is now FULLY SHIPPED** (all five milestones, `v85_c` through `v85_i`); its own section below still carries the full assessment/build-order text for reference, but nothing in it is open any more. **`PLAN §2.4` / Track A4** (comic/image ingest) — the four-milestone manual-panel-selection design chosen after the `§2.4` overlay-probe measurements — **is now FULLY SHIPPED** (`v85_j` UI, `v85_k`/`v85_l` extraction, `v85_m` chapter formation, `v85_n` progress-card integration); its own "PLAN §2.4" sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -97,10 +97,13 @@ to the roadmap only") — investigated just enough to make each entry actionable
 but deliberately NOT implemented this cut. Read each entry's own "found" note before starting; it
 names the exact file/line/mechanism so the next session doesn't have to re-locate it.*
 
-### A. Remove the app version from the UI
+### A. Remove the app version from the UI — ✅ FIXED at `v85_t`
 
 **Ask:** the app version (currently `v85_o` in the user's own report — they're on an older running
 build; the code itself is at `v85_r` as of this cut) doesn't need to be shown on the website/app.
+
+**Built at `v85_t`** — see that section's own SHIPPED entry below. The "found" write-up right below
+is kept verbatim as the diagnosis record.
 
 **Found:** it is NOT shown as visible text anywhere — the only surface is a HOVER TOOLTIP.
 `index.html:6843`: `{ const _v=document.getElementById('app-tagline'); if(_v&&APP.info.version)
@@ -155,7 +158,12 @@ one — the same "cancel-then-restart" shape the file already uses for other sta
 mute). NOT verified by writing or running it this cut — do that first, then mutation-test by
 temporarily removing the clear and confirming a double-`renderEx()` case still races.
 
-### C. Comic panel auto-detection misses real panel boundaries; no manual resize
+### C. Comic panel auto-detection misses real panel boundaries; no manual resize — resize ✅ FIXED, accuracy INVESTIGATED (both at `v85_t`)
+
+**Built at `v85_t`** — see that section's own SHIPPED entry below for both halves: the resize
+affordance (shipped) and a LIVE probe against the actual model (investigated, not fixed — a
+genuine, confirmed model-accuracy limitation, not a code bug, with the specific failure mode now
+named). The "found" write-up right below is kept verbatim as the diagnosis record that led there.
 
 **Ask + evidence:** `/home/raim/Pictures/dreizunge/Screenshot_2026-08-26_11-35-31.jpg` — a hand-drawn
 6-panel comic page (2 columns × 3 rows), run through `comicDetectPanels()`. The six auto-detected
@@ -1867,6 +1875,83 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v85 LINE
+
+## ✅ v85_t — items A and C of the `v85_r` roadmap-only cut: version tooltip removed, panel resize built, auto-detect accuracy LIVE-PROBED
+
+The user asked directly ("continue with items A and C") for the remaining two of three items
+recorded roadmap-only at `v85_r`. Item B (`v85_s`) was already shipped.
+
+**A — app version no longer shown anywhere, in either build.** The single call site
+(`index.html:6843` as of `v85_r`) that wrote `APP.info.version` into `#app-tagline`'s hover tooltip
+is removed, along with `build-static.js`'s own duplicate of the exact same line (§8's rule 8 shape:
+checked for a second caller before declaring this done, and there was one). `APP.info.version`
+itself is UNCHANGED and still populated by both builds — nothing reads it client-side any more, but
+it stays available for anyone inspecting `/api/info` or the console. `unit-app-motto.test.js` (the
+`v49` guard that originally REQUIRED this tooltip, as v49's own compromise over an always-visible
+version span) now asserts its ABSENCE in both builds instead — checked as a negative, not just left
+unasserted, so a future re-add has to pass deliberately. `unit-version-derivation.test.js`'s matching
+tooltip assertions removed; its `info.version`-derivation assertions (the actually-still-true claim)
+kept. Mutation-tested: reintroduced the tooltip line, confirmed `unit-app-motto` goes red, restored.
+
+**C1 — panel RESIZE via corner handles — built.** The milestone-1 UI (`v85_j`) never let a learner
+adjust an EXISTING box, only draw/delete/reorder. Added: 4 corner handles per box (`nw`/`ne`/`sw`/`se`),
+hit-tested in CANVAS space against a 12px tolerance (`_comicHitHandle`, scanning boxes last-drawn-first
+so an overlapping later box's handle wins), drawn as small filled squares on every box (no
+select-first step needed — this UI has no such concept). `_comicPointerStart` checks for a handle hit
+BEFORE falling through to "start a new box draw", so resize and draw are mutually exclusive by
+construction, not by a separate mode toggle. The resize itself works directly in NATURAL pixel space
+(matching how boxes are always stored) with the SAME "8 canvas px" minimum-size floor a freshly-drawn
+degenerate box was already rejected for — but CLAMPED live during the drag rather than validated
+after the fact, so a handle dragged past the opposite corner can never invert the box (x1>x2) or
+produce a zero/negative-area panel. Three new cases in `unit-comic-panel-ui.test.js` §7: the exact
+resize shape (grabbing a handle resizes, doesn't also start a new draw), a drag away from any handle
+still draws normally (resize doesn't swallow ordinary clicks), and the past-the-opposite-corner clamp.
+Mutation-tested: reverted the handle-hit check in `_comicPointerStart`, confirmed the resize case
+fails (a NEW box gets drawn instead of a resize), restored. `form.comic_help` (`ui.json`, `en`) updated
+to mention the new affordance.
+
+**C2 — auto-detect misalignment — LIVE-PROBED against the real model, CONFIRMED a model-accuracy
+limitation, not a code bug.** Per the roadmap's own note ("before trying another prompt/strategy fix,
+run the actual call... look at the RAW model response"), and since this container DOES have a live
+Ollama with `qwen2.5vl:7b` installed (checked directly — not assumed unavailable), ran
+`build_history/probe_comic_panels_v85_i.js` for real against a crop of the user's own screenshot
+isolating the comic-page region (`700,375` to `1200,1095` of the original 1920×1200 capture).
+
+**Caveat, stated plainly:** this crop is NOT the pristine original upload — it is a re-encoded crop of
+a SCREENSHOT taken AFTER auto-detect had already drawn its (misaligned) coloured overlay lines onto
+the page, since the user's report only included that screenshot, not the original file. If anything
+this should have made the model's job EASIER (the overlay roughly tracks the true borders), so a
+worse-than-expected result is not explained away by the overlay's presence.
+
+**Result:** the model came back CLEAN in every structural respect qwen2.5vl:7b has previously been
+measured on — correct count (6), correct reading order (`orderMatches: true`), well-formed `<box>`
+tags, no confabulation or repetition. **But the boxes are systematically too NARROW**: converted to
+the 500×720 crop's own pixel space, the six boxes span only x=22.5 to x=385 — leaving roughly 115px
+(23% of the crop's width) on the right edge completely unclaimed by any panel, most visible on the
+right column (panels 2/4/6), which the model drew ending well short of where that column's panels
+actually extend in the source crop. Row placement (y-bands) is comparatively close to correct, with
+the same minor last-row overshoot past the 1000-bound the original `v85_i` probe already noted on a
+DIFFERENT, cleaner fixture — a small, recurring quirk of this model, not new here.
+
+**This is a NEW, more precise characterization than the roadmap previously had** ("most likely a
+model-accuracy limitation," inferred, not measured): the failure mode is specifically an
+UNDERESTIMATE of panel WIDTH (not a wholesale coordinate scramble, not a row/column mixup, not the
+axis-swap or off-by-one the client-side arithmetic was already ruled out for). Consistent with — and
+now a second, independently-measured instance of — the standing "never tried the HARD `§2.7` fixture"
+gap: a hand-drawn page with panels close to the frame edge is exactly the harder case the original
+`v85_i` probe flagged as unconfirmed.
+
+**NOT fixed, and deliberately not attempted this cut**: trying an alternative prompt or strategy
+(e.g. per-panel grounding, a hard width floor, asking the model to re-check its own right edge) is
+real, open-ended prompt-engineering work — each iteration costs ~5-6 minutes of real model time on
+this machine (this cut's one call: 374.5s) — and the project's own standing practice is that this
+kind of work gets scoped with the user first, not attempted unilaterally on inference alone. Left
+open, with a concrete, measured starting point for whoever picks it up next, rather than the
+previous "inferred, not measured" state.
+
+Baseline: `node test/run.js` and `--quick` both green (only the routine post-edit `docs/index.html`
+staleness before the rebuild below). `docs/index.html` rebuilt from the current committed corpus.
+`APP_VERSION = 'v85_t'`.
 
 ## ✅ v85_s — progress-card word-tap speech race — FIXED (item B of the `v85_r` roadmap-only cut)
 

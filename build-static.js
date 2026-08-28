@@ -267,7 +267,8 @@ function repopulateContinueSelect(){
 
 async function init() {
   APP.info = { backend: 'none', canGenerate: false, version: '${APP_VERSION}', coverageThreshold: ${COVERAGE_THRESHOLD} };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='${APP_VERSION}'; }
+  // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
+  // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
   APP.buildSources = ${JSON.stringify(BUILD_SOURCES)};

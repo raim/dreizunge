@@ -83,7 +83,7 @@
     "form.use_story": "📖 I have my own story or document!",
     "form.use_dialect": "💬 I have a dialect glossary (dialect = standard word)",
     "form.use_comic": "🖼️ I have a comic page image",
-    "form.comic_help": "Upload a comic page, then drag a rectangle around each panel, in reading order. You can delete or reorder panels afterward.",
+    "form.comic_help": "Upload a comic page, then drag a rectangle around each panel, in reading order. Drag a corner to resize a panel, or delete/reorder it afterward.",
     "form.comic_choose": "🖼️ Upload a comic page",
     "form.comic_clear": "🗑 Clear panels",
     "form.comic_extract": "✨ Extract text",
