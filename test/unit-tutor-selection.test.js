@@ -51,8 +51,13 @@ function extFn(src, name) {
     'the REPLY language (S) is now uiLang, not srcLang');
   assert.ok(!/const S = langName\(srcLang\)/.test(route), 'srcLang no longer drives the reply language');
   // srcLang keeps its OWN, different job: retrieval's content-pairing filter, untouched.
-  assert.ok(/tutorRetrieveContext\(\{[\s\S]{0,120}srcLang \}\)/.test(route),
+  assert.ok(/tutorRetrieveContext\(\{[\s\S]{0,160}srcLang,/.test(route),
     'srcLang is still sent into retrieval, unchanged — a genuinely separate role from the reply language');
+  // v86_m: retrieval also learns whether conversation history already exists (a topic-less
+  // continuation mid-conversation skips the "grab by recency" fallback that a genuinely fresh
+  // question still gets).
+  assert.ok(/tutorRetrieveContext\(\{[\s\S]{0,200}hasHistory: history\.length > 0 \}\)/.test(route),
+    'retrieval is told whether conversation history already exists');
   assert.ok(/reply \(\$\{lang\}←\$\{uiLang\}\)/.test(route), 'the reply log line reflects the real reply language');
 }
 console.log('  /api/tutor: uiLang drives the reply language, srcLang keeps its retrieval role: OK');

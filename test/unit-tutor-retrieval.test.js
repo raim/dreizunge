@@ -101,7 +101,31 @@ console.log('  scope: storyline narrowing, current-chapter exclusion, language p
 }
 console.log('  relevance + recency + hard character budget: OK');
 
-// ── 4. The route wires it up ─────────────────────────────────────────────────
+// ── 4. History-aware retrieval — a topic-less question skips the recency-grab when history exists ──
+// v86_m: the "grab up to 4 by recency" fallback (qt.size === 0) exists so a genuinely topic-less
+// OPENING question still gets some grounding — but the SAME fallback was firing on a short
+// continuation mid-conversation ("finish that sentence please"), returning unrelated topics the
+// question never asked about (reported: 4 unrelated topics named as retrieved context on a stuck
+// reply). Reserved for the no-history case only.
+{
+  const noToks = 'ok so um'; // every word is length <= 2, so _tutorTokens() strips all of them: qt.size === 0
+  const fresh = retrieve({ question: noToks, scope: { kind: 'global' },
+    completed: ['Dragons', 'Sailing', 'Ending'], lang: 'it', srcLang: 'de', hasHistory: false });
+  assert.ok(fresh.used.length > 0, 'a topic-less OPENING question (no history) still gets some grounding');
+
+  const mid = retrieve({ question: noToks, scope: { kind: 'global' },
+    completed: ['Dragons', 'Sailing', 'Ending'], lang: 'it', srcLang: 'de', hasHistory: true });
+  assert.strictEqual(mid.text, '', 'a topic-less CONTINUATION mid-conversation retrieves nothing');
+  assert.deepStrictEqual(mid.used, [], 'and nothing reported as used');
+
+  // A question WITH real keyword overlap is unaffected by hasHistory either way.
+  const relevant = retrieve({ question: 'what happened at sea with the sailor?', scope: { kind: 'global' },
+    completed: ['Dragons', 'Sailing'], lang: 'it', srcLang: 'de', hasHistory: true });
+  assert.strictEqual(relevant.used[0], 'Sailing', 'a real keyword match still retrieves, history or not');
+}
+console.log('  history-aware retrieval: topic-less continuation skips the recency-grab: OK');
+
+// ── 5. The route wires it up ─────────────────────────────────────────────────
 {
   const at = server.indexOf("url.pathname === '/api/tutor'");
   const route = server.slice(at, server.indexOf("url.pathname === '/api/story-qc'", at));
@@ -111,6 +135,8 @@ console.log('  relevance + recency + hard character budget: OK');
     "the learner's newest message drives keyword relevance");
   assert.ok(/\['global','storyline','chapter','lesson'\]\.includes\(scopeIn\.kind\)/.test(route),
     'scope.kind is validated against a whitelist (untrusted input)');
+  assert.ok(/hasHistory: history\.length > 0/.test(route),
+    'the route tells retrieval whether conversation history already exists');
 }
 console.log('  route wiring: retrieval called, inputs validated + capped: OK');
 

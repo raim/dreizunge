@@ -184,7 +184,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v86_l';
+const APP_VERSION  = 'v86_m';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -1024,7 +1024,8 @@ function _tutorTokens(s) {
     .filter(w => w.length > 2 && !_TUTOR_STOPWORDS.has(w));
 }
 function tutorRetrieveContext(opts) {
-  const { question = '', scope = {}, completed = [], lang, srcLang, maxChars = 2400 } = opts || {};
+  const { question = '', scope = {}, completed = [], lang, srcLang, maxChars = 2400,
+          hasHistory = false } = opts || {};
   const completedSet = new Set(completed);
   const topics = (store.topics || []).filter(t =>
     t && t.story && completedSet.has(t.topic) &&
@@ -1058,6 +1059,14 @@ function tutorRetrieveContext(opts) {
 
   // Score: keyword overlap with the question (relevance), then recency as the tiebreaker.
   const qt = new Set(_tutorTokens(question));
+  // v86_m (user-reported): when the question tokenizes to nothing meaningful (qt.size === 0), the
+  // loop below falls back to "grab up to 4 topics by recency, regardless of relevance" — BY DESIGN,
+  // so a genuinely topic-less OPENING question still gets some grounding. But a short continuation
+  // mid-conversation ("finish that sentence please") also tokenizes to nothing, and for THAT case the
+  // real context is the conversation history already sent separately, not a recency grab — confirmed
+  // as the exact shape of a reported log line (4 unrelated topics named as retrieved context on a
+  // stuck reply). Reserve the recency fallback for a genuinely fresh question with no history at all.
+  if (!qt.size && hasHistory) return { text: '', used: [] };
   const scored = pool.map((t, i) => {
     let overlap = 0;
     if (qt.size) {
@@ -8218,7 +8227,8 @@ http.createServer(async (req, res) => {
       // The learner's newest message drives keyword relevance.
       const lastStudent = [...history].reverse().find(m => m.role === 'student');
       const retrieved = tutorRetrieveContext({
-        question: lastStudent ? lastStudent.text : '', scope, completed, lang, srcLang });
+        question: lastStudent ? lastStudent.text : '', scope, completed, lang, srcLang,
+        hasHistory: history.length > 0 });
       // v86_h (user-reported): a stuck/broken tutor reply previously left NO trace at all in the
       // console — only a completed reply logged anything (_logReply below), so a request that never
       // finished (crashed, hung, or the learner navigated away mid-stream) was invisible to any later
