@@ -37,7 +37,7 @@ this file stays current through the whole `v86` line.
 | section | what it is |
 |---|---|
 | **OPEN AT THE v86 CUT** | fresh, top-of-file summary of everything still genuinely open, then the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
-| **SHIPPED IN THE v86 LINE** | `v86_d` — mobile-backgrounding fix: `setInterval`-based polling for comic extraction AND detection can be throttled/suspended on a backgrounded phone tab, stranding a client that never learns its job finished (confirmed live: the user's own console showed server-side success while the UI stayed stuck). Fixed with a shared `visibilitychange` listener that re-checks any in-flight job off-schedule the instant the tab becomes visible again; `_pollComicBookJob` has the same class of gap and is explicitly NOT yet fixed (item K below). Also: a second live bug found mid-session — auto-detect silently dropped a malformed/inverted box with NO toast unless every suggested box was dropped (confirmed live: server said "4 panel(s) suggested", UI showed 3, no explanation) — now toasts on any drop, partial or total. Also item J: a "use whole image as one panel" shortcut button. `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
+| **SHIPPED IN THE v86 LINE** | `v86_e` — item K: the SAME mobile-backgrounding fix extended to `_pollComicBookJob` (book/chapter creation), the one poller `v86_d` explicitly left open — required its own small refactor (a `while`+`sleep` loop split into a re-invokable `_comicBookCheckOnce()`, gated on the pre-existing `_comicBookId`) rather than a copy-paste, since it wasn't `setInterval`-shaped like the other two. Preserves one deliberate behavioural difference: a network hiccup mid-poll is NOT terminal here (unlike extract/detect), matching the original code exactly. Six new tests exercise the REAL function for the first time (every prior test mocked it). `v86_d` — mobile-backgrounding fix: `setInterval`-based polling for comic extraction AND detection can be throttled/suspended on a backgrounded phone tab, stranding a client that never learns its job finished (confirmed live: the user's own console showed server-side success while the UI stayed stuck). Fixed with a shared `visibilitychange` listener that re-checks any in-flight job off-schedule the instant the tab becomes visible again; `_pollComicBookJob` has the same class of gap and is explicitly NOT yet fixed (item K below). Also: a second live bug found mid-session — auto-detect silently dropped a malformed/inverted box with NO toast unless every suggested box was dropped (confirmed live: server said "4 panel(s) suggested", UI showed 3, no explanation) — now toasts on any drop, partial or total. Also item J: a "use whole image as one panel" shortcut button. `v86_c` — a genuine `v85_u` REGRESSION found and fixed: `_comicSetupCanvas()` re-registered all 8 pointer/touch listeners on every call with no matching removal, latent since the function ran once per image before `v85_u`'s own ResizeObserver made it run repeatedly — a single drag could fire the same handler multiple times, corrupting an in-progress box (confirmed: the exact "one box spans two panels" shape the user reported, twice). Fixed by wiring listeners exactly once. Also: camera capture (`capture="environment"`) with automatic downscale to 1600px, routed through the same upload handler as a regular file pick. `v86_b` — comic panels on the progress card: the REAL bug found and fixed. `v85_u`'s own "confirmed already built" conclusion was WRONG — both real callers of the shared story renderer (`_renderCompStory`, `_exStoryPanelHtml`) unconditionally passed an explicit `text:` override that defeated the comic-panel branch regardless of value, so it never actually fired from any real UI path. Fixed at both call sites; new tests exercise the REAL functions, not just the underlying renderer in isolation. |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, `PLAN §7.0` Track A (CP1–5), and `PLAN §13` are ALL fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). `PLAN §2.4` / Track A4 (comic/image ingest) is fully shipped as its FOUR-milestone core, plus a `v85_o` auto-detect follow-up, plus a `v85_t` panel-resize follow-up, plus a `v85_u` resize-sync fix — its own sections below carry the full probe/measurement history. The browser-reachable single-chapter CP1-4 pipeline `PLAN §13` deferred remains its own, separate, not-yet-started follow-up. |
 
@@ -206,16 +206,24 @@ boxes rather than merging" precedent (`unit-comic-detect.test.js`) — then `_co
 
 </details>
 
-### K. `_pollComicBookJob` has the same mobile-backgrounding vulnerability as the two pollers fixed at `v86_d`
+### ✅ K. `_pollComicBookJob` mobile-backgrounding fix — SHIPPED `v86_e`
 
-**Not fixed this cut, named explicitly** (see the `v86_d` shipped entry). The book/chapter-creation
-poller (`_pollComicBookJob`) uses a `while`+`sleep`-shaped loop, not the `setInterval` shape
-`_startComicExtractJob`/`_startComicDetectJob` had — so the SAME fix (a re-invokable check function
-gated by a tracked job id, called off-schedule from a shared `visibilitychange` listener) needs its
-own small adaptation, not a copy-paste. The live bug that motivated `v86_d` was specifically about
-comic-panel EXTRACTION, so this was out of scope for that fix, but the underlying browser behaviour
-(mobile tab backgrounding suspends timers) applies identically to any long-running client-side poll —
-book/chapter creation can easily run long enough to be affected on a real device.
+Was: "`_pollComicBookJob` has the same mobile-backgrounding vulnerability as the two pollers fixed at
+`v86_d`." Built exactly as scoped below — see the `v86_e` shipped entry for the refactor and its test
+coverage. No longer open.
+
+<details><summary>Original scoping (kept for the record)</summary>
+
+**Not fixed at `v86_d`, named explicitly.** The book/chapter-creation poller (`_pollComicBookJob`)
+uses a `while`+`sleep`-shaped loop, not the `setInterval` shape `_startComicExtractJob`/
+`_startComicDetectJob` had — so the SAME fix (a re-invokable check function gated by a tracked job id,
+called off-schedule from a shared `visibilitychange` listener) needs its own small adaptation, not a
+copy-paste. The live bug that motivated `v86_d` was specifically about comic-panel EXTRACTION, so this
+was out of scope for that fix, but the underlying browser behaviour (mobile tab backgrounding
+suspends timers) applies identically to any long-running client-side poll — book/chapter creation can
+easily run long enough to be affected on a real device.
+
+</details>
 
 **Explicitly out of scope, confirmed with the user across the whole `v85` line — do not reopen without
 asking**: the CP1-6 pipeline's cross-chapter arc-sequencing; spell-check-driven auto error-hunt
@@ -1935,6 +1943,58 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v86 LINE
+
+## ✅ v86_e — item K: the same mobile-backgrounding fix extended to the book/chapter-creation poller
+
+Direct follow-on to `v86_d`, built the same session at the user's own "please continue with item K"
+— closes the one poller `v86_d`'s own diagnosis explicitly left open.
+
+**The shape difference that made this "its own small adaptation, not a copy-paste"** (as scoped at
+the `v86_d` cut): `_startComicExtractJob`/`_startComicDetectJob` are `setInterval`-based — a single
+repeating callback that was trivial to also invoke off-schedule. `_pollComicBookJob` was a single
+`async function` running one `while(true){ …; await _sleep(2000); }` loop with a `try/finally` for
+cleanup — there was no standalone "check" step to re-invoke from the `visibilitychange` listener
+without restructuring.
+
+**Refactor**: split the loop into `_comicBookCheckOnce(bookId)` — ONE fetch-and-handle-the-result
+step, gated on the PRE-EXISTING `_comicBookId` variable (which already tracked "the currently polled
+job", so no new tracking variable was needed) — plus `_comicBookFinish()` for the cleanup that used to
+live in the `finally` block. `_pollComicBookJob` is now a thin loop that calls
+`_comicBookCheckOnce()` each iteration and stops once `_comicBookId` no longer matches (cleared by
+whichever caller — the loop's own next tick, or an off-schedule `visibilitychange` call — sees a
+terminal status FIRST). `_comicBookId` is nulled as the very first step of handling a terminal status,
+so a second, slightly-later concurrent call is a safe no-op via the guard at the top of
+`_comicBookCheckOnce` — the same idempotency shape `_comicExtractCheckOnce`/`_comicDetectCheckOnce`
+already established at `v86_d`. The shared `visibilitychange` listener now re-checks all THREE
+pollers.
+
+**One genuine behavioural difference from extract/detect, preserved deliberately**: a network failure
+mid-poll is NOT terminal for the book-job poller — the original code's `catch(e){ await
+_sleep(2000); continue; }` retried silently forever, unlike extract/detect's own catch blocks (which
+DO toast and clear state on a network failure). Reasoning, unchanged from before this refactor: book
+creation can run long, and a flaky connection blip mid-generation shouldn't abort the whole flow the
+way it reasonably should for a much shorter single-extraction request. Verified with a dedicated test:
+fetch rejects on the first call, succeeds with `done` on the second — the poll survives the failure
+and completes on the retry, `fetch` called exactly twice.
+
+**Test coverage — the REAL function, not mocked**: every existing test in `unit-comic-chapter.test.js`
+mocks `_pollComicBookJob` itself (to isolate `comicCreateChapter()`'s own request-building logic), so
+NONE of them exercised this refactor at all before this cut. Six new tests were added, calling the
+real functions: a `'done'` status (toast names the chapter title, full cleanup, `loadSavedList()`
+called exactly once), an `'error'` status (error toast, same cleanup), a 404/job-gone (cleanup runs
+but silently, no toast — matching the ORIGINAL pre-refactor behaviour exactly, confirmed by reading
+the old code's bare `break`), the network-hiccup-is-not-terminal case described above, the
+off-schedule/stale-id safety shape (a check for a superseded book id never even calls `fetch` —
+mirroring `unit-comic-extraction.test.js`/`unit-comic-detect.test.js`'s own §8), and a source check
+confirming the shared listener's wiring now includes `_comicBookCheckOnce(_comicBookId)`. Mutation-
+tested twice: removing the stale-id guard in `_comicBookCheckOnce` failed the off-schedule test
+(`fetch` got called when it shouldn't have); removing the book-poller line from the listener failed
+the source check. Both restored, diff confirmed clean.
+
+Baseline: `node test/run.js` → 284 checks (unchanged count — item K added tests to an EXISTING
+registered file, `unit-comic-chapter.test.js`, rather than a new one), 0 failures. Both
+`check-inline.js` → 0 failures. `docs/index.html` rebuilt. No new `en` keys this cut (689, unchanged
+from `v86_d`). `lessons.json` untouched throughout. `APP_VERSION = 'v86_e'`.
 
 ## ✅ v86_d — mobile-backgrounding fix for both comic pollers, a silent-panel-drop fix, plus item J (single-panel shortcut)
 

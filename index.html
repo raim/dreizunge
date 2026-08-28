@@ -4069,32 +4069,51 @@ async function comicCreateChapter(){
 
 // A structural SIBLING of _pollBookJob() (same poll-every-2s-against-/api/book-job/:id shape) — NOT
 // a reuse: that function is hardwired to #pdf-panel's own _pdfChunks/#pdf-gen-btn.
-async function _pollComicBookJob(bookId){
-  if(_comicBookPolling) return;
-  _comicBookPolling=true;
+//
+// v86_e: same mobile-backgrounding fix as _startComicExtractJob/_startComicDetectJob (v86_d) — split
+// out of what used to be a single `while(true){...}` loop so the shared visibilitychange listener can
+// trigger an off-schedule check, the same way it already does for the other two pollers. _comicBookId
+// (pre-existing — it already tracked "the currently polled job") doubles as the tracked id the
+// listener reads; terminal cleanup (_comicBookId=null, the toast, re-enabling buttons,
+// loadSavedList()) happens exactly once no matter which caller — the main loop's own next tick, or an
+// off-schedule visibilitychange call — sees the terminal status first: _comicBookId is nulled as the
+// very FIRST step of handling one, so a second, slightly-later concurrent call is a no-op via the
+// guard at the top of _comicBookCheckOnce. A network hiccup mid-poll is deliberately NOT terminal
+// here (matches the ORIGINAL behaviour before this refactor) — book creation can run long, and a
+// flaky connection shouldn't abort the whole flow; the loop just retries after its own 2s sleep.
+async function _comicBookCheckOnce(bookId){
+  if(_comicBookId!==bookId) return;   // superseded by a later call, or already finished
   const status=document.getElementById('comic-extract-status');
+  let j=null, gone=false;
   try{
-    while(true){
-      let j=null;
-      try{
-        const pr=await fetch('/api/book-job/'+bookId);
-        if(pr.status===404) break;
-        j=await pr.json();
-      }catch(e){ await _sleep(2000); continue; }
-      if(status && j.chapters && j.chapters[0]) status.textContent=j.chapters[0].status==='active' ? t('form.comic_extracting') : '';
-      if(j.status==='done'||j.status==='error'||j.status==='cancelled'){
-        if(j.status==='error') showToast(t('form.comic_create_failed')+': '+(j.error||''));
-        else if(j.status==='done') showToast(t('toast.generated',{topic:(j.chapters&&j.chapters[0]&&j.chapters[0].title)||''}));
-        break;
-      }
-      await _sleep(2000);
-    }
-  }finally{
-    _comicBookPolling=false; _comicBookId=null;
-    if(status) status.textContent='';
-    const btn=document.getElementById('comic-create-btn'); if(btn) btn.disabled=false;
-    const extractBtn=document.getElementById('comic-extract-btn'); if(extractBtn) extractBtn.disabled=false;
-    await loadSavedList();
+    const pr=await fetch('/api/book-job/'+bookId);
+    if(pr.status===404) gone=true; else j=await pr.json();
+  }catch(e){ return; }   // network hiccup: not terminal — the poll loop just retries after its own sleep
+  if(_comicBookId!==bookId) return;   // superseded while the fetch was in flight
+  if(gone){ _comicBookId=null; await _comicBookFinish(); return; }
+  if(status && j.chapters && j.chapters[0]) status.textContent=j.chapters[0].status==='active' ? t('form.comic_extracting') : '';
+  if(j.status==='done'||j.status==='error'||j.status==='cancelled'){
+    const chapters=j.chapters, error=j.error, jStatus=j.status;
+    _comicBookId=null;   // clear FIRST so a concurrent second call becomes a no-op
+    if(jStatus==='error') showToast(t('form.comic_create_failed')+': '+(error||''));
+    else if(jStatus==='done') showToast(t('toast.generated',{topic:(chapters&&chapters[0]&&chapters[0].title)||''}));
+    await _comicBookFinish();
+  }
+}
+async function _comicBookFinish(){
+  _comicBookPolling=false;
+  const status=document.getElementById('comic-extract-status'); if(status) status.textContent='';
+  const btn=document.getElementById('comic-create-btn'); if(btn) btn.disabled=false;
+  const extractBtn=document.getElementById('comic-extract-btn'); if(extractBtn) extractBtn.disabled=false;
+  await loadSavedList();
+}
+async function _pollComicBookJob(bookId){
+  if(_comicBookPolling || _comicBookId!==bookId) return;
+  _comicBookPolling=true;
+  while(_comicBookId===bookId){
+    await _comicBookCheckOnce(bookId);
+    if(_comicBookId!==bookId) break;   // _comicBookCheckOnce just finished it (terminal or gone)
+    await _sleep(2000);
   }
 }
 
@@ -4177,19 +4196,18 @@ function _startComicDetectJob(jobId){
   }, 2000);
 }
 
-// v86_d: ONE shared listener for BOTH comic pollers — see _startComicExtractJob's own comment for
-// the full "mobile background throttling" diagnosis. Fires an IMMEDIATE re-check the instant the tab
-// becomes visible again, on top of (not instead of) each poller's own interval, so the foregrounded
-// case is completely unaffected and the backgrounded-then-resumed case no longer has to wait on a
-// timer that may have been suspended the whole time. `_pollComicBookJob` (book/chapter CREATION, a
-// much longer-running job) has the SAME class of vulnerability and is NOT yet covered here — book
-// creation wasn't what the user's own live report was about, and its while+sleep shape needs its own
-// small refactor to expose a re-checkable id the same way; left open, named explicitly rather than
-// silently un-fixed (see roadmap_v86.md).
+// v86_d/v86_e: ONE shared listener for ALL THREE comic pollers — see _startComicExtractJob's own
+// comment for the full "mobile background throttling" diagnosis. Fires an IMMEDIATE re-check the
+// instant the tab becomes visible again, on top of (not instead of) each poller's own timer, so the
+// foregrounded case is completely unaffected and the backgrounded-then-resumed case no longer has to
+// wait on a timer that may have been suspended the whole time. `_comicBookId`/`_comicBookCheckOnce`
+// (book/chapter CREATION, v86_e) joined the other two at this cut — see `_pollComicBookJob`'s own
+// comment for why it needed its own small refactor first (a while+sleep loop, not a setInterval).
 document.addEventListener('visibilitychange', ()=>{
   if(document.visibilityState!=='visible') return;
   if(_comicExtractJobId) _comicExtractCheckOnce(_comicExtractJobId);
   if(_comicDetectJobId) _comicDetectCheckOnce(_comicDetectJobId);
+  if(_comicBookId) _comicBookCheckOnce(_comicBookId);
 });
 
 // Converts the server's normalized-0-1000 boxes to APP_COMIC's own natural-pixel storage (the SAME

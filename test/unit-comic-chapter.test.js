@@ -136,6 +136,130 @@ console.log('  comicCreateChapter(): ONE chunk per panel (not joined), fresh per
 }
 console.log('  comicCreateChapter(): arc + storyboard controls, when checked, are correctly threaded into the request: OK');
 
+// ── 3. _pollComicBookJob() / _comicBookCheckOnce() — the REAL functions, not mocked (v86_e) ────────
+// Item K: the same mobile-backgrounding fix v86_d gave _startComicExtractJob/_startComicDetectJob,
+// now extended to the book/chapter-creation poller. This required refactoring a `while(true){...}`
+// loop into a re-invokable _comicBookCheckOnce(), gated on the pre-existing _comicBookId — every test
+// above mocks _pollComicBookJob() itself, so none of them exercise this refactor at all; these do.
+
+// ── 3a. a 'done' status: toast names the chapter title, full cleanup runs, loadSavedList() called ──
+{
+  const C = client();
+  C.run(`_comicBookId = 'book_done'; _comicBookPolling = false;
+    document.getElementById('comic-create-btn').disabled = true;
+    document.getElementById('comic-extract-btn').disabled = true;
+    window._toasts = []; showToast = function(msg){ window._toasts.push(msg); };
+    window._savedListCalls = 0; loadSavedList = function(){ window._savedListCalls++; return Promise.resolve(); };
+    fetch = function(url){
+      return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve({
+        status:'done', chapters:[{ title:'Grandpa\\'s Dough', status:'idle' }] }); } });
+    };
+    _pollComicBookJob('book_done');
+    true;`, 't3a');
+  await settle();
+  const r = JSON.parse(C.run(`JSON.stringify({ bookId: _comicBookId, polling: _comicBookPolling,
+    createDisabled: document.getElementById('comic-create-btn').disabled,
+    extractDisabled: document.getElementById('comic-extract-btn').disabled,
+    toasts: window._toasts, savedListCalls: window._savedListCalls })`));
+  assert.strictEqual(r.bookId, null, "a 'done' status clears _comicBookId");
+  assert.strictEqual(r.polling, false, "a 'done' status clears _comicBookPolling");
+  assert.strictEqual(r.createDisabled, false, "a 'done' status re-enables the create button");
+  assert.strictEqual(r.extractDisabled, false, "a 'done' status re-enables the extract button");
+  assert.strictEqual(r.toasts.length, 1, 'exactly one toast');
+  assert.ok(r.toasts[0].indexOf("Grandpa's Dough") >= 0, 'the toast names the chapter title from the FIRST chapter: ' + r.toasts[0]);
+  assert.strictEqual(r.savedListCalls, 1, 'loadSavedList() is called exactly once as part of cleanup');
+}
+console.log("  _pollComicBookJob(): a 'done' status toasts the chapter title, cleans up, calls loadSavedList(): OK");
+
+// ── 3b. an 'error' status: error toast, same full cleanup ──
+{
+  const C = client();
+  C.run(`_comicBookId = 'book_err'; _comicBookPolling = false;
+    window._toasts = []; showToast = function(msg){ window._toasts.push(msg); };
+    loadSavedList = function(){ return Promise.resolve(); };
+    fetch = function(){ return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve({
+      status:'error', error:'model unreachable' }); } }); };
+    _pollComicBookJob('book_err');
+    true;`, 't3b');
+  await settle();
+  const r = JSON.parse(C.run(`JSON.stringify({ bookId: _comicBookId, polling: _comicBookPolling, toasts: window._toasts })`));
+  assert.strictEqual(r.bookId, null, "an 'error' status clears _comicBookId");
+  assert.strictEqual(r.polling, false, "an 'error' status clears _comicBookPolling");
+  assert.strictEqual(r.toasts.length, 1, 'exactly one toast');
+  assert.ok(r.toasts[0].indexOf('model unreachable') >= 0, 'the toast names the server error: ' + r.toasts[0]);
+}
+console.log("  _pollComicBookJob(): an 'error' status toasts the server error, cleans up: OK");
+
+// ── 3c. a 404 (job gone): cleanup runs, but NO toast (matches original pre-refactor behaviour) ──
+{
+  const C = client();
+  C.run(`_comicBookId = 'book_gone'; _comicBookPolling = false;
+    window._toasts = []; showToast = function(msg){ window._toasts.push(msg); };
+    loadSavedList = function(){ return Promise.resolve(); };
+    fetch = function(){ return Promise.resolve({ ok:false, status:404, json: function(){ return Promise.resolve({}); } }); };
+    _pollComicBookJob('book_gone');
+    true;`, 't3c');
+  await settle();
+  const r = JSON.parse(C.run(`JSON.stringify({ bookId: _comicBookId, polling: _comicBookPolling, toasts: window._toasts })`));
+  assert.strictEqual(r.bookId, null, 'a 404 (job gone) clears _comicBookId');
+  assert.strictEqual(r.polling, false, 'a 404 (job gone) clears _comicBookPolling');
+  assert.strictEqual(r.toasts.length, 0, 'a 404 is silent, no toast — matches the ORIGINAL pre-refactor behaviour (a bare `break`)');
+}
+console.log('  _pollComicBookJob(): a 404 (job gone) cleans up silently, no toast (matches original behaviour): OK');
+
+// ── 3d. a network hiccup mid-poll is NOT terminal — the loop retries after its own 2s sleep ──
+// (this is the one behaviour that is genuinely easy to get wrong in a refactor: extract/detect treat
+// a fetch failure as TERMINAL, but the book-job poller always retried silently, since book creation
+// can run long and a flaky connection shouldn't abort the whole flow — preserved deliberately)
+{
+  const C = client();
+  C.run(`_comicBookId = 'book_retry'; _comicBookPolling = false;
+    window._toasts = []; showToast = function(msg){ window._toasts.push(msg); };
+    loadSavedList = function(){ return Promise.resolve(); };
+    window._fetchCalls = 0;
+    fetch = function(){
+      window._fetchCalls++;
+      if(window._fetchCalls === 1) return Promise.reject(new Error('network blip'));
+      return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve({ status:'done', chapters:[{title:'Recovered'}] }); } });
+    };
+    _pollComicBookJob('book_retry');
+    true;`, 't3d');
+  await settle(2200);   // one real poll interval, so the SECOND (successful) fetch has a chance to fire
+  const r = JSON.parse(C.run(`JSON.stringify({ bookId: _comicBookId, fetchCalls: window._fetchCalls, toasts: window._toasts })`));
+  assert.strictEqual(r.fetchCalls, 2, 'the first (failed) fetch did not abort the poll — a second attempt followed');
+  assert.strictEqual(r.bookId, null, 'the poll eventually completes once the network recovers');
+  assert.strictEqual(r.toasts.length, 1, 'exactly one toast — for the eventual success, not the transient failure');
+  assert.ok(r.toasts[0].indexOf('Recovered') >= 0, 'the success toast reflects the SECOND (successful) attempt: ' + r.toasts[0]);
+}
+console.log('  _pollComicBookJob(): a network hiccup mid-poll is NOT terminal — retries after its own 2s sleep, matches original behaviour: OK');
+
+// ── 3e. _comicBookCheckOnce(): the visibility-recovery shape — an off-schedule call for a STALE id
+//        is a no-op (cannot clobber a newer/already-finished job), matching extract/detect's own §8 ──
+{
+  const C = client();
+  C.run(`_comicBookId = 'book_current';
+    window._fetchCalled = false;
+    fetch = function(){ window._fetchCalled = true; return Promise.resolve({ ok:true, status:200,
+      json: function(){ return Promise.resolve({ status:'done', chapters:[] }); } }); };
+    _comicBookCheckOnce('book_stale');   // a DIFFERENT (superseded) id — the listener's own call shape
+    true;`, 't3e');
+  await settle();
+  const r = JSON.parse(C.run(`JSON.stringify({ fetchCalled: window._fetchCalled, bookIdAfter: _comicBookId })`));
+  assert.strictEqual(r.fetchCalled, false, 'a check for a SUPERSEDED book id never even calls fetch');
+  assert.strictEqual(r.bookIdAfter, 'book_current', 'the actually-current book id is untouched by the stale check');
+}
+console.log('  _comicBookCheckOnce(): a check for a superseded book id is a no-op — cannot clobber a newer, still-current job: OK');
+
+// ── 3f. the shared visibilitychange listener also re-checks the book-job poller (source check — see
+//        unit-comic-extraction.test.js §8b for why this harness can't drive it behaviourally) ──
+{
+  const idx = html.indexOf("addEventListener('visibilitychange'");
+  const block = html.slice(html.indexOf('{', idx), html.indexOf('});', idx));
+  assert.ok(/_comicBookCheckOnce\(_comicBookId\)/.test(block),
+    'the shared listener ALSO re-checks the book-job poller, not just extract/detect');
+}
+console.log('  visibilitychange listener also re-checks the book-job poller (source check): OK');
+
 console.log('unit-comic-chapter: ALL PASSED');
 }
 
