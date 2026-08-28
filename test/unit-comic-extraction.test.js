@@ -260,6 +260,51 @@ console.log('  a check for a superseded job id is a no-op — cannot clobber a n
 }
 console.log('  visibilitychange listener: checks visibility state, re-checks BOTH comic pollers (source check): OK');
 
+// ── 8c. The shared listener ALSO logs unconditionally on every fire (v86_j — user-reported: "the
+//       recovery fix didn't recover", but there was no way to tell from the console the user was
+//       ALREADY checking whether the listener even fired at all) — source check, same harness
+//       limitation as §8b ──────────────────────────────────────────────────────────────────────────
+{
+  const idx = html.indexOf("addEventListener('visibilitychange'");
+  const block = html.slice(html.indexOf('{', idx), html.indexOf('});', idx));
+  assert.ok(/console\.log\('visibilitychange: state='\+document\.visibilityState/.test(block),
+    'the listener logs on EVERY fire, before the visible-state guard — so a fire with nothing to do still leaves a trace');
+}
+console.log('  visibilitychange listener: logs unconditionally on every fire, even with nothing tracked (source check): OK');
+
+// ── 8d. _comicExtractCheckOnce() ALSO logs to console at each step (v86_j) — behaviourally testable,
+//       unlike the listener itself, since this function can be invoked directly ──────────────────────
+{
+  const C = client();
+  C.run(`window._logs = [];
+    console.log = function(msg){ window._logs.push(msg); };
+    _comicExtractJobId = 'job_stale_check';
+    _comicExtractCheckOnce('job_different');   // a stale/superseded call
+    true;`, 't8d-stale');
+  const r = JSON.parse(C.run(`JSON.stringify(window._logs)`));
+  assert.strictEqual(r.length, 1, 'a stale/superseded check still logs exactly once');
+  assert.ok(r[0].indexOf('stale') >= 0, 'the log names it as stale: ' + r[0]);
+}
+console.log('  _comicExtractCheckOnce(): logs a stale/superseded call: OK');
+
+{
+  const C = client();
+  C.run(`APP_COMIC.boxes = [{x1:0,y1:0,x2:10,y2:10}];
+    window._logs = [];
+    console.log = function(msg){ window._logs.push(msg); };
+    fetch = function(){ return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve({
+      status:'done', data: { panels: [ { caption:'C', inScene:'', error:null } ] } }); } }); };
+    _comicExtractJobId = 'job_real';
+    _comicExtractCheckOnce('job_real');
+    true;`, 't8d-real');
+  await settle();
+  const r = JSON.parse(C.run(`JSON.stringify(window._logs)`));
+  assert.ok(r.some(m => m.indexOf('polling job job_real') >= 0), 'logs that it is polling: ' + JSON.stringify(r));
+  assert.ok(r.some(m => m.indexOf('status=done') >= 0), 'logs the status it received: ' + JSON.stringify(r));
+  assert.ok(r.some(m => m.indexOf('done, applying 1 panel') >= 0), 'logs how many panels it is about to apply: ' + JSON.stringify(r));
+}
+console.log('  _comicExtractCheckOnce(): logs the polling attempt, the status received, and the panel count applied: OK');
+
 console.log('unit-comic-extraction: ALL PASSED');
 }
 

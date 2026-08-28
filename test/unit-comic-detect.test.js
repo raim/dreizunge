@@ -202,6 +202,40 @@ console.log('  _comicApplyDetectedPanels(): a PARTIAL drop also toasts, naming t
 }
 console.log('  _comicApplyDetectedPanels(): ALL suggestions malformed (0 survivors) fails cleanly, existing boxes untouched: OK');
 
+// ── 7d. _comicApplyDetectedPanels() ALSO logs to console, not just the toast (v86_j — user-reported:
+//        "i did not watch the screen" for the toast, asked for a console message too, since a toast
+//        was never going to show up there regardless of whether the underlying fix works) ──────────
+{
+  const C = client();
+  C.run(`APP_COMIC.naturalW=1000; APP_COMIC.naturalH=1000;
+    window._logs = [];
+    console.log = function(msg){ window._logs.push(msg); };
+    _comicApplyDetectedPanels([[100,100,50,50], [200,200,400,400], [300,300,600,600], [10,900,20,890]]);   // 4 in, 2 malformed
+    true;`, 't7d-partial');
+  const r = JSON.parse(C.run(`JSON.stringify(window._logs)`));
+  assert.strictEqual(r.length, 1, 'a partial drop logs exactly one console message');
+  assert.ok(r[0].indexOf('2/4') >= 0, 'the console message names the actual kept/suggested counts: ' + r[0]);
+  assert.ok(r[0].indexOf('[100,100,50,50]') >= 0 && r[0].indexOf('[10,900,20,890]') >= 0,
+    'the console message includes the RAW (0-1000 space) coordinates of the DROPPED boxes specifically — ' +
+    'so a report like "the 4th panel looks shifted outside the image" can be confirmed directly from the console: ' + r[0]);
+}
+console.log('  _comicApplyDetectedPanels(): a partial drop ALSO logs to console, including the dropped boxes\' raw coordinates: OK');
+
+{
+  // All kept (no drop at all) still logs — a silent console on the happy path would leave no trail
+  // to confirm "detection ran and everything was fine" versus "detection never ran at all".
+  const C = client();
+  C.run(`APP_COMIC.naturalW=1000; APP_COMIC.naturalH=1000;
+    window._logs = [];
+    console.log = function(msg){ window._logs.push(msg); };
+    _comicApplyDetectedPanels([[100,100,400,400], [500,500,900,900]]);   // both well-formed
+    true;`, 't7d-allkept');
+  const r = JSON.parse(C.run(`JSON.stringify(window._logs)`));
+  assert.strictEqual(r.length, 1, 'even a clean (nothing dropped) result logs once, for a full trail either way');
+  assert.ok(r[0].indexOf('all 2') >= 0, 'the message reflects that all suggested panels were kept: ' + r[0]);
+}
+console.log('  _comicApplyDetectedPanels(): a clean (nothing dropped) result also logs, for a complete trail: OK');
+
 // ── 8. Mobile-backgrounding fix (v86_d): _comicDetectJobId + an off-schedule check ────────────────
 // SIBLING of unit-comic-extraction.test.js's own §8 — same user-reported live bug (mobile tab
 // backgrounding suspends setInterval, stranding the client mid-poll), same fix shape: a shared
@@ -256,6 +290,39 @@ console.log('  an OFF-SCHEDULE check (the visibility-recovery shape) applies a d
   assert.strictEqual(r.jobIdAfter, 'job_current', 'the actually-current job id is untouched by the stale check');
 }
 console.log('  a check for a superseded job id is a no-op — cannot clobber a newer, still-current job: OK');
+
+// ── 8b. _comicDetectCheckOnce() ALSO logs to console at each step (v86_j — same addition as the
+//        extract/book-job pollers, for the same reason: no way to tell, from the console the user
+//        was already checking, whether this ran at all) ────────────────────────────────────────────
+{
+  const C = client();
+  C.run(`window._logs = [];
+    console.log = function(msg){ window._logs.push(msg); };
+    _comicDetectJobId = 'job_stale_check';
+    _comicDetectCheckOnce('job_different');
+    true;`, 't8b-stale');
+  const r = JSON.parse(C.run(`JSON.stringify(window._logs)`));
+  assert.strictEqual(r.length, 1, 'a stale/superseded check still logs exactly once');
+  assert.ok(r[0].indexOf('stale') >= 0, 'the log names it as stale: ' + r[0]);
+}
+console.log('  _comicDetectCheckOnce(): logs a stale/superseded call: OK');
+
+{
+  const C = client();
+  C.run(`APP_COMIC.naturalW=1000; APP_COMIC.naturalH=1000;
+    window._logs = [];
+    console.log = function(msg){ window._logs.push(msg); };
+    fetch = function(){ return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve({
+      status:'done', data: { panels: [[100,100,400,400]] } }); } }); };
+    _comicDetectJobId = 'job_real';
+    _comicDetectCheckOnce('job_real');
+    true;`, 't8b-real');
+  await settle();
+  const r = JSON.parse(C.run(`JSON.stringify(window._logs)`));
+  assert.ok(r.some(m => m.indexOf('polling job job_real') >= 0), 'logs that it is polling: ' + JSON.stringify(r));
+  assert.ok(r.some(m => m.indexOf('status=done') >= 0), 'logs the status it received: ' + JSON.stringify(r));
+}
+console.log('  _comicDetectCheckOnce(): logs the polling attempt and the status received: OK');
 
 console.log('unit-comic-detect: ALL PASSED');
 }

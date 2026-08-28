@@ -4039,18 +4039,28 @@ async function comicExtractPanels(){
 // this is additive, not a replacement — so the normal (foregrounded) case behaves exactly as before.
 let _comicExtractJobId=null;
 async function _comicExtractCheckOnce(jobId){
-  if(_comicExtractJobId!==jobId) return;   // superseded by a later call, or already finished
+  // v86_j (user-reported, LIVE bug: backgrounded mid-extraction, brought the tab back, still got "no
+  // extracted text yet" despite the console showing the server had finished): the whole visibility-
+  // recovery mechanism was silent — no way to tell, from the console the user WAS already checking,
+  // whether this function ever even ran, whether the job id it saw was still current, or what the
+  // server actually answered. Every branch below now logs, so the NEXT occurrence is diagnosable from
+  // the console directly instead of guessed at from a screenshot of an unrelated status label.
+  if(_comicExtractJobId!==jobId){ console.log('Comic extract check: job '+jobId+' is stale (current is '+_comicExtractJobId+'), skipping'); return; }
+  console.log('Comic extract check: polling job '+jobId);
   const status=document.getElementById('comic-extract-status');
   const btn=document.getElementById('comic-extract-btn');
   try{
     const r=await fetch('/api/job/'+jobId);
     if(!r.ok) throw new Error('Poll failed: '+r.status);
     const j=await r.json();
-    if(_comicExtractJobId!==jobId) return;   // a newer job started while this fetch was in flight
+    if(_comicExtractJobId!==jobId){ console.log('Comic extract check: job '+jobId+' superseded while the fetch was in flight'); return; }
+    console.log('Comic extract check: job '+jobId+' status='+j.status+(j.step?' step='+j.step:''));
     if(j.step && status) status.textContent=j.step;
     if(j.status==='done'){
       _comicExtractJobId=null;
-      _comicApplyExtraction(j.data && j.data.panels);
+      const panels=j.data && j.data.panels;
+      console.log('Comic extract check: job '+jobId+' done, applying '+(Array.isArray(panels)?panels.length:0)+' panel(s)');
+      _comicApplyExtraction(panels);
       if(status) status.textContent='';
       if(btn) btn.disabled=false;
     }
@@ -4067,6 +4077,7 @@ async function _comicExtractCheckOnce(jobId){
     }
   }catch(e){
     if(_comicExtractJobId!==jobId) return;
+    console.log('Comic extract check: job '+jobId+' poll failed: '+e.message);
     _comicExtractJobId=null;
     if(status) status.textContent='';
     showToast(t('form.comic_extract_failed')+': '+e.message);
@@ -4177,15 +4188,18 @@ async function comicCreateChapter(){
 // here (matches the ORIGINAL behaviour before this refactor) — book creation can run long, and a
 // flaky connection shouldn't abort the whole flow; the loop just retries after its own 2s sleep.
 async function _comicBookCheckOnce(bookId){
-  if(_comicBookId!==bookId) return;   // superseded by a later call, or already finished
+  // v86_j: same console-logging addition as _comicExtractCheckOnce's own comment — see there for why.
+  if(_comicBookId!==bookId){ console.log('Comic book-job check: '+bookId+' is stale (current is '+_comicBookId+'), skipping'); return; }
+  console.log('Comic book-job check: polling '+bookId);
   const status=document.getElementById('comic-extract-status');
   let j=null, gone=false;
   try{
     const pr=await fetch('/api/book-job/'+bookId);
     if(pr.status===404) gone=true; else j=await pr.json();
-  }catch(e){ return; }   // network hiccup: not terminal — the poll loop just retries after its own sleep
-  if(_comicBookId!==bookId) return;   // superseded while the fetch was in flight
-  if(gone){ _comicBookId=null; await _comicBookFinish(); return; }
+  }catch(e){ console.log('Comic book-job check: '+bookId+' fetch failed (retrying next tick): '+e.message); return; }   // network hiccup: not terminal — the poll loop just retries after its own sleep
+  if(_comicBookId!==bookId){ console.log('Comic book-job check: '+bookId+' superseded while the fetch was in flight'); return; }
+  if(gone){ console.log('Comic book-job check: '+bookId+' is gone (404)'); _comicBookId=null; await _comicBookFinish(); return; }
+  console.log('Comic book-job check: '+bookId+' status='+j.status);
   if(status && j.chapters && j.chapters[0]) status.textContent=j.chapters[0].status==='active' ? t('form.comic_extracting') : '';
   if(j.status==='done'||j.status==='error'||j.status==='cancelled'){
     const chapters=j.chapters, error=j.error, jStatus=j.status;
@@ -4247,14 +4261,17 @@ async function comicDetectPanels(){
 // lets the shared visibilitychange listener trigger an immediate re-check on this poller too.
 let _comicDetectJobId=null;
 async function _comicDetectCheckOnce(jobId){
-  if(_comicDetectJobId!==jobId) return;
+  // v86_j: same console-logging addition as _comicExtractCheckOnce's own comment — see there for why.
+  if(_comicDetectJobId!==jobId){ console.log('Comic detect check: job '+jobId+' is stale (current is '+_comicDetectJobId+'), skipping'); return; }
+  console.log('Comic detect check: polling job '+jobId);
   const status=document.getElementById('comic-detect-status');
   const btn=document.getElementById('comic-detect-btn');
   try{
     const r=await fetch('/api/job/'+jobId);
     if(!r.ok) throw new Error('Poll failed: '+r.status);
     const j=await r.json();
-    if(_comicDetectJobId!==jobId) return;
+    if(_comicDetectJobId!==jobId){ console.log('Comic detect check: job '+jobId+' superseded while the fetch was in flight'); return; }
+    console.log('Comic detect check: job '+jobId+' status='+j.status+(j.step?' step='+j.step:''));
     if(j.step && status) status.textContent=j.step;
     if(j.status==='done'){
       _comicDetectJobId=null; _comicDetectPolling=false;
@@ -4275,6 +4292,7 @@ async function _comicDetectCheckOnce(jobId){
     }
   }catch(e){
     if(_comicDetectJobId!==jobId) return;
+    console.log('Comic detect check: job '+jobId+' poll failed: '+e.message);
     _comicDetectJobId=null; _comicDetectPolling=false;
     if(status) status.textContent='';
     showToast(t('form.comic_detect_failed')+': '+e.message);
@@ -4298,7 +4316,13 @@ function _startComicDetectJob(jobId){
 // wait on a timer that may have been suspended the whole time. `_comicBookId`/`_comicBookCheckOnce`
 // (book/chapter CREATION, v86_e) joined the other two at this cut — see `_pollComicBookJob`'s own
 // comment for why it needed its own small refactor first (a while+sleep loop, not a setInterval).
+// v86_j (user-reported, LIVE bug): this listener firing at all was previously invisible — a report
+// of "the recovery fix didn't recover" had no way to distinguish "the listener never fired" from
+// "it fired, checked, and the server said something unexpected" from the console the user was
+// already looking at. Logs unconditionally (even when nothing is tracked, so a session with no
+// in-flight comic job at all still shows the listener is alive and firing on visibility changes).
 document.addEventListener('visibilitychange', ()=>{
+  console.log('visibilitychange: state='+document.visibilityState+' extractJob='+_comicExtractJobId+' detectJob='+_comicDetectJobId+' bookJob='+_comicBookId);
   if(document.visibilityState!=='visible') return;
   if(_comicExtractJobId) _comicExtractCheckOnce(_comicExtractJobId);
   if(_comicDetectJobId) _comicDetectCheckOnce(_comicDetectJobId);
@@ -4311,17 +4335,34 @@ document.addEventListener('visibilitychange', ()=>{
 // (a fresh detection is a fresh suggestion, not merged with hand-drawn ones already present) — the
 // user can always redraw/delete afterward through the existing UI if that is not what they wanted.
 function _comicApplyDetectedPanels(panels){
-  if(!Array.isArray(panels) || !panels.length) { showToast(t('form.comic_detect_failed')+': no panels found'); return; }
+  if(!Array.isArray(panels) || !panels.length) { console.log('Comic detect: no panels in response'); showToast(t('form.comic_detect_failed')+': no panels found'); return; }
   const w=APP_COMIC.naturalW||1, h=APP_COMIC.naturalH||1;
-  const converted=panels.map(b=>({
+  const rawToNatural=b=>({
     x1:Math.max(0,Math.round(b[0]/1000*w)), y1:Math.max(0,Math.round(b[1]/1000*h)),
     x2:Math.min(w,Math.round(b[2]/1000*w)), y2:Math.min(h,Math.round(b[3]/1000*h)),
-  })).filter(b=>b.x2>b.x1 && b.y2>b.y1);   // a malformed box (e.g. inverted/degenerate) is dropped, not stored broken
+  });
   // A dropped box used to be a SILENT no-op — the user saw fewer panels than the model actually
   // reported (confirmed live: server log said "4 panel(s) suggested", UI showed 3) with no
   // explanation. Surface it: a full drop (every suggested box was malformed) reuses the existing
   // "no panels found" toast; a PARTIAL drop gets its own toast naming the count, same as the
   // all-dropped case already did before this fix — never silent either way.
+  //
+  // v86_j (user-reported): the on-screen toast alone wasn't enough — a live report of "no toast"
+  // turned out to be "never actually watched the screen for the ~2s it's visible" (toasts have never
+  // logged to console, only appeared visually). Every outcome here now ALSO logs to console, matching
+  // the pattern already used for the tutor's own ask-time logging — a dropped box's RAW model
+  // coordinates (0-1000 space, before natural-pixel conversion) are logged too, specifically to let a
+  // report like "it looks like the 4th panel was shifted outside the image" be confirmed or refuted
+  // directly from the console, not guessed at from a screenshot.
+  const tagged=panels.map(b=>({raw:b, nat:rawToNatural(b)}));
+  const kept=tagged.filter(x=>x.nat.x2>x.nat.x1 && x.nat.y2>x.nat.y1);
+  const dropped=tagged.filter(x=>!(x.nat.x2>x.nat.x1 && x.nat.y2>x.nat.y1));
+  const converted=kept.map(x=>x.nat);   // a malformed box (e.g. inverted/degenerate) is dropped, not stored broken
+  if(dropped.length){
+    console.log('Comic detect: '+converted.length+'/'+panels.length+' panel(s) kept — dropped (raw 0-1000 coords): '+JSON.stringify(dropped.map(x=>x.raw)));
+  } else {
+    console.log('Comic detect: all '+panels.length+' panel(s) kept');
+  }
   if(!converted.length){ showToast(t('form.comic_detect_failed')+': no panels found'); return; }
   APP_COMIC.boxes=converted;
   if(converted.length<panels.length){

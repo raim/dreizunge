@@ -260,6 +260,40 @@ console.log('  _comicBookCheckOnce(): a check for a superseded book id is a no-o
 }
 console.log('  visibilitychange listener also re-checks the book-job poller (source check): OK');
 
+// ── 3g. _comicBookCheckOnce() ALSO logs to console at each step (v86_j — user-reported: the
+//        mobile-backgrounding recovery "didn't recover", but there was no way to tell from the
+//        console whether this function ever ran, or what the server answered) ────────────────────
+{
+  const C = client();
+  C.run(`window._logs = [];
+    console.log = function(msg){ window._logs.push(msg); };
+    _comicBookId = 'book_stale_check';
+    _comicBookCheckOnce('book_different');
+    true;`, 't3g-stale');
+  const r = JSON.parse(C.run(`JSON.stringify(window._logs)`));
+  assert.strictEqual(r.length, 1, 'a stale/superseded check still logs exactly once');
+  assert.ok(r[0].indexOf('stale') >= 0, 'the log names it as stale: ' + r[0]);
+}
+console.log('  _comicBookCheckOnce(): logs a stale/superseded call: OK');
+
+{
+  const C = client();
+  C.run(`window._logs = []; window._toasts = [];
+    console.log = function(msg){ window._logs.push(msg); };
+    showToast = function(msg){ window._toasts.push(msg); };
+    loadSavedList = function(){ return Promise.resolve(); };
+    fetch = function(){ return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve({
+      status:'done', chapters:[{title:'A Title'}] }); } }); };
+    _comicBookId = 'book_real';
+    _comicBookCheckOnce('book_real');
+    true;`, 't3g-real');
+  await settle();
+  const r = JSON.parse(C.run(`JSON.stringify(window._logs)`));
+  assert.ok(r.some(m => m.indexOf('polling book_real') >= 0), 'logs that it is polling: ' + JSON.stringify(r));
+  assert.ok(r.some(m => m.indexOf('status=done') >= 0), 'logs the status it received: ' + JSON.stringify(r));
+}
+console.log('  _comicBookCheckOnce(): logs the polling attempt and the status received: OK');
+
 console.log('unit-comic-chapter: ALL PASSED');
 }
 
