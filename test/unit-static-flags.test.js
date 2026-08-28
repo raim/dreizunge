@@ -166,7 +166,7 @@ console.log('  #1 content + story edits persist across reload: OK');
 // Teacher mode persists across reloads (localStorage 'dz_teacher_mode'); pill shows on load.
 assert.ok(/const _TEACHER_KEY = 'dz_teacher_mode'/.test(html), 'teacher-mode key defined');
 assert.ok(/APP\._teacherMode = \(localStorage\.getItem\(_TEACHER_KEY\) === '1'\)/.test(html), 'teacher mode restored early');
-assert.ok(/localStorage\.setItem\(_TEACHER_KEY, APP\._teacherMode \? '1' : '0'\)/.test(html), 'toggleTeacherMode persists');
+assert.ok(/localStorage\.setItem\(_TEACHER_KEY, APP\._teacherMode \? '1' : '0'\)/.test(html), 'setTeacherMode persists');
 const bstatic = fs.readFileSync(path.join(__dirname, '..', 'build-static.js'), 'utf8');
 assert.ok(/localStorage\.getItem\('dz_teacher_mode'\) === '1'/.test(bstatic), 'static init restores teacher mode (no hard false)');
 assert.ok(!/APP\._teacherMode = false;(?!.*catch)/.test(bstatic.replace(/catch \(_\) \{ APP\._teacherMode = false; \}/g, '')), 'static init no longer hard-forces teacher mode off');

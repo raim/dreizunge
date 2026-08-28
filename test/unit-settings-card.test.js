@@ -48,7 +48,7 @@ for (const [label, re] of [
   ['#export-static-btn',   /id="export-static-btn"/g],
   ['#teacher-dash-btn',    /id="teacher-dash-btn"/g],
   ['.import-btn label',    /class="import-btn"/g],
-  ['#teacher-mode-btn',    /id="teacher-mode-btn"/g],
+  ['#teacher-mode-select', /id="teacher-mode-select"/g],
 ]) {
   assert.strictEqual(count(re), 1, `${label} must appear exactly once in index.html, found ${count(re)}`);
 }
@@ -60,7 +60,7 @@ for (const [label, needle] of [
   ['#export-static-btn', 'id="export-static-btn"'],
   ['#teacher-dash-btn',  'id="teacher-dash-btn"'],
   ['.import-btn label',  'class="import-btn"'],
-  ['#teacher-mode-btn',  'id="teacher-mode-btn"'],
+  ['#teacher-mode-select', 'id="teacher-mode-select"'],
 ]) {
   assert.ok(settingsModal.includes(needle), `${label} must be inside #settings-modal`);
 }
@@ -98,7 +98,7 @@ console.log('  settings-pill has no default display:none: OK');
 
 // ── 5. The teacher-mode toggle is DOWN to one instance, and the old markup is really gone ─────
 // The CURRENT claim (user follow-up after v81_aa), replacing v78_f's three-instance one.
-assert.ok(/const _TEACHER_TOGGLES = \[\s*\{ id: 'teacher-mode-btn', compact: false \},\s*\];/.test(html),
+assert.ok(/const _TEACHER_TOGGLES = \[\s*\{ id: 'teacher-mode-select' \},\s*\];/.test(html),
   '_TEACHER_TOGGLES must be down to the single settings-modal instance');
 for (const gone of ['teacher-mode-bar', 'teacher-ico-ls', 'teacher-ico-sl']) {
   assert.ok(!html.includes(`id="${gone}"`),

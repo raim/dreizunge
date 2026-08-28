@@ -808,9 +808,14 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
            instances (a full-width bar + two compact footer icons) now that this Card is reachable
            from every screen — the original v78_f "reachable from every page" goal is better served
            by one instance here than by scattering it. -->
-      <button id="teacher-mode-btn" onclick="toggleTeacherMode()"
-        style="font-size:13px;font-weight:700;border:1.5px solid var(--gray-mid);border-radius:20px;padding:5px 16px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif;opacity:.7"
-        title="Unlock all stories">🔓 Teacher mode</button>
+      <!-- v86_l (user-requested): a dropdown with two EXPLICIT named options, replacing the old
+           single "click to flip" toggle button — see setTeacherMode()/updateTeacherModeBtn() below. -->
+      <select id="teacher-mode-select" onchange="setTeacherMode(this.value)"
+        style="font-size:13px;font-weight:700;border:1.5px solid var(--gray-mid);border-radius:20px;padding:5px 12px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"
+        title="Unlock all stories">
+        <option id="teacher-mode-opt-teacher" value="teacher">🔒 Teacher</option>
+        <option id="teacher-mode-opt-student" value="student">🔓 Student</option>
+      </select>
     </div>
   </div>
 </div>
@@ -21764,37 +21769,37 @@ async function saveSlTags() {
 // register, so the "three copies of which icon means which state" drift this was built to prevent
 // stays prevented if that ever happens again.
 const _TEACHER_TOGGLES = [
-  { id: 'teacher-mode-btn', compact: false },
+  { id: 'teacher-mode-select' },
 ];
+// v86_l (user-requested): a dropdown with two EXPLICIT named options ("Teacher"/"Student"),
+// replacing the old single "click to flip" toggle button (🔓 Teacher mode ↔ 🔒 Teacher mode ON —
+// which mode a bare lock icon meant was never obvious without reading the tooltip). The list stays a
+// list, same as before: the ONE place a future second instance would register, keeping "which control
+// shows which state" from drifting the way the pre-v81_aa three-copies version did.
 function updateTeacherModeBtn() {
-  // When unlocked (true): show green lock icon = click to lock
-  // When locked (false): show gray unlock icon = click to unlock
   const on = !!APP._teacherMode;
   for (const spec of _TEACHER_TOGGLES) {
-    const btn = document.getElementById(spec.id);
-    if (!btn) continue;
-    const label = on ? t('teacher.mode_on') : t('teacher.mode_off');
-    if (spec.compact) {
-      // The label already leads with the state emoji (🔒 / 🔓); the compact button is the emoji
-      // alone, with the full label as its tooltip so the meaning is still reachable. Taken from the
-      // SAME string rather than hard-coded here — a second spelling of the icon is a second rule.
-      btn.textContent = (Array.from(label)[0] || '🔓');
-      btn.title = label;
-      btn.style.opacity = on ? '1' : '.7';
-    } else {
-      btn.textContent = label;
-      btn.title = t('teacher.unlock_tooltip');
-      btn.style.opacity = '1';
-      btn.style.borderColor = on ? 'var(--green)' : 'var(--gray-mid)';
-    }
-    btn.style.color = on ? 'var(--green-dark)' : '';
-    // Assigned in JS, never as an inline attribute: the stub DOM does not turn onclick="f()" into a
-    // callable property, so an inline handler is one no headless test can click (standing rule 22).
-    btn.onclick = () => toggleTeacherMode();
+    const sel = document.getElementById(spec.id);
+    if (!sel) continue;
+    sel.value = on ? 'teacher' : 'student';
+    sel.title = t('teacher.unlock_tooltip');
+    sel.style.borderColor = on ? 'var(--green)' : 'var(--gray-mid)';
+    sel.style.color = on ? 'var(--green-dark)' : '';
+    // Assigned in JS, never as an inline attribute: the stub DOM does not turn onchange="f()" into a
+    // callable property, so an inline handler is one no headless test can trigger (standing rule 22).
+    sel.onchange = () => setTeacherMode(sel.value);
+    // Option labels are set here (re-run on every applyUIStrings() pass, same as the rest of this
+    // function) rather than left as static markup — a `.form-lbl[data-i18n]` sweep exists for that
+    // shape elsewhere, but this control already has its own update function, so reusing it here is
+    // one fewer mechanism to keep in sync rather than a second one.
+    const optT = document.getElementById('teacher-mode-opt-teacher');
+    const optS = document.getElementById('teacher-mode-opt-student');
+    if (optT) optT.textContent = t('teacher.option_teacher');
+    if (optS) optS.textContent = t('teacher.option_student');
   }
 }
-function toggleTeacherMode() {
-  APP._teacherMode = !APP._teacherMode;
+function setTeacherMode(mode) {
+  APP._teacherMode = (mode === 'teacher');
   try { localStorage.setItem(_TEACHER_KEY, APP._teacherMode ? '1' : '0'); } catch (_) {}   // remember across reloads
   loadSavedList();
   if (document.getElementById('lesson-set')?.classList.contains('active')) buildPath();

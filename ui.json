@@ -334,6 +334,8 @@
     "form.split_per_page": "📄 Split per page",
     "teacher.mode_off": "🔓 Teacher mode",
     "teacher.mode_on": "🔒 Teacher mode ON",
+    "teacher.option_teacher": "🔒 Teacher",
+    "teacher.option_student": "🔓 Student",
     "teacher.unlock_tooltip": "Unlock all stories",
     "complete.story_unlocked": "read and understand the chapter",
     "complete.next": "Next",
