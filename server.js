@@ -184,7 +184,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v86_m';
+const APP_VERSION  = 'v86_n';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -233,6 +233,22 @@ let OLLAMA_TUTOR_MODEL       = process.env.OLLAMA_TUTOR_MODEL       || OLLAMA_MO
 // this session's own measured comparison (roadmap_v85.md, PLAN §2.4 RESULT PART 3) — the ONLY model,
 // of the two tried, that passed one-shot panel enumeration AND text extraction cleanly.
 let OLLAMA_VISION_MODEL      = process.env.OLLAMA_VISION_MODEL      || 'qwen2.5vl:7b';
+// Analysis (PLAN §7.0 CP2, reconciled with item W "text explorer" — roadmap_v86.md): the per-token
+// lemma/form/sense pipeline (canonical-analysis.js's own analyzeChapter/analyzeSentence), NOT YET
+// called from any route as of this cut — this is groundwork only, so a future browser-reachable CP1/
+// CP2 integration has a real, independently-switchable role to call rather than a hardcoded model
+// string (canonical-analysis.js/apply-cp-lessons.js's own CLI default, 'qwen2.5:7b', is the CHEAP
+// dev-check model, deliberately NOT reused here — a real measured comparison on this exact task
+// (roadmap_v86.md, PLAN §7.0's `v83_n`→`v83_p` note) found it 2/8 wrong on a real chapter where the
+// production model, `qwen3.6:35b-a3b`, was 0/8 wrong; defaulting to the production text model here
+// avoids repeating that CLI default's own mistake). Falls back to OLLAMA_MODEL like every other TEXT
+// role (translation/lessons/qc/tutor) — unlike vision, analysis needs no special model capability, so
+// the general "one model for everything" override is a legitimate fit for it, not a footgun.
+// Not a "thinking" role: canonical-analysis.js's own analyzeSentence always passes think:false
+// itself (structured per-token JSON on a budget, the same category story/lessons/qc already are in
+// OLLAMA_THINK below) — it does not route through server.js's thinkOpts()/OLLAMA_THINK table at all,
+// so no entry is added there for it.
+let OLLAMA_ANALYSIS_MODEL    = process.env.OLLAMA_ANALYSIS_MODEL    || OLLAMA_MODEL;
 // (The request timeout lives in llm.js — runtime-adjustable via setRequestTimeout/getRequestTimeout;
 //  there is no separate server-side copy.)
 // Lesson output format: 'json' (default) or 'table' (markdown table, better for
@@ -284,7 +300,7 @@ function thinkOpts(role, baseTokens) {
 function currentModels() {
   return { story: OLLAMA_MODEL, translation: OLLAMA_TRANSLATION_MODEL,
            lessons: OLLAMA_LESSON_MODEL, qc: OLLAMA_QC_MODEL, tutor: OLLAMA_TUTOR_MODEL,
-           vision: OLLAMA_VISION_MODEL,
+           vision: OLLAMA_VISION_MODEL, analysis: OLLAMA_ANALYSIS_MODEL,
            lessonFormat: OLLAMA_LESSON_FORMAT, numThread: getNumThread(),
            think: { story: OLLAMA_THINK.story, lessons: OLLAMA_THINK.lessons, tutor: OLLAMA_THINK.tutor },
            timeoutMs: getRequestTimeout() };
@@ -298,13 +314,14 @@ function setRuntimeModels(next) {
   // silently point vision calls at a model with no vision capability.
   const story = pick(next.story) || all, transl = pick(next.translation) || all,
         lessons = pick(next.lessons) || all, qc = pick(next.qc) || all, tutor = pick(next.tutor) || all,
-        vision = pick(next.vision);
-  if (story)   OLLAMA_MODEL             = story;
-  if (transl)  OLLAMA_TRANSLATION_MODEL = transl;
-  if (lessons) OLLAMA_LESSON_MODEL      = lessons;
-  if (qc)      OLLAMA_QC_MODEL          = qc;
-  if (tutor)   OLLAMA_TUTOR_MODEL       = tutor;
-  if (vision)  OLLAMA_VISION_MODEL      = vision;
+        vision = pick(next.vision), analysis = pick(next.analysis) || all;
+  if (story)    OLLAMA_MODEL             = story;
+  if (transl)   OLLAMA_TRANSLATION_MODEL = transl;
+  if (lessons)  OLLAMA_LESSON_MODEL      = lessons;
+  if (qc)       OLLAMA_QC_MODEL          = qc;
+  if (tutor)    OLLAMA_TUTOR_MODEL       = tutor;
+  if (vision)   OLLAMA_VISION_MODEL      = vision;
+  if (analysis) OLLAMA_ANALYSIS_MODEL    = analysis;
   // Per-role reasoning toggles: story, lessons, tutor.
   if (next.think && typeof next.think === 'object') {
     if (typeof next.think.story === 'boolean')   OLLAMA_THINK.story   = next.think.story;
@@ -6735,6 +6752,7 @@ http.createServer(async (req, res) => {
         ollamaQcModel: OLLAMA_QC_MODEL,
         ollamaTutorModel: OLLAMA_TUTOR_MODEL,
         ollamaVisionModel: OLLAMA_VISION_MODEL,
+        ollamaAnalysisModel: OLLAMA_ANALYSIS_MODEL,
         ollamaLessonFormat: OLLAMA_LESSON_FORMAT,
         // v55_r: the client's colour-scheme picker reads this — the names live ONLY here, so the
         // list can never drift out of sync with STORYBOARD_SCHEMES (no duplicated list client-side).
@@ -6813,7 +6831,7 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
-      const requested = [body.model, body.story, body.translation, body.lessons, body.qc, body.tutor, body.vision]
+      const requested = [body.model, body.story, body.translation, body.lessons, body.qc, body.tutor, body.vision, body.analysis]
         .filter(v => typeof v === 'string' && v.trim()).map(v => v.trim());
       const hasTimeout = body.timeoutMs != null && Number.isFinite(parseInt(body.timeoutMs, 10));
       // v71_q: numThread — CPU threads Ollama may use. 0/empty means "leave it to Ollama", which is
@@ -6823,7 +6841,7 @@ http.createServer(async (req, res) => {
         (typeof body.think.story === 'boolean' || typeof body.think.lessons === 'boolean'
          || typeof body.think.tutor === 'boolean');
       if (!requested.length && !hasTimeout && !hasThink && !hasThreads)
-        return json(res, 400, { error: 'Nothing to set. Provide story, translation, lessons, qc, tutor, vision, model, timeoutMs, think, or numThread.' });
+        return json(res, 400, { error: 'Nothing to set. Provide story, translation, lessons, qc, tutor, vision, analysis, model, timeoutMs, think, or numThread.' });
       if (requested.length) {
         const available = await listOllamaModels();
         if (available.length) {

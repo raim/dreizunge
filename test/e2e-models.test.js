@@ -35,6 +35,11 @@ const findTopic = (env, ut) => env.readStore().topics.find(t => t.userTopic === 
       && m0.body.active.qc === 'fake',
       'all roles default to the boot model');
     assert(m0.body.active.lessonFormat === 'json', 'default lesson format is json');
+    // v86_m follow-up (PLAN §7.0 CP2, reconciled with item W): analysis is a new role, groundwork
+    // only — nothing calls OLLAMA_ANALYSIS_MODEL yet, but it must already behave like every other
+    // TEXT role (falls back to the boot model, independently switchable, validated, exposed on
+    // /api/info) so a future CP1/CP2 integration has real infrastructure to call into.
+    assert(m0.body.active.analysis === 'fake', 'analysis role also defaults to the boot model');
 
     // /api/info reflects the same active state.
     const i0 = await get(sport, '/api/info');
@@ -116,6 +121,21 @@ const findTopic = (env, ut) => env.readStore().topics.find(t => t.userTopic === 
       'switching translation left qc untouched (roles are independent)');
     const infoQc = await get(sport, '/api/info');
     assert(infoQc.body.ollamaQcModel === 'fake-translategemma', '/api/info exposes the active qc model');
+
+    // ── 6c) analysis (PLAN §7.0 CP2, groundwork — v86_m follow-up) is ALSO an independent role ──
+    const anOnly = await post(sport, '/api/models', { analysis: 'fake-translategemma' });
+    assert(anOnly.status === 200 && anOnly.body.active.analysis === 'fake-translategemma', 'analysis role switched');
+    assert(anOnly.body.active.qc === 'fake-translategemma', 'switching analysis left qc untouched (still its own prior value)');
+    assert(anOnly.body.active.translation === 'fake-transl', 'switching analysis left translation untouched');
+    assert(anOnly.body.active.lessonFormat === 'json', 'analysis=translategemma does NOT flip lesson format (only lessons does)');
+    const infoAn = await get(sport, '/api/info');
+    assert(infoAn.body.ollamaAnalysisModel === 'fake-translategemma', '/api/info exposes the active analysis model');
+    // The {model} convenience sets analysis too — unlike vision, analysis needs no special capability.
+    const anAll = await post(sport, '/api/models', { model: 'fake' });
+    assert(anAll.body.active.analysis === 'fake', '{model} convenience also resets the analysis role');
+    // An uninstalled model is rejected for analysis exactly like every other role.
+    const anBad = await post(sport, '/api/models', { analysis: 'definitely-not-installed' });
+    assert(anBad.status === 400, 'uninstalled analysis model rejected with 400');
 
     // ── 7) Runtime request timeout: settable (standalone) + reflected + clamped ──────────
     const m1 = await get(sport, '/api/models');
