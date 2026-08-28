@@ -160,8 +160,44 @@ seen by a human on a real device yet.
 
 ### H. `INTERNALS.md` §6b needs new comic-panel rows
 
-C1 (panel resize, `v85_t`) and the resize-sync fix (`v85_u`) are both undocumented there — two cuts
-overdue now.
+C1 (panel resize, `v85_t`), the resize-sync fix (`v85_u`), the listener-stacking fix and camera
+capture (`v86_c`) are all undocumented there — three cuts overdue now.
+
+### I. Rotate the uploaded/captured image (from `v86_c` real-device testing)
+
+**Ask**: a small button to rotate the photo — the user is testing the new camera-capture route
+(`v86_c`) and a photo can come in sideways (portrait comic page shot in landscape, or vice versa,
+common on a phone that doesn't lock orientation, or a scan/photo taken at an angle a fixed 90°
+rotation would fix).
+
+**Scoping, not built**: the pattern is a direct extension of `_comicDownscaleDims`'s own approach
+(`index.html`, `v86_c`) — draw the CURRENT image onto an offscreen canvas with a rotation transform,
+re-encode, replace `APP_COMIC.dataUrl`, and reload `#comic-draw-img`. For a 90°/270° rotation the
+canvas's own width/height must SWAP (`APP_COMIC.naturalW`/`naturalH` swap too) — a 180° rotation
+needs no dimension change. **One real design question, not yet ruled on**: any panel boxes ALREADY
+drawn are stored in NATURAL PIXEL coordinates relative to the CURRENT orientation — rotating the
+image after boxes exist either (a) invalidates them, matching the existing precedent that "a new
+image invalidates any boxes drawn over the old one" (`comicClearPanels()`, already called whenever
+`_comicFinishSetup` runs) — the SIMPLE option, recommended, since rotation is naturally a
+before-you-draw-panels step — or (b) recomputes each box's coordinates through the same rotation
+transform, preserving already-drawn work at the cost of real geometry code (a 90°/270° rotation maps
+`(x,y)` in the OLD frame to `(y, newW-x)`/`(newH-y, x)` in the new one, per rotation direction — doable,
+but adds a genuine coordinate-transform surface worth its own test coverage, not a "small button").
+**Recommend (a)** unless the user specifically wants panels preserved across a rotation.
+
+### J. A "single panel" shortcut — treat the whole image as ONE panel (from `v86_c` real-device testing)
+
+**Ask**: a button to take a complete photo/image as one panel, without manually drawing (or
+auto-detecting) a box around it — useful for a single illustration, a one-panel comic, or any image
+where there is exactly one thing to extract text from and drawing a box around the whole page is
+pure friction.
+
+**Scoping, not built**: small and low-risk. A new button (natural home: alongside `#comic-detect-btn`
+in `#comic-detect-row`, shown at the same point once an image is loaded) that sets
+`APP_COMIC.boxes = [{x1:0, y1:0, x2:APP_COMIC.naturalW, y2:APP_COMIC.naturalH}]` — REPLACING any
+existing boxes, matching auto-detect's own already-established "a fresh detection replaces prior
+boxes rather than merging" precedent (`unit-comic-detect.test.js`) — then `_comicRedraw()` +
+`_comicRenderList()`, the same two calls every other box-mutating action already ends with.
 
 **Explicitly out of scope, confirmed with the user across the whole `v85` line — do not reopen without
 asking**: the CP1-6 pipeline's cross-chapter arc-sequencing; spell-check-driven auto error-hunt
