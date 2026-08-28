@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "chapters": {
+    "tp_17877511606660000499": {
+      "chapterId": "tp_17877511606660000499",
+      "lang": "it",
+      "srcLang": "en",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 2,
+      "tokenCount": 11,
+      "sentences": [
+        {
+          "sentenceId": "tp_17877511606660000499:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17877511606660000499:s0:t0",
+              "idx": 0,
+              "surface": "Aiutateci",
+              "lemma": "aiutare",
+              "form": "verb, imperative plural second person",
+              "sense": "Help us",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877511606660000499:s0:t1",
+              "idx": 1,
+              "surface": "a",
+              "lemma": "a",
+              "form": "preposition",
+              "sense": "to",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877511606660000499:s0:t2",
+              "idx": 2,
+              "surface": "mantenere",
+              "lemma": "mantenere",
+              "form": "verb, infinitive",
+              "sense": "keep",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877511606660000499:s0:t3",
+              "idx": 3,
+              "surface": "pulito",
+              "lemma": "pulito",
+              "form": "adjective, masculine singular",
+              "sense": "clean",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877511606660000499:s0:t4",
+              "idx": 4,
+              "surface": "questo",
+              "lemma": "questo",
+              "form": "determiner, demonstrative masculine singular",
+              "sense": "this",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877511606660000499:s0:t5",
+              "idx": 5,
+              "surface": "bagno:",
+              "lemma": "bagno",
+              "form": "noun, masculine singular",
+              "sense": "bathroom",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877511606660000499:s0:t6",
+              "idx": 6,
+              "surface": "lasciatelo",
+              "lemma": "lasciare",
+              "form": "verb, imperative plural second person",
+              "sense": "Leave it",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877511606660000499:s0:t7",
+              "idx": 7,
+              "surface": "come",
+              "lemma": "come",
+              "form": "adverb/conjunction",
+              "sense": "as",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877511606660000499:s0:t8",
+              "idx": 8,
+              "surface": "vorreste",
+              "lemma": "volere",
+              "form": "verb, conditional plural second person",
+              "sense": "would want",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877511606660000499:s0:t9",
+              "idx": 9,
+              "surface": "trovarlo!!!",
+              "lemma": "trovare",
+              "form": "verb, infinitive",
+              "sense": "find it",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 1,
+              "tokenIds": [
+                "tp_17877511606660000499:s0:t0",
+                "tp_17877511606660000499:s0:t1"
+              ],
+              "lemma": "aiutare a",
+              "gloss": "help to",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 6,
+              "end": 9,
+              "tokenIds": [
+                "tp_17877511606660000499:s0:t6",
+                "tp_17877511606660000499:s0:t7",
+                "tp_17877511606660000499:s0:t8",
+                "tp_17877511606660000499:s0:t9"
+              ],
+              "lemma": "lasciare come trovare",
+              "gloss": "leave as you would find it",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-28T21:20:04.391Z",
+            "sentenceId": "tp_17877511606660000499:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Aiutateci a mantenere pulito questo bagno:\nlasciatelo come vorreste trovarlo!!!",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17877511606660000499:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17877511606660000499:s1:t0",
+              "idx": 0,
+              "surface": "Grazie!",
+              "lemma": "grazie",
+              "form": "interjection, plural",
+              "sense": "thanks",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-28T21:20:54.455Z",
+            "sentenceId": "tp_17877511606660000499:s1",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Grazie!",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-08-28T21:20:54.456Z",
+        "chapterId": "tp_17877511606660000499",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "a950d6bdb45c",
+      "analyzedAt": "2026-08-28T21:20:54.456Z"
+    }
+  },
+  "generatedAt": "2026-08-28T21:20:54.456Z",
+  "chapterCount": 1
+}
