@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v86_q';
+const APP_VERSION  = 'v86_r';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -8644,6 +8644,19 @@ http.createServer(async (req, res) => {
       // (only if not already set — a prior human/AI edit may already own it).
       if (!t.aiStory) t.aiStory = prop.against || t.story;
       const originalForDiff = t.aiStory;
+      // v86_r (user-reported LIVE bug, real case: sl_1597155858 — an ai_error_hunt-fixed typo,
+      // "vorrestevoletrovarlo" -> "vorreste trovarlo", showed FIXED on the storyline reader but
+      // STALE on the progress card): the v86_g fix synced comicPanels[0] only inside /api/save-story
+      // — this is a SECOND, independent route that also writes `t.story` (accepting a QC proposal,
+      // the exact path this real chapter's fix went through), and never got the same sync. Same
+      // exact logic, same single-panel-only scoping — see /api/save-story's own comment for why
+      // multi-panel is deliberately left unfixed (item O, genuinely ambiguous which panel an edited
+      // sentence belongs to).
+      const _storyChangedQc = (t.story !== acceptedStory);
+      if (_storyChangedQc && Array.isArray(t.comicPanels) && t.comicPanels.length === 1) {
+        t.comicPanels[0].caption = acceptedStory;
+        delete t.comicPanels[0].inScene;
+      }
       t.story = acceptedStory;
       stampUpdated(t);
       // Stamp the QC model on the topic (parallel to qcBy on lessons).
