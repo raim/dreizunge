@@ -608,6 +608,88 @@ server-side asset store rather than inline base64 in the topic record, serving a
 hierarchy's own tier (i) becomes cheaper (a smaller derived image, not the full-resolution panel crop)
 — worth sequencing AFTER item A rather than before, if both are ever picked up.
 
+## 🆕 CORPUS QUALITY SPOT-CHECK (`v86_j` cut) — asked directly, not a live-testing report
+
+The user asked for a general sanity/quality pass over the live corpus (read-only throughout —
+`lessons.json` never modified). Findings below; the corpus itself needed no action (nothing found was
+this session's own doing) but two items are worth recording.
+
+### ✅ Spot-check findings — no action needed
+
+Comic-panel sync (item L) confirmed correct on live data (`血の関税`: `comicPanels[0].caption` matches
+`story` byte-for-byte, `inScene` correctly cleared, after a real `ai_error_hunt` correction). Math
+generation arithmetically verified correct on several sampled items. Comprehension questions
+(`Wedding Fever`, pre-dating item Q's prompt fix) were already genuinely self-contained in this
+sample — the reported failure mode is real but not universal, consistent with a probabilistic
+compliance gap rather than a systematic break. Inflection MCQ distractors (English target) were
+clean, same-dimension alternatives. **Item F's own concern was re-examined against real data and
+looks LESS severe than first assumed**: `die Liebe`↔"love" vs. `die Villa`↔"the villa" is not random
+inconsistency — English legitimately drops "the" for abstract/generic nouns and keeps it for
+concrete/specific ones; the sampled vocab reflects genuinely correct per-word English judgment, not a
+bug. Three stale, lessonless topics (`Cooking Dinner at Home`, `Mountain Walk`, `A Walk in the Park`,
+all Aug 23, real story text but zero lessons) are live, concrete evidence for item R's own use case —
+not a new problem, just confirmation the gap is real.
+
+### AD. Furigana for SOURCE-language Japanese content — new audience requirement, scoped not built
+
+**The ask**: the app also targets Japanese-speaking KIDS learning some other language — for them,
+Japanese is the SOURCE language (their own, native, UI language), not the target being learned. A
+child reader may not yet know every kanji even in their OWN language, so source-language Japanese text
+(comprehension questions/choices/why, writing prompts, tutor replies, translations, error-hunt notes,
+etc.) may need furigana too — a genuinely different case from the EXISTING furigana support, which is
+built entirely around Japanese as the language being LEARNED.
+
+**Investigated first, found reassuring**: a spot-check of story text on Japanese-TARGET topics found
+what looked like broken furigana (spurious `[は]`/`[に]` brackets attached to hiragana instead of
+kanji, silently stripped by `_furiParts`'s own defensive Pass 1, so never visibly broken — just
+zero actual reading annotations). Checked ALL 16 Japanese-target topics in the corpus against their
+`generatedAt` timestamps: every single one predates `d8bcc5c` (`v82_i`, "restore difficulty-tiered
+furigana density", 2026-08-23 10:27) — the closest ones by mere HOURS. The user's own recollection
+("i think i didnt generate japanese lessons since we issued a fix for furigana") is confirmed exactly
+right — this is stale pre-fix data, not evidence of a current bug. Nothing to fix here; flagged so a
+future session doesn't rediscover the same false alarm from the same stale topics.
+
+**Current architecture, read in full** — furigana support exists in exactly ONE place:
+`sysStory(lang, ..., difficulty)` in `server.js`, gated on `lang === 'ja'` (the TARGET language),
+selecting a density tier via `_furiganaNoteFor(P, difficulty)` among `prompts.json`'s
+`story.furiganaNote1/2/3` (beginner: every kanji without exception / standard / advanced: only rare
+kanji — `v82_i`'s own restored behaviour). NOTHING else has any furigana awareness — not
+`comprehension`, not `writing`, not the tutor prompt, not translations, not `error_hunt`. Client-side:
+`furiHtml()`/`_furiParts()` are the shared rendering primitives (language-agnostic — they just look
+for `kanji[reading]` bracket syntax and no-op on anything else), but `updateFuriganaRow()` (the toggle
+that gates whether `APP.showFurigana` even CAN be true) checks only `APP.lessonData?.lang` — the
+target language — never `srcLang`. Comprehension's own renderer (`tComprehension`) additionally
+bypasses `furiHtml()` entirely for the question stem (`escHtml(ex.question)` — plain, no furigana
+processing at all), while its answer choices DO go through it (via `cGrid`) — an inconsistency found
+in passing, currently a no-op everywhere checked (no bracket data exists in source-language text to
+begin with), but real and worth fixing as part of this same work rather than separately.
+
+**User's own decisions on scope, this cut**: (1) don't build yet — scope in the roadmap first for
+review. (2) density should REUSE the existing difficulty-tier mechanism (beginner/standard/advanced),
+not a separate always-on rule — the same `furiganaNote1/2/3` shape, mirrored for source-language text.
+
+**Scoping for a future session, not built**:
+- **New prompt content**: a `srcFuriganaNote`/`srcFuriganaNote1/2/3` family (mirroring the existing
+  `story.furiganaNote*` naming) needs adding to `prompts.json`, then threading into EVERY generator
+  that produces source-language prose when `srcLang === 'ja'` — at minimum `comprehension` (questions,
+  choices, `why`), `writing` (the question), the tutor prompt (`PROMPTS.tutor.system`), and worth
+  auditing for others (`error_hunt`'s explanation-shaped fields, `synonyms`/`grammar`'s any prose
+  fields, translations). Each is its OWN prompt with its own `fillPrompt(...)` call site — this is the
+  bulk of the work, not one shared change.
+- **Client**: `updateFuriganaRow()` needs to ALSO show the toggle when `APP.lessonData?.srcLang ===
+  'ja'`, not just target `lang`. `tComprehension`'s question stem needs `furiHtml()` instead of bare
+  `escHtml()` (the inconsistency found above) — and every OTHER renderer touching source-language
+  prose (tutor widget, writing-feedback display, comprehension's own `why` field once shown, etc.)
+  needs auditing for the same gap, not just comprehension.
+- **Not yet decided**: whether TARGET-Japanese and SOURCE-Japanese furigana should share ONE
+  `APP.showFurigana` toggle/setting or need their own independent one (a learner could plausibly want
+  one on and the other off — e.g., full kanji help reading their native-language QUESTIONS but minimal
+  help in the target-language STORY they're actively learning, or vice versa). Needs a decision before
+  building the toggle-visibility change above.
+- **Verification**: any prompt change here needs a live-model check with a real human (ideally
+  Japanese-literate) reading the output — this codebase's own standing rule 7 — before shipping,
+  exactly like `v82_c`/`v82_i` themselves were live-verified for the target-language case.
+
 ## 🆕 LIVE-TESTING ROUND ON `v86_d`–`v86_h` (`v86_i`/`v86_j` cuts) — AF resolved (likely never a bug), AE still open with diagnostic logging now in place
 
 The user began live-verifying the whole round per `v86_h`'s own recommendation. **Confirmed working**:
