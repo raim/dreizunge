@@ -264,6 +264,7 @@ run('unit: comic upload + panel-drawing UI (PLAN §2.4 Track A4 milestone 1, v85
 run('unit: comic panel batch extraction, client side (PLAN §2.4 Track A4 milestone 2, v85_k)', 'node', [path.join(__dirname, 'unit-comic-extraction.test.js')]);
 run('unit: comic chapter formation, client side (PLAN §2.4 Track A4 milestone 3, v85_m)', 'node', [path.join(__dirname, 'unit-comic-chapter.test.js')]);
 run('unit: post-gen storyboard opt-in fix, client side (v85_p)', 'node', [path.join(__dirname, 'unit-postgen-storyboard-optin.test.js')]);
+run('unit: post-gen analysis opt-in, client side, mirrors postGenStoryboard (item W follow-up, v86_o)', 'node', [path.join(__dirname, 'unit-postgen-analysis-optin.test.js')]);
 run('unit: comic story-panel progress-card rendering (PLAN §2.4 Track A4 milestone 4, v85_n)', 'node', [path.join(__dirname, 'unit-comic-story-panel.test.js')]);
 run('unit: comic panel auto-detection, client side (PLAN §2.4 Track A4 milestone 5, v85_o)', 'node', [path.join(__dirname, 'unit-comic-detect.test.js')]);
 run('unit: hidden lessons omitted/non-blocking in static (v48)', 'node', [path.join(__dirname, 'unit-hidden-lessons.test.js')]);
@@ -281,6 +282,7 @@ run('unit: QC collect-and-compare per model', 'node', [path.join(__dirname, 'uni
 run('unit: feedback animations + mixed source icons', 'node', [path.join(__dirname, 'unit-ui-feedback-mixed-icons.test.js')]);
 run('unit: storyline theme by story style', 'node', [path.join(__dirname, 'unit-storyline-theme.test.js')]);
 run('unit: PLAN §7.0 CP1/CP2, item W step 4 — text explorer client fetch/render logic', 'node', [path.join(__dirname, 'unit-text-explorer.test.js')]);
+run('unit: item W follow-up — analyzeChaptersRun() batch curator trigger (v86_p)', 'node', [path.join(__dirname, 'unit-analyze-chapters-run.test.js')]);
 
 // 3) E2E — spawn the real server + fake Ollama. Skipped with --quick.
 if (!quick) {
@@ -326,6 +328,7 @@ if (!quick) {
   run('e2e: comic panel auto-detection (PLAN §2.4 Track A4 milestone 5, v85_o)', 'node', [path.join(__dirname, 'e2e-comic-detect.test.js')]);
   run('e2e: save-story syncs comicPanels for a single-panel chapter (v86_g)', 'node', [path.join(__dirname, 'e2e-save-story-comic-sync.test.js')]);
   run('e2e: post-gen storyboard opt-in fix, book-job pipeline (v85_p)', 'node', [path.join(__dirname, 'e2e-postgen-storyboard-optin.test.js')]);
+  run('e2e: post-gen analysis opt-in, mirroring postGenStoryboard (item W follow-up, v86_o)', 'node', [path.join(__dirname, 'e2e-postgen-analysis-optin.test.js')]);
   run('e2e: model picker + table-format + split-translation + provenance', 'node', [path.join(__dirname, 'e2e-models.test.js')]);
 } else {
   console.log('\n(skipping e2e tests: --quick)');

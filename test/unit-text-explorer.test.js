@@ -179,6 +179,35 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
   }
   console.log('  _textExplorerBodyHtml: loading/analyzing/error/ready each render their own correct markup, paragraph breaks respected: OK');
 
+  // ── 4b. v86_p (user follow-up): a comic-sourced chapter shows its panel IMAGES too, image-only ──
+  {
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON, 'seed-4b');
+    const COMIC_TOPIC = { ...TOPIC, comicPanels: [
+      { x1:0,y1:0,x2:10,y2:10, caption:'Der Hund lauft.', inScene:'', image:'data:image/jpeg;base64,AAAA' },
+      { x1:10,y1:0,x2:20,y2:10, caption:'', inScene:'', image:'data:image/jpeg;base64,BBBB' },
+    ] };
+    const ready = C.run(`
+      APP._teCache = { tp_te1: { status:'ready', data: { sentences: [
+        { sentenceId:'s0', text:'Der Hund lauft.', paraBreakBefore:false,
+          tokens:[{surface:'Der',lemma:'der',form:'article',sense:'the',confidence:'high'}] },
+      ] } } };
+      _textExplorerBodyHtml(${JSON.stringify(COMIC_TOPIC)});`);
+    assert.ok(ready.includes('comic-story-panels') && ready.includes('data:image/jpeg;base64,AAAA') && ready.includes('data:image/jpeg;base64,BBBB'),
+      `the text-explorer view shows BOTH real panel images (got ${ready})`);
+    assert.ok(!ready.includes('comic-story-panel-text'), 'image-only — no per-panel text pairing (CP1/CP2 has no panel-boundary awareness)');
+    assert.ok(ready.includes('te-tok'), 'the per-word analysis marks still render too, below the image strip');
+    // Non-comic TOPIC (no comicPanels) must be entirely unaffected — no stray empty strip.
+    const readyPlain = C.run(`
+      APP._teCache = { tp_te1: { status:'ready', data: { sentences: [
+        { sentenceId:'s0', text:'Der Hund lauft.', paraBreakBefore:false,
+          tokens:[{surface:'Der',lemma:'der',form:'article',sense:'the',confidence:'high'}] },
+      ] } } };
+      _textExplorerBodyHtml(${JSON.stringify(TOPIC)});`);
+    assert.ok(!readyPlain.includes('comic-story-panels'), 'a plain (non-comic) chapter shows no panel strip at all — the helper is a harmless no-op for it');
+  }
+  console.log('  _textExplorerBodyHtml: a comic-sourced chapter shows its panel images (image-only strip), unaffected for plain chapters: OK');
+
   // ── 5. Injection safety: a hostile lemma/form/sense cannot break out of the attribute or tag ──
   {
     const C = loadClient({ quiet: true });

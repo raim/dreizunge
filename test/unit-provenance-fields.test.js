@@ -134,8 +134,9 @@ console.log('  /api/topic-source contract + list projection: OK');
   assert.ok(/slChapter \? '' : '<button class="ico-btn export"/.test(builder),
     'the static row GATES the download button on slChapter, not just accepts the flag');
   // v74_h — the ACTIONS on a storyline chapter card, asserted by rendering rather than by reading
-  // the source. A storyline chapter keeps the three that act on the story (continue / QC / delete);
-  // edit-rename, add-lesson and download are library operations and stay in the library.
+  // the source. A storyline chapter keeps the ones that act on the story (continue / QC / analyse
+  // for the text explorer, v86_p / delete); edit-rename, add-lesson and download are library
+  // operations and stay in the library.
   {
     const { loadClient } = require('./lib-dom');
     const LANGSj = JSON.parse(fs.readFileSync(path.join(ROOT, 'languages.json'), 'utf8'));
@@ -162,7 +163,10 @@ console.log('  /api/topic-source contract + list projection: OK');
       assert.ok(sl.some(x => x.startsWith(keep)), `a storyline chapter card keeps "${keep}"`);
     }
     assert.ok(sl.some(x => /QC/i.test(x)), 'and keeps QC');
-    assert.strictEqual(sl.length, 3, `exactly three actions remain, got ${JSON.stringify(sl)}`);
+    // v86_p (item W follow-up, user-requested): a fourth action, 🔤 analyse-for-the-text-explorer —
+    // reuses the SAME ui.json label the generation checkboxes use, distinct from QC's own title.
+    assert.ok(sl.some(x => x.includes('text explorer')), 'and keeps the analyse-for-text-explorer action');
+    assert.strictEqual(sl.length, 4, `exactly four actions remain, got ${JSON.stringify(sl)}`);
     console.log(`  storyline chapter actions: ${JSON.stringify(sl.map(x => x.split(' (')[0]))}`);
   }
 

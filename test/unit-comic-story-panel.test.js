@@ -26,6 +26,14 @@
 //     UNCONDITIONALLY, which defeats the `o.text == null` check regardless of whether the override
 //     happens to equal the default (exactly what §3 above documents as correct — it IS correct for
 //     _storyBodyHtml itself, the bug was entirely in what its two callers chose to pass it).
+//   • §9 (v86_p, user follow-up) the TRANSLATION view — `o.text != null`, so §3's bypass still
+//     applies and the full per-panel §1 pairing is correctly skipped — now ALSO shows the panel
+//     images, via a separate, simpler `_comicPanelImageStripHtml` (image-only, no per-panel
+//     caption/inScene text, since no per-panel TRANSLATION exists to pair each image with — only one
+//     flat `storyTranslation` string for the whole chapter). Superseded here: this used to assert
+//     the translation view shows NO panels at all; that was correct for its own cut but is no longer
+//     the desired behaviour — REWRITE, not append, per this project's own standing rule for a
+//     changed invariant.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -200,8 +208,10 @@ console.log('  a panel with no image renders no <img> tag at all, rather than a 
 console.log('  THE REAL PROGRESS-CARD RENDERER (_renderCompStory) reaches the comic-panel branch: OK');
 
 {
-  // The translation side must NOT show panels (no per-panel translation exists) — falls back to the
-  // plain flat-text path, same as before this fix, on that one side only.
+  // v86_p (user follow-up): the translation side now DOES show the panel images — a plain
+  // IMAGE-ONLY strip (_comicPanelImageStripHtml), not the full per-panel image+caption pairing
+  // §1 proved, since there is still no PER-PANEL translation to pair each image with (only one flat
+  // `storyTranslation` string for the whole chapter).
   const C = client();
   const topic = { ...JSON.parse(JSON.stringify(COMIC_TOPIC)), storyTranslation: 'A translated story.' };
   C.run(`
@@ -210,11 +220,15 @@ console.log('  THE REAL PROGRESS-CARD RENDERER (_renderCompStory) reaches the co
     APP._compStoryLang = 'source';
     true;`, 'comp-story-translation-setup');
   const out = C.run(`_renderCompStory(); document.getElementById('comp-story-text').innerHTML;`);
-  assert.ok(!out.includes('comic-story-panels'),
-    'showing the TRANSLATION side does not attempt to show per-panel images (no per-panel translation data exists)');
-  assert.ok(out.includes('A translated story.'), 'the translation text itself still renders');
+  assert.ok(out.includes('comic-story-panels'), 'the TRANSLATION side now shows the panel-image strip too (v86_p)');
+  const imgCount = (out.match(/comic-story-panel-img/g) || []).length;
+  assert.strictEqual(imgCount, 2, `both panel images appear, in order (got ${imgCount})`);
+  assert.ok(out.includes('data:image/jpeg;base64,AAAA') && out.includes('data:image/jpeg;base64,BBBB'), 'the real image data for BOTH panels is present');
+  assert.ok(!out.includes('comic-story-panel-text'),
+    'but NOT the per-panel TEXT pairing — no per-panel translation exists, only the flat storyTranslation string');
+  assert.ok(out.includes('A translated story.'), 'the translation text itself still renders, once, below the image strip');
 }
-console.log('  the TRANSLATION side of the progress card still falls back to plain text (no per-panel translation): OK');
+console.log('  the TRANSLATION side of the progress card now shows an image-only panel strip, without per-panel text pairing (v86_p): OK');
 
 {
   const C = client();

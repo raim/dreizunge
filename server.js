@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v86_o';
+const APP_VERSION  = 'v86_q';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6206,6 +6206,39 @@ function buildArcIntroLessons(lang, srcLang, chapterText, priorRef, difficulty, 
   return out;
 }
 
+// PLAN §7.0 CP1/CP2, item W step 2: shared "kick off (or reuse) the background CP1+CP2 job for one
+// chapter" logic — factored out so BOTH `POST /api/analyze-chapter/:chapterId` (needs the jobId/
+// cached info to answer the HTTP request) and `_runBookJob`'s own `postGenAnalysis` opt-in
+// (fire-and-forget, no HTTP response to answer, just wants the job started per newly-generated
+// chapter) share ONE lock/dedup implementation rather than two independently-maintained copies.
+// Defined HERE (inside `boot()`, alongside `_runBookJob` itself) rather than at module scope
+// alongside `_runAnalysisJob` — it needs `active` in scope, which is `boot()`-local (see the route
+// handlers' own `active === 'none'` checks), the same reason `_runBookJob` itself already lives here.
+//
+// Returns `null` when there is genuinely nothing to do (no story text, or no LLM backend) — the
+// ROUTE turns that into its own specific 400/503 (it validates both cases itself, BEFORE calling
+// this, for the exact right status code); a fire-and-forget caller can just treat `null` as "skip,
+// nothing to log beyond what analysisShadowFor already would have said."
+function _kickOffAnalysisJob(topic) {
+  if (!topic || !topic.id || !topic.story || !String(topic.story).trim()) return null;
+  const chapterId = topic.id;
+  const shadow = analysisShadowFor(chapterId);
+  if (shadow.available && !shadow.stale) return { jobId: null, cached: true, shadow };
+  if (active === 'none') return null;
+  const existingJobId = analyzingChapters.get(chapterId);
+  if (existingJobId && jobs.has(existingJobId) && jobs.get(existingJobId).status === 'running')
+    return { jobId: existingJobId, cached: false, shadow };
+  const jobId = newJob();
+  analyzingChapters.set(chapterId, jobId);
+  console.log(`  Analyzing chapter: ${chapterId} model=${OLLAMA_ANALYSIS_MODEL} job=${jobId}`);
+  _runAnalysisJob(jobId, topic).catch(e => {
+    console.error('  Analysis job error:', e.message);
+    jobFail(jobId, e.message);
+    analyzingChapters.delete(chapterId);
+  });
+  return { jobId, cached: false, shadow };
+}
+
 async function _runBookJob(bookId, chunks, base) {
   const bj = bookJobs.get(bookId);
   if (!bj) return;
@@ -6353,6 +6386,13 @@ async function _runBookJob(bookId, chunks, base) {
       bj.chapters[i].topicId = saved.id || null;
       bj.chapters[i].title   = saved.topic || placeholderTopic;
       prevRef = saved.id || saved.topic; // chain next chapter from this one (prefer id)
+      // item W follow-up (v86_o): opt-in per-chapter CP1/CP2 analysis, fired the instant THIS
+      // chapter is saved rather than waiting for the whole book — unlike the storyboard post-pass
+      // (below, once per storyline, needs every chapter's summary first), analysis is intrinsically
+      // per-chapter and has nothing to gain from waiting. Fire-and-forget: _kickOffAnalysisJob
+      // already owns its own error handling/logging, and a chapter taking real minutes to analyse
+      // must never hold up the NEXT chapter's generation.
+      if (base.postGenAnalysis) _kickOffAnalysisJob(saved);
     } catch (e) {
       console.error(`  [book ${bookId}] chapter ${i+1} failed:`, e.message);
       jobFail(jobId, e.message);
@@ -7712,6 +7752,9 @@ http.createServer(async (req, res) => {
         // v85_p: opt-in gate for _runBookJob's own storyboard post-pass — see that function's own
         // comment for why this used to run unconditionally for every caller of this route.
         postGenStoryboard: !!body.postGenStoryboard,
+        // item W follow-up (v86_o): mirrors postGenStoryboard exactly — opt-in gate for
+        // _runBookJob's own per-chapter _kickOffAnalysisJob call, see that function's own comment.
+        postGenAnalysis: !!body.postGenAnalysis,
         // Retained for logging/back-compat only — nothing downstream branches on it since v71_u.
         arcMode: arcMode === 'grammar' ? 'grammar' : 'vocab',
         // Arc script-teaching opt-in. Default ON when the target uses a script the source
@@ -7769,18 +7812,16 @@ http.createServer(async (req, res) => {
       const shadow = analysisShadowFor(chapterId);
       if (shadow.available && !shadow.stale) return json(res, 200, { cached: true, ...shadow });
       if (active === 'none') return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
-      const existingJobId = analyzingChapters.get(chapterId);
-      if (existingJobId && jobs.has(existingJobId) && jobs.get(existingJobId).status === 'running')
-        return json(res, 202, { jobId: existingJobId });
-      const jobId = newJob();
-      analyzingChapters.set(chapterId, jobId);
-      console.log(`  Analyzing chapter: ${chapterId} model=${OLLAMA_ANALYSIS_MODEL} job=${jobId}`);
-      _runAnalysisJob(jobId, topic).catch(e => {
-        console.error('  Analysis job error:', e.message);
-        jobFail(jobId, e.message);
-        analyzingChapters.delete(chapterId);
-      });
-      return json(res, 202, { jobId });
+      // Validated above (real story text, a live backend) — _kickOffAnalysisJob's own internal
+      // repeat of those same checks exists for its OTHER caller (_runBookJob's postGenAnalysis,
+      // which has no route to pre-validate for it), so `result` is never null here in practice; the
+      // fallback still degrades to the same 503 rather than assuming, matching this file's own
+      // "never silently corrupt a response" convention (this is the correct, dedicated status code —
+      // "no backend" happens to be the only real way to reach it).
+      const result = _kickOffAnalysisJob(topic);
+      if (!result) return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
+      if (result.cached) return json(res, 200, { cached: true, ...result.shadow });
+      return json(res, 202, { jobId: result.jobId });
     }
 
     // ── Book job progress ──────────────────────────────────────────────
