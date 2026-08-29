@@ -35,12 +35,12 @@ design.
 
 1. **This file**, whole.
 2. `build_history/roadmap_v86.md` — its **index table** and **⚠️ Session protocol** block first. Item
-   W's own section (✅ SHIPPED across four cuts now) if you need that history; **item AG** if you're
-   picking up the CP2-enrichment work.
-3. `INTERNALS.md` **§6b** is current through `v86_g` for the comic-panel subsystem specifically — it
-   still has NOT been updated for item W's full surface (four cuts now) OR `v86_r`'s second sync
-   point — flagged repeatedly across multiple cuts now, genuinely overdue; a future session should
-   just do it rather than flag it again.
+   W's own section (✅ SHIPPED across four cuts now) if you need that history; **items AG/AH/AI**
+   (added post-release, doc-only, no version bump) if you're picking up any of the CP2-quality/
+   cost/curation-UI follow-ups.
+3. `INTERNALS.md` **§6b** is now current through `v86_s` for BOTH the comic-panel subsystem AND item
+   W's whole CP1/CP2 browser-integration surface (added in the same doc-only pass as AG/AH/AI,
+   after several cuts of flagging it — done now, not carried forward again).
 
 ## Establish a green baseline before changing anything
 
@@ -100,8 +100,11 @@ earned in session N…the v85 line" blocks — now 46+ standing rules, plus item
 - **Item AG (CP2 enrichment — clitic pronouns, explanation field)** — scoped, real comparison data
   already in the roadmap, needs a prompt-design decision and a live-model measurement before any
   code ships (see item AG's own section for the two concrete candidate enrichments).
-- **`INTERNALS.md` §6b** needs rows for item W's whole surface (four cuts) AND `v86_r`'s second
-  comic-sync point — doc-only, cheap, now overdue across many flagged-but-not-done mentions.
+- **Item AH (three CP2 speed/reuse ideas, evaluated)** — recommendation is "hint, not skip" for
+  any reuse mechanism; no code started, needs a product decision on which mode(s) to build.
+- **Item AI (teacher/curator-editable CP1/CP2 analysis)** — scoped, one open design question
+  flagged (does a human correction survive a chapter re-analysis today? no — the `stale` mechanism
+  invalidates the whole chapter); not started.
 - **Job cancellation is cosmetic-only, app-wide** (found at `v86_p`, not fixed).
 - **Item AE (mobile-backgrounding)** is still open — blocked on the user hitting it again with the
   `v86_j` diagnostic logging in place.
@@ -121,5 +124,6 @@ earned in session N…the v85 line" blocks — now 46+ standing rules, plus item
 
 ## Standing tools — use them
 
-`INTERNALS.md` §6b has the full feature → function map — current through `v86_g` for the comic-panel
-subsystem; other sections are kept current inline as each cut touches them.
+`INTERNALS.md` §6b has the full feature → function map — current through `v86_s` for both the
+comic-panel subsystem and item W's whole CP1/CP2 browser-integration surface; other sections are
+kept current inline as each cut touches them.

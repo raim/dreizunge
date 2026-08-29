@@ -955,6 +955,87 @@ live test before it ships, and a prompt change to CP2 is exactly that). A future
 this up should re-measure `qwen3.6:35b-a3b`'s own output quality for whichever enrichment is tried,
 the same way `v83_n`→`v83_p` measured CP2's original design.
 
+### AH. Making CP2 faster: three user-proposed mechanisms, evaluated (`v86_t`) — none built, one clear recommendation
+
+**Three ideas, asked together, all aimed at CP2's real measured cost** (one model call PER SENTENCE,
+~3+ minutes each on this container's CPU-only inference — see `v86_o`'s own live-verification note):
+
+**1. "Only analyze a fraction of the vocab — rare words, most words, even single articles" (a
+coverage knob, like `inflections`' own curated subset).** The key fact this idea runs into: CP2's
+cost driver is SENTENCES, not tokens — one call covers every token in a sentence AT ONCE, for
+context, so filtering which TOKENS get analyzed does not by itself reduce the number of model calls;
+only skipping WHOLE SENTENCES would. A real lever exists: skip a sentence entirely when every token
+in it is already "well known" by some corpus-derived measure — but "well known" must be derived from
+`computeFrequency()`'s own corpus statistics (already built, already exported from
+`canonical-analysis.js`), NEVER a hand-authored per-language stopword/article list — this project's
+own standing design principle ("no language knowledge in the code") explicitly forbids exactly that
+(`v80_j`: "article lists live in a PROBE and must never migrate into the app"). Skipping sentences
+this way trades real speed for a real coverage gap (those words become dead in the explorer, unless
+the skip is presented as an explicit "fast, less complete" mode rather than the default). Separately,
+**a "hide function words/articles" DISPLAY filter** (after analysis, using the model's OWN reported
+`form` label to decide what to show) is a different, much simpler, ZERO-cost-savings feature — worth
+building on its own merits regardless of any coverage-for-speed decision, and should not be confused
+with it.
+
+**2. "Reuse word explanations that already exist for other lessons... incrementally faster as more
+lessons accumulate" for `canonical-analysis.json` itself.** Builds directly on the cross-chapter
+reuse question already asked and answered earlier this session (see this file's own record of that
+exchange): `sense` is genuinely CONTEXT-DEPENDENT by CP2's own design (the whole reason it analyses
+per-sentence, not per-lemma) — a blind "same surface form seen before, skip the model call" cache
+risks a silently wrong gloss surviving in a new context the model was never asked about, which is
+exactly the failure mode CP2 exists to avoid. Two shapes, genuinely different risk profiles: **(a)
+reuse as a HINT** — feed a prior analysis (same lemma/form) into the CP2 prompt as a candidate the
+model can confirm or override, preserving the "never silently guess" principle, though on this
+hardware inference time is dominated by generation length more than prompt size, so this may not
+meaningfully reduce wall-clock cost even though it could improve consistency; **(b) reuse as a
+SKIP** — genuinely faster, genuinely riskier (a stale/wrong-context sense ships unreviewed).
+
+**3. "Use existing `inflections` lessons to annotate text via the new function — or is mixing two
+different inputs too dangerous?"** The user's own instinct to ask this is well-founded. Real appeal:
+zero new model calls for words `inflections` already covers (its own real data for THIS chapter is
+literally why item AG exists — richer than CP2's own output for those same words). Real risk: the
+two data shapes don't align cleanly — `inflections` items carry a `sentence`+`surfaceForm` STRING
+pair with no stable per-token id, while CP2's tokens carry CP1's own STABLE `tokenId`; blending them
+needs a fuzzy string match, which can assign the WRONG occurrence's data when a surface form repeats
+with a different sense in a different sentence (exactly the ambiguity CP1's stable token ids exist
+to avoid). Also a provenance mismatch: `inflections`' own quality bar is exercise-shaped (a wrong
+DISTRACTOR there never corrupts the correct answer shown) — it has never been validated as "correct
+enough to present as fact" the way the explorer's own analysis is presented. The SAME safer pattern
+as idea 2(a) applies here too: use a scoped (same sentence, same token index) `inflections` match as
+a HINT into the CP2 prompt, never a blind corpus-wide swap.
+
+**Recommendation, if this is picked up**: none of the three should ship as a blind skip-the-model-
+call cache — all three converge on the SAME safer mechanism (feed prior analysis, from whichever
+source, as a HINT the model still confirms), which preserves CP2's own "never silently guess"
+design principle intact. A genuinely faster SKIP-based mode could exist later as an explicit,
+clearly-labelled opt-in ("fast, less certain") for a user who wants speed over completeness — but
+should not become the default without a live-model measurement of how often a naive skip is wrong.
+**Not started** — no code changed, no prompt work, no measurement; needs a product decision on which
+mode(s) (if any) to actually build before any of this ships.
+
+### AI. Surface CP1/CP2 analysis — and let a curator EDIT it — from the teacher/lesson-card interface, not just the learner's 🔍 toggle
+
+**The ask**: at some point, the text-explorer's own analysis needs to be reachable and correctable
+from the curator side (the lesson-card set / teacher interface), not only as a read-only learner
+toggle. This was already anticipated in CP2's own schema, never built: `canonical-analysis.js`'s
+own per-token `confidence`/`reviewed` fields exist specifically for "expose uncertainty/review
+rather than silently guessing" (its own file-header comment) — but no UI has ever read `reviewed`,
+shown low-confidence tokens distinctly to a curator, or let a human correct a wrong `lemma`/`form`/
+`sense` the way lesson content is already editable elsewhere (`openLessonEditor` and friends).
+
+**Scope, not yet designed in detail**: a new editor surface (or an extension of an existing one)
+showing a chapter's cached per-token analysis, letting a curator correct any field and stamp
+`reviewed:true` (+ presumably `reviewedBy`/`reviewedAt`, matching this project's existing provenance
+conventions elsewhere), and a new write endpoint to persist corrections back into
+`canonical-analysis.json`. **One real open question a future session will need to rule on**: how a
+correction survives (or doesn't) a RE-analysis. The existing `stale` mechanism (`v86_o`) invalidates
+a chapter's WHOLE cached analysis on any story edit, at the CHAPTER granularity — a per-token human
+correction has no protected status against that today, so a future re-analysis would silently
+discard it exactly like any other cached data. Whether that is acceptable (corrections are cheap to
+redo) or needs its own preservation mechanism (e.g. keep a reviewed token's values across
+re-analysis unless the SPECIFIC sentence containing it changed) is a real design decision, not yet
+made. **Not started.**
+
 ## ✅ FINDINGS THAT GOVERN THE OPEN SECTIONS BELOW
 
 *The reconciliation layer over the two RESTORED sections, plus the one diagnosis a future session
