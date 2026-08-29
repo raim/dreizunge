@@ -160488,12 +160488,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v86_t', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v86_u', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"43dc28a80a59","lessons.json":"210973c42be7","ui.json":"087feac24237","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"d7c9353f56a8"};
+  APP.buildSources = {"index.html":"3f87409d8580","lessons.json":"210973c42be7","ui.json":"087feac24237","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"d7c9353f56a8"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -167205,14 +167205,45 @@ function _foldElision(counts) {
 // plural distractors — and a second copy of a rule that then drifts is this codebase's most
 // expensive recurring defect. `_articleStatsFor` and `_pluralChoicesFor` are now the same traversal
 // asking different questions of it.
+//
+// v86_u (user-reported, real corpus finding): the three "circles" above OVERLAP in real use — the
+// lesson passed as `items` normally BELONGS to the open chapter (`APP.lessonData`), which is itself
+// normally ONE ENTRY in the full library (`APP.savedList`) — so the SAME lesson's items were visited,
+// and counted, up to three times. Harmless for `_pluralChoicesFor` (a `Set` does not care how many
+// times it is handed the same value), but a real bug for `_articleStatsFor`, which COUNTS
+// occurrences into a ratio: the currently-open lesson's own article mix got 3x the statistical
+// weight of every other lesson's, which can flip the predictability verdict for a language whose
+// TRUE corpus-wide ratio sits close to the threshold (measured: Italian, 91.7% overall vs. the 90%
+// cutoff — the il/lo split within masculine nouns, a real phonological fact this gender-only
+// heuristic cannot see, is genuinely close to the edge; WHICH lesson happened to be "open" should
+// never be what decides the answer). Deduped now: `visitArray` skips an array it has already walked
+// (covers `items` vs. the SAME lesson reached again via `APP.lessonData.lessons`, always the same
+// object by construction), and `seenLessonIds` skips a lesson by id (covers the open chapter's own
+// lesson reached a THIRD time via `APP.savedList`, where a separately-fetched copy of the same
+// topic is a DIFFERENT object with the SAME lesson id, so array-identity alone cannot catch it).
 function _forEachGrammarItem(lang, items, fn) {
-  (items || []).forEach(x => { if (x) fn(x); });                    // this lesson first
-  const scan = (lessons) => (lessons || []).forEach(L => {
-    ((L && L.grammar) || []).forEach(g => { if (g) fn(g); });
-  });
+  const seenArrays = new Set();
+  const seenLessonIds = new Set();
+  const visitArray = (arr) => {
+    if (!arr || !arr.length || seenArrays.has(arr)) return;
+    seenArrays.add(arr);
+    arr.forEach(g => { if (g) fn(g); });
+  };
+  const visitLesson = (L) => {
+    if (!L || !Array.isArray(L.grammar) || !L.grammar.length) return;
+    if (L.id != null) {
+      if (seenLessonIds.has(L.id)) return;
+      seenLessonIds.add(L.id);
+    }
+    visitArray(L.grammar);
+  };
   try {
-    if (APP.lessonData && APP.lessonData.lang === lang) scan(APP.lessonData.lessons);
-    (APP.savedList || []).forEach(t => { if (t && t.lang === lang) scan(t.lessons); });
+    visitArray(items);                                                   // this lesson first
+    if (APP.lessonData && APP.lessonData.lang === lang)
+      (APP.lessonData.lessons || []).forEach(visitLesson);                // then the open chapter
+    (APP.savedList || []).forEach(t => {
+      if (t && t.lang === lang) (t.lessons || []).forEach(visitLesson);   // then the rest of the library
+    });
   } catch(_) {}
 }
 

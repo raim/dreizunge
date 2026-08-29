@@ -68,6 +68,54 @@ C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; 
   console.log(`  derived choices for de: ${JSON.stringify(got)}`);
 }
 
+// ── 2b. v86_u (user-reported, real corpus finding): the corpus-wide predictability RATIO must not
+//        depend on WHICH lesson happens to be "open" — `_forEachGrammarItem`'s three scan paths
+//        (this lesson / the open chapter / the rest of the library) overlap in real use (the open
+//        lesson normally belongs to the open chapter, which is normally one entry in the full
+//        library), so the currently-open lesson's own items were being counted up to 3x — enough to
+//        flip the verdict for a language whose true ratio sits close to the 90% threshold (measured
+//        on the real corpus: Italian at 91.7%, tipped under 90% for exactly one real lesson whose
+//        own il/lo split, tripled, dragged the ratio down). Reproduced with a minimal, corpus-
+//        independent fixture so this stays meaningful regardless of what lessons.json contains:
+//        20 "x"-article items elsewhere in the language, plus the OPEN lesson's own 4 items split
+//        2x/2y — true ratio (counted once) is 22/24 = 91.7% (predictable); triple-counted, the
+//        open lesson's own 50/50 split is weighted 3x, dragging it to 26/32 = 81.25% (NOT
+//        predictable). This is the EXACT shape of the real bug, at the exact same real percentage. ──
+{
+  const topicA = { id: 'tp_dedupA', topic: 'A', lang: 'xx', srcLang: 'en', lessons: [
+    { id: 'ls_dedupA', type: 'grammar', grammar: [
+      { target: 'a1', article: 'x', gender: 'm' }, { target: 'a2', article: 'x', gender: 'm' },
+      { target: 'a3', article: 'y', gender: 'm' }, { target: 'a4', article: 'y', gender: 'm' },
+    ] },
+  ] };
+  const topicB = { id: 'tp_dedupB', topic: 'B', lang: 'xx', srcLang: 'en', lessons: [
+    { id: 'ls_dedupB', type: 'grammar',
+      grammar: Array.from({ length: 20 }, (_, i) => ({ target: 'b' + i, article: 'x', gender: 'm' })) },
+  ] };
+  // Reference-faithful: buildGrammarExercises() passes APP.lessonData.lessons[idx] BY REFERENCE
+  // (confirmed by reading buildExercises: `const lesson = APP.lessonData.lessons[lessonIdx];`), so
+  // APP.lessonData here is set to the SAME object already inside APP.savedList — not a re-parsed
+  // copy — matching the real app's own object graph exactly.
+  C.run(`APP.savedList = ${JSON.stringify([topicA, topicB])};
+         APP.lessonData = APP.savedList[0]; APP.lang = 'xx'; APP.srcLang = 'en'; true;`, 'seed-dedup');
+  const stats = JSON.parse(C.run(`JSON.stringify(_articleStatsFor('xx', APP.lessonData.lessons[0].grammar))`));
+  assert.strictEqual(stats.sampleSize, 24,
+    `the open lesson's own 4 items are counted ONCE, not tripled (expected n=24, got n=${stats.sampleSize})`);
+  assert.strictEqual(stats.predictable, true,
+    `the TRUE corpus-wide ratio (91.7%) is predictable — triple-counting would wrongly drag it to 81.25% (got ${JSON.stringify(stats)})`);
+
+  // Same scenario, but APP.savedList holds a SEPARATELY-parsed copy of topicA (a different object,
+  // same lesson id "ls_dedupA") — exactly what a real fetch() response looks like. Proves the
+  // id-based dedup (not just reference-equality) also catches this shape of the overlap.
+  const topicACopy = JSON.parse(JSON.stringify(topicA));
+  C.run(`APP.savedList = ${JSON.stringify([topicACopy, topicB])};
+         APP.lessonData = ${JSON.stringify(topicA)}; APP.lang = 'xx'; APP.srcLang = 'en'; true;`, 'seed-dedup-copy');
+  const stats2 = JSON.parse(C.run(`JSON.stringify(_articleStatsFor('xx', APP.lessonData.lessons[0].grammar))`));
+  assert.strictEqual(stats2.sampleSize, 24,
+    `a SEPARATE object instance of the same lesson (same id, reached via savedList) is still deduped by id (expected n=24, got n=${stats2.sampleSize})`);
+  console.log('  _forEachGrammarItem: the open lesson\'s own items are counted exactly once, not up to 3x (v86_u): OK');
+}
+
 // ── 3. Corpus-wide: strictly better than the table it replaced ─────────────
 // The number is the argument. If a future change drops it, this fails with the count.
 //
