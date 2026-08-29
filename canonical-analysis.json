@@ -193,8 +193,341 @@
       },
       "sourceTextHash": "a950d6bdb45c",
       "analyzedAt": "2026-08-28T21:20:54.456Z"
+    },
+    "tp_17880322416810000009": {
+      "chapterId": "tp_17880322416810000009",
+      "lang": "nl",
+      "srcLang": "en",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 4,
+      "tokenCount": 19,
+      "sentences": [
+        {
+          "sentenceId": "tp_17880322416810000009:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17880322416810000009:s0:t0",
+              "idx": 0,
+              "surface": "U",
+              "lemma": "u",
+              "form": "pronoun, formal second person singular nominative",
+              "sense": "you (formal)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17880322416810000009:s0:t1",
+              "idx": 1,
+              "surface": "Rijdt",
+              "lemma": "rijden",
+              "form": "verb, present tense, 2nd/3rd person singular",
+              "sense": "drive / are driving",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17880322416810000009:s0:t2",
+              "idx": 2,
+              "surface": "Nu",
+              "lemma": "nu",
+              "form": "adverb",
+              "sense": "now",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17880322416810000009:s0:t3",
+              "idx": 3,
+              "surface": "500",
+              "lemma": "500",
+              "form": "numeral",
+              "sense": "five hundred",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17880322416810000009:s0:t4",
+              "idx": 4,
+              "surface": "Meter",
+              "lemma": "meter",
+              "form": "noun, plural",
+              "sense": "meters",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17880322416810000009:s0:t5",
+              "idx": 5,
+              "surface": "Van",
+              "lemma": "van",
+              "form": "preposition",
+              "sense": "from / of",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17880322416810000009:s0:t6",
+              "idx": 6,
+              "surface": "Een",
+              "lemma": "een",
+              "form": "indefinite article",
+              "sense": "a / an",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17880322416810000009:s0:t7",
+              "idx": 7,
+              "surface": "N2000",
+              "lemma": "N2000",
+              "form": "proper noun / adjective",
+              "sense": "Natura 2000 (EU nature protection designation)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17880322416810000009:s0:t8",
+              "idx": 8,
+              "surface": "Gebied",
+              "lemma": "gebied",
+              "form": "noun, singular neuter",
+              "sense": "area / zone",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 3,
+              "end": 4,
+              "tokenIds": [
+                "tp_17880322416810000009:s0:t3",
+                "tp_17880322416810000009:s0:t4"
+              ],
+              "lemma": "500 meter",
+              "gloss": "500 meters",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 7,
+              "end": 8,
+              "tokenIds": [
+                "tp_17880322416810000009:s0:t7",
+                "tp_17880322416810000009:s0:t8"
+              ],
+              "lemma": "N2000-gebied",
+              "gloss": "Natura 2000 area",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-29T19:53:46.980Z",
+            "sentenceId": "tp_17880322416810000009:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "U Rijdt Nu 500 Meter Van Een N2000 Gebied",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17880322416810000009:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17880322416810000009:s1:t0",
+              "idx": 0,
+              "surface": "Onteigeningszone",
+              "lemma": "onteigeningszone",
+              "form": "noun, singular",
+              "sense": "expropriation zone",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-29T20:01:11.938Z",
+            "sentenceId": "tp_17880322416810000009:s1",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Onteigeningszone",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17880322416810000009:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17880322416810000009:s2:t0",
+              "idx": 0,
+              "surface": "Dit",
+              "lemma": "dit",
+              "form": "pronoun, demonstrative neuter singular nominative/accusative",
+              "sense": "this",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17880322416810000009:s2:t1",
+              "idx": 1,
+              "surface": "Raakt",
+              "lemma": "raken",
+              "form": "verb, present tense 3rd person singular",
+              "sense": "affects",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17880322416810000009:s2:t2",
+              "idx": 2,
+              "surface": "Niet",
+              "lemma": "niet",
+              "form": "adverb, negation",
+              "sense": "not",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17880322416810000009:s2:t3",
+              "idx": 3,
+              "surface": "Alleen",
+              "lemma": "alleen",
+              "form": "adverb",
+              "sense": "only",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17880322416810000009:s2:t4",
+              "idx": 4,
+              "surface": "Boeren.",
+              "lemma": "boer",
+              "form": "noun, plural",
+              "sense": "farmers",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 1,
+              "end": 2,
+              "tokenIds": [
+                "tp_17880322416810000009:s2:t1",
+                "tp_17880322416810000009:s2:t2"
+              ],
+              "lemma": "niet raken",
+              "gloss": "does not affect",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-29T20:06:29.396Z",
+            "sentenceId": "tp_17880322416810000009:s2",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Dit Raakt Niet Alleen Boeren.",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17880322416810000009:s3",
+          "tokens": [
+            {
+              "tokenId": "tp_17880322416810000009:s3:t0",
+              "idx": 0,
+              "surface": "Dit",
+              "lemma": "dit",
+              "form": "demonstrative pronoun, neuter singular nominative/accusative",
+              "sense": "this",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17880322416810000009:s3:t1",
+              "idx": 1,
+              "surface": "Raakt",
+              "lemma": "raken",
+              "form": "verb, 3rd person singular present",
+              "sense": "affects",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17880322416810000009:s3:t2",
+              "idx": 2,
+              "surface": "Ons",
+              "lemma": "ons",
+              "form": "personal pronoun, plural accusative/dative",
+              "sense": "us",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17880322416810000009:s3:t3",
+              "idx": 3,
+              "surface": "Allemaal.",
+              "lemma": "allemaal",
+              "form": "adverb/predicative adjective",
+              "sense": "all",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 3,
+              "tokenIds": [
+                "tp_17880322416810000009:s3:t0",
+                "tp_17880322416810000009:s3:t1",
+                "tp_17880322416810000009:s3:t2",
+                "tp_17880322416810000009:s3:t3"
+              ],
+              "lemma": "dit raakt ons allemaal",
+              "gloss": "this affects us all",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-29T20:08:48.376Z",
+            "sentenceId": "tp_17880322416810000009:s3",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Dit Raakt Ons Allemaal.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-08-29T20:08:48.376Z",
+        "chapterId": "tp_17880322416810000009",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "53e577539764",
+      "analyzedAt": "2026-08-29T20:08:48.376Z"
     }
   },
-  "generatedAt": "2026-08-28T21:20:54.456Z",
-  "chapterCount": 1
+  "generatedAt": "2026-08-29T20:08:48.377Z",
+  "chapterCount": 2
 }

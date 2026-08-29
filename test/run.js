@@ -263,6 +263,7 @@ run('unit: generation-time attribution fields (PLAN §13 milestone 5, v85_i)', '
 run('unit: comic upload + panel-drawing UI (PLAN §2.4 Track A4 milestone 1, v85_j)', 'node', [path.join(__dirname, 'unit-comic-panel-ui.test.js')]);
 run('unit: comic panel batch extraction, client side (PLAN §2.4 Track A4 milestone 2, v85_k)', 'node', [path.join(__dirname, 'unit-comic-extraction.test.js')]);
 run('unit: comic chapter formation, client side (PLAN §2.4 Track A4 milestone 3, v85_m)', 'node', [path.join(__dirname, 'unit-comic-chapter.test.js')]);
+run('unit: comic text review card — edit/confirm before lesson generation (v86_v)', 'node', [path.join(__dirname, 'unit-comic-review-card.test.js')]);
 run('unit: post-gen storyboard opt-in fix, client side (v85_p)', 'node', [path.join(__dirname, 'unit-postgen-storyboard-optin.test.js')]);
 run('unit: post-gen analysis opt-in, client side, mirrors postGenStoryboard (item W follow-up, v86_o)', 'node', [path.join(__dirname, 'unit-postgen-analysis-optin.test.js')]);
 run('unit: comic story-panel progress-card rendering (PLAN §2.4 Track A4 milestone 4, v85_n)', 'node', [path.join(__dirname, 'unit-comic-story-panel.test.js')]);

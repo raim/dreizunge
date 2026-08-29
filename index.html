@@ -1431,7 +1431,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           <div id="comic-panel-actions" style="display:none;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
             <button type="button" id="comic-extract-btn" onclick="comicExtractPanels()"
               style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif">✨ <span id="comic-extract-lbl">Extract text</span></button>
-            <button type="button" id="comic-create-btn" onclick="comicCreateChapter()"
+            <button type="button" id="comic-create-btn" onclick="comicOpenReview()"
               style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--blue-dark);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif">📖 <span id="comic-create-lbl">Create chapter</span></button>
             <button type="button" id="comic-clear-btn" onclick="comicClearPanels()"
               style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🗑 <span id="comic-clear-lbl">Clear panels</span></button>
@@ -4120,6 +4120,10 @@ async function _comicExtractCheckOnce(jobId){
       _comicApplyExtraction(panels);
       if(status) status.textContent='';
       if(btn) btn.disabled=false;
+      // v86_v (user-requested): open the review card the instant extraction succeeds — this is the
+      // ONLY entry point that must not toast on an empty result (every panel could have errored;
+      // comicOpenReview()'s own "nothing extracted" toast is for the MANUAL button, not this).
+      comicOpenReview(true);
     }
     if(j.status==='error'){
       _comicExtractJobId=null;
@@ -4157,6 +4161,96 @@ function _comicApplyExtraction(panels){
   if(!Array.isArray(panels)) return;
   panels.forEach((p,i)=>{ if(APP_COMIC.boxes[i]) APP_COMIC.boxes[i].text=p; });
   _comicRenderList();
+}
+
+// ── Comic text review card (v86_v, user-requested) ──────────────────────────────────────────────
+// An intermediate step between extraction and chapter creation: the user goes through each panel's
+// extracted caption/in-scene text, edits it, and only an explicit confirm here moves on to lesson
+// generation — reached BOTH automatically (comicOpenReview(true), fired the instant extraction
+// succeeds) and manually (the pre-existing "Create chapter" button, retargeted from
+// comicCreateChapter() to here, for a user who dismissed the auto-popup and re-opens it later).
+// comicCreateChapter() itself is UNTOUCHED — this sits entirely above it, so every existing test of
+// the actual chunk-building/POST logic keeps testing that logic directly, with no UI in between.
+//
+// Edits are held in a LOCAL buffer (module-level, like _comicExtractJobId's own single-in-flight
+// state), not written straight onto APP_COMIC.boxes while typing: Cancel must be a true no-op (the
+// panel list keeps showing exactly what extraction returned), which a live two-way binding could not
+// guarantee once the user starts editing then backs out.
+//
+// Wired via onclick/oninput ATTRIBUTES (matching every other dynamically-rendered list in this file —
+// comicDeletePanel/comicMovePanel above are the same pattern) rather than addEventListener closures,
+// specifically so _comicReviewEdit/_comicReviewConfirm/_comicReviewCancel are plain, directly
+// callable, directly testable functions — not handlers only a real click event can reach.
+let _comicReviewEditable=null, _comicReviewBuffer=null, _comicReviewOverlayEl=null;
+function comicOpenReview(auto){
+  const boxes=APP_COMIC.boxes;
+  const editable=boxes.map((b,i)=>({i,b})).filter(({b})=>b && b.text && !b.text.error);
+  if(!editable.length){
+    if(!auto) showToast(t('form.comic_create_failed')+': no extracted text yet');
+    return;
+  }
+  _comicReviewEditable=editable;
+  _comicReviewBuffer=editable.map(({b})=>({caption:(b.text&&b.text.caption)||'', inScene:(b.text&&b.text.inScene)||''}));
+  const rows=editable.map(({i,b},k)=>{
+    const color=_COMIC_COLORS[i%_COMIC_COLORS.length];
+    let img=''; try{ img=_comicCropDataUrl(b); }catch(_){}
+    const buf=_comicReviewBuffer[k];
+    return `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-mid)">
+      <div style="flex-shrink:0;text-align:center">
+        <span style="display:inline-block;width:20px;height:20px;border-radius:4px;background:${color};color:#fff;text-align:center;font-weight:800;font-size:12px;line-height:20px">${i+1}</span>
+        ${img?`<img src="${img}" style="display:block;width:72px;height:auto;margin-top:4px;border-radius:6px;border:1px solid var(--gray-mid)">`:''}
+      </div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+        <input type="text" value="${escAttr(buf.caption)}" oninput="_comicReviewEdit(${k},'caption',this.value)"
+          placeholder="${escAttr(t('form.comic_caption_ph'))}"
+          style="font-size:13px;font-weight:700;font-family:Nunito,sans-serif;padding:6px 8px;border:1.5px solid var(--gray-mid);border-radius:6px;color:var(--text)">
+        <textarea rows="2" oninput="_comicReviewEdit(${k},'inScene',this.value)"
+          placeholder="${escAttr(t('form.comic_scene_ph'))}"
+          style="font-size:13px;font-weight:600;font-family:Nunito,sans-serif;padding:6px 8px;border:1.5px solid var(--gray-mid);border-radius:6px;color:var(--text);resize:vertical">${escHtml(buf.inScene)}</textarea>
+      </div>
+    </div>`;
+  }).join('');
+  const ov=document.createElement('div');
+  ov.className='modal-overlay';
+  ov.style.zIndex=400;   // above the generation wizard's own card stack
+  ov.innerHTML=
+    '<div class="modal-box" style="max-width:520px" role="dialog" aria-modal="true">'
+    + `<div class="modal-hdr"><span>${escHtml(t('form.comic_review_title'))}</span>`
+    + `<button type="button" class="modal-close" onclick="_comicReviewCancel()">✕</button></div>`
+    + `<div style="padding:0 18px;overflow-y:auto;flex:1">`
+    + `<div style="font-size:12px;color:var(--gray-dark);padding:10px 0 0">${escHtml(t('form.comic_review_hint'))}</div>`
+    + rows
+    + `</div>`
+    + `<div class="modal-footer">`
+    + `<button type="button" class="modal-btn secondary" onclick="_comicReviewCancel()">${escHtml(t('dialog.cancel'))}</button>`
+    + `<button type="button" class="modal-btn primary" onclick="_comicReviewConfirm()">${escHtml(t('form.comic_review_confirm'))}</button>`
+    + `</div></div>`;
+  ov.addEventListener('click',e=>{ if(e.target===ov) _comicReviewCancel(); });   // backdrop click — not exercised by the test harness (see lib-dom.js's own addEventListener no-op), same as every other modal's backdrop dismiss in this file
+  _comicReviewOverlayEl=ov;
+  document.body.appendChild(ov);
+}
+function _comicReviewEdit(k,field,value){
+  if(!_comicReviewBuffer || !_comicReviewBuffer[k]) return;
+  _comicReviewBuffer[k][field]=value;
+}
+function _comicReviewClose(){
+  // Closes via the tracked object REFERENCE, not a getElementById lookup — this overlay is a
+  // dynamically-created node (like showChoiceDialog's), never registered under any id.
+  if(_comicReviewOverlayEl) _comicReviewOverlayEl.remove();
+  _comicReviewOverlayEl=null; _comicReviewEditable=null; _comicReviewBuffer=null;
+}
+function _comicReviewCancel(){ _comicReviewClose(); }
+function _comicReviewConfirm(){
+  if(_comicReviewEditable && _comicReviewBuffer){
+    _comicReviewEditable.forEach(({i},k)=>{
+      const buf=_comicReviewBuffer[k];
+      APP_COMIC.boxes[i].text.caption=buf.caption;
+      APP_COMIC.boxes[i].text.inScene=buf.inScene;
+    });
+  }
+  _comicReviewClose();
+  _comicRenderList();
+  comicCreateChapter();
 }
 
 // ── Comic chapter formation (PLAN §2.4 / Track A4 milestone 3, v85_m) ──────────────────────────
