@@ -157,27 +157,70 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
   {
     const C = loadClient({ quiet: true });
     C.run(SEED_COMMON, 'seed-4');
-    const withEntry = (entry) => C.run(`
+    const withEntry = (entry, topic) => C.run(`
       APP._teCache = APP._teCache || {};
       APP._teCache['tp_te1'] = ${JSON.stringify(entry)};
-      _textExplorerBodyHtml(${JSON.stringify(TOPIC)});`);
+      _textExplorerBodyHtml(${JSON.stringify(topic || TOPIC)});`);
 
     assert.ok(withEntry({ status: 'loading' }).includes('te-status'), 'loading renders the status paragraph');
     const analyzing = withEntry({ status: 'analyzing', step: 'CP2: analysing 3 sentence(s)…' });
     assert.ok(analyzing.includes('CP2: analysing 3 sentence'), `analyzing shows the real live job step (got ${analyzing})`);
     const errored = withEntry({ status: 'error', error: 'boom' });
     assert.ok(errored.includes('boom'), `error state shows the real error message (got ${errored})`);
+    // v86_s: layout is reconstructed from the REAL story text (d.story), not from CP1's own
+    // paraBreakBefore flag (see _teStoryHtml's own comment for why) — the topic's `story` here
+    // must actually contain a blank line between the two sentences for this to mean anything.
+    const twoParaTopic = { ...TOPIC, story: 'Der Hund lauft.\n\nDie Katze schlaft.' };
     const ready = withEntry({ status: 'ready', data: { sentences: [
-      { sentenceId:'s0', text:'Der Hund lauft.', paraBreakBefore:false,
+      { sentenceId:'s0', text:'Der Hund lauft.',
         tokens:[{surface:'Der',lemma:'der',form:'article',sense:'the',confidence:'high'}] },
-      { sentenceId:'s1', text:'Die Katze schlaft.', paraBreakBefore:true,
+      { sentenceId:'s1', text:'Die Katze schlaft.',
         tokens:[{surface:'Die',lemma:'die',form:'article',sense:'the',confidence:'high'}] },
-    ] } });
+    ] } }, twoParaTopic);
     assert.ok(ready.includes('te-tok'), 'ready state renders real per-word marks');
-    // paraBreakBefore on sentence 1 -> two separate <p> paragraphs, not one run-on paragraph.
-    assert.strictEqual((ready.match(/<p /g) || []).length, 2, `a paraBreakBefore sentence starts its OWN paragraph (got ${ready})`);
+    // A real blank line in the story between the two sentences -> two separate <p> paragraphs.
+    assert.strictEqual((ready.match(/<p /g) || []).length, 2, `a real blank line in the story starts a NEW paragraph (got ${ready})`);
   }
-  console.log('  _textExplorerBodyHtml: loading/analyzing/error/ready each render their own correct markup, paragraph breaks respected: OK');
+  console.log('  _textExplorerBodyHtml: loading/analyzing/error states render correctly; a real blank line starts a new paragraph: OK');
+
+  // ── 4c. v86_s (user follow-up): layout fidelity — switching views must change ONLY colours/links,
+  //       not the text's own line/paragraph structure. Reconstructed from the REAL story text via
+  //       forward alignment, same technique as per-token alignment, one level up per sentence. ────
+  {
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON, 'seed-4c');
+    // Real bug, real strings: tp_17877511606660000499 ("Cleanliness Command") — a `\n` falls MID-
+    // SENTENCE (after a colon, not a recognized sentence end) and survives verbatim inside CP1's own
+    // sentence.text; a SEPARATE `\n` falls BETWEEN two sentences with no blank line. Both must render
+    // as <br>, matching what _storyParasHtml would do for the exact same raw text.
+    const story = 'Aiutateci a mantenere pulito questo bagno:\nlasciatelo come vorreste trovarlo!!!\nGrazie!';
+    const html = C.run(`_teStoryHtml(${JSON.stringify(story)}, [
+      { text:'Aiutateci a mantenere pulito questo bagno:\\nlasciatelo come vorreste trovarlo!!!',
+        tokens:[{surface:'Aiutateci',lemma:'aiutare',form:'verb',sense:'help us',confidence:'high'}] },
+      { text:'Grazie!', tokens:[{surface:'Grazie!',lemma:'grazie',form:'interjection',sense:'thanks',confidence:'high'}] },
+    ])`);
+    assert.strictEqual((html.match(/<br>/g) || []).length, 2,
+      `BOTH the mid-sentence and the inter-sentence single newline become <br> (got ${html})`);
+    assert.strictEqual((html.match(/<p /g) || []).length, 1, 'no blank line anywhere in this story -> exactly ONE paragraph, not two');
+    assert.ok(!html.includes('\n<'), 'no literal newline survives unconverted into the HTML (would collapse to a space in the browser)');
+    console.log('  _teStoryHtml: both a mid-sentence AND an inter-sentence single newline become <br>, matching the normal view\'s own layout exactly: OK');
+
+    // A genuinely blank-line paragraph break is still a real <p> break, not just another <br>.
+    const html2 = C.run(`_teStoryHtml('One.\\n\\nTwo.', [
+      { text:'One.', tokens:[] }, { text:'Two.', tokens:[] },
+    ])`);
+    assert.strictEqual((html2.match(/<p /g) || []).length, 2, `a real blank line still starts a genuine new paragraph, not a <br> (got ${html2})`);
+    console.log('  _teStoryHtml: a genuine blank line still starts a real new <p>, not just another <br>: OK');
+
+    // Plain prose (a normal space between two sentences, no newline anywhere) is completely unaffected.
+    const html3 = C.run(`_teStoryHtml('One. Two.', [
+      { text:'One.', tokens:[] }, { text:'Two.', tokens:[] },
+    ])`);
+    assert.ok(html3.includes('One.</p>') === false && /One\.\s*Two\./.test(html3.replace(/<[^>]+>/g, '')),
+      `ordinary prose (a plain space between sentences) is unaffected (got ${html3})`);
+    assert.strictEqual((html3.match(/<p /g) || []).length, 1, 'plain prose stays ONE paragraph');
+    console.log('  _teStoryHtml: ordinary prose (a plain space between sentences) is completely unaffected: OK');
+  }
 
   // ── 4b. v86_p (user follow-up): a comic-sourced chapter shows its panel IMAGES too, image-only ──
   {

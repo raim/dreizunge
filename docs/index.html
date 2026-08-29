@@ -160482,12 +160482,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v86_r', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v86_s', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"8ff561222172","lessons.json":"210973c42be7","ui.json":"087feac24237","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"d7c9353f56a8"};
+  APP.buildSources = {"index.html":"4a6533bfa05f","lessons.json":"210973c42be7","ui.json":"087feac24237","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"d7c9353f56a8"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -172890,20 +172890,46 @@ function _textExplorerBodyHtml(d){
   // v86_p: same image-only strip as the translation view — see _comicPanelImageStripHtml's own
   // comment for why this can't reuse the default view's per-panel caption pairing.
   if (!sentences.length) return wrap(_comicPanelImageStripHtml(d) + _storyParasHtml(furiHtml(d.story || '')));
-  // Paragraph breaks are CP1's OWN `paraBreakBefore` flag (a blank line in the source story) — a
-  // plain single newline WITHIN a paragraph is not preserved at the sentence-record level at all
-  // (canonical-text.js's own splitCanonicalSentences trims each paragraph as one run before
-  // splitting on sentence punctuation), so this cannot reproduce single-line-break layout the way
-  // _storyParasHtml's direct `\n`->`<br>` pass over the raw story can. A real but minor gap — the
-  // rest of the paragraph structure (and every word's own analysis) is unaffected by it.
-  let out = '', para = '';
+  return wrap(_comicPanelImageStripHtml(d) + _teStoryHtml(d.story || '', sentences));
+}
+// User follow-up (v86_s): "the layout should be the very same as the normal red->green view —
+// switching should just change colours and links." The FIRST draft used CP1's own `paraBreakBefore`
+// flag to decide paragraph breaks and joined every other sentence with a bare space — but that flag
+// only records "was there a BLANK LINE before this sentence"; a single line break BETWEEN two
+// sentences (no blank line) collapses to the exact same `paraBreakBefore:false` a plain space would,
+// so CP1's own sentence records cannot distinguish the two. Rather than extend CP1 for this (a real
+// pipeline change, and this whole track's standing rule is that CP1/CP2 must stay useful for
+// PLAN §7.0 generally, not grow a field only the text-explorer view needs), this reconstructs
+// structure from the RAW story text directly — already sent to the client as `d.story`, and it is
+// the actual ground truth for layout. Same forward-only indexOf alignment `_teSentenceHtml` already
+// uses per TOKEN, one level up per SENTENCE: the real gap between where one sentence ends and the
+// next begins is inspected directly, so a blank line becomes a real `<p>` break and a single `\n`
+// becomes `<br>` — matching `_storyParasHtml`'s own two-tier rule exactly.
+function _teGapHtml(gap){
+  if (/\n\n/.test(gap)) return null;   // signals "close this <p>, open a new one" to the caller
+  return escHtml(gap).replace(/\n/g, '<br>');
+}
+function _teStoryHtml(story, sentences){
+  let out = '<p dir="auto">', cursor = 0, wroteAny = false;
   sentences.forEach((s, i) => {
-    if (i > 0 && s.paraBreakBefore) { out += '<p dir="auto">' + para + '</p>'; para = ''; }
-    else if (para) para += ' ';
-    para += _teSentenceHtml(s);
+    const sText = String((s && s.text) || '');
+    if (!sText) return;
+    const p = story.indexOf(sText, cursor);
+    if (p >= 0) {
+      if (i > 0) {
+        const gapHtml = _teGapHtml(story.slice(cursor, p));
+        out += (gapHtml === null) ? '</p><p dir="auto">' : gapHtml;
+      }
+      cursor = p + sText.length;
+    }
+    // A sentence CP1/CP2 couldn't be located in the story from the cursor onward (index drift)
+    // still renders — its own analysis is not lost — just without a real gap reconstructed before
+    // it, the same "degrade, don't drop" convention _teSentenceHtml's own token alignment uses.
+    out += _teSentenceHtml(s);
+    wroteAny = true;
   });
-  if (para) out += '<p dir="auto">' + para + '</p>';
-  return wrap(_comicPanelImageStripHtml(d) + out);
+  out += '</p>';
+  return wroteAny ? out : '';
 }
 // ONE sentence's HTML. Walks the sentence's OWN raw text with a cursor, finding each token's
 // surface by a forward-only indexOf from where the last token ended — never joins tokens back
@@ -172912,6 +172938,15 @@ function _textExplorerBodyHtml(d){
 // degenerate reply) is simply skipped — it survives as part of the surrounding PLAIN text instead
 // of corrupting the rest of the sentence, the same "degrade, don't corrupt" convention
 // _highlightVocabHtml's own regex-compile fallback uses.
+// User follow-up (v86_s): the plain-text gaps BETWEEN tokens can carry a real `\n` — CP1's own
+// sentence splitter only breaks on RECOGNIZED sentence punctuation (`.!?`), so a line break that
+// falls mid-sentence (e.g. after a colon, "questo bagno:\nlasciatelo…") survives verbatim inside
+// `s.text` — but nothing converted it to `<br>` before it went into a `<p>`, so the browser
+// collapsed it to a plain space, losing the original layout exactly the way `_storyParasHtml`'s own
+// `\n`->`<br>` pass (used by every OTHER story view) never would. Same fix, applied to each
+// plain-text gap here rather than once per paragraph — this renderer builds gaps and marks
+// token-by-token, not as one flat string _storyParasHtml could run over afterward.
+function _teEscText(t){ return escHtml(t).replace(/\n/g, '<br>'); }
 function _teSentenceHtml(s){
   const text = String((s && s.text) || '');
   const tokens = Array.isArray(s && s.tokens) ? s.tokens : [];
@@ -172921,11 +172956,11 @@ function _teSentenceHtml(s){
     if (!surface) return;
     const p = text.indexOf(surface, cursor);
     if (p < 0) return;
-    out += escHtml(text.slice(cursor, p));
+    out += _teEscText(text.slice(cursor, p));
     out += _teTokenMarkHtml(tok, surface);
     cursor = p + surface.length;
   });
-  out += escHtml(text.slice(cursor));
+  out += _teEscText(text.slice(cursor));
   return out;
 }
 function _teTokenMarkHtml(tok, surface){
