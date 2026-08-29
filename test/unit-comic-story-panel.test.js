@@ -26,14 +26,17 @@
 //     UNCONDITIONALLY, which defeats the `o.text == null` check regardless of whether the override
 //     happens to equal the default (exactly what §3 above documents as correct — it IS correct for
 //     _storyBodyHtml itself, the bug was entirely in what its two callers chose to pass it).
-//   • §9 (v86_p, user follow-up) the TRANSLATION view — `o.text != null`, so §3's bypass still
-//     applies and the full per-panel §1 pairing is correctly skipped — now ALSO shows the panel
-//     images, via a separate, simpler `_comicPanelImageStripHtml` (image-only, no per-panel
-//     caption/inScene text, since no per-panel TRANSLATION exists to pair each image with — only one
-//     flat `storyTranslation` string for the whole chapter). Superseded here: this used to assert
-//     the translation view shows NO panels at all; that was correct for its own cut but is no longer
-//     the desired behaviour — REWRITE, not append, per this project's own standing rule for a
-//     changed invariant.
+//   • §9 (v86_p, user follow-up; reworked v86_t after a real reported layout bug) the TRANSLATION
+//     view — `o.text != null`, so §3's bypass still applies and the full per-panel §1 pairing is
+//     correctly skipped — now ALSO shows the panel images, via `_comicPanelsFlatTextHtml`, which
+//     wraps the FLAT text (no per-panel translation exists to pair each image with) in the SAME
+//     `.comic-story-panel-text` markup §1's own per-panel case uses, rather than emitting it as a
+//     bare sibling with no matching padding (the real bug v86_t fixed — visible as the same
+//     chapter's text starting at a DIFFERENT x-position in this view than in the default one).
+//     Superseded twice here: this used to assert the translation view shows NO panels at all (correct
+//     for its own cut, no longer the desired behaviour), then an image-only strip with unwrapped text
+//     (visually broken) — REWRITE, not append, per this project's own standing rule for a changed
+//     invariant.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -208,10 +211,14 @@ console.log('  a panel with no image renders no <img> tag at all, rather than a 
 console.log('  THE REAL PROGRESS-CARD RENDERER (_renderCompStory) reaches the comic-panel branch: OK');
 
 {
-  // v86_p (user follow-up): the translation side now DOES show the panel images — a plain
-  // IMAGE-ONLY strip (_comicPanelImageStripHtml), not the full per-panel image+caption pairing
-  // §1 proved, since there is still no PER-PANEL translation to pair each image with (only one flat
-  // `storyTranslation` string for the whole chapter).
+  // v86_p (user follow-up), reworked v86_t (user-reported real layout bug): the translation side
+  // now DOES show the panel images. The FIRST draft (v86_p) put an image-only strip and the
+  // translation text as separate siblings — a REAL visual bug (the text lost `.comic-story-panel-
+  // text`'s own padding, so it started at a different x-position than the default view's own text).
+  // v86_t fix: `_comicPanelsFlatTextHtml` now wraps the flat text in `.comic-story-panel-text` too —
+  // for this MULTI-panel case (no per-panel translation to pair each image with), each image gets
+  // its OWN text-less card, and the whole flat text gets one FURTHER card of its own, not a bare
+  // sibling with no matching padding.
   const C = client();
   const topic = { ...JSON.parse(JSON.stringify(COMIC_TOPIC)), storyTranslation: 'A translated story.' };
   C.run(`
@@ -220,15 +227,17 @@ console.log('  THE REAL PROGRESS-CARD RENDERER (_renderCompStory) reaches the co
     APP._compStoryLang = 'source';
     true;`, 'comp-story-translation-setup');
   const out = C.run(`_renderCompStory(); document.getElementById('comp-story-text').innerHTML;`);
-  assert.ok(out.includes('comic-story-panels'), 'the TRANSLATION side now shows the panel-image strip too (v86_p)');
+  assert.ok(out.includes('comic-story-panels'), 'the TRANSLATION side now shows the panel images too (v86_p)');
   const imgCount = (out.match(/comic-story-panel-img/g) || []).length;
   assert.strictEqual(imgCount, 2, `both panel images appear, in order (got ${imgCount})`);
   assert.ok(out.includes('data:image/jpeg;base64,AAAA') && out.includes('data:image/jpeg;base64,BBBB'), 'the real image data for BOTH panels is present');
-  assert.ok(!out.includes('comic-story-panel-text'),
-    'but NOT the per-panel TEXT pairing — no per-panel translation exists, only the flat storyTranslation string');
-  assert.ok(out.includes('A translated story.'), 'the translation text itself still renders, once, below the image strip');
+  const cardCount = (out.match(/class="comic-story-panel"/g) || []).length;
+  assert.strictEqual(cardCount, 3, `2 image-only cards (one per panel) PLUS 1 further text-only card, not a per-panel pairing (got ${cardCount})`);
+  assert.ok(out.includes('comic-story-panel-text'),
+    'v86_t: the translation text IS wrapped in .comic-story-panel-text — same padding as the default view, just not per-panel-paired');
+  assert.ok(/comic-story-panel-text"><p[^>]*>A translated story\./.test(out), `the translation text itself renders once, correctly wrapped, not a bare sibling with mismatched padding (got ${out})`);
 }
-console.log('  the TRANSLATION side of the progress card now shows an image-only panel strip, without per-panel text pairing (v86_p): OK');
+console.log('  the TRANSLATION side of the progress card shows panel images AND wraps its text in the SAME padded card markup as the default view (v86_t): OK');
 
 {
   const C = client();

@@ -222,10 +222,33 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
     console.log('  _teStoryHtml: ordinary prose (a plain space between sentences) is completely unaffected: OK');
   }
 
-  // ── 4b. v86_p (user follow-up): a comic-sourced chapter shows its panel IMAGES too, image-only ──
+  // ── 4b. v86_p/v86_t (user follow-up + a real reported layout bug): a comic-sourced chapter shows
+  //       its panel images too, wrapped in the SAME padded card markup the default view uses ────
   {
     const C = loadClient({ quiet: true });
     C.run(SEED_COMMON, 'seed-4b');
+    // v86_t (user-reported, real screenshots): the SINGLE-panel case is the common one — image and
+    // text must share ONE `.comic-story-panel` card, pixel-identical structure to the default view's
+    // own `_comicStoryPanelsHtml`, or the SAME chapter's text visibly starts at a different
+    // x-position depending which view is showing (the real bug, caught from two real screenshots).
+    const SINGLE_COMIC_TOPIC = { ...TOPIC, comicPanels: [
+      { x1:0,y1:0,x2:10,y2:10, caption:'Der Hund lauft.', inScene:'', image:'data:image/jpeg;base64,AAAA' },
+    ] };
+    const readySingle = C.run(`
+      APP._teCache = { tp_te1: { status:'ready', data: { sentences: [
+        { sentenceId:'s0', text:'Der Hund lauft.', paraBreakBefore:false,
+          tokens:[{surface:'Der',lemma:'der',form:'article',sense:'the',confidence:'high'}] },
+      ] } } };
+      _textExplorerBodyHtml(${JSON.stringify(SINGLE_COMIC_TOPIC)});`);
+    assert.ok(readySingle.includes('data:image/jpeg;base64,AAAA'), `the panel image renders (got ${readySingle})`);
+    assert.strictEqual((readySingle.match(/class="comic-story-panel"/g) || []).length, 1,
+      `single panel -> exactly ONE card, image+text sharing it (got ${readySingle})`);
+    assert.ok(/comic-story-panel">[^]*<img class="comic-story-panel-img"[^]*<div class="comic-story-panel-text">[^]*te-tok/.test(readySingle),
+      `image and the per-word marked-up text are nested INSIDE the SAME card, in that order (got ${readySingle})`);
+
+    // Multi-panel: no per-panel boundary exists in the flat CP1/CP2 sentence stream, so each image
+    // gets its OWN text-less card, and the whole flat text gets one FURTHER card — same padded
+    // markup, just not a literal per-panel pairing (matches the translation view's own v86_t fix).
     const COMIC_TOPIC = { ...TOPIC, comicPanels: [
       { x1:0,y1:0,x2:10,y2:10, caption:'Der Hund lauft.', inScene:'', image:'data:image/jpeg;base64,AAAA' },
       { x1:10,y1:0,x2:20,y2:10, caption:'', inScene:'', image:'data:image/jpeg;base64,BBBB' },
@@ -238,8 +261,11 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
       _textExplorerBodyHtml(${JSON.stringify(COMIC_TOPIC)});`);
     assert.ok(ready.includes('comic-story-panels') && ready.includes('data:image/jpeg;base64,AAAA') && ready.includes('data:image/jpeg;base64,BBBB'),
       `the text-explorer view shows BOTH real panel images (got ${ready})`);
-    assert.ok(!ready.includes('comic-story-panel-text'), 'image-only — no per-panel text pairing (CP1/CP2 has no panel-boundary awareness)');
-    assert.ok(ready.includes('te-tok'), 'the per-word analysis marks still render too, below the image strip');
+    assert.strictEqual((ready.match(/class="comic-story-panel"/g) || []).length, 3,
+      `2 image-only cards PLUS 1 further text-only card, not a per-panel pairing (got ${ready})`);
+    assert.ok(ready.includes('comic-story-panel-text'),
+      'v86_t: the flat text IS wrapped in .comic-story-panel-text — same padding as the default view');
+    assert.ok(ready.includes('te-tok'), 'the per-word analysis marks still render too, inside that wrapped card');
     // Non-comic TOPIC (no comicPanels) must be entirely unaffected — no stray empty strip.
     const readyPlain = C.run(`
       APP._teCache = { tp_te1: { status:'ready', data: { sentences: [
@@ -249,7 +275,7 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
       _textExplorerBodyHtml(${JSON.stringify(TOPIC)});`);
     assert.ok(!readyPlain.includes('comic-story-panels'), 'a plain (non-comic) chapter shows no panel strip at all — the helper is a harmless no-op for it');
   }
-  console.log('  _textExplorerBodyHtml: a comic-sourced chapter shows its panel images (image-only strip), unaffected for plain chapters: OK');
+  console.log('  _textExplorerBodyHtml: a comic-sourced chapter shows panel images wrapped in the SAME padded card markup as the default view, unaffected for plain chapters: OK');
 
   // ── 5. Injection safety: a hostile lemma/form/sense cannot break out of the attribute or tag ──
   {

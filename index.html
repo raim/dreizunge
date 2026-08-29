@@ -540,8 +540,14 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
    this chapter's own vocabulary, unlike .story-vocab-hl above), so a distinct, cooler-toned scheme
    keeps the two views from reading as the same feature — this one answers "what is this word",
    not "have I learned this word". `.te-tok-low`/`.te-tok-unresolved` are visibly fainter, matching
-   this project's own "muted, not alarming" convention for a state that just means less certain. */
-.te-tok{background:#eaf2ff;border-radius:3px;padding:0 2px;cursor:pointer}
+   this project's own "muted, not alarming" convention for a state that just means less certain.
+   v86_u (user-reported, real screenshots): `font-weight:600` matches `.story-vocab-hl`'s own
+   unsolved weight — omitting it left marked words at the browser's normal (400) weight, which
+   renders slightly NARROWER than the default view's bold marks for the same characters, shifting
+   word-wrap points enough to make the same chapter's text visibly reflow between the two views even
+   with identical padding/margins (the `v86_t` fix). Not a layout/margin issue this time — a
+   character-metrics one. */
+.te-tok{background:#eaf2ff;border-radius:3px;padding:0 2px;cursor:pointer;font-weight:600}
 .te-tok:hover{outline:2px solid var(--blue);outline-offset:1px}
 .te-tok-low{background:#f2f2f2;color:var(--gray-dark)}
 .te-tok-unresolved{background:none;border-bottom:1px dashed var(--gray-mid)}
@@ -16195,22 +16201,36 @@ function _askedKeys(ex){
 //
 // `highlight:false` is for the translation view — the words are target-language, so marking them
 // inside a source-language translation would match nothing, or worse, coincidental substrings.
-// User follow-up (v86_p): the comic panel IMAGES were only ever visible on the plain target-language
-// view (_comicStoryPanelsHtml's own per-panel image+caption pairing) — the translation view
-// (`highlight:false` below) and the text-explorer view (_textExplorerBodyHtml) both showed NO images
-// at all for a comic-sourced chapter, even though the images are exactly as relevant there. Neither
-// view has PER-PANEL text to pair each image with (translation is one flat `storyTranslation` string
-// for the whole chapter — see the v86_a comment just below; CP1/CP2's own sentence records have no
-// panel-boundary awareness at all), so this is deliberately an IMAGE-ONLY strip — same bordered/
-// rounded card look as each panel gets in the default view (reusing `.comic-story-panel`/
-// `-img`), just without a per-panel caption underneath. Returns '' (a harmless no-op prefix) for any
-// non-comic chapter, so every existing caller/test for a plain-text chapter is unaffected.
-function _comicPanelImageStripHtml(d) {
-  if (!Array.isArray(d && d.comicPanels) || !d.comicPanels.length) return '';
-  const imgs = d.comicPanels.map(p => (p && p.image)
-    ? `<div class="comic-story-panel"><img class="comic-story-panel-img" src="${escAttr(p.image)}" alt=""></div>`
-    : '').join('');
-  return imgs ? `<div class="comic-story-panels">${imgs}</div>` : '';
+// User follow-up (v86_p, reworked v86_t): the comic panel IMAGES were only ever visible on the plain
+// target-language view (_comicStoryPanelsHtml's own per-panel image+caption pairing) — the
+// translation view (`highlight:false` below) and the text-explorer view (_textExplorerBodyHtml)
+// both showed NO images at all for a comic-sourced chapter. Neither view has PER-PANEL text to pair
+// each image with (translation is one flat `storyTranslation` string for the whole chapter — see the
+// v86_a comment just below; CP1/CP2's own sentence records have no panel-boundary awareness at all).
+//
+// v86_t (user-reported, real screenshots): the FIRST draft returned an image-only strip with the
+// caller's own text concatenated AFTER it as a separate sibling — visibly wrong: the text sat flush
+// against the outer card's own padding instead of getting `.comic-story-panel-text`'s own
+// `padding:10px 12px`, so the SAME chapter's text started at a different x-position in this view
+// than in the default one. Per the user's own diagnosis ("these should really use the same code to
+// display text, just update the highlighting colours") this now takes the caller's ALREADY-BUILT
+// text HTML as a parameter and wraps it in the EXACT SAME `.comic-story-panel`/`-text` markup
+// _comicStoryPanelsHtml's own per-panel case uses — single-panel chapters (the common case) get
+// pixel-identical structure to the default view, image and text sharing ONE card, differing only in
+// which highlighting the text itself carries. Multi-panel (no real per-panel boundary to split the
+// flat text by, in either view) shows every image as its own card, then the whole flat text as one
+// further card — same visual language, not a literal per-panel pairing. Returns `textHtml` UNCHANGED
+// for any non-comic chapter, so every existing caller/test for a plain-text chapter is unaffected.
+function _comicPanelsFlatTextHtml(d, textHtml) {
+  if (!Array.isArray(d && d.comicPanels) || !d.comicPanels.length) return textHtml;
+  const panelImg = p => (p && p.image) ? `<img class="comic-story-panel-img" src="${escAttr(p.image)}" alt="">` : '';
+  if (d.comicPanels.length === 1) {
+    return `<div class="comic-story-panels"><div class="comic-story-panel">${panelImg(d.comicPanels[0])}`
+      + `<div class="comic-story-panel-text">${textHtml}</div></div></div>`;
+  }
+  const imgs = d.comicPanels.map(p => `<div class="comic-story-panel">${panelImg(p)}</div>`).join('');
+  return `<div class="comic-story-panels">${imgs}`
+    + `<div class="comic-story-panel"><div class="comic-story-panel-text">${textHtml}</div></div></div>`;
 }
 function _storyBodyHtml(d, opts){
   const o = opts || {};
@@ -16225,9 +16245,10 @@ function _storyBodyHtml(d, opts){
   if (o.text == null && Array.isArray(d && d.comicPanels) && d.comicPanels.length) {
     return _comicStoryPanelsHtml(d, o);
   }
-  // v86_p: the translation view — no per-panel translation exists (see _comicPanelImageStripHtml's
-  // own comment), so this prepends an image-only strip rather than the full per-panel pairing above.
-  if (o.highlight === false) return _comicPanelImageStripHtml(d) + _storyParasHtml(furiHtml(text));
+  // v86_p/v86_t: the translation view — no per-panel translation exists (see
+  // _comicPanelsFlatTextHtml's own comment), so this wraps the flat translated text in the SAME
+  // card/padding markup as the default per-panel case above, rather than the full per-panel pairing.
+  if (o.highlight === false) return _comicPanelsFlatTextHtml(d, _storyParasHtml(furiHtml(text)));
   // PLAN §12: wrap the TARGET-language, highlighted body in a marker the free-text selection
   // listener looks for — every caller of this ONE renderer gets "select text, ask the tutor" for
   // free, no per-caller wiring. Deliberately NOT added to the `highlight === false` branch above:
@@ -20551,10 +20572,12 @@ function _textExplorerBodyHtml(d){
   if (entry.status === 'analyzing') return '<p class="te-status" dir="auto">' + escHtml(entry.step || t('text_explorer.analyzing')) + '</p>';
   if (entry.status === 'error') return '<p class="te-status" dir="auto">' + escHtml(t('text_explorer.error', { error: entry.error || '' })) + '</p>';
   const sentences = (entry.data && entry.data.sentences) || [];
-  // v86_p: same image-only strip as the translation view — see _comicPanelImageStripHtml's own
-  // comment for why this can't reuse the default view's per-panel caption pairing.
-  if (!sentences.length) return wrap(_comicPanelImageStripHtml(d) + _storyParasHtml(furiHtml(d.story || '')));
-  return wrap(_comicPanelImageStripHtml(d) + _teStoryHtml(d.story || '', sentences));
+  // v86_p/v86_t: same shared card/padding wrapper as the translation view — see
+  // _comicPanelsFlatTextHtml's own comment for why this can't reuse the default view's per-panel
+  // caption pairing, and why it must NOT just concatenate the image strip and the text as separate
+  // siblings (the real bug that shipped first: the text lost `.comic-story-panel-text`'s own padding).
+  if (!sentences.length) return wrap(_comicPanelsFlatTextHtml(d, _storyParasHtml(furiHtml(d.story || ''))));
+  return wrap(_comicPanelsFlatTextHtml(d, _teStoryHtml(d.story || '', sentences)));
 }
 // User follow-up (v86_s): "the layout should be the very same as the normal red->green view —
 // switching should just change colours and links." The FIRST draft used CP1's own `paraBreakBefore`
