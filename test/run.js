@@ -153,6 +153,7 @@ run('unit: story-finished card — the last page of the walk (v77_f)', 'node', [
 run('unit: story-summary card — the first page of the walk (v77_h)', 'node', [path.join(__dirname, 'unit-story-summary.test.js')]);
 run('unit: progress + entry card nav/bars popups (v83_c/v83_d)', 'node', [path.join(__dirname, 'unit-progress-card-nav.test.js')]);
 run('unit: story-panel border colour, red→green with comprehension progress (v83_g)', 'node', [path.join(__dirname, 'unit-story-border-color.test.js')]);
+run('unit: retranslate a story on demand, after a manual fix (v86_w)', 'node', [path.join(__dirname, 'unit-retranslate-story.test.js')]);
 run('unit: PLAN §7.0 CP1 — canonical text + analysis records, report-only', 'node', [path.join(__dirname, 'unit-canonical-text.test.js')]);
 run('unit: install.sh — one-line local installer, idempotent and non-destructive', 'node', [path.join(__dirname, 'unit-install-script.test.js')]);
 run('unit: bin/dreizunge — PATH launcher, symlink resolution + real end-to-end run', 'node', [path.join(__dirname, 'unit-dreizunge-launcher.test.js')]);
@@ -329,6 +330,7 @@ if (!quick) {
   run('e2e: comic panel auto-detection (PLAN §2.4 Track A4 milestone 5, v85_o)', 'node', [path.join(__dirname, 'e2e-comic-detect.test.js')]);
   run('e2e: save-story syncs comicPanels for a single-panel chapter (v86_g)', 'node', [path.join(__dirname, 'e2e-save-story-comic-sync.test.js')]);
   run('e2e: story-qc/accept ALSO syncs comicPanels for a single-panel chapter (v86_r)', 'node', [path.join(__dirname, 'e2e-story-qc-accept-comic-sync.test.js')]);
+  run('e2e: retranslate a story on demand, after a manual fix (v86_w)', 'node', [path.join(__dirname, 'e2e-retranslate-story.test.js')]);
   run('e2e: post-gen storyboard opt-in fix, book-job pipeline (v85_p)', 'node', [path.join(__dirname, 'e2e-postgen-storyboard-optin.test.js')]);
   run('e2e: post-gen analysis opt-in, mirroring postGenStoryboard (item W follow-up, v86_o)', 'node', [path.join(__dirname, 'e2e-postgen-analysis-optin.test.js')]);
   run('e2e: model picker + table-format + split-translation + provenance', 'node', [path.join(__dirname, 'e2e-models.test.js')]);

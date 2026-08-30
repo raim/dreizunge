@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v86_v';
+const APP_VERSION  = 'v86_w';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6669,6 +6669,17 @@ capitalization rules — for example, German capitalizes every common noun, not 
 proper nouns) rather than transcribing the capital letters literally. If ${langName} does not
 distinguish case, ignore this instruction and transcribe normally.${capsExample}
 
+The same convention drops normal punctuation, too — comic/sign lettering routinely has no periods,
+commas, or question marks at all, even where a correctly written ${langName} sentence would have one.
+Restore the punctuation a native ${langName} writer would naturally use for THIS exact sentence (a
+period at a genuine sentence end, a comma where the grammar clearly calls for one, a question mark for
+a real question) — but ONLY where you are confident; if you are unsure whether something is one
+sentence or two, or whether a comma belongs somewhere, leave it unpunctuated rather than guessing.
+This instruction is about HOW the words you see are written, never about WHICH words are there: never
+invent, add, drop, or reorder a word to make the punctuation or grammar fit — transcribe exactly the
+words visible in the image, stay as close to the original wording as possible, and fix only
+capitalization and punctuation.
+
 There may be two kinds of text in this panel:
 1. A CAPTION or narration box (plain text, usually no border or a simple rectangular box, at the top
    or bottom of the panel).
@@ -6679,7 +6690,19 @@ List each separately, labeled "CAPTION:" or "IN-SCENE:" (omit a label entirely i
 text of that kind). Within each, if a single word is broken across two lines, rejoin it into one word
 — only insert a hyphen if the source image actually shows one; do not add a hyphen that isn't there.
 Do not transcribe any text that is only partially visible at the very edge of this image — it likely
-belongs to an adjacent panel, not this one. Output only the labeled transcriptions, nothing else.`;
+belongs to an adjacent panel, not this one.
+
+Some signs and panels group text into visually distinct chunks WITHOUT using punctuation to mark the
+boundary between them — for example a highlighted headline phrase, then a separate coloured banner or
+box beneath it, then a final line, all on one sign. When you see this kind of real structural break —
+a change in background colour, a boxed/highlighted band, a plain gap clearly wider than normal line
+spacing — put a newline in your transcription at that break, even though there is no comma or period
+there in the source. Do NOT do this for ordinary word-wrap: if a single phrase merely wraps across
+lines because the artwork is narrow (no colour change, no box, no unusual gap), transcribe it as one
+continuous line exactly as you already do. The point is to preserve real content boundaries the sign
+itself is showing you, not to reproduce the artwork's own line breaks.
+
+Output only the labeled transcriptions, nothing else.`;
 }
 
 // Parse a "CAPTION: ...\nIN-SCENE: ..." response into { caption, inScene }. Either field may be ''
@@ -8021,6 +8044,50 @@ http.createServer(async (req, res) => {
       saveStore(store);
       console.log(`  Saved story for "${topic}" (${story.length} chars)`);
       return json(res, 200, { ok: true, aiStory: saved.aiStory, edits: aiHuntEdits });
+    }
+
+    // v86_w (user-requested): a manual story fix (typos, an extracted-text correction, an accepted
+    // QC proposal) does NOT re-translate — `storyTranslation` keeps whatever the ORIGINAL generation
+    // produced, so the read-story translation toggle and any dialect/lesson-generation pass that
+    // reads it can silently disagree with the now-corrected target text. Deliberately a SEPARATE,
+    // user-triggered route rather than automatic on every `/api/save-story` — same reasoning as
+    // `/api/storyline-retitle`'s own "not on every edit" precedent: re-translation is a real LLM call
+    // (cost + latency), and a teacher fixing a dozen small typos in a row should not pay for a dozen
+    // re-translations before they're done editing. Mirrors `/api/storyline-retitle`'s own shape
+    // (find-by-id-or-name, one LLM call, persist, return the new value) rather than duplicating
+    // `_runBookJob`'s own auto-translate block — that block runs ONCE at generation time inside a
+    // much larger pipeline; this route's whole job is exactly the one call ELIDED there because
+    // `storyTranslation` already existed.
+    if (M === 'POST' && url.pathname === '/api/retranslate-story') {
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { topic } = body;
+      if (!topic) return json(res, 400, { error: 'Missing topic' });
+      const saved = findSaved(topic);
+      if (!saved) return json(res, 404, { error: 'Topic not found' });
+      if (!saved.story) return json(res, 400, { error: 'No story to translate' });
+      const lang = saved.lang || 'it', srcLang = saved.srcLang || 'en';
+      try {
+        const t0 = Date.now();
+        const { result: { text, promptTokens, completionTokens }, tokens: _mTok } = await meterLLMTokens(() =>
+          callLLMTranslation(sysTranslation(lang, srcLang), saved.story,
+            Math.min(2048, Math.ceil(saved.story.length * 1.2)), { think: false }));
+        const storyTranslation = text.trim();
+        saved.storyTranslation = storyTranslation;
+        saved.translationMeta = buildGenMeta({ type: 'translation', model: OLLAMA_TRANSLATION_MODEL, t0,
+          valid: storyTranslation ? 1 : 0, promptTokens, completionTokens });
+        saved.translationMeta.origin = 'generated';
+        saved.translationMeta.source = 're-translated after a manual story edit';
+        addTokenUsage(saved, _mTok, 'translation');
+        stampUpdated(saved);
+        saveStore(store);
+        console.log(`  Re-translated "${topic}" (${lang}→${srcLang}): ${storyTranslation.length} chars`);
+        return json(res, 200, { storyTranslation });
+      } catch(e) {
+        return json(res, 500, { error: e.message });
+      }
     }
 
     // ── Direct lesson edit ───────────────────────────────────────────────

@@ -187,6 +187,8 @@
     "toast.export_ok": "✓ Exported {n} lesson",
     "toast.export_ok_plural": "✓ Exported {n} lessons",
     "toast.export_fail": "⚠ Export failed: {msg}",
+    "toast.retranslate_done": "🔄 Story re-translated",
+    "toast.retranslate_failed": "⚠ Re-translation failed: {msg}",
     "export.markdown": "⬇ Markdown (.md)",
     "export.html": "⬇ HTML (.html)",
     "export.json": "⬇ JSON (.json)",

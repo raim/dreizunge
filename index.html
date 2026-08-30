@@ -1713,6 +1713,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <button class="story-icon-btn" onclick="event.stopPropagation();speakStory()" id="speakstory-btn" title="Read aloud">💬</button>
       <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="event.stopPropagation();toggleStoryRepair()" title="Edit story">✏️</button>
       <button class="story-icon-btn" id="story-qc-btn" onclick="event.stopPropagation();runStoryQc()" title="Proofread with QC model" style="display:none">🔍</button>
+      <button class="story-icon-btn" id="story-retranslate-btn" onclick="event.stopPropagation();retranslateStory()" title="Re-translate (after fixing the story text)" style="display:none">🔄</button>
       <span id="story-edit-toolbar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap" onclick="event.stopPropagation()">
         <button class="story-repair-btn" onclick="saveStoryEdit()" style="padding:4px 10px;font-size:12px">💾</button>
         <button class="story-repair-btn" style="background:var(--gray-mid);color:var(--text);padding:4px 10px;font-size:12px" onclick="cancelStoryEdit()">✕</button>
@@ -5518,6 +5519,31 @@ async function saveStoryEdit(){
   }
 }
 
+// v86_w (user-requested): re-translate the story on demand — a manual fix to the story text (a typo,
+// an extracted-text correction, an accepted QC proposal) does NOT re-translate on its own (see
+// server.js's own /api/retranslate-story comment for why this stays a SEPARATE action, not automatic
+// on every save), so `storyTranslation` can silently keep describing the PRE-fix text. Static build
+// has no server for this — the button is hidden there (buildPath's own canGenerate gate), same
+// convention as story-qc-btn.
+async function retranslateStory(){
+  const d = APP.lessonData; if (!d || !d.story) return;
+  const btn = document.getElementById('story-retranslate-btn');
+  if (btn) btn.disabled = true;
+  try {
+    const r = await fetch('/api/retranslate-story', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: d.topic }) });
+    const resp = await r.json().catch(()=>({}));
+    if (!r.ok) throw new Error(resp.error || 'Failed');
+    d.storyTranslation = resp.storyTranslation;
+    showToast(t('toast.retranslate_done'));
+    renderStoryText(d);
+  } catch(e) {
+    showToast(t('toast.retranslate_failed', { msg: e.message }));
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
 // ── QC for generated texts (v55_g) ───────────────────────────────────────────
 // Proofread the current story with the QC model. The result is a PROPOSAL — never applied until the
 // user accepts. The review panel (reusing #aeh-diff-panel) shows the sentence-level diff + verdict.
@@ -9236,6 +9262,16 @@ function buildPath(){
     const qcBtn=document.getElementById('story-qc-btn');
     if(qcBtn) qcBtn.style.display=(APP.info?.canGenerate && d.story)?'':'none';
     if (d.storyQcProposal) { try { renderStoryQcProposal(d.storyQcProposal); } catch(_){} }
+    // v86_w (user-requested): a manual fix to the story text (a typo, an extracted-text correction)
+    // leaves storyTranslation stale. Gated EXACTLY like the QC button right above it (a real backend
+    // + a story) — NOT also on _canEdit(): re-translating doesn't let anyone free-edit any content
+    // (unlike story-repair-toggle-btn, which genuinely is teacher-only), it re-runs one deterministic
+    // LLM call and overwrites one derived field, the same class of action QC's own button already is
+    // and that button carries no teacher-mode gate either. unit-can-edit-teacher-mode.test.js's own
+    // sweep (§4) exists specifically to catch a NEW call site re-widening _canEdit() with a capability
+    // term — respected here by NOT combining them, rather than by exempting this line from that sweep.
+    const retransBtn=document.getElementById('story-retranslate-btn');
+    if(retransBtn) retransBtn.style.display=(APP.info?.canGenerate && d.story)?'':'none';
     // Story flag row
     const sfRow=document.getElementById('story-flag-row');
     if(sfRow) sfRow.style.display='';
