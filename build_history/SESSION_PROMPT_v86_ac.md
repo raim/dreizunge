@@ -95,9 +95,13 @@ earned in session N…the v85 line" blocks — now 46+ standing rules, plus item
 
 # WHERE TO START
 
-- **A possible follow-up refinement, NOT built**: constrain inflection wrong-choice generation so a
-  distractor category must genuinely apply to the TARGET language's own morphology (found via the
-  "datief" report at `v86_ab` — Dutch has no noun case at all). Needs a product decision on scope.
+- **A possible follow-up refinement, NOT built**, from the "datief" report at `v86_ab`, refined in a
+  follow-up conversation: constrain inflection wrong-choice generation to DIRECT RELATIVES of the
+  asked dimension — e.g. for a `"plural"` item, the only genuinely meaningful wrong choice is
+  `"singular"` (same dimension, number, other value), never an unrelated dimension (case, tense,
+  mood, …) that may not even exist for this language/word. Stricter and more specific than "the
+  category must apply to the target language" — worth doing for EVERY language, not just case-less
+  ones. Needs a product decision on scope before any prompt change ships.
 - **The 3 chapters cached in `canonical-analysis.json` still have stale English `"form"` values**
   from before `v86_aa`'s fix. The user can now re-analyse `tp_17880367188140000070` themselves via
   this cut's own confirm-gated 🔤 button — no code action needed, just noting it's finally possible.

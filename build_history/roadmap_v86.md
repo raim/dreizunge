@@ -2843,10 +2843,22 @@ self-contradicting one gives none.
 choice, `"datief"` (dative), is not a plausible distractor for Dutch at all — modern Dutch has lost
 noun-case marking almost entirely (unlike German), so `"boeren"` has no dative form distinct from its
 plural; asked directly, the user's specific question ("wouldn't datief also be correct?") is answered
-NO, this is not a second-correct-answer bug, just an imperfectly-chosen distractor that borrows a
-German-shaped case category for a language that doesn't have one. Left open as a possible future
-refinement to the wrong-choice generation instructions (constrain distractors to categories that
-genuinely apply to the TARGET language's own morphology), not built without being asked.
+NO twice over, not once — worked through in full with the user afterward: (1) `"boeren"` isn't even
+in a dative-shaped SYNTACTIC role here (`raken` is plain transitive, taking a direct/accusative-type
+object — Dutch grammar terms it *lijdend voorwerp*, not *meewerkend voorwerp*, the dative-like
+indirect-object role), and (2) Dutch nouns don't morphologically mark case at all regardless, so
+there is no separate "dative form" to select even in principle. This is not a second-correct-answer
+bug, just an imperfectly-chosen distractor that borrows a German-shaped case category for a language
+that doesn't have one.
+
+Left open as a possible future refinement, not built without being asked — REFINED by the user's own
+follow-up into something more specific than "distractor categories must apply to the target
+language": *constrain wrong choices to DIRECT RELATIVES of the asked dimension* — e.g. for a
+`"plural"` item, the only genuinely meaningful wrong choice is `"singular"` (the SAME dimension,
+number, just the other value), not an unrelated dimension (case, tense, mood, …) that may not even
+exist for this language/word at all. This is a STRICTER, more specific rule than "must apply to the
+target language" — it would also improve languages that DO have case, tense, etc., by keeping every
+wrong choice on the SAME axis as the correct answer instead of mixing axes. Not built.
 
 `test/unit-prompt-examples.test.js` gained a new §5: parses the `default` example's one worked JSON
 item and asserts `formLabel === 'Plural'`, `formChoices` contains the German-only terms `'Possessiv'`/
