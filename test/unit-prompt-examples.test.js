@@ -118,4 +118,27 @@ for (const [lang, example] of Object.entries(PROMPTS.wordForms.examples)) {
 }
 console.log(`  every wordForms example item validates (${checked} item(s)): OK`);
 
+// 5) v86_ab: inflections' own "default" example must demonstrate formLabel/formChoices/
+//    explanation IN THE SAME LANGUAGE as that example's own "translation" field (its S) — a real
+//    user report on tp_17880367188140000070 (nl-target/de-source, no dedicated example, falls
+//    back to "default") found every one of those fields coming back in the wrong language,
+//    because the old default example hardcoded them in ENGLISH despite its own "translation"
+//    field being German — internally inconsistent with the schema's own "AS A SHORT PHRASE IN
+//    {S}" instruction. wordForms' own default example does NOT have this inconsistency (checked
+//    above, not assumed) — this block is inflections-specific on purpose.
+{
+  const item = itemsOf(PROMPTS.inflections.examples.default)[0];
+  assert.ok(item, 'inflections default example should contain one worked item');
+  assert.strictEqual(item.formLabel, 'Plural',
+    'formLabel is German ("Plural"), matching the example\'s own German "translation" field — not the old hardcoded English ("plural")');
+  // "Plural"/"Singular" are spelled identically in English and German (only capitalisation
+  // differs), so check the other two choices instead — "possessive"/"past tense" are distinctly
+  // English, "Possessiv"/"Präteritum" distinctly German, no ambiguity either way.
+  assert.ok(item.formChoices.includes('Possessiv') && item.formChoices.includes('Präteritum'),
+    'formChoices use the German case/tense terms ("Possessiv", "Präteritum"), not the old English ones ("possessive", "past tense")');
+  assert.ok(/^Plural von/.test(item.explanation) && !/^Plural of/i.test(item.explanation),
+    'explanation is a German sentence ("Plural von ...") — not the old English "Plural of ..." phrasing');
+}
+console.log('  inflections\' "default" example: formLabel/formChoices/explanation now match its own translation field\'s language (German), not hardcoded English: OK');
+
 console.log('unit-prompt-examples: ALL PASSED');
