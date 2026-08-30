@@ -1,5 +1,9 @@
 {
   "en": {
+    "jobs.title": "Background jobs",
+    "jobs.empty": "Nothing running right now.",
+    "jobs.open": "Open",
+    "jobs.error": "Failed: {msg}",
     "qc.editor.suggests_by": "⚑ {model} suggests:",
     "models.story": "Story",
     "models.lessons": "Lessons",

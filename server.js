@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v87_a';
+const APP_VERSION  = 'v87_b';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -1247,9 +1247,18 @@ function flagsForTopic(topic) {
 
 // ── Job store — background tasks with progress ────────────────────────
 const jobs = new Map();
-function newJob() {
+// item U (roadmap_v87.md): `meta` is OPTIONAL and additive — every pre-existing caller that omits
+// it keeps working identically (label/link default to null). Only jobs given a `label` are
+// TOP-LEVEL, user-facing jobs and appear in GET /api/jobs; a labelless job is treated as an
+// internal sub-job (e.g. one chapter's own generate() inside a book job, which the book job's own
+// entry already represents) and stays out of the aggregate listing so it doesn't double up.
+// `link` is `{type:'topic'|'storyline', id}` or null — what the popover's "open" action navigates
+// to; several job kinds (a brand-new topic mid-generation, comic extraction/detection) have no
+// existing entity to link to yet and simply carry link:null.
+function newJob(meta) {
   const id = crypto.randomBytes(8).toString('hex');
   jobs.set(id, { status: 'running', step: 'Starting…', data: null, error: null,
+                 label: (meta && meta.label) || null, link: (meta && meta.link) || null,
                  createdAt: Date.now(), _timer: null });
   return id;
 }
@@ -5985,10 +5994,10 @@ function _syncStorylineForTopic(topicRef, continuedFromTopic) {
 // the book job tracks overall progress and chains continuedFrom server-side.
 const bookJobs = new Map(); // bookId -> { status, current, chapters:[{title,status,topicId,error,jobId}], error, createdAt }
 
-function newBookJob(titles) {
+function newBookJob(titles, label) {
   const id = 'book_' + crypto.randomBytes(8).toString('hex');
   bookJobs.set(id, {
-    status: 'running', current: 0,
+    status: 'running', current: 0, label: label || null,
     chapters: titles.map(t => ({ title: t || '', status: 'pending', topicId: null, error: null })),
     error: null, createdAt: Date.now(),
   });
@@ -6242,7 +6251,7 @@ function _kickOffAnalysisJob(topic) {
   const existingJobId = analyzingChapters.get(chapterId);
   if (existingJobId && jobs.has(existingJobId) && jobs.get(existingJobId).status === 'running')
     return { jobId: existingJobId, cached: false, shadow };
-  const jobId = newJob();
+  const jobId = newJob({ label: `Analyzing "${(topic.topic||'').slice(0,50)}"`, link: { type: 'topic', id: chapterId } });
   analyzingChapters.set(chapterId, jobId);
   console.log(`  Analyzing chapter: ${chapterId} model=${OLLAMA_ANALYSIS_MODEL} job=${jobId}`);
   _runAnalysisJob(jobId, topic).catch(e => {
@@ -7431,7 +7440,10 @@ http.createServer(async (req, res) => {
         if (tp) topics = [tp];
       }
       if (!topics.length) return json(res, 404, { error: 'Nothing in scope to check.' });
-      const jobId = newJob();
+      const jobId = newJob({
+        label: `QC: ${storylineId ? (topics[0]?.topic ? `"${topics[0].topic}" +${topics.length-1} more` : 'storyline') : (topics[0]?.topic || 'topic')}`,
+        link: storylineId ? { type: 'storyline', id: storylineId } : (topicId ? { type: 'topic', id: topicId } : null),
+      });
       console.log(`  ⚙ QC requested (${storylineId?('storyline '+storylineId):topicId?('topic '+topicId+(lessonIdx!==undefined&&lessonIdx!==null?' lesson '+lessonIdx:'')):'?'}) → ${topics.length} topic(s), job=${jobId}`);
       _runQc(jobId, topics, { lessonIdx: (lessonIdx === undefined ? null : lessonIdx), onlyFlagged: !!onlyFlagged, force: !!force, includeStory: includeStory !== false })
         .catch(e => { console.error('  QC error:', e.message); jobFail(jobId, e.message); });
@@ -7559,6 +7571,32 @@ http.createServer(async (req, res) => {
         data: job.data, error: job.error });
     }
 
+    // ── All in-flight jobs, aggregated (item U, roadmap_v87.md) ────────
+    // A single place to see everything running/recently finished — the popover's own data source.
+    // Aggregates the generic `jobs` store (only entries carrying a `label`, i.e. TOP-LEVEL jobs —
+    // see newJob()'s own comment for why a labelless sub-job is deliberately excluded) with the
+    // separate `bookJobs` store (multi-chapter generation has its own tracker predating this item;
+    // reusing it rather than routing book generation through `jobs` too avoids a second, riskier
+    // migration for one release). No owner/session concept — this is a single-learner deployment
+    // (CLAUDE.md's own standing rule), so "whose jobs" is simply "all of them".
+    if (M === 'GET' && url.pathname === '/api/jobs') {
+      const out = [];
+      for (const [id, j] of jobs) {
+        if (!j.label) continue;   // internal sub-job (e.g. one chapter inside a book job) — skip
+        out.push({ id, kind: 'job', label: j.label, link: j.link, status: j.status,
+          step: j.step, error: j.error, createdAt: j.createdAt });
+      }
+      for (const [id, bj] of bookJobs) {
+        const firstTopicId = bj.chapters.find(c => c.topicId)?.topicId || null;
+        out.push({ id, kind: 'book', label: bj.label || 'Generating book',
+          link: firstTopicId ? { type: 'topic', id: firstTopicId } : null,
+          status: bj.status, step: `Chapter ${Math.min(bj.current + 1, bj.chapters.length)}/${bj.chapters.length}`,
+          error: bj.error, createdAt: bj.createdAt });
+      }
+      out.sort((a, b) => b.createdAt - a.createdAt);
+      return json(res, 200, { jobs: out });
+    }
+
     // ── Cancel job ──────────────────────────────────────────────
     if (M === 'POST' && url.pathname === '/api/jobs/cancel') {
       let body; try { body = JSON.parse(await readBody(req)); } catch(e) { body = {}; }
@@ -7623,7 +7661,7 @@ http.createServer(async (req, res) => {
         return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
       if (generatingTopics.has(topicKey))
         return json(res, 429, { error: 'Already generating lessons for this topic. Please wait.' });
-      const jobId = newJob();
+      const jobId = newJob({ label: `Generating "${resolvedTopic.slice(0,60)}"` });
       generatingTopics.add(topicKey);
       const userOpts = {
         userStory:       userStory       ? String(userStory).trim()       : null,
@@ -7699,7 +7737,7 @@ http.createServer(async (req, res) => {
       // could tie up the job queue indefinitely on a bad request.
       if (images.length > 30) return json(res, 400, { error: 'Too many panels in one batch (max 30).' });
       const lang = typeof body.lang === 'string' && body.lang.trim() ? body.lang.trim() : 'en';
-      const jobId = newJob();
+      const jobId = newJob({ label: `Extracting comic panels (${images.length})` });
       console.log(`  Comic extraction: ${images.length} panel(s), lang=${lang}, model=${OLLAMA_VISION_MODEL} job=${jobId}`);
       _runComicExtractJob(jobId, images, lang).catch(e => {
         console.error('  Comic extraction error:', e.message);
@@ -7720,7 +7758,7 @@ http.createServer(async (req, res) => {
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
       const image = typeof body.image === 'string' ? body.image : '';
       if (!image) return json(res, 400, { error: 'No image provided.' });
-      const jobId = newJob();
+      const jobId = newJob({ label: 'Detecting comic panels' });
       console.log(`  Comic panel detection: model=${OLLAMA_VISION_MODEL} job=${jobId}`);
       _runComicDetectJob(jobId, image).catch(e => {
         console.error('  Comic detection error:', e.message);
@@ -7801,7 +7839,8 @@ http.createServer(async (req, res) => {
         generated: !!generated, baseTopic, chapterLen: chapterLenN,
         sourceFile: (typeof sourceFile === 'string' && sourceFile.trim()) ? sourceFile.trim().slice(0,200) : null,
         storyStyle: (storyStyle && storyStyle !== 'creative') ? storyStyle : null };
-      const bookId = newBookJob(chaptersIn.map((c, i) => c.title || (baseTopic ? `${baseTopic.slice(0,40)} — ${i+1}` : '')));
+      const bookId = newBookJob(chaptersIn.map((c, i) => c.title || (baseTopic ? `${baseTopic.slice(0,40)} — ${i+1}` : '')),
+        `Generating "${(baseTopic || 'book').slice(0,60)}" (${chaptersIn.length} chapter${chaptersIn.length===1?'':'s'})`);
       console.log(`  Book generation started: ${chaptersIn.length} chapter(s)${generated?` (generated from "${baseTopic}")`:' (from upload)'}, id=${bookId}`);
       // v78_q: the SCRIPTS are logged. They were not, which is why two rounds of "the story came
       // out in Latin" could not be told apart from the outside: a job that never received the
@@ -7908,7 +7947,7 @@ http.createServer(async (req, res) => {
       const storyTopic = String(body.topic || '').slice(0, 300);
       const instructions = String(body.instructions || '').slice(0, 600);
       const method = body.method === 'rewrite' ? 'rewrite' : 'direct';
-      const jobId = newJob();
+      const jobId = newJob({ label: `Writing dialect story: "${(topic.topic||'').slice(0,50)}"`, link: { type: 'topic', id: topic.id } });
       const glossaryRows = (topic.lessons||[]).flatMap(l => (l.vocab||[]).filter(v => v && v.target && v.source)
         .map(v => ({ target: v.target, source: v.source })));
       (async () => {
@@ -8234,7 +8273,7 @@ http.createServer(async (req, res) => {
       const dialect  = saved.userDialect || null;
       const style    = saved.storyStyle  || null;
       const story    = saved.story;
-      const jobId = newJob();
+      const jobId = newJob({ label: `Adding ${fmt} lesson: "${topicName.slice(0,50)}"`, link: { type: 'topic', id: saved.id } });
       generatingTopics.add(topicKey);
       console.log(`  Add lesson: "${topicName}" fmt=${fmt} diff=${diff} vocabMode=${_addVocabMode}`);
 
@@ -8322,7 +8361,11 @@ http.createServer(async (req, res) => {
       catch (e) { return json(res, 400, { error: 'Invalid JSON' }); }
       const startId = body.id || body.chapterId || body.startId;
       if (!startId) return json(res, 400, { error: 'missing chapter id' });
-      const jobId = newJob();
+      const _recreateStart = findSavedById(startId);
+      const jobId = newJob({
+        label: `${body.addTypes ? 'Adding' : 'Re-creating'} storyline lessons${_recreateStart ? `: "${_recreateStart.topic.slice(0,50)}"` : ''}`,
+        link: { type: 'topic', id: startId },
+      });
       // v71_p: `addTypes` is the tick-list from the shared picker (ADD, keeping existing lessons);
       // `arcMode` remains for older clients and still re-creates.
       const _addTypes = Array.isArray(body.addTypes) ? body.addTypes : null;

@@ -1693,6 +1693,22 @@ every case) is recorded as a scoped-but-unbuilt option, not designed further.
 
 ---
 
+**The jobs popover (item U, `roadmap_v87.md`, `v87_b`)** — "a single place to see everything in
+flight"; the running/scheduled-jobs half only, "unfinished projects" still blocked on item R.
+
+| what | where |
+|---|---|
+| the job store's own new metadata | `newJob(meta)` (server.js) — OPTIONAL `{label, link}`, defaulting to null so every pre-existing call site is unchanged. Only a job with a `label` is TOP-LEVEL/user-facing; a labelless one (the per-chapter `generate()` inside `_runBookJob`, still bare `newJob()`) is an internal sub-job, deliberately excluded from the aggregate — the book job itself (the separate `bookJobs` store, `newBookJob(titles, label)`) is the one entry that represents it |
+| the aggregate route | `GET /api/jobs` (server.js) — merges `jobs` (labeled entries only) + `bookJobs` into one array, newest first. No owner/session concept (single-learner deployment, the standing rule) |
+| `link` shape | `{type:'topic'\|'storyline', id}` or null — several kinds (a brand-new topic mid-generation, comic extraction/detection) have nothing to link to yet |
+| the client fab + popover | `#jobs-pill`/`#jobs-pop` (index.html, in `#bottom-bar`'s `#corner-pills`) — `refreshJobsPill()` (same availability gate as `refreshTutorAvailability`), `openJobsPop`/`closeJobsPop`/`toggleJobsPop` (same outside-click/Esc shape as `toggleModelPop`), `_jobsFetchAndRender`/`_jobsRenderList` |
+| polling cadence | `/api/jobs` polls every 3s ONLY while the popover is open (`_jobsPollIv`) — no standing interval; the badge count refreshes once per screen navigation, piggy-backing on `show()`'s existing call to `refreshTutorAvailability()` |
+| ⚠️ `refreshJobsPill()` is called from `init()` AFTER `loadUIStrings()`, unlike `refreshTutorAvailability()` (called BEFORE it) | found live: calling it earlier left the pill's `title` attribute showing the raw `t()` key (`"jobs.title"`) until the learner's first `show()` navigation, since a plain page load with no hash never calls `show()` on its own. `refreshTutorAvailability()` has this exact same latent gap, left alone as out of this item's scope |
+| ⚠️ `.jobs-pop` opens `left:0`, not `.bmodels-pop`'s own `right:0` | found live (screenshot, not just reading the CSS): the jobs pill sits EARLY (left) in `#corner-pills`, so `.bmodels-pop`'s own right-anchored convention ran the popover off the left edge of the viewport here. Same mobile fixed-fullwidth fallback as `.bmodels-pop` |
+| the acceptance tests | `test/e2e-jobs-list.test.js` (live server + fake Ollama, 3 checks) — labeled+linked QC/analysis jobs, a book job aggregates as ONE entry before and after completion, a source-level check (`_runBookJob`'s own `newJob()` call passes no meta) mirroring `e2e-recreate.test.js`'s own precedent. Mutation-tested (deleting the aggregate route's label filter turns the "every entry carries a label" assertion red) |
+
+---
+
 **Keep 6b current the cheap way:** when a session's write-up names a function it had to hunt for,
 add the row. A wrong row is worse than a missing one, so only add names verified in that session.
 

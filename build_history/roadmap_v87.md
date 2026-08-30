@@ -179,7 +179,9 @@ Still open, from a screenshot report; needs live reproduction.
 
 ### U. A popover listing all running/scheduled jobs, including unfinished projects
 
-Still open, not started.
+**✅ The running/scheduled-jobs half SHIPPED at `v87_b`** — see that entry under "SHIPPED IN THE v87
+LINE" for the full build. **Still open**: folding item R's own "unfinished projects" list into the
+same popover, blocked on item R (below) not yet existing.
 
 ### V. Multiple image upload for comic generation — each image its own chapter; "add images" after the first upload
 
@@ -1989,6 +1991,67 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 ---
 
+
+# ✅ SHIPPED IN THE v87 LINE
+
+## ✅ v87_b — item U, a jobs popover: "a single place to see everything in flight"
+
+The running/scheduled-jobs half of item U (the "unfinished projects" half stays blocked on item R,
+not yet built — this cut deliberately does not touch that). User picked this item from the v87_a
+carry-forward list.
+
+**Server**: `newJob(meta)` now takes an OPTIONAL `{label, link}` — every pre-existing call site that
+omits it is unchanged (label/link default to null). Only a job given a `label` is a TOP-LEVEL,
+user-facing job; a labelless one (the per-chapter `generate()` call inside `_runBookJob`, still bare
+`newJob()`) is an internal sub-job and stays out of the aggregate by construction — the book job
+itself, tracked in the separate pre-existing `bookJobs` store, is the one entry that represents it.
+Nine call sites tagged: chapter analysis (CP1/CP2), QC, single-topic generate, comic extraction,
+comic panel detection, dialect story, add-lesson, storyline recreate/add-lessons, and book generation
+(`newBookJob` gained the same `label` parameter). `link` is `{type:'topic'|'storyline', id}` or null
+— several kinds (a brand-new topic mid-generation, comic extraction/detection) have no existing
+entity to link to yet and carry `link:null`. New `GET /api/jobs` aggregates `jobs` (labeled entries
+only) + `bookJobs` (one entry per book, linking to its first finished chapter once one exists) into
+one array, newest first. No owner/session concept — single-learner deployment (the standing rule),
+so "whose jobs" is simply "all of them."
+
+**Client**: `#jobs-pill` (⏳), a new always-reachable icon next to settings/mute in `#bottom-bar`'s
+`#corner-pills`, same availability gate as the tutor fab (`refreshJobsPill()`, hidden without a
+backend). A running-count badge; clicking opens `#jobs-pop`, a popover listing each job's icon/label/
+step (or error), with an "Open →" button when a link exists (`loadSaved`/`showStorylineById`). Polls
+`/api/jobs` every 3s ONLY while open (closed = no standing interval, matching this codebase's own
+per-feature-poller convention); the badge itself refreshes once per screen navigation (`show()`),
+piggy-backing on the SAME cadence `refreshTutorAvailability()` already uses, not a second global
+interval. `refreshJobsPill()` is called from `init()` AFTER `loadUIStrings()` (unlike
+`refreshTutorAvailability()`, called before it) — found live: calling it earlier left the pill's
+`title` showing the raw `t()` key until the learner's first navigation, since a plain page load with
+no hash never calls `show()` on its own. The tutor fab has this same latent gap (not fixed here, out
+of this item's scope). Also found and fixed live: `.jobs-pop`'s first anchor (`right:0`, copied from
+`.bmodels-pop`) ran the popover off the LEFT edge of the viewport, since the pill sits early (left)
+in `#corner-pills` while `.bmodels-pop`'s own pill sits further right — switched to `left:0`, plus
+the same fixed-fullwidth mobile fallback `.bmodels-pop` already has. Both caught by actually
+rendering the popover in the browser pane at desktop and mobile widths, not by reading the CSS.
+
+New `ui.json` `en` keys (`jobs.title`, `jobs.empty`, `jobs.open`, `jobs.error`) — confirmed safe to
+add this cut (asked first, per the v87_a session prompt's own standing note; the user confirmed
+translation work is not blocked by it right now).
+
+New `test/e2e-jobs-list.test.js` (live server + fake Ollama, 3 checks): a QC job and an analysis job
+both appear labeled/linked to their topic; a book job aggregates as exactly ONE `kind:'book'` entry
+both while running and after completion (not one per chapter); a source-level check (mirroring
+`e2e-recreate.test.js`'s own precedent for a property a live run can't cleanly isolate) confirms
+`_runBookJob`'s own per-chapter `newJob()` call passes no meta. Mutation-tested: deleting the
+aggregate route's `if (!j.label) continue` filter turned the "every job-kind entry carries a label"
+assertion red, confirming the guard actually fires. A first draft of the test wrote real entries into
+the PROJECT'S OWN `canonical-analysis.json` (the analysis job genuinely runs CP1/CP2 against the fake
+backend) — caught via `git status` before commit, reverted, and fixed with the same isolated-scratch-
+file pattern `e2e-analysis.test.js` already established (`CANONICAL_ANALYSIS_FILE` override).
+
+**Not built this cut, deliberately**: the "unfinished projects" list item U's own scoping named as
+this feature's natural second half — blocked on item R (not yet built); a labelless job's error is
+visible in the popover but nothing yet prunes long-dead entries from view beyond the job store's own
+existing 5-minute-after-completion cleanup timer.
+
+---
 
 
 # TRACK T — THE TEXT-FOCUSED PROGRESS CARD (user, at the `v80_f` cut)

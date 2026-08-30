@@ -62,6 +62,26 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .bmodels-pop select{max-width:150px}
 @media(max-width:520px){.bmodels-pop{position:fixed;left:8px;right:8px;top:auto;min-width:0}}
 .bmodels .bmodel-field{display:inline-flex;align-items:center;gap:3px}
+/* item U (roadmap_v87.md): the jobs popover. Anchored ABOVE its pill (unlike .bmodels-pop, which
+   opens below) — the pill lives in the fixed BOTTOM bar, so opening downward would run off-screen. */
+.jobs-pop{position:absolute;bottom:calc(100% + 8px);left:0;z-index:902;background:var(--white);border:2px solid var(--gray-mid);border-radius:var(--radius-lg);padding:8px;box-shadow:0 6px 20px rgba(0,0,0,.2);width:min(320px,calc(100vw - 32px));max-height:min(360px,60vh);overflow-y:auto;box-sizing:border-box}
+/* the pill sits early (left-ish) in #corner-pills — measured live: right:0 (bmodels-pop's own
+   anchor, fine for a pill near the RIGHT of its row) ran the popover off the left edge of the
+   viewport here. left:0 opens rightward instead; the fixed-fullwidth fallback below still catches
+   a viewport too narrow for even that. */
+@media(max-width:520px){.jobs-pop{position:fixed;left:8px;right:8px;bottom:calc(var(--bottom-bar-h) + 12px);width:auto}}
+.jobs-pop-hdr{font-weight:800;font-size:12px;color:var(--gray-dark);padding:2px 4px 6px}
+.jobs-pop-empty{font-size:12px;color:var(--gray-dark);font-style:italic;padding:6px 4px}
+.jobs-row{display:flex;flex-direction:column;gap:2px;padding:7px 8px;border-radius:8px;background:var(--gray-light)}
+.jobs-row+.jobs-row{margin-top:6px}
+.jobs-row.error{background:#fdecea}
+.jobs-row-top{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:var(--text)}
+.jobs-row-icon{flex:0 0 auto}
+.jobs-row-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jobs-row-step{font-size:11px;color:var(--gray-dark);padding-left:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jobs-row.error .jobs-row-step{color:#b3261e}
+.jobs-row-open{align-self:flex-end;background:none;border:none;color:var(--blue-dark);font-weight:800;font-size:11px;cursor:pointer;padding:2px 4px}
+#jobs-pill-badge{position:absolute;top:-4px;right:-4px;background:var(--blue);color:#fff;font-size:10px;font-weight:800;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px;box-shadow:0 1px 4px rgba(0,0,0,.3)}
 .bmodels select{font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;color:var(--text);background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 5px;cursor:pointer;max-width:170px}
 .bpill{display:inline-flex;align-items:center;gap:6px;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;border:2px solid}
 .bpill.anthropic{background:#fff8f0;border-color:#ff9f1c;color:#c26000}
@@ -683,6 +703,21 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
          that updater was already generic, only the BUTTON was scattered. Always visible, same
          reasoning as settings-pill: reachable on every page including static. -->
     <button id="mute-pill" class="mute-btn" onclick="toggleMute()" title="Mute" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15);opacity:.7">🔊</button>
+    <!-- item U (roadmap_v87.md): "a single place to see everything in flight" — a popover over the
+         generic job store (GET /api/jobs), reachable from every screen like settings-pill/mute-pill.
+         Hidden without a backend (refreshJobsPill(), same gating refreshTutorAvailability() uses) —
+         a static build or a dead Ollama connection never has a job to show. #jobs-pill-badge mirrors
+         #tutor-fab-badge's own float-above-the-button placement, but shows a running COUNT rather
+         than a one-shot "reply ready" flag — jobs.js — the wrap is jobs-pop's own positioning
+         context (bottom:calc(100% + 8px), opens UPWARD — see .jobs-pop's own comment). -->
+    <div id="jobs-fab" style="display:none;position:relative">
+      <button id="jobs-pill" onclick="toggleJobsPop(event)" title="" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15)">⏳</button>
+      <span id="jobs-pill-badge" style="display:none"></span>
+      <div id="jobs-pop" class="jobs-pop" style="display:none">
+        <div class="jobs-pop-hdr" id="jobs-pop-hdr"></div>
+        <div id="jobs-pop-list"></div>
+      </div>
+    </div>
     <!-- v84_k (user request): ONE persistent speech-input control, not a button per exercise. Inert
          (disabled, greyed via CSS) whenever the current screen/exercise has nothing speakable.
          v84_k–v84_m auto-listened the instant a speakable question rendered; v85_b REMOVED that
@@ -5298,7 +5333,7 @@ function _closeEditorsOnNav(targetId){
   }
   if(targetId!=='storyline-screen'){ try{ closeStorylineEditInScreen(); }catch(_){} }
 }
-function show(id){ APP.screen = id; _closeEditorsOnNav(id); document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); try{ updateStaticFlagBanner(); }catch(_){} try{ refreshTutorAvailability(); }catch(_){} try{ _storySelHide(); }catch(_){} try{ _closeCardNavPopups(); }catch(_){} try{ _speechMicRefresh(); }catch(_){} try{ if(id==='generation-screen') _genWizardGoto(1); }catch(_){} }   // v62: the tutor follows the learner across screens; PLAN §12: a stale selection popover must not survive a navigation; progress-card redesign: neither must a stale nav popup (either card's) — this fires on every showComplete()/showStorySummary() re-render too, since both end with their own show(...) call
+function show(id){ APP.screen = id; _closeEditorsOnNav(id); document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); try{ updateStaticFlagBanner(); }catch(_){} try{ refreshTutorAvailability(); }catch(_){} try{ refreshJobsPill(); }catch(_){} try{ _storySelHide(); }catch(_){} try{ _closeCardNavPopups(); }catch(_){} try{ _speechMicRefresh(); }catch(_){} try{ if(id==='generation-screen') _genWizardGoto(1); }catch(_){} }   // v62: the tutor follows the learner across screens; PLAN §12: a stale selection popover must not survive a navigation; progress-card redesign: neither must a stale nav popup (either card's) — this fires on every showComplete()/showStorySummary() re-render too, since both end with their own show(...) call
 // ── PLAN §C0.2 — explicit screen renderers: a NAMING SEAM, not a rewrite ─────────────────────
 // The plan's own words: "must first preserve every current entry point; no visual redesign
 // bundled in." These delegate to the functions that already own their rendering — nothing about
@@ -7499,6 +7534,12 @@ async function init(){
   await syncFlagsFromServer();
   updateStaticFlagBanner();
   await loadUIStrings(APP.uiLang);   // boot in the persisted UI language, not "I speak"
+  // item U: called AFTER loadUIStrings, unlike refreshTutorAvailability() above (v62-era, called
+  // before strings load — its OWN title attribute has the same pre-existing "shows the raw key
+  // until the first show() navigation" gap, left alone here as out of this item's scope) — the
+  // landing screen never gets an explicit show() call on a plain load with no hash, so a call any
+  // earlier would leave the tooltip showing "jobs.title" until the learner first navigates.
+  try{ refreshJobsPill(); }catch(_){}
   // Restore source lang selector first so selectLang can read APP.srcLang
   const ssel=document.getElementById('src-lang-select');
   if(ssel) ssel.value='all'; // start at globe (no filter)
@@ -21075,6 +21116,107 @@ function _tutorApplyLabels(){
   set('tutor-widget-clear', el => el.title        = t('tutor.clear'));
   set('story-sel-grammar-lbl', el => el.textContent = t('tutor.sel_grammar'));
   set('story-sel-meaning-lbl', el => el.textContent = t('tutor.sel_meaning'));
+}
+
+// ── Jobs popover (item U, roadmap_v87.md) ─────────────────────────────────────
+// "A single place to see everything in flight" — a live view over the server's generic job store
+// (GET /api/jobs, aggregating `jobs` + the separate `bookJobs` tracker; see that route's own
+// comment for why book jobs stay a second store rather than a forced migration). Lives in the same
+// shared engine region as refreshTutorAvailability (defined AFTER @static-exclude-end so show()'s
+// call to it — shared between the live and static builds — never ReferenceErrors) and follows the
+// SAME availability gate: no backend, no jobs, fab hidden, exactly like the tutor fab. Deliberately
+// does NOT poll on a standing interval — refreshJobsPill() runs once per screen change (show(), the
+// same cadence refreshTutorAvailability already uses) so the badge count is never more than one
+// navigation stale; a faster live update (_jobsPollTick, every 3s) only runs while the popover is
+// actually open, matching this codebase's own "per-feature pollers only run while relevant"
+// convention (comic extraction/detection/chapter-formation each have their own, INTERNALS.md §6b).
+let _jobsLastList = [];
+let _jobsPollIv = null;
+async function refreshJobsPill(){
+  const fab = document.getElementById('jobs-fab');
+  if(!fab) return;
+  const ok = !!APP.info?.canGenerate;
+  if(!ok){ fab.style.display='none'; closeJobsPop(); return; }
+  fab.style.display = '';
+  const btn = document.getElementById('jobs-pill'); if(btn) btn.title = t('jobs.title');
+  await _jobsFetchAndRender();
+}
+async function _jobsFetchAndRender(){
+  try{
+    const r = await fetch('/api/jobs');
+    if(!r.ok) return;
+    const data = await r.json();
+    _jobsLastList = Array.isArray(data.jobs) ? data.jobs : [];
+  }catch(_){ return; }
+  const running = _jobsLastList.filter(j => j.status==='running' || j.status==='pending').length;
+  const badge = document.getElementById('jobs-pill-badge');
+  if(badge){
+    if(running > 0){ badge.style.display='flex'; badge.textContent=String(running); }
+    else badge.style.display='none';
+  }
+  const pop = document.getElementById('jobs-pop');
+  if(pop && pop.style.display !== 'none') _jobsRenderList();
+}
+function _jobsRenderList(){
+  const hdr = document.getElementById('jobs-pop-hdr'); if(hdr) hdr.textContent = t('jobs.title');
+  const wrap = document.getElementById('jobs-pop-list'); if(!wrap) return;
+  if(!_jobsLastList.length){
+    wrap.innerHTML = '<div class="jobs-pop-empty">'+escHtml(t('jobs.empty'))+'</div>';
+    return;
+  }
+  wrap.innerHTML = _jobsLastList.map(j => {
+    const isErr = j.status === 'error';
+    const icon = isErr ? '⚠️' : (j.status === 'done' ? '✅' : '⏳');
+    const stepText = isErr ? t('jobs.error', {msg: j.error||''}) : (j.step||'');
+    const openBtn = j.link
+      ? `<button class="jobs-row-open" data-jobid="${escAttr(j.id)}">${escHtml(t('jobs.open'))} →</button>`
+      : '';
+    return `<div class="jobs-row${isErr?' error':''}">`
+      + `<div class="jobs-row-top"><span class="jobs-row-icon">${icon}</span>`
+      + `<span class="jobs-row-label">${escHtml(j.label||'')}</span></div>`
+      + (stepText ? `<div class="jobs-row-step">${escHtml(stepText)}</div>` : '')
+      + openBtn + `</div>`;
+  }).join('');
+}
+// Delegated (not one listener per row — the list re-renders on every poll tick): looks the job back
+// up in _jobsLastList by id rather than serializing `link` into the markup, the same reason
+// _jobsLastList exists at module scope at all.
+document.addEventListener('click', e => {
+  const btn = e.target.closest && e.target.closest('.jobs-row-open');
+  if(!btn) return;
+  const job = _jobsLastList.find(j => j.id === btn.dataset.jobid);
+  if(job && job.link) _jobsOpenLink(job.link);
+});
+function _jobsOpenLink(link){
+  closeJobsPop();
+  if(link.type === 'storyline') showStorylineById(link.id);
+  else if(link.type === 'topic') loadSaved(link.id);
+}
+function _jobsPopOutside(e){
+  const wrap = document.getElementById('jobs-fab');
+  if(wrap && !wrap.contains(e.target)) closeJobsPop();
+}
+function _jobsPopEsc(e){ if(e.key === 'Escape') closeJobsPop(); }
+function openJobsPop(){
+  const pop = document.getElementById('jobs-pop'); if(!pop) return;
+  pop.style.display = '';
+  _jobsRenderList();
+  _jobsFetchAndRender();
+  if(_jobsPollIv) clearInterval(_jobsPollIv);
+  _jobsPollIv = setInterval(_jobsFetchAndRender, 3000);
+  setTimeout(() => { document.addEventListener('click', _jobsPopOutside); document.addEventListener('keydown', _jobsPopEsc); }, 0);
+}
+function closeJobsPop(){
+  const pop = document.getElementById('jobs-pop'); if(!pop) return;
+  pop.style.display = 'none';
+  if(_jobsPollIv){ clearInterval(_jobsPollIv); _jobsPollIv = null; }
+  document.removeEventListener('click', _jobsPopOutside);
+  document.removeEventListener('keydown', _jobsPopEsc);
+}
+function toggleJobsPop(e){
+  if(e) e.stopPropagation();
+  const pop = document.getElementById('jobs-pop'); if(!pop) return;
+  (pop.style.display === 'none') ? openJobsPop() : closeJobsPop();
 }
 
 // ── Scope: where is the learner asking from? ─────────────────────────────────

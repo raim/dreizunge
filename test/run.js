@@ -337,6 +337,7 @@ if (!quick) {
   run('e2e: post-gen storyboard opt-in fix, book-job pipeline (v85_p)', 'node', [path.join(__dirname, 'e2e-postgen-storyboard-optin.test.js')]);
   run('e2e: post-gen analysis opt-in, mirroring postGenStoryboard (item W follow-up, v86_o)', 'node', [path.join(__dirname, 'e2e-postgen-analysis-optin.test.js')]);
   run('e2e: model picker + table-format + split-translation + provenance', 'node', [path.join(__dirname, 'e2e-models.test.js')]);
+  run('e2e: GET /api/jobs — the aggregate jobs list (item U)', 'node', [path.join(__dirname, 'e2e-jobs-list.test.js')]);
 } else {
   console.log('\n(skipping e2e tests: --quick)');
 }
