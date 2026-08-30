@@ -351,5 +351,41 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
   }
   console.log('  explorer ON: neither flag shows active; clicking a flag exits explorer mode and switches the view: OK');
 
+  // ── 8. v86_z: static-build mode reads the baked STATIC_ANALYSIS snapshot, never fetches ────────
+  // The static build has no server for GET /api/analysis or POST /api/analyze-chapter — this is the
+  // ONLY branch reachable there, and it must never touch the network at all (a fetch would just fail
+  // against a page with no backend, but the point is to degrade INSTANTLY and correctly, not to fail
+  // slowly the same way a live 404 would).
+  {
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON + `
+      APP.lessonData = ${JSON.stringify(TOPIC)};
+      window._fetchCalls = 0; fetch = function(){ window._fetchCalls++; return Promise.reject(new Error('must not be called')); };
+      STATIC_ANALYSIS = { tp_te1: { chapterId:'tp_te1', available:true, stale:false, sentenceCount:1, tokenCount:1,
+        sentences:[{ sentenceId:'s0', text:'Der Hund lauft.', paraBreakBefore:false, tokens:[
+          {surface:'Der',lemma:'der',form:'article',sense:'the',confidence:'high'} ] }] } };
+      (async()=>{ await _ensureTextExplorerData(); })();
+      true;`, 'static-hit');
+    await settle();
+    const r = JSON.parse(C.run(`JSON.stringify({ fetchCalls: window._fetchCalls, entry: _teCacheStore()['tp_te1'] })`));
+    assert.strictEqual(r.fetchCalls, 0, 'static mode never calls fetch — the baked snapshot is read directly, no network round trip at all');
+    assert.strictEqual(r.entry.status, 'ready', 'a chapter present in the bake goes straight to ready');
+    assert.ok(r.entry.data && r.entry.data.sentences && r.entry.data.sentences.length === 1, 'the REAL baked sentence data reaches the cache entry, not a placeholder');
+  }
+  {
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON + `
+      APP.lessonData = ${JSON.stringify(TOPIC)};
+      window._fetchCalls = 0; fetch = function(){ window._fetchCalls++; return Promise.reject(new Error('must not be called')); };
+      STATIC_ANALYSIS = { };   // this chapter was never analysed before the last build-static.js run
+      (async()=>{ await _ensureTextExplorerData(); })();
+      true;`, 'static-miss');
+    await settle();
+    const r = JSON.parse(C.run(`JSON.stringify({ fetchCalls: window._fetchCalls, entry: _teCacheStore()['tp_te1'] })`));
+    assert.strictEqual(r.fetchCalls, 0, 'a chapter absent from the bake ALSO never calls fetch — there is no live job to kick off statically');
+    assert.strictEqual(r.entry.status, 'error', 'a chapter absent from the bake degrades to a clean error state, not a hang or a crash');
+  }
+  console.log('  static build: _ensureTextExplorerData() reads STATIC_ANALYSIS directly, present or absent, and never touches the network: OK');
+
   console.log('unit-text-explorer: ALL PASSED');
 })().catch(e => { console.error(e); process.exit(1); });

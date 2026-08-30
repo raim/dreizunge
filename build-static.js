@@ -20,6 +20,9 @@ const crypto = require('crypto');
 const UI_FILE   = path.join(__dirname, 'ui.json');
 const LANG_FILE = path.join(__dirname, 'languages.json');
 const SCRIPT_FILE = path.join(__dirname, 'scripts.json');
+// Same env-override convention server.js's own ANALYSIS_STORE_FILE already uses — lets a test point
+// this at an isolated scratch file instead of the real project-root canonical-analysis.json.
+const ANALYSIS_FILE = process.env.CANONICAL_ANALYSIS_FILE || path.join(__dirname, 'canonical-analysis.json');
 
 const lessonsFile = process.argv[2] || path.join(__dirname, 'lessons.json');
 const outputDir   = process.argv[3] || path.join(__dirname, 'docs');
@@ -62,6 +65,7 @@ const BUILD_SOURCES = {
   'ui.json'        : sourceFingerprint(UI_FILE),
   'languages.json' : sourceFingerprint(LANG_FILE),
   'scripts.json'   : sourceFingerprint(SCRIPT_FILE),
+  'canonical-analysis.json': sourceFingerprint(ANALYSIS_FILE),
   'build-static.js': sourceFingerprint(__filename),
 };
 
@@ -76,6 +80,36 @@ if (!fs.existsSync(lessonsFile)) {
 let lessonsData;
 try { lessonsData = JSON.parse(fs.readFileSync(lessonsFile, 'utf8')); }
 catch(e) { console.error('Error: could not parse', lessonsFile, '—', e.message); process.exit(1); }
+
+// v86_z (user-requested): bake PLAN §7.0 CP1/CP2's own per-chapter analysis (item W, "text
+// explorer") into the static build too — previously live-only (GET /api/analysis/:id has no static
+// equivalent, so the 🔍 button had nothing to show on GitHub Pages). canonical-analysis.json is
+// OPTIONAL and typically covers only a FEW chapters (CP2 is a real model call per sentence, minutes
+// each — nobody runs it for the whole corpus at once) — an honest snapshot, not a promise every
+// chapter works offline. Missing entirely degrades to an empty object, same "nothing baked, nothing
+// breaks" shape STATIC_LESSONS itself falls back to when lessons.json is thin.
+// Deliberately does NOT recompute `stale` the way the live GET /api/analysis/:id route does (a
+// re-hash of the chapter's CURRENT canonical text against the cached one) — that hash function lives
+// in canonical-text.js, a Node module with no reason to ship to the browser for this alone. Every
+// baked entry is stamped stale:false, matching what's true at THE MOMENT OF THIS BUILD; a chapter
+// edited after that point simply needs a rebuild, the exact same "re-run build-static.js" contract
+// every other baked artifact in this file already has.
+let STATIC_ANALYSIS_DATA = {};
+try {
+  const analysisStore = JSON.parse(fs.readFileSync(ANALYSIS_FILE, 'utf8'));
+  const chapters = (analysisStore && analysisStore.chapters) || {};
+  for (const [chapterId, rec] of Object.entries(chapters)) {
+    STATIC_ANALYSIS_DATA[chapterId] = {
+      chapterId, available: true, stale: false,
+      sentenceCount: rec.sentenceCount, tokenCount: rec.tokenCount, sentences: rec.sentences,
+      model: (rec.provenance && rec.provenance.model) || null, analyzedAt: rec.analyzedAt || null,
+    };
+  }
+  console.log(`  Baked CP1/CP2 analysis for ${Object.keys(STATIC_ANALYSIS_DATA).length} chapter(s) (canonical-analysis.json)`);
+} catch (e) {
+  console.log('  No canonical-analysis.json (or unreadable) — text explorer ships with 0 chapters baked, same as no chapters ever analysed');
+}
+const analysisSerialized = JSON.stringify(STATIC_ANALYSIS_DATA);
 
 // v69.2 (user-reported): the teacher's global pass mark lives in the store's settings and is
 // served live via /api/info — the static build never baked it, so _coverageTarget() fell back to
@@ -244,6 +278,10 @@ const STATIC_LESSONS = ${lessonsSerialized};
 STATIC_LESSONS.sort((a,b)=>((b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||'')));
 
 const STATIC_STORYLINES = ${storylinesSerialized};
+
+// v86_z: PLAN §7.0 CP1/CP2's own per-chapter analysis (item W, "text explorer") — see this file's
+// own comment above STATIC_ANALYSIS_DATA for what this does and does not promise.
+const STATIC_ANALYSIS = ${analysisSerialized};
 
 // ── repopulateContinueSelect — filters continue-dropdown by language ──
 function repopulateContinueSelect(){

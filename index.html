@@ -20718,6 +20718,19 @@ async function _ensureTextExplorerData(){
   if (existing && (existing.status === 'ready' || existing.status === 'loading' || existing.status === 'analyzing')) { _renderCompStory(); return; }
   const entry = store[chapterId] = { status: 'loading', error: null };
   _renderCompStory();
+  // v86_z (user-requested): the static build has no server for GET /api/analysis or
+  // POST /api/analyze-chapter — read the baked STATIC_ANALYSIS snapshot directly instead. Unlike the
+  // live path below, there is no retry-via-a-new-job option for a chapter that isn't in the bake: the
+  // snapshot is frozen at whatever `node build-static.js` last saw (see build-static.js's own comment
+  // on STATIC_ANALYSIS_DATA for why only SOME chapters are ever baked — CP2 is a real, slow model
+  // call per sentence).
+  if (typeof STATIC_ANALYSIS !== 'undefined') {
+    const cp = STATIC_ANALYSIS[chapterId];
+    if (cp && cp.available) { entry.status = 'ready'; entry.data = cp; }
+    else { entry.status = 'error'; entry.error = 'not analysed in this offline copy'; }
+    _renderCompStory();
+    return;
+  }
   try {
     const r = await fetch('/api/analysis/' + encodeURIComponent(chapterId));
     const cp = r && r.ok ? await r.json() : null;

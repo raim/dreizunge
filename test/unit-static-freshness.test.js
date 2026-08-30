@@ -23,7 +23,7 @@ const root = path.join(__dirname, '..');
 // as a change to the data does. server.js is not: only APP_VERSION reaches the artifact and
 // unit-version-derivation already guards that.
 const BAKED = ['index.html', 'lessons.json', 'ui.json', 'languages.json', 'scripts.json',
-               'build-static.js'];
+               'canonical-analysis.json', 'build-static.js'];
 
 function fingerprint(file) {
   try { return crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex').slice(0, 12); }

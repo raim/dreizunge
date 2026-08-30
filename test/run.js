@@ -100,6 +100,7 @@ run('unit: QC skip already-checked lessons (v49 bug 6)', 'node', [path.join(__di
 run('unit: static version derived from server APP_VERSION (v49)', 'node', [path.join(__dirname, 'unit-version-derivation.test.js')]);
 run('unit: current roadmap names the current line (v78_b)', 'node', [path.join(__dirname, 'unit-roadmap-version.test.js')]);
 run('unit: docs/ built from current sources (v73_b)', 'node', [path.join(__dirname, 'unit-static-freshness.test.js')]);
+run('unit: static build bakes CP1/CP2 analysis (text explorer offline, v86_z)', 'node', [path.join(__dirname, 'unit-static-analysis-bake.test.js')]);
 run('unit: runner reports its own check count (v70)', 'node', [path.join(__dirname, 'unit-run-summary.test.js')]);
 run('unit: translate-ui discovers every offered language (v53)', 'node', [path.join(__dirname, 'unit-translate-ui-langs.test.js')]);
 run('unit: llm.js race guard clears its timer (v53_c)', 'node', [path.join(__dirname, 'unit-llm-timeout-handle.test.js')]);
