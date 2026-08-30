@@ -168,12 +168,13 @@ VERBS, distinct from case (genuinely absent for some languages)? Two live-model 
 failed to move this via wording alone — a third attempt without answering this question first is not
 recommended.
 
-### R. Save an intermediate "unfinished" project state after text parsing, before lesson generation
+### ✅ R. Save an intermediate "unfinished" project state after text parsing, before lesson generation — SHIPPED `v87_d`/`v87_e`
 
-**✅ SHIPPED at `v87_d`** — the PDF/paste-then-split upload flow (`_pdfChunks`) only; see that
-entry under "SHIPPED IN THE v87 LINE" for the full build. **Not covered**: the comic-image upload
-flow, a genuinely different state shape (`APP_COMIC`) — a natural follow-up, not silently assumed
-done.
+The PDF/paste-then-split upload flow (`_pdfChunks`) shipped at `v87_d`; the comic-image upload flow
+(`APP_COMIC`, a genuinely different state shape) at `v87_e`, user-requested immediately after
+`v87_d`. See each entry under "SHIPPED IN THE v87 LINE" for its own full build. **Not covered by
+either**: multiple images / one draft per page — item V (multi-image comic upload) is itself
+unbuilt, so this follows the same single-image-at-a-time scope the live feature already has.
 
 ### T. Two questions initiated via text-selection → grammar click were never answered (needs reproduction)
 
@@ -1996,6 +1997,57 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v87 LINE
+
+## ✅ v87_e — item R extended to the comic-image upload flow
+
+User-requested immediately after `v87_d` shipped ("continue with comic upload") — extends the
+just-built drafts feature to `APP_COMIC` (the comic-image upload's own state), the gap `v87_d`
+explicitly flagged as not covered. Scope unchanged from what the live comic feature already has:
+single-image-at-a-time (item V, multi-image, is itself unbuilt).
+
+**The state, and why it's a different shape than the chunks kind**: `APP_COMIC = {dataUrl, naturalW,
+naturalH, boxes}` — ONE full page image plus an array of drawn/detected panel boxes
+(`{x1,y1,x2,y2,text?}`, where `text` is `{caption,inScene,raw,error}` once extraction lands). A box
+carries only COORDINATES, never its own cropped image — `_comicCropDataUrl(box)` crops from the one
+page image on demand at extraction/creation time. So a comic draft needs to persist the page image
+ONCE plus the (much smaller) box list, not one image per chunk.
+
+**Built**: `POST /api/drafts` now dispatches on `body.comic` being present — a comic-kind record
+carries `comic:{dataUrl,naturalW,naturalH,boxes}`, `chunks:null`; a chunks-kind record the reverse.
+New validation specific to the shape: `comic.dataUrl` required and capped at 8MB (real case is well
+under this — the client's existing `_COMIC_MAX_DIM=1600` downscale already bounds it — the cap is
+headroom for a hostile/unexpected body, not the expected case), `comic.boxes` required and capped at
+100. `GET /api/jobs`'s aggregate label differs by kind: `Comic draft (N panels)` vs. the existing
+`Draft: "file" (N chapters)`.
+
+Client: `_comicDraftSaveDebounced()`/`_comicDraftSaveNow()` hook `_comicRenderList()` (11 existing
+call sites — draw, delete, move, extraction landing, review-confirm), the exact same integration
+shape `_draftSaveDebounced()` used for `_renderPdfChunks()`. A SEPARATE `_comicDraftId` (not shared
+with the chunks flow's `_draftId`) — same precedent as `_pdfBookId`/`_comicBookId` already being
+independent, so neither flow's discard/resume can touch the other's state even if both happened to
+have an open draft. `discardComicDraft()` wired into `onUseComicCb()`'s "off" branch (dropping the
+image) and `comicCreateChapter()`'s success path (real generation supersedes the draft).
+`resumeDraft(draftId)` is now a DISPATCHER — fetches the record, and for `kind==='comic'` delegates
+to a new `_resumeComicDraftFrom(d)` instead of running the chunks-populate logic. That function
+deliberately does NOT reuse `_comicFinishSetup()` (the fresh-upload path) — its first act is
+`comicClearPanels()`, which would discard the very boxes being restored — so it re-implements just
+the image-load + canvas-setup half directly.
+
+**Applied last cut's own lesson before writing any code, not after finding a bug the hard way**:
+`v87_d`'s two real bugs (a missing `.open` class, a wrong wizard-step number derived from a label
+instead of the markup) were both found only by actually resuming a draft live. This time,
+`#comic-panel`'s own enclosing `gen-card` was checked FIRST (found: `gen-card-2`, same as
+`#pdf-panel`) — and the live resume-and-screenshot check that follows confirmed it needed no
+equivalent fix, on the first try: the image, both panels (one with its extracted caption/in-scene
+text, one correctly still showing its raw pixel size), and the "I have a comic page image" checkbox
+all rendered correctly immediately.
+
+New `test/e2e-drafts-comic.test.js` (live server + fake Ollama, 4 checks, mutation-tested: flipping
+the summary's box-vs-chunk-count logic turns its own assertion red) and
+`test/unit-drafts-comic.test.js` (`lib-dom.js` harness, 3 checks, mutation-tested: removing
+`resumeDraft`'s dispatch branch turns its own assertion red) — the latter also confirms dispatching
+to the comic path leaves the chunks flow's own `_pdfChunks` completely untouched, i.e. the two kinds'
+local state never cross-contaminates.
 
 ## ✅ v87_d — item R: unfinished-project drafts, folded into item U's own jobs popover
 

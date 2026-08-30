@@ -3676,6 +3676,11 @@ async function doDialectImport(){
 // x1/y1/x2/y2 at pointer-down) } — mutually exclusive with both `resizing` and `drawing`. See
 // _comicHitBox()/_comicPointerStart() for how the three are told apart.
 const APP_COMIC = { dataUrl: null, naturalW: 0, naturalH: 0, boxes: [], drawing: null, resizing: null, moving: null };
+// item R follow-up (roadmap_v87.md): the comic upload's own draft id, SEPARATE from the PDF flow's
+// _draftId — the two upload flows already keep independent job ids (_pdfBookId/_comicBookId), the
+// same precedent applies here rather than risking one flow's discard/resume touching the other's.
+let _comicDraftId = null;
+let _comicDraftSaveTimer = null;
 // v85_u (user-reported, confirmed): "when I zoom in/out on the page, the selected panel squares move
 // relative to the image." `_comicSetupCanvas()`'s own comment already named this gap when it was
 // written ("would need its own resize-observer to stay in sync with responsive CSS width") but never
@@ -3714,6 +3719,9 @@ function onUseComicCb(){
     const us=document.getElementById('use-story-cb'); if(us&&us.checked){ us.checked=false; onUseStoryCb(); }
     const ud=document.getElementById('use-dialect-cb'); if(ud&&ud.checked){ ud.checked=false; onUseDialectCb(); }
   } else {
+    // item R follow-up: an explicit "drop this image" is an explicit "forget the draft too" —
+    // same reasoning as _clearUpload()'s own discardDraft() call for the PDF flow.
+    discardComicDraft();
     comicClearPanels();
     APP_COMIC.dataUrl=null; APP_COMIC.naturalW=0; APP_COMIC.naturalH=0;
     const wrap=document.getElementById('comic-draw-wrap'); if(wrap) wrap.style.display='none';
@@ -4021,6 +4029,12 @@ function _comicRedraw(){
   }
 }
 function _comicRenderList(){
+  // item R follow-up: same integration point as _renderPdfChunks()'s own autosave hook — every
+  // APP_COMIC.boxes mutation (draw, delete, move, extraction landing, review-confirm) already
+  // funnels through this ONE function's 11 call sites, so hooking here needs no per-mutator
+  // instrumentation. Called unconditionally, before the empty-boxes early return just below — the
+  // debounce function's own guard is what actually decides whether there's anything to save.
+  _comicDraftSaveDebounced();
   const list=document.getElementById('comic-panel-list'); if(!list) return;
   const actions=document.getElementById('comic-panel-actions');
   const count=document.getElementById('comic-panel-count');
@@ -4076,6 +4090,84 @@ function comicMovePanel(i,dir){
 function comicClearPanels(){
   APP_COMIC.boxes=[]; APP_COMIC.drawing=null;
   _comicRedraw(); _comicRenderList();
+}
+
+// item R follow-up (roadmap_v87.md): unfinished-project drafts for the comic upload flow — the
+// SAME persistence problem _pdfChunks had (real work — drawn boxes, an expensive vision-model
+// extraction — living only in this tab's JS memory until a chapter is actually created), a
+// different state shape. Scope: this flow is single-image-at-a-time today (item V/multi-image is
+// unbuilt), so ONE draft holds ONE page.
+function _comicDraftSaveDebounced(){
+  // Nothing worth saving (no image, no boxes), or real generation has already started — from that
+  // moment bookJobs owns durability, same guard shape _draftSaveDebounced() uses for the PDF flow.
+  if(!APP_COMIC.dataUrl || !APP_COMIC.boxes.length || _comicBookId) return;
+  if(_comicDraftSaveTimer) clearTimeout(_comicDraftSaveTimer);
+  _comicDraftSaveTimer = setTimeout(_comicDraftSaveNow, 1500);
+}
+async function _comicDraftSaveNow(){
+  if(!APP_COMIC.dataUrl || !APP_COMIC.boxes.length || _comicBookId) return;
+  if(!APP.info?.canGenerate) return;
+  try{
+    const body = {
+      id: _comicDraftId || undefined,
+      lang: APP.lang||'it', srcLang: APP.srcLang||'en', difficulty: APP.difficulty||2,
+      lessonFormat: APP.lessonFormat||'standard',
+      arc: !!document.getElementById('comic-arc-cb')?.checked,
+      arcTypes: document.getElementById('comic-arc-cb')?.checked ? readArcTypeChecks('comic-arc-types') : null,
+      postGenStoryboard: !!document.getElementById('comic-storyboard-cb')?.checked,
+      postGenAnalysis: !!document.getElementById('comic-analysis-cb')?.checked,
+      comic: {
+        dataUrl: APP_COMIC.dataUrl, naturalW: APP_COMIC.naturalW, naturalH: APP_COMIC.naturalH,
+        // Coordinates + extracted text only — never a pre-cropped image per box, matching
+        // APP_COMIC's own shape (a box crops from the ONE page image on demand, see
+        // _comicCropDataUrl's own comment).
+        boxes: APP_COMIC.boxes.map(b=>({x1:b.x1, y1:b.y1, x2:b.x2, y2:b.y2, text: b.text||null})),
+      },
+    };
+    const r = await fetch('/api/drafts', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+    if(r.ok){ const resp = await r.json(); if(resp && resp.id) _comicDraftId = resp.id; }
+  }catch(e){ /* best-effort autosave, same silent-failure precedent as the PDF flow's own _draftSaveNow() */ }
+}
+async function discardComicDraft(){
+  if(!_comicDraftId) return;
+  const id = _comicDraftId; _comicDraftId = null;
+  try{ await fetch('/api/drafts/'+id, {method:'DELETE'}); }catch(e){}
+}
+// Resume: repopulate APP_COMIC + the visible form from a saved comic draft. Deliberately does NOT
+// route through _comicFinishSetup() (the fresh-upload path) — that function calls
+// comicClearPanels() as its very first step, which would discard the boxes this draft exists to
+// restore. Reached from the jobs popover (item U, kind:'draft') via _jobsOpenLink, dispatched by
+// resumeDraft() once it sees the fetched record's own d.kind==='comic'.
+async function _resumeComicDraftFrom(d){
+  if(!d.comic || !d.comic.dataUrl){ showToast(t('toast.draft_missing')); return; }
+  _comicDraftId = d.id;
+  show('generation-screen');
+  if(d.srcLang) selectSrcLang(d.srcLang);
+  if(d.lang) selectLang(d.lang, true);
+  if(d.difficulty){ APP.difficulty = d.difficulty; restoreDiffSelect(); }
+  if(d.lessonFormat){ APP.lessonFormat = d.lessonFormat; restoreFormatSelect(); }
+  const cb=document.getElementById('use-comic-cb'); if(cb && !cb.checked){ cb.checked=true; onUseComicCb(); }
+  APP_COMIC.dataUrl = d.comic.dataUrl;
+  APP_COMIC.boxes = (d.comic.boxes||[]).map(b=>({ x1:b.x1||0, y1:b.y1||0, x2:b.x2||0, y2:b.y2||0, text: b.text||undefined }));
+  APP_COMIC.drawing = null; APP_COMIC.resizing = null; APP_COMIC.moving = null;
+  const img = document.getElementById('comic-draw-img');
+  await new Promise(resolve => {
+    img.onload = () => {
+      APP_COMIC.naturalW = img.naturalWidth; APP_COMIC.naturalH = img.naturalHeight;
+      const wrap=document.getElementById('comic-draw-wrap'); if(wrap) wrap.style.display='';
+      const detectRow=document.getElementById('comic-detect-row'); if(detectRow) detectRow.style.display='flex';
+      _comicSetupCanvas();
+      _comicWatchImageResize();
+      _comicRedraw(); _comicRenderList();
+      resolve();
+    };
+    img.src = APP_COMIC.dataUrl;
+  });
+  const arcCb=document.getElementById('comic-arc-cb'); if(arcCb) arcCb.checked = !!d.arc;
+  const sbCb=document.getElementById('comic-storyboard-cb'); if(sbCb) sbCb.checked = !!d.postGenStoryboard;
+  const anCb=document.getElementById('comic-analysis-cb'); if(anCb) anCb.checked = !!d.postGenAnalysis;
+  try{ _genWizardGoto(2); }catch(_){}   // #comic-panel lives in gen-card-2 ("Text"), same as #pdf-panel
+  showToast(t('toast.draft_resumed'));
 }
 // v86_d (user-requested, item J): a lone illustration or a one-panel comic needs no manual box —
 // one box spanning the whole image IS the panel. REPLACES any existing boxes rather than appending,
@@ -4380,6 +4472,9 @@ async function comicCreateChapter(){
     const data=await r.json().catch(()=>({}));
     if(!r.ok){ if(status) status.textContent=''; showToast(t('form.comic_create_failed')+': '+(data.error||r.status)); if(btn) btn.disabled=false; if(extractBtn) extractBtn.disabled=false; return; }
     _comicBookId=data.bookId;
+    // item R follow-up: real generation is now the durable record — same "discard the pre-
+    // generation draft the instant it's superseded" moment as the PDF flow's own pdfGenerateAll().
+    discardComicDraft();
     _pollComicBookJob(_comicBookId);
   }catch(e){
     if(status) status.textContent='';
@@ -6318,6 +6413,9 @@ async function resumeDraft(draftId){
     const r = await fetch('/api/drafts/'+draftId);
     if(!r.ok){ showToast(t('toast.draft_missing')); return; }
     const d = await r.json();
+    // Two draft shapes share this one route/popover entry — dispatch on the record's OWN kind
+    // rather than needing the caller (the popover) to know it ahead of time.
+    if(d.kind === 'comic'){ await _resumeComicDraftFrom(d); return; }
     if(_pdfBookId) pdfCancelBook();
     _draftId = d.id;
     _uploadFileName = d.sourceFile || '';

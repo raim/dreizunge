@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v87_d';
+const APP_VERSION  = 'v87_e';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -7369,24 +7369,65 @@ http.createServer(async (req, res) => {
     }
 
     // ── item R (roadmap_v87.md): unfinished-project drafts ──────────────
-    // Body mirrors pdfGenerateAll()'s own /api/generate-book request almost exactly — on resume,
-    // the client repopulates its local state from GET /api/drafts/:id and can generate unchanged.
-    // Upsert by id: an existing id updates in place (touches updatedAt, the autosave path); a
-    // missing/unknown id creates fresh (the FIRST save for a newly-parsed document).
+    // Body mirrors pdfGenerateAll()'s (kind:'chunks') or comicCreateChapter()'s (kind:'comic') own
+    // eventual /api/generate-book request almost exactly — on resume, the client repopulates its
+    // local state from GET /api/drafts/:id and can generate unchanged. Upsert by id: an existing id
+    // updates in place (touches updatedAt, the autosave path); a missing/unknown id creates fresh
+    // (the FIRST save for a newly-parsed document).
     if (M === 'POST' && url.pathname === '/api/drafts') {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const chunksIn = Array.isArray(body.chunks) ? body.chunks : [];
-      if (!chunksIn.length) return json(res, 400, { error: 'No chapters to save.' });
-      // A generous but real cap — a runaway autosave loop or a hostile body must not grow this
-      // file without bound (same reasoning as comic extraction's own 30-image cap).
-      if (chunksIn.length > 200) return json(res, 400, { error: 'Too many chapters for one draft (max 200).' });
-      const chunks = chunksIn.map(c => ({
-        title: String((c && c.title) || '').slice(0, 300),
-        text: String((c && c.text) || '').slice(0, 50000),
-        wordCount: Math.max(0, Math.min(1e6, parseInt(c && c.wordCount, 10) || 0)),
-      }));
+
+      // Two mutually exclusive shapes, one draft record: a text/PDF draft carries `chunks`
+      // (title+text+wordCount, no images); a comic draft carries `comic` (ONE page image — the
+      // comic flow is single-image-at-a-time today, item V/multi-image is unbuilt — plus its drawn/
+      // extracted panel boxes, which carry coordinates and text but never their own image data,
+      // matching APP_COMIC's own client-side shape: a box is cropped from the ONE page image on
+      // demand, never stored pre-cropped). `body.comic` present decides which branch runs.
+      let kind, chunks = null, comic = null;
+      if (body.comic && typeof body.comic === 'object') {
+        kind = 'comic';
+        const boxesIn = Array.isArray(body.comic.boxes) ? body.comic.boxes : [];
+        if (!boxesIn.length) return json(res, 400, { error: 'No panels to save.' });
+        // A page realistically has a handful to a few dozen panels — 100 is already generous.
+        if (boxesIn.length > 100) return json(res, 400, { error: 'Too many panels for one draft (max 100).' });
+        const dataUrl = typeof body.comic.dataUrl === 'string' ? body.comic.dataUrl : '';
+        if (!dataUrl) return json(res, 400, { error: 'No image to save.' });
+        // The client downscales to _COMIC_MAX_DIM=1600px before this ever reaches here (typically
+        // well under 2MB as a base64 data URL) — 8MB is headroom for a hostile/unexpected body, not
+        // the expected case, same "generous but real cap" reasoning as every other upload limit in
+        // this file (comic-extract's 30-image cap, split-chapters' 400-paragraph cap).
+        if (dataUrl.length > 8_000_000) return json(res, 400, { error: 'Image too large for a draft.' });
+        comic = {
+          dataUrl,
+          naturalW: Math.max(0, Math.min(20000, parseInt(body.comic.naturalW, 10) || 0)),
+          naturalH: Math.max(0, Math.min(20000, parseInt(body.comic.naturalH, 10) || 0)),
+          boxes: boxesIn.map(b => ({
+            x1: Math.max(0, parseInt(b && b.x1, 10) || 0), y1: Math.max(0, parseInt(b && b.y1, 10) || 0),
+            x2: Math.max(0, parseInt(b && b.x2, 10) || 0), y2: Math.max(0, parseInt(b && b.y2, 10) || 0),
+            text: (b && b.text && typeof b.text === 'object') ? {
+              caption: String(b.text.caption || '').slice(0, 2000),
+              inScene: String(b.text.inScene || '').slice(0, 2000),
+              raw: String(b.text.raw || '').slice(0, 4000),
+              error: b.text.error ? String(b.text.error).slice(0, 500) : null,
+            } : null,
+          })),
+        };
+      } else {
+        kind = 'chunks';
+        const chunksIn = Array.isArray(body.chunks) ? body.chunks : [];
+        if (!chunksIn.length) return json(res, 400, { error: 'No chapters to save.' });
+        // A generous but real cap — a runaway autosave loop or a hostile body must not grow this
+        // file without bound (same reasoning as comic extraction's own 30-image cap).
+        if (chunksIn.length > 200) return json(res, 400, { error: 'Too many chapters for one draft (max 200).' });
+        chunks = chunksIn.map(c => ({
+          title: String((c && c.title) || '').slice(0, 300),
+          text: String((c && c.text) || '').slice(0, 50000),
+          wordCount: Math.max(0, Math.min(1e6, parseInt(c && c.wordCount, 10) || 0)),
+        }));
+      }
+
       const drafts = loadDrafts();
       const now = new Date().toISOString();
       let draft = body.id && drafts.find(d => d.id === body.id);
@@ -7398,7 +7439,7 @@ http.createServer(async (req, res) => {
         if (drafts.length > 30) drafts.splice(0, drafts.length - 30);
       }
       Object.assign(draft, {
-        updatedAt: now,
+        updatedAt: now, kind,
         lang: body.lang || 'it', srcLang: body.srcLang || 'en',
         difficulty: Math.max(1, Math.min(3, parseInt(body.difficulty, 10) || 2)),
         lessonFormat: body.lessonFormat || 'standard',
@@ -7408,18 +7449,21 @@ http.createServer(async (req, res) => {
         script: body.script || null, srcScript: body.srcScript || null,
         arc: !!body.arc, arcTypes: Array.isArray(body.arcTypes) ? body.arcTypes : null,
         postGenStoryboard: !!body.postGenStoryboard, postGenAnalysis: !!body.postGenAnalysis,
-        chunks,
+        chunks, comic,
       });
       saveDrafts(drafts);
       return json(res, 200, { id: draft.id, updatedAt: draft.updatedAt });
     }
-    // List: summaries only (no chunk text) — this is the popover's own data source, via GET /api/jobs
-    // below, which calls loadDrafts() directly rather than fetching this route internally.
+    // List: summaries only (no chunk text, no image data) — this is the popover's own data source,
+    // via GET /api/jobs below, which calls loadDrafts() directly rather than fetching this route
+    // internally.
     if (M === 'GET' && url.pathname === '/api/drafts') {
       const drafts = loadDrafts();
       return json(res, 200, { drafts: drafts.map(d => ({
         id: d.id, createdAt: d.createdAt, updatedAt: d.updatedAt, sourceFile: d.sourceFile,
-        chapterCount: (d.chunks || []).length, lang: d.lang, srcLang: d.srcLang,
+        kind: d.kind || 'chunks',
+        chapterCount: d.kind === 'comic' ? (d.comic && d.comic.boxes || []).length : (d.chunks || []).length,
+        lang: d.lang, srcLang: d.srcLang,
       })) });
     }
     if (M === 'GET' && url.pathname.startsWith('/api/drafts/')) {
@@ -7701,8 +7745,10 @@ http.createServer(async (req, res) => {
       // actively happening, they're just resumable, same distinction a paused download vs. an
       // active one would make.
       for (const d of loadDrafts()) {
-        out.push({ id: d.id, kind: 'draft',
-          label: `Draft: ${d.sourceFile ? `"${d.sourceFile}"` : 'pasted text'} (${(d.chunks || []).length} chapter${(d.chunks || []).length === 1 ? '' : 's'})`,
+        const label = d.kind === 'comic'
+          ? `Comic draft (${(d.comic && d.comic.boxes || []).length} panel${(d.comic && d.comic.boxes || []).length === 1 ? '' : 's'})`
+          : `Draft: ${d.sourceFile ? `"${d.sourceFile}"` : 'pasted text'} (${(d.chunks || []).length} chapter${(d.chunks || []).length === 1 ? '' : 's'})`;
+        out.push({ id: d.id, kind: 'draft', label,
           link: { type: 'draft', id: d.id }, status: 'draft', step: null, error: null,
           createdAt: Date.parse(d.updatedAt || d.createdAt) || 0 });
       }
