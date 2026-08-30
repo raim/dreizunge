@@ -2,6 +2,40 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_143869450",
+      "title": "Die Enteignungszone",
+      "titleAuto": false,
+      "icon": "🚜",
+      "chapters": [
+        "tp_17880367188140000070"
+      ],
+      "lang": "nl",
+      "srcLang": "de",
+      "createdAt": "2026-08-30T07:15:45.723Z",
+      "updatedAt": "2026-08-30T07:17:06.020Z",
+      "tokenUsage": {
+        "totalPromptTokens": 339,
+        "totalCompletionTokens": 83,
+        "tokensByType": {
+          "retitle": 193,
+          "summary": 229
+        }
+      },
+      "summary": "Die Erzählung beginnt mit der Warnung, dass man sich nur noch 500 Meter von einer Enteignungszone entfernt befindet. Diese Zone betrifft nicht nur die Bauern, sondern berührt uns alle. Der Fokus liegt auf der unmittelbaren Gefahr und der gemeinsamen Betroffenheit der Bevölkerung durch diese Entwicklung.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 164,
+        "completionTokens": 65,
+        "ms": 22477,
+        "at": "2026-08-30T07:17:06.020Z"
+      }
+    },
+    {
       "id": "sl_169961753",
       "title": "The N2000 Zone",
       "titleAuto": false,
@@ -11643,8 +11677,8 @@
   "topics": [
     {
       "id": "tp_17880367188140000070",
-      "topic": "U rijdt nu 500 meter van een N2000 gebie",
-      "topicEmoji": "📖",
+      "topic": "Die Enteignungszone",
+      "topicEmoji": "🚜",
       "userTopic": "U rijdt nu 500 meter van een N2000 gebie",
       "userPrompt": "U rijdt nu 500 meter van een N2000 gebie\n\n[story]\nU rijdt nu 500 meter van een N2000 gebied\nONTEIGENINGSZONE\nDit raakt niet alleen boeren.\nDit raakt ons allemaal.",
       "lang": "nl",
@@ -11684,9 +11718,507 @@
       },
       "storyTranslation": "Sie fahren jetzt 500 Meter von einem Natura-2000-Gebiet entfernt.  \nENTEIGNUNGSGEBIET  \nDies betrifft nicht nur Bauern.  \nDies betrifft uns alle.",
       "userStory": "U rijdt nu 500 meter van een N2000 gebied\nONTEIGENINGSZONE\nDit raakt niet alleen boeren.\nDit raakt ons allemaal.",
-      "lessons": [],
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Enteignungszone und N2000",
+          "desc": "Wortschatz zur Enteignungszone",
+          "icon": "🚜",
+          "vocab": [
+            {
+              "target": "rijden",
+              "source": "fahren",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "nl:vocab:rijden",
+                "canonicalId": "nl:vocab:rijden",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "meter",
+              "source": "Meter",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "nl:vocab:meter",
+                "canonicalId": "nl:vocab:meter",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "gebied",
+              "source": "Gebiet",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "nl:vocab:gebied",
+                "canonicalId": "nl:vocab:gebied",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "onteigeningszone",
+              "source": "Enteignungszone",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "nl:vocab:onteigeningszone",
+                "canonicalId": "nl:vocab:onteigeningszone",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "boer",
+              "source": "Bauer",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "nl:vocab:boer",
+                "canonicalId": "nl:vocab:boer",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "betrokken raken",
+              "source": "betreffen",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "nl:vocab:betrokken raken",
+                "canonicalId": "nl:vocab:betrokken raken",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "allemaal",
+              "source": "alle",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "nl:vocab:allemaal",
+                "canonicalId": "nl:vocab:allemaal",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "nu",
+              "source": "jetzt",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "nl:vocab:nu",
+                "canonicalId": "nl:vocab:nu",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "U rijdt nu 500 meter van een N2000 gebied",
+              "source": "Sie fahren jetzt 500 Meter von einem Natura-2000-Gebiet entfernt.",
+              "skillId": "nl:sent:rijden",
+              "words": [
+                "U",
+                "rijdt",
+                "nu",
+                "500",
+                "meter",
+                "van",
+                "een",
+                "N2000",
+                "gebied"
+              ]
+            },
+            {
+              "target": "Dit raakt niet alleen boeren.",
+              "source": "Dies betrifft nicht nur Bauern.",
+              "skillId": "nl:sent:betrokken raken",
+              "words": [
+                "Dit",
+                "raakt",
+                "niet",
+                "alleen",
+                "boeren."
+              ]
+            },
+            {
+              "target": "Dit raakt ons allemaal.",
+              "source": "Dies betrifft uns alle.",
+              "skillId": "nl:sent:allemaal",
+              "words": [
+                "Dit",
+                "raakt",
+                "ons",
+                "allemaal."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 896,
+            "completionTokens": 537,
+            "ms": 187880,
+            "at": "2026-08-30T07:15:45.647Z"
+          }
+        },
+        {
+          "id": "ls_1788075178999_0_word_forms",
+          "type": "word_forms",
+          "title": "Ontheffingszone oefenen",
+          "desc": "Woordvormen in context",
+          "icon": "🚜",
+          "items": [
+            {
+              "sentence": "U ___ nu 500 meter van een N2000 gebied.",
+              "translation": "Sie fahren jetzt 500 Meter von einem N2000-Gebiet entfernt.",
+              "choices": [
+                "rijdt",
+                "rijden"
+              ],
+              "correctIndex": 0,
+              "explanation": "onderwerp 'U' vereist eindigend werkwoord"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 1,
+            "rejected": 2,
+            "rejectReasons": {
+              "need at least 2 distinct choices": 2
+            },
+            "promptTokens": 1409,
+            "completionTokens": 290,
+            "ms": 179502,
+            "at": "2026-08-30T07:32:58.999Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1788075422935_0_inflections",
+          "type": "inflections",
+          "title": "Inflecties in de ONTEIGENINGSZONE",
+          "desc": "Leer werkwoordsvormen en meervoud",
+          "icon": "🚜",
+          "items": [
+            {
+              "sentence": "U rijdt nu 500 meter van een N2000 gebied",
+              "surfaceForm": "rijdt",
+              "translation": "Sie fahren jetzt 500 Meter von einem N2000-Gebiet entfernt.",
+              "lemma": "rijden",
+              "lemmaChoices": [
+                "rijden",
+                "rijdt",
+                "reed",
+                "gereden"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "tegenwoordige tijd, tweede persoon meervoud of verhevenheid",
+              "formChoices": [
+                "tegenwoordige tijd, tweede persoon meervoud of verhevenheid",
+                "infinitief",
+                "verleden tijd",
+                "voltooid deelwoord"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "'Rijdt' is de vervoegde vorm van het werkwoord 'rijden' in de tegenwoordige tijd voor 'u' (of zij/meervoud)."
+            },
+            {
+              "sentence": "Dit raakt niet alleen boeren.",
+              "surfaceForm": "boeren",
+              "translation": "Dies betrifft nicht nur Bauern.",
+              "lemma": "de boer",
+              "lemmaChoices": [
+                "de boer",
+                "de boeren",
+                "den boer",
+                "der boer"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "meervoud",
+              "formChoices": [
+                "meervoud",
+                "enkelvoud",
+                "genitief",
+                "datief"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "'Boeren' is het meervoud van 'de boer', gevormd door toevoeging van -en."
+            },
+            {
+              "sentence": "Dit raakt ons allemaal.",
+              "surfaceForm": "raakt",
+              "translation": "Dies betrifft uns alle.",
+              "lemma": "raken",
+              "lemmaChoices": [
+                "raken",
+                "raakt",
+                "raakte",
+                "geraakt"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "tegenwoordige tijd, derde persoon enkelvoud",
+              "formChoices": [
+                "tegenwoordige tijd, derde persoon enkelvoud",
+                "infinitief",
+                "verleden tijd",
+                "voltooid deelwoord"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "'Raakt' is de vervoegde vorm van het werkwoord 'raken' in de tegenwoordige tijd voor hij/zij/het."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1259,
+            "completionTokens": 705,
+            "ms": 243873,
+            "at": "2026-08-30T07:37:02.935Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1788075594988_0_grammar",
+          "type": "grammar",
+          "title": "Namen en Meervoud",
+          "desc": "Leer de geslachten en meervouden",
+          "icon": "📚",
+          "grammar": [
+            {
+              "target": "onteigeningszone",
+              "source": "Enteignungszone",
+              "gender": "v",
+              "article": "de",
+              "plural": "onteigeningszones"
+            },
+            {
+              "target": "gebied",
+              "source": "Gebiet",
+              "gender": "o",
+              "article": "het",
+              "plural": "gebieden"
+            },
+            {
+              "target": "huis",
+              "source": "Haus",
+              "gender": "o",
+              "article": "het",
+              "plural": "huizen"
+            },
+            {
+              "target": "boom",
+              "source": "Baum",
+              "gender": "m",
+              "article": "de",
+              "plural": "bomen"
+            },
+            {
+              "target": "man",
+              "source": "Mann",
+              "gender": "m",
+              "article": "de",
+              "plural": "mannen"
+            },
+            {
+              "target": "vrouw",
+              "source": "Frau",
+              "gender": "v",
+              "article": "de",
+              "plural": "vrouwen"
+            },
+            {
+              "target": "boek",
+              "source": "Buch",
+              "gender": "o",
+              "article": "het",
+              "plural": "boeken"
+            }
+          ],
+          "_genMeta": {
+            "type": "grammar",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 7,
+            "rejected": 3,
+            "rejectReasons": {
+              "target===source (\"meter\")": 1,
+              "target===source (\"auto\")": 1,
+              "target===source (\"kind\")": 1
+            },
+            "promptTokens": 651,
+            "completionTokens": 537,
+            "ms": 171998,
+            "at": "2026-08-30T07:39:54.988Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1788076693358_2dsm",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
+        },
+        {
+          "id": "ls_1788075949504_0_comprehension",
+          "type": "comprehension",
+          "title": "Die Enteignungszone",
+          "desc": "Verstehen Sie die Bedeutung der kurzen Nachricht?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Was beschreibt der Text hauptsächlich?",
+              "choices": [
+                "Eine neue Autobahn, die durch ein Naturschutzgebiet führt.",
+                "Ein Gebiet, das enteignet wird und viele Menschen betrifft.",
+                "Die Preise für landwirtschaftliche Produkte auf dem Markt.",
+                "Die Regeln für den Umgang mit der Straße N2000."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text nennt explizit 'ONTIEGENINGSZONE' und sagt 'Dit raakt ons allemaal' (Das betrifft uns alle)."
+            },
+            {
+              "q": "Wer wird laut dem Text von der Situation betroffen sein?",
+              "choices": [
+                "Nur die Bauern, die ihr Land verlieren.",
+                "Die Autofahrer auf der N2000.",
+                "Alle Menschen in der Region.",
+                "Nur die Eigentümer der Grundstücke."
+              ],
+              "correctIndex": 2,
+              "why": "Der Satz 'Dit raakt niet alleen boeren. Dit raakt ons allemaal.' bedeutet, dass es nicht nur Bauern betrifft, sondern alle."
+            },
+            {
+              "q": "Welche Schlussfolgerung lässt sich aus dem Text ziehen?",
+              "choices": [
+                "Die Enteignung ist ein rein lokales Problem für Landwirte.",
+                "Das N2000-Gebiet wird in einen Park umgewandelt.",
+                "Die Maßnahme hat weitreichende Folgen für die Allgemeinheit.",
+                "Die Entfernung von 500 Metern ist irrelevant für die Entscheidung."
+              ],
+              "correctIndex": 2,
+              "why": "Die Betonung 'Dit raakt ons allemaal' impliziert, dass die Auswirkungen über den direkten Kreis der Betroffenen hinausgehen."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 504,
+            "completionTokens": 451,
+            "ms": 354429,
+            "at": "2026-08-30T07:45:49.504Z"
+          },
+          "_recreated": true
+        },
+        {
+          "difficulty": 2,
+          "id": "ls_1788076736686",
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "U rijd nu 500 meter van een N2000 gebied\nONTEIGENINGZONES\nDit raak niet alleen boeren.\nDit raaks ons allemaal.",
+          "_genMeta": {
+            "type": "error_hunt",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": null,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 465,
+            "completionTokens": 44,
+            "ms": 23436,
+            "at": "2026-08-30T07:58:56.686Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 199456,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 5285,
+        "totalCompletionTokens": 2609,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 187876,
+            "promptTokens": 896,
+            "completionTokens": 537
+          }
+        ],
+        "tokensByType": {
+          "recreate": 5806,
+          "add_lesson": 509
+        }
+      },
+      "comicPanels": [
+        {
+          "x1": 707,
+          "y1": 268,
+          "x2": 922,
+          "y2": 465,
+          "caption": "",
+          "inScene": "U rijdt nu 500 meter van een N2000 gebied\nONTEIGENINGSZONE\nDit raakt niet alleen boeren.\nDit raakt ons allemaal.",
+          "image": "data:image/jpeg;base64,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"
+        }
+      ],
       "generatedAt": "2026-08-29T20:51:58.815Z",
-      "updatedAt": "2026-08-30T07:12:37.647Z",
+      "updatedAt": "2026-08-30T07:58:56.686Z",
       "createdBy": "admin"
     },
     {

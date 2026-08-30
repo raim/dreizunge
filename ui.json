@@ -189,6 +189,8 @@
     "toast.export_fail": "⚠ Export failed: {msg}",
     "toast.retranslate_done": "🔄 Story re-translated",
     "toast.retranslate_failed": "⚠ Re-translation failed: {msg}",
+    "toast.retranslate_batch": "🔄 {done} chapter(s) re-translated",
+    "toast.retranslate_batch_failed": "{failed} failed",
     "export.markdown": "⬇ Markdown (.md)",
     "export.html": "⬇ HTML (.html)",
     "export.json": "⬇ JSON (.json)",

@@ -10729,6 +10729,14 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
       '<span style="flex:1">' + t('lesson.read_full_story') + '</span>' +
       `<span class="storyline-story-arrow" id="csarrow-${slscId}">▼</span></div>` +
       `<span id="csflags-${slscId}" style="display:inline-flex;padding:0 4px"></span>` +
+      // v86_y (user-requested parity fix): the retranslate button existed only on the lesson-set
+      // page's own single-chapter progress card — missing here entirely. Same data-chain convention
+      // analyzeChaptersRun's own button already uses (JSON chapter-id array, URI-encoded), gated the
+      // SAME way (a real backend) — matches #story-retranslate-btn's own canGenerate-only gate, not
+      // teacher-mode (see index.html's own comment on that button for why).
+      (APP.info?.canGenerate
+        ? `<button class="story-icon-btn" onclick="event.stopPropagation();retranslateChain('${slscId}',this)" title="Re-translate all chapters" data-chain="${encodeURIComponent(JSON.stringify(chapterIds))}">🔄</button>`
+        : '') +
       `<span class="story-icon-btn" onclick="event.stopPropagation();speakChainStory('${slscId}')">💬</span>` +
       `</div>` +
       `<div class="storyline-story-body" id="csbody-${slscId}" data-chain="${escapedChain}"></div>` +
@@ -13749,6 +13757,40 @@ function speakChainStory(chainId){
   const first = chapters[0] || {};
   const lang = showSource ? (first.srcLang || APP.srcLang || 'en') : (first.lang || APP.lang || '');
   speakBodyText('__inline__', lang, text);
+}
+// v86_y (user-requested parity fix): the storyline page's own batch retranslate — "the button should
+// translate all chapters" — reads chapter ids from data-chain (SAME array analyzeChaptersRun's own
+// button reads, same convention), one POST /api/retranslate-story per id (the topicId path added
+// this cut specifically so this caller never needs a name lookup), sequential with a per-item
+// try/catch so one failure doesn't stop the rest — same shape as analyzeChaptersRun itself.
+async function retranslateChain(chainId, btn){
+  if(!APP.info?.canGenerate) return;
+  const ids = btn ? (JSON.parse(decodeURIComponent(btn.dataset.chain||'[]'))||[]).filter(Boolean) : [];
+  if(!ids.length) return;
+  const old = btn ? btn.innerHTML : null;
+  if(btn){ btn.disabled=true; btn.innerHTML='⏳'; }
+  let done=0, failed=0;
+  try{
+    for(const id of ids){
+      try{
+        const r = await fetch('/api/retranslate-story',{method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({topicId:id})});
+        if(!r.ok){ failed++; continue; }
+        done++;
+        // Keep the in-memory savedList/chain cache in sync so a re-render (this chain's own body, or
+        // a later navigation back to it) shows the fresh translation without a full reload.
+        const data = await r.json().catch(()=>({}));
+        const saved = (APP.savedList||[]).find(s=>s.id===id);
+        if(saved && data.storyTranslation) saved.storyTranslation = data.storyTranslation;
+        const cached = (_chainStoryCache[chainId]||[]).find(d=>d.id===id);
+        if(cached && data.storyTranslation) cached.storyTranslation = data.storyTranslation;
+      }catch(e){ failed++; }
+    }
+  } finally { if(btn){ btn.disabled=false; btn.innerHTML=old; } }
+  const body = document.getElementById('csbody-'+chainId);
+  const chapters = _chainStoryCache[chainId];
+  if(body && chapters) _renderChainStory(body, chapters, chainId);
+  showToast(t('toast.retranslate_batch',{done}) + (failed ? ' · '+t('toast.retranslate_batch_failed',{failed}) : ''));
 }
 
 // ── exercises ──
@@ -20587,11 +20629,18 @@ function _renderCompStory(){
   // user follow-up: two flag buttons replace the old single "🌐 Original/Translation" text toggle
   // — see _storyFlagButtonsHtml. `toggleCompStoryLang(lang)` now SETS the language explicitly
   // rather than flipping, so each flag's onclick names the language IT shows, not "the other one".
+  //
+  // user follow-up (v86_y): the text-explorer button is an ALTERNATIVE to the two flags, not an
+  // overlay on top of "target" — before this, toggling it on left the target flag looking active
+  // (current === 'target' still held, since toggleTextExplorer forces _compStoryLang back to
+  // 'target'), so a learner saw a highlighted target flag while looking at a THIRD view neither flag
+  // actually produces. Passing `null` when explorer mode is on matches neither 'target' nor 'source'
+  // in _storyFlagButtonsHtml's own `current === lang` check, so BOTH flags render unclicked.
   const _flagsEl = document.getElementById('comp-story-flags');
   if (_flagsEl) {
     _flagsEl.innerHTML = _storyFlagButtonsHtml(
       d.lang || APP.lang, d.srcLang || 'en', !!_xlate,
-      showingSource ? 'source' : 'target',
+      APP._textExplorer ? null : (showingSource ? 'source' : 'target'),
       lang => `toggleCompStoryLang('${lang}')`);
   }
   // The 💬 reads whatever is currently shown.
@@ -20622,7 +20671,15 @@ function toggleExStoryLang(lang){
 // user follow-up: SETS the language a flag names, rather than blindly flipping — two flag buttons
 // each call this with their OWN lang ('target'/'source'), so clicking the already-active one is a
 // harmless no-op re-render, not a flip away from it.
+//
+// user follow-up (v86_y): clicking a flag now EXITS text-explorer mode. Before this, clicking the
+// target flag while explorer mode was on did nothing visible at all (_compStoryLang was already
+// 'target', and _renderCompStory's own `APP._textExplorer && !showingSource` check kept rendering
+// the explorer view regardless) — the flag looked clickable but the click had no effect the learner
+// could see. The two are alternate views of the same panel, so picking one now always means leaving
+// the other.
 function toggleCompStoryLang(lang){
+  APP._textExplorer = false;
   APP._compStoryLang = (lang === 'source') ? 'source' : 'target';
   _renderCompStory();
 }

@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v86_x';
+const APP_VERSION  = 'v86_y';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -8063,9 +8063,13 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { topic } = body;
-      if (!topic) return json(res, 400, { error: 'Missing topic' });
-      const saved = findSaved(topic);
+      // v86_y: accepts EITHER {topic} (name — the single-chapter lesson-set page's own caller,
+      // unchanged) or {topicId} (id — the storyline "read full story" page's own batch caller, added
+      // this cut, which already has chapter ids in hand from the SAME data-chain array the export/
+      // delete/analyze buttons use, no name-lookup round trip needed).
+      const { topic, topicId } = body;
+      if (!topic && !topicId) return json(res, 400, { error: 'Missing topic or topicId' });
+      const saved = topicId ? findSavedById(topicId) : findSaved(topic);
       if (!saved) return json(res, 404, { error: 'Topic not found' });
       if (!saved.story) return json(res, 400, { error: 'No story to translate' });
       const lang = saved.lang || 'it', srcLang = saved.srcLang || 'en';
@@ -8083,7 +8087,7 @@ http.createServer(async (req, res) => {
         addTokenUsage(saved, _mTok, 'translation');
         stampUpdated(saved);
         saveStore(store);
-        console.log(`  Re-translated "${topic}" (${lang}→${srcLang}): ${storyTranslation.length} chars`);
+        console.log(`  Re-translated "${saved.topic}" (${lang}→${srcLang}): ${storyTranslation.length} chars`);
         return json(res, 200, { storyTranslation });
       } catch(e) {
         return json(res, 500, { error: e.message });

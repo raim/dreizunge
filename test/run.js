@@ -154,6 +154,7 @@ run('unit: story-summary card — the first page of the walk (v77_h)', 'node', [
 run('unit: progress + entry card nav/bars popups (v83_c/v83_d)', 'node', [path.join(__dirname, 'unit-progress-card-nav.test.js')]);
 run('unit: story-panel border colour, red→green with comprehension progress (v83_g)', 'node', [path.join(__dirname, 'unit-story-border-color.test.js')]);
 run('unit: retranslate a story on demand, after a manual fix (v86_w)', 'node', [path.join(__dirname, 'unit-retranslate-story.test.js')]);
+run('unit: retranslate ALL chapters from the storyline page (v86_y)', 'node', [path.join(__dirname, 'unit-retranslate-chain.test.js')]);
 run('unit: PLAN §7.0 CP1 — canonical text + analysis records, report-only', 'node', [path.join(__dirname, 'unit-canonical-text.test.js')]);
 run('unit: install.sh — one-line local installer, idempotent and non-destructive', 'node', [path.join(__dirname, 'unit-install-script.test.js')]);
 run('unit: bin/dreizunge — PATH launcher, symlink resolution + real end-to-end run', 'node', [path.join(__dirname, 'unit-dreizunge-launcher.test.js')]);

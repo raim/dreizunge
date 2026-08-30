@@ -46,10 +46,21 @@ const { boot, post, assert } = require('./lib');
     assert(r3.status === 404, 'an unknown topic 404s (got ' + r3.status + ')');
     console.log('  an unknown topic 404s cleanly: OK');
 
-    // 4) Missing `topic` in the body: 400, not a crash.
+    // 4) Missing BOTH `topic` and `topicId` in the body: 400, not a crash.
     const r4 = await post(sport, '/api/retranslate-story', {});
-    assert(r4.status === 400, 'a missing topic field 400s (got ' + r4.status + ')');
-    console.log('  a missing topic field 400s cleanly: OK');
+    assert(r4.status === 400, 'a missing topic/topicId 400s (got ' + r4.status + ')');
+    console.log('  a body with neither topic nor topicId 400s cleanly: OK');
+
+    // 5) v86_y: the storyline "read full story" page's own batch caller resolves by ID, not name —
+    //    no name lookup, no ambiguity from a title collision. A second topic proves the SAME route
+    //    handles both keys, not just whichever one happens to be tested first.
+    const r5 = await post(sport, '/api/retranslate-story', { topicId: 'tp_fixed' });
+    assert(r5.status === 200, 'retranslate by topicId succeeds (got ' + r5.status + ' ' + JSON.stringify(r5.body) + ')');
+    assert(r5.body.storyTranslation === 'Once upon a time there was a test. The cat and the house stayed the same.',
+      'topicId path returns the same fresh translation as the topic-name path');
+    const r6 = await post(sport, '/api/retranslate-story', { topicId: 'tp_does_not_exist' });
+    assert(r6.status === 404, 'an unknown topicId 404s cleanly (got ' + r6.status + ')');
+    console.log('  the SAME route also resolves by topicId (the storyline page\'s own batch caller), and an unknown id 404s cleanly: OK');
 
     console.log('e2e-retranslate-story: ALL PASSED');
   } catch (e) {

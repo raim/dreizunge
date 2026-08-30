@@ -317,5 +317,39 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
   }
   console.log('  _renderCompStory(): explorer ON renders real per-word analysis marks into the DOM; OFF reverts cleanly: OK');
 
+  // ── 7. v86_y: the explorer button and the two language flags are ALTERNATE views, not stackable ──
+  // User report: the explorer button is an alternative to the two flags — when it's on, a flag must
+  // NOT still look active (before this fix, toggleTextExplorer forced _compStoryLang back to
+  // 'target', so the target flag kept its active (blue-border) styling even though the panel was
+  // showing a THIRD view neither flag actually produces), and clicking a flag must exit explorer mode
+  // (before this fix, clicking the ALREADY-'target' flag while explorer was on did nothing visible).
+  {
+    const TOPIC_XL = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
+      story: 'Der Hund lauft.', storyTranslation: 'The dog runs.', lessons: [] };
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON + `
+      APP.lessonData = ${JSON.stringify(TOPIC_XL)};
+      APP._teCache = { tp_te1: { status:'ready', data: { sentences:[
+        { sentenceId:'s0', text:'Der Hund lauft.', paraBreakBefore:false, tokens:[] },
+      ] } } };
+      APP.cur = { lessonIdx: 0, exercises: [], cur: 0, correct: 1, total: 1, mistakes: 0, hearts: 3, streak: 1, bestStreak: 1 };
+      APP._textExplorer = true; APP._compStoryLang = 'target';
+      _renderCompStory();
+      true;`, 'explorer-on-flags');
+    const flagsHtml = C.run(`document.getElementById('comp-story-flags').innerHTML`);
+    assert.ok(!flagsHtml.includes('var(--blue)'), `explorer ON: NEITHER flag shows the active (blue-border) style (got ${flagsHtml})`);
+
+    // Clicking the target flag while explorer is on must exit explorer mode AND actually switch the
+    // rendered view — before the fix, _compStoryLang was already 'target', so this click was a
+    // same-state re-render that never left the explorer view at all.
+    C.run(`toggleCompStoryLang('target'); true;`, 'click-target-flag');
+    assert.strictEqual(C.run('APP._textExplorer'), false, 'clicking a flag while explorer is on turns explorer OFF');
+    const bodyHtml = C.run(`document.getElementById('comp-story-text').innerHTML`);
+    assert.ok(!bodyHtml.includes('te-tok'), 'the panel actually left the explorer view (no te-tok marks survive the click)');
+    const flagsHtml2 = C.run(`document.getElementById('comp-story-flags').innerHTML`);
+    assert.ok(flagsHtml2.includes('var(--blue)'), 'once explorer is off, the now-current flag (target) shows active again');
+  }
+  console.log('  explorer ON: neither flag shows active; clicking a flag exits explorer mode and switches the view: OK');
+
   console.log('unit-text-explorer: ALL PASSED');
 })().catch(e => { console.error(e); process.exit(1); });
