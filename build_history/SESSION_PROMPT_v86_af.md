@@ -6,9 +6,12 @@ session has a good reason to switch to `v87_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
 zero-dependency Node language-learning app). Picking up from **`v86_af`**. `v86_ae` silenced
-`inflection_lemma`'s answer-reveal. This cut (`v86_af`) built the "direct relatives" refinement — but
-also surfaced a bigger, still-OPEN problem while doing it. **Read "WHERE TO START" below first —
-there's a live, unresolved user report waiting on a go-ahead.**
+`inflection_lemma`'s answer-reveal. `v86_af` built the "direct relatives" refinement — and surfaced a
+bigger `{S}`-language-compliance problem while doing it, which has SINCE been fully investigated
+(a live-tested prompt reinforcement, a comparative analysis against a working case, and an explicit
+user ruling to leave it as-is) and recorded as item AJ in `roadmap_v86.md`'s own "OPEN AT THE v86
+CUT" section — nothing pending there, no code change needed unless asked to build the recorded
+"translate layer" option.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
 key, tell them explicitly and let them pause first — do not silently edit `ui.json` mid-session.
@@ -102,16 +105,16 @@ earned in session N…the v85 line" blocks — now 46+ standing rules, plus item
 
 # WHERE TO START
 
-- **THE LIVE, UNRESOLVED REPORT (see above, full detail in this cut's own roadmap section)**: check
-  whether the user has answered "should I proceed with a stronger prompt fix + live-model test for
-  the inflections `{S}`-field language-compliance failure?" If yes, this needs: (a) a stronger
-  reinforcement in `PROMPTS.inflections`'s own instruction (a closing restatement of which fields
-  must be in `{S}` is a common, well-precedented technique for instructions that get lost against a
-  dominant surrounding context — not yet tried here), and (b) a REAL live-model generation against
-  the REAL reported input (`tp_17880367188140000070`, the exact sentence pair) to CONFIRM the fix
-  actually works this time, not just that it reads correctly in isolation. Do not ship a THIRD guess
-  without live-verifying it first — two unverified prompt tweaks (`v86_ab`, plus whatever comes next)
-  have already not been enough.
+- **RESOLVED, without a code change — item AJ in `roadmap_v86.md`'s own "OPEN AT THE v86 CUT"
+  section**: the stronger prompt reinforcement WAS tried and live-tested against the real reported
+  input — it made NO difference (identical Dutch output for every `{S}`-designated field). A
+  comparative analysis against a WORKING case (`tp_17877511606660000499`, it→en, where `{S}`=English
+  complies perfectly even with the OLD, weaker prompt wording) is recorded in full there, along with
+  a working hypothesis (English is this model's own default meta-commentary language; the
+  instruction only visibly "works" when it's redundant with that default) and a recorded-not-built
+  "translate layer" option (a second, translation-framed LLM call). **The user's own ruling**: leave
+  it — target-language grammar labels are pedagogically defensible, not just a tolerated bug. Nothing
+  further needed here unless a future session is explicitly asked to build the translate layer.
 - **A possible follow-up refinement, NOT built**: the "direct relatives" rule (`v86_af`, this cut)
   applies to `formChoices` only — check whether `lemmaChoices`' own wrong-choice generation has any
   analogous implausibility issue, not investigated yet.

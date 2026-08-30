@@ -386,7 +386,7 @@ parity fix (all three are their own top-level bullets in the `v86_h` shipped ent
 since they were not part of this batch's own items — listed together only because they landed the
 same cut). The rest are scoped below, lettered P onward, continuing straight from O above.
 
-### P. Inflection MCQ distractors sometimes mix grammatical DIMENSIONS — needs live-model work, not a code fix
+### P. ✅ (the prompt-rule half) Inflection MCQ distractors sometimes mix grammatical DIMENSIONS — the RULE half SHIPPED `v86_af`, still not live-verified against THIS specific failure mode
 
 **User's report**, with a real example: for a question whose correct answer is "plural", the model
 sometimes offers "dative"/"genitive" as WRONG options alongside the genuinely plausible "singular" —
@@ -407,6 +407,19 @@ sanctioned exception, grammar categories are not). **Recommendation: (a), verifi
 not (b).** Needs a live test with a real human reading several generated items before/after a prompt
 change — this codebase's own standing rule 7 ("a live model call needs a live test AND a real human
 reading the output").
+
+**Update, `v86_ab`/`v86_af`**: a real, independent user report (`v86_ab`'s "datief" example —
+Dutch, a plural noun, offered a case-dimension distractor) turned out to be this EXACT bug,
+confirming the diagnosis above. `v86_af` shipped path (a) — the instruction now states the "same
+dimension" rule far more explicitly ("DIRECT RELATIVES," with worked-out single-dimension vs.
+combined-dimension guidance and a concrete counter-example) and both worked examples were fixed to
+comply. **NOT yet independently live-verified specifically against dimension-mixing** — the one live
+generation run this session (item AJ, below) tested the SEPARATE `{S}`-language-compliance failure,
+not dimension-mixing directly (that generation's own `formChoices` were arguably borderline on this
+too — e.g. offering `"Infinitief"`, a mood/form category, alongside a tense+person correct answer —
+not conclusively re-broken, but not conclusively clean either). A dedicated live check, reading
+several generated `formChoices` sets specifically for dimension purity, is still the honest
+remaining step before calling this item fully closed.
 
 ### Q. ✅ Comprehension questions must be answerable independently of each other — SHIPPED `v86_h` (prompt only, not live-verified)
 
@@ -1035,6 +1048,71 @@ discard it exactly like any other cached data. Whether that is acceptable (corre
 redo) or needs its own preservation mechanism (e.g. keep a reviewed token's values across
 re-analysis unless the SPECIFIC sentence containing it changed) is a real design decision, not yet
 made. **Not started.**
+
+### AJ. `PROMPTS.inflections`'s `{S}`-language fields comply reliably for `srcLang:'en'`, unreliably otherwise — a real model limitation, ACCEPTED by user ruling, not fixed
+
+Directly generalizes item P above (the "distractors mix dimensions" finding, from the SAME
+`prompts.json` prompt) into a bigger, comparative finding: `{S}`-designated fields
+(`title`/`desc`/`formLabel`/`formChoices`/`explanation`) comply with the "write this in {S}"
+instruction RELIABLY when `{S}` is English, and UNRELIABLY otherwise — confirmed by directly
+comparing two real, live-generated lessons rather than guessing.
+
+**Comparison data, both against the same model (`qwen3.6:35b-a3b`)**:
+
+| | `tp_17877511606660000499` ("Cleanliness Command", it→en) | `tp_17880367188140000070` ("Die Enteignungszone", nl→de) |
+|---|---|---|
+| `title` | `"Italian Inflection Practice"` — correct English | `"Nederlandse vervoegingen"` — WRONG, Dutch |
+| `desc` | `"Identify dictionary forms from context."` — correct English | `"Woorden in context herkennen"` — WRONG, Dutch |
+| `formLabel` | `"imperative plural with clitic pronoun"` — correct English | `"Tegenwoordige tijd, derde persoon enkelvoud"` — WRONG, Dutch |
+| `formChoices` | all 4 in English — correct | all 4 in Dutch — WRONG |
+| `explanation` | full English sentences — correct | full Dutch sentences — WRONG |
+| `translation` | correct English, both cases | correct German, both cases |
+| `lemma`/`lemmaChoices`/`sentence`/`surfaceForm` | correct Italian (`{L}`), both cases | correct Dutch (`{L}`), both cases |
+
+The `it→en` lesson predates every prompt change this session (generated `2026-08-26`, the OLD, much
+weaker instruction wording) and STILL complied perfectly. The `nl→de` lesson was regenerated live,
+AFTER `v86_ab`'s worked-example fix AND `v86_af`'s explicitly-reinforced "MUST be written IN {S} —
+NEVER in {L}" wording plus a closing LANGUAGE CHECKLIST — and STILL failed identically. Stronger
+prompt wording measurably made NO difference for this language pair; only `translation` reliably
+switches language in EITHER case.
+
+**Working hypothesis, clearly labelled as a hypothesis, not confirmed by a controlled experiment**:
+this model (like most) is trained overwhelmingly on English text, giving it a strong DEFAULT bias
+toward English for meta-commentary/labelling tasks. When `{S}` happens to BE English, the explicit
+instruction is redundant with that default — compliance looks perfect, but may not actually prove
+the INSTRUCTION works, only that the requested language matches the model's own bias. When `{S}` is
+any other language, the instruction must ACTIVELY OVERRIDE that English-default bias AND the strong
+LOCAL momentum of an otherwise `{L}`-saturated prompt (sentence/lemma/lemmaChoices are ALL `{L}`) —
+and for this size of model (an "a3b" MoE, a genuinely lightweight architecture), that override
+fails. Confirmed NOT to default to English either, when it fails — the `nl→de` case defaulted to
+DUTCH (`{L}`, the CONTEXTUALLY dominant language), not English — so this is "instruction loses to
+context," not simply "model always prefers English."
+
+A secondary, untested structural observation: the schema's own field ORDER places `formLabel`/
+`formChoices`/`explanation` (all `{S}`) immediately AFTER a block of `{L}`-only fields
+(`lemma`/`lemmaChoices`), right when the model most needs to switch OUT of `{L}` — while
+`translation` (the one field that reliably works) sits EARLY, right after a single short `{L}`
+field, needing a smaller "unwind." Reordering the schema to test this directly was proposed and
+NOT run — the user's own ruling (below) makes it moot for now.
+
+**User's ruling, ending this investigation without a code change**: *"let's just leave it as it is.
+it makes sense to use the target language to describe target language grammar."* Grammar labels in
+the TARGET language are pedagogically defensible on their own terms, not merely a bug to tolerate —
+recorded here as the explicit reasoning, not just "deferred."
+
+**Recorded for later, NOT built**: a POST-GENERATION "translate layer" — a dedicated, SECOND LLM
+call per generation that explicitly translates the `{S}`-designated fields (whatever language they
+came back in) INTO `{S}`, mirroring the ONE reliably-working case in this whole prompt: a
+translation-framed task, not a "compute in one language, relabel in another" one. This would need,
+if built: (a) a decision on when to run it — always (extra latency/cost every time, simplest,
+matches the fact that `translation`'s own reliability comes from EVERY call being translation-
+framed) vs. only when a language-mismatch heuristic fires (cheaper, but a heuristic itself needs
+design and could misfire); (b) which fields it covers (`title`/`desc`/`formLabel`/every
+`formChoices` entry/`explanation` — NOT `translation`, already correct, and NOT any `{L}` field);
+(c) whether it is `inflections`-specific or a shared helper other prompts could reuse if the SAME
+pattern is ever found elsewhere (not yet checked against any other prompt in this file). Not
+scoped further than this — no design decision has been made, and none is needed unless a future
+session is asked to build it.
 
 ## ✅ FINDINGS THAT GOVERN THE OPEN SECTIONS BELOW
 
