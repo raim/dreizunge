@@ -62,14 +62,16 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .bmodels-pop select{max-width:150px}
 @media(max-width:520px){.bmodels-pop{position:fixed;left:8px;right:8px;top:auto;min-width:0}}
 .bmodels .bmodel-field{display:inline-flex;align-items:center;gap:3px}
-/* item U (roadmap_v87.md): the jobs popover. Anchored ABOVE its pill (unlike .bmodels-pop, which
-   opens below) — the pill lives in the fixed BOTTOM bar, so opening downward would run off-screen. */
-.jobs-pop{position:absolute;bottom:calc(100% + 8px);left:0;z-index:902;background:var(--white);border:2px solid var(--gray-mid);border-radius:var(--radius-lg);padding:8px;box-shadow:0 6px 20px rgba(0,0,0,.2);width:min(320px,calc(100vw - 32px));max-height:min(360px,60vh);overflow-y:auto;box-sizing:border-box}
-/* the pill sits early (left-ish) in #corner-pills — measured live: right:0 (bmodels-pop's own
-   anchor, fine for a pill near the RIGHT of its row) ran the popover off the left edge of the
-   viewport here. left:0 opens rightward instead; the fixed-fullwidth fallback below still catches
-   a viewport too narrow for even that. */
-@media(max-width:520px){.jobs-pop{position:fixed;left:8px;right:8px;bottom:calc(var(--bottom-bar-h) + 12px);width:auto}}
+/* item U (roadmap_v87.md): the jobs popover. NOT anchored relative to its pill (unlike
+   .bmodels-pop) — #jobs-pop lives at the BODY level, a sibling of #tutor-widget, not inside
+   #jobs-fab/#bottom-bar (see the markup comment there: #bottom-bar is its own stacking context,
+   so no z-index on a descendant could ever out-rank a body-level sibling like #tutor-widget —
+   found live, the popover rendered fully invisible behind an open tutor widget). One fixed rule
+   at every viewport width, mirroring #tutor-widget's own right-anchored-above-the-bar placement —
+   deliberately not pixel-exact under the pill, which is what caused THIS item's earlier
+   left-vs-right anchor bug in the first place. */
+.jobs-pop{position:fixed;right:16px;bottom:calc(var(--bottom-bar-h) + 12px);z-index:902;background:var(--white);border:2px solid var(--gray-mid);border-radius:var(--radius-lg);padding:8px;box-shadow:0 6px 20px rgba(0,0,0,.2);width:min(320px,calc(100vw - 32px));max-height:min(360px,60vh);overflow-y:auto;box-sizing:border-box}
+@media(max-width:520px){.jobs-pop{left:8px;right:8px;width:auto}}
 .jobs-pop-hdr{font-weight:800;font-size:12px;color:var(--gray-dark);padding:2px 4px 6px}
 .jobs-pop-empty{font-size:12px;color:var(--gray-dark);font-style:italic;padding:6px 4px}
 .jobs-row{display:flex;flex-direction:column;gap:2px;padding:7px 8px;border-radius:8px;background:var(--gray-light)}
@@ -708,15 +710,11 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
          Hidden without a backend (refreshJobsPill(), same gating refreshTutorAvailability() uses) —
          a static build or a dead Ollama connection never has a job to show. #jobs-pill-badge mirrors
          #tutor-fab-badge's own float-above-the-button placement, but shows a running COUNT rather
-         than a one-shot "reply ready" flag — jobs.js — the wrap is jobs-pop's own positioning
-         context (bottom:calc(100% + 8px), opens UPWARD — see .jobs-pop's own comment). -->
+         than a one-shot "reply ready" flag. #jobs-pop itself does NOT live in this wrap — see its
+         own markup near #tutor-widget for why. -->
     <div id="jobs-fab" style="display:none;position:relative">
       <button id="jobs-pill" onclick="toggleJobsPop(event)" title="" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15)">⏳</button>
       <span id="jobs-pill-badge" style="display:none"></span>
-      <div id="jobs-pop" class="jobs-pop" style="display:none">
-        <div class="jobs-pop-hdr" id="jobs-pop-hdr"></div>
-        <div id="jobs-pop-list"></div>
-      </div>
     </div>
     <!-- v84_k (user request): ONE persistent speech-input control, not a button per exercise. Inert
          (disabled, greyed via CSS) whenever the current screen/exercise has nothing speakable.
@@ -869,6 +867,16 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       </select>
     </div>
   </div>
+</div>
+<!-- item U follow-up: #jobs-pop moved HERE from inside #jobs-fab (still in #bottom-bar) after a
+     live check found it invisible behind #tutor-widget whenever both were open — #bottom-bar is
+     itself a stacking context (position:fixed + z-index:900), so ANY z-index on a descendant of it
+     is capped at that context's own paint order and can never out-rank a BODY-level sibling like
+     #tutor-widget (z-index:901), no matter how high. Same fix shape as the comment just below:
+     the FAB (button) stays in the bottom bar, the floating panel itself lives at the body level. -->
+<div id="jobs-pop" class="jobs-pop" style="display:none">
+  <div class="jobs-pop-hdr" id="jobs-pop-hdr"></div>
+  <div id="jobs-pop-list"></div>
 </div>
 <!-- #tutor-fab used to live here as its own independently `position:fixed` widget in the bottom-
      right corner — relocated INTO #bottom-bar, next to #corner-pills (see the comment there), on
@@ -160874,12 +160882,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v87_b', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v87_c', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"58d1f0e02dc4","lessons.json":"f41a3e663fba","ui.json":"7e7ad046af99","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"dd9a5b683847","build-static.js":"012fc7f8f3ca"};
+  APP.buildSources = {"index.html":"49ffc3434292","lessons.json":"f41a3e663fba","ui.json":"7e7ad046af99","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"dd9a5b683847","build-static.js":"012fc7f8f3ca"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -173618,7 +173626,24 @@ async function _jobsFetchAndRender(){
     const data = await r.json();
     _jobsLastList = Array.isArray(data.jobs) ? data.jobs : [];
   }catch(_){ return; }
-  const running = _jobsLastList.filter(j => j.status==='running' || j.status==='pending').length;
+  _jobsUpdateBadgeAndList();
+}
+// A live in-flight tutor question is not tracked by the server's job store at all (POST /api/tutor
+// is stateless — INTERNALS.md §6b) — the client already knows the ONE piece of state that matters
+// (_tutorState.busy), so it's folded in here as a SYNTHETIC entry rather than teaching the server
+// about a request shape (streaming, no persisted id) the generic job store was never built for.
+// User-requested follow-up to item U ("a tutor job should also be part of the jobs popover").
+function _jobsEffectiveList(){
+  if(!_tutorState.busy) return _jobsLastList;
+  return [{ id: '__tutor__', kind: 'tutor', label: t('tutor.title'), status: 'running',
+    step: t('tutor.thinking'), error: null, link: { type: 'tutor' }, createdAt: Date.now() }, ..._jobsLastList];
+}
+// Re-renders the badge + (if open) the list from CURRENT STATE, no network round trip — the tutor
+// hook below calls this the instant _tutorState.busy flips, so the popover reacts immediately
+// instead of waiting for the next 3s poll tick (or worse, the next screen navigation).
+function _jobsUpdateBadgeAndList(){
+  const list = _jobsEffectiveList();
+  const running = list.filter(j => j.status==='running' || j.status==='pending').length;
   const badge = document.getElementById('jobs-pill-badge');
   if(badge){
     if(running > 0){ badge.style.display='flex'; badge.textContent=String(running); }
@@ -173630,13 +173655,14 @@ async function _jobsFetchAndRender(){
 function _jobsRenderList(){
   const hdr = document.getElementById('jobs-pop-hdr'); if(hdr) hdr.textContent = t('jobs.title');
   const wrap = document.getElementById('jobs-pop-list'); if(!wrap) return;
-  if(!_jobsLastList.length){
+  const list = _jobsEffectiveList();
+  if(!list.length){
     wrap.innerHTML = '<div class="jobs-pop-empty">'+escHtml(t('jobs.empty'))+'</div>';
     return;
   }
-  wrap.innerHTML = _jobsLastList.map(j => {
+  wrap.innerHTML = list.map(j => {
     const isErr = j.status === 'error';
-    const icon = isErr ? '⚠️' : (j.status === 'done' ? '✅' : '⏳');
+    const icon = isErr ? '⚠️' : (j.status === 'done' ? '✅' : (j.kind === 'tutor' ? '🦉' : '⏳'));
     const stepText = isErr ? t('jobs.error', {msg: j.error||''}) : (j.step||'');
     const openBtn = j.link
       ? `<button class="jobs-row-open" data-jobid="${escAttr(j.id)}">${escHtml(t('jobs.open'))} →</button>`
@@ -173649,22 +173675,26 @@ function _jobsRenderList(){
   }).join('');
 }
 // Delegated (not one listener per row — the list re-renders on every poll tick): looks the job back
-// up in _jobsLastList by id rather than serializing `link` into the markup, the same reason
-// _jobsLastList exists at module scope at all.
+// up in the CURRENT effective list by id rather than serializing `link` into the markup, the same
+// reason _jobsLastList exists at module scope at all.
 document.addEventListener('click', e => {
   const btn = e.target.closest && e.target.closest('.jobs-row-open');
   if(!btn) return;
-  const job = _jobsLastList.find(j => j.id === btn.dataset.jobid);
+  const job = _jobsEffectiveList().find(j => j.id === btn.dataset.jobid);
   if(job && job.link) _jobsOpenLink(job.link);
 });
 function _jobsOpenLink(link){
   closeJobsPop();
   if(link.type === 'storyline') showStorylineById(link.id);
   else if(link.type === 'topic') loadSaved(link.id);
+  else if(link.type === 'tutor') { if(!_tutorState.open) toggleTutorWidget(); }
 }
 function _jobsPopOutside(e){
-  const wrap = document.getElementById('jobs-fab');
-  if(wrap && !wrap.contains(e.target)) closeJobsPop();
+  // #jobs-pop lives OUTSIDE #jobs-fab now (body-level, see its own markup comment) — a click
+  // inside either the pill OR the popover itself must not count as "outside".
+  const fab = document.getElementById('jobs-fab');
+  const pop = document.getElementById('jobs-pop');
+  if((!fab || !fab.contains(e.target)) && (!pop || !pop.contains(e.target))) closeJobsPop();
 }
 function _jobsPopEsc(e){ if(e.key === 'Escape') closeJobsPop(); }
 function openJobsPop(){
@@ -174043,6 +174073,7 @@ function _tutorRender(){
 async function _tutorSend(opening){
   if(_tutorState.busy) return;
   _tutorState.busy = true; _tutorStreaming = ''; _tutorRender();
+  try{ _jobsUpdateBadgeAndList(); }catch(_){}   // item U follow-up: reflect immediately, not on the next poll
   const btn = document.getElementById('tutor-widget-send');
   const inp = document.getElementById('tutor-widget-input');
   if(btn) btn.disabled = true; if(inp) inp.disabled = true;
@@ -174062,6 +174093,7 @@ async function _tutorSend(opening){
   finally{
     _tutorState.busy = false; _tutorStreaming = '';
     _tutorRender();
+    try{ _jobsUpdateBadgeAndList(); }catch(_){}
     if(btn) btn.disabled = false; if(inp){ inp.disabled = false; inp.focus(); }
   }
 }

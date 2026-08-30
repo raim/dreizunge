@@ -288,6 +288,7 @@ run('unit: storyline theme by story style', 'node', [path.join(__dirname, 'unit-
 run('unit: PLAN §7.0 CP1/CP2, item W step 4 — text explorer client fetch/render logic', 'node', [path.join(__dirname, 'unit-text-explorer.test.js')]);
 run('unit: item W follow-up — analyzeChaptersRun() batch curator trigger (v86_p)', 'node', [path.join(__dirname, 'unit-analyze-chapters-run.test.js')]);
 run('unit: lesson-set card story display — language flags + text explorer (v86_ad)', 'node', [path.join(__dirname, 'unit-lesson-set-story-explorer.test.js')]);
+run('unit: jobs popover — tutor synthetic entry + stacking-context fix (item U follow-up)', 'node', [path.join(__dirname, 'unit-jobs-popover.test.js')]);
 
 // 3) E2E — spawn the real server + fake Ollama. Skipped with --quick.
 if (!quick) {

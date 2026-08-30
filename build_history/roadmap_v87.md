@@ -1994,6 +1994,53 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v87 LINE
 
+## ✅ v87_c — item U follow-up: a tutor question joins the jobs popover, plus a real stacking-context bug found and fixed
+
+**User request, immediately after `v87_b` shipped**: "a tutor job should also be part of the jobs
+popover." A live in-flight tutor question is not tracked by the server's generic job store at all
+(`POST /api/tutor` is stateless — INTERNALS.md §6b) — folded in as a SYNTHETIC entry instead, sourced
+from the one piece of client state that already exists for it (`_tutorState.busy`), rather than
+teaching the server about a request shape (streaming, no persisted id) the job store was never built
+for. `_jobsEffectiveList()` returns `_jobsLastList` (the real server data) plus a synthetic
+`{id:'__tutor__', kind:'tutor', link:{type:'tutor'}, ...}` entry whenever `_tutorState.busy` is true;
+`_tutorSend()` calls a new no-fetch `_jobsUpdateBadgeAndList()` at both busy transitions so the
+badge/list react the INSTANT a question is asked or answered, not on the next 3s poll tick or
+navigation. `_jobsOpenLink`'s new `tutor` branch calls `toggleTutorWidget()` (only if not already
+open) instead of navigating anywhere.
+
+**A real, unrelated bug found live while testing the above, not by reading the CSS**: opening the
+tutor widget and the jobs popover together rendered the popover COMPLETELY INVISIBLE, hidden behind
+the tutor widget, despite `.jobs-pop`'s `z-index:902` being numerically higher than `#tutor-widget`'s
+`901`. Cause: `#jobs-pop` lived inside `#jobs-fab`, itself inside `#bottom-bar` — and `#bottom-bar`
+(`position:fixed` + `z-index:900`) is ITSELF a stacking context, so every z-index on a descendant is
+capped at that context's own paint order and can never out-rank a BODY-LEVEL sibling like
+`#tutor-widget`, no matter how high the descendant's own z-index reads. Fixed by moving `#jobs-pop`
+out of `#jobs-fab` to the body level (a sibling of `#tutor-widget`) — the exact same split this
+codebase already uses for the tutor FAB (button, stays in the bottom bar) vs. the tutor WIDGET
+(floating panel, stays at the body level; see that markup's own pre-existing comment). `.jobs-pop`'s
+CSS simplified to ONE unconditional `position:fixed` rule (right-anchored above the bottom bar, same
+shape as `#tutor-widget`'s own placement) at every viewport width, dropping the pill-relative
+absolute-positioning + media-query-fallback pair `v87_b` shipped — that two-mode anchoring is exactly
+what caused `v87_b`'s OWN left-vs-right bug in the first place, so simplifying to one rule removes an
+entire bug class, not just this instance of it. `_jobsPopOutside` updated to treat a click inside
+EITHER `#jobs-fab` OR the now-separate `#jobs-pop` as "inside" (previously only checked the former,
+which used to be sufficient because the popover was nested inside it).
+
+**New `test/unit-jobs-popover.test.js`** (7 checks, `lib-dom.js` harness): the synthetic-entry merge
+(idle passthrough, busy prepend), a structural regression guard for the stacking fix (source-position
+check — NOT `Element.contains()`/`.parentNode`, both confirmed dead stubs in this harness for the
+statically-parsed tree, checked directly rather than assumed), the CSS rule itself, the rendered
+tutor row's markup, and `_jobsOpenLink`'s open-only-if-closed behaviour. Mutation-tested (breaking
+the busy-guard, and reintroducing the old nested structure, both turn their own assertions red). ONE
+sub-case (`_jobsPopOutside`'s inside/outside discrimination) is explicitly NOT unit-tested — it
+depends on real `Element.contains()`, unconditionally stubbed `false` in this harness (confirmed by
+direct probe, `el.contains(el)` → `false`) — any assertion built on it would pass or fail independent
+of whether the real logic is correct, which the test file's own comment flags rather than papering
+over with a vacuous assertion. Verified LIVE instead, in a real browser: a click inside the open
+popover does not close it; a click elsewhere does.
+
+---
+
 ## ✅ v87_b — item U, a jobs popover: "a single place to see everything in flight"
 
 The running/scheduled-jobs half of item U (the "unfinished projects" half stays blocked on item R,
