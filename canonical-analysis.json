@@ -545,7 +545,7 @@
               "idx": 0,
               "surface": "U",
               "lemma": "u",
-              "form": "pronoun, formal second person singular nominative",
+              "form": "Personalpronomen, 2. Person Plural, Nominativ",
               "sense": "Sie (Höflichkeitsform)",
               "confidence": "high",
               "reviewed": false
@@ -555,8 +555,8 @@
               "idx": 1,
               "surface": "rijdt",
               "lemma": "rijden",
-              "form": "verb, present tense, 2nd person plural/formal singular",
-              "sense": "fahren Sie",
+              "form": "Verb, Präsens, 2. Person Plural",
+              "sense": "fahren",
               "confidence": "high",
               "reviewed": false
             },
@@ -565,7 +565,7 @@
               "idx": 2,
               "surface": "nu",
               "lemma": "nu",
-              "form": "adverb",
+              "form": "Adverb",
               "sense": "jetzt",
               "confidence": "high",
               "reviewed": false
@@ -575,7 +575,7 @@
               "idx": 3,
               "surface": "500",
               "lemma": "500",
-              "form": "numeral",
+              "form": "Numeral",
               "sense": "fünfhundert",
               "confidence": "high",
               "reviewed": false
@@ -585,7 +585,7 @@
               "idx": 4,
               "surface": "meter",
               "lemma": "meter",
-              "form": "noun, plural",
+              "form": "Substantiv, Singular",
               "sense": "Meter",
               "confidence": "high",
               "reviewed": false
@@ -595,7 +595,7 @@
               "idx": 5,
               "surface": "van",
               "lemma": "van",
-              "form": "preposition",
+              "form": "Präposition",
               "sense": "von",
               "confidence": "high",
               "reviewed": false
@@ -605,7 +605,7 @@
               "idx": 6,
               "surface": "een",
               "lemma": "een",
-              "form": "indefinite article",
+              "form": "Unbestimmter Artikel, Singular",
               "sense": "ein",
               "confidence": "high",
               "reviewed": false
@@ -615,8 +615,8 @@
               "idx": 7,
               "surface": "N2000",
               "lemma": "N2000",
-              "form": "proper noun, acronym",
-              "sense": "N2000 (Netzwerk Natura 2000)",
+              "form": "Eigenname (Netzwerk)",
+              "sense": "Natura 2000",
               "confidence": "high",
               "reviewed": false
             },
@@ -625,7 +625,7 @@
               "idx": 8,
               "surface": "gebied",
               "lemma": "gebied",
-              "form": "noun, singular",
+              "form": "Substantiv, Singular",
               "sense": "Gebiet",
               "confidence": "high",
               "reviewed": false
@@ -635,7 +635,7 @@
               "idx": 9,
               "surface": "ONTEIGENINGSZONE",
               "lemma": "onteigeningszone",
-              "form": "noun, singular",
+              "form": "Substantiv, Singular",
               "sense": "Enteignungszone",
               "confidence": "high",
               "reviewed": false
@@ -645,8 +645,8 @@
               "idx": 10,
               "surface": "Dit",
               "lemma": "dit",
-              "form": "pronoun, demonstrative neuter singular nominative",
-              "sense": "Dies",
+              "form": "Demonstrativpronomen, Neutrum, Singular",
+              "sense": "Dieses",
               "confidence": "high",
               "reviewed": false
             },
@@ -655,7 +655,7 @@
               "idx": 11,
               "surface": "raakt",
               "lemma": " raken",
-              "form": "verb, present tense, 3rd person singular",
+              "form": "Verb, Präsens, 3. Person Singular",
               "sense": "betrifft",
               "confidence": "high",
               "reviewed": false
@@ -665,7 +665,7 @@
               "idx": 12,
               "surface": "niet",
               "lemma": "niet",
-              "form": "adverb",
+              "form": "Negationspartikel",
               "sense": "nicht",
               "confidence": "high",
               "reviewed": false
@@ -675,7 +675,7 @@
               "idx": 13,
               "surface": "alleen",
               "lemma": "alleen",
-              "form": "adverb",
+              "form": "Adverb",
               "sense": "nur",
               "confidence": "high",
               "reviewed": false
@@ -685,7 +685,7 @@
               "idx": 14,
               "surface": "boeren.",
               "lemma": "boer",
-              "form": "noun, plural",
+              "form": "Substantiv, Plural",
               "sense": "Bauern",
               "confidence": "high",
               "reviewed": false
@@ -701,7 +701,7 @@
               ],
               "lemma": "u rijdt",
               "gloss": "Sie fahren",
-              "confidence": "unresolved",
+              "confidence": "low",
               "reviewed": false
             },
             {
@@ -724,22 +724,8 @@
                 "tp_17880367188140000070:s0:t8"
               ],
               "lemma": "N2000-gebied",
-              "gloss": "N2000-Gebiet",
+              "gloss": "Natura 2000-Gebiet",
               "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "start": 11,
-              "end": 14,
-              "tokenIds": [
-                "tp_17880367188140000070:s0:t11",
-                "tp_17880367188140000070:s0:t12",
-                "tp_17880367188140000070:s0:t13",
-                "tp_17880367188140000070:s0:t14"
-              ],
-              "lemma": "raakt niet alleen ...",
-              "gloss": "betrifft nicht nur ...",
-              "confidence": "unresolved",
               "reviewed": false
             }
           ],
@@ -748,7 +734,7 @@
             "stage": "CP2",
             "pipelineVersion": 1,
             "producedBy": "canonical-analysis.js",
-            "at": "2026-08-30T07:43:50.867Z",
+            "at": "2026-08-30T12:09:33.490Z",
             "sentenceId": "tp_17880367188140000070:s0",
             "model": "qwen3.6:35b-a3b"
           },
@@ -763,8 +749,8 @@
               "idx": 0,
               "surface": "Dit",
               "lemma": "dit",
-              "form": "pronoun, demonstrative neuter singular nominative/accusative",
-              "sense": "dies",
+              "form": "Demonstrativpronomen, Nominativ/Akkusativ, Singular, Neutrum",
+              "sense": "dieses",
               "confidence": "high",
               "reviewed": false
             },
@@ -773,7 +759,7 @@
               "idx": 1,
               "surface": "raakt",
               "lemma": "raken",
-              "form": "verb, present tense 3rd person singular",
+              "form": "Verb, Präsens, Indikativ, 3. Person Singular",
               "sense": "berührt",
               "confidence": "high",
               "reviewed": false
@@ -783,7 +769,7 @@
               "idx": 2,
               "surface": "ons",
               "lemma": "ons",
-              "form": "pronoun, personal first person plural accusative",
+              "form": "Personalpronomen, Akkusativ/Dativ, Plural",
               "sense": "uns",
               "confidence": "high",
               "reviewed": false
@@ -793,7 +779,7 @@
               "idx": 3,
               "surface": "allemaal.",
               "lemma": "allemaal",
-              "form": "adverb, universal quantifier",
+              "form": "Adverb/Pronomen, all",
               "sense": "alle",
               "confidence": "high",
               "reviewed": false
@@ -811,7 +797,7 @@
               ],
               "lemma": "dit raakt ons allemaal",
               "gloss": "das betrifft uns alle",
-              "confidence": "low",
+              "confidence": "unresolved",
               "reviewed": false
             }
           ],
@@ -820,7 +806,7 @@
             "stage": "CP2",
             "pipelineVersion": 1,
             "producedBy": "canonical-analysis.js",
-            "at": "2026-08-30T07:47:34.312Z",
+            "at": "2026-08-30T12:10:48.086Z",
             "sentenceId": "tp_17880367188140000070:s1",
             "model": "qwen3.6:35b-a3b"
           },
@@ -832,14 +818,14 @@
         "stage": "CP2",
         "pipelineVersion": 1,
         "producedBy": "canonical-analysis.js",
-        "at": "2026-08-30T07:47:34.312Z",
+        "at": "2026-08-30T12:10:48.086Z",
         "chapterId": "tp_17880367188140000070",
         "model": "qwen3.6:35b-a3b"
       },
       "sourceTextHash": "9b8ad6d2d233",
-      "analyzedAt": "2026-08-30T07:47:34.312Z"
+      "analyzedAt": "2026-08-30T12:10:48.086Z"
     }
   },
-  "generatedAt": "2026-08-30T07:47:34.321Z",
+  "generatedAt": "2026-08-30T12:10:48.086Z",
   "chapterCount": 3
 }

@@ -12133,6 +12133,74 @@
             "ms": 23436,
             "at": "2026-08-30T07:58:56.686Z"
           }
+        },
+        {
+          "difficulty": 2,
+          "id": "ls_1788092767813",
+          "type": "inflections",
+          "title": "Nederlandse vervoegingen",
+          "desc": "Woorden uit de tekst ontleeden",
+          "icon": "🇳🇱",
+          "items": [
+            {
+              "sentence": "Dit raakt niet alleen boeren.",
+              "surfaceForm": "raakt",
+              "translation": "Dies betrifft nicht nur Bauern.",
+              "lemma": "raken",
+              "lemmaChoices": [
+                "raken",
+                "raakt",
+                "raakte",
+                "geraakt"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Tegenwoordige tijd, derde persoon enkelvoud",
+              "formChoices": [
+                "Tegenwoordige tijd, derde persoon enkelvoud",
+                "Verleden tijd, derde persoon enkelvoud",
+                "Infinitief",
+                "Imperatief"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "'Raakt' is de vervoegde vorm van het werkwoord 'raken' in de tegenwoordige tijd voor 'het/deze'."
+            },
+            {
+              "sentence": "Dit raakt ons allemaal.",
+              "surfaceForm": "raakt",
+              "translation": "Dies betrifft uns alle.",
+              "lemma": "raken",
+              "lemmaChoices": [
+                "raken",
+                "raakt",
+                "raakte",
+                "geraakt"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Tegenwoordige tijd, derde persoon enkelvoud",
+              "formChoices": [
+                "Tegenwoordige tijd, derde persoon enkelvoud",
+                "Verleden tijd, derde persoon enkelvoud",
+                "Infinitief",
+                "Imperatief"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "'Raakt' is de vervoegde vorm van het werkwoord 'raken' in de tegenwoordige tijd voor 'het/deze'."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 2,
+            "rejected": 1,
+            "rejectReasons": {
+              "formLabel not found among its own formChoices": 1
+            },
+            "promptTokens": 1477,
+            "completionTokens": 725,
+            "ms": 342510,
+            "at": "2026-08-30T12:26:07.813Z"
+          }
         }
       ],
       "generationStats": {
@@ -12145,8 +12213,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 5285,
-        "totalCompletionTokens": 2609,
+        "totalPromptTokens": 6762,
+        "totalCompletionTokens": 3334,
         "lessons": [
           {
             "lessonNum": 1,
@@ -12157,7 +12225,7 @@
         ],
         "tokensByType": {
           "recreate": 5806,
-          "add_lesson": 509
+          "add_lesson": 2711
         }
       },
       "comicPanels": [
@@ -12172,7 +12240,7 @@
         }
       ],
       "generatedAt": "2026-08-29T20:51:58.815Z",
-      "updatedAt": "2026-08-30T07:58:56.686Z",
+      "updatedAt": "2026-08-30T12:26:07.813Z",
       "createdBy": "admin"
     },
     {

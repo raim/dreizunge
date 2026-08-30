@@ -1710,6 +1710,16 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <div class="story-hdr" style="display:flex;align-items:center;cursor:pointer" onclick="toggleStory()">
       <span id="read-story-hdr" style="flex:1">📖 Read the story</span>
       <span class="story-arrow" id="story-arrow" style="margin-right:4px">▼</span>
+      <!-- v86_ad (user-requested): the lesson-set card's own story display had no language flags and
+           no text-analysis at all — full parity with the completion card's _renderCompStory, same
+           underlying _storyFlagButtonsHtml/CP1-CP2 cache, different DOM ids and state (APP._lsStoryLang/
+           APP._lsTextExplorer, not APP._compStoryLang/APP._textExplorer — this card and the completion
+           card can be open in different senses at once, e.g. teacher preview vs student view).
+           🔬, NOT 🔍 (this row's OWN 🔍 is the QC "Proofread with QC model" button, a different
+           feature) and NOT 🔎 (already the AI-hunt checkbox's icon further down this same row). -->
+      <span id="ls-story-flags" style="flex:none"></span>
+      <button class="story-icon-btn" id="ls-story-explorer-btn" onclick="event.stopPropagation();toggleLsTextExplorer()" title="Text explorer — tap any word for its grammar">🔬</button>
+      <button class="story-icon-btn" id="ls-story-analyze-btn" onclick="event.stopPropagation();analyzeChaptersRun([APP.lessonData?.id].filter(Boolean),this)" title="Analyse words for the text explorer" style="display:none">🔤</button>
       <button class="story-icon-btn" onclick="event.stopPropagation();speakStory()" id="speakstory-btn" title="Read aloud">💬</button>
       <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="event.stopPropagation();toggleStoryRepair()" title="Edit story">✏️</button>
       <button class="story-icon-btn" id="story-qc-btn" onclick="event.stopPropagation();runStoryQc()" title="Proofread with QC model" style="display:none">🔍</button>
@@ -5968,21 +5978,78 @@ function _storyParasHtml(html) {
 // the thing that ruling argued against, not a separate design worth keeping. No tap here, same as
 // every other read-only panel (v80_t): tapping needs an active run to jump into, and this screen,
 // like the library and storyline panels, has none.
+// v86_ad (user-requested): every REAL call site always passes the DEFAULT #story-body (no caller
+// ever supplies an explicit targetEl), so the language-flags/text-explorer chrome below is safe to
+// bake directly into this one function rather than adding a second wrapper only some callers use —
+// one source of truth, matching this file's own "_storyBodyHtml is the one shared BODY renderer,
+// or five screens drift" precedent. `isMainCard` stays defensive in case a future caller ever DOES
+// pass a different targetEl (a plain, undecorated render, same as before this cut).
 function renderStoryText(d, targetEl){
   const body=targetEl||document.getElementById('story-body'); if(!body) return;
-  const vocabWords=(d.lessons||[]).filter(Boolean).flatMap(L=>L.vocab||[]).map(v=>v&&v.target).filter(Boolean);
-  const extraWords=(typeof _storyExtraWords==='function') ? _storyExtraWords(d) : [];
-  const allWords=[...vocabWords, ...extraWords].filter(Boolean).sort((a,b)=>b.length-a.length);
-  let solved=[];
-  try { solved=_solvedTargetWords(d).concat(_solvedExtraWords(d)); } catch(_) { solved=[]; }
-  let rendered=furiHtml(d.story||'');
-  if(allWords.length) rendered = _highlightVocabHtml(rendered, allWords, solved);
-  const spkBtn=''; // speaker moved to story-hdr
-  body.innerHTML=spkBtn+_storyParasHtml(rendered);
+  const isMainCard = !targetEl || body===document.getElementById('story-body');
+  const _xlate = isMainCard ? (d.storyTranslation||'') : '';
+  const showingSource = isMainCard && APP._lsStoryLang==='source' && _xlate;
+  if (isMainCard && APP._lsTextExplorer && !showingSource) {
+    try { body.innerHTML = _textExplorerBodyHtml(d); }
+    catch(_) { body.textContent = d.story||''; }
+  } else {
+    const full = showingSource ? _xlate : (d.story||'');
+    const vocabWords=(d.lessons||[]).filter(Boolean).flatMap(L=>L.vocab||[]).map(v=>v&&v.target).filter(Boolean);
+    const extraWords=(typeof _storyExtraWords==='function') ? _storyExtraWords(d) : [];
+    const allWords=[...vocabWords, ...extraWords].filter(Boolean).sort((a,b)=>b.length-a.length);
+    let solved=[];
+    try { solved=_solvedTargetWords(d).concat(_solvedExtraWords(d)); } catch(_) { solved=[]; }
+    // Vocab highlighting is TARGET-language words matched against TARGET-language text — matching
+    // them against the translation would find nothing real, same reasoning _renderCompStory's own
+    // `highlight: !showingSource` already applies.
+    let rendered=furiHtml(full);
+    if(!showingSource && allWords.length) rendered = _highlightVocabHtml(rendered, allWords, solved);
+    const spkBtn=''; // speaker moved to story-hdr
+    body.innerHTML=spkBtn+_storyParasHtml(rendered);
+  }
+  if (!isMainCard) return;   // an explicit-targetEl caller (none exist today) skips the chrome below
+  const _expBtn=document.getElementById('ls-story-explorer-btn');
+  if (_expBtn) {
+    _expBtn.title = t('text_explorer.toggle_title');
+    _expBtn.style.opacity = APP._lsTextExplorer ? '1' : '.5';
+    _expBtn.style.borderRadius = '6px';
+    _expBtn.style.border = '1.5px solid ' + (APP._lsTextExplorer ? 'var(--blue)' : 'transparent');
+  }
+  const _flagsEl=document.getElementById('ls-story-flags');
+  if (_flagsEl) {
+    _flagsEl.innerHTML = _storyFlagButtonsHtml(
+      d.lang || APP.lang, d.srcLang || 'en', !!_xlate,
+      APP._lsTextExplorer ? null : (showingSource ? 'source' : 'target'),
+      lang => `toggleLsStoryLang('${lang}')`);
+  }
+}
+// v86_ad: the language-flag-aware companion to toggleCompStoryLang/toggleExStoryLang/
+// toggleChainStoryLang — SETS the language a flag names (never a blind flip), and (mirroring
+// v86_y's own fix for the completion card) always exits text-explorer mode first, so the two
+// controls stay genuine alternatives rather than one silently overriding the other's visible state.
+function toggleLsStoryLang(lang){
+  APP._lsTextExplorer = false;
+  APP._lsStoryLang = (lang === 'source') ? 'source' : 'target';
+  if (APP.lessonData) renderStoryText(APP.lessonData);
+}
+// v86_ad: the lesson-set card's own text-explorer toggle — same shape as toggleTextExplorer, reusing
+// the SAME chapter-id-keyed cache (_teCacheStore/_ensureTextExplorerData), just re-rendering THIS
+// card's #story-body instead of the completion card's #comp-story-text. A separate APP._lsTextExplorer
+// flag (not the completion card's APP._textExplorer) on purpose: a teacher can have both the
+// lesson-set card AND (via student preview) the completion card's own panel open in different
+// senses, and toggling one must not silently flip the other's visible state.
+function toggleLsTextExplorer(){
+  APP._lsTextExplorer = !APP._lsTextExplorer;
+  if (APP._lsTextExplorer) APP._lsStoryLang = 'target';
+  if (APP.lessonData) renderStoryText(APP.lessonData);
+  if (APP._lsTextExplorer) _ensureTextExplorerData();
 }
 function speakStory(){
-  const d=APP.lessonData; if(!d||!d.story) return;
-  speak(stripFuri(d.story));
+  const d=APP.lessonData; if(!d) return;
+  const showingSource = APP._lsStoryLang==='source' && d.storyTranslation;
+  const text = showingSource ? d.storyTranslation : d.story;
+  if(!text) return;
+  speakBodyText(null, showingSource ? (d.srcLang||'en') : (d.lang||APP.lang), text);
 }
 
 // ── AI error hunt diff panel (shown in story read view) ──────────────────────
@@ -9296,6 +9363,12 @@ function buildPath(){
     // term — respected here by NOT combining them, rather than by exempting this line from that sweep.
     const retransBtn=document.getElementById('story-retranslate-btn');
     if(retransBtn) retransBtn.style.display=(APP.info?.canGenerate && d.story)?'':'none';
+    // v86_ad: the lesson-set card's own force-(re)analyze button — gated EXACTLY like QC/retranslate
+    // right above (a real backend + a story); the read-only 🔬 explorer toggle next to it needs no
+    // such gate (it can still show an ALREADY-cached or statically-baked result with no live backend
+    // at all, same as the completion card's own 🔍).
+    const lsAnalyzeBtn=document.getElementById('ls-story-analyze-btn');
+    if(lsAnalyzeBtn) lsAnalyzeBtn.style.display=(APP.info?.canGenerate && d.story)?'':'none';
     // Story flag row
     const sfRow=document.getElementById('story-flag-row');
     if(sfRow) sfRow.style.display='';
