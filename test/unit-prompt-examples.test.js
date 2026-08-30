@@ -131,14 +131,39 @@ console.log(`  every wordForms example item validates (${checked} item(s)): OK`)
   assert.ok(item, 'inflections default example should contain one worked item');
   assert.strictEqual(item.formLabel, 'Plural',
     'formLabel is German ("Plural"), matching the example\'s own German "translation" field — not the old hardcoded English ("plural")');
-  // "Plural"/"Singular" are spelled identically in English and German (only capitalisation
-  // differs), so check the other two choices instead — "possessive"/"past tense" are distinctly
-  // English, "Possessiv"/"Präteritum" distinctly German, no ambiguity either way.
-  assert.ok(item.formChoices.includes('Possessiv') && item.formChoices.includes('Präteritum'),
-    'formChoices use the German case/tense terms ("Possessiv", "Präteritum"), not the old English ones ("possessive", "past tense")');
+  // v86_af: formChoices no longer mixes in an unrelated dimension ("Possessiv"/"Präteritum" — case
+  // and tense, neither relevant to a NUMBER-only correct answer like "Plural") — the example itself
+  // must comply with its own "wrong choices must be DIRECT RELATIVES of the correct answer" rule,
+  // the same "worked example must not contradict its own instruction" class of bug fixed twice
+  // already this session. "Plural"/"Singular" are spelled identically in English and German, but
+  // this assertion is about the DIMENSION constraint, not the language, so exact equality is right.
+  assert.deepStrictEqual(item.formChoices, ['Plural', 'Singular'],
+    'formChoices is EXACTLY the same single dimension (number) as the correct answer — no case/tense distractor mixed in');
   assert.ok(/^Plural von/.test(item.explanation) && !/^Plural of/i.test(item.explanation),
     'explanation is a German sentence ("Plural von ...") — not the old English "Plural of ..." phrasing');
 }
 console.log('  inflections\' "default" example: formLabel/formChoices/explanation now match its own translation field\'s language (German), not hardcoded English: OK');
+
+// 6) v86_af: formChoices wrong choices must be DIRECT RELATIVES of the correct answer — the SAME
+//    grammatical dimension(s) formLabel names, never a different axis mixed in. Follow-up to the
+//    "datief" report at v86_ab: the user's own specific pedagogical question ("wouldn't datief also
+//    be correct?") — answered no, but it surfaced that the wrong-choice instruction's OWN worked
+//    example ("plural" correct, "genitive singular"/"dative plural" wrong) mixed case into a
+//    number-only correct answer, exactly the kind of distractor the "datief" report flagged as
+//    implausible. The instruction text itself now says so explicitly; both worked examples
+//    (default, de) were fixed to comply, rather than left contradicting the very rule they
+//    illustrate.
+{
+  const sys = PROMPTS.inflections.system;
+  assert.ok(/DIRECT RELATIVES/.test(sys), 'the system prompt explicitly requires wrong choices to be direct relatives of the correct answer');
+  assert.ok(/dative/i.test(sys) && /Dutch/i.test(sys),
+    'the instruction keeps the concrete "Dutch has no case" counter-example, grounding the rule in the real report rather than an abstract rule alone');
+
+  const deItem = itemsOf(PROMPTS.inflections.examples.de)[0];
+  assert.ok(deItem, 'inflections "de" example should contain one worked item');
+  assert.deepStrictEqual(deItem.formChoices, ['plural', 'singular'],
+    'the "de" example\'s formChoices is ALSO exactly the same single dimension (number) as its own "plural" correct answer — no "genitive singular"/"dative plural" case distractor mixed in');
+}
+console.log('  inflections\' system prompt + BOTH worked examples (default, de) now enforce "wrong choices are direct relatives of the correct answer": OK');
 
 console.log('unit-prompt-examples: ALL PASSED');
