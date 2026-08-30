@@ -30,6 +30,8 @@ const SEED = {
       story: 'Der Hund lauft. Die Katze schlaft.', lessons: [] },
     { id: 'tp_ana2', topic: 'Ana Fixture Two', lang: 'de', srcLang: 'en',
       story: 'Der Vogel singt schon. Die Sonne scheint hell heute.', lessons: [] },
+    { id: 'tp_ana3', topic: 'Ana Fixture Three', lang: 'de', srcLang: 'en',
+      story: 'Der Fisch schwimmt.', lessons: [] },
   ],
 };
 
@@ -149,6 +151,37 @@ const SEED = {
       // 2 (tp_ana1 first pass) + 3 (tp_ana1 restale pass) + 2 (tp_ana2, ONCE, not twice) = 7.
       assert(entries.length === 7, `tp_ana2 was analysed exactly ONCE despite two concurrent POSTs (expected 7 total calls across this whole test, got ${entries.length})`);
       console.log('  two concurrent POSTs for a chapter already mid-analysis share the SAME job, not a duplicate: OK');
+    }
+
+    // ── 7. v86_ac (user-requested "force re-analyze"): {force:true} bypasses the fresh-cache
+    //    short-circuit and genuinely re-runs CP2, even though the cache is NOT stale ───────────
+    {
+      // tp_ana2 is fresh (not stale) after §6 — a plain POST would short-circuit (§3's own case).
+      const plain = await post(sport, '/api/analyze-chapter/tp_ana2', {});
+      assert(plain.status === 200 && plain.body.cached === true,
+        'sanity check: WITHOUT force, a fresh cache still short-circuits exactly as before (got ' + JSON.stringify(plain.body) + ')');
+
+      const before = env.readChatLog().filter(e => e.kind === 'canonical_analysis').length;
+      const start = await post(sport, '/api/analyze-chapter/tp_ana2', { force: true });
+      assert(start.status === 202, `force:true bypasses the short-circuit — a real new job starts even though the cache is fresh (got ${start.status} ${JSON.stringify(start.body)})`);
+      const fin = await waitJob(sport, start.body.jobId);
+      assert(fin.status === 'done' && fin.data.sentenceCount === 2, 'the forced re-analysis completes normally');
+      const after = env.readChatLog().filter(e => e.kind === 'canonical_analysis').length;
+      assert(after === before + 2, `force:true genuinely re-ran CP2 — 2 new model calls fired for tp_ana2's 2 sentences (before=${before}, after=${after})`);
+
+      const shadow = await get(sport, '/api/analysis/tp_ana2');
+      assert(shadow.body.available === true && shadow.body.stale === false, 'the re-analysed chapter is available and fresh again after the forced run');
+      console.log('  POST {force:true}: bypasses the fresh-cache short-circuit and genuinely re-runs CP2, replacing the old cached result: OK');
+    }
+
+    // ── 8. force:true on a chapter with NO existing cache at all — deleteAnalysisChapter's own
+    //    "nothing to delete" path — behaves exactly like a normal first-time analysis, no error ──
+    {
+      const start = await post(sport, '/api/analyze-chapter/tp_ana3', { force: true });
+      assert(start.status === 202, `force:true on a NEVER-analysed chapter starts a normal job, same as force:false would (got ${start.status} ${JSON.stringify(start.body)})`);
+      const fin = await waitJob(sport, start.body.jobId);
+      assert(fin.status === 'done' && fin.data.sentenceCount === 1, 'the job completes normally — the no-op delete never interfered');
+      console.log('  POST {force:true} on a never-analysed chapter is a harmless no-op-delete, same as a normal first run: OK');
     }
 
     console.log('e2e-analysis: ALL PASSED');

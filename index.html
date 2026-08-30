@@ -8295,14 +8295,33 @@ async function analyzeChaptersRun(chapterIds, btn){
   if(!APP.info?.canGenerate){ showToast(t('qc.toast.no_backend')); return; }
   const ids = Array.isArray(chapterIds) ? chapterIds.filter(Boolean) : [];
   if(!ids.length) return;
+  // v86_ac (user-requested — "I expected to be able to generate the text analysis annotation on
+  // the lesson-set card... there should be a way to re-generate it... we can just use the same
+  // button, but reroute via a warning that this would override an existing text annotation"): a
+  // SINGLE-chapter call (the lesson-set card's own 🔤 button, always ids.length===1) doubles as
+  // "re-analyze" — if THIS one chapter is already analysed, confirm before overwriting instead of
+  // silently short-circuiting on the cache hit the way a first-time run does. A multi-chapter BATCH
+  // call (the storyline page's own "analyze all") stays silent/non-destructive on purpose — asking
+  // once per chapter in a loop would be intrusive, and a batch run's whole point is "fill in
+  // whatever is missing," not "redo everything already done."
   const old = btn ? btn.innerHTML : null;
   if(btn){ btn.disabled=true; btn.innerHTML='⏳'; }
-  let queued=0, cached=0, failed=0;
+  let queued=0, cached=0, failed=0, force=false;
   try{
+    if(ids.length === 1){
+      try{
+        const r = await fetch('/api/analysis/'+encodeURIComponent(ids[0]));
+        const shadow = await r.json().catch(()=>({}));
+        if(shadow && shadow.available){
+          if(!confirm(t('text_explorer.confirm_reanalyze'))) return;
+          force = true;
+        }
+      }catch(e){ /* pre-check failed -> fall through as a normal (non-forced) run */ }
+    }
     for(const id of ids){
       try{
         const r = await fetch('/api/analyze-chapter/'+encodeURIComponent(id),
-          { method:'POST', headers:{'Content-Type':'application/json'}, body:'{}' });
+          { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(force ? {force:true} : {}) });
         const data = await r.json().catch(()=>({}));
         if(!r.ok){ failed++; continue; }
         if(data.cached) cached++; else queued++;

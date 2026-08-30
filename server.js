@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v86_ab';
+const APP_VERSION  = 'v86_ac';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -802,6 +802,20 @@ function writeAnalysisChapter(chapterId, record) {
   store.generatedAt = new Date().toISOString();
   store.chapterCount = Object.keys(store.chapters).length;
   fs.writeFileSync(ANALYSIS_STORE_FILE, JSON.stringify(store, null, 2), 'utf8');
+}
+// v86_ac (user-requested "force re-analyze," e.g. after a prompt fix like v86_aa/v86_ab): removes
+// ONE chapter's cached CP2 result so the next /api/analyze-chapter call re-runs it from scratch,
+// rather than the normal cache-hit short-circuit. A no-op (returns false) if nothing was cached —
+// the route above already treats "nothing to delete" as fine, not an error.
+function deleteAnalysisChapter(chapterId) {
+  const store = readAnalysisStore();
+  if (!store.chapters[chapterId]) return false;
+  delete store.chapters[chapterId];
+  store.schemaVersion = 1;
+  store.generatedAt = new Date().toISOString();
+  store.chapterCount = Object.keys(store.chapters).length;
+  fs.writeFileSync(ANALYSIS_STORE_FILE, JSON.stringify(store, null, 2), 'utf8');
+  return true;
 }
 // The GET route's own read path (item W step 3) — same absent -> available:false shape as
 // cp5ShadowFor, so the client-side pattern (fetch, degrade silently, paint only when real data
@@ -7821,17 +7835,24 @@ http.createServer(async (req, res) => {
     }
 
     // ── item W step 2: kick off (or reuse) the background CP1+CP2 job for one chapter ──────────
-    // Body: none — the chapter id is the resource, same as the GET route above. A cached, non-stale
-    // result short-circuits with 200 (no job at all); otherwise a job starts (or an already-running
-    // one for this SAME chapter is reused) and 202 + jobId is returned, polled via the existing
-    // /api/job/:id route every other background job already uses.
+    // Body: optional {force:true} (v86_ac, user-requested — "delete the old and re-generate a new
+    // text analysis annotation," e.g. after a prompt fix like v86_aa/v86_ab). A cached, non-stale
+    // result normally short-circuits with 200 (no job at all); force:true deletes that cached
+    // result FIRST, so the short-circuit below naturally sees available:false and a fresh job
+    // starts instead — no separate "force" branch needed past that point. A malformed body is
+    // treated the same as an absent `force` (this route's OWN client, analyzeChaptersRun, always
+    // sends valid JSON; the check is a defensive read, not a strict content-type gate the way
+    // other write routes' `JSON.parse(...) catch -> 400` is, since this route historically accepted
+    // any/no body at all and other pollers may still send one).
     if (M === 'POST' && url.pathname.startsWith('/api/analyze-chapter/')) {
-      await readBody(req); // no fields used — the chapter id is the resource (path param), but the
-                            // request body must still be drained like every other POST route here.
+      let body = {};
+      try { body = JSON.parse(await readBody(req)); } catch (e) { /* no/invalid body -> no force flag */ }
+      const force = !!(body && body.force === true);
       const chapterId = decodeURIComponent(url.pathname.slice('/api/analyze-chapter/'.length));
       const topic = chapterId ? findSavedById(chapterId) : null;
       if (!topic) return json(res, 404, { error: 'No chapter with that id.' });
       if (!topic.story || !String(topic.story).trim()) return json(res, 400, { error: 'Chapter has no story text.' });
+      if (force) deleteAnalysisChapter(chapterId);
       const shadow = analysisShadowFor(chapterId);
       if (shadow.available && !shadow.stale) return json(res, 200, { cached: true, ...shadow });
       if (active === 'none') return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
