@@ -82,7 +82,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .jobs-row-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .jobs-row-step{font-size:11px;color:var(--gray-dark);padding-left:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .jobs-row.error .jobs-row-step{color:#b3261e}
-.jobs-row-open{align-self:flex-end;background:none;border:none;color:var(--blue-dark);font-weight:800;font-size:11px;cursor:pointer;padding:2px 4px}
+.jobs-row-actions{display:flex;justify-content:flex-end;align-items:center;gap:4px}
+.jobs-row-open{background:none;border:none;color:var(--blue-dark);font-weight:800;font-size:11px;cursor:pointer;padding:2px 4px}
+.jobs-row-del{background:none;border:none;font-size:12px;cursor:pointer;padding:2px 4px;opacity:.6}
+.jobs-row-del:hover{opacity:1}
 #jobs-pill-badge{position:absolute;top:-4px;right:-4px;background:var(--blue);color:#fff;font-size:10px;font-weight:800;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px;box-shadow:0 1px 4px rgba(0,0,0,.3)}
 .bmodels select{font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;color:var(--text);background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 5px;cursor:pointer;max-width:170px}
 .bpill{display:inline-flex;align-items:center;gap:6px;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;border:2px solid}
@@ -6230,6 +6233,11 @@ let _pdfResplitTimer = null;
 // {start,end} character span into _pdfRawText; each becomes one chapter.
 let _pdfSelMode = false;
 let _pdfSelections = [];
+// item R (roadmap_v87.md): the currently-open draft's server id, or null. Set once the FIRST
+// autosave round-trip returns one; every later save for this session reuses it (upsert), so a
+// document being actively edited updates ONE draft record rather than spawning a new one per save.
+let _draftId = null;
+let _draftSaveTimer = null;
 
 // Show/hide the single paste box (and story-language row) vs. the chapters view.
 function _setPasteVisible(v){
@@ -6241,6 +6249,9 @@ function _setPasteVisible(v){
 // Drop any uploaded document and return to single-paste mode.
 function _clearUpload(){
   if(_pdfBookId) pdfCancelBook();
+  // item R: an explicit "drop this document" is an explicit "forget the draft too" — the autosave
+  // exists to survive an ACCIDENTAL loss (closed tab, crash), not to outlive a deliberate discard.
+  discardDraft();
   _uploadMode=false; _pdfRawText=''; _pdfPages=null; _pdfOrig=null; _pdfChunks=[]; _splitOpen=-1; _chunksDirty=false;
   _uploadFileName='';
   _pdfSelMode=false; _pdfSelections=[];
@@ -6254,6 +6265,96 @@ function _clearUpload(){
   _renderPdfChunks();
   _setPasteVisible(true);
   _updateUploadSliderVis();
+}
+
+// item R (roadmap_v87.md): unfinished-project drafts — autosave the chapter-splitting output
+// (_pdfChunks et al.) that used to live ONLY in this tab's JS memory. Debounced, not per-keystroke:
+// _renderPdfChunks() is the one function every mutation already funnels through (see its own
+// comment), so a 1.5s debounce there is enough to survive a closed tab without hammering the
+// server on every character of a manual chunk-title edit.
+function _draftSaveDebounced(){
+  // Nothing worth saving (cleared/empty), or real generation has already started — from that
+  // moment the book job's own bookJobs entry owns durability; re-saving here would just leave a
+  // stale duplicate draft behind (pdfGenerateAll() explicitly discards it once the job starts).
+  if(!_uploadMode || !_pdfChunks.length || _pdfBookId) return;
+  if(_draftSaveTimer) clearTimeout(_draftSaveTimer);
+  _draftSaveTimer = setTimeout(_draftSaveNow, 1500);
+}
+async function _draftSaveNow(){
+  if(!_uploadMode || !_pdfChunks.length || _pdfBookId) return;
+  if(!APP.info?.canGenerate) return;   // no backend to save to (also true for the static build)
+  try{
+    const body = {
+      id: _draftId || undefined,
+      lang: APP.lang||'it', srcLang: APP.srcLang||'en', difficulty: APP.difficulty||2,
+      lessonFormat: APP.lessonFormat||'standard',
+      storyStyle: (APP.storyStyle && APP.storyStyle!=='creative') ? APP.storyStyle : null,
+      sourceFile: _uploadFileName||null,
+      continuedFrom: document.getElementById('continue-select')?.value||null,
+      script: APP.script||null, srcScript: APP.srcScript||null,
+      arc: !!document.getElementById('pdf-arc-cb')?.checked,
+      arcTypes: document.getElementById('pdf-arc-cb')?.checked ? readArcTypeChecks('pdf-arc-types') : null,
+      postGenStoryboard: !!document.getElementById('pdf-storyboard-cb')?.checked,
+      postGenAnalysis: !!document.getElementById('pdf-analysis-cb')?.checked,
+      chunks: _pdfChunks.map(c=>({title:c.title, text:c.text, wordCount:c.wordCount})),
+    };
+    const r = await fetch('/api/drafts', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+    if(r.ok){ const resp = await r.json(); if(resp && resp.id) _draftId = resp.id; }
+  }catch(e){ /* best-effort autosave, same silent-failure precedent item S's persistLesson() sets — nothing user-facing on one failed round trip; the NEXT edit tries again */ }
+}
+// Explicit discard — called by _clearUpload() (the learner dropped the document) and by
+// pdfGenerateAll() the instant real generation starts (the draft's job is done at that point).
+async function discardDraft(){
+  if(!_draftId) return;
+  const id = _draftId; _draftId = null;
+  try{ await fetch('/api/drafts/'+id, {method:'DELETE'}); }catch(e){}
+}
+// Resume: repopulate this tab's local state from a saved draft and land on the SAME chapter-review
+// step pdfGenerateAll() would have been reachable from — the learner can review/edit further, or hit
+// Generate immediately, exactly as if the tab had never closed. Reached from the jobs popover
+// (item U, kind:'draft') via _jobsOpenLink.
+async function resumeDraft(draftId){
+  try{
+    const r = await fetch('/api/drafts/'+draftId);
+    if(!r.ok){ showToast(t('toast.draft_missing')); return; }
+    const d = await r.json();
+    if(_pdfBookId) pdfCancelBook();
+    _draftId = d.id;
+    _uploadFileName = d.sourceFile || '';
+    _pdfChunks = (d.chunks||[]).map(c=>({ title:c.title||'', text:c.text||'', wordCount:c.wordCount||0, status:'pending' }));
+    _uploadMode = true; _pdfRawText=''; _pdfPages=null; _pdfOrig=null; _splitOpen=-1;
+    // Manual-edit state, not a fresh split — resplitting-by-mode would discard exactly the chapter
+    // boundaries this draft exists to preserve.
+    _chunksDirty = true;
+    _pdfSelMode=false; _pdfSelections=[];
+    show('generation-screen');
+    if(d.srcLang) selectSrcLang(d.srcLang);
+    if(d.lang) selectLang(d.lang, true);
+    if(d.difficulty){ APP.difficulty = d.difficulty; restoreDiffSelect(); }
+    if(d.lessonFormat){ APP.lessonFormat = d.lessonFormat; restoreFormatSelect(); }
+    APP.storyStyle = d.storyStyle || null; restoreStyleSelect();
+    APP.script = d.script || null; APP.srcScript = d.srcScript || null;
+    // Same incantation _reconnectBookJob() uses: "own story" mode (checked) is the umbrella for
+    // BOTH paste and upload; _setPasteVisible(false) then selects the upload/chunks sub-view within it.
+    const cb=document.getElementById('use-story-cb'); if(cb && !cb.checked){ cb.checked=true; onUseStoryCb(); }
+    _setPasteVisible(false);
+    const cs=document.getElementById('continue-select'); if(cs && d.continuedFrom) cs.value=d.continuedFrom;
+    const arcCb=document.getElementById('pdf-arc-cb'); if(arcCb) arcCb.checked = !!d.arc;
+    const sbCb=document.getElementById('pdf-storyboard-cb'); if(sbCb) sbCb.checked = !!d.postGenStoryboard;
+    const anCb=document.getElementById('pdf-analysis-cb'); if(anCb) anCb.checked = !!d.postGenAnalysis;
+    // Found live: without this the chunk list rendered real content into a DOM node that was
+    // simply display:none — #pdf-panel needs its OWN 'open' class, same as every real upload path
+    // (pdfExtractText's LLM-split branch, setSplitMode, _loadPdfFile) adds at the equivalent point.
+    document.getElementById('pdf-panel')?.classList.add('open');
+    _renderPdfChunks();
+    _updateUploadSliderVis();
+    // Found live: #pdf-panel (the chunk list this draft exists to restore) lives inside gen-card-2
+    // ("2 · Text"), NOT card 3 ("Chapters", which is per-chapter lesson-type overrides) — confirmed
+    // by searching the RAW markup for #pdf-panel's nearest enclosing gen-card, not assumed from the
+    // step's own label text.
+    try{ _genWizardGoto(2); }catch(_){}
+    showToast(t('toast.draft_resumed'));
+  }catch(e){ showToast(t('toast.draft_missing')); }
 }
 
 // In upload mode the story-length slider doubles as the length-based chunk size, so it
@@ -7177,6 +7278,14 @@ function _renderPdfChunks() {
     selOpen.style.display = canSel ? '' : 'none';
     selOpen.textContent = t('pdf.sel_open');
   }
+  // item R (roadmap_v87.md): _renderPdfChunks() is the ONE function every _pdfChunks mutation
+  // already funnels through (15 call sites — upload, LLM-split, manual merge/split/delete/reorder/
+  // retitle, resplit-by-mode) — hooking the autosave HERE catches all of them for free, no per-
+  // mutator instrumentation needed. _draftSaveDebounced() is a no-op once real generation has
+  // started (_pdfBookId set) — this same function keeps firing during the post-generation status-
+  // polling calls to _renderPdfChunks(), and its own internal guard is what stops it from doing
+  // anything there.
+  _draftSaveDebounced();
 }
 
 // Item 11: open the manual break-editor for a chunk (paragraph-preserving view).
@@ -7406,6 +7515,10 @@ async function pdfGenerateAll() {
     const resp = await r.json();
     if (!r.ok) throw new Error(resp.error || 'Failed');
     _pdfBookId = resp.bookId;
+    // item R: real generation is now the durable record (bookJobs, reconnect-after-refresh already
+    // works for it) — the pre-generation draft has done its job and would just be a stale duplicate
+    // from here on. Fire-and-forget; a failed delete leaves a harmless orphan, not a user-facing bug.
+    discardDraft();
     document.getElementById('pdf-gen-btn').style.display = 'none';
     setGenStatus('running', `📖 0/${_pdfChunks.length}`);
     // The server now drives generation; this poll is only an observer and can be
@@ -21192,32 +21305,53 @@ function _jobsRenderList(){
   }
   wrap.innerHTML = list.map(j => {
     const isErr = j.status === 'error';
-    const icon = isErr ? '⚠️' : (j.status === 'done' ? '✅' : (j.kind === 'tutor' ? '🦉' : '⏳'));
+    const icon = isErr ? '⚠️' : (j.status === 'done' ? '✅' : (j.kind === 'tutor' ? '🦉' : (j.kind === 'draft' ? '📝' : '⏳')));
     const stepText = isErr ? t('jobs.error', {msg: j.error||''}) : (j.step||'');
     const openBtn = j.link
       ? `<button class="jobs-row-open" data-jobid="${escAttr(j.id)}">${escHtml(t('jobs.open'))} →</button>`
+      : '';
+    // item R: a draft is the one kind the popover can also DELETE, not just open — nothing else
+    // yet gives the learner a way to clear an abandoned one (the job store's own 5-min cleanup
+    // timer only applies to real running/finished jobs, never to a parked draft).
+    const delBtn = j.kind === 'draft'
+      ? `<button class="jobs-row-del" data-jobid="${escAttr(j.id)}" title="${escAttr(t('jobs.discard'))}">🗑</button>`
       : '';
     return `<div class="jobs-row${isErr?' error':''}">`
       + `<div class="jobs-row-top"><span class="jobs-row-icon">${icon}</span>`
       + `<span class="jobs-row-label">${escHtml(j.label||'')}</span></div>`
       + (stepText ? `<div class="jobs-row-step">${escHtml(stepText)}</div>` : '')
-      + openBtn + `</div>`;
+      + `<div class="jobs-row-actions">${delBtn}${openBtn}</div>` + `</div>`;
   }).join('');
 }
 // Delegated (not one listener per row — the list re-renders on every poll tick): looks the job back
 // up in the CURRENT effective list by id rather than serializing `link` into the markup, the same
 // reason _jobsLastList exists at module scope at all.
 document.addEventListener('click', e => {
-  const btn = e.target.closest && e.target.closest('.jobs-row-open');
-  if(!btn) return;
-  const job = _jobsEffectiveList().find(j => j.id === btn.dataset.jobid);
-  if(job && job.link) _jobsOpenLink(job.link);
+  const openBtn = e.target.closest && e.target.closest('.jobs-row-open');
+  if(openBtn){
+    const job = _jobsEffectiveList().find(j => j.id === openBtn.dataset.jobid);
+    if(job && job.link) _jobsOpenLink(job.link);
+    return;
+  }
+  const delBtn = e.target.closest && e.target.closest('.jobs-row-del');
+  if(delBtn) _jobsDiscardDraftById(delBtn.dataset.jobid);
 });
 function _jobsOpenLink(link){
   closeJobsPop();
   if(link.type === 'storyline') showStorylineById(link.id);
   else if(link.type === 'topic') loadSaved(link.id);
   else if(link.type === 'tutor') { if(!_tutorState.open) toggleTutorWidget(); }
+  else if(link.type === 'draft') resumeDraft(link.id);   // item R — resumeDraft() navigates itself
+}
+// item R: discard a draft BY ID from the popover — distinct from discardDraft() (index.html's PDF
+// section), which only ever acts on THIS tab's own currently-open _draftId. A draft listed here may
+// belong to a DIFFERENT tab/session (the store has no owner concept — see GET /api/jobs' own
+// comment), so deleting it must never assume it's the one this tab is editing.
+async function _jobsDiscardDraftById(id){
+  try{ await fetch('/api/drafts/'+id, {method:'DELETE'}); }catch(e){}
+  if(id === _draftId) _draftId = null;   // this tab WAS editing it — let its next autosave create fresh
+  showToast(t('toast.draft_discarded'));
+  _jobsFetchAndRender();
 }
 function _jobsPopOutside(e){
   // #jobs-pop lives OUTSIDE #jobs-fab now (body-level, see its own markup comment) — a click

@@ -289,6 +289,7 @@ run('unit: PLAN §7.0 CP1/CP2, item W step 4 — text explorer client fetch/rend
 run('unit: item W follow-up — analyzeChaptersRun() batch curator trigger (v86_p)', 'node', [path.join(__dirname, 'unit-analyze-chapters-run.test.js')]);
 run('unit: lesson-set card story display — language flags + text explorer (v86_ad)', 'node', [path.join(__dirname, 'unit-lesson-set-story-explorer.test.js')]);
 run('unit: jobs popover — tutor synthetic entry + stacking-context fix (item U follow-up)', 'node', [path.join(__dirname, 'unit-jobs-popover.test.js')]);
+run('unit: unfinished-project drafts — client-side half (item R)', 'node', [path.join(__dirname, 'unit-drafts.test.js')]);
 
 // 3) E2E — spawn the real server + fake Ollama. Skipped with --quick.
 if (!quick) {
@@ -339,6 +340,7 @@ if (!quick) {
   run('e2e: post-gen analysis opt-in, mirroring postGenStoryboard (item W follow-up, v86_o)', 'node', [path.join(__dirname, 'e2e-postgen-analysis-optin.test.js')]);
   run('e2e: model picker + table-format + split-translation + provenance', 'node', [path.join(__dirname, 'e2e-models.test.js')]);
   run('e2e: GET /api/jobs — the aggregate jobs list (item U)', 'node', [path.join(__dirname, 'e2e-jobs-list.test.js')]);
+  run('e2e: unfinished-project drafts (item R)', 'node', [path.join(__dirname, 'e2e-drafts.test.js')]);
 } else {
   console.log('\n(skipping e2e tests: --quick)');
 }

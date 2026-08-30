@@ -170,18 +170,21 @@ recommended.
 
 ### R. Save an intermediate "unfinished" project state after text parsing, before lesson generation
 
-Still open — the client-facing half of item S (item S's own "persist as it finishes" half shipped at
-`v86_k`).
+**✅ SHIPPED at `v87_d`** — the PDF/paste-then-split upload flow (`_pdfChunks`) only; see that
+entry under "SHIPPED IN THE v87 LINE" for the full build. **Not covered**: the comic-image upload
+flow, a genuinely different state shape (`APP_COMIC`) — a natural follow-up, not silently assumed
+done.
 
 ### T. Two questions initiated via text-selection → grammar click were never answered (needs reproduction)
 
 Still open, from a screenshot report; needs live reproduction.
 
-### U. A popover listing all running/scheduled jobs, including unfinished projects
+### ✅ U. A popover listing all running/scheduled jobs, including unfinished projects — SHIPPED `v87_b`/`v87_c`/`v87_d`
 
-**✅ The running/scheduled-jobs half SHIPPED at `v87_b`** — see that entry under "SHIPPED IN THE v87
-LINE" for the full build. **Still open**: folding item R's own "unfinished projects" list into the
-same popover, blocked on item R (below) not yet existing.
+The running/scheduled-jobs half shipped at `v87_b`; a user-requested tutor-question follow-up (plus
+a real stacking-context bug found and fixed) at `v87_c`; item R's own "unfinished projects" (drafts)
+folded into the SAME popover at `v87_d`, closing this item out as originally scoped. See each
+entry under "SHIPPED IN THE v87 LINE" for its own full build.
 
 ### V. Multiple image upload for comic generation — each image its own chapter; "add images" after the first upload
 
@@ -1993,6 +1996,64 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v87 LINE
+
+## ✅ v87_d — item R: unfinished-project drafts, folded into item U's own jobs popover
+
+The remaining half of item U's original ask ("a single place to see everything in flight,
+INCLUDING unfinished projects") — item R's own scoping note called this "likely the same popover";
+it now is. Scope: the PDF/paste-then-split upload flow (`_pdfChunks`) only — confirmed by reading
+`doGenerate()`'s multi-chapter branch that the "AI generates everything from a topic" path has no
+pre-generation client-side parsing state to lose at all, so there is nothing for it to protect. The
+comic-image upload flow (`APP_COMIC`, a genuinely different state shape) is explicitly NOT covered —
+a natural follow-up, not silently assumed done.
+
+**The gap, confirmed before building**: `/api/split-chapters` is stateless — chapter-splitting output
+(`_pdfChunks`, `_pdfRawText`, `_llmChunks`, `_uploadFileName`, all plain top-level `let`s) lived ONLY
+in the tab's own JS memory until `pdfGenerateAll()` fired `/api/generate-book`, the FIRST moment
+anything reached disk. A closed tab or lost connection any time before that click lost real work,
+including an expensive LLM chapter-split.
+
+**Built**: a new, deliberately separate `drafts.json` store (`DRAFTS_FILE`, same reasoning as
+`SKILLS_FILE` — ephemeral, never read by `build-static.js`, must not collide with `lessons.json`'s
+own schema/migration; gitignored, same category as `learners.json`). Four routes
+(`POST`/`GET`/`GET :id`/`DELETE /api/drafts`), upsert-by-id so an actively-edited document updates
+ONE record rather than spawning a new one per save. Client: `_draftSaveDebounced()` hooks the ONE
+function every `_pdfChunks` mutation already funnels through (`_renderPdfChunks()`, 15 existing call
+sites — upload, LLM-split, every manual edit), so autosave needed no per-mutator instrumentation;
+guards to a no-op once real generation starts (`_pdfBookId` set), matching item S's own "persist
+progressively" precedent for the adjacent problem (already-generated lessons, not yet-generated
+chapters). `discardDraft()` fires on an explicit clear AND the instant real generation starts (the
+draft's job is done at that point). `resumeDraft(draftId)` repopulates the tab's local state and the
+visible form via the SAME `selectLang`/`restoreDiffSelect`-family helpers and the
+`use-story-cb`+`_setPasteVisible(false)` incantation `_reconnectBookJob()` already established, then
+lands on the same review step `pdfGenerateAll()` would have been reachable from.
+
+**Folded into item U's own popover**: `GET /api/jobs` now merges drafts in as `kind:'draft'`,
+`status:'draft'` — deliberately NOT `'running'`, so a parked draft never inflates the badge's
+running-count (nothing is actively happening). Draft rows get their own 📝 icon and an EXTRA 🗑
+discard button (via `_jobsDiscardDraftById`, which operates on an arbitrary id since a listed draft
+may belong to a different tab/session — no owner concept, same as every other job kind); "Open →"
+calls `resumeDraft`.
+
+**⚠️⚠️ Two real bugs found only by actually resuming a draft live** (not by reading the code, per
+this project's own standing discipline): (1) the resumed chunk list rendered real content into a DOM
+node that was simply `display:none` — `#pdf-panel` needs its own `.open` class, which every real
+upload path already adds at the equivalent point and `resumeDraft()` had simply omitted; (2)
+`_genWizardGoto(3)` looked right from the wizard step's OWN LABEL ("3 · Chapters") but `#pdf-panel`
+actually lives inside `gen-card-2` ("2 · Text") — confirmed by searching the raw markup for its
+nearest enclosing `gen-card`, not assumed from the label; card 3 is unrelated (per-chapter
+lesson-type overrides). Both fixed, then re-verified by actually screenshotting the resumed screen
+(chapter titles, word counts, the "own story" checkbox, all correct).
+
+New `test/e2e-drafts.test.js` (live server + fake Ollama, 6 checks: validation, upsert-not-duplicate,
+full round-trip, `GET /api/jobs` integration mutation-tested by flipping `status` and watching the
+"excluded from the running count" assertion go red, idempotent delete, a second independent draft)
+and `test/unit-drafts.test.js` (`lib-dom.js` harness, 5 checks: the autosave guard's four branches,
+discard behaviour for both the local and by-id cases — the latter's id-matching mutation-tested too
+— the draft row's own markup, `_jobsOpenLink`'s `draft` branch). Three new `ui.json` `en` keys
+(`toast.draft_resumed`/`draft_missing`/`draft_discarded`, plus `jobs.discard`) — added under the same
+standing confirmation the user gave earlier this session for `v87_b`'s `jobs.*` keys, not re-asked
+fresh (the SESSION_PROMPT's own note says ask again NEXT session, not mid-session).
 
 ## ✅ v87_c — item U follow-up: a tutor question joins the jobs popover, plus a real stacking-context bug found and fixed
 

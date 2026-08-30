@@ -1,1 +1,5 @@
 learners.json
+# item R (roadmap_v87.md): ephemeral unfinished-project drafts (chapter-splitting output saved
+# before a learner clicks Generate) — operational state like learners.json above, not curated
+# content like canonical-analysis.json/skills.json, and may hold text from a personal upload.
+drafts.json

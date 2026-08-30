@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v87_c';
+const APP_VERSION  = 'v87_d';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -216,6 +216,11 @@ const CURRICULUM_PLAN_FILE = process.env.CURRICULUM_PLAN_FILE || path.join(__dir
 // artifact server.js never writes) this store IS written by the server itself — the first read/write
 // path CP1/CP2 output has ever had from server.js, rather than only from the standalone CLI scripts.
 const ANALYSIS_STORE_FILE = process.env.CANONICAL_ANALYSIS_FILE || path.join(__dirname, 'canonical-analysis.json');
+// item R (roadmap_v87.md): "unfinished project" persistence. Deliberately its OWN file, same
+// reasoning as SKILLS_FILE above — this is ephemeral, pre-lesson-generation state (parsed chapter
+// titles/text, not yet a playable topic), never read by build-static.js or the learner-progress
+// path, and must never collide with lessons.json's own schema/migration/dedup logic.
+const DRAFTS_FILE = process.env.DRAFTS_FILE || path.join(__dirname, 'drafts.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
 const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
 // Model roles are runtime-mutable (see setRuntimeModels / GET+POST /api/models) so a user can
@@ -450,6 +455,31 @@ function saveSkillRegistry(registry) {
   if (!registry) throw new Error('skills registry is unavailable');
   const out = { schemaVersion: 1, skills: registry.entries };
   fs.writeFileSync(SKILLS_FILE, JSON.stringify(out, null, 2) + '\n', 'utf8');
+}
+
+// ── item R: unfinished-project drafts ──────────────────────────────────
+// A draft is chapter-splitting output (titles + chapter text + the generation options that would
+// have gone into /api/generate-book) saved BEFORE the learner clicks Generate — the client-side
+// state (_pdfChunks et al., index.html) that used to live ONLY in JS memory and vanish on a closed
+// tab. Re-read fresh from disk on every call, same "no in-memory cache to go stale" choice
+// analysisShadowFor makes for ANALYSIS_STORE_FILE — drafts are rare, small, and edited by exactly
+// one client at a time in practice, so simplicity wins over an in-memory mirror.
+function loadDrafts() {
+  try {
+    if (!fs.existsSync(DRAFTS_FILE)) return [];
+    const data = JSON.parse(fs.readFileSync(DRAFTS_FILE, 'utf8'));
+    return Array.isArray(data && data.drafts) ? data.drafts : [];
+  } catch (e) {
+    console.warn('Could not read drafts.json:', e.message);
+    return [];
+  }
+}
+function saveDrafts(drafts) {
+  try {
+    fs.writeFileSync(DRAFTS_FILE, JSON.stringify({ schemaVersion: 1, drafts }, null, 2) + '\n', 'utf8');
+  } catch (e) {
+    console.error('Could not write drafts.json:', e.message);
+  }
 }
 
 function skillResolutionJson(resolution) {
@@ -7337,6 +7367,78 @@ http.createServer(async (req, res) => {
       try { return json(res, 200, await splitChaptersLLM(paras, body.lang || 'en', !!body.drop)); }
       catch(e) { return json(res, 502, { error: e.message }); }
     }
+
+    // ── item R (roadmap_v87.md): unfinished-project drafts ──────────────
+    // Body mirrors pdfGenerateAll()'s own /api/generate-book request almost exactly — on resume,
+    // the client repopulates its local state from GET /api/drafts/:id and can generate unchanged.
+    // Upsert by id: an existing id updates in place (touches updatedAt, the autosave path); a
+    // missing/unknown id creates fresh (the FIRST save for a newly-parsed document).
+    if (M === 'POST' && url.pathname === '/api/drafts') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const chunksIn = Array.isArray(body.chunks) ? body.chunks : [];
+      if (!chunksIn.length) return json(res, 400, { error: 'No chapters to save.' });
+      // A generous but real cap — a runaway autosave loop or a hostile body must not grow this
+      // file without bound (same reasoning as comic extraction's own 30-image cap).
+      if (chunksIn.length > 200) return json(res, 400, { error: 'Too many chapters for one draft (max 200).' });
+      const chunks = chunksIn.map(c => ({
+        title: String((c && c.title) || '').slice(0, 300),
+        text: String((c && c.text) || '').slice(0, 50000),
+        wordCount: Math.max(0, Math.min(1e6, parseInt(c && c.wordCount, 10) || 0)),
+      }));
+      const drafts = loadDrafts();
+      const now = new Date().toISOString();
+      let draft = body.id && drafts.find(d => d.id === body.id);
+      if (!draft) {
+        draft = { id: 'draft_' + crypto.randomBytes(8).toString('hex'), createdAt: now };
+        drafts.push(draft);
+        // Keep only the most recent 30 — an abandoned autosave loop (a tab left open indefinitely)
+        // must not grow this file without bound; matches bookJobs' own "keep 20" precedent.
+        if (drafts.length > 30) drafts.splice(0, drafts.length - 30);
+      }
+      Object.assign(draft, {
+        updatedAt: now,
+        lang: body.lang || 'it', srcLang: body.srcLang || 'en',
+        difficulty: Math.max(1, Math.min(3, parseInt(body.difficulty, 10) || 2)),
+        lessonFormat: body.lessonFormat || 'standard',
+        storyStyle: (body.storyStyle && body.storyStyle !== 'creative') ? body.storyStyle : null,
+        sourceFile: (typeof body.sourceFile === 'string' && body.sourceFile.trim()) ? body.sourceFile.trim().slice(0, 200) : null,
+        continuedFrom: body.continuedFrom || null,
+        script: body.script || null, srcScript: body.srcScript || null,
+        arc: !!body.arc, arcTypes: Array.isArray(body.arcTypes) ? body.arcTypes : null,
+        postGenStoryboard: !!body.postGenStoryboard, postGenAnalysis: !!body.postGenAnalysis,
+        chunks,
+      });
+      saveDrafts(drafts);
+      return json(res, 200, { id: draft.id, updatedAt: draft.updatedAt });
+    }
+    // List: summaries only (no chunk text) — this is the popover's own data source, via GET /api/jobs
+    // below, which calls loadDrafts() directly rather than fetching this route internally.
+    if (M === 'GET' && url.pathname === '/api/drafts') {
+      const drafts = loadDrafts();
+      return json(res, 200, { drafts: drafts.map(d => ({
+        id: d.id, createdAt: d.createdAt, updatedAt: d.updatedAt, sourceFile: d.sourceFile,
+        chapterCount: (d.chunks || []).length, lang: d.lang, srcLang: d.srcLang,
+      })) });
+    }
+    if (M === 'GET' && url.pathname.startsWith('/api/drafts/')) {
+      const id = url.pathname.split('/')[3];
+      const draft = loadDrafts().find(d => d.id === id);
+      if (!draft) return json(res, 404, { error: 'Draft not found' });
+      return json(res, 200, draft);
+    }
+    // Explicit discard (the popover's own 🗑), and also called by the client once a draft's
+    // generation successfully starts — from that moment /api/generate-book's own bookJobs entry
+    // is the durable record, and keeping the draft around too would just be a stale duplicate.
+    if (M === 'DELETE' && url.pathname.startsWith('/api/drafts/')) {
+      const id = url.pathname.split('/')[3];
+      const drafts = loadDrafts();
+      const next = drafts.filter(d => d.id !== id);
+      if (next.length !== drafts.length) saveDrafts(next);
+      return json(res, 200, { ok: true });
+    }
+
     if (M === 'POST' && url.pathname === '/api/pass-mark') {
       let body;
       try { body = JSON.parse(await readBody(req)); }
@@ -7592,6 +7694,17 @@ http.createServer(async (req, res) => {
           link: firstTopicId ? { type: 'topic', id: firstTopicId } : null,
           status: bj.status, step: `Chapter ${Math.min(bj.current + 1, bj.chapters.length)}/${bj.chapters.length}`,
           error: bj.error, createdAt: bj.createdAt });
+      }
+      // item R: unfinished-project drafts — the OTHER half of "everything in flight," per that
+      // item's own scoping note ("likely the same popover" as this one). status:'draft' (not
+      // 'running'/'pending') deliberately keeps these OUT of the badge's running-count — nothing is
+      // actively happening, they're just resumable, same distinction a paused download vs. an
+      // active one would make.
+      for (const d of loadDrafts()) {
+        out.push({ id: d.id, kind: 'draft',
+          label: `Draft: ${d.sourceFile ? `"${d.sourceFile}"` : 'pasted text'} (${(d.chunks || []).length} chapter${(d.chunks || []).length === 1 ? '' : 's'})`,
+          link: { type: 'draft', id: d.id }, status: 'draft', step: null, error: null,
+          createdAt: Date.parse(d.updatedAt || d.createdAt) || 0 });
       }
       out.sort((a, b) => b.createdAt - a.createdAt);
       return json(res, 200, { jobs: out });
