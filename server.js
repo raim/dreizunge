@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v87_e';
+const APP_VERSION  = 'v87_f';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -5293,7 +5293,16 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
 // ── Generate all lessons ──────────────────────────────────────────────
 async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLen, jobId, userOpts) {
   userOpts = userOpts || {};
-  const { userStory, userTranslation, userDialect, storyStyle, lessonFormat, reinforcePrior, vocabMode, useFullChain, userStoryLang, prevStoryTopic, mathInstruction, skipMeta, placeholderTopic, parentId, fromLearned } = userOpts;
+  const { userStory, userTranslation, userDialect, storyStyle, lessonFormat, reinforcePrior, vocabMode, useFullChain, userStoryLang, prevStoryTopic, mathInstruction, skipMeta, placeholderTopic, parentId, fromLearned,
+    // Decoupling chaptering from lesson generation (user request, roadmap_v87.md): when true, this
+    // call produces ONLY the story/chapter — no lesson of any kind, not even the "standard" gate
+    // lesson every path has always generated unconditionally until now. Relies on the PRE-EXISTING
+    // "save story early, before lessons" upsert below (v69_q, originally a crash-recovery safety net
+    // — a chapter with `story` set and `lessons:[]` was already a valid persisted state, just never
+    // a DELIBERATE stopping point before this). The learner adds lessons later via the SAME
+    // mechanism an already-finished chapter already uses (the per-chapter/storyline "add lessons"
+    // tick-list, ADD_LESSON_TYPES) — deliberately not a new code path for that half.
+    skipLessons } = userOpts;
   srcLang = srcLang || 'en';
   const userTopic = topic;
   // The complete, untruncated user input that drove generation. The saved display
@@ -5615,6 +5624,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   // ── Lessons ───────────────────────────────────────────────────────────
   const styleHint = null; // removed — story context goes in userMsg only
   const lessons = [];
+  if (!skipLessons) {
 
   // "My story": feed the learner's known words (wrong-first) into the lesson generator. The
   // vocab-mode selector controls HOW: 'reinforce' (default) weaves them into sentences as context;
@@ -5734,6 +5744,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       }
     }
   }
+  } // if (!skipLessons)
 
   const totalMs = Date.now() - genStart;
   const uniqueModels = [...new Set([OLLAMA_MODEL, OLLAMA_TRANSLATION_MODEL, OLLAMA_LESSON_MODEL])];
@@ -6345,8 +6356,14 @@ async function _runBookJob(bookId, chunks, base) {
         // Serbian-Cyrillic job produced a Latin story, an unstamped topic, and a primer with no
         // letters to teach. `/api/generate` has always passed them; only this route did not.
         script: base.script || null, srcScript: base.srcScript || null,
+        // Decoupling chaptering from lesson generation (roadmap_v87.md) — see generate()'s own
+        // comment. When set, generate() produces ONLY this chapter's story; the arc-reinforcement
+        // and script-intro blocks below are ALSO gated on it (defensive — base.arc is already
+        // forced false by the route when skipLessons is set, but a chapter is worth protecting on
+        // its own terms, not just via the caller's own promise).
+        skipLessons: !!base.skipLessons,
       };
-      console.log(`  [book ${bookId}] chapter ${i+1}/${chunks.length}: "${placeholderTopic}"${contFrom?' cont='+contFrom:''}${generated?' generated':''}${base.arc?' arc[+'+base.arcTypes.join(',')+']':''} job=${jobId}`);
+      console.log(`  [book ${bookId}] chapter ${i+1}/${chunks.length}: "${placeholderTopic}"${contFrom?' cont='+contFrom:''}${generated?' generated':''}${base.skipLessons?' skipLessons':base.arc?' arc[+'+base.arcTypes.join(',')+']':''} job=${jobId}`);
       // Generated chapters continue the prior story as context (continuedFrom set);
       // PDF chapters supply their own story, so the chain link is recorded via prevStoryTopic.
       const data  = await generate(storyTopic, base.lang, base.srcLang, base.diff, generated ? contFrom : null, wc, jobId, userOpts);
@@ -6359,7 +6376,7 @@ async function _runBookJob(bookId, chunks, base) {
       //   'grammar' (alt): grammar / conjugation / synonyms reinforcement lessons.
       // (collectChainVocab(parent) excludes the current chapter — which is persisted
       // below — so the review covers prior chapters and the standard lesson covers this one.)
-      if (base.arc && i >= 1 && Array.isArray(data.lessons)) {
+      if (!base.skipLessons && base.arc && i >= 1 && Array.isArray(data.lessons)) {
         const chainVocab = parent ? collectChainVocab(parent.id || prevRef) : { words: [], nouns: [], verbs: [] };
         const arcStory = userStory || data.story || '';
         // v71_u: the book path used to offer exactly two arc shapes ('vocab' → one review lesson,
@@ -6412,7 +6429,7 @@ async function _runBookJob(bookId, chunks, base) {
       // (extend). Generated after the vocab/reinforcement lessons (so we know this chapter's
       // text) but ordered FIRST so the learner meets the new letters before the words that use
       // them. priorRef = the parent chapter, so chapter 1 seeds the alphabet introduced so far.
-      if (base.arc && base.arcScript && Array.isArray(data.lessons)) {
+      if (!base.skipLessons && base.arc && base.arcScript && Array.isArray(data.lessons)) {
         try {
           const chapterText = userStory || data.story || '';
           const introLessons = buildArcIntroLessons(base.lang, base.srcLang, chapterText, parent ? (parent.id || prevRef) : null, base.diff, { script: base.script, srcScript: base.srcScript });
@@ -7778,7 +7795,7 @@ http.createServer(async (req, res) => {
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
       const { topic, lang, srcLang, difficulty, lessonFormat, storyLen, continuedFrom, forceRegenerate,
               userStory, userTranslation, userDialect, storyStyle, reinforcePrior, vocabMode, useFullChain, userStoryLang, mathInstruction, fromLearned,
-              script, srcScript } = body;
+              script, srcScript, skipLessons } = body;
       // continuedFrom may arrive as a stable tp_ id (from the continue-select)
       // or a topic name (other paths). Normalize to the canonical topic name so
       // everything downstream is unaffected by which the client sent.
@@ -7849,8 +7866,13 @@ http.createServer(async (req, res) => {
                              wrong: Math.max(0, Math.min(999, parseInt(w && w.wrong, 10) || 0)) }))
                 .filter(w => w.target) }
           : null,
+        // Decoupling chaptering from lesson generation (roadmap_v87.md): skipLessons:true produces
+        // a chapter with story text and NO lessons at all — see generate()'s own comment for the
+        // full reasoning. fmt is still computed/validated above but simply goes unused by generate()
+        // in this case.
+        skipLessons: skipLessons === true,
       };
-      console.log(`  Generating: "${resolvedTopic}" (${langName(lang||'it')}, from ${langName(resolvedSrcLang)}) diff=${diff} fmt=${fmt} storyLen=${wc}${userOpts.fromLearned?' myStory=yes':''}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' translation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${userOpts.storyStyle?' style='+userOpts.storyStyle:''}${contFrom?' cont='+contFrom:''} job=${jobId}`);
+      console.log(`  Generating: "${resolvedTopic}" (${langName(lang||'it')}, from ${langName(resolvedSrcLang)}) diff=${diff} fmt=${fmt} storyLen=${wc}${userOpts.fromLearned?' myStory=yes':''}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' translation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${userOpts.storyStyle?' style='+userOpts.storyStyle:''}${contFrom?' cont='+contFrom:''}${userOpts.skipLessons?' skipLessons=yes':''} job=${jobId}`);
       generate(resolvedTopic, lang || 'it', resolvedSrcLang, diff, contFromForStory, wc, jobId, userOpts).then(data => {
         upsert(data);
         // v29: assign stable topic id if missing, then update storyline chain
@@ -7936,7 +7958,10 @@ http.createServer(async (req, res) => {
               // v78_g: the chosen scripts, so the arc primer can narrow a DIGRAPHIC side the way
               // /api/generate does. Absent from older clients → undefined → the gate falls back to
               // every script the language admits, i.e. exactly the pre-v78_g answer.
-              script, srcScript } = body;
+              script, srcScript,
+              // Decoupling chaptering from lesson generation (roadmap_v87.md) — see generate()'s own
+              // comment. Wins over arc/arcTypes if a client somehow sent both (it shouldn't).
+              skipLessons } = body;
       if (active === 'none')
         return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
       // Generated batch: synthesize N text-less chapters from a single topic; each is
@@ -7966,7 +7991,10 @@ http.createServer(async (req, res) => {
       const _arcTypes = (_picked && _picked.length)
         ? _picked
         : arcTypesFromLegacyMode(arcMode, arcReinforce);
-      const arcEnabled = !!arc;
+      const _skipLessons = skipLessons === true;
+      // skipLessons wins over arc — a client asking for "no lessons at all" AND "these extra arc
+      // types" at once is a contradiction, not a combination; treat it as skipLessons.
+      const arcEnabled = !_skipLessons && !!arc;
       // Normalize the chain root (id or name) to a name for downstream context.
       const rootParent = continuedFrom ? (findSavedById(continuedFrom) || findSaved(continuedFrom)) : null;
       const base = { lang: lang || 'it', srcLang: srcLang || 'en', diff, fmt,
@@ -7982,7 +8010,7 @@ http.createServer(async (req, res) => {
               completionTokens: Math.max(0, Math.min(1e7, body.cleanupTokens.completionTokens | 0)) }
           : null,
         continuedFrom: rootParent ? rootParent.id : null, userStoryLang: userStoryLang || null,
-        arc: arcEnabled, arcTypes: _arcTypes,
+        arc: arcEnabled, arcTypes: _arcTypes, skipLessons: _skipLessons,
         // v85_p: opt-in gate for _runBookJob's own storyboard post-pass — see that function's own
         // comment for why this used to run unconditionally for every caller of this route.
         postGenStoryboard: !!body.postGenStoryboard,
@@ -7999,8 +8027,9 @@ http.createServer(async (req, res) => {
         sourceFile: (typeof sourceFile === 'string' && sourceFile.trim()) ? sourceFile.trim().slice(0,200) : null,
         storyStyle: (storyStyle && storyStyle !== 'creative') ? storyStyle : null };
       const bookId = newBookJob(chaptersIn.map((c, i) => c.title || (baseTopic ? `${baseTopic.slice(0,40)} — ${i+1}` : '')),
-        `Generating "${(baseTopic || 'book').slice(0,60)}" (${chaptersIn.length} chapter${chaptersIn.length===1?'':'s'})`);
-      console.log(`  Book generation started: ${chaptersIn.length} chapter(s)${generated?` (generated from "${baseTopic}")`:' (from upload)'}, id=${bookId}`);
+        (_skipLessons ? 'Creating chapters (no lessons yet): ' : 'Generating ') +
+        `"${(baseTopic || 'book').slice(0,60)}" (${chaptersIn.length} chapter${chaptersIn.length===1?'':'s'})`);
+      console.log(`  Book generation started: ${chaptersIn.length} chapter(s)${generated?` (generated from "${baseTopic}")`:' (from upload)'}${_skipLessons?' [skipLessons]':''}, id=${bookId}`);
       // v78_q: the SCRIPTS are logged. They were not, which is why two rounds of "the story came
       // out in Latin" could not be told apart from the outside: a job that never received the
       // script and a job that received it and ignored it print the same line otherwise. Also

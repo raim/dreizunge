@@ -58,8 +58,10 @@ const server = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
 {
   assert.ok(/script:\s*script\s*\|\|\s*null,\s*srcScript:\s*srcScript\s*\|\|\s*null/.test(server),
     '`base` carries the scripts from the request body (v78_g)');
-  assert.ok(/script,\s*srcScript\s*\}\s*=\s*body/.test(server.replace(/\s+/g, ' ')) ||
-            /script, srcScript \} = body/.test(server.replace(/\s+/g, ' ')),
+  // Decoupling chaptering from lesson generation (roadmap_v87.md) added skipLessons to this same
+  // destructure, after script/srcScript — so the anchor now spans the whole { ... } = body block
+  // (both fields present, in order) rather than requiring `srcScript }` to be adjacent.
+  assert.ok(/const \{[^}]*\bscript\b,\s*srcScript\b[^}]*\}\s*=\s*body/.test(server.replace(/\s+/g, ' ')),
     'and the book handler destructures them from the body at all');
   // v82_i: sysStory gained a trailing `difficulty` param (restoring the difficulty-tiered furigana
   // density lost since ~v40), so `userOpts.script` is no longer the LAST argument. Re-anchored on

@@ -104,7 +104,10 @@ const server = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
     "and legacy 'grammar' still maps to word_forms + synonyms — the v46 fix, preserved");
   assert.ok(/async function generateArcLesson\(aType, ctx\)/.test(server),
     'there is one shared per-type generator');
-  const book = server.slice(server.indexOf('if (base.arc && i >= 1 && Array.isArray(data.lessons))'));
+  // Decoupling chaptering from lesson generation (roadmap_v87.md) added a leading
+  // `!base.skipLessons &&` to this condition — the anchor now matches on the STABLE suffix rather
+  // than the whole condition, so a future guard addition here doesn't re-break this same way.
+  const book = server.slice(server.indexOf('base.arc && i >= 1 && Array.isArray(data.lessons))'));
   const bookBlock = book.slice(0, 2500);
   assert.ok(/generateArcLesson\(aType, \{/.test(bookBlock), 'the book arc dispatches through it');
   assert.ok(!/base\.arcMode === 'grammar'/.test(bookBlock),

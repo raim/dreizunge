@@ -1,5 +1,6 @@
 {
   "en": {
+    "form.skip_lessons_lbl": "⏸️ No lessons yet — just create the chapters, add lessons later",
     "jobs.title": "Background jobs",
     "jobs.empty": "Nothing running right now.",
     "jobs.open": "Open",
@@ -86,6 +87,7 @@
     "form.topic_label_story": "Topic / lesson title",
     "form.topic_placeholder": "e.g. cooking, architecture, medicine…",
     "form.generate": "Generate lessons →",
+    "form.create_chapters": "Create chapters →",
     "gen.title": "Generate",
     "form.show_other_langs": "show other languages",
     "form.use_story": "📖 I have my own story or document!",
@@ -335,6 +337,7 @@
     "pdf.no_text": "⚠ No text found. ",
     "pdf.encrypted": "⚠ PDF is password-protected.",
     "pdf.generate_all": "Generate storyline",
+    "pdf.create_chapters_only": "Create chapters",
     "pdf.chapters": "{n} chapters",
     "pdf.words": "{n} words",
     "pdf.break_here": "✂ break here",

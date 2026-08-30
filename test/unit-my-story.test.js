@@ -108,7 +108,11 @@ assert.ok(/_hasLearnedVocab && _vocabMode !== 'neutral'\)/.test(server),
   'lesson seam: neutral mode sends no chain-vocab hint');
 assert.ok(/sort\(\(a, b\) => \(b\.wrong \|\| 0\) - \(a\.wrong \|\| 0\)\)/.test(server),
   'lesson seam orders reinforce vocab most-wrong-first');
-assert.ok(/parentId, fromLearned } = userOpts/.test(server), 'generate() destructures fromLearned');
+// Decoupling chaptering from lesson generation (roadmap_v87.md) added skipLessons to this same
+// destructure, after fromLearned, with a multi-line comment in between — so the anchor now spans
+// the whole { ... } = userOpts block rather than requiring fromLearned to be the token right before
+// the closing brace.
+assert.ok(/const \{[^}]*\bfromLearned\b[^}]*\}\s*=\s*userOpts/.test(server), 'generate() destructures fromLearned');
 console.log('  server seams: story-seed + mode-respecting (reinforce/extend/neutral) wiring: OK');
 
 // ── Server: topic-less my-story synthesizes a topic (no throw) ───────────────

@@ -235,6 +235,15 @@ mode(s) to build.
 Scoped (`v86_s`/onward); one open design question flagged (does a correction survive a chapter
 re-analysis? no, today). Not started.
 
+### ✅ AK (new item, from a real screenshot). Decoupling chaptering from lesson generation, across all three input modes — SHIPPED `v87_f`
+
+User request, mid-session, from a real screenshot of the comic panel-review card mixing extraction/
+review with lesson-type selection. See that entry under "SHIPPED IN THE v87 LINE" for the full
+build — a shared `skipLessons` server mechanism plus one checkbox pattern reused across the wizard,
+`#pdf-panel`, and `#comic-panel`. **Explicitly deferred, not built**: run-now-vs-schedule-with-smart-
+defaults (the user's own framing — "at a later point we want to have or auto-select meaningful
+defaults") is future work; this cut only needed "don't schedule lessons at all yet" to become real.
+
 ## ✅ RESOLVED BY USER RULING AT THE v86 CUT — no code change, not carried as open tasks
 
 **Item AJ** — `PROMPTS.inflections`'s `{S}`-designated fields comply reliably only when `{S}` is
@@ -1997,6 +2006,89 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v87 LINE
+
+## ✅ v87_f — item AK (new): decoupling chaptering from lesson generation, across all three input modes
+
+**User request, from a real screenshot** of the comic panel-review card: "Can we get rid of the
+mixing of text extraction into chapters and lesson generation in this [screenshot]? We generally
+want to have texts and chapters first, let the user edit those (currently only available for
+comics), and THEN add lessons for them." Follow-up, before scoping was even finished: "Ideally, we
+have a highly similar pipeline for all generation modes, LLM, PDF/text or image, and only a few
+steps differ" — confirmed "if you can, do it in one pass" when asked whether to build all three
+input modes together or comic-first.
+
+**A THIRD option, not either of the two originally proposed**: mid-scoping, the user clarified this
+is about a WIZARD choice, not a hard split — "the user can go through a wizard, where jobs can be
+either directly run, or just scheduled. At a later point we want to have or auto-select meaningful
+defaults. BUT the user can also just not schedule lesson generation, so we only get the story texts,
+and can continue on the storyline card." Run-now-vs-schedule-with-smart-defaults is explicit FUTURE
+work, not built this cut — only "don't schedule lessons at all yet" needed to become a real, working
+path, which is what shipped.
+
+**The foundation already existed, just never used as a stopping point**: `generate()` has saved a
+chapter's story to disk with `lessons: []` BEFORE generating any lesson since `v69_q` — a
+crash-recovery safety net at the time, not a deliberate choice. A chapter with `story` set and zero
+lessons was already a valid, persisted state; nothing had ever stopped there on purpose. Also
+already existing: `ADD_LESSON_TYPES`/the per-chapter and storyline-wide "add lessons" tick-list —
+the exact mechanism a chapter created with no lessons needs later, reused unchanged.
+
+**Server**: `generate()` gained `userOpts.skipLessons` — true, it returns right after the pre-existing
+early save, generating NO lesson at all (not even the "standard" gate lesson every path had
+generated unconditionally until now). `/api/generate` and `/api/generate-book` both thread
+`body.skipLessons` through; the book route makes it win over `arc`/`arcTypes` if a client sends both
+(a contradiction, not a combination) — `_runBookJob`'s own arc-reinforcement and script-intro blocks
+gate on it too, defensively, not just relying on the route's own precedence.
+
+**Client**: ONE shared checkbox pattern (`⏸️ No lessons yet — just create the chapters, add lessons
+later`, ONE `ui.json` string, `form.skip_lessons_lbl`, reused across all three surfaces per the
+user's own "highly similar pipeline" framing) added to: the wizard's card 3 (`#gen-skip-lessons-cb`,
+always visible — not gated on chapter count, since the single-chapter format-select is just as
+skippable as the multi-chapter arc row; `_applySkipLessonsUI()` is the one function that hides the
+now-moot format-select/arc-row/per-chapter-row underneath it, layered on TOP of the pre-existing
+chapter-count gate rather than fighting it), `#pdf-panel` (`#pdf-skip-lessons-cb`, sharing the arc
+row's own "something to generate" visibility gate), and `#comic-panel` (`#comic-skip-lessons-cb`,
+same shape — this panel is the ONE the original screenshot showed). Each of the three send-paths
+(`doGenerate()`'s single- and multi-chapter branches, `pdfGenerateAll()`, `comicCreateChapter()`)
+sends `skipLessons` and skips attaching the now-irrelevant `arc`/`arcTypes`/`lessonFormat`-specific
+fields. The primary button's own label swaps too (`Generate lessons →` → `Create chapters →` /
+`Generate storyline` → `Create chapters`, new `form.create_chapters`/`pdf.create_chapters_only`
+keys) — the comic panel's own "Create chapter" button needed no change, already neutral wording.
+
+**Deliberately NOT touched**: `comicOpenReview()`'s text-review step — reviewing/editing extracted
+text before chapter creation is exactly the "let the user edit those" half of the original ask, and
+already worked; only the LESSON half of that same click was ever mixed in. Storyboard/text-explorer-
+analysis checkboxes stay bundled with chapter creation on all three surfaces — they enrich the
+story/chapter itself, not lesson content, so skipping lessons has no bearing on them.
+
+**Live-verified end to end against the real model** (not just the fake-backend e2e suite): generated
+a real chapter with `skipLessons:true` (`qwen3.6:35b-a3b`, real Italian story text, confirmed
+`lessons:[]` both in the job result and on disk), confirmed it renders cleanly in the lesson-set
+screen ("0 lessons", no crash, "Read full story" and the existing per-chapter "add lesson" control
+both present), then called the EXISTING, completely untouched `/api/lessons/add-lesson` against that
+same zero-lesson chapter — accepted (202), and the real add-lesson job completed with the chapter
+correctly ending up at exactly 1 lesson. This is the full loop the user asked for, proven live, not
+just asserted. All three checkboxes (wizard/PDF/comic) also visually confirmed in the browser pane —
+render correctly, correctly hide their surface's own arc/format-select row, correct button-label
+swap — with one transient false alarm (a stale browser cache showing an untranslated key on the
+first check, resolved by a fresh reload, not a real bug) caught and ruled out before trusting the
+result.
+
+**New `test/e2e-skip-lessons.test.js`** (fake-ollama, 5 checks, mutation-tested: reverting the
+`if (!skipLessons)` guard in `generate()` turns the "zero lessons" assertion red) — covers all
+three server entry points (`/api/generate`, `/api/generate-book` with real chunks, `/api/generate-book`
+with `generated:true`) both WITH `skipLessons:true` (zero lessons, real story text, arc sent-but-
+ignored) and WITHOUT it (an explicit regression guard — the normal path still generates its standard
+lesson, unchanged).
+
+**Three pre-existing tests broken by this cut's own source-text edits, found and fixed, not
+silently left red**: `unit-arc-reinforce-types.test.js`, `unit-my-story.test.js`, and
+`unit-book-script.test.js` each pinned an EXACT substring of a line this cut had to change (adding
+`!base.skipLessons &&`/`skipLessons` to an existing condition or destructure). Each fix re-anchors
+the assertion on the STABLE part of the claim (e.g. "a `{...} = userOpts` block contains
+`fromLearned` somewhere," not "the token immediately before the closing brace is `fromLearned`") so
+a future addition to the same line doesn't re-break it the same way — the underlying behavioural
+claim each test makes was never wrong, only the exact-string anchor was too brittle to survive an
+unrelated nearby edit.
 
 ## ✅ v87_e — item R extended to the comic-image upload flow
 

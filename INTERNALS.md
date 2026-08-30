@@ -1734,6 +1734,25 @@ chunk-splitting step) and is correctly NOT covered by either kind.
 
 ---
 
+**Decoupling chaptering from lesson generation (item AK, `roadmap_v87.md`, `v87_f`)** — a wizard/
+panel choice: create chapters with NO lessons at all, add them later via the pre-existing "add
+lessons" tick-list. User-requested from a real screenshot of the comic panel-review card.
+
+| what | where |
+|---|---|
+| the foundation, already existing | `generate()` (server.js) has saved a chapter's `story` to disk with `lessons: []` BEFORE generating any lesson since `v69_q` — a crash-recovery safety net, not a deliberate stopping point until this item. The "add lessons to an existing chapter" mechanism (`ADD_LESSON_TYPES`, the per-chapter dropdown, the storyline-wide tick-list) also already existed, unchanged — this item's ONLY new server behaviour is a way to stop BEFORE generating the first lesson |
+| `skipLessons` | `generate()`'s `userOpts.skipLessons` — true, the ENTIRE "Lessons" section (both the special-format branch and the standard/`isAllTypes` branch) is skipped; the function returns right after the pre-existing early save. `/api/generate` and `/api/generate-book` both thread `body.skipLessons` through (`userOpts.skipLessons`/`base.skipLessons`); the book route makes it win over `arc`/`arcTypes` (a contradiction if a client sent both), and `_runBookJob`'s own arc-reinforcement + script-intro blocks gate on it too, defensively |
+| the client checkbox | ONE shared markup/label pattern (`⏸️ No lessons yet — just create the chapters, add lessons later`, `ui.json`'s `form.skip_lessons_lbl`, reused verbatim across all three surfaces) — `#gen-skip-lessons-cb` (wizard card 3, `_applySkipLessonsUI()` hides the now-moot arc-row/per-chapter-row/format-select, layered on TOP of the pre-existing chapter-count gate those rows already had), `#pdf-skip-lessons-cb` (`#pdf-panel`, shares `#pdf-arc-row`'s own visibility gate inside `_renderPdfChunks()`), `#comic-skip-lessons-cb` (`#comic-panel`, same shape inside `_comicRenderList()` — this panel is the one the original screenshot showed) |
+| the three send-paths | `doGenerate()`'s single-chapter body AND its `nCh>1` multi-chapter `gbody` (one shared `skipLessons` local, read once near the top of the function — also used to bypass a stale-`APP.lessonFormat==='error_hunt'` guard that would otherwise wrongly demand a story/continuation even when skipping lessons entirely), `pdfGenerateAll()`, `comicCreateChapter()` — each sends `skipLessons` and skips attaching the now-irrelevant `arc`/`arcTypes`/`lessonFormat`-specific fields |
+| the button label swap | `#gen-btn` (`_applySkipLessonsUI()`), `#pdf-gen-lbl` (`_renderPdfChunks()`) — `Generate lessons →`/`Generate storyline` become `Create chapters →`/`Create chapters` (new `form.create_chapters`/`pdf.create_chapters_only` keys) when checked. `#comic-create-lbl` needed no change — already neutral ("Create chapter") |
+| deliberately untouched | `comicOpenReview()`'s text-review step (already did the "let the user edit those" half of the original ask); the storyboard/text-explorer-analysis checkboxes on all three surfaces (they enrich the story/chapter, not lesson content) |
+| explicitly deferred, not built | run-now-vs-schedule-with-smart-defaults — the user's own framing, future work; this item only needed "don't schedule lessons at all yet" |
+| live-verified end to end against the real model | generated a real chapter with `skipLessons:true` (`qwen3.6:35b-a3b`), confirmed real story text + `lessons:[]` both in the job result and on disk, confirmed it renders cleanly in the lesson-set screen (no crash), then called the EXISTING, untouched `/api/lessons/add-lesson` against that SAME zero-lesson chapter — accepted, and the resulting real job left the chapter at exactly 1 lesson. The full loop the user asked for, proven live |
+| the acceptance tests | `test/e2e-skip-lessons.test.js` (fake-ollama, 5 checks, mutation-tested) — all three server entry points, both WITH `skipLessons:true` (zero lessons, arc sent-but-ignored) and WITHOUT it (explicit regression guard: the normal path is unchanged) |
+| ⚠️ three PRE-EXISTING tests broken by this item's own source-text edits, found and fixed | `unit-arc-reinforce-types.test.js`, `unit-my-story.test.js`, `unit-book-script.test.js` each pinned an EXACT substring of a line this item had to change (adding `!base.skipLessons &&`/`skipLessons` to an existing condition or destructure). Each re-anchored on the STABLE part of the same claim (e.g. "a `{...} = userOpts` block contains `fromLearned` somewhere," not "is the token right before the closing brace") rather than the exact original wording — the underlying claim was never wrong, only the anchor was too brittle to survive an unrelated nearby edit |
+
+---
+
 **Keep 6b current the cheap way:** when a session's write-up names a function it had to hunt for,
 add the row. A wrong row is worse than a missing one, so only add names verified in that session.
 

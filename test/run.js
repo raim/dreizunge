@@ -343,6 +343,7 @@ if (!quick) {
   run('e2e: GET /api/jobs — the aggregate jobs list (item U)', 'node', [path.join(__dirname, 'e2e-jobs-list.test.js')]);
   run('e2e: unfinished-project drafts (item R)', 'node', [path.join(__dirname, 'e2e-drafts.test.js')]);
   run('e2e: unfinished-project drafts — comic upload flow (item R follow-up)', 'node', [path.join(__dirname, 'e2e-drafts-comic.test.js')]);
+  run('e2e: skipLessons — decoupling chaptering from lesson generation (user request)', 'node', [path.join(__dirname, 'e2e-skip-lessons.test.js')]);
 } else {
   console.log('\n(skipping e2e tests: --quick)');
 }
