@@ -160839,12 +160839,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v86_ad', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v86_ae', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"f21a6db9cd88","lessons.json":"f41a3e663fba","ui.json":"a4c8043ec457","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"dd9a5b683847","build-static.js":"012fc7f8f3ca"};
+  APP.buildSources = {"index.html":"d811cf35808f","lessons.json":"f41a3e663fba","ui.json":"a4c8043ec457","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"dd9a5b683847","build-static.js":"012fc7f8f3ca"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -171577,7 +171577,22 @@ function check(replay){
       : ex.type==='syn_select' ? synRevealHtml(ex)
       : furiHtml(ex.target||ex.correct);
     fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}${((ex.type==='word_form'||ex.type==='inflection_lemma'||ex.type==='inflection_form')&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
-    const speakOk = ex.type==='type_conjugation' ? _joinPronoun(ex.pronoun, stripFuri(ex.correct))
+    // v86_ae (user report): inflection_lemma's answer is a BARE, isolated target-language word
+    // form — for a language/device combination with no installed voice matching that language (or
+    // one whose "matching" voice is unreliable), the target-voice policy every other exercise type
+    // relies on has nothing good to fall back to, and the app's own "refuse rather than approximate"
+    // rule (_ttsMakeUtterance, v55_x) only catches the case where NO voice claims to match at all —
+    // it cannot detect a voice that CLAIMS the right language tag but sounds wrong. Substituting a
+    // German (source-language) reading was considered and rejected: there is no clean, short
+    // "German word form" of an isolated target-language lemma to read instead (ex.explanation is a
+    // full sentence, not a word) — worth building only as its own scoped follow-up if the user wants
+    // it, not a partial substitution here. Per the user's own explicit, accepted fallback ("we could
+    // also just omit the readout"), inflection_lemma's answer-reveal now speaks NOTHING — still
+    // advances (auto-advance is unaffected, matching _speakAndAdvance's own `!text` short-delay
+    // path), just silently. inflection_form is UNCHANGED: its own answer is a SOURCE-language label
+    // already confirmed working correctly with the source voice.
+    const speakOk = ex.type==='inflection_lemma' ? ''
+      : ex.type==='type_conjugation' ? _joinPronoun(ex.pronoun, stripFuri(ex.correct))
       : ex.type==='type_plural' ? stripFuri(ex.correct)
       : ex._intro ? _glyphSpeakForm(stripFuri(ex._intro==='glyph_sound' ? ex.source : ex.target))   // the GLYPH, once (case pair collapsed), never the Latin romanization ("dh"→"d-h")
       : ex.type==='mcq_article'      ? ex.article+' '+stripFuri(ex.target)
@@ -171590,7 +171605,7 @@ function check(replay){
     // language (e.g. Italian "nominativo plurale" for a German lesson), unlike every other type
     // above, whose reveal text is genuinely target-language. Falling into the generic branch above
     // and reading it with the target voice was audibly wrong. inflection_lemma is NOT included here
-    // — its target IS the target-language lemma, so the default (target voice) is already correct.
+    // — its own readout is now omitted entirely (v86_ae, above), so its lang is moot either way.
     const speakOkLang = ex.type==='inflection_form' ? (APP.lessonData?.srcLang||APP.srcLang||'en') : null;
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
     { const a=document.getElementById('ex-area'); if(a){ a.classList.remove('fall-down'); a.classList.add('rise-up'); setTimeout(()=>a.classList.remove('rise-up'),520); } }
@@ -171642,7 +171657,9 @@ function check(replay){
       ? _wrongCorrect
       : (_diff || `${t('check.correct_answer')} <strong>${_wrongCorrect}</strong>`);
     fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${_wrongBody}${((ex.type==='word_form'||ex.type==='inflection_lemma'||ex.type==='inflection_form')&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
-    const speakBad = ex.type==='type_conjugation' ? _joinPronoun(ex.pronoun, stripFuri(ex.correct))
+    // v86_ae: same omission as speakOk above — see its own comment.
+    const speakBad = ex.type==='inflection_lemma' ? ''
+      : ex.type==='type_conjugation' ? _joinPronoun(ex.pronoun, stripFuri(ex.correct))
       : ex.type==='type_plural' ? stripFuri(ex.correct)
       : ex._intro ? _glyphSpeakForm(stripFuri(ex._intro==='glyph_sound' ? ex.source : ex.target))   // glyph, once, not romanization
       : ex.type==='mcq_article'      ? ex.article+' '+stripFuri(ex.target)

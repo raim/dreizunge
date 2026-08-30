@@ -90,6 +90,8 @@ function goTo(C, i) {
   C.run(`APP.cur.cur = ${i}; APP.cur.answered = false; renderEx(); true;`);
 }
 
+async function main() {
+
 // ── 1. inflection_form, answered WRONG → the reveal (Italian formLabel) speaks in ITALIAN ──────
 {
   const C = open();
@@ -121,9 +123,17 @@ console.log('  inflection_form wrong-answer reveal speaks Italian, not German: O
 }
 console.log('  inflection_form correct-answer reveal speaks Italian too: OK');
 
-// ── 3. inflection_lemma is UNCHANGED — its target IS target-language text, speaks German ───────
-// Non-vacuity/regression guard: the fix must be scoped to inflection_form specifically, not applied
-// to every inflections exercise type wholesale.
+// ── 3. inflection_lemma's answer-reveal is now SILENT (v86_ae, user report + accepted fallback) ──
+// A real user report: an isolated target-language word form spoken with whatever voice claims to
+// match that language can sound audibly wrong (a Dutch/German pair, a device with no reliable Dutch
+// voice) — a case the app's own "refuse rather than approximate" voice policy (_ttsMakeUtterance,
+// v55_x) cannot catch, because it only refuses when NO voice claims to match, not when one claims to
+// match but sounds wrong. Substituting a source-language reading was considered and rejected (no
+// clean single-word source-language equivalent exists — explanation is a full sentence); per the
+// user's own explicit, accepted fallback ("we could also just omit the readout"), inflection_lemma
+// now speaks NOTHING on either the correct or the wrong path. This REPLACES this file's own former
+// v82_d regression guard, which asserted the OPPOSITE (that inflection_lemma keeps speaking target-
+// language audio) — that assertion is exactly what this cut intentionally changes.
 {
   const C = open();
   C.run(`startLesson(0); true;`, 'start');
@@ -133,10 +143,45 @@ console.log('  inflection_form correct-answer reveal speaks Italian too: OK');
   const droveWrong = answer(C, false);
   assert.ok(droveWrong, 'drove a wrong answer on the inflection_lemma exercise');
   const spoken = JSON.parse(C.run(`JSON.stringify(__spokeUtt)`));
-  assert.strictEqual(spoken.length, 1, 'exactly one utterance spoken');
-  assert.strictEqual(spoken[0].lang, 'de-DE',
-    `inflection_lemma's reveal is target-language text and must keep speaking German — got ${spoken[0] && spoken[0].lang}`);
+  assert.strictEqual(spoken.length, 0,
+    `inflection_lemma's WRONG-answer reveal speaks NOTHING now (got ${JSON.stringify(spoken)})`);
 }
-console.log('  inflection_lemma is unaffected — still speaks German (regression guard): OK');
+console.log('  inflection_lemma\'s wrong-answer reveal is now silent, not a mispronounced target-language word: OK');
+
+// ── 4. inflection_lemma's correct-answer path is ALSO silent, but still auto-advances ───────────
+{
+  const C = open();
+  C.run(`startLesson(0); true;`, 'start');
+  const i = findExercise(C, 'inflection_lemma');
+  goTo(C, i);
+  const before = C.run(`APP.cur.cur`);
+  const droveRight = answer(C, true);
+  assert.ok(droveRight, 'drove a correct answer on the inflection_lemma exercise');
+  const spokenRight = JSON.parse(C.run(`JSON.stringify(__spokeUtt)`));
+  assert.strictEqual(spokenRight.length, 0,
+    `inflection_lemma's CORRECT-answer reveal ALSO speaks nothing (got ${JSON.stringify(spokenRight)})`);
+  await new Promise(r => setTimeout(r, 500));
+  const after = C.run(`APP.cur.cur`);
+  assert.ok(after > before, `auto-advance still happens even with no speech (before=${before}, after=${after})`);
+}
+console.log('  inflection_lemma\'s correct-answer path is silent too, but auto-advance still happens (no speech to wait for): OK');
+
+// ── 5. inflection_form is completely UNCHANGED by this cut — still speaks source-language audio ──
+// Non-vacuity/regression guard: the v86_ae omission must be scoped to inflection_lemma specifically.
+{
+  const C = open();
+  C.run(`startLesson(0); true;`, 'start');
+  const i = findExercise(C, 'inflection_form');
+  goTo(C, i);
+  const droveWrong = answer(C, false);
+  assert.ok(droveWrong, 'drove a wrong answer on the inflection_form exercise');
+  const spoken = JSON.parse(C.run(`JSON.stringify(__spokeUtt)`));
+  assert.strictEqual(spoken.length, 1, 'inflection_form still speaks exactly one utterance — unaffected by the v86_ae change');
+  assert.strictEqual(spoken[0].lang, 'it-IT', 'inflection_form still speaks the SOURCE (Italian) voice, exactly as v82_d fixed it');
+}
+console.log('  inflection_form is completely unaffected by v86_ae — still speaks the source-language voice: OK');
 
 console.log('unit-inflection-speak-lang: ALL PASSED');
+}
+
+main().catch(err => { console.error(err); process.exit(1); });
