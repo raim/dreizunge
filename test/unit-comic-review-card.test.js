@@ -69,6 +69,28 @@ async function main() {
 }
 console.log('  comicOpenReview(): filters to panels with usable text, seeds the edit buffer from their OWN extracted text: OK');
 
+// ── 1b. comicOpenReview(): the REAL rendered markup is the near-fullscreen grid layout (v86_x) ──
+// User-reported, real usage: "the popover for text confirmation could be bigger and should allow to
+// view the text without scrolling." Checks the ACTUAL markup comicOpenReview() built (read back off
+// the tracked overlay element), not a source-text regex over index.html — a comment could satisfy a
+// regex without the function ever producing this markup at runtime.
+{
+  const C = client();
+  C.run(`APP_COMIC.boxes = [
+      { x1:0,y1:0,x2:10,y2:10, text: { caption:'Cap A', inScene:'Scene A' } },
+      { x1:5,y1:5,x2:15,y2:15, text: { caption:'Cap B', inScene:'Scene B' } },
+    ];
+    comicOpenReview();
+    true;`, 't1c');
+  const html = C.run(`_comicReviewOverlayEl.innerHTML`);
+  assert.ok(/max-width:min\(1200px,95vw\);width:95vw;height:90vh/.test(html),
+    'the modal box is sized near-fullscreen, not the original 520px fixed width');
+  assert.ok(/display:grid;grid-template-columns:repeat\(auto-fill,minmax\(340px,1fr\)\)/.test(html),
+    'panels are laid out in a responsive GRID (multiple columns on a wide screen), not a single flex column');
+  assert.ok(/rows="4"/.test(html), 'the in-scene textarea grew from 2 rows to 4, so a typical caption is visible without scrolling inside its own field');
+}
+console.log('  comicOpenReview(): the rendered markup is the near-fullscreen grid layout, not the original narrow single-column list: OK');
+
 {
   const C = client();
   C.run(`APP_COMIC.boxes = [{ x1:0,y1:0,x2:1,y2:1 }];   // never extracted

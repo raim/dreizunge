@@ -4197,35 +4197,40 @@ function comicOpenReview(auto){
   }
   _comicReviewEditable=editable;
   _comicReviewBuffer=editable.map(({b})=>({caption:(b.text&&b.text.caption)||'', inScene:(b.text&&b.text.inScene)||''}));
+  // v86_x (user-requested, real usage): the first cut was a narrow (520px) single-column list —
+  // "the popover for text confirmation could be bigger and should allow to view the text without
+  // scrolling." Near-fullscreen box (95vw × 90vh) + a CSS GRID body (not a single flex column) so
+  // panels flow into multiple columns on a wide screen instead of stacking one under another —
+  // that is what actually buys back vertical space, not just a bigger box around the same list.
+  // Each panel's own image/fields grew too (a 72px thumbnail and a 2-row textarea were the other
+  // half of "too small to read without scrolling WITHIN one panel's own field").
   const rows=editable.map(({i,b},k)=>{
     const color=_COMIC_COLORS[i%_COMIC_COLORS.length];
     let img=''; try{ img=_comicCropDataUrl(b); }catch(_){}
     const buf=_comicReviewBuffer[k];
-    return `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-mid)">
-      <div style="flex-shrink:0;text-align:center">
-        <span style="display:inline-block;width:20px;height:20px;border-radius:4px;background:${color};color:#fff;text-align:center;font-weight:800;font-size:12px;line-height:20px">${i+1}</span>
-        ${img?`<img src="${img}" style="display:block;width:72px;height:auto;margin-top:4px;border-radius:6px;border:1px solid var(--gray-mid)">`:''}
+    return `<div style="display:flex;flex-direction:column;gap:8px;padding:12px;border:1.5px solid var(--gray-mid);border-radius:10px;background:var(--white)">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="display:inline-block;width:22px;height:22px;border-radius:5px;background:${color};color:#fff;text-align:center;font-weight:800;font-size:13px;line-height:22px;flex-shrink:0">${i+1}</span>
+        ${img?`<img src="${img}" style="display:block;max-width:100%;max-height:160px;width:auto;height:auto;border-radius:8px;border:1px solid var(--gray-mid);object-fit:contain">`:''}
       </div>
-      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
-        <input type="text" value="${escAttr(buf.caption)}" oninput="_comicReviewEdit(${k},'caption',this.value)"
-          placeholder="${escAttr(t('form.comic_caption_ph'))}"
-          style="font-size:13px;font-weight:700;font-family:Nunito,sans-serif;padding:6px 8px;border:1.5px solid var(--gray-mid);border-radius:6px;color:var(--text)">
-        <textarea rows="2" oninput="_comicReviewEdit(${k},'inScene',this.value)"
-          placeholder="${escAttr(t('form.comic_scene_ph'))}"
-          style="font-size:13px;font-weight:600;font-family:Nunito,sans-serif;padding:6px 8px;border:1.5px solid var(--gray-mid);border-radius:6px;color:var(--text);resize:vertical">${escHtml(buf.inScene)}</textarea>
-      </div>
+      <input type="text" value="${escAttr(buf.caption)}" oninput="_comicReviewEdit(${k},'caption',this.value)"
+        placeholder="${escAttr(t('form.comic_caption_ph'))}"
+        style="font-size:15px;font-weight:700;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;color:var(--text)">
+      <textarea rows="4" oninput="_comicReviewEdit(${k},'inScene',this.value)"
+        placeholder="${escAttr(t('form.comic_scene_ph'))}"
+        style="font-size:15px;font-weight:600;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;color:var(--text);resize:vertical;min-height:88px">${escHtml(buf.inScene)}</textarea>
     </div>`;
   }).join('');
   const ov=document.createElement('div');
   ov.className='modal-overlay';
   ov.style.zIndex=400;   // above the generation wizard's own card stack
   ov.innerHTML=
-    '<div class="modal-box" style="max-width:520px" role="dialog" aria-modal="true">'
+    '<div class="modal-box" style="max-width:min(1200px,95vw);width:95vw;height:90vh;max-height:90vh" role="dialog" aria-modal="true">'
     + `<div class="modal-hdr"><span>${escHtml(t('form.comic_review_title'))}</span>`
     + `<button type="button" class="modal-close" onclick="_comicReviewCancel()">✕</button></div>`
-    + `<div style="padding:0 18px;overflow-y:auto;flex:1">`
-    + `<div style="font-size:12px;color:var(--gray-dark);padding:10px 0 0">${escHtml(t('form.comic_review_hint'))}</div>`
-    + rows
+    + `<div style="padding:0 20px;overflow-y:auto;flex:1">`
+    + `<div style="font-size:13px;color:var(--gray-dark);padding:12px 0">${escHtml(t('form.comic_review_hint'))}</div>`
+    + `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;padding-bottom:16px">${rows}</div>`
     + `</div>`
     + `<div class="modal-footer">`
     + `<button type="button" class="modal-btn secondary" onclick="_comicReviewCancel()">${escHtml(t('dialog.cancel'))}</button>`
@@ -160968,12 +160973,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v86_w', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v86_x', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"e022a8ed5c2e","lessons.json":"744495a0be41","ui.json":"d14978c636c1","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"d7c9353f56a8"};
+  APP.buildSources = {"index.html":"bfdb705de81b","lessons.json":"744495a0be41","ui.json":"d14978c636c1","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","build-static.js":"d7c9353f56a8"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
