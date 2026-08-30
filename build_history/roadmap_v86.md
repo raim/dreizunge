@@ -386,7 +386,7 @@ parity fix (all three are their own top-level bullets in the `v86_h` shipped ent
 since they were not part of this batch's own items — listed together only because they landed the
 same cut). The rest are scoped below, lettered P onward, continuing straight from O above.
 
-### P. ✅ (the prompt-rule half) Inflection MCQ distractors sometimes mix grammatical DIMENSIONS — the RULE half SHIPPED `v86_af`, still not live-verified against THIS specific failure mode
+### P. ⚠️ Inflection MCQ distractors sometimes mix grammatical DIMENSIONS — `v86_af` fixed the SINGLE-dimension case (the original "datief" report), confirmed STILL BROKEN for the COMBINED-dimension case
 
 **User's report**, with a real example: for a question whose correct answer is "plural", the model
 sometimes offers "dative"/"genitive" as WRONG options alongside the genuinely plausible "singular" —
@@ -413,13 +413,21 @@ Dutch, a plural noun, offered a case-dimension distractor) turned out to be this
 confirming the diagnosis above. `v86_af` shipped path (a) — the instruction now states the "same
 dimension" rule far more explicitly ("DIRECT RELATIVES," with worked-out single-dimension vs.
 combined-dimension guidance and a concrete counter-example) and both worked examples were fixed to
-comply. **NOT yet independently live-verified specifically against dimension-mixing** — the one live
-generation run this session (item AJ, below) tested the SEPARATE `{S}`-language-compliance failure,
-not dimension-mixing directly (that generation's own `formChoices` were arguably borderline on this
-too — e.g. offering `"Infinitief"`, a mood/form category, alongside a tense+person correct answer —
-not conclusively re-broken, but not conclusively clean either). A dedicated live check, reading
-several generated `formChoices` sets specifically for dimension purity, is still the honest
-remaining step before calling this item fully closed.
+comply.
+
+**Checked against real data (no new model call needed) — the rule did NOT fully take for
+COMBINED-dimension answers.** The live generation already run for item AJ (below), AFTER `v86_af`
+shipped, gives three real `formChoices` sets to inspect directly. All three correct answers combine
+TWO dimensions (tense + person, e.g. `"Tegenwoordige tijd, derde persoon enkelvoud"`), and all three
+distractor sets include `"Infinitief"` — a MOOD/finiteness value, a dimension absent from the
+correct answer entirely, not a value of tense OR person. This is a genuine, unambiguous violation of
+the rule `v86_af` wrote (it only permits varying ONE of the combined dimensions while KEEPING the
+other, never introducing an absent one) — the single-dimension case (this item's own original
+"datief" report) IS fixed, but the combined-dimension case is not. **Still open**: the rule's own
+wording may need a sharper worked example specifically for combined-dimension answers (the current
+`de` example demonstrates only a single-dimension case, `"plural"`/`"singular"`) — not attempted,
+would need its own live re-test before shipping, per this project's own standing rule that a live-
+model prompt change needs a live-model verification, not just a reading of the instruction text.
 
 ### Q. ✅ Comprehension questions must be answerable independently of each other — SHIPPED `v86_h` (prompt only, not live-verified)
 
