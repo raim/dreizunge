@@ -1601,6 +1601,96 @@ scrolling. it could be a whole page in the sequence of pages for storyline gener
 | **visually verified, not just asserted** | desktop (1440×900): 3 columns, 6 panels nearly fitting two rows unscrolled. A 7-panel case scrolls the outer container gracefully (the deliberate safety net for a comic with more panels than fit). Mobile (375×812): collapses to one column; `document.documentElement.scrollWidth === clientWidth` confirmed — zero horizontal overflow at any size |
 | the acceptance tests | `unit-comic-review-card.test.js` §1b — reads the ACTUAL markup `comicOpenReview()` built (off the tracked overlay's own `innerHTML`), not a source regex; mutation-tested by reverting the box sizing |
 
+**`v86_y` — progress-card story-view controls: flags/explorer mutual exclusivity + retranslate parity**
+(item W follow-ups, both from real usage of `v86_v`-`v86_x`'s own comic/translation work)
+
+| what | where |
+|---|---|
+| flags/explorer mutual exclusivity | `_renderCompStory()` passes `null` (not `'target'`) as `_storyFlagButtonsHtml`'s `current` arg while `APP._textExplorer` is on, so NEITHER flag renders active; `toggleCompStoryLang(lang)` now ALSO sets `APP._textExplorer=false` first, so clicking a flag always exits explorer mode instead of leaving it silently active underneath |
+| retranslate + language-flag parity, lesson-set ↔ storyline | `retranslateChain(chainId, btn)` (index.html) — the storyline "read full story" page's own new 🔄, loops `POST /api/retranslate-story` once per chapter via the SAME `data-chain` id array `analyzeChaptersRun` already reads, syncing both `APP.savedList` and the chain's own render cache, one failure isolated from the rest; server's `/api/retranslate-story` extended to accept `{topicId}` (not just `{topic}`) for this caller |
+| the acceptance tests | `unit-text-explorer.test.js` §7, `unit-retranslate-chain.test.js` |
+
+**`v86_z` — the static `docs/index.html` build gets item W's whole text explorer too** (user-requested:
+"Can we build the text analysis explorer also into the static docs/index.html?")
+
+| what | where |
+|---|---|
+| the bake | `build-static.js` reads `canonical-analysis.json` (env `CANONICAL_ANALYSIS_FILE`, mirrors `server.js`'s own `ANALYSIS_STORE_FILE`), transforms each cached chapter into the SAME shape `GET /api/analysis/:id` returns, bakes as `const STATIC_ANALYSIS` — a 7th fingerprinted `BUILD_SOURCES` entry. A missing file degrades to `{}`, not a crash |
+| the client branch | `_ensureTextExplorerData()` gained `typeof STATIC_ANALYSIS !== 'undefined'` (the SAME convention `STATIC_LESSONS` already uses everywhere) — reads the snapshot directly, NEVER calls `fetch`; an absent chapter degrades to the existing clean `error` cache state, no retry possible statically |
+| live-verified | a plain static HTTP server (no app server at all) serving the rebuilt `docs/index.html` — real per-word `<mark>` elements confirmed actually rendering from the baked data, not just asserted from source |
+| the acceptance tests | `unit-static-analysis-bake.test.js` (spawns the REAL `build-static.js` CLI against isolated scratch files — a real bake AND a missing-file degrade), `unit-text-explorer.test.js` §8 |
+
+**`v86_aa` — CP2's own `"form"` field now uses the SOURCE language's terminology, not hardcoded English**
+(user report: a german→dutch lesson's per-word analysis came back in English)
+
+| what | where |
+|---|---|
+| the bug | `buildAnalysisPrompt()` (canonical-analysis.js) explicitly instructed `"sense"`/the phrase `"gloss"` to be written IN `S`, but `"form"` (the grammatical-label field) had NO language instruction at all, PLUS a hardcoded ENGLISH worked example (`e.g. "verb, 3rd person singular past"`) — the model defaulted `"form"` to English regardless of the real source language, confirmed via the real cached chapter (every `"sense"` correctly German, every `"form"` English) |
+| the fix | `"form"`'s own instruction now explicitly names `S`; the English-only literal example REMOVED rather than translated (a fixed literal in one language recreates the same bug for every OTHER source language) |
+| the acceptance tests | `unit-canonical-analysis.test.js` (new block: `buildAnalysisPrompt(..., 'Dutch', 'German')`, mirroring the real report) |
+
+**`v86_ab` — the SAME class of bug, this time in `PROMPTS.inflections`'s own `default` worked example**
+
+| what | where |
+|---|---|
+| the bug | `PROMPTS.inflections.examples.default` (prompts.json) — the ONLY example used for a target language with no dedicated entry (only `default` and `de` exist) — demonstrated `formLabel`/`formChoices`/`explanation` in ENGLISH despite its OWN `translation` field being German, directly contradicting the schema's own "AS A SHORT PHRASE IN {S}" instruction |
+| the fix | rewrote those 3 fields into German, matching the example's own `translation` field. `de`'s own example checked too and found NOT to have this defect (its `translation` is English, so English fields ARE consistent with its own implied `S`) |
+| the acceptance tests | `unit-prompt-examples.test.js` §5 |
+
+**`v86_ac` — the library-list row's own 🔤 button now doubles as "re-analyze," gated by a confirm warning**
+(user: found no way to force a re-run once `v86_aa`'s CP2 prompt fix landed)
+
+| what | where |
+|---|---|
+| server | `POST /api/analyze-chapter/:chapterId` accepts an optional `{force:true}` body — a new `deleteAnalysisChapter(chapterId)` (mirrors `writeAnalysisChapter`'s own read-modify-write shape) clears the cached CP2 result FIRST, so the route's EXISTING cache-hit short-circuit naturally re-runs it — no separate "force" branch needed past the delete step |
+| client | `analyzeChaptersRun(chapterIds, btn)` — for a SINGLE-chapter call (`ids.length===1`, the library row's own usage) pre-checks `GET /api/analysis/:id` first; if already analysed, `confirm()`s before sending `{force:true}` — a decline makes NO server call at all, button restored, no toast. A multi-chapter BATCH call (the storyline page's "analyze all") is DELIBERATELY UNCHANGED — no pre-check, no confirm, silent skip-if-cached, since asking per-chapter in a loop would be intrusive |
+| the acceptance tests | `unit-analyze-chapters-run.test.js` §6-9 (real DOM, all 4 combinations), `e2e-analysis.test.js` §7-8 (real server + fake-Ollama round trip) |
+
+**`v86_ad` — the lesson-set card's OWN story display (`#story-section`) gains flags + a real text explorer**
+(user, after THREE rounds of "which card do you mean" — the library row and the completion card were
+both investigated and found NOT to be what was meant)
+
+| what | where |
+|---|---|
+| the surface | `#story-section` ("📖 Read the story") inside the `#lesson-set` screen — teachers land there (`v60`'s own routing; learners skip the screen entirely), DISTINCT from both the library row (`v86_ac`) and the completion card (`_renderCompStory`, item W above). Its own `🔍` is `story-qc-btn` (QC proofreading), a completely unrelated feature |
+| the fix, full parity (asked, not assumed) | `renderStoryText(d, targetEl)` ITSELF gained the flags/explorer logic — every one of its 6 real call sites always targets the SAME default `#story-body` (no caller ever supplies an explicit `targetEl`), so baking it into the one existing function keeps every caller automatically consistent, rather than adding a second wrapper only some would use. Reuses the SAME `_storyFlagButtonsHtml`/CP1-CP2 cache machinery (`_teCacheStore`/`_ensureTextExplorerData`/`_textExplorerBodyHtml`, already generic) under a SEPARATE `APP._lsStoryLang`/`APP._lsTextExplorer` state pair — NOT the completion card's own `APP._compStoryLang`/`APP._textExplorer`, since a teacher can have both cards open in different senses at once |
+| new icon | `🔬` for the explorer toggle — `🔍` is QC on this SAME row, `🔎` is already the AI-hunt checkbox's own icon further down it |
+| `toggleLsStoryLang`/`toggleLsTextExplorer` | mirror `toggleCompStoryLang`/`toggleTextExplorer` exactly, including `v86_y`'s own mutual-exclusivity fix, replicated here rather than re-derived |
+| live-verified | a REAL Ollama backend (an isolated scratch server, its own `LESSONS_FILE`) — clicking `🔬` genuinely kicks off a real `POST /api/analyze-chapter` job (confirmed via the real cache entry's own `status`/`step` fields), not just a client-side flag flip |
+| the acceptance tests | `unit-lesson-set-story-explorer.test.js` (5 sections, against the REAL DOM via `buildPath()`/`loadClient()`, not mocks) |
+
+**`v86_ae` — `inflection_lemma`'s answer-reveal is now silent, not a mispronounced target-language word**
+(user report, later self-corrected to a DIFFERENT real bug — see `v86_af`/item AJ below)
+
+| what | where |
+|---|---|
+| the finding | `inflection_lemma`'s TTS answer-reveal ALREADY correctly resolves to the TARGET-language voice — that IS the designed, tested behaviour (`v82_d`'s own regression guard proved it). The real issue: a voice can CLAIM to match a requested language tag (passing `_ttsMakeUtterance`'s own filter honestly) without actually being a reliable, correctly-accented voice for it on a given device/browser — a real TTS-engine limitation this app's "refuse rather than approximate" policy (`v55_x`) cannot detect, since it only refuses when NO voice claims to match at all |
+| the fix | `check()`'s `speakOk`/`speakBad` (index.html) now resolve to `''` for `ex.type==='inflection_lemma'` on BOTH the correct and wrong path — speaks NOTHING, still auto-advances (`_speakAndAdvance`'s own `!text` short-delay path needed no change). `inflection_form` completely UNCHANGED (its own SOURCE-language label, fixed at `v82_d`, already works and was not part of this report) |
+| the acceptance tests | `unit-inflection-speak-lang.test.js` — §3/§4 REPLACE (not extend) the old `v82_d`-era regression guard that asserted the OPPOSITE; §5 confirms `inflection_form` stays untouched |
+
+**`v86_af` — inflection wrong choices must be DIRECT RELATIVES of the correct answer's own dimension**
+(the user's own refinement of a real "datief" report, immediately after `v86_ab` shipped)
+
+| what | where |
+|---|---|
+| the rule | `PROMPTS.inflections`'s own `formChoices` instruction (prompts.json) — a wrong choice must stay on the SAME grammatical axis (or axes) `formLabel` already names; a SINGLE-dimension answer (e.g. `"plural"`) may only vary that ONE dimension (e.g. `"singular"`), never introduce an unrelated one (case, tense…) even if genuinely real for the language |
+| both worked examples fixed to comply | `default`'s/`de`'s own `formChoices` shrank to EXACTLY the same single dimension as their own correct answer — the SAME "worked example contradicts its own instruction" bug class as `v86_aa`/`v86_ab` |
+| ⚠️ CONFIRMED STILL BROKEN for combined-dimension answers (`roadmap_v86.md` item P) | a real post-`v86_af` live generation offered `"Infinitief"` (a mood/finiteness value) against a tense+person correct answer, in all 3 items — the single-dimension case IS fixed, the combined-dimension case is NOT, not yet re-attempted |
+| the acceptance tests | `unit-prompt-examples.test.js` §6 |
+
+**`v86_af`'s own follow-up investigation — item AJ (`roadmap_v86.md`), a real model-behaviour finding, NO code fix**: `PROMPTS.inflections`'s `{S}`-designated fields comply RELIABLY when `{S}` is English,
+UNRELIABLY otherwise. Confirmed by direct comparison, not guessed: an it→en lesson complied
+perfectly even with the OLD, pre-`v86_ab` prompt wording; a live-tested nl→de generation — even
+WITH a much-strengthened reinforcement (an explicit "MUST be IN {S} — NEVER in {L}" per field plus a
+closing checklist, tried and reverted after measuring zero effect) — still produced every `{S}`
+field in Dutch except `translation`. Working hypothesis: English is this model's own DEFAULT meta-
+commentary language, so the instruction only visibly "works" when it is redundant with that default,
+not because it actively overrides context. **User's own ruling, ending the investigation without a
+code change**: leave it — target-language grammar descriptions are pedagogically defensible on
+their own terms. A "translate layer" (a SECOND, translation-framed LLM call for just the `{S}`
+fields, mirroring the one field — `translation` itself — that DOES reliably switch language in
+every case) is recorded as a scoped-but-unbuilt option, not designed further.
+
 ---
 
 **Keep 6b current the cheap way:** when a session's write-up names a function it had to hunt for,
