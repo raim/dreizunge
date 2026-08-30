@@ -68,8 +68,11 @@ function buildAnalysisPrompt(sentenceText, tokens, langName, srcLangName) {
     'You will be given ONE sentence in ' + L + ' and its word-by-word tokenisation, each token ' +
     'carrying a 0-based index. For EVERY token, propose:\n' +
     '  - "lemma": its dictionary/citation form\n' +
-    '  - "form": its grammatical form in this sentence (part of speech plus any relevant inflection, ' +
-    'e.g. "verb, 3rd person singular past")\n' +
+    '  - "form": its grammatical form in this sentence (part of speech plus any relevant inflection -- ' +
+    'case, number, gender, tense, person, mood, degree, etc., whichever apply), given as a short ' +
+    'phrase IN ' + S + ' -- the grammatical TERMINOLOGY itself (the part-of-speech and inflection ' +
+    'names, not just the gloss) must be written in ' + S + ', not English, unless ' + S + ' happens ' +
+    'to be English\n' +
     '  - "sense": a short gloss IN ' + S + ' of what this token specifically means HERE, in this ' +
     'sentence -- not a generic dictionary definition. Keep the SAME grammatical form as the token ' +
     'itself: if the token is a conjugated/inflected form, give a conjugated/inflected gloss in the ' +

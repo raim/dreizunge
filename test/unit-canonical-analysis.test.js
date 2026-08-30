@@ -60,6 +60,22 @@ console.log('  canonical-analysis.js: standalone, no server.js dependency, model
 }
 console.log('  buildAnalysisPrompt: language names + full token list + every required field named: OK');
 
+// ── 2b. "form" must name the SOURCE language too, not just "sense" ────────────────────────
+// A real user report (tp_17880367188140000070, nl-target/de-source) found the "form" field
+// (the grammatical-label string, e.g. "verb, 3rd person singular") always came back in ENGLISH
+// regardless of the source language — the ONLY one of the token fields with no explicit
+// source-language instruction, unlike "sense" (explicitly "IN " + S) and the phrase "gloss"
+// (explicitly "(in " + S + ")"). A model left with no language cue for a field defaults to English.
+{
+  const tokens = [{ tokenId: 't0', idx: 0, text: 'rijdt' }];
+  const { sys } = ca.buildAnalysisPrompt('U rijdt nu.', tokens, 'Dutch', 'German');
+  assert.ok(/"form"[^]*?\bIN German\b/.test(sys),
+    '"form" explicitly names the SOURCE language ("German" here, target is Dutch) as the language its own grammatical terminology must be written in — not just "sense"');
+  assert.ok(!/e\.g\. "verb, 3rd person singular past"/.test(sys),
+    'the old hardcoded ENGLISH-only worked example for "form" is gone — it demonstrated the very bug it caused, giving the model an English-language cue with nothing to override it');
+}
+console.log('  buildAnalysisPrompt: "form" is now explicitly instructed to use the SOURCE language\'s own grammatical terminology, not English: OK');
+
 // ── 3. Reply parsing: resolved / low-confidence / unresolved, never dropped or fabricated ──
 {
   const tokens = [
