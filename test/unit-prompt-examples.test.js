@@ -166,4 +166,31 @@ console.log('  inflections\' "default" example: formLabel/formChoices/explanatio
 }
 console.log('  inflections\' system prompt + BOTH worked examples (default, de) now enforce "wrong choices are direct relatives of the correct answer": OK');
 
+// 7) v86_ag: item P (roadmap_v86.md) confirmed the "direct relatives" rule did NOT take for
+//    COMBINED-dimension correct answers (a real post-v86_af generation offered "Infinitief" against
+//    a tense+person correct answer, three times) — both examples had only ever demonstrated the
+//    SINGLE-dimension case ("plural"/"singular"). Each example now carries a SECOND worked item
+//    with a combined-dimension correct answer (tense + person), whose own formChoices vary ONLY
+//    those two dimensions, never introducing a third (mood/infinitive, case, etc.) — the exact
+//    thing the live-reported failure got wrong.
+{
+  for (const key of ['default', 'de']) {
+    const items = itemsOf(PROMPTS.inflections.examples[key]);
+    assert.strictEqual(items.length, 2, `inflections "${key}" example now carries TWO worked items (single-dimension + combined-dimension), got ${items.length}`);
+    const combined = items[1];
+    assert.ok(/person/i.test(combined.formLabel) && /(tense|Präteritum|Präsens)/i.test(combined.formLabel),
+      `"${key}" example's SECOND item has a genuinely COMBINED-dimension correct answer (tense + person), got "${combined.formLabel}"`);
+    assert.strictEqual(combined.formChoices.length, 4, `"${key}" example's second item offers 4 formChoices, got ${combined.formChoices.length}`);
+    // None of the 3 wrong choices may introduce mood/finiteness (infinitive, participle, imperative,
+    // subjunctive, gerund) or case — a dimension absent from a tense+person correct answer. This is
+    // the EXACT class of violation the live report found ("Infinitief" against a tense+person item).
+    const forbidden = /infinit|participle|imperat|subjunct|gerund|nominativ|genitiv|dativ|akkusativ|case/i;
+    combined.formChoices.forEach((c, i) => {
+      if (i === combined.formCorrectIndex) return;
+      assert.ok(!forbidden.test(c), `"${key}" example's combined-dimension item: wrong choice "${c}" must not introduce a dimension absent from the correct answer (mood/case) — this is the exact "Infinitief" class of bug`);
+    });
+  }
+}
+console.log('  inflections\' default/de examples each gained a SECOND, combined-dimension (tense+person) worked item, with compliant same-axis-only distractors: OK');
+
 console.log('unit-prompt-examples: ALL PASSED');
