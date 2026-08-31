@@ -28,10 +28,17 @@ const server = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
     `the client sends no hardcoded arcReinforce list any more — the user picks types (found ${assigns.length})`);
   const modeSends = [...html.matchAll(/body\.arcMode\s*=|gbody\.arcMode\s*=/g)];
   assert.strictEqual(modeSends.length, 0, 'and no two-value arcMode: the picker replaced it');
-  assert.ok(/body\.arcTypes = readArcTypeChecks\('pdf-arc-types'\)/.test(html),
-    'the PDF/book form sends its ticked types');
-  assert.ok(/gbody\.arcTypes=readArcTypeChecks\('gen-arc-types'\)/.test(html),
-    'the generate form sends its ticked types');
+  // item AL part 2 (roadmap_v87.md): there is ONE arc tick-list now, `#gen-arc-types`, on the
+  // wizard's lesson card — `#pdf-arc-types` and `#comic-arc-types` were deleted, not renamed. The
+  // claim this section makes is unchanged ("every send path sends TICKED types, never a hardcoded
+  // list or a two-value mode"); it just has three readers of one container instead of three
+  // containers. Anchored on the container name rather than each caller's exact assignment syntax,
+  // which is what made the old form break on an unrelated nearby edit.
+  const arcReads = [...html.matchAll(/readArcTypeChecks\('([a-z-]+)'\)/g)].map(m => m[1]);
+  assert.ok(arcReads.length >= 3,
+    `every send path reads a ticked arc list (found ${arcReads.length} readArcTypeChecks call sites)`);
+  assert.deepStrictEqual([...new Set(arcReads)], ['gen-arc-types'],
+    'and they ALL read the ONE canonical container — no per-panel copy has come back');
 }
 
 // 2 + 3. RUN both pickers and read them back (v73_c).
@@ -50,15 +57,18 @@ const server = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
 
   const valuesIn = (id) => C.document.getElementById(id).querySelectorAll('.arc-lt-check').map(b => b.value);
 
-  // Both forms render, and render the SAME options — the property that replaced the two drifting
-  // <select>s. Compared as rendered output, so a private copy in one form fails here even if it
-  // happens to be spelled identically in source.
-  C.run(`renderArcTypeChecks('gen-arc-types'); renderArcTypeChecks('pdf-arc-types'); true;`, 'render-both');
+  // "One shared list, no second source of truth" used to be checked by rendering BOTH forms'
+  // containers and diffing the output. item AL part 2 (roadmap_v87.md) made that check impossible to
+  // fail in the interesting direction and unnecessary in the other: #pdf-arc-types and
+  // #comic-arc-types were DELETED, and all three input modes read the wizard's #gen-arc-types. The
+  // property is now structural, and is guarded where it is real — unit-arc-options.test.js asserts
+  // against index.html's SOURCE that the per-panel copies have not come back, and §1 above asserts
+  // every readArcTypeChecks() call site names the one container. (Rendering into a deleted id proves
+  // nothing here: lib-dom AUTO-VIVIFIES any id, which is how the old two-container check stayed green
+  // through the release that removed one of them.)
+  C.run(`renderArcTypeChecks('gen-arc-types'); true;`, 'render-one');
   const genValues = valuesIn('gen-arc-types');
-  const pdfValues = valuesIn('pdf-arc-types');
   assert.ok(genValues.length >= 8, `the generate form renders a real tick-list (${genValues.length} options)`);
-  assert.deepStrictEqual(genValues, pdfValues,
-    'both forms offer exactly the same lesson types — one shared list, no second source of truth');
 
   // The default, read through the PRODUCT's own reader rather than pinned in source.
   assert.deepStrictEqual(JSON.parse(C.run(`JSON.stringify(readArcTypeChecks('gen-arc-types'))`, 'read-default')),
@@ -76,9 +86,11 @@ const server = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
 
   // Story-dependent types are hidden when there is no story — the same gate the add-lesson menu
   // applies. Asserted on the rendered options, which is where the learner meets it.
-  C.run(`const c = document.getElementById('pdf-arc-types'); c.dataset.rendered = '';
+  // A throwaway container, named as such: this section is about renderLessonTypeChecks()'s own
+  // hasStory gate, not about where the product mounts it (the real one is asserted above).
+  C.run(`const c = document.getElementById('arc-types-nostory-probe'); c.dataset.rendered = '';
          renderLessonTypeChecks(c, { cls: 'arc-lt-check', checked: ['review'], hasStory: false }); true;`, 'no-story');
-  const noStory = valuesIn('pdf-arc-types');
+  const noStory = valuesIn('arc-types-nostory-probe');
   assert.ok(!noStory.includes('comprehension') && !noStory.includes('error_hunt'),
     'without a story the story-dependent types are not offered');
   assert.ok(noStory.includes('standard') && noStory.includes('review'),

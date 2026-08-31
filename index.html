@@ -1381,47 +1381,18 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
               <span id="split-llm-drop-lbl">Also drop ads &amp; boilerplate</span>
             </label>
           </div>
-          <!-- Decoupling chaptering from lesson generation (user request, roadmap_v87.md) — same
-               checkbox/wiring shape as #gen-skip-lessons-cb (the wizard's own copy); see that
-               markup's own comment for the full reasoning. Hidden/shown alongside #pdf-arc-row by
-               _renderPdfChunks() (only meaningful once there's something to generate). -->
-          <div class="user-story-check-row" id="pdf-skip-lessons-row" style="display:none;margin-bottom:6px;padding:6px 8px;background:var(--gray-light);border-radius:8px">
-            <label class="user-story-check-row" style="margin:0">
-              <input type="checkbox" id="pdf-skip-lessons-cb" onchange="_renderPdfChunks()">
-              <span id="pdf-skip-lessons-lbl">⏸️ No lessons yet — just create the chapters, add lessons later</span>
-            </label>
-          </div>
-          <div id="pdf-arc-row" style="display:none">
-            <label class="user-story-check-row">
-              <input type="checkbox" id="pdf-arc-cb">
-              <span id="pdf-arc-lbl">🎯 Add more lesson types to each chapter</span>
-            </label>
-            <!-- v71_u: the two-option <select> here became the shared tick-list. Same operation as the
-                 storyline "add lessons" run, which has had the full picker since v71_p — so a type
-                 added to one silently did not exist in the other (comprehension, v71_l, was never
-                 reachable from a book at all). Rendered by renderLessonTypeChecks on form open. -->
-            <div id="pdf-arc-types" class="user-story-checks" style="margin:3px 0 0 24px"></div>
-          </div>
-          <!-- v85_p: the storyboard post-pass used to run unconditionally for every /api/generate-book
-               call (v68.1) — this checkbox actually gates it now (see server.js's own comment on
-               _runBookJob's postGenStoryboard). Reuses the SAME ui.json key the wizard's own storyboard
-               toggle uses, so the label stays in sync across both surfaces. -->
-          <label class="user-story-check-row" id="pdf-storyboard-row">
-            <input type="checkbox" id="pdf-storyboard-cb">
-            <span id="pdf-storyboard-lbl">🎬 Generate a storyboard</span>
-          </label>
-          <!-- item W follow-up (v86_o): mirrors pdf-storyboard-row exactly — opt-in (default off,
-               per the measured real cost: one model call PER SENTENCE, ~13-14 min for a 4-sentence
-               chapter on CPU-only inference), gates _kickOffAnalysisJob per chapter inside
-               _runBookJob (see server.js's own postGenAnalysis comment). -->
-          <label class="user-story-check-row" id="pdf-analysis-row">
-            <input type="checkbox" id="pdf-analysis-cb">
-            <span id="pdf-analysis-lbl">🔤 Analyse words for the text explorer</span>
-          </label>
+          <!-- item AL part 2 (roadmap_v87.md, user ruling: "current 4/Lessons should be the ONLY
+               place where we can select lesson types to be generated"): this panel's OWN copies of
+               the lesson-type controls are GONE. #pdf-skip-lessons-row, #pdf-arc-row/#pdf-arc-types,
+               #pdf-storyboard-row, #pdf-analysis-row and #pdf-gen-btn all moved to — or rather, were
+               deleted in favour of — the wizard's ONE lesson card (#gen-card-3): #gen-skip-lessons-cb,
+               #gen-arc-row/#gen-arc-types, #post-gen-storyboard-cb, #post-gen-analysis-cb and #gen-btn.
+               pdfGenerateAll() reads those ids now, and #gen-btn dispatches to it (doGenerate()'s own
+               pre-existing upload branch). What STAYS here is exactly what the user ruled must stay
+               live on the Text step: the chunk list, the split-mode controls, the selection panel and
+               the cleanup pass — extraction and chunk editing are unchanged, in place and in timing.
+               #pdf-stepper stays too: it is per-chunk PROGRESS, not a control. -->
           <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-            <button type="button" id="pdf-gen-btn" onclick="pdfGenerateAll()"
-              style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif;display:none">
-              ▶ <span id="pdf-gen-lbl"></span></button>
             <div id="pdf-stepper" class="pdf-stepper"></div>
           </div>
         </div>
@@ -1543,45 +1514,20 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <span id="comic-detect-status" style="font-size:11px;color:var(--gray-dark)"></span>
           </div>
           <div id="comic-panel-list" style="display:flex;flex-direction:column;gap:4px;margin-top:8px"></div>
-          <!-- v85_p (real-usage bug report): the comic flow had NO lesson-type/storyboard controls at
-               all — comicCreateChapter() always fired an immediate, bare-vocab-only, unconditional-
-               storyboard generation with no chance to configure anything, unlike #pdf-panel's own
-               embedded #pdf-arc-row. Mirrors that exact pattern rather than routing through the
-               wizard's lesson card (comics, like PDF uploads, act from their own panel's button). -->
-          <!-- Decoupling chaptering from lesson generation (user request, roadmap_v87.md) — the
-               screenshot that prompted this ask WAS this panel: extraction, review, and lesson-type
-               selection all bundled into one "Create chapter" click. Same checkbox/wiring shape as
-               #gen-skip-lessons-cb/#pdf-skip-lessons-cb; see the former's own comment for the full
-               reasoning. Hidden/shown alongside #comic-arc-row by _comicRenderList(). -->
-          <div class="user-story-check-row" id="comic-skip-lessons-row" style="display:none;margin-top:8px;margin-bottom:6px;padding:6px 8px;background:var(--gray-light);border-radius:8px">
-            <label class="user-story-check-row" style="margin:0">
-              <input type="checkbox" id="comic-skip-lessons-cb" onchange="_comicRenderList()">
-              <span id="comic-skip-lessons-lbl">⏸️ No lessons yet — just create the chapters, add lessons later</span>
-            </label>
-          </div>
-          <div id="comic-arc-row" style="display:none;margin-top:8px">
-            <label class="user-story-check-row">
-              <input type="checkbox" id="comic-arc-cb">
-              <span id="comic-arc-lbl">🎯 Add more lesson types to each chapter</span>
-            </label>
-            <div id="comic-arc-types" class="user-story-checks" style="margin:3px 0 0 24px"></div>
-          </div>
-          <label class="user-story-check-row" id="comic-storyboard-row" style="display:none">
-            <input type="checkbox" id="comic-storyboard-cb">
-            <span id="comic-storyboard-lbl">🎬 Generate a storyboard</span>
-          </label>
-          <!-- item W follow-up (v86_o): mirrors comic-storyboard-row exactly, including its
-               visibility toggle (_comicRenderList's own sbRow logic) — see pdf-analysis-row's own
-               comment for the opt-in reasoning. -->
-          <label class="user-story-check-row" id="comic-analysis-row" style="display:none">
-            <input type="checkbox" id="comic-analysis-cb">
-            <span id="comic-analysis-lbl">🔤 Analyse words for the text explorer</span>
-          </label>
+          <!-- item AL part 2 (roadmap_v87.md): like #pdf-panel above, this panel no longer carries
+               its OWN lesson-type controls. #comic-skip-lessons-row, #comic-arc-row/#comic-arc-types,
+               #comic-storyboard-row, #comic-analysis-row and #comic-create-btn are gone — the wizard's
+               ONE lesson card (#gen-card-3) owns all of them, for all three input modes, and #gen-btn
+               is the single start button (it dispatches to comicOpenReview() in comic mode).
+               v85_p originally gave this panel its own copies precisely BECAUSE it had none and
+               #pdf-panel did; that duplication is what item AL was raised to remove.
+               UNCHANGED, per the user's explicit ruling: everything above stays live on the Text step
+               — upload/camera, rotate, auto-detect, whole-image, drawing, the panel list with its
+               reorder/delete, and "Extract text". comicExtractPanels()'s own timing is untouched, and
+               comicOpenReview()'s text-review card still sits between "start" and chapter creation. -->
           <div id="comic-panel-actions" style="display:none;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
             <button type="button" id="comic-extract-btn" onclick="comicExtractPanels()"
               style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif">✨ <span id="comic-extract-lbl">Extract text</span></button>
-            <button type="button" id="comic-create-btn" onclick="comicOpenReview()"
-              style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--blue-dark);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif">📖 <span id="comic-create-lbl">Create chapter</span></button>
             <button type="button" id="comic-clear-btn" onclick="comicClearPanels()"
               style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🗑 <span id="comic-clear-lbl">Clear panels</span></button>
             <span id="comic-panel-count" style="font-size:12px;color:var(--gray-dark)"></span>
@@ -1711,7 +1657,15 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <input type="checkbox" id="post-gen-storyboard-cb">
             <span id="post-gen-storyboard-lbl">🎬 Generate a storyboard</span>
           </label>
-          <label class="user-story-check-row">
+          <!-- item AL part 2: this one row is NOT mode-independent, and is gated as such. QC on this
+               surface is CLIENT-orchestrated (_applyPostGenFeatures, chained onto the book job's own
+               completion in doGenerate()) and that orchestration only exists on the LLM-generate path
+               — pdfGenerateAll()/comicCreateChapter() have no such chaining today. Showing it for
+               PDF/comic would offer a checkbox that does nothing, which is worse than not offering it;
+               wiring it there is a separate, deliberate piece of work, not a side effect of unifying
+               the lesson controls. Storyboard and analysis have no such problem: both are threaded
+               into the INITIAL /api/generate-book request, which all three modes already send. -->
+          <label class="user-story-check-row" id="post-gen-qc-row">
             <input type="checkbox" id="post-gen-qc-cb">
             <span id="post-gen-qc-lbl">🔍 Proofread with QC after generating</span>
           </label>
@@ -3004,13 +2958,9 @@ function applyUIStrings() {
   { const ccam=document.getElementById('comic-camera-lbl'); if(ccam) ccam.textContent=t('form.comic_camera'); }
   { const ccl=document.getElementById('comic-clear-lbl'); if(ccl) ccl.textContent=t('form.comic_clear'); }
   { const cel=document.getElementById('comic-extract-lbl'); if(cel) cel.textContent=t('form.comic_extract'); }
-  { const ccl2=document.getElementById('comic-create-lbl'); if(ccl2) ccl2.textContent=t('form.comic_create'); }
   { const crl=document.getElementById('comic-rotate-lbl'); if(crl) crl.textContent=t('form.comic_rotate'); }
   { const cdl=document.getElementById('comic-detect-lbl'); if(cdl) cdl.textContent=t('form.comic_detect'); }
   { const csl=document.getElementById('comic-single-panel-lbl'); if(csl) csl.textContent=t('form.comic_single_panel'); }
-  { const cal=document.getElementById('comic-arc-lbl'); if(cal) cal.textContent=t('form.arc_lbl'); }
-  { const csl=document.getElementById('comic-storyboard-lbl'); if(csl) csl.textContent=t('gen.post_gen_storyboard_lbl'); }
-  { const canl=document.getElementById('comic-analysis-lbl'); if(canl) canl.textContent=t('gen.post_gen_analysis_lbl'); }
   _renderSplitModes();
   { const cl=document.getElementById('pdf-cleanup-lbl'); if(cl) cl.textContent=t('pdf.cleanup_lbl'); }
   { const al=document.getElementById('pdf-aiclean-lbl'); if(al) al.textContent=t('pdf.aiclean_lbl'); }
@@ -3022,7 +2972,7 @@ function applyUIStrings() {
   // labels from ADD_LESSON_TYPES via renderLessonTypeChecks). Re-render them on a language change
   // so the labels follow the UI language — the `rendered` flag is cleared first, since the picker
   // deliberately refuses to re-render over a user's ticks.
-  ['pdf-arc-types','gen-arc-types'].forEach(id => {
+  ['gen-arc-types'].forEach(id => {   // item AL part 2: 'pdf-arc-types' is gone — one tick-list now
     const c = document.getElementById(id);
     if (!c || c.dataset.rendered !== '1') return;
     const keep = readArcTypeChecks(id);
@@ -3116,8 +3066,6 @@ function applyUIStrings() {
   // Decoupling chaptering from lesson generation (roadmap_v87.md) — ONE shared string across all
   // three surfaces (wizard/PDF/comic), matching the user's own "highly similar pipeline" framing.
   _setText('gen-skip-lessons-lbl', t('form.skip_lessons_lbl'));
-  _setText('pdf-skip-lessons-lbl', t('form.skip_lessons_lbl'));
-  _setText('comic-skip-lessons-lbl', t('form.skip_lessons_lbl'));
   _setAttr('sl-bottom-continue', 'title', t('lesson.continue_title') || t('sl.continue'));
   _setAttr('sl-bottom-download', 'title', t('sl.download'));
   _setAttr('sl-bottom-clear', 'title', t('sl.clear_progress'));
@@ -3547,19 +3495,113 @@ function restoreStoryLenSlider(){
 function loadNumChapters(){ return Math.max(1,Math.min(20,parseInt(localStorage.getItem('imp3_numChapters')||'1',10))); }
 function saveNumChapters(){ localStorage.setItem('imp3_numChapters',String(APP.numChapters)); }
 function numChaptersLabel(n){ return n<=1 ? t('form.chapters_one') : t('form.chapters_n',{n}); }
-// Decoupling chaptering from lesson generation (roadmap_v87.md) — the single source of truth for
-// whether the lesson-type UI (arc row, per-chapter row, the single-chapter format-select on card 3)
-// is shown, layered ON TOP of the pre-existing chapter-count gate those rows already had. Called
-// from the checkbox's own onchange AND from onNumChaptersSlider() (a chapter-count change must not
-// silently un-hide rows while "skip lessons" is still checked).
-function _applySkipLessonsUI(){
+// ── item AL part 2 (roadmap_v87.md): ONE lesson card, for all three input modes ────────────────
+// The user's ruling: "current 4/Lessons should be the ONLY place where we can select lesson types to
+// be generated (optionally)". Before this, the same three ideas (skip-lessons, an arc tick-list, the
+// storyboard/analysis opt-ins) existed as THREE independent copies — the wizard's own, #pdf-panel's
+// (#pdf-arc-row, v71_u era) and #comic-panel's (#comic-arc-row, added at v85_p precisely BECAUSE the
+// comic flow had none and the PDF flow did). item AK made each of the three individually support
+// "no lessons"; this deletes two of them.
+//
+// The reason it needs a mode/count abstraction at all: the wizard's rows were gated on
+// `APP.numChapters > 1`, which is meaningless for an upload — a PDF's chapter count is
+// `_pdfChunks.length` and a comic's is however many drawn panels came back with text. So "how many
+// chapters is this run going to produce" becomes one function, and every gate asks IT.
+function _genInputMode(){
+  if(document.getElementById('use-comic-cb')?.checked) return 'comic';
+  if(document.getElementById('use-dialect-cb')?.checked) return 'dialect';
+  if(document.getElementById('use-story-cb')?.checked) return (typeof _uploadMode!=='undefined' && _uploadMode) ? 'pdf' : 'paste';
+  return 'llm';
+}
+// Guarded with typeof: this runs during init (onNumChaptersSlider's own restore call) before the PDF
+// and comic modules' own state exists.
+function _genChapterCount(){
+  const mode=_genInputMode();
+  if(mode==='comic'){
+    try{ return _comicPanels().filter(b=>_comicPanelText(b)).length; }catch(_){ return 0; }
+  }
+  if(mode==='pdf') return (typeof _pdfChunks!=='undefined' && _pdfChunks) ? _pdfChunks.length : 0;
+  if(mode==='paste') return 1;
+  if(mode==='dialect') return 0;
+  return Math.max(1, Math.min(20, APP.numChapters||1));
+}
+// The arc/storyboard/analysis rows share ONE "is there anything to generate for" gate, and it differs
+// by mode for a real reason, not an oversight: the LLM path plans N chapters up front, so an arc over
+// a single planned chapter was never offered (`APP.numChapters > 1`); an upload already HAS its text
+// split, and #pdf-arc-row was shown for a single chunk too. Preserved exactly, both ways.
+function _genArcApplicable(){
+  const mode=_genInputMode();
+  const n=_genChapterCount();
+  if(mode==='dialect') return false;
+  return mode==='llm' ? n>1 : n>=1;
+}
+// The script-primer opt-in, read through ONE helper by all three send paths. `needsIntroScript()` is
+// the same predicate `buildArcIntroLessons()` opens with (server.js: `if (!needsIntroScript(...)) return []`),
+// so gating on it client-side is exactly equivalent to letting the server decide — checked by reading
+// that function, not assumed. This is what pdfGenerateAll() already computed inline; the comic path
+// never sent arcScript at all, and gains the capability here.
+function _readArcScript(){
+  const applicable = (typeof needsIntroScript==='function') &&
+    needsIntroScript(APP.lang, APP.srcLang, { script: APP.script, srcScript: APP.srcScript });
+  return applicable && !!document.getElementById('gen-arc-script-cb')?.checked;
+}
+// Decoupling chaptering from lesson generation (item AK) + item AL part 2: the single source of truth
+// for EVERYTHING on the lesson card — which rows show, whether the start button is offered, and what
+// it says — for whichever input mode is active. Renamed from _applySkipLessonsUI() (item AK) when it
+// grew past the skip-lessons checkbox into owning the whole card. Called from the checkbox's own
+// onchange, from onNumChaptersSlider(), from _renderPdfChunks()/_comicRenderList() (a chunk/panel
+// count change moves the same gates a chapter-count change does), and from every mode toggle.
+function _applyLessonCardUI(){
   const skip = !!document.getElementById('gen-skip-lessons-cb')?.checked;
-  const multi = APP.numChapters > 1;
-  const arcRow=document.getElementById('gen-arc-row'); if(arcRow) arcRow.style.display = (skip || !multi) ? 'none' : '';
-  const perChRow=document.getElementById('per-chapter-row'); if(perChRow) perChRow.style.display = (skip || !multi) ? 'none' : '';
-  const formatWrap=document.getElementById('format-wrap'); if(formatWrap) formatWrap.style.display = skip ? 'none' : '';
-  const hdr=document.getElementById('lesson-type-hdr'); if(hdr) hdr.style.display = skip ? 'none' : '';
-  const genBtn=document.getElementById('gen-btn'); if(genBtn) genBtn.textContent = skip ? t('form.create_chapters') : t('form.generate');
+  const mode = _genInputMode();
+  const llm  = (mode==='llm');
+  const n    = _genChapterCount();
+  const arcOk = _genArcApplicable();
+  const show=(id,on)=>{ const e=document.getElementById(id); if(e) e.style.display = on ? '' : 'none'; };
+  show('gen-arc-row', !skip && arcOk);
+  if(!skip && arcOk) renderArcTypeChecks('gen-arc-types');
+  updateArcScriptRow();
+  // The per-chapter override stays LLM-ONLY: _renderPerChapterTypes() builds its rows from
+  // APP.numChapters (chapters that don't exist yet, only a planned count) and _applyPerChapterTypes()
+  // matches them positionally against the finished book's chapters. An upload's chunks are real
+  // objects the learner can still split/merge/delete, so the two never lined up — extending it to
+  // uploads is its own design question, not part of relocating controls.
+  show('per-chapter-row', !skip && arcOk && llm);
+  if(!llm){ const pc=document.getElementById('per-chapter-cb'); if(pc && pc.checked){ pc.checked=false; onPerChapterCb(); } }
+  // Storyboard/analysis are NOT gated on skip-lessons: they enrich the story/chapter itself, not
+  // lesson content (item AK settled this) — and both are threaded into the same initial
+  // /api/generate-book request all three modes send.
+  show('post-gen-row', arcOk);
+  show('post-gen-qc-row', llm);   // see its own markup comment: client-orchestrated, LLM path only
+  if(!llm){ const qc=document.getElementById('post-gen-qc-cb'); if(qc) qc.checked=false; }
+  show('format-wrap', !skip);
+  show('lesson-type-hdr', !skip);
+  // The start button. On the LLM/paste paths it is always offered, exactly as before. On the upload
+  // paths it REPLACES #pdf-gen-btn/#comic-create-btn, including their own "not ready / busy" hiding:
+  // that state is now DERIVED (nothing to generate yet, a chunk mid-generation, a book job running,
+  // or the PDF selection overlay open) rather than pushed from six imperative call sites.
+  const busy = (mode==='pdf'   && (( typeof _pdfSelMode!=='undefined' && _pdfSelMode) || (typeof _pdfBookId!=='undefined' && _pdfBookId)
+                                   || !_pdfChunks.every(c=>c.status!=='active')))
+            || (mode==='comic' && (typeof _comicBookId!=='undefined' && _comicBookId));
+  const startable = (mode==='llm' || mode==='paste') ? true : (n>0 && !busy);
+  show('gen-btn-row', mode!=='dialect' && startable);
+  const genBtn=document.getElementById('gen-btn');
+  if(genBtn) genBtn.textContent = _genStartBtnLabel(mode, skip, n);
+}
+// Kept as a name so item AK's own callers/notes still resolve; the whole card is what it applies now.
+function _applySkipLessonsUI(){ return _applyLessonCardUI(); }
+// One button, three modes, ZERO new ui.json keys — each mode reuses the string its own deleted button
+// already used (`pdf.generate_all`/`pdf.create_chapters_only` + the chapters/words counts,
+// `form.comic_create`, `form.generate`/`form.create_chapters`), so no translation work is created by
+// the unification.
+function _genStartBtnLabel(mode, skip, n){
+  if(mode==='pdf'){
+    const total=(typeof _pdfChunks!=='undefined' && _pdfChunks) ? _pdfChunks.reduce((s,c)=>s+(c.wordCount||0),0) : 0;
+    return (skip ? t('pdf.create_chapters_only') : t('pdf.generate_all'))
+      + ' (' + t('pdf.chapters',{n}) + ', ' + t('pdf.words',{n:total}) + ')';
+  }
+  if(mode==='comic') return skip ? t('form.create_chapters') : t('form.comic_create');
+  return skip ? t('form.create_chapters') : t('form.generate');
 }
 function onNumChaptersSlider(v){
   APP.numChapters=Math.max(1,Math.min(20,parseInt(v,10)||1)); saveNumChapters();
@@ -3580,20 +3622,26 @@ function onNumChaptersSlider(v){
   // storyboard needs >1 chapter to be a "board" of anything, and this release scopes QC's own toggle
   // to the same book-completion path (see _applyPostGenFeatures()'s own comment for why single-
   // chapter QC isn't wired here). Unchecking on drop-to-1, matching the per-chapter row's own hygiene.
-  const postGenRow=document.getElementById('post-gen-row'); if(postGenRow) postGenRow.style.display=APP.numChapters>1?'':'none';
-  if(APP.numChapters<=1){
+  // item AL part 2: the row's VISIBILITY moved into _applyLessonCardUI() (it is now a function of the
+  // input mode too, not of APP.numChapters alone) — this keeps only the hygiene, which is genuinely
+  // about the SLIDER: dropping the planned chapter count to 1 should forget toggles the learner set
+  // while planning several. It stays gated on APP.numChapters, not the effective count, for that
+  // reason: an upload's chunk count changing is not the learner changing their mind.
+  if(APP.numChapters<=1 && _genInputMode()==='llm'){
     const sbCb=document.getElementById('post-gen-storyboard-cb'); if(sbCb) sbCb.checked=false;
     const qcCb=document.getElementById('post-gen-qc-cb'); if(qcCb) qcCb.checked=false;
     const anCb=document.getElementById('post-gen-analysis-cb'); if(anCb) anCb.checked=false;
   }
-  _applySkipLessonsUI();
+  _applyLessonCardUI();
 }
 // The "teach the script per chapter" opt-in only makes sense when generating multiple chapters
 // AND the target uses a script the source language doesn't (so there's an alphabet to teach).
 function updateArcScriptRow(){
   const row=document.getElementById('gen-arc-script-row');
   if(!row) return;
-  const show = APP.numChapters>1 && typeof needsIntroScript==='function' && needsIntroScript(APP.lang, APP.srcLang, { script: APP.script, srcScript: APP.srcScript });
+  // item AL part 2: the count gate became the mode-aware one — the row belongs wherever the arc row
+  // itself is offered, and that is now all three input modes, not only multi-chapter LLM generation.
+  const show = _genArcApplicable() && typeof needsIntroScript==='function' && needsIntroScript(APP.lang, APP.srcLang, { script: APP.script, srcScript: APP.srcScript });
   row.style.display = show ? '' : 'none';
 }
 function restoreNumChaptersSlider(){
@@ -3682,6 +3730,7 @@ function onUseStoryCb(){
   const lbl=document.getElementById('topic-label');
   if(lbl) lbl.textContent=on?t('form.topic_label_story'):topicLabelText();
   _applyTextShapingVisibility();   // item AL: last, so the exclusivity block above has settled first
+  _applyLessonCardUI();            // item AL part 2: mode drives the whole lesson card now
 }
 function topicLabelText(){
   const tgtL=LANGS[APP.lang]||LANGS.it;
@@ -3717,6 +3766,7 @@ function onUseDialectCb(){
     const uc=document.getElementById('use-comic-cb'); if(uc&&uc.checked){ uc.checked=false; onUseComicCb(); }
   }
   _applyTextShapingVisibility();   // item AL: #gen-form-section no longer spans the three shaping rows
+  _applyLessonCardUI();            // item AL part 2: mode drives the whole lesson card now
 }
 function onDialectFileChosen(input){
   const f=input.files&&input.files[0]; if(!f) return;
@@ -3814,10 +3864,12 @@ function onUseComicCb(){
   const on=document.getElementById('use-comic-cb').checked;
   const panel=document.getElementById('comic-panel');
   if(panel) panel.classList.toggle('open',on);
-  // Same exclusive-mode shape as onUseDialectCb: comic import replaces the normal generation form
-  // for now (milestone 3 will feed extracted chapters back into it; not this milestone's job).
-  const gf=document.getElementById('gen-form-section'); if(gf) gf.style.display=on?'none':'';
-  const gbr=document.getElementById('gen-btn-row'); if(gbr) gbr.style.display=on?'none':'';
+  // item AL part 2: comic mode NO LONGER hides #gen-form-section / #gen-btn-row. It used to, because
+  // the comic flow had its own embedded lesson-type controls and its own start button, so the wizard's
+  // lesson card was genuinely irrelevant to it — that is exactly the duplication item AL removes. The
+  // lesson card is now this mode's ONLY place to choose lesson types, and #gen-btn its only start
+  // button, so hiding them would leave the flow with no way to finish. Dialect mode is unchanged and
+  // still hides both: it builds vocab lessons procedurally, with no lesson-type choice at all.
   const topicLbl=document.getElementById('topic-label'); if(topicLbl) topicLbl.style.display=on?'none':'';
   const topicRow=document.getElementById('topic-input'); if(topicRow) topicRow.style.display=on?'none':'';
   if(on){
@@ -3835,6 +3887,7 @@ function onUseComicCb(){
     _comicUnwatchImageResize();   // v85_u: nothing left to keep in sync once the image is gone
   }
   _applyTextShapingVisibility();   // item AL: #gen-form-section no longer spans the three shaping rows
+  _applyLessonCardUI();            // item AL part 2: the lesson card is this mode's own now too
 }
 
 // v86_c (user-requested): a raw camera photo can be many megapixels — far more than a comic page's
@@ -4144,26 +4197,17 @@ function _comicRenderList(){
   const list=document.getElementById('comic-panel-list'); if(!list) return;
   const actions=document.getElementById('comic-panel-actions');
   const count=document.getElementById('comic-panel-count');
-  const arcRow=document.getElementById('comic-arc-row');
-  const skipRow=document.getElementById('comic-skip-lessons-row');
-  const skipLessons=!!document.getElementById('comic-skip-lessons-cb')?.checked;
-  const sbRow=document.getElementById('comic-storyboard-row');
-  const anRow=document.getElementById('comic-analysis-row');
+  // item AL part 2: this panel's own skip-lessons/arc/storyboard/analysis rows are GONE — the
+  // wizard's ONE lesson card owns them for every mode. _applyLessonCardUI() is called at BOTH exits
+  // because the panel count is this mode's chapter count (_genChapterCount()), so drawing, deleting
+  // or extracting a panel moves exactly the gates a chapter-count change moves on the LLM path.
   if(!APP_COMIC.boxes.length){
     list.innerHTML=''; if(actions) actions.style.display='none';
-    if(arcRow) arcRow.style.display='none'; if(skipRow) skipRow.style.display='none';
-    if(sbRow) sbRow.style.display='none';
-    if(anRow) anRow.style.display='none';
+    _applyLessonCardUI();
     return;
   }
   if(actions) actions.style.display='flex';
-  // Decoupling chaptering from lesson generation (roadmap_v87.md): the skip-lessons row shares the
-  // arc row's own "something to generate" gate; checked, it hides the arc row itself — same
-  // layering _applySkipLessonsUI()/#pdf-skip-lessons-cb use for their own copies of this idea.
-  if(skipRow) skipRow.style.display='';
-  if(arcRow){ arcRow.style.display=skipLessons?'none':''; if(!skipLessons) renderArcTypeChecks('comic-arc-types'); }
-  if(sbRow) sbRow.style.display='';
-  if(anRow) anRow.style.display='';
+  _applyLessonCardUI();
   if(count) count.textContent=APP_COMIC.boxes.length+' panel'+(APP_COMIC.boxes.length===1?'':'s');
   list.innerHTML=APP_COMIC.boxes.map((b,i)=>{
     const color=_COMIC_COLORS[i%_COMIC_COLORS.length];
@@ -4225,10 +4269,10 @@ async function _comicDraftSaveNow(){
       id: _comicDraftId || undefined,
       lang: APP.lang||'it', srcLang: APP.srcLang||'en', difficulty: APP.difficulty||2,
       lessonFormat: APP.lessonFormat||'standard',
-      arc: !!document.getElementById('comic-arc-cb')?.checked,
-      arcTypes: document.getElementById('comic-arc-cb')?.checked ? readArcTypeChecks('comic-arc-types') : null,
-      postGenStoryboard: !!document.getElementById('comic-storyboard-cb')?.checked,
-      postGenAnalysis: !!document.getElementById('comic-analysis-cb')?.checked,
+      arc: !!document.getElementById('gen-arc-cb')?.checked,
+      arcTypes: document.getElementById('gen-arc-cb')?.checked ? readArcTypeChecks('gen-arc-types') : null,
+      postGenStoryboard: !!document.getElementById('post-gen-storyboard-cb')?.checked,
+      postGenAnalysis: !!document.getElementById('post-gen-analysis-cb')?.checked,
       comic: {
         dataUrl: APP_COMIC.dataUrl, naturalW: APP_COMIC.naturalW, naturalH: APP_COMIC.naturalH,
         // Coordinates + extracted text only — never a pre-cropped image per box, matching
@@ -4276,9 +4320,12 @@ async function _resumeComicDraftFrom(d){
     };
     img.src = APP_COMIC.dataUrl;
   });
-  const arcCb=document.getElementById('comic-arc-cb'); if(arcCb) arcCb.checked = !!d.arc;
-  const sbCb=document.getElementById('comic-storyboard-cb'); if(sbCb) sbCb.checked = !!d.postGenStoryboard;
-  const anCb=document.getElementById('comic-analysis-cb'); if(anCb) anCb.checked = !!d.postGenAnalysis;
+  // item AL part 2: same fields, restored into the wizard's one lesson card (see the PDF flow's own
+  // restore for the older-draft-compatibility note — the stored shape is unchanged).
+  const arcCb=document.getElementById('gen-arc-cb'); if(arcCb) arcCb.checked = !!d.arc;
+  const sbCb=document.getElementById('post-gen-storyboard-cb'); if(sbCb) sbCb.checked = !!d.postGenStoryboard;
+  const anCb=document.getElementById('post-gen-analysis-cb'); if(anCb) anCb.checked = !!d.postGenAnalysis;
+  _applyLessonCardUI();
   try{ _genWizardGoto(2); }catch(_){}   // #comic-panel lives in gen-card-2 ("Text"), same as #pdf-panel
   showToast(t('toast.draft_resumed'));
 }
@@ -4546,24 +4593,24 @@ async function comicCreateChapter(){
   const boxes=_comicPanels();
   if(!boxes.length) return;
   if(!boxes.some(b=>_comicPanelText(b))){ showToast(t('form.comic_create_failed')+': no extracted text yet'); return; }
-  const btn=document.getElementById('comic-create-btn');
   const extractBtn=document.getElementById('comic-extract-btn');
   const status=document.getElementById('comic-extract-status');
-  if(btn) btn.disabled=true; if(extractBtn) extractBtn.disabled=true;
+  if(extractBtn) extractBtn.disabled=true;
+  // item AL part 2: #comic-create-btn is gone — the shared #gen-btn started this, and
+  // _applyLessonCardUI() withdraws it on its own once _comicBookId is set (below). Nothing to disable.
   if(status) status.textContent=t('form.comic_extracting');
   try{
-    // v85_p (real-usage bug report): the comic panel had NO lesson-type/storyboard controls at all
-    // before — comicCreateChapter() fired immediately with no chance to configure anything, unlike
-    // #pdf-panel's own embedded #pdf-arc-row. Mirrors that exact pattern.
+    // v85_p gave this panel its own lesson-type/storyboard controls because it had NONE and
+    // #pdf-panel did; item AL part 2 removed that duplication instead — every field below now reads
+    // the wizard's ONE lesson card (#gen-card-3), the same ids pdfGenerateAll() and doGenerate() read.
     // Decoupling chaptering from lesson generation (user request, roadmap_v87.md) — the screenshot
-    // that prompted this ask WAS this exact panel. skipLessons wins over the arc checkbox below —
+    // that prompted THAT ask was this exact panel. skipLessons wins over the arc checkbox below —
     // see generate()'s own comment for the full mechanism.
-    const skipLessons=!!document.getElementById('comic-skip-lessons-cb')?.checked;
-    const arcOn=!skipLessons && document.getElementById('comic-arc-cb')?.checked;
-    const arcTypes=arcOn?readArcTypeChecks('comic-arc-types'):null;
-    const postGenStoryboard=!!document.getElementById('comic-storyboard-cb')?.checked;
-    // item W follow-up (v86_o): mirrors postGenStoryboard exactly — see comic-analysis-row's own comment.
-    const postGenAnalysis=!!document.getElementById('comic-analysis-cb')?.checked;
+    const skipLessons=!!document.getElementById('gen-skip-lessons-cb')?.checked;
+    const arcOn=!skipLessons && document.getElementById('gen-arc-cb')?.checked;
+    const arcTypes=arcOn?readArcTypeChecks('gen-arc-types'):null;
+    const postGenStoryboard=!!document.getElementById('post-gen-storyboard-cb')?.checked;
+    const postGenAnalysis=!!document.getElementById('post-gen-analysis-cb')?.checked;
     // A panel with no extracted text yet contributes NO chapter — filtered out rather than sent as
     // an empty/broken chunk. comicPanels metadata for a skipped panel is simply not attached
     // anywhere; the user can re-extract that one panel and create the chapter again.
@@ -4581,22 +4628,32 @@ async function comicCreateChapter(){
     const body={
       lang: APP.lang||'it', srcLang: APP.srcLang||'en', difficulty: APP.difficulty||2,
       lessonFormat: APP.lessonFormat||'standard', storyStyle: null,
+      // ⚠️ BUG FIX (item AL, found by reading the source while scoping the restructuring, not by a
+      // report): this body has NEVER sent `continuedFrom`, unlike pdfGenerateAll() and doGenerate()
+      // which both always did. A comic-sourced chapter therefore could not be linked as the
+      // continuation of an existing storyline — silently: the picker was right there on the form,
+      // the learner could set it, and the value was simply dropped on the floor. Fixed here rather
+      // than separately because continue-from only became genuinely universal when item AL moved it
+      // to card 1, where all three modes read the same one control.
+      continuedFrom: document.getElementById('continue-select')?.value || null,
       chunks, skipLessons,
-      ...(arcOn ? { arc:true, arcTypes } : {}),
+      ...(arcOn ? { arc:true, arcTypes, arcScript:_readArcScript(), script: APP.script||null, srcScript: APP.srcScript||null } : {}),
       postGenStoryboard, postGenAnalysis,
     };
     const r=await fetch('/api/generate-book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const data=await r.json().catch(()=>({}));
-    if(!r.ok){ if(status) status.textContent=''; showToast(t('form.comic_create_failed')+': '+(data.error||r.status)); if(btn) btn.disabled=false; if(extractBtn) extractBtn.disabled=false; return; }
+    if(!r.ok){ if(status) status.textContent=''; showToast(t('form.comic_create_failed')+': '+(data.error||r.status)); if(extractBtn) extractBtn.disabled=false; return; }
     _comicBookId=data.bookId;
     // item R follow-up: real generation is now the durable record — same "discard the pre-
     // generation draft the instant it's superseded" moment as the PDF flow's own pdfGenerateAll().
     discardComicDraft();
+    _applyLessonCardUI();   // item AL part 2: a book job is running — the shared start button withdraws
     _pollComicBookJob(_comicBookId);
   }catch(e){
     if(status) status.textContent='';
     showToast(t('form.comic_create_failed')+': '+e.message);
-    if(btn) btn.disabled=false; if(extractBtn) extractBtn.disabled=false;
+    if(extractBtn) extractBtn.disabled=false;
+    _applyLessonCardUI();
   }
 }
 
@@ -4639,8 +4696,8 @@ async function _comicBookCheckOnce(bookId){
 async function _comicBookFinish(){
   _comicBookPolling=false;
   const status=document.getElementById('comic-extract-status'); if(status) status.textContent='';
-  const btn=document.getElementById('comic-create-btn'); if(btn) btn.disabled=false;
   const extractBtn=document.getElementById('comic-extract-btn'); if(extractBtn) extractBtn.disabled=false;
+  _applyLessonCardUI();   // item AL part 2: _comicBookId is cleared by now — the start button returns
   await loadSavedList();
 }
 async function _pollComicBookJob(bookId){
@@ -6497,10 +6554,10 @@ async function _draftSaveNow(){
       sourceFile: _uploadFileName||null,
       continuedFrom: document.getElementById('continue-select')?.value||null,
       script: APP.script||null, srcScript: APP.srcScript||null,
-      arc: !!document.getElementById('pdf-arc-cb')?.checked,
-      arcTypes: document.getElementById('pdf-arc-cb')?.checked ? readArcTypeChecks('pdf-arc-types') : null,
-      postGenStoryboard: !!document.getElementById('pdf-storyboard-cb')?.checked,
-      postGenAnalysis: !!document.getElementById('pdf-analysis-cb')?.checked,
+      arc: !!document.getElementById('gen-arc-cb')?.checked,
+      arcTypes: document.getElementById('gen-arc-cb')?.checked ? readArcTypeChecks('gen-arc-types') : null,
+      postGenStoryboard: !!document.getElementById('post-gen-storyboard-cb')?.checked,
+      postGenAnalysis: !!document.getElementById('post-gen-analysis-cb')?.checked,
       chunks: _pdfChunks.map(c=>({title:c.title, text:c.text, wordCount:c.wordCount})),
     };
     const r = await fetch('/api/drafts', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
@@ -6547,9 +6604,12 @@ async function resumeDraft(draftId){
     const cb=document.getElementById('use-story-cb'); if(cb && !cb.checked){ cb.checked=true; onUseStoryCb(); }
     _setPasteVisible(false);
     const cs=document.getElementById('continue-select'); if(cs && d.continuedFrom) cs.value=d.continuedFrom;
-    const arcCb=document.getElementById('pdf-arc-cb'); if(arcCb) arcCb.checked = !!d.arc;
-    const sbCb=document.getElementById('pdf-storyboard-cb'); if(sbCb) sbCb.checked = !!d.postGenStoryboard;
-    const anCb=document.getElementById('pdf-analysis-cb'); if(anCb) anCb.checked = !!d.postGenAnalysis;
+    // item AL part 2: a draft saved by an OLDER client still restores correctly — the draft's own
+    // field names (arc/arcTypes/postGenStoryboard/postGenAnalysis) are unchanged; only the controls
+    // they are written back into moved to the wizard's one lesson card.
+    const arcCb=document.getElementById('gen-arc-cb'); if(arcCb) arcCb.checked = !!d.arc;
+    const sbCb=document.getElementById('post-gen-storyboard-cb'); if(sbCb) sbCb.checked = !!d.postGenStoryboard;
+    const anCb=document.getElementById('post-gen-analysis-cb'); if(anCb) anCb.checked = !!d.postGenAnalysis;
     // Found live: without this the chunk list rendered real content into a DOM node that was
     // simply display:none — #pdf-panel needs its OWN 'open' class, same as every real upload path
     // (pdfExtractText's LLM-split branch, setSplitMode, _loadPdfFile) adds at the equivalent point.
@@ -7445,11 +7505,13 @@ function _autoTitle(text, index) {
 
 function _renderPdfChunks() {
   const list = document.getElementById('pdf-chunk-list');
-  const genBtn = document.getElementById('pdf-gen-btn');
-  const genLbl = document.getElementById('pdf-gen-lbl');
   if (!list) return;
-  if (!_pdfChunks.length) { list.innerHTML=''; if(genBtn) genBtn.style.display='none'; const so0=document.getElementById('pdf-sel-open-btn'); if(so0) so0.style.display='none'; return; }
-  const total = _pdfChunks.reduce((s,c)=>s+c.wordCount,0);
+  // item AL part 2: this function no longer owns a start button, an arc row or a skip-lessons row —
+  // #pdf-gen-btn/#pdf-arc-row/#pdf-skip-lessons-row are gone, and the wizard's ONE lesson card owns
+  // all three for every mode. It still calls _applyLessonCardUI() because a CHUNK-COUNT change moves
+  // exactly the gates a chapter-count change moves (that is what _genChapterCount() unifies), and
+  // this is the one function every _pdfChunks mutation already funnels through.
+  if (!_pdfChunks.length) { list.innerHTML=''; const so0=document.getElementById('pdf-sel-open-btn'); if(so0) so0.style.display='none'; _applyLessonCardUI(); return; }
   list.innerHTML = _pdfChunks.map((c, i) => {
     const icon = c.status==='done'?'✅':c.status==='error'?'❌':c.status==='active'?'⏳':'○';
     const units = _sentenceUnits(c.text||'');
@@ -7471,20 +7533,10 @@ function _renderPdfChunks() {
       <button type="button" onclick="pdfDeleteChunk(${i})" title="Delete" style="font-size:10px;border:none;background:none;cursor:pointer;padding:0 2px">✕</button>
     </div>${editor}`;
   }).join('');
-  if(genLbl) genLbl.textContent = (document.getElementById('pdf-skip-lessons-cb')?.checked ? t('pdf.create_chapters_only') : t('pdf.generate_all')) + ' (' + t('pdf.chapters',{n:_pdfChunks.length}) + ', ' + t('pdf.words',{n:total}) + ')';
-  if(genBtn) genBtn.style.display = _pdfChunks.every(c=>c.status!=='active') ? '' : 'none';
-  const arcRow = document.getElementById('pdf-arc-row');
-  const arcLbl = document.getElementById('pdf-arc-lbl');
-  const skipRow = document.getElementById('pdf-skip-lessons-row');
-  const skipLessons = !!document.getElementById('pdf-skip-lessons-cb')?.checked;
-  const genReady = !!(genBtn && genBtn.style.display === '');
-  // Decoupling chaptering from lesson generation (roadmap_v87.md): the skip-lessons checkbox shares
-  // the arc row's own "something to generate" gate, and — checked — hides the arc row itself, the
-  // same layering _applySkipLessonsUI() does for the wizard's copy of this same idea.
-  if (skipRow) skipRow.style.display = genReady ? '' : 'none';
-  if (arcRow) arcRow.style.display = (genReady && !skipLessons) ? '' : 'none';
-  if (arcRow && arcRow.style.display === '') renderArcTypeChecks('pdf-arc-types');
-  if (arcLbl) arcLbl.textContent = t('form.arc_lbl');
+  // item AL part 2: the start button's label (chunk + word counts) and its "ready / busy" visibility,
+  // plus the arc and skip-lessons rows, are all DERIVED inside _applyLessonCardUI() now — see
+  // _genStartBtnLabel(), which reuses this flow's own pdf.generate_all/pdf.chapters/pdf.words keys.
+  _applyLessonCardUI();
   _renderSplitModes();
   const clLbl = document.getElementById('pdf-cleanup-lbl'); if(clLbl) clLbl.textContent = t('pdf.cleanup_lbl');
   const selOpen = document.getElementById('pdf-sel-open-btn');
@@ -7651,9 +7703,11 @@ function pdfSelOpen() {
   const panel = document.getElementById('pdf-sel-panel'); if (panel) panel.style.display = 'flex';
   const list = document.getElementById('pdf-chunk-list'); if (list) list.style.display = 'none';
   const openBtn = document.getElementById('pdf-sel-open-btn'); if (openBtn) openBtn.style.display = 'none';
-  // Other controls (split-per-page, arc, generate) are hidden while selecting.
-  ['split-mode-row', 'pdf-arc-row', 'pdf-skip-lessons-row'].forEach(id => { const e = document.getElementById(id); if (e) e.dataset.prevDisplay = e.style.display, e.style.display = 'none'; });
-  const gen = document.getElementById('pdf-gen-btn'); if (gen) gen.style.display = 'none';
+  // Other controls (split-per-page) are hidden while selecting. item AL part 2: the arc/skip-lessons
+  // rows and the start button are no longer this panel's to hide — _applyLessonCardUI() derives
+  // "busy" from _pdfSelMode (set just above) and withholds the start button itself.
+  ['split-mode-row'].forEach(id => { const e = document.getElementById(id); if (e) e.dataset.prevDisplay = e.style.display, e.style.display = 'none'; });
+  _applyLessonCardUI();
   _renderDocView();
   _renderSelList();
 }
@@ -7661,8 +7715,8 @@ function pdfSelClose() {
   _pdfSelMode = false;
   const panel = document.getElementById('pdf-sel-panel'); if (panel) panel.style.display = 'none';
   const list = document.getElementById('pdf-chunk-list'); if (list) list.style.display = '';
-  ['split-mode-row', 'pdf-arc-row', 'pdf-skip-lessons-row'].forEach(id => { const e = document.getElementById(id); if (e && e.dataset.prevDisplay !== undefined) e.style.display = e.dataset.prevDisplay; });
-  _renderPdfChunks(); // restores gen button / arc row / open button visibility
+  ['split-mode-row'].forEach(id => { const e = document.getElementById(id); if (e && e.dataset.prevDisplay !== undefined) e.style.display = e.dataset.prevDisplay; });
+  _renderPdfChunks(); // restores the open button, and (via _applyLessonCardUI) the start button
 }
 function pdfSelClear() { _pdfSelections = []; _renderDocView(); _renderSelList(); }
 function pdfSelRemove(i) { _pdfSelections.splice(i, 1); _renderDocView(); _renderSelList(); }
@@ -7701,22 +7755,25 @@ async function pdfGenerateAll() {
          ? { cleanupTokens: { ..._aiCleanTokens } } : {} ),
     // v85_p: this panel had NO storyboard control at all before — the server generated one for every
     // upload UNCONDITIONALLY regardless (see server.js's own comment on _runBookJob). Now opt-in,
-    // same as the wizard's own lesson-card toggle.
-    postGenStoryboard: !!document.getElementById('pdf-storyboard-cb')?.checked,
-    // item W follow-up (v86_o): mirrors postGenStoryboard exactly — see pdf-analysis-row's own comment.
-    postGenAnalysis: !!document.getElementById('pdf-analysis-cb')?.checked,
+    // item AL part 2: every lesson-related field below now reads the wizard's ONE lesson card
+    // (#gen-card-3) instead of this panel's own deleted copies. Same field names, same body shape,
+    // same endpoint — only where the CLIENT reads the answer from changed.
+    postGenStoryboard: !!document.getElementById('post-gen-storyboard-cb')?.checked,
+    postGenAnalysis: !!document.getElementById('post-gen-analysis-cb')?.checked,
     // Decoupling chaptering from lesson generation (user request, roadmap_v87.md) — see
     // generate()'s own comment for the full mechanism. Wins over the arc block below.
-    skipLessons: !!document.getElementById('pdf-skip-lessons-cb')?.checked,
+    skipLessons: !!document.getElementById('gen-skip-lessons-cb')?.checked,
   };
-  if (!body.skipLessons && document.getElementById('pdf-arc-cb')?.checked) {
+  if (!body.skipLessons && document.getElementById('gen-arc-cb')?.checked) {
     body.arc = true;
     // v71_u: the ticked types, not a two-value mode. arcMode is no longer sent — the server still
     // accepts it from older clients, but this client has no such control any more.
-    body.arcTypes = readArcTypeChecks('pdf-arc-types');
-    // PDF flow has no dedicated checkbox; default to the script primer when the target uses a
-    // script the source doesn't (server also defaults this, but be explicit).
-    body.arcScript = (typeof needsIntroScript === 'function') && needsIntroScript(APP.lang, APP.srcLang, { script: APP.script, srcScript: APP.srcScript });
+    body.arcTypes = readArcTypeChecks('gen-arc-types');
+    // item AL part 2: the PDF flow had no dedicated script-primer checkbox and computed this inline
+    // from needsIntroScript(). It now shares the wizard's #gen-arc-script-cb via _readArcScript(),
+    // which ANDs that very same predicate with the checkbox — so the default (checked) reproduces
+    // exactly what this line computed before, and the learner gains an off switch.
+    body.arcScript = _readArcScript();
     // v78_g: send the chosen scripts too. Without them the server re-decides on the LANGUAGES
     // alone and the primer would disagree with the checkbox the client just computed.
     body.script = APP.script || null; body.srcScript = APP.srcScript || null;
@@ -7737,7 +7794,7 @@ async function pdfGenerateAll() {
     // works for it) — the pre-generation draft has done its job and would just be a stale duplicate
     // from here on. Fire-and-forget; a failed delete leaves a harmless orphan, not a user-facing bug.
     discardDraft();
-    document.getElementById('pdf-gen-btn').style.display = 'none';
+    _applyLessonCardUI();   // item AL part 2: _pdfBookId is set now, so the shared start button withdraws
     setGenStatus('running', `📖 0/${_pdfChunks.length}`);
     // The server now drives generation; this poll is only an observer and can be
     // safely interrupted by a refresh (generation continues server-side). Chained with .then(), not
@@ -7756,7 +7813,7 @@ async function pdfGenerateAll() {
   } catch(e) {
     _pdfBookId = null;
     showToast('⚠ ' + e.message.slice(0,60));
-    document.getElementById('pdf-gen-btn').style.display = '';
+    _applyLessonCardUI();   // item AL part 2: no longer generating — the start button comes back
   }
 }
 
@@ -7811,8 +7868,7 @@ async function _pollBookJob(bookId) {
     _pdfBookPolling = false;
     _pdfBookId = null;
     await loadSavedList();
-    _renderPdfChunks();
-    document.getElementById('pdf-gen-btn').style.display = '';
+    _renderPdfChunks();   // item AL part 2: this re-derives the start button via _applyLessonCardUI()
     const done = _pdfChunks.filter(c=>c.status==='done').length;
     if (done) showToast('✅ ' + done + '/' + _pdfChunks.length + ' chapters generated');
   }
@@ -7835,8 +7891,7 @@ async function _reconnectBookJob() {
       const cb = document.getElementById('use-story-cb');
       if (cb && !cb.checked) { cb.checked = true; onUseStoryCb(); }
       _uploadMode = true; _setPasteVisible(false);
-      _applyBookProgress(j);
-      document.getElementById('pdf-gen-btn').style.display = 'none';
+      _applyBookProgress(j);   // item AL part 2: re-derives the start button (a book job is running)
       showToast('⏳ Resuming book generation…');
       _pollBookJob(j.bookId);
     }
@@ -8966,6 +9021,18 @@ async function doGenerate(forceRegen){
   if(document.getElementById('use-story-cb')?.checked && _uploadMode && _pdfChunks.length){
     if(!APP.info.canGenerate) return;
     pdfGenerateAll(); return;
+  }
+  // item AL part 2: the comic flow's own start button (#comic-create-btn) is gone, so #gen-btn is
+  // its start button too — dispatched here, beside the pre-existing upload branch that already
+  // worked exactly this way. It routes to comicOpenReview(), NOT straight to comicCreateChapter():
+  // that intermediate text-review card is the "let the user edit those" half of item AK's ask and
+  // the user's own part-2 ruling was to KEEP the review stop, so the click must still land on it.
+  // Placed before the topic guard below, same as the upload branch — a comic run has no topic.
+  if(_genInputMode()==='comic'){
+    if(!APP.info.canGenerate) return;
+    const boxes=_comicPanels();
+    if(!boxes.length){ showToast(t('form.comic_create_failed')+': no panels yet'); return; }
+    comicOpenReview(); return;
   }
   const topic=document.getElementById('topic-input').value.trim();
   const contVal=document.getElementById('continue-select')?.value||'';

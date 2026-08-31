@@ -304,4 +304,174 @@ console.log("  doGenerate()'s empty-topic guard reveals #gen-card-2 before .focu
 }
 console.log('  pill 3 renders gen.wizard_step3_lessons, a key that exists in `en`: OK');
 
+// ── 12. item AL PART 2: ONE lesson card, for all three input modes ───────────────────────────────
+// The user's ruling: "current 4/Lessons should be the ONLY place where we can select lesson types to
+// be generated (optionally)." #pdf-panel and #comic-panel each used to embed their own copy of the
+// skip-lessons checkbox, the arc tick-list, and the storyboard/analysis toggles, plus their own start
+// button. All of that is deleted; the wizard's card 3 owns it for every mode.
+//
+// §12a is the SOURCE-layer half (absence — the only layer where absence is real, see §4's note).
+{
+  for (const id of ['pdf-skip-lessons-row', 'pdf-skip-lessons-cb', 'pdf-arc-row', 'pdf-arc-types',
+                    'pdf-arc-cb', 'pdf-storyboard-row', 'pdf-storyboard-cb', 'pdf-analysis-row',
+                    'pdf-analysis-cb', 'pdf-gen-btn', 'pdf-gen-lbl',
+                    'comic-skip-lessons-row', 'comic-skip-lessons-cb', 'comic-arc-row',
+                    'comic-arc-types', 'comic-arc-cb', 'comic-storyboard-row', 'comic-storyboard-cb',
+                    'comic-analysis-row', 'comic-analysis-cb', 'comic-create-btn']) {
+    assert.strictEqual(html.indexOf('id="' + id + '"'), -1,
+      `#${id} is gone — the wizard's lesson card owns this control for every input mode now`);
+    assert.strictEqual(html.indexOf("getElementById('" + id + "')"), -1,
+      `and nothing still reads #${id} — a deleted control left half-wired is worse than either state`);
+  }
+  // What must have SURVIVED, per the user's explicit ruling that the live review stop stays: the
+  // panels' own extraction/editing controls are untouched, and only the lesson-type UI left.
+  for (const id of ['pdf-chunk-list', 'pdf-stepper', 'split-mode-row', 'pdf-sel-panel',
+                    'comic-panel-list', 'comic-extract-btn', 'comic-clear-btn', 'comic-detect-btn']) {
+    assert.ok(html.includes('id="' + id + '"'), `#${id} still exists — extraction/editing stays live on the Text step`);
+  }
+}
+console.log('  item AL part 2: every per-panel lesson control is deleted AND unreferenced; extraction/editing survives: OK');
+
+// §12b — _genInputMode() / _genChapterCount(): the abstraction the unification needed. The wizard's
+// rows were gated on `APP.numChapters > 1`, which means nothing for an upload.
+{
+  const C = client();
+  const probe = setup => C.run(`(function(){
+      ['use-story-cb','use-dialect-cb','use-comic-cb'].forEach(function(id){ document.getElementById(id).checked=false; });
+      _uploadMode = false; _pdfChunks = []; APP_COMIC.boxes = []; APP.numChapters = 1;
+      ${setup}
+      return JSON.stringify({ mode: _genInputMode(), n: _genChapterCount(), arcOk: _genArcApplicable() });
+    })()`);
+  const llm1 = JSON.parse(probe(''));
+  assert.deepStrictEqual(llm1, { mode: 'llm', n: 1, arcOk: false },
+    'plain LLM-generate, 1 planned chapter: no arc (the pre-existing `numChapters > 1` gate, unchanged)');
+  const llm4 = JSON.parse(probe('APP.numChapters = 4;'));
+  assert.deepStrictEqual(llm4, { mode: 'llm', n: 4, arcOk: true }, 'plain LLM-generate, 4 planned chapters: arc offered');
+
+  const paste = JSON.parse(probe(`document.getElementById('use-story-cb').checked = true;`));
+  assert.deepStrictEqual(paste, { mode: 'paste', n: 1, arcOk: true },
+    'a pasted story is ONE chapter, and the arc IS offered for it (uploads never had the >1 gate)');
+  const pdf = JSON.parse(probe(`document.getElementById('use-story-cb').checked = true; _uploadMode = true;
+    _pdfChunks = [{wordCount:10,status:'idle'},{wordCount:20,status:'idle'},{wordCount:5,status:'idle'}];`));
+  assert.deepStrictEqual(pdf, { mode: 'pdf', n: 3, arcOk: true },
+    "an upload's chapter count is its CHUNK count, not APP.numChapters");
+  const comic = JSON.parse(probe(`document.getElementById('use-comic-cb').checked = true;
+    APP_COMIC.boxes = [{x1:0,y1:0,x2:1,y2:1,text:{caption:'a'}}, {x1:0,y1:0,x2:1,y2:1}];`));
+  assert.deepStrictEqual(comic, { mode: 'comic', n: 1, arcOk: true },
+    "a comic's chapter count counts only panels WITH extracted text — an un-extracted box is not a chapter");
+  const dialect = JSON.parse(probe(`document.getElementById('use-dialect-cb').checked = true;`));
+  assert.deepStrictEqual(dialect, { mode: 'dialect', n: 0, arcOk: false },
+    'dialect import chooses no lesson types at all — it builds vocab lessons procedurally');
+  // Precedence: comic wins over story, matching the exclusivity the toggles themselves enforce.
+  const both = JSON.parse(probe(`document.getElementById('use-comic-cb').checked = true;
+    document.getElementById('use-story-cb').checked = true;`));
+  assert.strictEqual(both.mode, 'comic', 'comic takes precedence if two flags are somehow set at once');
+}
+console.log('  _genInputMode()/_genChapterCount()/_genArcApplicable(): correct per mode, chunk- and panel-aware: OK');
+
+// §12c — _applyLessonCardUI()'s truth table, per mode. This is the behaviour that replaced three
+// separate copies of the same show/hide logic.
+{
+  const C = client();
+  const vis = setup => JSON.parse(C.run(`(function(){
+      ['use-story-cb','use-dialect-cb','use-comic-cb'].forEach(function(id){ document.getElementById(id).checked=false; });
+      document.getElementById('gen-skip-lessons-cb').checked = false;
+      _uploadMode = false; _pdfChunks = []; APP_COMIC.boxes = []; APP.numChapters = 1;
+      _pdfSelMode = false; _pdfBookId = null; _comicBookId = null;
+      ${setup}
+      _applyLessonCardUI();
+      var d = function(id){ var e=document.getElementById(id); return e ? (e.style.display==='none'?'hidden':'shown') : 'MISSING'; };
+      return JSON.stringify({ arc: d('gen-arc-row'), perCh: d('per-chapter-row'), postGen: d('post-gen-row'),
+        qc: d('post-gen-qc-row'), fmt: d('format-wrap'), btnRow: d('gen-btn-row'),
+        label: document.getElementById('gen-btn').textContent });
+    })()`));
+
+  const pdf = vis(`document.getElementById('use-story-cb').checked = true; _uploadMode = true;
+    _pdfChunks = [{wordCount:10,status:'idle'},{wordCount:20,status:'idle'}];`);
+  assert.strictEqual(pdf.arc, 'shown', 'PDF: the ONE arc row is offered on the lesson card');
+  assert.strictEqual(pdf.postGen, 'shown', 'PDF: storyboard/analysis offered');
+  assert.strictEqual(pdf.qc, 'hidden',
+    'PDF: the QC toggle is NOT offered — _applyPostGenFeatures only orchestrates it on the LLM path, so it would be a no-op checkbox');
+  assert.strictEqual(pdf.perCh, 'hidden', 'PDF: the per-chapter override is LLM-only (it indexes planned chapters)');
+  assert.strictEqual(pdf.btnRow, 'shown', 'PDF: the shared start button is offered once chunks exist');
+  assert.ok(/2/.test(pdf.label) && /30/.test(pdf.label),
+    `PDF: the start button reuses this flow's own chunk+word count label (got: ${pdf.label})`);
+
+  const comic = vis(`document.getElementById('use-comic-cb').checked = true;
+    APP_COMIC.boxes = [{x1:0,y1:0,x2:1,y2:1,text:{caption:'a'}}];`);
+  assert.strictEqual(comic.arc, 'shown', 'comic: the ONE arc row is offered');
+  assert.strictEqual(comic.qc, 'hidden', 'comic: QC not offered, same reason as PDF');
+  assert.strictEqual(comic.btnRow, 'shown', 'comic: the shared start button replaces the deleted #comic-create-btn');
+  assert.strictEqual(comic.label, UI.en['form.comic_create'],
+    'comic: the start button reuses the deleted button\'s OWN existing string — no new ui.json key');
+
+  const llm = vis(`APP.numChapters = 3;`);
+  assert.strictEqual(llm.qc, 'shown', 'LLM: QC IS offered — this is the path that actually orchestrates it');
+  assert.strictEqual(llm.perCh, 'shown', 'LLM: the per-chapter override is offered for a multi-chapter plan');
+  assert.strictEqual(llm.label, UI.en['form.generate'], 'LLM: the unchanged Generate label');
+
+  const dialect = vis(`document.getElementById('use-dialect-cb').checked = true;`);
+  assert.strictEqual(dialect.btnRow, 'hidden', 'dialect: no start button on the lesson card — the panel has its own Build button');
+  assert.strictEqual(dialect.arc, 'hidden', 'dialect: no lesson-type choice at all');
+
+  // skip-lessons still governs the whole block, in EVERY mode — item AK's behaviour, generalised.
+  const pdfSkip = vis(`document.getElementById('use-story-cb').checked = true; _uploadMode = true;
+    _pdfChunks = [{wordCount:10,status:'idle'}];
+    document.getElementById('gen-skip-lessons-cb').checked = true;`);
+  assert.strictEqual(pdfSkip.arc, 'hidden', 'PDF + skip-lessons: the arc row hides, as it did behind #pdf-skip-lessons-cb');
+  assert.strictEqual(pdfSkip.fmt, 'hidden', 'PDF + skip-lessons: the format-select hides too');
+  assert.strictEqual(pdfSkip.postGen, 'shown',
+    'but storyboard/analysis stay: they enrich the CHAPTER, not the lessons (item AK settled this)');
+  assert.ok(pdfSkip.label !== pdf.label, 'and the start button relabels for a chapters-only run');
+}
+console.log('  _applyLessonCardUI(): correct rows + start button + label for pdf / comic / llm / dialect, and under skip-lessons: OK');
+
+// §12d — the start button withdraws while a run is in flight or nothing is ready. This DERIVED state
+// replaced six imperative `#pdf-gen-btn.style.display = ...` call sites.
+{
+  const C = client();
+  const btnRow = setup => C.run(`(function(){
+      ['use-story-cb','use-dialect-cb','use-comic-cb'].forEach(function(id){ document.getElementById(id).checked=false; });
+      _uploadMode = false; _pdfChunks = []; APP_COMIC.boxes = [];
+      _pdfSelMode = false; _pdfBookId = null; _comicBookId = null;
+      ${setup}
+      _applyLessonCardUI();
+      return document.getElementById('gen-btn-row').style.display;
+    })()`);
+  const on = `document.getElementById('use-story-cb').checked = true; _uploadMode = true;`;
+  assert.strictEqual(btnRow(on + `_pdfChunks = [];`), 'none', 'PDF with no chunks yet: no start button');
+  assert.strictEqual(btnRow(on + `_pdfChunks = [{wordCount:1,status:'idle'}];`), '', 'PDF with a chunk: offered');
+  assert.strictEqual(btnRow(on + `_pdfChunks = [{wordCount:1,status:'active'}];`), 'none', 'PDF mid-generation (a chunk active): withdrawn');
+  assert.strictEqual(btnRow(on + `_pdfChunks = [{wordCount:1,status:'idle'}]; _pdfBookId = 'bk1';`), 'none', 'PDF with a book job running: withdrawn');
+  assert.strictEqual(btnRow(on + `_pdfChunks = [{wordCount:1,status:'idle'}]; _pdfSelMode = true;`), 'none', 'PDF with the selection overlay open: withdrawn');
+  const comicOn = `document.getElementById('use-comic-cb').checked = true;`;
+  assert.strictEqual(btnRow(comicOn + `APP_COMIC.boxes = [{x1:0,y1:0,x2:1,y2:1}];`), 'none',
+    'comic with a drawn but UN-EXTRACTED panel: no start button (there is no text to make a chapter from)');
+  assert.strictEqual(btnRow(comicOn + `APP_COMIC.boxes = [{x1:0,y1:0,x2:1,y2:1,text:{caption:'a'}}];`), '',
+    'comic with extracted text: offered');
+  assert.strictEqual(btnRow(comicOn + `APP_COMIC.boxes = [{x1:0,y1:0,x2:1,y2:1,text:{caption:'a'}}]; _comicBookId = 'bk2';`), 'none',
+    'comic with a book job running: withdrawn');
+  assert.strictEqual(btnRow(``), '', 'plain LLM-generate: always offered, exactly as before');
+}
+console.log('  the shared start button is DERIVED: withheld when nothing is ready or a run is in flight: OK');
+
+// §12e — doGenerate() dispatches comic mode to comicOpenReview(), NOT straight to chapter creation.
+// The user's ruling was to KEEP the text-review stop, so the click must still land on it.
+{
+  const C = client();
+  const r = JSON.parse(C.run(`['use-story-cb','use-dialect-cb'].forEach(function(id){ document.getElementById(id).checked=false; });
+    document.getElementById('use-comic-cb').checked = true;
+    APP_COMIC.boxes = [{x1:0,y1:0,x2:1,y2:1,text:{caption:'a'}}];
+    APP.info = { backend:'ollama', canGenerate:true };
+    window._reviewCalls = 0; comicOpenReview = function(){ window._reviewCalls++; };
+    window._createCalls = 0; comicCreateChapter = function(){ window._createCalls++; };
+    window._pdfCalls = 0; pdfGenerateAll = function(){ window._pdfCalls++; };
+    doGenerate();
+    JSON.stringify({ review: window._reviewCalls, create: window._createCalls, pdf: window._pdfCalls })`));
+  assert.strictEqual(r.review, 1, 'comic mode: #gen-btn routes to comicOpenReview() exactly once');
+  assert.strictEqual(r.create, 0, 'and NOT straight to comicCreateChapter() — the review stop is kept, by ruling');
+  assert.strictEqual(r.pdf, 0, 'and not into the upload branch');
+}
+console.log('  doGenerate(): comic mode dispatches to comicOpenReview(), keeping the text-review stop: OK');
+
 console.log('unit-gen-wizard: ALL PASSED');

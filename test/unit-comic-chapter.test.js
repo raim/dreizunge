@@ -89,8 +89,8 @@ console.log('  comicCreateChapter(): zero panels / nothing extracted are both cl
       window._fetchCall = { url: url, method: opts.method, body: JSON.parse(opts.body) };
       return Promise.resolve({ ok:true, json: function(){ return Promise.resolve({ bookId:'book_xyz' }); } });
     };
-    document.getElementById('comic-arc-cb').checked = false;
-    document.getElementById('comic-storyboard-cb').checked = false;
+    document.getElementById('gen-arc-cb').checked = false;
+    document.getElementById('post-gen-storyboard-cb').checked = false;
     (async()=>{ await comicCreateChapter(); })();
     true;`, 't2b');
   await settle();
@@ -123,18 +123,28 @@ console.log('  comicCreateChapter(): ONE chunk per panel (not joined), fresh per
       window._fetchCall = JSON.parse(opts.body);
       return Promise.resolve({ ok:true, json: function(){ return Promise.resolve({ bookId:'book_2' }); } });
     };
-    document.getElementById('comic-arc-cb').checked = true;
-    document.getElementById('comic-storyboard-cb').checked = true;
+    document.getElementById('gen-arc-cb').checked = true;
+    document.getElementById('post-gen-storyboard-cb').checked = true;
+    document.getElementById('continue-select').value = 'sl_parent_1';
     (async()=>{ await comicCreateChapter(); })();
     true;`, 't2c');
   await settle();
   const r = JSON.parse(C.run(`JSON.stringify({ fetchCall: window._fetchCall, arcTypesCalledWith: window._readArcTypesCalledWith })`));
   assert.strictEqual(r.fetchCall.arc, true, 'arc:true sent when the checkbox is checked');
   assert.deepStrictEqual(r.fetchCall.arcTypes, ['grammar'], 'arcTypes read from the SAME shared tick-list PDF/wizard use');
-  assert.strictEqual(r.arcTypesCalledWith, 'comic-arc-types', 'reads from #comic-arc-types, the comic panel\'s own container');
+  // item AL part 2: the comic panel's own #comic-arc-types container was DELETED, not renamed — all
+  // three send paths read the wizard's one #gen-arc-types now. Same claim, one container.
+  assert.strictEqual(r.arcTypesCalledWith, 'gen-arc-types',
+    "reads from #gen-arc-types, the ONE canonical tick-list all three input modes share");
   assert.strictEqual(r.fetchCall.postGenStoryboard, true, 'postGenStoryboard:true sent when that checkbox is checked');
+  // ⚠️ REGRESSION GUARD for the bug item AL found by reading the source: comicCreateChapter() never
+  // sent `continuedFrom` at all, so a comic-sourced chapter could not be linked as the continuation
+  // of an existing storyline — silently, with the picker sitting right there on the form. Fixed at
+  // v87_h. Mutation-tested: drop the field from the body and this goes red.
+  assert.strictEqual(r.fetchCall.continuedFrom, 'sl_parent_1',
+    'continuedFrom is sent, from the SAME #continue-select pdfGenerateAll() and doGenerate() read');
 }
-console.log('  comicCreateChapter(): arc + storyboard controls, when checked, are correctly threaded into the request: OK');
+console.log('  comicCreateChapter(): arc + storyboard + continuedFrom are correctly threaded into the request: OK');
 
 // ── 3. _pollComicBookJob() / _comicBookCheckOnce() — the REAL functions, not mocked (v86_e) ────────
 // Item K: the same mobile-backgrounding fix v86_d gave _startComicExtractJob/_startComicDetectJob,
@@ -146,7 +156,6 @@ console.log('  comicCreateChapter(): arc + storyboard controls, when checked, ar
 {
   const C = client();
   C.run(`_comicBookId = 'book_done'; _comicBookPolling = false;
-    document.getElementById('comic-create-btn').disabled = true;
     document.getElementById('comic-extract-btn').disabled = true;
     window._toasts = []; showToast = function(msg){ window._toasts.push(msg); };
     window._savedListCalls = 0; loadSavedList = function(){ window._savedListCalls++; return Promise.resolve(); };
@@ -158,12 +167,10 @@ console.log('  comicCreateChapter(): arc + storyboard controls, when checked, ar
     true;`, 't3a');
   await settle();
   const r = JSON.parse(C.run(`JSON.stringify({ bookId: _comicBookId, polling: _comicBookPolling,
-    createDisabled: document.getElementById('comic-create-btn').disabled,
     extractDisabled: document.getElementById('comic-extract-btn').disabled,
     toasts: window._toasts, savedListCalls: window._savedListCalls })`));
   assert.strictEqual(r.bookId, null, "a 'done' status clears _comicBookId");
   assert.strictEqual(r.polling, false, "a 'done' status clears _comicBookPolling");
-  assert.strictEqual(r.createDisabled, false, "a 'done' status re-enables the create button");
   assert.strictEqual(r.extractDisabled, false, "a 'done' status re-enables the extract button");
   assert.strictEqual(r.toasts.length, 1, 'exactly one toast');
   assert.ok(r.toasts[0].indexOf("Grandpa's Dough") >= 0, 'the toast names the chapter title from the FIRST chapter: ' + r.toasts[0]);

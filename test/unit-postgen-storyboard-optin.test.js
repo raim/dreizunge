@@ -3,11 +3,18 @@
 // e2e-postgen-storyboard-optin.test.js). _runBookJob's storyboard post-pass used to run
 // unconditionally for every /api/generate-book caller; now gated on body.postGenStoryboard. This
 // file proves each of the THREE callers actually threads its own checkbox state into the request:
-//   • §1 pdfGenerateAll() -> the NEW #pdf-storyboard-cb (this panel had no such control before).
+//   • §1 pdfGenerateAll() -> the NEW #post-gen-storyboard-cb (this panel had no such control before).
 //   • §2 doGenerate()'s multi-chapter "generated" branch -> the EXISTING #post-gen-storyboard-cb,
 //     which was captured into `postGen.storyboard` all along but never actually SENT in the initial
 //     request — the exact latent no-op this whole fix addresses. (comicCreateChapter()'s own thread
 //     is covered by unit-comic-chapter.test.js §2c.)
+// ⚠️ ID UPDATE at item AL part 2 (roadmap_v87.md): the per-panel copies of these checkboxes
+// (#pdf-storyboard-cb/#comic-storyboard-cb, #pdf-analysis-cb/#comic-analysis-cb, #pdf-arc-cb/
+// #comic-arc-cb) were DELETED, not renamed — the wizard's ONE lesson card owns them for every
+// input mode now. Every claim below is UNCHANGED and still worth making: each send path must
+// thread the toggle into its request, explicitly in BOTH states. What changed is only which
+// control the learner ticks — which makes the two sections here stronger than before, since
+// they now prove the SAME checkbox reaches two different endpoints' bodies.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -28,7 +35,7 @@ function client() {
 
 async function main() {
 
-// ── 1. pdfGenerateAll() threads #pdf-storyboard-cb into the request, both states ──
+// ── 1. pdfGenerateAll() threads #post-gen-storyboard-cb into the request, both states ──
 {
   const C = client();
   C.run(`_pdfChunks = [ { title:'C1', text:'x', wordCount:5 } ];
@@ -36,12 +43,12 @@ async function main() {
     fetch = function(url, opts){ window._fetchCall = JSON.parse(opts.body);
       return Promise.resolve({ ok:true, json: function(){ return Promise.resolve({ bookId:'b1' }); } }); };
     _pollBookJob = function(){};
-    document.getElementById('pdf-storyboard-cb').checked = true;
+    document.getElementById('post-gen-storyboard-cb').checked = true;
     (async()=>{ await pdfGenerateAll(); })();
     true;`, 't1a');
   await settle();
   assert.strictEqual(JSON.parse(C.run('JSON.stringify(window._fetchCall.postGenStoryboard)')), true,
-    'pdfGenerateAll(): checked #pdf-storyboard-cb sends postGenStoryboard:true');
+    'pdfGenerateAll(): checked #post-gen-storyboard-cb sends postGenStoryboard:true');
 }
 {
   const C = client();
@@ -50,14 +57,14 @@ async function main() {
     fetch = function(url, opts){ window._fetchCall = JSON.parse(opts.body);
       return Promise.resolve({ ok:true, json: function(){ return Promise.resolve({ bookId:'b2' }); } }); };
     _pollBookJob = function(){};
-    document.getElementById('pdf-storyboard-cb').checked = false;
+    document.getElementById('post-gen-storyboard-cb').checked = false;
     (async()=>{ await pdfGenerateAll(); })();
     true;`, 't1b');
   await settle();
   assert.strictEqual(JSON.parse(C.run('JSON.stringify(window._fetchCall.postGenStoryboard)')), false,
-    'pdfGenerateAll(): unchecked #pdf-storyboard-cb sends postGenStoryboard:false (explicit, not omitted)');
+    'pdfGenerateAll(): unchecked #post-gen-storyboard-cb sends postGenStoryboard:false (explicit, not omitted)');
 }
-console.log('  pdfGenerateAll(): the NEW #pdf-storyboard-cb is correctly threaded, both states: OK');
+console.log('  pdfGenerateAll(): the NEW #post-gen-storyboard-cb is correctly threaded, both states: OK');
 
 // ── 2. doGenerate()'s multi-chapter branch threads #post-gen-storyboard-cb into the INITIAL
 //      request — the exact thing that was captured but never sent before this fix ─────────────

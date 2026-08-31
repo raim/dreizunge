@@ -59,22 +59,33 @@ async function main() {
 }
 console.log('  markup: #comic-panel (file input, draw-wrap, list, actions) lives inside #gen-card-2: OK');
 
-// ── 2. onUseComicCb(): toggle + form-hiding + mutual exclusion (both directions) ─
+// ── 2. onUseComicCb(): toggle + mutual exclusion (both directions) ──────────────
+// ⚠️ CHANGED DELIBERATELY at item AL part 2 (roadmap_v87.md). This section used to assert that comic
+// mode HIDES #gen-form-section "same as dialect mode". That was correct while the comic flow carried
+// its own embedded lesson-type controls and its own start button, which made the wizard's lesson card
+// genuinely irrelevant to it — and that duplication is exactly what item AL removed. The lesson card
+// is now this mode's ONLY place to choose lesson types and #gen-btn its only start button, so hiding
+// it would leave the flow unable to finish. The assertion is INVERTED, not deleted, so that a
+// regression back to hiding it is still caught. Dialect mode still hides it — see
+// unit-dialect-panel.test.js, whose own version of this check is untouched.
 {
   const C = client();
   const r = JSON.parse(C.run(`document.getElementById('use-comic-cb').checked = true; onUseComicCb();
     var openOn = document.getElementById('comic-panel').classList.contains('open');
-    var gfHiddenOn = document.getElementById('gen-form-section').style.display;
+    var gfOn = document.getElementById('gen-form-section').style.display;
+    var topicOn = document.getElementById('topic-input').style.display;
     document.getElementById('use-comic-cb').checked = false; onUseComicCb();
     var openOff = document.getElementById('comic-panel').classList.contains('open');
-    var gfShownOff = document.getElementById('gen-form-section').style.display;
-    JSON.stringify({ openOn: openOn, gfHiddenOn: gfHiddenOn, openOff: openOff, gfShownOff: gfShownOff })`));
+    var gfOff = document.getElementById('gen-form-section').style.display;
+    JSON.stringify({ openOn: openOn, gfOn: gfOn, topicOn: topicOn, openOff: openOff, gfOff: gfOff })`));
   assert.strictEqual(r.openOn, true, 'checking use-comic-cb opens #comic-panel');
-  assert.strictEqual(r.gfHiddenOn, 'none', 'comic mode hides #gen-form-section, same as dialect mode');
+  assert.notStrictEqual(r.gfOn, 'none',
+    'comic mode must NOT hide #gen-form-section — the lesson card is now its only lesson-type UI and its only start button');
+  assert.strictEqual(r.topicOn, 'none', 'it still hides #topic-input: a comic run has no topic to type');
   assert.strictEqual(r.openOff, false, 'unchecking use-comic-cb closes #comic-panel');
-  assert.strictEqual(r.gfShownOff, '', 'unchecking comic mode reveals #gen-form-section again');
+  assert.notStrictEqual(r.gfOff, 'none', '#gen-form-section stays available after unchecking too');
 }
-console.log('  onUseComicCb(): toggles .open + hides/shows #gen-form-section like dialect mode: OK');
+console.log('  onUseComicCb(): opens the panel, hides the topic field, and LEAVES the lesson card reachable: OK');
 
 {
   const C = client();

@@ -3,12 +3,19 @@
 // is covered by e2e-postgen-analysis-optin.test.js). Mirrors unit-postgen-storyboard-optin.test.js's
 // own structure exactly, since postGenAnalysis was built as a direct mirror of postGenStoryboard —
 // proves each of the THREE callers threads its OWN checkbox state into the request:
-//   • §1 pdfGenerateAll() -> #pdf-analysis-cb
-//   • §2 comicCreateChapter() -> #comic-analysis-cb
+//   • §1 pdfGenerateAll() -> #post-gen-analysis-cb
+//   • §2 comicCreateChapter() -> #post-gen-analysis-cb
 //   • §3 doGenerate()'s multi-chapter "generated" branch -> #post-gen-analysis-cb, threaded straight
 //     into the INITIAL request (unlike storyboard/QC there, analysis needs no post-hoc
 //     _applyPostGenFeatures orchestration — _kickOffAnalysisJob already fires server-side, per
 //     chapter, inside _runBookJob itself).
+// ⚠️ ID UPDATE at item AL part 2 (roadmap_v87.md): the per-panel copies of these checkboxes
+// (#pdf-storyboard-cb/#comic-storyboard-cb, #pdf-analysis-cb/#comic-analysis-cb, #pdf-arc-cb/
+// #comic-arc-cb) were DELETED, not renamed — the wizard's ONE lesson card owns them for every
+// input mode now. Every claim below is UNCHANGED and still worth making: each send path must
+// thread the toggle into its request, explicitly in BOTH states. What changed is only which
+// control the learner ticks — which makes the two sections here stronger than before, since
+// they now prove the SAME checkbox reaches two different endpoints' bodies.
 'use strict';
 const assert = require('assert');
 const fs = require('fs');
@@ -29,7 +36,7 @@ function client() {
 
 async function main() {
 
-// ── 1. pdfGenerateAll() threads #pdf-analysis-cb into the request, both states ──
+// ── 1. pdfGenerateAll() threads #post-gen-analysis-cb into the request, both states ──
 {
   const C = client();
   C.run(`_pdfChunks = [ { title:'C1', text:'x', wordCount:5 } ];
@@ -37,12 +44,12 @@ async function main() {
     fetch = function(url, opts){ window._fetchCall = JSON.parse(opts.body);
       return Promise.resolve({ ok:true, json: function(){ return Promise.resolve({ bookId:'b1' }); } }); };
     _pollBookJob = function(){};
-    document.getElementById('pdf-analysis-cb').checked = true;
+    document.getElementById('post-gen-analysis-cb').checked = true;
     (async()=>{ await pdfGenerateAll(); })();
     true;`, 't1a');
   await settle();
   assert.strictEqual(JSON.parse(C.run('JSON.stringify(window._fetchCall.postGenAnalysis)')), true,
-    'pdfGenerateAll(): checked #pdf-analysis-cb sends postGenAnalysis:true');
+    'pdfGenerateAll(): checked #post-gen-analysis-cb sends postGenAnalysis:true');
 }
 {
   const C = client();
@@ -51,16 +58,16 @@ async function main() {
     fetch = function(url, opts){ window._fetchCall = JSON.parse(opts.body);
       return Promise.resolve({ ok:true, json: function(){ return Promise.resolve({ bookId:'b2' }); } }); };
     _pollBookJob = function(){};
-    document.getElementById('pdf-analysis-cb').checked = false;
+    document.getElementById('post-gen-analysis-cb').checked = false;
     (async()=>{ await pdfGenerateAll(); })();
     true;`, 't1b');
   await settle();
   assert.strictEqual(JSON.parse(C.run('JSON.stringify(window._fetchCall.postGenAnalysis)')), false,
-    'pdfGenerateAll(): unchecked #pdf-analysis-cb sends postGenAnalysis:false (explicit, not omitted)');
+    'pdfGenerateAll(): unchecked #post-gen-analysis-cb sends postGenAnalysis:false (explicit, not omitted)');
 }
-console.log('  pdfGenerateAll(): #pdf-analysis-cb is correctly threaded, both states: OK');
+console.log('  pdfGenerateAll(): #post-gen-analysis-cb is correctly threaded, both states: OK');
 
-// ── 2. comicCreateChapter() threads #comic-analysis-cb into the request, both states ──
+// ── 2. comicCreateChapter() threads #post-gen-analysis-cb into the request, both states ──
 {
   const C = client();
   C.run(`APP_COMIC.boxes = [{ x1:0,y1:0,x2:10,y2:10, text: { caption:'Cap A', inScene:'' } }];
@@ -69,14 +76,14 @@ console.log('  pdfGenerateAll(): #pdf-analysis-cb is correctly threaded, both st
     window._fetchCall = null;
     fetch = function(url, opts){ window._fetchCall = JSON.parse(opts.body);
       return Promise.resolve({ ok:true, json: function(){ return Promise.resolve({ bookId:'b3' }); } }); };
-    document.getElementById('comic-arc-cb').checked = false;
-    document.getElementById('comic-storyboard-cb').checked = false;
-    document.getElementById('comic-analysis-cb').checked = true;
+    document.getElementById('gen-arc-cb').checked = false;
+    document.getElementById('post-gen-storyboard-cb').checked = false;
+    document.getElementById('post-gen-analysis-cb').checked = true;
     (async()=>{ await comicCreateChapter(); })();
     true;`, 't2a');
   await settle();
   assert.strictEqual(JSON.parse(C.run('JSON.stringify(window._fetchCall.postGenAnalysis)')), true,
-    'comicCreateChapter(): checked #comic-analysis-cb sends postGenAnalysis:true');
+    'comicCreateChapter(): checked #post-gen-analysis-cb sends postGenAnalysis:true');
 }
 {
   const C = client();
@@ -86,16 +93,16 @@ console.log('  pdfGenerateAll(): #pdf-analysis-cb is correctly threaded, both st
     window._fetchCall = null;
     fetch = function(url, opts){ window._fetchCall = JSON.parse(opts.body);
       return Promise.resolve({ ok:true, json: function(){ return Promise.resolve({ bookId:'b4' }); } }); };
-    document.getElementById('comic-arc-cb').checked = false;
-    document.getElementById('comic-storyboard-cb').checked = false;
-    document.getElementById('comic-analysis-cb').checked = false;
+    document.getElementById('gen-arc-cb').checked = false;
+    document.getElementById('post-gen-storyboard-cb').checked = false;
+    document.getElementById('post-gen-analysis-cb').checked = false;
     (async()=>{ await comicCreateChapter(); })();
     true;`, 't2b');
   await settle();
   assert.strictEqual(JSON.parse(C.run('JSON.stringify(window._fetchCall.postGenAnalysis)')), false,
-    'comicCreateChapter(): unchecked #comic-analysis-cb sends postGenAnalysis:false (explicit, not omitted)');
+    'comicCreateChapter(): unchecked #post-gen-analysis-cb sends postGenAnalysis:false (explicit, not omitted)');
 }
-console.log('  comicCreateChapter(): #comic-analysis-cb is correctly threaded, both states: OK');
+console.log('  comicCreateChapter(): #post-gen-analysis-cb is correctly threaded, both states: OK');
 
 // ── 3. doGenerate()'s multi-chapter branch threads #post-gen-analysis-cb into the INITIAL
 //      request — same shape as postGenStoryboard's own fix, built correctly from the start here

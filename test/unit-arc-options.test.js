@@ -41,13 +41,22 @@ const boxes = (id) => C.document.getElementById(id).querySelectorAll('.arc-lt-ch
 const values = (id) => boxes(id).map(b => b.value);
 const checkedValues = (id) => boxes(id).filter(b => b.checked).map(b => b.value);
 
-// ── 1. Both containers exist in the shipped markup ─────────────────────────
-// Not created by the test: if a form loses its container, the picker silently renders nowhere and
+// ── 1. The container exists in the shipped markup ──────────────────────────
+// Not created by the test: if the form loses its container, the picker silently renders nowhere and
 // the arc falls back to the server's legacy default.
-for (const id of ['pdf-arc-types', 'gen-arc-types']) {
-  assert.strictEqual(C.run(`!!document.getElementById(${JSON.stringify(id)})`), true,
-    `${id} is present in index.html`);
-}
+//
+// ⚠️ THIS CHECK WAS VACUOUS and is fixed here, found at item AL part 2 (roadmap_v87.md). It used to
+// run `!!document.getElementById(id)` through the DOM harness for BOTH 'gen-arc-types' and
+// 'gen-arc-types' — and lib-dom's makeDocument() AUTO-VIVIFIES every id asked for (`getElementById`
+// mints a div on a miss, deliberately, see its own comment). So it could never fail: it stayed GREEN
+// through the release that DELETED #pdf-arc-types from index.html entirely, which is exactly the
+// silent-render-nowhere failure it was written to catch. Asserted against the SOURCE now, where the
+// claim is real. (item AL part 2 also made this one container instead of two: #pdf-arc-types and
+// #comic-arc-types were deleted, and all three input modes read the wizard's #gen-arc-types.)
+const arcHtml = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+assert.ok(arcHtml.includes('id="gen-arc-types"'), '#gen-arc-types is present in index.html');
+assert.ok(!arcHtml.includes('id="pdf-arc-types"') && !arcHtml.includes('id="comic-arc-types"'),
+  'and the deleted per-panel copies have not come back (item AL part 2: one tick-list, three modes)');
 
 // ── 2. It renders every offered type, with the documented default ──────────
 {
@@ -82,9 +91,9 @@ for (const id of ['pdf-arc-types', 'gen-arc-types']) {
 // ── 4. Explicit `checked` overrides the default ────────────────────────────
 // This is the path the language-change handler uses to restore a user's ticks.
 {
-  reset('pdf-arc-types');
-  C.run(`renderArcTypeChecks('pdf-arc-types', { checked: ['synonyms','math'] })`);
-  assert.deepStrictEqual(checkedValues('pdf-arc-types'), ['synonyms', 'math'],
+  reset('gen-arc-types');
+  C.run(`renderArcTypeChecks('gen-arc-types', { checked: ['synonyms','math'] })`);
+  assert.deepStrictEqual(checkedValues('gen-arc-types'), ['synonyms', 'math'],
     'a supplied selection is what gets ticked');
 }
 
@@ -92,18 +101,18 @@ for (const id of ['pdf-arc-types', 'gen-arc-types']) {
 // What replaced the old <option> translation block — and the case that block could not have, since
 // the labels now sit inside checkboxes the user has interacted with.
 if (UI.de) {
-  const before = htmlOf('pdf-arc-types');
+  const before = htmlOf('gen-arc-types');
   const enLabel = (before.match(/<span>[^<]*<\/span>/) || [''])[0];
   C.run(`UI_STRINGS = ${JSON.stringify(UI.de)};
-    ['pdf-arc-types','gen-arc-types'].forEach(id => {
+    ['gen-arc-types'].forEach(id => {
       const c = document.getElementById(id);
       if (!c || c.dataset.rendered !== '1') return;
       const keep = readArcTypeChecks(id);   // v73_c: the REAL reader, no longer a hardcoded stand-in
       c.dataset.rendered = '';
       renderArcTypeChecks(id, { checked: keep });
     }); true;`, 'relabel');
-  const after = htmlOf('pdf-arc-types');
-  assert.deepStrictEqual(checkedValues('pdf-arc-types'), ['synonyms', 'math'],
+  const after = htmlOf('gen-arc-types');
+  assert.deepStrictEqual(checkedValues('gen-arc-types'), ['synonyms', 'math'],
     'the selection survives a language change — carried by readArcTypeChecks, not by a test constant');
   const deLabel = (after.match(/<span>[^<]*<\/span>/) || [''])[0];
   assert.notStrictEqual(deLabel, enLabel, 'and the labels followed the new language');

@@ -244,9 +244,22 @@ build — a shared `skipLessons` server mechanism plus one checkbox pattern reus
 defaults (the user's own framing — "at a later point we want to have or auto-select meaningful
 defaults") is future work; this cut only needed "don't schedule lessons at all yet" to become real.
 
-### 🔶 AL. Restructure the generation wizard — unify lesson-type selection, relocate text-shaping choices, across all three input modes — PART 1 SHIPPED `v87_g`, PART 2 OPEN
+### ✅ AL. Restructure the generation wizard — unify lesson-type selection, relocate text-shaping choices, across all three input modes — FULLY SHIPPED (`v87_g` + `v87_h`)
 
-> **⚠️ STATUS AT THE `v87_g` CUT — read before using anything below.** The fresh session the user
+> **✅ STATUS: CLOSED at the `v87_h` CUT.** Part 1 (`v87_g`) restructured the cards; part 2 (`v87_h`)
+> routed PDF and comic uploads through the one lesson card, deleting both panels' duplicated copies,
+> and fixed the `continuedFrom` bug this item found. **Both entries under "SHIPPED IN THE v87 LINE"
+> carry the full write-ups; everything below is the ORIGINAL design conversation, kept as the record,
+> and its "current markup" line anchors are STALE.** The one thing deliberately left undone is
+> recorded as its own carried-forward item, not as unfinished AL work: DIFFICULTY placement, ruled out
+> of scope by the user and deferred to its own design pass alongside the CP1/CP2 route ("difficulty
+> means something different for each lesson type" — and it may not be one dial at all). Genuine job
+> SCHEDULING was confirmed as never having been part of this item either: "schedule" meant deferring
+> the lesson-generation decision, which item AK already built.
+>
+> **Original part-1 status block, kept for the reasoning it records:**
+>
+> **⚠️ STATUS AT THE `v87_g` CUT.** The fresh session the user
 > planned for picked this up, ASKED ALL FOUR ⚠️ OPEN QUESTIONS FIRST (they are answered now — see the
 > `v87_g` entry's own table under "SHIPPED IN THE v87 LINE" for each ruling), and shipped **part 1**:
 > the card restructuring itself. The wizard is now a genuine 3-step flow — 1 · Language / 2 · Text /
@@ -254,7 +267,7 @@ defaults") is future work; this cut only needed "don't schedule lessons at all y
 > and continue-from / the text-shaping controls / the arc row + vocab-mode moved to cards 1 / 2 / 3
 > respectively. **Every "current markup" line anchor below is therefore STALE.**
 >
-> **What is STILL OPEN as part 2** — the half this item is really named for:
+> **What was part 2 — ALL of it shipped at `v87_h`:**
 > - `#pdf-panel` and `#comic-panel` still carry their OWN duplicated `#pdf-arc-row`/`#comic-arc-row`,
 >   skip-lessons, storyboard and analysis rows, and their own start buttons (`pdfGenerateAll()` /
 >   `comicOpenReview()` fired from inside card 2). Routing all three input modes through card 3's one
@@ -415,7 +428,7 @@ building any of this):
   needs relocating + de-duplicating from three copies to one), vocab-mode's replacement (folded in
   per the resolution above). Difficulty: placement OPEN (see above).
 
-**Part 1 shipped `v87_g`; part 2 (the PDF/comic unification + the `continuedFrom` bug) is open — see the status block at the top of this item.**
+**Fully shipped: part 1 `v87_g` (the card restructuring), part 2 `v87_h` (the PDF/comic unification + the `continuedFrom` fix). See the status block at the top of this item.**
 
 ## ✅ RESOLVED BY USER RULING AT THE v86 CUT — no code change, not carried as open tasks
 
@@ -2179,6 +2192,111 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v87 LINE
+
+## ✅ v87_h — item AL part 2: PDF and comic uploads route through the ONE lesson card; a silent `continuedFrom` bug fixed
+
+**This is the half item AL is actually named for.** `v87_g` restructured the wizard's cards; this
+removes the duplication that made the restructuring worth doing. The user's own words: *"current
+4/Lessons should be the ONLY place where we can select lesson types to be generated (optionally)."*
+
+**What was duplicated, and why it happened.** The same three ideas existed as THREE independent
+copies: the wizard's own (`#gen-arc-row` + `#gen-skip-lessons-cb` + `#post-gen-row`), `#pdf-panel`'s
+(`#pdf-arc-row`, from the `v71_u` era) and `#comic-panel`'s (`#comic-arc-row`, added at `v85_p`
+*precisely because* the comic flow had none and the PDF flow did — the duplication propagating one
+more time). Item AK (`v87_f`) then had to add its skip-lessons checkbox to all three separately.
+Both upload panels also had their own start buttons (`#pdf-gen-btn`, `#comic-create-btn`) fired from
+inside card 2, bypassing the wizard's card machinery entirely. **Deleted this cut**: 21 ids across
+the two panels, plus every reader of them.
+
+**The user's ruling this was built to, and it constrained the design.** Asked whether "start" should
+become one deferred job with no live stop, the answer was **keep the live review stop**. So
+extraction, chunk splitting, panel drawing/reordering and "Extract text" all stay exactly where and
+when they were — `comicExtractPanels()` and `splitChaptersLLM()`'s timing is untouched — and
+`#gen-btn` in comic mode routes to `comicOpenReview()`, NOT straight to `comicCreateChapter()`, so
+the text-review card still sits between "start" and chapter creation. The test asserts that
+specifically, and it is mutation-tested: dispatching straight to creation goes red.
+
+**The abstraction it needed.** The wizard's rows were gated on `APP.numChapters > 1`, which is
+meaningless for an upload — a PDF's chapter count is `_pdfChunks.length`, a comic's is however many
+drawn panels came back WITH extracted text (an un-extracted box is not a chapter). So `_genInputMode()`
+(`llm`/`paste`/`pdf`/`comic`/`dialect`) and `_genChapterCount()` answer that once and every gate asks
+them. `_genArcApplicable()` deliberately keeps the two paths' DIFFERENT rules rather than harmonising
+them: the LLM path plans chapters up front and never offered an arc over a single planned chapter
+(`n > 1`), while an upload already has its text split and `#pdf-arc-row` was shown for a single chunk
+(`n >= 1`). Both preserved exactly; the test pins both.
+
+**`_applySkipLessonsUI()` became `_applyLessonCardUI()`** — one function owning the whole card: which
+rows show, whether the start button is offered at all, and what it says. Two things are deliberately
+NOT mode-independent, each for a measured reason rather than an oversight:
+- **`#per-chapter-row` stays LLM-only.** `_renderPerChapterTypes()` builds its rows from
+  `APP.numChapters` (planned chapters that don't exist yet) and `_applyPerChapterTypes()` matches them
+  POSITIONALLY against the finished book. An upload's chunks are real objects the learner can still
+  split/merge/delete, so the two never lined up. Extending it is its own design question.
+- **`#post-gen-qc-cb` stays LLM-only** (new `#post-gen-qc-row` id, so it can be gated). QC on this
+  surface is CLIENT-orchestrated — `_applyPostGenFeatures()` chained onto the book job's completion in
+  `doGenerate()` — and `pdfGenerateAll()`/`comicCreateChapter()` have no such chaining. Offering it
+  there would be a checkbox that does nothing, which is worse than not offering it. Storyboard and
+  analysis have no such problem: both are threaded into the INITIAL `/api/generate-book` request that
+  all three modes already send, so they unify cleanly.
+
+**The start button's state is now DERIVED, replacing six imperative call sites.** `#pdf-gen-btn`'s
+visibility used to be pushed from `pdfGenerateAll()` (twice), `_pollBookJob`'s `finally`,
+`_reconnectBookJob()`, `_renderPdfChunks()` and `pdfSelOpen()`. `_applyLessonCardUI()` computes it
+instead: withheld when there is nothing to generate yet, when a chunk is mid-generation, when a book
+job is running, or when the PDF selection overlay is open. Each of those five states is a separate
+assertion, and the whole thing is mutation-tested (`startable = true` goes red).
+
+**⚠️ THE BUG ITEM AL FOUND — fixed here, and it was silent.** `comicCreateChapter()` had NEVER sent
+`continuedFrom`, unlike `pdfGenerateAll()` and `doGenerate()` which both always did. A comic-sourced
+chapter therefore could not be linked as the continuation of an existing storyline — and not in a way
+the learner could detect: the continuation picker sat right there on the form, could be set, and the
+value was dropped on the floor. Fixed in the same cut because continue-from only became genuinely
+universal when `v87_g` moved it to card 1, where all three modes read one control. Verified LIVE, not
+just in a fixture: a dry run against the real page (fetch stubbed, nothing sent to the server) shows
+the body now carrying `continuedFrom: "tp_17877511606660000499"` from the picker. The comic path also
+gains `arcScript`/`script`/`srcScript`, which it never sent either.
+
+**`_readArcScript()` — one reader, and equivalence CHECKED rather than assumed.** `pdfGenerateAll()`
+computed `arcScript` inline from `needsIntroScript()` because the PDF panel had no checkbox; the comic
+path sent nothing. All three now read `#gen-arc-script-cb` through one helper that ANDs the checkbox
+with that same predicate — and the predicate is exactly the line `buildArcIntroLessons()` opens with
+(`if (!needsIntroScript(...)) return []`, server.js), confirmed by reading it. So the default (checked)
+reproduces precisely what the PDF path computed before, and the learner gains an off switch.
+
+**ZERO new `ui.json` keys.** Each mode's start button reuses the string its own deleted button already
+had — `pdf.generate_all`/`pdf.create_chapters_only` plus the chapters/words counts, `form.comic_create`,
+`form.generate`/`form.create_chapters`. The unification creates no translation work. `en` keys stay 726.
+
+**A SECOND vacuous guard found — the same auto-vivify trap as `v87_g`, this time in a test that had
+been green for releases.** `unit-arc-options.test.js` §1 asserted "both containers exist in the
+shipped markup… if a form loses its container, the picker silently renders nowhere". It ran
+`!!document.getElementById(id)` through the DOM harness — and `lib-dom`'s `makeDocument()`
+AUTO-VIVIFIES every id. **It stayed green through this very release, which DELETED `#pdf-arc-types`
+from `index.html` entirely** — exactly the failure it was written to catch. Re-anchored to the source,
+where the claim is real, and extended to assert the deleted copies have not come back.
+`unit-arc-reinforce-types`'s own "both forms render the same options" check had the same shape and is
+replaced by the structural claim (one container, and every `readArcTypeChecks()` call site names it).
+
+**Tests.** `unit-gen-wizard.test.js` gains five sections (§12a–e): every deleted id absent AND
+unreferenced at the source layer, with the extraction/editing controls asserted to have SURVIVED;
+`_genInputMode()`/`_genChapterCount()`/`_genArcApplicable()` per mode; `_applyLessonCardUI()`'s truth
+table for pdf/comic/llm/dialect and under skip-lessons; the derived start-button state across five
+ready/busy conditions; and the comic dispatch landing on `comicOpenReview()`. **Five mutations, all
+confirmed RED** (dropping `continuedFrom`; showing QC for uploads; applying the LLM `>1` rule to
+uploads; skipping the review stop; always offering the start button). Five existing tests re-anchored
+onto the canonical ids — `unit-comic-chapter` (which now also owns the `continuedFrom` regression
+guard), `unit-postgen-storyboard-optin`, `unit-postgen-analysis-optin`, `unit-arc-reinforce-types`,
+`unit-arc-options` — and `unit-comic-panel-ui`'s "comic mode hides `#gen-form-section`" assertion
+INVERTED rather than deleted: that was correct while the comic flow had its own controls, and hiding
+the lesson card now would leave the flow unable to finish, so a regression back to hiding it is still
+caught.
+
+**Live-verified against the user's own running server** (nothing restarted): comic mode now REACHES a
+fully populated lesson card — arc tick-list, vocab-mode, storyboard/analysis, no QC box, and a green
+"📖 Create chapter" button — where before it hid the card entirely. PDF mode shows "Generate storyline
+(2 chapters, 200 words)", relabels to "Create chapters (…)" under skip-lessons while keeping
+storyboard/analysis, and withdraws the button when a chunk goes active. No deleted control is left in
+the DOM; no editing control was lost.
 
 ## ✅ v87_g — item AL, part 1: the generation wizard goes from FOUR cards to THREE
 
