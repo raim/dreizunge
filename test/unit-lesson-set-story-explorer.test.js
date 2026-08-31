@@ -169,6 +169,119 @@ console.log('  flags and the text-explorer toggle are genuine alternatives: turn
 }
 console.log('  speakStory(): reads whichever language/text is currently shown (target story vs source translation), not always the target: OK');
 
+// ── 6. ⚠️ REGRESSION: this card's non-explorer body is the IDENTICAL render the progress card uses ──
+// User report: "we now see the image above the text, like on the progress card, but ONLY for the text
+// analysis view, not for the vocab highlight view and also not for the translated text. The
+// lesson-set text view should resemble as close as possible, ideally identical code, to the text view
+// on the progress cards."
+//
+// Root cause: this card (v86_ad) OPEN-CODED its body render (furiHtml → _highlightVocabHtml →
+// _storyParasHtml) instead of calling `_storyBodyHtml`, the one shared renderer. That second
+// implementation silently missed four things, only one of which was reported — comic panel IMAGES
+// (`_storyBodyHtml`'s `o.text == null && d.comicPanels` branch, the same defect v86_a fixed for the
+// completion card), the translation view's card/padding wrapper, TRACK T's three-state
+// `_wordStateMap` (the inline copy still passed the superseded v74_n two-shade `solved` array), and
+// the `.story-selectable data-tutor-select="1"` wrapper that PLAN §12's "select text, ask the tutor"
+// depends on. The explorer view looked correct only because `_textExplorerBodyHtml` calls
+// `_comicPanelsFlatTextHtml` itself.
+//
+// Asserted as EXACT STRING EQUALITY against the very call `_renderCompStory` makes, which is the
+// user's own "ideally identical code" — a weaker "both contain an <img>" check would pass again the
+// moment the two drift apart for some other reason. Mutation-tested.
+{
+  const COMIC = { id: 'tp_lsc', topic: 'Comic', lang: 'de', srcLang: 'en', difficulty: 1,
+    story: 'Der Hund lauft schnell.', storyTranslation: 'The dog runs fast.',
+    lessons: [{ type: 'vocab', vocab: [{ target: 'Hund' }] }],
+    comicPanels: [{ x1:0, y1:0, x2:10, y2:10, caption:'Der Hund lauft schnell.', inScene:'',
+                    image:'data:image/png;base64,AAA' }] };
+  const C = client();
+  C.run(`APP.lessonData = ${JSON.stringify(COMIC)}; APP._lsTextExplorer = false;
+    APP._lsStoryLang = 'target'; renderStoryText(APP.lessonData); true;`);
+
+  const target = C.run(`document.getElementById('story-body').innerHTML`);
+  const refTarget = C.run(`_storyBodyHtml(APP.lessonData, { text: null, highlight: true })`);
+  assert.strictEqual(target, refTarget,
+    "the TARGET view is byte-for-byte the render _renderCompStory produces — identical code, not a " +
+    'second implementation that happens to look similar');
+  assert.ok(/<img/.test(target),
+    'and it therefore shows the comic panel image above the text, which is what was reported missing');
+  assert.ok(/data-tutor-select/.test(target),
+    "and carries PLAN §12's tutor-selection marker, which the open-coded version never emitted — " +
+    '"select text, ask the tutor" simply did not work on this card');
+
+  C.run(`toggleLsStoryLang('source'); true;`);
+  const src = C.run(`document.getElementById('story-body').innerHTML`);
+  const refSrc = C.run(`_storyBodyHtml(APP.lessonData, { text: APP.lessonData.storyTranslation, highlight: false })`);
+  assert.strictEqual(src, refSrc, 'the TRANSLATED view is likewise the identical render');
+  assert.ok(/<img/.test(src), 'the translated view shows the panel image too — also reported missing');
+  assert.ok(src.indexOf('The dog runs fast.') >= 0, 'and it really is the translation being shown');
+  // Deliberately NOT selectable: _storyBodyHtml omits the tutor wrapper on the translation branch on
+  // purpose (a selection there would ask the tutor about the wrong language's text). Pinned so
+  // "make them identical" is not later mistaken for "add the wrapper everywhere".
+  assert.ok(!/data-tutor-select/.test(src),
+    'the translation view intentionally has no tutor-selection marker, on BOTH cards alike');
+}
+console.log("  regression: the lesson-set body is the IDENTICAL _storyBodyHtml render the progress card uses, images and all: OK");
+
+// ── 7. ⚠️ The edit and QC affordances still work now that the body is TAPPABLE ─────────────────
+// User's condition on the "fully identical, tappable too" ruling: "if it is possible such that the
+// previous edit and qc functionality should still work." The specific hazard is real and worth
+// naming: `_storyBodyHtml`'s marks carry `onclick="event.stopPropagation();tapWord(…)"`, and this
+// card's header buttons rely on stopPropagation to avoid `toggleStory()`. Checked rather than
+// assumed — and it holds for a structural reason: #story-body is a SIBLING of .story-hdr, not a
+// child, so a mark's stopPropagation has no ancestor handler to swallow.
+{
+  const C = client();
+  C.run(`APP.info = { backend:'ollama', canGenerate:true }; APP._teacherMode = true;
+    APP.lessonData = ${JSON.stringify(BASE_TOPIC)}; APP._lsTextExplorer = false;
+    APP._lsStoryLang = 'target'; renderStoryText(APP.lessonData); true;`);
+  const rendered = C.run(`document.getElementById('story-body').innerHTML`);
+  assert.ok(/wp-tap/.test(rendered), 'setup: the body really is rendered with tappable marks');
+
+  // EDIT: entering edit mode must show the STORY, not the mark soup. It rebuilds from
+  // APP.lessonData.story (not by scraping innerText off the marks), which is what makes this safe.
+  C.run(`toggleStoryRepair(); true;`);
+  const editing = C.run(`(function(){ var b=document.getElementById('story-body');
+    return JSON.stringify({ editable: b.contentEditable, text: b.innerText || '' }); })()`);
+  const ed = JSON.parse(editing);
+  assert.strictEqual(ed.editable, 'true', 'the edit toggle still puts #story-body into contentEditable');
+  assert.strictEqual(ed.text, BASE_TOPIC.story,
+    'and the editable text is the real story — tap marks do not leak into what the teacher edits, ' +
+    'because toggleStoryRepair sources it from APP.lessonData.story rather than scraping the render');
+  // NOTE: "and no <mark> markup survives" is deliberately NOT asserted. lib-dom does not implement
+  // innerText at all (it is a plain property there), so assigning it does not clear innerHTML the way
+  // a real browser does — such a check would be testing the STUB, not the product. The claim that
+  // matters is the one above: what the teacher edits is the story text itself.
+
+  // SAVE reads innerText, which in edit mode is that same plain story — so a tappable render cannot
+  // corrupt what gets written back.
+  C.run(`(function(){ var b=document.getElementById('story-body');
+    b.innerText = 'Der Hund lauft sehr schnell.'; })(); true;`);
+  assert.strictEqual(C.run(`(document.getElementById('story-body').innerText||'').trim()`),
+    'Der Hund lauft sehr schnell.', 'an edit is readable back exactly as typed');
+
+  C.run(`cancelStoryEdit(); true;`);
+  assert.notStrictEqual(C.run(`document.getElementById('story-body').contentEditable`), 'true',
+    'cancelling leaves edit mode');
+
+  // QC: reads NOTHING from the DOM — it posts {topicId} — so a tappable body cannot affect it. Pinned
+  // so a future change that starts scraping the rendered story would be caught here.
+  const posted = C.run(`(function(){
+    var seen = null;
+    fetch = function(u, o){ seen = { url:u, body:o && o.body };
+      return Promise.resolve({ ok:true, json:function(){ return Promise.resolve({
+        corrected:'x', original:'y', verdict:'ok', rejected:[], changedSentences:0,
+        totalSentences:1, changedRatio:0, wordEditRatio:0 }); } }); };
+    runStoryQc();
+    return JSON.stringify(seen);
+  })()`);
+  const q = JSON.parse(posted);
+  assert.ok(q && /story-qc/.test(q.url), 'QC still posts to its own route');
+  assert.deepStrictEqual(JSON.parse(q.body), { topicId: BASE_TOPIC.id },
+    'and sends ONLY the topic id — it never reads the rendered story body, so tappable marks are irrelevant to it');
+}
+console.log('  edit + QC still work with a tappable body (the user\'s condition on the ruling): OK');
+
 console.log('unit-lesson-set-story-explorer: ALL PASSED');
 }
 

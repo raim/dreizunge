@@ -2207,6 +2207,70 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v87 LINE
 
+## ✅ v87_k — BUG (user-reported): the lesson-set story reader showed comic images only in the analysis view. Fixed by making it the IDENTICAL render the progress card uses — a user ruling that overturns `v80_t` for this panel
+
+**User report**: *"In the story reader of the teacher view lesson set card, we now see the image above
+the text, like on the progress card, but ONLY for the text analysis view, not for the vocab highlight
+view and also not for the translated text. The lesson-set text view should resemble as close as
+possible, ideally identical code, to the text view on the progress cards."*
+
+**Root cause — a second implementation of a shared renderer, and a repeat of `v86_a`.** `renderStoryText`
+(this card, `v86_ad`) OPEN-CODED its body render — `furiHtml` → `_highlightVocabHtml` →
+`_storyParasHtml` — instead of calling `_storyBodyHtml`, the one shared renderer the progress card and
+the exercise card both use. The explorer view looked right ONLY because `_textExplorerBodyHtml` calls
+`_comicPanelsFlatTextHtml` itself; the other two views never reached
+`_storyBodyHtml`'s `o.text == null && d.comicPanels` branch at all, because they never reached that
+function. This is the same shape as `v86_a` (a branch that tests IDENTITY, not value, defeated by a
+caller that always supplies `text`) — fixed once for the completion card, then reintroduced by a card
+that re-implemented the render rather than reusing it.
+
+**Three MORE defects the same line fixed, none of them reported** — the cost of the duplicate:
+- **TRACK T's three-state colouring.** The inline copy still passed the superseded `v74_n` two-shade
+  `solved` array, while the progress card had long since moved to `_wordStateMap(d)` — "the same
+  story, two meanings, one tap apart", which `_renderCompStory`'s own comment records as already
+  fixed on its side.
+- **`.story-selectable data-tutor-select="1"`.** The open-coded render never emitted it, so
+  `PLAN §12`'s "select text, ask the tutor" simply **did not work on this card at all**.
+- **The translation view's card/padding wrapper** (`_comicPanelsFlatTextHtml`, `v86_p`/`v86_t`).
+
+**⚠️ A PRIOR RULING OVERTURNED, by explicit user decision.** Making the render identical also makes the
+panel's words TAPPABLE, and the two cannot be separated: inside `_highlightVocabHtml`, `stateByKey`
+drives BOTH the three-state classes and the `wp-tap`/`tapWord` affordance (see its own `v80_t`
+comment). `v80_t` had restricted tapping to the one panel with an active run and explicitly made this
+one read-only. The conflict was put to the user with that trade-off named — including the fallback
+option of an opt-out that keeps `v80_t` at the price of keeping the old two-shade colouring — and they
+ruled: **"Fully identical — tappable too, if it is possible such that the previous edit and qc
+functionality should still work."** So the architecture line moved: every `_storyBodyHtml` caller is a
+tappable surface, and this card is now one of them. After `v87_i`, a tap here plays every question tied
+to that word.
+
+**The user's condition was CHECKED, not assumed, and it holds for structural reasons.** The real hazard
+is specific: `_storyBodyHtml`'s marks carry `onclick="event.stopPropagation();tapWord(…)"`, and this
+card's header buttons depend on `stopPropagation` to avoid `toggleStory()`.
+- **`#story-body` is a SIBLING of `.story-hdr`, not a child** — `toggleStory()` is bound to the header
+  alone, so a mark's `stopPropagation` has no ancestor handler to swallow.
+- **Edit** (`toggleStoryRepair`) rebuilds the body from `APP.lessonData.story`, NOT by scraping the
+  rendered marks, then sets `contentEditable`. What the teacher edits is the story text; marks cannot
+  leak into it. `saveStoryEdit` reads `innerText` only in that already-plain state.
+- **QC** (`runStoryQc`) posts `{topicId}` and reads NOTHING from the DOM, so the body's markup is
+  irrelevant to it. Pinned by a test, so a future change that started scraping the render would fail.
+
+**Tests.** `unit-lesson-set-story-explorer.test.js` §6 asserts EXACT STRING EQUALITY between this
+card's body and the very call `_renderCompStory` makes — the user's own "ideally identical code", and a
+much stronger guard than "both contain an `<img>`", which would pass again the moment the two drift.
+§7 covers the ruling's condition: edit mode yields the real story text, save round-trips it, and QC
+sends only `{topicId}`. `unit-story-panel-alignment.test.js` (`v82_c`) had two assertions encoding the
+old ruling: the two-shade `solved` class became "an answered form carries a TRACK T state class AND
+renders differently from an unanswered one" (same claim, new vocabulary), and the no-tap assertion was
+**INVERTED rather than deleted**, so a silent regression back to inert marks is still caught. THREE
+mutations confirmed red, including one aimed squarely at the user's condition (making edit mode scrape
+the render instead of the story data).
+
+**One assertion deliberately NOT written**: "no `<mark>` survives into edit mode". `lib-dom` does not
+implement `innerText` at all — it is a plain property there — so assigning it does not clear
+`innerHTML` the way a real browser does, and such a check would test the STUB, not the product. The
+claim that matters (the editable text IS the story) is asserted directly instead.
+
 ## ✅ v87_j — BUG (user-reported): a saved text analysis showed "lädt…" forever. TWO independent defects, both in the same seam
 
 **User report**: *"an existing text analysis can not be loaded anymore for `tp_17880367188140000070`,

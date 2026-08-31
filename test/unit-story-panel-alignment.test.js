@@ -94,16 +94,26 @@ const D = {
     renderStoryText(${JSON.stringify(D)}, el);
     el.innerHTML;
   `, 'render');
-  assert.ok(/<mark class="story-vocab-hl solved">parliamo<\/mark>/.test(html),
-    `the answered form gets the "solved" class — got ${html.match(/<mark[^>]*>parliamo<\/mark>/)}`);
-  assert.ok(/<mark class="story-vocab-hl">parlo<\/mark>/.test(html),
-    'a form for a pronoun NOT answered stays in the plain (light) shade');
-  console.log('  a solved word renders with the stronger "solved" shade, others do not: OK');
+  // ⚠️ UPDATED at `v87_k` (user ruling: "Fully identical — tappable too"). This panel now renders
+  // through `_storyBodyHtml`, the SAME call the progress card makes, instead of its own open-coded
+  // copy — which is what finally aligns it with the other panels, the very thing v82_c set out to do.
+  // The consequence, checked and accepted rather than discovered later: `_storyBodyHtml` passes
+  // `_wordStateMap(d)`, so marks carry TRACK T's THREE-state classes (`wp-red`/`wp-partial`/
+  // `wp-green`) instead of the superseded v74_n two-shade `solved`. The CLAIM is unchanged — an
+  // answered form must be visually distinguished from an unanswered one — only the vocabulary is.
+  const answered = html.match(/<mark[^>]*>parliamo<\/mark>/);
+  const unanswered = html.match(/<mark[^>]*>parlo<\/mark>/);
+  assert.ok(answered && unanswered, 'both forms are marked at all');
+  assert.ok(/\bwp-(red|partial|green)\b/.test(answered[0]),
+    `the answered form carries a TRACK T state class — got ${answered[0]}`);
+  assert.notStrictEqual(answered[0], unanswered[0],
+    `an answered form must still render differently from an unanswered one — both got ${answered[0]}`);
+  assert.ok(!/\bwp-red\b/.test(answered[0]),
+    `and the answered one is not the untouched (red) state — got ${answered[0]}`);
+  console.log('  an answered word renders in a different state class from an unanswered one: OK');
 }
 
-// ── 4. No tap affordance — this is a read-only panel, same as the library/storyline panels ──────
-// v80_t restricted tapping to the ONE panel with an active run to jump into. This screen has none,
-// same reasoning as `_renderSavedStory`/`_renderChainStory` (neither passes a state map either).
+// ── 4. Tap affordance — this panel is now the SAME surface as the progress card (v87_k ruling) ──
 {
   const C = client();
   C.run(`APP.progress = { solved: {}, completed: {} }; true;`);
@@ -112,9 +122,19 @@ const D = {
     renderStoryText(${JSON.stringify(D)}, el);
     el.innerHTML;
   `, 'render');
-  assert.ok(!/wp-tap/.test(html), 'no tappable class on this panel');
-  assert.ok(!/tapWord/.test(html), 'no tapWord handler wired on this panel');
-  console.log('  marks are inert (no tap), matching every other read-only story panel: OK');
+  // ⚠️ INVERTED at `v87_k`, on an explicit user ruling, NOT quietly relaxed. v80_t had restricted
+  // tapping to the one panel with an active run, and this panel was read-only. The user asked for
+  // this card's text view to be "as close as possible, ideally identical code" to the progress
+  // card's; tap and the three-state colouring are the SAME switch inside `_highlightVocabHtml`
+  // (`stateByKey` — see its own v80_t comment), so they cannot be separated, and the choice was put
+  // to them explicitly with that trade-off named. They chose fully identical, tappable included.
+  //
+  // Kept as an assertion in the opposite direction rather than deleted, so a silent REGRESSION back
+  // to inert marks is still caught — this panel is now a tappable surface by decision, and after
+  // v87_i a tap here plays every question tied to the word.
+  assert.ok(/wp-tap/.test(html), 'this panel is tappable now (user ruling, v87_k) — identical to the progress card');
+  assert.ok(/tapWord/.test(html), 'and the tap handler really is wired, not just the class');
+  console.log('  marks are tappable, identical to the progress card (v87_k user ruling): OK');
 }
 
 // ── 5. Malformed lesson data does not throw — this panel's whole job is being read ──────────────

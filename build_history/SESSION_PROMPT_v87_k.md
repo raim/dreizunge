@@ -1,7 +1,7 @@
-# Session prompt — written at the `v87_j` cut
+# Session prompt — written at the `v87_k` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
-one alongside. Keep using the double-letter suffix scheme (`v87_k`, `v87_l`, …) unless a future
+one alongside. Keep using the double-letter suffix scheme (`v87_l`, `v87_m`, …) unless a future
 session has a good reason to switch to `v88_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
@@ -21,27 +21,33 @@ live server was running on port 3000 throughout the `v87_g`/`v87_h`/`v87_i` cuts
 `v87_g` was live-verified that way, with nothing of the user's touched. `prompts.json` and `ui.json`
 HOT-RELOAD live via `fs.watch` too.
 
-**What shipped this cut**: a user-reported BUG FIX — a saved text analysis rendered "lädt…" forever.
-TWO independent client-side defects in item W's seam, both harness-reproduced before being touched:
-(1) `_ensureTextExplorerData()` ran ONLY from the two toggle handlers, but the explorer flag survives
-a chapter change — so arriving at another chapter with the mode already on fetched NOTHING (the user's
-own hypothesis, "chapter added to the storyline afterwards", was right); (2) every repaint in the
-analysis path was a bare `_renderCompStory()`, the COMPLETION card, so the lesson-set card's own
-explorer (`v86_ad`, `#story-body`) fetched, reached `ready`, and then repainted a card the learner was
-not looking at — which reproduces the report with ONE toggle and no navigation. Fixed with
-`_teRepaint()` (refresh whichever surfaces are open) and by parameterising
-`_ensureTextExplorerData(chapterId)` so the RENDER path drives it. The server, store and staleness
-hash were read and found correct — UNCHANGED.
+**What shipped this cut**: a second user-reported BUG FIX — the lesson-set (teacher view) story reader
+showed comic panel images only in the text-analysis view. Root cause: `renderStoryText` OPEN-CODED its
+body render instead of calling `_storyBodyHtml`, the shared renderer the progress and exercise cards
+use, so it never reached that function's comic-panel branch. Same shape as `v86_a`, fixed once and
+reintroduced by a card that re-implemented rather than reused. Three MORE defects fell out of the same
+line, none reported: the translation view's padding wrapper, TRACK T's three-state colouring (the copy
+still used the superseded `v74_n` two-shade array), and the `data-tutor-select` marker — so `PLAN §12`'s
+"select text, ask the tutor" had **never worked on that card**.
 
-**Item Z shipped at `v87_i` before it**, and with it the `unit-tap-word` flake — see that entry: the
-~35% failure documented as `buildExercises` corpus sampling since `v80_t` was `Math.random()` in
-`tapWord()`, a real defect. **Update your priors accordingly** (see the rules block).
+**⚠️ `v80_t` IS OVERTURNED FOR THAT PANEL, by explicit user ruling.** Identical code necessarily makes
+its words tappable: inside `_highlightVocabHtml`, `stateByKey` drives BOTH the three-state classes and
+the tap affordance, so they cannot be separated. The user was given that trade-off (including an
+opt-out that would have preserved `v80_t` at the cost of the old colouring) and chose "fully identical
+— tappable too, if it is possible such that the previous edit and qc functionality should still work."
+That condition was verified, not assumed — see the `v87_k` entry. **The architecture line has moved**:
+every `_storyBodyHtml` caller is a tappable, run-bearing surface; the genuinely read-only panels
+(`_renderSavedStory`/`_renderChainStory`) still open-code the two-shade highlight.
+
+**`v87_j` before it** fixed a saved text analysis rendering "lädt…" forever (two client-side defects in
+item W's seam), and **`v87_i`** shipped item Z and, with it, the `unit-tap-word` flake — which was never
+corpus noise but `Math.random()` in `tapWord()`. **Update your priors accordingly** (rules block below).
 
 ## Orient yourself, in this order
 
 1. **This file**, whole.
 2. `build_history/roadmap_v87.md` — its **index table** and **⚠️ Session protocol** block first, then
-   item AL's status block, then `# ✅ SHIPPED IN THE v87 LINE` (`v87_b` → `v87_j`).
+   item AL's status block, then `# ✅ SHIPPED IN THE v87 LINE` (`v87_b` → `v87_k`).
 3. `build_history/roadmap_v86.md` is KEPT as the historical record for the whole `v86` line
    (`v86_a`…`v86_ag`) — go there for how something from THAT line was built.
 4. `INTERNALS.md` **§6b** covers the jobs popover, the drafts store, and the `skipLessons` mechanism
@@ -78,7 +84,7 @@ a chaptering step ever returns) and are UNCHANGED at `v87_h`. `lessons.json`/`ca
 server generated a topic mid-session, which is exactly the "inherently live snapshot" this line warns
 about; both files were swept into the `v87_i` release commit so the guarded counts stay consistent
 with the tree.
-`drafts.json` may exist at the project root (server-created, gitignored) — normal. `APP_VERSION = 'v87_j'`.
+`drafts.json` may exist at the project root (server-created, gitignored) — normal. `APP_VERSION = 'v87_k'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -103,6 +109,16 @@ forward explicitly:
   `!!document.getElementById('gone-id')` is always true and its negation always red — a guard written
   that way fails on a CORRECT tree. Absence claims belong at the SOURCE layer. Found by writing it
   and watching it fail, not by reasoning.
+- **A card that RE-IMPLEMENTS a shared renderer will silently miss everything that renderer grew.**
+  `v87_k`: the lesson-set story reader open-coded its body render instead of calling
+  `_storyBodyHtml`, and so missed FOUR things — comic images (the reported symptom), the translation
+  wrapper, TRACK T's three-state colouring, and the tutor-selection marker, meaning `PLAN §12` never
+  worked there at all. Only one was ever reported; the other three were invisible. When two surfaces
+  are meant to show "the same thing", assert EXACT STRING EQUALITY between their renders, not that
+  both contain some feature — the weaker check passes the moment they drift.
+- **A branch that tests IDENTITY (`o.text == null`) is defeated by any caller that always passes the
+  value.** That is `v86_a`, and `v87_k` is the same defect reintroduced by a different caller. When
+  fixing one, grep for OTHER callers of the same option rather than fixing the one that was reported.
 - **When a user reports "it just hangs", check whether TWO states render the SAME string.** The
   `v87_j` text-explorer bug presented as a hang with no error because `!entry` (never fetched) and
   `status:'loading'` (in flight) both rendered the loading label — so a chapter nothing had even
