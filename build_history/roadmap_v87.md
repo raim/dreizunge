@@ -244,6 +244,154 @@ build — a shared `skipLessons` server mechanism plus one checkbox pattern reus
 defaults (the user's own framing — "at a later point we want to have or auto-select meaningful
 defaults") is future work; this cut only needed "don't schedule lessons at all yet" to become real.
 
+### 🆕 AL. Restructure the generation wizard — unify lesson-type selection, relocate text-shaping choices, across all three input modes
+
+**Not started. Planning/scoping only — written up at the user's own request so a FRESH SESSION (the
+user's own plan: "I start a fresh session with Opus") can pick this up without re-deriving the
+conversation below.** Everything in this entry is a direct record of a real design conversation, not
+a synthesis — where a decision is genuinely made, it's marked ✅ RESOLVED; where it's still open, it's
+marked ⚠️ OPEN, and the next session should NOT assume an answer for those.
+
+**Origin.** Immediately after item AK shipped (`v87_f`), the user asked, in their own words:
+
+> "Please review the logic of the generation flow for our three modes, LLM, PDF and image: 1 ·
+> Language 2 · Text 3 · Chapters 4 · Lessons. I think the #chapters and text length selector for the
+> LLM route should be in 2/Text. 3 could be skipped, and current 4/Lessons should be the ONLY place
+> where we can select lesson types to be generated (optionally). And it should work to schedule this,
+> so select lesson types on 3/Lessons before we start LLM story generation, PDF LLM-based text
+> extraction, or image-based text extraction"
+
+(The "3/Lessons" in that last sentence is the user's own anticipated RENUMBERING once old-card-3 is
+emptied out — Language/Text/Lessons, three steps, not four. Not yet decided whether the wizard
+literally renumbers or keeps a fourth, near-empty card — see the open items below.)
+
+**⚠️ THE KEY STRUCTURAL FINDING, not obvious from the card labels alone**: `#pdf-panel` and
+`#comic-panel` (index.html) live ENTIRELY INSIDE `gen-card-2` ("Text") and are NEVER routed through
+cards 3 or 4 at all. Each panel has its OWN embedded, duplicated copy of an arc/lesson-type row
+(`#pdf-arc-row`, `#comic-arc-row`, each with their own `v87_f`-added skip-lessons checkbox) and its
+OWN "start" button (`pdfGenerateAll()`/`comicCreateChapter()`, called directly from a button inside
+card 2) — completely bypassing the wizard's card-3/card-4 machinery that the plain LLM-generate path
+(`doGenerate()`) uses. This is WHY lesson-type selection is duplicated three times in the codebase
+today (card 4's `#format-wrap`+`#gen-arc-row`-on-card-3 for LLM-generate, `#pdf-arc-row`, and
+`#comic-arc-row`) instead of living in one place — item AK made each of the three copies individually
+support "no lessons," but did not (was not asked to) unify them into one. THIS is what item AL is
+actually about.
+
+**Current full content of `gen-card-3` ("Chapters")**, confirmed by reading the markup directly
+(index.html ~1523–1635), everything this item redistributes:
+- `#gen-skip-lessons-row` (item AK, `v87_f`) — moves to card 4 (below).
+- `#story-len-row` (story-length slider) — ✅ RESOLVED: moves to card 2, LLM path only.
+- `#num-chapters-row` (chapter-count slider) — ✅ RESOLVED: moves to card 2, LLM path only. Contains
+  `#gen-arc-row` nested inside it (the arc checkbox + `#gen-arc-types` tick-list + `#gen-arc-script-cb`
+  "🔡 Teach the script per chapter", which is the `intro_script` lesson type) — ✅ RESOLVED: the WHOLE
+  nested block moves to card 4 with every other lesson-type control (easy to miss since it's visually
+  nested under the chapter-count slider, not the arc checkbox at top level).
+- `#style-wrap` (`#style-select`, 15 writing-style options) — ✅ RESOLVED (see below): card 2, LLM
+  path only.
+- `#continue-row` (`#continue-select`, `#cont-all-langs`, `#reinforce-prior-row`/`#vocab-mode-select`,
+  `#use-full-chain-row`/`#use-full-chain-cb`) — ✅ RESOLVED, item by item, see below.
+- `#gen-create-now-btn` ("📖 Create storyline now, add lessons later" — the `v85_e` shortcut that
+  forces `arc:false`+`lessonFormat:'standard'`, i.e. "the standard gate lesson only, skip extras") —
+  ⚠️ OPEN: likely redundant once card 4 has a real optional/skippable lesson-type step (item AK's own
+  skip-lessons checkbox already goes further — zero lessons, not just "standard only"). Not decided:
+  remove it, or keep as a still-useful faster shortcut alongside the full card-4 flow.
+
+**✅ RESOLVED — style.** Measured, not assumed: style is NOT story-only. `storyStyle` reaches lesson
+generation directly — `sysGrammar`/`sysConjugation` take it as a parameter (server.js:4173/5065),
+`generateWriting` applies it as a `writingStyleNote` (server.js:4690), it's threaded into `chainOpts`
+for most lesson generators (server.js:5665), into the book path's arc lessons (server.js:6403), AND
+into a chapter's `saved.storyStyle` which the EXISTING `add-lesson` route re-reads automatically for
+any lesson added later (server.js:8462, inside `_sharedGenOpts`). **Despite affecting lessons, the
+DECISION correctly stays with the text step**: style is chosen ONCE, at story-creation time, and then
+persists on the topic — every lesson added later (immediately or via the deferred/add-lessons path)
+automatically inherits it from storage, so there is no reason to ask again on card 4. LLM-generate
+only — PDF/comic chapters never set `storyStyle` today (their text isn't model-authored, so "writing
+style" has no instruction to carry), consistent with keeping it in the LLM path specifically.
+
+**✅ RESOLVED — continue-from (+ its two sub-controls).** Moves to card 1 (Language), and is
+mode-independent: any storyline, continued via ANY of the three input modes, in a DIFFERENT
+language/script than the original if wanted. This is already partially wired — `_updateReinforcePriorVisibility()`
+(index.html:8485) calls `refreshScriptPickers()` on every continue-select change, so script
+inheritance/override already reacts correctly when continuing into a different script. **⚠️ A REAL
+BUG THIS RESTRUCTURING WOULD SURFACE (confirmed by reading the source, not assumed): `comicCreateChapter()`
+(index.html:4497) never reads or sends `continuedFrom` at all** — unlike `pdfGenerateAll()`
+(which does) and `doGenerate()` (which does). Comic-sourced chapters cannot be linked as a
+continuation of an existing storyline today, silently. Fixing this (continue-from becomes universal
+once it's one control on card 1, read by all three send-paths) should be part of this item, not a
+separate one — it was found BECAUSE of this restructuring, not before it.
+  - `#cont-all-langs` ("show other languages" in the continue-from list) moves WITH continue-select
+    (same row, same visibility logic).
+  - `#use-full-chain-cb` ("pass the full storyline as context — better continuity, slower generation")
+    — ⚠️ this one is easy to miss: it's inside `#continue-row` and only shown when continue-select has
+    a value (same gate as reinforce-prior-row, `_updateReinforcePriorVisibility()`), but the user's own
+    three answers didn't mention it. It's a story-generation context choice, tied to continuation, not
+    a lesson choice — the working assumption is it moves to card 1 alongside continue-from, but this
+    was not explicitly confirmed and should be checked with the user, not assumed.
+
+**✅ RESOLVED — vocab-mode.** `#reinforce-prior-row`/`#vocab-mode-select` is superseded by (folded
+into) the lesson-type-selection step that now runs AFTER story/chapter text exists, for any mode —
+matches the fact that it only ever mattered together with the SAME `chainVocab`-consuming lesson
+generators item AK's own card-4 controls already gate. The existing `add-lesson` route already has
+its own independent `vocabMode` field, so the mechanism this folds into already exists. **Noted by
+the user as an interim step**: this whole vocab-mode/chainVocab concept is planned to be superseded
+later by the CP1/CP2 text-analysis route (item W's own per-word pipeline), where lesson generation
+becomes dependent on the LEARNER'S OWN PROGRESS rather than a coarse reinforce/neutral/extend mode —
+NOT this item's scope, a forward-looking note only.
+
+**⚠️ OPEN — difficulty.** Explicitly NOT resolved; the user's own words, verbatim, since paraphrasing
+would lose the nuance: *"we want difficulty to intrinsically depend on the input text, which we can
+only control via LLM-based generation. for lesson types it means something different for each lesson
+type. We will later supersede this by the CP1/CP2/… text-analysis based route, where lesson
+generation for a given [chapter] will become also dependent on the user progress."* Unlike style,
+this was NOT placed — no card assignment was agreed. Read as: (a) for LLM-generate, difficulty
+genuinely shapes the TEXT the model writes, so it may belong with card 2's LLM path, same reasoning
+as style; (b) for PDF/comic, the input text is fixed/extracted, so "difficulty" can only mean
+something about the LESSONS, not the text, and (c) "difficulty" may not even be ONE dial that means
+the same thing across lesson types — needs its own design pass, not a placement decision. Do not
+build a difficulty-placement change without returning to the user on this specifically.
+
+**⚠️ OPEN — the exact "schedule this" mechanics, beyond what item AK already shipped.** The user's
+phrasing ("it should work to schedule this, so select lesson types … BEFORE we start LLM story
+generation, PDF LLM-based text extraction, or image-based text extraction") was never disambiguated
+against my own explicit question about it (asked, not answered — the user moved directly into the
+card-3-redistribution discussion instead). The open question, restated for the fresh session: once
+lesson types are chosen upfront (on the now-later Lessons step) — for PDF/comic specifically — does
+"start" mean the WHOLE pipeline (extraction → chaptering → maybe-lessons) becomes ONE deferred job
+with NO live preview/edit stop in between (review then happens afterward, on the resulting
+chapters-only state if lessons were skipped — which is exactly what item AK's `skipLessons` already
+produces), or does the user still see and edit extracted/split chunks live BEFORE reaching the
+Lessons step, same as today, with only the FINAL "now actually generate lessons" action moving later?
+This determines whether `comicExtractPanels()`/`splitChaptersLLM()`'s own TIMING changes at all, or
+only the lesson-type UI's location changes. **Do not assume either answer — ask first.** Separately:
+is genuine job SCHEDULING (queue now, run unattended at a later time) part of THIS item at all, or
+does "schedule" here just mean "defer the lesson-generation decision" — which item AK already built?
+The working hypothesis (not confirmed) is the latter: item AK's `skipLessons` mechanism, now just
+relocated to one consistent home, IS "the schedule capability" for this pass — actual run-now-vs-
+queued-for-later-with-auto-selected-defaults remains item AK's own already-recorded deferred half,
+untouched by item AL.
+
+**Target card layout, as far as resolved** (fresh session: confirm the ⚠️ OPEN items above before
+building any of this):
+- **Card 1 (Language)**: + continue-from, "show other languages", (tentatively) full-chain-context.
+- **Card 2 (Text)**: + story-length slider, chapter-count slider, style-select — all LLM-generate-path
+  only; `#pdf-panel`/`#comic-panel` stay here too (they already are), but STOP embedding their own
+  copies of arc-row/skip-lessons/storyboard/analysis controls and their own start buttons — those
+  route through card 4 instead, same as the LLM path already does.
+- **Card 3 ("Chapters")**: empties out almost entirely under this plan. Not decided whether the
+  wizard renumbers to a genuine 3-step flow (Language/Text/Lessons) or keeps a fourth slot for
+  whatever remains (`#use-full-chain-cb`, if it turns out NOT to move to card 1; a natural home for
+  difficulty, once that's resolved).
+  Also: PDF/comic's own step-2-embedded panels currently show under the "2 · Text" pill regardless —
+  worth checking whether the pill labels/count should change once cards 3/4 behave uniformly across
+  all three modes, or stay as today.
+- **Card 4 ("Lessons")**: becomes the ONE canonical, mode-independent place to pick lesson types —
+  `#format-wrap` (single-chapter), `#gen-arc-row`'s whole tick-list incl. `intro_script`
+  (multi-chapter AND, newly, PDF/comic), item AK's skip-lessons checkbox (already generalized, just
+  needs relocating + de-duplicating from three copies to one), vocab-mode's replacement (folded in
+  per the resolution above). Difficulty: placement OPEN (see above).
+
+**Not started. No code changed by this entry — planning/scoping only.**
+
 ## ✅ RESOLVED BY USER RULING AT THE v86 CUT — no code change, not carried as open tasks
 
 **Item AJ** — `PROMPTS.inflections`'s `{S}`-designated fields comply reliably only when `{S}` is

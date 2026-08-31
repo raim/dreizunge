@@ -33,6 +33,21 @@ for a FUTURE wizard concept ("at a later point we want to have or auto-select me
 This cut only needed "don't schedule lessons at all yet" to become real — don't build the scheduling
 half without a fresh ask.
 
+**🆕 THE PRIORITY FOR THIS SESSION — item AL, `roadmap_v87.md`, NOT YET STARTED.** Immediately after
+`v87_f` shipped, the user asked for a full restructuring of the generation wizard (unify lesson-type
+selection into ONE place across all three input modes, relocate several text-shaping controls),
+worked through it with me in detail, then said: *"I think, we should write up the insights on this
+planned re-structuring and i start a fresh session with Opus. Please prepare all for such a fresh
+session."* **That write-up is `roadmap_v87.md`'s own item AL — read it FIRST, in full, before doing
+anything else.** It is long and deliberately so: it records the exact current markup (with line
+anchors), every decision actually made in that conversation (marked ✅ RESOLVED, with the reasoning),
+a real bug found along the way (comic chapters never send `continuedFrom` — confirmed by reading the
+source), and — just as important — the questions that were asked but NOT answered (marked ⚠️ OPEN,
+including the difficulty-placement question and the exact "schedule this" mechanics). **Do not treat
+a ⚠️ OPEN item as settled just because a plausible answer is written next to it — go back to the user
+for those specifically before building.** No code has been changed for this item; it is 100%
+planning, waiting for this session to pick it up.
+
 ## Orient yourself, in this order
 
 1. **This file**, whole.
@@ -102,14 +117,19 @@ Two more, earned this cut, worth carrying forward explicitly:
 
 # WHERE TO START
 
+**Item AL first** — see the standalone section above and `roadmap_v87.md`'s own item AL entry (full
+detail, current-code line anchors, resolved decisions, and the specific open questions to take back
+to the user before writing any code). It supersedes item AK's own "deferred half" bullet below —
+read AL's own "schedule this" discussion first; don't treat the two as separate asks.
+
 Item U (`v87_b`→`v87_d`), item R (`v87_d`/`v87_e`), and item AK (`v87_f`) are all closed for their
-current scope. Everything below is carried from `roadmap_v87.md`'s own "OPEN AT THE v87 CUT" section
-— see it for full detail and pointers back to `roadmap_v86.md`/`v85.md` where each item's original
-diagnosis lives.
+own scope (item AL now extends/restructures on top of AK, not a reopening of it). Everything else
+below is carried from `roadmap_v87.md`'s own "OPEN AT THE v87 CUT" section — see it for full detail
+and pointers back to `roadmap_v86.md`/`v85.md` where each item's original diagnosis lives.
 
 - **Item AK's own deferred half**: run-now-vs-schedule-with-smart-defaults for lesson generation —
-  explicitly future work per the user's own framing; needs a fresh design conversation before
-  starting, not assumed wanted yet.
+  explicitly future work per the user's own framing; item AL's own "schedule this" ⚠️ OPEN question
+  is closely related — resolve AL's version first, this may turn out to be the same conversation.
 - **Item P's open pedagogy question**: should infinitive-vs-conjugated count as a permitted
   distractor axis for VERBS specifically, distinct from case (genuinely absent for some languages)?
   Needs a product/pedagogy decision — two live-model cycles have already failed to move this via
