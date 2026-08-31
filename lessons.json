@@ -12114,6 +12114,218 @@
         },
         {
           "difficulty": 1,
+          "id": "ls_1788186864644",
+          "title": "Der Waldpfad Manteling",
+          "desc": "Wandern entlang des Wasserturms",
+          "icon": "🌲",
+          "vocab": [
+            {
+              "target": "leiden",
+              "source": "führen",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "nl:vocab:leiden",
+                "canonicalId": "nl:vocab:leiden",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "wandelpad",
+              "source": "der Wanderweg",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "nl:vocab:wandelpad",
+                "canonicalId": "nl:vocab:wandelpad",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "buiten gebruik zijn",
+              "source": "außer Betrieb sein",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "nl:vocab:buiten gebruik zijn",
+                "canonicalId": "nl:vocab:buiten gebruik zijn",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "schilder",
+              "source": "der Maler",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "nl:vocab:schilder",
+                "canonicalId": "nl:vocab:schilder",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "inspireren",
+              "source": "inspirieren",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "nl:vocab:inspireren",
+                "canonicalId": "nl:vocab:inspireren",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "grillig",
+              "source": "unregelmäßig",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "nl:vocab:grillig",
+                "canonicalId": "nl:vocab:grillig",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "vormen",
+              "source": "bilden",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "nl:vocab:vormen",
+                "canonicalId": "nl:vocab:vormen",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "bescherming",
+              "source": "der Schutz",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "nl:vocab:bescherming",
+                "canonicalId": "nl:vocab:bescherming",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Langs de watertoren leidt het wandelpad in.",
+              "source": "Entlang des Wasserturms führt der Wanderweg hinein.",
+              "words": [
+                "Langs",
+                "de",
+                "watertoren",
+                "leidt",
+                "het",
+                "wandelpad",
+                "in."
+              ]
+            },
+            {
+              "target": "Vele schilders werden geïnspireerd door de bossen.",
+              "source": "Viele Maler ließen sich von den Wäldern inspirieren.",
+              "words": [
+                "Vele",
+                "schilders",
+                "werden",
+                "geïnspireerd",
+                "door",
+                "de",
+                "bossen."
+              ]
+            },
+            {
+              "target": "De bossen vormen een natuurlijke bescherming.",
+              "source": "Die Wälder bilden einen natürlichen Schutz.",
+              "words": [
+                "De",
+                "bossen",
+                "vormen",
+                "een",
+                "natuurlijke",
+                "bescherming."
+              ]
+            },
+            {
+              "target": "De Manteling-bossen zijn tegen de zeewind.",
+              "source": "Die Manteling-Wälder sind gegen den Seewind.",
+              "words": [
+                "De",
+                "Manteling-bossen",
+                "zijn",
+                "tegen",
+                "de",
+                "zeewind."
+              ]
+            },
+            {
+              "target": "Jan Toorop staat achter de kinderwagen.",
+              "source": "Jan Toorop steht hinter dem Kinderwagen.",
+              "words": [
+                "Jan",
+                "Toorop",
+                "staat",
+                "achter",
+                "de",
+                "kinderwagen."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1054,
+            "completionTokens": 511,
+            "ms": 233388,
+            "at": "2026-08-31T14:34:24.644Z"
+          }
+        },
+        {
+          "id": "ls_1788187044569_bk9b",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
+        },
+        {
+          "difficulty": 1,
           "id": "ls_1788176070036",
           "type": "comprehension",
           "title": "Die Enteignungszone und der Waldpfad",
@@ -12167,8 +12379,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 10122,
-        "totalCompletionTokens": 3963,
+        "totalPromptTokens": 11176,
+        "totalCompletionTokens": 4474,
         "lessons": [
           {
             "lessonNum": 1,
@@ -12179,7 +12391,7 @@
         ],
         "tokensByType": {
           "lesson_qc": 4255,
-          "add_lesson": 8004
+          "add_lesson": 9569
         }
       },
       "comicPanels": [
@@ -12194,8 +12406,9 @@
         }
       ],
       "generatedAt": "2026-08-31T10:19:43.057Z",
-      "updatedAt": "2026-08-31T11:37:20.756Z",
-      "createdBy": "admin"
+      "updatedAt": "2026-08-31T14:44:17.084Z",
+      "createdBy": "admin",
+      "coverageTarget": 0.55
     },
     {
       "id": "tp_17880367188140000070",
