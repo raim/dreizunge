@@ -1,13 +1,13 @@
-# Session prompt — written at the `v87_h` cut
+# Session prompt — written at the `v87_i` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
-one alongside. Keep using the double-letter suffix scheme (`v87_i`, `v87_j`, …) unless a future
+one alongside. Keep using the double-letter suffix scheme (`v87_j`, `v87_k`, …) unless a future
 session has a good reason to switch to `v88_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v87_h`** — **item AL is now CLOSED**:
-the generation wizard is a genuine THREE-step flow (1 · Language / 2 · Text / 3 · Lessons), and all
-three input modes (LLM-generate, PDF/paste upload, comic image) choose lesson types in ONE place.
+zero-dependency Node language-learning app). Picking up from **`v87_i`** — **item Z is CLOSED**: a
+word tap now plays ALL that word's questions, across lesson types, in ascending lesson order, then
+rejoins normal forward progress. Item AL closed at `v87_h` before it.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
 key, tell them explicitly and let them pause first — do not silently edit `ui.json` mid-session.
@@ -16,43 +16,37 @@ three options to take; `v87_h` added NONE (the unification deliberately reused e
 own existing string). Ask fresh THIS session before adding any.
 
 **A real Ollama backend IS reachable in this sandbox** — confirmed at `v86_ad`, and the user's own
-live server was running on port 3000 throughout the `v87_g`/`v87_h` cuts. `server.js` serves `index.html` with
+live server was running on port 3000 throughout the `v87_g`/`v87_h`/`v87_i` cuts. `server.js` serves `index.html` with
 `readFileSync` PER REQUEST, so a client edit is live on that server without restarting anything —
 `v87_g` was live-verified that way, with nothing of the user's touched. `prompts.json` and `ui.json`
 HOT-RELOAD live via `fs.watch` too.
 
-**What shipped this cut**: item AL part 2 — `#pdf-panel` and `#comic-panel` no longer carry their own
-duplicated lesson-type controls or their own start buttons. 21 ids deleted across the two panels;
-every reader repointed to the wizard's canonical `#gen-skip-lessons-cb`/`#gen-arc-cb`/`#gen-arc-types`/
-`#gen-arc-script-cb`/`#post-gen-storyboard-cb`/`#post-gen-analysis-cb`/`#gen-btn`. Request bodies,
-field names and endpoints are unchanged — only where the CLIENT reads the answer from. New
-`_genInputMode()`/`_genChapterCount()`/`_genArcApplicable()` (an upload's chapter count is its chunk
-or extracted-panel count, not `APP.numChapters`), and `_applySkipLessonsUI()` became
-`_applyLessonCardUI()`, owning the whole card. **A silent bug fixed**: `comicCreateChapter()` had never
-sent `continuedFrom`. Full write-up: `roadmap_v87.md`'s own `v87_h` entry.
+**What shipped this cut**: item Z. Three user rulings were taken BEFORE building, one of which
+**overturned a prior ruling**: `§T5.2` ("tapping enters the usual lesson flow, including questions not
+reachable by tapping") is superseded — a tap is a focused detour now. Order is ascending lesson order;
+scope is unsolved-or-wrong only, falling back to all for a fully-solved word.
 
-**Item AL is CLOSED — do not reopen it.** Its four originally-⚠️-OPEN questions were all answered at
-the `v87_g` cut and both halves have shipped. Two things it deliberately did NOT do, each now carried
-as its own item rather than as unfinished AL work:
-- **Difficulty placement** — ruled out of scope by the user, deferred to its own design pass alongside
-  the CP1/CP2 route ("difficulty means something different for each lesson type", and it may not be
-  one dial at all). `#diff-select` was left exactly where it is, on the lesson card, all three modes.
-- **`#per-chapter-row` and `#post-gen-qc-cb` stay LLM-only**, each for a measured reason recorded in
-  the `v87_h` entry — the per-chapter picker indexes PLANNED chapters positionally, and QC here is
-  client-orchestrated with no upload-path chaining. Extending either is its own piece of work; do NOT
-  treat them as leftovers to tidy up.
+**🎉 THE `unit-tap-word` FLAKE IS GONE — and it was never a flake.** It had failed ~35% of standalone
+runs since `v80_t`, and every session (including this one's own baseline, measured at 4 of 12) wrote
+it off as `buildExercises` corpus sampling. The real cause was `Math.random()` INSIDE `tapWord()`,
+choosing among the word's lessons — the fixture's two lessons held 6 and 1 questions, so a third of
+runs opened a legitimately one-question lesson and a `n > 1` assertion failed on correct behaviour.
+Item Z removed the random pick; 37 consecutive standalone passes since. **Update your priors: this
+project's documented "known flakes" are not automatically corpus noise.** The remaining three
+(`unit-observations-log`, `unit-ui-journeys`, `unit-word-progress`) have NOT been re-examined and may
+well be the same story — auditing them is a good, self-contained next task.
 
-**🆕 NO SINGLE PRIORITY IS SET FOR THIS SESSION.** The item the last two cuts were driving at is done,
-and nothing else is mid-flight. Pick from the carried-forward list under "WHERE TO START" — several
-entries there are blocked on a user decision rather than on work, so **asking the user which one they
-want is a reasonable first move**, and the ones marked as needing a ruling should not be started
-without one.
+**Two more vacuous guards were caught by mutation-testing, both inside `unit-tap-word` itself** — an
+assertion that stayed green when the code it protected was deleted, twice, for two different reasons
+(a fixture whose opening lesson made a reset moot; a fixture whose word lived in one lesson, so there
+was no order to get wrong). That is now FOUR vacuous guards found in this session across three files.
+See the rules block below.
 
 ## Orient yourself, in this order
 
 1. **This file**, whole.
 2. `build_history/roadmap_v87.md` — its **index table** and **⚠️ Session protocol** block first, then
-   item AL's status block, then `# ✅ SHIPPED IN THE v87 LINE` (`v87_b` → `v87_g`).
+   item AL's status block, then `# ✅ SHIPPED IN THE v87 LINE` (`v87_b` → `v87_i`).
 3. `build_history/roadmap_v86.md` is KEPT as the historical record for the whole `v86` line
    (`v86_a`…`v86_ag`) — go there for how something from THAT line was built.
 4. `INTERNALS.md` **§6b** covers the jobs popover, the drafts store, and the `skipLessons` mechanism
@@ -68,20 +62,28 @@ node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-`unit-observations-log` is a KNOWN pre-existing intermittent flake (documented since `v81_b`/`v86_b`)
-— reproduce standalone 5-10× before treating a failure there as real. `unit-ui-journeys`/
-`unit-word-progress`/`unit-tap-word` have each flaked at least once across the `v86` line too;
-**`unit-tap-word` failed 4 of 12 standalone runs on an UNTOUCHED tree at the `v87_g` cut**, and was
-the ONLY failure in the `v87_h` release run — matching the documented rate — all confirmed pre-existing/unrelated (`buildExercises`'s own corpus-sampling
-randomness — CLAUDE.md's own "Flaky tests" section). Don't run the full and `--quick` suites
+**⚠️ `unit-tap-word` IS NO LONGER FLAKY, and the reason matters more than the fact.** It failed ~35%
+of standalone runs from `v80_t` to `v87_h` and was documented as `buildExercises` corpus sampling
+throughout. It was a REAL DEFECT — `Math.random()` inside `tapWord()` — fixed at `v87_i`. It should
+now pass every time; **a failure there is a genuine regression, not noise.**
+
+`unit-observations-log` is still a known intermittent flake (documented since `v81_b`/`v86_b`) —
+reproduce standalone 5-10× before treating a failure there as real. `unit-ui-journeys` and
+`unit-word-progress` have each flaked at least once across the `v86` line. **But do not assume any of
+those three is corpus noise either** — that assumption held for `unit-tap-word` for seven releases and
+was wrong. Each deserves the same discriminating measurement (find the assertion, instrument what it
+compares, check whether the product is actually varying). Don't run the full and `--quick` suites
 CONCURRENTLY on this box (found at `v86_ae`) — run them one at a time.
 
-Corpus at this cut: **336 topics, 97 storylines, 33 languages, 726 `en` keys** — an inherently live
+Corpus at this cut: **337 topics, 97 storylines, 33 languages, 726 `en` keys** — an inherently live
 snapshot (the user's own live server generates content concurrently; re-measure fresh at commit
 time). `en` keys rose from 725 → 726 at `v87_g` (`gen.wizard_step3_lessons`; `gen.wizard_step3` and
 `gen.wizard_step4` are deliberately kept but now UNUSED, so their 33-language translations survive if
-a chaptering step ever returns) and are UNCHANGED at `v87_h`. `lessons.json`/`canonical-analysis.json` unchanged since `v86_ag`.
-`drafts.json` may exist at the project root (server-created, gitignored) — normal. `APP_VERSION = 'v87_h'`.
+a chaptering step ever returns) and are UNCHANGED at `v87_h`. `lessons.json`/`canonical-analysis.json` MOVED at this cut (336 → 337 topics) — the user's own live
+server generated a topic mid-session, which is exactly the "inherently live snapshot" this line warns
+about; both files were swept into the `v87_i` release commit so the guarded counts stay consistent
+with the tree.
+`drafts.json` may exist at the project root (server-created, gitignored) — normal. `APP_VERSION = 'v87_i'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -106,12 +108,28 @@ forward explicitly:
   `!!document.getElementById('gone-id')` is always true and its negation always red — a guard written
   that way fails on a CORRECT tree. Absence claims belong at the SOURCE layer. Found by writing it
   and watching it fail, not by reasoning.
+- **A "known flake" is a HYPOTHESIS, not a fact — and this one was wrong for seven releases.**
+  `unit-tap-word`'s ~35% failure was blamed on `buildExercises` corpus sampling by every session since
+  `v80_t`, including in this prompt. The cause was `Math.random()` in the PRODUCT. The discriminating
+  measurement took one instrumented run: the test already computed the value separating "the tap
+  truncated the run" from "the lesson really is one question" (`full`), and they were equal every
+  time. Before re-confirming an inherited flake, find the assertion and instrument what it compares.
+- **A guard that pins a PROXY fails in BOTH directions.** `n > 1` ("the run holds the whole lesson")
+  stood in for a claim the very next line stated properly (`n === full`). A proxy goes red on correct
+  behaviour and green on broken behaviour; both happened in this one file.
 - **The auto-vivify trap has a SECOND, worse form: a guard that has been green for releases.**
   `unit-arc-options.test.js` §1 claimed "if a form loses its container, the picker silently renders
   nowhere" — via `!!document.getElementById(id)` through the harness. It stayed GREEN through the
   `v87_h` release that DELETED `#pdf-arc-types` from `index.html` entirely: exactly the failure it was
   written to catch. When you delete an id, GREP the tests for a guard that claims to protect it and
   check that guard actually fails.
+- **A guard is only as good as the FIXTURE it runs against.** Two assertions added at `v87_i` stayed
+  GREEN when the code they protected was deleted — not because they were written badly, but because
+  the fixture did not exercise the case (an opening lesson whose type made a reset moot; a word whose
+  questions all sat in ONE lesson, so there was no order to get wrong). Mutation-testing found both.
+  The fixes: a seam that reproduces the state directly, and a SECOND fixture selected for the property
+  the section actually depends on. **Mutation-test every new assertion, not just the feature** — and
+  when one stays green, ask what the fixture is failing to cover.
 - **A cross-realm object literal breaks `deepStrictEqual`.** An object built inside the `vm` context
   carries THAT realm's `Object.prototype`; `assert.deepStrictEqual` reports a mismatch even when
   every value is equal. Go through `JSON.stringify`/`JSON.parse`, as the older assertions in
@@ -128,6 +146,11 @@ item AL (`v87_g`/`v87_h`) are all closed for their own scope. Everything below i
 a decision, not on effort; those are marked.
 
 **Buildable now, no decision needed:**
+- **⭐ Audit the three remaining "known flakes"** (`unit-observations-log`, `unit-ui-journeys`,
+  `unit-word-progress`) the way `unit-tap-word` was audited at `v87_i`: find the failing assertion,
+  instrument what it compares, then decide whether the PRODUCT is varying or the guard is a proxy. One
+  of the four turned out to be a real defect; the other three have never been checked. Self-contained,
+  and each one settled removes a recurring tax on every session's baseline.
 - **The completion card (`_renderCompStory`) still has no force-regenerate control** — only the
   lesson-set card does. Not requested, but a quick, well-precedented follow-up.
 - **Item D (Tier 2 image-coordinate highlighting)** is buildable now that Tier 1 genuinely works, but
@@ -164,7 +187,7 @@ a decision, not on effort; those are marked.
 - **Item AD (source-language furigana)** — needs a live-model check and a toggle-sharing design
   question settled.
 - **Item F's "add explanations" half** — open and unscoped in detail.
-- **Items G, N, O, V, X, Y, Z, AC** — each independently startable or needing user input; see
+- **Items G, N, O, V, X, Y, AC** — each independently startable or needing user input; see
   `roadmap_v87.md`'s own carry-forward section. (Item V, multi-image comic upload, would extend item
   R's comic-draft scope.)
 

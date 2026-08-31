@@ -16821,6 +16821,15 @@ function renderEx(){
         showProgressCard(true); return;
       }
     }
+    // item Z (user ruling): a word-tap detour rejoins normal forward progress instead of ending on
+    // its own progress card — "afterwards proceed with where 'next' or tapping non-highlighted words
+    // would bring us". The action was captured at TAP time (see _captureNextAction) because the card
+    // behind the learner may have been re-rendered since. Cleared FIRST so a re-entrant render can
+    // never fire it twice, and falls through to the normal card when nothing was captured.
+    if (C._wordRun) {
+      const _wr = C._wordRun; delete C._wordRun;
+      if (typeof _wr.next === 'function') { try { _wr.next(); return; } catch(_) {} }
+    }
     showProgressCard(); return;
   }
   const ex=C.exercises[C.cur];
@@ -21025,6 +21034,94 @@ function _wordQuestions(d, word){
   return out;
 }
 
+// ── item Z (roadmap_v87.md), user ruling: a tap is a FOCUSED DETOUR ──────────────────────────────
+// "we want tapping to open all questions for that word, and afterwards proceed with where 'next' or
+// tapping non-highlighted words would bring us."
+//
+// ⚠️ This SUPERSEDES the earlier §T5.2 ruling ("tapping should enter the usual lesson flow, including
+// questions that are not reachable by tapping"), explicitly and on the user's own call when the
+// conflict was put to them. A tap no longer opens a whole lesson: it plays exactly the questions tied
+// to the tapped word — across DIFFERENT lesson types — and then rejoins normal forward progress. The
+// lesson's other questions are still reached the ordinary way, by working through the lesson.
+//
+// What this DELETED, and why it matters beyond the feature: `tapWord` used to pick ONE candidate at
+// random (`pool[Math.floor(Math.random() * pool.length)]`) and open that lesson. That single line was
+// also the cause of `unit-tap-word`'s long-documented ~35% "flake" — the fixture word's two lessons
+// hold 6 and 1 questions, so the coin-flip produced a one-question run a third of the time and the
+// suite's `n > 1` assertion failed on entirely correct behaviour. It was re-confirmed as
+// "pre-existing, corpus-sampling noise, unrelated" in session after session; it was neither noise nor
+// unrelated, and playing ALL the word's questions removes the randomness at its source rather than
+// re-tuning the guard around it.
+//
+// Collecting the questions REUSES `buildMixedExercises`'s own proven mechanism rather than inventing
+// one: builders sample and shuffle, so a wanted qid may not appear in any single derivation — that
+// function re-derives a sibling's builder up to 40 times until every wanted key has a real exercise
+// object, and tags each with `_srcLessonIdx` so `qid()`/`markSolved`/`_exFlagTarget` all resolve back
+// to the SOURCE lesson instead of the run's own. Both facts are load-bearing here for exactly the
+// same reasons, so this uses the same loop and the same tag.
+const _WORD_RUN_DERIVE_TRIES = 40;   // same budget buildMixedExercises uses, for the same reason
+function _buildWordRun(d, pool){
+  // Corpus/lesson order (user ruling): the order the learner would otherwise have met these
+  // questions in. `_wordQuestions` already returns candidates in that order, so grouping by lesson
+  // while PRESERVING first-appearance order is all that is needed — no re-sorting by type or by
+  // solved-state, both of which would make repeat taps of the same word inconsistent.
+  const byLesson = new Map();
+  pool.forEach(c => {
+    if (!byLesson.has(c.lessonIdx)) byLesson.set(c.lessonIdx, new Set());
+    byLesson.get(c.lessonIdx).add(c.key);
+  });
+  // ASCENDING LESSON ORDER, not the pool's own order. `_wordQuestions` returns story-source probes
+  // first and vocab entries after, so iterating its insertion order put a lesson-0 vocab question
+  // AFTER lessons 2 and 6 — measured live on a real chapter, where tapping "send" produced 2, 6, 0.
+  // The user's ruling was "the order the learner would otherwise have met them in", and a learner
+  // works lessons in index order, so the groups are sorted. Order WITHIN a lesson still follows the
+  // pool, which is that lesson's own corpus order.
+  const out = [];
+  const lessonOrder = [...byLesson.keys()].sort((a, b) => a - b);
+  for (const li of lessonOrder) {
+    const want = byLesson.get(li);
+    const L = (d.lessons || [])[li];
+    if (!L) continue;
+    // The same exclusion buildMixedExercises applies to its own pooling, reused rather than
+    // re-spelled: these types build no playable pooled exercise (error_hunt/writing own their whole
+    // render path, and `mixed` pools from others). Rendering one inside a word run would need
+    // startLesson's per-type flags, which a MIXED-type run deliberately does not set.
+    if (typeof _mixedSkips === 'function' && _mixedSkips(L.type)) continue;
+    const remaining = new Set(want);
+    const found = new Map();
+    for (let r = 0; r < _WORD_RUN_DERIVE_TRIES && remaining.size; r++) {
+      let exs;
+      try { exs = lessonTypeMeta(L.type).build(L, li) || []; } catch(_) { exs = []; }
+      for (const ex of exs) {
+        let k = null;
+        try { k = qid(ex, L.id); } catch(_) {}
+        if (k && remaining.has(k)) { remaining.delete(k); found.set(k, { ...ex, _srcLessonIdx: li }); }
+      }
+    }
+    // Emit in the pool's own order for this lesson, not the Map's insertion order, so the sequence
+    // the learner meets is the corpus order the ruling asked for even when a later derivation is
+    // what finally surfaced an earlier question.
+    pool.forEach(c => { if (c.lessonIdx === li && found.has(c.key)) { out.push(found.get(c.key)); found.delete(c.key); } });
+  }
+  return out;
+}
+// "Where Next would have led" — captured at TAP time, deliberately.
+//
+// It is NOT `afterComplete()`, despite that being the inline `onclick` in the markup: `showComplete()`
+// REASSIGNS `#comp-next.onclick` (see its own comment), so the static name is stale for every case
+// except a finished drill. The honest destination is whatever that button does RIGHT NOW — which is
+// exactly the indirection `_storyTapMaybeAdvance()` already uses to make a plain-text tap advance,
+// including its explicit `disabled` check (a mid-chapter Next with mandatory work still open must
+// stay closed here too). Captured on the way IN rather than read on the way out, because by the time
+// the word run finishes the learner is on the lesson screen and the card behind them may have been
+// re-rendered and repointed.
+function _captureNextAction(){
+  for (const id of ['comp-next', 'sum-next']) {
+    const btn = document.getElementById(id);
+    if (btn && !btn.disabled && typeof btn.onclick === 'function') return btn.onclick.bind(btn);
+  }
+  return null;
+}
 // Tap handler. T0: "Each tapped word just opens one of potentially several associated questions …
 // Revisiting a word should preferentially ask questions not yet solved."
 //
@@ -21053,8 +21150,42 @@ function tapWord(word){
   //
   // Only consulted when there is no question, so a word with real questions is unaffected — the
   // preference above still decides, and a question-less destination can never dilute it.
+  // item Z: play ALL of the word's questions, in corpus order, instead of picking one at random.
+  // `pool` is already "unsolved or wrong-since-right, else all" (T0 / §T7, user ruling: a tap must
+  // not re-drill questions the learner already has right, but a fully-solved word still gets its
+  // whole set so the tap never does nothing).
+  if (pool.length) {
+    const run = _buildWordRun(d, pool);
+    if (run.length) {
+      const nextAction = _captureNextAction();
+      // Open through the REAL startLesson, then replace the run: that function owns a dozen pieces of
+      // per-round state (hearts, the §0h answer ledger, mic reset, the screen switch, the first
+      // render) and duplicating them here is exactly how the two would drift apart. The lesson it
+      // opens is the first source lesson, so `C.lessonIdx` is a real, startable index; every pooled
+      // exercise carries `_srcLessonIdx`, which is what `qid()` actually keys on, so a question from
+      // ANOTHER lesson still records against its own lesson's id.
+      if (!showLesson(run[0]._srcLessonIdx)) return false;
+      const CW = APP.cur;
+      CW.exercises = run;
+      CW.cur = 0;
+      CW.ans = [];
+      // A word run is a MIXED-type sequence by construction, so the per-type render flags startLesson
+      // set from its single opening lesson must not survive — otherwise a run opened at a `grammar`
+      // lesson would render every question through that lesson's path. `_mixedSkips` already kept
+      // error_hunt/writing out of the run, so ordinary `renderEx` is correct for everything in it.
+      CW.isErrorHunt = false; CW.isWriting = false; CW.isGrammar = false; CW.isConjugation = false;
+      // Read by renderEx's end-of-run branch to rejoin forward progress instead of showing this
+      // detour's own progress card. Null when Next was unavailable (or disabled) at tap time — then
+      // the run ends on the normal card, which is the honest fallback rather than a dead end.
+      CW._wordRun = { word: String(word), next: nextAction };
+      renderEx();
+      return true;
+    }
+    // Collection came up empty (every candidate's builder failed to surface it) — fall through to
+    // the pre-item-Z single-lesson behaviour below rather than reporting a tap that did nothing.
+  }
   const pick = pool.length
-    ? pool[Math.floor(Math.random() * pool.length)]
+    ? pool[0]
     : (() => {
         const ls = _wordLessons(d, word);
         return ls.length ? { lessonIdx: ls[Math.floor(Math.random() * ls.length)], key: null } : null;

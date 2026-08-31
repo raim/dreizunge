@@ -199,9 +199,23 @@ Still open — the user's own thoughts on this are recorded verbatim in `roadmap
 
 Still open, not started.
 
-### Z. Word-tap question routing: after answering, return to where "Next" would have led, having played through every question tied to that word first
+### ✅ Z. Word-tap question routing: after answering, return to where "Next" would have led, having played through every question tied to that word first — SHIPPED `v87_i`
 
-Still open, not started.
+**Shipped exactly as asked, and it closed a long-standing false "known flake" on the way.** A tap now
+plays ALL the tapped word's questions — across different lesson types, in ascending lesson order —
+then rejoins normal forward progress via `#comp-next`'s own current handler. Three user rulings taken
+before building: **item Z supersedes `§T5.2`** (which had ruled that a tap opens the whole lesson
+"including questions that are not reachable by tapping" — the conflict was put to the user explicitly
+rather than resolved quietly); ascending lesson order; and only unsolved-or-wrong questions, falling
+back to all of them for a fully-solved word.
+
+**The `unit-tap-word` ~35% "flake" was this feature's bug all along.** `tapWord()` picked among the
+word's lessons with `Math.random()`; the fixture's two lessons held 6 and 1 questions. Documented as
+`buildExercises` corpus noise since `v80_t` and re-confirmed as such every session; it was neither
+noise nor unrelated. Removing the random pick removed the failure class — 37 consecutive standalone
+passes, and the new §2c pins DETERMINISM across repeated taps so the class cannot come back. Full
+write-up, including the two further vacuous guards mutation-testing caught inside that same file:
+`roadmap_v87.md`'s own `v87_i` entry.
 
 ### AB. The "stuck mid-sentence" half of item AB (from `v86_m`)
 
@@ -2192,6 +2206,95 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v87 LINE
+
+## ✅ v87_i — item Z: a word tap plays ALL that word's questions, then rejoins forward progress — and the `unit-tap-word` "flake" turns out to be a real defect
+
+**User ask, restated in their own words this session**: *"we want tapping to open all questions for
+that word, and afterwards proceed with where 'next' or tapping non-highlighted words would bring
+us."* Item Z had sat open since the `v86` line, explicitly "not scoped — needs reading `tapWord()`'s
+own current routing/return logic in full first (not attempted this cut)". That reading is what made
+the rest fall out.
+
+**⚠️ THE FINDING THAT REFRAMES A LONG-STANDING "KNOWN FLAKE".** `unit-tap-word` has failed ~35% of
+standalone runs since `v80_t`, and every session since has re-confirmed it as "pre-existing,
+`buildExercises` corpus-sampling randomness, unrelated" — the session prompt said so, this session's
+own baseline said so, and it was measured again at 4 of 12 on an untouched tree. **It was neither
+corpus noise nor unrelated.** `tapWord()` chose among the tapped word's lessons with
+`pool[Math.floor(Math.random() * pool.length)]`, and the fixture word's two lessons held 6 and 1
+questions — so a third of runs opened a legitimately one-question lesson and the section's
+`n > 1` assertion ("the run holds the whole lesson") failed on entirely correct behaviour. The
+randomness was in the PRODUCT, not the corpus.
+
+The discriminator was inside the test the whole time: the very next line computes `full`, what
+`startLesson()` would have built. Instrumenting both showed `n === full` in every single run —
+6/6 and 1/1 — which is what proves `tapWord` was never truncating anything and the guard was pinning
+a PROXY (a count) for a claim it stated correctly one line later. **The fix was not to re-tune the
+assertion**: item Z deletes the random pick outright, so the failure class is gone at its source.
+37 consecutive standalone passes after the change, against the ~35% rate before it.
+
+**⚠️ A PRIOR USER RULING WAS OVERTURNED, deliberately and on the user's own call.** `§T5.2` ruled:
+*"tapping a word should enter the usual lesson flow, including questions that are not reachable by
+tapping."* That is why a tap opened a whole lesson, and why the `n > 1` assertion existed at all.
+Item Z asks for something incompatible. The conflict was put to the user explicitly rather than
+resolved quietly, and they ruled that **item Z supersedes §T5.2**: a tap is now a focused detour, and
+the lesson's other questions are reached the ordinary way, by working through the lesson. Two further
+rulings taken at the same time: order is **ascending lesson order**, and the run holds **only
+unsolved or wrong-since-right** questions (falling back to all of them for a fully-solved word, so a
+tap is never a no-op).
+
+**Built on the EXISTING cross-lesson mechanism, not a new one.** A word's questions live in different
+lessons, and `qid()` already resolves an exercise to its own source lesson via `ex._srcLessonIdx` —
+the tag `buildMixedExercises()` invented for `mixed` rounds. So a run holding questions from several
+lessons was already a supported shape; item Z is a second producer of it. `_buildWordRun()` reuses
+that function's two load-bearing details for the same reasons: the **40-derivation convergence loop**
+(builders sample and shuffle, so a wanted qid may not appear in any single derivation) and the
+`_srcLessonIdx` tag (so `markSolved`/`_exFlagTarget` record against the question's real lesson, not
+the run's opening one). `_mixedSkips()` is reused too, to keep `error_hunt`/`writing`/`mixed` out —
+they own their whole render path.
+
+**"Where Next would have led" is NOT `afterComplete()`**, despite that being the inline `onclick` in
+the markup. `showComplete()` REASSIGNS `#comp-next.onclick`, so the static name is stale for
+everything except a finished drill — which is exactly why `_storyTapMaybeAdvance()` (the plain-text
+tap) calls `btn.onclick()` dynamically instead of naming a function. `_captureNextAction()` reuses
+that same indirection, including its explicit `disabled` check so a mid-chapter Next that is
+legitimately locked stays locked. It captures on the way IN, not on the way out, because by the time
+the detour finishes the card behind the learner may have been re-rendered and repointed. With nothing
+captured, the run ends on the ordinary progress card — a fallback, not a dead end.
+
+**Ordering was corrected by LIVE measurement, not reasoning.** The first implementation grouped by
+`_wordQuestions`' own return order (story-source probes first, vocab last) and measured live on a
+real chapter as lessons **2, 6, 0** — which is not "the order the learner would otherwise have met
+them in", since a learner works lessons in index order. Sorted ascending; the same tap now yields
+**0, 2, 6**.
+
+**Test work — and two more vacuous guards caught by mutation-testing, in this same file.**
+`unit-tap-word`'s §2 was rewritten to the new contract (every question in the run is about the word;
+every exercise tagged; the run starts at its first question; the detour marker is set; the opening
+lesson's per-type render flags are cleared), plus new sections for "plays ALL of them" (non-vacuity
+enforced), **determinism across repeated taps** (the assertion that would have caught the original
+flake as a defect), the return-to-Next path, and the disabled-Next fallback. §4 was rewritten too:
+its old invariant ("if the run holds a solved and an unsolved question, don't land on the solved
+one") is now *unsatisfiable by construction* — solved questions are not put in the run at all — which
+is a strictly stronger claim, and its own precondition failing is how the supersession announced
+itself. §4b pins the fully-solved fallback.
+- **Vacuous guard 1**: the per-type-flag assertion stayed GREEN when the reset was deleted, because
+  this fixture's opening lesson is an ordinary type. Rewritten to reproduce the state at the seam
+  (wrapping `showLesson` to leave the flags set as a grammar lesson would), so it now fails.
+- **Vacuous guard 2**: the ascending-order assertion stayed GREEN when the sort was removed — the
+  primary fixture's word has all its questions in ONE lesson, so there was no order to get wrong.
+  Fixed by adding a SECOND fixture (`FIXZ`) selected for cross-lesson SPREAD rather than
+  co-occurrence, with its own non-vacuity assertion. It selects 血の関税 / "send", 3 questions across
+  3 lessons — the same case that was verified live first.
+
+**Seven mutations, all confirmed RED**: restoring the random single-lesson pick; dropping the detour
+marker; dropping the `_srcLessonIdx` tag; leaving the per-type flags set; including solved questions;
+removing the return-to-Next call; and reverting the ascending sort.
+
+**Live-verified against the user's own running server**: tapping "send" in a real chapter builds a
+3-question run spanning `word_forms`, `conjugation` and vocab, in lesson order 0 → 2 → 6, each
+exercise carrying its own `_srcLessonIdx` and each qid correctly keyed to its OWN lesson
+(`…_word_forms:`, `…_conjugation:`, `1:`) — so `markSolved` credits the right lesson. Before this
+change, that same tap coin-flipped into one of those three lessons and opened it whole.
 
 ## ✅ v87_h — item AL part 2: PDF and comic uploads route through the ONE lesson card; a silent `continuedFrom` bug fixed
 

@@ -141,6 +141,45 @@ assert.ok(FIX, 'the corpus has a chapter whose story contains a taught word with
 console.log(`  fixture: "${FIX.t.topic}" — tapping "${FIX.w}" (${FIX.n} question(s), pair co-occurs in ${FIX.pairCo}/${FIX.sampled} builds)`);
 assert.ok(FIX.n >= 1, 'the fixture word has at least one real question in a built run');
 
+// ── A SECOND fixture, for item Z's cross-lesson claims ──────────────────────────────────────────
+// FIX above is selected for CO-OCCURRENCE of two questions, which item Z's own sections cannot use:
+// "play all of the word's questions, in ascending lesson order" is only meaningfully exercised by a
+// word whose questions live in DIFFERENT lessons, and FIX's word routinely has all of them in one.
+// Written after mutation-testing showed the ordering guard staying GREEN when the sort was removed —
+// with a single-lesson fixture there is no order to get wrong. Selected for SPREAD (most distinct
+// source lessons), which is the property those sections actually depend on. Verified live first: the
+// corpus really does hold such words (tapping "send" in "血の関税" spans lessons 0, 2 and 6).
+let FIXZ = null;
+for (const t of store.topics) {
+  if (!(t.story || '').trim() || (t.lessons || []).length < 2) continue;
+  const C = open(t, {});
+  const best = JSON.parse(C.run(`(function(){
+    var d = APP.lessonData, low = String(d.story||'').toLowerCase();
+    var all = _storyWordSources(d).map(function(s){return s.word;})
+      .concat((d.lessons||[]).flatMap(function(L){ return (L && L.vocab || []).map(function(v){ return v && v.target; }); }))
+      .filter(Boolean);
+    var seen = {}, out = null;
+    for (var i=0;i<all.length;i++){
+      var w = String(all[i]);
+      if (seen[w]) continue; seen[w] = 1;
+      if (low.indexOf(w.toLowerCase()) < 0) continue;
+      var c = _wordQuestions(d, w);
+      if (c.length < 2) continue;
+      var ls = {}; c.forEach(function(x){ ls[x.lessonIdx] = 1; });
+      var spread = Object.keys(ls).length;
+      if (spread >= 2 && (!out || spread > out.spread)) out = { w: w, spread: spread, n: c.length };
+    }
+    return JSON.stringify(out);
+  })()`));
+  if (!best) continue;
+  if (!FIXZ || best.spread > FIXZ.spread) FIXZ = { t, w: best.w, spread: best.spread, n: best.n };
+  if (FIXZ.spread >= 3) break;                   // strong enough: three lessons genuinely orders
+}
+assert.ok(FIXZ,
+  'the corpus has a chapter with a story word whose questions span >= 2 DIFFERENT lessons — item ' +
+  "Z's cross-lesson sections are meaningless without one");
+console.log(`  cross-lesson fixture: "${FIXZ.t.topic}" — tapping "${FIXZ.w}" (${FIXZ.n} questions across ${FIXZ.spread} lessons)`);
+
 // ── 1. A tap starts a real run, positioned on a question about that word ──
 // Accumulated over several taps rather than asserted on one. The contract is conditional — land on
 // the word's question WHEN the run contains one, else enter at the top rather than do nothing — and
@@ -185,20 +224,230 @@ assert.ok(FIX.n >= 1, 'the fixture word has at least one real question in a buil
   console.log(`  a tap lands on that word's question (${hadOne}/${started} runs contained one)`);
 }
 
-// ── 2. It is the USUAL flow — the whole lesson is there ──────────────────
-// §T5.2's point: tapping is a way in, not a one-question mode. The run must contain the lesson's
-// other questions too, including ones no word tap could reach.
+// ── 2. item Z: the run is the WORD's questions — a focused detour, not a whole lesson ───────────
+// ⚠️ REWRITTEN, and the ruling it encoded was deliberately OVERTURNED. This section used to assert
+// §T5.2 ("tapping enters the usual lesson flow, INCLUDING questions not reachable by tapping"): that
+// the run held the whole lesson and was `=== startLesson(lessonIdx)`'s own run. Item Z supersedes
+// that, on the user's explicit call when the conflict was put to them — a tap now plays exactly the
+// questions tied to the tapped word, across lesson types, then rejoins forward progress.
+//
+// The old `n > 1` assertion is ALSO where this file's long-documented ~35% "flake" lived, and it was
+// never corpus noise: `tapWord` picked one of the word's lessons with `Math.random()`, and the
+// fixture's two lessons held 6 and 1 questions, so a third of runs built a legitimately-one-question
+// round and the assertion failed on correct behaviour. §2c below pins the property that makes that
+// whole failure class impossible now — the run is DETERMINISTIC across taps.
 {
   const C = open(FIX.t, {});
   C.run(`tapWord(${JSON.stringify(FIX.w)}); true;`);
-  const n = C.run(`(APP.cur.exercises||[]).length`);
-  const li = C.run(`APP.cur.lessonIdx`);
-  const full = C.run(`(function(){ var C2=APP.cur; var save=C2.cur;
-    startLesson(${'APP.cur.lessonIdx'}); var m=(APP.cur.exercises||[]).length; return m; })()`);
-  assert.ok(n > 1, `the run holds the whole lesson, not one question (${n})`);
-  assert.strictEqual(n, full, 'and it is exactly the run startLesson would have built anyway');
-  assert.ok(li >= 0, 'a real lesson index was chosen');
-  console.log(`  the tap enters the usual flow (${n} questions, lesson ${li})`);
+  const r = JSON.parse(C.run(`(function(){
+    var d = APP.lessonData, C2 = APP.cur, want = _hlKey(stripFuri(${JSON.stringify(FIX.w)}));
+    var pool = _wordQuestions(d, ${JSON.stringify(FIX.w)});
+    var unsolved = pool.filter(function(c){ return !c.solved || c.wrong; });
+    var expect = (unsolved.length ? unsolved : pool);
+    var isMine = function(ex){
+      if (!ex) return false;
+      var k = null; try { k = qid(ex, (d.lessons[ex._srcLessonIdx]||{}).id); } catch(e) {}
+      if (k && expect.some(function(c){ return c.key === k; })) return true;
+      return [ex.target, ex.correct, ex.base, ex.infinitive].filter(Boolean)
+        .some(function(x){ return _hlKey(stripFuri(String(x))) === want; });
+    };
+    var exs = C2.exercises || [];
+    return JSON.stringify({
+      n: exs.length,
+      allMine: exs.every(isMine),
+      tagged: exs.every(function(ex){ return ex && ex._srcLessonIdx != null; }),
+      srcLessons: exs.map(function(ex){ return ex._srcLessonIdx; }),
+      startAtTop: C2.cur === 0,
+      hasWordRun: !!(C2._wordRun && C2._wordRun.word === ${JSON.stringify(FIX.w)}),
+      typeFlags: [C2.isErrorHunt, C2.isWriting, C2.isGrammar, C2.isConjugation],
+      lessonIdx: C2.lessonIdx });
+  })()`));
+  assert.ok(r.n >= 1, `the tap built a real run (${r.n})`);
+  assert.ok(r.allMine,
+    'EVERY question in the run is about the tapped word — a tap is a focused detour now, not a way ' +
+    'into the whole lesson (item Z supersedes §T5.2)');
+  assert.ok(r.tagged,
+    'every pooled exercise carries _srcLessonIdx — this is what makes qid()/markSolved() record ' +
+    "against the question's OWN lesson rather than the run's opening one");
+  assert.strictEqual(r.startAtTop, true, 'the run starts at its first question, not at a scanned offset');
+  assert.ok(r.hasWordRun, 'the run is marked as a word detour, so renderEx can rejoin forward progress');
+  assert.ok(r.lessonIdx >= 0, 'a real lesson index was chosen');
+  console.log(`  item Z: the tap plays the WORD's questions (${r.n}, from lesson(s) ${[...new Set(r.srcLessons)].join(',')}): OK`);
+}
+
+// ── 2a. The opening lesson's per-type render flags are CLEARED ──────────────────────────────────
+// ⚠️ Written the long way ON PURPOSE. The obvious version — tap, then assert the four flags are
+// false — was VACUOUS and was caught by mutation-testing: this fixture's first source lesson is an
+// ordinary type, so startLesson already leaves all four false and deleting the reset changed
+// nothing. The flags only ever go true when the run's OPENING lesson is grammar/conjugation (or
+// error_hunt/writing, which `_mixedSkips` keeps out of a word run), and no corpus fixture here has a
+// tapped word whose first source lesson is one of those.
+//
+// So the state is reproduced at the seam instead: showLesson is wrapped to leave the flags set
+// exactly as a grammar opening lesson would, and the reset must still clear them. A pooled run
+// renders every question through the ordinary path — the same reason a `mixed` lesson carries none
+// of these flags — so a run opened at a grammar lesson must not render its other questions through
+// grammar's own path. Mutation-tested: removing the reset line turns this red.
+{
+  const C = open(FIX.t, {});
+  const r = JSON.parse(C.run(`(function(){
+    var realShow = showLesson;
+    showLesson = function(idx){
+      var ok = realShow(idx);
+      if (ok) { APP.cur.isGrammar = true; APP.cur.isConjugation = true;
+                APP.cur.isErrorHunt = true; APP.cur.isWriting = true; }
+      return ok;
+    };
+    var started = tapWord(${JSON.stringify(FIX.w)});
+    showLesson = realShow;
+    var C2 = APP.cur;
+    return JSON.stringify({ started: started,
+      flags: [C2.isErrorHunt, C2.isWriting, C2.isGrammar, C2.isConjugation] });
+  })()`));
+  assert.strictEqual(r.started, true, 'setup: the tap still started a run through the wrapped seam');
+  assert.deepStrictEqual(r.flags, [false, false, false, false],
+    "the opening lesson's per-type render flags are cleared — a mixed-source run renders through the " +
+    'ordinary path, exactly as a `mixed` lesson does');
+  console.log('  item Z: a pooled run clears the opening lesson\'s per-type render flags: OK');
+}
+
+// ── 2a2. The sequence is in ASCENDING LESSON ORDER ──────────────────────────────────────────────
+// User ruling: "the order the learner would otherwise have met them in". A learner works lessons in
+// index order, so the word's questions are played lesson 0 → 2 → 6, not in `_wordQuestions`' own
+// return order (story-source probes first, vocab last), which measured live as 2, 6, 0 on a real
+// chapter. Order WITHIN one lesson still follows that lesson's corpus order.
+{
+  const C = open(FIXZ.t, {});
+  C.run(`tapWord(${JSON.stringify(FIXZ.w)}); true;`);
+  const src = JSON.parse(C.run(`JSON.stringify((APP.cur.exercises||[]).map(function(ex){ return ex._srcLessonIdx; }))`));
+  assert.ok(src.length >= 1, 'setup: the tap built a run');
+  assert.ok(new Set(src).size >= 2,
+    `non-vacuity: the run really does span several lessons (${[...new Set(src)].join(',')}) — with a ` +
+    'single-lesson fixture there is no order to get wrong and this section proves nothing');
+  const firstSeen = [];
+  src.forEach(i => { if (!firstSeen.includes(i)) firstSeen.push(i); });
+  assert.deepStrictEqual(firstSeen, [...firstSeen].sort((a, b) => a - b),
+    `the run visits source lessons in ascending order (${firstSeen.join(',')})`);
+  // Questions from one lesson are contiguous — a run that interleaved lessons would still satisfy
+  // the ascending check above on first-appearance alone.
+  assert.deepStrictEqual(src, [...src].sort((a, b) => a - b),
+    `and does not interleave lessons (${src.join(',')})`);
+  console.log(`  item Z: the word's questions play in ascending lesson order (${src.join(',')}): OK`);
+}
+
+// ── 2b. It plays ALL of them, not one — the actual ask ───────────────────────────────────────────
+// "we want tapping to open all questions for that word". Non-vacuity matters here: if the fixture
+// only ever has one question, this proves nothing, so the assertion is conditional on the pool
+// genuinely holding more than one AND the section fails if that never happened across the sweep.
+{
+  let checked = 0, multi = 0;
+  for (let i = 0; i < 8; i++) {
+    const C = open(FIX.t, {});
+    if (C.run(`tapWord(${JSON.stringify(FIX.w)})`) !== true) continue;
+    const r = JSON.parse(C.run(`(function(){
+      var d = APP.lessonData;
+      var pool = _wordQuestions(d, ${JSON.stringify(FIX.w)});
+      var unsolved = pool.filter(function(c){ return !c.solved || c.wrong; });
+      var expect = (unsolved.length ? unsolved : pool);
+      var keys = {}; expect.forEach(function(c){ keys[c.key] = 1; });
+      var got = {};
+      (APP.cur.exercises||[]).forEach(function(ex){
+        var k = null; try { k = qid(ex, (d.lessons[ex._srcLessonIdx]||{}).id); } catch(e) {}
+        if (k) got[k] = 1;
+      });
+      var buildable = Object.keys(keys).filter(function(k){ return got[k]; });
+      return JSON.stringify({ want: Object.keys(keys).length, buildable: buildable.length,
+                              runLen: (APP.cur.exercises||[]).length });
+    })()`));
+    checked++;
+    if (r.want > 1) {
+      multi++;
+      // Every candidate whose exercise the builders could actually produce must BE in the run — the
+      // old behaviour would have held exactly one of them.
+      assert.ok(r.runLen >= r.buildable && r.buildable >= 1,
+        `the run holds every buildable question for the word (${r.buildable} buildable, run ${r.runLen})`);
+      assert.ok(r.runLen > 1,
+        'and when the word owns several buildable questions the run really does hold several — ' +
+        'this is the assertion the old single-random-pick behaviour could not satisfy');
+    }
+  }
+  assert.ok(checked > 0, 'non-vacuity: taps started runs');
+  assert.ok(multi > 0,
+    'non-vacuity: the fixture word owned more than one question in at least one sweep — otherwise ' +
+    '"plays ALL of them" was never actually exercised');
+  console.log(`  item Z: all of the word's buildable questions are played (${multi}/${checked} sweeps had several)`);
+}
+
+// ── 2c. ⚠️ The run is DETERMINISTIC across taps — the flake's root cause, pinned ─────────────────
+// `tapWord` used to choose among the word's lessons with Math.random(). That is what made this file
+// fail ~35% of runs for releases, always on correct behaviour, and it is why the failure was
+// repeatedly written off as `buildExercises` corpus sampling. Item Z removes the choice entirely, so
+// the SET of questions a tap yields is now stable. Pinned on the qid SET (not the order within a
+// build, and not the exercise objects, which builders legitimately regenerate).
+{
+  const keysOf = () => {
+    const C = open(FIX.t, {});
+    if (C.run(`tapWord(${JSON.stringify(FIX.w)})`) !== true) return null;
+    return JSON.parse(C.run(`(function(){
+      var d = APP.lessonData, out = [];
+      (APP.cur.exercises||[]).forEach(function(ex){
+        var k = null; try { k = qid(ex, (d.lessons[ex._srcLessonIdx]||{}).id); } catch(e) {}
+        if (k) out.push(k);
+      });
+      return JSON.stringify(out.sort());
+    })()`));
+  };
+  const first = keysOf();
+  assert.ok(first && first.length, 'setup: the first tap produced a keyed run');
+  for (let i = 0; i < 6; i++) {
+    assert.deepStrictEqual(keysOf(), first,
+      'the same tap yields the same question set every time — no Math.random() lesson pick any more ' +
+      '(this is the assertion that would have caught the ~35% flake as a real defect)');
+  }
+  console.log(`  item Z: repeated taps yield an identical question set (${first.length} questions, 7 taps)`);
+}
+
+// ── 2d. Finishing the detour rejoins forward progress, not this run's own card ───────────────────
+// "afterwards proceed with where 'next' or tapping non-highlighted words would bring us." The
+// destination is captured at TAP time from #comp-next's CURRENT onclick — not the static
+// afterComplete() in the markup, which showComplete() reassigns.
+{
+  const C = open(FIX.t, {});
+  C.run(`window._nextFired = 0;
+    var b = document.getElementById('comp-next'); b.disabled = false;
+    b.onclick = function(){ window._nextFired++; };
+    window._cardShown = 0; showComplete = function(){ window._cardShown++; };
+    tapWord(${JSON.stringify(FIX.w)}); true;`);
+  const r = JSON.parse(C.run(`(function(){
+    var C2 = APP.cur;
+    C2.cur = (C2.exercises||[]).length;   // walk to the end of the detour
+    renderEx();
+    return JSON.stringify({ nextFired: window._nextFired, cardShown: window._cardShown,
+                            cleared: !C2._wordRun });
+  })()`));
+  assert.strictEqual(r.nextFired, 1,
+    "finishing a word detour invokes #comp-next's own current handler — where Next would have led");
+  assert.strictEqual(r.cardShown, 0, 'and does NOT fall through to this detour\'s own progress card');
+  assert.strictEqual(r.cleared, true,
+    'the marker is cleared first, so a re-entrant render cannot fire the return twice');
+  console.log('  item Z: finishing the detour rejoins forward progress (#comp-next), once: OK');
+}
+
+// ── 2e. No Next available → the ordinary progress card, not a dead end ───────────────────────────
+{
+  const C = open(FIX.t, {});
+  C.run(`var b = document.getElementById('comp-next'); b.disabled = true; b.onclick = function(){};
+    var s = document.getElementById('sum-next'); if (s) { s.disabled = true; s.onclick = function(){}; }
+    window._cardShown = 0; showComplete = function(){ window._cardShown++; };
+    tapWord(${JSON.stringify(FIX.w)}); true;`);
+  const r = JSON.parse(C.run(`(function(){
+    var C2 = APP.cur; C2.cur = (C2.exercises||[]).length; renderEx();
+    return JSON.stringify({ cardShown: window._cardShown });
+  })()`));
+  assert.strictEqual(r.cardShown, 1,
+    'with Next disabled at tap time the detour ends on the normal progress card — a mid-chapter ' +
+    'Next that is legitimately locked must not be forced open from here');
+  console.log('  item Z: a disabled/absent Next falls back to the normal card: OK');
 }
 
 // ── 3. §0h still applies — back-navigation works from where the tap landed ──
@@ -217,75 +466,78 @@ assert.ok(FIX.n >= 1, 'the fixture word has at least one real question in a buil
   console.log('  §0h back-navigation works from a tapped entry point');
 }
 
-// ── 4. ⚠️ Unsolved questions are PREFERRED — T0 says so explicitly ───────
-// Asserted WITHIN each run, which is the only sound way: `buildExercises` is not deterministic in
-// CONTENT, not merely in order, so the set of questions about a word differs from one run to the
-// next. Two earlier versions of this section assumed otherwise — one marked probe keys solved
-// (probes can name questions no run holds), the other required the fixture to yield two real
-// questions every time — and both failed intermittently on correct product behaviour.
+// ── 4. item Z: solved questions are EXCLUDED, not merely de-prioritised ─────────────────────────
+// ⚠️ REWRITTEN. This section used to assert T0's LANDING preference: a tap picked ONE question, and
+// if the run held both a solved and an unsolved question about the word, the one it landed on had to
+// be unsolved. Item Z removes the pick entirely — the run IS the word's questions — so the old
+// invariant is not weakened, it is unsatisfiable by construction: a run can no longer contain both,
+// because solved questions are not put in it at all.
 //
-// The invariant that does hold: after a tap, if the run it built contains an unsolved question about
-// the word, the one it landed on must not be a solved one.
+// That is the user's ruling ("only unsolved or wrong-since-right"), and it is a STRONGER claim than
+// the one it replaces: the old rule let a solved question sit in the run as long as the tap did not
+// land on it. Its own precondition ("at least one run held BOTH") is what now fails, which is exactly
+// how a superseded invariant should announce itself rather than quietly passing.
+//
+// The fallback half matters just as much: a word whose questions are ALL solved must still open
+// something, or a green word becomes untappable. §4b pins that.
 {
-  let taps = 0, withChoice = 0;
-  // v81_d: the fixture is now chosen for CO-OCCURRENCE (see the sweep), and the solved set is built
-  // around the pair actually seen together — marking "all keys but the last" could leave the unsolved
-  // key in a question that never shares a round with a solved one, which is how this section flaked.
   const all = FIX.keys;
   assert.ok(all.length >= 2,
-    `the fixture word needs >= 2 distinct real questions to put the preference to a choice (${all.length})`);
-  // ⚠️ The precondition is a RATE, not a possibility (v81_e). `pairCo/sampled` is how often the two
-  // questions were actually asked together during selection; §4 then samples 30 rounds, so the
-  // chance of never seeing the choice is about (1 - rate)^30. At the 1-in-8 rate that v81_d's
-  // "seen together at least once" rule accepted, that is ~2%, which showed up as roughly 1 failure
-  // in 20 whole-file runs. Requiring 2 of 8 puts it near 1e-4, and the sweep now keeps the BEST
-  // fixture rather than the first acceptable one.
-  assert.ok(FIX.pair && FIX.pairCo >= 2,
-    `the fixture word's two questions must co-occur in a REASONABLE SHARE of builds, or a bounded ` +
-    `sample will sometimes never present the choice (pairCo=${FIX.pairCo}/${FIX.sampled})`);
+    `the fixture word needs >= 2 distinct real questions to tell exclusion from preference (${all.length})`);
   const unsolvedKey = FIX.pair[1];
   const solved = {};
   all.filter(k => k !== unsolvedKey).forEach(k => { solved[k] = 1; });
 
-  // 30 builds, and deliberately NOT stopping early once a choice has been seen: every extra tap is
-  // another chance for the preference assertion inside the loop to catch a real violation, and that
-  // assertion is the point of the section — the non-vacuity count is only its precondition.
-  // `buildExercises` samples, so a fixed 10 was a coin-flip on the weaker fixtures — measured at
-  // 1 failure in 40 whole-file runs, on the pre-v81_d client as well as this one.
-  for (let i = 0; i < 30; i++) {
+  let taps = 0, sawExclusion = 0;
+  for (let i = 0; i < 12; i++) {
     const C = open(FIX.t, solved);
     if (C.run(`tapWord(${JSON.stringify(FIX.w)})`) !== true) continue;
     taps++;
     const r = JSON.parse(C.run(`(function(){
-      var d = APP.lessonData, C2 = APP.cur, want = _hlKey(stripFuri(${JSON.stringify(FIX.w)}));
-      var lid = (d.lessons[C2.lessonIdx]||{}).id, m = _solvedMap(d.topic) || {};
-      var keys = {}; _wordQuestions(d, ${JSON.stringify(FIX.w)}).forEach(function(c){ keys[c.key]=1; });
-      var mine = [];
-      (C2.exercises||[]).forEach(function(ex, i){
-        if (!ex) return;
-        var k = null; try { k = qid(ex, lid); } catch(e) {}
-        if (!k) return;
-        var byText = [ex.target, ex.correct, ex.base, ex.infinitive].filter(Boolean)
-          .some(function(x){ return _hlKey(stripFuri(String(x))) === want; });
-        if (keys[k] || byText) mine.push({ i: i, k: k, solved: !!m[k] });
+      var d = APP.lessonData, C2 = APP.cur;
+      var m = _solvedMap(d.topic) || {}, w = (typeof _wrongMap === 'function' ? (_wrongMap(d.topic) || {}) : {});
+      var pool = _wordQuestions(d, ${JSON.stringify(FIX.w)});
+      var anyUnsolved = pool.some(function(c){ return !c.solved || c.wrong; });
+      var inRun = [];
+      (C2.exercises||[]).forEach(function(ex){
+        var k = null; try { k = qid(ex, (d.lessons[ex._srcLessonIdx]||{}).id); } catch(e) {}
+        if (k) inRun.push({ k: k, solved: !!m[k] && !w[k] });
       });
-      var landedK = null; try { landedK = qid(C2.exercises[C2.cur], lid); } catch(e) {}
-      return JSON.stringify({ mine: mine, at: C2.cur, landedSolved: !!(landedK && m[landedK]) });
+      return JSON.stringify({ anyUnsolved: anyUnsolved, inRun: inRun });
     })()`));
-    const hasUnsolved = r.mine.some(x => !x.solved);
-    const hasSolved = r.mine.some(x => x.solved);
-    if (hasUnsolved && hasSolved) withChoice++;
-    if (hasUnsolved) {
-      assert.ok(!r.landedSolved,
-        `tap ${i}: landed on a SOLVED question while this run held an unsolved one ` +
-        `(${JSON.stringify(r.mine)})`);
+    if (r.anyUnsolved) {
+      const solvedInRun = r.inRun.filter(x => x.solved);
+      assert.deepStrictEqual(solvedInRun, [],
+        `tap ${i}: the word has unsolved questions, so NO solved one may be in the run — found ` +
+        `${JSON.stringify(solvedInRun)}`);
+      if (r.inRun.length) sawExclusion++;
     }
   }
   assert.ok(taps > 0, 'non-vacuity: at least one tap started a run');
-  assert.ok(withChoice > 0,
-    'non-vacuity: at least one run held BOTH a solved and an unsolved question about the word — ' +
-    'without that the preference rule was never actually put to a choice');
-  console.log(`  unsolved questions are preferred (${taps} taps, ${withChoice} with a real choice)`);
+  assert.ok(sawExclusion > 0,
+    'non-vacuity: at least one tap produced a non-empty run while the word still had unsolved ' +
+    'questions — otherwise the exclusion rule was never actually exercised');
+  console.log(`  item Z: solved questions are excluded from the run (${taps} taps, ${sawExclusion} exercised)`);
+}
+
+// ── 4b. …but a fully-solved word still opens something — the tap never does nothing ─────────────
+// The pool falls back to ALL of the word's questions when none are outstanding (T0's own fallback,
+// kept). Without this, finishing a word would silently make it untappable, which reads as the
+// feature being broken — the same failure mode v81_f fixed for question-less words.
+{
+  const allSolved = {};
+  FIX.keys.forEach(k => { allSolved[k] = 1; });
+  let opened = 0;
+  for (let i = 0; i < 6; i++) {
+    const C = open(FIX.t, allSolved);
+    if (C.run(`tapWord(${JSON.stringify(FIX.w)})`) === true) {
+      const n = C.run(`(APP.cur.exercises||[]).length`);
+      assert.ok(n >= 1, 'a tap on a fully-solved word still opens a real run');
+      opened++;
+    }
+  }
+  assert.ok(opened > 0, 'a tap on a fully-solved word is never a no-op');
+  console.log(`  item Z: a fully-solved word still opens its questions (${opened}/6 taps): OK`);
 }
 
 // ── 5. An unknown word does nothing, and says so ─────────────────────────
