@@ -6303,28 +6303,42 @@ function renderStoryText(d, targetEl){
   const _xlate = isMainCard ? (d.storyTranslation||'') : '';
   const showingSource = isMainCard && APP._lsStoryLang==='source' && _xlate;
   if (isMainCard && APP._lsTextExplorer && !showingSource) {
-  // ⚠️ BUG FIX (user report): the explorer FLAG outlives a chapter change but the FETCH did not —
-  // it only ever ran from the two toggle handlers. Painting a chapter that has no cache entry now
-  // starts one, fire-and-forget, so arriving at any chapter with the mode already on loads instead
-  // of sitting on "Loading…". Terminates: _ensureTextExplorerData creates the 'loading' entry
-  // BEFORE it repaints, so the repaint this triggers finds an entry and does not re-fire.
-  try { if (d && d.id && !_teCacheStore()[d.id]) _ensureTextExplorerData(d.id); } catch(_) {}
+    // ⚠️ BUG FIX (user report): the explorer FLAG outlives a chapter change but the FETCH did not —
+    // it only ever ran from the two toggle handlers. Painting a chapter that has no cache entry now
+    // starts one, fire-and-forget, so arriving at any chapter with the mode already on loads instead
+    // of sitting on "Loading…". Terminates: _ensureTextExplorerData creates the 'loading' entry
+    // BEFORE it repaints, so the repaint this triggers finds an entry and does not re-fire.
+    try { if (d && d.id && !_teCacheStore()[d.id]) _ensureTextExplorerData(d.id); } catch(_) {}
     try { body.innerHTML = _textExplorerBodyHtml(d); }
     catch(_) { body.textContent = d.story||''; }
   } else {
     const full = showingSource ? _xlate : (d.story||'');
-    const vocabWords=(d.lessons||[]).filter(Boolean).flatMap(L=>L.vocab||[]).map(v=>v&&v.target).filter(Boolean);
-    const extraWords=(typeof _storyExtraWords==='function') ? _storyExtraWords(d) : [];
-    const allWords=[...vocabWords, ...extraWords].filter(Boolean).sort((a,b)=>b.length-a.length);
-    let solved=[];
-    try { solved=_solvedTargetWords(d).concat(_solvedExtraWords(d)); } catch(_) { solved=[]; }
-    // Vocab highlighting is TARGET-language words matched against TARGET-language text — matching
-    // them against the translation would find nothing real, same reasoning _renderCompStory's own
-    // `highlight: !showingSource` already applies.
-    let rendered=furiHtml(full);
-    if(!showingSource && allWords.length) rendered = _highlightVocabHtml(rendered, allWords, solved);
-    const spkBtn=''; // speaker moved to story-hdr
-    body.innerHTML=spkBtn+_storyParasHtml(rendered);
+    // ⚠️ BUG FIX (user report): "we now see the image above the text, like on the progress card, but
+    // ONLY for the text analysis view, not for the vocab highlight view and also not for the
+    // translated text. The lesson-set text view should resemble as close as possible, ideally
+    // identical code, to the text view on the progress cards."
+    //
+    // It is now the IDENTICAL call `_renderCompStory` makes — byte for byte — rather than a second,
+    // drifting re-implementation. This card (v86_ad) open-coded the body render (furiHtml →
+    // _highlightVocabHtml → _storyParasHtml) instead of reusing `_storyBodyHtml`, and so missed FOUR
+    // things that one function already did, only one of which was reported:
+    //   • comic panel IMAGES — `_storyBodyHtml`'s `o.text == null && d.comicPanels` branch. This is
+    //     the same defect v86_a fixed for the completion card (passing `text` unconditionally
+    //     defeats a branch that tests IDENTITY, not value); the explorer view looked right only
+    //     because `_textExplorerBodyHtml` calls `_comicPanelsFlatTextHtml` itself.
+    //   • the TRANSLATION view's own card/padding wrapper (`_comicPanelsFlatTextHtml`, v86_p/v86_t).
+    //   • TRACK T's THREE-state `_wordStateMap(d)`. The inline copy still passed the superseded
+    //     v74_n two-shade `solved` array — "the same story, two meanings, one tap apart", exactly
+    //     what _renderCompStory's own comment records as already fixed on its side.
+    //   • `.story-selectable data-tutor-select="1"` — so "select text, ask the tutor" (PLAN §12)
+    //     simply did not work on this card. Every caller of the one renderer gets it for free.
+    // `_storyExtraWords`/`_solvedTargetWords`/`_solvedExtraWords` are no longer read here because
+    // `_storyBodyHtml` derives the same word set from `_storyWordSources(d)` + the lessons' vocab.
+    try {
+      body.innerHTML = _storyBodyHtml(d, { text: showingSource ? full : null, highlight: !showingSource });
+    } catch(_) {
+      body.textContent = full;   // a story that renders unformatted is fine; one that fails is not
+    }
   }
   if (!isMainCard) return;   // an explicit-targetEl caller (none exist today) skips the chrome below
   const _expBtn=document.getElementById('ls-story-explorer-btn');
@@ -161758,7 +161772,7 @@ async function init() {
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"c902ce54147b","lessons.json":"c54a0f7bea0a","ui.json":"2306b3341a12","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"8a5360f2adc5","build-static.js":"012fc7f8f3ca"};
+  APP.buildSources = {"index.html":"fd40c0d66ffb","lessons.json":"c54a0f7bea0a","ui.json":"2306b3341a12","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"8a5360f2adc5","build-static.js":"012fc7f8f3ca"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -174240,11 +174254,11 @@ function _renderCompStory(){
     // has nothing to say about a translation view (toggleTextExplorer forces target on toggle-on, but
     // this stays defensive in case the two states ever disagree for any other reason).
     if (APP._textExplorer && !showingSource) {
-    // ⚠️ BUG FIX (user report): the explorer FLAG outlives a chapter change but the FETCH did not —
-    // it only ever ran from the two toggle handlers. Painting a chapter that has no cache entry now
-    // starts one, fire-and-forget, so arriving at any chapter with the mode already on loads instead
-    // of sitting on "Loading…". Terminates: _ensureTextExplorerData creates the 'loading' entry
-    // BEFORE it repaints, so the repaint this triggers finds an entry and does not re-fire.
+      // ⚠️ BUG FIX (user report): the explorer FLAG outlives a chapter change but the FETCH did not —
+      // it only ever ran from the two toggle handlers. Painting a chapter that has no cache entry now
+      // starts one, fire-and-forget, so arriving at any chapter with the mode already on loads
+      // instead of sitting on "Loading…". Terminates: _ensureTextExplorerData creates the 'loading'
+      // entry BEFORE it repaints, so the repaint this triggers finds an entry and does not re-fire.
       try { if (d && d.id && !_teCacheStore()[d.id]) _ensureTextExplorerData(d.id); } catch(_) {}
       try { _el.innerHTML = _textExplorerBodyHtml(d); }
       catch(_) { _el.textContent = full; }
