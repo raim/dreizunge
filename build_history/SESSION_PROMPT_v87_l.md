@@ -1,7 +1,7 @@
-# Session prompt — written at the `v87_k` cut
+# Session prompt — written at the `v87_l` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
-one alongside. Keep using the double-letter suffix scheme (`v87_l`, `v87_m`, …) unless a future
+one alongside. Keep using the double-letter suffix scheme (`v87_m`, `v87_n`, …) unless a future
 session has a good reason to switch to `v88_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
@@ -21,33 +21,31 @@ live server was running on port 3000 throughout the `v87_g`/`v87_h`/`v87_i` cuts
 `v87_g` was live-verified that way, with nothing of the user's touched. `prompts.json` and `ui.json`
 HOT-RELOAD live via `fs.watch` too.
 
-**What shipped this cut**: a second user-reported BUG FIX — the lesson-set (teacher view) story reader
-showed comic panel images only in the text-analysis view. Root cause: `renderStoryText` OPEN-CODED its
-body render instead of calling `_storyBodyHtml`, the shared renderer the progress and exercise cards
-use, so it never reached that function's comic-panel branch. Same shape as `v86_a`, fixed once and
-reintroduced by a card that re-implemented rather than reused. Three MORE defects fell out of the same
-line, none reported: the translation view's padding wrapper, TRACK T's three-state colouring (the copy
-still used the superseded `v74_n` two-shade array), and the `data-tutor-select` marker — so `PLAN §12`'s
-"select text, ask the tutor" had **never worked on that card**.
+**What shipped this cut**: a comic-panel IMAGE DESCRIPTION (user request) — "additionally or
+alternatively to text extraction, ask the model to give a short 1-2 sentence description of the image
+in the target language. This will be used as the chapter text, if no text is extracted." The single
+Extract-text button became two checkboxes plus a Generate button, per the same request. It matters
+because `comicCreateChapter()` DROPS any panel with no text, so a wordless panel silently contributed
+nothing to the chapter; now it becomes readable chapter content in the language being learned.
 
-**⚠️ `v80_t` IS OVERTURNED FOR THAT PANEL, by explicit user ruling.** Identical code necessarily makes
-its words tappable: inside `_highlightVocabHtml`, `stateByKey` drives BOTH the three-state classes and
-the tap affordance, so they cannot be separated. The user was given that trade-off (including an
-opt-out that would have preserved `v80_t` at the cost of the old colouring) and chose "fully identical
-— tappable too, if it is possible such that the previous edit and qc functionality should still work."
-That condition was verified, not assumed — see the `v87_k` entry. **The architecture line has moved**:
-every `_storyBodyHtml` caller is a tappable, run-bearing surface; the genuinely read-only panels
-(`_renderSavedStory`/`_renderChainStory`) still open-code the two-shade highlight.
+Three rulings taken before building: describe **only when no text was found** (a vision call is
+one-per-panel and slow — describing a fully lettered page would double the wait for nothing);
+defaults **text ON, description OFF**; and **two** new `ui.json` keys. The description is a SEPARATE
+prompt and a SEPARATE vision call — deliberately NOT folded into `_comicExtractPrompt`, the most
+heavily live-tuned text in `server.js`. **Live-verified against the real vision model** on a real
+wordless corpus panel: two correct Dutch sentences, in the target language rather than English, which
+is the whole point.
 
-**`v87_j` before it** fixed a saved text analysis rendering "lädt…" forever (two client-side defects in
-item W's seam), and **`v87_i`** shipped item Z and, with it, the `unit-tap-word` flake — which was never
-corpus noise but `Math.random()` in `tapWord()`. **Update your priors accordingly** (rules block below).
+**`v87_k` before it** made the lesson-set story reader the identical render the progress card uses
+(and overturned `v80_t` for that panel, by explicit ruling — it is a tappable surface now); **`v87_j`**
+fixed a saved text analysis rendering "lädt…" forever; **`v87_i`** shipped item Z and, with it, the
+`unit-tap-word` flake, which was never corpus noise but `Math.random()` in `tapWord()`.
 
 ## Orient yourself, in this order
 
 1. **This file**, whole.
 2. `build_history/roadmap_v87.md` — its **index table** and **⚠️ Session protocol** block first, then
-   item AL's status block, then `# ✅ SHIPPED IN THE v87 LINE` (`v87_b` → `v87_k`).
+   item AL's status block, then `# ✅ SHIPPED IN THE v87 LINE` (`v87_b` → `v87_l`).
 3. `build_history/roadmap_v86.md` is KEPT as the historical record for the whole `v86` line
    (`v86_a`…`v86_ag`) — go there for how something from THAT line was built.
 4. `INTERNALS.md` **§6b** covers the jobs popover, the drafts store, and the `skipLessons` mechanism
@@ -57,7 +55,7 @@ corpus noise but `Math.random()` in `tapWord()`. **Update your priors accordingl
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 306 checks
+node test/run.js                          → expect 307 checks
 node test/run.js --quick                  → expect 259
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
@@ -76,7 +74,7 @@ was wrong. Each deserves the same discriminating measurement (find the assertion
 compares, check whether the product is actually varying). Don't run the full and `--quick` suites
 CONCURRENTLY on this box (found at `v86_ae`) — run them one at a time.
 
-Corpus at this cut: **337 topics, 97 storylines, 33 languages, 726 `en` keys** — an inherently live
+Corpus at this cut: **338 topics, 98 storylines, 33 languages, 728 `en` keys** — an inherently live
 snapshot (the user's own live server generates content concurrently; re-measure fresh at commit
 time). `en` keys rose from 725 → 726 at `v87_g` (`gen.wizard_step3_lessons`; `gen.wizard_step3` and
 `gen.wizard_step4` are deliberately kept but now UNUSED, so their 33-language translations survive if
@@ -84,7 +82,7 @@ a chaptering step ever returns) and are UNCHANGED at `v87_h`. `lessons.json`/`ca
 server generated a topic mid-session, which is exactly the "inherently live snapshot" this line warns
 about; both files were swept into the `v87_i` release commit so the guarded counts stay consistent
 with the tree.
-`drafts.json` may exist at the project root (server-created, gitignored) — normal. `APP_VERSION = 'v87_k'`.
+`drafts.json` may exist at the project root (server-created, gitignored) — normal. `APP_VERSION = 'v87_l'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -109,6 +107,15 @@ forward explicitly:
   `!!document.getElementById('gone-id')` is always true and its negation always red — a guard written
   that way fails on a CORRECT tree. Absence claims belong at the SOURCE layer. Found by writing it
   and watching it fail, not by reasoning.
+- **`git checkout <file>` to undo a MUTATION discards every uncommitted change to that file.** Doing
+  it at `v87_l` threw away a session's worth of unrelated client work that happened to live in the
+  same file. Mutation-testing must restore from the copy taken before the mutation (`cp` to the
+  scratchpad first, restore with `cp`), never from git — the tree during a build is full of work git
+  does not know about yet.
+- **`pkill -f "node server.js"` would kill the USER's server too.** At `v87_l` a test server was
+  started on a spare port for a live model check; the user's own instance was running the identical
+  command line. Always list by PID first (`ps -eo pid,cmd | grep '[n]ode server.js'`) and kill the
+  ONE pid, and never assume the only matching process is yours.
 - **A card that RE-IMPLEMENTS a shared renderer will silently miss everything that renderer grew.**
   `v87_k`: the lesson-set story reader open-coded its body render instead of calling
   `_storyBodyHtml`, and so missed FOUR things — comic images (the reported symptom), the translation

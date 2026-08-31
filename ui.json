@@ -98,6 +98,8 @@
     "form.comic_camera": "📷 Take a photo",
     "form.comic_clear": "🗑 Clear panels",
     "form.comic_extract": "✨ Extract text",
+    "form.comic_describe": "🖼️ Describe the image",
+    "form.comic_generate": "✨ Generate",
     "form.comic_extracting": "Starting…",
     "form.comic_extract_failed": "Extraction failed",
     "form.comic_create": "📖 Create chapter",

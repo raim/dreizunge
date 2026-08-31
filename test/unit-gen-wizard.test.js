@@ -326,7 +326,8 @@ console.log('  pill 3 renders gen.wizard_step3_lessons, a key that exists in `en
   // What must have SURVIVED, per the user's explicit ruling that the live review stop stays: the
   // panels' own extraction/editing controls are untouched, and only the lesson-type UI left.
   for (const id of ['pdf-chunk-list', 'pdf-stepper', 'split-mode-row', 'pdf-sel-panel',
-                    'comic-panel-list', 'comic-extract-btn', 'comic-clear-btn', 'comic-detect-btn']) {
+                    'comic-panel-list', 'comic-generate-btn', 'comic-extract-cb', 'comic-describe-cb',
+                    'comic-clear-btn', 'comic-detect-btn']) {
     assert.ok(html.includes('id="' + id + '"'), `#${id} still exists — extraction/editing stays live on the Text step`);
   }
 }

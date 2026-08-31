@@ -254,9 +254,32 @@ const srv = http.createServer(async (req, res) => {
     // this is a `usr`-keyed branch, matching the prompt's own opening sentence. A test can force a
     // specific canned reply by putting a recognizable marker in place of the real crop's content —
     // there's nothing to key on in a real image, but the fake never SEES the image anyway.
+    // Comic panel IMAGE DESCRIPTION (user request). A SEPARATE vision call from comic_extract below,
+    // with its own prompt — hence its own branch and its own `kind`, which is what lets a test COUNT
+    // describe calls and so prove the laziness rule (both options ticked => describe only for a panel
+    // that produced no lettering).
+    //
+    // ⚠️ MUST be tested BEFORE comic_extract, not after. Both prompts legitimately open by naming the
+    // same context ("This image is a single panel cropped from a comic page"), because both are
+    // telling the model what it is looking at — so comic_extract's own pattern matches the DESCRIBE
+    // prompt too. Ordering is what disambiguates them: this branch keys on the describe-specific
+    // sentence, so it must get first refusal. Found by writing the e2e and watching a describe call
+    // come back with the extraction's canned transcription.
+    } else if (/Describe what is happening in it in/i.test(usr)) {
+      kind = 'comic_describe';
+      content = 'Ein Hund rennt durch den Garten. Die Sonne scheint.';
     } else if (/single panel cropped from a comic page/i.test(usr)) {
       kind = 'comic_extract';
-      content = /FORCE_EMPTY/.test(usr) ? '' : 'CAPTION: Fake caption text.\nIN-SCENE: Fake sign text.';
+      // FORCE_EMPTY returns a genuinely empty body, which callLLMVision treats as a FAILURE
+      // ("Ollama returned empty response") — so it exercises the per-panel error path, NOT "this
+      // panel has no lettering". FORCE_NOTEXT is the latter: a real wordless panel comes back as
+      // ordinary prose with no CAPTION:/IN-SCENE: labels at all, which _parseComicExtraction turns
+      // into empty caption+inScene with `raw` preserved. The two are genuinely different outcomes
+      // and the image-description feature depends on telling them apart (it describes a panel that
+      // extracted to NOTHING, and deliberately does not describe one whose extraction ERRORED).
+      content = /FORCE_EMPTY/.test(usr) ? ''
+        : /FORCE_NOTEXT/.test(usr) ? 'This panel contains no lettering.'
+        : 'CAPTION: Fake caption text.\nIN-SCENE: Fake sign text.';
     // PLAN §2.4 / Track A4 milestone 5 (v85_o): comic panel auto-detection (one-shot enumeration).
     // Same empty-system shape as comic_extract above, keyed on THIS prompt's own opening sentence
     // instead (distinct enough not to collide: "one page of a comic" vs "single panel cropped from

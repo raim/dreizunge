@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v87_k';
+const APP_VERSION  = 'v87_l';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6775,6 +6775,38 @@ itself is showing you, not to reproduce the artwork's own line breaks.
 Output only the labeled transcriptions, nothing else.`;
 }
 
+// ── Comic panel IMAGE DESCRIPTION (user request) ──────────────────────────────────────────────
+// "additionally or alternatively to text extraction, ask the model to give a short 1-2 sentence
+// description of the image in the target language. This will be used as the chapter text, if no text
+// is extracted."
+//
+// A SEPARATE prompt and a SEPARATE vision call, deliberately — NOT an extra instruction folded into
+// _comicExtractPrompt. That prompt is the most heavily live-tuned text in this file (three measured
+// rounds across v85_k/v85_l, with a German-only worked example that was proven necessary and a
+// standing warning not to extend its confidence to other languages); adding a second, unrelated task
+// to it is exactly the kind of change that regressed it before. Two prompts also mean the two
+// features fail independently: a description call that goes wrong cannot corrupt a transcription.
+//
+// Written in the TARGET language, per the request — the description IS chapter text when there is no
+// lettering, so it must be in the language being learned, not English. Kept to 1-2 sentences: this
+// becomes a chapter, and chapter length is the learner's own story-length setting elsewhere, not
+// something a panel description should quietly blow past.
+function _comicDescribePrompt(langName) {
+  return `This image is a single panel cropped from a comic page. Describe what is happening in it in
+${langName}, in ONE or TWO short sentences — no more.
+
+Write the description IN ${langName} ONLY. Do not write it in English first and do not add a
+translation, a label, or any commentary: output the ${langName} sentences and nothing else.
+
+Describe only what is actually VISIBLE in the panel — who or what is present, and what they are
+doing. Do not invent names for characters, do not guess at a wider story the panel is part of, and do
+not interpret the mood or the artist's intent. If the panel contains lettering (a caption, a speech
+bubble, a sign), do NOT transcribe it here — describe the scene, not the words.
+
+Use plain, natural ${langName} of the kind a learner could read: ordinary vocabulary, simple sentence
+structure, present tense.`;
+}
+
 // Parse a "CAPTION: ...\nIN-SCENE: ..." response into { caption, inScene }. Either field may be ''
 // if that label never appeared (a silent, valid panel — e.g. a wordless action panel) or if parsing
 // found nothing recognizable (a genuine extraction failure, indistinguishable from "no text" at this
@@ -6794,8 +6826,22 @@ function _parseComicExtraction(raw) {
 // crop produced them (NOT bare base64 — stripped here, once, so this is the only place that has to
 // know Ollama wants the bare form). lang: the topic's own target-language CODE, resolved to a display
 // name via langName() for the prompt (never sent as a code — the model reasons about language NAMES).
-async function _runComicExtractJob(jobId, images, lang) {
+// `opts`: { extract, describe } — the two independent operations the client's own checkboxes now
+// name (user request). Defaults keep an OLDER client, which sends neither flag, on exactly its
+// previous behaviour: extract only.
+//
+// ⚠️ The DESCRIPTION IS LAZY when both are requested, per the user's own ruling ("only when no text
+// was found"). A vision call is one-per-panel and slow (measured 15s-5min each), so describing every
+// panel of a fully-lettered page would roughly double the wait for a result that would never be used
+// — the description is the FALLBACK chapter text, consumed only when a panel yields no lettering.
+// So per panel: extract first (if asked), and describe only when that came back with nothing (or
+// when extraction was not asked for at all). A page of lettered panels therefore costs exactly what
+// it costs today, and only genuinely wordless panels pay for the second call.
+async function _runComicExtractJob(jobId, images, lang, opts) {
   const name = langName(lang || 'en');
+  const o = opts || {};
+  const wantExtract = (o.extract === undefined) ? true : !!o.extract;
+  const wantDescribe = !!o.describe;
   const results = [];
   for (let i = 0; i < images.length; i++) {
     jobStep(jobId, `[${OLLAMA_VISION_MODEL}] Extracting panel ${i + 1}/${images.length}…`);
@@ -6811,20 +6857,38 @@ async function _runComicExtractJob(jobId, images, lang) {
       // tokenization, neither of which this server introspects. Rather than guess, ask for the full
       // configured ceiling: these are per-panel, infrequent calls (not a hot loop), so there is no
       // meaningful cost to always requesting getNumCtxMax() instead of trying to estimate low.
-      const { text } = await callLLMVision('', _comicExtractPrompt(name, lang), 400,
-        { images: [b64], temperature: 0.1, ctxTokens: getNumCtxMax() });
-      results.push({ ..._parseComicExtraction(text), error: null });
+      let parsed = { caption: '', inScene: '', raw: '' };
+      if (wantExtract) {
+        const { text } = await callLLMVision('', _comicExtractPrompt(name, lang), 400,
+          { images: [b64], temperature: 0.1, ctxTokens: getNumCtxMax() });
+        parsed = _parseComicExtraction(text);
+      }
+      // The lazy half: only when this panel produced no lettering at all.
+      let description = '';
+      if (wantDescribe && !parsed.caption && !parsed.inScene) {
+        jobStep(jobId, `[${OLLAMA_VISION_MODEL}] Describing panel ${i + 1}/${images.length}…`);
+        // A description is prose, not a transcription, so it gets a slightly warmer temperature than
+        // the extraction call's near-deterministic 0.1 — but the same full context ceiling, for the
+        // same reason _comicExtractPrompt's own caller documents (an image's token cost cannot be
+        // estimated from here).
+        const { text: dtext } = await callLLMVision('', _comicDescribePrompt(name), 300,
+          { images: [b64], temperature: 0.4, ctxTokens: getNumCtxMax() });
+        description = String(dtext || '').trim();
+      }
+      results.push({ ...parsed, description, error: null });
     } catch (e) {
       // One panel's failure must not lose the rest of the batch — same reasoning as
       // _runRecreateJob's per-type try/catch above. The failed slot still gets a result object (with
       // an error field) so the client's panel list stays index-aligned with what it sent.
       console.warn(`  [comic-extract] panel ${i + 1} failed: ${e.message}`);
       jobStep(jobId, `⚠ panel ${i + 1} failed — continuing…`);
-      results.push({ caption: '', inScene: '', raw: '', error: e.message });
+      results.push({ caption: '', inScene: '', raw: '', description: '', error: e.message });
     }
   }
   const failed = results.filter(r => r.error).length;
-  console.log(`  [comic-extract] done: ${results.length} panel(s), ${failed} failed`);
+  const described = results.filter(r => r.description).length;
+  console.log(`  [comic-extract] done: ${results.length} panel(s), ${failed} failed` +
+    (wantDescribe ? `, ${described} described` : ''));
   jobDone(jobId, { panels: results });
 }
 
@@ -7918,9 +7982,18 @@ http.createServer(async (req, res) => {
       // could tie up the job queue indefinitely on a bad request.
       if (images.length > 30) return json(res, 400, { error: 'Too many panels in one batch (max 30).' });
       const lang = typeof body.lang === 'string' && body.lang.trim() ? body.lang.trim() : 'en';
+      // User request: the client's two checkboxes. Absent (an older client) => extract only, exactly
+      // the previous behaviour. Both false is rejected rather than silently running a job that would
+      // do nothing per panel — the client guards this too, but a route must not depend on that.
+      const wantExtract = (body.extract === undefined) ? true : !!body.extract;
+      const wantDescribe = !!body.describe;
+      if (!wantExtract && !wantDescribe)
+        return json(res, 400, { error: 'Nothing to do: pick text extraction, image description, or both.' });
       const jobId = newJob({ label: `Extracting comic panels (${images.length})` });
-      console.log(`  Comic extraction: ${images.length} panel(s), lang=${lang}, model=${OLLAMA_VISION_MODEL} job=${jobId}`);
-      _runComicExtractJob(jobId, images, lang).catch(e => {
+      console.log(`  Comic extraction: ${images.length} panel(s), lang=${lang}, ` +
+        `mode=${[wantExtract && 'text', wantDescribe && 'description'].filter(Boolean).join('+')}, ` +
+        `model=${OLLAMA_VISION_MODEL} job=${jobId}`);
+      _runComicExtractJob(jobId, images, lang, { extract: wantExtract, describe: wantDescribe }).catch(e => {
         console.error('  Comic extraction error:', e.message);
         jobFail(jobId, e.message);
       });

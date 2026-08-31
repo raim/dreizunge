@@ -1515,8 +1515,111 @@
       },
       "sourceTextHash": "a7c661b2bb8d",
       "analyzedAt": "2026-08-31T11:52:15.739Z"
+    },
+    "tp_17881907220620000002": {
+      "chapterId": "tp_17881907220620000002",
+      "lang": "nl",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 1,
+      "tokenCount": 5,
+      "sentences": [
+        {
+          "sentenceId": "tp_17881907220620000002:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17881907220620000002:s0:t0",
+              "idx": 0,
+              "surface": "GRATIS",
+              "lemma": "gratis",
+              "form": "Adverb (unveränderlich)",
+              "sense": "ohne Bezahlung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881907220620000002:s0:t1",
+              "idx": 1,
+              "surface": "KOSTENLOS",
+              "lemma": "kostenlos",
+              "form": "Adjektiv (Prädikativ/Attributiv)",
+              "sense": "ohne Kosten verursacht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881907220620000002:s0:t2",
+              "idx": 2,
+              "surface": "(bord",
+              "lemma": "bord",
+              "form": "Substantiv (Nominativ Singular Neutrum)",
+              "sense": "Tischplatte oder Theke",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881907220620000002:s0:t3",
+              "idx": 3,
+              "surface": "laten",
+              "lemma": "laten",
+              "form": "Verb (Infinitiv)",
+              "sense": "erlauben oder geschehen lassen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881907220620000002:s0:t4",
+              "idx": 4,
+              "surface": "staan)",
+              "lemma": "staan",
+              "form": "Verb (Partizip II / Infinitiv im Kontext von 'laten staan')",
+              "sense": "sich in aufrechter Position befinden",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 2,
+              "end": 4,
+              "tokenIds": [
+                "tp_17881907220620000002:s0:t2",
+                "tp_17881907220620000002:s0:t3",
+                "tp_17881907220620000002:s0:t4"
+              ],
+              "lemma": "bord laten staan",
+              "gloss": "den Tisch/Theke stehen lassen (nicht abräumen)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-31T15:48:46.673Z",
+            "sentenceId": "tp_17881907220620000002:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "GRATIS\nKOSTENLOS\n(bord laten staan)",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-08-31T15:48:46.674Z",
+        "chapterId": "tp_17881907220620000002",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "df479c7c3f72",
+      "analyzedAt": "2026-08-31T15:48:46.674Z"
     }
   },
-  "generatedAt": "2026-08-31T11:52:15.739Z",
-  "chapterCount": 4
+  "generatedAt": "2026-08-31T15:48:46.675Z",
+  "chapterCount": 5
 }

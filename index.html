@@ -1526,8 +1526,25 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
                reorder/delete, and "Extract text". comicExtractPanels()'s own timing is untouched, and
                comicOpenReview()'s text-review card still sits between "start" and chapter creation. -->
           <div id="comic-panel-actions" style="display:none;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
-            <button type="button" id="comic-extract-btn" onclick="comicExtractPanels()"
-              style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif">✨ <span id="comic-extract-lbl">Extract text</span></button>
+            <!-- User request: "'image description' and 'text extraction' button both become
+                 checkmarks, with a separate 'generate' button." The single ✨ Extract-text button
+                 became two independent opt-ins plus one action, so a wordless panel can still yield
+                 chapter text (a 1-2 sentence description IN THE TARGET LANGUAGE) instead of being
+                 filtered out of the chapter entirely by comicCreateChapter's own no-text filter.
+                 Defaults (user ruling): text ON, description OFF — pressing Generate with nothing
+                 touched does exactly what the old button did. The description is LAZY when both are
+                 ticked: server-side it only runs for a panel that produced no lettering, so a fully
+                 lettered page costs no more than it does today (see _runComicExtractJob). -->
+            <label class="user-story-check-row" style="margin:0;gap:5px">
+              <input type="checkbox" id="comic-extract-cb" checked onchange="_comicSyncGenerateBtn()">
+              <span id="comic-extract-lbl">✨ Extract text</span>
+            </label>
+            <label class="user-story-check-row" style="margin:0;gap:5px">
+              <input type="checkbox" id="comic-describe-cb" onchange="_comicSyncGenerateBtn()">
+              <span id="comic-describe-lbl">🖼️ Describe the image</span>
+            </label>
+            <button type="button" id="comic-generate-btn" onclick="comicExtractPanels()"
+              style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif"><span id="comic-generate-lbl">✨ Generate</span></button>
             <button type="button" id="comic-clear-btn" onclick="comicClearPanels()"
               style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🗑 <span id="comic-clear-lbl">Clear panels</span></button>
             <span id="comic-panel-count" style="font-size:12px;color:var(--gray-dark)"></span>
@@ -2958,6 +2975,8 @@ function applyUIStrings() {
   { const ccam=document.getElementById('comic-camera-lbl'); if(ccam) ccam.textContent=t('form.comic_camera'); }
   { const ccl=document.getElementById('comic-clear-lbl'); if(ccl) ccl.textContent=t('form.comic_clear'); }
   { const cel=document.getElementById('comic-extract-lbl'); if(cel) cel.textContent=t('form.comic_extract'); }
+  { const cdl=document.getElementById('comic-describe-lbl'); if(cdl) cdl.textContent=t('form.comic_describe'); }
+  { const cgl=document.getElementById('comic-generate-lbl'); if(cgl) cgl.textContent=t('form.comic_generate'); }
   { const crl=document.getElementById('comic-rotate-lbl'); if(crl) crl.textContent=t('form.comic_rotate'); }
   { const cdl=document.getElementById('comic-detect-lbl'); if(cdl) cdl.textContent=t('form.comic_detect'); }
   { const csl=document.getElementById('comic-single-panel-lbl'); if(csl) csl.textContent=t('form.comic_single_panel'); }
@@ -4207,6 +4226,7 @@ function _comicRenderList(){
     return;
   }
   if(actions) actions.style.display='flex';
+  _comicSyncGenerateBtn();
   _applyLessonCardUI();
   if(count) count.textContent=APP_COMIC.boxes.length+' panel'+(APP_COMIC.boxes.length===1?'':'s');
   list.innerHTML=APP_COMIC.boxes.map((b,i)=>{
@@ -4227,13 +4247,20 @@ function _comicPanelSummary(b){
   if(!b.text) return (b.x2-b.x1)+'×'+(b.y2-b.y1)+'px';
   if(b.text.error) return '⚠ '+b.text.error;
   const parts=[b.text.caption, b.text.inScene].filter(Boolean);
-  return parts.length ? parts.join(' / ') : '(no text found)';
+  if(parts.length) return parts.join(' / ');
+  // A description-only panel is a REAL panel with real chapter text, not an empty one — saying "no
+  // text found" for it would be wrong now (user request: the description becomes the chapter text
+  // when nothing was extracted). Prefixed so the two sources stay distinguishable at a glance.
+  const desc=String(b.text.description||'').trim();
+  return desc ? '🖼️ '+desc : '(no text found)';
 }
 function _comicPanelSummaryHtml(b){
   if(!b.text) return escHtml((b.x2-b.x1)+'×'+(b.y2-b.y1)+'px');
   if(b.text.error) return '<span style="color:var(--red-dark)">⚠ '+escHtml(b.text.error)+'</span>';
   const parts=[b.text.caption, b.text.inScene].filter(Boolean);
-  return parts.length ? escHtml(parts.join(' / ')) : '<em>(no text found)</em>';
+  if(parts.length) return escHtml(parts.join(' / '));
+  const desc=String(b.text.description||'').trim();   // see _comicPanelSummary's own comment
+  return desc ? '🖼️ '+escHtml(desc) : '<em>(no text found)</em>';
 }
 function comicDeletePanel(i){
   APP_COMIC.boxes.splice(i,1);
@@ -4367,17 +4394,36 @@ function _comicCropDataUrl(box){
   return c.toDataURL('image/jpeg', 0.92);
 }
 
+// Neither box ticked means there is genuinely nothing to generate, so the button says so by being
+// disabled rather than by failing on click. Called from both checkboxes' onchange and from
+// _comicRenderList (which repaints the panel actions row).
+function _comicSyncGenerateBtn(){
+  const btn=document.getElementById('comic-generate-btn');
+  if(!btn) return;
+  const any=!!document.getElementById('comic-extract-cb')?.checked
+         || !!document.getElementById('comic-describe-cb')?.checked;
+  btn.disabled=!any;
+  btn.style.opacity=any?'1':'.5';
+  btn.style.cursor=any?'pointer':'not-allowed';
+}
 async function comicExtractPanels(){
   const boxes=_comicPanels();
   if(!boxes.length) return;
-  const btn=document.getElementById('comic-extract-btn');
+  // User request: the two checkboxes are independent opt-ins and this ONE button acts on whichever
+  // are ticked. Unreachable through the UI — _comicSyncGenerateBtn() disables the button while
+  // neither is ticked, which is a clearer answer than a toast AND costs no new ui.json string. Kept
+  // as a silent defensive return; the route rejects the same combination independently.
+  const wantExtract=!!document.getElementById('comic-extract-cb')?.checked;
+  const wantDescribe=!!document.getElementById('comic-describe-cb')?.checked;
+  if(!wantExtract && !wantDescribe) return;
+  const btn=document.getElementById('comic-generate-btn');
   const status=document.getElementById('comic-extract-status');
   if(btn) btn.disabled=true;
   if(status) status.textContent=t('form.comic_extracting');
   try{
     const images=boxes.map(_comicCropDataUrl);
     const r=await fetch('/api/comic-extract',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({images, lang:APP.lang})});
+      body:JSON.stringify({images, lang:APP.lang, extract:wantExtract, describe:wantDescribe})});
     const data=await r.json().catch(()=>({}));
     if(!r.ok){ if(status) status.textContent=''; showToast(t('form.comic_extract_failed')+': '+(data.error||r.status)); if(btn) btn.disabled=false; return; }
     _startComicExtractJob(data.jobId);
@@ -4414,7 +4460,7 @@ async function _comicExtractCheckOnce(jobId){
   if(_comicExtractJobId!==jobId){ console.log('Comic extract check: job '+jobId+' is stale (current is '+_comicExtractJobId+'), skipping'); return; }
   console.log('Comic extract check: polling job '+jobId);
   const status=document.getElementById('comic-extract-status');
-  const btn=document.getElementById('comic-extract-btn');
+  const btn=document.getElementById('comic-generate-btn');
   try{
     const r=await fetch('/api/job/'+jobId);
     if(!r.ok) throw new Error('Poll failed: '+r.status);
@@ -4493,13 +4539,17 @@ function _comicApplyExtraction(panels){
 let _comicReviewEditable=null, _comicReviewBuffer=null, _comicReviewOverlayEl=null;
 function comicOpenReview(auto){
   const boxes=APP_COMIC.boxes;
+  // Unchanged in shape, but note what it now admits: a panel whose ONLY content is a generated
+  // description has `b.text` set (with empty caption/inScene) and no error, so it is editable here
+  // like any other — which is required, since that description becomes the chapter's text.
   const editable=boxes.map((b,i)=>({i,b})).filter(({b})=>b && b.text && !b.text.error);
   if(!editable.length){
     if(!auto) showToast(t('form.comic_create_failed')+': no extracted text yet');
     return;
   }
   _comicReviewEditable=editable;
-  _comicReviewBuffer=editable.map(({b})=>({caption:(b.text&&b.text.caption)||'', inScene:(b.text&&b.text.inScene)||''}));
+  _comicReviewBuffer=editable.map(({b})=>({caption:(b.text&&b.text.caption)||'', inScene:(b.text&&b.text.inScene)||'',
+    description:(b.text&&b.text.description)||''}));
   // v86_x (user-requested, real usage): the first cut was a narrow (520px) single-column list —
   // "the popover for text confirmation could be bigger and should allow to view the text without
   // scrolling." Near-fullscreen box (95vw × 90vh) + a CSS GRID body (not a single flex column) so
@@ -4522,6 +4572,9 @@ function comicOpenReview(auto){
       <textarea rows="4" oninput="_comicReviewEdit(${k},'inScene',this.value)"
         placeholder="${escAttr(t('form.comic_scene_ph'))}"
         style="font-size:15px;font-weight:600;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;color:var(--text);resize:vertical;min-height:88px">${escHtml(buf.inScene)}</textarea>
+      ${buf.description ? `<textarea rows="3" oninput="_comicReviewEdit(${k},'description',this.value)"
+        placeholder="${escAttr(t('form.comic_scene_ph'))}"
+        style="font-size:15px;font-weight:600;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px dashed var(--blue);border-radius:8px;color:var(--text);resize:vertical;min-height:66px">${escHtml(buf.description)}</textarea>` : ''}
     </div>`;
   }).join('');
   const ov=document.createElement('div');
@@ -4560,6 +4613,9 @@ function _comicReviewConfirm(){
       const buf=_comicReviewBuffer[k];
       APP_COMIC.boxes[i].text.caption=buf.caption;
       APP_COMIC.boxes[i].text.inScene=buf.inScene;
+      // Only written back when the panel HAS one, so confirming a normal lettered panel cannot
+      // introduce an empty description field onto it.
+      if(buf.description !== undefined) APP_COMIC.boxes[i].text.description=buf.description;
     });
   }
   _comicReviewClose();
@@ -4583,8 +4639,16 @@ function _comicReviewConfirm(){
 // entry; _runBookJob ALREADY chains multiple chunks into one connected storyline sequentially (the
 // same machinery a multi-chapter PDF split already uses) — no new server-side chaining logic needed,
 // confirmed by reading _runBookJob before relying on it.
+// The text a panel contributes to the chapter. User request: "[the description] will be used as the
+// chapter text, if no text is extracted" — so it is a FALLBACK, never mixed in alongside real
+// lettering. This one function is what makes that true everywhere at once: comicCreateChapter's own
+// no-text filter, the panel-list summary, comicOpenReview's editable set and (since v87_h)
+// _genChapterCount all read it, so a description-only panel becomes a real chapter without any of
+// them needing to know the description exists.
 function _comicPanelText(b){
-  const t=b.text||{}; return [t.caption, t.inScene].filter(Boolean).join('\n');
+  const t=b.text||{};
+  const extracted=[t.caption, t.inScene].filter(Boolean).join('\n');
+  return extracted || String(t.description||'').trim();
 }
 
 let _comicBookId=null, _comicBookPolling=false;
@@ -4593,7 +4657,7 @@ async function comicCreateChapter(){
   const boxes=_comicPanels();
   if(!boxes.length) return;
   if(!boxes.some(b=>_comicPanelText(b))){ showToast(t('form.comic_create_failed')+': no extracted text yet'); return; }
-  const extractBtn=document.getElementById('comic-extract-btn');
+  const extractBtn=document.getElementById('comic-generate-btn');
   const status=document.getElementById('comic-extract-status');
   if(extractBtn) extractBtn.disabled=true;
   // item AL part 2: #comic-create-btn is gone — the shared #gen-btn started this, and
@@ -4696,7 +4760,7 @@ async function _comicBookCheckOnce(bookId){
 async function _comicBookFinish(){
   _comicBookPolling=false;
   const status=document.getElementById('comic-extract-status'); if(status) status.textContent='';
-  const extractBtn=document.getElementById('comic-extract-btn'); if(extractBtn) extractBtn.disabled=false;
+  const extractBtn=document.getElementById('comic-generate-btn'); if(extractBtn) extractBtn.disabled=false;
   _applyLessonCardUI();   // item AL part 2: _comicBookId is cleared by now — the start button returns
   await loadSavedList();
 }

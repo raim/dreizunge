@@ -2207,6 +2207,90 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v87 LINE
 
+## ✅ v87_l — comic panels: an IMAGE DESCRIPTION in the target language, used as the chapter text when no lettering is found
+
+**User request**: *"comic text extraction: additionally or alternatively to text extraction, ask the
+model to give a short 1-2 sentence description of the image in the target language. This will be used
+as the chapter text, if no text is extracted. 'image description' and 'text extraction' button both
+become checkmarks, with a separate 'generate' button."*
+
+**Why it matters beyond the feature**: `comicCreateChapter()` filters out any panel `_comicPanelText()`
+returns nothing for. A wordless panel — a pure action beat, an establishing shot — therefore
+contributed NOTHING to the chapter and silently vanished from it. A description turns that same panel
+into real, readable chapter content in the language being learned.
+
+**Three rulings taken before building**, all with real trade-offs:
+| question | ruling |
+|---|---|
+| both ticked, and a panel DOES yield text — describe anyway? | **Only when no text was found.** A vision call is one-per-panel and slow (measured 15s-5min each), so describing every panel of a fully lettered page would roughly double the wait for a result that is never used. |
+| checkbox defaults | **Text ON, description OFF** — pressing Generate untouched does exactly what the old button did. |
+| `ui.json` | **Two new `en` keys** (`form.comic_describe`, `form.comic_generate`); the description field in the review card reuses `form.comic_scene_ph`. 726 → 728. |
+
+**A SEPARATE prompt and a SEPARATE vision call, deliberately.** `_comicDescribePrompt` is not an extra
+instruction folded into `_comicExtractPrompt` — that prompt is the most heavily live-tuned text in
+`server.js` (three measured rounds across `v85_k`/`v85_l`, a German-only worked example proven
+necessary, and a standing warning not to extend its confidence to other languages), and bolting a
+second, unrelated task onto it is exactly what regressed it before. Two prompts also fail
+independently: a bad description cannot corrupt a transcription. The description prompt asks for 1-2
+sentences IN THE TARGET LANGUAGE (it becomes chapter text, so it must be in the language being
+learned), describing only what is VISIBLE, in plain learner-readable present tense, explicitly NOT
+transcribing any lettering.
+
+**The laziness rule, server-side** (`_runComicExtractJob` gained `opts {extract, describe}`): per
+panel, extract first if asked, and describe only when that produced no caption AND no in-scene text
+(or when extraction was not requested at all). A fully lettered page therefore costs exactly what it
+costs today. Absent flags mean extract-only, so a client that predates this feature is unchanged. Both
+flags false is rejected by the route with a real message rather than running a job that would do
+nothing per panel.
+
+**An extraction ERROR is NOT "no text" — a deliberate boundary.** A failed extraction (model timeout,
+oversized image) is transient and re-runnable; substituting a description there would hide a failure
+behind plausible-looking content. So an errored panel surfaces its error and gets no description.
+Pinned by its own e2e section.
+
+**Client**: the single `#comic-extract-btn` became `#comic-extract-cb` + `#comic-describe-cb` +
+`#comic-generate-btn`, exactly as asked. `_comicSyncGenerateBtn()` DISABLES Generate while neither is
+ticked — a clearer answer than a toast, and it costs no third `ui.json` string.
+`_comicPanelText()` is the one place the fallback lives (`extracted || description`), which is what
+makes it true simultaneously for `comicCreateChapter`'s no-text filter, both panel summaries,
+`comicOpenReview`'s editable set and — since `v87_h` — `_genChapterCount`, none of which needed to
+learn that descriptions exist. The review card gained an editable description field, shown only for a
+panel that HAS one: the description becomes chapter text, so per the standing "keep the review stop"
+ruling it must be reviewable.
+
+**⚠️ LIVE-VERIFIED against the real vision model** (rule 9: a live model call needs a live test, not a
+plausible prompt), on a REAL comic panel taken from the corpus — `Gratis en Kostenlos`, a Dutch
+(`nl`) topic whose extracted caption was empty, i.e. exactly the wordless-panel case this feature
+exists for. A fresh server on port 3199 (the user's own on 3000 was never touched or restarted) with
+`extract:false, describe:true` returned:
+
+> "Een bordje staat op een houten statief en er onder ligt een zak met een plastic zak erin. Het is
+> buiten en het bord heeft een pijl naar links die 'gratis' aangeeft."
+
+Correct on every axis the prompt asks for: **Dutch, not English** (the target language, which is the
+whole point — an English description would be useless as chapter text); exactly two sentences; only
+what is visible; simple present tense; no commentary, label or translation.
+
+**New `test/e2e-comic-describe.test.js`** (6 checks, real fresh-spawned server + fake backend, per the
+standing "server.js changes need a FRESH PROCESS" rule). The laziness rule is only checkable by
+COUNTING the model calls the server actually made, so `fake-ollama.js` gained its own `comic_describe`
+kind — and it had to be ordered BEFORE `comic_extract`, because both prompts legitimately open by
+naming the same context ("a single panel cropped from a comic page") and the extract pattern matched
+the describe prompt too. Found by writing the e2e and watching a describe call come back with the
+extraction's canned transcription. The fake also gained `FORCE_NOTEXT` (unlabeled prose → parses to
+empty) alongside the existing `FORCE_EMPTY` (truly empty body → `callLLMVision` REJECTS it as a
+failure): the two are genuinely different outcomes and this feature depends on telling them apart.
+`unit-comic-extraction.test.js` gained three sections (the two flags sent independently; neither
+ticked → no request and a disabled button; `_comicPanelText`'s fallback in all five combinations).
+TWO mutations confirmed red: describing eagerly, and dropping the fallback.
+
+**Five existing tests updated** for the renamed control and the widened buffer —
+`unit-comic-extraction`, `unit-comic-chapter`, `unit-comic-review-card` (buffer gained `description`),
+`unit-gen-wizard` (its "these survived on the Text step" list now names the two checkboxes and the
+Generate button). Note the harness AUTO-VIVIFIES elements with no `checked`, so the markup's own
+default (text ON) had to be modelled explicitly wherever `comicExtractPanels()` is exercised — the
+same lib-dom characteristic that produced two vacuous guards earlier in this line.
+
 ## ✅ v87_k — BUG (user-reported): the lesson-set story reader showed comic images only in the analysis view. Fixed by making it the IDENTICAL render the progress card uses — a user ruling that overturns `v80_t` for this panel
 
 **User report**: *"In the story reader of the teacher view lesson set card, we now see the image above

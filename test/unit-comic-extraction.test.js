@@ -78,11 +78,12 @@ console.log('  _comicCropDataUrl(): crops the source image to the box\'s exact n
       window._fetchCall = { url: url, method: opts.method, body: JSON.parse(opts.body) };
       return Promise.resolve({ ok:true, json: function(){ return Promise.resolve({ jobId:'job_xyz' }); } });
     };
+    document.getElementById('comic-extract-cb').checked = true;
     (async()=>{ await comicExtractPanels(); })();
     true;`, 't2b');
   await settle();
   const r2 = JSON.parse(C.run(`JSON.stringify({ cropCalls: window._cropCalls, startedWith: window._startedWith,
-    fetchCall: window._fetchCall, btnDisabled: document.getElementById('comic-extract-btn').disabled })`));
+    fetchCall: window._fetchCall, btnDisabled: document.getElementById('comic-generate-btn').disabled })`));
   assert.strictEqual(r2.cropCalls, 2, 'one crop per drawn box');
   assert.strictEqual(r2.fetchCall.url, '/api/comic-extract', 'POSTs to the extraction endpoint');
   assert.strictEqual(r2.fetchCall.method, 'POST', 'uses POST');
@@ -99,6 +100,7 @@ console.log('  comicExtractPanels(): correct POST body (crops in order + lang), 
   C.run(`APP_COMIC.boxes = [];
     window._fetchCalled = false;
     fetch = function(){ window._fetchCalled = true; return Promise.resolve({ok:true,json:function(){return Promise.resolve({});}}); };
+    document.getElementById('comic-extract-cb').checked = true;
     (async()=>{ await comicExtractPanels(); })();
     true;`, 't3');
   await settle();
@@ -113,10 +115,11 @@ console.log('  comicExtractPanels(): zero panels is a no-op (no network call): O
   C.run(`APP_COMIC.boxes = [{x1:0,y1:0,x2:10,y2:10}];
     _comicCropDataUrl = function(){ return 'X'; };
     fetch = function(){ return Promise.reject(new Error('network down')); };
+    document.getElementById('comic-extract-cb').checked = true;
     (async()=>{ await comicExtractPanels(); })();
     true;`, 't4');
   await settle();
-  const r = JSON.parse(C.run(`JSON.stringify({ btnDisabled: document.getElementById('comic-extract-btn').disabled,
+  const r = JSON.parse(C.run(`JSON.stringify({ btnDisabled: document.getElementById('comic-generate-btn').disabled,
     status: document.getElementById('comic-extract-status').textContent })`));
   assert.strictEqual(r.btnDisabled, false, 'a network failure re-enables the extract button, not left stuck disabled');
   assert.strictEqual(r.status, '', 'a network failure clears the status text rather than leaving a stale "Starting…"');
@@ -127,7 +130,7 @@ console.log('  comicExtractPanels(): a network failure re-enables the button and
 {
   const C = client();
   C.run(`APP_COMIC.boxes = [{x1:0,y1:0,x2:10,y2:10},{x1:1,y1:1,x2:11,y2:11}];
-    document.getElementById('comic-extract-btn').disabled = true;
+    document.getElementById('comic-generate-btn').disabled = true;
     fetch = function(url){
       return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve({
         status:'done', step:'Complete',
@@ -138,7 +141,7 @@ console.log('  comicExtractPanels(): a network failure re-enables the button and
     true;`, 't5');
   await settle(2200);   // the real 2000ms poll interval — same convention as unit-gen-attribution.test.js
   const r = JSON.parse(C.run(`JSON.stringify({ box0: APP_COMIC.boxes[0].text, box1: APP_COMIC.boxes[1].text,
-    btnDisabled: document.getElementById('comic-extract-btn').disabled,
+    btnDisabled: document.getElementById('comic-generate-btn').disabled,
     status: document.getElementById('comic-extract-status').textContent })`));
   assert.strictEqual(r.box0.caption, 'Cap A', "panel 0's extracted text landed on APP_COMIC.boxes[0]");
   assert.strictEqual(r.box1.caption, 'Cap B', "panel 1's extracted text landed on APP_COMIC.boxes[1]");
@@ -151,7 +154,7 @@ console.log("  _startComicExtractJob(): a 'done' status merges panel text by ind
 {
   const C = client();
   C.run(`APP_COMIC.boxes = [{x1:0,y1:0,x2:10,y2:10}];
-    document.getElementById('comic-extract-btn').disabled = true;
+    document.getElementById('comic-generate-btn').disabled = true;
     fetch = function(){
       return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve({
         status:'error', error:'model unreachable' }); } });
@@ -159,7 +162,7 @@ console.log("  _startComicExtractJob(): a 'done' status merges panel text by ind
     _startComicExtractJob('job_err');
     true;`, 't6');
   await settle(2200);
-  const r = JSON.parse(C.run(`JSON.stringify({ btnDisabled: document.getElementById('comic-extract-btn').disabled,
+  const r = JSON.parse(C.run(`JSON.stringify({ btnDisabled: document.getElementById('comic-generate-btn').disabled,
     status: document.getElementById('comic-extract-status').textContent,
     boxUnchanged: APP_COMIC.boxes[0].text === undefined })`));
   assert.strictEqual(r.btnDisabled, false, "an 'error' status re-enables the extract button");
@@ -304,6 +307,85 @@ console.log('  _comicExtractCheckOnce(): logs a stale/superseded call: OK');
   assert.ok(r.some(m => m.indexOf('done, applying 1 panel') >= 0), 'logs how many panels it is about to apply: ' + JSON.stringify(r));
 }
 console.log('  _comicExtractCheckOnce(): logs the polling attempt, the status received, and the panel count applied: OK');
+
+// ── 6. Image description (user request): the two checkboxes drive the request ────────────────────
+// "additionally or alternatively to text extraction, ask the model to give a short 1-2 sentence
+// description of the image in the target language. This will be used as the chapter text, if no text
+// is extracted. 'image description' and 'text extraction' button both become checkmarks, with a
+// separate 'generate' button."
+{
+  const post = (extract, describe) => {
+    const C = client();
+    C.run(`APP_COMIC.boxes = [{x1:0,y1:0,x2:10,y2:10}];
+      _comicCropDataUrl = function(){ return 'data:image/png;base64,AAA'; };
+      _startComicExtractJob = function(){};
+      document.getElementById('comic-extract-cb').checked = ${extract};
+      document.getElementById('comic-describe-cb').checked = ${describe};
+      window._body = null;
+      fetch = function(u, o){ window._body = JSON.parse(o.body);
+        return Promise.resolve({ ok:true, json:function(){ return Promise.resolve({ jobId:'j1' }); } }); };
+      comicExtractPanels();
+      true;`);
+    return C;
+  };
+  const read = C => JSON.parse(C.run(`JSON.stringify(window._body)`));
+
+  const both = read(post(true, true));
+  assert.strictEqual(both.extract, true, 'both ticked: extract requested');
+  assert.strictEqual(both.describe, true, 'both ticked: description requested');
+
+  const textOnly = read(post(true, false));
+  assert.strictEqual(textOnly.extract, true, 'text only: extract requested');
+  assert.strictEqual(textOnly.describe, false, 'text only: description NOT requested');
+
+  const descOnly = read(post(false, true));
+  assert.strictEqual(descOnly.extract, false, 'description only: extraction NOT requested');
+  assert.strictEqual(descOnly.describe, true, 'description only: description requested');
+}
+console.log('  comicExtractPanels(): the two checkboxes are sent as independent extract/describe flags: OK');
+
+// ── 6b. Neither ticked: no request at all, and the button says so by being disabled ──────────────
+// Deliberately NOT a toast — that would have cost a third ui.json string for a state the UI can
+// simply prevent. The route rejects the same combination independently.
+{
+  const C = client();
+  const r = JSON.parse(C.run(`APP_COMIC.boxes = [{x1:0,y1:0,x2:10,y2:10}];
+    _comicCropDataUrl = function(){ return 'data:image/png;base64,AAA'; };
+    document.getElementById('comic-extract-cb').checked = false;
+    document.getElementById('comic-describe-cb').checked = false;
+    window._called = false;
+    fetch = function(){ window._called = true; return Promise.resolve({ ok:true, json:function(){ return Promise.resolve({}); } }); };
+    comicExtractPanels();
+    _comicSyncGenerateBtn();
+    JSON.stringify({ called: window._called,
+                     disabled: !!document.getElementById('comic-generate-btn').disabled })`));
+  assert.strictEqual(r.called, false, 'neither ticked: no network call');
+  assert.strictEqual(r.disabled, true, 'and the Generate button is disabled rather than silently doing nothing');
+}
+console.log('  neither ticked: no request, Generate disabled: OK');
+
+// ── 6c. _comicPanelText(): the description is a FALLBACK, never mixed in ────────────────────────
+// This ONE function is what makes "used as the chapter text, if no text is extracted" true across
+// comicCreateChapter's no-text filter, the panel summaries, the review card's editable set and
+// _genChapterCount at once — so it is asserted directly, in every combination.
+{
+  const C = client();
+  const r = JSON.parse(C.run(`JSON.stringify({
+    both:      _comicPanelText({ text:{ caption:'Cap', inScene:'Scene', description:'Desc' } }),
+    textOnly:  _comicPanelText({ text:{ caption:'Cap', inScene:'', description:'' } }),
+    descOnly:  _comicPanelText({ text:{ caption:'', inScene:'', description:'Ein Hund rennt.' } }),
+    neither:   _comicPanelText({ text:{ caption:'', inScene:'', description:'' } }),
+    noText:    _comicPanelText({})
+  })`));
+  assert.strictEqual(r.both, 'Cap\nScene',
+    'extracted lettering WINS — the description is never appended to real text');
+  assert.strictEqual(r.textOnly, 'Cap', 'a caption alone is still the text');
+  assert.strictEqual(r.descOnly, 'Ein Hund rennt.',
+    'a panel with no lettering falls back to its description — this is what makes it a chapter');
+  assert.strictEqual(r.neither, '', 'nothing at all is still nothing (the panel is filtered out downstream)');
+  assert.strictEqual(r.noText, '', 'an un-extracted panel is unchanged');
+}
+console.log('  _comicPanelText(): description is a fallback only, never mixed with extracted text: OK');
 
 console.log('unit-comic-extraction: ALL PASSED');
 }

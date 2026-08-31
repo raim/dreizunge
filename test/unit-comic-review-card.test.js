@@ -63,8 +63,14 @@ async function main() {
   assert.strictEqual(r.editableLen, 2, 'only panels 0 and 3 have usable text (no-text and errored panels excluded)');
   assert.deepStrictEqual(r.editableIdxs, [0, 3], 'the ORIGINAL panel indices are kept, not renumbered 0..n');
   assert.strictEqual(r.bufferLen, 2, 'one buffer entry per editable panel');
-  assert.deepStrictEqual(r.buf0, { caption:'Cap A', inScene:'Scene A' }, 'buffer seeded from the panel\'s own extracted text');
-  assert.deepStrictEqual(r.buf1, { caption:'', inScene:'' }, 'an empty-but-extracted panel seeds an empty (not undefined) buffer entry');
+  // The buffer gained a `description` field when image description shipped (user request): a panel
+  // with no lettering can now carry a generated 1-2 sentence description that BECOMES the chapter
+  // text, so the review card has to let it be edited like any other field. '' here because this
+  // fixture's panels all have real extracted text — the description is only ever generated for a
+  // panel that produced none.
+  assert.deepStrictEqual(r.buf0, { caption:'Cap A', inScene:'Scene A', description:'' },
+    'buffer seeded from the panel\'s own extracted text');
+  assert.deepStrictEqual(r.buf1, { caption:'', inScene:'', description:'' }, 'an empty-but-extracted panel seeds an empty (not undefined) buffer entry');
   assert.strictEqual(r.overlaySet, true, 'the overlay element is tracked for a later close');
 }
 console.log('  comicOpenReview(): filters to panels with usable text, seeds the edit buffer from their OWN extracted text: OK');

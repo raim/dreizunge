@@ -156,7 +156,7 @@ console.log('  comicCreateChapter(): arc + storyboard + continuedFrom are correc
 {
   const C = client();
   C.run(`_comicBookId = 'book_done'; _comicBookPolling = false;
-    document.getElementById('comic-extract-btn').disabled = true;
+    document.getElementById('comic-generate-btn').disabled = true;
     window._toasts = []; showToast = function(msg){ window._toasts.push(msg); };
     window._savedListCalls = 0; loadSavedList = function(){ window._savedListCalls++; return Promise.resolve(); };
     fetch = function(url){
@@ -167,7 +167,7 @@ console.log('  comicCreateChapter(): arc + storyboard + continuedFrom are correc
     true;`, 't3a');
   await settle();
   const r = JSON.parse(C.run(`JSON.stringify({ bookId: _comicBookId, polling: _comicBookPolling,
-    extractDisabled: document.getElementById('comic-extract-btn').disabled,
+    extractDisabled: document.getElementById('comic-generate-btn').disabled,
     toasts: window._toasts, savedListCalls: window._savedListCalls })`));
   assert.strictEqual(r.bookId, null, "a 'done' status clears _comicBookId");
   assert.strictEqual(r.polling, false, "a 'done' status clears _comicBookPolling");
