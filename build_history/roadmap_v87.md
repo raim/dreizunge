@@ -2207,6 +2207,69 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v87 LINE
 
+## ✅ v87_j — BUG (user-reported): a saved text analysis showed "lädt…" forever. TWO independent defects, both in the same seam
+
+**User report**: *"an existing text analysis can not be loaded anymore for `tp_17880367188140000070`,
+Die Enteignungszone. Perhaps this is due to chapter `tp_17881715830570000091` being added to the
+storyline afterwards. Also the existing text analysis for this second chapter was not available
+anymore. In both cases it just said 'lädt…' (loading)."* Their own hypothesis was correct, and
+pointed straight at the first defect.
+
+**First measurement ruled out the obvious suspects.** Both chapter ids ARE present in
+`canonical-analysis.json` (36 and 86 occurrences), so the data existed. `analysisShadowFor()` returns
+`available:true` for any record that exists — the only route to `available:false` is a MISSING record
+— so the server was answering correctly. The failure was entirely client-side, which is why
+regenerating the analyses (and seeing "cached" in the console) did not help: there was never anything
+wrong with the stored data.
+
+**⚠️ DEFECT 1 — the explorer FLAG outlives a chapter change; the FETCH never followed it.**
+`_ensureTextExplorerData()` was called from exactly two places: `toggleTextExplorer()` and
+`toggleLsTextExplorer()`. Nothing called it on navigation or re-render. But `APP._textExplorer` /
+`APP._lsTextExplorer` live on `APP` and survive moving between chapters — so opening the explorer on
+one chapter and then going to another (**exactly the "chapter added to the storyline afterwards"
+case the user guessed**) rendered a chapter with no cache entry, and NOTHING fetched it. Reproduced in
+the DOM harness before touching anything: navigating to the second chapter produced **zero fetches**
+and the loading string. There was no error, no retry and no recovery short of toggling the mode off
+and on, because `!entry` and `status:'loading'` render the SAME string — "never fetched" is
+indistinguishable from "in flight", which is why this presents as a hang rather than a failure.
+
+**⚠️ DEFECT 2 — the data path repainted the WRONG CARD**, and this one needs no navigation at all.
+`v86_ad` gave the lesson-set card its own text-explorer toggle (`#story-body`, its own
+`APP._lsTextExplorer` flag, deliberately separate) over the SAME shared cache. But every repaint in
+the analysis path was a bare `_renderCompStory()` — the COMPLETION card. So toggling the explorer on
+the lesson-set card painted "Loading…" into `#story-body`, fetched correctly, reached `status:'ready'`
+— and then repainted a card the learner was not looking at. `#story-body` was never re-rendered.
+Measured before the fix: cache `ready`, `_renderCompStory` called ×2, `renderStoryText` ×1 (the
+initial paint only), `#story-body` still holding the loading string. **This alone reproduces the
+report with a single toggle and no navigation**, and is the likelier of the two to be what was hit.
+
+**The fixes**, both small and at the seam rather than at the symptom:
+- `_teRepaint()` — one helper that refreshes whichever explorer surfaces are actually open, each
+  branch guarded by its own flag (so it is a no-op for a closed surface, and a late job callback
+  after the learner closed the panel does not force a render that fights their chosen view). All 13
+  repaints inside the analysis data path now go through it instead of naming one card.
+- `_ensureTextExplorerData(chapterId)` — takes the id as an argument, defaulting to `APP.lessonData`
+  so both pre-existing toggle callers are unchanged. The RENDER path (`renderStoryText`,
+  `_renderCompStory`) now fires it, fire-and-forget, for whatever chapter it is actually painting when
+  that chapter has no cache entry. Terminates by construction: `_ensureTextExplorerData` creates the
+  `'loading'` entry BEFORE it repaints, so the repaint it triggers finds an entry and does not re-fire.
+
+**Verified by re-running the same two harness reproductions**: navigating to the second chapter now
+issues `GET /api/analysis/tp_te2`, reaches `ready`, and renders the story instead of the loading
+string; the lesson-set card renders its analysed view into `#story-body` with the completion card
+left alone (`renderStoryText` ×4, `_renderCompStory` ×0).
+
+**Two regression tests** added to `unit-text-explorer.test.js` (§8, §9), each written from the
+reproduction rather than from the fix, and **both mutation-tested**: removing the render-path trigger
+turns §8 red; reverting `_teRepaint` to repaint only the completion card turns §9 red. §9 also
+asserts the completion card is NOT repainted for a lesson-set-card toggle, so the fix cannot
+regress into "repaint everything".
+
+**Not changed, deliberately**: the server side. `analysisShadowFor`, the store, the staleness hash and
+both routes were read and found correct — the stored analyses were never the problem, and the user's
+regeneration (visible in their console log as two completed jobs and two `— cached` lines) confirmed
+the write path was healthy the whole time.
+
 ## ✅ v87_i — item Z: a word tap plays ALL that word's questions, then rejoins forward progress — and the `unit-tap-word` "flake" turns out to be a real defect
 
 **User ask, restated in their own words this session**: *"we want tapping to open all questions for

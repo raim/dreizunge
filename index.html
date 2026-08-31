@@ -6298,6 +6298,12 @@ function renderStoryText(d, targetEl){
   const _xlate = isMainCard ? (d.storyTranslation||'') : '';
   const showingSource = isMainCard && APP._lsStoryLang==='source' && _xlate;
   if (isMainCard && APP._lsTextExplorer && !showingSource) {
+  // ⚠️ BUG FIX (user report): the explorer FLAG outlives a chapter change but the FETCH did not —
+  // it only ever ran from the two toggle handlers. Painting a chapter that has no cache entry now
+  // starts one, fire-and-forget, so arriving at any chapter with the mode already on loads instead
+  // of sitting on "Loading…". Terminates: _ensureTextExplorerData creates the 'loading' entry
+  // BEFORE it repaints, so the repaint this triggers finds an entry and does not re-fire.
+  try { if (d && d.id && !_teCacheStore()[d.id]) _ensureTextExplorerData(d.id); } catch(_) {}
     try { body.innerHTML = _textExplorerBodyHtml(d); }
     catch(_) { body.textContent = d.story||''; }
   } else {
@@ -21315,6 +21321,12 @@ function _renderCompStory(){
     // has nothing to say about a translation view (toggleTextExplorer forces target on toggle-on, but
     // this stays defensive in case the two states ever disagree for any other reason).
     if (APP._textExplorer && !showingSource) {
+    // ⚠️ BUG FIX (user report): the explorer FLAG outlives a chapter change but the FETCH did not —
+    // it only ever ran from the two toggle handlers. Painting a chapter that has no cache entry now
+    // starts one, fire-and-forget, so arriving at any chapter with the mode already on loads instead
+    // of sitting on "Loading…". Terminates: _ensureTextExplorerData creates the 'loading' entry
+    // BEFORE it repaints, so the repaint this triggers finds an entry and does not re-fire.
+      try { if (d && d.id && !_teCacheStore()[d.id]) _ensureTextExplorerData(d.id); } catch(_) {}
       try { _el.innerHTML = _textExplorerBodyHtml(d); }
       catch(_) { _el.textContent = full; }
     } else {
@@ -21409,21 +21421,53 @@ function _teCacheStore(){
   if (!APP._teCache) APP._teCache = {};   // chapterId -> {status:'loading'|'analyzing'|'ready'|'error', data, step, error}
   return APP._teCache;
 }
+// ⚠️ BUG FIX (user report: "an existing text analysis can not be loaded anymore … it just said
+// 'lädt…'"). The whole analysis data path used to repaint with a bare `_renderCompStory()`, which
+// renders the COMPLETION card's #comp-story-text. But there are TWO surfaces with a text-explorer
+// toggle — `v86_ad` added the lesson-set card's own (#story-body, its own APP._lsTextExplorer flag,
+// deliberately separate) and gave it the SAME shared cache. So toggling the explorer on the
+// LESSON-SET card painted "Loading…" into #story-body, fetched correctly, reached status 'ready' —
+// and then repainted the other card. #story-body was never re-rendered, so it sat on "Loading…"
+// forever even though the data was in hand. Reproduced in the DOM harness before fixing: cache
+// 'ready', _renderCompStory called twice, renderStoryText called once (the initial paint only),
+// #story-body still holding the loading string.
+//
+// One helper repaints whichever surfaces are actually open, so a fetch that resolves can never again
+// land on a card the learner isn't looking at. Both branches are guarded by their own flag, so this
+// is a no-op for a closed surface rather than a stray re-render.
+function _teRepaint(){
+  try { if (APP._textExplorer) _renderCompStory(); } catch(_) {}
+  try { if (APP._lsTextExplorer && APP.lessonData && typeof renderStoryText === 'function') renderStoryText(APP.lessonData); } catch(_) {}
+  // Neither flag set (e.g. a late job callback after the learner closed the panel): nothing to
+  // repaint, and forcing a render would fight whatever view they switched to.
+}
 // Fetches the cached analysis if one exists; otherwise triggers (or reuses) the background job and
 // hands off to the poller. Never throws — every branch degrades to an 'error' cache entry that
 // _textExplorerBodyHtml renders as a short status line, the same "fail soft, not silently" pattern
 // refreshCp5Shadow already uses for its own fire-and-forget fetch.
-async function _ensureTextExplorerData(){
-  const d = APP.lessonData, chapterId = d && d.id;
+async function _ensureTextExplorerData(chapterIdArg){
+  // ⚠️ BUG FIX (same user report). `chapterId` was derived from APP.lessonData ONLY, and this
+  // function was called from exactly two places: the two toggle handlers. The explorer FLAG,
+  // however, survives navigating between chapters — so opening the explorer on one chapter and then
+  // moving to another (e.g. a chapter newly added to the same storyline, which is precisely the
+  // case reported) rendered a chapter with NO cache entry and nothing ever fetched it: permanent
+  // "Loading…", no error, no retry. Reproduced in the harness before fixing: navigating to the
+  // second chapter produced zero fetches and the loading string.
+  //
+  // Taking the id as an argument lets the RENDER path drive it (see renderStoryText/_renderCompStory,
+  // which fire this for whatever chapter they are actually painting). Defaults to APP.lessonData for
+  // the two pre-existing toggle callers, whose behaviour is unchanged.
+  const d = APP.lessonData;
+  const chapterId = chapterIdArg || (d && d.id);
   const store = _teCacheStore();
   if (!chapterId) return;   // an unsaved/preview chapter has no id for CP1 to key on — nothing to fetch
   // Only an EXISTING entry counts as "already in flight or done" — checked BEFORE creating this
   // call's own entry, or a fresh 'loading' entry would immediately match its own just-created state
   // and short-circuit every single call, including the very first one.
   const existing = store[chapterId];
-  if (existing && (existing.status === 'ready' || existing.status === 'loading' || existing.status === 'analyzing')) { _renderCompStory(); return; }
+  if (existing && (existing.status === 'ready' || existing.status === 'loading' || existing.status === 'analyzing')) { _teRepaint(); return; }
   const entry = store[chapterId] = { status: 'loading', error: null };
-  _renderCompStory();
+  _teRepaint();
   // v86_z (user-requested): the static build has no server for GET /api/analysis or
   // POST /api/analyze-chapter — read the baked STATIC_ANALYSIS snapshot directly instead. Unlike the
   // live path below, there is no retry-via-a-new-job option for a chapter that isn't in the bake: the
@@ -21434,25 +21478,25 @@ async function _ensureTextExplorerData(){
     const cp = STATIC_ANALYSIS[chapterId];
     if (cp && cp.available) { entry.status = 'ready'; entry.data = cp; }
     else { entry.status = 'error'; entry.error = 'not analysed in this offline copy'; }
-    _renderCompStory();
+    _teRepaint();
     return;
   }
   try {
     const r = await fetch('/api/analysis/' + encodeURIComponent(chapterId));
     const cp = r && r.ok ? await r.json() : null;
-    if (cp && cp.available && !cp.stale) { entry.status = 'ready'; entry.data = cp; _renderCompStory(); return; }
+    if (cp && cp.available && !cp.stale) { entry.status = 'ready'; entry.data = cp; _teRepaint(); return; }
     entry.status = 'analyzing'; entry.step = t('text_explorer.analyzing');
-    _renderCompStory();
+    _teRepaint();
     const start = await fetch('/api/analyze-chapter/' + encodeURIComponent(chapterId),
       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
     const sb = await start.json().catch(() => null);
-    if (!start.ok) { entry.status = 'error'; entry.error = (sb && sb.error) || ('HTTP ' + start.status); _renderCompStory(); return; }
-    if (sb && sb.cached) { entry.status = 'ready'; entry.data = sb; _renderCompStory(); return; }
-    if (!sb || !sb.jobId) { entry.status = 'error'; entry.error = (sb && sb.error) || 'unavailable'; _renderCompStory(); return; }
+    if (!start.ok) { entry.status = 'error'; entry.error = (sb && sb.error) || ('HTTP ' + start.status); _teRepaint(); return; }
+    if (sb && sb.cached) { entry.status = 'ready'; entry.data = sb; _teRepaint(); return; }
+    if (!sb || !sb.jobId) { entry.status = 'error'; entry.error = (sb && sb.error) || 'unavailable'; _teRepaint(); return; }
     _startTextExplorerJob(chapterId, sb.jobId);
   } catch (e) {
     entry.status = 'error'; entry.error = String((e && e.message) || e);
-    _renderCompStory();
+    _teRepaint();
   }
 }
 // Poller, same shape as _startComicExtractJob/_comicExtractCheckOnce (v86_d's own mobile-
@@ -21477,21 +21521,21 @@ async function _textExplorerCheckOnce(jobId){
         if (gr && gr.available) { entry.status = 'ready'; entry.data = gr; }
         else { entry.status = 'error'; entry.error = 'analysis missing after the job finished'; }
       }
-      _renderCompStory();
+      _teRepaint();
       return;
     }
     if (j.status === 'error' || j.status === 'cancelled') {
       _textExplorerJobId = null;
       if (entry) { entry.status = 'error'; entry.error = j.error || j.status; }
-      _renderCompStory();
+      _teRepaint();
       return;
     }
-    _renderCompStory();   // still running — repaint so a changed `step` label is visible
+    _teRepaint();   // still running — repaint so a changed `step` label is visible
   } catch (e) {
     if (_textExplorerJobId !== jobId) return;
     _textExplorerJobId = null;
     if (entry) { entry.status = 'error'; entry.error = String((e && e.message) || e); }
-    _renderCompStory();
+    _teRepaint();
   }
 }
 function _startTextExplorerJob(chapterId, jobId){

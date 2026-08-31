@@ -387,5 +387,79 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
   }
   console.log('  static build: _ensureTextExplorerData() reads STATIC_ANALYSIS directly, present or absent, and never touches the network: OK');
 
+  // ── 8. ⚠️ REGRESSION: a chapter arrived at with the mode ALREADY ON must load, not hang ────────
+  // User bug report: "an existing text analysis can not be loaded anymore for tp_…070 … Perhaps this
+  // is due to chapter tp_…091 being added to the storyline afterwards … In both cases it just said
+  // 'lädt…'". Root cause: _ensureTextExplorerData() ran ONLY from the two toggle handlers, but
+  // APP._textExplorer SURVIVES a chapter change — so painting a different chapter with the mode
+  // already on found no cache entry, fetched nothing, and rendered the loading string forever. There
+  // was no error and no retry: `!entry` and `status:'loading'` render the SAME string, so "never
+  // fetched" is indistinguishable from "in flight". Mutation-tested: drop the render-path trigger and
+  // this goes red.
+  {
+    const C = loadClient({ quiet: true });
+    const B = { topic: 'T2', id: 'tp_te2', lang: 'de', srcLang: 'en', story: 'Ein Pfad.', lessons: [] };
+    C.run(SEED_COMMON + `
+      APP.lessonData = ${JSON.stringify(TOPIC)};
+      APP.cur = { lessonIdx: 0, exercises: [], cur: 0, correct: 1, total: 1, mistakes: 0, hearts: 3, streak: 1, bestStreak: 1 };
+      window.fetchCalls = [];
+      fetch = function(u){ window.fetchCalls.push(u);
+        return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve({
+          chapterId: 'x', available:true, stale:false, sentenceCount:1, tokenCount:1,
+          sentences:[{ text:'Ein Pfad.', tokens:[] }] }); } }); };
+      toggleTextExplorer();
+      true;`, 'chapter-A-on');
+    await settle();
+    assert.ok(C.run(`window.fetchCalls`).includes('/api/analysis/tp_te1'), 'setup: chapter A fetched on toggle-ON');
+    assert.strictEqual(C.run(`(APP._teCache['tp_te1']||{}).status`), 'ready', 'setup: chapter A reached ready');
+
+    // Navigate to a DIFFERENT chapter without touching the toggle — the reported scenario.
+    C.run(`APP.lessonData = ${JSON.stringify(B)}; window.fetchCalls = []; _renderCompStory(); true;`, 'nav-to-B');
+    await settle();
+    assert.strictEqual(C.run('APP._textExplorer'), true, 'the explorer flag survives the chapter change (it always did)');
+    assert.ok(C.run(`window.fetchCalls`).includes('/api/analysis/tp_te2'),
+      'rendering a chapter with no cache entry now FETCHES it — this is the bug: the flag outlived ' +
+      'the chapter but the fetch only ever ran from the toggle handler');
+    assert.strictEqual(C.run(`(APP._teCache['tp_te2']||{}).status`), 'ready',
+      'and the newly-arrived-at chapter reaches ready instead of sitting on "loading" forever');
+    const html = C.run(`_textExplorerBodyHtml(APP.lessonData)`);
+    assert.ok(!html.includes(UI.en['text_explorer.loading']),
+      `the second chapter no longer renders the loading string (got: ${html.slice(0, 90)})`);
+  }
+  console.log('  regression: a chapter arrived at with the mode already on fetches and renders, not "loading" forever: OK');
+
+  // ── 9. ⚠️ REGRESSION: the LESSON-SET card repaints when its own data lands ──────────────────────
+  // The second half of the same report, and the one reachable with NO navigation at all. v86_ad gave
+  // the lesson-set card its own explorer toggle (#story-body, its own APP._lsTextExplorer flag) over
+  // the SAME shared cache — but the data path repainted with a bare `_renderCompStory()`, the
+  // COMPLETION card. So toggling on the lesson-set card painted "Loading…" into #story-body, fetched,
+  // reached 'ready', and then repainted a card the learner was not looking at. Measured before the
+  // fix: cache 'ready', _renderCompStory ×2, renderStoryText ×1 (the initial paint), #story-body
+  // still holding the loading string. Mutation-tested: revert _teRepaint to _renderCompStory and this
+  // goes red.
+  {
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON + `
+      APP.lessonData = ${JSON.stringify(TOPIC)};
+      window.compRenders = 0;
+      var realComp = _renderCompStory;
+      _renderCompStory = function(){ window.compRenders++; return realComp.apply(null, arguments); };
+      fetch = function(u){ return Promise.resolve({ ok:true, status:200, json: function(){ return Promise.resolve({
+          chapterId:'tp_te1', available:true, stale:false, sentenceCount:1, tokenCount:1,
+          sentences:[{ text:'Der Hund lauft.', tokens:[] }] }); } }); };
+      toggleLsTextExplorer();
+      true;`, 'ls-toggle-on');
+    await settle();
+    assert.strictEqual(C.run(`(APP._teCache['tp_te1']||{}).status`), 'ready', 'setup: the fetch resolved to ready');
+    const body = C.run(`(document.getElementById('story-body')||{}).innerHTML || ''`);
+    assert.ok(!body.includes(UI.en['text_explorer.loading']),
+      `#story-body must not still show the loading string once the data is ready (got: ${body.slice(0, 90)})`);
+    assert.ok(body.length > 0, '#story-body actually rendered the analysed view');
+    assert.strictEqual(C.run('window.compRenders'), 0,
+      'and the COMPLETION card is not repainted for a lesson-set-card toggle — _teRepaint only ' +
+      'refreshes the surface whose own flag is set');
+  }
+  console.log("  regression: the lesson-set card repaints its own #story-body when the analysis lands: OK");
+
   console.log('unit-text-explorer: ALL PASSED');
 })().catch(e => { console.error(e); process.exit(1); });

@@ -1245,6 +1245,20 @@ already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly o
 | the acceptance tests (as of `v85_c`) | `test/unit-gen-wizard.test.js`: markup nesting (each existing block inside its own card, via `indexOf(needle, lo)` bounded search — NOT unbounded `indexOf`, which would find `.lang-box`'s OTHER pre-existing user, `#lib-lang-box` in the library filter, instead), default state (card 1 shown, pill 1 only active), `_genWizardNext`/`_genWizardBack` clamping at both ends, `_genWizardGoto` direct jump, the `show()` reset hook (mutation-tested), and the `#gen-area`-untouched invariant. Extended, not replaced, at `v85_d` — see its own row |
 | ⚠️ **div-balance verification method, worth reusing** | after any wizard-restructuring edit, a real HTML parser (Python's `html.parser`, stack-tracking start/end tags) was run over just the `#generation-screen`…next-screen region to confirm zero stray/missing closing tags — the same technique `PLAN §C5`'s own `landing`-nesting row used, reused again at both `v85_c` and `v85_d` |
 
+**`v87_j` — BUG FIX: a saved text analysis rendered "lädt…" forever** (user report; full write-up in
+`roadmap_v87.md`'s own `v87_j` entry). TWO independent client-side defects in item W's own seam; the
+server, store and staleness hash were read and found correct and are UNCHANGED.
+
+| what | where |
+|---|---|
+| ⚠️ **defect 1: the flag outlived the chapter, the fetch did not** | `_ensureTextExplorerData()` was called from `toggleTextExplorer()`/`toggleLsTextExplorer()` and NOWHERE else — not on navigation, not on re-render. `APP._textExplorer`/`APP._lsTextExplorer` live on `APP` and survive a chapter change, so arriving at another chapter with the mode already on rendered a chapter with no cache entry and fetched nothing. Harness-reproduced first: **zero fetches**, loading string forever. No error and no retry, because `!entry` and `status:'loading'` render the SAME string — "never fetched" is indistinguishable from "in flight" |
+| ⚠️ **defect 2: the data path repainted the WRONG CARD** | `v86_ad` gave the lesson-set card its own explorer toggle (`#story-body`, own `APP._lsTextExplorer`) over the SAME cache, but every repaint in the analysis path was a bare `_renderCompStory()` — the completion card. Toggling on the lesson-set card fetched, reached `ready`, then repainted the other card; `#story-body` kept the loading string. Measured: `_renderCompStory` ×2, `renderStoryText` ×1, body still loading. **Reproduces the report with one toggle and no navigation** |
+| **`_teRepaint()`** | one helper, refreshes whichever explorer surfaces are open, each branch guarded by its own flag — a no-op for a closed surface, so a late job callback cannot force a render that fights the view the learner switched to. All 13 repaints in the data path route through it |
+| **`_ensureTextExplorerData(chapterId)`** | takes the id as an argument (defaults to `APP.lessonData`, so both toggle callers are unchanged). `renderStoryText`/`_renderCompStory` fire it fire-and-forget for the chapter they are PAINTING when it has no cache entry. Terminates by construction: the `'loading'` entry is created BEFORE the repaint, so the repaint it triggers finds an entry and does not re-fire |
+| the acceptance tests | `unit-text-explorer.test.js` §8 (arrive at a chapter with the mode already on → it fetches, reaches ready, no loading string) and §9 (lesson-set card repaints its own `#story-body`, AND the completion card is NOT repainted — so the fix cannot regress into "repaint everything"). Both written from the reproduction, both mutation-tested red |
+
+---
+
 **`v87_i` — item Z: a word tap plays ALL that word's questions, then rejoins forward progress**
 (full write-up in `roadmap_v87.md`'s own `v87_i` entry). ⚠️ **SUPERSEDES `§T5.2`** — "tapping enters
 the usual lesson flow, including questions not reachable by tapping" — on an explicit user ruling
