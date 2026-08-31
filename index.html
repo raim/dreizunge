@@ -1109,23 +1109,22 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <!-- PLAN §13 — wizard shell: a pure re-layout/navigation wrapper around the EXISTING markup
            below. Every id/class/onclick it wraps is UNCHANGED; #gen-wizard only shows exactly one
            .gen-card at a time (_genWizardGoto/_genWizardNext/_genWizardBack, index into
-           #gen-card-1/-2/-3/-4). The pills reuse the EXISTING .pdf-stepper/.pdf-step visual language
+           #gen-card-1/-2/-3). The pills reuse the EXISTING .pdf-stepper/.pdf-step visual language
            (until now only a per-chunk PDF-import progress indicator) — same look, new page-level use,
            per roadmap_v85.md PLAN §13's approved approach. Milestone 1 (v85_c) built cards 1
            (language) and 2 (text source); milestone 2 (v85_d) split what was card 3's catch-all into
-           card 3 (chaptering) and card 4 (lesson-selection + Generate) — see the comment on
-           _genWizardGoto's own definition for the #gen-form-section nesting that keeps dialect mode's
-           single hide toggle working across both. Card 4 is milestones 3-5's own future territory
-           (lesson-selection reword + per-chapter override, additional features); it will split into
-           more pills as those land. No new validation: the topic field card 2 wraps was ALREADY
+           chaptering + lesson-selection cards. item AL (roadmap_v87.md) collapsed those two back into
+           ONE — 1 · Language / 2 · Text / 3 · Lessons — redistributing the chaptering card's contents
+           and deleting it; see _genWizardGoto's own definition for where each block went and for the
+           #gen-form-section nesting that keeps dialect mode's single hide toggle working.
+           No new validation: the topic field card 2 wraps was ALREADY
            required before this existed (doGenerate always has), so defaults + Next clicks reach it
            exactly as before, just paginated. -->
       <div id="gen-wizard">
         <div id="gen-wizard-steps" class="pdf-stepper" style="margin:0 0 10px">
           <span class="pdf-step active" id="gen-step-pill-1" onclick="_genWizardGoto(1)">1 · Language</span>
           <span class="pdf-step" id="gen-step-pill-2" onclick="_genWizardGoto(2)">2 · Text</span>
-          <span class="pdf-step" id="gen-step-pill-3" onclick="_genWizardGoto(3)">3 · Chapters</span>
-          <span class="pdf-step" id="gen-step-pill-4" onclick="_genWizardGoto(4)">4 · Lessons</span>
+          <span class="pdf-step" id="gen-step-pill-3" onclick="_genWizardGoto(3)">3 · Lessons</span>
         </div>
         <div class="gen-card" id="gen-card-1">
       <div class="lang-box">
@@ -1229,6 +1228,36 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         <!-- PLAN §C4 stage 1: #ui-translate-row moved into #settings-modal — it reads APP.srcLang,
              a global, so its DOM location never mattered to its own logic. -->
       </div>
+        <!-- item AL (roadmap_v87.md, user ruling): continue-from moves to card 1 and becomes
+             MODE-INDEPENDENT — a storyline can be continued via ANY of the three input modes
+             (LLM-generate, PDF/paste upload, comic image), in a different language or script than
+             the original if wanted. It sits with the language pair because that is what it
+             qualifies: _updateReinforcePriorVisibility() already calls refreshScriptPickers() on
+             every change here, so script inheritance/override has always reacted from this choice.
+             #use-full-chain-cb travels WITH it (user ruling) — it is a continuation-context choice,
+             not a lesson choice. #reinforce-prior-row did NOT: vocab-mode folds into the lesson step
+             (now card 3), see its own comment there. -->
+        <div class="continue-row" id="continue-row">
+          <span class="continue-lbl" id="continue-lbl">Continue story from</span>
+          <div class="continue-select-wrap">
+            <select class="continue-select" id="continue-select" onchange="onContinueSelectChange()">
+              <option value="">— new story —</option>
+            </select>
+            <span class="continue-select-arrow">▾</span>
+            <!-- v76_j: cancels a story pinned by the "continue story" route. Hidden unless pinned. -->
+            <button class="ico-btn" id="cont-pin-clear" style="display:none;font-size:11px;padding:2px 8px"
+              onclick="clearContinuePin()">✕</button>
+          </div>
+          <label style="font-size:11px;font-weight:700;color:var(--gray-dark);display:flex;align-items:center;gap:4px;margin-top:4px;cursor:pointer">
+            <input type="checkbox" id="cont-all-langs" onchange="repopulateContinueSelect()"> <span id="show-other-langs-lbl">show other languages</span>
+          </label>
+          <label id="use-full-chain-row" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;margin-top:4px;cursor:pointer" title="Pass the full storyline as context — better continuity, slower generation">
+            <!-- v78_r (user): CHECKED by default. Continuing a story with only the previous chapter as
+                 context is how a continuation loses the thread; the full chain is what the learner
+                 means by "continue this story". Slower, and the row is still there to turn it off. -->
+            <input type="checkbox" id="use-full-chain-cb" checked> <span id="use-full-chain-lbl"></span>
+          </label>
+        </div>
       <div class="gen-card-nav" style="display:flex;justify-content:flex-end;margin-top:10px">
         <button type="button" id="gen-step-next-1" onclick="_genWizardNext()"
           style="font-size:13px;font-weight:700;padding:6px 16px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif">Next →</button>
@@ -1241,6 +1270,59 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           placeholder="e.g. cooking, architecture, medicine…"
           maxlength="400" oninput="autoResizeTopic(this)"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doGenerate();}"></textarea>
+        <!-- item AL (roadmap_v87.md, user ruling): the text-SHAPING controls move here, to the step
+             that owns the text — "the #chapters and text length selector for the LLM route should be
+             in 2/Text". LLM-GENERATE PATH ONLY: an uploaded/pasted/comic text is not written by the
+             model, so length, chapter count and writing style have no instruction to carry — hidden
+             by _applyTextShapingVisibility(), which generalises the show/hide onUseStoryCb() already
+             did for the first two to all three exclusive panel modes (dialect and comic used to get
+             this for free from #gen-form-section's single hide toggle, which no longer spans them).
+             #style-select is here despite genuinely REACHING lesson generation (sysGrammar/
+             sysConjugation/generateWriting all take it, and it persists as topic.storyStyle for every
+             lesson added later): it is chosen ONCE at story-creation time and inherited from storage
+             from then on, so there is no reason to ask again on the lesson step. #gen-arc-row was
+             nested inside #num-chapters-row and is easy to miss — it moved to card 3 with every other
+             lesson-type control. -->
+        <div class="story-len-row" id="story-len-row">
+          <div class="story-len-hdr">
+            <span class="story-len-lbl" id="story-len-lbl">Story length</span>
+            <span class="story-len-val" id="story-len-val">300 words · 3-4 paragraphs</span>
+          </div>
+          <input type="range" class="story-len-slider" id="story-len-slider"
+            min="50" max="1000" step="50" value="300"
+            oninput="onStoryLenSlider(this.value)">
+        </div>
+        <div class="story-len-row" id="num-chapters-row">
+          <div class="story-len-hdr">
+            <span class="story-len-lbl" id="num-chapters-lbl">Chapters</span>
+            <span class="story-len-val" id="num-chapters-val">1 chapter</span>
+          </div>
+          <input type="range" class="story-len-slider" id="num-chapters-slider"
+            min="1" max="20" step="1" value="1"
+            oninput="onNumChaptersSlider(this.value)">
+        </div>
+        <div class="style-wrap" id="style-wrap">
+          <div class="style-select-wrap">
+            <select class="style-select" id="style-select" onchange="onStyleSelect(this.value)">
+              <option value="creative">🎭 Creative</option>
+              <option value="neutral">📰 Neutral</option>
+              <option value="interview">📰 Job Interview</option>
+              <option value="scientific">🔬 Scientific</option>
+              <option value="journalism">📡 Journalism</option>
+              <option value="essay">✍️ Essay</option>
+              <option value="children">🧸 Children's</option>
+              <option value="funny">😂 Funny</option>
+              <option value="romantic">💕 Romantic</option>
+              <option value="sensual">🌹 Sensual</option>
+              <option value="horror">🕷️ Horror</option>
+              <option value="action">⚡ Action</option>
+              <option value="philosophical">🧠 Philosophical</option>
+              <option value="poem">📜 Poem</option>
+              <option value="dialogue">💬 Dialogue</option>
+            </select>
+            <span class="style-select-arrow">▾</span>
+          </div>
+        </div>
         <div class="user-story-checks" id="user-story-checks">
           <label class="user-story-check-row">
             <input type="checkbox" id="use-story-cb" onchange="onUseStoryCb()">
@@ -1322,7 +1404,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           </div>
           <!-- v85_p: the storyboard post-pass used to run unconditionally for every /api/generate-book
                call (v68.1) — this checkbox actually gates it now (see server.js's own comment on
-               _runBookJob's postGenStoryboard). Reuses the SAME ui.json key card 4's own storyboard
+               _runBookJob's postGenStoryboard). Reuses the SAME ui.json key the wizard's own storyboard
                toggle uses, so the label stays in sync across both surfaces. -->
           <label class="user-story-check-row" id="pdf-storyboard-row">
             <input type="checkbox" id="pdf-storyboard-cb">
@@ -1465,7 +1547,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
                all — comicCreateChapter() always fired an immediate, bare-vocab-only, unconditional-
                storyboard generation with no chance to configure anything, unlike #pdf-panel's own
                embedded #pdf-arc-row. Mirrors that exact pattern rather than routing through the
-               wizard's card 4 (comics, like PDF uploads, act from their own panel's button). -->
+               wizard's lesson card (comics, like PDF uploads, act from their own panel's button). -->
           <!-- Decoupling chaptering from lesson generation (user request, roadmap_v87.md) — the
                screenshot that prompted this ask WAS this panel: extraction, review, and lesson-type
                selection all bundled into one "Create chapter" click. Same checkbox/wiring shape as
@@ -1521,123 +1603,25 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
              for per-step visibility, and does not change what dialect mode suppresses. -->
         <div id="gen-form-section">
         <div class="gen-card" id="gen-card-3" style="display:none">
-      <div class="gen-card-nav" style="display:flex;justify-content:space-between;margin-bottom:10px">
+      <div class="gen-card-nav" style="display:flex;justify-content:flex-start;margin-bottom:10px">
         <button type="button" id="gen-step-back-3" onclick="_genWizardBack()"
           style="font-size:13px;font-weight:700;padding:6px 16px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">← Back</button>
-        <button type="button" id="gen-step-next-3" onclick="_genWizardNext()"
-          style="font-size:13px;font-weight:700;padding:6px 16px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif">Next →</button>
       </div>
-        <!-- Decoupling chaptering from lesson generation (user request, roadmap_v87.md): "we
-             generally want to have texts and chapters first, let the user edit those, and THEN add
-             lessons for them." Distinct from the pre-existing #gen-create-now-btn shortcut further
-             down (which still creates a standard vocab lesson per chapter, just skips the EXTRA arc
-             types) — this goes all the way to ZERO lessons, matching the same "not a new code path
-             for adding lessons later" choice: the resulting chapters are picked up by the EXISTING
-             storyline/per-chapter "add lessons" tick-list, unchanged. Placed first, always visible
-             (not gated on chapter count — the single-chapter format-select on card 4 is just as
-             skippable as the multi-chapter arc row), so it reads as the first real choice in the
-             flow. _applySkipLessonsUI() owns hiding the now-moot lesson-type rows underneath it. -->
+        <!-- Decoupling chaptering from lesson generation (roadmap_v87.md item AK): "we generally want
+             to have texts and chapters first, let the user edit those, and THEN add lessons for them."
+             Goes all the way to ZERO lessons — the resulting chapters are picked up by the EXISTING
+             storyline/per-chapter "add lessons" tick-list, unchanged, so this is not a new code path
+             for adding lessons later. item AL moved it here, to the top of the one canonical lesson
+             step, and deleted #gen-create-now-btn (the v85_e "standard set only" shortcut) as
+             superseded by it per the user's own ruling: this checkbox goes strictly further, and a
+             skippable lesson step makes a second "skip most of it" entry point redundant.
+             _applySkipLessonsUI() owns hiding the now-moot lesson-type rows underneath it. -->
         <div class="user-story-check-row" id="gen-skip-lessons-row" style="margin-bottom:10px;padding:8px 10px;background:var(--gray-light);border-radius:8px">
           <label class="user-story-check-row" style="margin:0">
             <input type="checkbox" id="gen-skip-lessons-cb" onchange="_applySkipLessonsUI()">
             <span id="gen-skip-lessons-lbl">⏸️ No lessons yet — just create the chapters, add lessons later</span>
           </label>
         </div>
-        <div class="story-len-row" id="story-len-row">
-          <div class="story-len-hdr">
-            <span class="story-len-lbl" id="story-len-lbl">Story length</span>
-            <span class="story-len-val" id="story-len-val">300 words · 3-4 paragraphs</span>
-          </div>
-          <input type="range" class="story-len-slider" id="story-len-slider"
-            min="50" max="1000" step="50" value="300"
-            oninput="onStoryLenSlider(this.value)">
-        </div>
-        <div class="story-len-row" id="num-chapters-row">
-          <div class="story-len-hdr">
-            <span class="story-len-lbl" id="num-chapters-lbl">Chapters</span>
-            <span class="story-len-val" id="num-chapters-val">1 chapter</span>
-          </div>
-          <input type="range" class="story-len-slider" id="num-chapters-slider"
-            min="1" max="20" step="1" value="1"
-            oninput="onNumChaptersSlider(this.value)">
-          <div id="gen-arc-row" style="display:none;margin-top:6px">
-            <label class="user-story-check-row">
-              <input type="checkbox" id="gen-arc-cb" checked>
-              <span id="gen-arc-lbl">🎯 Add more lesson types to each chapter</span>
-            </label>
-            <div id="gen-arc-types" class="user-story-checks" style="margin:3px 0 0 24px"></div>
-            <label class="user-story-check-row" id="gen-arc-script-row" style="display:none;margin:4px 0 0 24px">
-              <input type="checkbox" id="gen-arc-script-cb" checked>
-              <span id="gen-arc-script-lbl">🔡 Teach the script per chapter</span>
-            </label>
-          </div>
-        </div>
-        <div class="style-wrap" id="style-wrap">
-          <div class="style-select-wrap">
-            <select class="style-select" id="style-select" onchange="onStyleSelect(this.value)">
-              <option value="creative">🎭 Creative</option>
-              <option value="neutral">📰 Neutral</option>
-              <option value="interview">📰 Job Interview</option>
-              <option value="scientific">🔬 Scientific</option>
-              <option value="journalism">📡 Journalism</option>
-              <option value="essay">✍️ Essay</option>
-              <option value="children">🧸 Children's</option>
-              <option value="funny">😂 Funny</option>
-              <option value="romantic">💕 Romantic</option>
-              <option value="sensual">🌹 Sensual</option>
-              <option value="horror">🕷️ Horror</option>
-              <option value="action">⚡ Action</option>
-              <option value="philosophical">🧠 Philosophical</option>
-              <option value="poem">📜 Poem</option>
-              <option value="dialogue">💬 Dialogue</option>
-            </select>
-            <span class="style-select-arrow">▾</span>
-          </div>
-        </div>
-        <div class="continue-row" id="continue-row">
-          <span class="continue-lbl" id="continue-lbl">Continue story from</span>
-          <div class="continue-select-wrap">
-            <select class="continue-select" id="continue-select" onchange="onContinueSelectChange()">
-              <option value="">— new story —</option>
-            </select>
-            <span class="continue-select-arrow">▾</span>
-            <!-- v76_j: cancels a story pinned by the "continue story" route. Hidden unless pinned. -->
-            <button class="ico-btn" id="cont-pin-clear" style="display:none;font-size:11px;padding:2px 8px"
-              onclick="clearContinuePin()">✕</button>
-          </div>
-          <label style="font-size:11px;font-weight:700;color:var(--gray-dark);display:flex;align-items:center;gap:4px;margin-top:4px;cursor:pointer">
-            <input type="checkbox" id="cont-all-langs" onchange="repopulateContinueSelect()"> <span id="show-other-langs-lbl">show other languages</span>
-          </label>
-          <div id="reinforce-prior-row" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;margin-top:4px">
-            <select id="vocab-mode-select" style="font-size:11px;font-weight:700;border:1.5px solid var(--blue-dark);border-radius:6px;padding:2px 6px;background:var(--white);color:var(--blue-dark);font-family:Nunito,sans-serif;cursor:pointer">
-              <option value="reinforce" id="vocab-mode-opt-reinforce">🔁 reinforce vocab</option>
-              <option value="neutral" id="vocab-mode-opt-neutral">○ neutral</option>
-              <option value="extend" id="vocab-mode-opt-extend">➕ extend vocab</option>
-            </select>
-          </div>
-          <label id="use-full-chain-row" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;margin-top:4px;cursor:pointer" title="Pass the full storyline as context — better continuity, slower generation">
-            <!-- v78_r (user): CHECKED by default. Continuing a story with only the previous chapter as
-                 context is how a continuation loses the thread; the full chain is what the learner
-                 means by "continue this story". Slower, and the row is still there to turn it off. -->
-            <input type="checkbox" id="use-full-chain-cb" checked> <span id="use-full-chain-lbl"></span>
-          </label>
-        </div>
-        <!-- PLAN §13 milestone 2's own shortcut (v85_e, user ruling: "skip the arc, standard set
-             only" — no new server work, reuses the EXISTING arc-off + standard-format generation
-             path unchanged, see _genWizardCreateNow()'s own comment). Deliberately its own row,
-             separate from the Back/Next nav below — a shortcut is an alternative to stepping through
-             card 4, not a step in the same sequence. -->
-        <div style="text-align:center;margin-top:12px">
-          <button type="button" id="gen-create-now-btn" onclick="_genWizardCreateNow()"
-            title="Generates the chapters with the standard lesson set only, skipping extra types and the per-chapter learning arc — add more lesson types per chapter later from the storyline screen."
-            style="font-size:12px;font-weight:700;padding:6px 14px;border:1.5px dashed var(--gray-mid);border-radius:8px;background:var(--white);color:var(--gray-dark);cursor:pointer;font-family:Nunito,sans-serif">📖 Create storyline now, add lessons later</button>
-        </div>
-        </div><!-- end gen-card-3 -->
-        <div class="gen-card" id="gen-card-4" style="display:none">
-      <div class="gen-card-nav" style="display:flex;justify-content:flex-start;margin-bottom:10px">
-        <button type="button" id="gen-step-back-4" onclick="_genWizardBack()"
-          style="font-size:13px;font-weight:700;padding:6px 16px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">← Back</button>
-      </div>
         <div class="lesson-type-hdr" id="lesson-type-hdr">
           <span id="lesson-type-hdr-lbl">Lesson type</span>
         </div>
@@ -1667,11 +1651,27 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <span class="format-select-arrow">▾</span>
           </div>
         </div>
+        <!-- item AL: the arc tick-list moved here from its old home NESTED INSIDE #num-chapters-row on
+             the "Chapters" card. Card 3 is now the ONE canonical place lesson types are chosen, for
+             every input mode — this block, #format-wrap above, #per-chapter-row below and the
+             skip-lessons checkbox at the top are the whole set. Its own multi-chapter gate is
+             unchanged and still owned by onNumChaptersSlider()/_applySkipLessonsUI(). -->
+        <div id="gen-arc-row" style="display:none;margin-top:6px">
+          <label class="user-story-check-row">
+            <input type="checkbox" id="gen-arc-cb" checked>
+            <span id="gen-arc-lbl">🎯 Add more lesson types to each chapter</span>
+          </label>
+          <div id="gen-arc-types" class="user-story-checks" style="margin:3px 0 0 24px"></div>
+          <label class="user-story-check-row" id="gen-arc-script-row" style="display:none;margin:4px 0 0 24px">
+            <input type="checkbox" id="gen-arc-script-cb" checked>
+            <span id="gen-arc-script-lbl">🔡 Teach the script per chapter</span>
+          </label>
+        </div>
         <!-- PLAN §13 milestone 3 (v85_f, user ruling: "sequential, reusing existing per-chapter
              endpoint" — NOT a new server-side per-chapter arcTypes body shape). Only meaningful for
              multi-chapter generation, same gate #gen-arc-row already uses — see
              onNumChaptersSlider()'s own toggle for both. When on, this REPLACES the shared "arc"
-             checkbox on card 3 for THIS generation (doGenerate() forces arc:false), so a type is
+             checkbox above for THIS generation (doGenerate() forces arc:false), so a type is
              never requested twice for the same chapter. -->
         <div id="per-chapter-row" style="display:none;margin-top:10px">
           <label class="user-story-check-row">
@@ -1679,6 +1679,22 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <span id="per-chapter-lbl">🎯 Choose lesson types per chapter</span>
           </label>
           <div id="per-chapter-list" style="display:none;margin:6px 0 0 24px"></div>
+        </div>
+        <!-- item AL (roadmap_v87.md, user ruling): vocab-mode is FOLDED INTO the lesson step — it only
+             ever mattered together with the same chainVocab-consuming lesson generators the controls
+             above gate, and that step now runs after the chapter text exists, for any input mode. The
+             per-chapter "add lesson" card (#sial-vocab-mode-*) has always shown this same select in a
+             lesson-selection context, label-free, so this is the shape that already had precedent.
+             Visibility is unchanged: _updateReinforcePriorVisibility() still shows it by id only when
+             #continue-select (now on card 1) has a value. Noted by the user as an INTERIM step — the
+             whole reinforce/neutral/extend concept is planned to be superseded by the CP1/CP2
+             text-analysis route, where lesson generation depends on the learner's own progress. -->
+        <div id="reinforce-prior-row" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;margin-top:4px">
+          <select id="vocab-mode-select" style="font-size:11px;font-weight:700;border:1.5px solid var(--blue-dark);border-radius:6px;padding:2px 6px;background:var(--white);color:var(--blue-dark);font-family:Nunito,sans-serif;cursor:pointer">
+            <option value="reinforce" id="vocab-mode-opt-reinforce">🔁 reinforce vocab</option>
+            <option value="neutral" id="vocab-mode-opt-neutral">○ neutral</option>
+            <option value="extend" id="vocab-mode-opt-extend">➕ extend vocab</option>
+          </select>
         </div>
         <!-- PLAN §13 milestone 4 (v85_g) — additional features as opt-in toggles, per the original
              assessment: storyboard and QC both already exist as separate MANUAL triggers (the
@@ -1711,7 +1727,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           </label>
         </div>
         <div id="gen-btn-row" style="display:flex;gap:8px;align-items:center"><button class="gen-btn" id="gen-btn" onclick="doGenerate()" style="flex:1">Generate lessons →</button><button class="stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="font-size:20px;border:none;background:none;cursor:pointer;padding:4px 6px;display:none;flex-shrink:0">🛑</button></div>
-        </div><!-- end gen-card-4 -->
+        </div><!-- end gen-card-3 -->
         </div><!-- end gen-form-section -->
       </div><!-- end gen-area -->
       </div><!-- end gen-wizard -->
@@ -2915,8 +2931,13 @@ function applyUIStrings() {
   // PLAN §13 milestone 1 (v85_c): the wizard shell's own stepper pills + Back/Next buttons.
   _setText('gen-step-pill-1', t('gen.wizard_step1'));
   _setText('gen-step-pill-2', t('gen.wizard_step2'));
-  _setText('gen-step-pill-3', t('gen.wizard_step3'));
-  _setText('gen-step-pill-4', t('gen.wizard_step4'));
+  // item AL: the wizard is a 3-step flow now (Language / Text / Lessons) — the old "3 · Chapters"
+  // card was emptied out and deleted. `gen.wizard_step3`/`gen.wizard_step4` are deliberately LEFT in
+  // ui.json rather than repurposed: their value embeds the step NUMBER, so reusing step4's string
+  // here would render "4 · Lessons" on the third pill, and overwriting step3's `en` value in place
+  // would leave its 32 existing translations actively wrong ("3 · Kapitel" on a Lessons step). One
+  // new key instead — a language without it falls through to English, which is merely untranslated.
+  _setText('gen-step-pill-3', t('gen.wizard_step3_lessons'));
   _setText('gen-step-next-1', t('gen.wizard_next'));
   _setText('gen-step-back-2', t('gen.wizard_back'));
   _setText('gen-step-next-2', t('gen.wizard_next'));
@@ -3527,7 +3548,7 @@ function loadNumChapters(){ return Math.max(1,Math.min(20,parseInt(localStorage.
 function saveNumChapters(){ localStorage.setItem('imp3_numChapters',String(APP.numChapters)); }
 function numChaptersLabel(n){ return n<=1 ? t('form.chapters_one') : t('form.chapters_n',{n}); }
 // Decoupling chaptering from lesson generation (roadmap_v87.md) — the single source of truth for
-// whether the lesson-type UI (arc row, per-chapter row, the single-chapter format-select on card 4)
+// whether the lesson-type UI (arc row, per-chapter row, the single-chapter format-select on card 3)
 // is shown, layered ON TOP of the pre-existing chapter-count gate those rows already had. Called
 // from the checkbox's own onchange AND from onNumChaptersSlider() (a chapter-count change must not
 // silently un-hide rows while "skip lessons" is still checked).
@@ -3614,13 +3635,37 @@ function autoResizeTopic(el){
 function autoResizeTextarea(el){
   el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,400)+'px';
 }
+// item AL (roadmap_v87.md): the three text-SHAPING rows moved from the deleted "Chapters" card onto
+// card 2, which means they are no longer inside #gen-form-section — the section dialect mode and
+// comic mode each hide with a single `gf.style.display` toggle. Without this helper they would newly
+// stay VISIBLE in both of those modes, a regression the move would otherwise introduce silently. So
+// one function owns all three, for all three exclusive panel modes, called at the END of each mode
+// toggle (after its own exclusivity handling has settled the other checkboxes).
+//
+// MEASURED, not assumed — and it corrects item AL's own write-up, which said "PDF/comic chapters
+// never set storyStyle today". Half of that is wrong: pdfGenerateAll() DOES send
+// `storyStyle: APP.storyStyle !== 'creative' ? ... : null`, the server stores it on every chapter
+// (_runBookJob's own `base.storyStyle`), and it reaches real lesson prompts from there — sysGrammar/
+// sysConjugation take it as a parameter, generateWriting/synonyms apply it as a writingStyleNote.
+// Only comicCreateChapter() hardcodes `storyStyle: null`. Hiding #style-wrap for the own-story/PDF
+// path would therefore DELETE a working capability, not tidy up a dead control — so this preserves
+// today's visibility exactly: story-length and chapter-count hide for a user-provided text (both
+// meaningless when the text isn't model-written, which is what onUseStoryCb already did inline);
+// #style-wrap hides only where it genuinely reaches nothing.
+function _applyTextShapingVisibility(){
+  const story   = !!document.getElementById('use-story-cb')?.checked;
+  const dialect = !!document.getElementById('use-dialect-cb')?.checked;
+  const comic   = !!document.getElementById('use-comic-cb')?.checked;
+  const hideAll = dialect || comic;   // both hid #gen-form-section wholesale before the move
+  const set=(id,hide)=>{ const el=document.getElementById(id); if(el) el.style.display = hide ? 'none' : ''; };
+  set('story-len-row',    hideAll || story);
+  set('num-chapters-row', hideAll || story);   // multi-chapter conflicts with one user-provided story
+  set('style-wrap',       hideAll);
+}
 function onUseStoryCb(){
   const on=document.getElementById('use-story-cb').checked;
   document.getElementById('user-story-panel').classList.toggle('open',on);
   document.getElementById('use-translation-cb-row').style.display=on?'':'none';
-  document.getElementById('story-len-row').style.display=on?'none':'';
-  // Multi-chapter generation conflicts with a user-provided single story.
-  { const ncr=document.getElementById('num-chapters-row'); if(ncr) ncr.style.display=on?'none':''; }
   // Keep the continuation selector available with own-story so a user-provided
   // story can still extend a storyline (server links continuedFromId either way).
   // If unchecking, also uncheck translation and drop any uploaded document.
@@ -3636,6 +3681,7 @@ function onUseStoryCb(){
   if(on){ const uc=document.getElementById('use-comic-cb'); if(uc&&uc.checked){ uc.checked=false; onUseComicCb(); } }
   const lbl=document.getElementById('topic-label');
   if(lbl) lbl.textContent=on?t('form.topic_label_story'):topicLabelText();
+  _applyTextShapingVisibility();   // item AL: last, so the exclusivity block above has settled first
 }
 function topicLabelText(){
   const tgtL=LANGS[APP.lang]||LANGS.it;
@@ -3670,6 +3716,7 @@ function onUseDialectCb(){
     // v85_j: same reasoning as onUseStoryCb's new comic-exclusion hook above — added on this side too.
     const uc=document.getElementById('use-comic-cb'); if(uc&&uc.checked){ uc.checked=false; onUseComicCb(); }
   }
+  _applyTextShapingVisibility();   // item AL: #gen-form-section no longer spans the three shaping rows
 }
 function onDialectFileChosen(input){
   const f=input.files&&input.files[0]; if(!f) return;
@@ -3787,6 +3834,7 @@ function onUseComicCb(){
     const status=document.getElementById('comic-upload-status'); if(status) status.textContent='';
     _comicUnwatchImageResize();   // v85_u: nothing left to keep in sync once the image is gone
   }
+  _applyTextShapingVisibility();   // item AL: #gen-form-section no longer spans the three shaping rows
 }
 
 // v86_c (user-requested): a raw camera photo can be many megapixels — far more than a comic page's
@@ -5462,16 +5510,24 @@ async function pushFlagToServer(key, entry){
 // `#pdf-stepper` already established for per-chunk PDF-import progress — same look, new page-level
 // use. Milestone 1 (v85_c): #gen-card-1 (.lang-box, unchanged) and #gen-card-2 (unchanged
 // topic-input/user-story-checks/pdf-panel/user-story-panel/dialect-panel); #gen-card-3 was a
-// catch-all for everything else. Milestone 2 (v85_d) split that catch-all: #gen-card-3 is now
-// CHAPTERING (unchanged story-len-row/num-chapters-row/style-wrap/continue-row) and #gen-card-4 is
-// LESSON-SELECTION + GENERATE (unchanged lesson-type-hdr/diff-wrap/format-wrap/gen-btn-row). Both
-// now live INSIDE #gen-form-section's own unchanged open/close tags, so onUseDialectCb()'s single
-// `gf.style.display` toggle still hides both atomically, exactly as it hid the one undifferentiated
-// section before. #gen-card-4 is milestones 3-5's own future territory (lesson-selection reword +
-// per-chapter override, additional-features); splitting it only ever means adding a 5th card + pill,
-// never touching 1-3's own wiring.
+// catch-all for everything else. Milestone 2 (v85_d) split that catch-all into #gen-card-3
+// (chaptering) and #gen-card-4 (lesson-selection + Generate).
+//
+// item AL (roadmap_v87.md, user ruling) COLLAPSED that back to THREE cards. The user's own framing:
+// "the #chapters and text length selector for the LLM route should be in 2/Text. 3 could be skipped,
+// and current 4/Lessons should be the ONLY place where we can select lesson types to be generated
+// (optionally)." So the "Chapters" card was redistributed and DELETED, not renamed:
+//   • continue-from (+ show-other-languages, + full-chain context) → card 1, beside the language pair
+//   • story-length, chapter-count, writing-style → card 2, LLM-generate path only
+//   • skip-lessons, the arc tick-list (which was nested inside #num-chapters-row), vocab-mode → card 3
+//   • #gen-create-now-btn — DELETED, superseded by the skip-lessons checkbox, which goes further
+// #gen-card-3 is now the LESSONS card (the old card 4's markup, renumbered) and is the only card
+// still inside #gen-form-section, so onUseDialectCb()'s single `gf.style.display` toggle keeps doing
+// exactly what it did — but the three text-shaping rows it used to hide for free now live OUTSIDE
+// that section, which is what _applyTextShapingVisibility() exists to cover. See each moved block's
+// own markup comment for the reasoning behind its destination.
 let _genWizardStep = 1;
-const _GEN_WIZARD_CARDS = 4;
+const _GEN_WIZARD_CARDS = 3;
 function _genWizardGoto(n){
   _genWizardStep = Math.max(1, Math.min(_GEN_WIZARD_CARDS, n));
   for(let i=1;i<=_GEN_WIZARD_CARDS;i++){
@@ -5483,21 +5539,6 @@ function _genWizardGoto(n){
 }
 function _genWizardNext(){ _genWizardGoto(_genWizardStep+1); }
 function _genWizardBack(){ _genWizardGoto(_genWizardStep-1); }
-// PLAN §13 milestone 2's "create storyline now, add lessons later" shortcut (v85_e, user ruling on
-// the `v85_d` open question: "skip the arc, standard set only" — NOT a new server-side "zero lessons"
-// mode; "add more later" means the storyline screen's EXISTING per-chapter "add lessons" dropdown,
-// unchanged, same as it always has). Forces the two fields that decide "how many lesson types" —
-// #gen-arc-cb off (book generation's optional per-chapter extras) and #format-select to 'standard'
-// (via the REAL onFormatSelect(), so APP.lessonFormat — what doGenerate() actually reads — updates
-// too, not just the select's displayed value) — then calls the UNMODIFIED doGenerate(), exactly the
-// same call the normal "Generate lessons →" button makes. No new pipeline, no new endpoint: this is
-// wiring onto the arc-off + standard-format path that already existed.
-function _genWizardCreateNow(){
-  const arcCb = document.getElementById('gen-arc-cb');
-  if(arcCb && arcCb.checked) arcCb.checked = false;
-  if(APP.lessonFormat !== 'standard') onFormatSelect('standard');
-  doGenerate();
-}
 function _closeEditorsOnNav(targetId){
   // Editors live on specific screens; navigating away (to a different lessonset/
   // chapter or any other screen) via the nav buttons should close them. Silent:
@@ -6516,7 +6557,7 @@ async function resumeDraft(draftId){
     _renderPdfChunks();
     _updateUploadSliderVis();
     // Found live: #pdf-panel (the chunk list this draft exists to restore) lives inside gen-card-2
-    // ("2 · Text"), NOT card 3 ("Chapters", which is per-chapter lesson-type overrides) — confirmed
+    // ("2 · Text"), NOT card 3 ("Lessons", which is lesson-type selection) — confirmed
     // by searching the RAW markup for #pdf-panel's nearest enclosing gen-card, not assumed from the
     // step's own label text.
     try{ _genWizardGoto(2); }catch(_){}
@@ -7660,7 +7701,7 @@ async function pdfGenerateAll() {
          ? { cleanupTokens: { ..._aiCleanTokens } } : {} ),
     // v85_p: this panel had NO storyboard control at all before — the server generated one for every
     // upload UNCONDITIONALLY regardless (see server.js's own comment on _runBookJob). Now opt-in,
-    // same as the wizard's own card-4 toggle.
+    // same as the wizard's own lesson-card toggle.
     postGenStoryboard: !!document.getElementById('pdf-storyboard-cb')?.checked,
     // item W follow-up (v86_o): mirrors postGenStoryboard exactly — see pdf-analysis-row's own comment.
     postGenAnalysis: !!document.getElementById('pdf-analysis-cb')?.checked,
@@ -8935,7 +8976,8 @@ async function doGenerate(forceRegen){
   const myStoryData = myStory ? myStoryPayload(APP.lang, APP.srcLang) : null;
   if(myStory && (!myStoryData || !myStoryData.vocab.length)){ showToast(t('toast.my_story_soon')); return; }
   // v85_e: the wizard (v85_c) can have #topic-input's own card (#gen-card-2) hidden when this guard
-  // fires — a learner who clicked Next past it, or used the "create storyline now" shortcut on card 3
+  // fires — a learner who clicked Next past it without typing a topic (item AL deleted the old
+  // "create storyline now" shortcut that was the other way to reach this state)
   // without typing a topic first. `.focus()` on a display:none field is silently invisible, which is
   // exactly the "surprise, an empty run costs the user a long wait for nothing" this guard exists to
   // avoid — reveal card 2 first, so the pre-existing "focus draws the eye to the missing topic"
@@ -8991,7 +9033,7 @@ async function doGenerate(forceRegen){
     // generation — a type must never be requested twice for the same chapter (once via arc, once
     // via _applyPerChapterTypes' own follow-up calls). Captured here, BEFORE the request fires, into
     // a plain array (not read again later — #per-chapter-types-N containers this reads from live
-    // inside #gen-card-4, which _pollGenBook's own completion may run long after the learner has
+    // inside #gen-card-3, which _pollGenBook's own completion may run long after the learner has
     // navigated elsewhere and those containers no longer exist).
     // Decoupling chaptering from lesson generation (user request, roadmap_v87.md): checked (read
     // once, at the top of doGenerate()), this wins over BOTH the arc tick-list and the per-chapter
@@ -11485,7 +11527,8 @@ function readArcTypeChecks(containerId){
   return readLessonTypeChecks(document.getElementById(containerId), 'arc-lt-check');
 }
 // PLAN §13 milestone 3 (v85_f) — the per-chapter lesson-type override, gated behind #per-chapter-cb
-// on #gen-card-4. Toggling it on renders ONE renderLessonTypeChecks() tick-list per PLANNED chapter
+// on the wizard's lesson card (#gen-card-4 when built; #gen-card-3 since item AL's renumber).
+// Toggling it on renders ONE renderLessonTypeChecks() tick-list per PLANNED chapter
 // (1..APP.numChapters — chapters don't exist yet at this point, only a count), each in its own
 // container/class pair so they read back independently. Genuinely re-renders on every toggle-on
 // (unlike renderArcTypeChecks's dataset.rendered guard) — the row count itself can change if the

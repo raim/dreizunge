@@ -57,16 +57,19 @@ async function main() {
 
 // ── 1. Markup: #per-chapter-row lives inside #gen-card-4 ─────────────────────────
 {
-  const card4Open = html.indexOf('id="gen-card-4"');
-  assert.ok(card4Open >= 0, '#gen-card-4 exists');
-  const card4Close = html.indexOf('end gen-card-4', card4Open);
+  // item AL (roadmap_v87.md) renumbered the wizard's lesson card from 4 to 3 — the "Chapters" card
+  // was redistributed and deleted. The CLAIM here is unchanged ("#per-chapter-row lives on the lesson
+  // card"), only its number moved.
+  const card4Open = html.indexOf('id="gen-card-3"');
+  assert.ok(card4Open >= 0, "#gen-card-3 (the wizard's lesson card) exists");
+  const card4Close = html.indexOf('end gen-card-3', card4Open);
   const rowAt = html.indexOf('id="per-chapter-row"', card4Open);
-  assert.ok(rowAt > card4Open && rowAt < card4Close, '#per-chapter-row is inside #gen-card-4');
+  assert.ok(rowAt > card4Open && rowAt < card4Close, "#per-chapter-row is inside the wizard's lesson card (#gen-card-3 since item AL)");
   const within = (needle) => { const at = html.indexOf(needle, rowAt); return at > rowAt && at < card4Close; };
   assert.ok(within('id="per-chapter-cb"'), '#per-chapter-cb is inside #per-chapter-row');
   assert.ok(within('id="per-chapter-list"'), '#per-chapter-list is inside #per-chapter-row');
 }
-console.log('  markup: #per-chapter-row (cb + list) lives inside #gen-card-4: OK');
+console.log('  markup: #per-chapter-row (cb + list) lives on the wizard lesson card: OK');
 
 // ── 2. onNumChaptersSlider(): shows/hides with the same gate as #gen-arc-row ─────
 {

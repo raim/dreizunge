@@ -42,16 +42,18 @@ async function main() {
 
 // ── 1. Markup: #post-gen-row lives inside #gen-card-4 ────────────────────────────
 {
-  const card4Open = html.indexOf('id="gen-card-4"');
-  assert.ok(card4Open >= 0, '#gen-card-4 exists');
-  const card4Close = html.indexOf('end gen-card-4', card4Open);
+  // item AL (roadmap_v87.md) renumbered the wizard's lesson card from 4 to 3 — see
+  // unit-gen-wizard.test.js for the whole restructuring. The claim here is unchanged.
+  const card4Open = html.indexOf('id="gen-card-3"');
+  assert.ok(card4Open >= 0, "#gen-card-3 (the wizard's lesson card) exists");
+  const card4Close = html.indexOf('end gen-card-3', card4Open);
   const rowAt = html.indexOf('id="post-gen-row"', card4Open);
-  assert.ok(rowAt > card4Open && rowAt < card4Close, '#post-gen-row is inside #gen-card-4');
+  assert.ok(rowAt > card4Open && rowAt < card4Close, "#post-gen-row is inside the wizard's lesson card (#gen-card-3 since item AL)");
   const within = (needle) => { const at = html.indexOf(needle, rowAt); return at > rowAt && at < card4Close; };
   assert.ok(within('id="post-gen-storyboard-cb"'), '#post-gen-storyboard-cb is inside #post-gen-row');
   assert.ok(within('id="post-gen-qc-cb"'), '#post-gen-qc-cb is inside #post-gen-row');
 }
-console.log('  markup: #post-gen-row (storyboard + qc checkboxes) lives inside #gen-card-4: OK');
+console.log('  markup: #post-gen-row (storyboard + qc checkboxes) lives on the wizard lesson card: OK');
 
 // ── 2. onNumChaptersSlider(): shows/hides with the same gate, resets on drop to 1 ─
 {

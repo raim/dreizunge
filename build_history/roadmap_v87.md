@@ -244,13 +244,38 @@ build — a shared `skipLessons` server mechanism plus one checkbox pattern reus
 defaults (the user's own framing — "at a later point we want to have or auto-select meaningful
 defaults") is future work; this cut only needed "don't schedule lessons at all yet" to become real.
 
-### 🆕 AL. Restructure the generation wizard — unify lesson-type selection, relocate text-shaping choices, across all three input modes
+### 🔶 AL. Restructure the generation wizard — unify lesson-type selection, relocate text-shaping choices, across all three input modes — PART 1 SHIPPED `v87_g`, PART 2 OPEN
 
-**Not started. Planning/scoping only — written up at the user's own request so a FRESH SESSION (the
-user's own plan: "I start a fresh session with Opus") can pick this up without re-deriving the
-conversation below.** Everything in this entry is a direct record of a real design conversation, not
-a synthesis — where a decision is genuinely made, it's marked ✅ RESOLVED; where it's still open, it's
-marked ⚠️ OPEN, and the next session should NOT assume an answer for those.
+> **⚠️ STATUS AT THE `v87_g` CUT — read before using anything below.** The fresh session the user
+> planned for picked this up, ASKED ALL FOUR ⚠️ OPEN QUESTIONS FIRST (they are answered now — see the
+> `v87_g` entry's own table under "SHIPPED IN THE v87 LINE" for each ruling), and shipped **part 1**:
+> the card restructuring itself. The wizard is now a genuine 3-step flow — 1 · Language / 2 · Text /
+> 3 · Lessons — with the "Chapters" card redistributed and DELETED, `#gen-create-now-btn` removed,
+> and continue-from / the text-shaping controls / the arc row + vocab-mode moved to cards 1 / 2 / 3
+> respectively. **Every "current markup" line anchor below is therefore STALE.**
+>
+> **What is STILL OPEN as part 2** — the half this item is really named for:
+> - `#pdf-panel` and `#comic-panel` still carry their OWN duplicated `#pdf-arc-row`/`#comic-arc-row`,
+>   skip-lessons, storyboard and analysis rows, and their own start buttons (`pdfGenerateAll()` /
+>   `comicOpenReview()` fired from inside card 2). Routing all three input modes through card 3's one
+>   canonical lesson-type block — the user's "current 4/Lessons should be the ONLY place" — is not
+>   done. The user's ruling on HOW: **keep the live review stop** (extraction/chunking/panel editing
+>   stay live in card 2; only the lesson-type choice and the final "go" move to card 3), so
+>   `comicExtractPanels()`/`splitChaptersLLM()` timing must NOT change.
+> - **The real bug found by this restructuring is NOT yet fixed**: `comicCreateChapter()` never reads
+>   or sends `continuedFrom` — confirmed again by reading the source at the `v87_g` cut. Comic-sourced
+>   chapters still cannot be linked as a continuation, silently. It belongs to part 2, since
+>   continue-from only became universal-by-construction when it moved to card 1.
+> - **Difficulty stays where it is, by ruling** — `#diff-select` was deliberately NOT moved. The whole
+>   "difficulty means something different per lesson type" question is deferred to its own design pass
+>   alongside the CP1/CP2 route, explicitly rather than half-decided.
+> - **Genuine job SCHEDULING** (queue now, run unattended later) was confirmed as NOT part of this
+>   item — "schedule" here meant deferring the lesson-generation decision, which item AK already
+>   built. Item AK's own deferred half (run-now-vs-schedule-with-smart-defaults) is untouched.
+
+**The original write-up, preserved as the record of the design conversation.** Where a decision was
+made it's marked ✅ RESOLVED; the ⚠️ OPEN marks are now HISTORICAL — all four were answered at the
+`v87_g` cut, and the answers are in that entry, not here.
 
 **Origin.** Immediately after item AK shipped (`v87_f`), the user asked, in their own words:
 
@@ -390,7 +415,7 @@ building any of this):
   needs relocating + de-duplicating from three copies to one), vocab-mode's replacement (folded in
   per the resolution above). Difficulty: placement OPEN (see above).
 
-**Not started. No code changed by this entry — planning/scoping only.**
+**Part 1 shipped `v87_g`; part 2 (the PDF/comic unification + the `continuedFrom` bug) is open — see the status block at the top of this item.**
 
 ## ✅ RESOLVED BY USER RULING AT THE v86 CUT — no code change, not carried as open tasks
 
@@ -2154,6 +2179,101 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v87 LINE
+
+## ✅ v87_g — item AL, part 1: the generation wizard goes from FOUR cards to THREE
+
+**Item AL was written up at the `v87_f` cut expressly so a fresh session could pick it up, and it
+carried four ⚠️ OPEN questions with a standing instruction not to assume answers for them. This
+session asked all four before writing any code. The user's rulings, verbatim in effect:**
+
+| ⚠️ OPEN question | ruling |
+|---|---|
+| PDF/comic: does "start" become one deferred job, or is the live review stop kept? | **Keep the live review stop.** Extraction/chunking/panel editing stay live in card 2, exactly as today; only lesson-type selection and the final "go" move later. `comicExtractPanels()`/`splitChaptersLLM()` timing does NOT change. |
+| Where does difficulty go? | **Leave `#diff-select` exactly where it is**, on the lesson card, all three modes. The whole difficulty question is deferred to its own design pass alongside the CP1/CP2 route — explicitly NOT half-decided here. |
+| Renumber, or keep a fourth near-empty card? | **Renumber to a genuine 3-step flow** — 1 · Language / 2 · Text / 3 · Lessons. The "Chapters" card is redistributed and DELETED. |
+| `#use-full-chain-cb`, and `#gen-create-now-btn`? | **Both**: full-chain travels to card 1 with continue-from; `#gen-create-now-btn` is REMOVED as superseded. |
+
+**What moved, and why** (each block also carries the reasoning in its own markup comment):
+- **→ card 1 (Language)**: `#continue-row` — continue-select, the ✕ pin-clear, `#cont-all-langs`, and
+  `#use-full-chain-cb`. Continuation is mode-independent and belongs with the language pair it
+  qualifies: `_updateReinforcePriorVisibility()` has always called `refreshScriptPickers()` from
+  here, so script inheritance/override already reacted from this choice.
+- **→ card 2 (Text)**: `#story-len-row`, `#num-chapters-row`, `#style-wrap` — the text-SHAPING
+  controls, on the step that owns the text, per the user's own "the #chapters and text length
+  selector for the LLM route should be in 2/Text".
+- **→ card 3 (Lessons, the old card 4 renumbered)**: `#gen-skip-lessons-row`, `#gen-arc-row` (which
+  was NESTED INSIDE `#num-chapters-row` — visually under the chapter-count slider, easy to miss),
+  and `#reinforce-prior-row`/`#vocab-mode-select` (which was nested inside `#continue-row`). Card 3
+  is now the single canonical home for every lesson-type control on the LLM path.
+- **DELETED**: `#gen-card-3` ("Chapters") itself, the 4th pill, `#gen-create-now-btn` and
+  `_genWizardCreateNow()` — the function too, not just its button.
+
+**A MEASURED CORRECTION to item AL's own write-up.** AL states, as justification for making style
+LLM-only, that "PDF/comic chapters never set `storyStyle` today (their text isn't model-authored...)".
+**Half of that is wrong, and building to it would have deleted a working capability.**
+`pdfGenerateAll()` really does send `storyStyle: APP.storyStyle !== 'creative' ? ... : null`
+(index.html), `/api/generate-book` stores it as `base.storyStyle` on every chapter, and it reaches
+REAL lesson prompts from there — `sysGrammar`/`sysConjugation` take it as a parameter
+(server.js:4173/5065), `generateWriting` and `synonyms` apply it as a `writingStyleNote`
+(server.js:4690). Only `comicCreateChapter()` genuinely hardcodes `storyStyle: null`. So
+`_applyTextShapingVisibility()` preserves today's visibility EXACTLY rather than implementing AL's
+stated rule: story-length and chapter-count hide for a user-provided text (what `onUseStoryCb()`
+already did inline), `#style-wrap` hides only for dialect and comic, where it reaches nothing.
+Standing rule 35 again — a warning in the notes is a claim about a DESIGN, not about the problem.
+
+**`_applyTextShapingVisibility()` is not cosmetic — it repairs a regression the move itself would
+have caused.** The three shaping rows used to sit inside `#gen-form-section`, which dialect mode and
+comic mode each hide with a single `gf.style.display` toggle. Moving them onto card 2 puts them
+OUTSIDE that section, so both modes would have newly left them visible. One function now owns all
+three rows for all three exclusive panel modes, called at the END of each mode toggle (after its own
+exclusivity handling has settled the other checkboxes). The test pins BOTH halves: the helper's
+truth table, and the fact that each of the three toggles actually calls it.
+
+**`ui.json`: exactly one new `en` key, and the reason the obvious alternative was refused.** Pill 3
+must read "3 · Lessons". The step NUMBER is baked into each pill's string in all 33 languages, so
+pill 3 could not reuse `gen.wizard_step4` ("4 · Lessons"), and overwriting `gen.wizard_step3`'s `en`
+value in place would have left its 32 existing translations ACTIVELY WRONG — "3 · Kapitel" rendered
+on a Lessons step — whereas a new key falls through to English, which is merely untranslated (`t()`,
+index.html). So `gen.wizard_step3_lessons` was added and `gen.wizard_step3`/`gen.wizard_step4` were
+LEFT IN PLACE, unused, preserving the user's hand-translation work if a chaptering step ever returns.
+`en` keys 725 → 726. **Asked and approved before editing `ui.json`**, per the standing rule.
+
+**A vacuous-guard trap found by writing the guard and watching it fail on a CORRECT tree.** The first
+draft asserted `#gen-card-4` absent in the RENDERED DOM. It went red on a tree where the card really
+was gone — because `lib-dom`'s `makeDocument()` AUTO-VIVIFIES every id asked for (`getElementById`
+mints a div on a miss, deliberately, see its own comment). Any `!!document.getElementById(x)` check
+is therefore always true and its negation always red, whatever the markup says. The absence claim
+belongs at the SOURCE layer, where it is real — and a note now sits in the test so the next reader
+does not "fix" the source-level check by moving it back into the DOM. Same family as rule 34: guard
+where the claim is observable.
+
+**`test/unit-gen-wizard.test.js` rewritten** for the 3-card contract: per-card markup nesting for
+every moved block; the deletions asserted as absent AND each moved id asserted to appear EXACTLY ONCE
+in the file (a copy left behind would still satisfy "is inside card N"); `#gen-form-section` now
+spanning only the lesson card while the three shaping rows sit outside it; clamping at `[1,3]` with a
+stale `_genWizardGoto(4)` clamping down rather than stranding the wizard on no card;
+`_applyTextShapingVisibility()`'s truth table plus its wiring into all three toggles; and pill 3
+rendering a key that EXISTS in `en`. **Five mutations, all confirmed RED**: `_GEN_WIZARD_CARDS` back
+to 4; `onUseDialectCb` dropping its helper call; `set('style-wrap', hideAll || story)` (the
+capability-deleting version AL's text would have produced); pill 3 pointed back at
+`gen.wizard_step3`; and a duplicate `#gen-arc-row` left behind by the move.
+`unit-per-chapter-types`/`unit-post-gen-features` re-anchored from `#gen-card-4` to `#gen-card-3` —
+their underlying claims ("this row lives on the lesson card") are unchanged, only the number moved.
+
+**Live-verified in the browser against the user's own running server** (`readFileSync` per request,
+so nothing was restarted): three pills reading 1 · Language / 2 · Text / 3 · Lessons, no card 4, no
+create-now button, and every moved block resolving to its intended enclosing card. Picking a real
+continuation on card 1 correctly revealed `#use-full-chain-row` on card 1 AND `#reinforce-prior-row`
+on card 3 — the two halves of the old `#continue-row` now living on different cards and still driven
+by the same one `_updateReinforcePriorVisibility()`. Skip-lessons still hid the whole lesson block
+and swapped the button to "Create chapters →". All four mode states (plain LLM / own-story / dialect
+/ comic) showed the right shaping-row visibility, and unticking restored it.
+
+**NOT in this cut — item AL's second half, deliberately.** `#pdf-panel` and `#comic-panel` still
+carry their OWN duplicated arc/skip-lessons/storyboard/analysis rows and their own start buttons;
+routing all three input modes through card 3 is the larger, riskier half and gets its own release
+(with the `continuedFrom` bug AL found in `comicCreateChapter()`). This cut is the card
+restructuring, complete and green on its own.
 
 ## ✅ v87_f — item AK (new): decoupling chaptering from lesson generation, across all three input modes
 
