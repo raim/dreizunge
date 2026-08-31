@@ -1245,6 +1245,20 @@ already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly o
 | the acceptance tests (as of `v85_c`) | `test/unit-gen-wizard.test.js`: markup nesting (each existing block inside its own card, via `indexOf(needle, lo)` bounded search — NOT unbounded `indexOf`, which would find `.lang-box`'s OTHER pre-existing user, `#lib-lang-box` in the library filter, instead), default state (card 1 shown, pill 1 only active), `_genWizardNext`/`_genWizardBack` clamping at both ends, `_genWizardGoto` direct jump, the `show()` reset hook (mutation-tested), and the `#gen-area`-untouched invariant. Extended, not replaced, at `v85_d` — see its own row |
 | ⚠️ **div-balance verification method, worth reusing** | after any wizard-restructuring edit, a real HTML parser (Python's `html.parser`, stack-tracking start/end tags) was run over just the `#generation-screen`…next-screen region to confirm zero stray/missing closing tags — the same technique `PLAN §C5`'s own `landing`-nesting row used, reused again at both `v85_c` and `v85_d` |
 
+**`v87_n` — the artwork toggle reaches all THREE surfaces; the strip is centred** (three user
+follow-ups to `v87_m`, reported live).
+
+| what | where |
+|---|---|
+| ⚠️ **the reported bug was PLACEMENT, not logic** | "i only see the storyboard and don't find the button". Verified against the user's real storyline: `_slHasComicImages` true, `_slThumbMode` correctly `storyboard` (unset + storyboard present), main-page gate would render. The user was on the storyline SCREEN (`#sl=…`), where `v87_m` had put no toggle — it read "on the main page and in the storyline view" as where the CHOICE APPLIES rather than where the CONTROL lives. A correct gate on a control nobody can find is the same as a broken feature |
+| **`_slThumbToggleHtml(sl, chapterIds)`** | the button's markup, teacher gate, "only when there IS a choice" condition and tooltip DIRECTION, EXTRACTED from `v87_m`'s inline template so three surfaces share one definition. Copying the gate twice more would have been the exact `v87_k` drift |
+| **three call sites** | library storyline card; storyline screen (right-aligned above the artwork it governs); and the lesson-set page's `#ls-storyline-hdr`, via a new `#ls-storyline-art` container populated by the same function that fills that header's title/progress (it already resolves `_ctxSl`) |
+| ⚠️ **lesson-set page is TEACHER-ONLY for the artwork too** | deliberate and narrower than the other two, which show artwork to everyone and gate only the toggle. That page never showed storyline-level artwork, so displaying it to every learner would be an unasked-for product change; the ask was the switch. Widening = dropping one `APP._teacherMode &&`, named in the code comment |
+| **centring** | `justify-content:safe center`, not plain `center`: both callers wrap the strip in `overflow-x:auto`, and a plain centred flex row that overflows pushes its leading items past the scroll origin where they cannot be scrolled back to. `safe` degrades to flex-start exactly when it overflows |
+| the acceptance tests | `unit-storyline-artwork.test.js` §6 (teacher gate; only with a real choice; reversible — the tooltip offers the way back) and §6b (all three call sites at the SOURCE layer, incl. the lesson-set teacher-only scope pinned as deliberate). THREE mutations red |
+
+---
+
 **`v87_m` — item AC: comic PANEL IMAGES instead of the storyboard, teacher's choice, per storyline**
 (user request; full write-up in `roadmap_v87.md`'s own `v87_m` entry).
 

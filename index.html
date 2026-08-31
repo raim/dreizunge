@@ -1722,6 +1722,13 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <div id="ls-storyline-prog-bar" style="height:100%;background:var(--green);border-radius:2px;transition:width .3s;width:0%"></div>
     </div>
     <div style="font-size:11px;font-weight:800;color:var(--gray-dark);padding:2px 0 0;opacity:.8" id="ls-storyline-prog-txt"></div>
+    <!-- v87_n (user): "the lesson-set page (teacher view) should also switch between storyboard and
+         images, as on main and the storyline page." This page never showed storyline-level artwork
+         at all, so this adds BOTH the strip and the toggle — the THIRD surface reading the same
+         per-storyline thumbMode through the same _slArtworkHtml/_slThumbToggleHtml pair. Populated
+         by the same function that fills the storyline title/progress above it (it already resolves
+         `_ctxSl`, the storyline this chapter belongs to). -->
+    <div id="ls-storyline-art" style="display:none;margin-top:6px;overflow-x:auto"></div>
   </div>
   <!-- Row 2: Lesson-set title — emoji, title, ✏️ edit, ✨ gen, 🔗 share -->
   <div class="sl-screen-hdr" id="ls-hdr">
@@ -8616,9 +8623,7 @@ async function loadSavedList(){
            already what _slThumbMode resolves to on its own. Teacher-gated: this is curation, and it
            changes what every learner sees. ONE control, because the mode is stored per storyline and
            both surfaces read the same field. -->
-      ${(APP._teacherMode && matchSl && matchSl.id && matchSl.storyboard && _slHasComicImages(chain))?`<button class="ico-btn" style="font-size:11px;padding:2px 8px"
-        title="${escAttr(t(_slThumbMode(matchSl, chain)==='images'?'storyline.thumb_show_storyboard':'storyline.thumb_show_images'))}"
-        onclick="event.stopPropagation();toggleSlThumbMode('${escAttr(matchSl.id)}')">${_slThumbMode(matchSl, chain)==='images'?'🎬':'🖼️'}</button>`:''}
+      ${_slThumbToggleHtml(matchSl, chain)}
       <button class="ico-btn" style="font-size:11px;padding:2px 8px;color:var(--red)" title="Delete all chapters in this storyline"
         data-chain="${escapedChain}"
         onclick="event.stopPropagation();deleteStoryline(this.dataset.chain)">🗑️</button>
@@ -9727,6 +9732,24 @@ function buildPath(){
       _slDoneSets+=tLessons.filter(L=>tDone[L.id]).length;
     });
     const _slPct=_slTotalSets>0?Math.round(100*_slDoneSets/_slTotalSets):0;
+    // v87_n (user request): the same storyline artwork the library card and the storyline screen
+    // show, with the same teacher toggle — one thumbMode, now read by three surfaces through the two
+    // shared helpers rather than a third private copy.
+    //
+    // ⚠️ Rendered in TEACHER MODE ONLY, deliberately. Unlike the other two surfaces, this page has
+    // never shown storyline-level artwork, so displaying it for every learner would be a visible
+    // product change nobody asked for; the user asked for the SWITCH here. Widening it is one
+    // condition — drop the `APP._teacherMode &&` below.
+    const _slArtEl = document.getElementById('ls-storyline-art');
+    if (_slArtEl) {
+      const _lsIds = _ctxSl.chapters || [];
+      const _lsArt = APP._teacherMode ? _slArtworkHtml(_ctxSl, _lsIds) : '';
+      const _lsTog = APP._teacherMode ? _slThumbToggleHtml(_ctxSl, _lsIds) : '';
+      _slArtEl.innerHTML = _lsArt
+        ? (_lsTog ? '<div style="display:flex;justify-content:flex-end">' + _lsTog + '</div>' : '') + _lsArt
+        : '';
+      _slArtEl.style.display = _lsArt ? '' : 'none';
+    }
     if(_slIconEl)  _slIconEl.textContent  = _ctxSl.icon||'📖';
     if(_slTitleEl) _slTitleEl.textContent = _ctxSl.title||_cTopics[0]||'Storyline';
     if(_slBarEl)   _slBarEl.style.width   = _slPct+'%';
@@ -11059,7 +11082,14 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
 
   // Storyboard — server-composed, validated SVG (composeStoryboardSVG is the security
   // boundary; the client only injects the finished string). Sits ABOVE the summary.
-  const _slSb = _slArtworkHtml(slMeta, (slMeta && slMeta.chapters) || []);   // user request: images may stand in — see _slArtworkHtml
+  const _slArtIds = (slMeta && slMeta.chapters && slMeta.chapters.length) ? slMeta.chapters : chapterIds;
+  const _slSb = _slArtworkHtml(slMeta, _slArtIds);   // user request: images may stand in — see _slArtworkHtml
+  // v87_n (user: "i only see the storyboard and don't find the button to switch to the images") —
+  // the toggle belongs HERE too, not only on the library card, since this screen is where a teacher
+  // looking at one storyline actually is. Placed directly above the artwork it governs, right-aligned
+  // so it reads as a control ON that strip rather than part of the chapter list below.
+  const _slToggle = _slThumbToggleHtml(slMeta, _slArtIds);
+  if (_slToggle) html += '<div style="display:flex;justify-content:flex-end;margin:4px 0 0">' + _slToggle + '</div>';
   html += '<div class="storyline-storyboard" id="slsb-screen-' + chainId.replace(/[^a-zA-Z0-9_-]/g,'_')
         + '" data-sb-chain="' + escAttr(chainId) + '"'
         + ' aria-label="' + escAttr(t('storyboard.title')) + '" style="margin:8px 0;overflow-x:auto'
@@ -11488,7 +11518,13 @@ function _slImageStripHtml(chapterIds){
       style="height:84px;width:auto;flex:0 0 auto;border-radius:8px;border:1.5px solid var(--gray-mid);object-fit:cover;cursor:pointer;background:var(--white)">`;
   }).filter(Boolean);
   if (!cells.length) return '';
-  return `<div style="display:flex;gap:6px;align-items:flex-start">${cells.join('')}</div>`;
+  // Centred (user request), on both surfaces at once since they share this one builder.
+  // `safe center` rather than plain `center` ON PURPOSE: both callers wrap this in an
+  // `overflow-x:auto` container, and a plain centred flex row that overflows pushes its first items
+  // past the scroll origin, where they cannot be scrolled back to. `safe` falls back to flex-start
+  // exactly when the content overflows, so a long strip still starts at its first panel and scrolls
+  // normally, while a short one sits centred.
+  return `<div style="display:flex;gap:6px;align-items:flex-start;justify-content:safe center">${cells.join('')}</div>`;
 }
 // What a storyline surface should actually put in its artwork slot. Returns '' when there is
 // nothing to show, so both callers keep their existing "hide the wrapper when empty" behaviour.
@@ -11504,6 +11540,24 @@ function _slArtworkHtml(sl, chapterIds){
   return (sl && sl.storyboard) || '';
 }
 
+// The toggle BUTTON's markup, shared by both surfaces that show artwork.
+//
+// ⚠️ Extracted at v87_n after the user reported not finding the control: v87_m put it ONLY on the
+// library storyline card, and the natural place to look is the storyline SCREEN you are already on
+// ("...which to show on the main page and in the storyline view"). Two placements, ONE definition —
+// duplicating the gate would be the same drift v87_k had to repair on another card.
+//
+// Shown only when there is a real choice to make (a storyboard AND at least one chapter with panel
+// images), exactly as the user scoped it, and only in teacher mode: this is curation and it changes
+// what every learner sees.
+function _slThumbToggleHtml(sl, chapterIds){
+  if (!APP._teacherMode || !sl || !sl.id) return '';
+  if (!sl.storyboard || !_slHasComicImages(chapterIds)) return '';
+  const showingImages = _slThumbMode(sl, chapterIds) === 'images';
+  const title = t(showingImages ? 'storyline.thumb_show_storyboard' : 'storyline.thumb_show_images');
+  return `<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="${escAttr(title)}"
+    onclick="event.stopPropagation();toggleSlThumbMode('${escAttr(sl.id)}')">${showingImages?'🎬':'🖼️'}</button>`;
+}
 // Flip which artwork this storyline shows, everywhere at once. Persisted through the EXISTING
 // /api/storylines upsert (which gained `thumbMode` alongside its existing title/icon/chapters
 // fields) — no new route. The local copy is updated before the refresh so the button's own icon and

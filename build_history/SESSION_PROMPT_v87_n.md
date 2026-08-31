@@ -1,7 +1,7 @@
-# Session prompt — written at the `v87_m` cut
+# Session prompt — written at the `v87_n` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
-one alongside. Keep using the double-letter suffix scheme (`v87_n`, `v87_o`, …) unless a future
+one alongside. Keep using the double-letter suffix scheme (`v87_o`, `v87_p`, …) unless a future
 session has a good reason to switch to `v88_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
@@ -21,7 +21,14 @@ live server was running on port 3000 throughout the `v87_g`/`v87_h`/`v87_i` cuts
 `v87_g` was live-verified that way, with nothing of the user's touched. `prompts.json` and `ui.json`
 HOT-RELOAD live via `fs.watch` too.
 
-**What shipped this cut**: item AC — a comic storyline can show its PANEL IMAGES instead of the
+**What shipped this cut**: `v87_n` — three live user follow-ups to `v87_m`: the artwork toggle now
+reaches ALL THREE surfaces (library card, storyline screen, and the lesson-set page — the reported bug
+was that `v87_m` put it only on the card, so a teacher on `#sl=…` could not find it), and the image
+strip is centred with `justify-content:safe center`. One assumption to revisit if you disagree: on the
+LESSON-SET page the artwork renders in TEACHER MODE ONLY, since that page never showed storyline
+artwork to learners and the ask was the switch — widening is one condition, named in the code.
+
+`v87_m` before it shipped item AC — a comic storyline can show its PANEL IMAGES instead of the
 storyboard, chosen by the teacher, per storyline, applying to both the main page and the storyline
 view. Unset resolves as "storyboard if one exists, else the images" (user ruling), so nothing changes
 for existing storylines. The ~240KB-per-image constraint is what shaped it: `/api/lessons` carries
@@ -50,7 +57,7 @@ three need little or no new server work.
 
 1. **This file**, whole.
 2. `build_history/roadmap_v87.md` — its **index table** and **⚠️ Session protocol** block first, then
-   item AL's status block, then `# ✅ SHIPPED IN THE v87 LINE` (`v87_b` → `v87_m`).
+   item AL's status block, then `# ✅ SHIPPED IN THE v87 LINE` (`v87_b` → `v87_n`).
 3. `build_history/roadmap_v86.md` is KEPT as the historical record for the whole `v86` line
    (`v86_a`…`v86_ag`) — go there for how something from THAT line was built.
 4. `INTERNALS.md` **§6b** covers the jobs popover, the drafts store, and the `skipLessons` mechanism
@@ -87,7 +94,7 @@ a chaptering step ever returns) and are UNCHANGED at `v87_h`. `lessons.json`/`ca
 server generated a topic mid-session, which is exactly the "inherently live snapshot" this line warns
 about; both files were swept into the `v87_i` release commit so the guarded counts stay consistent
 with the tree.
-`drafts.json` may exist at the project root (server-created, gitignored) — normal. `APP_VERSION = 'v87_m'`.
+`drafts.json` may exist at the project root (server-created, gitignored) — normal. `APP_VERSION = 'v87_n'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to

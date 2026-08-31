@@ -2211,6 +2211,57 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v87 LINE
 
+## ✅ v87_n — the artwork toggle reaches the two surfaces it was missing, and the strip is centred
+
+Three follow-ups to `v87_m`, all reported live by the user against their own running server.
+
+**⚠️ 1. "i only see the storyboard and don't find the button to switch to the images"** — reported
+against a real storyline (`sl_143869450`, "Enteignung und Wald": a storyboard AND a comic panel on
+both chapters, `thumbMode` unset).
+
+Diagnosed before changing anything, and the interesting part is that **nothing was broken**. Checked
+against the user's real data through the harness: `_slHasComicImages` → `true`, `_slThumbMode` →
+`storyboard` (correct: unset with a storyboard present), and the main-page gate would have rendered
+the button. `GET /api/storylines` returns whole storyline objects, so `matchSl.storyboard` really is
+available client-side — the projection trap that bit `comicPanelCount` does not apply here.
+
+The actual cause was PLACEMENT: the user's URL was `#sl=sl_143869450` — the storyline SCREEN — and
+`v87_m` had put the toggle only on the library storyline card. The request said "...which to show on
+the main page and in the storyline view", which `v87_m` read as where the CHOICE APPLIES; the user
+meant, reasonably, that the CONTROL should be reachable from where they are. **A correct gate on a
+control nobody can find is the same as a broken feature.**
+
+**⚠️ 2. "the lesson-set page (teacher view) should also switch"** — a THIRD surface, which had never
+shown storyline-level artwork at all, so this adds both the strip and the toggle to
+`#ls-storyline-hdr`, populated by the same function that already fills that header's title and
+progress (it resolves `_ctxSl`, the chapter's storyline).
+
+**Rendered in TEACHER MODE ONLY on that page, deliberately, and flagged to the user as the one
+assumption made.** The other two surfaces show artwork to everyone and gate only the toggle. This page
+never showed any, so displaying a storyboard strip to every learner would be a visible product change
+that was not asked for — the ask was the SWITCH. Widening it later is one condition
+(`APP._teacherMode &&`), which the code comment names explicitly.
+
+**3. "can we center the images"** — one change, both surfaces, because they share one builder.
+`justify-content:safe center`, NOT plain `center`: both callers wrap the strip in an
+`overflow-x:auto` container, and a plain centred flex row that overflows pushes its leading items past
+the scroll origin where they cannot be scrolled back to. `safe` falls back to flex-start exactly when
+the content overflows, so a long strip still starts at panel 1 while a short one sits centred.
+
+**What kept this cheap: `_slThumbToggleHtml(sl, chapterIds)` was EXTRACTED rather than the gate being
+re-typed.** `v87_m` had the gate inline in the library card's template. Adding two more placements by
+copying it would have been precisely the drift `v87_k` had just finished repairing on another card —
+so the button's markup, its teacher gate, its "only when there is a real choice" condition and its
+tooltip direction now live in ONE function that three surfaces call. The test asserts all three call
+sites at the source layer, which is where "one definition" is a real claim.
+
+**Tests**: `unit-storyline-artwork.test.js` gains §6 (the toggle is teacher-gated, appears only when
+both a storyboard and images exist, and offers the way BACK once switched — otherwise the choice is
+one-way) and §6b (all three surfaces emit it, and the lesson-set page's teacher-only scope is pinned
+so it reads as deliberate rather than as an oversight), plus a centring assertion naming why `safe` is
+there. THREE mutations confirmed red: removing the storyline-screen placement (the originally reported
+bug), dropping the teacher gate, and removing the lesson-set toggle.
+
 ## ✅ v87_m — item AC: a comic storyline can show its PANEL IMAGES instead of the storyboard, teacher's choice, per storyline
 
 **User request** (item AC, open since the `v86` line): *"use the images of a comic story, or thumbnails

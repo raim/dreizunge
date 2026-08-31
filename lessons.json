@@ -47,7 +47,7 @@
       "lang": "nl",
       "srcLang": "de",
       "createdAt": "2026-08-30T07:15:45.723Z",
-      "updatedAt": "2026-08-31T16:03:30.704Z",
+      "updatedAt": "2026-08-31T17:18:14.020Z",
       "tokenUsage": {
         "totalPromptTokens": 1963,
         "totalCompletionTokens": 1372,
@@ -313,7 +313,8 @@
           ]
         }
       ],
-      "storyboardScheme": "classic"
+      "storyboardScheme": "classic",
+      "thumbMode": "images"
     },
     {
       "id": "sl_1594408273",
@@ -327,7 +328,7 @@
       "lang": "en",
       "srcLang": "ja",
       "createdAt": "2026-08-28T13:20:55.800Z",
-      "updatedAt": "2026-08-28T13:28:45.729Z",
+      "updatedAt": "2026-08-31T17:20:29.192Z",
       "tokenUsage": {
         "totalPromptTokens": 1287,
         "totalCompletionTokens": 2239,
@@ -644,7 +645,8 @@
           ]
         }
       ],
-      "storyboardScheme": "classic"
+      "storyboardScheme": "classic",
+      "thumbMode": "storyboard"
     },
     {
       "id": "sl_1732342260",
@@ -1248,7 +1250,7 @@
       "lang": "en",
       "srcLang": "de",
       "createdAt": "2026-08-26T11:17:44.807Z",
-      "updatedAt": "2026-08-26T12:04:08.272Z",
+      "updatedAt": "2026-08-31T17:19:56.117Z",
       "tokenUsage": {
         "totalPromptTokens": 1829,
         "totalCompletionTokens": 1916,
@@ -1651,7 +1653,8 @@
           ]
         }
       ],
-      "storyboardScheme": "classic"
+      "storyboardScheme": "classic",
+      "thumbMode": "images"
     },
     {
       "id": "sl_379498431",
