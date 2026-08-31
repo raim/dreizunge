@@ -8609,6 +8609,16 @@ async function loadSavedList(){
       ${APP.info.canGenerate?`<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="${t('gen.post_gen_analysis_lbl')}"
         data-chain="${escapedChain}"
         onclick="event.stopPropagation();analyzeChaptersRun(JSON.parse(decodeURIComponent(this.dataset.chain)),this)">🔤</button>`:''}
+      <!-- User request: "If both, images and a storyboard exists, the teacher should be able to
+           choose which to show on the main page and in the storyline view." Shown ONLY when there
+           genuinely IS a choice — both a storyboard and at least one chapter with panel images —
+           because with only one of the two there is nothing to pick between and the other state is
+           already what _slThumbMode resolves to on its own. Teacher-gated: this is curation, and it
+           changes what every learner sees. ONE control, because the mode is stored per storyline and
+           both surfaces read the same field. -->
+      ${(APP._teacherMode && matchSl && matchSl.id && matchSl.storyboard && _slHasComicImages(chain))?`<button class="ico-btn" style="font-size:11px;padding:2px 8px"
+        title="${escAttr(t(_slThumbMode(matchSl, chain)==='images'?'storyline.thumb_show_storyboard':'storyline.thumb_show_images'))}"
+        onclick="event.stopPropagation();toggleSlThumbMode('${escAttr(matchSl.id)}')">${_slThumbMode(matchSl, chain)==='images'?'🎬':'🖼️'}</button>`:''}
       <button class="ico-btn" style="font-size:11px;padding:2px 8px;color:var(--red)" title="Delete all chapters in this storyline"
         data-chain="${escapedChain}"
         onclick="event.stopPropagation();deleteStoryline(this.dataset.chain)">🗑️</button>
@@ -8617,7 +8627,12 @@ async function loadSavedList(){
     // Summary strip — shows stored summary if available
     const _slSumMeta = matchSl || slTitles[chainId] || null;
     // Storyboard rides the same storyline object; render it ABOVE the summary strip.
-    const _slSb2 = _slSumMeta?.storyboard || '';
+    // User request: comic panel images may stand in for the storyboard here — _slArtworkHtml owns
+    // that choice for BOTH this card and the storyline screen, so the two cannot disagree.
+    // data-sb-chain stays on the wrapper either way: it is what makes a STORYBOARD panel clickable
+    // (the delegated handler below), and it is simply unused by the image strip, whose thumbnails
+    // carry their own onclick.
+    const _slSb2 = _slArtworkHtml(_slSumMeta, chain);   // `chain` is this card's own chapter-ID array
     if (_slSb2) {
       html += `<div class="storyline-storyboard" id="slsb-wrap-${chainId}" data-sb-chain="${escAttr(chainId)}" aria-label="${escAttr(t('storyboard.title'))}" style="padding:4px 8px;overflow-x:auto">${_slSb2}</div>`;
     }
@@ -11044,7 +11059,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
 
   // Storyboard — server-composed, validated SVG (composeStoryboardSVG is the security
   // boundary; the client only injects the finished string). Sits ABOVE the summary.
-  const _slSb = slMeta?.storyboard || '';
+  const _slSb = _slArtworkHtml(slMeta, (slMeta && slMeta.chapters) || []);   // user request: images may stand in — see _slArtworkHtml
   html += '<div class="storyline-storyboard" id="slsb-screen-' + chainId.replace(/[^a-zA-Z0-9_-]/g,'_')
         + '" data-sb-chain="' + escAttr(chainId) + '"'
         + ' aria-label="' + escAttr(t('storyboard.title')) + '" style="margin:8px 0;overflow-x:auto'
@@ -11416,6 +11431,94 @@ window.addEventListener('popstate', function(e) {
     }
   }
 });
+
+// ── Storyline artwork: comic panel images vs the storyboard (user request) ──────────────────────
+// "use the images of a comic story, or thumbnails thereof, instead of the story-board. If both,
+// images and a storyboard exists, the teacher should be able to choose which to show on the main
+// page and in the storyline view."
+//
+// ONE resolver, used by BOTH surfaces (the library storyline card and the storyline screen), so the
+// two cannot disagree about what a storyline shows — the same "one renderer or five screens drift"
+// reasoning `_storyBodyHtml` documents, and the drift `v87_k` had to repair on another card.
+//
+// `sl.thumbMode` is per storyline (user ruling — a comic shows its panels while a generated story
+// keeps its storyboard). UNSET resolves as "storyboard if one exists, else the images" (also a user
+// ruling): nothing changes for an existing storyline that has a storyboard, and a comic storyline
+// that never had one finally shows something instead of an empty strip.
+function _slThumbMode(sl, chapterIds){
+  const mode = sl && sl.thumbMode;
+  if (mode === 'images' || mode === 'storyboard') return mode;
+  if (sl && sl.storyboard) return 'storyboard';
+  return _slHasComicImages(chapterIds) ? 'images' : 'storyboard';
+}
+// Whether any chapter in this storyline has a panel image to show. Reads `comicPanelCount` from the
+// list projection in LIVE mode; the static build ships whole topics, so it falls back to the real
+// `comicPanels` array there — one helper covering both, rather than a build-mode branch at every
+// call site.
+function _slHasComicImages(chapterIds){
+  const saved = APP.savedList || [];
+  const byId = Object.fromEntries(saved.filter(x=>x && x.id).map(x=>[x.id,x]));
+  return (chapterIds||[]).some(id => {
+    const t = byId[id];
+    if (!t) return false;
+    return (t.comicPanelCount||0) > 0 || (Array.isArray(t.comicPanels) && t.comicPanels.length > 0);
+  });
+}
+// One thumbnail per CHAPTER — its first panel — so the strip has the same shape and reading order as
+// the storyboard it replaces (one cell per chapter, left to right), rather than every panel of every
+// chapter. Clicking one opens that chapter, matching what a storyboard panel already does.
+//
+// The image source differs by build, deliberately: live mode uses the /api/comic-thumb route (the
+// stored data URL is ~240KB and must not ride in the library list), while the static build already
+// has the whole topic inline and needs no server. `loading="lazy"` matters here — a library page can
+// hold many storylines, and this is the difference between one request per visible card and one per
+// storyline on the page.
+function _slImageStripHtml(chapterIds){
+  const saved = APP.savedList || [];
+  const byId = Object.fromEntries(saved.filter(x=>x && x.id).map(x=>[x.id,x]));
+  const cells = (chapterIds||[]).map(id => {
+    const t = byId[id];
+    if (!t) return '';
+    const inline = Array.isArray(t.comicPanels) && t.comicPanels[0] && t.comicPanels[0].image;
+    const hasLive = (t.comicPanelCount||0) > 0;
+    if (!inline && !hasLive) return '';
+    const src = inline || ('/api/comic-thumb/' + encodeURIComponent(id));
+    return `<img src="${escAttr(src)}" loading="lazy" alt="${escAttr(t.topic||'')}" title="${escAttr(t.topic||'')}"
+      onclick="event.stopPropagation();loadSaved('${escAttr(encodeURIComponent(t.topic||''))}')"
+      style="height:84px;width:auto;flex:0 0 auto;border-radius:8px;border:1.5px solid var(--gray-mid);object-fit:cover;cursor:pointer;background:var(--white)">`;
+  }).filter(Boolean);
+  if (!cells.length) return '';
+  return `<div style="display:flex;gap:6px;align-items:flex-start">${cells.join('')}</div>`;
+}
+// What a storyline surface should actually put in its artwork slot. Returns '' when there is
+// nothing to show, so both callers keep their existing "hide the wrapper when empty" behaviour.
+function _slArtworkHtml(sl, chapterIds){
+  const mode = _slThumbMode(sl, chapterIds);
+  if (mode === 'images') {
+    const strip = _slImageStripHtml(chapterIds);
+    // Fall back rather than showing an empty box: a storyline explicitly set to 'images' whose
+    // chapters have none (they were deleted, or the mode was set on the wrong storyline) still shows
+    // its storyboard if it has one.
+    if (strip) return strip;
+  }
+  return (sl && sl.storyboard) || '';
+}
+
+// Flip which artwork this storyline shows, everywhere at once. Persisted through the EXISTING
+// /api/storylines upsert (which gained `thumbMode` alongside its existing title/icon/chapters
+// fields) — no new route. The local copy is updated before the refresh so the button's own icon and
+// tooltip flip immediately rather than after the round trip.
+async function toggleSlThumbMode(slId){
+  const sl = (APP.storylines||[]).find(x => x && x.id === slId);
+  if (!sl) return;
+  const next = _slThumbMode(sl, sl.chapters||[]) === 'images' ? 'storyboard' : 'images';
+  sl.thumbMode = next;
+  try {
+    await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ slId, thumbMode: next }) });
+  } catch(e) { /* offline: the local flip still stands for this session, same as other card edits */ }
+  try { await loadSavedList(); } catch(_) {}
+}
 
 function _openStorylineForTopic(topicName) {
   // Find the storyline containing this topic and open it

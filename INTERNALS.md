@@ -1245,6 +1245,22 @@ already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly o
 | the acceptance tests (as of `v85_c`) | `test/unit-gen-wizard.test.js`: markup nesting (each existing block inside its own card, via `indexOf(needle, lo)` bounded search — NOT unbounded `indexOf`, which would find `.lang-box`'s OTHER pre-existing user, `#lib-lang-box` in the library filter, instead), default state (card 1 shown, pill 1 only active), `_genWizardNext`/`_genWizardBack` clamping at both ends, `_genWizardGoto` direct jump, the `show()` reset hook (mutation-tested), and the `#gen-area`-untouched invariant. Extended, not replaced, at `v85_d` — see its own row |
 | ⚠️ **div-balance verification method, worth reusing** | after any wizard-restructuring edit, a real HTML parser (Python's `html.parser`, stack-tracking start/end tags) was run over just the `#generation-screen`…next-screen region to confirm zero stray/missing closing tags — the same technique `PLAN §C5`'s own `landing`-nesting row used, reused again at both `v85_c` and `v85_d` |
 
+**`v87_m` — item AC: comic PANEL IMAGES instead of the storyboard, teacher's choice, per storyline**
+(user request; full write-up in `roadmap_v87.md`'s own `v87_m` entry).
+
+| what | where |
+|---|---|
+| ⚠️ **why it is a route, not a field** | a stored panel image is ~240KB as a base64 data URL, and `GET /api/lessons` is fetched on EVERY load — inlining one per chapter would add tens of MB. The whitelist projection carries only **`comicPanelCount`**; images come from a new **`GET /api/comic-thumb/:topicId?i=N`**, which decodes the data URL to real bytes with its own content-type (browser-cached, lazily fetched). It HAD to go in the whitelist: that projection's own comments record the same failure twice (`v74_i`, `v79_n`) — a field omitted there works in the static build and silently does nothing live |
+| **`_slArtworkHtml(sl, chapterIds)`** | ONE resolver; the library storyline card AND the storyline screen both call it and neither reads `.storyboard` directly any more. Asserted at the source layer — a second surface re-implementing a shared renderer is the `v87_k` defect, four silent regressions deep |
+| **`_slThumbMode()`** | `sl.thumbMode` is `'images'`/`'storyboard'`, per storyline (user ruling). UNSET = "storyboard if one exists, else the images" (also a user ruling) — so nothing changes for an existing storyline with a storyboard, and a comic storyline that never had one finally shows something. An unrecognised value is treated as UNSET, not a third mode |
+| **`_slHasComicImages()`** | counts BOTH the live projection's `comicPanelCount` and the static build's inline `comicPanels` array — one helper for two build shapes, rather than a build-mode branch at every call site |
+| **the strip** | one thumbnail per CHAPTER (its first panel), in chapter order, each clickable to its own chapter — same shape and reading order as the storyboard it replaces. `loading="lazy"`. Live points at the route; static uses the inline image it already ships |
+| **fallbacks** | a storyline set to `images` whose chapters have none still renders its storyboard; with neither, `''` so the caller hides the wrapper as before |
+| **the toggle** | shown ONLY when both a storyboard and panel images exist (exactly the user's own scoping), teacher-gated, ONE control since the mode is per storyline and both surfaces read it. Persists through the EXISTING `/api/storylines` upsert, which gained `thumbMode` — no new write route. TWO new `en` keys (728→730) |
+| the acceptance tests | `unit-storyline-artwork.test.js` (5 sections incl. the one-resolver source check) + `e2e-storyline-artwork.test.js` (5 sections, real server: count present and images ABSENT from the list; exact decoded bytes; `?i=` selects and clamps; 404s; `thumbMode` round-trip). THREE mutations red. `lib.js` untouched — its `get()` has no headers and a string body, so the binary assertions use a local raw helper |
+
+---
+
 **`v87_l` — comic panels: an IMAGE DESCRIPTION in the target language, as fallback chapter text**
 (user request; full write-up in `roadmap_v87.md`'s own `v87_l` entry).
 

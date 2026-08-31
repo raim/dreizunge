@@ -265,6 +265,7 @@ run('unit: post-generation storyboard/QC toggles (PLAN §13 milestone 4, v85_g)'
 run('unit: generation-time attribution fields (PLAN §13 milestone 5, v85_i)', 'node', [path.join(__dirname, 'unit-gen-attribution.test.js')]);
 run('unit: comic upload + panel-drawing UI (PLAN §2.4 Track A4 milestone 1, v85_j)', 'node', [path.join(__dirname, 'unit-comic-panel-ui.test.js')]);
 run('unit: comic panel batch extraction, client side (PLAN §2.4 Track A4 milestone 2, v85_k)', 'node', [path.join(__dirname, 'unit-comic-extraction.test.js')]);
+run('unit: storyline artwork — comic images vs storyboard (user request)', 'node', [path.join(__dirname, 'unit-storyline-artwork.test.js')]);
 run('unit: comic chapter formation, client side (PLAN §2.4 Track A4 milestone 3, v85_m)', 'node', [path.join(__dirname, 'unit-comic-chapter.test.js')]);
 run('unit: comic text review card — edit/confirm before lesson generation (v86_v)', 'node', [path.join(__dirname, 'unit-comic-review-card.test.js')]);
 run('unit: post-gen storyboard opt-in fix, client side (v85_p)', 'node', [path.join(__dirname, 'unit-postgen-storyboard-optin.test.js')]);
@@ -333,6 +334,7 @@ if (!quick) {
   run('e2e: re-create storyline lessons', 'node', [path.join(__dirname, 'e2e-recreate.test.js')]);
   run('e2e: comic panel text extraction (PLAN §2.4 Track A4 milestone 2, v85_k)', 'node', [path.join(__dirname, 'e2e-comic-extract.test.js')]);
   run('e2e: comic panel image DESCRIPTION — the lazy fallback (user request)', 'node', [path.join(__dirname, 'e2e-comic-describe.test.js')]);
+  run('e2e: storyline artwork — comicPanelCount + /api/comic-thumb (user request)', 'node', [path.join(__dirname, 'e2e-storyline-artwork.test.js')]);
   run('e2e: comic chapter formation (PLAN §2.4 Track A4 milestone 3, v85_m)', 'node', [path.join(__dirname, 'e2e-comic-chapter.test.js')]);
   run('e2e: comic panel auto-detection (PLAN §2.4 Track A4 milestone 5, v85_o)', 'node', [path.join(__dirname, 'e2e-comic-detect.test.js')]);
   run('e2e: save-story syncs comicPanels for a single-panel chapter (v86_g)', 'node', [path.join(__dirname, 'e2e-save-story-comic-sync.test.js')]);

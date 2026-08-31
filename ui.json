@@ -558,6 +558,8 @@
     "storyboard.title": "Storyboard",
     "storyboard.empty": "The model produced no usable storyboard panels — try again.",
     "storyboard.regenerate": "🎬 Regenerate storyboard",
+    "storyline.thumb_show_images": "🖼️ Show the comic images instead of the storyboard",
+    "storyline.thumb_show_storyboard": "🎬 Show the storyboard instead of the comic images",
     "storyboard.delete": "🗑 Delete storyboard",
     "storyboard.deleted": "Storyboard deleted",
     "storyboard.menu": "Storyboard options",

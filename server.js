@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v87_l';
+const APP_VERSION  = 'v87_m';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -7185,6 +7185,16 @@ http.createServer(async (req, res) => {
         createdBy: l.createdBy || null,
         source: l.source || null,
         sourceFile: l.storyMeta?.sourceFile || null,
+        // User request ("use the images of a comic story, or thumbnails thereof, instead of the
+        // story-board"): the storyline card and the storyline screen need to know whether a chapter
+        // HAS panel images, without receiving them. The images themselves are ~240KB each as stored
+        // data URLs, so putting them in this list would add tens of megabytes to a response that is
+        // fetched on every load — they are served lazily and individually by GET /api/comic-thumb/:id
+        // instead. Only the COUNT rides here, which is what the renderer actually branches on.
+        //
+        // ⚠️ It has to ride in THIS whitelist projection or the feature works in the static build and
+        // silently does nothing live — the exact failure v74_i and v79_n both record right here.
+        ...(Array.isArray(l.comicPanels) && l.comicPanels.length ? { comicPanelCount: l.comicPanels.length } : {}),
         // v74_i: hidden lessons never count for anything (user ruling, v74_e). This was the RAW
         // length, so live showed "Kälte und Paella · 3 lessons" where static showed 2 — the static
         // builder strips hidden ai_error_hunts at bake time, and the two counts disagreed on screen.
@@ -7735,7 +7745,7 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { slId, chainKey, title, icon, summary, tags, chapters } = body;
+      const { slId, chainKey, title, icon, summary, tags, chapters, thumbMode } = body;
       const targetId = slId || chainKey;
       if (!targetId) return json(res, 400, { error: 'Missing slId' });
       if (title === null) {
@@ -7751,6 +7761,13 @@ http.createServer(async (req, res) => {
         if (summary   !== undefined) patch.summary = typeof summary === 'string' ? summary.slice(0,2000) : summary;
         if (tags      !== undefined) patch.tags    = Array.isArray(tags) ? tags.map(t=>String(t).slice(0,50)) : [];
         if (chapters  !== undefined) patch.chapters = Array.isArray(chapters) ? chapters : [];
+        // User request: which artwork this storyline shows on the main page and its own screen.
+        // 'images' | 'storyboard'; anything else (including absent) means UNSET, and the client
+        // resolves that as "storyboard if one exists, else the comic images" (user ruling).
+        // Stored per storyline, not globally, so a comic can show its panels while a generated story
+        // keeps its storyboard.
+        if (thumbMode !== undefined)
+          patch.thumbMode = (thumbMode === 'images' || thumbMode === 'storyboard') ? thumbMode : null;
         upsertStoryline(patch);
       }
       return json(res, 200, { ok: true });
@@ -8129,6 +8146,38 @@ http.createServer(async (req, res) => {
     // ── PLAN §7.0 CP1/CP2, item W ("text explorer" mode) step 3: read-only per-token analysis ──
     // lookup, mirroring cp-shadow's own shape exactly (absent -> available:false, GET-only, no
     // write path here — the write path is the POST route immediately below).
+    // ── Comic panel THUMBNAIL (user request) ──────────────────────────────────────────────────
+    // GET /api/comic-thumb/:topicId?i=N — serves ONE stored panel image as real bytes.
+    //
+    // Why a route rather than a field on /api/lessons: a stored panel image is ~240KB as a base64
+    // data URL, and the library list is fetched on every load — inlining even one per chapter would
+    // add tens of megabytes to it. Served individually, each image is fetched only when a card
+    // actually shows it, and the browser caches it like any other image. `/api/lessons` carries only
+    // `comicPanelCount`, which is all the renderer branches on.
+    //
+    // Read-only, no auth surface of its own beyond what every other GET here has: it exposes exactly
+    // the image the client already renders inside the chapter itself.
+    if (M === 'GET' && url.pathname.startsWith('/api/comic-thumb/')) {
+      const rest = decodeURIComponent(url.pathname.slice('/api/comic-thumb/'.length));
+      const topic = rest ? findSavedById(rest) : null;
+      const panels = topic && Array.isArray(topic.comicPanels) ? topic.comicPanels : [];
+      const idx = Math.max(0, Math.min(panels.length - 1, parseInt(url.searchParams.get('i') || '0', 10) || 0));
+      const dataUrl = panels.length ? String((panels[idx] || {}).image || '') : '';
+      // A chapter with no panels, or a panel stored without an image, is a 404 rather than a broken
+      // image body — the client's own `comicPanelCount` gate means this should not be reached, and a
+      // silent empty 200 would render as a broken <img> with no way to tell why.
+      const m = /^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/.exec(dataUrl);
+      if (!m) return json(res, 404, { error: 'No such panel image.' });
+      let buf;
+      try { buf = Buffer.from(m[2], 'base64'); } catch (e) { return json(res, 404, { error: 'Unreadable panel image.' }); }
+      res.writeHead(200, { 'Content-Type': m[1], 'Content-Length': buf.length,
+        // Immutable in practice: a re-extraction writes a NEW chapter/panel rather than mutating this
+        // one in place, and the URL is keyed by chapter id. Short max-age anyway, so an edited panel
+        // (the review card CAN rewrite text, and v86_g syncs comicPanels[0]) is not pinned for long.
+        'Cache-Control': 'private, max-age=300' });
+      return res.end(buf);
+    }
+
     if (M === 'GET' && url.pathname.startsWith('/api/analysis/')) {
       const chapterId = decodeURIComponent(url.pathname.slice('/api/analysis/'.length));
       return json(res, 200, analysisShadowFor(chapterId));

@@ -221,7 +221,11 @@ write-up, including the two further vacuous guards mutation-testing caught insid
 
 The "unrelated context" half shipped at `v86_m`. This half remains open, needs live reproduction.
 
-### AC. Main page / storyline page: chapter icons or comic/image thumbnails instead of the storyboard, when available
+### ✅ AC. Main page / storyline page: comic image thumbnails instead of the storyboard — SHIPPED `v87_m`
+
+**Shipped with a per-storyline teacher toggle** (user ruling), unset resolving as "storyboard if one exists, else the images". See the `v87_m` entry for the ~240KB-per-image constraint that produced `comicPanelCount` + `GET /api/comic-thumb/:id` rather than inlining images into the library list.
+
+**Original entry:**
 
 Still open, a fallback-hierarchy design not yet started.
 
@@ -2206,6 +2210,82 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v87 LINE
+
+## ✅ v87_m — item AC: a comic storyline can show its PANEL IMAGES instead of the storyboard, teacher's choice, per storyline
+
+**User request** (item AC, open since the `v86` line): *"use the images of a comic story, or thumbnails
+thereof, instead of the story-board. If both, images and a storyboard exists, the teacher should be
+able to choose which to show on the main page and in the storyline view."* First of four features the
+user asked for in one message; they ruled **separate releases, images first**, so the three
+storyline-editing features (re-order, split, add-existing) are NOT in this cut.
+
+**Two user rulings taken before building**: the choice lives **per storyline, stored on it** (a comic
+shows its panels while a generated story keeps its storyboard — not one global setting), and an
+**UNSET** storyline resolves as *"storyboard if one exists, else the images"*. That second one is what
+makes this safe to ship: nothing changes for any existing storyline that has a storyboard, and a comic
+storyline that never had one finally shows something instead of an empty strip.
+
+**⚠️ THE CONSTRAINT THAT SHAPED THE DESIGN — measured, not assumed.** `GET /api/lessons` is a
+WHITELIST projection and carries no comic data at all, and a stored panel image is ~240KB as a base64
+data URL. Putting even one image per chapter into that response — fetched on every single load —
+would have added tens of megabytes to it. So:
+- the projection gained only **`comicPanelCount`**, which is all the renderer branches on;
+- images are served individually and lazily by a new **`GET /api/comic-thumb/:topicId?i=N`**, which
+  decodes the stored data URL to real bytes with its own content-type, so the browser caches each one
+  like any other image.
+
+That field HAD to ride in the whitelist: this projection's own comments record the same failure twice
+(`v74_i`, `v79_n`) — a field omitted here makes a feature work in the static build (which ships whole
+topics) and silently do nothing live. The e2e asserts both halves: the count is present, and the
+image data is NOT in the response.
+
+**ONE resolver, BOTH surfaces.** `_slArtworkHtml(sl, chapterIds)` decides what a storyline's artwork
+slot contains, and the library storyline card and the storyline screen both call it — neither reads
+`.storyboard` directly any more. This is deliberate and is asserted at the source layer: a second
+surface re-implementing a shared renderer is exactly the defect `v87_k` had to repair on another card,
+four silent regressions deep. Supporting helpers: `_slThumbMode()` (the unset rule; an unrecognised
+value is treated as unset, not as a third mode) and `_slHasComicImages()`, which counts BOTH the live
+projection's `comicPanelCount` AND the static build's inline `comicPanels` array — one helper covering
+two build shapes rather than a build-mode branch at every call site.
+
+**The strip mirrors the storyboard it replaces**: one thumbnail per CHAPTER (its first panel), in
+chapter order, each clickable to its own chapter — the same shape and reading order a storyboard has,
+not every panel of every chapter. `loading="lazy"`, which on a library page full of storylines is the
+difference between one request per visible card and one per storyline on the page. Live mode points at
+the route; the static build uses the inline image it already ships and never references a route that
+will not exist there.
+
+**Falls back rather than showing an empty box**: a storyline explicitly set to `images` whose chapters
+have none (deleted, or the mode was set on the wrong storyline) still renders its storyboard.
+
+**The toggle is scoped exactly as the user scoped it** — *"if BOTH images and a storyboard exists"* —
+so the button only appears when there is a genuine choice to make, and is teacher-gated (it is
+curation, and it changes what every learner sees). ONE control, because the mode is stored per
+storyline and both surfaces read the same field. It persists through the EXISTING `/api/storylines`
+upsert, which gained `thumbMode` beside its title/icon/chapters fields — no new write route.
+
+**`ui.json`: two new `en` keys** (`storyline.thumb_show_images`, `storyline.thumb_show_storyboard`),
+per the user's own choice of two over one — the tooltip names what the click will DO rather than what
+it toggles. 728 → 730.
+
+**Tests.** New `unit-storyline-artwork.test.js` (5 sections: the unset rule and explicit override;
+both build shapes counted; one cell per chapter with the right source per build; the fallback; and a
+source-layer check that both surfaces go through the one resolver and neither reads `.storyboard`
+directly again). New `e2e-storyline-artwork.test.js` (5 sections, real fresh-spawned server: the
+projection carries the count and NOT the images; the thumb route decodes to the exact stored bytes
+with the right content-type; `?i=` selects and a high index clamps; missing panels/chapters 404 rather
+than serving a broken empty body; `thumbMode` round-trips and an invalid value clears to unset).
+lib.js was left untouched — its `get()` returns a string body with no headers, so the binary
+assertions use a local raw helper in the test file instead. THREE mutations confirmed red, each caught
+by the right test: dropping the unset storyboard preference, dropping `comicPanelCount` from the
+projection, and echoing base64 text instead of decoding it.
+
+**Still open from the same user message** (their own sequencing): chapter re-ordering — ruled to
+**re-link `continuedFromId`**, not just reorder the `chapters` array, since the storyline screen draws
+a tree from those links; splitting chapters off into a new storyline named *"orphaned from <title>"*;
+and adding an existing chapter to a storyline via a dropdown, ruled to **add without removing** it from
+its current storyline (which the data model already supports — forks deliberately share a prefix, and
+"the 3-way fork's parent belongs to three storylines").
 
 ## ✅ v87_l — comic panels: an IMAGE DESCRIPTION in the target language, used as the chapter text when no lettering is found
 

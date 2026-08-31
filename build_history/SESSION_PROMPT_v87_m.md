@@ -1,7 +1,7 @@
-# Session prompt — written at the `v87_l` cut
+# Session prompt — written at the `v87_m` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
-one alongside. Keep using the double-letter suffix scheme (`v87_m`, `v87_n`, …) unless a future
+one alongside. Keep using the double-letter suffix scheme (`v87_n`, `v87_o`, …) unless a future
 session has a good reason to switch to `v88_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
@@ -21,31 +21,36 @@ live server was running on port 3000 throughout the `v87_g`/`v87_h`/`v87_i` cuts
 `v87_g` was live-verified that way, with nothing of the user's touched. `prompts.json` and `ui.json`
 HOT-RELOAD live via `fs.watch` too.
 
-**What shipped this cut**: a comic-panel IMAGE DESCRIPTION (user request) — "additionally or
-alternatively to text extraction, ask the model to give a short 1-2 sentence description of the image
-in the target language. This will be used as the chapter text, if no text is extracted." The single
-Extract-text button became two checkboxes plus a Generate button, per the same request. It matters
-because `comicCreateChapter()` DROPS any panel with no text, so a wordless panel silently contributed
-nothing to the chapter; now it becomes readable chapter content in the language being learned.
+**What shipped this cut**: item AC — a comic storyline can show its PANEL IMAGES instead of the
+storyboard, chosen by the teacher, per storyline, applying to both the main page and the storyline
+view. Unset resolves as "storyboard if one exists, else the images" (user ruling), so nothing changes
+for existing storylines. The ~240KB-per-image constraint is what shaped it: `/api/lessons` carries
+only `comicPanelCount`, and images come from a new `GET /api/comic-thumb/:id` — see the `v87_m` entry.
 
-Three rulings taken before building: describe **only when no text was found** (a vision call is
-one-per-panel and slow — describing a fully lettered page would double the wait for nothing);
-defaults **text ON, description OFF**; and **two** new `ui.json` keys. The description is a SEPARATE
-prompt and a SEPARATE vision call — deliberately NOT folded into `_comicExtractPrompt`, the most
-heavily live-tuned text in `server.js`. **Live-verified against the real vision model** on a real
-wordless corpus panel: two correct Dutch sentences, in the target language rather than English, which
-is the whole point.
+**🆕 THREE FEATURES FROM THE SAME USER MESSAGE ARE STILL OPEN**, and the user chose to ship them as
+SEPARATE RELEASES, images first. All three are storyline editing, all on the teacher-view storyline
+card, and **their design questions are already ANSWERED — do not re-ask**:
+- **Re-order a storyline's chapters.** Ruled: **re-link `continuedFromId` too**, not just reorder the
+  `chapters` array. This matters because the storyline SCREEN draws a fork TREE from those links while
+  the main page uses the array order — reordering the array alone can look like it did nothing. Forks
+  (one chapter with two children) need a deliberate rule; the user picked the full re-link option over
+  the "refuse on forks" variant, so decide and document how a branching storyline is handled rather
+  than silently breaking one.
+- **Split chapters off into a NEW storyline**, named `"orphaned from <title>"`.
+- **Add an EXISTING chapter to a storyline**, via a dropdown on the teacher-view storyline card, the
+  same shape as the wizard's "continue from" picker. Ruled: **add WITHOUT removing** it from its
+  current storyline — the model already supports a chapter in several (forks deliberately share a
+  prefix; "the 3-way fork's parent belongs to three storylines").
 
-**`v87_k` before it** made the lesson-set story reader the identical render the progress card uses
-(and overturned `v80_t` for that panel, by explicit ruling — it is a tappable surface now); **`v87_j`**
-fixed a saved text analysis rendering "lädt…" forever; **`v87_i`** shipped item Z and, with it, the
-`unit-tap-word` flake, which was never corpus noise but `Math.random()` in `tapWord()`.
+Useful groundwork already established: `storyline.chapters` is an ORDERED array of topic ids (it is
+both membership and order), and `POST /api/storylines` ALREADY accepts and upserts `chapters`, so all
+three need little or no new server work.
 
 ## Orient yourself, in this order
 
 1. **This file**, whole.
 2. `build_history/roadmap_v87.md` — its **index table** and **⚠️ Session protocol** block first, then
-   item AL's status block, then `# ✅ SHIPPED IN THE v87 LINE` (`v87_b` → `v87_l`).
+   item AL's status block, then `# ✅ SHIPPED IN THE v87 LINE` (`v87_b` → `v87_m`).
 3. `build_history/roadmap_v86.md` is KEPT as the historical record for the whole `v86` line
    (`v86_a`…`v86_ag`) — go there for how something from THAT line was built.
 4. `INTERNALS.md` **§6b** covers the jobs popover, the drafts store, and the `skipLessons` mechanism
@@ -55,8 +60,8 @@ fixed a saved text analysis rendering "lädt…" forever; **`v87_i`** shipped it
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 307 checks
-node test/run.js --quick                  → expect 259
+node test/run.js                          → expect 309 checks
+node test/run.js --quick                  → expect 260
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -74,7 +79,7 @@ was wrong. Each deserves the same discriminating measurement (find the assertion
 compares, check whether the product is actually varying). Don't run the full and `--quick` suites
 CONCURRENTLY on this box (found at `v86_ae`) — run them one at a time.
 
-Corpus at this cut: **338 topics, 98 storylines, 33 languages, 728 `en` keys** — an inherently live
+Corpus at this cut: **338 topics, 98 storylines, 33 languages, 730 `en` keys** — an inherently live
 snapshot (the user's own live server generates content concurrently; re-measure fresh at commit
 time). `en` keys rose from 725 → 726 at `v87_g` (`gen.wizard_step3_lessons`; `gen.wizard_step3` and
 `gen.wizard_step4` are deliberately kept but now UNUSED, so their 33-language translations survive if
@@ -82,7 +87,7 @@ a chaptering step ever returns) and are UNCHANGED at `v87_h`. `lessons.json`/`ca
 server generated a topic mid-session, which is exactly the "inherently live snapshot" this line warns
 about; both files were swept into the `v87_i` release commit so the guarded counts stay consistent
 with the tree.
-`drafts.json` may exist at the project root (server-created, gitignored) — normal. `APP_VERSION = 'v87_l'`.
+`drafts.json` may exist at the project root (server-created, gitignored) — normal. `APP_VERSION = 'v87_m'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
