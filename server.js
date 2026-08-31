@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v87_n';
+const APP_VERSION  = 'v87_o';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6791,9 +6791,30 @@ Output only the labeled transcriptions, nothing else.`;
 // lettering, so it must be in the language being learned, not English. Kept to 1-2 sentences: this
 // becomes a chapter, and chapter length is the learner's own story-length setting elsewhere, not
 // something a panel description should quietly blow past.
-function _comicDescribePrompt(langName) {
+// `priorStory` (user request, v87_o): "For images where we get a description and no text extraction,
+// we should pass the previous whole story as context for the image." Without it every panel is
+// described in isolation, so a recurring character becomes "a man" in each chapter instead of "the
+// man" — the descriptions read as a bag of unrelated captions rather than a story. Two sources feed
+// it, both meaning "the story so far": the CONTINUED-FROM storyline's own chapters (assembled
+// server-side by collectChainStory, since the client's savedList carries no story text), and the
+// panels already described earlier in THIS batch.
+//
+// Deliberately framed as "for continuity only, do not transcribe or repeat it": the risk with any
+// context block is the model summarising the context instead of describing the image in front of it.
+function _comicDescribePrompt(langName, priorStory) {
+  const ctx = String(priorStory || '').trim();
+  const ctxBlock = ctx ? `
+
+Here is the story so far, for CONTEXT ONLY:
+---
+${ctx}
+---
+Use it only to stay consistent with what came before — refer to a character or place the story has
+already introduced the way it already refers to them, rather than describing them as if new. Do NOT
+summarise, continue, retell or quote this text: describe ONLY what is visible in the image below.
+If the image shows something the story so far does not mention, describe what you see anyway.` : '';
   return `This image is a single panel cropped from a comic page. Describe what is happening in it in
-${langName}, in ONE or TWO short sentences — no more.
+${langName}, in ONE or TWO short sentences — no more.${ctxBlock}
 
 Write the description IN ${langName} ONLY. Do not write it in English first and do not add a
 translation, a label, or any commentary: output the ${langName} sentences and nothing else.
@@ -6842,6 +6863,14 @@ async function _runComicExtractJob(jobId, images, lang, opts) {
   const o = opts || {};
   const wantExtract = (o.extract === undefined) ? true : !!o.extract;
   const wantDescribe = !!o.describe;
+  // The story so far, seeded from the continued-from chain and then GROWN with each panel's own text
+  // as the batch proceeds — so panel 3 is described knowing panels 1 and 2, not just the chapters
+  // that preceded the upload. Capped: a long storyline plus an image already competes for the vision
+  // model's context window, and collectChainStory's own 40k default is sized for text-only calls.
+  let priorStory = String(o.priorStory || '').trim();
+  const _COMIC_CTX_CHARS = 6000;
+  const _capCtx = txt => txt.length > _COMIC_CTX_CHARS ? txt.slice(-_COMIC_CTX_CHARS) : txt;
+  priorStory = _capCtx(priorStory);
   const results = [];
   for (let i = 0; i < images.length; i++) {
     jobStep(jobId, `[${OLLAMA_VISION_MODEL}] Extracting panel ${i + 1}/${images.length}…`);
@@ -6871,11 +6900,16 @@ async function _runComicExtractJob(jobId, images, lang, opts) {
         // the extraction call's near-deterministic 0.1 — but the same full context ceiling, for the
         // same reason _comicExtractPrompt's own caller documents (an image's token cost cannot be
         // estimated from here).
-        const { text: dtext } = await callLLMVision('', _comicDescribePrompt(name), 300,
+        const { text: dtext } = await callLLMVision('', _comicDescribePrompt(name, priorStory), 300,
           { images: [b64], temperature: 0.4, ctxTokens: getNumCtxMax() });
         description = String(dtext || '').trim();
       }
       results.push({ ...parsed, description, error: null });
+      // Grow the running context with whatever THIS panel contributed — its transcription if it had
+      // lettering, else its description. Exactly what _comicPanelText picks client-side as the
+      // chapter's text, so the context the model sees matches the story that will actually exist.
+      const _mine = [parsed.caption, parsed.inScene].filter(Boolean).join('\n') || description;
+      if (_mine) priorStory = _capCtx((priorStory ? priorStory + '\n\n' : '') + _mine);
     } catch (e) {
       // One panel's failure must not lose the rest of the batch — same reasoning as
       // _runRecreateJob's per-type try/catch above. The failed slot still gets a result object (with
@@ -8010,7 +8044,19 @@ http.createServer(async (req, res) => {
       console.log(`  Comic extraction: ${images.length} panel(s), lang=${lang}, ` +
         `mode=${[wantExtract && 'text', wantDescribe && 'description'].filter(Boolean).join('+')}, ` +
         `model=${OLLAMA_VISION_MODEL} job=${jobId}`);
-      _runComicExtractJob(jobId, images, lang, { extract: wantExtract, describe: wantDescribe }).catch(e => {
+      // v87_o: resolve the continued-from chapter to the STORY SO FAR here, server-side — the
+      // client's savedList projection carries no story text, so it could not assemble this itself.
+      let priorStory = '';
+      if (wantDescribe && typeof body.continuedFrom === 'string' && body.continuedFrom.trim()) {
+        try {
+          const anchor = findSavedById(body.continuedFrom.trim()) || findSaved(body.continuedFrom.trim());
+          if (anchor) {
+            const chain = collectChainStory(anchor, 20000);
+            priorStory = (chain && chain.text) ? chain.text : String(anchor.story || '');
+          }
+        } catch (e) { /* context is an enhancement: a failure here must not fail the extraction */ }
+      }
+      _runComicExtractJob(jobId, images, lang, { extract: wantExtract, describe: wantDescribe, priorStory }).catch(e => {
         console.error('  Comic extraction error:', e.message);
         jobFail(jobId, e.message);
       });

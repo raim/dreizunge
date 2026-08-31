@@ -307,6 +307,20 @@ assert.ok(CASES.length >= 10, `non-vacuity: real learner histories to check agai
           for (var i = 0; i < (Cur.exercises||[]).length; i++) {
             var k = null; try { k = qid(Cur.exercises[i], lid); } catch(e) {}
             if (k && cands.some(function(c){ return c.key === k; })) {
+              // ⚠️ VERIFY the candidate before returning it (v87_o). Being a question
+              // _wordQuestions knows about is NOT the same as being one _wordProgress GRADES:
+              // the two derive their key sets differently, so a word can own a question whose
+              // wrongness never reaches its state. The section below then marks it wrong and asserts
+              // the word leaves green — which silently became untrue when the corpus grew (the
+              // user's own server writes to lessons.json between runs), failing on correct code.
+              // So: try it here, keep it only if the demotion actually happens, and CLEAN UP so the
+              // real run below still starts from a green, un-demoted word.
+              var _st = function(){ var s = null; _wordProgress(d).forEach(function(rec, x){ if (x === w) s = _wordState(rec); }); return s; };
+              if (_st() !== 'green') continue;
+              markWrong(Cur.exercises[i]);
+              var _after = _st();
+              try { delete _wrongMap(d.topic)[k]; } catch(e) {}
+              if (_after === 'green') continue;   // this question does not grade the word — keep looking
               return JSON.stringify({ topic: d.topic, word: w, key: k });
             }
           }
@@ -316,7 +330,9 @@ assert.ok(CASES.length >= 10, `non-vacuity: real learner histories to check agai
     return 'null';
   })();`));
   // Guard the guard against going vacuous on new data: without such a word this proves nothing.
-  assert.ok(found, 'the corpus has a fully-solved, probe-graded word with a question in a built round');
+  assert.ok(found,
+    'the corpus has a fully-solved, probe-graded word with a question in a built round WHOSE ' +
+    'wrongness actually grades the word — verified in the sweep, not assumed of the first match');
 
   const r = JSON.parse(C.run(`(function(){
     var d = APP.lessonData, w = ${JSON.stringify((found||{}).word)}, KEY = ${JSON.stringify((found||{}).key)};

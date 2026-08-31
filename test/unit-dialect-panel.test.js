@@ -59,18 +59,41 @@ console.log('  dialect panel: shown via .open class, Generate row hidden, panel 
 console.log('unit-dialect-panel: ALL PASSED');
 
 // ── Option A: LLM-authoring add-lesson types + AI-hunt gated off for dialect (UI) ──
-assert.ok(/class="opt-ai-authoring"/.test(html), 'LLM-authoring add-lesson options are tagged');
-assert.ok(/_fmtSel\.querySelectorAll\('\.opt-ai-authoring'\)\.forEach/.test(html),
-  'openAddLesson hides the LLM-authoring options for dialect topics');
-// v71_l: comprehension joins the LLM-authoring set. Its generator runs in the base language and
-// would write standard-German questions about dialect text, so the same guarantee applies.
-// v82_e: `writing` (PLAN §D4) joins it too, for the same reason.
-assert.ok(/if \(_isDia && \['synonyms','word_forms','inflections','error_hunt','comprehension','writing'\]\.includes\(_fmtSel\.value\)\) _fmtSel\.value = 'standard'/.test(html),
-  'a blocked format resets to standard for dialect');
-assert.ok(/<option value="comprehension" class="opt-ai-authoring opt-needs-story"/.test(html),
-  'comprehension is tagged as LLM-authoring, so the dialect gate above catches it');
-assert.ok(/<option value="writing" class="opt-ai-authoring opt-needs-story"/.test(html),
-  'writing is tagged the same way comprehension is');
+// ⚠️ RE-ANCHORED at v87_o. The CLAIM is unchanged and still load-bearing — a dialect topic must
+// never be offered the LLM-authoring lesson types, because those generators run in the base language
+// and would inject standard-German content, breaking the "no invented dialect" guarantee. What
+// changed is WHERE it is enforced.
+//
+// It used to live as a CSS class (`.opt-ai-authoring`) on the lesson-set card's own <select>, swept
+// by openAddLesson at open time. v87_o deleted that <select>: the user asked for that surface to
+// offer "the same checkmark list of all lesson types" as the storyline page, so it now routes through
+// _pickLessonTypes → renderLessonTypeChecks over the SHARED ADD_LESSON_TYPES registry. The gate moved
+// with it, from a class to a registry flag — which is strictly better, since the registry is the one
+// list every add-lesson surface reads.
+//
+// Note, recorded rather than asserted: the LIBRARY menu's own <select> never carried those classes,
+// so that surface never had this gate. Pre-existing, not introduced here, and out of scope for the
+// v87_o change — worth fixing if a dialect topic is ever reachable from the library add-lesson row.
+{
+  const REG = html.slice(html.indexOf('const ADD_LESSON_TYPES = ['),
+                         html.indexOf('\n];', html.indexOf('const ADD_LESSON_TYPES = [')));
+  for (const type of ['synonyms', 'word_forms', 'inflections', 'grammar', 'conjugation',
+                      // v71_l: comprehension joins the LLM-authoring set — its generator runs in the
+                      // base language and would write standard-German questions about dialect text.
+                      // v82_e: `writing` (PLAN §D4) joins it too, for the same reason.
+                      'error_hunt', 'comprehension', 'writing']) {
+    assert.ok(new RegExp("\\{ v: '" + type + "', ai: true,").test(REG),
+      `${type} is flagged as LLM-authoring in the shared registry`);
+  }
+  for (const safe of ['standard', 'math', 'intro_script']) {
+    assert.ok(!new RegExp("\\{ v: '" + safe + "', ai: true,").test(REG),
+      `${safe} is NOT flagged — a dialect topic must still be offered it`);
+  }
+  assert.ok(/!\(x\.ai && o\.allowAi === false\)/.test(html),
+    'renderLessonTypeChecks filters the flagged types out when a caller says allowAi:false');
+  assert.ok(/allowAi: !\(d && d\._dialect\)/.test(html),
+    'and the lesson-set card passes allowAi:false for a dialect topic — the gate is actually wired');
+}
 // It additionally needs a STORY — questions/tasks are written against the text — so it carries a
 // second gate the other authoring types do not. `querySelectorAll`, not `querySelector`: two
 // options now carry `.opt-needs-story` (comprehension, writing), and MUST run AFTER the dialect

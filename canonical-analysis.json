@@ -1618,8 +1618,1389 @@
       },
       "sourceTextHash": "df479c7c3f72",
       "analyzedAt": "2026-08-31T15:48:46.674Z"
+    },
+    "tp_17877433274320000281": {
+      "chapterId": "tp_17877433274320000281",
+      "lang": "en",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 2,
+      "tokenCount": 20,
+      "sentences": [
+        {
+          "sentenceId": "tp_17877433274320000281:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17877433274320000281:s0:t0",
+              "idx": 0,
+              "surface": "You",
+              "lemma": "you",
+              "form": "Personalpronomen, 2. Person Plural, Nominativ",
+              "sense": "du/euch (hier als Anrede oder allgemein)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s0:t1",
+              "idx": 1,
+              "surface": "know,",
+              "lemma": "know",
+              "form": "Verb, Präsens, Indikativ",
+              "sense": "wissen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s0:t2",
+              "idx": 2,
+              "surface": "I",
+              "lemma": "I",
+              "form": "Personalpronomen, 1. Person Singular, Nominativ",
+              "sense": "ich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s0:t3",
+              "idx": 3,
+              "surface": "think",
+              "lemma": "think",
+              "form": "Verb, Präsens, Indikativ",
+              "sense": "glauben / meinen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s0:t4",
+              "idx": 4,
+              "surface": "I",
+              "lemma": "I",
+              "form": "Personalpronomen, 1. Person Singular, Nominativ",
+              "sense": "ich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s0:t5",
+              "idx": 5,
+              "surface": "heard",
+              "lemma": "hear",
+              "form": "Verb, Präteritum (oder Partizip II), Indikativ",
+              "sense": "gehört haben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s0:t6",
+              "idx": 6,
+              "surface": "that",
+              "lemma": "that",
+              "form": "Konjunktion",
+              "sense": "dass",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s0:t7",
+              "idx": 7,
+              "surface": "the",
+              "lemma": "the",
+              "form": "Bestimmter Artikel, Plural, Nominativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s0:t8",
+              "idx": 8,
+              "surface": "Perseids",
+              "lemma": "Perseids",
+              "form": "Substantiv, Plural, Eigenname",
+              "sense": "Perseiden (Sternschnuppen)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s0:t9",
+              "idx": 9,
+              "surface": "might",
+              "lemma": "might",
+              "form": "Modalverb, Konjunktiv II",
+              "sense": "könnten / könnten möglicherweise",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s0:t10",
+              "idx": 10,
+              "surface": "be",
+              "lemma": "be",
+              "form": "Verb, Infinitiv",
+              "sense": "sein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s0:t11",
+              "idx": 11,
+              "surface": "late",
+              "lemma": "late",
+              "form": "Adjektiv",
+              "sense": "spät / verspätet",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s0:t12",
+              "idx": 12,
+              "surface": "this",
+              "lemma": "this",
+              "form": "Demonstrativpronomen/Determiner, Singular",
+              "sense": "dieses",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s0:t13",
+              "idx": 13,
+              "surface": "year.",
+              "lemma": "year",
+              "form": "Substantiv, Singular",
+              "sense": "Jahr",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 1,
+              "tokenIds": [
+                "tp_17877433274320000281:s0:t0",
+                "tp_17877433274320000281:s0:t1"
+              ],
+              "lemma": "you know",
+              "gloss": "weißt du / wissen Sie (Füllphrase)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 9,
+              "end": 10,
+              "tokenIds": [
+                "tp_17877433274320000281:s0:t9",
+                "tp_17877433274320000281:s0:t10"
+              ],
+              "lemma": "might be",
+              "gloss": "könnten sein",
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-31T17:34:53.675Z",
+            "sentenceId": "tp_17877433274320000281:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "You know, I think I heard that the Perseids might be late this year.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17877433274320000281:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17877433274320000281:s1:t0",
+              "idx": 0,
+              "surface": "Yeah,",
+              "lemma": "yeah",
+              "form": "Interjektion, affirmativ",
+              "sense": "Ja,",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s1:t1",
+              "idx": 1,
+              "surface": "actually,",
+              "lemma": "actually",
+              "form": "Adverb, modifizierend",
+              "sense": "eigentlich,",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s1:t2",
+              "idx": 2,
+              "surface": "I",
+              "lemma": "I",
+              "form": "Personalpronomen, 1. Person Singular, Nominativ",
+              "sense": "ich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s1:t3",
+              "idx": 3,
+              "surface": "heard",
+              "lemma": "hear",
+              "form": "Verb, Präteritum, Aktiv",
+              "sense": "habe gehört",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s1:t4",
+              "idx": 4,
+              "surface": "that",
+              "lemma": "that",
+              "form": "Demonstrativpronomen, Akkusativ Singular Neutrum",
+              "sense": "das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877433274320000281:s1:t5",
+              "idx": 5,
+              "surface": "too.",
+              "lemma": "too",
+              "form": "Adverb, additiv",
+              "sense": "auch",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-31T17:46:20.962Z",
+            "sentenceId": "tp_17877433274320000281:s1",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Yeah, actually, I heard that too.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-08-31T17:46:20.962Z",
+        "chapterId": "tp_17877433274320000281",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "80de41fee158",
+      "analyzedAt": "2026-08-31T17:46:20.962Z"
+    },
+    "tp_17877431141030000155": {
+      "chapterId": "tp_17877431141030000155",
+      "lang": "en",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 3,
+      "tokenCount": 37,
+      "sentences": [
+        {
+          "sentenceId": "tp_17877431141030000155:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17877431141030000155:s0:t0",
+              "idx": 0,
+              "surface": "The",
+              "lemma": "the",
+              "form": "Bestimmter Artikel, Nominativ, Singular, Neutrum",
+              "sense": "der/die/das (bestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t1",
+              "idx": 1,
+              "surface": "Perseids",
+              "lemma": "Perseid",
+              "form": "Eigenname, Plural",
+              "sense": "Perseiden (Sternschnuppen)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t2",
+              "idx": 2,
+              "surface": "happen",
+              "lemma": "happen",
+              "form": "Verb, Indikativ, Präsens, Aktiv, Plural",
+              "sense": "stattfinden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t3",
+              "idx": 3,
+              "surface": "when",
+              "lemma": "when",
+              "form": "Konjunktion",
+              "sense": "wenn",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t4",
+              "idx": 4,
+              "surface": "it's",
+              "lemma": "it be",
+              "form": "Pronomen + Verb, Indikativ, Präsens, Aktiv, Singular",
+              "sense": "es ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t5",
+              "idx": 5,
+              "surface": "warm",
+              "lemma": "warm",
+              "form": "Adjektiv, Positiv",
+              "sense": "warm",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t6",
+              "idx": 6,
+              "surface": "enough",
+              "lemma": "enough",
+              "form": "Adverb",
+              "sense": "genug",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t7",
+              "idx": 7,
+              "surface": "to",
+              "lemma": "to",
+              "form": "Partikel (Infinitivmarker)",
+              "sense": "zu (Infinitiv einleiten)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t8",
+              "idx": 8,
+              "surface": "lie",
+              "lemma": "lie",
+              "form": "Verb, Infinitiv",
+              "sense": "liegen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t9",
+              "idx": 9,
+              "surface": "outside",
+              "lemma": "outside",
+              "form": "Adverb",
+              "sense": "draußen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t10",
+              "idx": 10,
+              "surface": "with",
+              "lemma": "with",
+              "form": "Präposition",
+              "sense": "mit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t11",
+              "idx": 11,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Unbestimmter Artikel, Nominativ/Akkusativ, Singular, Maskulinum/Neutrum",
+              "sense": "ein/eine/ein (unbestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t12",
+              "idx": 12,
+              "surface": "blanket,",
+              "lemma": "blanket",
+              "form": "Substantiv, Akkusativ, Singular, Neutrum",
+              "sense": "Decke",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t13",
+              "idx": 13,
+              "surface": "and",
+              "lemma": "and",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t14",
+              "idx": 14,
+              "surface": "we",
+              "lemma": "we",
+              "form": "Personalpronomen, Nominativ, Plural",
+              "sense": "wir",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t15",
+              "idx": 15,
+              "surface": "found",
+              "lemma": "find",
+              "form": "Verb, Indikativ, Präteritum, Aktiv",
+              "sense": "fanden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t16",
+              "idx": 16,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Unbestimmter Artikel, Akkusativ, Singular, Maskulinum/Neutrum",
+              "sense": "eine (unbestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t17",
+              "idx": 17,
+              "surface": "good",
+              "lemma": "good",
+              "form": "Adjektiv, Positiv",
+              "sense": "gut",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t18",
+              "idx": 18,
+              "surface": "mosquito-free",
+              "lemma": "mosquito-free",
+              "form": "Adjektiv, Kompositum, Positiv",
+              "sense": "mückenfrei",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s0:t19",
+              "idx": 19,
+              "surface": "beach.",
+              "lemma": "beach",
+              "form": "Substantiv, Akkusativ, Singular, Femininum",
+              "sense": "Strand",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 1,
+              "tokenIds": [
+                "tp_17877431141030000155:s0:t0",
+                "tp_17877431141030000155:s0:t1"
+              ],
+              "lemma": "The Perseids",
+              "gloss": "die Perseiden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 4,
+              "end": 5,
+              "tokenIds": [
+                "tp_17877431141030000155:s0:t4",
+                "tp_17877431141030000155:s0:t5"
+              ],
+              "lemma": "it's warm",
+              "gloss": "es ist warm",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 17,
+              "end": 19,
+              "tokenIds": [
+                "tp_17877431141030000155:s0:t17",
+                "tp_17877431141030000155:s0:t18",
+                "tp_17877431141030000155:s0:t19"
+              ],
+              "lemma": "good mosquito-free beach",
+              "gloss": "guter mückenfreier Strand",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-31T17:30:19.984Z",
+            "sentenceId": "tp_17877431141030000155:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "The Perseids happen when it's warm enough to lie outside with a blanket, and we found a good mosquito-free beach.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17877431141030000155:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17877431141030000155:s1:t0",
+              "idx": 0,
+              "surface": "So",
+              "lemma": "so",
+              "form": "Adverb der Folge",
+              "sense": "folglich; daher",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s1:t1",
+              "idx": 1,
+              "surface": "we",
+              "lemma": "we",
+              "form": "Personalpronomen 1. Person Plural Nominativ",
+              "sense": "wir",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s1:t2",
+              "idx": 2,
+              "surface": "just",
+              "lemma": "just",
+              "form": "Adverb der Einschränkung",
+              "sense": "nur; lediglich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s1:t3",
+              "idx": 3,
+              "surface": "lie",
+              "lemma": "lie",
+              "form": "Verb Präsens Aktiv 1. Person Plural",
+              "sense": "liegen (sich hinlegen)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s1:t4",
+              "idx": 4,
+              "surface": "around",
+              "lemma": "around",
+              "form": "Adverb der Richtung/Lage",
+              "sense": "herum; sich ausbreitend",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s1:t5",
+              "idx": 5,
+              "surface": "watching",
+              "lemma": "watch",
+              "form": "Partizip Präsens (Gerundium)",
+              "sense": "beim Ansehen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s1:t6",
+              "idx": 6,
+              "surface": "the",
+              "lemma": "the",
+              "form": "bestimmter Artikel Plural Nominativ/Akkusativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s1:t7",
+              "idx": 7,
+              "surface": "stars",
+              "lemma": "star",
+              "form": "Substantiv Plural Nominativ/Akkusativ",
+              "sense": "Sternen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s1:t8",
+              "idx": 8,
+              "surface": "and",
+              "lemma": "and",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s1:t9",
+              "idx": 9,
+              "surface": "eating",
+              "lemma": "eat",
+              "form": "Partizip Präsens (Gerundium)",
+              "sense": "beim Essen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s1:t10",
+              "idx": 10,
+              "surface": "snacks.",
+              "lemma": "snack",
+              "form": "Substantiv Plural Nominativ/Akkusativ",
+              "sense": "Snacks; Imbiss",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 3,
+              "end": 4,
+              "tokenIds": [
+                "tp_17877431141030000155:s1:t3",
+                "tp_17877431141030000155:s1:t4"
+              ],
+              "lemma": "lie around",
+              "gloss": "sich herumliegen; faulenzen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-31T17:39:30.334Z",
+            "sentenceId": "tp_17877431141030000155:s1",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "So we just lie around watching the stars and eating snacks.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17877431141030000155:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17877431141030000155:s2:t0",
+              "idx": 0,
+              "surface": "One",
+              "lemma": "one",
+              "form": "Kardinalzahl im Nominativ Singular Femininum",
+              "sense": "ein (bestimmtes)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s2:t1",
+              "idx": 1,
+              "surface": "year",
+              "lemma": "year",
+              "form": "Substantiv im Akkusativ Singular Neutrum",
+              "sense": "Jahr",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s2:t2",
+              "idx": 2,
+              "surface": "we",
+              "lemma": "we",
+              "form": "Personalpronomen im Nominativ Plural",
+              "sense": "wir",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s2:t3",
+              "idx": 3,
+              "surface": "saw",
+              "lemma": "see",
+              "form": "Verb im Indikativ Präteritum Aktiv Plural",
+              "sense": "sahen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s2:t4",
+              "idx": 4,
+              "surface": "the",
+              "lemma": "the",
+              "form": "bestimmter Artikel im Akkusativ Singular Femininum",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877431141030000155:s2:t5",
+              "idx": 5,
+              "surface": "aurora.",
+              "lemma": "aurora",
+              "form": "Substantiv im Akkusativ Singular Femininum",
+              "sense": "Polarlicht",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-31T17:50:05.727Z",
+            "sentenceId": "tp_17877431141030000155:s2",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "One year we saw the aurora.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-08-31T17:50:05.727Z",
+        "chapterId": "tp_17877431141030000155",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "4346472289db",
+      "analyzedAt": "2026-08-31T17:50:05.727Z"
+    },
+    "tp_17877428605920000058": {
+      "chapterId": "tp_17877428605920000058",
+      "lang": "en",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 3,
+      "tokenCount": 16,
+      "sentences": [
+        {
+          "sentenceId": "tp_17877428605920000058:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17877428605920000058:s0:t0",
+              "idx": 0,
+              "surface": "I'm",
+              "lemma": "be",
+              "form": "1. Person Singular Indikativ Präsens (kontrahierte Form)",
+              "sense": "bin",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877428605920000058:s0:t1",
+              "idx": 1,
+              "surface": "sad",
+              "lemma": "sad",
+              "form": "Adjektiv Positiv",
+              "sense": "traurig",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877428605920000058:s0:t2",
+              "idx": 2,
+              "surface": "that",
+              "lemma": "that",
+              "form": "Subjunktion",
+              "sense": "dass",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877428605920000058:s0:t3",
+              "idx": 3,
+              "surface": "we",
+              "lemma": "we",
+              "form": "Personalpronomen 1. Person Plural Nominativ",
+              "sense": "wir",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877428605920000058:s0:t4",
+              "idx": 4,
+              "surface": "missed",
+              "lemma": "miss",
+              "form": "3. Person Plural Indikativ Präteritum",
+              "sense": "verpasst haben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877428605920000058:s0:t5",
+              "idx": 5,
+              "surface": "the",
+              "lemma": "the",
+              "form": "bestimmter Artikel Akkusativ Plural",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877428605920000058:s0:t6",
+              "idx": 6,
+              "surface": "Perseids.",
+              "lemma": "Perseid",
+              "form": "Eigenname Plural",
+              "sense": "Perseiden",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-31T17:48:46.475Z",
+            "sentenceId": "tp_17877428605920000058:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "I'm sad that we missed the Perseids.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17877428605920000058:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17877428605920000058:s1:t0",
+              "idx": 0,
+              "surface": "There's",
+              "lemma": "there",
+              "form": "Adverb + Verb (kontrahierte Form von 'is'), Präsens, 3. Person Singular",
+              "sense": "es gibt / ist vorhanden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877428605920000058:s1:t1",
+              "idx": 1,
+              "surface": "still",
+              "lemma": "still",
+              "form": "Adverb",
+              "sense": "noch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877428605920000058:s1:t2",
+              "idx": 2,
+              "surface": "the",
+              "lemma": "the",
+              "form": "Bestimmter Artikel, Nominativ/Akkusativ, Plural",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877428605920000058:s1:t3",
+              "idx": 3,
+              "surface": "Geminids.",
+              "lemma": "Geminids",
+              "form": "Substantiv, Plural",
+              "sense": "Geminiden (Meteorstrom)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-31T17:51:21.990Z",
+            "sentenceId": "tp_17877428605920000058:s1",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "There's still the Geminids.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17877428605920000058:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17877428605920000058:s2:t0",
+              "idx": 0,
+              "surface": "Yeah,",
+              "lemma": "yeah",
+              "form": "Interjektion",
+              "sense": "ja",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877428605920000058:s2:t1",
+              "idx": 1,
+              "surface": "but",
+              "lemma": "but",
+              "form": "Konjunktion",
+              "sense": "aber",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877428605920000058:s2:t2",
+              "idx": 2,
+              "surface": "they're",
+              "lemma": "they be",
+              "form": "Personalpronomen 3. Person Plural Nominativ + Verb sein Präsens Indikativ 3. Person Plural",
+              "sense": "sie sind",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877428605920000058:s2:t3",
+              "idx": 3,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "im",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17877428605920000058:s2:t4",
+              "idx": 4,
+              "surface": "December.",
+              "lemma": "December",
+              "form": "Substantiv Eigennamen",
+              "sense": "Dezember",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-31T17:56:10.545Z",
+            "sentenceId": "tp_17877428605920000058:s2",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Yeah, but they're in December.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-08-31T17:56:10.545Z",
+        "chapterId": "tp_17877428605920000058",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "e81a1bc76760",
+      "analyzedAt": "2026-08-31T17:56:10.545Z"
+    },
+    "tp_17881986169040000025": {
+      "chapterId": "tp_17881986169040000025",
+      "lang": "nl",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 2,
+      "tokenCount": 25,
+      "sentences": [
+        {
+          "sentenceId": "tp_17881986169040000025:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17881986169040000025:s0:t0",
+              "idx": 0,
+              "surface": "Een",
+              "lemma": "een",
+              "form": "bestimmter Artikel, Nominativ Singular Neutrum",
+              "sense": "ein (unbestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s0:t1",
+              "idx": 1,
+              "surface": "houten",
+              "lemma": "houten",
+              "form": "Adjektiv, attributive Form",
+              "sense": "aus Holz",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s0:t2",
+              "idx": 2,
+              "surface": "hek",
+              "lemma": "hek",
+              "form": "Nomen, Nominativ Singular Neutrum",
+              "sense": "Zaun",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s0:t3",
+              "idx": 3,
+              "surface": "staat",
+              "lemma": "staan",
+              "form": "Verb, Präsens, 3. Person Singular Indikativ",
+              "sense": "steht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s0:t4",
+              "idx": 4,
+              "surface": "voor",
+              "lemma": "voor",
+              "form": "Präposition",
+              "sense": "vor (räumlich)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s0:t5",
+              "idx": 5,
+              "surface": "een",
+              "lemma": "een",
+              "form": "bestimmter Artikel, Akkusativ Singular Neutrum",
+              "sense": "ein (unbestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s0:t6",
+              "idx": 6,
+              "surface": "landschap",
+              "lemma": "landschap",
+              "form": "Nomen, Akkusativ Singular Neutrum",
+              "sense": "Landschaft",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s0:t7",
+              "idx": 7,
+              "surface": "met",
+              "lemma": "met",
+              "form": "Präposition",
+              "sense": "mit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s0:t8",
+              "idx": 8,
+              "surface": "struiken",
+              "lemma": "struik",
+              "form": "Nomen, Plural",
+              "sense": "Sträucher",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s0:t9",
+              "idx": 9,
+              "surface": "en",
+              "lemma": "en",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s0:t10",
+              "idx": 10,
+              "surface": "gras",
+              "lemma": "gras",
+              "form": "Nomen, Singular",
+              "sense": "Gras",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s0:t11",
+              "idx": 11,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in (innerhalb von)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s0:t12",
+              "idx": 12,
+              "surface": "het",
+              "lemma": "het",
+              "form": "bestimmter Artikel, Akkusativ/Dativ Singular Neutrum",
+              "sense": "das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s0:t13",
+              "idx": 13,
+              "surface": "zand.",
+              "lemma": "zand",
+              "form": "Nomen, Singular",
+              "sense": "Sand",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 2,
+              "tokenIds": [
+                "tp_17881986169040000025:s0:t0",
+                "tp_17881986169040000025:s0:t1",
+                "tp_17881986169040000025:s0:t2"
+              ],
+              "lemma": "een houten hek",
+              "gloss": "ein Holzzaun",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 3,
+              "end": 4,
+              "tokenIds": [
+                "tp_17881986169040000025:s0:t3",
+                "tp_17881986169040000025:s0:t4"
+              ],
+              "lemma": "staan voor",
+              "gloss": "vor ... stehen",
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-31T18:52:36.045Z",
+            "sentenceId": "tp_17881986169040000025:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Een houten hek staat voor een landschap met struiken en gras in het zand.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17881986169040000025:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17881986169040000025:s1:t0",
+              "idx": 0,
+              "surface": "Een",
+              "lemma": "een",
+              "form": "bestimmter Artikel, Nominativ Singular Maskulinum/Neutrum/Femininum",
+              "sense": "ein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s1:t1",
+              "idx": 1,
+              "surface": "blauwe",
+              "lemma": "blauw",
+              "form": "Adjektiv, stark dekliniert, Nominativ Singular Maskulinum/Neutrum/Femininum",
+              "sense": "blauer/bläulicher",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s1:t2",
+              "idx": 2,
+              "surface": "hemel",
+              "lemma": "hemel",
+              "form": "Substantiv, Nominativ Singular Maskulinum",
+              "sense": "Himmel",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s1:t3",
+              "idx": 3,
+              "surface": "met",
+              "lemma": "met",
+              "form": "Präposition mit Dativ",
+              "sense": "mit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s1:t4",
+              "idx": 4,
+              "surface": "witte",
+              "lemma": "wit",
+              "form": "Adjektiv, stark dekliniert, Dativ Plural",
+              "sense": "weißen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s1:t5",
+              "idx": 5,
+              "surface": "wolken",
+              "lemma": "wolk",
+              "form": "Substantiv, Dativ Plural",
+              "sense": "Wolken",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s1:t6",
+              "idx": 6,
+              "surface": "hangt",
+              "lemma": "hangen",
+              "form": "Verb, Indikativ Präsens Singular 3. Person",
+              "sense": "hängt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s1:t7",
+              "idx": 7,
+              "surface": "boven",
+              "lemma": "boven",
+              "form": "Präposition mit Dativ",
+              "sense": "über",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s1:t8",
+              "idx": 8,
+              "surface": "de",
+              "lemma": "de",
+              "form": "bestimmter Artikel, Akkusativ Singular Maskulinum/Dativ Singular Maskulinum/Femininum/Nominativ Plural",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s1:t9",
+              "idx": 9,
+              "surface": "bergachtige",
+              "lemma": "bergachtig",
+              "form": "Adjektiv, schwach dekliniert, Akkusativ/Dativ Singular Maskulinum/Femininum/Nominativ Plural",
+              "sense": "bergähnliche",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17881986169040000025:s1:t10",
+              "idx": 10,
+              "surface": "achtergrond.",
+              "lemma": "achtergrond",
+              "form": "Substantiv, Akkusativ Singular Maskulinum/Dativ Singular Maskulinum/Femininum/Nominativ Plural",
+              "sense": "Hintergrund",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 2,
+              "tokenIds": [
+                "tp_17881986169040000025:s1:t0",
+                "tp_17881986169040000025:s1:t1",
+                "tp_17881986169040000025:s1:t2"
+              ],
+              "lemma": "een blauwe hemel",
+              "gloss": "ein blauer Himmel",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 3,
+              "end": 5,
+              "tokenIds": [
+                "tp_17881986169040000025:s1:t3",
+                "tp_17881986169040000025:s1:t4",
+                "tp_17881986169040000025:s1:t5"
+              ],
+              "lemma": "met witte wolken",
+              "gloss": "mit weißen Wolken",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 7,
+              "end": 10,
+              "tokenIds": [
+                "tp_17881986169040000025:s1:t7",
+                "tp_17881986169040000025:s1:t8",
+                "tp_17881986169040000025:s1:t9",
+                "tp_17881986169040000025:s1:t10"
+              ],
+              "lemma": "boven de bergachtige achtergrond",
+              "gloss": "über dem bergähnlichen Hintergrund",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-08-31T18:59:42.474Z",
+            "sentenceId": "tp_17881986169040000025:s1",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Een blauwe hemel met witte wolken hangt boven de bergachtige achtergrond.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-08-31T18:59:42.475Z",
+        "chapterId": "tp_17881986169040000025",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "870d4d801f86",
+      "analyzedAt": "2026-08-31T18:59:42.475Z"
     }
   },
-  "generatedAt": "2026-08-31T15:48:46.675Z",
-  "chapterCount": 5
+  "generatedAt": "2026-08-31T18:59:42.476Z",
+  "chapterCount": 9
 }

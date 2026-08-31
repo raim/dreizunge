@@ -2211,6 +2211,107 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v87 LINE
 
+## ✅ v87_o — multi-type add-lessons on the lesson-set page; the story so far as context for an image description; and TWO corpus-dependent tests repaired
+
+Two user requests, plus a genuine baseline finding uncovered while verifying them.
+
+### 1. Multi-type add-lessons on the lesson-set page
+
+**User request**: *"add-lessons from the lesson-set page, teacher view: here we should have the same
+checkmark list of all lesson types, as for book generation jobs and for add-lessons button of the
+storyline page, where we can select several lesson types to be generated."*
+
+Built by DELETING that card's hand-written `<select>` and routing its Generate button through
+`_pickLessonTypes()` — the SAME modal the storyline page's own add-lessons button opens, over the
+SAME `renderLessonTypeChecks` tick-list the book-generation form uses. That is precisely what the
+user compared against, so it is what this opens; a third inline copy of the same list would have been
+the drift `v87_k` and `v87_n` both had to repair.
+
+`doAddLesson()` gained a `fmtOverride` parameter, which is what makes multi-select possible with NO
+duplication of the per-type logic: the client-side `mixed`/`intro_script` paths and the LLM path are
+untouched, and `doAddLessonMulti()` simply calls it once per ticked type, SEQUENTIALLY (the same
+"gentle on the backend" reasoning `_applyPerChapterTypes` documents) with one type's failure not
+aborting the rest. Absent, everything behaves exactly as before — which is what keeps the OTHER
+add-lesson surface (the library item's own row) working untouched.
+
+**⚠️ The dialect gate had to move, or it would have been silently lost.** The deleted `<select>`
+carried it as a CSS class (`.opt-ai-authoring`), swept at open time by `openAddLesson`: a dialect
+topic must never be offered the LLM-authoring types, because those generators run in the base
+language and would inject standard-German content, breaking the "no invented dialect" guarantee. The
+tick-list had no equivalent. So `ADD_LESSON_TYPES` gained an `ai: true` flag on the eight authoring
+types and `renderLessonTypeChecks` a matching `allowAi` filter — same shape as its existing
+`needsStory`/`needsScript` gates, where `undefined` means "not asked" so every pre-existing caller is
+unaffected. This is strictly better than the class: the registry is the ONE list every add-lesson
+surface reads. `unit-dialect-panel.test.js` was re-anchored onto it — the claim is unchanged, only
+where it is enforced. **Recorded while there**: the LIBRARY menu's own `<select>` never carried those
+classes, so that surface never had this gate — pre-existing, not introduced here, and worth fixing if
+a dialect topic is ever reachable from it.
+
+`openAddLesson` also learned to handle a card with no `<select>`: the math-instruction and vocab-mode
+rows are shown up front there, since the format is now chosen AFTER the panel opens and there is no
+value to key them off. Both are per-RUN settings that are simply ignored unless a type consuming them
+is ticked — hiding them would have meant a math instruction could never be supplied from that card at
+all. `unit-add-lesson-menu.test.js`, whose whole premise is "the option list is written out THREE
+times… three copies is how they came to disagree", was rewritten to the stronger claim its own header
+was reaching for: that surface now reads the shared registry and cannot drift from it, leaving two
+copies rather than three. It also pins that `mixed` is still reachable — it comes from the tick-list's
+own toggle rather than a hand-written `<option>`, so the capability the deleted markup provided was
+not lost with it.
+
+### 2. The story so far as context for an image description
+
+**User request**: *"For images where we get a description and no text extraction, we should pass the
+previous whole story as context for the image."*
+
+Without it every panel is described in isolation, so a recurring character is "a man" in every chapter
+instead of "the man" — the chapters read as unrelated captions rather than a story. TWO sources feed
+the context, both meaning "the story so far":
+- **the continued-from chain**, assembled SERVER-side by the existing `collectChainStory()`. It has to
+  be server-side: the client's `savedList` projection carries no story text at all, so the client
+  could not send it — it sends only `continuedFrom`, read from the same `#continue-select` the
+  chapter-creation call reads (which item AL made universal across all three input modes).
+- **the panels already described earlier in the same batch**, accumulated as the job proceeds and
+  capped to 6000 chars — a long storyline plus an image already competes for the vision model's
+  context window, and `collectChainStory`'s own 40k default is sized for text-only calls.
+
+The context block is framed "for continuity only — do not summarise, continue, retell or quote this
+text", because the real risk with any context block is the model describing the CONTEXT instead of the
+image in front of it.
+
+`fake-ollama.js` now marks a reply `MITKONTEXT` when the prompt carried the block, so the e2e proves
+the text REACHED the model rather than merely being computed server-side. **The fixture is a TWO-chapter
+chain, deliberately**: with one chapter the route's own `anchor.story` fallback covers the case, so a
+single-chapter fixture cannot tell "walked the chain" from "used the anchor" — found by mutation-testing,
+where stubbing `collectChainStory` out stayed GREEN. THREE mutations red: dropping the context from the
+prompt, stopping the within-batch growth, and stubbing the chain walk.
+
+### 3. ⚠️ TWO tests were failing on the LIVE corpus, not on any code change
+
+Found while verifying the above: `unit-word-progress` and `unit-story-unlocked-card` failed 8/8 —
+deterministically, so not the documented sampling flakiness. Isolated properly rather than assumed:
+they fail at `HEAD` too, and they PASS with the committed `lessons.json` and FAIL with the working-tree
+one. The user's own server had written another chapter (338 → 339) between the `v87_n` release run and
+this one, and the new content deterministically broke two fixture SELECTIONS.
+
+Both were the same defect, and one this project has already recorded twice (`v81_d`/`v81_e`): the
+fixture was chosen by a PROXY for the property the section then asserts.
+- `unit-story-unlocked-card` took the first chapter with a story and ≥4 vocab words, then asserted its
+  vocabulary is actually MARKED in its story — different properties (an uploaded text or a comic
+  chapter can teach words its story never contains). A substring pre-check was tried and was ALSO
+  insufficient, because the real matcher normalises through `_hlKey`/`stripFuri`, splits multi-token
+  entries and folds apostrophes. Now the fixture is chosen by the property itself: render each
+  candidate, keep the first that actually produces marks. The non-vacuity claim became a statement
+  about the corpus as a whole rather than about whichever chapter sorts first.
+- `unit-word-progress` accepted a question `_wordQuestions` knows about, then asserted that marking it
+  wrong demotes the word — but the state is graded from `_wordProgress`, which derives its key set
+  differently, so a word can own a question whose wrongness never reaches its state. The sweep now
+  TRIES the demotion and keeps the candidate only if it happens, cleaning up the wrong-map entry so
+  the real run still starts from a green word.
+
+Both verified stable at 6/6 afterwards. **This is the standing "a red baseline is a FINDING" rule
+paying off**: the reflex would have been to call two known-flaky-adjacent tests flaky again, and the
+0-of-8 determinism is what ruled that out immediately.
+
 ## ✅ v87_n — the artwork toggle reaches the two surfaces it was missing, and the strip is centred
 
 Three follow-ups to `v87_m`, all reported live by the user against their own running server.

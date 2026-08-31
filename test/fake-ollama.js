@@ -267,7 +267,11 @@ const srv = http.createServer(async (req, res) => {
     // come back with the extraction's canned transcription.
     } else if (/Describe what is happening in it in/i.test(usr)) {
       kind = 'comic_describe';
-      content = 'Ein Hund rennt durch den Garten. Die Sonne scheint.';
+      // v87_o: echo back whether the prompt carried the "story so far" block, so a test can prove the
+      // context actually REACHED the model rather than merely being computed server-side.
+      content = /story so far/i.test(usr)
+        ? 'MITKONTEXT Ein Hund rennt durch den Garten. Die Sonne scheint.'
+        : 'Ein Hund rennt durch den Garten. Die Sonne scheint.';
     } else if (/single panel cropped from a comic page/i.test(usr)) {
       kind = 'comic_extract';
       // FORCE_EMPTY returns a genuinely empty body, which callLLMVision treats as a FAILURE

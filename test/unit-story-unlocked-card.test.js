@@ -200,10 +200,20 @@ function renderCard({ teacher }) {
 // exactly this. Both meanings now sit on the page: every vocabulary word is marked (what the
 // chapter teaches) and the solved ones are marked more strongly (what you already have).
 {
-  const topic = (store.topics || []).find(t => t.story
-    && (t.lessons || []).some(L => L && (L.vocab || []).length >= 4));
-  assert.ok(topic, 'the corpus has a chapter with a story and several vocabulary words');
-  const render = (rounds) => {
+  // ⚠️ The precondition is SELECTED FOR, not hoped for (v87_o). This was `.find(story && >=4 vocab)`,
+  // which takes the FIRST such chapter — and the section then asserts that chapter's vocabulary
+  // actually APPEARS in its story. Those are different properties: a chapter can teach four words
+  // its own story never contains (an uploaded text, a comic panel, a chapter whose vocab was
+  // generated from a summary). The corpus is a LIVE snapshot — the user's own server writes to it
+  // between runs — so "the first acceptable chapter" silently became one with zero overlap and this
+  // section went red on completely correct code. Exactly the lesson v81_d/v81_e already recorded for
+  // unit-tap-word: keep a fixture VERIFIED to have the property, not the first that passes a weaker
+  // proxy for it.
+  // A plain substring scan is NOT a good enough proxy either — tried first, still selected a chapter
+  // the renderer marked nothing in, because the real matcher normalises through _hlKey/stripFuri,
+  // splits multi-token entries and folds apostrophes. So the fixture is chosen by the PROPERTY
+  // ITSELF: render each candidate and keep the first that actually produces marks.
+  const render = (rounds, topic) => {
     const C = loadClient({ quiet: true });
     C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed');
     C.run(`
@@ -230,10 +240,20 @@ function renderCard({ teacher }) {
     return { total: (h.match(/<mark class="[^"]*story-vocab-hl/g) || []).length,
              strong: (h.match(/<mark class="[^"]*\bwp-(?:partial|green)\b/g) || []).length };
   };
-  const cold = render(0), warm = render(40);
-  // Non-vacuity: the fixture must actually contain vocabulary that appears in its story, or every
-  // count below is zero and the section proves nothing.
-  assert.ok(cold.total > 0, `the fixture's vocabulary really does appear in its story (${cold.total} marks)`);
+  const candidates = (store.topics || []).filter(t => t.story
+    && (t.lessons || []).some(L => L && (L.vocab || []).length >= 4));
+  assert.ok(candidates.length, 'the corpus has chapters with a story and several vocabulary words');
+  let topic = null, cold = null;
+  for (const cand of candidates) {
+    const c = render(0, cand);
+    if (c.total > 0) { topic = cand; cold = c; break; }
+  }
+  // Non-vacuity: SOME chapter's vocabulary must appear in its own story, or every count below is
+  // zero and the section proves nothing. Now a statement about the corpus as a whole rather than
+  // about whichever chapter happens to sort first.
+  assert.ok(topic && cold && cold.total > 0,
+    `some chapter's vocabulary is actually marked in its own story (scanned ${candidates.length})`);
+  const warm = render(40, topic);
   // The KEY property: marking no longer depends on progress — only the SHADE does. This is what
   // makes the card and the storyline page agree.
   assert.strictEqual(warm.total, cold.total,

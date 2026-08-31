@@ -32,8 +32,22 @@ async function waitJob(sport, jobId, timeoutMs = 30000) {
 const FAKE_IMG = (n) => 'data:image/jpeg;base64,' + Buffer.from('fake-panel-' + n).toString('base64');
 const countKind = (env, kind) => env.readChatLog().filter(e => e.kind === kind).length;
 
+// A chapter with a real story, so §7 can prove the continued-from chain's text actually reaches the
+// description prompt rather than an empty string being threaded through.
+// TWO chained chapters, not one: with a single chapter the route's own `anchor.story` fallback covers
+// the case, so a test seeded that way cannot tell "walked the chain" from "used the anchor" — found
+// by mutation-testing, where stubbing collectChainStory out stayed GREEN.
+const SEED = { schemaVersion: 29, flags: {}, progress: {}, storylines: [],
+  topics: [
+    { id: 'tp_first', topic: 'Erstes', lang: 'de', srcLang: 'en', lessons: [],
+      story: 'ERSTESKAPITEL Es war einmal ein Anfang.' },
+    { id: 'tp_prior', topic: 'Vorgaenger', lang: 'de', srcLang: 'en', lessons: [],
+      continuedFromId: 'tp_first',
+      story: 'Es war einmal ein Vorgaenger. Der Hund lief durch den Garten.' },
+  ] };
+
 (async () => {
-  const env = await boot({ log: true });
+  const env = await boot({ log: true, seed: SEED });
   try {
     const { sport } = env;
 
@@ -130,6 +144,45 @@ const countKind = (env, kind) => env.readChatLog().filter(e => e.kind === kind).
       assert(r.status === 400, 'neither operation requested => 400 (got ' + r.status + ')');
       assert(/nothing to do/i.test(r.body.error || ''), 'and says why: ' + (r.body.error || ''));
       console.log('  neither operation requested: rejected with a real message: OK');
+    }
+
+    // ── 7. ⚠️ THE STORY SO FAR reaches the description prompt (user request) ─────────────────
+    // "For images where we get a description and no text extraction, we should pass the previous
+    // whole story as context for the image." Two sources, both meaning "the story so far": the
+    // CONTINUED-FROM chain (assembled server-side by collectChainStory — the client's savedList
+    // projection carries no story text, so it could not send it) and the panels already described
+    // earlier in the same batch. fake-ollama marks a reply MITKONTEXT when the prompt carried the
+    // context block, so this proves the text REACHED the model rather than merely being computed.
+    {
+      // No continuedFrom, single panel: nothing precedes it, so no context block.
+      let start = await post(sport, '/api/comic-extract',
+        { images: [FAKE_IMG(20)], lang: 'de', extract: false, describe: true });
+      let fin = await waitJob(sport, start.body.jobId);
+      assert(!/MITKONTEXT/.test(fin.data.panels[0].description),
+        'a first panel with nothing before it gets NO context block — there is no story yet');
+
+      // Same call, but continuing a chapter that HAS a story.
+      start = await post(sport, '/api/comic-extract',
+        { images: [FAKE_IMG(21)], lang: 'de', extract: false, describe: true, continuedFrom: 'tp_prior' });
+      fin = await waitJob(sport, start.body.jobId);
+      assert(/MITKONTEXT/.test(fin.data.panels[0].description),
+        "the continued-from chapter's story reached the description prompt");
+      const ctxEntry = JSON.stringify(env.readChatLog().filter(e => e.kind === 'comic_describe').pop());
+      assert(/Es war einmal ein Vorgaenger/.test(ctxEntry),
+        'and it is the REAL story text of that chapter, not a placeholder');
+      assert(/ERSTESKAPITEL/.test(ctxEntry),
+        'and the WHOLE chain — the chapter before it too, via collectChainStory, which is what ' +
+        '"the previous whole story" means rather than just the immediate parent');
+
+      // A multi-panel batch with NO continuedFrom: panel 1 has no context, panel 2 has panel 1's.
+      start = await post(sport, '/api/comic-extract',
+        { images: [FAKE_IMG(22), FAKE_IMG(23)], lang: 'de', extract: false, describe: true });
+      fin = await waitJob(sport, start.body.jobId);
+      assert(!/MITKONTEXT/.test(fin.data.panels[0].description), 'panel 1 of a fresh batch: still no context');
+      assert(/MITKONTEXT/.test(fin.data.panels[1].description),
+        'panel 2 IS described with panel 1 as context — the story so far grows within the batch, ' +
+        'which is what stops a recurring character being reintroduced in every chapter');
+      console.log('  the story so far (continued-from chain AND earlier panels) reaches the prompt: OK');
     }
 
     console.log('e2e-comic-describe: ALL PASSED');

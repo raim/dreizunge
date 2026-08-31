@@ -1825,29 +1825,19 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
   <div class="lesson-actions" id="lesson-actions"></div>
   <div class="saved-item-addlesson" id="sial-lesson-card" style="border-radius:var(--radius-lg);margin-top:4px">
     <span id="add-lesson-lbl-card" style="font-size:12px;font-weight:800;color:var(--blue)">➕ Add lesson:</span>
-    <select class="addlesson-select" id="sial-fmt-lesson-card">
-      <option value="standard">📚 Standard</option>
-      <option value="synonyms" class="opt-ai-authoring">🔁 Synonyms</option>
-      <option value="word_forms" class="opt-ai-authoring">🧩 Word Forms</option>
-      <option value="inflections" class="opt-ai-authoring">🧬 Inflections</option>
-      <!-- v78_j (user): grammar and conjugation were hidden from the SINGLE-CHAPTER add-lesson
-           menu while the storyline-wide arc offered them. Both are full registry types with
-           builders, editors and labels; there was no gate, only an omission. -->
-      <option value="grammar" class="opt-ai-authoring">📐 Grammar</option>
-      <option value="conjugation" class="opt-ai-authoring">🔤 Conjugation</option>
-      <option value="error_hunt" class="opt-ai-authoring">🔍 Error Hunt</option>
-      <option value="comprehension" class="opt-ai-authoring opt-needs-story" style="display:none">🧠 Comprehension</option>
-      <option value="writing" class="opt-ai-authoring opt-needs-story" style="display:none">✍️ Writing</option>
-      <option value="math">🔢 Math</option>
-      <option value="mixed">🔀 Mixed review (no AI)</option>
-      <option value="intro_script" class="opt-intro-script" style="display:none">🔡 Learn the script (no AI)</option>
-    </select>
+    <!-- v87_o (user request): the single-format <select> is replaced by the SHARED tick-list, opened
+         by the Generate button through _pickLessonTypes() — the same modal the storyline page's own
+         add-lessons button uses, over the same list the book-generation form ticks. The three gates
+         this <select> carried (needs-story, script availability, and the dialect "no LLM authoring"
+         rule that lived in its `.opt-ai-authoring` class) are all passed to that picker instead; see
+         doAddLessonMulti. Difficulty / vocab-mode / math-instruction stay here: they are per-RUN
+         settings that apply to everything generated, not per-type choices. -->
     <select class="addlesson-select" id="sial-diff-lesson-card" title="Difficulty">
       <option value="1">🟢</option>
       <option value="2" selected>🟡</option>
       <option value="3">🔴</option>
     </select>
-    <button class="addlesson-btn" id="sial-btn-lesson-card" onclick="doAddLesson('lesson-card', document.getElementById('sial-enc-lesson-card').value)">Generate</button>
+    <button class="addlesson-btn" id="sial-btn-lesson-card" onclick="doAddLessonMulti('lesson-card', document.getElementById('sial-enc-lesson-card').value)">Generate</button>
     <button class="addlesson-cancel" onclick="closeAddLesson('lesson-card')">✕</button>
     <div id="sial-reinforce-row-lesson-card" data-has-prior="1" style="display:flex;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;width:100%;margin-top:2px">
       <select id="sial-vocab-mode-lesson-card" style="font-size:11px;font-weight:700;border:1.5px solid var(--blue-dark);border-radius:6px;padding:2px 6px;background:var(--white);color:var(--blue-dark);font-family:Nunito,sans-serif">
@@ -4430,7 +4420,13 @@ async function comicExtractPanels(){
   try{
     const images=boxes.map(_comicCropDataUrl);
     const r=await fetch('/api/comic-extract',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({images, lang:APP.lang, extract:wantExtract, describe:wantDescribe})});
+      // v87_o (user request): "pass the previous whole story as context for the image". Only the
+      // continued-from ID travels — the server assembles the actual story from it (collectChainStory),
+      // because this client's savedList projection carries no story text at all. Read from the SAME
+      // #continue-select the chapter-creation call reads (item AL moved it to card 1, which is what
+      // made it universal across all three input modes).
+      body:JSON.stringify({images, lang:APP.lang, extract:wantExtract, describe:wantDescribe,
+        continuedFrom: document.getElementById('continue-select')?.value || null})});
     const data=await r.json().catch(()=>({}));
     if(!r.ok){ if(status) status.textContent=''; showToast(t('form.comic_extract_failed')+': '+(data.error||r.status)); if(btn) btn.disabled=false; return; }
     _startComicExtractJob(data.jobId);
@@ -10653,6 +10649,15 @@ function openAddLesson(sid, enc) {
     _fmtSel._mathToggle = _toggleRows;
     _fmtSel.addEventListener('change', _toggleRows);
     _toggleRows();
+  } else if (_mathInstrRow) {
+    // v87_o: the LESSON-SET card has no <select> any more — the format is chosen in the shared
+    // tick-list modal, AFTER this panel is already open, so there is no value here to key the rows
+    // off. Both are shown up front instead: each is a per-RUN setting that is simply ignored unless
+    // a type consuming it is ticked (the math instruction only reaches the request for `math`, and
+    // vocabMode only matters to the vocab-style types). Showing them is honest; hiding them would
+    // mean a learner could never supply a math instruction from this card at all.
+    _mathInstrRow.style.display = '';
+    if (_reinforceRow) _reinforceRow.style.display = (_reinforceRow.dataset.hasPrior === '1') ? 'flex' : 'none';
   }
 }
 
@@ -10663,7 +10668,49 @@ function closeAddLesson(sid) {
   if (status) status.textContent = '';
 }
 
-async function doAddLesson(sid, enc, tid) {
+// ── v87_o (user request): multi-type add-lessons on the LESSON-SET page ─────────────────────────
+// "add-lessons from the lesson-set page, teacher view: here we should have the same checkmark list of
+// all lesson types, as for book generation jobs and for add-lessons button of the storyline page,
+// where we can select several lesson types to be generated."
+//
+// Reuses `_pickLessonTypes()` — the SAME modal the storyline page's own add-lessons button opens, on
+// the SAME `renderLessonTypeChecks` tick-list the book-generation form uses. That is what the user
+// compared against, so it is what this opens; a third, inline copy of the same list would be the
+// drift v87_k and v87_n both had to repair.
+//
+// The three gates the per-chapter <select> carried are passed through, not lost:
+//   • hasStory  — comprehension/writing/error_hunt are written AGAINST the story
+//   • hasScript — scriptLessonAvailableForSet, the same predicate the <select> used
+//   • allowAi   — false for a DIALECT topic (see renderLessonTypeChecks' own new filter)
+// Difficulty, vocab-mode and the math instruction stay on the card: they are per-RUN settings that
+// apply to whatever is generated, not a per-type choice.
+//
+// SEQUENTIAL, not concurrent — the same "gentle on the backend" reasoning `_applyPerChapterTypes`
+// documents for its own per-chapter loop. One type failing does not abort the rest; each reports
+// through the card's own status line as it goes.
+async function doAddLessonMulti(sid, enc, tid) {
+  const d = APP.lessonData;
+  const types = await _pickLessonTypes(t('sl.add_lessons_btn'), {
+    hasStory: !!(d && String(d.story || '').trim()),
+    hasScript: !!(d && typeof scriptLessonAvailableForSet === 'function' && scriptLessonAvailableForSet(d)),
+    allowAi: !(d && d._dialect),
+  });
+  if (!types || !types.length) return;
+  const status = document.getElementById('sial-status-' + sid);
+  for (let i = 0; i < types.length; i++) {
+    if (status) status.textContent = `(${i + 1}/${types.length}) ${types[i]}…`;
+    try { await doAddLesson(sid, enc, tid, types[i]); }
+    catch (e) { /* doAddLesson reports into the same status line; keep going */ }
+  }
+  if (status && types.length > 1) status.textContent = `✓ ${types.length}`;
+}
+// v87_o (user request): `fmtOverride` lets a caller name the format instead of reading this
+// surface's own <select>. That is what makes the multi-select possible without duplicating any of the
+// per-type logic below (the client-side `mixed`/`intro_script` paths and the LLM path all stay
+// exactly as they were) — doAddLessonMulti just calls this once per ticked type. Absent, everything
+// behaves precisely as before, which is what keeps the OTHER add-lesson surface (the saved-list
+// item's own row, `sial-fmt-<sid>`) working untouched.
+async function doAddLesson(sid, enc, tid, fmtOverride) {
   // For the lesson-card (lesson-set screen), always use the currently loaded topic
   const lessonCard = sid === 'lesson-card' && APP.lessonData?.topic;
   const topic = lessonCard ? APP.lessonData.topic : decodeURIComponent(enc);
@@ -10674,7 +10721,7 @@ async function doAddLesson(sid, enc, tid) {
   const fmtSel = document.getElementById('sial-fmt-' + sid);
   const btn    = document.getElementById('sial-btn-' + sid);
   const status = document.getElementById('sial-status-' + sid);
-  const fmt    = fmtSel?.value || 'grammar';
+  const fmt    = fmtOverride || fmtSel?.value || 'grammar';
 
   if (btn)    { btn.disabled = true; btn.textContent = '⏳'; }
   if (status) status.textContent = 'Generating…';
@@ -11754,16 +11801,16 @@ function slBottomClearProgress(){
 const ADD_LESSON_TYPES = [
   { v: 'standard',   emoji: '📖', key: 'form.format.standard' },
   { v: 'review',     emoji: '🔁', key: 'gen.vocab_mode_reinforce' },
-  { v: 'word_forms', emoji: '🧩', key: 'lesson.type.word_forms' },
-  { v: 'inflections', emoji: '🧬', key: 'lesson.type.inflections' },
-  { v: 'synonyms',   emoji: '🔀', key: 'lesson.type.synonyms' },
-  { v: 'grammar',    emoji: '📐', key: 'lesson.type.grammar' },
-  { v: 'conjugation',emoji: '🔤', key: 'lesson.type.conjugation' },
-  { v: 'comprehension', emoji: '🧠', key: 'lesson.type.comprehension', needsStory: true },
+  { v: 'word_forms', ai: true, emoji: '🧩', key: 'lesson.type.word_forms' },
+  { v: 'inflections', ai: true, emoji: '🧬', key: 'lesson.type.inflections' },
+  { v: 'synonyms', ai: true,   emoji: '🔀', key: 'lesson.type.synonyms' },
+  { v: 'grammar', ai: true,    emoji: '📐', key: 'lesson.type.grammar' },
+  { v: 'conjugation', ai: true,emoji: '🔤', key: 'lesson.type.conjugation' },
+  { v: 'comprehension', ai: true, emoji: '🧠', key: 'lesson.type.comprehension', needsStory: true },
   // PLAN §D4 (v82): the writing TASK is generated here like every other type; grading is a live
   // model call at play time, not part of this batch generation at all.
-  { v: 'writing', emoji: '✍️', key: 'lesson.type.writing', needsStory: true },
-  { v: 'error_hunt', emoji: '🔍', key: 'lesson.type.error_hunt', needsStory: true },
+  { v: 'writing', ai: true, emoji: '✍️', key: 'lesson.type.writing', needsStory: true },
+  { v: 'error_hunt', ai: true, emoji: '🔍', key: 'lesson.type.error_hunt', needsStory: true },
   { v: 'math',       emoji: '🔢', key: 'lesson.type.math' },
   // v79_h (user report, sl_1567412712 — an en→ar storyline): the script lesson was reachable from
   // the PER-CHAPTER "add lesson" dropdown (gated by scriptLessonAvailableForSet) but was simply
@@ -11785,6 +11832,13 @@ function renderLessonTypeChecks(container, opts){
     // gate must not silently hide the row — only an explicit false does, so a caller that does not
     // know about scripts keeps its old behaviour.
     .filter(x => !(x.needsScript && o.hasScript === false))
+    // v87_o: the DIALECT gate, which until now lived only in the per-chapter <select> as the
+    // `.opt-ai-authoring` class. A dialect topic must not be offered the LLM-authoring types: those
+    // generators run in the base language and don't know the dialect, so they would inject standard
+    // German (or mis-judged content) into it — breaking the "no invented dialect" guarantee that
+    // openAddLesson's own comment spells out. Same shape as the two gates above: `undefined` means
+    // "not asked" and hides nothing, so every pre-existing caller is unaffected.
+    .filter(x => !(x.ai && o.allowAi === false))
     .map(x => {
       const lbl = t(x.key);
       return `<label class="user-story-check-row" style="gap:7px">

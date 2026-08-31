@@ -1,7 +1,7 @@
-# Session prompt — written at the `v87_n` cut
+# Session prompt — written at the `v87_o` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
-one alongside. Keep using the double-letter suffix scheme (`v87_o`, `v87_p`, …) unless a future
+one alongside. Keep using the double-letter suffix scheme (`v87_p`, `v87_q`, …) unless a future
 session has a good reason to switch to `v88_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
@@ -21,43 +21,29 @@ live server was running on port 3000 throughout the `v87_g`/`v87_h`/`v87_i` cuts
 `v87_g` was live-verified that way, with nothing of the user's touched. `prompts.json` and `ui.json`
 HOT-RELOAD live via `fs.watch` too.
 
-**What shipped this cut**: `v87_n` — three live user follow-ups to `v87_m`: the artwork toggle now
-reaches ALL THREE surfaces (library card, storyline screen, and the lesson-set page — the reported bug
-was that `v87_m` put it only on the card, so a teacher on `#sl=…` could not find it), and the image
-strip is centred with `justify-content:safe center`. One assumption to revisit if you disagree: on the
-LESSON-SET page the artwork renders in TEACHER MODE ONLY, since that page never showed storyline
-artwork to learners and the ask was the switch — widening is one condition, named in the code.
+**What shipped this cut**: `v87_o` — two user requests plus a real baseline finding.
+(1) The lesson-set page's add-lessons now offers the SHARED multi-select tick-list (its hand-written
+`<select>` was deleted; Generate opens the same `_pickLessonTypes()` modal the storyline page uses).
+The dialect gate moved with it, from a CSS class on that `<select>` to an `ai: true` flag on
+`ADD_LESSON_TYPES` + an `allowAi` filter — otherwise it would have been silently lost.
+(2) Image descriptions now receive "the story so far" as context: the continued-from chain (assembled
+server-side by `collectChainStory` — the client's savedList has no story text) plus the panels already
+described in the same batch.
 
-`v87_m` before it shipped item AC — a comic storyline can show its PANEL IMAGES instead of the
-storyboard, chosen by the teacher, per storyline, applying to both the main page and the storyline
-view. Unset resolves as "storyboard if one exists, else the images" (user ruling), so nothing changes
-for existing storylines. The ~240KB-per-image constraint is what shaped it: `/api/lessons` carries
-only `comicPanelCount`, and images come from a new `GET /api/comic-thumb/:id` — see the `v87_m` entry.
-
-**🆕 THREE FEATURES FROM THE SAME USER MESSAGE ARE STILL OPEN**, and the user chose to ship them as
-SEPARATE RELEASES, images first. All three are storyline editing, all on the teacher-view storyline
-card, and **their design questions are already ANSWERED — do not re-ask**:
-- **Re-order a storyline's chapters.** Ruled: **re-link `continuedFromId` too**, not just reorder the
-  `chapters` array. This matters because the storyline SCREEN draws a fork TREE from those links while
-  the main page uses the array order — reordering the array alone can look like it did nothing. Forks
-  (one chapter with two children) need a deliberate rule; the user picked the full re-link option over
-  the "refuse on forks" variant, so decide and document how a branching storyline is handled rather
-  than silently breaking one.
-- **Split chapters off into a NEW storyline**, named `"orphaned from <title>"`.
-- **Add an EXISTING chapter to a storyline**, via a dropdown on the teacher-view storyline card, the
-  same shape as the wizard's "continue from" picker. Ruled: **add WITHOUT removing** it from its
-  current storyline — the model already supports a chapter in several (forks deliberately share a
-  prefix; "the 3-way fork's parent belongs to three storylines").
-
-Useful groundwork already established: `storyline.chapters` is an ORDERED array of topic ids (it is
-both membership and order), and `POST /api/storylines` ALREADY accepts and upserts `chapters`, so all
-three need little or no new server work.
+**⚠️ (3) TWO TESTS WERE FAILING ON YOUR LIVE CORPUS, not on any code change** — and this is the thing
+to carry forward. `unit-word-progress` and `unit-story-unlocked-card` failed 8/8, deterministically.
+They fail at HEAD too, PASS with the COMMITTED `lessons.json` and FAIL with the working-tree one: the
+live server wrote another chapter between release runs, and the new content broke two fixture
+SELECTIONS. Both had the same defect — the fixture was chosen by a PROXY for the property the section
+then asserts (`v81_d`/`v81_e`'s lesson, a third time). Both now select by the property ITSELF.
+**Expect this class again**: any test that picks a fixture out of `lessons.json` by a weaker condition
+than it goes on to assert is one generated chapter away from going red on correct code.
 
 ## Orient yourself, in this order
 
 1. **This file**, whole.
 2. `build_history/roadmap_v87.md` — its **index table** and **⚠️ Session protocol** block first, then
-   item AL's status block, then `# ✅ SHIPPED IN THE v87 LINE` (`v87_b` → `v87_n`).
+   item AL's status block, then `# ✅ SHIPPED IN THE v87 LINE` (`v87_b` → `v87_o`).
 3. `build_history/roadmap_v86.md` is KEPT as the historical record for the whole `v86` line
    (`v86_a`…`v86_ag`) — go there for how something from THAT line was built.
 4. `INTERNALS.md` **§6b** covers the jobs popover, the drafts store, and the `skipLessons` mechanism
@@ -86,7 +72,7 @@ was wrong. Each deserves the same discriminating measurement (find the assertion
 compares, check whether the product is actually varying). Don't run the full and `--quick` suites
 CONCURRENTLY on this box (found at `v86_ae`) — run them one at a time.
 
-Corpus at this cut: **338 topics, 98 storylines, 33 languages, 730 `en` keys** — an inherently live
+Corpus at this cut: **339 topics, 98 storylines, 33 languages, 730 `en` keys** — an inherently live
 snapshot (the user's own live server generates content concurrently; re-measure fresh at commit
 time). `en` keys rose from 725 → 726 at `v87_g` (`gen.wizard_step3_lessons`; `gen.wizard_step3` and
 `gen.wizard_step4` are deliberately kept but now UNUSED, so their 33-language translations survive if
@@ -94,7 +80,7 @@ a chaptering step ever returns) and are UNCHANGED at `v87_h`. `lessons.json`/`ca
 server generated a topic mid-session, which is exactly the "inherently live snapshot" this line warns
 about; both files were swept into the `v87_i` release commit so the guarded counts stay consistent
 with the tree.
-`drafts.json` may exist at the project root (server-created, gitignored) — normal. `APP_VERSION = 'v87_n'`.
+`drafts.json` may exist at the project root (server-created, gitignored) — normal. `APP_VERSION = 'v87_o'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -128,6 +114,18 @@ forward explicitly:
   started on a spare port for a live model check; the user's own instance was running the identical
   command line. Always list by PID first (`ps -eo pid,cmd | grep '[n]ode server.js'`) and kill the
   ONE pid, and never assume the only matching process is yours.
+- **A fixture chosen by a PROXY for the property a section asserts is one generated chapter away
+  from red.** Third occurrence (`v81_d`, `v81_e`, now `v87_o` twice over). "The first chapter with a
+  story and >=4 vocab words" is not "a chapter whose vocab appears in its story"; "a question
+  `_wordQuestions` knows" is not "a question that grades the word". Select by the PROPERTY ITSELF —
+  render the candidate and check, or try the state change and keep it only if it happens. And note
+  that a cheap approximation is not enough either: a substring pre-check still picked a chapter the
+  real matcher (which normalises via `_hlKey`/`stripFuri` and splits multi-token entries) marked
+  nothing in.
+- **A deterministic failure is NOT the documented flakiness — check before reaching for that label.**
+  Two corpus-driven tests failed 8/8 at `v87_o`. The reflex was "known flaky family"; the determinism
+  ruled that out in one command, and `git show HEAD:lessons.json` located the cause in the user's own
+  live data rather than in any code change.
 - **A card that RE-IMPLEMENTS a shared renderer will silently miss everything that renderer grew.**
   `v87_k`: the lesson-set story reader open-coded its body render instead of calling
   `_storyBodyHtml`, and so missed FOUR things — comic images (the reported symptom), the translation
