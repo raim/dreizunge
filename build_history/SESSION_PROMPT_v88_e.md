@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_d`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_e`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -20,24 +20,23 @@ work — it generated four chapters during the `v87` line, and twice that broke 
 restarting anything; a SERVER edit is not — start your own instance on another port to verify, and
 **kill it by PID** (`pkill -f "node server.js"` matches theirs too).
 
-**What shipped at this cut**: `v88_d` — the data-loss pair, and **both items had a cause nobody had
-reported**, found by reading the code around the reported one.
-**Item AO** (extraction lost on a phone) had THREE causes: the job carried no `link` (the half the
-user could see), `_comicExtractCheckOnce()` is the ONLY writer of the panel text so a dead tab loses
-it (the actual loss — and NOT item AE, which is about a *live* backgrounded tab), and `jobDone()`
-deletes the job after five minutes so a link alone would have worked briefly then failed silently.
-The durable fix is server-side: `applyExtractionToDraft()` writes results onto the draft BEFORE
-`jobDone()` starts that timer. The popover link carries both ids and prefers the draft; it opens the
-review card in AUTO mode, so `v88_c`'s fix composes with no changes.
-**Item AN** (a typed title destroyed the generated description) had THREE losses, of which the user
-had found one: caption-as-title suppressed the description, `comicPanels` never persisted
-`description`, and — found by reading, not reported — **`POST /api/drafts`'s box whitelist never
-listed `description` either**, so every autosave stripped it and would have quietly undone AO's
-durability. A FOURTH was prevented: a re-extraction replaces the whole `text` object and would have
-deleted a typed title, so both writers now carry it forward. A typed title is stamped
-`topicAuto: false` and the chapter-title post-pass skips it — the same ruling `titleAuto` already
-encodes for storylines (`v80_l`). One new key (`form.comic_title_ph`).
-Full write-up: `roadmap_v88.md`'s own `v88_d` entry; `v88_c`/`v88_b`/`v88_a` are below it.
+**What shipped at this cut**: `v88_e` — **two live bug reports that arrived mid-session**, taken
+ahead of item AP (a defect in real usage outranks a mechanical rename; AP moves to `v88_f` with its
+key set unaffected). No `ui.json` keys.
+**Item AY**: a DESCRIPTION-ONLY comic chapter rendered as an image with NO TEXT in the default
+(vocab-highlight) view, while the translation view and the text explorer both showed the story —
+because `_comicStoryPanelsHtml()` reads only `caption`+`inScene`, and that chapter has neither (its
+story came from `v87_l`'s description fallback, and being pre-`v88_d` it has no `description` field
+stored either). The per-panel renderer now honours the description fallback, and
+`_comicPanelsHaveText()` gates the branch so a chapter whose panels contribute nothing falls through
+to the flat image-strip-plus-story rendering the translation view already used.
+**Item AZ**: `_textExplorerBodyHtml()`'s four TRANSIENT states returned a bare status line with no
+`_comicPanelsFlatTextHtml` wrapper, so the panel image vanished for the whole of a CP2 run — the same
+class as `v87_k`.
+⚠️ **The first cut of AY broke a standing ruling and an existing guard caught it**: the image strip
+must be scoped to `o.text == null`, because the panels describe `d.story` and a caller substituting
+text must not get a strip around it (`unit-comic-story-panel` §3, since `v85_n`).
+Full write-up: `roadmap_v88.md`'s own `v88_e` entry; `v88_d`…`v88_a` are below it.
 
 **🆕 NOTHING IS MID-FLIGHT, and the queue is explicit.** The `v87` line closed six items (R, U, Z,
 AC, AK, AL) plus the three storyline asks; they are recorded where they shipped and are NOT in the
@@ -81,8 +80,8 @@ counter-propose page IMAGES rather than a pdf.js viewer).
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 318 checks
-node test/run.js --quick                  → expect 266
+node test/run.js                          → expect 319 checks
+node test/run.js --quick                  → expect 267
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -100,7 +99,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **340 topics, 98 storylines, 33 languages, 735 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_d'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_e'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -222,18 +221,23 @@ measures zero effect, reconsider the diagnosis before trying a third wording.**
 
 **🆕 FIRST: the thirteen TODOs handed over after `v88_a`** — items `AM`…`AX` in `roadmap_v88.md`,
 with their own suggested order. **`v88_b` shipped row 1 (`AW` + `AT`), `v88_c` row 2 (`AQ` + `AM`),
-`v88_d` row 3 (`AO` + `AN`).** The rest of that table:
+`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order.** The rest of that table:
 
-- **➡️ NEXT — `v88_e` — `AP`, the `comic`→`image` rename.** Deliberately scheduled AFTER the four
-  image releases so it renames the FINAL key set (both new keys — `form.comic_review_save`,
-  `form.comic_title_ph` — landed since the plan was written). **22 keys**, but only **122 translated
-  cells across six languages** (`en`/`pt`/`fr`/`de`/`it`/`es`); every other language is unfilled and
-  costs nothing. Renaming a KEY preserves its translation and is guarded by `unit-ui-key-exists`;
-  only CHANGED ENGLISH TEXT costs anything. **The user has ruled on how to handle that: DELETE the
-  stale non-`en` values so `translate-ui.js` refills them.** Still needs a count of how many English
-  strings may change. The user carved out one exception themselves: the auto-detect control keeps
-  "detect comic panels", because there the word does real work. Two keys mention comics in their
-  VALUE but not their name — `storyline.thumb_show_images`, `storyline.thumb_show_storyboard`.
+- **➡️ NEXT — `v88_f` — `AP`, the `comic`→`image` rename.** Deferred one release when two live bug
+  reports arrived (`v88_e`); its key set is unaffected and now FINAL — both new keys
+  (`form.comic_review_save`, `form.comic_title_ph`) have landed.
+  **MEASURED, and much cheaper than the original plan assumed**: 24 keys, but **only THREE whose
+  ENGLISH TEXT actually contains "comic"** — `form.use_comic` ("I have a comic page image"),
+  `form.comic_help` ("Upload a comic page, then drag…"), `form.comic_choose` ("Upload a comic
+  page"). The other 21 carry "comic" only in the KEY NAME, so renaming them preserves every
+  translation and is guarded by `unit-ui-key-exists`; **only CHANGED ENGLISH TEXT costs anything.**
+  Translations exist in six languages only (`en`/`pt`/`fr`/`de`/`it`/`es` — 122 cells total); the
+  other 27 languages are unfilled and cost nothing.
+  **The user has ruled: DELETE the stale non-`en` values so `translate-ui.js` refills them.**
+  Their own carve-out: `form.comic_detect` ("🔍 Auto-detect panels") should GAIN the word —
+  "detect comic panels" — because there it does real work. Two further keys mention comics in their
+  VALUE but not their name: `storyline.thumb_show_images`, `storyline.thumb_show_storyboard`.
+  So the honest budget is **4–6 English strings changed**, i.e. 20–30 translated cells to refill.
 - Then `AU`'s shutdown half (small, no decision: `SIGINT`/`SIGTERM` → `release()` the configured
   models; `llm.js` already EXPORTS `release()` and `server.js` has never called it, and there is no
   signal handler at all), `AX`, `AR`. **Item `V` is fully specified** by the user's ruling and shares

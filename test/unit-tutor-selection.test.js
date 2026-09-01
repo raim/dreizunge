@@ -98,7 +98,23 @@ console.log('  tutor prompt: persona no longer overclaims {S} as "native languag
   const body = extFn(html, '_storyBodyHtml');
   assert.ok(/onclick="event\.stopPropagation\(\);tapWord\(this\.textContent\)"/.test(html),
     'the per-word tap handler (tapWord) still exists, wired the same way');
-  assert.ok(/wrap\(_storyParasHtml\(/.test(body), 'the wrapper is applied via the shared renderer, not per-caller');
+  // v88_e (item AY): this used to pin the literal spelling `wrap(_storyParasHtml(`, which is a PROXY
+  // — it broke on a refactor that kept the claim perfectly true (the comic image strip now sits
+  // between the two calls). A proxy fails in both directions, so assert the CLAIM instead: the
+  // selection wrapper is defined inside this ONE renderer, is what the return paths go through, and
+  // exists nowhere else in the client — which is exactly "not per-caller".
+  assert.ok(/const wrap = html =>/.test(body), 'the wrapper is DEFINED inside the shared renderer');
+  assert.ok(/return wrap\(/.test(body), 'and the renderer returns through it');
+  // "not per-caller" does NOT mean "exactly once": the per-panel comic renderer
+  // (_comicStoryPanelsHtml, v85_n) legitimately has its own `wrap` too. The real claim is that every
+  // EMISSION of the marker is a renderer's own wrap definition, never inlined at a call site — so
+  // that is what is checked, over non-comment lines.
+  const markerLines = html.split('\n')
+    .filter(l => l.includes('data-tutor-select="1"') && !l.trim().startsWith('//'));
+  assert.ok(markerLines.length >= 1, 'the marker is emitted somewhere');
+  markerLines.forEach(l => assert.ok(/const wrap = html =>/.test(l),
+    'every emission of the selection marker is a renderer\'s own `wrap` definition, never inlined '
+    + 'at a call site — offending line: ' + l.trim().slice(0, 90)));
   // ONE story renderer, still — the wrap must not have grown a second copy of the body logic.
   assert.strictEqual((html.match(/function _storyBodyHtml\(/g) || []).length, 1, 'still exactly one story BODY renderer');
 }

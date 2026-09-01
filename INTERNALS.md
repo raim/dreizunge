@@ -661,6 +661,16 @@ Function`). Any helper such a function references must be `typeof`-guarded, or t
 `ReferenceError`. Follow the existing convention — degrade to the older behaviour, which is the
 safe direction.
 
+**⚠️ A guard that pins a SOURCE SPELLING is a proxy, and proxies fail in both directions (`v88_e`).**
+`unit-tutor-selection` asserted the literal `wrap(_storyParasHtml(` as its stand-in for "the
+selection wrapper is applied via the shared renderer, not per-caller". A refactor that kept the claim
+perfectly true broke the regex. Replaced with the claim itself: `wrap` is defined inside the
+renderer, the renderer returns through it, and every emission of `data-tutor-select="1"` is a
+renderer's own `wrap` definition rather than an inlined copy at a call site. **Note what the first
+correction got wrong**: asserting the marker appears EXACTLY ONCE — it legitimately appears twice
+(`_comicStoryPanelsHtml` has had its own `wrap` since `v85_n`). "Not per-caller" is not "not more
+than once", and conflating them would block a correct change later.
+
 **⚠️ `lib-dom`'s `src` is a PLAIN PROPERTY — assigning it never fires `onload` (`v88_d`).**
 `_resumeComicDraftFrom()` awaits exactly that event, so without a shim the resume promise never
 settles and **everything after the await is unreachable**. This is a SILENT trap, not a loud one: the
@@ -1759,6 +1769,7 @@ extracted text, to edit and confirm... Only THEN we move to lesson generation")
 
 | what | where |
 |---|---|
+| **⚠️⚠️ items AY/AZ (`v88_e`) — a comic chapter's three views must AGREE about text and image** | Two live reports on one chapter. **AY**: `_comicStoryPanelsHtml()` builds each panel's body from `caption`+`inScene` ONLY, so a **description-only** chapter (both empty; its story came from `v87_l`'s image-description fallback) rendered as an image with NO TEXT in the default view — while the translation view (`o.text != null`) and the text explorer both bypass the per-panel path and show the flat story. Two halves: the per-panel renderer now honours the description fallback (mirroring `_comicPanelText()`, so the renderer and chapter-formation stop deciding separately), and **`_comicPanelsHaveText(d)` gates the branch** — when the panels contribute nothing (every chapter created before `v88_d`, which never persisted `description`) the flat image-strip-plus-story rendering is used instead, which is what the translation view already did. **⚠️ The image strip added to the ordinary path is scoped to `o.text == null` DELIBERATELY**: the panels describe `d.story`, so a caller substituting other text must not get a strip around it — a standing ruling `unit-comic-story-panel` §3 has pinned since `v85_n`, which the first cut of this fix broke and that guard caught. **AZ**: `_textExplorerBodyHtml()`'s four TRANSIENT states (`loading`/`analyzing`/`error`/no id) returned a bare `<p class="te-status">` with no `_comicPanelsFlatTextHtml` wrapper, while the settled states always had one — so the panel image vanished for the whole of a multi-minute CP2 run. **Same class as `v87_k`**: a surface that short-circuits the shared renderer loses everything that renderer grew. One `status()` helper routes all four through it. Guard: `unit-comic-story-text.test.js` (7 checks, five mutations red) |
 | **the opener** | `comicOpenReview(auto)` — filters `APP_COMIC.boxes` to panels with usable extracted text (`b.text` present, no `.error`; a panel never extracted or whose extraction errored is skipped, nothing to edit there), seeds a LOCAL edit buffer (`_comicReviewBuffer`, one entry per editable panel, keyed by BUFFER position) from each panel's own `caption`/`inScene`, and builds a modal overlay. `auto` (true when fired automatically right after extraction) suppresses the "nothing extracted yet" toast a MANUAL call (the retargeted "Create chapter" button) still shows |
 | **why a local buffer, not live two-way binding** | Cancel must be a true no-op — the panel list has to keep showing exactly what extraction returned. Editing `APP_COMIC.boxes` directly while typing would make that unrecoverable once the user starts editing then backs out |
 | **the step functions** | `_comicReviewEdit(k, field, value)` (writes into the buffer only), `_comicReviewConfirm()` (writes the buffer back onto `APP_COMIC.boxes` BY EACH PANEL'S OWN ORIGINAL INDEX — not buffer position, which diverges whenever a panel was filtered out — then **branches on `_comicReviewMode`**, see the row below; ⚠️ it called `comicCreateChapter()` unconditionally until `v88_c`), `_comicReviewCancel()`/`_comicReviewClose()` (removes the tracked overlay via object reference, `_comicReviewOverlayEl`, never a `getElementById` lookup — this node is never registered under any id, same as `showChoiceDialog`'s own dynamically-created overlays) |

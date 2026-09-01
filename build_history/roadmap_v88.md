@@ -2380,6 +2380,77 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_e — items AY + AZ: a comic chapter's three views no longer disagree about what to show
+
+**Two live bug reports, mid-session, on a chapter the user had just made.** Taken ahead of item AP
+(the `comic`→`image` rename, which moves to `v88_f`): a defect in real usage outranks a mechanical
+rename, and AP's key set is unaffected by the delay. **No `ui.json` keys.**
+
+**User report 1**: *"in the progress card of `tp_17882535928630000095` the vocab-highlight does not
+show text, while the translation and text-analysis view do show text."*
+**User report 2**: *"perhaps related: while text-analysis is running, the text is not shown in the
+original story language vocab-highlight view, while the image is not showing in the text-analysis
+view (which shows the `[qwen3.6:35b-a3b] CP2: analysing 2 sentence(s)…` message)."*
+
+**They are related, and the user's hunch was right about the first half — but they are TWO defects.**
+
+### Item AY — the per-panel renderer only ever read `caption` + `inScene`
+
+`_comicStoryPanelsHtml()` builds each panel's body from `[p.caption, p.inScene].filter(Boolean)`.
+The reported chapter is **description-only**: read from `lessons.json`, `comicPanels[0]` has
+`caption: ''`, `inScene: ''`, and — because it predates `v88_d` — **no `description` field at all**;
+its story came from `v87_l`'s image-description fallback. So the default view had nothing to render
+and produced an image with no text, while the translation view (`o.text != null`) and the text
+explorer both bypass the per-panel path and show the flat story. **That is exactly the asymmetry
+reported**, and report 2's first half is this same bug with nothing to do with analysis timing.
+
+Two halves to the fix, because the chapter needs both:
+- **`_comicStoryPanelsHtml` now honours the description fallback**, mirroring `_comicPanelText()`'s
+  own rule so the renderer and the chapter-formation path stop deciding separately what counts as a
+  panel's text. This serves chapters created from `v88_d` onward, which persist the field.
+- **`_comicPanelsHaveText(d)` gates the per-panel branch.** When the panels contribute nothing at
+  all — every chapter created before `v88_d`, including the reported one — the per-panel pairing has
+  nothing to pair, and the flat rendering (image strip + the whole highlighted story) is strictly
+  better. It is also the shape the translation view already used, so the two stop disagreeing.
+
+**⚠️ Fixing "no text" must not create "no image".** The ordinary highlighted path now carries the
+panel strip too — but **scoped to `o.text == null`**, deliberately: the panels describe `d.story`
+specifically, so a caller SUBSTITUTING different text must not get an image strip wrapped around it.
+That is a standing ruling `unit-comic-story-panel` §3 has pinned since `v85_n`, and the first cut of
+this fix broke it. **The existing guard caught it** — which is the argument for that assertion
+existing at all.
+
+### Item AZ — the explorer's TRANSIENT states dropped the image
+
+`_textExplorerBodyHtml()`'s four early returns (`loading`, `analyzing`, `error`, no chapter id)
+returned a BARE `<p class="te-status">` with no `_comicPanelsFlatTextHtml` wrapper, while the two
+settled states have always had one. So a comic chapter's panel image vanished for the whole of a
+multi-minute CP2 run and reappeared only when it finished — precisely report 2's second half.
+**Same class as `v87_k`**: a surface that short-circuits the shared renderer silently loses
+everything that renderer grew. One `status()` helper now routes all four through it;
+`_comicPanelsFlatTextHtml` is a no-op without `comicPanels`, so non-comic chapters are unchanged.
+
+### A proxy assertion, replaced rather than re-pinned
+
+`unit-tutor-selection` asserted the literal source spelling `wrap(_storyParasHtml(` as its stand-in
+for *"the selection wrapper is applied via the shared renderer, not per-caller"*. The AY refactor
+kept that claim perfectly true and broke the regex anyway — **a proxy fails in both directions**
+(the `v87_i` rule, from a new direction). Replaced with the actual claim: `wrap` is defined inside
+the renderer, the renderer returns through it, and **every emission of `data-tutor-select="1"` is a
+renderer's own `wrap` definition, never inlined at a call site**.
+
+Note what the first attempt at that got wrong: asserting the marker appears EXACTLY ONCE. It appears
+twice for good reason — `_comicStoryPanelsHtml` has legitimately had its own `wrap` since `v85_n`.
+"Not per-caller" is not "not more than once", and a guard that conflates them would block a correct
+change later. Mutation-tested both ways: inlining the marker at a call site goes red, and so does
+removing the wrap from `_storyBodyHtml`.
+
+**Guards**: `unit-comic-story-text.test.js` (7 checks) — the reported chapter rendered end to end,
+the three views agreeing, a chapter WITH lettering still getting per-panel pairing (non-vacuity, or
+the fix would collapse `PLAN §2.4` milestone 4 entirely), a description-only PANEL, a non-comic
+chapter untouched, and the image surviving all three transient explorer states plus the settled one.
+**Five mutations red**, plus two more on the corrected tutor assertion.
+
 ## ✅ v88_d — item AO (an extraction started on a phone is no longer lost) + item AN (a typed title no longer destroys the image description)
 
 Row 3 of the thirteen-TODO order: the data-loss pair, in the region `v88_c` had just settled. **One

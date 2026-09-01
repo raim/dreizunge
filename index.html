@@ -17559,7 +17559,20 @@ function _storyBodyHtml(d, opts){
   // rendering is completely unchanged. `o.text != null` (a caller overriding what text to show, e.g.
   // a translation) bypasses this — the panels describe `d.story` specifically, not arbitrary text a
   // caller substitutes in its place.
-  if (o.text == null && Array.isArray(d && d.comicPanels) && d.comicPanels.length) {
+  // item AY (v88_e, user-reported, tp_17882535928630000095): the per-panel renderer builds each
+  // panel's text from `caption`+`inScene` ONLY, so a DESCRIPTION-ONLY chapter — one whose panels
+  // produced no lettering and whose story came from the image-description fallback — rendered as
+  // images with NO TEXT AT ALL. The translation view and the text explorer both bypass the per-panel
+  // path and show the flat story, which is exactly the asymmetry reported: "the vocab-highlight does
+  // not show text, while the translation and text-analysis view do show text."
+  //
+  // `_comicPanelsHaveText(d)` is the gate: when the panels collectively contribute nothing, the
+  // per-panel pairing has nothing to pair and the FLAT rendering (image strip + the whole story,
+  // highlighted) is strictly better. Same shape the translation view already uses, so the two stop
+  // disagreeing. Falls through to the normal highlighted path below, which then wraps itself in
+  // `_comicPanelsFlatTextHtml` — the images are never lost either way.
+  if (o.text == null && Array.isArray(d && d.comicPanels) && d.comicPanels.length
+      && _comicPanelsHaveText(d)) {
     return _comicStoryPanelsHtml(d, o);
   }
   // v86_p/v86_t: the translation view — no per-panel translation exists (see
@@ -17572,17 +17585,41 @@ function _storyBodyHtml(d, opts){
   // that path renders the SOURCE-language / translation view, where a selection would be asking the
   // tutor about the wrong language's text — same reasoning that already turns highlighting off there.
   const wrap = html => '<div class="story-selectable" data-tutor-select="1">' + html + '</div>';
+  // item AY: keep the panel IMAGES when a comic chapter falls through to this path — otherwise the
+  // fix for "no text" would simply trade it for "no image". Scoped to `o.text == null` ON PURPOSE:
+  // the panels describe `d.story` specifically, so a caller SUBSTITUTING different text must not get
+  // an image strip wrapped around it (the standing ruling `unit-comic-story-panel` §3 pins, and the
+  // reason the per-panel branch above carries the same condition). `_comicPanelsFlatTextHtml` is a
+  // no-op without comicPanels, so an ordinary chapter is untouched either way.
+  const strip = html => (o.text == null && Array.isArray(d && d.comicPanels) && d.comicPanels.length)
+    ? _comicPanelsFlatTextHtml(d, html) : html;
   try {
     const all = [...new Set(
       (typeof _storyWordSources === 'function' ? _storyWordSources(d).map(x => x.word) : [])
         .concat((d.lessons || []).flatMap(L => (L && L.vocab || []).map(v => v && v.target)))
     )].filter(Boolean);
-    if (!all.length) return wrap(_storyParasHtml(furiHtml(text)));
-    return wrap(_storyParasHtml(
-      _highlightVocabHtml(furiHtml(text), all, [], _wordStateMap(d), _askedKeys(o.ex))));
+    if (!all.length) return wrap(strip(_storyParasHtml(furiHtml(text))));
+    return wrap(strip(_storyParasHtml(
+      _highlightVocabHtml(furiHtml(text), all, [], _wordStateMap(d), _askedKeys(o.ex)))));
   } catch(_) {
-    return wrap(_storyParasHtml(furiHtml(text)));   // unhighlighted is fine; failing to render is not
+    return wrap(strip(_storyParasHtml(furiHtml(text))));   // unhighlighted is fine; failing to render is not
   }
+}
+
+// item AY (v88_e): does this chapter's panel metadata carry ANY text of its own? Mirrors
+// `_comicPanelText()`'s own rule — extracted lettering, else the generated description — so the
+// renderer and the chapter-formation path agree about what counts as a panel's text instead of each
+// deciding separately. `description` is included because `v87_l` made it a real source of chapter
+// text; it was never read here, which is half of why a description-only chapter rendered blank.
+// (The other half: chapters created before `v88_d` have no `description` field persisted at all —
+// item AN half 2 — so for those this correctly returns false and the flat path shows `d.story`.)
+function _comicPanelsHaveText(d){
+  if (!Array.isArray(d && d.comicPanels)) return false;
+  return d.comicPanels.some(p => {
+    if (!p) return false;
+    const extracted = [p.caption, p.inScene].filter(Boolean).join('\n').trim();
+    return !!(extracted || String(p.description || '').trim());
+  });
 }
 
 // Tier 1 per PLAN §2.6 (bubble/panel-level boxes with ordinary clickable HTML text) — NOT per-word
@@ -17604,7 +17641,11 @@ function _comicStoryPanelsHtml(d, o){
   try { stateByKey = _wordStateMap(d); } catch(_) {}
   try { askedKeys = _askedKeys(o.ex); } catch(_) {}
   const panelsHtml = d.comicPanels.map(p => {
-    const raw = [p && p.caption, p && p.inScene].filter(Boolean).join('\n');
+    // item AY: same fallback rule as `_comicPanelText()` — extracted lettering, else the generated
+    // description. A panel whose only content is a description is a REAL panel with real chapter
+    // text (the `v87_l` ruling), and reading only caption+inScene here is what rendered it blank.
+    const _ext = [p && p.caption, p && p.inScene].filter(Boolean).join('\n');
+    const raw = _ext || String((p && p.description) || '');
     let bodyHtml;
     if (o.highlight === false || !all.length) {
       bodyHtml = _storyParasHtml(furiHtml(raw));
@@ -22089,10 +22130,18 @@ function _textExplorerBodyHtml(d){
   const chapterId = d && d.id;
   const wrap = html => '<div class="story-selectable">' + html + '</div>';
   if (!chapterId) return '<p class="te-status" dir="auto">' + escHtml(t('text_explorer.error', { error: 'no chapter id' })) + '</p>';
+  // item AZ (v88_e, user-reported): the four TRANSIENT states below used to return a BARE status
+  // line, so a comic chapter's panel image VANISHED for the whole of a multi-minute CP2 run and
+  // reappeared only when it finished — "the image is not showing in the text-analysis view (which
+  // shows the '[…] CP2: analysing 2 sentence(s)…' message)". The settled states two lines down have
+  // always wrapped in `_comicPanelsFlatTextHtml`; these did not, which is the same class as `v87_k`
+  // — a surface that short-circuits the shared renderer loses everything that renderer grew.
+  // `_comicPanelsFlatTextHtml` is a no-op without comicPanels, so a non-comic chapter is unchanged.
+  const status = html => wrap(_comicPanelsFlatTextHtml(d, html));
   const entry = _teCacheStore()[chapterId];
-  if (!entry || entry.status === 'loading') return '<p class="te-status" dir="auto">' + escHtml(t('text_explorer.loading')) + '</p>';
-  if (entry.status === 'analyzing') return '<p class="te-status" dir="auto">' + escHtml(entry.step || t('text_explorer.analyzing')) + '</p>';
-  if (entry.status === 'error') return '<p class="te-status" dir="auto">' + escHtml(t('text_explorer.error', { error: entry.error || '' })) + '</p>';
+  if (!entry || entry.status === 'loading') return status('<p class="te-status" dir="auto">' + escHtml(t('text_explorer.loading')) + '</p>');
+  if (entry.status === 'analyzing') return status('<p class="te-status" dir="auto">' + escHtml(entry.step || t('text_explorer.analyzing')) + '</p>');
+  if (entry.status === 'error') return status('<p class="te-status" dir="auto">' + escHtml(t('text_explorer.error', { error: entry.error || '' })) + '</p>');
   const sentences = (entry.data && entry.data.sentences) || [];
   // v86_p/v86_t: same shared card/padding wrapper as the translation view — see
   // _comicPanelsFlatTextHtml's own comment for why this can't reuse the default view's per-panel
