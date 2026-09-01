@@ -33,15 +33,58 @@ assert.ok(ui.en && Object.keys(ui.en).length > 100, 'ui.json has an `en` table t
 // matching it would report a bare prefix as missing. Those are out of scope by construction.
 const CALL_RE = /\bt\(\s*(['"])([^'"]+)\1\s*[),]/g;
 
+// v88_f (item AP): CALL_RE above sees only a key that is the WHOLE argument. A CONDITIONAL call —
+// `t(auto ? 'form.image_review_save' : 'form.image_review_confirm')` — matches neither branch, so
+// both keys were invisible to this sweep. Found by mutation while renaming the comic branch: putting
+// a since-deleted key inside such a ternary left this file GREEN. There are six such sites in the
+// client (twelve keys), including two this very rename edited, so the gap was live, not theoretical.
+//
+// This second pass scans the argument list of every `t(` call for KEY-SHAPED string literals
+// (`section.name`, the shape every ui.json key has). Deliberately bounded to the call's own
+// parentheses and deliberately NOT trying to understand expressions: a concatenated key stays out of
+// scope for the same reason CALL_RE excludes it — its full spelling is not knowable from source.
+const KEYISH = /(['"])([a-z][a-z0-9_]*(?:\.[a-z0-9_]+)+)\1/gi;
+function condKeys(src) {
+  const out = [];
+  for (let i = src.indexOf('t('); i >= 0; i = src.indexOf('t(', i + 1)) {
+    // `t(` must be a real call, not the tail of an identifier like `format(` or `insert(`.
+    if (i > 0 && /[\w$.]/.test(src[i - 1])) continue;
+    let depth = 0, j = i + 1;
+    for (; j < src.length && j < i + 400; j++) {
+      const c = src[j];
+      if (c === '(') depth++;
+      else if (c === ')') { depth--; if (!depth) break; }
+      else if (c === '\n') break;          // a call that spans lines is left to CALL_RE
+    }
+    if (depth !== 0) continue;
+    const arg = src.slice(i + 2, j);
+    if (!arg.includes('?')) continue;      // only the conditional shape CALL_RE cannot see
+    for (const m of arg.matchAll(KEYISH)) out.push(m[2]);
+  }
+  return out;
+}
+
 const FILES = ['index.html', 'lesson-editor.html'];
 const found = new Map();          // key -> Set(file)
+let condFound = 0;
 for (const f of FILES) {
   const src = fs.readFileSync(path.join(ROOT, f), 'utf8');
   for (const m of src.matchAll(CALL_RE)) {
     if (!found.has(m[2])) found.set(m[2], new Set());
     found.get(m[2]).add(f);
   }
+  for (const k of condKeys(src)) {
+    condFound++;
+    if (!found.has(k)) found.set(k, new Set());
+    found.get(k).add(f);
+  }
 }
+// Non-vacuity for the SECOND pass specifically — the first pass's own check below cannot show that
+// this one is still finding anything, and a silently-empty second pass is exactly the regression it
+// was added to prevent.
+assert.ok(condFound >= 8,
+  `the conditional-call sweep found ${condFound} keys; the client carries at least a dozen across ` +
+  'six ternary t() sites, so a much smaller number means this second pass stopped matching');
 
 // ── Non-vacuity ─────────────────────────────────────────────────────────────────────────────
 // Evaluated on the data the assertion actually runs against (`found`), not on the source text it

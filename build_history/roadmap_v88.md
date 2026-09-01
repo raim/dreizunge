@@ -313,7 +313,7 @@ card; (2) is a consequence of (3).
 Effort: a release. `unit-comic-review-card` and `e2e-drafts-comic` already exist to build on.
 **Mutation-test the durability claim by killing the client**, not by asserting the request body.
 
-### AP. Rename the whole `comic` branch of `ui.json` to `image`
+### ~~AP.~~ ✅ SHIPPED `v88_f` — rename the whole `comic` branch of `ui.json` to `image`
 
 **User's words**: "Let's rename the whole comic branch in `ui.json` to just 'image'. Uploading comics
 is just a possible application of the tool. We don't need to mention comic in related `ui.json`
@@ -2379,6 +2379,76 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v88 LINE
+
+## ✅ v88_f — item AP: the `comic` branch of `ui.json` is now the `image` branch
+
+**User request**: *"Let's rename the whole comic branch in `ui.json` to just 'image'. Uploading comics
+is just a possible application of the tool. We don't need to mention comic in related `ui.json`
+entries. Just image. Only for the panel-recognition, currently in German 'Automatische
+Panel-Erkennung', we can use 'detect comic panels'."*
+
+**The measurement made this far cheaper than the plan assumed.** 24 keys, but **only THREE whose
+ENGLISH TEXT actually contained "comic"** — the other 21 carried it in the KEY NAME only. Renaming a
+key preserves every translation it has; only CHANGED ENGLISH costs anything. Translations existed in
+six languages (`en`/`pt`/`fr`/`de`/`it`/`es`, 122 cells); the other 27 languages were unfilled and
+cost nothing. **The original plan's "22 keys, needs a budget" framing was true but misleading** — it
+counted the renames, which are free, not the text changes, which are the actual cost.
+
+**Six English strings changed**, and the user's own carve-out is one of them:
+
+| key | was | now |
+|---|---|---|
+| `form.use_image` | 🖼️ I have a **comic page** image | 🖼️ I have an image |
+| `form.image_help` | Upload a **comic page**, then drag… | Upload an image, then drag… |
+| `form.image_choose` | 🖼️ Upload a **comic page** | 🖼️ Upload an image |
+| `form.image_detect` | 🔍 Auto-detect panels | 🔍 **Detect comic panels** |
+| `storyline.thumb_show_images` | Show the **comic** images instead… | Show the images instead… |
+| `storyline.thumb_show_storyboard` | …instead of the **comic** images | …instead of the images |
+
+The last two are NOT in the `form.comic_*` branch and keep their names — they were found by
+searching VALUES rather than keys, and would otherwise have been the one place the old framing
+survived. `form.image_detect` is the only string that gains the word, per the user's ruling that
+there it does real work.
+
+**Stale translations DELETED, per the user's ruling**, so `translate-ui.js` refills them rather than
+leaving a translation describing a concept the English no longer names — the `unit-ui-verbatim-en`
+precedent (`v71_k`). 30 cells dropped (6 strings × 5 languages); 16 keys per language carried across
+untouched.
+
+**⚠️ The static markup carries a duplicate of each English string** and had to be updated too:
+`#use-comic-lbl`, `#comic-help`, `#comic-choose-lbl`, `#comic-detect-lbl` each hold an English
+DEFAULT rendered before `loadUIStrings()` applies `ui.json` — and baked as-is into the static build.
+Missing these would have left the old wording in exactly the place a first-time visitor sees first.
+Not caught by any guard; found by grepping the rendered markup for the visible strings.
+
+**Element ids, function names and CSS classes are UNCHANGED** (`#comic-panel`, `APP_COMIC`,
+`comicOpenReview`, `.comic-story-panel`). The ask was about `ui.json` entries — what the learner
+READS — and renaming internals would have been a large, guard-free diff with no user-visible effect.
+Code comments describing the original comic use case are likewise kept: they are historically
+accurate.
+
+### ⚠️ The rename found a live hole in `unit-ui-key-exists`
+
+Mutation-testing the rename produced a mutation that **stayed GREEN**: putting a since-deleted key
+back into the client left the guard passing. The cause is that `CALL_RE` matches only a key that is
+the WHOLE argument — `t('a.b')` — and the call site in question is a CONDITIONAL,
+`t(auto ? 'form.image_review_save' : 'form.image_review_confirm')` (introduced at `v88_c`), so
+**neither branch was ever checked**. There are **six such sites in the client, twelve keys**,
+including the two `storyline.thumb_*` keys this very release edited. The guard's headline claim —
+"every key the client asks `t()` for exists" — was simply false for that shape.
+
+Closed with a second pass that scans the argument list of every `t(` call for key-shaped literals,
+bounded to the call's own parentheses and restricted to the conditional shape `CALL_RE` cannot see.
+Sweep count went 606 → **616**. It carries **its own non-vacuity assertion** (`condFound >= 8`),
+because the first pass's count cannot show that the second one still matches anything, and a
+silently-empty second pass is precisely the regression it exists to prevent.
+
+Three mutations red: each ternary branch un-renamed (the case that used to pass), and the second
+pass silently matching nothing.
+
+**The lesson generalises past this file**: a sweep's regex defines what it actually covers, and
+"every X" in a guard's message is a claim about the regex, not about the code. Mutation-testing the
+FEATURE is what exposed it — reading the guard would not have.
 
 ## ✅ v88_e — items AY + AZ: a comic chapter's three views no longer disagree about what to show
 

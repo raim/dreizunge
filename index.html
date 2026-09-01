@@ -1338,7 +1338,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           </label>
           <label class="user-story-check-row">
             <input type="checkbox" id="use-comic-cb" onchange="onUseComicCb()">
-            <span id="use-comic-lbl">🖼️ I have a comic page image</span>
+            <span id="use-comic-lbl">🖼️ I have an image</span>
           </label>
         </div>
         <div class="pdf-panel" id="pdf-panel">
@@ -1474,13 +1474,13 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
              wired up yet. Mirrors #dialect-panel's exclusive-mode toggle (onUseComicCb ~ onUseDialectCb). -->
         <div class="user-story-panel" id="comic-panel">
           <div style="font-size:12px;color:var(--gray-dark);margin-bottom:6px" id="comic-help">
-            Upload a comic page, then drag a rectangle around each panel, in reading order. You can
+            Upload an image, then drag a rectangle around each panel, in reading order. You can
             delete or reorder panels afterward.
           </div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
             <input type="file" id="comic-file-input" accept="image/png,image/jpeg" style="display:none" onchange="onComicFileChosen(this)">
             <button type="button" id="comic-choose-btn" onclick="document.getElementById('comic-file-input').click()"
-              style="font-size:12px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"><span id="comic-choose-lbl">🖼️ Upload a comic page</span></button>
+              style="font-size:12px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"><span id="comic-choose-lbl">🖼️ Upload an image</span></button>
             <!-- v86_c (user-requested): `capture="environment"` opens the device camera DIRECTLY on a
                  phone/tablet browser (skips the gallery picker) — ignored on desktop, where this just
                  behaves like an ordinary file picker, so no device-sniffing is needed to show/hide it.
@@ -1505,7 +1505,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <button type="button" id="comic-rotate-btn" onclick="comicRotateImage()"
               style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🔄 <span id="comic-rotate-lbl">Rotate</span></button>
             <button type="button" id="comic-detect-btn" onclick="comicDetectPanels()"
-              style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🔍 <span id="comic-detect-lbl">Auto-detect panels</span></button>
+              style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🔍 <span id="comic-detect-lbl">Detect comic panels</span></button>
             <!-- v86_d (user-requested, item J): a single box spanning the whole image — for a lone
                  illustration or a one-panel comic, drawing/auto-detecting a box around the whole page
                  is pure friction. Same row/timing as auto-detect (shown once an image is loaded). -->
@@ -2966,17 +2966,17 @@ function applyUIStrings() {
   if (useStoryLbl) useStoryLbl.textContent = t('form.use_story');
   { const ud=document.getElementById('use-dialect-lbl'); if(ud) ud.textContent=t('form.use_dialect'); }
   { const ub=document.getElementById('upload-choose-lbl'); if(ub) ub.textContent=t('form.upload_doc'); }
-  { const uc=document.getElementById('use-comic-lbl'); if(uc) uc.textContent=t('form.use_comic'); }
-  { const ch=document.getElementById('comic-help'); if(ch) ch.textContent=t('form.comic_help'); }
-  { const cc=document.getElementById('comic-choose-lbl'); if(cc) cc.textContent=t('form.comic_choose'); }
-  { const ccam=document.getElementById('comic-camera-lbl'); if(ccam) ccam.textContent=t('form.comic_camera'); }
-  { const ccl=document.getElementById('comic-clear-lbl'); if(ccl) ccl.textContent=t('form.comic_clear'); }
-  { const cel=document.getElementById('comic-extract-lbl'); if(cel) cel.textContent=t('form.comic_extract'); }
-  { const cdl=document.getElementById('comic-describe-lbl'); if(cdl) cdl.textContent=t('form.comic_describe'); }
-  { const cgl=document.getElementById('comic-generate-lbl'); if(cgl) cgl.textContent=t('form.comic_generate'); }
-  { const crl=document.getElementById('comic-rotate-lbl'); if(crl) crl.textContent=t('form.comic_rotate'); }
-  { const cdl=document.getElementById('comic-detect-lbl'); if(cdl) cdl.textContent=t('form.comic_detect'); }
-  { const csl=document.getElementById('comic-single-panel-lbl'); if(csl) csl.textContent=t('form.comic_single_panel'); }
+  { const uc=document.getElementById('use-comic-lbl'); if(uc) uc.textContent=t('form.use_image'); }
+  { const ch=document.getElementById('comic-help'); if(ch) ch.textContent=t('form.image_help'); }
+  { const cc=document.getElementById('comic-choose-lbl'); if(cc) cc.textContent=t('form.image_choose'); }
+  { const ccam=document.getElementById('comic-camera-lbl'); if(ccam) ccam.textContent=t('form.image_camera'); }
+  { const ccl=document.getElementById('comic-clear-lbl'); if(ccl) ccl.textContent=t('form.image_clear'); }
+  { const cel=document.getElementById('comic-extract-lbl'); if(cel) cel.textContent=t('form.image_extract'); }
+  { const cdl=document.getElementById('comic-describe-lbl'); if(cdl) cdl.textContent=t('form.image_describe'); }
+  { const cgl=document.getElementById('comic-generate-lbl'); if(cgl) cgl.textContent=t('form.image_generate'); }
+  { const crl=document.getElementById('comic-rotate-lbl'); if(crl) crl.textContent=t('form.image_rotate'); }
+  { const cdl=document.getElementById('comic-detect-lbl'); if(cdl) cdl.textContent=t('form.image_detect'); }
+  { const csl=document.getElementById('comic-single-panel-lbl'); if(csl) csl.textContent=t('form.image_single_panel'); }
   _renderSplitModes();
   { const cl=document.getElementById('pdf-cleanup-lbl'); if(cl) cl.textContent=t('pdf.cleanup_lbl'); }
   { const al=document.getElementById('pdf-aiclean-lbl'); if(al) al.textContent=t('pdf.aiclean_lbl'); }
@@ -3608,7 +3608,7 @@ function _applyLessonCardUI(){
 function _applySkipLessonsUI(){ return _applyLessonCardUI(); }
 // One button, three modes, ZERO new ui.json keys — each mode reuses the string its own deleted button
 // already used (`pdf.generate_all`/`pdf.create_chapters_only` + the chapters/words counts,
-// `form.comic_create`, `form.generate`/`form.create_chapters`), so no translation work is created by
+// `form.image_create`, `form.generate`/`form.create_chapters`), so no translation work is created by
 // the unification.
 function _genStartBtnLabel(mode, skip, n){
   if(mode==='pdf'){
@@ -3616,7 +3616,7 @@ function _genStartBtnLabel(mode, skip, n){
     return (skip ? t('pdf.create_chapters_only') : t('pdf.generate_all'))
       + ' (' + t('pdf.chapters',{n}) + ', ' + t('pdf.words',{n:total}) + ')';
   }
-  if(mode==='comic') return skip ? t('form.create_chapters') : t('form.comic_create');
+  if(mode==='comic') return skip ? t('form.create_chapters') : t('form.image_create');
   return skip ? t('form.create_chapters') : t('form.generate');
 }
 function onNumChaptersSlider(v){
@@ -3924,7 +3924,7 @@ function _comicFinishSetup(img, status){
   _comicSetupCanvas();
   _comicWatchImageResize();   // v85_u: keep the canvas in sync as the image's rendered size changes
   // item AM (v88_c, user request): "upon image upload, let's pre-select the whole image as one
-  // panel, as if the button associated with form.comic_single_panel had been pressed already."
+  // panel, as if the button associated with form.image_single_panel had been pressed already."
   // The commonest upload by far is ONE photo of ONE thing — a sign, a page, an illustration — for
   // which the whole image IS the panel, so the previous default (no panels at all, every control
   // downstream inert until the user draws or auto-detects) made the common case do the most work.
@@ -4434,7 +4434,7 @@ async function comicExtractPanels(){
   const btn=document.getElementById('comic-generate-btn');
   const status=document.getElementById('comic-extract-status');
   if(btn) btn.disabled=true;
-  if(status) status.textContent=t('form.comic_extracting');
+  if(status) status.textContent=t('form.image_extracting');
   try{
     const images=boxes.map(_comicCropDataUrl);
     // item AO: FLUSH the draft first, so `_comicDraftId` definitely exists by the time the job is
@@ -4458,11 +4458,11 @@ async function comicExtractPanels(){
         draftId: _comicDraftId || null,
         continuedFrom: document.getElementById('continue-select')?.value || null})});
     const data=await r.json().catch(()=>({}));
-    if(!r.ok){ if(status) status.textContent=''; showToast(t('form.comic_extract_failed')+': '+(data.error||r.status)); if(btn) btn.disabled=false; return; }
+    if(!r.ok){ if(status) status.textContent=''; showToast(t('form.image_extract_failed')+': '+(data.error||r.status)); if(btn) btn.disabled=false; return; }
     _startComicExtractJob(data.jobId);
   }catch(e){
     if(status) status.textContent='';
-    showToast(t('form.comic_extract_failed')+': '+e.message);
+    showToast(t('form.image_extract_failed')+': '+e.message);
     if(btn) btn.disabled=false;
   }
 }
@@ -4516,7 +4516,7 @@ async function _comicExtractCheckOnce(jobId){
     if(j.status==='error'){
       _comicExtractJobId=null;
       if(status) status.textContent='';
-      showToast(t('form.comic_extract_failed')+': '+j.error);
+      showToast(t('form.image_extract_failed')+': '+j.error);
       if(btn) btn.disabled=false;
     }
     if(j.status==='cancelled'){
@@ -4529,7 +4529,7 @@ async function _comicExtractCheckOnce(jobId){
     console.log('Comic extract check: job '+jobId+' poll failed: '+e.message);
     _comicExtractJobId=null;
     if(status) status.textContent='';
-    showToast(t('form.comic_extract_failed')+': '+e.message);
+    showToast(t('form.image_extract_failed')+': '+e.message);
     if(btn) btn.disabled=false;
   }
 }
@@ -4599,7 +4599,7 @@ function comicOpenReview(auto){
   // like any other — which is required, since that description becomes the chapter's text.
   const editable=boxes.map((b,i)=>({i,b})).filter(({b})=>b && b.text && !b.text.error);
   if(!editable.length){
-    if(!auto) showToast(t('form.comic_create_failed')+': no extracted text yet');
+    if(!auto) showToast(t('form.image_create_failed')+': no extracted text yet');
     return;
   }
   _comicReviewEditable=editable;
@@ -4623,16 +4623,16 @@ function comicOpenReview(auto){
         ${img?`<img src="${img}" style="display:block;max-width:100%;max-height:160px;width:auto;height:auto;border-radius:8px;border:1px solid var(--gray-mid);object-fit:contain">`:''}
       </div>
       <input type="text" value="${escAttr(buf.title)}" oninput="_comicReviewEdit(${k},'title',this.value)"
-        placeholder="${escAttr(t('form.comic_title_ph'))}"
+        placeholder="${escAttr(t('form.image_title_ph'))}"
         style="font-size:15px;font-weight:800;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px solid var(--accent);border-radius:8px;color:var(--text)">
       <input type="text" value="${escAttr(buf.caption)}" oninput="_comicReviewEdit(${k},'caption',this.value)"
-        placeholder="${escAttr(t('form.comic_caption_ph'))}"
+        placeholder="${escAttr(t('form.image_caption_ph'))}"
         style="font-size:15px;font-weight:700;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;color:var(--text)">
       <textarea rows="4" oninput="_comicReviewEdit(${k},'inScene',this.value)"
-        placeholder="${escAttr(t('form.comic_scene_ph'))}"
+        placeholder="${escAttr(t('form.image_scene_ph'))}"
         style="font-size:15px;font-weight:600;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;color:var(--text);resize:vertical;min-height:88px">${escHtml(buf.inScene)}</textarea>
       ${buf.description ? `<textarea rows="3" oninput="_comicReviewEdit(${k},'description',this.value)"
-        placeholder="${escAttr(t('form.comic_scene_ph'))}"
+        placeholder="${escAttr(t('form.image_scene_ph'))}"
         style="font-size:15px;font-weight:600;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px dashed var(--blue);border-radius:8px;color:var(--text);resize:vertical;min-height:66px">${escHtml(buf.description)}</textarea>` : ''}
     </div>`;
   }).join('');
@@ -4641,15 +4641,15 @@ function comicOpenReview(auto){
   ov.style.zIndex=400;   // above the generation wizard's own card stack
   ov.innerHTML=
     '<div class="modal-box" style="max-width:min(1200px,95vw);width:95vw;height:90vh;max-height:90vh" role="dialog" aria-modal="true">'
-    + `<div class="modal-hdr"><span>${escHtml(t('form.comic_review_title'))}</span>`
+    + `<div class="modal-hdr"><span>${escHtml(t('form.image_review_title'))}</span>`
     + `<button type="button" class="modal-close" onclick="_comicReviewCancel()">✕</button></div>`
     + `<div style="padding:0 20px;overflow-y:auto;flex:1">`
-    + `<div style="font-size:13px;color:var(--gray-dark);padding:12px 0">${escHtml(t('form.comic_review_hint'))}</div>`
+    + `<div style="font-size:13px;color:var(--gray-dark);padding:12px 0">${escHtml(t('form.image_review_hint'))}</div>`
     + `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;padding-bottom:16px">${rows}</div>`
     + `</div>`
     + `<div class="modal-footer">`
     + `<button type="button" class="modal-btn secondary" onclick="_comicReviewCancel()">${escHtml(t('dialog.cancel'))}</button>`
-    + `<button type="button" class="modal-btn primary" onclick="_comicReviewConfirm()">${escHtml(t(auto ? 'form.comic_review_save' : 'form.comic_review_confirm'))}</button>`
+    + `<button type="button" class="modal-btn primary" onclick="_comicReviewConfirm()">${escHtml(t(auto ? 'form.image_review_save' : 'form.image_review_confirm'))}</button>`
     + `</div></div>`;
   ov.addEventListener('click',e=>{ if(e.target===ov) _comicReviewCancel(); });   // backdrop click — not exercised by the test harness (see lib-dom.js's own addEventListener no-op), same as every other modal's backdrop dismiss in this file
   _comicReviewOverlayEl=ov;
@@ -4732,13 +4732,13 @@ let _comicBookId=null, _comicBookPolling=false;
 async function comicCreateChapter(){
   const boxes=_comicPanels();
   if(!boxes.length) return;
-  if(!boxes.some(b=>_comicPanelText(b))){ showToast(t('form.comic_create_failed')+': no extracted text yet'); return; }
+  if(!boxes.some(b=>_comicPanelText(b))){ showToast(t('form.image_create_failed')+': no extracted text yet'); return; }
   const extractBtn=document.getElementById('comic-generate-btn');
   const status=document.getElementById('comic-extract-status');
   if(extractBtn) extractBtn.disabled=true;
   // item AL part 2: #comic-create-btn is gone — the shared #gen-btn started this, and
   // _applyLessonCardUI() withdraws it on its own once _comicBookId is set (below). Nothing to disable.
-  if(status) status.textContent=t('form.comic_extracting');
+  if(status) status.textContent=t('form.image_extracting');
   try{
     // v85_p gave this panel its own lesson-type/storyboard controls because it had NONE and
     // #pdf-panel did; item AL part 2 removed that duplication instead — every field below now reads
@@ -4794,7 +4794,7 @@ async function comicCreateChapter(){
     };
     const r=await fetch('/api/generate-book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const data=await r.json().catch(()=>({}));
-    if(!r.ok){ if(status) status.textContent=''; showToast(t('form.comic_create_failed')+': '+(data.error||r.status)); if(extractBtn) extractBtn.disabled=false; return; }
+    if(!r.ok){ if(status) status.textContent=''; showToast(t('form.image_create_failed')+': '+(data.error||r.status)); if(extractBtn) extractBtn.disabled=false; return; }
     _comicBookId=data.bookId;
     // item R follow-up: real generation is now the durable record — same "discard the pre-
     // generation draft the instant it's superseded" moment as the PDF flow's own pdfGenerateAll().
@@ -4803,7 +4803,7 @@ async function comicCreateChapter(){
     _pollComicBookJob(_comicBookId);
   }catch(e){
     if(status) status.textContent='';
-    showToast(t('form.comic_create_failed')+': '+e.message);
+    showToast(t('form.image_create_failed')+': '+e.message);
     if(extractBtn) extractBtn.disabled=false;
     _applyLessonCardUI();
   }
@@ -4836,11 +4836,11 @@ async function _comicBookCheckOnce(bookId){
   if(_comicBookId!==bookId){ console.log('Comic book-job check: '+bookId+' superseded while the fetch was in flight'); return; }
   if(gone){ console.log('Comic book-job check: '+bookId+' is gone (404)'); _comicBookId=null; await _comicBookFinish(); return; }
   console.log('Comic book-job check: '+bookId+' status='+j.status);
-  if(status && j.chapters && j.chapters[0]) status.textContent=j.chapters[0].status==='active' ? t('form.comic_extracting') : '';
+  if(status && j.chapters && j.chapters[0]) status.textContent=j.chapters[0].status==='active' ? t('form.image_extracting') : '';
   if(j.status==='done'||j.status==='error'||j.status==='cancelled'){
     const chapters=j.chapters, error=j.error, jStatus=j.status;
     _comicBookId=null;   // clear FIRST so a concurrent second call becomes a no-op
-    if(jStatus==='error') showToast(t('form.comic_create_failed')+': '+(error||''));
+    if(jStatus==='error') showToast(t('form.image_create_failed')+': '+(error||''));
     else if(jStatus==='done') showToast(t('toast.generated',{topic:(chapters&&chapters[0]&&chapters[0].title)||''}));
     await _comicBookFinish();
   }
@@ -4876,16 +4876,16 @@ async function comicDetectPanels(){
   const btn=document.getElementById('comic-detect-btn');
   const status=document.getElementById('comic-detect-status');
   if(btn) btn.disabled=true;
-  if(status) status.textContent=t('form.comic_extracting');
+  if(status) status.textContent=t('form.image_extracting');
   try{
     const r=await fetch('/api/comic-detect-panels',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({image:APP_COMIC.dataUrl})});
     const data=await r.json().catch(()=>({}));
-    if(!r.ok){ if(status) status.textContent=''; showToast(t('form.comic_detect_failed')+': '+(data.error||r.status)); if(btn) btn.disabled=false; return; }
+    if(!r.ok){ if(status) status.textContent=''; showToast(t('form.image_detect_failed')+': '+(data.error||r.status)); if(btn) btn.disabled=false; return; }
     _startComicDetectJob(data.jobId);
   }catch(e){
     if(status) status.textContent='';
-    showToast(t('form.comic_detect_failed')+': '+e.message);
+    showToast(t('form.image_detect_failed')+': '+e.message);
     if(btn) btn.disabled=false;
   }
 }
@@ -4918,7 +4918,7 @@ async function _comicDetectCheckOnce(jobId){
     if(j.status==='error'){
       _comicDetectJobId=null; _comicDetectPolling=false;
       if(status) status.textContent='';
-      showToast(t('form.comic_detect_failed')+': '+j.error);
+      showToast(t('form.image_detect_failed')+': '+j.error);
       if(btn) btn.disabled=false;
     }
     if(j.status==='cancelled'){
@@ -4931,7 +4931,7 @@ async function _comicDetectCheckOnce(jobId){
     console.log('Comic detect check: job '+jobId+' poll failed: '+e.message);
     _comicDetectJobId=null; _comicDetectPolling=false;
     if(status) status.textContent='';
-    showToast(t('form.comic_detect_failed')+': '+e.message);
+    showToast(t('form.image_detect_failed')+': '+e.message);
     if(btn) btn.disabled=false;
   }
 }
@@ -4975,7 +4975,7 @@ document.addEventListener('visibilitychange', ()=>{
 // (a fresh detection is a fresh suggestion, not merged with hand-drawn ones already present) — the
 // user can always redraw/delete afterward through the existing UI if that is not what they wanted.
 function _comicApplyDetectedPanels(panels){
-  if(!Array.isArray(panels) || !panels.length) { console.log('Comic detect: no panels in response'); showToast(t('form.comic_detect_failed')+': no panels found'); return; }
+  if(!Array.isArray(panels) || !panels.length) { console.log('Comic detect: no panels in response'); showToast(t('form.image_detect_failed')+': no panels found'); return; }
   const w=APP_COMIC.naturalW||1, h=APP_COMIC.naturalH||1;
   const rawToNatural=b=>({
     x1:Math.max(0,Math.round(b[0]/1000*w)), y1:Math.max(0,Math.round(b[1]/1000*h)),
@@ -5003,10 +5003,10 @@ function _comicApplyDetectedPanels(panels){
   } else {
     console.log('Comic detect: all '+panels.length+' panel(s) kept');
   }
-  if(!converted.length){ showToast(t('form.comic_detect_failed')+': no panels found'); return; }
+  if(!converted.length){ showToast(t('form.image_detect_failed')+': no panels found'); return; }
   APP_COMIC.boxes=converted;
   if(converted.length<panels.length){
-    showToast(t('form.comic_detect_partial')+': '+converted.length+'/'+panels.length);
+    showToast(t('form.image_detect_partial')+': '+converted.length+'/'+panels.length);
   }
   _comicRedraw(); _comicRenderList();
 }
@@ -9253,7 +9253,7 @@ async function doGenerate(forceRegen){
   if(_genInputMode()==='comic'){
     if(!APP.info.canGenerate) return;
     const boxes=_comicPanels();
-    if(!boxes.length){ showToast(t('form.comic_create_failed')+': no panels yet'); return; }
+    if(!boxes.length){ showToast(t('form.image_create_failed')+': no panels yet'); return; }
     comicOpenReview(); return;
   }
   const topic=document.getElementById('topic-input').value.trim();
@@ -22482,7 +22482,7 @@ async function _jobsOpenComicExtract(link){
     _comicApplyExtraction(panels);
     comicOpenReview(true);
   }catch(e){
-    showToast(t('form.comic_extract_failed')+': '+e.message);
+    showToast(t('form.image_extract_failed')+': '+e.message);
   }
 }
 // item R: discard a draft BY ID from the popover — distinct from discardDraft() (index.html's PDF

@@ -126,8 +126,8 @@ const bookPosts = C => C.run(`__posts.filter(function(u){ return u.indexOf('/api
       // ampersand, so escHtml turns "&" into "&amp;" and the raw ui.json value never appears
       // literally in the markup. Taking them through the client's own escHtml keeps this correct if
       // either string is reworded (item AP will rewrite this whole branch).
-      const escSave = C.run(`escHtml(t('form.comic_review_save'))`);
-      const escGen  = C.run(`escHtml(t('form.comic_review_confirm'))`);
+      const escSave = C.run(`escHtml(t('form.image_review_save'))`);
+      const escGen  = C.run(`escHtml(t('form.image_review_confirm'))`);
       assert.notStrictEqual(escSave, escGen, 'the two labels are genuinely different strings');
       assert.ok(autoHtml.includes(escSave),
         'the auto card offers the save-and-continue label');

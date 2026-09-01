@@ -123,7 +123,7 @@ const bookBody = C => JSON.parse(C.run(
       const html = C.run(`_comicReviewOverlayEl.innerHTML`);
       assert.ok(html.includes(`_comicReviewEdit(0,'title'`), 'a title input, bound to the title field');
       assert.ok(html.includes(`_comicReviewEdit(0,'caption'`), 'and the caption input is still there');
-      assert.ok(html.includes(UI.en['form.comic_title_ph']), 'labelled with the new placeholder');
+      assert.ok(html.includes(UI.en['form.image_title_ph']), 'labelled with the new placeholder');
       console.log('  the review card renders a title input beside the caption one: OK');
     }
 

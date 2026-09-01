@@ -403,7 +403,7 @@ console.log('  _genInputMode()/_genChapterCount()/_genArcApplicable(): correct p
   assert.strictEqual(comic.arc, 'shown', 'comic: the ONE arc row is offered');
   assert.strictEqual(comic.qc, 'hidden', 'comic: QC not offered, same reason as PDF');
   assert.strictEqual(comic.btnRow, 'shown', 'comic: the shared start button replaces the deleted #comic-create-btn');
-  assert.strictEqual(comic.label, UI.en['form.comic_create'],
+  assert.strictEqual(comic.label, UI.en['form.image_create'],
     'comic: the start button reuses the deleted button\'s OWN existing string — no new ui.json key');
 
   const llm = vis(`APP.numChapters = 3;`);
