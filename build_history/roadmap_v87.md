@@ -2211,6 +2211,78 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v87 LINE
 
+## ✅ v87_p — the server RE-DETECTS its backend instead of deciding once at startup
+
+**User request, after diagnosing a false alarm together**: *"do the re-detection fix."*
+
+**How it surfaced.** The user asked why the "continue story" buttons on the storyline and lesson-set
+pages had disappeared, and guessed it was related to having just deleted a storyline's last chapter.
+It was not. Both buttons are gated on `APP.info.canGenerate` and nothing else
+(`#sl-bottom-continue`; the `↪ ↪` in `#lesson-actions`), and the real cause was in their own console
+output: the server had been started while Ollama was down — *"Checking Ollama… not found — offline
+mode"* — and **stayed offline for the entire session**. `pingOllama()` had exactly ONE call site in
+`server.js` and `active` was never revisited, so the only cure was restarting the server.
+
+The delete lead was chased and RULED OUT rather than assumed away: the delete route really does clean
+`sl.chapters` (`server.js`), and a storyline still holding a just-deleted chapter id was reproduced in
+the DOM harness — no throw, bottom row still shown. Worth recording, because the guess was reasonable
+and the disproof is what pointed at the console line.
+
+**Server half.** A self-scheduling re-check, deliberately ASYMMETRIC:
+- **OFFLINE → ONLINE on the FIRST successful ping, every 15s.** This is the case that actually bit
+  the user, twice; being slow to recover is the whole complaint.
+- **ONLINE → OFFLINE only after TWO consecutive failures, every 60s.** A single dropped ping is a
+  blip, not a backend going away — flipping on one would disable the UI mid-session, a worse failure
+  than the one being fixed.
+- **Logged ONLY on a real transition**, or a healthy server prints a line every 15 seconds.
+- **`unref()`d**, so the timer can never hold the process open — the e2e suite spawns and kills
+  servers constantly and a live handle would hang the runner.
+- Cadences are overridable (`BACKEND_RECHECK_OFFLINE_MS`/`_ONLINE_MS`, floored at 250ms) — the same
+  shape as the `LESSONS_FILE`/`UI_FILE`/`PORT` config this file already takes from the environment.
+  Not a test-only backdoor, though the e2e is what forced it (see below).
+
+**⚠️ An honest correction recorded in the code**: the `BACKEND !== 'none'` condition is NOT what
+protects an explicitly disabled backend. `llm.js`'s own `ping()` returns false unless
+`BACKEND === 'ollama'`, so a disabled backend can never be detected as up however often it is polled
+— that is the real guarantee, and it holds with or without the condition. Removing the server-side
+guard leaves the e2e GREEN precisely because the deeper one still holds; removing BOTH turns it red.
+The condition is kept as an OPTIMISATION (don't schedule a timer that will ping and fail forever for
+a configuration that opted out), and the comment now says so instead of claiming to be the safety net.
+
+**Client half — without it the fix would be half a fix.** `APP.info` is fetched EXACTLY ONCE, in
+`init()`, so an already-open page would keep every generation control hidden until a manual reload and
+the reported symptom would persist anyway. `_startBackendWatch()` polls `/api/info` **only while
+offline** (a healthy session makes no extra requests at all), and on recovery re-renders the three
+surfaces that gate on `canGenerate` — library list, lesson-set path, storyline screen — each guarded
+independently so one failing cannot stop the others. Deliberately does NOT poll the other way, the
+same asymmetry the server applies. Silent: buttons reappearing is self-explanatory, and a toast would
+have cost a `ui.json` string for something already visible. It lives INSIDE the static-build exclude
+region with `init()`, verified absent from `docs/index.html` — the static build has no server to poll.
+
+**Verified LIVE, both directions, against real processes** (not only the fake harness):
+- A server booted against a dead port reported `canGenerate:false` and logged "not found — offline
+  mode". A stand-in backend was then started on that port; the server flipped to `canGenerate:true`
+  within ~6s and logged the transition exactly once. **No restart.**
+- The backend was then killed at 21:54:57. The server stayed ONLINE through 21:56:38 and flipped at
+  21:56:43 — ~106s, i.e. two 60s checks, exactly the hysteresis intended, with one log line.
+
+**New `test/e2e-backend-recheck.test.js`** (4 sections, real spawned servers): starts offline when
+nothing answers; picks up a late-starting backend with no restart; does not re-log while healthy; and
+`LLM_BACKEND=none` never comes online even with a live backend on its port.
+
+**THREE separate vacuity defects were found in that one test by mutation-testing, each fixed:**
+1. §4's wait (3s) was shorter than the default 15s poll, so the loop never ran inside the window —
+   which is why the cadence became configurable.
+2. After restructuring (see below) §4 ran AFTER the `finally` that closed the stand-in backend, so
+   "stays offline even though the backend is reachable" had a false premise — it now starts its own.
+3. Even correct, §4 cannot attribute the behaviour to one guard, because two independent guards
+   enforce it. The test now says so explicitly rather than implying it proves the server-side one.
+
+**And one real harness trap worth carrying**: `lib.js`'s `boot()` derives its port from the process
+id, so TWO servers booted in one test process collide — the second fails to bind and every request
+silently reaches the FIRST. A nested second boot made §4 query the already-healed server and "fail"
+while the code was correct. The second boot now happens only after the first is stopped.
+
 ## ✅ v87_o — multi-type add-lessons on the lesson-set page; the story so far as context for an image description; and TWO corpus-dependent tests repaired
 
 Two user requests, plus a genuine baseline finding uncovered while verifying them.

@@ -1,7 +1,7 @@
-# Session prompt — written at the `v87_o` cut
+# Session prompt — written at the `v87_p` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
-one alongside. Keep using the double-letter suffix scheme (`v87_p`, `v87_q`, …) unless a future
+one alongside. Keep using the double-letter suffix scheme (`v87_q`, `v87_r`, …) unless a future
 session has a good reason to switch to `v88_a` instead.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
@@ -21,29 +21,32 @@ live server was running on port 3000 throughout the `v87_g`/`v87_h`/`v87_i` cuts
 `v87_g` was live-verified that way, with nothing of the user's touched. `prompts.json` and `ui.json`
 HOT-RELOAD live via `fs.watch` too.
 
-**What shipped this cut**: `v87_o` — two user requests plus a real baseline finding.
-(1) The lesson-set page's add-lessons now offers the SHARED multi-select tick-list (its hand-written
-`<select>` was deleted; Generate opens the same `_pickLessonTypes()` modal the storyline page uses).
-The dialect gate moved with it, from a CSS class on that `<select>` to an `ai: true` flag on
-`ADD_LESSON_TYPES` + an `allowAi` filter — otherwise it would have been silently lost.
-(2) Image descriptions now receive "the story so far" as context: the continued-from chain (assembled
-server-side by `collectChainStory` — the client's savedList has no story text) plus the panels already
-described in the same batch.
+**What shipped this cut**: `v87_p` — the server now RE-DETECTS its backend instead of deciding once
+at startup. Reported as "why have the continue story buttons disappeared?": the server had been
+started while Ollama was down, printed "not found — offline mode", and stayed offline all session,
+because `pingOllama()` had a single call site and `active` was never revisited. Both continue buttons
+(and the storyline ➕, and the whole lesson-set action row) are gated on `APP.info.canGenerate`, so it
+reads as broken buttons rather than as a state.
 
-**⚠️ (3) TWO TESTS WERE FAILING ON YOUR LIVE CORPUS, not on any code change** — and this is the thing
-to carry forward. `unit-word-progress` and `unit-story-unlocked-card` failed 8/8, deterministically.
-They fail at HEAD too, PASS with the COMMITTED `lessons.json` and FAIL with the working-tree one: the
-live server wrote another chapter between release runs, and the new content broke two fixture
-SELECTIONS. Both had the same defect — the fixture was chosen by a PROXY for the property the section
-then asserts (`v81_d`/`v81_e`'s lesson, a third time). Both now select by the property ITSELF.
-**Expect this class again**: any test that picks a fixture out of `lessons.json` by a weaker condition
-than it goes on to assert is one generated chapter away from going red on correct code.
+Asymmetric by design: OFFLINE→ONLINE on the first successful ping every 15s; ONLINE→OFFLINE only after
+TWO consecutive failures at 60s (a blip must not disable the UI mid-session). The CLIENT half matters
+too — `APP.info` is fetched once in `init()`, so `_startBackendWatch()` polls `/api/info` while offline
+and re-renders the three gated surfaces on recovery. Verified live in both directions against real
+processes. **⚠️ The `BACKEND !== 'none'` condition is an optimisation, NOT the protection** —
+`llm.js`'s `ping()` already refuses unless `BACKEND === 'ollama'`; removing either guard alone leaves
+the e2e green, and the code comment says so.
+
+**Still open from the storyline batch** (user chose separate releases, images shipped at `v87_m`):
+chapter RE-ORDERING (ruled: re-link `continuedFromId`, not just the array — and forks need a
+deliberate rule), SPLIT-OFF into "orphaned from <title>", and ADD-EXISTING-CHAPTER (ruled: add without
+removing). `storyline.chapters` is an ordered array that is both membership and order, and
+`POST /api/storylines` already upserts it, so all three need little new server work.
 
 ## Orient yourself, in this order
 
 1. **This file**, whole.
 2. `build_history/roadmap_v87.md` — its **index table** and **⚠️ Session protocol** block first, then
-   item AL's status block, then `# ✅ SHIPPED IN THE v87 LINE` (`v87_b` → `v87_o`).
+   item AL's status block, then `# ✅ SHIPPED IN THE v87 LINE` (`v87_b` → `v87_p`).
 3. `build_history/roadmap_v86.md` is KEPT as the historical record for the whole `v86` line
    (`v86_a`…`v86_ag`) — go there for how something from THAT line was built.
 4. `INTERNALS.md` **§6b** covers the jobs popover, the drafts store, and the `skipLessons` mechanism
@@ -53,7 +56,7 @@ than it goes on to assert is one generated chapter away from going red on correc
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 309 checks
+node test/run.js                          → expect 310 checks
 node test/run.js --quick                  → expect 260
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
@@ -80,7 +83,7 @@ a chaptering step ever returns) and are UNCHANGED at `v87_h`. `lessons.json`/`ca
 server generated a topic mid-session, which is exactly the "inherently live snapshot" this line warns
 about; both files were swept into the `v87_i` release commit so the guarded counts stay consistent
 with the tree.
-`drafts.json` may exist at the project root (server-created, gitignored) — normal. `APP_VERSION = 'v87_o'`.
+`drafts.json` may exist at the project root (server-created, gitignored) — normal. `APP_VERSION = 'v87_p'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -114,6 +117,15 @@ forward explicitly:
   started on a spare port for a live model check; the user's own instance was running the identical
   command line. Always list by PID first (`ps -eo pid,cmd | grep '[n]ode server.js'`) and kill the
   ONE pid, and never assume the only matching process is yours.
+- **`lib.js`'s `boot()` derives its port from the PROCESS ID — two servers in one test process
+  COLLIDE.** The second fails to bind and every request silently reaches the FIRST. At `v87_p` a
+  nested second boot made a section query the already-healed server and "fail" while the code was
+  correct. Boot a second server only after stopping the first.
+- **When a mutation stays GREEN, ask whether a SECOND guard is holding — do not just strengthen the
+  test.** At `v87_p`, removing the server's `BACKEND !== 'none'` check changed nothing because
+  `llm.js`'s `ping()` already refuses unless the backend is ollama. The honest outcome was to keep the
+  (now correctly described) optimisation, say in the comment that it is not the protection, and record
+  in the test that it cannot attribute the behaviour to one guard. Removing BOTH does go red.
 - **A fixture chosen by a PROXY for the property a section asserts is one generated chapter away
   from red.** Third occurrence (`v81_d`, `v81_e`, now `v87_o` twice over). "The first chapter with a
   story and >=4 vocab words" is not "a chapter whose vocab appears in its story"; "a question

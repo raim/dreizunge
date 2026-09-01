@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v87_o';
+const APP_VERSION  = 'v87_p';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -5898,6 +5898,70 @@ async function boot() {
     console.log(active === 'ollama' ? 'reachable ✓' : 'not found — offline mode');
   }
   if (active === 'ollama') await warmupOllama();
+
+  // ── Backend RE-DETECTION (user request) ───────────────────────────────────────────────────────
+  // Reported twice: the server was started while Ollama was not up yet, printed "not found —
+  // offline mode", and STAYED offline for the whole session even once Ollama was running. Every
+  // generation-gated control then silently disappears client-side (`APP.info.canGenerate`), which
+  // reads as broken buttons rather than as a state — the user's own report was "any idea why the
+  // continue story buttons have disappeared?".
+  //
+  // `active` was set exactly once, above, and never revisited: `pingOllama()` had a single call
+  // site in the whole file. This re-checks it, so the server heals itself instead of needing a
+  // restart.
+  //
+  // Design, deliberately asymmetric:
+  //   • OFFLINE → ONLINE on the FIRST successful ping, checked often (15s). This is the case that
+  //     actually bit the user, and being slow to recover is the whole complaint.
+  //   • ONLINE → OFFLINE only after TWO consecutive failures, checked rarely (60s). A single
+  //     dropped ping is a blip, not a backend going away, and flipping on one would disable the UI
+  //     mid-session — a worse failure than the one being fixed.
+  //   • `BACKEND === 'none'` is never revisited. ⚠️ Be precise about WHY, because it is not this
+  //     line that guarantees it: `llm.js`'s own `ping()` returns false unless `BACKEND === 'ollama'`,
+  //     so a disabled backend can never be detected as up however often it is polled. That is the
+  //     real protection, and it holds with or without the condition below — verified by mutation
+  //     (removing this guard leaves the e2e green, precisely because the deeper one still holds).
+  //     The condition is kept as an OPTIMISATION, not a safety net: without it the server would
+  //     schedule a timer that pings and fails forever, for a configuration that has opted out.
+  //   • Logged ONLY on a real transition, or a healthy server prints a line every 15 seconds.
+  //   • The timer is `unref()`d so it can never hold the process open — the e2e suite spawns and
+  //     kills servers constantly, and a live handle there would hang the runner.
+  if (BACKEND !== 'none') {
+    // Overridable so the e2e can exercise the loop in seconds instead of minutes. Same shape as
+    // LESSONS_FILE/UI_FILE/PORT, which this file already takes from the environment — NOT a
+    // test-only backdoor: an operator on a flaky link has a real reason to re-check more often.
+    // Floored at 250ms so a typo cannot turn this into a busy loop against the backend.
+    const _envMs = (name, dflt) => {
+      const v = parseInt(process.env[name] || '', 10);
+      return Number.isFinite(v) && v >= 250 ? v : dflt;
+    };
+    const _RECHECK_OFFLINE_MS = _envMs('BACKEND_RECHECK_OFFLINE_MS', 15000);
+    const _RECHECK_ONLINE_MS  = _envMs('BACKEND_RECHECK_ONLINE_MS', 60000);
+    let _pingFails = 0;
+    const _scheduleBackendRecheck = () => {
+      const t = setTimeout(async () => {
+        try {
+          const up = await pingOllama();
+          if (up) {
+            _pingFails = 0;
+            if (active !== 'ollama') {
+              active = 'ollama';
+              console.log('  ✓ Ollama is reachable again — generation re-enabled (was offline).');
+              // Warm the model as the startup path does, but never block the poll loop on it.
+              warmupOllama().catch(() => {});
+            }
+          } else if (active === 'ollama' && ++_pingFails >= 2) {
+            active = 'none';
+            _pingFails = 0;
+            console.log('  ⚠ Ollama unreachable (2 checks) — offline mode until it returns.');
+          }
+        } catch (e) { /* a re-check must never take the server down */ }
+        _scheduleBackendRecheck();
+      }, active === 'ollama' ? _RECHECK_ONLINE_MS : _RECHECK_OFFLINE_MS);
+      if (t.unref) t.unref();
+    };
+    _scheduleBackendRecheck();
+  }
 
   console.log('\n🌍  Dreizunge');
   console.log('='.repeat(44));

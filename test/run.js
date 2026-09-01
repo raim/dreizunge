@@ -335,6 +335,7 @@ if (!quick) {
   run('e2e: comic panel text extraction (PLAN §2.4 Track A4 milestone 2, v85_k)', 'node', [path.join(__dirname, 'e2e-comic-extract.test.js')]);
   run('e2e: comic panel image DESCRIPTION — the lazy fallback (user request)', 'node', [path.join(__dirname, 'e2e-comic-describe.test.js')]);
   run('e2e: storyline artwork — comicPanelCount + /api/comic-thumb (user request)', 'node', [path.join(__dirname, 'e2e-storyline-artwork.test.js')]);
+  run('e2e: backend RE-DETECTION — a late-starting Ollama is picked up (user request)', 'node', [path.join(__dirname, 'e2e-backend-recheck.test.js')]);
   run('e2e: comic chapter formation (PLAN §2.4 Track A4 milestone 3, v85_m)', 'node', [path.join(__dirname, 'e2e-comic-chapter.test.js')]);
   run('e2e: comic panel auto-detection (PLAN §2.4 Track A4 milestone 5, v85_o)', 'node', [path.join(__dirname, 'e2e-comic-detect.test.js')]);
   run('e2e: save-story syncs comicPanels for a single-panel chapter (v86_g)', 'node', [path.join(__dirname, 'e2e-save-story-comic-sync.test.js')]);
