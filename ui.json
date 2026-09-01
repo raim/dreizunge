@@ -112,6 +112,7 @@
     "form.comic_review_title": "Review extracted text",
     "form.comic_review_hint": "Check and edit each panel's text before creating the chapter.",
     "form.comic_caption_ph": "Caption / sign text",
+    "form.comic_title_ph": "Chapter title (optional)",
     "form.comic_scene_ph": "What's happening in the scene",
     "form.comic_review_confirm": "✅ Confirm & create chapter",
     "form.comic_review_save": "✅ Save text & continue",

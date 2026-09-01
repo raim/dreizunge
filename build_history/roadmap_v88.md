@@ -242,7 +242,7 @@ inspect the panel list), not by pinning the source.
 
 Effort: an hour including the guard. No ui.json keys. No decision needed.
 
-### AN. A caption typed in the review card SILENTLY DISCARDS the generated image description
+### ~~AN.~~ ✅ SHIPPED `v88_d` — a caption typed in the review card silently discarded the generated description
 
 **User's words**: "image upload bug: I lost an already generated image description, perhaps because I
 added title 'De Manteling' in `tp_17882063882590000007`."
@@ -275,7 +275,7 @@ candidates, in the order they are worth considering:
 
 Recommendation: the separate title field. Do (2) unconditionally first — it is not blocked on this.
 
-### AO. An extraction started on a phone is LOST, and the job's popover row has no link
+### ~~AO.~~ ✅ SHIPPED `v88_d` — an extraction started on a phone was LOST, and the job row had no link
 
 **User's words**: "I keep losing extracted text, when text extraction is started on the mobile phone.
 The job is listed in the job popover but has no link associated, and clicking on the comic draft job
@@ -2379,6 +2379,109 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v88 LINE
+
+## ✅ v88_d — item AO (an extraction started on a phone is no longer lost) + item AN (a typed title no longer destroys the image description)
+
+Row 3 of the thirteen-TODO order: the data-loss pair, in the region `v88_c` had just settled. **One
+new `ui.json` key**, `en` only, on the budget the user granted. **Both items turned out to have a
+cause nobody had reported**, found by reading the code around the reported one.
+
+### Item AO — three causes, and the reported one was the least important
+
+**User report**: *"I keep losing extracted text, when text extraction is started on the mobile phone.
+The job is listed in the job popover but has no link associated, and clicking on the comic draft job
+opens the generation page without the extracted text. The job popover link should lead to the text
+confirmation popover of the text extraction routine."*
+
+**All three had to close, or the report recurs:**
+
+1. **The job carried no `link`.** `POST /api/comic-extract` called `newJob({ label })` with nothing
+   else, and `_jobsRenderList()` renders "open →" only `if (j.link)`. This is the half the user could
+   SEE, and `newJob()`'s own comment had predicted it ("comic extraction/detection … simply carry
+   `link:null`").
+2. **`_comicExtractCheckOnce()` is the ONLY writer of `APP_COMIC.boxes[i].text`.** When the tab that
+   started the job is gone — phone locked past the browser's tab eviction, page reloaded, app
+   switched away and killed — nothing ever applies the result. The panels sit in the job store, the
+   draft still holds the image and the boxes, and the expensive vision work is simply gone. **This is
+   the actual loss**, and it is NOT item AE (that one is about a *live* tab that was backgrounded;
+   this is a tab that no longer exists).
+3. **`jobDone()` schedules cleanup at FIVE MINUTES.** So closing (1) alone would have produced a link
+   that works briefly and then silently stops — **worse than no link at all**.
+
+**So the durable fix is SERVER-side**: `applyExtractionToDraft(draftId, panels)` writes the results
+onto the draft as the job finishes, index-aligned exactly as the client's own
+`_comicApplyExtraction()` does. **Called BEFORE `jobDone()`** — that call starts the five-minute
+timer, so the durable copy must already exist by the time the job is observable as finished. After
+this the draft is the record: resuming it from any device carries the text, with no window and no
+dependency on the originating tab.
+
+The client **flushes the draft before extracting** (`await _comicDraftSaveNow()`), because the
+autosave is debounced 1.5s and extraction is precisely the moment where "the draft might not exist
+yet" costs the whole result. The link carries both ids — `id` (the job, instant) and `draftId` (the
+draft, durable) — and `_jobsOpenComicExtract()` **prefers the draft**, falling back to the job store
+only when there is no draft id. It opens the review card in **AUTO mode** (item AQ, `v88_c`): nobody
+arriving from the popover has seen the wizard's lesson card, so confirming must save and continue,
+never start a generation with card 3's controls at their defaults. `v88_c`'s fix composes here
+without changes — a second entry point, same reasoning.
+
+### Item AN — three losses, of which the user had only found one
+
+**User report**: *"image upload bug: I lost an already generated image description, perhaps because I
+added title 'De Manteling' in `tp_17882063882590000007`."*
+
+**Reproduced from the stored data, not the report.** That topic has `story: "De Manteling"`,
+`comicPanels[0].caption: "De Manteling"`, `inScene: ""`, and **no `description` field at all**.
+
+1. **The card had no title field**, so the user typed a title into CAPTION — and `_comicPanelText()`
+   reads caption as extracted lettering, which SUPPRESSES the description (their own earlier ruling:
+   the description is a fallback *"if no text is extracted"*). Working exactly as ruled; experienced
+   as data loss. **User's ruling this cut**: a separate TITLE field, which keeps caption meaning
+   "text lettered in the panel" and leaves the earlier ruling true rather than reversing it.
+2. **`comicCreateChapter()`'s `comicPanels` never wrote `description`.** So even on the fallback path
+   where the description WAS the chapter's text, the description itself survived nowhere. No ruling
+   blocked this; fixed unconditionally.
+3. **⚠️ `POST /api/drafts`'s box whitelist never listed `description` either** — found by READING
+   that route while wiring item AO, not from any report. Every autosave through it stripped the
+   field, so a description-only panel saved as a draft and resumed came back with nothing to make a
+   chapter from. **It would also have quietly undone item AO's whole durability story**: the server
+   writes the descriptions onto the draft, and the client's very next autosave would have deleted
+   them again. This is the `v74_i`/`v79_n` whitelist failure in a third place.
+
+**A fourth, prevented rather than found.** The e2e exposed that a job result REPLACES the whole
+`text` object, so a re-extraction would delete a title the user had typed — item AN's own loss,
+reintroduced through a different door. Both writers (`_comicApplyExtraction` client-side,
+`applyExtractionToDraft` server-side) now carry the title forward. **They had to be fixed together**:
+if only one did it, the outcome would depend on which writer happened to run.
+
+**A typed title is AUTHORED.** It becomes the chunk's title, travels as `titleAuthored`, and is
+stamped `topicAuto: false` on the saved topic; `_applyChapterTitles()` skips those. Without it the
+user would type a title, watch it save, and find it silently replaced by the post-pass minutes later
+— a new instance of exactly the loss this item closes. This mirrors the ruling `titleAuto` already
+encodes for STORYLINE titles (`v80_l` / `PLAN §9c`, *"a hand-named book would be retitled by the
+post-pass"*), which is why the flag has the same shape and name. The skipped chapter's name is still
+reserved against collisions, so a later auto-titled chapter cannot be given it.
+
+New key: `form.comic_title_ph` = `Chapter title (optional)`.
+
+### Guards
+
+`unit-comic-extract-durable` (4 checks — the flush-and-send, the link's two branches, and the
+whitelist), `unit-comic-title-field` (6 checks), `e2e-comic-extract-draft` (4 checks, live server +
+fake Ollama, driving the REAL `/api/comic-extract` route — no test-only endpoint and no
+re-implemented job runner). **Nine mutations, all red.**
+
+**⚠️ Two layers were genuinely needed, and a mutation proved it.** Removing `description` from the
+draft whitelist left the e2e GREEN at first, because `applyExtractionToDraft` writes to the file
+directly and bypasses the sanitiser. The unit's source-level section caught it; the e2e was then
+strengthened to round-trip through `POST /api/drafts` (the real autosave path) so it catches it too.
+Neither layer alone covered the claim.
+
+**⚠️ A harness trap worth remembering.** `lib-dom`'s `src` is a PLAIN PROPERTY — assigning it never
+fires `onload`, and `_resumeComicDraftFrom()` awaits exactly that event. Without a shim the resume
+promise never settles and **everything after the await is unreachable**. That is a SILENT trap, not a
+loud one: the boxes are restored BEFORE the await, so a section asserting only on `APP_COMIC.boxes`
+passes while the rest of the function never ran. `v88_c`'s own §6 sits on the right side of this by
+luck; this file installs the shim explicitly.
 
 ## ✅ v88_c — item AQ (the auto-opened review card no longer generates a whole book) + item AM (upload pre-selects the whole image)
 

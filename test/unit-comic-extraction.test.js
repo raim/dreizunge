@@ -314,7 +314,11 @@ console.log('  _comicExtractCheckOnce(): logs the polling attempt, the status re
 // is extracted. 'image description' and 'text extraction' button both become checkmarks, with a
 // separate 'generate' button."
 {
-  const post = (extract, describe) => {
+  // v88_d (item AO): comicExtractPanels() now AWAITS a draft flush before it POSTs, so the request
+  // body is no longer readable in the same synchronous turn — and the flush is itself a fetch, so
+  // the stub has to capture BY URL rather than keeping only the last call. Both changes are about
+  // the new sequencing, not about what this section asserts (which flags the extract call carries).
+  const post = async (extract, describe) => {
     const C = client();
     C.run(`APP_COMIC.boxes = [{x1:0,y1:0,x2:10,y2:10}];
       _comicCropDataUrl = function(){ return 'data:image/png;base64,AAA'; };
@@ -322,23 +326,25 @@ console.log('  _comicExtractCheckOnce(): logs the polling attempt, the status re
       document.getElementById('comic-extract-cb').checked = ${extract};
       document.getElementById('comic-describe-cb').checked = ${describe};
       window._body = null;
-      fetch = function(u, o){ window._body = JSON.parse(o.body);
-        return Promise.resolve({ ok:true, json:function(){ return Promise.resolve({ jobId:'j1' }); } }); };
+      fetch = function(u, o){
+        if (String(u).indexOf('/api/comic-extract') >= 0) window._body = JSON.parse(o.body);
+        return Promise.resolve({ ok:true, json:function(){ return Promise.resolve({ jobId:'j1', id:'d1' }); } }); };
       comicExtractPanels();
       true;`);
+    await settle();
     return C;
   };
   const read = C => JSON.parse(C.run(`JSON.stringify(window._body)`));
 
-  const both = read(post(true, true));
+  const both = read(await post(true, true));
   assert.strictEqual(both.extract, true, 'both ticked: extract requested');
   assert.strictEqual(both.describe, true, 'both ticked: description requested');
 
-  const textOnly = read(post(true, false));
+  const textOnly = read(await post(true, false));
   assert.strictEqual(textOnly.extract, true, 'text only: extract requested');
   assert.strictEqual(textOnly.describe, false, 'text only: description NOT requested');
 
-  const descOnly = read(post(false, true));
+  const descOnly = read(await post(false, true));
   assert.strictEqual(descOnly.extract, false, 'description only: extraction NOT requested');
   assert.strictEqual(descOnly.describe, true, 'description only: description requested');
 }

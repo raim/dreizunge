@@ -68,9 +68,13 @@ async function main() {
   // text, so the review card has to let it be edited like any other field. '' here because this
   // fixture's panels all have real extracted text — the description is only ever generated for a
   // panel that produced none.
-  assert.deepStrictEqual(r.buf0, { caption:'Cap A', inScene:'Scene A', description:'' },
+  // v88_d (item AN): a `title` field joined the buffer. The user had been typing chapter titles into
+  // CAPTION — which `_comicPanelText()` reads as extracted lettering, suppressing the description —
+  // so the card grew its own title input and caption went back to meaning "text lettered in the
+  // panel". '' here for the same reason `description` is: this fixture's panels carry neither.
+  assert.deepStrictEqual(r.buf0, { title:'', caption:'Cap A', inScene:'Scene A', description:'' },
     'buffer seeded from the panel\'s own extracted text');
-  assert.deepStrictEqual(r.buf1, { caption:'', inScene:'', description:'' }, 'an empty-but-extracted panel seeds an empty (not undefined) buffer entry');
+  assert.deepStrictEqual(r.buf1, { title:'', caption:'', inScene:'', description:'' }, 'an empty-but-extracted panel seeds an empty (not undefined) buffer entry');
   assert.strictEqual(r.overlaySet, true, 'the overlay element is tracked for a later close');
 }
 console.log('  comicOpenReview(): filters to panels with usable text, seeds the edit buffer from their OWN extracted text: OK');

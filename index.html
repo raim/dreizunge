@@ -4437,13 +4437,25 @@ async function comicExtractPanels(){
   if(status) status.textContent=t('form.comic_extracting');
   try{
     const images=boxes.map(_comicCropDataUrl);
+    // item AO: FLUSH the draft first, so `_comicDraftId` definitely exists by the time the job is
+    // created. The autosave is debounced 1.5s (_comicDraftSaveDebounced), and extraction is the one
+    // moment where "the draft might not have been written yet" costs the whole result — the server
+    // needs an id to write the panels back onto. Awaited, not fired-and-forgotten: the POST below
+    // has to carry the id this call assigns. A failure is silently tolerated (the function is
+    // best-effort by design) and simply degrades to the pre-AO behaviour.
+    try{ await _comicDraftSaveNow(); }catch(_){}
     const r=await fetch('/api/comic-extract',{method:'POST',headers:{'Content-Type':'application/json'},
       // v87_o (user request): "pass the previous whole story as context for the image". Only the
       // continued-from ID travels — the server assembles the actual story from it (collectChainStory),
       // because this client's savedList projection carries no story text at all. Read from the SAME
       // #continue-select the chapter-creation call reads (item AL moved it to card 1, which is what
       // made it universal across all three input modes).
+      // item AO: `draftId` is what makes the result DURABLE — the server writes the extracted
+      // panels onto that draft as the job finishes, so resuming it from any device carries the text
+      // even if this tab is gone by then. It also becomes the job's `link`, giving the popover row
+      // the "open →" button it never had.
       body:JSON.stringify({images, lang:APP.lang, extract:wantExtract, describe:wantDescribe,
+        draftId: _comicDraftId || null,
         continuedFrom: document.getElementById('continue-select')?.value || null})});
     const data=await r.json().catch(()=>({}));
     if(!r.ok){ if(status) status.textContent=''; showToast(t('form.comic_extract_failed')+': '+(data.error||r.status)); if(btn) btn.disabled=false; return; }
@@ -4535,7 +4547,17 @@ function _startComicExtractJob(jobId){
 // server.js's _runComicExtractJob), so index alignment holds even after a partial failure.
 function _comicApplyExtraction(panels){
   if(!Array.isArray(panels)) return;
-  panels.forEach((p,i)=>{ if(APP_COMIC.boxes[i]) APP_COMIC.boxes[i].text=p; });
+  // item AN (v88_d): a result REPLACES the extracted fields but must PRESERVE the user's own title.
+  // Extraction has nothing to say about a title the user typed, and re-extracting a panel (a
+  // perfectly normal thing to do after a bad OCR pass) would otherwise silently delete it — the same
+  // class of loss this item exists to fix, reintroduced through a different door. Same rule the
+  // codebase already applies to authored titles everywhere else: a regeneration never overwrites
+  // one. Mirrored server-side in applyExtractionToDraft().
+  panels.forEach((p,i)=>{
+    if(!APP_COMIC.boxes[i]) return;
+    const keptTitle=(APP_COMIC.boxes[i].text && APP_COMIC.boxes[i].text.title) || '';
+    APP_COMIC.boxes[i].text={ ...p, title: (p && p.title) || keptTitle };
+  });
   _comicRenderList();
 }
 
@@ -4581,7 +4603,8 @@ function comicOpenReview(auto){
     return;
   }
   _comicReviewEditable=editable;
-  _comicReviewBuffer=editable.map(({b})=>({caption:(b.text&&b.text.caption)||'', inScene:(b.text&&b.text.inScene)||'',
+  _comicReviewBuffer=editable.map(({b})=>({title:(b.text&&b.text.title)||'',
+    caption:(b.text&&b.text.caption)||'', inScene:(b.text&&b.text.inScene)||'',
     description:(b.text&&b.text.description)||''}));
   // v86_x (user-requested, real usage): the first cut was a narrow (520px) single-column list —
   // "the popover for text confirmation could be bigger and should allow to view the text without
@@ -4599,6 +4622,9 @@ function comicOpenReview(auto){
         <span style="display:inline-block;width:22px;height:22px;border-radius:5px;background:${color};color:#fff;text-align:center;font-weight:800;font-size:13px;line-height:22px;flex-shrink:0">${i+1}</span>
         ${img?`<img src="${img}" style="display:block;max-width:100%;max-height:160px;width:auto;height:auto;border-radius:8px;border:1px solid var(--gray-mid);object-fit:contain">`:''}
       </div>
+      <input type="text" value="${escAttr(buf.title)}" oninput="_comicReviewEdit(${k},'title',this.value)"
+        placeholder="${escAttr(t('form.comic_title_ph'))}"
+        style="font-size:15px;font-weight:800;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px solid var(--accent);border-radius:8px;color:var(--text)">
       <input type="text" value="${escAttr(buf.caption)}" oninput="_comicReviewEdit(${k},'caption',this.value)"
         placeholder="${escAttr(t('form.comic_caption_ph'))}"
         style="font-size:15px;font-weight:700;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;color:var(--text)">
@@ -4644,6 +4670,13 @@ function _comicReviewConfirm(){
   if(_comicReviewEditable && _comicReviewBuffer){
     _comicReviewEditable.forEach(({i},k)=>{
       const buf=_comicReviewBuffer[k];
+      // item AN (v88_d, user-reported): "I lost an already generated image description, perhaps
+      // because I added title 'De Manteling'". They had typed a TITLE into the CAPTION field,
+      // because the card had no title field — and `_comicPanelText()` reads caption as extracted
+      // lettering, which SUPPRESSES the description (the user's own earlier ruling: the description
+      // is a fallback "if no text is extracted"). A separate field keeps both rulings true at once:
+      // caption still means "text lettered in the panel", so a title no longer displaces anything.
+      APP_COMIC.boxes[i].text.title=buf.title;
       APP_COMIC.boxes[i].text.caption=buf.caption;
       APP_COMIC.boxes[i].text.inScene=buf.inScene;
       // Only written back when the panel HAS one, so confirming a normal lettered panel cannot
@@ -4726,11 +4759,23 @@ async function comicCreateChapter(){
       // Placeholder title only — _runBookJob's own post-pass assigns the real, coherent title
       // (skipMeta:true, same as every other chunk-based chapter), same convention pdfGenerateAll's
       // chunks rely on.
-      const title=text.replace(/\s+/g,' ').trim().slice(0,40) || 'Comic panel';
+      // item AN: a title the user TYPED wins over the derived placeholder, and travels with
+      // `titleAuthored` so the server's chapter-title post-pass leaves it alone (_applyChapterTitles
+      // skips `topicAuto === false`). Without that flag the user would type a title, watch it save,
+      // and find it silently replaced minutes later — the same class of loss this item exists to fix.
+      const userTitle=String((b.text&&b.text.title)||'').trim();
+      const title=userTitle.slice(0,80)
+        || text.replace(/\s+/g,' ').trim().slice(0,40) || 'Comic panel';
+      // ⚠️ item AN, half (2): `description` was NEVER persisted here — so even when it WAS the
+      // chapter's text (the fallback path), the description itself survived nowhere, and
+      // tp_17882063882590000007 has the caption and no description to show for it. Unblocked by any
+      // ruling and fixed unconditionally. `title` rides along for the same reason.
       const comicPanels=[{ x1:b.x1, y1:b.y1, x2:b.x2, y2:b.y2,
-        caption:(b.text&&b.text.caption)||'', inScene:(b.text&&b.text.inScene)||'',
+        title:userTitle, caption:(b.text&&b.text.caption)||'', inScene:(b.text&&b.text.inScene)||'',
+        description:String((b.text&&b.text.description)||''),
         image:_comicCropDataUrl(b) }];
-      return { title, text, wordCount: text.split(/\s+/).filter(Boolean).length, comicPanels };
+      return { title, titleAuthored: !!userTitle,
+        text, wordCount: text.split(/\s+/).filter(Boolean).length, comicPanels };
     }).filter(Boolean);
     const body={
       lang: APP.lang||'it', srcLang: APP.srcLang||'en', difficulty: APP.difficulty||2,
@@ -22354,6 +22399,42 @@ function _jobsOpenLink(link){
   else if(link.type === 'topic') loadSaved(link.id);
   else if(link.type === 'tutor') { if(!_tutorState.open) toggleTutorWidget(); }
   else if(link.type === 'draft') resumeDraft(link.id);   // item R — resumeDraft() navigates itself
+  else if(link.type === 'comic-extract') _jobsOpenComicExtract(link);   // item AO
+}
+// item AO (v88_d, user-reported): "the job popover link should lead to the text confirmation popover
+// of the text extraction routine." Two routes to the same place, and the DURABLE one is preferred:
+//
+//   • `draftId` — resume the draft, then open the review card. The server has already written the
+//     extracted panels onto that draft (applyExtractionToDraft, server.js), so this works from any
+//     device, at any later time, and after this tab is long gone. This is the path that actually
+//     fixes the report.
+//   • `id` (the job) — fall back to reading the result straight out of the job store. Only reachable
+//     while the job still exists: jobDone() schedules cleanup at FIVE MINUTES, which is precisely
+//     why it cannot be the primary path. Kept because it is correct and instant in the common case
+//     where the draft could not be written (no draft id at extraction time).
+//
+// The review card is opened in AUTO mode (item AQ, v88_c): whoever arrives here has NOT been through
+// the wizard's lesson card, so confirming must save the text and land them on card 3 — never start a
+// generation with card 3's controls at their defaults. That is the same reasoning AQ's own fix rests
+// on, reached from a second entry point.
+async function _jobsOpenComicExtract(link){
+  try{
+    if(link.draftId){
+      await resumeDraft(link.draftId);   // navigates to the generation screen and restores the image
+      comicOpenReview(true);
+      return;
+    }
+    const r = await fetch('/api/job/'+link.id);
+    if(!r.ok) throw new Error('Job not found');
+    const j = await r.json();
+    const panels = j && j.data && j.data.panels;
+    if(!Array.isArray(panels) || !panels.length) throw new Error('No result');
+    show('generation-screen');
+    _comicApplyExtraction(panels);
+    comicOpenReview(true);
+  }catch(e){
+    showToast(t('form.comic_extract_failed')+': '+e.message);
+  }
 }
 // item R: discard a draft BY ID from the popover — distinct from discardDraft() (index.html's PDF
 // section), which only ever acts on THIS tab's own currently-open _draftId. A draft listed here may

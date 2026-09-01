@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_c';
+const APP_VERSION  = 'v88_d';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -474,6 +474,53 @@ function loadDrafts() {
     return [];
   }
 }
+// item AO (v88_d, user-reported): "I keep losing extracted text, when text extraction is started on
+// the mobile phone." Measured: `_comicExtractCheckOnce()` (index.html) is the ONLY writer of
+// `APP_COMIC.boxes[i].text`, so when the tab that started the job is gone — phone locked past the
+// browser's tab eviction, page reloaded, app switched away and killed — NOTHING ever applies the
+// result. The panels sit in the job store, the draft still holds the image and the boxes, and the
+// expensive vision work is simply lost. Worse, `jobDone()` schedules cleanup at FIVE MINUTES, so
+// even a link back to the job would work briefly and then fail silently.
+//
+// So the SERVER writes the results onto the draft, index-aligned exactly as the client's own
+// `_comicApplyExtraction()` does (images were sent in `APP_COMIC.boxes` order and this job preserves
+// that order even for a failed panel — a placeholder result, never a skipped slot). After this the
+// draft is the durable record: resuming it from ANY device carries the text, with no five-minute
+// window and no dependency on the originating tab still being alive.
+//
+// Best-effort by design: a failure here must not fail an extraction that actually succeeded, which
+// is the same reasoning `/api/comic-extract`'s own priorStory lookup uses.
+function applyExtractionToDraft(draftId, panels) {
+  if (!draftId || !Array.isArray(panels)) return false;
+  try {
+    const drafts = loadDrafts();
+    const d = drafts.find(x => x && x.id === draftId);
+    if (!d || !d.comic || !Array.isArray(d.comic.boxes)) return false;
+    let n = 0;
+    panels.forEach((p, i) => {
+      if (!d.comic.boxes[i] || !p) return;
+      // item AN: preserve a title the user typed — extraction has nothing to say about it, and
+      // re-extracting a panel would otherwise delete it silently. Mirrors the client's own
+      // _comicApplyExtraction(); the two writers must agree or the result depends on which one ran.
+      const keptTitle = (d.comic.boxes[i].text && d.comic.boxes[i].text.title) || '';
+      d.comic.boxes[i].text = { ...p, title: p.title || keptTitle };
+      n++;
+    });
+    if (!n) return false;
+    // stampUpdated(), not a raw toISOString() — `unit-stamp-updated` §5 enforces the one choke
+    // point, and this site genuinely needs it: the server writing results and the client's own
+    // autosave can land on the same draft in the same millisecond, which is exactly the collision
+    // that helper's strictly-advancing stamp exists to prevent.
+    stampUpdated(d);
+    saveDrafts(drafts);
+    console.log(`  [comic-extract] wrote ${n} panel result(s) onto draft ${draftId}`);
+    return true;
+  } catch (e) {
+    console.warn(`  [comic-extract] could not write results onto draft ${draftId}: ${e.message}`);
+    return false;
+  }
+}
+
 function saveDrafts(drafts) {
   try {
     fs.writeFileSync(DRAFTS_FILE, JSON.stringify({ schemaVersion: 1, drafts }, null, 2) + '\n', 'utf8');
@@ -5293,7 +5340,7 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
 // ── Generate all lessons ──────────────────────────────────────────────
 async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLen, jobId, userOpts) {
   userOpts = userOpts || {};
-  const { userStory, userTranslation, userDialect, storyStyle, lessonFormat, reinforcePrior, vocabMode, useFullChain, userStoryLang, prevStoryTopic, mathInstruction, skipMeta, placeholderTopic, parentId, fromLearned,
+  const { userStory, userTranslation, userDialect, storyStyle, lessonFormat, reinforcePrior, vocabMode, useFullChain, userStoryLang, prevStoryTopic, mathInstruction, skipMeta, placeholderTopic, topicAuthored, parentId, fromLearned,
     // Decoupling chaptering from lesson generation (user request, roadmap_v87.md): when true, this
     // call produces ONLY the story/chapter — no lesson of any kind, not even the "standard" gate
     // lesson every path has always generated unconditionally until now. Relies on the PRE-EXISTING
@@ -5604,6 +5651,11 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     upsert({
       ...(_genTopicId ? { id: _genTopicId } : {}),
       topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
+      // item AN (v88_d): a title the USER typed is authored by definition, so the chapter-title
+      // post-pass must leave it alone — exactly the ruling `titleAuto` already encodes for STORYLINE
+      // titles (v80_l / PLAN §9c, "a hand-named book would be retitled by the post-pass"). Absent
+      // (the overwhelmingly common case) means auto, so every existing chapter is unaffected.
+      ...(topicAuthored ? { topicAuto: false } : {}),
       userTopic, userPrompt, lang, srcLang, difficulty: difficulty || 2, storyLen,
       ...(userOpts.script    ? { script: userOpts.script }       : {}),
       ...(userOpts.srcScript ? { srcScript: userOpts.srcScript } : {}),
@@ -5753,6 +5805,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   return {
     ...(_genTopicId ? { id: _genTopicId } : {}),   // v69_q: carry the id minted at the early save
     topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
+    ...(topicAuthored ? { topicAuto: false } : {}),   // item AN — see the early-save site's own comment
     userTopic, userPrompt, lang, srcLang, difficulty: difficulty || 2, storyLen,
     story, storyLang, storyPrompt,
     ...(_storyMeta ? { storyMeta: _storyMeta } : {}),
@@ -6153,6 +6206,10 @@ function _applyChapterTitles(topics, chapterMeta, bj) {
   if (!Array.isArray(chapterMeta) || !chapterMeta.length) return false;
   const used = new Set();
   topics.forEach((tp, i) => {
+    // item AN (v88_d): never rename a chapter the user named themselves. Same rule, same flag
+    // shape, as the storyline title's own `titleAuto` guard (v80_l). Its name is still reserved
+    // against collisions below, because a LATER auto-titled chapter must not be given it.
+    if (tp.topicAuto === false) { used.add(String(tp.topic || '').toLowerCase()); return; }
     const m = chapterMeta[i] || {};
     let title = (m.title || '').trim() || tp.topic;
     let uniq = title, k = 2;
@@ -6412,8 +6469,11 @@ async function _runBookJob(bookId, chunks, base) {
         // The exact parent topic id — authoritative chain link (avoids name collisions
         // between same-named chapters from a different-language run of the same PDF).
         parentId: parent ? (parent.id || null) : null,
-        // Defer titling to the whole-storyline post-pass (cheap placeholder for now).
+        // Defer titling to the whole-storyline post-pass (cheap placeholder for now) — UNLESS the
+        // chunk says the user typed this title themselves (item AN), in which case `placeholderTopic`
+        // is not a placeholder at all and the post-pass must not overwrite it.
         skipMeta: true, placeholderTopic,
+        topicAuthored: !!(chunks[i] && chunks[i].titleAuthored),
         // v78_p: the chosen scripts. `generate()` reads `userOpts.script` for THREE things — the
         // story prompt's scriptNote (v76_h), the saved topic's `script`/`srcScript` stamps, and the
         // stamps the arc primer later reads. The book route built userOpts without them, so a
@@ -6987,6 +7047,10 @@ async function _runComicExtractJob(jobId, images, lang, opts) {
   const described = results.filter(r => r.description).length;
   console.log(`  [comic-extract] done: ${results.length} panel(s), ${failed} failed` +
     (wantDescribe ? `, ${described} described` : ''));
+  // item AO: persist BEFORE jobDone(). jobDone() starts the five-minute cleanup timer, and the
+  // client may pick the result up from either place — so the durable copy must already exist by the
+  // time the job is observable as finished.
+  applyExtractionToDraft(o.draftId, results);
   jobDone(jobId, { panels: results });
 }
 
@@ -7595,9 +7659,20 @@ http.createServer(async (req, res) => {
           boxes: boxesIn.map(b => ({
             x1: Math.max(0, parseInt(b && b.x1, 10) || 0), y1: Math.max(0, parseInt(b && b.y1, 10) || 0),
             x2: Math.max(0, parseInt(b && b.x2, 10) || 0), y2: Math.max(0, parseInt(b && b.y2, 10) || 0),
+            // ⚠️ item AN (v88_d) — a THIRD instance of the same data loss, found by reading this
+            // whitelist while wiring item AO, not from a report. `description` (v87_l's
+            // image-description fallback) was NEVER listed here, so every autosave through this
+            // route STRIPPED it: a description-only panel saved to a draft and resumed came back
+            // with nothing to make a chapter from. It also undercut item AO's whole durability
+            // story — the server writes results onto the draft directly, and the client's next
+            // autosave would have deleted the descriptions again. A whitelist that silently drops a
+            // field the feature depends on is the `v74_i`/`v79_n` failure in a third place.
+            // `title` is item AN's own new field and is listed from the start for the same reason.
             text: (b && b.text && typeof b.text === 'object') ? {
+              title: String(b.text.title || '').slice(0, 300),
               caption: String(b.text.caption || '').slice(0, 2000),
               inScene: String(b.text.inScene || '').slice(0, 2000),
+              description: String(b.text.description || '').slice(0, 4000),
               raw: String(b.text.raw || '').slice(0, 4000),
               error: b.text.error ? String(b.text.error).slice(0, 500) : null,
             } : null,
@@ -8200,7 +8275,19 @@ http.createServer(async (req, res) => {
       const wantDescribe = !!body.describe;
       if (!wantExtract && !wantDescribe)
         return json(res, 400, { error: 'Nothing to do: pick text extraction, image description, or both.' });
+      // item AO: the draft this extraction belongs to, when the client has one. Two jobs at once:
+      //   • the runner writes the results onto it, so they survive the originating tab (durability);
+      //   • it rides in the job's `link`, so the popover row gets an "open →" that leads back to the
+      //     text-confirmation card — which is exactly what the user asked for ("the job popover link
+      //     should lead to the text confirmation popover of the text extraction routine").
+      // `link` was null here until now, which is why the row had no button at all — `_jobsRenderList`
+      // renders "open →" only `if (j.link)`, and `newJob()`'s own comment predicted this case.
+      const draftId = (typeof body.draftId === 'string' && body.draftId.trim()) ? body.draftId.trim() : null;
       const jobId = newJob({ label: `Extracting comic panels (${images.length})` });
+      // The link carries the job's OWN id, so it can only be attached once newJob() has minted it.
+      // `id` is the fast path (apply the result straight from the job store); `draftId` is the
+      // DURABLE one, and the client prefers it — see _jobsOpenLink's own comic-extract branch.
+      jobs.get(jobId).link = { type: 'comic-extract', id: jobId, draftId };
       console.log(`  Comic extraction: ${images.length} panel(s), lang=${lang}, ` +
         `mode=${[wantExtract && 'text', wantDescribe && 'description'].filter(Boolean).join('+')}, ` +
         `model=${OLLAMA_VISION_MODEL} job=${jobId}`);
@@ -8216,7 +8303,7 @@ http.createServer(async (req, res) => {
           }
         } catch (e) { /* context is an enhancement: a failure here must not fail the extraction */ }
       }
-      _runComicExtractJob(jobId, images, lang, { extract: wantExtract, describe: wantDescribe, priorStory }).catch(e => {
+      _runComicExtractJob(jobId, images, lang, { extract: wantExtract, describe: wantDescribe, priorStory, draftId }).catch(e => {
         console.error('  Comic extraction error:', e.message);
         jobFail(jobId, e.message);
       });

@@ -2999,8 +2999,418 @@
       },
       "sourceTextHash": "870d4d801f86",
       "analyzedAt": "2026-08-31T18:59:42.475Z"
+    },
+    "tp_17882063882590000007": {
+      "chapterId": "tp_17882063882590000007",
+      "lang": "nl",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 1,
+      "tokenCount": 2,
+      "sentences": [
+        {
+          "sentenceId": "tp_17882063882590000007:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17882063882590000007:s0:t0",
+              "idx": 0,
+              "surface": "De",
+              "lemma": "de",
+              "form": "bestimmter Artikel, Nominativ Singular Femininum",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882063882590000007:s0:t1",
+              "idx": 1,
+              "surface": "Manteling",
+              "lemma": "manteling",
+              "form": "Nomen, Nominativ Singular Femininum",
+              "sense": "Ummantelung",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-01T10:24:01.800Z",
+            "sentenceId": "tp_17882063882590000007:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "De Manteling",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-01T10:24:01.800Z",
+        "chapterId": "tp_17882063882590000007",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "898673f8af87",
+      "analyzedAt": "2026-09-01T10:24:01.800Z"
+    },
+    "tp_17882535928630000095": {
+      "chapterId": "tp_17882535928630000095",
+      "lang": "nl",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 2,
+      "tokenCount": 23,
+      "sentences": [
+        {
+          "sentenceId": "tp_17882535928630000095:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17882535928630000095:s0:t0",
+              "idx": 0,
+              "surface": "Een",
+              "lemma": "een",
+              "form": "bestimmter Artikel, unbestimmt, Nominativ Singular Maskulinum/Neutrum/Femininum",
+              "sense": "ein (unbestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s0:t1",
+              "idx": 1,
+              "surface": "weg",
+              "lemma": "weg",
+              "form": "Substantiv, Nominativ Singular Neutrum",
+              "sense": "Weg",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s0:t2",
+              "idx": 2,
+              "surface": "loopt",
+              "lemma": "lopen",
+              "form": "Verb, Präsens, Indikativ, 3. Person Singular",
+              "sense": "verläuft / führt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s0:t3",
+              "idx": 3,
+              "surface": "door",
+              "lemma": "door",
+              "form": "Präposition",
+              "sense": "durch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s0:t4",
+              "idx": 4,
+              "surface": "een",
+              "lemma": "een",
+              "form": "bestimmter Artikel, unbestimmt, Akkusativ Singular Maskulinum/Neutrum/Femininum",
+              "sense": "ein (unbestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s0:t5",
+              "idx": 5,
+              "surface": "droge",
+              "lemma": "droog",
+              "form": "Adjektiv, Positiv, starke Deklination, Akkusativ Singular Maskulinum/Neutrum/Femininum",
+              "sense": "trocken",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s0:t6",
+              "idx": 6,
+              "surface": "heideveld",
+              "lemma": "heideveld",
+              "form": "Substantiv, Akkusativ Singular Neutrum",
+              "sense": "Heideland / Heidegebiet",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s0:t7",
+              "idx": 7,
+              "surface": "onder",
+              "lemma": "onder",
+              "form": "Präposition",
+              "sense": "unter",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s0:t8",
+              "idx": 8,
+              "surface": "een",
+              "lemma": "een",
+              "form": "bestimmter Artikel, unbestimmt, Akkusativ Singular Maskulinum/Neutrum/Femininum",
+              "sense": "ein (unbestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s0:t9",
+              "idx": 9,
+              "surface": "blauwe",
+              "lemma": "blauw",
+              "form": "Adjektiv, Positiv, starke Deklination, Akkusativ Singular Maskulinum/Neutrum/Femininum",
+              "sense": "blau",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s0:t10",
+              "idx": 10,
+              "surface": "hemel",
+              "lemma": "hemel",
+              "form": "Substantiv, Akkusativ Singular Maskulinum",
+              "sense": "Himmel",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s0:t11",
+              "idx": 11,
+              "surface": "met",
+              "lemma": "met",
+              "form": "Präposition",
+              "sense": "mit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s0:t12",
+              "idx": 12,
+              "surface": "wolken.",
+              "lemma": "wolk",
+              "form": "Substantiv, Plural, Akkusativ",
+              "sense": "Wolken",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 1,
+              "tokenIds": [
+                "tp_17882535928630000095:s0:t0",
+                "tp_17882535928630000095:s0:t1"
+              ],
+              "lemma": "een weg",
+              "gloss": "ein Weg",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "start": 4,
+              "end": 6,
+              "tokenIds": [
+                "tp_17882535928630000095:s0:t4",
+                "tp_17882535928630000095:s0:t5",
+                "tp_17882535928630000095:s0:t6"
+              ],
+              "lemma": "een droge heideveld",
+              "gloss": "ein trockenes Heidegebiet",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "start": 8,
+              "end": 10,
+              "tokenIds": [
+                "tp_17882535928630000095:s0:t8",
+                "tp_17882535928630000095:s0:t9",
+                "tp_17882535928630000095:s0:t10"
+              ],
+              "lemma": "een blauwe hemel",
+              "gloss": "ein blauer Himmel",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-01T10:23:08.563Z",
+            "sentenceId": "tp_17882535928630000095:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Een weg loopt door een droge heideveld onder een blauwe hemel met wolken.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17882535928630000095:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17882535928630000095:s1:t0",
+              "idx": 0,
+              "surface": "Op",
+              "lemma": "op",
+              "form": "Präposition",
+              "sense": "auf",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s1:t1",
+              "idx": 1,
+              "surface": "de",
+              "lemma": "de",
+              "form": "bestimmter Artikel, Femininum Singular",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s1:t2",
+              "idx": 2,
+              "surface": "voorgrond",
+              "lemma": "voorgrond",
+              "form": "Nomen, Femininum Singular",
+              "sense": "Vordergrund",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s1:t3",
+              "idx": 3,
+              "surface": "is",
+              "lemma": "zijn",
+              "form": "Hilfsverb, Präsens, 3. Person Singular",
+              "sense": "ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s1:t4",
+              "idx": 4,
+              "surface": "een",
+              "lemma": "een",
+              "form": "unbestimmter Artikel, Neutrum Singular",
+              "sense": "ein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s1:t5",
+              "idx": 5,
+              "surface": "verlaten",
+              "lemma": "verlaten",
+              "form": "Partizip II als Adjektiv, Neutrum Singular",
+              "sense": "verlassen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s1:t6",
+              "idx": 6,
+              "surface": "stuk",
+              "lemma": "stuk",
+              "form": "Nomen, Neutrum Singular",
+              "sense": "Stück",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s1:t7",
+              "idx": 7,
+              "surface": "asfalt",
+              "lemma": "asfalt",
+              "form": "Nomen, Neutrum Singular",
+              "sense": "Asphalt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s1:t8",
+              "idx": 8,
+              "surface": "te",
+              "lemma": "te",
+              "form": "Partikel (Infinitivmarker)",
+              "sense": "zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882535928630000095:s1:t9",
+              "idx": 9,
+              "surface": "zien.",
+              "lemma": "zien",
+              "form": "Verb, Infinitiv",
+              "sense": "sehen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 2,
+              "tokenIds": [
+                "tp_17882535928630000095:s1:t0",
+                "tp_17882535928630000095:s1:t1",
+                "tp_17882535928630000095:s1:t2"
+              ],
+              "lemma": "op de voorgrond",
+              "gloss": "im Vordergrund",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 8,
+              "end": 9,
+              "tokenIds": [
+                "tp_17882535928630000095:s1:t8",
+                "tp_17882535928630000095:s1:t9"
+              ],
+              "lemma": "te zien",
+              "gloss": "zu sehen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-01T10:27:18.582Z",
+            "sentenceId": "tp_17882535928630000095:s1",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Op de voorgrond is een verlaten stuk asfalt te zien.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-01T10:27:18.582Z",
+        "chapterId": "tp_17882535928630000095",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "ce8ae5ebd16b",
+      "analyzedAt": "2026-09-01T10:27:18.582Z"
     }
   },
-  "generatedAt": "2026-08-31T18:59:42.476Z",
-  "chapterCount": 9
+  "generatedAt": "2026-09-01T10:27:18.583Z",
+  "chapterCount": 11
 }

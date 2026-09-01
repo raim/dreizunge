@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_c`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_d`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -20,19 +20,24 @@ work — it generated four chapters during the `v87` line, and twice that broke 
 restarting anything; a SERVER edit is not — start your own instance on another port to verify, and
 **kill it by PID** (`pkill -f "node server.js"` matches theirs too).
 
-**What shipped at this cut**: `v88_c` — the image-upload flow now does what the wizard promises.
-**Item AQ** (the most damaging bug of the thirteen): `comicOpenReview(auto)`'s `auto` flag never
-reached `_comicReviewConfirm()`, so confirming the review card that POPS UP BY ITSELF after
-extraction ran a full book generation — translation, arc, lessons — from card 2, on text the user had
-not finished reviewing. `_comicReviewMode` now carries the reason; the auto path stores the reviewed
-text (via `_comicRenderList()`'s existing draft autosave) and lands on card 3, and only the card-3
-start button generates. **The "card 3 has no generate button" half was the SAME bug** —
-`comicCreateChapter()` set `_comicBookId`, so `_applyLessonCardUI()` correctly hid the row for a job
-that really was running. One new `ui.json` key (`form.comic_review_save`), on the user's budget.
-**Item AM**: a fresh upload now pre-selects the whole image as one panel — one call at
-`_comicFinishSetup()`, the upload path's choke point, deliberately NOT on the resumed-draft path.
-Full write-up: `roadmap_v88.md`'s own `v88_c` entry. `v88_b` (items AW/AT) and `v88_a` (storyline
-chapter management) are directly below it in the same section.
+**What shipped at this cut**: `v88_d` — the data-loss pair, and **both items had a cause nobody had
+reported**, found by reading the code around the reported one.
+**Item AO** (extraction lost on a phone) had THREE causes: the job carried no `link` (the half the
+user could see), `_comicExtractCheckOnce()` is the ONLY writer of the panel text so a dead tab loses
+it (the actual loss — and NOT item AE, which is about a *live* backgrounded tab), and `jobDone()`
+deletes the job after five minutes so a link alone would have worked briefly then failed silently.
+The durable fix is server-side: `applyExtractionToDraft()` writes results onto the draft BEFORE
+`jobDone()` starts that timer. The popover link carries both ids and prefers the draft; it opens the
+review card in AUTO mode, so `v88_c`'s fix composes with no changes.
+**Item AN** (a typed title destroyed the generated description) had THREE losses, of which the user
+had found one: caption-as-title suppressed the description, `comicPanels` never persisted
+`description`, and — found by reading, not reported — **`POST /api/drafts`'s box whitelist never
+listed `description` either**, so every autosave stripped it and would have quietly undone AO's
+durability. A FOURTH was prevented: a re-extraction replaces the whole `text` object and would have
+deleted a typed title, so both writers now carry it forward. A typed title is stamped
+`topicAuto: false` and the chapter-title post-pass skips it — the same ruling `titleAuto` already
+encodes for storylines (`v80_l`). One new key (`form.comic_title_ph`).
+Full write-up: `roadmap_v88.md`'s own `v88_d` entry; `v88_c`/`v88_b`/`v88_a` are below it.
 
 **🆕 NOTHING IS MID-FLIGHT, and the queue is explicit.** The `v87` line closed six items (R, U, Z,
 AC, AK, AL) plus the three storyline asks; they are recorded where they shipped and are NOT in the
@@ -76,8 +81,8 @@ counter-propose page IMAGES rather than a pdf.js viewer).
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 315 checks
-node test/run.js --quick                  → expect 264
+node test/run.js                          → expect 318 checks
+node test/run.js --quick                  → expect 266
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -94,8 +99,8 @@ DETERMINISTIC, so not flakiness — because the user's server had written a new 
 fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don't run the full and
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **339 topics, 98 storylines, 33 languages, 734 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_c'`.
+Corpus at this cut: **340 topics, 98 storylines, 33 languages, 735 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_d'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -216,26 +221,29 @@ measures zero effect, reconsider the diagnosis before trying a third wording.**
 # WHERE TO START
 
 **🆕 FIRST: the thirteen TODOs handed over after `v88_a`** — items `AM`…`AX` in `roadmap_v88.md`,
-with their own suggested order. **`v88_b` shipped row 1 (`AW` + `AT`); `v88_c` shipped row 2
-(`AQ` + `AM`).** The rest of that table:
+with their own suggested order. **`v88_b` shipped row 1 (`AW` + `AT`), `v88_c` row 2 (`AQ` + `AM`),
+`v88_d` row 3 (`AO` + `AN`).** The rest of that table:
 
-- **➡️ NEXT — `v88_d` — `AO` + `AN`.** The data-loss pair, in the SAME region `v88_c` just settled —
-  read `roadmap_v88.md`'s `v88_c` entry first, the review card now has TWO open modes.
-  `AO` has **three** causes and all three must be closed or the report recurs: the extract job
-  carries no `link` (hence no "open →" button — what the user actually sees), the result is only ever
-  applied by the ORIGINATING tab (so a killed phone tab loses it, and the draft never receives the
-  text), and `jobDone()` schedules cleanup at **5 minutes** (so a bare link would work briefly then
-  fail silently — worse than no link). **The durable fix is the SERVER writing extraction results
-  onto the draft**: pass `_comicDraftId` in the `/api/comic-extract` body.
-  `AN` already has its ruling (below): give the review card its own TITLE field, keeping the
-  "description is a fallback" ruling intact. Half (2) — persisting `description` in `comicPanels` —
-  was never blocked and should land regardless. **`AN`’s 1 `ui.json` key is already approved.**
+- **➡️ NEXT — `v88_e` — `AP`, the `comic`→`image` rename.** Deliberately scheduled AFTER the four
+  image releases so it renames the FINAL key set (both new keys — `form.comic_review_save`,
+  `form.comic_title_ph` — landed since the plan was written). **22 keys**, but only **122 translated
+  cells across six languages** (`en`/`pt`/`fr`/`de`/`it`/`es`); every other language is unfilled and
+  costs nothing. Renaming a KEY preserves its translation and is guarded by `unit-ui-key-exists`;
+  only CHANGED ENGLISH TEXT costs anything. **The user has ruled on how to handle that: DELETE the
+  stale non-`en` values so `translate-ui.js` refills them.** Still needs a count of how many English
+  strings may change. The user carved out one exception themselves: the auto-detect control keeps
+  "detect comic panels", because there the word does real work. Two keys mention comics in their
+  VALUE but not their name — `storyline.thumb_show_images`, `storyline.thumb_show_storyboard`.
+- Then `AU`'s shutdown half (small, no decision: `SIGINT`/`SIGTERM` → `release()` the configured
+  models; `llm.js` already EXPORTS `release()` and `server.js` has never called it, and there is no
+  signal handler at all), `AX`, `AR`. **Item `V` is fully specified** by the user's ruling and shares
+  `AM`'s own whole-image-panel act, so it slots in beside the image work.
 - Then `AP` (the `comic`→`image` rename — deliberately after the four image releases), `AU`'s
   shutdown half, `AX`, `AR`. Item `V` is now fully specified too (see the rulings above) and can be
   slotted in beside the image work, since it shares `AM`'s own whole-image-panel act.
 
-**⚠️ `ui.json` keys.** `AQ`'s one key is SPENT (`form.comic_review_save`, `v88_c`) and `AN`'s one is
-APPROVED but not yet spent. **`AP` and `AR` still need a count** — the user has ruled on HOW the
+**⚠️ `ui.json` keys.** `AQ`'s (`form.comic_review_save`, `v88_c`) and `AN`'s (`form.comic_title_ph`,
+`v88_d`) are both SPENT — 735 `en` keys now. **`AP` and `AR` still need a count** — the user has ruled on HOW the
 rename handles stale translations (delete the non-`en` values, let `translate-ui.js` refill them) but
 not on how many strings may change; `AR` wants ~5. **Ask fresh, as every `v87` cut did** — and note
 `v88_b` closed two reports with ZERO new keys by reusing existing strings. Try that first every time.
