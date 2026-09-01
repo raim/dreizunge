@@ -276,6 +276,7 @@ run('unit: a typed chapter title no longer destroys the image description (item 
 run('unit: a comic chapter\'s views agree about text and image (items AY/AZ, v88_e)', 'node', [path.join(__dirname, 'unit-comic-story-text.test.js')]);
 run('unit: translate-storyline picker + dispatch (item AX, v88_i)', 'node', [path.join(__dirname, 'unit-translate-picker.test.js')]);
 run('unit: library sort — edited / generated / token usage (item AR, v88_j)', 'node', [path.join(__dirname, 'unit-library-sort.test.js')]);
+run('unit: teacher walkthrough of a storyline\'s progress cards (v88_o)', 'node', [path.join(__dirname, 'unit-teacher-walk.test.js')]);
 run('unit: per-job cancel button in the jobs popover (item AU cancel, v88_k)', 'node', [path.join(__dirname, 'unit-jobs-cancel-button.test.js')]);
 run('unit: post-gen storyboard opt-in fix, client side (v85_p)', 'node', [path.join(__dirname, 'unit-postgen-storyboard-optin.test.js')]);
 run('unit: post-gen analysis opt-in, client side, mirrors postGenStoryboard (item W follow-up, v86_o)', 'node', [path.join(__dirname, 'unit-postgen-analysis-optin.test.js')]);

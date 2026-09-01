@@ -3650,8 +3650,239 @@
       },
       "sourceTextHash": "c42f7e54414c",
       "analyzedAt": "2026-09-01T13:37:32.512Z"
+    },
+    "tp_17882900616230000013": {
+      "chapterId": "tp_17882900616230000013",
+      "lang": "nl",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 3,
+      "tokenCount": 13,
+      "sentences": [
+        {
+          "sentenceId": "tp_17882900616230000013:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17882900616230000013:s0:t0",
+              "idx": 0,
+              "surface": "De",
+              "lemma": "de",
+              "form": "bestimmter Artikel, Nominativ Singular Femininum",
+              "sense": "der/die/das (definit)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882900616230000013:s0:t1",
+              "idx": 1,
+              "surface": "stekker",
+              "lemma": "stekker",
+              "form": "Nomen, Nominativ Singular Maskulinum",
+              "sense": "Stecker",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882900616230000013:s0:t2",
+              "idx": 2,
+              "surface": "zit",
+              "lemma": "zitten",
+              "form": "Verb, Präsens Indikativ 3. Person Singular",
+              "sense": "sitzt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882900616230000013:s0:t3",
+              "idx": 3,
+              "surface": "er",
+              "lemma": "er",
+              "form": "Pronomen, Akkusativ/Präpositionalobjekt (lokal)",
+              "sense": "davon/daran (hier: als Teil der Wendung 'er in zitten')",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882900616230000013:s0:t4",
+              "idx": 4,
+              "surface": "weer",
+              "lemma": "weer",
+              "form": "Adverb",
+              "sense": "wieder",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882900616230000013:s0:t5",
+              "idx": 5,
+              "surface": "in.",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "rein/herein (hier: Teil der Wendung 'er in zitten')",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 2,
+              "end": 5,
+              "tokenIds": [
+                "tp_17882900616230000013:s0:t2",
+                "tp_17882900616230000013:s0:t3",
+                "tp_17882900616230000013:s0:t4",
+                "tp_17882900616230000013:s0:t5"
+              ],
+              "lemma": "er weer in zitten",
+              "gloss": "wieder angesteckt sein / wieder eingesteckt sein",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-01T19:20:23.141Z",
+            "sentenceId": "tp_17882900616230000013:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "De stekker zit er weer in.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17882900616230000013:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17882900616230000013:s1:t0",
+              "idx": 0,
+              "surface": "Stroom",
+              "lemma": "stroom",
+              "form": "Substantiv (Hauptwort) im Nominativ Singular Maskulinum",
+              "sense": "elektrischer Stromfluss",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882900616230000013:s1:t1",
+              "idx": 1,
+              "surface": "geregelD.",
+              "lemma": "regelen",
+              "form": "Partizip Perfekt (Partizip II) des Verbs",
+              "sense": "reguliert; in Ordnung gebracht",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-01T19:21:49.608Z",
+            "sentenceId": "tp_17882900616230000013:s1",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Stroom geregelD.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17882900616230000013:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17882900616230000013:s2:t0",
+              "idx": 0,
+              "surface": "We",
+              "lemma": "wij",
+              "form": "Personalpronomen, Nominativ, Plural",
+              "sense": "wir",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882900616230000013:s2:t1",
+              "idx": 1,
+              "surface": "zijn",
+              "lemma": "zijn",
+              "form": "Verb, Präsens, Indikativ, 1. Person Plural",
+              "sense": "sind",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882900616230000013:s2:t2",
+              "idx": 2,
+              "surface": "weer",
+              "lemma": "weer",
+              "form": "Adverb",
+              "sense": "wieder",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882900616230000013:s2:t3",
+              "idx": 3,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882900616230000013:s2:t4",
+              "idx": 4,
+              "surface": "beweging.",
+              "lemma": "beweging",
+              "form": "Substantiv, Singular, Nominativ/Akkusativ",
+              "sense": "Bewegung",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 3,
+              "end": 4,
+              "tokenIds": [
+                "tp_17882900616230000013:s2:t3",
+                "tp_17882900616230000013:s2:t4"
+              ],
+              "lemma": "in beweging zijn",
+              "gloss": "in Bewegung sein",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-01T19:24:13.924Z",
+            "sentenceId": "tp_17882900616230000013:s2",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "We zijn weer in beweging.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-01T19:24:13.924Z",
+        "chapterId": "tp_17882900616230000013",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "e92bde0445bb",
+      "analyzedAt": "2026-09-01T19:24:13.924Z"
     }
   },
-  "generatedAt": "2026-09-01T13:37:32.513Z",
-  "chapterCount": 12
+  "generatedAt": "2026-09-01T19:24:13.925Z",
+  "chapterCount": 13
 }

@@ -26,11 +26,28 @@ const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
 
 const byId = Object.fromEntries(store.topics.filter(t => t.id).map(t => [t.id, t]));
 // A multi-chapter storyline, so "finished" and "not finished" are genuinely different states.
+//
+// ⚠️ v88_o: the LAST chapter must belong to NO OTHER storyline. Every section here stands on that
+// chapter and lets the card resolve its own deck via `_storylineForTopic()` — which returns the
+// FIRST storyline containing the topic. A chapter that is also a member of a one-chapter storyline
+// therefore resolves to THAT one, the card sees a finished single-chapter story, and §2's
+// "an unfinished story does not open the finished card" fails against completely correct code.
+//
+// This is not hypothetical: the user's own server generated `tp_…0013` into both
+// `sl_143869450` (6 chapters) and `sl_454402490` (1 chapter), and this file went red 8/8 while
+// passing against the previous corpus. Third-plus instance of the standing rule — select by the
+// PROPERTY the section asserts (the card must resolve back to THIS storyline), not by a proxy for
+// it (`>= 2 chapters with stories`).
+const _slsWith = id => (store.storylines || []).filter(s => (s.chapters || []).includes(id));
 const SL = (store.storylines || []).find(sl => {
   const ts = (sl.chapters || []).map(c => byId[c]).filter(Boolean);
-  return ts.length >= 2 && ts.every(t => (t.story || '').length > 0);
+  if (ts.length < 2 || !ts.every(t => (t.story || '').length > 0)) return false;
+  const last = ts[ts.length - 1];
+  return _slsWith(last.id).length === 1;      // the card will resolve back to THIS storyline
 });
-assert.ok(SL, 'the corpus has a multi-chapter storyline whose chapters carry stories');
+assert.ok(SL, 'the corpus has a multi-chapter storyline whose chapters carry stories AND whose last '
+  + 'chapter belongs to no other storyline (see the comment above — a shared last chapter makes '
+  + 'every section here resolve the wrong deck)');
 const TOPICS = (SL.chapters || []).map(c => byId[c]).filter(Boolean);
 const LAST = TOPICS[TOPICS.length - 1];
 

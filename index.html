@@ -5850,7 +5850,14 @@ function _closeEditorsOnNav(targetId){
   }
   if(targetId!=='storyline-screen'){ try{ closeStorylineEditInScreen(); }catch(_){} }
 }
-function show(id){ APP.screen = id; _closeEditorsOnNav(id); document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); try{ updateStaticFlagBanner(); }catch(_){} try{ refreshTutorAvailability(); }catch(_){} try{ refreshJobsPill(); }catch(_){} try{ _storySelHide(); }catch(_){} try{ _closeCardNavPopups(); }catch(_){} try{ _speechMicRefresh(); }catch(_){} try{ if(id==='generation-screen') _genWizardGoto(1); }catch(_){} }   // v62: the tutor follows the learner across screens; PLAN §12: a stale selection popover must not survive a navigation; progress-card redesign: neither must a stale nav popup (either card's) — this fires on every showComplete()/showStorySummary() re-render too, since both end with their own show(...) call
+function show(id){
+  // item: teacher walkthrough (v88_o) — a walk owns the progress card only. Navigating anywhere
+  // else (library, storyline screen, a lesson, the generator) ENDS it, so a stale walk can never
+  // repoint the nav on a card the teacher reached by another route. walkGoto() re-enters through
+  // showLessonSet()/showComplete(), which land on 'complete-screen', so stepping through chapters
+  // is unaffected.
+  if (id !== 'complete-screen' && typeof walkActive === 'function' && walkActive()) walkExit();
+  APP.screen = id; _closeEditorsOnNav(id); document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); try{ updateStaticFlagBanner(); }catch(_){} try{ refreshTutorAvailability(); }catch(_){} try{ refreshJobsPill(); }catch(_){} try{ _storySelHide(); }catch(_){} try{ _closeCardNavPopups(); }catch(_){} try{ _speechMicRefresh(); }catch(_){} try{ if(id==='generation-screen') _genWizardGoto(1); }catch(_){} }   // v62: the tutor follows the learner across screens; PLAN §12: a stale selection popover must not survive a navigation; progress-card redesign: neither must a stale nav popup (either card's) — this fires on every showComplete()/showStorySummary() re-render too, since both end with their own show(...) call
 // ── PLAN §C0.2 — explicit screen renderers: a NAMING SEAM, not a rewrite ─────────────────────
 // The plan's own words: "must first preserve every current entry point; no visual redesign
 // bundled in." These delegate to the functions that already own their rendering — nothing about
@@ -8871,6 +8878,12 @@ async function loadSavedList(){
     html += `<div class="storyline-hdr" id="slhdr-${chainId}" data-chain-id="${chainId}" data-chain="${escapedChain}"
       onclick="showStoryline(this.dataset.chainId,this.dataset.chain)">
       ${hdrTitle}
+      <!-- item: teacher walkthrough (v88_o, user request) — "a play button on the storyline card".
+           TEACHER-ONLY: it opens every chapter's progress card with no locking, which is a preview
+           of the course, not a way through it. A learner must keep the gated path. -->
+      ${APP._teacherMode?`<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="${escAttr(t('walk.start'))}"
+        data-sl="${chainId}" data-chain="${escapedChain}"
+        onclick="event.stopPropagation();walkStoryline(this.dataset.sl,this.dataset.chain)">▶</button>`:''}
       <button class="ico-btn export" style="font-size:11px;padding:2px 8px"
         title="${t('lesson.export_storyline_title')}"
         data-chain="${escapedChain}"
@@ -15880,6 +15893,87 @@ function _mirrorNavBtn(srcId, dstId){
   const inner = src.onclick;
   dst.onclick = (e) => { try { e.stopPropagation(); } catch(_) {} if (inner) inner(e); };
 }
+// ── Teacher walkthrough (v88_o, user request) ──────────────────────────────────────────────────
+// "currently we only see progress cards in student mode. let's allow a teacher mode access, started
+// via a play button on the storyline card, and where there is NO locking/unlocking, back/next
+// buttons just lead through chapters, playing lessons is optional."
+//
+// ⚠️ DESIGNED AS AN OVERRIDE, NOT A REWIRE. `showComplete()`'s Next/Back decision tree is the most
+// expensive code in this file to get wrong — the §C1 gate analysis, `v77_card_gates.md`'s 32-row
+// truth table, and several releases spent on it. So this does NOT touch a single existing branch:
+// every gate still computes exactly what it computed before, and `_walkApplyNav()` runs at the END
+// of the render (just before the header-row mirror) and REPOINTS the two buttons. A learner never
+// enters this path, so their card cannot change.
+//
+// What the mode is: linear over the storyline's chapters. No completion checks, no pass mark, no
+// "next unfinished lesson", no chapter locking. Lessons stay clickable — playing them is optional,
+// which is the difference between previewing a course and taking it.
+//
+// It records NOTHING. Every chapter is opened via `showComplete(true)` — the REVIEW render, whose
+// own comment says it "neither records progress nor shows per-round stats" — so a teacher paging
+// through a storyline cannot mark chapters complete or write into a learner's ledger.
+let APP_WALK = null;   // { slId, chapters:[topicId], idx } while walking, else null
+function walkActive(){ return !!(APP_WALK && Array.isArray(APP_WALK.chapters) && APP_WALK.chapters.length); }
+function walkExit(){ APP_WALK = null; }
+// Start at the storyline's FIRST chapter. Teacher-only: the button that calls this is teacher-gated
+// too, but a mode that silently unlocks every chapter must not depend on markup for that.
+async function walkStoryline(slId, encodedChain){
+  if(!APP._teacherMode) return;
+  let ids = [];
+  try{
+    const sl = (APP.storylines||[]).find(s => s && s.id === slId);
+    ids = (sl && Array.isArray(sl.chapters)) ? sl.chapters.slice() : [];
+    if(!ids.length && encodedChain){
+      // Fall back to the data-chain array the export/delete buttons already carry — it holds topic
+      // NAMES, so resolve them to ids the same way the rest of this file does.
+      const names = JSON.parse(decodeURIComponent(encodedChain)) || [];
+      ids = names.map(n => (APP.savedList||[]).find(t => t.topic === n)?.id).filter(Boolean);
+    }
+  }catch(_){ ids = []; }
+  if(!ids.length){ showToast(t('walk.empty')); return; }
+  APP_WALK = { slId, chapters: ids, idx: 0 };
+  await walkGoto(0);
+}
+// Open the chapter at `i` as a progress card. `showComplete(true)` is the review render — see
+// APP_WALK's own comment for why that specific entry point.
+async function walkGoto(i){
+  if(!walkActive()) return;
+  const ids = APP_WALK.chapters;
+  if(i < 0 || i >= ids.length) return;
+  APP_WALK.idx = i;
+  try{
+    const r = await fetch('/api/lessons/load?id=' + encodeURIComponent(ids[i]));
+    if(!r.ok) throw new Error('Not found');
+    APP.lessonData = await r.json();
+    await showLessonSet();          // same language/dir setup every chapter open does
+    showComplete(true);
+  }catch(e){ showToast(t('walk.load_failed')); walkExit(); }
+}
+// Repoints comp-prev/comp-next for the walk. Called at the very END of showComplete(), immediately
+// before the header-row mirror, so the mirrored duplicates inherit these destinations too.
+function _walkApplyNav(){
+  if(!walkActive()) return;
+  const { chapters, idx } = APP_WALK;
+  const prev = document.getElementById('comp-prev');
+  const next = document.getElementById('comp-next');
+  const set = (el, on, fn, title) => {
+    if(!el) return;
+    el.style.display = '';
+    el.disabled = !on;
+    el.style.opacity = on ? '1' : '.35';
+    el.style.cursor = on ? 'pointer' : 'not-allowed';
+    el.onclick = on ? fn : null;
+    if(title) el.title = title;
+  };
+  // Back on the FIRST chapter leaves the walk rather than dead-ending — the teacher came from the
+  // library, so that is where it returns them.
+  set(prev, true, idx > 0 ? (() => walkGoto(idx - 1)) : (() => { walkExit(); goLibraryClean(); }),
+      idx > 0 ? t('walk.prev') : t('walk.exit'));
+  // Forward stops at the last chapter. Deliberately DISABLED rather than hidden: a control that
+  // vanishes at the end reads as a bug, one that greys out reads as "you are at the end".
+  set(next, idx < chapters.length - 1, () => walkGoto(idx + 1), t('walk.next'));
+}
+
 // Mirrors comp-prev/comp-next onto the story panel's header-row duplicates, so the two pairs can
 // never disagree about where "back"/"forward" lead. Called once, at the very end of showComplete(),
 // AFTER every branch that can set comp-next's destination has run.
@@ -21389,6 +21483,10 @@ function showComplete(review, lessonIdxOverride){
       if (_spk) _spk.style.display = (typeof _lessonIsDialect==='function' && _lessonIsDialect()) ? 'none' : '';
     }
   }
+  // item: teacher walkthrough (v88_o). Runs AFTER every gate above has resolved and BEFORE the
+  // mirror below, so the header duplicates inherit the walk's destinations. A no-op unless a walk
+  // is active, which is what keeps the learner path byte-identical to before.
+  try { _walkApplyNav(); } catch(e) { if (typeof _cardNote === 'function') _cardNote('walk-nav', e); }
   // progress-card redesign: the header-row back/next duplicate, mirrored AFTER every branch above
   // has resolved comp-prev/comp-next — see _syncCompHdrNav's own comment for why it must run last.
   try { _syncCompHdrNav(); } catch(e) { if (typeof _cardNote === 'function') _cardNote('hdr-nav-sync', e); }

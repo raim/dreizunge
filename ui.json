@@ -744,7 +744,13 @@
     "jobs.cancel": "Cancel this job",
     "jobs.cancelled": "🛑 Job cancelled",
     "jobs.cancel_too_late": "That job had already finished",
-    "lib.sort_reverse": "Reverse the sort order"
+    "lib.sort_reverse": "Reverse the sort order",
+    "walk.start": "▶ Walk through the chapters (teacher preview)",
+    "walk.next": "Next chapter",
+    "walk.prev": "Previous chapter",
+    "walk.exit": "Back to the library",
+    "walk.empty": "That storyline has no chapters to walk through",
+    "walk.load_failed": "Could not open that chapter"
   },
   "nl": {
     "qc.editor.suggests_by": "⚑ {model} stelt voor:",

@@ -2424,6 +2424,73 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_o — a teacher walkthrough of a storyline's progress cards
+
+**User request**: *"currently we only see progress cards in student mode. let's allow a teacher mode
+access, started via a play button on the storyline card, and where there is NO locking/unlocking,
+back/next buttons just lead through chapters, playing lessons is optional."* Six new `ui.json` keys.
+
+### ⚠️ Built as an OVERRIDE, never a rewire — and that was the whole design decision
+
+`showComplete()`'s Next/Back decision tree is the most expensive code in this client to get wrong:
+the `§C1` gate analysis, `v77_card_gates.md`'s 32-row corrected truth table, and several releases
+spent on it. So **not one existing branch is touched**. Every gate still computes exactly what it
+computed before; `_walkApplyNav()` runs at the very END of the render — after all branches, just
+before `_syncCompHdrNav()` so the header duplicates inherit the destinations — and REPOINTS the two
+buttons. With no walk active it is a complete no-op.
+
+That no-op is the load-bearing claim, and it has its own section: with `APP_WALK` null, a disabled
+Next stays disabled, an un-wired one stays un-wired, and the styling is untouched. **A learner's card
+cannot have changed**, which is the only way to add a mode to this function safely.
+
+### The mode
+
+`▶` on the storyline card (teacher-only) opens chapter 1. Back/Next are linear over
+`sl.chapters` — no completion checks, no pass mark, no "next unfinished lesson", no locking. Lessons
+stay clickable, so playing them is optional: the difference between previewing a course and taking
+it. Forward is **disabled** on the last chapter rather than hidden (a vanished control reads as a
+bug; a greyed one reads as "you are at the end"), and Back on chapter 1 leaves the walk for the
+library rather than dead-ending.
+
+**It records nothing.** Every chapter opens through `showComplete(true)` — the REVIEW render, whose
+own comment says it "neither records progress nor shows per-round stats". A teacher paging through
+cannot mark chapters complete or write into a learner's ledger. Not offered as a choice: a preview
+that mutates progress would be a trap.
+
+**Teacher-gated at BOTH layers** — the button renders only in teacher mode AND `walkStoryline()`
+refuses independently. A mode that unlocks every chapter must not depend on markup for that.
+Navigating anywhere but the progress card ends the walk, so a stale walk can never repoint the nav on
+a card reached by another route.
+
+### ⚠️ Two existing tests went red, and only ONE was caused by this release
+
+- **`unit-storyline-lang-filter` — mine.** It read a 4000-char window from the group id, and the new
+  header button pushed `FIXTURE_SUMMARY` past it, so it reported a MISSING summary against a
+  perfectly good render. Bounded by the NEXT `slgroup-` now. **Third window-too-narrow bug in this
+  line** (`v88_m`'s cancel coverage, `v88_n`'s order regex, this) — a fixed-size window over
+  generated markup is a proxy, and it fails in the false-positive direction the moment the markup
+  grows.
+- **`unit-story-finished` — NOT mine, and the diagnosis is worth keeping.** It failed **8/8 against
+  the live corpus and PASSED against `HEAD`'s** — deterministic, so not flakiness (protocol item 1).
+  Cause: the user's own server had generated `tp_…0013` into **TWO** storylines — `sl_143869450`
+  (6 chapters) and `sl_454402490` (1 chapter). Every section stands on the fixture storyline's LAST
+  chapter and lets the card resolve its own deck via `_storylineForTopic()`, which returns the FIRST
+  storyline containing that topic — the one-chapter one. The card correctly saw a finished
+  single-chapter story, and §2's "an unfinished story does not open the finished card" asserted
+  against the wrong deck entirely.
+  **Fixed by selecting on the property**: the last chapter must belong to no other storyline. The
+  old predicate (`>= 2 chapters, all with stories`) was a proxy for "the card will resolve back to
+  THIS storyline", and a proxy fails in both directions.
+
+**Guard**: `unit-teacher-walk` (6 checks) — the walk opens chapter 1 via the review render, next/back
+step with no gating, both ends of the walk, the learner no-op, teacher-gating at both layers, and the
+walk ending on navigation away. **Five mutations red.**
+
+⚠️ **A note on the mutation-testing INSTRUMENT.** The first run of these mutations grepped the output
+for `AssertionError` and reported one as GREEN — it had actually failed with a `TypeError`, which the
+grep did not match. **A mutation harness that can report a false green is worse than not running
+one.** Check the test's own verdict line (`ALL PASSED` / `FAILED`), never a grep for one error type.
+
 ## ✅ v88_n — item AR follow-up: a reverse-sort button, and a usability finding about the grouping
 
 **User request**: *"please add a reverse sorting button."* One new `ui.json` key

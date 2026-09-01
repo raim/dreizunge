@@ -93,7 +93,12 @@ async function renderLanding(libFilter, libSrcFilter) {
     assert.ok(gi >= 0,
       `the storyline is rendered under its REAL id when ${why} — a card keyed by anything else `
       + 'is a card with no storyline behind it');
-    const seg = html.slice(gi, gi + 4000);
+    // v88_o: bounded by the NEXT storyline group rather than a fixed 4000 chars. The header grew a
+    // teacher-only ▶ walkthrough button and pushed FIXTURE_SUMMARY past the old window, so this
+    // reported a MISSING summary against a perfectly good render — the window, not the feature.
+    // Same trap as v88_m's cancel-coverage window; the next group is the honest boundary.
+    const nextGroup = html.indexOf('slgroup-', gi + 1);
+    const seg = html.slice(gi, nextGroup > gi ? nextGroup : html.length);
 
     // The derived content only renders when the storyline object was found.
     assert.ok(seg.includes('FIXTURE_STORYBOARD'), `the storyboard survives (${why})`);
