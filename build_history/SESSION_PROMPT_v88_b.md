@@ -5,8 +5,8 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_a`**, the first release of a
-**FRESH LINE** — `roadmap_v88.md` was cut at this release and is now the current roadmap.
+zero-dependency Node language-learning app). Picking up from **`v88_b`**. `roadmap_v88.md` was cut
+at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
 key, tell them explicitly and let them pause first. Every cut in the `v87` line asked first and was
@@ -20,17 +20,49 @@ work — it generated four chapters during the `v87` line, and twice that broke 
 restarting anything; a SERVER edit is not — start your own instance on another port to verify, and
 **kill it by PID** (`pkill -f "node server.js"` matches theirs too).
 
-**What shipped at this cut**: `v88_a` — storyline chapter management. Re-order (which also re-links
-`continuedFromId`, scoped to that storyline's own chapters so forks survive), split off into
-`"orphaned from <title>"`, and add an existing chapter (without removing it from its current
-storyline). Two new server routes do each operation atomically, because a re-order rewrites several
-topics and a half-applied chain is worse than none. One teacher-only panel on the storyline screen.
-Full write-up: `roadmap_v88.md`'s own `v88_a` entry.
+**What shipped at this cut**: `v88_b` — the first release off the thirteen-TODO handover, and both
+halves closed a user report with **no new `ui.json` keys**.
+**Item AW**: an ALL-CAPS word (reported: ONTEIGENINGSZONE) was read out letter by letter — the speech
+engine's own "a run of capitals is an initialism" heuristic, right for BBC and wrong for a
+photographed sign. `_ttsSpeakableText()` title-cases runs of 4+ capitals inside `_ttsMakeUtterance`,
+which is the ONE place in the client where any text becomes an utterance (verified across every
+caller). Three-letter runs are untouched on purpose.
+**Item AT**: "storyline title re-generation did not appear in the running job popover" — because the
+JOB DOES NOT EXIST. `/api/storyline-retitle` is fully synchronous and never calls `newJob()`, and
+FOUR sibling routes have the identical shape. `_jobsTracked()` generalises the tutor's existing
+synthetic-entry trick into an in-flight registry; nine call sites across five routes now register,
+**three of which the new guard found rather than a reading did**.
+Full write-up: `roadmap_v88.md`'s own `v88_b` entry.
 
-**🆕 NOTHING IS MID-FLIGHT, and no priority is set.** The `v87` line closed six items (R, U, Z, AC,
-AK, AL) plus the three storyline asks; they are recorded where they shipped and are NOT in the open
-list. Pick from "WHERE TO START" below — several entries are blocked on a user decision rather than
-on work, so **asking the user which one they want is a reasonable first move**.
+**⚠️ `v88_a`'s own entry is still the record for storyline chapter management** (re-order, split off,
+add existing) — it is directly below `v88_b`'s in the same section.
+
+**🆕 NOTHING IS MID-FLIGHT, and the queue is explicit.** The `v87` line closed six items (R, U, Z,
+AC, AK, AL) plus the three storyline asks; they are recorded where they shipped and are NOT in the
+open list. **After `v88_a` the user handed over thirteen TODOs in one message.** They were each read
+against the running code and written up as items **`AM`…`AX`** in `roadmap_v88.md`'s own
+"🆕 OPENED AT THE `v88_a` → `v88_b` HANDOVER" block, which ends with a **suggested implementation
+order** (a table, `v88_b` through `v88_h`). **Start there**, not from the older "WHERE TO START"
+list below — that list is still accurate but is no longer the top of the queue.
+
+**`v88_b` shipped the first row of that table (`AW` + `AT`). The next row is `v88_c` = `AQ` + `AM`.**
+
+**Three rulings the user has ALREADY GIVEN — do not re-ask:**
+1. **Item `AP`** (the `comic`→`image` rename): when an English string changes, **DELETE the stale
+   non-`en` values** so the offline `translate-ui.js` pass refills them. (Renaming a KEY preserves
+   its translations and is free; only changed English text costs anything.)
+2. **Item `AN`**: build the recommended fix — **a separate TITLE field on the review card**, keeping
+   the existing "the description is a fallback when nothing was extracted" ruling intact rather than
+   reversing it. Half (2) — persisting `description` in `comicPanels` — was never blocked.
+3. **Item `V`**: *"if multiple images are uploaded, mark all images as one panel, but still allow the
+   user to modify, add and resort panels. each panel is one chapter."* So: each uploaded image gets a
+   whole-image panel automatically (the same act item `AM` performs for one image), the panel list
+   stays fully editable, and `comicCreateChapter()`'s existing one-chapter-per-panel behaviour
+   (`v85_p`) is confirmed as correct — **item `V` is now fully specified and no longer blocked.**
+
+**Still genuinely blocked on a user decision**: `AV` (display surface + which of three sources
+generates it — needs a live three-way comparison, not a choice) and `AS` (whose recommendation is to
+counter-propose page IMAGES rather than a pdf.js viewer).
 
 ## Orient yourself, in this order
 
@@ -47,8 +79,8 @@ on work, so **asking the user which one they want is a reasonable first move**.
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 312 checks
-node test/run.js --quick                  → expect 261
+node test/run.js                          → expect 314 checks
+node test/run.js --quick                  → expect 263
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -66,7 +98,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **339 topics, 98 storylines, 33 languages, 733 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_a'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_b'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -76,8 +108,21 @@ snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_a'`.
 
 Now 54 numbered standing rules across "Rules earned in session 28…34" plus dedicated blocks for the
 `v83`/`v84`/`v85`/`v86` lines — see `roadmap_v87.md`'s own copy of them. Read the **"⚠️ How the rules
-are NUMBERED"** note before citing one. Three earned or re-confirmed at THIS cut, worth carrying
-forward explicitly:
+are NUMBERED"** note before citing one.
+
+**Earned at `v88_b`, and it paid for itself immediately:**
+
+- **A SET-LEVEL guard finds the call sites a reading misses.** Item AT wrapped one caller per route,
+  which looked complete. The guard section asserting *every* caller of all five routes is wrapped went
+  red naming the offset of the next one — and there were **three more**, including `/api/storyline-title`'s
+  four separate client callers. That section is the reason the release is complete rather than 60%
+  complete. When a fix must apply to EVERY caller of something, assert over the whole set, not over
+  the one you happened to change — and expect it to fail the first time.
+- **When a fix has two halves — "it works" and "it doesn't leak" — the second half needs its own
+  assertion.** `_ttsSpeakableText` had to reach the utterance AND reach nothing else; only the second
+  claim can be observed at the source layer, and it is the one that would silently ruin a render.
+
+Three earned or re-confirmed at the `v88_a` cut, still worth carrying forward explicitly:
 
 - **A written-up plan's factual claims are still claims — measure them.** Item AL's own write-up said
   "PDF/comic chapters never set `storyStyle` today" as the justification for making writing-style
@@ -173,7 +218,34 @@ measures zero effect, reconsider the diagnosis before trying a third wording.**
 
 # WHERE TO START
 
-**Nothing is mid-flight.** Everything below is carried from `roadmap_v88.md`'s own "OPEN AT THE v88
+**🆕 FIRST: the thirteen TODOs handed over after `v88_a`** — items `AM`…`AX` in `roadmap_v88.md`,
+with their own suggested order. **`v88_b` shipped row 1 (`AW` + `AT`).** The rest of that table:
+
+- **➡️ NEXT — `v88_c` — `AQ` + `AM`.** `AQ` is the most damaging bug in the batch: `comicOpenReview(auto)`'s
+  `auto` flag never reaches `_comicReviewConfirm()`, so the review card auto-opened from card 2 runs
+  a FULL book generation. The "no generate button on card 3" half is the same bug (`_comicBookId`
+  set → `_applyLessonCardUI()` computes `busy` → the row hides), not a second defect.
+- **`v88_d` — `AO` + `AN`(2).** The data-loss pair. `AO` has THREE causes (no `link` on the job, the
+  result only ever applied by the originating tab, and a 5-minute job-store cleanup that would make a
+  bare link fail silently) — the durable fix is the SERVER writing results onto the draft.
+- Then `AP` (the `comic`→`image` rename — deliberately after the four image releases), `AU`'s
+  shutdown half, `AX`, `AR`. Item `V` is now fully specified too (see the rulings above) and can be
+  slotted in beside the image work, since it shares `AM`'s own whole-image-panel act.
+
+**⚠️ `ui.json` budget still needed before `AQ` / `AN` / `AP` / `AR`.** The user has ruled on HOW the
+rename handles stale translations (delete them, let `translate-ui.js` refill) but has NOT yet given a
+key count. `AQ` needs 1 (a confirm-only label for the auto-opened review card), `AN` needs 1 (the new
+title field), `AR` ~5. **Ask fresh, as every `v87` cut did** — and note `v88_b` managed to close two
+reports with ZERO new keys by reusing existing strings; try that first each time.
+
+**⚠️ Still blocked on a user decision**: `AV` (where a language summary is shown, and which of three
+sources generates it — needs a live three-way comparison, not a choice) and `AS` (recommendation:
+counter-propose page IMAGES rather than a pdf.js viewer — the PDF bytes are never stored, and chapter
+text has no offset back into the PDF).
+
+---
+
+**The older list.** Everything below is carried from `roadmap_v88.md`'s own "OPEN AT THE v88
 CUT" section — see it for full detail. Several are blocked on a decision, not on effort.
 
 **Buildable now, no decision needed:**

@@ -51,6 +51,7 @@ run('unit: grammar reinforce note (item 5)', 'node', [path.join(__dirname, 'unit
 run('unit: editor sync on delete (item 3)', 'node', [path.join(__dirname, 'unit-editor-sync.test.js')]);
 run('unit: tts voice-quality helpers (item 1)', 'node', [path.join(__dirname, 'unit-tts-voice.test.js')]);
 run('unit: tts never approximates a missing voice (v55_x)', 'node', [path.join(__dirname, 'unit-tts-no-approximation.test.js')]);
+run('unit: an ALL-CAPS word is spoken as a word, not spelled out (item AW, v88_b)', 'node', [path.join(__dirname, 'unit-tts-allcaps.test.js')]);
 run('unit: always-on sound-test row (v49)', 'node', [path.join(__dirname, 'unit-tts-test-row.test.js')]);
 run('unit: lesson-type meta table (item 8)', 'node', [path.join(__dirname, 'unit-lesson-type-meta.test.js')]);
 run('unit: word-count tokenizer (item 8)', 'node', [path.join(__dirname, 'unit-word-count.test.js')]);
@@ -291,6 +292,7 @@ run('unit: PLAN §7.0 CP1/CP2, item W step 4 — text explorer client fetch/rend
 run('unit: item W follow-up — analyzeChaptersRun() batch curator trigger (v86_p)', 'node', [path.join(__dirname, 'unit-analyze-chapters-run.test.js')]);
 run('unit: lesson-set card story display — language flags + text explorer (v86_ad)', 'node', [path.join(__dirname, 'unit-lesson-set-story-explorer.test.js')]);
 run('unit: jobs popover — tutor synthetic entry + stacking-context fix (item U follow-up)', 'node', [path.join(__dirname, 'unit-jobs-popover.test.js')]);
+run('unit: synchronous LLM routes are visible in the jobs popover (item AT, v88_b)', 'node', [path.join(__dirname, 'unit-jobs-sync-inflight.test.js')]);
 run('unit: unfinished-project drafts — client-side half (item R)', 'node', [path.join(__dirname, 'unit-drafts.test.js')]);
 run('unit: unfinished-project drafts — comic upload flow, client-side half (item R follow-up)', 'node', [path.join(__dirname, 'unit-drafts-comic.test.js')]);
 

@@ -31,7 +31,13 @@ function harness(voices, voiceName) {
   // extraction limit as v74_j's _ttsRankVoices — a new dependency of an extracted function has to
   // be extracted alongside it. Note this harness gives it no localStorage on purpose: the helper
   // is try/catch'd and returns null, so these cases exercise the ranker path exactly as before.
+  // v88_b (item AW): _ttsMakeUtterance gained a THIRD helper, _ttsSpeakableText (it now speaks a
+  // title-cased projection of the text, so an all-caps word is not spelled out letter by letter).
+  // Same extraction limit as v74_j's _ttsRankVoices and v79_l's _ttsSavedVoiceName above — a new
+  // dependency of an extracted function has to be extracted alongside it, or the isolated copy
+  // ReferenceErrors. Third occurrence; the limit is documented in INTERNALS' harness section.
   const code = ext(client, '_ttsRankVoices') + '\n' + ext(client, '_ttsSavedVoiceName') + '\n'
+             + ext(client, '_ttsSpeakableText') + '\n'
              + ext(client, '_ttsPickVoice') + '\n' + ext(client, '_ttsMakeUtterance');
   const APP = { _ttsVoiceName: voiceName || null };
   const LANGS = { sw: { tts: 'sw-KE', name: 'Swahili' }, de: { tts: 'de-DE', name: 'German' } };

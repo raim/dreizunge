@@ -5920,8 +5920,11 @@ async function retranslateStory(){
   const btn = document.getElementById('story-retranslate-btn');
   if (btn) btn.disabled = true;
   try {
-    const r = await fetch('/api/retranslate-story', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ topic: d.topic }) });
+    // item AT: one real translation call, tracked. `models.translation` is reused as the label —
+    // it is the role name this call belongs to, and it needs no new ui.json key.
+    const r = await _jobsTracked(t('models.translation'), () => fetch('/api/retranslate-story',
+      { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic: d.topic }) }));
     const resp = await r.json().catch(()=>({}));
     if (!r.ok) throw new Error(resp.error || 'Failed');
     d.storyTranslation = resp.storyTranslation;
@@ -10556,8 +10559,10 @@ async function genStorylineTitle(chainId, rootTopic, encodedChain) {
   setTitleGenStatus('running',t('lesson.generating_title'));
   try {
     const topics = JSON.parse(decodeURIComponent(encodedChain));
-    const r = await fetch('/api/storyline-title', { method:'POST',
-      headers:{'Content-Type':'application/json'}, body: JSON.stringify({ topics, slId: chainId }) });
+    // item AT: reuses the label already passed to setTitleGenStatus above — same string on both
+    // surfaces, no new ui.json key.
+    const r = await _jobsTracked(t('lesson.generating_title'), () => fetch('/api/storyline-title', { method:'POST',
+      headers:{'Content-Type':'application/json'}, body: JSON.stringify({ topics, slId: chainId }) }));
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || t('status.generation_failed'));
     const inp  = document.getElementById('sledit-input-' + chainId);
@@ -10584,11 +10589,12 @@ async function genLessonTitle() {
   const oldTopic = APP.lessonData.topic;
   const oldEmoji = APP.lessonData.topicEmoji || '📚';
   try {
-    const r = await fetch('/api/storyline-title', {
+    // item AT: same route again — four client callers reach it, and all four were invisible.
+    const r = await _jobsTracked(t('lesson.gen_topic_title'), () => fetch('/api/storyline-title', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ topics: [oldTopic] })
-    });
+    }));
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || t('status.generation_failed'));
     // Save new topic/emoji to server
@@ -12694,10 +12700,11 @@ async function genStorylineSummary() {
   const btn = document.getElementById('sl-screen-summary-btn');
   if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
   try {
-    const r = await fetch('/api/storyline-summary', {
+    // item AT: same synchronous shape as retitle — a multi-minute call with no job behind it.
+    const r = await _jobsTracked(t('lesson.gen_summary'), () => fetch('/api/storyline-summary', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slId: sl.chainId, topics: sl.topics })
-    });
+    }));
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'Failed');
     const summary = data.summary;
@@ -13075,7 +13082,10 @@ async function _doRetitle(scope){
   if(!slId){ showToast('⚠ Open a storyline first'); return; }
   showToast(scope==='chapters' ? t('retitle.working_chapters') : t('retitle.working_title'));
   try{
-    const r=await fetch('/api/storyline-retitle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slId, scope})});
+    // item AT: the REPORTED case. Reuses the label already computed for the toast above — one
+    // string for both surfaces, and zero new ui.json keys.
+    const r=await _jobsTracked(scope==='chapters' ? t('retitle.working_chapters') : t('retitle.working_title'),
+      () => fetch('/api/storyline-retitle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slId, scope})}));
     const resp=await r.json();
     if(!r.ok) throw new Error(resp.error||'Failed');
     console.log('[storyline] retitle ('+scope+') ->', resp);
@@ -13092,9 +13102,11 @@ async function genStorylineTitleFromScreen() {
   const btn = document.getElementById('sl-screen-gen-btn');
   if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
   try {
-    const r = await fetch('/api/storyline-title', { method:'POST',
+    // item AT: /api/storyline-title is the SECOND synchronous title route (the user's report
+    // could have meant either) — both are tracked, so neither is invisible.
+    const r = await _jobsTracked(t('lesson.gen_topic_title'), () => fetch('/api/storyline-title', { method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ topics, slId: chainId }) });
+      body: JSON.stringify({ topics, slId: chainId }) }));
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'Failed');
     const inp  = document.getElementById('sl-screen-edit-input');
@@ -14622,10 +14634,11 @@ async function genSavedItemTitle(sid, enc, tid) {
   const found = tid ? (APP.savedList || []).find(l => l.id === tid)
                     : (APP.savedList || []).find(l => l.topic === oldTopic);
   try {
-    const r = await fetch('/api/storyline-title', {
+    // item AT: the fourth and last caller of this route.
+    const r = await _jobsTracked(t('lesson.gen_topic_title'), () => fetch('/api/storyline-title', {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ topics: [found?.userTopic || oldTopic] })
-    });
+    }));
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || t('status.generation_failed'));
     // Pre-fill edit form — user still confirms with Save
@@ -14769,8 +14782,11 @@ async function retranslateChain(chainId, btn){
   try{
     for(const id of ids){
       try{
-        const r = await fetch('/api/retranslate-story',{method:'POST',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({topicId:id})});
+        // item AT: tracked PER CHAPTER, not once around the whole loop — the loop is sequential,
+        // so one entry per iteration is what actually tells the user where the batch has got to.
+        const r = await _jobsTracked(t('models.translation'), () => fetch('/api/retranslate-story',
+          {method:'POST',headers:{'Content-Type':'application/json'},
+           body:JSON.stringify({topicId:id})}));
         if(!r.ok){ failed++; continue; }
         done++;
         // Keep the in-memory savedList/chain cache in sync so a re-render (this chain's own body, or
@@ -17117,9 +17133,12 @@ async function writingSubmit(){
   const btn=document.getElementById('wr-submit-btn');
   if (btn) { btn.disabled=true; btn.textContent=t('ex.writing.grading'); }
   try {
-    const r = await fetch('/api/writing-feedback', { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ text, lang: APP.lessonData?.lang||APP.lang, srcLang: APP.lessonData?.srcLang||APP.srcLang,
-        question: lesson.question||'', story: APP.lessonData?.story||'' }) });
+    // item AT: the `writing` type is the one lesson graded by a LIVE model call at play time
+    // (INTERNALS.md §6b) — stateless, no job, and so previously invisible like the other four.
+    const r = await _jobsTracked(t('ex.writing.grading'), () => fetch('/api/writing-feedback',
+      { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ text, lang: APP.lessonData?.lang||APP.lang, srcLang: APP.lessonData?.srcLang||APP.srcLang,
+          question: lesson.question||'', story: APP.lessonData?.story||'' }) }));
     const data = await r.json().catch(()=>({}));
     if (!r.ok || data.error) { showToast(data.error || t('ex.writing.failed')); return; }
     const topicKey=APP.lessonData.topic;
@@ -22187,10 +22206,52 @@ async function _jobsFetchAndRender(){
 // (_tutorState.busy), so it's folded in here as a SYNTHETIC entry rather than teaching the server
 // about a request shape (streaming, no persisted id) the generic job store was never built for.
 // User-requested follow-up to item U ("a tutor job should also be part of the jobs popover").
+// item AT (v88_b, user-reported: "Storyline title re-generation did not appear in the running job
+// popover. It should."). MEASURED cause, and it generalises well past the report:
+// POST /api/storyline-retitle is FULLY SYNCHRONOUS — it awaits generateChapterMeta() /
+// generateStorylineTitle() inline and returns the result, never calling newJob(). So there is
+// nothing for GET /api/jobs to aggregate, and the popover is not failing to SHOW the job; the job
+// does not exist. `/api/storyline-title`, `/api/storyline-summary`, `/api/retranslate-story` and
+// `/api/writing-feedback` have the IDENTICAL shape — five long, blocking, model-backed routes, all
+// invisible, of which retitle is merely the one the user happened to sit and wait on.
+//
+// Fixed CLIENT-side rather than by converting five routes to jobs, following the precedent the
+// tutor entry below already set for exactly this situation (a real request the server's job store
+// was never built to represent). The tutor's one-off is generalised into a registry any awaited
+// call can join — see _jobsTracked(). Converting the routes themselves is the other option and is
+// the right one IF item AU (per-job cancellation) is ever taken, because a cancel button needs a
+// server-side job to cancel; it is recorded in item AT's own roadmap entry so that decision is not
+// re-derived.
+//
+// ⚠️ The tutor entry is deliberately NOT migrated onto this registry. Its source of truth is
+// _tutorState.busy — a flag that already exists, is set from two places, and survives a re-render —
+// and it is the only entry carrying a `link`. Re-expressing it as a registration would add a
+// second, weaker source for state that is already correct.
+const _jobsInflight = new Map();   // synthetic id -> { label, step }
+let _jobsInflightSeq = 0;
+// Wraps ONE awaited call so it is visible in the popover for exactly as long as it is in flight.
+// try/finally, not a then/catch pair: a route that throws (offline, 500, a JSON parse failure) must
+// still remove its entry, or a failed re-title would leave a phantom job running forever — which is
+// a worse bug than the invisible one this item exists to fix.
+async function _jobsTracked(label, fn, step){
+  const id = '__sync' + (++_jobsInflightSeq) + '__';
+  _jobsInflight.set(id, { label: label || '', step: step || null });
+  try{ _jobsUpdateBadgeAndList(); }catch(_){}
+  try{ return await fn(); }
+  finally{
+    _jobsInflight.delete(id);
+    try{ _jobsUpdateBadgeAndList(); }catch(_){}
+  }
+}
 function _jobsEffectiveList(){
-  if(!_tutorState.busy) return _jobsLastList;
-  return [{ id: '__tutor__', kind: 'tutor', label: t('tutor.title'), status: 'running',
-    step: t('tutor.thinking'), error: null, link: { type: 'tutor' }, createdAt: Date.now() }, ..._jobsLastList];
+  const sync = _jobsInflight.size
+    ? [..._jobsInflight].map(([id, e]) => ({ id, kind: 'sync', label: e.label, status: 'running',
+        step: e.step, error: null, link: null, createdAt: Date.now() }))
+    : [];
+  if(!_tutorState.busy && !sync.length) return _jobsLastList;
+  return [...(_tutorState.busy ? [{ id: '__tutor__', kind: 'tutor', label: t('tutor.title'), status: 'running',
+    step: t('tutor.thinking'), error: null, link: { type: 'tutor' }, createdAt: Date.now() }] : []),
+    ...sync, ..._jobsLastList];
 }
 // Re-renders the badge + (if open) the list from CURRENT STATE, no network round trip — the tutor
 // hook below calls this the instant _tutorState.busy flips, so the popover reacts immediately
@@ -24387,10 +24448,40 @@ function _ttsPickVoice(ttsCode) {
   return named || langVoices[0] || null;
 }
 
+// item AW (v88_b, user-reported, real content): ONTEIGENINGSZONE — an all-caps word on a
+// photographed sign, extracted into tp_17880367188140000070's story — was read out LETTER BY
+// LETTER. That is the TTS engine's own heuristic ("a run of capitals is an initialism, so spell
+// it"), and it is right for BBC or EU and wrong for a sign that simply shouts. The user's own
+// proposed rule is the one implemented: a run of FOUR OR MORE capitals is a word, not an
+// initialism. Three-letter runs are left alone precisely because that is where the genuine
+// initialisms live.
+//
+// TITLE-cased, not lower-cased: it defeats the spell-it-out heuristic just as completely while
+// changing the string as little as possible (a capitalised German/Dutch noun stays capitalised,
+// and a sentence-initial word does not suddenly start lower-case). Engines do not pronounce on
+// case beyond this heuristic, so the smaller edit is the safer one.
+//
+// ⚠️ This is the SPOKEN projection ONLY — it is applied where text becomes an utterance and
+// NOWHERE else, so every rendered surface keeps the sign's real capitalisation. The story panel,
+// the comic panel list and the text explorer must go on showing ONTEIGENINGSZONE.
+//
+// Permitted under §4 ("no language knowledge in the code"): \p{Lu} is Unicode machinery, not a
+// hand-authored table, and the rule is orthographic rather than about any one language. Scripts
+// with no case (Japanese, Arabic, Devanagari…) cannot match it at all, so they are untouched.
+function _ttsSpeakableText(text) {
+  return String(text == null ? '' : text)
+    .replace(/\p{Lu}{4,}/gu, w => w[0] + w.slice(1).toLowerCase());
+}
+
 // Build an utterance, or null when we must NOT speak. A voice in the wrong language (an English
 // voice reading Swahili) is worse than silence for a learner, so there is no approximation path.
 function _ttsMakeUtterance(text, ttsCode, rate) {
-  const u = new SpeechSynthesisUtterance(text);
+  // item AW: the ONE place any text in this client becomes a SpeechSynthesisUtterance — verified
+  // across every caller (_doSpeak and _doSpeakLang both funnel through _speakChunks,
+  // _doSpeakLangThen through _speakChunksThen, and _speakAndAdvance calls this directly), which is
+  // why the all-caps fix needs to exist only here. _ttsChunks() splits on SENTENCE boundaries, so
+  // a chunk can never arrive with a word cut in half.
+  const u = new SpeechSynthesisUtterance(_ttsSpeakableText(text));
   u.lang = ttsCode; u.rate = rate || 0.9; u.pitch = 1;
   const v = _ttsPickVoice(ttsCode);
   if (v === undefined) return u;              // can't tell yet → behave as before (conservative)

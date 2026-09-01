@@ -66,7 +66,12 @@ function client() {
     const spoken = JSON.parse(C.run('JSON.stringify(__spoken)'));
     assert.strictEqual(spoken.length, 1,
       `exactly one utterance should reach the engine, not one per render (got ${spoken.length}: ${JSON.stringify(spoken)})`);
-    assert.strictEqual(spoken[0], 'RICHTIG',
+    // 'Richtig', not 'RICHTIG': item AW (v88_b) title-cases runs of 4+ capitals on the way into the
+    // utterance, so an all-caps word is spoken rather than spelled out. This file's own claim is
+    // WHICH question is spoken (the second, not the stale first) and how many times — both
+    // untouched. The fixture's placeholders happen to be all-caps, so leaving them that way is free
+    // confirmation that AW's transform reaches the listen_mcq auto-speak path as well.
+    assert.strictEqual(spoken[0], 'Richtig',
       'the ONE utterance spoken is the CURRENT (second) question\'s text, not the first render\'s stale one');
   }
   console.log('  two synchronous renderEx() calls (the tapWord() shape): only the LATEST question is spoken');
@@ -80,7 +85,7 @@ function client() {
     await sleep(450);
     const spoken = JSON.parse(C.run('JSON.stringify(__spoken)'));
     assert.strictEqual(spoken.length, 1, 'a single render still produces exactly one utterance');
-    assert.strictEqual(spoken[0], 'FALSCH', 'and it is that render\'s own question');
+    assert.strictEqual(spoken[0], 'Falsch', 'and it is that render\'s own question');   // title-cased by item AW, see case 1's note
   }
   console.log('  a single renderEx() call: unaffected, still speaks its own question');
 

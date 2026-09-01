@@ -32,7 +32,7 @@ through the whole v88 line.
 
 | section | what it is |
 |---|---|
-| **OPEN AT THE v88 CUT** | fresh, top-of-file summary of everything still genuinely open, then the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
+| **OPEN AT THE v88 CUT** | fresh, top-of-file summary of everything still genuinely open — including the **thirteen TODOs handed over after `v88_a`** (items `AM`…`AX` plus a re-framing of item `V`), each evaluated against the running code, with a **suggested implementation order** at the foot of that block — then the findings that govern the open sections, then `§0` / `§0i` themselves, then the standing RULES |
 | **SHIPPED IN THE v88 LINE** | this line's own release history, newest first |
 | **TRACK T** | the text-focused progress card — steps 1–4 and `§T7` all shipped in the v81 line; nothing open here at this cut |
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, `PLAN §7.0` Track A (CP1-5), and `PLAN §13` are ALL fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). `PLAN §2.4` / Track A4 (comic/image ingest) is fully shipped as its FOUR-milestone core plus several `v85`/`v86`/`v87`-line follow-ups. |
@@ -207,6 +207,415 @@ mode(s) to build.
 
 Scoped (`v86_s`/onward); one open design question flagged (does a correction survive a chapter
 re-analysis? no, today). Not started.
+
+## 🆕 OPENED AT THE `v88_a` → `v88_b` HANDOVER — the user's own TODO list, evaluated
+
+*Thirteen TODOs handed over in one message at the start of the session after `v88_a`. Each was
+READ AGAINST THE RUNNING CODE before being written up here (protocol item 2 — a user report is a
+symptom, not a diagnosis, and a previous session's write-up is a claim), so what follows is where
+the defect actually is, not where the report points. One of the thirteen — "multiple photos treated
+like multiple panels" — is **item V**, already open since the `v86` line, and was NOT given a new
+letter; its entry below records only what this pass added to it. Letters `AM`…`AX` are new.*
+
+**Four of them (`AM`, `AN`, `AO`, `AQ`) are one code region** — `_comicFinishSetup()` /
+`comicOpenReview()` / `_comicReviewConfirm()` / `comicCreateChapter()` / `_comicExtractCheckOnce()`,
+all within ~400 lines of `index.html`. They were reported as four separate symptoms from one real
+session with a photographed sign. Read the region ONCE and land them as two releases (see the
+suggested order at the foot of this block), not four.
+
+### AM. On upload, pre-select the whole image as one panel
+
+**User's words**: "Upon image upload, let's pre-select the whole image as one panel, as if the button
+associated with `form.comic_single_panel` had been pressed already."
+
+**Measured**: `comicUseWholeImageAsPanel()` (`v86_d`, item J) already does exactly this and is
+already idempotent-safe — it REPLACES `APP_COMIC.boxes` rather than appending. The fresh-upload path
+funnels through **`_comicFinishSetup(img, status)`** for BOTH the downscaled and the
+not-downscaled branch of `onComicFileChosen()`, and that function already calls `comicClearPanels()`
+as its first act. So this is one call at the end of `_comicFinishSetup()`.
+
+**⚠️ The one thing not to break**: `_resumeComicDraftFrom()` deliberately does NOT route through
+`_comicFinishSetup()` (its own comment says why — `comicClearPanels()` would discard the boxes the
+draft exists to restore). Putting the call anywhere more general than `_comicFinishSetup` would
+destroy a resumed draft's panels. Guard the resume path explicitly, at the DOM layer (render and
+inspect the panel list), not by pinning the source.
+
+Effort: an hour including the guard. No ui.json keys. No decision needed.
+
+### AN. A caption typed in the review card SILENTLY DISCARDS the generated image description
+
+**User's words**: "image upload bug: I lost an already generated image description, perhaps because I
+added title 'De Manteling' in `tp_17882063882590000007`."
+
+**Reproduced from the stored data, not from the report.** `tp_17882063882590000007` has
+`story: "De Manteling"`, `comicPanels[0].caption: "De Manteling"`, `inScene: ""` — and **no
+`description` field at all**. Two independent losses, both real:
+
+1. **`_comicPanelText(b)`** returns `[caption, inScene].filter(Boolean).join('\n') || description`.
+   The description is a strict FALLBACK — per an explicit earlier user ruling ("[the description]
+   will be used as the chapter text, if no text is extracted"). Typing anything into the caption
+   field therefore makes `extracted` truthy and the description stops contributing to the chapter
+   text. Working as ruled; **experienced as data loss**, because the user was typing a TITLE, not
+   correcting an extraction.
+2. **`comicCreateChapter()`'s `comicPanels` metadata carries `caption` and `inScene` only** — it
+   never writes `description`. So even when the description IS the chapter text (case 1's fallback),
+   the description itself is not persisted anywhere; the stored topic keeps the derived `story` and
+   nothing else. **This half is a plain defect with no ruling behind it** and should be fixed
+   regardless of how (1) is decided: persist `description` on the panel like the other two fields.
+
+**⚠️ Needs a user ruling on (1) only**, and it is a ruling that REVISES an earlier one. The three
+candidates, in the order they are worth considering:
+- **A separate title field.** The review card has no title input; the caption field is being used as
+  one. Give the card its own title, keep caption meaning "text lettered in the panel". Costs one
+  ui.json key, and makes the ruling above correct again instead of overriding it.
+- **Caption + description both contribute** when both exist. Cheapest, but reverses the ruling and
+  will produce "the sign says X. A man stands beside a fence." prose in every mixed panel.
+- **Keep the ruling, warn instead** — the review card greys the description when a caption is typed,
+  so the loss is at least visible. Weakest: it makes the behaviour legible without making it useful.
+
+Recommendation: the separate title field. Do (2) unconditionally first — it is not blocked on this.
+
+### AO. An extraction started on a phone is LOST, and the job's popover row has no link
+
+**User's words**: "I keep losing extracted text, when text extraction is started on the mobile phone.
+The job is listed in the job popover but has no link associated, and clicking on the comic draft job
+opens the generation page without the extracted text. The job popover link should lead to the text
+confirmation popover of the text extraction routine."
+
+**Three measured causes, not one.** All three must be closed or the report recurs:
+
+1. **The job carries no `link`.** `POST /api/comic-extract` calls
+   `newJob({ label: 'Extracting comic panels (N)' })` with **no `link` field** — and `_jobsRenderList()`
+   renders the "open →" button only `if (j.link)`. Same for `/api/comic-detect-panels`. This is
+   exactly what the user sees, and `newJob()`'s own comment even predicts it ("comic
+   extraction/detection … simply carry `link:null`"). The user is asking for a NEW link type —
+   `{type:'comic-extract', id:jobId}` — which `_jobsOpenLink()` resolves by fetching `/api/job/:id`,
+   applying `_comicApplyExtraction(j.data.panels)`, and opening `comicOpenReview()`.
+2. **The result is only ever applied by the ORIGINATING tab.** `_comicExtractCheckOnce()` is the only
+   writer of `APP_COMIC.boxes[i].text`. If that tab is gone (phone locked past the browser's tab
+   eviction, page reloaded, app switched away and killed), nothing ever applies the panels — which is
+   why resuming the comic DRAFT shows the image and boxes but no text: the draft's `text` field is
+   only ever populated as a downstream effect of that same poller (via `_comicRenderList()`'s
+   autosave hook). This is the same failure family as **item AE**, but it is NOT the same bug and is
+   not fixed by AE's visibility listener — AE is about a *live* tab that was backgrounded; this is
+   about a tab that no longer exists.
+3. **The job store forgets the result after five minutes.** `jobDone()` calls
+   `_scheduleCleanup(id, 5 * 60 * 1000)`. So (1) alone gives a link that works for five minutes and
+   then silently stops — a worse failure than no link. **The durable fix is to make the SERVER write
+   the extraction results onto the draft**: pass the client's `_comicDraftId` in the
+   `/api/comic-extract` body, and have `_runComicExtractJob` persist per-panel results into that
+   draft record on completion. Then resuming the draft — which is what the user already instinctively
+   clicked — carries the text, from any device, with no five-minute window.
+
+Do all three. (3) is the fix; (1) is what the user asked for and is the fast path back to the review
+card; (2) is a consequence of (3).
+
+Effort: a release. `unit-comic-review-card` and `e2e-drafts-comic` already exist to build on.
+**Mutation-test the durability claim by killing the client**, not by asserting the request body.
+
+### AP. Rename the whole `comic` branch of `ui.json` to `image`
+
+**User's words**: "Let's rename the whole comic branch in `ui.json` to just 'image'. Uploading comics
+is just a possible application of the tool. We don't need to mention comic in related `ui.json`
+entries. Just image. Only for the panel-recognition, currently in German 'Automatische
+Panel-Erkennung', we can use 'detect comic panels'."
+
+**Measured scope**: **22 keys** (`form.use_comic` plus `form.comic_*`), 33 languages in the file, but
+only **122 translated cells across six languages** (`en`, `pt`, `fr`, `de`, `it`, `es` — 20 keys each
+outside `en`). Every other language is unfilled and costs nothing. Two further keys mention comics in
+their VALUE but not their key name: `storyline.thumb_show_images` and `storyline.thumb_show_storyboard`.
+
+**Two separable halves, with very different costs:**
+- **Renaming the KEYS** (`form.comic_extract` → `form.image_extract`, …) is mechanical, preserves
+  every existing translation, and is **guarded**: `unit-ui-key-exists` asserts every literal
+  `t('…')` in `index.html` resolves in `en`, so a half-done rename goes red. Effectively free.
+- **Changing the English TEXT** invalidates the five non-`en` translations for each string touched.
+  The `unit-ui-verbatim-en` precedent is the right handling: DELETE the now-stale non-`en` value so
+  the offline `translate-ui.js` pass refills it, rather than leaving a translation that describes a
+  concept the English no longer names.
+
+**⚠️ This is a `ui.json` edit and needs the user's explicit budget before a key is touched** (protocol
+— every cut in the `v87` line asked and was given a smaller number than proposed). The user has
+already made one carve-out themselves: the auto-detect control keeps "detect comic panels", because
+there the word is doing real work.
+
+**Sequencing**: land this AFTER `AM`/`AN`/`AO`/`AQ`. Those releases are likely to add a key
+(`AQ` needs a confirm-only label; `AN`'s recommended fix needs a title label), and renaming the
+branch twice is the avoidable half of the cost.
+
+### AQ. ⚠️ "Create chapter" after extraction runs the WHOLE generation — and then hides the button that was supposed to start it
+
+**User's words**: "BUG … Apparently the generate chapter button after image text extraction
+automatically starts the book generation, and the next button leads to a lesson selection site that
+has no generate button at all. … we want that button to just store chapter text as draft, no lessons
+yet. Translation, lessons, titles etc. should ONLY be generated on the third page." — with the
+server log showing a full run: translation, `arc=[review]`, `Lesson 1/1`.
+
+**Diagnosed, and the diagnosis is exact.** `comicOpenReview(auto)` is reached two ways and **the
+`auto` flag is never carried to the confirm handler**:
+- from `#gen-btn` on **card 3** (`doGenerate()`'s comic branch) — where confirm SHOULD generate, and
+  the user has just chosen their lesson types;
+- **automatically from card 2** the instant extraction succeeds (`_comicExtractCheckOnce()`'s
+  `comicOpenReview(true)`, added at `v86_v`) — where the user has not yet seen card 3 at all.
+
+Both land on `_comicReviewConfirm()`, which unconditionally calls `comicCreateChapter()`.
+`comicCreateChapter()` reads `#gen-skip-lessons-cb` — a control on **card 3**, still at its default —
+so the auto path generates everything. **The vanishing button is the same bug's second half, not a
+separate one**: `comicCreateChapter()` sets `_comicBookId`, and `_applyLessonCardUI()` computes
+`busy = mode==='comic' && _comicBookId`, `startable = n>0 && !busy` → `#gen-btn-row` hidden. Card 3
+therefore correctly shows no start button, because a book job really IS running. The screenshot is
+consistent with the code; nothing there is a second defect.
+
+**Fix**: carry the open REASON into `_comicReviewConfirm()`. Auto-opened → write the buffer back,
+save the comic draft, `_genWizardGoto(3)`, and stop. Opened from `#gen-btn` → unchanged. The
+auto-path confirm button also needs its own label (`form.comic_review_confirm` currently reads
+"✅ Confirm & create chapter", which would be a lie) — **one new `ui.json` key, needs the budget**.
+
+**⚠️ Guard at the behaviour layer**: assert that the auto path issues ZERO `/api/generate-book`
+requests and that the card-3 path issues exactly one. A source-level assertion about which function
+`_comicReviewConfirm` names cannot fail for the state that actually matters (protocol item 5).
+
+This is the most expensive of the four bugs: every occurrence spends a full multi-minute generation
+the user did not ask for, on text they had not finished reviewing. **Fix it first.**
+
+### AR. Sort the library's saved stories/lessons by token usage, generation date and last-edit date
+
+**User's words**: "main page: sort saved stories/lessons (for selected language combinations) by
+total token usage, generation and last-edit date."
+
+**Measured**: `loadSavedList()` sorts hard-coded — storylines by `srcLang.localeCompare` then newest
+`updatedAt||generatedAt` descending, orphans the same way. There is no sort state and no control.
+Adding one is a small client change plus a select in the library header (where `#lib-filter` and the
+language selects already live).
+
+**⚠️ The one real trap is server-side.** `GET /api/lessons` is a **WHITELIST projection** and does
+**not** carry `generationStats.totalPromptTokens/totalCompletionTokens`. Sorting by token usage
+without adding them there gives a feature that works in the STATIC build (which ships whole topics)
+and silently does nothing live — the exact failure `v74_i` and `v79_n` both record in a comment at
+that very site, twice. Storyline-level tokens (`tokenUsage`) DO already arrive, because
+`GET /api/storylines` returns whole storyline objects. So: one scalar (`tokens`, the pre-summed
+total — not the whole `generationStats` block) added to the projection, and the sort reads storyline
+tokens + its chapters'.
+
+Decision needed: **is "total token usage" for a storyline its own `tokenUsage` plus its chapters', or
+the storyline bucket alone?** `addTokenUsage()`'s own comment records a deliberate ruling that
+storyline-level work is NOT spread across chapters, so the two numbers are genuinely different
+things. Recommendation: sum both, and say so in the label.
+
+Effort: one release. ~5 ui.json keys (a select label + three or four option labels) — **needs the
+budget**.
+
+### AS. Evaluate: a built-in PDF viewer on the progress card instead of the chapter text
+
+**User's words**: "Evaluate for the roadmap: for uploaded pdfs, can we use a built-in pdf viewer on
+the progress card, instead of the chapter text? We would need to highlight vocab and map our text
+analysis in the pdf viewer instead of our own text panel."
+
+**Evaluated; the recommendation is to DEFER, and the reason is not the viewer.** Three findings:
+
+1. **The PDF is never stored.** `_loadPdfFile()` reads the file into `_pdfOrig = {text, pages}` and
+   the bytes are dropped on the floor. Drafts persist `chunks` (title/text/wordCount) and a
+   `sourceFile` STRING — a filename, not a file. So this feature starts with "persist multi-megabyte
+   binaries", which is **item A's open ruling** (comic images out of `lessons.json`, a CONFIRMED `D4`
+   violation) with a bigger payload. **`AS` is blocked behind `A`, not behind viewer work.**
+2. **pdf.js is a CDN dependency, loaded lazily at upload time** (`cdnjs.cloudflare.com`, hard-coded).
+   Rendering at *upload* time in an online session is one thing; rendering at *study* time makes a
+   remote script a prerequisite for reading a chapter — against this app's zero-dependency,
+   `sw.js`-offline shape.
+3. **The mapping is the actual cost, and it is worse than it sounds.** A chapter's text is not a
+   region of the PDF: it is `cleanExtractedText()` applied to pdf.js output and then re-chunked by
+   length / paragraph / page, with the chunk boundaries hand-editable afterward. Nothing retains a
+   character offset back to a page, let alone to a text-layer span. TRACK T's highlighting, the
+   text explorer's per-word spans and the comic panel-image path all key off OUR text. Mapping them
+   onto pdf.js's text layer means carrying provenance through extraction, cleaning, splitting and
+   manual editing — the whole pipeline, not the renderer.
+
+**The cheap 80%** that delivers the same intent — "see the original, not just the transcription" —
+is the machinery `v85_n`/`v87_m` already built for comics: render the source PAGE AS AN IMAGE above
+the chapter text, keep highlighting in our own text panel. Per-page PNGs are the same storage class
+as comic panel images (so they ride on item A's ruling rather than needing a new one), pdf.js can
+rasterise them at upload time when it is already loaded, and nothing about the text pipeline has to
+change. Recommend putting THIS to the user as the counter-proposal.
+
+### AT. Storyline title re-generation does not appear in the running-jobs popover
+
+**User's words**: "Storyline title re-generation did not appear in the running job popover. It
+should."
+
+**Measured, and the cause generalises.** `POST /api/storyline-retitle` is **fully synchronous** — it
+awaits `generateChapterMeta()` / `generateStorylineTitle()` inline and returns the result. It never
+calls `newJob()`, so there is nothing for `GET /api/jobs` to aggregate. **`/api/storyline-summary`,
+`/api/retranslate-story` and `/api/writing-feedback` have the identical shape** — every long
+synchronous LLM route is invisible to the popover, and retitle is simply the one the user happened
+to run and wait on.
+
+Two ways, and the cheaper one is also the better precedent:
+- **Client-side synthetic entries.** `_jobsEffectiveList()` already does exactly this for the tutor
+  (`id:'__tutor__'`, synthesised from `_tutorState.busy`, with its own comment explaining why
+  teaching the server about a stateless request shape was the wrong move). Generalise that one-off
+  into a small in-flight registry the client's `fetch` wrappers register with, and every synchronous
+  route becomes visible at once — including the three nobody has reported yet.
+- **Convert the routes to jobs.** Correct, more invasive, and buys cancellability — which is
+  precisely what **item AU** wants. If `AU` is taken, revisit; if not, the synthetic route is right.
+
+Recommendation: synthetic registry now (small, no server change, closes the report and three latent
+siblings); revisit if `AU` converts these routes anyway.
+
+### AU. Per-job cancellation, and freeing model VRAM when idle and at shutdown
+
+**User's words**: "It seems difficult to cancel individual ollama jobs? If it IS possible, it would be
+great to have individual cancel buttons in the new 'running jobs' popover. If we can only cancel by
+model type, we would need a second popover, listing all actively running models and add a cancel
+button there. Also, we should free the occupied memory for unused models (`ollama stop`) and when
+`server.js` is stopped."
+
+**Yes, per-job cancellation is possible.** Three measured facts:
+
+1. **`POST /api/jobs/cancel` already exists** and already calls `job.abort()` if present — but
+   **nothing in the codebase ever sets `job.abort`** (grepped: `server.js:8059` is the only
+   occurrence). The route today flips a status field and the model keeps generating to completion.
+   The route is a stub with a real shape, which is the good half.
+2. **The transport can be aborted.** `_callOllama()` builds a plain `http.request`; `req.destroy()`
+   is already used by its own timeout path, and Ollama stops generating when the client disconnects.
+   So cancellation is: return a handle from `_callOllama` → thread it through `callLLM` → have each
+   job set `job.abort`. **The cost is the threading, not the mechanism**, and it touches every
+   generator. Do the popover button for ONE job kind first and prove it end to end (server log
+   shows generation stopping, `ollama ps` frees) before widening.
+3. **VRAM is never freed, and half the machinery is already written.** `llm.js` sends
+   `keep_alive: -1` on every `/api/chat` — models stay resident indefinitely. `llm.js` **exports
+   `release(model)`** (a `keep_alive: 0` call, i.e. `ollama stop`) and **`server.js` never calls
+   it**. There is also **no `SIGINT`/`SIGTERM` handler in `server.js` at all**, so Ctrl-C leaves
+   every model resident. The shutdown half is small and self-contained: a signal handler that
+   `release()`s the distinct configured models (story / lessons / translation / QC / vision) and
+   exits. The idle half needs a policy decision — after how long, and does an idle release make the
+   next generation pay a reload it did not before?
+
+Split it: **shutdown release** (small, no decision, do it first), **per-job cancel** (real
+plumbing), **idle release** (needs a policy).
+
+### AV. A LANGUAGE/grammar summary, distinct from the content summary
+
+**User's words**: "let's add a 'language/grammar summary' in the source language, that doesn't explain
+the content (as the current summary does) but the language used in this text, e.g. writing style,
+difficulty, or highlight whether the text contains unusual grammar or phrases. It could e.g. name the
+one most unusual construct. I am not yet sure where it should be displayed, along with the
+conventional summary, or as a choice for each storyline. Perhaps this should be generated based on
+inflections lessons or the CP2 text analysis?"
+
+**Where it fits**: `sl.summary` is a STORYLINE property (`generateStorylineSummary`, persisted by
+`/api/storyline-summary`, metered into the storyline's own `summary` token bucket) and is rendered on
+the progress-card entry page (roadmap `§0c`) and the storyline screen. A `sl.languageSummary` beside
+it is the natural shape — same route pattern, same token bucket convention, same two render sites.
+
+**The user's own display question already has a precedent**: `v87_n` shipped exactly this shape for
+comic artwork — a **teacher's choice per storyline**, toggled on all three surfaces, with the tooltip
+offering the way back (`unit-storyline-artwork` §6/§6b). Recommend reusing it rather than re-deciding.
+
+**The user's own generation question is the one that needs measuring, not deciding.** Three sources
+are available and they are not equivalent: the raw story text (an LLM call like the existing summary
+— simplest, and the only one that works for a chapter with no lessons and no analysis);
+`inflections` lessons (a curated, already-QC'd view of the grammar, but only where such lessons were
+generated); CP2 canonical analysis (per-sentence `form`/lemma decomposition — the richest, and the
+one that could name "the one most unusual construct" from evidence rather than from the model's
+impression). **Do not pick from the armchair**: run all three on ONE chapter against the real model
+and compare the outputs before writing the prompt (protocol item 9). Note that item **AJ**'s ruling
+applies — a target-language grammar description is defensible; do not re-litigate `{S}` compliance.
+
+Needs a product decision on display AND a live measurement on source. Not startable as written.
+
+### AW. An ALL-CAPS word is read out letter by letter
+
+**User's words**: "For the word ONTEIGENINGSZONE in the extracted text of
+`tp_17880367188140000070`, the readout of the full text reads this all-caps word letter by letter. Is
+there a simple way to avoid this? For example, all-caps words longer then 3 letters should be read
+out as a word?"
+
+**Yes, and there is exactly one place to do it.** `_ttsMakeUtterance(text, ttsCode, rate)` is the
+single site where any text becomes a `SpeechSynthesisUtterance` — verified by reading every caller:
+`_doSpeak` and `_doSpeakLang` both funnel through `_speakChunks`, `_doSpeakLangThen` through
+`_speakChunksThen`, and `_speakAndAdvance` calls it directly. Lower-casing (or title-casing) runs of
+≥4 upper-case letters there fixes every readout at once, and it is **the kind of rule this codebase
+is allowed to hold**: it is Unicode-general orthography (`\p{Lu}`), not a hand-authored language
+table (§4's own tier rule).
+
+Two things to get right, both cheap: **do not touch the DISPLAYED text** — the fix belongs to the
+utterance only, and the panel/story render must keep the sign's real capitalisation; and **leave
+short runs alone**, because a genuine initialism (BBC, EU, USA) is *correctly* spelled out. The
+user's own ">3 letters" threshold is the right default.
+
+Effort: under an hour. No ui.json keys. No decision. **The best first commit of the session** — it is
+the smallest thing here with a guaranteed user-visible payoff.
+
+### AX. Generate lessons from an EXISTING storyline for a different SOURCE language
+
+**User's words**: "Allow to generate lessons based on existing storylines and chapters, but for a
+different source language. This could be a drop-down menu in the generation interface, with the same
+choice as 'continue from'. This would skip the story generation part (otherwise via LLM, PDF, comic),
+and start with the target language text."
+
+**Much cheaper than it looks, because the pipeline it needs already exists.** `POST /api/generate-book`
+takes `chunks: [{title, text, wordCount}]` and runs the entire rest of the pipeline — translation,
+chapter titles, lessons, arc, storyboard, analysis — from that text alone. Both the PDF path
+(`pdfGenerateAll()`) and the comic path (`comicCreateChapter()`) are nothing but "build chunks, POST".
+A fourth input mode whose chunks are **an existing storyline's chapter stories** is the same shape,
+and the target text is already correct by construction.
+
+New work, in full: one server-side resolution (storyline id → its chapters' `story` fields → chunks,
+in chapter order), one dropdown on card 1 beside `#continue-select` (which already lists exactly the
+right things and is already read by all three modes since item AL), and the input-mode plumbing in
+`_genInputMode()` / `_applyLessonCardUI()` / `doGenerate()`.
+
+Three decisions to settle first, none of them large:
+- The result is a NEW storyline (a different language pair cannot join the existing one) — but should
+  it be LINKED to its source, and shown as such? There is no "translation of" relation today.
+- Copy `comicPanels` across? The images belong to the text and would otherwise be lost for the new
+  pair. Recommendation: yes, and note it interacts with **item A**.
+- Guard against the degenerate selection — the same `srcLang` as the source storyline, which would
+  silently duplicate a whole storyline for nothing.
+
+This is the highest-value NEW feature in this batch: it turns every existing storyline into content
+for a second language pair at the cost of the lesson generation alone.
+
+### Item V — what this pass adds
+
+**User's words this time**: "Allow multiple photos/images to be loaded and treated like multiple
+panels in the image-based story-generation pipeline."
+
+Still **item V**, open since the `v86` line; not renumbered. What is new is the framing: the user now
+describes multiple images as **multiple PANELS**, where V's own title says "each image its own
+chapter". Those are different products — `comicCreateChapter()` already makes **one chapter per
+panel** (`v85_p`, reversing its own original scoping after the user's first real test), so
+"each image is a panel" and "each image is a chapter" happen to coincide TODAY and would diverge the
+moment several panels are drawn on one of several images. **Settle which one the user means before
+building**, and note `_comicDraftSaveDebounced()`'s own scoping comment — "this flow is
+single-image-at-a-time today (item V/multi-image is unbuilt), so ONE draft holds ONE page" — the
+draft shape is part of this item's cost.
+
+### ⭐ Suggested implementation order for these thirteen
+
+*Ordered by (a) damage per occurrence, (b) whether a user decision blocks it, (c) whether it shares a
+code region with something already being opened. `AP` is deliberately NOT first despite being
+mechanical — see its own entry.*
+
+| # | release | items | why here |
+|---|---|---|---|
+| 1 | `v88_b` | **AW** + **AT** | The two smallest with no decision behind either, in unrelated regions. `AW` is one function; `AT` reuses the tutor's own synthetic-entry precedent. A clean first commit that closes two reports. |
+| 2 | `v88_c` | **AQ** + **AM** | The most damaging bug in the batch (a full unwanted generation per occurrence) plus the one-line fix in the same function region. Do not separate them — both live in the review/confirm/upload path. |
+| 3 | `v88_d` | **AO** + **AN(2)** | The data-loss pair, same region again, now that the flow above is settled. `AN`'s half (2) — persisting `description` — is unblocked; `AN`(1) waits on the ruling. |
+| 4 | `v88_e` | **AP** | The rename, once the four image releases have settled the final key set. Mechanical, guarded by `unit-ui-key-exists`, but needs the translation budget. |
+| 5 | `v88_f` | **AU**, shutdown half | `SIGINT`/`SIGTERM` → `release()` the configured models. Small, self-contained, no decision, and the machinery is already exported and unused. |
+| 6 | `v88_g` | **AX** | The highest-value new feature, and the one that reuses the most existing pipeline. |
+| 7 | `v88_h` | **AR** | Library sorting — worthwhile, but the projection change is the trap, not the sort. |
+| 8 | later | **AU** cancel + idle halves | Real plumbing through every generator. Prove one job kind end to end first. |
+| — | blocked | **AN(1)**, **AV**, **AS**, **V** | Each needs a user ruling or a live measurement before any code. `AS`'s recommendation is to counter-propose page images rather than build the viewer. |
+
+**Older open items worth folding in while nearby**: `AE` shares a symptom family with `AO` (read its
+diagnostic logging before writing `AO`'s, and say explicitly in the write-up why `AO` does not close
+it); item **A** governs `AS` and touches `AX`; item **C** (upload-card UX) should be re-read against
+the markup `AQ` leaves behind rather than the markup it was written against. And the `v88_a`
+prompt's own two no-decision entries — **the completion card's missing force-regenerate control**
+and the **flake audit** of `unit-observations-log`/`unit-ui-journeys`/`unit-word-progress` — remain
+the best filler work if a release above finishes early.
 
 ## ✅ RESOLVED BY USER RULING AT THE v86 CUT — no code change, not carried as open tasks
 
@@ -1970,6 +2379,108 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v88 LINE
+
+## ✅ v88_b — item AW (an ALL-CAPS word is spoken, not spelled) + item AT (synchronous LLM routes appear in the jobs popover)
+
+**The first release off the thirteen-TODO handover.** Both were picked for the same reason: no user
+decision stands behind either, they live in unrelated regions so they cannot interact, and each
+closes a report the user could otherwise hit again the same day. **Neither costs a `ui.json` key** —
+item AT deliberately reuses seven labels that already existed.
+
+### Item AW — `_ttsSpeakableText()`
+
+**User report**: *"For the word ONTEIGENINGSZONE in the extracted text of `tp_17880367188140000070`,
+the readout of the full text reads this all-caps word letter by letter. Is there a simple way to
+avoid this? For example, all-caps words longer then 3 letters should be read out as a word?"*
+
+The cause is the speech engine's own heuristic — a run of capitals is an initialism, so spell it —
+which is **correct for BBC or EU and wrong for a photographed sign that simply shouts**. Nothing in
+this codebase was doing anything wrong; the input simply looked like an initialism.
+
+**Shipped exactly the user's own rule**: a run of **four or more** capitals is a word. Three-letter
+runs are untouched, precisely because that is where the genuine initialisms live.
+
+**One fix site, and that is a measured claim, not a convenience.** `_ttsMakeUtterance()` is the ONLY
+place in the client where any text becomes a `SpeechSynthesisUtterance` — verified by reading every
+caller, not by grepping for the constructor: `_doSpeak` and `_doSpeakLang` both funnel through
+`_speakChunks`, `_doSpeakLangThen` through `_speakChunksThen`, and `_speakAndAdvance` calls it
+directly. `_ttsChunks()` splits on SENTENCE boundaries, so a chunk can never arrive with a word cut
+in half and the transform can safely run per chunk.
+
+**TITLE-cased, not lower-cased.** Both defeat the spell-it-out heuristic completely; title-casing
+changes the string less (a capitalised German/Dutch noun stays capitalised, a sentence-initial word
+does not suddenly start lower-case). Engines do not pronounce on case beyond this heuristic, so the
+smaller edit is the safer one.
+
+**§4 compliance is the reason this is allowed to exist at all.** `\p{Lu}` is Unicode machinery, not
+a hand-authored table, and the rule is orthographic rather than about any one language — the "no
+language knowledge in the code" tier test. Caseless scripts (Japanese, Arabic, Devanagari) cannot
+match it and are returned byte-identical; Greek and Cyrillic are handled by the same rule with no
+ASCII assumption. All four are pinned.
+
+**⚠️ It is a SPOKEN projection and nothing else.** The rendered surfaces must go on showing
+ONTEIGENINGSZONE — a sign that stops looking like a sign is a worse bug than the one being fixed.
+`unit-tts-allcaps` §3 pins this at the SOURCE layer (exactly one call site, and it is inside
+`_ttsMakeUtterance`) deliberately: "no renderer calls this" is a claim about a SET of call sites,
+and no single rendered fixture can observe it.
+
+**Mutations, all red**: removing the call site (fix present but unreachable — §1 alone stayed green,
+which is exactly why §2 exists); lowering the threshold to 3; swapping `\p{Lu}` for `[A-Z]`.
+
+### Item AT — `_jobsTracked()`, an in-flight registry for synchronous routes
+
+**User report**: *"Storyline title re-generation did not appear in the running job popover. It
+should."*
+
+**The popover was not failing to show the job — the job did not exist.**
+`POST /api/storyline-retitle` is FULLY SYNCHRONOUS: it awaits `generateChapterMeta()` /
+`generateStorylineTitle()` inline and returns the result, never calling `newJob()`. So `GET /api/jobs`
+has nothing to aggregate. **Measuring that turned one report into five routes**:
+`/api/storyline-title`, `/api/storyline-summary`, `/api/retranslate-story` and
+`/api/writing-feedback` have the identical shape. Retitle is merely the one the user happened to sit
+and wait on; the other four were equally invisible and unreported.
+
+**Fixed client-side, following the precedent the tutor entry already set** for exactly this
+situation (a real request the server's job store was never built to represent — streaming, no
+persisted id). `_jobsEffectiveList()`'s tutor one-off is generalised into a registry any awaited call
+can join. **`_jobsTracked(label, fn)` uses `try/finally`, not `then`/`catch`**: a route that throws
+(offline, a 500, a JSON parse failure) must still remove its entry, or a failed re-title parks a
+permanent "running" row and a permanent badge count — strictly worse than the invisible job this
+item exists to fix. Pinned by its own section.
+
+**⚠️ The tutor entry is deliberately NOT migrated onto the registry.** Its source of truth is
+`_tutorState.busy` — a flag that already exists, is set from two places, and survives a re-render —
+and it is the only entry carrying a `link`. Re-expressing it as a registration would add a second,
+weaker source for state that is already correct. Its existing guards (`unit-jobs-popover` §1/§2) are
+untouched and still pass.
+
+**Nine call sites across five routes.** `/api/storyline-title` alone has FOUR client callers
+(`genStorylineTitle` from the library storyline card — most likely the exact control the user
+pressed — `genLessonTitle`, `genSavedItemTitle`, `genStorylineTitleFromScreen`), and
+`/api/retranslate-story` has two. **Three of those were found by the guard, not by reading**: the
+first pass wrapped one caller per route and `unit-jobs-sync-inflight` §5 went red naming the offset
+of the next. That section is the reason the release is complete rather than 60% complete, and it is
+the one deliberately source-level section in the file — "no synchronous model-backed route is left
+untracked" is a claim about a SET of call sites.
+
+**Zero new `ui.json` keys.** Every label reuses a string that already existed, chosen so the popover
+row and the surface that already reported the same work cannot drift: `retitle.working_title` /
+`retitle.working_chapters` (the same strings `_doRetitle`'s own toast shows),
+`lesson.generating_title` (the same string `setTitleGenStatus` shows), `lesson.gen_topic_title`,
+`lesson.gen_summary`, `models.translation`, `ex.writing.grading`.
+
+The batch re-translate (`retranslateChain`) is tracked **per chapter, not once around the loop** —
+the loop is sequential, so one entry per iteration is what actually tells the user how far the batch
+has got.
+
+**Mutations, all red**: dropping the sync entries from `_jobsEffectiveList`; replacing `try/finally`
+with a plain `await` (the phantom-job leak); unwrapping one call site; making the synthetic ids
+collide.
+
+**⚠️ Recorded for whoever takes item AU.** Converting these five routes to real jobs is the other
+option and is the RIGHT one if per-job cancellation is ever built, because a cancel button needs a
+server-side job to cancel. That decision is written into both the code comment and item AT's own
+entry so it is not re-derived from scratch.
 
 ## ✅ v88_a — storyline chapter management: re-order, split off, add existing. And the v88 line cut.
 
