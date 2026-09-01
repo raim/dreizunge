@@ -474,7 +474,7 @@ Two ways, and the cheaper one is also the better precedent:
 Recommendation: synthetic registry now (small, no server change, closes the report and three latent
 siblings); revisit if `AU` converts these routes anyway.
 
-### AU. ⚠️ ONLY THE IDLE-RELEASE THIRD REMAINS — shutdown shipped `v88_g`, per-job cancel shipped `v88_k`
+### ~~AU.~~ ✅ COMPLETE — shutdown `v88_g`, per-job cancel `v88_k`, idle release `v88_l`. ⚠️ ONE follow-up left: `_runRecreateJob` may still swallow a cancel (see the `v88_k` entry)
 
 **User's words**: "It seems difficult to cancel individual ollama jobs? If it IS possible, it would be
 great to have individual cancel buttons in the new 'running jobs' popover. If we can only cancel by
@@ -2423,6 +2423,83 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v88 LINE
+
+## ✅ v88_l — item AU, idle release: models are freed after 30 minutes idle. **Item AU is now COMPLETE.**
+
+**User's ruling**: *"release after 30 min idle is ok."* No `ui.json` keys. This is the third and last
+piece of item AU — shutdown shipped at `v88_g`, per-job cancel at `v88_k`.
+
+**The window was the user's to set, and that is why this waited.** Releasing means the next
+generation pays a full model RELOAD; `keep_alive: -1` exists precisely to avoid that, and on a 35B
+model it is tens of seconds before the first token. That is a tradeoff on THEIR machine, not a
+default this code could pick. The design was written into item AU's entry at the `v88_k` handover so
+the question could be asked once and answered in a line.
+
+### What it does
+
+`_lastLLMUseAt` is stamped in **`_callLLM`** — the one function every server-side model call
+converges on, so "when was a model last used" is a single write rather than a survey of call sites.
+Stamped **before the await as well as after**: a long generation is USE for its whole duration, and
+stamping only on completion would let a 20-minute call look idle for 20 minutes.
+
+An unref'd 60s interval checks the policy and reuses `releaseConfiguredModels()` wholesale (built for
+the shutdown path at `v88_g`) — same de-duplication of the five role models, same parallel calls,
+same no-op when `BACKEND === 'none'`. Unref'd like `llm.js`'s own guard timer: an idle sweep must
+never be the reason a process refuses to exit.
+
+Three guards on the policy, each with its own reason:
+- **Never while a job is running.** A job can sit between model calls (assembling a prompt, writing
+  the store, waiting on a poll), so "no call in flight" is NOT "idle" — without this, a long
+  multi-step job has its models pulled out from under it mid-run.
+- **Release once, not every tick.** `_idleReleased` stops the sweep hammering a backend that has
+  nothing left to free.
+- **New use re-arms it.** Otherwise the server frees its models once and never again for the rest of
+  its life.
+
+`IDLE_RELEASE_MS` / `IDLE_TICK_MS` are env-overridable — not a test backdoor: a deployment with
+different habits can tune both, and `IDLE_RELEASE_MS=0` disables the sweep entirely.
+
+### ⚠️ Two scoping bugs, both found by instrumenting rather than reading
+
+1. **`bookJobs` is declared INSIDE `boot()`** (which opens at ~6002), unlike the module-scope `jobs`
+   map — so `_anyJobRunning()`, living after boot's closing brace, threw
+   `ReferenceError: bookJobs is not defined` on its very first tick. The throw happened inside a
+   `setInterval`, so the only symptom the e2e saw was **"the release never happened"**, with no clue
+   why. Fixed by publishing `_bookJobsRef` where the map is created; moving the map to module scope
+   would have touched every book-job call site for no benefit. **`_idleTick` is now also wrapped in
+   try/catch** — an exception on a bare interval is an UNCAUGHT one, and taking the server down for a
+   VRAM optimisation is a far worse trade than skipping a sweep.
+2. **A TDZ risk, avoided deliberately.** `_lastLLMUseAt`/`_idleReleased` are written by `_callLLM`
+   (~line 150) but the policy lives ~9,700 lines below. A `let` referenced from above its declaration
+   is a runtime `ReferenceError` — this codebase has shipped exactly that before (`v68.1`) — and
+   "module evaluation finishes before the first request" is a reason it happens to work, not a
+   reason to rely on it. The declarations sit beside their writer.
+
+### ⚠️ A guard that stayed GREEN, and what it was failing to cover
+
+The first version of the e2e's §1 started a job and checked for no release after 400ms — against a
+1.2s window. **Removing the running-job guard entirely left it passing**: it was the WINDOW that had
+not elapsed, not the guard doing anything. Rewritten so the fake holds its call open for 3s and the
+wait deliberately CROSSES the 1.2s window while the job is still running, plus an assertion that the
+job really is still running at that moment. The mutation now goes red.
+
+That is the "when a mutation stays green, ask what the fixture is failing to cover" rule, and it is
+the only section here whose first form proved nothing.
+
+**Guard**: `e2e-idle-release` (4 checks, live server + fake Ollama) — a job outliving the window keeps
+its models, an idle server frees them, it does not re-release every tick, and new work re-arms the
+sweep. **Four mutations red.** The discriminator is the same as `e2e-shutdown-release`'s: a real
+`keep_alive: 0` request on the wire, since a release and an ordinary generation are otherwise
+indistinguishable.
+
+### ⚠️ A note on process, recorded because it cost something
+
+While debugging this, a server was booted MANUALLY with a 1.2-second idle window and **no
+`LLM_BACKEND=none`** — so it connected to the user's REAL Ollama rather than the fake, and may have
+released their loaded models. The consequence is benign (a reload on next use, exactly the tradeoff
+being shipped) but it was careless: the protocol's rule about the user's own environment covers
+starting servers, and a manual boot must force `LLM_BACKEND=none` or point `OLLAMA_HOST` at nothing.
+The e2e harness was always safe — it points at the fake. **Manual boots are the hazard, not tests.**
 
 ## ✅ v88_k — item AU, cancel third: cancelling a job actually stops the model
 

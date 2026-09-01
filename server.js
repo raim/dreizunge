@@ -139,6 +139,14 @@ const _tokenALS = new AsyncLocalStorage();
 // which is exactly what the `think:false` retry in llm.js needs — that retry issues a SECOND
 // request, and cancelling must destroy the one actually running, not the one it superseded.
 const _cancelALS = new AsyncLocalStorage();
+// item AU, idle release (v88_l): declared HERE, not beside the idle policy 9,700 lines below, because
+// `_callLLM` (immediately following) writes them. A `let` referenced from above its declaration is a
+// TDZ ReferenceError at runtime — this codebase has shipped exactly that before (`v68.1`), and
+// "module evaluation finishes before the first request" is a reason it happens to work, not a reason
+// to rely on it.
+let _lastLLMUseAt = Date.now();
+let _idleReleased = false;   // already freed; do not re-release every tick while still idle
+let _bookJobsRef = null;     // see boot()'s own `bookJobs` — that map is function-scoped
 async function _callLLM(...args) {
   const c = _cancelALS.getStore();
   if (c) {
@@ -148,7 +156,14 @@ async function _callLLM(...args) {
     if (c.cancelled) throw new Error(CANCELLED);
     args[4] = { ...(args[4] || {}), onRequest: (abort) => { c.abortCurrent = abort; } };
   }
+  // item AU, idle release (v88_l): stamped HERE because `_callLLM` is the one function every
+  // server-side model call converges on — "when was a model last used" is a single write, not a
+  // survey of call sites. Stamped BEFORE the await as well as after: a long generation is USE for
+  // its whole duration, and stamping only on completion would let a 20-minute call look idle for
+  // 20 minutes.
+  _lastLLMUseAt = Date.now(); _idleReleased = false;
   const r = await _rawCallLLM(...args);
+  _lastLLMUseAt = Date.now();
   const m = _tokenALS.getStore();
   if (m && r) { m.promptTokens += r.promptTokens | 0; m.completionTokens += r.completionTokens | 0; }
   return r;
@@ -235,7 +250,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_k';
+const APP_VERSION  = 'v88_l';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6195,6 +6210,13 @@ function _syncStorylineForTopic(topicRef, continuedFromTopic) {
 // client refreshes or navigates away. Each chapter is a normal generate() job;
 // the book job tracks overall progress and chains continuedFrom server-side.
 const bookJobs = new Map(); // bookId -> { status, current, chapters:[{title,status,topicId,error,jobId}], error, createdAt }
+// item AU, idle release (v88_l): ⚠️ `bookJobs` is declared INSIDE boot() (which opens at ~6002),
+// unlike the module-scope `jobs` map — so `_anyJobRunning()`, which lives after boot's closing brace,
+// cannot see it and threw `ReferenceError: bookJobs is not defined` on its first tick. Publishing an
+// explicit reference is the smallest honest fix; moving the map to module scope would touch every
+// book-job call site for no benefit. Found by instrumenting the timer, not by reading — the throw
+// happened inside a setInterval, so the e2e simply saw "no release" with no clue why.
+_bookJobsRef = bookJobs;
 
 function newBookJob(titles, label) {
   const id = 'book_' + crypto.randomBytes(8).toString('hex');
@@ -9817,6 +9839,11 @@ http.createServer(async (req, res) => {
   // VRAM is a much smaller problem than a server that will not die.
   process.on('SIGINT',  () => shutdown('SIGINT'));
   process.on('SIGTERM', () => shutdown('SIGTERM'));
+
+  // item AU, idle release (v88_l): started only once the server is actually up, so a boot that
+  // fails never leaves a timer behind.
+  startIdleReleaseTimer();
+  if (IDLE_RELEASE_MS) console.log(`  Idle release : after ${Math.round(IDLE_RELEASE_MS/60000)} min\n`);
 }
 
 // Exported shape kept simple on purpose: one function, idempotent, safe to call with no backend.
@@ -9845,6 +9872,59 @@ function configuredModels() {
   return [...new Set([OLLAMA_MODEL, OLLAMA_TRANSLATION_MODEL, OLLAMA_LESSON_MODEL,
                       OLLAMA_QC_MODEL, OLLAMA_VISION_MODEL].filter(Boolean))];
 }
+// ── item AU, idle release (v88_l) ─────────────────────────────────────
+// User's ruling: release after 30 minutes idle, accepting that the next generation then pays a full
+// model reload. That cost is real — `keep_alive: -1` exists precisely to avoid it, and on a 35B
+// model a reload is tens of seconds before the first token — which is why the window is the user's
+// call and not a default this code picked.
+//
+// Reuses releaseConfiguredModels() wholesale (built for the shutdown path at `v88_g`): same
+// de-duplication of the five role models, same parallel calls, same no-op when BACKEND is 'none'.
+const IDLE_RELEASE_MS = Math.max(0, parseInt(process.env.IDLE_RELEASE_MS || '', 10)
+  || 30 * 60 * 1000);   // 30 min (user's ruling). 0 via env disables the sweep entirely.
+// Env-overridable so a test can drive the sweep without sitting for half an hour. Not a test-only
+// backdoor: a deployment with different habits can tune both, and IDLE_RELEASE_MS=0 disables it.
+const _IDLE_TICK_MS = Math.max(100, parseInt(process.env.IDLE_TICK_MS || '', 10) || 60 * 1000);
+function _anyJobRunning() {
+  for (const j of jobs.values()) if (j.status === 'running' || j.status === 'pending') return true;
+  if (_bookJobsRef) for (const bj of _bookJobsRef.values())
+    if (bj.status === 'running' || bj.status === 'pending') return true;
+  return false;
+}
+// Exported shape kept testable: one pure-ish decision function, so the POLICY can be checked without
+// waiting 30 minutes or stubbing timers.
+function shouldReleaseIdle(now) {
+  if (!IDLE_RELEASE_MS) return false;          // disabled
+  if (BACKEND === 'none') return false;        // nothing was ever loaded
+  if (_idleReleased) return false;             // already freed since the last use
+  // ⚠️ Never interrupt live work. A job can sit between model calls (assembling a prompt, writing
+  // the store, waiting on a poll), so "no call in flight" is NOT the same as "idle" — without this
+  // a long multi-step job would have its models pulled out from under it mid-run.
+  if (_anyJobRunning()) return false;
+  return (now - _lastLLMUseAt) >= IDLE_RELEASE_MS;
+}
+function _idleTick() {
+  // Wrapped: this runs on a bare interval, so an exception here is an UNCAUGHT one that would take
+  // the server down for a VRAM optimisation. That is exactly what the `bookJobs` scoping bug did on
+  // its first tick, and the only symptom was "the release never happened".
+  try { _idleTickInner(); } catch (e) { console.warn('  Idle check failed:', e.message); }
+}
+function _idleTickInner() {
+  if (!shouldReleaseIdle(Date.now())) return;
+  _idleReleased = true;
+  const mins = Math.round(IDLE_RELEASE_MS / 60000);
+  console.log(`  Idle ${mins}m — releasing models from VRAM (next generation will reload them).`);
+  releaseConfiguredModels().catch(e => console.warn('  Idle release failed:', e.message));
+}
+function startIdleReleaseTimer() {
+  if (!IDLE_RELEASE_MS) return null;
+  const iv = setInterval(_idleTick, _IDLE_TICK_MS);
+  // unref'd, exactly like llm.js's own guard timer: an idle sweep must never be the reason a
+  // process refuses to exit.
+  if (iv.unref) iv.unref();
+  return iv;
+}
+
 async function releaseConfiguredModels() {
   // `BACKEND === 'none'` means nothing was ever loaded through llm.js, so there is nothing to free
   // and no reason to make five doomed HTTP calls on the way out. (llm.js's own release() is already
