@@ -223,7 +223,7 @@ all within ~400 lines of `index.html`. They were reported as four separate sympt
 session with a photographed sign. Read the region ONCE and land them as two releases (see the
 suggested order at the foot of this block), not four.
 
-### AM. On upload, pre-select the whole image as one panel
+### ~~AM. On upload, pre-select the whole image as one panel~~ — ✅ SHIPPED `v88_c`
 
 **User's words**: "Upon image upload, let's pre-select the whole image as one panel, as if the button
 associated with `form.comic_single_panel` had been pressed already."
@@ -343,7 +343,7 @@ there the word is doing real work.
 (`AQ` needs a confirm-only label; `AN`'s recommended fix needs a title label), and renaming the
 branch twice is the avoidable half of the cost.
 
-### AQ. ⚠️ "Create chapter" after extraction runs the WHOLE generation — and then hides the button that was supposed to start it
+### ~~AQ.~~ ✅ SHIPPED `v88_c` — "Create chapter" after extraction ran the WHOLE generation — and then hides the button that was supposed to start it
 
 **User's words**: "BUG … Apparently the generate chapter button after image text extraction
 automatically starts the book generation, and the next button leads to a lesson selection site that
@@ -2379,6 +2379,91 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v88 LINE
+
+## ✅ v88_c — item AQ (the auto-opened review card no longer generates a whole book) + item AM (upload pre-selects the whole image)
+
+Row 2 of the thirteen-TODO order. Both live in the same ~400-line region of `index.html`
+(`_comicFinishSetup` / `comicOpenReview` / `_comicReviewConfirm` / `comicCreateChapter`), which is
+why they shipped together rather than as two reads of the same code. **One new `ui.json` key**, `en`
+only, on the budget the user granted.
+
+### Item AQ — the reported bug, and its second half was the same bug
+
+**User report**, with the server log attached: *"the generate chapter button after image text
+extraction automatically starts the book generation, and the next button leads to a lesson selection
+site that has no generate button at all. … we want that button to just store chapter text as draft,
+no lessons yet. Translation, lessons, titles etc. should ONLY be generated on the third page."* The
+log showed a full run — `Translating story to German…`, `arc=[review]`, `Lesson 1/1` — on text the
+user had not finished reviewing.
+
+**Diagnosed exactly.** `comicOpenReview(auto)` is reached TWO ways and **the `auto` flag never
+reached `_comicReviewConfirm()`**, which called `comicCreateChapter()` unconditionally:
+
+- from **`#gen-btn` on wizard card 3** (`doGenerate()`'s comic branch) — where confirming SHOULD
+  generate: the learner has just chosen lesson types and pressed the start button;
+- **automatically from card 2**, the instant extraction succeeds (`_comicExtractCheckOnce()`'s
+  `comicOpenReview(true)`, added at `v86_v`) — where the learner has **not seen card 3 at all**, so
+  `#gen-skip-lessons-cb` (which lives THERE) was still at its default and `comicCreateChapter()`
+  read that as "generate everything".
+
+**⚠️ The vanishing card-3 button is the SAME defect's second half, not a separate one.**
+`comicCreateChapter()` sets `_comicBookId`; `_applyLessonCardUI()` then computes
+`busy = mode==='comic' && _comicBookId`, `startable = n>0 && !busy`, and hides `#gen-btn-row`. Card 3
+was correctly showing no start button, because a book job really was running. Nothing there needed
+its own fix — §1's `_comicBookId === null` assertion pins that it stays available once the first half
+is fixed. **This is worth remembering as a shape**: two symptoms one navigation apart, one cause.
+
+**The fix** is a module-level `_comicReviewMode` (`'auto'` | `'generate'`) set at open and read at
+confirm. The write-back of the edit buffer is shared; only the ENDING differs. The auto path
+`_comicRenderList()`s — which is what PERSISTS the reviewed text, since every `APP_COMIC.boxes`
+mutation funnels through it and it calls `_comicDraftSaveDebounced()` at the top (item R follow-up) —
+then `_genWizardGoto(3)` and stops. So "store the chapter text as draft, no lessons yet" is
+satisfied by machinery that already existed; nothing new persists anything.
+
+**One new key**: `form.comic_review_save` = `✅ Save text & continue`. The existing
+`form.comic_review_confirm` (`✅ Confirm & create chapter`) would be a lie on the auto path, and a
+button that misdescribes its own effect is how this bug reached a user in the first place. The card-3
+path keeps the original string.
+
+**⚠️ Guarded at the BEHAVIOUR layer, not the source layer** (protocol item 5). The sections COUNT
+`/api/generate-book` requests issued by the REAL `comicCreateChapter()` under a stubbed `fetch` —
+"no generation happened" is a state, and a source-level check of which function
+`_comicReviewConfirm` names could not fail for it. §3 is the non-vacuity partner: without it,
+"never generate" would pass §1 and §2 while breaking the feature outright.
+
+**Mutations, all red**: removing the fix (the reported bug returns); inverting the mode (each path
+does the other's job); returning without `_genWizardGoto(3)` (the user is stranded on card 2 with
+their text saved and nowhere to go); making the label mode-independent again.
+
+### Item AM — a fresh upload pre-selects the whole image as one panel
+
+**User request**: *"Upon image upload, let's pre-select the whole image as one panel, as if the button
+associated with `form.comic_single_panel` had been pressed already."*
+
+One call to the pre-existing `comicUseWholeImageAsPanel()` (`v86_d`, item J) at the end of
+**`_comicFinishSetup()`** — the fresh-upload path's one choke point, reached by BOTH branches of
+`onComicFileChosen()` (downscaled and not). Nothing is taken away: drawing a box, auto-detecting, or
+pressing the button itself all REPLACE this, because `comicUseWholeImageAsPanel()` and
+`_comicApplyDetectedPanels()` both replace rather than append. The commonest upload is one photo of
+one thing, for which the whole image IS the panel — the old default (no panels, every downstream
+control inert) made the common case do the most work.
+
+**⚠️ The placement is the whole risk, and it is guarded through the REAL function.**
+`_resumeComicDraftFrom()` deliberately does NOT route through `_comicFinishSetup()` (its own comment
+says why: `comicClearPanels()` there would discard the boxes a draft exists to restore). Put the
+pre-select anywhere more general and a resumed draft's panels are replaced by one giant box.
+**Mutation-tested by actually adding the call to the resume path** and watching §6 go red — not by
+reasoning about where the call sits. That mutation also required making the section's `fetch` stub
+URL-aware: the real resume path calls `loadSavedList()`, which needs ARRAYS, and a one-shape stub
+killed the path before it restored a box — i.e. the section would have been **vacuous**, passing for
+the wrong reason.
+
+**This is also the per-image act item V now needs.** The user's ruling on multi-image upload — *"if
+multiple images are uploaded, mark all images as one panel, but still allow the user to modify, add
+and resort panels. each panel is one chapter"* — is exactly this behaviour repeated per image, over a
+panel list that stays editable, feeding `comicCreateChapter()`'s existing one-chapter-per-panel
+formation (`v85_p`). **Item V is fully specified and no longer blocked**; it is now mostly a question
+of the draft shape holding more than one page.
 
 ## ✅ v88_b — item AW (an ALL-CAPS word is spoken, not spelled) + item AT (synchronous LLM routes appear in the jobs popover)
 

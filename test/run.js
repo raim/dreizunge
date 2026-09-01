@@ -270,6 +270,7 @@ run('unit: storyline artwork — comic images vs storyboard (user request)', 'no
 run('unit: storyline chapter management — reorder/split/add (user request)', 'node', [path.join(__dirname, 'unit-storyline-chapters.test.js')]);
 run('unit: comic chapter formation, client side (PLAN §2.4 Track A4 milestone 3, v85_m)', 'node', [path.join(__dirname, 'unit-comic-chapter.test.js')]);
 run('unit: comic text review card — edit/confirm before lesson generation (v86_v)', 'node', [path.join(__dirname, 'unit-comic-review-card.test.js')]);
+run('unit: the auto-opened review card saves instead of generating; whole-image pre-select (items AQ/AM, v88_c)', 'node', [path.join(__dirname, 'unit-comic-review-autopath.test.js')]);
 run('unit: post-gen storyboard opt-in fix, client side (v85_p)', 'node', [path.join(__dirname, 'unit-postgen-storyboard-optin.test.js')]);
 run('unit: post-gen analysis opt-in, client side, mirrors postGenStoryboard (item W follow-up, v86_o)', 'node', [path.join(__dirname, 'unit-postgen-analysis-optin.test.js')]);
 run('unit: comic story-panel progress-card rendering (PLAN §2.4 Track A4 milestone 4, v85_n)', 'node', [path.join(__dirname, 'unit-comic-story-panel.test.js')]);

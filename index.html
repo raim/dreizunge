@@ -3923,6 +3923,24 @@ function _comicFinishSetup(img, status){
   if(status) status.textContent='';
   _comicSetupCanvas();
   _comicWatchImageResize();   // v85_u: keep the canvas in sync as the image's rendered size changes
+  // item AM (v88_c, user request): "upon image upload, let's pre-select the whole image as one
+  // panel, as if the button associated with form.comic_single_panel had been pressed already."
+  // The commonest upload by far is ONE photo of ONE thing — a sign, a page, an illustration — for
+  // which the whole image IS the panel, so the previous default (no panels at all, every control
+  // downstream inert until the user draws or auto-detects) made the common case do the most work.
+  // Drawing a box, auto-detecting, or pressing the button itself all REPLACE this, so nothing is
+  // taken away: comicUseWholeImageAsPanel() replaces rather than appends (its own v86_d comment),
+  // and comicDetectPanels' result does the same.
+  //
+  // ⚠️ Placed HERE, in the fresh-upload path's one choke point, and deliberately nowhere more
+  // general: _resumeComicDraftFrom() does NOT route through this function (see its own comment —
+  // comicClearPanels() above would discard the very boxes a draft exists to restore), so a resumed
+  // draft keeps its own panels untouched. Both of onComicFileChosen()'s branches — downscaled and
+  // not — end up here, so one call covers the whole upload path.
+  //
+  // Also the per-image act item V needs: the user's ruling is "if multiple images are uploaded,
+  // mark all images as one panel, but still allow the user to modify, add and resort panels."
+  comicUseWholeImageAsPanel();
 }
 // Pure sizing math, split out so it's testable without a real Image/canvas decode. Returns null
 // when no resize is needed (already within budget), else the target {cw,ch} — Math.round on each
@@ -4540,7 +4558,19 @@ function _comicApplyExtraction(panels){
 // specifically so _comicReviewEdit/_comicReviewConfirm/_comicReviewCancel are plain, directly
 // callable, directly testable functions — not handlers only a real click event can reach.
 let _comicReviewEditable=null, _comicReviewBuffer=null, _comicReviewOverlayEl=null;
+// item AQ (v88_b→c, user-reported BUG): the card is reached TWO ways and, until this cut, confirming
+// did the same thing from both — start a full book generation. That is right from one entry and
+// badly wrong from the other, so the reason it opened has to survive until the confirm click.
+//   'generate' — #gen-btn on wizard card 3 (doGenerate()'s comic branch). The learner has just
+//                chosen lesson types and pressed the start button; confirming SHOULD generate.
+//   'auto'     — _comicExtractCheckOnce() popping the card the instant extraction succeeds (v86_v).
+//                The learner has not seen card 3 at all, so #gen-skip-lessons-cb (which lives THERE)
+//                is still at its default and comicCreateChapter() read it as "generate everything".
+//                Reported symptom: extraction finished and a full run started by itself —
+//                translation, arc[review], lessons — on text the user had not finished reviewing.
+let _comicReviewMode='generate';
 function comicOpenReview(auto){
+  _comicReviewMode = auto ? 'auto' : 'generate';   // item AQ — see _comicReviewMode's own comment
   const boxes=APP_COMIC.boxes;
   // Unchanged in shape, but note what it now admits: a panel whose ONLY content is a generated
   // description has `b.text` set (with empty caption/inScene) and no error, so it is editable here
@@ -4593,7 +4623,7 @@ function comicOpenReview(auto){
     + `</div>`
     + `<div class="modal-footer">`
     + `<button type="button" class="modal-btn secondary" onclick="_comicReviewCancel()">${escHtml(t('dialog.cancel'))}</button>`
-    + `<button type="button" class="modal-btn primary" onclick="_comicReviewConfirm()">${escHtml(t('form.comic_review_confirm'))}</button>`
+    + `<button type="button" class="modal-btn primary" onclick="_comicReviewConfirm()">${escHtml(t(auto ? 'form.comic_review_save' : 'form.comic_review_confirm'))}</button>`
     + `</div></div>`;
   ov.addEventListener('click',e=>{ if(e.target===ov) _comicReviewCancel(); });   // backdrop click — not exercised by the test harness (see lib-dom.js's own addEventListener no-op), same as every other modal's backdrop dismiss in this file
   _comicReviewOverlayEl=ov;
@@ -4621,8 +4651,18 @@ function _comicReviewConfirm(){
       if(buf.description !== undefined) APP_COMIC.boxes[i].text.description=buf.description;
     });
   }
+  const mode=_comicReviewMode;
   _comicReviewClose();
+  // _comicRenderList() is what persists this: every APP_COMIC.boxes mutation funnels through it and
+  // it calls _comicDraftSaveDebounced() at the top (item R follow-up). So the reviewed text IS
+  // stored as a draft on BOTH paths, before either decides what to do next.
   _comicRenderList();
+  // item AQ: the auto path stops HERE. The user's own words — "we want that button to just store
+  // chapter text as draft, no lessons yet. Translation, lessons, titles etc. should ONLY be
+  // generated on the third page." So: land them on card 3 with the start button live (it is live
+  // because _comicBookId is still null, so _applyLessonCardUI()'s `busy` is false), and let THAT
+  // button run comicCreateChapter() through doGenerate()'s comic branch as it always did.
+  if(mode==='auto'){ try{ _genWizardGoto(3); }catch(_){} return; }
   comicCreateChapter();
 }
 

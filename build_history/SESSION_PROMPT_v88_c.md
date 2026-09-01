@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_b`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_c`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -20,22 +20,19 @@ work — it generated four chapters during the `v87` line, and twice that broke 
 restarting anything; a SERVER edit is not — start your own instance on another port to verify, and
 **kill it by PID** (`pkill -f "node server.js"` matches theirs too).
 
-**What shipped at this cut**: `v88_b` — the first release off the thirteen-TODO handover, and both
-halves closed a user report with **no new `ui.json` keys**.
-**Item AW**: an ALL-CAPS word (reported: ONTEIGENINGSZONE) was read out letter by letter — the speech
-engine's own "a run of capitals is an initialism" heuristic, right for BBC and wrong for a
-photographed sign. `_ttsSpeakableText()` title-cases runs of 4+ capitals inside `_ttsMakeUtterance`,
-which is the ONE place in the client where any text becomes an utterance (verified across every
-caller). Three-letter runs are untouched on purpose.
-**Item AT**: "storyline title re-generation did not appear in the running job popover" — because the
-JOB DOES NOT EXIST. `/api/storyline-retitle` is fully synchronous and never calls `newJob()`, and
-FOUR sibling routes have the identical shape. `_jobsTracked()` generalises the tutor's existing
-synthetic-entry trick into an in-flight registry; nine call sites across five routes now register,
-**three of which the new guard found rather than a reading did**.
-Full write-up: `roadmap_v88.md`'s own `v88_b` entry.
-
-**⚠️ `v88_a`'s own entry is still the record for storyline chapter management** (re-order, split off,
-add existing) — it is directly below `v88_b`'s in the same section.
+**What shipped at this cut**: `v88_c` — the image-upload flow now does what the wizard promises.
+**Item AQ** (the most damaging bug of the thirteen): `comicOpenReview(auto)`'s `auto` flag never
+reached `_comicReviewConfirm()`, so confirming the review card that POPS UP BY ITSELF after
+extraction ran a full book generation — translation, arc, lessons — from card 2, on text the user had
+not finished reviewing. `_comicReviewMode` now carries the reason; the auto path stores the reviewed
+text (via `_comicRenderList()`'s existing draft autosave) and lands on card 3, and only the card-3
+start button generates. **The "card 3 has no generate button" half was the SAME bug** —
+`comicCreateChapter()` set `_comicBookId`, so `_applyLessonCardUI()` correctly hid the row for a job
+that really was running. One new `ui.json` key (`form.comic_review_save`), on the user's budget.
+**Item AM**: a fresh upload now pre-selects the whole image as one panel — one call at
+`_comicFinishSetup()`, the upload path's choke point, deliberately NOT on the resumed-draft path.
+Full write-up: `roadmap_v88.md`'s own `v88_c` entry. `v88_b` (items AW/AT) and `v88_a` (storyline
+chapter management) are directly below it in the same section.
 
 **🆕 NOTHING IS MID-FLIGHT, and the queue is explicit.** The `v87` line closed six items (R, U, Z,
 AC, AK, AL) plus the three storyline asks; they are recorded where they shipped and are NOT in the
@@ -79,8 +76,8 @@ counter-propose page IMAGES rather than a pdf.js viewer).
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 314 checks
-node test/run.js --quick                  → expect 263
+node test/run.js                          → expect 315 checks
+node test/run.js --quick                  → expect 264
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -97,8 +94,8 @@ DETERMINISTIC, so not flakiness — because the user's server had written a new 
 fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don't run the full and
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **339 topics, 98 storylines, 33 languages, 733 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_b'`.
+Corpus at this cut: **339 topics, 98 storylines, 33 languages, 734 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_c'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -219,24 +216,29 @@ measures zero effect, reconsider the diagnosis before trying a third wording.**
 # WHERE TO START
 
 **🆕 FIRST: the thirteen TODOs handed over after `v88_a`** — items `AM`…`AX` in `roadmap_v88.md`,
-with their own suggested order. **`v88_b` shipped row 1 (`AW` + `AT`).** The rest of that table:
+with their own suggested order. **`v88_b` shipped row 1 (`AW` + `AT`); `v88_c` shipped row 2
+(`AQ` + `AM`).** The rest of that table:
 
-- **➡️ NEXT — `v88_c` — `AQ` + `AM`.** `AQ` is the most damaging bug in the batch: `comicOpenReview(auto)`'s
-  `auto` flag never reaches `_comicReviewConfirm()`, so the review card auto-opened from card 2 runs
-  a FULL book generation. The "no generate button on card 3" half is the same bug (`_comicBookId`
-  set → `_applyLessonCardUI()` computes `busy` → the row hides), not a second defect.
-- **`v88_d` — `AO` + `AN`(2).** The data-loss pair. `AO` has THREE causes (no `link` on the job, the
-  result only ever applied by the originating tab, and a 5-minute job-store cleanup that would make a
-  bare link fail silently) — the durable fix is the SERVER writing results onto the draft.
+- **➡️ NEXT — `v88_d` — `AO` + `AN`.** The data-loss pair, in the SAME region `v88_c` just settled —
+  read `roadmap_v88.md`'s `v88_c` entry first, the review card now has TWO open modes.
+  `AO` has **three** causes and all three must be closed or the report recurs: the extract job
+  carries no `link` (hence no "open →" button — what the user actually sees), the result is only ever
+  applied by the ORIGINATING tab (so a killed phone tab loses it, and the draft never receives the
+  text), and `jobDone()` schedules cleanup at **5 minutes** (so a bare link would work briefly then
+  fail silently — worse than no link). **The durable fix is the SERVER writing extraction results
+  onto the draft**: pass `_comicDraftId` in the `/api/comic-extract` body.
+  `AN` already has its ruling (below): give the review card its own TITLE field, keeping the
+  "description is a fallback" ruling intact. Half (2) — persisting `description` in `comicPanels` —
+  was never blocked and should land regardless. **`AN`’s 1 `ui.json` key is already approved.**
 - Then `AP` (the `comic`→`image` rename — deliberately after the four image releases), `AU`'s
   shutdown half, `AX`, `AR`. Item `V` is now fully specified too (see the rulings above) and can be
   slotted in beside the image work, since it shares `AM`'s own whole-image-panel act.
 
-**⚠️ `ui.json` budget still needed before `AQ` / `AN` / `AP` / `AR`.** The user has ruled on HOW the
-rename handles stale translations (delete them, let `translate-ui.js` refill) but has NOT yet given a
-key count. `AQ` needs 1 (a confirm-only label for the auto-opened review card), `AN` needs 1 (the new
-title field), `AR` ~5. **Ask fresh, as every `v87` cut did** — and note `v88_b` managed to close two
-reports with ZERO new keys by reusing existing strings; try that first each time.
+**⚠️ `ui.json` keys.** `AQ`'s one key is SPENT (`form.comic_review_save`, `v88_c`) and `AN`'s one is
+APPROVED but not yet spent. **`AP` and `AR` still need a count** — the user has ruled on HOW the
+rename handles stale translations (delete the non-`en` values, let `translate-ui.js` refill them) but
+not on how many strings may change; `AR` wants ~5. **Ask fresh, as every `v87` cut did** — and note
+`v88_b` closed two reports with ZERO new keys by reusing existing strings. Try that first every time.
 
 **⚠️ Still blocked on a user decision**: `AV` (where a language summary is shown, and which of three
 sources generates it — needs a live three-way comparison, not a choice) and `AS` (recommendation:
