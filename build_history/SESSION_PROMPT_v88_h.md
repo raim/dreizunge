@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_g`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_h`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -20,23 +20,19 @@ work — it generated four chapters during the `v87` line, and twice that broke 
 restarting anything; a SERVER edit is not — start your own instance on another port to verify, and
 **kill it by PID** (`pkill -f "node server.js"` matches theirs too).
 
-**What shipped at this cut**: `v88_g` — **item AU's SHUTDOWN third**. `SIGINT`/`SIGTERM` now release
-every DISTINCT configured model from VRAM before exiting (de-duplicated, reading CURRENT model values
-since `/api/models` can change them at runtime, in parallel, racing a 6s deadline and exiting either
-way — Ctrl-C must stay responsive; a second signal exits at once). Per-job cancel and idle release
-remain OPEN.
-⚠️ **A correction to this session's own write-up, made before any code.** Item AU's entry said
-"`server.js` never calls `release()`" — **wrong**. It is called at `server.js:5629` inside
-`generate()`, to swap the story model out for a different lesson model; the claim survived because
-that call is guarded by `OLLAMA_LESSON_MODEL !== OLLAMA_MODEL`, FALSE by default, so it never fires
-for most users. What genuinely did not exist (verified by grepping `process.on(`/`SIGINT`/`SIGTERM`
-and finding ZERO matches) was a SHUTDOWN release. Both documents were corrected in place first,
-because the wrong sentence would have justified deleting a working optimisation as dead code.
-Two harness changes were needed: `fake-ollama.js` now logs `model`+`keep_alive` (the discriminator —
-a release sends 0, a generation sends -1), and `lib.js` gained `stopServer(sig)`, because `stop()`
-also kills the fake and deletes the log, so the first version of the test failed against a CORRECT
-implementation.
-Full write-up: `roadmap_v88.md`'s own `v88_g` entry; `v88_f`…`v88_a` are below it.
+**What shipped at this cut**: `v88_h` — **the flake audit**, the ⭐ item from this prompt's own
+"buildable now" list. Test-only; no product change, no `ui.json` keys.
+`unit-observations-log`'s inherited label was **wrong**: it failed STANDALONE at the same rate, not
+"under suite load". Its `answer()` helper branched on `querySelectorAll('.choice')` before the
+exercise TYPE, and `lib-dom` does not re-parse runtime `innerHTML`, so stale `.choice` nodes from the
+previous MCQ render hijacked a TYPED exercise — `#type-in` stayed empty and `check()` correctly
+graded it wrong. **The product is fine**; this was purely a test driver. Worse than the red runs: the
+assertions sat behind `if (droveRight)`, so the section was **VACUOUS on many of the runs it passed**.
+Both closed — the driver dispatches on `ex.type`, and `droveRight` is now asserted.
+Proven with a DETERMINISTIC probe (render an MCQ, advance to a `listen_type`, watch the old driver
+fail every time), because sampling could not settle it — one pre-fix batch of 40 passed clean.
+Second inherited "known flake" in this project found to be a real defect; the first was `unit-tap-word`.
+Full write-up: `roadmap_v88.md`'s own `v88_h` entry.
 
 **🆕 NOTHING IS MID-FLIGHT, and the queue is explicit.** The `v87` line closed six items (R, U, Z,
 AC, AK, AL) plus the three storyline asks; they are recorded where they shipped and are NOT in the
@@ -95,16 +91,23 @@ node test/check-inline.js docs/index.html → expect 0 failures
 DEFECT (`Math.random()` in `tapWord()`), fixed at `v87_i`. A failure there now is a genuine
 regression.
 
-`unit-observations-log` remains a known intermittent flake (documented since `v81_b`/`v86_b`) — it
-fails under suite load, not standalone; reproduce 5-10× before believing it.
-`unit-ui-journeys`/`unit-word-progress` have each flaked across the `v86` line.
+**⚠️ `unit-observations-log` is NO LONGER FLAKY — and the claim carried here since `v81_b` was
+WRONG.** It did NOT "fail under suite load, not standalone": it failed standalone at the same rate
+(2/10, 3/60, 2/30 across batches). Root cause found and fixed at `v88_h` — its own `answer()` helper
+branched on `document.querySelectorAll('.choice')` before considering the exercise TYPE, and
+`lib-dom` does not re-parse runtime `innerHTML`, so stale `.choice` nodes from the previous MCQ
+render hijacked a TYPED exercise. Worse, the assertions sat behind `if (droveRight)`, so the section
+was **VACUOUS on many of the runs it passed**. A failure there now is a genuine regression.
+`unit-ui-journeys`/`unit-word-progress` are **NOT cleared** — measured 12/12 each standalone, which
+is too few to mean anything (this file's own rate would have survived 12 runs about a third of the
+time). Treat them as UNVERIFIED, not clean.
 **But do NOT reach for the flake label first.** At `v87_o` two corpus-driven tests failed 8/8 —
 DETERMINISTIC, so not flakiness — because the user's server had written a new chapter and broken two
 fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don't run the full and
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **340 topics, 98 storylines, 33 languages, 735 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_g'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_h'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -226,7 +229,7 @@ measures zero effect, reconsider the diagnosis before trying a third wording.**
 
 **🆕 FIRST: the thirteen TODOs handed over after `v88_a`** — items `AM`…`AX` in `roadmap_v88.md`,
 with their own suggested order. **`v88_b` shipped row 1 (`AW` + `AT`), `v88_c` row 2 (`AQ` + `AM`),
-`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third.** The rest of that table:
+`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third; `v88_h` did the flake audit.** The rest of that table:
 
 - **➡️ NEXT — `v88_h` — `AX`**: generate lessons from an EXISTING storyline for a DIFFERENT source
   language. The highest-value new feature left and much cheaper than it looks: `POST
@@ -271,10 +274,18 @@ text has no offset back into the PDF).
 CUT" section — see it for full detail. Several are blocked on a decision, not on effort.
 
 **Buildable now, no decision needed:**
-- **⭐ Audit the remaining "known flakes"** (`unit-observations-log`, `unit-ui-journeys`,
-  `unit-word-progress`) the way `unit-tap-word` was audited at `v87_i`: find the failing assertion,
-  instrument what it compares, decide whether the PRODUCT is varying or the guard is a proxy. One of
-  four turned out to be a real defect; the others have never been checked.
+- **⭐ Finish the flake audit.** `unit-tap-word` (`v87_i`) and `unit-observations-log` (`v88_h`) are
+  both done, and **both inherited "known flake" labels turned out to be wrong** — one a `Math.random()`
+  in the PRODUCT, one a test driver branching on a proxy. `unit-ui-journeys`/`unit-word-progress`
+  remain UNVERIFIED (12/12 each is not enough runs to clear them). Instrument the failing assertion;
+  do not re-confirm the label.
+- **⚠️ THREE test files share `unit-observations-log`'s defective driver shape** — `unit-question-nav`,
+  `unit-inflection-speak-lang`, `unit-tap-word` all branch on `if (btns.length)` before considering
+  `ex.type`. Grep for `querySelectorAll('.choice')` ahead of any type check. `unit-question-nav` is
+  the most exposed (navigating BETWEEN questions is exactly the MCQ-then-typed sequence that
+  triggers it) but measured 14/14 clean, so `v88_h` deliberately did NOT change it — altering four
+  test files on one file's evidence is how a cleanup becomes a regression. `roadmap_v88.md`'s `v88_h`
+  entry carries the deterministic probe that demonstrates the bug.
 - **The completion card (`_renderCompStory`) still has no force-regenerate control** — only the
   lesson-set card does. Quick and well-precedented.
 - **Item D (Tier 2 image-coordinate highlighting)** — buildable, wants its own design pass first.

@@ -2393,6 +2393,85 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_h — the flake audit: `unit-observations-log` was never a load flake, and it was VACUOUS as often as it was red
+
+The ⭐ item from the `v88` prompt's own "buildable now" list: *"audit the remaining known flakes the
+way `unit-tap-word` was audited at `v87_i`."* Test-only change, no `ui.json` keys, no product change.
+
+**The inherited claim was wrong, exactly as `unit-tap-word`'s was.** Every session prompt since
+`v81_b` has said `unit-observations-log` *"fails under suite load, not standalone; reproduce 5-10×
+before believing it."* Measured: it fails **standalone**, at roughly the same rate it fails in the
+suite — 2/10, 3/60, 2/30 across separate batches. Load has nothing to do with it. That is the second
+"known flake" in this project found to be a real defect rather than noise, and both were found the
+same way: by instrumenting the failing assertion instead of re-confirming the label.
+
+### The diagnosis, taken causally rather than statistically
+
+The rate is low and VARIABLE (one 40-run batch passed clean), so sampling could never have settled
+this. Instrumenting every failure printed the same thing:
+
+```
+{"type":"listen_type","exCorrect":"weg","tiValue":"","choices":4,"recorded":false}
+```
+
+`tiValue: ""` with `choices: 4` on a TYPED exercise. The section's own `answer()` helper asked
+`document.querySelectorAll('.choice')` FIRST and took the MCQ branch whenever it returned anything —
+but **`lib-dom`'s `querySelectorAll` matches over the tree parsed from `index.html` and does not
+re-parse `innerHTML` assigned at runtime** (a limitation INTERNALS has documented for a long time).
+So the four `.choice` nodes from the PREVIOUS exercise's MCQ render were still visible after
+advancing to a typed one. The helper drove those, left `#type-in` empty, and `check()` correctly
+graded the empty string as wrong — recording a "correct" answer as incorrect.
+
+**Proven deterministically, not inferred**: a probe that renders an MCQ and then advances to a
+`listen_type` reproduces it every time —
+
+```
+OLD driver -> {"drove":false}            {"seenChoices":4,"ti":""}
+NEW driver -> {"drove":true,"path":"typed"} {"seenChoices":4,"ti":"lopen","correctCount":1}
+```
+
+**⚠️ The product is fine.** `check()` compares `normDiacritics(#type-in.value)` against
+`normDiacritics(ex.correct)` and is correct. This was entirely a test-driver defect. Worth saying
+plainly, because the `unit-tap-word` precedent makes "known flake → real product bug" the tempting
+conclusion, and here it would have been the wrong one.
+
+### The worse half: the section was VACUOUS on many of the runs it PASSED
+
+The probe's `drove:false` is the finding that matters more than the red runs. The assertions sat
+behind `if (droveRight) { … }`, so whenever the driver failed to drive, **both assertions were
+silently skipped and the section passed having checked nothing**. Same root cause, opposite symptom —
+and the invisible one had presumably been happening for as long as the visible one.
+
+Both halves are closed:
+- **`answer()` dispatches on the EXERCISE TYPE**, not on "are there `.choice` buttons" — the
+  protocol's own rule (select by the property the section asserts, not a proxy for it), applied to a
+  test's DRIVER rather than its fixture. The type list mirrors `check()`'s own typed branch.
+- **`droveRight` is now ASSERTED**, with a message naming the offending exercise type and saying
+  explicitly not to re-wrap it in an `if`. A driver that cannot drive is a finding, not a reason to
+  check nothing.
+
+`listen_type` lands second in ~4 runs in 30, so the typed path is genuinely exercised — the fix is
+not vacuous either.
+
+**Mutation**: reverting the dispatch gives 2 failures in 30 runs; with it, 0 in 30, and 30/30 again
+after the vacuity assertion was added. Sampling ALONE would not have been conclusive (one pre-fix
+batch of 40 passed clean) — the deterministic probe is what carries the claim.
+
+### The other two named "flakes", and a wider finding
+
+`unit-ui-journeys` and `unit-word-progress` were measured at **12/12 and 12/12 standalone**. Not
+cleared — that is too few runs to call them clean, and this file's own rate would have survived 12
+runs about a third of the time. They are simply **not reproduced yet**, and the prompt's claim about
+them is unverified rather than disproven.
+
+**⚠️ THREE OTHER TEST FILES SHARE THE DEFECTIVE DRIVER SHAPE** — `unit-question-nav`,
+`unit-inflection-speak-lang`, `unit-tap-word` all branch on `if (btns.length)` before considering the
+exercise type. `unit-question-nav` is the most exposed (navigating BETWEEN questions is exactly the
+MCQ-then-typed sequence that triggers it) and measured 14/14 clean, so it is **not changed here**:
+altering four test files on the strength of one file's evidence is how a cleanup becomes a
+regression. Recorded as a follow-up with the exact shape to grep for (`querySelectorAll('.choice')`
+ahead of any type check) and the deterministic probe that demonstrates it.
+
 ## ✅ v88_g — item AU, shutdown half: stopping the server frees model VRAM
 
 **User request** (one third of item AU): *"we should free the occupied memory for unused models

@@ -148,10 +148,30 @@ function open() {
 // the DOM-facing check(), because assertions on recordObservation alone (§3 above) prove nothing
 // about whether check() calls it (v71_u rule).
 {
+  // v88_h (the flake audit): dispatch on the EXERCISE TYPE, not on "are there .choice buttons".
+  //
+  // The old shape asked `document.querySelectorAll('.choice')` first and took the MCQ branch if it
+  // returned anything — but lib-dom's querySelectorAll matches over the tree parsed from
+  // index.html and does NOT re-parse innerHTML assigned at runtime (INTERNALS → harness limits).
+  // So on a TYPED exercise it still saw four stale `.choice` buttons, drove the MCQ path, left
+  // `#type-in` empty, and check() correctly graded the empty string as wrong — recording a
+  // "correct" answer as incorrect. Measured, not guessed: instrumenting the failure printed
+  // `{"type":"listen_type","tiValue":"","choices":4,"recorded":false}` on every occurrence.
+  //
+  // That is the whole of this file's intermittency: ~2 runs in 30, entirely dependent on whether
+  // buildExercises' non-deterministic content happens to put a TYPED exercise second. It is NOT a
+  // product bug (check() compares the typed value against ex.correct and is correct), and it is NOT
+  // "fails under suite load, not standalone" as the session prompt has claimed since v81_b — it
+  // fails standalone at the same rate.
+  //
+  // The type list mirrors check()'s own typed branch (`listen_type`/`type_plural`/
+  // `type_conjugation`); anything else that renders choices takes the MCQ path.
+  const TYPED = ['listen_type', 'type_plural', 'type_conjugation'];
   function answer(C, wantCorrect) {
     return C.run(`(function(){
       var Cur = APP.cur, ex = Cur.exercises[Cur.cur];
-      var btns = [].slice.call(document.querySelectorAll('.choice'));
+      var typed = ${JSON.stringify(TYPED)}.indexOf(ex.type) >= 0;
+      var btns = typed ? [] : [].slice.call(document.querySelectorAll('.choice'));
       if (btns.length) {
         var correctBtn = null, wrongBtn = null;
         for (var i = 0; i < btns.length; i++) {
@@ -193,11 +213,18 @@ function open() {
   const advanced = C.run(`(function(){ if (APP.cur.cur + 1 >= APP.cur.exercises.length) return false;
     APP.cur.cur++; APP.cur.answered = false; renderEx(); return true; })()`);
   if (advanced) {
+    // v88_h: `droveRight` is now ASSERTED, not merely tested. The old `if (droveRight)` silently
+    // skipped both assertions whenever the driver failed to drive — which is exactly what the stale
+    // `.choice` bug caused on a typed exercise, so this section was VACUOUS on some passing runs and
+    // red on others, from the same root cause. A driver that cannot drive is a finding, not a reason
+    // to check nothing.
     const droveRight = answer(C, true);
-    if (droveRight) {
-      assert.strictEqual(C.run(`_obsLog().length`), 2, 'a second LIVE answer -> a second observation');
-      assert.strictEqual(C.run(`_obsLog()[1].correct`), true, 'recorded as correct this time');
-    }
+    assert.ok(droveRight,
+      'the second exercise is drivable to a CORRECT answer (type: '
+      + C.run(`APP.cur.exercises[APP.cur.cur].type`) + '). If this fails, the driver above does not '
+      + 'handle that exercise type — do NOT re-wrap this in an `if`, teach answer() the type.');
+    assert.strictEqual(C.run(`_obsLog().length`), 2, 'a second LIVE answer -> a second observation');
+    assert.strictEqual(C.run(`_obsLog()[1].correct`), true, 'recorded as correct this time');
   }
   console.log(`  check() wiring: live answers recorded (${C.run('_obsLog().length')} total), replay recorded none`);
 

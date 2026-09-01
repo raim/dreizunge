@@ -661,6 +661,19 @@ Function`). Any helper such a function references must be `typeof`-guarded, or t
 `ReferenceError`. Follow the existing convention — degrade to the older behaviour, which is the
 safe direction.
 
+**⚠️ A test DRIVER can branch on a proxy too — and stale `.choice` nodes are the trap (`v88_h`).**
+`querySelectorAll` does not see runtime `innerHTML` (above), so `.choice` buttons from a PREVIOUS
+MCQ render are still visible after advancing to a TYPED exercise. A helper shaped
+`var btns = querySelectorAll('.choice'); if (btns.length) { …MCQ… } else { …type-in… }` therefore
+drives the wrong control, leaves `#type-in` empty, and `check()` correctly grades the empty string
+wrong — a "correct" answer recorded as incorrect. This was the whole of `unit-observations-log`'s
+years-old "known flake", which also **failed standalone**, not only under load as every prompt since
+`v81_b` claimed. **Dispatch on `ex.type`** (mirroring `check()`'s own typed branch:
+`listen_type`/`type_plural`/`type_conjugation`). And note the worse half: assertions behind
+`if (droveDriver) { … }` are SILENTLY SKIPPED when the driver fails, so the same bug made the section
+VACUOUS on runs it passed — assert that the driver drove. **Three files still carry the old shape**:
+`unit-question-nav`, `unit-inflection-speak-lang`, `unit-tap-word`.
+
 **⚠️ `env.stop()` is a TEARDOWN helper, not a SIGNALLING one (`v88_g`).** It kills the fake Ollama
 and deletes the chat log alongside the server, so a test that uses it to observe what the server does
 ON ITS WAY OUT has nowhere for those requests to land — `e2e-shutdown-release`'s first version failed
