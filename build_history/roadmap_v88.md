@@ -474,7 +474,7 @@ Two ways, and the cheaper one is also the better precedent:
 Recommendation: synthetic registry now (small, no server change, closes the report and three latent
 siblings); revisit if `AU` converts these routes anyway.
 
-### ~~AU.~~ ✅ COMPLETE — shutdown `v88_g`, per-job cancel `v88_k`, idle release `v88_l`. ⚠️ ONE follow-up left: `_runRecreateJob` may still swallow a cancel (see the `v88_k` entry)
+### ~~AU.~~ ✅ COMPLETE — shutdown `v88_g`, cancel `v88_k`, idle `v88_l`, and ALL EIGHT job kinds wired at `v88_m` (the `v88_k` entry's "the rest cancel status-only, not a regression" was WRONG — see `v88_m`)
 
 **User's words**: "It seems difficult to cancel individual ollama jobs? If it IS possible, it would be
 great to have individual cancel buttons in the new 'running jobs' popover. If we can only cancel by
@@ -2423,6 +2423,62 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v88 LINE
+
+## ✅ v88_m — every labelled job is actually cancellable (fixing what `v88_k` half-shipped)
+
+**User report**: *"there is no cancel button yet in the jobpopover."*
+
+**The button was there; their TAB was stale.** `server.js` serves `index.html` with `readFileSync`
+per request, so a client edit is live without a restart — but an already-open tab keeps running the
+JS it loaded. `curl http://localhost:3000/ | grep jobs-row-cancel` returned 3 hits, and the service
+worker is network-first for the shell, so nothing was caching it. A reload shows the button. **That
+half of the report needed no code change.**
+
+### ⚠️ But investigating it exposed a real defect that `v88_k` shipped
+
+Their live job list had exactly one running job — `Adding inflections lesson: "Graffiti im Verfall"`
+— and **that job kind was NOT wrapped in `runCancellable`**. `v88_k` wrapped THREE of the EIGHT
+labelled job kinds and shipped a cancel button for **all** of them. So on the job the user actually
+had, the button would have appeared, flipped a status, left the model running, and toasted *"that job
+had already finished"* — which is false.
+
+`v88_k`'s own entry called this out as *"the rest cancel status-only — pre-`v88_k` behaviour, not a
+regression"*. **That framing was wrong.** Before `v88_k` there was no button, so status-only cancel
+was invisible; after it, every one of those jobs grew a control that lies. The entry stated the exact
+principle it violated: *"a dead cancel button is worse than none, because the learner believes the
+model stopped."* Shipping the button for eight kinds while wiring three made that true of five of
+them.
+
+### The fix
+
+All eight labelled job kinds now run inside `runCancellable`, and each one's OUTER catch routes
+through `jobFailOrCancel` so a deliberate stop settles as `cancelled` rather than `error`:
+single-chapter `generate`, the QC sweep, add-lesson, recreate/add-storyline-lessons, the dialect
+story (an inline async IIFE — wrapped in place), plus the three from `v88_k` (comic extract, comic
+detect, analysis). Inner/validation `jobFail` calls are deliberately left alone: those are real
+failures, not cancels.
+
+### The guard is a SET-level claim, because that is what failed
+
+`e2e-job-cancel` §5 walks `server.js` for every `newJob({ … label: … })` — a labelled job is by
+definition one the popover LISTS and therefore offers a button for — and asserts each runs inside a
+cancel scope. Source-level on purpose: no single running job can observe a claim about all of them,
+which is exactly why `v88_k`'s per-job e2e passed while five kinds were unwired.
+
+⚠️ **Bounded by the NEXT `newJob()`, not a fixed span.** The first version used a 60-line window and
+reported add-lesson as unwrapped — its launch is 69 lines below its `newJob()`, with a long
+`doGenLesson` definition in between. A window wide enough for that would start borrowing the
+neighbouring route's wrap and go green for the wrong reason. A job's launch always precedes the next
+job's creation, so that is the honest boundary. Mutation: unwrapping add-lesson again reports its
+exact line.
+
+### ⚠️ A tooling mistake that silently discarded work
+
+Three of these wraps were applied and then **lost**: the edit script wrote the file only at the END,
+so a later assertion failure in the same run discarded every earlier edit. The audit then showed them
+missing and it looked like the edits had never matched. Fixed by writing per edit. **A batch editor
+that commits once at the end turns one bad pattern into a silent rollback of everything before it** —
+write incrementally, or verify after every run rather than after the batch.
 
 ## ✅ v88_l — item AU, idle release: models are freed after 30 minutes idle. **Item AU is now COMPLETE.**
 

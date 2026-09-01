@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_l`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_m`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -20,22 +20,20 @@ work — it generated four chapters during the `v87` line, and twice that broke 
 restarting anything; a SERVER edit is not — start your own instance on another port to verify, and
 **kill it by PID** (`pkill -f "node server.js"` matches theirs too).
 
-**What shipped at this cut**: `v88_l` — **item AU's IDLE third, which COMPLETES item AU** (shutdown
-`v88_g`, cancel `v88_k`, idle `v88_l`). Models are freed after **30 minutes** idle — the user's own
-window, asked for because releasing means the next generation pays a full model RELOAD and
-`keep_alive: -1` exists to avoid exactly that. `_lastLLMUseAt` is stamped in `_callLLM` (the one
-choke point), BEFORE the await as well as after, since a long generation is USE for its whole
-duration. An unref'd 60s interval reuses `releaseConfiguredModels()` from `v88_g`. Three guards:
-never while a job runs (a job sits between calls — "no call in flight" is not "idle"), release once
-rather than every tick, and new use re-arms it. No `ui.json` keys.
-⚠️ **Two scoping bugs, both found by instrumenting a timer rather than reading it**: `bookJobs` is
-declared INSIDE `boot()`, so the module-scope idle check threw `ReferenceError` on its first tick —
-and because that throw was inside a `setInterval`, the only symptom was "the release never happened".
-`_idleTick` is now try/catch'd: an uncaught exception on a bare interval would take the server down
-for a VRAM optimisation. And the `let`s live beside their writer to avoid the `v68.1` TDZ crash.
-⚠️ **A guard stayed GREEN** — the e2e's first §1 waited 400ms against a 1.2s window, so the WINDOW
-protected it, not the running-job guard. Rewritten so the job outlives the window. Four mutations red.
-Full write-up: `roadmap_v88.md`'s own `v88_l` entry.
+**What shipped at this cut**: `v88_m` — a user report (*"there is no cancel button yet in the
+jobpopover"*) whose FIRST half needed no code: the button was there, their TAB was stale.
+`server.js` serves `index.html` per request so a client edit is live, but an open tab keeps its old
+JS; `curl`ing the served HTML confirmed the button, and `sw.js` is network-first so nothing cached it.
+⚠️ **The second half was a real defect `v88_k` shipped.** Their one running job (add-lesson) was among
+the FIVE labelled job kinds `v88_k` left unwrapped while shipping a cancel button for ALL EIGHT — so
+the button would have flipped a status, left the model running, and toasted "already finished".
+`v88_k`'s entry called that "not a regression"; **it was one**, and it violated the very principle
+that entry stated ("a dead cancel button is worse than none"). All eight kinds are now wrapped, each
+outer catch routed through `jobFailOrCancel`.
+The guard is a SET-level source check — no single running job can observe a claim about all of them,
+which is exactly why `v88_k`'s per-job e2e passed while five kinds were unwired. ⚠️ Bounded by the
+NEXT `newJob()`, not a fixed span: add-lesson's launch is 69 lines below its own `newJob()`.
+Full write-up: `roadmap_v88.md`'s own `v88_m` entry.
 
 **🆕 NOTHING IS MID-FLIGHT, and the queue is explicit.** The `v87` line closed six items (R, U, Z,
 AC, AK, AL) plus the three storyline asks; they are recorded where they shipped and are NOT in the
@@ -110,7 +108,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **341 topics, 98 storylines, 33 languages, 744 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_l'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_m'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -232,7 +230,7 @@ measures zero effect, reconsider the diagnosis before trying a third wording.**
 
 **🆕 FIRST: the thirteen TODOs handed over after `v88_a`** — items `AM`…`AX` in `roadmap_v88.md`,
 with their own suggested order. **`v88_b` shipped row 1 (`AW` + `AT`), `v88_c` row 2 (`AQ` + `AM`),
-`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third; `v88_h` did the flake audit; `v88_i` shipped `AX`; `v88_j` shipped `AR`; `v88_k` shipped `AU`'s cancel third; `v88_l` completed `AU` with idle release.** The rest of that table:
+`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third; `v88_h` did the flake audit; `v88_i` shipped `AX`; `v88_j` shipped `AR`; `v88_k` shipped `AU`'s cancel third; `v88_l` completed `AU` with idle release; `v88_m` wired ALL job kinds for cancel.** The rest of that table:
 
 **🆕 THE THIRTEEN TODOs ARE DONE.** Every item from the `v88_a` handover has shipped, plus two live
 bug reports (`AY`/`AZ`) and the flake audit. What remains is either the pre-existing open list or
@@ -244,11 +242,10 @@ work the user deferred. **Ask the user what they want next** — that is a reaso
   list stays editable, and `comicCreateChapter()`'s existing one-chapter-per-panel formation
   (`v85_p`) is confirmed correct. Mostly a question of the DRAFT shape holding more than one page
   (`_comicDraftSaveDebounced`'s own comment scopes it to one image today).
-- **⚠️ `AU` follow-up, small and concrete (the ONLY thing left of that item)**: `_runRecreateJob`
-  has the same per-item `try/catch` shape that made `_runComicExtractJob` report a cancelled job as
-  DONE. Wrap it in `runCancellable` and re-throw on `CANCELLED`. Only three job kinds are wrapped so
-  far (comic extract, comic detect, analysis); the rest cancel status-only — pre-`v88_k` behaviour,
-  not a regression, but each is a one-line wrap plus a check for swallowing catches.
+- **⚠️ `AU` residue, now small**: all eight job kinds are wrapped (`v88_m`), but only
+  `_runComicExtractJob` has been checked for a per-item `try/catch` that SWALLOWS a cancel (it
+  re-throws on `CANCELLED` now). `_runQc` and `_runRecreateJob` both have per-item tolerance and have
+  NOT been checked — a cancelled job there may still report DONE. One read each.
 - **⚠️ `AU` cancel follow-up, small and concrete**: `_runRecreateJob` has the same per-item
   `try/catch` shape that made `_runComicExtractJob` report a cancelled job as DONE. Wrap it in
   `runCancellable` and re-throw on `CANCELLED`. Only three job kinds are wrapped so far (comic

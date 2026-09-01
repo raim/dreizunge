@@ -250,7 +250,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_l';
+const APP_VERSION  = 'v88_m';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -1019,7 +1019,7 @@ async function _runAnalysisJob(jobId, topic) {
       sentenceCount: result.sentenceCount, tokenCount: result.tokenCount });
   } catch (e) {
     console.error('  [analysis] failed:', e.message);
-    jobFail(jobId, e.message);
+    jobFailOrCancel(jobId, e);
   } finally {
     analyzingChapters.delete(topic.id);
   }
@@ -7975,8 +7975,8 @@ http.createServer(async (req, res) => {
         link: storylineId ? { type: 'storyline', id: storylineId } : (topicId ? { type: 'topic', id: topicId } : null),
       });
       console.log(`  ⚙ QC requested (${storylineId?('storyline '+storylineId):topicId?('topic '+topicId+(lessonIdx!==undefined&&lessonIdx!==null?' lesson '+lessonIdx:'')):'?'}) → ${topics.length} topic(s), job=${jobId}`);
-      _runQc(jobId, topics, { lessonIdx: (lessonIdx === undefined ? null : lessonIdx), onlyFlagged: !!onlyFlagged, force: !!force, includeStory: includeStory !== false })
-        .catch(e => { console.error('  QC error:', e.message); jobFail(jobId, e.message); });
+      runCancellable(jobId, () => _runQc(jobId, topics, { lessonIdx: (lessonIdx === undefined ? null : lessonIdx), onlyFlagged: !!onlyFlagged, force: !!force, includeStory: includeStory !== false }))
+        .catch(e => { console.error('  QC error:', e.message); jobFailOrCancel(jobId, e); });
       return json(res, 202, { jobId, topics: topics.length });
     }
 
@@ -8347,7 +8347,7 @@ http.createServer(async (req, res) => {
         skipLessons: skipLessons === true,
       };
       console.log(`  Generating: "${resolvedTopic}" (${langName(lang||'it')}, from ${langName(resolvedSrcLang)}) diff=${diff} fmt=${fmt} storyLen=${wc}${userOpts.fromLearned?' myStory=yes':''}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' translation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${userOpts.storyStyle?' style='+userOpts.storyStyle:''}${contFrom?' cont='+contFrom:''}${userOpts.skipLessons?' skipLessons=yes':''} job=${jobId}`);
-      generate(resolvedTopic, lang || 'it', resolvedSrcLang, diff, contFromForStory, wc, jobId, userOpts).then(data => {
+      runCancellable(jobId, () => generate(resolvedTopic, lang || 'it', resolvedSrcLang, diff, contFromForStory, wc, jobId, userOpts)).then(data => {
         upsert(data);
         // v29: assign stable topic id if missing, then update storyline chain
         if (store.schemaVersion >= 29) {
@@ -8362,7 +8362,7 @@ http.createServer(async (req, res) => {
         jobDone(jobId, { ...data, fromCache: false });
       }).catch(e => {
         console.error('  Generation error:', e.message);
-        jobFail(jobId, e.message);
+        jobFailOrCancel(jobId, e);
       }).finally(() => {
         generatingTopics.delete(topicKey);
       });
@@ -8721,7 +8721,7 @@ http.createServer(async (req, res) => {
       const jobId = newJob({ label: `Writing dialect story: "${(topic.topic||'').slice(0,50)}"`, link: { type: 'topic', id: topic.id } });
       const glossaryRows = (topic.lessons||[]).flatMap(l => (l.vocab||[]).filter(v => v && v.target && v.source)
         .map(v => ({ target: v.target, source: v.source })));
-      (async () => {
+      runCancellable(jobId, async () => {
         try {
           jobStep(jobId, method === 'rewrite' ? 'Writing a Standard-German story, then rewriting into dialect…' : 'Generating a dialect story…');
           const out = method === 'rewrite'
@@ -8747,8 +8747,8 @@ http.createServer(async (req, res) => {
           const covStr = out.coverage ? ` [coverage ${out.coverage.used}/${out.coverage.total}]` : '';
           console.log(`  🤖 Dialect story (${out.method||'direct'}) for "${fresh.topic}"${storyTopic?` (topic: ${storyTopic})`:''}${covStr} — needs review`);
           jobDone(jobId, { id: fresh.id, chars: out.story.length, method: out.method || 'direct', coverage: out.coverage || null });
-        } catch (e) { jobFail(jobId, e.message || String(e)); }
-      })();
+        } catch (e) { jobFailOrCancel(jobId, e); }
+      });
       return json(res, 202, { jobId });
     }
 
@@ -9113,11 +9113,11 @@ http.createServer(async (req, res) => {
         return { lesson: newLesson, topic: saved.topic, lessonCount: saved.lessons.length };
       };
 
-      doGenLesson().then(data => {
+      runCancellable(jobId, doGenLesson).then(data => {
         jobDone(jobId, data);
       }).catch(e => {
         console.error(`  Add-lesson error:`, e.message);
-        jobFail(jobId, e.message);
+        jobFailOrCancel(jobId, e);
       }).finally(() => {
         generatingTopics.delete(topicKey);
       });
@@ -9143,9 +9143,9 @@ http.createServer(async (req, res) => {
       console.log(_addTypes
         ? `  Add storyline lessons: start=${startId}, types=${_addTypes.join(',')}`
         : `  Re-create storyline lessons: start=${startId}, arcMode=${body.arcMode || 'vocab'}`);
-      _runRecreateJob(jobId, startId, { arcMode: body.arcMode, addTypes: _addTypes, add: !!body.add })
+      runCancellable(jobId, () => _runRecreateJob(jobId, startId, { arcMode: body.arcMode, addTypes: _addTypes, add: !!body.add }))
         .then(r => jobDone(jobId, r))
-        .catch(e => { console.error('  Re-create error:', e.message); jobFail(jobId, e.message); });
+        .catch(e => { console.error('  Re-create error:', e.message); jobFailOrCancel(jobId, e); });
       return json(res, 202, { jobId });
     }
 

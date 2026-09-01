@@ -12123,6 +12123,180 @@
             "ms": 208308,
             "at": "2026-09-01T13:30:22.820Z"
           }
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1788286548706",
+          "type": "inflections",
+          "title": "Nederlandse vervoegingen",
+          "desc": "Woorden herleiden naar de grondvorm",
+          "icon": "📚",
+          "items": [
+            {
+              "sentence": "Een verlaten gebouw met graffiti staat boven een droge weide onder een blauwe hemel met wolken.",
+              "surfaceForm": "staat",
+              "translation": "Ein verlassenes Gebäude mit Graffiti steht über einer trockenen Wiese unter einem blauen Himmel mit Wolken.",
+              "lemma": "staan",
+              "lemmaChoices": [
+                "staan",
+                "stond",
+                "gestaan",
+                "staand"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Tegenwoordige tijd, 3e persoon enkelvoud",
+              "formChoices": [
+                "Tegenwoordige tijd, 3e persoon enkelvoud",
+                "Tegenwoordige tijd, 1e persoon enkelvoud",
+                "Verleden tijd, 3e persoon enkelvoud",
+                "Toekomende tijd, 3e persoon enkelvoud"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "De werkwoordsvorm 'staat' is de tegenwoordige tijd van het infinitief 'staan' in de derde persoon enkelvoud."
+            },
+            {
+              "sentence": "Een verlaten gebouw met graffiti staat boven een droge weide onder een blauwe hemel met wolken.",
+              "surfaceForm": "wolken",
+              "translation": "Ein verlassenes Gebäude mit Graffiti steht über einer trockenen Wiese unter einem blauen Himmel mit Wolken.",
+              "lemma": "de wolk",
+              "lemmaChoices": [
+                "de wolk",
+                "de wolken",
+                "het wolk",
+                "de wolke"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Meervoud",
+              "formChoices": [
+                "Enkelvoud",
+                "Meervoud"
+              ],
+              "formCorrectIndex": 1,
+              "explanation": "'Wolken' is de meervoudsvorm van het zelfstandig naamwoord 'de wolk'."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 2,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1648,
+            "completionTokens": 529,
+            "ms": 316836,
+            "at": "2026-09-01T18:15:48.706Z"
+          }
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1788286915932",
+          "type": "synonyms",
+          "title": "Verlaten gebouw en graffiti",
+          "desc": "Beschrijving van een verlaten gebouw met graffiti.",
+          "icon": "🏚️",
+          "words": [
+            {
+              "base": "verlaten",
+              "gloss": "verlassen",
+              "sentence": "Een verlaten gebouw met graffiti staat boven een droge weide onder een blauwe hemel met wolken.",
+              "synonyms": [
+                {
+                  "w": "verwaarloosd",
+                  "g": "vernachlässigt"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "bewoond",
+                  "g": "bewohnt"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "gebouw",
+              "gloss": "Gebäude",
+              "sentence": "Een verlaten gebouw met graffiti staat boven een droge weide onder een blauwe hemel met wolken.",
+              "synonyms": [
+                {
+                  "w": "pand",
+                  "g": "Objekt"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "droge",
+              "gloss": "trockene",
+              "sentence": "Een verlaten gebouw met graffiti staat boven een droge weide onder een blauwe hemel met wolken.",
+              "synonyms": [
+                {
+                  "w": "uitgedroogde",
+                  "g": "ausgetrocknete"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "natte",
+                  "g": "nasse"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "weide",
+              "gloss": "Weide",
+              "sentence": "Een verlaten gebouw met graffiti staat boven een droge weide onder een blauwe hemel met wolken.",
+              "synonyms": [
+                {
+                  "w": "grasland",
+                  "g": "Grasland"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "hemel",
+              "gloss": "Himmel",
+              "sentence": "Een verlaten gebouw met graffiti staat boven een droge weide onder een blauwe hemel met wolken.",
+              "synonyms": [
+                {
+                  "w": "lucht",
+                  "g": "Luft"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "wolken",
+              "gloss": "Wolken",
+              "sentence": "Een verlaten gebouw met graffiti staat boven een droge weide onder een blauwe hemel met wolken.",
+              "synonyms": [
+                {
+                  "w": "wolkenmassa's",
+                  "g": "Wolkenmassen"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 6,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1183,
+            "completionTokens": 760,
+            "ms": 365988,
+            "at": "2026-09-01T18:21:55.932Z"
+          }
         }
       ],
       "generationStats": {
@@ -12135,8 +12309,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 937,
-        "totalCompletionTokens": 471,
+        "totalPromptTokens": 3768,
+        "totalCompletionTokens": 1760,
         "lessons": [
           {
             "lessonNum": 1,
@@ -12144,7 +12318,10 @@
             "promptTokens": 853,
             "completionTokens": 444
           }
-        ]
+        ],
+        "tokensByType": {
+          "add_lesson": 4120
+        }
       },
       "comicPanels": [
         {
@@ -12160,7 +12337,7 @@
         }
       ],
       "generatedAt": "2026-09-01T13:26:54.429Z",
-      "updatedAt": "2026-09-01T13:30:22.820Z",
+      "updatedAt": "2026-09-01T18:21:55.932Z",
       "createdBy": "admin"
     },
     {

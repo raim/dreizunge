@@ -8377,6 +8377,70 @@ const STATIC_LESSONS = [
           "ms": 208308,
           "at": "2026-09-01T13:30:22.820Z"
         }
+      },
+      {
+        "difficulty": 1,
+        "id": "ls_1788286548706",
+        "type": "inflections",
+        "title": "Nederlandse vervoegingen",
+        "desc": "Woorden herleiden naar de grondvorm",
+        "icon": "📚",
+        "items": [
+          {
+            "sentence": "Een verlaten gebouw met graffiti staat boven een droge weide onder een blauwe hemel met wolken.",
+            "surfaceForm": "staat",
+            "translation": "Ein verlassenes Gebäude mit Graffiti steht über einer trockenen Wiese unter einem blauen Himmel mit Wolken.",
+            "lemma": "staan",
+            "lemmaChoices": [
+              "staan",
+              "stond",
+              "gestaan",
+              "staand"
+            ],
+            "lemmaCorrectIndex": 0,
+            "formLabel": "Tegenwoordige tijd, 3e persoon enkelvoud",
+            "formChoices": [
+              "Tegenwoordige tijd, 3e persoon enkelvoud",
+              "Tegenwoordige tijd, 1e persoon enkelvoud",
+              "Verleden tijd, 3e persoon enkelvoud",
+              "Toekomende tijd, 3e persoon enkelvoud"
+            ],
+            "formCorrectIndex": 0,
+            "explanation": "De werkwoordsvorm 'staat' is de tegenwoordige tijd van het infinitief 'staan' in de derde persoon enkelvoud."
+          },
+          {
+            "sentence": "Een verlaten gebouw met graffiti staat boven een droge weide onder een blauwe hemel met wolken.",
+            "surfaceForm": "wolken",
+            "translation": "Ein verlassenes Gebäude mit Graffiti steht über einer trockenen Wiese unter einem blauen Himmel mit Wolken.",
+            "lemma": "de wolk",
+            "lemmaChoices": [
+              "de wolk",
+              "de wolken",
+              "het wolk",
+              "de wolke"
+            ],
+            "lemmaCorrectIndex": 0,
+            "formLabel": "Meervoud",
+            "formChoices": [
+              "Enkelvoud",
+              "Meervoud"
+            ],
+            "formCorrectIndex": 1,
+            "explanation": "'Wolken' is de meervoudsvorm van het zelfstandig naamwoord 'de wolk'."
+          }
+        ],
+        "_genMeta": {
+          "type": "inflections",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": 1,
+          "valid": 2,
+          "rejected": 0,
+          "rejectReasons": {},
+          "promptTokens": 1648,
+          "completionTokens": 529,
+          "ms": 316836,
+          "at": "2026-09-01T18:15:48.706Z"
+        }
       }
     ],
     "generationStats": {
@@ -8389,8 +8453,8 @@ const STATIC_LESSONS = [
         "lessons": "qwen3.6:35b-a3b"
       },
       "lessonFormat": "json",
-      "totalPromptTokens": 937,
-      "totalCompletionTokens": 471,
+      "totalPromptTokens": 2585,
+      "totalCompletionTokens": 1000,
       "lessons": [
         {
           "lessonNum": 1,
@@ -8398,7 +8462,10 @@ const STATIC_LESSONS = [
           "promptTokens": 853,
           "completionTokens": 444
         }
-      ]
+      ],
+      "tokensByType": {
+        "add_lesson": 2177
+      }
     },
     "comicPanels": [
       {
@@ -8414,7 +8481,7 @@ const STATIC_LESSONS = [
       }
     ],
     "generatedAt": "2026-09-01T13:26:54.429Z",
-    "updatedAt": "2026-09-01T13:30:22.820Z",
+    "updatedAt": "2026-09-01T18:15:48.706Z",
     "createdBy": "admin"
   },
   {
@@ -163243,12 +163310,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v88_l', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v88_m', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"739834cb0bd8","lessons.json":"34e8b1098085","ui.json":"71bf63d54064","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"0ae83dc00fff","build-static.js":"012fc7f8f3ca"};
+  APP.buildSources = {"index.html":"739834cb0bd8","lessons.json":"5e440bda7144","ui.json":"71bf63d54064","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"0ae83dc00fff","build-static.js":"012fc7f8f3ca"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).

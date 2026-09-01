@@ -94,6 +94,43 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       console.log('  cancelling an unknown or already-stopped job claims nothing: OK');
     }
 
+    // ── 5. EVERY labelled job kind is cancellable ────────────────────────────────────────────
+    // ⚠️ The reason this section exists: `v88_k` wrapped THREE job kinds and shipped a cancel button
+    // for ALL of them. The user then found the button missing — and the investigation showed the
+    // job they actually had running (add-lesson) was one of the FIVE unwrapped kinds, so the button
+    // would have appeared and done nothing but flip a status. "A dead cancel button is worse than
+    // none" was the stated principle and the code violated it.
+    //
+    // Source-level on purpose: this is a claim about a SET of call sites, and no single running job
+    // can observe it. Every `newJob({ label: … })` is a job the popover LISTS and therefore offers a
+    // cancel button for, so every one of them must run inside a cancel scope.
+    {
+      const path = require('path');
+      const src = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
+      const lines = src.split('\n');
+      const unwrapped = [];
+      lines.forEach((l, i) => {
+        if (!/newJob\(\{/.test(l)) return;
+        // A labelled job is a user-facing one (newJob()'s own comment); labelless sub-jobs are
+        // deliberately excluded from the popover and so need no button.
+        const head = lines.slice(i, i + 6).join('\n');
+        if (!/label:/.test(head)) return;
+        // Bounded by the NEXT newJob() rather than a fixed span: add-lesson's own launch is 69
+        // lines below its newJob() (a long doGenLesson definition sits between), and a fixed window
+        // wide enough for that would start borrowing the neighbouring route's wrap. A job's launch
+        // always precedes the next job's creation, so that is the honest boundary.
+        let end = lines.length;
+        for (let k = i + 1; k < lines.length; k++) if (/newJob\(\{/.test(lines[k])) { end = k; break; }
+        const body = lines.slice(i, end).join('\n');
+        if (!/runCancellable\(jobId/.test(body)) unwrapped.push(i + 1);
+      });
+      assert(unwrapped.length === 0,
+        'every LABELLED job runs inside runCancellable — the popover offers a cancel button for all '
+        + 'of them, so an unwrapped one is a button that lies. Unwrapped at line(s): '
+        + unwrapped.join(', '));
+      console.log('  every labelled job kind runs inside a cancel scope: OK');
+    }
+
   } catch (e) { failed = true; console.error(e); }
   finally { try { env.stop(); } catch (_) {} }
   console.log(failed ? 'e2e-job-cancel: FAILED' : 'e2e-job-cancel: ALL PASSED');
