@@ -1245,6 +1245,23 @@ already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly o
 | the acceptance tests (as of `v85_c`) | `test/unit-gen-wizard.test.js`: markup nesting (each existing block inside its own card, via `indexOf(needle, lo)` bounded search — NOT unbounded `indexOf`, which would find `.lang-box`'s OTHER pre-existing user, `#lib-lang-box` in the library filter, instead), default state (card 1 shown, pill 1 only active), `_genWizardNext`/`_genWizardBack` clamping at both ends, `_genWizardGoto` direct jump, the `show()` reset hook (mutation-tested), and the `#gen-area`-untouched invariant. Extended, not replaced, at `v85_d` — see its own row |
 | ⚠️ **div-balance verification method, worth reusing** | after any wizard-restructuring edit, a real HTML parser (Python's `html.parser`, stack-tracking start/end tags) was run over just the `#generation-screen`…next-screen region to confirm zero stray/missing closing tags — the same technique `PLAN §C5`'s own `landing`-nesting row used, reused again at both `v85_c` and `v85_d` |
 
+**`v88_a` — storyline chapter management: re-order, split off, add existing** (user request; full
+write-up in `roadmap_v88.md`'s own `v88_a` entry — **note the roadmap line changed here**:
+`roadmap_v88.md` is current, `roadmap_v87.md` is the record for `v87_b`…`v87_p`).
+
+| what | where |
+|---|---|
+| ⚠️ **why it is SERVER-side** | `storyline.chapters` is an ordered array that is BOTH membership and order, and `POST /api/storylines` already upserts it — so this looks like pure client work. It is not: a re-order also rewrites `continuedFromId` across SEVERAL topics, and a half-applied chain is worse than no re-order |
+| **`POST /api/storyline/chapters`** | `{slId, chapters[], relink?}` — sets the order, optionally re-links. Serves BOTH re-ordering and adding, because they are the same write. Refuses ghost ids, duplicates, an empty list, an unknown storyline (a storyline listing an unresolvable id renders as a gap and breaks "last chapter" lookups — one way a continue button silently vanishes) |
+| **`POST /api/storyline/split`** | `{slId, fromIndex}` — moves `[fromIndex..]` into a new storyline titled `"orphaned from <title>"` (the user's own wording). The moved HEAD is detached (`continuedFromId = null`); the rest of the run keeps its internal links so the new storyline arrives intact. `fromIndex` 0 is refused — it would move everything and leave an empty storyline, a rename pretending to be a split |
+| ⚠️ **the re-linking rule, and why FORKS survive** | user ruling: a re-order must re-link, because the storyline SCREEN draws a tree from `continuedFromId` while the main page uses the array. Scoped to THIS storyline's own chapters: `chapter[i]` continues `chapter[i-1]`; **`chapter[0]` keeps the storyline's EXTERNAL parent** (taken from whichever chapter was first BEFORE the shuffle, and ignored if it is itself one of these chapters, or position 0 recreates the old order); and a chapter in ANOTHER storyline that continues one of these is left untouched, so a fork keeps both branches. That is what made the user's chosen option safe without the "refuse on forks" fallback |
+| **client** | ONE teacher-only panel on the STORYLINE SCREEN, collapsed behind `⇅` — that is where the chapters are, and `v87_n` was the lesson about controls placed where the user is not looking. Rows carry `↑`/`↓`/`✂` with boundary buttons disabled; the add-picker offers every saved chapter except current members, newest first. All three funnel through `_slChaptersPost()`, which posts, reloads and **re-derives the chapter list from the stored storyline** rather than reusing the screen's opening snapshot |
+| **the rulings live in the request BODY** | re-order posts `relink:true`; adding posts NO relink (membership is not re-sequencing, and the chapter may still belong to another storyline). Mutating either direction goes red |
+| **`ui.json`** | three new `en` keys (`sl.manage_chapters`, `sl.add_chapter`, `sl.split_here`), 730→733 — the user chose three over six, so `↑`/`↓` carry no tooltip and a split shows no toast |
+| the acceptance tests | `e2e-storyline-chapters.test.js` (6 sections, real server) + `unit-storyline-chapters.test.js` (8 sections, the panel and its exact request bodies). FOUR mutations red, each caught by the right layer |
+
+---
+
 **`v87_p` — the server RE-DETECTS its backend instead of deciding once at startup** (user request;
 full write-up in `roadmap_v87.md`'s own `v87_p` entry).
 

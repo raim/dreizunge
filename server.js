@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v87_p';
+const APP_VERSION  = 'v88_a';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -7881,6 +7881,102 @@ http.createServer(async (req, res) => {
         return json(res, 200, { ok: true, output: stdout.trim().slice(0, 500) });
       });
       return; // response sent by callback
+    }
+
+    // ── Storyline CHAPTER MANAGEMENT (user request) ───────────────────────────────────────────
+    // "Allow to re-order chapters of a storyline… split off storyline's chapters into separate
+    // storylines… add existing chapters to a given storyline."
+    //
+    // ONE route for set-the-order and add-a-chapter, because they are the same write: `chapters` is
+    // an ORDERED array that is BOTH membership and order. Server-side rather than client-side
+    // because a re-order is not one write — it rewrites `continuedFromId` across several topics, and
+    // a half-applied chain is worse than no re-order at all.
+    //
+    // Body: { slId, chapters:[ids], relink? }
+    if (M === 'POST' && url.pathname === '/api/storyline/chapters') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch (e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const sl = body.slId ? findStoryline(body.slId) : null;
+      if (!sl) return json(res, 404, { error: 'No storyline with that id.' });
+      const wanted = Array.isArray(body.chapters) ? body.chapters.map(String) : null;
+      if (!wanted || !wanted.length) return json(res, 400, { error: 'chapters must be a non-empty array.' });
+      // Every id must resolve to a real chapter: a storyline listing a ghost renders as a gap and
+      // silently breaks "the last chapter" lookups (which is how the continue button can vanish).
+      const missing = wanted.filter(id => !findSavedById(id));
+      if (missing.length) return json(res, 400, { error: 'Unknown chapter id(s): ' + missing.slice(0, 3).join(', ') });
+      const deduped = [...new Set(wanted)];
+      if (deduped.length !== wanted.length) return json(res, 400, { error: 'Duplicate chapter ids.' });
+
+      // ⚠️ RE-LINKING, per the user's own ruling ("re-link the chain too"): the storyline SCREEN
+      // draws a tree from each chapter's continuedFromId, so re-ordering the array alone would leave
+      // that view in the old sequence — the re-order would look like it did nothing.
+      //
+      // Scoped to THIS storyline's own chapters, deliberately, which is what makes forks safe:
+      //   • chapter[i] continues chapter[i-1], for i >= 1.
+      //   • chapter[0] KEEPS whatever it pointed at before — a storyline continuing another
+      //     storyline must not be cut loose just because its chapters were reordered. The parent is
+      //     taken from whichever of these chapters is currently first, not from the new first, so
+      //     the storyline's external anchor survives the shuffle.
+      //   • A chapter in ANOTHER storyline that continues one of these is left completely untouched.
+      //     Its link still resolves — the chapter still exists — so a fork keeps both branches.
+      let relinked = 0;
+      if (body.relink) {
+        const prevFirst = (sl.chapters || []).map(findSavedById).filter(Boolean)[0] || null;
+        const externalParentId = prevFirst ? (prevFirst.continuedFromId || null) : null;
+        const externalParent = externalParentId ? findSavedById(externalParentId) : null;
+        // An external parent INSIDE this same storyline is not external at all — it is one of the
+        // chapters being reordered, so honouring it would recreate the old order at position 0.
+        const keepExternal = externalParent && !deduped.includes(externalParent.id) ? externalParent : null;
+        deduped.forEach((id, i) => {
+          const t = findSavedById(id);
+          if (!t) return;
+          const parent = i === 0 ? keepExternal : findSavedById(deduped[i - 1]);
+          const nextId = parent ? (parent.id || null) : null;
+          const nextName = parent ? (parent.topic || null) : null;
+          if (t.continuedFromId !== nextId || t.continuedFrom !== nextName) {
+            t.continuedFromId = nextId;
+            t.continuedFrom = nextName;
+            relinked++;
+          }
+        });
+      }
+      upsertStoryline({ id: sl.id, chapters: deduped });
+      saveStore(store);
+      console.log(`  Storyline chapters: ${sl.id} -> ${deduped.length} chapter(s)` +
+        (body.relink ? `, ${relinked} re-linked` : ', order only'));
+      return json(res, 200, { ok: true, chapters: deduped, relinked });
+    }
+
+    // Split a storyline in two, at a chapter index (user request): the chapters from `fromIndex`
+    // onward move into a NEW storyline named "orphaned from <title>" (the user's own wording).
+    // Body: { slId, fromIndex }
+    if (M === 'POST' && url.pathname === '/api/storyline/split') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch (e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const sl = body.slId ? findStoryline(body.slId) : null;
+      if (!sl) return json(res, 404, { error: 'No storyline with that id.' });
+      const ids = (sl.chapters || []).slice();
+      const at = parseInt(body.fromIndex, 10);
+      // Splitting at 0 would move EVERY chapter and leave an empty storyline behind (which the
+      // delete path prunes), i.e. a rename dressed up as a split — refused rather than half-done.
+      if (!Number.isInteger(at) || at <= 0 || at >= ids.length)
+        return json(res, 400, { error: `fromIndex must be between 1 and ${Math.max(0, ids.length - 1)}.` });
+      const moved = ids.slice(at), kept = ids.slice(0, at);
+      const newId = 'sl_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      // The split-off head becomes a ROOT: it is no longer a continuation of the chapter left behind,
+      // which is the whole point of splitting. Its own children (the rest of `moved`) keep their
+      // links, so the new storyline arrives intact rather than as a pile of loose chapters.
+      const head = findSavedById(moved[0]);
+      if (head) { head.continuedFromId = null; head.continuedFrom = null; }
+      upsertStoryline({ id: sl.id, chapters: kept });
+      upsertStoryline({ id: newId, title: `orphaned from ${sl.title || 'storyline'}`.slice(0, 80),
+        titleAuto: false, icon: sl.icon || '📖', chapters: moved,
+        lang: sl.lang, srcLang: sl.srcLang, createdAt: new Date().toISOString() });
+      saveStore(store);
+      console.log(`  Storyline split: ${sl.id} keeps ${kept.length}, ${newId} takes ${moved.length}`);
+      return json(res, 200, { ok: true, slId: sl.id, newId, kept, moved });
     }
 
     if (M === 'POST' && url.pathname === '/api/storyline-title') {

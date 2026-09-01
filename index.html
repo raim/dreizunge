@@ -11169,6 +11169,8 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   // the toggle belongs HERE too, not only on the library card, since this screen is where a teacher
   // looking at one storyline actually is. Placed directly above the artwork it governs, right-aligned
   // so it reads as a control ON that strip rather than part of the chapter list below.
+  // User request: re-order / split / add-existing, teacher-only, where the chapters actually are.
+  html += _slManageHtml(slMeta, _slArtIds);
   const _slToggle = _slThumbToggleHtml(slMeta, _slArtIds);
   if (_slToggle) html += '<div style="display:flex;justify-content:flex-end;margin:4px 0 0">' + _slToggle + '</div>';
   html += '<div class="storyline-storyboard" id="slsb-screen-' + chainId.replace(/[^a-zA-Z0-9_-]/g,'_')
@@ -11749,6 +11751,113 @@ function _tryOpenStorylineByChainId(chainId) {
 
 
 // ── Storyline bottom-row actions ─────────────────────────────────────────────
+// ── Storyline chapter management (user request) ─────────────────────────────────────────────────
+// "Allow to re-order chapters of a storyline. Allow to split off storyline's chapters into separate
+// storylines… Allow to add existing chapters to a given storyline."
+//
+// All three live in ONE teacher-only panel on the STORYLINE SCREEN, because that is where the
+// chapters are — a re-order needs the list in front of you, and v87_n was the lesson about putting a
+// control somewhere other than where the user is looking. Every operation goes through the server
+// (`/api/storyline/chapters`, `/api/storyline/split`): a re-order rewrites `continuedFromId` across
+// several topics, and a half-applied chain is worse than no re-order.
+function _slManageOpen(){
+  const sl = APP._slScreen; if(!sl) return;
+  APP._slManage = !APP._slManage;
+  _renderStorylineScreen(sl.chainId, sl.encodedChain, sl.topics);
+}
+// The panel's own markup. Returns '' unless teacher mode is on AND we know the storyline's id —
+// every operation needs it, and the library-card path can render a chain with no stored storyline.
+function _slManageHtml(slMeta, chapterIds){
+  if (!APP._teacherMode || !slMeta || !slMeta.id) return '';
+  const ids = (chapterIds || []).filter(Boolean);
+  const byId = Object.fromEntries((APP.savedList||[]).filter(x=>x&&x.id).map(x=>[x.id,x]));
+  if (!APP._slManage) {
+    return `<div style="display:flex;justify-content:flex-end;margin:6px 0">
+      <button class="ico-btn" title="${escAttr(t('sl.manage_chapters'))}" onclick="_slManageOpen()">⇅</button></div>`;
+  }
+  const rows = ids.map((id, i) => {
+    const tp = byId[id];
+    const name = (tp && tp.topic) || id;
+    return `<div style="display:flex;align-items:center;gap:6px;padding:4px 6px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);margin-bottom:4px">
+      <span style="font-size:11px;font-weight:800;color:var(--gray-dark);flex:0 0 auto">${i+1}</span>
+      <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px">${escHtml(name)}</span>
+      <button class="ico-btn" style="font-size:11px;padding:1px 6px" ${i===0?'disabled':''} onclick="_slMoveChapter(${i},-1)">↑</button>
+      <button class="ico-btn" style="font-size:11px;padding:1px 6px" ${i===ids.length-1?'disabled':''} onclick="_slMoveChapter(${i},1)">↓</button>
+      <button class="ico-btn" style="font-size:11px;padding:1px 6px" ${i===0?'disabled':''} title="${escAttr(t('sl.split_here'))}" onclick="_slSplitHere(${i})">✂</button>
+    </div>`;
+  }).join('');
+  // The "add existing chapter" picker, built the same way the wizard's own continue-from select is:
+  // every saved chapter, newest first, excluding the ones already here. Same shape the user asked
+  // for ("same as the 'continue from' selection in the generation wizard's first page").
+  const opts = (APP.savedList||[])
+    .filter(x => x && x.id && !ids.includes(x.id))
+    .slice().sort((a,b) => String(b.updatedAt||b.generatedAt||'').localeCompare(String(a.updatedAt||a.generatedAt||'')))
+    .map(x => `<option value="${escAttr(x.id)}">${escHtml(x.topic||x.id)}</option>`).join('');
+  return `<div style="margin:6px 0;padding:8px;border:1.5px solid var(--blue);border-radius:10px;background:var(--gray-light)">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+      <span style="flex:1;font-size:12px;font-weight:800;color:var(--blue-dark)">${escHtml(t('sl.manage_chapters'))}</span>
+      <button class="ico-btn" title="${escAttr(t('dialog.cancel'))}" onclick="_slManageOpen()">✕</button>
+    </div>
+    ${rows}
+    <div style="display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap">
+      <select id="sl-add-chapter-select" style="flex:1;min-width:120px;font-size:12px;font-weight:700;border:1.5px solid var(--gray-mid);border-radius:6px;padding:3px 8px;background:var(--white);font-family:Nunito,sans-serif">
+        <option value="">${escHtml(t('sl.add_chapter'))}</option>${opts}
+      </select>
+      <button class="ico-btn" title="${escAttr(t('sl.add_chapter'))}" onclick="_slAddExistingChapter()">➕</button>
+    </div>
+  </div>`;
+}
+// Every mutation funnels through here: post, reload, re-render. One place to get the refresh right.
+async function _slChaptersPost(path, body, failKey){
+  const sl = APP._slScreen; if(!sl) return false;
+  try{
+    const r = await fetch(path, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body) });
+    const resp = await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(resp.error || ('HTTP ' + r.status));
+    await loadSavedList();
+    try{ const sr = await fetch('/api/storylines'); APP.storylines = await sr.json(); }catch(_){}
+    // The chapter list this screen was opened with is now stale — re-derive it from the stored
+    // storyline rather than re-using the snapshot, or a moved/split chapter renders in its old slot.
+    const fresh = (APP.storylines||[]).find(x => x && x.id === sl.chainId);
+    const ids = fresh ? (fresh.chapters||[]) : (sl.chapterIds||[]);
+    const byId = Object.fromEntries((APP.savedList||[]).filter(x=>x&&x.id).map(x=>[x.id,x]));
+    const topics = ids.map(id => byId[id]?.topic).filter(Boolean);
+    APP._slScreen.chapterIds = ids;
+    _renderStorylineScreen(sl.chainId, encodeURIComponent(JSON.stringify(topics)), topics);
+    return true;
+  }catch(e){
+    showToast('⚠ ' + String(e.message||e).slice(0,60));
+    return false;
+  }
+}
+function _slMoveChapter(i, dir){
+  const ids = ((APP._slScreen && APP._slScreen.chapterIds) || []).slice();
+  const j = i + dir;
+  if (i < 0 || j < 0 || i >= ids.length || j >= ids.length) return;
+  const tmp = ids[i]; ids[i] = ids[j]; ids[j] = tmp;
+  // relink:true — the user's ruling. Without it the screen's own tree (drawn from continuedFromId)
+  // would keep the old sequence and the move would look like it did nothing.
+  _slChaptersPost('/api/storyline/chapters', { slId: APP._slScreen.chainId, chapters: ids, relink: true });
+}
+async function _slSplitHere(i){
+  if (!APP._slScreen || i <= 0) return;
+  // No toast (user ruling: 3 keys): the panel re-renders with the chapters gone, and the new
+  // storyline appears in the library — the change is visible without a string for it.
+  await _slChaptersPost('/api/storyline/split', { slId: APP._slScreen.chainId, fromIndex: i });
+}
+function _slAddExistingChapter(){
+  const sel = document.getElementById('sl-add-chapter-select');
+  const id = sel && sel.value;
+  if (!id) return;
+  const ids = ((APP._slScreen && APP._slScreen.chapterIds) || []).slice();
+  if (ids.includes(id)) return;
+  ids.push(id);
+  // NO relink (user ruling: "add without removing"): joining a storyline is a membership change, not
+  // a re-sequencing, and the chapter may still legitimately belong to another storyline too.
+  _slChaptersPost('/api/storyline/chapters', { slId: APP._slScreen.chainId, chapters: ids });
+}
+
 function _slBottomChapters(){
   const sl = APP._slScreen; if(!sl) return { ids:[], topics:[], last:null };
   const ids = (sl.chapterIds||[]).slice();

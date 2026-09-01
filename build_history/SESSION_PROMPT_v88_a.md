@@ -1,89 +1,72 @@
-# Session prompt — written at the `v87_p` cut
+# Session prompt — written at the `v88_a` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
-one alongside. Keep using the double-letter suffix scheme (`v87_q`, `v87_r`, …) unless a future
-session has a good reason to switch to `v88_a` instead.)*
+one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A bump to a new BASE
+(`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v87_i`** — **item Z is CLOSED**: a
-word tap now plays ALL that word's questions, across lesson types, in ascending lesson order, then
-rejoins normal forward progress. Item AL closed at `v87_h` before it.
+zero-dependency Node language-learning app). Picking up from **`v88_a`**, the first release of a
+**FRESH LINE** — `roadmap_v88.md` was cut at this release and is now the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
-key, tell them explicitly and let them pause first — do not silently edit `ui.json` mid-session.
-`v87_g` added ONE new `en` key (`gen.wizard_step3_lessons`) after asking and being told which of
-three options to take; `v87_h` added NONE (the unification deliberately reused each deleted control's
-own existing string). Ask fresh THIS session before adding any.
+key, tell them explicitly and let them pause first. Every cut in the `v87` line asked first and was
+given an explicit budget (often fewer keys than proposed — e.g. three instead of six at `v88_a`).
+Ask again fresh THIS session.
 
-**A real Ollama backend IS reachable in this sandbox** — confirmed at `v86_ad`, and the user's own
-live server was running on port 3000 throughout the `v87_g`/`v87_h`/`v87_i` cuts. `server.js` serves `index.html` with
-`readFileSync` PER REQUEST, so a client edit is live on that server without restarting anything —
-`v87_g` was live-verified that way, with nothing of the user's touched. `prompts.json` and `ui.json`
-HOT-RELOAD live via `fs.watch` too.
+**The user's own server runs on port 3000 across sessions** and WRITES to `lessons.json` while you
+work — it generated four chapters during the `v87` line, and twice that broke a test. Check
+`git status --short lessons.json` at the start and again at commit time. `server.js` serves
+`index.html` with `readFileSync` PER REQUEST, so a CLIENT edit is live on their server without
+restarting anything; a SERVER edit is not — start your own instance on another port to verify, and
+**kill it by PID** (`pkill -f "node server.js"` matches theirs too).
 
-**What shipped this cut**: `v87_p` — the server now RE-DETECTS its backend instead of deciding once
-at startup. Reported as "why have the continue story buttons disappeared?": the server had been
-started while Ollama was down, printed "not found — offline mode", and stayed offline all session,
-because `pingOllama()` had a single call site and `active` was never revisited. Both continue buttons
-(and the storyline ➕, and the whole lesson-set action row) are gated on `APP.info.canGenerate`, so it
-reads as broken buttons rather than as a state.
+**What shipped at this cut**: `v88_a` — storyline chapter management. Re-order (which also re-links
+`continuedFromId`, scoped to that storyline's own chapters so forks survive), split off into
+`"orphaned from <title>"`, and add an existing chapter (without removing it from its current
+storyline). Two new server routes do each operation atomically, because a re-order rewrites several
+topics and a half-applied chain is worse than none. One teacher-only panel on the storyline screen.
+Full write-up: `roadmap_v88.md`'s own `v88_a` entry.
 
-Asymmetric by design: OFFLINE→ONLINE on the first successful ping every 15s; ONLINE→OFFLINE only after
-TWO consecutive failures at 60s (a blip must not disable the UI mid-session). The CLIENT half matters
-too — `APP.info` is fetched once in `init()`, so `_startBackendWatch()` polls `/api/info` while offline
-and re-renders the three gated surfaces on recovery. Verified live in both directions against real
-processes. **⚠️ The `BACKEND !== 'none'` condition is an optimisation, NOT the protection** —
-`llm.js`'s `ping()` already refuses unless `BACKEND === 'ollama'`; removing either guard alone leaves
-the e2e green, and the code comment says so.
-
-**Still open from the storyline batch** (user chose separate releases, images shipped at `v87_m`):
-chapter RE-ORDERING (ruled: re-link `continuedFromId`, not just the array — and forks need a
-deliberate rule), SPLIT-OFF into "orphaned from <title>", and ADD-EXISTING-CHAPTER (ruled: add without
-removing). `storyline.chapters` is an ordered array that is both membership and order, and
-`POST /api/storylines` already upserts it, so all three need little new server work.
+**🆕 NOTHING IS MID-FLIGHT, and no priority is set.** The `v87` line closed six items (R, U, Z, AC,
+AK, AL) plus the three storyline asks; they are recorded where they shipped and are NOT in the open
+list. Pick from "WHERE TO START" below — several entries are blocked on a user decision rather than
+on work, so **asking the user which one they want is a reasonable first move**.
 
 ## Orient yourself, in this order
 
 1. **This file**, whole.
-2. `build_history/roadmap_v87.md` — its **index table** and **⚠️ Session protocol** block first, then
-   item AL's status block, then `# ✅ SHIPPED IN THE v87 LINE` (`v87_b` → `v87_p`).
-3. `build_history/roadmap_v86.md` is KEPT as the historical record for the whole `v86` line
-   (`v86_a`…`v86_ag`) — go there for how something from THAT line was built.
-4. `INTERNALS.md` **§6b** covers the jobs popover, the drafts store, and the `skipLessons` mechanism
-   (`v87_b`→`v87_f`); still current through `v86_af` for item W's CP1/CP2 surface and `v86_x` for the
-   comic-panel subsystem.
+2. `build_history/roadmap_v88.md` — its **index table** and **⚠️ Session protocol** block first (the
+   protocol gained THREE items across the `v87` line — read it, it is not the same block as `v87`'s),
+   then "OPEN AT THE v88 CUT", then `# ✅ SHIPPED IN THE v88 LINE`.
+3. `build_history/roadmap_v87.md` is KEPT as the record for the whole `v87` line (`v87_b`…`v87_p`,
+   fifteen point releases) — go there for how anything from that line was built, and for the six
+   items it closed.
+4. `INTERNALS.md` **§6b, the feature → function map** — read it BEFORE grepping for where anything
+   lives. Current through `v88_a`.
 
 ## Establish a green baseline before changing anything
 
 ```
-node test/run.js                          → expect 310 checks
-node test/run.js --quick                  → expect 260
+node test/run.js                          → expect 312 checks
+node test/run.js --quick                  → expect 261
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-**⚠️ `unit-tap-word` IS NO LONGER FLAKY, and the reason matters more than the fact.** It failed ~35%
-of standalone runs from `v80_t` to `v87_h` and was documented as `buildExercises` corpus sampling
-throughout. It was a REAL DEFECT — `Math.random()` inside `tapWord()` — fixed at `v87_i`. It should
-now pass every time; **a failure there is a genuine regression, not noise.**
+**⚠️ `unit-tap-word` is NO LONGER FLAKY** — its ~35% failure rate from `v80_t` to `v87_h` was a REAL
+DEFECT (`Math.random()` in `tapWord()`), fixed at `v87_i`. A failure there now is a genuine
+regression.
 
-`unit-observations-log` is still a known intermittent flake (documented since `v81_b`/`v86_b`) —
-reproduce standalone 5-10× before treating a failure there as real. `unit-ui-journeys` and
-`unit-word-progress` have each flaked at least once across the `v86` line. **But do not assume any of
-those three is corpus noise either** — that assumption held for `unit-tap-word` for seven releases and
-was wrong. Each deserves the same discriminating measurement (find the assertion, instrument what it
-compares, check whether the product is actually varying). Don't run the full and `--quick` suites
-CONCURRENTLY on this box (found at `v86_ae`) — run them one at a time.
+`unit-observations-log` remains a known intermittent flake (documented since `v81_b`/`v86_b`) — it
+fails under suite load, not standalone; reproduce 5-10× before believing it.
+`unit-ui-journeys`/`unit-word-progress` have each flaked across the `v86` line.
+**But do NOT reach for the flake label first.** At `v87_o` two corpus-driven tests failed 8/8 —
+DETERMINISTIC, so not flakiness — because the user's server had written a new chapter and broken two
+fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don't run the full and
+`--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **339 topics, 98 storylines, 33 languages, 730 `en` keys** — an inherently live
-snapshot (the user's own live server generates content concurrently; re-measure fresh at commit
-time). `en` keys rose from 725 → 726 at `v87_g` (`gen.wizard_step3_lessons`; `gen.wizard_step3` and
-`gen.wizard_step4` are deliberately kept but now UNUSED, so their 33-language translations survive if
-a chaptering step ever returns) and are UNCHANGED at `v87_h`. `lessons.json`/`canonical-analysis.json` MOVED at this cut (336 → 337 topics) — the user's own live
-server generated a topic mid-session, which is exactly the "inherently live snapshot" this line warns
-about; both files were swept into the `v87_i` release commit so the guarded counts stay consistent
-with the tree.
-`drafts.json` may exist at the project root (server-created, gitignored) — normal. `APP_VERSION = 'v87_p'`.
+Corpus at this cut: **339 topics, 98 storylines, 33 languages, 733 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_a'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -190,56 +173,47 @@ measures zero effect, reconsider the diagnosis before trying a third wording.**
 
 # WHERE TO START
 
-**Nothing is mid-flight.** Item U (`v87_b`→`v87_d`), item R (`v87_d`/`v87_e`), item AK (`v87_f`) and
-item AL (`v87_g`/`v87_h`) are all closed for their own scope. Everything below is carried from
-`roadmap_v87.md`'s own "OPEN AT THE v87 CUT" section — see it for full detail. Several are blocked on
-a decision, not on effort; those are marked.
+**Nothing is mid-flight.** Everything below is carried from `roadmap_v88.md`'s own "OPEN AT THE v88
+CUT" section — see it for full detail. Several are blocked on a decision, not on effort.
 
 **Buildable now, no decision needed:**
-- **⭐ Audit the three remaining "known flakes"** (`unit-observations-log`, `unit-ui-journeys`,
+- **⭐ Audit the remaining "known flakes"** (`unit-observations-log`, `unit-ui-journeys`,
   `unit-word-progress`) the way `unit-tap-word` was audited at `v87_i`: find the failing assertion,
-  instrument what it compares, then decide whether the PRODUCT is varying or the guard is a proxy. One
-  of the four turned out to be a real defect; the other three have never been checked. Self-contained,
-  and each one settled removes a recurring tax on every session's baseline.
+  instrument what it compares, decide whether the PRODUCT is varying or the guard is a proxy. One of
+  four turned out to be a real defect; the others have never been checked.
 - **The completion card (`_renderCompStory`) still has no force-regenerate control** — only the
-  lesson-set card does. Not requested, but a quick, well-precedented follow-up.
-- **Item D (Tier 2 image-coordinate highlighting)** is buildable now that Tier 1 genuinely works, but
-  wants its own design pass first.
+  lesson-set card does. Quick and well-precedented.
+- **Item D (Tier 2 image-coordinate highlighting)** — buildable, wants its own design pass first.
 
 **⚠️ Blocked on a user decision — do NOT start without one:**
-- **Item P's pedagogy question**: should infinitive-vs-conjugated count as a permitted distractor axis
-  for VERBS specifically, distinct from case? TWO live-model cycles already failed to move this via
-  wording alone — a third guess is explicitly the wrong move.
-- **Difficulty placement** (from item AL, above) — needs its own design pass.
-- **Item AH (three CP2 speed/reuse ideas, evaluated)** — recommendation is "hint, not skip"; needs a
-  product decision on which mode(s) to build.
-- **Item AG (CP2 enrichment — clitic pronouns, explanation field)** — needs a prompt-design decision
-  AND a live-model measurement before any code ships.
-- **Item AI (teacher/curator-editable CP1/CP2 analysis)** — scoped, one open design question (does a
-  correction survive a chapter re-analysis? no, today).
-- **Item C (comic/PDF upload-card UX)** — needs the user's confirmation of the recommendation. Note
-  `v87_h` just reshaped both panels; re-read the recommendation against the CURRENT markup before
-  putting it to the user, since some of it may already be satisfied.
-- **Item A (move comic images out of `lessons.json`)** — needs the user's go-ahead before touching the
-  6 existing topics.
-- **Item B (vision-role model picker)** — needs a short design choice.
-- **Item AK's own deferred half**: run-now-vs-schedule-with-smart-defaults. Confirmed at `v87_g` as
-  NOT part of item AL ("schedule" there meant deferring the lesson-generation decision, already built).
+- **Item P's pedagogy question** (infinitive-vs-conjugated as a distractor axis for VERBS). TWO
+  live-model cycles already failed to move it by wording; a third guess is explicitly the wrong move.
+- **Difficulty placement** — ruled out of scope for item AL and deferred to its own design pass
+  alongside the CP1/CP2 route ("difficulty means something different for each lesson type").
+- **Item AH** (three CP2 speed ideas; recommendation is "hint, not skip") — needs a product decision.
+- **Item AG** (CP2 clitic pronouns / explanations) — needs a prompt-design decision AND a live
+  measurement.
+- **Item AI** (teacher-editable CP1/CP2 analysis) — one open design question flagged.
+- **Item C (comic/PDF upload-card UX)** — note `v87_h`/`v87_l` reshaped both panels; re-read the
+  recommendation against the CURRENT markup before putting it to the user.
+- **Item A** (move comic images out of `lessons.json`) — needs a go-ahead before touching existing
+  topics. Note `v87_m` added `GET /api/comic-thumb/:id`, which is a natural stepping stone.
+- **Item B** (vision-role model picker) — short design choice.
+- **Item AK's deferred half**: run-now-vs-schedule-with-smart-defaults.
 
 **⚠️ Blocked on a live reproduction the user has to hit:**
-- **Item AE (mobile-backgrounding)** — the `v86_d` fix did NOT recover on a real device; needs another
-  occurrence with diagnostic logging in place.
-- **Item AB's "stuck mid-sentence" half**.
-- **Item E** (chapter-title post-pass failures) — needs the raw model response captured.
-- **Item T** (two questions initiated via text-selection → grammar click, never answered).
+- **Item AE** (mobile-backgrounding — the `v86_d` fix did NOT recover on a real device),
+  **item AB's "stuck mid-sentence" half**, **item E** (chapter-title post-pass failures, needs the
+  raw model response), **item T** (two text-selection→grammar questions never answered).
 
 **Scoped but needing one more thing:**
-- **Item AD (source-language furigana)** — needs a live-model check and a toggle-sharing design
-  question settled.
+- **Item AD** (source-language furigana) — live check + a toggle-sharing question.
 - **Item F's "add explanations" half** — open and unscoped in detail.
-- **Items G, N, O, V, X, Y, AC** — each independently startable or needing user input; see
-  `roadmap_v87.md`'s own carry-forward section. (Item V, multi-image comic upload, would extend item
-  R's comic-draft scope.)
+- **Items G, N, O, V, X, Y** — each independently startable or needing user input.
+
+**Offered and not taken up** (from `v87_p`'s diagnosis): offline mode hides controls SILENTLY on the
+storyline and lesson-set pages — the `#offline-note` only exists on the generation screen, which is
+why a backend outage reads as broken buttons. Small, and would have saved the user two reports.
 
 ## Standing tools — use them
 
