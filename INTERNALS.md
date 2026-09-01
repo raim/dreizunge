@@ -711,14 +711,17 @@ the rest of the function never ran at all. `unit-comic-extract-durable`'s seed i
 `Object.defineProperty` shim that schedules `onload`; copy it for any test that drives an
 image-loading path.
 
-**⚠️ The corollary, hit THREE times now: giving an already-extracted function a NEW helper breaks
-every harness that extracts it.** `_ttsMakeUtterance` has now acquired three (`_ttsRankVoices`
-`v74_j`, `_ttsSavedVoiceName` `v79_l`, `_ttsSpeakableText` `v88_b`), and each time the fix was the
-same — extract the new helper alongside it in `unit-tts-no-approximation`'s own `harness()`. The
-failure is loud (`ReferenceError`, not a wrong value) and appears in a test that has nothing to do
-with the change, which is why it reads as an unrelated regression the first time. **Before adding a
-helper call inside a function, grep the tests for `ext(client, 'thatFunction')`** and extend every
-harness that names it.
+**⚠️ The corollary, hit FOUR times now: giving an already-extracted function a NEW dependency breaks
+every harness that extracts it.** `_ttsMakeUtterance` acquired three helpers (`_ttsRankVoices`
+`v74_j`, `_ttsSavedVoiceName` `v79_l`, `_ttsSpeakableText` `v88_b`); `_callLLM` (server.js) acquired
+a second AsyncLocalStorage at `v88_k` (`_cancelALS`, item AU's abort scope) and broke
+`unit-token-usage` the same way. Each time the fix is the same — inject the new dependency alongside
+the extracted function. The failure is loud (`ReferenceError`, not a wrong value) and appears in a
+test with nothing to do with the change, which is why it reads as an unrelated regression the first
+time. **Before adding a helper or module-scope reference inside a function, grep the tests for
+`ext(…, 'thatFunction')`** and extend every harness that names it. ⚠️ Note this instruction ALREADY
+existed when `v88_k` broke it — writing the rule down is not the same as running the grep, so run
+it: `grep -rn "ext(.*'yourFunction'" test/`.
 
 **`APP.cur` has a default (`lessonIdx: 0`) that sections silently depend on.** A test needing a real
 index must **mutate and restore the field** (`APP.cur.lessonIdx = i` … `= 0`), never replace or

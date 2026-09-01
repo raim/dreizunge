@@ -740,7 +740,10 @@
     "lib.sort_lbl": "Sort by",
     "lib.sort_edited": "Last edited",
     "lib.sort_created": "Generated",
-    "lib.sort_tokens": "Token usage"
+    "lib.sort_tokens": "Token usage",
+    "jobs.cancel": "Cancel this job",
+    "jobs.cancelled": "🛑 Job cancelled",
+    "jobs.cancel_too_late": "That job had already finished"
   },
   "nl": {
     "qc.editor.suggests_by": "⚑ {model} stelt voor:",

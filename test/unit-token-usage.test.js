@@ -38,8 +38,15 @@ function ext(src, name) {
 // ticks — this executes the ALS plumbing rather than pattern-matching it.
 {
   const { AsyncLocalStorage } = require('async_hooks');
-  const mkTrio = (impl, als) => new Function('_rawCallLLM', '_tokenALS',
-    ext(server, '_callLLM') + '\n' + ext(server, 'meterLLMTokens') + '\nreturn { _callLLM, meterLLMTokens };')(impl, als);
+  // v88_k (item AU cancel): `_callLLM` gained a SECOND AsyncLocalStorage — `_cancelALS`, the per-job
+  // abort scope. Same extraction limit INTERNALS records for `_ttsMakeUtterance` (three helpers over
+  // three releases): a new dependency of an extracted function has to be injected alongside it, or
+  // the isolated copy ReferenceErrors. Injected as a REAL AsyncLocalStorage rather than a stub, so
+  // the meter assertions below still exercise genuine async-context propagation — and so a cancel
+  // scope, if one were ever active here, would behave as it does in production.
+  const mkTrio = (impl, als) => new Function('_rawCallLLM', '_tokenALS', '_cancelALS', 'CANCELLED',
+    ext(server, '_callLLM') + '\n' + ext(server, 'meterLLMTokens') + '\nreturn { _callLLM, meterLLMTokens };')(
+      impl, als, new AsyncLocalStorage(), 'LLM call cancelled');
   const fake = (pt, ct) => async () => { await new Promise(r => setTimeout(r, Math.random() * 4)); return { text: 'x', promptTokens: pt, completionTokens: ct }; };
   (async () => {
     const als = new AsyncLocalStorage();

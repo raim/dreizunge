@@ -84,7 +84,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .jobs-row.error .jobs-row-step{color:#b3261e}
 .jobs-row-actions{display:flex;justify-content:flex-end;align-items:center;gap:4px}
 .jobs-row-open{background:none;border:none;color:var(--blue-dark);font-weight:800;font-size:11px;cursor:pointer;padding:2px 4px}
-.jobs-row-del{background:none;border:none;font-size:12px;cursor:pointer;padding:2px 4px;opacity:.6}
+.jobs-row-del{background:none;border:none;font-size:12px;cursor:pointer;padding:2px 4px;opacity:.6}.jobs-row-cancel{background:none;border:none;font-size:12px;cursor:pointer;padding:2px 4px;opacity:.6;color:var(--red-dark)}.jobs-row-cancel:hover{opacity:1}
 .jobs-row-del:hover{opacity:1}
 #jobs-pill-badge{position:absolute;top:-4px;right:-4px;background:var(--blue);color:#fff;font-size:10px;font-weight:800;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px;box-shadow:0 1px 4px rgba(0,0,0,.3)}
 .bmodels select{font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;color:var(--text);background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 5px;cursor:pointer;max-width:170px}
@@ -22607,11 +22607,22 @@ function _jobsRenderList(){
     const delBtn = j.kind === 'draft'
       ? `<button class="jobs-row-del" data-jobid="${escAttr(j.id)}" title="${escAttr(t('jobs.discard'))}">🗑</button>`
       : '';
+    // item AU cancel (v88_k, user request): "individual cancel buttons in the new running jobs
+    // popover". Offered ONLY for a genuinely running SERVER job: a draft is not running, a finished
+    // one has nothing to stop, and the synthetic entries (`tutor`, `sync`) have no server-side job
+    // to cancel — `POST /api/jobs/cancel` looks up the id in the `jobs` map and would find nothing,
+    // so a button there would be a lie. `book` is excluded too: multi-chapter generation lives in
+    // the separate `bookJobs` store with its own cancel route (`/api/book-job/cancel`), which this
+    // one does not reach.
+    const canCancel = j.kind === 'job' && (j.status === 'running' || j.status === 'pending');
+    const cancelBtn = canCancel
+      ? `<button class="jobs-row-cancel" data-jobid="${escAttr(j.id)}" title="${escAttr(t('jobs.cancel'))}">✕</button>`
+      : '';
     return `<div class="jobs-row${isErr?' error':''}">`
       + `<div class="jobs-row-top"><span class="jobs-row-icon">${icon}</span>`
       + `<span class="jobs-row-label">${escHtml(j.label||'')}</span></div>`
       + (stepText ? `<div class="jobs-row-step">${escHtml(stepText)}</div>` : '')
-      + `<div class="jobs-row-actions">${delBtn}${openBtn}</div>` + `</div>`;
+      + `<div class="jobs-row-actions">${cancelBtn}${delBtn}${openBtn}</div>` + `</div>`;
   }).join('');
 }
 // Delegated (not one listener per row — the list re-renders on every poll tick): looks the job back
@@ -22626,7 +22637,23 @@ document.addEventListener('click', e => {
   }
   const delBtn = e.target.closest && e.target.closest('.jobs-row-del');
   if(delBtn) _jobsDiscardDraftById(delBtn.dataset.jobid);
+  const cancelBtn = e.target.closest && e.target.closest('.jobs-row-cancel');
+  if(cancelBtn) _jobsCancelById(cancelBtn.dataset.jobid);
 });
+// item AU cancel (v88_k). The route now answers `{ok, stopped}` — `stopped:false` means it found
+// nothing to abort (the job finished between the render and the click, which a 3s poll makes a real
+// race). Reporting the two differently matters: telling a learner "cancelled" when the model is
+// still running is the exact bug this item fixes, and doing it in the UI instead of the server
+// would be no better.
+async function _jobsCancelById(id){
+  try{
+    const r = await fetch('/api/jobs/cancel',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({jobId:id})});
+    const data = await r.json().catch(()=>({}));
+    showToast(data && data.stopped ? t('jobs.cancelled') : t('jobs.cancel_too_late'));
+  }catch(e){ showToast('⚠ '+e.message); }
+  _jobsFetchAndRender();
+}
 function _jobsOpenLink(link){
   closeJobsPop();
   if(link.type === 'storyline') showStorylineById(link.id);

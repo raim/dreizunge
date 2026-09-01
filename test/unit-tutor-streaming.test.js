@@ -52,8 +52,15 @@ console.log('  streaming think-filter: split tags, unterminated blocks, exact re
 
 // ── 2. llm.js surface: streaming added WITHOUT disturbing the whole-reply path ─
 {
-  assert.ok(/module\.exports = \{ callLLM, callLLMStream, makeThinkFilter,/.test(llmSrc),
-    'callLLMStream + makeThinkFilter are exported alongside the untouched callLLM');
+  // v88_k: this pinned the exact export-list PREFIX, so prepending an unrelated name (`CANCELLED`,
+  // item AU's cancel sentinel) broke it while the claim stayed perfectly true — a proxy failing in
+  // the false-positive direction, the same shape `unit-tutor-selection` carried until `v88_e`.
+  // Assert the CLAIM: all three are exported, whatever the order.
+  const _exports = /module\.exports = \{([^}]*)\}/.exec(llmSrc);
+  assert.ok(_exports, 'llm.js has an export list');
+  const _names = _exports[1].split(',').map(x => x.split(':')[0].trim());
+  ['callLLM', 'callLLMStream', 'makeThinkFilter'].forEach(n => assert.ok(_names.includes(n),
+    `callLLMStream + makeThinkFilter are exported alongside the untouched callLLM (missing ${n})`));
   const st = extFn(llmSrc, 'callLLMStream');
   assert.ok(/stream: true/.test(st), 'the streaming call asks Ollama to stream');
   assert.ok(/line\.indexOf\('\\n'\)/.test(st), 'NDJSON is parsed line-wise (a chunk may split a line)');

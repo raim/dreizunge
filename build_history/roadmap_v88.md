@@ -474,7 +474,7 @@ Two ways, and the cheaper one is also the better precedent:
 Recommendation: synthetic registry now (small, no server change, closes the report and three latent
 siblings); revisit if `AU` converts these routes anyway.
 
-### AU. Per-job cancellation, and freeing model VRAM when idle — ⚠️ the SHUTDOWN third SHIPPED at `v88_g`; the other two remain open
+### AU. ⚠️ ONLY THE IDLE-RELEASE THIRD REMAINS — shutdown shipped `v88_g`, per-job cancel shipped `v88_k`
 
 **User's words**: "It seems difficult to cancel individual ollama jobs? If it IS possible, it would be
 great to have individual cancel buttons in the new 'running jobs' popover. If we can only cancel by
@@ -490,10 +490,20 @@ button there. Also, we should free the occupied memory for unused models (`ollam
    The route is a stub with a real shape, which is the good half.
 2. **The transport can be aborted.** `_callOllama()` builds a plain `http.request`; `req.destroy()`
    is already used by its own timeout path, and Ollama stops generating when the client disconnects.
-   So cancellation is: return a handle from `_callOllama` → thread it through `callLLM` → have each
-   job set `job.abort`. **The cost is the threading, not the mechanism**, and it touches every
-   generator. Do the popover button for ONE job kind first and prove it end to end (server log
-   shows generation stopping, `ollama ps` frees) before widening.
+   **⚠️ CORRECTION, measured at the `v88_j` handover.** This entry previously said "the cost is the
+   threading, not the mechanism, and it touches every generator". **That is wrong**, and it was
+   written by this line's own session — the third such self-correction here (see item AU's point 3
+   and `v88_g`). There is **already ONE choke point**: `_callLLM` (`server.js:131`), whose own
+   comment states that *"EVERY server-side LLM call converges on \_callLLM (the four role wrappers
+   and all direct call sites go through this one function)"*, and which **already uses
+   `AsyncLocalStorage`** to scope per-async-context state — the exact mechanism a per-job abort
+   registry needs, sitting three lines from where it would go. Measured surface: 35 wrapper call
+   sites all funnel through that one function; `llm.js` needs a seam in TWO places (`_callOllama`
+   and `callLLMStream` — the other three `lib.request` sites are ping/listModels/release, short
+   calls nobody cancels); and the `think:false` retry creates a SECOND request, which a registry
+   that is REPLACED on each new request handles naturally. Still do ONE job kind end to end first
+   (server log shows generation stopping, `ollama ps` frees) before widening — but the estimate
+   "touches every generator" should not be carried forward.
 3. **VRAM is never freed at shutdown, and half the machinery is already written.** `llm.js` sends
    `keep_alive: -1` on every `/api/chat` — models stay resident indefinitely. `llm.js` exports
    `release(model)` (a `keep_alive: 0` call, i.e. `ollama stop`).
@@ -507,8 +517,22 @@ button there. Also, we should free the occupied memory for unused models (`ollam
    not inferred), so Ctrl-C leaves every model resident. This is rule 35 landing on this session's
    own write-up: a document's factual claims are claims until measured, including ones I wrote. The shutdown half is small and self-contained: a signal handler that
    `release()`s the distinct configured models (story / lessons / translation / QC / vision) and
-   exits. The idle half needs a policy decision — after how long, and does an idle release make the
-   next generation pay a reload it did not before?
+   exits. **The IDLE half — the last piece of item AU, and the design work is now done for it.**
+   What is already in place after `v88_g`/`v88_k`, so a fresh session does not re-derive it:
+   `llm.js` exports `release(model)` (a `keep_alive: 0` call), `releaseConfiguredModels()` already
+   de-duplicates the five role models and runs them in parallel behind a deadline, and
+   `_callLLM` (`server.js:131`) is the ONE choke point every model call passes through — so
+   "when did a model last get used" is a single timestamp written in one place, not a survey.
+   **A sketch that fits the existing shapes**: stamp `_lastLLMUseAt` in `_callLLM`; a
+   `setInterval` (unref'd, like `llm.js`'s own guard timer) checks it and calls
+   `releaseConfiguredModels()` once past the window; skip entirely while any job is running
+   (`jobs` already knows) so an idle timer can never interrupt live work.
+   **⚠️ What genuinely needs the USER, and is the whole reason this is still open**: the WINDOW,
+   and whether they accept the cost. A release means the next generation pays a full model
+   RELOAD — on a 35B model that is tens of seconds before the first token, and this app's
+   `keep_alive: -1` exists precisely to avoid it. So the tradeoff is "VRAM back while idle" vs
+   "the next lesson starts slower", and only the user can price that on their own machine.
+   Ask for a window (e.g. 15/30/60 minutes, or never) rather than picking one.
 
 Split it: **shutdown release** (small, no decision, do it first), **per-job cancel** (real
 plumbing), **idle release** (needs a policy).
@@ -2399,6 +2423,91 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v88 LINE
+
+## ✅ v88_k — item AU, cancel third: cancelling a job actually stops the model
+
+**User request**: *"individual cancel buttons in the new 'running jobs' popover."* Three new
+`ui.json` keys. **Item AU's third and last piece is IDLE RELEASE, still open** — see its entry, which
+now carries the design work this cut did rather than a bare "needs a decision".
+
+### What was actually broken
+
+`POST /api/jobs/cancel` has called `job.abort()` since it was written — but **nothing in the codebase
+ever SET `job.abort`** (one occurrence in the whole tree: the call itself). Cancelling flipped a
+status field to `'cancelled'` while the request ran to completion. The popover said stopped, the GPU
+disagreed, and the next job queued behind one nobody wanted.
+
+### ⚠️ The estimate in this item's own entry was wrong
+
+It said *"the cost is the threading, not the mechanism, and it touches every generator"*. **Measured
+before building**: `_callLLM` (`server.js:131`) is ALREADY the one function every server-side LLM
+call converges on — its own comment says so — and it ALREADY uses `AsyncLocalStorage` to scope
+per-async-context state, which is exactly what a per-job abort registry needs, three lines from where
+it goes. 35 wrapper call sites funnel through it. **There is no threading; the scope carries the
+handle.** Third self-correction in this line (see item AU point 3 and `v88_g`); the entry is fixed so
+the bad estimate is not carried forward.
+
+### The mechanism
+
+`llm.js` publishes an aborter per request (`opts.onRequest`), in BOTH transports — `_callOllama` and
+`callLLMStream`. Only the tutor streams today, but a cancel that silently skips one transport is
+worse than none: the learner presses stop and watches a model keep running with no way to tell why.
+Destroying the socket is the real mechanism — Ollama aborts generation when the client disconnects —
+not a status flag.
+
+`server.js` adds `_cancelALS`, mirroring the token meter directly above it. The store holds the ONE
+request currently in flight, **replaced on each new call** — which is what the `think:false` retry in
+`llm.js` needs, since that retry issues a SECOND request and cancelling must destroy the one actually
+running. `runCancellable(jobId, fn)` runs a job body in that scope and wires `job.abort` to it.
+`_callLLM` also **refuses to START a call once cancelled**, or a multi-step job (a book chapter, a QC
+sweep) would keep issuing requests after the user pressed stop — each individually cancellable, none
+of them wanted.
+
+**A cancel is distinguished from a failure**, by an exported `CANCELLED` sentinel rather than by
+regex-matching prose. Without it every cancel surfaces as `"Ollama network: socket hang up"` and the
+job's error field lies about what happened. `jobFailOrCancel()` settles such a job as `cancelled`,
+not `error` — a deliberate stop must not look like an alarming failure the user caused themselves.
+
+**⚠️ A per-item catch will SWALLOW a cancel.** `_runComicExtractJob`'s per-panel `try/catch` exists so
+one bad panel cannot lose the batch — and it turned a cancelled job into a DONE one with the
+cancelled panel listed as merely errored. Found by the e2e, not by reading. It now re-throws on
+`CANCELLED`. **`_runRecreateJob` has the same per-type shape and is NOT yet covered** — recorded
+below.
+
+### The button
+
+Offered only for a genuinely running SERVER job (`kind:'job'`). Not for a draft (parked, not
+running), a finished job (nothing to stop), the synthetic `tutor` entry (no server-side job at all —
+`/api/tutor` is stateless, so the route would find nothing), or a `book` job (the separate `bookJobs`
+store has its own `/api/book-job/cancel`, which this route does not reach). **A dead cancel button is
+worse than none**, because the learner believes the model stopped.
+
+The route now answers `{ok, stopped}`. `stopped:false` means it found nothing to abort — a real race,
+since the popover polls every 3s and a job can finish between render and click. The client reports
+the two differently: claiming "cancelled" when nothing stopped is the very bug this item fixes, and
+doing it in the UI rather than the server would be no better.
+
+### Guards
+
+`e2e-job-cancel` (4 checks, live server) — a job in flight, the cancel **destroying the socket**
+(observed as the fake's own `res` `'close'`, the only honest evidence: a server that merely relabels
+produces an identical status and an identical 200), the job settling as `cancelled`, and honesty
+about cancelling something unknown or already finished. `unit-jobs-cancel-button` (4 checks) — which
+rows get a button, and the two reply cases. **Eight mutations red.**
+
+`test/fake-ollama.js` gained a runtime `POST /__slow` control (hold a response open without
+answering). ⚠️ It could NOT be an env var: the server's own boot-time `warmup()` is itself an
+`/api/chat` call, so a fake slow from process start **hangs boot** — which is how the first two
+versions of this test "failed" against correct code.
+
+### Still open in item AU
+
+**Per-item catches that may swallow a cancel.** `_runRecreateJob` has the same per-type `try/catch`
+shape `_runComicExtractJob` did; it is not wrapped in `runCancellable` yet and not covered by a test.
+Wrap it and re-throw on `CANCELLED` when its turn comes — and check any future job with per-item
+error tolerance for the same thing. **Three of the labelled job kinds are wrapped** (comic extract,
+comic detect, analysis); the rest still cancel status-only, which is the pre-`v88_k` behaviour and
+not a regression.
 
 ## ✅ v88_j — item AR: sort the library by last-edit date, generation date, or token usage
 

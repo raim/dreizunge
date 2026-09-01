@@ -276,6 +276,7 @@ run('unit: a typed chapter title no longer destroys the image description (item 
 run('unit: a comic chapter\'s views agree about text and image (items AY/AZ, v88_e)', 'node', [path.join(__dirname, 'unit-comic-story-text.test.js')]);
 run('unit: translate-storyline picker + dispatch (item AX, v88_i)', 'node', [path.join(__dirname, 'unit-translate-picker.test.js')]);
 run('unit: library sort — edited / generated / token usage (item AR, v88_j)', 'node', [path.join(__dirname, 'unit-library-sort.test.js')]);
+run('unit: per-job cancel button in the jobs popover (item AU cancel, v88_k)', 'node', [path.join(__dirname, 'unit-jobs-cancel-button.test.js')]);
 run('unit: post-gen storyboard opt-in fix, client side (v85_p)', 'node', [path.join(__dirname, 'unit-postgen-storyboard-optin.test.js')]);
 run('unit: post-gen analysis opt-in, client side, mirrors postGenStoryboard (item W follow-up, v86_o)', 'node', [path.join(__dirname, 'unit-postgen-analysis-optin.test.js')]);
 run('unit: comic story-panel progress-card rendering (PLAN §2.4 Track A4 milestone 4, v85_n)', 'node', [path.join(__dirname, 'unit-comic-story-panel.test.js')]);
@@ -313,6 +314,7 @@ if (!quick) {
   run('e2e: PLAN §7.0 CP1/CP2, item W step 2-3 — background analysis job + per-chapter cache + GET shadow', 'node', [path.join(__dirname, 'e2e-analysis.test.js')]);
   run('e2e: llm.js warmup() sends think:false on the wire (v83_r)', 'node', [path.join(__dirname, 'e2e-warmup-think.test.js')]);
   run('e2e: stopping the server frees model VRAM (item AU shutdown half, v88_g)', 'node', [path.join(__dirname, 'e2e-shutdown-release.test.js')]);
+  run('e2e: cancelling a job aborts the in-flight model call (item AU cancel, v88_k)', 'node', [path.join(__dirname, 'e2e-job-cancel.test.js')]);
   run('e2e: PWA install support -- manifest/sw/icon served, shell-only interception (v84_b)', 'node', [path.join(__dirname, 'e2e-pwa-install.test.js')]);
   run('e2e: PLAN §7.0 apply-cp-lessons.js — additive CP1-4 lesson writes, cross-chapter dedup', 'node', [path.join(__dirname, 'unit-apply-cp-lessons.test.js')]);
   // Moved inside the block in v70_b: these six spawn a real server + fake Ollama, but were

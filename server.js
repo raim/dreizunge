@@ -8,7 +8,7 @@ const fs    = require('fs');
 const path  = require('path');
 const { parseDialectGlossary, buildDialectTopic } = require('./dialect-glossary.js');
 const { createSkillRegistry, resolveSkill, withRegisteredSkill, withSkillAlias, withoutSkillAlias } = require('./skill-registry.js');
-const { callLLM: _rawCallLLM, callLLMStream: _rawCallLLMStream, ping: pingOllama, release: releaseOllamaModel,
+const { CANCELLED, callLLM: _rawCallLLM, callLLMStream: _rawCallLLMStream, ping: pingOllama, release: releaseOllamaModel,
         warmup: _warmupLLM, listModels: listOllamaModels, setRequestTimeout, getRequestTimeout,
         setNumThread, getNumThread, setNumCtxMax, getNumCtxMax, estimateCtxTokens,
         stripRaw, extractJSON, extractArray, salvageArray } = require('./llm');
@@ -128,11 +128,55 @@ function currentLearner(req) {
 // Calls outside any meterLLMTokens scope are counted nowhere here — the initial generation
 // pipeline keeps its own accumulation (generationStats), and wrapping it too would double-count.
 const _tokenALS = new AsyncLocalStorage();
+// ── item AU, cancel (v88_k) ───────────────────────────────────────────
+// Per-JOB cancellation, built on the SAME AsyncLocalStorage pattern the token meter above already
+// uses, and for the same reason: `_callLLM` is the one function every server-side LLM call
+// converges on, so instrumenting here is impossible to forget at a call site. The earlier estimate
+// for this item ("threading a handle touches every generator") was wrong — see item AU's own
+// corrected entry. There is no threading: the scope carries the handle.
+//
+// The store holds the ONE request currently in flight for this job. Replaced on every new call,
+// which is exactly what the `think:false` retry in llm.js needs — that retry issues a SECOND
+// request, and cancelling must destroy the one actually running, not the one it superseded.
+const _cancelALS = new AsyncLocalStorage();
 async function _callLLM(...args) {
+  const c = _cancelALS.getStore();
+  if (c) {
+    // Already cancelled: do not START another call. A multi-step job (a book chapter, a QC sweep)
+    // would otherwise keep issuing requests after the user pressed stop — each individually
+    // cancellable, none of them wanted.
+    if (c.cancelled) throw new Error(CANCELLED);
+    args[4] = { ...(args[4] || {}), onRequest: (abort) => { c.abortCurrent = abort; } };
+  }
   const r = await _rawCallLLM(...args);
   const m = _tokenALS.getStore();
   if (m && r) { m.promptTokens += r.promptTokens | 0; m.completionTokens += r.completionTokens | 0; }
   return r;
+}
+// Runs a job body inside a cancel scope and wires the job's own `abort` to it. `POST
+// /api/jobs/cancel` has called `job.abort()` since it was written — but NOTHING ever set that
+// field, so cancelling flipped a status while the model ran to completion. This is what makes the
+// route true.
+function runCancellable(jobId, fn) {
+  const store = { cancelled: false, abortCurrent: null };
+  const j = jobs.get(jobId);
+  if (j) j.abort = () => {
+    store.cancelled = true;
+    if (store.abortCurrent) { try { store.abortCurrent(); } catch (_) {} }
+  };
+  return _cancelALS.run(store, fn);
+}
+// A cancelled job is not a FAILED one. Routes funnel their catch through this so the popover shows
+// "cancelled" rather than an alarming error the user caused deliberately.
+function jobFailOrCancel(jobId, err) {
+  const msg = String((err && err.message) || err || '');
+  const j = jobs.get(jobId);
+  if (msg === CANCELLED || (j && j.status === 'cancelled')) {
+    if (j && j.status !== 'cancelled') { j.status = 'cancelled'; j.step = 'Cancelled'; }
+    console.log(`  Job ${jobId} cancelled`);
+    return;
+  }
+  jobFail(jobId, msg);
 }
 // Run `fn` with a fresh meter; resolves to { result, tokens }. Tokens of a THROWING scope are
 // lost to accounting (the route 500s) — accepted and documented; the per-topic QC scopes
@@ -191,7 +235,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_j';
+const APP_VERSION  = 'v88_k';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6432,9 +6476,9 @@ function _kickOffAnalysisJob(topic) {
   const jobId = newJob({ label: `Analyzing "${(topic.topic||'').slice(0,50)}"`, link: { type: 'topic', id: chapterId } });
   analyzingChapters.set(chapterId, jobId);
   console.log(`  Analyzing chapter: ${chapterId} model=${OLLAMA_ANALYSIS_MODEL} job=${jobId}`);
-  _runAnalysisJob(jobId, topic).catch(e => {
+  runCancellable(jobId, () => _runAnalysisJob(jobId, topic)).catch(e => {   // item AU cancel
     console.error('  Analysis job error:', e.message);
-    jobFail(jobId, e.message);
+    jobFailOrCancel(jobId, e);
     analyzingChapters.delete(chapterId);
   });
   return { jobId, cached: false, shadow };
@@ -7073,6 +7117,11 @@ async function _runComicExtractJob(jobId, images, lang, opts) {
       const _mine = [parsed.caption, parsed.inScene].filter(Boolean).join('\n') || description;
       if (_mine) priorStory = _capCtx((priorStory ? priorStory + '\n\n' : '') + _mine);
     } catch (e) {
+      // ⚠️ item AU cancel (v88_k): a CANCEL is not a panel failure. This per-panel tolerance exists
+      // so one bad panel cannot lose the batch — but swallowing a deliberate stop the same way made
+      // a cancelled job report DONE, with the cancelled panel listed as merely errored. Re-thrown so
+      // the job settles as 'cancelled' (jobFailOrCancel) and no further panels are started.
+      if (String(e && e.message) === CANCELLED) throw e;
       // One panel's failure must not lose the rest of the batch — same reasoning as
       // _runRecreateJob's per-type try/catch above. The failed slot still gets a result object (with
       // an error field) so the client's panel list stays index-aligned with what it sent.
@@ -8176,15 +8225,19 @@ http.createServer(async (req, res) => {
     if (M === 'POST' && url.pathname === '/api/jobs/cancel') {
       let body; try { body = JSON.parse(await readBody(req)); } catch(e) { body = {}; }
       const { jobId } = body;
+      let stopped = false;
       if (jobId && jobs.has(jobId)) {
         const job = jobs.get(jobId);
         if (job.status === 'running' || job.status === 'pending') {
           job.status = 'cancelled'; job.step = 'Cancelled';
-          if (job.abort) job.abort();
-          console.log('  Job cancelled:', jobId);
+          // item AU cancel (v88_k): `job.abort` is finally SET (by runCancellable) rather than
+          // being a field nothing wrote. Before this it flipped a status while the model ran to
+          // completion — the job looked cancelled and the GPU disagreed.
+          if (job.abort) { job.abort(); stopped = true; }
+          console.log(`  Job cancelled: ${jobId}${stopped ? ' (in-flight call aborted)' : ' (status only — no abort registered)'}`);
         }
       }
-      return json(res, 200, { ok: true });
+      return json(res, 200, { ok: true, stopped });
     }
 
     // ── Generate (async — returns jobId immediately) ─────────────
@@ -8352,9 +8405,12 @@ http.createServer(async (req, res) => {
           }
         } catch (e) { /* context is an enhancement: a failure here must not fail the extraction */ }
       }
-      _runComicExtractJob(jobId, images, lang, { extract: wantExtract, describe: wantDescribe, priorStory, draftId }).catch(e => {
+      // item AU cancel (v88_k): the job body runs inside its cancel scope, so `job.abort` is live
+      // for as long as it runs. jobFailOrCancel keeps a deliberate stop out of the error state.
+      runCancellable(jobId, () => _runComicExtractJob(jobId, images, lang,
+        { extract: wantExtract, describe: wantDescribe, priorStory, draftId })).catch(e => {
         console.error('  Comic extraction error:', e.message);
-        jobFail(jobId, e.message);
+        jobFailOrCancel(jobId, e);
       });
       return json(res, 202, { jobId });
     }
@@ -8373,9 +8429,9 @@ http.createServer(async (req, res) => {
       if (!image) return json(res, 400, { error: 'No image provided.' });
       const jobId = newJob({ label: 'Detecting comic panels' });
       console.log(`  Comic panel detection: model=${OLLAMA_VISION_MODEL} job=${jobId}`);
-      _runComicDetectJob(jobId, image).catch(e => {
+      runCancellable(jobId, () => _runComicDetectJob(jobId, image)).catch(e => {   // item AU cancel
         console.error('  Comic detection error:', e.message);
-        jobFail(jobId, e.message);
+        jobFailOrCancel(jobId, e);
       });
       return json(res, 202, { jobId });
     }

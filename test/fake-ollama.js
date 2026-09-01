@@ -14,6 +14,13 @@ const http = require('http');
 const fs = require('fs');
 
 const LOG = process.env.FAKE_LOG || null;
+// v88_k (item AU cancel): how long to HOLD a /api/chat response open without answering, so a test
+// can observe an IN-FLIGHT call. Runtime-controlled via POST /__slow rather than an env var,
+// because the server's own boot-time warmup() is itself a /api/chat call — an env var slow from
+// process start hangs boot, which is how the first version of e2e-job-cancel "failed" against a
+// correct implementation. 0 (the default) is the original instant behaviour, so every other test is
+// untouched.
+let SLOW_MS = 0;
 if (LOG) { try { fs.unlinkSync(LOG); } catch (_) {} }
 
 function readBody(req) {
@@ -354,8 +361,40 @@ const srv = http.createServer(async (req, res) => {
                     keep_alive: (body.keep_alive === undefined ? null : body.keep_alive),
                     images: _images };
     if (LOG) { try { fs.appendFileSync(LOG, JSON.stringify({ kind, sys: sys.slice(0, 8000), usr, opts: _opts }) + '\n'); } catch (_) {} }
+    // v88_k (item AU cancel): FAKE_SLOW_MS holds the response open without answering, so a test can
+    // observe what happens to an IN-FLIGHT call. The socket's 'close' event is recorded — that is
+    // the only honest evidence a cancel actually reached the transport, as opposed to the server
+    // merely relabelling a job it left running. Off by default; every existing test is unaffected.
+    const slowMs = SLOW_MS;
+    if (slowMs > 0) {
+      let done = false;
+      // `res.on('close')`, not `req.on('close')`: the request body is already fully received by the
+      // time we get here, so IncomingMessage 'close' has ALREADY fired and a listener added now
+      // never runs. ServerResponse 'close' is the one that fires when the client disconnects before
+      // the response is sent — which is exactly the event a cancel produces.
+      res.on('close', () => {
+        if (done) return;
+        done = true;
+        if (LOG) { try { fs.appendFileSync(LOG, JSON.stringify({ kind, aborted: true, opts: _opts }) + '\n'); } catch (_) {} }
+      });
+      setTimeout(() => {
+        if (done) return;
+        done = true;
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: { role: 'assistant', content }, done: true }));
+      }, slowMs);
+      return;
+    }
     res.writeHead(200, { 'Content-Type': 'application/json' });
     return res.end(JSON.stringify({ message: { role: 'assistant', content }, done: true }));
+  }
+  if (req.method === 'POST' && req.url === '/__slow') {
+    let b = ''; req.on('data', c => b += c);
+    return req.on('end', () => {
+      try { SLOW_MS = Math.max(0, parseInt(JSON.parse(b || '{}').ms, 10) || 0); } catch (_) { SLOW_MS = 0; }
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ ok: true, slowMs: SLOW_MS }));
+    });
   }
   res.writeHead(404); res.end('nope');
 });

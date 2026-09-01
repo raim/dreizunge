@@ -19,6 +19,10 @@
 const http  = require('http');
 const https = require('https');
 
+// item AU cancel (v88_k): the rejection message a DELIBERATELY aborted call produces. Exported so
+// server.js can tell "the user cancelled this" from "the network broke" without regex-matching
+// prose — the two need different job outcomes ('cancelled' vs 'error') and different logging.
+const CANCELLED = 'LLM call cancelled';
 const BACKEND        = (process.env.LLM_BACKEND || 'ollama').toLowerCase();
 const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
 let OLLAMA_TIMEOUT = parseInt(process.env.OLLAMA_TIMEOUT || '720000', 10);
@@ -266,7 +270,16 @@ function _callOllama(model, system, userMsg, maxTokens, opts) {
         } catch(e) { reject(new Error('Ollama parse: ' + e.message + '\n' + d.slice(0, 200))); }
       });
     });
-    req.on('error', e => reject(new Error('Ollama network: ' + e.message)));
+    // item AU cancel (v88_k): publish an aborter for THIS request. Destroying the socket is what
+    // actually stops Ollama — it aborts generation when the client disconnects — so this is the
+    // real mechanism, not a status flag. `aborted` makes a DELIBERATE cancel distinguishable from a
+    // network failure: without it every cancel would surface as "Ollama network: socket hang up"
+    // and a job's error field would lie about what happened.
+    let aborted = false;
+    if (opts && typeof opts.onRequest === 'function') {
+      try { opts.onRequest(() => { aborted = true; req.destroy(); }); } catch (_) {}
+    }
+    req.on('error', e => reject(aborted ? new Error(CANCELLED) : new Error('Ollama network: ' + e.message)));
     req.setTimeout(timeoutMs, () => { req.destroy(); reject(new Error('Ollama timeout')); });
     req.write(body); req.end();
   });
@@ -451,9 +464,16 @@ function callLLMStream(model, system, userMsg, maxTokens, opts, onDelta) {
         resolve({ text, promptTokens, completionTokens });
       });
     });
-    req.on('error', e => reject(new Error('Ollama network: ' + e.message)));
+    // item AU cancel (v88_k): the streaming path gets the SAME seam. Only the tutor streams today,
+    // but a cancel that silently skips one transport is a worse bug than no cancel at all — the
+    // learner would press stop and watch a model keep running with no way to tell why.
+    let aborted = false;
+    if (opts && typeof opts.onRequest === 'function') {
+      try { opts.onRequest(() => { aborted = true; req.destroy(); }); } catch (_) {}
+    }
+    req.on('error', e => reject(aborted ? new Error(CANCELLED) : new Error('Ollama network: ' + e.message)));
     req.write(body); req.end();
   });
 }
 
-module.exports = { callLLM, callLLMStream, makeThinkFilter, ping, listModels, release, warmup, stripThink, stripRaw, extractJSON, extractArray, salvageArray, setRequestTimeout, getRequestTimeout, setNumThread, getNumThread, setNumCtxMax, getNumCtxMax, estimateCtxTokens };
+module.exports = { CANCELLED, callLLM, callLLMStream, makeThinkFilter, ping, listModels, release, warmup, stripThink, stripRaw, extractJSON, extractArray, salvageArray, setRequestTimeout, getRequestTimeout, setNumThread, getNumThread, setNumCtxMax, getNumCtxMax, estimateCtxTokens };

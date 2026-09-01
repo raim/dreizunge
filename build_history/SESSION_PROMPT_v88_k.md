@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_j`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_k`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -20,21 +20,20 @@ work — it generated four chapters during the `v87` line, and twice that broke 
 restarting anything; a SERVER edit is not — start your own instance on another port to verify, and
 **kill it by PID** (`pkill -f "node server.js"` matches theirs too).
 
-**What shipped at this cut**: `v88_j` — **item AR**: sort the library by last-edit date, generation
-date, or token usage. Four new `ui.json` keys.
-⚠️ **The trap was not the sort.** `GET /api/lessons` is a WHITELIST projection carrying no
-`generationStats`, so a token sort built without adding a field there works in the STATIC build and
-silently does NOTHING live — the `v74_i`/`v79_n` failure. One pre-summed `tokens` scalar now rides in
-the projection, guarded at the SERVER SOURCE because no client state can observe another process's
-whitelist.
-**The decision**: a storyline's total is its OWN `tokenUsage` PLUS its chapters' — `addTokenUsage()`
-deliberately keeps storyline-level work out of the chapters, so only the sum answers "what did this
-story cost". The fixture makes that observable: chapter A has the FEWEST chapter tokens but the MOST
-in total, so "sum both" and "chapters only" give different orders.
-Source-language GROUPING is deliberately not part of the sort choice (it is what the flag headers
-render); the key sorts WITHIN each group, which is also what "for selected language combinations"
-asks for. `edited` stays the default, so an existing user sees no change until they ask.
-Full write-up: `roadmap_v88.md`'s own `v88_j` entry; `v88_i`…`v88_a` are below it.
+**What shipped at this cut**: `v88_k` — **item AU's CANCEL third**: cancelling a job now actually
+stops the model. `POST /api/jobs/cancel` had called `job.abort()` since it was written, but NOTHING
+ever set that field — so a cancel flipped a status while the request ran to completion.
+⚠️ **This item's own estimate was wrong and was corrected before building**: "threading a handle
+touches every generator" — no. `_callLLM` (`server.js:131`) is already the one choke point every
+server-side call converges on, and already uses `AsyncLocalStorage`. The scope carries the handle;
+there is no threading. Third self-correction in this line.
+`llm.js` publishes an aborter in BOTH transports; a `CANCELLED` sentinel keeps a deliberate stop out
+of the error state; `_callLLM` refuses to START a call once cancelled, so a multi-step job stops
+issuing requests. ⚠️ **A per-item `try/catch` SWALLOWS a cancel** — `_runComicExtractJob`'s per-panel
+tolerance turned a cancelled job into a DONE one, found by the e2e, not by reading;
+**`_runRecreateJob` has the same shape and is NOT yet covered**. Three job kinds are wrapped; the
+rest still cancel status-only (the pre-`v88_k` behaviour, not a regression).
+Three new `ui.json` keys. Full write-up: `roadmap_v88.md`'s own `v88_k` entry.
 
 **🆕 NOTHING IS MID-FLIGHT, and the queue is explicit.** The `v87` line closed six items (R, U, Z,
 AC, AK, AL) plus the three storyline asks; they are recorded where they shipped and are NOT in the
@@ -83,8 +82,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 323 checks
-node test/run.js --quick                  → expect 269
+node test/run.js                          → expect 325 checks
+node test/run.js --quick                  → expect 270
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -108,8 +107,8 @@ DETERMINISTIC, so not flakiness — because the user's server had written a new 
 fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don't run the full and
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **341 topics, 98 storylines, 33 languages, 741 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_j'`.
+Corpus at this cut: **341 topics, 98 storylines, 33 languages, 744 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_k'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -231,7 +230,7 @@ measures zero effect, reconsider the diagnosis before trying a third wording.**
 
 **🆕 FIRST: the thirteen TODOs handed over after `v88_a`** — items `AM`…`AX` in `roadmap_v88.md`,
 with their own suggested order. **`v88_b` shipped row 1 (`AW` + `AT`), `v88_c` row 2 (`AQ` + `AM`),
-`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third; `v88_h` did the flake audit; `v88_i` shipped `AX`; `v88_j` shipped `AR`.** The rest of that table:
+`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third; `v88_h` did the flake audit; `v88_i` shipped `AX`; `v88_j` shipped `AR`; `v88_k` shipped `AU`'s cancel third.** The rest of that table:
 
 **🆕 THE THIRTEEN TODOs ARE DONE.** Every item from the `v88_a` handover has shipped, plus two live
 bug reports (`AY`/`AZ`) and the flake audit. What remains is either the pre-existing open list or
@@ -243,10 +242,18 @@ work the user deferred. **Ask the user what they want next** — that is a reaso
   list stays editable, and `comicCreateChapter()`'s existing one-chapter-per-panel formation
   (`v85_p`) is confirmed correct. Mostly a question of the DRAFT shape holding more than one page
   (`_comicDraftSaveDebounced`'s own comment scopes it to one image today).
-- **`AU`'s remaining two thirds**: per-job cancel (`POST /api/jobs/cancel` already calls
-  `job.abort()` but **nothing sets `job.abort`**; the transport CAN be aborted — `_callOllama`
-  already `req.destroy()`s on timeout — but threading a handle touches every generator, so prove
-  ONE job kind end to end first) and IDLE release (needs a policy decision).
+- **`AU`'s LAST third — idle release. ⚠️ NEEDS THE USER, and it is a one-line answer.** The design
+  is already worked out in `roadmap_v88.md`'s item AU entry (a `_lastLLMUseAt` stamp in `_callLLM`,
+  an unref'd interval, `releaseConfiguredModels()` already built at `v88_g`, skipped while any job
+  runs) — **do not re-derive it, and do not build it without the answer.** The open question is the
+  WINDOW and whether the user accepts the cost: releasing means the next generation pays a full model
+  RELOAD, which on a 35B model is tens of seconds before the first token, and `keep_alive: -1` exists
+  precisely to avoid that. Ask for a window (15/30/60 minutes, or never); do not pick one.
+- **⚠️ `AU` cancel follow-up, small and concrete**: `_runRecreateJob` has the same per-item
+  `try/catch` shape that made `_runComicExtractJob` report a cancelled job as DONE. Wrap it in
+  `runCancellable` and re-throw on `CANCELLED`. Only three job kinds are wrapped so far (comic
+  extract, comic detect, analysis); the rest cancel status-only — pre-`v88_k` behaviour, not a
+  regression, but each is a one-line wrap plus a check for swallowing catches.
 - **The completion card (`_renderCompStory`) still has no force-regenerate control** — only the
   lesson-set card does. Quick and well-precedented.
 
