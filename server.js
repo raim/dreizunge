@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_h';
+const APP_VERSION  = 'v88_i';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6332,6 +6332,22 @@ async function _titleStorylinePostPass(chapterIds, base, bj) {
   // 4) For file-derived books, record the original uploaded filename on the
   // storyline (so the library can show provenance). Best-effort.
   try {
+    // item AX (v88_i): stamp the new STORYLINE with what it was translated from. Mirrors the
+    // sourceFile stamp just below (same lookup, same upsert), and uses the same id-authoritative
+    // shape as the per-chapter stamp: `translationOfId` resolves, `translationOfTitle` is a display
+    // snapshot that survives the source being renamed or deleted.
+    if (base.xlSource && base.xlSourceSlId) {
+      const slId = _chainId(chapterIds);
+      const all = getStorylines();
+      const sl = all.find(s => s.id === slId)
+              || all.find(s => chapterIds.every(id => s.chapters.includes(id)));
+      if (sl) {
+        sl.translationOfId = base.xlSourceSlId;
+        sl.translationOfTitle = String(base.xlSourceTitle || '').slice(0, 200);
+        upsertStoryline(sl);
+        console.log(`  Storyline ${sl.id} recorded as a translation of ${base.xlSourceSlId}`);
+      }
+    }
     if (base.sourceFile) {
       const slId = _chainId(chapterIds);
       const all = getStorylines();
@@ -6572,6 +6588,28 @@ async function _runBookJob(bookId, chunks, base) {
       // so attaching it here is sufficient — no schema migration needed. Absent for every other
       // chunk source (PDF, pasted text, generated) — `data.comicPanels` simply never gets set.
       if (chunks[i].comicPanels) data.comicPanels = chunks[i].comicPanels;
+      // item AX (v88_i): a translated chapter carries its LINEAGE and inherits the source chapter's
+      // panel images. Same `upsert()` spread as comicPanels above, so no schema migration.
+      //   • `translationOfId` — the SOURCE CHAPTER's stable id, per the user's ruling ("it should
+      //     include the ID, not just the title"). Deliberately NOT reusing `source`, which is
+      //     EXTERNAL attribution (`{author, url, licence}`, rendered as an author/licence line by
+      //     `_provSrcBits`) — conflating "who wrote the original work" with "which chapter of this
+      //     app this was regenerated from" would corrupt both readings. Measured before deciding:
+      //     339 of 340 topics have `source: null` and the one that doesn't is an xkcd credit.
+      //   • `translationOfTitle` — a SNAPSHOT for display, so the lineage stays readable if the
+      //     source chapter is later renamed or deleted. The id remains authoritative; this is never
+      //     resolved against.
+      //   • `comicPanels` copied across (user's ruling, "for now"). ⚠️ This DUPLICATES the panel
+      //     images inside `lessons.json`, which is exactly the `D4` violation **item A** exists to
+      //     fix — so item A's migration must treat a translated chapter as a second reference to
+      //     the SAME image, not as its own copy. Recorded in item A's entry too.
+      const _xlSrc = base.xlSource && base.xlSource[i];
+      if (_xlSrc) {
+        data.translationOfId    = _xlSrc.id || null;
+        data.translationOfTitle = _xlSrc.topic || '';
+        if (!data.comicPanels && Array.isArray(_xlSrc.comicPanels) && _xlSrc.comicPanels.length)
+          data.comicPanels = _xlSrc.comicPanels;
+      }
       // v69_q: pass the parent's stored id, not only its name, so chaining is id-based and two
       // chapters sharing a title cannot collapse onto each other.
       const saved = _persistGenerated(data, contFrom, parent ? parent.id : null);
@@ -8344,13 +8382,48 @@ http.createServer(async (req, res) => {
               script, srcScript,
               // Decoupling chaptering from lesson generation (roadmap_v87.md) — see generate()'s own
               // comment. Wins over arc/arcTypes if a client somehow sent both (it shouldn't).
-              skipLessons } = body;
+              skipLessons,
+              // item AX (v88_i, user request): "generate lessons based on existing storylines and
+              // chapters, but for a different source language ... skip the story generation part
+              // and start with the target language text." A storyline id; the server resolves it to
+              // that storyline's chapters IN ORDER and uses their `story` fields as the chunks. The
+              // client cannot do this itself — its savedList projection carries no story text at
+              // all (the same reason /api/comic-extract resolves `continuedFrom` server-side).
+              translateFrom } = body;
       if (active === 'none')
         return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
       // Generated batch: synthesize N text-less chapters from a single topic; each is
       // written by the model continuing the previous (chained narrative).
       let chaptersIn = chunks;
       let baseTopic = null, chapterLenN = null;
+      // item AX: a FOURTH input mode, alongside `generated` (synthesize) and the default (chunks the
+      // client built from a PDF or image panels). The target-language text already exists and is
+      // correct by construction, so this reuses the entire downstream pipeline — translation into
+      // the NEW source language, chapter titles, lessons, arc, storyboard, analysis — unchanged.
+      let _xlSource = null, _xlSourceTitle = '';
+      if (translateFrom) {
+        const sl = getStorylines().find(x => x.id === translateFrom);
+        if (!sl) return json(res, 404, { error: 'Storyline to translate not found' });
+        const src = (sl.chapters || []).map(findSavedById).filter(Boolean);
+        if (!src.length) return json(res, 400, { error: 'That storyline has no chapters' });
+        const withText = src.filter(t => String(t.story || '').trim());
+        if (!withText.length) return json(res, 400, { error: 'That storyline has no story text to build on' });
+        // ⚠️ REFUSE the degenerate case (user's ruling). Same source language means this would
+        // silently duplicate an entire storyline — every chapter, every lesson, a full generation
+        // run — and produce nothing the learner does not already have. A confusing no-op that costs
+        // many minutes of model time is worse than an error.
+        const srcLangs = [...new Set(withText.map(t => t.srcLang || 'en'))];
+        if (srcLangs.length === 1 && srcLangs[0] === (srcLang || 'en'))
+          return json(res, 400, { error:
+            `That storyline is already written for ${langName(srcLangs[0])} speakers — pick a different source language.` });
+        _xlSource = withText;
+        _xlSourceTitle = sl.title || '';
+        chaptersIn = withText.map(t => ({
+          title: t.topic || '',
+          text: String(t.story || ''),
+          wordCount: String(t.story || '').split(/\s+/).filter(Boolean).length,
+        }));
+      }
       if (generated) {
         // Keep the FULL topic — it is chapter 1's story-prompt theme and is stored
         // as userTopic/userPrompt. (Only the transient placeholder label is shortened,
@@ -8392,6 +8465,12 @@ http.createServer(async (req, res) => {
           ? { promptTokens: Math.max(0, Math.min(1e7, body.cleanupTokens.promptTokens | 0)),
               completionTokens: Math.max(0, Math.min(1e7, body.cleanupTokens.completionTokens | 0)) }
           : null,
+        // item AX: the source chapters, INDEX-ALIGNED with `chaptersIn` (both derive from the same
+        // filtered list above), so each new chapter can be stamped with the id of the one it was
+        // translated from and inherit its panel images. null for every other input mode.
+        xlSource: _xlSource,
+        xlSourceSlId: _xlSource ? translateFrom : null,
+        xlSourceTitle: _xlSourceTitle,
         continuedFrom: rootParent ? rootParent.id : null, userStoryLang: userStoryLang || null,
         arc: arcEnabled, arcTypes: _arcTypes, skipLessons: _skipLessons,
         // v85_p: opt-in gate for _runBookJob's own storyboard post-pass — see that function's own

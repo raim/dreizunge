@@ -3409,8 +3409,249 @@
       },
       "sourceTextHash": "ce8ae5ebd16b",
       "analyzedAt": "2026-09-01T10:27:18.582Z"
+    },
+    "tp_17882692144280000018": {
+      "chapterId": "tp_17882692144280000018",
+      "lang": "nl",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 1,
+      "tokenCount": 16,
+      "sentences": [
+        {
+          "sentenceId": "tp_17882692144280000018:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17882692144280000018:s0:t0",
+              "idx": 0,
+              "surface": "Een",
+              "lemma": "een",
+              "form": "bestimmter Artikel, Nominativ Singular Neutrum",
+              "sense": "ein (unbestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882692144280000018:s0:t1",
+              "idx": 1,
+              "surface": "verlaten",
+              "lemma": "verlaten",
+              "form": "Partizip II als Adjektiv, Nominativ Singular Neutrum",
+              "sense": "verlassen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882692144280000018:s0:t2",
+              "idx": 2,
+              "surface": "gebouw",
+              "lemma": "gebouw",
+              "form": "Nomen, Nominativ Singular Neutrum",
+              "sense": "Gebäude",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882692144280000018:s0:t3",
+              "idx": 3,
+              "surface": "met",
+              "lemma": "met",
+              "form": "Präposition",
+              "sense": "mit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882692144280000018:s0:t4",
+              "idx": 4,
+              "surface": "graffiti",
+              "lemma": "graffiti",
+              "form": "Nomen, Akkusativ Singular (oder unbestimmt)",
+              "sense": "Graffiti",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882692144280000018:s0:t5",
+              "idx": 5,
+              "surface": "staat",
+              "lemma": "staan",
+              "form": "Verb, Präsens, 3. Person Singular",
+              "sense": "steht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882692144280000018:s0:t6",
+              "idx": 6,
+              "surface": "boven",
+              "lemma": "boven",
+              "form": "Präposition",
+              "sense": "über",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882692144280000018:s0:t7",
+              "idx": 7,
+              "surface": "een",
+              "lemma": "een",
+              "form": "bestimmter Artikel, Akkusativ Singular Femininum",
+              "sense": "eine (unbestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882692144280000018:s0:t8",
+              "idx": 8,
+              "surface": "droge",
+              "lemma": "droog",
+              "form": "Adjektiv, Akkusativ Singular Femininum",
+              "sense": "trockene",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882692144280000018:s0:t9",
+              "idx": 9,
+              "surface": "weide",
+              "lemma": "weide",
+              "form": "Nomen, Akkusativ Singular Femininum",
+              "sense": "Weide",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882692144280000018:s0:t10",
+              "idx": 10,
+              "surface": "onder",
+              "lemma": "onder",
+              "form": "Präposition",
+              "sense": "unter",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882692144280000018:s0:t11",
+              "idx": 11,
+              "surface": "een",
+              "lemma": "een",
+              "form": "bestimmter Artikel, Akkusativ Singular Femininum",
+              "sense": "eine (unbestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882692144280000018:s0:t12",
+              "idx": 12,
+              "surface": "blauwe",
+              "lemma": "blauw",
+              "form": "Adjektiv, Akkusativ Singular Femininum",
+              "sense": "blaue",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882692144280000018:s0:t13",
+              "idx": 13,
+              "surface": "hemel",
+              "lemma": "hemel",
+              "form": "Nomen, Akkusativ Singular Femininum",
+              "sense": "Himmel",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882692144280000018:s0:t14",
+              "idx": 14,
+              "surface": "met",
+              "lemma": "met",
+              "form": "Präposition",
+              "sense": "mit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17882692144280000018:s0:t15",
+              "idx": 15,
+              "surface": "wolken.",
+              "lemma": "wolk",
+              "form": "Nomen, Plural",
+              "sense": "Wolken",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 2,
+              "tokenIds": [
+                "tp_17882692144280000018:s0:t0",
+                "tp_17882692144280000018:s0:t1",
+                "tp_17882692144280000018:s0:t2"
+              ],
+              "lemma": "een verlaten gebouw",
+              "gloss": "ein verlassenes Gebäude",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 6,
+              "end": 9,
+              "tokenIds": [
+                "tp_17882692144280000018:s0:t6",
+                "tp_17882692144280000018:s0:t7",
+                "tp_17882692144280000018:s0:t8",
+                "tp_17882692144280000018:s0:t9"
+              ],
+              "lemma": "boven een droge weide",
+              "gloss": "über einer trockenen Weide",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 10,
+              "end": 13,
+              "tokenIds": [
+                "tp_17882692144280000018:s0:t10",
+                "tp_17882692144280000018:s0:t11",
+                "tp_17882692144280000018:s0:t12",
+                "tp_17882692144280000018:s0:t13"
+              ],
+              "lemma": "onder een blauwe hemel",
+              "gloss": "unter einem blauen Himmel",
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-01T13:37:32.512Z",
+            "sentenceId": "tp_17882692144280000018:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Een verlaten gebouw met graffiti staat boven een droge weide onder een blauwe hemel met wolken.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-01T13:37:32.512Z",
+        "chapterId": "tp_17882692144280000018",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "c42f7e54414c",
+      "analyzedAt": "2026-09-01T13:37:32.512Z"
     }
   },
-  "generatedAt": "2026-09-01T10:27:18.583Z",
-  "chapterCount": 11
+  "generatedAt": "2026-09-01T13:37:32.513Z",
+  "chapterCount": 12
 }

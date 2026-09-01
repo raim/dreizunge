@@ -274,6 +274,7 @@ run('unit: the auto-opened review card saves instead of generating; whole-image 
 run('unit: extraction survives the tab that started it; the job row links back (item AO, v88_d)', 'node', [path.join(__dirname, 'unit-comic-extract-durable.test.js')]);
 run('unit: a typed chapter title no longer destroys the image description (item AN, v88_d)', 'node', [path.join(__dirname, 'unit-comic-title-field.test.js')]);
 run('unit: a comic chapter\'s views agree about text and image (items AY/AZ, v88_e)', 'node', [path.join(__dirname, 'unit-comic-story-text.test.js')]);
+run('unit: translate-storyline picker + dispatch (item AX, v88_i)', 'node', [path.join(__dirname, 'unit-translate-picker.test.js')]);
 run('unit: post-gen storyboard opt-in fix, client side (v85_p)', 'node', [path.join(__dirname, 'unit-postgen-storyboard-optin.test.js')]);
 run('unit: post-gen analysis opt-in, client side, mirrors postGenStoryboard (item W follow-up, v86_o)', 'node', [path.join(__dirname, 'unit-postgen-analysis-optin.test.js')]);
 run('unit: comic story-panel progress-card rendering (PLAN §2.4 Track A4 milestone 4, v85_n)', 'node', [path.join(__dirname, 'unit-comic-story-panel.test.js')]);
@@ -358,6 +359,7 @@ if (!quick) {
   run('e2e: unfinished-project drafts — comic upload flow (item R follow-up)', 'node', [path.join(__dirname, 'e2e-drafts-comic.test.js')]);
   run('e2e: comic extraction results are written onto the draft (item AO, v88_d)', 'node', [path.join(__dirname, 'e2e-comic-extract-draft.test.js')]);
   run('e2e: skipLessons — decoupling chaptering from lesson generation (user request)', 'node', [path.join(__dirname, 'e2e-skip-lessons.test.js')]);
+  run('e2e: generate a storyline for a DIFFERENT source language (item AX, v88_i)', 'node', [path.join(__dirname, 'e2e-translate-storyline.test.js')]);
 } else {
   console.log('\n(skipping e2e tests: --quick)');
 }

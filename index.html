@@ -1076,9 +1076,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     </div>
     <div id="lang-progress-strip" style="margin-bottom:10px"></div>
     <div id="lib-filter" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px"></div>
-    <div id="saved-list">
-      <div class="lib-empty">No saved lessons yet — generate one above!</div>
-    </div>
+
   </div>
 </div>
 </div>
@@ -1237,6 +1235,21 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
              #use-full-chain-cb travels WITH it (user ruling) — it is a continuation-context choice,
              not a lesson choice. #reinforce-prior-row did NOT: vocab-mode folds into the lesson step
              (now card 3), see its own comment there. -->
+        <!-- item AX (v88_i, user request): "generate lessons based on existing storylines and chapters,
+             but for a different source language ... a drop-down menu in the generation interface, with
+             the same choice as 'continue from'." Deliberately its own row beside #continue-select
+             rather than an extra option inside it: the two are different ACTS (extend this story vs.
+             re-teach it to a different speaker) and conflating them in one control would make each
+             harder to read. Selecting one clears the other — see onTranslateSelectChange(). -->
+        <div class="continue-row" id="translate-row">
+          <span class="continue-lbl" id="translate-lbl">Translate storyline for</span>
+          <div class="continue-select-wrap">
+            <select class="continue-select" id="translate-select" onchange="onTranslateSelectChange()">
+              <option value="">— not a translation —</option>
+            </select>
+            <span class="continue-select-arrow">▾</span>
+          </div>
+        </div>
         <div class="continue-row" id="continue-row">
           <span class="continue-lbl" id="continue-lbl">Continue story from</span>
           <div class="continue-select-wrap">
@@ -2791,6 +2804,7 @@ var APP = {
   lessonFormat: loadLessonFormat(),
   libFilter: 'all',
   libSrcFilter: (() => { try { return localStorage.getItem('imp3_libsrc') || 'all'; } catch(_) { return 'all'; } })(),   // v67.1: survives reload
+
   prevLangFilter: null,
   savedList: [],
   progress: loadProg(),
@@ -3090,6 +3104,8 @@ function applyUIStrings() {
   { const _nc=document.getElementById('num-chapters-val'); if(_nc) _nc.textContent=numChaptersLabel(APP.numChapters||1); }
   _setText('lesson-type-hdr-lbl', t('form.lesson_type_hdr'));
   _setText('continue-lbl', t('form.continue_from_lbl'));
+  _setText('translate-lbl', t('form.translate_label'));   // item AX
+
   _setText('show-other-langs-lbl', t('form.show_other_langs'));
   _setText('app-tagline', t('app.motto'));
   _setText('lib-title-lbl', '📚');
@@ -3524,6 +3540,9 @@ function numChaptersLabel(n){ return n<=1 ? t('form.chapters_one') : t('form.cha
 // `_pdfChunks.length` and a comic's is however many drawn panels came back with text. So "how many
 // chapters is this run going to produce" becomes one function, and every gate asks IT.
 function _genInputMode(){
+  // item AX: checked FIRST — a storyline translation supplies its own chapters, so it overrides
+  // whatever upload/paste state happens to be left over on the form.
+  if(document.getElementById('translate-select')?.value) return 'translate';
   if(document.getElementById('use-comic-cb')?.checked) return 'comic';
   if(document.getElementById('use-dialect-cb')?.checked) return 'dialect';
   if(document.getElementById('use-story-cb')?.checked) return (typeof _uploadMode!=='undefined' && _uploadMode) ? 'pdf' : 'paste';
@@ -3539,6 +3558,13 @@ function _genChapterCount(){
   if(mode==='pdf') return (typeof _pdfChunks!=='undefined' && _pdfChunks) ? _pdfChunks.length : 0;
   if(mode==='paste') return 1;
   if(mode==='dialect') return 0;
+  // item AX: the count is the SOURCE storyline's chapter count, read from the option the user
+  // picked — the server re-derives it authoritatively (and drops chapters with no story text), so
+  // this is a label, not a contract.
+  if(mode==='translate'){
+    const o=document.getElementById('translate-select')?.selectedOptions?.[0];
+    return Math.max(1, parseInt(o?.dataset?.n, 10) || 1);
+  }
   return Math.max(1, Math.min(20, APP.numChapters||1));
 }
 // The arc/storyboard/analysis rows share ONE "is there anything to generate for" gate, and it differs
@@ -4697,6 +4723,40 @@ function _comicReviewConfirm(){
   // button run comicCreateChapter() through doGenerate()'s comic branch as it always did.
   if(mode==='auto'){ try{ _genWizardGoto(3); }catch(_){} return; }
   comicCreateChapter();
+}
+
+// item AX (v88_i): "generate lessons based on existing storylines and chapters, but for a different
+// source language ... skip the story generation part and start with the target language text."
+// Reads the SAME wizard lesson card every other mode reads (item AL made that card universal), so
+// arc/storyboard/analysis/skip-lessons all behave identically here with no new plumbing. The only
+// mode-specific field is `translateFrom`.
+async function translateStorylineGenerate(){
+  const slId=document.getElementById('translate-select')?.value||'';
+  if(!slId) return;
+  const skipLessons=!!document.getElementById('gen-skip-lessons-cb')?.checked;
+  const arcOn=!skipLessons && document.getElementById('gen-arc-cb')?.checked;
+  const body={
+    translateFrom: slId,
+    lang: APP.lang||'it', srcLang: APP.srcLang||'en', difficulty: APP.difficulty||2,
+    lessonFormat: APP.lessonFormat||'standard',
+    skipLessons,
+    ...(arcOn ? { arc:true, arcTypes:readArcTypeChecks('gen-arc-types'), arcScript:_readArcScript(),
+                  script: APP.script||null, srcScript: APP.srcScript||null } : {}),
+    postGenStoryboard: !!document.getElementById('post-gen-storyboard-cb')?.checked,
+    postGenAnalysis: !!document.getElementById('post-gen-analysis-cb')?.checked,
+  };
+  try{
+    const r=await fetch('/api/generate-book',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)});
+    const data=await r.json().catch(()=>({}));
+    // The server refuses a same-source-language pick (user's ruling) and a storyline with no text.
+    // Both are real, actionable answers, so they are SHOWN rather than swallowed — the picker
+    // already excludes the former, but a stale form could still send it.
+    if(!r.ok){ showToast('⚠ '+(data.error||r.status)); return; }
+    _pdfBookId=data.bookId;
+    _pollBookJob(data.bookId);
+    _applyLessonCardUI();
+  }catch(e){ showToast('⚠ '+e.message); }
 }
 
 // ── Comic chapter formation (PLAN §2.4 / Track A4 milestone 3, v85_m) ──────────────────────────
@@ -8584,6 +8644,7 @@ async function loadSavedList(){
   // filtered index instead broke a mixed-language storyline three ways at once — see below.
   const byIdAll = Object.fromEntries(saved.filter(l=>l.id).map(l => [l.id, l]));
 
+
   let storylines, orphans;
   const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
   const v29chains = slArr.filter(sl => sl.chapters && sl.chapters.length >= 1);
@@ -8833,7 +8894,53 @@ function onContinueSelectChange(){
   if (v !== APP.contPin) setContinuePin(v);      // picking another story re-pins to it
   else _updateReinforcePriorVisibility();
 }
+// item AX (v88_i): the translate-storyline picker. Lists STORYLINES (not chapters — the unit being
+// re-taught is the whole story), filtered to those whose TARGET language matches the form's, since
+// the target text is what gets reused. Storylines already written for the currently-selected SOURCE
+// language are excluded outright: the server refuses that combination (it would silently duplicate a
+// whole storyline), so offering it would only produce an error the user cannot act on.
+//
+// Rebuilt from the same places repopulateContinueSelect() is called from, and preserves the current
+// selection across a rebuild — a language change must not silently cancel a chosen translation.
+function repopulateTranslateSelect(){
+  const sel=document.getElementById('translate-select');
+  if(!sel) return;
+  const prev=sel.value;
+  const curLang=APP.lang||'it', curSrc=APP.srcLang||'en';
+  const saved=APP.savedList||[];
+  const byId=Object.fromEntries(saved.filter(t=>t.id).map(t=>[t.id,t]));
+  const opts=(APP.storylines||[]).map(sl=>{
+    const chs=(sl.chapters||[]).map(id=>byId[id]).filter(Boolean);
+    if(!chs.length) return null;
+    if((chs[0].lang||'it')!==curLang) return null;             // different target text — not this
+    if((chs[0].srcLang||'en')===curSrc) return null;           // the server refuses this; do not offer it
+    const L=LANGS[chs[0].srcLang||'en']||LANGS.en||{flag:''};
+    const title=sl.title || chs[0].topic || sl.id;
+    return { id: sl.id, n: chs.length,
+      label: `${L.flag||''} ${title} (${chs.length})`.trim() };
+  }).filter(Boolean);
+  sel.innerHTML='<option value="">'+escHtml(t('form.translate_none'))+'</option>'
+    + opts.map(o=>`<option value="${escAttr(o.id)}" data-n="${o.n}">${escHtml(o.label)}</option>`).join('');
+  if(prev && opts.some(o=>o.id===prev)) sel.value=prev;
+  // Hidden entirely when there is nothing to offer — an empty picker is a question the learner
+  // cannot answer, and this mode is a minority path.
+  const row=document.getElementById('translate-row');
+  if(row) row.style.display = opts.length ? '' : 'none';
+  if(!opts.length && sel.value) { sel.value=''; }
+}
+// Picking a translation and picking a continuation are mutually exclusive acts: one supplies the
+// chapters, the other extends an existing chain. Clearing the other control is what keeps
+// _genInputMode()'s precedence from being a silent surprise.
+function onTranslateSelectChange(){
+  const v=document.getElementById('translate-select')?.value||'';
+  if(v){
+    const cs=document.getElementById('continue-select');
+    if(cs && cs.value){ cs.value=''; try{ clearContinuePin(); }catch(_){} }
+  }
+  try{ _applyLessonCardUI(); }catch(_){}
+}
 function repopulateContinueSelect(){
+  try{ repopulateTranslateSelect(); }catch(_){}   // item AX: same triggers, same data
   const contSel=document.getElementById('continue-select');
   if(!contSel) return;
   const showAll=document.getElementById('cont-all-langs')?.checked;
@@ -9250,6 +9357,14 @@ async function doGenerate(forceRegen){
   // that intermediate text-review card is the "let the user edit those" half of item AK's ask and
   // the user's own part-2 ruling was to KEEP the review stop, so the click must still land on it.
   // Placed before the topic guard below, same as the upload branch — a comic run has no topic.
+  // item AX (v88_i): a storyline translation supplies its own chapters, so it dispatches here —
+  // before the topic guard below, exactly like the upload and comic branches, because it has no
+  // topic either. The SERVER resolves the storyline to chunks (the client's savedList projection
+  // carries no story text), so this request is deliberately tiny.
+  if(_genInputMode()==='translate'){
+    if(!APP.info.canGenerate) return;
+    translateStorylineGenerate(); return;
+  }
   if(_genInputMode()==='comic'){
     if(!APP.info.canGenerate) return;
     const boxes=_comicPanels();

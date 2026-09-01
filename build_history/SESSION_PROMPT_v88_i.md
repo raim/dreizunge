@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_h`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_i`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -20,19 +20,19 @@ work — it generated four chapters during the `v87` line, and twice that broke 
 restarting anything; a SERVER edit is not — start your own instance on another port to verify, and
 **kill it by PID** (`pkill -f "node server.js"` matches theirs too).
 
-**What shipped at this cut**: `v88_h` — **the flake audit**, the ⭐ item from this prompt's own
-"buildable now" list. Test-only; no product change, no `ui.json` keys.
-`unit-observations-log`'s inherited label was **wrong**: it failed STANDALONE at the same rate, not
-"under suite load". Its `answer()` helper branched on `querySelectorAll('.choice')` before the
-exercise TYPE, and `lib-dom` does not re-parse runtime `innerHTML`, so stale `.choice` nodes from the
-previous MCQ render hijacked a TYPED exercise — `#type-in` stayed empty and `check()` correctly
-graded it wrong. **The product is fine**; this was purely a test driver. Worse than the red runs: the
-assertions sat behind `if (droveRight)`, so the section was **VACUOUS on many of the runs it passed**.
-Both closed — the driver dispatches on `ex.type`, and `droveRight` is now asserted.
-Proven with a DETERMINISTIC probe (render an MCQ, advance to a `listen_type`, watch the old driver
-fail every time), because sampling could not settle it — one pre-fix batch of 40 passed clean.
-Second inherited "known flake" in this project found to be a real defect; the first was `unit-tap-word`.
-Full write-up: `roadmap_v88.md`'s own `v88_h` entry.
+**What shipped at this cut**: `v88_i` — **item AX**: generate lessons from an EXISTING storyline for
+a DIFFERENT source language. Almost nothing is new, which was the argument for building it:
+`/api/generate-book` already runs the whole downstream pipeline from bare `chunks`, so this adds a
+FOURTH way to obtain them — an existing storyline's chapter `story` fields, resolved SERVER-side
+because the client's `savedList` projection carries no story text. Two new `ui.json` keys.
+The user's three rulings, each guarded: **lineage carries the ID** (`translationOfId` on chapter AND
+storyline, plus a `translationOfTitle` snapshot — existing provenance was MEASURED and rejected,
+`source` is external attribution and 339/340 topics have it null); **`comicPanels` are copied** ⚠️
+which duplicates image data and is recorded in **item A**'s entry, whose migration must treat a
+translated chapter as a second reference to the SAME image; and the **same-source-language case is
+REFUSED** (it would silently duplicate a whole storyline), with the picker excluding it too so the
+refusal is a backstop, not the UX.
+Full write-up: `roadmap_v88.md`'s own `v88_i` entry; `v88_h`…`v88_a` are below it.
 
 **🆕 NOTHING IS MID-FLIGHT, and the queue is explicit.** The `v87` line closed six items (R, U, Z,
 AC, AK, AL) plus the three storyline asks; they are recorded where they shipped and are NOT in the
@@ -81,8 +81,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 320 checks
-node test/run.js --quick                  → expect 267
+node test/run.js                          → expect 322 checks
+node test/run.js --quick                  → expect 268
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -106,8 +106,8 @@ DETERMINISTIC, so not flakiness — because the user's server had written a new 
 fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don't run the full and
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **340 topics, 98 storylines, 33 languages, 735 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_h'`.
+Corpus at this cut: **341 topics, 98 storylines, 33 languages, 737 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_i'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -229,39 +229,38 @@ measures zero effect, reconsider the diagnosis before trying a third wording.**
 
 **🆕 FIRST: the thirteen TODOs handed over after `v88_a`** — items `AM`…`AX` in `roadmap_v88.md`,
 with their own suggested order. **`v88_b` shipped row 1 (`AW` + `AT`), `v88_c` row 2 (`AQ` + `AM`),
-`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third; `v88_h` did the flake audit.** The rest of that table:
+`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third; `v88_h` did the flake audit; `v88_i` shipped `AX`.** The rest of that table:
 
-- **➡️ NEXT — `v88_h` — `AX`**: generate lessons from an EXISTING storyline for a DIFFERENT source
-  language. The highest-value new feature left and much cheaper than it looks: `POST
-  /api/generate-book` already runs the whole downstream pipeline (translation, chapter titles,
-  lessons, arc, storyboard, analysis) from bare `chunks`, and BOTH the PDF and image paths are
-  nothing but "build chunks, POST". A fourth input mode whose chunks are an existing storyline's
-  chapter `story` fields is the same shape, and the target text is correct by construction.
-  New work: one server-side resolution (storyline id → chapters in order → chunks), one dropdown on
-  card 1 beside `#continue-select` (which already lists the right things and is read by all modes
-  since item AL), and the input-mode plumbing in `_genInputMode()`/`_applyLessonCardUI()`/
-  `doGenerate()`. **Three decisions to settle first**, none large: is the new storyline LINKED to
-  its source (there is no "translation of" relation today)? Copy `comicPanels` across (recommend
-  yes — the images belong to the text; interacts with item `A`)? And refuse the degenerate case
-  (same `srcLang` as the source, which would silently duplicate a whole storyline for nothing).
-- Then `AX` (generate lessons from an existing storyline for a DIFFERENT source language — the
-  highest-value new feature left, and it reuses `/api/generate-book`'s existing chunks pipeline
-  wholesale) and `AR` (library sorting — the trap is the `GET /api/lessons` WHITELIST projection,
-  not the sort). **Item `V` is fully specified** and shares `AM`'s whole-image-panel act.
-- Then `AU`'s shutdown half (small, no decision: `SIGINT`/`SIGTERM` → `release()` the configured
-  models; `llm.js` already exports `release()` and there is no
-  signal handler at all), `AX`, `AR`. **Item `V` is fully specified** by the user's ruling and shares
-  `AM`'s own whole-image-panel act, so it slots in beside the image work.
-- Then `AP` (the `comic`→`image` rename — deliberately after the four image releases), `AU`'s
-  shutdown half, `AX`, `AR`. Item `V` is now fully specified too (see the rulings above) and can be
-  slotted in beside the image work, since it shares `AM`'s own whole-image-panel act.
+- **➡️ NEXT — `v88_j` — `AR`**: sort the library by token usage / generation date / last-edit date.
+  **The trap is NOT the sort.** `loadSavedList()` sorts hard-coded (source language, then newest)
+  and adding a control is small. The trap is that `GET /api/lessons` is a **WHITELIST projection**
+  and does NOT carry `generationStats.totalPromptTokens/totalCompletionTokens`. Sorting by tokens
+  without adding them gives a feature that works in the STATIC build (which ships whole topics) and
+  silently does nothing LIVE — the exact failure `v74_i` and `v79_n` both record in a comment at
+  that very site. Add ONE pre-summed scalar, not the whole `generationStats` block.
+  Storyline-level `tokenUsage` already arrives (`/api/storylines` returns whole objects).
+  **Needs a `ui.json` count (~5: a select label + three or four option labels)** and one decision:
+  is a storyline's "total token usage" its own `tokenUsage` PLUS its chapters', or the storyline
+  bucket alone? `addTokenUsage()`'s own comment records a deliberate ruling that storyline-level
+  work is NOT spread across chapters, so the two numbers are genuinely different things.
+  Recommendation: sum both, and say so in the label.
+- **Item `V`** (multi-image upload) is FULLY SPECIFIED by the user's ruling and unblocked — each
+  uploaded image gets a whole-image panel (the act `AM` already performs for one image), the panel
+  list stays editable, and `comicCreateChapter()`'s existing one-chapter-per-panel formation
+  (`v85_p`) is confirmed correct. Mostly a question of the DRAFT shape holding more than one page
+  (`_comicDraftSaveDebounced`'s own comment scopes it to one image today).
+- **`AU`'s remaining two thirds**: per-job cancel (`POST /api/jobs/cancel` already calls
+  `job.abort()` but **nothing sets `job.abort`**; the transport CAN be aborted — `_callOllama`
+  already `req.destroy()`s on timeout — but threading a handle touches every generator, so prove
+  ONE job kind end to end first) and IDLE release (needs a policy decision).
+- **The completion card (`_renderCompStory`) still has no force-regenerate control** — only the
+  lesson-set card does. Quick and well-precedented.
 
-**⚠️ `ui.json` keys.** `AQ`'s and `AN`'s are SPENT (both now renamed to `form.image_*` by `AP`), and
-`AP` itself is done — still 735 `en` keys, since a rename adds none. **`AR` is the only open item that
-needs a count** — the user has ruled on HOW the
-rename handles stale translations (delete the non-`en` values, let `translate-ui.js` refill them) but
-not on how many strings may change; `AR` wants ~5. **Ask fresh, as every `v87` cut did** — and note
-`v88_b` closed two reports with ZERO new keys by reusing existing strings. Try that first every time.
+**⚠️ `ui.json` keys.** 737 `en` keys now. `AQ`/`AN`/`AP`/`AX` are all SPENT. **`AR` is the only open
+item that needs a count** (~5). The user's standing ruling on changed English text: delete the stale
+non-`en` values so `translate-ui.js` refills them. **Ask fresh for a count, as every `v87` cut did**
+— and note that `v88_b` closed two user reports with ZERO new keys by reusing existing strings, and
+`v88_g`/`v88_h` needed none at all. Try that first every time.
 
 **⚠️ Still blocked on a user decision**: `AV` (where a language summary is shown, and which of three
 sources generates it — needs a live three-way comparison, not a choice) and `AS` (recommendation:

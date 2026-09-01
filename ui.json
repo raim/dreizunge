@@ -734,7 +734,9 @@
     "gen.post_gen_analysis_lbl": "🔤 Analyse words for the text explorer",
     "text_explorer.batch_toast": "🔤 {queued} chapter(s) queued for analysis, {cached} already ready",
     "text_explorer.batch_failed": "{failed} failed",
-    "text_explorer.confirm_reanalyze": "This chapter has already been analysed. Re-analyze from scratch, replacing the existing text-explorer annotation?"
+    "text_explorer.confirm_reanalyze": "This chapter has already been analysed. Re-analyze from scratch, replacing the existing text-explorer annotation?",
+    "form.translate_label": "Translate storyline for",
+    "form.translate_none": "— not a translation —"
   },
   "nl": {
     "qc.editor.suggests_by": "⚑ {model} stelt voor:",

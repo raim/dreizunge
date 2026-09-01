@@ -106,6 +106,13 @@ does not get renumbered just because a cut happened.*
 
 ### A. Move comic panel images OUT of `lessons.json` (from `v85_u`)
 
+**⚠️ UPDATED at `v88_i`: a translated chapter now COPIES its source chapter's `comicPanels`** (item
+AX, the user's own ruling — "copy comic panels for now, but we want to move images out of
+`lessons.json` later"). So the same image can now exist under TWO topic ids, and this item's
+migration must treat a translated chapter as a **second reference to the SAME image**, not as its own
+copy — `translationOfId` is exactly the link that identifies the pair. Getting this wrong would
+silently double the storage the migration exists to reclaim.
+
 Still unactioned. A CONFIRMED, measured violation of an EXISTING ruling (`D4`, THE LARGER PLAN
 section below) the comic feature never implemented. Full scoping in `roadmap_v85.md`'s `v85_u`
 entry, item 4. **The migration of existing topics needs the user's own go-ahead before touching
@@ -559,7 +566,7 @@ user's own ">3 letters" threshold is the right default.
 Effort: under an hour. No ui.json keys. No decision. **The best first commit of the session** — it is
 the smallest thing here with a guaranteed user-visible payoff.
 
-### AX. Generate lessons from an EXISTING storyline for a different SOURCE language
+### ~~AX.~~ ✅ SHIPPED `v88_i` — generate lessons from an EXISTING storyline for a different SOURCE language
 
 **User's words**: "Allow to generate lessons based on existing storylines and chapters, but for a
 different source language. This could be a drop-down menu in the generation interface, with the same
@@ -2392,6 +2399,82 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v88 LINE
+
+## ✅ v88_i — item AX: generate lessons from an existing storyline for a DIFFERENT source language
+
+**User request**: *"Allow to generate lessons based on existing storylines and chapters, but for a
+different source language. This could be a drop-down menu in the generation interface, with the same
+choice as 'continue from'. This would skip the story generation part (otherwise via LLM, PDF, comic),
+and start with the target language text."* Two new `ui.json` keys.
+
+**Almost nothing here is new, which was the whole argument for building it.** `POST
+/api/generate-book` already runs the entire downstream pipeline — translation into the new source
+language, chapter titles, lessons, arc, storyboard, analysis — from bare `chunks`, and both the PDF
+and image paths are nothing but "build chunks, POST". This adds a **fourth way to obtain those
+chunks**: an existing storyline's chapter `story` fields. The target text is correct by construction,
+so the "skip the story generation part" the user asked for is not a new code path — it is simply what
+the chunks path already does.
+
+**Resolved SERVER-side, and that is forced, not a preference**: the client's `savedList` projection
+carries no story text at all (the same reason `/api/comic-extract` resolves `continuedFrom` on the
+server). So the request is tiny — `{translateFrom: slId, lang, srcLang, …}` — and no story text
+crosses the wire twice.
+
+### The user's three rulings, each guarded
+
+1. **Lineage carries the ID, not just the title.** `translationOfId` on both the chapter (the source
+   CHAPTER's id) and the storyline (the source STORYLINE's id), plus `translationOfTitle` as a
+   display snapshot that survives the source being renamed or deleted. The id stays authoritative and
+   is never resolved against the title.
+   **⚠️ Existing provenance was MEASURED before deciding, not assumed unsuitable.** `source` is
+   `{author, url, licence}` — EXTERNAL attribution, rendered by `_provSrcBits` as an author/licence
+   line; 339 of 340 topics have it `null` and the one that doesn't is an xkcd credit. Reusing it
+   would conflate "who wrote the original work" with "which chapter of this app this came from" and
+   corrupt both readings. `continuedFrom`/`continuedFromId` mean chapter-continues-chapter, a chain,
+   not a translation. So: a dedicated field, as the user's second option allowed.
+2. **`comicPanels` copied across, "for now".** ⚠️ This DUPLICATES image data inside `lessons.json` —
+   exactly the `D4` violation **item A** exists to fix. Recorded in item A's own entry as well: its
+   migration must treat a translated chapter as a **second reference to the SAME image**, not as its
+   own copy, or the fix will silently double the storage it is trying to reclaim.
+3. **The same-source-language case is REFUSED**, with an error naming the language. It would
+   otherwise silently duplicate an entire storyline — every chapter, every lesson, a full multi-minute
+   generation — and produce nothing the learner does not already have. A confusing no-op that costs
+   model time is worse than an error. **The picker excludes it too**, so the refusal is a backstop for
+   a stale form rather than the primary UX.
+
+### The client
+
+One dropdown on card 1 beside `#continue-select` — *"the same choice as 'continue from'"* — but its
+OWN row, deliberately: extending a story and re-teaching it to a different speaker are different
+acts, and one control offering both would make each harder to read. Picking a translation **clears
+the continuation**, so `_genInputMode()`'s precedence (translate wins over leftover upload/paste
+state) is never a silent surprise.
+
+The picker offers only storylines whose TARGET language matches the form (their text is the text
+being reused) and whose source language differs (the server refuses the rest). **It hides its own row
+when nothing qualifies** — an empty picker is a question the learner cannot answer. Everything else —
+arc, storyboard, analysis, skip-lessons — comes free from the wizard's ONE shared lesson card that
+item AL made universal.
+
+### Guards
+
+`e2e-translate-storyline` (6 checks, live server + fake Ollama) — both refusals, one new chapter per
+source chapter, **the target text reused VERBATIM** (the item's whole point), lineage by id at both
+levels, and panels copied. `unit-translate-picker` (5 checks) — the picker's two filters, the
+self-hiding row, the mode/count switch, the dispatch body, and the continue-from clearing.
+**Ten mutations red.**
+
+⚠️ Two test-authoring notes worth keeping. There is **no single-topic GET route** — `/api/lessons` is
+a whitelist projection carrying neither `story` nor `comicPanels` — so the e2e asserts on the
+PERSISTED STORE, which is the stronger claim anyway. And the first "nothing qualifies" fixture was
+wrong: setting `srcLang='de'` does not empty the picker, because an `nl←en` storyline is a perfectly
+valid thing to translate FOR German speakers. Getting that backwards is how a vacuity check ends up
+asserting against a populated control.
+
+**Not built, deliberately**: any UI that DISPLAYS the lineage. The ids are stored and
+`/api/storylines` returns whole objects (so a storyline's lineage is already reachable), but the
+topic projection does not carry `translationOfId` yet — adding it is the `v74_i`/`v79_n` whitelist
+trap and belongs with whatever surface actually renders it.
 
 ## ✅ v88_h — the flake audit: `unit-observations-log` was never a load flake, and it was VACUOUS as often as it was red
 
