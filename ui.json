@@ -736,7 +736,11 @@
     "text_explorer.batch_failed": "{failed} failed",
     "text_explorer.confirm_reanalyze": "This chapter has already been analysed. Re-analyze from scratch, replacing the existing text-explorer annotation?",
     "form.translate_label": "Translate storyline for",
-    "form.translate_none": "— not a translation —"
+    "form.translate_none": "— not a translation —",
+    "lib.sort_lbl": "Sort by",
+    "lib.sort_edited": "Last edited",
+    "lib.sort_created": "Generated",
+    "lib.sort_tokens": "Token usage"
   },
   "nl": {
     "qc.editor.suggests_by": "⚑ {model} stelt voor:",

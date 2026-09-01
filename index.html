@@ -1076,7 +1076,22 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     </div>
     <div id="lang-progress-strip" style="margin-bottom:10px"></div>
     <div id="lib-filter" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px"></div>
-
+    <!-- item AR (v88_j, user request): "sort saved stories/lessons (for selected language
+         combinations) by total token usage, generation and last-edit date." Sits BELOW #lib-filter
+         so it reads as "of what the filters selected, in this order" — which is exactly what the
+         request says. -->
+    <div id="lib-sort-row" style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+      <span id="lib-sort-lbl" style="font-size:11px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.02em">Sort by</span>
+      <select id="lib-sort" onchange="onLibSortChange()"
+        style="font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 6px;background:var(--white);color:var(--text)">
+        <option value="edited">Last edited</option>
+        <option value="created">Generated</option>
+        <option value="tokens">Token usage</option>
+      </select>
+    </div>
+    <div id="saved-list">
+      <div class="lib-empty">No saved lessons yet — generate one above!</div>
+    </div>
   </div>
 </div>
 </div>
@@ -2804,7 +2819,10 @@ var APP = {
   lessonFormat: loadLessonFormat(),
   libFilter: 'all',
   libSrcFilter: (() => { try { return localStorage.getItem('imp3_libsrc') || 'all'; } catch(_) { return 'all'; } })(),   // v67.1: survives reload
-
+  // item AR (v88_j): the library sort key. Persisted like libSrcFilter — a sort the learner chose is
+  // a preference, not a per-visit decision. 'edited' is the default because it is what the library
+  // has always done, so an existing user sees no change until they ask for one.
+  libSort: (() => { try { return localStorage.getItem('imp3_libsort') || 'edited'; } catch(_) { return 'edited'; } })(),
   prevLangFilter: null,
   savedList: [],
   progress: loadProg(),
@@ -3105,7 +3123,13 @@ function applyUIStrings() {
   _setText('lesson-type-hdr-lbl', t('form.lesson_type_hdr'));
   _setText('continue-lbl', t('form.continue_from_lbl'));
   _setText('translate-lbl', t('form.translate_label'));   // item AX
-
+  // item AR (v88_j): the sort control. The <select>'s OPTIONS carry English defaults in the markup
+  // (they are what a first paint shows), so each is localised by value here rather than rebuilt —
+  // rebuilding the list would lose the current selection on every language change.
+  _setText('lib-sort-lbl', t('lib.sort_lbl'));
+  { const ss=document.getElementById('lib-sort');
+    const L={ edited:'lib.sort_edited', created:'lib.sort_created', tokens:'lib.sort_tokens' };
+    if(ss && ss.options) [].forEach.call(ss.options, o => { if(L[o.value]) o.textContent = t(L[o.value]); }); }
   _setText('show-other-langs-lbl', t('form.show_other_langs'));
   _setText('app-tagline', t('app.motto'));
   _setText('lib-title-lbl', '📚');
@@ -8414,6 +8438,15 @@ async function switchThreshold(pctStr){
 }
 
 // ── library ──
+// item AR (v88_j): the sort control's own onchange. Persists, then re-renders through the ONE list
+// builder — loadSavedList() re-reads and re-sorts, so there is no second ordering path to keep in
+// step with this one.
+function onLibSortChange(){
+  const v = document.getElementById('lib-sort')?.value || 'edited';
+  APP.libSort = ['edited','created','tokens'].includes(v) ? v : 'edited';
+  try{ localStorage.setItem('imp3_libsort', APP.libSort); }catch(_){}
+  loadSavedList();
+}
 function _populateLibSelects(saved){
   // Update main lang selects to mark active filter state
   const srcSel=document.getElementById('src-lang-select');
@@ -8559,6 +8592,10 @@ async function loadSavedList(){
   }
   // Build language filter UI — a single "🌐 All" toggle when libFilter is 'all',
   // otherwise show the active language name + an "All" escape
+  // item AR: reflect the PERSISTED key back into the control on every rebuild — the <select>'s own
+  // markup default is 'edited', so without this a reload would show "Last edited" while sorting by
+  // whatever was actually stored.
+  { const ss=document.getElementById('lib-sort'); if(ss && ss.value!==APP.libSort) ss.value=APP.libSort; }
   const filterEl=document.getElementById('lib-filter');
   const hasMultiLang=[...new Set(saved.map(s=>s.lang||'it'))].length>1;
   if(filterEl){
@@ -8643,7 +8680,18 @@ async function loadSavedList(){
   // decides WHETHER it is shown, never WHICH of its chapters are. Projecting the chain through the
   // filtered index instead broke a mixed-language storyline three ways at once — see below.
   const byIdAll = Object.fromEntries(saved.filter(l=>l.id).map(l => [l.id, l]));
-
+  // item AR (v88_j): a chain -> its storyline's OWN token spend. Keyed by the chapter-id list, the
+  // same identity the renderer below recovers a storyline by (`matchSl`), so the two agree by
+  // construction instead of by a second hash. `/api/storylines` returns whole objects, so
+  // `tokenUsage` is already here — only the TOPIC side needed a projection field.
+  const _chainKeyFor = chain => (chain || []).join('|');
+  const _slTokensById = {};
+  (APP.storylines || []).forEach(sl => {
+    const tu = sl && sl.tokenUsage;
+    if (!tu) return;
+    _slTokensById[_chainKeyFor(sl.chapters || [])] =
+      ((tu.totalPromptTokens | 0) + (tu.totalCompletionTokens | 0));
+  });
 
   let storylines, orphans;
   const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
@@ -8693,20 +8741,42 @@ async function loadSavedList(){
     orphans = filtered.filter(l => !inChain.has(l.id));
   }
 
-  // Sort storylines by source (home) language, then newest updatedAt within each.
+  // Sort storylines by source (home) language, then by the CHOSEN key within each.
   // v76_e: chain-scoped lookups resolve through byIdAll — a chain may legitimately contain a
   // chapter the current filter hides, and byId would read it as missing.
+  // item AR (v88_j): the source-language grouping is NOT part of the sort choice — it is what the
+  // flag headers below render, so breaking it would break the grouping, not just the order. The
+  // user's control picks the key WITHIN each language group.
   const newestOf = chain => chain.reduce((best, id) => {
     const dt = byIdAll[id]?.updatedAt || byIdAll[id]?.generatedAt || '';
     return dt > best ? dt : best;
   }, '');
+  const madeOf = chain => chain.reduce((best, id) => {
+    const dt = byIdAll[id]?.generatedAt || '';
+    return dt > best ? dt : best;
+  }, '');
+  // The storyline's OWN tokenUsage PLUS its chapters'. `addTokenUsage()` deliberately keeps
+  // storyline-level work (summary, storyboard, retitle, summary-QC) out of the chapters, so the two
+  // are genuinely different numbers and only their sum answers "what did this story cost".
+  const tokensOfTopic = t => (t && t.tokens) | 0;
+  const tokensOf = chain => {
+    const own = _slTokensById[_chainKeyFor(chain)] || 0;
+    return own + chain.reduce((n, id) => n + tokensOfTopic(byIdAll[id]), 0);
+  };
   const srcOf = chain => byIdAll[chain[0]]?.srcLang || 'en';
-  storylines.sort((a, b) =>
-    srcOf(a).localeCompare(srcOf(b)) || newestOf(b).localeCompare(newestOf(a)));
-  // Sort orphans by source language, then newest first within each.
+  const _key = APP.libSort || 'edited';
+  const chainCmp = (a, b) =>
+    _key === 'tokens'  ? (tokensOf(b) - tokensOf(a))
+  : _key === 'created' ? madeOf(b).localeCompare(madeOf(a))
+  :                      newestOf(b).localeCompare(newestOf(a));
+  storylines.sort((a, b) => srcOf(a).localeCompare(srcOf(b)) || chainCmp(a, b));
+  // Sort orphans by source language, then the same chosen key within each.
+  const orphanCmp = (a, b) =>
+    _key === 'tokens'  ? (tokensOfTopic(b) - tokensOfTopic(a))
+  : _key === 'created' ? (b.generatedAt||'').localeCompare(a.generatedAt||'')
+  :                      (b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||'');
   orphans.sort((a, b) =>
-    (a.srcLang||'en').localeCompare(b.srcLang||'en') ||
-    (b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||''));
+    (a.srcLang||'en').localeCompare(b.srcLang||'en') || orphanCmp(a, b));
 
   // When showing all languages, group by SOURCE (home) language with flag headers.
   // Collect source-language order from the filtered list.

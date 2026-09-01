@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_i';
+const APP_VERSION  = 'v88_j';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -7399,6 +7399,17 @@ http.createServer(async (req, res) => {
         // length, so live showed "Kälte und Paella · 3 lessons" where static showed 2 — the static
         // builder strips hidden ai_error_hunts at bake time, and the two counts disagreed on screen.
         lessonCount: (l.lessons || []).filter(L => L && !L._hidden && !L._aiExamples).length,
+        // item AR (v88_j): ONE pre-summed scalar for the library's token sort. ⚠️ It HAS to ride in
+        // this whitelist projection: `generationStats` is not otherwise sent, so a token sort built
+        // without this works in the STATIC build (which ships whole topics and has the field for
+        // free) and silently does nothing LIVE — the exact `v74_i`/`v79_n` failure the comments
+        // above and below this line both record. Summed here rather than shipping the whole
+        // `generationStats` block, which is far larger and whose other fields nothing in the list
+        // reads. Omitted when zero, like every other optional field here, so the payload is
+        // unchanged for a topic that never metered anything.
+        ...((() => { const g = l.generationStats || {};
+          const n = (g.totalPromptTokens | 0) + (g.totalCompletionTokens | 0);
+          return n > 0 ? { tokens: n } : {}; })()),
         // v79_n: the chapter speech locale MUST ride in this projection. It is a whitelist, and
         // `_speechLocaleFor` resolves from APP.savedList — omitting it would mean the setting
         // saves, survives a reload of lessons.json, and silently does nothing in live mode.

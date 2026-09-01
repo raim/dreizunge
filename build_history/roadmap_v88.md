@@ -391,7 +391,7 @@ requests and that the card-3 path issues exactly one. A source-level assertion a
 This is the most expensive of the four bugs: every occurrence spends a full multi-minute generation
 the user did not ask for, on text they had not finished reviewing. **Fix it first.**
 
-### AR. Sort the library's saved stories/lessons by token usage, generation date and last-edit date
+### ~~AR.~~ ✅ SHIPPED `v88_j` — sort the library by token usage, generation date and last-edit date
 
 **User's words**: "main page: sort saved stories/lessons (for selected language combinations) by
 total token usage, generation and last-edit date."
@@ -2399,6 +2399,62 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v88 LINE
+
+## ✅ v88_j — item AR: sort the library by last-edit date, generation date, or token usage
+
+**User request**: *"main page: sort saved stories/lessons (for selected language combinations) by
+total token usage, generation and last-edit date."* Four new `ui.json` keys.
+
+### ⚠️ The trap is not the sort
+
+`loadSavedList()` sorted hard-coded (source language, then newest `updatedAt`), and adding a control
+over that is small. The real hazard is that **`GET /api/lessons` is a WHITELIST projection** and does
+not carry `generationStats`. A token sort built without adding a field there **works in the STATIC
+build** — which ships whole topics and has the field for free — **and silently does nothing LIVE**.
+That is the exact `v74_i`/`v79_n` failure, recorded in a comment at that very site, twice. One
+pre-summed `tokens` scalar now rides in the projection (not the whole `generationStats` block, which
+is far larger and whose other fields nothing in the list reads), omitted when zero so an unmetered
+topic's payload is unchanged.
+
+`unit-library-sort` §5 guards this at the SERVER SOURCE, deliberately: it is a claim about another
+process's whitelist, and no client-side state can observe it.
+
+### The decision that had a real answer
+
+A storyline's "total token usage" is its **own `tokenUsage` PLUS its chapters'**. `addTokenUsage()`
+records a deliberate ruling that storyline-level work (summary, storyboard, retitle, summary-QC) is
+NOT spread across chapters — so the two are genuinely different numbers, and only their sum answers
+"what did this story cost". The fixture is built so this is observable rather than assumed: chapter
+**A** has the FEWEST chapter tokens (10) but the MOST in total (510, because its storyline carries
+500 of its own), so "sum both" and "chapters only" produce different orders. The mutation that zeroes
+the storyline bucket returns exactly the `BCA` the assertion message names.
+
+The chain→storyline lookup is keyed by the chapter-id list — the same identity the renderer below
+already recovers a storyline by (`matchSl`) — so the two agree by construction rather than via a
+second hash of a projection, which is the `v75_f`/`v76_e` failure.
+
+### Scope kept deliberately narrow
+
+- **The source-language grouping is NOT part of the sort choice.** It is what the flag headers
+  render, so folding it into the control would break the grouping, not just the order. The chosen key
+  sorts WITHIN each language group — which is also what "for selected language combinations" asks
+  for.
+- **`edited` is the default**, because it is what the library has always done: an existing user sees
+  no change until they ask for one.
+- **Persisted** (`imp3_libsort`), like `libSrcFilter` — a chosen sort is a preference, not a
+  per-visit decision — and reflected back into the `<select>` on every rebuild, since the markup's
+  own default is `edited` and a reload would otherwise show the wrong label while sorting correctly.
+- Storylines and orphans get the same key through parallel comparators; the ONE list builder does
+  both, so there is no second ordering path to keep in step.
+
+**Guard**: `unit-library-sort` (5 checks) — the three orders, the control reflecting the persisted
+key, and the projection. **Four mutations red.**
+
+⚠️ **A test-authoring note.** The first version of the order-reading helper scanned the markup for
+`tp_` ids and reported an EMPTY order against a perfectly good render, because `data-chain` carries
+topic NAMES, not ids. Keyed off `slgroup-sl_X` instead, and the helper now asserts it found all three
+— a short list means the render failed, not that the sort is wrong, and those two must not be
+confusable.
 
 ## ✅ v88_i — item AX: generate lessons from an existing storyline for a DIFFERENT source language
 
