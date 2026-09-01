@@ -310,6 +310,7 @@ if (!quick) {
   run('e2e: PLAN §7.0 CP5 — silent shadow-mode consumption of the curriculum plan (progress card unchanged)', 'node', [path.join(__dirname, 'unit-cp5-shadow.test.js')]);
   run('e2e: PLAN §7.0 CP1/CP2, item W step 2-3 — background analysis job + per-chapter cache + GET shadow', 'node', [path.join(__dirname, 'e2e-analysis.test.js')]);
   run('e2e: llm.js warmup() sends think:false on the wire (v83_r)', 'node', [path.join(__dirname, 'e2e-warmup-think.test.js')]);
+  run('e2e: stopping the server frees model VRAM (item AU shutdown half, v88_g)', 'node', [path.join(__dirname, 'e2e-shutdown-release.test.js')]);
   run('e2e: PWA install support -- manifest/sw/icon served, shell-only interception (v84_b)', 'node', [path.join(__dirname, 'e2e-pwa-install.test.js')]);
   run('e2e: PLAN §7.0 apply-cp-lessons.js — additive CP1-4 lesson writes, cross-chapter dedup', 'node', [path.join(__dirname, 'unit-apply-cp-lessons.test.js')]);
   // Moved inside the block in v70_b: these six spawn a real server + fake Ollama, but were

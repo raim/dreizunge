@@ -102,6 +102,11 @@ async function boot({ log = false, seed = null, extraEnv = null } = {}) {
     readChatLog: () => (logPath && fs.existsSync(logPath))
       ? fs.readFileSync(logPath, 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l))
       : [],
+    // v88_g (item AU): signal ONLY the server, leaving the fake Ollama alive and the chat log on
+    // disk — `stop()` below tears both down, which makes it useless for observing what the server
+    // does ON ITS WAY OUT. Additive; no existing caller is affected.
+    stopServer: (sig) => { try { srv.kill(sig || 'SIGTERM'); } catch (_) {} },
+    srvPid: srv.pid,
     stop: () => {
       try { srv.kill(); } catch (_) {}
       try { fake.child.kill(); } catch (_) {}

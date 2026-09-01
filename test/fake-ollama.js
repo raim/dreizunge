@@ -343,9 +343,15 @@ const srv = http.createServer(async (req, res) => {
     const _images = Array.isArray(_userMsg.images)
       ? _userMsg.images.map(s => ({ len: String(s || '').length, prefix: String(s || '').slice(0, 12) }))
       : null;
+    // v88_g (item AU): `model` and `keep_alive` are recorded so a test can tell a RELEASE
+    // (keep_alive:0 — llm.js's release(), i.e. `ollama stop`) from an ordinary generation
+    // (keep_alive:-1). Purely additive: every existing consumer reads named fields off `opts`,
+    // and the one deepStrictEqual in the suite is on a different object entirely.
     const _opts = { think: (typeof body.think === 'boolean' ? body.think : null),
                     num_ctx: (body.options && body.options.num_ctx) || null,
                     num_predict: (body.options && body.options.num_predict) || null,
+                    model: body.model || null,
+                    keep_alive: (body.keep_alive === undefined ? null : body.keep_alive),
                     images: _images };
     if (LOG) { try { fs.appendFileSync(LOG, JSON.stringify({ kind, sys: sys.slice(0, 8000), usr, opts: _opts }) + '\n'); } catch (_) {} }
     res.writeHead(200, { 'Content-Type': 'application/json' });

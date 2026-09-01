@@ -191,7 +191,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_f';
+const APP_VERSION  = 'v88_g';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -9653,6 +9653,63 @@ http.createServer(async (req, res) => {
     console.log(`  Local : http://localhost:${PORT}`);
     console.log(`  LAN   : http://${lanIp}:${PORT}\n`);
   });
+
+  // ── item AU, shutdown half (v88_g, user request) ───────────────────────────
+  // "we should free the occupied memory for unused models (ollama stop) … when server.js is
+  // stopped." Every /api/chat request llm.js sends carries `keep_alive: -1`, so a model loaded by
+  // this server stays in VRAM indefinitely — including after the server itself is gone. Until now
+  // there were ZERO `process.on()` handlers here, so Ctrl-C simply orphaned them.
+  //
+  // ⚠️ `release()` was ALREADY called once (inside generate(), to swap the story model out for a
+  // different lesson model) — but only when OLLAMA_LESSON_MODEL !== OLLAMA_MODEL, which is false in
+  // the default configuration, so it never fires for most users. That is a mid-generation
+  // optimisation, not a shutdown path; this is the shutdown path.
+  //
+  // Deliberately BEST-EFFORT and TIME-BOUNDED. Ctrl-C must stay responsive: a wedged or already-dead
+  // Ollama would otherwise hold the process open for `_releaseOllama`'s own 10s socket timeout per
+  // model. The whole sweep races a short deadline and the process exits either way — failing to free
+  // VRAM is a much smaller problem than a server that will not die.
+  process.on('SIGINT',  () => shutdown('SIGINT'));
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+}
+
+// Exported shape kept simple on purpose: one function, idempotent, safe to call with no backend.
+let _shuttingDown = false;
+async function shutdown(signal) {
+  if (_shuttingDown) {
+    // A second Ctrl-C means "I am not waiting" — honour it immediately rather than queueing
+    // another sweep behind the first.
+    console.log('\n  Second signal — exiting now.');
+    process.exit(130);
+  }
+  _shuttingDown = true;
+  console.log(`\n  ${signal} — releasing models…`);
+  try {
+    await Promise.race([releaseConfiguredModels(), new Promise(r => setTimeout(r, 6000))]);
+  } catch (e) { console.warn('  Release failed:', e.message); }
+  process.exit(0);
+}
+
+// The DISTINCT models this server may have loaded. De-duplicated because the defaults collapse —
+// translation/lesson both fall back to OLLAMA_MODEL — and releasing the same name five times would
+// just be four extra round trips against a backend that may already be gone.
+// Reads the CURRENT values, not the boot-time ones: /api/models can change them at runtime (see
+// the setters around line 336), and it is the models actually loaded that need freeing.
+function configuredModels() {
+  return [...new Set([OLLAMA_MODEL, OLLAMA_TRANSLATION_MODEL, OLLAMA_LESSON_MODEL,
+                      OLLAMA_QC_MODEL, OLLAMA_VISION_MODEL].filter(Boolean))];
+}
+async function releaseConfiguredModels() {
+  // `BACKEND === 'none'` means nothing was ever loaded through llm.js, so there is nothing to free
+  // and no reason to make five doomed HTTP calls on the way out. (llm.js's own release() is already
+  // a no-op for a non-ollama backend; this just avoids the round trips.)
+  if (BACKEND === 'none') return 0;
+  const models = configuredModels();
+  // In PARALLEL, not sequentially: five models × a 10s per-call socket timeout would blow the
+  // 6s deadline above on its own, and these are independent one-shot requests.
+  await Promise.all(models.map(m => releaseOllamaModel(m).catch(() => {})));
+  console.log(`  Released ${models.length} model(s) from VRAM.`);
+  return models.length;
 }
 
 boot().catch(e => { console.error('Fatal:', e.message); process.exit(1); });

@@ -661,6 +661,14 @@ Function`). Any helper such a function references must be `typeof`-guarded, or t
 `ReferenceError`. Follow the existing convention — degrade to the older behaviour, which is the
 safe direction.
 
+**⚠️ `env.stop()` is a TEARDOWN helper, not a SIGNALLING one (`v88_g`).** It kills the fake Ollama
+and deletes the chat log alongside the server, so a test that uses it to observe what the server does
+ON ITS WAY OUT has nowhere for those requests to land — `e2e-shutdown-release`'s first version failed
+with "released nothing" against a perfectly correct implementation. Use **`env.stopServer(sig)`**
+(added at `v88_g`) to signal only the server. `test/fake-ollama.js` also records `model` and
+`keep_alive` per request as of `v88_g`, which is what lets a test tell a RELEASE (`keep_alive: 0`,
+llm.js's `release()` / `ollama stop`) from an ordinary generation (`keep_alive: -1`).
+
 **⚠️ A SWEEP's regex defines what it actually covers — "every X" is a claim about the regex
 (`v88_f`).** `unit-ui-key-exists` says "every key the client asks `t()` for exists in ui.json", but
 its `CALL_RE` matched only a key that is the WHOLE argument (`t('a.b')`). A CONDITIONAL call —
@@ -1114,6 +1122,16 @@ already guarded by `unit-speech-locale.test.js` §11. So "mismatch" is exactly o
 | unique lesson ids within a topic | `_dedupeLessonIds(topics)`, called from `saveStore` — the ONE choke point all 23 write paths funnel through |
 | **`updatedAt` stamping** (`v82_h`) | `stampUpdated(saved)`, next to `saveStore` — the ONE choke point all nine stamp sites funnel through. Guarantees the timestamp strictly ADVANCES even when two saves for the same record land in the same wall-clock millisecond (bumps the previous value +1ms rather than reusing `Date.now()` verbatim) — genuinely possible under load, and the root cause of a flake reconfirmed three releases running before being traced here. Any NEW route that stamps a topic/lesson's `updatedAt` must call this, not `new Date().toISOString()` directly — `unit-stamp-updated.test.js` asserts zero raw stamp sites remain |
 | the vocab article contradiction | `prompts.json` `vocab.system` — the per-side clause was REMOVED and a worked counter-example added (`v80_j`, rule 31). **Unverified by design**: whether the model obeys needs regeneration across MANY lessons and a re-run of `probe_article_symmetry_v80j.js` against its 1.0%/bimodal baseline |
+
+**Model lifetime and VRAM**
+
+| what | where |
+|---|---|
+| models stay resident by default | `llm.js` sends `keep_alive: -1` on every `/api/chat`, so a model this server loads stays in VRAM indefinitely — including after the process exits |
+| the release primitive | `llm.js`'s `release(model)` — a `keep_alive: 0` call, i.e. `ollama stop`. A no-op for a non-ollama backend |
+| ⚠️ the MID-GENERATION release (pre-existing, easy to miss) | `server.js:5629`, inside `generate()`: frees the story model before loading a DIFFERENT lesson model. **Guarded by `OLLAMA_LESSON_MODEL !== OLLAMA_MODEL`, which is FALSE in the default configuration** (both default to `OLLAMA_MODEL`), so it never fires for most users. A `v88_g` write-up wrongly recorded this as "`release()` is never called" precisely because of that — measure the guard, not just the call site |
+| the SHUTDOWN release (item AU, `v88_g`) | `process.on('SIGINT'\|'SIGTERM')` → `shutdown(sig)` → `releaseConfiguredModels()`. De-duplicated (the five role models collapse by default), reads CURRENT values (`/api/models` changes them at runtime), runs in PARALLEL (`_releaseOllama` has its own 10s socket timeout), races a **6s deadline and exits either way** — Ctrl-C must stay responsive, and failing to free VRAM beats a server that will not die. A SECOND signal exits at once (130). `BACKEND === 'none'` returns early. Guard: `e2e-shutdown-release.test.js`, THREE mutations red |
+| still OPEN | per-job cancel (`POST /api/jobs/cancel` calls `job.abort()` but **nothing sets `job.abort`**; the transport CAN be aborted — `_callOllama` already `req.destroy()`s on timeout — but threading a handle touches every generator) and IDLE release (needs a policy decision) |
 
 **Speech**
 

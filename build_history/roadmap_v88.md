@@ -64,6 +64,12 @@ block below — read the **"⚠️ How the rules are NUMBERED"** note before cit
    consecutive runs, not one. **And a fixture must be selected by the PROPERTY the section asserts**,
    not by a weaker proxy for it — three separate occurrences now (`v81_d`, `v81_e`, `v87_o` twice).
 7. A version bump to a new BASE needs its own roadmap. **This is that roadmap for `v88`.**
+7b. **⚠️ EVERY release needs `node build-static.js`, including a SERVER-ONLY one (`v88_g`).**
+   `APP_VERSION` lives in `server.js` but is BAKED into `docs/index.html`, so a release that touches
+   no client file still leaves the static build stale. The habit "no client change → no rebuild" is
+   what fails here, and `unit-static-freshness` does NOT catch it — it compares the seven baked
+   INPUTS, and `server.js` is not one of them. `unit-version-derivation` is the guard that does.
+   Just run the rebuild at every release and stop reasoning about whether it is needed.
 8. **Never put emoji in a Python string literal** (rule 25) — write emoji-bearing blocks via a `cat`
    heredoc and splice the file in. And **check what a mechanical rewrite DID**, not just that it ran
    (`v80_d` mangled six sentences including a heading).
@@ -461,7 +467,7 @@ Two ways, and the cheaper one is also the better precedent:
 Recommendation: synthetic registry now (small, no server change, closes the report and three latent
 siblings); revisit if `AU` converts these routes anyway.
 
-### AU. Per-job cancellation, and freeing model VRAM when idle and at shutdown
+### AU. Per-job cancellation, and freeing model VRAM when idle — ⚠️ the SHUTDOWN third SHIPPED at `v88_g`; the other two remain open
 
 **User's words**: "It seems difficult to cancel individual ollama jobs? If it IS possible, it would be
 great to have individual cancel buttons in the new 'running jobs' popover. If we can only cancel by
@@ -481,11 +487,18 @@ button there. Also, we should free the occupied memory for unused models (`ollam
    job set `job.abort`. **The cost is the threading, not the mechanism**, and it touches every
    generator. Do the popover button for ONE job kind first and prove it end to end (server log
    shows generation stopping, `ollama ps` frees) before widening.
-3. **VRAM is never freed, and half the machinery is already written.** `llm.js` sends
-   `keep_alive: -1` on every `/api/chat` — models stay resident indefinitely. `llm.js` **exports
-   `release(model)`** (a `keep_alive: 0` call, i.e. `ollama stop`) and **`server.js` never calls
-   it**. There is also **no `SIGINT`/`SIGTERM` handler in `server.js` at all**, so Ctrl-C leaves
-   every model resident. The shutdown half is small and self-contained: a signal handler that
+3. **VRAM is never freed at shutdown, and half the machinery is already written.** `llm.js` sends
+   `keep_alive: -1` on every `/api/chat` — models stay resident indefinitely. `llm.js` exports
+   `release(model)` (a `keep_alive: 0` call, i.e. `ollama stop`).
+   **⚠️ CORRECTION, measured at `v88_g` — an earlier draft of this item said "`server.js` never
+   calls it", and that is WRONG.** It is called, at `server.js:5629`, inside `generate()` — but only
+   to free the story model before loading a DIFFERENT lesson model, and only when
+   `OLLAMA_LESSON_MODEL !== OLLAMA_MODEL`, which is FALSE in the default configuration (both default
+   to `OLLAMA_MODEL`). So in the default setup it never fires, which is how the wrong claim survived
+   a grep. **What genuinely does not exist is a SHUTDOWN release**: there are ZERO `process.on()`
+   handlers in `server.js` or `llm.js` (verified by grepping for `process.on(`/`SIGINT`/`SIGTERM`,
+   not inferred), so Ctrl-C leaves every model resident. This is rule 35 landing on this session's
+   own write-up: a document's factual claims are claims until measured, including ones I wrote. The shutdown half is small and self-contained: a signal handler that
    `release()`s the distinct configured models (story / lessons / translation / QC / vision) and
    exits. The idle half needs a policy decision — after how long, and does an idle release make the
    next generation pay a reload it did not before?
@@ -2379,6 +2392,71 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 
 # ✅ SHIPPED IN THE v88 LINE
+
+## ✅ v88_g — item AU, shutdown half: stopping the server frees model VRAM
+
+**User request** (one third of item AU): *"we should free the occupied memory for unused models
+(`ollama stop`) and when `server.js` is stopped."* The shutdown third only — per-job cancel and idle
+release stay open, for the reasons in item AU's own entry. No `ui.json` keys.
+
+### ⚠️ A correction to this session's own write-up, made before any code
+
+Item AU's entry said **"`server.js` never calls `release()`"**. **That is wrong**, and it was written
+by this session. `releaseOllamaModel` IS called, at `server.js:5629`, inside `generate()` — to free
+the story model before loading a DIFFERENT lesson model. What made the false claim survivable is that
+the call is guarded by `OLLAMA_LESSON_MODEL !== OLLAMA_MODEL`, which is **false in the default
+configuration** (both default to `OLLAMA_MODEL`), so it never fires for most users and never appears
+in a casual log. The original grep that produced the claim had filtered too aggressively.
+
+**What genuinely did not exist** — verified by grepping `process.on(` / `SIGINT` / `SIGTERM` across
+`server.js` and `llm.js`, and finding **zero matches**, rather than by inference — is a SHUTDOWN
+release. Every `/api/chat` request llm.js sends carries `keep_alive: -1`, so a model this server
+loads stays in VRAM indefinitely, including after the process is gone.
+
+Rule 35 landing on this line's own documents: **a previous session's write-up is a claim, not a
+measurement — including one I wrote an hour earlier.** Both the roadmap entry and the session prompt
+were corrected in place before the fix was designed, because the wrong sentence would otherwise have
+justified a wrong design (deleting a working mid-generation optimisation as "dead code").
+
+### The fix
+
+`process.on('SIGINT'|'SIGTERM')` → `shutdown(signal)` → `releaseConfiguredModels()` → exit.
+
+- **De-duplicated.** The five role models collapse by default (translation and lesson both fall back
+  to `OLLAMA_MODEL`), and releasing one name five times is four doomed round trips against a backend
+  that may already be going away.
+- **Reads CURRENT values, not boot-time ones** — `/api/models` can change them at runtime, and it is
+  the models actually loaded that need freeing.
+- **In PARALLEL.** `_releaseOllama` has its own 10s socket timeout, so five sequential calls would
+  blow the deadline below on their own; these are independent one-shot requests.
+- **Time-bounded, and exits either way.** The sweep races a 6s deadline. **Ctrl-C must stay
+  responsive**: a wedged or already-dead Ollama would otherwise hold the process open for 10s per
+  model. Failing to free VRAM is a far smaller problem than a server that will not die. A SECOND
+  signal exits immediately (code 130) rather than queueing another sweep — that is what a second
+  Ctrl-C means.
+- **`BACKEND === 'none'` returns early**: nothing was ever loaded through `llm.js`, so there is
+  nothing to free and no reason to make five doomed calls on the way out.
+
+### The guard, and two harness changes it needed
+
+`e2e-shutdown-release.test.js` boots a real server against the fake Ollama with **five distinct role
+models, one of them deliberately duplicated**, and reads what actually went over the wire.
+
+- **`test/fake-ollama.js` now logs `model` and `keep_alive`.** `keep_alive` IS the discriminator: a
+  release sends `0` ("unload now"), an ordinary generation sends `-1`. Without it a release is
+  indistinguishable from any other request. Purely additive — every existing consumer reads named
+  fields off `opts`.
+- **`test/lib.js` gained `stopServer(sig)`.** The first version of this test used `env.stop()`, which
+  also kills the fake Ollama and deletes the chat log — so the very requests it exists to observe had
+  nowhere to land, and it failed with "released nothing" against a CORRECT implementation. A teardown
+  helper is not a signalling helper.
+
+§1 is the non-vacuity partner: a running server must release NOTHING. Without it a test that only
+counts releases at the end would pass on a server that releases constantly — a worse bug than the one
+being fixed.
+
+**Three mutations red**: removing the signal handlers (the pre-`v88_g` state); removing the
+de-duplication (the doubled model freed twice); releasing only the story model (an incomplete sweep).
 
 ## ✅ v88_f — item AP: the `comic` branch of `ui.json` is now the `image` branch
 

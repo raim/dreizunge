@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_f`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_g`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -20,21 +20,23 @@ work — it generated four chapters during the `v87` line, and twice that broke 
 restarting anything; a SERVER edit is not — start your own instance on another port to verify, and
 **kill it by PID** (`pkill -f "node server.js"` matches theirs too).
 
-**What shipped at this cut**: `v88_f` — **item AP**, the `comic`→`image` rename of `ui.json`.
-The measurement made it far cheaper than the plan assumed: 24 keys, but only THREE whose ENGLISH TEXT
-contained "comic" — the rest carried it in the KEY NAME only, and renaming a key preserves its
-translations. **Six English strings changed** in total (three losing the word, `form.image_detect`
-GAINING it per the user's own carve-out — "detect comic panels" — and two `storyline.thumb_*` keys
-found by searching VALUES rather than key names). Stale non-`en` values deleted per the user's ruling
-so `translate-ui.js` refills them: 30 cells. **The static markup's English DEFAULTS had to be updated
-too** (`#use-comic-lbl`, `#comic-help`, `#comic-choose-lbl`, `#comic-detect-lbl`) — no guard covers
-those. Element ids, function names and CSS classes are UNCHANGED, deliberately.
-⚠️ **The rename exposed a live hole in `unit-ui-key-exists`**: `CALL_RE` only matched a key that is
-the WHOLE argument, so a CONDITIONAL call — `t(cond ? 'a.b' : 'c.d')` — was never checked. Six such
-sites, twelve keys, including two this release edited. Closed with a second pass (sweep 606 → 616)
-carrying its own non-vacuity assertion. **Found by mutation-testing the feature, not by reading the
-guard.**
-Full write-up: `roadmap_v88.md`'s own `v88_f` entry; `v88_e`…`v88_a` are below it.
+**What shipped at this cut**: `v88_g` — **item AU's SHUTDOWN third**. `SIGINT`/`SIGTERM` now release
+every DISTINCT configured model from VRAM before exiting (de-duplicated, reading CURRENT model values
+since `/api/models` can change them at runtime, in parallel, racing a 6s deadline and exiting either
+way — Ctrl-C must stay responsive; a second signal exits at once). Per-job cancel and idle release
+remain OPEN.
+⚠️ **A correction to this session's own write-up, made before any code.** Item AU's entry said
+"`server.js` never calls `release()`" — **wrong**. It is called at `server.js:5629` inside
+`generate()`, to swap the story model out for a different lesson model; the claim survived because
+that call is guarded by `OLLAMA_LESSON_MODEL !== OLLAMA_MODEL`, FALSE by default, so it never fires
+for most users. What genuinely did not exist (verified by grepping `process.on(`/`SIGINT`/`SIGTERM`
+and finding ZERO matches) was a SHUTDOWN release. Both documents were corrected in place first,
+because the wrong sentence would have justified deleting a working optimisation as dead code.
+Two harness changes were needed: `fake-ollama.js` now logs `model`+`keep_alive` (the discriminator —
+a release sends 0, a generation sends -1), and `lib.js` gained `stopServer(sig)`, because `stop()`
+also kills the fake and deletes the log, so the first version of the test failed against a CORRECT
+implementation.
+Full write-up: `roadmap_v88.md`'s own `v88_g` entry; `v88_f`…`v88_a` are below it.
 
 **🆕 NOTHING IS MID-FLIGHT, and the queue is explicit.** The `v87` line closed six items (R, U, Z,
 AC, AK, AL) plus the three storyline asks; they are recorded where they shipped and are NOT in the
@@ -77,8 +79,13 @@ counter-propose page IMAGES rather than a pdf.js viewer).
 
 ## Establish a green baseline before changing anything
 
+**⚠️ Run `node build-static.js` at EVERY release, even a server-only one.** `APP_VERSION` lives in
+`server.js` and is BAKED into `docs/index.html`, so "no client change → no rebuild" is wrong and cost
+a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares the seven baked
+inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
+
 ```
-node test/run.js                          → expect 319 checks
+node test/run.js                          → expect 320 checks
 node test/run.js --quick                  → expect 267
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
@@ -97,7 +104,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **340 topics, 98 storylines, 33 languages, 735 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_f'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_g'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -219,26 +226,27 @@ measures zero effect, reconsider the diagnosis before trying a third wording.**
 
 **🆕 FIRST: the thirteen TODOs handed over after `v88_a`** — items `AM`…`AX` in `roadmap_v88.md`,
 with their own suggested order. **`v88_b` shipped row 1 (`AW` + `AT`), `v88_c` row 2 (`AQ` + `AM`),
-`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`.** The rest of that table:
+`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third.** The rest of that table:
 
-- **➡️ NEXT — `v88_g` — `AU`'s SHUTDOWN half.** Small, self-contained, no decision needed, and half
-  the machinery already exists and is unused: `llm.js` EXPORTS `release(model)` (a `keep_alive: 0`
-  call, i.e. `ollama stop`) and **`server.js` has never called it**, while every `/api/chat` request
-  sends `keep_alive: -1` so models stay resident indefinitely. There is also **no `SIGINT`/`SIGTERM`
-  handler in `server.js` at all**, so Ctrl-C leaves every model in VRAM. Add one that `release()`s
-  the distinct configured models (story / lessons / translation / QC / vision) and exits.
-  The other two thirds of item `AU` are NOT this release: **per-job cancel** is real plumbing
-  (`POST /api/jobs/cancel` already calls `job.abort()` but **nothing ever sets `job.abort`** — the
-  transport CAN be aborted, `_callOllama` already `req.destroy()`s on timeout, but threading a
-  handle touches every generator, so prove ONE job kind end to end first), and **idle release**
-  needs a policy decision (after how long, and does the next generation pay a reload it did not
-  before?).
+- **➡️ NEXT — `v88_h` — `AX`**: generate lessons from an EXISTING storyline for a DIFFERENT source
+  language. The highest-value new feature left and much cheaper than it looks: `POST
+  /api/generate-book` already runs the whole downstream pipeline (translation, chapter titles,
+  lessons, arc, storyboard, analysis) from bare `chunks`, and BOTH the PDF and image paths are
+  nothing but "build chunks, POST". A fourth input mode whose chunks are an existing storyline's
+  chapter `story` fields is the same shape, and the target text is correct by construction.
+  New work: one server-side resolution (storyline id → chapters in order → chunks), one dropdown on
+  card 1 beside `#continue-select` (which already lists the right things and is read by all modes
+  since item AL), and the input-mode plumbing in `_genInputMode()`/`_applyLessonCardUI()`/
+  `doGenerate()`. **Three decisions to settle first**, none large: is the new storyline LINKED to
+  its source (there is no "translation of" relation today)? Copy `comicPanels` across (recommend
+  yes — the images belong to the text; interacts with item `A`)? And refuse the degenerate case
+  (same `srcLang` as the source, which would silently duplicate a whole storyline for nothing).
 - Then `AX` (generate lessons from an existing storyline for a DIFFERENT source language — the
   highest-value new feature left, and it reuses `/api/generate-book`'s existing chunks pipeline
   wholesale) and `AR` (library sorting — the trap is the `GET /api/lessons` WHITELIST projection,
   not the sort). **Item `V` is fully specified** and shares `AM`'s whole-image-panel act.
 - Then `AU`'s shutdown half (small, no decision: `SIGINT`/`SIGTERM` → `release()` the configured
-  models; `llm.js` already EXPORTS `release()` and `server.js` has never called it, and there is no
+  models; `llm.js` already exports `release()` and there is no
   signal handler at all), `AX`, `AR`. **Item `V` is fully specified** by the user's ruling and shares
   `AM`'s own whole-image-panel act, so it slots in beside the image work.
 - Then `AP` (the `comic`→`image` rename — deliberately after the four image releases), `AU`'s
