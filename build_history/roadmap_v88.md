@@ -2424,6 +2424,63 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_n — item AR follow-up: a reverse-sort button, and a usability finding about the grouping
+
+**User request**: *"please add a reverse sorting button."* One new `ui.json` key
+(`lib.sort_reverse`, the button's tooltip).
+
+### ⚠️ The report that came first, and what it actually was
+
+The same message opened with *"selecting 'tokens', 'last edited' or 'generated' doesn't really change
+the list"* — then the user corrected themselves: *"sorry it works, i didn't see it in the all
+languages settings."* **Both readings were right, and the measurement explains why.**
+
+Run against the REAL corpus (341 topics, 98 storylines), the three keys produce genuinely different
+orders — **63 to 78 of 98 positions differ** between any pair. The sort was never broken. But the
+PRIMARY key is source language (`srcOf(a).localeCompare(srcOf(b))`), because that is what the flag
+headers group by, and the leading language groups are tiny (`ar` 2, `es` 2, `fr` 2). So in the
+all-languages view the first several cards are **identical across all three keys** — `edited` and
+`created` share their first five — and the top of the page, which is all you see without scrolling,
+barely moves.
+
+**This is a real usability finding, not a bug**: a global metric like token usage is being asked
+"which stories cost the most", and the answer can sit anywhere down the page behind the language
+grouping. Recorded here rather than acted on, because changing the grouping is a product decision the
+user has not been asked. **If it comes up: the obvious options are to drop the language headers while
+a non-default sort is active, or to sort globally and keep the per-card language badge (which already
+exists) as the only language cue.**
+
+### The button
+
+`APP.libSortDir` (`'desc'` default — every existing order was already newest/highest first, so an
+existing user sees no change until they press it), persisted like `libSort`, with the arrow reflecting
+the state on every rebuild for the same reason the select does: the markup default is `▼`, so a
+reload would otherwise show it while sorting ascending.
+
+**⚠️ The direction flips the chosen KEY only, never the source-language grouping.** Reversing the
+grouping would reorder the flag-headed GROUPS rather than the list the learner asked to sort — a
+different and unrequested change. `_dir` multiplies `chainCmp`/`orphanCmp` and is deliberately kept
+out of the `srcOf` comparison.
+
+### ⚠️ Two mutations stayed GREEN, and the fixture was why
+
+- **Applying the direction to the grouping too** — undetected, because the fixture had all three
+  storylines in ONE source-language pair, so the grouping had nothing to reorder. A fourth storyline
+  in a different source language (`sl_D`, `en`) fixes it: `de` sorts before `en`, so it must stay
+  LAST in both directions, and reversing the grouping moves it to the front. The mutation now reports
+  `DCBA`.
+- **The toggle not flipping** — simply untested; `onLibSortDirToggle` had no assertion at all. Now
+  pressed twice and checked both ways.
+
+Both are the same lesson the `v88_l` idle guard taught two releases earlier: **when a mutation stays
+green, the fixture is usually what is failing to cover it, not the assertion wording.** Adding the
+fourth card also required widening the order-reading regex, which was `[ABC]` — it reported three
+cards against a four-card render, the same "the extractor, not the feature" trap this file already
+carried a comment about.
+
+**Guard**: `unit-library-sort` grows to 9 checks. **Four mutations red**, including the two that were
+green before the fixture was fixed.
+
 ## ✅ v88_m — every labelled job is actually cancellable (fixing what `v88_k` half-shipped)
 
 **User report**: *"there is no cancel button yet in the jobpopover."*

@@ -35,19 +35,25 @@ const SAVED = [
   { id: 'tp_A', topic: 'A', lang: 'nl', srcLang: 'de', tokens: 10,  generatedAt: '2026-01-03', updatedAt: '2026-01-01', lessons: [] },
   { id: 'tp_B', topic: 'B', lang: 'nl', srcLang: 'de', tokens: 200, generatedAt: '2026-01-01', updatedAt: '2026-01-03', lessons: [] },
   { id: 'tp_C', topic: 'C', lang: 'nl', srcLang: 'de', tokens: 50,  generatedAt: '2026-01-02', updatedAt: '2026-01-02', lessons: [] },
+  // v88_n: a DIFFERENT source language. Without it the source-language grouping has nothing to
+  // reorder, and the assertion that reversing leaves the GROUPS alone passes vacuously — which is
+  // exactly what the first version of this fixture did (mutation M2 stayed green).
+  { id: 'tp_D', topic: 'D', lang: 'nl', srcLang: 'en', tokens: 999, generatedAt: '2026-01-09', updatedAt: '2026-01-09', lessons: [] },
 ];
 const SLS = [
   { id: 'sl_A', title: 'A', chapters: ['tp_A'], tokenUsage: { totalPromptTokens: 300, totalCompletionTokens: 200 } },
   { id: 'sl_B', title: 'B', chapters: ['tp_B'] },
   { id: 'sl_C', title: 'C', chapters: ['tp_C'] },
+  { id: 'sl_D', title: 'D', chapters: ['tp_D'] },
 ];
 
-function client(sortKey) {
+function client(sortKey, dir) {
   const C = loadClient({ quiet: true });
   C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)};
     APP.info = { backend:'ollama', canGenerate:true };
     APP.libFilter='all'; APP.libSrcFilter='all'; APP.libTagFilter=null;
     APP.libSort = ${JSON.stringify(sortKey)};
+    APP.libSortDir = ${JSON.stringify(dir || 'desc')};
     APP.progress = { completed:{}, solved:{}, chapterDone:{}, learned:{}, storyShown:{} };
     fetch = function(url){
       var u=String(url);
@@ -62,15 +68,16 @@ function client(sortKey) {
 // not the topic id: `data-chain` carries topic NAMES, not ids, so a `tp_` scan finds nothing and
 // would report an empty order against a perfectly good render — which is exactly what the first
 // version of this helper did.
-async function order(sortKey) {
-  const C = client(sortKey);
+const order = sortKey => orderDir(sortKey, 'desc');
+async function orderDir(sortKey, dir) {
+  const C = client(sortKey, dir);
   C.run(`loadSavedList(); true;`, 'render');
   await settle(60);
   const html = C.run(`document.getElementById('saved-list').innerHTML`);
   const seen = [];
-  for (const m of html.matchAll(/slgroup-sl_([ABC])/g)) if (!seen.includes(m[1])) seen.push(m[1]);
-  assert.strictEqual(seen.length, 3,
-    'all three storylines rendered (got ' + seen.length + ') — a short list here means the render '
+  for (const m of html.matchAll(/slgroup-sl_([ABCD])/g)) if (!seen.includes(m[1])) seen.push(m[1]);
+  assert.strictEqual(seen.length, 4,
+    'all four storylines rendered (got ' + seen.length + ') — a short list here means the render '
     + 'failed, not that the sort is wrong');
   return seen.join('');
 }
@@ -82,14 +89,14 @@ async function order(sortKey) {
     // ── 1. Last edited (the pre-existing default — an existing user sees no change) ────────────
     {
       const got = await order('edited');
-      assert.strictEqual(got, 'BCA', 'newest updatedAt first (got ' + got + ')');
+      assert.strictEqual(got.slice(0,3), 'BCA', 'newest updatedAt first within the group (got ' + got + ')');
       console.log('  sort by last edited: OK');
     }
 
     // ── 2. Generated ──────────────────────────────────────────────────────────────────────────
     {
       const got = await order('created');
-      assert.strictEqual(got, 'ACB', 'newest generatedAt first (got ' + got + ')');
+      assert.strictEqual(got.slice(0,3), 'ACB', 'newest generatedAt first within the group (got ' + got + ')');
       console.log('  sort by generation date: OK');
     }
 
@@ -99,7 +106,7 @@ async function order(sortKey) {
     // what distinguishes "sum both" from "chapters only".
     {
       const got = await order('tokens');
-      assert.strictEqual(got, 'ABC',
+      assert.strictEqual(got.slice(0,3), 'ABC',
         'highest TOTAL first, storyline bucket included (got ' + got + '; "BCA" would mean the '
         + 'storyline\'s own tokenUsage was ignored)');
       console.log('  sort by token usage, storyline bucket included: OK');
@@ -115,6 +122,61 @@ async function order(sortKey) {
       assert.strictEqual(C.run(`document.getElementById('lib-sort').value`), 'tokens',
         'the select shows the key actually in use');
       console.log('  the control reflects the persisted key: OK');
+    }
+
+    // ── 4b. item AR follow-up (v88_n): the REVERSE button flips the chosen key ────────────────
+    // The direction applies to the KEY only, never to the source-language grouping — reversing that
+    // would reorder the flag-headed GROUPS rather than the list the learner asked to sort.
+    {
+      const asc  = await orderDir('tokens', 'asc');
+      const desc = await orderDir('tokens', 'desc');
+      assert.strictEqual(desc.slice(0,3), 'ABC', 'descending is the default order (highest total first)');
+      assert.strictEqual(asc.slice(0,3), 'CBA', 'ascending is its exact reverse (got ' + asc + ')');
+
+      const ascE = await orderDir('edited', 'asc');
+      assert.strictEqual(ascE.slice(0,3), 'ACB',
+        'the direction applies to whichever key is chosen, not just tokens (got ' + ascE + ')');
+      console.log('  the reverse button flips the chosen key, whichever it is: OK');
+    }
+
+    // ── 4b-ii. Reversing does NOT reorder the language GROUPS ────────────────────────────────
+    // `sl_D` is the only en-source storyline, and `de` sorts before `en`, so it must stay LAST in
+    // both directions. Reversing the grouping instead of the key would move it to the front —
+    // and would reorder the flag headers, which is not what the learner asked to sort.
+    {
+      const desc = await orderDir('tokens', 'desc');
+      const asc  = await orderDir('tokens', 'asc');
+      assert.strictEqual(desc[3], 'D', 'the other-language storyline sits last, descending');
+      assert.strictEqual(asc[3], 'D',
+        'and STILL last ascending — the direction flips the key, never the grouping (got ' + asc + ')');
+      console.log('  reversing flips the key without reordering the language groups: OK');
+    }
+
+    // ── 4d. The toggle actually flips, and persists ──────────────────────────────────────────
+    {
+      const C = client('tokens', 'desc');
+      C.run(`loadSavedList = function(){}; onLibSortDirToggle(); true;`, 'flip1');
+      assert.strictEqual(C.run(`APP.libSortDir`), 'asc', 'one press goes ascending');
+      C.run(`onLibSortDirToggle(); true;`, 'flip2');
+      assert.strictEqual(C.run(`APP.libSortDir`), 'desc', 'a second press goes back');
+      console.log('  the toggle flips the direction both ways: OK');
+    }
+
+    // ── 4c. The arrow reflects the persisted direction ────────────────────────────────────────
+    // Same reason the select does: the markup default is ▼, so a reload would show it while
+    // sorting ascending — a silent lie about what the learner is looking at.
+    {
+      const C = client('tokens', 'asc');
+      C.run(`loadSavedList(); true;`, 'r');
+      await settle(60);
+      assert.strictEqual(C.run(`document.getElementById('lib-sort-dir').textContent`), '▲',
+        'the arrow shows ascending when that is what is in use');
+      const C2 = client('tokens', 'desc');
+      C2.run(`loadSavedList(); true;`, 'r');
+      await settle(60);
+      assert.strictEqual(C2.run(`document.getElementById('lib-sort-dir').textContent`), '▼',
+        'and descending otherwise (non-vacuity: the two differ)');
+      console.log('  the arrow reflects the persisted direction: OK');
     }
 
     // ── 5. ⚠️ The SERVER projection carries the token scalar ──────────────────────────────────

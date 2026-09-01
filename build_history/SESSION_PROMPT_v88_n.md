@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_m`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_n`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -20,20 +20,21 @@ work — it generated four chapters during the `v87` line, and twice that broke 
 restarting anything; a SERVER edit is not — start your own instance on another port to verify, and
 **kill it by PID** (`pkill -f "node server.js"` matches theirs too).
 
-**What shipped at this cut**: `v88_m` — a user report (*"there is no cancel button yet in the
-jobpopover"*) whose FIRST half needed no code: the button was there, their TAB was stale.
-`server.js` serves `index.html` per request so a client edit is live, but an open tab keeps its old
-JS; `curl`ing the served HTML confirmed the button, and `sw.js` is network-first so nothing cached it.
-⚠️ **The second half was a real defect `v88_k` shipped.** Their one running job (add-lesson) was among
-the FIVE labelled job kinds `v88_k` left unwrapped while shipping a cancel button for ALL EIGHT — so
-the button would have flipped a status, left the model running, and toasted "already finished".
-`v88_k`'s entry called that "not a regression"; **it was one**, and it violated the very principle
-that entry stated ("a dead cancel button is worse than none"). All eight kinds are now wrapped, each
-outer catch routed through `jobFailOrCancel`.
-The guard is a SET-level source check — no single running job can observe a claim about all of them,
-which is exactly why `v88_k`'s per-job e2e passed while five kinds were unwired. ⚠️ Bounded by the
-NEXT `newJob()`, not a fixed span: add-lesson's launch is 69 lines below its own `newJob()`.
-Full write-up: `roadmap_v88.md`'s own `v88_m` entry.
+**What shipped at this cut**: `v88_n` — a **reverse-sort button** for the library (item AR
+follow-up), one new `ui.json` key. The direction flips the chosen KEY only, never the
+source-language grouping — reversing that would reorder the flag-headed GROUPS rather than the list.
+⚠️ **A usability finding worth knowing before touching the library again.** The same user message
+first reported the sort "doesn't really change the list", then corrected itself ("i didn't see it in
+the all languages settings"). Measured against the REAL corpus: the three keys differ in **63–78 of
+98 positions** — the sort was never broken. But source language is the PRIMARY key (the flag headers
+group by it) and the leading groups are tiny (`ar` 2, `es` 2, `fr` 2), so the first several cards are
+identical across all three keys and the visible top barely moves. **Not acted on — changing the
+grouping is a product decision nobody has been asked.** Options if it returns are in the `v88_n`
+entry.
+⚠️ **TWO mutations stayed GREEN because the FIXTURE could not express them** (one language pair, so
+the grouping had nothing to reorder; and the toggle had no assertion at all). Same lesson as `v88_l`:
+when a mutation stays green, suspect the fixture before the assertion wording.
+Full write-up: `roadmap_v88.md`'s own `v88_n` entry.
 
 **🆕 NOTHING IS MID-FLIGHT, and the queue is explicit.** The `v87` line closed six items (R, U, Z,
 AC, AK, AL) plus the three storyline asks; they are recorded where they shipped and are NOT in the
@@ -107,8 +108,8 @@ DETERMINISTIC, so not flakiness — because the user's server had written a new 
 fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don't run the full and
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **341 topics, 98 storylines, 33 languages, 744 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_m'`.
+Corpus at this cut: **341 topics, 98 storylines, 33 languages, 745 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_n'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -230,7 +231,7 @@ measures zero effect, reconsider the diagnosis before trying a third wording.**
 
 **🆕 FIRST: the thirteen TODOs handed over after `v88_a`** — items `AM`…`AX` in `roadmap_v88.md`,
 with their own suggested order. **`v88_b` shipped row 1 (`AW` + `AT`), `v88_c` row 2 (`AQ` + `AM`),
-`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third; `v88_h` did the flake audit; `v88_i` shipped `AX`; `v88_j` shipped `AR`; `v88_k` shipped `AU`'s cancel third; `v88_l` completed `AU` with idle release; `v88_m` wired ALL job kinds for cancel.** The rest of that table:
+`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third; `v88_h` did the flake audit; `v88_i` shipped `AX`; `v88_j` shipped `AR`; `v88_k` shipped `AU`'s cancel third; `v88_l` completed `AU` with idle release; `v88_m` wired ALL job kinds for cancel; `v88_n` added reverse sort.** The rest of that table:
 
 **🆕 THE THIRTEEN TODOs ARE DONE.** Every item from the `v88_a` handover has shipped, plus two live
 bug reports (`AY`/`AZ`) and the flake audit. What remains is either the pre-existing open list or

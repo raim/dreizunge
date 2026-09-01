@@ -743,7 +743,8 @@
     "lib.sort_tokens": "Token usage",
     "jobs.cancel": "Cancel this job",
     "jobs.cancelled": "🛑 Job cancelled",
-    "jobs.cancel_too_late": "That job had already finished"
+    "jobs.cancel_too_late": "That job had already finished",
+    "lib.sort_reverse": "Reverse the sort order"
   },
   "nl": {
     "qc.editor.suggests_by": "⚑ {model} stelt voor:",
