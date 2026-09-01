@@ -25,7 +25,8 @@ const SAVED = [
   { id: 'tp_2', topic: 'Two',   lang: 'nl', srcLang: 'de', lessons: [{ id: 1, type: 'standard' }] },
   { id: 'tp_3', topic: 'Three', lang: 'nl', srcLang: 'de', lessons: [{ id: 1, type: 'standard' }] },
 ];
-const SLS = [{ id: 'sl_x', title: 'A Storyline', chapters: ['tp_1', 'tp_2', 'tp_3'] }];
+const SLS = [{ id: 'sl_x', title: 'A Storyline', chapters: ['tp_1', 'tp_2', 'tp_3'],
+               summary: 'Wat er tot nu toe gebeurd is.' }];
 
 function client(teacher) {
   const C = loadClient({ quiet: true });
@@ -66,7 +67,11 @@ function client(teacher) {
     // complete or write into a learner's ledger.
     {
       const C = client(true);
-      C.run(`__revFlags=[]; showComplete = function(rev,i){ __revFlags.push(rev); __completeCalls++; };
+      // v88_q: pinned to the NO-summary case. This section is about how a CHAPTER is opened (the
+      // review render, which records nothing); the summary-first entry is 6c's subject. Asserting
+      // both here would make each failure ambiguous.
+      C.run(`_summaryOfStory = function(){ return null; };
+        __revFlags=[]; showComplete = function(rev,i){ __revFlags.push(rev); __completeCalls++; };
         walkStoryline('sl_x', ''); true;`, 'start');
       await settle(80);
       assert.strictEqual(C.run(`JSON.stringify(__loaded)`), JSON.stringify(['tp_1']),
@@ -80,7 +85,8 @@ function client(teacher) {
     // ── 2. Next / Back step chapter by chapter, regardless of completion ──────────────────────
     {
       const C = client(true);
-      C.run(`showComplete = function(){ __completeCalls++; };
+      C.run(`_summaryOfStory = function(){ return null; };
+        showComplete = function(){ __completeCalls++; };
         walkStoryline('sl_x',''); true;`, 'start');
       await settle(80);
       C.run(`walkGoto(APP_WALK.idx + 1); true;`, 'fwd'); await settle(60);
@@ -182,6 +188,63 @@ function client(teacher) {
       console.log('  the storyline screen offers the same walk, teacher-gated: OK');
     }
 
+    // ── 6c. v88_q: the walk STARTS on the summary when the storyline has one ─────────────────
+    // User: "the teacher play button SHOULD start with the summary, if one is available." Index -1
+    // IS that page — the same first page §0c gives a learner, so the teacher previews the course
+    // the learner actually gets.
+    {
+      const C = client(true);
+      C.run(`__sum = 0; showStorySummary = function(){ __sum++; show('summary-screen'); };
+        showComplete = function(){ __completeCalls++; show('complete-screen'); };
+        _summaryOfStory = function(){ return { sl: { summary:'x' }, text:'x' }; };
+        walkStoryline('sl_x',''); true;`, 'sum-start');
+      await settle(90);
+      assert.strictEqual(C.run(`APP_WALK && APP_WALK.idx`), -1,
+        'the walk lands on the SUMMARY page (index -1), not chapter 1');
+      assert.ok(C.run(`__sum`) >= 1, 'and the summary card was rendered');
+      assert.strictEqual(C.run(`JSON.stringify(__loaded)`), JSON.stringify(['tp_1']),
+        'chapter 1 is still LOADED first — _summaryOfStory resolves through the open chapter, so '
+        + 'the question cannot even be asked before then');
+      console.log('  the walk starts on the summary when the storyline has one: OK');
+    }
+
+    // ── 6d. …and goes straight to chapter 1 when it has NONE ─────────────────────────────────
+    // "if one is available" is a real condition, not decoration: showStorySummary() on a storyline
+    // with no summary text would render a blank card.
+    {
+      const C = client(true);
+      C.run(`__sum = 0; showStorySummary = function(){ __sum++; show('summary-screen'); };
+        showComplete = function(){ __completeCalls++; show('complete-screen'); };
+        _summaryOfStory = function(){ return null; };
+        walkStoryline('sl_x',''); true;`, 'no-sum');
+      await settle(90);
+      assert.strictEqual(C.run(`APP_WALK && APP_WALK.idx`), 0,
+        'with no summary the walk starts on chapter 1');
+      assert.strictEqual(C.run(`__sum`), 0, 'and the summary card is never rendered');
+      console.log('  with no summary it starts on chapter 1: OK');
+    }
+
+    // ── 6e. Forward from the summary reaches chapter 1; Back from chapter 1 returns to it ─────
+    {
+      const C = client(true);
+      C.run(`_summaryOfStory = function(){ return { sl:{summary:'x'}, text:'x' }; };
+        APP_WALK = { slId:'sl_x', chapters:['tp_1','tp_2','tp_3'], idx:-1 };
+        _walkApplySumNav();
+        __sumFwd = !!document.getElementById('sum-next').onclick; true;`, 'sumfwd');
+      assert.strictEqual(C.run(`__sumFwd`), true, 'the summary page gets a forward handler');
+
+      C.run(`APP_WALK.idx = 0; _walkApplyNav();
+        __prevTitle = document.getElementById('comp-prev').title; true;`, 'backtitle');
+      assert.strictEqual(C.run(`__prevTitle`), UI.en['walk.summary'],
+        'and Back from chapter 1 returns to the SUMMARY, not out to the library');
+
+      C.run(`_summaryOfStory = function(){ return null; }; _walkApplyNav();
+        __prevTitle2 = document.getElementById('comp-prev').title; true;`, 'backtitle2');
+      assert.strictEqual(C.run(`__prevTitle2`), UI.en['walk.exit'],
+        'with no summary it leaves for the library instead (non-vacuity: the two differ)');
+      console.log('  summary → chapter 1 → back to summary, and the no-summary case: OK');
+    }
+
     // ── 7. ⚠️ THE WALK SURVIVES ITS OWN NAVIGATION ───────────────────────────────────────────
     // The user-reported bug, and the one the original stub could not express: opening a chapter goes
     // through show('lesson-set') on the way to the card. If that counts as "leaving", APP_WALK is
@@ -189,7 +252,8 @@ function client(teacher) {
     // handler — which starts a lesson instead of stepping to the next chapter.
     {
       const C = client(true);
-      C.run(`__navSeen = []; _origShow = show;
+      C.run(`_summaryOfStory = function(){ return null; };
+        __navSeen = []; _origShow = show;
         show = function(id){ __navSeen.push(id); return _origShow(id); };
         showComplete = function(){ __completeCalls++; };
         walkStoryline('sl_x',''); true;`, 'transit');

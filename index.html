@@ -15960,13 +15960,36 @@ async function walkStoryline(slId, encodedChain){
   }catch(_){ ids = []; }
   if(!ids.length){ showToast(t('walk.empty')); return; }
   APP_WALK = { slId, chapters: ids, idx: 0 };
+  // v88_q (user request): "the teacher play button SHOULD start with the summary, if one is
+  // available." Index -1 IS the summary page — the same first page §0c gives a learner ("the story
+  // so far", in the source language, bars empty), so the teacher previews the course the learner
+  // actually gets rather than a different entry.
+  //
+  // ⚠️ `_summaryOfStory()` resolves through `_storylineForTopic(APP.lessonData.topic)`, so a chapter
+  // has to be LOADED before the question can even be asked. Chapter 1 is loaded first either way,
+  // and walkGoto(-1) then decides: summary if this storyline has one, else straight to the card.
   await walkGoto(0);
+  if(walkActive() && _walkHasSummary()) await walkGoto(-1);
+}
+// Only a storyline with real summary TEXT has a summary page — `_summaryOfStory()` returns null for
+// an empty one, and `showStorySummary()` would render a blank card. "If one is available" is exactly
+// that check, asked once here rather than re-derived at each step.
+function _walkHasSummary(){
+  try { return !!_summaryOfStory(); } catch(_) { return false; }
 }
 // Open the chapter at `i` as a progress card. `showComplete(true)` is the review render — see
 // APP_WALK's own comment for why that specific entry point.
 async function walkGoto(i){
   if(!walkActive()) return;
   const ids = APP_WALK.chapters;
+  // -1 is the SUMMARY page (see walkStoryline). It renders from the chapter already loaded, so it
+  // needs no fetch — and it is only ever reached when _walkHasSummary() said yes.
+  if(i === -1){
+    APP_WALK.idx = -1;
+    _walkNavigating = true;
+    try{ showStorySummary(); } finally { _walkNavigating = false; }
+    return;
+  }
   if(i < 0 || i >= ids.length) return;
   APP_WALK.idx = i;
   _walkNavigating = true;           // see _walkNavigating's own comment — this transit is not an exit
@@ -15997,11 +16020,27 @@ function _walkApplyNav(){
   };
   // Back on the FIRST chapter leaves the walk rather than dead-ending — the teacher came from the
   // library, so that is where it returns them.
-  set(prev, true, idx > 0 ? (() => walkGoto(idx - 1)) : (() => { walkExit(); goLibraryClean(); }),
-      idx > 0 ? t('walk.prev') : t('walk.exit'));
+  // v88_q: from chapter 1, Back returns to the SUMMARY when the storyline has one — the walk's real
+  // first page — and only leaves for the library when there is none.
+  const _toSummary = idx === 0 && _walkHasSummary();
+  set(prev, true,
+      idx > 0        ? (() => walkGoto(idx - 1))
+    : _toSummary     ? (() => walkGoto(-1))
+    :                  (() => { walkExit(); goLibraryClean(); }),
+      idx > 0 ? t('walk.prev') : _toSummary ? t('walk.summary') : t('walk.exit'));
   // Forward stops at the last chapter. Deliberately DISABLED rather than hidden: a control that
   // vanishes at the end reads as a bug, one that greys out reads as "you are at the end".
   set(next, idx < chapters.length - 1, () => walkGoto(idx + 1), t('walk.next'));
+}
+
+// v88_q: the summary page's forward, while walking. The card has no back button of its own (see
+// _syncSumHdrNav), so this is the one control to repoint.
+function _walkApplySumNav(){
+  if(!walkActive() || APP_WALK.idx !== -1) return;
+  const nx = document.getElementById('sum-next');
+  if(!nx) return;
+  nx.onclick = () => walkGoto(0);
+  nx.title = t('walk.next');
 }
 
 // Mirrors comp-prev/comp-next onto the story panel's header-row duplicates, so the two pairs can
@@ -23930,6 +23969,11 @@ function showStorySummary(){
     _compIco(nx, '→', _entry ? t('summary.start') : t('summary.next'));
     nx.onclick = () => { APP._sumNext = null; endDrill(); sumForwardToCard(); };
   }
+  // v88_q: during a teacher walk this page is step -1, so forward means "on to chapter 1", not
+  // "back into the card you came from". Same override shape as _walkApplyNav on the progress card,
+  // and for the same reason: run AFTER the branch above has decided, BEFORE the mirror below, and a
+  // complete no-op when no walk is active.
+  try { _walkApplySumNav(); } catch(e) { if (typeof _cardNote === 'function') _cardNote('walk-sum-nav', e); }
   // user follow-up: mirror sum-next's just-resolved state onto the header-row duplicate, AFTER the
   // branch above has decided it — same ordering requirement _syncCompHdrNav documents.
   try { _syncSumHdrNav(); } catch(e) { if (typeof _cardNote === 'function') _cardNote('hdr-nav-sync', e); }

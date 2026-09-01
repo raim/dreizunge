@@ -3881,8 +3881,1204 @@
       },
       "sourceTextHash": "e92bde0445bb",
       "analyzedAt": "2026-09-01T19:24:13.924Z"
+    },
+    "tp_17851387238120000029": {
+      "chapterId": "tp_17851387238120000029",
+      "lang": "it",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 6,
+      "tokenCount": 103,
+      "sentences": [
+        {
+          "sentenceId": "tp_17851387238120000029:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17851387238120000029:s0:t0",
+              "idx": 0,
+              "surface": "Evoluzione",
+              "lemma": "evoluzione",
+              "form": "Nomen Substantivum Femininum Singular Nominativ",
+              "sense": "Entwicklung",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-01T21:35:01.468Z",
+            "sentenceId": "tp_17851387238120000029:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Evoluzione",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17851387238120000029:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17851387238120000029:s1:t0",
+              "idx": 0,
+              "surface": "Telmo",
+              "lemma": "Telmo",
+              "form": "Eigenname (Mann), Nominativ",
+              "sense": "Name einer Person",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s1:t1",
+              "idx": 1,
+              "surface": "Pievani",
+              "lemma": "Pievani",
+              "form": "Eigenname (Familienname), Nominativ",
+              "sense": "Nachname einer Person",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s1:t2",
+              "idx": 2,
+              "surface": "scienze",
+              "lemma": "scienza",
+              "form": "Nomen, Plural, Femininum",
+              "sense": "Wissenschaften (allgemein)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-01T21:36:10.315Z",
+            "sentenceId": "tp_17851387238120000029:s1",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Telmo Pievani scienze",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17851387238120000029:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17851387238120000029:s2:t0",
+              "idx": 0,
+              "surface": "Se",
+              "lemma": "se",
+              "form": "Konjunktion (Konditional)",
+              "sense": "falls, wenn",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t1",
+              "idx": 1,
+              "surface": "una",
+              "lemma": "uno",
+              "form": "unbestimmter Artikel (Maskulinum Singular)",
+              "sense": "eine",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t2",
+              "idx": 2,
+              "surface": "teoria",
+              "lemma": "teoria",
+              "form": "Nomen (Femininum Singular)",
+              "sense": "Theorie",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t3",
+              "idx": 3,
+              "surface": "scientifica",
+              "lemma": "scientifico",
+              "form": "Adjektiv (Femininum Singular)",
+              "sense": "wissenschaftlich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t4",
+              "idx": 4,
+              "surface": "rimanesse",
+              "lemma": "rimanere",
+              "form": "Verb (Konjunktiv Imperfekt, 3. Person Singular)",
+              "sense": "bliebe",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t5",
+              "idx": 5,
+              "surface": "sempre",
+              "lemma": "sempre",
+              "form": "Adverb",
+              "sense": "immer",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t6",
+              "idx": 6,
+              "surface": "la",
+              "lemma": "il",
+              "form": "bestimmter Artikel (Femininum Singular)",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t7",
+              "idx": 7,
+              "surface": "stessa,",
+              "lemma": "stesso",
+              "form": "Adjektiv (Femininum Singular)",
+              "sense": "gleiche",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t8",
+              "idx": 8,
+              "surface": "senza",
+              "lemma": "senza",
+              "form": "Präposition",
+              "sense": "ohne",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t9",
+              "idx": 9,
+              "surface": "aggiornamenti,",
+              "lemma": "aggiornamento",
+              "form": "Nomen (Maskulinum Plural)",
+              "sense": "Aktualisierungen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t10",
+              "idx": 10,
+              "surface": "revisioni",
+              "lemma": "revisione",
+              "form": "Nomen (Femininum Plural)",
+              "sense": "Überprüfungen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t11",
+              "idx": 11,
+              "surface": "ed",
+              "lemma": "ed",
+              "form": "Konjunktion (Koordinierend)",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t12",
+              "idx": 12,
+              "surface": "estensioni,",
+              "lemma": "estensione",
+              "form": "Nomen (Femininum Plural)",
+              "sense": "Erweiterungen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t13",
+              "idx": 13,
+              "surface": "ci",
+              "lemma": "ci",
+              "form": "Pronomen (Dativ/Lokal)",
+              "sense": "dafür / es gibt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t14",
+              "idx": 14,
+              "surface": "sarebbe",
+              "lemma": "essere",
+              "form": "Verb (Konjunktiv Präsens, 3. Person Singular)",
+              "sense": "wäre",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t15",
+              "idx": 15,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t16",
+              "idx": 16,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Relativpronomen (Neutrum)",
+              "sense": "was",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s2:t17",
+              "idx": 17,
+              "surface": "preoccuparsi.",
+              "lemma": "preoccuparsi",
+              "form": "Verb (Infinitiv Reflexiv)",
+              "sense": "sich zu sorgen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 13,
+              "end": 17,
+              "tokenIds": [
+                "tp_17851387238120000029:s2:t13",
+                "tp_17851387238120000029:s2:t14",
+                "tp_17851387238120000029:s2:t15",
+                "tp_17851387238120000029:s2:t16",
+                "tp_17851387238120000029:s2:t17"
+              ],
+              "lemma": "ci sarebbe di che preoccuparsi",
+              "gloss": "es gäbe Anlass zur Sorge",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-01T21:40:57.939Z",
+            "sentenceId": "tp_17851387238120000029:s2",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Se una teoria scientifica rimanesse sempre la stessa, senza aggiornamenti, revisioni ed estensioni, ci sarebbe di che preoccuparsi.",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17851387238120000029:s3",
+          "tokens": [
+            {
+              "tokenId": "tp_17851387238120000029:s3:t0",
+              "idx": 0,
+              "surface": "Vorrebbe",
+              "lemma": "volere",
+              "form": "Konjunktiv II Präsens 3. Person Singular",
+              "sense": "würde wollen / würde bedeuten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t1",
+              "idx": 1,
+              "surface": "dire",
+              "lemma": "dire",
+              "form": "Infinitiv Präsens",
+              "sense": "bedeuten / sagen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t2",
+              "idx": 2,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Relativpronomen / Konjunktion",
+              "sense": "dass",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t3",
+              "idx": 3,
+              "surface": "non",
+              "lemma": "non",
+              "form": "Negationspartikel",
+              "sense": "nicht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t4",
+              "idx": 4,
+              "surface": "sta",
+              "lemma": "stare",
+              "form": "Indikativ Präsens 3. Person Singular",
+              "sense": "liegt (in der Verantwortung) / hängt ab",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t5",
+              "idx": 5,
+              "surface": "al",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "an / bei",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t6",
+              "idx": 6,
+              "surface": "passo",
+              "lemma": "passo",
+              "form": "Substantiv Singular Maskulinum",
+              "sense": "Schritt / Tempo",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t7",
+              "idx": 7,
+              "surface": "delle",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von / der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t8",
+              "idx": 8,
+              "surface": "nuove",
+              "lemma": "nuovo",
+              "form": "Adjektiv Plural Femininum",
+              "sense": "neue",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t9",
+              "idx": 9,
+              "surface": "scoperte",
+              "lemma": "scoperta",
+              "form": "Substantiv Plural Femininum",
+              "sense": "Entdeckungen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t10",
+              "idx": 10,
+              "surface": "ed",
+              "lemma": "ed",
+              "form": "Koordinierende Konjunktion (elidiert)",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t11",
+              "idx": 11,
+              "surface": "evidenze,",
+              "lemma": "evidenza",
+              "form": "Substantiv Plural Femininum",
+              "sense": "Beweise / Erkenntnisse",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t12",
+              "idx": 12,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Relativpronomen",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t13",
+              "idx": 13,
+              "surface": "nella",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t14",
+              "idx": 14,
+              "surface": "scienza",
+              "lemma": "scienza",
+              "form": "Substantiv Singular Femininum",
+              "sense": "Wissenschaft / der Wissenschaft",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t15",
+              "idx": 15,
+              "surface": "si",
+              "lemma": "si",
+              "form": "Reflexivpronomen / Passivpartikel",
+              "sense": "sich (man) / werden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t16",
+              "idx": 16,
+              "surface": "susseguono",
+              "lemma": "susseguire",
+              "form": "Indikativ Präsens 3. Person Plural",
+              "sense": "folgen aufeinander / sich abwechseln",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s3:t17",
+              "idx": 17,
+              "surface": "sempre.",
+              "lemma": "sempre",
+              "form": "Adverb",
+              "sense": "immer",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 1,
+              "tokenIds": [
+                "tp_17851387238120000029:s3:t0",
+                "tp_17851387238120000029:s3:t1"
+              ],
+              "lemma": "vorrebbe dire",
+              "gloss": "würde bedeuten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 4,
+              "end": 6,
+              "tokenIds": [
+                "tp_17851387238120000029:s3:t4",
+                "tp_17851387238120000029:s3:t5",
+                "tp_17851387238120000029:s3:t6"
+              ],
+              "lemma": "stare al passo",
+              "gloss": "mitgehen / Schritt halten",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-01T21:45:46.621Z",
+            "sentenceId": "tp_17851387238120000029:s3",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Vorrebbe dire che non sta al passo delle nuove scoperte ed evidenze, che nella scienza si susseguono sempre.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17851387238120000029:s4",
+          "tokens": [
+            {
+              "tokenId": "tp_17851387238120000029:s4:t0",
+              "idx": 0,
+              "surface": "La",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t1",
+              "idx": 1,
+              "surface": "spiegazione",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t2",
+              "idx": 2,
+              "surface": "evoluzionistica",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t3",
+              "idx": 3,
+              "surface": "darwiniana",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t4",
+              "idx": 4,
+              "surface": "in",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t5",
+              "idx": 5,
+              "surface": "realtà",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t6",
+              "idx": 6,
+              "surface": "non",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t7",
+              "idx": 7,
+              "surface": "è",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t8",
+              "idx": 8,
+              "surface": "soltanto",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t9",
+              "idx": 9,
+              "surface": "una",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t10",
+              "idx": 10,
+              "surface": "«teoria»",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t11",
+              "idx": 11,
+              "surface": "scientifica,",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t12",
+              "idx": 12,
+              "surface": "ma",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t13",
+              "idx": 13,
+              "surface": "un",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t14",
+              "idx": 14,
+              "surface": "vasto",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t15",
+              "idx": 15,
+              "surface": "e",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t16",
+              "idx": 16,
+              "surface": "complesso",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t17",
+              "idx": 17,
+              "surface": "«programma",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t18",
+              "idx": 18,
+              "surface": "di",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t19",
+              "idx": 19,
+              "surface": "ricerca»,",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t20",
+              "idx": 20,
+              "surface": "composto",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t21",
+              "idx": 21,
+              "surface": "da",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t22",
+              "idx": 22,
+              "surface": "più",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t23",
+              "idx": 23,
+              "surface": "leggi,",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t24",
+              "idx": 24,
+              "surface": "fattori,",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t25",
+              "idx": 25,
+              "surface": "modelli",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t26",
+              "idx": 26,
+              "surface": "e",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s4:t27",
+              "idx": 27,
+              "surface": "ipotesi.",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-01T21:51:31.732Z",
+            "sentenceId": "tp_17851387238120000029:s4",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "La spiegazione evoluzionistica darwiniana in realtà non è soltanto una «teoria» scientifica, ma un vasto e complesso «programma di ricerca», composto da più leggi, fattori, modelli e ipotesi.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17851387238120000029:s5",
+          "tokens": [
+            {
+              "tokenId": "tp_17851387238120000029:s5:t0",
+              "idx": 0,
+              "surface": "E",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t1",
+              "idx": 1,
+              "surface": "come",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t2",
+              "idx": 2,
+              "surface": "programma",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t3",
+              "idx": 3,
+              "surface": "di",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t4",
+              "idx": 4,
+              "surface": "ricerca",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t5",
+              "idx": 5,
+              "surface": "ha",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t6",
+              "idx": 6,
+              "surface": "subito",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t7",
+              "idx": 7,
+              "surface": "nell'ultimo",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t8",
+              "idx": 8,
+              "surface": "secolo",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t9",
+              "idx": 9,
+              "surface": "e",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t10",
+              "idx": 10,
+              "surface": "mezzo",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t11",
+              "idx": 11,
+              "surface": "molte",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t12",
+              "idx": 12,
+              "surface": "correzioni",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t13",
+              "idx": 13,
+              "surface": "e",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t14",
+              "idx": 14,
+              "surface": "integrazioni,",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t15",
+              "idx": 15,
+              "surface": "come",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t16",
+              "idx": 16,
+              "surface": "è",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t17",
+              "idx": 17,
+              "surface": "bene",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t18",
+              "idx": 18,
+              "surface": "che",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t19",
+              "idx": 19,
+              "surface": "sia,",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t20",
+              "idx": 20,
+              "surface": "rimanendo",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t21",
+              "idx": 21,
+              "surface": "tuttavia",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t22",
+              "idx": 22,
+              "surface": "integro",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t23",
+              "idx": 23,
+              "surface": "nel",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t24",
+              "idx": 24,
+              "surface": "suo",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t25",
+              "idx": 25,
+              "surface": "nocciolo",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t26",
+              "idx": 26,
+              "surface": "centrale,",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t27",
+              "idx": 27,
+              "surface": "quello",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t28",
+              "idx": 28,
+              "surface": "individuato",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t29",
+              "idx": 29,
+              "surface": "da",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t30",
+              "idx": 30,
+              "surface": "Charles",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t31",
+              "idx": 31,
+              "surface": "Darwin",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t32",
+              "idx": 32,
+              "surface": "alla",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t33",
+              "idx": 33,
+              "surface": "metà",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851387238120000029:s5:t34",
+              "idx": 34,
+              "surface": "dell'Ottocento.",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-01T21:59:07.393Z",
+            "sentenceId": "tp_17851387238120000029:s5",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "E come programma di ricerca ha subito nell'ultimo secolo e mezzo molte correzioni e integrazioni, come è bene che sia, rimanendo tuttavia integro nel suo nocciolo centrale, quello individuato da Charles Darwin alla metà dell'Ottocento.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-01T21:59:07.393Z",
+        "chapterId": "tp_17851387238120000029",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "2800581a53eb",
+      "analyzedAt": "2026-09-01T21:59:07.393Z"
     }
   },
-  "generatedAt": "2026-09-01T19:24:13.925Z",
-  "chapterCount": 13
+  "generatedAt": "2026-09-01T21:59:07.395Z",
+  "chapterCount": 14
 }

@@ -2424,6 +2424,52 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_q — the teacher walk starts on the story summary, when there is one
+
+**User request**: *"the teacher play button SHOULD start with the summary, if one is available."*
+One new `ui.json` key (`walk.summary`, the Back title on chapter 1).
+
+**Why this is the right entry, not just a preference**: the summary page IS the walk's first page for
+a learner (`§0c`, `v77_k` — *"the summary card is the ACTUAL ENTRY POINT"*: the story so far, in the
+source language, bars empty, before any question). Starting a teacher somewhere else would have them
+previewing a course the learner never sees.
+
+### The shape
+
+**Index `-1` IS the summary page.** The walk now runs `-1 → 0 → 1 → … → n-1`, which keeps one
+position variable rather than a second "am I on the summary" flag that could disagree with it.
+
+- **Forward from the summary → chapter 1.** `_walkApplySumNav()` repoints `sum-next`, mirroring
+  `_walkApplyNav`'s shape exactly: after the branch that decides it, before `_syncSumHdrNav()` so the
+  header duplicate inherits it, and a complete no-op when no walk is active. Without it the page's
+  own forward means *"back into the card you came from"* — right for a learner, wrong here.
+- **Back from chapter 1 → the summary**, when there is one; out to the library when there is not.
+
+**⚠️ Chapter 1 is still LOADED first, and that ordering is forced, not incidental.**
+`_summaryOfStory()` resolves through `_storylineForTopic(APP.lessonData?.topic)` — it reads the OPEN
+chapter to find the storyline — so "does this storyline have a summary?" cannot be asked before a
+chapter exists. `walkStoryline()` therefore opens chapter 1 and only then steps back to `-1`. Pinned
+by its own assertion, because a later "optimise the extra render away" would break the question
+rather than the answer.
+
+**"If one is available" is a real condition.** `_summaryOfStory()` returns null for empty summary
+text, and `showStorySummary()` on such a storyline renders a blank card — so the no-summary path goes
+straight to chapter 1. Both directions are guarded, and the mutation that always starts on the
+summary goes red.
+
+### Three older sections were re-scoped, not patched
+
+Giving the fixture storyline a summary made §1/§2/§7 land on the summary instead of chapter 1 — they
+are about how a CHAPTER is opened (the review render), not about the entry page. Rather than widen
+their assertions to accept either, each now pins `_summaryOfStory` to null, so a failure in any of
+them still names one thing. **An assertion that accepts two outcomes has stopped discriminating
+between them**, which is how a guard quietly becomes decoration.
+
+**Guard**: `unit-teacher-walk` grows to 11 checks — the summary entry, the no-summary entry, the
+forward override, and Back's two destinations. **Four mutations red**: never starting on the summary
+(the `v88_p` behaviour), always starting on it (the blank card), Back always exiting, and the
+summary's forward left unrepointed.
+
 ## ✅ v88_p — the walkthrough's Next actually walks, and the ▶ reaches the storyline screen
 
 **User report**: *"The teacher play button should also be available on the storyline card, not just

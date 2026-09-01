@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_p`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_q`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -20,22 +20,20 @@ work — it generated four chapters during the `v87` line, and twice that broke 
 restarting anything; a SERVER edit is not — start your own instance on another port to verify, and
 **kill it by PID** (`pkill -f "node server.js"` matches theirs too).
 
-**What shipped at this cut**: `v88_p` — the teacher walkthrough's Next **actually walks**, and the ▶
-now also sits on the storyline SCREEN. No new `ui.json` keys.
-⚠️ **The bug was `v88_o`'s own exit rule.** `walkGoto()` transits through `show('lesson-set')` on its
-way to the card, and "navigating anywhere but the progress card ends the walk" fired on THAT — so the
-walk was already null when the card rendered, `_walkApplyNav()` no-opped, and Next kept the learner's
-handler and started a lesson. Fixed with a `_walkNavigating` flag around the walk's own transit.
-⚠️⚠️ **THE TEST COULD NOT HAVE CAUGHT IT: the stub removed the bug.** `showLessonSet` was stubbed to
-an empty function ("not what this file tests") — deleting the exact interaction that breaks the
-feature, so six sections passed against code that failed on the first human click. The stub now
-reproduces the navigation, and §7 ASSERTS the transit happens before asserting the walk survives it.
-**Every stub is a claim that the stubbed thing is irrelevant — a navigation-ordering bug is precisely
-what falsifies that claim.** Fourth "the fixture, not the assertion" finding in this line.
-The screen's ▶ is gated on `APP._teacherMode` but deliberately NOT on `canGenerate` (unlike every
-neighbouring button): walking makes no model call, so it must work in the static build too — the
-guard pins that absence so a "make it consistent" edit fails loudly.
-Full write-up: `roadmap_v88.md`'s own `v88_p` entry.
+**What shipped at this cut**: `v88_q` — the teacher walk **starts on the story summary** when the
+storyline has one (user request). One new `ui.json` key.
+Index **-1 IS the summary page**, so the walk runs `-1 → 0 → … → n-1` on ONE position variable rather
+than a second flag that could disagree with it. `_walkApplySumNav()` repoints `sum-next` (whose own
+meaning — "back into the card you came from" — is right for a learner and wrong here), same override
+shape as the progress card's. Back from chapter 1 returns to the summary, or leaves for the library
+when there is none.
+⚠️ **Chapter 1 is LOADED first and that ordering is forced**: `_summaryOfStory()` resolves through
+`_storylineForTopic(APP.lessonData?.topic)`, so the question "does this storyline have a summary?"
+cannot be asked before a chapter is open. Pinned by its own assertion, because optimising the extra
+render away would break the question rather than the answer.
+Three older sections were RE-SCOPED (pinned to the no-summary case) rather than widened to accept
+either outcome — an assertion that accepts two outcomes has stopped discriminating between them.
+Full write-up: `roadmap_v88.md`'s own `v88_q` entry.
 
 **🆕 NOTHING IS MID-FLIGHT, and the queue is explicit.** The `v87` line closed six items (R, U, Z,
 AC, AK, AL) plus the three storyline asks; they are recorded where they shipped and are NOT in the
@@ -109,8 +107,8 @@ DETERMINISTIC, so not flakiness — because the user's server had written a new 
 fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don't run the full and
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **342 topics, 99 storylines, 33 languages, 751 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_p'`.
+Corpus at this cut: **342 topics, 99 storylines, 33 languages, 752 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_q'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -232,7 +230,7 @@ measures zero effect, reconsider the diagnosis before trying a third wording.**
 
 **🆕 FIRST: the thirteen TODOs handed over after `v88_a`** — items `AM`…`AX` in `roadmap_v88.md`,
 with their own suggested order. **`v88_b` shipped row 1 (`AW` + `AT`), `v88_c` row 2 (`AQ` + `AM`),
-`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third; `v88_h` did the flake audit; `v88_i` shipped `AX`; `v88_j` shipped `AR`; `v88_k` shipped `AU`'s cancel third; `v88_l` completed `AU` with idle release; `v88_m` wired ALL job kinds for cancel; `v88_n` added reverse sort; `v88_o` added the teacher walkthrough, `v88_p` fixed it.** The rest of that table:
+`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third; `v88_h` did the flake audit; `v88_i` shipped `AX`; `v88_j` shipped `AR`; `v88_k` shipped `AU`'s cancel third; `v88_l` completed `AU` with idle release; `v88_m` wired ALL job kinds for cancel; `v88_n` added reverse sort; `v88_o` added the teacher walkthrough, `v88_p` fixed it; `v88_q` made it start on the summary.** The rest of that table:
 
 **🆕 THE THIRTEEN TODOs ARE DONE.** Every item from the `v88_a` handover has shipped, plus two live
 bug reports (`AY`/`AZ`) and the flake audit. What remains is either the pre-existing open list or
