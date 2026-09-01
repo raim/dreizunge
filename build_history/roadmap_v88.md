@@ -2424,6 +2424,55 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_p — the walkthrough's Next actually walks, and the ▶ reaches the storyline screen
+
+**User report**: *"The teacher play button should also be available on the storyline card, not just
+on the main page. And it currently doesn't work, clicking play did open the first chapter progress
+card, but it's next button just openend a question."* No new `ui.json` keys.
+
+### ⚠️ The bug was mine, and `v88_o`'s own exit rule caused it
+
+`walkGoto()` calls `showLessonSet()` → `goLessonSet()` → **`show('lesson-set')`** before rendering the
+card. `v88_o` had added "navigating anywhere but the progress card ends the walk" to `show()` — and
+that rule fired on the walk's OWN transit. So `APP_WALK` was already null by the time
+`showComplete(true)` ran, `_walkApplyNav()` no-opped, and `comp-next` kept the learner's handler:
+Next started a lesson instead of stepping to chapter 2. Exactly what the user saw.
+
+Fixed with `_walkNavigating`, set for the duration of `walkGoto`'s own navigation only. The exit rule
+still fires for every genuine departure — §6 still passes.
+
+### ⚠️ The test could not have caught it, because the stub removed the bug
+
+`unit-teacher-walk`'s seed contained `showLessonSet = async function(){}` — an empty stub, written
+because "language/dir setup is not what this file tests". **That stub deleted the exact interaction
+that breaks the feature.** Six sections passed against code that did not work when a human clicked it.
+
+The stub now reproduces the real navigation (`show('lesson-set')`), and **§7 asserts the transit
+happens** before asserting the walk survives it — so it cannot go quiet if the navigation is ever
+removed. Reverting the fix now fails; so does restoring the empty stub, because §7's non-vacuity
+check catches that too.
+
+**The lesson is sharper than "the fixture was wrong".** Every stub is a claim that the stubbed thing
+is irrelevant to what is being tested — and that claim is exactly what a navigation-ordering bug
+falsifies. When stubbing a call that a feature makes *on its way to the state under test*, the stub
+has to keep whatever that call does to shared state. Fourth "the fixture, not the assertion" finding
+in this line (`v88_l`, `v88_n`, `v88_m`'s window, this).
+
+### The storyline screen's ▶
+
+Same walk, same teacher gate, in `#sl-screen-walk-btn` alongside the other header controls. The
+screen already knows which storyline it shows, so `walkStorylineFromScreen()` needs no
+data-attributes — unlike the library card, which is one of many on a page.
+
+**⚠️ Gated on `APP._teacherMode` but NOT on `APP.info.canGenerate`**, unlike every neighbouring button
+in that row. Walking reads chapters that already exist and makes no model call at all, so it works in
+the static build too; gating it on a live backend would have removed it exactly where a teacher
+reviewing published material would want it. The guard pins the absence of `canGenerate` deliberately,
+so a later "make it consistent with its neighbours" edit fails loudly.
+
+**Guard**: `unit-teacher-walk` grows to 8 checks. Four mutations red (the transit fix, the empty
+stub, the screen button's teacher gate, and the screen entry point naming the wrong storyline).
+
 ## ✅ v88_o — a teacher walkthrough of a storyline's progress cards
 
 **User request**: *"currently we only see progress cards in student mode. let's allow a teacher mode

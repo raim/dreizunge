@@ -2279,6 +2279,11 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         <button class="sl-screen-share" id="sl-screen-summary-btn" onclick="genStorylineSummary()" title="Generate summary" style="display:none">📝</button>
         <button class="sl-screen-share" id="sl-screen-storyboard-btn" onclick="onStorylineStoryboardBtn()" title="Generate storyboard" style="display:none">🎬</button>
         <button class="sl-screen-share" id="sl-screen-qc-btn" title="" style="display:none">🔍</button>
+        <!-- v88_p (user request): "the teacher play button should also be available on the storyline
+             card, not just on the main page". Same walk, same teacher gate — the storyline screen is
+             where a teacher actually reviews a story, so it is the more natural home of the two.
+             Shown/hidden in _renderStorylineScreen alongside the other teacher controls. -->
+        <button class="sl-screen-share" id="sl-screen-walk-btn" onclick="walkStorylineFromScreen()" title="" style="display:none">▶</button>
         <button class="sl-screen-share" id="share-storyline-btn" onclick="shareStoryline()" title="Share">🔗</button>
       </div>
       <!-- v69_r: the v65.1 global-threshold row that used to sit here has been REMOVED. It was a
@@ -5856,7 +5861,8 @@ function show(id){
   // repoint the nav on a card the teacher reached by another route. walkGoto() re-enters through
   // showLessonSet()/showComplete(), which land on 'complete-screen', so stepping through chapters
   // is unaffected.
-  if (id !== 'complete-screen' && typeof walkActive === 'function' && walkActive()) walkExit();
+  if (!_walkNavigating && id !== 'complete-screen'
+      && typeof walkActive === 'function' && walkActive()) walkExit();
   APP.screen = id; _closeEditorsOnNav(id); document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); try{ updateStaticFlagBanner(); }catch(_){} try{ refreshTutorAvailability(); }catch(_){} try{ refreshJobsPill(); }catch(_){} try{ _storySelHide(); }catch(_){} try{ _closeCardNavPopups(); }catch(_){} try{ _speechMicRefresh(); }catch(_){} try{ if(id==='generation-screen') _genWizardGoto(1); }catch(_){} }   // v62: the tutor follows the learner across screens; PLAN §12: a stale selection popover must not survive a navigation; progress-card redesign: neither must a stale nav popup (either card's) — this fires on every showComplete()/showStorySummary() re-render too, since both end with their own show(...) call
 // ── PLAN §C0.2 — explicit screen renderers: a NAMING SEAM, not a rewrite ─────────────────────
 // The plan's own words: "must first preserve every current entry point; no visual redesign
@@ -11361,6 +11367,14 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   if (genBtn)    genBtn.style.display    = APP.info.canGenerate ? '' : 'none';
   const summaryBtn = document.getElementById('sl-screen-summary-btn');
   if (summaryBtn) summaryBtn.style.display = APP.info.canGenerate ? '' : 'none';
+  // v88_p: the walkthrough button. Gated on TEACHER MODE, not on canGenerate — walking a storyline
+  // reads chapters that already exist and needs no backend at all, so it works in the static build
+  // too. It needs chapters to walk, hence the length check.
+  const walkBtn = document.getElementById('sl-screen-walk-btn');
+  if (walkBtn) {
+    walkBtn.style.display = (APP._teacherMode && (topics || []).length >= 1) ? '' : 'none';
+    walkBtn.title = t('walk.start');
+  }
   // Storyboard button: needs a story to board, but is NOT gated on chapter count (v55_v). Panels are
   // SCENES, not chapters — a single-chapter storyline has an arc the model can board in 2+ panels,
   // and the composer's own ≥2-PANEL floor is the real constraint (it rejects a board that can't
@@ -15913,8 +15927,22 @@ function _mirrorNavBtn(srcId, dstId){
 // own comment says it "neither records progress nor shows per-round stats" — so a teacher paging
 // through a storyline cannot mark chapters complete or write into a learner's ledger.
 let APP_WALK = null;   // { slId, chapters:[topicId], idx } while walking, else null
+// ⚠️ v88_p (user-reported, live): the walk's OWN transit must not be mistaken for leaving it.
+// `walkGoto()` calls `showLessonSet()` → `goLessonSet()` → `show('lesson-set')` before rendering the
+// card, and `show()`'s "anything but the progress card ends the walk" rule fired on THAT — so
+// `APP_WALK` was already null by the time `showComplete(true)` ran, `_walkApplyNav()` no-opped, and
+// Next kept the learner's own handler: it started a lesson instead of stepping to chapter 2, which
+// is exactly what the user saw. Set for the duration of walkGoto's own navigation only.
+let _walkNavigating = false;
 function walkActive(){ return !!(APP_WALK && Array.isArray(APP_WALK.chapters) && APP_WALK.chapters.length); }
 function walkExit(){ APP_WALK = null; }
+// v88_p: the storyline SCREEN's own entry point. It already knows which storyline it is showing, so
+// it needs no data-attributes — unlike the library card, which is one of many on the page.
+function walkStorylineFromScreen(){
+  const id = APP._slScreen && APP._slScreen.chainId;
+  if (!id) return;
+  return walkStoryline(id, APP._slScreen.encodedChain || '');
+}
 // Start at the storyline's FIRST chapter. Teacher-only: the button that calls this is teacher-gated
 // too, but a mode that silently unlocks every chapter must not depend on markup for that.
 async function walkStoryline(slId, encodedChain){
@@ -15941,6 +15969,7 @@ async function walkGoto(i){
   const ids = APP_WALK.chapters;
   if(i < 0 || i >= ids.length) return;
   APP_WALK.idx = i;
+  _walkNavigating = true;           // see _walkNavigating's own comment — this transit is not an exit
   try{
     const r = await fetch('/api/lessons/load?id=' + encodeURIComponent(ids[i]));
     if(!r.ok) throw new Error('Not found');
@@ -15948,6 +15977,7 @@ async function walkGoto(i){
     await showLessonSet();          // same language/dir setup every chapter open does
     showComplete(true);
   }catch(e){ showToast(t('walk.load_failed')); walkExit(); }
+  finally{ _walkNavigating = false; }
 }
 // Repoints comp-prev/comp-next for the walk. Called at the very END of showComplete(), immediately
 // before the header-row mirror, so the mirrored duplicates inherit these destinations too.

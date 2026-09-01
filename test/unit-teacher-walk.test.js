@@ -44,7 +44,13 @@ function client(teacher) {
           Object.assign({}, t, { story:'Een verhaal.', lessons:[{id:1,type:'standard',vocab:[]}] })); } }); }
       return Promise.resolve({ ok:true, status:200, json:function(){ return Promise.resolve([]); } });
     };
-    showLessonSet = async function(){};       // language/dir setup, not what this file tests
+    // ⚠️ v88_p: this stub used to be an empty function, and THAT is why the release shipped broken.
+    // The real showLessonSet() -> goLessonSet() -> show('lesson-set') NAVIGATES, and show()'s own
+    // "leaving the progress card ends the walk" rule fired on that transit — killing the walk before
+    // the card rendered, so Next kept the learner's handler and started a lesson. The empty stub
+    // removed the exact interaction that breaks it. It now reproduces the navigation, which is the
+    // only reason §7 below can fail.
+    showLessonSet = async function(){ show('lesson-set'); };
     __completeCalls = 0; _origComplete = showComplete;
     showComplete = function(rev, i){ __completeCalls++; return _origComplete(rev, i); };
     true;`, 'seed');
@@ -149,6 +155,53 @@ function client(teacher) {
       assert.strictEqual(C.run(`__stillWalking`), true, 'staying on the progress card keeps the walk');
       assert.strictEqual(C.run(`__afterLeaving`), false, 'leaving it ends the walk');
       console.log('  the walk ends when the teacher navigates away: OK');
+    }
+
+    // ── 6b. The storyline SCREEN offers the same walk (v88_p, user request) ──────────────────
+    // "the teacher play button should also be available on the storyline card, not just on the main
+    // page." Same walk, same gate — the screen just knows its own storyline, so it needs no
+    // data-attributes.
+    {
+      const C = client(true);
+      C.run(`APP._slScreen = { chainId:'sl_x', encodedChain:'' };
+        __started = null; _origWalk = walkStoryline;
+        walkStoryline = function(id, enc){ __started = id; };
+        walkStorylineFromScreen(); true;`, 'screen');
+      assert.strictEqual(C.run(`__started`), 'sl_x',
+        'the screen entry point starts the walk for the storyline it is showing');
+
+      // The button is teacher-gated on the SCREEN too, and — unlike the other header controls —
+      // NOT gated on canGenerate: walking reads existing chapters and needs no backend.
+      const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+      const at = src.indexOf("const walkBtn = document.getElementById('sl-screen-walk-btn');");
+      assert.ok(at > 0, 'the screen button has visibility logic');
+      const blk = src.slice(at, at + 400);
+      assert.ok(/APP\._teacherMode/.test(blk), 'gated on teacher mode');
+      assert.ok(!/canGenerate/.test(blk),
+        'and NOT on canGenerate — a walk needs no backend, so it must work in the static build too');
+      console.log('  the storyline screen offers the same walk, teacher-gated: OK');
+    }
+
+    // ── 7. ⚠️ THE WALK SURVIVES ITS OWN NAVIGATION ───────────────────────────────────────────
+    // The user-reported bug, and the one the original stub could not express: opening a chapter goes
+    // through show('lesson-set') on the way to the card. If that counts as "leaving", APP_WALK is
+    // null by the time the card renders, _walkApplyNav() no-ops, and Next keeps the LEARNER's
+    // handler — which starts a lesson instead of stepping to the next chapter.
+    {
+      const C = client(true);
+      C.run(`__navSeen = []; _origShow = show;
+        show = function(id){ __navSeen.push(id); return _origShow(id); };
+        showComplete = function(){ __completeCalls++; };
+        walkStoryline('sl_x',''); true;`, 'transit');
+      await settle(90);
+      assert.ok(JSON.parse(C.run(`JSON.stringify(__navSeen)`)).includes('lesson-set'),
+        'the walk really does transit through the lesson-set screen (non-vacuity: if it stopped '
+        + 'doing so, this section would prove nothing)');
+      assert.strictEqual(C.run(`walkActive()`), true,
+        'and the walk SURVIVES that transit — otherwise the card renders with no walk and Next '
+        + 'falls back to the learner handler, which starts a lesson');
+      assert.strictEqual(C.run(`APP_WALK && APP_WALK.idx`), 0, 'still positioned on chapter 1');
+      console.log('  the walk survives its own lesson-set transit: OK');
     }
 
   } catch (e) { failed = true; console.error(e); }
