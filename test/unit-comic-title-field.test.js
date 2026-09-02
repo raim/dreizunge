@@ -125,6 +125,85 @@ const bookBody = C => JSON.parse(C.run(
       assert.ok(html.includes(`_comicReviewEdit(0,'caption'`), 'and the caption input is still there');
       assert.ok(html.includes(UI.en['form.image_title_ph']), 'labelled with the new placeholder');
       console.log('  the review card renders a title input beside the caption one: OK');
+}
+
+// ── v88_y: EVERY field carries a visible label ────────────────────────────────────────────────
+// ⚠️ The cause of two separate user reports. These fields carried PLACEHOLDERS and no labels, and a
+// placeholder disappears the moment its field has content — so on a panel with extracted text the
+// only label-shaped words on screen were the EMPTY title field's placeholder, sitting directly above
+// the CAPTION field that held the text. The user typed their chapter title into the caption:
+// measured in their own data, `title:""` with the title text in `caption`.
+//
+// Asserted as ORDER — each label immediately precedes the field it names — because "the card
+// contains the word 'Chapter title'" was ALREADY true when the bug existed. Position is the whole
+// claim; presence never was.
+{
+  const C = client();
+  // ⚠️ description EMPTY on purpose. The user only ever saw THREE fields, because the description
+  // box rendered only when one existed — hiding it in exactly the state worth noticing. On their
+  // screen the third visible field was therefore `inScene`, whose string used to read "What's
+  // happening in the scene": that describes a DESCRIPTION, while the field holds TEXT VISIBLE IN THE
+  // PICTURE. They looked for the description, found a field that seemed to ask for one, and the real
+  // title field above was invisible because it was empty. This fixture reproduces that exact panel.
+  C.run(`APP_COMIC.boxes = [{ x1:0,y1:0,x2:10,y2:10,
+      text:{ caption:'Cap', inScene:'', description:'', title:'' } }];
+    comicOpenReview(); true;`, 'labels');
+  const html = C.run(`_comicReviewOverlayEl.innerHTML`);
+  const UI = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, '..', 'ui.json'), 'utf8')).en;
+
+  // Each field's own edit handler names it, so the field position is unambiguous.
+  const fieldAt = (name) => {
+    const i = html.indexOf(`_comicReviewEdit(0,'${name}'`);
+    assert.ok(i > 0, `the ${name} field is rendered`);
+    return html.lastIndexOf('<', i);
+  };
+  const labelAt = (key) => {
+    const i = html.indexOf(UI[key]);
+    assert.ok(i > 0, `the label for ${key} is rendered (${JSON.stringify(UI[key])})`);
+    return i;
+  };
+  for (const [key, field] of [
+    ['form.image_title_ph', 'title'],
+    ['form.image_caption_ph', 'caption'],
+    ['form.image_scene_ph', 'inScene'],
+    ['form.image_description_lbl', 'description'],
+  ]) {
+    const l = labelAt(key), f = fieldAt(field);
+    assert.ok(l < f, `${key} is rendered BEFORE the ${field} field it names`);
+    // …and nothing else sits between them: a label separated from its field by another input is
+    // exactly the arrangement that caused this bug.
+    assert.ok(!/_comicReviewEdit\(/.test(html.slice(l, f)),
+      `no other field sits between the ${key} label and the ${field} field it names`);
+  }
+
+  // The placeholders are GONE from the labelled fields — a permanent label plus the same words
+  // greyed inside an empty field is the doubled text that made this ambiguous to begin with.
+  const titleTag = html.slice(fieldAt('title'), html.indexOf('>', fieldAt('title')));
+  assert.ok(!/placeholder=/.test(titleTag),
+    'the title field no longer carries a placeholder duplicating its own label');
+
+  // ⚠️ Non-vacuity, and the assertion that would have caught the original bug: with the title field
+  // EMPTY — the exact state the user was in — its label must still be visible, and must still be
+  // adjacent to the TITLE field rather than reading as a heading for the caption below.
+  assert.ok(html.indexOf(UI['form.image_caption_ph']) < fieldAt('caption'),
+    'and with an empty title, the caption still has its OWN label directly above it');
+
+  // The description box is rendered even with NO description — "none was generated" is the state
+  // worth seeing, and the old conditional hid it precisely then.
+  assert.ok(/_comicReviewEdit\(0,'description'/.test(html),
+    'the image-description field is rendered even when empty — its absence used to be silent');
+
+  // And the in-scene string no longer promises a description. Asserted on the STRING, because this
+  // is the one that sent the user to the wrong field; a label in the right place saying the wrong
+  // thing would still be the bug.
+  assert.ok(!/happening in the scene/i.test(UI['form.image_scene_ph']),
+    'the in-scene label no longer reads as a request for a description of the scene');
+  assert.ok(/text/i.test(UI['form.image_scene_ph']),
+    'it says what the field actually holds: text visible in the picture (got '
+    + JSON.stringify(UI['form.image_scene_ph']) + ')');
+  assert.notStrictEqual(UI['form.image_scene_ph'], UI['form.image_description_lbl'],
+    'and the two adjacent fields no longer share a label — the whole confusion in one line');
+  console.log('  every review-card field carries a visible, ACCURATE label, immediately above itself: OK');
     }
 
     // ── 6. A RE-EXTRACTION preserves the typed title, client-side ──────────────────────────────

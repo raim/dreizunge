@@ -4726,13 +4726,39 @@ function comicOpenReview(auto){
     const color=_COMIC_COLORS[i%_COMIC_COLORS.length];
     let img=''; try{ img=_comicCropDataUrl(b); }catch(_){}
     const buf=_comicReviewBuffer[k];
+    // ⚠️ v88_y (user, live test — the cause of TWO separate reports). These four fields carried
+    // PLACEHOLDERS and no labels. A placeholder disappears the moment its field has content, so on a
+    // panel with extracted text the ONLY label-shaped words on screen were the EMPTY title field's
+    // placeholder, sitting directly above the caption field that held the text. That reads as
+    // label-above-field, and the user typed their chapter title into the CAPTION — which is why
+    // "I assign a title" produced `title:""` with the title text in `caption`, and why the image
+    // description (a fallback only when nothing was extracted) stopped reaching the story.
+    //
+    // A visible label per field, above it, always. The placeholders are dropped: with a permanent
+    // label, an empty field showing the same words again is the doubled text that made this
+    // ambiguous in the first place.
+    //
+    // ⚠️ FOUR fields, but the user only ever SAW three — and misread which was which. The image
+    // description rendered only when one existed, so on a panel with none the third visible field
+    // was `inScene`, whose string read "What's happening in the scene": that describes a
+    // DESCRIPTION, while the field holds TEXT VISIBLE IN THE PICTURE (signs, banners). Both are
+    // fixed here on the user's rulings — the string now says what the field wants, and the
+    // description box is ALWAYS rendered, empty when absent, because "no description was generated"
+    // is exactly the state worth seeing and the old conditional hid it precisely then.
+    //
+    // caption and inScene are BOTH extracted text (server.js's own CAPTION:/IN-SCENE: contract) and
+    // are joined with a newline downstream; they stay separate because `_comicStoryPanelsHtml`
+    // renders them separately.
+    // (No backticks in this comment: it lives inside a template literal.)
+    const _fld = (labelKey) => `<div style="font-size:11px;font-weight:800;color:var(--gray-dark);`
+      + `text-transform:uppercase;letter-spacing:.02em;margin-bottom:-4px">${escHtml(t(labelKey))}</div>`;
     return `<div style="display:flex;flex-direction:column;gap:8px;padding:12px;border:1.5px solid var(--gray-mid);border-radius:10px;background:var(--white)">
       <div style="display:flex;align-items:center;gap:8px">
         <span style="display:inline-block;width:22px;height:22px;border-radius:5px;background:${color};color:#fff;text-align:center;font-weight:800;font-size:13px;line-height:22px;flex-shrink:0">${i+1}</span>
         ${img?`<img src="${img}" style="display:block;max-width:100%;max-height:160px;width:auto;height:auto;border-radius:8px;border:1px solid var(--gray-mid);object-fit:contain">`:''}
       </div>
+      ${_fld('form.image_title_ph')}
       <input type="text" value="${escAttr(buf.title)}" oninput="_comicReviewEdit(${k},'title',this.value)"
-        placeholder="${escAttr(t('form.image_title_ph'))}"
         style="font-size:15px;font-weight:800;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px solid var(--accent);border-radius:8px;color:var(--text)">
       <!-- ⚠️ v88_t (user, live test, with a screenshot): this was a single-line <input>, and the
            extracted CAPTION is not a caption in the short sense — on a photographed information
@@ -4743,15 +4769,15 @@ function comicOpenReview(auto){
            resizable textareas all along: a vertical-resize rule plus a min-height. Only the CHAPTER
            TITLE above stays a single-line field — a title really is one line.
            (No backticks in this comment: it lives inside a template literal.) -->
+      ${_fld('form.image_caption_ph')}
       <textarea rows="3" oninput="_comicReviewEdit(${k},'caption',this.value)"
-        placeholder="${escAttr(t('form.image_caption_ph'))}"
         style="font-size:15px;font-weight:700;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;color:var(--text);resize:vertical;min-height:66px">${escHtml(buf.caption)}</textarea>
+      ${_fld('form.image_scene_ph')}
       <textarea rows="4" oninput="_comicReviewEdit(${k},'inScene',this.value)"
-        placeholder="${escAttr(t('form.image_scene_ph'))}"
         style="font-size:15px;font-weight:600;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;color:var(--text);resize:vertical;min-height:88px">${escHtml(buf.inScene)}</textarea>
-      ${buf.description ? `<textarea rows="3" oninput="_comicReviewEdit(${k},'description',this.value)"
-        placeholder="${escAttr(t('form.image_scene_ph'))}"
-        style="font-size:15px;font-weight:600;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px dashed var(--blue);border-radius:8px;color:var(--text);resize:vertical;min-height:66px">${escHtml(buf.description)}</textarea>` : ''}
+      ${_fld('form.image_description_lbl')}
+      <textarea rows="3" oninput="_comicReviewEdit(${k},'description',this.value)"
+        style="font-size:15px;font-weight:600;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px dashed var(--blue);border-radius:8px;color:var(--text);resize:vertical;min-height:66px">${escHtml(buf.description)}</textarea>
     </div>`;
   }).join('');
   const ov=document.createElement('div');

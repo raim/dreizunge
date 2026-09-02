@@ -331,6 +331,7 @@ if (!quick) {
   run('e2e: model text cleanup — deletion-only (v69_m)', 'node', [path.join(__dirname, 'e2e-text-cleanup.test.js')]);
   run('e2e: teacher dashboard — overview + flag triage (v69_n)', 'node', [path.join(__dirname, 'e2e-teacher-dashboard.test.js')]);
   run('e2e: book chapters sharing a title stay distinct (v69_q)', 'node', [path.join(__dirname, 'e2e-book-duplicate-titles.test.js')]);
+  run('e2e: a typed chapter title survives the title post-pass (item AN server half, v88_y)', 'node', [path.join(__dirname, 'e2e-authored-chapter-title.test.js')]);
   run('e2e: insecure-transport warning (v70_b)', 'node', [path.join(__dirname, 'e2e-tls-warning.test.js')]);
   run('e2e: generate-book + storyline-title (item 5)', 'node', [path.join(__dirname, 'e2e-generate.test.js')]);
   run('e2e: userPrompt stores full input', 'node', [path.join(__dirname, 'e2e-userprompt.test.js')]);

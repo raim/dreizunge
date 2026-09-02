@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_x`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_y`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -121,7 +121,29 @@ the last analysed sentence, so a partial would have rendered a TRUNCATED chapter
 Verified live on `tp_…093` against a real 35B model: "analysing 1 sentence(s)", `6 reused`, sentence 5
 went from 23 unresolved to 23 resolved. Fourteen mutations red.
 
-**⚠️ TWO ITEMS ARE STILL OWED, plus one reported since.** Verbatim where quoted:
+**`v88_y` answered a user question with "already built", then found why it had never worked.** The
+review card's fields carried PLACEHOLDERS and no labels — and a placeholder vanishes once its field
+has content, so the only label-shaped words on screen were the EMPTY title field's placeholder,
+sitting directly above the CAPTION field holding the extracted text. The user had been typing their
+chapter title into the caption (measured: `title:""`, title text in `caption`), which explains all
+three of their image-upload reports at once.
+
+⚠️ **And my first reading of that card was WRONG — the user caught it.** I said "four fields"; they
+said three. Both true: the image-description box rendered only when a description already existed, so
+the third VISIBLE field was `inScene`, whose string said *"What's happening in the scene"* — which
+describes a DESCRIPTION, while the field holds TEXT VISIBLE IN THE PICTURE (`server.js`'s own
+`CAPTION:`/`IN-SCENE:` contract). Reading the extraction prompt before writing the labels is what
+caught it; the labels already drafted would have shipped the wrong reading with a confident label on
+top. Now: a visible label above every field, that string reworded, and the description box always
+rendered (empty when absent). Two keys, both approved.
+
+Also: **the server half of item AN had ZERO coverage** — grepping the suite for `topicAuto` returned
+no hits, so everything that actually SUPPRESSES title generation was unverified. New
+`e2e-authored-chapter-title`, with its two limits recorded in the file (the fake returns no usable
+titles, so nothing is renamed either way; non-vacuity comes from the titling calls in the request
+log, and the skip is pinned at the source). Seven mutations red.
+
+**⚠️ TWO ITEMS ARE STILL OWED, plus one needing a ruling.** Verbatim where quoted:
 
 1. **Generation from comic/image: move the Generate button off the text-extraction/confirmation card
    onto the THIRD generation card**, where extra lessons and all features (translation, title,
@@ -136,7 +158,8 @@ went from 23 unresolved to 23 resolved. Fourteen mutations red.
    server-side job id for `POST /api/jobs/cancel` to look up. So this is NOT a one-line gate change —
    it needs either an `AbortController` on the client fetch (stops the waiting, leaves the model
    running) or the sync routes registering real cancellable jobs. Decide which before building.
-3. **🆕 An image DESCRIPTION becomes unreachable once the panel has any extracted text.** User:
+3. **⚠️ NEEDS A RULING — an image DESCRIPTION becomes unreachable once the panel has any extracted
+   text.** (`v88_y` fixed the field CONFUSION behind this report, but not the underlying rule.) User:
    *"I am still loosing image description if I assign a title in the text confirmation interface, eg.
    sl_580844164 did have a finished description that i can't access anymore."* **Measured — the data
    is NOT lost**: `tp_17883458445860000053`'s panel still holds a 128-char `description`
@@ -166,7 +189,7 @@ one 🔒 that legitimately survives there). Do not "finish the job" by removing 
    fifteen point releases) — go there for how anything from that line was built, and for the six
    items it closed.
 4. `INTERNALS.md` **§6b, the feature → function map** — read it BEFORE grepping for where anything
-   lives. Current through `v88_x`.
+   lives. Current through `v88_y`.
 
 ## Establish a green baseline before changing anything
 
@@ -176,7 +199,7 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 328 checks
+node test/run.js                          → expect 329 checks
 node test/run.js --quick                  → expect 272
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
@@ -213,8 +236,8 @@ DETERMINISTIC, so not flakiness — because the user's server had written a new 
 fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don't run the full and
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **344 topics, 99 storylines, 33 languages, 753 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_x'`.
+Corpus at this cut: **344 topics, 99 storylines, 33 languages, 754 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_y'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to

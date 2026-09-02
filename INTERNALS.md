@@ -1366,6 +1366,23 @@ descriptions** (two user requests; full write-up in `roadmap_v87.md`'s own `v87_
 
 ---
 
+**`v88_y` — the review card says which field is which; item AN's server half finally has a test**
+(user question, then a user correction; full write-up in `roadmap_v88.md`'s own `v88_y` entry). TWO
+`ui.json` keys.
+
+| what | where |
+|---|---|
+| the question | *"if the user enters a title … it could be used as a title for that chapter and would suppress title generation; easy?"* — **already built** at `v88_d` (item AN), all five hops: review-card `title` → `userTitle` beats the derived placeholder → chunk `titleAuthored` → `topicAuthored` → `topicAuto:false` → `_applyChapterTitles` returns early |
+| ⚠️ **why it had never worked** | `comicOpenReview`'s fields carried PLACEHOLDERS and no labels, and a placeholder vanishes once its field has content. On a panel with extracted text the only label-shaped words were the EMPTY title field's placeholder, directly above the CAPTION field holding the text. Measured in the user's data: `title:""`, title text in `caption`. One arrangement, three reports |
+| ⚠️ **my first reading was wrong, and the user caught it** | I said "four fields"; they saw three. The description box rendered only `buf.description ? … : ''`, so the third VISIBLE field was `inScene` — whose string said *"What's happening in the scene"*, which describes a DESCRIPTION while the field holds TEXT VISIBLE IN THE PICTURE (`server.js`'s `CAPTION:`/`IN-SCENE:` contract: a narration box, and words drawn into the scene). **Reading the extraction prompt before writing the labels is what caught it** — the drafted labels would have shipped the wrong reading with a confident label on top |
+| what shipped | a visible label above EVERY field (three reuse existing strings verbatim; one new key); placeholders dropped, since a permanent label plus the same words greyed inside is the doubled text that caused this; `form.image_scene_ph` reworded to "Text in the picture (signs, banners)" (5 stale translations deleted); the description box ALWAYS rendered, empty when absent — "none was generated" is the state worth seeing and the conditional hid it precisely then |
+| what stayed | `caption` and `inScene` remain separate despite both being extracted text — `_comicStoryPanelsHtml` renders them separately |
+| ⚠️ **item AN's server half had ZERO coverage** | `unit-comic-title-field` proved `titleAuthored` reaches the request body and stopped. Grepping the suite for `topicAuto` returned NO hits, so everything that actually suppresses title generation was unverified — the same shape as `v88_x`'s two cache gates and `v87_m`'s index.html-only guard |
+| the new e2e, and its stated LIMITS | `e2e-authored-chapter-title`: a chunk-based book, one authored chapter and one not. The fake returns no usable titles, so `_applyChapterTitles` falls back to each existing name and NOTHING is renamed either way — "the authored title survived" cannot be told from "nothing was renamed" by reading titles. Non-vacuity comes from the fake's request log (`chapter_titles` calls really happened); the SKIP is pinned at the source, including that it short-circuits BEFORE computing a replacement and still reserves the authored name. A first attempt asserted "the neighbour was retitled" and failed — it was measuring the FAKE |
+| the acceptance tests | `unit-comic-title-field` (+1 section, fixture switched to the user's exact panel state: empty title, empty description) and `e2e-authored-chapter-title`. **SEVEN mutations red** |
+
+---
+
 **`v88_x` — text analysis RESUMES instead of restarting, and a failed sentence is no longer
 permanent** (user request; full write-up in `roadmap_v88.md`'s own `v88_x` entry). THREE new
 `ui.json` keys — the approved budget.

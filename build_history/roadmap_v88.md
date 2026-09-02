@@ -2424,6 +2424,85 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_y — the review card says which field is which, and the server half of item AN finally has a test
+
+**User question**: *"if the user enters a title, such as here 't Manteling', it could be used as a
+title for that chapter and would suppress title generation; easy?"*
+
+**It was already built.** Item AN (`v88_d`) wired all five hops: the review card's `title` field →
+`userTitle` wins over the derived placeholder → chunk `titleAuthored:true` → `topicAuthored` → the
+saved topic gets `topicAuto:false` → `_applyChapterTitles` returns early for it. So the honest answer
+was "done" — except for **why it had never worked for the user**, which turned out to be the same
+defect behind their two previous reports.
+
+**TWO `ui.json` keys**, both approved when the finding was put to them: one new label, one reworded
+string (whose five translations were deleted per the standing ruling).
+
+### ⚠️ The card had no labels, and the one label-shaped thing on screen named the wrong field
+
+Every field carried a PLACEHOLDER and nothing else. **A placeholder disappears the moment its field
+has content.** So on a panel with extracted text, the only label-shaped words on screen were the
+EMPTY title field's placeholder — sitting directly above the CAPTION field that held the text. That
+reads as label-above-field, and the user typed their chapter title into the caption. Measured in
+their own data: `title:""`, with the title text in `caption`.
+
+That one arrangement explains all three reports:
+- *"if I assign a title"* — they were editing the caption;
+- *"I'm losing the image description"* — the story is built from `[caption, inScene]`, so a caption
+  they had just filled kept the description out (it is a fallback only when nothing was extracted);
+- and the chapter title came from the text-derived placeholder, because the real title field stayed
+  empty.
+
+### ⚠️ AND MY FIRST READING OF THE CARD WAS WRONG — the user caught it
+
+I described "four fields"; the user replied that they only ever saw three. Both true, and the gap is
+the bug. The image-description box rendered **only when a description already existed**
+(`buf.description ? … : ''`), so on a panel with none it was absent — and the third visible field was
+`inScene`, whose string read **"What's happening in the scene"**. That describes a *description*,
+while the field holds **text visible in the picture** (`server.js`'s own `CAPTION:` / `IN-SCENE:`
+extraction contract: a narration box, and words drawn into the scene — signs, banners). The user
+looked for the description, found a field that seemed to ask for one, and never saw the real one.
+
+**Checking the extraction prompt before writing the labels is what caught this** — the labels I had
+already written would have shipped the wrong reading with a confident label on top of it. Rule 35 in
+its most literal form: my own summary of a card was a claim about it.
+
+### What shipped
+
+- **A visible label above every field, always.** Three reuse existing strings verbatim (they were
+  already written as field names); the description needed one new key. The placeholders are dropped —
+  with a permanent label, an empty field repeating the same words is the doubled text that made this
+  ambiguous to begin with.
+- **`form.image_scene_ph` reworded** to *"Text in the picture (signs, banners)"* — it now says what
+  the field wants. Five stale translations deleted.
+- **The description box always renders**, empty when absent. "No description was generated" is
+  exactly the state worth seeing, and the old conditional hid it precisely then.
+- `caption` and `inScene` stay separate despite both being extracted text: `_comicStoryPanelsHtml`
+  renders them separately.
+
+### ⚠️ The server half of item AN had ZERO coverage
+
+`unit-comic-title-field` proved `titleAuthored` reaches the request body and stopped there. Grepping
+the whole suite for `topicAuto` returned **no hits** — so everything that actually SUPPRESSES title
+generation was unverified. That is the same shape that produced two failures in this line already
+(`v88_x`'s two cache short-circuits; `v87_m`'s guard that only checked `index.html`), so it got a real
+e2e: a chunk-based book with one authored and one un-authored chapter, against a live server.
+
+**Two limits are recorded in the file rather than implied.** The fake returns no usable titles, so
+`_applyChapterTitles` falls back to each chapter's existing name and NOTHING is renamed either way —
+"the authored title survived" cannot be distinguished from "nothing was renamed" by reading titles
+alone. Non-vacuity therefore comes from the fake's own request log (`chapter_titles` calls really
+happened, so the post-pass ran), and the SKIP itself is pinned at the source — including that it
+short-circuits **before** computing a replacement title, and still reserves the authored name so a
+later auto-titled chapter cannot be given it. A first attempt asserted "the neighbour was retitled"
+and failed: it was measuring the FAKE, not the product.
+
+**Guard**: `unit-comic-title-field` (+1 section, fixture switched to the user's exact panel state —
+empty title, empty description) and the new `e2e-authored-chapter-title`. **SEVEN mutations red** —
+the labels removed, the description conditional restored, the misleading string restored, a label
+moved after its field, `topicAuthored` never set, the post-pass skip removed, and the skip moved to
+after the rename.
+
 ## ✅ v88_x — text analysis resumes instead of restarting, and a failed sentence is no longer permanent
 
 **User request**: *"text analysis: did not finish for tp_17851387238120000029, while the server was
