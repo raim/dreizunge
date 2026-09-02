@@ -576,10 +576,20 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
    the word on mouse-over." The fill marked every analysed word at once, which on a fully analysed
    chapter is the whole text — a highlight that highlights everything signals nothing, and it fought
    the red→green vocabulary colouring the same text carries. The hover outline below is the whole
-   affordance now. Padding/radius stay so the outline has something to hug. */
-.te-tok{border-radius:3px;padding:0 2px;cursor:pointer;font-weight:600}
+   affordance now. Padding/radius stay so the outline has something to hug.
+
+   ⚠️ v88_w (user, within minutes of v88_u): `background:none` and `color:inherit` are REQUIRED, not
+   tidiness. These tokens are <mark> elements (see _teTokenMarkHtml), and a bare <mark> carries the
+   BROWSER's own yellow fill and black text. v88_u merely DELETED the blue declaration, which
+   unmasked that default — the user saw the highlight turn from light blue to yellow, which is not
+   what "no colour" means. Removing an override does not remove a style when the element type has
+   one of its own. */
+.te-tok{background:none;color:inherit;border-radius:3px;padding:0 2px;cursor:pointer;font-weight:600}
 .te-tok:hover{outline:2px solid var(--blue);outline-offset:1px}
-.te-tok-low{background:#f2f2f2;color:var(--gray-dark)}
+/* v88_w: the low-confidence fill goes for the same reason the blue one did — "NO COLOR", and a grey
+   block is still a highlight. The muted TEXT colour stays: that is a property of the word, not a
+   marker painted behind it, and it is the only thing left distinguishing an uncertain reading. */
+.te-tok-low{background:none;color:var(--gray-dark)}
 .te-tok-unresolved{background:none;border-bottom:1px dashed var(--gray-mid)}
 .te-status{color:var(--gray-dark);font-style:italic}
 .story-flag-row{padding:6px 14px 10px;display:flex;flex-direction:column;gap:6px}

@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_u`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_w`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -79,7 +79,25 @@ renders the plain unclickable story), analysed words lost their blue fill (the h
 whole affordance), and the QUESTION card got its own 🔍 with a THIRD independent flag over the shared
 cache. Zero keys. Ten mutations red. Full write-up: the `v88_u` entry.
 
-**⚠️ FOUR ITEMS ARE STILL OWED — they are the top of the queue.** Verbatim where quoted:
+**`v88_w` took three more reports, two of them arriving mid-release.** It reworded the last two
+"comics" in the jobs popover (`Extracting image panels`,
+`Image draft`). ⚠️ **The finding is bigger than the fix**: both were hardcoded English in
+`server.js`, which is why `v88_f`'s `comic`→`image` rename could not reach them — **server job labels
+are the one user-facing surface `ui.json` does not cover, and are therefore never translated in any
+UI language.** Known gap, not an oversight; closing it needs keys plus a client-side lookup for
+server-minted strings. `d.kind === 'comic'` (a stored draft field), the `comic-extract` link type and
+`Detecting comic panels` (the user's own exception) all deliberately keep the word.
+
+It also fixed **a regression `v88_u` shipped**: removing `.te-tok`'s blue fill unmasked the BROWSER's
+own `<mark>` yellow, because the analysed tokens are `<mark>` elements. **Removing an override does
+not remove a style when the element type has one of its own.** ⚠️ `v88_u`'s guard was a PROXY
+(`!/background/`) which the broken version satisfied exactly AND which would have gone red on the
+correct fix — both failure directions in one release. And it routed the **static landing card's
+artwork** through `_slArtworkHtml`: it read `sl.storyboard` directly, so `v87_m`'s `thumbMode` never
+reached the one surface that re-implements `loadSavedList` — `v87_m`'s guard had checked `index.html`
+alone. Eleven mutations red across the three.
+
+**⚠️ THREE ITEMS ARE STILL OWED — they are the top of the queue.** Verbatim where quoted:
 
 1. **Generation from comic/image: move the Generate button off the text-extraction/confirmation card
    onto the THIRD generation card**, where extra lessons and all features (translation, title,
@@ -100,15 +118,6 @@ cache. Zero keys. Ten mutations red. Full write-up: the `v88_u` entry.
    server-side job id for `POST /api/jobs/cancel` to look up. So this is NOT a one-line gate change —
    it needs either an `AbortController` on the client fetch (stops the waiting, leaves the model
    running) or the sync routes registering real cancellable jobs. Decide which before building.
-4. **🆕 The jobs popover still says "comics" twice** (user screenshot): *"We aimed to replace these,
-   since 'comics' is just one use case of the image upload. Below the image the text 'detect comic
-   panels' is OK, since this really refers to an image of a comics/manga."* **Diagnosed**: both are
-   HARDCODED ENGLISH in `server.js` — the extract job's `newJob({ label: ... })` and the drafts
-   listing's own draft label. That is why `v88_f`'s `comic`→`image` rename could not reach them:
-   `unit-ui-key-exists` sweeps strings that go through `ui.json`, and **server job labels are the one
-   user-facing surface `ui.json` does not cover at all** — they are never translated either. Reword
-   to the image vocabulary and add a guard scoped to the label expressions (the link TYPE and the
-   `console.log` line legitimately keep the word).
 
 **⚠️ The WITHIN-chapter progression is untouched and is meant to stay** — the user was explicit:
 *"we do still want the 'play mode' question progress within chapters, to first solve vocab, then, to
@@ -126,7 +135,7 @@ one 🔒 that legitimately survives there). Do not "finish the job" by removing 
    fifteen point releases) — go there for how anything from that line was built, and for the six
    items it closed.
 4. `INTERNALS.md` **§6b, the feature → function map** — read it BEFORE grepping for where anything
-   lives. Current through `v88_u`.
+   lives. Current through `v88_w`.
 
 ## Establish a green baseline before changing anything
 
@@ -174,7 +183,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **344 topics, 99 storylines, 33 languages, 751 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_u'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_w'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to

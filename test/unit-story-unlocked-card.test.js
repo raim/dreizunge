@@ -294,11 +294,27 @@ function renderCard({ teacher }) {
   const byId = Object.fromEntries((store.topics || []).map(t => [t.id, t]));
   // A LATER chapter must be mixed-driven, or case (c) below cannot tell the shared completion rule
   // from the raw done-flags-vs-lessonCount one it replaced.
+  // ⚠️ v88_w: the selector gained a THIRD condition — no chapter of this storyline may belong to
+  // ANOTHER one. Without it the section failed 3/3 (DETERMINISTIC, so not the documented flakiness —
+  // protocol item 1) the moment the user's own server generated a chapter into two decks at once:
+  // `tp_…093` sat in both `sl_790942494` (2 chapters) and `sl_143869450` (7). Every case below marks
+  // THIS storyline's chapters complete and then lets the card resolve its own deck through
+  // `_storylineForTopic()`, which returns the FIRST storyline containing the topic — so "the whole
+  // story is finished" was being asked of a deck the test had never touched, and case (a) correctly
+  // got "back to the storyline" instead of the finished card.
+  //
+  // This is the SAME defect and the SAME fix `v88_o` applied to `unit-story-finished`; that release's
+  // write-up says a proxy fails in both directions, and this file kept the proxy. Selecting on the
+  // property the section actually depends on — the card resolves back to THIS deck — is the fix.
+  const _slOwners = id => (store.storylines || []).filter(x => (x.chapters || []).includes(id)).length;
   const sl = (store.storylines || []).find(x => {
     const ts = (x.chapters || []).map(c => byId[c]).filter(Boolean);
-    return ts.length >= 2 && ts.slice(1).some(t => (t.lessons || []).some(L => L && L.type === 'mixed' && !L._hidden));
+    if (ts.length < 2) return false;
+    if (!(x.chapters || []).every(c => _slOwners(c) === 1)) return false;
+    return ts.slice(1).some(t => (t.lessons || []).some(L => L && L.type === 'mixed' && !L._hidden));
   });
-  assert.ok(sl, 'the corpus has a multi-chapter storyline whose later chapters include a mixed one');
+  assert.ok(sl, 'the corpus has a multi-chapter storyline, owned by no other deck, whose later '
+    + 'chapters include a mixed one');
   const topics = (sl.chapters || []).map(c => byId[c]).filter(Boolean);
   const last = topics[topics.length - 1];
 

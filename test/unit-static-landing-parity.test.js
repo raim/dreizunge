@@ -35,14 +35,27 @@ const mkTopic = (id, topic, next) => ({
   ...(next ? { continuedIn: next } : {}),
   lessons: [{ id: 'l_' + id, type: 'standard', title: 'L', vocab: [{ target: 'gatto', source: 'cat' }] }],
 });
+// v88_w (user report): a SECOND storyline, in `images` thumbMode, carrying BOTH a storyboard and
+// inline panel images. It is the discriminating fixture — with only the storyboard-mode storyline
+// above, a landing card that always renders the storyboard passes everything in this file.
+const IMG_MARKER = 'data:image/png;base64,iVBORw0KGgoAAAANS-v88w-marker';
+const mkImgTopic = (id, topic, next) => Object.assign(mkTopic(id, topic, next), {
+  comicPanels: [{ image: IMG_MARKER, caption: 'panel' }],
+});
 const fixture = {
   schemaVersion: 29,
-  topics: [mkTopic('t_a', 'Chapter A', 'Chapter B'), mkTopic('t_b', 'Chapter B')],
+  topics: [mkTopic('t_a', 'Chapter A', 'Chapter B'), mkTopic('t_b', 'Chapter B'),
+           mkImgTopic('t_i', 'Image Chapter A', 'Image Chapter B'), mkImgTopic('t_j', 'Image Chapter B')],
   storylines: [{
     id: 'sl_test', title: 'Test Storyline', icon: '📖', chapters: ['t_a', 't_b'],
     lang: 'it', srcLang: 'en',
     summary: SUM_MARKER,
     storyboard,
+  }, {
+    id: 'sl_img', title: 'Image Storyline', icon: '🖼️', chapters: ['t_i', 't_j'],
+    lang: 'it', srcLang: 'en',
+    thumbMode: 'images',
+    storyboard,           // it HAS one — the mode is what must decide, not availability
   }],
   flags: {},
 };
@@ -77,9 +90,57 @@ assert.ok(staticFnAt > 0, 'the static-mode block exists');
 //      someone adds a strip to one loadSavedList and forgets the other.
 const client = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const builder = fs.readFileSync(path.join(ROOT, 'build-static.js'), 'utf8');
-for (const hook of ['slsb-wrap-', 'slsum-wrap-', 'data-sb-chain', 'provLineHtml(s)']) {
+for (const hook of ['slsb-wrap-', 'slsum-wrap-', 'data-sb-chain', 'provLineHtml(s)',
+                    // v88_w: the ARTWORK RESOLVER is a landing-card hook like any other. `v87_m`
+                    // made `_slArtworkHtml` the one place that decides storyboard-vs-images and
+                    // asserted "neither surface reads .storyboard directly any more" — against
+                    // index.html ALONE, so the static landing card kept its own direct read and
+                    // never honoured the mode. That is the v55_p trap this whole file exists for,
+                    // sprung on a feature added two lines under its own warning comment.
+                    '_slArtworkHtml(']) {
   assert.ok(client.includes(hook), `live landing renderer emits ${hook}`);
   assert.ok(builder.includes(hook), `static landing renderer emits ${hook} (add it to BOTH loadSavedList impls)`);
+}
+
+// ── 5b. v88_w: FUNCTIONAL — the static landing card honours thumbMode ────────────────────────────
+// The source check above proves the resolver is CALLED; this proves the built bundle actually
+// renders images for an images-mode storyline and the storyboard for the other. Run against the real
+// built file, because the whole class of bug this file guards is "the static renderer differs".
+{
+  const { loadClient } = require('./lib-dom');
+  const LANGS = JSON.parse(fs.readFileSync(path.join(ROOT, 'languages.json'), 'utf8'));
+  const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
+  const C = loadClient({ quiet: true, file: path.join(outDir, 'index.html') });
+  C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)};
+    APP.libFilter = 'all'; APP.libSrcFilter = 'all'; APP.libTagFilter = null;
+    APP.progress = { completed:{}, solved:{}, chapterDone:{}, learned:{}, storyShown:{} };
+    loadSavedList();
+    window._html = document.getElementById('saved-list').innerHTML;
+    true;`, 'static-render');
+  const html = C.run('window._html');
+  // Scope each claim to its own storyline group, or "the page contains an image somewhere" would
+  // pass while the images-mode card still showed a storyboard.
+  // ⚠️ Bounded by the NEXT storyline group, not by a character budget. The first attempt sliced a
+  // fixed 4000 chars from the artwork slot and ran straight into the other storyline's card, so the
+  // "and not an image strip" assertion failed on a correct render — the seventh fixed-size window to
+  // fail that way in this line. A structural bound cannot fail for that reason.
+  const groupOf = id => {
+    const at = html.indexOf('slgroup-' + id);
+    assert.ok(at > 0, `the ${id} card rendered its own group container`);
+    const next = html.indexOf('slgroup-', at + 1);
+    return html.slice(at, next > at ? next : html.length);
+  };
+  const imgGroup = groupOf('sl_img'), sbGroup = groupOf('sl_test');
+  assert.ok(imgGroup.includes(IMG_MARKER),
+    'an images-mode storyline shows its PANEL IMAGES on the static landing card');
+  assert.ok(!imgGroup.includes(SB_MARKER),
+    'and NOT its storyboard, even though it has one — the mode decides, not availability');
+  // Non-vacuity in the other direction: the default-mode storyline still gets its storyboard, so
+  // this is not passing because artwork stopped rendering altogether.
+  assert.ok(sbGroup.includes(SB_MARKER),
+    'while a storyboard-mode storyline still shows its storyboard');
+  assert.ok(!sbGroup.includes(IMG_MARKER), 'and not an image strip it has no images for');
+  console.log('  static landing card: thumbMode decides the artwork, same as live: OK');
 }
 
 fs.rmSync(tmp, { recursive: true, force: true });

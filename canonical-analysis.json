@@ -7163,8 +7163,126 @@
       },
       "sourceTextHash": "97ac0149e7d6",
       "analyzedAt": "2026-09-02T08:51:04.205Z"
+    },
+    "tp_17883419204170000088": {
+      "chapterId": "tp_17883419204170000088",
+      "lang": "nl",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 1,
+      "tokenCount": 2,
+      "sentences": [
+        {
+          "sentenceId": "tp_17883419204170000088:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17883419204170000088:s0:t0",
+              "idx": 0,
+              "surface": "De",
+              "lemma": "de",
+              "form": "bestimmter Artikel, Nominativ Singular Femininum",
+              "sense": "der/die/das (definit)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883419204170000088:s0:t1",
+              "idx": 1,
+              "surface": "Manteling",
+              "lemma": "manteling",
+              "form": "Nomen, Nominativ Singular Femininum",
+              "sense": "Ummantelung",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-02T09:44:36.182Z",
+            "sentenceId": "tp_17883419204170000088:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "De Manteling",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-02T09:44:36.182Z",
+        "chapterId": "tp_17883419204170000088",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "898673f8af87",
+      "analyzedAt": "2026-09-02T09:44:36.182Z"
+    },
+    "tp_17883426979990000196": {
+      "chapterId": "tp_17883426979990000196",
+      "lang": "nl",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 1,
+      "tokenCount": 2,
+      "sentences": [
+        {
+          "sentenceId": "tp_17883426979990000196:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17883426979990000196:s0:t0",
+              "idx": 0,
+              "surface": "De",
+              "lemma": "de",
+              "form": "bestimmter Artikel, Nominativ Singular Femininum",
+              "sense": "der/die/das (definit)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883426979990000196:s0:t1",
+              "idx": 1,
+              "surface": "Manteling",
+              "lemma": "manteling",
+              "form": "Nomen, Nominativ Singular Femininum",
+              "sense": "Ummantelung",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-02T09:57:17.176Z",
+            "sentenceId": "tp_17883426979990000196:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "De Manteling",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-02T09:57:17.176Z",
+        "chapterId": "tp_17883426979990000196",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "898673f8af87",
+      "analyzedAt": "2026-09-02T09:57:17.176Z"
     }
   },
-  "generatedAt": "2026-09-02T08:51:04.206Z",
-  "chapterCount": 16
+  "generatedAt": "2026-09-02T09:57:17.178Z",
+  "chapterCount": 18
 }

@@ -2424,6 +2424,110 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_w — the "comics" job labels, a yellow highlight I caused, and the static landing card's artwork
+
+Three user reports, two of them arriving while the previous release was still being written. **ZERO
+`ui.json` keys.**
+
+### 1. The last two "comics" in the jobs popover
+
+*"The job popover on the lower right still has two mentions of 'comics'. We aimed to replace these,
+since 'comics' is just one use case of the image upload. Below the image the text 'detect comic
+panels' is OK, since this really refers to an image of a comics/manga."*
+
+`Extracting comic panels (N)` → `Extracting image panels (N)`; `Comic draft (N panels)` →
+`Image draft (N panels)`.
+
+**⚠️ Why `v88_f`'s `comic`→`image` rename could not have caught them.** Both are **hardcoded English
+in `server.js`**, not `ui.json` keys. `unit-ui-key-exists` sweeps every string reaching `t()` —
+including, since `v88_f`, the conditional-call shape `CALL_RE` could not see. None of that can see a
+job label, because **server job labels are the one user-facing surface `ui.json` does not cover at
+all.** They are consequently **never translated**, in any UI language. Recorded, not closed: closing
+it needs keys plus a client-side lookup for server-minted strings.
+
+Deliberately keeping the word: `d.kind === 'comic'` (a stored DRAFT field — renaming it orphans every
+draft on disk), `link:{type:'comic-extract'}` (a protocol token), and `Detecting comic panels` (**the
+user's own explicit exception**).
+
+The guard sweeps the **whole set** of job labels, not the two reported (`v88_b`'s rule), stripping
+`${…}` interpolations first — those are code, and without that the draft label fails on its own
+`d.comic` field access. `deepStrictEqual` against a one-element list pins the exemption in BOTH
+directions: it cannot silently grow, and renaming the detection job breaks it too.
+
+### 2. ⚠️ A regression I shipped in `v88_u`, reported within minutes
+
+*"it seems that you just changed the word highlight in text analysis view from light blue to yellow.
+I wanted it to be cleared, i.e. NO COLOR, and only keep the frame that is shown on mouse-over."*
+
+Correct, and the cause is exact: **the analysed tokens are `<mark>` elements**, and a bare `<mark>`
+carries the BROWSER's own yellow fill and black text. `v88_u` merely DELETED the blue declaration,
+which unmasked the default. **Removing an override does not remove a style when the element type has
+one of its own.** Now `background:none;color:inherit`, and `.te-tok-low`'s grey block goes the same
+way (a grey highlight is still a highlight; its muted TEXT colour stays, being a property of the word
+rather than a marker painted behind it).
+
+**⚠️ THE GUARD WAS A PROXY, AND THE PROXY IS WHY IT SHIPPED.** `v88_u` asserted
+`!/background/.test(rule)` — "the rule declares no background" — as a stand-in for "the word is not
+filled". Different claims for a `<mark>`. The broken version satisfied the proxy exactly, **and the
+proxy would have gone RED on the correct fix**, since suppressing a UA default REQUIRES declaring
+`background:none`. A proxy fails in both directions; this one demonstrated both within one release.
+Restated properly: every `.te-tok*` rule must SET a background, and every background it sets must be
+`none`/`transparent` — red on a colour, red on a missing declaration, green on the fix. The mutation
+reproducing `v88_u`'s exact shape now goes red, plus a non-vacuity assertion that these really are
+`<mark>` elements, which is the whole premise.
+
+### 3. The static landing card ignored the artwork mode
+
+*"in the static docs/index.html main page, we still see the story board where in live and in static
+storylinepage we do see the images, e.g. sl_143869450"*
+
+`build-static.js`'s own `loadSavedList` read `sl.storyboard` **directly**, so `v87_m`'s
+per-storyline `thumbMode` never reached the one surface that re-implements this render. Measured
+against the real bake: `sl_143869450` ("Wald und Verfall") has `thumbMode:"images"`, a storyboard,
+and inline panel images on all 7 chapters — so it showed the storyboard on the landing card and
+images everywhere else.
+
+**`v87_m`'s own guard asserted "neither surface reads `.storyboard` directly any more" — against
+`index.html` alone.** That is exactly the `v55_p` trap `unit-static-landing-parity` exists for, and
+the direct read sat **two lines under that file's own warning comment** about it. Now routed through
+`_slArtworkHtml`, which works offline unchanged because `_slImageStripHtml` prefers
+`comicPanels[0].image` (baked inline) and only falls back to the live thumb route.
+
+The guard is two-sided: `_slArtworkHtml(` joins the parity hook list *and* a new FUNCTIONAL section
+builds a real static bundle from a fixture carrying **two** storylines — one in images mode with both
+artworks available, one in the default mode — loads the built file in the DOM harness, renders the
+landing list and asserts each card shows the right thing. The images-mode fixture is discriminating:
+without it, a card that always renders the storyboard passes everything else in that file.
+
+### ⚠️ Two old traps, sprung again while fixing these
+
+- **Backticks in a comment inside a template literal** (`build-static.js` this time) — third
+  occurrence this session, and the file already carries a note about it elsewhere.
+- **A fixed-size window**, again: the new functional guard first sliced 4000 chars from the artwork
+  slot and ran into the *other* storyline's card, failing on a correct render. Bounded by the next
+  `slgroup-` instead. Seventh in this line.
+
+### ⚠️ And a fourth: a fixture the live corpus broke, for the third time in this line
+
+`unit-story-unlocked-card` §7 went red **3/3 — deterministic, so not the documented flakiness**
+(protocol item 1) — because the user's own server had generated `tp_…093` into **two** storylines at
+once (`sl_790942494`, 2 chapters, and `sl_143869450`, 7). Every case there marks THIS storyline's
+chapters complete and then lets the card resolve its own deck through `_storylineForTopic()`, which
+returns the FIRST storyline containing the topic. So "is the whole story finished?" was being asked
+of a deck the test had never touched, and case (a) correctly answered "back to the storyline" instead
+of the finished card.
+
+**Identical defect and identical fix to the one `v88_o` applied to `unit-story-finished`** — that
+release's own write-up says a proxy fails in both directions, and this file kept the proxy. The
+selector now requires every chapter of the candidate storyline to belong to **no other deck**, which
+is the property the section actually depends on rather than a stand-in for it. Isolated in two
+commands (`git show HEAD:lessons.json`, then the same run against the working tree), exactly as the
+protocol prescribes.
+
+**Guard**: `unit-jobs-popover` (+1 section), `unit-text-explorer` (§7d rewritten),
+`unit-static-landing-parity` (+1 functional section, fixture extended), `e2e-drafts-comic` (label
+claim updated, unchanged in substance). **ELEVEN mutations red.**
+
 ## ✅ v88_u — three text-analysis fixes: no auto-start, no blue fill, and the question card gets its own 🔍
 
 Three items from the user's live-test batch, all in the text-explorer view. **ZERO new `ui.json`

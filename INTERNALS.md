@@ -1366,6 +1366,26 @@ descriptions** (two user requests; full write-up in `roadmap_v87.md`'s own `v87_
 
 ---
 
+**`v88_w` — the "comics" job labels, a yellow highlight `v88_u` caused, and the static landing card's
+artwork** (three user reports; full write-up in `roadmap_v88.md`'s own `v88_w` entry). ZERO `ui.json`
+keys.
+
+| what | where |
+|---|---|
+| the two job labels | `server.js`: **`Extracting image panels (N)`** and **`Image draft (N panels)`** |
+| ⚠️ **why `v88_f` could not have caught them** | both are HARDCODED ENGLISH in `server.js`. `unit-ui-key-exists` sweeps what reaches `t()`. **Server job labels are the one user-facing surface `ui.json` does not cover — and are therefore never translated in any UI language.** A known gap, recorded not closed |
+| what KEEPS the word, on purpose | `d.kind === 'comic'` (a stored DRAFT field — renaming orphans every draft on disk), `link:{type:'comic-extract'}` (a protocol token), `Detecting comic panels` (**the user's explicit exception**) |
+| that guard | `unit-jobs-popover` sweeps EVERY job label (`v88_b`'s set-level rule), stripping `${…}` interpolations first — they are CODE, and without that the draft label fails on its own `d.comic` field access. `deepStrictEqual` against a one-element list pins the exemption in BOTH directions |
+| ⚠️ **`.te-tok` — a regression `v88_u` shipped** | the analysed tokens are **`<mark>` elements**, and a bare `<mark>` carries the BROWSER's yellow fill and black text. `v88_u` DELETED the blue declaration, unmasking it. **Removing an override does not remove a style when the element type has one of its own.** Now `background:none;color:inherit`; `.te-tok-low`'s grey block goes too (its muted TEXT colour stays — a property of the word, not a marker behind it) |
+| ⚠️ **the guard was a PROXY, and that is why it shipped** | `!/background/.test(rule)` stood in for "the word is not filled". The broken version satisfied it exactly, **and it would have gone RED on the correct fix** — suppressing a UA default REQUIRES declaring `background:none`. Both failure directions inside one release. Restated: every `.te-tok*` rule must SET a background and every one must be `none`/`transparent` |
+| the static landing card's artwork | `build-static.js`'s own `loadSavedList` read `sl.storyboard` DIRECTLY, so `v87_m`'s per-storyline `thumbMode` never reached it. Measured on the real bake: `sl_143869450` is `thumbMode:"images"` with images on all 7 chapters, and showed the storyboard there and images everywhere else. Routed through **`_slArtworkHtml`** — works offline unchanged, since `_slImageStripHtml` prefers the inline `comicPanels[0].image` |
+| ⚠️ **`v87_m`'s guard checked `index.html` ALONE** | it asserted "neither surface reads `.storyboard` directly any more". The static landing card is a SEPARATE `loadSavedList` — the `v55_p` trap `unit-static-landing-parity` exists for, sprung **two lines under that file's own warning comment** about it |
+| that guard | `_slArtworkHtml(` joins the parity hook list, AND a new FUNCTIONAL section builds a real static bundle from a fixture with TWO storylines (one images-mode with both artworks available, one default), loads the built file in `lib-dom` and asserts each card shows the right thing. The images-mode fixture is what discriminates — without it a card that always renders the storyboard passes |
+| two old traps sprung again | backticks in a comment inside a template literal (`build-static.js`, 3rd this session), and a fixed-size window (4000 chars ran into the next storyline's card — bounded by the next `slgroup-` instead, 7th in this line) |
+| the acceptance tests | `unit-jobs-popover`, `unit-text-explorer` §7d rewritten, `unit-static-landing-parity` (+functional section), `e2e-drafts-comic`. **ELEVEN mutations red** |
+
+---
+
 **`v88_u` — three text-analysis fixes: no auto-start, no blue fill, the question card gets its own 🔍**
 (user live-test batch; full write-up in `roadmap_v88.md`'s own `v88_u` entry). ZERO new `ui.json` keys.
 

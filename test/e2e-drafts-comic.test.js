@@ -61,7 +61,11 @@ const BOXES = [
       const jobs = await get(sport, '/api/jobs');
       const entry = jobs.body.jobs.find(j => j.id === draftId);
       assert(entry, 'the comic draft appears in the jobs aggregate');
-      assert(/^Comic draft/.test(entry.label), 'the label is worded distinctly from a text draft (got "' + entry.label + '")');
+      // v88_v (user report): the label reads "Image draft", not "Comic draft" — comics are one USE
+      // CASE of the image upload, not the feature. The CLAIM here is unchanged and is what the
+      // assertion still states: an image-sourced draft is worded distinctly from a text one.
+      assert(/^Image draft/.test(entry.label), 'the label is worded distinctly from a text draft (got "' + entry.label + '")');
+      assert(!/comic/i.test(entry.label), 'and it does not call every uploaded image a comic');
       assert(/2 panels/.test(entry.label), 'the label states the panel count (got "' + entry.label + '")');
       assert(entry.link && entry.link.type === 'draft' && entry.link.id === draftId, 'links the same way a text draft does');
       console.log('  comic draft: create, full round-trip (including an un-extracted box), list summary, jobs-aggregate label: OK');

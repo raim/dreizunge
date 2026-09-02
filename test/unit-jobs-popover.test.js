@@ -148,6 +148,45 @@ function client() {
     // header) does not close it; a click elsewhere on the page does. See this item's own roadmap
     // write-up for the live-verification note.
 
+    // ── v88_v: the job labels a person READS carry the image vocabulary, not "comic" ────────────
+    // User report, with a screenshot of the popover: *"The job popover on the lower right still has
+    // two mentions of 'comics'. We aimed to replace these, since 'comics' is just one use case of
+    // the image upload. Below the image the text 'detect comic panels' is OK, since this really
+    // refers to an image of a comics/manga."*
+    //
+    // ⚠️ WHY `v88_f`'s COMIC→IMAGE RENAME COULD NOT HAVE CAUGHT THIS. Both strings are hardcoded
+    // English in `server.js`, not `ui.json` keys — `unit-ui-key-exists` sweeps what goes through
+    // `t()`, and **server job labels are the one user-facing surface `ui.json` does not cover at
+    // all**. They are never translated either; that is a known limitation, not something this
+    // release changes.
+    //
+    // Asserted over the WHOLE SET of labels, not over the two that were reported: "a fix must apply
+    // to every caller" is `v88_b`'s own lesson, and a third label added later with the old word
+    // would otherwise ship unnoticed. The panel-DETECTION job is the ONE deliberate exception, by
+    // the user's explicit ruling above — it really is about comics.
+    {
+      const srv = require('fs').readFileSync(require('path').join(__dirname, '..', 'server.js'), 'utf8');
+      // Interpolations are stripped: `${d.comic && …}` is CODE, and the claim is about the words a
+      // person reads. Without this the draft label fails on its own `d.comic` field access — a field
+      // that must NOT be renamed, since it is stored on every draft on disk.
+      const readable = lit => lit.slice(1, -1).replace(/\$\{[^}]*\}/g, '');
+      const labels = [];
+      for (const m of srv.matchAll(/label:\s*(`[^`]*`|'[^']*'|"[^"]*")/g)) labels.push(readable(m[1]));
+      for (const m of srv.matchAll(/const label = [^;]*?(`[^`]*`)/g)) labels.push(readable(m[1]));
+      assert.ok(labels.length >= 8,
+        'the sweep found the job labels (got ' + labels.length + ') — a short list means the regex '
+        + 'stopped matching, not that every label is clean');
+      const comicky = labels.filter(l => /comic/i.test(l));
+      assert.deepStrictEqual(comicky.map(l => l.trim()), ['Detecting comic panels'],
+        'the ONLY job label that still says "comic" is panel detection, which the user ruled correct '
+        + '— it really is about a comic/manga image (got ' + JSON.stringify(comicky) + ')');
+      assert.ok(labels.some(l => /Extracting image panels/.test(l)),
+        'the extraction job reads as an IMAGE operation');
+      assert.ok(labels.some(l => /Image draft/.test(l)),
+        'and so does the parked draft');
+      console.log('  server job labels: image vocabulary everywhere except panel detection: OK');
+    }
+
     console.log('unit-jobs-popover: ALL PASSED');
   } catch (e) {
     failed = true;

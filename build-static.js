@@ -632,8 +632,22 @@ async function loadSavedList() {
     // loadSavedList is a SEPARATE implementation, so anything added to the landing card there has
     // to be added here too or it silently vanishes offline. Display-only in static (no 🎬 button —
     // canGenerate is false); the SVG was server-validated by composeStoryboardSVG before storage.
+    //
+    // (No backticks in this comment: it lives inside a template literal.)
+    // ⚠️ v88_w (user report): "in the static docs/index.html main page, we still see the story board
+    // where in live and in static storyline page we do see the images". This read sl.storyboard
+    // DIRECTLY, so the per-storyline thumbMode ruling (v87_m) never reached the static landing card
+    // — the ONE surface that re-implements this render. _slArtworkHtml is the single resolver that
+    // owns the choice, and v87_m's own guard asserted "neither surface reads .storyboard directly
+    // any more" — against index.html only, which is precisely the v55_p trap the paragraph above
+    // already warns about, sprung on the very line it warns about.
+    //
+    // It works offline unchanged: _slImageStripHtml prefers comicPanels[0].image, which the static
+    // build bakes inline, and only falls back to the live comic-thumb route.
     const _slSumMeta2=matchSl2||slTitles[chainId]||null;
-    const _slSb2=_slSumMeta2?.storyboard||'';
+    const _slSb2=(typeof _slArtworkHtml==='function')
+      ? _slArtworkHtml(_slSumMeta2, chain)
+      : (_slSumMeta2?.storyboard||'');
     if(_slSb2){
       html+='<div class="storyline-storyboard" id="slsb-wrap-'+chainId+'" data-sb-chain="'+String(chainId).replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" aria-label="'+t('storyboard.title').replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" style="padding:4px 8px;overflow-x:auto">'+_slSb2+'</div>';
     }

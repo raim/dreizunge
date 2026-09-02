@@ -250,7 +250,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_u';
+const APP_VERSION  = 'v88_w';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -8232,8 +8232,12 @@ http.createServer(async (req, res) => {
       // actively happening, they're just resumable, same distinction a paused download vs. an
       // active one would make.
       for (const d of loadDrafts()) {
+        // v88_v (user, live test): "comics" is one USE CASE of the image upload, not the feature —
+        // the same rename `v88_f` (item AP) applied to the ui.json branch. `d.kind` stays 'comic'
+        // deliberately: it is a stored DRAFT field, and renaming it would orphan every draft on
+        // disk. Only the words a person reads change.
         const label = d.kind === 'comic'
-          ? `Comic draft (${(d.comic && d.comic.boxes || []).length} panel${(d.comic && d.comic.boxes || []).length === 1 ? '' : 's'})`
+          ? `Image draft (${(d.comic && d.comic.boxes || []).length} panel${(d.comic && d.comic.boxes || []).length === 1 ? '' : 's'})`
           : `Draft: ${d.sourceFile ? `"${d.sourceFile}"` : 'pasted text'} (${(d.chunks || []).length} chapter${(d.chunks || []).length === 1 ? '' : 's'})`;
         out.push({ id: d.id, kind: 'draft', label,
           link: { type: 'draft', id: d.id }, status: 'draft', step: null, error: null,
@@ -8407,7 +8411,9 @@ http.createServer(async (req, res) => {
       // `link` was null here until now, which is why the row had no button at all — `_jobsRenderList`
       // renders "open →" only `if (j.link)`, and `newJob()`'s own comment predicted this case.
       const draftId = (typeof body.draftId === 'string' && body.draftId.trim()) ? body.draftId.trim() : null;
-      const jobId = newJob({ label: `Extracting comic panels (${images.length})` });
+      // v88_v: see the drafts-listing label above. The link TYPE below keeps the old word because it
+      // is a protocol token the client matches on, not text anyone reads.
+      const jobId = newJob({ label: `Extracting image panels (${images.length})` });
       // The link carries the job's OWN id, so it can only be attached once newJob() has minted it.
       // `id` is the fast path (apply the result straight from the job store); `draftId` is the
       // DURABLE one, and the client prefers it — see _jobsOpenLink's own comic-extract branch.

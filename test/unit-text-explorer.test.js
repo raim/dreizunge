@@ -522,15 +522,35 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
   // "don't show the blue highlight of analyzed text, just show the blue frame around the word on
   // mouse-over." The fill marked every analysed word at once — on a fully analysed chapter, the
   // whole text — and fought the red→green vocabulary colouring the same text carries.
+  //
+  // ⚠️ v88_w: THIS ASSERTION WAS A PROXY, AND THE PROXY IS WHY THE FIRST ATTEMPT SHIPPED BROKEN.
+  // It read `!/background/.test(rule)` — "the rule declares no background" — as a stand-in for "the
+  // word is not filled". Those are different claims for a <mark>, which carries the BROWSER's own
+  // yellow. v88_u deleted the blue declaration and satisfied the proxy exactly, and the user saw the
+  // highlight turn from light blue to YELLOW. Worse, the proxy would have gone RED on the correct
+  // fix, since suppressing a UA default REQUIRES declaring `background:none`.
+  //
+  // Stated properly now: every token rule must set a background, and every one it sets must be
+  // none/transparent. That fails on a colour, fails on a missing declaration, and passes on the fix.
   {
     const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-    const rule = /\.te-tok\{([^}]*)\}/.exec(src);
-    assert.ok(rule, 'the token rule exists');
-    assert.ok(!/background/.test(rule[1]),
-      'no background fill on an analysed word (got "' + rule[1] + '")');
+    // Non-vacuity for the premise: these really are <mark> elements, which is the whole reason a
+    // bare "no background declared" is not enough.
+    assert.ok(/<mark class="\$\{cls\}"/.test(src),
+      'the analysed tokens are <mark> elements — so the browser has a fill of its own to suppress');
+    const rules = [...src.matchAll(/\.te-tok(-[a-z]+)?\{([^}]*)\}/g)].map(m => ({ sel: '.te-tok' + (m[1] || ''), body: m[2] }));
+    assert.ok(rules.length >= 3, 'all the token rules were found (got ' + rules.length + ')');
+    for (const r of rules) {
+      const bg = /background:\s*([^;]+)/.exec(r.body);
+      assert.ok(bg, r.sel + ' declares a background — omitting it leaves the <mark> default showing');
+      assert.ok(/^(none|transparent)$/.test(bg[1].trim()),
+        r.sel + ' paints NO colour behind the word (got "' + bg[1].trim() + '")');
+    }
     assert.ok(/\.te-tok:hover\{[^}]*outline:2px solid var\(--blue\)/.test(src),
       'the hover outline IS still there — the affordance moved, it was not removed');
-    console.log('  analysed words carry no fill, only the hover frame: OK');
+    assert.ok(/\.te-tok\{[^}]*color:inherit/.test(src),
+      'and the text colour is inherited, not the <mark> default black, which would fight the theme');
+    console.log('  analysed words carry no fill at all (the <mark> default included), only the hover frame: OK');
   }
 
   // ── 8. ⚠️ REGRESSION: a chapter arrived at with the mode ALREADY ON must load, not hang ────────
