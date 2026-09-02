@@ -5594,8 +5594,1577 @@
       },
       "sourceTextHash": "74d273572295",
       "analyzedAt": "2026-09-02T06:41:55.809Z"
+    },
+    "tp_17883366642310000093": {
+      "chapterId": "tp_17883366642310000093",
+      "lang": "nl",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 7,
+      "tokenCount": 123,
+      "sentences": [
+        {
+          "sentenceId": "tp_17883366642310000093:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17883366642310000093:s0:t0",
+              "idx": 0,
+              "surface": "Gemeente",
+              "lemma": "gemeente",
+              "form": "Substantiv, Nominativ Singular Femininum",
+              "sense": "Kommune",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t1",
+              "idx": 1,
+              "surface": "Veere",
+              "lemma": "Veere",
+              "form": "Eigenname, Nominativ Singular",
+              "sense": "Veere (Ortsname)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t2",
+              "idx": 2,
+              "surface": "geeft",
+              "lemma": "geven",
+              "form": "Verb, Präsens Indikativ 3. Person Singular",
+              "sense": "gibt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t3",
+              "idx": 3,
+              "surface": "ook",
+              "lemma": "ook",
+              "form": "Adverb",
+              "sense": "auch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t4",
+              "idx": 4,
+              "surface": "op",
+              "lemma": "op",
+              "form": "Präposition",
+              "sense": "an/auf (lokal)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t5",
+              "idx": 5,
+              "surface": "deze",
+              "lemma": "deze",
+              "form": "Demonstrativpronomen, Akkusativ Singular Femininum",
+              "sense": "diese",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t6",
+              "idx": 6,
+              "surface": "plek",
+              "lemma": "plek",
+              "form": "Substantiv, Akkusativ Singular Femininum",
+              "sense": "Platz/Stelle",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t7",
+              "idx": 7,
+              "surface": "meer",
+              "lemma": "meer",
+              "form": "Adverb",
+              "sense": "mehr",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t8",
+              "idx": 8,
+              "surface": "ruimte",
+              "lemma": "ruimte",
+              "form": "Substantiv, Akkusativ Singular Femininum",
+              "sense": "Raum/Platz (im übertragenen Sinne)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t9",
+              "idx": 9,
+              "surface": "aan",
+              "lemma": "aan",
+              "form": "Präposition",
+              "sense": "für/an (Dativ)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t10",
+              "idx": 10,
+              "surface": "de",
+              "lemma": "de",
+              "form": "Bestimmter Artikel, Dativ Singular Femininum",
+              "sense": "der/die/das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t11",
+              "idx": 11,
+              "surface": "natuur",
+              "lemma": "natuur",
+              "form": "Substantiv, Dativ Singular Femininum",
+              "sense": "Natur",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t12",
+              "idx": 12,
+              "surface": "om",
+              "lemma": "om",
+              "form": "Konjunktion (Zweck)",
+              "sense": "um ... zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t13",
+              "idx": 13,
+              "surface": "de",
+              "lemma": "de",
+              "form": "Bestimmter Artikel, Akkusativ Singular Femininum",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t14",
+              "idx": 14,
+              "surface": "biodiversiteit",
+              "lemma": "biodiversiteit",
+              "form": "Substantiv, Akkusativ Singular Femininum",
+              "sense": "Biodiversität",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t15",
+              "idx": 15,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t16",
+              "idx": 16,
+              "surface": "onze",
+              "lemma": "onze",
+              "form": "Possessivpronomen, Akkusativ Singular Femininum",
+              "sense": "unser",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t17",
+              "idx": 17,
+              "surface": "gemeente",
+              "lemma": "gemeente",
+              "form": "Substantiv, Akkusativ Singular Femininum",
+              "sense": "Gemeinde/Kommune",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t18",
+              "idx": 18,
+              "surface": "te",
+              "lemma": "te",
+              "form": "Partikel (Infinitivmarker)",
+              "sense": "zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s0:t19",
+              "idx": 19,
+              "surface": "bevorderen.",
+              "lemma": "bevorderen",
+              "form": "Verb, Infinitiv",
+              "sense": "fördern",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 2,
+              "end": 8,
+              "tokenIds": [
+                "tp_17883366642310000093:s0:t2",
+                "tp_17883366642310000093:s0:t3",
+                "tp_17883366642310000093:s0:t4",
+                "tp_17883366642310000093:s0:t5",
+                "tp_17883366642310000093:s0:t6",
+                "tp_17883366642310000093:s0:t7",
+                "tp_17883366642310000093:s0:t8"
+              ],
+              "lemma": "ruimte geven aan",
+              "gloss": "Platz machen für / Raum geben für",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 12,
+              "end": 19,
+              "tokenIds": [
+                "tp_17883366642310000093:s0:t12",
+                "tp_17883366642310000093:s0:t13",
+                "tp_17883366642310000093:s0:t14",
+                "tp_17883366642310000093:s0:t15",
+                "tp_17883366642310000093:s0:t16",
+                "tp_17883366642310000093:s0:t17",
+                "tp_17883366642310000093:s0:t18",
+                "tp_17883366642310000093:s0:t19"
+              ],
+              "lemma": "om ... te bevorderen",
+              "gloss": "um ... zu fördern",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-02T08:21:52.314Z",
+            "sentenceId": "tp_17883366642310000093:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Gemeente Veere geeft ook op deze plek meer ruimte aan de natuur om de biodiversiteit in onze gemeente te bevorderen.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17883366642310000093:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17883366642310000093:s1:t0",
+              "idx": 0,
+              "surface": "Bloemen",
+              "lemma": "bloem",
+              "form": "Nomen Plural Nominativ",
+              "sense": "Blumen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t1",
+              "idx": 1,
+              "surface": "en",
+              "lemma": "en",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t2",
+              "idx": 2,
+              "surface": "kruiden",
+              "lemma": "kruid",
+              "form": "Nomen Plural Nominativ",
+              "sense": "Kräuter",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t3",
+              "idx": 3,
+              "surface": "krijgen",
+              "lemma": "krijgen",
+              "form": "Verb Präsens Indikativ Plural",
+              "sense": "bekommen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t4",
+              "idx": 4,
+              "surface": "de",
+              "lemma": "de",
+              "form": "Artikel Akkusativ Singular Maskulinum/Neutrum oder Plural",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t5",
+              "idx": 5,
+              "surface": "kans",
+              "lemma": "kans",
+              "form": "Nomen Akkusativ Singular Femininum",
+              "sense": "Chance",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t6",
+              "idx": 6,
+              "surface": "om",
+              "lemma": "om",
+              "form": "Konjunktion (Infinitivsatz)",
+              "sense": "um ... zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t7",
+              "idx": 7,
+              "surface": "te",
+              "lemma": "te",
+              "form": "Partikel (Infinitivmarker)",
+              "sense": "(zu-Infinitiv-Marker)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t8",
+              "idx": 8,
+              "surface": "bloeien",
+              "lemma": "bloeien",
+              "form": "Verb Infinitiv",
+              "sense": "blühen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t9",
+              "idx": 9,
+              "surface": "en",
+              "lemma": "en",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t10",
+              "idx": 10,
+              "surface": "te",
+              "lemma": "te",
+              "form": "Partikel (Infinitivmarker)",
+              "sense": "(zu-Infinitiv-Marker)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t11",
+              "idx": 11,
+              "surface": "groeien",
+              "lemma": "groeien",
+              "form": "Verb Infinitiv",
+              "sense": "wachsen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t12",
+              "idx": 12,
+              "surface": "door",
+              "lemma": "door",
+              "form": "Präposition",
+              "sense": "durch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t13",
+              "idx": 13,
+              "surface": "het",
+              "lemma": "het",
+              "form": "Artikel Akkusativ Singular Neutrum",
+              "sense": "das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t14",
+              "idx": 14,
+              "surface": "gras",
+              "lemma": "gras",
+              "form": "Nomen Akkusativ Singular Neutrum",
+              "sense": "Gras",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t15",
+              "idx": 15,
+              "surface": "minder",
+              "lemma": "minder",
+              "form": "Adverb Komparativ",
+              "sense": "weniger",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t16",
+              "idx": 16,
+              "surface": "vaak",
+              "lemma": "vaak",
+              "form": "Adverb Positiv",
+              "sense": "oft",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t17",
+              "idx": 17,
+              "surface": "te",
+              "lemma": "te",
+              "form": "Partikel (Infinitivmarker)",
+              "sense": "(zu-Infinitiv-Marker)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s1:t18",
+              "idx": 18,
+              "surface": "maaien.",
+              "lemma": "maaien",
+              "form": "Verb Infinitiv",
+              "sense": "mähen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 6,
+              "end": 8,
+              "tokenIds": [
+                "tp_17883366642310000093:s1:t6",
+                "tp_17883366642310000093:s1:t7",
+                "tp_17883366642310000093:s1:t8"
+              ],
+              "lemma": "om te bloeien",
+              "gloss": "um zu blühen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 10,
+              "end": 11,
+              "tokenIds": [
+                "tp_17883366642310000093:s1:t10",
+                "tp_17883366642310000093:s1:t11"
+              ],
+              "lemma": "te groeien",
+              "gloss": "zu wachsen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 15,
+              "end": 16,
+              "tokenIds": [
+                "tp_17883366642310000093:s1:t15",
+                "tp_17883366642310000093:s1:t16"
+              ],
+              "lemma": "minder vaak",
+              "gloss": "weniger oft",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 17,
+              "end": 18,
+              "tokenIds": [
+                "tp_17883366642310000093:s1:t17",
+                "tp_17883366642310000093:s1:t18"
+              ],
+              "lemma": "te maaien",
+              "gloss": "zu mähen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-02T08:28:01.098Z",
+            "sentenceId": "tp_17883366642310000093:s1",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Bloemen en kruiden krijgen de kans om te bloeien en te groeien door het gras minder vaak te maaien.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17883366642310000093:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17883366642310000093:s2:t0",
+              "idx": 0,
+              "surface": "Insecten",
+              "lemma": "insect",
+              "form": "Nomen Plural",
+              "sense": "Insekten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s2:t1",
+              "idx": 1,
+              "surface": "zoals",
+              "lemma": "zoals",
+              "form": "Konjunktion",
+              "sense": "wie",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s2:t2",
+              "idx": 2,
+              "surface": "bijen",
+              "lemma": "bij",
+              "form": "Nomen Plural",
+              "sense": "Bienen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s2:t3",
+              "idx": 3,
+              "surface": "en",
+              "lemma": "en",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s2:t4",
+              "idx": 4,
+              "surface": "vlinders",
+              "lemma": "vlinder",
+              "form": "Nomen Plural",
+              "sense": "Schmetterlinge",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s2:t5",
+              "idx": 5,
+              "surface": "houden",
+              "lemma": "houden van",
+              "form": "Verb Präsens Aktiv Plural",
+              "sense": "mögen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s2:t6",
+              "idx": 6,
+              "surface": "van",
+              "lemma": "van",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s2:t7",
+              "idx": 7,
+              "surface": "bloemen",
+              "lemma": "bloem",
+              "form": "Nomen Plural",
+              "sense": "Blumen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s2:t8",
+              "idx": 8,
+              "surface": "en",
+              "lemma": "en",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s2:t9",
+              "idx": 9,
+              "surface": "vogels",
+              "lemma": "vogel",
+              "form": "Nomen Plural",
+              "sense": "Vögel",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s2:t10",
+              "idx": 10,
+              "surface": "houden",
+              "lemma": "houden van",
+              "form": "Verb Präsens Aktiv Plural",
+              "sense": "mögen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s2:t11",
+              "idx": 11,
+              "surface": "weer",
+              "lemma": "weer",
+              "form": "Adverb",
+              "sense": "wiederum",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s2:t12",
+              "idx": 12,
+              "surface": "van",
+              "lemma": "van",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s2:t13",
+              "idx": 13,
+              "surface": "insecten.",
+              "lemma": "insect",
+              "form": "Nomen Plural",
+              "sense": "Insekten",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 5,
+              "end": 6,
+              "tokenIds": [
+                "tp_17883366642310000093:s2:t5",
+                "tp_17883366642310000093:s2:t6"
+              ],
+              "lemma": "houden van",
+              "gloss": "mögen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 10,
+              "end": 12,
+              "tokenIds": [
+                "tp_17883366642310000093:s2:t10",
+                "tp_17883366642310000093:s2:t11",
+                "tp_17883366642310000093:s2:t12"
+              ],
+              "lemma": "houden van",
+              "gloss": "mögen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-02T08:32:35.782Z",
+            "sentenceId": "tp_17883366642310000093:s2",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Insecten zoals bijen en vlinders houden van bloemen en vogels houden weer van insecten.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17883366642310000093:s3",
+          "tokens": [
+            {
+              "tokenId": "tp_17883366642310000093:s3:t0",
+              "idx": 0,
+              "surface": "Op",
+              "lemma": "op",
+              "form": "Präposition",
+              "sense": "auf",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s3:t1",
+              "idx": 1,
+              "surface": "deze",
+              "lemma": "deze",
+              "form": "Demonstrativpronomen, bestimmter Form",
+              "sense": "diese",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s3:t2",
+              "idx": 2,
+              "surface": "manier",
+              "lemma": "manier",
+              "form": "Nomen, Singular",
+              "sense": "Weise",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s3:t3",
+              "idx": 3,
+              "surface": "wordt",
+              "lemma": "worden",
+              "form": "Hilfsverb, Präsens, 3. Person Singular, Passiv",
+              "sense": "wird",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s3:t4",
+              "idx": 4,
+              "surface": "de",
+              "lemma": "de",
+              "form": "Bestimmter Artikel, Singular",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s3:t5",
+              "idx": 5,
+              "surface": "natuurlijke",
+              "lemma": "natuurlijk",
+              "form": "Adjektiv, schwache Deklination",
+              "sense": "natürliche",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s3:t6",
+              "idx": 6,
+              "surface": "kringloop",
+              "lemma": "kringloop",
+              "form": "Nomen, Singular",
+              "sense": "Kreislauf",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s3:t7",
+              "idx": 7,
+              "surface": "versterkt.",
+              "lemma": "versterken",
+              "form": "Partizip II",
+              "sense": "gestärkt",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 2,
+              "tokenIds": [
+                "tp_17883366642310000093:s3:t0",
+                "tp_17883366642310000093:s3:t1",
+                "tp_17883366642310000093:s3:t2"
+              ],
+              "lemma": "op deze manier",
+              "gloss": "auf diese Weise",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 3,
+              "end": 7,
+              "tokenIds": [
+                "tp_17883366642310000093:s3:t3",
+                "tp_17883366642310000093:s3:t4",
+                "tp_17883366642310000093:s3:t5",
+                "tp_17883366642310000093:s3:t6",
+                "tp_17883366642310000093:s3:t7"
+              ],
+              "lemma": "worden versterkt",
+              "gloss": "gestärkt werden",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-02T08:35:15.604Z",
+            "sentenceId": "tp_17883366642310000093:s3",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Op deze manier wordt de natuurlijke kringloop versterkt.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17883366642310000093:s4",
+          "tokens": [
+            {
+              "tokenId": "tp_17883366642310000093:s4:t0",
+              "idx": 0,
+              "surface": "Grasranden",
+              "lemma": "grasrand",
+              "form": "Nomen Plural Nominativ",
+              "sense": "Graskanten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s4:t1",
+              "idx": 1,
+              "surface": "worden",
+              "lemma": "worden",
+              "form": "Hilfsverb Präsens Passiv 3. Person Plural",
+              "sense": "werden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s4:t2",
+              "idx": 2,
+              "surface": "wel",
+              "lemma": "wel",
+              "form": "Partikel",
+              "sense": "allerdings",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s4:t3",
+              "idx": 3,
+              "surface": "gemaaid",
+              "lemma": "maaien",
+              "form": "Partizip II",
+              "sense": "gemäht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s4:t4",
+              "idx": 4,
+              "surface": "om",
+              "lemma": "om",
+              "form": "Präposition",
+              "sense": "um",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s4:t5",
+              "idx": 5,
+              "surface": "te",
+              "lemma": "te",
+              "form": "Partikel",
+              "sense": "zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s4:t6",
+              "idx": 6,
+              "surface": "voorkomen",
+              "lemma": "voorkomen",
+              "form": "Infinitiv",
+              "sense": "vorzubeugen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s4:t7",
+              "idx": 7,
+              "surface": "dat",
+              "lemma": "dat",
+              "form": "Konjunktion",
+              "sense": "dass",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s4:t8",
+              "idx": 8,
+              "surface": "het",
+              "lemma": "het",
+              "form": "Bestimmter Artikel Nominativ Singular Neutrum",
+              "sense": "das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s4:t9",
+              "idx": 9,
+              "surface": "gras",
+              "lemma": "gras",
+              "form": "Nomen Singular Nominativ Neutrum",
+              "sense": "Gras",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s4:t10",
+              "idx": 10,
+              "surface": "over",
+              "lemma": "over",
+              "form": "Präposition",
+              "sense": "über",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s4:t11",
+              "idx": 11,
+              "surface": "paden",
+              "lemma": "pad",
+              "form": "Nomen Plural Akkusativ/Dativ",
+              "sense": "Wegen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s4:t12",
+              "idx": 12,
+              "surface": "groeit",
+              "lemma": "groeien",
+              "form": "Verb Präsens Indikativ 3. Person Singular",
+              "sense": "wächst",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s4:t13",
+              "idx": 13,
+              "surface": "en",
+              "lemma": "en",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s4:t14",
+              "idx": 14,
+              "surface": "maaiafval",
+              "lemma": "maaiafval",
+              "form": "Nomen Singular Nominativ Neutrum",
+              "sense": "Mähabfall",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s4:t15",
+              "idx": 15,
+              "surface": "wordt",
+              "lemma": "worden",
+              "form": "Hilfsverb Präsens Passiv 3. Person Singular",
+              "sense": "wird",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s4:t16",
+              "idx": 16,
+              "surface": "afgevoerd.",
+              "lemma": "afvoeren",
+              "form": "Partizip II",
+              "sense": "abgeführt",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 4,
+              "end": 6,
+              "tokenIds": [
+                "tp_17883366642310000093:s4:t4",
+                "tp_17883366642310000093:s4:t5",
+                "tp_17883366642310000093:s4:t6"
+              ],
+              "lemma": "om ... te voorkomen",
+              "gloss": "um ... vorzubeugen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 15,
+              "end": 16,
+              "tokenIds": [
+                "tp_17883366642310000093:s4:t15",
+                "tp_17883366642310000093:s4:t16"
+              ],
+              "lemma": "worden afgevoerd",
+              "gloss": "abgeführt werden",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-02T08:39:24.300Z",
+            "sentenceId": "tp_17883366642310000093:s4",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Grasranden worden wel gemaaid om te voorkomen dat het gras over paden groeit en maaiafval wordt afgevoerd.",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17883366642310000093:s5",
+          "tokens": [
+            {
+              "tokenId": "tp_17883366642310000093:s5:t0",
+              "idx": 0,
+              "surface": "Hondenpoep",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t1",
+              "idx": 1,
+              "surface": "draagt",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t2",
+              "idx": 2,
+              "surface": "niet",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t3",
+              "idx": 3,
+              "surface": "bij",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t4",
+              "idx": 4,
+              "surface": "aan",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t5",
+              "idx": 5,
+              "surface": "een",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t6",
+              "idx": 6,
+              "surface": "betere",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t7",
+              "idx": 7,
+              "surface": "kringloop",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t8",
+              "idx": 8,
+              "surface": "en",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t9",
+              "idx": 9,
+              "surface": "door",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t10",
+              "idx": 10,
+              "surface": "het",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t11",
+              "idx": 11,
+              "surface": "zelf",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t12",
+              "idx": 12,
+              "surface": "op",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t13",
+              "idx": 13,
+              "surface": "te",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t14",
+              "idx": 14,
+              "surface": "ruimen,",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t15",
+              "idx": 15,
+              "surface": "draagt",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t16",
+              "idx": 16,
+              "surface": "u",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t17",
+              "idx": 17,
+              "surface": "ook",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t18",
+              "idx": 18,
+              "surface": "bij",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t19",
+              "idx": 19,
+              "surface": "aan",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t20",
+              "idx": 20,
+              "surface": "een",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t21",
+              "idx": 21,
+              "surface": "betere",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s5:t22",
+              "idx": 22,
+              "surface": "biodiversiteit.",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-02T08:45:44.893Z",
+            "sentenceId": "tp_17883366642310000093:s5",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Hondenpoep draagt niet bij aan een betere kringloop en door het zelf op te ruimen, draagt u ook bij aan een betere biodiversiteit.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17883366642310000093:s6",
+          "tokens": [
+            {
+              "tokenId": "tp_17883366642310000093:s6:t0",
+              "idx": 0,
+              "surface": "Plant",
+              "lemma": "planten",
+              "form": "Imperativ Singular Präsens Aktiv",
+              "sense": "pflanzt (Befehl)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t1",
+              "idx": 1,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t2",
+              "idx": 2,
+              "surface": "uw",
+              "lemma": "uw",
+              "form": "Possessivpronomen 2. Person Singular formell",
+              "sense": "Ihr (formell)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t3",
+              "idx": 3,
+              "surface": "eigen",
+              "lemma": "eigen",
+              "form": "Adjektiv Positiv attributiv",
+              "sense": "eigen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t4",
+              "idx": 4,
+              "surface": "tuin",
+              "lemma": "tuin",
+              "form": "Substantiv Singular",
+              "sense": "Garten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t5",
+              "idx": 5,
+              "surface": "ook",
+              "lemma": "ook",
+              "form": "Adverb",
+              "sense": "auch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t6",
+              "idx": 6,
+              "surface": "bloemen",
+              "lemma": "bloemen",
+              "form": "Substantiv Plural",
+              "sense": "Blumen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t7",
+              "idx": 7,
+              "surface": "en",
+              "lemma": "en",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t8",
+              "idx": 8,
+              "surface": "kruiden",
+              "lemma": "kruiden",
+              "form": "Substantiv Plural",
+              "sense": "Kräuter",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t9",
+              "idx": 9,
+              "surface": "planten",
+              "lemma": "planten",
+              "form": "Substantiv Plural",
+              "sense": "Pflanzen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t10",
+              "idx": 10,
+              "surface": "en",
+              "lemma": "en",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t11",
+              "idx": 11,
+              "surface": "draag",
+              "lemma": "dragen",
+              "form": "Imperativ Singular Präsens Aktiv",
+              "sense": "beitragen (Befehl)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t12",
+              "idx": 12,
+              "surface": "zo",
+              "lemma": "zo",
+              "form": "Adverb",
+              "sense": "so",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t13",
+              "idx": 13,
+              "surface": "ook",
+              "lemma": "ook",
+              "form": "Adverb",
+              "sense": "auch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t14",
+              "idx": 14,
+              "surface": "zelf",
+              "lemma": "zelf",
+              "form": "Reflexivpronomen/Adjektiv",
+              "sense": "selbst",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t15",
+              "idx": 15,
+              "surface": "bij",
+              "lemma": "bijdragen",
+              "form": "Partikelverb (trennbar)",
+              "sense": "beitragen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t16",
+              "idx": 16,
+              "surface": "aan",
+              "lemma": "aan",
+              "form": "Präposition",
+              "sense": "an",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t17",
+              "idx": 17,
+              "surface": "het",
+              "lemma": "het",
+              "form": "Bestimmter Artikel Neutrum Singular",
+              "sense": "das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t18",
+              "idx": 18,
+              "surface": "verbeteren",
+              "lemma": "verbeteren",
+              "form": "Substantiviert Infinitiv",
+              "sense": "Verbesserung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t19",
+              "idx": 19,
+              "surface": "van",
+              "lemma": "van",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t20",
+              "idx": 20,
+              "surface": "onze",
+              "lemma": "onze",
+              "form": "Possessivpronomen 1. Person Plural",
+              "sense": "unser",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883366642310000093:s6:t21",
+              "idx": 21,
+              "surface": "natuur!",
+              "lemma": "natuur",
+              "form": "Substantiv Singular",
+              "sense": "Natur",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 11,
+              "end": 15,
+              "tokenIds": [
+                "tp_17883366642310000093:s6:t11",
+                "tp_17883366642310000093:s6:t12",
+                "tp_17883366642310000093:s6:t13",
+                "tp_17883366642310000093:s6:t14",
+                "tp_17883366642310000093:s6:t15"
+              ],
+              "lemma": "bijdragen aan",
+              "gloss": "beitragen zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 0,
+              "end": 4,
+              "tokenIds": [
+                "tp_17883366642310000093:s6:t0",
+                "tp_17883366642310000093:s6:t1",
+                "tp_17883366642310000093:s6:t2",
+                "tp_17883366642310000093:s6:t3",
+                "tp_17883366642310000093:s6:t4"
+              ],
+              "lemma": "in uw eigen tuin planten",
+              "gloss": "in Ihrem eigenen Garten pflanzen",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-02T08:51:04.204Z",
+            "sentenceId": "tp_17883366642310000093:s6",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Plant in uw eigen tuin ook bloemen en kruiden planten en draag zo ook zelf bij aan het verbeteren van onze natuur!",
+          "paraBreakBefore": true
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-02T08:51:04.205Z",
+        "chapterId": "tp_17883366642310000093",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "97ac0149e7d6",
+      "analyzedAt": "2026-09-02T08:51:04.205Z"
     }
   },
-  "generatedAt": "2026-09-02T06:41:55.811Z",
-  "chapterCount": 15
+  "generatedAt": "2026-09-02T08:51:04.206Z",
+  "chapterCount": 16
 }
