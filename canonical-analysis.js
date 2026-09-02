@@ -185,11 +185,26 @@ async function analyzeSentence(model, sentenceRec, opts) {
 // risks truncation on longer chapters and, per the plan's "small representative corpus" framing for
 // each migration stage, is not the concern this stage is measuring. `script` is attached once per
 // chapter (a language-level fact, not a per-sentence one) and needs no model call at all.
+// v88_x (user request): TWO optional hooks, both absent by default so every existing caller behaves
+// byte-identically.
+//   • `opts.reuse(sentence, i)` -> an already-analysed sentence to KEEP, or null/undefined to
+//     analyse it now. This is what "a second run should skip the existing annotation and just do the
+//     rest" needs, and it is the caller's business to decide what counts as reusable (the server
+//     matches on sentence TEXT — see _runAnalysisJob).
+//   • `opts.onProgress(i, sentencesSoFar)` -> awaited after each NEWLY analysed sentence. CP2 is one
+//     model call per sentence and a chapter can take many minutes, so a run that dies mid-way used
+//     to throw away every completed sentence: the server persists after each one now.
+// A reused sentence deliberately does NOT fire onProgress — nothing new was computed, and a resume
+// that re-persisted an unchanged prefix would write the store once per sentence for no reason.
 async function analyzeChapter(model, chapter, opts) {
   opts = opts || {};
   const sentences = [];
-  for (const s of (chapter.sentences || [])) {
-    sentences.push(await analyzeSentence(model, s, opts));
+  const src = chapter.sentences || [];
+  for (let i = 0; i < src.length; i++) {
+    const s = src[i];
+    const kept = (typeof opts.reuse === 'function') ? opts.reuse(s, i) : null;
+    sentences.push(kept || await analyzeSentence(model, s, opts));
+    if (!kept && typeof opts.onProgress === 'function') await opts.onProgress(i, sentences);
   }
   return {
     chapterId: chapter.chapterId,

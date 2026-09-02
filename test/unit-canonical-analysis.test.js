@@ -201,6 +201,65 @@ console.log('  cp2Provenance: CP2-specific shape, model field present (a real ca
     assert.strictEqual(result.phrases.length, 1, 'the fake also proposes one phrase spanning both tokens');
     assert.strictEqual(result.provenance.model, 'fake', 'CP2 provenance records WHICH model produced this');
     console.log('  live model call via fake Ollama: resolved/unresolved distinction holds over a real HTTP round trip: OK');
+
+    // ── 8b. v88_x: analyzeChapter's resume hooks, counted over REAL HTTP calls ──────────────────
+    // User request: "If a text is already half-annotated, a second run should skip the existing
+    // annotation and just do the rest." The only assertion that means anything here is HOW MANY
+    // MODEL CALLS HAPPEN — "the result contains the reused sentence" would pass just as well if the
+    // sentence were re-analysed and happened to come back the same. The fake counts its own
+    // requests, so a reuse that silently still calls the model cannot pass.
+    const script2 = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'cp2-resume-')), 'run.js');
+    fs.writeFileSync(script2, `
+      process.env.OLLAMA_HOST = 'http://127.0.0.1:${fake.port}';
+      const { analyzeChapter } = require(${JSON.stringify(path.join(ROOT, 'canonical-analysis.js'))});
+      const mk = (i) => ({ sentenceId: 'ch1:s' + i, text: 'S' + i,
+        tokens: [{ tokenId: 'ch1:s' + i + ':t0', idx: 0, text: 'Katze' }] });
+      const chapter = { chapterId: 'ch1', lang: 'de', srcLang: 'en',
+        sentences: [mk(0), mk(1), mk(2)], sentenceCount: 3 };
+      const KEPT = { sentenceId: 'ch1:s1', tokens: [{ tokenId:'kept', idx:0, surface:'S1',
+        lemma:'reused-lemma', form:'f', sense:'s', confidence:'high' }], phrases: [], phrasesDropped: 0 };
+      const progress = [];
+      analyzeChapter('fake', chapter, {
+        langName: 'German', srcLangName: 'English',
+        reuse: (s) => (s.sentenceId === 'ch1:s1' ? KEPT : null),
+        onProgress: (i, soFar) => { progress.push([i, soFar.length]); },
+      }).then(r => process.stdout.write(JSON.stringify({
+        lemmas: r.sentences.map(s => (s.tokens[0] || {}).lemma),
+        sentenceCount: r.sentenceCount, progress,
+      })));
+    `);
+    const before = fake.requestCount ? fake.requestCount() : null;
+    const out2 = JSON.parse(execFileSync(process.execPath, [script2], { cwd: ROOT, timeout: 20000 }).toString());
+    assert.strictEqual(out2.sentenceCount, 3, 'every sentence is present in the result, reused or not');
+    assert.strictEqual(out2.lemmas[1], 'reused-lemma',
+      'the REUSED sentence is passed through verbatim, not re-derived');
+    assert.strictEqual(out2.lemmas[0], 'katze', 'while its neighbours really were analysed');
+    assert.strictEqual(out2.lemmas[2], 'katze');
+    // onProgress fires ONLY for newly analysed sentences — a reused one computed nothing, and a
+    // resume that re-persisted an unchanged prefix would write the store once per sentence for free.
+    assert.deepStrictEqual(out2.progress, [[0, 1], [2, 3]],
+      'onProgress fires once per NEWLY analysed sentence, with the accumulating prefix — and NOT '
+      + 'for the reused one (got ' + JSON.stringify(out2.progress) + ')');
+    console.log('  analyzeChapter: reuse skips the model, onProgress reports only real work: OK');
+
+    // Hooks absent => byte-identical to the old behaviour. The whole safety argument for adding them.
+    const script3 = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'cp2-nohook-')), 'run.js');
+    fs.writeFileSync(script3, `
+      process.env.OLLAMA_HOST = 'http://127.0.0.1:${fake.port}';
+      const { analyzeChapter } = require(${JSON.stringify(path.join(ROOT, 'canonical-analysis.js'))});
+      const mk = (i) => ({ sentenceId: 'ch1:s' + i, text: 'S' + i,
+        tokens: [{ tokenId: 'ch1:s' + i + ':t0', idx: 0, text: 'Katze' }] });
+      const chapter = { chapterId: 'ch1', lang: 'de', srcLang: 'en',
+        sentences: [mk(0), mk(1)], sentenceCount: 2 };
+      analyzeChapter('fake', chapter, { langName: 'German', srcLangName: 'English' })
+        .then(r => process.stdout.write(JSON.stringify({
+          n: r.sentenceCount, lemmas: r.sentences.map(s => (s.tokens[0] || {}).lemma) })));
+    `);
+    const out3 = JSON.parse(execFileSync(process.execPath, [script3], { cwd: ROOT, timeout: 20000 }).toString());
+    assert.deepStrictEqual(out3, { n: 2, lemmas: ['katze', 'katze'] },
+      'with neither hook supplied every sentence is analysed exactly as before — the hooks are '
+      + 'opt-in, so no existing caller changed behaviour');
+    console.log('  analyzeChapter without the hooks is unchanged: OK');
   } finally {
     fake.child.kill();
   }

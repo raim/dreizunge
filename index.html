@@ -9342,22 +9342,44 @@ async function analyzeChaptersRun(chapterIds, btn){
   // whatever is missing," not "redo everything already done."
   const old = btn ? btn.innerHTML : null;
   if(btn){ btn.disabled=true; btn.innerHTML='⏳'; }
-  let queued=0, cached=0, failed=0, force=false;
+  let queued=0, cached=0, failed=0, mode=null;   // v88_x: null | 'resume' | 'force'
   try{
     if(ids.length === 1){
       try{
         const r = await fetch('/api/analysis/'+encodeURIComponent(ids[0]));
         const shadow = await r.json().catch(()=>({}));
         if(shadow && shadow.available){
-          if(!confirm(t('text_explorer.confirm_reanalyze'))) return;
-          force = true;
+          // ⚠️ v88_x (user request): "when the button is clicked on existing annotation, we should
+          // get an option 'overwrite' or 'expand existing'". This was a boolean confirm() — the only
+          // choices were "throw it all away and redo it" or "do nothing" — so a chapter that was
+          // half-annotated, or whose story had grown, or (measured: 5.9% of sentences live) whose
+          // model reply failed for a sentence and left every token unresolved, could only be fixed
+          // by paying for the WHOLE chapter again. `showChoiceDialog` already existed for exactly
+          // this shape of decision; no new dialog machinery.
+          //
+          // The counts come from the SERVER (`usableSentences`/`totalSentences`), not from counting
+          // tokens here — the number shown and the sentences the resume redoes must come from one
+          // definition of "usable", or the dialog promises work the run does not do.
+          const done = Number(shadow.usableSentences), total = Number(shadow.totalSentences);
+          mode = await showChoiceDialog({
+            title: t('text_explorer.toggle_title'),
+            body: t('text_explorer.confirm_reanalyze', {
+              done: Number.isFinite(done) ? done : '?',
+              total: Number.isFinite(total) ? total : '?' }),
+            choices: [
+              { value: 'resume', label: t('text_explorer.reanalyze_expand'), primary: true },
+              { value: 'force',  label: t('text_explorer.reanalyze_force') },
+            ],
+          });
+          if(!mode) return;   // cancelled or dismissed — unchanged from the old confirm()
         }
       }catch(e){ /* pre-check failed -> fall through as a normal (non-forced) run */ }
     }
     for(const id of ids){
       try{
         const r = await fetch('/api/analyze-chapter/'+encodeURIComponent(id),
-          { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(force ? {force:true} : {}) });
+          { method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify(mode === 'force' ? {force:true} : mode === 'resume' ? {resume:true} : {}) });
         const data = await r.json().catch(()=>({}));
         if(!r.ok){ failed++; continue; }
         if(data.cached) cached++; else queued++;
@@ -22854,6 +22876,22 @@ function _teStoryHtml(story, sentences){
     out += _teSentenceHtml(s);
     wroteAny = true;
   });
+  // ⚠️ v88_x: the story AFTER the last analysed sentence. This loop only ever emitted the gaps
+  // BETWEEN located sentences, so everything past the final one was silently dropped — the explorer
+  // showed a TRUNCATED chapter. Invisible while every analysis was complete and reached the end of
+  // the text; the moment a PARTIAL analysis renders (the whole point of the resume this release
+  // adds), the un-analysed remainder would simply vanish, which is far worse than showing it
+  // unclickable. It also recovers any trailing text CP1's own sentence splitter left behind — it
+  // breaks only on recognised sentence punctuation, so a chapter ending without one already lost its
+  // last line here.
+  //
+  // Not `_teGapHtml`: that returns null for ANY gap containing a blank line, which the caller reads
+  // as "close the paragraph" and which would DISCARD the gap's own text. For a tail the text is the
+  // point, so every blank line becomes a real paragraph break and the parts between them survive.
+  out += String(story.slice(cursor) || '')
+    .split(/\n{2,}/)
+    .map(part => escHtml(part).replace(/\n/g, '<br>'))
+    .join('</p><p dir="auto">');
   out += '</p>';
   return wroteAny ? out : '';
 }

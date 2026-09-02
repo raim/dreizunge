@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_w`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_x`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -97,7 +97,31 @@ artwork** through `_slArtworkHtml`: it read `sl.storyboard` directly, so `v87_m`
 reached the one surface that re-implements `loadSavedList` — `v87_m`'s guard had checked `index.html`
 alone. Eleven mutations red across the three.
 
-**⚠️ THREE ITEMS ARE STILL OWED — they are the top of the queue.** Verbatim where quoted:
+**`v88_x` shipped the text-analysis resume.** ⚠️ **The measurement changed the design.** The chapter
+the user said "did not finish" had finished — but 2 of its 6 sentences held a full set of token slots
+and NOT ONE lemma, because `parseAnalysisReply` degrades a malformed reply the same way for every
+token in a sentence (deliberately, so one bad reply cannot abort a long chapter) and nothing ever
+revisited it. Measured store-wide: **3 of 51 sentences (5.9%) in 2 of 18 chapters**, both of them
+chapters the user reported. So "already analysed" cannot mean "has tokens" — `_analysisSentenceUsable`
+requires at least one real lemma, reusing `computeFrequency`'s own definition of "resolved".
+
+There was also nothing to resume FROM: `writeAnalysisChapter` ran once, after the whole chapter, so a
+run that died persisted nothing. The release therefore adds THREE things — opt-in `reuse`/`onProgress`
+hooks on `analyzeChapter`, a per-sentence checkpoint flagged `partial:true`, and a three-way dialog
+(cancel / "Analyse only what is missing" / "Re-analyse everything from scratch") whose counts come
+from the server's own shadow. Reuse matches on sentence TEXT, not index, so it serves a died-mid-run
+prefix, a story that grew, and a failed sentence with one rule.
+
+⚠️ **TWO cache short-circuits exist on that path** — the route's and `_kickOffAnalysisJob`'s (which
+repeats the test for `_runBookJob`'s postGenAnalysis). Teaching only the route about `resume` left the
+other firing and a live request returned `{cached:true}` having done nothing; found by issuing it
+against a running server, not by reading the route. Also fixed: `_teStoryHtml` dropped everything past
+the last analysed sentence, so a partial would have rendered a TRUNCATED chapter.
+
+Verified live on `tp_…093` against a real 35B model: "analysing 1 sentence(s)", `6 reused`, sentence 5
+went from 23 unresolved to 23 resolved. Fourteen mutations red.
+
+**⚠️ TWO ITEMS ARE STILL OWED, plus one reported since.** Verbatim where quoted:
 
 1. **Generation from comic/image: move the Generate button off the text-extraction/confirmation card
    onto the THIRD generation card**, where extra lessons and all features (translation, title,
@@ -105,19 +129,26 @@ alone. Eleven mutations red across the three.
    *"The second page of the generation wizard, and its popover parts, should really only generate and
    confirm the text(s) for one or more chapters, and NOT start generation."* — the biggest item; the
    user agreed to take it LAST, after the small fixes.
-2. **Text analysis did not finish for `tp_17851387238120000029`** while the server was still running
-   — possibly a timeout. **A second run must SKIP existing annotations and do only the rest.** The
-   current "already analysed" confirm becomes a three-way choice: cancel / expand existing /
-   overwrite. **THE USER APPROVED THREE `ui.json` KEYS FOR THIS** (two button labels plus a rewritten
-   question; the rewritten English means its stale non-`en` values get deleted per the standing
-   ruling). Nothing else in the batch may spend keys without asking again.
-3. **Some LLM-based jobs still have no cancel button** (user screenshot: "Erstelle Zusammenfassung",
+2. **Some LLM-based jobs still have no cancel button** (user screenshot: "Erstelle Zusammenfassung",
    "Neuer Titel…"). **Diagnosed**: both are `kind:'sync'` rows — the synchronous LLM routes `v88_b`
    surfaced in the popover from `_jobsInflight`. `_jobsRenderList`'s `canCancel` is
    `j.kind === 'job' && …`, and the comment there explains why sync was excluded: there is no
    server-side job id for `POST /api/jobs/cancel` to look up. So this is NOT a one-line gate change —
    it needs either an `AbortController` on the client fetch (stops the waiting, leaves the model
    running) or the sync routes registering real cancellable jobs. Decide which before building.
+3. **🆕 An image DESCRIPTION becomes unreachable once the panel has any extracted text.** User:
+   *"I am still loosing image description if I assign a title in the text confirmation interface, eg.
+   sl_580844164 did have a finished description that i can't access anymore."* **Measured — the data
+   is NOT lost**: `tp_17883458445860000053`'s panel still holds a 128-char `description`
+   ("Een landschap met heuvels…"). What happened is that the chapter's STORY was built from
+   `[caption, inScene]` only (index.html, two sites — see `_comicPanelText` and the
+   `comicCreateChapter` path), and `caption` was the sign's 12-char headline "De Manteling". So a
+   12-character extraction suppressed a 128-character description, and the story is now just
+   "De Manteling". ⚠️ **This collides with a STANDING USER RULING** — *"the description is a fallback
+   when nothing was extracted"* (`v88_d`/item AN) — so the fix is a product decision, not a bug fix:
+   the ruling is too crude for a headline-only extraction. **Put the options to the user before
+   building** (combine both, fall back on a length threshold, or surface the description separately);
+   do not quietly change the ruling.
 
 **⚠️ The WITHIN-chapter progression is untouched and is meant to stay** — the user was explicit:
 *"we do still want the 'play mode' question progress within chapters, to first solve vocab, then, to
@@ -135,7 +166,7 @@ one 🔒 that legitimately survives there). Do not "finish the job" by removing 
    fifteen point releases) — go there for how anything from that line was built, and for the six
    items it closed.
 4. `INTERNALS.md` **§6b, the feature → function map** — read it BEFORE grepping for where anything
-   lives. Current through `v88_w`.
+   lives. Current through `v88_x`.
 
 ## Establish a green baseline before changing anything
 
@@ -182,8 +213,8 @@ DETERMINISTIC, so not flakiness — because the user's server had written a new 
 fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don't run the full and
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **344 topics, 99 storylines, 33 languages, 751 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_w'`.
+Corpus at this cut: **344 topics, 99 storylines, 33 languages, 753 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_x'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to

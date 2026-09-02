@@ -2424,6 +2424,120 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_x — text analysis resumes instead of restarting, and a failed sentence is no longer permanent
+
+**User request**: *"text analysis: did not finish for tp_17851387238120000029, while the server was
+still running. Was this a timeout problem? If a text is already half-annotated, a second run should
+skip the existing annotation and just do the rest. I think this would be an option of the current
+'overwrite' dialogue … we should get an option 'overwrite' or 'expand existing'."*
+
+**THREE new `ui.json` keys — exactly the budget the user approved**: two button labels, plus a
+rewritten `text_explorer.confirm_reanalyze` whose changed English cost its four existing translations
+(deleted per the standing ruling, so `translate-ui.js` refills them).
+
+### ⚠️ MEASURE FIRST: the reported chapter had finished, and that is not the good news it sounds like
+
+`tp_…029`'s stored analysis was **complete** — 6 of 6 sentences, 103 tokens, written the night
+before. The run did not time out. But **2 of its 6 sentences hold a full set of token slots and not
+one lemma**: `parseAnalysisReply` degrades an unparseable or malformed model reply the SAME way for
+every token in that sentence — deliberately, so one bad reply cannot abort a chapter that takes many
+minutes. Nothing ever revisited them. A third of that chapter was unusable, which is exactly what
+"did not finish" looks like from the reader's side.
+
+Measured across the whole live store before writing any code: **3 of 51 sentences (5.9%) in 2 of 18
+chapters, 86 tokens stranded** — and both affected chapters are ones the user reported, the second
+(*"some words in the middle of the text say 'nicht analysiert'"*, `tp_…093`, sentence 5) arriving
+mid-release and landing on the same defect.
+
+**So the request was right and its premise was not**, which changed the design: "already analysed"
+cannot mean "has tokens".
+
+### There was nothing to resume FROM, either
+
+`writeAnalysisChapter` ran **once, after the whole chapter finished**. A run that timed out, was
+cancelled, or died with the server persisted **nothing** — every completed sentence thrown away. The
+store confirms it: all 18 chapters complete, no partials, because a partial could never be written.
+So the feature is three things, not one:
+
+- **`analyzeChapter` gained two opt-in hooks** (`canonical-analysis.js`): `reuse(sentence, i)` returns
+  an already-analysed sentence to keep, `onProgress(i, soFar)` fires after each NEWLY analysed one.
+  Absent by default, so every existing caller is byte-identical — asserted, not assumed. A reused
+  sentence deliberately does not fire `onProgress`: nothing was computed, and re-persisting an
+  unchanged prefix would write the store once per sentence for free.
+- **The run checkpoints after every new sentence**, flagged `partial:true`. A failed checkpoint never
+  fails the run — the analysis in hand is worth more than the save.
+- **`_analysisSentenceUsable(sent)`**: a sentence is analysed when at least one token carries a real
+  lemma. That is `computeFrequency`'s own definition of "resolved", reused rather than re-invented.
+
+**Reuse matches on sentence TEXT, not index.** Index matching is right only while CP1's segmentation
+is unchanged — which is precisely when nothing needs resuming. The valuable cases are the others: a
+run that died (the store holds a prefix), a story that GREW (the hash differs, most sentences are
+word-for-word identical), and a sentence whose reply failed. Text matching serves all three with one
+rule and cannot pair an old analysis with a different sentence that happens to share its slot.
+
+### ⚠️ THERE ARE TWO CACHE SHORT-CIRCUITS, AND READING THE ROUTE FOUND ONE
+
+The route has its own; `_kickOffAnalysisJob` repeats the test for its OTHER caller (`_runBookJob`'s
+`postGenAnalysis`, which has no route to pre-check for it). Teaching only the route about `resume`
+left the second one firing, and **a live resume request came straight back `{cached:true}` having
+done nothing at all.** Found by issuing the request against a running server — the code reads
+correctly at either site in isolation. `v88_b`'s lesson in a new shape: when a fix must apply to
+every gate, assert over the OUTCOME, which is what the e2e now does.
+
+A `partial` is deliberately still `available`: the explorer renders the half it has (some words
+clickable beats none). What it must not do is satisfy either short-circuit — asserted with a PLAIN
+post, no flags, because doing it with `{resume:true}` was vacuous (`!resume` already opens the gate).
+
+### ⚠️ A partial would have rendered a TRUNCATED chapter
+
+`_teStoryHtml` emitted only the gaps BETWEEN located sentences, so everything past the last one was
+silently dropped. Invisible while every analysis was complete and reached the end of the text — and
+fatal the moment a partial renders, which is the whole point of this release. It also recovers any
+trailing text CP1's splitter left behind (it breaks only on recognised sentence punctuation, so a
+chapter ending without one already lost its last line). Not routed through `_teGapHtml`: that returns
+null for any gap containing a blank line, which the caller reads as "close the paragraph" and which
+would DISCARD the gap's own text — for a tail the text is the point.
+
+### The dialog
+
+`showChoiceDialog` already existed for exactly this shape of decision, so no new machinery. Cancel /
+**Analyse only what is missing** / **Re-analyse everything from scratch**. The counts it states
+(`{done} of {total}`) come from the SERVER's shadow (`usableSentences`/`totalSentences`), not from
+counting tokens client-side — the number shown and the sentences the run redoes must come from one
+definition of "usable", or the dialog promises work the run does not do.
+
+`force` and `resume` are mutually exclusive **by construction**: `force` deletes the record before
+the shadow is read, so a resume flag alongside it is inert. Worth stating because the mutation
+"force also resumes" stays GREEN — that is the design, not a hole, and the ORDER of those two lines
+is what is pinned instead.
+
+### Verified live, end to end, on the user's own reported chapter
+
+Against a real Ollama and a real 35B model, on `tp_…093`, with the store pointed at a scratch copy so
+the user's data was untouched: the job reported **"CP2: analysing 1 sentence(s)"**, the server logged
+**`7 sentence(s), 123 token(s), 6 reused`**, and sentence 5 went from 23 unresolved tokens to 23
+resolved. One model call instead of seven. Server started on a spare port and killed by PID.
+
+### Four vacuous or brittle assertions found by mutation, and what each taught
+
+- **`/catch \(e\)/` matched the FUNCTION's outer catch**, not the checkpoint's own — removing the
+  checkpoint's guard left it green. Pinned to the one statement it is about.
+- **The partial-gate assertion posted `{resume:true}`**, which opens the gate by itself, so
+  `!shadow.partial` was untested. A plain post is the only thing that exercises it.
+- **`unit-analyze-chapters-run` §7 asserted "the user said yes"** — now two different answers that
+  must post two different bodies. Split, and the resume half is the one that decides whether the user
+  pays for the whole chapter again.
+- **The concurrency section counted a RUNNING TOTAL across the whole file** (7) and spelled every
+  earlier section's arithmetic into its own assertion. Three new sections broke it on a correct
+  render of its own claim. Measured as a delta now — the same class as the fixed-size source windows
+  this line keeps hitting: an absolute standing in for a local property.
+
+**Guard**: `unit-canonical-analysis` (+2 sections, counted over REAL HTTP calls to the fake — "the
+result contains the reused sentence" would pass just as well if it were re-analysed and came back the
+same), `e2e-analysis` (+4 sections, staged by editing the store directly, since the fake model always
+answers and no fixture can produce a failed sentence on demand), `unit-text-explorer` (+2),
+`unit-analyze-chapters-run` (migrated). **FOURTEEN mutations red.**
+
 ## ✅ v88_w — the "comics" job labels, a yellow highlight I caused, and the static landing card's artwork
 
 Three user reports, two of them arriving while the previous release was still being written. **ZERO

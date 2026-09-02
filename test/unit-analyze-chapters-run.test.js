@@ -131,17 +131,30 @@ console.log('  analyzeChaptersRun(): one failed chapter does not abort the rest,
 }
 console.log('  analyzeChaptersRun(): the button is disabled+hourglassed mid-run, restored exactly after: OK');
 
-// ── 6-9. v86_ac: a SINGLE-chapter call doubles as "re-analyze", gated by confirm() ──────────
+// ── 6-9. v86_ac: a SINGLE-chapter call doubles as "re-analyze" ──────────────────────────────
 // User: "I expected to be able to generate the text analysis annotation on the lesson-set card...
 // there should be a way to re-generate it... we can just use the same button, but reroute via a
 // warning that this would override an existing text annotation."
+//
+// ⚠️ MIGRATED AT v88_x. The gate was a boolean `confirm()`, so the only outcomes were "throw the
+// whole analysis away and redo it" or "do nothing". The user asked for a third: *"we should get an
+// option 'overwrite' or 'expand existing'"* — because a chapter can be half-finished, or have grown,
+// or (measured: 5.9% of live sentences) hold a sentence whose model reply failed and left every
+// token unresolved, none of which is worth paying for the whole chapter again.
+//
+// These sections' CLAIMS are unchanged — when it prompts, when it does not, and what reaches the
+// server — so they were re-pointed at `showChoiceDialog` rather than rewritten. §7 gained a second
+// half, because "the user said yes" is now two different answers that must post two different things.
+const stubDialog = (choice) => `showChoiceDialog = function(o){ window._dlgCalls++; window._dlgArgs = o; `
+  + `return Promise.resolve(${JSON.stringify(choice)}); };`;
 
 // 6. Not yet analysed (available:false): no confirm() prompt at all, POST sent WITHOUT force.
 {
   const C = client();
   C.run(`APP.info = { canGenerate:true };
-    window._confirmCalls = 0; confirm = function(){ window._confirmCalls++; return true; };
+    window._dlgCalls = 0; ${'' /* stub below */}
     window._fetchCalls = [];
+    ${stubDialog('resume')}
     fetch = function(u, opts){
       window._fetchCalls.push({ u, body: opts && opts.body });
       if(u.indexOf('/api/analysis/') === 0) return Promise.resolve({ ok:true, json:()=>Promise.resolve({ available:false }) });
@@ -150,8 +163,8 @@ console.log('  analyzeChaptersRun(): the button is disabled+hourglassed mid-run,
     (async()=>{ await analyzeChaptersRun(['tp_new'], null); })();
     true;`, 't6');
   await new Promise(r => setTimeout(r, 40));
-  const r = JSON.parse(C.run('JSON.stringify({ confirmCalls: window._confirmCalls, fetchCalls: window._fetchCalls, toasts: window._toasts })'));
-  assert.strictEqual(r.confirmCalls, 0, 'a never-before-analysed chapter never triggers the confirm() prompt');
+  const r = JSON.parse(C.run('JSON.stringify({ confirmCalls: window._dlgCalls, fetchCalls: window._fetchCalls, toasts: window._toasts })'));
+  assert.strictEqual(r.confirmCalls, 0, 'a never-before-analysed chapter never opens the choice dialog');
   assert.deepStrictEqual(r.fetchCalls.map(c => c.u), ['/api/analysis/tp_new', '/api/analyze-chapter/tp_new'],
     'the pre-check GET, then the POST, in that order');
   assert.strictEqual(r.fetchCalls[1].body, '{}', 'a first-time run posts an empty body — no force flag');
@@ -159,32 +172,51 @@ console.log('  analyzeChaptersRun(): the button is disabled+hourglassed mid-run,
 }
 console.log('  analyzeChaptersRun(): a not-yet-analysed single chapter skips confirm() entirely, posts without force: OK');
 
-// 7. Already analysed (available:true) + user CONFIRMS: POST sent WITH force:true.
+// 7. Already analysed (available:true): the dialog opens ONCE, and each answer posts its own thing.
 {
-  const C = client();
-  C.run(`APP.info = { canGenerate:true };
-    window._confirmCalls = 0; confirm = function(){ window._confirmCalls++; return true; };
-    window._fetchCalls = [];
-    fetch = function(u, opts){
-      window._fetchCalls.push({ u, body: opts && opts.body });
-      if(u.indexOf('/api/analysis/') === 0) return Promise.resolve({ ok:true, json:()=>Promise.resolve({ available:true }) });
-      return Promise.resolve({ ok:true, json:()=>Promise.resolve({ jobId:'j' }) });
-    };
-    (async()=>{ await analyzeChaptersRun(['tp_old'], null); })();
-    true;`, 't7');
-  await new Promise(r => setTimeout(r, 40));
-  const r = JSON.parse(C.run('JSON.stringify({ confirmCalls: window._confirmCalls, fetchCalls: window._fetchCalls, toasts: window._toasts })'));
-  assert.strictEqual(r.confirmCalls, 1, 'an already-analysed chapter DOES trigger exactly one confirm() prompt');
-  assert.strictEqual(r.fetchCalls[1].body, JSON.stringify({ force: true }), 'confirming re-analysis posts {force:true}, overriding the cache-hit short-circuit');
-  assert.strictEqual(r.toasts.length, 1, 'a confirmed re-analysis completes normally, with its usual summary toast');
+  const runWith = async (choice) => {
+    const C = client();
+    C.run(`APP.info = { canGenerate:true };
+      window._dlgCalls = 0; window._dlgArgs = null;
+      ${stubDialog(choice)}
+      window._fetchCalls = [];
+      fetch = function(u, opts){
+        window._fetchCalls.push({ u, body: opts && opts.body });
+        if(u.indexOf('/api/analysis/') === 0) return Promise.resolve({ ok:true, json:()=>Promise.resolve(
+          { available:true, usableSentences:2, totalSentences:5 }) });
+        return Promise.resolve({ ok:true, json:()=>Promise.resolve({ jobId:'j' }) });
+      };
+      (async()=>{ await analyzeChaptersRun(['tp_old'], null); })();
+      true;`, 't7-' + choice);
+    await new Promise(r => setTimeout(r, 40));
+    return JSON.parse(C.run('JSON.stringify({ dlgCalls: window._dlgCalls, fetchCalls: window._fetchCalls, toasts: window._toasts, choices: (window._dlgArgs&&window._dlgArgs.choices||[]).map(function(c){return c.value;}), body: window._dlgArgs && window._dlgArgs.body })'));
+  };
+
+  const forced = await runWith('force');
+  assert.strictEqual(forced.dlgCalls, 1, 'an already-analysed chapter DOES open exactly one dialog');
+  assert.strictEqual(forced.fetchCalls[1].body, JSON.stringify({ force: true }),
+    'choosing overwrite posts {force:true}, overriding the cache-hit short-circuit');
+  assert.strictEqual(forced.toasts.length, 1, 'and the run completes normally, with its usual summary toast');
+  assert.deepStrictEqual(forced.choices, ['resume', 'force'],
+    'both answers are offered — the third option the user asked for is really there');
+  // The dialog states how much already exists, from the SERVER's own counts. A dialog that offered
+  // "fill in the gaps" without saying how many gaps there are is a choice made blind.
+  assert.ok(/\b2\b/.test(forced.body) && /\b5\b/.test(forced.body),
+    'and it reports the shadow\'s usable/total counts (got ' + JSON.stringify(forced.body) + ')');
+
+  const resumed = await runWith('resume');
+  assert.strictEqual(resumed.fetchCalls[1].body, JSON.stringify({ resume: true }),
+    'while choosing "fill in the gaps" posts {resume:true} — the whole point of the third option, '
+    + 'and the one thing that decides whether the user pays for the whole chapter again');
 }
-console.log('  analyzeChaptersRun(): an already-analysed single chapter confirms before posting {force:true}: OK');
+console.log('  analyzeChaptersRun(): an already-analysed chapter offers resume/overwrite and posts what was chosen: OK');
 
 // 8. Already analysed + user DECLINES: NO POST at all, button restored, no toast — a true cancel.
 {
   const C = client();
   C.run(`APP.info = { canGenerate:true };
-    confirm = function(){ return false; };
+    window._dlgCalls = 0;
+    ${stubDialog(null)}
     window._fetchCalls = [];
     fetch = function(u, opts){
       window._fetchCalls.push(u);
@@ -197,25 +229,26 @@ console.log('  analyzeChaptersRun(): an already-analysed single chapter confirms
   await new Promise(r => setTimeout(r, 40));
   const r = JSON.parse(C.run(`JSON.stringify({ fetchCalls: window._fetchCalls, toasts: window._toasts,
     disabled: document.getElementById('fake-btn').disabled, html: document.getElementById('fake-btn').innerHTML })`));
-  assert.deepStrictEqual(r.fetchCalls, ['/api/analysis/tp_old'], 'declining the confirm makes NO /api/analyze-chapter call at all — a true cancel, not a soft force:false run');
-  assert.strictEqual(r.toasts.length, 0, 'declining shows no summary toast either — silent cancel');
-  assert.strictEqual(r.disabled, false, 'the button is still restored (re-enabled) after a declined confirm');
-  assert.strictEqual(r.html, '🔤', 'the button\'s original icon is restored after a declined confirm too');
+  assert.deepStrictEqual(r.fetchCalls, ['/api/analysis/tp_old'], 'cancelling the dialog makes NO /api/analyze-chapter call at all — a true cancel, not a soft force:false run');
+  assert.strictEqual(r.toasts.length, 0, 'cancelling shows no summary toast either — silent cancel');
+  assert.strictEqual(r.disabled, false, 'the button is still restored (re-enabled) after a cancel');
+  assert.strictEqual(r.html, '🔤', 'the button\'s original icon is restored after a cancel too');
 }
-console.log('  analyzeChaptersRun(): declining the re-analyze confirm makes no server call, restores the button, shows no toast: OK');
+console.log('  analyzeChaptersRun(): cancelling the re-analyze dialog makes no server call, restores the button, shows no toast: OK');
 
 // 9. A BATCH call (length > 1) never confirms, even when every chapter is already analysed —
 //    asking once per chapter would be intrusive; a batch run's job is "fill in what's missing."
 {
   const C = client();
   C.run(`APP.info = { canGenerate:true };
-    window._confirmCalls = 0; confirm = function(){ window._confirmCalls++; return true; };
+    window._dlgCalls = 0;
+    ${stubDialog('force')}
     window._fetchCalls = [];
     fetch = function(u){ window._fetchCalls.push(u); return Promise.resolve({ ok:true, json:()=>Promise.resolve({ cached:true, available:true }) }); };
     (async()=>{ await analyzeChaptersRun(['tp_c1','tp_c2'], null); })();
     true;`, 't9');
   await new Promise(r => setTimeout(r, 40));
-  const r = JSON.parse(C.run('JSON.stringify({ confirmCalls: window._confirmCalls, fetchCalls: window._fetchCalls })'));
+  const r = JSON.parse(C.run('JSON.stringify({ confirmCalls: window._dlgCalls, fetchCalls: window._fetchCalls })'));
   assert.strictEqual(r.confirmCalls, 0, 'a multi-chapter batch never calls confirm(), regardless of cache state');
   assert.deepStrictEqual(r.fetchCalls, ['/api/analyze-chapter/tp_c1', '/api/analyze-chapter/tp_c2'],
     'no pre-check GET at all for a batch call — straight to the POST for each chapter, as before v86_ac');

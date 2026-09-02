@@ -27,7 +27,7 @@ const { compareWithExistingLessons } = require('./curriculum-plan.js');
 // port as a side effect of an offline analysis script), so server.js requiring THEM is the
 // established, already-precedented direction, not a new risk.
 const { buildCanonicalText } = require('./canonical-text.js');
-const { analyzeChapter } = require('./canonical-analysis.js');
+const { analyzeChapter, scriptsForLangCP2, cp2Provenance } = require('./canonical-analysis.js');
 
 // ── Learner sessions (v65) ───────────────────────────────────────────────────
 // Cookie-based, HttpOnly so page scripts can never read the token, SameSite=Lax so it isn't sent
@@ -250,7 +250,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_w';
+const APP_VERSION  = 'v88_x';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -978,6 +978,17 @@ function analysisShadowFor(chapterId) {
     sentences: rec.sentences,
     model: (rec.provenance && rec.provenance.model) || null,
     analyzedAt: rec.analyzedAt || null,
+    // v88_x: a PARTIAL is still `available` — the sentences it holds are real, and the explorer
+    // renders them (half a chapter clickable beats none). What it must not do is satisfy the
+    // "already analysed, don't run" short-circuit, or the run that would finish it could never
+    // start. That distinction lives at the two call sites, keyed on this flag.
+    partial: !!rec.partial,
+    // How much of this chapter actually HAS a usable analysis, and how much there is to have. The
+    // server answers this, rather than the client counting tokens itself, so the number the dialog
+    // shows and the sentences the resume redoes come from ONE definition of "usable"
+    // (`_analysisSentenceUsable`) — two copies of that rule would drift the moment either moved.
+    totalSentences: rec.partial ? (rec.totalSentences || rec.sentenceCount) : rec.sentenceCount,
+    usableSentences: (rec.sentences || []).filter(_analysisSentenceUsable).length,
   };
 }
 
@@ -987,34 +998,97 @@ function analysisShadowFor(chapterId) {
 // caching the result so a chapter is only ever analysed once. Mirrors _runComicExtractJob's/
 // _runComicDetectJob's own shape (newJob/jobStep/jobDone/jobFail) — the exact precedent item W's own
 // recommended path calls out, not a new job pattern invented for this feature.
-async function _runAnalysisJob(jobId, topic) {
+// ⚠️ v88_x (user report, and the reason this feature is worth more than the request that prompted
+// it): "some words in the middle of the text say 'nicht analysiert'".
+//
+// `parseAnalysisReply` degrades an unparseable or malformed reply the SAME way for every token in
+// that sentence — deliberately, so one bad reply cannot abort a chapter that takes many minutes. The
+// cost is that the sentence is recorded with a full set of token SLOTS and no lemma in any of them,
+// and nothing ever revisited it. Measured across the live store: 3 of 51 sentences (5.9%) in 2 of 18
+// chapters, 86 tokens stranded — including BOTH chapters the user reported, one of which they
+// described as "did not finish" (it had finished; a third of it was simply unusable).
+//
+// So "already analysed" cannot mean "has tokens". A sentence with token slots and NOT ONE resolved
+// lemma is a recorded FAILURE, not an analysis, and a resume must redo it — otherwise "expand
+// existing" would politely preserve the exact gaps it exists to close. "Resolved = a real, non-null
+// lemma" is `computeFrequency`'s own definition (canonical-analysis.js), reused rather than
+// re-invented. A sentence with SOME resolved tokens is a good analysis with a gap in it, and is kept.
+function _analysisSentenceUsable(sent) {
+  const toks = (sent && sent.tokens) || [];
+  return toks.length > 0 && toks.some(t => t && t.lemma);
+}
+
+async function _runAnalysisJob(jobId, topic, jobOpts) {
+  const resume = !!(jobOpts && jobOpts.resume);
   try {
     jobStep(jobId, 'CP1: building canonical text…');
     const chapter = buildCanonicalText(topic);
     if (!chapter.sentenceCount) { jobFail(jobId, 'No sentences to analyse.'); return; }
-    jobStep(jobId, `[${OLLAMA_ANALYSIS_MODEL}] CP2: analysing ${chapter.sentenceCount} sentence(s)…`);
-    const result = await analyzeChapter(OLLAMA_ANALYSIS_MODEL, chapter, {
-      langName: langName(topic.lang), srcLangName: langName(topic.srcLang || 'en'),
-    });
     // canonical-analysis.js's own analyzeChapter (deliberately, per its own file header — CP2 is
     // token-level analysis, not a second copy of CP1's sentence boundaries) does NOT carry the raw
     // sentence TEXT or paragraph-break flag through into its result. A client renderer (item W step
     // 4) needs both to place each token back into the actual story layout without re-deriving CP1's
     // own tokenisation client-side, so they are stitched on here, from CP1's OWN `chapter.sentences`
     // — same array, same order, one call each in analyzeChapter's own sequential loop, so a
-    // same-index zip is exact, not a guess.
-    const enrichedSentences = result.sentences.map((s, i) => ({
+    // same-index zip is exact, not a guess. A PARTIAL list is a PREFIX of that same array, so the
+    // zip stays exact for it too.
+    const enrich = sents => sents.map((s, i) => ({
       ...s,
       text: (chapter.sentences[i] && chapter.sentences[i].text) || '',
       paraBreakBefore: !!(chapter.sentences[i] && chapter.sentences[i].paraBreakBefore),
     }));
-    writeAnalysisChapter(topic.id, {
-      ...result,
-      sentences: enrichedSentences,
-      sourceTextHash: chapter.sourceTextHash,
-      analyzedAt: new Date().toISOString(),
+    // ⚠️ v88_x (user request): "If a text is already half-annotated, a second run should skip the
+    // existing annotation and just do the rest."
+    //
+    // Matched on the sentence TEXT, not on the index. Index matching would be right only while CP1's
+    // segmentation is unchanged — which is exactly the case where nothing needs resuming. The
+    // valuable cases are the other ones: a run that DIED partway (the store now holds a prefix), and
+    // a story that GREW or was edited (the hash differs, most sentences are still word-for-word the
+    // same, and only the new ones need the model). Text matching serves both with one rule, and
+    // cannot silently pair an old analysis with a different sentence that happens to share its slot.
+    let reuseMap = null, reusedCount = 0;
+    if (resume) {
+      reuseMap = new Map();
+      const prev = (readAnalysisStore().chapters[topic.id] || {}).sentences || [];
+      for (const ps of prev) {
+        if (ps && typeof ps.text === 'string' && ps.text && !reuseMap.has(ps.text)
+            && _analysisSentenceUsable(ps)) reuseMap.set(ps.text, ps);
+      }
+    }
+    const todo = reuseMap
+      ? (chapter.sentences || []).filter(s => !reuseMap.has(s.text)).length
+      : chapter.sentenceCount;
+    jobStep(jobId, `[${OLLAMA_ANALYSIS_MODEL}] CP2: analysing ${todo} sentence(s)…`);
+    // Persist after EVERY newly analysed sentence. CP2 is one model call per sentence and a chapter
+    // can run for many minutes; before this, a job that timed out, was cancelled, or died with the
+    // server threw away every completed sentence, which is why there was never a partial to resume
+    // FROM. `partial:true` is what keeps the route from treating it as a finished analysis.
+    const persist = (sents, partial) => {
+      writeAnalysisChapter(topic.id, {
+        chapterId: chapter.chapterId, lang: chapter.lang, srcLang: chapter.srcLang,
+        script: scriptsForLangCP2(chapter.lang),
+        sentenceCount: sents.length,
+        tokenCount: sents.reduce((n, s) => n + ((s && s.tokens) || []).length, 0),
+        sentences: enrich(sents),
+        provenance: cp2Provenance({ chapterId: chapter.chapterId, model: OLLAMA_ANALYSIS_MODEL }),
+        sourceTextHash: chapter.sourceTextHash,
+        analyzedAt: new Date().toISOString(),
+        ...(partial ? { partial: true, totalSentences: chapter.sentenceCount } : {}),
+      });
+    };
+    const result = await analyzeChapter(OLLAMA_ANALYSIS_MODEL, chapter, {
+      langName: langName(topic.lang), srcLangName: langName(topic.srcLang || 'en'),
+      reuse: reuseMap ? (s => { const hit = reuseMap.get(s && s.text); if (hit) reusedCount++; return hit || null; }) : null,
+      onProgress: (i, soFar) => {
+        jobStep(jobId, `[${OLLAMA_ANALYSIS_MODEL}] CP2: ${soFar.length}/${chapter.sentenceCount} sentence(s)…`);
+        // A partial write must never be the thing that fails the run — the analysis in hand is worth
+        // more than the checkpoint. Same "degrade, don't lose" convention the rest of this path uses.
+        try { persist(soFar, true); } catch (e) { console.error('  [analysis] partial write failed:', e.message); }
+      },
     });
-    console.log(`  [analysis] ${topic.id}: ${result.sentenceCount} sentence(s), ${result.tokenCount} token(s) — cached`);
+    persist(result.sentences, false);
+    console.log(`  [analysis] ${topic.id}: ${result.sentenceCount} sentence(s), ${result.tokenCount} token(s)`
+      + (resume ? `, ${reusedCount} reused` : '') + ' — cached');
     jobDone(jobId, { chapterId: topic.id, available: true,
       sentenceCount: result.sentenceCount, tokenCount: result.tokenCount });
   } catch (e) {
@@ -6486,11 +6560,21 @@ function buildArcIntroLessons(lang, srcLang, chapterText, priorRef, difficulty, 
 // ROUTE turns that into its own specific 400/503 (it validates both cases itself, BEFORE calling
 // this, for the exact right status code); a fire-and-forget caller can just treat `null` as "skip,
 // nothing to log beyond what analysisShadowFor already would have said."
-function _kickOffAnalysisJob(topic) {
+function _kickOffAnalysisJob(topic, jobOpts) {
   if (!topic || !topic.id || !topic.story || !String(topic.story).trim()) return null;
+  const resume = !!(jobOpts && jobOpts.resume);
   const chapterId = topic.id;
   const shadow = analysisShadowFor(chapterId);
-  if (shadow.available && !shadow.stale) return { jobId: null, cached: true, shadow };
+  // ⚠️ v88_x: THERE ARE TWO CACHE SHORT-CIRCUITS on this path, not one — the route has its own, and
+  // this function repeats the test for its OTHER caller (_runBookJob's postGenAnalysis, which has no
+  // route to pre-check for it). Teaching only the route about `resume` left this one firing: a live
+  // resume request came straight back `{cached:true}` having done nothing at all. Found by actually
+  // issuing the request against a running server, not by reading the route.
+  //
+  // `!shadow.partial` — a half-finished analysis is not a cache hit either; without it the run that
+  // would COMPLETE it short-circuits on the prefix it left behind.
+  if (shadow.available && !shadow.stale && !shadow.partial && !resume)
+    return { jobId: null, cached: true, shadow };
   if (active === 'none') return null;
   const existingJobId = analyzingChapters.get(chapterId);
   if (existingJobId && jobs.has(existingJobId) && jobs.get(existingJobId).status === 'running')
@@ -6498,7 +6582,7 @@ function _kickOffAnalysisJob(topic) {
   const jobId = newJob({ label: `Analyzing "${(topic.topic||'').slice(0,50)}"`, link: { type: 'topic', id: chapterId } });
   analyzingChapters.set(chapterId, jobId);
   console.log(`  Analyzing chapter: ${chapterId} model=${OLLAMA_ANALYSIS_MODEL} job=${jobId}`);
-  runCancellable(jobId, () => _runAnalysisJob(jobId, topic)).catch(e => {   // item AU cancel
+  runCancellable(jobId, () => _runAnalysisJob(jobId, topic, jobOpts)).catch(e => {   // item AU cancel
     console.error('  Analysis job error:', e.message);
     jobFailOrCancel(jobId, e);
     analyzingChapters.delete(chapterId);
@@ -8664,13 +8748,23 @@ http.createServer(async (req, res) => {
       let body = {};
       try { body = JSON.parse(await readBody(req)); } catch (e) { /* no/invalid body -> no force flag */ }
       const force = !!(body && body.force === true);
+      // v88_x (user request): the third option. `force` throws the existing annotation away and
+      // starts over; `resume` KEEPS every sentence whose text still matches and analyses only the
+      // rest — "a second run should skip the existing annotation and just do the rest". They are
+      // mutually exclusive by construction: force deletes the record `resume` would have read.
+      const resume = !force && !!(body && body.resume === true);
       const chapterId = decodeURIComponent(url.pathname.slice('/api/analyze-chapter/'.length));
       const topic = chapterId ? findSavedById(chapterId) : null;
       if (!topic) return json(res, 404, { error: 'No chapter with that id.' });
       if (!topic.story || !String(topic.story).trim()) return json(res, 400, { error: 'Chapter has no story text.' });
       if (force) deleteAnalysisChapter(chapterId);
       const shadow = analysisShadowFor(chapterId);
-      if (shadow.available && !shadow.stale) return json(res, 200, { cached: true, ...shadow });
+      // v88_x: `!resume` — an explicit resume must reach the job even when the cached record looks
+      // complete and fresh, because "complete" is a claim about the sentences CP1 produced LAST
+      // time. A chapter whose story grew has a full, non-stale-looking prefix and new sentences with
+      // no analysis at all; that is the case the user hit. `!shadow.partial` covers the other one.
+      if (shadow.available && !shadow.stale && !shadow.partial && !resume)
+        return json(res, 200, { cached: true, ...shadow });
       if (active === 'none') return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
       // Validated above (real story text, a live backend) — _kickOffAnalysisJob's own internal
       // repeat of those same checks exists for its OTHER caller (_runBookJob's postGenAnalysis,
@@ -8678,7 +8772,7 @@ http.createServer(async (req, res) => {
       // fallback still degrades to the same 503 rather than assuming, matching this file's own
       // "never silently corrupt a response" convention (this is the correct, dedicated status code —
       // "no backend" happens to be the only real way to reach it).
-      const result = _kickOffAnalysisJob(topic);
+      const result = _kickOffAnalysisJob(topic, { resume });
       if (!result) return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
       if (result.cached) return json(res, 200, { cached: true, ...result.shadow });
       return json(res, 202, { jobId: result.jobId });

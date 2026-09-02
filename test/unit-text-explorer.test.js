@@ -505,6 +505,86 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
     console.log('  the question card has its own 🔍 over the shared cache, with its own flag: OK');
   }
 
+  // ── 7b2. v88_x: the story AFTER the last analysed sentence is RENDERED, not dropped ───────────
+  // ⚠️ `_teStoryHtml` only ever emitted the gaps BETWEEN located sentences, so everything past the
+  // final one vanished — the explorer showed a TRUNCATED chapter. Invisible while every analysis was
+  // complete and reached the end of the text; the moment a PARTIAL renders (the point of v88_x's
+  // resume) the un-analysed remainder would disappear, which is far worse than showing it plain.
+  {
+    const C = loadClient({ quiet: true });
+    const story = 'Der Hund lauft. Die Katze schlaft.\n\nEin neuer Absatz folgt.';
+    C.run(SEED_COMMON + `
+      window._out = _teStoryHtml(${JSON.stringify(story)}, [
+        { sentenceId:'s0', text:'Der Hund lauft.', tokens:[
+          {surface:'Hund',lemma:'hund',form:'n',sense:'dog',confidence:'high'} ] } ]);
+      true;`, 'tail');
+    const html = C.run('window._out');
+    assert.ok(/te-tok/.test(html), 'the analysed sentence is marked up');
+    assert.ok(html.includes('Die Katze schlaft.'),
+      'the sentence AFTER the analysed one is still shown — unclickable, but present');
+    assert.ok(html.includes('Ein neuer Absatz folgt.'),
+      'and so is text beyond a blank line, which the gap helper would have discarded entirely');
+    assert.ok(!/te-tok[^>]*>\s*Katze/.test(html),
+      'the un-analysed remainder carries NO token spans — nothing there is clickable');
+    // Non-vacuity: the paragraph break in the tail becomes a real break, not a swallowed newline.
+    assert.ok(/<\/p><p[^>]*>[^<]*Ein neuer Absatz/.test(html),
+      'a blank line in the tail opens a new paragraph rather than collapsing');
+    console.log('  the explorer renders the story past the last analysed sentence: OK');
+  }
+
+  // ── 7b3. v88_x: the re-analyse choice is a THREE-way dialog, and it sends what it promises ────
+  // "when the button is clicked on existing annotation, we should get an option 'overwrite' or
+  // 'expand existing'". Asserted on the REQUEST BODY, because that is the only thing that decides
+  // what the server does — a dialog that offers "fill in the gaps" and then posts {force:true}
+  // would look perfect and cost the user the whole chapter.
+  {
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON + `
+      window._posts = []; window._choiceArgs = null;
+      APP.info = { canGenerate: true };
+      showToast = function(){};
+      fetch = function(u, o){
+        if (o && o.method === 'POST') { window._posts.push({ url:String(u), body:o.body });
+          return Promise.resolve({ ok:true, status:202, json:function(){ return Promise.resolve({jobId:'j'}); } }); }
+        return Promise.resolve({ ok:true, status:200, json:function(){ return Promise.resolve(
+          { chapterId:'tp_1', available:true, stale:false, partial:false,
+            usableSentences:4, totalSentences:6 }); } });
+      };
+      true;`, 'seed-dlg');
+
+    const run = async (choice) => {
+      C.run(`window._posts = [];
+        showChoiceDialog = function(o){ window._choiceArgs = JSON.stringify(o); return Promise.resolve(${JSON.stringify(choice)}); };
+        analyzeChaptersRun(["tp_1"]); true;`, "run");
+      await settle(80);
+      return JSON.parse(C.run('JSON.stringify(window._posts)'));
+    };
+
+    let posts = await run('resume');
+    assert.strictEqual(posts.length, 1, 'the resume choice issues exactly one analyse request');
+    assert.deepStrictEqual(JSON.parse(posts[0].body), { resume: true },
+      'and it asks the server to RESUME (got ' + posts[0].body + ')');
+
+    posts = await run('force');
+    assert.deepStrictEqual(JSON.parse(posts[0].body), { force: true },
+      'the overwrite choice asks the server to FORCE (got ' + posts[0].body + ')');
+
+    posts = await run(null);
+    assert.strictEqual(posts.length, 0,
+      'cancelling issues no request at all — unchanged from the confirm() this replaced');
+
+    // The dialog itself: two real choices, and the counts come from the SERVER's own shadow rather
+    // than being recomputed here, or the number shown and the work done could disagree.
+    const args = JSON.parse(C.run('window._choiceArgs'));
+    assert.deepStrictEqual(args.choices.map(c => c.value), ['resume', 'force'],
+      'both options are offered, resume first');
+    assert.ok(args.choices.every(c => c.label && c.label.length > 3), 'each option is labelled');
+    assert.ok(/\b4\b/.test(args.body) && /\b6\b/.test(args.body),
+      'the question states how much is already annotated, from the shadow\'s own counts (got '
+      + JSON.stringify(args.body) + ')');
+    console.log('  the re-analyse dialog offers resume/overwrite and posts what it offered: OK');
+  }
+
   // ── 7c. v88_u: the shared cache repaints ALL THREE surfaces ───────────────────────────────────
   // v86_ad's own lesson, applied before shipping rather than after a bug report: "a second surface
   // added over a shared cache needs the repaint path widened too" — a fetch that resolves must not

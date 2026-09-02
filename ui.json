@@ -733,7 +733,7 @@
     "gen.post_gen_analysis_lbl": "🔤 Analyse words for the text explorer",
     "text_explorer.batch_toast": "🔤 {queued} chapter(s) queued for analysis, {cached} already ready",
     "text_explorer.batch_failed": "{failed} failed",
-    "text_explorer.confirm_reanalyze": "This chapter has already been analysed. Re-analyze from scratch, replacing the existing text-explorer annotation?",
+    "text_explorer.confirm_reanalyze": "This chapter already has an analysis: {done} of {total} sentences are annotated. What should the new run do?",
     "form.translate_label": "Translate storyline for",
     "form.translate_none": "— not a translation —",
     "lib.sort_lbl": "Sort by",
@@ -750,7 +750,9 @@
     "walk.exit": "Back to the library",
     "walk.empty": "That storyline has no chapters to walk through",
     "walk.load_failed": "Could not open that chapter",
-    "walk.summary": "Back to the story summary"
+    "walk.summary": "Back to the story summary",
+    "text_explorer.reanalyze_expand": "Analyse only what is missing",
+    "text_explorer.reanalyze_force": "Re-analyse everything from scratch"
   },
   "nl": {
     "qc.editor.suggests_by": "⚑ {model} stelt voor:",
@@ -2812,8 +2814,7 @@
     "gen.post_gen_qc_lbl": "🔍 Vérification qualité après génération",
     "gen.post_gen_analysis_lbl": "🔤 Analyser les mots pour l'explorateur de texte",
     "text_explorer.batch_toast": "🔤 {queued} chapitre(s) mis en file d'attente pour analyse, {cached} déjà prêts",
-    "text_explorer.batch_failed": "{failed} échecs",
-    "text_explorer.confirm_reanalyze": "Ce chapitre a déjà été analysé. Voulez-vous réanalyser complètement, en remplaçant les annotations existantes ?"
+    "text_explorer.batch_failed": "{failed} échecs"
   },
   "tr": {
     "qc.editor.suggests_by": "⚑ {model} öneriyor:",
@@ -4839,8 +4840,7 @@
     "gen.post_gen_qc_lbl": "🔍 Qualitätskontrolle nach Erstellung",
     "gen.post_gen_analysis_lbl": "🔤 Wörter für den Text-Explorer analysieren",
     "text_explorer.batch_toast": "🔤 {queued} Kapitel zur Analyse hinzugefügt, {cached} bereits bereit",
-    "text_explorer.batch_failed": "{failed} fehlgeschlagen",
-    "text_explorer.confirm_reanalyze": "Dieses Kapitel wurde bereits analysiert. Möchten Sie die Analyse von Grund auf neu starten und die vorhandene Text-Explorer-Annotation ersetzen?"
+    "text_explorer.batch_failed": "{failed} fehlgeschlagen"
   },
   "ar": {
     "qc.editor.suggests_by": "⚑ يقترح النموذج {model}:",
@@ -8840,8 +8840,7 @@
     "gen.post_gen_qc_lbl": "🔍 Controlla la qualità dopo la generazione",
     "gen.post_gen_analysis_lbl": "🔤 Analizza le parole per l'esploratore di testo",
     "text_explorer.batch_toast": "🔤 {queued} capitolo/i in coda per l'analisi, {cached} già pronti",
-    "text_explorer.batch_failed": "{failed} falliti",
-    "text_explorer.confirm_reanalyze": "Questo capitolo è già stato analizzato. Vuoi rianalizzarlo da zero, sostituendo le annotazioni esistenti nell'esploratore di testo?"
+    "text_explorer.batch_failed": "{failed} falliti"
   },
   "pl": {
     "qc.editor.suggests_by": "⚑ {model} sugeruje:",
@@ -10209,8 +10208,7 @@
     "gen.post_gen_qc_lbl": "🔍 Revisar con control de calidad después de generar",
     "gen.post_gen_analysis_lbl": "🔤 Analizar palabras para el explorador de texto",
     "text_explorer.batch_toast": "🔤 {queued} capítulo(s) en cola para análisis, {cached} ya listos",
-    "text_explorer.batch_failed": "{failed} fallidos",
-    "text_explorer.confirm_reanalyze": "¿Este capítulo ya ha sido analizado? ¿Reanalizar desde cero, reemplazando la anotación existente del explorador de texto?"
+    "text_explorer.batch_failed": "{failed} fallidos"
   },
   "ja": {
     "qc.editor.suggests_by": "⚑ {model} が提案:",

@@ -7281,8 +7281,67 @@
       },
       "sourceTextHash": "898673f8af87",
       "analyzedAt": "2026-09-02T09:57:17.176Z"
+    },
+    "tp_17883458445860000053": {
+      "chapterId": "tp_17883458445860000053",
+      "lang": "nl",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 1,
+      "tokenCount": 2,
+      "sentences": [
+        {
+          "sentenceId": "tp_17883458445860000053:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17883458445860000053:s0:t0",
+              "idx": 0,
+              "surface": "De",
+              "lemma": "de",
+              "form": "bestimmter Artikel, Nominativ Singular Femininum",
+              "sense": "der/die/das (definit)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883458445860000053:s0:t1",
+              "idx": 1,
+              "surface": "Manteling",
+              "lemma": "manteling",
+              "form": "Nomen, Nominativ Singular Femininum",
+              "sense": "Ummantelung",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-02T10:48:53.449Z",
+            "sentenceId": "tp_17883458445860000053:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "De Manteling",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-02T10:48:53.450Z",
+        "chapterId": "tp_17883458445860000053",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "898673f8af87",
+      "analyzedAt": "2026-09-02T10:48:53.450Z"
     }
   },
-  "generatedAt": "2026-09-02T09:57:17.178Z",
-  "chapterCount": 18
+  "generatedAt": "2026-09-02T10:48:53.454Z",
+  "chapterCount": 19
 }
