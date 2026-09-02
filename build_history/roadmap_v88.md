@@ -2424,6 +2424,93 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_u — three text-analysis fixes: no auto-start, no blue fill, and the question card gets its own 🔍
+
+Three items from the user's live-test batch, all in the text-explorer view. **ZERO new `ui.json`
+keys** (the three approved for the re-analyse dialog are still unspent — that item is separate).
+
+### 1. ⚠️ Looking at a chapter no longer queues an hour of GPU time
+
+*"Do NOT auto-start text-analysis from the progress cards, when the magnifying glass button is
+clicked and no analysis exists. Just show the text where words just can not be clicked if an
+analysis is not yet available."*
+
+`_ensureTextExplorerData` fired the job-kickoff route whenever the GET came back unavailable. So
+**merely toggling a VIEW started a multi-minute CP2 run — one model call per sentence — against the
+user's own Ollama, with no confirmation, on every chapter they happened to open in explorer mode.**
+Starting work that expensive is a decision, and it already has a control that asks first: the
+analysis button (`analyzeChapters`, which pre-checks and confirms before forcing a re-run).
+
+The view now READS and only that control WRITES. A new settled status, **`'none'`**, means "asked,
+and there is no analysis" — a settled state, not a transient, so it joins `ready`/`loading`/
+`analyzing` in the early return and the view stops re-asking on every repaint. `analyzeChapters`
+**deletes the cache entry** when it queues a run, which is what lets a freshly analysed chapter light
+up without a reload.
+
+**`'none'` renders the plain story, not a status line.** The easy reading of the request would have
+been a "not analysed yet" message; the user asked for the TEXT. It reuses the existing
+nothing-to-annotate branch verbatim — real paragraphs, no `.te-tok` spans, so no word is clickable.
+The static build's "absent from the bake" case moved from `'error'` to `'none'` for the same reason:
+offline, only some chapters are ever baked, so that is the DEFAULT, not a fault the learner can act
+on.
+
+### 2. Analysed words are no longer filled blue
+
+*"In text analysis view: don't show the blue highlight of analyzed text, just show the blue frame
+around the word on mouse-over."* `.te-tok` loses its `background:#eaf2ff`; `.te-tok:hover`'s outline
+is the whole affordance now. On a fully analysed chapter the fill marked **every word**, which
+signals nothing, and it fought the red→green vocabulary colouring the same text carries. Padding and
+radius stay so the hover outline has something to hug.
+
+### 3. The question card gets its own 🔍
+
+*"Question card: the collapsed text-view should also have the button to view the text analysis."*
+Open since `v86_ad` and recorded as such in INTERNALS: the progress card and the lesson-set card both
+grew a 🔍; the panel a learner spends the most time beside never did.
+
+A **THIRD independent flag** (`APP._exTextExplorer`), matching the precedent `v86_ad` set rather than
+reusing `APP._textExplorer` — three surfaces can be open in different senses, and toggling one must
+not silently flip another's visible state. The chapter-id-keyed CACHE is shared, so the data is
+fetched once however many surfaces ask. Picking a language flag exits explorer mode, the same rule
+the other two follow.
+
+**`_teRepaint` was widened in the same commit, not after a bug report.** `v86_ad`'s own lesson — "a
+second surface added over a shared cache needs the repaint path widened too" — is exactly what this
+release would otherwise have reproduced. The panel rebuild that `toggleExStoryLang` had inline became
+`_exStoryPanelRefresh()`, shared by both toggles and the repaint, so the three callers cannot
+disagree about whether the panel stays open.
+
+### ⚠️ THREE comments had to be reworded because they spelled patterns the new guards SWEEP
+
+The job route's name inside `_ensureTextExplorerData`, and `chainBlocked`/the resume key in `v88_s`
+before it. **Third and fourth occurrence in two releases.** The rule is old — a comment near a
+source-scanned pattern must not spell the pattern — and it keeps being rediscovered by the guard
+rather than by review, which is the system working, but worth stating plainly: when you write an
+absence assertion, expect your own explanatory comment to be the first thing that fails it.
+
+### Two sections were re-anchored, not patched
+
+`unit-text-explorer` §2b asserted the **opposite** of the new behaviour (that an unavailable GET
+fires the POST and moves to `'analyzing'`). Rewritten to assert **no POST is made at all** — stated
+that way rather than as "the entry is `'none'`", because the entry could reach `'none'` while a POST
+also fired, and the POST is the thing that costs the user an hour of GPU. Backed by a SOURCE-layer
+sweep (§2d) proving the view path does not name that route, so a POST reintroduced on a branch no
+fixture reaches still fails. §8's static-miss case moved from `'error'` to `'none'`, keeping its own
+claim (degrades cleanly rather than hanging) intact.
+
+### ⚠️ A fixture that made a mutation pass
+
+The new §7b first seeded BOTH other explorer flags to `true` and asserted all three true afterwards
+— which the mutation "copy my flag onto the completion card's" satisfies exactly, and it stayed
+GREEN. Seeded to DIFFERENT values (one on, one off) it goes red. *"Leaves the others alone" is not
+observable when the others already agree with you.*
+
+**Guard**: `unit-text-explorer` grows to 15 checks. **TEN mutations red** — the view starting a job
+again, `'none'` rendering a status line, `'none'` not terminal, a queued run leaving the cached
+`'none'`, the question panel losing its 🔍, that 🔍 reusing the completion card's flag, the panel
+ignoring the analysis, the blue fill restored, the repaint dropping the third surface, and the
+language flag no longer exiting explorer mode.
+
 ## ✅ v88_t — two live-test fixes: the extracted-text field is resizable, and the library sorts by ONE key
 
 Two items from the user's live-test batch, taken together because both are small, contained and

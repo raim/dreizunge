@@ -572,7 +572,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
    word-wrap points enough to make the same chapter's text visibly reflow between the two views even
    with identical padding/margins (the `v86_t` fix). Not a layout/margin issue this time — a
    character-metrics one. */
-.te-tok{background:#eaf2ff;border-radius:3px;padding:0 2px;cursor:pointer;font-weight:600}
+/* v88_u (user): "don't show the blue highlight of analyzed text, just show the blue frame around
+   the word on mouse-over." The fill marked every analysed word at once, which on a fully analysed
+   chapter is the whole text — a highlight that highlights everything signals nothing, and it fought
+   the red→green vocabulary colouring the same text carries. The hover outline below is the whole
+   affordance now. Padding/radius stay so the outline has something to hug. */
+.te-tok{border-radius:3px;padding:0 2px;cursor:pointer;font-weight:600}
 .te-tok:hover{outline:2px solid var(--blue);outline-offset:1px}
 .te-tok-low{background:#f2f2f2;color:var(--gray-dark)}
 .te-tok-unresolved{background:none;border-bottom:1px dashed var(--gray-mid)}
@@ -9346,6 +9351,10 @@ async function analyzeChaptersRun(chapterIds, btn){
         const data = await r.json().catch(()=>({}));
         if(!r.ok){ failed++; continue; }
         if(data.cached) cached++; else queued++;
+        // v88_u: the view no longer starts analyses, so it caches "there is none" as a settled
+        // answer. Queueing a real run is exactly the event that makes that answer stale — drop the
+        // entry so the next render asks again and the chapter lights up without a reload.
+        try { delete _teCacheStore()[id]; } catch(_) {}
       }catch(e){ failed++; }
     }
   } finally { if(btn){ btn.disabled=false; btn.innerHTML=old; } }
@@ -18314,15 +18323,42 @@ function _exStoryPanelHtml(ex){
   // re-implemented, just two different mount points (static markup vs. a template string).
   const _xl = String((d && d.storyTranslation) || '').trim();
   const _showSrc = APP._compStoryLang === 'source' && _xl;
+  // ⚠️ v88_u (user request): "Question card: the collapsed text-view should also have the button to
+  // view the text analysis." Recorded as open in INTERNALS since `v86_ad` — the progress card and
+  // the lesson-set card both grew a 🔍; this panel, the one a learner spends the most time beside,
+  // never did.
+  //
+  // THIRD independent flag, matching the precedent `APP._lsTextExplorer` set rather than reusing
+  // `APP._textExplorer`: a teacher can have the progress card, the lesson-set card and a question
+  // card open in different senses, and toggling one must not silently flip another's visible state.
+  // The chapter-id-keyed CACHE is shared, so the data is fetched once however many surfaces ask.
+  const _exExp = !!APP._exTextExplorer && !_showSrc;
   const _flagsHtml = _storyFlagButtonsHtml(
     d.lang || APP.lang, d.srcLang || 'en', !!_xl,
-    _showSrc ? 'source' : 'target',
+    _exExp ? null : (_showSrc ? 'source' : 'target'),
     lang => `toggleExStoryLang('${lang}')`);
+  // Same on/off styling as the lesson-set card's button (opacity + a blue border when active), so
+  // the three surfaces read as one control in three places rather than three controls.
+  const _expBtn = `<button class="spk-ico" id="ex-story-explorer-btn"
+       onclick="event.stopPropagation();toggleExTextExplorer()"
+       title="${escAttr(t('text_explorer.toggle_title'))}"
+       style="flex:none;border-radius:6px;opacity:${_exExp ? '1' : '.5'};border:1.5px solid ${_exExp ? 'var(--blue)' : 'transparent'}">🔍</button>`;
   // v86_a: same fix as _renderCompStory's own comment — passing `text: story` (identical to
   // _storyBodyHtml's own default) still defeated its comic-panel branch, since that check is on
   // IDENTITY (an override was passed at all), not on value equality. Only the translation side needs
   // an explicit override now.
-  const paras = _storyBodyHtml(d, { ex, text: _showSrc ? _xl : null, highlight: !_showSrc });
+  // In explorer mode the body comes from the CP1/CP2 analysis instead of the vocabulary highlight —
+  // the same swap `_renderCompStory` and `renderStoryText` make, through the same renderer, so a
+  // chapter with no analysis shows plain unclickable text here too (v88_u) rather than a status line.
+  let paras;
+  if (_exExp) {
+    try {
+      if (d && d.id && !_teCacheStore()[d.id]) _ensureTextExplorerData(d.id);
+      paras = _textExplorerBodyHtml(d);
+    } catch(_) { paras = _storyBodyHtml(d, { ex, text: null, highlight: true }); }
+  } else {
+    paras = _storyBodyHtml(d, { ex, text: _showSrc ? _xl : null, highlight: !_showSrc });
+  }
   const lang = d.lang || APP.lang;
   const title = escHtml(d.topic || t('ex.comprehension.story'));
   const spk = (typeof _lessonIsDialect === 'function' && _lessonIsDialect()) ? '' :
@@ -18331,7 +18367,7 @@ function _exStoryPanelHtml(ex){
   return '<details id="ex-story-panel"' + (_open ? ' open' : '') + ' style="margin-top:14px;border:2px solid var(--gray-mid);'
        + 'border-radius:var(--radius-lg);background:var(--white);text-align:left;padding:10px 14px">'
        + `<summary style="cursor:pointer;font-size:13px;font-weight:900;color:var(--gray-dark);outline:none;display:flex;align-items:center;gap:8px">`
-       + `<span style="font-size:20px">📖</span><span>${title}</span>${_flagsHtml}${spk}</summary>`
+       + `<span style="font-size:20px">📖</span><span>${title}</span>${_flagsHtml}${_expBtn}${spk}</summary>`
        + `<div id="ex-story-text" style="margin-top:8px;font-size:15px;line-height:1.6">${paras}</div>`
        + '</details>';
 }
@@ -22529,8 +22565,10 @@ function _renderCompStory(){
 // cannot produce a panel the initial render would not have produced.
 // user follow-up: SETS the language a flag names, rather than blindly flipping — same change as
 // `toggleCompStoryLang`.
-function toggleExStoryLang(lang){
-  APP._compStoryLang = (lang === 'source') ? 'source' : 'target';
+// v88_u: the re-render was inline in toggleExStoryLang; the explorer toggle and _teRepaint need the
+// SAME move (rebuild the panel, keep the learner's open/closed state), so it is one helper. A second
+// copy is how the two controls would end up disagreeing about whether the panel stays open.
+function _exStoryPanelRefresh(){
   try {
     const _sp = document.getElementById('ex-story-panel');
     if (!_sp) return;
@@ -22540,6 +22578,23 @@ function toggleExStoryLang(lang){
     const _fresh = document.getElementById('ex-story-panel');
     if (_fresh) _fresh.open = _wasOpen;
   } catch(_) {}
+}
+function toggleExStoryLang(lang){
+  // v88_u: picking a language LEAVES explorer mode, mirroring toggleLsStoryLang/toggleCompStoryLang
+  // — the analysis is of the target-language story, so the two controls are alternatives, not
+  // layers, and one must not silently override the other's visible state.
+  APP._exTextExplorer = false;
+  APP._compStoryLang = (lang === 'source') ? 'source' : 'target';
+  _exStoryPanelRefresh();
+}
+// v88_u (user request): the question card's own text-explorer toggle. Same shape as
+// toggleTextExplorer / toggleLsTextExplorer, over the SAME chapter-id-keyed cache — only the mount
+// point differs.
+function toggleExTextExplorer(){
+  APP._exTextExplorer = !APP._exTextExplorer;
+  if (APP._exTextExplorer) APP._compStoryLang = 'target';
+  _exStoryPanelRefresh();
+  if (APP._exTextExplorer) { try { _ensureTextExplorerData(APP.lessonData && APP.lessonData.id); } catch(_) {} }
 }
 
 // user follow-up: SETS the language a flag names, rather than blindly flipping — two flag buttons
@@ -22594,6 +22649,10 @@ function _teCacheStore(){
 function _teRepaint(){
   try { if (APP._textExplorer) _renderCompStory(); } catch(_) {}
   try { if (APP._lsTextExplorer && APP.lessonData && typeof renderStoryText === 'function') renderStoryText(APP.lessonData); } catch(_) {}
+  // v88_u: the question card is the THIRD consumer of this shared cache. `v86_ad`'s own lesson —
+  // "a second surface added over a shared cache needs the repaint path widened too" — applied
+  // before shipping this one rather than after a bug report.
+  try { if (APP._exTextExplorer && document.getElementById('ex-story-panel')) _exStoryPanelRefresh(); } catch(_) {}
   // Neither flag set (e.g. a late job callback after the learner closed the panel): nothing to
   // repaint, and forcing a render would fight whatever view they switched to.
 }
@@ -22621,19 +22680,23 @@ async function _ensureTextExplorerData(chapterIdArg){
   // call's own entry, or a fresh 'loading' entry would immediately match its own just-created state
   // and short-circuit every single call, including the very first one.
   const existing = store[chapterId];
-  if (existing && (existing.status === 'ready' || existing.status === 'loading' || existing.status === 'analyzing')) { _teRepaint(); return; }
+  // v88_u: 'none' joins the terminal states — "asked, and there is no analysis" is an answer, and
+  // re-asking on every render would be a fetch per repaint for no new information.
+  if (existing && (existing.status === 'ready' || existing.status === 'loading'
+                || existing.status === 'analyzing' || existing.status === 'none')) { _teRepaint(); return; }
   const entry = store[chapterId] = { status: 'loading', error: null };
   _teRepaint();
-  // v86_z (user-requested): the static build has no server for GET /api/analysis or
-  // POST /api/analyze-chapter — read the baked STATIC_ANALYSIS snapshot directly instead. Unlike the
-  // live path below, there is no retry-via-a-new-job option for a chapter that isn't in the bake: the
-  // snapshot is frozen at whatever `node build-static.js` last saw (see build-static.js's own comment
-  // on STATIC_ANALYSIS_DATA for why only SOME chapters are ever baked — CP2 is a real, slow model
-  // call per sentence).
+  // v86_z (user-requested): the static build has no server for either analysis route — read the
+  // baked STATIC_ANALYSIS snapshot directly instead. The snapshot is frozen at whatever
+  // `node build-static.js` last saw (see build-static.js's own comment on STATIC_ANALYSIS_DATA for
+  // why only SOME chapters are ever baked — CP2 is a real, slow model call per sentence).
   if (typeof STATIC_ANALYSIS !== 'undefined') {
     const cp = STATIC_ANALYSIS[chapterId];
     if (cp && cp.available) { entry.status = 'ready'; entry.data = cp; }
-    else { entry.status = 'error'; entry.error = 'not analysed in this offline copy'; }
+    // v88_u: the offline copy simply has no analysis for this chapter — that is the DEFAULT, not a
+    // failure (build-static.js bakes only some), so it reads as 'none' like any unanalysed chapter
+    // rather than as an error the learner might try to act on.
+    else { entry.status = 'none'; }
     _teRepaint();
     return;
   }
@@ -22641,15 +22704,26 @@ async function _ensureTextExplorerData(chapterIdArg){
     const r = await fetch('/api/analysis/' + encodeURIComponent(chapterId));
     const cp = r && r.ok ? await r.json() : null;
     if (cp && cp.available && !cp.stale) { entry.status = 'ready'; entry.data = cp; _teRepaint(); return; }
-    entry.status = 'analyzing'; entry.step = t('text_explorer.analyzing');
+    // ⚠️ v88_u (user request): "Do NOT auto-start text-analysis from the progress cards, when the
+    // magnifying glass button is clicked and no analysis exists. Just show the text where words just
+    // can not be clicked if an analysis is not yet available."
+    //
+    // This function used to fire the job-kickoff route right here, so merely LOOKING at a chapter in
+    // explorer mode queued a multi-minute CP2 run per sentence against the user's own model — from a
+    // VIEW toggle, with no confirmation, and on every chapter they happened to open. Starting work
+    // that expensive is a decision, and it already has a control that asks first: the analysis button
+    // (`analyzeChapters`, which pre-checks and confirms before forcing a re-run).
+    //
+    // ⚠️ That route's NAME is deliberately not written anywhere in this function:
+    // `unit-text-explorer` §2d sweeps it to prove the view path cannot start a run, and a comment
+    // spelling it would fail the very check it documents.
+    //
+    // 'none' is a settled state, not a transient one, so the early-return above treats it as
+    // terminal — the view stops re-fetching a chapter it has already asked about. `analyzeChapters`
+    // DELETES the entry when it queues a run, which is what lets a freshly analysed chapter light up
+    // without a reload.
+    entry.status = 'none';
     _teRepaint();
-    const start = await fetch('/api/analyze-chapter/' + encodeURIComponent(chapterId),
-      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
-    const sb = await start.json().catch(() => null);
-    if (!start.ok) { entry.status = 'error'; entry.error = (sb && sb.error) || ('HTTP ' + start.status); _teRepaint(); return; }
-    if (sb && sb.cached) { entry.status = 'ready'; entry.data = sb; _teRepaint(); return; }
-    if (!sb || !sb.jobId) { entry.status = 'error'; entry.error = (sb && sb.error) || 'unavailable'; _teRepaint(); return; }
-    _startTextExplorerJob(chapterId, sb.jobId);
   } catch (e) {
     entry.status = 'error'; entry.error = String((e && e.message) || e);
     _teRepaint();
@@ -22721,6 +22795,11 @@ function _textExplorerBodyHtml(d){
   if (!entry || entry.status === 'loading') return status('<p class="te-status" dir="auto">' + escHtml(t('text_explorer.loading')) + '</p>');
   if (entry.status === 'analyzing') return status('<p class="te-status" dir="auto">' + escHtml(entry.step || t('text_explorer.analyzing')) + '</p>');
   if (entry.status === 'error') return status('<p class="te-status" dir="auto">' + escHtml(t('text_explorer.error', { error: entry.error || '' })) + '</p>');
+  // v88_u: no analysis exists and none was started. Render the story EXACTLY as the
+  // nothing-to-annotate branch below does — plain paragraphs, no `.te-tok` spans, so no word is
+  // clickable — rather than a status line. The user asked for the text, not for an explanation of
+  // why there is no annotation: "just show the text where words just can not be clicked".
+  if (entry.status === 'none') return wrap(_comicPanelsFlatTextHtml(d, _storyParasHtml(furiHtml(d.story || ''))));
   const sentences = (entry.data && entry.data.sentences) || [];
   // v86_p/v86_t: same shared card/padding wrapper as the translation view — see
   // _comicPanelsFlatTextHtml's own comment for why this can't reuse the default view's per-panel

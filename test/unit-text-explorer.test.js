@@ -98,7 +98,18 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
   }
   console.log('  _ensureTextExplorerData: a fresh cache hit reaches ready with NO analysis job started: OK');
 
-  // ── 2b. _ensureTextExplorerData: unavailable -> triggers the POST job-kickoff route ──────────
+  // ── 2b. ⚠️ REWRITTEN AT v88_u: an unavailable analysis starts NOTHING ────────────────────────
+  // This section asserted the OPPOSITE — that an unavailable GET fires POST /api/analyze-chapter and
+  // moves the entry to 'analyzing'. The user removed that: *"Do NOT auto-start text-analysis from
+  // the progress cards, when the magnifying glass button is clicked and no analysis exists. Just
+  // show the text where words just can not be clicked if an analysis is not yet available."*
+  //
+  // Merely LOOKING at a chapter in explorer mode queued a multi-minute CP2 run per sentence against
+  // the user's own model — from a VIEW toggle, no confirmation, on every chapter opened. The claim
+  // inverts: the view READS, and only `analyzeChapters` (which pre-checks and confirms) writes.
+  //
+  // Asserted as "no POST was made at all", not as "the entry is 'none'": the entry could reach
+  // 'none' while a POST also fired, and the POST is the thing that costs the user an hour of GPU.
   {
     const C = loadClient({ quiet: true });
     C.run(SEED_COMMON + `
@@ -118,13 +129,62 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
       _ensureTextExplorerData();
       true;`, 'ensure-miss');
     await settle();
-    assert.strictEqual(C.run('postedUrl'), '/api/analyze-chapter/tp_te1', 'an unavailable GET triggers the POST job-kickoff route for the SAME chapter');
-    assert.strictEqual(C.run('_textExplorerJobId'), 'j123', 'the returned jobId is recorded for the shared poller/visibilitychange hook');
+    assert.strictEqual(C.run('postedUrl'), null,
+      'NO POST is made — a view toggle must never queue a multi-minute analysis run');
+    assert.strictEqual(C.run('typeof scheduledIntervalFn'), 'object',
+      'and no polling interval is scheduled either (non-vacuity: the stub records one if it is)');
     const entry = JSON.parse(C.run(`JSON.stringify(APP._teCache['tp_te1'])`));
-    assert.strictEqual(entry.status, 'analyzing', 'the cache entry moves to analyzing while the job runs');
-    assert.strictEqual(C.run('typeof scheduledIntervalFn'), 'function', 'a real polling interval was scheduled for the new job (2s poll shape, matching the comic pollers)');
+    assert.strictEqual(entry.status, 'none',
+      'the entry settles on "none" — an answer, not a transient, so the view stops re-asking');
+    // Terminal: a second call must not re-fetch either, or every repaint costs a round trip.
+    C.run(`window._getCalls = 0; var _f = fetch;
+      fetch = function(u, o){ if(!(o && o.method === 'POST')) window._getCalls++; return _f(u, o); };
+      _ensureTextExplorerData(); true;`, 'again');
+    await settle();
+    assert.strictEqual(C.run('window._getCalls'), 0,
+      'and "none" is TERMINAL — a second look does not re-ask the server');
   }
-  console.log('  _ensureTextExplorerData: an unavailable/stale cache triggers a real analysis job, tracked for polling: OK');
+  console.log('  _ensureTextExplorerData: an unavailable analysis starts NO job and settles on "none": OK');
+
+  // ── 2c. v88_u: the "none" state renders the plain story, with no word clickable ───────────────
+  // "just show the text where words just can not be clicked". A status line would have been the
+  // easy read of the request and the wrong one — the user asked for the TEXT.
+  {
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON + `
+      APP.lessonData = ${JSON.stringify(TOPIC)};
+      _teCacheStore()['tp_te1'] = { status:'none' };
+      window._html = _textExplorerBodyHtml(APP.lessonData);
+      true;`, 'none-render');
+    const html = C.run('window._html');
+    assert.ok(!/te-tok/.test(html),
+      'no token spans — nothing in the text is clickable without an analysis');
+    assert.ok(!/te-status/.test(html),
+      'and no status line either: the request was for the text, not for an explanation');
+    assert.ok(html.includes('Hund'),
+      'the story itself IS rendered (non-vacuity: an empty body would satisfy both checks above)');
+    console.log('  the "no analysis" state renders the plain, unclickable story: OK');
+  }
+
+  // ── 2d. v88_u: queueing a real run drops the cached "none" ───────────────────────────────────
+  // Otherwise a chapter analysed from the analysis button would keep showing plain text until a
+  // reload, because "none" is terminal.
+  {
+    const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+    const at = src.indexOf('async function analyzeChapters');
+    assert.ok(at > 0, 'the explicit analysis entry point exists');
+    const fn = src.slice(at, src.indexOf('\n}\n', at));
+    assert.ok(/delete _teCacheStore\(\)\[id\]/.test(fn),
+      'queueing a run invalidates the cached "none", so the chapter lights up without a reload');
+    assert.ok(/analyze-chapter/.test(fn),
+      'non-vacuity: this really is the function that starts analyses — the ONLY one that may');
+    const ensure = src.slice(src.indexOf('async function _ensureTextExplorerData'),
+                             src.indexOf('// Poller, same shape as'));
+    assert.ok(!/analyze-chapter/.test(ensure),
+      'and the VIEW path no longer names that route at all — the source-layer half of §2b, so a '
+      + 'POST reintroduced on a branch no fixture reaches still fails');
+    console.log('  starting a run invalidates the cached "none"; the view path cannot start one: OK');
+  }
 
   // ── 3. _teSentenceHtml/_teTokenMarkHtml: real per-token marks, forward-only alignment ─────────
   {
@@ -383,9 +443,95 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
     await settle();
     const r = JSON.parse(C.run(`JSON.stringify({ fetchCalls: window._fetchCalls, entry: _teCacheStore()['tp_te1'] })`));
     assert.strictEqual(r.fetchCalls, 0, 'a chapter absent from the bake ALSO never calls fetch — there is no live job to kick off statically');
-    assert.strictEqual(r.entry.status, 'error', 'a chapter absent from the bake degrades to a clean error state, not a hang or a crash');
+    // v88_u: 'none', not 'error'. A chapter missing from the bake is the DEFAULT case offline (only
+    // some are ever baked — CP2 is a real model call per sentence), and it is now exactly the same
+    // situation as an unanalysed chapter live: the plain story renders, no word is clickable, and
+    // nothing suggests the learner has hit a fault they could act on. The claim this section
+    // protects — degrades cleanly rather than hanging or crashing — is unchanged.
+    assert.strictEqual(r.entry.status, 'none',
+      'a chapter absent from the bake settles on "none", the same settled state an unanalysed '
+      + 'chapter reaches live — not an error the learner cannot act on');
   }
   console.log('  static build: _ensureTextExplorerData() reads STATIC_ANALYSIS directly, present or absent, and never touches the network: OK');
+
+  // ── 7b. v88_u: the QUESTION card's own 🔍, the third surface over the shared cache ────────────
+  // "Question card: the collapsed text-view should also have the button to view the text analysis."
+  // Open since v86_ad, which gave the LESSON-SET card one and recorded the question panel as the
+  // remaining gap in INTERNALS. A THIRD independent flag, matching that precedent: three surfaces
+  // can be open in different senses and toggling one must not flip another's visible state.
+  {
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON + `
+      APP.lessonData = ${JSON.stringify(TOPIC)};
+      APP.cur = { lessonIdx:0, cur:0, exercises:[{ type:'mcq_target_source', correct:'x' }] };
+      window._off = _exStoryPanelHtml(APP.cur.exercises[0]);
+      true;`, 'panel-off');
+    const off = C.run('window._off');
+    assert.ok(/id="ex-story-explorer-btn"/.test(off), 'the question panel carries a 🔍 button');
+    assert.ok(/toggleExTextExplorer\(\)/.test(off), 'wired to its own toggle');
+    assert.ok(!/te-tok/.test(off), 'and with the flag off it renders the ordinary highlighted story');
+
+    // Toggling must not disturb the OTHER two surfaces' flags — that is the whole reason for a
+    // third flag rather than reusing APP._textExplorer.
+    // ⚠️ The two other flags are seeded to DIFFERENT values on purpose. The first version of this
+    // seeded both to `true` and asserted all three true afterwards — which a "copy my flag onto the
+    // completion card's" mutation satisfies exactly, and it stayed green. Mixed values are what make
+    // "leaves the others alone" observable at all.
+    C.run(`APP._textExplorer = false; APP._lsTextExplorer = true;
+      _teCacheStore()['tp_te1'] = { status:'none' };
+      toggleExTextExplorer();
+      window._flags = JSON.stringify({ ex: !!APP._exTextExplorer, comp: !!APP._textExplorer, ls: !!APP._lsTextExplorer });
+      window._on = _exStoryPanelHtml(APP.cur.exercises[0]);
+      true;`, 'panel-on');
+    assert.deepStrictEqual(JSON.parse(C.run('window._flags')), { ex: true, comp: false, ls: true },
+      'the question card\'s toggle flips ITS flag and leaves the other two EXACTLY as they were — '
+      + 'one off, one on, neither touched');
+    assert.ok(/var\(--blue\)/.test(C.run('window._on')),
+      'and the button shows as active while the mode is on');
+
+    // With a real analysis in the cache, the panel body comes from the ANALYSIS, not the vocabulary
+    // highlight — non-vacuity for the branch, since the "none" state renders plain text either way.
+    C.run(`_teCacheStore()['tp_te1'] = { status:'ready', data: { sentences: [
+        { sentenceId:'s0', text:'Der Hund lauft.', paraBreakBefore:false, tokens:[
+          {surface:'Der',lemma:'der',form:'article',sense:'the',confidence:'high'} ] } ] } };
+      window._ana = _exStoryPanelHtml(APP.cur.exercises[0]); true;`, 'panel-ana');
+    assert.ok(/te-tok/.test(C.run('window._ana')),
+      'with an analysis in hand the question panel renders the analysed tokens');
+
+    // Picking a language LEAVES explorer mode, the same rule the other two surfaces follow.
+    C.run(`toggleExStoryLang('target'); window._after = !!APP._exTextExplorer; true;`, 'panel-lang');
+    assert.strictEqual(C.run('window._after'), false,
+      'choosing a flag exits explorer mode — the two controls are alternatives, not layers');
+    console.log('  the question card has its own 🔍 over the shared cache, with its own flag: OK');
+  }
+
+  // ── 7c. v88_u: the shared cache repaints ALL THREE surfaces ───────────────────────────────────
+  // v86_ad's own lesson, applied before shipping rather than after a bug report: "a second surface
+  // added over a shared cache needs the repaint path widened too" — a fetch that resolves must not
+  // land on a card the learner is not looking at.
+  {
+    const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+    const at = src.indexOf('function _teRepaint()');
+    const fn = src.slice(at, src.indexOf('\n}\n', at));
+    assert.ok(/APP\._textExplorer/.test(fn) && /APP\._lsTextExplorer/.test(fn) && /APP\._exTextExplorer/.test(fn),
+      'the repaint path names all three surfaces, each behind its own flag');
+    console.log('  the shared cache repaints all three explorer surfaces: OK');
+  }
+
+  // ── 7d. v88_u: analysed words are no longer filled blue ───────────────────────────────────────
+  // "don't show the blue highlight of analyzed text, just show the blue frame around the word on
+  // mouse-over." The fill marked every analysed word at once — on a fully analysed chapter, the
+  // whole text — and fought the red→green vocabulary colouring the same text carries.
+  {
+    const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+    const rule = /\.te-tok\{([^}]*)\}/.exec(src);
+    assert.ok(rule, 'the token rule exists');
+    assert.ok(!/background/.test(rule[1]),
+      'no background fill on an analysed word (got "' + rule[1] + '")');
+    assert.ok(/\.te-tok:hover\{[^}]*outline:2px solid var\(--blue\)/.test(src),
+      'the hover outline IS still there — the affordance moved, it was not removed');
+    console.log('  analysed words carry no fill, only the hover frame: OK');
+  }
 
   // ── 8. ⚠️ REGRESSION: a chapter arrived at with the mode ALREADY ON must load, not hang ────────
   // User bug report: "an existing text analysis can not be loaded anymore for tp_…070 … Perhaps this

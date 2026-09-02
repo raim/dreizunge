@@ -1366,6 +1366,25 @@ descriptions** (two user requests; full write-up in `roadmap_v87.md`'s own `v87_
 
 ---
 
+**`v88_u` — three text-analysis fixes: no auto-start, no blue fill, the question card gets its own 🔍**
+(user live-test batch; full write-up in `roadmap_v88.md`'s own `v88_u` entry). ZERO new `ui.json` keys.
+
+| what | where |
+|---|---|
+| ⚠️ **a VIEW no longer queues an hour of GPU** | `_ensureTextExplorerData` fired the job-kickoff route on any unavailable GET — so toggling 🔍 started a multi-minute CP2 run (one model call per SENTENCE) against the user's own Ollama, unconfirmed, on every chapter opened in explorer mode. The view READS; only `analyzeChapters` (which pre-checks and confirms) WRITES |
+| the new settled state | **`'none'`** — "asked, and there is none". Joins `ready`/`loading`/`analyzing` in the early return, so the view stops re-asking every repaint. `analyzeChapters` **deletes the entry** when it queues a run, which is what lets a freshly analysed chapter light up without a reload |
+| what `'none'` RENDERS | the plain story, through the existing nothing-to-annotate branch — real paragraphs, no `.te-tok` spans, nothing clickable. **Not a status line**: the easy reading of the request would have been "not analysed yet"; the user asked for the TEXT. The static build's absent-from-the-bake case moved `'error'` → `'none'` for the same reason — offline, only some chapters are ever baked, so that is the DEFAULT, not a fault |
+| the blue fill | `.te-tok` loses `background:#eaf2ff`; `.te-tok:hover`'s outline is the whole affordance. On a fully analysed chapter the fill marked EVERY word — a highlight that highlights everything signals nothing — and it fought the red→green vocabulary colouring the same text carries |
+| the question card's 🔍 | `_exStoryPanelHtml` gains `#ex-story-explorer-btn` + `toggleExTextExplorer()`. **THIRD independent flag** (`APP._exTextExplorer`), matching `v86_ad`'s precedent rather than reusing `APP._textExplorer`: three surfaces can be open in different senses. The chapter-id-keyed CACHE is shared, so data is fetched once however many ask. Picking a language flag exits explorer mode, as on the other two |
+| **`_exStoryPanelRefresh()`** | the panel rebuild `toggleExStoryLang` had inline, extracted — both toggles AND `_teRepaint` need it, and three copies would drift on whether the panel stays open |
+| ⚠️ `_teRepaint` widened in the SAME commit | `v86_ad`'s own lesson ("a second surface over a shared cache needs the repaint path widened too") applied BEFORE shipping rather than after a bug report — this release would otherwise have reproduced it exactly |
+| ⚠️ **comments spelling swept patterns, 3rd and 4th occurrence** | the job route's name inside `_ensureTextExplorerData` (and `chainBlocked`/the resume key at `v88_s`). When you write an absence assertion, expect your own explanatory comment to be the first thing that fails it |
+| §2b **re-anchored to the opposite claim** | it asserted an unavailable GET FIRES the POST. Now asserts **no POST at all** — stated that way rather than as "the entry is `'none'`", because the entry could reach `'none'` while a POST also fired, and the POST is what costs the hour. Backed by a SOURCE sweep (§2d) so a POST on a branch no fixture reaches still fails |
+| ⚠️ **a fixture that made a mutation pass** | §7b first seeded BOTH other flags to `true` and asserted all three true — which "copy my flag onto the completion card's" satisfies exactly, and it stayed GREEN. Seeded to DIFFERENT values it goes red. *"Leaves the others alone" is not observable when the others already agree with you* |
+| the acceptance tests | `unit-text-explorer`, 15 checks. **TEN mutations red** |
+
+---
+
 **`v88_t` — two live-test fixes: the extracted-text field is resizable, and the library sorts by ONE
 key** (user reports, one with a screenshot; full write-up in `roadmap_v88.md`'s own `v88_t` entry).
 ZERO new `ui.json` keys.

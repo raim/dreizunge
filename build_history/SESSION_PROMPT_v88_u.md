@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_t`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_u`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -72,7 +72,14 @@ naming the source language. Zero new keys. Two findings worth carrying: a commen
 TEMPLATE LITERAL must not contain backticks (`check-inline.js` caught it), and `_populateLibSelects`
 had a branch no fixture had ever reached because `lib-dom` auto-vivifies a div with no `.options`.
 
-**⚠️ SIX ITEMS OF THAT BATCH ARE STILL OWED — they are the top of the queue.** Verbatim:
+**`v88_u` then shipped three of that batch's text-analysis items**: the explorer no longer AUTO-STARTS
+an analysis (toggling a VIEW used to queue a multi-minute CP2 run per sentence against the user's own
+model, unconfirmed — it now READS, and only the analysis button WRITES; a new settled `'none'` status
+renders the plain unclickable story), analysed words lost their blue fill (the hover outline is the
+whole affordance), and the QUESTION card got its own 🔍 with a THIRD independent flag over the shared
+cache. Zero keys. Ten mutations red. Full write-up: the `v88_u` entry.
+
+**⚠️ FOUR ITEMS ARE STILL OWED — they are the top of the queue.** Verbatim where quoted:
 
 1. **Generation from comic/image: move the Generate button off the text-extraction/confirmation card
    onto the THIRD generation card**, where extra lessons and all features (translation, title,
@@ -80,27 +87,28 @@ had a branch no fixture had ever reached because `lib-dom` auto-vivifies a div w
    *"The second page of the generation wizard, and its popover parts, should really only generate and
    confirm the text(s) for one or more chapters, and NOT start generation."* — the biggest item; the
    user agreed to take it LAST, after the small fixes.
-2. **Do NOT auto-start text analysis from the progress cards.** When 🔍 is clicked and no analysis
-   exists, just show the text with words not clickable. (Today `toggleTextExplorer` →
-   `_ensureTextExplorerData` POSTs `/api/analyze-chapter` and starts a job.)
-3. **In the text-analysis view, drop the blue highlight of analysed text** — keep only the blue frame
-   on mouse-over. (`.te-tok{background:#eaf2ff}` goes; `.te-tok:hover{outline:2px solid var(--blue)}`
-   stays.)
-4. **Text analysis did not finish for `tp_17851387238120000029`** while the server was still running
+2. **Text analysis did not finish for `tp_17851387238120000029`** while the server was still running
    — possibly a timeout. **A second run must SKIP existing annotations and do only the rest.** The
    current "already analysed" confirm becomes a three-way choice: cancel / expand existing /
    overwrite. **THE USER APPROVED THREE `ui.json` KEYS FOR THIS** (two button labels plus a rewritten
    question; the rewritten English means its stale non-`en` values get deleted per the standing
    ruling). Nothing else in the batch may spend keys without asking again.
-5. **The question card's collapsed text view needs the text-analysis button too** (`_exStoryPanelHtml`
-   never got the 🔍 toggle — INTERNALS already records this as open).
-6. **Some LLM-based jobs still have no cancel button** (user screenshot: "Erstelle Zusammenfassung",
+3. **Some LLM-based jobs still have no cancel button** (user screenshot: "Erstelle Zusammenfassung",
    "Neuer Titel…"). **Diagnosed**: both are `kind:'sync'` rows — the synchronous LLM routes `v88_b`
    surfaced in the popover from `_jobsInflight`. `_jobsRenderList`'s `canCancel` is
    `j.kind === 'job' && …`, and the comment there explains why sync was excluded: there is no
    server-side job id for `POST /api/jobs/cancel` to look up. So this is NOT a one-line gate change —
    it needs either an `AbortController` on the client fetch (stops the waiting, leaves the model
    running) or the sync routes registering real cancellable jobs. Decide which before building.
+4. **🆕 The jobs popover still says "comics" twice** (user screenshot): *"We aimed to replace these,
+   since 'comics' is just one use case of the image upload. Below the image the text 'detect comic
+   panels' is OK, since this really refers to an image of a comics/manga."* **Diagnosed**: both are
+   HARDCODED ENGLISH in `server.js` — the extract job's `newJob({ label: ... })` and the drafts
+   listing's own draft label. That is why `v88_f`'s `comic`→`image` rename could not reach them:
+   `unit-ui-key-exists` sweeps strings that go through `ui.json`, and **server job labels are the one
+   user-facing surface `ui.json` does not cover at all** — they are never translated either. Reword
+   to the image vocabulary and add a guard scoped to the label expressions (the link TYPE and the
+   `console.log` line legitimately keep the word).
 
 **⚠️ The WITHIN-chapter progression is untouched and is meant to stay** — the user was explicit:
 *"we do still want the 'play mode' question progress within chapters, to first solve vocab, then, to
@@ -118,7 +126,7 @@ one 🔒 that legitimately survives there). Do not "finish the job" by removing 
    fifteen point releases) — go there for how anything from that line was built, and for the six
    items it closed.
 4. `INTERNALS.md` **§6b, the feature → function map** — read it BEFORE grepping for where anything
-   lives. Current through `v88_t`.
+   lives. Current through `v88_u`.
 
 ## Establish a green baseline before changing anything
 
@@ -165,8 +173,8 @@ DETERMINISTIC, so not flakiness — because the user's server had written a new 
 fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don't run the full and
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **343 topics, 99 storylines, 33 languages, 751 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_t'`.
+Corpus at this cut: **344 topics, 99 storylines, 33 languages, 751 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_u'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
