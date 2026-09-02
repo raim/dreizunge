@@ -12,13 +12,27 @@
       "lang": "nl",
       "srcLang": "de",
       "createdAt": "2026-09-02T08:15:15.438Z",
-      "updatedAt": "2026-09-02T08:22:06.615Z",
+      "updatedAt": "2026-09-02T08:28:37.859Z",
       "tokenUsage": {
-        "totalPromptTokens": 451,
-        "totalCompletionTokens": 41,
+        "totalPromptTokens": 730,
+        "totalCompletionTokens": 153,
         "tokensByType": {
-          "retitle": 492
+          "retitle": 492,
+          "summary": 391
         }
+      },
+      "summary": "Die Gemeinde Veere fördert die Biodiversität, indem sie der Natur mehr Raum gibt und das Gras seltener mäht. Dies ermöglicht es Blumen und Kräutern zu blühen, was wiederum Insekten wie Bienen und Schmetterlingen sowie Vögeln zugutekommt. Durch diese Maßnahmen wird der natürliche Kreislauf gestärkt, wobei Rasenränder zur Sicherung der Wege weiterhin gemäht werden. Zudem wird die Bevölkerung aufgefordert, Hundekot selbst zu entfernen, um die ökologische Balance nicht zu stören.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 279,
+        "completionTokens": 112,
+        "ms": 391173,
+        "at": "2026-09-02T08:28:37.859Z"
       }
     },
     {

@@ -166,10 +166,40 @@ function open() {
   //
   // The type list mirrors check()'s own typed branch (`listen_type`/`type_plural`/
   // `type_conjugation`); anything else that renders choices takes the MCQ path.
+  // v88_t: and the SAME defect had a third shape the v88_h fix did not reach. `order` (and its
+  // `math_order` / no-keyboard glyph variants) is neither typed nor choice-driven: `check()` grades
+  // `APP.cur.placed`, the tiles the learner dragged. Left unhandled, the driver fell through to the
+  // stale-`.choice` path exactly as a typed exercise did, and the run failed ~1 in 6 — which the
+  // session prompt had been carrying as "a genuine regression" since v88_h cleared this file.
+  // Measured, not guessed: the assertion's own message named the type on every occurrence.
+  //
+  // Driven through `placed` directly rather than by clicking tiles: `lib-dom` does not re-parse
+  // runtime `innerHTML` (the root cause of the v88_h bug), so the tiles are not there to click. The
+  // separators mirror check()'s own branches — do not let them drift.
   const TYPED = ['listen_type', 'type_plural', 'type_conjugation'];
+  const PLACED = ['order', 'math_order'];
   function answer(C, wantCorrect) {
     return C.run(`(function(){
       var Cur = APP.cur, ex = Cur.exercises[Cur.cur];
+      // The placed-tile family FIRST, mirroring check()'s own branch order (the glyph variant
+      // shadows the plain \`order\` branch there too).
+      var glyph = typeof _glyphOrderActive === 'function' && _glyphOrderActive(ex);
+      if (glyph || ${JSON.stringify(PLACED)}.indexOf(ex.type) >= 0) {
+        if (!${wantCorrect}) { Cur.placed = [{ w: 'zzz-not-the-answer' }]; check(); return Cur.answered; }
+        var want;
+        if (glyph) {
+          var goal = ex._glyphTarget != null ? ex._glyphTarget : stripFuri(ex.correct);
+          want = String(goal).split('');
+        } else if (ex.type === 'math_order') {
+          want = (ex.correct || []).map(String);
+        } else {
+          var sep = (APP.lessonData && APP.lessonData.lang || APP.lang) === 'ja' ? '' : ' ';
+          want = sep === '' ? String(ex.correct).split('') : String(ex.correct).split(sep);
+        }
+        Cur.placed = want.map(function(w){ return { w: w }; });
+        check();
+        return Cur.answered;
+      }
       var typed = ${JSON.stringify(TYPED)}.indexOf(ex.type) >= 0;
       var btns = typed ? [] : [].slice.call(document.querySelectorAll('.choice'));
       if (btns.length) {
@@ -227,6 +257,57 @@ function open() {
     assert.strictEqual(C.run(`_obsLog()[1].correct`), true, 'recorded as correct this time');
   }
   console.log(`  check() wiring: live answers recorded (${C.run('_obsLog().length')} total), replay recorded none`);
+
+  // ── v88_t: the placed-tile family, driven DETERMINISTICALLY ────────────────────────────────
+  // ⚠️ WHY THIS EXISTS. The section above depends on what `buildExercises` happens to sample, and
+  // the `order` branch taught to `answer()` above was measured across THIRTY consecutive runs
+  // without firing once — the corpus had moved on since the failure that prompted it. A driver
+  // branch shipped green and unexercised is precisely the vacuous-fixture failure this project has
+  // shipped guards on twice already (v87_i, both found by mutation testing). So the exercise is
+  // constructed here rather than waited for, and BOTH directions go through the real `check()`.
+  {
+    const D = open();
+    const ORD = { type: 'order', source: 'the house is big', target: 'das Haus ist gross',
+                  words: ['das', 'Haus', 'ist', 'gross'], correct: 'das Haus ist gross' };
+    const ORD2 = Object.assign({}, ORD, { source: 'the dog is small', target: 'der Hund ist klein',
+                  words: ['der', 'Hund', 'ist', 'klein'], correct: 'der Hund ist klein' });
+    D.run(`startLesson(${FIX.idx});
+      APP.cur.exercises = ${JSON.stringify([ORD, ORD2])};
+      APP.cur.cur = 0; APP.cur.answered = false; APP.cur.placed = [];
+      _obsLog().length = 0;
+      renderEx(); true;`, 'ord');
+    assert.ok(answer(D, false), 'an `order` exercise is drivable to a WRONG answer');
+    assert.strictEqual(D.run(`_obsLog().length`), 1, 'and it records exactly one observation');
+    assert.strictEqual(D.run(`_obsLog()[0].correct`), false, 'graded incorrect, as placed');
+
+    D.run(`APP.cur.cur = 1; APP.cur.answered = false; APP.cur.placed = []; renderEx(); true;`, 'ord2');
+    assert.ok(answer(D, true),
+      'and to a CORRECT one — the branch reconstructs `placed` from ex.correct with check()\'s own '
+      + 'separator rule, which is the half that would silently grade every order question wrong');
+    assert.strictEqual(D.run(`_obsLog().length`), 2, 'a second observation is recorded');
+    assert.strictEqual(D.run(`_obsLog()[1].correct`), true, 'and THIS one is graded correct');
+
+    // …and the GLYPH variant, which is the same branch under a different condition:
+    // `_glyphOrderActive = APP.noKeyboard && _isTypingEx(ex)`, so a learner with no-keyboard mode on
+    // turns every TYPED exercise into a placed-tile one. check() puts that branch FIRST, ahead of
+    // its own typed branch — a driver that checked the typed path first would write `#type-in`,
+    // leave `placed` empty, and grade a correct answer wrong. Covered here because mutation-testing
+    // showed the `order` fixture above does not reach it (APP.noKeyboard is false there).
+    const G = open();
+    const GEX = { type: 'listen_type', target: 'Haus', source: 'house', correct: 'Haus' };
+    G.run(`APP.noKeyboard = true; startLesson(${FIX.idx});
+      APP.cur.exercises = ${JSON.stringify([GEX, Object.assign({}, GEX, {target:'Hund', source:'dog', correct:'Hund'})])};
+      APP.cur.cur = 0; APP.cur.answered = false; APP.cur.placed = [];
+      _obsLog().length = 0; renderEx(); true;`, 'glyph');
+    assert.strictEqual(G.run(`_glyphOrderActive(APP.cur.exercises[0])`), true,
+      'non-vacuity: no-keyboard mode really does turn this typed exercise into glyph ordering');
+    assert.ok(answer(G, false), 'a glyph-ordered exercise is drivable to a WRONG answer');
+    assert.strictEqual(G.run(`_obsLog()[0].correct`), false, 'graded incorrect');
+    G.run(`APP.cur.cur = 1; APP.cur.answered = false; APP.cur.placed = []; renderEx(); true;`, 'glyph2');
+    assert.ok(answer(G, true), 'and to a CORRECT one, through the glyph branch rather than #type-in');
+    assert.strictEqual(G.run(`_obsLog()[1].correct`), true, 'graded correct');
+    console.log('  the placed-tile driver branch (order + glyph), exercised deterministically: OK');
+  }
 
   // B3 path: a canonical skill ID survives real exercise construction and the DOM-facing
   // `check()` call. Build until the normal random round surfaces a tagged vocabulary exercise;

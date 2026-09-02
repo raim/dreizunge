@@ -105,7 +105,19 @@ WRONG.** It did NOT "fail under suite load, not standalone": it failed standalon
 branched on `document.querySelectorAll('.choice')` before considering the exercise TYPE, and
 `lib-dom` does not re-parse runtime `innerHTML`, so stale `.choice` nodes from the previous MCQ
 render hijacked a TYPED exercise. Worse, the assertions sat behind `if (droveRight)`, so the section
-was **VACUOUS on many of the runs it passed**. A failure there now is a genuine regression.
+was **VACUOUS on many of the runs it passed**.
+
+**⚠️ AND THAT FIX WAS NOT COMPLETE — `v88_h`'s claim of "no longer flaky" was itself carried too
+confidently.** This file was still failing ~1 in 6 standalone at the start of the `v88_r` session,
+for the SAME root cause in a THIRD shape the type list did not cover: `order` (and its `math_order`
+/ no-keyboard glyph variants) is neither typed nor choice-driven — `check()` grades `APP.cur.placed`,
+the tiles the learner dragged — so those fell through to the stale-`.choice` path exactly as a typed
+exercise did. Taught to `answer()` and fixed after `v88_s`. **The fix was then found to be VACUOUS**:
+thirty consecutive runs never produced an `order` exercise at all (the corpus had moved on), so the
+new branch shipped green and unexercised. It now has its own DETERMINISTIC section that constructs
+both an `order` exercise and a glyph-ordered one and drives each in both directions. **Five mutations
+red.** A failure there now really is a genuine regression.
+
 `unit-ui-journeys`/`unit-word-progress` are **NOT cleared** — measured 12/12 each standalone, which
 is too few to mean anything (this file's own rate would have survived 12 runs about a third of the
 time). Treat them as UNVERIFIED, not clean.
