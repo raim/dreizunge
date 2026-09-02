@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_q`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_r`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -20,20 +20,45 @@ work — it generated four chapters during the `v87` line, and twice that broke 
 restarting anything; a SERVER edit is not — start your own instance on another port to verify, and
 **kill it by PID** (`pkill -f "node server.js"` matches theirs too).
 
-**What shipped at this cut**: `v88_q` — the teacher walk **starts on the story summary** when the
-storyline has one (user request). One new `ui.json` key.
-Index **-1 IS the summary page**, so the walk runs `-1 → 0 → … → n-1` on ONE position variable rather
-than a second flag that could disagree with it. `_walkApplySumNav()` repoints `sum-next` (whose own
-meaning — "back into the card you came from" — is right for a learner and wrong here), same override
-shape as the progress card's. Back from chapter 1 returns to the summary, or leaves for the library
-when there is none.
-⚠️ **Chapter 1 is LOADED first and that ordering is forced**: `_summaryOfStory()` resolves through
-`_storylineForTopic(APP.lessonData?.topic)`, so the question "does this storyline have a summary?"
-cannot be asked before a chapter is open. Pinned by its own assertion, because optimising the extra
-render away would break the question rather than the answer.
-Three older sections were RE-SCOPED (pinned to the no-summary case) rather than widened to accept
-either outcome — an assertion that accepts two outcomes has stopped discriminating between them.
-Full write-up: `roadmap_v88.md`'s own `v88_q` entry.
+**What shipped at this cut**: `v88_r` — **the progress card's arrows now BROWSE chapters and a new
+▶ plays** (user request). **ZERO new `ui.json` keys** — the budget the user chose when asked.
+
+Built as an OVERRIDE, exactly as `v88_o` was: `showComplete()`'s gate chain computes what it always
+computed, and `_browseApplyNav()` runs at the end of the render, MOVES that destination onto ▶ and
+repoints → at the **adjacent** chapter. ▶ takes the chain WHOLE (in-chapter lesson, story-unlock
+page, below-mark work, **and** the next unfinished chapter) — "continue the course"; → is free
+browsing. The one branch ▶ withholds is the terminal one: ▶ greys, → carries the exit, so `v74_o`'s
+"never a dead end" and `v77_f`'s finished card both survive. The within-chapter progression the user
+asked to KEEP (vocab first, then comprehension/text-hunt to complete a chapter) was not touched —
+only the chapter-wise lock went. ▶ sits in the ☰ popup as asked AND is mirrored beside the arrows
+(`← ☰ ▶ →`), and `_captureNextAction`/`_storyTapMaybeAdvance` now read ▶ first, → second.
+
+⚠️ **Two pre-existing defects were found by building it, and both are fixed here:**
+1. **`_backToChapterProgress` has NEVER existed in the static build.** It sits above
+   `@static-exclude-end`, so `docs/index.html` calls it and never defines it — the ← "previous
+   chapter" button has been a `ReferenceError` in the published build since `v82_e`. `build-static.js`
+   now supplies its own `STATIC_LESSONS` version.
+2. **`renderEx` could crash on a review card.** A review render's synthetic `APP.cur` has no `cur`,
+   and the length guard reads `C.cur >= C.exercises.length` — `undefined >= 0` is FALSE, so a stray
+   speech-advance timer rendered `exercises[undefined]`. Latent until → started loading the next
+   chapter asynchronously. Found because `smoke-render` exited 1 AFTER printing ALL PASSED.
+
+Also: `_compEndForward()` extracted so the end-of-storyline destination is ONE rule with two askers,
+and TWO more fixed-size source windows (`unit-progress-card-nav`, `unit-drill-ledger`) replaced with
+structural bounds after failing in the false-positive direction. Eight test files migrated from
+`comp-next` to `comp-play`. Full write-up: `roadmap_v88.md`'s own `v88_r` entry.
+
+**⚠️ OWED TO THE USER, AGREED THIS SESSION: `v88_s` — remove the two remaining chapter locks.** The
+user was asked and answered *"yes, as a second release"*. Both fire only in the PUBLISHED static
+build (`!APP.info.canGenerate && !APP._teacherMode`), which is exactly where students are:
+- **`_renderChapterCard`'s `_isLocked`** (index.html, the storyline screen's 🔒 chapter cards) — the
+  transitive `chainBlocked` / `!_chapterComplete(prevTopic)` gate. **Keep only the honest
+  `_sets.length === 0` case** ("this chapter has no lessons yet"); drop the progress conditions.
+- **`_sbChapterTarget`** (index.html, storyboard panel clicks) — silently REDIRECTS a click on a
+  locked panel to the last unlocked unfinished chapter and toasts `storyboard.locked_resume`. With
+  browsing free, that redirect is the same lock wearing different clothes.
+Both have existing guards that will need re-scoping rather than deleting, and
+`storyboard.locked_resume` becomes an unused `ui.json` key — ask before removing it.
 
 **🆕 NOTHING IS MID-FLIGHT, and the queue is explicit.** The `v87` line closed six items (R, U, Z,
 AC, AK, AL) plus the three storyline asks; they are recorded where they shipped and are NOT in the
@@ -72,7 +97,7 @@ counter-propose page IMAGES rather than a pdf.js viewer).
    fifteen point releases) — go there for how anything from that line was built, and for the six
    items it closed.
 4. `INTERNALS.md` **§6b, the feature → function map** — read it BEFORE grepping for where anything
-   lives. Current through `v88_a`.
+   lives. Current through `v88_r`.
 
 ## Establish a green baseline before changing anything
 
@@ -82,8 +107,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 327 checks
-node test/run.js --quick                  → expect 271
+node test/run.js                          → expect 328 checks
+node test/run.js --quick                  → expect 272
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -107,8 +132,8 @@ DETERMINISTIC, so not flakiness — because the user's server had written a new 
 fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don't run the full and
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **342 topics, 99 storylines, 33 languages, 752 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_q'`.
+Corpus at this cut: **342 topics, 98 storylines, 33 languages, 752 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_r'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -119,6 +144,26 @@ snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_q'`.
 Now 54 numbered standing rules across "Rules earned in session 28…34" plus dedicated blocks for the
 `v83`/`v84`/`v85`/`v86` lines — see `roadmap_v87.md`'s own copy of them. Read the **"⚠️ How the rules
 are NUMBERED"** note before citing one.
+
+**Earned at `v88_r`:**
+
+- **A non-zero exit code with no failing assertion is a FINDING, not harness noise.** `smoke-render`
+  printed `ALL PASSED` and then crashed on a stray `setTimeout` from a `check()` fixture. The lazy
+  reading is "a leaked timer in a test". The real one was a product crash: `renderEx`'s
+  `C.cur >= C.exercises.length` guard is FALSE for `undefined`, and a review render's synthetic
+  `APP.cur` has no `cur`. The feature being built is what made that state reachable in normal use.
+- **A guard written against `index.html` says nothing about `docs/index.html`.** Every guard for the
+  ← previous-chapter button passed for four releases while the function it calls was not defined in
+  the static build at all — it sits above `@static-exclude-end`. When a client helper is added near
+  the server functions, check which side of that marker it landed on, and assert against the BUILT
+  file.
+- **When a mutation stays green, say so in the test rather than strengthening it.** `walkActive()`
+  in `_browseApplyNav` is not what keeps a teacher walk in charge of the arrows — the call ORDER is.
+  `v87_p`'s ruling applied verbatim: keep the (now honestly described) optimisation, record the
+  non-attribution, and pin the mechanism that IS attributable.
+- **Take the WHOLE of what a request moves, not the tidy part of it.** The first draft gave ▶ only
+  the in-chapter branches, which left `_nextChapter()`'s branch reachable by nothing and made the
+  story-finished card unreachable by forward. "Move the next function" meant the whole function.
 
 **Earned at `v88_b`, and it paid for itself immediately:**
 
@@ -230,11 +275,14 @@ measures zero effect, reconsider the diagnosis before trying a third wording.**
 
 **🆕 FIRST: the thirteen TODOs handed over after `v88_a`** — items `AM`…`AX` in `roadmap_v88.md`,
 with their own suggested order. **`v88_b` shipped row 1 (`AW` + `AT`), `v88_c` row 2 (`AQ` + `AM`),
-`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third; `v88_h` did the flake audit; `v88_i` shipped `AX`; `v88_j` shipped `AR`; `v88_k` shipped `AU`'s cancel third; `v88_l` completed `AU` with idle release; `v88_m` wired ALL job kinds for cancel; `v88_n` added reverse sort; `v88_o` added the teacher walkthrough, `v88_p` fixed it; `v88_q` made it start on the summary.** The rest of that table:
+`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third; `v88_h` did the flake audit; `v88_i` shipped `AX`; `v88_j` shipped `AR`; `v88_k` shipped `AU`'s cancel third; `v88_l` completed `AU` with idle release; `v88_m` wired ALL job kinds for cancel; `v88_n` added reverse sort; `v88_o` added the teacher walkthrough, `v88_p` fixed it, `v88_q` made it start on the summary; `v88_r` generalised it into a student BROWSE mode and split forward into ▶ play / → browse.** The rest of that table:
 
 **🆕 THE THIRTEEN TODOs ARE DONE.** Every item from the `v88_a` handover has shipped, plus two live
 bug reports (`AY`/`AZ`) and the flake audit. What remains is either the pre-existing open list or
 work the user deferred. **Ask the user what they want next** — that is a reasonable first move here.
+
+**🆕 FIRST, and already agreed with the user: `v88_s`** — see the OWED block near the top of this
+file. Two chapter locks, both static-build-only, both to go.
 
 **Buildable now, no decision needed:**
 - **Item `V`** (multi-image upload) is FULLY SPECIFIED by the user's ruling and unblocked — each
@@ -254,7 +302,7 @@ work the user deferred. **Ask the user what they want next** — that is a reaso
 - **The completion card (`_renderCompStory`) still has no force-regenerate control** — only the
   lesson-set card does. Quick and well-precedented.
 
-**⚠️ `ui.json` keys.** 741 `en` keys now. Every item that needed keys this line has spent them
+**⚠️ `ui.json` keys.** 752 `en` keys now. Every item that needed keys this line has spent them
 (`AQ` 1, `AN` 1, `AX` 2, `AR` 4; `AP` renamed 24 without adding any). **Nothing is pre-approved for
 the next session.** The user's standing ruling on changed English text: delete the stale non-`en`
 values so `translate-ui.js` refills them. **Ask fresh for a count, as every `v87` cut did**

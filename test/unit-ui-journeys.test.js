@@ -131,7 +131,7 @@ async function main() {
   C.run('showProgressCard(); true;', 'progress-card');
   assert.strictEqual(active(C, 'complete-screen'), true, 'the journey starts on the rendered progress card');
   assert.strictEqual(C.run('APP.screen'), 'complete-screen', 'APP.screen agrees with the rendered card');
-  C.run("document.getElementById('comp-next').onclick(); true;", 'story');
+  C.run("document.getElementById('comp-play').onclick(); true;", 'story');
   assert.strictEqual(active(C, 'unlockstory-screen'), true, 'Next enters the story-unlock screen');
   assert.strictEqual(C.run('APP.screen'), 'unlockstory-screen',
     'APP.screen tracks the reroute onto showStory() — comp-next used to call showStoryUnlocked() directly');

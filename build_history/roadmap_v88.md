@@ -2424,6 +2424,141 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_r — the progress card's arrows BROWSE chapters; a new ▶ plays. Chapter-wise locking is gone for students.
+
+**User request**: *"Can we make the new teacher play mode also available for students? Let's allow to
+browse through texts by the current arrows and instead move the 'next' function to play the next
+questions to a play button in the progress card menu. That is, we remove the chapter-wise progress
+locking as the default play mode for students. Students can ALSO browse through chapters, and play
+each chapter separately via the new play button or by clicking on words in the vocab-highlight view.
+[…] However, we do still want the 'play mode' question progress within chapters, to first solve
+vocab, then, to really complete a chapter, solve the comprehension or text hunt lessons."*
+
+**ZERO new `ui.json` keys** — the user's chosen budget. `walk.next` ("Next chapter") already existed
+from `v88_o` and is exactly what the browse arrow means; `complete.continue` ("Continue") labels ▶;
+`complete.repeat_none` explains the greyed one. Third release in this line to close a user request
+with no new strings.
+
+### The shape: an OVERRIDE, not a rewire — the same decision `v88_o` made, for the same reason
+
+`showComplete()`'s Next/Back decision tree is still the most expensive code in this client to get
+wrong (the `§C1` gate analysis, `v77_card_gates.md`'s 32-row truth table, four user-reported dead
+ends). **Not one branch's computation changed.** `_browseApplyNav()` runs at the END of the render —
+before `_walkApplyNav()`, before the header mirror — and MOVES what the chain resolved onto ▶, then
+repoints → at the next chapter.
+
+**▶ takes the chain's destination WHOLE, not just its in-chapter part.** "Move the next function to
+a play button" means the whole function: the next unfinished lesson here, the story-unlocked page,
+the below-mark remediation, **and the next UNFINISHED chapter** when this one is done. So ▶ is
+"continue the course, wherever the pedagogy says that is" and → is "browse to the chapter next
+door". They can both land on a chapter and mean different things; that is the point. The first
+draft of this release withheld the chapter branch from ▶ — which left the most delicate branch in
+the file reachable by nothing and would have made `showStoryFinished` unreachable by forward.
+
+**The one branch ▶ does NOT take is the terminal one.** There the chain resolves to *leaving* — the
+story-finished card or the storyline — and a ▶ meaning "back to the library" would lie about what it
+plays. ▶ greys there (present and greyed, `v71_h`'s rule, never hidden) and → carries the exit, so
+`v74_o`'s "the last card is never a dead end" and `v77_f`'s finished card both survive intact.
+
+**What the user asked to KEEP is exactly what was not touched.** The within-chapter progression —
+vocab first, then the comprehension/text-hunt lessons to actually complete a chapter — is the gate
+chain plus `storyUnlocked`/`_storyLockedLesson`, and none of it moved. What went is the CHAPTER-wise
+lock: → no longer waits for this chapter to be finished.
+
+### ⚠️ Browsing is NOT `_nextChapter()`, and that is the discriminating case
+
+`_nextChapter()` scans for the next UNFINISHED chapter and skips finished ones — right for "continue
+the course", wrong for browsing. → mirrors `comp-prev`'s own `_prevChapter` instead (`v82_e`:
+*"going back is revisiting what came before, not hunting for outstanding work"*), one step, always,
+and lands through `_backToChapterProgress`, which forces the PROGRESS card and deliberately never
+consults `_enterViaSummaryCard`. **`unit-browse-mode` §3 is the fixture that tells the two apart**:
+chapter 2 finished, chapter 3 not, standing on chapter 1 — the old rule answers 3, browsing must
+answer 2. Without that section a browse built on `_nextChapter` passes every other assertion here.
+
+### ⚠️ `_backToChapterProgress` HAS NEVER EXISTED IN THE STATIC BUILD — the ← button was dead since `v82_e`
+
+It was added at `v82_e` among the server-calling functions, i.e. **above `@static-exclude-end`**, so
+`build-static.js` drops it: `docs/index.html` *calls* it and never *defines* it. The progress card's
+← "previous chapter" has been throwing a `ReferenceError` in the published build for four releases,
+silently doing nothing. Nothing caught it because every guard for that button ran against
+`index.html`. Pointing the FORWARD arrow at the same helper is what surfaced it. `build-static.js`
+now supplies its own `STATIC_LESSONS` version, the same shape as its `loadSaved` reimplementation,
+and `unit-browse-mode` §12 asserts the built file DEFINES it — the assertion that would have caught
+the original.
+
+### ⚠️ A real crash, latent until this release made it ordinary
+
+A review render's synthetic `APP.cur` carries `_review:true`, an empty `exercises` array and **no
+`cur` at all**. `renderEx`'s length guard is `C.cur >= C.exercises.length` — **`undefined >= 0` is
+false** — so a speech-advance timer left over from the previous round walked straight past it into
+`C.exercises[undefined]` and threw *"Cannot read properties of undefined (reading 'type')"*. Rare
+while landing on a review card mid-flight was rare; → now loads the next chapter ASYNCHRONOUSLY and
+lands on exactly that card, so a learner pressing it right after answering has that timer in the
+air. Guarded at the top of `renderEx`. **Found by a stray timer crashing `smoke-render` AFTER it
+printed ALL PASSED** — an exit code with no failing assertion, which is the shape that gets dismissed
+as harness noise. It was not.
+
+### One rule, two askers
+
+The terminal branch's "there is no next chapter, so where does forward lead?" is now
+`_compEndForward(slCtx, isDrill)` — extracted VERBATIM, because the browse arrow standing on the last
+chapter asks the same question and (unlike that branch) can be reached with work still outstanding. A
+second copy is the shape that drifted for the storyline page's connector line in `v71_w`.
+`unit-browse-mode` §4b pins the caller count and asserts the inline copy is gone.
+
+### ▶ is in the popup AND beside the arrows
+
+The request says "in the progress card menu", and that is where it lives — `#comp-actions`, inside
+`#comp-nav-modal` with the rest of the machinery. But the popup is two taps away while browsing is
+one, and ▶ is the move the card is *asking* for; leaving it deeper than the arrow would invert the
+card's own priority. So it is mirrored into the nav row as `← ☰ ▶ →` through the SAME
+`_mirrorNavBtn` the arrows already use — a copy of the resolved state, never a re-derivation. Put to
+the user as a question before building; they chose both.
+
+`_captureNextAction` (the word-tap detour, item Z) and `_storyTapMaybeAdvance` (a tap on plain story
+text) both read "where forward would have led". They now read **▶ first, → second** — together the
+pair reproduces exactly what `comp-next` alone meant before, and reading only `comp-next` would have
+turned a tap-to-continue into a tap-to-leave-the-chapter. This is the user's own third route in
+("play each chapter … by clicking on words in the vocab-highlight view").
+
+### ⚠️ A guard that stayed green, and was left honest rather than strengthened
+
+`_browseApplyNav`'s `if(walkActive()) return;` looked like what keeps a teacher walk in charge of the
+arrows. **Deleting it left every guard green** — `_walkApplyNav()` runs immediately afterwards and
+repoints both arrows, so the ORDERING is the protection. Following `v87_p`'s ruling on exactly this
+situation: the check is KEPT (it avoids a pointless transient assignment and one wasted closure per
+walked chapter), its comment now says it is not the protection, the test records that its
+behavioural assertion cannot attribute itself to one guard, and the ordering — which IS attributable
+— is pinned at the source layer. Swapping the two calls goes red.
+
+### Fixed-size windows, the fifth and sixth
+
+Two more source-scanning guards failed in the FALSE-POSITIVE direction the moment the markup grew:
+`unit-progress-card-nav`'s `vocabAt - detailsEnd < 400` (a fourth button in the nav row) and
+`unit-drill-ledger`'s `indexOf('function renderEx()') + 3000` (an eleven-line comment). Both replaced
+with STRUCTURAL bounds that are strictly stronger — the nav row now asserts the exact id membership
+AND order of the gap; the drill ledger slices to `renderEx`'s own closing brace. **A fixed-size
+window over generated markup is a proxy, and a proxy fails in both directions.**
+
+### Migration
+
+Eight existing test files clicked `comp-next` for a claim about where PLAY leads. Each moved to
+`comp-play`; the claims are unchanged, because the chain still resolves the same destination in the
+same branch. `unit-story-unlocked-card` §7 needed real re-scoping rather than a substitution — all
+three of its cases are the terminal branch, so ▶ correctly greys there and → carries `v74_o`'s
+"never a dead end" guarantee; case (c)'s "a finished later chapter is not re-offered" is now a claim
+about ▶, while → browsing into it is deliberate.
+
+**Verified live** on the user's own running server (a real 6-chapter storyline, `Enteignung und
+Wald`): → walked chapters 1 → 2 → 3 and ← back to 2, every landing the review progress card, no
+completion required anywhere; the nav row renders `← ☰ ▶ →`.
+
+**Guard**: new `unit-browse-mode.test.js`, 13 checks. **Twelve mutations red** — the arrows never
+repointed, browse skipping finished chapters, ▶ never inheriting the chain, ▶ also taking the end
+branch, the end rule copied instead of shared, the header duplicate unmirrored, the walk override
+reordered, the drill exemption removed, the tap-advance reading only `comp-next`, the `renderEx`
+guard removed, the static override removed, and the branch kind hardcoded.
+
 ## ✅ v88_q — the teacher walk starts on the story summary, when there is one
 
 **User request**: *"the teacher play button SHOULD start with the summary, if one is available."*

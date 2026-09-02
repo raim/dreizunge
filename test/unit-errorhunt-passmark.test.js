@@ -245,7 +245,7 @@ const seed = (tgt) => C.run(`
               correct:3, total:4, mistakes:1, hearts:3, streak:2, bestStreak:2 };
              showComplete(); true;`);
       const went = C.run(`(function(){
-        var e = document.getElementById('comp-next');
+        var e = document.getElementById('comp-play');
         if (!e) return 'no-button';
         if (e.classList.contains('locked')) return 'LOCKED';
         try { e.onclick && e.onclick(); } catch (err) { return 'threw:' + err.message; }

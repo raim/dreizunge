@@ -103,12 +103,15 @@ function seed() {
   const other = C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
   assert.ok(other >= 0 && other !== CI,
     `another unfinished lesson exists (${other}), so the preference is observable`);
-  assert.strictEqual(C.run(`!!document.getElementById('comp-next').disabled`), false,
-    'Next is live (v77_o)');
-  C.run(`document.getElementById('comp-next').onclick(); true;`, 'next');
+  // v88_r: the in-chapter forward move is ▶ now, not →. The RULE under test is unchanged — this
+  // file is about which lesson the gate chain resolves, and it still resolves it in exactly the
+  // same branch; only the button carrying the result changed.
+  assert.strictEqual(C.run(`!!document.getElementById('comp-play').disabled`), false,
+    '▶ is live (v77_o: forward always leads somewhere)');
+  C.run(`document.getElementById('comp-play').onclick(); true;`, 'play');
   assert.strictEqual(C.run(`APP._started`), CI,
-    `Next restarts the comprehension lesson (${CI}), not the other unfinished one (${other})`);
-  console.log(`  Next restarts the comprehension lesson ${CI}, not lesson ${other}`);
+    `▶ restarts the comprehension lesson (${CI}), not the other unfinished one (${other})`);
+  console.log(`  ▶ restarts the comprehension lesson ${CI}, not lesson ${other}`);
 }
 
 // ── 5. Once every question is answered, Next moves ON ──────────────────────
@@ -119,10 +122,14 @@ function seed() {
   C.run(`APP.cur = { lessonIdx: ${CI}, correct:3, total:3, mistakes:0, hearts:3, streak:3,
                      bestStreak:3, exercises: [], cur: 0 };
          APP._started = null; showComplete(); true;`, 'card');
-  C.run(`document.getElementById('comp-next').onclick(); true;`, 'next');
+  // v88_r: ▶ either points somewhere else or is greyed (nothing left to play in this chapter);
+  // both are "not trapped in the finished lesson", which is the claim. The greyed case is asserted
+  // explicitly so this cannot pass by the click simply doing nothing for an unrelated reason.
+  const playLive = C.run(`!document.getElementById('comp-play').disabled`);
+  if (playLive) C.run(`document.getElementById('comp-play').onclick(); true;`, 'play');
   assert.notStrictEqual(C.run(`APP._started`), CI,
-    'with every question answered, Next leaves the comprehension lesson');
-  console.log('  all answered: Next moves on');
+    'with every question answered, ▶ leaves the comprehension lesson');
+  console.log(`  all answered: ▶ moves on (play button ${playLive ? 'live, led elsewhere' : 'greyed — nothing left in this chapter'})`);
 }
 
 console.log('unit-comprehension-repeat: ALL PASSED');

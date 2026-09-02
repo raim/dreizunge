@@ -99,10 +99,10 @@ function arriveAt(topic) {
 // ── 1. Next opens the next chapter DIRECTLY ────────────────────────────────
 {
   const C = finishFirstChapter();
-  assert.strictEqual(C.run(`!!document.getElementById('comp-next').disabled`), false,
+  assert.strictEqual(C.run(`!!document.getElementById('comp-play').disabled`), false,
     'non-vacuity: Next is live after finishing a chapter with another ahead');
   assert.strictEqual(C.run(`APP._loadedSaved`), null, 'non-vacuity: nothing loaded before the click');
-  C.run(`document.getElementById('comp-next').onclick(); true;`, 'next');
+  C.run(`document.getElementById('comp-play').onclick(); true;`, 'next');
   const loaded = C.run(`APP._loadedSaved`);
   assert.ok(loaded, 'Next loads the next chapter');
   assert.ok(loaded === (SECOND.id || SECOND.topic) || loaded.includes(SECOND.id || ''),
@@ -123,7 +123,7 @@ function arriveAt(topic) {
   assert.strictEqual(stashed, SECOND.topic, 'the next chapter is stashed when the card renders');
   // Move the goalposts AFTER render: a click that re-resolved would now pick something else.
   C.run(`APP._unlNext = { id: 'sentinel-id', topic: 'SENTINEL' }; true;`);
-  C.run(`document.getElementById('comp-next').onclick(); true;`, 'next');
+  C.run(`document.getElementById('comp-play').onclick(); true;`, 'next');
   assert.strictEqual(C.run(`APP._loadedSaved`), 'sentinel-id',
     'the click uses the STASHED target, so the render and the click cannot disagree');
   console.log('  the destination is stashed at render time');
@@ -311,7 +311,7 @@ await (async () => {
   // the click keeps the value the ARRIVAL render produced.
   const title = C.run(`(document.getElementById('comp-title')||{}).textContent || ''`);
 
-  C.run(`document.getElementById('comp-next').onclick(); true;`, 'forward');
+  C.run(`document.getElementById('comp-play').onclick(); true;`, 'forward');
   assert.strictEqual(C.run(`APP._went`), null,
     'Next does NOT leave the chapter while its comprehension lesson is unplayed');
   assert.strictEqual(C.run(`APP._started`), gatedIdx,

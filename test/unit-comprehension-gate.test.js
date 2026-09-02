@@ -309,12 +309,12 @@ const solveLesson = (idx) => C.run(`(function(){
   // the chapter, and that is asserted above (`setComplete` is false, the next chapter stays
   // locked). Here we assert the replacement: Next is live and points BACK INTO this chapter,
   // never onward.
-  assert.ok(!C.run(`document.getElementById('comp-next').disabled`),
+  assert.ok(!C.run(`document.getElementById('comp-play').disabled`),
     'Next is not greyed while questions remain — it leads to the work that answers them');
   const before = C.run(`APP.lessonData.topic`);
   C.run(`APP._leftChapter = null;
          loadSaved = function(x){ APP._leftChapter = String(x); };
-         document.getElementById('comp-next').onclick(); true;`, 'fwd');
+         document.getElementById('comp-play').onclick(); true;`, 'fwd');
   assert.strictEqual(C.run(`APP._leftChapter`), null,
     'and it does NOT carry the learner out of the chapter while questions remain');
   assert.strictEqual(C.run(`APP.lessonData.topic`), before, 'the chapter is unchanged');
@@ -328,7 +328,7 @@ const solveLesson = (idx) => C.run(`(function(){
     showComplete();
     return JSON.stringify(APP.progress.completed[APP.lessonData.topic] || {}); })()`));
   assert.ok(afterFull['GateH_c'], 'once every question is solved the lesson records as done');
-  assert.ok(!C.run(`document.getElementById('comp-next').classList.contains('locked')`),
+  assert.ok(!C.run(`document.getElementById('comp-play').classList.contains('locked')`),
     'and Next unlocks');
   console.log(`  100% rule: partial play not recorded, full play recorded (${uni.length} questions)`);
 }
@@ -346,7 +346,7 @@ const solveLesson = (idx) => C.run(`(function(){
     APP.cur = { lessonIdx: 1, exercises: [], cur: 0, correct: 0, total: 0, mistakes: 0,
                 hearts: 3, streak: 0, bestStreak: 0 };
     showComplete(true); return true; })()`);
-  assert.ok(!C.run(`document.getElementById('comp-next').classList.contains('locked')`),
+  assert.ok(!C.run(`document.getElementById('comp-play').classList.contains('locked')`),
     'a review render does not apply the 100% rule');
   const recorded = JSON.parse(C.run('JSON.stringify(APP.progress.completed[APP.lessonData.topic]||{})'));
   assert.ok(!recorded['GateI_c'], 'and records nothing for the lesson it merely pointed at');

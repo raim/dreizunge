@@ -1366,6 +1366,26 @@ descriptions** (two user requests; full write-up in `roadmap_v87.md`'s own `v87_
 
 ---
 
+**`v88_r` — the progress card's arrows BROWSE chapters; a new ▶ plays** (user request; full
+write-up in `roadmap_v88.md`'s own `v88_r` entry). ZERO new `ui.json` keys.
+
+| what | where |
+|---|---|
+| the override | **`_browseApplyNav(o)`** (`index.html`, beside `_walkApplyNav`), `o = {kind, slCtx, topicKey, isDrill}`. Runs at the END of `showComplete()` — **before** `_walkApplyNav()` and the header mirror, and that ORDER is the whole contract: browse proposes, a teacher walk overrides, the duplicates inherit whichever spoke last. **Not one gate branch's computation changed** — same decision made at `v88_o`, same reason (`§C1`, `v77_card_gates.md`'s 32 rows) |
+| which branch resolved `comp-next` | **`_compNextKind`** — a `let` declared just before the chain, one assignment per branch (`'play'` ×3, `'chapter'`, `'end'`), read by nothing else. Recording only: "what does this destination MEAN" cannot be asked of a resolved `onclick` |
+| ▶ takes the chain **whole** | every kind except `'end'`, so ▶ = "continue the course" incl. the next UNFINISHED chapter. `'end'` resolves to *leaving*, which is not something you play — ▶ greys (present + greyed, `v71_h`) and → carries the exit. A first draft withholding `'chapter'` too left `_nextChapter()`'s branch reachable by nothing and `showStoryFinished` unreachable by forward |
+| → is **not** `_nextChapter()` | it mirrors `comp-prev`'s `_prevChapter` — exactly one step, no completion check — through `_backToChapterProgress`, which forces the PROGRESS card and never consults `_enterViaSummaryCard`. `_nextChapter()` SKIPS finished chapters, which is right for ▶ and wrong for browsing. `unit-browse-mode` §3 is the fixture that discriminates |
+| the end of the deck | **`_compEndForward(slCtx, isDrill)`** — extracted VERBATIM from the terminal gate branch, which now calls it. TWO askers (that branch, and → on the last chapter), ONE rule; a second copy is the `v71_w` connector-line shape |
+| ▶'s two homes | `#comp-play` in `#comp-actions` (inside `#comp-nav-modal`, per the request) and `#comp-story-play` in the nav row (`← ☰ ▶ →`), mirrored by the SAME `_mirrorNavBtn` the arrows use — a copy of resolved state, never a re-derivation. The duplicate earned its place because ▶ is the move the card is ASKING for |
+| "where forward would have led" | `_captureNextAction()` and `_storyTapMaybeAdvance()` read **▶ first, → second**. Together the pair reproduces exactly what `comp-next` alone meant; reading only `comp-next` turns a tap-to-continue into a tap-to-leave-the-chapter |
+| ⚠️ **`_backToChapterProgress` was NEVER in the static build** | it sits ABOVE `@static-exclude-end` (added at `v82_e` among the server functions), so `docs/index.html` *called* it and never *defined* it — the ← previous-chapter button has been a `ReferenceError` in the published build for four releases. `build-static.js`'s `staticOverrides` now supplies a `STATIC_LESSONS` version. **When a client helper is added near the server functions, check which side of that marker it landed on** |
+| ⚠️ **`renderEx` could crash on a review card** | a review render's synthetic `APP.cur` has `_review:true`, `exercises: []` and **no `cur`**; the length guard reads `C.cur >= C.exercises.length`, and `undefined >= 0` is FALSE, so a leftover speech-advance timer rendered `exercises[undefined]`. Guarded at the top of `renderEx`. Surfaced because → loads the next chapter ASYNCHRONOUSLY onto exactly that card — and because `smoke-render` exited 1 *after* printing `ALL PASSED` |
+| ⚠️ **a guard that stayed green, kept honest** | `_browseApplyNav`'s `walkActive()` early return is NOT what keeps a walk in charge of the arrows — deleting it leaves everything green, because `_walkApplyNav()` runs next. `v87_p`'s ruling: keep the optimisation, say in the comment that it is not the protection, record the non-attribution in the test, and pin the ORDER (which is attributable) at the source layer |
+| the acceptance tests | new **`unit-browse-mode.test.js`** (13 checks) — ▶ carries the chain, → browses with the chapter unfinished, → does not skip a finished chapter, the terminal split, one end-rule with two askers, a solo chapter, the recorded kind at both ends, the header mirror, the walk still owning the arrows, a drill left alone, the tap-advance preference, the review-card guard, static parity. **TWELVE mutations red.** Eight existing files migrated `comp-next` → `comp-play`; `unit-story-unlocked-card` §7 re-scoped rather than substituted |
+| fixed-size windows, #5 and #6 | `unit-progress-card-nav`'s `< 400` gap check and `unit-drill-ledger`'s `+ 3000` slice both went red on a CORRECT render as soon as the markup grew. Replaced with structural bounds (exact id membership + order of the gap; `renderEx`'s own closing brace) |
+
+---
+
 **`v87_n` — the artwork toggle reaches all THREE surfaces; the strip is centred** (three user
 follow-ups to `v87_m`, reported live).
 

@@ -346,17 +346,24 @@ function renderCard({ teacher }) {
     lessonCount: (t.lessons || []).filter(L => L && !L._hidden && !L._aiExamples).length,
     lessons: (t.lessons || []).map(L => Object.assign({ id: L.id, type: L.type || 'standard' },
       L._hidden ? { _hidden: true } : {})) }));
-  // (a) End of a FINISHED storyline → v77_f: Next now leads to the story-finished card, the last
-  // page of the §0c walk, rather than handing the learner straight back to the storyline. The
-  // guarantee this section exists to protect is unchanged and still asserted: Next is not greyed,
-  // and it does not go NOWHERE. It simply goes one page further along the walk first, and that
-  // page has its own way out — which is what stops v74_o's dead end coming back.
+  // ⚠️ v88_r: forward SPLIT into two buttons — ▶ plays (whatever the gate chain resolved) and →
+  // browses chapters. All three cases below are the chain's TERMINAL branch, the one case ▶ does
+  // not take: there is nothing left to play, so ▶ greys and → carries the destination through
+  // `_compEndForward`, the same rule the terminal branch itself uses. v74_o's guarantee is what is
+  // re-asserted on the new pair: the learner is never left with no live route onward.
+  //
+  // (a) End of a FINISHED storyline → v77_f: forward leads to the story-finished card, the last
+  // page of the §0c walk, rather than handing the learner straight back to the storyline. It goes
+  // one page further along the walk first, and that page has its own way out — which is what stops
+  // v74_o's dead end coming back.
   const C1 = play(projected, last, store.storylines || []);
-  assert.strictEqual(C1.run(`!!document.getElementById('comp-next').disabled`, 'd'), false,
-    'at the end of a finished storyline Next is NOT greyed');
+  assert.strictEqual(C1.run(`!!document.getElementById('comp-play').disabled`, 'd'), true,
+    'with the story finished there is nothing left to PLAY, so ▶ is greyed rather than lying');
+  assert.strictEqual(C1.run(`!!document.getElementById('comp-next').disabled`, 'd-'), false,
+    'but → is NOT greyed — v74_o: the last card must never be a dead end');
   C1.run(`document.getElementById('comp-next').onclick(); true;`, 'click');
   assert.strictEqual(C1.run(`APP._navWent`, 'w'), null,
-    'Next does not leave for the storyline — it opens the story-finished card');
+    'forward does not leave for the storyline — it opens the story-finished card');
   assert.ok(C1.run(`(document.getElementById('fin-story').innerHTML||'').length`, 'fin') > 0,
     'and that card is populated with the story');
   // The way out. Without this the new card would be exactly the dead end v74_o was written to fix.
@@ -367,7 +374,7 @@ function renderCard({ teacher }) {
   // (b) A chapter in NO storyline → home (user ruling).
   const C2 = play(projected, last, []);
   assert.strictEqual(C2.run(`!!document.getElementById('comp-next').disabled`, 'd2'), false,
-    'a solo chapter also gets a live Next');
+    'a solo chapter also gets a live forward arrow');
   C2.run(`document.getElementById('comp-next').onclick(); true;`, 'click2');
   assert.strictEqual(C2.run(`APP._navWent`, 'w2'), 'landing',
     'and it goes home, because there is no storyline to return to');
@@ -383,19 +390,20 @@ function renderCard({ teacher }) {
   {
     const C3 = play(projected, topics[0], store.storylines || []);
     C3.run(`APP._loadedSaved = null; loadSaved = function(x){ APP._loadedSaved = String(x); }; true;`, 'stub');
-    assert.strictEqual(C3.run(`!!document.getElementById('comp-next').disabled`, 'd3'), false,
-      'Next is live on an earlier chapter too');
-    C3.run(`document.getElementById('comp-next').onclick(); true;`, 'click3');
+    // v88_r: the claim is now carried by ▶ — the button that means "continue the course". Greyed
+    // is the correct answer here: every later chapter is finished, so there is no unfinished work
+    // for it to offer, which is exactly what the raw done-flags-vs-lessonCount rule got wrong.
+    // Asserted by clicking anyway, so a ▶ that were somehow live could still be caught reloading.
+    assert.strictEqual(C3.run(`!!document.getElementById('comp-play').disabled`, 'd3'), true,
+      'a FINISHED later chapter gives ▶ nothing to offer, so it greys');
+    C3.run(`var p=document.getElementById('comp-play'); if(typeof p.onclick==='function') p.onclick(); true;`, 'click3');
     assert.strictEqual(C3.run(`APP._loadedSaved`, 'ls') || null, null,
-      'a FINISHED later chapter is not offered as unfinished — Next does not reload it');
-    // v77_f: the destination for "nothing left" moved one page along the walk. The claim this
-    // section protects is unchanged — Next must not drag the learner back into a finished chapter
-    // — and is asserted immediately above. Where it goes INSTEAD is now the story-finished card,
-    // because every chapter of this storyline is complete.
-    assert.strictEqual(C3.run(`APP._navWent`, 'w3'), null,
-      'it does not leave for the storyline — the finished story opens its own card');
-    assert.ok(C3.run(`(document.getElementById('fin-story').innerHTML||'').length`, 'f3') > 0,
-      'and that card is populated, so Next still leads somewhere real');
+      'a FINISHED later chapter is not offered as unfinished — ▶ does not reload it');
+    // …while → is a live BROWSE step to the adjacent chapter. That is deliberate and is the whole
+    // point of v88_r: browsing ignores completion, the pedagogy lives on ▶. The learner is
+    // therefore still not dead-ended, which is v74_o's guarantee.
+    assert.strictEqual(C3.run(`!!document.getElementById('comp-next').disabled`, 'd3n'), false,
+      'while → stays live: browsing to the next chapter never depends on finishing this one');
   }
   console.log('  last card: a finished story opens the story-finished card; finished chapters are not re-offered');
 }

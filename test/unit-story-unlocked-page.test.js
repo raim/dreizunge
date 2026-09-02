@@ -83,13 +83,17 @@ const SIX = store.topics.filter(t =>
 const gateOpen = C => C.run(`storyUnlocked(APP.lessonData)`);
 const workLeft = C => C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
 
-// ── 1-2. Next opens the page; → continues into the resolved lesson ─────────
+// ⚠️ v88_r: the in-chapter forward move is the ▶ PLAY button now, not the → arrow — the arrows
+// browse chapters for a student since that release. Every "Next …" claim in this file is unchanged
+// as a CLAIM: the gate chain still resolves the same destination in the same branch, and `▶` is
+// where that destination is now carried. Only the id clicked changed.
+// ── 1-2. ▶ opens the page; → continues into the resolved lesson ─────────
 {
   const C = atUnlock();
   // Non-vacuity: this must genuinely be "gate open, work remains", or the section proves nothing.
   assert.strictEqual(gateOpen(C), true, 'the prep gate is open on this fixture');
   assert.ok(workLeft(C) >= 0, 'and there is still a lesson left in the chapter');
-  C.run(`document.getElementById('comp-next').onclick(); true;`, 'next');
+  C.run(`document.getElementById('comp-play').onclick(); true;`, 'next');
   assert.strictEqual(C.run(`APP._shown`), 'unlockstory-screen',
     'Next opens the story-unlocked page at the moment the gate flips');
   assert.strictEqual(C.run(`APP._started`), null, 'and does not start the lesson on the way');
@@ -107,11 +111,11 @@ const workLeft = C => C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
 // ── 3. Once per chapter ────────────────────────────────────────────────────
 {
   const C = atUnlock();
-  C.run(`document.getElementById('comp-next').onclick(); true;`, 'first');
+  C.run(`document.getElementById('comp-play').onclick(); true;`, 'first');
   assert.strictEqual(C.run(`APP._shown`), 'unlockstory-screen', 'shown the first time');
   // Render the card again, as a fresh completion would.
   C.run(`APP._shown = null; APP._started = null; showComplete(); true;`, 're-render');
-  C.run(`document.getElementById('comp-next').onclick(); true;`, 'second');
+  C.run(`document.getElementById('comp-play').onclick(); true;`, 'second');
   assert.notStrictEqual(C.run(`APP._shown`), 'unlockstory-screen',
     'NOT shown a second time — a celebration that repeats is noise');
   assert.ok(C.run(`APP._started`) != null,
@@ -153,7 +157,7 @@ const workLeft = C => C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`);
   // non-vacuity check that is itself vacuous, which is the failure mode this file exists to catch.
   assert.ok(workLeft(C) >= 0,
     'this chapter still has a lesson to move to, so "the page is not shown" is a real refusal');
-  const shown = C.run(`document.getElementById('comp-next').onclick(); APP._shown;`);
+  const shown = C.run(`document.getElementById('comp-play').onclick(); APP._shown;`);
   assert.notStrictEqual(shown, 'unlockstory-screen',
     'a review render never opens the story-unlocked page');
   assert.strictEqual(C.run(`!!APP.progress.storyShown[APP.lessonData.topic]`), false,
@@ -274,7 +278,7 @@ assert.ok(SIX_PICK,
     'non-vacuity: the next-lesson branch was NOT taken, so the below-mark branch is what answers ' +
     'here — the entry condition the two earlier attempts could not reach');
 
-  C.run(`document.getElementById('comp-next').onclick(); true;`, 'next');
+  C.run(`document.getElementById('comp-play').onclick(); true;`, 'next');
   const started = C.run(`APP._started`);
   assert.strictEqual(started, unfinished,
     'Next opens the UNPLAYED comprehension work (lesson ' + unfinished + ')');

@@ -2033,6 +2033,13 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
   <div style="display:flex;align-items:center;justify-content:center;gap:18px;margin-top:8px">
     <button class="spk-ico" id="comp-story-prev" style="display:none" title="">➜</button>
     <button class="spk-ico" id="comp-story-nav-btn" onclick="openCompNav();" title="">☰</button>
+    <!-- v88_r: the ▶ duplicate. The play button lives in the popup with the rest of the machinery,
+         per the request — but the popup is two taps away, and playing is the move this card is
+         asking for while BROWSING is one tap. So ▶ is mirrored out here beside the arrows, by the
+         same `_mirrorNavBtn` copy the arrows themselves use, so the pair can never disagree about
+         where forward leads. Same static-glyph rule as comp-story-prev/next: the duplicate's icon
+         is markup, only the FUNCTIONAL state is mirrored. -->
+    <button class="spk-ico" id="comp-story-play" style="display:none" title="">▶</button>
     <button class="spk-ico" id="comp-story-next" style="display:none" title="">➜</button>
   </div>
   <div class="vocab-box" style="margin-top:18px"><div class="vocab-hdr" id="words-from-lbl">Words from this lesson</div><div id="comp-vocab" style="display:flex;flex-wrap:wrap;margin:-3px"></div></div>
@@ -2084,7 +2091,17 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
              (its topic is synthetic and has no progress of its own). Handler assigned in JS: the
              stub DOM cannot click an inline one (standing rule 22). -->
         <button class="comp-ico" id="comp-wipe" style="display:none">🧹</button>
-        <button class="comp-ico primary" id="comp-next" onclick="afterComplete()">→</button>
+        <!-- v88_r (user): ▶ PLAY — "move the next function to play the next questions to a play
+             button in the progress card menu". It carries whatever showComplete's gate chain
+             resolved as the IN-CHAPTER next step (the next unfinished lesson, the story-unlocked
+             page, the below-mark remediation) — the SAME decision tree, on a different button.
+             The arrows beside it stopped meaning "play" and now browse chapters, which is what
+             removes the chapter-wise locking for a student. Handler assigned in JS: the
+             destination depends on state the markup cannot see (standing rule 22).
+             It is the PRIMARY action now; comp-next is a plain icon, since browsing is not the
+             move the card is asking the learner to make. -->
+        <button class="comp-ico primary" id="comp-play" style="display:none">▶</button>
+        <button class="comp-ico" id="comp-next" onclick="afterComplete()">→</button>
       </div>
       <!-- v80_y (user): the progress BARS sit at the BOTTOM. v81_b (user): below the ACTION row
            too, so the chapter-icon, lesson-icon and play-button rows are contiguous. -->
@@ -16043,12 +16060,120 @@ function _walkApplySumNav(){
   nx.title = t('walk.next');
 }
 
+// ── v88_r: BROWSE MODE — the arrows walk the chapters, ▶ plays ─────────────────────────────────
+// User request: "Let's allow to browse through texts by the current arrows and instead move the
+// 'next' function to play the next questions to a play button in the progress card menu. That is,
+// we remove the chapter-wise progress locking as the default play mode for students. Students can
+// ALSO browse through chapters, and play each chapter separately via the new play button or by
+// clicking on words in the vocab-highlight view."
+//
+// ⚠️ SAME DESIGN DECISION AS THE TEACHER WALK (v88_o), for the same reason: showComplete()'s gate
+// chain is NOT rewired. Every branch still computes exactly what it computed before — the §C1 gate
+// analysis and v77_card_gates.md's 32-row truth table still describe it line for line. This runs at
+// the END of the render and MOVES the destination that chain resolved onto ▶ whenever it is an
+// in-chapter play target, then repoints → at the next chapter.
+//
+// ⚠️ WHAT THE USER ASKED TO KEEP is exactly what is untouched: "we do still want the play mode
+// question progress WITHIN chapters, to first solve vocab, then, to really complete a chapter,
+// solve the comprehension or text hunt lessons." That progression is the gate chain plus
+// `storyUnlocked`/`_storyLockedLesson`, and none of it is touched here — only which button carries
+// the result. What goes is the CHAPTER-wise lock: → no longer waits for this chapter to be finished
+// before it will move to the next one.
+//
+// The teacher's ▶ walk (v88_o) is unchanged and still owns both arrows while it runs.
+function _browseApplyNav(o){
+  const play = document.getElementById('comp-play');
+  const next = document.getElementById('comp-next');
+  if(!play || !next) return;
+  // A drill's card keeps its own wiring, whole. Its topic is synthetic, so there is no chapter to
+  // browse to — the same reason ← is hidden there — and the branch is a defensive fallback for
+  // three separate user-reported dead ends (v66.1, v69.2), which is not code to disturb for a
+  // cosmetic gain.
+  if(o.isDrill){ play.style.display = 'none'; return; }
+
+  // 1. ▶ takes over the chain's destination WHOLE — "move the next function to play the next
+  // questions to a play button" is the request, and the next function is the entire chain: the
+  // next unfinished lesson here, the story-unlocked page, the below-mark remediation, and the
+  // next UNFINISHED chapter when this one is done. ▶ is therefore "continue the course, wherever
+  // the pedagogy says that is"; → is free browsing to the adjacent chapter. The two can both end
+  // up on a chapter and mean different things, which is the point: one follows the progression
+  // the user asked to KEEP, the other ignores it.
+  //
+  // Only 'end' is withheld. There the chain resolves to leaving — the story-finished card or the
+  // storyline — and a ▶ that means "go back to the library" would be a lie about what it plays.
+  // That destination is not lost: → carries it, through the same `_compEndForward` rule.
+  play.style.display = '';
+  play.classList.remove('disabled');
+  _compIco(play, '▶', t('complete.continue'));
+  if(o.kind !== 'end' && typeof next.onclick === 'function'){
+    play.disabled = false;
+    play.onclick = next.onclick;
+  } else {
+    // Nothing left to play. Greyed rather than hidden, the rule the rest of this row has followed
+    // since v71_h: a control that vanishes reads as a bug, one that greys reads as "nothing here".
+    play.onclick = null;
+    _compBtnState(play, false, t('complete.repeat_none'));
+  }
+
+  // 2. → becomes the chapter browse.
+  //
+  // ⚠️ This `walkActive()` check is NOT what keeps a teacher walk in charge of the arrows, and the
+  // comment says so because mutation-testing proved it: deleting the line leaves every guard green.
+  // The ORDERING is the protection — `_walkApplyNav()` runs immediately after this function and
+  // repoints both arrows again, so the walk always has the last word. What the check buys is the
+  // absence of a pointless transient assignment (and one fewer `_backToChapterProgress` closure
+  // built per walked chapter), which is worth keeping and is worth describing honestly.
+  if(walkActive()) return;
+  const ctx = o.slCtx;
+  const ids = (ctx && ctx.sl && Array.isArray(ctx.sl.chapters)) ? ctx.sl.chapters : [];
+  const myIdx = ctx ? (ctx.topics || []).indexOf(o.topicKey) : -1;
+  const nextCh = (myIdx >= 0 && myIdx + 1 < ids.length) ? ((ctx.byId || {})[ids[myIdx + 1]] || null) : null;
+  next.style.display = '';
+  next.disabled = false;
+  next.classList.remove('disabled');
+  next.classList.remove('locked');
+  if(nextCh){
+    // Exactly one step, whatever the completion state — the mirror of comp-prev's own `_prevChapter`
+    // ("going back is revisiting what came before, not hunting for outstanding work", v82_e), and
+    // the same landing rule: `_backToChapterProgress` always forces the PROGRESS card, deliberately
+    // never consulting `_enterViaSummaryCard`. Note it is NOT `_nextChapter()`, which scans for the
+    // next UNFINISHED chapter and would skip over finished ones — browsing must not skip.
+    _compIco(next, '→', t('walk.next'));
+    next.onclick = () => { endDrill(); _backToChapterProgress(nextCh.id || encTopic(nextCh.topic)); };
+  } else {
+    // Nothing after this chapter. Forward is then the end-of-storyline move — the SAME rule the
+    // gate chain's own terminal branch uses, through the same helper, so the two cannot drift.
+    const end = _compEndForward(ctx, false);
+    _compIco(next, '→', end.label);
+    next.onclick = end.run;
+  }
+}
+
+// v88_r: "there is no next chapter — where does forward lead?" ONE rule, because TWO surfaces now
+// ask it: showComplete's terminal gate branch (which owned it since v74_o/v77_f) and
+// `_browseApplyNav` standing on the last chapter, which — unlike that branch — can be reached with
+// work still outstanding. The ruling itself is unchanged: the story-finished card once every
+// chapter is done, else back to the storyline, else home for a chapter that belongs to none.
+function _compEndForward(slCtx, isDrill){
+  const fin = !isDrill && _storyAllChaptersDone(slCtx);
+  const sl = (slCtx && slCtx.sl) || null, enc = (slCtx && slCtx.enc) || null;
+  return {
+    label: fin       ? t('finished.next')
+         : (sl && enc) ? t('complete.back_story')
+         :               t('complete.back_home'),
+    run:   fin ? () => { endDrill(); showStoryFinished(); }
+               : () => { endDrill(); compBackToStory(); }
+  };
+}
+
 // Mirrors comp-prev/comp-next onto the story panel's header-row duplicates, so the two pairs can
 // never disagree about where "back"/"forward" lead. Called once, at the very end of showComplete(),
 // AFTER every branch that can set comp-next's destination has run.
 function _syncCompHdrNav(){
   _mirrorNavBtn('comp-prev', 'comp-story-prev');
   _mirrorNavBtn('comp-next', 'comp-story-next');
+  // v88_r: and ▶ alongside them — playing is one tap, exactly as browsing is.
+  _mirrorNavBtn('comp-play', 'comp-story-play');
 }
 // user follow-up: the entry card's own duplicate — just "next", it has no back button to mirror.
 // Called once, at the very end of showStorySummary().
@@ -17700,6 +17825,17 @@ const EX_RENDERERS = {
 let _speakTimeout = null;
 function renderEx(){
   const C=APP.cur;
+  // ⚠️ v88_r: a REVIEW render's synthetic C (showComplete(true)) carries `_review:true`, an EMPTY
+  // exercises array and NO `cur` at all. A speech-advance timer scheduled by the previous round can
+  // still land here afterwards — and the length guard below is written as `C.cur >= length`, which
+  // is FALSE for `undefined`, so it waved the stray call straight through to
+  // `C.exercises[undefined]` and threw `Cannot read properties of undefined (reading 'type')`.
+  //
+  // Latent until now because reaching a review card mid-flight was rare; v88_r's browse arrow makes
+  // it ordinary — → loads the next chapter ASYNCHRONOUSLY and lands on its review card, so a learner
+  // who presses it right after answering has exactly that timer in the air. There is no round to
+  // render and nothing to record, so the only correct move is to leave the card alone.
+  if (!C || C._review || !Number.isFinite(C.cur)) return;
   clearTimeout(_speakTimeout); _speakTimeout = null;
   try{ _speechMicRefresh(); }catch(_){}   // v84_k: every question render re-evaluates the mic pill
   if(C.cur>=C.exercises.length){
@@ -21067,6 +21203,13 @@ function showComplete(review, lessonIdxOverride){
   // every lesson has a done-flag. The chapter was correctly marked incomplete, but nothing stopped
   // them leaving. Now Next becomes "practise your mistakes" and the chapter cannot be left until
   // the required percentage is reached.
+  // v88_r: WHICH branch of the chain below resolved comp-next. Recording only — not one branch's
+  // computation changes, and nothing above reads it. It exists because the destination the chain
+  // picks is now needed on a DIFFERENT button depending on its KIND: an in-chapter play target
+  // ('play') belongs on ▶, while 'chapter'/'end' are chapter-level moves the browse arrow owns.
+  // Asking the resolved onclick what it means is impossible; asking the chain to say so is one
+  // assignment per branch.
+  let _compNextKind = 'end';
   if (lesson._drill) {
     // v71_h: NORMALLY UNREACHABLE. A finished drill now ends via renderEx, which calls endDrill()
     // before showComplete, so `lesson._drill` is false by the time the card renders and the flow
@@ -21082,6 +21225,7 @@ function showComplete(review, lessonIdxOverride){
     // again, coverage replay, next chapter, or done).
     compNext.textContent = t('complete.next');
     compNext.style.display = '';
+    _compNextKind = 'play';
     compNext.onclick = () => {
       endDrill();
       const idx = _firstUnfinishedLessonIdx(APP.lessonData);
@@ -21133,6 +21277,7 @@ function showComplete(review, lessonIdxOverride){
     APP._usNextLesson = _target;
     _compIco(compNext, '→', t('complete.next'));
     compNext.style.display = '';
+    _compNextKind = 'play';
     compNext.onclick = _showUnlock
       ? () => showStory()
       : () => { endDrill(); showLesson(_target); };
@@ -21156,6 +21301,7 @@ function showComplete(review, lessonIdxOverride){
     compNext.style.display = '';
     compNext.disabled = false;
     compNext.classList.remove('locked');
+    _compNextKind = 'play';
     compNext.onclick = () => {
       endDrill();
       // v77_p (user): UNPLAYED WORK FIRST. v77_o looked for a coverage-short lesson before an
@@ -21191,6 +21337,7 @@ function showComplete(review, lessonIdxOverride){
     APP._unlNext = ch;
     _compIco(compNext, '→', t('complete.next'));
     compNext.style.display = '';
+    _compNextKind = 'chapter';
     compNext.onclick = () => { const c = APP._unlNext; endDrill();
       if (c) loadSaved(c.id || encTopic(c.topic)); };
   } else {
@@ -21226,15 +21373,14 @@ function showComplete(review, lessonIdxOverride){
     // sites call the ONE shared rule instead of spelling it twice (INTERNALS, "one rule per
     // question"): a second copy of "is the story finished" is exactly the shape that drifted for
     // the storyline page's connector line in v71_w.
-    const _finish = !lesson._drill && _storyAllChaptersDone(_slCtx);
-    const _endLbl = _finish            ? t('finished.next')
-                  : (sl && slEnc)      ? t('complete.back_story')
-                  :                      t('complete.back_home');
-    _compIco(compNext, '→', _endLbl);
+    // v88_r: the decision itself moved into `_compEndForward` VERBATIM, because a SECOND caller
+    // now asks the same question — the browse arrow standing on the LAST chapter, which (unlike
+    // this branch) can be reached with work still outstanding. One rule, two askers.
+    const _end = _compEndForward(_slCtx, lesson._drill);
+    _compIco(compNext, '→', _end.label);
     compNext.style.display = '';
-    compNext.onclick = _finish
-      ? () => { endDrill(); showStoryFinished(); }
-      : () => { endDrill(); compBackToStory(); };
+    _compNextKind = 'end';
+    compNext.onclick = _end.run;
   }
 
   // Back-to-story target is stashed for compBackToStory(): the storyline screen if any, else
@@ -21552,6 +21698,13 @@ function showComplete(review, lessonIdxOverride){
       if (_spk) _spk.style.display = (typeof _lessonIsDialect==='function' && _lessonIsDialect()) ? 'none' : '';
     }
   }
+  // v88_r browse mode. Runs AFTER every gate above has resolved — it MOVES what they resolved onto
+  // ▶ and repoints → at the next chapter — and BEFORE both the walk override and the header mirror,
+  // so a teacher walk still gets the last word on the arrows and the duplicates inherit whichever
+  // of the two spoke last.
+  try {
+    _browseApplyNav({ kind: _compNextKind, slCtx: _slCtx, topicKey, isDrill: !!lesson._drill });
+  } catch(e) { if (typeof _cardNote === 'function') _cardNote('browse-nav', e); }
   // item: teacher walkthrough (v88_o). Runs AFTER every gate above has resolved and BEFORE the
   // mirror below, so the header duplicates inherit the walk's destinations. A no-op unless a walk
   // is active, which is what keeps the learner path byte-identical to before.
@@ -22075,7 +22228,11 @@ function _buildWordRun(d, pool){
 // the word run finishes the learner is on the lesson screen and the card behind them may have been
 // re-rendered and repointed.
 function _captureNextAction(){
-  for (const id of ['comp-next', 'sum-next']) {
+  // v88_r: ▶ FIRST. The play button now carries the in-chapter destination this function was
+  // written to capture; comp-next stays in the list because when ▶ is greyed (nothing left to play
+  // in this chapter) the browse arrow IS the honest forward move — together the two reproduce
+  // exactly what comp-next alone meant before the split.
+  for (const id of ['comp-play', 'comp-next', 'sum-next']) {
     const btn = document.getElementById(id);
     if (btn && !btn.disabled && typeof btn.onclick === 'function') return btn.onclick.bind(btn);
   }
@@ -23187,7 +23344,13 @@ function _storyTapMaybeAdvance(e){
   if (e.target.closest('.wp-tap')) return;   // a highlighted word keeps its OWN behaviour, untouched
   const sel = window.getSelection && window.getSelection();
   if (sel && !sel.isCollapsed && sel.rangeCount > 0 && String(sel.toString() || '').trim()) return;
-  const btn = document.getElementById(host.id === 'comp-story-text' ? 'comp-next' : 'sum-next');
+  // v88_r: on the progress card, ▶ then →, for the reason `_captureNextAction` states — the tap
+  // should continue the CHAPTER where there is anything left to play, and only browse on when
+  // there is not. The entry card has no play button of its own; its forward is still sum-next.
+  const btn = host.id === 'comp-story-text'
+    ? [document.getElementById('comp-play'), document.getElementById('comp-next')]
+        .find(b => b && !b.disabled && typeof b.onclick === 'function')
+    : document.getElementById('sum-next');
   // An explicit disabled check, not .click() — a mid-chapter Next that is currently disabled
   // (mandatory work still open) must stay disabled here too, checked directly rather than relying
   // on a real browser's native click-suppression (which this project's own DOM test harness does

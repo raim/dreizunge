@@ -2,40 +2,6 @@
   "schemaVersion": 30,
   "storylines": [
     {
-      "id": "sl_454402490",
-      "title": "Rückkehr zum Leben",
-      "titleAuto": false,
-      "icon": "⚡",
-      "chapters": [
-        "tp_17882900616230000013"
-      ],
-      "lang": "nl",
-      "srcLang": "de",
-      "createdAt": "2026-09-01T19:17:08.562Z",
-      "updatedAt": "2026-09-01T19:22:16.106Z",
-      "tokenUsage": {
-        "totalPromptTokens": 456,
-        "totalCompletionTokens": 116,
-        "tokensByType": {
-          "retitle": 362,
-          "summary": 210
-        }
-      },
-      "summary": "Die Geschichte beginnt mit der Wiederherstellung der Stromversorgung, symbolisiert durch den eingesteckten Stecker und die funktionierende Regelung. Dieser Moment markiert das Ende einer Pause und den Beginn neuer Aktivitäten, da alles wieder in Bewegung kommt. Die zentralen Themen sind die Rückkehr von Energie und Dynamik nach einer Phase der Stille oder des Stillstands.",
-      "summaryMeta": {
-        "type": "storyline_summary",
-        "model": "qwen3.6:35b-a3b",
-        "attempts": null,
-        "valid": 1,
-        "rejected": 0,
-        "rejectReasons": null,
-        "promptTokens": 135,
-        "completionTokens": 75,
-        "ms": 94539,
-        "at": "2026-09-01T19:22:16.106Z"
-      }
-    },
-    {
       "id": "sl_1672382706",
       "title": "Gratis und Kostenlos",
       "titleAuto": false,

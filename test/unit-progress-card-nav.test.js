@@ -89,7 +89,7 @@ console.log('  both popups: hold each card\'s relocated machinery unchanged, sam
   const detailsEnd = html.indexOf('</details>', panelStart);
   const summary = html.slice(panelStart, html.indexOf('</summary>', panelStart));
   // The header row is now ONLY title/flags/read — no nav trio inside it at all.
-  for (const id of ['comp-story-prev', 'comp-story-nav-btn', 'comp-story-next']) {
+  for (const id of ['comp-story-prev', 'comp-story-nav-btn', 'comp-story-play', 'comp-story-next']) {
     assert.ok(!summary.includes(`id="${id}"`), `${id} must NOT be inside the <summary> anymore`);
   }
   const at = (id) => { const i = summary.indexOf(`id="${id}"`); assert.ok(i > 0, `${id} exists in the progress-card header row`); return i; };
@@ -99,12 +99,20 @@ console.log('  both popups: hold each card\'s relocated machinery unchanged, sam
   // The nav trio lives in its own row, AFTER </details> — found within the vocab box that always
   // immediately follows it, so this is scoped to the real next sibling, not just "somewhere later".
   const vocabAt = html.indexOf('class="vocab-box"', detailsEnd);
-  assert.ok(vocabAt > detailsEnd && vocabAt - detailsEnd < 400,
-    'the vocab box (the panel\'s own next sibling) is found close after </details> -- scopes the nav-row search to the real gap between them, not the whole rest of the file');
+  assert.ok(vocabAt > detailsEnd, 'the vocab box (the panel\'s own next sibling) follows </details>');
   const navRow = html.slice(detailsEnd, vocabAt);
-  const nAt = (id) => { const i = navRow.indexOf(`id="${id}"`); assert.ok(i > 0, `${id} exists in the nav row below the text field`); return i; };
-  const prev = nAt('comp-story-prev'), nav = nAt('comp-story-nav-btn'), next = nAt('comp-story-next');
-  assert.ok(prev < nav && nav < next, 'nav-row order: prev, then the ☰ popup trigger, then next');
+  // v88_r: the gap is asserted STRUCTURALLY — every id it contains, in order — rather than by a
+  // character budget. The old `vocabAt - detailsEnd < 400` was a PROXY for "the vocab box really is
+  // the next sibling", and it went red the moment the row grew a fourth button, reporting a broken
+  // layout against a perfectly good render. That is the FOURTH fixed-size window to fail in the
+  // false-positive direction in this line alone (v88_m, v88_n, v88_o, this). The list below is a
+  // strictly stronger claim: it pins the membership AND the order, and it fails if anything else
+  // ever drifts into the gap.
+  const idsInGap = (navRow.match(/id="[a-z0-9-]+"/g) || []).map(x => x.slice(4, -1));
+  assert.deepStrictEqual(idsInGap,
+    ['comp-story-prev', 'comp-story-nav-btn', 'comp-story-play', 'comp-story-next'],
+    'the gap between the story panel and the vocab box is the nav row alone: prev, the ☰ popup '
+    + 'trigger, ▶ play, next — in that order and with nothing else in it');
   assert.ok(/onclick="openCompNav\(\);"/.test(navRow), 'the ☰ button opens the popup');
   // No longer inside a <details>/<summary> click-toggle, so stopPropagation is no longer needed —
   // its ABSENCE here is itself a signal the buttons genuinely left the collapsible header.
@@ -130,8 +138,10 @@ console.log('  progress card: header row is title/flags/read only; prev/☰/next
   assert.ok(nav < next, 'nav-row order: the ☰ popup trigger, then next (no back button — this card has none to duplicate)');
   assert.ok(/onclick="openSumNav\(\);"/.test(navRow), 'the entry card\'s ☰ button opens its own popup');
 
-  // ONLY next/back are duplicated anywhere — no OTHER action id (repeat/drill/crossword/wipe) gets
-  // a header-row twin on EITHER card, and the entry card (no back button at all) gets no sum-sum-prev.
+  // ONLY next/back and (v88_r) ▶ play are duplicated anywhere — no OTHER action id
+  // (repeat/drill/crossword/wipe) gets a header-row twin on EITHER card, and the entry card (no back
+  // button at all) gets no sum-sum-prev. ▶ earned its duplicate because it is the move the card is
+  // ASKING for: leaving it two taps deep while browsing stayed one would invert the card's priority.
   for (const id of ['comp-story-repeat', 'comp-story-drill', 'comp-story-crossword', 'comp-story-wipe', 'sum-sum-prev']) {
     assert.ok(!html.includes(`id="${id}"`), `${id} must NOT exist`);
   }

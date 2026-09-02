@@ -124,7 +124,14 @@ const finish = (wrongList) => C.run(`
 // Source-level, because the bug was WHERE the call sits relative to endDrill(), and no assertion on
 // the resulting numbers explains that to whoever next edits this branch.
 {
-  const rx = html.slice(html.indexOf('function renderEx()'), html.indexOf('function renderEx()') + 3000);
+  // v88_r: bounded by renderEx's own closing brace (a `}` in column 0), not by a character budget.
+  // The old `+ 3000` was a proxy for "inside renderEx", and it went red the moment the function
+  // grew a comment at the top — reporting a missing call that was right there. Sixth fixed-size
+  // window to fail this way in the v88 line; the structural bound cannot fail for that reason.
+  const _rxAt = html.indexOf('function renderEx()');
+  const _rxEnd = html.indexOf('\n}\n', _rxAt);
+  assert.ok(_rxAt > 0 && _rxEnd > _rxAt, 'renderEx is found and its closing brace located');
+  const rx = html.slice(_rxAt, _rxEnd);
   // Match the CALLS, not the words: the surrounding comments mention endDrill() too, and matching
   // prose would have this assertion passing on the strength of a sentence.
   const recAt = rx.indexOf('recordLearnedFromLesson(_dl');

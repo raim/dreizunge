@@ -717,6 +717,23 @@ const staticOverrides = [
   'async function syncFlagsFromServer(){}',
   'async function pushFlagToServer(){}',
   'async function deleteSaved(){}',
+  // v88_r: `_backToChapterProgress` lives ABOVE @static-exclude-end in index.html (it was added at
+  // v82_e among the server-calling functions), so the static build has never had it AT ALL — the
+  // progress card's ← "previous chapter" has been throwing a ReferenceError in docs/index.html
+  // since that release, silently doing nothing. v88_r makes the FORWARD arrow use the same helper,
+  // so the gap had to close. Same shape as this file's own `loadSaved` reimplementation: resolve
+  // from STATIC_LESSONS instead of /api/lessons/load, then force the PROGRESS card — deliberately
+  // never `_enterViaSummaryCard`, which is the whole point of the helper (v82_e's ruling).
+  'async function _backToChapterProgress(ref){',
+  '  const isId=/^tp_\\d+$/.test(String(ref));',
+  '  const dec=decodeURIComponent(String(ref));',
+  '  const found=isId ? STATIC_LESSONS.find(l=>l.id===ref)',
+  '                   : STATIC_LESSONS.find(l=>l.topic.toLowerCase()===dec.toLowerCase());',
+  '  if(!found){ alert("Lesson not found."); return; }',
+  '  APP.lessonData=found;',
+  '  await showLessonSet();',
+  '  if(typeof _isLearner==="function" && _isLearner()) showProgressCard(true);',
+  '}',
   'async function regenSaved(){}',
   'function regenCurrent(){}',
   'async function doGenerate(){}',
