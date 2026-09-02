@@ -250,7 +250,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_y';
+const APP_VERSION  = 'v88_z';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -2695,7 +2695,15 @@ async function _runQc(jobId, topics, opts) {
         const _check = async (item, runner, label, by, locate) => {
           checked++;
           let res;
-          try { res = await runner(); } catch (e) { return; }
+          // ⚠️ item AU cancel (v88_z): a CANCEL is not a failed CHECK. This per-item tolerance exists
+          // so one unparseable verdict cannot abort a QC run over hundreds of items — but swallowing
+          // a deliberate stop the same way meant cancelling did nothing visible: every remaining
+          // item "failed" silently, the loop ran to the end, and the job reported DONE. The user
+          // pressed cancel and watched their model keep working. Same fix, same reasoning, as
+          // `_runComicExtractJob`'s own per-panel catch (v88_k) — re-thrown so the job settles as
+          // 'cancelled' via jobFailOrCancel and no further item is checked.
+          try { res = await runner(); }
+          catch (e) { if (String(e && e.message) === CANCELLED) throw e; return; }
           const model = by || OLLAMA_QC_MODEL;
           // v73_j: resolve AFTER the await. Between the call and here the chapter may have been
           // saved, replacing every item object in it.
@@ -2889,6 +2897,7 @@ async function _runQc(jobId, topics, opts) {
           }
           touched = true;
         } catch(e) {
+          if (String(e && e.message) === CANCELLED) throw e;   // item AU cancel (v88_z)
           console.warn(`    ⚠ story QC failed for "${tp.topic}": ${e.message}`);
         }
       }
@@ -5540,6 +5549,9 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     meta = extractJSON(raw);
     totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
   } catch(e) {
+    // item AU cancel (v88_z): a cancel is not a meta-call failure. Without this the run would fall
+    // back to a placeholder title and keep generating the whole chapter after the user stopped it.
+    if (String(e && e.message) === CANCELLED) throw e;
     meta = { topic, topicEmoji: '📚' };
     console.warn('  Meta failed, using fallback:', e.message);
   }
@@ -5557,6 +5569,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       totalPromptTokens += pt; totalCompletionTokens += ct;
       console.log(`    Meta translated to ${S}: "${meta.topic}"`);
     } catch(e) {
+      if (String(e && e.message) === CANCELLED) throw e;   // item AU cancel (v88_z)
       console.warn(`  Meta translation to ${langName(srcLang)} failed, keeping original:`, e.message);
     }
   }
@@ -5728,6 +5741,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
       console.log(`    [${OLLAMA_TRANSLATION_MODEL}] Translation (${lang}→${srcLang}): ${Date.now()-t0}ms, ${storyTranslation.length} chars`);
     } catch(e) {
+      if (String(e && e.message) === CANCELLED) throw e;   // item AU cancel (v88_z)
       console.warn('  Translation failed, falling back to context-only mode:', e.message);
       storyTranslation = null;
       // Distinguish a FAILED attempt from one never attempted (both leave storyTranslation null).
@@ -5923,6 +5937,10 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
           totalPromptTokens += eTokens.promptTokens; totalCompletionTokens += eTokens.completionTokens;
           lessonTokenStats.push(eTokens);
         } catch(e) {
+          // item AU cancel (v88_z): "skip and continue" is right for a format the model fumbled and
+          // wrong for a stop the user asked for — this loop would otherwise generate every REMAINING
+          // lesson type after the cancel.
+          if (String(e && e.message) === CANCELLED) throw e;
           console.warn(`  ${label} lesson failed, skipping: ${e.message}`);
           jobStep(jobId, `⚠ ${label} failed — continuing…`);
         }
@@ -6945,7 +6963,9 @@ async function _runRecreateJob(jobId, startId, opts) {
             if (lesson) { stamp(lesson, aType); persistLesson(lesson); }
           } catch (e) {
             // One failing type must not abandon the other selections, or a whole run is lost to a
-            // format the model happened to fumble on one chapter.
+            // format the model happened to fumble on one chapter. item AU cancel (v88_z): a
+            // deliberate stop is not such a failure and must end the run.
+            if (String(e && e.message) === CANCELLED) throw e;
             console.warn(`  [add-lessons] chapter ${i + 1} ${aType} failed: ${e.message}`);
             jobStep(jobId, `⚠ ${aType} failed on chapter ${i + 1} — continuing…`);
           }
@@ -6955,7 +6975,13 @@ async function _runRecreateJob(jobId, startId, opts) {
       try {
         const { lesson } = await generateOneLesson(lang, srcLang, topic.topic, 1, 1, [], story, diff, jobId, { story, vocabMode: null });
         if (lesson) { stamp(lesson, 'gate'); persistLesson(lesson); }
-      } catch (e) { console.warn(`  [recreate] chapter ${i + 1} gate failed: ${e.message}`); }
+      } catch (e) {
+        // item AU cancel (v88_z): same rule as _runQc/_runComicExtractJob — per-chapter tolerance
+        // must not swallow a deliberate stop, or a cancelled recreate runs to completion and
+        // reports DONE.
+        if (String(e && e.message) === CANCELLED) throw e;
+        console.warn(`  [recreate] chapter ${i + 1} gate failed: ${e.message}`);
+      }
       // Reinforcement from the second chapter on.
       if (i >= 1) {
         const parent = prevRef ? findSavedById(prevRef) : null;
@@ -6966,14 +6992,20 @@ async function _runRecreateJob(jobId, startId, opts) {
               const rFn = rType === 'synonyms' ? generateSynonyms : generateWordForms;
               const { lesson } = await rFn(topic.topic, lang, srcLang, diff, jobId, { chainVocab, vocabMode: 'reinforce', story });
               if (lesson) { stamp(lesson, rType); lesson._arcMode = 'reinforce'; persistLesson(lesson); }
-            } catch (e) { console.warn(`  [recreate] chapter ${i + 1} ${rType} reinforce failed: ${e.message}`); }
+            } catch (e) {
+              if (String(e && e.message) === CANCELLED) throw e;   // item AU cancel (v88_z)
+              console.warn(`  [recreate] chapter ${i + 1} ${rType} reinforce failed: ${e.message}`);
+            }
           }
         } else {
           try {
             const { lesson } = await generateOneLesson(lang, srcLang, topic.topic, 1, 1, [], story, diff, jobId,
               { story, chainVocab: chainVocab.words || [], vocabMode: 'reinforce' });
             if (lesson) { stamp(lesson, 'review'); lesson._arcMode = 'reinforce'; if (!lesson.title) lesson.title = 'Review words'; if (!lesson.icon) lesson.icon = '🔁'; persistLesson(lesson); }
-          } catch (e) { console.warn(`  [recreate] chapter ${i + 1} vocab review failed: ${e.message}`); }
+          } catch (e) {
+            if (String(e && e.message) === CANCELLED) throw e;     // item AU cancel (v88_z)
+            console.warn(`  [recreate] chapter ${i + 1} vocab review failed: ${e.message}`);
+          }
         }
       }
     });

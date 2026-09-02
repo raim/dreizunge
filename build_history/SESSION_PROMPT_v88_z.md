@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_y`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_z`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -143,21 +143,46 @@ no hits, so everything that actually SUPPRESSES title generation was unverified.
 titles, so nothing is renamed either way; non-vacuity comes from the titling calls in the request
 log, and the skip is pinned at the source). Seven mutations red.
 
+**`v88_z` closed the `AU` cancel residue — and it was EIGHT sites, not the two this prompt carried
+as "one read each".** `runCancellable` makes the in-flight model call throw `CANCELLED`, but a runner
+that loops over items and wraps each in `try { … } catch { continue; }` catches that like any other
+failure: the loop runs to the end and the job reports DONE. **Being inside a cancel scope is
+necessary and NOT sufficient**, and nothing said so until now. Six real sites fixed — `_runQc`'s
+per-item check and story QC, `_runRecreateJob`'s add-types loop, and THREE inside `generate` itself
+(the meta/title call, meta translation, story translation) plus its extra-lesson-formats loop, which
+between them meant a cancelled generation kept producing the whole chapter.
+
+⚠️ **The set-level guard found four times what the reading did** (`v88_b`'s rule again), and its
+FIRST version reported CORRECT code — eight sites, six of them synchronous, which cannot throw
+`CANCELLED` at all. **A rule that reports correct code is a rule nobody keeps.** Now scoped to try
+blocks that actually `await`, brace-matched rather than sampled by a line window. Six mutations red.
+
 **⚠️ TWO ITEMS ARE STILL OWED, plus one needing a ruling.** Verbatim where quoted:
 
-1. **Generation from comic/image: move the Generate button off the text-extraction/confirmation card
-   onto the THIRD generation card**, where extra lessons and all features (translation, title,
-   summary, storyboard, text analysis) are selected. **Also for LLM- and PDF-based generation.**
+1. **⚠️ NEEDS A RULING, and it is NOT the item it looks like — MEASURED at `v88_z`.**
    *"The second page of the generation wizard, and its popover parts, should really only generate and
-   confirm the text(s) for one or more chapters, and NOT start generation."* — the biggest item; the
-   user agreed to take it LAST, after the small fixes.
-2. **Some LLM-based jobs still have no cancel button** (user screenshot: "Erstelle Zusammenfassung",
-   "Neuer Titel…"). **Diagnosed**: both are `kind:'sync'` rows — the synchronous LLM routes `v88_b`
-   surfaced in the popover from `_jobsInflight`. `_jobsRenderList`'s `canCancel` is
-   `j.kind === 'job' && …`, and the comment there explains why sync was excluded: there is no
-   server-side job id for `POST /api/jobs/cancel` to look up. So this is NOT a one-line gate change —
-   it needs either an `AbortController` on the client fetch (stops the waiting, leaves the model
-   running) or the sync routes registering real cancellable jobs. Decide which before building.
+   confirm the text(s) for one or more chapters, and NOT start generation."* **Structurally this is
+   already true**: `v87_h` (item AL part 2) deleted `#pdf-gen-btn`/`#comic-create-btn` and made
+   card 3's `#gen-btn` the ONE start button for all three modes, and `v88_c` (item AQ) made the
+   auto-opened review card stop at card 3. Traced afresh: PDF and LLM have no generate trigger on
+   card 2, and the comic path's card-3 button dispatches through `doGenerate()`.
+   **What is left is two things, each needing a decision the user has to make:**
+   (a) card 2's prominent green **"✨ Generate"** (`#comic-generate-btn` → `comicExtractPanels()`)
+   runs the TEXT EXTRACTION, which is the correct step for that card — it is the LABEL that reads as
+   chapter generation. Rewording `form.image_generate` costs its translations.
+   (b) the review popover's **"✅ Confirm & create chapter"** does start generation — but only when
+   opened FROM card 3's start button, which routes there deliberately: **the user's own earlier
+   ruling was to KEEP that review stop** between start and creation. Removing it reverses that
+   ruling. Do NOT do either unilaterally.
+2. **⚠️ NEEDS A RULING — some LLM-based jobs still have no cancel BUTTON** (user screenshot:
+   "Erstelle Zusammenfassung", "Neuer Titel…"). Untouched by `v88_z`, which fixed cancels that were
+   swallowed, not buttons that are absent. **Diagnosed**: both are `kind:'sync'` rows — the
+   synchronous LLM routes `v88_b` surfaced in the popover from `_jobsInflight`. `_jobsRenderList`'s
+   `canCancel` is `j.kind === 'job' && …`, and the comment there explains why sync was excluded:
+   there is no server-side job id for `POST /api/jobs/cancel` to look up. So it needs either an
+   `AbortController` on the client fetch (stops the waiting, leaves the model running) **or** the
+   sync routes registering real cancellable jobs. Ask before building.
+
 3. **⚠️ NEEDS A RULING — an image DESCRIPTION becomes unreachable once the panel has any extracted
    text.** (`v88_y` fixed the field CONFUSION behind this report, but not the underlying rule.) User:
    *"I am still loosing image description if I assign a title in the text confirmation interface, eg.
@@ -189,7 +214,7 @@ one 🔒 that legitimately survives there). Do not "finish the job" by removing 
    fifteen point releases) — go there for how anything from that line was built, and for the six
    items it closed.
 4. `INTERNALS.md` **§6b, the feature → function map** — read it BEFORE grepping for where anything
-   lives. Current through `v88_y`.
+   lives. Current through `v88_z`.
 
 ## Establish a green baseline before changing anything
 
@@ -237,7 +262,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **344 topics, 99 storylines, 33 languages, 754 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_y'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_z'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to

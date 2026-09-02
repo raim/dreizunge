@@ -1366,6 +1366,22 @@ descriptions** (two user requests; full write-up in `roadmap_v87.md`'s own `v87_
 
 ---
 
+**`v88_z` — cancelling a job actually stops it: SIX more swallowed cancels** (the `AU` residue the
+session prompt carried as "one read each" for two functions; full write-up in `roadmap_v88.md`'s own
+`v88_z` entry). ZERO `ui.json` keys.
+
+| what | where |
+|---|---|
+| ⚠️ **the defect, one level below `v88_k`** | `runCancellable` makes the in-flight model call throw `CANCELLED` — but a runner looping over items with `try { … } catch { continue; }` catches that like any other failure. The loop runs to the end, every remaining item "failing" silently, and the job reports **DONE**. **Being inside a cancel scope is necessary and NOT sufficient**, and nothing said so until now |
+| the six real sites | `_runQc`'s per-item `_check` and its story-QC catch; `_runRecreateJob`'s add-types loop; and THREE inside `generate` itself — the meta/title call (fell back to a placeholder title and **generated the whole chapter anyway**), meta translation, story translation — plus its extra-lesson-formats loop (generated every REMAINING type after the stop). Each wraps a real `await` on a model call in a tolerant catch; the tolerance is right and simply never distinguished a failure from a deliberate stop |
+| ⚠️ **the set-level guard found 4× what the reading did** | the prompt named two functions; sweeping EVERY cancellable runner named eight, six real. `v88_b`'s rule verbatim: assert over the whole set, not the one you happened to change, and expect it to fail the first time |
+| ⚠️ **the guard's first version reported CORRECT code** | it flagged every `catch` in every runner — six of them SYNCHRONOUS (a checkpoint write, a diacritic index), which cannot throw `CANCELLED` because only an in-flight model call does. **A rule that reports correct code is a rule nobody keeps**: it would have been loosened or switched off within a release. Now scoped to try blocks that actually `await` |
+| how the block is bounded | **BRACE-MATCHED**, not a line window — the "does it await" question is asked of the real try body. An eighth fixed-size window in this line would have been a poor way to police a rule about not cutting corners |
+| what the sweep excludes, by name | catches that re-throw unconditionally, and the outermost one routing to `jobFailOrCancel` — those already behave |
+| the acceptance test | `e2e-job-cancel` §6, over every function named as `runCancellable`'s work, so a seventh loop cannot ship swallowing. It asserts the sweep found ≥5 runners, so a pattern that stops matching FAILS rather than passing silently. **SIX mutations red**, one per restored site |
+
+---
+
 **`v88_y` — the review card says which field is which; item AN's server half finally has a test**
 (user question, then a user correction; full write-up in `roadmap_v88.md`'s own `v88_y` entry). TWO
 `ui.json` keys.

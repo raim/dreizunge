@@ -2424,6 +2424,62 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_z — cancelling a job actually stops it: SIX more swallowed cancels, found by a set-level guard
+
+The `AU` residue the session prompt carried as *"one read each"* for `_runQc` and `_runRecreateJob`.
+It was eight sites, not two. **ZERO `ui.json` keys.**
+
+### The defect, one level below where `v88_k` fixed it
+
+`runCancellable` makes the in-flight model call throw `CANCELLED`. A runner that loops over items and
+wraps each in `try { … } catch { continue; }` catches that throw **like any other failure** — so the
+loop runs to the end, every remaining item "failing" silently, and the job reports **DONE**. The user
+presses cancel, the popover agrees, and the GPU keeps working: exactly the symptom `v88_k` shipped to
+prevent, reintroduced one level lower.
+
+Being inside a cancel scope is **necessary and not sufficient**, and nothing said so until now.
+
+### ⚠️ THE SET-LEVEL GUARD FOUND FOUR TIMES WHAT THE READING DID
+
+The prompt named two functions. Written as a sweep over *every* cancellable runner — `v88_b`'s rule,
+"assert over the whole set, not the one you happened to change, and expect it to fail the first
+time" — it named **eight**, of which **six were real**:
+
+| where | what a cancel used to do |
+|---|---|
+| `_runQc`'s per-item `_check` | every remaining item "fails" silently; the run completes |
+| `_runQc`'s story-QC catch | same, per topic |
+| `_runRecreateJob`'s add-types loop | keeps generating every remaining lesson type |
+| `generate`'s meta/title call | falls back to a placeholder title and **generates the whole chapter anyway** |
+| `generate`'s meta-translation call | continues with the untranslated title |
+| `generate`'s story-translation call | records "translation failed", continues |
+| `generate`'s extra-lesson-formats loop | generates every REMAINING lesson type after the stop |
+
+Every one wraps a real `await` on a model call in a tolerant catch that continues. The tolerance is
+right — one fumbled format must not lose a whole run — and it simply never distinguished a failure
+from a deliberate stop. All six now re-throw `CANCELLED` and keep the tolerance for everything else,
+the same shape and the same reasoning as `_runComicExtractJob`'s own fix at `v88_k`.
+
+### ⚠️ The first version of the guard reported CORRECT code, and that is a bug in a guard
+
+It flagged every `catch` in every runner: eight sites, six of them **synchronous** — writing a
+checkpoint, building a diacritic index. A synchronous try cannot throw `CANCELLED`, because only an
+in-flight model call does. **A rule that reports correct code is a rule nobody keeps**, and this one
+would have been switched off or loosened within a release.
+
+Scoped to try blocks that actually `await`, and the block is **BRACE-MATCHED** rather than sampled by
+a line window — the "does it await" question is asked of the real try body, not of a fixed span that
+would drift into the neighbouring statement. (An eighth fixed-size window in this line would have
+been a poor way to police a rule about not cutting corners.)
+
+Catches that re-throw unconditionally, and the outermost one routing to `jobFailOrCancel`, are
+excluded by name: those are the ones that already behave.
+
+**Guard**: `e2e-job-cancel` §6, sweeping every function named as `runCancellable`'s work — so a
+seventh loop added later cannot ship swallowing. It asserts the sweep found at least five runners, so
+a pattern that stops matching is a failure rather than a silent pass. **SIX mutations red**, one per
+restored site.
+
 ## ✅ v88_y — the review card says which field is which, and the server half of item AN finally has a test
 
 **User question**: *"if the user enters a title, such as here 't Manteling', it could be used as a

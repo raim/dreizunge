@@ -131,6 +131,73 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       console.log('  every labelled job kind runs inside a cancel scope: OK');
     }
 
+    // ── 6. v88_z: no per-item catch SWALLOWS a cancel ────────────────────────────────────────
+    // ⚠️ Being inside a cancel scope is necessary and NOT sufficient. `runCancellable` makes the
+    // in-flight model call throw CANCELLED — but a runner that loops over items and wraps each one
+    // in `try { … } catch { continue; }` catches that throw like any other failure. The loop then
+    // runs to the end, every remaining item "failing" silently, and the job reports DONE. The user
+    // presses cancel, the popover agrees, and the GPU keeps working: the exact symptom §1-§4 exist
+    // to prevent, reintroduced one level lower.
+    //
+    // `v88_k` fixed this in `_runComicExtractJob` and left the others unaudited (the session prompt
+    // said so in as many words). `_runQc`'s per-item `_check` and `_runRecreateJob`'s three
+    // per-chapter catches were both swallowing. Asserted over the SET rather than over the three
+    // that were fixed — `v88_b`'s lesson — so a fourth loop added later cannot ship swallowing.
+    //
+    // The rule: inside a cancellable runner, a catch that CONTINUES (does not re-throw and does not
+    // end the run) must test for CANCELLED first. Catches that re-throw unconditionally, and the
+    // outermost one that routes to jobFailOrCancel, are exactly the ones that already behave.
+    {
+      const path = require('path');
+      const src = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
+      // The runners a cancel can actually interrupt: every function named as runCancellable's work.
+      const runners = [...src.matchAll(/runCancellable\(jobId,\s*(?:\(\)\s*=>\s*)?(_run[A-Za-z]+|generate|doGenLesson)\b/g)]
+        .map(m => m[1]);
+      assert(runners.length >= 5,
+        `the sweep found the cancellable runners (got ${runners.length}: ${runners.join(', ')}) — a `
+        + 'short list means the pattern stopped matching, not that every runner is clean');
+
+      // ⚠️ Scoped to try blocks that actually AWAIT. A synchronous try — writing a checkpoint,
+      // building an index — cannot throw CANCELLED, because only an in-flight model call does. The
+      // first version of this sweep flagged every catch in every runner and named eight sites, six
+      // of them synchronous: a rule that reports correct code is a rule nobody keeps. The block is
+      // BRACE-MATCHED rather than sampled by a line window, so the "does it await" question is asked
+      // of the real try body.
+      const offenders = [];
+      const matchBlock = (src, openIdx) => {           // openIdx points at the '{'
+        let depth = 0;
+        for (let i = openIdx; i < src.length; i++) {
+          if (src[i] === '{') depth++;
+          else if (src[i] === '}') { depth--; if (!depth) return i; }
+        }
+        return -1;
+      };
+      for (const name of new Set(runners)) {
+        const at = src.indexOf(`async function ${name}(`);
+        if (at < 0) continue;                       // an inline/nested runner has no top-level decl
+        const end = src.indexOf('\n}\n', at);
+        const body = src.slice(at, end < 0 ? src.length : end);
+        for (const m of body.matchAll(/\btry\s*\{/g)) {
+          const open = m.index + m[0].length - 1;
+          const close = matchBlock(body, open);
+          if (close < 0) continue;
+          const tryBody = body.slice(open, close);
+          if (!/\bawait\b/.test(tryBody)) continue;   // cannot be interrupted by a cancel
+          const after = body.slice(close + 1, close + 400);
+          if (!/^\s*catch\s*\(/.test(after)) continue;
+          const handler = after.slice(0, 400);
+          if (/CANCELLED/.test(handler) || /throw\b/.test(handler)) continue;
+          if (/jobFail/.test(handler)) continue;      // ends the run; not a "continue anyway" catch
+          offenders.push(`${name}@${body.slice(0, open).split('\n').length}`);
+        }
+      }
+      assert(offenders.length === 0,
+        'no per-item catch inside a cancellable runner swallows a cancel — one that does makes the '
+        + 'whole cancel a lie, however correctly the job was wrapped. Swallowing at: '
+        + offenders.join(', '));
+      console.log('  no per-item catch inside a cancellable runner swallows a cancel: OK');
+    }
+
   } catch (e) { failed = true; console.error(e); }
   finally { try { env.stop(); } catch (_) {} }
   console.log(failed ? 'e2e-job-cancel: FAILED' : 'e2e-job-cancel: ALL PASSED');
