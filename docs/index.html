@@ -164382,12 +164382,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v88_s', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v88_t', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"a03ec3536669","lessons.json":"4b5f9123ddf9","ui.json":"c9374f5bf415","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"7769d02fbefa","build-static.js":"270ff8141305"};
+  APP.buildSources = {"index.html":"8a9054cdeff7","lessons.json":"4b5f9123ddf9","ui.json":"c9374f5bf415","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"7769d02fbefa","build-static.js":"270ff8141305"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).

@@ -98,6 +98,33 @@ console.log('  comicOpenReview(): filters to panels with usable text, seeds the 
   assert.ok(/display:grid;grid-template-columns:repeat\(auto-fill,minmax\(340px,1fr\)\)/.test(html),
     'panels are laid out in a responsive GRID (multiple columns on a wide screen), not a single flex column');
   assert.ok(/rows="4"/.test(html), 'the in-scene textarea grew from 2 rows to 4, so a typical caption is visible without scrolling inside its own field');
+
+  // ⚠️ v88_t (user, live test, with a screenshot): the CAPTION field was a single-line <input>. On a
+  // photographed information board the extracted "caption" is the whole body of the sign — several
+  // sentences — so the one screen whose entire job is CHECKING that text before a chapter is built
+  // showed the first few words and hid the rest behind horizontal scrolling.
+  //
+  // Asserted per FIELD, not as a count of textareas: "there are three textareas" would stay green if
+  // caption reverted to an input while some other field gained one. The `oninput` handler names the
+  // field, so each claim is anchored to the field it is about.
+  const fieldTag = (name) => {
+    const at = html.indexOf(`_comicReviewEdit(0,'${name}'`);
+    assert.ok(at > 0, `the ${name} field is rendered`);
+    // Walk back to the tag that owns the handler.
+    const open = html.lastIndexOf('<', at);
+    return html.slice(open + 1, html.indexOf(' ', open));
+  };
+  assert.strictEqual(fieldTag('caption'), 'textarea',
+    'the extracted CAPTION is a resizable textarea — it is body text, not a label');
+  assert.strictEqual(fieldTag('inScene'), 'textarea', 'as the in-scene text already was');
+  assert.strictEqual(fieldTag('title'), 'input',
+    'while the chapter TITLE stays a single-line field — non-vacuity: this section would pass on a '
+    + 'blanket "make everything a textarea" edit without it, and a one-line title is correct');
+  // The resize affordance is the point, not just the tag: a textarea with `resize:none` would read
+  // as a fixed three-line box and reintroduce the same complaint one size up.
+  const capBlock = html.slice(html.lastIndexOf('<', html.indexOf("_comicReviewEdit(0,'caption'")),
+                              html.indexOf('>', html.indexOf("_comicReviewEdit(0,'caption'")));
+  assert.ok(/resize:vertical/.test(capBlock), 'and it can actually be resized');
 }
 console.log('  comicOpenReview(): the rendered markup is the near-fullscreen grid layout, not the original narrow single-column list: OK');
 

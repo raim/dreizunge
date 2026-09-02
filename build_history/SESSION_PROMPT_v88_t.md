@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_s`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_t`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -63,6 +63,45 @@ was RE-ANCHORED (rule 29) — it observed `v74_i`'s shared-completion fix THROUG
 non-vacuity check asserted the deleted rule was still running; the claim moved to the connector line,
 where `chapterComplete` is still observable. Eight mutations red. Full write-up: the `v88_s` entry.
 
+**`v88_t` then took the first two items of a NEW live-test batch the user handed over mid-session**:
+the comic/image review card's extracted-text field is a resizable textarea instead of a single-line
+input (it holds the whole body of a photographed sign, not a short caption), and the library sorts by
+ONE key — the unconditional source-language pre-sort is gone, "my language" and "target language"
+are two more options in the dropdown, and the flag headers follow the chosen key instead of always
+naming the source language. Zero new keys. Two findings worth carrying: a comment inside a JS
+TEMPLATE LITERAL must not contain backticks (`check-inline.js` caught it), and `_populateLibSelects`
+had a branch no fixture had ever reached because `lib-dom` auto-vivifies a div with no `.options`.
+
+**⚠️ SIX ITEMS OF THAT BATCH ARE STILL OWED — they are the top of the queue.** Verbatim:
+
+1. **Generation from comic/image: move the Generate button off the text-extraction/confirmation card
+   onto the THIRD generation card**, where extra lessons and all features (translation, title,
+   summary, storyboard, text analysis) are selected. **Also for LLM- and PDF-based generation.**
+   *"The second page of the generation wizard, and its popover parts, should really only generate and
+   confirm the text(s) for one or more chapters, and NOT start generation."* — the biggest item; the
+   user agreed to take it LAST, after the small fixes.
+2. **Do NOT auto-start text analysis from the progress cards.** When 🔍 is clicked and no analysis
+   exists, just show the text with words not clickable. (Today `toggleTextExplorer` →
+   `_ensureTextExplorerData` POSTs `/api/analyze-chapter` and starts a job.)
+3. **In the text-analysis view, drop the blue highlight of analysed text** — keep only the blue frame
+   on mouse-over. (`.te-tok{background:#eaf2ff}` goes; `.te-tok:hover{outline:2px solid var(--blue)}`
+   stays.)
+4. **Text analysis did not finish for `tp_17851387238120000029`** while the server was still running
+   — possibly a timeout. **A second run must SKIP existing annotations and do only the rest.** The
+   current "already analysed" confirm becomes a three-way choice: cancel / expand existing /
+   overwrite. **THE USER APPROVED THREE `ui.json` KEYS FOR THIS** (two button labels plus a rewritten
+   question; the rewritten English means its stale non-`en` values get deleted per the standing
+   ruling). Nothing else in the batch may spend keys without asking again.
+5. **The question card's collapsed text view needs the text-analysis button too** (`_exStoryPanelHtml`
+   never got the 🔍 toggle — INTERNALS already records this as open).
+6. **Some LLM-based jobs still have no cancel button** (user screenshot: "Erstelle Zusammenfassung",
+   "Neuer Titel…"). **Diagnosed**: both are `kind:'sync'` rows — the synchronous LLM routes `v88_b`
+   surfaced in the popover from `_jobsInflight`. `_jobsRenderList`'s `canCancel` is
+   `j.kind === 'job' && …`, and the comment there explains why sync was excluded: there is no
+   server-side job id for `POST /api/jobs/cancel` to look up. So this is NOT a one-line gate change —
+   it needs either an `AbortController` on the client fetch (stops the waiting, leaves the model
+   running) or the sync routes registering real cancellable jobs. Decide which before building.
+
 **⚠️ The WITHIN-chapter progression is untouched and is meant to stay** — the user was explicit:
 *"we do still want the 'play mode' question progress within chapters, to first solve vocab, then, to
 really complete a chapter, solve the comprehension or text hunt lessons."* That is the gate chain
@@ -79,7 +118,7 @@ one 🔒 that legitimately survives there). Do not "finish the job" by removing 
    fifteen point releases) — go there for how anything from that line was built, and for the six
    items it closed.
 4. `INTERNALS.md` **§6b, the feature → function map** — read it BEFORE grepping for where anything
-   lives. Current through `v88_s`.
+   lives. Current through `v88_t`.
 
 ## Establish a green baseline before changing anything
 
@@ -127,7 +166,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **343 topics, 99 storylines, 33 languages, 751 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_s'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_t'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to

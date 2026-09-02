@@ -2424,6 +2424,92 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_t — two live-test fixes: the extracted-text field is resizable, and the library sorts by ONE key
+
+Two items from the user's live-test batch, taken together because both are small, contained and
+unrelated to each other's code. **ZERO new `ui.json` keys** — the two new sort options reuse
+`gen.story_lang_source` / `gen.story_lang_target` verbatim.
+
+### 1. The extracted-text field was a single line (user report, with a screenshot)
+
+*"the extracted text confirmation window is a single line even though the text can be long. It
+should be a resizable text field just like the 'image description' field below it."*
+
+The review card's CAPTION field was an `<input>`. "Caption" is the wrong intuition for what lands
+there: on a photographed information board — the screenshot's own case — the extracted caption is
+the whole body of the sign, several sentences. A one-line field showed the first few words and hid
+the rest behind horizontal scrolling, **on the one screen whose entire job is checking that text
+before a chapter is built from it**. Now a `rows="3"` textarea with `resize:vertical`, matching the
+in-scene field directly below it and the image description below that. The chapter TITLE stays an
+`<input>` — a title really is one line, and the guard pins that too, or a blanket "make everything a
+textarea" edit would pass.
+
+**⚠️ The comment explaining it broke the build**, because it lives inside a JS template literal and
+contained backticks. Same trap `build-static.js` already carries a note about. Caught by
+`check-inline.js`, which is why that check runs on every release.
+
+### 2. The library sorted by source language FIRST, and the dropdown only ordered within each group
+
+*"On the main page, we sort by source language and THEN by the new sorter (token usage, generated,
+last-edited). Let's add language sorting as an option in the dropdown menu, and allow both source
+and target language sorting, and drop the main previous source language sorting all together."*
+
+The source language was an **unconditional outer sort**, and `v88_j`/`v88_n` had both treated that as
+deliberate and worth protecting — `v88_n`'s own entry even recorded it as "a usability finding about
+the grouping". It meant *"sort by token usage"* never produced a list in token order: it produced
+language groups, each internally in token order. Now the dropdown owns the whole ordering and the
+two languages are simply two more keys in it.
+
+- **Sorted by NAME, not by code.** `de`/`en`/`it`/`nl` sort as "German"/"English"/"Italian"/"Dutch"
+  only by accident, and the flag headers spell the name out — a list ordered by code under a
+  name-ordered header reads as broken. Unknown codes fall back to the code so they still sort
+  deterministically.
+- **Ties inside a language run keep "last edited, newest first"** — without it the list reshuffles
+  between renders for no reason. The tiebreak is deliberately NOT reversed by the direction toggle,
+  so reversing "my language" swaps the language runs without shuffling each run's contents.
+- **⚠️ The flag headers FOLLOW the sort now**, and vanish when it is not a language sort. A header
+  saying "German" over a run of rows is a claim that the list is grouped that way, and after this
+  release it is only grouped that way when the chosen key IS that language. Keeping source-language
+  headers over a token sort would emit one header per row wherever the languages interleave — worse
+  than none. This was not in the request; it follows from it, and stating it as a separate rule
+  (`_langHdrBy`) is what keeps the two decisions from drifting.
+- The reverse button now applies to the language keys too. `v88_n` had deliberately excluded the
+  grouping from reversal; with no grouping left there is nothing to exclude.
+
+### ⚠️ A whole render branch had never been reachable in the test harness
+
+Adding a second TARGET language to the fixture — needed to test the target-language sort at all —
+made `loadSavedList()` throw. `_populateLibSelects` runs only when the library holds more than one
+target language, and it did `Array.from(srcSel.options)`. **`lib-dom` auto-vivifies a plain `div` for
+any id**, and a div has no `.options`, so that branch threw for every headless render of a
+multi-language library. No fixture had ever been multi-target-language, so it had never run. Guarded
+on `.options`, not just on the element. In a browser the guard never fires; what it buys is that the
+branch can be exercised at all.
+
+### The fixture had to be redesigned twice
+
+`unit-library-sort` grew a fifth storyline (`E`, sharing A/B/C's SOURCE and D's TARGET) so the two
+language keys partition the library **differently** — otherwise a `srcLang`↔`lang` mix-up passes.
+Then the dates had to change as well: the first attempt had `srclang` and `edited` produce the
+IDENTICAL order, so a sort ignoring the language key entirely would have passed. All five keys now
+give five different orders, and §3b asserts that explicitly rather than trusting it.
+
+Every expected order also moved from `.slice(0,3)` to the **whole list**. The slice existed only to
+step around the source-language pre-sort, which parked the en-source storyline last regardless of its
+value — the very behaviour this release removes, and invisible through the slice.
+
+**§4b-ii was rewritten to the opposite claim.** It asserted that reversing leaves the language GROUPS
+alone; that was correct when a grouping existed and is now false by design. It asserts the inversion:
+reversing a language key swaps the language runs, headers included, while each run's internal
+tiebreak stays put.
+
+**Guard**: `unit-comic-review-card` (per-FIELD tag assertions, read from the real rendered markup —
+"there are three textareas" would stay green if caption reverted while another field gained one) and
+`unit-library-sort` (11 checks, incl. the new `headers()` helper). **Nine mutations red** — caption
+back to an input, caption un-resizable, the title turned into a textarea, the source-language
+pre-sort restored, the two language keys swapped, headers always by source language, language sort
+by code instead of name, the reversal skipping the language keys, and the tiebreak removed.
+
 ## ✅ v88_s — the chapter-wise progress lock is GONE, on both surfaces that carried it
 
 **User request** (the second half of the same message `v88_r` served, answered "yes, as a second

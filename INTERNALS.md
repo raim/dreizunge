@@ -1366,6 +1366,26 @@ descriptions** (two user requests; full write-up in `roadmap_v87.md`'s own `v87_
 
 ---
 
+**`v88_t` — two live-test fixes: the extracted-text field is resizable, and the library sorts by ONE
+key** (user reports, one with a screenshot; full write-up in `roadmap_v88.md`'s own `v88_t` entry).
+ZERO new `ui.json` keys.
+
+| what | where |
+|---|---|
+| the review card's text field | `comicOpenReview`'s per-panel markup (index.html). The CAPTION field was an `<input>`; on a photographed information board the "caption" is the whole body of the sign. Now `rows="3"` + `resize:vertical`, matching in-scene and description. The chapter TITLE stays an `<input>` and the guard pins that too, or a blanket "textarea everything" edit would pass |
+| ⚠️ **backticks in a comment inside a template literal** | the explaining comment sits inside a JS template literal and broke the parse. `build-static.js` already carries a note about the same trap. `check-inline.js` caught it — which is why that check runs at every release |
+| the library sort | `loadSavedList`'s comparators (index.html). The source language was an **unconditional outer sort**, so "sort by token usage" produced language groups each internally in token order, never a list in token order. Gone; `srclang`/`lang` are two more keys in the same dropdown, labelled from the EXISTING `gen.story_lang_source`/`gen.story_lang_target` |
+| sorted by NAME, not code | `_langName(c)` → `LANGS[c].name`, falling back to the code. `de`/`en`/`it`/`nl` order as German/English/Italian/Dutch only by accident, and the flag headers spell the name out |
+| **`_langHdrBy`** | which language the flag headers name — **or `null`**. A header is a claim that the list is grouped that way, true only when the chosen key IS that language. Under a token sort, source-language headers would emit one per row wherever languages interleave. Not in the request; it follows from it, and naming the rule is what stops the two decisions drifting |
+| the tiebreak | ties inside a language run keep "last edited, newest first", and are deliberately NOT reversed by the direction toggle — so reversing a language key swaps the language RUNS without shuffling each run's contents |
+| ⚠️ **a render branch no fixture had ever reached** | `_populateLibSelects` runs only when the library holds more than one TARGET language, and did `Array.from(srcSel.options)`. `lib-dom` AUTO-VIVIFIES a plain div for any id, and a div has no `.options` — so that branch threw for every headless render of a multi-language library, and no fixture had ever been multi-target-language. Guarded on `.options`, not just on the element |
+| ⚠️ **the fixture had to be redesigned TWICE** | `unit-library-sort` grew a fifth storyline sharing A/B/C's SOURCE and D's TARGET, so the two language keys partition differently and a `srcLang`↔`lang` mix-up cannot pass; then the DATES had to change too, because the first attempt made `srclang` and `edited` produce the identical order — a sort ignoring the language key would have passed. All five keys now give five different orders, asserted explicitly |
+| `.slice(0,3)` → the whole list | every expected order widened. The slice existed only to step around the source-language pre-sort, which parked the en-source storyline last regardless of its value — the very behaviour removed here, and invisible through the slice |
+| §4b-ii **rewritten to the opposite claim** | it asserted reversing leaves the language GROUPS alone. Correct while a grouping existed, false by design now: it asserts the inversion instead |
+| the acceptance tests | `unit-comic-review-card` (per-FIELD tag assertions read from the REAL rendered markup — a textarea COUNT would stay green if caption reverted while another field gained one) and `unit-library-sort` (11 checks, incl. a `headers()` helper). **NINE mutations red** |
+
+---
+
 **`v88_s` — the chapter-wise progress lock is GONE, on both surfaces that carried it** (user
 request, the second half of `v88_r`'s; full write-up in `roadmap_v88.md`'s own `v88_s` entry).
 **One `ui.json` key REMOVED** across all 33 languages.
