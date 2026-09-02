@@ -456,8 +456,16 @@ console.log('  _applyLessonCardUI(): correct rows + start button + label for pdf
 }
 console.log('  the shared start button is DERIVED: withheld when nothing is ready or a run is in flight: OK');
 
-// §12e — doGenerate() dispatches comic mode to comicOpenReview(), NOT straight to chapter creation.
-// The user's ruling was to KEEP the text-review stop, so the click must still land on it.
+// §12e — ⚠️ REWRITTEN AT v88_aa, to the OPPOSITE claim, because the old one misread the ruling it
+// cited. It asserted that comic mode routes to `comicOpenReview()` and NOT to `comicCreateChapter()`,
+// justified as "the user's ruling was to KEEP the text-review stop". The ruling's actual words
+// (roadmap_v87.md): *"Keep the live review stop. Extraction/chunking/panel editing stay live in
+// CARD 2, exactly as today; only lesson-type selection and THE FINAL 'GO' MOVE LATER."*
+//
+// The review stop is card 2's panel editing — untouched. The final "go" was always meant to be
+// card 3's. So the routing this section pinned was the thing the ruling asked to remove, and the
+// user reported it as a bug: pressing Generate on card 3 bounced them back to the text-confirmation
+// popover to press Generate a second time.
 {
   const C = client();
   const r = JSON.parse(C.run(`['use-story-cb','use-dialect-cb'].forEach(function(id){ document.getElementById(id).checked=false; });
@@ -469,10 +477,13 @@ console.log('  the shared start button is DERIVED: withheld when nothing is read
     window._pdfCalls = 0; pdfGenerateAll = function(){ window._pdfCalls++; };
     doGenerate();
     JSON.stringify({ review: window._reviewCalls, create: window._createCalls, pdf: window._pdfCalls })`));
-  assert.strictEqual(r.review, 1, 'comic mode: #gen-btn routes to comicOpenReview() exactly once');
-  assert.strictEqual(r.create, 0, 'and NOT straight to comicCreateChapter() — the review stop is kept, by ruling');
+  assert.strictEqual(r.create, 1,
+    'comic mode: #gen-btn GENERATES, exactly once — card 3 is where the final "go" lives');
+  assert.strictEqual(r.review, 0,
+    'and does NOT reopen the text-review card: bouncing the learner back to a second Generate '
+    + 'button on the confirmation popover is the reported bug');
   assert.strictEqual(r.pdf, 0, 'and not into the upload branch');
 }
-console.log('  doGenerate(): comic mode dispatches to comicOpenReview(), keeping the text-review stop: OK');
+console.log('  doGenerate(): comic mode generates straight from card 3, no bounce: OK');
 
 console.log('unit-gen-wizard: ALL PASSED');

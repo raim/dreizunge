@@ -185,7 +185,14 @@ console.log('  _comicReviewEdit(): edits land in the local buffer only, never st
   assert.strictEqual(r.overlaySet, false, 'the overlay is removed on confirm');
   assert.strictEqual(r.editableCleared, true, 'review state is cleared, not left dangling for a stale later edit');
   assert.strictEqual(r.renderCalls, 1, 'the panel list is re-rendered so the summary reflects the edits');
-  assert.strictEqual(r.createCalled, true, 'confirm hands off to the REAL comicCreateChapter() — the gate actually leads to generation');
+  // ⚠️ v88_aa: was `createCalled === true` — "confirm hands off to the REAL comicCreateChapter()".
+  // That handoff was the bug the user reported: pressing Generate on card 3 routed through this card
+  // and made them press a second Generate here. The final "go" belongs to card 3 (the standing
+  // ruling's own words), so confirm now only SAVES and navigates. The claims this section really
+  // owns — the edits land on the right panels, the overlay closes, state is cleared, the list
+  // re-renders — are all above and unchanged.
+  assert.strictEqual(r.createCalled, false,
+    'confirm does NOT start generation — this card is for text; card 3 owns the one Generate button');
 }
 console.log('  _comicReviewConfirm(): writes the buffer back BY THE PANEL\'S OWN INDEX, closes, re-renders, and calls comicCreateChapter(): OK');
 

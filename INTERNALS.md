@@ -1366,6 +1366,22 @@ descriptions** (two user requests; full write-up in `roadmap_v87.md`'s own `v87_
 
 ---
 
+**`v88_aa` — card 3's Generate generates, instead of bouncing to the confirmation popover** (user
+report; full write-up in `roadmap_v88.md`'s own `v88_aa` entry). ZERO `ui.json` keys.
+
+| what | where |
+|---|---|
+| ⚠️ **the misread ruling** | `doGenerate()`'s comic branch routed to `comicOpenReview()`, justified in its own comment as *"the user's own ruling was to KEEP the review stop"*. The ruling's real words (`roadmap_v87.md`): *"Keep the live review stop. Extraction/chunking/panel editing stay live in CARD 2 … only lesson-type selection and THE FINAL 'GO' MOVE LATER."* The review stop is card 2's panel editing; the go was always card 3's. **The bounce contradicted the ruling it cited**, and had been carried, quoted and acted on for two releases. Rule 35's sharpest form: a comment citing a ruling is a claim about that ruling |
+| the change | `doGenerate()` → `comicCreateChapter()` directly. That function already carries its own "no extracted text yet" guard, so the popover was not protecting anything |
+| **`#comic-review-btn`** | card 2's new "Review extracted text" button, label reusing the EXISTING `form.image_review_title`. Card 3's Generate was doubling as the only way back into the review card after dismissing the auto-popup; removing that routing without this would have stranded the extracted text. Shown only when some panel HAS text (caption, in-scene **or** description), derived in `_comicSyncGenerateBtn` from the panels rather than pushed from the extraction callback, so it is right after a draft resume and after a delete |
+| one behaviour, one label | the review card saves and goes to card 3 on BOTH entries. `_comicReviewMode` had one reader and now none — deleted. `form.image_review_confirm` is no longer referenced anywhere in the client |
+| ⚠️ **three test sections pinned the BUG, in the ruling's name** | `unit-gen-wizard` §12e, `unit-comic-review-autopath` §3, `unit-comic-review-card` — all rewritten to the opposite claim. The non-vacuity §1/§2 needed MOVED to where generation now lives (`#gen-btn` generates exactly once), and that is stated in the file so the "never generates" claim reads as bounded, not universal |
+| ⚠️ **the auto-vivify trap, measured** | the new button's guard first read `tagName === 'BUTTON'` through the DOM and could not fail — `lib-dom` mints a div for any id, and **the PRE-EXISTING `comic-clear-btn`/`comic-generate-btn` report `DIV` too**. Existence moved to the SOURCE layer (markup + `onclick` wiring); show/hide stayed at the DOM layer, where our own code writes it |
+| verified live | on the user's own server, driving the reported flow: card 3's Generate gives `bouncedToPopover: 0, startedGeneration: 1`, and the reopen button renders visible |
+| the acceptance tests | `unit-gen-wizard`, `unit-comic-review-autopath` (+§3b), `unit-comic-review-card`, `unit-comic-title-field`. **NINE mutations red** |
+
+---
+
 **`v88_z` — cancelling a job actually stops it: SIX more swallowed cancels** (the `AU` residue the
 session prompt carried as "one read each" for two functions; full write-up in `roadmap_v88.md`'s own
 `v88_z` entry). ZERO `ui.json` keys.

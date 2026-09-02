@@ -1602,6 +1602,14 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             </label>
             <button type="button" id="comic-generate-btn" onclick="comicExtractPanels()"
               style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif"><span id="comic-generate-lbl">✨ Generate</span></button>
+            <!-- v88_aa: reopen the text-review card. It auto-opens the moment extraction finishes,
+                 and card 3's Generate no longer routes through it — so without this a learner who
+                 dismissed the popup had no way back to their extracted text. Label reuses the
+                 EXISTING form.image_review_title, which already reads as a control ("Review
+                 extracted text"): zero new ui.json keys. Shown only once some panel HAS text, so it
+                 can never open an empty card — the same condition comicOpenReview() itself toasts
+                 about. -->
+            <button type="button" id="comic-review-btn" onclick="comicOpenReview()" style="display:none;font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"><span id="comic-review-lbl">Review extracted text</span></button>
             <button type="button" id="comic-clear-btn" onclick="comicClearPanels()"
               style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🗑 <span id="comic-clear-lbl">Clear panels</span></button>
             <span id="comic-panel-count" style="font-size:12px;color:var(--gray-dark)"></span>
@@ -3069,6 +3077,7 @@ function applyUIStrings() {
   { const cel=document.getElementById('comic-extract-lbl'); if(cel) cel.textContent=t('form.image_extract'); }
   { const cdl=document.getElementById('comic-describe-lbl'); if(cdl) cdl.textContent=t('form.image_describe'); }
   { const cgl=document.getElementById('comic-generate-lbl'); if(cgl) cgl.textContent=t('form.image_generate'); }
+  { const crvl=document.getElementById('comic-review-lbl'); if(crvl) crvl.textContent=t('form.image_review_title'); }
   { const crl=document.getElementById('comic-rotate-lbl'); if(crl) crl.textContent=t('form.image_rotate'); }
   { const cdl=document.getElementById('comic-detect-lbl'); if(cdl) cdl.textContent=t('form.image_detect'); }
   { const csl=document.getElementById('comic-single-panel-lbl'); if(csl) csl.textContent=t('form.image_single_panel'); }
@@ -4528,12 +4537,23 @@ function _comicCropDataUrl(box){
 // _comicRenderList (which repaints the panel actions row).
 function _comicSyncGenerateBtn(){
   const btn=document.getElementById('comic-generate-btn');
-  if(!btn) return;
-  const any=!!document.getElementById('comic-extract-cb')?.checked
-         || !!document.getElementById('comic-describe-cb')?.checked;
-  btn.disabled=!any;
-  btn.style.opacity=any?'1':'.5';
-  btn.style.cursor=any?'pointer':'not-allowed';
+  if(btn){
+    const any=!!document.getElementById('comic-extract-cb')?.checked
+           || !!document.getElementById('comic-describe-cb')?.checked;
+    btn.disabled=!any;
+    btn.style.opacity=any?'1':'.5';
+    btn.style.cursor=any?'pointer':'not-allowed';
+  }
+  // v88_aa: the reopen-review button appears once there is something to review. Derived from the
+  // panels themselves rather than pushed from the extraction callback, so it is correct after a
+  // draft resume and after a panel is deleted, not only right after a run.
+  const rv=document.getElementById('comic-review-btn');
+  if(rv){
+    let has=false;
+    try{ has=_comicPanels().some(b=>b && b.text && !b.text.error
+      && ((b.text.caption||'') || (b.text.inScene||'') || (b.text.description||''))); }catch(_){ has=false; }
+    rv.style.display = has ? '' : 'none';
+  }
 }
 async function comicExtractPanels(){
   const boxes=_comicPanels();
@@ -4704,9 +4724,10 @@ let _comicReviewEditable=null, _comicReviewBuffer=null, _comicReviewOverlayEl=nu
 //                is still at its default and comicCreateChapter() read it as "generate everything".
 //                Reported symptom: extraction finished and a full run started by itself —
 //                translation, arc[review], lessons — on text the user had not finished reviewing.
-let _comicReviewMode='generate';
+// v88_aa: `_comicReviewMode` lived here to tell the auto-opened card from the one card 3's
+// Generate routed through. Card 3 no longer routes through it, both behave identically, and a flag
+// with no readers is a question nobody asks.
 function comicOpenReview(auto){
-  _comicReviewMode = auto ? 'auto' : 'generate';   // item AQ — see _comicReviewMode's own comment
   const boxes=APP_COMIC.boxes;
   // Unchanged in shape, but note what it now admits: a panel whose ONLY content is a generated
   // description has `b.text` set (with empty caption/inScene) and no error, so it is editable here
@@ -4798,7 +4819,7 @@ function comicOpenReview(auto){
     + `</div>`
     + `<div class="modal-footer">`
     + `<button type="button" class="modal-btn secondary" onclick="_comicReviewCancel()">${escHtml(t('dialog.cancel'))}</button>`
-    + `<button type="button" class="modal-btn primary" onclick="_comicReviewConfirm()">${escHtml(t(auto ? 'form.image_review_save' : 'form.image_review_confirm'))}</button>`
+    + `<button type="button" class="modal-btn primary" onclick="_comicReviewConfirm()">${escHtml(t('form.image_review_save'))}</button>`
     + `</div></div>`;
   ov.addEventListener('click',e=>{ if(e.target===ov) _comicReviewCancel(); });   // backdrop click — not exercised by the test harness (see lib-dom.js's own addEventListener no-op), same as every other modal's backdrop dismiss in this file
   _comicReviewOverlayEl=ov;
@@ -4833,19 +4854,23 @@ function _comicReviewConfirm(){
       if(buf.description !== undefined) APP_COMIC.boxes[i].text.description=buf.description;
     });
   }
-  const mode=_comicReviewMode;
   _comicReviewClose();
   // _comicRenderList() is what persists this: every APP_COMIC.boxes mutation funnels through it and
   // it calls _comicDraftSaveDebounced() at the top (item R follow-up). So the reviewed text IS
   // stored as a draft on BOTH paths, before either decides what to do next.
   _comicRenderList();
-  // item AQ: the auto path stops HERE. The user's own words — "we want that button to just store
+  // item AQ: this card stops HERE, always. The user's own words — "we want that button to just store
   // chapter text as draft, no lessons yet. Translation, lessons, titles etc. should ONLY be
   // generated on the third page." So: land them on card 3 with the start button live (it is live
   // because _comicBookId is still null, so _applyLessonCardUI()'s `busy` is false), and let THAT
-  // button run comicCreateChapter() through doGenerate()'s comic branch as it always did.
-  if(mode==='auto'){ try{ _genWizardGoto(3); }catch(_){} return; }
-  comicCreateChapter();
+  // button run comicCreateChapter().
+  //
+  // ⚠️ v88_aa: "always" is new. `v88_c` made only the AUTO-opened card stop here, because the card
+  // was ALSO what card 3's own Generate routed through — so the other path had to keep generating or
+  // nothing would. That routing is gone (see doGenerate's comic branch), which is what the user's
+  // standing ruling asked for in the first place: "only lesson-type selection and the final 'go'
+  // move later". With one behaviour left, `_comicReviewMode` had one reader and no longer has any.
+  try{ _genWizardGoto(3); }catch(_){}
 }
 
 // item AX (v88_i): "generate lessons based on existing storylines and chapters, but for a different
@@ -164699,12 +164724,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v88_z', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v88_aa', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"f79fe7d457e4","lessons.json":"d78848178085","ui.json":"1ea3bfb800af","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"1a86a0474c64","build-static.js":"11554e951b19"};
+  APP.buildSources = {"index.html":"775d68169503","lessons.json":"d78848178085","ui.json":"1ea3bfb800af","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"1a86a0474c64","build-static.js":"11554e951b19"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).

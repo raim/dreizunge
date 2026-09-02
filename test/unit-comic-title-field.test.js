@@ -59,7 +59,7 @@ const bookBody = C => JSON.parse(C.run(
       const C = client();
       C.run(`comicOpenReview();
         _comicReviewEdit(0,'title','De Manteling');
-        _comicReviewConfirm(); true;`, 'title');
+        _comicReviewConfirm(); comicCreateChapter(); true;`, 'title');
       await settle(60);
       assert.strictEqual(C.run(`APP_COMIC.boxes[0].text.title`), 'De Manteling', 'the title is stored');
       assert.strictEqual(C.run(`APP_COMIC.boxes[0].text.caption`), '',
@@ -72,12 +72,18 @@ const bookBody = C => JSON.parse(C.run(
       console.log('  typing a title no longer displaces the generated description: OK');
     }
 
-    // ── 2. The typed title becomes the chapter title, and is marked AUTHORED ───────────────────
+    // ⚠️ v88_aa: these sections drive `_comicReviewConfirm()` and then `comicCreateChapter()`. Confirm
+// used to do both — saving the reviewed text AND starting generation — which is the bounce the user
+// reported (card 3's Generate routed through this card, so they pressed Generate twice). Confirm now
+// only saves; card 3's one Generate button calls `comicCreateChapter()`. Same two acts, same order,
+// same assertions — the test just performs them the way the UI now does.
+
+// ── 2. The typed title becomes the chapter title, and is marked AUTHORED ───────────────────
     // Without the flag the server's chapter-title post-pass renames it minutes later — the user
     // would watch their title save and then silently vanish, a new instance of the same loss.
     {
       const C = client();
-      C.run(`comicOpenReview(); _comicReviewEdit(0,'title','De Manteling'); _comicReviewConfirm(); true;`, 't2');
+      C.run(`comicOpenReview(); _comicReviewEdit(0,'title','De Manteling'); _comicReviewConfirm(); comicCreateChapter(); true;`, 't2');
       await settle(60);
       const body = bookBody(C);
       assert.strictEqual(body.chunks[0].title, 'De Manteling', 'the chunk carries the typed title');
@@ -90,7 +96,7 @@ const bookBody = C => JSON.parse(C.run(
     // The derived placeholder and the post-pass must both keep working for every existing flow.
     {
       const C = client();
-      C.run(`comicOpenReview(); _comicReviewConfirm(); true;`, 't3');
+      C.run(`comicOpenReview(); _comicReviewConfirm(); comicCreateChapter(); true;`, 't3');
       await settle(60);
       const body = bookBody(C);
       assert.strictEqual(body.chunks[0].titleAuthored, false,
@@ -105,7 +111,7 @@ const bookBody = C => JSON.parse(C.run(
     // to show for it, because this object never carried the field.
     {
       const C = client();
-      C.run(`comicOpenReview(); _comicReviewEdit(0,'title','De Manteling'); _comicReviewConfirm(); true;`, 't4');
+      C.run(`comicOpenReview(); _comicReviewEdit(0,'title','De Manteling'); _comicReviewConfirm(); comicCreateChapter(); true;`, 't4');
       await settle(60);
       const p = bookBody(C).chunks[0].comicPanels[0];
       assert.strictEqual(p.description, 'Een bord bij een hek in het bos.',

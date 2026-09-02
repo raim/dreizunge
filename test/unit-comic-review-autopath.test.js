@@ -102,40 +102,95 @@ const bookPosts = C => C.run(`__posts.filter(function(u){ return u.indexOf('/api
       console.log('  auto-opened → confirm: text IS stored and the user lands on card 3: OK');
     }
 
-    // ── 3. Non-vacuity: the CARD-3 path is unchanged and still generates ───────────────────────
-    // Without this, "never generate" would pass §1 and §2 and break the feature entirely.
+    // ── 3. ⚠️ REWRITTEN AT v88_aa: the review card NEVER generates, from either entry ──────────
+    // This asserted the opposite — that a card opened from #gen-btn still POSTs on confirm — as the
+    // non-vacuity for §1/§2 ("without this, 'never generate' would pass and break the feature").
+    // That was true while card 3's Generate ROUTED THROUGH this card, which is exactly the bounce
+    // the user reported: press Generate on card 3, land back on the confirmation popover, press
+    // Generate again. Card 3 now calls comicCreateChapter() directly (unit-gen-wizard §12e), so
+    // this card has one behaviour on both entries: save the text, go to card 3.
+    //
+    // The non-vacuity §1/§2 needed does not disappear — it MOVES to where generation now lives, and
+    // unit-gen-wizard §12e is that assertion: #gen-btn generates exactly once. Stated here so a
+    // reader of this file knows the "never generate" claim is bounded, not universal.
     {
       const C = client();
       C.run(`comicOpenReview(); _comicReviewConfirm(); true;`, 'gen-confirm');
       await settle(60);
-      assert.strictEqual(bookPosts(C), 1,
-        'opened from #gen-btn on card 3, confirm still POSTs exactly one /api/generate-book');
-      assert.strictEqual(C.run('_comicBookId'), 'bk_test', 'and adopts the returned book job as before');
-      console.log('  card-3 path → confirm: still generates, exactly once (non-vacuity): OK');
+      assert.strictEqual(bookPosts(C), 0,
+        'a manually opened review card also POSTs nothing on confirm — the popover is for text, '
+        + 'never for starting generation');
+      assert.strictEqual(C.run('_comicBookId'), null, 'and no book job is adopted');
+      assert.ok(C.run(`__gotos.indexOf(3) >= 0`),
+        'it lands the learner on card 3, where the one Generate button lives');
+      console.log('  the review card never generates, from either entry: OK');
     }
 
-    // ── 4. The button tells the truth about what it will do ────────────────────────────────────
-    // The old label ("Confirm & create chapter") would be a lie on the auto path now.
+    // ── 3b. ⚠️ v88_aa: the way BACK to the review card ────────────────────────────────────────
+    // Load-bearing, and easy to miss. Card 3's Generate used to double as "reopen the text review"
+    // for anyone who dismissed the auto-popup — that was the ONLY other way in. Removing that
+    // routing without replacing the affordance would strand a learner's extracted text behind a
+    // popup they closed once. So card 2 carries its own reopen button, and it must be there.
+    //
+    // Asserted behaviourally, not just as markup: it is hidden while there is nothing to review, so
+    // it can never open the empty card `comicOpenReview()` itself only toasts about.
+    {
+      const C = client();
+      // ⚠️ EXISTENCE at the SOURCE layer, not the DOM. `lib-dom` auto-vivifies a plain div for any
+      // id, so `getElementById(...)` is always truthy and even `tagName === 'BUTTON'` fails for the
+      // buttons that DO exist — measured: comic-clear-btn and comic-generate-btn both report DIV.
+      // A DOM "the button is there" assertion could not fail, which is the trap this project has
+      // shipped vacuous guards on twice.
+      const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+      const at = src.indexOf('id="comic-review-btn"');
+      assert.ok(at > 0, 'card 2 has a reopen-review button in the markup');
+      assert.ok(/onclick="comicOpenReview\(\)"/.test(src.slice(Math.max(0, at - 200), at + 200)),
+        'wired to open the review card, not to some other action');
+
+      // The SHOW/HIDE logic is genuinely observable: it is written onto the element by our own code,
+      // so the auto-vivified stand-in carries it faithfully.
+      const vis = () => C.run(`(function(){ var b=document.getElementById('comic-review-btn');
+        return b ? String(b.style.display) : 'MISSING'; })()`);
+
+      C.run(`APP_COMIC.boxes = [{ x1:0,y1:0,x2:10,y2:10 }]; _comicRenderList(); true;`, 'no-text');
+      assert.strictEqual(vis(), 'none',
+        'hidden while no panel has any extracted text — it cannot open an empty card');
+
+      C.run(`APP_COMIC.boxes = [{ x1:0,y1:0,x2:10,y2:10, text:{ caption:'De Manteling' } }];
+        _comicRenderList(); true;`, 'with-text');
+      assert.strictEqual(vis(), '', 'and shown once there IS something to review');
+
+      // A description alone counts too — a wordless panel that was only described still has text
+      // worth checking, and that is exactly the panel whose description keeps getting lost.
+      C.run(`APP_COMIC.boxes = [{ x1:0,y1:0,x2:10,y2:10, text:{ caption:'', inScene:'', description:'Een landschap.' } }];
+        _comicRenderList(); true;`, 'desc-only');
+      assert.strictEqual(vis(), '',
+        'including a panel that only carries an image description — the very panel whose '
+        + 'description the user keeps losing track of');
+      console.log('  card 2 carries the way back into the review card, shown only when there is text: OK');
+    }
+
+    // ── 4. ⚠️ v88_aa: ONE label, because there is now one behaviour ──────────────────────────
+    // The card used to carry two labels for two behaviours ("Save text & continue" when auto-opened,
+    // "Confirm & create chapter" when card 3 routed through it). With the routing gone there is one
+    // behaviour, so a second label would be a promise the button cannot keep.
     {
       const C = client();
       C.run(`comicOpenReview(true); true;`, 'label-auto');
       const autoHtml = C.run(`_comicReviewOverlayEl.innerHTML`);
       C.run(`_comicReviewCancel(); comicOpenReview(); true;`, 'label-gen');
       const genHtml = C.run(`_comicReviewOverlayEl.innerHTML`);
-      // Compare against the ESCAPED strings the renderer actually emits: both labels contain an
-      // ampersand, so escHtml turns "&" into "&amp;" and the raw ui.json value never appears
-      // literally in the markup. Taking them through the client's own escHtml keeps this correct if
-      // either string is reworded (item AP will rewrite this whole branch).
+      // Compared through the client's own escHtml: the label contains an ampersand, so the raw
+      // ui.json value never appears literally in the markup.
       const escSave = C.run(`escHtml(t('form.image_review_save'))`);
-      const escGen  = C.run(`escHtml(t('form.image_review_confirm'))`);
-      assert.notStrictEqual(escSave, escGen, 'the two labels are genuinely different strings');
-      assert.ok(autoHtml.includes(escSave),
-        'the auto card offers the save-and-continue label');
-      assert.ok(!autoHtml.includes(escGen),
-        'and NOT the create-chapter one, which would misdescribe what the click does');
-      assert.ok(genHtml.includes(escGen),
-        'the card-3 card keeps its original create-chapter label');
-      console.log('  the confirm button\'s label matches the mode it is in: OK');
+      assert.ok(autoHtml.includes(escSave), 'the auto-opened card offers the save-and-continue label');
+      assert.ok(genHtml.includes(escSave), 'and so does a manually opened one — same act, same words');
+      // The create-chapter label is gone from the client entirely: a button that says it will create
+      // a chapter and then does not is worse than no label at all.
+      const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+      assert.ok(!/image_review_confirm/.test(src),
+        'the old create-chapter label is no longer referenced anywhere in the client');
+      console.log('  one label, because there is one behaviour: OK');
     }
 
     // ── 5. Item AM: a fresh upload pre-selects the whole image as one panel ────────────────────

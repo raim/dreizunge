@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_z`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_aa`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -157,23 +157,65 @@ FIRST version reported CORRECT code — eight sites, six of them synchronous, wh
 `CANCELLED` at all. **A rule that reports correct code is a rule nobody keeps.** Now scoped to try
 blocks that actually `await`, brace-matched rather than sampled by a line window. Six mutations red.
 
-**⚠️ TWO ITEMS ARE STILL OWED, plus one needing a ruling.** Verbatim where quoted:
+**`v88_aa` fixed the wizard bounce — and I had wrongly called it blocked.** The user reported that
+card 3's Generate led back to the text-confirmation popover and made them press Generate a second
+time. True, and the comment in `doGenerate()` justified it as *"the user's own ruling was to KEEP the
+review stop"*. ⚠️ **That comment MISREAD the ruling, and I repeated the misreading to the user before
+checking.** Its actual words (`roadmap_v87.md`): *"Keep the live review stop. Extraction/chunking/
+panel editing stay live in CARD 2, exactly as today; only lesson-type selection and THE FINAL 'GO'
+MOVE LATER."* The review stop is card 2's panel editing; the final go was always card 3's. Card 3 now
+calls `comicCreateChapter()` directly, card 2 gained a **"Review extracted text"** button (existing
+key) so dismissing the popup no longer strands the text, and the review card has ONE behaviour and
+ONE label on both entries (`_comicReviewMode` deleted). Three test sections were re-scoped to the
+OPPOSITE claim — they had pinned the bug in the ruling's own name. Nine mutations red.
+**Rule 35, sharpest form: a comment citing a ruling is a claim about that ruling.**
 
-1. **⚠️ NEEDS A RULING, and it is NOT the item it looks like — MEASURED at `v88_z`.**
-   *"The second page of the generation wizard, and its popover parts, should really only generate and
-   confirm the text(s) for one or more chapters, and NOT start generation."* **Structurally this is
-   already true**: `v87_h` (item AL part 2) deleted `#pdf-gen-btn`/`#comic-create-btn` and made
-   card 3's `#gen-btn` the ONE start button for all three modes, and `v88_c` (item AQ) made the
-   auto-opened review card stop at card 3. Traced afresh: PDF and LLM have no generate trigger on
-   card 2, and the comic path's card-3 button dispatches through `doGenerate()`.
-   **What is left is two things, each needing a decision the user has to make:**
-   (a) card 2's prominent green **"✨ Generate"** (`#comic-generate-btn` → `comicExtractPanels()`)
-   runs the TEXT EXTRACTION, which is the correct step for that card — it is the LABEL that reads as
-   chapter generation. Rewording `form.image_generate` costs its translations.
-   (b) the review popover's **"✅ Confirm & create chapter"** does start generation — but only when
-   opened FROM card 3's start button, which routes there deliberately: **the user's own earlier
-   ruling was to KEEP that review stop** between start and creation. Removing it reverses that
-   ruling. Do NOT do either unilaterally.
+---
+
+## ⚠️ START HERE — THE USER'S OWN NEXT QUESTION, ALREADY MEASURED
+
+*"which of `story`, `panel.title`, `panel.caption` and `panel.description` actually becomes
+user-visible text?"* — asked at the `v88_aa` cut, with a request to **clarify what roles those four
+fields play in lessons and progress cards**. Traced through the client so the next session starts
+from the measurement, not a re-derivation:
+
+| field | where it actually becomes visible |
+|---|---|
+| **`topic.story`** | THE chapter text, everywhere: the progress card's story panel, the question card's panel, the lesson-set reader, the story-finished card and the text explorer — **and it is the INPUT every lesson generator reads.** For a comic chapter it is not authored directly; it is *derived* (next row) |
+| **`panel.caption` + `panel.inScene`** | joined with `\n` by **`_comicPanelText()`**, and that join IS `topic.story` for a comic chapter. **Also rendered per-panel** by `_comicStoryPanelsHtml` on every surface that shows a comic chapter's story. Both are EXTRACTED text (`server.js`'s `CAPTION:` / `IN-SCENE:` contract: a narration box, and words drawn into the scene) |
+| **`panel.description`** | **ONLY when caption AND in-scene are both empty.** Then it becomes the story and is rendered per-panel (`_comicStoryPanelsHtml` applies the same fallback, `v88_e`/item AY). Otherwise it is stored and shown NOWHERE — which is the report behind the open ruling below |
+| **`panel.title`** | **NEVER rendered.** It becomes the chunk `title` → the chapter's own `topic` name at creation, and sets `topicAuto:false` so the title post-pass leaves it alone (`v88_y` proved that half end to end). The copy stored on `comicPanels[0].title` is write-only after that |
+
+**⚠️ THE USER'S OWN FRAMING FOR THE NEXT SESSION** (their words, at the cut): *"we should clarify
+what roles those 4 fields play in lessons and progress cards."* The table above is the MEASUREMENT,
+not the answer they want — it says what happens today. What is open is what SHOULD happen, and it is
+a design conversation, not a bug hunt. Three things worth putting to them, with the measurement in
+hand:
+  • **`panel.title` is write-only after chapter creation.** It sets the chapter name and then is
+    never read again. Should it show anywhere — as a panel heading on the progress card, say?
+  • **`panel.description` is invisible whenever ANY text was extracted** (item 3 below). Should the
+    two be combined, thresholded, or shown as separate blocks?
+  • **`caption` vs `inScene` are both "extracted text"** and are joined with `\n` for the story, yet
+    rendered as one block per panel. Is the distinction earning its keep in the UI at all, or is it
+    only an extraction-time concept?
+Do NOT start building any of this before they answer — every option changes what a learner reads.
+
+⚠️ **The open ruling this exposes** (carried below as item 3, and the user has NOT yet answered it):
+a **12-character** caption suppresses a **157-character** description, because "extracted" is
+`caption || inScene` with no notion of how much was extracted. Measured on the user's own
+`tp_17883426979990000196`: `story:"De Manteling"`, `description:` a full landscape sentence, intact
+and unreachable. Today the workaround is manual — clear the caption field so the fallback fires.
+
+**⚠️ ONE ITEM IS OWED, plus two needing a ruling.** Verbatim where quoted:
+
+1. **⚠️ NEEDS A RULING — card 2's green "✨ Generate" button is mislabelled.** The wizard's
+   structure is now right (`v88_aa`): card 3 owns the one Generate. What remains is that
+   `#comic-generate-btn` on card 2 — which runs the TEXT EXTRACTION, the correct act for that card —
+   is labelled `form.image_generate` = "✨ Generate", which is what the user kept reading as the
+   chapter-generation button. Rewording it costs that string's translations, so **ask for a key
+   budget first**. `form.image_extract` ("✨ Extract text") exists but the button can run extraction
+   AND/OR description, so it is not a drop-in.
+
 2. **⚠️ NEEDS A RULING — some LLM-based jobs still have no cancel BUTTON** (user screenshot:
    "Erstelle Zusammenfassung", "Neuer Titel…"). Untouched by `v88_z`, which fixed cancels that were
    swallowed, not buttons that are absent. **Diagnosed**: both are `kind:'sync'` rows — the
@@ -214,7 +256,7 @@ one 🔒 that legitimately survives there). Do not "finish the job" by removing 
    fifteen point releases) — go there for how anything from that line was built, and for the six
    items it closed.
 4. `INTERNALS.md` **§6b, the feature → function map** — read it BEFORE grepping for where anything
-   lives. Current through `v88_z`.
+   lives. Current through `v88_aa`.
 
 ## Establish a green baseline before changing anything
 
@@ -229,6 +271,26 @@ node test/run.js --quick                  → expect 272
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
+
+**⚠️ `e2e-idle-release` is LOAD-SENSITIVE — newly characterised at `v88_aa`, and NOT cleared.**
+Failed once in a full-suite run with `a still-idle server does not release again on every tick
+(got 1 -> 2)` — the idle timer ticked twice inside the observation window. Measured **7 of 8 passes
+standalone**, and neither `v88_z` (catch blocks in `generate`/QC/recreate) nor `v88_aa` (client +
+tests) touches `releaseOllamaModel` or the idle timer. Treated as pre-existing timing sensitivity
+under load, NOT as a cleared flake and NOT as a regression — if it fails again, instrument the tick
+count rather than re-running until it passes.
+
+⚠️ **AND A REAL CONTRIBUTOR TO LOAD FLAKINESS WAS FOUND AND CLEARED at `v88_aa`**: FOUR orphaned
+`test/fake-ollama.js` servers were still listening, the oldest **29 hours** old, leaked from e2e runs
+whose `fake.child.kill()` never fired (several from interrupted mutation batches). They hold ports.
+An unexplained `e2e-writing` failure earlier in that session is plausibly theirs and should NOT be
+considered diagnosed. **Check `ps -eo pid,cmd | grep '[f]ake-ollama'` before trusting a load flake.**
+
+⚠️ **A wait-loop trap that cost 20 leaked processes**: `until ! pgrep -f "test/run.js"; do sleep; done`
+NEVER EXITS — `pgrep -f` matches the waiting shell's OWN command line, which contains that string.
+Twenty of them span for up to 11 hours. Wait on the OUTPUT FILE instead (`until tail -1 out.txt |
+grep -qE '^(ALL CHECKS PASSED|FAILED [0-9]+ of)'`), or bracket the pattern (`"[t]est/run.js"`). Same
+family as the standing `pkill -f "node server.js"` warning, from the other direction.
 
 **⚠️ `unit-tap-word` is NO LONGER FLAKY** — its ~35% failure rate from `v80_t` to `v87_h` was a REAL
 DEFECT (`Math.random()` in `tapWord()`), fixed at `v87_i`. A failure there now is a genuine
@@ -262,7 +324,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **344 topics, 99 storylines, 33 languages, 754 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_z'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_aa'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to

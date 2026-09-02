@@ -2424,6 +2424,75 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_aa — card 3's Generate generates, instead of bouncing back to the confirmation popover
+
+**User report**: *"I remember for a recent image-based generation that card 3 actually led back to
+card 2 or to the text confirmation popover and required to click generate there, instead of just
+generating from card 3."* Correct, and it matches the code exactly. **ZERO `ui.json` keys.**
+
+### ⚠️ I had called this BLOCKED on a user ruling. Checking the ruling's actual words proved me wrong
+
+`doGenerate()`'s comic branch routed to `comicOpenReview()`, and the comment there justified it:
+*"the user's own part-2 ruling was to KEEP the review stop, so the click must still land on it."*
+Earlier this session I repeated that and told the user the item needed a fresh decision. It did not.
+The ruling's real text (`roadmap_v87.md`):
+
+> **"Keep the live review stop.** Extraction/chunking/panel editing stay live in **card 2**, exactly
+> as today; only lesson-type selection and **THE FINAL 'GO' MOVE LATER."**
+
+The "review stop" is card 2's panel editing — untouched by any of this. The final "go" was always
+meant to be card 3's. **The bounce contradicted the ruling it cited**, and the user's request and the
+standing ruling agreed all along. Rule 35 in its sharpest form: a comment citing a ruling is a claim
+about that ruling, and this one had been carried, quoted and acted on for two releases.
+
+### The change
+
+- `doGenerate()`'s comic branch calls `comicCreateChapter()` directly. `comicCreateChapter` already
+  carries its own "no extracted text yet" guard, so nothing was lost by removing the popover from
+  the path.
+- **Card 2 gains a "Review extracted text" button.** Card 3's Generate was doubling as the only way
+  back into the review card for anyone who dismissed the auto-popup — removing that routing without
+  replacing the affordance would have stranded a learner's extracted text behind a popup they closed
+  once. Label reuses the EXISTING `form.image_review_title`; shown only once some panel actually has
+  text (caption, in-scene **or** description), so it can never open the empty card
+  `comicOpenReview()` itself only toasts about.
+- The review card now has **one behaviour on both entries**: save the text, go to card 3. With the
+  routing gone, `_comicReviewMode` had one reader and now has none, so it is deleted — and the
+  confirm button carries ONE label, because a second one would be a promise it cannot keep.
+  `form.image_review_confirm` is no longer referenced anywhere in the client.
+
+### Four test files re-scoped, three of them to the OPPOSITE claim
+
+`unit-gen-wizard` §12e asserted *"comic mode routes to `comicOpenReview()` and NOT to
+`comicCreateChapter()` — the review stop is kept, by ruling"*. `unit-comic-review-autopath` §3
+asserted a card opened from `#gen-btn` *"still POSTs exactly one /api/generate-book"* — as the
+non-vacuity for its own "never generate" claim. `unit-comic-review-card` asserted *"confirm hands off
+to the REAL `comicCreateChapter()`"*. All three pinned the bug, in the ruling's own name.
+
+The non-vacuity §1/§2 needed did not disappear — it MOVED to where generation now lives
+(`unit-gen-wizard` §12e: `#gen-btn` generates exactly once), and that is stated in the file so a
+later reader knows the "never generates" claim is bounded rather than universal.
+`unit-comic-title-field`'s four sections now perform confirm-then-`comicCreateChapter()` — the same
+two acts in the same order, the way the UI now does them.
+
+### ⚠️ A guard that stayed green, and the auto-vivify trap under it
+
+Removing the new reopen button left everything green: nothing asserted it. Written first as a DOM
+check (`tagName === 'BUTTON'`) it still could not fail — `lib-dom` auto-vivifies a plain div for any
+id, and **measured, the PRE-EXISTING `comic-clear-btn` and `comic-generate-btn` report `DIV` too**.
+Existence moved to the SOURCE layer (the markup, and its `onclick` wiring); the show/hide logic
+stayed at the DOM layer, where it is genuinely observable because our own code writes it.
+
+**Verified live** on the user's own running server, driving the reported flow: with a panel carrying
+extracted text, pressing card 3's Generate gives `bouncedToPopover: 0, startedGeneration: 1`, and the
+"Review extracted text" button renders visible.
+
+**Guard**: `unit-gen-wizard` §12e (rewritten), `unit-comic-review-autopath` (§3 rewritten, §3b new,
+§4 collapsed to one label), `unit-comic-review-card`, `unit-comic-title-field`. **NINE mutations
+red** — the bounce restored, confirm generating again, confirm not routing to card 3, the reopen
+button removed, always visible, never visible, description-only no longer counting, the button wired
+to the wrong action, and the old create-chapter label returning.
+
 ## ✅ v88_z — cancelling a job actually stops it: SIX more swallowed cancels, found by a set-level guard
 
 The `AU` residue the session prompt carried as *"one read each"* for `_runQc` and `_runRecreateJob`.
