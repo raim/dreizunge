@@ -4768,8 +4768,18 @@ function comicOpenReview(auto){
     // is exactly the state worth seeing and the old conditional hid it precisely then.
     //
     // caption and inScene are BOTH extracted text (server.js's own CAPTION:/IN-SCENE: contract) and
-    // are joined with a newline downstream; they stay separate because `_comicStoryPanelsHtml`
-    // renders them separately.
+    // are joined with a single newline into ONE block downstream (`_comicTextFromFields`).
+    // ⚠️ v88_ab: the previous sentence here claimed they "stay separate because
+    // `_comicStoryPanelsHtml` renders them separately". That was FALSE — that renderer has always
+    // joined them too — and it was the stated justification for keeping two fields, so it is worth
+    // recording rather than quietly deleting. Asked at this cut, the user's ruling was to KEEP the
+    // split as-is: two extraction fields, one rendered block. The real reason they stay separate is
+    // that the extraction prompt produces them separately and the review card is where a
+    // mis-assignment gets corrected, NOT that anything downstream distinguishes them.
+    //
+    // The description field below is no longer a fallback: since v88_ab it is COMBINED into the
+    // chapter text whenever it is present, so what is typed there is read by the learner and by
+    // every lesson generator. See `_comicTextFromFields` for the ruling and the measurement.
     // (No backticks in this comment: it lives inside a template literal.)
     const _fld = (labelKey) => `<div style="font-size:11px;font-weight:800;color:var(--gray-dark);`
       + `text-transform:uppercase;letter-spacing:.02em;margin-bottom:-4px">${escHtml(t(labelKey))}</div>`;
@@ -4918,17 +4928,50 @@ async function translateStorylineGenerate(){
 // entry; _runBookJob ALREADY chains multiple chunks into one connected storyline sequentially (the
 // same machinery a multi-chapter PDF split already uses) — no new server-side chaining logic needed,
 // confirmed by reading _runBookJob before relying on it.
-// The text a panel contributes to the chapter. User request: "[the description] will be used as the
-// chapter text, if no text is extracted" — so it is a FALLBACK, never mixed in alongside real
-// lettering. This one function is what makes that true everywhere at once: comicCreateChapter's own
-// no-text filter, the panel-list summary, comicOpenReview's editable set and (since v87_h)
-// _genChapterCount all read it, so a description-only panel becomes a real chapter without any of
-// them needing to know the description exists.
-function _comicPanelText(b){
-  const t=b.text||{};
-  const extracted=[t.caption, t.inScene].filter(Boolean).join('\n');
-  return extracted || String(t.description||'').trim();
+// The text a panel contributes to the chapter. This one function is what makes the rule true
+// everywhere at once: comicCreateChapter's own no-text filter, the panel-list summary,
+// comicOpenReview's editable set and (since v87_h) _genChapterCount all read it, so a
+// description-only panel becomes a real chapter without any of them needing to know the
+// description exists.
+//
+// ⚠️ v88_ab — THE RULE CHANGED, on the user's own ruling, and the OLD one is worth stating because
+// it stood since v87_l. It was a strict FALLBACK: "[the description] will be used as the chapter
+// text, if no text is extracted", i.e. `extracted || description`. That is too crude for a
+// HEADLINE-ONLY extraction, and the failure was reported live: a photographed information board
+// whose caption came back as the sign's 12-character heading ("De Manteling") suppressed a
+// 128-character description of the same photo, and the whole chapter's story became those 12
+// characters. Measured across the store at the v88_aa cut: 2 panels, both from that one sign, with
+// extracted/description length ratios of 0.09 and 0.08 — so the suppressed side was always the
+// substantial one, never a close call.
+//
+// The ruling put to the user was four-way (length threshold / combine / separate block / keep and
+// expose) and they chose COMBINE: extracted text AND description, always, both. Joined with a BLANK
+// line rather than a single newline, because `_storyParasHtml` splits on /\n\n+/ — so the two
+// arrive as two <p> blocks on every story surface, which is the "two blocks" half of the ruling.
+// Order is extracted-first: it is what the picture literally says, and it keeps the chapter-title
+// placeholder derivation in comicCreateChapter (text.slice(0,40)) reading the lettering rather than
+// a generated scene description.
+//
+// Note what did NOT change: caption and inScene stay joined with a SINGLE newline into one
+// "extracted" block (the user's ruling on that question was "keep as-is — one joined block"), and
+// a panel with only a description still yields exactly that description, so v87_l's
+// description-only chapters and v88_e/item AY's renderer agree with this exactly as before.
+//
+// ⚠️ ONE function, TWO field shapes. The wizard's in-flight panel carries these four fields under
+// `b.text`; a SAVED chapter's `comicPanels[i]` carries the same four flat. Both surfaces have
+// always asked the same question and each answered it in its own copy of the rule — which is
+// precisely how `v88_e`/item AY happened (the renderer's copy had never learned that `description`
+// counts, so a description-only chapter rendered as images with no text). The rule lives HERE now
+// and every asker delegates, so a change like this one cannot reach one surface and miss another.
+function _comicTextFromFields(f){
+  const src=f||{};
+  const extracted=[src.caption, src.inScene].filter(Boolean).join('\n');
+  const description=String(src.description||'').trim();
+  if(!extracted) return description;
+  if(!description) return extracted;
+  return extracted+'\n\n'+description;
 }
+function _comicPanelText(b){ return _comicTextFromFields(b&&b.text); }
 
 let _comicBookId=null, _comicBookPolling=false;
 
@@ -18272,11 +18315,11 @@ function _storyBodyHtml(d, opts){
 // item AN half 2 — so for those this correctly returns false and the flat path shows `d.story`.)
 function _comicPanelsHaveText(d){
   if (!Array.isArray(d && d.comicPanels)) return false;
-  return d.comicPanels.some(p => {
-    if (!p) return false;
-    const extracted = [p.caption, p.inScene].filter(Boolean).join('\n').trim();
-    return !!(extracted || String(p.description || '').trim());
-  });
+  // v88_ab: delegates to `_comicTextFromFields` instead of re-deriving. The ANSWER here is
+  // unchanged by the combine ruling — "extracted or description" and "extracted plus description"
+  // are non-empty on exactly the same panels — but a second copy of the rule is how this gate and
+  // the renderer it guards drifted apart in the first place (item AY).
+  return d.comicPanels.some(p => !!(p && _comicTextFromFields(p).trim()));
 }
 
 // Tier 1 per PLAN §2.6 (bubble/panel-level boxes with ordinary clickable HTML text) — NOT per-word
@@ -18297,12 +18340,38 @@ function _comicStoryPanelsHtml(d, o){
   let stateByKey = {}, askedKeys = [];
   try { stateByKey = _wordStateMap(d); } catch(_) {}
   try { askedKeys = _askedKeys(o.ex); } catch(_) {}
+  // ⚠️ v88_ab — WHY A SINGLE-PANEL CHAPTER RENDERS `d.story` AND NOT ITS OWN PANEL FIELDS.
+  // This renderer holds a SECOND COPY of the chapter's text: `story` on one side, `comicPanels[i]`
+  // on the other, extracted once at upload time. Keeping those two agreeing has already cost two
+  // releases from opposite directions — `v86_g` (a story edit left the panel copy stale forever, so
+  // this surface alone kept showing the reported typo) and `v88_e`/item AY (this surface's copy of
+  // the text rule had never learned about `description`, so a description-only chapter rendered
+  // blank). The combine ruling adds a third input, and with it a third way for the two to disagree:
+  // an EXISTING chapter's `story` was built under the old fallback rule, so re-deriving it here
+  // under the new one would show the description on the highlighted story panel while the
+  // translation view, the text explorer and every lesson — all of which read `story` — would not.
+  // That is item AY's asymmetry exactly, in a new shape.
+  //
+  // So for the unambiguous single-panel case, `story` IS the panel's text and is used directly.
+  // Measured over the whole store at this cut: for all 18 chapters carrying panels, the old
+  // derivation reproduced `story` character-for-character, the one exception being a chapter whose
+  // panel holds no text at all — which never reaches here, because `_comicPanelsHaveText` gates it
+  // out to the flat path. So this is a NO-OP on every chapter that exists today; what it buys is
+  // that no future chapter can drift. It also means `v86_g`'s server-side sync is no longer what
+  // keeps this surface correct after a story edit — that sync is kept (it keeps the stored fields
+  // honest for the multi-panel case and for anything else reading them), but it is no longer the
+  // protection, and this comment is the record of that rather than a stronger claim for it.
+  //
+  // MULTI-PANEL is left deriving per panel: a flat story string cannot be split back across panels
+  // (the same reason `v86_g`'s sync scopes itself to one panel). Note that comic chapters are
+  // one-panel-per-chapter by construction since `v85_p` — `comicCreateChapter` emits one chunk per
+  // panel — so a multi-panel array today comes only from the server's cross-link copy.
+  const _singleStory = (d.comicPanels.length === 1 && String(d.story || '').trim()) ? String(d.story) : null;
   const panelsHtml = d.comicPanels.map(p => {
-    // item AY: same fallback rule as `_comicPanelText()` — extracted lettering, else the generated
-    // description. A panel whose only content is a description is a REAL panel with real chapter
-    // text (the `v87_l` ruling), and reading only caption+inScene here is what rendered it blank.
-    const _ext = [p && p.caption, p && p.inScene].filter(Boolean).join('\n');
-    const raw = _ext || String((p && p.description) || '');
+    // item AY / v88_ab: the panel's own text comes from the ONE shared rule (`_comicTextFromFields`)
+    // — extracted lettering, the generated description, or both combined — so this renderer and the
+    // chapter-formation path can no longer answer that question differently.
+    const raw = _singleStory != null ? _singleStory : _comicTextFromFields(p);
     let bodyHtml;
     if (o.highlight === false || !all.length) {
       bodyHtml = _storyParasHtml(furiHtml(raw));

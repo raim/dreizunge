@@ -370,28 +370,81 @@ console.log('  comicExtractPanels(): the two checkboxes are sent as independent 
 }
 console.log('  neither ticked: no request, Generate disabled: OK');
 
-// ── 6c. _comicPanelText(): the description is a FALLBACK, never mixed in ────────────────────────
-// This ONE function is what makes "used as the chapter text, if no text is extracted" true across
-// comicCreateChapter's no-text filter, the panel summaries, the review card's editable set and
-// _genChapterCount at once — so it is asserted directly, in every combination.
+// ── 6c. _comicPanelText(): extracted text AND description are COMBINED ──────────────────────────
+// ⚠️ v88_ab RE-SCOPED THIS SECTION TO THE OPPOSITE CLAIM. It asserted `both === 'Cap\\nScene'` under
+// the message "extracted lettering WINS — the description is never appended to real text", which
+// pinned the v87_l fallback ruling. The user replaced that ruling at this cut (a 12-character sign
+// heading was suppressing a 128-character description of the same photo — measured at ratios of
+// 0.09 and 0.08 on their own two chapters), so the assertion was not failing, it had become an
+// assertion of the wrong thing. Rewritten rather than relaxed.
+//
+// This ONE function is still what makes the rule true across comicCreateChapter's no-text filter,
+// the panel summaries, the review card's editable set and _genChapterCount at once — and since
+// v88_ab across the RENDERER too, which delegates to the same `_comicTextFromFields`. So it is
+// asserted directly, in every combination.
 {
   const C = client();
   const r = JSON.parse(C.run(`JSON.stringify({
     both:      _comicPanelText({ text:{ caption:'Cap', inScene:'Scene', description:'Desc' } }),
+    capDesc:   _comicPanelText({ text:{ caption:'De Manteling', inScene:'', description:'Een landschap.' } }),
     textOnly:  _comicPanelText({ text:{ caption:'Cap', inScene:'', description:'' } }),
     descOnly:  _comicPanelText({ text:{ caption:'', inScene:'', description:'Ein Hund rennt.' } }),
+    blankDesc: _comicPanelText({ text:{ caption:'Cap', inScene:'', description:'   ' } }),
     neither:   _comicPanelText({ text:{ caption:'', inScene:'', description:'' } }),
-    noText:    _comicPanelText({})
+    noText:    _comicPanelText({}),
+    shared:    _comicTextFromFields({ caption:'Cap', inScene:'Scene', description:'Desc' })
   })`));
-  assert.strictEqual(r.both, 'Cap\nScene',
-    'extracted lettering WINS — the description is never appended to real text');
-  assert.strictEqual(r.textOnly, 'Cap', 'a caption alone is still the text');
+  assert.strictEqual(r.both, 'Cap\nScene\n\nDesc',
+    'extracted lettering and the description are BOTH kept, extracted first');
+  // The separator is load-bearing, not cosmetic: _storyParasHtml splits on /\n\n+/, so a SINGLE
+  // newline here would render the description as another line of the same paragraph instead of the
+  // second block the ruling asked for. caption/inScene keep their single newline — one block.
+  assert.ok(/^Cap\nScene\n\nDesc$/.test(r.both),
+    'joined with a BLANK line, so _storyParasHtml renders two <p> blocks; caption/inScene stay one block');
+  assert.strictEqual(r.capDesc, 'De Manteling\n\nEen landschap.',
+    'the reported case: a short sign heading no longer suppresses the description');
+  assert.strictEqual(r.textOnly, 'Cap', 'a caption alone is still the text, with no trailing separator');
   assert.strictEqual(r.descOnly, 'Ein Hund rennt.',
-    'a panel with no lettering falls back to its description — this is what makes it a chapter');
+    'a panel with no lettering is still exactly its description — v87_l chapters are unchanged');
+  assert.strictEqual(r.blankDesc, 'Cap',
+    'a whitespace-only description adds nothing — no empty second block');
   assert.strictEqual(r.neither, '', 'nothing at all is still nothing (the panel is filtered out downstream)');
   assert.strictEqual(r.noText, '', 'an un-extracted panel is unchanged');
+  assert.strictEqual(r.shared, r.both,
+    '_comicPanelText is a thin wrapper over the shared _comicTextFromFields the renderer also uses');
 }
-console.log('  _comicPanelText(): description is a fallback only, never mixed with extracted text: OK');
+console.log('  _comicPanelText(): extracted text and description are combined into two blocks: OK');
+
+// ── 6d. …and the rule reaches the PUBLISHED build, not just index.html ──────────────────────────
+// ⚠️ v88_r's rule, applied deliberately: "a guard written against index.html says nothing about
+// docs/index.html". The ← previous-chapter button was a ReferenceError in the published build for
+// four releases because the function it called sat inside the @static-exclude region and every
+// guard for it read the source file. `_comicTextFromFields` is a new client helper added near the
+// comic wizard, so the same accident was available here — and the published build is where the
+// students are. Asserted at the SOURCE layer because that is where "the built file defines this"
+// is observable; the BEHAVIOUR is pinned above, against the same code loaded from index.html.
+{
+  const built = fs.readFileSync(path.join(ROOT, 'docs', 'index.html'), 'utf8');
+  assert.ok(/function\s+_comicTextFromFields\s*\(/.test(built),
+    'the static build DEFINES _comicTextFromFields — it must not land inside the @static-exclude region');
+  assert.ok(/function\s+_comicPanelText\s*\(/.test(built), 'and still defines _comicPanelText');
+  assert.ok(/function\s+_comicStoryPanelsHtml\s*\(/.test(built), 'and the renderer that delegates to it');
+  // Absence over the WHOLE file, not a passing fixture: the old fallback expression must not
+  // survive anywhere in the built output, in either function's shape.
+  assert.ok(!/return\s+extracted\s*\|\|\s*String\(t\.description/.test(built),
+    'and carries no surviving copy of the v87_l fallback rule');
+  // Non-vacuity for the checks above: prove this file really did read the BUILT artifact and not a
+  // second copy of index.html. ⚠️ The first draft used `built.includes('STATIC_LESSONS')` against
+  // `!html.includes('STATIC_LESSONS =')` and went red on a correct tree — index.html mentions
+  // STATIC_LESSONS a dozen times, in `typeof STATIC_LESSONS !== 'undefined'` guards. The
+  // discriminator has to be something the BUILD produces, not something the build merely reads:
+  // only the built file DECLARES it, and only the source file still carries the exclude marker.
+  assert.ok(/const\s+STATIC_LESSONS\b/.test(built) && !/const\s+STATIC_LESSONS\b/.test(html),
+    'non-vacuity: only the built file DECLARES STATIC_LESSONS');
+  assert.ok(html.includes('@static-exclude-start') && !built.includes('@static-exclude-start'),
+    'non-vacuity: and only the source still carries the @static-exclude marker — genuinely two different files');
+}
+console.log('  the shared text rule is present in the PUBLISHED build too (v88_r rule): OK');
 
 console.log('unit-comic-extraction: ALL PASSED');
 }

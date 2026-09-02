@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_aa`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_ab`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -170,43 +170,66 @@ ONE label on both entries (`_comicReviewMode` deleted). Three test sections were
 OPPOSITE claim — they had pinned the bug in the ruling's own name. Nine mutations red.
 **Rule 35, sharpest form: a comment citing a ruling is a claim about that ruling.**
 
+**`v88_ab` closed the description-suppression ruling — and the RULING changed the design twice.**
+The user chose **COMBINE** (chapter text = extracted text AND description, as two blocks), replacing
+`v87_l`'s fallback ruling outright. **ZERO `ui.json` keys**: `v88_y` had already worded all four
+review-card labels neutrally, so nothing encoded the old semantics. The combine itself is two lines.
+
+⚠️ **What the work actually was: the rule had THREE copies** — the wizard's `_comicPanelText`, the
+render GATE `_comicPanelsHaveText`, and the renderer `_comicStoryPanelsHtml` — which is precisely how
+`v88_e`/item AY happened. All three now delegate to one `_comicTextFromFields(fields)`.
+
+⚠️ **And combining opened a THIRD way for a comic chapter's two copies of its text to disagree**
+(`story` vs `comicPanels[i]`; `v86_g` and `v88_e` were the first two, from opposite directions).
+Re-deriving a LEGACY chapter under the new rule would show the description on the highlighted story
+panel and nowhere else — item AY's asymmetry again — and a story EDIT would have duplicated it,
+caused by the `v86_g` sync written to keep the two in step. One change fixes both:
+**`_comicStoryPanelsHtml` reads `d.story` directly for the single-panel case.** Measured: for all 18
+chapters carrying panels the old derivation reproduced `story` character-for-character, so it is a
+NO-OP today and a guarantee going forward. `v86_g`'s sync is kept but is **no longer the protection**
+(`v87_p`'s ruling), and it deliberately does NOT delete `description` — item AN lost one already.
+
+Three guards were asserting the wrong thing, including one that re-implemented the renderer's join
+INLINE and claimed to be testing the renderer. ⚠️ **A new non-vacuity assertion could never fire**
+and mutation-testing caught it: for ONE panel the flat path emits identical markup AND identical
+text, so `comic-story-panel-text` cannot discriminate. Ten mutations red. Full write-up: the
+`v88_ab` entry.
+
 ---
 
-## ⚠️ START HERE — THE USER'S OWN NEXT QUESTION, ALREADY MEASURED
+## ⚠️ START HERE — THE FOUR-FIELD QUESTION IS ANSWERED; ONE OF ITS CONSEQUENCES IS NOT
 
-*"which of `story`, `panel.title`, `panel.caption` and `panel.description` actually becomes
-user-visible text?"* — asked at the `v88_aa` cut, with a request to **clarify what roles those four
-fields play in lessons and progress cards**. Traced through the client so the next session starts
-from the measurement, not a re-derivation:
+`v88_aa` handed over the user's own question — *"which of `story`, `panel.title`, `panel.caption`
+and `panel.description` actually becomes user-visible text?"*, with a request to clarify what roles
+those four play. **That was put to them at the `v88_ab` cut, with a store-wide measurement, and all
+four sub-questions were answered.** The measurement table `v88_aa` wrote is still accurate and is
+worth reading once (it is reproduced with counts in `roadmap_v88.md`'s `v88_ab` entry). The rulings:
 
-| field | where it actually becomes visible |
-|---|---|
-| **`topic.story`** | THE chapter text, everywhere: the progress card's story panel, the question card's panel, the lesson-set reader, the story-finished card and the text explorer — **and it is the INPUT every lesson generator reads.** For a comic chapter it is not authored directly; it is *derived* (next row) |
-| **`panel.caption` + `panel.inScene`** | joined with `\n` by **`_comicPanelText()`**, and that join IS `topic.story` for a comic chapter. **Also rendered per-panel** by `_comicStoryPanelsHtml` on every surface that shows a comic chapter's story. Both are EXTRACTED text (`server.js`'s `CAPTION:` / `IN-SCENE:` contract: a narration box, and words drawn into the scene) |
-| **`panel.description`** | **ONLY when caption AND in-scene are both empty.** Then it becomes the story and is rendered per-panel (`_comicStoryPanelsHtml` applies the same fallback, `v88_e`/item AY). Otherwise it is stored and shown NOWHERE — which is the report behind the open ruling below |
-| **`panel.title`** | **NEVER rendered.** It becomes the chunk `title` → the chapter's own `topic` name at creation, and sets `topicAuto:false` so the title post-pass leaves it alone (`v88_y` proved that half end to end). The copy stored on `comicPanels[0].title` is write-only after that |
+| question | the user's ruling | status |
+|---|---|---|
+| a description suppressed by extracted text | **COMBINE** — the story is extracted text AND description, both, always. Replaces `v87_l`'s fallback ruling | **shipped `v88_ab`** |
+| is the `caption` / `inScene` split earning its keep in the UI | **keep as-is** — two extraction fields, one rendered block | nothing to build |
+| should `panel.title` be rendered anywhere | **leave it write-only** — it names the chapter and sets `topicAuto:false`; that is the job | nothing to build |
+| `ui.json` budget | **propose each key first** | none were needed; `v88_ab` shipped zero |
 
-**⚠️ THE USER'S OWN FRAMING FOR THE NEXT SESSION** (their words, at the cut): *"we should clarify
-what roles those 4 fields play in lessons and progress cards."* The table above is the MEASUREMENT,
-not the answer they want — it says what happens today. What is open is what SHOULD happen, and it is
-a design conversation, not a bug hunt. Three things worth putting to them, with the measurement in
-hand:
-  • **`panel.title` is write-only after chapter creation.** It sets the chapter name and then is
-    never read again. Should it show anywhere — as a panel heading on the progress card, say?
-  • **`panel.description` is invisible whenever ANY text was extracted** (item 3 below). Should the
-    two be combined, thresholded, or shown as separate blocks?
-  • **`caption` vs `inScene` are both "extracted text"** and are joined with `\n` for the story, yet
-    rendered as one block per panel. Is the distinction earning its keep in the UI at all, or is it
-    only an extraction-time concept?
-Do NOT start building any of this before they answer — every option changes what a learner reads.
+**⚠️ THE ONE THING THAT REMAINS FROM IT — and it is a decision, not effort.** `v88_ab` changed how a
+chapter's text is FORMED and RENDERED. It did **not** rewrite stored data, so **the two chapters the
+user actually reported still read `"De Manteling"`**: `tp_17883458445860000053` (description 128
+chars, intact in `comicPanels[0].description`) and `tp_17883426979990000196` (159 chars, likewise
+intact). Nothing is lost and the new rule governs everything created from now on, but those two do
+not fix themselves. Three ways to close it, and **the user has not been asked which** — ask before
+building any of them:
+  • **Nothing** — each is a ~10-second paste through the existing story-repair UI, and they may
+    prefer to just do it (they hand-pasted a whole chapter for exactly this reason on `2026-09-02`,
+    `tp_17883793024690000067`, which is how live the annoyance was).
+  • **A one-shot repair action** — a button that re-forms `story` from the panel under the new rule.
+    Costs a `ui.json` key and a decision about where it lives.
+  • **A load-time migration** — ⚠️ recommend AGAINST without an explicit go-ahead: `schemaVersion` is
+    a load-time SHAPE adapter, not a per-field migration hook, so this means inventing a mechanism
+    AND silently rewriting the user's own chapter text on their running server.
 
-⚠️ **The open ruling this exposes** (carried below as item 3, and the user has NOT yet answered it):
-a **12-character** caption suppresses a **157-character** description, because "extracted" is
-`caption || inScene` with no notion of how much was extracted. Measured on the user's own
-`tp_17883426979990000196`: `story:"De Manteling"`, `description:` a full landscape sentence, intact
-and unreachable. Today the workaround is manual — clear the caption field so the fallback fires.
-
-**⚠️ ONE ITEM IS OWED, plus two needing a ruling.** Verbatim where quoted:
+**⚠️ TWO ITEMS STILL NEED A RULING** (item 3 of the previous list is now closed by `v88_ab`).
+Verbatim where quoted:
 
 1. **⚠️ NEEDS A RULING — card 2's green "✨ Generate" button is mislabelled.** The wizard's
    structure is now right (`v88_aa`): card 3 owns the one Generate. What remains is that
@@ -225,20 +248,13 @@ and unreachable. Today the workaround is manual — clear the caption field so t
    `AbortController` on the client fetch (stops the waiting, leaves the model running) **or** the
    sync routes registering real cancellable jobs. Ask before building.
 
-3. **⚠️ NEEDS A RULING — an image DESCRIPTION becomes unreachable once the panel has any extracted
-   text.** (`v88_y` fixed the field CONFUSION behind this report, but not the underlying rule.) User:
-   *"I am still loosing image description if I assign a title in the text confirmation interface, eg.
-   sl_580844164 did have a finished description that i can't access anymore."* **Measured — the data
-   is NOT lost**: `tp_17883458445860000053`'s panel still holds a 128-char `description`
-   ("Een landschap met heuvels…"). What happened is that the chapter's STORY was built from
-   `[caption, inScene]` only (index.html, two sites — see `_comicPanelText` and the
-   `comicCreateChapter` path), and `caption` was the sign's 12-char headline "De Manteling". So a
-   12-character extraction suppressed a 128-character description, and the story is now just
-   "De Manteling". ⚠️ **This collides with a STANDING USER RULING** — *"the description is a fallback
-   when nothing was extracted"* (`v88_d`/item AN) — so the fix is a product decision, not a bug fix:
-   the ruling is too crude for a headline-only extraction. **Put the options to the user before
-   building** (combine both, fall back on a length threshold, or surface the description separately);
-   do not quietly change the ruling.
+⚠️ **A partial EXTRACTION is now a known failure mode, and it is not the same as a mislabelled
+field.** Measuring item 3 showed the two reported chapters are the same photographed sign as
+`tp_17881715830570000091` — which extracted correctly, `caption` = the sign's heading, `inScene` =
+its body paragraph. The two broken ones simply never got the body. `v88_y` fixed the field CONFUSION
+and `v88_ab` fixed the SUPPRESSION, but nothing yet notices that an extraction returned a 12-character
+heading for a sign full of text. Worth raising as its own item rather than assuming it is covered.
+
 
 **⚠️ The WITHIN-chapter progression is untouched and is meant to stay** — the user was explicit:
 *"we do still want the 'play mode' question progress within chapters, to first solve vocab, then, to
@@ -256,7 +272,7 @@ one 🔒 that legitimately survives there). Do not "finish the job" by removing 
    fifteen point releases) — go there for how anything from that line was built, and for the six
    items it closed.
 4. `INTERNALS.md` **§6b, the feature → function map** — read it BEFORE grepping for where anything
-   lives. Current through `v88_aa`.
+   lives. Current through `v88_ab`.
 
 ## Establish a green baseline before changing anything
 
@@ -323,8 +339,8 @@ DETERMINISTIC, so not flakiness — because the user's server had written a new 
 fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don't run the full and
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **344 topics, 99 storylines, 33 languages, 754 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_aa'`.
+Corpus at this cut: **344 topics, 100 storylines, 33 languages, 754 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_ab'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -335,6 +351,41 @@ snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_aa'`.
 Now 54 numbered standing rules across "Rules earned in session 28…34" plus dedicated blocks for the
 `v83`/`v84`/`v85`/`v86` lines — see `roadmap_v87.md`'s own copy of them. Read the **"⚠️ How the rules
 are NUMBERED"** note before citing one.
+
+**Earned at `v88_ab`:**
+
+- **A ruling that replaces another ruling must be hunted for in the TESTS, not waited for in red.**
+  `unit-comic-extraction` §6c asserted the superseded rule under a message that stated it as a
+  principle. It was not failing; it had become an assertion of the wrong thing — `v88_s`'s rule, now
+  seen twice in three releases. When a user replaces a ruling, grep the suite for the ruling's own
+  words before writing any code.
+- **A guard that RE-IMPLEMENTS the thing it claims to test cannot fail when that thing changes.**
+  `e2e-save-story-comic-sync` rebuilt the renderer's `[caption, inScene].join()` inline and asserted
+  *"the renderer's own join reproduces the corrected story"* — about a function the file never calls.
+  This cut made that sentence false in two independent ways and the guard stayed green. Assert what
+  the layer can observe (here: the stored fields), and pin the screen where the screen is rendered.
+- **Two code paths that produce IDENTICAL output cannot host a non-vacuity assertion.** The
+  description-only single-panel fixture was meant to prove it reached the per-panel pairing rather
+  than the flat fallback — but `_comicPanelsFlatTextHtml` emits the same wrapper for one panel, and
+  with `story === description` the text matches too. Mutation-testing was the only thing that could
+  have found it. When a marker stays green under mutation, ask whether the two branches are
+  *distinguishable at all* before strengthening the assertion, and move the claim to a fixture where
+  they are.
+- **A non-vacuity check can go RED on a correct tree by picking the wrong discriminator.** Proving
+  `docs/index.html` and `index.html` are different files via `!html.includes('STATIC_LESSONS =')`
+  fails, because the source mentions that name a dozen times in `typeof` guards. Discriminate on
+  what the BUILD PRODUCES (only the built file DECLARES it; only the source keeps
+  `@static-exclude-start`), never on what the build merely reads.
+- **A behaviour ruling does not carry a data migration with it — say so instead of assuming either
+  way.** Combining fixed how chapters are formed; the two chapters the user reported still hold the
+  old `story`. `schemaVersion` is a load-time SHAPE adapter, not a per-field migration hook, so
+  "just migrate it" means inventing a mechanism and silently rewriting the user's chapter text on
+  their running server. Ship the behaviour, state the residue, let the user choose.
+- **Measure the reported artefact against a SIBLING that worked.** The two suppressed chapters
+  looked like a field-labelling problem until a third chapter from the same photographed sign turned
+  up with `caption` = heading and `inScene` = body, extracted correctly. That one comparison
+  reclassified the failure from "the user filled in the wrong box" to "the extraction returned only
+  the headline" — a different open item, and one nothing yet detects.
 
 **Earned at `v88_s`:**
 

@@ -2424,6 +2424,175 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_ab — an image description is no longer suppressed by a headline, and the story rule has one home
+
+**Closes open item 3** (*"an image DESCRIPTION becomes unreachable once the panel has any extracted
+text"*), the last of the three items carried into this session needing a ruling. **ZERO `ui.json`
+keys** — the review card's four labels (`form.image_title_ph`, `form.image_caption_ph`,
+`form.image_scene_ph`, `form.image_description_lbl`) were all worded neutrally by `v88_y` and none
+of them encoded the fallback semantics, so the ruling change needed no new string and no re-wording
+of an existing one. The user's budget this session was "tell me each key before adding it"; nothing
+had to be asked for.
+
+### The measurement came first, and it sharpened the question the previous cut had framed
+
+`v88_aa` handed this over with one example. Measured across the whole store before proposing
+anything:
+
+| | count |
+|---|---|
+| chapters carrying `comicPanels` | 18 (**every one of them single-panel**) |
+| panels with any `description` at all | 3 |
+| → description SUPPRESSED by extracted text | **2** |
+| → description used as the story (the `v87_l` fallback firing) | 1 |
+| panels with BOTH `caption` and `inScene` | 6 |
+| panels with a stored `panel.title` | **0 of 18** |
+
+The two suppressed panels are `tp_17883458445860000053` (caption 12 chars, description 128) and
+`tp_17883426979990000196` (12 / 159) — extracted/description length ratios of **0.09 and 0.08**, so
+the suppressed side was never the close call the old ruling implicitly assumed. ⚠️ **And they are
+not user error.** A third chapter from the same photographed sign, `tp_17881715830570000091`, shows
+what a COMPLETE extraction of it looks like: `caption` = the sign's heading *"De Manteling"*,
+`inScene` = the sign's body paragraph. The two broken chapters are the same sign with the body
+simply not extracted — so the failure mode is a PARTIAL EXTRACTION, not a mislabelled field, and
+`v88_y`'s field-confusion fix (correct in itself) could never have reached it.
+
+### The user's four rulings, asked with that measurement in hand
+
+1. **Combine.** The chapter story is extracted text **AND** description, both, always — not a length
+   threshold, not a separate block, not "keep it and expose it". This REPLACES the `v87_l` ruling
+   (*"the description is a fallback when nothing was extracted"*) rather than refining it.
+2. **`caption` / `inScene` stay as they are** — two extraction fields, ONE rendered block. The split
+   is an extraction-time concept and the user chose to keep it that way.
+3. **`panel.title` stays write-only.** It names the chapter at creation and sets `topicAuto:false`;
+   that is a real job, done. Notably it has never once been stored (0 of 18) — it postdates `v88_d`
+   and `v88_y` only just made its field legible.
+4. Keys: propose each one first. None were needed.
+
+### One rule, one home
+
+The combine is a two-line change. What took the work is that **the rule had three copies**, which is
+exactly how `v88_e`/item AY happened (the renderer's copy had never learned that `description`
+counts, so a description-only chapter rendered as images with no text). All three now delegate to a
+new `_comicTextFromFields(fields)`:
+
+- `_comicPanelText(b)` — the wizard's in-flight panel, fields under `b.text`. Now a one-line wrapper.
+- `_comicPanelsHaveText(d)` — the render GATE, reading a saved chapter's flat `comicPanels[i]`.
+- `_comicStoryPanelsHtml(d, o)` — the per-panel renderer, same flat shape.
+
+Separator: extracted and description are joined with a **blank line**, because `_storyParasHtml`
+splits on `/\n\n+/` — that is what makes them the two `<p>` blocks the ruling asked for. `caption`
+and `inScene` keep their SINGLE newline, which is ruling 2 expressed in the same function. Order is
+extracted-first, which also keeps `comicCreateChapter`'s title placeholder (`text.slice(0,40)`)
+reading the lettering rather than a generated scene description.
+
+### ⚠️ The ruling opened a THIRD way for the two copies of the text to disagree
+
+A comic chapter stores its text twice — `story`, and `comicPanels[i]` extracted at upload time.
+Keeping those agreeing has already cost two releases from opposite directions: `v86_g` (a story edit
+left the panel copy stale forever, so the progress card alone kept showing the reported typo) and
+`v88_e` (the panel copy's rule had never learned about `description`). Combining adds a third input,
+and with it two new divergences that the tests would NOT have caught:
+
+1. **Legacy chapters.** An existing chapter's `story` was built under the OLD rule. Re-deriving it
+   under the new one would show the description on the highlighted story panel while the translation
+   view, the text explorer and every lesson — all of which read `story` — would not. **That is item
+   AY's asymmetry exactly, in a new shape**, and it would have landed on the two chapters the user
+   actually reported.
+2. **A story EDIT.** `/api/save-story` collapses an edited story into `caption` and clears
+   `inScene`, its own comment justifying this as *"so the renderer's own join reproduces `story`
+   exactly"*. Under the combine rule that join would append `description` a SECOND time — the
+   description duplicated on screen, caused by the very sync written to keep the two in step.
+
+Both are fixed by one change, not two: **`_comicStoryPanelsHtml` reads `d.story` directly for the
+unambiguous single-panel case** and only derives per panel when there is more than one. Measured
+justification: for all 18 chapters carrying panels the old derivation reproduced `story`
+character-for-character, the sole exception being a panel with no text at all — which never reaches
+this renderer because `_comicPanelsHaveText` gates it to the flat path. **So it is a no-op on every
+chapter that exists today**; what it buys is that no future one can drift. Multi-panel keeps
+deriving, for the same reason `v86_g` scoped its sync to one panel: a flat story string cannot be
+split back across panels.
+
+⚠️ **`v86_g`'s sync is therefore no longer the protection** — `v87_p`'s ruling applied verbatim: the
+sync is KEPT (the stored fields should still describe the chapter honestly), both its sites say in
+their comments that they are an optimisation now rather than the guarantee, and the guarantee is
+pinned where it is observable. The sync deliberately does **not** delete `description`: this project
+has lost a user's generated description once already (item AN), and it does not need to, because
+nothing re-derives on that path any more.
+
+### Three guards were asserting the wrong thing, and one of them twice over
+
+- `unit-comic-extraction` §6c asserted `both === 'Cap\nScene'` under the message *"extracted
+  lettering WINS — the description is never appended to real text"*. Not failing — **asserting the
+  superseded ruling**. Re-scoped to the opposite claim (`v88_s`'s rule again), with the reported
+  12-vs-128 shape as its own case.
+- `unit-comic-story-text` §4's fixture spread a chapter whose `story` and whose panel copy
+  **disagreed** — a state measured never to occur. It passed only because the renderer ignored
+  `story`. Split into the realistic single-panel shape, a multi-panel case that pins the shared rule,
+  the combine end to end, and the story-edit divergence.
+- `e2e-save-story-comic-sync` re-implemented the renderer's join INLINE and claimed the result was
+  *"the renderer's own join"* — **a claim about a function that file never calls**, which this cut
+  made false in two ways at once. A guard that pins a re-implementation cannot fail when the real
+  renderer changes. Re-scoped to what it can honestly observe (the stored fields), with the screen
+  pinned in `unit-comic-story-text`, plus a new fixture carrying a `description` so the sync's
+  interaction with the new rule is covered at all — the three existing fixtures all predate the
+  field and none of them had one.
+
+### ⚠️ A non-vacuity assertion that could NEVER fire, caught by mutation-testing
+
+The first draft of the description-only section asserted `comic-story-panel-text` to claim it had
+reached the per-panel pairing rather than the flat fallback. Mutating `_comicPanelsHaveText` to
+ignore `description` left it **GREEN**: for ONE panel, `_comicPanelsFlatTextHtml` emits the
+*identical* wrapper markup, and with `story === description` the visible text is identical too — the
+two paths are indistinguishable in that fixture, in both markup and text. A proxy marker again
+(`v88_w`'s rule). The gate's claim moved to a MULTI-panel, description-only fixture, where the two
+paths genuinely differ, and the single-panel section now RECORDS that it cannot carry that claim
+rather than pretending to.
+
+A second self-inflicted one is worth recording because it went red on a CORRECT tree: the new
+static-build guard's non-vacuity check used `!html.includes('STATIC_LESSONS =')` to prove the two
+files differ — but `index.html` mentions `STATIC_LESSONS` a dozen times, in
+`typeof STATIC_LESSONS !== 'undefined'` guards. The discriminator has to be something the BUILD
+produces, not something the build merely reads: only `docs/index.html` DECLARES it, and only
+`index.html` still carries `@static-exclude-start`.
+
+### Also fixed: two comments making false claims about the code around them
+
+Rule 35, both found while editing rather than reported:
+
+- The review card said `caption` and `inScene` *"stay separate because `_comicStoryPanelsHtml`
+  renders them separately"*. **That renderer has always joined them.** The sentence was the stated
+  justification for keeping two fields, so it is corrected in place with the user's ruling recorded
+  next to it — the real reason they stay separate is that the extraction prompt produces them
+  separately and the review card is where a mis-assignment gets corrected.
+- `_comicPanelText`'s own header still quoted the `v87_l` fallback ruling as current. The superseded
+  ruling is now quoted AS superseded, with the measurement that replaced it.
+
+### Guard for the published build
+
+`_comicTextFromFields` is a new client helper added near the comic wizard — the exact accident
+`v88_r` found, where `_backToChapterProgress` sat inside the `@static-exclude` region and was a
+`ReferenceError` in `docs/index.html` for four releases while every guard read the source file.
+`unit-comic-extraction` §6d asserts the built file DEFINES all three functions and carries **no
+surviving copy** of the `v87_l` expression (an absence over the whole file, `v88_s`'s rule).
+
+**Ten mutations red**: the old fallback rule restored; a single-newline separator; description-first
+ordering; `caption`/`inScene` split into two blocks; the renderer re-deriving instead of reading
+`d.story`; the gate ignoring `description`; the renderer ignoring `description` on the multi-panel
+path; the server sync deleting `description`; and two on the published build (the helper renamed
+away, and the old expression left in place).
+
+### ⚠️ What this does NOT do — the two reported chapters keep their current story
+
+The change is to how a chapter's text is FORMED and RENDERED, not a rewrite of stored data.
+`tp_17883458445860000053` and `tp_17883426979990000196` still have `story: "De Manteling"`, and the
+renderer still shows exactly that, because the single-panel path reads `story`. **This is deliberate
+and is the honest scope of a behaviour ruling**: `schemaVersion` is a load-time shape adapter, not a
+per-field migration hook, so applying the new rule retroactively would mean either inventing a
+migration mechanism or silently rewriting the user's own chapter text on their running server.
+Neither was asked for. Each is a ~10-second fix through the existing story-repair UI, and the
+description is intact in `comicPanels[0].description` for both — **put to the user at the handover.**
+
 ## ✅ v88_aa — card 3's Generate generates, instead of bouncing back to the confirmation popover
 
 **User report**: *"I remember for a recent image-based generation that card 3 actually led back to

@@ -40,6 +40,19 @@ const { boot, post, assert } = require('./lib');
         story: 'Just a plain story.',
         lessons: [],
       },
+      // v88_ab: a single-panel chapter created under the COMBINE rule — its story is the extracted
+      // heading plus the generated description, and the panel still carries `description` of its
+      // own. This is the shape that makes the sync's interaction with the new rule observable; the
+      // three chapters above all predate it and none of them has a description at all.
+      {
+        id: 'tp_desc', topic: 'Manteling', lang: 'nl', srcLang: 'de', difficulty: 1,
+        story: 'De Manteling\n\nEen landschap met heuvels en struiken.',
+        comicPanels: [
+          { x1: 0, y1: 0, x2: 100, y2: 100, caption: 'De Manteling', inScene: '',
+            description: 'Een landschap met heuvels en struiken.' },
+        ],
+        lessons: [],
+      },
     ],
     storylines: [], flags: {}, progress: {},
   } });
@@ -56,9 +69,15 @@ const { boot, post, assert } = require('./lib');
     assert(saved1.story === corrected, 'story field itself is updated');
     assert(saved1.comicPanels[0].caption === corrected, 'comicPanels[0].caption is synced to the FULL corrected story: ' + JSON.stringify(saved1.comicPanels[0]));
     assert(!('inScene' in saved1.comicPanels[0]), 'comicPanels[0].inScene is CLEARED, not left holding stale text alongside the synced caption');
-    // Reconstructs the renderer's own [caption, inScene].filter(Boolean).join(\'\\n\') exactly:
-    const rendered = [saved1.comicPanels[0].caption, saved1.comicPanels[0].inScene].filter(Boolean).join('\n');
-    assert(rendered === corrected, 'the renderer\'s own caption+inScene join reproduces the corrected story EXACTLY, not the stale original');
+    // ⚠️ v88_ab RE-SCOPED THIS ASSERTION. It re-implemented the renderer's join inline and claimed
+    // the result was "the renderer's own join" — a claim about a function this file never calls,
+    // which v88_ab made false in two ways at once: the renderer now reads `d.story` for a
+    // single-panel chapter, and the shared text rule appends `description` as well. A guard that
+    // pins a re-implementation cannot fail when the real renderer changes, which is exactly what
+    // happened here. What this file can honestly observe is the STORED FIELDS; the screen is pinned
+    // where it is observable, in unit-comic-story-text.test.js §4d.
+    const joined = [saved1.comicPanels[0].caption, saved1.comicPanels[0].inScene].filter(Boolean).join('\n');
+    assert(joined === corrected, 'the stored caption+inScene carry the corrected story exactly, with no stale remnant');
     console.log('  single-panel chapter: a story edit syncs comicPanels[0] (caption+inScene) to match: OK');
 
     // 2) Multi-panel chapter: deliberately NOT synced (no way to know which edited sentence belongs
@@ -87,6 +106,28 @@ const { boot, post, assert } = require('./lib');
     const after = env.readStore().topics.find(t => t.id === 'tp_single').comicPanels[0].caption;
     assert(after === before, 'an unchanged story is a no-op for comicPanels too (still the already-synced caption)');
     console.log('  re-saving an UNCHANGED story is a no-op (guarded by the same _storyChanged check): OK');
+
+    // 5) v88_ab: a chapter whose panel carries a DESCRIPTION. The sync collapses the edited story
+    //    into `caption` and clears `inScene` — and DELIBERATELY leaves `description` alone. Both
+    //    halves matter and each would be a real defect the other way round:
+    //      • deleting it would repeat item AN, which is the loss the user reported in the first
+    //        place ("a finished description that i can't access anymore");
+    //      • but leaving it means the stored fields no longer re-derive to `story` under the
+    //        combine rule (caption already contains the description text, and re-deriving would
+    //        append it a second time). That is fine ONLY because nothing re-derives for a
+    //        single-panel chapter any more — the renderer reads `story`. If someone reinstates a
+    //        re-derivation on that path, unit-comic-story-text.test.js §4c/§4d go red, not this.
+    const edited = 'De Manteling\n\nEen landschap met heuvels, struiken en een houten hek.';
+    const r5 = await post(sport, '/api/save-story', { topic: 'Manteling', story: edited });
+    assert(r5.status === 200, 'save-story succeeds for the description-carrying chapter (got ' + r5.status + ')');
+    const saved5 = env.readStore().topics.find(t => t.id === 'tp_desc');
+    assert(saved5.story === edited, 'story field itself is updated');
+    assert(saved5.comicPanels[0].caption === edited,
+      'caption takes the FULL edited story, description text included');
+    assert(!('inScene' in saved5.comicPanels[0]), 'inScene is cleared as for any single-panel sync');
+    assert(saved5.comicPanels[0].description === 'Een landschap met heuvels en struiken.',
+      'and `description` is PRESERVED, not deleted — the user has lost a generated description once already (item AN)');
+    console.log('  a story edit preserves the panel description while syncing caption (v88_ab): OK');
 
     console.log('e2e-save-story-comic-sync: ALL PASSED');
   } catch (e) {

@@ -89,16 +89,130 @@ const strip = h => String(h).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim(
       console.log('  a chapter with real panel lettering still gets per-panel pairing: OK');
     }
 
-    // ── 4. A panel whose only content is a DESCRIPTION now renders that description ────────────
-    // Chapters created from v88_d onward persist the field; before this cut it was never read here.
+    // ── 4. A panel whose only content is a DESCRIPTION still renders that description ──────────
+    // Chapters created from v88_d onward persist the field; before v88_e it was never read here.
+    //
+    // ⚠️ v88_ab REBUILT THIS SECTION, and the reason is worth stating: its fixture spread `__D`
+    // (whose story is the heideveld text) over a panel holding an UNRELATED description, i.e. a
+    // chapter whose `story` and whose panel copy disagreed. Measured across the whole store at the
+    // v88_ab cut, that state does not occur: for all 18 chapters carrying panels the panel
+    // derivation reproduced `story` character-for-character, the sole exception being a panel with
+    // no text at all (which this renderer never sees — `_comicPanelsHaveText` gates it to the flat
+    // path). A real description-only chapter has `story === description`, because v87_l's fallback
+    // is what put the description there. The old fixture passed only because the renderer
+    // re-derived the text and ignored `story`; v88_ab made the single-panel case read `story`
+    // directly, precisely so the two can never disagree on screen.
+    //
+    // So the claim is split in two, and NEITHER half is the old vacuous one:
+    //   4a — the realistic single-panel shape, pinning the GATE (a description-only panel must be
+    //        admitted to the per-panel pairing at all, which is `_comicPanelsHaveText`'s job).
+    //   4b — a MULTI-panel chapter, where per-panel derivation is the only thing that can produce
+    //        each panel's text, pinning `_comicTextFromFields` inside the renderer.
+    {
+      const C = client();
+      const DESC = 'Een bord bij een hek.';
+      const html = C.run(`_storyBodyHtml({ ...__D, story: ${JSON.stringify(DESC)}, comicPanels: [
+        { x1:0,y1:0,x2:10,y2:10, caption:'', inScene:'', description:${JSON.stringify(DESC)},
+          image:'data:image/jpeg;base64,P1' } ] }, {})`);
+      assert.ok(strip(html).includes(DESC),
+        "the panel description is rendered as that panel's text");
+      // ⚠️ NO non-vacuity assertion for the GATE here, and that is deliberate — it CANNOT have one.
+      // A first draft asserted `comic-story-panel-text` to claim this reached the per-panel pairing
+      // rather than the flat fallback. Mutation-testing `_comicPanelsHaveText` (made to ignore
+      // `description`) left it GREEN: for ONE panel, `_comicPanelsFlatTextHtml` emits the identical
+      // comic-story-panels / comic-story-panel / comic-story-panel-text wrapper, so the two paths
+      // are indistinguishable in both markup AND text once story === description. That marker was a
+      // proxy that could never fire. The gate's real claim is asserted in §4b-gate below, in the
+      // multi-panel fixture where the two paths genuinely produce different output.
+      console.log('  a description-only PANEL renders its description: OK');
+    }
+
+    // ── 4b-gate. _comicPanelsHaveText: a description-only chapter still gets PER-PANEL pairing ──
+    // The gate decides between per-panel pairing (each panel's text beside its own image) and the
+    // flat path (all images, then the whole `story` once). Those differ only when there is MORE
+    // THAN ONE panel — which is why this is the fixture that can observe it. Both panels here carry
+    // nothing but a description, so if the gate stopped counting `description` the chapter would
+    // fall to the flat path and render `d.story` instead of the two panel texts.
     {
       const C = client();
       const html = C.run(`_storyBodyHtml({ ...__D, comicPanels: [
         { x1:0,y1:0,x2:10,y2:10, caption:'', inScene:'', description:'Een bord bij een hek.',
-          image:'data:image/jpeg;base64,P1' } ] }, {})`);
-      assert.ok(strip(html).includes('Een bord bij een hek.'),
-        "the panel description is rendered as that panel's text");
-      console.log('  a description-only PANEL renders its description: OK');
+          image:'data:image/jpeg;base64,P1' },
+        { x1:10,y1:0,x2:20,y2:10, caption:'', inScene:'', description:'Een pad door de heide.',
+          image:'data:image/jpeg;base64,P2' } ] }, {})`);
+      const s = strip(html);
+      assert.ok(s.includes('Een bord bij een hek.') && s.includes('Een pad door de heide.'),
+        'both description-only panels render their own text — the gate admitted them');
+      assert.ok(!s.includes('droge heideveld'),
+        'and the chapter story is NOT what was rendered (non-vacuity: this is the per-panel path, not the flat one)');
+      console.log('  _comicPanelsHaveText admits description-only panels to the per-panel path: OK');
+    }
+
+    // ── 4b. MULTI-panel: each panel's OWN text is derived, description included ────────────────
+    // The single-panel shortcut cannot apply here (a flat story string cannot be split back across
+    // panels), so this is the section that pins the renderer's use of the shared text rule.
+    {
+      const C = client();
+      const html = C.run(`_storyBodyHtml({ ...__D, comicPanels: [
+        { x1:0,y1:0,x2:10,y2:10, caption:'HALT', inScene:'', description:'', image:'data:image/jpeg;base64,P1' },
+        { x1:10,y1:0,x2:20,y2:10, caption:'', inScene:'', description:'Een bord bij een hek.',
+          image:'data:image/jpeg;base64,P2' } ] }, {})`);
+      const s = strip(html);
+      assert.ok(s.includes('HALT'), 'the lettering panel shows its lettering');
+      assert.ok(s.includes('Een bord bij een hek.'),
+        'and the description-only panel shows its description — derived per panel, not from d.story');
+      assert.ok(!s.includes('droge heideveld'),
+        'and neither panel falls back to the chapter story (non-vacuity: d.story is NOT what is shown here)');
+      console.log('  a MULTI-panel chapter derives each panel\'s own text, descriptions included: OK');
+    }
+
+    // ── 4c. v88_ab: the COMBINE ruling, end to end on the render side ──────────────────────────
+    // The user's ruling replaced v87_l's `extracted || description` with `extracted + description`.
+    // The reported shape is a photographed sign whose caption came back as the 12-character heading
+    // while the description held a full sentence about the same photo.
+    {
+      const C = client();
+      const CAP = 'De Manteling', DESC = 'Een landschap met heuvels en struiken.';
+      // A chapter created under the new rule: comicCreateChapter builds `story` with
+      // _comicPanelText, so story and panel agree by construction. Built here the same way rather
+      // than hand-written, so the test cannot drift from the function it is about.
+      const story = C.run(`_comicPanelText({ text:{ caption:${JSON.stringify(CAP)}, inScene:'',
+        description:${JSON.stringify(DESC)} } })`);
+      assert.strictEqual(story, CAP + '\n\n' + DESC, 'the chapter text carries both blocks');
+      const html = C.run(`_storyBodyHtml({ ...__D, story: ${JSON.stringify(CAP + '\n\n' + DESC)},
+        comicPanels: [ { x1:0,y1:0,x2:10,y2:10, caption:${JSON.stringify(CAP)}, inScene:'',
+          description:${JSON.stringify(DESC)}, image:'data:image/jpeg;base64,P1' } ] }, {})`);
+      const s = strip(html);
+      assert.ok(s.includes(CAP), 'the sign heading is shown');
+      assert.ok(s.includes('Een landschap met heuvels'),
+        'AND the description is shown — a 12-character heading no longer suppresses it');
+      // It must appear ONCE. Reading `story` (which already contains the description) and ALSO
+      // appending the panel's `description` is the duplication this design exists to prevent, and
+      // it is exactly what the v86_g story-edit sync would have caused.
+      assert.strictEqual(s.split('Een landschap met heuvels').length - 1, 1,
+        'exactly once — not duplicated by the renderer re-appending the panel description');
+      // Two <p> blocks, not one paragraph: _storyParasHtml splits on a blank line.
+      assert.ok((html.match(/<p[ >]/g) || []).length >= 2,
+        'and as two paragraph blocks, which is the blank-line separator doing its job');
+      console.log('  v88_ab: extracted heading AND description both render, once, as two blocks: OK');
+    }
+
+    // ── 4d. v88_ab: a story EDIT reaches the story panel with no panel sync at all ─────────────
+    // v86_g's server-side sync used to be what kept this surface correct after a story edit, and
+    // under the combine rule re-deriving would append `description` a second time. The single-panel
+    // case now reads `d.story`, so the stale panel copy cannot reach the screen. This is that
+    // claim, stated as the divergence it protects against.
+    {
+      const C = client();
+      const html = C.run(`_storyBodyHtml({ ...__D, story:'De gecorrigeerde tekst.', comicPanels: [
+        { x1:0,y1:0,x2:10,y2:10, caption:'De oude OCR-tekst met de typfout', inScene:'',
+          description:'Een oude beschrijving.', image:'data:image/jpeg;base64,P1' } ] }, {})`);
+      const s = strip(html);
+      assert.ok(s.includes('De gecorrigeerde tekst.'), 'the edited story is what the panel shows');
+      assert.ok(!s.includes('typfout'), 'the stale panel caption does not reach the screen');
+      assert.ok(!s.includes('Een oude beschrijving.'),
+        'and neither does the stale panel description — no re-derivation happens for one panel');
+      console.log('  a single-panel chapter shows d.story, so a stale panel copy cannot leak: OK');
     }
 
     // ── 5. A chapter with NO comicPanels is completely unchanged ──────────────────────────────

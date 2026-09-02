@@ -250,7 +250,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_aa';
+const APP_VERSION  = 'v88_ab';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -8959,6 +8959,17 @@ http.createServer(async (req, res) => {
       // `story` exactly. A chapter with MULTIPLE panels has no way to know which edited sentence
       // belongs to which panel from a single flat story string — deliberately left unfixed rather than
       // guessed at; flagged in roadmap_v86.md as a genuine, harder follow-up.
+      // ⚠️ v88_ab: that last sentence — "so the renderer's own join reproduces `story` exactly" —
+      // is NO LONGER what keeps this correct, and saying so is the point of this note. The combine
+      // ruling means a panel's derived text is `[caption, inScene].join('\n')` PLUS `description`,
+      // so collapsing an edited story into `caption` alone would re-derive as story + description:
+      // the description duplicated on screen. The fix was NOT to also delete `description` here —
+      // that is a user's generated text and this project has lost it once already (item AN) — but
+      // to stop the render path re-deriving at all for the single-panel case, which is exactly the
+      // ambiguity this block scopes itself to. `_comicStoryPanelsHtml` now reads `d.story` directly
+      // when there is one panel, so a story edit reaches that surface with no sync at all.
+      // This sync is KEPT because the stored fields should still describe the chapter honestly for
+      // everything else that reads them, but it is an optimisation now, not the protection.
       if (_storyChanged && Array.isArray(saved.comicPanels) && saved.comicPanels.length === 1) {
         saved.comicPanels[0].caption = story;
         delete saved.comicPanels[0].inScene;
@@ -9691,6 +9702,10 @@ http.createServer(async (req, res) => {
       // multi-panel is deliberately left unfixed (item O, genuinely ambiguous which panel an edited
       // sentence belongs to).
       const _storyChangedQc = (t.story !== acceptedStory);
+      // ⚠️ v88_ab: same note as /api/save-story's copy of this sync — re-deriving the panel text is
+      // no longer how the story surface stays correct for a single-panel chapter (it reads
+      // `d.story`), because the combine ruling would make a re-derivation append `description` a
+      // second time. Kept to keep the stored fields honest, not as the protection.
       if (_storyChangedQc && Array.isArray(t.comicPanels) && t.comicPanels.length === 1) {
         t.comicPanels[0].caption = acceptedStory;
         delete t.comicPanels[0].inScene;
