@@ -2424,6 +2424,80 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_s — the chapter-wise progress lock is GONE, on both surfaces that carried it
+
+**User request** (the second half of the same message `v88_r` served, answered "yes, as a second
+release" when the two surfaces were put to them): *"we remove the chapter-wise progress locking as
+the default play mode for students. Students can ALSO browse through chapters."*
+
+`v88_r` made the progress card's → browse freely. A 🔒 on the storyline screen would have
+contradicted it on the one surface where a student PICKS a chapter — and only in the published
+build, where the student actually is.
+
+### Both copies of the same gate went, and finding the second one was the point
+
+Neither fired live: both are scoped `!APP.info.canGenerate && !APP._teacherMode`, and `canGenerate`
+is true on a running server. **The published `docs/index.html` is where they had force.**
+
+1. **`_renderChapterCard`'s `_isLocked`** — the visible 🔒 overlay. Gone with it: the transitive
+   "something earlier is unfinished" flag threaded down `_renderChain`'s recursion (`v69.2d`), the
+   predecessor-completion test (`v74_k`), the fail-closed `!prevTopic` clause (`v46` Bug #2), and the
+   started-chapter helper that existed only to stop the gate confiscating work in progress. **What
+   remains is not a progress gate at all**: `!isFirst && _sets.length === 0` — a chapter whose
+   lessons have not been generated has nothing behind it to open, which is a fact about the DATA.
+2. **`_sbChapterTarget`** — the same rule wearing different clothes. A student clicking a storyboard
+   panel for a "locked" chapter was silently REDIRECTED to the last unlocked incomplete chapter,
+   with a toast to explain it. **A click that opens a different chapter than the one clicked is the
+   exact opposite of what the ruling asks for.** The `completed` and `free` parameters went with it;
+   the function is now clamp-and-return, kept as a NAME because `_sbNavClick` and
+   `_sbMarkCurrentPanels` share the panel→chapter mapping and "the frame and the link cannot
+   disagree" is pinned at the source layer.
+
+**Removing one and leaving the other is how a rule survives its own deletion**, so the cross-check
+that both went lives in one place (`unit-storyline-chapter-access` §3).
+
+**One `ui.json` key REMOVED**, from all 33 languages: the resume toast explained a redirect that no
+longer happens. Removing costs the user nothing to translate; leaving it would have left a dead
+string plus a guard asserting its existence — decoration.
+
+### Three test files needed re-scoping, and one of them was named for the deleted rule
+
+- **`unit-storyline-lock-hardening` → `unit-storyline-chapter-access`** (renamed via `git mv`,
+  rewritten). Its assertions did not FAIL — they became assertions of the wrong thing, which is the
+  worse outcome. The new claim is stronger and easier to break: **no progress state may reach the
+  predicate at all**, asserted as an ABSENCE over the whole client, because a deleted rule must not
+  survive as a dead branch some fixture happens not to reach. Its chain-REPAIR half is untouched:
+  chaining unresolved chapters to their storyline-order predecessor shapes the connector lines and
+  render order, which the lock's removal does not affect.
+- **`unit-storyboard-nav` §3** — every fixture that used to be REDIRECTED now asserts the clicked
+  panel is the chapter opened. §4/§5's two lock assertions became absence assertions (no `free`
+  flag recomputed, no resume string anywhere).
+- **⚠️ `unit-live-static-progress-parity`, re-anchored (rule 29).** It observed `v74_i`'s
+  shared-completion fix THROUGH the lock — "the chapter after a completed one opens" — and its own
+  non-vacuity check asserted that a later chapter is *still locked*, i.e. that the deleted rule is
+  still running. **The claim did not change, only the mechanism.** `chapterComplete` still decides
+  the CONNECTOR LINE into the next chapter, and `v74_i`'s defect shows there just as sharply: under
+  the raw `every(done-flag)` rule a mixed-driven chapter can never be finished, because the pooled
+  prep lessons it hides never receive a done-flag. So the observation moved to `path-line done`
+  (exactly one, which is non-vacuous in both directions: a broken rule gives 0 or all), and the lock
+  reading became `deepStrictEqual(locked, all-false)` — `v88_s`'s own claim carried into the static
+  projection. **Mutation-tested both ways**: reinstating the lock, RED; swapping the connector back
+  to the raw done-flag rule, RED.
+
+**⚠️ Two comments had to be reworded** because they spelled identifiers the new guards SWEEP for
+(`chainBlocked`, the resume key). Standing rule: a comment near a source-scanned pattern must not
+spell the pattern — it fails the very check it documents. Caught by the guards, not by review.
+
+**Verified live** on the user's own server with `canGenerate` forced false and teacher mode off, on
+a real 6-chapter storyline: **six 🔒 glyphs and ten inert card wrappers before, one glyph and zero
+inert wrappers after** — and the survivor is inside `.storyline-story`, the full-story row's own
+gate, not a chapter card. That gate is the WITHIN-chapter progression the user explicitly kept.
+
+**Guard**: `unit-storyline-chapter-access` (4 checks, rewritten) + `unit-storyboard-nav` §3/§4/§5 +
+`unit-live-static-progress-parity`. **Eight mutations red** — the predecessor lock reinstated, the
+"no lessons yet" case dropped as well, the first chapter made markable, the storyboard redirect
+reinstated, the resume key resurrected, the chain flag threaded again, and the parity file's two.
+
 ## ✅ v88_r — the progress card's arrows BROWSE chapters; a new ▶ plays. Chapter-wise locking is gone for students.
 
 **User request**: *"Can we make the new teacher play mode also available for students? Let's allow to

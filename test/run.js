@@ -93,7 +93,7 @@ run('unit: static build markers', 'node', [path.join(__dirname, 'unit-static-mar
 run('unit: generation metadata (_genMeta everywhere)', 'node', [path.join(__dirname, 'unit-genmeta.test.js')]);
 run('unit: edit-history report (v46 #12)', 'node', [path.join(__dirname, 'unit-report-edits.test.js')]);
 run('unit: chapter-link repair (v46 bug #2)', 'node', [path.join(__dirname, 'unit-chapter-link-repair.test.js')]);
-run('unit: storyline lock hardening (v46 bug #2)', 'node', [path.join(__dirname, 'unit-storyline-lock-hardening.test.js')]);
+run('unit: storyline chapter access — the progress lock is gone (v88_s, was v46 bug #2)', 'node', [path.join(__dirname, 'unit-storyline-chapter-access.test.js')]);
 run('unit: japanese furigana paste + tokenizer (v47)', 'node', [path.join(__dirname, 'unit-furigana.test.js')]);
 run('unit: intro learn-the-script course (v48)', 'node', [path.join(__dirname, 'unit-intro-script.test.js')]);
 run('unit: QC dispatch — synonyms/word_forms (v48)', 'node', [path.join(__dirname, 'unit-qc-dispatch.test.js')]);

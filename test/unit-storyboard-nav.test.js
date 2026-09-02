@@ -99,7 +99,17 @@ const compose = new Function(schemeConsts + '\n' + ext(server, 'composeStoryboar
 }
 console.log('  composer data-chapter: integer-clamped, absent when invalid, injection-proof: OK');
 
-// ── 3. Lock/resume resolution (client, pure) — same rule as the chapter cards ─
+// ── 3. Panel → chapter resolution (client, pure) ─────────────────────────────
+// ⚠️ v88_s (user): THIS SECTION USED TO ASSERT A LOCK, and the lock is gone. A student clicking a
+// panel for a chapter whose predecessor was unfinished was silently redirected to the last unlocked
+// incomplete chapter — the storyline screen's chapter-wise progress gate, wearing different clothes.
+// "We remove the chapter-wise progress locking as the default play mode for students. Students can
+// ALSO browse through chapters": a click that opens a chapter other than the one clicked is exactly
+// what that ruling forbids.
+//
+// The assertions were REWRITTEN to the new claim rather than deleted, and the new claim is the
+// stronger one: every fixture that used to be redirected must now open EXACTLY what was clicked.
+// Each one below is a case the old rule got wrong.
 const _sbChapterTarget = new Function(ext(client, '_sbChapterTarget') + '\nreturn _sbChapterTarget;')();
 {
   const L = id => ({ id });
@@ -109,36 +119,28 @@ const _sbChapterTarget = new Function(ext(client, '_sbChapterTarget') + '\nretur
     chap('B', [L('b1')]),
     chap('C', [L('c1')]),
   ];
-  const done = ids => Object.fromEntries(ids.map(i => [i, { total: 1, correct: 1 }]));
-  // Teacher / canGenerate: free navigation, no resume redirects.
-  assert.strictEqual(_sbChapterTarget(chaps, {}, 3, true).chapter.topic, 'C', 'free mode: direct deep link');
-  assert.strictEqual(_sbChapterTarget(chaps, {}, 3, true).resumed, false, 'free mode: never "resumed"');
-  // Student, nothing done: chapter 1 opens directly; chapters 2/3 are locked → resume at 1.
-  let r = _sbChapterTarget(chaps, {}, 1, false);
-  assert.ok(r.chapter.topic === 'A' && !r.resumed, 'student: first chapter always open');
-  r = _sbChapterTarget(chaps, {}, 3, false);
-  assert.ok(r.chapter.topic === 'A' && r.resumed, 'student: locked panel resumes at first incomplete chapter');
-  // Chapter A complete: B unlocks; a click on C resumes at B (first unlocked incomplete).
-  const progA = { A: done(['a1', 'a2']) };
-  r = _sbChapterTarget(chaps, progA, 2, false);
-  assert.ok(r.chapter.topic === 'B' && !r.resumed, 'predecessor complete → target unlocked');
-  r = _sbChapterTarget(chaps, progA, 3, false);
-  assert.ok(r.chapter.topic === 'B' && r.resumed, 'still-locked C resumes at B');
-  // Fail closed exactly like the cards: a chapter with NO lessons is locked even when its
-  // predecessor is complete — the resume lands on the last playable position.
+  // Nothing played anywhere — the state in which the old rule redirected EVERY panel but the first.
+  assert.strictEqual(_sbChapterTarget(chaps, 1).chapter.topic, 'A', 'panel 1 opens chapter 1');
+  assert.strictEqual(_sbChapterTarget(chaps, 2).chapter.topic, 'B',
+    'panel 2 opens chapter 2 with NOTHING played — the old rule sent this to chapter 1');
+  assert.strictEqual(_sbChapterTarget(chaps, 3).chapter.topic, 'C',
+    'and panel 3 opens chapter 3, three chapters ahead of any progress');
+  // A chapter with no lessons yet is still opened, not redirected: the storyline screen's own
+  // remaining "no lessons generated" case is a CARD-level affordance, not a navigation trap.
   const gappy = [chap('A', [L('a1')]), chap('B', []), chap('C', [L('c1')])];
-  r = _sbChapterTarget(gappy, { A: done(['a1']) }, 2, false);
-  assert.ok(r.resumed, 'lesson-less chapter is locked (fail closed)');
-  // Out-of-range panel targets clamp instead of throwing.
-  assert.strictEqual(_sbChapterTarget(chaps, {}, 99, true).chapter.topic, 'C', 'target clamped high');
-  assert.strictEqual(_sbChapterTarget(chaps, {}, -5, true).chapter.topic, 'A', 'target clamped low');
-  assert.strictEqual(_sbChapterTarget([], {}, 1, true), null, 'empty storyline → null');
-  // Everything complete: a locked-computation never strands — falls back to chapter 1.
-  const allDone = { A: done(['a1', 'a2']), B: done(['b1']), C: done(['c1']) };
-  r = _sbChapterTarget(chaps, allDone, 3, false);
-  assert.ok(r.chapter.topic === 'C' && !r.resumed, 'all complete: every chapter open');
+  assert.strictEqual(_sbChapterTarget(gappy, 2).chapter.topic, 'B',
+    'a chapter with no lessons opens too — the click is honoured, not rerouted');
+  // Clamping and the empty case are unchanged, and still the only shaping this function does.
+  assert.strictEqual(_sbChapterTarget(chaps, 99).chapter.topic, 'C', 'target clamped high');
+  assert.strictEqual(_sbChapterTarget(chaps, -5).chapter.topic, 'A', 'target clamped low');
+  assert.strictEqual(_sbChapterTarget([], 1), null, 'empty storyline → null');
+  // ⚠️ Non-vacuity, at the SOURCE layer: the lock could not survive as dead branches that these
+  // pure-function assertions happen not to reach. Nothing in this function may consult progress.
+  const fn = ext(client, '_sbChapterTarget');
+  assert.ok(!/completed|_locked|resumed|free/.test(fn),
+    'the resolver consults no progress state at all — no lock survives as an unreached branch');
 }
-console.log('  lock/resume: chapter-card rule mirrored, locked panels resume, fail closed: OK');
+console.log('  panel → chapter: the clicked panel is the chapter opened, with no progress gate: OK');
 
 // ── 4. Wiring: one delegated listener, mapping shared by click + framing ──────
 {
@@ -152,10 +154,16 @@ console.log('  lock/resume: chapter-card rule mirrored, locked panels resume, fa
   const mark = ext(client, '_sbMarkCurrentPanels');
   assert.ok(/_sbPanelChapter\(/.test(mark), 'current-chapter framing uses THE SAME mapping (frame and link cannot disagree)');
   const open = ext(client, 'openStoryboardChapter');
-  assert.ok(/_sbChapterTarget\(/.test(open), 'open resolves locks via _sbChapterTarget');
-  assert.ok(/APP\._teacherMode/.test(open) && /canGenerate/.test(open), 'free navigation = teacher mode or canGenerate');
+  assert.ok(/_sbChapterTarget\(/.test(open), 'open resolves the panel through _sbChapterTarget');
+  // v88_s: the two lines that used to sit here asserted the LOCK — that the caller computed a
+  // `free` flag from teacher mode / canGenerate, and that a redirect explained itself with a toast.
+  // Both are now assertions of ABSENCE, which is the only way to state "the gate is gone" at the
+  // layer where it lived: a caller that recomputed either would be reintroducing it.
+  assert.ok(!/canGenerate/.test(open),
+    'the caller no longer computes a "free navigation" flag — every viewer navigates freely');
+  assert.ok(!/storyboard\.locked_resume/.test(open) && !/resumed/.test(open),
+    'and there is no resume redirect left to explain');
   assert.ok(/APP\._slScreen = \{ chainId/.test(open), 'sets the storyline context so the lesson-set header names the right storyline');
-  assert.ok(/storyboard\.locked_resume/.test(open), 'resume redirect explains itself with a toast');
   assert.ok(/loadSaved\(/.test(open), 'opens through the existing loadSaved/resume machinery — no second progress system');
   // The composer emits panels as direct <g> children; the handler indexes exactly those.
   assert.ok(/g\.parentNode !== outer/.test(nav), 'only top-level panel groups are click targets');
@@ -183,9 +191,14 @@ console.log('  delegation + shared mapping between click, framing and lock resol
   assert.ok(/\{chapters\}/.test(prompts.storylineStoryboard.system), 'prompt names the real chapter count');
   assert.ok(/fillPrompt\(PROMPTS\.storylineStoryboard\.system, \{ S, chapters: topics\.length, maxPanels \}\)/.test(server),
     'generator fills the chapter count (and v57 panel budget) into the system prompt');
-  // i18n: the resume toast key exists in en (en ONLY — translate-ui.js fills the rest).
+  // v88_s: the resume-toast key was REMOVED from all 33 languages along with the redirect it
+  // explained. Asserted as an absence so a future reader does not resurrect a string for a
+  // behaviour that no longer exists.
   const ui = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
-  assert.ok(ui.en['storyboard.locked_resume'], 'ui.json en has storyboard.locked_resume');
+  assert.ok(!ui.en['storyboard.locked_resume'],
+    'the resume-toast key is gone from ui.json — no dead string for a deleted redirect');
+  assert.ok(!/storyboard\.locked_resume/.test(client),
+    'and nothing in the client still asks for it');
 }
 console.log('  render-site hooks live+static, prompt chapter field, i18n key: OK');
 

@@ -245,29 +245,37 @@ function playThrough(list, topics, chapterIds) {
     _renderStorylineScreen('ch1', encodeURIComponent(${JSON.stringify(names2)}.join('|')), ${JSON.stringify(names2)});
     true;`, 'play-first');
   const html2 = C2.run(`(function(){ var e=document.getElementById('sl-screen-body'); return e ? e.innerHTML : ''; })()`, 'h');
-  // v76_d: this counted TOTAL 🔒 and required exactly 1, which silently encoded the shape of a
-  // TWO-chapter storyline (ch2 open + the full-story row locked). The corpus is not a constant
-  // (harness rule): the first chain the selector above matches is now SIX chapters, where ch3..ch6
-  // are locked *correctly* — their own predecessors are unplayed — so the count was 5 and the
-  // product was right. Assert the CLAIM instead: the chapter AFTER a completed one opens.
-  // Chapter cards carry a locked/unlocked wrapper (index.html ~7490); read that, in render order.
+  // ⚠️ RE-ANCHORED AT v88_s. This block used to read the chapter cards' locked/unlocked wrappers,
+  // and its claim was "the chapter AFTER a completed one OPENS" — v74_i's shared-completion fix,
+  // observed through the chain LOCK. The user removed that lock ("we remove the chapter-wise
+  // progress locking as the default play mode for students"), which does two things to this block:
+  // its positive assertion became trivially true, and its own non-vacuity check — "a chapter whose
+  // predecessor is unplayed is still locked" — became an assertion that the deleted rule is still
+  // running. Rule 29: when a pin breaks, ask whether the CLAIM changed or only the MECHANISM.
+  //
+  // The claim did not change. `chapterComplete`'s shared rule still decides two things the screen
+  // draws — the CONNECTOR LINE into the next chapter, and the chapter card's own bar colour — and
+  // v74_i's defect shows there just as sharply: under the raw `every(done-flag)` rule a
+  // mixed-driven chapter can never be "finished", because the pooled prep lessons it hides never
+  // receive a done-flag. So the observation moves to the connector line, and the LOCK becomes an
+  // assertion of ABSENCE, which is v88_s's own claim carried into the static projection.
   const cards = [];
   const wrapRe = /<div style="position:relative;border-radius:var\(--radius-xl\);overflow:hidden(;opacity:\.45;pointer-events:none)?">/g;
   for (let mm; (mm = wrapRe.exec(html2)) !== null; ) cards.push({ locked: !!mm[1], at: mm.index });
   assert.ok(cards.length >= 2,
     `the storyline screen rendered its chapter cards (found ${cards.length})`);
-  assert.strictEqual(cards[0].locked, false, 'the played chapter itself is open');
-  assert.strictEqual(cards[1].locked, false,
-    'the chapter AFTER a completed one opens — the shared-rule fix (v74_i); under the raw '
-    + '`every(done)` rule a mixed/hidden-lesson chapter is never "finished" and this stayed locked');
-  // Non-vacuity, evaluated on the data this assertion actually runs against (session-28 rule 3):
-  // if NOTHING is ever locked the check above is meaningless. A chain longer than two must still
-  // lock the chapter whose own predecessor is unplayed.
-  if (cards.length > 2) {
-    assert.strictEqual(cards[2].locked, true,
-      'a chapter whose OWN predecessor is unplayed is still locked — otherwise the chain rule is '
-      + 'not running at all and the assertion above passes for the wrong reason');
-  }
+  assert.deepStrictEqual(cards.map(c => c.locked), cards.map(() => false),
+    'v88_s: NO chapter card is locked in the static build — not the played one, not the one after '
+    + 'it, and not the ones whose predecessors are untouched. A student browses the whole deck');
+  // v74_i, at the layer where the shared rule is still observable. The line BEFORE chapter 2 is
+  // drawn `done` because chapter 1 is complete; every later line is not, which is the non-vacuity
+  // this block needs — if the rule were not running, the count would be 0 (nothing is complete) or
+  // all of them (everything reads complete), never exactly one.
+  const doneLines = (html2.match(/class="path-line done"/g) || []).length;
+  assert.strictEqual(doneLines, 1,
+    `exactly one connector line is drawn "done" — the one into the chapter after the completed `
+    + `first (found ${doneLines}). Under the raw every(done-flag) rule a mixed-driven chapter is `
+    + `never finished and this would be 0`);
   // The full story stays locked while later chapters are unplayed; it renders its own lock row
   // (index.html ~7608) rather than a card overlay.
   const fullStoryLocks = (html2.match(/<span>🔒<\/span>/g) || []).length;

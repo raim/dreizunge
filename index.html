@@ -11557,16 +11557,13 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
     (_succMap[parent.topic] = _succMap[parent.topic] || []).push(l.topic);
   });
 
-  // A chapter counts as STARTED once any of its lessons has a progress record. Used by the lock
-  // below: the gate exists to stop a learner reading AHEAD, not to confiscate work already done.
-  const _chapterStarted = (t) => {
-    const p = _slCompleted[t] || {};
-    return (byTopic[t]?.lessons || []).some(ls => p[ls.id]);
-  };
+  // v88_s: a "has the learner started this chapter" helper lived here, to keep the progress lock
+  // from confiscating work already in progress. With the lock gone (see `_isLocked` below) it had
+  // no readers left, so it went with it rather than lingering as a helper nothing calls.
   // v69_l: one definition. Was "every lesson has a done-flag", which disagreed with the completion
   // card (coverage vs the pass mark) and let a below-mark chapter unlock the next one.
   const _chapterComplete = (t) => chapterComplete(byTopic[t]);
-  function _renderChapterCard(topic, prevTopic, isFirst, chainBlocked) {
+  function _renderChapterCard(topic, prevTopic, isFirst) {
     const s = byTopic[topic];
     const _done = _slCompleted[topic] || {};
     // v71_w: COUNTED lessons, not every lesson. A mixed-driven chapter hides the siblings the mixed
@@ -11592,30 +11589,23 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
       out += '<div class="path-line' + (_prevAllDone ? ' done' : '') + '" style="height:20px"></div>';
     }
     if (!s) return out + '<div class="lesson-node" style="opacity:.5;width:100%;box-sizing:border-box">' + escHtml(topic) + '</div>';
-    // v69.2d (user-reported: "progress skipped the third, still locked chapter"). Two changes:
-    //  • TRANSITIVE: the gate used to inspect only the IMMEDIATE predecessor, so a chapter could be
-    //    unlocked while an ancestor was locked — a locked card sandwiched between reachable ones.
-    //    Exactly what the report showed: adding a lesson to chapter 2 made it incomplete, which
-    //    locked chapter 3, while chapter 4 stayed open because ITS predecessor (3) still had all
-    //    its done-flags. `chainBlocked` now carries "something earlier is unfinished" down the chain.
-    //  • NEVER RE-LOCK STARTED WORK: the gate stops a learner reading AHEAD; it must not confiscate
-    //    a chapter they have already worked on. Without this, making an earlier chapter incomplete
-    //    (by adding a lesson to it, as here) would have locked chapters the learner was midway
-    //    through. Only untouched chapters behind an unfinished chain stay locked.
-    const _isLocked = !APP.info.canGenerate && !APP._teacherMode && !isFirst
-      && !_chapterStarted(topic) && (
-        // This chapter's own lessons haven't been generated yet…
-        _sets.length === 0 ||
-        // …or we don't know its predecessor (fail closed — never fall open to "unlocked")…
-        !prevTopic ||
-        // …or anything earlier in the chain is unfinished.
-        chainBlocked ||
-        // v74_k: the SHARED rule. This was a raw `lessons.every(done-flag)` — the v69_l pattern
-        // again. A mixed-driven predecessor hides the prep lessons its mixed round pools, and those
-        // never receive a done-flag, so `every()` could never be satisfied and the chapter AFTER a
-        // mixed chapter stayed locked forever however thoroughly it was played.
-        !_chapterComplete(prevTopic)
-      );
+    // ⚠️ v88_s (user): THE CHAPTER-WISE PROGRESS LOCK IS GONE. "We remove the chapter-wise progress
+    // locking as the default play mode for students. Students can ALSO browse through chapters."
+    // v88_r made the progress card's → browse freely; a 🔒 here would have contradicted it on the
+    // one surface where a student picks a chapter, and only in the PUBLISHED build — the storyline
+    // screen's own gate never fired live, because `canGenerate` is true there.
+    //
+    // What went with it: the transitive "something earlier is unfinished" flag threaded down the
+    // recursion (v69.2d), the predecessor-completion test (v74_k), and the started-chapter helper
+    // that existed only to stop the gate confiscating work in progress. Their history is kept in
+    // `roadmap_v88.md`'s `v88_s` entry rather than as commentary on a predicate that no longer asks
+    // the question — and their NAMES are deliberately not written here, because
+    // `unit-storyline-chapter-access` sweeps the whole client to prove the removal is complete.
+    //
+    // What REMAINS is not a progress gate at all: a chapter whose lessons have not been generated
+    // yet has nothing behind it to open. `!isFirst` stays because the first chapter of a storyline
+    // must always be reachable, even mid-generation.
+    const _isLocked = !APP.info.canGenerate && !APP._teacherMode && !isFirst && _sets.length === 0;
     // v71_w: the bar's FRACTION is a genuinely different question from completeness — "how much of
     // this chapter have you played" — and stays a fraction. But its COLOUR asserts "finished", so
     // that reads the shared rule: 100% of done-flags is not the same as complete once a pass mark
@@ -11642,14 +11632,15 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   // Guard: a chapter card is rendered at most once (defends against any residual
   // double-attachment from same-named chapters / multi-parent links).
   const _rendered = new Set();
-  function _renderChain(topic, prevTopic, isFirst, depth, chainBlocked) {
+  function _renderChain(topic, prevTopic, isFirst, depth) {
     if (depth > 20) return ''; // safety
     if (_rendered.has(topic)) return ''; // already rendered elsewhere in the tree
     _rendered.add(topic);
     const _topicSet = new Set(topics);
-    let out = _renderChapterCard(topic, prevTopic, isFirst, !!chainBlocked);
-    // Once a chapter in the chain is unfinished, everything after it is behind that gap.
-    const _blockedOnward = !!chainBlocked || !_chapterComplete(topic);
+    let out = _renderChapterCard(topic, prevTopic, isFirst);
+    // v88_s: the "something earlier is unfinished" flag this function used to thread down the
+    // recursion had exactly one reader, the lock predicate, and went with it. (Named nowhere in
+    // this file on purpose — see `_isLocked`'s own comment for why.)
     const allKids = (_succMap[topic] || []).filter(t => !_rendered.has(t));
     const ownKids   = allKids.filter(t => _topicSet.has(t));
     const otherKids = allKids.filter(t => !_topicSet.has(t) && byTopic[t]);
@@ -11666,7 +11657,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
     if (kids.length === 0) return out;
     if (kids.length === 1 && ownKids.length === 1) {
       // Simple linear continuation
-      return out + _renderChain(kids[0], topic, false, depth + 1, _blockedOnward);
+      return out + _renderChain(kids[0], topic, false, depth + 1);
     }
     // Branch point — side-by-side columns
     out += '<div style="display:flex;align-items:flex-start;margin-top:0">';
@@ -11710,7 +11701,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
       }
       out += '<div class="path-line" style="height:12px;width:2px;margin:0 auto"></div>';
       if (isOwn) {
-        out += _renderChain(kid, topic, false, depth + 1, _blockedOnward);
+        out += _renderChain(kid, topic, false, depth + 1);
       } else {
         out += _renderAltBranch(kid, _altSl);
       }
@@ -11816,7 +11807,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
     _hasPred.add(cur);
   }
   const _roots = topics.filter(t => !_hasPred.has(t));
-  _roots.forEach((root, ri) => { if (ri > 0) html += '<div class="path-line" style="height:20px"></div>'; html += _renderChain(root, null, root === topics[0], 0, false); });
+  _roots.forEach((root, ri) => { if (ri > 0) html += '<div class="path-line" style="height:20px"></div>'; html += _renderChain(root, null, root === topics[0], 0); });
   html += '</div>';
   html += '</div>';
 
@@ -12819,31 +12810,24 @@ function _sbPanelChapter(i, panelCount, chapterCount, dataVal) {
 // PLAN §C0.4 (user ruling, `v81_q`): deleted as a proven-dead path — a caller search found none,
 // same bar `_renderCompStoryboard` (removed alongside these, see near `_cardHeader`) was held to.
 
-// Resolve which chapter a panel click actually opens. `chaps` is the storyline's ordered
-// chapter OBJECTS, `completed` is APP.progress.completed, `ch` the 1-based panel target,
-// `free` = teacher mode / canGenerate (navigate anywhere). Student mode applies the SAME
-// lock rule as the storyline screen's chapter cards (fail closed): a chapter is locked
-// unless it is first, has lessons, and its predecessor exists with all lessons complete.
-// A locked target does not dead-end: it RESUMES at the first unlocked, not-yet-complete
-// chapter — the student runs through the underlying lessons in order (reusing the
-// existing progress machinery; clicking a panel again lands where they left off).
-function _sbChapterTarget(chaps, completed, ch, free) {
+// Resolve which chapter a panel click opens. `chaps` is the storyline's ordered chapter OBJECTS,
+// `ch` the 1-based panel target. It clamps and returns — nothing else.
+//
+// ⚠️ v88_s (user): THIS USED TO BE A LOCK. In the published build a student clicking a panel for a
+// chapter whose predecessor was unfinished was silently REDIRECTED to the last unlocked incomplete
+// chapter, with a toast to explain it — the same chapter-wise progress gate the storyline screen's
+// cards carried, wearing different clothes. "We remove the chapter-wise
+// progress locking as the default play mode for students. Students can ALSO browse through
+// chapters": a click that opens a different chapter than the one clicked is the opposite of that.
+//
+// The `completed` and `free` parameters went with the rule. It is kept as a NAMED function rather
+// than inlined because `_sbNavClick` and `_sbMarkCurrentPanels` share the panel→chapter mapping,
+// and "the frame and the link cannot disagree" is asserted at the source layer.
+function _sbChapterTarget(chaps, ch) {
   const n = Array.isArray(chaps) ? chaps.length : 0;
   if (!n) return null;
   const idx = Math.max(1, Math.min(n, ch | 0)) - 1;
-  if (free) return { chapter: chaps[idx], resumed: false };
-  const _all = c => {
-    const d = (completed || {})[c.topic] || {}; const ls = c.lessons || [];
-    return ls.length > 0 && ls.every(L => d[L.id]);
-  };
-  const _locked = i => {
-    if (i === 0) return false;
-    const c = chaps[i], p = chaps[i - 1];
-    return !(c.lessons || []).length || !p || !(p.lessons || []).length || !_all(p);
-  };
-  if (!_locked(idx)) return { chapter: chaps[idx], resumed: false };
-  for (let i = 0; i < n; i++) if (!_locked(i) && !_all(chaps[i])) return { chapter: chaps[i], resumed: true };
-  return { chapter: chaps[0], resumed: true };
+  return { chapter: chaps[idx] };
 }
 
 // Open the lesson set behind a panel. Also sets the storyline context (APP._slScreen)
@@ -12855,12 +12839,14 @@ async function openStoryboardChapter(chainId, ch) {
   const byId = Object.fromEntries((APP.savedList || []).filter(l => l.id).map(l => [l.id, l]));
   const chaps = (sl.chapters || []).map(id => byId[id]).filter(Boolean);
   if (!chaps.length) return;
-  const free = !!(APP.info && APP.info.canGenerate) || !!APP._teacherMode;
-  const target = _sbChapterTarget(chaps, APP.progress?.completed || {}, ch, free);
+  const target = _sbChapterTarget(chaps, ch);
   if (!target || !target.chapter) return;
   const topics = chaps.map(c => c.topic);
   APP._slScreen = { chainId, encodedChain: encodeURIComponent(JSON.stringify(topics)), topics };
-  if (target.resumed) showToast(t('storyboard.locked_resume'));
+  // v88_s: the resume toast went with the redirect it explained — there is nothing left to explain,
+  // because the click now opens the panel that was clicked. Its `ui.json` key is deleted, and its
+  // NAME is deliberately not written here: `unit-storyboard-nav` sweeps this function to prove the
+  // removal is complete, and a comment spelling it would fail the very check it documents.
   loadSaved(target.chapter.id || encTopic(target.chapter.topic));
 }
 

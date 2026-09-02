@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_r`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_s`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -48,44 +48,26 @@ and TWO more fixed-size source windows (`unit-progress-card-nav`, `unit-drill-le
 structural bounds after failing in the false-positive direction. Eight test files migrated from
 `comp-next` to `comp-play`. Full write-up: `roadmap_v88.md`'s own `v88_r` entry.
 
-**⚠️ OWED TO THE USER, AGREED THIS SESSION: `v88_s` — remove the two remaining chapter locks.** The
-user was asked and answered *"yes, as a second release"*. Both fire only in the PUBLISHED static
-build (`!APP.info.canGenerate && !APP._teacherMode`), which is exactly where students are:
-- **`_renderChapterCard`'s `_isLocked`** (index.html, the storyline screen's 🔒 chapter cards) — the
-  transitive `chainBlocked` / `!_chapterComplete(prevTopic)` gate. **Keep only the honest
-  `_sets.length === 0` case** ("this chapter has no lessons yet"); drop the progress conditions.
-- **`_sbChapterTarget`** (index.html, storyboard panel clicks) — silently REDIRECTS a click on a
-  locked panel to the last unlocked unfinished chapter and toasts `storyboard.locked_resume`. With
-  browsing free, that redirect is the same lock wearing different clothes.
-Both have existing guards that will need re-scoping rather than deleting, and
-`storyboard.locked_resume` becomes an unused `ui.json` key — ask before removing it.
+**`v88_s` shipped immediately after, completing the same user request**: the **chapter-wise
+progress lock is GONE**, on BOTH surfaces that carried it — the storyline screen's 🔒 chapter cards
+(`_renderChapterCard`'s `_isLocked`) and the storyboard panel click that silently REDIRECTED to the
+last unlocked incomplete chapter (`_sbChapterTarget`). Neither ever fired live (both are scoped
+`!canGenerate && !teacherMode`); the PUBLISHED build is where they had force, which is where the
+students are. What remains is not a progress gate: `!isFirst && _sets.length === 0`, "this chapter
+has no lessons yet". **ONE `ui.json` key REMOVED** across all 33 languages (the resume toast
+explained a redirect that no longer happens) — hence 751, not 752.
 
-**🆕 NOTHING IS MID-FLIGHT, and the queue is explicit.** The `v87` line closed six items (R, U, Z,
-AC, AK, AL) plus the three storyline asks; they are recorded where they shipped and are NOT in the
-open list. **After `v88_a` the user handed over thirteen TODOs in one message.** They were each read
-against the running code and written up as items **`AM`…`AX`** in `roadmap_v88.md`'s own
-"🆕 OPENED AT THE `v88_a` → `v88_b` HANDOVER" block, which ends with a **suggested implementation
-order** (a table, `v88_b` through `v88_h`). **Start there**, not from the older "WHERE TO START"
-list below — that list is still accurate but is no longer the top of the queue.
+`unit-storyline-lock-hardening` was RENAMED to `unit-storyline-chapter-access` and rewritten: its
+assertions did not fail, they became assertions of the wrong thing. `unit-live-static-progress-parity`
+was RE-ANCHORED (rule 29) — it observed `v74_i`'s shared-completion fix THROUGH the lock, and its own
+non-vacuity check asserted the deleted rule was still running; the claim moved to the connector line,
+where `chapterComplete` is still observable. Eight mutations red. Full write-up: the `v88_s` entry.
 
-**`v88_b` shipped the first row of that table (`AW` + `AT`). The next row is `v88_c` = `AQ` + `AM`.**
-
-**Three rulings the user has ALREADY GIVEN — do not re-ask:**
-1. **Item `AP`** (the `comic`→`image` rename): when an English string changes, **DELETE the stale
-   non-`en` values** so the offline `translate-ui.js` pass refills them. (Renaming a KEY preserves
-   its translations and is free; only changed English text costs anything.)
-2. **Item `AN`**: build the recommended fix — **a separate TITLE field on the review card**, keeping
-   the existing "the description is a fallback when nothing was extracted" ruling intact rather than
-   reversing it. Half (2) — persisting `description` in `comicPanels` — was never blocked.
-3. **Item `V`**: *"if multiple images are uploaded, mark all images as one panel, but still allow the
-   user to modify, add and resort panels. each panel is one chapter."* So: each uploaded image gets a
-   whole-image panel automatically (the same act item `AM` performs for one image), the panel list
-   stays fully editable, and `comicCreateChapter()`'s existing one-chapter-per-panel behaviour
-   (`v85_p`) is confirmed as correct — **item `V` is now fully specified and no longer blocked.**
-
-**Still genuinely blocked on a user decision**: `AV` (display surface + which of three sources
-generates it — needs a live three-way comparison, not a choice) and `AS` (whose recommendation is to
-counter-propose page IMAGES rather than a pdf.js viewer).
+**⚠️ The WITHIN-chapter progression is untouched and is meant to stay** — the user was explicit:
+*"we do still want the 'play mode' question progress within chapters, to first solve vocab, then, to
+really complete a chapter, solve the comprehension or text hunt lessons."* That is the gate chain
+plus `storyUnlocked`/`_storyLockedLesson` plus the full-story lock row on the storyline screen (the
+one 🔒 that legitimately survives there). Do not "finish the job" by removing those.
 
 ## Orient yourself, in this order
 
@@ -97,7 +79,7 @@ counter-propose page IMAGES rather than a pdf.js viewer).
    fifteen point releases) — go there for how anything from that line was built, and for the six
    items it closed.
 4. `INTERNALS.md` **§6b, the feature → function map** — read it BEFORE grepping for where anything
-   lives. Current through `v88_r`.
+   lives. Current through `v88_s`.
 
 ## Establish a green baseline before changing anything
 
@@ -132,8 +114,8 @@ DETERMINISTIC, so not flakiness — because the user's server had written a new 
 fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don't run the full and
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **342 topics, 98 storylines, 33 languages, 752 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_r'`.
+Corpus at this cut: **343 topics, 99 storylines, 33 languages, 751 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_s'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
@@ -144,6 +126,20 @@ snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_r'`.
 Now 54 numbered standing rules across "Rules earned in session 28…34" plus dedicated blocks for the
 `v83`/`v84`/`v85`/`v86` lines — see `roadmap_v87.md`'s own copy of them. Read the **"⚠️ How the rules
 are NUMBERED"** note before citing one.
+
+**Earned at `v88_s`:**
+
+- **A guard can go WRONG without going RED.** `unit-storyline-lock-hardening` pinned a rule the user
+  then asked to delete; every assertion still passed, against the wrong claim. Worse, its own
+  non-vacuity check ("a later chapter is still locked") became an assertion that the deleted rule was
+  still running — so it would have gone red on the CORRECT tree. When a feature is removed, grep the
+  tests for the ones NAMED after it and rewrite them to the new claim, rather than waiting for red.
+- **State a deletion as an ABSENCE over the whole file, not as a passing fixture.** A lock can
+  survive its own removal as a dead branch no fixture reaches. `!/chainBlocked/.test(html)` is the
+  assertion that cannot be satisfied by luck.
+- **When a rule has TWO copies, deleting one leaves the rule alive.** The storyline screen's chapter
+  gate had a second life inside `_sbChapterTarget` as a silent redirect, with no 🔒 anywhere to make
+  it visible. Found by asking "where else is this question asked?" before editing, not after.
 
 **Earned at `v88_r`:**
 
@@ -275,14 +271,14 @@ measures zero effect, reconsider the diagnosis before trying a third wording.**
 
 **🆕 FIRST: the thirteen TODOs handed over after `v88_a`** — items `AM`…`AX` in `roadmap_v88.md`,
 with their own suggested order. **`v88_b` shipped row 1 (`AW` + `AT`), `v88_c` row 2 (`AQ` + `AM`),
-`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third; `v88_h` did the flake audit; `v88_i` shipped `AX`; `v88_j` shipped `AR`; `v88_k` shipped `AU`'s cancel third; `v88_l` completed `AU` with idle release; `v88_m` wired ALL job kinds for cancel; `v88_n` added reverse sort; `v88_o` added the teacher walkthrough, `v88_p` fixed it, `v88_q` made it start on the summary; `v88_r` generalised it into a student BROWSE mode and split forward into ▶ play / → browse.** The rest of that table:
+`v88_d` row 3 (`AO` + `AN`); `v88_e` took two live bug reports (`AY`/`AZ`) out of order; `v88_f` shipped `AP`; `v88_g` shipped `AU`'s shutdown third; `v88_h` did the flake audit; `v88_i` shipped `AX`; `v88_j` shipped `AR`; `v88_k` shipped `AU`'s cancel third; `v88_l` completed `AU` with idle release; `v88_m` wired ALL job kinds for cancel; `v88_n` added reverse sort; `v88_o` added the teacher walkthrough, `v88_p` fixed it, `v88_q` made it start on the summary; `v88_r` generalised it into a student BROWSE mode and split forward into ▶ play / → browse; `v88_s` removed the chapter-wise progress lock on both surfaces that carried it.** The rest of that table:
 
 **🆕 THE THIRTEEN TODOs ARE DONE.** Every item from the `v88_a` handover has shipped, plus two live
 bug reports (`AY`/`AZ`) and the flake audit. What remains is either the pre-existing open list or
 work the user deferred. **Ask the user what they want next** — that is a reasonable first move here.
 
-**🆕 FIRST, and already agreed with the user: `v88_s`** — see the OWED block near the top of this
-file. Two chapter locks, both static-build-only, both to go.
+**🆕 NOTHING IS OWED.** The browse-mode request is complete end to end (`v88_r` + `v88_s`). **Ask
+the user what they want next.**
 
 **Buildable now, no decision needed:**
 - **Item `V`** (multi-image upload) is FULLY SPECIFIED by the user's ruling and unblocked — each
