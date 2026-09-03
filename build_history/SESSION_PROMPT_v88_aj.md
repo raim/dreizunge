@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_ai`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_aj`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -291,6 +291,24 @@ live check had called the function instead of clicking the button. Both fixed; r
 real `.click()`. Sixteen mutations red, three of which stayed green first and each exposed a real
 weakness in the guards.
 
+**`v88_aj` moved the storyboard/images switch INTO the storyboard menu** and removed it from the
+library, storyline and lesson-set pages (user request). Zero keys. `v88_ai`'s `_slArtRepaint` is
+still needed — one trigger now, but it is opened from the storyline screen while two other surfaces
+display the artwork it changes.
+
+⚠️⚠️ **I BROKE THE USER'S RUNNING APP MID-EDIT, and the mechanism must not be repeated.** I replaced
+`_slThumbToggleHtml` BEFORE removing its three call sites. **`server.js` serves `index.html` with
+`readFileSync` PER REQUEST** — the warning at the top of this file — so the instant that edit hit
+disk their browser loaded a client where `loadSavedList()` threw `ReferenceError`, and they reported
+"live mode currently shows no saved lessons" plus dead `#sl=` deep links. **In this repo a rename
+must delete the callers FIRST, or land as one atomic edit; there is no "not finished yet" window.**
+
+⚠️ **A defect the tests could not see**: the menu label prefixed an icon onto a string that already
+had one ("🎬 🎬 Show the storyboard…"). The assertions used `includes`, which a doubled prefix
+satisfies. Now EQUALITY. **Third proxy-guard failure in three releases** — containment is the shape
+that keeps hiding these. Two more `v87_m`/`v87_n` guards were re-scoped (the fourth time in this
+line that a guard had become an assertion of the wrong thing). Five mutations red.
+
 ---
 
 ## ⚠️ START HERE — THE FOUR-FIELD QUESTION IS ANSWERED; ONE OF ITS CONSEQUENCES IS NOT
@@ -481,7 +499,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **343 topics, 97 storylines, 33 languages, 755 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_ai'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_aj'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to

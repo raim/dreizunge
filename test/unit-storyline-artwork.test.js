@@ -133,61 +133,80 @@ console.log('  _slArtworkHtml(): renders the chosen artwork, falls back rather t
 console.log('  one resolver, both surfaces, and the toggle strings exist: OK');
 
 // ── 6. ⚠️ The toggle is reachable on BOTH surfaces, from ONE definition ─────────────────────────
-// User report against v87_m: "i see the images for stories w/o storyboard, but for [a storyline
-// where] both exist, i only see the storyboard and don't find the button to switch to the images."
-// The gates were all correct — the button simply was not on the storyline SCREEN, which is where a
-// teacher looking at one storyline actually is. v87_m had put it only on the library card, reading
-// "on the main page and in the storyline view" as where the CHOICE applies rather than where the
-// CONTROL lives. Two placements now, one _slThumbToggleHtml definition — duplicating the gate is the
-// v87_k drift this project keeps paying for.
+// ⚠️ v88_aj RE-SCOPED BOTH OF THESE SECTIONS TO THE OPPOSITE CLAIM. They asserted that a
+// `_slThumbToggleHtml` BUTTON is emitted by three surfaces — the library card (`v87_m`), the
+// storyline screen (`v87_n`, after the user could not find it) and the lesson-set page (`v87_n`
+// again). The user has now moved the control: "Let's move the button to switch between storyboard
+// and images INTO the storyboard generation popover, and remove it from the storyline, main and
+// lesson-set pages." So these were not failing — they had become assertions of the wrong thing, the
+// fourth time in this line (`v88_s`, `v88_ab`, `v88_ah`, now here).
+//
+// The ELIGIBILITY rule they pinned is unchanged and still worth pinning; only its shape moved, from
+// a button to a menu entry. `_slThumbChoice` returns null when there is nothing to choose between —
+// exactly how the user scoped it originally ("if BOTH ... exists").
 {
   const C = client(LIVE);
   const SL = { id:'sl_x', storyboard:'<svg/>', chapters:['a','b'] };
-  const call = () => C.run(`_slThumbToggleHtml(${JSON.stringify(SL)}, ['a','b'])`);
+  const call = () => C.run(`JSON.stringify(_slThumbChoice(${JSON.stringify(SL)}, ['a','b']))`);
 
   C.run(`APP._teacherMode = false; true;`);
-  assert.strictEqual(call(), '', 'no toggle outside teacher mode — this is curation, and it changes what every learner sees');
+  assert.strictEqual(JSON.parse(call()), null,
+    'no switch outside teacher mode — this is curation, and it changes what every learner sees');
 
   C.run(`APP._teacherMode = true; true;`);
-  const on = call();
-  assert.ok(/toggleSlThumbMode\('sl_x'\)/.test(on), 'in teacher mode it renders, wired to this storyline');
-  assert.ok(on.includes(UI.en['storyline.thumb_show_images']),
-    'and its tooltip names what the click will DO (switch to images), not what it toggles');
+  const on = JSON.parse(call());
+  assert.ok(on && on.id === 'sl_x', 'in teacher mode it offers the switch, for this storyline');
+  // ⚠️ EQUALITY, not containment. `includes` passed over a real defect: an earlier draft prefixed
+  // its own icon to a string that already starts with one, rendering "🎬 🎬 Show the storyboard…".
+  // A containment check cannot see a doubled prefix; it was found by reading the live label.
+  assert.strictEqual(on.label, UI.en['storyline.thumb_show_images'],
+    'the label IS the ui.json string, verbatim — it already carries its own icon');
+  assert.strictEqual(on.showingImages, false, 'and reports the current side');
 
-  // Only when there is a genuine choice — exactly how the user scoped it ("if BOTH ... exists").
-  assert.strictEqual(C.run(`_slThumbToggleHtml(${JSON.stringify({id:'sl_x', chapters:['a','b']})}, ['a','b'])`), '',
-    'no storyboard: nothing to choose between, so no button');
-  assert.strictEqual(C.run(`_slThumbToggleHtml(${JSON.stringify(SL)}, ['b'])`), '',
-    'no chapter with images: likewise no button');
-  assert.strictEqual(C.run(`_slThumbToggleHtml(null, ['a','b'])`), '', 'no storyline object: no throw, no button');
+  // Only when there is a genuine choice.
+  assert.strictEqual(JSON.parse(C.run(`JSON.stringify(_slThumbChoice(${JSON.stringify({id:'sl_x', chapters:['a','b']})}, ['a','b']))`)), null,
+    'no storyboard: nothing to choose between, so no entry');
+  assert.strictEqual(JSON.parse(C.run(`JSON.stringify(_slThumbChoice(${JSON.stringify(SL)}, ['b']))`)), null,
+    'no chapter with images: likewise no entry');
+  assert.strictEqual(JSON.parse(C.run(`JSON.stringify(_slThumbChoice(null, ['a','b']))`)), null,
+    'no storyline object: no throw, no entry');
 
-  // Once switched, the button offers the way BACK — otherwise the choice is one-way.
-  const flipped = C.run(`_slThumbToggleHtml(${JSON.stringify({ ...SL, thumbMode:'images' })}, ['a','b'])`);
-  assert.ok(flipped.includes(UI.en['storyline.thumb_show_storyboard']),
-    'showing images, the tooltip offers the storyboard back');
+  // Once switched, it offers the way BACK — otherwise the choice is one-way.
+  const flipped = JSON.parse(C.run(`JSON.stringify(_slThumbChoice(${JSON.stringify({ ...SL, thumbMode:'images' })}, ['a','b']))`));
+  assert.strictEqual(flipped.label, UI.en['storyline.thumb_show_storyboard'],
+    'showing images, the entry offers the storyboard back — again verbatim');
+  assert.strictEqual(flipped.showingImages, true, 'and says so');
 }
-console.log('  _slThumbToggleHtml(): teacher-gated, only when there IS a choice, and reversible: OK');
+console.log('  _slThumbChoice(): teacher-gated, only when there IS a choice, and reversible: OK');
 
-// ── 6b. Both surfaces actually EMIT it — source layer, where the claim is real ──────────────────
+// ── 6b. The switch is offered in the STORYBOARD MENU, and nowhere else ─────────────────────────
+// ⚠️ Both halves matter. "Move it into the popover" is only half the instruction — leaving a copy
+// on any of the three pages would satisfy a one-sided check and still be wrong. The removal is
+// asserted as an ABSENCE over the whole file (`v88_s`'s rule), which is the only form that cannot
+// be satisfied by luck.
 {
-  const uses = (html.match(/_slThumbToggleHtml\(/g) || []).length;
-  assert.ok(uses >= 3, `defined once and used by both surfaces (${uses} occurrences)`);
-  assert.ok(/\$\{_slThumbToggleHtml\(matchSl, chain\)\}/.test(html),
-    'the library storyline card emits it');
-  assert.ok(/const _slToggle = _slThumbToggleHtml\(slMeta, _slArtIds\);/.test(html) &&
-            /if \(_slToggle\) html \+=/.test(html),
-    'and the storyline SCREEN emits it too — the placement the user could not find in v87_m');
-  // v87_n, second user follow-up: "the lesson-set page (teacher view) should also switch between
-  // storyboard and images, as on main and the storyline page." A THIRD surface, still one definition.
-  assert.ok(/_slThumbToggleHtml\(_ctxSl, _lsIds\)/.test(html) && /_slArtworkHtml\(_ctxSl, _lsIds\)/.test(html),
-    'and the LESSON-SET page emits both the artwork and the toggle for its chapter\'s storyline');
-  assert.ok(/id="ls-storyline-art"/.test(html), 'with its own container in the lesson-set storyline header');
-  // Teacher-only on THIS page specifically — it never showed storyline artwork before, so this is a
-  // deliberate narrower scope than the other two surfaces, not an oversight.
+  assert.ok(/value: 'thumb', label: _thumb\.label/.test(html),
+    'the storyboard menu offers the switch as one of its choices');
+  assert.ok(/else if \(choice === 'thumb'\)\s+await toggleSlThumbMode\(_thumb\.id\);/.test(html),
+    'and choosing it performs the flip');
+  assert.ok(/const _thumb = _slThumbChoice\(/.test(html),
+    'gated by the same eligibility rule, so the menu never grows an entry that would do nothing');
+
+  // ⚠️ ABSENCE, over the whole file: no surface renders a toggle BUTTON any more.
+  assert.ok(!/_slThumbToggleHtml\s*\(/.test(html),
+    'and NO page calls the old toggle-button renderer — it is gone, not merely unused');
+  assert.ok(!/const _slToggle =/.test(html), 'the storyline screen no longer builds one');
+  assert.ok(!/_lsTog/.test(html), 'nor does the lesson-set page');
+
+  // The ARTWORK itself must survive on the surfaces that showed it — the user moved the control,
+  // not the picture.
+  assert.ok(/_slArtworkHtml\(_slSumMeta, chain\)/.test(html),
+    'the library card still renders the artwork');
   assert.ok(/APP\._teacherMode \? _slArtworkHtml\(_ctxSl, _lsIds\) : ''/.test(html),
-    'and only in teacher mode there, since that page never showed storyline artwork to learners');
+    'and the lesson-set page still renders it, teacher-only as before');
+  assert.ok(/id="ls-storyline-art"/.test(html), 'with its own container in the lesson-set header');
 }
-console.log('  the toggle is emitted by the library card, the storyline screen AND the lesson-set page: OK');
+console.log('  the switch lives in the storyboard menu, and on no page any more: OK');
 
 // ⚠️ The sections below are the file's only ASYNC ones (toggleSlThumbMode awaits its own POST),
 // so they live in an IIFE: this file is otherwise top-level-synchronous CommonJS, where a bare

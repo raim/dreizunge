@@ -199,8 +199,28 @@ assert.ok(/onclick="onStorylineStoryboardBtn\(\)"/.test(client), 'button calls t
 assert.ok(/function onStorylineStoryboardBtn\(\)/.test(client), 'dispatcher exists');
 assert.ok(/if \(!_slHasStoryboard\(\)\) \{ await genStorylineStoryboard\(\); return; \}/.test(client),
   'dispatcher generates when no storyboard exists');
-assert.ok(/showChoiceDialog\(\{[\s\S]{0,200}storyboard\.regenerate/.test(client), 'menu offers regenerate');
-assert.ok(/value: 'delete'[\s\S]{0,60}storyboard\.delete/.test(client), 'menu offers delete');
+// ⚠️ v88_aj: these two were FIXED-SIZE SOURCE WINDOWS (`[\s\S]{0,200}` / `{0,60}`) and the first
+// went red the moment the menu grew a fourth entry — `storyboard.regenerate` simply fell past 200
+// characters. The code was correct; the guard was measuring distance. Third time this project has
+// paid for that shape (v88_r replaced two others for the same reason, after they failed in the
+// false-positive direction), so it is replaced with a STRUCTURAL bound: slice the dispatcher's own
+// body and assert inside it. Widening the number would just move the next failure.
+const _sbDispatch = (() => {
+  const at = client.indexOf('async function onStorylineStoryboardBtn()');
+  assert.ok(at > 0, 'the storyboard dispatcher is found');
+  // Bounded by the NEXT top-level function, which is where this one ends.
+  const end = client.indexOf('\nfunction ', at) > 0
+    ? Math.min(client.indexOf('\nfunction ', at), client.indexOf('\nasync function ', at + 10) > 0
+        ? client.indexOf('\nasync function ', at + 10) : Infinity)
+    : client.length;
+  return client.slice(at, end === Infinity ? client.length : end);
+})();
+assert.ok(/storyboard\.regenerate/.test(_sbDispatch), 'menu offers regenerate');
+assert.ok(/value: 'delete'[\s\S]*storyboard\.delete/.test(_sbDispatch), 'menu offers delete');
+assert.ok(/storyboard\.scheme/.test(_sbDispatch), 'and the scheme picker (non-vacuity: the slice really holds the menu)');
+assert.ok(_sbDispatch.length < 3000,
+  'non-vacuity for the BOUND: the slice is the dispatcher, not half the file (got '
+    + _sbDispatch.length + ' chars)');
 assert.ok(/method: 'DELETE'[\s\S]{0,200}\/api\/storyline-storyboard/.test(client)
        || /\/api\/storyline-storyboard'[\s\S]{0,120}method: 'DELETE'/.test(client), 'delete fn calls DELETE');
 assert.ok(/delete APP\.storylines\[idx\]\.storyboard/.test(client), 'delete clears the client cache too');

@@ -1818,7 +1818,8 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <!-- v87_n (user): "the lesson-set page (teacher view) should also switch between storyboard and
          images, as on main and the storyline page." This page never showed storyline-level artwork
          at all, so this adds BOTH the strip and the toggle — the THIRD surface reading the same
-         per-storyline thumbMode through the same _slArtworkHtml/_slThumbToggleHtml pair. Populated
+         per-storyline thumbMode through _slArtworkHtml. (v88_aj: the SWITCH itself moved into the
+         storyboard menu; this container shows the artwork only.) Populated
          by the same function that fills the storyline title/progress above it (it already resolves
          `_ctxSl`, the storyline this chapter belongs to). -->
     <div id="ls-storyline-art" style="display:none;margin-top:6px;overflow-x:auto"></div>
@@ -9262,7 +9263,6 @@ async function loadSavedList(){
            already what _slThumbMode resolves to on its own. Teacher-gated: this is curation, and it
            changes what every learner sees. ONE control, because the mode is stored per storyline and
            both surfaces read the same field. -->
-      ${_slThumbToggleHtml(matchSl, chain)}
       <button class="ico-btn" style="font-size:11px;padding:2px 8px;color:var(--red)" title="Delete all chapters in this storyline"
         data-chain="${escapedChain}"
         onclick="event.stopPropagation();deleteStoryline(this.dataset.chain)">🗑️</button>
@@ -10478,10 +10478,9 @@ function buildPath(){
     if (_slArtEl) {
       const _lsIds = _ctxSl.chapters || [];
       const _lsArt = APP._teacherMode ? _slArtworkHtml(_ctxSl, _lsIds) : '';
-      const _lsTog = APP._teacherMode ? _slThumbToggleHtml(_ctxSl, _lsIds) : '';
-      _slArtEl.innerHTML = _lsArt
-        ? (_lsTog ? '<div style="display:flex;justify-content:flex-end">' + _lsTog + '</div>' : '') + _lsArt
-        : '';
+      // v88_aj: the storyboard/images switch moved into the storyboard menu (user request), so this
+      // page shows the artwork alone.
+      _slArtEl.innerHTML = _lsArt || '';
       _slArtEl.style.display = _lsArt ? '' : 'none';
     }
     if(_slIconEl)  _slIconEl.textContent  = _ctxSl.icon||'📖';
@@ -11945,8 +11944,6 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   // down, below the summary field, and above the chain of chapter fields." It used to render HERE,
   // above the artwork — which put a control ABOUT the chapter list two sections away from the list
   // it edits. It is now emitted after the summary block; see `_slManageHtml`'s call site below.
-  const _slToggle = _slThumbToggleHtml(slMeta, _slArtIds);
-  if (_slToggle) html += '<div style="display:flex;justify-content:flex-end;margin:4px 0 0">' + _slToggle + '</div>';
   html += '<div class="storyline-storyboard" id="slsb-screen-' + chainId.replace(/[^a-zA-Z0-9_-]/g,'_')
         + '" data-sb-chain="' + escAttr(chainId) + '"'
         + ' aria-label="' + escAttr(t('storyboard.title')) + '" style="margin:8px 0;overflow-x:auto'
@@ -12402,13 +12399,31 @@ function _slArtworkHtml(sl, chapterIds){
 // Shown only when there is a real choice to make (a storyboard AND at least one chapter with panel
 // images), exactly as the user scoped it, and only in teacher mode: this is curation and it changes
 // what every learner sees.
-function _slThumbToggleHtml(sl, chapterIds){
-  if (!APP._teacherMode || !sl || !sl.id) return '';
-  if (!sl.storyboard || !_slHasComicImages(chapterIds)) return '';
+// ⚠️ v88_aj (user request): "Let's move the button to switch between storyboard and images INTO the
+// storyboard generation popover, and remove it from the storyline, main and lesson-set pages."
+//
+// So this is no longer a BUTTON. It was rendered on three surfaces (`v87_n` added the storyline
+// screen, `v88_?` the lesson-set page, on top of the library card) — three copies of one control,
+// which is what made `v88_ai` have to widen the repaint path across all of them. It now describes a
+// single MENU ENTRY, offered where the storyboard's other actions already live.
+//
+// The eligibility rule is unchanged and stays in ONE place: teacher mode, a storyboard to switch
+// away from, and comic images to switch to. Without both there is nothing to choose between, which
+// is exactly how the user scoped it originally ("if BOTH ... exists").
+function _slThumbChoice(sl, chapterIds){
+  if (!APP._teacherMode || !sl || !sl.id) return null;
+  if (!sl.storyboard || !_slHasComicImages(chapterIds)) return null;
   const showingImages = _slThumbMode(sl, chapterIds) === 'images';
-  const title = t(showingImages ? 'storyline.thumb_show_storyboard' : 'storyline.thumb_show_images');
-  return `<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="${escAttr(title)}"
-    onclick="event.stopPropagation();toggleSlThumbMode('${escAttr(sl.id)}')">${showingImages?'🎬':'🖼️'}</button>`;
+  return {
+    id: sl.id,
+    showingImages,
+    // The SAME two strings the button used — no new ui.json keys for the move. ⚠️ Used VERBATIM:
+    // both already begin with their own icon ("🎬 Show the storyboard instead of the images"), and
+    // an earlier draft prefixed a second one, which rendered "🎬 🎬 Show the storyboard…". Caught by
+    // reading the live label, not by a test — the assertions only checked that the string was
+    // CONTAINED, which a doubled prefix satisfies.
+    label: t(showingImages ? 'storyline.thumb_show_storyboard' : 'storyline.thumb_show_images'),
+  };
 }
 // Flip which artwork this storyline shows, everywhere at once. Persisted through the EXISTING
 // /api/storylines upsert (which gained `thumbMode` alongside its existing title/icon/chapters
@@ -12430,11 +12445,13 @@ async function toggleSlThumbMode(slId){
 // ⚠️ v88_ai (user report): "Switching between storyboard and images requires a reload to take
 // effect, can it be loaded directly w/o a full page reload?" — and the cause is exactly `v86_ad`'s
 // standing lesson, from the other direction: the toggle is offered on FOUR surfaces
-// (`_slThumbToggleHtml` is rendered by `loadSavedList`'s own card, `buildPath`'s lesson-set card,
-// and `_renderStorylineScreen`), but the flip only ever called `loadSavedList()` — which rebuilds
-// the LIBRARY and nothing else. So pressing it on the storyline screen or the lesson-set card
-// updated the data, persisted it, flipped the button's own icon, and left the artwork beside it
-// stale until a reload.
+// (the toggle button was rendered by `loadSavedList`'s own card, `buildPath`'s lesson-set card, and
+// `_renderStorylineScreen`), but the flip only ever called `loadSavedList()` — which rebuilds the
+// LIBRARY and nothing else. So pressing it on the storyline screen or the lesson-set card updated
+// the data, persisted it, flipped the button's own icon, and left the artwork beside it stale until
+// a reload. ⚠️ v88_aj then moved the control into the storyboard menu, leaving ONE trigger — but
+// this repaint is still exactly as necessary, because that menu is opened from the storyline screen
+// while the library card and lesson-set page both show the artwork it changes.
 //
 // One repaint helper, every surface that can show the artwork, each guarded by whether it is
 // actually up. Same shape as `_teRepaint` — which exists for the identical reason on the analysis
@@ -13358,15 +13375,21 @@ function _slHasStoryboard() {
 async function onStorylineStoryboardBtn() {
   if (!APP._slScreen) return;
   if (!_slHasStoryboard()) { await genStorylineStoryboard(); return; }
+  // v88_aj: the artwork switch lives here now. Offered only when there IS something to switch
+  // between, so the menu never grows an entry that would do nothing.
+  const _slForThumb = (APP.storylines || []).find(x => x && x.id === APP._slScreen.chainId) || null;
+  const _thumb = _slThumbChoice(_slForThumb, (APP._slScreen.chapterIds || []));
   const choice = await showChoiceDialog({
     title: t('storyboard.title'),
     choices: [
       { value: 'scheme', label: t('storyboard.scheme'), primary: true },
+      ...(_thumb ? [{ value: 'thumb', label: _thumb.label }] : []),
       { value: 'regen',  label: t('storyboard.regenerate') },
       { value: 'delete', label: t('storyboard.delete') },
     ],
   });
   if (choice === 'scheme') await pickStoryboardScheme();
+  else if (choice === 'thumb')  await toggleSlThumbMode(_thumb.id);
   else if (choice === 'regen')  await genStorylineStoryboard();
   else if (choice === 'delete') await deleteStorylineStoryboard();
 }

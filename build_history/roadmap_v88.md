@@ -2424,6 +2424,62 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_aj — the storyboard/images switch moved into the storyboard menu, and a live outage I caused
+
+User request: *"Let's move the button to switch between storyboard and images INTO the storyboard
+generation popover, and remove it from the storyline, main and lesson-set pages."* **ZERO `ui.json`
+keys** — the two existing strings move with it.
+
+### ⚠️ FIRST: I broke the user's running app, mid-edit
+
+While this change was half-applied, the user reported: *"live mode currently shows no saved
+lessons"*, and that `#sl=…` deep links did not open.
+
+**My fault, and the mechanism is worth writing down.** I had replaced `_slThumbToggleHtml` with
+`_slThumbChoice` **before** removing its three call sites. `server.js` serves `index.html` with
+`readFileSync` PER REQUEST — the standing warning at the top of every session prompt — so the moment
+that edit hit disk, the user's browser was loading a client where `loadSavedList()` threw
+`ReferenceError: _slThumbToggleHtml is not defined`. The library never rendered, and every route that
+runs through it (including the hash deep link) died with it.
+
+**The lesson is about ORDER, not about the edit.** In a repo whose client is live-served from the
+working tree, a rename must remove the callers FIRST or land as one atomic edit; there is no window
+in which a dangling reference is merely "not finished yet". Verified fixed against the user's own
+server before doing anything else: 343 saved lessons, 97 storylines, 29 cards rendering, and
+`#sl=sl_143869450` resolving to "🌿 Wald und Wildnis" (8 chapters).
+
+### The change
+
+`_slThumbToggleHtml` (a button) became `_slThumbChoice` (a menu-entry description). The eligibility
+rule is untouched and still lives in ONE place — teacher mode, a storyboard to switch away from, and
+comic images to switch to — so the storyboard menu never grows an entry that would do nothing. The
+three call sites (library card, storyline screen, lesson-set page) are gone.
+
+⚠️ **`v88_ai`'s `_slArtRepaint` is still exactly as necessary**, and it is worth saying why rather
+than assuming: there is now ONE trigger instead of three, but it is opened from the storyline screen
+while the library card and the lesson-set page both display the artwork it changes.
+
+### Two guards had become assertions of the wrong thing — the FOURTH time in this line
+
+`unit-storyline-artwork` §6 and §6b pinned that a toggle BUTTON is emitted by three surfaces
+(`v87_m` added the library card, `v87_n` the other two after the user could not find it). Not
+failing — pinned to a placement the user has now reversed. Re-scoped to the eligibility rule in its
+new shape, plus the **removal**, asserted as an ABSENCE over the whole file (`v88_s`'s rule): no page
+calls the old renderer, and the artwork itself still renders on the surfaces that had it. Both halves
+of "move it and remove it", because a one-sided check passes on a copy left behind.
+
+### ⚠️ A defect the tests could not see, found by reading the live label
+
+The first draft prefixed its own icon to the menu label — but both strings already begin with one
+(`"🎬 Show the storyboard instead of the images"`), so it rendered **"🎬 🎬 Show the storyboard…"**.
+The assertions used `includes`, which a doubled prefix satisfies perfectly. Now asserted as EQUALITY
+against the `ui.json` string. Third proxy-guard failure in three releases (`v88_ai`'s
+`_teOpenCuratorTable` substring, `v88_ai`'s header-row bound, now this) — containment is the shape
+that keeps hiding these.
+
+**Five mutations red**: the entry not offered; choosing it doing nothing; the entry ignoring
+eligibility; a toggle button left behind on a page; and the doubled icon restored.
+
 ## ✅ v88_ai — an eight-item user batch: analysis curation gated and relocated, item Y, and the idle window
 
 One user message with seven requests plus a follow-up exclusion, and a further live correction while
