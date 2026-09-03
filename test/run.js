@@ -319,6 +319,7 @@ if (!quick) {
   run('e2e: stopping the server frees model VRAM (item AU shutdown half, v88_g)', 'node', [path.join(__dirname, 'e2e-shutdown-release.test.js')]);
   run('e2e: cancelling a job aborts the in-flight model call (item AU cancel, v88_k)', 'node', [path.join(__dirname, 'e2e-job-cancel.test.js')]);
   run('e2e: the ui.json translation job is listed, cancellable and checkpointed (v88_af)', 'node', [path.join(__dirname, 'e2e-ui-translate.test.js')]);
+  run('e2e: story/summary QC run as listed, cancellable jobs (v88_ag)', 'node', [path.join(__dirname, 'e2e-qc-job.test.js')]);
   run('e2e: models are freed after an idle period (item AU idle, v88_l)', 'node', [path.join(__dirname, 'e2e-idle-release.test.js')]);
   run('e2e: PWA install support -- manifest/sw/icon served, shell-only interception (v84_b)', 'node', [path.join(__dirname, 'e2e-pwa-install.test.js')]);
   run('e2e: PLAN §7.0 apply-cp-lessons.js — additive CP1-4 lesson writes, cross-chapter dedup', 'node', [path.join(__dirname, 'unit-apply-cp-lessons.test.js')]);

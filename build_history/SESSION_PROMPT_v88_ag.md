@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_af`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_ag`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -253,6 +253,22 @@ and reported DONE), and `saveUI` ran ONCE after the whole loop, so a cancelled r
 press. Four mutations red, and the e2e's cancel is driven by OBSERVED PROGRESS (poll until the job
 reports `batch 2/3`) rather than a timer, so it is deterministic.
 
+⚠️ **`v88_ag` then fixed the bug that report was ACTUALLY about.** The user corrected it mid-release:
+*"above message was potentially wrong, i had click a QC, not the translation button."* `v88_af`'s
+defect was real and measured, but it was the wrong trigger. **THREE QC entry points existed and only
+`/api/qc` was a job** — `/api/story-qc` and `/api/summary-qc` both blocked and registered nothing,
+and neither caller was `_jobsTracked`. Both converted (not just the clicked one), same pattern.
+
+⚠️ **The fix introduced a HANG and the suite caught it the hard way**: the shared `_qcPoll` continued
+on ANY unrecognised status, so a stubbed fetch with no `status` re-armed a 2s timer forever —
+`unit-lesson-set-story-explorer` printed ALL PASSED **and never exited**, stalling the whole suite.
+`v88_r`'s rule: a process that will not die is a finding. Only `running`/`pending` continue now.
+⚠️ **And that fix was briefly UNGUARDED** — repairing the stub removed the only thing exercising the
+path — so the claim moved to `unit-jobs-sync-inflight`. ⚠️ **And `v88_m`'s set-level guard fired
+correctly** on the two new QC jobs: it required the LITERAL `runCancellable(jobId`, so it was really
+asserting "wrapped AND spelled jobId". It now derives each job's own variable and demands that id —
+**stronger**, not looser. Eight mutations red.
+
 ---
 
 ## ⚠️ START HERE — THE FOUR-FIELD QUESTION IS ANSWERED; ONE OF ITS CONSEQUENCES IS NOT
@@ -319,7 +335,17 @@ Verbatim where quoted:
    budget first**. `form.image_extract` ("✨ Extract text") exists but the button can run extraction
    AND/OR description, so it is not a drop-in.
 
-2. **⚠️ PARTLY ANSWERED AT `v88_af` — some LLM-based jobs still have no cancel BUTTON.** The
+2. **⚠️ LARGELY ANSWERED AT `v88_af`/`v88_ag` — some LLM-based jobs still have no cancel BUTTON.**
+   THREE routes are now converted (`/api/ui-translate`, `/api/story-qc`, `/api/summary-qc`), so the
+   pattern is proven twice over. **What remains is the REST of the `_jobsTracked` sync list** —
+   `/api/storyline-title`, `/api/storyline-summary`, `/api/storyline-retitle`,
+   `/api/retranslate-story`, `/api/writing-feedback` — which are listed but not cancellable. Each is
+   the same mechanical conversion (`newJob` + `runCancellable` + a client poller; add a per-item
+   `CANCELLED` re-throw and a checkpoint only where there IS a loop). ⚠️ Still a RULING because each
+   turns a blocking route into a polled one, and `v88_ag` showed that carries its own risk: the
+   first shared poller looped forever on an unrecognised status and hung the suite. Ask before
+   converting more, and if asked, convert them together with ONE poller rather than one each.
+   The original diagnosis, unchanged: The
    ui.json translation was one of them and is now a real, cancellable job, so **the conversion
    pattern is proven and is the recommended answer for the rest**: `newJob` + `runCancellable` + a
    per-item re-throw of `CANCELLED` + a per-item checkpoint, then a client poller. What remains is
@@ -367,11 +393,19 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 331 checks
+node test/run.js                          → expect 332 checks
 node test/run.js --quick                  → expect 273
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
+
+**⚠️ `e2e-idle-release` FAILED AGAIN in the full run at `v88_ag`, and passed standalone.** Nothing in
+`v88_af`/`v88_ag` touches `releaseOllamaModel` or the idle timer — but those two releases added TWO
+new e2e files (`e2e-ui-translate`, `e2e-qc-job`), both of which hold model calls open with the slow
+fake, so suite load is genuinely higher than when this was characterised. **Per the standing
+instruction below, the NEXT occurrence should be met by INSTRUMENTING THE TICK COUNT, not by
+re-running until it passes** — this session did exactly one standalone re-run and is recording that
+rather than claiming the file is clear.
 
 **⚠️ `e2e-idle-release` is LOAD-SENSITIVE — newly characterised at `v88_aa`, and NOT cleared.**
 Failed once in a full-suite run with `a still-idle server does not release again on every tick
@@ -425,7 +459,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **343 topics, 97 storylines, 33 languages, 755 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_af'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_ag'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to

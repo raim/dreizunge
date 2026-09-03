@@ -266,12 +266,21 @@ console.log("  regression: the lesson-set body is the IDENTICAL _storyBodyHtml r
 
   // QC: reads NOTHING from the DOM — it posts {topicId} — so a tappable body cannot affect it. Pinned
   // so a future change that starts scraping the rendered story would be caught here.
+  // ⚠️ v88_ag: the stub answers with the CURRENT protocol — /api/story-qc now returns 202 +
+  // {jobId} and the payload arrives via /api/job/:id, because QC became a real cancellable job.
+  // The claim below is unchanged (the POST body carries only the topic id), but a stub that still
+  // returned the old inline payload would drive `_qcPoll` down its unknown-status path instead of
+  // the real one — and with the FIRST version of that poller, which continued on any unrecognised
+  // status, it did worse than that: an unbounded 2s timer kept this whole FILE alive after it had
+  // printed ALL PASSED, so the suite hung rather than failing. `seen` still holds the story-qc POST
+  // because it is read in the same tick, before the poll's own fetch can overwrite it.
   const posted = C.run(`(function(){
     var seen = null;
-    fetch = function(u, o){ seen = { url:u, body:o && o.body };
+    fetch = function(u, o){ if (seen === null) seen = { url:u, body:o && o.body };
       return Promise.resolve({ ok:true, json:function(){ return Promise.resolve({
+        ok:true, jobId:'qcjob1', status:'done', data:{
         corrected:'x', original:'y', verdict:'ok', rejected:[], changedSentences:0,
-        totalSentences:1, changedRatio:0, wordEditRatio:0 }); } }); };
+        totalSentences:1, changedRatio:0, wordEditRatio:0 } }); } }); };
     runStoryQc();
     return JSON.stringify(seen);
   })()`);

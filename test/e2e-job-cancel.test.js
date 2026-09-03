@@ -122,7 +122,16 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
         let end = lines.length;
         for (let k = i + 1; k < lines.length; k++) if (/newJob\(\{/.test(lines[k])) { end = k; break; }
         const body = lines.slice(i, end).join('\n');
-        if (!/runCancellable\(jobId/.test(body)) unwrapped.push(i + 1);
+        // ⚠️ v88_ag STRENGTHENED this, after it correctly flagged two genuinely-wrapped jobs. It
+        // required the literal `runCancellable(jobId`, so it was really asserting "wrapped AND the
+        // variable is spelled jobId" — and v88_ag's QC jobs use `_qcJobId`/`_sqJobId` because two of
+        // them live in one scope. The CLAIM is "this job runs inside a cancel scope", so the check
+        // now derives the job's OWN variable from its `newJob` assignment and demands that one be
+        // the id wrapped. Strictly stronger than the old form, not looser: a body that wraps some
+        // OTHER job's id used to pass and no longer does.
+        const decl = /(?:const|let|var)\s+(\w+)\s*=\s*newJob\(\{/.exec(l);
+        const idName = decl ? decl[1] : 'jobId';
+        if (!new RegExp('runCancellable\\(\\s*' + idName + '\\b').test(body)) unwrapped.push(i + 1);
       });
       assert(unwrapped.length === 0,
         'every LABELLED job runs inside runCancellable — the popover offers a cancel button for all '

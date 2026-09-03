@@ -255,7 +255,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_af';
+const APP_VERSION  = 'v88_ag';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -9793,24 +9793,43 @@ http.createServer(async (req, res) => {
       if (!t) return json(res, 404, { error: 'Topic not found' });
       if (!t.story || !t.story.trim()) return json(res, 400, { error: 'Topic has no story to QC' });
       const _t0 = Date.now();
-      try {
-        const { result: r, tokens: _mTok } = await meterLLMTokens(() => generateStoryQc(t.story, t.lang || 'it', t.script || null));
-        addTokenUsage(t, _mTok, 'story_qc');   // cumulative per-chapter tokens (v59)
-        // Persist the proposal (survives a client refresh; overwrites any prior proposal). Store
-        // the exact original it was diffed against, so acceptance can't drift if the story changed.
-        t.storyQcProposal = { corrected: r.corrected, against: t.story, verdict: r.verdict,
-          rejected: r.rejected, changedSentences: r.changedSentences, totalSentences: r.totalSentences,
-          changedRatio: r.changedRatio, wordEditRatio: r.wordEditRatio, meta: r.meta,
-          at: new Date().toISOString() };
-        saveStore(store);
-        return json(res, 200, { corrected: r.corrected, original: t.story, verdict: r.verdict,
-          rejected: r.rejected,
-          changedSentences: r.changedSentences, totalSentences: r.totalSentences,
-          changedRatio: r.changedRatio, wordEditRatio: r.wordEditRatio });
-      } catch(e) {
-        console.error(`  ✗ Story QC FAILED after ${((Date.now() - _t0) / 1000).toFixed(0)}s: ${e.message}`);
-        return json(res, 500, { error: e.message });
-      }
+      // ⚠️ v88_ag (user report): "translation job is not listed in the job popover (and ideally
+      // should be cancel-able)" — clarified afterwards as a QC click, not the translate button.
+      // This route AWAITED the proofread and answered only when it finished, registering no job, and
+      // `runStoryQc()` was not `_jobsTracked` either — so a QC run appeared NOWHERE in the popover
+      // while a full-story model call ran. Same shape as `/api/ui-translate` (v88_af) and fixed the
+      // same way: a REAL job, because a `_jobsTracked` sync row cannot carry a cancel button
+      // (`canCancel` needs a server-side job id for POST /api/jobs/cancel to look up).
+      //
+      // The response payload is unchanged — it now travels as the job's `data` instead of as the
+      // body, so the client reads exactly the same fields from `/api/job/:id`.
+      const _qcJobId = newJob({
+        label: `Proofreading "${String(t.topic || '').slice(0, 50)}"`,
+        link: { type: 'topic', id: t.id },
+      });
+      (async () => {
+        try {
+          const { result: r, tokens: _mTok } = await runCancellable(_qcJobId,
+            () => meterLLMTokens(() => generateStoryQc(t.story, t.lang || 'it', t.script || null)));
+          addTokenUsage(t, _mTok, 'story_qc');   // cumulative per-chapter tokens (v59)
+          // Persist the proposal (survives a client refresh; overwrites any prior proposal). Store
+          // the exact original it was diffed against, so acceptance can't drift if the story changed.
+          t.storyQcProposal = { corrected: r.corrected, against: t.story, verdict: r.verdict,
+            rejected: r.rejected, changedSentences: r.changedSentences, totalSentences: r.totalSentences,
+            changedRatio: r.changedRatio, wordEditRatio: r.wordEditRatio, meta: r.meta,
+            at: new Date().toISOString() };
+          saveStore(store);
+          jobDone(_qcJobId, { corrected: r.corrected, original: t.story, verdict: r.verdict,
+            rejected: r.rejected,
+            changedSentences: r.changedSentences, totalSentences: r.totalSentences,
+            changedRatio: r.changedRatio, wordEditRatio: r.wordEditRatio });
+        } catch(e) {
+          console.error(`  ✗ Story QC FAILED after ${((Date.now() - _t0) / 1000).toFixed(0)}s: ${e.message}`);
+          // A cancel is not a failure — jobFailOrCancel keeps the popover honest about which it was.
+          jobFailOrCancel(_qcJobId, e);
+        }
+      })();
+      return json(res, 202, { ok: true, jobId: _qcJobId });
     }
 
     // Accept a stored QC proposal: the correction becomes topic.story, aiStory is pinned to the
@@ -9943,20 +9962,31 @@ http.createServer(async (req, res) => {
       if (!sl) return json(res, 404, { error: 'Storyline not found' });
       if (!sl.summary || !sl.summary.trim()) return json(res, 400, { error: 'Storyline has no summary to QC' });
       const _t0 = Date.now();
-      try {
-        const { result: r, tokens: _mTok } = await meterLLMTokens(() => generateSummaryQc(sl.summary, srcLang || sl.srcLang || 'en'));
-        addTokenUsage(sl, _mTok, 'summary_qc');   // storyline-level artefact (v59)
-        sl.summaryQcProposal = { corrected: r.corrected, against: sl.summary, verdict: r.verdict,
-          rejected: r.rejected, changedSentences: r.changedSentences, totalSentences: r.totalSentences,
-          changedRatio: r.changedRatio, wordEditRatio: r.wordEditRatio, meta: r.meta, at: new Date().toISOString() };
-        upsertStoryline(sl);
-        return json(res, 200, { corrected: r.corrected, original: sl.summary, verdict: r.verdict,
-          rejected: r.rejected, changedSentences: r.changedSentences, totalSentences: r.totalSentences,
-          changedRatio: r.changedRatio, wordEditRatio: r.wordEditRatio });
-      } catch(e) {
-        console.error(`  ✗ Summary QC FAILED after ${((Date.now() - _t0) / 1000).toFixed(0)}s: ${e.message}`);
-        return json(res, 500, { error: e.message });
-      }
+      // v88_ag: same conversion as /api/story-qc directly above — "where else is this question
+      // asked?". The two QC buttons are the same control in two places, and fixing only the one the
+      // user happened to click would leave the other invisible for the next report.
+      const _sqJobId = newJob({
+        label: `Proofreading summary "${String(sl.title || sl.id || '').slice(0, 50)}"`,
+        link: { type: 'storyline', id: sl.id },
+      });
+      (async () => {
+        try {
+          const { result: r, tokens: _mTok } = await runCancellable(_sqJobId,
+            () => meterLLMTokens(() => generateSummaryQc(sl.summary, srcLang || sl.srcLang || 'en')));
+          addTokenUsage(sl, _mTok, 'summary_qc');   // storyline-level artefact (v59)
+          sl.summaryQcProposal = { corrected: r.corrected, against: sl.summary, verdict: r.verdict,
+            rejected: r.rejected, changedSentences: r.changedSentences, totalSentences: r.totalSentences,
+            changedRatio: r.changedRatio, wordEditRatio: r.wordEditRatio, meta: r.meta, at: new Date().toISOString() };
+          upsertStoryline(sl);
+          jobDone(_sqJobId, { corrected: r.corrected, original: sl.summary, verdict: r.verdict,
+            rejected: r.rejected, changedSentences: r.changedSentences, totalSentences: r.totalSentences,
+            changedRatio: r.changedRatio, wordEditRatio: r.wordEditRatio });
+        } catch(e) {
+          console.error(`  ✗ Summary QC FAILED after ${((Date.now() - _t0) / 1000).toFixed(0)}s: ${e.message}`);
+          jobFailOrCancel(_sqJobId, e);
+        }
+      })();
+      return json(res, 202, { ok: true, jobId: _sqJobId });
     }
 
     // Accept a summary QC proposal (optionally a per-sentence subset). No error-hunt — a summary

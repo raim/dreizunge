@@ -140,6 +140,73 @@ function client() {
       console.log('  all five synchronous model-backed routes are wrapped at every call site: OK');
     }
 
+  // ── v88_ag: _qcPoll must TERMINATE on a response it cannot interpret ───────────────────────
+  // ⚠️ This section exists because the first version of that poller did not, and the failure mode
+  // was not a wrong answer — it was a SUITE THAT HUNG. `unit-lesson-set-story-explorer` printed
+  // ALL PASSED and then never exited, because a stubbed fetch answered the poll with a body that
+  // had no `status`, and the poller treated "unrecognised" as "still running" and re-armed a 2s
+  // timer forever. v88_r's rule in its clearest form: a process that will not die is a finding.
+  //
+  // Pinned HERE rather than there because that file's stub was updated to speak the real protocol,
+  // which removed the only thing exercising this path — the fix would otherwise be unguarded.
+  // Asserted on the poller's own registry and the button it restores, both observable synchronously.
+  {
+    const C = loadClient({ quiet: true });
+    const out = C.run(`(function(){
+      var polls = 0;
+      var btn = { textContent:'⏳', disabled:true };
+      var realGet = document.getElementById;
+      document.getElementById = function(id){ return id === 'qcbtn' ? btn : realGet.call(document, id); };
+      // No status field at all — the shape that used to loop forever.
+      fetch = function(){ polls++; return Promise.resolve({ ok:true, json:function(){
+        return Promise.resolve({ id:'j1' }); } }); };
+      _qcPoll('t', 'j1', 'qcbtn', function(){});
+      return new Promise(function(res){ setTimeout(function(){
+        res(JSON.stringify({ polls: polls, tracked: _qcPollJobs['t'],
+                             btnText: btn.textContent, btnDisabled: btn.disabled }));
+      }, 300); });
+    })()`);
+    const r = JSON.parse(await out);
+    assert.strictEqual(r.polls, 1,
+      'an unrecognised job status is polled exactly ONCE — re-arming the timer is the hang (got '
+      + r.polls + ' polls)');
+    assert.strictEqual(r.tracked, null, 'the poller deregisters itself rather than staying live');
+    assert.strictEqual(r.btnText, '🔍', 'and the QC button is restored, not left spinning forever');
+    assert.strictEqual(r.btnDisabled, false, 'and re-enabled');
+    console.log('  _qcPoll stops on a status it cannot interpret, instead of looping forever: OK');
+  }
+
+  // A CANCELLED QC must hand the button back. The user pressed cancel in the popover; leaving the
+  // control stuck on ⏳ would make their own deliberate act look like a wedged app, and there is no
+  // second thing to click to recover it.
+  {
+    const C = loadClient({ quiet: true });
+    const out = C.run(`(function(){
+      var btn = { textContent:'⏳', disabled:true }, toasts = [], onDone = 0;
+      var realGet = document.getElementById;
+      document.getElementById = function(id){ return id === 'qcbtn' ? btn : realGet.call(document, id); };
+      showToast = function(m){ toasts.push(m); };
+      fetch = function(){ return Promise.resolve({ ok:true, json:function(){
+        return Promise.resolve({ id:'j2', status:'cancelled' }); } }); };
+      _qcPoll('t2', 'j2', 'qcbtn', function(){ onDone++; });
+      return new Promise(function(res){ setTimeout(function(){
+        res(JSON.stringify({ tracked: _qcPollJobs['t2'], btnText: btn.textContent,
+                             btnDisabled: btn.disabled, toasts: toasts, onDone: onDone }));
+      }, 300); });
+    })()`);
+    const r = JSON.parse(await out);
+    assert.strictEqual(r.btnText, '🔍', 'a cancelled QC restores the button (got ' + r.btnText + ')');
+    assert.strictEqual(r.btnDisabled, false, 'and re-enables it');
+    assert.strictEqual(r.tracked, null, 'and deregisters the poll');
+    assert.strictEqual(r.onDone, 0, 'and does NOT render a proposal — there is no result to show');
+    // ⚠️ And it is SILENT. A cancel is not a failure: toasting "⚠ QC failed" would report the
+    // user's own deliberate act back to them as an error, which is the same distinction
+    // jobFailOrCancel draws on the server side.
+    assert.deepStrictEqual(r.toasts, [],
+      'and shows no error toast — the user cancelled on purpose (got ' + JSON.stringify(r.toasts) + ')');
+    console.log('  a cancelled QC restores the button silently, with no proposal and no error: OK');
+  }
+
   } catch (e) { failed = true; console.error(e); }
   console.log(failed ? 'unit-jobs-sync-inflight: FAILED' : 'unit-jobs-sync-inflight: ALL PASSED');
   process.exit(failed ? 1 : 0);

@@ -2424,6 +2424,81 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_ag — QC runs as a listed, cancellable job (the report `v88_af` answered in the wrong place)
+
+**User report**: *"translation job is not listed in the job popover (and ideally should be
+cancel-able)"*, then, while `v88_af` was being written: *"above message was potentially wrong, i had
+click a QC, not the translation button."* **ZERO `ui.json` keys.**
+
+⚠️ **`v88_af` is kept, and is not wasted work — but it was the wrong bug.** The translation defect it
+fixed is real and was measured before it was fixed (`triggerUITranslation` was genuinely the one
+translation caller `_jobsTracked` had never been applied to, and its route registered no job). It
+simply was not what the user hit. Recorded plainly rather than quietly folded in: the investigation
+was right about the mechanism and wrong about the trigger, and the correction came from the user,
+not from the tests.
+
+### THREE QC entry points, and only ONE of them was a job
+
+`/api/qc` (the lesson QC sweep) has always registered `newJob`. **`/api/story-qc` and
+`/api/summary-qc` both AWAITED the proofread and answered only when it finished, registering
+nothing** — and neither `runStoryQc()` nor `runSummaryQc()` was `_jobsTracked` either. So clicking
+🔍 on a story ran a full-story model call with **no row anywhere in the popover**. Exactly the
+report.
+
+**Both are converted**, not only the one that was clicked — the same "where else is this question
+asked?" that `v88_s` earned. They are the same control in two places, and fixing one would have left
+the other waiting for the next report.
+
+Real jobs rather than `_jobsTracked` sync rows, for the reason established at `v88_af`: a sync row
+cannot carry a cancel button, because `_jobsRenderList`'s `canCancel` needs a server-side job id for
+`POST /api/jobs/cancel`. Each route now answers **202 + `{jobId}`**, runs under `runCancellable`,
+and hands the **unchanged payload** through `jobDone` — the client reads exactly the same fields, they
+just arrive as the job's `data`. Labels are load-bearing: `/api/jobs` skips any job without one.
+
+### ⚠️ The fix introduced a HANG, and the suite caught it the hard way
+
+`runStoryQc`/`runSummaryQc` share ONE poller (`_qcPoll`) so the two cannot drift the way the three QC
+entry points already had. Its first version continued polling on **any** status it did not
+recognise — and `unit-lesson-set-story-explorer`'s stubbed fetch answers with a QC payload carrying
+no `status` at all. The result was not a failing assertion: the file printed **ALL PASSED and then
+never exited**, re-arming a 2s timer forever, and the whole suite stalled behind it. `v88_r`'s rule
+in its clearest form — *a non-zero exit, or a process that will not die, is a FINDING*.
+
+Fixed at the source: only `running`/`pending` continue; anything else is terminal. ⚠️ **And the fix
+was briefly UNGUARDED** — updating that test's stub to speak the new protocol removed the only thing
+exercising the path, so a mutation of the guard stayed green. The claim moved to
+`unit-jobs-sync-inflight`, where it is asserted directly on the poller's own registry and the button
+it restores.
+
+### The cancel path had to be asserted separately
+
+A cancelled QC must hand the button back (a control stuck on ⏳ makes the user's own deliberate act
+look like a wedged app, with nothing to click to recover), must render no proposal, and must be
+**silent** — toasting "⚠ QC failed" would report a deliberate cancel as an error, the same
+distinction `jobFailOrCancel` draws server-side. Each of those is its own assertion; a mutation
+removing the button restore stayed green until they existed.
+
+### ⚠️ `v88_m`'s set-level guard fired — correctly — and got STRONGER for it
+
+`e2e-job-cancel`'s "every LABELLED job runs inside `runCancellable`" section went red on the two new
+QC jobs. They ARE wrapped: the guard required the **literal** `runCancellable(jobId`, so it was
+really asserting *"wrapped AND the variable is spelled `jobId`"*, and these two live in one scope so
+they are `_qcJobId`/`_sqJobId`. The lazy fix is to rename the variables to satisfy the matcher. The
+guard now derives each job's OWN variable from its `newJob` assignment and demands **that** id be the
+one wrapped — **strictly stronger than before**, since a body that wrapped some other job's id used
+to pass and no longer does. Exactly the value `v88_b` claimed for set-level guards: it found the
+call sites a reading would have missed, and it was right both times.
+
+**Eight mutations red**: story QC registered without a label (the reported bug restored);
+`runCancellable` removed from story QC; summary QC left unconverted; the poller re-arming on an
+unrecognised status (the hang); the cancel path not restoring the button; the cancel path toasting
+an error; a genuinely unwrapped labelled job (the strengthened guard's old half); and a body wrapping
+the WRONG job id (its new half).
+
+`e2e-qc-job.test.js` also pins that a cancelled proofread leaves **no proposal behind** — the user
+stopped it precisely because they did not want its answer — and that a completed job still persists
+the proposal server-side, which is what survives a client refresh.
+
 ## ✅ v88_af — the ui.json translation is a real job: listed, cancellable, and it keeps what it finished
 
 **User report**: *"translation job is not listed in the job popover (and ideally should be

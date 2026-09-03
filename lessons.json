@@ -19,7 +19,7 @@
       "lang": "nl",
       "srcLang": "de",
       "createdAt": "2026-08-30T07:15:45.723Z",
-      "updatedAt": "2026-09-03T08:36:57.509Z",
+      "updatedAt": "2026-09-03T09:25:49.358Z",
       "tokenUsage": {
         "totalPromptTokens": 5945,
         "totalCompletionTokens": 2216,
@@ -12420,6 +12420,473 @@
             "ms": 251031,
             "at": "2026-09-02T08:15:15.334Z"
           }
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1788425797364",
+          "title": "Naturraum für Biodiversität",
+          "desc": "Mehr Raum für Natur und Tiere in Veere",
+          "icon": "🌿",
+          "vocab": [
+            {
+              "target": "gemeente",
+              "source": "die Gemeinde",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "ruimte",
+              "source": "der Raum",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "natuur",
+              "source": "die Natur",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "bloemen",
+              "source": "die Blumen",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "kruiden",
+              "source": "die Kräuter",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "insecten",
+              "source": "die Insekten",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "vogels",
+              "source": "die Vögel",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "tuin",
+              "source": "der Garten",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "nl",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Gemeente Veere geeft ook op deze plek meer ruimte aan de natuur.",
+              "source": "Die Gemeinde Veere gibt auch an diesem Ort der Natur mehr Raum.",
+              "words": [
+                "Gemeente",
+                "Veere",
+                "geeft",
+                "ook",
+                "op",
+                "deze",
+                "plek",
+                "meer",
+                "ruimte",
+                "aan",
+                "de",
+                "natuur."
+              ]
+            },
+            {
+              "target": "Bloemen en kruiden krijgen de kans om te bloeien.",
+              "source": "Blumen und Kräuter haben die Chance zu blühen.",
+              "words": [
+                "Bloemen",
+                "en",
+                "kruiden",
+                "krijgen",
+                "de",
+                "kans",
+                "om",
+                "te",
+                "bloeien."
+              ]
+            },
+            {
+              "target": "Insecten zoals bijen en vlinders houden van bloemen.",
+              "source": "Insekten wie Bienen und Schmetterlinge mögen Blumen.",
+              "words": [
+                "Insecten",
+                "zoals",
+                "bijen",
+                "en",
+                "vlinders",
+                "houden",
+                "van",
+                "bloemen."
+              ]
+            },
+            {
+              "target": "Hondenpoep draagt niet bij aan een betere kringloop.",
+              "source": "Hundekot trägt nicht zu einem besseren Kreislauf bei.",
+              "words": [
+                "Hondenpoep",
+                "draagt",
+                "niet",
+                "bij",
+                "aan",
+                "een",
+                "betere",
+                "kringloop."
+              ]
+            },
+            {
+              "target": "Plant in uw eigen tuin ook bloemen en kruiden.",
+              "source": "Pflanzen Sie in Ihrem eigenen Garten ebenfalls Blumen und Kräuter.",
+              "words": [
+                "Plant",
+                "in",
+                "uw",
+                "eigen",
+                "tuin",
+                "ook",
+                "bloemen",
+                "en",
+                "kruiden."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1383,
+            "completionTokens": 488,
+            "ms": 224134,
+            "at": "2026-09-03T08:56:37.364Z"
+          }
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1788426156765",
+          "type": "inflections",
+          "title": "Nederlandse vervoegingen",
+          "desc": "Leer werkwoordsvormen en meervouden",
+          "icon": "🌿",
+          "items": [
+            {
+              "sentence": "Gemeente Veere geeft ook op deze plek meer ruimte aan de natuur om de biodiversiteit in onze gemeente te bevorderen.",
+              "surfaceForm": "geeft",
+              "translation": "Die Gemeinde Veere gibt auch an dieser Stelle mehr Raum der Natur, um die Biodiversität in unserer Gemeinde zu fördern.",
+              "lemma": "geven",
+              "lemmaChoices": [
+                "geven",
+                "gegeven",
+                "gaf",
+                "geeft"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Tegenwoordige tijd, 3e persoon enkelvoud",
+              "formChoices": [
+                "Tegenwoordige tijd, 3e persoon enkelvoud",
+                "Tegenwoordige tijd, 1e persoon enkelvoud",
+                "Verleden tijd, 3e persoon enkelvoud",
+                "Toekomende tijd, 3e persoon enkelvoud"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "De werkwoordsvorm 'geeft' is de tegenwoordige tijd van het infinitief 'geven' in de derde persoon enkelvoud."
+            },
+            {
+              "sentence": "Op deze manier wordt de natuurlijke kringloop versterkt.",
+              "surfaceForm": "versterkt",
+              "translation": "Auf diese Weise wird der natürliche Kreislauf gestärkt.",
+              "lemma": "versterken",
+              "lemmaChoices": [
+                "versterken",
+                "versterkt",
+                "versterkte"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Voltooid deelwoord",
+              "formChoices": [
+                "Voltooid deelwoord",
+                "Tegenwoordige tijd",
+                "Verleden tijd",
+                "Infinitief"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "'Versterkt' is het voltooid deelwoord van het werkwoord 'versterken', gebruikt in de lijdende vorm."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 2,
+            "rejected": 2,
+            "rejectReasons": {
+              "surfaceForm equals lemma — not an inflection": 1,
+              "surfaceForm not found as a whole word in sentence": 1
+            },
+            "promptTokens": 1807,
+            "completionTokens": 1078,
+            "ms": 357484,
+            "at": "2026-09-03T09:02:36.765Z"
+          }
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1788426452725",
+          "type": "conjugation",
+          "title": "Natuur en biodiversiteit",
+          "desc": "Werken in de natuur voor biodiversiteit",
+          "icon": "🌿",
+          "conjugations": [
+            {
+              "infinitive": "bloemen",
+              "source": "blühen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ik",
+                  "form": "bloei"
+                },
+                {
+                  "pronoun": "jij/je",
+                  "form": "bloeit"
+                },
+                {
+                  "pronoun": "hij/zij/het",
+                  "form": "bloeit"
+                },
+                {
+                  "pronoun": "wij/jullie/zij",
+                  "form": "bloeien"
+                }
+              ]
+            },
+            {
+              "infinitive": "groeien",
+              "source": "wachsen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ik",
+                  "form": "groe"
+                },
+                {
+                  "pronoun": "jij/je",
+                  "form": "groeit"
+                },
+                {
+                  "pronoun": "hij/zij/het",
+                  "form": "groeit"
+                },
+                {
+                  "pronoun": "wij/jullie/zij",
+                  "form": "groeien"
+                }
+              ]
+            },
+            {
+              "infinitive": "werken",
+              "source": "arbeiten",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ik",
+                  "form": "werk"
+                },
+                {
+                  "pronoun": "jij/je",
+                  "form": "werkt"
+                },
+                {
+                  "pronoun": "hij/zij/het",
+                  "form": "werkt"
+                },
+                {
+                  "pronoun": "wij/jullie/zij",
+                  "form": "werken"
+                }
+              ]
+            },
+            {
+              "infinitive": "kijken",
+              "source": "schauen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ik",
+                  "form": "kijk"
+                },
+                {
+                  "pronoun": "jij/je",
+                  "form": "kijkt"
+                },
+                {
+                  "pronoun": "hij/zij/het",
+                  "form": "kijkt"
+                },
+                {
+                  "pronoun": "wij/jullie/zij",
+                  "form": "kijken"
+                }
+              ]
+            },
+            {
+              "infinitive": "stromen",
+              "source": "fließen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ik",
+                  "form": "stroom"
+                },
+                {
+                  "pronoun": "jij/je",
+                  "form": "stroomt"
+                },
+                {
+                  "pronoun": "hij/zij/het",
+                  "form": "stroomt"
+                },
+                {
+                  "pronoun": "wij/jullie/zij",
+                  "form": "stromen"
+                }
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "conjugation",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 773,
+            "completionTokens": 703,
+            "ms": 295375,
+            "at": "2026-09-03T09:07:32.725Z"
+          }
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1788426648486",
+          "type": "comprehension",
+          "title": "Die Enteignungszone",
+          "desc": "Verstehen Sie den Text über die Naturschutzmaßnahmen in Veere?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum wird das Gras an den Rändern der Wege gemäht, während es im übrigen Bereich weniger oft geschnitten wird?",
+              "choices": [
+                "Um die Biodiversität zu fördern und gleichzeitig die Wege begehbar zu halten.",
+                "Damit die Blumen und Kräuter nicht von Unkraut überwuchert werden.",
+                "Weil die Gemeinde keine Zeit hat, den gesamten Bereich regelmäßig zu pflegen.",
+                "Um sicherzustellen, dass das Mähgut schnell trocknet und abtransportiert wird."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text sagt: 'Grasranden worden wel gemaaid om te voorkomen dat het gras over paden groeit' (damit es nicht auf die Wege wächst), während der Rest weniger gemäht wird, um Blumen und Insekten zu fördern."
+            },
+            {
+              "q": "Welche Rolle spielen die Insekten in dem beschriebenen natürlichen Kreislauf?",
+              "choices": [
+                "Sie bestäuben die Blumen direkt, um das Graswachstum zu stoppen.",
+                "Sie sind eine Nahrungsquelle für Vögel und Teil der Biodiversität.",
+                "Sie verhindern, dass Hunde auf den Wiesen ihre Notdurft verrichten.",
+                "Sie schützen die Pflanzen vor dem zeewind (Meereswind)."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text erklärt: 'Insecten zoals bijen en vlinders houden van bloemen en vogels houden weer van insecten.' Insekten sind also Nahrung für Vögel."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 966,
+            "completionTokens": 568,
+            "ms": 195072,
+            "at": "2026-09-03T09:10:48.486Z"
+          }
         }
       ],
       "generationStats": {
@@ -12432,8 +12899,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1788,
-        "totalCompletionTokens": 1030,
+        "totalPromptTokens": 6717,
+        "totalCompletionTokens": 3867,
         "lessons": [
           {
             "lessonNum": 1,
@@ -12443,7 +12910,8 @@
           }
         ],
         "tokensByType": {
-          "story_qc": 562
+          "story_qc": 562,
+          "add_lesson": 7766
         }
       },
       "comicPanels": [
@@ -12460,36 +12928,10 @@
         }
       ],
       "generatedAt": "2026-09-02T08:11:04.232Z",
-      "updatedAt": "2026-09-02T08:15:15.334Z",
+      "updatedAt": "2026-09-03T09:22:51.110Z",
       "createdBy": "admin",
       "continuedFromId": "tp_17882900616230000013",
-      "continuedFrom": "Strom fließt wieder",
-      "storyQcProposal": {
-        "corrected": "Gemeente Veere geeft ook op deze plek meer ruimte aan de natuur om de biodiversiteit in onze gemeente te bevorderen.\nBloemen en kruiden krijgen de kans om te bloeien en te groeien doordat het gras minder vaak wordt gemaaid. Insecten zoals bijen en vlinders houden van bloemen, en vogels houden weer van insecten. Op deze manier wordt de natuurlijke kringloop versterkt.\n\nGrasranden worden wel gemaaid om te voorkomen dat het gras over paden groeit, en maaiafval wordt afgevoerd. Hondenpoep draagt niet bij aan een betere kringloop, en door het zelf op te ruimen, draagt u ook bij aan een betere biodiversiteit.\n\nPlant in uw eigen tuin ook bloemen en kruiden en draag zo ook zelf bij aan het verbeteren van onze natuur!",
-        "against": "Gemeente Veere geeft ook op deze plek meer ruimte aan de natuur om de biodiversiteit in onze gemeente te bevorderen.\nBloemen en kruiden krijgen de kans om te bloeien en te groeien door het gras minder vaak te maaien. Insecten zoals bijen en vlinders houden van bloemen en vogels houden weer van insecten. Op deze manier wordt de natuurlijke kringloop versterkt.\n\nGrasranden worden wel gemaaid om te voorkomen dat het gras over paden groeit en maaiafval wordt afgevoerd. Hondenpoep draagt niet bij aan een betere kringloop en door het zelf op te ruimen, draagt u ook bij aan een betere biodiversiteit.\n\nPlant in uw eigen tuin ook bloemen en kruiden planten en draag zo ook zelf bij aan het verbeteren van onze natuur!",
-        "verdict": "rewrite",
-        "rejected": true,
-        "changedSentences": 8,
-        "totalSentences": 8,
-        "changedRatio": 1,
-        "wordEditRatio": 0.057,
-        "meta": {
-          "type": "story_qc",
-          "model": "translategemma:12b",
-          "attempts": null,
-          "valid": 0,
-          "rejected": 0,
-          "rejectReasons": null,
-          "promptTokens": 377,
-          "completionTokens": 185,
-          "ms": 236441,
-          "at": "2026-09-03T08:12:15.230Z",
-          "verdict": "rewrite",
-          "changedRatio": 1,
-          "wordEditRatio": 0.057
-        },
-        "at": "2026-09-03T08:12:15.230Z"
-      }
+      "continuedFrom": "Strom fließt wieder"
     },
     {
       "id": "tp_17882900616230000013",

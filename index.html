@@ -6363,6 +6363,51 @@ async function retranslateStory(){
 // ── QC for generated texts (v55_g) ───────────────────────────────────────────
 // Proofread the current story with the QC model. The result is a PROPOSAL — never applied until the
 // user accepts. The review panel (reusing #aeh-diff-panel) shows the sentence-level diff + verdict.
+// ── v88_ag: both QC buttons run as real, cancellable JOBS ────────────────────────────────────────
+// User report: a QC click showed nothing in the jobs popover. Both /api/story-qc and
+// /api/summary-qc used to BLOCK until the proofread finished and registered no job, and neither
+// caller was `_jobsTracked` — so a full-story model call ran with no row anywhere. They now answer
+// 202 + {jobId}; this ONE poller serves both, so the two cannot drift the way the two QC buttons
+// already had (only one of the three QC entry points, `/api/qc`, was ever a real job).
+//
+// Shape follows `_textExplorerCheckOnce`/`_uiTranslatePoll`: a per-key job id so a superseded run
+// cannot repaint over a newer one, and `cancelled` handled as its own outcome rather than as an
+// error — the user pressed cancel, and "⚠ ..." would be reporting their own deliberate act as a
+// failure.
+const _qcPollJobs = {};
+function _qcPoll(key, jobId, btnId, onDone){
+  _qcPollJobs[key] = jobId;
+  const restore = () => { const b = document.getElementById(btnId); if (b) { b.textContent = '🔍'; b.disabled = false; } };
+  const tick = async () => {
+    if (_qcPollJobs[key] !== jobId) return;              // superseded by a newer run
+    try {
+      const r = await fetch('/api/job/' + jobId);
+      if (!r.ok) throw new Error('Poll failed: ' + r.status);
+      const j = await r.json();
+      if (_qcPollJobs[key] !== jobId) return;
+      if (j.status === 'done'){ _qcPollJobs[key] = null; restore(); onDone(j.data || {}); return; }
+      if (j.status === 'cancelled'){ _qcPollJobs[key] = null; restore(); return; }
+      if (j.status === 'error'){ _qcPollJobs[key] = null; restore();
+        showToast('⚠ ' + String(j.error || 'QC failed').slice(0, 60)); return; }
+      // ⚠️ Poll ONLY for statuses that really mean "still working". Continuing on anything
+      // unrecognised is an unbounded 2s timer that never stops — which is not theoretical: it hung
+      // `unit-lesson-set-story-explorer` (the file printed ALL PASSED and then never exited,
+      // v88_r's "a process that will not die is a finding" in its clearest form) the moment that
+      // test's stubbed fetch answered this poll with a body carrying no status at all. A response
+      // this function cannot interpret is a failure, not progress.
+      if (j.status !== 'running' && j.status !== 'pending'){
+        _qcPollJobs[key] = null; restore();
+        showToast('⚠ ' + String(j.error || 'QC failed').slice(0, 60)); return;
+      }
+      setTimeout(tick, 2000);
+    } catch(e){
+      _qcPollJobs[key] = null; restore();
+      showToast('⚠ ' + String(e.message || 'QC failed').slice(0, 60));
+    }
+  };
+  tick();
+}
+
 async function runStoryQc() {
   const d = APP.lessonData; if (!d || !d.id) return;
   const btn = document.getElementById('story-qc-btn');
@@ -6372,13 +6417,16 @@ async function runStoryQc() {
       body: JSON.stringify({ topicId: d.id }) });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'Failed');
-    d.storyQcProposal = { corrected: data.corrected, against: data.original, verdict: data.verdict,
-      rejected: data.rejected, changedSentences: data.changedSentences, totalSentences: data.totalSentences,
-      changedRatio: data.changedRatio, wordEditRatio: data.wordEditRatio };
-    renderStoryQcProposal(d.storyQcProposal);
+    // The payload is unchanged — it just arrives as the job's `data` now, so everything below reads
+    // the same fields it always did.
+    _qcPoll('story', data.jobId, 'story-qc-btn', (out) => {
+      d.storyQcProposal = { corrected: out.corrected, against: out.original, verdict: out.verdict,
+        rejected: out.rejected, changedSentences: out.changedSentences, totalSentences: out.totalSentences,
+        changedRatio: out.changedRatio, wordEditRatio: out.wordEditRatio };
+      renderStoryQcProposal(d.storyQcProposal);
+    });
   } catch(e) {
     showToast('⚠ ' + e.message.slice(0, 60));
-  } finally {
     if (btn) { btn.textContent = '🔍'; btn.disabled = false; }
   }
 }
@@ -6538,13 +6586,14 @@ async function runSummaryQc() {
       body: JSON.stringify({ slId, srcLang: APP._slScreen?.slMeta?.srcLang }) });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'Failed');
-    APP._slScreen._summaryQcProp = { against: data.original, corrected: data.corrected, verdict: data.verdict,
-      rejected: data.rejected, changedSentences: data.changedSentences, totalSentences: data.totalSentences };
-    _renderQcProposalInto(APP._slScreen._summaryQcProp, { panelId: 'sum-qc-panel', cbClass: 'sum-qc-cb',
-      acceptCall: 'acceptSummaryQc()', discardCall: 'discardSummaryQc()' });
+    _qcPoll('summary', data.jobId, 'sum-qc-btn', (out) => {
+      APP._slScreen._summaryQcProp = { against: out.original, corrected: out.corrected, verdict: out.verdict,
+        rejected: out.rejected, changedSentences: out.changedSentences, totalSentences: out.totalSentences };
+      _renderQcProposalInto(APP._slScreen._summaryQcProp, { panelId: 'sum-qc-panel', cbClass: 'sum-qc-cb',
+        acceptCall: 'acceptSummaryQc()', discardCall: 'discardSummaryQc()' });
+    });
   } catch(e) {
     showToast('⚠ ' + e.message.slice(0, 60));
-  } finally {
     if (btn) { btn.textContent = '🔍'; btn.disabled = false; }
   }
 }
