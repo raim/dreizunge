@@ -148,10 +148,27 @@ console.log('  /api/topic-source contract + list projection: OK');
             APP.progress = { completed:{}, solved:{} }; APP._teacherMode = true; true;`, 'env');
     const row = { id: 'T1', topic: 'Chapter One', lang: 'de', srcLang: 'en',
                   lessonCount: 4, difficulty: 2, updatedAt: '2026-01-01' };
+    // ⚠️ v88_am: the actions moved BEHIND a pencil, so this scan must exclude the pencil itself —
+    // it is a container, not an action, and counting it turned "exactly four actions" into five on
+    // a correct tree. The claim below is unchanged and still worth pinning: which ACTIONS a
+    // storyline chapter card offers, and which it does not.
     const titles = (slChapter) => {
       const h = Cc.run(`savedItemHtml(${JSON.stringify(row)}, false, true, ${slChapter ? 'true, true' : 'false, false'})`, 'h');
-      return [...h.matchAll(/<button class="ico-btn[^"]*"[^>]*title="([^"]*)"/g)].map(m => m[1]);
+      // Match the WHOLE opening tag, not just up to `title=`: the pencil's onclick sits AFTER its
+      // title, so a match that stopped at the title could not see what to exclude.
+      return [...h.matchAll(/<button class="ico-btn[^>]*>/g)]
+        .map(m => m[0])
+        .filter(tag => !/_cardEditToggle\(/.test(tag))
+        .map(tag => (/title="([^"]*)"/.exec(tag) || [, ''])[1])
+        .filter(Boolean);
     };
+    // Non-vacuity for that exclusion: the pencil really IS there, so the filter is removing
+    // something rather than silently matching nothing.
+    {
+      const raw = Cc.run(`savedItemHtml(${JSON.stringify(row)}, false, true, true, true)`, 'h-raw');
+      assert.ok(/_cardEditToggle\('sicardpop-/.test(raw),
+        'the chapter card does render the pencil this scan filters out');
+    }
     const lib = titles(false), sl = titles(true);
     // Non-vacuity: the library row must actually carry the buttons being removed, or "absent from
     // the storyline card" would be trivially true and prove nothing.

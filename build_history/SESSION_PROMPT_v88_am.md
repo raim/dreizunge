@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_al`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_am`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -324,6 +324,24 @@ comment that swallows the rest of the statement and reports a baffling `Unexpect
 **Any `\` in a template literal is processed twice.** Same family as the standing "no backticks in a
 comment inside a template literal" rule.
 
+**`v88_am` extended the pencil popover to the CARDS** — the library storyline cards and the chapter
+cards (user request). Zero keys. A SECOND mechanism on purpose: item Y's popover mirrors STATIC
+markup, while cards are built as strings per instance, so `_cardEditPopHtml` builds rows from the
+button HTML the caller already emitted, with the label it already carried. `.card-edit-pop` is
+`position:fixed` and placed from the pencil's rect — a card header is a flex row in a scrolling list,
+where an absolutely-positioned child would be clipped. Library card keeps `▶`/`🔗`; the chapter card
+has neither, so its row holds only the pencil.
+
+⚠️ **A judgement call to reverse in one line if unwanted**: `savedItemHtml` serves BOTH a storyline
+chapter and a standalone library item, and the change was applied to both rather than only to
+`slChapter` — one renderer looking different in two places would be stranger than the decluttering.
+
+⚠️ **Three already-documented traps hit in one release**: backticks in a comment inside a template
+literal (`v88_t`); the auto-vivify trap (a test created its own `<div id=…>` while the code addressed
+the vivified, cached one); and containment-as-proxy TWICE — the pencil counted as an action, and a
+label assertion satisfied by the button's own `title` so a too-greedy icon strip stayed green.
+**Third containment-proxy failure in three releases.** Seven mutations red.
+
 ---
 
 ## ⚠️ START HERE — THE FOUR-FIELD QUESTION IS ANSWERED; ONE OF ITS CONSEQUENCES IS NOT
@@ -441,8 +459,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 334 checks
-node test/run.js --quick                  → expect 274
+node test/run.js                          → expect 335 checks
+node test/run.js --quick                  → expect 275
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -495,7 +513,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **343 topics, 97 storylines, 33 languages, 755 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_al'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_am'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to

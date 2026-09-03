@@ -2424,6 +2424,69 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_am — the pencil popover reaches the library storyline cards and the chapter cards
+
+User request, extending item Y: *"Let's do the same for the storyline fields on the main page, and
+for the individual chapter fields of the storyline page. Hide all but the play and share buttons
+behind a pencil that opens a popover with the existing edit buttons."* **ZERO `ui.json` keys.**
+
+### A second mechanism, deliberately
+
+Item Y's popover MIRRORS static markup: the storyline page has ONE header whose buttons exist in the
+document, and `_slEditMenuSync` copies their state onto rows. A library list has one card per
+storyline and a storyline page one per chapter — those buttons are built as STRINGS, per card, and
+there is no single element to mirror. `_cardEditPopHtml(popId, entries)` therefore builds rows
+directly from **the button HTML the caller was already emitting**, with **the label it already
+carried**. That is what keeps this at zero keys and keeps every handler, data attribute and title
+working: the buttons are relocated, not rewritten.
+
+`.card-edit-pop` is `position:fixed` and placed from the pencil's own rect, clamped to the viewport.
+The page-level popover can sit in flow because it owns its header; a card cannot — its header is a
+flex row inside a scrolling list with its own overflow and stacking, so an absolutely-positioned
+child would be clipped or painted under the next card. Only ONE popover is open page-wide, or two
+cards could stack theirs over each other.
+
+### What moved where
+
+- **Library storyline card**: `▶` (teacher walkthrough) and `🔗` (share) stay in the header, exactly
+  as the user scoped it for the page header at `v88_aj`. `⬇` export, `🔍` QC, `🔤` analyse and `🗑️`
+  delete moved behind the pencil.
+- **Chapter card (`savedItemHtml`)**: this card has NEITHER a play nor a share button — its whole
+  body IS the play affordance — so every action moved and the row is left holding only the pencil.
+
+⚠️ **A judgement call worth flagging**: `savedItemHtml` renders BOTH a storyline's chapter and a
+standalone library item, and the change was applied to both rather than only to `slChapter`. Making
+the same card look different in two places would have been a stranger outcome than the decluttering
+asked for, and the per-context differences that already existed (edit/add/export are hidden for a
+storyline chapter) are untouched — they simply drop rows, since `_cardEditPopHtml` ignores falsy
+entries and callers keep their own conditionals. **One line to reverse if that is not wanted.**
+
+### ⚠️ Three traps, all of them ones this project has already written down
+
+1. **Backticks in a comment inside a TEMPLATE LITERAL.** The `v88_t` rule, walked into one release
+   after `v88_al` added a note about its sibling (backslashes). The comment explaining the move
+   contained `` `_cardEditPopHtml` `` and terminated the literal.
+2. **The auto-vivify trap.** The toggle test created its own `<div id="popA">` and read back from it,
+   while the code addressed `document.getElementById('popA')` — which `lib-dom` vivifies and caches
+   as a DIFFERENT object. Every assertion failed on a correct tree. Read through the same accessor
+   the code uses.
+3. **Containment as a proxy, twice.** `unit-provenance-fields` counts a chapter card's actions by
+   scanning `ico-btn` titles; the pencil is one, so "exactly four actions" became five on a correct
+   tree — re-scoped to exclude the pencil as a CONTAINER (with its own non-vacuity check that the
+   pencil is really there). And the label assertion used `includes`, which the button's own `title`
+   attribute satisfies — so a too-greedy icon strip that ate the first word stayed GREEN until the
+   assertion was delimited to the label span. **Third containment-proxy failure in three releases.**
+
+### Also found live, not by a test
+
+The `🔤` row read **"🔤 Analyse words for the text explorer"** — the `ui.json` string already begins
+with that icon and the row already shows the button. Same strip item Y uses, and the same way it was
+found there: by reading the rendered label.
+
+**Seven mutations red**: an empty popover still offering a pencil; two popovers open at once; share
+swept into the library popover; a chapter action left outside the pencil; a real action regression
+still caught through the pencil-exclusion; the icon strip removed; and the icon strip made greedy.
+
 ## ✅ v88_al — the last five blocking LLM routes become listed, cancellable jobs
 
 **Closes the open "some LLM-based jobs still have no cancel BUTTON" item**, carried since the user's

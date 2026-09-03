@@ -132,6 +132,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
    of the viewport-clamping the jobs/tutor popovers do. */
 .sl-edit-pop{margin:4px 0 0;padding:6px;background:var(--white);border:2px solid var(--gray-mid);
   border-radius:var(--radius-lg);box-shadow:0 6px 20px rgba(0,0,0,.18);max-width:280px}
+/* v88_am: the CARD variant of the same popover. `position:fixed`, placed at click time from the
+   pencil's own rect — a card's header is a flex row inside a scrolling list with its own overflow
+   and stacking, and an absolutely-positioned child of it would be clipped or painted under the next
+   card. The storyline PAGE's popover can stay in flow because it owns its header; a card cannot. */
+.card-edit-pop{position:fixed;z-index:950;padding:6px;background:var(--white);
+  border:2px solid var(--gray-mid);border-radius:var(--radius-lg);
+  box-shadow:0 6px 20px rgba(0,0,0,.22);max-width:min(300px,calc(100vw - 24px))}
 .sl-edit-pop-row{display:flex;align-items:center;gap:8px;padding:2px}
 .sl-edit-pop-lbl{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;
   overflow:hidden;text-overflow:ellipsis}
@@ -165116,12 +165123,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v88_al', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v88_am', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"30ef408e804e","lessons.json":"fb51bbb87f2d","ui.json":"65b74537b8af","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"c91e65d377b1","analysis-corrections.json":"missing","build-static.js":"3bcdb2d82139"};
+  APP.buildSources = {"index.html":"de1f0b149a60","lessons.json":"fb51bbb87f2d","ui.json":"65b74537b8af","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"c91e65d377b1","analysis-corrections.json":"missing","build-static.js":"3bcdb2d82139"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -167152,6 +167159,64 @@ function _lessonTypesDropdownHtml(s) {
 // control). This is now a no-op kept only so the single call site needs no change; the storyline
 // pass mark is rendered by the #sl-passmark block further down _renderStorylineScreen.
 function _refreshSlThreshold(){ /* removed — see #sl-passmark */ }
+
+// ── v88_am: the same pencil-popover, for DYNAMICALLY RENDERED cards ─────────────────────────────
+// User request, extending item Y: "Let's do the same for the storyline fields on the main page, and
+// for the individual chapter fields of the storyline page. Hide all but the play and share buttons
+// behind a pencil that opens a popover with the existing edit buttons."
+//
+// ⚠️ Why this is NOT `_slEditMenuSync`. That one MIRRORS static markup: the storyline page has ONE
+// header, its buttons exist in the document, and the sync copies their state onto rows. A library
+// list has one card per storyline and a storyline page one per chapter — the buttons are built as
+// STRINGS, per card, and there is no single element to mirror. So this builds the rows directly and
+// the caller passes the same button HTML it was already emitting, unchanged, with the label it
+// already had. That is what keeps this at ZERO new ui.json keys and keeps every handler working:
+// the buttons are MOVED, not rewritten.
+let _cardEditOpenId = null;
+function _cardEditClose(){
+  if (_cardEditOpenId) {
+    const el = document.getElementById(_cardEditOpenId);
+    if (el) el.style.display = 'none';
+  }
+  _cardEditOpenId = null;
+}
+function _cardEditToggle(popId, btn){
+  const el = document.getElementById(popId);
+  if (!el) return;
+  const wasOpen = el.style.display !== 'none';
+  _cardEditClose();                      // only ever ONE open, across every card on the page
+  if (wasOpen) return;
+  el.style.display = 'block';
+  _cardEditOpenId = popId;
+  // Positioned from the pencil's own rect, and clamped to the viewport so a card near the right
+  // edge or the bottom of a long list still opens something reachable.
+  try {
+    const r = btn.getBoundingClientRect();
+    const w = el.offsetWidth || 260, h = el.offsetHeight || 120;
+    el.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + 'px';
+    el.style.top  = ((r.bottom + h > innerHeight - 8) ? Math.max(8, r.top - h - 6) : r.bottom + 6) + 'px';
+  } catch(_) { /* no layout engine (test harness): the popover is still open and addressable */ }
+  setTimeout(() => document.addEventListener('click', _cardEditClose, { once: true }), 0);
+}
+// `entries` are { html, label } — `html` is the button EXACTLY as the caller used to emit it.
+// Falsy entries are dropped, so a caller can keep using its existing `cond ? btn : ''` expressions
+// and an entry that renders nothing simply does not become a row.
+function _cardEditPopHtml(popId, entries){
+  // The row already SHOWS the button, so a label that starts with the same icon
+  // ("🔤 Analyse words for the text explorer") would print the glyph twice side by side. Same strip
+  // item Y's own popover uses; labels that are plain words are untouched.
+  const rows = (entries || []).filter(e => e && e.html).map(e =>
+    `<div class="sl-edit-pop-row">${e.html}`
+    + `<span class="sl-edit-pop-lbl">`
+    + `${escHtml(String(e.label || '').replace(/^[^\p{L}\p{N}]+\s/u, ''))}</span></div>`).join('');
+  // A pencil that would open an empty menu is not offered — the same "a dead control is worse than
+  // no control" rule this project applied to the cancel affordance and to item Y's own pencil.
+  if (!rows) return '';
+  return `<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="${escAttr(t('ui.edit_title'))}"`
+    + ` onclick="event.stopPropagation();_cardEditToggle('${escAttr(popId)}',this)">✏️</button>`
+    + `<div class="card-edit-pop" id="${escAttr(popId)}" style="display:none"`
+    + ` onclick="event.stopPropagation()">${rows}</div>`;
+}
 
 // ── item Y (v88_ai): the storyline header's edit popover ─────────────────────────────────────────
 // Deliberately NOT a re-implementation of the five buttons. They are the SAME elements, relocated,

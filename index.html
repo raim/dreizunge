@@ -132,6 +132,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
    of the viewport-clamping the jobs/tutor popovers do. */
 .sl-edit-pop{margin:4px 0 0;padding:6px;background:var(--white);border:2px solid var(--gray-mid);
   border-radius:var(--radius-lg);box-shadow:0 6px 20px rgba(0,0,0,.18);max-width:280px}
+/* v88_am: the CARD variant of the same popover. `position:fixed`, placed at click time from the
+   pencil's own rect — a card's header is a flex row inside a scrolling list with its own overflow
+   and stacking, and an absolutely-positioned child of it would be clipped or painted under the next
+   card. The storyline PAGE's popover can stay in flow because it owns its header; a card cannot. */
+.card-edit-pop{position:fixed;z-index:950;padding:6px;background:var(--white);
+  border:2px solid var(--gray-mid);border-radius:var(--radius-lg);
+  box-shadow:0 6px 20px rgba(0,0,0,.22);max-width:min(300px,calc(100vw - 24px))}
 .sl-edit-pop-row{display:flex;align-items:center;gap:8px;padding:2px}
 .sl-edit-pop-lbl{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;
   overflow:hidden;text-overflow:ellipsis}
@@ -8856,19 +8863,37 @@ function savedItemHtml(s, connector, hideStory, hideProv, slChapter) {
         <div class="saved-meta"><span class="lang-pair-badge" title="${srcL.name} → ${tL.name}">${srcL.flag}→${tL.flag}</span> ${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}${ratingStr}</div>
         ${hideProv ? '' : provLineHtml(s)}
       </div>
+      <!-- ⚠️ v88_am (user request): "the individual chapter fields of the storyline page ... hide all
+           but the play and share buttons behind a pencil". This card has NEITHER a play nor a share
+           button — its whole surface IS the play affordance (the card body opens the chapter) — so
+           every action moves behind the pencil and the row becomes just that one icon.
+           Applied to BOTH contexts this renderer serves (a storyline's chapter and a standalone
+           library item), not only to slChapter: it is ONE renderer, and making the same card look
+           different in two places would be a stranger outcome than the decluttering asked for. The
+           per-context differences that already existed (edit/add/export are hidden for a storyline
+           chapter) are untouched — they simply drop rows, since _cardEditPopHtml ignores falsy ones.
+           (No backticks in this comment: it lives inside a template literal.) -->
       <div class="saved-actions" onclick="event.stopPropagation()">
-        ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${escJsAttr(s.id||s.topic)}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
-        ${(APP.info.canGenerate && !slChapter)?`<button class="ico-btn" title="Edit / rename topic" onclick="event.stopPropagation();openSavedItemEdit('${sid}','${enc}')">✏️</button>`:''}
-        ${(APP.info.canGenerate && !slChapter)?`<button class="ico-btn" title="${t('lib.add_lesson')}" onclick="event.stopPropagation();openAddLesson('${sid}','${enc}')">➕</button>`:''}
-        ${APP.info.canGenerate&&s.id?`<button class="ico-btn" title="${t('qc.btn.topic')} ${t('qc.btn.force_hint')}" onclick="event.stopPropagation();qcRun({topicId:'${s.id}'},this)">🔍${s.qcFlags>0?`<span style="color:var(--red);font-weight:800">${s.qcFlags}</span>`:''}${s.storyQcPending?`<span title="${t('qc.story_pending')}" style="color:var(--green);font-weight:800">📝</span>`:''}</button>`:''}
-        <!-- item W follow-up (v86_p, user-requested): 🔤, NOT 🔍 (taken by QC right above) — same
-             per-chapter analyzeChaptersRun the storyline header's own 🔤 button uses, scoped to
-             this ONE chapter. -->
-        ${APP.info.canGenerate&&s.id?`<button class="ico-btn" title="${t('gen.post_gen_analysis_lbl')}" onclick="event.stopPropagation();analyzeChaptersRun(['${s.id}'],this)">🔤</button>`:''}
-        ${slChapter?'':`<button class="ico-btn export" title="${t('lesson.export_title')}"
-          data-topic="${s.topic.replace(/"/g,'&quot;')}"
-          onclick="openExportMenu(event,[this.dataset.topic])">⬇</button>`}
-        <button class="ico-btn" title="Delete" onclick="deleteSaved('${s.id||enc}')">🗑</button>
+        ${_cardEditPopHtml('sicardpop-' + sid, [
+          (APP.info.canGenerate ? { html: `<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${escJsAttr(s.id||s.topic)}',${s.difficulty||2},${s.storyLen||300})">↪</button>`,
+            label: 'Continue story' } : null),
+          ((APP.info.canGenerate && !slChapter) ? { html: `<button class="ico-btn" title="Edit / rename topic" onclick="event.stopPropagation();openSavedItemEdit('${sid}','${enc}')">✏️</button>`,
+            label: 'Edit / rename topic' } : null),
+          ((APP.info.canGenerate && !slChapter) ? { html: `<button class="ico-btn" title="${t('lib.add_lesson')}" onclick="event.stopPropagation();openAddLesson('${sid}','${enc}')">➕</button>`,
+            label: t('lib.add_lesson') } : null),
+          ((APP.info.canGenerate && s.id) ? { html: `<button class="ico-btn" title="${t('qc.btn.topic')} ${t('qc.btn.force_hint')}" onclick="event.stopPropagation();qcRun({topicId:'${s.id}'},this)">🔍${s.qcFlags>0?`<span style="color:var(--red);font-weight:800">${s.qcFlags}</span>`:''}${s.storyQcPending?`<span title="${t('qc.story_pending')}" style="color:var(--green);font-weight:800">📝</span>`:''}</button>`,
+            label: t('qc.btn.topic') } : null),
+          // item W follow-up (v86_p, user-requested): 🔤, NOT 🔍 (taken by QC above) — the same
+          // per-chapter analyzeChaptersRun the storyline header's own 🔤 uses, scoped to ONE chapter.
+          ((APP.info.canGenerate && s.id) ? { html: `<button class="ico-btn" title="${t('gen.post_gen_analysis_lbl')}" onclick="event.stopPropagation();analyzeChaptersRun(['${s.id}'],this)">🔤</button>`,
+            label: t('gen.post_gen_analysis_lbl') } : null),
+          (slChapter ? null : { html: `<button class="ico-btn export" title="${t('lesson.export_title')}"
+            data-topic="${s.topic.replace(/"/g,'&quot;')}"
+            onclick="openExportMenu(event,[this.dataset.topic])">⬇</button>`,
+            label: t('lesson.export_title') }),
+          { html: `<button class="ico-btn" title="Delete" onclick="deleteSaved('${s.id||enc}')">🗑</button>`,
+            label: 'Delete' },
+        ])}
       </div>
     </div>
     <div class="saved-item-story"${hideStory ? ' style="display:none"' : ''}>
@@ -9237,34 +9262,40 @@ async function loadSavedList(){
       ${APP._teacherMode?`<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="${escAttr(t('walk.start'))}"
         data-sl="${chainId}" data-chain="${escapedChain}"
         onclick="event.stopPropagation();walkStoryline(this.dataset.sl,this.dataset.chain)">▶</button>`:''}
-      <button class="ico-btn export" style="font-size:11px;padding:2px 8px"
-        title="${t('lesson.export_storyline_title')}"
-        data-chain="${escapedChain}"
-        onclick="openExportMenu(event,JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇</button>
       <button class="ico-btn" style="font-size:11px;padding:2px 8px" title="Share storyline link"
         data-chain-id="${chainId}"
         onclick="event.stopPropagation();shareStorylineById(this.dataset.chainId)">🔗</button>
-      ${APP.info.canGenerate?`<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="${t('qc.btn.storyline')} ${t('qc.btn.force_hint')}"
-        data-sl="${chainId}"
-        onclick="event.stopPropagation();qcRun({storylineId:this.dataset.sl},this)">🔍${(()=>{const n=chain.reduce((a,id)=>a+((byIdAll[id]&&byIdAll[id].qcFlags)||0),0);return n>0?`<span style="color:var(--red);font-weight:800">${n}</span>`:'';})()}${(()=>{const sp=chain.reduce((a,id)=>a+((byIdAll[id]&&byIdAll[id].storyQcPending)?1:0),0);return sp>0?`<span title="${t('qc.story_pending')}" style="color:var(--green);font-weight:800">📝${sp}</span>`:'';})()}</button>`:''}
-      <!-- item W follow-up (v86_p, user-requested): 🔤, NOT 🔍 (taken by QC right above) — batch-
-           triggers _kickOffAnalysisJob for every chapter in the storyline. No server-side
-           "resolve a storylineId to its chapters" endpoint exists for this feature (unlike /api/qc),
-           so the client passes the SAME chapter-id array the export/delete buttons already carry
-           via data-chain, and loops itself (analyzeChaptersRun). -->
-      ${APP.info.canGenerate?`<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="${t('gen.post_gen_analysis_lbl')}"
-        data-chain="${escapedChain}"
-        onclick="event.stopPropagation();analyzeChaptersRun(JSON.parse(decodeURIComponent(this.dataset.chain)),this)">🔤</button>`:''}
-      <!-- User request: "If both, images and a storyboard exists, the teacher should be able to
-           choose which to show on the main page and in the storyline view." Shown ONLY when there
-           genuinely IS a choice — both a storyboard and at least one chapter with panel images —
-           because with only one of the two there is nothing to pick between and the other state is
-           already what _slThumbMode resolves to on its own. Teacher-gated: this is curation, and it
-           changes what every learner sees. ONE control, because the mode is stored per storyline and
-           both surfaces read the same field. -->
-      <button class="ico-btn" style="font-size:11px;padding:2px 8px;color:var(--red)" title="Delete all chapters in this storyline"
-        data-chain="${escapedChain}"
-        onclick="event.stopPropagation();deleteStoryline(this.dataset.chain)">🗑️</button>
+      <!-- ⚠️ v88_am (user request): everything except the play and share buttons moved behind the
+           pencil below. The buttons are the SAME strings, relocated into _cardEditPopHtml rows —
+           every handler, data attribute and title is untouched, which is what keeps their behaviour
+           identical and this change at zero new ui.json keys. Each row's LABEL is the title the
+           button already carried.
+           (No backticks in this comment: it lives inside a template literal.) -->
+      ${_cardEditPopHtml('slcardpop-' + chainId, [
+        { html: `<button class="ico-btn export" style="font-size:11px;padding:2px 8px"
+            title="${t('lesson.export_storyline_title')}"
+            data-chain="${escapedChain}"
+            onclick="openExportMenu(event,JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇</button>`,
+          label: t('lesson.export_storyline_title') },
+        (APP.info.canGenerate ? {
+          html: `<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="${t('qc.btn.storyline')} ${t('qc.btn.force_hint')}"
+            data-sl="${chainId}"
+            onclick="event.stopPropagation();qcRun({storylineId:this.dataset.sl},this)">🔍${(()=>{const n=chain.reduce((a,id)=>a+((byIdAll[id]&&byIdAll[id].qcFlags)||0),0);return n>0?`<span style="color:var(--red);font-weight:800">${n}</span>`:'';})()}${(()=>{const sp=chain.reduce((a,id)=>a+((byIdAll[id]&&byIdAll[id].storyQcPending)?1:0),0);return sp>0?`<span title="${t('qc.story_pending')}" style="color:var(--green);font-weight:800">📝${sp}</span>`:'';})()}</button>`,
+          label: t('qc.btn.storyline') } : null),
+        // item W follow-up (v86_p, user-requested): 🔤, NOT 🔍 (taken by QC above) — batch-triggers
+        // _kickOffAnalysisJob for every chapter. No server-side "resolve a storylineId to its
+        // chapters" endpoint exists for this feature (unlike /api/qc), so the client passes the SAME
+        // chapter-id array the export/delete buttons already carry via data-chain, and loops itself.
+        (APP.info.canGenerate ? {
+          html: `<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="${t('gen.post_gen_analysis_lbl')}"
+            data-chain="${escapedChain}"
+            onclick="event.stopPropagation();analyzeChaptersRun(JSON.parse(decodeURIComponent(this.dataset.chain)),this)">🔤</button>`,
+          label: t('gen.post_gen_analysis_lbl') } : null),
+        { html: `<button class="ico-btn" style="font-size:11px;padding:2px 8px;color:var(--red)" title="Delete all chapters in this storyline"
+            data-chain="${escapedChain}"
+            onclick="event.stopPropagation();deleteStoryline(this.dataset.chain)">🗑️</button>`,
+          label: 'Delete all chapters in this storyline' },
+      ])}
     </div>`;
 
     // Summary strip — shows stored summary if available
@@ -11687,6 +11718,64 @@ function _lessonTypesDropdownHtml(s) {
 // control). This is now a no-op kept only so the single call site needs no change; the storyline
 // pass mark is rendered by the #sl-passmark block further down _renderStorylineScreen.
 function _refreshSlThreshold(){ /* removed — see #sl-passmark */ }
+
+// ── v88_am: the same pencil-popover, for DYNAMICALLY RENDERED cards ─────────────────────────────
+// User request, extending item Y: "Let's do the same for the storyline fields on the main page, and
+// for the individual chapter fields of the storyline page. Hide all but the play and share buttons
+// behind a pencil that opens a popover with the existing edit buttons."
+//
+// ⚠️ Why this is NOT `_slEditMenuSync`. That one MIRRORS static markup: the storyline page has ONE
+// header, its buttons exist in the document, and the sync copies their state onto rows. A library
+// list has one card per storyline and a storyline page one per chapter — the buttons are built as
+// STRINGS, per card, and there is no single element to mirror. So this builds the rows directly and
+// the caller passes the same button HTML it was already emitting, unchanged, with the label it
+// already had. That is what keeps this at ZERO new ui.json keys and keeps every handler working:
+// the buttons are MOVED, not rewritten.
+let _cardEditOpenId = null;
+function _cardEditClose(){
+  if (_cardEditOpenId) {
+    const el = document.getElementById(_cardEditOpenId);
+    if (el) el.style.display = 'none';
+  }
+  _cardEditOpenId = null;
+}
+function _cardEditToggle(popId, btn){
+  const el = document.getElementById(popId);
+  if (!el) return;
+  const wasOpen = el.style.display !== 'none';
+  _cardEditClose();                      // only ever ONE open, across every card on the page
+  if (wasOpen) return;
+  el.style.display = 'block';
+  _cardEditOpenId = popId;
+  // Positioned from the pencil's own rect, and clamped to the viewport so a card near the right
+  // edge or the bottom of a long list still opens something reachable.
+  try {
+    const r = btn.getBoundingClientRect();
+    const w = el.offsetWidth || 260, h = el.offsetHeight || 120;
+    el.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + 'px';
+    el.style.top  = ((r.bottom + h > innerHeight - 8) ? Math.max(8, r.top - h - 6) : r.bottom + 6) + 'px';
+  } catch(_) { /* no layout engine (test harness): the popover is still open and addressable */ }
+  setTimeout(() => document.addEventListener('click', _cardEditClose, { once: true }), 0);
+}
+// `entries` are { html, label } — `html` is the button EXACTLY as the caller used to emit it.
+// Falsy entries are dropped, so a caller can keep using its existing `cond ? btn : ''` expressions
+// and an entry that renders nothing simply does not become a row.
+function _cardEditPopHtml(popId, entries){
+  // The row already SHOWS the button, so a label that starts with the same icon
+  // ("🔤 Analyse words for the text explorer") would print the glyph twice side by side. Same strip
+  // item Y's own popover uses; labels that are plain words are untouched.
+  const rows = (entries || []).filter(e => e && e.html).map(e =>
+    `<div class="sl-edit-pop-row">${e.html}`
+    + `<span class="sl-edit-pop-lbl">`
+    + `${escHtml(String(e.label || '').replace(/^[^\p{L}\p{N}]+\s/u, ''))}</span></div>`).join('');
+  // A pencil that would open an empty menu is not offered — the same "a dead control is worse than
+  // no control" rule this project applied to the cancel affordance and to item Y's own pencil.
+  if (!rows) return '';
+  return `<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="${escAttr(t('ui.edit_title'))}"`
+    + ` onclick="event.stopPropagation();_cardEditToggle('${escAttr(popId)}',this)">✏️</button>`
+    + `<div class="card-edit-pop" id="${escAttr(popId)}" style="display:none"`
+    + ` onclick="event.stopPropagation()">${rows}</div>`;
+}
 
 // ── item Y (v88_ai): the storyline header's edit popover ─────────────────────────────────────────
 // Deliberately NOT a re-implementation of the five buttons. They are the SAME elements, relocated,
