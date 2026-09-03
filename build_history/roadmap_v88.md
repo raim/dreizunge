@@ -2424,6 +2424,41 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_ah — the curator table is reachable on ANY analysed chapter
+
+**User question, which turned out to be a bug report**: *"where can i enter the new text analysis
+curator table?"* **ZERO `ui.json` keys.**
+
+The answer was: open the text explorer (🔍 on the progress card, 🔬 on the lesson-set card, or the
+question card's own) and use the `▤` button in the bar above the story. ⚠️ **But on some chapters
+there was no honest answer at all.** `v88_ae` gated the WHOLE bar on `unresolved || orphans`, so a
+chapter whose tokens were all resolved and which had no orphans offered **no way into the table**.
+
+That is wrong for a review interface, and wrong in the case that matters most: **a confidently WRONG
+lemma is exactly what an unresolved worklist can never surface.** The 63 unresolved tokens are the
+visible damage; a token CP2 resolved incorrectly is the invisible kind, and reviewing a
+finished-looking chapter is the only way to find one.
+
+Now the table button renders for any chapter with an analysis. Only two things stay conditional, and
+both are honest: the worklist JUMP appears only when there is something unresolved to jump to, and
+the bar disappears entirely when there are no analysed sentences at all (nothing to curate).
+
+### Two guards were asserting the old behaviour
+
+Both from `v88_ae`, and neither was failing — they had become assertions of the wrong thing, the
+third occurrence of that pattern in this line (`v88_s`, `v88_ab`, now here). One asserted the bar is
+EMPTY on a fully-resolved chapter; the other asserted `_teUnresolvedBarHtml` returns `''` when
+nothing is unresolved. Both re-scoped to what must actually be true: no unresolved COUNT and no JUMP
+on such a chapter, but the table still reachable — plus a new non-vacuity case pinning the one
+absence that remains (a chapter with no analysed sentences shows no bar).
+
+**Three mutations red**: the old gate restored (the reported gap); the bar shown with no analysis at
+all; and the jump offered with nothing to jump to.
+
+Verified live against a real chapter: the bar renders `✏️ 63 · not analysed` and `▤`, the table
+builds 103 rows and filters to the 63 unresolved, and a synthetic fully-resolved chapter still
+offers the table with no jump.
+
 ## ✅ v88_ag — QC runs as a listed, cancellable job (the report `v88_af` answered in the wrong place)
 
 **User report**: *"translation job is not listed in the job popover (and ideally should be

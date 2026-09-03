@@ -792,9 +792,14 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
     assert.ok(html.includes('2 · ' + UI.en['text_explorer.unresolved']),
       'and states how many tokens are unresolved, reusing text_explorer.unresolved (got: '
         + (html.match(/te-fixbtn[^>]*>([^<]*)</) || ['', ''])[1] + ')');
-    // Non-vacuity: a fully resolved chapter must NOT show the bar.
-    const clean = C.run(`_teUnresolvedBarHtml('tp_te1', [{ text:'x', tokens:[{surface:'x',lemma:'x'}] }])`);
-    assert.strictEqual(clean, '', 'a chapter with nothing unresolved shows no bar at all');
+    // Non-vacuity: the COUNT is what varies. ⚠️ v88_ah re-scoped this — it used to assert the bar
+    // vanishes entirely on a fully-resolved chapter, which is exactly what left the curator table
+    // unreachable there. What must not appear on such a chapter is the unresolved COUNT and the
+    // worklist JUMP, not the bar.
+    const clean = C.run(`_teUnresolvedBarHtml('tp_te1', [{ text:'x', tokens:[{surface:'x',lemma:'x'}] }], { orphanedCorrections: [] })`);
+    assert.ok(!/\d+ · /.test(clean),
+      'a fully-resolved chapter shows no unresolved count (got: ' + clean + ')');
+    assert.ok(!clean.includes('_teJumpUnresolved'), 'and no worklist jump');
     console.log('  the unresolved worklist bar counts and hides itself when there is nothing to fix: OK');
   }
 
@@ -955,12 +960,29 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
   {
     const C = explorerClient();
     const clean = [{ text:'x.', tokens:[{surface:'x', lemma:'x'}] }];
+    // ⚠️ v88_ah CHANGED THIS CLAIM, and the old one is worth stating: it asserted the bar is EMPTY
+    // when nothing is unresolved and nothing is orphaned. That was v88_ae's behaviour and it meant a
+    // fully-resolved chapter had no way into the curator table at all — the user asked where the
+    // table was, and on such a chapter the honest answer was "nowhere". Reviewing a finished-looking
+    // chapter, and correcting a confidently WRONG lemma, are exactly what a review interface is for,
+    // and neither is reachable from a worklist that only lists unresolved tokens.
     const none = C.run(`_teUnresolvedBarHtml('tp_te1', ${JSON.stringify(clean)}, { orphanedCorrections: [] })`);
-    assert.strictEqual(none, '', 'nothing unresolved and no orphans: no bar');
+    assert.ok(none.includes('_teOpenCuratorTable'),
+      'a fully-resolved chapter STILL offers the curator table — it is the only way in (got: ' + none + ')');
+    assert.ok(!none.includes('_teJumpUnresolved'),
+      'but NOT the worklist jump, which would have nowhere to jump to');
+
+    // Non-vacuity for the one thing that IS still conditional: a chapter with no analysis at all has
+    // no bar, because there is nothing to curate.
+    const empty = C.run(`_teUnresolvedBarHtml('tp_te1', [], { orphanedCorrections: [] })`);
+    assert.strictEqual(empty, '', 'a chapter with no analysed sentences shows no bar at all');
+
     const withOrph = C.run(`_teUnresolvedBarHtml('tp_te1', ${JSON.stringify(clean)}, { orphanedCorrections: ${JSON.stringify([ORPHAN])} })`);
-    assert.ok(withOrph.includes('te-fixbar'), 'an orphan alone is enough to show the bar');
-    assert.ok(withOrph.includes('_teOpenCuratorTable'), 'and the bar offers the table, which is the only place an orphan can be repaired');
-    console.log('  the worklist bar appears for orphans even when nothing is unresolved: OK');
+    assert.ok(withOrph.includes('te-fixbar'), 'an orphan is surfaced in the bar');
+    assert.ok(withOrph.includes('1 · ' + UI.en['text_explorer.unresolved']),
+      'counted, so a chapter whose only remaining work is an orphan says so (got: '
+        + (withOrph.match(/te-fixbtn[^>]*>([^<]*)</) || ['',''])[1] + ')');
+    console.log('  the curator table is reachable on any analysed chapter; the jump only when there is work: OK');
   }
 
   // ── v88_ae: the story-rewrite warning ─────────────────────────────────────────────────────────

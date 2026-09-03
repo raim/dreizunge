@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_ag`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_ah`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -269,6 +269,14 @@ correctly** on the two new QC jobs: it required the LITERAL `runCancellable(jobI
 asserting "wrapped AND spelled jobId". It now derives each job's own variable and demands that id —
 **stronger**, not looser. Eight mutations red.
 
+**`v88_ah` answered "where can i enter the curator table?" — and the question was a bug report.**
+It is the `▤` button in the text explorer's bar (🔍 on the progress card, 🔬 on the lesson-set card).
+⚠️ **But `v88_ae` gated the whole bar on `unresolved || orphans`, so a fully-resolved chapter offered
+NO WAY IN.** Wrong for a review interface, and wrong in the case that matters most: a confidently
+WRONG lemma is precisely what an unresolved worklist can never surface. The table button now renders
+for any analysed chapter; only the JUMP stays conditional. Two `v88_ae` guards had to be re-scoped —
+they were asserting the old behaviour, not failing. Three mutations red.
+
 ---
 
 ## ⚠️ START HERE — THE FOUR-FIELD QUESTION IS ANSWERED; ONE OF ITS CONSEQUENCES IS NOT
@@ -459,7 +467,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **343 topics, 97 storylines, 33 languages, 755 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_ag'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_ah'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to

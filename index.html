@@ -23261,24 +23261,33 @@ function _teUnresolvedCount(sentences){
 // new ui.json keys and nothing to translate across 33 languages.
 function _teUnresolvedBarHtml(chapterId, sentences, shadow){
   if (!_teCanEdit()) return '';
+  // ⚠️ v88_ah: the bar renders for ANY analysed chapter, not only one with outstanding work.
+  // v88_ae gated the whole bar on `unresolved || orphans`, which meant a fully-resolved chapter had
+  // NO WAY INTO THE CURATOR TABLE AT ALL — asked directly by the user ("where can i enter the new
+  // text analysis curator table?"), and wrong for a REVIEW interface: checking a chapter that looks
+  // finished is exactly a thing a curator does, and correcting a confidently WRONG lemma is the case
+  // the unresolved worklist can never surface. Only the table button is unconditional; the jump
+  // button still needs somewhere to jump to.
+  if (!(sentences || []).length) return '';
   const n = _teUnresolvedCount(sentences);
-  // v88_ae: orphaned corrections are a reason to show the bar even when nothing is unresolved —
-  // they are only repairable from the table, and a chapter with no other work to do is exactly when
-  // they would otherwise never be found.
   const orph = ((shadow && shadow.orphanedCorrections) || []).length;
-  if (!n && !orph) return '';
   const cid = JSON.stringify(String(chapterId || ''));
-  const label = n ? `✏️ ${n} · ${escHtml(t('text_explorer.unresolved'))}`
-                  : `✏️ ${orph} · ${escHtml(t('text_explorer.unresolved'))}`;
-  // Two buttons, and the split is deliberate: the first walks the worklist IN CONTEXT (the sentence
-  // around a word is usually what tells you its form), the second opens the table for working
-  // through many at once. The user chose "popover first, table after" precisely because those are
-  // different jobs, so neither replaces the other.
-  return `<div class="te-fixbar">`
-    + `<button type="button" class="te-fixbtn" onclick="event.stopPropagation();_teJumpUnresolved(${cid})">`
-    + `${label}</button>`
-    + `<button type="button" class="te-fixbtn" onclick="event.stopPropagation();_teOpenCuratorTable(${cid})">`
-    + `▤</button></div>`;
+  // The worklist jump: only when there IS something unresolved to walk to. Orphans are counted into
+  // the label when nothing is unresolved, because they are the remaining work and are repairable
+  // only from the table.
+  const jump = n
+    ? `<button type="button" class="te-fixbtn" onclick="event.stopPropagation();_teJumpUnresolved(${cid})">`
+      + `✏️ ${n} · ${escHtml(t('text_explorer.unresolved'))}</button>`
+    : (orph
+      ? `<button type="button" class="te-fixbtn" onclick="event.stopPropagation();_teOpenCuratorTable(${cid})">`
+        + `✏️ ${orph} · ${escHtml(t('text_explorer.unresolved'))}</button>`
+      : '');
+  // The split is deliberate: the jump walks the worklist IN CONTEXT (the sentence around a word is
+  // usually what tells you its form), the table works through many at once. The user chose "popover
+  // first, table after" precisely because those are different jobs, so neither replaces the other.
+  return `<div class="te-fixbar">${jump}`
+    + `<button type="button" class="te-fixbtn" title="${escAttr(t('text_explorer.toggle_title'))}"`
+    + ` onclick="event.stopPropagation();_teOpenCuratorTable(${cid})">▤</button></div>`;
 }
 // Which unresolved token to jump to next. PURE and separate from the scrolling so the SELECTION —
 // the part that can be wrong — is testable without a layout engine. Cycles, so repeated presses
