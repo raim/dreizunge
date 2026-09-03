@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_ae`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_af`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -237,6 +237,22 @@ story has never been through CP2; the honest question is SENTENCE-level and now 
 function. ⚠️ **The e2e also corrected the lifecycle**: a story save does NOT re-run CP2, so the
 correction still applies to the stale analysis until the RE-ANALYSIS. Ten mutations red.
 
+**`v88_af` answered a live report** — *"translation job is not listed in the job popover (and ideally
+should be cancel-able)."* ⚠️ **"Not listed" understated it**: of the THREE translation triggers,
+`retranslateStory`/`retranslateChain` were `_jobsTracked` at `v88_b`, but `triggerUITranslation` was
+the one caller never wrapped AND its route registered no job — invisible in every channel at once,
+for what is ~19 sequential model calls per language (755 keys at 40 per call).
+
+Made a REAL job rather than a `_jobsTracked` sync row, deliberately: **a sync row cannot carry a
+cancel button** (`canCancel` needs a server-side job id), which is the diagnosis under the open
+"some LLM jobs have no cancel button" item — **so this is the first of those routes converted, and
+the pattern for the rest**. ⚠️ Reading the loop found TWO defects nobody reported: the per-batch
+`try/catch` swallowed `CANCELLED` (`v88_z`'s exact shape — it would have run every remaining batch
+and reported DONE), and `saveUI` ran ONCE after the whole loop, so a cancelled run kept **nothing**
+(`v88_x`'s rule). Both fixed; the checkpoint is what makes a re-run resume and the cancel safe to
+press. Four mutations red, and the e2e's cancel is driven by OBSERVED PROGRESS (poll until the job
+reports `batch 2/3`) rather than a timer, so it is deterministic.
+
 ---
 
 ## ⚠️ START HERE — THE FOUR-FIELD QUESTION IS ANSWERED; ONE OF ITS CONSEQUENCES IS NOT
@@ -303,7 +319,12 @@ Verbatim where quoted:
    budget first**. `form.image_extract` ("✨ Extract text") exists but the button can run extraction
    AND/OR description, so it is not a drop-in.
 
-2. **⚠️ NEEDS A RULING — some LLM-based jobs still have no cancel BUTTON** (user screenshot:
+2. **⚠️ PARTLY ANSWERED AT `v88_af` — some LLM-based jobs still have no cancel BUTTON.** The
+   ui.json translation was one of them and is now a real, cancellable job, so **the conversion
+   pattern is proven and is the recommended answer for the rest**: `newJob` + `runCancellable` + a
+   per-item re-throw of `CANCELLED` + a per-item checkpoint, then a client poller. What remains is
+   WHICH of the other sync routes are worth converting — still a ruling, because each conversion
+   turns a blocking route into a polled one. The original diagnosis, unchanged (user screenshot:
    "Erstelle Zusammenfassung", "Neuer Titel…"). Untouched by `v88_z`, which fixed cancels that were
    swallowed, not buttons that are absent. **Diagnosed**: both are `kind:'sync'` rows — the
    synchronous LLM routes `v88_b` surfaced in the popover from `_jobsInflight`. `_jobsRenderList`'s
@@ -346,7 +367,7 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 330 checks
+node test/run.js                          → expect 331 checks
 node test/run.js --quick                  → expect 273
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
@@ -403,8 +424,8 @@ DETERMINISTIC, so not flakiness — because the user's server had written a new 
 fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don't run the full and
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **343 topics, 98 storylines, 33 languages, 755 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_ae'`.
+Corpus at this cut: **343 topics, 97 storylines, 33 languages, 755 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_af'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to

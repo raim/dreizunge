@@ -2424,6 +2424,78 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_af — the ui.json translation is a real job: listed, cancellable, and it keeps what it finished
+
+**User report**: *"translation job is not listed in the job popover (and ideally should be
+cancel-able)."* **ZERO `ui.json` keys.**
+
+### "Not listed" understated it — it was invisible in every channel at once
+
+There are THREE translation triggers in the client. `retranslateStory()` and `retranslateChain()`
+were both wrapped in `_jobsTracked` at `v88_b`, so they show as `sync` rows — verified live in the
+browser before touching anything, by starting a tracked call and watching the row and the badge
+appear. `triggerUITranslation()` is the third, and it was **the one caller `_jobsTracked` was never
+applied to**; the route it calls registered no server job either. So it appeared NOWHERE: not in
+`jobs`, not as a sync row, nothing but a small inline "⏳ Translating…" in the settings row.
+
+⚠️ **And it is one of the longest LLM operations in the app**: `translateUIToLang` batches 40 keys
+per model call, so 755 `en` keys is **~19 sequential calls per language** — for a user who is
+translating `ui.json` by hand across 33 languages, the single operation most worth being able to
+watch and stop.
+
+### A real JOB, not a `_jobsTracked` sync row — deliberately
+
+A sync row **cannot** carry a cancel button: `_jobsRenderList`'s `canCancel` is
+`j.kind === 'job' && …`, because `POST /api/jobs/cancel` needs a server-side job id to look up. That
+is the diagnosis standing under the open "some LLM jobs have no cancel button" item. Wrapping the
+client call would have fixed the listing and left the cancel impossible. So the route now answers
+**202 + `{jobId}`** and runs under `newJob` + `runCancellable`, which buys the listing AND the cancel
+from machinery that already exists — and is the pattern the remaining sync routes can follow.
+
+⚠️ The label is not cosmetic: `/api/jobs` **skips any job without one** (`if (!j.label) continue`,
+for labelless per-chapter sub-jobs), so an unlabelled registration would have left it exactly as
+invisible as before. Asserted.
+
+### ⚠️ Two defects this project has already paid for, both present in that loop
+
+Neither was in the report; both were found by reading the function the fix had to touch.
+
+1. **`v88_z`'s exact shape.** The per-batch `try { … } catch { }` swallows `CANCELLED` like any
+   other failure, so a cancelled job would run **every remaining batch to the end and report DONE**.
+   Being inside a cancel scope is necessary and NOT sufficient. Re-thrown.
+2. **`v88_x`'s rule, in a second long loop.** `saveUI` ran **once, after the whole loop**, so a run
+   that was cancelled, timed out, or died with the server persisted **nothing** — nineteen model
+   calls' worth of work discarded, with nothing to resume from. It now checkpoints after every
+   batch. Since the function already skips keys that exist, the checkpoint is also what makes a
+   re-run cheap: it resumes exactly where the cancel stopped, which is what makes the button safe to
+   press.
+
+`translateUIToLang(lang, jobId)` takes the job id as OPTIONAL — `ensureUIForLang` still calls it
+with none on a plain language switch, and that path is unchanged.
+
+### The client polls instead of awaiting
+
+`triggerUITranslation` reads `{jobId}` and polls `/api/job/:id`, same shape as
+`_textExplorerCheckOnce` (module-level id so a superseded run cannot repaint over a newer one).
+⚠️ **`cancelled` is handled as its own outcome, not as an error** — reporting the user's own
+deliberate act as "Translation failed" is exactly what `jobFailOrCancel` exists to avoid on the
+server side — and the strings are reloaded on that path too, because the completed batches really
+are saved.
+
+### The guard is deterministic, not a race
+
+`e2e-ui-translate.test.js`, six checks. A 100-key fixture gives 3 batches (40/40/20), and the cancel
+is driven by **observed progress** — poll until the job's own step reports `batch 2/3`, then cancel —
+so nothing depends on machine speed. That makes three claims provable rather than probable: batch 1
+is already on disk mid-run; after the cancel the count is **exactly** what batch 1 had persisted (a
+swallowed `CANCELLED` would have produced all 100); and a re-run finishes the rest without
+re-translating what survived. The fake gained a UI-translator branch that echoes each key with an
+`XX ` marker, so a translated value cannot be confused with the English one it was given.
+
+**Four mutations red**: the job registered without a label (the reported bug restored); the
+per-batch catch swallowing `CANCELLED` again; the checkpoint moved back outside the loop; and
+`runCancellable` removed.
+
 ## ✅ v88_ae — item AI's curator TABLE, and a rewrite no longer orphans corrections silently
 
 Both halves of one user message: *"do the curator table and show a warning upon story rewrite."*

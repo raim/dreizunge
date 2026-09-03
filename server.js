@@ -255,7 +255,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_ae';
+const APP_VERSION  = 'v88_af';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -665,7 +665,10 @@ try {
   fs.watch(UI_FILE, () => { setTimeout(reloadUI, 100); });
 } catch(_) {}
 
-async function translateUIToLang(lang) {
+// `jobId` is OPTIONAL: this is called both from the background job below (which wants progress and
+// cancellation) and from `ensureUIForLang` on a plain language switch (which has no job and must
+// keep working exactly as before). Everything job-shaped is guarded on it.
+async function translateUIToLang(lang, jobId) {
   const S = langName(lang);
   const base = uiStrings['en'] || {};
   const existing = uiStrings[lang] || {};
@@ -676,24 +679,37 @@ async function translateUIToLang(lang) {
   }
   console.log(`  UI [${lang}]: translating ${missing.length} missing keys to ${S}…`);
   const BATCH = 40;
+  const batches = Math.ceil(missing.length / BATCH);
   let translated = { ...existing };
   for (let i = 0; i < missing.length; i += BATCH) {
+    const nth = Math.floor(i / BATCH) + 1;
     const batch = Object.fromEntries(missing.slice(i, i + BATCH));
     const sys = `You are a UI translator. Translate the values of this JSON object into ${S}. ` +
 	  `IMPORTANT: Preserve ALL {placeholder} tokens exactly as-is (e.g. {lang}, {n}, {topic}, {word}, {pronoun}, {verb}). Preserve icons. Keep translations short and natural for a mobile app. ` +
       `Return ONLY a valid JSON object with the same keys, no markdown, no explanation.`;
     const userMsg = JSON.stringify(batch, null, 2);
+    if (jobId) jobStep(jobId, `Translating UI to ${S}: batch ${nth}/${batches}`);
     try {
       const { text } = await callLLM(sys, userMsg, 2048);
       const parsed = extractJSON(text);
       Object.assign(translated, parsed);
-      console.log(`    batch ${Math.floor(i/BATCH)+1}: ${Object.keys(parsed).length} keys translated`);
+      console.log(`    batch ${nth}: ${Object.keys(parsed).length} keys translated`);
     } catch(e) {
-      console.warn(`    batch ${Math.floor(i/BATCH)+1} failed:`, e.message);
+      // ⚠️ v88_af — v88_z's rule, and this loop is the exact shape it was earned on: a runner that
+      // wraps each item in `try { … } catch { continue; }` swallows CANCELLED like any other
+      // failure, so a cancelled job runs every remaining batch to the end and reports DONE. Being
+      // inside a cancel scope is NECESSARY AND NOT SUFFICIENT. Re-thrown here so the cancel is real.
+      if (String(e && e.message) === CANCELLED) throw e;
+      console.warn(`    batch ${nth} failed:`, e.message);
     }
+    // ⚠️ v88_af — CHECKPOINT after every batch, which is v88_x's rule applied to a second long
+    // loop. Before this, `saveUI` ran ONCE after the whole loop, so a run that was cancelled, timed
+    // out or died with the server persisted NOTHING — nineteen model calls' worth of work thrown
+    // away, and nothing to resume from. The function already skips keys that exist, so a partial
+    // save is exactly what makes the next run cheap: it picks up where this one stopped.
+    uiStrings[lang] = translated;
+    saveUI(uiStrings);
   }
-  uiStrings[lang] = translated;
-  saveUI(uiStrings);
   return translated;
 }
 
@@ -10115,12 +10131,30 @@ http.createServer(async (req, res) => {
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
       const { lang } = body;
       if (!lang) return json(res, 400, { error: 'Missing lang' });
-      try {
-        const result = await translateUIToLang(lang);
-        return json(res, 200, { ok: true, lang, count: Object.keys(result).length });
-      } catch(e) {
-        return json(res, 500, { error: e.message });
-      }
+      // ⚠️ v88_af (user report): "translation job is not listed in the job popover (and ideally
+      // should be cancel-able)". This route used to AWAIT translateUIToLang and answer only when it
+      // finished — so it appeared nowhere: not in `jobs` (it registered none), and not even as a
+      // client-side `sync` row (the caller was the one translation trigger of three that
+      // `_jobsTracked` had never been applied to). Meanwhile it is one of the longest LLM
+      // operations in the app: 755 `en` keys at 40 per call is ~19 sequential model calls.
+      //
+      // Now a REAL job rather than a `_jobsTracked` sync row, deliberately: a sync row cannot carry
+      // a cancel button, because `_jobsRenderList`'s `canCancel` needs a server-side job id for
+      // POST /api/jobs/cancel to look up (the diagnosis standing under open item 2). Making it a
+      // job gets the listing AND the cancel from machinery that already exists, and is the pattern
+      // the remaining sync routes can follow.
+      const jobId = newJob({ label: `Translating UI to ${langName(lang)}` });
+      (async () => {
+        try {
+          const result = await runCancellable(jobId, () => translateUIToLang(lang, jobId));
+          jobDone(jobId, { lang, count: Object.keys(result).length });
+        } catch (e) {
+          // A cancel is not a failure — jobFailOrCancel shows "cancelled" rather than an alarming
+          // error the user caused on purpose.
+          jobFailOrCancel(jobId, e);
+        }
+      })();
+      return json(res, 202, { ok: true, jobId, lang });
     }
 
         res.writeHead(404); res.end('Not found');

@@ -124,6 +124,16 @@ const srv = http.createServer(async (req, res) => {
         '| Das Haus ist groß. | The house is big. |',
         '| Die Katze schläft. | The cat sleeps. |',
       ].join('\n');
+    } else if (/You are a UI translator/i.test(sys)) {
+      // v88_af: ui.json translation (translateUIToLang), one call per batch of 40 keys. Echoes every
+      // key back with a marker prefix, so a test can tell a translated value from the English one it
+      // was given AND count exactly which keys a partial (cancelled) run managed to persist.
+      kind = 'ui_translate';
+      let _in = {};
+      try { _in = JSON.parse(usr); } catch (_) { _in = {}; }
+      const _out = {};
+      for (const k of Object.keys(_in)) _out[k] = 'XX ' + String(_in[k]);
+      content = JSON.stringify(_out);
     } else if (/professional translator\. Translate the following/i.test(sys)) {
       // Story translation (only requested when the translation model differs from the story model).
       kind = 'translation';

@@ -2,40 +2,6 @@
   "schemaVersion": 30,
   "storylines": [
     {
-      "id": "sl_1672382706",
-      "title": "Gratis und Kostenlos",
-      "titleAuto": false,
-      "icon": "🏷️",
-      "chapters": [
-        "tp_17881907220620000002"
-      ],
-      "lang": "nl",
-      "srcLang": "de",
-      "createdAt": "2026-08-31T15:40:46.639Z",
-      "updatedAt": "2026-08-31T15:42:17.454Z",
-      "tokenUsage": {
-        "totalPromptTokens": 265,
-        "totalCompletionTokens": 144,
-        "tokensByType": {
-          "retitle": 159,
-          "summary": 250
-        }
-      },
-      "summary": "Die Geschichte konzentriert sich auf die Nuancen der deutschen Sprache, indem sie Synonyme für den Begriff kostenlos wie umsonst und gratis gegenüberstellt. Ein zentrales Element ist die Redewendung bord laten staan, die im Kontext von stehen lassen verwendet wird, um etwas unangetastet zu lassen. Durch diese sprachlichen Feinheiten wird verdeutlicht, wie wichtig der genaue Wortschatz für das Verständnis kultureller und linguistischer Zusammenhänge ist. Der Fokus liegt darauf, wie scheinbar einfache Begriffe im Deutschen spezifische Bedeutungen und Verwendungen haben können.",
-      "summaryMeta": {
-        "type": "storyline_summary",
-        "model": "qwen3.6:35b-a3b",
-        "attempts": null,
-        "valid": 1,
-        "rejected": 0,
-        "rejectReasons": null,
-        "promptTokens": 124,
-        "completionTokens": 126,
-        "ms": 26104,
-        "at": "2026-08-31T15:42:17.454Z"
-      }
-    },
-    {
       "id": "sl_143869450",
       "title": "Wald und Wildnis",
       "titleAuto": false,
@@ -46,13 +12,14 @@
         "tp_17883793024690000067",
         "tp_17882535928630000095",
         "tp_17882692144280000018",
+        "tp_17881907220620000002",
         "tp_17882900616230000013",
         "tp_17883366642310000093"
       ],
       "lang": "nl",
       "srcLang": "de",
       "createdAt": "2026-08-30T07:15:45.723Z",
-      "updatedAt": "2026-09-02T20:18:41.959Z",
+      "updatedAt": "2026-09-03T08:36:57.509Z",
       "tokenUsage": {
         "totalPromptTokens": 5945,
         "totalCompletionTokens": 2216,
@@ -13113,8 +13080,8 @@
       "generatedAt": "2026-09-01T19:14:21.624Z",
       "updatedAt": "2026-09-01T19:46:01.931Z",
       "createdBy": "admin",
-      "continuedFromId": "tp_17882692144280000018",
-      "continuedFrom": "Graffiti im Verfall"
+      "continuedFromId": "tp_17881907220620000002",
+      "continuedFrom": "Gratis und Kostenlos"
     },
     {
       "id": "tp_17882692144280000018",
@@ -14035,7 +14002,9 @@
       ],
       "generatedAt": "2026-08-31T15:38:42.063Z",
       "updatedAt": "2026-08-31T15:46:47.809Z",
-      "createdBy": "admin"
+      "createdBy": "admin",
+      "continuedFromId": "tp_17882692144280000018",
+      "continuedFrom": "Graffiti im Verfall"
     },
     {
       "id": "tp_17881715830570000091",

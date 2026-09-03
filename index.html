@@ -3302,16 +3302,63 @@ async function triggerUITranslation() {
       body: JSON.stringify({lang})
     });
     const result = r.ok ? await r.json() : null;
-    if (result?.ok) {
-      await loadUIStrings(lang); // reload now-translated strings
-      _uiTranslateRow('done', '', '', '✓ Done');
-      setTimeout(() => _uiTranslateRow('hidden', '', '', ''), 3000);
-    } else {
-      _uiTranslateRow('error', 'Translation failed', 'Retry', '');
-    }
+    // ⚠️ v88_af: the route now answers 202 + {jobId} instead of blocking until the whole translation
+    // is done, so that the job is LISTED and CANCELLABLE (user report). The reload of the strings
+    // therefore has to wait for the job, not for the response.
+    if (result?.ok && result.jobId) { _uiTranslatePoll(result.jobId, lang); return; }
+    _uiTranslateRow('error', 'Translation failed', 'Retry', '');
   } catch(e) {
     _uiTranslateRow('error', 'Translation failed', 'Retry', '');
   }
+}
+
+// Poller for the UI-translation job. Same shape as _textExplorerCheckOnce/_startComicExtractJob —
+// a module-level job id so a superseded run cannot repaint over a newer one, and a plain 2s timer.
+//
+// ⚠️ `cancelled` is handled as its own outcome, NOT as an error: the user pressed cancel in the
+// jobs popover, and reporting their own deliberate act as "Translation failed" is exactly the
+// alarming-error case `jobFailOrCancel` exists to avoid on the server side. The strings here are
+// hardcoded English like the three already in this function — this settings row predates ui.json
+// coverage of it, and v88_w recorded that server/job-adjacent labels are a known untranslated
+// surface rather than an oversight. Widening that is its own item, not a side effect of this fix.
+let _uiTranslateJobId = null;
+async function _uiTranslatePoll(jobId, lang){
+  _uiTranslateJobId = jobId;
+  const tick = async () => {
+    if (_uiTranslateJobId !== jobId) return;         // superseded by a newer run
+    try {
+      const r = await fetch('/api/job/' + jobId);
+      if (!r.ok) throw new Error('Poll failed: ' + r.status);
+      const j = await r.json();
+      if (_uiTranslateJobId !== jobId) return;
+      if (j.status === 'done') {
+        _uiTranslateJobId = null;
+        await loadUIStrings(lang);                   // reload the now-translated strings
+        _uiTranslateRow('done', '', '', '✓ Done');
+        setTimeout(() => _uiTranslateRow('hidden', '', '', ''), 3000);
+        return;
+      }
+      if (j.status === 'cancelled') {
+        _uiTranslateJobId = null;
+        // Whatever batches finished before the cancel ARE saved (the server checkpoints per batch),
+        // so the strings are reloaded here too — cancelling keeps the work already paid for.
+        await loadUIStrings(lang);
+        _uiTranslateRow('idle', '', 'Retry', 'Cancelled');
+        return;
+      }
+      if (j.status === 'error') {
+        _uiTranslateJobId = null;
+        _uiTranslateRow('error', 'Translation failed', 'Retry', '');
+        return;
+      }
+      _uiTranslateRow('running', '', '', '⏳ ' + (j.step || 'Translating…'));
+      setTimeout(tick, 2000);
+    } catch(e) {
+      _uiTranslateJobId = null;
+      _uiTranslateRow('error', 'Translation failed', 'Retry', '');
+    }
+  };
+  tick();
 }
 
 function updateUITranslateRow(srcLang, missingKeys) {
