@@ -44,7 +44,12 @@ const SEED = {
   // MUST get its own isolated scratch file, or a run pollutes the real project's working tree (and
   // a later run reads back a stale cache from an EARLIER test run instead of starting fresh).
   const scratchAnalysis = tmpFile('dz_canonical_analysis', '.json');
-  const env = await boot({ log: true, seed: SEED, extraEnv: { CANONICAL_ANALYSIS_FILE: scratchAnalysis } });
+  // item AI (v88_ad) added a SECOND per-chapter store, and it needs the same isolation for the same
+  // reason spelled out directly above — a run that writes the real analysis-corrections.json dirties
+  // the working tree and leaves a later run reading an earlier run's curation.
+  const scratchCorrections = tmpFile('dz_analysis_corrections', '.json');
+  const env = await boot({ log: true, seed: SEED, extraEnv: {
+    CANONICAL_ANALYSIS_FILE: scratchAnalysis, ANALYSIS_CORRECTIONS_FILE: scratchCorrections } });
   try {
     const { sport } = env;
 
@@ -408,6 +413,100 @@ const SEED = {
       console.log('  DELETE /api/lessons/delete also drops that chapter\'s cached CP1/CP2 analysis (v88_ac): OK');
     }
 
+    // ── 10. item AI (v88_ad): a curator correction, and THE ruling — it survives a re-analysis ──
+    // The user's answer to the design question item AI has carried since v86_s was "sticky
+    // overlay". That is a claim about what happens AFTER CP2 runs again, so it cannot be observed
+    // anywhere but here, against a real server that really re-runs the model.
+    {
+      // tp_ana2 is analysed and cached by now. Take a real token out of its stored analysis rather
+      // than inventing one — a correction keyed to a sentence/surface the store does not contain
+      // would apply to nothing and every assertion below would pass vacuously.
+      const shadow0 = (await get(sport, '/api/analysis/tp_ana2')).body;
+      const sent0 = shadow0.sentences[0];
+      const surface = sent0.tokens[0].surface;
+      assert(shadow0.correctionCount === 0, 'precondition: nothing is curated yet (got ' + shadow0.correctionCount + ')');
+
+      const save = await post(sport, '/api/analysis-correction/tp_ana2', {
+        sentenceText: sent0.text, surface, occurrence: 0,
+        lemma: 'CURATED_LEMMA', form: 'CURATED_FORM', sense: 'CURATED_SENSE' });
+      assert(save.status === 200 && save.body.ok, 'the correction saves (got ' + save.status + ')');
+      assert(save.body.cleared === false, 'and it is a save, not a clear');
+
+      // The route answers with the freshly merged shadow so the client never has to patch its own
+      // cache and hope the two agree.
+      const merged = save.body.shadow;
+      assert(merged.sentences[0].tokens[0].lemma === 'CURATED_LEMMA',
+        'the response already carries the merged token, not the raw one');
+      assert(merged.sentences[0].tokens[0].reviewed === true, 'and marks it reviewed');
+      assert(merged.correctionCount === 1, 'and reports how much of the chapter is curated');
+
+      // A plain GET must show it too — the merge lives in analysisShadowFor, not in the POST route.
+      const got = (await get(sport, '/api/analysis/tp_ana2')).body;
+      assert(got.sentences[0].tokens[0].sense === 'CURATED_SENSE',
+        'a subsequent GET shows the correction — it is merged on every read, not just in the save response');
+
+      // ⚠️ The stored analysis itself must be UNCHANGED. If the correction had been written into
+      // canonical-analysis.json, "sticky" would be an illusion: the next force run rewrites that
+      // record wholesale and the edit would vanish. This is the assertion that proves it is a real
+      // overlay and not an edit in place.
+      const rawRec = JSON.parse(fs.readFileSync(scratchAnalysis, 'utf8')).chapters['tp_ana2'];
+      assert(rawRec.sentences[0].tokens[0].lemma !== 'CURATED_LEMMA',
+        'canonical-analysis.json still holds the MODEL\'s own analysis — the correction is an overlay, not an edit in place');
+
+      // ── THE RULING: force a full re-analysis and check the correction is still there ──────────
+      const start = await post(sport, '/api/analyze-chapter/tp_ana2', { force: true });
+      assert(start.status === 202, 'a forced re-analysis starts (got ' + start.status + ')');
+      const fin = await waitJob(sport, start.body.jobId);
+      assert(fin.status === 'done', 'and completes');
+
+      const after = (await get(sport, '/api/analysis/tp_ana2')).body;
+      assert(after.correctionCount === 1, 'the correction survived the re-analysis (count)');
+      assert(after.sentences[0].tokens[0].lemma === 'CURATED_LEMMA',
+        'and is STILL APPLIED after CP2 rewrote every token from scratch — this is the whole ruling');
+      assert(after.sentences[0].tokens[0].reviewed === true, 'and the token is still marked as curated');
+      console.log('  a curator correction is merged on read, leaves canonical-analysis.json untouched, and SURVIVES a forced re-analysis (v88_ad): OK');
+    }
+
+    // ── 11. Clearing every field removes the correction and the model's own analysis returns ────
+    {
+      const before = (await get(sport, '/api/analysis/tp_ana2')).body;
+      const sent0 = before.sentences[0];
+      const raw = JSON.parse(fs.readFileSync(scratchAnalysis, 'utf8'))
+        .chapters['tp_ana2'].sentences[0].tokens[0];
+      const clear = await post(sport, '/api/analysis-correction/tp_ana2', {
+        sentenceText: sent0.text, surface: sent0.tokens[0].surface, occurrence: 0,
+        lemma: '', form: '', sense: '' });
+      assert(clear.status === 200 && clear.body.cleared === true,
+        'clearing all three fields is reported as a clear, not a save');
+      const after = clear.body.shadow;
+      assert(after.correctionCount === 0, 'the correction is gone');
+      assert(after.sentences[0].tokens[0].lemma === raw.lemma,
+        'and the MODEL\'s own lemma shows through again (got "' + after.sentences[0].tokens[0].lemma + '")');
+      assert(after.sentences[0].tokens[0].reviewed !== true, 'and the token is no longer marked curated');
+      console.log('  clearing every field removes the correction and restores the model\'s own analysis: OK');
+    }
+
+    // ── 12. Deleting the CHAPTER takes its corrections with it ───────────────────────────────────
+    // v88_ac's leak, from the new store's side: a second per-chapter store added without the same
+    // cleanup reintroduces it immediately. Note the asymmetry against §10 — re-analysis KEEPS
+    // corrections, deletion does not.
+    {
+      const sent0 = (await get(sport, '/api/analysis/tp_ana2')).body.sentences[0];
+      await post(sport, '/api/analysis-correction/tp_ana2',
+        { sentenceText: sent0.text, surface: sent0.tokens[0].surface, occurrence: 0, lemma: 'DOOMED' });
+      await post(sport, '/api/analysis-correction/tp_ana1',
+        { sentenceText: 'Der Hund lauft.', surface: 'Hund', occurrence: 0, lemma: 'KEEPER' });
+      const store = () => JSON.parse(fs.readFileSync(scratchCorrections, 'utf8')).chapters;
+      assert(store()['tp_ana2'] && store()['tp_ana1'], 'precondition: both chapters have corrections');
+
+      const d = await req(sport, 'DELETE', '/api/lessons/delete?id=tp_ana2');
+      assert(d.status === 200, 'the chapter delete succeeds (got ' + d.status + ')');
+      assert(!store()['tp_ana2'], 'the deleted chapter\'s corrections are gone');
+      assert(store()['tp_ana1'], 'and an unrelated chapter\'s corrections survive — targeted, not a sweep');
+      console.log('  deleting a chapter also drops its curator corrections, and only its own (v88_ad): OK');
+    }
+
     console.log('e2e-analysis: ALL PASSED');
-  } finally { env.stop(); try { fs.unlinkSync(scratchAnalysis); } catch (_) {} }
+  } finally { env.stop(); try { fs.unlinkSync(scratchAnalysis); } catch (_) {}
+    try { fs.unlinkSync(scratchCorrections); } catch (_) {} }
 })().catch(e => { console.error(e); process.exit(1); });

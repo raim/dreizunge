@@ -707,5 +707,174 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
   }
   console.log("  regression: the lesson-set card repaints its own #story-body when the analysis lands: OK");
 
+  // ── item AI (v88_ad): the curator EDITOR in the token popover ─────────────────────────────────
+  // Rendered through the real _textExplorerBodyHtml so the identity attributes the editor depends on
+  // (data-cid / data-si / data-occ) are asserted as the real render emits them, not as a fixture
+  // hand-writes them — those three ARE the correction key, and a mismatch would silently write a
+  // correction onto the wrong word.
+  // ⚠️ The surface "een" appears TWICE, identically cased, on purpose. A first version of this
+  // fixture used "Een … een", and the capitalised one is a DIFFERENT surface — so every token was
+  // occurrence 0 of its own surface and a mutation that hardcoded `occ = 0` stayed GREEN. A fixture
+  // that cannot distinguish right from wrong is not a guard, however many assertions it carries.
+  const ANA = { chapterId:'tp_te1', available:true, stale:false, sentenceCount:1, tokenCount:5,
+    correctionCount:0, sentences:[{ text:'een landschap met een hek.', tokens:[
+      { surface:'een', lemma:'een', form:'Artikel', sense:'ein', confidence:'high', reviewed:false },
+      { surface:'landschap', lemma:'', form:'', sense:'', confidence:'unresolved', reviewed:false },
+      { surface:'met', lemma:'met', form:'Prap', sense:'mit', confidence:'high', reviewed:false },
+      { surface:'een', lemma:'een', form:'Artikel', sense:'ein', confidence:'high', reviewed:false },
+      { surface:'hek', lemma:'', form:'', sense:'', confidence:'unresolved', reviewed:false } ] }] };
+  const TOPIC_NL = { id:'tp_te1', topic:'Landschap', lang:'nl', srcLang:'de',
+    story:'een landschap met een hek.', lessons:[] };
+
+  function explorerClient(){
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON + `
+      APP.lessonData = ${JSON.stringify(TOPIC_NL)};
+      _teCacheStore()['tp_te1'] = { status:'ready', data: ${JSON.stringify(ANA)} };
+      __HTML = _textExplorerBodyHtml(${JSON.stringify(TOPIC_NL)});
+      true;`, 'te-seed');
+    return C;
+  }
+
+  {
+    const C = explorerClient();
+    const html = C.run('__HTML');
+    // The identity attributes, on the RIGHT tokens. "een" appears twice with different case, so
+    // occurrence must restart per surface: 'Een' is occ 0 of its own surface, and the lower-case
+    // 'een' is occ 0 of ITS surface — not occ 1.
+    assert.ok(/data-cid="tp_te1"/.test(html), 'each token carries its chapter id');
+    assert.ok(/data-surface="landschap"[^>]*data-si="0"[^>]*data-occ="0"/.test(html)
+           || /data-si="0"[^>]*data-occ="0"[^>]*data-surface="landschap"/.test(html)
+           || /data-surface="landschap"[^>]*data-occ="0"/.test(html),
+      'and its sentence index and occurrence (got: ' + (html.match(/<mark[^>]*landschap[^>]*>/) || [''])[0] + ')');
+    const eens = (html.match(/<mark[^>]*data-surface="een"[^>]*>/g) || []);
+    assert.strictEqual(eens.length, 2, '"een" rendered twice — the repeat the occurrence index exists for');
+    assert.ok(/data-occ="0"/.test(eens[0]), 'the first "een" is occurrence 0');
+    assert.ok(/data-occ="1"/.test(eens[1]), 'and the second is occurrence 1 — counted per surface');
+    console.log('  the explorer stamps chapter/sentence/occurrence identity on every token: OK');
+  }
+
+  // ⚠️ CROSS-LAYER: the key the CLIENT emits must address the token the SERVER's merge resolves.
+  // These are two independent implementations of "which occurrence of this surface is this" — the
+  // renderer's loop in index.html and applyCorrections' loop in analysis-corrections.js — and if
+  // they ever disagree, a curator's edit is written under one key and applied to a DIFFERENT word,
+  // silently. Neither side's own unit tests can catch that: each is self-consistent. So the real
+  // server module is required here and fed the attributes the real renderer produced.
+  {
+    const AC = require(path.join(ROOT, 'analysis-corrections.js'));
+    const C = explorerClient();
+    const html = C.run('__HTML');
+    // Pick the LOWER-CASE "een" — the sentence's genuinely ambiguous surface, and the one a
+    // key without an occurrence would resolve to the wrong token.
+    // Deliberately the SECOND "een": the first would be occurrence 0 and could not tell a correct
+    // occurrence index from a hardcoded zero.
+    const mark = (html.match(/<mark[^>]*data-surface="een"[^>]*>/g) || [])[1];
+    assert.ok(mark, 'the second "een" token rendered');
+    const attr = (n) => (new RegExp('data-' + n + '="([^"]*)"').exec(mark) || [])[1];
+    const si = Number(attr('si')), occ = Number(attr('occ')), surface = attr('surface');
+
+    const merged = AC.applyCorrections(ANA.sentences, [{
+      sentenceText: ANA.sentences[si].text, surface, occurrence: occ, sense: 'ROUNDTRIP' }]);
+    const hits = merged[0].tokens.map((t, i) => (t.sense === 'ROUNDTRIP' ? i : -1)).filter(i => i >= 0);
+    assert.strictEqual(occ, 1, 'the client stamped the SECOND "een" as occurrence 1');
+    assert.deepStrictEqual(hits, [3],
+      'and the server merge lands on token index 3 — the same second "een" (si=' + si + ', occ=' + occ
+      + '), NOT the first one at index 0');
+    console.log('  the client\'s correction key and the server\'s merge resolve the SAME token: OK');
+  }
+
+  // The worklist bar: composed from the EXISTING unresolved string plus a count, so this whole
+  // feature shipped with zero new ui.json keys.
+  {
+    const C = explorerClient();
+    const html = C.run('__HTML');
+    assert.ok(html.includes('te-fixbar'), 'the unresolved worklist bar renders when there is something to fix');
+    assert.ok(html.includes('2 · ' + UI.en['text_explorer.unresolved']),
+      'and states how many tokens are unresolved, reusing text_explorer.unresolved (got: '
+        + (html.match(/te-fixbtn[^>]*>([^<]*)</) || ['', ''])[1] + ')');
+    // Non-vacuity: a fully resolved chapter must NOT show the bar.
+    const clean = C.run(`_teUnresolvedBarHtml('tp_te1', [{ text:'x', tokens:[{surface:'x',lemma:'x'}] }])`);
+    assert.strictEqual(clean, '', 'a chapter with nothing unresolved shows no bar at all');
+    console.log('  the unresolved worklist bar counts and hides itself when there is nothing to fix: OK');
+  }
+
+  // _teNextUnresolved is the selection half of the jump, kept pure so it can be asserted without a
+  // layout engine — the scrolling is best-effort, the CHOICE of token is what can be wrong.
+  {
+    const C = explorerClient();
+    const first = C.run(`JSON.stringify(_teNextUnresolved(${JSON.stringify(ANA.sentences)}, null, null))`);
+    assert.deepStrictEqual(JSON.parse(first), { si:0, occ:0, surface:'landschap' },
+      'with no previous position it starts at the first unresolved token');
+    const next = C.run(`JSON.stringify(_teNextUnresolved(${JSON.stringify(ANA.sentences)}, 0, 0))`);
+    assert.strictEqual(JSON.parse(next).surface, 'hek', 'and steps to the next one');
+    // Cycling matters: without it a second press sticks on the last token and the worklist has no
+    // way back to the start.
+    const wrapped = C.run(`JSON.stringify(_teNextUnresolved(${JSON.stringify(ANA.sentences)}, 0, 3))`);
+    assert.strictEqual(JSON.parse(wrapped).surface, 'landschap', 'and wraps around rather than sticking on the last');
+    assert.strictEqual(C.run(`_teNextUnresolved([{text:'x',tokens:[{surface:'x',lemma:'x'}]}], null, null)`), null,
+      'a chapter with nothing unresolved has no next token');
+    console.log('  _teNextUnresolved walks the worklist in order and cycles: OK');
+  }
+
+  // The popover itself: editable in the live build, and the fields prefilled from the model.
+  {
+    const C = explorerClient();
+    const pop = C.run(`
+      var el = { dataset: { surface:'landschap', lemma:'', form:'', sense:'', conf:'unresolved',
+                            cid:'tp_te1', si:'0', occ:'0' } };
+      _teShowWordPopover({ clientX:10, clientY:10 }, el);
+      // ⚠️ Read through the TRACKED reference. An id lookup cannot answer this in lib-dom: it
+      // auto-vivifies a fresh div on a miss, so getElementById('te-word-pop') returns an empty
+      // element that is not the popover at all, and every assertion below would fail on a correct
+      // tree. Same reason index.html tracks the node rather than looking it up.
+      (_teWordPopEl && _teWordPopEl.innerHTML) || 'NO-POPOVER';`, 'pop');
+    assert.ok(pop.includes('te-edit-lemma') && pop.includes('te-edit-form') && pop.includes('te-edit-sense'),
+      'the popover renders all three fields as inputs in the live build');
+    assert.ok(pop.includes(UI.en['prov.save']), 'with a Save button (reusing prov.save — no new key)');
+    assert.ok(pop.includes(UI.en['dialog.cancel']), 'and a Cancel (reusing dialog.cancel)');
+    assert.ok(pop.includes('_teSaveCorrection("tp_te1",0,0,"landschap")'),
+      'and Save is wired to the exact correction key this token was rendered with (got: '
+        + (pop.match(/_teSaveCorrection\([^)]*\)/) || [''])[0] + ')');
+    // ⚠️ The dismiss-on-next-click listener would have closed the editor the instant a curator
+    // clicked into a field. This is the assertion for that, at the layer it is observable.
+    const guard = C.run(`(_teWordPopEl && _teWordPopEl.getAttribute) ? _teWordPopEl.getAttribute('onclick') : 'NONE'`);
+    assert.ok(String(guard).includes('stopPropagation'),
+      'and the popover stops click propagation, or clicking into an input would dismiss it (got: ' + guard + ')');
+    console.log('  the token popover is an editor in the live build, wired to the right token: OK');
+  }
+
+  // Prefill: a `low`-confidence token already has most of the answer, so the boxes must not be empty.
+  {
+    const C = explorerClient();
+    const pop = C.run(`
+      var el = { dataset: { surface:'Een', lemma:'een', form:'Artikel', sense:'ein', conf:'high',
+                            cid:'tp_te1', si:'0', occ:'0' } };
+      _teShowWordPopover({ clientX:10, clientY:10 }, el);
+      (_teWordPopEl && _teWordPopEl.innerHTML) || '';`, 'pop2');
+    assert.ok(/id="te-edit-lemma"[^>]*value="een"/.test(pop), 'the lemma box is prefilled with the model\'s value');
+    assert.ok(/id="te-edit-form"[^>]*value="Artikel"/.test(pop), 'and the form box');
+    assert.ok(/id="te-edit-sense"[^>]*value="ein"/.test(pop), 'and the sense box');
+    console.log('  the editor prefills the model\'s own values rather than starting blank: OK');
+  }
+
+  // ⚠️ The STATIC build has no server to save to and a BAKED analysis: an edit there would appear to
+  // work and survive nothing. Asserted by defining STATIC_LESSONS, which is the same test every
+  // other write action in index.html uses to tell the two builds apart.
+  {
+    const C = explorerClient();
+    const pop = C.run(`
+      STATIC_LESSONS = [];
+      var el = { dataset: { surface:'landschap', lemma:'', form:'', sense:'', conf:'unresolved',
+                            cid:'tp_te1', si:'0', occ:'0' } };
+      _teShowWordPopover({ clientX:10, clientY:10 }, el);
+      (_teWordPopEl && _teWordPopEl.innerHTML) || '';`, 'pop-static');
+    assert.ok(!pop.includes('te-edit-lemma'), 'the published build renders NO editor');
+    assert.ok(pop.includes(UI.en['text_explorer.unresolved']),
+      'and falls back to the read-only card, which still explains why the word has no analysis');
+    const bar = C.run(`STATIC_LESSONS = []; _teUnresolvedBarHtml('tp_te1', ${JSON.stringify(ANA.sentences)})`);
+    assert.strictEqual(bar, '', 'and shows no worklist bar either — there is nothing it could do there');
+    console.log('  the published static build stays read-only — no editor, no worklist: OK');
+  }
+
   console.log('unit-text-explorer: ALL PASSED');
 })().catch(e => { console.error(e); process.exit(1); });

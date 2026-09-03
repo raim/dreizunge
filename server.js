@@ -28,6 +28,11 @@ const { compareWithExistingLessons } = require('./curriculum-plan.js');
 // established, already-precedented direction, not a new risk.
 const { buildCanonicalText } = require('./canonical-text.js');
 const { analyzeChapter, scriptsForLangCP2, cp2Provenance } = require('./canonical-analysis.js');
+// item AI (v88_ad): the curator's overlay over CP2's output. Its own module rather than more of
+// this file because build-static.js must apply the SAME merge when it bakes the analysis into the
+// published build, and it cannot require server.js. See analysis-corrections.js's header for why
+// the key is (sentence text, surface, occurrence) and not `tokenId`.
+const _corrections = require('./analysis-corrections.js');
 
 // ── Learner sessions (v65) ───────────────────────────────────────────────────
 // Cookie-based, HttpOnly so page scripts can never read the token, SameSite=Lax so it isn't sent
@@ -250,7 +255,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_ac';
+const APP_VERSION  = 'v88_ad';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -972,10 +977,25 @@ function analysisShadowFor(chapterId) {
   if (topic) {
     try { stale = buildCanonicalText(topic).sourceTextHash !== rec.sourceTextHash; } catch (e) { /* leave stale:false — a broken re-hash must not hide an otherwise-good cached result */ }
   }
+  // item AI (v88_ad): the curator's corrections are merged HERE, on read, not baked into the stored
+  // record. Two reasons, both load-bearing: a correction made after the last analysis must show
+  // immediately (baking would surface it only after the NEXT re-analysis, the opposite of the
+  // "corrections are sticky" ruling), and canonical-analysis.json stays honestly the model's own
+  // output. This is the ONE live read path — the GET route, the analyse route's short-circuit and
+  // _kickOffAnalysisJob all come through here — so every live consumer sees corrected tokens
+  // without its own wiring. ⚠️ build-static.js does NOT come through here; it reads the store file
+  // directly to bake STATIC_ANALYSIS_DATA, so it applies the same merge itself. Two callers, one
+  // shared function, deliberately — a second surface over a shared cache that re-implements the
+  // read is how v87_k and v88_w both happened.
+  const _corr = _corrections.correctionsFor(chapterId);
+  const _sentences = _corrections.applyCorrections(rec.sentences || [], _corr);
   return {
     chapterId, available: true, stale,
     sentenceCount: rec.sentenceCount, tokenCount: rec.tokenCount,
-    sentences: rec.sentences,
+    sentences: _sentences,
+    // How many of this chapter's tokens a human has curated. The client shows this and uses it to
+    // decide whether the "discard corrections" warning is worth showing at all.
+    correctionCount: _corr.length,
     model: (rec.provenance && rec.provenance.model) || null,
     analyzedAt: rec.analyzedAt || null,
     // v88_x: a PARTIAL is still `available` — the sentences it holds are real, and the explorer
@@ -988,7 +1008,11 @@ function analysisShadowFor(chapterId) {
     // shows and the sentences the resume redoes come from ONE definition of "usable"
     // (`_analysisSentenceUsable`) — two copies of that rule would drift the moment either moved.
     totalSentences: rec.partial ? (rec.totalSentences || rec.sentenceCount) : rec.sentenceCount,
-    usableSentences: (rec.sentences || []).filter(_analysisSentenceUsable).length,
+    // ⚠️ Counted over the CORRECTED sentences, not the raw ones. Resolving an unresolved token by
+    // hand is precisely what turns a recorded FAILURE (token slots, not one lemma — v88_x's 5.9%)
+    // back into a usable sentence, so a resume must not offer to redo a sentence a curator has
+    // already fixed. Counting `rec.sentences` here would have it do exactly that.
+    usableSentences: _sentences.filter(_analysisSentenceUsable).length,
   };
 }
 
@@ -7791,6 +7815,13 @@ http.createServer(async (req, res) => {
       if (deleteId && deleteAnalysisChapter(deleteId)) {
         console.log(`  Deleted cached CP1/CP2 analysis for "${delName}"`);
       }
+      // ⚠️ item AI (v88_ad) added a SECOND per-chapter store, so it needs the same cleanup — a new
+      // store added without it would reintroduce v88_ac's leak the day it shipped. Note the
+      // asymmetry that IS the feature: deleting the chapter drops its corrections, re-analysing it
+      // must NOT (deleteAnalysisChapter deliberately leaves them alone).
+      if (deleteId && _corrections.deleteChapterCorrections(deleteId)) {
+        console.log(`  Deleted curator analysis corrections for "${delName}"`);
+      }
       saveStore(store);
       return json(res, 200, { ok: true });
     }
@@ -8778,6 +8809,39 @@ http.createServer(async (req, res) => {
     if (M === 'GET' && url.pathname.startsWith('/api/analysis/')) {
       const chapterId = decodeURIComponent(url.pathname.slice('/api/analysis/'.length));
       return json(res, 200, analysisShadowFor(chapterId));
+    }
+    // ── item AI (v88_ad): save or clear ONE curator correction ────────────────────────────────
+    // POST body: { sentenceText, surface, occurrence, lemma, form, sense }. An empty lemma AND form
+    // AND sense means "drop my correction, show me the model's own analysis again" — expressed as
+    // clearing the fields rather than as a separate DELETE verb, because that is what a curator
+    // does in the editor (blank the boxes and save) and a second route would be a second way to say
+    // the same thing.
+    //
+    // Needs NO model and NO backend: this is the one thing in the analysis feature a curator can do
+    // with Ollama switched off entirely, so it is deliberately not behind any canGenerate gate.
+    // Returns the freshly merged shadow so the client repaints from the server's own answer rather
+    // than patching its cache locally and hoping the two agree.
+    if (M === 'POST' && url.pathname.startsWith('/api/analysis-correction/')) {
+      const chapterId = decodeURIComponent(url.pathname.slice('/api/analysis-correction/'.length));
+      if (!chapterId) return json(res, 400, { error: 'Missing chapter id' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); } catch (e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const sentenceText = String((body && body.sentenceText) || '');
+      const surface = String((body && body.surface) || '');
+      if (!sentenceText || !surface)
+        return json(res, 400, { error: 'Missing sentenceText or surface' });
+      const occurrence = Number((body && body.occurrence) || 0);
+      const lemma = String((body && body.lemma) || '').trim();
+      const form  = String((body && body.form)  || '').trim();
+      const sense = String((body && body.sense) || '').trim();
+      let cleared = false;
+      if (!lemma && !form && !sense) {
+        cleared = _corrections.deleteCorrection(chapterId, { sentenceText, surface, occurrence });
+      } else {
+        _corrections.saveCorrection(chapterId, { sentenceText, surface, occurrence, lemma, form, sense });
+      }
+      console.log(`  [analysis] ${cleared ? 'cleared' : 'saved'} correction on "${surface}" in ${chapterId}`);
+      return json(res, 200, { ok: true, cleared, shadow: analysisShadowFor(chapterId) });
     }
 
     // ── item W step 2: kick off (or reuse) the background CP1+CP2 job for one chapter ──────────

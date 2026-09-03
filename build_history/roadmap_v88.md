@@ -2424,6 +2424,119 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_ad — item AI, first cut: a curator can correct CP2's analysis, and the correction sticks
+
+**Closes the open design question item `AI` has carried since `v86_s`.** User request at the
+`v88_ac` cut: *"perhaps we need a review/edit interface for text analysis entries."* **ZERO
+`ui.json` keys** — the editor reuses `text_explorer.lemma`/`form`/`sense`, `prov.save` and
+`dialog.cancel`, and the worklist bar is a count composed with the existing
+`text_explorer.unresolved`. The user's standing budget was "tell me each key before adding it";
+nothing had to be asked for.
+
+### The measurement that made the case
+
+`canonical-analysis.js` writes **`reviewed: false`** onto every token it emits, at three separate
+sites — and **nothing has ever set it or read it**: 533 of 533 tokens in the live store sat at the
+default. The schema slot for this feature has existed since the beginning; the feature never got
+built. And there is real work for it: **63 of 483 tokens (13%) are `unresolved` with no lemma at
+all**, and 2 of 44 sentences carry not one resolved lemma — the same defect `v88_x` measured at
+5.9%. (Also noted: `confidence` is only ever `high` or `unresolved` in practice. The `.te-tok-low`
+styling has never matched a real token.)
+
+### The three rulings
+
+1. **Sticky overlay.** Corrections live in their own store and are re-applied after every
+   re-analysis. Ruled over "locked tokens" and "wiped but warned".
+2. **The editor is the existing token popover** — `_teShowWordPopover`, until now explicitly "a
+   read-only info card".
+3. **The first cut targets the unresolved tokens**, as a worklist.
+
+### ⚠️ The key is NOT `tokenId`, and that is the load-bearing decision
+
+The obvious key is the token's own id. It is wrong: `tokenId` is `chapterId:sN:tM`, a pure INDEX
+into the current segmentation. A story edit that inserts a sentence renumbers every sentence after
+it. A correction keyed that way would silently **re-attach to a different word** — worse than being
+lost, because the curator would never know. The key is instead **(sentence TEXT, token SURFACE,
+which occurrence of that surface in that sentence)**, which is `v88_x`'s own precedent (its resume
+matched on sentence text, for these reasons, and was verified live).
+
+### Where the merge lives, and the second surface that nearly got missed
+
+Applied on **read**, in `analysisShadowFor` — not baked into the stored record. A correction made
+after the last analysis must show immediately, and `canonical-analysis.json` stays honestly the
+model's own output. That one function is the whole live read path (the GET route, the analyse
+route's short-circuit, `_kickOffAnalysisJob`).
+
+⚠️ **But `build-static.js` does not go through it.** It reads `canonical-analysis.json` DIRECTLY to
+bake `STATIC_ANALYSIS_DATA`, which makes it a SECOND surface over the same cache — and in this
+project a second surface that re-implements a shared read has twice shipped missing what the shared
+path grew (`v87_k`'s lesson-set reader missed four features; `v88_w`'s static landing card missed
+`thumbMode`). Without the same merge there, **every correction would be silently absent from
+`docs/`** — the build students actually read, and the one nobody would think to check. Caught before
+any code was written, by asking who else reads the analysis. Both callers now share ONE merge
+function, which is why it lives in its own module (`analysis-corrections.js`) rather than in
+`server.js`: `build-static.js` cannot require the server, and `canonical-analysis.js` drags in
+`llm.js`. `analysis-corrections.json` was added to `BUILD_SOURCES` too, or a corrected chapter would
+ship stale from `docs/` with nothing saying so.
+
+### The asymmetry that IS the feature
+
+- **Re-analysing a chapter KEEPS its corrections.** `deleteAnalysisChapter` (the `force` path) drops
+  the whole model record and CP2 rewrites every token; the overlay is untouched and re-applies. This
+  is the ruling, and it is asserted end to end against a real server that really re-runs the model.
+- **Deleting the CHAPTER takes them.** ⚠️ `v88_ac` had just fixed exactly this leak for
+  `canonical-analysis.json` (5 of 20 entries were orphans of deleted chapters); a second per-chapter
+  store added without the same cleanup would have reintroduced it on day one.
+
+### Client
+
+`_teShowWordPopover` becomes an editor: three inputs prefilled with the model's own values (a
+curator corrects an analysis, they do not write one from scratch), Save, Cancel. Clearing all three
+fields removes the correction and the model's own analysis shows through again — expressed as
+clearing rather than a second verb, because that is what a curator does in the editor.
+
+⚠️ **The popover dismissed itself on the next document click**, which — the moment it gained inputs
+— would have closed the editor as soon as a curator clicked into a field. Fixed with the same
+attribute-level `stopPropagation` the token mark already used. And the popover is now tracked **by
+reference** rather than looked up by id, following `_comicReviewOverlayEl`'s precedent: an id lookup
+for a dynamically-created node is exactly what the DOM harness cannot answer (it auto-vivifies a
+fresh div on a miss, so the lookup returns the WRONG element and every assertion fails on a correct
+tree — which is precisely what happened while writing the test).
+
+Editing is **live-build only** (`typeof STATIC_LESSONS === 'undefined'`): the published build has no
+server to save to and a baked snapshot, so an edit there would appear to work and survive nothing.
+Deliberately NOT gated on `teacherMode` or `canGenerate` — a correction needs no model, so it is the
+one analysis action that still works with Ollama switched off.
+
+### ⚠️ Two fixtures that could not tell right from wrong, both found by mutation
+
+- **The occurrence index was untested twice over.** Both the module's fixture and the client's used
+  `"Een … een"` — and the capitalised one is a DIFFERENT surface, so every token was occurrence 0 of
+  its own surface. A mutation hardcoding `occ = 0` stayed GREEN on both. Both fixtures now repeat a
+  surface identically-cased, and both directions are asserted (occurrence 0 hits ONLY index 0,
+  occurrence 1 ONLY index 3) — either alone is satisfied by a merge that ignores the index.
+- **A comment claimed a protection that cannot exist.** The renderer counted occurrences before its
+  two skip-checks, commented as guarding against divergence from the server. The mutant moving it
+  after stayed green, and working out why showed the two are *provably* equivalent: a token skipped
+  for failing to align can never be followed by a same-surface token that aligns, since the cursor
+  only moves forward. The ordering is kept (it mirrors the server's loop literally) but the comment
+  now says it is not load-bearing — `v87_p`'s ruling. The claim that IS real moved to a **cross-layer**
+  guard: the attributes the real renderer emits are fed into the real server-side merge, and the
+  token it resolves is asserted. Neither side's own tests could catch that disagreement; each is
+  self-consistent.
+
+**Fifteen mutations red**, including: the old fallback key without occurrence, a merge that mutates
+its input, a blank field blanking the model's value, `confidence` left unresolved, `saveCorrection`
+appending instead of upserting, the save baking into `canonical-analysis.json` (edit-in-place rather
+than an overlay), `analysisShadowFor` not merging, the chapter delete not pruning, **the force path
+dropping corrections (the ruling itself)**, `build-static.js` not applying them, the client not
+stamping the key, the popover losing its `stopPropagation`, and editing offered in the static build.
+
+### Not in this cut
+
+The per-chapter curator TABLE (the user chose "popover first"), and `reviewed` as a per-sentence or
+per-chapter state — it is per-token, which is what the schema already had.
+
 ## ✅ v88_ac — deleting a chapter no longer leaks its analysis, and 5 orphans are gone
 
 **Not a user report — found by answering a user QUESTION.** They asked what was dirty in

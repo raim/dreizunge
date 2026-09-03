@@ -17,6 +17,9 @@
 const fs   = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+// item AI (v88_ad): the curator overlay lives in its own module precisely so this script can use
+// it — it has no LLM or server dependency, unlike canonical-analysis.js.
+const { applyCorrections, correctionsFor, correctionsFile } = require('./analysis-corrections.js');
 const UI_FILE   = path.join(__dirname, 'ui.json');
 const LANG_FILE = path.join(__dirname, 'languages.json');
 const SCRIPT_FILE = path.join(__dirname, 'scripts.json');
@@ -66,6 +69,10 @@ const BUILD_SOURCES = {
   'languages.json' : sourceFingerprint(LANG_FILE),
   'scripts.json'   : sourceFingerprint(SCRIPT_FILE),
   'canonical-analysis.json': sourceFingerprint(ANALYSIS_FILE),
+  // item AI (v88_ad): a curator correction changes the BAKED analysis without changing any file
+  // already listed here, so without this entry a corrected chapter would ship stale from docs/ and
+  // nothing would say so. Same reasoning as canonical-analysis.json's own entry directly above.
+  'analysis-corrections.json': sourceFingerprint(correctionsFile()),
   'build-static.js': sourceFingerprint(__filename),
 };
 
@@ -99,9 +106,17 @@ try {
   const analysisStore = JSON.parse(fs.readFileSync(ANALYSIS_FILE, 'utf8'));
   const chapters = (analysisStore && analysisStore.chapters) || {};
   for (const [chapterId, rec] of Object.entries(chapters)) {
+    // ⚠️ item AI (v88_ad): the curator's corrections are applied HERE too. This build reads the
+    // analysis store DIRECTLY rather than through the live server's analysisShadowFor, so it is a
+    // SECOND surface over the same cache — and a second surface that re-implements the read is
+    // exactly how v87_k (the lesson-set reader missing four features) and v88_w (the static landing
+    // card missing thumbMode) both happened. Both callers share ONE merge function rather than each
+    // deciding what a corrected token looks like. Without this, every correction a curator made
+    // would be silently absent from the published build — the one place students actually read.
     STATIC_ANALYSIS_DATA[chapterId] = {
       chapterId, available: true, stale: false,
-      sentenceCount: rec.sentenceCount, tokenCount: rec.tokenCount, sentences: rec.sentences,
+      sentenceCount: rec.sentenceCount, tokenCount: rec.tokenCount,
+      sentences: applyCorrections(rec.sentences || [], correctionsFor(chapterId)),
       model: (rec.provenance && rec.provenance.model) || null, analyzedAt: rec.analyzedAt || null,
     };
   }

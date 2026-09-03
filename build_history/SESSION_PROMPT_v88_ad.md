@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_ac`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_ad`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -207,6 +207,21 @@ analysis on the box, and the e2e asserts an unrelated chapter survives the delet
 sweep cannot pass. The 5 orphans were pruned (20 → 15 entries, 245 → 217 KB) and the result verified
 against the user's own running server. Two mutations red. Zero keys.
 
+**`v88_ad` shipped item AI's first cut** — the user asked for "a review/edit interface for text
+analysis entries" and answered its three design questions: a **sticky overlay** (corrections survive
+a re-analysis), the **existing token popover** as the editor, targeting the **unresolved** tokens.
+Zero keys. The measurement that made the case: `reviewed:false` was written on every token by
+`canonical-analysis.js` and **never once set or read** (533/533 at the default), and 63 of 483
+tokens (13%) have no lemma at all.
+
+⚠️ **The key is NOT `tokenId`** — that is `chapterId:sN:tM`, a pure index, and a correction keyed to
+it would silently RE-ATTACH TO A DIFFERENT WORD after a story edit. It is (sentence text, surface,
+occurrence), `v88_x`'s own precedent. ⚠️ **And `build-static.js` is a SECOND surface over the same
+cache** — it reads `canonical-analysis.json` directly, so without the same merge every correction
+would be missing from `docs/`, the build students actually read. Caught before writing code, by
+asking who else reads the analysis; both callers share one module. Fifteen mutations red, including
+two fixtures that could not tell right from wrong.
+
 ---
 
 ## ⚠️ START HERE — THE FOUR-FIELD QUESTION IS ANSWERED; ONE OF ITS CONSEQUENCES IS NOT
@@ -240,24 +255,20 @@ building any of them:
     a load-time SHAPE adapter, not a per-field migration hook, so this means inventing a mechanism
     AND silently rewriting the user's own chapter text on their running server.
 
-**⚠️ ITEM AI IS NOW LIVE — the user asked for it at the `v88_ac` cut**: *"perhaps we need a
-review/edit interface for text analysis entries."* That is item `AI` (`roadmap_v88.md` §AI, scoped
-`v86_s`, never started). **A measurement worth having before designing it**: `canonical-analysis.js`
-already writes **`reviewed: false`** onto every token it emits, at three separate sites — and
-**nothing anywhere sets it true, and nothing reads it**. 533 of 533 tokens in the store carry the
-default. The schema slot exists; the feature behind it never got built.
+**✅ ITEM AI'S FIRST CUT SHIPPED AT `v88_ad`** — the editable token popover, the sticky overlay and
+the unresolved worklist. What the user explicitly deferred, and what is therefore the natural next
+ask rather than an open question: **the per-chapter curator TABLE** (they chose "popover first, table
+after"), which is the surface that makes working through the 63 unresolved tokens practical —
+editing them one popover at a time is slow, and that was named as the trade-off when they chose.
+Also unbuilt and NOT decided: whether `reviewed` should ever mean anything at sentence or chapter
+level (today it is per-token, which is what CP2's schema already had), and whether a fully curated
+chapter should be exempt from the `stale` re-hash. **Ask before building either.**
 
-⚠️ **The open design question is the one that shapes everything else, and the user has NOT answered
-it**: *does a curator's correction survive a re-analysis?* **Today it cannot** — `force:true` calls
-`deleteAnalysisChapter`, which drops the WHOLE chapter entry, and CP2 rewrites every token from
-scratch. So any edit is silently lost on the next re-run, which is exactly the class of loss this
-project has already paid for twice (item AN's description, `v88_y`'s title). Do not build the
-editing UI before that is settled — it determines whether corrections live in the same store
-(needing a merge-on-reanalyse rule keyed on token identity, and `tokenId` is `chapterId:sN:tM`, an
-INDEX, so it does not survive a story edit) or in a separate overlay keyed on something stabler.
-Three sub-questions worth putting alongside it: which surface hosts the editor (the text explorer
-already renders the tokens), whether `reviewed` is per-token or per-sentence, and whether a curator
-edit should mark the chapter non-stale.
+⚠️ **A REAL LIMIT OF THE OVERLAY, worth stating before someone reports it as a bug**: a correction
+is keyed on the SENTENCE TEXT, so rewriting that sentence stops its corrections applying. That is
+deliberate (the words they described may be gone) and is pinned by a test, but it means a story
+repair silently drops curation for the sentences it touched, with nothing said in the UI. If the
+user hits that, the fix is a warning, not a looser key.
 
 **⚠️ TWO ITEMS STILL NEED A RULING** (item 3 of the previous list is now closed by `v88_ab`).
 Verbatim where quoted:
@@ -313,8 +324,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 329 checks
-node test/run.js --quick                  → expect 272
+node test/run.js                          → expect 330 checks
+node test/run.js --quick                  → expect 273
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -371,7 +382,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **344 topics, 100 storylines, 33 languages, 754 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_ac'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_ad'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
