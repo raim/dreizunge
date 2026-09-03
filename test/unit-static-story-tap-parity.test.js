@@ -39,6 +39,22 @@ assert.ok(/_storyTapInit\(\)/.test(body),
   "even though the function itself is present");
 console.log('  the static build\'s own init() wires _storyTapInit(): OK');
 
+// v89_b: the SWIPE gesture is the same class of feature — pure client-side navigation, it just
+// presses comp-prev/comp-next — and it is wired from the same two inits, so it is guarded from the
+// same place rather than left to be re-discovered as a static-build gap the way tap-to-advance was.
+assert.ok(/_cardSwipeInit\(\)/.test(body),
+  "the static build's own init() must call _cardSwipeInit() — otherwise swiping the progress card " +
+  "left/right is silently dead in the static build, even though the function itself is present");
+console.log('  the static build\'s own init() wires _cardSwipeInit(): OK');
+{
+  const mutated = body.replace(/try \{ _cardSwipeInit\(\); \} catch \(_\) \{\}/, '');
+  assert.notStrictEqual(mutated, body,
+    'the mutation must actually remove the _cardSwipeInit call — if this fires, the regex no longer ' +
+    'matches the real source and the guard above is vacuous');
+  assert.ok(!/_cardSwipeInit\(\)/.test(mutated), 'sanity: with the call removed, the assertion above must NOT match');
+}
+console.log('  mutation check: removing the _cardSwipeInit() call makes that guard fail: OK');
+
 // _storySelInit (select text -> ASK THE TUTOR, PLAN §12) is correctly STILL absent from the static
 // init — that feature genuinely needs a live backend, unlike tap-to-advance, which is pure
 // client-side navigation. Asserted explicitly so a future "just add everything" fix doesn't

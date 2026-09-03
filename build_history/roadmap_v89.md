@@ -2175,6 +2175,82 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 # ✅ SHIPPED IN THE v89 LINE
 
-*Nothing yet — this line was cut at `v89`. Entries go at the TOP of this section, newest first, and
-a merge conflict between two sessions lands exactly here: resolve it by keeping BOTH entries,
-ordered by version.*
+*Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
+lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_b — swipe the progress card left/right = its ← / → arrows
+
+User request: *"progress card allow to swipe right and left on mobile phone, same as if the back and
+forward arrows were pressed. So on the vocab-highlight view tapping starts questions, and swiping
+moves back and forth."* **ZERO `ui.json` keys** — the gesture has no strings of its own.
+
+### The two gestures are complementary, on one surface
+
+`_storyTapMaybeAdvance` (the mobile tap follow-up) already owns the progress card's story body: a
+tap PLAYS (`comp-play`, falling back to `comp-next`). The swipe BROWSES (`comp-prev`/`comp-next`,
+one chapter, no completion check — `v88_r`'s arrows). That pairing is the request, so the two live
+side by side in the source and share their tap-vs-drag signal.
+
+| what | where |
+|---|---|
+| the gesture | `_cardSwipeInit()` / `_cardSwipeStart` / `_cardSwipeEnd` (index.html, directly after `_storyTapMaybeAdvance`) |
+| **the decision, split out so it can be driven** | `_cardSwipeNav(from, to)` — returns whether it navigated. Same shape as `_storyTapMaybeAdvance`: the harness's `addEventListener` is a no-op, so the plumbing is thin and the rule is a plain function |
+| thresholds | `_SWIPE_MIN_PX = 60`, `_SWIPE_X_OVER_Y = 2` |
+| wired from | BOTH inits — `index.html`'s and `build-static.js`'s own replacement one, per `v86_h`'s lesson (see below) |
+
+**It presses the buttons, it does not re-derive a destination.** `comp-next`'s target depends on ~7
+branches in `showComplete()`; the swipe reads `comp-prev`/`comp-next` — the SOURCE buttons
+`_syncCompHdrNav`/`_mirrorNavBtn` already copy from — and calls their resolved `onclick`. A HIDDEN
+arrow (`display:none`, i.e. no previous chapter) and a DISABLED one are both unreachable: a gesture
+has no greyed state of its own to show, so it must not reach a destination the card withheld.
+
+**Touch only, `passive:true`.** A mouse drag across story text is a SELECTION (PLAN §12's popover)
+and there is no desktop gesture to disambiguate it from. Nothing calls `preventDefault` on the touch
+itself, so vertical scrolling through a long card is untouched; a mostly-vertical drag is rejected
+by the ratio, and a drag that left a non-collapsed selection is rejected by the SAME `sel.isCollapsed`
+signal PLAN §12 and `_storyTapMaybeAdvance` already trust.
+
+**Scope:** anywhere in `#complete-screen` EXCEPT `#comp-nav-modal`. The request says "progress card",
+not "the story field", so the whole card swipes — but the ☰ popup is a dialog stacked on top of it,
+and its chapter-icon strip (`#comp-storyboard`) is the one horizontally-scrolling element on this
+screen. Nothing outside the popup on this card scrolls sideways (checked element by element), so no
+further exclusion was invented. Analysis mode (`APP._textExplorer`) is deliberately NOT excluded,
+unlike the tap: `v88_ai` made that body inert as a QUESTION surface, and browsing to the next
+chapter is navigation, not a question.
+
+### ⚠️ The capture-phase click swallow is load-bearing, not defensive
+
+A horizontal touch drag is not a scroll, so the browser still synthesises a `click` on `touchend`.
+Without suppression, a swipe starting on plain text would ALSO run `_storyTapMaybeAdvance` (play) and
+one starting on a highlighted word would ALSO run `tapWord` — a second, different navigation stacked
+on the swipe's. `_cardSwipeSwallowClick` is registered on `document` in the CAPTURE phase, the
+outermost listener there is: `stopPropagation()` there means the event never reaches the target and
+never bubbles back to the document-level tap handler either. It disarms after ONE click and expires
+after 700ms, so an ordinary tap is never eaten.
+
+### Verified in the live app, not only in the harness
+
+Driven through real `TouchEvent`s against the running server (standing rule: verify at the layer the
+user touches — a live check that CALLS the function proves nothing about the gesture):
+
+- swipe left on the story body: **"Der Waldpfad" → "Landschaft hinter dem Zaun"**; swipe right: back.
+- a mostly-vertical drag over the same text: **no move**.
+- swipe across a **highlighted** word, then the synthetic click: the click came back
+  `cancelled` and the card **stayed on the progress card** — `tapWord` did not fire.
+- control, same word, plain click with no swipe in front of it: **still opens `lesson-screen`**. The
+  swallow is scoped to the post-swipe window and has not broken tap-to-lesson.
+
+### Guards
+
+`unit-card-swipe-nav.test.js` (new, 9 sections) + a second assertion in
+`unit-static-story-tap-parity.test.js` for the static build's own `init()`.
+
+⚠️ **The DOM harness auto-vivifies a FLAT, detached element per id — there is no page tree**, so
+`closest('#complete-screen')` returns null even from a span inside `#comp-story-text` (probed before
+writing the file). Every section therefore BUILDS the nesting the real markup has, by `appendChild`
+on the very objects `getElementById` hands out, so the product code walks the same ancestry it walks
+in a browser. **Twelve mutations, all red**: dropping either scope check, flipping the direction,
+dropping the 60px minimum, dropping the ratio, ignoring `disabled`, ignoring `display:none`, dropping
+the selection check, never arming the swallow, accepting a two-finger pinch, never expiring the
+swallow window, and swallowing every click instead of one.
+

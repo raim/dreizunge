@@ -350,6 +350,9 @@ async function init() {
   // init() (mobile follow-up, see index.html's own _storyTapInit comment). _storySelInit (select
   // text -> ASK THE TUTOR) is correctly still absent: that one genuinely needs a live backend.
   try { _storyTapInit(); } catch (_) {} // mobile follow-up: a short tap on plain story text advances
+  // v89_b: same reasoning, same class of feature — swiping the progress card left/right is pure
+  // client-side navigation (it just presses comp-prev/comp-next), so the static build gets it too.
+  try { _cardSwipeInit(); } catch (_) {} // v89_b: swipe the progress card = its back/forward arrows
   // Hash routing
   if (location.hash.startsWith('#sl=')) {
     const chainId = location.hash.slice(4);
