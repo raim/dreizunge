@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_ad`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_ae`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -222,6 +222,21 @@ would be missing from `docs/`, the build students actually read. Caught before w
 asking who else reads the analysis; both callers share one module. Fifteen mutations red, including
 two fixtures that could not tell right from wrong.
 
+**`v88_ae` shipped both halves of the next user message** — *"do the curator table and show a warning
+upon story rewrite."* ONE key (`text_explorer.corrections_orphaned`, wording the user picked from
+three); everything else reuses existing strings and the table's header is the chapter's own name.
+The table is one editable row per token with an unresolved filter, saving **only the rows that
+changed** (saving all of them would turn every model value into a "correction" and pin the chapter
+against future prompt improvements). Orphaned corrections are LISTED, never deleted (user ruling),
+always visible even under the filter — an orphan is the one row kind findable no other way.
+
+⚠️ **The dry-run route was WRONG in its first version and the e2e caught it**: it asked the
+TOKEN-level question of CP1 output, but CP1's tokens carry `text` and split naively (`"lauft."`)
+while CP2's carry `surface` — so it matched nothing and called every correction doomed. A candidate
+story has never been through CP2; the honest question is SENTENCE-level and now has its own
+function. ⚠️ **The e2e also corrected the lifecycle**: a story save does NOT re-run CP2, so the
+correction still applies to the stale analysis until the RE-ANALYSIS. Ten mutations red.
+
 ---
 
 ## ⚠️ START HERE — THE FOUR-FIELD QUESTION IS ANSWERED; ONE OF ITS CONSEQUENCES IS NOT
@@ -255,20 +270,27 @@ building any of them:
     a load-time SHAPE adapter, not a per-field migration hook, so this means inventing a mechanism
     AND silently rewriting the user's own chapter text on their running server.
 
-**✅ ITEM AI'S FIRST CUT SHIPPED AT `v88_ad`** — the editable token popover, the sticky overlay and
-the unresolved worklist. What the user explicitly deferred, and what is therefore the natural next
-ask rather than an open question: **the per-chapter curator TABLE** (they chose "popover first, table
-after"), which is the surface that makes working through the 63 unresolved tokens practical —
-editing them one popover at a time is slow, and that was named as the trade-off when they chose.
-Also unbuilt and NOT decided: whether `reviewed` should ever mean anything at sentence or chapter
-level (today it is per-token, which is what CP2's schema already had), and whether a fully curated
-chapter should be exempt from the `stale` re-hash. **Ask before building either.**
+**✅ ITEM AI IS COMPLETE AS SCOPED** — `v88_ad` shipped the editable popover, the sticky overlay and
+the unresolved worklist; `v88_ae` shipped the curator table and the story-rewrite warning. Nothing
+from that request is owed.
 
-⚠️ **A REAL LIMIT OF THE OVERLAY, worth stating before someone reports it as a bug**: a correction
-is keyed on the SENTENCE TEXT, so rewriting that sentence stops its corrections applying. That is
-deliberate (the words they described may be gone) and is pinned by a test, but it means a story
-repair silently drops curation for the sentences it touched, with nothing said in the UI. If the
-user hits that, the fix is a warning, not a looser key.
+Still unbuilt and **NOT decided** — ask before starting either: whether `reviewed` should ever mean
+anything at SENTENCE or CHAPTER level (today it is per-token, which is what CP2's schema already
+had), and whether a fully curated chapter should be exempt from the `stale` re-hash.
+
+⚠️ **A known, deliberate limit, now warned about but not solved**: a correction is keyed on the
+SENTENCE TEXT, so rewriting a sentence orphans its corrections. `v88_ae` makes that visible in three
+places (a Cancel/Continue warning before the save, an orphan block in the curator table, the
+worklist bar appearing for orphans alone) — but **retyping an orphan against the new sentence is
+still manual**. If the user asks for more, the shapes worth putting to them are a fuzzy re-key
+(match the orphan's surface inside the new sentence) or a side-by-side "old sentence → new sentence"
+repair view. Do NOT loosen the KEY itself: an approximate key silently re-attaches a correction to
+the wrong word, which is worse than losing it.
+
+⚠️ **`v88_ab`'s residue is CLOSED — by the user, not by a release.** They deleted the two isolated
+"De Manteling" storylines. The surviving `tp_17881715830570000091` is the chapter that extracted
+correctly (heading in `caption`, 310-char body in `inScene`, no description), so the combine rule
+has nothing to add there. Do not re-open it.
 
 **⚠️ TWO ITEMS STILL NEED A RULING** (item 3 of the previous list is now closed by `v88_ab`).
 Verbatim where quoted:
@@ -381,8 +403,8 @@ DETERMINISTIC, so not flakiness — because the user's server had written a new 
 fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don't run the full and
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **344 topics, 100 storylines, 33 languages, 754 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_ad'`.
+Corpus at this cut: **343 topics, 98 storylines, 33 languages, 755 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_ae'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to

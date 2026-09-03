@@ -876,5 +876,137 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
     console.log('  the published static build stays read-only — no editor, no worklist: OK');
   }
 
+  // ── v88_ae: the per-chapter CURATOR TABLE ─────────────────────────────────────────────────────
+  const ORPHAN = { surface:'watertoren', occurrence:0, sentenceText:'Een zin die is herschreven.',
+    lemma:'watertoren', form:'Nomen', sense:'Wasserturm' };
+  function tableClient(withOrphan){
+    const C = explorerClient();
+    C.run(`
+      _teCacheStore()['tp_te1'].data.orphanedCorrections = ${withOrphan ? JSON.stringify([ORPHAN]) : '[]'};
+      APP.lessonData = ${JSON.stringify(TOPIC_NL)};
+      _teOpenCuratorTable('tp_te1'); true;`, 'table-open');
+    return C;
+  }
+
+  // Row building is asserted as a pure function: which rows exist, in what order, and which are
+  // orphans is the part that can be wrong, and it does not need a layout engine to check.
+  {
+    const C = explorerClient();
+    const rows = JSON.parse(C.run(`JSON.stringify(_teTableBuildRows({
+      sentences: ${JSON.stringify(ANA.sentences)},
+      orphanedCorrections: ${JSON.stringify([ORPHAN])} }))`));
+    assert.strictEqual(rows.length, 6, 'one row per token (5) plus one per orphan (1)');
+    assert.deepStrictEqual(rows.slice(0, 5).map(r => r.surface),
+      ['een','landschap','met','een','hek'], 'token rows follow the sentence order');
+    assert.deepStrictEqual(rows.slice(0, 5).map(r => r.occ), [0,0,0,1,0],
+      'and carry the SAME occurrence index the correction key uses — the second "een" is occ 1');
+    assert.deepStrictEqual(rows.filter(r => r.unresolved).map(r => r.surface), ['landschap','hek'],
+      'the unresolved rows are the two tokens with no lemma');
+    // Orphans LAST and in their own kind: their sentence no longer exists, so they cannot be
+    // interleaved with tokens without pretending they still align to one.
+    assert.strictEqual(rows[5].kind, 'orphan', 'the orphan is the last row');
+    assert.strictEqual(rows[5].si, -1, 'and carries no sentence index, because its sentence is gone');
+    assert.strictEqual(rows[5].sentenceText, ORPHAN.sentenceText,
+      'but keeps the sentence text it was keyed to, which is what makes it repairable');
+    console.log('  the curator table builds one row per token plus a block of orphans: OK');
+  }
+
+  // The filter is the worklist. An ORPHAN must survive it — it is the one row kind that cannot be
+  // found any other way, and hiding it under "only unresolved" would make it unreachable.
+  {
+    const C = tableClient(true);
+    const all = Number(C.run('_teTableVisible().length'));
+    assert.strictEqual(all, 6, 'unfiltered, every row is visible');
+    C.run('_teTableToggleFilter(); true;', 'filter-on');
+    const filtered = JSON.parse(C.run('JSON.stringify(_teTableVisible().map(r=>r.surface+":"+r.kind))'));
+    assert.deepStrictEqual(filtered, ['landschap:token','hek:token','watertoren:orphan'],
+      'filtered, the two unresolved tokens AND the orphan remain — the orphan is never filtered away');
+    C.run('_teTableToggleFilter(); true;', 'filter-off');
+    assert.strictEqual(Number(C.run('_teTableVisible().length')), 6, 'and toggling back restores every row');
+    console.log('  the table filter keeps unresolved tokens and always keeps orphans: OK');
+  }
+
+  // ⚠️ Saving must send only what CHANGED. A table of 100 tokens saving every row would turn every
+  // model-produced value into a "curator correction", mark the whole chapter reviewed, and pin it
+  // against future prompt improvements — quietly defeating the point of an overlay.
+  {
+    const C = tableClient(false);
+    assert.strictEqual(Number(C.run('_teTableChanged().length')), 0,
+      'an untouched table has nothing to save — opening and closing writes nothing');
+    C.run(`_teTableEdit(1,'lemma','landschap'); _teTableEdit(1,'sense','Landschaft'); true;`, 'edit');
+    const changed = JSON.parse(C.run('JSON.stringify(_teTableChanged())'));
+    assert.strictEqual(changed.length, 1, 'only the edited row is sent');
+    assert.strictEqual(changed[0].surface, 'landschap', 'and it is the row that was edited');
+    assert.strictEqual(changed[0].occurrence, 0, 'with its occurrence index');
+    assert.strictEqual(changed[0].sentenceText, ANA.sentences[0].text,
+      'and the sentence text the server keys on');
+    assert.strictEqual(changed[0].lemma, 'landschap', 'carrying the edited values');
+    assert.strictEqual(changed[0].sense, 'Landschaft');
+    // Editing a value BACK to what it was is not a change — otherwise a curator who types and undoes
+    // still pins the token.
+    C.run(`_teTableEdit(1,'lemma',''); _teTableEdit(1,'sense',''); true;`, 'undo');
+    assert.strictEqual(Number(C.run('_teTableChanged().length')), 0,
+      'and restoring the original values makes it not a change again');
+    console.log('  the table saves only the rows that actually changed: OK');
+  }
+
+  // The bar must appear for a chapter whose tokens are all resolved but which HAS orphans — that is
+  // precisely the chapter where an orphan would otherwise never be found.
+  {
+    const C = explorerClient();
+    const clean = [{ text:'x.', tokens:[{surface:'x', lemma:'x'}] }];
+    const none = C.run(`_teUnresolvedBarHtml('tp_te1', ${JSON.stringify(clean)}, { orphanedCorrections: [] })`);
+    assert.strictEqual(none, '', 'nothing unresolved and no orphans: no bar');
+    const withOrph = C.run(`_teUnresolvedBarHtml('tp_te1', ${JSON.stringify(clean)}, { orphanedCorrections: ${JSON.stringify([ORPHAN])} })`);
+    assert.ok(withOrph.includes('te-fixbar'), 'an orphan alone is enough to show the bar');
+    assert.ok(withOrph.includes('_teOpenCuratorTable'), 'and the bar offers the table, which is the only place an orphan can be repaired');
+    console.log('  the worklist bar appears for orphans even when nothing is unresolved: OK');
+  }
+
+  // ── v88_ae: the story-rewrite warning ─────────────────────────────────────────────────────────
+  // The claim is about CONTROL FLOW — does the save go ahead — so it is asserted on the boolean the
+  // save path branches on, not on pixels.
+  {
+    const C = explorerClient();
+    const setup = (wouldOrphan, pick) => C.run(`
+      window.__dialogs = [];
+      showChoiceDialog = function(o){ window.__dialogs.push(o); return Promise.resolve(${pick}); };
+      fetch = function(u, o){ window.__impactUrl = u; return Promise.resolve({ ok:true, status:200,
+        json: function(){ return Promise.resolve({ wouldOrphan: ${wouldOrphan} }); } }); };
+      true;`, 'confirm-setup');
+
+    // No corrections at risk: no dialog at all, and the save proceeds.
+    setup(0, 1);
+    C.run(`window.__res = null; _teConfirmStoryRewrite({id:'tp_te1'}, 'new story').then(function(v){ window.__res = v; }); true;`, 'clean');
+    await settle();
+    assert.strictEqual(C.run('window.__res'), true, 'a rewrite that orphans nothing proceeds');
+    assert.strictEqual(C.run('window.__dialogs.length'), 0,
+      'a rewrite that orphans nothing asks nothing — the warning must not fire on every save');
+
+    setup(3, 0);
+    C.run(`window.__res = null; _teConfirmStoryRewrite({id:'tp_te1'}, 'new story').then(function(v){ window.__res = v; }); true;`, 'cancel');
+    await settle();
+    assert.strictEqual(C.run('window.__res'), false, 'choosing Cancel stops the save');
+    const dlg = JSON.parse(C.run('JSON.stringify(window.__dialogs[0])'));
+    assert.ok(dlg.body.includes('3'), 'and the warning states how many corrections are at risk (got: ' + dlg.body + ')');
+    assert.strictEqual(dlg.choices.length, 2, 'two choices');
+    assert.ok(!dlg.choices[0].primary && dlg.choices[1].primary,
+      'and Cancel is first and NOT primary — the destructive path is not what a reflexive Enter takes');
+    assert.ok(String(C.run('window.__impactUrl')).includes('/api/analysis-correction-impact/tp_te1'),
+      'the count came from the SERVER dry run, not from a client-side substring guess');
+
+    setup(3, 1);
+    C.run(`window.__res = null; _teConfirmStoryRewrite({id:'tp_te1'}, 'new story').then(function(v){ window.__res = v; }); true;`, 'continue');
+    await settle();
+    assert.strictEqual(C.run('window.__res'), true, 'and choosing Continue lets the save proceed');
+
+    // Fails OPEN: a check that cannot run must never stand between a curator and a story repair.
+    C.run(`fetch = function(){ return Promise.reject(new Error('offline')); };
+      window.__res = null; _teConfirmStoryRewrite({id:'tp_te1'}, 'x').then(function(v){ window.__res = v; }); true;`, 'fail-open');
+    await settle();
+    assert.strictEqual(C.run('window.__res'), true, 'a failed impact check proceeds rather than blocking the save');
+    console.log('  the story-rewrite warning fires only when corrections are at risk, and fails open: OK');
+  }
+
   console.log('unit-text-explorer: ALL PASSED');
 })().catch(e => { console.error(e); process.exit(1); });

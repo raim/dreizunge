@@ -2424,6 +2424,94 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_ae — item AI's curator TABLE, and a rewrite no longer orphans corrections silently
+
+Both halves of one user message: *"do the curator table and show a warning upon story rewrite."*
+**ONE new `ui.json` key**, `text_explorer.corrections_orphaned`, wording chosen by the user from
+three options; everything else reuses existing strings (`text_explorer.lemma`/`form`/`sense` as
+column headers, `text_explorer.unresolved` as the filter, `prov.save`, `dialog.cancel`,
+`check.continue`, `toast.saved`), and the table's HEADER is the chapter's own name — data, not a UI
+string, and more useful than a generic title.
+
+### The user also closed `v88_ab`'s residue themselves
+
+They deleted the two isolated "De Manteling" storylines. Measured at this cut: the surviving
+chapter is `tp_17881715830570000091`, which is the one that extracted **correctly** — `caption` =
+the sign's heading, `inScene` = its 310-character body, `description` empty — inside the
+"Wald und Wildnis" storyline. So the combine rule has nothing left to add there and **nothing is
+owed on that item.**
+
+⚠️ **And it confirmed `v88_ac` in real use**: the analysis store went 15 → 14 entries with **zero
+orphans**, so the chapter delete pruned its analysis exactly as intended, on the user's own data.
+
+### The rewrite warning — and the bug the test found in it
+
+A correction is keyed on the SENTENCE TEXT, so rewriting a sentence stops its corrections applying.
+Deliberate, and now no longer silent: a dry-run route (`POST /api/analysis-correction-impact/:id`)
+runs CP1 on the CANDIDATE story and reports how many currently-applying corrections would lose their
+sentence. The story editor asks before committing and offers Cancel / Continue.
+
+⚠️ **The first version of that route was wrong, and the e2e caught it.** It ran
+`partitionCorrections` — the TOKEN-level question — over CP1 output. But CP1's tokens carry `text`
+and are split naively (`"lauft."` keeps its period), while CP2's carry `surface`; the token
+partition therefore matched nothing and reported **every** correction as doomed. A candidate story
+has never been through CP2, so the token question cannot be asked of it at all. The honest question
+is SENTENCE-level — *will this correction still have a sentence to attach to* — and it now has its
+own function (`partitionCorrectionsBySentence`) with the distinction written down, because the two
+partitions look interchangeable and are not.
+
+⚠️ **The e2e also corrected the LIFECYCLE this release assumed.** Saving a story does not re-run
+CP2: the cached analysis is marked stale and keeps its old sentences, so immediately after a rewrite
+the correction *still applies* to what the explorer is still showing. Orphaning becomes real at the
+RE-ANALYSIS. The test now asserts that whole sequence, and the warning's wording is future tense
+("will stop applying") for exactly this reason.
+
+Deliberate properties: the check **fails open** (a check that cannot run must not stand between a
+curator and a story repair), it charges only against corrections that currently APPLY (otherwise it
+cries wolf on every subsequent save), and it returns immediately for the overwhelmingly common case
+of a chapter with no corrections at all. The client asks the SERVER rather than testing
+`newStory.includes(sentenceText)` — containment is a PROXY for "is still a sentence", and proxy
+guards are how `v87_i` and `v88_w` both shipped broken.
+
+### The curator table
+
+`_teOpenCuratorTable(chapterId)` — one editable row per token, grouped in sentence order, with a
+filter that narrows to the unresolved. Modal shape and attribute-wired handlers are
+`comicOpenReview`'s, deliberately: edits live in a LOCAL buffer so Cancel is a true no-op, and every
+handler is a plain callable function rather than a closure only a real click can reach. The
+worklist bar gained a second button (`▤`) beside the jump — the user's own reasoning for "popover
+first, table after" was that walking a word IN CONTEXT and working through many at once are
+different jobs, so neither replaces the other.
+
+⚠️ **The table sends only the rows that CHANGED.** Saving all of them would turn every
+model-produced value into a "curator correction", mark the whole chapter reviewed, and pin it
+against future prompt improvements — quietly defeating the point of an overlay. Editing a value and
+putting it back counts as unchanged.
+
+### Orphans are listed, never deleted
+
+The user's ruling. `analysisShadowFor` now reports `correctionCount` as what actually APPLIES (so it
+never overstates the curation a reader is seeing) plus `orphanedCorrections` in full, and the table
+lists them in their own block, always visible — **exempt from the "only unresolved" filter**,
+because an orphan is the one row kind that cannot be found any other way, and a chapter whose tokens
+are all resolved is exactly when it would otherwise never be seen. The worklist bar therefore
+appears for orphans alone. Clearing all three fields deletes a correction, which is how an orphan is
+dropped once a curator decides it is stale.
+
+**Ten mutations red**: the partition calling everything applied; the sentence partition ignoring the
+sentence text; the dry run asking the token question of CP1 output (the real bug, pinned so it
+cannot return); `wouldOrphan` charged against all corrections rather than the applying ones; the
+table saving every row; the filter hiding orphans; the table dropping orphan rows; the warning never
+blocking; the warning firing when nothing is at risk; and the bar ignoring orphans.
+
+### Also fixed while writing the tests
+
+Two of this file's own e2e sections were loose. §12's correction is keyed to a hand-typed sentence
+text that matches no real sentence — so it was stored but ORPHANED from the start, which §13 then
+tripped over. It is kept (the delete claim it makes holds either way) and now says so, and §13
+measures a DELTA rather than an absolute so the two stay independent. §14 originally picked
+`tp_ana3`, which §9 deletes: in an ordered e2e a late section cannot choose a fixture freely.
+
 ## ✅ v88_ad — item AI, first cut: a curator can correct CP2's analysis, and the correction sticks
 
 **Closes the open design question item `AI` has carried since `v86_s`.** User request at the

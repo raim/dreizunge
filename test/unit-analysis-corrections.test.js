@@ -173,6 +173,54 @@ try {
     console.log('  the store file shape is stable and self-describing: OK');
   }
 
+  // ── 9. v88_ae: partitionCorrections splits applied from orphaned ───────────────────────────
+  // A correction whose sentence has been rewritten away is a NORMAL state, not corruption — and the
+  // user's ruling is that it is KEPT and listed for repair, never deleted on the rewrite. So the
+  // split has to be a first-class answer, not something inferred from a failed merge.
+  {
+    const corr = [
+      { sentenceText: SENT, surface: 'landschap', occurrence: 0, lemma: 'landschap' }, // applies
+      { sentenceText: SENT, surface: 'een', occurrence: 1, lemma: 'een' },             // applies
+      { sentenceText: 'Een zin die is herschreven.', surface: 'zin', occurrence: 0, lemma: 'zin' }, // orphan: sentence gone
+      { sentenceText: SENT, surface: 'een', occurrence: 9, lemma: 'x' },               // orphan: no 10th "een"
+      { sentenceText: SENT, surface: 'ontbreekt', occurrence: 0, lemma: 'y' },         // orphan: no such token
+    ];
+    const p = ac.partitionCorrections(sentences(), corr);
+    assert.strictEqual(p.applied.length, 2, 'two corrections still land on a token');
+    assert.strictEqual(p.orphaned.length, 3, 'and three do not');
+    assert.deepStrictEqual(p.orphaned.map(c => c.surface).sort(), ['een', 'ontbreekt', 'zin'],
+      'the orphans are the rewritten sentence, the out-of-range occurrence and the missing surface');
+    assert.deepStrictEqual(p.applied.map(c => c.surface).sort(), ['een', 'landschap'],
+      'and the applied ones are exactly the rest');
+    console.log('  partitionCorrections splits applied from orphaned: OK');
+  }
+
+  // ── 10. ⚠️ The split must AGREE with the merge ─────────────────────────────────────────────
+  // These are two answers to one question ("does this correction land on a token"), and the whole
+  // feature rests on them agreeing: the UI reports a count from the partition while the reader sees
+  // the result of the merge. If they drifted, a curator would be told N corrections apply while a
+  // different number actually did. Asserted by construction rather than by inspection — every
+  // correction the partition calls APPLIED must change a token, and every ORPHAN must change none.
+  {
+    const corr = [
+      { sentenceText: SENT, surface: 'landschap', occurrence: 0, sense: 'MARK-A' },
+      { sentenceText: SENT, surface: 'een', occurrence: 1, sense: 'MARK-B' },
+      { sentenceText: 'weg.', surface: 'weg', occurrence: 0, sense: 'MARK-C' },
+      { sentenceText: SENT, surface: 'een', occurrence: 4, sense: 'MARK-D' },
+    ];
+    const p = ac.partitionCorrections(sentences(), corr);
+    const merged = ac.applyCorrections(sentences(), corr);
+    const marks = new Set(merged.flatMap(s => s.tokens.map(t => t.sense)));
+    for (const c of p.applied)
+      assert.ok(marks.has(c.sense), `partition says "${c.sense}" applies, and the merge applied it`);
+    for (const c of p.orphaned)
+      assert.ok(!marks.has(c.sense), `partition says "${c.sense}" is orphaned, and the merge ignored it`);
+    // Non-vacuity: this would pass trivially if both lists were empty.
+    assert.ok(p.applied.length > 0 && p.orphaned.length > 0,
+      'non-vacuity: the fixture really contains both kinds (got ' + p.applied.length + '/' + p.orphaned.length + ')');
+    console.log('  the partition and the merge agree token-for-token: OK');
+  }
+
 } catch (e) { failed = true; console.error(e); }
 finally { try { fs.unlinkSync(scratch); } catch (_) {} }
 console.log(failed ? 'unit-analysis-corrections: FAILED' : 'unit-analysis-corrections: ALL PASSED');

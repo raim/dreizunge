@@ -698,6 +698,7 @@
     "text_explorer.sense": "Meaning here",
     "text_explorer.low_confidence": "model is unsure",
     "text_explorer.unresolved": "not analysed",
+    "text_explorer.corrections_orphaned": "{n} of your word-analysis corrections belong to sentences this edit rewrites, and will stop applying.",
     "crossword.none": "Not enough words for a crossword",
     "crossword.pick_cell": "Pick a square to see its clue",
     "ex.comprehension.story": "The story",

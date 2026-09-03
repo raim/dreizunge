@@ -255,7 +255,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_ad';
+const APP_VERSION  = 'v88_ae';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -989,13 +989,23 @@ function analysisShadowFor(chapterId) {
   // read is how v87_k and v88_w both happened.
   const _corr = _corrections.correctionsFor(chapterId);
   const _sentences = _corrections.applyCorrections(rec.sentences || [], _corr);
+  // v88_ae: split stored corrections into the ones that still land on a token and the ones whose
+  // sentence has been rewritten away. Both numbers are reported: `correctionCount` is what is
+  // actually IN EFFECT (so it never overstates the curation a reader is seeing), and the orphans
+  // travel in full so the curator table can list them for retyping or deletion rather than leaving
+  // them invisible in the store.
+  const _part = _corrections.partitionCorrections(rec.sentences || [], _corr);
   return {
     chapterId, available: true, stale,
     sentenceCount: rec.sentenceCount, tokenCount: rec.tokenCount,
     sentences: _sentences,
-    // How many of this chapter's tokens a human has curated. The client shows this and uses it to
-    // decide whether the "discard corrections" warning is worth showing at all.
-    correctionCount: _corr.length,
+    // How many of this chapter's tokens a human has curated AND that still apply. The client shows
+    // this and uses it to decide whether the rewrite warning is worth showing at all.
+    correctionCount: _part.applied.length,
+    // v88_ae: corrections whose sentence no longer exists. Kept in the store deliberately (the
+    // user's ruling — orphans are listed for repair, never deleted on a rewrite), surfaced here so
+    // the curator table is the place they get resolved instead of accumulating unseen.
+    orphanedCorrections: _part.orphaned,
     model: (rec.provenance && rec.provenance.model) || null,
     analyzedAt: rec.analyzedAt || null,
     // v88_x: a PARTIAL is still `available` — the sentences it holds are real, and the explorer
@@ -8809,6 +8819,82 @@ http.createServer(async (req, res) => {
     if (M === 'GET' && url.pathname.startsWith('/api/analysis/')) {
       const chapterId = decodeURIComponent(url.pathname.slice('/api/analysis/'.length));
       return json(res, 200, analysisShadowFor(chapterId));
+    }
+    // ── v88_ae: what would a story rewrite cost in curator corrections? ───────────────────────
+    // A DRY RUN, and deliberately its own route rather than a flag on /api/save-story: the story
+    // editor has to know BEFORE it commits, so that the warning can be cancelled. Body: { story }.
+    //
+    // The server is the authority on purpose. The tempting client-side shortcut — "does the new
+    // story still CONTAIN this correction's sentenceText" — is a PROXY for the real question ("is
+    // it still a SENTENCE, holding that token at that occurrence"), and this project has been bitten
+    // by proxy guards repeatedly (v87_i, v88_w). CP1 is instant and deterministic, so running the
+    // real segmentation costs nothing and answers the actual question.
+    if (M === 'POST' && url.pathname.startsWith('/api/analysis-correction-impact/')) {
+      const chapterId = decodeURIComponent(url.pathname.slice('/api/analysis-correction-impact/'.length));
+      let body;
+      try { body = JSON.parse(await readBody(req)); } catch (e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const corr = _corrections.correctionsFor(chapterId);
+      // Nothing curated: answer without touching CP1 at all. This is the common case by far, and it
+      // keeps the story editor's pre-save check free for every chapter nobody has curated.
+      if (!corr.length) return json(res, 200, { chapterId, total: 0, applied: 0, orphaned: 0, wouldOrphan: 0 });
+      const saved = findSavedById(chapterId);
+      if (!saved) return json(res, 404, { error: 'Topic not found' });
+      const before = _corrections.partitionCorrections(
+        (readAnalysisStore().chapters[chapterId] || {}).sentences || [], corr);
+      let kept;
+      try {
+        const cand = buildCanonicalText({ ...saved, story: String((body && body.story) || '') });
+        // ⚠️ SENTENCE-level, not token-level. The candidate has never been through CP2, so it has no
+        // `surface` tokens to match against — asking the token question here reports EVERY
+        // correction as doomed, which is what the first version of this route did. See
+        // partitionCorrectionsBySentence's own comment.
+        kept = _corrections.partitionCorrectionsBySentence(cand.sentences || [], before.applied).kept;
+      } catch (e) {
+        // A candidate story CP1 cannot segment is not a reason to block the save — degrade to "no
+        // opinion" rather than inventing a scary number, the same "fail soft, not silently" rule the
+        // rest of this path uses.
+        return json(res, 200, { chapterId, total: corr.length, applied: before.applied.length,
+          orphaned: before.orphaned.length, wouldOrphan: 0, unknown: true });
+      }
+      // What the EDIT costs: corrections applying NOW whose sentence the candidate no longer has.
+      // Counted against `before.applied` only — corrections already orphaned by an earlier rewrite
+      // must not be charged to this one, or the warning cries wolf on every subsequent save and
+      // stops being read.
+      const wouldOrphan = before.applied.length - kept.length;
+      return json(res, 200, { chapterId, total: corr.length, applied: before.applied.length,
+        orphaned: before.orphaned.length, wouldOrphan });
+    }
+    // ── v88_ae: save MANY corrections at once (the curator table's save) ──────────────────────
+    // The table edits a whole chapter's worth of tokens, so it saves as ONE request rather than one
+    // per changed row: a partial failure halfway through a per-row loop would leave the curator
+    // unable to tell what landed. Same body shape as the single route, in an array.
+    if (M === 'POST' && url.pathname.startsWith('/api/analysis-corrections/')) {
+      const chapterId = decodeURIComponent(url.pathname.slice('/api/analysis-corrections/'.length));
+      if (!chapterId) return json(res, 400, { error: 'Missing chapter id' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); } catch (e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const list = Array.isArray(body && body.corrections) ? body.corrections : null;
+      if (!list) return json(res, 400, { error: 'Missing corrections array' });
+      let saved = 0, cleared = 0;
+      for (const c of list) {
+        const sentenceText = String((c && c.sentenceText) || '');
+        const surface = String((c && c.surface) || '');
+        if (!sentenceText || !surface) continue;
+        const occurrence = Number((c && c.occurrence) || 0);
+        const lemma = String((c && c.lemma) || '').trim();
+        const form  = String((c && c.form)  || '').trim();
+        const sense = String((c && c.sense) || '').trim();
+        // Same rule as the single route: all three blank means "drop my correction". That is how the
+        // table deletes a row, and how an ORPHAN gets cleared once a curator decides it is stale.
+        if (!lemma && !form && !sense) {
+          if (_corrections.deleteCorrection(chapterId, { sentenceText, surface, occurrence })) cleared++;
+        } else {
+          _corrections.saveCorrection(chapterId, { sentenceText, surface, occurrence, lemma, form, sense });
+          saved++;
+        }
+      }
+      console.log(`  [analysis] curator table: ${saved} saved, ${cleared} cleared in ${chapterId}`);
+      return json(res, 200, { ok: true, saved, cleared, shadow: analysisShadowFor(chapterId) });
     }
     // ── item AI (v88_ad): save or clear ONE curator correction ────────────────────────────────
     // POST body: { sentenceText, surface, occurrence, lemma, form, sense }. An empty lemma AND form

@@ -597,7 +597,17 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
    <mark> elements). A border adds a mark without reintroducing either problem, and reads in both
    themes without a second rule. */
 .te-tok-reviewed{background:none;border-left:2px solid var(--blue);padding-left:3px}
-.te-fixbar{margin:0 0 10px}
+.te-fixbar{margin:0 0 10px;display:flex;gap:6px;align-items:center}
+.te-table{width:100%;border-collapse:collapse;font-size:13px}
+.te-table th{text-align:left;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.02em;
+  color:var(--gray-dark);padding:8px 6px;position:sticky;top:0;background:var(--white)}
+.te-table td{padding:4px 6px;vertical-align:top;border-top:1px solid var(--gray-mid)}
+.te-cell-surface{font-weight:800;white-space:nowrap;padding-top:9px !important}
+.te-row-unresolved .te-cell-surface{color:var(--gray-dark)}
+/* An orphan's sentence no longer exists, so it is marked rather than merely tinted — it is the one
+   row kind that cannot be understood from the word alone. */
+.te-row-orphan{background:color-mix(in srgb, var(--blue) 7%, transparent)}
+.te-row-note{font-size:10px;font-weight:700;opacity:.7;text-transform:uppercase;white-space:nowrap}
 .te-fixbtn{font-size:12px;font-weight:800;font-family:Nunito,sans-serif;padding:4px 10px;
   border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);color:var(--text);cursor:pointer}
 .te-fixbtn:hover{border-color:var(--blue)}
@@ -6206,6 +6216,23 @@ async function saveStoryEdit(){
       try { buildPath(); } catch(_){}
     }, 1400);
     return;
+  }
+  // ── v88_ae (user request): warn BEFORE a rewrite silently orphans curator corrections ────────
+  // A correction is keyed on the SENTENCE TEXT, so rewriting a sentence stops its corrections
+  // applying. That is deliberate — the words they described may be gone — but until now it happened
+  // with nothing said, and the curator would simply find their work no longer in effect.
+  //
+  // The SERVER answers "how many would this cost", by running CP1 on the candidate story. Asking it
+  // rather than testing `newStory.includes(sentenceText)` here is the point: containment is a PROXY
+  // for "is still a sentence holding that token", and a proxy guard is how v87_i and v88_w both
+  // shipped broken. Cheap in the common case — the route returns immediately when the chapter has
+  // no corrections at all, which is almost every chapter.
+  //
+  // Fails OPEN: if the check itself errors, the save proceeds. A warning that cannot be computed
+  // must not block a story repair.
+  if (!(await _teConfirmStoryRewrite(d, newStory))) {
+    if (status) status.textContent = '';
+    return;                                   // the curator chose to keep their corrections
   }
   if (status) status.textContent = 'Saving…';
   try {
@@ -22979,7 +23006,7 @@ function _textExplorerBodyHtml(d){
   // caption pairing, and why it must NOT just concatenate the image strip and the text as separate
   // siblings (the real bug that shipped first: the text lost `.comic-story-panel-text`'s own padding).
   if (!sentences.length) return wrap(_comicPanelsFlatTextHtml(d, _storyParasHtml(furiHtml(d.story || ''))));
-  return wrap(_comicPanelsFlatTextHtml(d, _teUnresolvedBarHtml(chapterId, sentences)
+  return wrap(_comicPanelsFlatTextHtml(d, _teUnresolvedBarHtml(chapterId, sentences, entry.data)
     + _teStoryHtml(d.story || '', sentences, chapterId)));
 }
 // User follow-up (v86_s): "the layout should be the very same as the normal red->green view —
@@ -23136,13 +23163,26 @@ function _teUnresolvedCount(sentences){
 // The worklist affordance the user asked for ("target the unresolved tokens"). Composed from the
 // EXISTING `text_explorer.unresolved` string plus a count — deliberately, so this ships with zero
 // new ui.json keys and nothing to translate across 33 languages.
-function _teUnresolvedBarHtml(chapterId, sentences){
+function _teUnresolvedBarHtml(chapterId, sentences, shadow){
   if (!_teCanEdit()) return '';
   const n = _teUnresolvedCount(sentences);
-  if (!n) return '';
-  return `<div class="te-fixbar"><button type="button" class="te-fixbtn"`
-    + ` onclick="event.stopPropagation();_teJumpUnresolved(${JSON.stringify(String(chapterId||''))})">`
-    + `✏️ ${n} · ${escHtml(t('text_explorer.unresolved'))}</button></div>`;
+  // v88_ae: orphaned corrections are a reason to show the bar even when nothing is unresolved —
+  // they are only repairable from the table, and a chapter with no other work to do is exactly when
+  // they would otherwise never be found.
+  const orph = ((shadow && shadow.orphanedCorrections) || []).length;
+  if (!n && !orph) return '';
+  const cid = JSON.stringify(String(chapterId || ''));
+  const label = n ? `✏️ ${n} · ${escHtml(t('text_explorer.unresolved'))}`
+                  : `✏️ ${orph} · ${escHtml(t('text_explorer.unresolved'))}`;
+  // Two buttons, and the split is deliberate: the first walks the worklist IN CONTEXT (the sentence
+  // around a word is usually what tells you its form), the second opens the table for working
+  // through many at once. The user chose "popover first, table after" precisely because those are
+  // different jobs, so neither replaces the other.
+  return `<div class="te-fixbar">`
+    + `<button type="button" class="te-fixbtn" onclick="event.stopPropagation();_teJumpUnresolved(${cid})">`
+    + `${label}</button>`
+    + `<button type="button" class="te-fixbtn" onclick="event.stopPropagation();_teOpenCuratorTable(${cid})">`
+    + `▤</button></div>`;
 }
 // Which unresolved token to jump to next. PURE and separate from the scrolling so the SELECTION —
 // the part that can be wrong — is testable without a layout engine. Cycles, so repeated presses
@@ -23177,6 +23217,200 @@ function _teJumpUnresolved(chapterId){
   try { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (_) {}
   const r = (el.getBoundingClientRect && el.getBoundingClientRect()) || { left: 20, bottom: 20 };
   _teShowWordPopover({ clientX: r.left || 20, clientY: r.bottom || 20 }, el);
+}
+
+// ── v88_ae: the per-chapter CURATOR TABLE ────────────────────────────────────────────────────────
+// The user chose "popover first, table after" at the v88_ad cut and asked for the table here. The
+// reason they were given for wanting it is the reason it exists: working through a chapter's
+// unresolved tokens one popover at a time is slow, and a chapter can hold dozens (63 of 483 tokens
+// in the live store when this was built, one chapter alone holding 62).
+//
+// Modal shape and wiring are `comicOpenReview`'s, deliberately — near-fullscreen box, a scrolling
+// body, onclick ATTRIBUTES rather than addEventListener closures so every handler is a plain,
+// directly callable, directly testable function. Edits are held in a LOCAL buffer and written only
+// on save, so Cancel is a true no-op.
+//
+// ZERO new ui.json keys: the column labels are text_explorer.lemma/form/sense, the filter reuses
+// text_explorer.unresolved, the buttons reuse prov.save/dialog.cancel, and the HEADER is the
+// chapter's own name — data, not a UI string, and more useful than a generic title would be.
+let _teTableCid = null, _teTableRows = null, _teTableBuf = null, _teTableOverlayEl = null;
+let _teTableOnlyUnresolved = false;
+
+// Flattens a chapter into one editable row per token, plus the ORPHANS (corrections whose sentence
+// was rewritten away). Pure and separate from the rendering so the row SET — which rows exist, in
+// what order, and which are orphans — is testable without a DOM.
+function _teTableBuildRows(shadow){
+  const rows = [];
+  ((shadow && shadow.sentences) || []).forEach((sent, si) => {
+    const seen = new Map();
+    ((sent && sent.tokens) || []).forEach(tok => {
+      const surface = String((tok && tok.surface) || '');
+      const occ = seen.get(surface) || 0;
+      if (surface) seen.set(surface, occ + 1);
+      if (!surface) return;
+      rows.push({ kind: 'token', si, occ, surface, sentenceText: String((sent && sent.text) || ''),
+        lemma: (tok && tok.lemma) || '', form: (tok && tok.form) || '', sense: (tok && tok.sense) || '',
+        unresolved: !(tok && tok.lemma), reviewed: !!(tok && tok.reviewed) });
+    });
+  });
+  // Orphans last, in their own block. They are NOT tokens of this analysis any more — their sentence
+  // is gone — so they cannot be merged into the list above without pretending they still align to
+  // something. Listing them is what makes them fixable instead of invisible (the user's ruling was
+  // to keep them, not to delete them on the rewrite).
+  ((shadow && shadow.orphanedCorrections) || []).forEach(c => {
+    rows.push({ kind: 'orphan', si: -1, occ: Number(c.occurrence) || 0, surface: String(c.surface || ''),
+      sentenceText: String(c.sentenceText || ''), lemma: c.lemma || '', form: c.form || '',
+      sense: c.sense || '', unresolved: false, reviewed: true });
+  });
+  return rows;
+}
+
+function _teTableVisible(){
+  if (!_teTableRows) return [];
+  // An orphan is always shown: it is exactly what the curator opened the table to resolve, and
+  // filtering it out under "only unresolved" would hide the one class of row that cannot be found
+  // any other way.
+  return _teTableOnlyUnresolved
+    ? _teTableRows.filter(r => r.unresolved || r.kind === 'orphan')
+    : _teTableRows;
+}
+
+function _teTableEdit(i, field, value){
+  if (!_teTableBuf || !_teTableBuf[i]) return;
+  _teTableBuf[i][field] = value;
+}
+function _teTableToggleFilter(){
+  _teTableOnlyUnresolved = !_teTableOnlyUnresolved;
+  _teTableRepaint();
+}
+function _teTableClose(){
+  if (_teTableOverlayEl) { try { _teTableOverlayEl.remove(); } catch (_) {} }
+  _teTableOverlayEl = null; _teTableCid = null; _teTableRows = null; _teTableBuf = null;
+}
+function _teTableCancel(){ _teTableClose(); }
+
+function _teTableRowsHtml(){
+  const cell = (i, field, v) => `<input type="text" value="${escAttr(v || '')}"`
+    + ` oninput="_teTableEdit(${i},'${field}',this.value)"`
+    + ` style="width:100%;box-sizing:border-box;font-size:13px;font-family:Nunito,sans-serif;`
+    + `padding:4px 6px;border:1.5px solid var(--gray-mid);border-radius:6px;color:var(--text)">`;
+  return _teTableVisible().map(r => {
+    const i = _teTableRows.indexOf(r);
+    const b = _teTableBuf[i];
+    const mark = r.kind === 'orphan' ? ' te-row-orphan' : (r.unresolved ? ' te-row-unresolved' : '');
+    return `<tr class="te-row${mark}">`
+      + `<td class="te-cell-surface">${escHtml(r.surface)}`
+      + (r.kind === 'orphan' ? `<div class="te-row-note">${escHtml(t('text_explorer.unresolved'))}</div>` : '')
+      + `</td>`
+      + `<td>${cell(i, 'lemma', b.lemma)}</td>`
+      + `<td>${cell(i, 'form', b.form)}</td>`
+      + `<td>${cell(i, 'sense', b.sense)}</td></tr>`;
+  }).join('');
+}
+
+function _teTableRepaint(){
+  if (!_teTableOverlayEl) return;
+  const tb = _teTableOverlayEl.querySelector ? _teTableOverlayEl.querySelector('#te-table-body') : null;
+  if (tb) tb.innerHTML = _teTableRowsHtml();
+  const f = _teTableOverlayEl.querySelector ? _teTableOverlayEl.querySelector('#te-table-filter') : null;
+  if (f) f.textContent = (_teTableOnlyUnresolved ? '☑ ' : '☐ ') + t('text_explorer.unresolved');
+}
+
+function _teOpenCuratorTable(chapterId){
+  if (!_teCanEdit()) return;
+  const entry = _teCacheStore()[chapterId];
+  const shadow = entry && entry.data;
+  if (!shadow || !(shadow.sentences || []).length) return;
+  _teTableCid = chapterId;
+  _teTableRows = _teTableBuildRows(shadow);
+  // The buffer starts as a COPY of what is on screen, so saving an untouched row is a no-op rather
+  // than a rewrite, and Cancel cannot leave a half-applied edit behind.
+  _teTableBuf = _teTableRows.map(r => ({ lemma: r.lemma, form: r.form, sense: r.sense }));
+  const d = APP.lessonData;
+  const title = (d && d.id === chapterId && d.topic) ? d.topic : chapterId;
+  const ov = document.createElement('div');
+  ov.className = 'modal-overlay';
+  ov.style.zIndex = 400;
+  ov.innerHTML =
+    '<div class="modal-box" style="max-width:min(1100px,95vw);width:95vw;height:90vh;max-height:90vh" role="dialog" aria-modal="true">'
+    + `<div class="modal-hdr"><span>${escHtml(title)}</span>`
+    + `<button type="button" class="modal-close" onclick="_teTableCancel()">✕</button></div>`
+    + `<div style="padding:10px 20px 0"><button type="button" id="te-table-filter" class="te-fixbtn"`
+    + ` onclick="_teTableToggleFilter()">☐ ${escHtml(t('text_explorer.unresolved'))}</button></div>`
+    + `<div style="padding:0 20px;overflow:auto;flex:1">`
+    + `<table class="te-table"><thead><tr>`
+    + `<th></th><th>${escHtml(t('text_explorer.lemma'))}</th>`
+    + `<th>${escHtml(t('text_explorer.form'))}</th><th>${escHtml(t('text_explorer.sense'))}</th>`
+    + `</tr></thead><tbody id="te-table-body">${_teTableRowsHtml()}</tbody></table></div>`
+    + `<div class="modal-footer">`
+    + `<button type="button" class="modal-btn secondary" onclick="_teTableCancel()">${escHtml(t('dialog.cancel'))}</button>`
+    + `<button type="button" class="modal-btn primary" onclick="_teTableSave()">${escHtml(t('prov.save'))}</button>`
+    + `</div></div>`;
+  _teTableOverlayEl = ov;
+  document.body.appendChild(ov);
+}
+
+// Sends only the rows that actually CHANGED. A table of 100 tokens would otherwise write 100
+// corrections on every save — turning every model-produced value into a "curator correction",
+// marking every token reviewed, and pinning the whole chapter against future prompt improvements.
+// That would quietly defeat the entire point of an overlay.
+function _teTableChanged(){
+  if (!_teTableRows || !_teTableBuf) return [];
+  const out = [];
+  _teTableRows.forEach((r, i) => {
+    const b = _teTableBuf[i];
+    if (b.lemma === r.lemma && b.form === r.form && b.sense === r.sense) return;
+    out.push({ sentenceText: r.sentenceText, surface: r.surface, occurrence: r.occ,
+      lemma: b.lemma, form: b.form, sense: b.sense });
+  });
+  return out;
+}
+
+async function _teTableSave(){
+  const cid = _teTableCid;
+  const changed = _teTableChanged();
+  if (!cid) return;
+  if (!changed.length) { _teTableClose(); return; }   // nothing edited — closing is the whole action
+  try {
+    const r = await fetch('/api/analysis-corrections/' + encodeURIComponent(cid), {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ corrections: changed }) });
+    const j = await r.json();
+    if (!r.ok || !j || !j.ok) throw new Error((j && j.error) || ('HTTP ' + r.status));
+    if (j.shadow) _teCacheStore()[cid] = { status: 'ready', data: j.shadow };
+    _teTableClose();
+    showToast(t('toast.saved'));
+    _teRepaint();
+  } catch (e) {
+    showToast(t('text_explorer.error', { error: (e && e.message) || 'save failed' }));
+  }
+}
+
+// v88_ae: returns true when the story edit should go ahead. Asks the server what the rewrite would
+// cost in curator corrections and, when it costs anything, puts it to the curator as a real choice.
+// Returns true (proceed) on ANY failure — a chapter with no corrections, no backend, a route that
+// errored: none of those are a reason to stand between a curator and a story repair.
+async function _teConfirmStoryRewrite(d, newStory){
+  const cid = d && d.id;
+  if (!cid) return true;
+  let n = 0;
+  try {
+    const r = await fetch('/api/analysis-correction-impact/' + encodeURIComponent(cid), {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ story: newStory }) });
+    if (!r.ok) return true;
+    const j = await r.json();
+    n = Number(j && j.wouldOrphan) || 0;
+  } catch (_) { return true; }
+  if (n <= 0) return true;
+  // showChoiceDialog is the same helper v88_x's three-way re-analyse dialog uses; the resolved index
+  // is the chosen button, so 1 is "continue". Cancel is FIRST and non-primary so the destructive
+  // path is never the one a reflexive Enter takes.
+  const pick = await showChoiceDialog({
+    body: t('text_explorer.corrections_orphaned', { n }),
+    choices: [ { label: t('dialog.cancel') }, { label: t('check.continue'), primary: true } ],
+  });
+  return pick === 1;
 }
 
 // item AI (v88_ad): saves ONE correction and repaints from the SERVER's own merged answer rather

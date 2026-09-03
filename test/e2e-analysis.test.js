@@ -494,6 +494,9 @@ const SEED = {
       const sent0 = (await get(sport, '/api/analysis/tp_ana2')).body.sentences[0];
       await post(sport, '/api/analysis-correction/tp_ana2',
         { sentenceText: sent0.text, surface: sent0.tokens[0].surface, occurrence: 0, lemma: 'DOOMED' });
+      // Note: this sentence text is hand-typed rather than read from the analysis, so the correction
+      // is stored but ORPHANED. That is fine for this section's claim (the delete must drop stored
+      // corrections whether or not they currently apply) and is called out because §13 relies on it.
       await post(sport, '/api/analysis-correction/tp_ana1',
         { sentenceText: 'Der Hund lauft.', surface: 'Hund', occurrence: 0, lemma: 'KEEPER' });
       const store = () => JSON.parse(fs.readFileSync(scratchCorrections, 'utf8')).chapters;
@@ -504,6 +507,111 @@ const SEED = {
       assert(!store()['tp_ana2'], 'the deleted chapter\'s corrections are gone');
       assert(store()['tp_ana1'], 'and an unrelated chapter\'s corrections survive — targeted, not a sweep');
       console.log('  deleting a chapter also drops its curator corrections, and only its own (v88_ad): OK');
+    }
+
+    // ── 13. v88_ae: the impact dry run, and orphaning through a REAL story rewrite ──────────────
+    // The user asked to be warned when a rewrite would drop corrections. The claim is about what
+    // survives a real /api/save-story, so it is asserted against one — not against a simulated edit.
+    {
+      const sh = (await get(sport, '/api/analysis/tp_ana1')).body;
+      const sent0 = sh.sentences[0];
+      const surface = sent0.tokens[0].surface;
+      // tp_ana1 already carries the 'KEEPER' correction from §12. Replace it with one on a token we
+      // can name, so the assertions below are about a correction this section actually made.
+      await post(sport, '/api/analysis-correction/tp_ana1',
+        { sentenceText: sent0.text, surface, occurrence: 0, lemma: 'IMPACT_LEMMA' });
+      const before = (await get(sport, '/api/analysis/tp_ana1')).body;
+      assert(before.correctionCount >= 1, 'precondition: the chapter has an applying correction');
+      // ⚠️ NOT asserted as "zero orphans". §12 deliberately writes a correction with a hand-typed
+      // sentence text that matches no real sentence, so this chapter already carries one orphan
+      // before this section starts — which is itself the partition working. Measured as a DELTA so
+      // the two sections stay independent; asserting an absolute count here would couple them and
+      // break the moment either changed.
+      const orphansBefore = (before.orphanedCorrections || []).length;
+
+      // A candidate story that KEEPS the sentence costs nothing — the warning must not cry wolf on
+      // every save, which is how a warning stops being read.
+      const keep = await post(sport, '/api/analysis-correction-impact/tp_ana1',
+        { story: before.sentences.map(s => s.text).join(' ') + ' Ein neuer Satz.' });
+      assert(keep.status === 200, 'the impact route answers (got ' + keep.status + ')');
+      assert(keep.body.wouldOrphan === 0,
+        'appending a sentence orphans nothing — the existing sentences are untouched (got '
+          + JSON.stringify(keep.body) + ')');
+
+      // A candidate story that REPLACES the sentence costs the correction on it.
+      const wipe = await post(sport, '/api/analysis-correction-impact/tp_ana1',
+        { story: 'Ein voellig anderer Satz steht hier.' });
+      assert(wipe.body.wouldOrphan >= 1,
+        'rewriting the sentence away is reported as orphaning at least one correction (got '
+          + JSON.stringify(wipe.body) + ')');
+
+      // ⚠️ And it is a DRY RUN: asking must not change anything.
+      const still = (await get(sport, '/api/analysis/tp_ana1')).body;
+      assert(still.correctionCount === before.correctionCount,
+        'the impact check changed nothing — it is a dry run (got ' + still.correctionCount + ')');
+
+      // Now actually rewrite the story, and confirm the prediction came true.
+      const w = await post(sport, '/api/save-story',
+        { topic: 'Ana Fixture', story: 'Ein voellig anderer Satz steht hier.' });
+      assert(w.status === 200, 'the story rewrite succeeds (got ' + w.status + ')');
+      // ⚠️ THE LIFECYCLE, and it is NOT what the first version of this test assumed. Saving a story
+      // does not re-run CP2 — the cached analysis is marked STALE and keeps its old sentences. So
+      // immediately after the rewrite the correction still lands on the stale analysis, which is
+      // exactly what the explorer is still showing. Orphaning becomes real at the RE-ANALYSIS.
+      // The warning's wording is future tense ("will stop applying") for precisely this reason.
+      const afterSave = (await get(sport, '/api/analysis/tp_ana1')).body;
+      assert(afterSave.stale === true, 'the rewrite makes the cached analysis stale (got ' + afterSave.stale + ')');
+      assert(afterSave.correctionCount === 1,
+        'and until it is re-analysed the correction still applies to the OLD sentences it was keyed to (got '
+          + afterSave.correctionCount + ')');
+
+      const re = await post(sport, '/api/analyze-chapter/tp_ana1', { force: true });
+      assert(re.status === 202, 'the re-analysis starts (got ' + re.status + ')');
+      await waitJob(sport, re.body.jobId);
+
+      const after = (await get(sport, '/api/analysis/tp_ana1')).body;
+      assert(after.correctionCount === 0,
+        'after the re-analysis the correction no longer applies (got ' + after.correctionCount + ')');
+      assert((after.orphanedCorrections || []).length === orphansBefore + 1,
+        'and it is reported as ORPHANED rather than vanishing — exactly one more than before (got '
+          + (after.orphanedCorrections || []).length + ', was ' + orphansBefore + ')');
+      assert(after.orphanedCorrections.some(c => c.lemma === 'IMPACT_LEMMA'),
+        'the orphan carries the curator\'s own text, so the table can offer it for retyping');
+      // ⚠️ The user's ruling: orphans are KEPT, never deleted on the rewrite.
+      const stored = JSON.parse(fs.readFileSync(scratchCorrections, 'utf8')).chapters['tp_ana1'];
+      assert(stored && stored.corrections.some(c => c.lemma === 'IMPACT_LEMMA'),
+        'and it is still in the store — neither the rewrite nor the re-analysis destroys curated work');
+      console.log('  the impact dry run predicts orphaning; the rewrite goes stale, the re-analysis orphans, nothing is deleted (v88_ae): OK');
+    }
+
+    // ── 14. v88_ae: the curator table's batch save ───────────────────────────────────────────────
+    // ⚠️ tp_ana1, deliberately: §9 deletes tp_ana3 and §12 deletes tp_ana2, so it is the only
+    // chapter still standing this late in the file. A first draft used tp_ana3 and failed with an
+    // undefined shadow — the sections are ordered, and a late one cannot pick a fixture freely.
+    {
+      const sh = (await get(sport, '/api/analysis/tp_ana1')).body;
+      const sent0 = sh.sentences[0];
+      const a = sent0.tokens[0].surface, b = sent0.tokens[1] && sent0.tokens[1].surface;
+      const batch = await post(sport, '/api/analysis-corrections/tp_ana1', { corrections: [
+        { sentenceText: sent0.text, surface: a, occurrence: 0, lemma: 'BATCH_A' },
+        ...(b ? [{ sentenceText: sent0.text, surface: b, occurrence: 0, lemma: 'BATCH_B' }] : []),
+      ] });
+      assert(batch.status === 200 && batch.body.ok, 'the batch save succeeds (got ' + batch.status + ')');
+      assert(batch.body.saved === (b ? 2 : 1), 'and reports how many it saved (got ' + batch.body.saved + ')');
+      assert(batch.body.shadow.sentences[0].tokens[0].lemma === 'BATCH_A',
+        'the response carries the merged result, like the single-correction route');
+      assert(batch.body.shadow.correctionCount === (b ? 2 : 1), 'and the new applying count');
+
+      // Blank fields in a batch CLEAR, exactly as they do singly — that is how the table deletes a
+      // row and how an orphan gets dropped once a curator decides it is stale.
+      const clr = await post(sport, '/api/analysis-corrections/tp_ana1', { corrections: [
+        { sentenceText: sent0.text, surface: a, occurrence: 0, lemma: '', form: '', sense: '' } ] });
+      assert(clr.body.cleared === 1, 'a blank row in a batch clears that correction (got ' + clr.body.cleared + ')');
+      assert(clr.body.shadow.correctionCount === (b ? 1 : 0), 'and the count drops accordingly');
+
+      const bad = await post(sport, '/api/analysis-corrections/tp_ana1', { nope: true });
+      assert(bad.status === 400, 'a body with no corrections array is rejected rather than silently doing nothing');
+      console.log('  the curator table\'s batch route saves and clears many corrections at once (v88_ae): OK');
     }
 
     console.log('e2e-analysis: ALL PASSED');

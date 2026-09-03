@@ -12465,8 +12465,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1411,
-        "totalCompletionTokens": 845,
+        "totalPromptTokens": 1788,
+        "totalCompletionTokens": 1030,
         "lessons": [
           {
             "lessonNum": 1,
@@ -12474,7 +12474,10 @@
             "promptTokens": 1168,
             "completionTokens": 663
           }
-        ]
+        ],
+        "tokensByType": {
+          "story_qc": 562
+        }
       },
       "comicPanels": [
         {
@@ -12493,7 +12496,33 @@
       "updatedAt": "2026-09-02T08:15:15.334Z",
       "createdBy": "admin",
       "continuedFromId": "tp_17882900616230000013",
-      "continuedFrom": "Strom fließt wieder"
+      "continuedFrom": "Strom fließt wieder",
+      "storyQcProposal": {
+        "corrected": "Gemeente Veere geeft ook op deze plek meer ruimte aan de natuur om de biodiversiteit in onze gemeente te bevorderen.\nBloemen en kruiden krijgen de kans om te bloeien en te groeien doordat het gras minder vaak wordt gemaaid. Insecten zoals bijen en vlinders houden van bloemen, en vogels houden weer van insecten. Op deze manier wordt de natuurlijke kringloop versterkt.\n\nGrasranden worden wel gemaaid om te voorkomen dat het gras over paden groeit, en maaiafval wordt afgevoerd. Hondenpoep draagt niet bij aan een betere kringloop, en door het zelf op te ruimen, draagt u ook bij aan een betere biodiversiteit.\n\nPlant in uw eigen tuin ook bloemen en kruiden en draag zo ook zelf bij aan het verbeteren van onze natuur!",
+        "against": "Gemeente Veere geeft ook op deze plek meer ruimte aan de natuur om de biodiversiteit in onze gemeente te bevorderen.\nBloemen en kruiden krijgen de kans om te bloeien en te groeien door het gras minder vaak te maaien. Insecten zoals bijen en vlinders houden van bloemen en vogels houden weer van insecten. Op deze manier wordt de natuurlijke kringloop versterkt.\n\nGrasranden worden wel gemaaid om te voorkomen dat het gras over paden groeit en maaiafval wordt afgevoerd. Hondenpoep draagt niet bij aan een betere kringloop en door het zelf op te ruimen, draagt u ook bij aan een betere biodiversiteit.\n\nPlant in uw eigen tuin ook bloemen en kruiden planten en draag zo ook zelf bij aan het verbeteren van onze natuur!",
+        "verdict": "rewrite",
+        "rejected": true,
+        "changedSentences": 8,
+        "totalSentences": 8,
+        "changedRatio": 1,
+        "wordEditRatio": 0.057,
+        "meta": {
+          "type": "story_qc",
+          "model": "translategemma:12b",
+          "attempts": null,
+          "valid": 0,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 377,
+          "completionTokens": 185,
+          "ms": 236441,
+          "at": "2026-09-03T08:12:15.230Z",
+          "verdict": "rewrite",
+          "changedRatio": 1,
+          "wordEditRatio": 0.057
+        },
+        "at": "2026-09-03T08:12:15.230Z"
+      }
     },
     {
       "id": "tp_17882900616230000013",

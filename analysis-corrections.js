@@ -119,6 +119,69 @@ function deleteChapterCorrections(chapterId) {
   return true;
 }
 
+// Every (sentence, surface, occurrence) key an analysis actually contains. ONE walk, shared by the
+// merge and by the partition below, so "which token is this correction for" cannot be answered two
+// different ways — the failure that would put a curator's edit on the wrong word without telling
+// anyone.
+function indexSentenceTokens(sentences) {
+  const keys = new Set();
+  for (const sent of sentences || []) {
+    if (!sent || !Array.isArray(sent.tokens) || !sent.text) continue;
+    const seen = new Map();
+    for (const tok of sent.tokens) {
+      const surface = String((tok && tok.surface) || '');
+      const n = seen.get(surface) || 0;
+      seen.set(surface, n + 1);
+      keys.add(correctionKey(sent.text, surface, n));
+    }
+  }
+  return keys;
+}
+
+// Split a chapter's corrections into the ones that still land on a token and the ones that do not.
+//
+// ⚠️ v88_ae: ORPHANS ARE A NORMAL STATE, not corruption. A correction is keyed on the SENTENCE TEXT
+// (see the header), so rewriting that sentence — a story repair, an accepted QC proposal — stops it
+// applying. That is deliberate: the words it described may be gone. But it used to happen SILENTLY,
+// which is the part the user asked to fix. This function is what lets the story editor warn BEFORE
+// the rewrite commits, and what lets the curator table list orphans so they can be retyped against
+// the new sentence or dropped. The user's ruling was to KEEP orphans rather than delete them on the
+// rewrite: this project has destroyed curated data twice already (item AN, v88_y).
+function partitionCorrections(sentences, corrections) {
+  const keys = indexSentenceTokens(sentences);
+  const applied = [], orphaned = [];
+  for (const c of corrections || []) {
+    if (!c || !c.sentenceText || !c.surface) continue;
+    (keys.has(correctionKey(c.sentenceText, c.surface, c.occurrence)) ? applied : orphaned).push(c);
+  }
+  return { applied, orphaned };
+}
+
+// ⚠️ A SECOND partition, asking a DIFFERENT question of DIFFERENT input — and the distinction is
+// the whole reason the first draft of the impact dry run was wrong.
+//
+// `partitionCorrections` above asks "does this correction land on a TOKEN", and needs CP2's output
+// (tokens carrying `surface`). The dry run cannot ask that: it runs against a CANDIDATE story that
+// has never been analysed, so all it has is CP1, whose sentences carry tokens of a different shape
+// entirely (`text`, and naively split — "lauft." keeps its period). Running the token partition
+// over CP1 output finds NOTHING and reports every correction as doomed, which is exactly what the
+// first version did.
+//
+// The honest question for a rewrite is SENTENCE-level: will this correction still have a sentence
+// to attach to? Whether the token then resolves is CP2's business, decided after the rewrite — and
+// the surface is part of the sentence text by construction. Works on CP1 and CP2 sentences alike,
+// since both carry `text`.
+function partitionCorrectionsBySentence(sentences, corrections) {
+  const texts = new Set();
+  for (const sent of sentences || []) if (sent && sent.text) texts.add(String(sent.text));
+  const kept = [], lost = [];
+  for (const c of corrections || []) {
+    if (!c || !c.sentenceText || !c.surface) continue;
+    (texts.has(String(c.sentenceText)) ? kept : lost).push(c);
+  }
+  return { kept, lost };
+}
+
 // The merge. PURE — takes sentences and corrections, returns new sentences, touches no disk — so it
 // can be unit-tested directly and reused by anything that renders an analysis.
 //
@@ -173,4 +236,5 @@ function applyCorrections(sentences, corrections) {
 module.exports = {
   correctionsFile, readCorrectionsStore, correctionsFor, correctionKey,
   saveCorrection, deleteCorrection, deleteChapterCorrections, applyCorrections,
+  indexSentenceTokens, partitionCorrections, partitionCorrectionsBySentence,
 };
