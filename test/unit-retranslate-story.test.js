@@ -99,6 +99,70 @@ console.log('  #story-retranslate-btn: shown for a real backend + an existing st
 }
 console.log('  retranslateStory(): posts {topic}, replaces the stale translation, re-renders, toasts success: OK');
 
+// ── 2b. v88_al: the same call site, over the real JOB protocol ─────────────────────────────────
+// ⚠️ §2 above still passes unchanged — its stub answers with a payload and no jobId, which
+// `_jobAwait` hands straight back. That is a real property worth keeping (the helper is safe in
+// front of either kind of route), but it means §2 no longer exercises the protocol this route
+// actually speaks now. v88_r's rule: a guard on the helper says nothing about the caller, and the
+// set-level guard in unit-jobs-sync-inflight only proves the caller GOES THROUGH it.
+{
+  const C = client();
+  C.run(`APP.lessonData = ${JSON.stringify(BASE_TOPIC)};
+    window._urls = [];
+    fetch = function(url, opts){
+      window._urls.push(url);
+      if (String(url).indexOf('/api/job/') === 0)
+        return Promise.resolve({ ok:true, json:function(){ return Promise.resolve({
+          status:'done', data:{ storyTranslation: 'From the job.' } }); } });
+      return Promise.resolve({ ok:true, json:function(){ return Promise.resolve({ ok:true, jobId:'j9' }); } });
+    };
+    window._renderCalls = 0; renderStoryText = function(){ window._renderCalls++; };
+    window._toasts = []; showToast = function(m){ window._toasts.push(m); };
+    (async()=>{ await retranslateStory(); })();
+    true;`, 't2b');
+  await new Promise(r => setTimeout(r, 900));   // the poller's own 500ms interval, plus slack
+  const r = JSON.parse(C.run(`JSON.stringify({
+    urls: window._urls, storyTranslation: APP.lessonData.storyTranslation,
+    renderCalls: window._renderCalls, toasts: window._toasts,
+    btnDisabled: document.getElementById('story-retranslate-btn').disabled })`));
+  assert.ok(r.urls.some(u => u === '/api/retranslate-story'), 'it still posts to its own route');
+  assert.ok(r.urls.some(u => /^\/api\/job\//.test(u)),
+    'and then POLLS the job it was handed (got ' + JSON.stringify(r.urls) + ')');
+  assert.strictEqual(r.storyTranslation, 'From the job.',
+    'the translation comes from the JOB DATA — the same field, from its new place');
+  assert.strictEqual(r.renderCalls, 1, 'the panel is re-rendered exactly once, as before');
+  assert.strictEqual(r.btnDisabled, false, 'and the button is re-enabled');
+}
+console.log('  retranslateStory(): over the job protocol, reads the translation from the job data: OK');
+
+// ── 2c. A CANCELLED job stops quietly — no toast, no state change ─────────────────────────────
+// The user pressed cancel in the popover. Reporting that back as "re-translation failed" would be
+// the same mistake `jobFailOrCancel` avoids server-side, and the stale translation must survive.
+{
+  const C = client();
+  C.run(`APP.lessonData = ${JSON.stringify(BASE_TOPIC)};
+    fetch = function(url){
+      if (String(url).indexOf('/api/job/') === 0)
+        return Promise.resolve({ ok:true, json:function(){ return Promise.resolve({ status:'cancelled' }); } });
+      return Promise.resolve({ ok:true, json:function(){ return Promise.resolve({ ok:true, jobId:'j10' }); } });
+    };
+    window._renderCalls = 0; renderStoryText = function(){ window._renderCalls++; };
+    window._toasts = []; showToast = function(m){ window._toasts.push(m); };
+    (async()=>{ await retranslateStory(); })();
+    true;`, 't2c');
+  await new Promise(r => setTimeout(r, 900));
+  const r = JSON.parse(C.run(`JSON.stringify({
+    storyTranslation: APP.lessonData.storyTranslation, renderCalls: window._renderCalls,
+    toasts: window._toasts, btnDisabled: document.getElementById('story-retranslate-btn').disabled })`));
+  assert.strictEqual(r.storyTranslation, BASE_TOPIC.storyTranslation,
+    'a cancelled job leaves the EXISTING translation untouched');
+  assert.strictEqual(r.renderCalls, 0, 'and re-renders nothing');
+  assert.deepStrictEqual(r.toasts, [],
+    'and says nothing — a cancel is the user\'s own act, not a failure (got ' + JSON.stringify(r.toasts) + ')');
+  assert.strictEqual(r.btnDisabled, false, 'while still re-enabling the button');
+}
+console.log('  retranslateStory(): a cancelled job changes nothing and stays silent: OK');
+
 {
   const C = client();
   C.run(`APP.lessonData = { ...${JSON.stringify(BASE_TOPIC)}, story: '' };   // no story yet

@@ -1,7 +1,7 @@
 // E2E (live server + fake Ollama): roadmap item 5.
 //  5a: /api/generate-book rejects nChapters < 2 instead of silently coercing to 2.
 //  5b: /api/storyline-title (title-only patch) preserves chapters + summary.
-const { boot, get, post, assert } = require('./lib');
+const { boot, get, post, postJob, assert } = require('./lib');
 
 (async () => {
   const env = await boot();
@@ -35,7 +35,7 @@ const { boot, get, post, assert } = require('./lib');
     const before = arr.find(s => s.id === slId);
     assert(before && before.chapters?.length === 2 && before.summary, '5b: seed has chapters + summary');
 
-    const rt = await post(sport, '/api/storyline-title', { slId, topics: ['cid1'] });
+    const rt = await postJob(sport, '/api/storyline-title', { slId, topics: ['cid1'] });
     assert(rt.status === 200, '5b: storyline-title 200 (got ' + rt.status + ')');
 
     info = await get(sport, '/api/storylines');

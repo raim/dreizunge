@@ -2424,6 +2424,76 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_al — the last five blocking LLM routes become listed, cancellable jobs
+
+**Closes the open "some LLM-based jobs still have no cancel BUTTON" item**, carried since the user's
+screenshot of "Erstelle Zusammenfassung" and "Neuer Titel…" running with no ✕. User ruling: *"let's
+convert all five together behind one poller."* **ZERO `ui.json` keys.**
+
+### Why a `sync` row could never be enough
+
+`v88_b` made these routes VISIBLE by registering a client-side `kind:'sync'` placeholder while the
+fetch was open. But `_jobsRenderList`'s `canCancel` is `j.kind === 'job' && …`, and that is not an
+oversight: a sync row has **no server-side job id** for `POST /api/jobs/cancel` to look up, so a ✕ on
+one would be a button that lies. The fix therefore had to be in the ROUTES, not the popover.
+
+### One shape, on both sides
+
+- **Server**: a new `runAsJob(res, meta, producer)` — mints a labelled job, runs `producer` inside
+  `runCancellable`, answers **202 + `{jobId}`**, and puts whatever the producer RETURNS into the
+  job's `data`. `v88_af`/`v88_ag` had done this by hand three times; hand-writing the same eight
+  lines per route is how they drift.
+- **Client**: one `_jobAwait(response)` — returns the job's `data` (the SAME payload the body used to
+  carry, so no caller reads different fields), **throws** on error so every existing `try/catch`
+  keeps working, and returns **`null` on a cancel**, which each of the nine call sites branches on to
+  stop quietly rather than reporting the user's own act as a failure.
+
+⚠️ **Validation stays OUTSIDE the producer.** A 400/404/503 is an answer about the REQUEST; turning
+it into a failed job would make a malformed call look like a model failure in the popover and rob the
+caller of its status code. Asserted first in the e2e, because every later assertion assumes it.
+
+⚠️ **`_jobAwait` polls at 500ms, not the 2s the background pollers use.** Three of the five sit in
+front of a control the user is watching, and `/api/writing-feedback` is in the learner's exercise
+flow — the conversion must not make grading feel slower than the blocking version it replaces.
+
+⚠️ **Only `running`/`pending` continue polling** — `v88_ag`'s lesson, where a poller that treated an
+unrecognised status as "still working" re-armed its timer forever and hung the whole suite.
+
+### Five guards had become assertions of the wrong thing
+
+The fifth, sixth and seventh occurrences in this line. `unit-jobs-sync-inflight`'s **set-level**
+guard asserted every caller of the five is inside a `_jobsTracked(...)` wrapper — `v88_b`'s design,
+now reversed. Re-scoped rather than deleted, because its VALUE is unchanged: it is a claim about a
+SET of call sites that no rendered state can observe, and it now pins that all **nine** go through
+`_jobAwait`, that none still uses the old wrapper, and (new) that the server answers all five through
+`runAsJob`. `unit-storyline-summary-stamp` asserted `return json(res, 200, { summary })` — re-scoped
+to `return { summary }`, the same client contract from its new place (its message also named the
+wrong route, `/api/storyline-retitle`, and is fixed). Three e2e files were pointed at a new
+`postJob()` helper in `test/lib.js` — the test-side mirror of `_jobAwait`, shaped to return
+`{status, body}` so their existing payload assertions are untouched.
+
+### `_jobsTracked` now has NO callers — and is deliberately not deleted
+
+Stated in its own comment so nobody mistakes it for load-bearing. Removing it means removing
+`_jobsInflight` and the `kind:'sync'` branch of `_jobsEffectiveList`/`_jobsRenderList` too, plus
+re-scoping the tests that pin them: a purely internal cleanup with its own risk, which does not
+belong in a release whose subject is a user-visible behaviour change. **Carried as an explicit
+follow-up.**
+
+### ⚠️ Two escape-collapse traps, one of them new to this project's notes
+
+A regex written as `/\/api\/job\//` inside a TEMPLATE LITERAL has its backslashes collapsed before
+the `vm` ever sees it, arriving as `//api/job//` — a line comment that swallowed the rest of the
+statement and produced a baffling `Unexpected token '?'`. Same family as the standing "no backticks
+in a comment inside a template literal" rule, and worth its own line: **any `\` in a template
+literal destined for `C.run` is processed twice.** Also, rewiring the call sites by regex missed
+`post(okEnv.sport, …)` because the pattern assumed a bare identifier for the port.
+
+**Nine mutations red**: an unlabelled job (invisible in `/api/jobs`); `runCancellable` dropped; one
+route left blocking; a cancel reported as an error; validation moved inside the job; the client
+treating a cancel as an error; the poller looping on an unrecognised status; a call site ignoring a
+cancel; and the poller never polling at all.
+
 ## ✅ v88_ak — `e2e-idle-release` was never flaky: the guard was counting the wrong thing
 
 **ZERO `ui.json` keys, ZERO product changes.** The server was right the whole time.

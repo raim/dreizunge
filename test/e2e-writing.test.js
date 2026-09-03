@@ -5,7 +5,7 @@
 // generated ONCE like every other lesson type, through the normal add-lesson job; grading is a LIVE
 // call at play time, through its own route, with no generation job and no stored "correct answer"
 // involved at all — it judges the learner's own free-text answer against the story, live.
-const { boot, post, get, assert, sleep } = require('./lib');
+const { boot, post, postJob, get, assert, sleep } = require('./lib');
 
 const STORY = 'Es war einmal ein Test. Die Katze und das Haus blieben gleich.';
 const SEED = {
@@ -59,7 +59,7 @@ async function waitJob(sport, jobId, timeoutMs = 60000) {
     // ── 2. Grading: a LIVE call, no job, no stored "correct answer" ──────────────────────────────
     // The fake's default reply: a "partially correct" verdict plus two "<wrong> => <fix> — <note>"
     // language-issue lines (server.js's parseWritingFeedback splits the two apart).
-    const fb = await post(sport, '/api/writing-feedback', {
+    const fb = await postJob(sport, '/api/writing-feedback', {
       text: 'Ich habe gerne. Der Haus ist gross.', lang: 'de', srcLang: 'en', question, story: STORY,
     });
     assert(fb.status === 200, 'writing-feedback accepted (got ' + fb.status + ' ' + fb.raw + ')');
@@ -72,17 +72,17 @@ async function waitJob(sport, jobId, timeoutMs = 60000) {
     console.log('  writing-feedback: verdict=' + fb.body.correctness + ', ' + fb.body.issues.length + ' language issue(s) parsed');
 
     // Missing text/question/story are each rejected before any model call.
-    const empty = await post(sport, '/api/writing-feedback', { text: '', lang: 'de', srcLang: 'en', question, story: STORY });
+    const empty = await postJob(sport, '/api/writing-feedback', { text: '', lang: 'de', srcLang: 'en', question, story: STORY });
     assert(empty.status === 400, 'an empty submission is rejected with 400 (got ' + empty.status + ')');
 
-    const noLang = await post(sport, '/api/writing-feedback', { text: 'hallo', question, story: STORY });
+    const noLang = await postJob(sport, '/api/writing-feedback', { text: 'hallo', question, story: STORY });
     assert(noLang.status === 400, 'a missing lang is rejected with 400 (got ' + noLang.status + ')');
 
-    const noQuestion = await post(sport, '/api/writing-feedback', { text: 'hallo', lang: 'de', srcLang: 'en', story: STORY });
+    const noQuestion = await postJob(sport, '/api/writing-feedback', { text: 'hallo', lang: 'de', srcLang: 'en', story: STORY });
     assert(noQuestion.status === 400, 'a missing question is rejected with 400 (got ' + noQuestion.status + ') — ' +
       'grading needs it to judge correctness (v82_f)');
 
-    const noStory = await post(sport, '/api/writing-feedback', { text: 'hallo', lang: 'de', srcLang: 'en', question });
+    const noStory = await postJob(sport, '/api/writing-feedback', { text: 'hallo', lang: 'de', srcLang: 'en', question });
     assert(noStory.status === 400, 'a missing story is rejected with 400 (got ' + noStory.status + ')');
   } catch (e) {
     failed = true;
@@ -100,7 +100,7 @@ async function waitJob(sport, jobId, timeoutMs = 60000) {
     process.env.FAKE_WRITING_REPLY = 'CORRECTNESS: correct — The story confirms the cat and the house stayed the same.';
     const okEnv = await boot({ seed: SEED });
     try {
-      const okFb = await post(okEnv.sport, '/api/writing-feedback',
+      const okFb = await postJob(okEnv.sport, '/api/writing-feedback',
         { text: 'Die Katze und das Haus blieben gleich.', lang: 'de', srcLang: 'en', question: question || 'Q?', story: STORY });
       if (okFb.status !== 200) throw new Error('correct-verdict reply accepted (got ' + okFb.status + ')');
       if (okFb.body.correctness !== 'correct') throw new Error('verdict parses as correct (got ' + JSON.stringify(okFb.body) + ')');
@@ -119,7 +119,7 @@ async function waitJob(sport, jobId, timeoutMs = 60000) {
     process.env.FAKE_WRITING_REPLY = 'This looks good to me, well done!';
     const unkEnv = await boot({ seed: SEED });
     try {
-      const unkFb = await post(unkEnv.sport, '/api/writing-feedback',
+      const unkFb = await postJob(unkEnv.sport, '/api/writing-feedback',
         { text: 'Die Katze und das Haus blieben gleich.', lang: 'de', srcLang: 'en', question: question || 'Q?', story: STORY });
       if (unkFb.status !== 200) throw new Error('non-compliant reply still accepted (got ' + unkFb.status + ')');
       if (unkFb.body.correctness !== 'unknown') throw new Error('a reply with no CORRECTNESS line parses as unknown (got ' + JSON.stringify(unkFb.body) + ')');

@@ -186,6 +186,33 @@ function runCancellable(jobId, fn) {
   };
   return _cancelALS.run(store, fn);
 }
+// ── v88_al: the ONE shape a blocking LLM route becomes a cancellable job in ──────────────────────
+// User ruling, after `v88_af`/`v88_ag` converted three routes by hand: "let's convert all five
+// together behind one poller." This is the server half of that — the five remaining `_jobsTracked`
+// routes all had the identical shape (validate synchronously, then await one or more model calls,
+// then answer with a payload), and hand-writing the same eight lines per route is how they would
+// drift.
+//
+// Answers **202 + {jobId}** immediately and runs `producer` in the background inside a cancel scope.
+// `producer` receives the job id, so a multi-step one can report progress with `jobStep`. Whatever
+// it RETURNS becomes the job's `data` — which is the same payload the route used to put in the
+// response body, so no client reads different fields than before, only from a different place.
+//
+// ⚠️ Validation must stay OUTSIDE the producer. A 400/404/503 is an answer about the REQUEST and
+// belongs in the response; turning it into a failed job would make a malformed call look like a
+// model failure in the popover and rob the caller of its status code.
+function runAsJob(res, meta, producer) {
+  const jobId = newJob(meta);
+  (async () => {
+    try {
+      const data = await runCancellable(jobId, () => producer(jobId));
+      jobDone(jobId, data);
+    } catch (e) {
+      jobFailOrCancel(jobId, e);
+    }
+  })();
+  return json(res, 202, { ok: true, jobId });
+}
 // A cancelled job is not a FAILED one. Routes funnel their catch through this so the popover shows
 // "cancelled" rather than an alarming error the user caused deliberately.
 function jobFailOrCancel(jobId, err) {
@@ -255,7 +282,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_ak';
+const APP_VERSION  = 'v88_al';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -8370,16 +8397,18 @@ http.createServer(async (req, res) => {
       if (!Array.isArray(topics) || !topics.length) return json(res, 400, { error: 'Missing topics array' });
       const stories = topics.map(t => (findSaved(t)||{}).story || '');
       const srcLang = (findSaved(topics[0])||{}).srcLang || 'en';
-      try {
+      // v88_al: a listed, cancellable job; the `{title, icon}` result travels as the job's data.
+      return runAsJob(res, {
+        label: `Generating title: "${String(topics[0] || '').slice(0, 50)}"`,
+        ...(slId ? { link: { type: 'storyline', id: slId } } : {}),
+      }, async () => {
         const result = await generateStorylineTitle(topics, stories, srcLang);
         // Auto-save into storylines if slId provided
         if (slId && result.title) {
           upsertStoryline({ id: slId, title: result.title, icon: result.icon || '📖' });
         }
-        return json(res, 200, result);
-      } catch(e) {
-        return json(res, 500, { error: e.message });
-      }
+        return result;
+      });
     }
 
     // ── Job status polling ────────────────────────────────────────────
@@ -9227,7 +9256,11 @@ http.createServer(async (req, res) => {
       if (!saved) return json(res, 404, { error: 'Topic not found' });
       if (!saved.story) return json(res, 400, { error: 'No story to translate' });
       const lang = saved.lang || 'it', srcLang = saved.srcLang || 'en';
-      try {
+      // v88_al: a listed, cancellable job; `{ storyTranslation }` travels as the job's data.
+      return runAsJob(res, {
+        label: `Translating "${String(saved.topic || '').slice(0, 50)}"`,
+        link: { type: 'topic', id: saved.id },
+      }, async () => {
         const t0 = Date.now();
         const { result: { text, promptTokens, completionTokens }, tokens: _mTok } = await meterLLMTokens(() =>
           callLLMTranslation(sysTranslation(lang, srcLang), saved.story,
@@ -9242,10 +9275,8 @@ http.createServer(async (req, res) => {
         stampUpdated(saved);
         saveStore(store);
         console.log(`  Re-translated "${saved.topic}" (${lang}→${srcLang}): ${storyTranslation.length} chars`);
-        return json(res, 200, { storyTranslation });
-      } catch(e) {
-        return json(res, 500, { error: e.message });
-      }
+        return { storyTranslation };
+      });
     }
 
     // ── Direct lesson edit ───────────────────────────────────────────────
@@ -9488,27 +9519,31 @@ http.createServer(async (req, res) => {
       const stories = topics.map(t => t.story || '');
       const srcLang = topics[0].srcLang || 'en';
       const lang = topics[0].lang || 'it';
-      const out = {};
-      try {
+      // v88_al: a listed, cancellable job; `out` travels as the job's data.
+      return runAsJob(res, {
+        label: `Re-titling: "${String(sl.title || slId).slice(0, 50)}"`,
+        link: { type: 'storyline', id: slId },
+      }, async (jobId) => {
+        const out = {};
         // v59: both retitle scopes are ONE call each covering the whole storyline, so tokens
         // go to the STORYLINE bucket (splitting one call across N chapters would be noise).
         if (sc === 'chapters' || sc === 'all') {
+          jobStep(jobId, 'Re-titling chapters…');
           const { result: chapterMeta, tokens: _mTok } = await meterLLMTokens(() => generateChapterMeta(stories, srcLang, lang));
           addTokenUsage(sl, _mTok, 'retitle');
           _applyChapterTitles(topics, chapterMeta, null);
           out.chapters = topics.map(t => ({ id: t.id, topic: t.topic, emoji: t.topicEmoji || '' }));
         }
         if (sc === 'title' || sc === 'all') {
+          jobStep(jobId, 'Re-titling the storyline…');
           const { result: { title, icon }, tokens: _mTok } = await meterLLMTokens(() => generateStorylineTitle(topics.map(t => t.topic), stories, srcLang));
           addTokenUsage(sl, _mTok, 'retitle');
           sl.title = title; sl.icon = icon || sl.icon || '📖'; sl.titleAuto = false;
           out.title = title; out.icon = sl.icon;
         }
         upsertStoryline(sl);   // persists title AND accumulated tokens for either scope
-        return json(res, 200, out);
-      } catch(e) {
-        return json(res, 500, { error: e.message });
-      }
+        return out;
+      });
     }
 
     if (M === 'POST' && url.pathname === '/api/storyline-summary') {
@@ -9526,16 +9561,19 @@ http.createServer(async (req, res) => {
       const vocab    = topicData.flatMap(t =>
         (t.lessons||[]).flatMap(ls => (ls.vocab||[]).map(v => v.source || v.target))
       );
-      try {
+      // v88_al: a listed, cancellable job. The payload is unchanged — `{ summary }` now travels as
+      // the job's data instead of the response body.
+      return runAsJob(res, {
+        label: `Generating summary: "${String((findStoryline(slId) || {}).title || slId).slice(0, 50)}"`,
+        link: { type: 'storyline', id: slId },
+      }, async () => {
         const { result: { text: summary, meta: summaryMeta }, tokens: _mTok } =
           await meterLLMTokens(() => generateStorylineSummary(topics, stories, vocab, srcLang));
         // Persist on the storyline object (+ cumulative tokens — storyline-level artefact, v59)
         const sl = findStoryline(slId);
         if (sl) { addTokenUsage(sl, _mTok, 'summary'); sl.summary = summary; sl.summaryMeta = summaryMeta; upsertStoryline(sl); }
-        return json(res, 200, { summary });
-      } catch(e) {
-        return json(res, 500, { error: e.message });
-      }
+        return { summary };
+      });
     }
 
     // ── Storyline storyboard (v55) — clone of the summary route above. The composed SVG is
@@ -9768,7 +9806,11 @@ http.createServer(async (req, res) => {
       const L = langName(lang), S = langName(srcLang);
       const sys = fillPrompt(PROMPTS.writingFeedback.system, { L, S, question, story });
       const userMsg = fillPrompt(PROMPTS.writingFeedback.user, { L, text });
-      try {
+      // v88_al: a listed, cancellable job like its four siblings. ⚠️ This one sits in the LEARNER'S
+      // exercise flow rather than in an authoring screen, so the client polls it faster (see
+      // `_jobAwait`'s own interval note) — the conversion must not make grading feel slower than the
+      // blocking version it replaces.
+      return runAsJob(res, { label: 'Checking your writing' }, async () => {
         // Live-tested against BOTH candidates before picking (phase 1): OLLAMA_QC_MODEL
         // (translategemma:12b, a translation-faithfulness checker) ignored the requested line format
         // entirely and was markedly slower, while OLLAMA_LESSON_MODEL (qwen3.6:35b-a3b, the default)
@@ -9778,10 +9820,8 @@ http.createServer(async (req, res) => {
         const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 500);
         const { correctness, correctnessNote, ok, issues } = parseWritingFeedback(stripRaw(String(raw || '')));
         console.log(`  Writing feedback (${lang}←${srcLang}): ${text.length} chars, verdict=${correctness}, ${issues.length} language issue(s)`);
-        return json(res, 200, { correctness, correctnessNote, ok, issues, promptTokens, completionTokens });
-      } catch(e) {
-        return json(res, 502, { error: `Writing feedback failed: ${e.message}` });
-      }
+        return { correctness, correctnessNote, ok, issues, promptTokens, completionTokens };
+      });
     }
     if (M === 'POST' && url.pathname === '/api/story-qc') {
       if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });

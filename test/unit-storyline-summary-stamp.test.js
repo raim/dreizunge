@@ -59,9 +59,17 @@ const persists = server.match(/addTokenUsage\(sl, _mTok, 'summary'\);\s*sl\.summ
 assert.strictEqual(persists.length, 2, 'both call sites accumulate tokens AND persist sl.summaryMeta');
 assert.ok(!/sl\.summary = summary; upsertStoryline/.test(server), 'no call site stores the summary without its stamp');
 
-// 5. The HTTP route still hands the client a plain string.
-assert.ok(/return json\(res, 200, \{ summary \}\);/.test(server),
-  '/api/storyline-retitle still returns a plain string summary (client contract unchanged)');
+// 5. The client still receives a plain string summary — but as the JOB's data, not the body.
+// ⚠️ v88_al re-scoped this assertion (and fixed its message, which named the wrong route:
+// `/api/storyline-retitle` rather than `/api/storyline-summary`). The route became a listed,
+// cancellable job on the user's ruling, so it answers 202 + {jobId} and the payload travels as the
+// job's data. The CLAIM this section makes — the client contract is `{ summary }`, a plain string,
+// unchanged — is exactly as true and exactly as worth pinning; only where it is returned moved.
+assert.ok(/return \{ summary \};/.test(server),
+  '/api/storyline-summary still hands the client a plain string summary, now as the job\'s data');
+assert.ok(/return runAsJob\(res, \{[\s\S]{0,200}generateStorylineSummary/.test(server)
+       || /runAsJob\(res, \{[\s\S]*?\}, async \(\) => \{[\s\S]{0,300}generateStorylineSummary/.test(server),
+  'and it does so from inside runAsJob — a listed, cancellable job');
 
 console.log('  storyline summary: model logged, stamped via buildGenMeta, both call sites updated: OK');
 console.log('unit-storyline-summary-stamp: ALL PASSED');

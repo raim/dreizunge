@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_ak`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_al`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -309,6 +309,21 @@ satisfies. Now EQUALITY. **Third proxy-guard failure in three releases** — con
 that keeps hiding these. Two more `v87_m`/`v87_n` guards were re-scoped (the fourth time in this
 line that a guard had become an assertion of the wrong thing). Five mutations red.
 
+**`v88_al` CLOSED the cancel-button item.** User ruling: "convert all five together behind one
+poller." All EIGHT formerly-blocking model routes are now listed, cancellable jobs. ONE shape each
+side: **`runAsJob`** (server) and **`_jobAwait`** (client). ⚠️ Validation stays OUTSIDE the producer;
+`_jobAwait` polls at 500ms (three sit in front of a watched control, one is in the learner's exercise
+flow); only `running`/`pending` continue polling (`v88_ag`'s hang). **Three more guards had become
+assertions of the wrong thing**, including `v88_b`'s set-level one — re-scoped, not deleted, since
+its value is unchanged. ⚠️ **`_jobsTracked` now has NO callers**, is marked superseded in place, and
+deleting the whole `sync` path is carried as its own follow-up. Nine mutations red.
+
+⚠️ **A new escape trap**: a regex like `/\/api\/job\//` inside a TEMPLATE LITERAL destined for
+`C.run` has its backslashes collapsed BEFORE the `vm` sees it, arriving as `//api/job//` — a line
+comment that swallows the rest of the statement and reports a baffling `Unexpected token '?'`.
+**Any `\` in a template literal is processed twice.** Same family as the standing "no backticks in a
+comment inside a template literal" rule.
+
 ---
 
 ## ⚠️ START HERE — THE FOUR-FIELD QUESTION IS ANSWERED; ONE OF ITS CONSEQUENCES IS NOT
@@ -375,29 +390,22 @@ Verbatim where quoted:
    budget first**. `form.image_extract` ("✨ Extract text") exists but the button can run extraction
    AND/OR description, so it is not a drop-in.
 
-2. **⚠️ LARGELY ANSWERED AT `v88_af`/`v88_ag` — some LLM-based jobs still have no cancel BUTTON.**
-   *(Rewritten at `v88_ak`: two successive edits had left this item with duplicated paragraphs.)*
+2. **✅ CLOSED AT `v88_al` — the cancel-button item is done.** All EIGHT model-backed routes that
+   used to block are now listed, cancellable jobs: `/api/ui-translate` (`v88_af`), `/api/story-qc`
+   and `/api/summary-qc` (`v88_ag`), and — on the user's ruling "convert all five together behind one
+   poller" — `/api/retranslate-story`, `/api/storyline-title`, `/api/storyline-summary`,
+   `/api/storyline-retitle`, `/api/writing-feedback` (`v88_al`).
 
-   **Original report** (user screenshot): "Erstelle Zusammenfassung" and "Neuer Titel…" ran in the
-   popover with no ✕. **Diagnosed**: those are `kind:'sync'` rows — the client-side placeholders
-   `v88_b` added via `_jobsInflight` so that BLOCKING LLM routes are at least visible. The cancel
-   button is gated on `j.kind === 'job'` (`_jobsRenderList`), and that is not an oversight: a sync
-   row has **no server-side job id** for `POST /api/jobs/cancel` to look up, so a ✕ there would be a
-   button that lies.
+   The shape to reuse for any future blocking route: **`runAsJob(res, meta, producer)`** server-side
+   and **`_jobAwait(response)`** client-side. Keep validation OUTSIDE the producer (a 400/404/503 is
+   an answer about the request), add a per-item `CANCELLED` re-throw and a checkpoint only where
+   there IS a loop, and remember that only `running`/`pending` may continue polling.
 
-   **THREE routes are now converted** to real jobs, which buys the listing AND the cancel from
-   machinery that already exists: `/api/ui-translate` (`v88_af`), `/api/story-qc` and
-   `/api/summary-qc` (`v88_ag`).
-
-   **What remains — five routes, listed but not cancellable**: `/api/retranslate-story`,
-   `/api/storyline-title`, `/api/storyline-summary`, `/api/storyline-retitle`,
-   `/api/writing-feedback`. Each is the same mechanical conversion (`newJob` + `runCancellable` +
-   a client poller; add a per-item `CANCELLED` re-throw and a checkpoint only where there IS a loop).
-
-   ⚠️ **Still a RULING, not just work**: each conversion turns a BLOCKING route into a POLLED one,
-   which is a real behaviour change per call site. `v88_ag` showed the risk — the first shared poller
-   looped forever on an unrecognised status and hung the whole suite. **If asked to do them, convert
-   all five together behind ONE poller**, not one at a time.
+   ⚠️ **ONE FOLLOW-UP, deliberately not done**: `_jobsTracked` and the whole `kind:'sync'` path
+   (`_jobsInflight`, the sync branch of `_jobsEffectiveList`/`_jobsRenderList`) now have **no
+   callers**. Superseded, not broken — its comment says so. Deleting it means re-scoping the tests
+   that pin it, which is an internal cleanup deserving its own release rather than a side effect of a
+   user-visible one.
 
 ⚠️ **A partial EXTRACTION is now a known failure mode, and it is not the same as a mislabelled
 field.** Measuring item 3 showed the two reported chapters are the same photographed sign as
@@ -433,7 +441,7 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 333 checks
+node test/run.js                          → expect 334 checks
 node test/run.js --quick                  → expect 274
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
@@ -487,7 +495,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **343 topics, 97 storylines, 33 languages, 755 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_ak'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_al'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to

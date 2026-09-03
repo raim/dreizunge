@@ -114,30 +114,65 @@ function client() {
       console.log('  the row renders its label, with neither an open nor a discard button: OK');
     }
 
-    // ── 5. All five synchronous routes are wrapped ─────────────────────────────────────────────
-    // Deliberately source-level: "no synchronous model-backed route is left untracked" is a claim
-    // about a SET of call sites, and no single rendered state can observe it. If a sixth such route
-    // is added later, this is what should fail.
+    // ── 5. All five routes are AWAITED AS JOBS at every call site ──────────────────────────────
+    // ⚠️ v88_al RE-SCOPED THIS TO THE OPPOSITE CLAIM — the fifth time in this line a guard had
+    // become an assertion of the wrong thing rather than a failing one. It asserted every caller of
+    // these five is inside a `_jobsTracked(...)` wrapper, which was `v88_b`'s design: make a
+    // BLOCKING route visible in the popover. The user then ruled "let's convert all five together
+    // behind one poller", because a `sync` row can never carry a cancel button — it has no
+    // server-side job id for POST /api/jobs/cancel to look up.
+    //
+    // Its VALUE is unchanged and is why it is re-scoped rather than deleted: this is a claim about a
+    // SET of call sites, which no single rendered state can observe. Nine call sites across five
+    // routes; a tenth added later without the poller is what should fail here.
     {
       const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
       const routes = ['/api/storyline-retitle', '/api/storyline-title', '/api/storyline-summary',
                       '/api/retranslate-story', '/api/writing-feedback'];
+      let total = 0;
       for (const route of routes) {
         let from = 0, hits = 0;
         for (;;) {
           const at = src.indexOf(`fetch('${route}'`, from);
           if (at < 0) break;
-          hits++;
-          // The wrapper opens within a few hundred characters before the fetch (it takes a label
-          // argument and an arrow function, so it is not adjacent).
+          hits++; total++;
+          // `_jobAwait(await fetch(...))` — the helper opens immediately before the fetch now, but
+          // the window stays generous so a reformat cannot fail this for cosmetic reasons.
           const before = src.slice(Math.max(0, at - 400), at);
-          assert.ok(before.includes('_jobsTracked('),
-            `${route} at offset ${at} is inside a _jobsTracked(...) wrapper`);
+          assert.ok(before.includes('_jobAwait('),
+            `${route} at offset ${at} is awaited as a JOB (_jobAwait), not left blocking`);
+          // And the superseded wrapper is gone from these call sites entirely — the removal half,
+          // which a one-sided check would miss.
+          assert.ok(!before.includes('_jobsTracked('),
+            `${route} at offset ${at} no longer goes through the sync-row wrapper`);
           from = at + 1;
         }
         assert.ok(hits > 0, `found at least one caller of ${route}`);
       }
-      console.log('  all five synchronous model-backed routes are wrapped at every call site: OK');
+      assert.ok(total >= 9,
+        `non-vacuity: all nine known call sites are covered (found ${total})`);
+      console.log('  all five converted routes are awaited as jobs at every call site (' + total + '): OK');
+    }
+
+    // ── 5b. …and the server really answers them as jobs ────────────────────────────────────────
+    // The client half above is only true if the routes changed too. Asserted at the source layer on
+    // server.js: each of the five returns through `runAsJob`, the one shape they now share.
+    {
+      const srv = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
+      const routes = ['/api/storyline-retitle', '/api/storyline-title', '/api/storyline-summary',
+                      '/api/retranslate-story', '/api/writing-feedback'];
+      for (const route of routes) {
+        const at = srv.indexOf(`url.pathname === '${route}'`);
+        assert.ok(at > 0, `${route} exists server-side`);
+        // Bounded by the next route handler, so this cannot borrow a neighbour's body.
+        const next = srv.indexOf("if (M === 'POST' && url.pathname === '/api/", at + 10);
+        const body = srv.slice(at, next > at ? next : at + 6000);
+        assert.ok(/return runAsJob\(/.test(body),
+          `${route} answers through runAsJob — a listed, cancellable job`);
+      }
+      assert.ok(/function runAsJob\(res, meta, producer\)/.test(srv),
+        'and runAsJob is the single shape they share');
+      console.log('  and the server answers all five through runAsJob: OK');
     }
 
   // ── v88_ag: _qcPoll must TERMINATE on a response it cannot interpret ───────────────────────
@@ -205,6 +240,83 @@ function client() {
     assert.deepStrictEqual(r.toasts, [],
       'and shows no error toast — the user cancelled on purpose (got ' + JSON.stringify(r.toasts) + ')');
     console.log('  a cancelled QC restores the button silently, with no proposal and no error: OK');
+  }
+
+  // Local timing helper for the async section below — this file had no `settle()`; the poller runs
+  // on real timers (5ms in these fixtures) so the assertions need a real tick to observe.
+  const settle = (ms) => new Promise(r => setTimeout(r, ms || 60));
+
+  // ── v88_al: _jobAwait — the ONE poller the five converted routes share ────────────────────────
+  // Behavioural, on the boolean/payload each call site branches on. The set-level guards above prove
+  // every caller GOES THROUGH it; these prove what it does when it gets there.
+  {
+    const C = client();
+
+    // done -> the job's data, which is the same payload the response body used to carry.
+    // ⚠️ `indexOf`, not a regex: a literal like /\/api\/job\// inside a TEMPLATE LITERAL has its
+    // backslash-escapes collapsed before the vm ever sees it, so it arrives as //api/job// — a line
+    // comment that swallowed the rest of the statement. Same family as the standing "no backticks in
+    // a comment inside a template literal" rule.
+    C.run(`fetch = function(u){
+      return Promise.resolve({ ok:true, status:200, json:function(){
+        return Promise.resolve(String(u).indexOf('/api/job/') >= 0
+          ? { status:'done', data:{ summary:'S' } } : { ok:true, jobId:'j1' }); } }); };
+      window.__out = undefined;
+      _jobAwait({ ok:true, json:function(){ return Promise.resolve({ ok:true, jobId:'j1' }); } }, { every: 5 })
+        .then(function(v){ window.__out = JSON.stringify(v); }); true;`, 'done');
+    await settle(120);
+    assert.strictEqual(C.run('window.__out'), '{"summary":"S"}',
+      'a finished job resolves to its DATA — the same fields the response body used to carry');
+
+    // cancelled -> null, NOT an error. Every call site branches on this to stop quietly.
+    C.run(`fetch = function(){ return Promise.resolve({ ok:true, status:200, json:function(){
+        return Promise.resolve({ status:'cancelled' }); } }); };
+      window.__out2 = 'unset'; window.__err2 = null;
+      _jobAwait({ ok:true, json:function(){ return Promise.resolve({ ok:true, jobId:'j2' }); } }, { every: 5 })
+        .then(function(v){ window.__out2 = v; }, function(e){ window.__err2 = String(e.message); }); true;`, 'cancel');
+    await settle(120);
+    assert.strictEqual(C.run('window.__out2'), null,
+      'a CANCELLED job resolves to null — the user stopped it, which is not a failure');
+    assert.strictEqual(C.run('window.__err2'), null, 'and does not throw');
+
+    // error -> throws, so every existing try/catch at the call sites keeps working unchanged.
+    C.run(`fetch = function(){ return Promise.resolve({ ok:true, status:200, json:function(){
+        return Promise.resolve({ status:'error', error:'boom' }); } }); };
+      window.__err3 = null;
+      _jobAwait({ ok:true, json:function(){ return Promise.resolve({ ok:true, jobId:'j3' }); } }, { every: 5 })
+        .catch(function(e){ window.__err3 = String(e.message); }); true;`, 'error');
+    await settle(120);
+    assert.strictEqual(C.run('window.__err3'), 'boom',
+      'a failed job THROWS with the server\'s message, so existing try/catch keeps working');
+
+    // ⚠️ An unrecognised status is TERMINAL, not "still running" — v88_ag's hang, in the new poller.
+    C.run(`fetch = function(){ return Promise.resolve({ ok:true, status:200, json:function(){
+        return Promise.resolve({ id:'j4' }); } }); };
+      window.__err4 = null; window.__out4 = 'unset';
+      _jobAwait({ ok:true, json:function(){ return Promise.resolve({ ok:true, jobId:'j4' }); } }, { every: 5 })
+        .then(function(v){ window.__out4 = v; }, function(e){ window.__err4 = String(e.message); }); true;`, 'unknown');
+    await settle(150);
+    assert.ok(C.run('window.__err4') !== null,
+      'a status this poller cannot interpret ENDS the wait — polling on is the hang that stalled the '
+      + 'suite at v88_ag (got out=' + C.run('window.__out4') + ')');
+
+    // A non-job answer (an unconverted sibling, a cached short-circuit) is handed straight back, so
+    // the helper is safe to put in front of either kind of route.
+    C.run(`window.__out5 = undefined;
+      _jobAwait({ ok:true, json:function(){ return Promise.resolve({ cached:true, summary:'C' }); } }, { every: 5 })
+        .then(function(v){ window.__out5 = JSON.stringify(v); }); true;`, 'nojob');
+    await settle(60);
+    assert.strictEqual(C.run('window.__out5'), '{"cached":true,"summary":"C"}',
+      'a response with no jobId is returned as-is — no polling, no throw');
+
+    // A non-OK response throws before any polling starts.
+    C.run(`window.__err6 = null;
+      _jobAwait({ ok:false, status:503, json:function(){ return Promise.resolve({ error:'No LLM backend available.' }); } }, { every: 5 })
+        .catch(function(e){ window.__err6 = String(e.message); }); true;`, 'notok');
+    await settle(60);
+    assert.strictEqual(C.run('window.__err6'), 'No LLM backend available.',
+      'a rejected REQUEST still surfaces its own error, not a job error');
+    console.log('  _jobAwait: done->data, cancelled->null, error->throw, unknown->terminal, non-job->as-is: OK');
   }
 
   } catch (e) { failed = true; console.error(e); }

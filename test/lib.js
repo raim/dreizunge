@@ -30,6 +30,32 @@ function req(port, method, p, obj) {
 const get = (port, p) => req(port, 'GET', p);
 const post = (port, p, o) => req(port, 'POST', p, o);
 
+// ── v88_al: POST a route that now answers 202 + {jobId}, and wait for its result ─────────────────
+// The five formerly-blocking LLM routes (`/api/retranslate-story`, `/api/storyline-title`,
+// `/api/storyline-summary`, `/api/storyline-retitle`, `/api/writing-feedback`) became cancellable
+// jobs, so the payload arrives as the job's `data` rather than in the response body. This is the
+// test-side mirror of the client's own `_jobAwait`.
+//
+// Deliberately shaped to return `{ status, body }` like `post` does, with the job's data AS the
+// body — so an existing assertion about the payload keeps working unchanged, and only the
+// *mechanism* moved. A response that is NOT a job (a 400/404/503 from validation, which stays
+// outside the job on purpose) is handed straight back, so status-code assertions are untouched too.
+async function postJob(port, p, o, timeoutMs = 30000) {
+  const started = await req(port, 'POST', p, o);
+  const jobId = started.body && started.body.jobId;
+  if (!jobId) return started;                 // validation answer, or an unconverted route
+  const t0 = Date.now();
+  for (;;) {
+    if (Date.now() - t0 > timeoutMs) throw new Error('job ' + jobId + ' timed out on ' + p);
+    await sleep(100);
+    const st = await req(port, 'GET', '/api/job/' + jobId);
+    const j = st.body || {};
+    if (j.status === 'done') return { status: 200, body: j.data || {}, jobId };
+    if (j.status === 'error') return { status: 500, body: { error: j.error }, jobId };
+    if (j.status === 'cancelled') return { status: 499, body: { cancelled: true }, jobId };
+  }
+}
+
 function waitPort(port, ms = 10000) {
   const t0 = Date.now();
   return new Promise((resolve, reject) => {
@@ -131,5 +157,5 @@ async function waitBookJob(sport, bookId, { timeoutMs = 60000, intervalMs = 400 
   return last;
 }
 
-module.exports = { ROOT, SERVER, FAKE, assert, sleep, req, get, post, waitPort,
+module.exports = { ROOT, SERVER, FAKE, assert, sleep, req, get, post, postJob, waitPort,
   tmpFile, startFakeOllama, boot, waitBookJob };

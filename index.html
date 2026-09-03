@@ -6376,11 +6376,10 @@ async function retranslateStory(){
   try {
     // item AT: one real translation call, tracked. `models.translation` is reused as the label —
     // it is the role name this call belongs to, and it needs no new ui.json key.
-    const r = await _jobsTracked(t('models.translation'), () => fetch('/api/retranslate-story',
+    const resp = await _jobAwait(await fetch('/api/retranslate-story',
       { method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ topic: d.topic }) }));
-    const resp = await r.json().catch(()=>({}));
-    if (!r.ok) throw new Error(resp.error || 'Failed');
+    if (!resp) return;                       // cancelled from the jobs popover
     d.storyTranslation = resp.storyTranslation;
     showToast(t('toast.retranslate_done'));
     renderStoryText(d);
@@ -11261,10 +11260,9 @@ async function genStorylineTitle(chainId, rootTopic, encodedChain) {
     const topics = JSON.parse(decodeURIComponent(encodedChain));
     // item AT: reuses the label already passed to setTitleGenStatus above — same string on both
     // surfaces, no new ui.json key.
-    const r = await _jobsTracked(t('lesson.generating_title'), () => fetch('/api/storyline-title', { method:'POST',
+    const data = await _jobAwait(await fetch('/api/storyline-title', { method:'POST',
       headers:{'Content-Type':'application/json'}, body: JSON.stringify({ topics, slId: chainId }) }));
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error || t('status.generation_failed'));
+    if (!data) return;                       // cancelled
     const inp  = document.getElementById('sledit-input-' + chainId);
     const icon = document.getElementById('sledit-icon-' + chainId);
     if (inp)  inp.value = data.title || '';
@@ -11290,13 +11288,12 @@ async function genLessonTitle() {
   const oldEmoji = APP.lessonData.topicEmoji || '📚';
   try {
     // item AT: same route again — four client callers reach it, and all four were invisible.
-    const r = await _jobsTracked(t('lesson.gen_topic_title'), () => fetch('/api/storyline-title', {
+    const data = await _jobAwait(await fetch('/api/storyline-title', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ topics: [oldTopic] })
     }));
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error || t('status.generation_failed'));
+    if (!data) return;                       // cancelled
     // Save new topic/emoji to server
    const patch = { ...APP.lessonData, topic: data.title, topicEmoji: data.icon };
    const saveR = await fetch('/api/lessons/save-meta', {
@@ -13501,12 +13498,11 @@ async function genStorylineSummary() {
   if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
   try {
     // item AT: same synchronous shape as retitle — a multi-minute call with no job behind it.
-    const r = await _jobsTracked(t('lesson.gen_summary'), () => fetch('/api/storyline-summary', {
+    const data = await _jobAwait(await fetch('/api/storyline-summary', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slId: sl.chainId, topics: sl.topics })
     }));
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error || 'Failed');
+    if (!data) return;                       // cancelled
     const summary = data.summary;
     // Update in-screen summary section
     const chainId = sl.chainId;
@@ -13884,10 +13880,9 @@ async function _doRetitle(scope){
   try{
     // item AT: the REPORTED case. Reuses the label already computed for the toast above — one
     // string for both surfaces, and zero new ui.json keys.
-    const r=await _jobsTracked(scope==='chapters' ? t('retitle.working_chapters') : t('retitle.working_title'),
-      () => fetch('/api/storyline-retitle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slId, scope})}));
-    const resp=await r.json();
-    if(!r.ok) throw new Error(resp.error||'Failed');
+    const resp = await _jobAwait(await fetch('/api/storyline-retitle',
+      {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slId, scope})}));
+    if(!resp) return;                        // cancelled
     console.log('[storyline] retitle ('+scope+') ->', resp);
     await loadSavedList();   // refresh storylines + topic names
     if(APP._slScreen) _renderStorylineScreen(APP._slScreen.chainId, APP._slScreen.encodedChain, APP._slScreen.topics);
@@ -13904,11 +13899,10 @@ async function genStorylineTitleFromScreen() {
   try {
     // item AT: /api/storyline-title is the SECOND synchronous title route (the user's report
     // could have meant either) — both are tracked, so neither is invisible.
-    const r = await _jobsTracked(t('lesson.gen_topic_title'), () => fetch('/api/storyline-title', { method:'POST',
+    const data = await _jobAwait(await fetch('/api/storyline-title', { method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ topics, slId: chainId }) }));
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error || 'Failed');
+    if (!data) return;                       // cancelled
     const inp  = document.getElementById('sl-screen-edit-input');
     const icon = document.getElementById('sl-screen-edit-icon');
     if (inp)  inp.value = data.title || '';
@@ -15435,12 +15429,11 @@ async function genSavedItemTitle(sid, enc, tid) {
                     : (APP.savedList || []).find(l => l.topic === oldTopic);
   try {
     // item AT: the fourth and last caller of this route.
-    const r = await _jobsTracked(t('lesson.gen_topic_title'), () => fetch('/api/storyline-title', {
+    const data = await _jobAwait(await fetch('/api/storyline-title', {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ topics: [found?.userTopic || oldTopic] })
     }));
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error || t('status.generation_failed'));
+    if (!data) return;                       // cancelled
     // Pre-fill edit form — user still confirms with Save
     const inp   = document.getElementById('siedit-input-' + sid);
     const emoji = document.getElementById('siedit-emoji-' + sid);
@@ -15584,14 +15577,17 @@ async function retranslateChain(chainId, btn){
       try{
         // item AT: tracked PER CHAPTER, not once around the whole loop — the loop is sequential,
         // so one entry per iteration is what actually tells the user where the batch has got to.
-        const r = await _jobsTracked(t('models.translation'), () => fetch('/api/retranslate-story',
+        // v88_al: awaits the job per chapter. A CANCEL stops the whole batch rather than being
+        // counted as one failed chapter and pressing on — the user cancelled the run, not a chapter.
+        const data = await _jobAwait(await fetch('/api/retranslate-story',
           {method:'POST',headers:{'Content-Type':'application/json'},
            body:JSON.stringify({topicId:id})}));
-        if(!r.ok){ failed++; continue; }
+        if(data === null) break;
         done++;
         // Keep the in-memory savedList/chain cache in sync so a re-render (this chain's own body, or
         // a later navigation back to it) shows the fresh translation without a full reload.
-        const data = await r.json().catch(()=>({}));
+        // v88_al: `data` is the JOB's payload now — same fields, read from the job instead of the
+        // response body, so the two lines below are unchanged.
         const saved = (APP.savedList||[]).find(s=>s.id===id);
         if(saved && data.storyTranslation) saved.storyTranslation = data.storyTranslation;
         const cached = (_chainStoryCache[chainId]||[]).find(d=>d.id===id);
@@ -18179,12 +18175,12 @@ async function writingSubmit(){
   try {
     // item AT: the `writing` type is the one lesson graded by a LIVE model call at play time
     // (INTERNALS.md §6b) — stateless, no job, and so previously invisible like the other four.
-    const r = await _jobsTracked(t('ex.writing.grading'), () => fetch('/api/writing-feedback',
+    const data = await _jobAwait(await fetch('/api/writing-feedback',
       { method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ text, lang: APP.lessonData?.lang||APP.lang, srcLang: APP.lessonData?.srcLang||APP.srcLang,
           question: lesson.question||'', story: APP.lessonData?.story||'' }) }));
-    const data = await r.json().catch(()=>({}));
-    if (!r.ok || data.error) { showToast(data.error || t('ex.writing.failed')); return; }
+    if (!data) return;                       // cancelled
+    if (data.error) { showToast(data.error || t('ex.writing.failed')); return; }
     const topicKey=APP.lessonData.topic;
     if (!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
     APP.progress.completed[topicKey][lesson.id] = { text, correctness: data.correctness||'unknown',
@@ -23887,6 +23883,58 @@ let _jobsInflightSeq = 0;
 // try/finally, not a then/catch pair: a route that throws (offline, 500, a JSON parse failure) must
 // still remove its entry, or a failed re-title would leave a phantom job running forever — which is
 // a worse bug than the invisible one this item exists to fix.
+// ── v88_al: ONE poller for every route that became a cancellable job ─────────────────────────────
+// User ruling: "let's convert all five together behind one poller." `_jobsTracked` made a blocking
+// route VISIBLE (v88_b) but could never make it CANCELLABLE — a `sync` row has no server-side job id
+// for POST /api/jobs/cancel to look up, which is the whole diagnosis under that open item. Now the
+// five routes answer 202 + {jobId}, and this awaits the job.
+//
+// Returns the job's `data` — the SAME payload the route used to put in its response body, so no
+// caller reads different fields, only from a different place. Throws on error, so every existing
+// try/catch at the call sites keeps working unchanged. Returns `null` for a CANCEL, which is not a
+// failure: the caller quietly stops rather than reporting the user's own deliberate act as an error
+// (the distinction `jobFailOrCancel` draws server-side).
+//
+// ⚠️ Only `running`/`pending` continue polling. Anything else is terminal — the lesson from v88_ag,
+// where a poller that treated an unrecognised status as "still working" re-armed its timer forever
+// and hung the whole test suite rather than failing.
+async function _jobAwait(r, opts){
+  const started = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(started.error || ('HTTP ' + r.status));
+  const jobId = started.jobId;
+  // A route that answered with a payload rather than a job (an unconverted sibling, a cached
+  // short-circuit) is handed straight back, so this helper is safe to put in front of either.
+  if (!jobId) return started;
+  // ⚠️ 500ms, not the 2s the background pollers use: three of these five sit in front of a control
+  // the user is WATCHING (a title, a summary, a translation) and one is in the learner's exercise
+  // flow. The conversion must not make them feel slower than the blocking version it replaces.
+  const every = (opts && opts.every) || 500;
+  for (;;) {
+    await new Promise(res => setTimeout(res, every));
+    let j;
+    try {
+      const pr = await fetch('/api/job/' + encodeURIComponent(jobId));
+      if (!pr.ok) throw new Error('Poll failed: ' + pr.status);
+      j = await pr.json();
+    } catch (e) { throw new Error((e && e.message) || 'Poll failed'); }
+    if (j.status === 'done') return j.data || {};
+    if (j.status === 'cancelled') return null;
+    if (j.status !== 'running' && j.status !== 'pending')
+      throw new Error(j.error || ('Job ' + j.status));
+  }
+}
+
+// ⚠️ v88_al: THIS FUNCTION NOW HAS NO CALLERS, and that is stated here so nobody mistakes it for
+// load-bearing. All five routes it wrapped (`/api/retranslate-story`, `/api/storyline-title`,
+// `/api/storyline-summary`, `/api/storyline-retitle`, `/api/writing-feedback`) became real jobs and
+// use `_jobAwait` instead, which is what finally makes them CANCELLABLE — the thing a `sync` row
+// could never be, since it has no server-side job id.
+//
+// Deliberately NOT deleted in this release. Removing it means removing `_jobsInflight` and the
+// `kind:'sync'` branch of `_jobsEffectiveList`/`_jobsRenderList` too, and re-scoping the tests that
+// pin them — a purely internal cleanup with its own risk, landed in a release whose subject is a
+// user-visible behaviour change. It is superseded, not broken: any future blocking route should use
+// `runAsJob` + `_jobAwait` rather than this. Carried as an explicit follow-up.
 async function _jobsTracked(label, fn, step){
   const id = '__sync' + (++_jobsInflightSeq) + '__';
   _jobsInflight.set(id, { label: label || '', step: step || null });

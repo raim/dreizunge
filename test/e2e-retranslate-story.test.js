@@ -5,7 +5,7 @@
 // fix does NOT re-translate on its own (deliberately, per that route's own cost/latency reasoning —
 // see server.js's comment on this route) — `storyTranslation` can silently keep describing the
 // PRE-fix text until this route is explicitly called.
-const { boot, post, assert } = require('./lib');
+const { boot, post, postJob, assert } = require('./lib');
 
 (async () => {
   const env = await boot({ seed: {
@@ -26,7 +26,7 @@ const { boot, post, assert } = require('./lib');
 
     // 1) A real re-translation call: replaces storyTranslation, stamps fresh translationMeta,
     //    persists to disk, and books tokens onto the topic's own generationStats.
-    const r1 = await post(sport, '/api/retranslate-story', { topic: 'Fixed Sign' });
+    const r1 = await postJob(sport, '/api/retranslate-story', { topic: 'Fixed Sign' });
     assert(r1.status === 200, 'retranslate succeeds (got ' + r1.status + ' ' + JSON.stringify(r1.body) + ')');
     assert(r1.body.storyTranslation === 'Once upon a time there was a test. The cat and the house stayed the same.',
       'returns the fresh translation from the (fake) translation model, not the stale one: ' + JSON.stringify(r1.body));
@@ -37,28 +37,28 @@ const { boot, post, assert } = require('./lib');
     console.log('  a real re-translation replaces the stale translation and stamps fresh meta, persisted to disk: OK');
 
     // 2) A topic with NO story at all: a clean 400, not a crash or a translation of the empty string.
-    const r2 = await post(sport, '/api/retranslate-story', { topic: 'No Story Yet' });
+    const r2 = await postJob(sport, '/api/retranslate-story', { topic: 'No Story Yet' });
     assert(r2.status === 400, 'a topic with no story yet is rejected cleanly (got ' + r2.status + ')');
     console.log('  a topic with no story yet is rejected with a clean 400, not a crash: OK');
 
     // 3) An unknown topic: 404, not a crash.
-    const r3 = await post(sport, '/api/retranslate-story', { topic: 'Does Not Exist' });
+    const r3 = await postJob(sport, '/api/retranslate-story', { topic: 'Does Not Exist' });
     assert(r3.status === 404, 'an unknown topic 404s (got ' + r3.status + ')');
     console.log('  an unknown topic 404s cleanly: OK');
 
     // 4) Missing BOTH `topic` and `topicId` in the body: 400, not a crash.
-    const r4 = await post(sport, '/api/retranslate-story', {});
+    const r4 = await postJob(sport, '/api/retranslate-story', {});
     assert(r4.status === 400, 'a missing topic/topicId 400s (got ' + r4.status + ')');
     console.log('  a body with neither topic nor topicId 400s cleanly: OK');
 
     // 5) v86_y: the storyline "read full story" page's own batch caller resolves by ID, not name —
     //    no name lookup, no ambiguity from a title collision. A second topic proves the SAME route
     //    handles both keys, not just whichever one happens to be tested first.
-    const r5 = await post(sport, '/api/retranslate-story', { topicId: 'tp_fixed' });
+    const r5 = await postJob(sport, '/api/retranslate-story', { topicId: 'tp_fixed' });
     assert(r5.status === 200, 'retranslate by topicId succeeds (got ' + r5.status + ' ' + JSON.stringify(r5.body) + ')');
     assert(r5.body.storyTranslation === 'Once upon a time there was a test. The cat and the house stayed the same.',
       'topicId path returns the same fresh translation as the topic-name path');
-    const r6 = await post(sport, '/api/retranslate-story', { topicId: 'tp_does_not_exist' });
+    const r6 = await postJob(sport, '/api/retranslate-story', { topicId: 'tp_does_not_exist' });
     assert(r6.status === 404, 'an unknown topicId 404s cleanly (got ' + r6.status + ')');
     console.log('  the SAME route also resolves by topicId (the storyline page\'s own batch caller), and an unknown id 404s cleanly: OK');
 
