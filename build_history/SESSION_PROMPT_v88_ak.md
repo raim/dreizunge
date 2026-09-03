@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_aj`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_ak`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -376,28 +376,28 @@ Verbatim where quoted:
    AND/OR description, so it is not a drop-in.
 
 2. **⚠️ LARGELY ANSWERED AT `v88_af`/`v88_ag` — some LLM-based jobs still have no cancel BUTTON.**
-   THREE routes are now converted (`/api/ui-translate`, `/api/story-qc`, `/api/summary-qc`), so the
-   pattern is proven twice over. **What remains is the REST of the `_jobsTracked` sync list** —
+   *(Rewritten at `v88_ak`: two successive edits had left this item with duplicated paragraphs.)*
+
+   **Original report** (user screenshot): "Erstelle Zusammenfassung" and "Neuer Titel…" ran in the
+   popover with no ✕. **Diagnosed**: those are `kind:'sync'` rows — the client-side placeholders
+   `v88_b` added via `_jobsInflight` so that BLOCKING LLM routes are at least visible. The cancel
+   button is gated on `j.kind === 'job'` (`_jobsRenderList`), and that is not an oversight: a sync
+   row has **no server-side job id** for `POST /api/jobs/cancel` to look up, so a ✕ there would be a
+   button that lies.
+
+   **THREE routes are now converted** to real jobs, which buys the listing AND the cancel from
+   machinery that already exists: `/api/ui-translate` (`v88_af`), `/api/story-qc` and
+   `/api/summary-qc` (`v88_ag`).
+
+   **What remains — five routes, listed but not cancellable**: `/api/retranslate-story`,
    `/api/storyline-title`, `/api/storyline-summary`, `/api/storyline-retitle`,
-   `/api/retranslate-story`, `/api/writing-feedback` — which are listed but not cancellable. Each is
-   the same mechanical conversion (`newJob` + `runCancellable` + a client poller; add a per-item
-   `CANCELLED` re-throw and a checkpoint only where there IS a loop). ⚠️ Still a RULING because each
-   turns a blocking route into a polled one, and `v88_ag` showed that carries its own risk: the
-   first shared poller looped forever on an unrecognised status and hung the suite. Ask before
-   converting more, and if asked, convert them together with ONE poller rather than one each.
-   The original diagnosis, unchanged: The
-   ui.json translation was one of them and is now a real, cancellable job, so **the conversion
-   pattern is proven and is the recommended answer for the rest**: `newJob` + `runCancellable` + a
-   per-item re-throw of `CANCELLED` + a per-item checkpoint, then a client poller. What remains is
-   WHICH of the other sync routes are worth converting — still a ruling, because each conversion
-   turns a blocking route into a polled one. The original diagnosis, unchanged (user screenshot:
-   "Erstelle Zusammenfassung", "Neuer Titel…"). Untouched by `v88_z`, which fixed cancels that were
-   swallowed, not buttons that are absent. **Diagnosed**: both are `kind:'sync'` rows — the
-   synchronous LLM routes `v88_b` surfaced in the popover from `_jobsInflight`. `_jobsRenderList`'s
-   `canCancel` is `j.kind === 'job' && …`, and the comment there explains why sync was excluded:
-   there is no server-side job id for `POST /api/jobs/cancel` to look up. So it needs either an
-   `AbortController` on the client fetch (stops the waiting, leaves the model running) **or** the
-   sync routes registering real cancellable jobs. Ask before building.
+   `/api/writing-feedback`. Each is the same mechanical conversion (`newJob` + `runCancellable` +
+   a client poller; add a per-item `CANCELLED` re-throw and a checkpoint only where there IS a loop).
+
+   ⚠️ **Still a RULING, not just work**: each conversion turns a BLOCKING route into a POLLED one,
+   which is a real behaviour change per call site. `v88_ag` showed the risk — the first shared poller
+   looped forever on an unrecognised status and hung the whole suite. **If asked to do them, convert
+   all five together behind ONE poller**, not one at a time.
 
 ⚠️ **A partial EXTRACTION is now a known failure mode, and it is not the same as a mislabelled
 field.** Measuring item 3 showed the two reported chapters are the same photographed sign as
@@ -439,33 +439,21 @@ node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
 
-**⚠️ `e2e-idle-release` FAILED AGAIN in the full run at `v88_ag`, and passed standalone.** Nothing in
-`v88_af`/`v88_ag` touches `releaseOllamaModel` or the idle timer — but those two releases added TWO
-new e2e files (`e2e-ui-translate`, `e2e-qc-job`), both of which hold model calls open with the slow
-fake, so suite load is genuinely higher than when this was characterised. **Per the standing
-instruction below, the NEXT occurrence should be met by INSTRUMENTING THE TICK COUNT, not by
-re-running until it passes** — this session did exactly one standalone re-run and is recording that
-rather than claiming the file is clear.
+**✅ `e2e-idle-release` IS EXPLAINED — it was never flaky, and `v88_ak` fixed the GUARD, not the
+server.** It failed in three consecutive full-suite runs with `a still-idle server does not release
+again on every tick (got 1 -> 2)` and passed standalone every time. Instrumenting it (as this file
+had instructed for two cuts) showed why: **`releaseConfiguredModels()` releases every configured role
+model IN PARALLEL, so ONE sweep writes one log entry PER MODEL** — two in the test harness (`fake`,
+plus the un-overridden VISION model `qwen2.5vl:7b`). The test counted ENTRIES as a proxy for SWEEPS,
+and §2 exited on the FIRST entry; under load the second entry of the same sweep landed during §3's
+sleep and was reported as a second release that never happened. The metric is now the number of
+SWEEPS (the highest per-model release count), which no intra-sweep interleaving can affect.
 
-**⚠️ `e2e-idle-release` is LOAD-SENSITIVE — newly characterised at `v88_aa`, and NOT cleared.**
-Failed once in a full-suite run with `a still-idle server does not release again on every tick
-(got 1 -> 2)` — the idle timer ticked twice inside the observation window. Measured **7 of 8 passes
-standalone**, and neither `v88_z` (catch blocks in `generate`/QC/recreate) nor `v88_aa` (client +
-tests) touches `releaseOllamaModel` or the idle timer. Treated as pre-existing timing sensitivity
-under load, NOT as a cleared flake and NOT as a regression — if it fails again, instrument the tick
-count rather than re-running until it passes.
-
-⚠️ **AND A REAL CONTRIBUTOR TO LOAD FLAKINESS WAS FOUND AND CLEARED at `v88_aa`**: FOUR orphaned
-`test/fake-ollama.js` servers were still listening, the oldest **29 hours** old, leaked from e2e runs
-whose `fake.child.kill()` never fired (several from interrupted mutation batches). They hold ports.
-An unexplained `e2e-writing` failure earlier in that session is plausibly theirs and should NOT be
-considered diagnosed. **Check `ps -eo pid,cmd | grep '[f]ake-ollama'` before trusting a load flake.**
-
-⚠️ **A wait-loop trap that cost 20 leaked processes**: `until ! pgrep -f "test/run.js"; do sleep; done`
-NEVER EXITS — `pgrep -f` matches the waiting shell's OWN command line, which contains that string.
-Twenty of them span for up to 11 hours. Wait on the OUTPUT FILE instead (`until tail -1 out.txt |
-grep -qE '^(ALL CHECKS PASSED|FAILED [0-9]+ of)'`), or bracket the pattern (`"[t]est/run.js"`). Same
-family as the standing `pkill -f "node server.js"` warning, from the other direction.
+⚠️ **NOT "cleared", and the file says so itself.** The fix is justified by CONSTRUCTION, not by
+reproducing the failure: the OLD counting passed **6/6** under three busy-loop CPU hogs, so that load
+does not recreate the race and cannot distinguish the versions. What is pinned deterministically is
+the METRIC (a new §0). **If it fails again, capture the actual entry arrival times from the failing
+run — do not re-run it.**
 
 **⚠️ `unit-tap-word` is NO LONGER FLAKY** — its ~35% failure rate from `v80_t` to `v87_h` was a REAL
 DEFECT (`Math.random()` in `tapWord()`), fixed at `v87_i`. A failure there now is a genuine
@@ -499,7 +487,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **343 topics, 97 storylines, 33 languages, 755 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_aj'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_ak'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to

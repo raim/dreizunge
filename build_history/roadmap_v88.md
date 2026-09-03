@@ -2424,6 +2424,59 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_ak — `e2e-idle-release` was never flaky: the guard was counting the wrong thing
+
+**ZERO `ui.json` keys, ZERO product changes.** The server was right the whole time.
+
+### The instruction was to instrument, and instrumenting is what found it
+
+`e2e-idle-release` failed in three consecutive full-suite runs with `a still-idle server does not
+release again on every tick (got 1 -> 2)` and passed standalone every time. It had been carried as
+"LOAD-SENSITIVE, NOT cleared" since `v88_aa`, with a standing instruction — written precisely to stop
+the "ran it again, it was fine" reflex — to **instrument the tick count rather than re-run until it
+passes**. This release finally did that.
+
+**Measured directly**, with a probe that recorded every `keep_alive: 0` entry, its model and its
+arrival offset against a genuinely idle server:
+
+```
+TOTAL ENTRIES: 2
+DISTINCT MODELS: 2 {"fake":1,"qwen2.5vl:7b":1}
+SWEEPS (max per-model count): 1
+ARRIVAL OFFSETS (ms): [1608,1608]
+```
+
+**One sweep, two log entries.** `releaseConfiguredModels()` releases every configured role model IN
+PARALLEL, so a single sweep writes one entry PER MODEL — two here, because `boot()` overrides the
+story/lesson/translation models but not the VISION one (`qwen2.5vl:7b`). The test's
+`releases().length` therefore counted MODELS, not sweeps.
+
+§2 broke out of its wait as soon as the FIRST entry appeared. Standalone, the two parallel calls land
+inside the same 200ms poll (measured spread: **0 ms**), so `before` was already 2 and §3 passed.
+Under suite load they can straddle a poll boundary: §2 exits at 1, the second entry of the SAME sweep
+lands during §3's sleep, and §3 reports a second release **that never happened**. `1 -> 2` is exactly
+that arithmetic.
+
+### The fix, and ⚠️ what is NOT proven
+
+The metric is now the number of SWEEPS — the highest number of times any ONE model was released. A
+real second sweep must re-release every model, so any model appearing twice means two sweeps, and
+that is immune both to how many models a sweep covers and to how their parallel calls interleave. §2
+also waits for a COMPLETE sweep rather than the first entry of one.
+
+⚠️ **The fix is justified by construction, NOT by reproducing the failure — and that distinction is
+recorded in the file itself.** Running the OLD counting six times under three busy-loop CPU hogs
+passed **6/6**, so that load did not recreate the race and cannot tell the two versions apart. What
+is proven is the MECHANISM (measured above) and the METRIC: a new deterministic §0 asserts that one
+sweep over two models counts as one, a half-observed sweep counts as one, and two genuine sweeps
+count as two. **This file is therefore still not "cleared"** — if it fails again, the next step is to
+capture the actual entry arrival times from the failing run, not to re-run it. Said plainly in the
+test, so the next session inherits the honest version rather than a claim of victory.
+
+**Three mutations red**: the server's release-once latch removed (§3 still catches a genuine per-tick
+re-release — the guard did not lose its teeth); the metric collapsed back to entry-counting; and the
+metric hardcoded to always answer "one sweep".
+
 ## ✅ v88_aj — the storyboard/images switch moved into the storyboard menu, and a live outage I caused
 
 User request: *"Let's move the button to switch between storyboard and images INTO the storyboard
