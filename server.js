@@ -255,7 +255,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_ah';
+const APP_VERSION  = 'v88_ai';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -10256,7 +10256,10 @@ function configuredModels() {
 // Reuses releaseConfiguredModels() wholesale (built for the shutdown path at `v88_g`): same
 // de-duplication of the five role models, same parallel calls, same no-op when BACKEND is 'none'.
 const IDLE_RELEASE_MS = Math.max(0, parseInt(process.env.IDLE_RELEASE_MS || '', 10)
-  || 30 * 60 * 1000);   // 30 min (user's ruling). 0 via env disables the sweep entirely.
+  // v88_ai: 60 min (user's ruling, raised from the 30 min set at v88_l — a model reloaded from cold
+  // costs more than the VRAM it was holding, on their own usage pattern). 0 via env disables the
+  // sweep entirely.
+  || 60 * 60 * 1000);
 // Env-overridable so a test can drive the sweep without sitting for half an hour. Not a test-only
 // backdoor: a deployment with different habits can tune both, and IDLE_RELEASE_MS=0 disables it.
 const _IDLE_TICK_MS = Math.max(100, parseInt(process.env.IDLE_TICK_MS || '', 10) || 60 * 1000);

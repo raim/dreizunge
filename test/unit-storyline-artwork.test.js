@@ -189,4 +189,69 @@ console.log('  _slThumbToggleHtml(): teacher-gated, only when there IS a choice,
 }
 console.log('  the toggle is emitted by the library card, the storyline screen AND the lesson-set page: OK');
 
+// ⚠️ The sections below are the file's only ASYNC ones (toggleSlThumbMode awaits its own POST),
+// so they live in an IIFE: this file is otherwise top-level-synchronous CommonJS, where a bare
+// `await` is a parse error (ERR_AMBIGUOUS_MODULE_SYNTAX), not a runtime one.
+(async () => {
+// Its own fixture: §6's `SL` is block-scoped to that section, and widening a scope so a later block
+// can borrow it couples two sections that otherwise share nothing.
+const SL_ART = { id:'sl_x', storyboard:'<svg/>', chapters:['a','b'] };
+
+// ── v88_ai: flipping the mode REPAINTS every surface, not just the library ─────────────────────
+// ⚠️ User report: "Switching between storyboard and images requires a reload to take effect."
+// `toggleSlThumbMode` only ever called `loadSavedList()`, which rebuilds the LIBRARY — so pressing
+// the button on the storyline screen or the lesson-set card persisted the flip and left the artwork
+// beside it stale. Exactly `v86_ad`'s standing lesson ("a second surface over shared state needs the
+// repaint path widened too"), here with FOUR surfaces offering the control and one being repainted.
+//
+// Asserted behaviourally, by counting the renders each surface performs, not by reading the source.
+{
+  const C = loadClient({ quiet: true });
+  const out = C.run(`(function(){
+    APP._teacherMode = true;
+    APP.storylines = [${JSON.stringify(SL_ART)}];
+    APP._slScreen = { chainId:'sl_x', encodedChain:'%5B%5D', topics:[] };
+    var calls = { sl:0, path:0, lib:0 };
+    _renderStorylineScreen = function(){ calls.sl++; };
+    buildPath = function(){ calls.path++; };
+    loadSavedList = function(){ calls.lib++; return Promise.resolve(); };
+    fetch = function(){ return Promise.resolve({ ok:true, json:function(){ return Promise.resolve({}); } }); };
+    return toggleSlThumbMode('sl_x').then(function(){
+      return JSON.stringify({ calls: calls, mode: APP.storylines[0].thumbMode });
+    });
+  })()`);
+  const r = JSON.parse(await out);
+  assert.strictEqual(r.mode, 'images', 'the flip still happens (non-vacuity: the toggle ran)');
+  assert.strictEqual(r.calls.lib, 1, 'the library is still refreshed, as before');
+  assert.strictEqual(r.calls.sl, 1,
+    'and the STORYLINE SCREEN is repainted — the surface the user was looking at when they reported this');
+  assert.strictEqual(r.calls.path, 1, 'and the lesson-set page, which offers the same button');
+  console.log('  flipping the artwork mode repaints every surface that shows it, with no reload: OK');
+}
+
+// The repaint must be safe when those surfaces are NOT up — the library card is the common case,
+// and a toggle pressed there must not try to render a storyline screen that does not exist.
+{
+  const C = loadClient({ quiet: true });
+  const out = C.run(`(function(){
+    APP._teacherMode = true;
+    APP.storylines = [${JSON.stringify(SL_ART)}];
+    APP._slScreen = null;
+    var calls = { sl:0 };
+    _renderStorylineScreen = function(){ calls.sl++; };
+    buildPath = function(){ throw new Error('no lesson-set page'); };
+    loadSavedList = function(){ return Promise.resolve(); };
+    fetch = function(){ return Promise.resolve({ ok:true, json:function(){ return Promise.resolve({}); } }); };
+    return toggleSlThumbMode('sl_x').then(function(){
+      return JSON.stringify({ sl: calls.sl, mode: APP.storylines[0].thumbMode });
+    }).catch(function(e){ return JSON.stringify({ threw: String(e.message) }); });
+  })()`);
+  const r = JSON.parse(await out);
+  assert.ok(!r.threw, 'a toggle from the library does not throw when the other surfaces are absent (got ' + r.threw + ')');
+  assert.strictEqual(r.sl, 0, 'and does not render a storyline screen that is not open');
+  assert.strictEqual(r.mode, 'images', 'while still performing the flip');
+  console.log('  and degrades safely when those surfaces are not open: OK');
+}
+
 console.log('unit-storyline-artwork: ALL PASSED');
+})().catch(e => { console.error(e); process.exit(1); });

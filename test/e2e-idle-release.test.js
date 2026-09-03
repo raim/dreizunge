@@ -1,7 +1,10 @@
 // E2E (live server + fake Ollama): item AU, idle release third (v88_l) — models are freed from VRAM
 // after a period with no model use.
 //
-// User's ruling: "release after 30 min idle is ok." That window is THEIRS, not a default this code
+// User's ruling at v88_l: "release after 30 min idle is ok" — RAISED TO 60 MIN at v88_ai on their
+// own follow-up ("Increase idle time before releasing models from 30 min to 60 min"), because a
+// model reloaded from cold costs more than the VRAM it was holding on their usage. That window
+// is THEIRS, not a default this code
 // picked, because the cost is real: releasing means the next generation pays a full model reload,
 // which on a 35B model is tens of seconds before the first token. `keep_alive: -1` exists precisely
 // to avoid that, so the tradeoff had to be priced by the person whose machine it is.

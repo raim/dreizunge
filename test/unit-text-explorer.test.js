@@ -729,9 +729,13 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
   function explorerClient(){
     const C = loadClient({ quiet: true });
     C.run(SEED_COMMON + `
+      // v88_ai: curating an analysis is an authoring act and is teacher-mode only, so every section
+      // that exercises the editor has to be IN teacher mode. The gate itself is asserted separately
+      // below, with the flag off.
+      APP._teacherMode = true;
       APP.lessonData = ${JSON.stringify(TOPIC_NL)};
       _teCacheStore()['tp_te1'] = { status:'ready', data: ${JSON.stringify(ANA)} };
-      __HTML = _textExplorerBodyHtml(${JSON.stringify(TOPIC_NL)});
+      __HTML = _textExplorerBodyHtml(${JSON.stringify(TOPIC_NL)}, { curator: true });
       true;`, 'te-seed');
     return C;
   }
@@ -789,6 +793,19 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
     const C = explorerClient();
     const html = C.run('__HTML');
     assert.ok(html.includes('te-fixbar'), 'the unresolved worklist bar renders when there is something to fix');
+    // ⚠️ v88_ai (user, live: "The ▤ button ... currently has no effect"). The ids were interpolated
+    // with JSON.stringify, whose DOUBLE quotes closed the double-quoted onclick attribute — so both
+    // buttons emitted a truncated handler and did nothing. The old assertion here merely checked the
+    // markup CONTAINED the function name, which is equally true of the broken version: a proxy that
+    // passed over a button that could not work. Asserted on the whole, well-formed attribute now.
+    assert.ok(html.includes(`onclick="event.stopPropagation();_teOpenCuratorTable('tp_te1')"`),
+      'the table button carries a COMPLETE, single-quoted onclick — double quotes would end the '
+      + 'attribute and make it inert (got: ' + (html.match(/<button[^>]*te-fixbtn[^>]*>▤/) || [''])[0] + ')');
+    assert.ok(html.includes(`onclick="event.stopPropagation();_teJumpUnresolved('tp_te1')"`),
+      'and so does the worklist jump');
+    // v88_ai: BELOW the text, not above.
+    assert.ok(html.indexOf('te-fixbar') > html.indexOf('te-tok'),
+      'and the bar sits BELOW the story text (user ruling)');
     assert.ok(html.includes('2 · ' + UI.en['text_explorer.unresolved']),
       'and states how many tokens are unresolved, reusing text_explorer.unresolved (got: '
         + (html.match(/te-fixbtn[^>]*>([^<]*)</) || ['', ''])[1] + ')');
@@ -1028,6 +1045,96 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
     await settle();
     assert.strictEqual(C.run('window.__res'), true, 'a failed impact check proceeds rather than blocking the save');
     console.log('  the story-rewrite warning fires only when corrections are at risk, and fails open: OK');
+  }
+
+  // ── v88_ai: the whole editing feature is TEACHER-MODE only ────────────────────────────────────
+  // User ruling: "Editing text analysis should ONLY work in teacher mode." Asserted across all
+  // THREE surfaces at once, because they share one gate (`_teCanEdit`) and a per-surface check is
+  // how two of them would eventually disagree — the same reasoning that put the text rule in one
+  // function at v88_ab.
+  {
+    const C = loadClient({ quiet: true });
+    C.run(SEED_COMMON + `
+      APP._teacherMode = false;
+      APP.lessonData = ${JSON.stringify(TOPIC_NL)};
+      _teCacheStore()['tp_te1'] = { status:'ready', data: ${JSON.stringify(ANA)} };
+      __HTML = _textExplorerBodyHtml(${JSON.stringify(TOPIC_NL)}, { curator: true });
+      true;`, 'te-seed-student');
+
+    assert.strictEqual(C.run('_teCanEdit()'), false, 'a learner cannot edit the analysis');
+    const html = C.run('__HTML');
+    assert.ok(!html.includes('te-fixbar'), 'no worklist bar for a learner');
+    assert.ok(!html.includes('_teOpenCuratorTable'), 'and no way into the curator table');
+    // The READING half must survive: the explorer is a learner feature, only the editing is not.
+    assert.ok(html.includes('te-tok'), 'but the analysed words still render — reading is unaffected');
+    assert.ok(html.includes('landschap'), 'including the text itself');
+
+    const pop = C.run(`
+      var el = { dataset: { surface:'landschap', lemma:'', form:'', sense:'', conf:'unresolved',
+                            cid:'tp_te1', si:'0', occ:'0' } };
+      _teShowWordPopover({ clientX:10, clientY:10 }, el);
+      (_teWordPopEl && _teWordPopEl.innerHTML) || '';`, 'pop-student');
+    assert.ok(!pop.includes('te-edit-lemma'), 'the token popover is read-only for a learner');
+    assert.ok(pop.includes(UI.en['text_explorer.unresolved']),
+      'and still explains why the word has no analysis');
+
+    // The table cannot be opened even by calling it directly — the gate is in the function, not
+    // only in the markup that offers it.
+    C.run(`_teOpenCuratorTable('tp_te1'); true;`, 'table-student');
+    assert.strictEqual(C.run('_teTableOverlayEl'), null,
+      'and _teOpenCuratorTable refuses outright, not just hidden behind a missing button');
+    console.log('  editing the analysis is teacher-mode only, on all three surfaces (v88_ai): OK');
+  }
+
+  // ── v88_ai: the curator affordances are LESSON-SET ONLY ───────────────────────────────────────
+  // User ruling: "it should only be shown in the lesson-set teacher view edit interface, NOT in the
+  // progress cards' text analysis view." Three surfaces share this renderer, so the claim is about
+  // the OPT-IN: a caller that does not ask gets the reading view.
+  {
+    const C = explorerClient();
+    const reading = C.run(`_textExplorerBodyHtml(${JSON.stringify(TOPIC_NL)})`);
+    assert.ok(!reading.includes('te-fixbar'),
+      'the progress card and question card (which pass no options) get NO curator bar');
+    assert.ok(!reading.includes('_teOpenCuratorTable'), 'and no table button at all');
+    // Non-vacuity: the same chapter, same teacher mode, WITH the opt-in, does show it — so the
+    // absence above is the opt-in talking and not some other state.
+    const curating = C.run(`_textExplorerBodyHtml(${JSON.stringify(TOPIC_NL)}, { curator: true })`);
+    assert.ok(curating.includes('te-fixbar'), 'while the lesson-set card, which opts in, does');
+    // And the reading view still reads: this must narrow the AFFORDANCES, not the analysis.
+    assert.ok(reading.includes('te-tok') && reading.includes('landschap'),
+      'the analysed text itself is unchanged on the reading surfaces');
+    console.log('  the curator bar is lesson-set only; the other surfaces still render the analysis: OK');
+  }
+
+  // ⚠️ SET-LEVEL: exactly ONE caller may opt in. Behavioural guards cover "what the renderer does
+  // with the flag" and "the lesson-set card passes it" — but neither can catch a THIRD surface
+  // starting to pass it, which is precisely the change the user's ruling forbids. v88_b's rule:
+  // when a property must hold across every call site, assert over the whole set, not the one you
+  // happened to touch. Source-layer because "how many callers pass this" has no runtime form.
+  {
+    const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+    // The DEFINITION matches this pattern too — and excluding it by testing the matched text for
+    // "function" does not work, because that word sits BEFORE the match. Excluded by looking at what
+    // precedes each match index instead. (Found by the guard reporting 2 curating call sites on a
+    // correct tree: the definition's own body contains the word.)
+    const calls = [...src.matchAll(/_textExplorerBodyHtml\(([^;]*?)\)[;\s}]/g)]
+      .filter(m => src.slice(Math.max(0, m.index - 9), m.index) !== 'function ')
+      .map(m => m[0]);
+    const curating = calls.filter(c => /curator/.test(c));
+    assert.strictEqual(curating.length, 1,
+      'exactly ONE call site asks for the curator affordances (got ' + curating.length + ': '
+        + JSON.stringify(curating) + ')');
+    // …and it is the lesson-set one. Identified by the element it paints into, which is what makes
+    // it that surface: #story-body is the lesson-set card's own body.
+    const at = src.indexOf(curating[0]);
+    const before = src.slice(Math.max(0, at - 400), at);
+    assert.ok(/body\.innerHTML/.test(before) || /story-body/.test(before),
+      'and it is the lesson-set card\'s render, not another surface (context: '
+        + JSON.stringify(before.slice(-120)) + ')');
+    // Non-vacuity: there really are several call sites, so "exactly one" is a constraint.
+    assert.ok(calls.length >= 3,
+      'non-vacuity: the renderer has multiple callers (got ' + calls.length + ')');
+    console.log('  exactly one surface opts into the curator affordances, and it is the lesson-set card: OK');
   }
 
   console.log('unit-text-explorer: ALL PASSED');

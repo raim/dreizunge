@@ -127,6 +127,14 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .sl-screen-title-row{display:flex;align-items:center;gap:10px;padding-bottom:6px}
 .sl-screen-title{flex:1;font-size:17px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sl-screen-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* item Y (v88_ai): the storyline header's authoring popover. Anchored under the title row rather
+   than `position:fixed` — it belongs to this page's own header, scrolls with it, and so needs none
+   of the viewport-clamping the jobs/tutor popovers do. */
+.sl-edit-pop{margin:4px 0 0;padding:6px;background:var(--white);border:2px solid var(--gray-mid);
+  border-radius:var(--radius-lg);box-shadow:0 6px 20px rgba(0,0,0,.18);max-width:280px}
+.sl-edit-pop-row{display:flex;align-items:center;gap:8px;padding:2px}
+.sl-edit-pop-lbl{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
 .sl-screen-back{background:none;border:2px solid var(--gray-mid);cursor:pointer;font-size:12px;font-weight:800;color:var(--gray-dark);padding:5px 10px;border-radius:var(--radius);font-family:'Nunito',sans-serif}
 .sl-screen-home{background:none;border:none;cursor:pointer;font-size:24px;line-height:1;padding:0;margin:0;display:flex;align-items:center;justify-content:center}
 .sl-screen-home:hover{transform:scale(1.08)}
@@ -2343,17 +2351,40 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <div class="sl-screen-title-row">
         <button class="sl-screen-home" onclick="showLibraryClean()" title="Home">🌍</button>
         <span class="sl-screen-title" id="sl-screen-title" style="cursor:default">📖</span>
-        <button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="Edit title" style="display:none">✏️</button>
-        <button class="sl-screen-share" id="sl-screen-gen-btn" onclick="openRetitleMenu(event)" title="Re-generate titles" style="display:none">✨</button>
-        <button class="sl-screen-share" id="sl-screen-summary-btn" onclick="genStorylineSummary()" title="Generate summary" style="display:none">📝</button>
-        <button class="sl-screen-share" id="sl-screen-storyboard-btn" onclick="onStorylineStoryboardBtn()" title="Generate storyboard" style="display:none">🎬</button>
-        <button class="sl-screen-share" id="sl-screen-qc-btn" title="" style="display:none">🔍</button>
+        <!-- ⚠️ item Y (v88_ai) — the header's five authoring buttons moved BEHIND this one pencil.
+             User request, and the roadmap has carried it since the v87 line: "move all edit buttons
+             of the storyline page header row behind a single edit pencil and show all edit buttons
+             as a popover". The two the user explicitly EXCLUDED stay in the row beside it: "Dont
+             include the share link and the new play button in the requested popover ... keep these
+             two in the header, next to the new edit pencil."
+             The buttons themselves are UNCHANGED and merely relocated into #sl-screen-edit-pop
+             below, so every existing handler, title string and per-button visibility rule in
+             _renderStorylineScreen keeps working untouched — the popover mirrors their state rather
+             than re-deciding it. -->
+        <button class="sl-screen-share" id="sl-screen-edit-menu-btn" onclick="event.stopPropagation();toggleSlEditMenu(event)" title="" style="display:none">✏️</button>
         <!-- v88_p (user request): "the teacher play button should also be available on the storyline
              card, not just on the main page". Same walk, same teacher gate — the storyline screen is
              where a teacher actually reviews a story, so it is the more natural home of the two.
              Shown/hidden in _renderStorylineScreen alongside the other teacher controls. -->
         <button class="sl-screen-share" id="sl-screen-walk-btn" onclick="walkStorylineFromScreen()" title="" style="display:none">▶</button>
         <button class="sl-screen-share" id="share-storyline-btn" onclick="shareStoryline()" title="Share">🔗</button>
+      </div>
+      <!-- The popover. Each row is the ORIGINAL button plus a label filled in at open time from that
+           button's own `title` attribute — so the labels are always exactly the strings
+           _applyUIStrings already set, in whatever UI language, and this costs ZERO new ui.json
+           keys. A row hides itself when its button is hidden, so the existing visibility logic
+           stays the single source of truth. -->
+      <div id="sl-screen-edit-pop" class="sl-edit-pop" style="display:none">
+        <div class="sl-edit-pop-row" id="row-sl-screen-edit-btn"><button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="Edit title" style="display:none">✏️</button><span class="sl-edit-pop-lbl" id="lbl-sl-screen-edit-btn"></span></div>
+        <div class="sl-edit-pop-row" id="row-sl-screen-gen-btn"><button class="sl-screen-share" id="sl-screen-gen-btn" onclick="openRetitleMenu(event)" title="Re-generate titles" style="display:none">✨</button><span class="sl-edit-pop-lbl" id="lbl-sl-screen-gen-btn"></span></div>
+        <div class="sl-edit-pop-row" id="row-sl-screen-summary-btn"><button class="sl-screen-share" id="sl-screen-summary-btn" onclick="genStorylineSummary()" title="Generate summary" style="display:none">📝</button><span class="sl-edit-pop-lbl" id="lbl-sl-screen-summary-btn"></span></div>
+        <div class="sl-edit-pop-row" id="row-sl-screen-storyboard-btn"><button class="sl-screen-share" id="sl-screen-storyboard-btn" onclick="onStorylineStoryboardBtn()" title="Generate storyboard" style="display:none">🎬</button><span class="sl-edit-pop-lbl" id="lbl-sl-screen-storyboard-btn"></span></div>
+        <div class="sl-edit-pop-row" id="row-sl-screen-qc-btn"><button class="sl-screen-share" id="sl-screen-qc-btn" title="" style="display:none">🔍</button><span class="sl-edit-pop-lbl" id="lbl-sl-screen-qc-btn"></span></div>
+        <!-- ⚠️ MOVED HERE FROM INSIDE #sl-tag-editor, where it had been sitting since it was added:
+             that container is `display:none` unless the tag editor is open, so "Delete storyline"
+             was only ever reachable by opening the TAG editor first. A pre-existing bug, found by
+             relocating the row rather than by a report. -->
+        <div class="sl-edit-pop-row" id="row-sl-screen-del-btn"><button class="sl-screen-share" id="sl-screen-del-btn" onclick="deleteCurrentStoryline()" style="color:var(--red);display:none" title="Delete storyline">🗑️</button><span class="sl-edit-pop-lbl" id="lbl-sl-screen-del-btn"></span></div>
       </div>
       <!-- v69_r: the v65.1 global-threshold row that used to sit here has been REMOVED. It was a
            SECOND, older pass-mark control (it set the GLOBAL default via /api/coverage-threshold and
@@ -2376,7 +2407,6 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           <button class="storyline-hdr-btn" onclick="saveSlTags()">Save</button>
           <button class="storyline-hdr-btn" onclick="closeSlTagEditor()">✕</button>
         </div>
-        <button class="sl-screen-share" id="sl-screen-del-btn" onclick="deleteCurrentStoryline()" style="color:var(--red);display:none" title="Delete storyline">🗑️</button>
       </div>
       <div id="sl-screen-edit-row" style="display:none;padding:8px 0 0;gap:6px;align-items:center;flex-wrap:wrap">
         <span id="sl-screen-edit-icon-wrap" style="position:relative;display:inline-block"><span id="sl-screen-edit-icon" class="icon-picker-btn" onclick="openIconPicker('sl-screen-edit-icon','sl-edit')">📖</span></span>
@@ -6851,7 +6881,9 @@ function renderStoryText(d, targetEl){
     // of sitting on "Loading…". Terminates: _ensureTextExplorerData creates the 'loading' entry
     // BEFORE it repaints, so the repaint this triggers finds an entry and does not re-fire.
     try { if (d && d.id && !_teCacheStore()[d.id]) _ensureTextExplorerData(d.id); } catch(_) {}
-    try { body.innerHTML = _textExplorerBodyHtml(d); }
+    // v88_ai: the ONLY surface that gets the curator affordances — the user's ruling. The progress
+    // card and the question card render the same analysis for READING.
+    try { body.innerHTML = _textExplorerBodyHtml(d, { curator: true }); }
     catch(_) { body.textContent = d.story||''; }
   } else {
     const full = showingSource ? _xlate : (d.story||'');
@@ -165084,12 +165116,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v88_ah', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v88_ai', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"2fe6e92e8517","lessons.json":"156a09d9c953","ui.json":"65b74537b8af","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"c91e65d377b1","analysis-corrections.json":"missing","build-static.js":"3bcdb2d82139"};
+  APP.buildSources = {"index.html":"23c882d25ec0","lessons.json":"156a09d9c953","ui.json":"65b74537b8af","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"c91e65d377b1","analysis-corrections.json":"missing","build-static.js":"3bcdb2d82139"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -167124,6 +167156,59 @@ function _lessonTypesDropdownHtml(s) {
 // pass mark is rendered by the #sl-passmark block further down _renderStorylineScreen.
 function _refreshSlThreshold(){ /* removed — see #sl-passmark */ }
 
+// ── item Y (v88_ai): the storyline header's edit popover ─────────────────────────────────────────
+// Deliberately NOT a re-implementation of the five buttons. They are the SAME elements, relocated,
+// so `_renderStorylineScreen`'s existing per-button visibility rules and `_applyUIStrings`' existing
+// title strings remain the single source of truth for both. This function only MIRRORS that state
+// onto the rows and fills each label from its own button's `title` — which is why the feature costs
+// zero new ui.json keys and cannot drift out of sync with the buttons it presents.
+// The buttons this menu presents, in the order they appear. An explicit list rather than a class
+// query over the container: every element is then addressable by id, which is what the DOM test
+// harness can actually observe (element-scoped querySelectorAll is not modelled there — the same
+// limitation unit-jobs-popover ran into with `Element.contains`), and it states in one place which
+// controls belong to the menu instead of leaving that to markup archaeology.
+const _SL_EDIT_MENU_BTNS = ['sl-screen-edit-btn', 'sl-screen-gen-btn', 'sl-screen-summary-btn',
+                            'sl-screen-storyboard-btn', 'sl-screen-qc-btn', 'sl-screen-del-btn'];
+function _slEditMenuSync(){
+  const pop = document.getElementById('sl-screen-edit-pop');
+  if (!pop) return 0;
+  let shown = 0;
+  _SL_EDIT_MENU_BTNS.forEach(id => {
+    const btn = document.getElementById(id);
+    const row = document.getElementById('row-' + id);
+    const lbl = document.getElementById('lbl-' + id);
+    if (!btn || !row) return;
+    const on = btn.style.display !== 'none';
+    row.style.display = on ? 'flex' : 'none';
+    if (on) shown++;
+    // The row already SHOWS the button, so a title that starts with the same icon ("✨ Generate
+    // title") would print the glyph twice side by side. Strip a leading non-letter glyph plus its
+    // space; titles that are plain words ("Edit title") are untouched.
+    if (lbl) lbl.textContent = String(btn.title || '').replace(/^[^\p{L}\p{N}]+\s/u, '');
+  });
+  // The pencil is worth showing only when it opens onto something. A menu button that opens an
+  // empty menu is the "dead button" this project already ruled against for the cancel affordance.
+  const menuBtn = document.getElementById('sl-screen-edit-menu-btn');
+  if (menuBtn) menuBtn.style.display = shown ? '' : 'none';
+  return shown;
+}
+function _slEditMenuClose(){
+  const pop = document.getElementById('sl-screen-edit-pop');
+  if (pop) pop.style.display = 'none';
+}
+function toggleSlEditMenu(ev){
+  const pop = document.getElementById('sl-screen-edit-pop');
+  if (!pop) return;
+  const open = pop.style.display !== 'none';
+  if (open) { _slEditMenuClose(); return; }
+  _slEditMenuSync();
+  pop.style.display = 'block';
+  // Dismiss on the next click ANYWHERE else. The rows' own buttons keep their existing handlers —
+  // several of them (openRetitleMenu, the storyboard menu) open a SECOND popover of their own, so
+  // this one must be out of the way by then rather than sitting behind it.
+  setTimeout(() => document.addEventListener('click', _slEditMenuClose, { once: true }), 0);
+}
+
 function _renderStorylineScreen(chainId, encodedChain, topics) {
   try{ _refreshSlThreshold(); }catch(_){}
   // Title — look up from v29 array first, then legacy object
@@ -167216,6 +167301,10 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   }
   const delBtn = document.getElementById('sl-screen-del-btn');
   if (delBtn) delBtn.style.display = APP.info.canGenerate ? '' : 'none';
+  // item Y (v88_ai): every rule above has just run, so this is the point at which the popover's
+  // rows and the pencil's own visibility can be derived from them. Closed on every render — a
+  // re-render means the page changed underneath it.
+  try { _slEditMenuClose(); _slEditMenuSync(); } catch(_) {}
   // Bottom action row (continue / download / clear / delete / re-create all).
   const bottomRow = document.getElementById('sl-bottom-row');
   if (bottomRow) bottomRow.style.display = 'flex';
@@ -167316,8 +167405,10 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   // the toggle belongs HERE too, not only on the library card, since this screen is where a teacher
   // looking at one storyline actually is. Placed directly above the artwork it governs, right-aligned
   // so it reads as a control ON that strip rather than part of the chapter list below.
-  // User request: re-order / split / add-existing, teacher-only, where the chapters actually are.
-  html += _slManageHtml(slMeta, _slArtIds);
+  // ⚠️ v88_ai (user request): "The chapter reordering menu on the storyline card should be moved
+  // down, below the summary field, and above the chain of chapter fields." It used to render HERE,
+  // above the artwork — which put a control ABOUT the chapter list two sections away from the list
+  // it edits. It is now emitted after the summary block; see `_slManageHtml`'s call site below.
   const _slToggle = _slThumbToggleHtml(slMeta, _slArtIds);
   if (_slToggle) html += '<div style="display:flex;justify-content:flex-end;margin:4px 0 0">' + _slToggle + '</div>';
   html += '<div class="storyline-storyboard" id="slsb-screen-' + chainId.replace(/[^a-zA-Z0-9_-]/g,'_')
@@ -167342,6 +167433,10 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
         + '<div id="sum-qc-panel" style="display:none;margin:0 16px 12px;font-size:12px;border-top:1.5px solid var(--gray-mid);padding-top:10px"></div>'
         + '</div>';
   APP._slScreen._summaryQcSlId = chainId; // for the QC handlers
+
+  // v88_ai: the chapter management row (re-order / split / add-existing), teacher-only. Directly
+  // above the chapter cards it acts on, and below the summary — the user's own placement.
+  html += _slManageHtml(slMeta, _slArtIds);
 
   // Chapter cards — branching tree renderer
   // Build global successor map from all saved topics
@@ -167793,6 +167888,25 @@ async function toggleSlThumbMode(slId){
       body: JSON.stringify({ slId, thumbMode: next }) });
   } catch(e) { /* offline: the local flip still stands for this session, same as other card edits */ }
   try { await loadSavedList(); } catch(_) {}
+  _slArtRepaint();
+}
+
+// ⚠️ v88_ai (user report): "Switching between storyboard and images requires a reload to take
+// effect, can it be loaded directly w/o a full page reload?" — and the cause is exactly `v86_ad`'s
+// standing lesson, from the other direction: the toggle is offered on FOUR surfaces
+// (`_slThumbToggleHtml` is rendered by `loadSavedList`'s own card, `buildPath`'s lesson-set card,
+// and `_renderStorylineScreen`), but the flip only ever called `loadSavedList()` — which rebuilds
+// the LIBRARY and nothing else. So pressing it on the storyline screen or the lesson-set card
+// updated the data, persisted it, flipped the button's own icon, and left the artwork beside it
+// stale until a reload.
+//
+// One repaint helper, every surface that can show the artwork, each guarded by whether it is
+// actually up. Same shape as `_teRepaint` — which exists for the identical reason on the analysis
+// cache — so a fifth surface has one obvious place to be added rather than a fourth call site to
+// be forgotten.
+function _slArtRepaint(){
+  try { if (APP._slScreen) _renderStorylineScreen(APP._slScreen.chainId, APP._slScreen.encodedChain, APP._slScreen.topics); } catch(_) {}
+  try { if (typeof buildPath === 'function') buildPath(); } catch(_) {}
 }
 
 function _openStorylineForTopic(topicName) {
@@ -178539,7 +178653,14 @@ function _startTextExplorerJob(chapterId, jobId){
 // The view itself. Built DIRECTLY from the cached per-sentence CP1/CP2 data (text + tokens), not by
 // highlighting an already-rendered story — see _teSentenceHtml for why that alignment is safer than
 // a shared regex pass over the whole story the way _highlightVocabHtml works for the vocab view.
-function _textExplorerBodyHtml(d){
+// `opts.curator` — render the curator affordances (the worklist jump and the ▤ table button).
+// ⚠️ v88_ai (user ruling): "it should only be shown in the lesson-set teacher view edit interface,
+// NOT in the progress cards' text analysis view." THREE surfaces share this ONE renderer (the
+// lesson-set card, the progress card and the question card), so the surface cannot be inferred from
+// here — the caller has to say. Only `renderStoryText`'s lesson-set branch passes it; a caller that
+// says nothing gets the reading view, which is the right default for the two learner-facing ones.
+function _textExplorerBodyHtml(d, opts){
+  const _curator = !!(opts && opts.curator);
   const chapterId = d && d.id;
   const wrap = html => '<div class="story-selectable">' + html + '</div>';
   if (!chapterId) return '<p class="te-status" dir="auto">' + escHtml(t('text_explorer.error', { error: 'no chapter id' })) + '</p>';
@@ -178566,8 +178687,10 @@ function _textExplorerBodyHtml(d){
   // caption pairing, and why it must NOT just concatenate the image strip and the text as separate
   // siblings (the real bug that shipped first: the text lost `.comic-story-panel-text`'s own padding).
   if (!sentences.length) return wrap(_comicPanelsFlatTextHtml(d, _storyParasHtml(furiHtml(d.story || ''))));
-  return wrap(_comicPanelsFlatTextHtml(d, _teUnresolvedBarHtml(chapterId, sentences, entry.data)
-    + _teStoryHtml(d.story || '', sentences, chapterId)));
+  // v88_ai (user): the bar goes BELOW the text, not above — it is a follow-up action on what you
+  // have just read, and putting it first pushed the chapter down the screen on every analysed view.
+  return wrap(_comicPanelsFlatTextHtml(d, _teStoryHtml(d.story || '', sentences, chapterId)
+    + (_curator ? _teUnresolvedBarHtml(chapterId, sentences, entry.data) : '')));
 }
 // User follow-up (v86_s): "the layout should be the very same as the normal red->green view —
 // switching should just change colours and links." The FIRST draft used CP1's own `paraBreakBefore`
@@ -178709,7 +178832,16 @@ function _teTokenMarkHtml(tok, surface, ctx, occ){
 // Deliberately NOT gated on teacherMode or canGenerate: a correction needs no model and no backend
 // beyond this server, so it is the one analysis action that still works with Ollama switched off —
 // which is exactly when a curator has time to do it.
-function _teCanEdit(){ return typeof STATIC_LESSONS === 'undefined'; }
+function _teCanEdit(){
+  // ⚠️ v88_ai (user ruling): "Editing text analysis should ONLY work in teacher mode." Curating an
+  // analysis is an authoring act — it rewrites what every learner then reads as the grammar of a
+  // word — so it belongs with the other authoring affordances, not on a learner's screen. This gate
+  // covers the whole feature at once (the worklist bar, the curator table, and the editable half of
+  // the token popover), because all three ask this ONE function; a per-surface check is how two of
+  // them would eventually disagree.
+  if (!APP._teacherMode) return false;
+  return typeof STATIC_LESSONS === 'undefined';
+}
 
 // How many of a chapter's tokens the model could not resolve. `lemma` is the test, matching
 // _analysisSentenceUsable/computeFrequency's own server-side definition of "resolved" rather than
@@ -178725,6 +178857,14 @@ function _teUnresolvedCount(sentences){
 // new ui.json keys and nothing to translate across 33 languages.
 function _teUnresolvedBarHtml(chapterId, sentences, shadow){
   if (!_teCanEdit()) return '';
+  // ⚠️ v88_ai (user, live): "The ▤ button to access the curator table currently has no effect."
+  // The cause was ESCAPING, and it made both buttons inert: the ids were interpolated with
+  // JSON.stringify, which yields DOUBLE quotes — inside a double-quoted onclick attribute those
+  // close the attribute, so the handler was the fragment before them and the click did nothing.
+  // Single quotes + escAttr, the convention every other dynamically-wired control in this file
+  // already uses (see toggleSlThumbMode's own button). ⚠️ My guard had asserted the markup merely
+  // CONTAINED "_teOpenCuratorTable" — a substring that is present in the broken version too, which
+  // is why a test passed over a button that could not work.
   // ⚠️ v88_ah: the bar renders for ANY analysed chapter, not only one with outstanding work.
   // v88_ae gated the whole bar on `unresolved || orphans`, which meant a fully-resolved chapter had
   // NO WAY INTO THE CURATOR TABLE AT ALL — asked directly by the user ("where can i enter the new
@@ -178735,7 +178875,7 @@ function _teUnresolvedBarHtml(chapterId, sentences, shadow){
   if (!(sentences || []).length) return '';
   const n = _teUnresolvedCount(sentences);
   const orph = ((shadow && shadow.orphanedCorrections) || []).length;
-  const cid = JSON.stringify(String(chapterId || ''));
+  const cid = "'" + escAttr(String(chapterId || '')) + "'";
   // The worklist jump: only when there IS something unresolved to walk to. Orphans are counted into
   // the label when nothing is unresolved, because they are the remaining work and are repairable
   // only from the table.
@@ -179629,6 +179769,15 @@ function _storyTapInit(){
 function _storyTapMaybeAdvance(e){
   const host = e.target.closest && e.target.closest('#comp-story-text, #sum-sumtext');
   if (!host) return;
+  // ⚠️ v88_ai (user report): "Unlike the vocab highlight text field, clicking on white space or
+  // non-marked words in the text analysis view should NOT open questions, it should just be inert."
+  // The analysed tokens themselves were already safe — `_teTokenMarkHtml` puts
+  // `event.stopPropagation()` on each `<mark>` — but everything BETWEEN them (whitespace,
+  // punctuation, any word CP2 did not tokenise) fell through to this handler and advanced the
+  // lesson. In analysis mode the body is a READING surface, not a tap-to-continue one: the two
+  // modes render into the same element, so the mode has to be checked here rather than assumed from
+  // the markup.
+  if (host.id === 'comp-story-text' && APP._textExplorer) return;
   if (e.target.closest('.wp-tap')) return;   // a highlighted word keeps its OWN behaviour, untouched
   const sel = window.getSelection && window.getSelection();
   if (sel && !sel.isCollapsed && sel.rangeCount > 0 && String(sel.toString() || '').trim()) return;

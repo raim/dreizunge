@@ -156,6 +156,19 @@ console.log('  split: posts the index, refuses 0: OK');
   for (const k of ['sl.manage_chapters', 'sl.add_chapter', 'sl.split_here']) {
     assert.ok(UI.en[k], `${k} exists in ui.json en`);
   }
+  // ⚠️ v88_ai (user request): "The chapter reordering menu ... should be moved down, below the
+  // summary field, and above the chain of chapter fields." Asserted as ORDER, at the source layer,
+  // because that is where the emission order lives — the three markers below are unique and the
+  // panel has to sit between the last two. It previously rendered above the ARTWORK, two sections
+  // away from the list it edits.
+  const iSummaryQc = html.indexOf("APP._slScreen._summaryQcSlId = chainId;");
+  const iManage    = html.indexOf('html += _slManageHtml(slMeta, _slArtIds);');
+  const iChapters  = html.indexOf('// Chapter cards — branching tree renderer');
+  assert.ok(iSummaryQc > 0 && iManage > 0 && iChapters > 0, 'all three landmarks are present');
+  assert.ok(iManage > iSummaryQc,
+    'the chapter-management panel is emitted AFTER the summary block');
+  assert.ok(iManage < iChapters,
+    'and BEFORE the chapter cards it acts on');
 }
 console.log('  the storyline screen emits it, and its strings exist: OK');
 

@@ -2424,6 +2424,73 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_ai — an eight-item user batch: analysis curation gated and relocated, item Y, and the idle window
+
+One user message with seven requests plus a follow-up exclusion, and a further live correction while
+it was being built. **ZERO `ui.json` keys** — item Y in particular, which looks like it needs six
+labels, gets them from the buttons' own `title` attributes.
+
+**Closes item `Y`**, open since the `v87` line.
+
+### The eight
+
+1. **"I don't really see the ▤ curator table link"** — measured, and the answer was already shipped:
+   only **14 of 343 chapters have any analysis, and 13 of those 14 have ZERO unresolved tokens**, so
+   under `v88_ae`'s `unresolved || orphans` gate the bar appeared on exactly ONE chapter in the whole
+   corpus. `v88_ah` had just fixed that; the user's browser had the older client.
+2. **Editing is TEACHER-MODE only** (user ruling). One gate (`_teCanEdit`) covers all three surfaces
+   — the bar, the table and the editable half of the popover — because a per-surface check is how two
+   of them eventually disagree.
+3. **The artwork toggle repaints without a reload.** ⚠️ `v86_ad`'s standing lesson from the other
+   direction: the toggle is offered on FOUR surfaces but `toggleSlThumbMode` only ever called
+   `loadSavedList()`, which rebuilds the LIBRARY. Pressing it on the storyline screen or the
+   lesson-set card persisted the flip and left the artwork beside it stale. One `_slArtRepaint()`
+   helper now covers every surface, shaped like `_teRepaint` for the same reason.
+4. **The analysis view is inert to stray taps.** The analysed tokens were already safe (each `<mark>`
+   stops propagation), but everything BETWEEN them fell through to `_storyTapMaybeAdvance` and
+   advanced the lesson. Both modes render into the same element, so the MODE is what had to be
+   checked. Scoped to the progress card; the entry card, which has no analysis mode, is untouched.
+5. **The chapter-management row moved below the summary**, directly above the chapters it edits.
+6. **Item Y**: the storyline header's five authoring buttons behind ONE pencil, with `▶` and `🔗`
+   left in the header — the user's explicit exclusion, asserted in BOTH directions.
+7. **Idle release 30 → 60 min** (user ruling; `v88_l`'s comment updated rather than left stale).
+8. And a live correction, below.
+
+### Item Y: relocated, not rewritten
+
+The five buttons are the SAME elements moved into `#sl-screen-edit-pop`. So every existing handler,
+title string and per-button visibility rule in `_renderStorylineScreen` keeps working untouched, and
+`_slEditMenuSync` only MIRRORS that state onto the rows. Each row's label is read from **its own
+button's `title`**, which is why six menu entries cost zero keys and cannot drift from what
+`_applyUIStrings` set. A leading icon is stripped so the glyph is not printed twice beside the button
+that already shows it. The pencil hides itself when every row is hidden — a menu button that opens an
+empty menu is the "dead control" this project already ruled against for cancel.
+
+⚠️ **A pre-existing bug fell out of the move**: `sl-screen-del-btn` ("Delete storyline") was nested
+inside `#sl-tag-editor`, which is `display:none` unless the tag editor is open — so it was only ever
+reachable by opening the TAG editor first. Found by relocating the row, not by a report.
+
+### ⚠️ The live correction: the ▤ button did nothing
+
+*"The ▤ button to access the curator table currently has no effect."* Correct, and the cause was
+ESCAPING: the chapter id was interpolated with `JSON.stringify`, whose **double** quotes closed the
+double-quoted `onclick` attribute. Both buttons emitted a truncated handler and were inert.
+
+⚠️ **My own guard was a PROXY and passed over it** — it asserted the markup CONTAINED
+`_teOpenCuratorTable`, which is equally true of the broken version. Now asserted on the whole,
+well-formed attribute. And the live check that "verified" it earlier had called the function
+directly rather than clicking the button; the re-verification uses a real `.click()`.
+
+Same message also ruled the affordances **lesson-set only** ("NOT in the progress cards' text
+analysis view") and **below the text**. Three surfaces share `_textExplorerBodyHtml`, so the surface
+cannot be inferred inside it — the caller opts in, and ⚠️ a SET-LEVEL guard asserts **exactly one**
+call site does (`v88_b`'s rule: a behavioural test on the function and one on the lesson-set caller
+both stayed green when a THIRD surface started opting in).
+
+**Sixteen mutations red.** Three stayed green first and each exposed a real weakness: the header-row
+bound was "everything before the popover" rather than the row itself (so moving `🔗` out of the row
+passed); nothing pinned the lesson-set CALL SITE; and nothing stopped another surface opting in.
+
 ## ✅ v88_ah — the curator table is reachable on ANY analysed chapter
 
 **User question, which turned out to be a bug report**: *"where can i enter the new text analysis

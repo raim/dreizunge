@@ -296,6 +296,29 @@ console.log('  touch devices get a fixed, bar-adjacent popover placement; deskto
   C.run(`_storyTapMaybeAdvance({ target: document.getElementById('plain-span') }); true;`, 'tap-disabled');
   assert.deepStrictEqual(JSON.parse(C.run(`JSON.stringify(window.__calls())`)), { compNextCalls: 1, sumNextCalls: 1 },
     'a DISABLED Next does not fire even on an otherwise-qualifying tap');
+
+  // G) ⚠️ v88_ai (user report): in TEXT-ANALYSIS mode the progress-card body is inert.
+  // "clicking on white space or non-marked words in the text analysis view should NOT open
+  // questions, it should just be inert." The analysed tokens were already safe (each <mark> stops
+  // propagation itself) — everything BETWEEN them was not, and both modes render into the SAME
+  // element, so the mode is what has to be checked.
+  C.run(`document.getElementById('comp-next').disabled = false; APP._textExplorer = true; true;`);
+  collapsed();
+  C.run(`_storyTapMaybeAdvance({ target: document.getElementById('plain-span') }); true;`, 'tap-explorer');
+  assert.deepStrictEqual(JSON.parse(C.run(`JSON.stringify(window.__calls())`)), { compNextCalls: 1, sumNextCalls: 1 },
+    'a tap on plain text in analysis mode advances NOTHING — the count is unchanged from (A)');
+  // The entry card has no explorer of its own, so it must be UNAFFECTED — otherwise this guard
+  // would have quietly disabled a second surface nobody asked about.
+  C.run(`_storyTapMaybeAdvance({ target: document.getElementById('sum-plain-span') }); true;`, 'tap-sum-explorer');
+  assert.deepStrictEqual(JSON.parse(C.run(`JSON.stringify(window.__calls())`)), { compNextCalls: 1, sumNextCalls: 2 },
+    'while the entry card, which has no analysis mode, still advances');
+  // Non-vacuity: turning the mode back OFF restores the tap, so (G) is the MODE talking and not
+  // some other state this section happened to leave behind.
+  C.run(`APP._textExplorer = false; true;`);
+  collapsed();
+  C.run(`_storyTapMaybeAdvance({ target: document.getElementById('plain-span') }); true;`, 'tap-explorer-off');
+  assert.deepStrictEqual(JSON.parse(C.run(`JSON.stringify(window.__calls())`)), { compNextCalls: 2, sumNextCalls: 2 },
+    'and leaving analysis mode makes the progress card tappable again');
 }
 console.log('  a short tap on plain story/summary text advances like Next; highlighted words and drag-selects are both left alone: OK');
 

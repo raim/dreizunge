@@ -129,6 +129,56 @@ console.log('  renderStoryText(): target view highlights vocab; toggleLsStoryLan
 }
 console.log('  toggleLsTextExplorer(): renders REAL per-word <mark> elements from the CP1/CP2 cache into #story-body: OK');
 
+// ── 3b. v88_ai: THIS is the one surface that gets the curator affordances ───────────────────────
+// ⚠️ Asserted at the CALL SITE, through the real renderStoryText, because that is the only place
+// the claim is true or false. `unit-text-explorer` pins what `_textExplorerBodyHtml` does with and
+// without `{curator:true}` — but a mutation removing the opt-in from THIS caller left both files
+// green, which is v88_r's rule exactly: a guard on the function says nothing about who calls it.
+//
+// User ruling: "it should only be shown in the lesson-set teacher view edit interface, NOT in the
+// progress cards' text analysis view", and "Ideally show it BELOW the text, not above."
+{
+  const C = client();
+  C.run(`APP.lessonData = ${JSON.stringify(BASE_TOPIC)};
+    APP._teacherMode = true;                 // curating is teacher-only (v88_ai)
+    APP.lang = 'de'; APP.srcLang = 'en';
+    APP._lsStoryLang = null; APP._lsTextExplorer = false;
+    renderStoryText(APP.lessonData);
+    _teCacheStore()['tp_ls1'] = { status: 'ready', data: { sentences: [
+      { text: 'Der Hund lauft schnell.', tokens: [
+        { idx:0, surface:'Der', lemma:'der', form:'article', sense:'the', confidence:'high' },
+        { idx:1, surface:'Hund', lemma:'', form:'', sense:'', confidence:'unresolved' },
+      ] },
+    ], orphanedCorrections: [] } };
+    toggleLsTextExplorer(); true;`, 't3b');
+  const html = C.run(`document.getElementById('story-body').innerHTML`);
+  assert.ok(html.includes('te-fixbar'),
+    'the LESSON-SET card opts in, so the curator bar is rendered here (got: ' + html.slice(0, 200) + ')');
+  assert.ok(html.includes(`_teOpenCuratorTable('tp_ls1')`),
+    'with a working, correctly-quoted table button');
+  assert.ok(html.indexOf('te-fixbar') > html.indexOf('te-tok'),
+    'and BELOW the analysed text, not above it');
+
+  // Non-vacuity for the teacher gate on this surface too: a learner sees the analysis, no bar.
+  const C2 = client();
+  C2.run(`APP.lessonData = ${JSON.stringify(BASE_TOPIC)};
+    APP._teacherMode = false;
+    APP.lang = 'de'; APP.srcLang = 'en';
+    APP._lsStoryLang = null; APP._lsTextExplorer = false;
+    renderStoryText(APP.lessonData);
+    _teCacheStore()['tp_ls1'] = { status: 'ready', data: { sentences: [
+      { text: 'Der Hund lauft schnell.', tokens: [
+        { idx:0, surface:'Der', lemma:'der', form:'article', sense:'the', confidence:'high' },
+        { idx:1, surface:'Hund', lemma:'', form:'', sense:'', confidence:'unresolved' },
+      ] },
+    ], orphanedCorrections: [] } };
+    toggleLsTextExplorer(); true;`, 't3b-student');
+  const studentHtml = C2.run(`document.getElementById('story-body').innerHTML`);
+  assert.ok(!studentHtml.includes('te-fixbar'), 'a learner gets no curator bar on this card either');
+  assert.ok(studentHtml.includes('te-tok'), 'but still reads the analysis');
+}
+console.log('  the lesson-set card is the surface that carries the curator bar, below the text (v88_ai): OK');
+
 // ── 4. Flags/explorer mutual exclusivity (the v86_y fix, replicated here) ───────────────────────
 {
   const C = client();

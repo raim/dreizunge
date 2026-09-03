@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_ah`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_ai`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -277,6 +277,20 @@ WRONG lemma is precisely what an unresolved worklist can never surface. The tabl
 for any analysed chapter; only the JUMP stays conditional. Two `v88_ae` guards had to be re-scoped —
 they were asserting the old behaviour, not failing. Three mutations red.
 
+**`v88_ai` shipped an EIGHT-ITEM user batch** (one message, a follow-up exclusion, and a live
+correction mid-build). **Closes item `Y`.** ZERO keys. Analysis curation is now **teacher-mode only**
+and **lesson-set only**, rendered **below** the text; the artwork toggle repaints without a reload
+(`v86_ad`'s lesson again — four surfaces offered it, one was repainted); the analysis view is inert
+to stray taps; the chapter-management row moved below the summary; item Y put the header's five
+authoring buttons behind one pencil with `▶`/`🔗` left beside it; idle release went 30 → 60 min.
+
+⚠️ **The ▤ button was INERT when first shipped** — the chapter id was interpolated with
+`JSON.stringify`, whose double quotes closed the double-quoted `onclick`. **My guard was a proxy**
+(it checked the markup merely CONTAINED the function name, true of the broken version too) and my
+live check had called the function instead of clicking the button. Both fixed; re-verified with a
+real `.click()`. Sixteen mutations red, three of which stayed green first and each exposed a real
+weakness in the guards.
+
 ---
 
 ## ⚠️ START HERE — THE FOUR-FIELD QUESTION IS ANSWERED; ONE OF ITS CONSEQUENCES IS NOT
@@ -401,8 +415,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 332 checks
-node test/run.js --quick                  → expect 273
+node test/run.js                          → expect 333 checks
+node test/run.js --quick                  → expect 274
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -467,7 +481,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **343 topics, 97 storylines, 33 languages, 755 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_ah'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_ai'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to
