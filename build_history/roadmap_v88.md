@@ -2424,6 +2424,71 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 # ✅ SHIPPED IN THE v88 LINE
 
+## ✅ v88_ac — deleting a chapter no longer leaks its analysis, and 5 orphans are gone
+
+**Not a user report — found by answering a user QUESTION.** They asked what was dirty in
+`canonical-analysis.json` and said "let's clean it up". The dirty diff turned out to be nothing:
+one complete, correctly-formed entry their own server had written for `tp_17883793024690000067`,
+plus the `chapterCount` 19→20 and `generatedAt` bump. **But auditing the file to answer the question
+found a real leak.** ZERO `ui.json` keys.
+
+### The leak
+
+`DELETE /api/lessons/delete` cleans up every per-chapter artefact — the topic itself, storyline
+membership, the `continuedFromId` chain (with the fork-collapse merge), and every flag by slug and
+by id — **except the CP1/CP2 analysis**. So each deleted chapter left its whole token analysis
+behind in `canonical-analysis.json`, permanently.
+
+It is invisible in normal use, which is why it survived: nothing in the UI can address an id that no
+longer exists, and the file is only ever appended to, so the store grows and nothing ever reads the
+dead entries. Measured in the working tree at the `v88_ab` cut: **5 of 20 entries orphaned, 12% of
+the analysis bytes**, the oldest 5 days old.
+
+| orphan | size | analysed |
+|---|---|---|
+| `tp_17880322416810000009` | 5.8 KB | 2026-08-29 |
+| `tp_17881986169040000025` | 6.9 KB | 2026-08-31 |
+| `tp_17882063882590000007` | 1.1 KB | 2026-09-01 |
+| `tp_17883419204170000088` | 1.1 KB | 2026-09-02 |
+| `tp_17883426979990000196` | 1.1 KB | 2026-09-02 |
+
+Two of those are chapters this line's own write-ups name: `tp_17882063882590000007` is item AN's
+reported chapter, and `tp_17883426979990000196` is one of the two "De Manteling" chapters measured
+for `v88_ab` — the user deleted it between the two cuts, which is also what moved the topic count
+345→344.
+
+### The fix is one call, and the SHAPE of it is the part worth defending
+
+`deleteAnalysisChapter(chapterId)` has existed since `v86_ac` for the "force re-analyse" path. The
+gap was only that the delete route never called it. It now does, targeted at the one id being
+deleted.
+
+⚠️ **Deliberately NOT a sweep.** The tempting implementation is "on load, drop every entry with no
+matching chapter" — it would have cleaned the 5 orphans in one line and is one partial or failed
+read of `lessons.json` away from **deleting every analysis on the box**. The e2e asserts against
+that directly: an unrelated chapter's entry must be untouched by the delete, which the sweep version
+fails. Both mutations red — the leak restored, and the sweep substituted.
+
+### The one-time prune
+
+The 5 existing orphans were removed by mirroring exactly what `deleteAnalysisChapter` writes
+(`schemaVersion`, re-derived `chapterCount`, fresh `generatedAt`, `JSON.stringify(store, null, 2)`
+with no trailing newline — verified byte-identical to the on-disk convention first, so the cleanup
+does not show up as a whole-file reformat). 20 → 15 entries, 245.2 → 217.1 KB, zero orphans.
+Verified against the user's own RUNNING server afterwards: a surviving chapter's analysis still
+resolves with `available:true`, and a pruned id degrades to `available:false` rather than erroring —
+the absent case the route was already written to treat as normal.
+
+### ⚠️ Found while auditing, NOT fixed here — the `reviewed` flag has never been read
+
+`canonical-analysis.js` writes `reviewed: false` onto every token it emits, at three separate sites.
+**Nothing anywhere sets it true, and nothing reads it** — 533 of 533 tokens in the store carry the
+default. It is a schema placeholder for **item AI** (teacher-editable CP1/CP2 analysis), which is
+scoped but not started and carries one open design question: *does a curator's correction survive a
+re-analysis?* Today it cannot — `deleteAnalysisChapter` drops the whole chapter entry and CP2
+rewrites it from scratch, so any edit is lost on the next re-run. **Put to the user at this cut; not
+started.**
+
 ## ✅ v88_ab — an image description is no longer suppressed by a headline, and the story rule has one home
 
 **Closes open item 3** (*"an image DESCRIPTION becomes unreachable once the panel has any extracted

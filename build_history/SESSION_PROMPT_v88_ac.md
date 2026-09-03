@@ -5,7 +5,7 @@ one alongside. Point releases use an alphabetic suffix: `v88_b`, `v88_c`, … A 
 (`v89`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v88_ab`**. `roadmap_v88.md` was cut
+zero-dependency Node language-learning app). Picking up from **`v88_ac`**. `roadmap_v88.md` was cut
 at `v88_a` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -195,6 +195,18 @@ and mutation-testing caught it: for ONE panel the flat path emits identical mark
 text, so `comic-story-panel-text` cannot discriminate. Ten mutations red. Full write-up: the
 `v88_ab` entry.
 
+**`v88_ac` came out of a user QUESTION, not a report** — *"what is dirty in `canonical-analysis.json`?
+let's clean it up"*. The dirty diff was nothing: one correctly-formed entry their own server had
+written. ⚠️ **But auditing the file to answer found a real leak** — `DELETE /api/lessons/delete`
+cleans up storylines, chain links and every flag, but never the CP1/CP2 analysis, so each deleted
+chapter left its whole token analysis behind forever. Invisible in normal use (nothing can address a
+dead id) and unbounded: **5 of 20 entries were orphans, 12% of the file.** `deleteAnalysisChapter()`
+had existed since `v86_ac`; nothing called it from there. Fixed targeted at the ONE id, deliberately
+NOT as a load-time sweep — that version is one partial read of `lessons.json` away from wiping every
+analysis on the box, and the e2e asserts an unrelated chapter survives the delete precisely so the
+sweep cannot pass. The 5 orphans were pruned (20 → 15 entries, 245 → 217 KB) and the result verified
+against the user's own running server. Two mutations red. Zero keys.
+
 ---
 
 ## ⚠️ START HERE — THE FOUR-FIELD QUESTION IS ANSWERED; ONE OF ITS CONSEQUENCES IS NOT
@@ -227,6 +239,25 @@ building any of them:
   • **A load-time migration** — ⚠️ recommend AGAINST without an explicit go-ahead: `schemaVersion` is
     a load-time SHAPE adapter, not a per-field migration hook, so this means inventing a mechanism
     AND silently rewriting the user's own chapter text on their running server.
+
+**⚠️ ITEM AI IS NOW LIVE — the user asked for it at the `v88_ac` cut**: *"perhaps we need a
+review/edit interface for text analysis entries."* That is item `AI` (`roadmap_v88.md` §AI, scoped
+`v86_s`, never started). **A measurement worth having before designing it**: `canonical-analysis.js`
+already writes **`reviewed: false`** onto every token it emits, at three separate sites — and
+**nothing anywhere sets it true, and nothing reads it**. 533 of 533 tokens in the store carry the
+default. The schema slot exists; the feature behind it never got built.
+
+⚠️ **The open design question is the one that shapes everything else, and the user has NOT answered
+it**: *does a curator's correction survive a re-analysis?* **Today it cannot** — `force:true` calls
+`deleteAnalysisChapter`, which drops the WHOLE chapter entry, and CP2 rewrites every token from
+scratch. So any edit is silently lost on the next re-run, which is exactly the class of loss this
+project has already paid for twice (item AN's description, `v88_y`'s title). Do not build the
+editing UI before that is settled — it determines whether corrections live in the same store
+(needing a merge-on-reanalyse rule keyed on token identity, and `tokenId` is `chapterId:sN:tM`, an
+INDEX, so it does not survive a story edit) or in a separate overlay keyed on something stabler.
+Three sub-questions worth putting alongside it: which surface hosts the editor (the text explorer
+already renders the tokens), whether `reviewed` is per-token or per-sentence, and whether a curator
+edit should mark the chapter non-stale.
 
 **⚠️ TWO ITEMS STILL NEED A RULING** (item 3 of the previous list is now closed by `v88_ab`).
 Verbatim where quoted:
@@ -340,7 +371,7 @@ fixture SELECTIONS; `git show HEAD:lessons.json` isolated it in one command. Don
 `--quick` suites CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **344 topics, 100 storylines, 33 languages, 754 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_ab'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v88_ac'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is the thing to

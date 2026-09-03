@@ -250,7 +250,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v88_ab';
+const APP_VERSION  = 'v88_ac';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -7776,6 +7776,20 @@ http.createServer(async (req, res) => {
       if (flagsDeleted > 0) {
         setFlags(flags);
         console.log(`  Deleted ${flagsDeleted} flag(s) for "${delName}"`);
+      }
+      // ⚠️ v88_ac (found by auditing canonical-analysis.json, not by a report): this route cleaned up
+      // storylines, chain links and flags — every per-chapter artefact EXCEPT the CP1/CP2 analysis.
+      // So deleting a chapter leaked its whole token analysis into canonical-analysis.json forever,
+      // unreachable through any UI (nothing can address an id that no longer exists) and invisible
+      // because the file is only ever appended to. Measured at the v88_ab cut: 5 of 20 entries were
+      // orphans, 12% of the file, the oldest 5 days old.
+      //
+      // `deleteAnalysisChapter` already existed for v86_ac's "force re-analyse" — the gap was
+      // simply that nothing called it from here. Deliberately targeted at the ONE id being deleted
+      // rather than a sweep over the store: a load-time "drop every entry with no matching chapter"
+      // pass would be one partial read of lessons.json away from deleting every analysis on the box.
+      if (deleteId && deleteAnalysisChapter(deleteId)) {
+        console.log(`  Deleted cached CP1/CP2 analysis for "${delName}"`);
       }
       saveStore(store);
       return json(res, 200, { ok: true });

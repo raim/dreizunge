@@ -194,339 +194,6 @@
       "sourceTextHash": "a950d6bdb45c",
       "analyzedAt": "2026-08-28T21:20:54.456Z"
     },
-    "tp_17880322416810000009": {
-      "chapterId": "tp_17880322416810000009",
-      "lang": "nl",
-      "srcLang": "en",
-      "script": [
-        "latin"
-      ],
-      "sentenceCount": 4,
-      "tokenCount": 19,
-      "sentences": [
-        {
-          "sentenceId": "tp_17880322416810000009:s0",
-          "tokens": [
-            {
-              "tokenId": "tp_17880322416810000009:s0:t0",
-              "idx": 0,
-              "surface": "U",
-              "lemma": "u",
-              "form": "pronoun, formal second person singular nominative",
-              "sense": "you (formal)",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17880322416810000009:s0:t1",
-              "idx": 1,
-              "surface": "Rijdt",
-              "lemma": "rijden",
-              "form": "verb, present tense, 2nd/3rd person singular",
-              "sense": "drive / are driving",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17880322416810000009:s0:t2",
-              "idx": 2,
-              "surface": "Nu",
-              "lemma": "nu",
-              "form": "adverb",
-              "sense": "now",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17880322416810000009:s0:t3",
-              "idx": 3,
-              "surface": "500",
-              "lemma": "500",
-              "form": "numeral",
-              "sense": "five hundred",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17880322416810000009:s0:t4",
-              "idx": 4,
-              "surface": "Meter",
-              "lemma": "meter",
-              "form": "noun, plural",
-              "sense": "meters",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17880322416810000009:s0:t5",
-              "idx": 5,
-              "surface": "Van",
-              "lemma": "van",
-              "form": "preposition",
-              "sense": "from / of",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17880322416810000009:s0:t6",
-              "idx": 6,
-              "surface": "Een",
-              "lemma": "een",
-              "form": "indefinite article",
-              "sense": "a / an",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17880322416810000009:s0:t7",
-              "idx": 7,
-              "surface": "N2000",
-              "lemma": "N2000",
-              "form": "proper noun / adjective",
-              "sense": "Natura 2000 (EU nature protection designation)",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17880322416810000009:s0:t8",
-              "idx": 8,
-              "surface": "Gebied",
-              "lemma": "gebied",
-              "form": "noun, singular neuter",
-              "sense": "area / zone",
-              "confidence": "high",
-              "reviewed": false
-            }
-          ],
-          "phrases": [
-            {
-              "start": 3,
-              "end": 4,
-              "tokenIds": [
-                "tp_17880322416810000009:s0:t3",
-                "tp_17880322416810000009:s0:t4"
-              ],
-              "lemma": "500 meter",
-              "gloss": "500 meters",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "start": 7,
-              "end": 8,
-              "tokenIds": [
-                "tp_17880322416810000009:s0:t7",
-                "tp_17880322416810000009:s0:t8"
-              ],
-              "lemma": "N2000-gebied",
-              "gloss": "Natura 2000 area",
-              "confidence": "high",
-              "reviewed": false
-            }
-          ],
-          "phrasesDropped": 0,
-          "provenance": {
-            "stage": "CP2",
-            "pipelineVersion": 1,
-            "producedBy": "canonical-analysis.js",
-            "at": "2026-08-29T19:53:46.980Z",
-            "sentenceId": "tp_17880322416810000009:s0",
-            "model": "qwen3.6:35b-a3b"
-          },
-          "text": "U Rijdt Nu 500 Meter Van Een N2000 Gebied",
-          "paraBreakBefore": false
-        },
-        {
-          "sentenceId": "tp_17880322416810000009:s1",
-          "tokens": [
-            {
-              "tokenId": "tp_17880322416810000009:s1:t0",
-              "idx": 0,
-              "surface": "Onteigeningszone",
-              "lemma": "onteigeningszone",
-              "form": "noun, singular",
-              "sense": "expropriation zone",
-              "confidence": "high",
-              "reviewed": false
-            }
-          ],
-          "phrases": [],
-          "phrasesDropped": 0,
-          "provenance": {
-            "stage": "CP2",
-            "pipelineVersion": 1,
-            "producedBy": "canonical-analysis.js",
-            "at": "2026-08-29T20:01:11.938Z",
-            "sentenceId": "tp_17880322416810000009:s1",
-            "model": "qwen3.6:35b-a3b"
-          },
-          "text": "Onteigeningszone",
-          "paraBreakBefore": true
-        },
-        {
-          "sentenceId": "tp_17880322416810000009:s2",
-          "tokens": [
-            {
-              "tokenId": "tp_17880322416810000009:s2:t0",
-              "idx": 0,
-              "surface": "Dit",
-              "lemma": "dit",
-              "form": "pronoun, demonstrative neuter singular nominative/accusative",
-              "sense": "this",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17880322416810000009:s2:t1",
-              "idx": 1,
-              "surface": "Raakt",
-              "lemma": "raken",
-              "form": "verb, present tense 3rd person singular",
-              "sense": "affects",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17880322416810000009:s2:t2",
-              "idx": 2,
-              "surface": "Niet",
-              "lemma": "niet",
-              "form": "adverb, negation",
-              "sense": "not",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17880322416810000009:s2:t3",
-              "idx": 3,
-              "surface": "Alleen",
-              "lemma": "alleen",
-              "form": "adverb",
-              "sense": "only",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17880322416810000009:s2:t4",
-              "idx": 4,
-              "surface": "Boeren.",
-              "lemma": "boer",
-              "form": "noun, plural",
-              "sense": "farmers",
-              "confidence": "high",
-              "reviewed": false
-            }
-          ],
-          "phrases": [
-            {
-              "start": 1,
-              "end": 2,
-              "tokenIds": [
-                "tp_17880322416810000009:s2:t1",
-                "tp_17880322416810000009:s2:t2"
-              ],
-              "lemma": "niet raken",
-              "gloss": "does not affect",
-              "confidence": "high",
-              "reviewed": false
-            }
-          ],
-          "phrasesDropped": 0,
-          "provenance": {
-            "stage": "CP2",
-            "pipelineVersion": 1,
-            "producedBy": "canonical-analysis.js",
-            "at": "2026-08-29T20:06:29.396Z",
-            "sentenceId": "tp_17880322416810000009:s2",
-            "model": "qwen3.6:35b-a3b"
-          },
-          "text": "Dit Raakt Niet Alleen Boeren.",
-          "paraBreakBefore": true
-        },
-        {
-          "sentenceId": "tp_17880322416810000009:s3",
-          "tokens": [
-            {
-              "tokenId": "tp_17880322416810000009:s3:t0",
-              "idx": 0,
-              "surface": "Dit",
-              "lemma": "dit",
-              "form": "demonstrative pronoun, neuter singular nominative/accusative",
-              "sense": "this",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17880322416810000009:s3:t1",
-              "idx": 1,
-              "surface": "Raakt",
-              "lemma": "raken",
-              "form": "verb, 3rd person singular present",
-              "sense": "affects",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17880322416810000009:s3:t2",
-              "idx": 2,
-              "surface": "Ons",
-              "lemma": "ons",
-              "form": "personal pronoun, plural accusative/dative",
-              "sense": "us",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17880322416810000009:s3:t3",
-              "idx": 3,
-              "surface": "Allemaal.",
-              "lemma": "allemaal",
-              "form": "adverb/predicative adjective",
-              "sense": "all",
-              "confidence": "high",
-              "reviewed": false
-            }
-          ],
-          "phrases": [
-            {
-              "start": 0,
-              "end": 3,
-              "tokenIds": [
-                "tp_17880322416810000009:s3:t0",
-                "tp_17880322416810000009:s3:t1",
-                "tp_17880322416810000009:s3:t2",
-                "tp_17880322416810000009:s3:t3"
-              ],
-              "lemma": "dit raakt ons allemaal",
-              "gloss": "this affects us all",
-              "confidence": "high",
-              "reviewed": false
-            }
-          ],
-          "phrasesDropped": 0,
-          "provenance": {
-            "stage": "CP2",
-            "pipelineVersion": 1,
-            "producedBy": "canonical-analysis.js",
-            "at": "2026-08-29T20:08:48.376Z",
-            "sentenceId": "tp_17880322416810000009:s3",
-            "model": "qwen3.6:35b-a3b"
-          },
-          "text": "Dit Raakt Ons Allemaal.",
-          "paraBreakBefore": false
-        }
-      ],
-      "provenance": {
-        "stage": "CP2",
-        "pipelineVersion": 1,
-        "producedBy": "canonical-analysis.js",
-        "at": "2026-08-29T20:08:48.376Z",
-        "chapterId": "tp_17880322416810000009",
-        "model": "qwen3.6:35b-a3b"
-      },
-      "sourceTextHash": "53e577539764",
-      "analyzedAt": "2026-08-29T20:08:48.376Z"
-    },
     "tp_17880367188140000070": {
       "chapterId": "tp_17880367188140000070",
       "lang": "nl",
@@ -2626,438 +2293,6 @@
       },
       "sourceTextHash": "e81a1bc76760",
       "analyzedAt": "2026-08-31T17:56:10.545Z"
-    },
-    "tp_17881986169040000025": {
-      "chapterId": "tp_17881986169040000025",
-      "lang": "nl",
-      "srcLang": "de",
-      "script": [
-        "latin"
-      ],
-      "sentenceCount": 2,
-      "tokenCount": 25,
-      "sentences": [
-        {
-          "sentenceId": "tp_17881986169040000025:s0",
-          "tokens": [
-            {
-              "tokenId": "tp_17881986169040000025:s0:t0",
-              "idx": 0,
-              "surface": "Een",
-              "lemma": "een",
-              "form": "bestimmter Artikel, Nominativ Singular Neutrum",
-              "sense": "ein (unbestimmt)",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s0:t1",
-              "idx": 1,
-              "surface": "houten",
-              "lemma": "houten",
-              "form": "Adjektiv, attributive Form",
-              "sense": "aus Holz",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s0:t2",
-              "idx": 2,
-              "surface": "hek",
-              "lemma": "hek",
-              "form": "Nomen, Nominativ Singular Neutrum",
-              "sense": "Zaun",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s0:t3",
-              "idx": 3,
-              "surface": "staat",
-              "lemma": "staan",
-              "form": "Verb, Präsens, 3. Person Singular Indikativ",
-              "sense": "steht",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s0:t4",
-              "idx": 4,
-              "surface": "voor",
-              "lemma": "voor",
-              "form": "Präposition",
-              "sense": "vor (räumlich)",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s0:t5",
-              "idx": 5,
-              "surface": "een",
-              "lemma": "een",
-              "form": "bestimmter Artikel, Akkusativ Singular Neutrum",
-              "sense": "ein (unbestimmt)",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s0:t6",
-              "idx": 6,
-              "surface": "landschap",
-              "lemma": "landschap",
-              "form": "Nomen, Akkusativ Singular Neutrum",
-              "sense": "Landschaft",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s0:t7",
-              "idx": 7,
-              "surface": "met",
-              "lemma": "met",
-              "form": "Präposition",
-              "sense": "mit",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s0:t8",
-              "idx": 8,
-              "surface": "struiken",
-              "lemma": "struik",
-              "form": "Nomen, Plural",
-              "sense": "Sträucher",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s0:t9",
-              "idx": 9,
-              "surface": "en",
-              "lemma": "en",
-              "form": "Konjunktion",
-              "sense": "und",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s0:t10",
-              "idx": 10,
-              "surface": "gras",
-              "lemma": "gras",
-              "form": "Nomen, Singular",
-              "sense": "Gras",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s0:t11",
-              "idx": 11,
-              "surface": "in",
-              "lemma": "in",
-              "form": "Präposition",
-              "sense": "in (innerhalb von)",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s0:t12",
-              "idx": 12,
-              "surface": "het",
-              "lemma": "het",
-              "form": "bestimmter Artikel, Akkusativ/Dativ Singular Neutrum",
-              "sense": "das",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s0:t13",
-              "idx": 13,
-              "surface": "zand.",
-              "lemma": "zand",
-              "form": "Nomen, Singular",
-              "sense": "Sand",
-              "confidence": "high",
-              "reviewed": false
-            }
-          ],
-          "phrases": [
-            {
-              "start": 0,
-              "end": 2,
-              "tokenIds": [
-                "tp_17881986169040000025:s0:t0",
-                "tp_17881986169040000025:s0:t1",
-                "tp_17881986169040000025:s0:t2"
-              ],
-              "lemma": "een houten hek",
-              "gloss": "ein Holzzaun",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "start": 3,
-              "end": 4,
-              "tokenIds": [
-                "tp_17881986169040000025:s0:t3",
-                "tp_17881986169040000025:s0:t4"
-              ],
-              "lemma": "staan voor",
-              "gloss": "vor ... stehen",
-              "confidence": "unresolved",
-              "reviewed": false
-            }
-          ],
-          "phrasesDropped": 0,
-          "provenance": {
-            "stage": "CP2",
-            "pipelineVersion": 1,
-            "producedBy": "canonical-analysis.js",
-            "at": "2026-08-31T18:52:36.045Z",
-            "sentenceId": "tp_17881986169040000025:s0",
-            "model": "qwen3.6:35b-a3b"
-          },
-          "text": "Een houten hek staat voor een landschap met struiken en gras in het zand.",
-          "paraBreakBefore": false
-        },
-        {
-          "sentenceId": "tp_17881986169040000025:s1",
-          "tokens": [
-            {
-              "tokenId": "tp_17881986169040000025:s1:t0",
-              "idx": 0,
-              "surface": "Een",
-              "lemma": "een",
-              "form": "bestimmter Artikel, Nominativ Singular Maskulinum/Neutrum/Femininum",
-              "sense": "ein",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s1:t1",
-              "idx": 1,
-              "surface": "blauwe",
-              "lemma": "blauw",
-              "form": "Adjektiv, stark dekliniert, Nominativ Singular Maskulinum/Neutrum/Femininum",
-              "sense": "blauer/bläulicher",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s1:t2",
-              "idx": 2,
-              "surface": "hemel",
-              "lemma": "hemel",
-              "form": "Substantiv, Nominativ Singular Maskulinum",
-              "sense": "Himmel",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s1:t3",
-              "idx": 3,
-              "surface": "met",
-              "lemma": "met",
-              "form": "Präposition mit Dativ",
-              "sense": "mit",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s1:t4",
-              "idx": 4,
-              "surface": "witte",
-              "lemma": "wit",
-              "form": "Adjektiv, stark dekliniert, Dativ Plural",
-              "sense": "weißen",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s1:t5",
-              "idx": 5,
-              "surface": "wolken",
-              "lemma": "wolk",
-              "form": "Substantiv, Dativ Plural",
-              "sense": "Wolken",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s1:t6",
-              "idx": 6,
-              "surface": "hangt",
-              "lemma": "hangen",
-              "form": "Verb, Indikativ Präsens Singular 3. Person",
-              "sense": "hängt",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s1:t7",
-              "idx": 7,
-              "surface": "boven",
-              "lemma": "boven",
-              "form": "Präposition mit Dativ",
-              "sense": "über",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s1:t8",
-              "idx": 8,
-              "surface": "de",
-              "lemma": "de",
-              "form": "bestimmter Artikel, Akkusativ Singular Maskulinum/Dativ Singular Maskulinum/Femininum/Nominativ Plural",
-              "sense": "die",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s1:t9",
-              "idx": 9,
-              "surface": "bergachtige",
-              "lemma": "bergachtig",
-              "form": "Adjektiv, schwach dekliniert, Akkusativ/Dativ Singular Maskulinum/Femininum/Nominativ Plural",
-              "sense": "bergähnliche",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17881986169040000025:s1:t10",
-              "idx": 10,
-              "surface": "achtergrond.",
-              "lemma": "achtergrond",
-              "form": "Substantiv, Akkusativ Singular Maskulinum/Dativ Singular Maskulinum/Femininum/Nominativ Plural",
-              "sense": "Hintergrund",
-              "confidence": "high",
-              "reviewed": false
-            }
-          ],
-          "phrases": [
-            {
-              "start": 0,
-              "end": 2,
-              "tokenIds": [
-                "tp_17881986169040000025:s1:t0",
-                "tp_17881986169040000025:s1:t1",
-                "tp_17881986169040000025:s1:t2"
-              ],
-              "lemma": "een blauwe hemel",
-              "gloss": "ein blauer Himmel",
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "start": 3,
-              "end": 5,
-              "tokenIds": [
-                "tp_17881986169040000025:s1:t3",
-                "tp_17881986169040000025:s1:t4",
-                "tp_17881986169040000025:s1:t5"
-              ],
-              "lemma": "met witte wolken",
-              "gloss": "mit weißen Wolken",
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "start": 7,
-              "end": 10,
-              "tokenIds": [
-                "tp_17881986169040000025:s1:t7",
-                "tp_17881986169040000025:s1:t8",
-                "tp_17881986169040000025:s1:t9",
-                "tp_17881986169040000025:s1:t10"
-              ],
-              "lemma": "boven de bergachtige achtergrond",
-              "gloss": "über dem bergähnlichen Hintergrund",
-              "confidence": "low",
-              "reviewed": false
-            }
-          ],
-          "phrasesDropped": 0,
-          "provenance": {
-            "stage": "CP2",
-            "pipelineVersion": 1,
-            "producedBy": "canonical-analysis.js",
-            "at": "2026-08-31T18:59:42.474Z",
-            "sentenceId": "tp_17881986169040000025:s1",
-            "model": "qwen3.6:35b-a3b"
-          },
-          "text": "Een blauwe hemel met witte wolken hangt boven de bergachtige achtergrond.",
-          "paraBreakBefore": false
-        }
-      ],
-      "provenance": {
-        "stage": "CP2",
-        "pipelineVersion": 1,
-        "producedBy": "canonical-analysis.js",
-        "at": "2026-08-31T18:59:42.475Z",
-        "chapterId": "tp_17881986169040000025",
-        "model": "qwen3.6:35b-a3b"
-      },
-      "sourceTextHash": "870d4d801f86",
-      "analyzedAt": "2026-08-31T18:59:42.475Z"
-    },
-    "tp_17882063882590000007": {
-      "chapterId": "tp_17882063882590000007",
-      "lang": "nl",
-      "srcLang": "de",
-      "script": [
-        "latin"
-      ],
-      "sentenceCount": 1,
-      "tokenCount": 2,
-      "sentences": [
-        {
-          "sentenceId": "tp_17882063882590000007:s0",
-          "tokens": [
-            {
-              "tokenId": "tp_17882063882590000007:s0:t0",
-              "idx": 0,
-              "surface": "De",
-              "lemma": "de",
-              "form": "bestimmter Artikel, Nominativ Singular Femininum",
-              "sense": "die",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17882063882590000007:s0:t1",
-              "idx": 1,
-              "surface": "Manteling",
-              "lemma": "manteling",
-              "form": "Nomen, Nominativ Singular Femininum",
-              "sense": "Ummantelung",
-              "confidence": "high",
-              "reviewed": false
-            }
-          ],
-          "phrases": [],
-          "phrasesDropped": 0,
-          "provenance": {
-            "stage": "CP2",
-            "pipelineVersion": 1,
-            "producedBy": "canonical-analysis.js",
-            "at": "2026-09-01T10:24:01.800Z",
-            "sentenceId": "tp_17882063882590000007:s0",
-            "model": "qwen3.6:35b-a3b"
-          },
-          "text": "De Manteling",
-          "paraBreakBefore": false
-        }
-      ],
-      "provenance": {
-        "stage": "CP2",
-        "pipelineVersion": 1,
-        "producedBy": "canonical-analysis.js",
-        "at": "2026-09-01T10:24:01.800Z",
-        "chapterId": "tp_17882063882590000007",
-        "model": "qwen3.6:35b-a3b"
-      },
-      "sourceTextHash": "898673f8af87",
-      "analyzedAt": "2026-09-01T10:24:01.800Z"
     },
     "tp_17882535928630000095": {
       "chapterId": "tp_17882535928630000095",
@@ -7210,124 +6445,6 @@
       "sourceTextHash": "97ac0149e7d6",
       "analyzedAt": "2026-09-02T12:07:21.537Z"
     },
-    "tp_17883419204170000088": {
-      "chapterId": "tp_17883419204170000088",
-      "lang": "nl",
-      "srcLang": "de",
-      "script": [
-        "latin"
-      ],
-      "sentenceCount": 1,
-      "tokenCount": 2,
-      "sentences": [
-        {
-          "sentenceId": "tp_17883419204170000088:s0",
-          "tokens": [
-            {
-              "tokenId": "tp_17883419204170000088:s0:t0",
-              "idx": 0,
-              "surface": "De",
-              "lemma": "de",
-              "form": "bestimmter Artikel, Nominativ Singular Femininum",
-              "sense": "der/die/das (definit)",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17883419204170000088:s0:t1",
-              "idx": 1,
-              "surface": "Manteling",
-              "lemma": "manteling",
-              "form": "Nomen, Nominativ Singular Femininum",
-              "sense": "Ummantelung",
-              "confidence": "high",
-              "reviewed": false
-            }
-          ],
-          "phrases": [],
-          "phrasesDropped": 0,
-          "provenance": {
-            "stage": "CP2",
-            "pipelineVersion": 1,
-            "producedBy": "canonical-analysis.js",
-            "at": "2026-09-02T09:44:36.182Z",
-            "sentenceId": "tp_17883419204170000088:s0",
-            "model": "qwen3.6:35b-a3b"
-          },
-          "text": "De Manteling",
-          "paraBreakBefore": false
-        }
-      ],
-      "provenance": {
-        "stage": "CP2",
-        "pipelineVersion": 1,
-        "producedBy": "canonical-analysis.js",
-        "at": "2026-09-02T09:44:36.182Z",
-        "chapterId": "tp_17883419204170000088",
-        "model": "qwen3.6:35b-a3b"
-      },
-      "sourceTextHash": "898673f8af87",
-      "analyzedAt": "2026-09-02T09:44:36.182Z"
-    },
-    "tp_17883426979990000196": {
-      "chapterId": "tp_17883426979990000196",
-      "lang": "nl",
-      "srcLang": "de",
-      "script": [
-        "latin"
-      ],
-      "sentenceCount": 1,
-      "tokenCount": 2,
-      "sentences": [
-        {
-          "sentenceId": "tp_17883426979990000196:s0",
-          "tokens": [
-            {
-              "tokenId": "tp_17883426979990000196:s0:t0",
-              "idx": 0,
-              "surface": "De",
-              "lemma": "de",
-              "form": "bestimmter Artikel, Nominativ Singular Femininum",
-              "sense": "der/die/das (definit)",
-              "confidence": "high",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17883426979990000196:s0:t1",
-              "idx": 1,
-              "surface": "Manteling",
-              "lemma": "manteling",
-              "form": "Nomen, Nominativ Singular Femininum",
-              "sense": "Ummantelung",
-              "confidence": "high",
-              "reviewed": false
-            }
-          ],
-          "phrases": [],
-          "phrasesDropped": 0,
-          "provenance": {
-            "stage": "CP2",
-            "pipelineVersion": 1,
-            "producedBy": "canonical-analysis.js",
-            "at": "2026-09-02T09:57:17.176Z",
-            "sentenceId": "tp_17883426979990000196:s0",
-            "model": "qwen3.6:35b-a3b"
-          },
-          "text": "De Manteling",
-          "paraBreakBefore": false
-        }
-      ],
-      "provenance": {
-        "stage": "CP2",
-        "pipelineVersion": 1,
-        "producedBy": "canonical-analysis.js",
-        "at": "2026-09-02T09:57:17.176Z",
-        "chapterId": "tp_17883426979990000196",
-        "model": "qwen3.6:35b-a3b"
-      },
-      "sourceTextHash": "898673f8af87",
-      "analyzedAt": "2026-09-02T09:57:17.176Z"
-    },
     "tp_17883458445860000053": {
       "chapterId": "tp_17883458445860000053",
       "lang": "nl",
@@ -7386,8 +6503,267 @@
       },
       "sourceTextHash": "898673f8af87",
       "analyzedAt": "2026-09-02T10:48:53.450Z"
+    },
+    "tp_17883793024690000067": {
+      "chapterId": "tp_17883793024690000067",
+      "lang": "nl",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 1,
+      "tokenCount": 18,
+      "sentences": [
+        {
+          "sentenceId": "tp_17883793024690000067:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17883793024690000067:s0:t0",
+              "idx": 0,
+              "surface": "Een",
+              "lemma": "een",
+              "form": "bestimmter Artikel, Nominativ Singular Neutrum",
+              "sense": "ein (unbestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t1",
+              "idx": 1,
+              "surface": "landschap",
+              "lemma": "landschap",
+              "form": "Nomen, Nominativ Singular Neutrum",
+              "sense": "Landschaft",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t2",
+              "idx": 2,
+              "surface": "met",
+              "lemma": "met",
+              "form": "Präposition",
+              "sense": "mit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t3",
+              "idx": 3,
+              "surface": "een",
+              "lemma": "een",
+              "form": "bestimmter Artikel, Akkusativ Singular Neutrum",
+              "sense": "ein (unbestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t4",
+              "idx": 4,
+              "surface": "hek",
+              "lemma": "hek",
+              "form": "Nomen, Akkusativ Singular Neutrum",
+              "sense": "Zaun",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t5",
+              "idx": 5,
+              "surface": "voorop",
+              "lemma": "voorop",
+              "form": "Adverb",
+              "sense": "vorne",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t6",
+              "idx": 6,
+              "surface": "en",
+              "lemma": "en",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t7",
+              "idx": 7,
+              "surface": "daarachter",
+              "lemma": "daarachter",
+              "form": "Adverb",
+              "sense": "dahinter",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t8",
+              "idx": 8,
+              "surface": "groene",
+              "lemma": "groen",
+              "form": "Adjektiv, Nominativ Plural (attributiv)",
+              "sense": "grüne",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t9",
+              "idx": 9,
+              "surface": "struiken",
+              "lemma": "struik",
+              "form": "Nomen, Nominativ Plural",
+              "sense": "Sträucher",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t10",
+              "idx": 10,
+              "surface": "en",
+              "lemma": "en",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t11",
+              "idx": 11,
+              "surface": "bomen",
+              "lemma": "boom",
+              "form": "Nomen, Nominativ Plural",
+              "sense": "Bäume",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t12",
+              "idx": 12,
+              "surface": "onder",
+              "lemma": "onder",
+              "form": "Präposition",
+              "sense": "unter",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t13",
+              "idx": 13,
+              "surface": "een",
+              "lemma": "een",
+              "form": "bestimmter Artikel, Akkusativ Singular Femininum",
+              "sense": "eine (unbestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t14",
+              "idx": 14,
+              "surface": "blauwe",
+              "lemma": "blauw",
+              "form": "Adjektiv, Akkusativ Singular Femininum (attributiv)",
+              "sense": "blaue",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t15",
+              "idx": 15,
+              "surface": "lucht",
+              "lemma": "lucht",
+              "form": "Nomen, Akkusativ Singular Femininum",
+              "sense": "Himmel",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t16",
+              "idx": 16,
+              "surface": "vol",
+              "lemma": "vol",
+              "form": "Adjektiv/Predikativer Zustand",
+              "sense": "voll",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17883793024690000067:s0:t17",
+              "idx": 17,
+              "surface": "wolken.",
+              "lemma": "wolk",
+              "form": "Nomen, Akkusativ Plural",
+              "sense": "Wolken",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 1,
+              "tokenIds": [
+                "tp_17883793024690000067:s0:t0",
+                "tp_17883793024690000067:s0:t1"
+              ],
+              "lemma": "een landschap",
+              "gloss": "eine Landschaft",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 2,
+              "end": 5,
+              "tokenIds": [
+                "tp_17883793024690000067:s0:t2",
+                "tp_17883793024690000067:s0:t3",
+                "tp_17883793024690000067:s0:t4",
+                "tp_17883793024690000067:s0:t5"
+              ],
+              "lemma": "met een hek voorop",
+              "gloss": "mit einem Zaun vorne",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 13,
+              "end": 15,
+              "tokenIds": [
+                "tp_17883793024690000067:s0:t13",
+                "tp_17883793024690000067:s0:t14",
+                "tp_17883793024690000067:s0:t15"
+              ],
+              "lemma": "een blauwe lucht",
+              "gloss": "ein blauer Himmel",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-02T20:10:59.059Z",
+            "sentenceId": "tp_17883793024690000067:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Een landschap met een hek voorop en daarachter groene struiken en bomen onder een blauwe lucht vol wolken.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-02T20:14:03.245Z",
+        "chapterId": "tp_17883793024690000067",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "1bf618f39861",
+      "analyzedAt": "2026-09-02T20:14:03.245Z"
     }
   },
-  "generatedAt": "2026-09-02T12:07:21.538Z",
-  "chapterCount": 19
+  "generatedAt": "2026-09-03T06:35:05.127Z",
+  "chapterCount": 15
 }

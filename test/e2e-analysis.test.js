@@ -13,7 +13,7 @@
 const fs = require('fs');
 const path = require('path');
 const ROOT = path.join(__dirname, '..');
-const { boot, post, get, assert, sleep, tmpFile } = require('./lib');
+const { boot, post, get, req, assert, sleep, tmpFile } = require('./lib');
 
 async function waitJob(sport, jobId, timeoutMs = 30000) {
   const t0 = Date.now();
@@ -372,6 +372,40 @@ const SEED = {
       const fin = await waitJob(sport, start.body.jobId);
       assert(fin.status === 'done' && fin.data.sentenceCount === 1, 'the job completes normally — the no-op delete never interfered');
       console.log('  POST {force:true} on a never-analysed chapter is a harmless no-op-delete, same as a normal first run: OK');
+    }
+
+    // ── 9. v88_ac: DELETING a chapter drops its cached analysis ───────────────────────────────
+    // ⚠️ Found by AUDITING canonical-analysis.json in the working tree, not from a report: 5 of its
+    // 20 entries were analyses of chapters that no longer existed — 12% of the file, the oldest 5
+    // days old. /api/lessons/delete cleaned up storylines, chain links and flags and simply never
+    // called deleteAnalysisChapter, which had existed since v86_ac for the force path. The leak is
+    // invisible in normal use (nothing can address an id that no longer exists) and unbounded.
+    //
+    // Both halves are asserted against the STORE FILE, which is where the leak was: the deleted
+    // chapter's entry is gone, AND an unrelated chapter's entry is untouched. The second is the one
+    // that matters — the tempting "sweep every entry with no matching chapter" implementation would
+    // pass the first assertion and is one partial read of lessons.json away from wiping the store.
+    {
+      const readStore = () => JSON.parse(fs.readFileSync(scratchAnalysis, 'utf8'));
+      // tp_ana2 and tp_ana3 are both analysed by now (sections 7 and 8 above).
+      const before = readStore();
+      assert(before.chapters['tp_ana3'] && before.chapters['tp_ana2'],
+        'precondition: both fixtures are cached before the delete (got ' + Object.keys(before.chapters).join(',') + ')');
+      const beforeCount = Object.keys(before.chapters).length;
+
+      const d = await req(sport, 'DELETE', '/api/lessons/delete?id=tp_ana3');
+      assert(d.status === 200, 'the chapter delete succeeds (got ' + d.status + ')');
+
+      const after = readStore();
+      assert(!after.chapters['tp_ana3'],
+        'the deleted chapter\'s cached analysis is GONE from the store — it leaked forever before this cut');
+      assert(after.chapters['tp_ana2'],
+        'and an unrelated chapter\'s analysis is UNTOUCHED — this is a targeted drop, not a sweep');
+      assert(Object.keys(after.chapters).length === beforeCount - 1,
+        'exactly one entry was removed (got ' + Object.keys(after.chapters).length + ' from ' + beforeCount + ')');
+      assert(after.chapterCount === Object.keys(after.chapters).length,
+        'and the store\'s own chapterCount was re-derived, not left stating the old total');
+      console.log('  DELETE /api/lessons/delete also drops that chapter\'s cached CP1/CP2 analysis (v88_ac): OK');
     }
 
     console.log('e2e-analysis: ALL PASSED');
