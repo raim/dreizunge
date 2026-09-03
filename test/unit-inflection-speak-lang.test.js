@@ -49,13 +49,25 @@ function open() {
     if (typeof _invalidateQidUniverse === 'function') _invalidateQidUniverse();
     // Fake TTS engine — de-DE and it-IT voices available, so both the (correct) target-voice path
     // and the (fixed) source-voice path can actually resolve a voice and speak.
+    // v89_c: it now FIRES onend, the shape unit-speak-advance's own fake already uses and the one a
+    // real engine presents. §4 asserts auto-advance after a spoken reveal, and that advance is
+    // driven by _speakChunksThen's u.onend callback; an engine that never ends leaves only
+    // _speakAndAdvance's START_GRACE_MS watchdog, so the test would have been measuring the
+    // wedged-engine safety net instead of the ordinary path.
+    // (No backticks in this comment on purpose — it lives INSIDE a template literal, and the
+    // harness's own standing trap is that one would terminate it. See INTERNALS on that.)
     __spokeUtt = [];
     _ttsUnlocked = true; APP.muted = false;
     globalThis.speechSynthesis = {
       speaking: false, pending: false,
       getVoices: function(){ return [{ name:'DE', lang:'de-DE', localService:true },
                                       { name:'IT', lang:'it-IT', localService:true }]; },
-      cancel: function(){}, speak: function(u){ __spokeUtt.push({ text:u.text, lang:u.lang }); },
+      cancel: function(){},
+      speak: function(u){
+        __spokeUtt.push({ text:u.text, lang:u.lang });
+        globalThis.speechSynthesis.speaking = true;
+        setTimeout(function(){ globalThis.speechSynthesis.speaking = false; if (u.onend) u.onend(); }, 10);
+      },
       addEventListener: function(){}, removeEventListener: function(){},
     };
     globalThis.SpeechSynthesisUtterance = function(t){ this.text = t; };
@@ -123,17 +135,16 @@ console.log('  inflection_form wrong-answer reveal speaks Italian, not German: O
 }
 console.log('  inflection_form correct-answer reveal speaks Italian too: OK');
 
-// ── 3. inflection_lemma's answer-reveal is now SILENT (v86_ae, user report + accepted fallback) ──
-// A real user report: an isolated target-language word form spoken with whatever voice claims to
-// match that language can sound audibly wrong (a Dutch/German pair, a device with no reliable Dutch
-// voice) — a case the app's own "refuse rather than approximate" voice policy (_ttsMakeUtterance,
-// v55_x) cannot catch, because it only refuses when NO voice claims to match, not when one claims to
-// match but sounds wrong. Substituting a source-language reading was considered and rejected (no
-// clean single-word source-language equivalent exists — explanation is a full sentence); per the
-// user's own explicit, accepted fallback ("we could also just omit the readout"), inflection_lemma
-// now speaks NOTHING on either the correct or the wrong path. This REPLACES this file's own former
-// v82_d regression guard, which asserted the OPPOSITE (that inflection_lemma keeps speaking target-
-// language audio) — that assertion is exactly what this cut intentionally changes.
+// ── 3. inflection_lemma's WRONG-answer reveal speaks the lemma, in the TARGET voice (v89_c) ─────
+// ⚠️ RE-SCOPED, not deleted — the third ruling this pair of sections has carried. v82_d asserted
+// target-language audio; v86_ae REPLACED that with silence, on the user's own offered fallback
+// ("we could also just omit the readout") after an isolated target-language word form came out
+// mispronounced on a device whose "matching" voice was unreliable — something _ttsMakeUtterance's
+// refuse-rather-than-approximate policy (v55_x) cannot detect, since it only refuses when NO voice
+// claims the language at all. v89_c is the user asking for the readout BACK with that trade-off
+// already known: "For the lemma-type question, the correct answer (the lemma) is not read-out at
+// all. Also read this out, it is always in the target language." So the assertion returns to
+// v82_d's shape — and the LANGUAGE is the point of it, not merely that something was spoken.
 {
   const C = open();
   C.run(`startLesson(0); true;`, 'start');
@@ -143,12 +154,20 @@ console.log('  inflection_form correct-answer reveal speaks Italian too: OK');
   const droveWrong = answer(C, false);
   assert.ok(droveWrong, 'drove a wrong answer on the inflection_lemma exercise');
   const spoken = JSON.parse(C.run(`JSON.stringify(__spokeUtt)`));
-  assert.strictEqual(spoken.length, 0,
-    `inflection_lemma's WRONG-answer reveal speaks NOTHING now (got ${JSON.stringify(spoken)})`);
+  assert.strictEqual(spoken.length, 1,
+    `inflection_lemma's WRONG-answer reveal speaks exactly one utterance (got ${JSON.stringify(spoken)})`);
+  assert.strictEqual(spoken[0].lang, 'de-DE',
+    `and it speaks with the TARGET (German) voice — the lemma is target-language text, unlike ` +
+    `inflection_form's label (got ${spoken[0] && spoken[0].lang})`);
+  // It speaks the LEMMA, not the learner's wrong pick and not the whole sentence.
+  const want = C.run(`(function(){ for (var i=0;i<APP.cur.exercises.length;i++){ var e=APP.cur.exercises[i];
+    if (e.type==='inflection_lemma') return String(e.correct); } return null; })()`);
+  assert.strictEqual(spoken[0].text, want,
+    `and the text spoken is the correct LEMMA itself (expected ${JSON.stringify(want)}, got ${JSON.stringify(spoken[0].text)})`);
 }
-console.log('  inflection_lemma\'s wrong-answer reveal is now silent, not a mispronounced target-language word: OK');
+console.log('  inflection_lemma\'s wrong-answer reveal speaks the lemma in the target voice: OK');
 
-// ── 4. inflection_lemma's correct-answer path is ALSO silent, but still auto-advances ───────────
+// ── 4. inflection_lemma's correct-answer path speaks it too, and still auto-advances ────────────
 {
   const C = open();
   C.run(`startLesson(0); true;`, 'start');
@@ -158,16 +177,23 @@ console.log('  inflection_lemma\'s wrong-answer reveal is now silent, not a misp
   const droveRight = answer(C, true);
   assert.ok(droveRight, 'drove a correct answer on the inflection_lemma exercise');
   const spokenRight = JSON.parse(C.run(`JSON.stringify(__spokeUtt)`));
-  assert.strictEqual(spokenRight.length, 0,
-    `inflection_lemma's CORRECT-answer reveal ALSO speaks nothing (got ${JSON.stringify(spokenRight)})`);
-  await new Promise(r => setTimeout(r, 500));
+  assert.strictEqual(spokenRight.length, 1,
+    `inflection_lemma's CORRECT-answer reveal ALSO speaks (got ${JSON.stringify(spokenRight)})`);
+  assert.strictEqual(spokenRight[0].lang, 'de-DE',
+    `and with the TARGET voice on this path too — both paths, per the request (got ${spokenRight[0] && spokenRight[0].lang})`);
+  await new Promise(r => setTimeout(r, 600));
   const after = C.run(`APP.cur.cur`);
-  assert.ok(after > before, `auto-advance still happens even with no speech (before=${before}, after=${after})`);
+  assert.ok(after > before, `auto-advance still happens after the speech (before=${before}, after=${after})`);
 }
-console.log('  inflection_lemma\'s correct-answer path is silent too, but auto-advance still happens (no speech to wait for): OK');
+console.log('  inflection_lemma\'s correct-answer path speaks the lemma too, and still auto-advances: OK');
 
-// ── 5. inflection_form is completely UNCHANGED by this cut — still speaks source-language audio ──
-// Non-vacuity/regression guard: the v86_ae omission must be scoped to inflection_lemma specifically.
+// ── 5. inflection_form still speaks SOURCE-language audio — the two questions genuinely differ ───
+// ⚠️ The non-vacuity that makes §3/§4 mean something: one inflections ITEM builds both questions
+// from the same sentence, and they must resolve to DIFFERENT voices. v89_c (user ruling, taken
+// after the live corpus was measured) keeps the form label a SOURCE-language explanation by design,
+// even though nl/de and it/nl chapters carry labels the model wrote in the TARGET language against
+// the prompt's own {S} instruction — the lever for that drift is PROMPTS.inflections, hardened at
+// the same cut, not this branch.
 {
   const C = open();
   C.run(`startLesson(0); true;`, 'start');
@@ -176,10 +202,10 @@ console.log('  inflection_lemma\'s correct-answer path is silent too, but auto-a
   const droveWrong = answer(C, false);
   assert.ok(droveWrong, 'drove a wrong answer on the inflection_form exercise');
   const spoken = JSON.parse(C.run(`JSON.stringify(__spokeUtt)`));
-  assert.strictEqual(spoken.length, 1, 'inflection_form still speaks exactly one utterance — unaffected by the v86_ae change');
+  assert.strictEqual(spoken.length, 1, 'inflection_form still speaks exactly one utterance');
   assert.strictEqual(spoken[0].lang, 'it-IT', 'inflection_form still speaks the SOURCE (Italian) voice, exactly as v82_d fixed it');
 }
-console.log('  inflection_form is completely unaffected by v86_ae — still speaks the source-language voice: OK');
+console.log('  inflection_form still speaks the source-language voice, so the two questions of one item genuinely differ: OK');
 
 console.log('unit-inflection-speak-lang: ALL PASSED');
 }

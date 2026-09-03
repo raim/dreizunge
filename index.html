@@ -21268,22 +21268,21 @@ function check(replay){
       : ex.type==='syn_select' ? synRevealHtml(ex)
       : furiHtml(ex.target||ex.correct);
     fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}${((ex.type==='word_form'||ex.type==='inflection_lemma'||ex.type==='inflection_form')&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
-    // v86_ae (user report): inflection_lemma's answer is a BARE, isolated target-language word
-    // form — for a language/device combination with no installed voice matching that language (or
-    // one whose "matching" voice is unreliable), the target-voice policy every other exercise type
-    // relies on has nothing good to fall back to, and the app's own "refuse rather than approximate"
-    // rule (_ttsMakeUtterance, v55_x) only catches the case where NO voice claims to match at all —
-    // it cannot detect a voice that CLAIMS the right language tag but sounds wrong. Substituting a
-    // German (source-language) reading was considered and rejected: there is no clean, short
-    // "German word form" of an isolated target-language lemma to read instead (ex.explanation is a
-    // full sentence, not a word) — worth building only as its own scoped follow-up if the user wants
-    // it, not a partial substitution here. Per the user's own explicit, accepted fallback ("we could
-    // also just omit the readout"), inflection_lemma's answer-reveal now speaks NOTHING — still
-    // advances (auto-advance is unaffected, matching _speakAndAdvance's own `!text` short-delay
-    // path), just silently. inflection_form is UNCHANGED: its own answer is a SOURCE-language label
-    // already confirmed working correctly with the source voice.
-    const speakOk = ex.type==='inflection_lemma' ? ''
-      : ex.type==='type_conjugation' ? _joinPronoun(ex.pronoun, stripFuri(ex.correct))
+    // ⚠️ v89_c (user, REVERSING v86_ae): "For the lemma-type question, the correct answer (the
+    // lemma) is not read-out at all. Also read this out, it is always in the target language."
+    // `inflection_lemma` therefore has NO branch here any more and falls into the generic
+    // `stripFuri(ex.target)` tail below — its target IS the target-language lemma — with
+    // `speakOkLang` left null, i.e. the target voice, exactly as before v86_ae.
+    //
+    // v86_ae's own reasoning is not withdrawn, it is OVERRULED on its ruling: an isolated
+    // target-language word form can be mispronounced by a voice that CLAIMS the language tag but
+    // sounds wrong on that device, which `_ttsMakeUtterance`'s "refuse rather than approximate"
+    // policy (v55_x) cannot detect — it only refuses when NO voice claims to match. v86_ae took the
+    // user's own offered fallback ("we could also just omit the readout"); this cut is the user
+    // asking for the readout back with that trade-off already known. Nothing else about the type
+    // changed, so if the mispronunciation returns, the lever is the VOICE policy, not this branch.
+    // `inflection_form` is untouched — see speakOkLang below.
+    const speakOk = ex.type==='type_conjugation' ? _joinPronoun(ex.pronoun, stripFuri(ex.correct))
       : ex.type==='type_plural' ? stripFuri(ex.correct)
       : ex._intro ? _glyphSpeakForm(stripFuri(ex._intro==='glyph_sound' ? ex.source : ex.target))   // the GLYPH, once (case pair collapsed), never the Latin romanization ("dh"→"d-h")
       : ex.type==='mcq_article'      ? ex.article+' '+stripFuri(ex.target)
@@ -21295,8 +21294,16 @@ function check(replay){
     // v82_d (user report): inflection_form's answer is a grammatical-form LABEL in the SOURCE
     // language (e.g. Italian "nominativo plurale" for a German lesson), unlike every other type
     // above, whose reveal text is genuinely target-language. Falling into the generic branch above
-    // and reading it with the target voice was audibly wrong. inflection_lemma is NOT included here
-    // — its own readout is now omitted entirely (v86_ae, above), so its lang is moot either way.
+    // and reading it with the target voice was audibly wrong. `inflection_lemma` is deliberately NOT
+    // in this branch: its own answer IS target-language text, so null (= the target voice) is right
+    // for it — that is the whole difference between the two questions one inflections item builds.
+    //
+    // ⚠️ v89_c, user ruling, after the corpus was measured: the form label STAYS a source-language
+    // explanation by design, so this line stays as it is. The live corpus is genuinely MIXED — nl/de
+    // and it/nl chapters carry TARGET-language labels the model produced against the prompt's own
+    // {S} instruction, while en/ja, de/en, it/en and en/de carry source-language ones. Switching
+    // this to the target voice would fix the first group by breaking the second; the lever chosen
+    // instead is `PROMPTS.inflections`, hardened at the same cut so new lessons stop drifting.
     const speakOkLang = ex.type==='inflection_form' ? (APP.lessonData?.srcLang||APP.srcLang||'en') : null;
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
     { const a=document.getElementById('ex-area'); if(a){ a.classList.remove('fall-down'); a.classList.add('rise-up'); setTimeout(()=>a.classList.remove('rise-up'),520); } }
@@ -21348,9 +21355,9 @@ function check(replay){
       ? _wrongCorrect
       : (_diff || `${t('check.correct_answer')} <strong>${_wrongCorrect}</strong>`);
     fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${_wrongBody}${((ex.type==='word_form'||ex.type==='inflection_lemma'||ex.type==='inflection_form')&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
-    // v86_ae: same omission as speakOk above — see its own comment.
-    const speakBad = ex.type==='inflection_lemma' ? ''
-      : ex.type==='type_conjugation' ? _joinPronoun(ex.pronoun, stripFuri(ex.correct))
+    // v89_c: the lemma readout is back on this path too — see speakOk's own comment above. The
+    // request named the ANSWER, and the wrong-answer reveal is where the correct lemma is shown.
+    const speakBad = ex.type==='type_conjugation' ? _joinPronoun(ex.pronoun, stripFuri(ex.correct))
       : ex.type==='type_plural' ? stripFuri(ex.correct)
       : ex._intro ? _glyphSpeakForm(stripFuri(ex._intro==='glyph_sound' ? ex.source : ex.target))   // glyph, once, not romanization
       : ex.type==='mcq_article'      ? ex.article+' '+stripFuri(ex.target)
@@ -21360,7 +21367,8 @@ function check(replay){
       : ex.type==='syn_select' ? stripFuri(ex.correct.join(', '))
       : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+stripFuri(ex.target) : stripFuri(ex.target));
     // v82_d: same source-language exception as speakOkLang above — inflection_form's answer is an
-    // Italian (source-language) form label, not target-language text.
+    // Italian (source-language) form label, not target-language text. inflection_lemma is again
+    // absent on purpose (v89_c): null resolves to the target voice, which is what its answer needs.
     const speakBadLang = ex.type==='inflection_form' ? (APP.lessonData?.srcLang||APP.srcLang||'en') : null;
     // v74_q: the reason is SHOWN, not spoken. v71_o read it aloud in the learner's own language on
     // the argument that the reason is the useful thing to hear — but it means a target-language

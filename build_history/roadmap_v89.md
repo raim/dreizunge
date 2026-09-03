@@ -129,6 +129,15 @@ in the carried sections further down and, where noted, in the older roadmaps.*
   exists only on the generation screen, which is why a backend outage reads as broken buttons.
   Offered at `v87_p` and not taken up; small, and would have saved two user reports.
 
+**Buildable, raised by `v89_c`'s own measurement:**
+- **Normalise `formLabel`/`formChoices` into `{S}` after parsing, in `generateInflections`.**
+  `v89_c` hardened `PROMPTS.inflections` and MEASURED it against the live model: OLD 0 of 3 runs
+  compliant, NEW 1 of 3. It helps and it does not fix the drift, and the drift is **per-RUN and
+  all-or-nothing** — the model picks one language for the whole item set. Sending those two fields
+  through the existing translation route after the parse turns an instruction the model may ignore
+  into a transformation it cannot skip: one extra call per lesson, not per item. ⚠️ It would only
+  fix NEW lessons — the mixed corpus `v89_c` measured stays mixed unless something backfills it.
+
 **⚠️ Blocked on a user decision — do NOT start without one:**
 - **Card 2's green "✨ Generate" button is mislabelled** (`#comic-generate-btn` runs the TEXT
   EXTRACTION but is labelled `form.image_generate` = "✨ Generate"). Rewording costs that string's
@@ -2177,6 +2186,129 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_c — the inflections lemma is read aloud again; the form label stays source-language by ruling
+
+User report, two halves: *"inflections lesson: the grammar form is now given in the target language,
+but readout is still in the source language voice. For the lemma-type question, the correct answer
+(the lemma) is not read-out at all. Also read this out, it is always in the target language."*
+**ZERO `ui.json` keys.**
+
+### ⚠️ The first half was NOT the bug it looked like — measure before editing
+
+"The grammar form is now given in the target language" reads as a design statement. It is not: the
+live corpus is **genuinely mixed**, and neither half of it is a majority everywhere.
+
+| chapter | `formLabel` | which language |
+|---|---|---|
+| nl target / de source | `"Tegenwoordige tijd, 3e persoon enkelvoud"` | **TARGET** (Dutch) |
+| it target / nl source | `"imperativo presente (2ª persona plurale)…"` | **TARGET** (Italian) |
+| en target / ja source | `"複数形"` | source (Japanese) |
+| de target / en source | `"dative singular"` | source (English) |
+| en target / de source | `"Plural"` | source (German) |
+| nl target / de source, *"Der Waldpfad"* | `"Präsens, 3. Person Singular"` | source (German) |
+
+`PROMPTS.inflections` has always asked for `{S}`. The model complies when `{S}` is English and
+drifts into `{L}` when it is not — which is `roadmap_v86.md`'s **item AJ**, recorded there as a
+model-behaviour finding, showing up in the corpus. **Reading the label with the target voice would
+have fixed the top two rows by breaking the bottom four.** Put to the user with that measurement.
+
+**User ruling: the form label stays a SOURCE-language explanation.** So `speakOkLang`/`speakBadLang`
+are unchanged, and the lever is the prompt instead. The accepted cost, stated: chapters that already
+hold a target-language label keep the source voice until they are regenerated.
+
+### The second half: the lemma readout comes back (reversing `v86_ae`)
+
+`check()`'s `speakOk`/`speakBad` no longer carry an `inflection_lemma` branch at all — the type falls
+into the generic `stripFuri(ex.target)` tail with `speakOkLang` null, i.e. the target voice, exactly
+as it behaved before `v86_ae`. Both paths, correct and wrong: the request named the ANSWER, and the
+wrong-answer reveal is where the correct lemma is shown.
+
+⚠️ **`v86_ae`'s reasoning is not withdrawn, its RULING is overruled.** An isolated target-language
+word form really can be mispronounced by a voice that CLAIMS the language tag but sounds wrong on a
+given device — `_ttsMakeUtterance`'s "refuse rather than approximate" policy (`v55_x`) only refuses
+when NO voice claims the language at all. `v86_ae` took the user's own offered fallback ("we could
+also just omit the readout"); this cut is the user asking for the readout back with that trade-off
+already known and confirmed. **If the mispronunciation returns, the lever is the VOICE policy, not
+this branch.**
+
+### Prompt hardening — an explicit negative, a field partition, and a re-read step
+
+`PROMPTS.inflections.system` (prompts.json) gains, in the per-field bullets, in a new RULE, and again
+in the schema block:
+
+- `formLabel` is `IN {S}, THE LEARNER'S OWN LANGUAGE — NOT in {L}`; `formChoices` is
+  `IN {S} (never in {L})`. The bare positive `{S}` is what was already being ignored.
+- A rule that **partitions the fields**: exactly three are `{L}` (`surfaceForm`, `lemma`,
+  `lemmaChoices`, plus the quoted `sentence`); every other field is `{S}` — and it names the trap
+  out loud, that a grammatical form BELONGS to `{L}` so its name feels like it should be written in
+  `{L}`.
+- A **re-read step** before returning the JSON: check every `formLabel` and every `formChoices`
+  entry, rewrite any that came out in `{L}`.
+
+### ⚠️ MEASURED AGAINST THE LIVE MODEL — it helps, and it does NOT fix the drift
+
+A scratch spike ran the OLD and the NEW system prompt against the user's own Ollama
+(`qwen3.6:35b-a3b`), three runs each, same real nl-target/de-source chapter ("Naturraum für
+Biodiversität"), no writes to `lessons.json`:
+
+| prompt | runs fully in `{S}` (German) | labels in `{S}` |
+|---|---|---|
+| OLD | **0 of 3** | 0 of 13 |
+| NEW | **1 of 3** | 5 of 15 |
+
+**Report that as it is: a partial mitigation, not a fix.** The old prompt never once produced a
+German label for this pair; the new one produced a completely clean run — and then two completely
+drifted ones. It ships because it strictly improves and costs nothing, **not** because the problem
+is solved.
+
+Two findings worth keeping:
+
+1. **The drift is per-RUN and all-or-nothing.** Every run in the spike was internally consistent —
+   five German labels or five Dutch ones, never a mix. The model picks a language for the whole item
+   set, which means a per-item repair would be repairing a decision made once, higher up.
+2. **`unit-prompt-strictness`'s new section cannot see any of this.** It pins the instruction TEXT.
+   The 1-of-3 above is the only kind of evidence that bears on behaviour, and it came from a spike,
+   not from the suite. Re-measure; do not read the green test as proof.
+
+**The lever that would actually settle it, NOT built here** (recorded in the open list): a
+post-parse NORMALISATION pass in `generateInflections` — send `formLabel` + `formChoices` through the
+existing translation route with "render these grammatical-form labels in `{S}`" and replace them.
+That converts an instruction the model may ignore into a transformation it cannot skip, and it is
+one extra call per lesson, not per item. Left for the user's call rather than added to a bug fix.
+
+### Verified live, on the very chapter the report came from
+
+Driven through the running app on `Naturraum für Biodiversität` (nl target, de source — a chapter
+whose labels ARE in the target language), with the TTS engine stubbed to record and every progress
+write neutralised, one exercise per observation:
+
+- `inflection_lemma`, answer `"geven"` → spoken, **`nl-NL`**. Under `v86_ae` this was silence.
+- `inflection_form`, answer `"Voltooid deelwoord"` → spoken, **`de-DE`**.
+
+⚠️ **That second line is the user's original complaint, and it is now the RULED behaviour**: a Dutch
+label read with the German voice. On chapters that already hold a target-language label they will
+keep hearing exactly that until those chapters are regenerated. Said plainly rather than buried,
+because it is the one thing about this cut that could read as "not fixed".
+
+### Guards, and what they honestly cover
+
+- **`unit-inflection-speak-lang.test.js` §3/§4 RE-SCOPED, not deleted** — the third ruling this pair
+  of sections has carried (`v82_d` target audio → `v86_ae` silence → `v89_c` target audio again).
+  They now assert the utterance COUNT, its LANGUAGE (`de-DE`) and that the text is the correct lemma
+  itself. §5 is the non-vacuity that makes them mean anything: the two questions one inflections item
+  builds must resolve to DIFFERENT voices, and `inflection_form` still speaks `it-IT`.
+- ⚠️ That file's fake TTS engine now **fires `onend`**, the shape `unit-speak-advance`'s own fake
+  already used. §4 asserts auto-advance after a SPOKEN reveal; with an engine that never ends, the
+  advance came only from `_speakAndAdvance`'s `START_GRACE_MS` watchdog — the test would have been
+  measuring the wedged-engine safety net instead of the ordinary path. **Six mutations, all red**:
+  re-silencing either path, giving the lemma the source voice on either path, giving the form label
+  the target voice on either path.
+- **`unit-prompt-strictness.test.js`** gains an inflections section — eight assertions, **eight
+  mutations all red**. ⚠️ It guards prompt TEXT, which is all a prompt is, but it **cannot guard
+  model BEHAVIOUR**: it proves the instruction is present and was not quietly reworded away (which
+  is exactly what happened to this same field's worked example at `v86_ab`), not that the drift
+  stopped. Re-measure the corpus; do not read the green test as evidence.
 
 ## ✅ v89_b — swipe the progress card left/right = its ← / → arrows
 

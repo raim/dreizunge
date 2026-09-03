@@ -7,6 +7,49 @@ const path = require('path');
 const server = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
 const prompts = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'prompts.json'), 'utf8'));
 
+// ── Inflections: which language each field is written in (v89_c) ───────────────────
+// User ruling, taken after the live corpus was measured: the grammatical-form LABEL stays an
+// explanation in {S}, the language the learner already speaks — it is not moved to {L}. The label's
+// readout follows that (unit-inflection-speak-lang §1/§2/§5), so the prompt is the only lever left
+// for the drift the measurement found: nl/de and it/nl chapters carry formLabels the model wrote in
+// the TARGET language, against this prompt's own {S} instruction, while en/ja, de/en, it/en and
+// en/de comply. That is roadmap_v86.md's item AJ ({S}-designated fields comply reliably when {S} is
+// English) showing up in real data.
+//
+// ⚠️ This guards prompt TEXT, and prompt text is all a prompt is — but it cannot guard model
+// BEHAVIOUR. Nothing here proves the drift stops; it proves the instruction is present and did not
+// get quietly reworded away, which is exactly what happened to the same field's own worked example
+// at v86_ab. Re-measure the corpus, do not read this test as evidence.
+{
+  const inflSys = prompts.inflections.system;
+  assert.ok(/AS A SHORT PHRASE IN \{S\}, THE LEARNER'S OWN LANGUAGE — NOT in \{L\}/.test(inflSys),
+    "formLabel's own bullet says {S} AND says not {L} — the positive alone is what the model was already ignoring");
+  assert.ok(/2 to 6 short labels IN \{S\} \(never in \{L\}\)/.test(inflSys),
+    'formChoices carries the same explicit negative — a compliant formLabel with target-language choices is the half-failure this catches');
+  assert.ok(/THE LANGUAGE OF EACH FIELD IS FIXED/.test(inflSys),
+    'a dedicated RULE names the field-language split rather than leaving it implied per-field');
+  // The rule PARTITIONS the fields. A rule that only repeated "use {S}" would add nothing over the
+  // per-field text that was already being ignored; naming the three {L} fields is what makes the
+  // boundary checkable by the model itself.
+  for (const f of ['surfaceForm', 'lemma', 'lemmaChoices']) {
+    assert.ok(new RegExp('THREE fields are in \\{L\\}[^.]*"' + f + '"').test(inflSys),
+      `the field-language rule names "${f}" as one of the {L} fields`);
+  }
+  for (const f of ['formLabel', 'formChoices', 'translation', 'explanation']) {
+    assert.ok(new RegExp('EVERY other field[^.]*"' + f + '"').test(inflSys),
+      `the field-language rule names "${f}" as an {S} field`);
+  }
+  assert.ok(/RE-READ every "formLabel" and every entry of every "formChoices" list/.test(inflSys),
+    'and a re-read step before returning the JSON — the self-check that gives the model somewhere to catch its own drift');
+  // The schema block repeats it, because a model that skims the prose still reads the schema.
+  assert.ok(/"formLabel": "short phrase IN \{S\}, NOT in \{L\}/.test(inflSys), 'the SCHEMA line for formLabel repeats the constraint');
+  assert.ok(/"formChoices": \["2 to 6 short labels IN \{S\}, NOT in \{L\}/.test(inflSys), 'and the schema line for formChoices');
+  // Non-vacuity: the {L}-only fields must NOT have picked up an {S} instruction in the process.
+  assert.ok(/"lemma" is the word's DICTIONARY \(citation\) form/.test(inflSys),
+    'lemma is still described as the word\'s own dictionary form — the hardening did not spill onto the {L} fields');
+}
+console.log('  inflections: formLabel/formChoices are pinned to {S} with an explicit "not {L}" and a re-read step: OK');
+
 // ── Synonyms/antonyms: substitutability ─────────────────────────────────────────
 const synSys = prompts.synonyms.system;
 assert.ok(/drop-in replacement for "base"/.test(synSys), 'synonyms rule requires a drop-in replacement');

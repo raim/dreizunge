@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_b` cut
+# Session prompt — written at the `v89_c` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_b`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_c`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -61,6 +61,19 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   **capture-phase click swallow** is load-bearing, not defensive: a horizontal touch drag still
   synthesises a `click`, which would otherwise ALSO fire `tapWord` or `_storyTapMaybeAdvance` on top
   of the swipe. `unit-card-swipe-nav.test.js`, twelve mutations all red.
+- **`v89_c`** — inflections readout. The lemma question speaks its answer again, in the TARGET
+  voice, **reversing `v86_ae`** (the user asked for it back with that ruling's trade-off known — if
+  the mispronunciation returns, the lever is the VOICE policy, not that branch). ⚠️ **User ruling:
+  the grammar-form label STAYS a source-language explanation.** Measured at the cut: the live corpus
+  is genuinely MIXED — nl/de and it/nl chapters carry target-language labels, en/ja, de/en, it/en and
+  en/de carry source-language ones — so reading the label with the target voice would fix one half by
+  breaking the other. `PROMPTS.inflections` was hardened instead (explicit `NOT in {L}`, a field
+  PARTITION, a re-read step) — and **MEASURED against the live model: OLD 0 of 3 runs compliant,
+  NEW 1 of 3.** A partial mitigation, NOT a fix; it ships because it strictly improves and costs
+  nothing. ⚠️ **The drift is per-RUN and all-or-nothing** (five German labels or five Dutch, never a
+  mix). ⚠️ `unit-prompt-strictness`'s new section pins prompt TEXT and **cannot** guard model
+  behaviour — the 1-of-3 came from a scratch spike, not the suite. The lever that would settle it is
+  in the open list: normalise `formLabel`/`formChoices` after parsing, in `generateInflections`.
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -131,7 +144,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **343 topics, 97 storylines, 33 languages, 755 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_b'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_c'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing
