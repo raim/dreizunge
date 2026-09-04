@@ -2231,6 +2231,18 @@ lessons" tick-list. User-requested from a real screenshot of the comic panel-rev
 | the acceptance tests | `unit-card-swipe-nav.test.js` (9 sections, twelve mutations all red). ⚠️ **It builds the card's nesting by hand**: the harness auto-vivifies a FLAT, detached element per id, so `closest('#complete-screen')` returns null even from a span inside `#comp-story-text` |
 | live-verified | real `TouchEvent`s against the running app: swipe left moved "Der Waldpfad" → "Landschaft hinter dem Zaun", swipe right came back, a vertical drag did nothing, a swipe across a HIGHLIGHTED word browsed with its trailing click `cancelled` and no lesson opened, and the same word plain-clicked still opened `lesson-screen` |
 
+**`v89_k` — a live selection owns the finger** (the regression `v89_e` shipped; user report after
+`v89_i`: *"i still don't see the grammar/meaning popover on the phone"*)
+
+| what | where |
+|---|---|
+| ⚠️ **the cause, and it was NOT `v89_i`'s placement** | a finger adjusting a SELECTION moves horizontally, so `_cardSwipeMove`'s axis lock called it a swipe → `_cardSwipeDragBegin` set `user-select:none` on `#comp-body` → **that COLLAPSES a selection live inside the container** → `_storySelMaybeShow` read `sel.isCollapsed` and returned. PLAN §12 stopped working on touch entirely, wherever the popover was pinned |
+| the fix | at the AXIS LOCK, before anything is decided: a non-collapsed `getSelection()` sets `from.axis = 'sel'` and returns. No drag begins, no `user-select` is touched, `preventDefault` is never reached — the browser's own selection handling runs untouched. `_cardSwipeNav`'s guard widened from `axis === 'y'` to `axis && axis !== 'x'` |
+| ⚠️ **THE LESSON: reproduce the INTERACTION, not the STATE** | `v89_i` measured the popover's rect from a PROGRAMMATIC selection plus a bare synthetic `touchend` — a sequence that never goes through the swipe handlers. It concluded the popover was created and correctly placed, and it was, in that setup. **The bug lived entirely in the two events the repro skipped.** Two releases went to the visible symptom |
+| reproduced, both ways | before: selection came back EMPTY, `#comp-body` had travelled 68px, `user-select:none`, `preventDefault` fired, chapter CHANGED. After: `axis:'sel'`, nothing moved, nothing touched, selection intact, popover shown |
+| the acceptance tests | `unit-card-swipe-nav.test.js` §20. §6 covered the COMMIT; §20 covers the DRAG, one step earlier, where the damage was done — including that `user-select` is NEVER TOUCHED, the specific thing that broke it. Its non-vacuity is that the identical gesture with no selection still drags AND still commits |
+| ⚠️ **two mutations stayed green, both because an OLDER guard masked the new one** | reverting `_cardSwipeNav` to `axis === 'y'` was caught by §6's commit-time selection check — the distinguishing case is a gesture that WAS a selection whose selection is already GONE at touchend, where the axis is the only record. And a mis-built "too late" mutation left `_cardSwipeDragBegin` behind its own `axis === 'x'` test, so it was not the ordering defect at all |
+
 **`v89_j` — "was my wrong answer actually also correct?", asked at answer time** (user request, from
 a real instance: `KOSTENLOS` marked wrong for Dutch `kosteloos` in favour of `UMSONST`)
 

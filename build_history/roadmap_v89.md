@@ -2249,6 +2249,77 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_k — a live selection owns the finger (the regression `v89_e` shipped)
+
+User, after `v89_i`: *"i still don't see the grammar/meaning popover on the phone."*
+
+### ⚠️ `v89_i`'s fix was correct. It was not the bug.
+
+Two releases were spent on the visible symptom. The actual cause was shipped by **`v89_e`**, this
+session, three releases earlier:
+
+1. A finger adjusting a **selection** moves horizontally, so `_cardSwipeMove`'s axis lock called it
+   a swipe.
+2. `_cardSwipeDragBegin` sets `user-select: none` on `#comp-body` — and setting that while a
+   selection is live **inside that container COLLAPSES the selection**.
+3. `_storySelMaybeShow` then read `sel.isCollapsed` and returned. **PLAN §12 stopped working on
+   touch entirely** — no popover, wherever it was pinned.
+
+**Reproduced in a real browser before the fix**, with the sequence the earlier repro had missed:
+a bare synthetic `touchend` never went through the swipe handlers, which is exactly why `v89_i`'s
+diagnosis found the popover healthy. Driving the REAL gesture (touchstart → horizontal touchmove →
+touchend) gave: selection came back **empty**, `#comp-body` had travelled **68px**, `user-select`
+was `none`, `preventDefault` had fired — **and the chapter had changed**.
+
+> **The lesson: reproduce the INTERACTION, not the STATE.** `v89_i` measured the popover's rect from
+> a programmatically-set selection and a synthetic `touchend`, concluded it was created and correctly
+> placed — and it was, in that setup. The bug lived in the two events that setup skipped.
+
+### The fix
+
+At the axis lock, before anything is decided:
+
+```js
+const _sel = window.getSelection && window.getSelection();
+if (_sel && !_sel.isCollapsed) { from.axis = 'sel'; return; }
+```
+
+**Checked at the LOCK, the one moment before damage is done** — no drag begins, no `user-select` is
+touched, `preventDefault` is never reached, so the browser's own selection handling runs untouched.
+The signal is the one this file already trusts three times over (`_storySelMaybeShow`,
+`_storyTapMaybeAdvance`, `_cardSwipeNav`): a non-collapsed selection means the gesture belongs to the
+selection.
+
+`_cardSwipeNav`'s guard widened from `axis === 'y'` to **`axis && axis !== 'x'`**, so the new `'sel'`
+verdict cannot commit either. `null` (a finger that never passed the lock distance) still falls
+through to the geometry, which is what a tap or a jitter must be judged by.
+
+### Verified after, same real gesture
+
+`axis: 'sel'`, **no drag**, `transform` untouched, `user-select` untouched, `preventDefault` **not
+called**, **selection intact** (`selBefore === selAfter`, 67 characters), **popover shown**
+(`display:flex`, `top:8px`), **chapter unchanged**.
+
+### Guards
+
+`unit-card-swipe-nav.test.js` §20 (new). §6 already covered the COMMIT ("a drag that selected text
+stays a selection"); this covers the **DRAG**, one step earlier, which is where the damage was
+actually done. It asserts the axis, no drag, **`user-select` never touched** (the specific thing that
+broke the feature), `preventDefault` never reached, and no commit — plus the non-vacuity that the
+IDENTICAL gesture with no selection still drags, still takes `user-select`, still preempts the scroll
+and still commits. Without that last part, "the swipe never works at all" would pass §20 perfectly.
+
+**Four mutations, all red — after two fixes to the TESTS**, both of the same kind: an older guard was
+masking the new one.
+
+- Reverting `_cardSwipeNav` to `axis === 'y'` stayed green, because §6's commit-time selection check
+  caught it anyway. The case that distinguishes them is a gesture that WAS a selection whose
+  selection is **already gone** by the time the finger lifts — the axis is then the only record of
+  what the gesture was. That case is now in the file.
+- A "check the selection after computing the axis" mutation stayed green because it was not actually
+  the too-late ordering — `_cardSwipeDragBegin` still ran behind the `axis === 'x'` test. Rewritten
+  to move `_cardSwipeDragBegin` ABOVE the check, which is the real defect shape, and it goes red.
+
 ## ✅ v89_j — "was my wrong answer actually also correct?", asked at answer time
 
 User request, from the instance they sent: a nl→de `read_translate` marked **KOSTENLOS** wrong in

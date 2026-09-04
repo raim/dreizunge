@@ -3124,8 +3124,8 @@
       "script": [
         "latin"
       ],
-      "sentenceCount": 6,
-      "tokenCount": 103,
+      "sentenceCount": 5,
+      "tokenCount": 68,
       "sentences": [
         {
           "sentenceId": "tp_17851387238120000029:s0",
@@ -3927,378 +3927,11 @@
             "stage": "CP2",
             "pipelineVersion": 1,
             "producedBy": "canonical-analysis.js",
-            "at": "2026-09-01T21:51:31.732Z",
+            "at": "2026-09-04T10:28:22.965Z",
             "sentenceId": "tp_17851387238120000029:s4",
             "model": "qwen3.6:35b-a3b"
           },
           "text": "La spiegazione evoluzionistica darwiniana in realtà non è soltanto una «teoria» scientifica, ma un vasto e complesso «programma di ricerca», composto da più leggi, fattori, modelli e ipotesi.",
-          "paraBreakBefore": false
-        },
-        {
-          "sentenceId": "tp_17851387238120000029:s5",
-          "tokens": [
-            {
-              "tokenId": "tp_17851387238120000029:s5:t0",
-              "idx": 0,
-              "surface": "E",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t1",
-              "idx": 1,
-              "surface": "come",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t2",
-              "idx": 2,
-              "surface": "programma",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t3",
-              "idx": 3,
-              "surface": "di",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t4",
-              "idx": 4,
-              "surface": "ricerca",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t5",
-              "idx": 5,
-              "surface": "ha",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t6",
-              "idx": 6,
-              "surface": "subito",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t7",
-              "idx": 7,
-              "surface": "nell'ultimo",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t8",
-              "idx": 8,
-              "surface": "secolo",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t9",
-              "idx": 9,
-              "surface": "e",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t10",
-              "idx": 10,
-              "surface": "mezzo",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t11",
-              "idx": 11,
-              "surface": "molte",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t12",
-              "idx": 12,
-              "surface": "correzioni",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t13",
-              "idx": 13,
-              "surface": "e",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t14",
-              "idx": 14,
-              "surface": "integrazioni,",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t15",
-              "idx": 15,
-              "surface": "come",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t16",
-              "idx": 16,
-              "surface": "è",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t17",
-              "idx": 17,
-              "surface": "bene",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t18",
-              "idx": 18,
-              "surface": "che",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t19",
-              "idx": 19,
-              "surface": "sia,",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t20",
-              "idx": 20,
-              "surface": "rimanendo",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t21",
-              "idx": 21,
-              "surface": "tuttavia",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t22",
-              "idx": 22,
-              "surface": "integro",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t23",
-              "idx": 23,
-              "surface": "nel",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t24",
-              "idx": 24,
-              "surface": "suo",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t25",
-              "idx": 25,
-              "surface": "nocciolo",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t26",
-              "idx": 26,
-              "surface": "centrale,",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t27",
-              "idx": 27,
-              "surface": "quello",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t28",
-              "idx": 28,
-              "surface": "individuato",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t29",
-              "idx": 29,
-              "surface": "da",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t30",
-              "idx": 30,
-              "surface": "Charles",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t31",
-              "idx": 31,
-              "surface": "Darwin",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t32",
-              "idx": 32,
-              "surface": "alla",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t33",
-              "idx": 33,
-              "surface": "metà",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            },
-            {
-              "tokenId": "tp_17851387238120000029:s5:t34",
-              "idx": 34,
-              "surface": "dell'Ottocento.",
-              "lemma": null,
-              "form": null,
-              "sense": null,
-              "confidence": "unresolved",
-              "reviewed": false
-            }
-          ],
-          "phrases": [],
-          "phrasesDropped": 0,
-          "provenance": {
-            "stage": "CP2",
-            "pipelineVersion": 1,
-            "producedBy": "canonical-analysis.js",
-            "at": "2026-09-01T21:59:07.393Z",
-            "sentenceId": "tp_17851387238120000029:s5",
-            "model": "qwen3.6:35b-a3b"
-          },
-          "text": "E come programma di ricerca ha subito nell'ultimo secolo e mezzo molte correzioni e integrazioni, come è bene che sia, rimanendo tuttavia integro nel suo nocciolo centrale, quello individuato da Charles Darwin alla metà dell'Ottocento.",
           "paraBreakBefore": false
         }
       ],
@@ -4306,12 +3939,14 @@
         "stage": "CP2",
         "pipelineVersion": 1,
         "producedBy": "canonical-analysis.js",
-        "at": "2026-09-01T21:59:07.393Z",
+        "at": "2026-09-04T10:28:22.966Z",
         "chapterId": "tp_17851387238120000029",
         "model": "qwen3.6:35b-a3b"
       },
       "sourceTextHash": "2800581a53eb",
-      "analyzedAt": "2026-09-01T21:59:07.393Z"
+      "analyzedAt": "2026-09-04T10:28:22.966Z",
+      "partial": true,
+      "totalSentences": 6
     },
     "tp_17877435309330000372": {
       "chapterId": "tp_17877435309330000372",
@@ -6705,6 +6340,6 @@
       "analyzedAt": "2026-09-02T20:14:03.245Z"
     }
   },
-  "generatedAt": "2026-09-03T07:39:01.748Z",
+  "generatedAt": "2026-09-04T10:28:22.968Z",
   "chapterCount": 14
 }

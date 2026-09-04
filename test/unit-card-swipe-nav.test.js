@@ -506,4 +506,70 @@ console.log('  each card drags its own body and never the other one\'s: OK');
 }
 console.log('  on the entry card the backward direction is a short wall that commits nothing: OK');
 
+// ── 20. ⚠️ v89_k — A LIVE SELECTION OWNS THE FINGER. A REGRESSION v89_e SHIPPED. ───────────────
+// User report after v89_i: "I still don't see the grammar/meaning popover on the phone." It was
+// never the popover's placement. A finger adjusting a SELECTION moves horizontally too, so the axis
+// lock called it a swipe — and `_cardSwipeDragBegin` sets `user-select:none` on the card, which
+// COLLAPSES a selection live inside that container. `_storySelMaybeShow` then read `sel.isCollapsed`
+// and returned, so PLAN §12 simply stopped working on touch.
+//
+// Reproduced in a real browser before the fix (the selection came back empty and the card had
+// travelled 68px), and re-checked after (selection intact, popover shown, nothing moved). §9's
+// existing "a drag that selected text stays a selection" covers the COMMIT; this covers the DRAG,
+// which is where the damage was actually done — one step earlier, before any commit is considered.
+{
+  const C = open();
+  const dragged = () => C.run(`window.getSelection = function(){ return { isCollapsed: false, rangeCount: 1, toString: function(){ return 'picked words'; } }; }; true;`);
+  const collapsed = () => C.run(`window.getSelection = function(){ return { isCollapsed: true, rangeCount: 0 }; }; true;`);
+  const gesture = () => JSON.parse(C.run(`JSON.stringify((function(){
+    document.getElementById('comp-body').style.transform = '';
+    document.getElementById('comp-body').style.userSelect = '';
+    var prevented = 0;
+    _cardSwipeStart({ touches: [{ clientX: 200, clientY: 300 }], target: document.getElementById('plain-span') });
+    _cardSwipeMove({ touches: [{ clientX: 60, clientY: 303 }], cancelable: true, preventDefault: function(){ prevented++; } });
+    return { axis: APP._swipeFrom && APP._swipeFrom.axis, dragging: !!APP._swipeEl, prevented: prevented,
+             transform: document.getElementById('comp-body').style.transform || '',
+             userSelect: document.getElementById('comp-body').style.userSelect || '' };
+  })())`));
+
+  dragged();
+  const withSel = gesture();
+  assert.strictEqual(withSel.axis, 'sel', 'a horizontal drag with a LIVE selection locks to neither x nor y');
+  assert.strictEqual(withSel.dragging, false, 'and starts no drag');
+  assert.strictEqual(withSel.transform, '', 'the card does not move');
+  assert.strictEqual(withSel.userSelect, '',
+    '⚠️ AND user-select is NEVER TOUCHED — setting it is what collapsed the selection and broke the feature');
+  assert.strictEqual(withSel.prevented, 0,
+    '⚠️ and preventDefault is never reached, so the browser\'s own selection handling runs untouched');
+
+  // It must not commit either, however far the finger travelled.
+  assert.strictEqual(C.run(`_cardSwipeNav({ x: 200, y: 300, axis: 'sel',
+    target: document.getElementById('plain-span') }, { x: 40, y: 310 })`), false,
+    'a selection gesture never navigates, even with a qualifying end delta');
+  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0, sumNextCalls: 0 }, 'nothing fired');
+  // ⚠️ AND with the selection ALREADY GONE by the time the finger lifts. `_cardSwipeNav`'s own
+  // selection check (§6) reads getSelection() at COMMIT time, so it cannot see a gesture that WAS a
+  // selection and no longer is — the AXIS is the only record of what the gesture was. Written
+  // because the first mutation run showed §6 masking this: the widened `axis && axis !== 'x'`
+  // condition looked untestable until the selection was cleared first.
+  collapsed();
+  assert.strictEqual(C.run(`_cardSwipeNav({ x: 200, y: 300, axis: 'sel',
+    target: document.getElementById('plain-span') }, { x: 40, y: 310 })`), false,
+    'a gesture the lock called a SELECTION never navigates, even once the selection itself is gone');
+  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0, sumNextCalls: 0 }, 'still nothing fired');
+
+  // ⚠️ NON-VACUITY: the IDENTICAL gesture with no selection still drags and still commits. Without
+  // this, "the swipe never works" would pass §20 perfectly.
+  collapsed();
+  const noSel = gesture();
+  assert.strictEqual(noSel.axis, 'x', 'with no selection the same gesture is a swipe');
+  assert.strictEqual(noSel.dragging, true, 'and drags');
+  assert.ok(noSel.transform, 'moving the card: ' + noSel.transform);
+  assert.strictEqual(noSel.userSelect, 'none', 'and takes user-select for the duration, as it should when it IS a swipe');
+  assert.strictEqual(noSel.prevented, 1, 'and preempts the page scroll');
+  assert.strictEqual(C.run(`_cardSwipeNav({ x: 200, y: 300, axis: 'x',
+    target: document.getElementById('plain-span') }, { x: 40, y: 310 })`), true, 'and commits');
+}
+console.log('  a live selection owns the finger: no drag, no user-select, no preventDefault, no commit: OK');
+
 console.log('unit-card-swipe-nav: ALL PASSED');

@@ -165151,12 +165151,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v89_j', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v89_k', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"fda03525d7b7","lessons.json":"0d6144373b1a","ui.json":"2affd3acf293","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"c91e65d377b1","analysis-corrections.json":"missing","build-static.js":"e464fdfb9bd3"};
+  APP.buildSources = {"index.html":"3433490ccd83","lessons.json":"0d6144373b1a","ui.json":"2affd3acf293","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"c91e65d377b1","analysis-corrections.json":"missing","build-static.js":"e464fdfb9bd3"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -180076,6 +180076,20 @@ function _cardSwipeMove(e){
   const dx = t.clientX - from.x, dy = t.clientY - from.y;
   if (!from.axis) {
     if (Math.max(Math.abs(dx), Math.abs(dy)) < _SWIPE_LOCK_PX) return;   // too early to tell
+    // ⚠️ v89_k, A REGRESSION v89_e SHIPPED. A finger adjusting a SELECTION moves horizontally too,
+    // and taking that for a swipe destroyed the selection outright: `_cardSwipeDragBegin` sets
+    // `user-select:none` on the card, and setting it while a selection is live inside the container
+    // COLLAPSES it. `_storySelMaybeShow` then read `sel.isCollapsed` and returned, so PLAN §12's
+    // "select text, ask the tutor" simply stopped happening on touch — which is exactly what the
+    // user reported after v89_i, and it was never the popover's placement.
+    //
+    // The signal is the one this file already trusts three times over (`_storySelMaybeShow`,
+    // `_storyTapMaybeAdvance`, `_cardSwipeNav`): a non-collapsed selection means the gesture belongs
+    // to the selection, not to us. Checked at the LOCK, the one moment before any damage is done —
+    // no drag begins, no `user-select` is touched, and `preventDefault` is never reached, so the
+    // browser's own selection handling runs untouched.
+    const _sel = window.getSelection && window.getSelection();
+    if (_sel && !_sel.isCollapsed) { from.axis = 'sel'; return; }
     from.axis = (Math.abs(dx) > Math.abs(dy)) ? 'x' : 'y';
     if (from.axis === 'x') _cardSwipeDragBegin(from.target);
   }
@@ -180205,7 +180219,10 @@ function _cardSwipeNav(from, to){
   if (!card) return false;
   // v89_e: a gesture the axis lock called a SCROLL never navigates, however far sideways the finger
   // wandered afterwards. Without this a curving scroll could still end 60px off-axis and commit.
-  if (from.axis === 'y') return false;
+  // v89_k: widened from `=== 'y'` to "anything the lock decided that is not 'x'", so the new 'sel'
+  // verdict cannot commit either. `null` (a finger that never passed the lock distance) still falls
+  // through to the geometry below, which is what a tap or a jitter must be judged by.
+  if (from.axis && from.axis !== 'x') return false;
   const dx = to.x - from.x, dy = to.y - from.y;
   if (Math.abs(dx) < _SWIPE_MIN_PX) return false;
   if (Math.abs(dx) < Math.abs(dy) * _SWIPE_X_OVER_Y) return false;
