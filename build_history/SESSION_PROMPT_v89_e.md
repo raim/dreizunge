@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_d` cut
+# Session prompt — written at the `v89_e` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_d`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_e`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -84,6 +84,16 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   ⚠️ `explanation`/`title`/`desc` drift the SAME way (measured) and are deliberately NOT in scope:
   `explanation` quotes target-language word forms inside itself, so a translation pass over it can
   corrupt the very forms the exercise teaches.
+- **`v89_e`** — the progress card now FOLLOWS THE FINGER and springs back (tier A of the evaluation
+  the user asked for before committing to it). `#comp-body` is the element that moves, and that is
+  load-bearing: **a transformed ancestor becomes the containing block for its `position:fixed`
+  descendants**, and `#comp-nav-modal` is one — moving `#complete-screen` would quietly stop the ☰
+  overlay covering the viewport. The axis locks ONCE at 10px and is never revisited; `touchmove` is
+  the only non-passive listener and `preventDefault` is reached only on an 'x' lock, so scrolling a
+  long card is untouched. ⚠️ **Tiers B and C were rejected on evidence**: the neighbouring chapter's
+  text is not in memory (`_backToChapterProgress` fetches it; all 343 `APP.savedList` entries carry
+  no `story`), and where forward LEADS lives in `comp-next`'s closure, resolved by `showComplete`'s
+  gate chain at render time.
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -154,7 +164,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **343 topics, 97 storylines, 33 languages, 755 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_d'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_e'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

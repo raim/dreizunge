@@ -2213,6 +2213,24 @@ lessons" tick-list. User-requested from a real screenshot of the comic panel-rev
 | the acceptance tests | `unit-card-swipe-nav.test.js` (9 sections, twelve mutations all red). ⚠️ **It builds the card's nesting by hand**: the harness auto-vivifies a FLAT, detached element per id, so `closest('#complete-screen')` returns null even from a span inside `#comp-story-text` |
 | live-verified | real `TouchEvent`s against the running app: swipe left moved "Der Waldpfad" → "Landschaft hinter dem Zaun", swipe right came back, a vertical drag did nothing, a swipe across a HIGHLIGHTED word browsed with its trailing click `cancelled` and no lesson opened, and the same word plain-clicked still opened `lesson-screen` |
 
+**`v89_e` — the progress card FOLLOWS THE FINGER and springs back** (user request, after asking for
+an evaluation of the three possible tiers first)
+
+| what | where |
+|---|---|
+| the drag | `_cardSwipeMove` / `_cardSwipeDragBegin` / `_cardSwipeDragTo` / `_cardSwipeDragEnd` / `_cardSwipeCancel` (index.html), beside `v89_b`'s commit handlers, which are UNCHANGED |
+| the curve | `_cardSwipeOffset(dx, max)` — pure: 1:1 up to `_SWIPE_MIN_PX`, then asymptotically damped toward `max`, so pulling harder never runs the card off the screen. Checkable as arithmetic instead of inferred from pixels |
+| constants | `_SWIPE_LOCK_PX = 10`, `_SWIPE_DRAG_MAX = 96`, `_SWIPE_DEAD_MAX = 24` (a direction with nowhere to go gets a short, hard wall) |
+| shared by drag AND commit | `_cardSwipeInScope(target)`, `_cardSwipeBtnFor(dx)` — split out of `_cardSwipeNav` so the card can never travel toward a destination the release would then refuse |
+| ⚠️ **why `#comp-body` and not `#complete-screen`** | **a transformed ancestor becomes the containing block for its `position:fixed` descendants**, and `#comp-nav-modal` is one — moving the screen quietly stops the ☰ overlay covering the viewport. The modal is `#comp-body`'s SIBLING. (`#story-sel-popover` sits at document top level, outside either way.) Also not `#comp-story-panel`: it is a `<details>` the learner can collapse, and dragging a collapsed one animates an empty box |
+| ⚠️ the one non-passive listener | `touchmove`, `{passive:false}`. `preventDefault` is reached ONLY after the axis lock says `'x'`, which is what keeps scrolling a long card untouched — live-verified with a real `TouchEvent` whose `defaultPrevented` came back `false` on a vertical drag |
+| ⚠️ the axis is decided ONCE | at 10px, never revisited: a gesture that starts as a scroll stays one however far the finger later curves, and `_cardSwipeNav` refuses to commit a `'y'`-locked gesture even when its END delta qualifies |
+| spring vs snap | abandoned → EASES home (`.22s`, `.rise-up`'s easing reused). Committed → SNAPS, and `_cardSwipeNav` clears the transform ITSELF before `btn.onclick()`: that handler can re-render synchronously, and clearing afterwards clears it on a card already shown displaced |
+| nothing may leave it parked | `touchcancel`, a SECOND FINGER (which arrives as a `touchstart`, never a `touchend`), a `touchmove` with no touches, an orphan `touchend`. Each stranded a transform in an earlier draft |
+| ⚠️ **tiers B and C rejected on EVIDENCE** | the neighbouring chapter's text is not in memory (`_backToChapterProgress` fetches it; all 343 `APP.savedList` entries measured to carry no `story`), and where forward LEADS lives in `comp-next`'s closure, resolved by `showComplete`'s gate chain at render time. A carousel must know the destination BEFORE the gesture — the re-derivation `v88_r`/`v89_b` refused |
+| markup | `id="comp-body"` added to `#complete-screen`'s `.comp-body`. **`class` stays FIRST**: `smoke-render` pins the first occurrence of the literal `class="comp-body"` against `id="comp-hdr"`'s position, and three other cards carry the same class |
+| the acceptance tests | `unit-card-swipe-nav.test.js`, 9 sections → 16. **Seventeen mutations, all red — after a fix**: the first run left `from.axis !== 'x'` green, because the `\|\| !APP._swipeEl` half beside it caught everything (`_swipeEl` is only ever set on the `'x'` branch). ⚠️ **A condition that cannot fail on its own is not a guard** — the redundant half was REMOVED rather than the test weakened. Same class of finding as `v89_d`'s `Array.isArray`, two releases running |
+
 **`v89_d` — the inflections form labels are NORMALISED into `{S}`, not merely asked for**
 (user request, after `v89_c` measured the prompt hardening at 1 of 3 runs)
 

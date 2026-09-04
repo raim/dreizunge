@@ -24,7 +24,7 @@ function open() {
   const C = loadClient({ quiet: true });
   C.run(`
     var screenEl = document.getElementById('complete-screen');
-    var body     = document.getElementById('comp-body-fixture');
+    var body     = document.getElementById('comp-body');   // v89_e: the REAL id now — it is the element the drag moves
     var panel    = document.getElementById('comp-story-panel');
     var text     = document.getElementById('comp-story-text');
     var modal    = document.getElementById('comp-nav-modal');
@@ -200,5 +200,211 @@ console.log('  exactly one synthetic click is swallowed per swipe; ordinary and 
     'mutation check: removing that call makes the assertion above fail');
 }
 console.log('  index.html\'s init() wires _cardSwipeInit(): OK');
+
+// ══ v89_e — the card FOLLOWS THE FINGER and springs back ═══════════════════════════════════════
+// User: "is it easy that the text field actually moves with swiping?" Tier A of the evaluation —
+// the card tracks the finger, clamped, and returns; the commit rule above is unchanged.
+
+// ── 10. The offset curve, as arithmetic ────────────────────────────────────────────────────────
+// It is a pure function on purpose: checking a curve by reading pixels off a transform proves the
+// wiring, not the shape. Both are checked, in that order.
+{
+  const C = open();
+  const off = (dx, max) => C.run(`_cardSwipeOffset(${dx}, ${max})`);
+  assert.strictEqual(off(0, 96), 0, 'no travel, no offset');
+  // 1:1 up to the COMMIT distance, so the learner can see how far is far enough.
+  for (const d of [1, 17, 40, 59, 60]) {
+    assert.strictEqual(off(d, 96), d, `a ${d}px drag moves the card exactly ${d}px — taken literally below the threshold`);
+    assert.strictEqual(off(-d, 96), -d, `and ${-d}px the other way`);
+  }
+  // Beyond it, damped and asymptotic: pulling harder always moves it further, never past the cap.
+  const past = [61, 96, 200, 1000, 100000].map(d => off(d, 96));
+  for (let i = 1; i < past.length; i++) {
+    assert.ok(past[i] > past[i - 1], 'the curve is strictly increasing past the threshold');
+    assert.ok(past[i] < 96, `and never reaches the cap (got ${past[i]} at index ${i})`);
+  }
+  assert.ok(past[0] > 60 && past[0] < 62, 'and it is CONTINUOUS at the join — 61px maps just past 60 (got ' + past[0] + ')');
+  assert.ok(off(100000, 96) > 95, 'an absurd drag asymptotes to the cap rather than stopping short: ' + off(100000, 96));
+  // The dead-direction cap is the same curve with a smaller ceiling — a short, hard wall.
+  assert.strictEqual(off(10, 24), 10, 'a dead direction still tracks 1:1 at first');
+  assert.strictEqual(off(24, 24), 24, 'up to its own smaller cap');
+  assert.ok(off(500, 24) === 24, 'and then stops dead there: ' + off(500, 24));
+  assert.ok(off(500, 24) < off(500, 96), 'so a dead direction is visibly shorter than a live one');
+}
+console.log('  the offset curve: 1:1 to the threshold, damped and asymptotic past it, capped short when dead: OK');
+
+// ── 11. The axis lock decides ONCE, and a vertical gesture never moves the card ─────────────────
+{
+  const C = open();
+  const move = (dx, dy) => C.run(`(function(){
+    var prevented = 0;
+    _cardSwipeMove({ touches: [{ clientX: 200 + (${dx}), clientY: 300 + (${dy}) }],
+                     cancelable: true, preventDefault: function(){ prevented++; } });
+    return { prevented: prevented, axis: APP._swipeFrom && APP._swipeFrom.axis,
+             transform: document.getElementById('comp-body').style.transform,
+             dragging: !!APP._swipeEl };
+  })()`, 'move');
+  const start = () => C.run(`document.getElementById('comp-body').style.transform = '';
+    _cardSwipeStart({ touches: [{ clientX: 200, clientY: 300 }], target: document.getElementById('plain-span') }); true;`);
+
+  // Below the lock distance nothing is decided and nothing moves.
+  start();
+  let r = move(6, 2);
+  assert.strictEqual(r.axis, null, 'a 6px drift has not decided an axis yet');
+  assert.strictEqual(r.transform, '', 'and has not moved the card');
+  assert.strictEqual(r.prevented, 0, 'nor taken the axis from the page');
+
+  // Past it, horizontally: locked to x, the card moves, and the page scroll is preempted.
+  r = move(40, 5);
+  assert.strictEqual(r.axis, 'x', 'a clearly horizontal drag locks to x');
+  assert.strictEqual(r.dragging, true, 'and starts dragging');
+  assert.strictEqual(r.transform, 'translateX(40px)', 'the card is exactly under the finger');
+  assert.strictEqual(r.prevented, 1, 'and preventDefault was called — otherwise the page scrolls under a moving card');
+
+  // ⚠️ The lock is not revisited: a gesture that began horizontal stays horizontal.
+  r = move(45, 400);
+  assert.strictEqual(r.axis, 'x', 'a later vertical excursion does NOT re-decide the axis');
+
+  // A gesture that starts VERTICAL never moves the card and never takes the axis from the page.
+  start();
+  r = move(4, 40);
+  assert.strictEqual(r.axis, 'y', 'a clearly vertical drag locks to y');
+  assert.strictEqual(r.dragging, false, 'and never begins a drag');
+  assert.strictEqual(r.transform, '', 'the card does not move');
+  assert.strictEqual(r.prevented, 0, '⚠️ and preventDefault is NEVER called — scrolling a long card is untouched');
+  r = move(400, 45);
+  assert.strictEqual(r.axis, 'y', 'even when the finger later curves hard sideways');
+  assert.strictEqual(r.prevented, 0, 'still no preventDefault');
+  assert.strictEqual(r.transform, '', 'still no movement');
+}
+console.log('  the axis locks once: horizontal drags move the card and preempt the scroll, vertical ones do neither: OK');
+
+// ── 12. A y-locked gesture cannot commit, however far sideways it ends ─────────────────────────
+{
+  const C = open();
+  // Geometry that WOULD otherwise commit: 160px left, 10px down. The finger scrolled first (so the
+  // lock said 'y' at 10px), then curved back and travelled sideways — a scroll with a bounce.
+  assert.strictEqual(C.run(`_cardSwipeNav({ x: 200, y: 300, axis: 'y',
+    target: document.getElementById('plain-span') }, { x: 40, y: 310 })`), false,
+    'a gesture the lock called a SCROLL does not navigate even when its END delta qualifies');
+  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0 }, 'nothing fired');
+  // Non-vacuity: the identical numbers with an x lock DO navigate, so §12 is the lock talking and
+  // not the geometry.
+  assert.strictEqual(C.run(`_cardSwipeNav({ x: 200, y: 300, axis: 'x',
+    target: document.getElementById('plain-span') }, { x: 40, y: 310 })`), true,
+    'the same numbers with an x lock DO navigate');
+  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 0 }, 'and that one pressed comp-next');
+}
+console.log('  a scroll that curves sideways still does not navigate: OK');
+
+// ── 13. A dead direction gets the short wall, and still refuses to commit ──────────────────────
+{
+  const C = open();
+  C.run(`document.getElementById('comp-prev').style.display = 'none';
+         _cardSwipeStart({ touches: [{ clientX: 200, clientY: 300 }], target: document.getElementById('plain-span') });
+         _cardSwipeMove({ touches: [{ clientX: 500, clientY: 302 }], cancelable: false }); true;`);
+  assert.strictEqual(C.run(`document.getElementById('comp-body').style.transform`), 'translateX(24px)',
+    'dragging toward a HIDDEN comp-prev stops at the short wall, not the full travel');
+  // The same drag the other way, toward a live arrow, goes much further — same gesture, same code.
+  C.run(`_cardSwipeCancel();
+         _cardSwipeStart({ touches: [{ clientX: 200, clientY: 300 }], target: document.getElementById('plain-span') });
+         _cardSwipeMove({ touches: [{ clientX: -100, clientY: 302 }], cancelable: false }); true;`);
+  const live = C.run(`document.getElementById('comp-body').style.transform`);
+  assert.ok(/^translateX\(-(8[0-9]|9[0-5])px\)$/.test(live),
+    'toward a LIVE comp-next the same 300px pull travels most of the full 96px: ' + live);
+}
+console.log('  a direction with nowhere to go gets a short hard wall; a live one gets the full travel: OK');
+
+// ── 14. Release: an abandoned drag SPRINGS home, a committed one SNAPS ─────────────────────────
+// ⚠️ The distinction is load-bearing, not decorative. A commit re-renders the card underneath, and
+// animating a transform on an element whose content is being replaced is exactly how the next card
+// arrives already displaced.
+{
+  const C = open();
+  const body = () => JSON.parse(C.run(`JSON.stringify((function(){ var e = document.getElementById('comp-body');
+    return { transform: e.style.transform, transition: e.style.transition, userSelect: e.style.userSelect, dragging: !!APP._swipeEl }; })())`));
+  const drag = (toX) => C.run(`_cardSwipeStart({ touches: [{ clientX: 200, clientY: 300 }], target: document.getElementById('plain-span') });
+    _cardSwipeMove({ touches: [{ clientX: ${toX}, clientY: 303 }], cancelable: false }); true;`);
+
+  // While dragging: no transition (track, don't chase) and selection is off.
+  drag(240);
+  const mid = body();
+  assert.strictEqual(mid.transition, 'none', 'a card being dragged has NO transition — it tracks the finger');
+  assert.strictEqual(mid.userSelect, 'none', 'and selection is off, so PLAN §12 is not also trying to own the finger');
+  assert.ok(mid.transform, 'and it has moved');
+
+  // Abandoned (30px — under the 60px commit distance): springs, selection restored, nothing fired.
+  C.run(`_cardSwipeEnd({ changedTouches: [{ clientX: 230, clientY: 303 }] }); true;`);
+  const sprung = body();
+  assert.strictEqual(sprung.transform, '', 'an abandoned drag returns the card home');
+  assert.ok(/^transform \.22s/.test(sprung.transition), 'and EASES back rather than jumping: ' + sprung.transition);
+  assert.strictEqual(sprung.userSelect, '', 'selection is handed back');
+  assert.strictEqual(sprung.dragging, false, 'and the drag is over');
+  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0 }, 'a 30px drag committed nothing');
+
+  // Committed (a full swipe left): SNAPS, and the transform is already gone by the time the
+  // destination's handler runs — asserted from INSIDE that handler, which is the only place the
+  // ordering is observable.
+  C.run(`window.__atNav = null;
+         document.getElementById('comp-next').onclick = function(){
+           var e = document.getElementById('comp-body');
+           window.__atNav = { transform: e.style.transform, transition: e.style.transition };
+         }; true;`);
+  drag(60);
+  C.run(`_cardSwipeEnd({ changedTouches: [{ clientX: 20, clientY: 303 }] }); true;`);
+  const atNav = JSON.parse(C.run(`JSON.stringify(window.__atNav)`));
+  assert.ok(atNav, 'the destination handler ran');
+  assert.strictEqual(atNav.transform, '', '⚠️ the card was already back home when the destination opened');
+  assert.strictEqual(atNav.transition, '', 'and SNAPPED — no transition left running across the re-render');
+  assert.strictEqual(body().dragging, false, 'the drag is over');
+}
+console.log('  an abandoned drag eases home; a committed one snaps back BEFORE the destination opens: OK');
+
+// ── 15. Nothing can leave the card parked ──────────────────────────────────────────────────────
+// Every way a gesture can end without a touchend, each of which stranded a transform in an earlier
+// draft of this feature.
+{
+  const C = open();
+  const tf = () => C.run(`document.getElementById('comp-body').style.transform`);
+  const drag = () => C.run(`_cardSwipeStart({ touches: [{ clientX: 200, clientY: 300 }], target: document.getElementById('plain-span') });
+    _cardSwipeMove({ touches: [{ clientX: 260, clientY: 303 }], cancelable: false }); true;`);
+
+  drag(); assert.ok(tf(), 'the card is parked mid-drag');
+  C.run(`_cardSwipeCancel(); true;`);
+  assert.strictEqual(tf(), '', 'touchcancel puts it back');
+
+  drag(); assert.ok(tf(), 'parked again');
+  // A SECOND FINGER lands: this arrives as a touchstart, never a touchend.
+  C.run(`_cardSwipeStart({ touches: [{ clientX: 200, clientY: 300 }, { clientX: 260, clientY: 300 }],
+                           target: document.getElementById('plain-span') }); true;`);
+  assert.strictEqual(tf(), '', 'a second finger landing mid-drag puts it back');
+  assert.strictEqual(C.run(`!!APP._swipeFrom`), false, 'and the pinch is not treated as a swipe');
+
+  drag(); assert.ok(tf(), 'parked again');
+  // A touchmove reporting no touches at all (the shape a torn-down gesture can produce).
+  C.run(`_cardSwipeMove({ touches: [] }); true;`);
+  assert.strictEqual(tf(), '', 'a touchmove with no touches puts it back');
+
+  // A touchend with no recorded start must not throw, and must leave the card home.
+  C.run(`_cardSwipeEnd({ changedTouches: [{ clientX: 60, clientY: 300 }] }); true;`);
+  assert.strictEqual(tf(), '', 'an orphan touchend leaves it home');
+}
+console.log('  touchcancel, a second finger, an empty touchmove and an orphan touchend all put the card back: OK');
+
+// ── 16. Out of scope means no drag at all ──────────────────────────────────────────────────────
+// The drag and the commit share `_cardSwipeInScope`, so this is the same boundary §4 asserts — but
+// asserted on the VISUAL half, which would otherwise be free to move a card that then refuses.
+{
+  const C = open();
+  for (const id of ['sum-plain-span', 'sb-icon']) {
+    C.run(`document.getElementById('comp-body').style.transform = '';
+      _cardSwipeStart({ touches: [{ clientX: 200, clientY: 300 }], target: document.getElementById(${JSON.stringify(id)}) });
+      _cardSwipeMove({ touches: [{ clientX: 300, clientY: 302 }], cancelable: false }); true;`);
+    assert.strictEqual(C.run(`document.getElementById('comp-body').style.transform`), '',
+      'a horizontal drag starting at #' + id + ' moves nothing — it is out of scope');
+    assert.strictEqual(C.run(`!!APP._swipeEl`), false, 'and starts no drag');
+  }
+}
+console.log('  a drag starting outside the progress card moves nothing: OK');
 
 console.log('unit-card-swipe-nav: ALL PASSED');

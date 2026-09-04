@@ -2192,6 +2192,78 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_e — the progress card follows the finger and springs back
+
+User, after asking for the evaluation first: *"is it easy that the text field actually moves with
+swiping?"* → *"yes, do A"*. **ZERO `ui.json` keys.**
+
+### Tiers B and C were rejected on evidence, not taste
+
+Recorded because the next session will want to try them:
+
+- **The neighbouring chapter's text is not in memory.** `_backToChapterProgress` FETCHES it
+  (`/api/lessons/load`), and all **343** `APP.savedList` entries were measured to carry no `story`
+  field. There is nothing to slide IN from the side without a prefetch.
+- **Where forward LEADS is decided at render time.** `comp-next`'s destination comes out of
+  `showComplete()`'s ~7-branch gate chain and lives in its `onclick` closure. A carousel has to know
+  the destination BEFORE the gesture — which is exactly the re-derivation `v88_r` and `v89_b`
+  refused. That is an architectural change, not an animation one.
+
+So: tier A. The card tracks the finger, clamped, and returns. **The commit rule from `v89_b` is
+untouched** — every one of its nine sections still passes unchanged.
+
+| what | where |
+|---|---|
+| the drag | `_cardSwipeMove` / `_cardSwipeDragBegin` / `_cardSwipeDragTo` / `_cardSwipeDragEnd` / `_cardSwipeCancel` (index.html, beside `v89_b`'s own handlers) |
+| the curve, as a pure function | `_cardSwipeOffset(dx, max)` — 1:1 up to `_SWIPE_MIN_PX`, then asymptotically damped toward `max`. Pure so it can be checked as arithmetic rather than inferred from pixels |
+| constants | `_SWIPE_LOCK_PX = 10` (axis decision), `_SWIPE_DRAG_MAX = 96`, `_SWIPE_DEAD_MAX = 24` |
+| two rules now SHARED by the drag and the commit | `_cardSwipeInScope(target)` and `_cardSwipeBtnFor(dx)`, split out of `_cardSwipeNav` — so the card can never travel toward a destination the release would then refuse |
+| the new markup | `id="comp-body"` on `#complete-screen`'s `.comp-body`. `class` stays FIRST: `smoke-render` pins the first occurrence of the literal `class="comp-body"` against `id="comp-hdr"`'s position, and three other cards carry the same class |
+
+### ⚠️ Three things that decide the implementation, none of them obvious
+
+1. **`#comp-body` moves, NOT `#complete-screen`.** A transformed ancestor becomes the containing
+   block for its `position:fixed` descendants — and `#comp-nav-modal` is one. Moving the screen would
+   quietly stop the ☰ overlay covering the viewport. The modal is `#comp-body`'s SIBLING, so moving
+   the body cannot reach it. (`#story-sel-popover`, PLAN §12's own fixed element, sits at document
+   top level and is outside either way.) It is also the whole card rather than `#comp-story-panel` —
+   that panel is a `<details>` the learner can collapse, and dragging a collapsed one would animate
+   an empty box.
+2. **`touchmove` is the ONE non-passive listener, and `preventDefault` is reached only on an 'x'
+   lock.** Owning the horizontal axis means calling it, or the page keeps scrolling under a card
+   that is visibly following the finger. A vertical gesture never reaches that line, which is what
+   keeps scrolling a long card untouched — asserted directly, and live-verified through a real
+   `TouchEvent` whose `defaultPrevented` came back `false`.
+3. **The axis is decided ONCE, at 10px, and never revisited** — a gesture that starts as a scroll
+   stays a scroll even if the finger later curves hard sideways, and `_cardSwipeNav` now refuses to
+   commit a `'y'`-locked gesture however far off-axis it ends.
+
+**Release: spring vs snap, and it is not decoration.** An abandoned drag EASES home (`.22s`, the
+`.rise-up` easing reused). A commit SNAPS, and `_cardSwipeNav` clears the transform ITSELF, before
+calling `btn.onclick()` — the handler can re-render synchronously, and clearing a transform
+afterwards is clearing it on a card the learner has already been shown displaced.
+
+**Nothing may leave the card parked.** `touchcancel`, a SECOND FINGER landing mid-drag (which arrives
+as a `touchstart`, never a `touchend`), a `touchmove` reporting no touches, and an orphan `touchend`
+each put it back. Every one of those stranded a transform in an earlier draft.
+
+### Verified live, then guarded
+
+Real `TouchEvent`s against the running app: 6px → nothing; 40px → `translateX(-40px)` with
+`transition:none` and `user-select:none`; 300px → `translateX(-91px)`, damped short of the 96 cap;
+released at 20px → transform cleared, spring transition applied, selection handed back, **no
+navigation**; a vertical drag → no movement and `defaultPrevented === false`, then curving 300px
+sideways still moved nothing and still did not navigate; a committed swipe → `-86px` mid-drag,
+transform and transition both **empty at release** (a snap), and `"Der Waldpfad"` →
+`"Landschaft hinter dem Zaun"`.
+
+`unit-card-swipe-nav.test.js` grows from 9 sections to 16. **Seventeen mutations, all red — after a
+fix.** The first run left ONE green: dropping `from.axis !== 'x'` from the move guard. That was the
+finding. `APP._swipeEl` is only ever set on the `'x'` branch, so the `|| !APP._swipeEl` half I had
+written beside it caught everything and made the axis test itself unfalsifiable. **The redundant
+half is now gone** — a condition that cannot fail on its own is not a guard — and the mutation goes
+red. Same class of finding as `v89_d`'s `Array.isArray`, two releases running.
+
 ## ✅ v89_d — the form labels are NORMALISED into the source language, not merely asked for
 
 User request, following `v89_c`'s measurement: *"yes, do the normalisation pass"*.

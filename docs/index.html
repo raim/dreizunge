@@ -2017,7 +2017,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
        and the result card was 60px narrower than the storyline page (520px cap with 20px padding
        = a 480px content box, against .sl-screen's 540px), which is what made the storyboard
        render visibly smaller here than on the page it is copied from. -->
-  <div class="comp-body">
+  <div class="comp-body" id="comp-body"><!-- id: v89_e, the element the swipe drag moves; the class is shared with three other cards, an id is not -->
   <!-- v77_m (user) — the progress card mirrors the STORYLINE PAGE as closely as possible, so
        moving between them causes no jump in either width or row order:
          title + its progress bar  ->  storyboard  ->  chapter-wise bars  ->  the story
@@ -165123,12 +165123,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v89_d', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v89_e', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"3e97b6b6e79d","lessons.json":"fb51bbb87f2d","ui.json":"65b74537b8af","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"c91e65d377b1","analysis-corrections.json":"missing","build-static.js":"5820ff10c020"};
+  APP.buildSources = {"index.html":"1422469efda1","lessons.json":"fb51bbb87f2d","ui.json":"65b74537b8af","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"c91e65d377b1","analysis-corrections.json":"missing","build-static.js":"5820ff10c020"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -179970,9 +179970,26 @@ function _storyTapMaybeAdvance(e){
 // body inert as a QUESTION surface, and browsing to the next chapter is navigation, not a question.
 const _SWIPE_MIN_PX = 60;    // shorter than this is a tap or a jitter, not a swipe
 const _SWIPE_X_OVER_Y = 2;   // must be at least twice as horizontal as it is vertical
+// v89_e (user request: "is it easy that the text field actually moves with swiping?"). The card
+// FOLLOWS THE FINGER and springs back — tier A of the three the evaluation set out. Tier C, a real
+// pager showing the neighbouring chapter under the finger, was rejected on evidence rather than
+// taste: the neighbour's text is not in memory (`_backToChapterProgress` FETCHES it, and all 343
+// `APP.savedList` entries were measured to carry no `story`), and where forward LEADS is resolved
+// by showComplete()'s own gate chain into `comp-next`'s closure at render time — knowing it before
+// the gesture is exactly the re-derivation `v88_r` and `v89_b` refused.
+const _SWIPE_LOCK_PX = 10;    // how far the finger travels before the axis is decided
+const _SWIPE_DRAG_MAX = 96;   // the furthest the card ever moves, however far the finger goes
+const _SWIPE_DEAD_MAX = 24;   // … unless that direction has nowhere to go — then a short, hard wall
 function _cardSwipeInit(){
   document.addEventListener('touchstart', _cardSwipeStart, { passive: true });
+  // ⚠️ The ONLY non-passive listener here, and it has to be: owning the horizontal axis means
+  // calling preventDefault, or the page keeps scrolling under a card that is visibly following the
+  // finger. It is called ONLY after the axis lock has said 'x' — a vertical gesture never reaches
+  // it, so scrolling a long card is untouched.
+  document.addEventListener('touchmove', _cardSwipeMove, { passive: false });
   document.addEventListener('touchend', _cardSwipeEnd, { passive: true });
+  // A cancelled gesture (a call arriving, the browser taking over) must not leave the card parked.
+  document.addEventListener('touchcancel', _cardSwipeCancel, { passive: true });
   // ⚠️ CAPTURE phase, and it is load-bearing. A horizontal touch drag is not a scroll, so the
   // browser still synthesises a `click` on touchend — which would land on `tapWord`'s own inline
   // onclick (a swipe starting on a highlighted word) or on `_storyTapMaybeAdvance` (a swipe
@@ -179983,22 +180000,127 @@ function _cardSwipeInit(){
   document.addEventListener('click', _cardSwipeSwallowClick, true);
 }
 function _cardSwipeStart(e){
+  // A second finger landing mid-drag arrives here, not at touchend — without this the card would be
+  // left parked wherever the first finger had pulled it to.
+  _cardSwipeDragEnd(true);
   const t = e.touches && e.touches.length === 1 && e.touches[0];   // 2+ fingers = a pinch, never a swipe
-  APP._swipeFrom = t ? { x: t.clientX, y: t.clientY, target: e.target } : null;
+  APP._swipeFrom = t ? { x: t.clientX, y: t.clientY, target: e.target, axis: null } : null;
+}
+// The axis is decided ONCE, at `_SWIPE_LOCK_PX`, and never revisited. A gesture that starts as a
+// scroll stays a scroll even if the finger later curves sideways, and vice versa — re-deciding
+// mid-gesture is what makes a drag feel like it is fighting the page.
+function _cardSwipeMove(e){
+  const from = APP._swipeFrom;
+  if (!from) return;
+  const t = e.touches && e.touches.length === 1 && e.touches[0];
+  if (!t) { APP._swipeFrom = null; _cardSwipeDragEnd(true); return; }
+  const dx = t.clientX - from.x, dy = t.clientY - from.y;
+  if (!from.axis) {
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < _SWIPE_LOCK_PX) return;   // too early to tell
+    from.axis = (Math.abs(dx) > Math.abs(dy)) ? 'x' : 'y';
+    if (from.axis === 'x') _cardSwipeDragBegin(from.target);
+  }
+  // ⚠️ The `!APP._swipeEl` half of this test used to be here too and was REMOVED at the mutation
+  // check: `_swipeEl` is only ever set on the 'x' branch above, so it could not fail
+  // independently, and its presence made the axis test itself unfalsifiable — mutating the axis
+  // half away left the redundant half catching everything and the guard stayed green.
+  if (from.axis !== 'x') return;   // a vertical gesture is a SCROLL and stays one
+  if (e.cancelable && typeof e.preventDefault === 'function') e.preventDefault();
+  _cardSwipeDragTo(dx);
 }
 function _cardSwipeEnd(e){
   const from = APP._swipeFrom; APP._swipeFrom = null;
   const t = e.changedTouches && e.changedTouches[0];
-  if (from && t) _cardSwipeNav(from, { x: t.clientX, y: t.clientY });
+  // `_cardSwipeNav` puts the card back ITSELF when it commits, so the transform is gone before the
+  // re-render rather than after it — see its own comment. Reaching here means the gesture was
+  // abandoned, which is the case that springs.
+  if (from && t && _cardSwipeNav(from, { x: t.clientX, y: t.clientY })) return;
+  _cardSwipeDragEnd(true);
+}
+function _cardSwipeCancel(){
+  APP._swipeFrom = null;
+  _cardSwipeDragEnd(true);
+}
+// ── The drag itself ───────────────────────────────────────────────────────────────────────────
+// `#comp-body` is the element that moves, NOT `#complete-screen`: a transformed ancestor becomes
+// the containing block for its `position:fixed` descendants, and `#comp-nav-modal` is one — moving
+// the screen would quietly stop the ☰ overlay covering the viewport. The modal is `#comp-body`'s
+// SIBLING, so moving the body cannot reach it. (`#story-sel-popover`, PLAN §12's own fixed element,
+// lives at document top level and is outside either way.) It is also the whole card rather than
+// `#comp-story-panel`: that panel is a `<details>` the learner can collapse, and dragging a
+// collapsed one would animate an empty box.
+function _cardSwipeDragBegin(target){
+  if (!_cardSwipeInScope(target)) return;
+  const el = document.getElementById('comp-body');
+  if (!el) return;
+  APP._swipeEl = el;
+  el.style.transition = 'none';                 // track the finger, do not chase it
+  // The drag owns the finger now, so PLAN §12's long-press selection must not also try to. Set only
+  // AFTER the lock says 'x' — a press that was going to become a selection never gets here.
+  el.style.userSelect = 'none';
+  el.style.webkitUserSelect = 'none';
+}
+function _cardSwipeDragTo(dx){
+  const el = APP._swipeEl;
+  if (!el) return;
+  // The SAME availability rule the commit uses, so the card can never travel toward a destination
+  // the release would then refuse: a direction with nowhere to go gets a short, hard wall instead.
+  const max = _cardSwipeBtnFor(dx) ? _SWIPE_DRAG_MAX : _SWIPE_DEAD_MAX;
+  el.style.transform = 'translateX(' + Math.round(_cardSwipeOffset(dx, max)) + 'px)';
+}
+// 1:1 up to the commit distance — the gesture is taken literally, so the learner can see how far is
+// far enough — then asymptotically damped toward `max`, so pulling harder never runs the card off
+// the screen and the wall itself is the signal that the threshold has been passed. Continuous and
+// monotone at the join; pure, so it can be checked as arithmetic rather than inferred from pixels.
+function _cardSwipeOffset(dx, max){
+  const a = Math.abs(dx);
+  if (!a) return 0;
+  const lin = Math.min(a, Math.min(_SWIPE_MIN_PX, max));
+  const room = Math.max(0, max - lin);
+  const extra = Math.max(0, a - lin);
+  const off = lin + (room ? room * (extra / (extra + room)) : 0);
+  return dx < 0 ? -off : off;
+}
+// `spring` = the gesture was ABANDONED, so the card eases home. A COMMIT snaps instead: the screen
+// is about to be re-rendered under it, and animating a transform on an element whose content is
+// being replaced is exactly how a new card arrives already displaced.
+function _cardSwipeDragEnd(spring){
+  const el = APP._swipeEl;
+  if (!el) return;
+  APP._swipeEl = null;
+  el.style.userSelect = '';
+  el.style.webkitUserSelect = '';
+  el.style.transform = '';
+  if (!spring) { el.style.transition = ''; return; }
+  el.style.transition = 'transform .22s cubic-bezier(.22,1,.36,1)';   // the .rise-up easing, reused
+  setTimeout(() => { if (APP._swipeEl !== el) el.style.transition = ''; }, 260);
 }
 // The decision, split out from the event plumbing so it can be driven directly (the DOM harness's
 // addEventListener is a no-op, exactly as `_storyTapMaybeAdvance` is driven in unit-tutor-selection).
 // Returns whether it navigated.
-function _cardSwipeNav(from, to){
-  const tgt = from && from.target;
+// Scope: the progress card, minus its own ☰ popup. Split out at v89_e so the DRAG and the COMMIT
+// cannot disagree about where the gesture applies.
+function _cardSwipeInScope(tgt){
   if (!tgt || !tgt.closest) return false;
   if (!tgt.closest('#complete-screen')) return false;
   if (tgt.closest('#comp-nav-modal')) return false;
+  return true;
+}
+// Likewise the availability rule. A HIDDEN arrow (comp-prev is display:none wherever there is no
+// previous chapter) has no destination on this card, and a DISABLED one is a destination
+// deliberately withheld; neither may be reached by a gesture that has no greyed state of its own
+// to show. Returning the BUTTON rather than a boolean keeps one lookup for both callers.
+function _cardSwipeBtnFor(dx){
+  const btn = document.getElementById(dx < 0 ? 'comp-next' : 'comp-prev');
+  if (!btn || btn.disabled || btn.style.display === 'none') return null;
+  if (typeof btn.onclick !== 'function') return null;
+  return btn;
+}
+function _cardSwipeNav(from, to){
+  if (!_cardSwipeInScope(from && from.target)) return false;
+  // v89_e: a gesture the axis lock called a SCROLL never navigates, however far sideways the finger
+  // wandered afterwards. Without this a curving scroll could still end 60px off-axis and commit.
+  if (from.axis === 'y') return false;
   const dx = to.x - from.x, dy = to.y - from.y;
   if (Math.abs(dx) < _SWIPE_MIN_PX) return false;
   if (Math.abs(dx) < Math.abs(dy) * _SWIPE_X_OVER_Y) return false;
@@ -180007,12 +180129,13 @@ function _cardSwipeNav(from, to){
   const sel = window.getSelection && window.getSelection();
   if (sel && !sel.isCollapsed && sel.rangeCount > 0 && String(sel.toString() || '').trim()) return false;
   // Swipe LEFT (dx < 0) drags the card away to the left, i.e. moves FORWARD — the direction every
-  // paged mobile UI uses. A hidden arrow has no destination on this card (comp-prev is display:none
-  // wherever there is no previous chapter), and a disabled one is a destination deliberately
-  // withheld; neither may be reached by a gesture that has no greyed state of its own to show.
-  const btn = document.getElementById(dx < 0 ? 'comp-next' : 'comp-prev');
-  if (!btn || btn.disabled || btn.style.display === 'none') return false;
-  if (typeof btn.onclick !== 'function') return false;
+  // paged mobile UI uses. Availability is `_cardSwipeBtnFor`'s single rule, shared with the drag.
+  const btn = _cardSwipeBtnFor(dx);
+  if (!btn) return false;
+  // Put the card back BEFORE opening the destination, never after: `btn.onclick` can re-render
+  // synchronously, and clearing a transform afterwards is clearing it on a card the learner has
+  // already been shown displaced. `false` = snap, not spring — see `_cardSwipeDragEnd`.
+  _cardSwipeDragEnd(false);
   APP._swipeAt = Date.now();
   btn.onclick();
   return true;
