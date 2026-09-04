@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_e` cut
+# Session prompt — written at the `v89_f` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_e`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_f`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -79,8 +79,8 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   in ONE request keyed the way `metaTranslation` already keys its own, and re-derives `formLabel`
   from the normalised list at `formCorrectIndex`. Gated on `srcLang !== 'en'` — the same gate the
   meta pass uses, and the one item AJ justifies. Falls back PER ITEM (a missing key, an empty value,
-  or two options collapsing onto one phrase), never per lesson. ⚠️ **It only fixes NEW lessons** —
-  the mixed corpus stays mixed until something backfills it, which was OFFERED and not yet asked for.
+  or two options collapsing onto one phrase), never per lesson. ⚠️ It only fixed NEW lessons
+  at the time; `v89_f` backfilled the corpus.
   ⚠️ `explanation`/`title`/`desc` drift the SAME way (measured) and are deliberately NOT in scope:
   `explanation` quotes target-language word forms inside itself, so a translation pass over it can
   corrupt the very forms the exercise teaches.
@@ -94,6 +94,15 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   text is not in memory (`_backToChapterProgress` fetches it; all 343 `APP.savedList` entries carry
   no `story`), and where forward LEADS lives in `comp-next`'s closure, resolved by `showComplete`'s
   gate chain at render time.
+- **`v89_f`** — the BACKFILL, run for real against the corpus: 15 lessons, **28 of 60 items
+  rewritten**, the rest already correct. `inflection-labels.js` now owns the RULES (gate, request
+  shape, per-item fallback) and BOTH callers use it — server.js's generator and
+  `backfill-inflection-labels.js`. ⚠️ The backfill re-reads `lessons.json` at write time and matches
+  each repair on CONTENT (topic id → lesson id → the item's own sentence + surfaceForm + original
+  choices), **never on an index**: the user's server writes that file while a run spends minutes
+  inside model calls. ⚠️ `--write` RE-QUERIES the model, so what lands is not character-identical to
+  what the dry run printed. **Known limitation, not fixed:** terminology is consistent WITHIN a
+  lesson but not across the corpus — one German lesson says `Präteritum`, another `Vergangenheit`.
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -130,8 +139,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 338 checks
-node test/run.js --quick                  → expect 277
+node test/run.js                          → expect 339 checks
+node test/run.js --quick                  → expect 278
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -164,7 +173,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **343 topics, 97 storylines, 33 languages, 755 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_e'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_f'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

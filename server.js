@@ -279,10 +279,12 @@ function promptExample(P, lang, srcLang) {
   if (!ex) return '';
   return (srcLang && ex[lang + '__' + srcLang]) || ex[lang] || ex.default || '';
 }
+const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTokens } =
+  require('./inflection-labels.js');   // v89_f: the rules, shared with backfill-inflection-labels.js
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_e';
+const APP_VERSION  = 'v89_f';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -4774,24 +4776,18 @@ function validateInflectionsItems(items, story) {
 // counts, so the caller's `_genMeta` accounts for the extra call.
 async function normaliseInflectionLabels(items, srcLang, jobId) {
   const none = { items, tokens: { promptTokens: 0, completionTokens: 0 }, normalised: 0, ran: false };
-  if (!srcLang || srcLang === 'en') return none;
+  if (!shouldNormaliseLabels(srcLang)) return none;
   if (!Array.isArray(items) || !items.length) return none;
 
-  // One flat map, all items together — the `metaTranslation` contract ("the same keys"), reused
-  // rather than a second JSON shape invented. Flat rather than nested so a missing or extra key is
-  // a one-line check instead of a tree walk, and so the model sees every label of the lesson at
-  // once, which is what lets it keep near-identical options apart.
-  const map = {}; let nKeys = 0;
-  // keysByItem[i][j] is the key that item i's choice j was sent under — built on the way OUT so the
-  // way BACK is a direct lookup, never a search that could re-derive the pairing differently.
-  const keysByItem = items.map(it => (it.formChoices || []).map(c => {
-    const k = String(nKeys++); map[k] = c; return k;
-  }));
-  if (!nKeys) return none;
+  // ⚠️ v89_f: the RULES moved to inflection-labels.js so the backfill over the existing corpus runs
+  // the same ones. What is left here is plumbing — the job step, the call, the parse, the logging
+  // and the cancel — and none of it decides anything.
+  const { map, keysByItem, count } = buildLabelRequest(items);
+  if (!count) return none;
 
   const S = langName(srcLang);
   const payload = JSON.stringify(map);
-  jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] Normalising ${nKeys} form label(s) to ${S}…`);
+  jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] Normalising ${count} form label(s) to ${S}…`);
   let parsed;
   try {
     // The TRANSLATION role: this is a translation, the role exists for it, and it falls back to the
@@ -4800,7 +4796,7 @@ async function normaliseInflectionLabels(items, srcLang, jobId) {
     const t0 = Date.now();
     const { text, promptTokens, completionTokens } = await callLLMTranslation(
       fillPrompt(PROMPTS.inflectionLabels.system, { S }), payload,
-      Math.min(2048, Math.max(256, Math.ceil(payload.length * 1.5))), { think: false });
+      labelReplyTokens(payload), { think: false });
     none.tokens = { promptTokens, completionTokens };
     const cleaned = String(text || '').replace(/```json|```/g, '').trim();
     try { parsed = JSON.parse(cleaned); } catch(_) { parsed = extractJSON(text); }
@@ -4810,35 +4806,11 @@ async function normaliseInflectionLabels(items, srcLang, jobId) {
     console.warn(`  Form-label normalisation to ${S} failed, keeping the model's own labels:`, e.message);
     return none;
   }
-  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-    console.warn(`  Form-label normalisation returned no object, keeping the model's own labels`);
-    return none;
-  }
 
-  // PER ITEM, not all-or-nothing. An item whose reply is short, empty, or collapses two of its own
-  // options keeps its ORIGINAL labels — a lesson with three normalised items and two untouched ones
-  // is strictly better than five untouched ones, and each item's options are only ever compared with
-  // each other. The distinctness check is the one that matters: `formChoices` IS the multiple-choice
-  // list, and two options that translate to the same {S} phrase make the question unanswerable.
-  let normalised = 0;
-  const out = items.map((it, i) => {
-    const src = it.formChoices || [];
-    const next = src.map((_, j) => {
-      const v = parsed[keysByItem[i][j]];
-      return (typeof v === 'string') ? v.trim() : '';
-    });
-    if (next.length !== src.length || next.some(v => !v)) return it;
-    if (new Set(next.map(v => v.toLowerCase())).size !== next.length) {
-      console.warn(`    Form labels for "${String(it.surfaceForm || '').slice(0, 30)}" collapsed to duplicates — keeping the originals`);
-      return it;
-    }
-    normalised++;
-    // formLabel is DERIVED from the normalised list at the index the validator already resolved,
-    // never translated separately: that is what keeps `validateInflectionsItems`'s own invariant
-    // (formLabel is one of formChoices, at formCorrectIndex) true by construction rather than by
-    // hoping two independent translations of the same string come back identical.
-    return { ...it, formChoices: next, formLabel: next[it.formCorrectIndex] };
+  const { items: out, normalised } = applyLabelReply(items, keysByItem, parsed, (it, why) => {
+    if (why === 'collapsed') console.warn(`    Form labels for "${String(it.surfaceForm || '').slice(0, 30)}" collapsed to duplicates — keeping the originals`);
   });
+  if (!normalised && out === items) console.warn(`  Form-label normalisation changed nothing, keeping the model's own labels`);
   console.log(`    Form labels normalised to ${S}: ${normalised}/${items.length} item(s)`);
   return { items: out, tokens: none.tokens, normalised, ran: true };
 }

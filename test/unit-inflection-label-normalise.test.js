@@ -25,6 +25,7 @@ function extractAsync(name) {
   return src.slice(at, i);
 }
 const CANCELLED = 'CANCELLED';
+const RULES = require(path.join(__dirname, '..', 'inflection-labels.js'));
 // One factory per case, so a scripted reply cannot leak between them.
 function build(reply) {
   const calls = [];
@@ -37,6 +38,11 @@ function build(reply) {
   const fn = new Function(
     'langName', 'PROMPTS', 'fillPrompt', 'callLLMTranslation', 'OLLAMA_TRANSLATION_MODEL',
     'jobStep', 'extractJSON', 'CANCELLED', 'console',
+    // v89_f: the RULES now live in inflection-labels.js, shared with the backfill. They are injected
+    // from the REAL module rather than re-stubbed — this file is about the wrapper's plumbing, and a
+    // stubbed rule set would let the two drift while the test stayed green. Its OTHER caller, the
+    // backfill, is covered in unit-inflection-label-backfill.test.js.
+    'shouldNormaliseLabels', 'buildLabelRequest', 'applyLabelReply', 'labelReplyTokens',
     extractAsync('normaliseInflectionLabels') + '\nreturn normaliseInflectionLabels;')(
     (c) => ({ nl: 'Dutch', de: 'German', en: 'English' })[c] || c,
     { inflectionLabels: { system: 'SYS {S}' } },
@@ -47,6 +53,7 @@ function build(reply) {
     (t) => JSON.parse(String(t)),           // the same "throw on garbage" contract extractJSON has
     CANCELLED,
     { log() {}, warn() {} },
+    RULES.shouldNormaliseLabels, RULES.buildLabelRequest, RULES.applyLabelReply, RULES.labelReplyTokens,
   );
   return { fn, calls };
 }

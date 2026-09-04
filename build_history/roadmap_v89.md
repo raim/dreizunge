@@ -130,12 +130,11 @@ in the carried sections further down and, where noted, in the older roadmaps.*
   Offered at `v87_p` and not taken up; small, and would have saved two user reports.
 
 **Raised by `v89_c`/`v89_d`'s own measurements — the label pass is SHIPPED, these two are what it left:**
-- **A BACKFILL over the existing inflections lessons.** `v89_d` normalises labels at GENERATION
-  time only, so the mixed corpus `v89_c` measured is still mixed — the user still hears a Dutch
-  label in a German voice on every chapter generated before `v89_d`. Offered and not taken up yet:
-  it rewrites `lessons.json` with a model call per lesson, which is the user's call. The shape is
-  settled — `normaliseInflectionLabels` is already a pure function over validated items, so a
-  `backfill-*.js` script (the precedent this repo already has four of) can call it directly.
+- ~~A backfill over the existing inflections lessons~~ — **SHIPPED at `v89_f`**: 15 lessons, 28 of
+  60 items rewritten. What it LEFT open: **terminology is consistent within a lesson but not across
+  the corpus** (one German lesson says `Präteritum`, another `Vergangenheit` — both correct, both
+  internally coherent, which is all the per-item distinctness check can see). Making the corpus
+  agree needs a per-language glossary handed to the model; that is a feature, not a fix.
 - **⚠️ `explanation`, `title` and `desc` drift the same way as `formLabel` did** — measured on the
   same nl/de chapters (*"De werkwoordsvorm 'geeft' is de tegenwoordige tijd…"* against a German
   `{S}`). Deliberately NOT folded into `v89_d`: `explanation` **quotes target-language word forms
@@ -2191,6 +2190,85 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_f — the backfill: the corpus's own form labels, repaired
+
+User: *"yes, do the backfill"*. **ZERO `ui.json` keys.** Run for real against `lessons.json`:
+**15 lessons, 28 of 60 items rewritten**, the other 32 returned unchanged because they were already
+in the right language. `v89_d` only ever fixed NEW lessons; this is the half the original report was
+actually about.
+
+### The rules moved out first, so the two callers cannot drift
+
+`inflection-labels.js` (new) owns the DECISIONS — `shouldNormaliseLabels`, `buildLabelRequest`,
+`applyLabelReply`, `labelReplyTokens` — and is pure: no I/O, no model, no logging. Both callers use
+it: `normaliseInflectionLabels` (server.js, at generation time, inside a job) and
+`backfill-inflection-labels.js` (over the corpus, from the command line). What is left in server.js
+is plumbing — the job step, the call, the parse, the logging, the cancel — and none of it decides
+anything. **Duplicating the fallback policy across two files is exactly the drift this project keeps
+paying for**, so the extraction came before the script.
+
+The refactor was diffed rather than asserted: `e2e-inflection-label-lang` passed unchanged, first
+try, and `unit-inflection-label-normalise` now injects the REAL module into the extracted wrapper
+instead of re-stubbing the rules — a stubbed rule set would let the two drift while the test stayed
+green.
+
+### ⚠️ Concurrency here is real, not theoretical
+
+The user's server runs continuously and writes `lessons.json` on every answered question, and a run
+spends **minutes** inside model calls between its read and its write. So the write is not "save the
+object I loaded":
+
+- the file is **RE-READ** at write time;
+- each repair is located by **CONTENT** — topic id → lesson id → the item's own
+  `sentence` + `surfaceForm` + **original `formChoices`** — never by index (see
+  `analysis-corrections.js`'s header for the standing reasoning);
+- an item that changed underneath is **REPORTED and SKIPPED**, never guessed at;
+- a `.bak` is written first, like every other backfill here.
+
+`--write` **RE-QUERIES** the model; it does not replay the dry run. The backend is
+non-deterministic, so what lands is equally valid but not character-identical to what was previewed
+— documented in the script's own header, because reading a dry run as a diff to sign off line by
+line would be wrong.
+
+### What it actually did, verified against the backup
+
+| check | result |
+|---|---|
+| everything except `formLabel`/`formChoices`, anywhere in the file | **byte-identical** |
+| inflections items before / after | 60 / 60, **28 changed** |
+| items with a broken `formLabel === formChoices[formCorrectIndex]` | **0**, before and after |
+| items with duplicate choices | **0**, before and after |
+| topics / storylines | 343 / 97, unchanged |
+
+Every language pair now reads in its source language: `nl→de` "Präsens, 3. Person Singular"
+(was "Tegenwoordige tijd, 3e persoon enkelvoud" — the original report), `it→nl` Dutch, `sr→de`
+German (was Cyrillic Serbian), `en→de` German (was English), `de→it` Italian. The `en→ja` lessons
+were already Japanese and came back **unchanged** — the pass is idempotent where nothing is wrong.
+
+### ⚠️ Known limitation, not fixed
+
+**Terminology is consistent WITHIN a lesson but not ACROSS the corpus.** One German lesson says
+`Präteritum`/`Präsens`, another `Vergangenheit`/`Gegenwart`; both are correct German and both are
+internally coherent as a multiple-choice set, which is all `applyLabelReply` can check. Making the
+whole corpus agree needs a per-language glossary the model is handed, which is a different feature.
+Recorded in the open list rather than half-built here.
+
+### Guards
+
+`unit-inflection-label-backfill.test.js` (new, 8 sections) covers the two PURE halves that bracket
+the model call — `planBackfill` (scope) and `applyPlan` (the write-back). §6 is the one that matters:
+a **REORDERED** lesson still repairs each item correctly, which is the non-vacuity for §5's staleness
+checks — if the match were positional, reordering would silently write each repair onto the wrong
+item.
+
+**Twelve mutations, all red — after a fix.** The first run left `l.type !== 'inflections'` GREEN: the
+fixture's other lessons were `standard` ones with no `items` at all, so the item filter dropped them
+anyway and the two branches were indistinguishable. **Third release running that a mutation found an
+unfalsifiable guard** (`v89_d`'s `Array.isArray`, `v89_e`'s `|| !APP._swipeEl`). Here the guard is
+right and the FIXTURE was too weak, so the fixture grew a `word_forms` lesson carrying
+inflection-shaped items — contrived in this corpus, and the only thing that makes "the lesson TYPE
+is the scope statement, not the field names" falsifiable.
 
 ## ✅ v89_e — the progress card follows the finger and springs back
 

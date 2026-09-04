@@ -12659,12 +12659,12 @@
                 "geeft"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "Tegenwoordige tijd, 3e persoon enkelvoud",
+              "formLabel": "Präsens, 3. Person Singular",
               "formChoices": [
-                "Tegenwoordige tijd, 3e persoon enkelvoud",
-                "Tegenwoordige tijd, 1e persoon enkelvoud",
-                "Verleden tijd, 3e persoon enkelvoud",
-                "Toekomende tijd, 3e persoon enkelvoud"
+                "Präsens, 3. Person Singular",
+                "Präsens, 1. Person Singular",
+                "Präteritum, 3. Person Singular",
+                "Futur I, 3. Person Singular"
               ],
               "formCorrectIndex": 0,
               "explanation": "De werkwoordsvorm 'geeft' is de tegenwoordige tijd van het infinitief 'geven' in de derde persoon enkelvoud."
@@ -12680,12 +12680,12 @@
                 "versterkte"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "Voltooid deelwoord",
+              "formLabel": "Partizip II",
               "formChoices": [
-                "Voltooid deelwoord",
-                "Tegenwoordige tijd",
-                "Verleden tijd",
-                "Infinitief"
+                "Partizip II",
+                "Präsens",
+                "Präteritum",
+                "Infinitiv"
               ],
               "formCorrectIndex": 0,
               "explanation": "'Versterkt' is het voltooid deelwoord van het werkwoord 'versterken', gebruikt in de lijdende vorm."
@@ -13240,12 +13240,12 @@
                 "zittend"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "Tegenwoordige tijd, 3e persoon enkelvoud",
+              "formLabel": "Präsens, 3. Person Singular",
               "formChoices": [
-                "Tegenwoordige tijd, 3e persoon enkelvoud",
-                "Tegenwoordige tijd, 1e persoon enkelvoud",
-                "Verleden tijd, 3e persoon enkelvoud",
-                "Toekomende tijd, 3e persoon enkelvoud"
+                "Präsens, 3. Person Singular",
+                "Präsens, 1. Person Singular",
+                "Präteritum, 3. Person Singular",
+                "Futur I, 3. Person Singular"
               ],
               "formCorrectIndex": 0,
               "explanation": "De werkwoordsvorm 'zit' is de tegenwoordige tijd, derde persoon enkelvoud van het infinitief 'zitten'."
@@ -13262,12 +13262,12 @@
                 "regelend"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "Voltooid deelwoord",
+              "formLabel": "Partizip II",
               "formChoices": [
-                "Voltooid deelwoord",
-                "Tegenwoordige tijd, 3e persoon enkelvoud",
-                "Verleden tijd, 3e persoon enkelvoud",
-                "Infinitief"
+                "Partizip II",
+                "Präsens, 3. Person Singular",
+                "Präteritum, 3. Person Singular",
+                "Infinitiv"
               ],
               "formCorrectIndex": 0,
               "explanation": "'GeregelD' is het voltooid deelwoord van 'regelen', gevormd met het voorvoegsel ge- en de uitgang -d."
@@ -13754,12 +13754,12 @@
                 "staand"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "Tegenwoordige tijd, 3e persoon enkelvoud",
+              "formLabel": "Präsens, 3. Person Singular",
               "formChoices": [
-                "Tegenwoordige tijd, 3e persoon enkelvoud",
-                "Tegenwoordige tijd, 1e persoon enkelvoud",
-                "Verleden tijd, 3e persoon enkelvoud",
-                "Toekomende tijd, 3e persoon enkelvoud"
+                "Präsens, 3. Person Singular",
+                "Präsens, 1. Person Singular",
+                "Präteritum, 3. Person Singular",
+                "Futur I, 3. Person Singular"
               ],
               "formCorrectIndex": 0,
               "explanation": "De werkwoordsvorm 'staat' is de tegenwoordige tijd van het infinitief 'staan' in de derde persoon enkelvoud."
@@ -13776,10 +13776,10 @@
                 "de wolke"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "Meervoud",
+              "formLabel": "Plural",
               "formChoices": [
-                "Enkelvoud",
-                "Meervoud"
+                "Singular",
+                "Plural"
               ],
               "formCorrectIndex": 1,
               "explanation": "'Wolken' is de meervoudsvorm van het zelfstandig naamwoord 'de wolk'."
@@ -14381,11 +14381,11 @@
                 "des bords"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "Enkelvoud, onzijdig",
+              "formLabel": "Singular, Neutrum",
               "formChoices": [
-                "Enkelvoud, onzijdig",
-                "Meervoud, onzijdig",
-                "Enkelvoud, de-woord"
+                "Singular, Neutrum",
+                "Plural, Neutrum",
+                "Singular, der-Wort"
               ],
               "formCorrectIndex": 0,
               "explanation": "'Bord' is een enkelvoudig, onzijdig zelfstandig naamwoord (het-bord)."
@@ -14886,11 +14886,11 @@
                 "doen"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "Verleden Tijd, Meervoud",
+              "formLabel": "Vergangenheit, Plural",
               "formChoices": [
-                "Verleden Tijd, Meervoud",
-                "Tegenwoordige Tijd, Enkelvoud",
-                "Toekomende Tijd, Meervoud",
+                "Vergangenheit, Plural",
+                "Gegenwart, Singular",
+                "Zukunft, Plural",
                 "Infinitiv"
               ],
               "formCorrectIndex": 0,
@@ -14908,10 +14908,10 @@
                 "de kinderen"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "Enkelvoud",
+              "formLabel": "Singular",
               "formChoices": [
-                "Enkelvoud",
-                "Meervoud"
+                "Singular",
+                "Plural"
               ],
               "formCorrectIndex": 0,
               "explanation": "Enkelvoud van 'de kinderwagen' (samentrekking van kind en wagen)."
@@ -15581,12 +15581,12 @@
                 "geraakt"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "Tegenwoordige tijd, derde persoon enkelvoud",
+              "formLabel": "Präsens, dritte Person Singular",
               "formChoices": [
-                "Tegenwoordige tijd, derde persoon enkelvoud",
-                "Verleden tijd, derde persoon enkelvoud",
-                "Infinitief",
-                "Imperatief"
+                "Präsens, dritte Person Singular",
+                "Präteritum, dritte Person Singular",
+                "Infinitiv",
+                "Imperativ"
               ],
               "formCorrectIndex": 0,
               "explanation": "'Raakt' is de vervoegde vorm van het werkwoord 'raken' in de tegenwoordige tijd voor 'het/deze'."
@@ -15603,12 +15603,12 @@
                 "geraakt"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "Tegenwoordige tijd, derde persoon enkelvoud",
+              "formLabel": "Präsens, dritte Person Singular",
               "formChoices": [
-                "Tegenwoordige tijd, derde persoon enkelvoud",
-                "Verleden tijd, derde persoon enkelvoud",
-                "Infinitief",
-                "Imperatief"
+                "Präsens, dritte Person Singular",
+                "Präteritum, dritte Person Singular",
+                "Infinitiv",
+                "Imperativ"
               ],
               "formCorrectIndex": 0,
               "explanation": "'Raakt' is de vervoegde vorm van het werkwoord 'raken' in de tegenwoordige tijd voor 'het/deze'."
@@ -17543,12 +17543,12 @@
                 "aiuterà"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "imperativo presente (2ª persona plurale) + pronome enclitico 'ci'",
+              "formLabel": "imperatief tegenwoordige tijd (2e persoon meervoud) + enclitisch voornaamwoord 'ci'",
               "formChoices": [
-                "imperativo presente (2ª persona plurale) + pronome enclitico 'ci'",
-                "indicativo presente (3ª persona plurale)",
-                "congiuntivo presente (1ª persona plurale)",
-                "infinito presente"
+                "imperatief tegenwoordige tijd (2e persoon meervoud) + enclitisch voornaamwoord 'ci'",
+                "aangezien tegenwoordige tijd (3e persoon meervoud)",
+                "aanvoegende wijs tegenwoordige tijd (1e persoon meervoud)",
+                "infinitief tegenwoordige tijd"
               ],
               "formCorrectIndex": 0,
               "explanation": "'Aiutateci' è la forma imperativa di 'aiutare' alla seconda persona plurale, con il pronome enclitico 'ci' aggiunto."
@@ -17565,12 +17565,12 @@
                 "lascerà"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "imperativo presente (2ª persona plurale) + pronome enclitico 'lo'",
+              "formLabel": "imperatief tegenwoordige tijd (2e persoon meervoud) + enclitisch voornaamwoord 'lo'",
               "formChoices": [
-                "imperativo presente (2ª persona plurale) + pronome enclitico 'lo'",
-                "indicativo presente (3ª persona plurale)",
-                "congiuntivo presente (1ª persona plurale)",
-                "infinito presente"
+                "imperatief tegenwoordige tijd (2e persoon meervoud) + enclitisch voornaamwoord 'lo'",
+                "aangezien tegenwoordige tijd (3e persoon meervoud)",
+                "aanvoegende wijs tegenwoordige tijd (1e persoon meervoud)",
+                "infinitief tegenwoordige tijd"
               ],
               "formCorrectIndex": 0,
               "explanation": "'Lasciatelo' è la forma imperativa di 'lasciare' alla seconda persona plurale, con il pronome enclitico 'lo' aggiunto."
@@ -17587,12 +17587,12 @@
                 "volevo"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "condizionale presente (2ª persona plurale)",
+              "formLabel": "voorwaardelijke wijs tegenwoordige tijd (2e persoon meervoud)",
               "formChoices": [
-                "condizionale presente (2ª persona plurale)",
-                "indicativo presente (2ª persona plurale)",
-                "congiuntivo presente (2ª persona plurale)",
-                "imperativo presente (2ª persona plurale)"
+                "voorwaardelijke wijs tegenwoordige tijd (2e persoon meervoud)",
+                "aangezien tegenwoordige tijd (2e persoon meervoud)",
+                "aanvoegende wijs tegenwoordige tijd (2e persoon meervoud)",
+                "imperatief tegenwoordige tijd (2e persoon meervoud)"
               ],
               "formCorrectIndex": 0,
               "explanation": "'Vorreste' è la forma condizionale di 'volere' alla seconda persona plurale."
@@ -17609,12 +17609,12 @@
                 "troverà"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "infinito presente + pronome enclitico 'lo'",
+              "formLabel": "infinitief tegenwoordige tijd + enclitisch voornaamwoord 'lo'",
               "formChoices": [
-                "infinito presente + pronome enclitico 'lo'",
-                "participio passato maschile singolare",
-                "gerundio presente + pronome enclitico 'lo'",
-                "indicativo futuro (3ª persona singolare)"
+                "infinitief tegenwoordige tijd + enclitisch voornaamwoord 'lo'",
+                "voltooid deelwoord mannelijk enkelvoud",
+                "gerundium tegenwoordige tijd + enclitisch voornaamwoord 'lo'",
+                "aangezien toekomstige tijd (3e persoon enkelvoud)"
               ],
               "formCorrectIndex": 0,
               "explanation": "'Trovarlo' è l'infinito di 'trovare' con il pronome enclitico 'lo' attaccato alla fine."
@@ -19866,10 +19866,10 @@
                 "hearing"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "Vergangenheit (Past Tense)",
+              "formLabel": "Vergangenheit",
               "formChoices": [
-                "Vergangenheit (Past Tense)",
-                "Gegenwart (Present Tense)",
+                "Vergangenheit",
+                "Gegenwart",
                 "Partizip II",
                 "Infinitiv"
               ],
@@ -19910,9 +19910,9 @@
                 "let it"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "Kontraktion (Contraction)",
+              "formLabel": "Kontraktion",
               "formChoices": [
-                "Kontraktion (Contraction)",
+                "Kontraktion",
                 "Plural",
                 "Genitiv",
                 "Infinitiv"
@@ -20458,12 +20458,12 @@
                 "hearded"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "past tense",
+              "formLabel": "Präteritum",
               "formChoices": [
-                "past tense",
-                "present tense",
-                "past participle",
-                "present participle"
+                "Präteritum",
+                "Präsens",
+                "Partizip Perfekt",
+                "Partizip Präsens"
               ],
               "formCorrectIndex": 0,
               "explanation": "Past tense (Präteritum) of 'hear', formed irregularly."
@@ -20480,12 +20480,12 @@
                 "Perseidae"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "plural",
+              "formLabel": "Plural",
               "formChoices": [
-                "plural",
-                "singular",
-                "genitive",
-                "dative"
+                "Plural",
+                "Singular",
+                "Genitiv",
+                "Dativ"
               ],
               "formCorrectIndex": 0,
               "explanation": "Plural of 'Perseid', formed by adding -s."
@@ -20502,12 +20502,12 @@
                 "hearded"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "past tense",
+              "formLabel": "Präteritum",
               "formChoices": [
-                "past tense",
-                "present tense",
-                "past participle",
-                "present participle"
+                "Präteritum",
+                "Präsens",
+                "Partizip Perfekt",
+                "Partizip Präsens"
               ],
               "formCorrectIndex": 0,
               "explanation": "Past tense (Präteritum) of 'hear', formed irregularly."
@@ -21525,12 +21525,12 @@
                 "missed"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "past tense",
+              "formLabel": "Vergangenheit",
               "formChoices": [
-                "past tense",
-                "present tense",
-                "present participle",
-                "past participle"
+                "Vergangenheit",
+                "Gegenwart",
+                "Präsenspartizip",
+                "Partizip Perfekt"
               ],
               "formCorrectIndex": 0,
               "explanation": "Vergangenheit (Past Tense) von 'miss', gebildet durch Hinzufügen von -ed."
@@ -21547,12 +21547,12 @@
                 "Perseidae"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "plural",
+              "formLabel": "Plural",
               "formChoices": [
-                "plural",
-                "singular",
-                "possessive",
-                "genitive"
+                "Plural",
+                "Singular",
+                "Possessiv",
+                "Genitiv"
               ],
               "formCorrectIndex": 0,
               "explanation": "Plural von 'Perseid', gebildet durch Hinzufügen von -s."
@@ -21569,12 +21569,12 @@
                 "Geminidae"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "plural",
+              "formLabel": "Plural",
               "formChoices": [
-                "plural",
-                "singular",
-                "possessive",
-                "genitive"
+                "Plural",
+                "Singular",
+                "Possessiv",
+                "Genitiv"
               ],
               "formCorrectIndex": 0,
               "explanation": "Plural von 'Geminid', gebildet durch Hinzufügen von -s."
@@ -21591,12 +21591,12 @@
                 "their are"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "contraction",
+              "formLabel": "Kontraktion",
               "formChoices": [
-                "contraction",
-                "full form",
-                "plural noun",
-                "possessive adjective"
+                "Kontraktion",
+                "Vollform",
+                "Pluralisches Substantiv",
+                "Possessivadjektiv"
               ],
               "formCorrectIndex": 0,
               "explanation": "Kontraktion von 'they are' (sie sind)."
@@ -23014,12 +23014,12 @@
                 "јаз"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "генитив једнине",
+              "formLabel": "Genitiv Singular",
               "formChoices": [
-                "генитив једнине",
-                "номинатив множине",
-                "акузатив множине",
-                "датив једнине"
+                "Genitiv Singular",
+                "Nominativ Plural",
+                "Akkusativ Plural",
+                "Dativ Singular"
               ],
               "formCorrectIndex": 0,
               "explanation": "Генитив једнине именице 'јазац', који се користи након броја 'два' за мушки род."
@@ -23036,12 +23036,12 @@
                 "мостом"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "локатив једнине",
+              "formLabel": "Lokativ Singular",
               "formChoices": [
-                "локатив једнине",
-                "номинатив једнине",
-                "генитив множине",
-                "инструментал множине"
+                "Lokativ Singular",
+                "Nominativ Singular",
+                "Genitiv Plural",
+                "Instrumental Plural"
               ],
               "formCorrectIndex": 0,
               "explanation": "Локатив једнине именице 'мост', који означава место где се нешто дешава."
@@ -23058,12 +23058,12 @@
                 "почне"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "прошло време множине",
+              "formLabel": "Präteritum Plural",
               "formChoices": [
-                "прошло време множине",
-                "садашње време множине",
-                "будуће време множине",
-                "инфинитив"
+                "Präteritum Plural",
+                "Präsens Plural",
+                "Futur Plural",
+                "Infinitiv"
               ],
               "formCorrectIndex": 0,
               "explanation": "Прошло време (перфект/аорист контекст) глагола 'почети' у множини за мушки род."
@@ -23080,12 +23080,12 @@
                 "реком"
               ],
               "lemmaCorrectIndex": 0,
-              "formLabel": "акузатив једнине",
+              "formLabel": "Akkusativ Singular",
               "formChoices": [
-                "акузатив једнине",
-                "номинатив множине",
-                "генитив једнине",
-                "локатив једнине"
+                "Akkusativ Singular",
+                "Nominativ Plural",
+                "Genitiv Singular",
+                "Lokativ Singular"
               ],
               "formCorrectIndex": 0,
               "explanation": "Акузатив једнине именице 'река', који означава правца кретања (у реку)."
