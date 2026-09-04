@@ -8791,20 +8791,6 @@ const STATIC_LESSONS = [
         "icon": "🚌",
         "vocab": [
           {
-            "target": "hub",
-            "source": "der Hub",
-            "skillId": null,
-            "skillProposal": {
-              "proposedId": "",
-              "canonicalId": null,
-              "skillId": null,
-              "status": "missing",
-              "targetLang": "nl",
-              "sourceLang": "de",
-              "entry": null
-            }
-          },
-          {
             "target": "gebruik maken van",
             "source": "nutzen",
             "skillId": null,
@@ -8821,34 +8807,6 @@ const STATIC_LESSONS = [
           {
             "target": "reizen",
             "source": "reisen",
-            "skillId": null,
-            "skillProposal": {
-              "proposedId": "",
-              "canonicalId": null,
-              "skillId": null,
-              "status": "missing",
-              "targetLang": "nl",
-              "sourceLang": "de",
-              "entry": null
-            }
-          },
-          {
-            "target": "app",
-            "source": "die App",
-            "skillId": null,
-            "skillProposal": {
-              "proposedId": "",
-              "canonicalId": null,
-              "skillId": null,
-              "status": "missing",
-              "targetLang": "nl",
-              "sourceLang": "de",
-              "entry": null
-            }
-          },
-          {
-            "target": "QR-code",
-            "source": "der QR-Code",
             "skillId": null,
             "skillProposal": {
               "proposedId": "",
@@ -8980,6 +8938,405 @@ const STATIC_LESSONS = [
           "ms": 195766,
           "at": "2026-09-04T11:43:38.210Z"
         }
+      },
+      {
+        "difficulty": 1,
+        "id": "ls_1788522434773",
+        "type": "word_forms",
+        "title": "Flexvervoer oefenen",
+        "desc": "Oefen met werkwoordsvormen",
+        "icon": "🚌",
+        "items": [
+          {
+            "sentence": "U kunt gebruik ___ van de Flex.",
+            "translation": "Sie können von der Flex Gebrauch machen.",
+            "choices": [
+              "maken",
+              "maakt",
+              "gemaakt"
+            ],
+            "correctIndex": 0,
+            "explanation": "Infinitief na 'kunt'"
+          },
+          {
+            "sentence": "___ uw reis via een app of bel de Vervoercentrale.",
+            "translation": "Buchen Sie Ihre Reise über eine App oder rufen Sie das Verkehrszentrum an.",
+            "choices": [
+              "Boek",
+              "Boekt",
+              "Boekte"
+            ],
+            "correctIndex": 0,
+            "explanation": "Imperatief"
+          },
+          {
+            "sentence": "Geef door waar u vertrekt en naartoe ___.",
+            "translation": "Geben Sie an, woher Sie kommen und wohin Sie wollen.",
+            "choices": [
+              "wilt",
+              "wil",
+              "willen"
+            ],
+            "correctIndex": 0,
+            "explanation": "Vervoeging van 'willen' voor 'u'"
+          },
+          {
+            "sentence": "Volg uw Flex en ___ in.",
+            "translation": "Verfolgen Sie Ihre Flex und steigen Sie ein.",
+            "choices": [
+              "stap",
+              "stapt",
+              "stapte"
+            ],
+            "correctIndex": 0,
+            "explanation": "Imperatief"
+          },
+          {
+            "sentence": "___ uw rit via een app of in de Flex.",
+            "translation": "Bezahlen Sie Ihre Fahrt über eine App oder in der Flex.",
+            "choices": [
+              "Betaal",
+              "Betaalt",
+              "Betaalde"
+            ],
+            "correctIndex": 0,
+            "explanation": "Imperatief"
+          }
+        ],
+        "_genMeta": {
+          "type": "word_forms",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": 1,
+          "valid": 5,
+          "rejected": 0,
+          "rejectReasons": {},
+          "promptTokens": 1514,
+          "completionTokens": 457,
+          "ms": 216246,
+          "at": "2026-09-04T11:47:14.773Z"
+        }
+      },
+      {
+        "difficulty": 1,
+        "id": "ls_1788522972428",
+        "type": "inflections",
+        "title": "Niederländische Flexion üben",
+        "desc": "Wörter im Kontext erkennen",
+        "icon": "📖",
+        "items": [
+          {
+            "sentence": "Op deze hub kunt u gebruik maken van de Flex.",
+            "surfaceForm": "gebruik",
+            "translation": "Auf diesem Hub können Sie den Flex nutzen.",
+            "lemma": "gebruiken",
+            "lemmaChoices": [
+              "gebruiken",
+              "gebruikt",
+              "gebruikte",
+              "gebruikend"
+            ],
+            "lemmaCorrectIndex": 0,
+            "formLabel": "Infinitiv",
+            "formChoices": [
+              "Infinitiv",
+              "Partizip II",
+              "Präsens",
+              "Imperativ"
+            ],
+            "formCorrectIndex": 0,
+            "explanation": "Der Infinitiv von 'gebruik', der nach 'kunt' steht."
+          },
+          {
+            "sentence": "1 Boek uw reis via een app of bel de Vervoercentrale: 088 235 8070.",
+            "surfaceForm": "Boek",
+            "translation": "Buchen Sie Ihre Reise über eine App oder rufen Sie das Verkehrszentrum an: 088 235 8070.",
+            "lemma": "boeken",
+            "lemmaChoices": [
+              "boeken",
+              "boek",
+              "boekt",
+              "geboekt"
+            ],
+            "lemmaCorrectIndex": 0,
+            "formLabel": "Imperativ",
+            "formChoices": [
+              "Imperativ",
+              "Präsens",
+              "Partizip II",
+              "Infinitiv"
+            ],
+            "formCorrectIndex": 0,
+            "explanation": "Der Imperativ von 'boeken', der hier als Aufforderung verwendet wird."
+          },
+          {
+            "sentence": "4 Betaal uw rit via een app of in de Flex.",
+            "surfaceForm": "Betaal",
+            "translation": "Bezahlen Sie Ihre Fahrt über eine App oder im Flex.",
+            "lemma": "betalen",
+            "lemmaChoices": [
+              "betalen",
+              "betaalt",
+              "betaalde",
+              "betaald"
+            ],
+            "lemmaCorrectIndex": 0,
+            "formLabel": "Imperativ",
+            "formChoices": [
+              "Imperativ",
+              "Präsens",
+              "Partizip II",
+              "Infinitiv"
+            ],
+            "formCorrectIndex": 0,
+            "explanation": "Der Imperativ von 'betalen', der hier als Aufforderung verwendet wird."
+          }
+        ],
+        "_genMeta": {
+          "type": "inflections",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": 1,
+          "valid": 3,
+          "rejected": 1,
+          "rejectReasons": {
+            "surfaceForm equals lemma — not an inflection": 1
+          },
+          "promptTokens": 2431,
+          "completionTokens": 934,
+          "ms": 535808,
+          "at": "2026-09-04T11:56:12.428Z"
+        }
+      },
+      {
+        "difficulty": 1,
+        "id": "ls_1788523192352",
+        "type": "conjugation",
+        "title": "Domburg Verben",
+        "desc": "Fünf wichtige Verben für Domburg",
+        "icon": "🏖️",
+        "conjugations": [
+          {
+            "infinitive": "gebruiken",
+            "source": "benutzen",
+            "tense": "present",
+            "forms": [
+              {
+                "pronoun": "ik",
+                "form": "gebruik"
+              },
+              {
+                "pronoun": "jij/je",
+                "form": "gebruikt"
+              },
+              {
+                "pronoun": "hij/zij/het",
+                "form": "gebruikt"
+              },
+              {
+                "pronoun": "wij/we",
+                "form": "gebruiken"
+              },
+              {
+                "pronoun": "jullie",
+                "form": "gebruiken"
+              },
+              {
+                "pronoun": "zij/ze",
+                "form": "gebruiken"
+              }
+            ]
+          },
+          {
+            "infinitive": "maken",
+            "source": "machen",
+            "tense": "present",
+            "forms": [
+              {
+                "pronoun": "ik",
+                "form": "maak"
+              },
+              {
+                "pronoun": "jij/je",
+                "form": "maakt"
+              },
+              {
+                "pronoun": "hij/zij/het",
+                "form": "maakt"
+              },
+              {
+                "pronoun": "wij/we",
+                "form": "maken"
+              },
+              {
+                "pronoun": "jullie",
+                "form": "maken"
+              },
+              {
+                "pronoun": "zij/ze",
+                "form": "maken"
+              }
+            ]
+          },
+          {
+            "infinitive": "welkom heten",
+            "source": "willkommen heißen",
+            "tense": "present",
+            "forms": [
+              {
+                "pronoun": "ik",
+                "form": "het welkom"
+              },
+              {
+                "pronoun": "jij/je",
+                "form": "heet het welkom"
+              },
+              {
+                "pronoun": "hij/zij/het",
+                "form": "heet het welkom"
+              },
+              {
+                "pronoun": "wij/we",
+                "form": "heten het welkom"
+              },
+              {
+                "pronoun": "jullie",
+                "form": "heten het welkom"
+              },
+              {
+                "pronoun": "zij/ze",
+                "form": "heten het welkom"
+              }
+            ]
+          },
+          {
+            "infinitive": "lopen",
+            "source": "laufen",
+            "tense": "present",
+            "forms": [
+              {
+                "pronoun": "ik",
+                "form": "loop"
+              },
+              {
+                "pronoun": "jij/je",
+                "form": "loopt"
+              },
+              {
+                "pronoun": "hij/zij/het",
+                "form": "loopt"
+              },
+              {
+                "pronoun": "wij/we",
+                "form": "lopen"
+              },
+              {
+                "pronoun": "jullie",
+                "form": "lopen"
+              },
+              {
+                "pronoun": "zij/ze",
+                "form": "lopen"
+              }
+            ]
+          },
+          {
+            "infinitive": "kijken",
+            "source": "schauen",
+            "tense": "present",
+            "forms": [
+              {
+                "pronoun": "ik",
+                "form": "kijk"
+              },
+              {
+                "pronoun": "jij/je",
+                "form": "kijkt"
+              },
+              {
+                "pronoun": "hij/zij/het",
+                "form": "kijkt"
+              },
+              {
+                "pronoun": "wij/we",
+                "form": "kijken"
+              },
+              {
+                "pronoun": "jullie",
+                "form": "kijken"
+              },
+              {
+                "pronoun": "zij/ze",
+                "form": "kijken"
+              }
+            ]
+          }
+        ],
+        "_genMeta": {
+          "type": "conjugation",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": null,
+          "valid": 5,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 734,
+          "completionTokens": 890,
+          "ms": 219593,
+          "at": "2026-09-04T11:59:52.352Z"
+        }
+      },
+      {
+        "difficulty": 1,
+        "id": "ls_1788523337260",
+        "type": "comprehension",
+        "title": "Flexvervoer in Domburg",
+        "desc": "Verstehen Sie, wie der flexible Transportdienst funktioniert?",
+        "icon": "🧠",
+        "questions": [
+          {
+            "q": "Wie kann man die Fahrt buchen?",
+            "choices": [
+              "Nur telefonisch bei der Vervoercentrale.",
+              "Über eine App oder telefonisch.",
+              "Nur durch Scannen des QR-Codes vor Ort.",
+              "Im Büro in der Badstraat."
+            ],
+            "correctIndex": 1,
+            "why": "Der Text sagt: 'Boek uw reis via een app of bel de Vervoercentrale'."
+          },
+          {
+            "q": "Was muss man bei der Buchung angeben?",
+            "choices": [
+              "Den Namen des Fahrers.",
+              "Die Anzahl der Passagiere.",
+              "Start- und Zielort.",
+              "Das bevorzugte Fahrzeugmodell."
+            ],
+            "correctIndex": 2,
+            "why": "Der Text sagt: 'Geef door waar u vertrekt en naartoe wilt'."
+          },
+          {
+            "q": "Wie kann man bezahlen?",
+            "choices": [
+              "Nur mit Bargeld im Fahrzeug.",
+              "Nur per Kreditkarte an der Haltestelle.",
+              "Über eine App oder im Flex.",
+              "Durch Bezahlen bei der Ankunft zu Hause."
+            ],
+            "correctIndex": 2,
+            "why": "Der Text sagt: 'Betaal uw rit via een app of in de Flex'."
+          }
+        ],
+        "_genMeta": {
+          "type": "comprehension",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": 1,
+          "valid": 3,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 608,
+          "completionTokens": 369,
+          "ms": 144356,
+          "at": "2026-09-04T12:02:17.260Z"
+        }
       }
     ],
     "generationStats": {
@@ -8992,8 +9349,8 @@ const STATIC_LESSONS = [
         "lessons": "qwen3.6:35b-a3b"
       },
       "lessonFormat": "json",
-      "totalPromptTokens": 2397,
-      "totalCompletionTokens": 1125,
+      "totalPromptTokens": 7684,
+      "totalCompletionTokens": 3775,
       "lessons": [
         {
           "lessonNum": 1,
@@ -9003,7 +9360,7 @@ const STATIC_LESSONS = [
         }
       ],
       "tokensByType": {
-        "add_lesson": 1455
+        "add_lesson": 9392
       }
     },
     "comicPanels": [
@@ -9020,7 +9377,7 @@ const STATIC_LESSONS = [
       }
     ],
     "generatedAt": "2026-09-04T11:06:19.540Z",
-    "updatedAt": "2026-09-04T11:43:38.210Z",
+    "updatedAt": "2026-09-04T12:02:17.260Z",
     "createdBy": "admin"
   },
   {
@@ -165635,12 +165992,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v89_l', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v89_m', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"3433490ccd83","lessons.json":"b695cd17b5a5","ui.json":"2affd3acf293","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"847debd00ea3","analysis-corrections.json":"missing","build-static.js":"e464fdfb9bd3"};
+  APP.buildSources = {"index.html":"3433490ccd83","lessons.json":"f186a03f94bc","ui.json":"2affd3acf293","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"847debd00ea3","analysis-corrections.json":"missing","build-static.js":"e464fdfb9bd3"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
